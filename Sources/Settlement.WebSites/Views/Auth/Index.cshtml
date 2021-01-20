@@ -1,0 +1,154 @@
+﻿@{
+    Layout = null;
+}
+@model Fanex.NAP.Signin.AspNetCore.ViewModel.IndexViewModel
+<!DOCTYPE html>
+<!--[if IEMobile 7]><html class="no-js iem7 oldie"><![endif]-->
+<!--[if (IE 7)&!(IEMobile)]><html class="no-js ie7 oldie" lang="en"><![endif]-->
+<!--[if (IE 8)&!(IEMobile)]><html class="no-js ie8 oldie" lang="en"><![endif]-->
+<!--[if (IE 9)&!(IEMobile)]><html class="no-js ie9" lang="en"><![endif]-->
+<!--[if (gt IE 9)|(gt IEMobile 7)]><!-->
+<html lang="en">
+<!--<![endif]-->
+<head>
+    <meta charset="utf-8" />
+    <title>Sign In</title>
+    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <meta name="viewport" content="width=device-width" />
+    <link href="@Url.Content("~/nap-auth/auth.css")" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <div id='not-supported-browser-panel' style="display: none">
+        Your browser is no longer supported. Some parts will not work and you may experience
+        problems.<br />
+        If you are having problems, try <a href='http://browsehappy.com/'>this</a> for full
+        browsing experience. Thank you!
+    </div>
+    @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "login-form" }))
+    {
+        <div class="center">
+            @Html.AntiForgeryToken()
+            <div id="login-box">
+                <div id="msg">
+                    <span id="inner-msg">@Model.Message</span>
+                </div>
+                <div class="header">
+                    <div class="welcome">
+                    </div>
+                    <div class="secure">
+                    </div>
+                </div>
+                <div class="auth">
+                    <input type="text" id="username" name="username" autocomplete="off" />
+                    <input type="password" id="password" name="password" />
+                    <input type="submit" id="submit" value="Sign In" />
+                    <div class="bestview">
+                        <span>Best view in </span><span class="ff4">Firefox 60+</span><span class="chrome">Chrome 67+</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <script src="@Url.Content("~/Auth/Static")?url=jquery-1.8.0.min.js" type="text/javascript"></script>
+    <script src="@Url.Content("~/Auth/Static")?url=cryptojs.js" type="text/javascript"></script>
+    <script type="text/javascript">
+
+        var msg, username, password, btnSubmit;
+
+        window.onload = function () {
+            msg = document.getElementById('msg');
+            innerMsg = document.getElementById('inner-msg');
+            username = document.getElementById('username');
+            password = document.getElementById('password');
+            btnSubmit = document.getElementById('submit');
+
+            checkBrowser(); // check if the client's browser is supported
+            username.focus();
+            if (innerMsg.innerHTML.length > 0) {
+                msg.style.display = 'block';
+                shake('msg', 0, 100);
+            } else {
+                msg.style.display = 'none';
+            }
+
+            $('#submit').click(function (e) {
+                var pwdInputByUser = $("#password").val();
+                var pwdInDb = CryptoJS.CfsEnCode(pwdInputByUser);
+                var hashPassword = CryptoJS.SHA256(pwdInDb);
+
+                $("#password").val(hashPassword);
+            });
+        };
+
+        document.forms[0].onsubmit = function () {
+            msg.style.display = 'none';
+
+            var isValid = true;
+
+            username.value = username.value.trim();
+
+            if (username.value.length == 0) {
+                username.classList.add('err');
+                isValid = false;
+                shake('username', 0, 100);
+            } else {
+                username.classList.remove('err');
+            }
+
+            if (password.value.length == 0) {
+                password.classList.add('err');
+                isValid = false;
+                shake('password', 0, 100);
+            } else {
+                password.classList.remove('err');
+            }
+
+            return isValid;
+        };
+
+        String.prototype.trim = function () {
+            return this.replace(/^\s*/, "").replace(/\s*$/, "");
+        };
+
+        function shake(target, times, duration) {
+            for (var i = times, j = 0; i >= 0; i--) {
+                setTimeout(target + ".style.left = '-" + i + "0px'", j++ * duration);
+                setTimeout(target + ".style.left = '" + i + "0px'", j++ * duration);
+            }
+        }
+
+        function checkBrowser() {
+            var browser = detectBrowser();
+            var isSuitableChrome = browser.chrome && browser.version >= 67;
+            var isSuitableFirefox = browser.firefox && browser.version >= 60;
+
+            if (!isSuitableChrome && !isSuitableFirefox) {
+                var warnPnl = document.getElementById('not-supported-browser-panel');
+                warnPnl.style.display = 'block';
+            }
+        }
+
+        function detectBrowser() {
+            var browser = {};
+            browser.version = 0;
+            var uagent = navigator.userAgent.toLowerCase();
+            var match = '';
+
+            browser.chrome = /webkit/.test(uagent) && /chrome/.test(uagent) && !/edge/.test(uagent);
+            browser.firefox = /mozilla/.test(uagent) && /firefox/.test(uagent);
+            if (browser.chrome) {
+                match = navigator.userAgent.match(/Chrom(e|ium)\/([0-9]+)\./);
+                browser.version = match ? parseInt(match[2], 10) : 0;
+            }
+            else if (browser.firefox) {
+                match = uagent.match(new RegExp("rv:([0-9]+)"));
+                browser.version = match ? parseInt(match[1], 10) : 0;
+            }
+
+            return browser;
+        }
+
+    </script>
+</body>
+</html>

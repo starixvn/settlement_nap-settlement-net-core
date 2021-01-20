@@ -1,0 +1,15 @@
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Now is: @System.DateTime.Now</p>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <p>
+        Session Is Available: @ViewBag.IsSessionAvailable. <br />
+        User Id: @ViewBag.UserId. <br />
+        Username: @ViewBag.Username. <br />
+    </p>
+    <p><a asp-area="" asp-controller="Home" asp-action="FakeLogin">Fake Login</a></p>
+</div>

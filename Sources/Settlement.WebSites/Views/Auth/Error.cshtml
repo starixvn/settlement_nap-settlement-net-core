@@ -1,0 +1,27 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Error occurred! Sorry about that</title>
+    <link href="@Url.Content("~/Auth/Static")?url=error.css" rel="stylesheet" type="text/css" />
+    <style type="text/css" media="screen">
+        body
+        {
+            margin: 0px;
+        }
+    </style>
+</head>
+<body>
+    <div class="note rounded">
+        <h2>
+            OOPS! Error Occurred</h2>
+        Sorry about this.
+        <p>
+            An unexpected error has occurred. Please contact the system administrator.
+        </p>
+        <a href="javascript:window.history.back();">Please go back and try again.</a>
+    </div>
+</body>
+</html>

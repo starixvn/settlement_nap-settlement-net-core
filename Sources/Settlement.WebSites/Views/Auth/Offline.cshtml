@@ -1,0 +1,89 @@
+﻿@{
+    Layout = null;
+}
+@model Fanex.NAP.Signin.AspNetCore.ViewModel.MaintenanceViewModel
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Under Maintenance</title>
+    <style type="text/css">
+        html, body
+        {
+            border: 0;
+            margin: 0;
+            outline: 0;
+            padding: 0;
+        }
+
+        body
+        {
+            color: #333;
+            font-family: 'Segoe UI' , Tahoma, Arial, Sans-Serif;
+        }
+
+        .container
+        {
+            background-color: #549cba;
+            margin: 0 auto;
+            padding: 20px;
+            width: 960px;
+        }
+
+        h1
+        {
+            border-bottom: solid 1px #fff;
+            color: #fff;
+            font-weight: normal;
+            padding: 0 0 10px;
+        }
+
+        a
+        {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        a:hover
+        {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>
+            Maintenance</h1>
+        <p>
+            Our system is currently unavailable due to scheduled maintenance.<br />
+            This downtime will last from <span class="em">@Model.UmtFrom</span> &rarr; <span
+                class="em">@Model.UmtTo</span> (GMT+8). Thanks for your patience!
+        </p>
+    </div>
+    <script type="text/javascript">
+        window.rootUrl = '@Url.Content("~/")';
+
+        function ReCheckUM() {
+            var urlRecheckIn = window.rootUrl + "Auth/WhoAmI";
+            var xmlhttp = new XMLHttpRequest();
+
+            xmlhttp.onreadystatechange = function () {
+                if (xmlhttp.readyState === XMLHttpRequest.DONE) {   // XMLHttpRequest.DONE == 4
+                    
+                    if (xmlhttp.status === 200) {
+                        document.location.href = window.rootUrl;
+                    }
+
+                    setTimeout(ReCheckUM, 60000);
+                }
+            };
+
+            xmlhttp.open("POST", urlRecheckIn, true);
+            xmlhttp.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+            xmlhttp.send();
+        }
+        ReCheckUM();
+    </script>
+</body>
+</html>
