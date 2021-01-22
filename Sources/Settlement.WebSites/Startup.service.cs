@@ -1,4 +1,5 @@
 using AutoMapper;
+using Fanex.Caching;
 using Fanex.Data;
 using Fanex.Data.Repository;
 using Fanex.Data.SqlServer;
@@ -14,6 +15,8 @@ using Fanex.NAP.Client.Helpers.Web;
 using Fanex.NAP.Client.Services;
 using Fanex.NAP.Client.Transport;
 using Fanex.NAP.Client.Web;
+using Fanex.RemotingRef;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -21,9 +24,14 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Sentry;
+using Settlement.Core.Services;
+using Settlement.Sportsbook.Aio;
+using Settlement.Sportsbook.Aio.Controllers;
+using Settlement.Sportsbook.Aio.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace Settlement.WebSites
@@ -92,6 +100,7 @@ namespace Settlement.WebSites
 
         private static void ConfigInternalService(IServiceCollection services)
         {
+            services.AddTransient<ICricketService, CricketService>();
         }
 
         private void ConfigureNapServices(IServiceCollection services)
@@ -144,18 +153,25 @@ namespace Settlement.WebSites
         private static void ConfigureCore(IServiceCollection services)
         {
             services.AddScoped<IDynamicRepository, DynamicRepository>();
+            services.AddSingleton<IRemotingRefService, RemotingRefService>();
+            services.AddSingleton<INapSession, NapSession>();
+            services.AddSingleton<IUserService, UserService>();
+            services.AddSingleton<ICacheService, CacheService>();
+            services.AddSingleton<INapSettings, NapSettings>();
+            services.AddSingleton<IRefDataService, RefDataService>();
+            services.AddSingleton<PermissionService, PermissionServiceImp>();
         }
 
         private static void ConfigureMediator(IServiceCollection services)
         {
-            // services.AddMediatR(typeof(Controller).GetTypeInfo().Assembly);
+            services.AddMediatR(typeof(CricketApiController).GetTypeInfo().Assembly);
         }
 
         private static void ConfigureAutoMapper(IServiceCollection services)
         {
             var mapperConfig = new MapperConfiguration(mc =>
             {
-                //mc.AddProfile();
+                mc.AddProfile(typeof(SportsbookAioAutoMapperProfile));
             });
 
             IMapper mapper = mapperConfig.CreateMapper();

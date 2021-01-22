@@ -42,5 +42,10 @@
 		<PackageReference Include="Fanex.NAP.Client.Transport" Version="1.0.0-beta7" />
 		<PackageReference Include="Fanex.NAP.Signin.AspNetCore" Version="1.0.0.1-beta1" />
 		<PackageReference Include="MediatR" Version="9.0.0" />
+		<PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="9.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Settlement.Cricket\Settlement.Sportsbook.Aio.csproj" />
 	</ItemGroup>
 </Project>

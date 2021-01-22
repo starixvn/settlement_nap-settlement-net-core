@@ -1,0 +1,67 @@
+﻿using AutoMapper;
+using Fanex.Data.Repository;
+using Settlement.Sportsbook.Aio.Models;
+using Settlement.Sportsbook.Aio.Requests;
+using Settlement.Sportsbook.Aio.Criterias;
+using System.Threading.Tasks;
+using Settlement.Core.Models;
+using System.Linq;
+using Settlement.Core.Services;
+
+namespace Settlement.Sportsbook.Aio.Services
+{
+    public interface ICricketService
+    {
+        Task<Match> GetMatch(GetMatchRequest request);
+
+        Task<Result> Settle(SettleRequest request);
+    }
+
+    public class CricketService : ICricketService
+    {
+        private readonly IDynamicRepository repository;
+
+        private readonly IMapper mapper;
+
+        private readonly PermissionService permissionService;
+
+        public CricketService(
+            IDynamicRepository repository,
+            PermissionService permissionService,
+            IMapper mapper)
+        {
+            this.repository = repository;
+            this.permissionService = permissionService;
+            this.mapper = mapper;
+        }
+
+        public async Task<Match> GetMatch(GetMatchRequest request)
+        {
+            var getMatchDetailCriteria = mapper.Map<GetMatchRequest, GetMatchDetailCriteria>(request);
+            var matchDetail = await repository.GetAsync<MatchDetail>(getMatchDetailCriteria);
+            var getResultDetailCriteria = mapper.Map<GetMatchRequest, GetResultDetailCriteria>(request);
+            var (firstResultSet, secondResultSet) = await repository.FetchMultipleAsync<MatchResultDetail, TicketCounts>(getResultDetailCriteria);
+            var resultDetails = firstResultSet.ToList();
+            var ticketCounts = secondResultSet.FirstOrDefault() ?? new TicketCounts();
+
+            return new Match
+            {
+                MatchDetail = matchDetail,
+                ResultDetails = resultDetails,
+                TicketCounts = ticketCounts,
+                Permission = permissionService.Permission
+            };
+        }
+
+        public async Task<Result> Settle(SettleRequest request)
+        {
+            var criteria = mapper.Map<SettleRequest, SettleCriteria>(request);
+            await repository.ExecuteAsync(criteria);
+            return new Result
+            {
+                ErrCode = criteria.ErrCode,
+                ErrMsg = criteria.ErrMsg
+            };
+        }
+    }
+}
