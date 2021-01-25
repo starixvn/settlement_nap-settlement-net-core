@@ -111,11 +111,18 @@ namespace Settlement.WebSites
             services.AddSingleton<INapSettings>(new NapSettings(Configuration));
             services.AddSingleton<INapSession, NapSession>();
             services.AddSingleton<IRestClient, RestClient>();
+            services.AddSingleton<ICacheService, CacheService>();
 
             services.AddSingleton<IGroupService, GroupService>();
             services.AddSingleton<IUserService, UserService>();
             services.AddSingleton<ISecurityService, SecurityService>();
             services.AddSingleton<ISiteService, SiteService>();
+
+            RefDataTypeContainer
+                .ConnectTo(new Uri(Configuration.GetSection("Fanex.RemotingRef.Service.Url").Value))
+                .FromApplication("Settlement");
+            services.Configure<IConfiguration>(Configuration);
+            services.AddSingleton<IRemotingRefService, RemotingRefService>();
         }
 
         private void ConfigureFanex()
@@ -153,12 +160,8 @@ namespace Settlement.WebSites
         private static void ConfigureCore(IServiceCollection services)
         {
             services.AddScoped<IDynamicRepository, DynamicRepository>();
-            services.AddSingleton<IRemotingRefService, RemotingRefService>();
-            services.AddSingleton<INapSession, NapSession>();
-            services.AddSingleton<IUserService, UserService>();
-            services.AddSingleton<ICacheService, CacheService>();
-            services.AddSingleton<INapSettings, NapSettings>();
-            services.AddSingleton<IRefDataService, RefDataService>();
+            services.AddScoped<IRemotingRefService, RemotingRefService>();
+            services.AddTransient<IRefDataService, RefDataService>();
             services.AddSingleton<PermissionService, PermissionServiceImp>();
         }
 

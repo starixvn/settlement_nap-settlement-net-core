@@ -4,7 +4,17 @@ namespace Settlement.Sportsbook.Aio.Criterias
 {
     class SettleCriteria : NonQueryCommand
     {
+        public int AdminId { get; set; }
+
         public int MatchId { get; set; }
+
+        public string SelectedResources { get; set; }
+
+        public string Action { get; set; }
+
+        public string Ip { get; set; }
+
+        public bool IsReSettledTickets { get; set; }
 
         public int ErrCode { get; set; }
 
@@ -12,12 +22,12 @@ namespace Settlement.Sportsbook.Aio.Criterias
 
         public override string GetSettingKey()
         {
-            return "";
+            return "NAP_Admin_Settlement_Profile_Push";
         }
 
         public override bool IsValid()
         {
-            return MatchId > 0;
+            return AdminId > 0 && MatchId > 0;
         }
     }
 }
