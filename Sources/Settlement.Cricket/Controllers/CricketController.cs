@@ -24,6 +24,19 @@ namespace Settlement.Sportsbook.Aio.Controllers
 
         [Route("settle")]
         [HttpPost]
-        public async Task<IActionResult> Settle(SettleRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+        public async Task<IActionResult> Settle(SettleRequest request)
+        {
+            var ip = HttpContext.Connection.RemoteIpAddress.ToString();
+            request.Ip = ip;
+
+            return Ok(await mediator.Send(request).ConfigureAwait(false));
+        }
+
+        [HttpPost("check-marked-tickets")]
+        public async Task<IActionResult> CheckMarkedTickets(CheckMarkedTicketsRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+
+
+        [HttpPost("get-recal-result")]
+        public async Task<IActionResult> GetRecalResult(GetRecalResultRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
     }
 }

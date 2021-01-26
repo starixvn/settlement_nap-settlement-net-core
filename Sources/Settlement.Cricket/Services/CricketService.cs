@@ -9,6 +9,9 @@ using System.Linq;
 using Settlement.Core.Services;
 using Fanex.NAP.Client.Helpers.Web;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Http;
+using Kaden.XmlConverter;
+using Settlement.Sportsbook.Aio.Constants;
 
 namespace Settlement.Sportsbook.Aio.Services
 {
@@ -17,6 +20,10 @@ namespace Settlement.Sportsbook.Aio.Services
         Task<Match> GetMatch(GetMatchRequest request);
 
         Task<Result> Settle(SettleRequest request);
+
+        Task<List<MatchResultDetail>> GetRecalResult(GetRecalResultRequest request);
+
+        Task<MarkedTickets> CheckMarkedTickets(CheckMarkedTicketsRequest request);
     }
 
     public class CricketService : ICricketService
@@ -29,21 +36,27 @@ namespace Settlement.Sportsbook.Aio.Services
 
         private readonly IRefDataService refDataService;
 
-        //private readonly XmlConvertService xmlConvertService;
+        private readonly XmlConvertService xmlConvertService;
 
         private readonly INapSession currentSession;
+
+        private readonly INetPositionService netPositionService;
 
         public CricketService(
             IDynamicRepository repository,
             PermissionService permissionService,
             IRefDataService refDataService,
-            //XmlConvertService xmlConvertService,
+            XmlConvertService xmlConvertService,
             INapSession currentSession,
+            INetPositionService netPositionService,
             IMapper mapper)
         {
             this.repository = repository;
             this.permissionService = permissionService;
             this.refDataService = refDataService;
+            this.xmlConvertService = xmlConvertService;
+            this.currentSession = currentSession;
+            this.netPositionService = netPositionService;
             this.mapper = mapper;
         }
 
@@ -70,25 +83,55 @@ namespace Settlement.Sportsbook.Aio.Services
             };
         }
 
-        public async Task<Result> Settle(SettleRequest request)
+        public async Task<List<MatchResultDetail>> GetRecalResult(GetRecalResultRequest request)
         {
-            var criteria = mapper.Map<SettleRequest, SettleCriteria>(request);
+            var criteria = mapper.Map<GetRecalResultRequest, GetRecalResultCriteria>(request);
+            var results = await repository.FetchAsync<MatchResultDetail>(criteria);
+
+            return results.ToList();
+        }
+
+        public async Task<MarkedTickets> CheckMarkedTickets(CheckMarkedTicketsRequest request)
+        {
+            var criteria = mapper.Map<CheckMarkedTicketsRequest, CheckMarkedTicketsCriteria>(request);
             await repository.ExecuteAsync(criteria);
-            return new Result
+
+            return new MarkedTickets
             {
-                ErrCode = criteria.ErrCode,
-                ErrMsg = criteria.ErrMsg
+                IsExistMarkedTicket = criteria.IsExistMarkedTicket
             };
         }
 
-        //private string CreateSettleResources(List<ResourceItem> selectedResources)
-        //{
-        //    var resources = new Resources<ResourceItem>
-        //    {
-        //        ResourceItems = selectedResources
-        //    };
+        public async Task<Result> Settle(SettleRequest request)
+        {
+            var criteria = mapper.Map<SettleRequest, SettleCriteria>(request);
+            criteria.AdminId = currentSession.UserId;
+            criteria.SelectedResources = CreateSettleResources(request.SelectedResources);
+            await repository.ExecuteAsync(criteria);
 
-        //    return xmlConvertService.Serialize(resources);
-        //}
+            var settleResult = new Result
+            {
+                ErrCode = criteria.ErrCode,
+                ErrMsg = criteria.ErrMsg,
+                Command = criteria.Command,
+            };
+
+            if (settleResult.IsSuccessful && request.ActionName != SettleType.Refund)
+            {
+                return netPositionService.PushNetPosition(criteria);
+            }
+
+            return settleResult;
+        }
+
+        private string CreateSettleResources(List<ResourceItem> selectedResources)
+        {
+            var resources = new Resources<ResourceItem>
+            {
+                ResourceItems = selectedResources
+            };
+
+            return xmlConvertService.Serialize(resources);
+        }
     }
 }

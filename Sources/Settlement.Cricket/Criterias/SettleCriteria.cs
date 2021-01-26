@@ -2,7 +2,7 @@
 
 namespace Settlement.Sportsbook.Aio.Criterias
 {
-    class SettleCriteria : NonQueryCommand
+    public class SettleCriteria : NonQueryCommand
     {
         public int AdminId { get; set; }
 
@@ -19,6 +19,8 @@ namespace Settlement.Sportsbook.Aio.Criterias
         public int ErrCode { get; set; }
 
         public string ErrMsg { get; set; }
+
+        public string Command { get; set; }
 
         public override string GetSettingKey()
         {
