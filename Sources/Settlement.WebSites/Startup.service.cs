@@ -79,7 +79,8 @@ namespace Settlement.WebSites
                 options.AddPolicy(allowOrigin,
                     builder =>
                     {
-                        builder.WithOrigins("https://localhost:44346",
+                        builder.WithOrigins("http://localhost:5001",
+                                            "https://localhost:44346",
                                             "http://localhost:58793")
                               .AllowAnyMethod()
                               .AllowAnyHeader()
