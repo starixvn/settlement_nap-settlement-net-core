@@ -167,7 +167,7 @@ namespace Settlement.WebSites
 
         private static void ConfigureMediator(IServiceCollection services)
         {
-            services.AddMediatR(typeof(CricketApiController).GetTypeInfo().Assembly);
+            services.AddMediatR(typeof(CricketController).GetTypeInfo().Assembly);
         }
 
         private static void ConfigureAutoMapper(IServiceCollection services)

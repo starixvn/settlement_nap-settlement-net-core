@@ -1,25 +1,29 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Settlement.Sportsbook.Aio.Requests;
 using System.Threading.Tasks;
 
 namespace Settlement.Sportsbook.Aio.Controllers
-{ 
+{
     [ApiController]
-    [Route("api/cricket")]
-    public class CricketApiController : ControllerBase
+    [Route("api/[controller]")]
+    [EnableCors("AllowOrigin")]
+    public class CricketController : ControllerBase
     {
         private readonly IMediator mediator;
 
-        public CricketApiController(IMediator mediator)
+        public CricketController(IMediator mediator)
         {
             this.mediator = mediator;
         }
 
-        [HttpPost("get-match")]
+        [Route("get-match")]
+        [HttpPost]
         public async Task<IActionResult> GetMatch(GetMatchRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
-        [HttpPost("settle")]
+        [Route("settle")]
+        [HttpPost]
         public async Task<IActionResult> Settle(SettleRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
     }
 }
