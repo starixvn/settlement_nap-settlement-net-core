@@ -16,6 +16,7 @@ using Fanex.NAP.Client.Services;
 using Fanex.NAP.Client.Transport;
 using Fanex.NAP.Client.Web;
 using Fanex.RemotingRef;
+using Kaden.XmlConverter;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -164,6 +165,7 @@ namespace Settlement.WebSites
             services.AddScoped<IRemotingRefService, RemotingRefService>();
             services.AddTransient<IRefDataService, RefDataService>();
             services.AddSingleton<PermissionService, PermissionServiceImp>();
+            services.AddSingleton<XmlConvertService, XmlConvertServiceImp>();
         }
 
         private static void ConfigureMediator(IServiceCollection services)

@@ -40,15 +40,12 @@ namespace Settlement.Sportsbook.Aio.Services
 
         private readonly INapSession currentSession;
 
-        private readonly INetPositionService netPositionService;
-
         public CricketService(
             IDynamicRepository repository,
             PermissionService permissionService,
             IRefDataService refDataService,
             XmlConvertService xmlConvertService,
             INapSession currentSession,
-            INetPositionService netPositionService,
             IMapper mapper)
         {
             this.repository = repository;
@@ -56,7 +53,6 @@ namespace Settlement.Sportsbook.Aio.Services
             this.refDataService = refDataService;
             this.xmlConvertService = xmlConvertService;
             this.currentSession = currentSession;
-            this.netPositionService = netPositionService;
             this.mapper = mapper;
         }
 
@@ -113,12 +109,13 @@ namespace Settlement.Sportsbook.Aio.Services
             {
                 ErrCode = criteria.ErrCode,
                 ErrMsg = criteria.ErrMsg,
-                Command = criteria.Command,
+                Command = criteria.Command
             };
 
-            if (settleResult.IsSuccessful && request.ActionName != SettleType.Refund)
+            if (settleResult.IsSuccessful && request.IsApplyHedging)
             {
-                return netPositionService.PushNetPosition(criteria);
+                criteria.MatchId = request.HedgeMatchId;
+                await repository.ExecuteAsync(criteria);
             }
 
             return settleResult;

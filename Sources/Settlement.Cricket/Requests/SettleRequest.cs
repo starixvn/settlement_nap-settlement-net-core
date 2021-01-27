@@ -17,6 +17,10 @@ namespace Settlement.Sportsbook.Aio.Requests
 
         public string BetStatus { get; set; }
 
+        public bool IsApplyHedging { get; set; }
+
+        public int HedgeMatchId { get; set; }
+
         public List<ResourceItem> SelectedResources { get; set; }
     }
 }

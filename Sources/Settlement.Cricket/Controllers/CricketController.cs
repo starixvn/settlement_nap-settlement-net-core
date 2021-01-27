@@ -32,11 +32,12 @@ namespace Settlement.Sportsbook.Aio.Controllers
             return Ok(await mediator.Send(request).ConfigureAwait(false));
         }
 
-        [HttpPost("check-marked-tickets")]
+        [Route("check-marked-tickets")]
+        [HttpPost]
         public async Task<IActionResult> CheckMarkedTickets(CheckMarkedTicketsRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
-
-        [HttpPost("get-recal-result")]
+        [Route("get-recal-result")]
+        [HttpPost]
         public async Task<IActionResult> GetRecalResult(GetRecalResultRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
     }
 }

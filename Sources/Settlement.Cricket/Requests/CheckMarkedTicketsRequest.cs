@@ -14,7 +14,5 @@ namespace Settlement.Sportsbook.Aio.Requests
         public int MatchId { get; set; }
 
         public List<ResourceItem> SelectedResources { get; set; }
-
-        public string ApiKey { get; set; }
     }
 }
