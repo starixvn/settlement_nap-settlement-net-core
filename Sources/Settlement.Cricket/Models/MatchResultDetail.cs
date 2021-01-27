@@ -25,6 +25,10 @@ namespace Settlement.Sportsbook.Aio.Models
 
         public byte SettlementStatusId { get; set; }
 
+        public int GroupId { get; set; }
+
+        public string GroupName { get; set; }
+
         public virtual string ResultStatus
         {
             get

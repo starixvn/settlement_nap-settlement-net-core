@@ -103,6 +103,7 @@ namespace Settlement.WebSites
         private static void ConfigInternalService(IServiceCollection services)
         {
             services.AddTransient<ICricketService, CricketService>();
+            services.AddTransient<ICricketBetTypeService, CricketBetTypeService>();
         }
 
         private void ConfigureNapServices(IServiceCollection services)

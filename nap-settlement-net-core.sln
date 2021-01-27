@@ -17,6 +17,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{0318FA
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Settlement.Core", "Sources\Settlement.Core\Settlement.Core.csproj", "{C2438490-1481-4F3E-8673-FD5B1AB1ACDF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Settlement.Sportsbook.Aio.UnitTests", "Settlement.Sportsbook.Aio.UnitTests\Settlement.Sportsbook.Aio.UnitTests.csproj", "{8DE86747-C500-4F89-B299-D3BAAD31BD9D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{C2438490-1481-4F3E-8673-FD5B1AB1ACDF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C2438490-1481-4F3E-8673-FD5B1AB1ACDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C2438490-1481-4F3E-8673-FD5B1AB1ACDF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8DE86747-C500-4F89-B299-D3BAAD31BD9D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8DE86747-C500-4F89-B299-D3BAAD31BD9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8DE86747-C500-4F89-B299-D3BAAD31BD9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8DE86747-C500-4F89-B299-D3BAAD31BD9D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -49,6 +55,7 @@ Global
 		{6409734F-A24C-4162-B72B-FE22F0D79EFB} = {A1FCD18B-3CAA-4629-A10D-F9EDCEF84670}
 		{0318FAF0-0F10-4D19-A03A-BA495310F4D4} = {D19D8BE5-5331-437B-BE2D-FDF1B5F02781}
 		{C2438490-1481-4F3E-8673-FD5B1AB1ACDF} = {0318FAF0-0F10-4D19-A03A-BA495310F4D4}
+		{8DE86747-C500-4F89-B299-D3BAAD31BD9D} = {A1FCD18B-3CAA-4629-A10D-F9EDCEF84670}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F134C0FB-5844-4216-814B-BAE66FBB0195}

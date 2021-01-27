@@ -40,12 +40,15 @@ namespace Settlement.Sportsbook.Aio.Services
 
         private readonly INapSession currentSession;
 
+        private readonly ICricketBetTypeService cricketBetTypeService;
+
         public CricketService(
             IDynamicRepository repository,
             PermissionService permissionService,
             IRefDataService refDataService,
             XmlConvertService xmlConvertService,
             INapSession currentSession,
+            ICricketBetTypeService cricketBetTypeService,
             IMapper mapper)
         {
             this.repository = repository;
@@ -53,6 +56,7 @@ namespace Settlement.Sportsbook.Aio.Services
             this.refDataService = refDataService;
             this.xmlConvertService = xmlConvertService;
             this.currentSession = currentSession;
+            this.cricketBetTypeService = cricketBetTypeService;
             this.mapper = mapper;
         }
 
@@ -68,6 +72,7 @@ namespace Settlement.Sportsbook.Aio.Services
             var getResultDetailCriteria = mapper.Map<GetMatchRequest, GetResultDetailCriteria>(request);
             var (firstResultSet, secondResultSet) = await repository.FetchMultipleAsync<MatchResultDetail, TicketCounts>(getResultDetailCriteria);
             var resultDetails = firstResultSet.ToList();
+            cricketBetTypeService.GroupBetTypesAndGenerateNames(resultDetails);
             var ticketCounts = secondResultSet.FirstOrDefault() ?? new TicketCounts();
 
             return new Match

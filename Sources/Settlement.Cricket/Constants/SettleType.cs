@@ -7,5 +7,7 @@
         public const string UnCalculate = "UNCAL";
 
         public const string Refund = "REFUND";
+
+        public const string Early = "EAR";
     }
 }
