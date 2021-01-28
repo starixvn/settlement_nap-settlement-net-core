@@ -12,6 +12,7 @@ namespace Settlement.Sportsbook.Aio.Constants
         public const int CaughtOrNot = 1;
         public const int SingleScore = 2;
         public const int CoupleScores = 3;
+        public const int OneToSix = 4;
 
         public static List<int> HomeAwayGroup => new List<int>
         {
@@ -26,6 +27,11 @@ namespace Settlement.Sportsbook.Aio.Constants
         public static List<int> CoupleScoresGroup => new List<int>
         {
             9449
+        };
+
+        public static List<int> OneToSixGroup => new List<int>
+        {
+            94901, 94911, 94902, 94912
         };
     }
 }

@@ -70,15 +70,19 @@ namespace Settlement.Sportsbook.Aio.Services
 
             if (!string.IsNullOrEmpty(betTypeName))
             {
+                const int overPosition = 5;
+                const int overLength = 3;
+                const int ballPosition = 8;
+                const int ballLength = 2;
                 if (GroupBetType.IncludedOvers.Contains(betTypeId))
                 {
-                    var betTypeOvers = Convert.ToInt32(resourceId.Substring(5, 3));
+                    var betTypeOvers = Convert.ToInt32(resourceId.Substring(overPosition, overLength));
                     betTypeName = betTypeName.Replace("XXX", betTypeOvers.ToString());
                 }
                 else if (GroupBetType.IncludedOversAndBalls.Contains(betTypeId))
                 {
-                    var betTypeOvers = Convert.ToInt32(resourceId.Substring(5, 3));
-                    var betTypeBalls = Convert.ToInt32(resourceId.Substring(8, 2));
+                    var betTypeOvers = Convert.ToInt32(resourceId.Substring(overPosition, overLength));
+                    var betTypeBalls = Convert.ToInt32(resourceId.Substring(ballPosition, ballLength));
                     betTypeName = betTypeName.Replace("XXX", betTypeOvers.ToString())
                                       .Replace("YYY", betTypeBalls.ToString());
                 }
@@ -146,6 +150,10 @@ namespace Settlement.Sportsbook.Aio.Services
             if (InputType.CaughtOrNotGroup.Contains(betTypeId))
             {
                 resultDetail.InputType = InputType.CaughtOrNot;
+            }
+            else if (InputType.OneToSixGroup.Contains(betTypeId))
+            {
+                resultDetail.InputType = InputType.OneToSix;
             }
             else
             {
