@@ -8,23 +8,60 @@ namespace Settlement.Sportsbook.Aio.Services
 {
     public interface ICricketBetTypeService
     {
-        void GroupBetTypesAndGenerateNames(List<MatchResultDetail> resultDetails);
+        void GroupBetTypesAndGenerateNames(List<MatchResultDetail> resultDetails, MatchDetail matchDetail);
     }
 
     public class CricketBetTypeService : ICricketBetTypeService
     {
-        public void GroupBetTypesAndGenerateNames(List<MatchResultDetail> resultDetails)
+        private readonly int MainResourceIdMaxLength = 2;
+
+        private readonly int InnsBetTypeMinLength = 5;
+
+        public void GroupBetTypesAndGenerateNames(List<MatchResultDetail> resultDetails, MatchDetail matchDetail)
         {
             resultDetails.ForEach((resultDetail) =>
             {
-                resultDetail.BetTypeName = GetBetTypeName(resultDetail.BetType, resultDetail.ResourceId);
-                GetGroupBetType(resultDetail);
+                if (resultDetail.ResourceId.Length > MainResourceIdMaxLength)
+                {
+                    GenerateBetTypeNameAndGroup(resultDetail, matchDetail);
+                }
             });
         }
 
-        private string GetBetTypeName(string betType, string resourceId)
+        private void GenerateBetTypeNameAndGroup(MatchResultDetail resultDetail, MatchDetail matchDetail)
         {
-            var betTypeId = Convert.ToInt32(betType);
+            var resourceId = resultDetail.ResourceId;
+            if (resourceId.Length < InnsBetTypeMinLength)
+            {
+                var betTypeId = Convert.ToInt32(resourceId);
+                resultDetail.BetTypeName = GetNonInnsBetTypeName(betTypeId);
+                GroupNonInnsBetType(resultDetail, betTypeId);
+                GetNonInnsBetTypeInputType(resultDetail, betTypeId);
+            }
+            else
+            {
+                var betTypeId = Convert.ToInt32(resourceId.Substring(0, 5));
+                resultDetail.BetTypeName = GetInnsBetTypeName(betTypeId, resourceId)
+                                            .Replace("HOME_TEAM", matchDetail.HomeName.Trim())
+                                            .Replace("AWAY_TEAM", matchDetail.AwayName.Trim());
+                GroupInnsBetType(resultDetail, betTypeId);
+                GetInnsBetTypeInputType(resultDetail, betTypeId);
+            }
+        }
+
+        private string GetNonInnsBetTypeName(int betTypeId)
+        {
+            var betTypeName = string.Empty;
+            if (BetType.CricketBetTypeNames.ContainsKey(betTypeId))
+            {
+                betTypeName = BetType.CricketBetTypeNames[betTypeId];
+            }
+
+            return betTypeName;
+        }
+
+        private string GetInnsBetTypeName(int betTypeId, string resourceId)
+        {
             var betTypeName = string.Empty;
             if (BetType.CricketBetTypeNames.ContainsKey(betTypeId))
             {
@@ -33,67 +70,86 @@ namespace Settlement.Sportsbook.Aio.Services
 
             if (!string.IsNullOrEmpty(betTypeName))
             {
-                var resourceGroup = resourceId.Substring(0, 4);
-                int betTypeOvers;
-                switch (resourceGroup)
+                if (GroupBetType.IncludedOvers.Contains(betTypeId))
                 {
-                    case "9410":
-                    case "9411":
-                    case "9428":
-                    case "9429":
-                    case "9434":
-                    case "9435":
-                    case "9484":
-                    case "9485":
-                        betTypeOvers = Convert.ToInt32(resourceId.Substring(5, 3));
-                        betTypeName = betTypeName.Replace("XXX", betTypeOvers.ToString());
-                        break;
-                    case "9422":
-                    case "9423":
-                    case "9490":
-                    case "9491":
-                        betTypeOvers = Convert.ToInt32(resourceId.Substring(5, 3));
-                        var betTypeBalls = Convert.ToInt32(resourceId.Substring(8, 2));
-                        betTypeName = betTypeName.Replace("XXX", betTypeOvers.ToString())
-                                          .Replace("YYY", betTypeBalls.ToString());
-                        break;
+                    var betTypeOvers = Convert.ToInt32(resourceId.Substring(5, 3));
+                    betTypeName = betTypeName.Replace("XXX", betTypeOvers.ToString());
+                }
+                else if (GroupBetType.IncludedOversAndBalls.Contains(betTypeId))
+                {
+                    var betTypeOvers = Convert.ToInt32(resourceId.Substring(5, 3));
+                    var betTypeBalls = Convert.ToInt32(resourceId.Substring(8, 2));
+                    betTypeName = betTypeName.Replace("XXX", betTypeOvers.ToString())
+                                      .Replace("YYY", betTypeBalls.ToString());
                 }
             }
 
             return betTypeName;
         }
 
-        private void GetGroupBetType(MatchResultDetail resultDetail)
+        private void GroupNonInnsBetType(MatchResultDetail resultDetail, int betTypeId)
         {
-            var betTypeId = Convert.ToInt32(resultDetail.BetType);
-            if (GroupBetType.ExactBetTypes.Contains(betTypeId))
+            if (GroupBetType.Other.Contains(betTypeId))
             {
-                resultDetail.GroupId = GroupBetType.ExactId;
-                resultDetail.GroupName = GroupBetType.ExactName;
+                resultDetail.GroupId = GroupBetType.OtherId;
+                resultDetail.GroupName = GroupBetType.OtherName;
             }
-            else if (GroupBetType.WinnerLoserBetTypes.Contains(betTypeId))
+            else if (GroupBetType.MatchBetType.Contains(betTypeId))
             {
-                resultDetail.GroupId = GroupBetType.WinnerLoserId;
-                resultDetail.GroupName = GroupBetType.WinnerLoserName;
+                resultDetail.GroupId = GroupBetType.MatchBetTypeId;
+                resultDetail.GroupName = GroupBetType.MatchBetTypeName;
             }
-            else if (GroupBetType.OverUnderBetTypes.Contains(betTypeId))
+        }
+
+        private void GroupInnsBetType(MatchResultDetail resultDetail, int betTypeId)
+        {
+            if (GroupBetType.FirstInnsHome.Contains(betTypeId))
             {
-                resultDetail.GroupId = GroupBetType.OverUnderId;
-                resultDetail.GroupName = GroupBetType.OverUnderName;
+                resultDetail.GroupId = GroupBetType.FirstInnsHomeId;
+                resultDetail.GroupName = GroupBetType.FirstInnsHomeName;
             }
-            else if (GroupBetType.OddEvenBetTypes.Contains(betTypeId))
+            else if (GroupBetType.FirstInnsAway.Contains(betTypeId))
             {
-                resultDetail.GroupId = GroupBetType.OddEvenId;
-                resultDetail.GroupName = GroupBetType.OddEvenName;
+                resultDetail.GroupId = GroupBetType.FirstInnsAwayId;
+                resultDetail.GroupName = GroupBetType.FirstInnsAwayName;
             }
-            else if (GroupBetType.FancyBetTypes.Contains(betTypeId))
+            else if (GroupBetType.SecondInnsHome.Contains(betTypeId))
             {
-                resultDetail.GroupId = GroupBetType.FancyId;
-                resultDetail.GroupName = GroupBetType.FancyName;
+                resultDetail.GroupId = GroupBetType.SecondInnsHomeId;
+                resultDetail.GroupName = GroupBetType.SecondInnsHomeName;
+            }
+            else if (GroupBetType.SecondInnsAway.Contains(betTypeId))
+            {
+                resultDetail.GroupId = GroupBetType.SecondInnsAwayId;
+                resultDetail.GroupName = GroupBetType.SecondInnsAwayName;
+            }
+        }
+
+        private void GetNonInnsBetTypeInputType(MatchResultDetail resultDetail, int betTypeId)
+        {
+            if (InputType.HomeAwayGroup.Contains(betTypeId))
+            {
+                resultDetail.InputType = InputType.HomeAway;
+            }
+            else if (InputType.CoupleScoresGroup.Contains(betTypeId))
+            {
+                resultDetail.InputType = InputType.CoupleScores;
             }
             else
             {
-                resultDetail.GroupId = GroupBetType.MainId;
+                resultDetail.InputType = InputType.SingleScore;
+            }
+        }
+
+        private void GetInnsBetTypeInputType(MatchResultDetail resultDetail, int betTypeId)
+        {
+            if (InputType.CaughtOrNotGroup.Contains(betTypeId))
+            {
+                resultDetail.InputType = InputType.CaughtOrNot;
+            }
+            else
+            {
+                resultDetail.InputType = InputType.SingleScore;
             }
         }
     }

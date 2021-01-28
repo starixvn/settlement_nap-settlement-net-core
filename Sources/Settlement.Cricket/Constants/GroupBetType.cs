@@ -9,46 +9,58 @@ namespace Settlement.Sportsbook.Aio.Constants
     public static class GroupBetType
     {
         public const int MainId = 0;
-        public const int WinnerLoserId = 1;
-        public const int ExactId = 2;
-        public const int OverUnderId = 3;
-        public const int OddEvenId = 4;
-        public const int FancyId = 5;
-        public const string WinnerLoserName = "Winner/Loser";
-        public const string ExactName = "Exact";
-        public const string OverUnderName = "Over/Under";
-        public const string OddEvenName = "Odd/Even";
-        public const string FancyName = "Fancy";
+        public const int OtherId = 1;
+        public const int FirstInnsHomeId = 2;
+        public const int FirstInnsAwayId = 3;
+        public const int SecondInnsHomeId = 4;
+        public const int SecondInnsAwayId = 5;
+        public const int MatchBetTypeId = 6;
+        public const string OtherName = "Other";
+        public const string FirstInnsHomeName = "1st Innings - Home";
+        public const string FirstInnsAwayName = "1st Innings - Away";
+        public const string SecondInnsHomeName = "2nd Innings - Home";
+        public const string SecondInnsAwayName = "2nd Innings - Away";
+        public const string MatchBetTypeName = "Match";
 
-        public static List<int> WinnerLoserBetTypes = new List<int>
+        public static List<int> Other => new List<int>
         {
-            9401, 9400, 9540
+            9401, 9400
         };
 
-        public static List<int> ExactBetTypes = new List<int>
+        public static List<int> FirstInnsHome => new List<int>
         {
-            9434, 9435, 9436, 9437, 9438, 9439, 9484, 9485, 9490, 9491
+            94841, 94901, 94221, 94101, 94281, 94341, 94541, 94601
         };
 
-        public static List<int> OverUnderBetTypes = new List<int>
+        public static List<int> FirstInnsAway => new List<int>
         {
-            9410, 9411, 9412, 9413, 9414, 9415, 9416, 9417, 9418, 9419,
-            9420, 9421, 9422, 9423, 9428, 9429, 9430, 9431, 9432, 9433,
-            9446, 9447, 9449, 9450, 9452, 9453, 9454, 9455, 9460, 9461
+            94851, 94911, 94231, 94111, 94291, 94351, 94551, 94611
         };
 
-        public static List<int> OddEvenBetTypes = new List<int>
+        public static List<int> SecondInnsHome => new List<int>
         {
-            9502, 9503, 9504, 9505, 9506, 9507, 9508, 9509, 9510, 9511,
-            9512, 9513, 9514, 9515, 9516, 9517, 9518, 9519, 9527, 9528,
-            9530, 9532, 9533
+            94842, 94902, 94222, 94102, 94282, 94342, 94542, 94602
         };
 
-        public static List<int> FancyBetTypes = new List<int>
+        public static List<int> SecondInnsAway => new List<int>
         {
-            9547, 9548, 9549, 9550, 9551, 9552, 9553, 9554, 9555, 9556,
-            9557, 9558, 9559, 9560, 9561, 9562, 9563, 9564, 9566, 9567,
-            9569, 9570, 9572, 9573, 9574, 9575, 9580, 9581
+            94852, 94912, 94232, 94112, 94292, 94352, 94552, 94612
+        };
+
+        public static List<int> MatchBetType => new List<int>
+        {
+            9446, 9447, 9449, 9450, 9452, 9453
+        };
+
+        public static List<int> IncludedOvers => new List<int>
+        {
+            94841, 94101, 94281, 94341, 94851, 94111, 94291, 94351, 94842, 94102,
+            94282, 94342, 94852, 94112, 94292, 94352
+        };
+
+        public static List<int> IncludedOversAndBalls => new List<int>
+        {
+            94901, 94221, 94911, 94231, 94902, 94222, 94912, 94232,
         };
     }
 }

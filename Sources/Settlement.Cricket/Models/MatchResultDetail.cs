@@ -29,6 +29,8 @@ namespace Settlement.Sportsbook.Aio.Models
 
         public string GroupName { get; set; }
 
+        public int InputType { get; set; }
+
         public virtual string ResultStatus
         {
             get

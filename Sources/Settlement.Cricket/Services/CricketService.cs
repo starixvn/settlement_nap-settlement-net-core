@@ -72,7 +72,7 @@ namespace Settlement.Sportsbook.Aio.Services
             var getResultDetailCriteria = mapper.Map<GetMatchRequest, GetResultDetailCriteria>(request);
             var (firstResultSet, secondResultSet) = await repository.FetchMultipleAsync<MatchResultDetail, TicketCounts>(getResultDetailCriteria);
             var resultDetails = firstResultSet.ToList();
-            cricketBetTypeService.GroupBetTypesAndGenerateNames(resultDetails);
+            cricketBetTypeService.GroupBetTypesAndGenerateNames(resultDetails, matchDetail);
             var ticketCounts = secondResultSet.FirstOrDefault() ?? new TicketCounts();
 
             return new Match
