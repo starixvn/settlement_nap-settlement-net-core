@@ -82,7 +82,10 @@ namespace Settlement.WebSites
                     {
                         builder.WithOrigins("http://localhost:5001",
                                             "https://localhost:44346",
-                                            "http://localhost:58793")
+                                            "http://localhost:58793",
+                                            "https://10.19.10.46:45455",
+                                            "http://ha.nexdev.net:7306"
+                                            )
                               .AllowAnyMethod()
                               .AllowAnyHeader()
                               .AllowCredentials();
@@ -109,7 +112,6 @@ namespace Settlement.WebSites
         private void ConfigureNapServices(IServiceCollection services)
         {
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-
             services.AddTransient<ILogger, Logger>();
             services.AddSingleton<INapSettings>(new NapSettings(Configuration));
             services.AddSingleton<INapSession, NapSession>();

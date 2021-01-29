@@ -10,6 +10,7 @@ using Settlement.Core.Services;
 using Fanex.NAP.Client.Helpers.Web;
 using System.Collections.Generic;
 using Kaden.XmlConverter;
+using Microsoft.AspNetCore.Http;
 
 namespace Settlement.Sportsbook.Aio.Services
 {
@@ -26,6 +27,8 @@ namespace Settlement.Sportsbook.Aio.Services
 
     public class CricketService : ICricketService
     {
+        private readonly IHttpContextAccessor accessor;
+
         private readonly IDynamicRepository repository;
 
         private readonly IMapper mapper;
@@ -47,7 +50,8 @@ namespace Settlement.Sportsbook.Aio.Services
             XmlConvertService xmlConvertService,
             INapSession currentSession,
             ICricketBetTypeService cricketBetTypeService,
-            IMapper mapper)
+            IMapper mapper,
+            IHttpContextAccessor accessor)
         {
             this.repository = repository;
             this.permissionService = permissionService;
@@ -56,6 +60,7 @@ namespace Settlement.Sportsbook.Aio.Services
             this.currentSession = currentSession;
             this.cricketBetTypeService = cricketBetTypeService;
             this.mapper = mapper;
+            this.accessor = accessor;
         }
 
         public async Task<Match> GetMatch(GetMatchRequest request)
@@ -105,6 +110,7 @@ namespace Settlement.Sportsbook.Aio.Services
         {
             var criteria = mapper.Map<SettleRequest, SettleCriteria>(request);
             criteria.AdminId = currentSession.UserId;
+            criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
             criteria.SelectedResources = CreateSettleResources(request.SelectedResources);
             await repository.ExecuteAsync(criteria);
 
