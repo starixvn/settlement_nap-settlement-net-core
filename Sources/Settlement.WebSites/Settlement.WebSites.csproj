@@ -46,6 +46,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Settlement.Cricket\Settlement.Sportsbook.Aio.csproj" />
+	  <ProjectReference Include="..\Settlement.Sportsbook.Aio\Settlement.Sportsbook.Aio.csproj" />
 	</ItemGroup>
 </Project>
