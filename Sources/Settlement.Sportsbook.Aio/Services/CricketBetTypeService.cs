@@ -41,9 +41,7 @@ namespace Settlement.Sportsbook.Aio.Services
             else
             {
                 var betTypeId = Convert.ToInt32(resourceId.Substring(0, 5));
-                resultDetail.BetTypeName = GetInnsBetTypeName(betTypeId, resourceId)
-                                            .Replace("HOME_TEAM", matchDetail.HomeName.Trim())
-                                            .Replace("AWAY_TEAM", matchDetail.AwayName.Trim());
+                resultDetail.BetTypeName = GetInnsBetTypeName(betTypeId, resourceId);
                 GroupInnsBetType(resultDetail, betTypeId);
                 GetInnsBetTypeInputType(resultDetail, betTypeId);
             }
