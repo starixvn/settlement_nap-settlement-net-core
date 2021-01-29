@@ -9,9 +9,7 @@ using System.Linq;
 using Settlement.Core.Services;
 using Fanex.NAP.Client.Helpers.Web;
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Http;
 using Kaden.XmlConverter;
-using Settlement.Sportsbook.Aio.Constants;
 
 namespace Settlement.Sportsbook.Aio.Services
 {

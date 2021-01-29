@@ -47,7 +47,7 @@ namespace Settlement.Sportsbook.Aio.Services
             }
         }
 
-        private string GetNonInnsBetTypeName(int betTypeId)
+        private static string GetNonInnsBetTypeName(int betTypeId)
         {
             var betTypeName = string.Empty;
             if (BetType.CricketBetTypeNames.ContainsKey(betTypeId))
@@ -58,7 +58,7 @@ namespace Settlement.Sportsbook.Aio.Services
             return betTypeName;
         }
 
-        private string GetInnsBetTypeName(int betTypeId, string resourceId)
+        private static string GetInnsBetTypeName(int betTypeId, string resourceId)
         {
             var betTypeName = string.Empty;
             if (BetType.CricketBetTypeNames.ContainsKey(betTypeId))
@@ -89,7 +89,7 @@ namespace Settlement.Sportsbook.Aio.Services
             return betTypeName;
         }
 
-        private void GroupNonInnsBetType(MatchResultDetail resultDetail, int betTypeId)
+        private static void GroupNonInnsBetType(MatchResultDetail resultDetail, int betTypeId)
         {
             if (GroupBetType.Other.Contains(betTypeId))
             {
@@ -103,7 +103,7 @@ namespace Settlement.Sportsbook.Aio.Services
             }
         }
 
-        private void GroupInnsBetType(MatchResultDetail resultDetail, int betTypeId)
+        private static void GroupInnsBetType(MatchResultDetail resultDetail, int betTypeId)
         {
             if (GroupBetType.FirstInnsHome.Contains(betTypeId))
             {
@@ -127,7 +127,7 @@ namespace Settlement.Sportsbook.Aio.Services
             }
         }
 
-        private void GetNonInnsBetTypeInputType(MatchResultDetail resultDetail, int betTypeId)
+        private static void GetNonInnsBetTypeInputType(MatchResultDetail resultDetail, int betTypeId)
         {
             if (InputType.HomeAwayGroup.Contains(betTypeId))
             {
@@ -143,7 +143,7 @@ namespace Settlement.Sportsbook.Aio.Services
             }
         }
 
-        private void GetInnsBetTypeInputType(MatchResultDetail resultDetail, int betTypeId)
+        private static void GetInnsBetTypeInputType(MatchResultDetail resultDetail, int betTypeId)
         {
             if (InputType.CaughtOrNotGroup.Contains(betTypeId))
             {

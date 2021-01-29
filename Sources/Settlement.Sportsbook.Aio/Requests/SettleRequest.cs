@@ -11,8 +11,6 @@ namespace Settlement.Sportsbook.Aio.Requests
 
         public string ActionName { get; set; }
 
-        public string Ip { get; set; }
-
         public bool IsReSettledTickets { get; set; }
 
         public string BetStatus { get; set; }

@@ -24,13 +24,7 @@ namespace Settlement.Sportsbook.Aio.Controllers
 
         [Route("settle")]
         [HttpPost]
-        public async Task<IActionResult> Settle(SettleRequest request)
-        {
-            var ip = HttpContext.Connection.RemoteIpAddress.ToString();
-            request.Ip = ip;
-
-            return Ok(await mediator.Send(request).ConfigureAwait(false));
-        }
+        public async Task<IActionResult> Settle(SettleRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
         [Route("check-marked-tickets")]
         [HttpPost]

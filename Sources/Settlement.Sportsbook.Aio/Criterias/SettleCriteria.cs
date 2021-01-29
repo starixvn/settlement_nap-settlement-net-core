@@ -1,9 +1,11 @@
 ﻿using Fanex.Data.Repository;
+using Microsoft.AspNetCore.Http;
 
 namespace Settlement.Sportsbook.Aio.Criterias
 {
     public class SettleCriteria : NonQueryCommand
     {
+        private static readonly HttpContext context;
         public int AdminId { get; set; }
 
         public int MatchId { get; set; }
@@ -12,7 +14,7 @@ namespace Settlement.Sportsbook.Aio.Criterias
 
         public string Action { get; set; }
 
-        public string Ip { get; set; }
+        public string Ip { get; } = context.Connection.RemoteIpAddress.ToString();
 
         public bool IsReSettledTickets { get; set; }
 
