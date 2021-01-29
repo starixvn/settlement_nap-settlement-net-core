@@ -2,7 +2,6 @@ FROM registry.nexdev.net:5050/docker/dotnet/core/sdk:5.0.102-ca-patch-buster-sli
 WORKDIR /src
 
 COPY ./Sources/Settlement.Core ./Settlement.Core
-COPY ./Sources/Settlement.Cricket ./Settlement.Cricket
 COPY ./Sources/Settlement.Sportsbook.Aio ./Settlement.Sportsbook.Aio
 COPY ./Sources/Settlement.WebSites/Settlement.WebSites.csproj ./Settlement.WebSites/Settlement.WebSites.csproj
 
