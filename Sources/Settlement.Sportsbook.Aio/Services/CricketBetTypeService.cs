@@ -75,13 +75,13 @@ namespace Settlement.Sportsbook.Aio.Services
                 if (GroupBetType.IncludedOvers.Contains(betTypeId))
                 {
                     var betTypeOvers = Convert.ToInt32(resourceId.Substring(overPosition, overLength));
-                    betTypeName = string.Format(betTypeName, betTypeOvers.ToString());
+                    betTypeName = string.Format(betTypeName, betTypeOvers);
                 }
                 else if (GroupBetType.IncludedOversAndBalls.Contains(betTypeId))
                 {
                     var betTypeOvers = Convert.ToInt32(resourceId.Substring(overPosition, overLength));
                     var betTypeBalls = Convert.ToInt32(resourceId.Substring(ballPosition, ballLength));
-                    betTypeName = string.Format(betTypeName, betTypeOvers.ToString(), betTypeBalls.ToString());
+                    betTypeName = string.Format(betTypeName, betTypeOvers, betTypeBalls);
                 }
             }
 

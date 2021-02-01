@@ -12,6 +12,7 @@ namespace Settlement.Sportsbook.Aio
             CreateMap<GetMatchRequest, GetResultDetailCriteria>();
             CreateMap<GetRecalResultRequest, GetRecalResultCriteria>();
             CreateMap<CheckMarkedTicketsRequest, CheckMarkedTicketsCriteria>();
+            CreateMap<GetMatchRequest, GetHedgeMatchCriteria>();
             CreateMap<SettleRequest, SettleCriteria>()
                 .ForMember(dest => dest.Action, map => map.MapFrom(src => src.ActionName))
                 .ForMember(dest => dest.SelectedResources, map => map.Ignore());

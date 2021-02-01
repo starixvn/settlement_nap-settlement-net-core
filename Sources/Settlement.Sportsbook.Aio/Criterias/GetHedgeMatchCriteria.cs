@@ -1,0 +1,19 @@
+﻿using Fanex.Data.Repository;
+
+namespace Settlement.Sportsbook.Aio.Criterias
+{
+    public class GetHedgeMatchCriteria : CriteriaBase
+    {
+        public int MatchId { get; set; }
+
+        public override string GetSettingKey()
+        {
+            return "NAP_Set_MatchSelHedge";
+        }
+
+        public override bool IsValid()
+        {
+            return MatchId > 0;
+        }
+    }
+}
