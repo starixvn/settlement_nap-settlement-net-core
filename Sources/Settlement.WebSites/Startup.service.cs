@@ -147,7 +147,7 @@ namespace Settlement.WebSites
               .StartNewSession()
               .Use(connections)
               .WithSqlServer()
-              .UseDefaultDbSettingProvider(resourcePath: "~/App_Data")
+              .UseDefaultDbSettingProvider(resourcePath: Configuration.GetSection("StoredProcedurePath").Value)
               .Run();
 
             LogManager
