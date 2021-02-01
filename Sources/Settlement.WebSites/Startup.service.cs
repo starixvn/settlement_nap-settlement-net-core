@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Fanex.Caching.Redis;
 
 namespace Settlement.WebSites
 {
@@ -94,6 +95,18 @@ namespace Settlement.WebSites
                               .AllowCredentials();
                     });
             });
+        }
+
+        private void ConfigureRedis(IServiceCollection services)
+        {
+            var redisConfig = Configuration.GetSection("AuthSettings:RedisConfig").Value;
+            services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = redisConfig;
+                options.InstanceName = $"Fanex.Settlement.Session-";
+            });
+
+            services.AddRedisCache(Configuration.GetSection("fanex.caching.redis"));
         }
 
         private void ConfigureSession(IServiceCollection services)

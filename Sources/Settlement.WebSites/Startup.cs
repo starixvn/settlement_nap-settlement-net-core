@@ -26,6 +26,7 @@ namespace Settlement.WebSites
             ConfigureCORS(services);
             ConfigureAuthorization(services);
             ConfigureAuthentication(services);
+            ConfigureRedis(services);
             ConfigureSession(services);
 
             ConfigureNapServices(services);
