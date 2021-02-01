@@ -83,8 +83,11 @@ namespace Settlement.WebSites
                         builder.WithOrigins("http://localhost:5001",
                                             "https://localhost:44346",
                                             "http://localhost:58793",
-                                            "https://10.19.10.46:45455",
-                                            "http://ha.nexdev.net:7306"
+
+                                            "https://settlement.nexdev.net",
+                                            "https://settlement-netcore-v1.nexdev.net",
+                                            "https://settlement-netcore-v2.nexdev.net",
+                                            "https://settlement-netcore-v3.nexdev.net"
                                             )
                               .AllowAnyMethod()
                               .AllowAnyHeader()
