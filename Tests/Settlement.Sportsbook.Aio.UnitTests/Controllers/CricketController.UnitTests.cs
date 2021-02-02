@@ -18,7 +18,7 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Controllers
             var request = new GetMatchRequest();
             var controller = new CricketController();
 
-            controller.
+            //controller.
         }
     }
 }

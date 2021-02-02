@@ -105,7 +105,7 @@ namespace Settlement.WebSites
             var redis = ConnectionMultiplexer.Connect(redisConfig);
 
             services.AddDataProtection()
-                .PersistKeysToStackExchangeRedis(redis, "DataProtectionKeys");
+                .PersistKeysToStackExchangeRedis(redis, "Fanex.Settlement-ProtectionKeys");
 
             services.AddStackExchangeRedisCache(options =>
             {
