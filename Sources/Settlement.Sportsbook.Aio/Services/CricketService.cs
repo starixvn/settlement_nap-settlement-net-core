@@ -23,6 +23,10 @@ namespace Settlement.Sportsbook.Aio.Services
         Task<List<MatchResultDetail>> GetRecalResult(GetRecalResultRequest request);
 
         Task<MarkedTickets> CheckMarkedTickets(CheckMarkedTicketsRequest request);
+
+        Task<MarkedTickets> CheckMarkedTicketsParlay(CheckMarkedTicketsParlayRequest request);
+
+        Task<Result> RefundParlay(RefundParlayRequest request);
     }
 
     public class CricketService : ICricketService
@@ -101,6 +105,7 @@ namespace Settlement.Sportsbook.Aio.Services
         public async Task<MarkedTickets> CheckMarkedTickets(CheckMarkedTicketsRequest request)
         {
             var criteria = mapper.Map<CheckMarkedTicketsRequest, CheckMarkedTicketsCriteria>(request);
+            criteria.ResourceIds = GetResourceIds(request.SelectedResources);
             await repository.ExecuteAsync(criteria);
 
             return new MarkedTickets
@@ -141,6 +146,44 @@ namespace Settlement.Sportsbook.Aio.Services
             };
 
             return xmlConvertService.Serialize(resources);
+        }
+
+        public async Task<MarkedTickets> CheckMarkedTicketsParlay(CheckMarkedTicketsParlayRequest request)
+        {
+            var criteria = mapper.Map<CheckMarkedTicketsParlayRequest, CheckMarkedTicketsParlayCriteria>(request);
+            await repository.ExecuteAsync(criteria);
+
+            return new MarkedTickets
+            {
+                IsExistMarkedTicket = criteria.IsExistMarkedTicket
+            };
+        }
+
+        public async Task<Result> RefundParlay(RefundParlayRequest request)
+        {
+            var criteria = mapper.Map<RefundParlayRequest, RefundParlayCriteria>(request);
+            criteria.AdminId = currentSession.UserId;
+            criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
+            await repository.ExecuteAsync(criteria);
+
+            var result = new Result
+            {
+                ErrCode = criteria.ErrCode,
+                ErrMsg = criteria.ErrMsg
+            };
+
+            return result;
+        }
+
+        private static string GetResourceIds(List<ResourceItem> betTypes)
+        {
+            var listResourceId = new List<string>();
+            foreach (var betType in betTypes)
+            {
+                listResourceId.Add(betType.ResourceId);
+            }
+
+            return string.Join(",", listResourceId);
         }
     }
 }

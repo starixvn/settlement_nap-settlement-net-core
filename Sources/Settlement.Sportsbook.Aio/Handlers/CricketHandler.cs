@@ -13,7 +13,9 @@ namespace Settlement.Sportsbook.Aio.Handlers
             IRequestHandler<GetMatchRequest, Match>,
             IRequestHandler<SettleRequest, Result>,
             IRequestHandler<GetRecalResultRequest, List<MatchResultDetail>>,
-            IRequestHandler<CheckMarkedTicketsRequest, MarkedTickets>
+            IRequestHandler<CheckMarkedTicketsRequest, MarkedTickets>,
+            IRequestHandler<CheckMarkedTicketsParlayRequest, MarkedTickets>,
+            IRequestHandler<RefundParlayRequest, Result>
     {
         private readonly ICricketService cricketService;
 
@@ -29,5 +31,9 @@ namespace Settlement.Sportsbook.Aio.Handlers
         public async Task<List<MatchResultDetail>> Handle(GetRecalResultRequest request, CancellationToken cancellationToken) => await cricketService.GetRecalResult(request);
 
         public async Task<MarkedTickets> Handle(CheckMarkedTicketsRequest request, CancellationToken cancellationToken) => await cricketService.CheckMarkedTickets(request);
+
+        public async Task<MarkedTickets> Handle(CheckMarkedTicketsParlayRequest request, CancellationToken cancellationToken) => await cricketService.CheckMarkedTicketsParlay(request);
+
+        public async Task<Result> Handle(RefundParlayRequest request, CancellationToken cancellationToken) => await cricketService.RefundParlay(request);
     }
 }

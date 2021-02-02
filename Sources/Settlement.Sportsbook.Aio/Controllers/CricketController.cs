@@ -33,5 +33,13 @@ namespace Settlement.Sportsbook.Aio.Controllers
         [Route("get-recal-result")]
         [HttpPost]
         public async Task<IActionResult> GetRecalResult(GetRecalResultRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+
+        [Route("check-marked-tickets-parlay")]
+        [HttpPost]
+        public async Task<IActionResult> CheckMarkedTicketsParlay(CheckMarkedTicketsParlayRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+
+        [Route("refund-parlay")]
+        [HttpPost]
+        public async Task<IActionResult> RefundParlay(RefundParlayRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
     }
 }

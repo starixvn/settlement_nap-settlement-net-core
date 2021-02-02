@@ -1,0 +1,12 @@
+﻿using MediatR;
+using Settlement.Core.Models;
+using Settlement.Sportsbook.Aio.Models;
+using System.Collections.Generic;
+
+namespace Settlement.Sportsbook.Aio.Requests
+{
+    public class CheckMarkedTicketsParlayRequest : IRequest<MarkedTickets>
+    {
+        public int MatchId { get; set; }
+    }
+}
