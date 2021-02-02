@@ -35,6 +35,8 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Fanex.Caching.Redis;
+using StackExchange.Redis;
+using Microsoft.AspNetCore.DataProtection;
 
 namespace Settlement.WebSites
 {
@@ -100,6 +102,11 @@ namespace Settlement.WebSites
         private void ConfigureRedis(IServiceCollection services)
         {
             var redisConfig = Configuration.GetSection("AuthSettings:RedisConfig").Value;
+            var redis = ConnectionMultiplexer.Connect(redisConfig);
+
+            services.AddDataProtection()
+                .PersistKeysToStackExchangeRedis(redis, "DataProtectionKeys");
+
             services.AddStackExchangeRedisCache(options =>
             {
                 options.Configuration = redisConfig;
