@@ -6,7 +6,7 @@
 
         public string ErrMsg { get; set; }
 
-        public string Command { get; set; }
+        public string ServiceCommand { get; set; }
 
         public bool IsSuccessful => string.IsNullOrEmpty(ErrMsg) || (ErrCode == 0);
     }

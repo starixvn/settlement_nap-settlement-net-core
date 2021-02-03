@@ -126,7 +126,7 @@ namespace Settlement.Sportsbook.Aio.Services
             {
                 ErrCode = criteria.ErrCode,
                 ErrMsg = criteria.ErrMsg,
-                Command = criteria.Command
+                ServiceCommand = criteria.ServiceCommand
             };
 
             if (settleResult.IsSuccessful && request.IsApplyHedging)

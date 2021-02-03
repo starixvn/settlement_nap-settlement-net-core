@@ -20,7 +20,7 @@ namespace Settlement.Sportsbook.Aio.Criterias
 
         public string ErrMsg { get; set; }
 
-        public string Command { get; set; }
+        public string ServiceCommand { get; set; }
 
         public override string GetSettingKey()
         {
