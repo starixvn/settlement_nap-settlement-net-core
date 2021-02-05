@@ -8,7 +8,7 @@ namespace Settlement.Sportsbook.Aio.Services
 {
     public interface ICricketBetTypeService
     {
-        void GroupBetTypesAndGenerateNames(List<MatchResultDetail> resultDetails, MatchDetail matchDetail);
+        void GroupBetTypesAndGenerateNames(List<MatchResultDetail> resultDetails);
     }
 
     public class CricketBetTypeService : ICricketBetTypeService
@@ -17,18 +17,18 @@ namespace Settlement.Sportsbook.Aio.Services
 
         private readonly int InnsBetTypeMinLength = 5;
 
-        public void GroupBetTypesAndGenerateNames(List<MatchResultDetail> resultDetails, MatchDetail matchDetail)
+        public void GroupBetTypesAndGenerateNames(List<MatchResultDetail> resultDetails)
         {
             resultDetails.ForEach((resultDetail) =>
             {
                 if (resultDetail.ResourceId.Length > MainResourceIdMaxLength)
                 {
-                    GenerateBetTypeNameAndGroup(resultDetail, matchDetail);
+                    GenerateBetTypeNameAndGroup(resultDetail);
                 }
             });
         }
 
-        private void GenerateBetTypeNameAndGroup(MatchResultDetail resultDetail, MatchDetail matchDetail)
+        private void GenerateBetTypeNameAndGroup(MatchResultDetail resultDetail)
         {
             var resourceId = resultDetail.ResourceId;
             if (resourceId.Length < InnsBetTypeMinLength)

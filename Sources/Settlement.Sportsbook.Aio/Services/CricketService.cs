@@ -79,7 +79,7 @@ namespace Settlement.Sportsbook.Aio.Services
             var getResultDetailCriteria = mapper.Map<GetMatchRequest, GetResultDetailCriteria>(request);
             var (firstResultSet, secondResultSet) = await repository.FetchMultipleAsync<MatchResultDetail, TicketCounts>(getResultDetailCriteria);
             var resultDetails = firstResultSet.ToList();
-            cricketBetTypeService.GroupBetTypesAndGenerateNames(resultDetails, matchDetail);
+            cricketBetTypeService.GroupBetTypesAndGenerateNames(resultDetails);
             var ticketCounts = secondResultSet.FirstOrDefault() ?? new TicketCounts();
             var getHedgeMatchCriteria = mapper.Map<GetMatchRequest, GetHedgeMatchCriteria>(request);
             var hedgeMatchDetail = await repository.GetAsync<HedgeMatchDetail>(getHedgeMatchCriteria);
