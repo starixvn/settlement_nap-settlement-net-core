@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Functions SiteName="NAP - Settlement site">
+	<Function Name="Cricket">
+		<Setting Key="NAP_Set_MatchSelInfo" SpName="NAP_Set_MatchSelInfo_UAT1" DbName="DBPRO.bodb02.bodbAdminNet" />
+		<Setting Key="NAP_Set_MatchSelDetail_Resources" SpName="NAP_Set_MatchSelDetail_Resources_UAT1" DbName="DBTXN.bodb02.bodbAdminNet" />
+		<Setting Key="NAP_Set_MatchSelDetail_Resources_ReCal" SpName="NAP_Set_MatchSelDetail_Resources_ReCal_UAT1" DbName="DBPRO.bodb02.bodbAdminNet" />
+		<Setting Key="NAP_Set_CheckingMarkedTransaction" SpName="NAP_Set_CheckingMarkedTransaction_UAT1" DbName="DBTXN.bodb02.bodbAdminNet" />
+		<Setting Key="NAP_Set_EarlySettlement_CheckingMarkedTransaction" SpName="NAP_Set_EarlySettlement_CheckingMarkedTransaction" DbName="DBTXN.bodb02.bodbAdminNet" />
+		<Setting Key="NAP_Admin_Settlement_Profile_Push" SpName="NAP_Admin_Settlement_Profile_Push_UAT1" DbName="DBTXN.bodb02.bodbAdminNet" />
+		<Setting Key="NAP_Set_MatchSelHedge" SpName="NAP_Set_MatchSelHedge" DbName="DBPRO.bodb02.bodbAdminNet" />
+		<Setting Key="NAP_Admin_Settlement_Refund_MP_Push" SpName="NAP_Admin_Settlement_Refund_MP_Push_UAT1" DbName="DBTXN.bodb02.bodbAdminNet" />
+	</Function>
+</Functions>
