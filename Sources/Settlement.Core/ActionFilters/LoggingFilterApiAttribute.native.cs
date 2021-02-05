@@ -30,6 +30,7 @@ namespace Settlement.Core.ActionFilters
             var objectResult = actionExecutedContext.Result as OkObjectResult;
             var result = JsonConvert.SerializeObject(objectResult.Value);
             stringBuilder.AppendLine($"Result: {result}");
+
             
             //var objectContent = actionExecutedContext.HttpContext.Response.Body. as ObjectContent;
             //if (objectContent != null)

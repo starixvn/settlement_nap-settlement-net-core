@@ -192,6 +192,7 @@ namespace Settlement.WebSites
             services.AddTransient<IRefDataService, RefDataService>();
             services.AddSingleton<PermissionService, PermissionServiceImp>();
             services.AddSingleton<XmlConvertService, XmlConvertServiceImp>();
+            services.AddSingleton<ILoggingService, LoggingService>();
         }
 
         private static void ConfigureMediator(IServiceCollection services)
