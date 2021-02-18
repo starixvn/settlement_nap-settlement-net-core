@@ -91,10 +91,9 @@ namespace Settlement.WebSites
                                             "https://settlement-netcore-v1.nexdev.net",
                                             "https://settlement-netcore-v2.nexdev.net",
                                             "https://settlement-netcore-v3.nexdev.net",
-                                            "https://napsettlement.playthefun.com",
-                                            "https://nap-settlement.playthefun.com"
 
-                                            )
+                                            "https://nap-settlement.playthefun.com",
+                                            "https://napsettlement.playthefun.com")
                               .AllowAnyMethod()
                               .AllowAnyHeader()
                               .AllowCredentials();
