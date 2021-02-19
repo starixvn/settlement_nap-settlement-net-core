@@ -1,22 +1,19 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
-using Settlement.Core.Services;
-using System;
 using Microsoft.AspNetCore.Http.Extensions;
-using System.Net.Http;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Fanex.Logging;
 
 namespace Settlement.Core.ActionFilters
 {
-    [AttributeUsage(AttributeTargets.Method)]
-    public class LoggingFilterApiAttribute : ActionFilterAttribute
+    public class LogRequestResponseAttribute : ActionFilterAttribute
     {
-        private readonly ILoggingService loggingService;
+        private readonly ILogger logger;
 
-        public LoggingFilterApiAttribute()
+        public LogRequestResponseAttribute()
         {
-            loggingService = new LoggingService();
+            this.logger = new Logger();
         }
 
         public async override void OnActionExecuted(ActionExecutedContext actionExecutedContext)
@@ -25,22 +22,24 @@ namespace Settlement.Core.ActionFilters
             var request = context.Request;
             var stringBuilder = new StringBuilder();
             stringBuilder.AppendLine($"Url: {request.GetDisplayUrl()}");
-            stringBuilder.AppendLine($"UserAgent: {request.Headers["User-Agent"].ToString()}");
+            stringBuilder.AppendLine($"UserAgent: {request.Headers["User-Agent"]}");
             stringBuilder.AppendLine($"Username: {context.User.Identity.Name}");
+
             var objectResult = actionExecutedContext.Result as OkObjectResult;
             var result = JsonConvert.SerializeObject(objectResult.Value);
-            stringBuilder.AppendLine($"Result: {result}");
-
-            
-            //var objectContent = actionExecutedContext.HttpContext.Response.Body. as ObjectContent;
-            //if (objectContent != null)
-            //{
-            //    var content = await objectContent.ReadAsStringAsync();
-            //    stringBuilder.Append($"InputStream: {content}");
-            //}
-            loggingService.Info(stringBuilder.ToString());
+            stringBuilder.AppendLine(result);
+            await logger.InfoAsync(stringBuilder.ToString());
 
             base.OnActionExecuted(actionExecutedContext);
+        }
+
+        public async override void OnActionExecuting(ActionExecutingContext context)
+        {
+            var model = context.ActionArguments;
+            var serialString = JsonConvert.SerializeObject(model);
+            await logger.InfoAsync(serialString);
+
+            base.OnActionExecuting(context);
         }
     }
 }

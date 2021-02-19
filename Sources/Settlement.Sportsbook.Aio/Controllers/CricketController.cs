@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Settlement.Core.ActionFilters;
 using Settlement.Sportsbook.Aio.Requests;
 using System.Threading.Tasks;
 
@@ -22,10 +23,12 @@ namespace Settlement.Sportsbook.Aio.Controllers
 
         [Route("get-match")]
         [HttpPost]
+        [LogRequestResponse]
         public async Task<IActionResult> GetMatch(GetMatchRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
         [Route("settle")]
         [HttpPost]
+        [LogRequestResponse]
         public async Task<IActionResult> Settle(SettleRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
         [Route("check-marked-tickets")]
