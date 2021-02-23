@@ -29,6 +29,7 @@ using Settlement.Core.Services;
 using Settlement.Sportsbook.Aio;
 using Settlement.Sportsbook.Aio.Controllers;
 using Settlement.Sportsbook.Aio.Services;
+using Settlement.Sportsbook.MoveTickets.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,6 +38,8 @@ using System.Threading.Tasks;
 using Fanex.Caching.Redis;
 using StackExchange.Redis;
 using Microsoft.AspNetCore.DataProtection;
+using Settlement.Sportsbook.MoveTickets.Controllers;
+using Settlement.Sportsbook.MoveTickets;
 
 namespace Settlement.WebSites
 {
@@ -132,6 +135,11 @@ namespace Settlement.WebSites
         {
             services.AddTransient<ICricketService, CricketService>();
             services.AddTransient<ICricketBetTypeService, CricketBetTypeService>();
+            services.AddTransient<IMatchResultDetailService, MatchResultDetailService>();
+            services.AddTransient<IMatchService, MatchService>();
+            services.AddTransient<IMoveTicketService, MoveTicketService>();
+            services.AddTransient<IScoreService, ScoreService>();
+            services.AddTransient<IScoreSetService, ScoreSetService>();
         }
 
         private void ConfigureNapServices(IServiceCollection services)
@@ -200,6 +208,7 @@ namespace Settlement.WebSites
         private static void ConfigureMediator(IServiceCollection services)
         {
             services.AddMediatR(typeof(CricketController).GetTypeInfo().Assembly);
+            services.AddMediatR(typeof(MoveTicketController).GetTypeInfo().Assembly);
         }
 
         private static void ConfigureAutoMapper(IServiceCollection services)
@@ -207,6 +216,7 @@ namespace Settlement.WebSites
             var mapperConfig = new MapperConfiguration(mc =>
             {
                 mc.AddProfile(typeof(SportsbookAioAutoMapperProfile));
+                mc.AddProfile(typeof(SportsbookMoveTicketAutoMapperProfile));
             });
 
             IMapper mapper = mapperConfig.CreateMapper();

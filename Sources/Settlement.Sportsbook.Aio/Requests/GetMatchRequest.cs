@@ -3,7 +3,7 @@ using Settlement.Sportsbook.Aio.Models;
 
 namespace Settlement.Sportsbook.Aio.Requests
 {
-    public class GetMatchRequest : IRequest<Match>
+    public class GetMatchRequest : IRequest<AioMatch>
     {
         public int MatchId { get; set; }
 

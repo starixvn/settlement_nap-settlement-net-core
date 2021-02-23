@@ -16,7 +16,7 @@ namespace Settlement.Sportsbook.Aio.Services
 {
     public interface ICricketService
     {
-        Task<Match> GetMatch(GetMatchRequest request);
+        Task<AioMatch> GetMatch(GetMatchRequest request);
 
         Task<Result> Settle(SettleRequest request);
 
@@ -67,7 +67,7 @@ namespace Settlement.Sportsbook.Aio.Services
             this.accessor = accessor;
         }
 
-        public async Task<Match> GetMatch(GetMatchRequest request)
+        public async Task<AioMatch> GetMatch(GetMatchRequest request)
         {
             var getMatchDetailCriteria = mapper.Map<GetMatchRequest, GetMatchDetailCriteria>(request);
             var matchDetail = await repository.GetAsync<MatchDetail>(getMatchDetailCriteria);
@@ -84,7 +84,7 @@ namespace Settlement.Sportsbook.Aio.Services
             var getHedgeMatchCriteria = mapper.Map<GetMatchRequest, GetHedgeMatchCriteria>(request);
             var hedgeMatchDetail = await repository.GetAsync<HedgeMatchDetail>(getHedgeMatchCriteria);
 
-            return new Match
+            return new AioMatch
             {
                 MatchDetail = matchDetail,
                 ResultDetails = resultDetails,

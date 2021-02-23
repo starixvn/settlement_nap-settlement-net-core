@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Controllers\CricketController.cs" />
+    <Compile Remove="Models\HedgeMatchDetail.cs" />
+    <Compile Remove="Models\MatchResultDetail.cs" />
+    <Compile Remove="Models\MatchResultSetting.cs" />
+    <Compile Remove="Models\ResourceItem.cs" />
+    <Compile Remove="Models\Resources.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="10.1.1" />
+    <PackageReference Include="Fanex.Data.Repository" Version="4.2.2" />
+    <PackageReference Include="Kaden.Extensions" Version="2.0.0" />
+    <PackageReference Include="MediatR" Version="9.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Settlement.Core\Settlement.Core.csproj" />
+  </ItemGroup>
+
+</Project>

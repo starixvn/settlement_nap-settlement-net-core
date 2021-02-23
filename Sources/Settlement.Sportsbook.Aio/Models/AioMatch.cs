@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Settlement.Sportsbook.Aio.Models
 {
-    public class Match
+    public class AioMatch
     {
         public MatchDetail MatchDetail { get; set; }
 

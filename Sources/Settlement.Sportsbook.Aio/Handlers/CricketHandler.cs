@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace Settlement.Sportsbook.Aio.Handlers
 {
     public class CricketHandler :
-            IRequestHandler<GetMatchRequest, Match>,
+            IRequestHandler<GetMatchRequest, AioMatch>,
             IRequestHandler<SettleRequest, Result>,
             IRequestHandler<GetRecalResultRequest, List<MatchResultDetail>>,
             IRequestHandler<CheckMarkedTicketsRequest, MarkedTickets>,
@@ -24,7 +24,7 @@ namespace Settlement.Sportsbook.Aio.Handlers
             this.cricketService = cricketService;
         }
 
-        public async Task<Match> Handle(GetMatchRequest request, CancellationToken cancellationToken) => await cricketService.GetMatch(request);
+        public async Task<AioMatch> Handle(GetMatchRequest request, CancellationToken cancellationToken) => await cricketService.GetMatch(request);
 
         public async Task<Result> Handle(SettleRequest request, CancellationToken cancellationToken) => await cricketService.Settle(request);
 

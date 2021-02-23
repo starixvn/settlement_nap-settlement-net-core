@@ -5,6 +5,13 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="Controllers\MoveTicketsController.cs" />
+	  <Compile Remove="Models\LeagueModel.cs" />
+	  <Compile Remove="Models\MultiSportModel.cs" />
+	  <Compile Remove="Models\SportModel.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="AutoMapper" Version="10.1.1" />
 		<PackageReference Include="Fanex.Data.Repository" Version="4.2.2" />
 		<PackageReference Include="Fanex.NAP.Client.AspNetCore" Version="1.0.0-beta5" />
