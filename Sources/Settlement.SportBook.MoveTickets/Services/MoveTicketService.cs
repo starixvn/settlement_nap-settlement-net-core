@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using Fanex.Data.Repository;
+using Fanex.NAP.Client.Helpers.Web;
+using Microsoft.AspNetCore.Http;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
@@ -16,6 +18,8 @@ namespace Settlement.Sportsbook.MoveTickets.Services
     public interface IMoveTicketService
     {
         Task<List<SportModel>> GetSportBook(GetMatchRequest request);
+
+        Task<Result> MoveTicket(MoveTicketRequest request);
     }
 
     public class MoveTicketService : IMoveTicketService
@@ -24,17 +28,23 @@ namespace Settlement.Sportsbook.MoveTickets.Services
         private readonly IRefDataService refDataService;
         private readonly IMapper mapper;
         private readonly IMatchService matchService;
+        private readonly INapSession currentSession;
+        private readonly IHttpContextAccessor accessor;
 
         public MoveTicketService(
             IDynamicRepository repository,
             IRefDataService refDataService,
             IMapper mapper,
-            IMatchService matchService)
+            IMatchService matchService,
+            INapSession currentSession,
+            IHttpContextAccessor accessor)
         {
             this.repository = repository;
             this.refDataService = refDataService;
             this.mapper = mapper;
             this.matchService = matchService;
+            this.currentSession = currentSession;
+            this.accessor = accessor;
         }
 
         public async Task<List<SportModel>> GetSportBook(GetMatchRequest request)
@@ -127,6 +137,7 @@ namespace Settlement.Sportsbook.MoveTickets.Services
                           .ThenBy(match => match.MatchId)
                           .ToList();
         }
+
         private static int PositionByEventStatus(MatchMoveTicket match)
         {
             const int firstPosition = 1;
@@ -149,6 +160,22 @@ namespace Settlement.Sportsbook.MoveTickets.Services
                 Matches = data.Item1.ToList(),
                 ResultDetails = data.Item2.ToList()
             };
+        }
+
+        public async Task<Result> MoveTicket(MoveTicketRequest request)
+        {
+            var criteria = mapper.Map<MoveTicketRequest, MoveTicketCriteria>(request);
+            criteria.AdminId = currentSession.UserId;
+            criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
+            await repository.ExecuteAsync(criteria);
+
+            var result = new Result()
+            {
+                ErrCode = criteria.ErrCode,
+                ErrMsg = criteria.ErrMsg
+            };
+
+            return result;
         }
     }
 }

@@ -5,6 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Request\**" />
+    <EmbeddedResource Remove="Request\**" />
+    <None Remove="Request\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="Controllers\CricketController.cs" />
     <Compile Remove="Models\HedgeMatchDetail.cs" />
     <Compile Remove="Models\MatchResultDetail.cs" />

@@ -1,12 +1,9 @@
 ﻿using MediatR;
+using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.MoveTickets.Models;
 using Settlement.Sportsbook.MoveTickets.Requests;
 using Settlement.Sportsbook.MoveTickets.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -31,5 +28,7 @@ namespace Settlement.Sportsbook.MoveTickets.Handlers
                 Permission = permissionService.Permission
             };
         }
+
+        public async Task<Result> Handle(MoveTicketRequest request, CancellationToken cancellationToken) => await moveTicketService.MoveTicket(request);
     }
 }

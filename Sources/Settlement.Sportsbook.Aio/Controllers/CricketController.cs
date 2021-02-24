@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Settlement.Core.ActionFilters;
 using Settlement.Sportsbook.Aio.Requests;
+using Settlement.Sportsbook.Aio.Services;
 using System.Threading.Tasks;
 
 namespace Settlement.Sportsbook.Aio.Controllers
@@ -15,10 +16,12 @@ namespace Settlement.Sportsbook.Aio.Controllers
     public class CricketController : ControllerBase
     {
         private readonly IMediator mediator;
+        private readonly ICricketService cricketService;
 
-        public CricketController(IMediator mediator)
+        public CricketController(IMediator mediator, ICricketService cricketService)
         {
             this.mediator = mediator;
+            this.cricketService = cricketService;
         }
 
         [Route("get-match")]
@@ -46,5 +49,10 @@ namespace Settlement.Sportsbook.Aio.Controllers
         [Route("refund-parlay")]
         [HttpPost]
         public async Task<IActionResult> RefundParlay(RefundParlayRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+
+        [Route("settle-child-match")]
+        [HttpPost]
+        [LogRequestResponse]
+        public void SettleChildMatch(SettleChildMatchRequest request) => cricketService.SettleChildMatch(request);
     }
 }

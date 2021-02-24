@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Settlement.Sportsbook.Aio.Requests
 {
-    public class SettleRequest : IRequest<Result>
+    public class SettleRequest : IRequest<ResultCricket>
     {
         public int MatchId { get; set; }
 

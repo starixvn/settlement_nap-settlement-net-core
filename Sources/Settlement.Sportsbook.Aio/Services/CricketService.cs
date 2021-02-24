@@ -18,7 +18,7 @@ namespace Settlement.Sportsbook.Aio.Services
     {
         Task<AioMatch> GetMatch(GetMatchRequest request);
 
-        Task<Result> Settle(SettleRequest request);
+        Task<ResultCricket> Settle(SettleRequest request);
 
         Task<List<MatchResultDetail>> GetRecalResult(GetRecalResultRequest request);
 
@@ -27,6 +27,8 @@ namespace Settlement.Sportsbook.Aio.Services
         Task<MarkedTickets> CheckMarkedTicketsParlay(CheckMarkedTicketsParlayRequest request);
 
         Task<Result> RefundParlay(RefundParlayRequest request);
+
+        void SettleChildMatch(SettleChildMatchRequest request);
     }
 
     public class CricketService : ICricketService
@@ -114,7 +116,7 @@ namespace Settlement.Sportsbook.Aio.Services
             };
         }
 
-        public async Task<Result> Settle(SettleRequest request)
+        public async Task<ResultCricket> Settle(SettleRequest request)
         {
             var criteria = mapper.Map<SettleRequest, SettleCriteria>(request);
             criteria.AdminId = currentSession.UserId;
@@ -122,11 +124,12 @@ namespace Settlement.Sportsbook.Aio.Services
             criteria.SelectedResources = CreateSettleResources(request.SelectedResources);
             await repository.ExecuteAsync(criteria);
 
-            var settleResult = new Result
+            var settleResult = new ResultCricket
             {
                 ErrCode = criteria.ErrCode,
                 ErrMsg = criteria.ErrMsg,
-                ServiceCommand = criteria.ServiceCommand
+                ServiceCommand = criteria.ServiceCommand,
+                ChildMatchIds = criteria.ErrCode == 0 ? await GetChildMatch(request.MatchId) : string.Empty
             };
 
             if (settleResult.IsSuccessful && request.IsApplyHedging)
@@ -148,6 +151,16 @@ namespace Settlement.Sportsbook.Aio.Services
             return xmlConvertService.Serialize(resources);
         }
 
+        private async Task<string> GetChildMatch(int matchId)
+        {
+            var criteria = new GetChildMatchCriteria();
+            criteria.matchId = matchId;
+
+            var listMatchIds = await repository.FetchAsync<int>(criteria);
+
+            return string.Join(',', listMatchIds.ToList());
+
+        }
         public async Task<MarkedTickets> CheckMarkedTicketsParlay(CheckMarkedTicketsParlayRequest request)
         {
             var criteria = mapper.Map<CheckMarkedTicketsParlayRequest, CheckMarkedTicketsParlayCriteria>(request);
@@ -184,6 +197,21 @@ namespace Settlement.Sportsbook.Aio.Services
             }
 
             return string.Join(",", listResourceId);
+        }
+
+        public void SettleChildMatch(SettleChildMatchRequest request)
+        {
+            var listChildMatch = request.ChildMatchIds.Split(',').ToList();
+            var criteria = mapper.Map<SettleChildMatchRequest, SettleCriteria>(request);
+            criteria.AdminId = currentSession.UserId;
+            criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
+            criteria.SelectedResources = CreateSettleResources(request.SelectedResources);
+
+            foreach (var match in listChildMatch)
+            {
+                criteria.MatchId = int.Parse(match);
+                repository.Execute(criteria);
+            }
         }
     }
 }

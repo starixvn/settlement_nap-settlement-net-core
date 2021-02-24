@@ -14,6 +14,8 @@
   <Function Name="MoveTickets">
     <Setting Key="NAP_Set_MoveTicket_ReferenceActionByMatchSel" SpName="NAP_Set_MoveTicket_ReferenceActionByMatchSel_UAT1" DbName="DBLOG.bodb_CustomerLog.bodbAdminNet" />
     <Setting Key="NAP_Set_WaitingOtherSportSel" SpName="NAP_Set_WaitingOtherSportSel" DbName="DBTXN.bodb02.bodbAdminNet" />
-    <Setting Key="NAP_Set_MatchOtherSportsSel" SpName="NAP_Set_MatchOtherSportsSel" DbName="DBTXN.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_MoveTicketSel" SpName="NAP_Set_MoveTicketSel" DbName="DBTXN.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Admin_Settlement_50_MoveTicket" SpName="NAP_Admin_Settlement_50_MoveTicket" DbName="DBTXN.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_GetChildMatchByParent" SpName="NAP_Set_GetChildMatchByParent_UAT1" DbName="DBPRO.bodb02.bodbAdminNet" />
   </Function>
 </Functions>

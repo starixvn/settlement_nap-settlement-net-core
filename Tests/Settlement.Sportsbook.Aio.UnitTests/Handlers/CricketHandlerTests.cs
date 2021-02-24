@@ -19,7 +19,7 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Handlers
         public async Task HandleGetMatchRequest_Always_ReturnCorrectResult()
         {
             var service = Substitute.For<ICricketService>();
-            var result = new Match();
+            var result = new AioMatch();
             service.GetMatch(Arg.Any<GetMatchRequest>()).Returns(result);
             var handler = new CricketHandler(service);
 
@@ -32,7 +32,7 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Handlers
         public async Task HandleSettleRequest_Always_ReturnCorrectResult()
         {
             var service = Substitute.For<ICricketService>();
-            var result = new Result();
+            var result = new ResultCricket();
             service.Settle(Arg.Any<SettleRequest>()).Returns(result);
             var handler = new CricketHandler(service);
 

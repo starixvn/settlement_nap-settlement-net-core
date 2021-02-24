@@ -13,7 +13,7 @@ namespace Settlement.Sportsbook.MoveTickets.Criterias
 
         public override bool IsValid()
         {
-            return MatchIds.Length > 0 ;
+            return MatchIds.Length > 0;
         }
     }
 }

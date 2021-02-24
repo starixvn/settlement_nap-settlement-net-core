@@ -14,7 +14,6 @@ namespace Settlement.Sportsbook.MoveTickets.Services
 
     public class MatchResultDetailService : IMatchResultDetailService
     {
-       
         private readonly IRefDataService refDataService;
 
         private readonly IScoreService scoreService;
@@ -45,7 +44,7 @@ namespace Settlement.Sportsbook.MoveTickets.Services
 
             return matches;
         }
-  
+
         private static bool IsDisplayIntervalScore(MatchMoveTicket match, List<ResultDetail> resultDetails)
         {
             if (match.SportType == SportType.BasketBall)
