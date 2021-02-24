@@ -9,7 +9,7 @@ namespace Settlement.Sportsbook.MoveTickets.Services
 {
     public interface IMatchResultDetailService
     {
-        List<MatchMoveTicket> CricketResultDetail(List<MatchMoveTicket> matches, List<ResultDetail> resultDetails);
+        List<Match> CricketResultDetail(List<Match> matches, List<ResultDetail> resultDetails);
     }
 
     public class MatchResultDetailService : IMatchResultDetailService
@@ -26,13 +26,13 @@ namespace Settlement.Sportsbook.MoveTickets.Services
             this.scoreService = scoreService;
         }
 
-        public List<MatchMoveTicket> CricketResultDetail(List<MatchMoveTicket> matches, List<ResultDetail> resultDetails)
+        public List<Match> CricketResultDetail(List<Match> matches, List<ResultDetail> resultDetails)
         {
             var resources = new List<string> { "H1", "H2", "A1", "A2" };
             return SetMatchInfo(matches, resultDetails, resources);
         }
 
-        private List<MatchMoveTicket> SetMatchInfo(List<MatchMoveTicket> matches, List<ResultDetail> resultDetails, List<string> resources)
+        private List<Match> SetMatchInfo(List<Match> matches, List<ResultDetail> resultDetails, List<string> resources)
         {
             foreach (var match in matches)
             {
@@ -45,7 +45,7 @@ namespace Settlement.Sportsbook.MoveTickets.Services
             return matches;
         }
 
-        private static bool IsDisplayIntervalScore(MatchMoveTicket match, List<ResultDetail> resultDetails)
+        private static bool IsDisplayIntervalScore(Match match, List<ResultDetail> resultDetails)
         {
             if (match.SportType == SportType.BasketBall)
             {

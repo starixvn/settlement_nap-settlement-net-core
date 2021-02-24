@@ -7,10 +7,10 @@ namespace Settlement.Sportsbook.MoveTickets.Models
     {
         public MultiSportResult()
         {
-            Matches = new List<MatchMoveTicket>();
+            Matches = new List<Match>();
         }
 
-        public List<MatchMoveTicket> Matches { get; set; }
+        public List<Match> Matches { get; set; }
 
         public List<ResultDetail> ResultDetails { get; set; }
     }

@@ -22,7 +22,7 @@ namespace Settlement.Sportsbook.MoveTickets.Services
 
         MultiSportResult GetWaitingMatches(GetWaitingMatchesCriteria criteria);
 
-        List<MatchMoveTicket> GetScoreForMatchBySportType(List<MatchMoveTicket> matches, List<ResultDetail> resultDetails, int sportType, int groupSport);
+        List<Match> GetScoreForMatchBySportType(List<Match> matches, List<ResultDetail> resultDetails, int sportType, int groupSport);
     }
 
     public class MatchService : IMatchService
@@ -51,7 +51,7 @@ namespace Settlement.Sportsbook.MoveTickets.Services
 
         public MultiSportResult GetMatchesAndResultDetails(ICriteria criteria)
         {
-            var result = repository.FetchMultiple<MatchMoveTicket, ResultDetail>(criteria);
+            var result = repository.FetchMultiple<Match, ResultDetail>(criteria);
 
             return new MultiSportResult
             {
@@ -70,7 +70,7 @@ namespace Settlement.Sportsbook.MoveTickets.Services
             return GetOverOnlyMatch(criteria);
         }
 
-        public List<MatchMoveTicket> GetScoreForMatchBySportType(List<MatchMoveTicket> matches, List<ResultDetail> resultDetails, int sportType, int groupSport)
+        public List<Match> GetScoreForMatchBySportType(List<Match> matches, List<ResultDetail> resultDetails, int sportType, int groupSport)
         {
             if (sportType == SportType.Cricket)
             {
@@ -107,7 +107,7 @@ namespace Settlement.Sportsbook.MoveTickets.Services
                 }
             }
 
-            return MatchesOnLongCaching(criteria.SportType) ?? new MultiSportResult { Matches = new List<MatchMoveTicket>() };
+            return MatchesOnLongCaching(criteria.SportType) ?? new MultiSportResult { Matches = new List<Match>() };
         }
 
         private MultiSportResult GetAndCachingMatches(GetWaitingMatchesCriteria criteria)

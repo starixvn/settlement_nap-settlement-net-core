@@ -10,6 +10,7 @@ using Settlement.Sportsbook.MoveTickets.Models;
 using Settlement.Sportsbook.MoveTickets.Requests;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -53,7 +54,7 @@ namespace Settlement.Sportsbook.MoveTickets.Services
             var data = await FetchMatchesAndResultDetails(criteria);
             var matchesByEachSport = GetMoreScore(data);
 
-            var matches = new List<MatchMoveTicket>();
+            var matches = new List<Match>();
             matchesByEachSport.ForEach(sport => sport.Matches.ForEach(match =>
             {
                 match.RefDataService = refDataService;
@@ -72,7 +73,7 @@ namespace Settlement.Sportsbook.MoveTickets.Services
             return sportBooks;
         }
 
-        private void getReferenceAction(List<MatchMoveTicket> data)
+        private void getReferenceAction(List<Match> data)
         {
             var ListMatchId = data.Select(match => match.MatchId).ToList();
             var matchIds = string.Join(',', ListMatchId);
@@ -84,6 +85,7 @@ namespace Settlement.Sportsbook.MoveTickets.Services
             foreach (var match in data)
             {
                 var referenceActionByMatchId = referenceActions.Where(item => item.MatchId == match.MatchId).ToList();
+                referenceActionByMatchId.ForEach(item => item.ActionName = item.LogDate.ToString("MMM dd", CultureInfo.CreateSpecificCulture("en-US")));
                 match.ReferenceActions = referenceActionByMatchId;
             }
         }
@@ -101,7 +103,7 @@ namespace Settlement.Sportsbook.MoveTickets.Services
             return matchesByEachSport;
         }
 
-        private static List<LeagueModel> GroupLeague(IEnumerable<MatchMoveTicket> sports)
+        private static List<LeagueModel> GroupLeague(IEnumerable<Match> sports)
         {
             return sports.GroupBy(sport => new
             {
@@ -117,7 +119,7 @@ namespace Settlement.Sportsbook.MoveTickets.Services
             }).ToList();
         }
 
-        private static List<MatchMoveTicket> SortMatch(IEnumerable<MatchMoveTicket> leagues)
+        private static List<Match> SortMatch(IEnumerable<Match> leagues)
         {
             var eventStatuses = new List<string>
             {
@@ -138,14 +140,14 @@ namespace Settlement.Sportsbook.MoveTickets.Services
                           .ToList();
         }
 
-        private static int PositionByEventStatus(MatchMoveTicket match)
+        private static int PositionByEventStatus(Match match)
         {
             const int firstPosition = 1;
             const int secondPosition = 2;
             return IsSettleAndHasRuningTicket(match) ? firstPosition : secondPosition;
         }
 
-        private static bool IsSettleAndHasRuningTicket(MatchMoveTicket match)
+        private static bool IsSettleAndHasRuningTicket(Match match)
         {
             var isCacl = match.NewEventStatus.Equals(EventStatus.Refund, StringComparison.OrdinalIgnoreCase) || match.NewEventStatus.Equals(EventStatus.Completed, StringComparison.OrdinalIgnoreCase);
 
@@ -154,7 +156,7 @@ namespace Settlement.Sportsbook.MoveTickets.Services
 
         private async Task<MultiSportResult> FetchMatchesAndResultDetails(ICriteria criteria)
         {
-            var data = await repository.FetchMultipleAsync<MatchMoveTicket, ResultDetail>(criteria);
+            var data = await repository.FetchMultipleAsync<Match, ResultDetail>(criteria);
             return new MultiSportResult
             {
                 Matches = data.Item1.ToList(),

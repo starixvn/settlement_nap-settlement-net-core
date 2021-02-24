@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Settlement.Core.Models;
+using System.Collections.Generic;
 
 namespace Settlement.Sportsbook.MoveTickets.Models
 {
@@ -6,6 +7,6 @@ namespace Settlement.Sportsbook.MoveTickets.Models
     {
         public int SportType { get; set; }
 
-        public List<MatchMoveTicket> Matches { get; set; }
+        public List<Match> Matches { get; set; }
     }
 }

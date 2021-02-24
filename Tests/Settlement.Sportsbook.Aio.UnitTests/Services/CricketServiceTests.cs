@@ -47,7 +47,7 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
             repository.FetchMultipleAsync<MatchResultDetail, TicketCounts>(Arg.Any<GetResultDetailCriteria>()).Returns((new List<MatchResultDetail>(), new List<TicketCounts>()));
             repository.GetAsync<HedgeMatchDetail>(Arg.Any<GetHedgeMatchCriteria>()).Returns(new HedgeMatchDetail());
             permissionService.Permission.Returns(new Permission());
-            var expected = new Match
+            var expected = new AioMatch
             {
                 MatchDetail = new MatchDetail { MatchId = 12345, RefDataService = refDataService },
                 ResultDetails = new List<MatchResultDetail>(),
@@ -90,9 +90,9 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
         }
 
         [Theory]
-        [InlineData(0, "", true)]
-        [InlineData(1, "Error", false)]
-        public async Task Settle_Always_ReturnCorrectResult(int errorCode, string errorMsg, bool result)
+        [InlineData(0, "", true, "100")]
+        [InlineData(1, "Error", false, "")]
+        public async Task Settle_Always_ReturnCorrectResult(int errorCode, string errorMsg, bool result, string childMatch)
         {
             #region Mock dependencies
             var repository = Substitute.For<IDynamicRepository>();
@@ -117,23 +117,15 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
             {
                 x.ErrCode = errorCode;
                 x.ErrMsg = errorMsg;
-                x.Command = "";
+                x.ServiceCommand = "";
             })).Returns(1);
-            var request = new SettleRequest
-            {
-                SelectedResources = new List<ResourceItem>
-                {
-                    new ResourceItem
-                    {
-                        ResourceId = "00",
-                        HomeValue = "1",
-                        AwayValue = "2"
-                    }
-                }
-            };
+
+            var listChildMatch = new List<int> { 100 };
+            repository.FetchAsync<int>(Arg.Any<GetChildMatchCriteria>()).Returns(listChildMatch);
             var actual = await service.Settle(new SettleRequest());
 
             Assert.Equal(result, actual.IsSuccessful);
+            Assert.Equal(childMatch, actual.ChildMatchIds);
         }
 
         [Theory]

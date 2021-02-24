@@ -28,7 +28,7 @@ namespace Settlement.Sportsbook.Aio.Services
 
         Task<Result> RefundParlay(RefundParlayRequest request);
 
-        void SettleChildMatch(SettleChildMatchRequest request);
+        Task<Result> SettleChildMatch(SettleChildMatchRequest request);
     }
 
     public class CricketService : ICricketService
@@ -158,7 +158,7 @@ namespace Settlement.Sportsbook.Aio.Services
 
             var listMatchIds = await repository.FetchAsync<int>(criteria);
 
-            return string.Join(',', listMatchIds.ToList());
+            return listMatchIds.ToList().Count > 0 ? string.Join(',', listMatchIds.ToList()) : string.Empty;
 
         }
         public async Task<MarkedTickets> CheckMarkedTicketsParlay(CheckMarkedTicketsParlayRequest request)
@@ -199,7 +199,7 @@ namespace Settlement.Sportsbook.Aio.Services
             return string.Join(",", listResourceId);
         }
 
-        public void SettleChildMatch(SettleChildMatchRequest request)
+        public async Task<Result> SettleChildMatch(SettleChildMatchRequest request)
         {
             var listChildMatch = request.ChildMatchIds.Split(',').ToList();
             var criteria = mapper.Map<SettleChildMatchRequest, SettleCriteria>(request);
@@ -210,8 +210,10 @@ namespace Settlement.Sportsbook.Aio.Services
             foreach (var match in listChildMatch)
             {
                 criteria.MatchId = int.Parse(match);
-                repository.Execute(criteria);
+                await repository.ExecuteAsync(criteria);
             }
+
+            return new Result();
         }
     }
 }

@@ -53,6 +53,6 @@ namespace Settlement.Sportsbook.Aio.Controllers
         [Route("settle-child-match")]
         [HttpPost]
         [LogRequestResponse]
-        public void SettleChildMatch(SettleChildMatchRequest request) => cricketService.SettleChildMatch(request);
+        public async Task<IActionResult> SettleChildMatch(SettleChildMatchRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
     }
 }

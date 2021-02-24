@@ -94,6 +94,8 @@ namespace Settlement.Core.Models
 
         public MoreScores MoreScores { get; set; }
 
+        public List<ReferenceAction> ReferenceActions { get; set; }
+
         public int SportType { get; set; }
 
         public int MatchId { get; set; }
