@@ -1,7 +1,6 @@
 ﻿using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
-using Settlement.Sportsbook.MoveTickets.Models;
 using System.Collections.Generic;
 using System.Linq;
 

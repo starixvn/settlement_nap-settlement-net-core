@@ -1,9 +1,7 @@
 ﻿using Fanex.Caching;
-using Fanex.NAP.Client.AspNetCore.Configuration;
 using Fanex.NAP.Client.Configuration;
 using Fanex.NAP.Client.Helpers.Web;
 using Fanex.NAP.Client.Services;
-using Fanex.NAP.Client.Web;
 using Fanex.NAP.Core.Business;
 using Settlement.Core.Configuration;
 using Settlement.Core.Models;

@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Settlement.Core.Constants
 {
     public static class BetType
     {
         #region Cricket early bet types
+
         public static Dictionary<int, string> CricketBetTypeNames => new Dictionary<int, string>
         {
             {9400, "Super Over Winner" },
@@ -55,6 +52,7 @@ namespace Settlement.Core.Constants
             {94602, "2nd Inns Sixes" },
             {94612, "2nd Inns Sixes" },
         };
-        #endregion
+
+        #endregion Cricket early bet types
     }
 }

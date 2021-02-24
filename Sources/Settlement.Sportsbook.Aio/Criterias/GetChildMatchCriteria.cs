@@ -2,7 +2,7 @@
 
 namespace Settlement.Sportsbook.Aio.Criterias
 {
-    public class GetChildMatchCriteria: CriteriaBase
+    public class GetChildMatchCriteria : CriteriaBase
     {
         public int matchId { get; set; }
 

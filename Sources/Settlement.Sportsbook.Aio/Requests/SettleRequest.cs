@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using Settlement.Core.Models;
 using Settlement.Sportsbook.Aio.Models;
 using System.Collections.Generic;
 

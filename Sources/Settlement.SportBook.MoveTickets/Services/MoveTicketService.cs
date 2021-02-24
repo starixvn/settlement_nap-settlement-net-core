@@ -21,6 +21,8 @@ namespace Settlement.Sportsbook.MoveTickets.Services
         Task<List<SportModel>> GetSportBook(GetMatchRequest request);
 
         Task<Result> MoveTicket(MoveTicketRequest request);
+
+        Task<List<ChildMatch>> GetChildMatch(GetChildMatchRequest request);
     }
 
     public class MoveTicketService : IMoveTicketService
@@ -31,6 +33,7 @@ namespace Settlement.Sportsbook.MoveTickets.Services
         private readonly IMatchService matchService;
         private readonly INapSession currentSession;
         private readonly IHttpContextAccessor accessor;
+        private readonly ILogService logService;
 
         public MoveTicketService(
             IDynamicRepository repository,
@@ -38,7 +41,8 @@ namespace Settlement.Sportsbook.MoveTickets.Services
             IMapper mapper,
             IMatchService matchService,
             INapSession currentSession,
-            IHttpContextAccessor accessor)
+            IHttpContextAccessor accessor,
+            ILogService logService)
         {
             this.repository = repository;
             this.refDataService = refDataService;
@@ -46,6 +50,7 @@ namespace Settlement.Sportsbook.MoveTickets.Services
             this.matchService = matchService;
             this.currentSession = currentSession;
             this.accessor = accessor;
+            this.logService = logService;
         }
 
         public async Task<List<SportModel>> GetSportBook(GetMatchRequest request)
@@ -171,6 +176,11 @@ namespace Settlement.Sportsbook.MoveTickets.Services
             criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
             await repository.ExecuteAsync(criteria);
 
+            if (criteria.ErrCode != 0)
+            {
+                logService.ActionLog(request.matchId, criteria.ErrMsg);
+            }
+
             var result = new Result()
             {
                 ErrCode = criteria.ErrCode,
@@ -178,6 +188,16 @@ namespace Settlement.Sportsbook.MoveTickets.Services
             };
 
             return result;
+        }
+
+        public async Task<List<ChildMatch>> GetChildMatch(GetChildMatchRequest request)
+        {
+            var criteria = new GetChildMatchCriteria();
+            criteria.matchId = request.matchId;
+
+            var listMatch = await repository.FetchAsync<ChildMatch>(criteria);
+
+            return listMatch.ToList();
         }
     }
 }

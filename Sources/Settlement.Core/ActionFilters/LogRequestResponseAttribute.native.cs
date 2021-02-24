@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc.Filters;
+﻿using Fanex.Logging;
 using Microsoft.AspNetCore.Http.Extensions;
-using System.Text;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Newtonsoft.Json;
-using Fanex.Logging;
+using System.Text;
 
 namespace Settlement.Core.ActionFilters
 {

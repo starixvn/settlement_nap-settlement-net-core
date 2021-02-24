@@ -38,6 +38,5 @@ namespace Settlement.Sportsbook.Aio.Handlers
         public async Task<Result> Handle(RefundParlayRequest request, CancellationToken cancellationToken) => await cricketService.RefundParlay(request);
 
         public async Task<Result> Handle(SettleChildMatchRequest request, CancellationToken cancellationToken) => await cricketService.SettleChildMatch(request);
-
     }
 }

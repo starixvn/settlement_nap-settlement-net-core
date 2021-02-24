@@ -1,5 +1,6 @@
 using AutoMapper;
 using Fanex.Caching;
+using Fanex.Caching.Redis;
 using Fanex.Data;
 using Fanex.Data.Repository;
 using Fanex.Data.SqlServer;
@@ -20,6 +21,7 @@ using Kaden.XmlConverter;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
@@ -29,17 +31,15 @@ using Settlement.Core.Services;
 using Settlement.Sportsbook.Aio;
 using Settlement.Sportsbook.Aio.Controllers;
 using Settlement.Sportsbook.Aio.Services;
+using Settlement.Sportsbook.MoveTickets;
+using Settlement.Sportsbook.MoveTickets.Controllers;
 using Settlement.Sportsbook.MoveTickets.Services;
+using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using Fanex.Caching.Redis;
-using StackExchange.Redis;
-using Microsoft.AspNetCore.DataProtection;
-using Settlement.Sportsbook.MoveTickets.Controllers;
-using Settlement.Sportsbook.MoveTickets;
 
 namespace Settlement.WebSites
 {
@@ -140,6 +140,7 @@ namespace Settlement.WebSites
             services.AddTransient<IMoveTicketService, MoveTicketService>();
             services.AddTransient<IScoreService, ScoreService>();
             services.AddTransient<IScoreSetService, ScoreSetService>();
+            services.AddTransient<ILogService, LogServiceImp>();
         }
 
         private void ConfigureNapServices(IServiceCollection services)

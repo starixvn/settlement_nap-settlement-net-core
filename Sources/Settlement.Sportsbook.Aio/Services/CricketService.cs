@@ -1,16 +1,16 @@
 ﻿using AutoMapper;
 using Fanex.Data.Repository;
-using Settlement.Sportsbook.Aio.Models;
-using Settlement.Sportsbook.Aio.Requests;
-using Settlement.Sportsbook.Aio.Criterias;
-using System.Threading.Tasks;
-using Settlement.Core.Models;
-using System.Linq;
-using Settlement.Core.Services;
 using Fanex.NAP.Client.Helpers.Web;
-using System.Collections.Generic;
 using Kaden.XmlConverter;
 using Microsoft.AspNetCore.Http;
+using Settlement.Core.Models;
+using Settlement.Core.Services;
+using Settlement.Sportsbook.Aio.Criterias;
+using Settlement.Sportsbook.Aio.Models;
+using Settlement.Sportsbook.Aio.Requests;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Settlement.Sportsbook.Aio.Services
 {
@@ -129,7 +129,7 @@ namespace Settlement.Sportsbook.Aio.Services
                 ErrCode = criteria.ErrCode,
                 ErrMsg = criteria.ErrMsg,
                 ServiceCommand = criteria.ServiceCommand,
-                ChildMatchIds = criteria.ErrCode == 0 ? await GetChildMatch(request.MatchId) : string.Empty
+                ChildMatchIds = criteria.ErrCode == 0 ? await GetChildMatchIds(request.MatchId) : string.Empty
             };
 
             if (settleResult.IsSuccessful && request.IsApplyHedging)
@@ -151,16 +151,17 @@ namespace Settlement.Sportsbook.Aio.Services
             return xmlConvertService.Serialize(resources);
         }
 
-        private async Task<string> GetChildMatch(int matchId)
+        private async Task<string> GetChildMatchIds(int matchId)
         {
             var criteria = new GetChildMatchCriteria();
             criteria.matchId = matchId;
 
-            var listMatchIds = await repository.FetchAsync<int>(criteria);
+            var listMatch = await repository.FetchAsync<ChildMatch>(criteria);
+            var matchIds = listMatch.Select(item => item.matchId).ToList();
 
-            return listMatchIds.ToList().Count > 0 ? string.Join(',', listMatchIds.ToList()) : string.Empty;
-
+            return matchIds.Count > 0 ? string.Join(',', matchIds.ToList()) : string.Empty;
         }
+
         public async Task<MarkedTickets> CheckMarkedTicketsParlay(CheckMarkedTicketsParlayRequest request)
         {
             var criteria = mapper.Map<CheckMarkedTicketsParlayRequest, CheckMarkedTicketsParlayCriteria>(request);

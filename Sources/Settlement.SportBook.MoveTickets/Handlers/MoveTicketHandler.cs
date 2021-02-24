@@ -4,12 +4,14 @@ using Settlement.Core.Services;
 using Settlement.Sportsbook.MoveTickets.Models;
 using Settlement.Sportsbook.MoveTickets.Requests;
 using Settlement.Sportsbook.MoveTickets.Services;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Settlement.Sportsbook.MoveTickets.Handlers
 {
-    public class MoveTicketHandler : IRequestHandler<GetMatchRequest, MultiSportModel>
+    public class MoveTicketHandler : IRequestHandler<GetMatchRequest, MultiSportModel>,
+                                    IRequestHandler<GetChildMatchRequest, List<ChildMatch>>
     {
         private readonly IMoveTicketService moveTicketService;
         private readonly PermissionService permissionService;
@@ -30,5 +32,7 @@ namespace Settlement.Sportsbook.MoveTickets.Handlers
         }
 
         public async Task<Result> Handle(MoveTicketRequest request, CancellationToken cancellationToken) => await moveTicketService.MoveTicket(request);
+
+        public async Task<List<ChildMatch>> Handle(GetChildMatchRequest request, CancellationToken cancellationToken) => await moveTicketService.GetChildMatch(request);
     }
 }
