@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
+using Settlement.Sportsbook.Core.Criterias;
 using Settlement.Sportsbook.MoveTickets.Criterias;
 using Settlement.Sportsbook.MoveTickets.Models;
 using Settlement.Sportsbook.MoveTickets.Requests;
@@ -178,7 +179,7 @@ namespace Settlement.Sportsbook.MoveTickets.Services
 
             if (criteria.ErrCode != 0)
             {
-                logService.ActionLog(request.matchId, criteria.ErrMsg);
+                logService.ActionLog(request.MatchId, criteria.ErrMsg);
             }
 
             var result = new Result()
@@ -193,7 +194,7 @@ namespace Settlement.Sportsbook.MoveTickets.Services
         public async Task<List<ChildMatch>> GetChildMatch(GetChildMatchRequest request)
         {
             var criteria = new GetChildMatchCriteria();
-            criteria.matchId = request.matchId;
+            criteria.matchIds = request.MatchIds;
 
             var listMatch = await repository.FetchAsync<ChildMatch>(criteria);
 

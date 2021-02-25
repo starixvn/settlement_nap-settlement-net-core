@@ -1,10 +1,12 @@
 ﻿using Fanex.Data.Repository;
 
-namespace Settlement.Sportsbook.Aio.Criterias
+namespace Settlement.Sportsbook.Core.Criterias
 {
     public class GetChildMatchCriteria : CriteriaBase
     {
-        public int matchId { get; set; }
+        public string matchIds { get; set; }
+
+        public string mode { get; set; }
 
         public override string GetSettingKey()
         {
@@ -13,7 +15,7 @@ namespace Settlement.Sportsbook.Aio.Criterias
 
         public override bool IsValid()
         {
-            return matchId > 0;
+            return matchIds.Length > 0;
         }
     }
 }

@@ -8,6 +8,7 @@ using Settlement.Core.Services;
 using Settlement.Sportsbook.Aio.Criterias;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Requests;
+using Settlement.Sportsbook.Core.Criterias;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -27,6 +28,8 @@ namespace Settlement.Sportsbook.Aio.Services
         Task<MarkedTickets> CheckMarkedTicketsParlay(CheckMarkedTicketsParlayRequest request);
 
         Task<Result> RefundParlay(RefundParlayRequest request);
+
+        Task<Result> RefundParlayChildMatch(RefundParlayChildMatchRequest request);
 
         Task<Result> SettleChildMatch(SettleChildMatchRequest request);
     }
@@ -154,7 +157,7 @@ namespace Settlement.Sportsbook.Aio.Services
         private async Task<string> GetChildMatchIds(int matchId)
         {
             var criteria = new GetChildMatchCriteria();
-            criteria.matchId = matchId;
+            criteria.matchIds = matchId.ToString();
 
             var listMatch = await repository.FetchAsync<ChildMatch>(criteria);
             var matchIds = listMatch.Select(item => item.matchId).ToList();
@@ -180,13 +183,30 @@ namespace Settlement.Sportsbook.Aio.Services
             criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
             await repository.ExecuteAsync(criteria);
 
-            var result = new Result
+            var result = new ResultCricket
             {
                 ErrCode = criteria.ErrCode,
-                ErrMsg = criteria.ErrMsg
+                ErrMsg = criteria.ErrMsg,
+                ChildMatchIds = criteria.ErrCode == 0 ? await GetChildMatchIds(request.MatchId) : string.Empty
             };
 
             return result;
+        }
+
+        public async Task<Result> RefundParlayChildMatch(RefundParlayChildMatchRequest request)
+        {
+            var listChildMatch = request.MatchIds.Split(',').ToList();
+            var criteria = mapper.Map<RefundParlayChildMatchRequest, RefundParlayCriteria>(request);
+            criteria.AdminId = currentSession.UserId;
+            criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
+
+            foreach (var match in listChildMatch)
+            {
+                criteria.MatchId = int.Parse(match);
+                await repository.ExecuteAsync(criteria);
+            }
+
+            return new Result();
         }
 
         private static string GetResourceIds(List<ResourceItem> betTypes)

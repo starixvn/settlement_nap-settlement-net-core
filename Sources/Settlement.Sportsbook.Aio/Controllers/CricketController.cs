@@ -16,12 +16,10 @@ namespace Settlement.Sportsbook.Aio.Controllers
     public class CricketController : ControllerBase
     {
         private readonly IMediator mediator;
-        private readonly ICricketService cricketService;
 
-        public CricketController(IMediator mediator, ICricketService cricketService)
+        public CricketController(IMediator mediator)
         {
             this.mediator = mediator;
-            this.cricketService = cricketService;
         }
 
         [Route("get-match")]
@@ -54,5 +52,11 @@ namespace Settlement.Sportsbook.Aio.Controllers
         [HttpPost]
         [LogRequestResponse]
         public async Task<IActionResult> SettleChildMatch(SettleChildMatchRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+
+        [Route("refund-parlay-child-match")]
+        [HttpPost]
+        [LogRequestResponse]
+        public async Task<IActionResult> RefundParlayChildMatch(RefundParlayChildMatchRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+
     }
 }

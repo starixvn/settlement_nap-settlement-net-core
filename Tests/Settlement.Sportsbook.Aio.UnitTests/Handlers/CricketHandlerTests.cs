@@ -92,5 +92,18 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Handlers
 
             Assert.Equal(result, actual);
         }
+
+        [Fact]
+        public async Task HandleSettleChildMatchRequest_Always_ReturnCorrectResult()
+        {
+            var service = Substitute.For<ICricketService>();
+            var result = new Result();
+            service.SettleChildMatch(Arg.Any<SettleChildMatchRequest>()).Returns(result);
+            var handler = new CricketHandler(service);
+
+            var actual = await handler.Handle(new SettleChildMatchRequest(), new System.Threading.CancellationToken());
+
+            Assert.Equal(result, actual);
+        }
     }
 }

@@ -6,6 +6,8 @@ namespace Settlement.Sportsbook.MoveTickets.Requests
 {
     public class GetChildMatchRequest : IRequest<List<ChildMatch>>
     {
-        public int matchId { get; set; }
+        public string MatchIds { get; set; }
+
+        public string Mode { get; set; }
     }
 }

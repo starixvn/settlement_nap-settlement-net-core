@@ -11,6 +11,7 @@ using Settlement.Sportsbook.Aio.Criterias;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Requests;
 using Settlement.Sportsbook.Aio.Services;
+using Settlement.Sportsbook.Core.Criterias;
 using System;
 using System.Collections.Generic;
 using System.Linq;

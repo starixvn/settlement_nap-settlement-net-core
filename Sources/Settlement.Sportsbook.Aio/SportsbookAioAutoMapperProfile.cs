@@ -22,6 +22,8 @@ namespace Settlement.Sportsbook.Aio
                 .ForMember(dest => dest.Action, map => map.MapFrom(src => src.ActionName))
                 .ForMember(dest => dest.SelectedResources, map => map.Ignore())
                 .ForMember(dest => dest.MatchId, map => map.Ignore());
+            CreateMap<RefundParlayChildMatchRequest, RefundParlayCriteria>()
+                .ForMember(dest => dest.MatchId, map => map.Ignore());
         }
     }
 }

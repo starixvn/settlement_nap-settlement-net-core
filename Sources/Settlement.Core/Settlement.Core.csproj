@@ -14,6 +14,8 @@
 
   <ItemGroup>
     <PackageReference Include="Fanex.Caching" Version="2.2.2" />
+    <PackageReference Include="Fanex.Data" Version="4.2.2" />
+    <PackageReference Include="Fanex.Data.Repository" Version="4.2.2" />
     <PackageReference Include="Fanex.Logging" Version="2.0.1" />
     <PackageReference Include="Fanex.NAP.Client.AspNetCore" Version="1.0.0-beta5" />
     <PackageReference Include="Fanex.NAP.Client.Transport" Version="1.0.0-beta7" />
