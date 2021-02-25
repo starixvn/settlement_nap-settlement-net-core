@@ -50,7 +50,6 @@ namespace Settlement.WebSites
             app.UseStaticFiles();
             app.UseCookiePolicy();
             app.UseSession();
-            //app.UseMiddleware<ApiLoggingMiddleware>();
             app.UseMiddleware<ErrorHandler>();
             app.UseRouting();
             app.UseCors(allowOrigin);

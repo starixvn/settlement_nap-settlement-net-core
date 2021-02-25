@@ -11,7 +11,8 @@ using System.Threading.Tasks;
 namespace Settlement.Sportsbook.MoveTickets.Handlers
 {
     public class MoveTicketHandler : IRequestHandler<GetMatchRequest, MultiSportModel>,
-                                    IRequestHandler<GetChildMatchRequest, List<ChildMatch>>
+                                    IRequestHandler<GetChildMatchRequest, List<ChildMatch>>,
+                                    IRequestHandler<MoveTicketRequest, Result>
     {
         private readonly IMoveTicketService moveTicketService;
         private readonly PermissionService permissionService;

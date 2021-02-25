@@ -17,5 +17,6 @@
     <Setting Key="NAP_Set_MatchOtherSportsSel" SpName="NAP_Set_MatchOtherSportsSel_UAT1" DbName="DBTXN.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Admin_Settlement_50_MoveTicket" SpName="NAP_Admin_Settlement_50_MoveTicket_UAT1" DbName="DBTXN.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_GetChildMatchByParent" SpName="NAP_Set_GetChildMatchByParent_UAT1" DbName="DBPRO.bodb02.bodbAdminNet" />
+	<Setting Key="WriteLog_UserLog_Settle" SpName="WriteLog_UserLog_Settle" DbName="DBLOG.bodb_CustomerLog.bodbAdminNet" />
   </Function>
 </Functions>
