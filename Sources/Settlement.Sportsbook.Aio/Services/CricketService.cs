@@ -132,7 +132,7 @@ namespace Settlement.Sportsbook.Aio.Services
                 ErrCode = criteria.ErrCode,
                 ErrMsg = criteria.ErrMsg,
                 ServiceCommand = criteria.ServiceCommand,
-                ChildMatchIds = criteria.ErrCode == 0 ? await GetChildMatchIds(request.MatchId) : string.Empty
+                ChildMatchIds = criteria.ErrCode == 0 ? await GetChildMatchIds(request.MatchId, criteria.SelectedResources) : string.Empty
             };
 
             if (settleResult.IsSuccessful && request.IsApplyHedging)
@@ -154,11 +154,14 @@ namespace Settlement.Sportsbook.Aio.Services
             return xmlConvertService.Serialize(resources);
         }
 
-        private async Task<string> GetChildMatchIds(int matchId)
+        private async Task<string> GetChildMatchIds(int matchId, string selectedResources = "")
         {
             var criteria = new GetChildMatchCriteria();
             criteria.matchIds = matchId.ToString();
-
+            if(selectedResources != "")
+            {
+                criteria.SelectedResources = selectedResources;
+            }
             var listMatch = await repository.FetchAsync<ChildMatch>(criteria);
             var matchIds = listMatch.Select(item => item.matchId).ToList();
 

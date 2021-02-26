@@ -38,19 +38,14 @@ namespace Settlement.Sportsbook.MoveTickets.Services
                 match.RefDataService = refDataService;
                 var resultDetailByMatchId = resultDetails.Where(m => m.MatchId == match.MatchId && m.SourceId == SourceType.Normal).ToList();
                 match.MoreScores = scoreService.ScoreLoader(resultDetailByMatchId, resources);
-                match.IsHavingIntervalScore = IsDisplayIntervalScore(match, resultDetailByMatchId);
+                match.IsHavingIntervalScore = IsDisplayIntervalScore(resultDetailByMatchId);
             }
 
             return matches;
         }
 
-        private static bool IsDisplayIntervalScore(Match match, List<ResultDetail> resultDetails)
+        private static bool IsDisplayIntervalScore(List<ResultDetail> resultDetails)
         {
-            if (match.SportType == SportType.BasketBall)
-            {
-                return resultDetails.Exists(item => !item.ResourceId.Equals(ResourceType.Halftime) && !item.ResourceId.Equals(ResourceType.Final));
-            }
-
             return resultDetails.Exists(item => !item.ResourceId.Equals(ResourceType.Final));
         }
     }

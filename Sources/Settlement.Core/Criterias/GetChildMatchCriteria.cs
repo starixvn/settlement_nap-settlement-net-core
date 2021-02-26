@@ -8,6 +8,8 @@ namespace Settlement.Sportsbook.Core.Criterias
 
         public string mode { get; set; }
 
+        public string SelectedResources { get; set; }
+
         public override string GetSettingKey()
         {
             return "NAP_Set_GetChildMatchByParent";
