@@ -10,4 +10,12 @@
 		<Setting Key="NAP_Set_MatchSelHedge" SpName="NAP_Set_MatchSelHedge" DbName="DBPRO.bodb02.bodbAdminNet" />
 		<Setting Key="NAP_Admin_Settlement_Refund_MP_Push" SpName="NAP_Admin_Settlement_Refund_MP_Push_UAT1" DbName="DBTXN.bodb02.bodbAdminNet" />
 	</Function>
+  <Function Name="MoveTickets">
+    <Setting Key="NAP_Set_AutoPayout_ReferenceActionByMatchSel" SpName="NAP_Set_AutoPayout_ReferenceActionByMatchSel_UAT1" DbName="DBLOG.bodb_CustomerLog.bodbAdminNet" />
+    <Setting Key="NAP_Set_WaitingOtherSportSel" SpName="NAP_Set_WaitingOtherSportSel" DbName="DBTXN.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_MatchOtherSportsSel" SpName="NAP_Set_MatchOtherSportsSel_UAT1" DbName="DBTXN.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Admin_Settlement_50_MoveTicket" SpName="NAP_Admin_Settlement_50_MoveTicket_UAT1" DbName="DBTXN.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_GetChildMatchByParent" SpName="NAP_Set_GetChildMatchByParent_UAT1" DbName="DBPRO.bodb02.bodbAdminNet" />
+    <Setting Key="WriteLog_UserLog_Settle" SpName="WriteLog_UserLog_Settle" DbName="DBLOG.bodb_CustomerLog.bodbAdminNet" />
+  </Function>
 </Functions>

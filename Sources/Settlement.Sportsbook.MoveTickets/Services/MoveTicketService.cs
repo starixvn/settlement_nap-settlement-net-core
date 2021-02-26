@@ -66,6 +66,7 @@ namespace Settlement.Sportsbook.MoveTickets.Services
                 match.RefDataService = refDataService;
                 matches.Add(match);
             }));
+
             getReferenceAction(matches);
 
             var sportBooks = matches.GroupBy(match => new { match.SportName, match.SportType })
