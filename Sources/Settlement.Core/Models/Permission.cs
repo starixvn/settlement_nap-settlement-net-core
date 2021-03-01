@@ -26,6 +26,6 @@
 
         public bool CanChangeScoreSource { get; set; }
 
-        public bool CanRefundNotSDT { get; set; }
+        public bool CanMoveTickets { get; set; }
     }
 }
