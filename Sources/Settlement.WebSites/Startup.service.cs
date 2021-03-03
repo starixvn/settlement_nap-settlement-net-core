@@ -29,6 +29,8 @@ using Sentry;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.Aio;
 using Settlement.Sportsbook.Aio.Controllers;
+using Settlement.Sportsbook.Aio.Cricket;
+using Settlement.Sportsbook.Aio.Mapper;
 using Settlement.Sportsbook.Aio.Services;
 using Settlement.Sportsbook.MoveTickets;
 using Settlement.Sportsbook.MoveTickets.Controllers;
@@ -139,7 +141,7 @@ namespace Settlement.WebSites
 
         private static void ConfigInternalService(IServiceCollection services)
         {
-            services.AddTransient<ICricketService, CricketService>();
+            services.AddTransient<IAioService, AioService>();
             services.AddTransient<ICricketBetTypeService, CricketBetTypeService>();
             services.AddTransient<IMatchResultDetailService, MatchResultDetailService>();
             services.AddTransient<IMatchService, MatchService>();
@@ -147,6 +149,10 @@ namespace Settlement.WebSites
             services.AddTransient<IScoreService, ScoreService>();
             services.AddTransient<IScoreSetService, ScoreSetService>();
             services.AddTransient<ILogService, LogServiceImp>();
+            services.AddTransient<IMapperFactory, MapperFactoryBase>();
+            services.AddTransient<IMapperFactory, MapperFactoryImp>();
+            services.AddTransient<IValidateApiKeyService, ValidateApiKeyServiceImp>();
+            services.AddTransient<ICriteriaFactory, CriteriaFactoryBase>();
         }
 
         private void ConfigureNapServices(IServiceCollection services)
@@ -213,7 +219,7 @@ namespace Settlement.WebSites
 
         private static void ConfigureMediator(IServiceCollection services)
         {
-            services.AddMediatR(typeof(CricketController).GetTypeInfo().Assembly);
+            services.AddMediatR(typeof(AioController).GetTypeInfo().Assembly);
             services.AddMediatR(typeof(MoveTicketController).GetTypeInfo().Assembly);
         }
 

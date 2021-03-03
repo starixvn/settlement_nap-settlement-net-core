@@ -8,5 +8,7 @@ namespace Settlement.Sportsbook.Aio.Requests
         public int MatchId { get; set; }
 
         public string ActionName { get; set; }
+
+        public int SportType { get; set; }
     }
 }

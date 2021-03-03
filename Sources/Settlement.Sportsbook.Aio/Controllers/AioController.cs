@@ -12,11 +12,11 @@ namespace Settlement.Sportsbook.Aio.Controllers
     [Route("api/[controller]")]
     [EnableCors("AllowOrigin")]
     [Authorize]
-    public class CricketController : ControllerBase
+    public class AioController : ControllerBase
     {
         private readonly IMediator mediator;
 
-        public CricketController(IMediator mediator)
+        public AioController(IMediator mediator)
         {
             this.mediator = mediator;
         }

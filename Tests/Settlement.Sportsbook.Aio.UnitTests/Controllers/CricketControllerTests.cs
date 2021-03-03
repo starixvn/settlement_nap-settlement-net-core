@@ -17,11 +17,11 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Controllers
         private readonly IMediator mediator;
 
 
-        private readonly CricketController controller;
+        private readonly AioController controller;
         public CricketControllerTests()
         {
             mediator = Substitute.For<IMediator>();
-            controller = new CricketController(mediator);
+            controller = new AioController(mediator);
         }
 
         [Fact]

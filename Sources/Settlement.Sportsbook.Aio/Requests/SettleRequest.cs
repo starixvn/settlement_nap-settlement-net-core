@@ -4,9 +4,11 @@ using System.Collections.Generic;
 
 namespace Settlement.Sportsbook.Aio.Requests
 {
-    public class SettleRequest : IRequest<ResultCricket>
+    public class SettleRequest : IRequest<ResultAio>
     {
         public int MatchId { get; set; }
+
+        public int SportType { get; set; }
 
         public string ActionName { get; set; }
 

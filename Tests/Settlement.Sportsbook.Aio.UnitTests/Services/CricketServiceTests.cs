@@ -40,7 +40,7 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
             var mapper = new Mapper(config);
             #endregion
 
-            var service = new CricketService(repository, permissionService, refDataService, xmlConvertService,
+            var service = new AioService(repository, permissionService, refDataService, xmlConvertService,
                 currentSession, cricketBetTypeService, mapper, accessor);
 
             var request = new GetMatchRequest();
@@ -79,7 +79,7 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
             var mapper = new Mapper(config);
             #endregion
 
-            var service = new CricketService(repository, permissionService, refDataService, xmlConvertService,
+            var service = new AioService(repository, permissionService, refDataService, xmlConvertService,
                 currentSession, cricketBetTypeService, mapper, accessor);
 
             var request = new GetRecalResultRequest();
@@ -112,7 +112,7 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
             var mapper = new Mapper(config);
             #endregion
 
-            var service = new CricketService(repository, permissionService, refDataService, xmlConvertService,
+            var service = new AioService(repository, permissionService, refDataService, xmlConvertService,
                 currentSession, cricketBetTypeService, mapper, accessor);
             repository.ExecuteAsync(Arg.Do<SettleCriteria>(x =>
             {
@@ -151,7 +151,7 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
             var mapper = new Mapper(config);
             #endregion
 
-            var service = new CricketService(repository, permissionService, refDataService, xmlConvertService,
+            var service = new AioService(repository, permissionService, refDataService, xmlConvertService,
                 currentSession, cricketBetTypeService, mapper, accessor);
             repository.ExecuteAsync(Arg.Do<RefundParlayCriteria>(x =>
             {
@@ -186,7 +186,7 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
             var mapper = new Mapper(config);
             #endregion
 
-            var service = new CricketService(repository, permissionService, refDataService, xmlConvertService,
+            var service = new AioService(repository, permissionService, refDataService, xmlConvertService,
                 currentSession, cricketBetTypeService, mapper, accessor);
             repository.ExecuteAsync(Arg.Do<CheckMarkedTicketsCriteria>(x =>
             {
@@ -231,7 +231,7 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
             var mapper = new Mapper(config);
             #endregion
 
-            var service = new CricketService(repository, permissionService, refDataService, xmlConvertService,
+            var service = new AioService(repository, permissionService, refDataService, xmlConvertService,
                 currentSession, cricketBetTypeService, mapper, accessor);
             repository.ExecuteAsync(Arg.Do<CheckMarkedTicketsParlayCriteria>(x =>
             {

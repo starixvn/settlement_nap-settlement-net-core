@@ -2,7 +2,7 @@
 
 namespace Settlement.Sportsbook.Aio.Models
 {
-    public class ResultCricket : Result
+    public class ResultAio : Result
     {
         public string ChildMatchIds { get; set; }
     }

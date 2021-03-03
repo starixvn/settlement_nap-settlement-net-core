@@ -7,20 +7,22 @@ using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.Aio.Constants;
 using Settlement.Sportsbook.Aio.Criterias;
+using Settlement.Sportsbook.Aio.Mapper;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Requests;
 using Settlement.Sportsbook.Core.Criterias;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Settlement.Sportsbook.Aio.Services
 {
-    public interface ICricketService
+    public interface IAioService
     {
         Task<AioMatch> GetMatch(GetMatchRequest request);
 
-        Task<ResultCricket> Settle(SettleRequest request);
+        Task<ResultAio> Settle(SettleRequest request);
 
         Task<List<MatchResultDetail>> GetRecalResult(GetRecalResultRequest request);
 
@@ -28,14 +30,14 @@ namespace Settlement.Sportsbook.Aio.Services
 
         Task<MarkedTickets> CheckMarkedTicketsParlay(CheckMarkedTicketsParlayRequest request);
 
-        Task<Result> RefundParlay(RefundParlayRequest request);
+        Task<ResultAio> RefundParlay(RefundParlayRequest request);
 
         Task<Result> RefundParlayChildMatch(RefundParlayChildMatchRequest request);
 
         Task<Result> SettleChildMatch(SettleChildMatchRequest request);
     }
 
-    public class CricketService : ICricketService
+    public class AioService : IAioService
     {
         private readonly IHttpContextAccessor accessor;
 
@@ -51,41 +53,61 @@ namespace Settlement.Sportsbook.Aio.Services
 
         private readonly INapSession currentSession;
 
-        private readonly ICricketBetTypeService cricketBetTypeService;
+        private readonly IMapperFactory mapperFactory;
 
-        public CricketService(
+        private readonly IValidateApiKeyService validateApiKeyService;
+
+        public AioService(
             IDynamicRepository repository,
             PermissionService permissionService,
             IRefDataService refDataService,
             XmlConvertService xmlConvertService,
             INapSession currentSession,
-            ICricketBetTypeService cricketBetTypeService,
             IMapper mapper,
-            IHttpContextAccessor accessor)
+            IHttpContextAccessor accessor,
+            IMapperFactory mapperFactory,
+            IValidateApiKeyService validateApiKeyService)
         {
             this.repository = repository;
             this.permissionService = permissionService;
             this.refDataService = refDataService;
             this.xmlConvertService = xmlConvertService;
             this.currentSession = currentSession;
-            this.cricketBetTypeService = cricketBetTypeService;
             this.mapper = mapper;
             this.accessor = accessor;
+            this.mapperFactory = mapperFactory;
+            this.validateApiKeyService = validateApiKeyService;
         }
 
         public async Task<AioMatch> GetMatch(GetMatchRequest request)
         {
             var getMatchDetailCriteria = mapper.Map<GetMatchRequest, GetMatchDetailCriteria>(request);
             var matchDetail = await repository.GetAsync<MatchDetail>(getMatchDetailCriteria);
+            var externalResults = new List<ExternalResultModel>();
             if (matchDetail != null)
             {
                 matchDetail.RefDataService = refDataService;
+                var providerMapperService = mapperFactory.GetMapperService($"{request.SportType}-{ApiKeyConstant.ProviderKey}");
+                if (providerMapperService != null)
+                {
+                    var providerCriteria = validateApiKeyService.CriteriaName(request, $"{request.SportType}-{ApiKeyConstant.ProviderKey}");
+                    var providerResult = await repository.FetchAsync<ExternalResultDetailModel>(providerCriteria);
+                    var provider = new Tuple<List<ExternalResultDetailModel>, List<ExternalResultModel>>(providerResult.ToList(), new List<ExternalResultModel>());
+                    providerMapperService.Decorate(provider);
+                    externalResults = provider.Item2;
+                }
             }
 
             var getResultDetailCriteria = mapper.Map<GetMatchRequest, GetResultDetailCriteria>(request);
             var (firstResultSet, secondResultSet) = await repository.FetchMultipleAsync<MatchResultDetail, TicketCounts>(getResultDetailCriteria);
             var resultDetails = firstResultSet.ToList();
-            cricketBetTypeService.GroupBetTypesAndGenerateNames(resultDetails);
+
+            var mapperService = mapperFactory.GetMapperService($"{request.SportType}-{ApiKeyConstant.ResultDetailKey}");
+            if (mapperService != null)
+            {
+                mapperService.Decorate(resultDetails);
+            }
+
             var ticketCounts = secondResultSet.FirstOrDefault() ?? new TicketCounts();
             var getHedgeMatchCriteria = mapper.Map<GetMatchRequest, GetHedgeMatchCriteria>(request);
             var hedgeMatchDetail = await repository.GetAsync<HedgeMatchDetail>(getHedgeMatchCriteria);
@@ -96,7 +118,8 @@ namespace Settlement.Sportsbook.Aio.Services
                 ResultDetails = resultDetails,
                 TicketCounts = ticketCounts,
                 Permission = permissionService.Permission,
-                HedgeMatchDetail = hedgeMatchDetail
+                HedgeMatchDetail = hedgeMatchDetail,
+                ExternalResults = externalResults
             };
         }
 
@@ -120,7 +143,7 @@ namespace Settlement.Sportsbook.Aio.Services
             };
         }
 
-        public async Task<ResultCricket> Settle(SettleRequest request)
+        public async Task<ResultAio> Settle(SettleRequest request)
         {
             var criteria = mapper.Map<SettleRequest, SettleCriteria>(request);
             criteria.AdminId = currentSession.UserId;
@@ -128,13 +151,20 @@ namespace Settlement.Sportsbook.Aio.Services
             criteria.SelectedResources = CreateSettleResources(request.SelectedResources);
             await repository.ExecuteAsync(criteria);
 
-            var settleResult = new ResultCricket
+            var settleResult = new ResultAio
             {
                 ErrCode = criteria.ErrCode,
                 ErrMsg = criteria.ErrMsg,
                 ServiceCommand = criteria.ServiceCommand,
-                ChildMatchIds = criteria.ErrCode == 0 ? await GetChildMatchIds(request.MatchId, criteria.Action, criteria.SelectedResources) : string.Empty
+                ChildMatchIds = string.Empty
             };
+
+            var childMatchService = mapperFactory.GetFetchService($"{request.SportType}-{ApiKeyConstant.ChildMatchKey}");
+            if (childMatchService != null)
+            {
+                await childMatchService.Fetch(settleResult, criteria.MatchId, criteria.SelectedResources );
+            }
+
 
             if (settleResult.IsSuccessful && request.IsApplyHedging)
             {
@@ -155,21 +185,7 @@ namespace Settlement.Sportsbook.Aio.Services
             return xmlConvertService.Serialize(resources);
         }
 
-        private async Task<string> GetChildMatchIds(int matchId, string actionName, string selectedResources = "")
-        {
-            var criteria = new GetChildMatchCriteria();
-            criteria.matchIds = matchId.ToString();
             criteria.mode = actionName;
-            if (selectedResources != "")
-            {
-                criteria.SelectedResources = selectedResources;
-            }
-            var listMatch = await repository.FetchAsync<ChildMatch>(criteria);
-            var matchIds = listMatch.Select(item => item.matchId).ToList();
-
-            return matchIds.Count > 0 ? string.Join(',', matchIds.ToList()) : string.Empty;
-        }
-
         public async Task<MarkedTickets> CheckMarkedTicketsParlay(CheckMarkedTicketsParlayRequest request)
         {
             var criteria = mapper.Map<CheckMarkedTicketsParlayRequest, CheckMarkedTicketsParlayCriteria>(request);
@@ -181,19 +197,25 @@ namespace Settlement.Sportsbook.Aio.Services
             };
         }
 
-        public async Task<Result> RefundParlay(RefundParlayRequest request)
+        public async Task<ResultAio> RefundParlay(RefundParlayRequest request)
         {
             var criteria = mapper.Map<RefundParlayRequest, RefundParlayCriteria>(request);
             criteria.AdminId = currentSession.UserId;
             criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
             await repository.ExecuteAsync(criteria);
 
-            var result = new ResultCricket
+            var result = new ResultAio
             {
                 ErrCode = criteria.ErrCode,
                 ErrMsg = criteria.ErrMsg,
-                ChildMatchIds = criteria.ErrCode == 0 ? await GetChildMatchIds(request.MatchId, SettleType.CalculateMixParlay) : string.Empty
+                ChildMatchIds = string.Empty
             };
+
+            var childMatchService = mapperFactory.GetFetchService($"{request.SportType}-{ApiKeyConstant.ChildMatchKey}");
+            if (childMatchService != null)
+            {
+                await childMatchService.Fetch(result, criteria.MatchId, "");
+            }
 
             return result;
         }

@@ -1,5 +1,5 @@
-﻿using Settlement.Sportsbook.Aio.Models;
-using Settlement.Sportsbook.Aio.Services;
+﻿using Settlement.Sportsbook.Aio.Cricket;
+using Settlement.Sportsbook.Aio.Models;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;

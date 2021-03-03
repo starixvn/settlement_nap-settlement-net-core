@@ -5,6 +5,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="Services\CreateQueryService.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="AutoMapper" Version="10.1.1" />
 		<PackageReference Include="Fanex.Data.Repository" Version="4.2.2" />
 		<PackageReference Include="Fanex.NAP.Client.AspNetCore" Version="1.0.0.5-beta10" />
@@ -13,6 +17,8 @@
 		<PackageReference Include="MediatR" Version="9.0.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.1-beta1" />
+		<PackageReference Include="System.Text.Json" Version="6.0.0-preview.1.21102.12" />
 		<PackageReference Include="System.ValueTuple" Version="4.5.0" />
 	</ItemGroup>
 
