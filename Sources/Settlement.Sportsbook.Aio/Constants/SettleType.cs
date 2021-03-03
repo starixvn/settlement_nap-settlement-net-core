@@ -9,5 +9,7 @@
         public const string Refund = "REFUND";
 
         public const string Early = "EAR";
+
+        public const string CalculateMixParlay = "CAL-MP";
     }
 }

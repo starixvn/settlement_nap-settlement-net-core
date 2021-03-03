@@ -5,6 +5,7 @@ using Kaden.XmlConverter;
 using Microsoft.AspNetCore.Http;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
+using Settlement.Sportsbook.Aio.Constants;
 using Settlement.Sportsbook.Aio.Criterias;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Requests;
@@ -132,7 +133,7 @@ namespace Settlement.Sportsbook.Aio.Services
                 ErrCode = criteria.ErrCode,
                 ErrMsg = criteria.ErrMsg,
                 ServiceCommand = criteria.ServiceCommand,
-                ChildMatchIds = criteria.ErrCode == 0 ? await GetChildMatchIds(request.MatchId, criteria.SelectedResources) : string.Empty
+                ChildMatchIds = criteria.ErrCode == 0 ? await GetChildMatchIds(request.MatchId, criteria.Action, criteria.SelectedResources) : string.Empty
             };
 
             if (settleResult.IsSuccessful && request.IsApplyHedging)
@@ -154,11 +155,12 @@ namespace Settlement.Sportsbook.Aio.Services
             return xmlConvertService.Serialize(resources);
         }
 
-        private async Task<string> GetChildMatchIds(int matchId, string selectedResources = "")
+        private async Task<string> GetChildMatchIds(int matchId, string actionName, string selectedResources = "")
         {
             var criteria = new GetChildMatchCriteria();
             criteria.matchIds = matchId.ToString();
-            if(selectedResources != "")
+            criteria.mode = actionName;
+            if (selectedResources != "")
             {
                 criteria.SelectedResources = selectedResources;
             }
@@ -190,7 +192,7 @@ namespace Settlement.Sportsbook.Aio.Services
             {
                 ErrCode = criteria.ErrCode,
                 ErrMsg = criteria.ErrMsg,
-                ChildMatchIds = criteria.ErrCode == 0 ? await GetChildMatchIds(request.MatchId) : string.Empty
+                ChildMatchIds = criteria.ErrCode == 0 ? await GetChildMatchIds(request.MatchId, SettleType.CalculateMixParlay) : string.Empty
             };
 
             return result;
