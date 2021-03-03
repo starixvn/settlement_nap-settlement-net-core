@@ -194,8 +194,7 @@ namespace Settlement.Sportsbook.MoveTickets.Services
 
         public async Task<List<ChildMatch>> GetChildMatch(GetChildMatchRequest request)
         {
-            var criteria = new GetChildMatchCriteria();
-            criteria.matchIds = request.MatchIds;
+            var criteria = mapper.Map<GetChildMatchRequest, GetChildMatchCriteria>(request);
 
             var listMatch = await repository.FetchAsync<ChildMatch>(criteria);
 

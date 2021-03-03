@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Settlement.Sportsbook.Core.Criterias;
 using Settlement.Sportsbook.MoveTickets.Criterias;
 using Settlement.Sportsbook.MoveTickets.Requests;
 
@@ -10,6 +11,7 @@ namespace Settlement.Sportsbook.MoveTickets
         {
             CreateMap<GetMatchRequest, SportsbookCriteria>();
             CreateMap<MoveTicketRequest, MoveTicketCriteria>();
+            CreateMap<GetChildMatchRequest, GetChildMatchCriteria>();
         }
     }
 }
