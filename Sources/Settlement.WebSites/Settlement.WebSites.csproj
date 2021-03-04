@@ -44,9 +44,9 @@
 		<PackageReference Include="Fanex.Logging.Extensions.AspNetCore" Version="1.0.1-beta1" />
 		<PackageReference Include="Fanex.Logging.Extensions.Database" Version="1.0.8" />
 		<PackageReference Include="Fanex.Logging.Sentry" Version="1.0.6" />
-		<PackageReference Include="Fanex.NAP.Client.AspNetCore" Version="1.0.0-beta5" />
+		<PackageReference Include="Fanex.NAP.Client.AspNetCore" Version="1.0.0.5-beta10" />
 		<PackageReference Include="Fanex.NAP.Client.Transport" Version="1.0.0-beta7" />
-		<PackageReference Include="Fanex.NAP.Signin.AspNetCore" Version="1.0.0.1-beta1" />
+		<PackageReference Include="Fanex.NAP.Signin.AspNetCore" Version="1.0.0.3-beta1" />
 		<PackageReference Include="MediatR" Version="9.0.0" />
 		<PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="9.0.0" />
 		<PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="5.0.2" />

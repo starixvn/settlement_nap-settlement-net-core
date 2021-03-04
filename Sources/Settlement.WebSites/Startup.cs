@@ -1,7 +1,6 @@
 using Fanex.NAP.Client;
 using Fanex.NAP.Client.Configuration;
 using Fanex.NAP.Client.Helpers.Web;
-using Fanex.NAP.Client.Web;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -65,7 +64,6 @@ namespace Settlement.WebSites
 
             NapClientManager
             .UseConfig(app.ApplicationServices.GetService<INapSettings>())
-            .UseRestClient(app.ApplicationServices.GetService<IRestClient>())
             .UseSession(app.ApplicationServices.GetService<INapSession>());
         }
     }

@@ -15,7 +15,6 @@ using Fanex.NAP.Client.Configuration;
 using Fanex.NAP.Client.Helpers.Web;
 using Fanex.NAP.Client.Services;
 using Fanex.NAP.Client.Transport;
-using Fanex.NAP.Client.Web;
 using Fanex.RemotingRef;
 using Kaden.XmlConverter;
 using MediatR;
@@ -149,7 +148,6 @@ namespace Settlement.WebSites
             services.AddTransient<ILogger, Logger>();
             services.AddSingleton<INapSettings>(new NapSettings(Configuration));
             services.AddSingleton<INapSession, NapSession>();
-            services.AddSingleton<IRestClient, RestClient>();
             services.AddSingleton<ICacheService, CacheService>();
 
             services.AddSingleton<IGroupService, GroupService>();

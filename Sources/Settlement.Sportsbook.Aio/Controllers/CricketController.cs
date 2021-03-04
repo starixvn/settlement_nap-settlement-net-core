@@ -29,7 +29,7 @@ namespace Settlement.Sportsbook.Aio.Controllers
 
         [Route("settle")]
         [HttpPost]
-        //[LogRequestResponse]
+        [LogRequestResponse]
         public async Task<IActionResult> Settle(SettleRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
         [Route("check-marked-tickets")]
