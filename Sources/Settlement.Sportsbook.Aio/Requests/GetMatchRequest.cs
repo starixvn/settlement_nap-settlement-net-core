@@ -7,8 +7,10 @@ namespace Settlement.Sportsbook.Aio.Requests
     {
         public int MatchId { get; set; }
 
-        public int SportType { get; set; }
+        public string ApiKey { get; set; }
 
         public string SettleType { get; set; }
+
+        public int SportType { get; set; }
     }
 }

@@ -5,7 +5,20 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Compile Remove="Services\CreateQueryService.cs" />
+	  <Compile Remove="Cricket\**" />
+	  <EmbeddedResource Remove="Cricket\**" />
+	  <None Remove="Cricket\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Remove="Constants\GroupBetType.cs" />
+	  <Compile Remove="Constants\InputType.cs" />
+	  <Compile Remove="Criterias\CheckMarkedTicketsParlayCriteria.cs" />
+	  <Compile Remove="Criterias\GetRecalResultCriteria.cs" />
+	  <Compile Remove="Mapper\GetFetchService.cs" />
+	  <Compile Remove="Requests\CheckMarkedTicketsParlayRequest.cs" />
+	  <Compile Remove="Requests\RefundParlayChildMatchRequest.cs" />
+	  <Compile Remove="Requests\SettleChildMatchRequest.cs" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -17,8 +30,6 @@
 		<PackageReference Include="MediatR" Version="9.0.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.1-beta1" />
-		<PackageReference Include="System.Text.Json" Version="6.0.0-preview.1.21102.12" />
 		<PackageReference Include="System.ValueTuple" Version="4.5.0" />
 	</ItemGroup>
 

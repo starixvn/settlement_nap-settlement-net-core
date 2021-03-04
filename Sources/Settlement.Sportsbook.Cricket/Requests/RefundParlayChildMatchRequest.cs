@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Settlement.Core.Models;
 
-namespace Settlement.Sportsbook.Aio.Requests
+namespace Settlement.Sportsbook.Cricket.Requests
 {
     public class RefundParlayChildMatchRequest : IRequest<Result>
     {

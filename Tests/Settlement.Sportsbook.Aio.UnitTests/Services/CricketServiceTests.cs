@@ -8,14 +8,13 @@ using NSubstitute;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.Aio.Criterias;
-using Settlement.Sportsbook.Aio.Models;
-using Settlement.Sportsbook.Aio.Requests;
-using Settlement.Sportsbook.Aio.Services;
 using Settlement.Sportsbook.Core.Criterias;
-using System;
+using Settlement.Sportsbook.Cricket;
+using Settlement.Sportsbook.Cricket.Criterias;
+using Settlement.Sportsbook.Cricket.Models;
+using Settlement.Sportsbook.Cricket.Requests;
+using Settlement.Sportsbook.Cricket.Services;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -23,26 +22,36 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
 {
     public class CricketServiceTests
     {
+        private readonly IDynamicRepository repository;
+        private readonly PermissionService permissionService;
+        private readonly IRefDataService refDataService;
+        private readonly XmlConvertService xmlConvertService;
+        private readonly INapSession currentSession;
+        private readonly ICricketBetTypeService cricketBetTypeService;
+        private readonly IHttpContextAccessor accessor;
+        private readonly ICricketService service;
+        public CricketServiceTests()
+        {
+            repository = Substitute.For<IDynamicRepository>();
+            permissionService = Substitute.For<PermissionService>(null, null, null, null);
+            refDataService = Substitute.For<IRefDataService>();
+            xmlConvertService = Substitute.For<XmlConvertService>();
+            currentSession = Substitute.For<INapSession>();
+            cricketBetTypeService = Substitute.For<ICricketBetTypeService>();
+            accessor = Substitute.For<IHttpContextAccessor>();
+            var context = new DefaultHttpContext();
+            context.Connection.RemoteIpAddress = new System.Net.IPAddress(1);
+            accessor.HttpContext = context;
+            var mapperConfig = new MapperConfigurationExpression();
+            mapperConfig.AddProfile<SportsbookCricketAutoMapperProfile>();
+            var config = new MapperConfiguration(mapperConfig);
+            var mapper = new Mapper(config);
+            service = new CricketService(repository, permissionService, refDataService, xmlConvertService,
+                currentSession, cricketBetTypeService, mapper, accessor);
+        }
         [Fact]
         public async Task GetMatch_Always_ReturnCorrectMatch()
         {
-            #region Mock dependencies
-            var repository = Substitute.For<IDynamicRepository>();
-            var permissionService = Substitute.For<PermissionService>(null, null, null, null);
-            var refDataService = Substitute.For<IRefDataService>();
-            var xmlConvertService = Substitute.For<XmlConvertService>();
-            var currentSession = Substitute.For<INapSession>();
-            var cricketBetTypeService = Substitute.For<ICricketBetTypeService>();
-            var accessor = Substitute.For<IHttpContextAccessor>();
-            var mapperConfig = new MapperConfigurationExpression();
-            mapperConfig.AddProfile<SportsbookAioAutoMapperProfile>();
-            var config = new MapperConfiguration(mapperConfig);
-            var mapper = new Mapper(config);
-            #endregion
-
-            var service = new AioService(repository, permissionService, refDataService, xmlConvertService,
-                currentSession, cricketBetTypeService, mapper, accessor);
-
             var request = new GetMatchRequest();
             repository.GetAsync<MatchDetail>(Arg.Any<GetMatchDetailCriteria>()).Returns(new MatchDetail { MatchId = 12345 });
             repository.FetchMultipleAsync<MatchResultDetail, TicketCounts>(Arg.Any<GetResultDetailCriteria>()).Returns((new List<MatchResultDetail>(), new List<TicketCounts>()));
@@ -65,23 +74,6 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
         [Fact]
         public async Task GetRecalResult_Always_ReturnResultDetailList()
         {
-            #region Mock dependencies
-            var repository = Substitute.For<IDynamicRepository>();
-            var permissionService = Substitute.For<PermissionService>(null, null, null, null);
-            var refDataService = Substitute.For<IRefDataService>();
-            var xmlConvertService = Substitute.For<XmlConvertService>();
-            var currentSession = Substitute.For<INapSession>();
-            var cricketBetTypeService = Substitute.For<ICricketBetTypeService>();
-            var accessor = Substitute.For<IHttpContextAccessor>();
-            var mapperConfig = new MapperConfigurationExpression();
-            mapperConfig.AddProfile<SportsbookAioAutoMapperProfile>();
-            var config = new MapperConfiguration(mapperConfig);
-            var mapper = new Mapper(config);
-            #endregion
-
-            var service = new AioService(repository, permissionService, refDataService, xmlConvertService,
-                currentSession, cricketBetTypeService, mapper, accessor);
-
             var request = new GetRecalResultRequest();
             repository.FetchAsync<MatchResultDetail>(Arg.Any<GetRecalResultCriteria>()).Returns(new List<MatchResultDetail> { new MatchResultDetail() });
 
@@ -95,25 +87,6 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
         [InlineData(1, "Error", false, "")]
         public async Task Settle_Always_ReturnCorrectResult(int errorCode, string errorMsg, bool result, string childMatch)
         {
-            #region Mock dependencies
-            var repository = Substitute.For<IDynamicRepository>();
-            var permissionService = Substitute.For<PermissionService>(null, null, null, null);
-            var refDataService = Substitute.For<IRefDataService>();
-            var xmlConvertService = Substitute.For<XmlConvertService>();
-            var currentSession = Substitute.For<INapSession>();
-            var cricketBetTypeService = Substitute.For<ICricketBetTypeService>();
-            var accessor = Substitute.For<IHttpContextAccessor>();
-            var context = new DefaultHttpContext();
-            context.Connection.RemoteIpAddress = new System.Net.IPAddress(1);
-            accessor.HttpContext = context;
-            var mapperConfig = new MapperConfigurationExpression();
-            mapperConfig.AddProfile<SportsbookAioAutoMapperProfile>();
-            var config = new MapperConfiguration(mapperConfig);
-            var mapper = new Mapper(config);
-            #endregion
-
-            var service = new AioService(repository, permissionService, refDataService, xmlConvertService,
-                currentSession, cricketBetTypeService, mapper, accessor);
             repository.ExecuteAsync(Arg.Do<SettleCriteria>(x =>
             {
                 x.ErrCode = errorCode;
@@ -121,8 +94,11 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
                 x.ServiceCommand = "";
             })).Returns(1);
 
-            var listChildMatch = new List<int> { 100 };
-            repository.FetchAsync<int>(Arg.Any<GetChildMatchCriteria>()).Returns(listChildMatch);
+            var listChildMatch = new List<ChildMatch> { 
+            
+                new ChildMatch{matchId = 100}
+            };
+            repository.FetchAsync<ChildMatch>(Arg.Any<GetChildMatchCriteria>()).Returns(listChildMatch);
             var actual = await service.Settle(new SettleRequest());
 
             Assert.Equal(result, actual.IsSuccessful);
@@ -134,25 +110,6 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
         [InlineData(1, "Error", false)]
         public async Task RefundParlay_Always_ReturnCorrectResult(int errorCode, string errorMsg, bool result)
         {
-            #region Mock dependencies
-            var repository = Substitute.For<IDynamicRepository>();
-            var permissionService = Substitute.For<PermissionService>(null, null, null, null);
-            var refDataService = Substitute.For<IRefDataService>();
-            var xmlConvertService = Substitute.For<XmlConvertService>();
-            var currentSession = Substitute.For<INapSession>();
-            var cricketBetTypeService = Substitute.For<ICricketBetTypeService>();
-            var accessor = Substitute.For<IHttpContextAccessor>();
-            var context = new DefaultHttpContext();
-            context.Connection.RemoteIpAddress = new System.Net.IPAddress(1);
-            accessor.HttpContext = context;
-            var mapperConfig = new MapperConfigurationExpression();
-            mapperConfig.AddProfile<SportsbookAioAutoMapperProfile>();
-            var config = new MapperConfiguration(mapperConfig);
-            var mapper = new Mapper(config);
-            #endregion
-
-            var service = new AioService(repository, permissionService, refDataService, xmlConvertService,
-                currentSession, cricketBetTypeService, mapper, accessor);
             repository.ExecuteAsync(Arg.Do<RefundParlayCriteria>(x =>
             {
                 x.ErrCode = errorCode;
@@ -169,25 +126,6 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
         [InlineData(false)]
         public async Task CheckMarkedTickets_Always_ReturnCorrectResult(bool result)
         {
-            #region Mock dependencies
-            var repository = Substitute.For<IDynamicRepository>();
-            var permissionService = Substitute.For<PermissionService>(null, null, null, null);
-            var refDataService = Substitute.For<IRefDataService>();
-            var xmlConvertService = Substitute.For<XmlConvertService>();
-            var currentSession = Substitute.For<INapSession>();
-            var cricketBetTypeService = Substitute.For<ICricketBetTypeService>();
-            var accessor = Substitute.For<IHttpContextAccessor>();
-            var context = new DefaultHttpContext();
-            context.Connection.RemoteIpAddress = new System.Net.IPAddress(1);
-            accessor.HttpContext = context;
-            var mapperConfig = new MapperConfigurationExpression();
-            mapperConfig.AddProfile<SportsbookAioAutoMapperProfile>();
-            var config = new MapperConfiguration(mapperConfig);
-            var mapper = new Mapper(config);
-            #endregion
-
-            var service = new AioService(repository, permissionService, refDataService, xmlConvertService,
-                currentSession, cricketBetTypeService, mapper, accessor);
             repository.ExecuteAsync(Arg.Do<CheckMarkedTicketsCriteria>(x =>
             {
                 x.IsExistMarkedTicket = result;
@@ -214,25 +152,6 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
         [InlineData(false)]
         public async Task CheckMarkedTicketsParlay_Always_ReturnCorrectResult(bool result)
         {
-            #region Mock dependencies
-            var repository = Substitute.For<IDynamicRepository>();
-            var permissionService = Substitute.For<PermissionService>(null, null, null, null);
-            var refDataService = Substitute.For<IRefDataService>();
-            var xmlConvertService = Substitute.For<XmlConvertService>();
-            var currentSession = Substitute.For<INapSession>();
-            var cricketBetTypeService = Substitute.For<ICricketBetTypeService>();
-            var accessor = Substitute.For<IHttpContextAccessor>();
-            var context = new DefaultHttpContext();
-            context.Connection.RemoteIpAddress = new System.Net.IPAddress(1);
-            accessor.HttpContext = context;
-            var mapperConfig = new MapperConfigurationExpression();
-            mapperConfig.AddProfile<SportsbookAioAutoMapperProfile>();
-            var config = new MapperConfiguration(mapperConfig);
-            var mapper = new Mapper(config);
-            #endregion
-
-            var service = new AioService(repository, permissionService, refDataService, xmlConvertService,
-                currentSession, cricketBetTypeService, mapper, accessor);
             repository.ExecuteAsync(Arg.Do<CheckMarkedTicketsParlayCriteria>(x =>
             {
                 x.IsExistMarkedTicket = result;

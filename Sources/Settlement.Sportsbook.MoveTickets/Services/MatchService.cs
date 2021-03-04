@@ -12,7 +12,6 @@ namespace Settlement.Sportsbook.MoveTickets.Services
 
     public class MatchService : IMatchService
     {
-
         private readonly IMatchResultDetailService matchResultDetailService;
 
         private readonly IRefDataService refDataService;

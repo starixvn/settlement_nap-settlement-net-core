@@ -1,5 +1,4 @@
-﻿using Settlement.Core.Constants;
-using Settlement.Sportsbook.Aio.Constants;
+﻿using Settlement.Sportsbook.Aio.Constants;
 
 namespace Settlement.Sportsbook.Aio.Mapper
 {
@@ -7,9 +6,7 @@ namespace Settlement.Sportsbook.Aio.Mapper
     {
         static MapperFactoryImp()
         {
-            AddMapperService($"{SportType.Tennis}-{ApiKeyConstant.ProviderKey}", typeof(Services.ProviderMapperService));
-            AddMapperService($"{SportType.Cricket}-{ApiKeyConstant.ResultDetailKey}", typeof(Cricket.ResultDetailMapperService));
-            AddGetService($"{SportType.Cricket}-{ApiKeyConstant.ChildMatchKey}", typeof(Cricket.ChildMatchService));
+            AddMapperService($"tennis-{ApiKeyConstant.ProviderKey}", typeof(Services.ProviderMapperService));
         }
     }
 }

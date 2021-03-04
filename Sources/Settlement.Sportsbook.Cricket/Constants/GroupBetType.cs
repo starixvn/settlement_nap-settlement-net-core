@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Settlement.Sportsbook.Aio.Constants
+namespace Settlement.Sportsbook.Cricket.Constants
 {
     public static class GroupBetType
     {

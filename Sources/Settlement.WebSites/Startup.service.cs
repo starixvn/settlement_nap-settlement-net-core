@@ -29,9 +29,11 @@ using Sentry;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.Aio;
 using Settlement.Sportsbook.Aio.Controllers;
-using Settlement.Sportsbook.Aio.Cricket;
 using Settlement.Sportsbook.Aio.Mapper;
 using Settlement.Sportsbook.Aio.Services;
+using Settlement.Sportsbook.Cricket;
+using Settlement.Sportsbook.Cricket.Controllers;
+using Settlement.Sportsbook.Cricket.Services;
 using Settlement.Sportsbook.MoveTickets;
 using Settlement.Sportsbook.MoveTickets.Controllers;
 using Settlement.Sportsbook.MoveTickets.Services;
@@ -152,8 +154,10 @@ namespace Settlement.WebSites
             services.AddTransient<IMapperFactory, MapperFactoryBase>();
             services.AddTransient<IMapperFactory, MapperFactoryImp>();
             services.AddTransient<IValidateApiKeyService, ValidateApiKeyServiceImp>();
-            services.AddTransient<ICriteriaFactory, CriteriaFactoryBase>();
-        }
+            services.AddTransient<ICriteriaFactory, CriteriaFactoryImp>();
+            services.AddTransient<ICricketService, CricketService>();
+            services.AddTransient<ICreateQueryService, CreateQueryServiceImp>();
+         }
 
         private void ConfigureNapServices(IServiceCollection services)
         {
@@ -221,6 +225,7 @@ namespace Settlement.WebSites
         {
             services.AddMediatR(typeof(AioController).GetTypeInfo().Assembly);
             services.AddMediatR(typeof(MoveTicketController).GetTypeInfo().Assembly);
+            services.AddMediatR(typeof(CricketController).GetTypeInfo().Assembly);
         }
 
         private static void ConfigureAutoMapper(IServiceCollection services)
@@ -229,6 +234,7 @@ namespace Settlement.WebSites
             {
                 mc.AddProfile(typeof(SportsbookAioAutoMapperProfile));
                 mc.AddProfile(typeof(SportsbookMoveTicketAutoMapperProfile));
+                mc.AddProfile(typeof(SportsbookCricketAutoMapperProfile));
             });
 
             IMapper mapper = mapperConfig.CreateMapper();

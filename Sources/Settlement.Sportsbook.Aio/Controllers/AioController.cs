@@ -39,22 +39,17 @@ namespace Settlement.Sportsbook.Aio.Controllers
         [HttpPost]
         public async Task<IActionResult> GetRecalResult(GetRecalResultRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
-        [Route("check-marked-tickets-parlay")]
-        [HttpPost]
-        public async Task<IActionResult> CheckMarkedTicketsParlay(CheckMarkedTicketsParlayRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
-
         [Route("refund-parlay")]
         [HttpPost]
         public async Task<IActionResult> RefundParlay(RefundParlayRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
-        [Route("settle-child-match")]
+        [Route("no-running-odds")]
         [HttpPost]
-        [LogRequestResponse]
-        public async Task<IActionResult> SettleChildMatch(SettleChildMatchRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+        public async Task<IActionResult> VerifyNoRunningOdds(CheckRunningOddsRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
-        [Route("refund-parlay-child-match")]
         [HttpPost]
+        [Route("save-score")]
         [LogRequestResponse]
-        public async Task<IActionResult> RefundParlayChildMatch(RefundParlayChildMatchRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+        public async Task<IActionResult> SaveScore(SaveScoreRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
     }
 }

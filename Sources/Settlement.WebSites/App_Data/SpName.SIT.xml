@@ -17,4 +17,7 @@
     <Setting Key="NAP_Set_GetChildMatchByParent" SpName="NAP_Set_GetChildMatchByParent_UAT1" DbName="DBTXN.bodb02.bodbAdminNet" />
     <Setting Key="WriteLog_UserLog_Settle" SpName="WriteLog_UserLog_Settle" DbName="DBLOG.bodb_CustomerLog.bodbAdminNet" />
   </Function>
+  <Function Name="Provider">
+    <Setting Key="NAP_Set_ProviderExternalResultDetailOSLatestInfoSel" SpName="NAP_Set_ProviderExternalResultDetailOSLatestInfoSel" DbName="DBPRO.bodb02.bodbAdminNet" />
+  </Function>
 </Functions>

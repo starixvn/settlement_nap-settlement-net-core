@@ -16,6 +16,8 @@ namespace Settlement.Sportsbook.Aio.Criterias
 
         public bool IsReSettledTickets { get; set; }
 
+        public bool IsLeader { get; set; }
+
         public int ErrCode { get; set; }
 
         public string ErrMsg { get; set; }

@@ -2,10 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using NSubstitute;
 using Settlement.Core.Models;
-using Settlement.Sportsbook.Aio.Controllers;
-using Settlement.Sportsbook.Aio.Models;
-using Settlement.Sportsbook.Aio.Requests;
-using Settlement.Sportsbook.Aio.Services;
+using Settlement.Sportsbook.Cricket.Controllers;
+using Settlement.Sportsbook.Cricket.Models;
+using Settlement.Sportsbook.Cricket.Requests;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
@@ -17,11 +16,11 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Controllers
         private readonly IMediator mediator;
 
 
-        private readonly AioController controller;
+        private readonly CricketController controller;
         public CricketControllerTests()
         {
             mediator = Substitute.For<IMediator>();
-            controller = new AioController(mediator);
+            controller = new CricketController(mediator);
         }
 
         [Fact]
