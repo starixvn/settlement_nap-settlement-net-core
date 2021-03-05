@@ -16,7 +16,7 @@ namespace Settlement.Sportsbook.Aio.Services
 
         RefundParlayCriteria QueryRefundParlay(RefundParlayRequest request);
 
-        object QuerySaveScore(SaveScoreRequest request);
+        SaveScoreCriteria QuerySaveScore(SaveScoreRequest request);
     }
 
     public class CreateQueryServiceImp : ICreateQueryService
@@ -68,11 +68,11 @@ namespace Settlement.Sportsbook.Aio.Services
             return criteria;
         }
 
-        public object QuerySaveScore(SaveScoreRequest request)
+        public SaveScoreCriteria QuerySaveScore(SaveScoreRequest request)
         {
             var scoreToSaveResources = CreateScoreResources(request.ScoresToSave);
             var scoreResources = CreateScoreResources(request.CheckedScores);
-            return new
+            return new SaveScoreCriteria
             {
                 MatchId = request.MatchId,
                 UserId = currentSession.UserId,

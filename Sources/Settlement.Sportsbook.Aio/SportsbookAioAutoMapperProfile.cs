@@ -13,7 +13,8 @@ namespace Settlement.Sportsbook.Aio
             CreateMap<GetRecalResultRequest, GetRecalResultCriteria>();
             CreateMap<CheckMarkedTicketsRequest, CheckMarkedTicketsCriteria>();
             CreateMap<GetMatchRequest, GetHedgeMatchCriteria>();
-            CreateMap<RefundParlayRequest, RefundParlayCriteria>();
+            CreateMap<RefundParlayRequest, RefundParlayCriteria>()
+                .ForMember(dest => dest.Action, map => map.MapFrom(src => src.ActionName));
             CreateMap<SettleRequest, SettleCriteria>()
                 .ForMember(dest => dest.Action, map => map.MapFrom(src => src.ActionName))
                 .ForMember(dest => dest.SelectedResources, map => map.Ignore());

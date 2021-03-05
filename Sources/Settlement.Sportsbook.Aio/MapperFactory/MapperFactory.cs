@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Settlement.Sportsbook.Aio.Mapper
+namespace Settlement.Sportsbook.Aio.MapperFactory
 {
     public interface IMapperFactory
     {

@@ -1,6 +1,6 @@
 ﻿using Settlement.Sportsbook.Aio.Constants;
 
-namespace Settlement.Sportsbook.Aio.Mapper
+namespace Settlement.Sportsbook.Aio.MapperFactory
 {
     public class MapperFactoryImp : MapperFactoryBase
     {

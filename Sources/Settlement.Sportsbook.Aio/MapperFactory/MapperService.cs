@@ -1,4 +1,4 @@
-﻿namespace Settlement.Sportsbook.Aio.Mapper
+﻿namespace Settlement.Sportsbook.Aio.MapperFactory
 {
     public interface IMapperService
     {

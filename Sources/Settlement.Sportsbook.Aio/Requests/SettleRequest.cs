@@ -17,7 +17,7 @@ namespace Settlement.Sportsbook.Aio.Requests
 
         public string BetStatus { get; set; }
 
-        public int IsLeader { get; set; }
+        public bool IsLeader { get; set; }
 
         public List<ResourceItem> SelectedResources { get; set; }
     }

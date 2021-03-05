@@ -12,7 +12,5 @@ namespace Settlement.Sportsbook.Aio.Requests
         public List<SaveScoreModel> ScoresToSave { get; set; }
 
         public List<SaveScoreModel> CheckedScores { get; set; }
-        
-        public string ApiKey { get; set; }
     }
 }

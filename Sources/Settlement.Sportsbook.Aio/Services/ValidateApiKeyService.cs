@@ -1,5 +1,5 @@
 ﻿using Fanex.Data.Repository;
-using Settlement.Sportsbook.Aio.Mapper;
+using Settlement.Sportsbook.Aio.MapperFactory;
 
 namespace Settlement.Sportsbook.Aio.Services
 {

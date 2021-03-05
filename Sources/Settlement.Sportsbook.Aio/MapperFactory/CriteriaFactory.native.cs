@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
-namespace Settlement.Sportsbook.Aio.Mapper
+namespace Settlement.Sportsbook.Aio.MapperFactory
 {
     public interface ICriteriaFactory
     {
@@ -32,7 +32,7 @@ namespace Settlement.Sportsbook.Aio.Mapper
             return (INonQueryCommand)nonQueryCommand;
         }
 
-        public virtual Type GetCriteriaType(string apiKey)
+        public Type GetCriteriaType(string apiKey)
         {
             return CriteriaTypes.ContainsKey(apiKey) ? CriteriaTypes[apiKey] : null;
         }

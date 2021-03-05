@@ -29,7 +29,7 @@ using Sentry;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.Aio;
 using Settlement.Sportsbook.Aio.Controllers;
-using Settlement.Sportsbook.Aio.Mapper;
+using Settlement.Sportsbook.Aio.MapperFactory;
 using Settlement.Sportsbook.Aio.Services;
 using Settlement.Sportsbook.Cricket;
 using Settlement.Sportsbook.Cricket.Controllers;

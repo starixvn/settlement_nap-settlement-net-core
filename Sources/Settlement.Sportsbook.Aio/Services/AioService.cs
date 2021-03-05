@@ -7,7 +7,7 @@ using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.Aio.Constants;
 using Settlement.Sportsbook.Aio.Criterias;
-using Settlement.Sportsbook.Aio.Mapper;
+using Settlement.Sportsbook.Aio.MapperFactory;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Requests;
 using System;
@@ -196,8 +196,7 @@ namespace Settlement.Sportsbook.Aio.Services
 
         public async Task<Result> SaveScore(SaveScoreRequest request)
         {
-            var query = createQueryService.QuerySaveScore(request);
-            var criteria = validateApiKeyService.CreateNonQueryCommand(query, request.ApiKey) as SaveScoreCriteriaBase;
+            var criteria = createQueryService.QuerySaveScore(request);
             await repository.ExecuteAsync(criteria);
             return new Result
             {

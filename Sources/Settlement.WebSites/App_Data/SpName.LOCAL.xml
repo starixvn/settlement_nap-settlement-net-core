@@ -2,13 +2,17 @@
 <Functions SiteName="NAP - Settlement site">
   <Function Name="Cricket">
     <Setting Key="NAP_Set_MatchSelInfo" SpName="NAP_Set_MatchSelInfo" DbName="DBPRO.bodb02.bodbAdminNet" />
-    <Setting Key="NAP_Set_MatchSelDetail_Resources" SpName="NAP_Set_MatchSelDetail_Resources" DbName="DBTXN.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_MatchSelDetail_Resources_ReCal" SpName="NAP_Set_MatchSelDetail_Resources_ReCal" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_CheckingMarkedTransaction" SpName="NAP_Set_CheckingMarkedTransaction" DbName="DBTXN.bodb02.bodbAdminNet" />
-    <Setting Key="NAP_Set_EarlySettlement_CheckingMarkedTransaction" SpName="NAP_Set_EarlySettlement_CheckingMarkedTransaction" DbName="DBTXN.bodb02.bodbAdminNet" />
-    <Setting Key="NAP_Admin_Settlement_Profile_Push" SpName="NAP_Admin_Settlement_Profile_Push" DbName="DBTXN.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_MatchSelHedge" SpName="NAP_Set_MatchSelHedge" DbName="DBPRO.bodb02.bodbAdminNet" />
+  </Function>
+
+  <Function Name="Aio">
+    <Setting Key="NAP_Set_MatchSelDetail_Resources" SpName="NAP_Set_MatchSelDetail_Resources_UAT2" DbName="DBTXN.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Admin_Settlement_Profile_Push" SpName="NAP_Admin_Settlement_Profile_Push_UAT2" DbName="DBTXN.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_EarlySettlement_CheckingMarkedTransaction" SpName="NAP_Set_EarlySettlement_CheckingMarkedTransaction" DbName="DBTXN.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Admin_Settlement_Refund_MP_Push" SpName="NAP_Admin_Settlement_Refund_MP_Push" DbName="DBTXN.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Admin_Settlement_Validation_PrePush" SpName="NAP_Admin_Settlement_Validation_PrePush_UAT2" DbName="DBPRO.bodb02.bodbAdminNet" />
   </Function>
 
   <Function Name="MoveTickets">
@@ -20,10 +24,10 @@
   </Function>
 
   <Function Name="Provider">
-    <Setting Key="NAP_Set_ProviderExternalResultDetailOSLatestInfoSel" SpName="NAP_Set_ProviderExternalResultDetailOSLatestInfoSel" DbName="DBPRO.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_ProviderExternalResultDetailOSLatestInfoSel" SpName="NAP_Set_ProviderExternalResultDetailOSLatestInfoSel_UAT2" DbName="DBPRO.bodb02.bodbAdminNet" />
   </Function>
 
   <Function Name="Setting">
-    <Setting Key="NAP_Set_ExternalResultDetailESIns" SpName="NAP_Set_ExternalResultDetailESIns" DbName="DBPRO.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_ExternalResultDetailOSIns" SpName="NAP_Set_ExternalResultDetailOSIns_UAT2" DbName="DBPRO.bodb02.bodbAdminNet" />
   </Function>
 </Functions>

@@ -15,7 +15,8 @@
 	  <Compile Remove="Constants\InputType.cs" />
 	  <Compile Remove="Criterias\CheckMarkedTicketsParlayCriteria.cs" />
 	  <Compile Remove="Criterias\GetRecalResultCriteria.cs" />
-	  <Compile Remove="Mapper\GetFetchService.cs" />
+	  <Compile Remove="Criterias\Tennis\SaveScoreCriteria.cs" />
+	  <Compile Remove="MapperFactory\GetFetchService.cs" />
 	  <Compile Remove="Requests\CheckMarkedTicketsParlayRequest.cs" />
 	  <Compile Remove="Requests\RefundParlayChildMatchRequest.cs" />
 	  <Compile Remove="Requests\SettleChildMatchRequest.cs" />
