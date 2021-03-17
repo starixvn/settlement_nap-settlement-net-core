@@ -24,7 +24,7 @@
   </Function>
 
   <Function Name="Provider">
-    <Setting Key="NAP_Set_ProviderExternalResultDetailOSLatestInfoSel" SpName="NAP_Set_ProviderExternalResultDetailOSLatestInfoSel_UAT2" DbName="DBPRO.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_ProviderExternalResultDetailLatestInfoSel" SpName="NAP_Set_ProviderExternalResultDetailLatestInfoSel_UAT2" DbName="DBPRO.bodb02.bodbAdminNet" />
   </Function>
 
   <Function Name="Setting">

@@ -10,7 +10,7 @@ namespace Settlement.Sportsbook.Aio.Criteria.Tennis
 
         public override string GetSettingKey()
         {
-            return "NAP_Set_ProviderExternalResultDetailOSLatestInfoSel";
+            return "NAP_Set_ProviderExternalResultDetailLatestInfoSel";
         }
 
         public override bool IsValid()
