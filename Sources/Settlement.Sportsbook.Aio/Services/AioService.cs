@@ -3,6 +3,7 @@ using Fanex.Data.Repository;
 using Fanex.NAP.Client.Helpers.Web;
 using Kaden.XmlConverter;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.Aio.Constants;
@@ -12,6 +13,7 @@ using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Requests;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -51,6 +53,8 @@ namespace Settlement.Sportsbook.Aio.Services
 
         private readonly IValidateApiKeyService validateApiKeyService;
 
+        private readonly IConfiguration configuration;
+
         public AioService(
             IDynamicRepository repository,
             PermissionService permissionService,
@@ -58,7 +62,8 @@ namespace Settlement.Sportsbook.Aio.Services
             IMapper mapper,
             IMapperFactory mapperFactory,
             IValidateApiKeyService validateApiKeyService,
-            ICreateQueryService createQueryService)
+            ICreateQueryService createQueryService,
+            IConfiguration configuration)
         {
             this.repository = repository;
             this.permissionService = permissionService;
@@ -67,6 +72,7 @@ namespace Settlement.Sportsbook.Aio.Services
             this.mapperFactory = mapperFactory;
             this.validateApiKeyService = validateApiKeyService;
             this.createQueryService = createQueryService;
+            this.configuration = configuration;
         }
 
         public async Task<AioMatch> GetMatch(GetMatchRequest request)
@@ -178,6 +184,10 @@ namespace Settlement.Sportsbook.Aio.Services
 
         public async Task<Result> VerifyNoRunningOdds(CheckRunningOddsRequest request)
         {
+            if(configuration.GetSection("EnableVerifyingRunningOdds").Value == "0")
+            {
+                return new Result();
+            }
             var criteria = new VerificationCriteria
             {
                 MatchId = request.MatchId,

@@ -108,7 +108,7 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
 
             };
 
-            var expectedData = new
+            var expectedData = new SaveScoreCriteria
             {
                 MatchId = request.MatchId,
                 UserId = currentSession.UserId,
