@@ -109,7 +109,6 @@ namespace Settlement.Sportsbook.MoveTickets.UnitTests.Services
                 CreateMatch(7, "Refund", false),
             };
 
-            referenceAction.ActionName = "Fed 01";
             expectedMatches[0].ReferenceActions.Add(referenceAction);
 
             Assert.Equal(JsonConvert.SerializeObject(expectedMatches), JsonConvert.SerializeObject(actualMatches));

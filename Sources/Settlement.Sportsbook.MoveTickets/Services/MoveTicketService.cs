@@ -92,7 +92,6 @@ namespace Settlement.Sportsbook.MoveTickets.Services
             foreach (var match in data)
             {
                 var referenceActionByMatchId = referenceActions.Where(item => item.MatchId == match.MatchId).ToList();
-                referenceActionByMatchId.ForEach(item => item.ActionName = item.LogDate.ToString("MMM dd", CultureInfo.CreateSpecificCulture("en-US")));
                 match.ReferenceActions = referenceActionByMatchId;
             }
         }

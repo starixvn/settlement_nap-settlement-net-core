@@ -15,7 +15,5 @@ namespace Settlement.Core.Models
         public string AwayScore { get; set; }
 
         public DateTime LogDate { get; set; }
-
-        public string ActionName { get; set; }
     }
 }
