@@ -40,7 +40,7 @@ namespace Settlement.Sportsbook.Aio.Services
             }
             else
             {
-                var betTypeId = Convert.ToInt32(resourceId.Substring(0, 5));
+                var betTypeId = SplitBetType(resourceId, 0, 5);
                 resultDetail.BetTypeName = GetInnsBetTypeName(betTypeId, resourceId);
                 GroupInnsBetType(resultDetail, betTypeId);
                 GetInnsBetTypeInputType(resultDetail, betTypeId);
@@ -74,13 +74,13 @@ namespace Settlement.Sportsbook.Aio.Services
                 const int ballLength = 2;
                 if (GroupBetType.IncludedOvers.Contains(betTypeId))
                 {
-                    var betTypeOvers = Convert.ToInt32(resourceId.Substring(overPosition, overLength));
+                    var betTypeOvers = SplitBetType(resourceId, overPosition, overLength);
                     betTypeName = string.Format(betTypeName, betTypeOvers);
                 }
                 else if (GroupBetType.IncludedOversAndBalls.Contains(betTypeId))
                 {
-                    var betTypeOvers = Convert.ToInt32(resourceId.Substring(overPosition, overLength));
-                    var betTypeBalls = Convert.ToInt32(resourceId.Substring(ballPosition, ballLength));
+                    var betTypeOvers = SplitBetType(resourceId, overPosition, overLength);
+                    var betTypeBalls = SplitBetType(resourceId, ballPosition, ballLength);
                     betTypeName = string.Format(betTypeName, betTypeOvers, betTypeBalls);
                 }
             }
@@ -156,6 +156,11 @@ namespace Settlement.Sportsbook.Aio.Services
             {
                 resultDetail.InputType = InputType.SingleScore;
             }
+        }
+
+        private static int SplitBetType(string resourceId, int startIndex, int length)
+        {
+            return Convert.ToInt32(resourceId.Substring(startIndex, length));
         }
     }
 }
