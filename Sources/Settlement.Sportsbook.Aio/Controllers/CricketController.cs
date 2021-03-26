@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Settlement.Core.ActionFilters;
 using Settlement.Sportsbook.Aio.Requests;
-using Settlement.Sportsbook.Aio.Services;
 using System.Threading.Tasks;
 
 namespace Settlement.Sportsbook.Aio.Controllers

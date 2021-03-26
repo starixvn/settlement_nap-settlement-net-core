@@ -97,7 +97,7 @@ namespace Settlement.WebSites
                                             "https://nap-settlement.playthefun.com",
                                             "https://napsettlement.playthefun.com",
 
-                                            "http://napsettlement.starixuat.com",
+                                            "https://napsettlement.starixuat.com",
                                             "https://napsettlementcore.starixuat.com",
 
                                             "https://settlement.oneops.net",

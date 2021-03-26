@@ -9,6 +9,9 @@ using Settlement.WebSites.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
@@ -30,6 +33,11 @@ namespace Settlement.WebSites.Controllers
             ViewBag.IsSessionAvailable = HttpContext.Session.IsAvailable;
             ViewBag.UserId = session.UserId;
             ViewBag.Username = session.UserName;
+            var instanceName = Dns.GetHostName();
+            var ip = Dns.GetHostEntry(instanceName).AddressList.FirstOrDefault(x => x.AddressFamily == AddressFamily.InterNetwork);
+            ViewBag.InstanceName = instanceName;
+            ViewBag.InstanceIp = ip;
+
             return View();
         }
 
