@@ -11,7 +11,6 @@ using Settlement.Sportsbook.MoveTickets.Models;
 using Settlement.Sportsbook.MoveTickets.Requests;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -67,7 +66,7 @@ namespace Settlement.Sportsbook.MoveTickets.Services
                 matches.Add(match);
             }));
 
-            getReferenceAction(matches);
+            GetReferenceAction(matches);
 
             var sportBooks = matches.GroupBy(match => new { match.SportName, match.SportType })
                                     .Select(sports => new SportModel
@@ -80,12 +79,14 @@ namespace Settlement.Sportsbook.MoveTickets.Services
             return sportBooks;
         }
 
-        private void getReferenceAction(List<Match> data)
+        private void GetReferenceAction(List<Match> data)
         {
-            var ListMatchId = data.Select(match => match.MatchId).ToList();
-            var matchIds = string.Join(',', ListMatchId);
-            var criteria = new ReferenceActionCriteria();
-            criteria.MatchIds = matchIds;
+            var listMatchId = data.Select(match => match.MatchId).ToList();
+            var matchIds = string.Join(',', listMatchId);
+            var criteria = new GetReferenceActionCriteria
+            {
+                MatchIds = matchIds
+            };
 
             var referenceActions = repository.Fetch<ReferenceAction>(criteria);
 
@@ -182,13 +183,11 @@ namespace Settlement.Sportsbook.MoveTickets.Services
                 logService.ActionLog(request.MatchId, criteria.ErrMsg);
             }
 
-            var result = new Result()
+            return new Result()
             {
                 ErrCode = criteria.ErrCode,
                 ErrMsg = criteria.ErrMsg
             };
-
-            return result;
         }
 
         public async Task<List<ChildMatch>> GetChildMatch(GetChildMatchRequest request)

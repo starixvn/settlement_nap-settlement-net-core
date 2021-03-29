@@ -2,7 +2,7 @@
 
 namespace Settlement.Sportsbook.MoveTickets.Criterias
 {
-    public class ReferenceActionCriteria : CriteriaBase
+    public class GetReferenceActionCriteria : CriteriaBase
     {
         public string MatchIds { get; set; }
 
