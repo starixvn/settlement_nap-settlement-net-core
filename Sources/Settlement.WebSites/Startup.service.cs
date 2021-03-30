@@ -101,9 +101,14 @@ namespace Settlement.WebSites
 
                                             "https://nap-settlement.playthefun.com",
                                             "https://napsettlement.playthefun.com",
+                                            "https://napsettlementcore.playthefun.com",
+                                            "https://napsettlementcore2.playthefun.com",
+                                            "https://napsettlementcore3.playthefun.com",
 
                                             "https://napsettlement.starixuat.com",
                                             "https://napsettlementcore.starixuat.com",
+                                            "https://napsettlementcore2.starixuat.com",
+                                            "https://napsettlementcore3.starixuat.com",
 
                                             "https://settlement.oneops.net",
                                             "https://settlementcore.oneops.net")
@@ -157,7 +162,7 @@ namespace Settlement.WebSites
             services.AddTransient<ICriteriaFactory, CriteriaFactoryImp>();
             services.AddTransient<ICricketService, CricketService>();
             services.AddTransient<ICreateQueryService, CreateQueryServiceImp>();
-         }
+        }
 
         private void ConfigureNapServices(IServiceCollection services)
         {
