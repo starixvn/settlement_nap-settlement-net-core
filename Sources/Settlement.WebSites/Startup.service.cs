@@ -87,6 +87,7 @@ namespace Settlement.WebSites
                     {
                         builder.WithOrigins("http://localhost:5001",
                                             "https://localhost:44346",
+                                            "http://localhost:55201",
                                             "http://localhost:58793",
 
                                             "https://settlement.nexdev.net",
