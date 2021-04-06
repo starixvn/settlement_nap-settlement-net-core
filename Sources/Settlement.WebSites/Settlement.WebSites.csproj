@@ -5,12 +5,28 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<None Remove="App_Data\SpName.LOCAL.xml" />
+		<None Remove="App_Data\SpName.PROD.xml" />
+		<None Remove="App_Data\SpName.SIT.xml" />
+		<None Remove="App_Data\SpName.UAT.xml" />
 		<None Remove="App_Data\SpName.xml" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<Content Include="App_Data\SpName.xml">
+		<Content Include="App_Data\SpName.LOCAL.xml">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="App_Data\SpName.PROD.xml">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="App_Data\SpName.SIT.xml">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="App_Data\SpName.UAT.xml">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="App_Data\SpName.xml">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
 	</ItemGroup>
 
@@ -32,15 +48,25 @@
 
 	<ItemGroup>
 		<PackageReference Include="AutoMapper" Version="10.1.1" />
+		<PackageReference Include="Fanex.Caching.AspNetCore" Version="2.2.2" />
+		<PackageReference Include="Fanex.Caching.Redis.AspNetCore" Version="2.2.2" />
 		<PackageReference Include="Fanex.Data" Version="4.2.2" />
 		<PackageReference Include="Fanex.Data.Repository" Version="4.2.2" />
 		<PackageReference Include="Fanex.Data.SqlServer" Version="4.2.2" />
 		<PackageReference Include="Fanex.Logging.Extensions.AspNetCore" Version="1.0.1-beta1" />
 		<PackageReference Include="Fanex.Logging.Extensions.Database" Version="1.0.8" />
 		<PackageReference Include="Fanex.Logging.Sentry" Version="1.0.6" />
-		<PackageReference Include="Fanex.NAP.Client.AspNetCore" Version="1.0.0-beta5" />
-		<PackageReference Include="Fanex.NAP.Client.Transport" Version="1.0.0-beta7" />
-		<PackageReference Include="Fanex.NAP.Signin.AspNetCore" Version="1.0.0.1-beta1" />
+		<PackageReference Include="Fanex.NAP.Client.AspNetCore" Version="1.0.0.5" />
+		<PackageReference Include="Fanex.NAP.Signin.AspNetCore" Version="1.0.0.3" />
 		<PackageReference Include="MediatR" Version="9.0.0" />
+		<PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="9.0.0" />
+		<PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="5.0.2" />
+		<PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="5.0.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Settlement.Sportsbook.Cricket\Settlement.Sportsbook.Cricket.csproj" />
+		<ProjectReference Include="..\Settlement.Sportsbook.MoveTickets\Settlement.Sportsbook.MoveTickets.csproj" />
+		<ProjectReference Include="..\Settlement.Sportsbook.Aio\Settlement.Sportsbook.Aio.csproj" />
 	</ItemGroup>
 </Project>

@@ -1,4 +1,6 @@
 using AutoMapper;
+using Fanex.Caching;
+using Fanex.Caching.Redis;
 using Fanex.Data;
 using Fanex.Data.Repository;
 using Fanex.Data.SqlServer;
@@ -12,18 +14,33 @@ using Fanex.NAP.Client.AspNetCore.Session;
 using Fanex.NAP.Client.Configuration;
 using Fanex.NAP.Client.Helpers.Web;
 using Fanex.NAP.Client.Services;
-using Fanex.NAP.Client.Transport;
-using Fanex.NAP.Client.Web;
+using Fanex.RemotingRef;
+using Kaden.XmlConverter;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Sentry;
+using Settlement.Core.Services;
+using Settlement.Sportsbook.Aio;
+using Settlement.Sportsbook.Aio.Controllers;
+using Settlement.Sportsbook.Aio.MapperFactory;
+using Settlement.Sportsbook.Aio.Services;
+using Settlement.Sportsbook.Cricket;
+using Settlement.Sportsbook.Cricket.Controllers;
+using Settlement.Sportsbook.Cricket.Services;
+using Settlement.Sportsbook.MoveTickets;
+using Settlement.Sportsbook.MoveTickets.Controllers;
+using Settlement.Sportsbook.MoveTickets.Services;
+using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace Settlement.WebSites
@@ -71,13 +88,51 @@ namespace Settlement.WebSites
                 options.AddPolicy(allowOrigin,
                     builder =>
                     {
-                        builder.WithOrigins("https://localhost:44346",
-                                            "http://localhost:58793")
+                        builder.WithOrigins("http://localhost:5001",
+                                            "https://localhost:44346",
+                                            "http://localhost:55201",
+                                            "http://localhost:58793",
+
+                                            "https://settlement.nexdev.net",
+                                            "https://settlement-netcore-v1.nexdev.net",
+                                            "https://settlement-netcore-v2.nexdev.net",
+                                            "https://settlement-netcore-v3.nexdev.net",
+
+                                            "https://nap-settlement.playthefun.com",
+                                            "https://napsettlement.playthefun.com",
+                                            "https://napsettlementcore.playthefun.com",
+                                            "https://napsettlementcore2.playthefun.com",
+                                            "https://napsettlementcore3.playthefun.com",
+
+                                            "https://napsettlement.starixuat.com",
+                                            "https://napsettlementcore.starixuat.com",
+                                            "https://napsettlementcore2.starixuat.com",
+                                            "https://napsettlementcore3.starixuat.com",
+
+                                            "https://settlement.oneops.net",
+                                            "https://settlementcore.oneops.net")
                               .AllowAnyMethod()
                               .AllowAnyHeader()
                               .AllowCredentials();
                     });
             });
+        }
+
+        private void ConfigureRedis(IServiceCollection services)
+        {
+            var redisConfig = Configuration.GetSection("AuthSettings:RedisConfig").Value;
+            var redis = ConnectionMultiplexer.Connect(redisConfig);
+
+            services.AddDataProtection()
+                .PersistKeysToStackExchangeRedis(redis, "Fanex.Settlement-ProtectionKeys");
+
+            services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = redisConfig;
+                options.InstanceName = $"Fanex.Settlement.Session-";
+            });
+
+            services.AddRedisCache(Configuration.GetSection("fanex.caching.redis"));
         }
 
         private void ConfigureSession(IServiceCollection services)
@@ -92,21 +147,40 @@ namespace Settlement.WebSites
 
         private static void ConfigInternalService(IServiceCollection services)
         {
+            services.AddTransient<IAioService, AioService>();
+            services.AddTransient<ICricketBetTypeService, CricketBetTypeService>();
+            services.AddTransient<IMatchResultDetailService, MatchResultDetailService>();
+            services.AddTransient<IMatchService, MatchService>();
+            services.AddTransient<IMoveTicketService, MoveTicketService>();
+            services.AddTransient<IScoreService, ScoreService>();
+            services.AddTransient<IScoreSetService, ScoreSetService>();
+            services.AddTransient<ILogService, LogServiceImp>();
+            services.AddTransient<IMapperFactory, MapperFactoryBase>();
+            services.AddTransient<IMapperFactory, MapperFactoryImp>();
+            services.AddTransient<IValidateApiKeyService, ValidateApiKeyServiceImp>();
+            services.AddTransient<ICriteriaFactory, CriteriaFactoryImp>();
+            services.AddTransient<ICricketService, CricketService>();
+            services.AddTransient<ICreateQueryService, CreateQueryServiceImp>();
         }
 
         private void ConfigureNapServices(IServiceCollection services)
         {
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-
             services.AddTransient<ILogger, Logger>();
             services.AddSingleton<INapSettings>(new NapSettings(Configuration));
             services.AddSingleton<INapSession, NapSession>();
-            services.AddSingleton<IRestClient, RestClient>();
+            services.AddSingleton<ICacheService, CacheService>();
 
             services.AddSingleton<IGroupService, GroupService>();
             services.AddSingleton<IUserService, UserService>();
             services.AddSingleton<ISecurityService, SecurityService>();
             services.AddSingleton<ISiteService, SiteService>();
+
+            RefDataTypeContainer
+                .ConnectTo(new Uri(Configuration.GetSection("Fanex.RemotingRef.Service.Url").Value))
+                .FromApplication("Settlement");
+            services.Configure<IConfiguration>(Configuration);
+            services.AddSingleton<IRemotingRefService, RemotingRefService>();
         }
 
         private void ConfigureFanex()
@@ -123,7 +197,7 @@ namespace Settlement.WebSites
               .StartNewSession()
               .Use(connections)
               .WithSqlServer()
-              .UseDefaultDbSettingProvider(resourcePath: "~/App_Data")
+              .UseDefaultDbSettingProvider(resourcePath: Configuration.GetSection("StoredProcedurePath").Value)
               .Run();
 
             LogManager
@@ -144,18 +218,27 @@ namespace Settlement.WebSites
         private static void ConfigureCore(IServiceCollection services)
         {
             services.AddScoped<IDynamicRepository, DynamicRepository>();
+            services.AddScoped<IRemotingRefService, RemotingRefService>();
+            services.AddTransient<IRefDataService, RefDataService>();
+            services.AddSingleton<PermissionService, PermissionServiceImp>();
+            services.AddSingleton<XmlConvertService, XmlConvertServiceImp>();
+            services.AddSingleton<ILoggingService, LoggingService>();
         }
 
         private static void ConfigureMediator(IServiceCollection services)
         {
-            // services.AddMediatR(typeof(Controller).GetTypeInfo().Assembly);
+            services.AddMediatR(typeof(AioController).GetTypeInfo().Assembly);
+            services.AddMediatR(typeof(MoveTicketController).GetTypeInfo().Assembly);
+            services.AddMediatR(typeof(CricketController).GetTypeInfo().Assembly);
         }
 
         private static void ConfigureAutoMapper(IServiceCollection services)
         {
             var mapperConfig = new MapperConfiguration(mc =>
             {
-                //mc.AddProfile();
+                mc.AddProfile(typeof(SportsbookAioAutoMapperProfile));
+                mc.AddProfile(typeof(SportsbookMoveTicketAutoMapperProfile));
+                mc.AddProfile(typeof(SportsbookCricketAutoMapperProfile));
             });
 
             IMapper mapper = mapperConfig.CreateMapper();

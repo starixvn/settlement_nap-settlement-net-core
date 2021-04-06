@@ -9,9 +9,21 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sources", "Sources", "{D19D
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{A1FCD18B-3CAA-4629-A10D-F9EDCEF84670}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Settlement.Cricket", "Sources\Settlement.Cricket\Settlement.Cricket.csproj", "{03F51B3F-145E-4698-BD4C-E7ECDDCCC218}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Settlement.Sportsbook.Aio", "Sources\Settlement.Sportsbook.Aio\Settlement.Sportsbook.Aio.csproj", "{03F51B3F-145E-4698-BD4C-E7ECDDCCC218}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Settlement.Cricket.UnitTests", "Tests\Settlement.Cricket.UnitTests\Settlement.Cricket.UnitTests.csproj", "{6409734F-A24C-4162-B72B-FE22F0D79EFB}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{0318FAF0-0F10-4D19-A03A-BA495310F4D4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Settlement.Core", "Sources\Settlement.Core\Settlement.Core.csproj", "{C2438490-1481-4F3E-8673-FD5B1AB1ACDF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Settlement.Sportsbook.MoveTickets.UnitTests", "Tests\Settlement.Sportsbook.MoveTickets.UnitTests\Settlement.Sportsbook.MoveTickets.UnitTests.csproj", "{8624D201-FCDD-4CE8-AE38-B8CE09073877}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Settlement.Sportsbook.MoveTickets", "Sources\Settlement.Sportsbook.MoveTickets\Settlement.Sportsbook.MoveTickets.csproj", "{5FB58EAE-5DA1-4BA7-8A58-022EC51CD37C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Settlement.Sportsbook.Cricket", "Sources\Settlement.Sportsbook.Cricket\Settlement.Sportsbook.Cricket.csproj", "{D4F22893-D16C-4ECA-8420-A25376958DAE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Settlement.Sportsbook.Aio.UnitTests", "Tests\Settlement.Sportsbook.Aio.UnitTests\Settlement.Sportsbook.Aio.UnitTests.csproj", "{4F904B57-5030-4138-9DF2-377BDC4F7CDE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Settlement.Sportsbook.Cricket.UnitTests", "Tests\Settlement.Sportsbook.Cricket.UnitTests\Settlement.Sportsbook.Cricket.UnitTests.csproj", "{5C044008-B895-4075-BDAB-C1EF245B41F7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,10 +39,30 @@ Global
 		{03F51B3F-145E-4698-BD4C-E7ECDDCCC218}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{03F51B3F-145E-4698-BD4C-E7ECDDCCC218}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{03F51B3F-145E-4698-BD4C-E7ECDDCCC218}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6409734F-A24C-4162-B72B-FE22F0D79EFB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6409734F-A24C-4162-B72B-FE22F0D79EFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6409734F-A24C-4162-B72B-FE22F0D79EFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6409734F-A24C-4162-B72B-FE22F0D79EFB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C2438490-1481-4F3E-8673-FD5B1AB1ACDF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C2438490-1481-4F3E-8673-FD5B1AB1ACDF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C2438490-1481-4F3E-8673-FD5B1AB1ACDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C2438490-1481-4F3E-8673-FD5B1AB1ACDF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8624D201-FCDD-4CE8-AE38-B8CE09073877}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8624D201-FCDD-4CE8-AE38-B8CE09073877}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8624D201-FCDD-4CE8-AE38-B8CE09073877}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8624D201-FCDD-4CE8-AE38-B8CE09073877}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5FB58EAE-5DA1-4BA7-8A58-022EC51CD37C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5FB58EAE-5DA1-4BA7-8A58-022EC51CD37C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5FB58EAE-5DA1-4BA7-8A58-022EC51CD37C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5FB58EAE-5DA1-4BA7-8A58-022EC51CD37C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D4F22893-D16C-4ECA-8420-A25376958DAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4F22893-D16C-4ECA-8420-A25376958DAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4F22893-D16C-4ECA-8420-A25376958DAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4F22893-D16C-4ECA-8420-A25376958DAE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F904B57-5030-4138-9DF2-377BDC4F7CDE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F904B57-5030-4138-9DF2-377BDC4F7CDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F904B57-5030-4138-9DF2-377BDC4F7CDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F904B57-5030-4138-9DF2-377BDC4F7CDE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C044008-B895-4075-BDAB-C1EF245B41F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C044008-B895-4075-BDAB-C1EF245B41F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C044008-B895-4075-BDAB-C1EF245B41F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C044008-B895-4075-BDAB-C1EF245B41F7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -38,7 +70,13 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{ECAAA459-2B59-4B77-9B04-96F76E944B63} = {D19D8BE5-5331-437B-BE2D-FDF1B5F02781}
 		{03F51B3F-145E-4698-BD4C-E7ECDDCCC218} = {D19D8BE5-5331-437B-BE2D-FDF1B5F02781}
-		{6409734F-A24C-4162-B72B-FE22F0D79EFB} = {A1FCD18B-3CAA-4629-A10D-F9EDCEF84670}
+		{0318FAF0-0F10-4D19-A03A-BA495310F4D4} = {D19D8BE5-5331-437B-BE2D-FDF1B5F02781}
+		{C2438490-1481-4F3E-8673-FD5B1AB1ACDF} = {0318FAF0-0F10-4D19-A03A-BA495310F4D4}
+		{8624D201-FCDD-4CE8-AE38-B8CE09073877} = {A1FCD18B-3CAA-4629-A10D-F9EDCEF84670}
+		{5FB58EAE-5DA1-4BA7-8A58-022EC51CD37C} = {D19D8BE5-5331-437B-BE2D-FDF1B5F02781}
+		{D4F22893-D16C-4ECA-8420-A25376958DAE} = {D19D8BE5-5331-437B-BE2D-FDF1B5F02781}
+		{4F904B57-5030-4138-9DF2-377BDC4F7CDE} = {A1FCD18B-3CAA-4629-A10D-F9EDCEF84670}
+		{5C044008-B895-4075-BDAB-C1EF245B41F7} = {A1FCD18B-3CAA-4629-A10D-F9EDCEF84670}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F134C0FB-5844-4216-814B-BAE66FBB0195}

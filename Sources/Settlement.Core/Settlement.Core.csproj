@@ -1,0 +1,47 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="Configurations\SettlementFunctionKeys.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SettlementFunctionKeys.tt</DependentUpon>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Fanex.Caching" Version="2.2.2" />
+    <PackageReference Include="Fanex.Data" Version="4.2.2" />
+    <PackageReference Include="Fanex.Data.Repository" Version="4.2.2" />
+    <PackageReference Include="Fanex.Logging" Version="2.0.1" />
+    <PackageReference Include="Fanex.NAP.Client.AspNetCore" Version="1.0.0.5" />
+    <PackageReference Include="Fanex.RemotingRef" Version="1.5.0" />
+    <PackageReference Include="Kaden.Extensions" Version="2.0.0" />
+    <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.7" />
+    <PackageReference Include="Microsoft.AspNetCore" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Configurations\SettlementFunctionKeys.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>SettlementFunctionKeys.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Configurations\SettlementFunctionKeys.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SettlementFunctionKeys.tt</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+</Project>

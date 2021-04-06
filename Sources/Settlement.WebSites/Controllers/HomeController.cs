@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Security.Claims;
-using System.Threading;
-using System.Threading.Tasks;
-using Fanex.NAP.Client.Helpers.Web;
+﻿using Fanex.NAP.Client.Helpers.Web;
 using Fanex.NAP.Client.Models.ParameterObject;
 using Fanex.NAP.Client.Services;
 using Microsoft.AspNetCore.Authentication;
@@ -12,6 +6,15 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Settlement.WebSites.Models;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Net;
+using System.Net.Sockets;
+using System.Security.Claims;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Settlement.WebSites.Controllers
 {
@@ -30,6 +33,11 @@ namespace Settlement.WebSites.Controllers
             ViewBag.IsSessionAvailable = HttpContext.Session.IsAvailable;
             ViewBag.UserId = session.UserId;
             ViewBag.Username = session.UserName;
+            var instanceName = Dns.GetHostName();
+            var ip = Dns.GetHostEntry(instanceName).AddressList.FirstOrDefault(x => x.AddressFamily == AddressFamily.InterNetwork);
+            ViewBag.InstanceName = instanceName;
+            ViewBag.InstanceIp = ip;
+
             return View();
         }
 
