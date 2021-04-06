@@ -14,7 +14,6 @@ using Fanex.NAP.Client.AspNetCore.Session;
 using Fanex.NAP.Client.Configuration;
 using Fanex.NAP.Client.Helpers.Web;
 using Fanex.NAP.Client.Services;
-using Fanex.NAP.Client.Transport;
 using Fanex.RemotingRef;
 using Kaden.XmlConverter;
 using MediatR;
