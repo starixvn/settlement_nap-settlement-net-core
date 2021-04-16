@@ -12,7 +12,7 @@
     <Setting Key="NAP_Admin_Settlement_Profile_Push" SpName="NAP_Admin_Settlement_Profile_Push" DbName="DBTXN.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_EarlySettlement_CheckingMarkedTransaction" SpName="NAP_Set_EarlySettlement_CheckingMarkedTransaction" DbName="DBTXN.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Admin_Settlement_Refund_MP_Push" SpName="NAP_Admin_Settlement_Refund_MP_Push" DbName="DBTXN.bodb02.bodbAdminNet" />
-    <Setting Key="NAP_Admin_Settlement_Validation_PrePush" SpName="NAP_Admin_Settlement_Validation_PrePush_UAT2" DbName="DBPRO.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Admin_Settlement_Validation_PrePush" SpName="NAP_Admin_Settlement_Validation_PrePush" DbName="DBPRO.bodb02.bodbAdminNet" />
   </Function>
 
   <Function Name="MoveTickets">
