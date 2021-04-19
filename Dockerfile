@@ -1,5 +1,6 @@
 FROM registry.nexdev.net:5050/docker/dotnet/core/sdk:5.0.102-ca-patch-buster-slim AS builder
 WORKDIR /src
+ENV TZ="America/New_York"
 
 COPY ./Sources/Settlement.Core ./Settlement.Core
 COPY ./Sources/Settlement.Sportsbook.Aio ./Settlement.Sportsbook.Aio
