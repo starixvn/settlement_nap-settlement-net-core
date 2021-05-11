@@ -31,6 +31,10 @@ namespace Settlement.Sportsbook.Aio.Models
 
         public int InputType { get; set; }
 
+        public bool IsSpecialBettype { get; set; }
+
+        public int Map { get; set; }
+
         public virtual string ResultStatus
         {
             get

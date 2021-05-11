@@ -24,10 +24,11 @@
   </Function>
 
   <Function Name="Provider">
-    <Setting Key="NAP_Set_ProviderExternalResultDetailLatestInfoSel" SpName="NAP_Set_ProviderExternalResultDetailLatestInfoSel" DbName="DBPRO.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_ProviderExternalResultDetailLatestInfoSel" SpName="NAP_Set_ProviderExternalResultDetailLatestInfoSel_xtest" DbName="DBPRO.bodb02.bodbAdminNet" />
   </Function>
 
   <Function Name="Setting">
-    <Setting Key="NAP_Set_ExternalResultDetailOSIns" SpName="NAP_Set_ExternalResultDetailOSIns_UAT2" DbName="DBPRO.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_ExternalResultDetailOSIns" SpName="NAP_Set_ExternalResultDetailOSIns_xtest" DbName="DBPRO.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_ExternalResultDetailESIns" SpName="NAP_Set_ExternalResultDetailESIns" DbName="DBPRO.bodb02.bodbAdminNet" />
   </Function>
 </Functions>

@@ -5,17 +5,11 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Compile Remove="Cricket\**" />
-	  <EmbeddedResource Remove="Cricket\**" />
-	  <None Remove="Cricket\**" />
-	</ItemGroup>
-
-	<ItemGroup>
 	  <Compile Remove="Constants\GroupBetType.cs" />
 	  <Compile Remove="Constants\InputType.cs" />
 	  <Compile Remove="Criterias\CheckMarkedTicketsParlayCriteria.cs" />
 	  <Compile Remove="Criterias\GetRecalResultCriteria.cs" />
-	  <Compile Remove="Criterias\Tennis\SaveScoreCriteria.cs" />
+	  <Compile Remove="Tennis\SaveScoreCriteria.cs" />
 	  <Compile Remove="MapperFactory\GetFetchService.cs" />
 	  <Compile Remove="Requests\CheckMarkedTicketsParlayRequest.cs" />
 	  <Compile Remove="Requests\RefundParlayChildMatchRequest.cs" />

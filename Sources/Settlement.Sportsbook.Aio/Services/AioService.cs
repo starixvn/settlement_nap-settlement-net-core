@@ -105,7 +105,7 @@ namespace Settlement.Sportsbook.Aio.Services
                 mapperService.Decorate(resultDetails);
             }
 
-            var ticketCounts = secondResultSet.FirstOrDefault() ?? new TicketCounts();
+           var ticketCounts = secondResultSet.FirstOrDefault() ?? new TicketCounts();
             var hedgeMatchCriteria = validateApiKeyService.CriteriaName(request, $"{apiKey}-{ApiKeyConstant.HedgeMatchInfoKey}");
             var hedgeMatchDetail = await repository.GetAsync<HedgeMatchDetail>(hedgeMatchCriteria);
 
