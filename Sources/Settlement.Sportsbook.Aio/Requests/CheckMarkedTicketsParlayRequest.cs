@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Settlement.Core.Models;
 
-namespace Settlement.Sportsbook.Cricket.Requests
+namespace Settlement.Sportsbook.Aio.Requests
 {
     public class CheckMarkedTicketsParlayRequest : IRequest<MarkedTickets>
     {

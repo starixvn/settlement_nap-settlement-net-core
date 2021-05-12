@@ -1,6 +1,6 @@
 ﻿using Fanex.Data.Repository;
 
-namespace Settlement.Sportsbook.Cricket.Criterias
+namespace Settlement.Sportsbook.Aio.Criterias
 {
     public class CheckMarkedTicketsParlayCriteria : NonQueryCommand
     {

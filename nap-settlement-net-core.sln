@@ -19,11 +19,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Settlement.Sportsbook.MoveT
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Settlement.Sportsbook.MoveTickets", "Sources\Settlement.Sportsbook.MoveTickets\Settlement.Sportsbook.MoveTickets.csproj", "{5FB58EAE-5DA1-4BA7-8A58-022EC51CD37C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Settlement.Sportsbook.Cricket", "Sources\Settlement.Sportsbook.Cricket\Settlement.Sportsbook.Cricket.csproj", "{D4F22893-D16C-4ECA-8420-A25376958DAE}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Settlement.Sportsbook.Aio.UnitTests", "Tests\Settlement.Sportsbook.Aio.UnitTests\Settlement.Sportsbook.Aio.UnitTests.csproj", "{4F904B57-5030-4138-9DF2-377BDC4F7CDE}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Settlement.Sportsbook.Cricket.UnitTests", "Tests\Settlement.Sportsbook.Cricket.UnitTests\Settlement.Sportsbook.Cricket.UnitTests.csproj", "{5C044008-B895-4075-BDAB-C1EF245B41F7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Settlement.Sportsbook.Aio.UnitTests", "Tests\Settlement.Sportsbook.Aio.UnitTests\Settlement.Sportsbook.Aio.UnitTests.csproj", "{4F904B57-5030-4138-9DF2-377BDC4F7CDE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,18 +47,10 @@ Global
 		{5FB58EAE-5DA1-4BA7-8A58-022EC51CD37C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5FB58EAE-5DA1-4BA7-8A58-022EC51CD37C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5FB58EAE-5DA1-4BA7-8A58-022EC51CD37C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D4F22893-D16C-4ECA-8420-A25376958DAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D4F22893-D16C-4ECA-8420-A25376958DAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D4F22893-D16C-4ECA-8420-A25376958DAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D4F22893-D16C-4ECA-8420-A25376958DAE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4F904B57-5030-4138-9DF2-377BDC4F7CDE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4F904B57-5030-4138-9DF2-377BDC4F7CDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4F904B57-5030-4138-9DF2-377BDC4F7CDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4F904B57-5030-4138-9DF2-377BDC4F7CDE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5C044008-B895-4075-BDAB-C1EF245B41F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5C044008-B895-4075-BDAB-C1EF245B41F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5C044008-B895-4075-BDAB-C1EF245B41F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5C044008-B895-4075-BDAB-C1EF245B41F7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -74,9 +62,7 @@ Global
 		{C2438490-1481-4F3E-8673-FD5B1AB1ACDF} = {0318FAF0-0F10-4D19-A03A-BA495310F4D4}
 		{8624D201-FCDD-4CE8-AE38-B8CE09073877} = {A1FCD18B-3CAA-4629-A10D-F9EDCEF84670}
 		{5FB58EAE-5DA1-4BA7-8A58-022EC51CD37C} = {D19D8BE5-5331-437B-BE2D-FDF1B5F02781}
-		{D4F22893-D16C-4ECA-8420-A25376958DAE} = {D19D8BE5-5331-437B-BE2D-FDF1B5F02781}
 		{4F904B57-5030-4138-9DF2-377BDC4F7CDE} = {A1FCD18B-3CAA-4629-A10D-F9EDCEF84670}
-		{5C044008-B895-4075-BDAB-C1EF245B41F7} = {A1FCD18B-3CAA-4629-A10D-F9EDCEF84670}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F134C0FB-5844-4216-814B-BAE66FBB0195}

@@ -17,6 +17,10 @@ namespace Settlement.Sportsbook.Aio.Services
         RefundParlayCriteria QueryRefundParlay(RefundParlayRequest request);
 
         SaveScoreCriteria QuerySaveScore(SaveScoreRequest request);
+
+        RefundParlayCriteria QueryRefundParlayChildMatch(RefundParlayChildMatchRequest request);
+
+        SettleCriteria QuerySettleChilMatch(SettleChildMatchRequest request);
     }
 
     public class CreateQueryServiceImp : ICreateQueryService
@@ -50,6 +54,16 @@ namespace Settlement.Sportsbook.Aio.Services
             return criteria;
         }
 
+        public SettleCriteria QuerySettleChilMatch (SettleChildMatchRequest request)
+        {
+            var resourcesResult = CreateResources(request.SelectedResources);
+            var criteria = mapper.Map<SettleChildMatchRequest, SettleCriteria>(request);
+            criteria.AdminId = currentSession.UserId;
+            criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
+            criteria.SelectedResources = resourcesResult;
+            return criteria;
+        }
+
         private string CreateResources(List<ResourceItem> selectedResources)
         {
             var resources = new Resources<ResourceItem>
@@ -67,6 +81,15 @@ namespace Settlement.Sportsbook.Aio.Services
             criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
             return criteria;
         }
+
+        public RefundParlayCriteria QueryRefundParlayChildMatch(RefundParlayChildMatchRequest request)
+        {
+            var criteria = mapper.Map<RefundParlayChildMatchRequest, RefundParlayCriteria>(request);
+            criteria.AdminId = currentSession.UserId;
+            criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
+            return criteria;
+        }
+
 
         public SaveScoreCriteria QuerySaveScore(SaveScoreRequest request)
         {

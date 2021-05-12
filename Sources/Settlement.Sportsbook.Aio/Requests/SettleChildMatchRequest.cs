@@ -1,9 +1,9 @@
 ﻿using MediatR;
 using Settlement.Core.Models;
-using Settlement.Sportsbook.Cricket.Models;
+using Settlement.Sportsbook.Aio.Models;
 using System.Collections.Generic;
 
-namespace Settlement.Sportsbook.Cricket.Requests
+namespace Settlement.Sportsbook.Aio.Requests
 {
     public class SettleChildMatchRequest : IRequest<Result>
     {
