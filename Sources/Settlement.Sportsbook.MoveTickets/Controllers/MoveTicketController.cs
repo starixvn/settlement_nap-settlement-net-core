@@ -9,7 +9,6 @@ namespace Settlement.Sportsbook.MoveTickets.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [EnableCors("AllowOrigin")]
     [Authorize]
     public class MoveTicketController : ControllerBase
     {

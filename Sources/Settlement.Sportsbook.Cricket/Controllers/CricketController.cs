@@ -10,7 +10,6 @@ namespace Settlement.Sportsbook.Cricket.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [EnableCors("AllowOrigin")]
     [Authorize]
     public class CricketController : ControllerBase
     {

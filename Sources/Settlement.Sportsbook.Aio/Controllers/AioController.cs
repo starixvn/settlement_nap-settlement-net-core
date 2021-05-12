@@ -10,7 +10,6 @@ namespace Settlement.Sportsbook.Aio.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [EnableCors("AllowOrigin")]
     [Authorize]
     public class AioController : ControllerBase
     {
