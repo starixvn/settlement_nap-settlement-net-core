@@ -11,5 +11,7 @@
         public const string ProviderKey = "external-result";
 
         public const string LastestResultKey = "lastest-result";
+
+        public const string SaveScore = "save-score";
     }
 }

@@ -16,7 +16,7 @@ namespace Settlement.Sportsbook.Aio.Services
 
         RefundParlayCriteria QueryRefundParlay(RefundParlayRequest request);
 
-        SaveScoreCriteria QuerySaveScore(SaveScoreRequest request);
+        SaveScoreRequest QuerySaveScore(SaveScoreRequest request);
 
         RefundParlayCriteria QueryRefundParlayChildMatch(RefundParlayChildMatchRequest request);
 
@@ -91,17 +91,18 @@ namespace Settlement.Sportsbook.Aio.Services
         }
 
 
-        public SaveScoreCriteria QuerySaveScore(SaveScoreRequest request)
+        public SaveScoreRequest QuerySaveScore(SaveScoreRequest request)
         {
             var scoreToSaveResources = CreateScoreResources(request.ScoresToSave);
             var scoreResources = CreateScoreResources(request.CheckedScores);
-            return new SaveScoreCriteria
+            return new SaveScoreRequest
             {
                 MatchId = request.MatchId,
                 UserId = currentSession.UserId,
                 OutsideSources = scoreToSaveResources,
                 Sources = scoreResources,
-                Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString()
+                Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString(),
+                ApiKey = request.ApiKey
             };
         }
 

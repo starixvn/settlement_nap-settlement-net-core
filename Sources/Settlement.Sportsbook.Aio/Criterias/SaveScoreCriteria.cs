@@ -1,8 +1,9 @@
 ﻿using Fanex.Data.Repository;
+using Settlement.Core.Models;
 
 namespace Settlement.Sportsbook.Aio.Criterias
 {
-    public class SaveScoreCriteria : NonQueryCommand
+    public class SaveScoreCriteria : NonQueryCommand, IReturnValue
     {
         public int MatchId { get; set; }
 

@@ -160,7 +160,8 @@ namespace Settlement.Sportsbook.Aio.Services
             {
                 ErrCode = criteria.ErrCode,
                 ErrMsg = criteria.ErrMsg,
-                ChildMatchIds = request.SportType == SportType.Cricket && criteria.ErrCode == 0 ? await GetChildMatchIds(request.MatchId, criteria.Action, criteria.SelectedResources) : string.Empty
+                ChildMatchIds = request.SportType == SportType.Cricket && criteria.ErrCode == 0 ? await GetChildMatchIds(request.MatchId, criteria.Action, criteria.SelectedResources) : string.Empty,
+                ServiceCommand = criteria.ServiceCommand
             };
 
             return settleResult;
@@ -205,8 +206,9 @@ namespace Settlement.Sportsbook.Aio.Services
 
         public async Task<Result> SaveScore(SaveScoreRequest request)
         {
-            var criteria = createQueryService.QuerySaveScore(request);
-            await repository.ExecuteAsync(criteria);
+            var requestQuery = createQueryService.QuerySaveScore(request);
+            var criteria = validateApiKeyService.CreateNonQueryCommand(requestQuery, $"{requestQuery.ApiKey}-{ ApiKeyConstant.SaveScore}") as IReturnValue;
+            await repository.ExecuteAsync((INonQueryCommand)criteria);
             return new Result
             {
                 ErrCode = criteria.ErrCode,
