@@ -3,7 +3,7 @@ using Settlement.Core.Services;
 using Settlement.Sportsbook.Aio.Models;
 using System;
 
-namespace Settlement.Sportsbook.Aio.ESport
+namespace Settlement.Sportsbook.Aio.Services.ESport
 {
     public interface IEarlyBetTypeNameService
     {

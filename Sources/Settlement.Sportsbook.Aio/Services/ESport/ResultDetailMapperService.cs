@@ -5,7 +5,7 @@ using System.Linq;
 using Settlement.Sportsbook.Aio.MapperFactory;
 using Settlement.Sportsbook.Aio.Models;
 
-namespace Settlement.Sportsbook.Aio.ESport
+namespace Settlement.Sportsbook.Aio.Services.ESport
 {
     public class ResultDetailMapperServiceImp : IMapperService
     {

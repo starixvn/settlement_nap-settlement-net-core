@@ -3,7 +3,7 @@ using System.Linq;
 using Settlement.Sportsbook.Aio.MapperFactory;
 using Settlement.Sportsbook.Aio.Models;
 
-namespace Settlement.Sportsbook.Aio.Cricket
+namespace Settlement.Sportsbook.Aio.Services.Cricket
 {
     public class ResultDetailMapperServiceImp : IMapperService
     {

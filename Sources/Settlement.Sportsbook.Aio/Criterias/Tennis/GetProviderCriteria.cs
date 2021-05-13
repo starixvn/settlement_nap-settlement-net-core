@@ -1,6 +1,6 @@
 ﻿using Fanex.Data.Repository;
 
-namespace Settlement.Sportsbook.Aio.Cricket.Criteria
+namespace Settlement.Sportsbook.Aio.Criterias.Tennis
 {
     public class GetProviderCriteria : CriteriaBase
     {

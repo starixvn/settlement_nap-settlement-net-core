@@ -1,6 +1,6 @@
 ﻿using Fanex.Data.Repository;
 
-namespace Settlement.Sportsbook.Aio.Tennis.Criteria
+namespace Settlement.Sportsbook.Aio.Criterias.ESport
 {
     public class GetProviderCriteria : CriteriaBase
     {
@@ -10,7 +10,7 @@ namespace Settlement.Sportsbook.Aio.Tennis.Criteria
 
         public override string GetSettingKey()
         {
-            return "NAP_Set_ProviderExternalResultDetailLatestInfoSel";
+            return "NAP_Set_ProviderExternalResultDetailESLatestInfoSel";
         }
 
         public override bool IsValid()

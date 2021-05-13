@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Settlement.Sportsbook.Aio.ESport
+namespace Settlement.Sportsbook.Aio.Services.ESport
 {
     public class ProviderMapperService : IMapperService
     {

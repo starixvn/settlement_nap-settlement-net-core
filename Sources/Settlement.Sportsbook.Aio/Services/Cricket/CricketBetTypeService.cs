@@ -4,7 +4,7 @@ using Settlement.Sportsbook.Aio.Constants;
 using System;
 using System.Collections.Generic;
 
-namespace Settlement.Sportsbook.Aio.Cricket
+namespace Settlement.Sportsbook.Aio.Services.Cricket
 {
     public interface ICricketBetTypeService
     {
