@@ -44,8 +44,6 @@ namespace Settlement.WebSites.Controllers
         [AllowAnonymous]
         public IActionResult Test()
         {
-            const int sleepTime = 2 * 60 * 1000;
-            Thread.Sleep(sleepTime);
             return Content("Test");
         }
 

@@ -109,6 +109,9 @@ namespace Settlement.WebSites
                                             "https://napsettlementcore2.starixuat.com",
                                             "https://napsettlementcore3.starixuat.com",
 
+                                            "https://settlement.sportsfun.app",
+                                            "https://settlementcore.sportsfun.app",
+
                                             "https://settlement.oneops.net",
                                             "https://settlementcore.oneops.net")
                               .AllowAnyMethod()
