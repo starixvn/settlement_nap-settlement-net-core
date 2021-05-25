@@ -27,5 +27,7 @@
         public bool CanChangeScoreSource { get; set; }
 
         public bool CanMoveTickets { get; set; }
+
+        public bool IsTrader { get; set; }
     }
 }

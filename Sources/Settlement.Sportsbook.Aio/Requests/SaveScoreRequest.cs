@@ -22,5 +22,7 @@ namespace Settlement.Sportsbook.Aio.Requests
         public string Ip { get; set; }
 
         public string ApiKey { get; set; }
+
+        public bool IsTrader { get; set; }
     }
 }

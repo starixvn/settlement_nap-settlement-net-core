@@ -102,7 +102,8 @@ namespace Settlement.Sportsbook.Aio.Services
                 OutsideSources = scoreToSaveResources,
                 Sources = scoreResources,
                 Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString(),
-                ApiKey = request.ApiKey
+                ApiKey = request.ApiKey,
+                IsTrader = request.IsTrader
             };
         }
 

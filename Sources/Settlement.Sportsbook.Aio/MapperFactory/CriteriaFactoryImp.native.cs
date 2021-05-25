@@ -31,7 +31,7 @@ namespace Settlement.Sportsbook.Aio.MapperFactory
             CriteriaTypes.Add($"cricket-{ApiKeyConstant.ResultDetailKey}", typeof(Criterias.GetResultDetailCriteria));
             CriteriaTypes.Add($"cricket-{ApiKeyConstant.ProviderKey}", typeof(Criterias.Cricket.GetProviderCriteria));
             CriteriaTypes.Add($"cricket-{ApiKeyConstant.LastestResultKey}", typeof(Criterias.GetRecalResultCriteria));
-            CriteriaTypes.Add($"cricket-{ApiKeyConstant.SaveScore}", typeof(Criterias.SaveScoreCriteria));
+            CriteriaTypes.Add($"cricket-{ApiKeyConstant.SaveScore}", typeof(Criterias.Cricket.SaveScoreCriteria));
 
             CriteriaTypes.Add("cricket-refund-parlay", typeof(Criterias.RefundParlayCriteria));
             CriteriaTypes.Add("cricket-settle", typeof(Criterias.SettleCriteria));
