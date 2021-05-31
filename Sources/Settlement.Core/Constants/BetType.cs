@@ -54,5 +54,51 @@ namespace Settlement.Core.Constants
         };
 
         #endregion Cricket early bet types
+
+        #region E-Sport early bet types
+
+        public static class ESportBetType
+        {
+            public const int MapKillsScore = 9002;
+
+            public const int MapTowersScore = 9008;
+
+            public const int MapRoshansScore = 9012;
+
+            public const int MapBarracksScore = 9018;
+
+            public const int MapTurretsScore = 9024;
+
+            public const int MapDragonsScore = 9028;
+
+            public const int MapBaronsScore = 9034;
+
+            public const int MapInhibitorsScore = 9040;
+
+            public const int MapTyrantsScore = 9046;
+
+            public const int MapLordsScore = 9052;
+
+            public const int MapDuration = 9058;
+
+            public const int MapRoundsScore = 9059;
+
+            public const int MapRoundsScoreOvertime = 9074;
+
+            public const int MapTotalFirstKills = 9065;
+
+            public const int MapClutchesScore = 9066;
+
+            public const int MapRoundWinner = 9068;
+
+            public const int MapRoundTotalKills = 9069;
+
+            public const int MapGameRacePoint = 712;
+
+            public const int MapGamePointWinner = 713;
+
+        }
+
+        #endregion E-Sport early bet types
     }
 }

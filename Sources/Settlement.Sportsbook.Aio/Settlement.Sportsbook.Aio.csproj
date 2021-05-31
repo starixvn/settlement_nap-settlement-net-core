@@ -5,21 +5,11 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Compile Remove="Cricket\**" />
-	  <EmbeddedResource Remove="Cricket\**" />
-	  <None Remove="Cricket\**" />
-	</ItemGroup>
-
-	<ItemGroup>
 	  <Compile Remove="Constants\GroupBetType.cs" />
 	  <Compile Remove="Constants\InputType.cs" />
-	  <Compile Remove="Criterias\CheckMarkedTicketsParlayCriteria.cs" />
 	  <Compile Remove="Criterias\GetRecalResultCriteria.cs" />
-	  <Compile Remove="Criterias\Tennis\SaveScoreCriteria.cs" />
+	  <Compile Remove="Models\ResultAio.cs" />
 	  <Compile Remove="MapperFactory\GetFetchService.cs" />
-	  <Compile Remove="Requests\CheckMarkedTicketsParlayRequest.cs" />
-	  <Compile Remove="Requests\RefundParlayChildMatchRequest.cs" />
-	  <Compile Remove="Requests\SettleChildMatchRequest.cs" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -36,5 +26,9 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Settlement.Core\Settlement.Core.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Services\Tennis\" />
 	</ItemGroup>
 </Project>

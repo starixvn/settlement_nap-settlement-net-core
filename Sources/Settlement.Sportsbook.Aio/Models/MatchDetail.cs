@@ -28,6 +28,8 @@ namespace Settlement.Sportsbook.Aio.Models
 
         public int PlayTime { get; set; }
 
+        public int BestOfMap { get; set; }
+
         public int? HalfTimeHomeScore { get; set; }
 
         public int? HalfTimeAwayScore { get; set; }
@@ -38,6 +40,7 @@ namespace Settlement.Sportsbook.Aio.Models
 
         public string BetStatus { get; set; }
 
+        public int ChildMatchType { get; set; }
         public bool IsHalftimeCal { get; set; }
     }
 }

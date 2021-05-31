@@ -19,6 +19,8 @@ namespace Settlement.Sportsbook.Aio.Requests
 
         public bool IsLeader { get; set; }
 
+        public int SportType { get; set; }
+
         public List<ResourceItem> SelectedResources { get; set; }
     }
 }

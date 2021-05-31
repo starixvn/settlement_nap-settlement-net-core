@@ -10,7 +10,6 @@ namespace Settlement.Sportsbook.Aio.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [EnableCors("AllowOrigin")]
     [Authorize]
     public class AioController : ControllerBase
     {
@@ -35,6 +34,11 @@ namespace Settlement.Sportsbook.Aio.Controllers
         [HttpPost]
         public async Task<IActionResult> CheckMarkedTickets(CheckMarkedTicketsRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
+
+        [Route("check-marked-tickets-parlay")]
+        [HttpPost]
+        public async Task<IActionResult> CheckMarkedTicketsParlay(CheckMarkedTicketsParlayRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+
         [Route("get-recal-result")]
         [HttpPost]
         public async Task<IActionResult> GetRecalResult(GetRecalResultRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
@@ -51,5 +55,15 @@ namespace Settlement.Sportsbook.Aio.Controllers
         [Route("save-score")]
         [LogRequestResponse]
         public async Task<IActionResult> SaveScore(SaveScoreRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+
+        [Route("settle-child-match")]
+        [HttpPost]
+        [LogRequestResponse]
+        public async Task<IActionResult> SettleChildMatch(SettleChildMatchRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+
+        [Route("refund-parlay-child-match")]
+        [HttpPost]
+        [LogRequestResponse]
+        public async Task<IActionResult> RefundParlayChildMatch(RefundParlayChildMatchRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
     }
 }

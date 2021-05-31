@@ -4,6 +4,7 @@ using Fanex.NAP.Client.Helpers.Web;
 using Kaden.XmlConverter;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.Aio.Constants;
@@ -11,6 +12,7 @@ using Settlement.Sportsbook.Aio.Criterias;
 using Settlement.Sportsbook.Aio.MapperFactory;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Requests;
+using Settlement.Sportsbook.Core.Criterias;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -34,6 +36,12 @@ namespace Settlement.Sportsbook.Aio.Services
         Task<Result> VerifyNoRunningOdds(CheckRunningOddsRequest request);
 
         Task<Result> SaveScore(SaveScoreRequest request);
+
+        Task<MarkedTickets> CheckMarkedTicketsParlay(CheckMarkedTicketsParlayRequest request);
+
+        Task<Result> RefundParlayChildMatch(RefundParlayChildMatchRequest request);
+
+        Task<Result> SettleChildMatch(SettleChildMatchRequest request);
     }
 
     public class AioService : IAioService
@@ -105,7 +113,7 @@ namespace Settlement.Sportsbook.Aio.Services
                 mapperService.Decorate(resultDetails);
             }
 
-            var ticketCounts = secondResultSet.FirstOrDefault() ?? new TicketCounts();
+           var ticketCounts = secondResultSet.FirstOrDefault() ?? new TicketCounts();
             var hedgeMatchCriteria = validateApiKeyService.CriteriaName(request, $"{apiKey}-{ApiKeyConstant.HedgeMatchInfoKey}");
             var hedgeMatchDetail = await repository.GetAsync<HedgeMatchDetail>(hedgeMatchCriteria);
 
@@ -143,17 +151,6 @@ namespace Settlement.Sportsbook.Aio.Services
             };
         }
 
-        private static string GetResourceIds(List<ResourceItem> betTypes)
-        {
-            var listResourceId = new List<string>();
-            foreach (var betType in betTypes)
-            {
-                listResourceId.Add(betType.ResourceId);
-            }
-
-            return string.Join(",", listResourceId);
-        }
-
         public async Task<Result> Settle(SettleRequest request)
         {
             var criteria = createQueryService.QuerySettle(request);
@@ -163,6 +160,8 @@ namespace Settlement.Sportsbook.Aio.Services
             {
                 ErrCode = criteria.ErrCode,
                 ErrMsg = criteria.ErrMsg,
+                ChildMatchIds = request.SportType == SportType.Cricket && criteria.ErrCode == 0 ? await GetChildMatchIds(request.MatchId, criteria.Action, criteria.SelectedResources) : string.Empty,
+                ServiceCommand = criteria.ServiceCommand
             };
 
             return settleResult;
@@ -173,10 +172,11 @@ namespace Settlement.Sportsbook.Aio.Services
             var criteria = createQueryService.QueryRefundParlay(request);
             await repository.ExecuteAsync(criteria);
 
-            var result = new ResultAio
+            var result = new Result
             {
                 ErrCode = criteria.ErrCode,
                 ErrMsg = criteria.ErrMsg,
+                ChildMatchIds = request.SportType == SportType.Cricket && criteria.ErrCode == 0 ? await GetChildMatchIds(request.MatchId, SettleType.CalculateMixParlay) : string.Empty
             };
 
             return result;
@@ -206,13 +206,80 @@ namespace Settlement.Sportsbook.Aio.Services
 
         public async Task<Result> SaveScore(SaveScoreRequest request)
         {
-            var criteria = createQueryService.QuerySaveScore(request);
-            await repository.ExecuteAsync(criteria);
+            var requestQuery = createQueryService.QuerySaveScore(request);
+            var criteria = validateApiKeyService.CreateNonQueryCommand(requestQuery, $"{requestQuery.ApiKey}-{ ApiKeyConstant.SaveScore}") as IReturnValue;
+            await repository.ExecuteAsync((INonQueryCommand)criteria);
             return new Result
             {
                 ErrCode = criteria.ErrCode,
                 ErrMsg = criteria.ErrMsg
             };
+        }
+
+        private async Task<string> GetChildMatchIds(int matchId, string actionName, string selectedResources = "")
+        {
+            var criteria = new GetChildMatchCriteria();
+            criteria.matchIds = matchId.ToString();
+            criteria.mode = actionName;
+            if (selectedResources != "")
+            {
+                criteria.SelectedResources = selectedResources;
+            }
+            var listMatch = await repository.FetchAsync<ChildMatch>(criteria);
+            var matchIds = listMatch.Select(item => item.matchId).ToList();
+
+            return matchIds.Count > 0 ? string.Join(',', matchIds.ToList()) : string.Empty;
+        }
+
+        public async Task<MarkedTickets> CheckMarkedTicketsParlay(CheckMarkedTicketsParlayRequest request)
+        {
+            var criteria = mapper.Map<CheckMarkedTicketsParlayRequest, CheckMarkedTicketsParlayCriteria>(request);
+            await repository.ExecuteAsync(criteria);
+
+            return new MarkedTickets
+            {
+                IsExistMarkedTicket = criteria.IsExistMarkedTicket
+            };
+        }
+
+        public async Task<Result> RefundParlayChildMatch(RefundParlayChildMatchRequest request)
+        {
+            var listChildMatch = request.MatchIds.Split(',').ToList();
+            var criteria = createQueryService.QueryRefundParlayChildMatch(request);
+
+            foreach (var match in listChildMatch)
+            {
+                criteria.MatchId = int.Parse(match);
+                await repository.ExecuteAsync(criteria);
+            }
+
+            return new Result();
+        }
+
+        private static string GetResourceIds(List<ResourceItem> betTypes)
+        {
+            var listResourceId = new List<string>();
+            foreach (var betType in betTypes)
+            {
+                listResourceId.Add(betType.ResourceId);
+            }
+
+            return string.Join(",", listResourceId);
+        }
+
+        public async Task<Result> SettleChildMatch(SettleChildMatchRequest request)
+        {
+            var listChildMatch = request.ChildMatchIds.Split(',').ToList();
+
+            var criteria = createQueryService.QuerySettleChilMatch(request);
+
+            foreach (var match in listChildMatch)
+            {
+                criteria.MatchId = int.Parse(match);
+                await repository.ExecuteAsync(criteria);
+            }
+
+            return new Result();
         }
     }
 }

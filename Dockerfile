@@ -6,7 +6,6 @@ COPY ./Sources/Settlement.Core ./Settlement.Core
 COPY ./Sources/Settlement.Sportsbook.Aio ./Settlement.Sportsbook.Aio
 COPY ./Sources/Settlement.WebSites/Settlement.WebSites.csproj ./Settlement.WebSites/Settlement.WebSites.csproj
 COPY ./Sources/Settlement.Sportsbook.MoveTickets ./Settlement.Sportsbook.MoveTickets
-COPY ./Sources/Settlement.Sportsbook.Cricket ./Settlement.Sportsbook.Cricket
 
 RUN ls /src -l
 WORKDIR /src/Settlement.WebSites
