@@ -10,6 +10,8 @@ namespace Settlement.Core.Constants
         {
             {9400, "Super Over Winner" },
             {9401, "Toss Winner" },
+            {9442, "Highest Opening Partnership" },
+            {9443, "Highest Score in Over 1" },
 
             {9446, "Match Fours" },
             {9447, "Match Sixes" },
@@ -51,6 +53,7 @@ namespace Settlement.Core.Constants
             {94552, "2nd Inns Fours" },
             {94602, "2nd Inns Sixes" },
             {94612, "2nd Inns Sixes" },
+
         };
 
         #endregion Cricket early bet types

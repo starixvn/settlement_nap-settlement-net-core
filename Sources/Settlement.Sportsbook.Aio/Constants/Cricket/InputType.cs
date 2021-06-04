@@ -12,7 +12,7 @@ namespace Settlement.Sportsbook.Aio.Constants
 
         public static List<int> HomeAwayGroup => new List<int>
         {
-            9401, 9400,
+            9401, 9400, 9442, 9443
         };
 
         public static List<int> CaughtOrNotGroup => new List<int>

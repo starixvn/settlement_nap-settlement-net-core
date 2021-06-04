@@ -98,5 +98,38 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Handlers
 
             Assert.Equal(result, actual);
         }
+        [Fact]
+        public async Task HandleCheckMarkedTicketsParlayRequest_Always_ReturnCorrectResult()
+        {
+            var result = new MarkedTickets();
+            service.CheckMarkedTicketsParlay(Arg.Any<CheckMarkedTicketsParlayRequest>()).Returns(result);
+
+            var actual = await handler.Handle(new CheckMarkedTicketsParlayRequest(), new System.Threading.CancellationToken());
+
+            Assert.Equal(result, actual);
+        }
+
+        [Fact]
+        public async Task HandleSettleChildMatchRequest_Always_ReturnCorrectResult()
+        {
+            var result = new Result();
+            service.SettleChildMatch(Arg.Any<SettleChildMatchRequest>()).Returns(result);
+
+            var actual = await handler.Handle(new SettleChildMatchRequest(), new System.Threading.CancellationToken());
+
+            Assert.Equal(result, actual);
+        }
+
+        [Fact]
+        public async Task HandleRefundParlayChildMatchRequest_Always_ReturnCorrectResult()
+        {
+            var result = new Result();
+            service.RefundParlayChildMatch(Arg.Any<RefundParlayChildMatchRequest>()).Returns(result);
+
+            var actual = await handler.Handle(new RefundParlayChildMatchRequest(), new System.Threading.CancellationToken());
+
+            Assert.Equal(result, actual);
+        }
+
     }
 }
