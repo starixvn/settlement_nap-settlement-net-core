@@ -21,6 +21,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Settlement.Sportsbook.MoveT
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Settlement.Sportsbook.Aio.UnitTests", "Tests\Settlement.Sportsbook.Aio.UnitTests\Settlement.Sportsbook.Aio.UnitTests.csproj", "{4F904B57-5030-4138-9DF2-377BDC4F7CDE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Settlement.Sportsbook.OtherSports", "Sources\Settlement.Sportsbook.OtherSports\Settlement.Sportsbook.OtherSports.csproj", "{79939510-467E-4283-9503-59CEA7A8487B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{4F904B57-5030-4138-9DF2-377BDC4F7CDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4F904B57-5030-4138-9DF2-377BDC4F7CDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4F904B57-5030-4138-9DF2-377BDC4F7CDE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{79939510-467E-4283-9503-59CEA7A8487B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{79939510-467E-4283-9503-59CEA7A8487B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{79939510-467E-4283-9503-59CEA7A8487B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{79939510-467E-4283-9503-59CEA7A8487B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -63,6 +69,7 @@ Global
 		{8624D201-FCDD-4CE8-AE38-B8CE09073877} = {A1FCD18B-3CAA-4629-A10D-F9EDCEF84670}
 		{5FB58EAE-5DA1-4BA7-8A58-022EC51CD37C} = {D19D8BE5-5331-437B-BE2D-FDF1B5F02781}
 		{4F904B57-5030-4138-9DF2-377BDC4F7CDE} = {A1FCD18B-3CAA-4629-A10D-F9EDCEF84670}
+		{79939510-467E-4283-9503-59CEA7A8487B} = {D19D8BE5-5331-437B-BE2D-FDF1B5F02781}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F134C0FB-5844-4216-814B-BAE66FBB0195}
