@@ -12,7 +12,7 @@ namespace Settlement.Sportsbook.Aio.Handlers
     public class AioHandler :
             IRequestHandler<GetMatchRequest, AioMatch>,
             IRequestHandler<SettleRequest, Result>,
-            IRequestHandler<GetRecalResultRequest, List<MatchResultDetail>>,
+            IRequestHandler<GetRecalResultRequest, List<Models.ResultDetail>>,
             IRequestHandler<CheckMarkedTicketsRequest, MarkedTickets>,
             IRequestHandler<RefundParlayRequest, Result>,
             IRequestHandler<CheckRunningOddsRequest, Result>,
@@ -33,7 +33,7 @@ namespace Settlement.Sportsbook.Aio.Handlers
 
         public async Task<Result> Handle(SettleRequest request, CancellationToken cancellationToken) => await aioService.Settle(request);
 
-        public async Task<List<MatchResultDetail>> Handle(GetRecalResultRequest request, CancellationToken cancellationToken) => await aioService.GetRecalResult(request);
+        public async Task<List<Models.ResultDetail>> Handle(GetRecalResultRequest request, CancellationToken cancellationToken) => await aioService.GetRecalResult(request);
 
         public async Task<MarkedTickets> Handle(CheckMarkedTicketsRequest request, CancellationToken cancellationToken) => await aioService.CheckMarkedTickets(request);
 

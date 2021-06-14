@@ -15,8 +15,8 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Controllers
     {
         private readonly IMediator mediator;
 
-
         private readonly AioController controller;
+
         public AioControllerTests()
         {
             mediator = Substitute.For<IMediator>();
@@ -75,7 +75,7 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Controllers
         public async Task GetRecalResult_Always_ReturnOkStatus()
         {
             var request = new GetRecalResultRequest();
-            mediator.Send(Arg.Any<GetRecalResultRequest>()).Returns(new List<MatchResultDetail>());
+            mediator.Send(Arg.Any<GetRecalResultRequest>()).Returns(new List<Models.ResultDetail>());
 
             var actual = await controller.GetRecalResult(request) as OkObjectResult;
 

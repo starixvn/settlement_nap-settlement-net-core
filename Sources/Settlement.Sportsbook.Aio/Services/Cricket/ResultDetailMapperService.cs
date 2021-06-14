@@ -17,7 +17,7 @@ namespace Settlement.Sportsbook.Aio.Services.Cricket
         public void Decorate(dynamic obj)
         {
             const int maxLengthResourceId = 2;
-            var list = obj as List<MatchResultDetail>;
+            var list = obj as List<ResultDetail>;
             var listEarly = list.Where(x => x.ResourceId.Length > maxLengthResourceId).ToList();
             earlyBetTypeNameService.GroupBetTypesAndGenerateNames(listEarly);
         }

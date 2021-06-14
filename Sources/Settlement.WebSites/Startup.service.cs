@@ -33,6 +33,7 @@ using Settlement.Sportsbook.Aio.Services;
 using Settlement.Sportsbook.MoveTickets;
 using Settlement.Sportsbook.MoveTickets.Controllers;
 using Settlement.Sportsbook.MoveTickets.Services;
+using Settlement.Sportsbook.OtherSports;
 using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
@@ -235,6 +236,7 @@ namespace Settlement.WebSites
             {
                 mc.AddProfile(typeof(SportsbookAioAutoMapperProfile));
                 mc.AddProfile(typeof(SportsbookMoveTicketAutoMapperProfile));
+                mc.AddProfile(typeof(OtherSportsAutoMapperProfile));
             });
 
             IMapper mapper = mapperConfig.CreateMapper();

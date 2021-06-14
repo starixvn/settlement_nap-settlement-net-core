@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Settlement.Sportsbook.Aio.Requests
 {
-    public class GetRecalResultRequest : IRequest<List<MatchResultDetail>>
+    public class GetRecalResultRequest : IRequest<List<ResultDetail>>
     {
         public int MatchId { get; set; }
 

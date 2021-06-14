@@ -15,12 +15,13 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Handlers
         private readonly AioHandler handler;
 
         private readonly IAioService service;
+
         public AioHandlerTests()
         {
             service = Substitute.For<IAioService>();
             handler = new AioHandler(service);
-
         }
+
         [Fact]
         public async Task HandleGetMatchRequest_Always_ReturnCorrectResult()
         {
@@ -46,7 +47,7 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Handlers
         [Fact]
         public async Task HandleGetRecalResultRequest_Always_ReturnCorrectResult()
         {
-            var result = new List<MatchResultDetail>();
+            var result = new List<Models.ResultDetail>();
             service.GetRecalResult(Arg.Any<GetRecalResultRequest>()).Returns(result);
 
             var actual = await handler.Handle(new GetRecalResultRequest(), new System.Threading.CancellationToken());
@@ -97,6 +98,5 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Handlers
 
             Assert.Equal(result, actual);
         }
-
     }
 }

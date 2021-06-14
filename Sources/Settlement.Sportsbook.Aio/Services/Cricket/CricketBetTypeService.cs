@@ -8,14 +8,14 @@ namespace Settlement.Sportsbook.Aio.Services.Cricket
 {
     public interface ICricketBetTypeService
     {
-        void GroupBetTypesAndGenerateNames(List<MatchResultDetail> resultDetails);
+        void GroupBetTypesAndGenerateNames(List<ResultDetail> resultDetails);
     }
 
     public class CricketBetTypeService : ICricketBetTypeService
     {
         private readonly int InnsBetTypeMinLength = 5;
 
-        public void GroupBetTypesAndGenerateNames(List<MatchResultDetail> resultDetails)
+        public void GroupBetTypesAndGenerateNames(List<ResultDetail> resultDetails)
         {
             resultDetails.ForEach((resultDetail) =>
             {
@@ -23,7 +23,7 @@ namespace Settlement.Sportsbook.Aio.Services.Cricket
             });
         }
 
-        private void GenerateBetTypeNameAndGroup(MatchResultDetail resultDetail)
+        private void GenerateBetTypeNameAndGroup(ResultDetail resultDetail)
         {
             var resourceId = resultDetail.ResourceId;
             if (resourceId.Length < InnsBetTypeMinLength)
@@ -83,7 +83,7 @@ namespace Settlement.Sportsbook.Aio.Services.Cricket
             return betTypeName;
         }
 
-        private static void GroupNonInnsBetType(MatchResultDetail resultDetail, int betTypeId)
+        private static void GroupNonInnsBetType(ResultDetail resultDetail, int betTypeId)
         {
             if (GroupBetType.Other.Contains(betTypeId))
             {
@@ -97,7 +97,7 @@ namespace Settlement.Sportsbook.Aio.Services.Cricket
             }
         }
 
-        private static void GroupInnsBetType(MatchResultDetail resultDetail, int betTypeId)
+        private static void GroupInnsBetType(ResultDetail resultDetail, int betTypeId)
         {
             if (GroupBetType.FirstInnsHome.Contains(betTypeId))
             {
@@ -121,7 +121,7 @@ namespace Settlement.Sportsbook.Aio.Services.Cricket
             }
         }
 
-        private static void GetNonInnsBetTypeInputType(MatchResultDetail resultDetail, int betTypeId)
+        private static void GetNonInnsBetTypeInputType(ResultDetail resultDetail, int betTypeId)
         {
             if (InputType.HomeAwayGroup.Contains(betTypeId))
             {
@@ -137,7 +137,7 @@ namespace Settlement.Sportsbook.Aio.Services.Cricket
             }
         }
 
-        private static void GetInnsBetTypeInputType(MatchResultDetail resultDetail, int betTypeId)
+        private static void GetInnsBetTypeInputType(ResultDetail resultDetail, int betTypeId)
         {
             if (InputType.CaughtOrNotGroup.Contains(betTypeId))
             {
