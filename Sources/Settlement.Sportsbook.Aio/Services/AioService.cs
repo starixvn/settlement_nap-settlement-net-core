@@ -1,8 +1,5 @@
 ﻿using AutoMapper;
 using Fanex.Data.Repository;
-using Fanex.NAP.Client.Helpers.Web;
-using Kaden.XmlConverter;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
@@ -15,7 +12,6 @@ using Settlement.Sportsbook.Aio.Requests;
 using Settlement.Sportsbook.Core.Criterias;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
 
