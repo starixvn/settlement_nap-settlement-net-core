@@ -86,6 +86,7 @@ namespace Settlement.Sportsbook.Aio.Services
             var externalResults = new List<ExternalResultModel>();
             if (matchDetail != null)
             {
+                matchDetail.SportType = request.SportType;
                 matchDetail.RefDataService = refDataService;
                 var providerMapperService = mapperFactory.GetMapperService($"{apiKey}-{ApiKeyConstant.ProviderKey}");
                 if (providerMapperService != null)
