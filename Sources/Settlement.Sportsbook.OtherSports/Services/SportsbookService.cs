@@ -22,7 +22,7 @@ namespace Settlement.Sportsbook.OtherSports.Services
     {
         private readonly IDynamicRepository repository;
 
-        private readonly RefDataService refDataService;
+        private readonly IRefDataService refDataService;
 
         private readonly string fulltimeResource = "00";
 
@@ -32,7 +32,8 @@ namespace Settlement.Sportsbook.OtherSports.Services
 
         public SportsbookServiceImp(
             IDynamicRepository repository,
-            RefDataService refDataService)
+            IRefDataService refDataService,
+            IMapper mapper)
         {
             this.repository = repository;
             this.refDataService = refDataService;

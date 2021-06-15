@@ -19,11 +19,6 @@ namespace Settlement.Sportsbook.OtherSports.Controllers
             this.mediator = mediator;
         }
 
-        public OtherSportsController(Mediator mediator)
-        {
-            this.mediator = mediator;
-        }
-
         [Route("get-match"), HttpPost]
         public async Task<IActionResult> GetMatch(GetMatchRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
@@ -42,6 +37,5 @@ namespace Settlement.Sportsbook.OtherSports.Controllers
 
         [Route("get-lastest-result"), HttpPost]
         public async Task<IActionResult> GetLastestResult(GetLastestResultRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
-
     }
 }
