@@ -1,36 +1,46 @@
 ﻿using AutoMapper;
 using AutoMapper.Configuration;
 using Fanex.Data.Repository;
-using Fanex.NAP.Core.Web.Session;
+using Fanex.NAP.Client.Helpers.Web;
+using Microsoft.AspNetCore.Http;
 using NSubstitute;
-using NUnit.Framework;
-using Settlement.Sportsbook.NewCalculation.Criterias;
-using Settlement.Sportsbook.NewCalculation.Requests;
-using Settlement.Sportsbook.NewCalculation.Services;
+using Settlement.Sportsbook.OtherSports.Criteria;
+using Settlement.Sportsbook.OtherSports.Requests;
+using Settlement.Sportsbook.OtherSports.Services;
 using System.Threading.Tasks;
+using Xunit;
 
-namespace Settlement.Sportsbook.NewCalculation.UnitTests.Services
+namespace Settlement.Sportsbook.OtherSports.UnitTests.Services
 {
-    [TestFixture]
     public class SettlementActionsServiceTests
     {
-        private SettlementActionsService service;
+        private readonly IDynamicRepository repository;
 
-        [SetUp]
-        public void SetUp()
+        private readonly SettlementActionsService service;
+
+        private readonly INapSession currentSession;
+
+        private readonly IHttpContextAccessor accessor;
+
+        public SettlementActionsServiceTests()
         {
-            Mapper.Reset();
-            var config = new MapperConfigurationExpression();
-            config.AddProfile<OtherSportsAutoMapper>();
-            Mapper.Initialize(config);
+            var mapperConfig = new MapperConfigurationExpression();
+            mapperConfig.AddProfile<OtherSportsAutoMapperProfile>();
+            var config = new MapperConfiguration(mapperConfig);
+            var mapper = new Mapper(config);
+            repository = Substitute.For<IDynamicRepository>();
+            currentSession = Substitute.For<INapSession>();
+            accessor = Substitute.For<IHttpContextAccessor>();
+            var context = new DefaultHttpContext();
+            context.Connection.RemoteIpAddress = new System.Net.IPAddress(1);
+            accessor.HttpContext = context;
+
+            service = new SettlementActionsServiceImp(repository, accessor, currentSession, mapper);
         }
 
-        [Test]
+        [Fact]
         public async Task Calculate_Always_ExecuteAndReturnResult()
         {
-            var repository = Substitute.For<IDynamicRepository>();
-            var currentSession = Substitute.For<ICurrentSession>();
-            service = new SettlementActionsServiceImp(repository, currentSession);
             const int errorCode = 100;
             const string errorMsg = "Error Message";
             repository.ExecuteAsync(Arg.Do<CalculateCriteria>(x =>
@@ -40,15 +50,12 @@ namespace Settlement.Sportsbook.NewCalculation.UnitTests.Services
             })).Returns(1);
             var result = await service.Calculate(new CalculateRequest());
 
-            Assert.AreEqual(false, result.IsSuccessful);
+            Assert.False(result.IsSuccessful);
         }
 
-        [Test]
+        [Fact]
         public async Task Refund_Always_ExecuteAndReturnResult()
         {
-            var repository = Substitute.For<IDynamicRepository>();
-            var currentSession = Substitute.For<ICurrentSession>();
-            service = new SettlementActionsServiceImp(repository, currentSession);
             const int errorCode = 100;
             const string errorMsg = "Error Message";
             repository.ExecuteAsync(Arg.Do<RefundAllCriteria>(x =>
@@ -58,15 +65,12 @@ namespace Settlement.Sportsbook.NewCalculation.UnitTests.Services
             })).Returns(1);
             var result = await service.Refund(new RefundRequest());
 
-            Assert.AreEqual(false, result.IsSuccessful);
+            Assert.False(result.IsSuccessful);
         }
 
-        [Test]
+        [Fact]
         public async Task RefundParlay_Always_ExecuteAndReturnResult()
         {
-            var repository = Substitute.For<IDynamicRepository>();
-            var currentSession = Substitute.For<ICurrentSession>();
-            service = new SettlementActionsServiceImp(repository, currentSession);
             const int errorCode = 100;
             const string errorMsg = "Error Message";
             repository.ExecuteAsync(Arg.Do<ParlayCriteria>(x =>
@@ -76,22 +80,19 @@ namespace Settlement.Sportsbook.NewCalculation.UnitTests.Services
             })).Returns(1);
             var result = await service.RefundParlay(new RefundParlayRequest());
 
-            Assert.AreEqual(false, result.IsSuccessful);
+            Assert.False(result.IsSuccessful);
         }
 
-        [Test]
+        [Fact]
         public async Task CheckMarkedTickets_Always_ExecuteAndReturnResult()
         {
-            var repository = Substitute.For<IDynamicRepository>();
-            var currentSession = Substitute.For<ICurrentSession>();
-            service = new SettlementActionsServiceImp(repository, currentSession);
             repository.ExecuteAsync(Arg.Do<CheckingMarkedTicketsCriteria>(x =>
             {
                 x.IsExistMarkedTicket = true;
             })).Returns(1);
             var result = await service.CheckMarkedTickets(new CheckingMarkedTicketsRequest());
 
-            Assert.AreEqual(true, result.IsExistMarkedTicket);
+            Assert.True(result.IsExistMarkedTicket);
         }
     }
 }
