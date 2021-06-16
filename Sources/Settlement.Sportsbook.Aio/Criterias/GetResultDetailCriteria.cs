@@ -6,8 +6,6 @@ namespace Settlement.Sportsbook.Aio.Criterias
     {
         public int MatchId { get; set; }
 
-        public int SportType { get; set; }
-
         public string SettleType { get; set; }
 
         public override string GetSettingKey()

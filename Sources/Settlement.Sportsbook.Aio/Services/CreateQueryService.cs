@@ -21,6 +21,8 @@ namespace Settlement.Sportsbook.Aio.Services
         RefundParlayCriteria QueryRefundParlayChildMatch(RefundParlayChildMatchRequest request);
 
         SettleCriteria QuerySettleChilMatch(SettleChildMatchRequest request);
+
+        ResultSettingCriteria QueryChangeSetting(ResultSettingRequest request);
     }
 
     public class CreateQueryServiceImp : ICreateQueryService
@@ -115,6 +117,20 @@ namespace Settlement.Sportsbook.Aio.Services
             };
 
             return xmlConvertService.Serialize(resources);
+        }
+
+        public ResultSettingCriteria QueryChangeSetting(ResultSettingRequest request)
+        {
+            var criteria = new ResultSettingCriteria
+            {
+                MatchId = request.MatchId,
+                IsEnabled = request.IsEnabled,
+                Type = request.Type,
+                ResourceIds = request.ResourceIds,
+                AdminId = currentSession.UserId
+            };
+
+            return criteria;
         }
     }
 }

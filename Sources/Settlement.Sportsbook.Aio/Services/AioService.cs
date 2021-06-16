@@ -38,6 +38,8 @@ namespace Settlement.Sportsbook.Aio.Services
         Task<Result> RefundParlayChildMatch(RefundParlayChildMatchRequest request);
 
         Task<Result> SettleChildMatch(SettleChildMatchRequest request);
+
+        Task<Boolean> ResultSetting(ResultSettingRequest request);
     }
 
     public class AioService : IAioService
@@ -86,7 +88,6 @@ namespace Settlement.Sportsbook.Aio.Services
             var externalResults = new List<ExternalResultModel>();
             if (matchDetail != null)
             {
-                matchDetail.SportType = request.SportType;
                 matchDetail.RefDataService = refDataService;
                 var providerMapperService = mapperFactory.GetMapperService($"{apiKey}-{ApiKeyConstant.ProviderKey}");
                 if (providerMapperService != null)
@@ -276,6 +277,14 @@ namespace Settlement.Sportsbook.Aio.Services
             }
 
             return new Result();
+        }
+
+        public async Task<Boolean> ResultSetting(ResultSettingRequest request)
+        {
+            var criteria = createQueryService.QueryChangeSetting(request);
+
+            await repository.ExecuteAsync(criteria);
+            return criteria.IsEnabled;
         }
     }
 }
