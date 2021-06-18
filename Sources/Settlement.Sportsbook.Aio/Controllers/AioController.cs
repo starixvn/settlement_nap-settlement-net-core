@@ -34,7 +34,6 @@ namespace Settlement.Sportsbook.Aio.Controllers
         [HttpPost]
         public async Task<IActionResult> CheckMarkedTickets(CheckMarkedTicketsRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
-
         [Route("check-marked-tickets-parlay")]
         [HttpPost]
         public async Task<IActionResult> CheckMarkedTicketsParlay(CheckMarkedTicketsParlayRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
