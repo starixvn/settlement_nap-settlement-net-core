@@ -47,8 +47,6 @@ namespace Settlement.Core.Models
 
         public string BetStatus { get; set; }
 
-        public bool IsHalftimeCal { get; set; }
-
         public int? ExHTHomeScore { get; set; }
 
         public int? ExHTAwayScore { get; set; }
