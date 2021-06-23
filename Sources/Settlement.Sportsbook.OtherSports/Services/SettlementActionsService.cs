@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Settlement.Core.Models;
 using Settlement.Sportsbook.OtherSports.Criteria;
 using Settlement.Sportsbook.OtherSports.Requests;
+using System;
 using System.Threading.Tasks;
 
 namespace Settlement.Sportsbook.OtherSports.Services
@@ -45,6 +46,8 @@ namespace Settlement.Sportsbook.OtherSports.Services
         public async Task<Result> Calculate(CalculateRequest request)
         {
             var criteria = mapper.Map<CalculateRequest, CalculateCriteria>(request);
+            criteria.FullTimeHome = ParseInt(request.FinalHomeScore);
+            criteria.FullTimeAway = ParseInt(request.FinalAwayScore);
             criteria.AdminId = currentSession.UserId;
             criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
             await repository.ExecuteAsync(criteria);
@@ -67,6 +70,8 @@ namespace Settlement.Sportsbook.OtherSports.Services
         public async Task<Result> Refund(RefundRequest request)
         {
             var criteria = mapper.Map<RefundRequest, RefundAllCriteria>(request);
+            criteria.FullTimeHome = ParseInt(request.FinalHomeScore);
+            criteria.FullTimeAway = ParseInt(request.FinalAwayScore);
             criteria.AdminId = currentSession.UserId;
             criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
             await repository.ExecuteAsync(criteria);
@@ -76,6 +81,11 @@ namespace Settlement.Sportsbook.OtherSports.Services
                 ErrCode = criteria.ErrCode,
                 ErrMsg = criteria.ErrMsg,
             };
+        }
+
+        private int? ParseInt(string value)
+        {
+            return int.TryParse(value, out int valueOut) ? (int?)valueOut : null;
         }
 
         public async Task<Result> RefundParlay(RefundParlayRequest request)

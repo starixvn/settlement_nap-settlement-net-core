@@ -7,9 +7,9 @@ namespace Settlement.Sportsbook.OtherSports.Requests
     {
         public int MatchId { get; set; }
 
-        public int? FinalHomeScore { get; set; }
+        public string FinalHomeScore { get; set; }
 
-        public int? FinalAwayScore { get; set; }
+        public string FinalAwayScore { get; set; }
 
         public string BetStatus { get; set; }
 
