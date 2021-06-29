@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Settlement.Sportsbook.OtherSports.Criteria;
 using Settlement.Sportsbook.OtherSports.Requests;
-using System;
 
 namespace Settlement.Sportsbook.OtherSports
 {
@@ -10,9 +9,11 @@ namespace Settlement.Sportsbook.OtherSports
         public OtherSportsAutoMapperProfile()
         {
             CreateMap<GetMatchRequest, GetSportsbookMatchDetailCriteria>();
-            CreateMap<CalculateRequest, CalculateCriteria>();
+            CreateMap<CalculateRequest, CalculateCriteria>().ForMember(dest => dest.FullTimeHome, map => map.MapFrom(src => src.FinalHomeScore))
+                .ForMember(dest => dest.FullTimeAway, map => map.MapFrom(src => src.FinalAwayScore));
             CreateMap<CheckingMarkedTicketsRequest, CheckingMarkedTicketsCriteria>();
-            CreateMap<RefundRequest, RefundAllCriteria>();
+            CreateMap<RefundRequest, RefundAllCriteria>().ForMember(dest => dest.FullTimeHome, map => map.MapFrom(src => src.FinalHomeScore))
+                .ForMember(dest => dest.FullTimeAway, map => map.MapFrom(src => src.FinalAwayScore));
             CreateMap<RefundParlayRequest, ParlayCriteria>();
             CreateMap<GetLastestResultRequest, GetLastestResultCriteria>();
         }
