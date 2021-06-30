@@ -138,7 +138,8 @@ namespace Settlement.Sportsbook.Aio.Services
             var criteria = new CheckMarkedTicketsCriteria
             {
                 MatchId = request.MatchId,
-                ResourceIds = GetResourceIds(request.SelectedResources)
+                ResourceIds = GetResourceIds(request.SelectedResources),
+                IsMergedParlay = request.IsMergedParlay
             };
             await repository.ExecuteAsync(criteria);
 
