@@ -26,8 +26,8 @@ namespace Settlement.Core.ActionFilters
             stringBuilder.AppendLine($"Username: {context.User.Identity.Name}");
 
             var objectResult = actionExecutedContext.Result as OkObjectResult;
-            var result = JsonConvert.SerializeObject(objectResult.Value);
-            stringBuilder.AppendLine(result);
+            //var result = JsonConvert.SerializeObject(objectResult.Value);
+            //stringBuilder.AppendLine(result);
             await logger.InfoAsync(stringBuilder.ToString());
 
             base.OnActionExecuted(actionExecutedContext);

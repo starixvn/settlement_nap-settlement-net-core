@@ -9,6 +9,8 @@ namespace Settlement.Sportsbook.Aio.MapperFactory
             Tennis();
             Cricket();
             Esport();
+            Badminton();
+            Basketball();
         }
 
         private static void Tennis()
@@ -48,6 +50,32 @@ namespace Settlement.Sportsbook.Aio.MapperFactory
 
             CriteriaTypes.Add($"esport-settle", typeof(Criterias.SettleCriteria));
             CriteriaTypes.Add($"esport-refund-parlay", typeof(Criterias.RefundParlayCriteria));
+        }
+
+        private static void Badminton()
+        {
+            CriteriaTypes.Add($"badminton-{ApiKeyConstant.MatchInfoKey}", typeof(Criterias.GetMatchDetailCriteria));
+            CriteriaTypes.Add($"badminton-{ApiKeyConstant.HedgeMatchInfoKey}", typeof(Criterias.GetHedgeMatchCriteria));
+            CriteriaTypes.Add($"badminton-{ApiKeyConstant.ResultDetailKey}", typeof(Criterias.GetResultDetailCriteria));
+            CriteriaTypes.Add($"badminton-{ApiKeyConstant.LastestResultKey}", typeof(Criterias.GetRecalResultCriteria));
+            CriteriaTypes.Add($"badminton-{ApiKeyConstant.ProviderKey}", typeof(Criterias.GetProviderCriteria));
+            CriteriaTypes.Add($"badminton-{ApiKeyConstant.SaveScore}", typeof(Criterias.SaveScoreCriteria));
+
+            CriteriaTypes.Add("badminton-settle", typeof(Criterias.SettleCriteria));
+            CriteriaTypes.Add("badminton-refund-parlay", typeof(Criterias.RefundParlayCriteria));
+        }
+
+        private static void Basketball()
+        {
+            CriteriaTypes.Add($"basketball-{ApiKeyConstant.MatchInfoKey}", typeof(Criterias.GetMatchDetailCriteria));
+            CriteriaTypes.Add($"basketball-{ApiKeyConstant.HedgeMatchInfoKey}", typeof(Criterias.GetHedgeMatchCriteria));
+            CriteriaTypes.Add($"basketball-{ApiKeyConstant.ResultDetailKey}", typeof(Criterias.GetResultDetailCriteria));
+            CriteriaTypes.Add($"basketball-{ApiKeyConstant.LastestResultKey}", typeof(Criterias.GetRecalResultCriteria));
+            CriteriaTypes.Add($"basketball-{ApiKeyConstant.ProviderKey}", typeof(Criterias.GetProviderCriteria));
+            CriteriaTypes.Add($"basketball-{ApiKeyConstant.SaveScore}", typeof(Criterias.SaveScoreCriteria));
+
+            CriteriaTypes.Add("basketball-settle", typeof(Criterias.SettleCriteria));
+            CriteriaTypes.Add("basketball-refund-parlay", typeof(Criterias.RefundParlayCriteria));
         }
     }
 }

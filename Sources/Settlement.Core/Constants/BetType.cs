@@ -100,5 +100,12 @@ namespace Settlement.Core.Constants
         }
 
         #endregion E-Sport early bet types
+
+        #region Badminton bet types
+        public static class BadmintonBetType
+        {
+            public const int MapGameRacePoint = 712;
+        }
+        #endregion Badminton bet types
     }
 }
