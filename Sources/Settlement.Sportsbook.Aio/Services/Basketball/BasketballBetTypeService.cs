@@ -1,18 +1,15 @@
 ﻿using Settlement.Core.Services;
 using Settlement.Sportsbook.Aio.Constants.Basketball;
-using Settlement.Sportsbook.Aio.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ResultDetail = Settlement.Sportsbook.Aio.Models.ResultDetail;
 
 namespace Settlement.Sportsbook.Aio.Services.Basketball
 {
     public interface IBasketballBetTypeService
     {
-        MatchResultDetail GetBetTypeNameAndGroup(MatchResultDetail item);
-        MatchResultDetail CheckValue(MatchResultDetail item);
+        ResultDetail GetBetTypeNameAndGroup(ResultDetail item);
+
+        ResultDetail CheckValue(ResultDetail item);
     }
 
     public class BasketballBetTypeServiceImp : IBasketballBetTypeService
@@ -29,7 +26,7 @@ namespace Settlement.Sportsbook.Aio.Services.Basketball
             this.refDataService = refDataService;
         }
 
-        public MatchResultDetail GetBetTypeNameAndGroup(MatchResultDetail item)
+        public ResultDetail GetBetTypeNameAndGroup(ResultDetail item)
         {
             var resourceId = item.ResourceId;
             item.BetType = resourceId.Substring(0, MaxLength + 1);
@@ -39,9 +36,8 @@ namespace Settlement.Sportsbook.Aio.Services.Basketball
             return item;
         }
 
-        private void GroupBasketballBetType(MatchResultDetail resultDetail)
+        private void GroupBasketballBetType(ResultDetail resultDetail)
         {
-            
             var resourceId = resultDetail.ResourceId;
             if (resourceId.Length == otherBetTypeLength)
             {
@@ -54,7 +50,7 @@ namespace Settlement.Sportsbook.Aio.Services.Basketball
             }
         }
 
-        private void GroupOtherBetType(MatchResultDetail resultDetail)
+        private void GroupOtherBetType(ResultDetail resultDetail)
         {
             var resourceId = Convert.ToInt32(resultDetail.ResourceId);
             if (GroupBetType.Other.Contains(resourceId))
@@ -64,7 +60,7 @@ namespace Settlement.Sportsbook.Aio.Services.Basketball
             }
         }
 
-        private void GroupHalfBetType(MatchResultDetail resultDetail)
+        private void GroupHalfBetType(ResultDetail resultDetail)
         {
             var resourceId = SplitBetType(resultDetail.ResourceId, 0, halfBetTypeLength - betTypeIndexLength);
             if (GroupBetType.FirstHalf.Contains(resourceId))
@@ -79,7 +75,7 @@ namespace Settlement.Sportsbook.Aio.Services.Basketball
             }
         }
 
-        private void GroupQuarterBetType(MatchResultDetail resultDetail)
+        private void GroupQuarterBetType(ResultDetail resultDetail)
         {
             var resourceId = SplitBetType(resultDetail.ResourceId, 0, quarterBetTypeLength - betTypeIndexLength);
             if (GroupBetType.QuarterOne.Contains(resourceId))
@@ -104,7 +100,7 @@ namespace Settlement.Sportsbook.Aio.Services.Basketball
             }
         }
 
-        public MatchResultDetail CheckValue(MatchResultDetail item)
+        public ResultDetail CheckValue(ResultDetail item)
         {
             item.HomeValue ??= "";
             item.AwayValue ??= "";

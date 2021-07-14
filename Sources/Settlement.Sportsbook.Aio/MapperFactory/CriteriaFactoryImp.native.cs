@@ -79,7 +79,7 @@ namespace Settlement.Sportsbook.Aio.MapperFactory
             CriteriaTypes.Add("basketball-refund-parlay", typeof(Criterias.RefundParlayCriteria));
         }
         
-         private static void GameTotal()
+        private static void GameTotal()
         {
             CriteriaTypes.Add($"game-total-{ApiKeyConstant.MatchInfoKey}", typeof(Criterias.GetMatchDetailCriteria));
             CriteriaTypes.Add($"game-total-{ApiKeyConstant.HedgeMatchInfoKey}", typeof(Criterias.GetHedgeMatchCriteria));
