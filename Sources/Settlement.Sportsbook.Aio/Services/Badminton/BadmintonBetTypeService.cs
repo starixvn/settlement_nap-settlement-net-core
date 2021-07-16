@@ -1,16 +1,12 @@
 ﻿using Settlement.Core.Constants;
 using Settlement.Sportsbook.Aio.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Settlement.Sportsbook.Aio.Services.Badminton
 {
     public interface IBadmintonBetTypeService
     {
-        MatchResultDetail GetBetTypeName(MatchResultDetail item);
+        ResultDetail GetBetTypeName(ResultDetail item);
     }
 
     public class BadmintonBetTypeServiceImp : IBadmintonBetTypeService
@@ -19,7 +15,7 @@ namespace Settlement.Sportsbook.Aio.Services.Badminton
         private const int ThreePosition = 3;
         private const int MapCharacter = 2;
 
-        public MatchResultDetail GetBetTypeName(MatchResultDetail item)
+        public ResultDetail GetBetTypeName(ResultDetail item)
         {
             var resourceId = item.ResourceId;
             item.Map = Convert.ToInt32(resourceId.Substring(ThreePosition, MapCharacter));

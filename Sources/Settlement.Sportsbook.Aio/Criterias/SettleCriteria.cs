@@ -20,6 +20,8 @@ namespace Settlement.Sportsbook.Aio.Criterias
 
         public string BetStatus { get; set; }
 
+        public bool IsDirectly { get; set; }
+
         public int ErrCode { get; set; }
 
         public string ErrMsg { get; set; }

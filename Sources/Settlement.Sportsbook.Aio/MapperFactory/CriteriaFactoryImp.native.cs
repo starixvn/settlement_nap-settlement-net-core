@@ -10,6 +10,7 @@ namespace Settlement.Sportsbook.Aio.MapperFactory
             Cricket();
             Esport();
             Badminton();
+            GameTotal();
             Basketball();
         }
 
@@ -77,5 +78,17 @@ namespace Settlement.Sportsbook.Aio.MapperFactory
             CriteriaTypes.Add("basketball-settle", typeof(Criterias.SettleCriteria));
             CriteriaTypes.Add("basketball-refund-parlay", typeof(Criterias.RefundParlayCriteria));
         }
+        
+        private static void GameTotal()
+        {
+            CriteriaTypes.Add($"game-total-{ApiKeyConstant.MatchInfoKey}", typeof(Criterias.GetMatchDetailCriteria));
+            CriteriaTypes.Add($"game-total-{ApiKeyConstant.HedgeMatchInfoKey}", typeof(Criterias.GetHedgeMatchCriteria));
+            CriteriaTypes.Add($"game-total-{ApiKeyConstant.ResultDetailKey}", typeof(Criterias.GetResultDetailCriteria));
+            CriteriaTypes.Add($"game-total-{ApiKeyConstant.LastestResultKey}", typeof(Criterias.GetRecalResultCriteria));
+
+            CriteriaTypes.Add($"game-total-settle", typeof(Criterias.SettleCriteria));
+            CriteriaTypes.Add($"game-total-refund-parlay", typeof(Criterias.RefundParlayCriteria));
+        }
+
     }
 }

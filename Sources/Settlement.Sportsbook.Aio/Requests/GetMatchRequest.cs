@@ -11,6 +11,5 @@ namespace Settlement.Sportsbook.Aio.Requests
 
         public string SettleType { get; set; }
 
-        public int SportType { get; set; }
     }
 }

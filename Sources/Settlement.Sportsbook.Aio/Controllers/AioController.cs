@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Settlement.Core.ActionFilters;
 using Settlement.Sportsbook.Aio.Requests;
@@ -64,5 +63,10 @@ namespace Settlement.Sportsbook.Aio.Controllers
         [HttpPost]
         [LogRequestResponse]
         public async Task<IActionResult> RefundParlayChildMatch(RefundParlayChildMatchRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+
+        [Route("result-setting")]
+        [HttpPost]
+        [LogRequestResponse]
+        public async Task<IActionResult> ResultSetting(ResultSettingRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
     }
 }

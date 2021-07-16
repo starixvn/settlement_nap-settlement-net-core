@@ -24,7 +24,6 @@ namespace Settlement.Core.Models
         private string instantHomeScore = string.Empty;
         private string instantAwayScore = string.Empty;
         private BackgroundColor backgroundColor;
-        private BetStatusHelper betStatusAccess;
         private AutoCalculationSetting autoCalcSetting;
         private MixParlay mixParlay;
         private RemarkSettingModel remark;
@@ -178,23 +177,6 @@ namespace Settlement.Core.Models
         public string BetStatus { get; set; }
 
         public GoalIcon GoalIcon { get; set; } = new GoalIcon();
-
-        public BetStatusHelper BetStatusAccess
-        {
-            get
-            {
-                if (betStatusAccess != null)
-                {
-                    return betStatusAccess;
-                }
-
-                betStatusAccess = string.IsNullOrWhiteSpace(BetStatus)
-                    ? new BetStatusHelper()
-                    : new BetStatusHelper(GroupSport, BetStatus);
-
-                return betStatusAccess;
-            }
-        }
 
         public string NewEventStatus
         {

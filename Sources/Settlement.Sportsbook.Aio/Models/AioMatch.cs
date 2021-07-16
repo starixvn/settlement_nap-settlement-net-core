@@ -7,7 +7,7 @@ namespace Settlement.Sportsbook.Aio.Models
     {
         public MatchDetail MatchDetail { get; set; }
 
-        public List<MatchResultDetail> ResultDetails { get; set; }
+        public List<ResultDetail> ResultDetails { get; set; }
 
         public TicketCounts TicketCounts { get; set; }
 

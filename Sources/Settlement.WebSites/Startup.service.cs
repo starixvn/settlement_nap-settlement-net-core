@@ -33,6 +33,9 @@ using Settlement.Sportsbook.Aio.Services;
 using Settlement.Sportsbook.MoveTickets;
 using Settlement.Sportsbook.MoveTickets.Controllers;
 using Settlement.Sportsbook.MoveTickets.Services;
+using Settlement.Sportsbook.OtherSports;
+using Settlement.Sportsbook.OtherSports.Controllers;
+using Settlement.Sportsbook.OtherSports.Services;
 using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
@@ -159,6 +162,9 @@ namespace Settlement.WebSites
             services.AddTransient<IValidateApiKeyService, ValidateApiKeyServiceImp>();
             services.AddTransient<ICriteriaFactory, CriteriaFactoryImp>();
             services.AddTransient<ICreateQueryService, CreateQueryServiceImp>();
+
+            services.AddTransient<SettlementActionsService, SettlementActionsServiceImp>();
+            services.AddTransient<SportsbookService, SportsbookServiceImp>();
         }
 
         private void ConfigureNapServices(IServiceCollection services)
@@ -227,6 +233,7 @@ namespace Settlement.WebSites
         {
             services.AddMediatR(typeof(AioController).GetTypeInfo().Assembly);
             services.AddMediatR(typeof(MoveTicketController).GetTypeInfo().Assembly);
+            services.AddMediatR(typeof(OtherSportsController).GetTypeInfo().Assembly);
         }
 
         private static void ConfigureAutoMapper(IServiceCollection services)
@@ -235,6 +242,7 @@ namespace Settlement.WebSites
             {
                 mc.AddProfile(typeof(SportsbookAioAutoMapperProfile));
                 mc.AddProfile(typeof(SportsbookMoveTicketAutoMapperProfile));
+                mc.AddProfile(typeof(OtherSportsAutoMapperProfile));
             });
 
             IMapper mapper = mapperConfig.CreateMapper();

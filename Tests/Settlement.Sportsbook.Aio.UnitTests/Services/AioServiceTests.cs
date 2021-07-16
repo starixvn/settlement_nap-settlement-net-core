@@ -26,6 +26,7 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
         private readonly IValidateApiKeyService validateApiKeyService;
         private readonly IAioService service;
         private readonly Microsoft.Extensions.Configuration.IConfiguration configuration;
+
         public AioServiceTests()
         {
             repository = Substitute.For<IDynamicRepository>();
@@ -60,16 +61,16 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
             // Arrange
             var request = new GetMatchRequest();
 
-            var fakeMatch = new MatchDetail { MatchId = 1 };
-            repository.GetAsync<MatchDetail>(Arg.Any<ICriteria>()).Returns(fakeMatch);
+            var fakeMatch = new Models.MatchDetail { MatchId = 1 };
+            repository.GetAsync<Models.MatchDetail>(Arg.Any<ICriteria>()).Returns(fakeMatch);
 
-            var listResultDetial = new List<MatchResultDetail> {
-                new MatchResultDetail { ResourceId="00" }
+            var listResultDetial = new List<Models.ResultDetail> {
+                new Models.ResultDetail { ResourceId="00" }
             };
 
-            var tuple = ValueTuple.Create<IEnumerable<MatchResultDetail>, IEnumerable<TicketCounts>>(listResultDetial, new List<TicketCounts>());
+            var tuple = ValueTuple.Create<IEnumerable<Models.ResultDetail>, IEnumerable<TicketCounts>>(listResultDetial, new List<TicketCounts>());
 
-            repository.FetchMultipleAsync<MatchResultDetail, TicketCounts>(Arg.Any<ICriteria>()).Returns(tuple);
+            repository.FetchMultipleAsync<Models.ResultDetail, TicketCounts>(Arg.Any<ICriteria>()).Returns(tuple);
 
             // Act
             var result = await service.GetMatch(request);
@@ -99,7 +100,6 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
                 x.ErrCode = errorCode;
                 x.ErrMsg = errorMsg;
             })).Returns(1);
-
 
             var actual = await service.Settle(new SettleRequest());
 
@@ -170,12 +170,12 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
         [InlineData(1, "Error", false)]
         public async Task SaveScore_Always_CallInOrderAllRelatedMethods(int errorCode, string errorMsg, bool result)
         {
-            createQueryService.QuerySaveScore(Arg.Any<SaveScoreRequest>()).Returns(new SaveScoreCriteria());
+            createQueryService.QuerySaveScore(Arg.Any<SaveScoreRequest>()).Returns(new SaveScoreRequest());
 
-           repository.ExecuteAsync(Arg.Do<SaveScoreCriteria>(x =>
-           {
-               x.ErrCode = errorCode;
-               x.ErrMsg = errorMsg;
+            repository.ExecuteAsync(Arg.Do<SaveScoreCriteria>(x =>
+            {
+                x.ErrCode = errorCode;
+                x.ErrMsg = errorMsg;
             })).Returns(1);
 
             var actual = await service.SaveScore(new SaveScoreRequest());
@@ -183,5 +183,4 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
             Assert.Equal(result, actual.IsSuccessful);
         }
     }
-
 }

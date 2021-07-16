@@ -1,8 +1,5 @@
 ﻿using AutoMapper;
 using Fanex.Data.Repository;
-using Fanex.NAP.Client.Helpers.Web;
-using Kaden.XmlConverter;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
@@ -15,7 +12,6 @@ using Settlement.Sportsbook.Aio.Requests;
 using Settlement.Sportsbook.Core.Criterias;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -27,7 +23,7 @@ namespace Settlement.Sportsbook.Aio.Services
 
         Task<Result> Settle(SettleRequest request);
 
-        Task<List<MatchResultDetail>> GetRecalResult(GetRecalResultRequest request);
+        Task<List<Models.ResultDetail>> GetRecalResult(GetRecalResultRequest request);
 
         Task<MarkedTickets> CheckMarkedTickets(CheckMarkedTicketsRequest request);
 
@@ -42,6 +38,8 @@ namespace Settlement.Sportsbook.Aio.Services
         Task<Result> RefundParlayChildMatch(RefundParlayChildMatchRequest request);
 
         Task<Result> SettleChildMatch(SettleChildMatchRequest request);
+
+        Task<Boolean> ResultSetting(ResultSettingRequest request);
     }
 
     public class AioService : IAioService
@@ -55,7 +53,6 @@ namespace Settlement.Sportsbook.Aio.Services
         private readonly IRefDataService refDataService;
 
         private readonly ICreateQueryService createQueryService;
-
 
         private readonly IMapperFactory mapperFactory;
 
@@ -87,7 +84,7 @@ namespace Settlement.Sportsbook.Aio.Services
         {
             var apiKey = validateApiKeyService.GetApiKey(request.ApiKey);
             var matchCriteria = validateApiKeyService.CriteriaName(request, $"{apiKey}-{ ApiKeyConstant.MatchInfoKey}");
-            var matchDetail = await repository.GetAsync<MatchDetail>(matchCriteria);
+            var matchDetail = await repository.GetAsync<Models.MatchDetail>(matchCriteria);
             var externalResults = new List<ExternalResultModel>();
             if (matchDetail != null)
             {
@@ -104,7 +101,7 @@ namespace Settlement.Sportsbook.Aio.Services
             }
 
             var resultDetailCriteria = validateApiKeyService.CriteriaName(request, $"{apiKey}-{ApiKeyConstant.ResultDetailKey}");
-            var (firstResultSet, secondResultSet) = await repository.FetchMultipleAsync<MatchResultDetail, TicketCounts>(resultDetailCriteria);
+            var (firstResultSet, secondResultSet) = await repository.FetchMultipleAsync<Models.ResultDetail, TicketCounts>(resultDetailCriteria);
             var resultDetails = firstResultSet.ToList();
 
             var mapperService = mapperFactory.GetMapperService($"{apiKey}-{ApiKeyConstant.ResultDetailKey}");
@@ -113,7 +110,7 @@ namespace Settlement.Sportsbook.Aio.Services
                 mapperService.Decorate(resultDetails);
             }
 
-           var ticketCounts = secondResultSet.FirstOrDefault() ?? new TicketCounts();
+            var ticketCounts = secondResultSet.FirstOrDefault() ?? new TicketCounts();
             var hedgeMatchCriteria = validateApiKeyService.CriteriaName(request, $"{apiKey}-{ApiKeyConstant.HedgeMatchInfoKey}");
             var hedgeMatchDetail = await repository.GetAsync<HedgeMatchDetail>(hedgeMatchCriteria);
 
@@ -128,10 +125,10 @@ namespace Settlement.Sportsbook.Aio.Services
             };
         }
 
-        public async Task<List<MatchResultDetail>> GetRecalResult(GetRecalResultRequest request)
+        public async Task<List<Models.ResultDetail>> GetRecalResult(GetRecalResultRequest request)
         {
             var criteria = mapper.Map<GetRecalResultRequest, GetRecalResultCriteria>(request);
-            var resultDetails = await repository.FetchAsync<MatchResultDetail>(criteria);
+            var resultDetails = await repository.FetchAsync<Models.ResultDetail>(criteria);
 
             return resultDetails.ToList();
         }
@@ -184,7 +181,7 @@ namespace Settlement.Sportsbook.Aio.Services
 
         public async Task<Result> VerifyNoRunningOdds(CheckRunningOddsRequest request)
         {
-            if(configuration.GetSection("EnableVerifyingRunningOdds").Value == "0")
+            if (configuration.GetSection("EnableVerifyingRunningOdds").Value == "0")
             {
                 return new Result();
             }
@@ -280,6 +277,14 @@ namespace Settlement.Sportsbook.Aio.Services
             }
 
             return new Result();
+        }
+
+        public async Task<Boolean> ResultSetting(ResultSettingRequest request)
+        {
+            var criteria = createQueryService.QueryChangeSetting(request);
+
+            await repository.ExecuteAsync(criteria);
+            return criteria.IsEnabled;
         }
     }
 }

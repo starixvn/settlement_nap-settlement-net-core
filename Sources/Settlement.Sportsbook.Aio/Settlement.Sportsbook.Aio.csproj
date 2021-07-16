@@ -8,6 +8,7 @@
 	  <Compile Remove="Constants\GroupBetType.cs" />
 	  <Compile Remove="Constants\InputType.cs" />
 	  <Compile Remove="Criterias\GetRecalResultCriteria.cs" />
+	  <Compile Remove="Models\MatchResultDetail.cs" />
 	  <Compile Remove="Models\ResultAio.cs" />
 	  <Compile Remove="MapperFactory\GetFetchService.cs" />
 	</ItemGroup>

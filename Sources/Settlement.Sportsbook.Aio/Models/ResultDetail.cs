@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Settlement.Sportsbook.Aio.Models
 {
-    public class MatchResultDetail
+    public class ResultDetail
     {
         private const int ToBase = 2;
 

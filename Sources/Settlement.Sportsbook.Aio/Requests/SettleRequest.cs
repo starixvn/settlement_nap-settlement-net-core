@@ -21,6 +21,8 @@ namespace Settlement.Sportsbook.Aio.Requests
 
         public int SportType { get; set; }
 
+        public bool IsDirectly { get; set; }
+
         public List<ResourceItem> SelectedResources { get; set; }
     }
 }

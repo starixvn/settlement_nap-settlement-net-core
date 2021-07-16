@@ -7,7 +7,7 @@ namespace Settlement.Sportsbook.Aio.Services.ESport
 {
     public interface IEarlyBetTypeNameService
     {
-        MatchResultDetail GetBetTypeName(MatchResultDetail item);
+        ResultDetail GetBetTypeName(ResultDetail item);
     }
 
     public class EarlyBetTypeNameServiceImp : IEarlyBetTypeNameService
@@ -22,7 +22,7 @@ namespace Settlement.Sportsbook.Aio.Services.ESport
             this.refDataService = refDataService;
         }
 
-        public MatchResultDetail GetBetTypeName(MatchResultDetail item)
+        public ResultDetail GetBetTypeName(ResultDetail item)
         {
             var resourceId = item.ResourceId;
             item.Map = Convert.ToInt32(resourceId.Substring(FourPosition, TwoPosition));

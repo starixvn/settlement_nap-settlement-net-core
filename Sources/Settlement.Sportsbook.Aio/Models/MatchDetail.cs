@@ -41,6 +41,15 @@ namespace Settlement.Sportsbook.Aio.Models
         public string BetStatus { get; set; }
 
         public int ChildMatchType { get; set; }
+
         public bool IsHalftimeCal { get; set; }
+
+        public int SportType { get; set; }
+
+        public string SportName => RefDataService.GetSportName(SportType);
+
+        public int ConfirmFT { get; set; }
+
+        public string EventStatus { get; set; }
     }
 }
