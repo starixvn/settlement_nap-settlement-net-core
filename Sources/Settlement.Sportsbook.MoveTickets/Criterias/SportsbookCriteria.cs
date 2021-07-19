@@ -21,7 +21,7 @@ namespace Settlement.Sportsbook.MoveTickets.Criterias
 
         public bool IsIncludeTest { get; set; }
 
-        public decimal Remark { get; set; }
+        public string HoldStatus { get; set; }
 
         public override string GetSettingKey()
         {
