@@ -22,6 +22,6 @@ namespace Settlement.Sportsbook.MoveTickets.Requests
 
         public bool IsIncludeTest { get; set; }
 
-        public int Remark { get; set; }
+        public string HoldStatus { get; set; }
     }
 }
