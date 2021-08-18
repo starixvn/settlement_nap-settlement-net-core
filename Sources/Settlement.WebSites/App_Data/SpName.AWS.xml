@@ -27,7 +27,6 @@
     <Setting Key="NAP_Set_ProviderExternalResultDetailESLatestInfoSel" SpName="NAP_Set_ProviderExternalResultDetailESLatestInfoSel" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_ProviderExternalResultDetailLatestInfoSel" SpName="NAP_Set_ProviderExternalResultDetailLatestInfoSel" DbName="DBPRO.bodb02.bodbAdminNet" />
   </Function>
-
   <Function Name="Setting">
     <Setting Key="NAP_Set_ExternalResultDetailOSIns" SpName="NAP_Set_ExternalResultDetailOSIns" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_ExternalResultDetailESIns" SpName="NAP_Set_ExternalResultDetailESIns" DbName="DBPRO.bodb02.bodbAdminNet" />

@@ -23,6 +23,8 @@ namespace Settlement.Sportsbook.MoveTickets.Criterias
 
         public string HoldStatus { get; set; }
 
+        public byte Page { get; } = 1;
+
         public override string GetSettingKey()
         {
             return "NAP_Set_MatchOtherSportsSel";
