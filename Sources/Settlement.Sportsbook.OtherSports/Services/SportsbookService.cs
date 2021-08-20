@@ -74,6 +74,7 @@ namespace Settlement.Sportsbook.OtherSports.Services
             var fulltimeExScore = externalResultDetails.FirstOrDefault(item => item.ResourceId == fulltimeResource);
             if (fulltimeExScore != null && !string.IsNullOrEmpty(fulltimeExScore.HomeValue) && !string.IsNullOrEmpty(fulltimeExScore.AwayValue))
             {
+                matchDetail.ExternalSourceName = fulltimeExScore.SourceName;
                 matchDetail.ExFTAwayScore = int.Parse(fulltimeExScore.AwayValue);
                 matchDetail.ExFTHomeScore = int.Parse(fulltimeExScore.HomeValue);
             }
@@ -81,6 +82,7 @@ namespace Settlement.Sportsbook.OtherSports.Services
             var halftimeExScore = externalResultDetails.FirstOrDefault(item => item.ResourceId == halfTimeResource);
             if (halftimeExScore != null && !string.IsNullOrEmpty(halftimeExScore.HomeValue) && !string.IsNullOrEmpty(halftimeExScore.AwayValue))
             {
+                matchDetail.ExternalSourceName = halftimeExScore.SourceName;
                 matchDetail.ExHTAwayScore = int.Parse(halftimeExScore.AwayValue);
                 matchDetail.ExHTHomeScore = int.Parse(halftimeExScore.HomeValue);
             }

@@ -93,5 +93,7 @@ namespace Settlement.Core.Models
 
         private bool IsRefundFullTime => !string.IsNullOrWhiteSpace(BetStatus) && (BetStatus.IgnoreCaseContains(Constants.EventStatus.Abandoned)
                  || (BetStatus.IgnoreCaseContains(Constants.EventStatus.Refund) && !BetStatus.IgnoreCaseContains(Constants.EventStatus.RefundHT)));
+
+        public string ExternalSourceName { get; set; }
     }
 }
