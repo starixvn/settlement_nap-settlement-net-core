@@ -10,6 +10,8 @@ namespace Settlement.Sportsbook.Aio.Criterias
 
         public bool IsExistMarkedTicket { get; set; }
 
+        public bool IsMergedParlay { get; set; }
+
         public override string GetSettingKey()
         {
             return "NAP_Set_EarlySettlement_CheckingMarkedTransaction";
