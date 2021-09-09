@@ -13,5 +13,7 @@
         public const string LastestResultKey = "lastest-result";
 
         public const string SaveScore = "save-score";
+
+        public const string ChildMatchKey = "childMatch";
     }
 }

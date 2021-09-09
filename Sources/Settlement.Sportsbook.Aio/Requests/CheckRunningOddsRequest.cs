@@ -1,5 +1,7 @@
-﻿using MediatR;
+﻿using System.Collections.Generic;
+using MediatR;
 using Settlement.Core.Models;
+using Settlement.Sportsbook.Aio.Models;
 
 namespace Settlement.Sportsbook.Aio.Requests
 {
@@ -8,6 +10,8 @@ namespace Settlement.Sportsbook.Aio.Requests
         public int MatchId { get; set; }
 
         public string SelectedResources { get; set; }
+
+        public List<CheckOddsItem> SelectedMatchResource { get; set; }
 
         public string Action { get; set; }
     }

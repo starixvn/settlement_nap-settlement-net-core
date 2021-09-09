@@ -60,18 +60,6 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Controllers
         }
 
         [Fact]
-        public async Task RefundParlay_Always_ReturnOkStatus()
-        {
-            var request = new RefundParlayRequest();
-            mediator.Send(Arg.Any<RefundParlayRequest>()).Returns(new Result());
-
-            var actual = await controller.RefundParlay(request) as OkObjectResult;
-
-            Assert.IsType<Result>(actual.Value);
-            Assert.Equal(200, actual.StatusCode);
-        }
-
-        [Fact]
         public async Task GetRecalResult_Always_ReturnOkStatus()
         {
             var request = new GetRecalResultRequest();
@@ -79,7 +67,7 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Controllers
 
             var actual = await controller.GetRecalResult(request) as OkObjectResult;
 
-            Assert.IsType<List<MatchResultDetail>>(actual.Value);
+            Assert.IsType<List<Models.ResultDetail>>(actual.Value);
             Assert.Equal(200, actual.StatusCode);
         }
 

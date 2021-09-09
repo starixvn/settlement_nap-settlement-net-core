@@ -23,7 +23,6 @@ namespace Settlement.Sportsbook.Aio.MapperFactory
             CriteriaTypes.Add($"tennis-{ApiKeyConstant.LastestResultKey}", typeof(Criterias.GetRecalResultCriteria));
             CriteriaTypes.Add($"tennis-{ApiKeyConstant.SaveScore}", typeof(Criterias.SaveScoreCriteria));
 
-            CriteriaTypes.Add("tennis-refund-parlay", typeof(Criterias.RefundParlayCriteria));
             CriteriaTypes.Add("tennis-settle", typeof(Criterias.SettleCriteria));
         }
 
@@ -36,7 +35,6 @@ namespace Settlement.Sportsbook.Aio.MapperFactory
             CriteriaTypes.Add($"cricket-{ApiKeyConstant.LastestResultKey}", typeof(Criterias.GetRecalResultCriteria));
             CriteriaTypes.Add($"cricket-{ApiKeyConstant.SaveScore}", typeof(Criterias.Cricket.SaveScoreCriteria));
 
-            CriteriaTypes.Add("cricket-refund-parlay", typeof(Criterias.RefundParlayCriteria));
             CriteriaTypes.Add("cricket-settle", typeof(Criterias.SettleCriteria));
         }
 
@@ -50,7 +48,6 @@ namespace Settlement.Sportsbook.Aio.MapperFactory
             CriteriaTypes.Add($"esport-{ApiKeyConstant.SaveScore}", typeof(Criterias.ESport.SaveScoreCriteria));
 
             CriteriaTypes.Add($"esport-settle", typeof(Criterias.SettleCriteria));
-            CriteriaTypes.Add($"esport-refund-parlay", typeof(Criterias.RefundParlayCriteria));
         }
 
         private static void Badminton()
@@ -63,7 +60,6 @@ namespace Settlement.Sportsbook.Aio.MapperFactory
             CriteriaTypes.Add($"badminton-{ApiKeyConstant.SaveScore}", typeof(Criterias.SaveScoreCriteria));
 
             CriteriaTypes.Add("badminton-settle", typeof(Criterias.SettleCriteria));
-            CriteriaTypes.Add("badminton-refund-parlay", typeof(Criterias.RefundParlayCriteria));
         }
 
         private static void Basketball()
@@ -76,7 +72,6 @@ namespace Settlement.Sportsbook.Aio.MapperFactory
             CriteriaTypes.Add($"basketball-{ApiKeyConstant.SaveScore}", typeof(Criterias.SaveScoreCriteria));
 
             CriteriaTypes.Add("basketball-settle", typeof(Criterias.SettleCriteria));
-            CriteriaTypes.Add("basketball-refund-parlay", typeof(Criterias.RefundParlayCriteria));
         }
 
         private static void GameTotal()
@@ -86,9 +81,9 @@ namespace Settlement.Sportsbook.Aio.MapperFactory
             CriteriaTypes.Add($"game-total-{ApiKeyConstant.ResultDetailKey}", typeof(Criterias.GetResultDetailCriteria));
             CriteriaTypes.Add($"game-total-{ApiKeyConstant.LastestResultKey}", typeof(Criterias.GetRecalResultCriteria));
             CriteriaTypes.Add($"game-total-{ApiKeyConstant.ProviderKey}", typeof(Criterias.GetProviderCriteria));
+            CriteriaTypes.Add($"game-total-{ApiKeyConstant.ChildMatchKey}", typeof(Criterias.Volleyball.GetChildMatchCriteria));
 
             CriteriaTypes.Add($"game-total-settle", typeof(Criterias.SettleCriteria));
-            CriteriaTypes.Add($"game-total-refund-parlay", typeof(Criterias.RefundParlayCriteria));
         }
     }
 }

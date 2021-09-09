@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Settlement.Sportsbook.Aio.Criterias;
+using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Requests;
 
 namespace Settlement.Sportsbook.Aio
@@ -13,8 +14,6 @@ namespace Settlement.Sportsbook.Aio
             CreateMap<GetRecalResultRequest, GetRecalResultCriteria>();
             CreateMap<CheckMarkedTicketsRequest, CheckMarkedTicketsCriteria>();
             CreateMap<GetMatchRequest, GetHedgeMatchCriteria>();
-            CreateMap<RefundParlayRequest, RefundParlayCriteria>()
-                .ForMember(dest => dest.Action, map => map.MapFrom(src => src.ActionName));
             CreateMap<SettleRequest, SettleCriteria>()
                 .ForMember(dest => dest.Action, map => map.MapFrom(src => src.ActionName))
                 .ForMember(dest => dest.SelectedResources, map => map.Ignore());
@@ -22,9 +21,7 @@ namespace Settlement.Sportsbook.Aio
            .ForMember(dest => dest.Action, map => map.MapFrom(src => src.ActionName))
            .ForMember(dest => dest.SelectedResources, map => map.Ignore())
            .ForMember(dest => dest.MatchId, map => map.Ignore());
-            CreateMap<RefundParlayChildMatchRequest, RefundParlayCriteria>()
-                .ForMember(dest => dest.MatchId, map => map.Ignore());
-            CreateMap<CheckMarkedTicketsParlayRequest, CheckMarkedTicketsParlayCriteria>();
+            CreateMap<ChildMatchModel, ResourceItem>();
         }
     }
 }

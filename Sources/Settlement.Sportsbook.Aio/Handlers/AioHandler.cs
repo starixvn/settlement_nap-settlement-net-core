@@ -15,12 +15,9 @@ namespace Settlement.Sportsbook.Aio.Handlers
             IRequestHandler<SettleRequest, Result>,
             IRequestHandler<GetRecalResultRequest, List<Models.ResultDetail>>,
             IRequestHandler<CheckMarkedTicketsRequest, MarkedTickets>,
-            IRequestHandler<RefundParlayRequest, Result>,
             IRequestHandler<CheckRunningOddsRequest, Result>,
             IRequestHandler<SaveScoreRequest, Result>,
             IRequestHandler<SettleChildMatchRequest, Result>,
-            IRequestHandler<RefundParlayChildMatchRequest, Result>,
-            IRequestHandler<CheckMarkedTicketsParlayRequest, MarkedTickets>,
             IRequestHandler<ResultSettingRequest, Boolean>
 
     {
@@ -39,17 +36,11 @@ namespace Settlement.Sportsbook.Aio.Handlers
 
         public async Task<MarkedTickets> Handle(CheckMarkedTicketsRequest request, CancellationToken cancellationToken) => await aioService.CheckMarkedTickets(request);
 
-        public async Task<Result> Handle(RefundParlayRequest request, CancellationToken cancellationToken) => await aioService.RefundParlay(request);
-
         public async Task<Result> Handle(CheckRunningOddsRequest request, CancellationToken cancellationToken) => await aioService.VerifyNoRunningOdds(request);
 
         public async Task<Result> Handle(SaveScoreRequest request, CancellationToken cancellationToken) => await aioService.SaveScore(request);
 
         public async Task<Result> Handle(SettleChildMatchRequest request, CancellationToken cancellationToken) => await aioService.SettleChildMatch(request);
-
-        public async Task<Result> Handle(RefundParlayChildMatchRequest request, CancellationToken cancellationToken) => await aioService.RefundParlayChildMatch(request);
-
-        public async Task<MarkedTickets> Handle(CheckMarkedTicketsParlayRequest request, CancellationToken cancellationToken) => await aioService.CheckMarkedTicketsParlay(request);
 
         public async Task<Boolean> Handle(ResultSettingRequest request, CancellationToken cancellationToken) => await aioService.ResultSetting(request);
     }

@@ -67,17 +67,6 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Handlers
         }
 
         [Fact]
-        public async Task HandleRefundParlayRequest_Always_ReturnCorrectResult()
-        {
-            var result = new Result();
-            service.RefundParlay(Arg.Any<RefundParlayRequest>()).Returns(result);
-
-            var actual = await handler.Handle(new RefundParlayRequest(), new System.Threading.CancellationToken());
-
-            Assert.Equal(result, actual);
-        }
-
-        [Fact]
         public async Task HandleCheckRunningOddsRequest_Always_ReturnCorrectResult()
         {
             var result = new Result();

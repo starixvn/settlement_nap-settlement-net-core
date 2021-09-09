@@ -48,7 +48,7 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
         public async Task GetRecalResult_Always_ReturnResultDetailList()
         {
             var request = new GetRecalResultRequest();
-            repository.FetchAsync<MatchResultDetail>(Arg.Any<GetRecalResultCriteria>()).Returns(new List<MatchResultDetail> { new MatchResultDetail() });
+            repository.FetchAsync<Models.ResultDetail>(Arg.Any<GetRecalResultCriteria>()).Returns(new List<Models.ResultDetail> { new Models.ResultDetail() });
 
             var actual = await service.GetRecalResult(request);
 
@@ -107,23 +107,6 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
         }
 
         [Theory]
-        [InlineData(0, "", true)]
-        [InlineData(1, "Error", false)]
-        public async Task RefundParlay_Always_ReturnCorrectResult(int errorCode, string errorMsg, bool result)
-        {
-            createQueryService.QueryRefundParlay(Arg.Any<RefundParlayRequest>()).Returns(new RefundParlayCriteria());
-            repository.ExecuteAsync(Arg.Do<RefundParlayCriteria>(x =>
-            {
-                x.ErrCode = errorCode;
-                x.ErrMsg = errorMsg;
-            })).Returns(1);
-
-            var actual = await service.RefundParlay(new RefundParlayRequest());
-
-            Assert.Equal(result, actual.IsSuccessful);
-        }
-
-        [Theory]
         [InlineData(true)]
         [InlineData(false)]
         public async Task CheckMarkedTickets_Always_ReturnCorrectResult(bool result)
@@ -171,7 +154,8 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
         public async Task SaveScore_Always_CallInOrderAllRelatedMethods(int errorCode, string errorMsg, bool result)
         { 
             createQueryService.QuerySaveScore(Arg.Any<SaveScoreRequest>()).Returns(new SaveScoreRequest());
-            validateApiKeyService.CreateNonQueryCommand(Arg.Any<SaveScoreRequest>(), Arg.Any<string>()).Returns(new SaveScoreCriteria());
+            validateApiKeyService.CreateNonQueryCommand(Arg.Any<SaveScoreRequest>(), Arg.Any<string>())
+                .Returns(new SaveScoreCriteria());
 
             repository.ExecuteAsync(Arg.Do<SaveScoreCriteria>(x =>
             {
