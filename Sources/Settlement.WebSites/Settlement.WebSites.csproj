@@ -76,6 +76,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Content Update="appsettings.SIT_3.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Update="appsettings.UAT_3.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
 	  <Content Update="appsettings.AWS.json">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
