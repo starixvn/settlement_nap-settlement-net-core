@@ -10,6 +10,12 @@ namespace Settlement.Sportsbook.Aio.Models
     {
         private const int ToBase = 2;
 
+        private string leagueName;
+
+        private string relatedResourceId;
+
+        private string defaultValue = "";
+
         public string MatchCode { get; set; }
 
         public int MatchId { get; set; }
@@ -34,9 +40,9 @@ namespace Settlement.Sportsbook.Aio.Models
 
         public byte ConfirmFT { get; set; }
 
-        public string LeagueName => ChildMatchConstant.LeagueName[ChildMatchType];
+        public string LeagueName => ChildMatchConstant.LeagueName.TryGetValue(ChildMatchType, out leagueName) ? leagueName : defaultValue;
 
-        public string RelatedResourceId => ChildMatchConstant.ResourceRelated[ChildMatchType];
+        public string RelatedResourceId => ChildMatchConstant.ResourceRelated.TryGetValue(ChildMatchType, out relatedResourceId) ? relatedResourceId : defaultValue;
 
         public MatchResultSetting ResultSettingData => new MatchResultSetting
         {

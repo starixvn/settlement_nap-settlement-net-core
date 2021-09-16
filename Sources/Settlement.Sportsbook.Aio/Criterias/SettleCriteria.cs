@@ -4,6 +4,8 @@ namespace Settlement.Sportsbook.Aio.Criterias
 {
     public class SettleCriteria : NonQueryCommand
     {
+        private string childMatchIds;
+
         public int AdminId { get; set; }
 
         public int MatchId { get; set; }
@@ -27,6 +29,18 @@ namespace Settlement.Sportsbook.Aio.Criterias
         public string ErrMsg { get; set; }
 
         public string ServiceCommand { get; set; }
+
+        public string ChildMatchIds
+        {
+            get
+            {
+                return string.IsNullOrEmpty(childMatchIds) ? "0" : childMatchIds;
+            }
+            set
+            {
+                childMatchIds = value;
+            }
+        }
 
         public override string GetSettingKey()
         {

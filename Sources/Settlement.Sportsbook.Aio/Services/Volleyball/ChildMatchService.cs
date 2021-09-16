@@ -14,35 +14,35 @@ namespace Settlement.Sportsbook.Aio.Services.Volleyball
 
         private readonly int setted = 5;
 
+        private readonly int bestOfMatch = 3;
+
         public void Decorate(dynamic obj)
         {
-            var tuple = obj as Tuple<List<ChildMatchModel>, MatchDetail, List<ResultDetail>>;
-            var childMatchAfterFilter = VerifyChildMatches(tuple.Item1, tuple.Item2, tuple.Item3);
+            var tuple = obj as Tuple<List<ChildMatchModel>, List<ResultDetail>>;
+            var childMatchAfterFilter = VerifyChildMatches(tuple.Item1, tuple.Item2);
             tuple.Item1.Clear();
             tuple.Item1.AddRange(childMatchAfterFilter);
         }
 
-        private List<ChildMatchModel> VerifyChildMatches(List<ChildMatchModel> childMatches, MatchDetail matchDetail, List<ResultDetail> resultDetail)
+        private List<ChildMatchModel> VerifyChildMatches(List<ChildMatchModel> childMatches, List<ResultDetail> resultDetails)
         {
+            var finalResult = resultDetails.FirstOrDefault(item => item.ResourceId == ResourceType.Final);
             return childMatches.Where(item => !item.EventStatus.Equals(EventStatus.Completed, StringComparison.CurrentCultureIgnoreCase)
                                               && !item.ResultSettingData.IsConfirmedRefund
-                                              && VerifyMainMatchStatus(item, matchDetail, resultDetail)).OrderBy(child => child.ChildMatchType).ToList();
+                                              && VerifyFinalResult(item, finalResult)).OrderBy(child => child.ChildMatchType).ToList();
         }
 
-        private bool VerifyMainMatchStatus(ChildMatchModel childMatch, MatchDetail matchDetail, List<ResultDetail> resultDetails)
+        private bool VerifyFinalResult(ChildMatchModel childMatch, ResultDetail finalResult)
         {
-            var ftResult = resultDetails.FirstOrDefault(item => item.ResourceId == ResourceType.Final);
-            if (!matchDetail.EventStatus.Equals(EventStatus.Completed, StringComparison.CurrentCultureIgnoreCase) || matchDetail.FinalHomeScore == null ||
-                (ftResult.ResultStatusId != null && ftResult.ResultStatusId != setted && ftResult.ResultStatusId != confirmed) ||
-                ftResult.ResultStatusId == null)
+            if (finalResult.ResultStatusId == setted || finalResult.ResultStatusId == confirmed)
             {
-                return true;
+                var setCompleted = int.Parse(finalResult.HomeValue) + int.Parse(finalResult.AwayValue);
+                return !finalResult.HomeValue.Equals(finalResult.AwayValue) &&
+                    int.Parse(finalResult.HomeValue) <= bestOfMatch && int.Parse(finalResult.AwayValue) <= bestOfMatch
+                    && ChildMatchConstant.ChildMatchValid[setCompleted].Contains(childMatch.ChildMatchType.ToString());
             }
-            else
-            {
-                var setCompleted = int.Parse(ftResult.HomeValue) + int.Parse(ftResult.AwayValue);
-                return ChildMatchConstant.ChildMatchValid[setCompleted].Contains(childMatch.ChildMatchType.ToString());
-            }
+
+            return true;
         }
     }
 }

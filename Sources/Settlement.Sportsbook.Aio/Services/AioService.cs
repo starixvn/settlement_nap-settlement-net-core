@@ -110,7 +110,7 @@ namespace Settlement.Sportsbook.Aio.Services
             var hedgeMatchCriteria = validateApiKeyService.CriteriaName(request, $"{apiKey}-{ApiKeyConstant.HedgeMatchInfoKey}");
             var hedgeMatchDetail = await repository.GetAsync<HedgeMatchDetail>(hedgeMatchCriteria);
 
-            var childMatches = await GetChildMatch(matchDetail, resultDetails, request, apiKey);
+            var childMatches = await GetChildMatch(resultDetails, request, apiKey);
 
             return new AioMatch
             {
@@ -175,7 +175,7 @@ namespace Settlement.Sportsbook.Aio.Services
             {
                 MatchId = request.MatchId,
                 Action = request.Action,
-                CheckType = request.SelectedResources.Count == 1 ? 1 : 2,
+                CheckType = request.SelectedResources.Count > 1,
                 SelectedResource = createQueryService.CreateMatchResources(request.SelectedResources)
             };
 
@@ -200,14 +200,14 @@ namespace Settlement.Sportsbook.Aio.Services
             };
         }
 
-        private async Task<List<ChildMatchModel>> GetChildMatch(Models.MatchDetail matchDetail, List<ResultDetail> resultDetail, GetMatchRequest request, string apiKey)
+        private async Task<List<ChildMatchModel>> GetChildMatch(List<ResultDetail> resultDetail, GetMatchRequest request, string apiKey)
         {
             var childMatchMapperService = mapperFactory.GetMapperService($"{apiKey}-{ApiKeyConstant.ChildMatchKey}");
             if (childMatchMapperService != null)
             {
                 var getChildMatchCriteria = validateApiKeyService.CriteriaName(request, $"{apiKey}-{ApiKeyConstant.ChildMatchKey}");
                 var childMatchList = await repository.FetchAsync<ChildMatchModel>(getChildMatchCriteria);
-                var childMatchTuple = new Tuple<List<ChildMatchModel>, Models.MatchDetail, List<ResultDetail>>(childMatchList.ToList(), matchDetail, resultDetail);
+                var childMatchTuple = new Tuple<List<ChildMatchModel>, List<ResultDetail>>(childMatchList.ToList(), resultDetail);
                 childMatchMapperService.Decorate(childMatchTuple);
                 return childMatchTuple.Item1.ToList();
             }

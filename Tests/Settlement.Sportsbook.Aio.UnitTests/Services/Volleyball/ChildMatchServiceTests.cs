@@ -14,8 +14,6 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services.Volleyball
 
         private ResultDetail resultDetail;
 
-        private MatchDetail matchDetail;
-
         public ChildMatchServiceTests()
         {
             service = new ChildMatchService();
@@ -23,7 +21,6 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services.Volleyball
             {
                 ResourceId = ResourceType.Final
             };
-            matchDetail = new MatchDetail { EventStatus = EventStatus.Running };
         }
 
         [Fact]
@@ -37,7 +34,7 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services.Volleyball
             };
 
             var listResult = new List<ResultDetail> { resultDetail };
-            var tuple = Tuple.Create(list, matchDetail, listResult);
+            var tuple = Tuple.Create(list, listResult);
 
             service.Decorate(tuple);
 
@@ -57,10 +54,8 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services.Volleyball
             resultDetail.AwayValue = "1";
             resultDetail.ResultStatusId = 5;
             var listResult = new List<ResultDetail> { resultDetail };
-            matchDetail.EventStatus = EventStatus.Completed;
-            matchDetail.FinalHomeScore = 1;
 
-            var tuple = Tuple.Create(list, matchDetail, listResult);
+            var tuple = Tuple.Create(list, listResult);
 
             service.Decorate(tuple);
 
