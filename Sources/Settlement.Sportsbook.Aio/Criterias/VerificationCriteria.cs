@@ -10,8 +10,6 @@ namespace Settlement.Sportsbook.Aio.Criterias
 
         public string Action { get; set; }
 
-        public string SelectedMatchResource { get; set; }
-
         public int CheckType { get; set; }
 
         public int ErrCode { get; set; }

@@ -174,10 +174,9 @@ namespace Settlement.Sportsbook.Aio.Services
             var criteria = new VerificationCriteria
             {
                 MatchId = request.MatchId,
-                SelectedResource = request.SelectedResources,
                 Action = request.Action,
-                CheckType = request.SelectedMatchResource?.Any() != true ? 1 : 2,
-                SelectedMatchResource = request.SelectedMatchResource?.Count > 0 ? createQueryService.CreateMatchResources(request.SelectedMatchResource) : null
+                CheckType = request.SelectedResources.Count == 1 ? 1 : 2,
+                SelectedResource = createQueryService.CreateMatchResources(request.SelectedResources)
             };
 
             await repository.ExecuteAsync(criteria);

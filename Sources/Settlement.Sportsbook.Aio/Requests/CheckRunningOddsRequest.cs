@@ -9,9 +9,7 @@ namespace Settlement.Sportsbook.Aio.Requests
     {
         public int MatchId { get; set; }
 
-        public string SelectedResources { get; set; }
-
-        public List<CheckOddsItem> SelectedMatchResource { get; set; }
+        public List<CheckOddsItem> SelectedResources { get; set; }
 
         public string Action { get; set; }
     }
