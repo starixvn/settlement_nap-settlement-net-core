@@ -10,8 +10,6 @@ namespace Settlement.Sportsbook.Aio.Services.Volleyball
 {
     public class ChildMatchService : IMapperService
     {
-        private readonly string settleResultStatus = "completed";
-
         private readonly int confirmed = 3;
 
         private readonly int setted = 5;
@@ -26,14 +24,14 @@ namespace Settlement.Sportsbook.Aio.Services.Volleyball
 
         private List<ChildMatchModel> VerifyChildMatches(List<ChildMatchModel> childMatches, MatchDetail matchDetail, List<ResultDetail> resultDetail)
         {
-            return childMatches.Where(item => item.EventStatus != settleResultStatus
+            return childMatches.Where(item => !item.EventStatus.Equals(EventStatus.Completed, StringComparison.CurrentCultureIgnoreCase)
                                               && !item.ResultSettingData.IsConfirmedRefund
                                               && VerifyMainMatchStatus(item, matchDetail, resultDetail)).OrderBy(child => child.ChildMatchType).ToList();
         }
 
         private bool VerifyMainMatchStatus(ChildMatchModel childMatch, MatchDetail matchDetail, List<ResultDetail> resultDetails)
         {
-            var ftResult = resultDetails.FirstOrDefault(item => item.ResourceId == "00");
+            var ftResult = resultDetails.FirstOrDefault(item => item.ResourceId == ResourceType.Final);
             if (!matchDetail.EventStatus.Equals(EventStatus.Completed, StringComparison.CurrentCultureIgnoreCase) || matchDetail.FinalHomeScore == null ||
                 (ftResult.ResultStatusId != null && ftResult.ResultStatusId != setted && ftResult.ResultStatusId != confirmed) ||
                 ftResult.ResultStatusId == null)

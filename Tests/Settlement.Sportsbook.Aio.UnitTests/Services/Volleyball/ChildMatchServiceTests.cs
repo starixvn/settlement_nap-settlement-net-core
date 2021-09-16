@@ -1,0 +1,70 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Net;
+using Settlement.Core.Constants;
+using Settlement.Sportsbook.Aio.Models;
+using Settlement.Sportsbook.Aio.Services.Volleyball;
+using Xunit;
+
+namespace Settlement.Sportsbook.Aio.UnitTests.Services.Volleyball
+{
+    public class ChildMatchServiceTests
+    {
+        private readonly ChildMatchService service;
+
+        private ResultDetail resultDetail;
+
+        private MatchDetail matchDetail;
+
+        public ChildMatchServiceTests()
+        {
+            service = new ChildMatchService();
+            resultDetail = new ResultDetail
+            {
+                ResourceId = ResourceType.Final
+            };
+            matchDetail = new MatchDetail { EventStatus = EventStatus.Running };
+        }
+
+        [Fact]
+        public void Decorate_Always_ReturnChildMatchRunningAndNotConfirmedRefund()
+        {
+            var list = new List<ChildMatchModel>
+            {
+                new ChildMatchModel {EventStatus = EventStatus.Completed},
+                new ChildMatchModel {EventStatus = EventStatus.Running ,ResultSetting = 2},
+                new ChildMatchModel {EventStatus = EventStatus.Running}
+            };
+
+            var listResult = new List<ResultDetail> { resultDetail };
+            var tuple = Tuple.Create(list, matchDetail, listResult);
+
+            service.Decorate(tuple);
+
+            Assert.Single(list);
+        }
+
+        [Fact]
+        public void Decorate_Always_ReturnChildMatchRelatedSet()
+        {
+            var list = new List<ChildMatchModel>
+            {
+                new ChildMatchModel {EventStatus = EventStatus.Running, ChildMatchType = 12},
+                new ChildMatchModel {EventStatus = EventStatus.Running, ChildMatchType = 11},
+                new ChildMatchModel {EventStatus = EventStatus.Running, ChildMatchType = 16}
+            };
+            resultDetail.HomeValue = "1";
+            resultDetail.AwayValue = "1";
+            resultDetail.ResultStatusId = 5;
+            var listResult = new List<ResultDetail> { resultDetail };
+            matchDetail.EventStatus = EventStatus.Completed;
+            matchDetail.FinalHomeScore = 1;
+
+            var tuple = Tuple.Create(list, matchDetail, listResult);
+
+            service.Decorate(tuple);
+
+            Assert.Equal(2, list.Count);
+        }
+    }
+}

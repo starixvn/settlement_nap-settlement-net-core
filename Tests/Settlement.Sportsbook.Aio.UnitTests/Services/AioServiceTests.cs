@@ -168,20 +168,43 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
             Assert.Equal(result, actual.IsSuccessful);
         }
 
-        [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public async Task CheckMarkedTicketsParlay_Always_ReturnCorrectResult(bool result)
+        [Fact]
+        public async Task SettleChildMatch_Always_CallQueryWithEveryMatch()
         {
-            repository.ExecuteAsync(Arg.Do<CheckMarkedTicketsParlayCriteria>(x =>
+            createQueryService.QuerySettleChildMatch(Arg.Any<SettleChildMatchRequest>()).Returns(new SettleCriteria());
+            createQueryService.CreateResources(Arg.Any<List<ResourceItem>>()).Returns("");
+            var count = 0;
+
+            await repository.ExecuteAsync(Arg.Do<SettleCriteria>(x => count++));
+
+            var request = new SettleChildMatchRequest
             {
-                x.IsExistMarkedTicket = result;
-            })).Returns(1);
+                ChildMatchIds = "1,2"
+            };
 
-            var actual = await service.CheckMarkedTicketsParlay(new CheckMarkedTicketsParlayRequest());
+            await service.SettleChildMatch(request);
 
-            Assert.Equal(result, actual.IsExistMarkedTicket);
+            Assert.Equal(2, count);
         }
 
+        [Fact]
+        public async Task SettleChildMatch_Always_CallCriteriaWithWithEveryMatch()
+        {
+            createQueryService.QuerySettleChildMatch(Arg.Any<SettleChildMatchRequest>()).Returns(new SettleCriteria());
+            createQueryService.CreateResourceChildMatch(Arg.Any<ChildMatchModel>()).Returns("");
+            var count = 0;
+
+            await repository.ExecuteAsync(Arg.Do<SettleCriteria>(x => count++));
+
+            var request = new SettleChildMatchRequest
+            {
+                ChildMatches = new List<ChildMatchModel>
+                    { new ChildMatchModel(), new ChildMatchModel() }
+            };
+
+            await service.SettleChildMatch(request);
+
+            Assert.Equal(2, count);
+        }
     }
 }
