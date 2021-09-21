@@ -108,13 +108,14 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
 
             };
 
-            var expectedData = new SaveScoreCriteria
+            var expectedData = new SaveScoreRequest
             {
                 MatchId = request.MatchId,
                 UserId = currentSession.UserId,
                 OutsideSources = "",
                 Sources = "",
-                Ip = "1.0.0.0"
+                Ip = "1.0.0.0",
+                IsTrader = false
             };
 
             var result = service.QuerySaveScore(request);

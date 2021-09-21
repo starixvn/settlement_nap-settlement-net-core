@@ -20,7 +20,7 @@ namespace Settlement.Sportsbook.Aio.Constants
 
         public static List<int> Other => new List<int>
         {
-            9401, 9400
+            9401, 9400, 9442, 9443
         };
 
         public static List<int> FirstInnsHome => new List<int>

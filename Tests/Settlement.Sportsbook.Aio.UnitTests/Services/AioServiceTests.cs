@@ -169,8 +169,9 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
         [InlineData(0, "", true)]
         [InlineData(1, "Error", false)]
         public async Task SaveScore_Always_CallInOrderAllRelatedMethods(int errorCode, string errorMsg, bool result)
-        {
+        { 
             createQueryService.QuerySaveScore(Arg.Any<SaveScoreRequest>()).Returns(new SaveScoreRequest());
+            validateApiKeyService.CreateNonQueryCommand(Arg.Any<SaveScoreRequest>(), Arg.Any<string>()).Returns(new SaveScoreCriteria());
 
             repository.ExecuteAsync(Arg.Do<SaveScoreCriteria>(x =>
             {
@@ -182,5 +183,21 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
 
             Assert.Equal(result, actual.IsSuccessful);
         }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task CheckMarkedTicketsParlay_Always_ReturnCorrectResult(bool result)
+        {
+            repository.ExecuteAsync(Arg.Do<CheckMarkedTicketsParlayCriteria>(x =>
+            {
+                x.IsExistMarkedTicket = result;
+            })).Returns(1);
+
+            var actual = await service.CheckMarkedTicketsParlay(new CheckMarkedTicketsParlayRequest());
+
+            Assert.Equal(result, actual.IsExistMarkedTicket);
+        }
+
     }
 }
