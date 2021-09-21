@@ -59,6 +59,13 @@ namespace Settlement.WebSites.Controllers
             return View();
         }
 
+        [AllowAnonymous]
+        public IActionResult ClearSession()
+        {
+            HttpContext.Session.Clear();
+            return Content("Clear session.");
+        }
+
 #if DEBUG
 
         [AllowAnonymous]

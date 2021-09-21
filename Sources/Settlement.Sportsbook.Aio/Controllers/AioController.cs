@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Settlement.Core.ActionFilters;
 using Settlement.Sportsbook.Aio.Requests;
@@ -9,7 +8,7 @@ namespace Settlement.Sportsbook.Aio.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
+    [SessionAuthorize]
     public class AioController : ControllerBase
     {
         private readonly IMediator mediator;

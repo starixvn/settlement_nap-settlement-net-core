@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Settlement.Core.ActionFilters;
 using Settlement.Sportsbook.OtherSports.Requests;
@@ -9,7 +8,7 @@ namespace Settlement.Sportsbook.OtherSports.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
+    [SessionAuthorize]
     public class OtherSportsController : ControllerBase
     {
         private readonly IMediator mediator;
