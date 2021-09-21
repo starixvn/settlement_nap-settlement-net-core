@@ -6,7 +6,7 @@ namespace Settlement.Sportsbook.Aio.Constants
     {
         public static Dictionary<int, string> ResourceRelated => new()
         {
-            { 11, "00" },
+            { 11, "01" },
             { 12, "0101" },
             { 14, "0102" },
             { 15, "0103" },
