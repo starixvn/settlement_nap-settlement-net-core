@@ -44,7 +44,7 @@ namespace Settlement.Core.ActionFilters
             if (IsAjaxRequest(context.HttpContext.Request))
             {
                 var response = context.HttpContext.Response;
-                const string messageContent = "You have not been privileged to use any function. Please contact the admin for help.";
+                const string messageContent = "Sorry, you have lost connection to the session! Please sign-in again.";
                 response.StatusCode = (int)HttpStatusCode.Forbidden;
                 response.WriteAsync(messageContent);
             }
