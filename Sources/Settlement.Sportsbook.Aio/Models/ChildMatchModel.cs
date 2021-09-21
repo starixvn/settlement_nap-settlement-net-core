@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using Kaden.Extensions;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
@@ -16,13 +17,19 @@ namespace Settlement.Sportsbook.Aio.Models
 
         private string defaultValue = "";
 
+        private string eventStatus;
+
         public string MatchCode { get; set; }
 
         public int MatchId { get; set; }
 
         public string ResourceId { get; set; }
 
-        public string EventStatus { get; set; }
+        public string EventStatus
+        {
+            get => CultureInfo.CurrentCulture.TextInfo.ToTitleCase(eventStatus.ToLower());
+            set => eventStatus = value;
+        }
 
         public string BetStatus { get; set; }
 
