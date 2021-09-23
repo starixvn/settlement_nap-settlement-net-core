@@ -84,30 +84,6 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Controllers
         }
 
         [Fact]
-        public async Task CheckMarkedTicketsParlay_Always_ReturnOkStatus()
-        {
-            var request = new CheckMarkedTicketsParlayRequest();
-            mediator.Send(Arg.Any<CheckMarkedTicketsParlayRequest>()).Returns(new MarkedTickets());
-
-            var actual = await controller.CheckMarkedTicketsParlay(request) as OkObjectResult;
-
-            Assert.IsType<MarkedTickets>(actual.Value);
-            Assert.Equal(200, actual.StatusCode);
-        }
-
-        [Fact]
-        public async Task RefundParlayChildMatch_Always_ReturnOkStatus()
-        {
-            var request = new RefundParlayChildMatchRequest();
-            mediator.Send(Arg.Any<RefundParlayChildMatchRequest>()).Returns(new Result());
-
-            var actual = await controller.RefundParlayChildMatch(request) as OkObjectResult;
-
-            Assert.IsType<Result>(actual.Value);
-            Assert.Equal(200, actual.StatusCode);
-        }
-
-        [Fact]
         public async Task SettleChildMatch_Always_ReturnOkStatus()
         {
             var request = new SettleChildMatchRequest();

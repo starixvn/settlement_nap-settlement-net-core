@@ -1,14 +1,14 @@
 ﻿using Fanex.Data.Repository;
 
-namespace Settlement.Sportsbook.MoveTickets.Criterias
+namespace Settlement.Core.Criterias
 {
     public class LogCriteria : NonQueryCommand
     {
-        public LogCriteria(int matchId, string errorMessage)
+        public LogCriteria(int matchId, string errorMessage, int actionId)
         {
             MatchId = matchId;
             Remark = errorMessage;
-            ActionId = 81026;
+            ActionId = actionId;
         }
 
         public int UserId { get; }

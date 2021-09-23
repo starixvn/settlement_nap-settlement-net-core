@@ -56,6 +56,10 @@ namespace Settlement.Sportsbook.Aio.Services
 
         private readonly IConfiguration configuration;
 
+        private readonly ILogService logService;
+
+        private readonly int actionCalculate = 100;
+
         public AioService(
             IDynamicRepository repository,
             PermissionService permissionService,
@@ -64,7 +68,8 @@ namespace Settlement.Sportsbook.Aio.Services
             IMapperFactory mapperFactory,
             IValidateApiKeyService validateApiKeyService,
             ICreateQueryService createQueryService,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            ILogService logService)
         {
             this.repository = repository;
             this.permissionService = permissionService;
@@ -74,6 +79,7 @@ namespace Settlement.Sportsbook.Aio.Services
             this.validateApiKeyService = validateApiKeyService;
             this.createQueryService = createQueryService;
             this.configuration = configuration;
+            this.logService = logService;
         }
 
         public async Task<AioMatch> GetMatch(GetMatchRequest request)
@@ -259,6 +265,7 @@ namespace Settlement.Sportsbook.Aio.Services
                     criteria.MatchId = match.MatchId;
                     criteria.SelectedResources = createQueryService.CreateResourceChildMatch(match);
                     await repository.ExecuteAsync(criteria);
+                    WriteLogChildMatch(criteria);
                 }
             }
             else
@@ -275,6 +282,16 @@ namespace Settlement.Sportsbook.Aio.Services
             }
 
             return new Result();
+        }
+
+        private void WriteLogChildMatch(SettleCriteria criteria)
+        {
+            if (!string.IsNullOrWhiteSpace(criteria.ErrMsg))
+            {
+                logService.ActionLog(criteria.MatchId, criteria.ErrMsg, actionCalculate);
+                criteria.ErrCode = 0;
+                criteria.ErrMsg = string.Empty;
+            }
         }
     }
 }

@@ -50,8 +50,8 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services.Volleyball
                 new ChildMatchModel {EventStatus = EventStatus.Running, ChildMatchType = 11},
                 new ChildMatchModel {EventStatus = EventStatus.Running, ChildMatchType = 16}
             };
-            resultDetail.HomeValue = "1";
-            resultDetail.AwayValue = "1";
+            resultDetail.HomeValue = "0";
+            resultDetail.AwayValue = "2";
             resultDetail.ResultStatusId = 5;
             var listResult = new List<ResultDetail> { resultDetail };
 

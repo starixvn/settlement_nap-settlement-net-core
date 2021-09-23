@@ -139,7 +139,7 @@ namespace Settlement.Sportsbook.MoveTickets.UnitTests.Services
 
             await service.MoveTicket(new MoveTicketRequest());
 
-            logService.Received().ActionLog(Arg.Any<int>(), Arg.Any<string>());
+            logService.Received().ActionLog(Arg.Any<int>(), Arg.Any<string>(), Arg.Any<int>());
         }
 
         [Fact]
@@ -155,7 +155,6 @@ namespace Settlement.Sportsbook.MoveTickets.UnitTests.Services
             var actual = await service.GetChildMatch(new GetChildMatchRequest());
 
             Assert.Equal(listMatch, actual);
-
         }
     }
 }

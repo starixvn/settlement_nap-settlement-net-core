@@ -156,7 +156,6 @@ namespace Settlement.WebSites
             services.AddTransient<IMoveTicketService, MoveTicketService>();
             services.AddTransient<IScoreService, ScoreService>();
             services.AddTransient<IScoreSetService, ScoreSetService>();
-            services.AddTransient<ILogService, LogServiceImp>();
             services.AddTransient<IMapperFactory, MapperFactoryBase>();
             services.AddTransient<IMapperFactory, MapperFactoryImp>();
             services.AddTransient<IValidateApiKeyService, ValidateApiKeyServiceImp>();
@@ -226,7 +225,7 @@ namespace Settlement.WebSites
             services.AddTransient<IRefDataService, RefDataService>();
             services.AddSingleton<PermissionService, PermissionServiceImp>();
             services.AddSingleton<XmlConvertService, XmlConvertServiceImp>();
-            services.AddSingleton<ILoggingService, LoggingService>();
+            services.AddTransient<ILogService, LogServiceImp>();
         }
 
         private static void ConfigureMediator(IServiceCollection services)

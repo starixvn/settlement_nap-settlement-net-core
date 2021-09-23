@@ -26,6 +26,7 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
         private readonly IValidateApiKeyService validateApiKeyService;
         private readonly IAioService service;
         private readonly Microsoft.Extensions.Configuration.IConfiguration configuration;
+        private readonly ILogService logService;
 
         public AioServiceTests()
         {
@@ -36,12 +37,13 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
             mapperFactory = Substitute.For<IMapperFactory>();
             validateApiKeyService = Substitute.For<IValidateApiKeyService>();
             configuration = Substitute.For<Microsoft.Extensions.Configuration.IConfiguration>();
+            logService = Substitute.For<ILogService>();
             var mapperConfig = new MapperConfigurationExpression();
             mapperConfig.AddProfile<SportsbookAioAutoMapperProfile>();
             var config = new MapperConfiguration(mapperConfig);
             var mapper = new Mapper(config);
             service = new AioService(repository, permissionService, refDataService, mapper,
-                                    mapperFactory, validateApiKeyService, createQueryService, configuration);
+                                    mapperFactory, validateApiKeyService, createQueryService, configuration, logService);
         }
 
         [Fact]
@@ -152,7 +154,7 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
         [InlineData(0, "", true)]
         [InlineData(1, "Error", false)]
         public async Task SaveScore_Always_CallInOrderAllRelatedMethods(int errorCode, string errorMsg, bool result)
-        { 
+        {
             createQueryService.QuerySaveScore(Arg.Any<SaveScoreRequest>()).Returns(new SaveScoreRequest());
             validateApiKeyService.CreateNonQueryCommand(Arg.Any<SaveScoreRequest>(), Arg.Any<string>())
                 .Returns(new SaveScoreCriteria());
