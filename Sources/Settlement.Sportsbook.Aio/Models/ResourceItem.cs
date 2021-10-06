@@ -7,6 +7,15 @@ namespace Settlement.Sportsbook.Aio.Models
     {
         private string isSettleDetermined;
 
+        public ResourceItem()
+        {
+        }
+
+        public ResourceItem(string id)
+        {
+            ResourceId = id;
+        }
+
         [XmlAttribute("Id")]
         public string ResourceId { get; set; }
 

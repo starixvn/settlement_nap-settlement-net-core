@@ -13,6 +13,7 @@
     <Setting Key="NAP_Admin_Settlement_Refund_MP_Push" SpName="NAP_Admin_Settlement_Refund_MP_Push" DbName="DBTXN.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Admin_Settlement_Validation_PrePush" SpName="NAP_Admin_Settlement_Validation_PrePush" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_ResultDetailSettingUpd" SpName="NAP_Set_ResultDetailSettingUpd" DbName="DBPRO.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_ChildMatchSel" SpName="NAP_Set_ChildMatchSel" DbName="DBPRO.bodb02.bodbAdminNet" />
   </Function>
 
   <Function Name="MoveTickets">

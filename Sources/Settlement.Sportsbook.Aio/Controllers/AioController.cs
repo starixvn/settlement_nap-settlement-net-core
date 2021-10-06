@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Settlement.Core.ActionFilters;
 using Settlement.Sportsbook.Aio.Requests;
@@ -9,7 +8,7 @@ namespace Settlement.Sportsbook.Aio.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
+    [SessionAuthorize]
     public class AioController : ControllerBase
     {
         private readonly IMediator mediator;
@@ -33,17 +32,9 @@ namespace Settlement.Sportsbook.Aio.Controllers
         [HttpPost]
         public async Task<IActionResult> CheckMarkedTickets(CheckMarkedTicketsRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
-        [Route("check-marked-tickets-parlay")]
-        [HttpPost]
-        public async Task<IActionResult> CheckMarkedTicketsParlay(CheckMarkedTicketsParlayRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
-
         [Route("get-recal-result")]
         [HttpPost]
         public async Task<IActionResult> GetRecalResult(GetRecalResultRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
-
-        [Route("refund-parlay")]
-        [HttpPost]
-        public async Task<IActionResult> RefundParlay(RefundParlayRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
         [Route("no-running-odds")]
         [HttpPost]
@@ -58,11 +49,6 @@ namespace Settlement.Sportsbook.Aio.Controllers
         [HttpPost]
         [LogRequestResponse]
         public async Task<IActionResult> SettleChildMatch(SettleChildMatchRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
-
-        [Route("refund-parlay-child-match")]
-        [HttpPost]
-        [LogRequestResponse]
-        public async Task<IActionResult> RefundParlayChildMatch(RefundParlayChildMatchRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
         [Route("result-setting")]
         [HttpPost]

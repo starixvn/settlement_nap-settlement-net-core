@@ -14,15 +14,17 @@ namespace Settlement.Sportsbook.Aio.Services
     {
         SettleCriteria QuerySettle(SettleRequest request);
 
-        RefundParlayCriteria QueryRefundParlay(RefundParlayRequest request);
-
         SaveScoreRequest QuerySaveScore(SaveScoreRequest request);
 
-        RefundParlayCriteria QueryRefundParlayChildMatch(RefundParlayChildMatchRequest request);
-
-        SettleCriteria QuerySettleChilMatch(SettleChildMatchRequest request);
+        SettleCriteria QuerySettleChildMatch(SettleChildMatchRequest request);
 
         ResultSettingCriteria QueryChangeSetting(ResultSettingRequest request);
+
+        string CreateResourceChildMatch(ChildMatchModel childMatch);
+
+        string CreateResources(List<ResourceItem> selectedResources);
+
+        string CreateMatchResources(List<CheckOddsItem> selectedResources);
     }
 
     public class CreateQueryServiceImp : ICreateQueryService
@@ -56,7 +58,17 @@ namespace Settlement.Sportsbook.Aio.Services
             return criteria;
         }
 
-        public SettleCriteria QuerySettleChilMatch (SettleChildMatchRequest request)
+        public string CreateMatchResources(List<CheckOddsItem> selectedResources)
+        {
+            var resources = new Resources<CheckOddsItem>
+            {
+                ResourceItems = selectedResources
+            };
+
+            return xmlConvertService.Serialize(resources);
+        }
+
+        public SettleCriteria QuerySettleChildMatch(SettleChildMatchRequest request)
         {
             var resourcesResult = CreateResources(request.SelectedResources);
             var criteria = mapper.Map<SettleChildMatchRequest, SettleCriteria>(request);
@@ -66,7 +78,7 @@ namespace Settlement.Sportsbook.Aio.Services
             return criteria;
         }
 
-        private string CreateResources(List<ResourceItem> selectedResources)
+        public string CreateResources(List<ResourceItem> selectedResources)
         {
             var resources = new Resources<ResourceItem>
             {
@@ -76,22 +88,15 @@ namespace Settlement.Sportsbook.Aio.Services
             return xmlConvertService.Serialize(resources);
         }
 
-        public RefundParlayCriteria QueryRefundParlay(RefundParlayRequest request)
+        public string CreateResourceChildMatch(ChildMatchModel childMatch)
         {
-            var criteria = mapper.Map<RefundParlayRequest, RefundParlayCriteria>(request);
-            criteria.AdminId = currentSession.UserId;
-            criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
-            return criteria;
-        }
+            var resource = new Resources<ResourceItem>
+            {
+                ResourceItems = new List<ResourceItem>() { mapper.Map<ChildMatchModel, ResourceItem>(childMatch) }
+            };
 
-        public RefundParlayCriteria QueryRefundParlayChildMatch(RefundParlayChildMatchRequest request)
-        {
-            var criteria = mapper.Map<RefundParlayChildMatchRequest, RefundParlayCriteria>(request);
-            criteria.AdminId = currentSession.UserId;
-            criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
-            return criteria;
+            return xmlConvertService.Serialize(resource);
         }
-
 
         public SaveScoreRequest QuerySaveScore(SaveScoreRequest request)
         {

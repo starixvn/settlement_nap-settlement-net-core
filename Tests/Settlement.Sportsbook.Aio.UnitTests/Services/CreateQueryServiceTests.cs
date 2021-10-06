@@ -74,38 +74,12 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
         }
 
         [Fact]
-        public void QueryRefundParlay_Always_ReturnsExpectedData()
-        {
-            // Arrange
-            var request = new RefundParlayRequest
-            {
-                MatchId = 1,
-                ActionName = "RefundParlay"
-            };
-
-            var expectedData = new RefundParlayCriteria
-            {
-                MatchId = request.MatchId,
-                AdminId = 0,
-                Action = request.ActionName,
-                Ip = "1.0.0.0",
-            };
-
-            // Act
-            var result = service.QueryRefundParlay(request);
-
-            // Assert
-            Assert.Equal(JsonConvert.SerializeObject(expectedData), JsonConvert.SerializeObject(result));
-        }
-
-        [Fact]
         public void QuerySaveScore__Always_ReturnsExpectedData()
         {
             // Arrange
             var request = new SaveScoreRequest
             {
                 MatchId = 1,
-
             };
 
             var expectedData = new SaveScoreRequest
@@ -121,7 +95,6 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
             var result = service.QuerySaveScore(request);
 
             Assert.Equal(JsonConvert.SerializeObject(expectedData), JsonConvert.SerializeObject(result));
-
         }
     }
 }

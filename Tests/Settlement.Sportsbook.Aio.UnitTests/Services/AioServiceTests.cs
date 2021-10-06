@@ -26,6 +26,7 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
         private readonly IValidateApiKeyService validateApiKeyService;
         private readonly IAioService service;
         private readonly Microsoft.Extensions.Configuration.IConfiguration configuration;
+        private readonly ILogService logService;
 
         public AioServiceTests()
         {
@@ -36,19 +37,20 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
             mapperFactory = Substitute.For<IMapperFactory>();
             validateApiKeyService = Substitute.For<IValidateApiKeyService>();
             configuration = Substitute.For<Microsoft.Extensions.Configuration.IConfiguration>();
+            logService = Substitute.For<ILogService>();
             var mapperConfig = new MapperConfigurationExpression();
             mapperConfig.AddProfile<SportsbookAioAutoMapperProfile>();
             var config = new MapperConfiguration(mapperConfig);
             var mapper = new Mapper(config);
             service = new AioService(repository, permissionService, refDataService, mapper,
-                                    mapperFactory, validateApiKeyService, createQueryService, configuration);
+                                    mapperFactory, validateApiKeyService, createQueryService, configuration, logService);
         }
 
         [Fact]
         public async Task GetRecalResult_Always_ReturnResultDetailList()
         {
             var request = new GetRecalResultRequest();
-            repository.FetchAsync<MatchResultDetail>(Arg.Any<GetRecalResultCriteria>()).Returns(new List<MatchResultDetail> { new MatchResultDetail() });
+            repository.FetchAsync<Models.ResultDetail>(Arg.Any<GetRecalResultCriteria>()).Returns(new List<Models.ResultDetail> { new Models.ResultDetail() });
 
             var actual = await service.GetRecalResult(request);
 
@@ -107,23 +109,6 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
         }
 
         [Theory]
-        [InlineData(0, "", true)]
-        [InlineData(1, "Error", false)]
-        public async Task RefundParlay_Always_ReturnCorrectResult(int errorCode, string errorMsg, bool result)
-        {
-            createQueryService.QueryRefundParlay(Arg.Any<RefundParlayRequest>()).Returns(new RefundParlayCriteria());
-            repository.ExecuteAsync(Arg.Do<RefundParlayCriteria>(x =>
-            {
-                x.ErrCode = errorCode;
-                x.ErrMsg = errorMsg;
-            })).Returns(1);
-
-            var actual = await service.RefundParlay(new RefundParlayRequest());
-
-            Assert.Equal(result, actual.IsSuccessful);
-        }
-
-        [Theory]
         [InlineData(true)]
         [InlineData(false)]
         public async Task CheckMarkedTickets_Always_ReturnCorrectResult(bool result)
@@ -169,9 +154,10 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
         [InlineData(0, "", true)]
         [InlineData(1, "Error", false)]
         public async Task SaveScore_Always_CallInOrderAllRelatedMethods(int errorCode, string errorMsg, bool result)
-        { 
+        {
             createQueryService.QuerySaveScore(Arg.Any<SaveScoreRequest>()).Returns(new SaveScoreRequest());
-            validateApiKeyService.CreateNonQueryCommand(Arg.Any<SaveScoreRequest>(), Arg.Any<string>()).Returns(new SaveScoreCriteria());
+            validateApiKeyService.CreateNonQueryCommand(Arg.Any<SaveScoreRequest>(), Arg.Any<string>())
+                .Returns(new SaveScoreCriteria());
 
             repository.ExecuteAsync(Arg.Do<SaveScoreCriteria>(x =>
             {
@@ -184,20 +170,43 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
             Assert.Equal(result, actual.IsSuccessful);
         }
 
-        [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public async Task CheckMarkedTicketsParlay_Always_ReturnCorrectResult(bool result)
+        [Fact]
+        public async Task SettleChildMatch_Always_CallQueryWithEveryMatch()
         {
-            repository.ExecuteAsync(Arg.Do<CheckMarkedTicketsParlayCriteria>(x =>
+            createQueryService.QuerySettleChildMatch(Arg.Any<SettleChildMatchRequest>()).Returns(new SettleCriteria());
+            createQueryService.CreateResources(Arg.Any<List<ResourceItem>>()).Returns("");
+            var count = 0;
+
+            await repository.ExecuteAsync(Arg.Do<SettleCriteria>(x => count++));
+
+            var request = new SettleChildMatchRequest
             {
-                x.IsExistMarkedTicket = result;
-            })).Returns(1);
+                ChildMatchIds = "1,2"
+            };
 
-            var actual = await service.CheckMarkedTicketsParlay(new CheckMarkedTicketsParlayRequest());
+            await service.SettleChildMatch(request);
 
-            Assert.Equal(result, actual.IsExistMarkedTicket);
+            Assert.Equal(2, count);
         }
 
+        [Fact]
+        public async Task SettleChildMatch_Always_CallCriteriaWithWithEveryMatch()
+        {
+            createQueryService.QuerySettleChildMatch(Arg.Any<SettleChildMatchRequest>()).Returns(new SettleCriteria());
+            createQueryService.CreateResourceChildMatch(Arg.Any<ChildMatchModel>()).Returns("");
+            var count = 0;
+
+            await repository.ExecuteAsync(Arg.Do<SettleCriteria>(x => count++));
+
+            var request = new SettleChildMatchRequest
+            {
+                ChildMatches = new List<ChildMatchModel>
+                    { new ChildMatchModel(), new ChildMatchModel() }
+            };
+
+            await service.SettleChildMatch(request);
+
+            Assert.Equal(2, count);
+        }
     }
 }

@@ -27,6 +27,7 @@ namespace Settlement.Sportsbook.MoveTickets.Services
 
     public class MoveTicketService : IMoveTicketService
     {
+        private readonly int actionIdMoveTicket = 81026;
         private readonly IDynamicRepository repository;
         private readonly IRefDataService refDataService;
         private readonly IMapper mapper;
@@ -180,7 +181,7 @@ namespace Settlement.Sportsbook.MoveTickets.Services
 
             if (criteria.ErrCode != 0)
             {
-                logService.ActionLog(request.MatchId, criteria.ErrMsg);
+                logService.ActionLog(request.MatchId, criteria.ErrMsg, actionIdMoveTicket);
             }
 
             return new Result()
