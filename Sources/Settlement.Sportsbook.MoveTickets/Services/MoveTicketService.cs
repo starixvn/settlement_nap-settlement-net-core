@@ -23,11 +23,18 @@ namespace Settlement.Sportsbook.MoveTickets.Services
         Task<Result> MoveTicket(MoveTicketRequest request);
 
         Task<List<ChildMatch>> GetChildMatch(GetChildMatchRequest request);
+
+        Task<Result> ValidateMovingRunningTickets(ValidateMatchesRequest request);
+
+        Task<List<MoveTicketsMatchDetail>> GetMoveTicketsMatches(GetMoveTicketsMatchesRequest request);
+
+        Task<Result> MoveRunningTickets(MoveRunningTicketsRequest request);
     }
 
     public class MoveTicketService : IMoveTicketService
     {
         private readonly int actionIdMoveTicket = 81026;
+        private readonly int actionIDMoveRunningTickets = 81035;
         private readonly IDynamicRepository repository;
         private readonly IRefDataService refDataService;
         private readonly IMapper mapper;
@@ -198,6 +205,51 @@ namespace Settlement.Sportsbook.MoveTickets.Services
             var listMatch = await repository.FetchAsync<ChildMatch>(criteria);
 
             return listMatch.ToList();
+        }
+
+        public async Task<Result> ValidateMovingRunningTickets(ValidateMatchesRequest request)
+        {
+            var criteria = mapper.Map<ValidateMatchesRequest, ValidateMatchesCriteria>(request);
+
+            await repository.ExecuteAsync(criteria);
+
+            return new Result
+            {
+                ErrCode = criteria.ErrCode,
+                ErrMsg = criteria.ErrMsg
+            };
+        }
+
+        public async Task<List<MoveTicketsMatchDetail>> GetMoveTicketsMatches(GetMoveTicketsMatchesRequest request)
+        {
+            var criteria = mapper.Map<GetMoveTicketsMatchesRequest, GetMoveTicketsMatchesCriteria>(request);
+
+            var matches = await repository.FetchAsync<MoveTicketsMatchDetail>(criteria);
+            foreach (var match in matches)
+            {
+                match.RefDataService = refDataService;
+            }
+
+            return matches.ToList();
+        }
+
+        public async Task<Result> MoveRunningTickets(MoveRunningTicketsRequest request)
+        {
+            var criteria = mapper.Map<MoveRunningTicketsRequest, MoveRunningTicketsCriteria>(request);
+            criteria.AdminId = currentSession.UserId;
+            criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
+            await repository.ExecuteAsync(criteria);
+
+            if (criteria.ErrCode != 0)
+            {
+                logService.ActionLog(request.MatchId, criteria.ErrMsg, actionIDMoveRunningTickets);
+            }
+
+            return new Result()
+            {
+                ErrCode = criteria.ErrCode,
+                ErrMsg = criteria.ErrMsg
+            };
         }
     }
 }

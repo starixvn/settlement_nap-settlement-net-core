@@ -46,6 +46,7 @@ namespace Settlement.Sportsbook.Aio.MapperFactory
             CriteriaTypes.Add($"esport-{ApiKeyConstant.ProviderKey}", typeof(Criterias.ESport.GetProviderCriteria));
             CriteriaTypes.Add($"esport-{ApiKeyConstant.LastestResultKey}", typeof(Criterias.GetRecalResultCriteria));
             CriteriaTypes.Add($"esport-{ApiKeyConstant.SaveScore}", typeof(Criterias.ESport.SaveScoreCriteria));
+            CriteriaTypes.Add($"esport-{ApiKeyConstant.OldMatch}", typeof(Criterias.ESport.GetOldMatchCriteria));
 
             CriteriaTypes.Add($"esport-settle", typeof(Criterias.SettleCriteria));
         }

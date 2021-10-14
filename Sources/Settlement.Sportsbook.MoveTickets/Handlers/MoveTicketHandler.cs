@@ -12,7 +12,10 @@ namespace Settlement.Sportsbook.MoveTickets.Handlers
 {
     public class MoveTicketHandler : IRequestHandler<GetMatchRequest, MultiSportModel>,
                                     IRequestHandler<GetChildMatchRequest, List<ChildMatch>>,
-                                    IRequestHandler<MoveTicketRequest, Result>
+                                    IRequestHandler<MoveTicketRequest, Result>,
+                                    IRequestHandler<ValidateMatchesRequest, Result>,
+                                    IRequestHandler<GetMoveTicketsMatchesRequest, List<MoveTicketsMatchDetail>>,
+                                    IRequestHandler<MoveRunningTicketsRequest, Result>
     {
         private readonly IMoveTicketService moveTicketService;
         private readonly PermissionService permissionService;
@@ -35,5 +38,11 @@ namespace Settlement.Sportsbook.MoveTickets.Handlers
         public async Task<Result> Handle(MoveTicketRequest request, CancellationToken cancellationToken) => await moveTicketService.MoveTicket(request);
 
         public async Task<List<ChildMatch>> Handle(GetChildMatchRequest request, CancellationToken cancellationToken) => await moveTicketService.GetChildMatch(request);
+
+        public async Task<Result> Handle(ValidateMatchesRequest request, CancellationToken cancellationToken) => await moveTicketService.ValidateMovingRunningTickets(request);
+
+        public async Task<List<MoveTicketsMatchDetail>> Handle(GetMoveTicketsMatchesRequest request, CancellationToken cancellationToken) => await moveTicketService.GetMoveTicketsMatches(request);
+
+        public async Task<Result> Handle(MoveRunningTicketsRequest request, CancellationToken cancellationToken) => await moveTicketService.MoveRunningTickets(request);
     }
 }

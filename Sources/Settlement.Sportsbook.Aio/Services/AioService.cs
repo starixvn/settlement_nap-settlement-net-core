@@ -115,6 +115,7 @@ namespace Settlement.Sportsbook.Aio.Services
             var ticketCounts = secondResultSet.FirstOrDefault() ?? new TicketCounts();
             var hedgeMatchCriteria = validateApiKeyService.CriteriaName(request, $"{apiKey}-{ApiKeyConstant.HedgeMatchInfoKey}");
             var hedgeMatchDetail = await repository.GetAsync<HedgeMatchDetail>(hedgeMatchCriteria);
+            var oldMatch = await GetOldMatch(matchDetail, request, apiKey);
 
             var childMatches = await GetChildMatch(resultDetails, request, apiKey);
 
@@ -126,8 +127,20 @@ namespace Settlement.Sportsbook.Aio.Services
                 Permission = permissionService.Permission,
                 HedgeMatchDetail = hedgeMatchDetail,
                 ExternalResults = externalResults,
-                childMatches = childMatches
+                childMatches = childMatches,
+                OldMatchDetail = oldMatch
             };
+        }
+
+        private async Task<HedgeMatchDetail> GetOldMatch(Models.MatchDetail matchDetail, GetMatchRequest request, string apiKey)
+        {
+            if (matchDetail != null && matchDetail.SportType == SportType.ESports)
+            {
+                var getOldMatchCriteria = validateApiKeyService.CriteriaName(request, $"{apiKey}-{ApiKeyConstant.OldMatch}");
+                return await repository.GetAsync<HedgeMatchDetail>(getOldMatchCriteria);
+            }
+
+            return null;
         }
 
         public async Task<List<Models.ResultDetail>> GetRecalResult(GetRecalResultRequest request)

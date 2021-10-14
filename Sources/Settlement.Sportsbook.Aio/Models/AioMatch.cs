@@ -18,5 +18,7 @@ namespace Settlement.Sportsbook.Aio.Models
         public List<ExternalResultModel> ExternalResults { get; set; }
 
         public List<ChildMatchModel> childMatches { get; set; }
+        
+        public HedgeMatchDetail OldMatchDetail { get; set; }
     }
 }

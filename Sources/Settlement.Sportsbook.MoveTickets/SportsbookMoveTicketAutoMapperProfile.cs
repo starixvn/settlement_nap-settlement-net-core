@@ -12,6 +12,9 @@ namespace Settlement.Sportsbook.MoveTickets
             CreateMap<GetMatchRequest, SportsbookCriteria>();
             CreateMap<MoveTicketRequest, MoveTicketCriteria>();
             CreateMap<GetChildMatchRequest, GetChildMatchCriteria>();
+            CreateMap<GetMoveTicketsMatchesRequest, GetMoveTicketsMatchesCriteria>();
+            CreateMap<ValidateMatchesRequest, ValidateMatchesCriteria>().ForMember(dest => dest.DestinationMatchId, map => map.MapFrom(src => src.TargetMatchId));
+            CreateMap<MoveRunningTicketsRequest, MoveRunningTicketsCriteria>();
         }
     }
 }
