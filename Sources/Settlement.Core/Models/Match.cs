@@ -161,15 +161,9 @@ namespace Settlement.Core.Models
 
         public string EventStatus
         {
-            get
-            {
-                return eventStatus.MapToString(BetStatus, Remark.IsPending);
-            }
+            get => eventStatus.MapToString(BetStatus, Remark.IsPending);
 
-            set
-            {
-                eventStatus = value;
-            }
+            set => eventStatus = value;
         }
 
         public int GroupSport { get; set; }
