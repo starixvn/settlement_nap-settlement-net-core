@@ -5,10 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Models\BetStatusHelper.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="Configurations\SettlementFunctionKeys.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>

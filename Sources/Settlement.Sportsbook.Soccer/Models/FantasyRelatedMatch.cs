@@ -12,7 +12,7 @@ namespace Settlement.Sportsbook.Soccer.Models
 
         private const int ConvertToBase = 2;
 
-        public RefDataService RefDataService { get; set; }
+        public IRefDataService RefDataService { get; set; }
 
         public int MatchId { get; set; }
 
@@ -55,9 +55,7 @@ namespace Settlement.Sportsbook.Soccer.Models
 
         public RemarkSettingModel Remark => new RemarkSettingModel
         {
-            SettlementStatus = Convert.ToString(SettlementStatus, ConvertToBase).Reverse(),
-        });
-
-        public string EventStatusColor => string.IsNullOrEmpty(BetStatus) || !BetStatus.Contains("Refund") && !BetStatus.Contains("Abandoned") ? "" : Background.BrightYellow;
+            SettlementStatus = Convert.ToString(SettlementStatus, ConvertToBase).Reverse()
+        };
     }
 }

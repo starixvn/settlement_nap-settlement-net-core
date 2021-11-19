@@ -1,4 +1,6 @@
-﻿namespace Settlement.Sportsbook.Soccer.Models
+﻿using System.Collections.Generic;
+
+namespace Settlement.Sportsbook.Soccer.Models
 {
     public class FantasyMatch
     {

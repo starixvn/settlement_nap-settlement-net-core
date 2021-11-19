@@ -1,6 +1,5 @@
 ﻿using System;
 using Kaden.Extensions;
-using Settlement.Core.Constants;
 
 namespace Settlement.Sportsbook.Soccer.Models
 {
@@ -45,53 +44,5 @@ namespace Settlement.Sportsbook.Soccer.Models
                 eventStatus = value;
             }
         }
-
-        public string EventStatusColor
-        {
-            get
-            {
-                if (EventStatus.IgnoreCaseEquals(Constants.EventStatus.PostPoned))
-                {
-                    return IsExistMarkedTicket ? Background.YellowBlinking : Background.Yellow;
-                }
-
-                if (EventStatus.IgnoreCaseEquals(Constants.EventStatus.Completed))
-                {
-                    return GetBackgroundCompletedStatus;
-                }
-
-                if (IsPending && EventStatus.IgnoreCaseEquals(EventStatusExtensions.ResultPending))
-                {
-                    return IsExistMarkedTicket ? Background.BrightYellowBlinking : Background.BrightYellow;
-                }
-
-                return IsExistMarkedTicket ? Background.WhiteBlinking : string.Empty;
-            }
-        }
-
-        private string GetBackgroundCompletedStatus
-        {
-            get
-            {
-                return IsOnlyMarkedTicket
-                    ? Background.WhiteBlinking
-                    : GetBackgroundRunningTicket;
-            }
-        }
-
-        private string GetBackgroundRunningTicket
-        {
-            get
-            {
-                if (IsExistRunningTicket)
-                {
-                    return IsExistMarkedTicket ? Background.PinkBlinking : Background.Pink;
-                }
-
-                return string.Empty;
-            }
-        }
-
-        private bool IsOnlyMarkedTicket => IsExistMarkedTicket && !IsExistRunningTicket;
     }
 }

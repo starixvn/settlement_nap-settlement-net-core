@@ -36,12 +36,15 @@ using Settlement.Sportsbook.MoveTickets.Services;
 using Settlement.Sportsbook.OtherSports;
 using Settlement.Sportsbook.OtherSports.Controllers;
 using Settlement.Sportsbook.OtherSports.Services;
+using Settlement.Sportsbook.Soccer.Services;
 using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Settlement.Sportsbook.Soccer;
+using Settlement.Sportsbook.Soccer.Controllers;
 
 namespace Settlement.WebSites
 {
@@ -168,6 +171,10 @@ namespace Settlement.WebSites
             services.AddTransient<ICriteriaFactory, CriteriaFactoryImp>();
             services.AddTransient<ICreateQueryService, CreateQueryServiceImp>();
 
+            services.AddTransient<IFirstGoalLastGoalService, FirstGoalLastGoalServiceImp>();
+            services.AddTransient<IGetMatchService, GetMatchService>();
+            services.AddTransient<IGoalIconService, GoalIconServiceImp>();
+
             services.AddTransient<SettlementActionsService, SettlementActionsServiceImp>();
             services.AddTransient<SportsbookService, SportsbookServiceImp>();
         }
@@ -239,6 +246,7 @@ namespace Settlement.WebSites
             services.AddMediatR(typeof(AioController).GetTypeInfo().Assembly);
             services.AddMediatR(typeof(MoveTicketController).GetTypeInfo().Assembly);
             services.AddMediatR(typeof(OtherSportsController).GetTypeInfo().Assembly);
+            services.AddMediatR(typeof(SoccerController).GetTypeInfo().Assembly);
         }
 
         private static void ConfigureAutoMapper(IServiceCollection services)
@@ -248,6 +256,7 @@ namespace Settlement.WebSites
                 mc.AddProfile(typeof(SportsbookAioAutoMapperProfile));
                 mc.AddProfile(typeof(SportsbookMoveTicketAutoMapperProfile));
                 mc.AddProfile(typeof(OtherSportsAutoMapperProfile));
+                mc.AddProfile(typeof(SoccerAutoMapperProfile));
             });
 
             IMapper mapper = mapperConfig.CreateMapper();

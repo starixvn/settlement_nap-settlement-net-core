@@ -6,7 +6,7 @@ using Settlement.Core.ActionFilters;
 namespace Settlement.Sportsbook.Soccer.Controllers
 {
     [ApiController]
-    [Route("soccer/[controller]")]
+    [Route("api/[controller]")]
     [SessionAuthorize]
     public class SoccerController : ControllerBase
     {
