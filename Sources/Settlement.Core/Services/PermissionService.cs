@@ -69,7 +69,7 @@ namespace Settlement.Core.Services
             CanViewSettlementLog = HasPermission(SettlementFunctionKeys.ViewLogSettlement, Constant.Policy.Read),
             IsLeader = HasPermission(SettlementFunctionKeys.LeaderCalculate, Constant.Policy.Host),
             CanChangeScoreSource = HasPermission(SettlementFunctionKeys.ScoreSource, Constant.Policy.Host),
-            CanMoveTickets = HasPermission(SettlementFunctionKeys.MoveTickets, Constant.Policy.Host),
+            CanMoveTickets = HasPermission(SettlementFunctionKeys.CricketMoveTickets, Constant.Policy.Host),
             IsTrader = HasPermission(SettlementFunctionKeys.TraderSaveScore, Constant.Policy.Host)
         };
     }
