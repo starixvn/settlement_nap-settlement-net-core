@@ -1,8 +1,10 @@
 ﻿using Settlement.Core.Services;
 using System;
 using System.Collections.Generic;
+using AutoMapper.Configuration.Annotations;
 using Kaden.Extensions;
 using Settlement.Core.Models;
+using System.Text.Json.Serialization;
 
 namespace Settlement.Sportsbook.Soccer.Models
 {
@@ -12,21 +14,27 @@ namespace Settlement.Sportsbook.Soccer.Models
         private const int MarkedRefundAllPosition = 5;
         private string goalRecord = string.Empty;
 
+        [JsonIgnore]
         public IRefDataService RefDataService { get; set; }
 
-        public int LeagueId { get; set; }
+        [JsonIgnore]
+        public int LeagueGroupId { get; set; }
 
-        public int LeagueIndex { get; set; }
+        private int LeagueId { get; set; }
 
         public string LeagueName => RefDataService.GetLeagueName(LeagueId);
 
-        public int HomeId { get; set; }
+        private int HomeId { get; set; }
+
+        private bool IsNeutral { get; set; }
 
         public string HomeName => RefDataService.GetTeamName(HomeId) + (IsNeutral ? " (N)" : string.Empty);
 
-        public int AwayId { get; set; }
+        private int AwayId { get; set; }
 
         public string AwayName => RefDataService.GetTeamName(AwayId);
+        private int SportType { get; set; }
+        public string SportName => RefDataService.GetSportName(SportType);
 
         public string MatchCode { get; set; }
 
@@ -35,10 +43,6 @@ namespace Settlement.Sportsbook.Soccer.Models
         public string EventStatus { get; set; }
 
         public bool IsHtOnly { get; set; }
-
-        public bool IsNeutral { get; set; }
-
-        public int SportType { get; set; }
 
         public int MatchId { get; set; }
 
@@ -119,9 +123,7 @@ namespace Settlement.Sportsbook.Soccer.Models
         public int? ExFTHomeScore { get; set; }
 
         public int? ExFTAwayScore { get; set; }
-
-        public string SportName { get; set; }
-
+        
         public string ExternalSourceName { get; set; }
 
         public bool IsFantasyMatch
@@ -134,9 +136,7 @@ namespace Settlement.Sportsbook.Soccer.Models
             }
         }
 
-        public int? EventStatusReason { get; set; }
-
-        public byte SettlementStatus { get; set; }
+        private byte SettlementStatus { get; set; }
 
         public bool IsMarkedRefundAll
         {
@@ -146,7 +146,5 @@ namespace Settlement.Sportsbook.Soccer.Models
                 return !string.IsNullOrWhiteSpace(status) && status.Length > MarkedRefundAllPosition && status[MarkedRefundAllPosition].Equals('1');
             }
         }
-
-        public int LeagueGroupId { get; set; }
     }
 }

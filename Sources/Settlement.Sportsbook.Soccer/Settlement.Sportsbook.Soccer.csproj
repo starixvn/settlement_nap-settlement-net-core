@@ -5,6 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Services\BetStatusService.cs" />
+    <Compile Remove="Services\CriteriaService.cs" />
     <Compile Remove="Services\HandleResultDetail.cs" />
   </ItemGroup>
 

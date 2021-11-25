@@ -3,6 +3,7 @@ using System;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
+using System.Text.Json.Serialization;
 
 namespace Settlement.Sportsbook.Soccer.Models
 {
@@ -12,6 +13,7 @@ namespace Settlement.Sportsbook.Soccer.Models
 
         private const int ConvertToBase = 2;
 
+        [JsonIgnore]
         public IRefDataService RefDataService { get; set; }
 
         public int MatchId { get; set; }
@@ -20,9 +22,9 @@ namespace Settlement.Sportsbook.Soccer.Models
 
         public DateTime KickOffTime { get; set; }
 
-        public int HomeId { get; set; }
+        private int HomeId { get; set; }
 
-        public int AwayId { get; set; }
+        private int AwayId { get; set; }
 
         public string HomeName => RefDataService.GetTeamName(HomeId);
 
@@ -36,9 +38,9 @@ namespace Settlement.Sportsbook.Soccer.Models
 
         public int? FinalAwayScore { get; set; }
 
-        public byte SettlementStatus { get; set; }
+        private byte SettlementStatus { get; set; }
 
-        public string BetStatus { get; set; }
+        private string BetStatus { get; set; }
 
         public string EventStatus
         {

@@ -9,7 +9,7 @@ namespace Settlement.Sportsbook.Soccer.Models
 
         public List<ResultDetail> ResultDetail { get; set; }
 
-        public List<TicketCountModel> TicketCount { get; set; }
+        public List<TicketCounts> TicketCount { get; set; }
 
         public List<ChildMatchModel> ChildMatch { get; set; }
 

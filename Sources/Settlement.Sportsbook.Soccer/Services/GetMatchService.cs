@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Match = Settlement.Sportsbook.Soccer.Models.Match;
 using MatchDetail = Settlement.Sportsbook.Soccer.Models.MatchDetail;
+using static Fanex.NAP.Client.Check;
 
 namespace Settlement.Sportsbook.Soccer.Services
 {
@@ -29,10 +30,6 @@ namespace Settlement.Sportsbook.Soccer.Services
 
         private readonly IGoalIconService goalIconService;
 
-        private readonly string fulltimeResource = "00";
-
-        private readonly string halfTimeResource = "01";
-
         public GetMatchService(
             IDynamicRepository repository,
             PermissionService permission,
@@ -50,9 +47,10 @@ namespace Settlement.Sportsbook.Soccer.Services
         public async Task<Match> GetMatch(GetMatchRequest request)
         {
             var criteria = mapper.Map<GetMatchRequest, GetMatchDetailCriteria>(request);
-            var mappingTypes = new[] { typeof(MatchDetail), typeof(ResultDetail), typeof(TicketCountModel), typeof(ChildMatchModel) };
-            var result = repository.FetchMultiple(criteria, mappingTypes);
+            var mappingTypes = new[] { typeof(MatchDetail), typeof(ResultDetail), typeof(TicketCounts), typeof(ChildMatchModel) };
+            var result = await repository.FetchMultipleAsync(criteria, mappingTypes);
             var matchDetail = result[0].Cast<MatchDetail>().FirstOrDefault();
+            Argument.IsNotNull(matchDetail, $"Match ${criteria.MatchId} does not exist");
             matchDetail.RefDataService = refDataService;
 
             var goalIconQuery = GoalIconQuery(matchDetail);
@@ -63,20 +61,20 @@ namespace Settlement.Sportsbook.Soccer.Services
                 MatchId = criteria.MatchId
             };
 
-            var externalResultDetails = repository.Fetch<ResultDetail>(providerCriteria);
+            var externalResultDetails = await repository.FetchAsync<ResultDetail>(providerCriteria);
             matchDetail = ProviderScore(matchDetail, externalResultDetails.ToList());
 
             var fantasyMatch = new FantasyMatch();
             if (matchDetail.IsFantasyMatch)
             {
-                fantasyMatch = GetRelatedMatches(matchDetail.MatchId);
+                fantasyMatch = await GetRelatedMatches(matchDetail.MatchId);
             }
 
             return new Match
             {
                 MatchDetail = matchDetail,
                 ResultDetail = result[1].Cast<ResultDetail>().ToList(),
-                TicketCount = result[2].Cast<TicketCountModel>().ToList(),
+                TicketCount = result[2].Cast<TicketCounts>().ToList(),
                 ChildMatch = result[3].Cast<ChildMatchModel>().ToList(),
                 FantasyMatch = fantasyMatch,
                 Permission = permission.Permission
@@ -98,7 +96,9 @@ namespace Settlement.Sportsbook.Soccer.Services
 
         private MatchDetail ProviderScore(MatchDetail matchDetail, List<ResultDetail> externalResultDetails)
         {
-            var fulltimeExScore = externalResultDetails.FirstOrDefault(item => item.ResourceId == fulltimeResource);
+            const string fullTimeResource = "00";
+            const string halfTimeResource = "01";
+            var fulltimeExScore = externalResultDetails.FirstOrDefault(item => item.ResourceId == fullTimeResource);
             if (fulltimeExScore != null && !string.IsNullOrEmpty(fulltimeExScore.HomeValue) && !string.IsNullOrEmpty(fulltimeExScore.AwayValue))
             {
                 matchDetail.ExternalSourceName = fulltimeExScore.SourceName;
@@ -107,6 +107,7 @@ namespace Settlement.Sportsbook.Soccer.Services
             }
 
             var halftimeExScore = externalResultDetails.FirstOrDefault(item => item.ResourceId == halfTimeResource);
+            
             if (halftimeExScore != null && !string.IsNullOrEmpty(halftimeExScore.HomeValue) && !string.IsNullOrEmpty(halftimeExScore.AwayValue))
             {
                 matchDetail.ExternalSourceName = halftimeExScore.SourceName;
@@ -115,16 +116,16 @@ namespace Settlement.Sportsbook.Soccer.Services
             }
 
             return matchDetail;
-        }
+            }
 
-        private FantasyMatch GetRelatedMatches(int matchId)
+        private async Task<FantasyMatch> GetRelatedMatches(int matchId)
         {
             var criteria = new GetFantasyMatchCriteria
             {
                 MatchId = matchId
             };
 
-            var result = repository.FetchMultiple<FantasyMatchDetail, FantasyRelatedMatch>(criteria);
+            var result = await repository.FetchMultipleAsync<FantasyMatchDetail, FantasyRelatedMatch>(criteria);
             var matchDetail = result.firstResultSet.FirstOrDefault();
             var relatedMatches = result.secondResultSet.OrderBy(match => match.MatchCode).ToList();
             foreach (var match in relatedMatches)
