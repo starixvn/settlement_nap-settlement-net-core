@@ -53,7 +53,7 @@
 	<ItemGroup>
 		<PackageReference Include="AutoMapper" Version="10.1.1" />
 		<PackageReference Include="Fanex.Caching.AspNetCore" Version="2.2.2" />
-		<PackageReference Include="Fanex.Caching.Redis.AspNetCore" Version="2.2.2" />
+		<PackageReference Include="Fanex.Caching.Redis.AspNetCore" Version="2.2.2.1" />
 		<PackageReference Include="Fanex.Data" Version="4.2.2" />
 		<PackageReference Include="Fanex.Data.Repository" Version="4.2.2" />
 		<PackageReference Include="Fanex.Data.SqlServer" Version="4.2.2" />
