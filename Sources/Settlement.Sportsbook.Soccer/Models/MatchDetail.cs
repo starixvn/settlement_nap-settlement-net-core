@@ -17,7 +17,6 @@ namespace Settlement.Sportsbook.Soccer.Models
         [JsonIgnore]
         public IRefDataService RefDataService { get; set; }
 
-        [JsonIgnore]
         public int LeagueGroupId { get; set; }
 
         private int LeagueId { get; set; }
@@ -106,13 +105,7 @@ namespace Settlement.Sportsbook.Soccer.Models
 
         public string FtStatus { get; set; }
 
-        public string FgLgStatus { get; set; }
-
-        public string HtFgLgStatus { get; set; }
-
         public bool IsExistResultAndFirstTeamScore { get; set; }
-
-        public bool HasInstantCompleted { get; set; }
 
         public int? SourceId { get; set; }
 
@@ -146,5 +139,18 @@ namespace Settlement.Sportsbook.Soccer.Models
                 return !string.IsNullOrWhiteSpace(status) && status.Length > MarkedRefundAllPosition && status[MarkedRefundAllPosition].Equals('1');
             }
         }
+
+        private int AutoSetting { get; set; }
+
+        public bool IsInstant
+        {
+            get
+            {
+                var matchSetting = Convert.ToString(AutoSetting, ConvertToBase).Reverse();
+                return !string.IsNullOrWhiteSpace(matchSetting) && matchSetting.Length > 1 && matchSetting[1].Equals('1');
+            }
+        }
+
+        public bool HasInstantCompleted { get; set; }
     }
 }

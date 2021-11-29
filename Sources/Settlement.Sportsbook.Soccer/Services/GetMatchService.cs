@@ -73,9 +73,9 @@ namespace Settlement.Sportsbook.Soccer.Services
             return new Match
             {
                 MatchDetail = matchDetail,
-                ResultDetail = result[1].Cast<ResultDetail>().ToList(),
-                TicketCount = result[2].Cast<TicketCounts>().ToList(),
-                ChildMatch = result[3].Cast<ChildMatchModel>().ToList(),
+                ResultDetails = result[1].Cast<ResultDetail>().ToList(),
+                TicketCounts = result[2].Cast<TicketCounts>().ToList(),
+                ChildMatches = result[3].Cast<ChildMatchModel>().ToList(),
                 FantasyMatch = fantasyMatch,
                 Permission = permission.Permission
             };
