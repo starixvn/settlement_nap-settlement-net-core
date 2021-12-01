@@ -22,9 +22,9 @@ namespace Settlement.Sportsbook.Soccer.Models
 
         public DateTime KickOffTime { get; set; }
 
-        private int HomeId { get; set; }
+        public int HomeId { get; set; }
 
-        private int AwayId { get; set; }
+        public int AwayId { get; set; }
 
         public string HomeName => RefDataService.GetTeamName(HomeId);
 
