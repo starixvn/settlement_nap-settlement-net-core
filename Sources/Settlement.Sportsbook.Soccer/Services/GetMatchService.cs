@@ -64,6 +64,9 @@ namespace Settlement.Sportsbook.Soccer.Services
             var externalResultDetails = await repository.FetchAsync<ResultDetail>(providerCriteria);
             matchDetail = ProviderScore(matchDetail, externalResultDetails.ToList());
 
+            var hedgeMatchCriteria = new GetHedgeMatchCriteria { MatchId = request.MatchId };
+            var hedgeMatchDetail = await repository.GetAsync<HedgeMatchDetail>(hedgeMatchCriteria);
+
             var fantasyMatch = new FantasyMatch();
             if (matchDetail.IsFantasyMatch)
             {
@@ -77,6 +80,7 @@ namespace Settlement.Sportsbook.Soccer.Services
                 TicketCounts = result[2].Cast<TicketCounts>().ToList(),
                 ChildMatches = result[3].Cast<ChildMatchModel>().ToList(),
                 FantasyMatch = fantasyMatch,
+                HedgeMatchDetail = hedgeMatchDetail,
                 Permission = permission.Permission
             };
         }

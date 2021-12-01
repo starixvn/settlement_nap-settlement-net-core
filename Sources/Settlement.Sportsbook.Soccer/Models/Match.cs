@@ -16,5 +16,7 @@ namespace Settlement.Sportsbook.Soccer.Models
         public FantasyMatch FantasyMatch { get; set; }
 
         public Permission Permission { get; set; }
+
+        public HedgeMatchDetail HedgeMatchDetail { get; set; }
     }
 }
