@@ -16,7 +16,7 @@
       }
     },
     "Settlement.WebSites": {
-      "commandName": "IISExpress",
+      "commandName": "Settlement.WebSites",
       "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"

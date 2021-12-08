@@ -15,5 +15,7 @@
         public const string SaveScore = "save-score";
 
         public const string ChildMatchKey = "childMatch";
+        
+        public const string OldMatch = "old-match";
     }
 }
