@@ -19,7 +19,7 @@ namespace Settlement.Sportsbook.Soccer.Models
 
         public int LeagueGroupId { get; set; }
 
-        private int LeagueId { get; set; }
+        public int LeagueId { get; set; }
 
         public string LeagueName => RefDataService.GetLeagueName(LeagueId);
 
