@@ -7,18 +7,23 @@ using Settlement.Sportsbook.Soccer.Criterias;
 using Settlement.Sportsbook.Soccer.Models;
 using System.Linq;
 using System.Threading.Tasks;
+using Settlement.Sportsbook.Soccer.Requests;
 using Match = Settlement.Sportsbook.Soccer.Models.Match;
 using MatchDetail = Settlement.Sportsbook.Soccer.Models.MatchDetail;
 using static Fanex.NAP.Client.Check;
 
 namespace Settlement.Sportsbook.Soccer.Services
 {
-    public interface IGetMatchService
+    public interface IMatchService
     {
+        string GetBetStatus(int matchId);
+
         Task<Match> GetMatch(GetMatchRequest request);
+
+        Task<MatchDetail> GetLastestMatchDetail(GetLastestMatchDetailRequest request);
     }
 
-    public class GetMatchService : IGetMatchService
+    public class MatchService : IMatchService
     {
         private readonly IDynamicRepository repository;
 
@@ -30,7 +35,7 @@ namespace Settlement.Sportsbook.Soccer.Services
 
         private readonly IGoalIconService goalIconService;
 
-        public GetMatchService(
+        public MatchService(
             IDynamicRepository repository,
             PermissionService permission,
             IMapper mapper,
@@ -42,6 +47,18 @@ namespace Settlement.Sportsbook.Soccer.Services
             this.mapper = mapper;
             this.refDataService = refDataService;
             this.goalIconService = goalIconService;
+        }
+
+        public string GetBetStatus(int matchId)
+        {
+            var criteria = new GetMatchInfoCriteria
+            {
+                MatchId = matchId
+            };
+
+            var matchInfo = repository.Get<MatchDetail>(criteria);
+
+            return matchInfo != null ? matchInfo.BetStatus : string.Empty;
         }
 
         public async Task<Match> GetMatch(GetMatchRequest request)
@@ -111,7 +128,7 @@ namespace Settlement.Sportsbook.Soccer.Services
             }
 
             var halftimeExScore = externalResultDetails.FirstOrDefault(item => item.ResourceId == halfTimeResource);
-            
+
             if (halftimeExScore != null && !string.IsNullOrEmpty(halftimeExScore.HomeValue) && !string.IsNullOrEmpty(halftimeExScore.AwayValue))
             {
                 matchDetail.ExternalSourceName = halftimeExScore.SourceName;
@@ -120,7 +137,7 @@ namespace Settlement.Sportsbook.Soccer.Services
             }
 
             return matchDetail;
-            }
+        }
 
         private async Task<FantasyMatch> GetRelatedMatches(int matchId)
         {
@@ -142,6 +159,15 @@ namespace Settlement.Sportsbook.Soccer.Services
                 FantasyMatchDetail = matchDetail,
                 RelatedMatches = relatedMatches
             };
+        }
+
+        public async Task<MatchDetail> GetLastestMatchDetail(GetLastestMatchDetailRequest request)
+        {
+            var criteria = mapper.Map<GetLastestMatchDetailRequest, GetLastestMatchDetailCriteria>(request);
+            var matchDetail = await repository.GetAsync<MatchDetail>(criteria);
+            matchDetail.RefDataService = refDataService;
+
+            return matchDetail;
         }
     }
 }

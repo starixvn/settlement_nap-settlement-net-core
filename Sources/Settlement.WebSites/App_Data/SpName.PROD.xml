@@ -46,5 +46,6 @@
     <Setting Key="RefundParlay" SpName="NAP_Admin_Settlement_Refund_MP_Push" DbName="DBTXN.bodb02.bodbAdminNet" />
     <Setting Key="RefundAll" SpName="NAP_Admin_Settlement_Refund_All_Push" DbName="DBTXN.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_CheckingMarkedTransaction" SpName="NAP_Set_CheckingMarkedTransaction" DbName="DBTXN.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_SettlementStatusChecking" SpName="NAP_Set_SettlementStatusChecking" DbName="DBPRO.bodb02.bodbAdminNet" />
   </Function>
 </Functions>

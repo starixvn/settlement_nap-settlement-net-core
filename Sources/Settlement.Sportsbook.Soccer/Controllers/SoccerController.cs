@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Settlement.Core.ActionFilters;
+using Settlement.Sportsbook.Soccer.Requests;
 
 namespace Settlement.Sportsbook.Soccer.Controllers
 {
@@ -17,13 +18,11 @@ namespace Settlement.Sportsbook.Soccer.Controllers
             this.mediator = mediator;
         }
 
-        [Route("get-match")]
-        [HttpPost]
+        [Route("get-match"), HttpPost]
         [LogRequestResponse]
         public async Task<IActionResult> GetMatch(GetMatchRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
-        [Route("test-get-match")]
-        [HttpGet]
+        [Route("test-get-match"), HttpGet]
         [LogRequestResponse]
         public async Task<IActionResult> GetMatch1(int matchId)
         {
@@ -33,5 +32,14 @@ namespace Settlement.Sportsbook.Soccer.Controllers
             };
             return Ok(await mediator.Send(request).ConfigureAwait(false));
         }
+
+        [Route("get-lastest-match-detail"), HttpPost]
+        public async Task<IActionResult> GetLastestMatchDetail(GetLastestMatchDetailRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+
+        [Route("calculate"), HttpPost]
+        public async Task<IActionResult> Calculate(SettleRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+
+        [Route("check-status"), HttpPost]
+        public async Task<IActionResult> CheckingStatus(CheckStatusRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
     }
 }

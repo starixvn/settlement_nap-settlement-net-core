@@ -45,6 +45,8 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Settlement.Sportsbook.Soccer;
 using Settlement.Sportsbook.Soccer.Controllers;
+using Settlement.Sportsbook.Soccer.Services.FullTimeBetStatus;
+using Settlement.Sportsbook.Soccer.Services.HalfTimeBetStatus;
 
 namespace Settlement.WebSites
 {
@@ -161,7 +163,7 @@ namespace Settlement.WebSites
         {
             services.AddTransient<IAioService, AioService>();
             services.AddTransient<IMatchResultDetailService, MatchResultDetailService>();
-            services.AddTransient<IMatchService, MatchService>();
+            services.AddTransient<Sportsbook.MoveTickets.Services.IMatchService, Sportsbook.MoveTickets.Services.MatchService>();
             services.AddTransient<IMoveTicketService, MoveTicketService>();
             services.AddTransient<IScoreService, ScoreService>();
             services.AddTransient<IScoreSetService, ScoreSetService>();
@@ -171,12 +173,27 @@ namespace Settlement.WebSites
             services.AddTransient<ICriteriaFactory, CriteriaFactoryImp>();
             services.AddTransient<ICreateQueryService, CreateQueryServiceImp>();
 
-            services.AddTransient<IFirstGoalLastGoalService, FirstGoalLastGoalServiceImp>();
-            services.AddTransient<IGetMatchService, GetMatchService>();
-            services.AddTransient<IGoalIconService, GoalIconServiceImp>();
-
             services.AddTransient<SettlementActionsService, SettlementActionsServiceImp>();
             services.AddTransient<SportsbookService, SportsbookServiceImp>();
+
+            services.AddTransient<Sportsbook.Soccer.Services.IFirstGoalLastGoalService, Sportsbook.Soccer.Services.FirstGoalLastGoalServiceImp>();
+            services.AddTransient<Sportsbook.Soccer.Services.IMatchService, Sportsbook.Soccer.Services.MatchService>();
+            services.AddTransient<IGoalIconService, GoalIconServiceImp>();
+            services.AddTransient<IBetStatusAllService, BetStatusAllServiceImp>();
+            services.AddTransient<IGoalRecordService, GoalRecordServiceImp>();
+            services.AddTransient<ICalculateService, CalculateServiceImp>();
+            services.AddTransient<ISoccerBetStatusService, SoccerBetStatusServiceImp>();
+            services.AddTransient<IValidationService, ValidationServiceImp>();
+            services.AddTransient<Sportsbook.Soccer.Services.FullTimeBetStatus.IBetStatusService, Sportsbook.Soccer.Services.FullTimeBetStatus.BetStatusServiceImp>();
+            services.AddTransient<Sportsbook.Soccer.Services.FullTimeBetStatus.IFirstGoalLastGoalService, Sportsbook.Soccer.Services.FullTimeBetStatus.FirstGoalLastGoalServiceImp>();
+            services.AddTransient<IFullTimeService, FullTimeServiceImp>();
+            services.AddTransient<IHalftimeFullTimeService, HalftimeFullTimeServiceImp>();
+            services.AddTransient<IScoreAndGoalService, ScoreAndGoalServiceImp>();
+            services.AddTransient<Sportsbook.Soccer.Services.HalfTimeBetStatus.IBetStatusService, Sportsbook.Soccer.Services.HalfTimeBetStatus.BetStatusServiceImp>();
+            services.AddTransient<IHalftimeScoreAndGoalService, HalftimeScoreAndGoalServiceImp>();
+            services.AddTransient<IHalftimeService, HalftimeServiceImp>();
+            services.AddTransient<IResourceService, ResourceServiceImp>();
+            services.AddTransient<IActionResourceService, ActionResourceServiceImp>();
         }
 
         private void ConfigureNapServices(IServiceCollection services)

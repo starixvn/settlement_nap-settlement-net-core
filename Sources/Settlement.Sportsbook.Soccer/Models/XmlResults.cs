@@ -1,0 +1,16 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Xml.Serialization;
+
+namespace Settlement.Sportsbook.Soccer.Models
+{
+    [XmlRoot("Results")]
+    public class XmlResults
+    {
+        [XmlElement("Resource")]
+        public List<XmlResource> Resources { get; set; }
+    }
+}
