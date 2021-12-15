@@ -113,7 +113,13 @@ namespace Settlement.WebSites
                                             "https://settlementcore.sportsfun.app",
 
                                             "https://settlement.oneops.net",
-                                            "https://settlementcore.oneops.net")
+                                            "https://settlementcore.oneops.net",
+
+                                            "https://settlement2.oneops.net",
+                                            "https://settlementcore2.oneops.net",
+
+                                            "https://settlement3.oneops.net",
+                                            "https://settlementcore3.oneops.net")
                               .AllowAnyMethod()
                               .AllowAnyHeader()
                               .AllowCredentials();
