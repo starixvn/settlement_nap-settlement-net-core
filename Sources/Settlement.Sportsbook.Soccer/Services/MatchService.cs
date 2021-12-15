@@ -119,12 +119,12 @@ namespace Settlement.Sportsbook.Soccer.Services
         {
             const string fullTimeResource = "00";
             const string halfTimeResource = "01";
-            var fulltimeExScore = externalResultDetails.FirstOrDefault(item => item.ResourceId == fullTimeResource);
-            if (fulltimeExScore != null && !string.IsNullOrEmpty(fulltimeExScore.HomeValue) && !string.IsNullOrEmpty(fulltimeExScore.AwayValue))
+            var fullTimeExScore = externalResultDetails.FirstOrDefault(item => item.ResourceId == fullTimeResource);
+            if (fullTimeExScore != null && !string.IsNullOrEmpty(fullTimeExScore.HomeValue) && !string.IsNullOrEmpty(fullTimeExScore.AwayValue))
             {
-                matchDetail.ExternalSourceName = fulltimeExScore.SourceName;
-                matchDetail.ExFTAwayScore = int.Parse(fulltimeExScore.AwayValue);
-                matchDetail.ExFTHomeScore = int.Parse(fulltimeExScore.HomeValue);
+                matchDetail.ExternalSourceName = fullTimeExScore.SourceName;
+                matchDetail.ExFTAwayScore = int.Parse(fullTimeExScore.AwayValue);
+                matchDetail.ExFTHomeScore = int.Parse(fullTimeExScore.HomeValue);
             }
 
             var halftimeExScore = externalResultDetails.FirstOrDefault(item => item.ResourceId == halfTimeResource);

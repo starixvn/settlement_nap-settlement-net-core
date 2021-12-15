@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Settlement.Sportsbook.Soccer.Constants;
 using Settlement.Sportsbook.Soccer.Models;
 
@@ -45,10 +41,10 @@ namespace Settlement.Sportsbook.Soccer.Services
 
         public List<XmlResource> FullTimeResources(GoalAction goalAction)
         {
-            var fristGoal = goalRecordService.FirstGoalRecord(goalAction.FirstGoal, goalAction.IsRefund);
+            var firstGoal = goalRecordService.FirstGoalRecord(goalAction.FirstGoal, goalAction.IsRefund);
             var lastGoal = goalRecordService.LastGoalRecord(goalAction.LastGoal, goalAction.IsRefund);
             return new List<XmlResource> {
-                    SettleResource(ResourceKey.FullTimeFirstGoal, fristGoal, goalAction.FirstGoalSettlementStatusId),
+                    SettleResource(ResourceKey.FullTimeFirstGoal, firstGoal, goalAction.FirstGoalSettlementStatusId),
                     SettleResource(ResourceKey.FullTimeLastGoal, lastGoal, goalAction.LastGoalSettlementStatusId)
             };
         }

@@ -14,21 +14,21 @@ namespace Settlement.Sportsbook.Soccer.Handlers
         IRequestHandler<SettleRequest, Result>,
         IRequestHandler<CheckStatusRequest, Result>
     {
-        private readonly IMatchService getMatchService;
+        private readonly IMatchService matchService;
 
         private readonly ICalculateService calculateService;
 
-        public SoccerHandler(IMatchService getMatchService, ICalculateService calculateService)
+        public SoccerHandler(IMatchService matchService, ICalculateService calculateService)
         {
-            this.getMatchService = getMatchService;
+            this.matchService = matchService;
             this.calculateService = calculateService;
         }
 
         public async Task<Match> Handle(GetMatchRequest request, CancellationToken cancellationToken) =>
-            await getMatchService.GetMatch(request);
+            await matchService.GetMatch(request);
 
         public async Task<MatchDetail> Handle(GetLastestMatchDetailRequest request, CancellationToken cancellationToken) =>
-            await getMatchService.GetLastestMatchDetail(request);
+            await matchService.GetLastestMatchDetail(request);
 
         public async Task<Result> Handle(SettleRequest request, CancellationToken cancellationToken) =>
             await calculateService.Calculate(request);

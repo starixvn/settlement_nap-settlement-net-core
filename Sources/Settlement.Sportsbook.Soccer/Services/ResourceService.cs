@@ -14,6 +14,10 @@ namespace Settlement.Sportsbook.Soccer.Services
         List<XmlResource> AllResources(GoalCondition goalCondition, int settlementStatusId);
 
         List<XmlResource> UnCalculateResources(GoalCondition goalCondition);
+
+        List<XmlResource> FullTimeResourcesSettleDetermined(GoalCondition goalCondition);
+
+        List<XmlResource> AllResourcesSettleDetermined(GoalCondition goalCondition);
     }
 
     public class ResourceServiceImp : IResourceService
@@ -123,6 +127,78 @@ namespace Settlement.Sportsbook.Soccer.Services
             return resources;
         }
 
+        public List<XmlResource> FullTimeResourcesSettleDetermined(GoalCondition goalCondition)
+        {
+            var resources = new List<XmlResource>();
+
+            if (goalCondition.IsExistFgLg)
+            {
+                GoalAction goalAction;
+                if (string.IsNullOrWhiteSpace(goalCondition.GoalRecord.Replace(";", string.Empty)))
+                {
+                    goalAction = CreateGoalAction(string.Empty, SettlementStatus.Abandoned2H);
+                }
+                else
+                {
+                    var halftime = goalRecordService.HalftimeGoal(goalCondition.GoalRecord);
+                    var fullTime = goalRecordService.FullTimeGoal(goalCondition.GoalRecord);
+                    var goal = $"{halftime}{fullTime}";
+                    goalAction = CreateGoalAction(goal, SettlementStatus.Completed, SettlementStatus.Abandoned2H);
+                }
+
+                var res = actionResourceService.FullTimeResources(goalAction);
+                resources.AddRange(res);
+            }
+
+            if (goalCondition.IsEnabledGoalRecordFt)
+            {
+                var res = actionResourceService.FullTimeGoalRecord(goalCondition.GoalRecord, SettlementStatus.Abandoned2H);
+                resources.Add(res);
+            }
+
+            return resources;
+        }
+
+        public List<XmlResource> AllResourcesSettleDetermined(GoalCondition goalCondition)
+        {
+            var resources = new List<XmlResource>();
+            var halftimeGoal = goalRecordService.HalftimeGoal(goalCondition.GoalRecord);
+
+            if (goalCondition.IsExistHtFgLg)
+            {
+                var goalAction = string.IsNullOrWhiteSpace(halftimeGoal)
+                    ? CreateGoalAction(string.Empty, SettlementStatus.Abandoned1H)
+                    : CreateGoalAction(halftimeGoal, SettlementStatus.Completed, SettlementStatus.Abandoned1H);
+
+                var res = actionResourceService.HalftimeResources(goalAction);
+                resources.AddRange(res);
+            }
+
+            if (goalCondition.IsExistFgLg)
+            {
+                var goalAction = string.IsNullOrWhiteSpace(halftimeGoal)
+                    ? CreateGoalAction(string.Empty, SettlementStatus.Abandoned1H)
+                    : CreateGoalAction(halftimeGoal, SettlementStatus.Completed, SettlementStatus.Abandoned1H);
+
+                var res = actionResourceService.FullTimeResources(goalAction);
+                resources.AddRange(res);
+            }
+
+            if (goalCondition.IsEnabledGoalRecordHt)
+            {
+                var res = actionResourceService.HalftimeGoalRecord(halftimeGoal, SettlementStatus.Abandoned1H);
+                resources.Add(res);
+            }
+
+            if (goalCondition.IsEnabledGoalRecordFt)
+            {
+                var res = actionResourceService.FullTimeGoalRecord(goalCondition.GoalRecord, SettlementStatus.Abandoned1H);
+                resources.Add(res);
+            }
+
+            return resources;
+        }
+
         private XmlResource InitialResource(string resourceId)
         {
             return new XmlResource
@@ -142,6 +218,17 @@ namespace Settlement.Sportsbook.Soccer.Services
                 LastGoal = goal,
                 FirstGoalSettlementStatusId = settlementStatusId,
                 LastGoalSettlementStatusId = settlementStatusId
+            };
+        }
+
+        private GoalAction CreateGoalAction(string halftimeGoal, int firtsGoalSettlementStatusId, int lastGoalSettlementStatusId)
+        {
+            return new GoalAction
+            {
+                FirstGoal = halftimeGoal,
+                LastGoal = string.Empty,
+                FirstGoalSettlementStatusId = firtsGoalSettlementStatusId,
+                LastGoalSettlementStatusId = lastGoalSettlementStatusId
             };
         }
     }
