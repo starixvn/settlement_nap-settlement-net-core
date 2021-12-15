@@ -76,6 +76,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Content Update="appsettings.PROD_2.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Update="appsettings.PROD_1.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
 	  <Content Update="appsettings.SIT_3.json">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>

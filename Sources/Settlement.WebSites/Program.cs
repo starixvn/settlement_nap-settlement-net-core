@@ -20,7 +20,7 @@ namespace Settlement.WebSites
                     webBuilder.ConfigureKestrel(serverOptions =>
                     {
                         serverOptions.Limits.MinRequestBodyDataRate =
-                            new MinDataRate(bytesPerSecond: 100, gracePeriod: TimeSpan.FromSeconds(10));
+                            new MinDataRate(bytesPerSecond: 240, gracePeriod: TimeSpan.FromSeconds(30));
                     }).UseStartup<Startup>();
                 });
     }
