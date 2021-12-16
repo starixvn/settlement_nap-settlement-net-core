@@ -38,6 +38,8 @@ namespace Settlement.Sportsbook.OtherSports.Criteria
 
         public bool IsReSettledTickets { get; set; } = true;
 
+        public int? RefResultStatus { get; set; }
+
         public override bool IsValid()
         {
             return AdminId > 0 && MatchId > 0;
