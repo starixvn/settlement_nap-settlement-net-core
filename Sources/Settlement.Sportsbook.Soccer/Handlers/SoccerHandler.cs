@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using MediatR;
 using Settlement.Core.Models;
+using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Requests;
 using Settlement.Sportsbook.Soccer.Services;
 using Match = Settlement.Sportsbook.Soccer.Models.Match;
@@ -12,7 +13,9 @@ namespace Settlement.Sportsbook.Soccer.Handlers
     public class SoccerHandler : IRequestHandler<GetMatchRequest, Match>,
         IRequestHandler<GetLastestMatchDetailRequest, MatchDetail>,
         IRequestHandler<SettleRequest, Result>,
-        IRequestHandler<CheckStatusRequest, Result>
+        IRequestHandler<CheckStatusRequest, Result>,
+        IRequestHandler<UndoCheckingRequest, UndoCheckingModel>,
+        IRequestHandler<InstantCalculationRequest, Result>
     {
         private readonly IMatchService matchService;
 
@@ -35,5 +38,11 @@ namespace Settlement.Sportsbook.Soccer.Handlers
 
         public async Task<Result> Handle(CheckStatusRequest request, CancellationToken cancellationToken) =>
             await calculateService.CheckStatus(request);
+
+        public async Task<UndoCheckingModel> Handle(UndoCheckingRequest request, CancellationToken cancellationToken) =>
+            await calculateService.UndoCheckingInfoAsync(request);
+
+        public async Task<Result> Handle(InstantCalculationRequest request, CancellationToken cancellationToken) =>
+            await calculateService.PushInstantCalculation(request);
     }
 }

@@ -20,6 +20,7 @@ namespace Settlement.Sportsbook.Soccer
             CreateMap<CheckStatusRequest, CheckStatusCriteria>()
                 .ForMember(dest => dest.Action, opt => opt.MapFrom(src => src.ActionName));
             CreateMap<SettleRequest, GoalCondition>();
+            CreateMap<InstantCalculationRequest, PushInstantCalculationCriteria>();
         }
     }
 }

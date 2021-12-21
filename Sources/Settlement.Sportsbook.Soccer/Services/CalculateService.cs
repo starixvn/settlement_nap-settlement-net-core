@@ -20,6 +20,10 @@ namespace Settlement.Sportsbook.Soccer.Services
         Task<Result> Calculate(SettleRequest request);
 
         Task<Result> CheckStatus(CheckStatusRequest request);
+
+        Task<UndoCheckingModel> UndoCheckingInfoAsync(UndoCheckingRequest request);
+
+        Task<Result> PushInstantCalculation(InstantCalculationRequest request);
     }
 
     public class CalculateServiceImp : ICalculateService
@@ -38,6 +42,8 @@ namespace Settlement.Sportsbook.Soccer.Services
 
         private readonly IResourceService resourceService;
 
+        private readonly IInstantResourceService instantResourceService;
+
         public CalculateServiceImp(
             IDynamicRepository repository,
             INapSession currentSession,
@@ -45,7 +51,8 @@ namespace Settlement.Sportsbook.Soccer.Services
             IHttpContextAccessor accessor,
             ISoccerBetStatusService soccerBetStatusService,
             XmlConvertService xmlConvertService,
-            IResourceService resourceService)
+            IResourceService resourceService,
+            IInstantResourceService instantResourceService)
         {
             this.repository = repository;
             this.currentSession = currentSession;
@@ -54,6 +61,7 @@ namespace Settlement.Sportsbook.Soccer.Services
             this.soccerBetStatusService = soccerBetStatusService;
             this.xmlConvertService = xmlConvertService;
             this.resourceService = resourceService;
+            this.instantResourceService = instantResourceService;
         }
 
         public async Task<Result> Calculate(SettleRequest request)
@@ -86,6 +94,51 @@ namespace Settlement.Sportsbook.Soccer.Services
                 ErrCode = criteria.ErrCode,
                 ErrMsg = criteria.ErrMsg
             };
+        }
+
+        public async Task<UndoCheckingModel> UndoCheckingInfoAsync(UndoCheckingRequest request)
+        {
+            var criteria = new UndoCheckingCriteria { MatchId = request.MatchId };
+            var undoCheckingScore = await repository.GetAsync<UndoCheckingModel>(criteria);
+            undoCheckingScore.ErrCode = criteria.ErrCode;
+            undoCheckingScore.ErrMsg = criteria.ErrMsg;
+
+            return undoCheckingScore;
+        }
+
+        public async Task<Result> PushInstantCalculation(InstantCalculationRequest request)
+        {
+            var resourceResult = GetResource(request);
+            var criteria = mapper.Map<InstantCalculationRequest, PushInstantCalculationCriteria>(request);
+
+            criteria.ResourceResult = resourceResult;
+            criteria.AdminId = currentSession.UserId;
+            criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
+            await repository.ExecuteAsync(criteria);
+
+            return new Result
+            {
+                ErrCode = criteria.ErrCode,
+                ErrMsg = criteria.ErrMsg
+            };
+        }
+
+        private string GetResource(InstantCalculationRequest request)
+        {
+            var goalCondition = new InstantGoalCondition
+            {
+                GoalRecord = request.GoalRecord,
+                FirstGoalValue = request.FirstGoalValue,
+                IsExistFgNg = request.IsExistFgNg,
+                IsExistHtFgNg = request.IsExistHtFgNg,
+                IsHalfTime = request.IsHalfTime
+            };
+
+            List<XmlResource> resources = instantResourceService.UnCalculate(goalCondition); ;
+
+            return resources.Count > 0
+                ? xmlConvertService.Serialize(new XmlResults { Resources = resources })
+                : string.Empty;
         }
 
         private void SetScoreCriteria(SettleRequest request, CalculateCriteria criteria)
