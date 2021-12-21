@@ -15,6 +15,8 @@ namespace Settlement.Sportsbook.Soccer.Models
 
         [JsonIgnore]
         public IRefDataService RefDataService { get; set; }
+        
+        private bool IsCalRefund { get; set; }
 
         public int LeagueGroupId { get; set; }
 
@@ -43,16 +45,6 @@ namespace Settlement.Sportsbook.Soccer.Models
         public bool IsHtOnly { get; set; }
 
         public int MatchId { get; set; }
-
-        public bool IsCalculated { get; set; }
-
-        public bool IsRefund { get; set; }
-
-        public bool IsCalRefund { get; set; }
-
-        public bool IsHalfTimeCal { get; set; }
-
-        public bool IsMultiCaled { get; set; }
 
         public bool IsExistFgLg { get; set; }
 
