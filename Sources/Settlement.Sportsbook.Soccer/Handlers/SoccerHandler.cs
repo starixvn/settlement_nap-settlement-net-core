@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using MediatR;
 using Settlement.Core.Models;
+using Settlement.Sportsbook.Soccer.Constants;
 using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Requests;
 using Settlement.Sportsbook.Soccer.Services;
@@ -21,10 +22,13 @@ namespace Settlement.Sportsbook.Soccer.Handlers
 
         private readonly ICalculateService calculateService;
 
-        public SoccerHandler(IMatchService matchService, ICalculateService calculateService)
+        private readonly IInstantCalculateService instantCalculateService;
+
+        public SoccerHandler(IMatchService matchService, ICalculateService calculateService, IInstantCalculateService instantCalculateService)
         {
             this.matchService = matchService;
             this.calculateService = calculateService;
+            this.instantCalculateService = instantCalculateService;
         }
 
         public async Task<Match> Handle(GetMatchRequest request, CancellationToken cancellationToken) =>
@@ -33,16 +37,25 @@ namespace Settlement.Sportsbook.Soccer.Handlers
         public async Task<MatchDetail> Handle(GetLastestMatchDetailRequest request, CancellationToken cancellationToken) =>
             await matchService.GetLastestMatchDetail(request);
 
-        public async Task<Result> Handle(SettleRequest request, CancellationToken cancellationToken) =>
-            await calculateService.Calculate(request);
+        public async Task<Result> Handle(SettleRequest request, CancellationToken cancellationToken)
+        {
+            if (request.ActionName.Equals(ActionType.Uncalculate))
+            {
+                return await calculateService.UnCalculate(request);
+            }
+            else
+            {
+                return await calculateService.Calculate(request);
+            }
+        }
 
         public async Task<Result> Handle(CheckStatusRequest request, CancellationToken cancellationToken) =>
             await calculateService.CheckStatus(request);
 
         public async Task<UndoCheckingModel> Handle(UndoCheckingRequest request, CancellationToken cancellationToken) =>
-            await calculateService.UndoCheckingScore(request.MatchId);
+            await instantCalculateService.UndoCheckingScore(request.MatchId);
 
         public async Task<Result> Handle(InstantCalculationRequest request, CancellationToken cancellationToken) =>
-            await calculateService.PushInstantCalculation(request);
+            await instantCalculateService.PushInstantCalculation(request);
     }
 }

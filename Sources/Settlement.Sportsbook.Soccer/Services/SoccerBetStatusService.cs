@@ -36,30 +36,15 @@ namespace Settlement.Sportsbook.Soccer.Services
 
             if (validationService.IsExistFirstGoalLastGoal(request))
             {
-                return SetNewValueBetStatusForGoalRecord(request);
+                return request.ActionName switch
+                {
+                    ActionType.CalculateHalfTime => halfTimeBetStatusService.GetBetStatus(request),
+                    ActionType.CalculateFullTime => fullTimeBetStatusService.GetBetStatus(request),
+                    _ => betStatusAllService.GetBetStatus(request)
+                };
             }
 
             return validationService.IsRefundHalftime(request) || validationService.IsRefundFullTime(request) ? request.BetStatus : string.Empty;
-        }
-
-        private string SetNewValueBetStatusForGoalRecord(SettleRequest request)
-        {
-            if (request.ActionName == ActionType.CalculateAll)
-            {
-                return betStatusAllService.GetBetStatus(request);
-            }
-
-            if (request.ActionName == ActionType.CalculateHalfTime)
-            {
-                return halfTimeBetStatusService.GetBetStatus(request);
-            }
-
-            if (request.ActionName == ActionType.CalculateFullTime)
-            {
-                return fullTimeBetStatusService.GetBetStatus(request);
-            }
-
-            return string.Empty;
         }
     }
 }

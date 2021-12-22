@@ -19,7 +19,7 @@ namespace Settlement.Sportsbook.Soccer.Services
 
         public bool IsFullTimeGoallChecking(InstantGoalCondition goalCondition)
         {
-            string firtGoalRecordFullTime = goalCondition.GoalRecord.Replace(";", string.Empty);
+            var firtGoalRecordFullTime = goalCondition.GoalRecord.Replace(";", string.Empty);
 
             if (goalCondition.GoalRecord.Length > 1)
             {

@@ -12,7 +12,6 @@ using Settlement.Sportsbook.Soccer.Requests;
 using Settlement.Sportsbook.Soccer.Services;
 using Xunit;
 using AutoMapper.Configuration;
-using Settlement.Core.Models;
 using Settlement.Sportsbook.Soccer.Criterias;
 
 namespace Settlement.Sportsbook.Soccer.UnitTests.Services
@@ -48,7 +47,7 @@ namespace Settlement.Sportsbook.Soccer.UnitTests.Services
             mapperConfig.AddProfile<SoccerAutoMapperProfile>();
             var config = new MapperConfiguration(mapperConfig);
             var mapper = new Mapper(config);
-            service = new CalculateServiceImp(repository, currentSession, mapper, accessor, soccerBetStatusService, xmlConvertService, resourceService, null);
+            service = new CalculateServiceImp(repository, currentSession, mapper, accessor, soccerBetStatusService, xmlConvertService, resourceService);
         }
 
         [Fact]

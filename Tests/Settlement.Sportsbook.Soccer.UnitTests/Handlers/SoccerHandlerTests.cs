@@ -16,12 +16,14 @@ namespace Settlement.Sportsbook.Soccer.UnitTests.Handlers
 
         private readonly IMatchService matchService;
         private readonly ICalculateService calculateService;
+        private readonly IInstantCalculateService instantCalculateService;
 
         public SoccerHandlerTests()
         {
             matchService = Substitute.For<IMatchService>();
             calculateService = Substitute.For<ICalculateService>();
-            handler = new SoccerHandler(matchService, calculateService);
+            instantCalculateService = Substitute.For<IInstantCalculateService>();
+            handler = new SoccerHandler(matchService, calculateService, instantCalculateService);
         }
 
         [Fact]

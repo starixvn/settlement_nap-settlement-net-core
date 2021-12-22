@@ -196,6 +196,7 @@ namespace Settlement.WebSites
             services.AddTransient<IActionResourceService, ActionResourceServiceImp>();
             services.AddTransient<IInstantGoalCheckingService, InstantGoalCheckingServiceImp>();
             services.AddTransient<IInstantResourceService, InstantResourceServiceImp>();
+            services.AddTransient<IInstantCalculateService, InstantCalculateServiceImp>();
         }
 
         private void ConfigureNapServices(IServiceCollection services)
