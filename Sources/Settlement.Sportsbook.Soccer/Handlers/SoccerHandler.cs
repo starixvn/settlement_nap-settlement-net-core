@@ -40,7 +40,7 @@ namespace Settlement.Sportsbook.Soccer.Handlers
             await calculateService.CheckStatus(request);
 
         public async Task<UndoCheckingModel> Handle(UndoCheckingRequest request, CancellationToken cancellationToken) =>
-            await calculateService.UndoCheckingInfoAsync(request);
+            await calculateService.UndoCheckingScore(request.MatchId);
 
         public async Task<Result> Handle(InstantCalculationRequest request, CancellationToken cancellationToken) =>
             await calculateService.PushInstantCalculation(request);

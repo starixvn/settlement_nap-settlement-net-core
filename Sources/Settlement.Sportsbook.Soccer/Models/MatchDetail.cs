@@ -54,6 +54,10 @@ namespace Settlement.Sportsbook.Soccer.Models
 
         public bool IsEnabledGoalRecordFt { get; set; }
 
+        public bool IsHalfTimeCal { get; set; }
+
+        public bool IsCalculated { get; set; }
+
         public int? HalfTimeHomeScore { get; set; }
 
         public int? HalfTimeAwayScore { get; set; }

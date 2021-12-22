@@ -21,7 +21,7 @@ namespace Settlement.Sportsbook.Soccer.Services
 
         Task<Result> CheckStatus(CheckStatusRequest request);
 
-        Task<UndoCheckingModel> UndoCheckingInfoAsync(UndoCheckingRequest request);
+        Task<UndoCheckingModel> UndoCheckingScore(int matchId);
 
         Task<Result> PushInstantCalculation(InstantCalculationRequest request);
     }
@@ -96,9 +96,9 @@ namespace Settlement.Sportsbook.Soccer.Services
             };
         }
 
-        public async Task<UndoCheckingModel> UndoCheckingInfoAsync(UndoCheckingRequest request)
+        public async Task<UndoCheckingModel> UndoCheckingScore(int matchId)
         {
-            var criteria = new UndoCheckingCriteria { MatchId = request.MatchId };
+            var criteria = new UndoCheckingCriteria { MatchId = matchId };
             var undoCheckingScore = await repository.GetAsync<UndoCheckingModel>(criteria);
             undoCheckingScore.ErrCode = criteria.ErrCode;
             undoCheckingScore.ErrMsg = criteria.ErrMsg;
@@ -134,7 +134,20 @@ namespace Settlement.Sportsbook.Soccer.Services
                 IsHalfTime = request.IsHalfTime
             };
 
-            List<XmlResource> resources = instantResourceService.UnCalculate(goalCondition); ;
+            List<XmlResource> resources;
+
+            if (request.Action.Equals(ActionType.Uncalculate))
+            {
+                resources = instantResourceService.UnCalculate(goalCondition);
+            }
+            else if (request.IsHalfTime)
+            {
+                resources = instantResourceService.Halftime(goalCondition);
+            }
+            else
+            {
+                resources = instantResourceService.FullTime(goalCondition);
+            }
 
             return resources.Count > 0
                 ? xmlConvertService.Serialize(new XmlResults { Resources = resources })
@@ -145,6 +158,7 @@ namespace Settlement.Sportsbook.Soccer.Services
         {
             criteria.HalfTimeHome = request.HalfTimeHomeScore ?? 0;
             criteria.HalfTimeAway = request.HalfTimeAwayScore ?? 0;
+            
             if (request.ActionName.Equals(ActionType.CalculateFullTime) || request.ActionName.Equals(ActionType.CalculateAll))
             {
                 criteria.FullTimeHome = request.FinalHomeScore ?? 0;

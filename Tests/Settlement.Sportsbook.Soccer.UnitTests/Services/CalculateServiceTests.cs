@@ -48,7 +48,7 @@ namespace Settlement.Sportsbook.Soccer.UnitTests.Services
             mapperConfig.AddProfile<SoccerAutoMapperProfile>();
             var config = new MapperConfiguration(mapperConfig);
             var mapper = new Mapper(config);
-            service = new CalculateServiceImp(repository, currentSession, mapper, accessor, soccerBetStatusService, xmlConvertService, resourceService);
+            service = new CalculateServiceImp(repository, currentSession, mapper, accessor, soccerBetStatusService, xmlConvertService, resourceService, null);
         }
 
         [Fact]
