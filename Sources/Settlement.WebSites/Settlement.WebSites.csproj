@@ -6,9 +6,9 @@
 
 	<ItemGroup>
 		<None Remove="App_Data\SpName.AWS.xml" />
-		<None Remove="App_Data\SpName.LOCAL.xml" />
 		<None Remove="App_Data\SpName.LOCAL_1.xml" />
 		<None Remove="App_Data\SpName.LOCAL_2.xml" />
+		<None Remove="App_Data\SpName.LOCAL_3.xml" />
 		<None Remove="App_Data\SpName.PROD.xml" />
 		<None Remove="App_Data\SpName.SIT_1.xml" />
 		<None Remove="App_Data\SpName.SIT_2.xml" />
@@ -44,7 +44,7 @@
 		<Content Include="App_Data\SpName.AWS.xml">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
-		<Content Include="App_Data\SpName.LOCAL.xml">
+		<Content Include="App_Data\SpName.LOCAL_3.xml">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
 		<Content Include="App_Data\SpName.PROD.xml">

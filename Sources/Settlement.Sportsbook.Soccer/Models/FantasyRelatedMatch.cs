@@ -40,7 +40,7 @@ namespace Settlement.Sportsbook.Soccer.Models
 
         private byte SettlementStatus { get; set; }
 
-        private string BetStatus { get; set; }
+        public string BetStatus { get; set; }
 
         public string EventStatus
         {

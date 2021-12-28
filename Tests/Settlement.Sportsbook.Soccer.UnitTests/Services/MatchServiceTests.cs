@@ -6,6 +6,7 @@ using AutoMapper;
 using AutoMapper.Configuration;
 using Fanex.Data.Repository;
 using NSubstitute;
+using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.Soccer.Models;
@@ -103,18 +104,17 @@ namespace Settlement.Sportsbook.Soccer.UnitTests.Services
                 new Models.MatchDetail { MatchId = 123}
             };
 
-            var externalResult = new List<ResultDetail>
+            var resultDetail = new List<ResultDetail>
             {
-                new ResultDetail { ResourceId = "01", AwayValue = "1", HomeValue = "2" }
+                new ResultDetail { ResourceId = "01", AwayValue = "1", HomeValue = "2", SourceId = SourceType.SBO}
             };
             var results = new IEnumerable<object>[4];
 
             results[0] = matches;
-            results[1] = Substitute.For<IEnumerable<ResultDetail>>();
+            results[1] = resultDetail;
             results[2] = Substitute.For<IEnumerable<TicketCounts>>();
             results[3] = Substitute.For<IEnumerable<ChildMatchModel>>();
             repository.FetchMultipleAsync(Arg.Any<CriteriaBase>(), Arg.Any<Type[]>()).Returns(results);
-            repository.FetchAsync<ResultDetail>(Arg.Any<CriteriaBase>()).Returns(externalResult);
             // Act
             var match = await service.GetMatch(new GetMatchRequest { MatchId = 1 });
 

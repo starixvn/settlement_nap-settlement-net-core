@@ -7,6 +7,7 @@ using Settlement.Sportsbook.Soccer.Criterias;
 using Settlement.Sportsbook.Soccer.Models;
 using System.Linq;
 using System.Threading.Tasks;
+using Settlement.Core.Constants;
 using Settlement.Sportsbook.Soccer.Requests;
 using Match = Settlement.Sportsbook.Soccer.Models.Match;
 using MatchDetail = Settlement.Sportsbook.Soccer.Models.MatchDetail;
@@ -67,19 +68,13 @@ namespace Settlement.Sportsbook.Soccer.Services
             var mappingTypes = new[] { typeof(MatchDetail), typeof(ResultDetail), typeof(TicketCounts), typeof(ChildMatchModel) };
             var result = await repository.FetchMultipleAsync(criteria, mappingTypes);
             var matchDetail = result[0].Cast<MatchDetail>().FirstOrDefault();
+            var resultDetails = result[1].Cast<ResultDetail>().ToList();
             Argument.IsNotNull(matchDetail, $"Match ${criteria.MatchId} does not exist");
             matchDetail.RefDataService = refDataService;
+            matchDetail = HandleResultDetailSoccer(matchDetail, resultDetails);
 
             var goalIconQuery = GoalIconQuery(matchDetail);
             matchDetail.GoalIcon = goalIconService.GetGoalIcon(goalIconQuery);
-
-            var providerCriteria = new GetExternalResultCriteria
-            {
-                MatchId = criteria.MatchId
-            };
-
-            var externalResultDetails = await repository.FetchAsync<ResultDetail>(providerCriteria);
-            matchDetail = ProviderScore(matchDetail, externalResultDetails.ToList());
 
             var hedgeMatchCriteria = new GetHedgeMatchCriteria { MatchId = request.MatchId };
             var hedgeMatchDetail = await repository.GetAsync<HedgeMatchDetail>(hedgeMatchCriteria);
@@ -93,7 +88,7 @@ namespace Settlement.Sportsbook.Soccer.Services
             return new Match
             {
                 MatchDetail = matchDetail,
-                ResultDetails = result[1].Cast<ResultDetail>().ToList(),
+                ResultDetails = resultDetails,
                 TicketCounts = result[2].Cast<TicketCounts>().ToList(),
                 ChildMatches = result[3].Cast<ChildMatchModel>().ToList(),
                 FantasyMatch = fantasyMatch,
@@ -113,30 +108,6 @@ namespace Settlement.Sportsbook.Soccer.Services
                 IsExistFgLg = match.IsExistFgLg,
                 IsExistHtFgLg = match.IsExistHtFgLg
             };
-        }
-
-        private MatchDetail ProviderScore(MatchDetail matchDetail, List<ResultDetail> externalResultDetails)
-        {
-            const string fullTimeResource = "00";
-            const string halfTimeResource = "01";
-            var fullTimeExScore = externalResultDetails.FirstOrDefault(item => item.ResourceId == fullTimeResource);
-            if (fullTimeExScore != null && !string.IsNullOrEmpty(fullTimeExScore.HomeValue) && !string.IsNullOrEmpty(fullTimeExScore.AwayValue))
-            {
-                matchDetail.ExternalSourceName = fullTimeExScore.SourceName;
-                matchDetail.ExFTAwayScore = int.Parse(fullTimeExScore.AwayValue);
-                matchDetail.ExFTHomeScore = int.Parse(fullTimeExScore.HomeValue);
-            }
-
-            var halftimeExScore = externalResultDetails.FirstOrDefault(item => item.ResourceId == halfTimeResource);
-
-            if (halftimeExScore != null && !string.IsNullOrEmpty(halftimeExScore.HomeValue) && !string.IsNullOrEmpty(halftimeExScore.AwayValue))
-            {
-                matchDetail.ExternalSourceName = halftimeExScore.SourceName;
-                matchDetail.ExHTAwayScore = int.Parse(halftimeExScore.AwayValue);
-                matchDetail.ExHTHomeScore = int.Parse(halftimeExScore.HomeValue);
-            }
-
-            return matchDetail;
         }
 
         private async Task<FantasyMatch> GetRelatedMatches(int matchId)
@@ -159,6 +130,27 @@ namespace Settlement.Sportsbook.Soccer.Services
                 FantasyMatchDetail = matchDetail,
                 RelatedMatches = relatedMatches
             };
+        }
+
+        private static MatchDetail HandleResultDetailSoccer(MatchDetail match, List<ResultDetail> resultdetails)
+        {
+            var externalResultDetail = resultdetails.Where(result => result.SourceId == SourceType.SBO).ToList();
+            var halfTimeResult = externalResultDetail.Find(result => result.ResourceId == ResourceType.Halftime);
+            var fullTimeResult = externalResultDetail.Find(result => result.ResourceId == ResourceType.Final);
+
+            if (halfTimeResult != null && !string.IsNullOrWhiteSpace(halfTimeResult.AwayValue) && !string.IsNullOrWhiteSpace(halfTimeResult.HomeValue))
+            {
+                match.ExHTAwayScore = int.Parse(halfTimeResult.AwayValue);
+                match.ExHTHomeScore = int.Parse(halfTimeResult.HomeValue);
+            }
+
+            if (fullTimeResult != null && !string.IsNullOrWhiteSpace(fullTimeResult.AwayValue) && !string.IsNullOrWhiteSpace(fullTimeResult.HomeValue))
+            {
+                match.ExFTAwayScore = int.Parse(fullTimeResult.AwayValue);
+                match.ExFTHomeScore = int.Parse(fullTimeResult.HomeValue);
+            }
+
+            return match;
         }
 
         public async Task<MatchDetail> GetLastestMatchDetail(GetLastestMatchDetailRequest request)

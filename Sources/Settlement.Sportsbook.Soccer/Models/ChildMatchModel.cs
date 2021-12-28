@@ -30,7 +30,7 @@ namespace Settlement.Sportsbook.Soccer.Models
         public string IsRefund => !string.IsNullOrWhiteSpace(SettlementStatusText) && SettlementStatusText.Length > IsRefundPosition && SettlementStatusText[IsRefundPosition].Equals('1')
             ? "YES" : "NO";
 
-        private bool IsPending => !string.IsNullOrWhiteSpace(SettlementStatusText) && SettlementStatusText.Length > IsPendingPosition && SettlementStatusText[IsPendingPosition].Equals('1');
+        public bool IsPending => !string.IsNullOrWhiteSpace(SettlementStatusText) && SettlementStatusText.Length > IsPendingPosition && SettlementStatusText[IsPendingPosition].Equals('1');
 
         public string EventStatus
         {
