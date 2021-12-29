@@ -15,5 +15,7 @@ namespace Settlement.Sportsbook.OtherSports.Requests
         public string Action { get; set; }
 
         public bool IsReSettledTickets { get; set; }
+
+        public int? RefResultStatus { get; set; }
     }
 }
