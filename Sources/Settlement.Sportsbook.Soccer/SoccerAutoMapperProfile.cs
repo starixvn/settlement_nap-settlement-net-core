@@ -9,6 +9,7 @@ namespace Settlement.Sportsbook.Soccer
     {
         public SoccerAutoMapperProfile()
         {
+            CreateMap<MatchCheckingRequest, InstantCheckingCriteria>();
             CreateMap<GetMatchRequest, GetMatchDetailCriteria>();
             CreateMap<GetLastestMatchDetailRequest, GetLastestMatchDetailCriteria>();
             CreateMap<CheckStatusRequest, CheckStatusCriteria>()

@@ -15,6 +15,8 @@ namespace Settlement.Sportsbook.Soccer.Services
 {
     public interface IInstantCalculateService
     {
+        Task<MatchGoalRecordModel> CalculateCheckingInfo(MatchCheckingRequest request);
+
         Task<UndoCheckingModel> UndoCheckingScore(int matchId);
 
         Task<Result> PushInstantCalculation(InstantCalculationRequest request);
@@ -49,7 +51,19 @@ namespace Settlement.Sportsbook.Soccer.Services
             this.xmlConvertService = xmlConvertService;
             this.instantResourceService = instantResourceService;
         }
-        
+
+        public async Task<MatchGoalRecordModel> CalculateCheckingInfo(MatchCheckingRequest request)
+        {
+            var criteria = mapper.Map<MatchCheckingRequest, InstantCheckingCriteria>(request);
+
+            var matchChecking = await repository.GetAsync<MatchGoalRecordModel>(criteria);
+
+            matchChecking.ErrCode = criteria.ErrCode;
+            matchChecking.ErrMsg = criteria.ErrMsg;
+
+            return matchChecking;
+        }
+
         public async Task<UndoCheckingModel> UndoCheckingScore(int matchId)
         {
             var criteria = new UndoCheckingCriteria { MatchId = matchId };

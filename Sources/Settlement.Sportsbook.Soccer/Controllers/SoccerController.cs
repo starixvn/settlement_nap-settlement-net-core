@@ -42,6 +42,9 @@ namespace Settlement.Sportsbook.Soccer.Controllers
         [Route("check-status"), HttpPost]
         public async Task<IActionResult> CheckingStatus(CheckStatusRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
+        [Route("match-checking"), HttpPost]
+        public async Task<IActionResult> MatchChecking(MatchCheckingRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+
         [Route("undo-checking-score"), HttpPost]
         public async Task<IActionResult> UndoCheckingScore(UndoCheckingRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 

@@ -16,7 +16,8 @@ namespace Settlement.Sportsbook.Soccer.Handlers
         IRequestHandler<SettleRequest, Result>,
         IRequestHandler<CheckStatusRequest, Result>,
         IRequestHandler<UndoCheckingRequest, UndoCheckingModel>,
-        IRequestHandler<InstantCalculationRequest, Result>
+        IRequestHandler<InstantCalculationRequest, Result>,
+        IRequestHandler<MatchCheckingRequest, MatchGoalRecordModel>
     {
         private readonly IMatchService matchService;
 
@@ -57,5 +58,9 @@ namespace Settlement.Sportsbook.Soccer.Handlers
 
         public async Task<Result> Handle(InstantCalculationRequest request, CancellationToken cancellationToken) =>
             await instantCalculateService.PushInstantCalculation(request);
+
+        public async Task<MatchGoalRecordModel> Handle(MatchCheckingRequest request, CancellationToken cancellationToken) => 
+            await instantCalculateService.CalculateCheckingInfo(request);
+
     }
 }
