@@ -90,7 +90,7 @@ namespace Settlement.Sportsbook.Soccer.Services
                 MatchDetail = matchDetail,
                 ResultDetails = resultDetails,
                 TicketCounts = result[2].Cast<TicketCounts>().ToList(),
-                ChildMatches = result[3].Cast<ChildMatchModel>().ToList(),
+                ChildMatches = result[3].Cast<ChildMatchModel>().OrderBy(child => child.MatchCode).ThenBy(child => child.MatchId).ToList(),
                 FantasyMatch = fantasyMatch,
                 HedgeMatchDetail = hedgeMatchDetail,
                 Permission = permission.Permission
