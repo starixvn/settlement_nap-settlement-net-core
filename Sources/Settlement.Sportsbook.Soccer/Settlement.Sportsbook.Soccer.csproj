@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <CodeAnalysisRuleSet>..\..\.sonarlint\settlement-netcorecsharp.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
 
   <ItemGroup>
@@ -9,6 +10,10 @@
     <Compile Remove="Services\BetStatusService.cs" />
     <Compile Remove="Services\CriteriaService.cs" />
     <Compile Remove="Services\HandleResultDetail.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="..\..\.sonarlint\settlement-netcore\CSharp\SonarLint.xml" Link="SonarLint.xml" />
   </ItemGroup>
 
   <ItemGroup>
