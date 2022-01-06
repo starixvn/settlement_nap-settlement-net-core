@@ -1,5 +1,7 @@
 ﻿using System;
 using Kaden.Extensions;
+using Newtonsoft.Json;
+using Settlement.Core.Services;
 
 namespace Settlement.Sportsbook.Soccer.Models
 {
@@ -12,6 +14,17 @@ namespace Settlement.Sportsbook.Soccer.Models
         private const int ToBase = 2;
 
         private string eventStatus = string.Empty;
+
+        [JsonIgnore]
+        public IRefDataService RefDataService { get; set; }
+
+        public int HomeId { get; set; }
+
+        public int AwayId { get; set; }
+
+        public string HomeName => RefDataService.GetTeamName(HomeId);
+
+        public string AwayName => RefDataService.GetTeamName(AwayId);
 
         public string MatchCode { get; set; }
 

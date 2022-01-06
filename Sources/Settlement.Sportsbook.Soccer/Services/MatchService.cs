@@ -85,12 +85,20 @@ namespace Settlement.Sportsbook.Soccer.Services
                 fantasyMatch = await GetRelatedMatches(matchDetail.MatchId);
             }
 
+            var childMatches = result[3].Cast<ChildMatchModel>().OrderBy(child => child.MatchCode)
+                .ThenBy(child => child.MatchId).ToList();
+
+            foreach (var match in childMatches)
+            {
+                match.RefDataService = refDataService;
+            }
+
             return new Match
             {
                 MatchDetail = matchDetail,
                 ResultDetails = resultDetails,
                 TicketCounts = result[2].Cast<TicketCounts>().ToList(),
-                ChildMatches = result[3].Cast<ChildMatchModel>().OrderBy(child => child.MatchCode).ThenBy(child => child.MatchId).ToList(),
+                ChildMatches = childMatches,
                 FantasyMatch = fantasyMatch,
                 HedgeMatchDetail = hedgeMatchDetail,
                 Permission = permission.Permission
