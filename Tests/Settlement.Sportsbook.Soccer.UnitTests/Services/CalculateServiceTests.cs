@@ -69,8 +69,8 @@ namespace Settlement.Sportsbook.Soccer.UnitTests.Services
             // Assert
             Received.InOrder(() =>
             {
-                soccerBetStatusService.Received().CreateBetStatus(Arg.Any<SettleRequest>());
                 resourceService.Received().HalftimeResources(Arg.Any<GoalCondition>(), Arg.Any<int>());
+                soccerBetStatusService.Received().CreateBetStatus(Arg.Any<SettleRequest>());
             });
         }
 
@@ -91,8 +91,8 @@ namespace Settlement.Sportsbook.Soccer.UnitTests.Services
             // Assert
             Received.InOrder(() =>
             {
-                soccerBetStatusService.Received().CreateBetStatus(Arg.Any<SettleRequest>());
                 resourceService.Received().FullTimeResources(Arg.Any<GoalCondition>(), Arg.Any<int>());
+                soccerBetStatusService.Received().CreateBetStatus(Arg.Any<SettleRequest>());
             });
         }
 
@@ -113,8 +113,8 @@ namespace Settlement.Sportsbook.Soccer.UnitTests.Services
             // Assert
             Received.InOrder(() =>
             {
-                soccerBetStatusService.Received().CreateBetStatus(Arg.Any<SettleRequest>());
                 resourceService.Received().AllResources(Arg.Any<GoalCondition>(), Arg.Any<int>());
+                soccerBetStatusService.Received().CreateBetStatus(Arg.Any<SettleRequest>());
             });
         }
 
