@@ -4,7 +4,7 @@ using Fanex.Data.Repository;
 using NSubstitute;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
-using Settlement.Sportsbook.Aio.Criterias;
+using Settlement.Sportsbook.Aio.Criteria;
 using Settlement.Sportsbook.Aio.MapperFactory;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Requests;
@@ -26,7 +26,6 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
         private readonly IValidateApiKeyService validateApiKeyService;
         private readonly IAioService service;
         private readonly Microsoft.Extensions.Configuration.IConfiguration configuration;
-        private readonly ILogService logService;
 
         public AioServiceTests()
         {
@@ -37,13 +36,10 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
             mapperFactory = Substitute.For<IMapperFactory>();
             validateApiKeyService = Substitute.For<IValidateApiKeyService>();
             configuration = Substitute.For<Microsoft.Extensions.Configuration.IConfiguration>();
-            logService = Substitute.For<ILogService>();
             var mapperConfig = new MapperConfigurationExpression();
             mapperConfig.AddProfile<SportsbookAioAutoMapperProfile>();
-            var config = new MapperConfiguration(mapperConfig);
-            var mapper = new Mapper(config);
-            service = new AioService(repository, permissionService, refDataService, mapper,
-                                    mapperFactory, validateApiKeyService, createQueryService, configuration, logService);
+            service = new AioService(repository, permissionService, refDataService,
+                                    mapperFactory, validateApiKeyService, createQueryService, configuration);
         }
 
         [Fact]
@@ -145,7 +141,10 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
                 x.ErrMsg = errorMsg;
             })).Returns(1);
 
-            var actual = await service.VerifyNoRunningOdds(new CheckRunningOddsRequest());
+            var request = new CheckRunningOddsRequest();
+            var selectedResource = new CheckOddsItem();
+            request.SelectedResources = new List<CheckOddsItem> { selectedResource };
+            var actual = await service.VerifyNoRunningOdds(request);
 
             Assert.Equal(result, actual.IsSuccessful);
         }

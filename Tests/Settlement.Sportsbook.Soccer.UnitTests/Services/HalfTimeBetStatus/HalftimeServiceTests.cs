@@ -30,10 +30,10 @@ namespace Settlement.Sportsbook.Soccer.UnitTests.Services.HalftimeBetStatus
             validationService.HasHalftimeScoreWithSemicolonOnGoalRecord(Arg.Any<SettleRequest>()).Returns(true);
 
             // Act
-            service.GetBetStatusForCalculateHalfTime(Arg.Any<SettleRequest>());
+            service.GetBetStatusForCalculateHalfTime(new SettleRequest { GoalRecord = "abc" });
 
             // Assert
-            halftimeScoreAndGoalService.Received().BetStatusHasHalftimeScoreWithSemicolonOnGoalRecord(Arg.Any<SettleRequest>());
+            halftimeScoreAndGoalService.Received().BetStatusHasHalftimeScoreWithSemicolonOnGoalRecord("ABC");
         }
 
         [Fact]
@@ -66,10 +66,10 @@ namespace Settlement.Sportsbook.Soccer.UnitTests.Services.HalftimeBetStatus
             validationService.HasHalftimeScoreWithoutSemicolonOnGoalRecord(Arg.Any<SettleRequest>()).Returns(true);
 
             // Act
-            service.GetBetStatusForCalculateHalfTime(Arg.Any<SettleRequest>());
+            service.GetBetStatusForCalculateHalfTime(new SettleRequest { GoalRecord = "abc" });
 
             // Assert
-            halftimeScoreAndGoalService.Received().BetStatusHasHalftimeScoreWithoutSemicolonOnGoalRecord(Arg.Any<SettleRequest>());
+            halftimeScoreAndGoalService.Received().BetStatusHasHalftimeScoreWithoutSemicolonOnGoalRecord("ABC");
         }
 
         [Fact]

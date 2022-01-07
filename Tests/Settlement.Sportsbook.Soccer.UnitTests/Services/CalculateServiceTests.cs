@@ -12,7 +12,7 @@ using Settlement.Sportsbook.Soccer.Requests;
 using Settlement.Sportsbook.Soccer.Services;
 using Xunit;
 using AutoMapper.Configuration;
-using Settlement.Sportsbook.Soccer.Criterias;
+using Settlement.Sportsbook.Soccer.Criteria;
 
 namespace Settlement.Sportsbook.Soccer.UnitTests.Services
 {

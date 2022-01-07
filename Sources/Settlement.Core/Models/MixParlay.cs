@@ -10,13 +10,13 @@
 
         public int? IsCalculatingMp { get; set; }
 
-        public string BetStatus { get; set; }
+        public string BetStatusValue { get; set; }
 
         public bool IsExistMarkedTicketParlay { get; set; }
 
         public RemarkSettingModel Remark { get; set; }
 
-        private bool EnableCaclMixParlay => IsKeyScore && IsCalculated && !IsExistMarkedTicketParlay && !BetStatus.Contains(Constants.BetStatus.RefundHT);
+        private bool EnableCaclMixParlay => IsKeyScore && IsCalculated && !IsExistMarkedTicketParlay && !BetStatusValue.Contains(Constants.BetStatus.RefundHT);
 
         public bool HasMixParlay
         {

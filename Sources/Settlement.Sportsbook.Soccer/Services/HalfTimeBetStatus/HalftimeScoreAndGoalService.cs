@@ -10,9 +10,9 @@ namespace Settlement.Sportsbook.Soccer.Services.HalfTimeBetStatus
 
         string HasFirstGoalOnBetStatus(string oldBetStatus, string halfTimeBetStatus);
 
-        string BetStatusHasHalftimeScoreWithoutSemicolonOnGoalRecord(SettleRequest request);
+        string BetStatusHasHalftimeScoreWithoutSemicolonOnGoalRecord(string goalRecordValue);
 
-        string BetStatusHasHalftimeScoreWithSemicolonOnGoalRecord(SettleRequest request);
+        string BetStatusHasHalftimeScoreWithSemicolonOnGoalRecord(string goalRecordValue);
     }
 
     public class HalftimeScoreAndGoalServiceImp : IHalftimeScoreAndGoalService
@@ -51,9 +51,9 @@ namespace Settlement.Sportsbook.Soccer.Services.HalfTimeBetStatus
             return oldBetStatus.Replace(oldHalfTimeBetStatus, halfTimeBetStatus);
         }
 
-        public string BetStatusHasHalftimeScoreWithoutSemicolonOnGoalRecord(SettleRequest singleQuery)
+        public string BetStatusHasHalftimeScoreWithoutSemicolonOnGoalRecord(string goalRecordValue)
         {
-            var firstGoal = goalRecordService.HomeOrAwayFirstGoal(singleQuery.GoalRecord);
+            var firstGoal = goalRecordService.HomeOrAwayFirstGoal(goalRecordValue);
             var goalRecord = new GoalRecordModel
             {
                 IsExistHtFgLg = true,
@@ -64,9 +64,9 @@ namespace Settlement.Sportsbook.Soccer.Services.HalfTimeBetStatus
             return goalRecord.HalftimeBetStatus;
         }
 
-        public string BetStatusHasHalftimeScoreWithSemicolonOnGoalRecord(SettleRequest singleQuery)
+        public string BetStatusHasHalftimeScoreWithSemicolonOnGoalRecord(string goalRecordValue)
         {
-            var goal = singleQuery.GoalRecord.Split(';')[0];
+            var goal = goalRecordValue.Split(';')[0];
             var goalRecord = new GoalRecordModel { IsExistHtFgLg = true };
             goalRecord = goalRecordService.GoalRecordWithSemicolon(goalRecord, goal);
 

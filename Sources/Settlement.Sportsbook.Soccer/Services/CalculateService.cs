@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Sportsbook.Soccer.Constants;
-using Settlement.Sportsbook.Soccer.Criterias;
+using Settlement.Sportsbook.Soccer.Criteria;
 using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Requests;
 
@@ -37,7 +37,6 @@ namespace Settlement.Sportsbook.Soccer.Services
         private readonly XmlConvertService xmlConvertService;
 
         private readonly IResourceService resourceService;
-
 
         public CalculateServiceImp(
             IDynamicRepository repository,
@@ -115,7 +114,7 @@ namespace Settlement.Sportsbook.Soccer.Services
                 MatchId = request.MatchId,
                 GoalRecord = string.IsNullOrWhiteSpace(request.GoalRecord) ? string.Empty : request.GoalRecord.ToUpperInvariant(),
                 ResourceResult = GetResourceResultUnCalculate(request),
-                BetStatus =  string.Empty,
+                BetStatus = string.Empty,
                 Action = request.ActionName,
                 HalfTimeHome = request.HalfTimeHomeScore ?? 0,
                 HalfTimeAway = request.HalfTimeAwayScore ?? 0,
@@ -157,7 +156,7 @@ namespace Settlement.Sportsbook.Soccer.Services
                 ErrMsg = criteria.ErrMsg
             };
         }
-        
+
         private async Task<Result> Execute(CalculateCriteria criteria)
         {
             await repository.ExecuteAsync(criteria);

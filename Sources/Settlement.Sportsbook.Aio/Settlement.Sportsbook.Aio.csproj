@@ -8,8 +8,8 @@
 	<ItemGroup>
 	  <Compile Remove="Constants\GroupBetType.cs" />
 	  <Compile Remove="Constants\InputType.cs" />
-	  <Compile Remove="Criterias\GetRecalResultCriteria.cs" />
-	  <Compile Remove="Criterias\RefundParlayCriteria.cs" />
+	  <Compile Remove="Criteria\GetRecalResultCriteria.cs" />
+	  <Compile Remove="Criteria\RefundParlayCriteria.cs" />
 	  <Compile Remove="Models\ChildMatchItem.cs" />
 	  <Compile Remove="Models\MatchResultDetail.cs" />
 	  <Compile Remove="Models\ResourceIdItem.cs" />
@@ -17,6 +17,7 @@
 	  <Compile Remove="MapperFactory\GetFetchService.cs" />
 	  <Compile Remove="Requests\CheckMarkedTicketsParlayRequest.cs" />
 	  <Compile Remove="Requests\RefundParlayRequest.cs" />
+	  <Compile Remove="Services\ESport\MoveMatchMapperService.cs" />
 	</ItemGroup>
 
 	<ItemGroup>

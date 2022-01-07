@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Linq;
 using Kaden.Extensions;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
@@ -15,7 +16,7 @@ namespace Settlement.Sportsbook.Aio.Models
 
         private string relatedResourceId;
 
-        private string defaultValue = "";
+        private readonly string defaultValue = "";
 
         private string eventStatus;
 
@@ -27,7 +28,7 @@ namespace Settlement.Sportsbook.Aio.Models
 
         public string EventStatus
         {
-            get => CultureInfo.CurrentCulture.TextInfo.ToTitleCase(eventStatus.ToLower());
+            get => CultureInfo.CurrentCulture.TextInfo.ToTitleCase(eventStatus.ToLowerInvariant());
             set => eventStatus = value;
         }
 
@@ -56,12 +57,22 @@ namespace Settlement.Sportsbook.Aio.Models
             ResultSetting = Convert.ToString(ResultSetting, ToBase).Reverse(),
         };
 
-        public RemarkSettingModel Remark => new RemarkSettingModel()
+        public RemarkSettingModel Remark => new RemarkSettingModel
         {
             SettlementStatus = Convert.ToString(SettlementStatus, ToBase).Reverse(),
         };
 
-        public bool IsHold => Remark.IsKeyHold || Remark.IsMtdHold || Remark.IsPending || Remark.IsUndecided ||
-                              Remark.IsUnderSettle;
+        public bool IsHold
+        {
+            get
+            {
+                bool[] settingMatch =
+                {
+                    Remark.IsKeyHold, Remark.IsMtdHold, Remark.IsPending, Remark.IsUndecided,
+                    Remark.IsUnderSettle
+                };
+                return settingMatch.Any(item => item);
+            }
+        }
     }
 }

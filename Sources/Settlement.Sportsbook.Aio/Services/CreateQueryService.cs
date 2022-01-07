@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
 using Fanex.NAP.Client.Helpers.Web;
-using Kaden.Extensions;
 using Kaden.XmlConverter;
 using Microsoft.AspNetCore.Http;
-using Settlement.Sportsbook.Aio.Criterias;
+using Settlement.Sportsbook.Aio.Criteria;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Requests;
 using System.Collections.Generic;
+using Settlement.Core.Services;
 
 namespace Settlement.Sportsbook.Aio.Services
 {
@@ -25,6 +25,10 @@ namespace Settlement.Sportsbook.Aio.Services
         string CreateResources(List<ResourceItem> selectedResources);
 
         string CreateMatchResources(List<CheckOddsItem> selectedResources);
+
+        GetRecalResultCriteria QueryRecalResult(GetRecalResultRequest request);
+
+        void WriteLogChildMatch(SettleCriteria criteria);
     }
 
     public class CreateQueryServiceImp : ICreateQueryService
@@ -37,15 +41,21 @@ namespace Settlement.Sportsbook.Aio.Services
 
         private readonly IMapper mapper;
 
+        private readonly ILogService logService;
+
+        private readonly int actionCalculate = 100;
+
         public CreateQueryServiceImp(XmlConvertService xmlConvertService,
                                     INapSession currentSession,
                                     IHttpContextAccessor accessor,
-                                    IMapper mapper)
+                                    IMapper mapper,
+                                    ILogService logService)
         {
             this.xmlConvertService = xmlConvertService;
             this.currentSession = currentSession;
             this.accessor = accessor;
             this.mapper = mapper;
+            this.logService = logService;
         }
 
         public SettleCriteria QuerySettle(SettleRequest request)
@@ -92,7 +102,7 @@ namespace Settlement.Sportsbook.Aio.Services
         {
             var resource = new Resources<ResourceItem>
             {
-                ResourceItems = new List<ResourceItem>() { mapper.Map<ChildMatchModel, ResourceItem>(childMatch) }
+                ResourceItems = new List<ResourceItem> { mapper.Map<ChildMatchModel, ResourceItem>(childMatch) }
             };
 
             return xmlConvertService.Serialize(resource);
@@ -136,6 +146,22 @@ namespace Settlement.Sportsbook.Aio.Services
             };
 
             return criteria;
+        }
+
+        public GetRecalResultCriteria QueryRecalResult(GetRecalResultRequest request)
+        {
+            var criteria = mapper.Map<GetRecalResultRequest, GetRecalResultCriteria>(request);
+            return criteria;
+        }
+
+        public void WriteLogChildMatch(SettleCriteria criteria)
+        {
+            if (!string.IsNullOrWhiteSpace(criteria.ErrMsg))
+            {
+                logService.ActionLog(criteria.MatchId, criteria.ErrMsg, actionCalculate);
+                criteria.ErrCode = 0;
+                criteria.ErrMsg = string.Empty;
+            }
         }
     }
 }

@@ -38,7 +38,7 @@ namespace Settlement.Sportsbook.Soccer.Models
 
         public int? FinalAwayScore { get; set; }
 
-        private byte SettlementStatus { get; set; }
+        public byte SettlementStatus { get; set; }
 
         public string BetStatus { get; set; }
 

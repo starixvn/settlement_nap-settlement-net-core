@@ -1,5 +1,5 @@
 ﻿using Fanex.Data.Repository;
-using Settlement.Core.Criterias;
+using Settlement.Core.Criteria;
 
 namespace Settlement.Core.Services
 {

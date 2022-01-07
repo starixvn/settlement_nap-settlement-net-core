@@ -1,6 +1,6 @@
 ﻿using Fanex.Data.Repository;
 
-namespace Settlement.Sportsbook.Core.Criterias
+namespace Settlement.Sportsbook.Core.Criteria
 {
     public class GetChildMatchCriteria : CriteriaBase
     {

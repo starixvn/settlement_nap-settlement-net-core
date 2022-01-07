@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Criterias\GetExternalResultCriteria.cs" />
+    <Compile Remove="Criteria\GetExternalResultCriteria.cs" />
     <Compile Remove="Services\BetStatusService.cs" />
     <Compile Remove="Services\CriteriaService.cs" />
     <Compile Remove="Services\HandleResultDetail.cs" />

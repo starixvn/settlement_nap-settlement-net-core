@@ -3,7 +3,6 @@ using Settlement.Core.Constants;
 using Settlement.Core.Services;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text.Json.Serialization;
 
 namespace Settlement.Core.Models
@@ -382,7 +381,7 @@ namespace Settlement.Core.Models
             IsCalculatingMp = IsCalculatingMP,
             IsKeyScore = IsKeyScore,
             IsCalculated = IsCalculated,
-            BetStatus = BetStatus ?? string.Empty,
+            BetStatusValue = BetStatus ?? string.Empty,
             IsExistMarkedTicketParlay = IsExistMarkedTicketParlay
         });
 

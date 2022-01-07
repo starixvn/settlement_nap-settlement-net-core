@@ -5,8 +5,12 @@ using System;
 
 namespace Settlement.WebSites
 {
-    public class Program
+    public static class Program
     {
+        private const int bytesPerSecond = 240;
+
+        private static readonly TimeSpan gracePeriod = TimeSpan.FromSeconds(30);
+
         public static void Main(string[] args)
         {
             CreateHostBuilder(args).Build().Run();
@@ -20,7 +24,7 @@ namespace Settlement.WebSites
                     webBuilder.ConfigureKestrel(serverOptions =>
                     {
                         serverOptions.Limits.MinRequestBodyDataRate =
-                            new MinDataRate(bytesPerSecond: 240, gracePeriod: TimeSpan.FromSeconds(30));
+                            new MinDataRate(bytesPerSecond, gracePeriod);
                     }).UseStartup<Startup>();
                 });
     }

@@ -14,8 +14,6 @@ namespace Settlement.Sportsbook.Soccer.Requests
 
         public string ActionName { get; set; }
 
-        public int SportType => Settlement.Core.Constants.SportType.Soccer;
-
         public int? HalfTimeHomeScore { get; set; }
 
         public int? FinalHomeScore { get; set; }

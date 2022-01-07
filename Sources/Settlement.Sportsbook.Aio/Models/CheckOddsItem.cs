@@ -5,7 +5,7 @@ namespace Settlement.Sportsbook.Aio.Models
 {
     public class CheckOddsItem
     {
-        private List<ResourceItem> resourceIdItems = new List<ResourceItem>();
+        private readonly List<ResourceItem> resourceIdItems = new List<ResourceItem>();
 
         [XmlAttribute("MatchId")]
         public int MatchId { get; set; }

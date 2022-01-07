@@ -1,6 +1,6 @@
 ﻿using Fanex.Data.Repository;
 
-namespace Settlement.Core.Criterias
+namespace Settlement.Core.Criteria
 {
     public class LogCriteria : NonQueryCommand
     {

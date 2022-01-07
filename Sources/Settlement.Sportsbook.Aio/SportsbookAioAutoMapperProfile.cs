@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Settlement.Sportsbook.Aio.Criterias;
+using Settlement.Sportsbook.Aio.Criteria;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Requests;
 

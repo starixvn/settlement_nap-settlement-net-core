@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 using NSubstitute;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
-using Settlement.Sportsbook.MoveTickets.Criterias;
+using Settlement.Sportsbook.MoveTickets.Criteria;
 using Settlement.Sportsbook.MoveTickets.Requests;
 using Settlement.Sportsbook.MoveTickets.Services;
 using System;

@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Criterias\LogCriteria.cs" />
+    <Compile Remove="Criteria\LogCriteria.cs" />
     <Compile Remove="Services\AioService.cs" />
     <Compile Remove="Services\LogService.native.cs" />
   </ItemGroup>

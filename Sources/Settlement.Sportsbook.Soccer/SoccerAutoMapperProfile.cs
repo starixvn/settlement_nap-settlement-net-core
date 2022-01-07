@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Settlement.Sportsbook.Soccer.Criterias;
+using Settlement.Sportsbook.Soccer.Criteria;
 using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Requests;
 

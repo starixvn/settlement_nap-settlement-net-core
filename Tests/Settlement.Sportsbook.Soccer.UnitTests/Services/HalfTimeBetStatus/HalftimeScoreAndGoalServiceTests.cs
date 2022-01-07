@@ -42,7 +42,7 @@ namespace Settlement.Sportsbook.Soccer.UnitTests.Services.HalftimeBetStatus
             goalRecordService.HomeOrAwayFirstGoal(Arg.Any<string>()).Returns("2");
 
             // Act
-            var actualBetStatus = service.BetStatusHasHalftimeScoreWithoutSemicolonOnGoalRecord(new SettleRequest());
+            var actualBetStatus = service.BetStatusHasHalftimeScoreWithoutSemicolonOnGoalRecord("");
 
             // Assert
             Assert.Equal(expectedBetStatus, actualBetStatus);
@@ -63,7 +63,7 @@ namespace Settlement.Sportsbook.Soccer.UnitTests.Services.HalftimeBetStatus
             goalRecordService.GoalRecordWithSemicolon(Arg.Any<GoalRecordModel>(), Arg.Any<string>()).Returns(goalRecordModel);
 
             // Act
-            var actualBetStatus = service.BetStatusHasHalftimeScoreWithSemicolonOnGoalRecord(new SettleRequest { GoalRecord = ";" });
+            var actualBetStatus = service.BetStatusHasHalftimeScoreWithSemicolonOnGoalRecord(";");
 
             // Assert
             Assert.Equal(expectedBetStatus, actualBetStatus);

@@ -3,7 +3,7 @@ using AutoMapper;
 using Fanex.Data.Repository;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
-using Settlement.Sportsbook.Soccer.Criterias;
+using Settlement.Sportsbook.Soccer.Criteria;
 using Settlement.Sportsbook.Soccer.Models;
 using System.Linq;
 using System.Threading.Tasks;
@@ -93,11 +93,13 @@ namespace Settlement.Sportsbook.Soccer.Services
                 match.RefDataService = refDataService;
             }
 
+            var ticketCount = result[2].Cast<TicketCounts>().ToList();
+
             return new Match
             {
                 MatchDetail = matchDetail,
                 ResultDetails = resultDetails,
-                TicketCounts = result[2].Cast<TicketCounts>().ToList(),
+                TicketCounts = ticketCount,
                 ChildMatches = childMatches,
                 FantasyMatch = fantasyMatch,
                 HedgeMatchDetail = hedgeMatchDetail,

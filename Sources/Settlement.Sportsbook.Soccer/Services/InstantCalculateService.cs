@@ -9,7 +9,7 @@ using Fanex.NAP.Client.Helpers.Web;
 using Kaden.XmlConverter;
 using Microsoft.AspNetCore.Http;
 using Settlement.Sportsbook.Soccer.Constants;
-using Settlement.Sportsbook.Soccer.Criterias;
+using Settlement.Sportsbook.Soccer.Criteria;
 
 namespace Settlement.Sportsbook.Soccer.Services
 {

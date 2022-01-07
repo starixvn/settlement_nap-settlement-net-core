@@ -1,12 +1,10 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
-using NSubstitute;
 using Settlement.Core.Constants;
 using Settlement.Sportsbook.Soccer.Constants;
 using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Services;
 using Xunit;
-using Xunit.Sdk;
 
 namespace Settlement.Sportsbook.Soccer.UnitTests.Services
 {

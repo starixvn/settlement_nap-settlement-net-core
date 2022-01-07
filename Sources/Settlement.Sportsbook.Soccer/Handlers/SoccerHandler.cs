@@ -40,14 +40,7 @@ namespace Settlement.Sportsbook.Soccer.Handlers
 
         public async Task<Result> Handle(SettleRequest request, CancellationToken cancellationToken)
         {
-            if (request.ActionName.Equals(ActionType.Uncalculate))
-            {
-                return await calculateService.UnCalculate(request);
-            }
-            else
-            {
-                return await calculateService.Calculate(request);
-            }
+            return request.ActionName.Equals(ActionType.Uncalculate) ? await calculateService.UnCalculate(request) : await calculateService.Calculate(request);
         }
 
         public async Task<Result> Handle(CheckStatusRequest request, CancellationToken cancellationToken) =>
@@ -59,8 +52,7 @@ namespace Settlement.Sportsbook.Soccer.Handlers
         public async Task<Result> Handle(InstantCalculationRequest request, CancellationToken cancellationToken) =>
             await instantCalculateService.PushInstantCalculation(request);
 
-        public async Task<MatchGoalRecordModel> Handle(MatchCheckingRequest request, CancellationToken cancellationToken) => 
+        public async Task<MatchGoalRecordModel> Handle(MatchCheckingRequest request, CancellationToken cancellationToken) =>
             await instantCalculateService.CalculateCheckingInfo(request);
-
     }
 }

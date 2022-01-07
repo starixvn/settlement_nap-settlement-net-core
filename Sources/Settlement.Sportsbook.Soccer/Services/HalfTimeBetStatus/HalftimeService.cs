@@ -30,11 +30,11 @@ namespace Settlement.Sportsbook.Soccer.Services.HalfTimeBetStatus
 
             if (validationService.HasHalftimeScoreWithSemicolonOnGoalRecord(request))
             {
-                return halftimeScoreAndGoalService.BetStatusHasHalftimeScoreWithSemicolonOnGoalRecord(request);
+                return halftimeScoreAndGoalService.BetStatusHasHalftimeScoreWithSemicolonOnGoalRecord(request.GoalRecord);
             }
 
             return validationService.HasHalftimeScoreWithoutSemicolonOnGoalRecord(request)
-                ? halftimeScoreAndGoalService.BetStatusHasHalftimeScoreWithoutSemicolonOnGoalRecord(request)
+                ? halftimeScoreAndGoalService.BetStatusHasHalftimeScoreWithoutSemicolonOnGoalRecord(request.GoalRecord)
                 : string.Empty;
         }
 

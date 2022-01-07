@@ -1,6 +1,6 @@
 ﻿using Fanex.Data.Repository;
 using NSubstitute;
-using Settlement.Sportsbook.Aio.Criterias;
+using Settlement.Sportsbook.Aio.Criteria;
 using Settlement.Sportsbook.Aio.MapperFactory;
 using Settlement.Sportsbook.Aio.Services;
 using System;

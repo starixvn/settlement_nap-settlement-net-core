@@ -15,8 +15,8 @@ namespace Settlement.Sportsbook.Soccer.Models
 
         [JsonIgnore]
         public IRefDataService RefDataService { get; set; }
-        
-        private bool IsCalRefund { get; set; }
+
+        public bool IsCalRefund { get; set; }
 
         public int LeagueGroupId { get; set; }
 
@@ -24,16 +24,18 @@ namespace Settlement.Sportsbook.Soccer.Models
 
         public string LeagueName => RefDataService.GetLeagueName(LeagueId);
 
-        private int HomeId { get; set; }
+        public int HomeId { get; set; }
 
-        private bool IsNeutral { get; set; }
+        public bool IsNeutral { get; set; }
 
         public string HomeName => RefDataService.GetTeamName(HomeId) + (IsNeutral ? " (N)" : string.Empty);
 
-        private int AwayId { get; set; }
+        public int AwayId { get; set; }
 
         public string AwayName => RefDataService.GetTeamName(AwayId);
-        private int SportType { get; set; }
+
+        public int SportType { get; set; }
+
         public string SportName => RefDataService.GetSportName(SportType);
 
         public string MatchCode { get; set; }
@@ -124,7 +126,7 @@ namespace Settlement.Sportsbook.Soccer.Models
             }
         }
 
-        private byte SettlementStatus { get; set; }
+        public byte SettlementStatus { get; set; }
 
         public bool IsMarkedRefundAll
         {
@@ -135,7 +137,7 @@ namespace Settlement.Sportsbook.Soccer.Models
             }
         }
 
-        private int AutoSetting { get; set; }
+        public int AutoSetting { get; set; }
 
         public bool IsInstant
         {
