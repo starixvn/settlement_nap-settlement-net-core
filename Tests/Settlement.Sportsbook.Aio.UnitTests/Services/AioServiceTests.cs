@@ -93,11 +93,11 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
         public async Task Settle_Always_ReturnCorrectResult(int errorCode, string errorMsg, bool result)
         {
             createQueryService.QuerySettle(Arg.Any<SettleRequest>()).Returns(new SettleCriteria());
-            repository.ExecuteAsync(Arg.Do<SettleCriteria>(x =>
+            await repository.ExecuteAsync(Arg.Do<SettleCriteria>(x =>
             {
                 x.ErrCode = errorCode;
                 x.ErrMsg = errorMsg;
-            })).Returns(1);
+            }));
 
             var actual = await service.Settle(new SettleRequest());
 
@@ -109,10 +109,10 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
         [InlineData(false)]
         public async Task CheckMarkedTickets_Always_ReturnCorrectResult(bool result)
         {
-            repository.ExecuteAsync(Arg.Do<CheckMarkedTicketsCriteria>(x =>
+            await repository.ExecuteAsync(Arg.Do<CheckMarkedTicketsCriteria>(x =>
             {
                 x.IsExistMarkedTicket = result;
-            })).Returns(1);
+            }));
             var request = new CheckMarkedTicketsRequest
             {
                 MatchId = 12345,
@@ -135,11 +135,11 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
         [InlineData(1, "Error", false)]
         public async Task VerifyNoRunningOdds_Always_ReturnCorrectResult(int errorCode, string errorMsg, bool result)
         {
-            repository.ExecuteAsync(Arg.Do<VerificationCriteria>(x =>
+            await repository.ExecuteAsync(Arg.Do<VerificationCriteria>(x =>
             {
                 x.ErrCode = errorCode;
                 x.ErrMsg = errorMsg;
-            })).Returns(1);
+            }));
 
             var request = new CheckRunningOddsRequest();
             var selectedResource = new CheckOddsItem();
@@ -158,11 +158,11 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
             validateApiKeyService.CreateNonQueryCommand(Arg.Any<SaveScoreRequest>(), Arg.Any<string>())
                 .Returns(new SaveScoreCriteria());
 
-            repository.ExecuteAsync(Arg.Do<SaveScoreCriteria>(x =>
+            await repository.ExecuteAsync(Arg.Do<SaveScoreCriteria>(x =>
             {
                 x.ErrCode = errorCode;
                 x.ErrMsg = errorMsg;
-            })).Returns(1);
+            }));
 
             var actual = await service.SaveScore(new SaveScoreRequest());
 

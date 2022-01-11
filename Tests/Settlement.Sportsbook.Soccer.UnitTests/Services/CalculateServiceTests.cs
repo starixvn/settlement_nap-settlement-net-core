@@ -129,11 +129,11 @@ namespace Settlement.Sportsbook.Soccer.UnitTests.Services
                 ActionName = ActionType.CalculateAll
             };
             resourceService.AllResources(Arg.Any<GoalCondition>(), Arg.Any<int>()).Returns(new List<XmlResource>());
-            repository.ExecuteAsync(Arg.Do<CalculateCriteria>(x =>
+            await repository.ExecuteAsync(Arg.Do<CalculateCriteria>(x =>
             {
                 x.ErrCode = errorCode;
                 x.ErrMsg = errorMsg;
-            })).Returns(1);
+            }));
 
             var actual = await service.Calculate(query);
 
@@ -151,7 +151,7 @@ namespace Settlement.Sportsbook.Soccer.UnitTests.Services
                 HedgeMatchId = 123
             };
             resourceService.AllResources(Arg.Any<GoalCondition>(), Arg.Any<int>()).Returns(new List<XmlResource>());
-            repository.ExecuteAsync(Arg.Any<CalculateCriteria>()).Returns(1);
+            await repository.ExecuteAsync(Arg.Any<CalculateCriteria>());
 
             await service.Calculate(query);
 
@@ -163,11 +163,11 @@ namespace Settlement.Sportsbook.Soccer.UnitTests.Services
         [InlineData(1, "Error", false)]
         public async Task CheckMarkedTickets_Always_ReturnCorrectResult(int errorCode, string errorMsg, bool result)
         {
-            repository.ExecuteAsync(Arg.Do<CheckStatusCriteria>(x =>
+            await repository.ExecuteAsync(Arg.Do<CheckStatusCriteria>(x =>
             {
                 x.ErrCode = errorCode;
                 x.ErrMsg = errorMsg;
-            })).Returns(1);
+            }));
             var request = new CheckStatusRequest
             {
                 MatchId = 12345,
