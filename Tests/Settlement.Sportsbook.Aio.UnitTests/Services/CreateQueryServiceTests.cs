@@ -113,6 +113,7 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
             service.WriteLogChildMatch(criteria);
 
             Assert.Equal("", criteria.ErrMsg);
+            logService.Received(1).ActionLog(Arg.Any<int>(), Arg.Any<string>(), 100);
         }
     }
 }
