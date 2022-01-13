@@ -89,30 +89,6 @@ namespace Settlement.Sportsbook.Aio.Services.ESport
                     return $"Map {mapX} Home Team Total Kills Over/Under";
                 case BetType.ESportBetType.MapAwayTotalKillOU:
                     return $"Map {mapX} Away Team Total Kills Over/Under";
-                case BetType.ESportBetType.MapFirstKill:
-                    return $"Map {mapX} 1st Kill";
-                case BetType.ESportBetType.MapSecondKill:
-                    return $"Map {mapX} 2nd Kill";
-                case BetType.ESportBetType.MapThirdKill:
-                    return $"Map {mapX} 3rd Kill";
-                case BetType.ESportBetType.MapFourthKill:
-                    return $"Map {mapX} 4th Kill";
-                case BetType.ESportBetType.MapFifthKill:
-                    return $"Map {mapX} 5th Kill";
-                case BetType.ESportBetType.MapSixthKill:
-                    return $"Map {mapX} 6th Kill";
-                case BetType.ESportBetType.MapSeventhKill:
-                    return $"Map {mapX} 7th Kill";
-                case BetType.ESportBetType.MapEighthKill:
-                    return $"Map {mapX} 8th Kill";
-                case BetType.ESportBetType.MapNinthKill:
-                    return $"Map {mapX} 9th Kill";
-                case BetType.ESportBetType.MapTenthKill:
-                    return $"Map {mapX} 10th Kill";
-                case BetType.ESportBetType.MapFifteenthKill:
-                    return $"Map {mapX} 15th Kill";
-                case BetType.ESportBetType.MapTwentiethKill:
-                    return $"Map {mapX} 20th Kill";
                 case BetType.ESportBetType.MapFirstTurretTimeOU:
                     return $"Map {mapX} First Turret Time Over/Under";
                 case BetType.ESportBetType.MapFirstTurretLocation:
@@ -223,10 +199,36 @@ namespace Settlement.Sportsbook.Aio.Services.ESport
                 mapY = Convert.ToInt32(resourceId.Substring(sixPosition, twoPosition));
                 return $"Map {mapX} First to {mapY} Kills Time Over/Under";
             }
+            else if (betTypeId == BetType.ESportBetType.MapSpecificKill)
+            {
+                mapY = Convert.ToInt32(resourceId.Substring(sixPosition, twoPosition));
+                var ordinal = GenerateOrdinals(mapY);
+                return $"Map {mapX} {mapY}{ordinal} Kill";
+            }
             else
             {
                 return refDataService.GetBetTypeName(betTypeId, resourceId.Substring(fourPosition));
             }
+        }
+
+        private string GenerateOrdinals(int number)
+        {
+            if (number.ToString()[0] == '1')
+            {
+                return "st";
+            }
+
+            if (number.ToString()[0] == '2')
+            {
+                return "nd";
+            }
+
+            if (number.ToString()[0] == '3')
+            {
+                return "rd";
+            }
+
+            return "th";
         }
     }
 }

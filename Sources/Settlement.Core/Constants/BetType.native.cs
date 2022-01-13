@@ -124,29 +124,7 @@ namespace Settlement.Core.Constants
 
             public const int MapAwayTotalKillOU = 9100;
 
-            public const int MapFirstKill = 9101;
-
-            public const int MapSecondKill = 9102;
-
-            public const int MapThirdKill = 9103;
-
-            public const int MapFourthKill = 9104;
-
-            public const int MapFifthKill = 9105;
-
-            public const int MapSixthKill = 9106;
-
-            public const int MapSeventhKill = 9107;
-
-            public const int MapEighthKill = 9108;
-
-            public const int MapNinthKill = 9109;
-
-            public const int MapTenthKill = 9110;
-
-            public const int MapFifteenthKill = 9111;
-
-            public const int MapTwentiethKill = 9112;
+            public const int MapSpecificKill = 9101;
 
             public const int MapFirstTurretTimeOU = 9113;
 
