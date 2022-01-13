@@ -19,6 +19,7 @@ namespace Settlement.Sportsbook.OtherSports.Controllers
         }
 
         [Route("get-match"), HttpPost]
+        [LogRequestResponse]
         public async Task<IActionResult> GetMatch(GetMatchRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
         [Route("calculate"), HttpPost]
@@ -26,6 +27,7 @@ namespace Settlement.Sportsbook.OtherSports.Controllers
         public async Task<IActionResult> Calculate(CalculateRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
         [Route("refund"), HttpPost]
+        [LogRequestResponse]
         public async Task<IActionResult> Refund(RefundRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
         [Route("refund-parlay"), HttpPost]

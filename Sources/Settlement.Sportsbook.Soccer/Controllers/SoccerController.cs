@@ -22,21 +22,11 @@ namespace Settlement.Sportsbook.Soccer.Controllers
         [LogRequestResponse]
         public async Task<IActionResult> GetMatch(GetMatchRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
-        [Route("test-get-match"), HttpGet]
-        [LogRequestResponse]
-        public async Task<IActionResult> GetMatch1(int matchId)
-        {
-            var request = new GetMatchRequest
-            {
-                MatchId = matchId
-            };
-            return Ok(await mediator.Send(request).ConfigureAwait(false));
-        }
-
         [Route("get-lastest-match-detail"), HttpPost]
         public async Task<IActionResult> GetLastestMatchDetail(GetLastestMatchDetailRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
         [Route("calculate"), HttpPost]
+        [LogRequestResponse]
         public async Task<IActionResult> Calculate(SettleRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
         [Route("check-status"), HttpPost]
@@ -49,6 +39,7 @@ namespace Settlement.Sportsbook.Soccer.Controllers
         public async Task<IActionResult> UndoCheckingScore(UndoCheckingRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
         [Route("push-instant-score"), HttpPost]
+        [LogRequestResponse]
         public async Task<IActionResult> PushInstantScore(InstantCalculationRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
     }
 }
