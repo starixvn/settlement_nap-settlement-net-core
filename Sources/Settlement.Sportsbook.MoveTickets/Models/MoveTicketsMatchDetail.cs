@@ -1,5 +1,4 @@
 ﻿using Kaden.Extensions;
-using Newtonsoft.Json;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using System;
@@ -10,7 +9,6 @@ namespace Settlement.Sportsbook.MoveTickets.Models
     {
         private const int ConvertToBase = 2;
         private RemarkSettingModel remark;
-        private string eventStatus = string.Empty;
 
         public IRefDataService RefDataService { get; set; }
 
@@ -36,7 +34,7 @@ namespace Settlement.Sportsbook.MoveTickets.Models
 
         public string EventStatus { get; set; }
 
-        public bool HasChildMatch { get; set; } = false;
+        public bool HasChildMatch { get; set; }
 
         public RemarkSettingModel Remark => remark ??= new RemarkSettingModel
         {

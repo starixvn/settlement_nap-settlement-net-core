@@ -1,20 +1,18 @@
-﻿using AutoMapper;
-using Fanex.Data.Repository;
+﻿using Fanex.Data.Repository;
 using Microsoft.Extensions.Configuration;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.Aio.Constants;
-using Settlement.Sportsbook.Aio.Criterias;
+using Settlement.Sportsbook.Aio.Criteria;
 using Settlement.Sportsbook.Aio.MapperFactory;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Requests;
-using Settlement.Sportsbook.Core.Criterias;
+using Settlement.Sportsbook.Core.Criteria;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MatchDetail = Settlement.Core.Models.MatchDetail;
 using ResultDetail = Settlement.Sportsbook.Aio.Models.ResultDetail;
 
 namespace Settlement.Sportsbook.Aio.Services
@@ -42,8 +40,6 @@ namespace Settlement.Sportsbook.Aio.Services
     {
         private readonly IDynamicRepository repository;
 
-        private readonly IMapper mapper;
-
         private readonly PermissionService permissionService;
 
         private readonly IRefDataService refDataService;
@@ -56,30 +52,22 @@ namespace Settlement.Sportsbook.Aio.Services
 
         private readonly IConfiguration configuration;
 
-        private readonly ILogService logService;
-
-        private readonly int actionCalculate = 100;
-
         public AioService(
             IDynamicRepository repository,
             PermissionService permissionService,
             IRefDataService refDataService,
-            IMapper mapper,
             IMapperFactory mapperFactory,
             IValidateApiKeyService validateApiKeyService,
             ICreateQueryService createQueryService,
-            IConfiguration configuration,
-            ILogService logService)
+            IConfiguration configuration)
         {
             this.repository = repository;
             this.permissionService = permissionService;
             this.refDataService = refDataService;
-            this.mapper = mapper;
             this.mapperFactory = mapperFactory;
             this.validateApiKeyService = validateApiKeyService;
             this.createQueryService = createQueryService;
             this.configuration = configuration;
-            this.logService = logService;
         }
 
         public async Task<AioMatch> GetMatch(GetMatchRequest request)
@@ -145,7 +133,7 @@ namespace Settlement.Sportsbook.Aio.Services
 
         public async Task<List<Models.ResultDetail>> GetRecalResult(GetRecalResultRequest request)
         {
-            var criteria = mapper.Map<GetRecalResultRequest, GetRecalResultCriteria>(request);
+            var criteria = createQueryService.QueryRecalResult(request);
             var resultDetails = await repository.FetchAsync<Models.ResultDetail>(criteria);
 
             return resultDetails.ToList();
@@ -278,7 +266,7 @@ namespace Settlement.Sportsbook.Aio.Services
                     criteria.MatchId = match.MatchId;
                     criteria.SelectedResources = createQueryService.CreateResourceChildMatch(match);
                     await repository.ExecuteAsync(criteria);
-                    WriteLogChildMatch(criteria);
+                    createQueryService.WriteLogChildMatch(criteria);
                 }
             }
             else
@@ -295,16 +283,6 @@ namespace Settlement.Sportsbook.Aio.Services
             }
 
             return new Result();
-        }
-
-        private void WriteLogChildMatch(SettleCriteria criteria)
-        {
-            if (!string.IsNullOrWhiteSpace(criteria.ErrMsg))
-            {
-                logService.ActionLog(criteria.MatchId, criteria.ErrMsg, actionCalculate);
-                criteria.ErrCode = 0;
-                criteria.ErrMsg = string.Empty;
-            }
         }
     }
 }

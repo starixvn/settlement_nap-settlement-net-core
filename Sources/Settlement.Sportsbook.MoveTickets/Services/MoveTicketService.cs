@@ -5,8 +5,8 @@ using Microsoft.AspNetCore.Http;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
-using Settlement.Sportsbook.Core.Criterias;
-using Settlement.Sportsbook.MoveTickets.Criterias;
+using Settlement.Sportsbook.Core.Criteria;
+using Settlement.Sportsbook.MoveTickets.Criteria;
 using Settlement.Sportsbook.MoveTickets.Models;
 using Settlement.Sportsbook.MoveTickets.Requests;
 using System;
@@ -191,7 +191,7 @@ namespace Settlement.Sportsbook.MoveTickets.Services
                 logService.ActionLog(request.MatchId, criteria.ErrMsg, actionIdMoveTicket);
             }
 
-            return new Result()
+            return new Result
             {
                 ErrCode = criteria.ErrCode,
                 ErrMsg = criteria.ErrMsg
@@ -245,7 +245,7 @@ namespace Settlement.Sportsbook.MoveTickets.Services
                 logService.ActionLog(request.MatchId, criteria.ErrMsg, actionIDMoveRunningTickets);
             }
 
-            return new Result()
+            return new Result
             {
                 ErrCode = criteria.ErrCode,
                 ErrMsg = criteria.ErrMsg

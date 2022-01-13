@@ -2,13 +2,14 @@
 
 	<PropertyGroup>
 		<TargetFramework>net5.0</TargetFramework>
+		<CodeAnalysisRuleSet>..\..\.sonarlint\settlement-netcorecsharp.ruleset</CodeAnalysisRuleSet>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<None Remove="App_Data\SpName.AWS.xml" />
-		<None Remove="App_Data\SpName.LOCAL.xml" />
 		<None Remove="App_Data\SpName.LOCAL_1.xml" />
 		<None Remove="App_Data\SpName.LOCAL_2.xml" />
+		<None Remove="App_Data\SpName.LOCAL_3.xml" />
 		<None Remove="App_Data\SpName.PROD.xml" />
 		<None Remove="App_Data\SpName.SIT_1.xml" />
 		<None Remove="App_Data\SpName.SIT_2.xml" />
@@ -20,6 +21,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<AdditionalFiles Include="..\..\.sonarlint\settlement-netcore\CSharp\SonarLint.xml" Link="SonarLint.xml" />
 		<Content Include="App_Data\SpName.SIT_1.xml">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
@@ -44,7 +46,7 @@
 		<Content Include="App_Data\SpName.AWS.xml">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
-		<Content Include="App_Data\SpName.LOCAL.xml">
+		<Content Include="App_Data\SpName.LOCAL_3.xml">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
 		<Content Include="App_Data\SpName.PROD.xml">
@@ -97,13 +99,11 @@
 		<ProjectReference Include="..\Settlement.Sportsbook.MoveTickets\Settlement.Sportsbook.MoveTickets.csproj" />
 		<ProjectReference Include="..\Settlement.Sportsbook.Aio\Settlement.Sportsbook.Aio.csproj" />
 		<ProjectReference Include="..\Settlement.Sportsbook.OtherSports\Settlement.Sportsbook.OtherSports.csproj" />
+		<ProjectReference Include="..\Settlement.Sportsbook.Soccer\Settlement.Sportsbook.Soccer.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <Content Update="appsettings.PROD_2.json">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
-	  <Content Update="appsettings.PROD_1.json">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
 	  <Content Update="appsettings.SIT_3.json">

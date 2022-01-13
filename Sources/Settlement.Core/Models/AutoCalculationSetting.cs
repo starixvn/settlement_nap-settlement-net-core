@@ -1,12 +1,27 @@
-﻿namespace Settlement.Core.Models
+﻿using Kaden.Extensions;
+using System;
+
+namespace Settlement.Core.Models
 {
     public class AutoCalculationSetting
     {
         private const int DirectPayoutBit = 4;
 
+        private const int ConvertToBase = 2;
+
         private const int MultiSportAutoPayoutBit = 5;
 
         public string MatchSetting { get; set; }
+
+        public AutoCalculationSetting()
+        {
+        }
+
+        public AutoCalculationSetting(int autoSettingForMatch, int autoSettingForLeague)
+        {
+            MatchSetting = Convert.ToString(autoSettingForMatch, ConvertToBase).Reverse();
+            LeagueSetting = Convert.ToString(autoSettingForLeague, ConvertToBase).Reverse();
+        }
 
         public bool IsAutoPayoutForMatch
         {

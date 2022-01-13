@@ -3,7 +3,6 @@ using Settlement.Core.Constants;
 using Settlement.Core.Services;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text.Json.Serialization;
 
 namespace Settlement.Core.Models
@@ -161,15 +160,9 @@ namespace Settlement.Core.Models
 
         public string EventStatus
         {
-            get
-            {
-                return eventStatus.MapToString(BetStatus, Remark.IsPending);
-            }
+            get => eventStatus.MapToString(BetStatus, Remark.IsPending);
 
-            set
-            {
-                eventStatus = value;
-            }
+            set => eventStatus = value;
         }
 
         public int GroupSport { get; set; }
@@ -388,7 +381,7 @@ namespace Settlement.Core.Models
             IsCalculatingMp = IsCalculatingMP,
             IsKeyScore = IsKeyScore,
             IsCalculated = IsCalculated,
-            BetStatus = BetStatus ?? string.Empty,
+            BetStatusValue = BetStatus ?? string.Empty,
             IsExistMarkedTicketParlay = IsExistMarkedTicketParlay
         });
 

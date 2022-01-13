@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 using NSubstitute;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
-using Settlement.Sportsbook.MoveTickets.Criterias;
+using Settlement.Sportsbook.MoveTickets.Criteria;
 using Settlement.Sportsbook.MoveTickets.Requests;
 using Settlement.Sportsbook.MoveTickets.Services;
 using System;
@@ -117,11 +117,11 @@ namespace Settlement.Sportsbook.MoveTickets.UnitTests.Services
         [Fact]
         public async Task MoveTicket_Always_ReturnResult()
         {
-            repository.ExecuteAsync(Arg.Do<MoveTicketCriteria>(x =>
+            await repository.ExecuteAsync(Arg.Do<MoveTicketCriteria>(x =>
             {
                 x.ErrCode = 0;
                 x.ErrMsg = "";
-            })).Returns(1);
+            }));
 
             var actual = await service.MoveTicket(new MoveTicketRequest());
 
@@ -131,11 +131,11 @@ namespace Settlement.Sportsbook.MoveTickets.UnitTests.Services
         [Fact]
         public async Task MoveTicket_IsFail_AlwaysCallActionLog()
         {
-            repository.ExecuteAsync(Arg.Do<MoveTicketCriteria>(x =>
+            await repository.ExecuteAsync(Arg.Do<MoveTicketCriteria>(x =>
             {
                 x.ErrCode = 1;
                 x.ErrMsg = "message";
-            })).Returns(1);
+            }));
 
             await service.MoveTicket(new MoveTicketRequest());
 

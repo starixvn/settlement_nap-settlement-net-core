@@ -16,75 +16,75 @@ namespace Settlement.Sportsbook.Aio.MapperFactory
 
         private static void Tennis()
         {
-            CriteriaTypes.Add($"tennis-{ApiKeyConstant.MatchInfoKey}", typeof(Criterias.GetMatchDetailCriteria));
-            CriteriaTypes.Add($"tennis-{ApiKeyConstant.HedgeMatchInfoKey}", typeof(Criterias.GetHedgeMatchCriteria));
-            CriteriaTypes.Add($"tennis-{ApiKeyConstant.ResultDetailKey}", typeof(Criterias.GetResultDetailCriteria));
-            CriteriaTypes.Add($"tennis-{ApiKeyConstant.ProviderKey}", typeof(Criterias.Tennis.GetProviderCriteria));
-            CriteriaTypes.Add($"tennis-{ApiKeyConstant.LastestResultKey}", typeof(Criterias.GetRecalResultCriteria));
-            CriteriaTypes.Add($"tennis-{ApiKeyConstant.SaveScore}", typeof(Criterias.SaveScoreCriteria));
+            CriteriaTypes.Add($"tennis-{ApiKeyConstant.MatchInfoKey}", typeof(Criteria.GetMatchDetailCriteria));
+            CriteriaTypes.Add($"tennis-{ApiKeyConstant.HedgeMatchInfoKey}", typeof(Criteria.GetHedgeMatchCriteria));
+            CriteriaTypes.Add($"tennis-{ApiKeyConstant.ResultDetailKey}", typeof(Criteria.GetResultDetailCriteria));
+            CriteriaTypes.Add($"tennis-{ApiKeyConstant.ProviderKey}", typeof(Criteria.Tennis.GetProviderCriteria));
+            CriteriaTypes.Add($"tennis-{ApiKeyConstant.LastestResultKey}", typeof(Criteria.GetRecalResultCriteria));
+            CriteriaTypes.Add($"tennis-{ApiKeyConstant.SaveScore}", typeof(Criteria.SaveScoreCriteria));
 
-            CriteriaTypes.Add("tennis-settle", typeof(Criterias.SettleCriteria));
+            CriteriaTypes.Add("tennis-settle", typeof(Criteria.SettleCriteria));
         }
 
         private static void Cricket()
         {
-            CriteriaTypes.Add($"cricket-{ApiKeyConstant.MatchInfoKey}", typeof(Criterias.GetMatchDetailCriteria));
-            CriteriaTypes.Add($"cricket-{ApiKeyConstant.HedgeMatchInfoKey}", typeof(Criterias.GetHedgeMatchCriteria));
-            CriteriaTypes.Add($"cricket-{ApiKeyConstant.ResultDetailKey}", typeof(Criterias.GetResultDetailCriteria));
-            CriteriaTypes.Add($"cricket-{ApiKeyConstant.ProviderKey}", typeof(Criterias.Cricket.GetProviderCriteria));
-            CriteriaTypes.Add($"cricket-{ApiKeyConstant.LastestResultKey}", typeof(Criterias.GetRecalResultCriteria));
-            CriteriaTypes.Add($"cricket-{ApiKeyConstant.SaveScore}", typeof(Criterias.Cricket.SaveScoreCriteria));
+            CriteriaTypes.Add($"cricket-{ApiKeyConstant.MatchInfoKey}", typeof(Criteria.GetMatchDetailCriteria));
+            CriteriaTypes.Add($"cricket-{ApiKeyConstant.HedgeMatchInfoKey}", typeof(Criteria.GetHedgeMatchCriteria));
+            CriteriaTypes.Add($"cricket-{ApiKeyConstant.ResultDetailKey}", typeof(Criteria.GetResultDetailCriteria));
+            CriteriaTypes.Add($"cricket-{ApiKeyConstant.ProviderKey}", typeof(Criteria.Cricket.GetProviderCriteria));
+            CriteriaTypes.Add($"cricket-{ApiKeyConstant.LastestResultKey}", typeof(Criteria.GetRecalResultCriteria));
+            CriteriaTypes.Add($"cricket-{ApiKeyConstant.SaveScore}", typeof(Criteria.Cricket.SaveScoreCriteria));
 
-            CriteriaTypes.Add("cricket-settle", typeof(Criterias.SettleCriteria));
+            CriteriaTypes.Add("cricket-settle", typeof(Criteria.SettleCriteria));
         }
 
         private static void Esport()
         {
-            CriteriaTypes.Add($"esport-{ApiKeyConstant.MatchInfoKey}", typeof(Criterias.GetMatchDetailCriteria));
-            CriteriaTypes.Add($"esport-{ApiKeyConstant.HedgeMatchInfoKey}", typeof(Criterias.GetHedgeMatchCriteria));
-            CriteriaTypes.Add($"esport-{ApiKeyConstant.ResultDetailKey}", typeof(Criterias.GetResultDetailCriteria));
-            CriteriaTypes.Add($"esport-{ApiKeyConstant.ProviderKey}", typeof(Criterias.ESport.GetProviderCriteria));
-            CriteriaTypes.Add($"esport-{ApiKeyConstant.LastestResultKey}", typeof(Criterias.GetRecalResultCriteria));
-            CriteriaTypes.Add($"esport-{ApiKeyConstant.SaveScore}", typeof(Criterias.ESport.SaveScoreCriteria));
-            CriteriaTypes.Add($"esport-{ApiKeyConstant.OldMatch}", typeof(Criterias.ESport.GetOldMatchCriteria));
+            CriteriaTypes.Add($"esport-{ApiKeyConstant.MatchInfoKey}", typeof(Criteria.GetMatchDetailCriteria));
+            CriteriaTypes.Add($"esport-{ApiKeyConstant.HedgeMatchInfoKey}", typeof(Criteria.GetHedgeMatchCriteria));
+            CriteriaTypes.Add($"esport-{ApiKeyConstant.ResultDetailKey}", typeof(Criteria.GetResultDetailCriteria));
+            CriteriaTypes.Add($"esport-{ApiKeyConstant.ProviderKey}", typeof(Criteria.ESport.GetProviderCriteria));
+            CriteriaTypes.Add($"esport-{ApiKeyConstant.LastestResultKey}", typeof(Criteria.GetRecalResultCriteria));
+            CriteriaTypes.Add($"esport-{ApiKeyConstant.SaveScore}", typeof(Criteria.ESport.SaveScoreCriteria));
+            CriteriaTypes.Add($"esport-{ApiKeyConstant.OldMatch}", typeof(Criteria.ESport.GetOldMatchCriteria));
 
-            CriteriaTypes.Add($"esport-settle", typeof(Criterias.SettleCriteria));
+            CriteriaTypes.Add($"esport-settle", typeof(Criteria.SettleCriteria));
         }
 
         private static void Badminton()
         {
-            CriteriaTypes.Add($"badminton-{ApiKeyConstant.MatchInfoKey}", typeof(Criterias.GetMatchDetailCriteria));
-            CriteriaTypes.Add($"badminton-{ApiKeyConstant.HedgeMatchInfoKey}", typeof(Criterias.GetHedgeMatchCriteria));
-            CriteriaTypes.Add($"badminton-{ApiKeyConstant.ResultDetailKey}", typeof(Criterias.GetResultDetailCriteria));
-            CriteriaTypes.Add($"badminton-{ApiKeyConstant.LastestResultKey}", typeof(Criterias.GetRecalResultCriteria));
-            CriteriaTypes.Add($"badminton-{ApiKeyConstant.ProviderKey}", typeof(Criterias.GetProviderCriteria));
-            CriteriaTypes.Add($"badminton-{ApiKeyConstant.SaveScore}", typeof(Criterias.SaveScoreCriteria));
+            CriteriaTypes.Add($"badminton-{ApiKeyConstant.MatchInfoKey}", typeof(Criteria.GetMatchDetailCriteria));
+            CriteriaTypes.Add($"badminton-{ApiKeyConstant.HedgeMatchInfoKey}", typeof(Criteria.GetHedgeMatchCriteria));
+            CriteriaTypes.Add($"badminton-{ApiKeyConstant.ResultDetailKey}", typeof(Criteria.GetResultDetailCriteria));
+            CriteriaTypes.Add($"badminton-{ApiKeyConstant.LastestResultKey}", typeof(Criteria.GetRecalResultCriteria));
+            CriteriaTypes.Add($"badminton-{ApiKeyConstant.ProviderKey}", typeof(Criteria.GetProviderCriteria));
+            CriteriaTypes.Add($"badminton-{ApiKeyConstant.SaveScore}", typeof(Criteria.SaveScoreCriteria));
 
-            CriteriaTypes.Add("badminton-settle", typeof(Criterias.SettleCriteria));
+            CriteriaTypes.Add("badminton-settle", typeof(Criteria.SettleCriteria));
         }
 
         private static void Basketball()
         {
-            CriteriaTypes.Add($"basketball-{ApiKeyConstant.MatchInfoKey}", typeof(Criterias.GetMatchDetailCriteria));
-            CriteriaTypes.Add($"basketball-{ApiKeyConstant.HedgeMatchInfoKey}", typeof(Criterias.GetHedgeMatchCriteria));
-            CriteriaTypes.Add($"basketball-{ApiKeyConstant.ResultDetailKey}", typeof(Criterias.GetResultDetailCriteria));
-            CriteriaTypes.Add($"basketball-{ApiKeyConstant.LastestResultKey}", typeof(Criterias.GetRecalResultCriteria));
-            CriteriaTypes.Add($"basketball-{ApiKeyConstant.ProviderKey}", typeof(Criterias.GetProviderCriteria));
-            CriteriaTypes.Add($"basketball-{ApiKeyConstant.SaveScore}", typeof(Criterias.SaveScoreCriteria));
+            CriteriaTypes.Add($"basketball-{ApiKeyConstant.MatchInfoKey}", typeof(Criteria.GetMatchDetailCriteria));
+            CriteriaTypes.Add($"basketball-{ApiKeyConstant.HedgeMatchInfoKey}", typeof(Criteria.GetHedgeMatchCriteria));
+            CriteriaTypes.Add($"basketball-{ApiKeyConstant.ResultDetailKey}", typeof(Criteria.GetResultDetailCriteria));
+            CriteriaTypes.Add($"basketball-{ApiKeyConstant.LastestResultKey}", typeof(Criteria.GetRecalResultCriteria));
+            CriteriaTypes.Add($"basketball-{ApiKeyConstant.ProviderKey}", typeof(Criteria.GetProviderCriteria));
+            CriteriaTypes.Add($"basketball-{ApiKeyConstant.SaveScore}", typeof(Criteria.SaveScoreCriteria));
 
-            CriteriaTypes.Add("basketball-settle", typeof(Criterias.SettleCriteria));
+            CriteriaTypes.Add("basketball-settle", typeof(Criteria.SettleCriteria));
         }
 
         private static void GameTotal()
         {
-            CriteriaTypes.Add($"game-total-{ApiKeyConstant.MatchInfoKey}", typeof(Criterias.GetMatchDetailCriteria));
-            CriteriaTypes.Add($"game-total-{ApiKeyConstant.HedgeMatchInfoKey}", typeof(Criterias.GetHedgeMatchCriteria));
-            CriteriaTypes.Add($"game-total-{ApiKeyConstant.ResultDetailKey}", typeof(Criterias.GetResultDetailCriteria));
-            CriteriaTypes.Add($"game-total-{ApiKeyConstant.LastestResultKey}", typeof(Criterias.GetRecalResultCriteria));
-            CriteriaTypes.Add($"game-total-{ApiKeyConstant.ProviderKey}", typeof(Criterias.GetProviderCriteria));
-            CriteriaTypes.Add($"game-total-{ApiKeyConstant.ChildMatchKey}", typeof(Criterias.Volleyball.GetChildMatchCriteria));
+            CriteriaTypes.Add($"game-total-{ApiKeyConstant.MatchInfoKey}", typeof(Criteria.GetMatchDetailCriteria));
+            CriteriaTypes.Add($"game-total-{ApiKeyConstant.HedgeMatchInfoKey}", typeof(Criteria.GetHedgeMatchCriteria));
+            CriteriaTypes.Add($"game-total-{ApiKeyConstant.ResultDetailKey}", typeof(Criteria.GetResultDetailCriteria));
+            CriteriaTypes.Add($"game-total-{ApiKeyConstant.LastestResultKey}", typeof(Criteria.GetRecalResultCriteria));
+            CriteriaTypes.Add($"game-total-{ApiKeyConstant.ProviderKey}", typeof(Criteria.GetProviderCriteria));
+            CriteriaTypes.Add($"game-total-{ApiKeyConstant.ChildMatchKey}", typeof(Criteria.Volleyball.GetChildMatchCriteria));
 
-            CriteriaTypes.Add($"game-total-settle", typeof(Criterias.SettleCriteria));
+            CriteriaTypes.Add($"game-total-settle", typeof(Criteria.SettleCriteria));
         }
     }
 }

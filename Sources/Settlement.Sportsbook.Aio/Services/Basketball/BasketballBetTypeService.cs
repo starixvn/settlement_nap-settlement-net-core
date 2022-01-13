@@ -36,7 +36,7 @@ namespace Settlement.Sportsbook.Aio.Services.Basketball
             return item;
         }
 
-        private void GroupBasketballBetType(ResultDetail resultDetail)
+        private static void GroupBasketballBetType(ResultDetail resultDetail)
         {
             var resourceId = resultDetail.ResourceId;
             if (resourceId.Length == otherBetTypeLength)
@@ -48,9 +48,13 @@ namespace Settlement.Sportsbook.Aio.Services.Basketball
                 GroupHalfBetType(resultDetail);
                 GroupQuarterBetType(resultDetail);
             }
+            else
+            {
+                // do  not thing
+            }
         }
 
-        private void GroupOtherBetType(ResultDetail resultDetail)
+        private static void GroupOtherBetType(ResultDetail resultDetail)
         {
             var resourceId = Convert.ToInt32(resultDetail.ResourceId);
             if (GroupBetType.Other.Contains(resourceId))
@@ -58,9 +62,13 @@ namespace Settlement.Sportsbook.Aio.Services.Basketball
                 resultDetail.GroupId = GroupBetType.OtherId;
                 resultDetail.GroupName = GroupBetType.OtherName;
             }
+            else
+            {
+                // do  not thing
+            }
         }
 
-        private void GroupHalfBetType(ResultDetail resultDetail)
+        private static void GroupHalfBetType(ResultDetail resultDetail)
         {
             var resourceId = SplitBetType(resultDetail.ResourceId, 0, halfBetTypeLength - betTypeIndexLength);
             if (GroupBetType.FirstHalf.Contains(resourceId))
@@ -73,9 +81,13 @@ namespace Settlement.Sportsbook.Aio.Services.Basketball
                 resultDetail.GroupId = GroupBetType.SecondHalfId;
                 resultDetail.GroupName = GroupBetType.SecondHalfName;
             }
+            else
+            {
+                // do  not thing
+            }
         }
 
-        private void GroupQuarterBetType(ResultDetail resultDetail)
+        private static void GroupQuarterBetType(ResultDetail resultDetail)
         {
             var resourceId = SplitBetType(resultDetail.ResourceId, 0, quarterBetTypeLength - betTypeIndexLength);
             if (GroupBetType.QuarterOne.Contains(resourceId))
@@ -97,6 +109,10 @@ namespace Settlement.Sportsbook.Aio.Services.Basketball
             {
                 resultDetail.GroupId = GroupBetType.QuarterFourId;
                 resultDetail.GroupName = GroupBetType.QuarterFourName;
+            }
+            else
+            {
+                // do  not thing
             }
         }
 

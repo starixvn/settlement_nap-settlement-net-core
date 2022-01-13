@@ -43,11 +43,11 @@ namespace Settlement.Sportsbook.OtherSports.UnitTests.Services
         {
             const int errorCode = 100;
             const string errorMsg = "Error Message";
-            repository.ExecuteAsync(Arg.Do<CalculateCriteria>(x =>
+            await repository.ExecuteAsync(Arg.Do<CalculateCriteria>(x =>
             {
                 x.ErrCode = errorCode;
                 x.ErrMsg = errorMsg;
-            })).Returns(1);
+            }));
             var result = await service.Calculate(new CalculateRequest());
 
             Assert.False(result.IsSuccessful);
@@ -58,11 +58,11 @@ namespace Settlement.Sportsbook.OtherSports.UnitTests.Services
         {
             const int errorCode = 100;
             const string errorMsg = "Error Message";
-            repository.ExecuteAsync(Arg.Do<RefundAllCriteria>(x =>
+            await repository.ExecuteAsync(Arg.Do<RefundAllCriteria>(x =>
             {
                 x.ErrCode = errorCode;
                 x.ErrMsg = errorMsg;
-            })).Returns(1);
+            }));
             var result = await service.Refund(new RefundRequest());
 
             Assert.False(result.IsSuccessful);
@@ -73,11 +73,11 @@ namespace Settlement.Sportsbook.OtherSports.UnitTests.Services
         {
             const int errorCode = 100;
             const string errorMsg = "Error Message";
-            repository.ExecuteAsync(Arg.Do<ParlayCriteria>(x =>
+            await repository.ExecuteAsync(Arg.Do<ParlayCriteria>(x =>
             {
                 x.ErrCode = errorCode;
                 x.ErrMsg = errorMsg;
-            })).Returns(1);
+            }));
             var result = await service.RefundParlay(new RefundParlayRequest());
 
             Assert.False(result.IsSuccessful);
@@ -86,10 +86,10 @@ namespace Settlement.Sportsbook.OtherSports.UnitTests.Services
         [Fact]
         public async Task CheckMarkedTickets_Always_ExecuteAndReturnResult()
         {
-            repository.ExecuteAsync(Arg.Do<CheckingMarkedTicketsCriteria>(x =>
+            await repository.ExecuteAsync(Arg.Do<CheckingMarkedTicketsCriteria>(x =>
             {
                 x.IsExistMarkedTicket = true;
-            })).Returns(1);
+            }));
             var result = await service.CheckMarkedTickets(new CheckingMarkedTicketsRequest());
 
             Assert.True(result.IsExistMarkedTicket);

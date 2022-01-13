@@ -1,14 +1,9 @@
-﻿using Fanex.Data.Repository;
-using NSubstitute;
+﻿using NSubstitute;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.MoveTickets.Services;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace Settlement.Sportsbook.MoveTickets.UnitTests.Services

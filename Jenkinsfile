@@ -1,5 +1,4 @@
 @Library("JenkinsPipelineLibrary") _
-
 pipeline {
   agent any
 

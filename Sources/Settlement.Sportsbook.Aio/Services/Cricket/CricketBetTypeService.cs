@@ -19,7 +19,7 @@ namespace Settlement.Sportsbook.Aio.Services.Cricket
         {
             resultDetails.ForEach((resultDetail) =>
             {
-                    GenerateBetTypeNameAndGroup(resultDetail);
+                GenerateBetTypeNameAndGroup(resultDetail);
             });
         }
 
@@ -78,6 +78,10 @@ namespace Settlement.Sportsbook.Aio.Services.Cricket
                     var betTypeBalls = SplitBetType(resourceId, ballPosition, ballLength);
                     betTypeName = string.Format(betTypeName, betTypeOvers, betTypeBalls);
                 }
+                else
+                {
+                    // do  not thing
+                }
             }
 
             return betTypeName;
@@ -94,6 +98,10 @@ namespace Settlement.Sportsbook.Aio.Services.Cricket
             {
                 resultDetail.GroupId = GroupBetType.MatchBetTypeId;
                 resultDetail.GroupName = GroupBetType.MatchBetTypeName;
+            }
+            else
+            {
+                // do  not thing
             }
         }
 
@@ -118,6 +126,10 @@ namespace Settlement.Sportsbook.Aio.Services.Cricket
             {
                 resultDetail.GroupId = GroupBetType.SecondInnsAwayId;
                 resultDetail.GroupName = GroupBetType.SecondInnsAwayName;
+            }
+            else
+            {
+                // do  not thing
             }
         }
 

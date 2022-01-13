@@ -5,7 +5,7 @@ using Kaden.XmlConverter;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using NSubstitute;
-using Settlement.Sportsbook.Aio.Criterias;
+using Settlement.Sportsbook.Aio.Criteria;
 using Settlement.Sportsbook.Aio.Requests;
 using Settlement.Sportsbook.Aio.Services;
 using System;
@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Settlement.Core.Services;
 using Xunit;
 
 namespace Settlement.Sportsbook.Aio.UnitTests.Services
@@ -27,6 +28,8 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
 
         private readonly ICreateQueryService service;
 
+        private readonly ILogService logService;
+
         public CreateQueryServiceTests()
         {
             xmlConvertService = Substitute.For<XmlConvertService>();
@@ -39,7 +42,8 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
             mapperConfig.AddProfile<SportsbookAioAutoMapperProfile>();
             var config = new MapperConfiguration(mapperConfig);
             var mapper = new Mapper(config);
-            service = new CreateQueryServiceImp(xmlConvertService, currentSession, accessor, mapper);
+            logService = Substitute.For<ILogService>();
+            service = new CreateQueryServiceImp(xmlConvertService, currentSession, accessor, mapper, logService);
         }
 
         [Fact]
@@ -95,6 +99,21 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
             var result = service.QuerySaveScore(request);
 
             Assert.Equal(JsonConvert.SerializeObject(expectedData), JsonConvert.SerializeObject(result));
+        }
+
+        [Fact]
+        public void WriteLogChildMatch__CriteriaExistError_WriteLog()
+        {
+            var criteria = new SettleCriteria
+            {
+                MatchId = 1,
+                ErrMsg = "Message"
+            };
+
+            service.WriteLogChildMatch(criteria);
+
+            Assert.Equal("", criteria.ErrMsg);
+            logService.Received(1).ActionLog(Arg.Any<int>(), Arg.Any<string>(), 100);
         }
     }
 }
