@@ -65,80 +65,64 @@ namespace Settlement.Sportsbook.Aio.Services.ESport
                 case BetType.ESportBetType.MapTotalFirstKills:
                     return $"Map {mapX} Total First Kills";
 
-                case BetType.ESportBetType.MapFirstBloodTimeOU:
-                    return $"Map {mapX} First Blood Time Over/Under";
+                case BetType.ESportBetType.MapFirstBloodTime:
+                    return $"Map {mapX} First Blood Time";
 
-                case BetType.ESportBetType.MapTotalKillTenMinHDP:
-                    return $"Map {mapX} Total Kills at 10 Mins Handicap";
+                case BetType.ESportBetType.MapTotalKillTenMin:
+                    return $"Map {mapX} Total Kills at 10 Mins";
 
-                case BetType.ESportBetType.MapTotalKillTenMinOU:
-                    return $"Map {mapX} Total Kills at 10 Mins Over/Under";
-                case BetType.ESportBetType.MapTotalKillTwentyMinHDP:
-                    return $"Map {mapX} Total Kills at 20 Mins Handicap";
-                case BetType.ESportBetType.MapTotalKillTwentyMinOU:
-                    return $"Map {mapX} Total Kills at 20 Mins Over/Under";
-                case BetType.ESportBetType.MapHomeTotalKillTenMinOU:
-                    return $"Map {mapX} Home Team Total Kills at 10 Mins Over/Under";
-                case BetType.ESportBetType.MapAwayTotalKillTenMinOU:
-                    return $"Map {mapX} Away Team Total Kills at 10 Mins Over/Under";
-                case BetType.ESportBetType.MapHomeTotalKillTwentyMinOU:
-                    return $"Map {mapX} Home Team Total Kills at 20 Mins Over/Under";
-                case BetType.ESportBetType.MapAwayTotalKillTwentyMinOU:
-                    return $"Map {mapX} Away Team Total Kills at 20 Mins Over/Under";
-                case BetType.ESportBetType.MapHomeTotalKillOU:
-                    return $"Map {mapX} Home Team Total Kills Over/Under";
-                case BetType.ESportBetType.MapAwayTotalKillOU:
-                    return $"Map {mapX} Away Team Total Kills Over/Under";
-                case BetType.ESportBetType.MapFirstTurretTimeOU:
-                    return $"Map {mapX} First Turret Time Over/Under";
+                case BetType.ESportBetType.MapTotalKillTwentyMin:
+                    return $"Map {mapX} Total Kills at 20 Mins";
+
+                case BetType.ESportBetType.MapFirstTurretTime:
+                    return $"Map {mapX} First Turret Time";
+
                 case BetType.ESportBetType.MapFirstTurretLocation:
                     return $"Map {mapX} First Turret Location";
-                case BetType.ESportBetType.MapTotalGoldMoneyline:
-                    return $"Map {mapX} Total Gold Moneyline";
-                case BetType.ESportBetType.MapTotalGoldHDP:
-                    return $"Map {mapX} Total Gold Handicap";
-                case BetType.ESportBetType.MapTotalGoldOU:
-                    return $"Map {mapX} Total Gold Over/Under";
-                case BetType.ESportBetType.MapHomeTotalGoldOU:
-                    return $"Map {mapX} Home Team Total Gold Over/Under";
-                case BetType.ESportBetType.MapAwayTotalGoldOU:
-                    return $"Map {mapX} Away Team Total Gold Over/Under";
-                case BetType.ESportBetType.MapTotalGoldOE:
-                    return $"Map {mapX} Total Gold Odd/Even";
-                case BetType.ESportBetType.MapFirstTyrantTimeOU:
-                    return $"Map {mapX} First Tyrant Time Over/Under";
+
+                case BetType.ESportBetType.MapTotalGold:
+                    return $"Map {mapX} Total Gold";
+
+                case BetType.ESportBetType.MapFirstTyrantTime:
+                    return $"Map {mapX} First Tyrant Time";
+
                 case BetType.ESportBetType.MapFirstDarkTyrant:
                     return $"Map {mapX} First Dark Tyrant";
-                case BetType.ESportBetType.MapFirstOverlordTimeOU:
-                    return $"Map {mapX} First Overlord Time Over/Under";
+
+                case BetType.ESportBetType.MapFirstOverlordTime:
+                    return $"Map {mapX} First Overlord Time";
+
                 case BetType.ESportBetType.MapStormDragonKilled:
-                    return $"Map {mapX} Will Storm Dragon Be Killed Yes/No";
+                    return $"Map {mapX} Will Storm Dragon Be Killed";
+
                 case BetType.ESportBetType.MapFirstHerald:
                     return $"Map {mapX} First Herald";
-                case BetType.ESportBetType.MapFirstHeraldTimeOU:
-                    return $"Map {mapX} First Herald Time Over/Under";
-                case BetType.ESportBetType.MapFirstBaronTimeOU:
-                    return $"Map {mapX} First Baron Time Over/Under";
-                case BetType.ESportBetType.MapNumberOfPlayersFirstBaronBuffedOU:
-                    return $"Map {mapX} First Barron No. Players Buff Over/Under";
-                case BetType.ESportBetType.MapFirstInhibitorTimeOU:
-                    return $"Map {mapX} First Inhibitor Time Over/Under";
+
+                case BetType.ESportBetType.MapFirstHeraldTime:
+                    return $"Map {mapX} First Herald Time";
+
+                case BetType.ESportBetType.MapFirstBaronTime:
+                    return $"Map {mapX} First Baron Time";
+                case BetType.ESportBetType.MapNumberOfPlayersFirstBaronBuffed:
+                    return $"Map {mapX} First Barron No. Players Buff";
+                case BetType.ESportBetType.MapFirstInhibitorTime:
+                    return $"Map {mapX} First Inhibitor Time";
                 case BetType.ESportBetType.MapFirstInhibitorLocation:
                     return $"Map {mapX} First Inhibitor Location";
-                case BetType.ESportBetType.MapFirstDragonTimeOU:
-                    return $"Map {mapX} First Dragon Time Over/Under";
+                case BetType.ESportBetType.MapFirstDragonTime:
+                    return $"Map {mapX} First Dragon Time";
                 case BetType.ESportBetType.MapFirstElderDragon:
                     return $"Map {mapX} First Elder Dragon";
                 case BetType.ESportBetType.MapFirstAegisSnatched:
-                    return $"Map {mapX} Will First Aegis Be Snatched Yes/No";
-                case BetType.ESportBetType.MapFirstTowerTimeOU:
-                    return $"Map {mapX} First Tower Time Over/Under";
+                    return $"Map {mapX} Will First Aegis Be Snatched";
+                case BetType.ESportBetType.MapFirstTowerTime:
+                    return $"Map {mapX} First Tower Time";
                 case BetType.ESportBetType.MapFirstTowerLocation:
                     return $"Map {mapX} First Tower Location";
-                case BetType.ESportBetType.MapFirstRoshanTimeOU:
-                    return $"Map {mapX} First Roshan Time Over/Under";
-                case BetType.ESportBetType.MapFirstBarrackTimeOU:
-                    return $"Map {mapX} First Barrack Time Over/Under";
+                case BetType.ESportBetType.MapFirstRoshanTime:
+                    return $"Map {mapX} First Roshan Time";
+                case BetType.ESportBetType.MapFirstBarrackTime:
+                    return $"Map {mapX} First Barrack Time";
                 case BetType.ESportBetType.MapFirstBarrackLocation:
                     return $"Map {mapX} First Barrack Location";
 
@@ -194,10 +178,10 @@ namespace Settlement.Sportsbook.Aio.Services.ESport
                 mapY = Convert.ToInt32(resourceId.Substring(sixPosition, twoPosition));
                 return $"Map {mapX} Round {mapY} Total Kills";
             }
-            else if (betTypeId == BetType.ESportBetType.MapFirstToKillTimeOU)
+            else if (betTypeId == BetType.ESportBetType.MapFirstToKillTime)
             {
                 mapY = Convert.ToInt32(resourceId.Substring(sixPosition, twoPosition));
-                return $"Map {mapX} First to {mapY} Kills Time Over/Under";
+                return $"Map {mapX} First to {mapY} Kills Time";
             }
             else if (betTypeId == BetType.ESportBetType.MapSpecificKill)
             {

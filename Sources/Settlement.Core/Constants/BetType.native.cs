@@ -100,81 +100,57 @@ namespace Settlement.Core.Constants
 
             public const int MapGamePointWinner = 713;
 
-            public const int MapFirstToKillTimeOU = 9089;
+            public const int MapFirstToKillTime = 9089;
 
-            public const int MapFirstBloodTimeOU = 9090;
+            public const int MapFirstBloodTime = 9090;
 
-            public const int MapTotalKillTenMinHDP = 9091;
+            public const int MapTotalKillTenMin = 9091;
 
-            public const int MapTotalKillTenMinOU = 9092;
+            public const int MapTotalKillTwentyMin = 9093;
 
-            public const int MapTotalKillTwentyMinHDP = 9093;
-
-            public const int MapTotalKillTwentyMinOU = 9094;
-
-            public const int MapHomeTotalKillTenMinOU = 9095;
-
-            public const int MapAwayTotalKillTenMinOU = 9096;
-
-            public const int MapHomeTotalKillTwentyMinOU = 9097;
-
-            public const int MapAwayTotalKillTwentyMinOU = 9098;
-
-            public const int MapHomeTotalKillOU = 9099;
-
-            public const int MapAwayTotalKillOU = 9100;
+            public const int MapHomeTotalKill = 9099;
 
             public const int MapSpecificKill = 9101;
 
-            public const int MapFirstTurretTimeOU = 9113;
+            public const int MapFirstTurretTime = 9113;
 
             public const int MapFirstTurretLocation = 9114;
 
-            public const int MapTotalGoldMoneyline = 9115;
+            public const int MapTotalGold = 9115;
 
-            public const int MapTotalGoldHDP = 9116;
-
-            public const int MapTotalGoldOU = 9117;
-
-            public const int MapHomeTotalGoldOU = 9118;
-
-            public const int MapAwayTotalGoldOU = 9119;
-
-            public const int MapTotalGoldOE = 9120;
-
-            public const int MapFirstTyrantTimeOU = 9121;
+            public const int MapFirstTyrantTime = 9121;
 
             public const int MapFirstDarkTyrant = 9122;
 
-            public const int MapFirstOverlordTimeOU = 9123;
+            public const int MapFirstOverlordTime = 9123;
 
             public const int MapStormDragonKilled = 9124;
 
             public const int MapFirstHerald = 9125;
 
-            public const int MapFirstHeraldTimeOU = 9126;
+            public const int MapFirstHeraldTime = 9126;
 
-            public const int MapFirstBaronTimeOU = 9127;
+            public const int MapFirstBaronTime = 9127;
 
-            public const int MapNumberOfPlayersFirstBaronBuffedOU = 9128;
+            public const int MapNumberOfPlayersFirstBaronBuffed = 9128;
 
-            public const int MapFirstInhibitorTimeOU = 9129;
+            public const int MapFirstInhibitorTime = 9129;
 
             public const int MapFirstInhibitorLocation = 9130;
 
-            public const int MapFirstDragonTimeOU = 9131;
+            public const int MapFirstDragonTime = 9131;
 
             public const int MapFirstElderDragon = 9132;
 
             public const int MapFirstAegisSnatched = 9133;
 
-            public const int MapFirstTowerTimeOU = 9134;
+            public const int MapFirstTowerTime = 9134;
 
             public const int MapFirstTowerLocation = 9135;
 
-            public const int MapFirstRoshanTimeOU = 9136;
+            public const int MapFirstRoshanTime = 9136;
 
-            public const int MapFirstBarrackTimeOU = 9137;
+            public const int MapFirstBarrackTime = 9137;
 
             public const int MapFirstBarrackLocation = 9138;
 
