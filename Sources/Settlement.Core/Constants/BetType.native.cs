@@ -112,7 +112,7 @@ namespace Settlement.Core.Constants
 
             public const int MapSpecificKill = 9101;
 
-            public const int MapFirstTurretTime = 9113;
+            public const int MapMostTurretsDestroyedLane = 9113;
 
             public const int MapFirstTurretLocation = 9114;
 
@@ -140,7 +140,7 @@ namespace Settlement.Core.Constants
 
             public const int MapFirstDragonTime = 9131;
 
-            public const int MapFirstElderDragon = 9132;
+            public const int MapElderDragonKilled = 9132;
 
             public const int MapFirstAegisSnatched = 9133;
 
