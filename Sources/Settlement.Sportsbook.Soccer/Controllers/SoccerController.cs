@@ -41,5 +41,14 @@ namespace Settlement.Sportsbook.Soccer.Controllers
         [Route("push-instant-score"), HttpPost]
         [LogRequestResponse]
         public async Task<IActionResult> PushInstantScore(InstantCalculationRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+
+        [Route("specific-bet-type"), HttpPost]
+        public async Task<IActionResult> LicenseeBetTypes(GetSpecificBetTypeRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+
+        [Route("checking-marked-tickets"), HttpPost]
+        public async Task<IActionResult> CheckingMarkedTickets(CheckingMarkedTicketsRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+
+        [Route("refund"), HttpPost]
+        public async Task<IActionResult> Refund(RefundRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
     }
 }

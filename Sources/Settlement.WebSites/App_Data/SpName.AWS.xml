@@ -53,5 +53,8 @@
     <Setting Key="NAP_Admin_Settlement_1_InstantCalculation_Push" SpName="NAP_Admin_Settlement_1_InstantCalculation_Push" DbName="DBTXN.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Settlement_InstantCalculation_UndoChecking" SpName="NAP_Settlement_InstantCalculation_UndoChecking" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Settlement_InstantCalculation_Checking" SpName="NAP_Settlement_InstantCalculation_Checking" DbName="DBTXN.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_BetDaq_Checking" SpName="NAP_Set_BetDaq_Checking" DbName="DBTXN.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_BetFair_Checking" SpName="NAP_Set_BetFair_Checking" DbName="DBTXN.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_SpecificBettypes" SpName="NAP_Set_SpecificBettypes" DbName="DBPRO.bodb02.bodbAdminNet" />
   </Function>
 </Functions>

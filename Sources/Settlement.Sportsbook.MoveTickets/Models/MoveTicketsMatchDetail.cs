@@ -38,7 +38,7 @@ namespace Settlement.Sportsbook.MoveTickets.Models
 
         public RemarkSettingModel Remark => remark ??= new RemarkSettingModel
         {
-            SettlementStatus = Convert.ToString(SettlementStatus, ConvertToBase).Reverse(),
+            SettlementStatus = Convert.ToString(SettlementStatus, ConvertToBase).Reverse()
         };
     }
 }

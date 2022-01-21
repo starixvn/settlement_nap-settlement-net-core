@@ -21,7 +21,11 @@ namespace Settlement.Sportsbook.Soccer.Services
 
         Task<Match> GetMatch(GetMatchRequest request);
 
+        Task<Match> GetMatchRefund(GetMatchRequest request);
+
         Task<MatchDetail> GetLastestMatchDetail(GetLastestMatchDetailRequest request);
+
+        Task<List<string>> GetSpecificBetTypes(GetSpecificBetTypeRequest request);
     }
 
     public class MatchService : IMatchService
@@ -107,6 +111,40 @@ namespace Settlement.Sportsbook.Soccer.Services
             };
         }
 
+        public async Task<Match> GetMatchRefund(GetMatchRequest request)
+        {
+            var criteria = mapper.Map<GetMatchRequest, GetMatchDetailCriteria>(request);
+            var mappingTypes = new[] { typeof(MatchDetail), typeof(ResultDetail) };
+            var result = await repository.FetchMultipleAsync(criteria, mappingTypes);
+            var matchDetail = result[0].Cast<MatchDetail>().FirstOrDefault();
+            var resultDetails = result[1].Cast<ResultDetail>().ToList();
+            Argument.IsNotNull(matchDetail, $"Match ${criteria.MatchId} does not exist");
+
+            matchDetail.RefDataService = refDataService;
+            matchDetail = HandleResultDetailSoccer(matchDetail, resultDetails);
+            var goalIconQuery = GoalIconQuery(matchDetail);
+            matchDetail.GoalIcon = goalIconService.GetGoalIcon(goalIconQuery);
+
+            var hedgeMatchCriteria = new GetHedgeMatchCriteria { MatchId = request.MatchId };
+            var hedgeMatchDetail = await repository.GetAsync<HedgeMatchDetail>(hedgeMatchCriteria);
+
+            var betDaqCriteria = new BetDaqCheckingCriteria { MatchId = request.MatchId };
+            var betDaq = await repository.GetAsync<BetDaq>(betDaqCriteria);
+
+            var betFairCriteria = new BetFairCheckingCriteria { MatchId = request.MatchId };
+            var betFair = await repository.GetAsync<BetFair>(betFairCriteria);
+
+            return new Match()
+            {
+                MatchDetail = matchDetail,
+                ResultDetails = resultDetails,
+                HedgeMatchDetail = hedgeMatchDetail,
+                BetDaq = betDaq,
+                BetFair = betFair,
+                Permission = permission.Permission
+            };
+        }
+
         private GoalIconQueryModel GoalIconQuery(MatchDetail match)
         {
             return new GoalIconQueryModel
@@ -170,6 +208,14 @@ namespace Settlement.Sportsbook.Soccer.Services
             matchDetail.RefDataService = refDataService;
 
             return matchDetail;
+        }
+
+        public async Task<List<string>> GetSpecificBetTypes(GetSpecificBetTypeRequest request)
+        {
+            var criteria = mapper.Map<GetSpecificBetTypeRequest, SpecificBetTypesCriteria>(request);
+            var listBetType = await repository.FetchAsync<int>(criteria);
+
+            return listBetType.Select(item => refDataService.GetBetTypeName(item.ToString())).ToList();
         }
     }
 }
