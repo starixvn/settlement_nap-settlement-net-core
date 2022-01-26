@@ -51,5 +51,7 @@ namespace Settlement.Sportsbook.Aio.Models
         public int ConfirmFT { get; set; }
 
         public string EventStatus { get; set; }
+
+        public int LeagueGroupId { get; set; }
     }
 }
