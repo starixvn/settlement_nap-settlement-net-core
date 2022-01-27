@@ -20,10 +20,6 @@ namespace Settlement.Sportsbook.Soccer.Services
         Task<Result> UnCalculate(SettleRequest request);
 
         Task<Result> CheckStatus(CheckStatusRequest request);
-
-        Task<MarkedTickets> CheckMarkedTickets(CheckingMarkedTicketsRequest request);
-
-        Task<Result> Refund(RefundRequest request);
     }
 
     public class CalculateServiceImp : ICalculateService
@@ -170,50 +166,6 @@ namespace Settlement.Sportsbook.Soccer.Services
                 ErrCode = criteria.ErrCode,
                 ErrMsg = criteria.ErrMsg
             };
-        }
-
-        public async Task<MarkedTickets> CheckMarkedTickets(CheckingMarkedTicketsRequest request)
-        {
-            var criteria = mapper.Map<CheckingMarkedTicketsRequest, CheckingMarkedTicketsCriteria>(request);
-            await repository.ExecuteAsync(criteria);
-
-            return new MarkedTickets { IsExistMarkedTicket = criteria.IsExistMarkedTicket };
-        }
-
-        public async Task<Result> Refund(RefundRequest request)
-        {
-            var criteria = new RefundCriteria
-            {
-                MatchId = request.MatchId,
-                Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString(),
-                AdminId = currentSession.UserId,
-                GoalSequence = string.IsNullOrWhiteSpace(request.GoalRecord)
-                    ? string.Empty
-                    : request.GoalRecord.ToLowerInvariant(),
-                SDTRecord = request.SDTRecord,
-                HalfTimeHome = request.HalfTimeHome ?? 0,
-                HalfTimeAway = request.HalfTimeAway ?? 0,
-                FullTimeAway = request.FullTimeAway ?? 0,
-                FullTimeHome = request.FullTimeHome ?? 0,
-                BetStatus = request.BetStatus,
-                Action = request.ActionName
-            };
-
-            await repository.ExecuteAsync(criteria);
-
-            var result = new Result
-            {
-                ErrMsg = criteria.ErrMsg,
-                ErrCode = criteria.ErrCode
-            };
-
-            if (result.IsSuccessful && request.IsApplyHedging)
-            {
-                criteria.MatchId = request.HedgeMatchId;
-                await repository.ExecuteAsync(criteria);
-            }
-
-            return result;
         }
     }
 }

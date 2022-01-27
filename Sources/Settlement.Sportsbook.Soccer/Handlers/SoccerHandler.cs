@@ -18,10 +18,7 @@ namespace Settlement.Sportsbook.Soccer.Handlers
         IRequestHandler<CheckStatusRequest, Result>,
         IRequestHandler<UndoCheckingRequest, UndoCheckingModel>,
         IRequestHandler<InstantCalculationRequest, Result>,
-        IRequestHandler<MatchCheckingRequest, MatchGoalRecordModel>,
-        IRequestHandler<GetSpecificBetTypeRequest, List<string>>,
-        IRequestHandler<CheckingMarkedTicketsRequest, MarkedTickets>,
-        IRequestHandler<RefundRequest, Result>
+        IRequestHandler<MatchCheckingRequest, MatchGoalRecordModel>
 
     {
         private readonly IMatchService matchService;
@@ -64,14 +61,5 @@ namespace Settlement.Sportsbook.Soccer.Handlers
 
         public async Task<MatchGoalRecordModel> Handle(MatchCheckingRequest request, CancellationToken cancellationToken) =>
             await instantCalculateService.CalculateCheckingInfo(request);
-
-        public async Task<List<string>> Handle(GetSpecificBetTypeRequest request, CancellationToken cancellationToken) =>
-            await matchService.GetSpecificBetTypes(request);
-
-        public async Task<MarkedTickets> Handle(CheckingMarkedTicketsRequest request, CancellationToken cancellationToken) =>
-        await calculateService.CheckMarkedTickets(request);
-
-        public async Task<Result> Handle(RefundRequest request, CancellationToken cancellationToken) =>
-            await calculateService.Refund(request);
     }
 }

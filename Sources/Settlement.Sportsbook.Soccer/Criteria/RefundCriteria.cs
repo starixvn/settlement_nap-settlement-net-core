@@ -41,7 +41,7 @@ namespace Settlement.Sportsbook.Soccer.Criteria
 
         public override string GetSettingKey()
         {
-            return "NAP_Admin_Settlement_Refund_1_Push";
+            return "Refund";
         }
 
         public override bool IsValid()

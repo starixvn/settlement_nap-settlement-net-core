@@ -3,28 +3,18 @@ using Settlement.Core.Models;
 
 namespace Settlement.Sportsbook.Soccer.Requests
 {
-    public class RefundRequest : IRequest<Result>
+    public class RefundRequest : SettleBaseRequest, IRequest<Result>
     {
-        public int MatchId { get; set; }
+        public bool IsSettleAbandonedMatchBetDaq { get; set; }
 
-        public string ActionName { get; set; }
+        public bool IsSettleAbandonedMatchBetFair { get; set; }
 
-        public int? HalfTimeHome { get; set; }
+        public bool IsSettleAbandonedMatchIbc { get; set; }
 
-        public int? HalfTimeAway { get; set; }
+        public bool ExcludeTicketBetDaqInRefund { get; set; }
 
-        public int? FullTimeHome { get; set; }
+        public bool ExcludeTicketBetFairInRefund { get; set; }
 
-        public int? FullTimeAway { get; set; }
-
-        public string BetStatus { get; set; }
-
-        public byte SDTRecord { get; set; }
-
-        public string GoalRecord { get; set; }
-
-        public bool IsApplyHedging { get; set; }
-
-        public int HedgeMatchId { get; set; }
+        public bool IsDeterminedHedgeMatch { get; set; }
     }
 }
