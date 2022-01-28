@@ -35,9 +35,9 @@ namespace Settlement.Sportsbook.Aio.Services.Cricket
             }
             else
             {
-                var betTypeId = SplitBetType(resourceId, 0, 5);
+                var betTypeId = SplitBetType(resourceId, 0, 4);
                 resultDetail.BetTypeName = GetInnsBetTypeName(betTypeId, resourceId);
-                GroupInnsBetType(resultDetail, betTypeId);
+                GroupInnsBetType(resultDetail, betTypeId, resourceId);
                 GetInnsBetTypeInputType(resultDetail, betTypeId);
             }
         }
@@ -67,20 +67,32 @@ namespace Settlement.Sportsbook.Aio.Services.Cricket
                 const int overLength = 3;
                 const int ballPosition = 8;
                 const int ballLength = 2;
+                const int numberOfInnsPosition = 4;
+                const int numberOfInnsLength = 1;
+                var numberOfInns = SplitBetType(resourceId, numberOfInnsPosition, numberOfInnsLength);
+                var innsOrdinal = numberOfInns == 1 ? "1st" : "2nd";
                 if (GroupBetType.IncludedOvers.Contains(betTypeId))
                 {
                     var betTypeOvers = SplitBetType(resourceId, overPosition, overLength);
-                    betTypeName = string.Format(betTypeName, betTypeOvers);
+                    betTypeName = string.Format(betTypeName, innsOrdinal, betTypeOvers);
                 }
                 else if (GroupBetType.IncludedOversAndBalls.Contains(betTypeId))
                 {
                     var betTypeOvers = SplitBetType(resourceId, overPosition, overLength);
                     var betTypeBalls = SplitBetType(resourceId, ballPosition, ballLength);
-                    betTypeName = string.Format(betTypeName, betTypeOvers, betTypeBalls);
+                    betTypeName = string.Format(betTypeName, innsOrdinal, betTypeOvers, betTypeBalls);
+                }
+                else if (GroupBetType.IncludedPlayerName.Contains(betTypeId))
+                {
+                    //TODO
+                }
+                else if (GroupBetType.IncludedTwoPlayerName.Contains(betTypeId))
+                {
+                    //TODO
                 }
                 else
                 {
-                    // do  not thing
+                    betTypeName = string.Format(betTypeName, innsOrdinal);
                 }
             }
 
@@ -105,27 +117,25 @@ namespace Settlement.Sportsbook.Aio.Services.Cricket
             }
         }
 
-        private static void GroupInnsBetType(ResultDetail resultDetail, int betTypeId)
+        private static void GroupInnsBetType(ResultDetail resultDetail, int betTypeId, string resourceId)
         {
-            if (GroupBetType.FirstInnsHome.Contains(betTypeId))
+            const int numberOfInnsPosition = 4;
+            const int numberOfInnsLength = 1;
+            var numberOfInns = SplitBetType(resourceId, numberOfInnsPosition, numberOfInnsLength);
+            if (GroupBetType.InnsHome.Contains(betTypeId))
             {
-                resultDetail.GroupId = GroupBetType.FirstInnsHomeId;
-                resultDetail.GroupName = GroupBetType.FirstInnsHomeName;
+                resultDetail.GroupId = numberOfInns == 1 ? GroupBetType.FirstInnsHomeId : GroupBetType.SecondInnsHomeId;
+                resultDetail.GroupName = numberOfInns == 1 ? GroupBetType.FirstInnsHomeName : GroupBetType.SecondInnsHomeName;
             }
-            else if (GroupBetType.FirstInnsAway.Contains(betTypeId))
+            else if (GroupBetType.InnsAway.Contains(betTypeId))
             {
-                resultDetail.GroupId = GroupBetType.FirstInnsAwayId;
-                resultDetail.GroupName = GroupBetType.FirstInnsAwayName;
+                resultDetail.GroupId = numberOfInns == 1 ? GroupBetType.FirstInnsAwayId : GroupBetType.SecondInnsAwayId;
+                resultDetail.GroupName = numberOfInns == 1 ? GroupBetType.FirstInnsAwayName : GroupBetType.SecondInnsAwayName;
             }
-            else if (GroupBetType.SecondInnsHome.Contains(betTypeId))
+            else if (GroupBetType.Other.Contains(betTypeId))
             {
-                resultDetail.GroupId = GroupBetType.SecondInnsHomeId;
-                resultDetail.GroupName = GroupBetType.SecondInnsHomeName;
-            }
-            else if (GroupBetType.SecondInnsAway.Contains(betTypeId))
-            {
-                resultDetail.GroupId = GroupBetType.SecondInnsAwayId;
-                resultDetail.GroupName = GroupBetType.SecondInnsAwayName;
+                resultDetail.GroupId = GroupBetType.OtherId;
+                resultDetail.GroupName = GroupBetType.OtherName;
             }
             else
             {
@@ -158,6 +168,22 @@ namespace Settlement.Sportsbook.Aio.Services.Cricket
             else if (InputType.OneToSixGroup.Contains(betTypeId))
             {
                 resultDetail.InputType = InputType.OneToSix;
+            }
+            else if (InputType.PlayerSelectGroup.Contains(betTypeId))
+            {
+                resultDetail.InputType = InputType.PlayerSelect;
+            }
+            else if (InputType.PlayerMultipleSelectGroup.Contains(betTypeId))
+            {
+                resultDetail.InputType = InputType.PlayerMultipleSelect;
+            }
+            else if (InputType.DismissalMethodGroup.Contains(betTypeId))
+            {
+                resultDetail.InputType = InputType.DismissalMethod;
+            }
+            else if (InputType.YesNoGroup.Contains(betTypeId))
+            {
+                resultDetail.InputType = InputType.YesNo;
             }
             else
             {
