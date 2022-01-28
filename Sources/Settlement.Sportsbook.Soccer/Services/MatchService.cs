@@ -26,6 +26,8 @@ namespace Settlement.Sportsbook.Soccer.Services
         Task<MatchDetail> GetLastestMatchDetail(GetLastestMatchDetailRequest request);
 
         Task<List<string>> GetSpecificBetTypes(GetSpecificBetTypeRequest request);
+
+        Task<List<MatchMoveBetTicket>> GetMatchDetailThirdPartyBetTicket(GetMatchDetailThirdPartyBetTicketsRequest request);
     }
 
     public class MatchService : IMatchService
@@ -134,7 +136,7 @@ namespace Settlement.Sportsbook.Soccer.Services
             var betFairCriteria = new BetFairCheckingCriteria { MatchId = request.MatchId };
             var betFair = await repository.GetAsync<BetFair>(betFairCriteria);
 
-            return new Match()
+            return new Match
             {
                 MatchDetail = matchDetail,
                 ResultDetails = resultDetails,
@@ -216,6 +218,17 @@ namespace Settlement.Sportsbook.Soccer.Services
             var listBetType = await repository.FetchAsync<int>(criteria);
 
             return listBetType.Select(item => refDataService.GetBetTypeName(item.ToString())).ToList();
+        }
+
+        public async Task<List<MatchMoveBetTicket>> GetMatchDetailThirdPartyBetTicket(GetMatchDetailThirdPartyBetTicketsRequest request)
+        {
+            var criteria = new GetMatchDetailThirdPartyBetTicketCriteria
+            {
+                MatchId = request.MatchId
+            };
+
+            var listMatch = await repository.FetchAsync<MatchMoveBetTicket>(criteria);
+            return listMatch.ToList();
         }
     }
 }

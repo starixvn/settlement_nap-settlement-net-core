@@ -15,5 +15,9 @@
         public const string RefundFullTime = "REFUND-FT";
 
         public const string RefundAll = "REFUND";
+
+        public const string BetDaq = "BETDAQ";
+
+        public const string BetFair = "BETFAIR";
     }
 }

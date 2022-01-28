@@ -10,9 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Settlement.Core.Constants;
 using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Constants;
-using System;
 using System.Collections.Generic;
-using Kaden.Extensions;
 
 namespace Settlement.Sportsbook.Soccer.Services
 {
@@ -21,6 +19,10 @@ namespace Settlement.Sportsbook.Soccer.Services
         Task<MarkedTickets> CheckMarkedTickets(CheckingMarkedTicketsRequest request);
 
         Task<Result> Refund(RefundRequest request);
+
+        Task<Result> RefundRunningThirdPartyTickets(RefundRunningThirdPartyTicketRequest request);
+
+        Task<Result> MoveThirdPartyBetTickets(MoveBetRequest request);
     }
 
     public class RefundServiceImp : IRefundService
@@ -76,8 +78,8 @@ namespace Settlement.Sportsbook.Soccer.Services
                 AdminId = currentSession.UserId,
                 GoalSequence = string.IsNullOrWhiteSpace(request.GoalRecord)
                     ? string.Empty
-                    : request.GoalRecord.ToLowerInvariant(),
-                SDTRecord = SdtRecord(request),
+                    : request.GoalRecord,
+                SDTRecord = SettleDetermineTicket(request),
                 HalfTimeHome = request.HalfTimeHomeScore ?? 0,
                 HalfTimeAway = request.HalfTimeAwayScore ?? 0,
                 FullTimeAway = request.FinalAwayScore ?? 0,
@@ -105,7 +107,7 @@ namespace Settlement.Sportsbook.Soccer.Services
             return result;
         }
 
-        private void RefundHedgeMatch(RefundRequest request, RefundCriteria criteria)
+        private static void RefundHedgeMatch(RefundRequest request, RefundCriteria criteria)
         {
             if (!request.ActionName.Equals(ActionType.RefundHalfTime) && request.IsDeterminedHedgeMatch)
             {
@@ -117,7 +119,7 @@ namespace Settlement.Sportsbook.Soccer.Services
         private void GetResourceResultAndBetStatusRefund(RefundRequest request, RefundCriteria criteria)
         {
             var goalCondition = mapper.Map<RefundRequest, GoalCondition>(request);
-            var resources = new List<XmlResource>();
+            List<XmlResource> resources;
             var actionName = request.ActionName;
 
             var isAbandonedMatch = IsAbandonedMatch(request);
@@ -145,7 +147,7 @@ namespace Settlement.Sportsbook.Soccer.Services
                 : string.Empty;
         }
 
-        private byte SdtRecord(RefundRequest request)
+        private static byte SettleDetermineTicket(RefundRequest request)
         {
             var sdtRecord = new int();
             var dictionary = new Dictionary<int, bool>
@@ -167,18 +169,51 @@ namespace Settlement.Sportsbook.Soccer.Services
             return (byte)sdtRecord;
         }
 
-        private bool IsAbandonedMatch(RefundRequest request)
+        private static bool IsAbandonedMatch(RefundRequest request)
         {
             return request.IsSettleAbandonedMatchIbc || request.IsSettleAbandonedMatchBetDaq || request.IsSettleAbandonedMatchBetFair;
         }
 
-        private void AbandonedFinalValue(RefundRequest request, RefundCriteria criteria)
+        private static void AbandonedFinalValue(RefundRequest request, RefundCriteria criteria)
         {
             if (request.ActionName.Equals(ActionType.RefundAll))
             {
                 criteria.FullTimeAway = request.HalfTimeAwayScore ?? 0;
                 criteria.FullTimeHome = request.HalfTimeHomeScore ?? 0;
             }
+        }
+
+        public async Task<Result> RefundRunningThirdPartyTickets(RefundRunningThirdPartyTicketRequest request)
+        {
+            var criteria = new RefundRunningThirdPartyTicketCriteria
+            {
+                ActionName = request.ActionName,
+                MatchId = request.MatchId,
+                Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString(),
+                AdminId = currentSession.UserId,
+            };
+            await repository.ExecuteAsync(criteria);
+
+            return new Result
+            {
+                ErrCode = criteria.ErrCode,
+                ErrMsg = criteria.ErrMsg
+            };
+        }
+
+        public async Task<Result> MoveThirdPartyBetTickets(MoveBetRequest request)
+        {
+            var criteria = mapper.Map<MoveBetRequest, MoveThirdPartyBetTicketCriteria>(request);
+            criteria.AdminId = currentSession.UserId;
+            criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
+
+            await repository.ExecuteAsync(criteria);
+
+            return new Result
+            {
+                ErrCode = criteria.ErrCode,
+                ErrMsg = criteria.ErrMsg
+            };
         }
     }
 }

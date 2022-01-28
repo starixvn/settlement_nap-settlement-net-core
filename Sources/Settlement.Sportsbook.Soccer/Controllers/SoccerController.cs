@@ -50,5 +50,14 @@ namespace Settlement.Sportsbook.Soccer.Controllers
 
         [Route("refund"), HttpPost]
         public async Task<IActionResult> Refund(RefundRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+
+        [Route("refund-running-third-party-ticket"), HttpPost]
+        public async Task<IActionResult> RefundRunningThirdPartyTickets(RefundRunningThirdPartyTicketRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+
+        [Route("move-third-party-bet-ticket"), HttpPost]
+        public async Task<IActionResult> MoveThirdPartyBetTickets(MoveBetRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+
+        [Route("third-party-bet-tickets-checking"), HttpPost]
+        public async Task<IActionResult> ThirdPartyBetTicketsChecking(GetMatchDetailThirdPartyBetTicketsRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
     }
 }

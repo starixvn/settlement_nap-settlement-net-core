@@ -1,6 +1,6 @@
 ﻿namespace Settlement.Sportsbook.Soccer.Requests
 {
-    public abstract class SettleBaseRequest
+    public class SettleBaseRequest
     {
         private string goalRecord;
 
