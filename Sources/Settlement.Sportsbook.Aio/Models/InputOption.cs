@@ -11,5 +11,9 @@ namespace Settlement.Sportsbook.Aio.Models
         public string Value { get; set; }
 
         public string OptionName { get; set; }
+
+        public string ResourceId { get; set; }
+
+        public string OddsInfo { get; set; }
     }
 }

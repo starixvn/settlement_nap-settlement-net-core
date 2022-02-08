@@ -35,17 +35,6 @@ namespace Settlement.Sportsbook.Aio.Constants
             9671, 9651, 9675, 9657, 9637, 9617, 9625, 9631, 9731, 9737
         };
 
-        public static List<int> SecondInnsHome => new List<int>
-        {
-            94842, 94902, 94222, 94102, 94282, 94342, 94542, 94602, 96802, 96622,
-            96762, 96682, 96502, 96722, 96562, 96362, 96162, 96242, 96302, 97302, 97362
-        };
-
-        public static List<int> SecondInnsAway => new List<int>
-        {
-            94852, 94912, 94232, 94112, 94292, 94352, 94552, 94612
-        };
-
         public static List<int> MatchBetType => new List<int>
         {
             9446, 9447, 9449, 9450, 9452, 9453, 9615, 9451
@@ -65,11 +54,6 @@ namespace Settlement.Sportsbook.Aio.Constants
         public static List<int> IncludedPlayerName => new List<int>
         {
             9680, 9676, 9730, 9736, 9690, 9686, 9731, 9737
-        };
-
-        public static List<int> IncludedTwoPlayerName => new List<int>
-        {
-            9662, 9663
         };
     }
 }

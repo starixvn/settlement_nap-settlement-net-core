@@ -3,6 +3,9 @@ using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Constants;
 using System;
 using System.Collections.Generic;
+using Fanex.Data.Repository;
+using Settlement.Sportsbook.Aio.Criteria.Cricket;
+using System.Linq;
 
 namespace Settlement.Sportsbook.Aio.Services.Cricket
 {
@@ -13,17 +16,37 @@ namespace Settlement.Sportsbook.Aio.Services.Cricket
 
     public class CricketBetTypeService : ICricketBetTypeService
     {
+        private readonly IDynamicRepository repository;
         private readonly int InnsBetTypeMinLength = 5;
 
-        public void GroupBetTypesAndGenerateNames(List<ResultDetail> resultDetails)
+        public CricketBetTypeService()
         {
+            repository = new DynamicRepository();
+        }
+
+        public void GroupBetTypesAndGenerateNames(List<ResultDetail> resultDetails)
+        { 
+            var inputOptions = new List<InputOption>();
+            var existPlayerNameResult = resultDetails.Exists((result) =>
+            {
+                var betTypeId = SplitBetType(result.ResourceId, 0, 4);
+                return GroupBetType.IncludedPlayerName.Contains(betTypeId) || InputType.PlayerSelectGroup.Contains(betTypeId) || InputType.PlayerMultipleSelectGroup.Contains(betTypeId);
+            });
+
+            if (existPlayerNameResult)
+            {
+                var getPlayerCriteria = new GetPlayerInfoCriteria { MatchId = resultDetails.FirstOrDefault().MatchId };
+                inputOptions = repository.Fetch<InputOption>(getPlayerCriteria).ToList();
+                inputOptions.ForEach(option => option.OptionName = option.OddsInfo.Split(',')[1]);
+            }
+
             resultDetails.ForEach((resultDetail) =>
             {
-                GenerateBetTypeNameAndGroup(resultDetail);
+                GenerateBetTypeNameAndGroup(resultDetail, inputOptions);
             });
         }
 
-        private void GenerateBetTypeNameAndGroup(ResultDetail resultDetail)
+        private void GenerateBetTypeNameAndGroup(ResultDetail resultDetail, List<InputOption> inputOptions)
         {
             var resourceId = resultDetail.ResourceId;
             if (resourceId.Length < InnsBetTypeMinLength)
@@ -36,9 +59,9 @@ namespace Settlement.Sportsbook.Aio.Services.Cricket
             else
             {
                 var betTypeId = SplitBetType(resourceId, 0, 4);
-                resultDetail.BetTypeName = GetInnsBetTypeName(betTypeId, resourceId);
+                resultDetail.BetTypeName = GetInnsBetTypeName(betTypeId, resourceId, inputOptions);
                 GroupInnsBetType(resultDetail, betTypeId, resourceId);
-                GetInnsBetTypeInputType(resultDetail, betTypeId);
+                GetInnsBetTypeInputType(resultDetail, betTypeId, inputOptions);
             }
         }
 
@@ -53,7 +76,7 @@ namespace Settlement.Sportsbook.Aio.Services.Cricket
             return betTypeName;
         }
 
-        private static string GetInnsBetTypeName(int betTypeId, string resourceId)
+        private static string GetInnsBetTypeName(int betTypeId, string resourceId, List<InputOption> inputOptions)
         {
             var betTypeName = string.Empty;
             if (BetType.CricketBetTypeNames.ContainsKey(betTypeId))
@@ -84,11 +107,8 @@ namespace Settlement.Sportsbook.Aio.Services.Cricket
                 }
                 else if (GroupBetType.IncludedPlayerName.Contains(betTypeId))
                 {
-                    //TODO
-                }
-                else if (GroupBetType.IncludedTwoPlayerName.Contains(betTypeId))
-                {
-                    //TODO
+                    var playerName = inputOptions.Find(option => option.ResourceId == resourceId);
+                    betTypeName = string.Format(betTypeName, innsOrdinal, playerName);
                 }
                 else
                 {
@@ -159,7 +179,7 @@ namespace Settlement.Sportsbook.Aio.Services.Cricket
             }
         }
 
-        private static void GetInnsBetTypeInputType(ResultDetail resultDetail, int betTypeId)
+        private static void GetInnsBetTypeInputType(ResultDetail resultDetail, int betTypeId, List<InputOption> inputOptions)
         {
             if (InputType.CaughtOrNotGroup.Contains(betTypeId))
             {
@@ -172,10 +192,12 @@ namespace Settlement.Sportsbook.Aio.Services.Cricket
             else if (InputType.PlayerSelectGroup.Contains(betTypeId))
             {
                 resultDetail.InputType = InputType.PlayerSelect;
+                resultDetail.InputOptions = inputOptions.FindAll(option => option.ResourceId == resultDetail.ResourceId);
             }
             else if (InputType.PlayerMultipleSelectGroup.Contains(betTypeId))
             {
                 resultDetail.InputType = InputType.PlayerMultipleSelect;
+                resultDetail.InputOptions = inputOptions.FindAll(option => option.ResourceId == resultDetail.ResourceId);
             }
             else if (InputType.DismissalMethodGroup.Contains(betTypeId))
             {
