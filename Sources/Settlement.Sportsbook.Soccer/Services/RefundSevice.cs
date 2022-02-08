@@ -11,6 +11,8 @@ using Settlement.Core.Constants;
 using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Constants;
 using System.Collections.Generic;
+using System.Linq;
+using System;
 
 namespace Settlement.Sportsbook.Soccer.Services
 {
@@ -76,18 +78,22 @@ namespace Settlement.Sportsbook.Soccer.Services
                 MatchId = request.MatchId,
                 Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString(),
                 AdminId = currentSession.UserId,
-                GoalSequence = string.IsNullOrWhiteSpace(request.GoalRecord)
-                    ? string.Empty
-                    : request.GoalRecord,
-                SDTRecord = SettleDetermineTicket(request),
+                GoalSequence = request.GoalRecord,
                 HalfTimeHome = request.HalfTimeHomeScore ?? 0,
                 HalfTimeAway = request.HalfTimeAwayScore ?? 0,
                 FullTimeAway = request.FinalAwayScore ?? 0,
                 FullTimeHome = request.FinalHomeScore ?? 0,
                 Action = request.ActionName,
+                SDTRecord = SettleDetermineTicket(request),
+                BetStatus = GetBetStatus(request),
+                ResourceResult = GetResourceResult(request)
             };
 
-            GetResourceResultAndBetStatusRefund(request, criteria);
+            if (IsAbandonedMatch(request) && request.ActionName.Equals(ActionType.RefundAll))
+            {
+                criteria.FullTimeAway = request.HalfTimeAwayScore ?? 0;
+                criteria.FullTimeHome = request.HalfTimeHomeScore ?? 0;
+            }
 
             await repository.ExecuteAsync(criteria);
 
@@ -97,9 +103,20 @@ namespace Settlement.Sportsbook.Soccer.Services
                 ErrCode = criteria.ErrCode
             };
 
+            return await RefundHedgeMatch(result, request, criteria);
+        }
+
+        private async Task<Result> RefundHedgeMatch(Result result, RefundRequest request, RefundCriteria criteria)
+        {
             if (result.IsSuccessful && request.IsApplyHedging)
             {
-                RefundHedgeMatch(request, criteria);
+                if (!request.ActionName.Equals(ActionType.RefundHalfTime) && !request.IsDeterminedHedgeMatch)
+                {
+                    request.IsSettleAbandonedMatchIbc = false;
+                    criteria.SDTRecord = SettleDetermineTicket(request);
+                    criteria.ResourceResult = string.Empty;
+                }
+
                 criteria.MatchId = request.HedgeMatchId;
                 await repository.ExecuteAsync(criteria);
             }
@@ -107,30 +124,29 @@ namespace Settlement.Sportsbook.Soccer.Services
             return result;
         }
 
-        private static void RefundHedgeMatch(RefundRequest request, RefundCriteria criteria)
+        private string GetBetStatus(RefundRequest request)
         {
-            if (!request.ActionName.Equals(ActionType.RefundHalfTime) && request.IsDeterminedHedgeMatch)
+            if (request.ActionName.Equals(ActionType.RefundHalfTime))
             {
-                criteria.SDTRecord -= SettleAbandonedMatchIbcValue;
-                criteria.ResourceResult = string.Empty;
+                return string.Empty;
             }
+
+            return IsAbandonedMatch(request) ? betStatusAllService.GetBetStatusRefund(request) : request.BetStatus;
         }
 
-        private void GetResourceResultAndBetStatusRefund(RefundRequest request, RefundCriteria criteria)
+        private string GetResourceResult(RefundRequest request)
         {
             var goalCondition = mapper.Map<RefundRequest, GoalCondition>(request);
             List<XmlResource> resources;
             var actionName = request.ActionName;
 
-            var isAbandonedMatch = IsAbandonedMatch(request);
-
-            if (!actionName.Equals(ActionType.RefundHalfTime) && isAbandonedMatch)
+            if (IsAbandonedMatch(request) && actionName.Equals(ActionType.RefundFullTime))
             {
-                goalCondition.GoalRecord = request.GoalRecord;
-                resources = actionName.Equals(ActionType.RefundFullTime) ? resourceService.FullTimeResourcesSettleDetermined(goalCondition) :
-                                        resourceService.AllResourcesSettleDetermined(goalCondition);
-                criteria.BetStatus = betStatusAllService.GetBetStatusRefund(request);
-                AbandonedFinalValue(request, criteria);
+                resources = resourceService.FullTimeResourcesSettleDetermined(goalCondition);
+            }
+            else if (IsAbandonedMatch(request) && actionName.Equals(ActionType.RefundAll))
+            {
+                resources = resourceService.AllResourcesSettleDetermined(goalCondition);
             }
             else
             {
@@ -142,14 +158,13 @@ namespace Settlement.Sportsbook.Soccer.Services
                 };
             }
 
-            criteria.ResourceResult = resources.Count > 0
+            return resources.Count > 0
                 ? xmlConvertService.Serialize(new XmlResults { Resources = resources })
                 : string.Empty;
         }
 
         private static byte SettleDetermineTicket(RefundRequest request)
         {
-            var sdtRecord = new int();
             var dictionary = new Dictionary<int, bool>
             {
                 { 1, request.IsSettleAbandonedMatchBetDaq},
@@ -158,29 +173,15 @@ namespace Settlement.Sportsbook.Soccer.Services
                 { 8, request.ExcludeTicketBetDaqInRefund },
                 { 16, request.ExcludeTicketBetFairInRefund }
             };
-            foreach (var item in dictionary)
-            {
-                if (item.Value)
-                {
-                    sdtRecord += item.Key;
-                }
-            }
 
-            return (byte)sdtRecord;
+            var value = dictionary.Where(item => item.Value).Sum(item => item.Key);
+
+            return (byte)value;
         }
 
         private static bool IsAbandonedMatch(RefundRequest request)
         {
             return request.IsSettleAbandonedMatchIbc || request.IsSettleAbandonedMatchBetDaq || request.IsSettleAbandonedMatchBetFair;
-        }
-
-        private static void AbandonedFinalValue(RefundRequest request, RefundCriteria criteria)
-        {
-            if (request.ActionName.Equals(ActionType.RefundAll))
-            {
-                criteria.FullTimeAway = request.HalfTimeAwayScore ?? 0;
-                criteria.FullTimeHome = request.HalfTimeHomeScore ?? 0;
-            }
         }
 
         public async Task<Result> RefundRunningThirdPartyTickets(RefundRunningThirdPartyTicketRequest request)
@@ -192,6 +193,7 @@ namespace Settlement.Sportsbook.Soccer.Services
                 Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString(),
                 AdminId = currentSession.UserId,
             };
+
             await repository.ExecuteAsync(criteria);
 
             return new Result

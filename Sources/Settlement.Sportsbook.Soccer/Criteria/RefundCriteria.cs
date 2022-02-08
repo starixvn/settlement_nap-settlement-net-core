@@ -31,8 +31,6 @@ namespace Settlement.Sportsbook.Soccer.Criteria
 
         public string GoalSequence { get; set; }
 
-        public string ServiceCommand { get; set; }
-
         public byte SDTRecord { get; set; }
 
         public int ErrCode { get; set; }
