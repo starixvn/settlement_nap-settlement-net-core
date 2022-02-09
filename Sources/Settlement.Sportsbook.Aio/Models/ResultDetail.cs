@@ -62,5 +62,9 @@ namespace Settlement.Sportsbook.Aio.Models
         public List<InputOption> InputOptions { get; set; }
 
         public int MatchId { get; set; }
+
+        public string HomeName { get; set; }
+
+        public string AwayName { get; set; }
     }
 }

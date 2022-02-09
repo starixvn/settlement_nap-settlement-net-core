@@ -13,6 +13,7 @@ namespace Settlement.Sportsbook.Aio.Constants
         public const int PlayerMultipleSelect = 6;
         public const int DismissalMethod = 7;
         public const int YesNo = 8;
+        public const int ScoreWithLabel = 9;
 
         public static List<int> HomeAwayGroup => new List<int>
         {
@@ -52,6 +53,11 @@ namespace Settlement.Sportsbook.Aio.Constants
         public static List<int> YesNoGroup = new List<int>
         {
             9624, 9630, 9625, 9631
+        };
+
+        public static List<int> ScoreWithLabelGroup => new List<int>
+        {
+            9680, 9676, 9730, 9736, 9690, 9686, 9731, 9737
         };
     }
 }

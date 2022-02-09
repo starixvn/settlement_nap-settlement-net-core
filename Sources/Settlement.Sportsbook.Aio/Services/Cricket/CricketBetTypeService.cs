@@ -25,7 +25,8 @@ namespace Settlement.Sportsbook.Aio.Services.Cricket
         }
 
         public void GroupBetTypesAndGenerateNames(List<ResultDetail> resultDetails)
-        { 
+        {
+            const char semicolon = ',';
             var inputOptions = new List<InputOption>();
             var existPlayerNameResult = resultDetails.Exists((result) =>
             {
@@ -36,8 +37,8 @@ namespace Settlement.Sportsbook.Aio.Services.Cricket
             if (existPlayerNameResult)
             {
                 var getPlayerCriteria = new GetPlayerInfoCriteria { MatchId = resultDetails.FirstOrDefault().MatchId };
-                inputOptions = repository.Fetch<InputOption>(getPlayerCriteria).ToList();
-                inputOptions.ForEach(option => option.OptionName = option.OddsInfo.Split(',')[1]);
+                inputOptions = repository.Fetch<InputOption>(getPlayerCriteria).Where((option) => option.OddsInfo.Contains(semicolon)).ToList();
+                inputOptions.ForEach((option) => option.OptionName = option.OddsInfo.Split(semicolon)[1]);
             }
 
             resultDetails.ForEach((resultDetail) =>
@@ -60,6 +61,7 @@ namespace Settlement.Sportsbook.Aio.Services.Cricket
             {
                 var betTypeId = SplitBetType(resourceId, 0, 4);
                 resultDetail.BetTypeName = GetInnsBetTypeName(betTypeId, resourceId, inputOptions);
+                GetInnsInputLabel(resultDetail, betTypeId, inputOptions);
                 GroupInnsBetType(resultDetail, betTypeId, resourceId);
                 GetInnsBetTypeInputType(resultDetail, betTypeId, inputOptions);
             }
@@ -104,11 +106,6 @@ namespace Settlement.Sportsbook.Aio.Services.Cricket
                     var betTypeOvers = SplitBetType(resourceId, overPosition, overLength);
                     var betTypeBalls = SplitBetType(resourceId, ballPosition, ballLength);
                     betTypeName = string.Format(betTypeName, innsOrdinal, betTypeOvers, betTypeBalls);
-                }
-                else if (GroupBetType.IncludedPlayerName.Contains(betTypeId))
-                {
-                    var playerName = inputOptions.Find(option => option.ResourceId == resourceId);
-                    betTypeName = string.Format(betTypeName, innsOrdinal, playerName);
                 }
                 else
                 {
@@ -156,6 +153,11 @@ namespace Settlement.Sportsbook.Aio.Services.Cricket
             {
                 resultDetail.GroupId = GroupBetType.OtherId;
                 resultDetail.GroupName = GroupBetType.OtherName;
+            }
+            else if (GroupBetType.MatchBetType.Contains(betTypeId))
+            {
+                resultDetail.GroupId = GroupBetType.MatchBetTypeId;
+                resultDetail.GroupName = GroupBetType.MatchBetTypeName;
             }
             else
             {
@@ -207,6 +209,14 @@ namespace Settlement.Sportsbook.Aio.Services.Cricket
             {
                 resultDetail.InputType = InputType.YesNo;
             }
+            else if (InputType.ScoreWithLabelGroup.Contains(betTypeId))
+            {
+                resultDetail.InputType = InputType.ScoreWithLabel;
+            }
+            else if (InputType.CoupleScoresGroup.Contains(betTypeId))
+            {
+                resultDetail.InputType = InputType.CoupleScores;
+            }
             else
             {
                 resultDetail.InputType = InputType.SingleScore;
@@ -216,6 +226,25 @@ namespace Settlement.Sportsbook.Aio.Services.Cricket
         private static int SplitBetType(string resourceId, int startIndex, int length)
         {
             return Convert.ToInt32(resourceId.Substring(startIndex, length));
+        }
+
+        private static void GetInnsInputLabel(ResultDetail resultDetail, int betTypeId, List<InputOption> inputOptions)
+        {
+            if (GroupBetType.IncludedPlayerName.Contains(betTypeId))
+            {
+                var option = inputOptions.Find(option => option.ResourceId == resultDetail.ResourceId);
+                resultDetail.HomeName = option == null ? string.Empty : option.OptionName;
+            }
+            else if (GroupBetType.IncludedTwoPlayerName.Contains(betTypeId))
+            {
+                var playerNames = inputOptions.FindAll(option => option.ResourceId == resultDetail.ResourceId);
+                resultDetail.HomeName = playerNames.Count < 2 || playerNames[0] == null ? string.Empty : playerNames[0].OptionName;
+                resultDetail.AwayName = playerNames.Count < 2 || playerNames[1] == null ? string.Empty : playerNames[1].OptionName;
+            }
+            else
+            {
+
+            }
         }
     }
 }
