@@ -49,12 +49,15 @@ namespace Settlement.Sportsbook.Soccer.Controllers
         public async Task<IActionResult> CheckingMarkedTickets(CheckingMarkedTicketsRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
         [Route("refund"), HttpPost]
+        [LogRequestResponse]
         public async Task<IActionResult> Refund(RefundRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
         [Route("refund-running-third-party-ticket"), HttpPost]
+        [LogRequestResponse]
         public async Task<IActionResult> RefundRunningThirdPartyTickets(RefundRunningThirdPartyTicketRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
         [Route("move-third-party-bet-ticket"), HttpPost]
+        [LogRequestResponse]
         public async Task<IActionResult> MoveThirdPartyBetTickets(MoveBetRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
         [Route("third-party-bet-tickets-checking"), HttpPost]

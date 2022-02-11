@@ -29,8 +29,6 @@ namespace Settlement.Sportsbook.Soccer.Services
 
     public class RefundServiceImp : IRefundService
     {
-        private const byte SettleAbandonedMatchIbcValue = 4;
-
         private readonly IDynamicRepository repository;
 
         private readonly INapSession currentSession;

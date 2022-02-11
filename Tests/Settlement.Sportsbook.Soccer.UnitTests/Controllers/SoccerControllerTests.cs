@@ -1,10 +1,12 @@
-﻿using MediatR;
+﻿using System.Collections.Generic;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using NSubstitute;
 using Settlement.Sportsbook.Soccer.Controllers;
 using System.Threading.Tasks;
 using Xunit;
 using Settlement.Core.Models;
+using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Requests;
 using Match = Settlement.Sportsbook.Soccer.Models.Match;
 using MatchDetail = Settlement.Sportsbook.Soccer.Models.MatchDetail;
@@ -60,7 +62,7 @@ namespace Settlement.Sportsbook.Soccer.UnitTests.Controllers
         }
 
         [Fact]
-        public async Task GEtLastestMatchDetail_Always_ReturnOkStatus()
+        public async Task GetLastestMatchDetail_Always_ReturnOkStatus()
         {
             var request = new GetLastestMatchDetailRequest();
             mediator.Send(Arg.Any<GetLastestMatchDetailRequest>()).Returns(new MatchDetail());
@@ -68,6 +70,54 @@ namespace Settlement.Sportsbook.Soccer.UnitTests.Controllers
             var actual = await controller.GetLastestMatchDetail(request) as OkObjectResult;
 
             Assert.IsType<MatchDetail>(actual.Value);
+            Assert.Equal(200, actual.StatusCode);
+        }
+
+        [Fact]
+        public async Task Refund_Always_ReturnOkStatus()
+        {
+            var request = new RefundRequest();
+            mediator.Send(Arg.Any<RefundRequest>()).Returns(new Result());
+
+            var actual = await controller.Refund(request) as OkObjectResult;
+
+            Assert.IsType<Result>(actual.Value);
+            Assert.Equal(200, actual.StatusCode);
+        }
+
+        [Fact]
+        public async Task RefundRunningThirdPartyTickets_Always_ReturnOkStatus()
+        {
+            var request = new RefundRunningThirdPartyTicketRequest();
+            mediator.Send(Arg.Any<RefundRunningThirdPartyTicketRequest>()).Returns(new Result());
+
+            var actual = await controller.RefundRunningThirdPartyTickets(request) as OkObjectResult;
+
+            Assert.IsType<Result>(actual.Value);
+            Assert.Equal(200, actual.StatusCode);
+        }
+
+        [Fact]
+        public async Task MoveThirdPartyBetTickets_Always_ReturnOkStatus()
+        {
+            var request = new MoveBetRequest();
+            mediator.Send(Arg.Any<MoveBetRequest>()).Returns(new Result());
+
+            var actual = await controller.MoveThirdPartyBetTickets(request) as OkObjectResult;
+
+            Assert.IsType<Result>(actual.Value);
+            Assert.Equal(200, actual.StatusCode);
+        }
+
+        [Fact]
+        public async Task ThirdPartyBetTicketsChecking_Always_ReturnOkStatus()
+        {
+            var request = new GetMatchDetailThirdPartyBetTicketsRequest();
+            mediator.Send(Arg.Any<GetMatchDetailThirdPartyBetTicketsRequest>()).Returns(new List<MatchMoveBetTicket>());
+
+            var actual = await controller.ThirdPartyBetTicketsChecking(request) as OkObjectResult;
+
+            Assert.IsType<List<MatchMoveBetTicket>>(actual.Value);
             Assert.Equal(200, actual.StatusCode);
         }
     }
