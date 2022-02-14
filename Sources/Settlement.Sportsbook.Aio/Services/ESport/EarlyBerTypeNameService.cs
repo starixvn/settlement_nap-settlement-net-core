@@ -187,6 +187,10 @@ namespace Settlement.Sportsbook.Aio.Services.ESport
                     return $"Map {mapX} First Barrack Time";
                 case BetType.ESportBetType.MapFirstBarrackLocation:
                     return $"Map {mapX} First Barrack Location";
+                case BetType.ESportBetType.MapTotalBombDetonation:
+                    return $"Map {mapX} Total Bomb Detonation (excl. OT)";
+                case BetType.ESportBetType.MapTotalBombDefuses:
+                    return $"Map {mapX} Total Bomb Defuses (excl. OT)";
                 default:
                     return BetTypeNameGroupSix(betTypeId, resourceId);
             }

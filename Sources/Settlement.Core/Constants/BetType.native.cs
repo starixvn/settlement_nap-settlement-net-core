@@ -154,6 +154,9 @@ namespace Settlement.Core.Constants
 
             public const int MapFirstBarrackLocation = 9138;
 
+            public const int MapTotalBombDetonation = 9139;
+
+            public const int MapTotalBombDefuses = 9140;
         }
 
         #endregion E-Sport early bet types
