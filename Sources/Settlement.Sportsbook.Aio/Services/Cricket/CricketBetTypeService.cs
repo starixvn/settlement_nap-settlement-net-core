@@ -38,7 +38,12 @@ namespace Settlement.Sportsbook.Aio.Services.Cricket
             {
                 var getPlayerCriteria = new GetPlayerInfoCriteria { MatchId = resultDetails.FirstOrDefault().MatchId };
                 inputOptions = repository.Fetch<InputOption>(getPlayerCriteria).Where((option) => option.OddsInfo.Contains(semicolon)).ToList();
-                inputOptions.ForEach((option) => option.OptionName = option.OddsInfo.Split(semicolon)[1]);
+                inputOptions.ForEach((option) =>
+                {
+                    var oddsInfos = option.OddsInfo.Split(semicolon);
+                    option.PlayerId = Convert.ToInt32(oddsInfos[0]);
+                    option.OptionName = oddsInfos[1];
+                });
             }
 
             resultDetails.ForEach((resultDetail) =>
@@ -194,7 +199,7 @@ namespace Settlement.Sportsbook.Aio.Services.Cricket
             else if (InputType.PlayerSelectGroup.Contains(betTypeId))
             {
                 resultDetail.InputType = InputType.PlayerSelect;
-                resultDetail.InputOptions = inputOptions.FindAll(option => option.ResourceId == resultDetail.ResourceId);
+                resultDetail.InputOptions = inputOptions.FindAll(option => option.ResourceId == resultDetail.ResourceId).Take(2).ToList();
             }
             else if (InputType.PlayerMultipleSelectGroup.Contains(betTypeId))
             {

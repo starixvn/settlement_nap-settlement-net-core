@@ -66,5 +66,7 @@ namespace Settlement.Sportsbook.Aio.Models
         public string HomeName { get; set; }
 
         public string AwayName { get; set; }
+
+        public string OtherInfo { get; set; }
     }
 }
