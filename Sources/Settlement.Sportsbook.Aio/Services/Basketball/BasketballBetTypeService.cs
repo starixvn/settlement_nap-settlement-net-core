@@ -19,9 +19,9 @@ namespace Settlement.Sportsbook.Aio.Services.Basketball
         private const int halfBetTypeLength = 5;
         private const int quarterBetTypeLength = 7;
         private const int betTypeIndexLength = 2;
-        private readonly RefDataService refDataService;
+        private readonly IRefDataService refDataService;
 
-        public BasketballBetTypeServiceImp(RefDataService refDataService)
+        public BasketballBetTypeServiceImp(IRefDataService refDataService)
         {
             this.refDataService = refDataService;
         }

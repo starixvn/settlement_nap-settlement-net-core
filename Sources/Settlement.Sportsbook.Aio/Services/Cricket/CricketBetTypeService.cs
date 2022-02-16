@@ -18,10 +18,11 @@ namespace Settlement.Sportsbook.Aio.Services.Cricket
     {
         private readonly IDynamicRepository repository;
         private readonly int InnsBetTypeMinLength = 5;
+        private readonly int MaxPlayerSelected = 2;
 
-        public CricketBetTypeService()
+        public CricketBetTypeService(IDynamicRepository repository)
         {
-            repository = new DynamicRepository();
+            this.repository = repository;
         }
 
         public void GroupBetTypesAndGenerateNames(List<ResultDetail> resultDetails)
@@ -65,7 +66,7 @@ namespace Settlement.Sportsbook.Aio.Services.Cricket
             else
             {
                 var betTypeId = SplitBetType(resourceId, 0, 4);
-                resultDetail.BetTypeName = GetInnsBetTypeName(betTypeId, resourceId, inputOptions);
+                resultDetail.BetTypeName = GetInnsBetTypeName(betTypeId, resourceId);
                 GetInnsInputLabel(resultDetail, betTypeId, inputOptions);
                 GroupInnsBetType(resultDetail, betTypeId, resourceId);
                 GetInnsBetTypeInputType(resultDetail, betTypeId, inputOptions);
@@ -83,7 +84,7 @@ namespace Settlement.Sportsbook.Aio.Services.Cricket
             return betTypeName;
         }
 
-        private static string GetInnsBetTypeName(int betTypeId, string resourceId, List<InputOption> inputOptions)
+        private static string GetInnsBetTypeName(int betTypeId, string resourceId)
         {
             var betTypeName = string.Empty;
             if (BetType.CricketBetTypeNames.ContainsKey(betTypeId))
@@ -186,7 +187,7 @@ namespace Settlement.Sportsbook.Aio.Services.Cricket
             }
         }
 
-        private static void GetInnsBetTypeInputType(ResultDetail resultDetail, int betTypeId, List<InputOption> inputOptions)
+        private void GetInnsBetTypeInputType(ResultDetail resultDetail, int betTypeId, List<InputOption> inputOptions)
         {
             if (InputType.CaughtOrNotGroup.Contains(betTypeId))
             {
@@ -199,7 +200,7 @@ namespace Settlement.Sportsbook.Aio.Services.Cricket
             else if (InputType.PlayerSelectGroup.Contains(betTypeId))
             {
                 resultDetail.InputType = InputType.PlayerSelect;
-                resultDetail.InputOptions = inputOptions.FindAll(option => option.ResourceId == resultDetail.ResourceId).Take(2).ToList();
+                resultDetail.InputOptions = inputOptions.FindAll(option => option.ResourceId == resultDetail.ResourceId).Take(MaxPlayerSelected).ToList();
             }
             else if (InputType.PlayerMultipleSelectGroup.Contains(betTypeId))
             {
@@ -233,7 +234,7 @@ namespace Settlement.Sportsbook.Aio.Services.Cricket
             return Convert.ToInt32(resourceId.Substring(startIndex, length));
         }
 
-        private static void GetInnsInputLabel(ResultDetail resultDetail, int betTypeId, List<InputOption> inputOptions)
+        private void GetInnsInputLabel(ResultDetail resultDetail, int betTypeId, List<InputOption> inputOptions)
         {
             if (GroupBetType.IncludedPlayerName.Contains(betTypeId))
             {
@@ -243,12 +244,12 @@ namespace Settlement.Sportsbook.Aio.Services.Cricket
             else if (GroupBetType.IncludedTwoPlayerName.Contains(betTypeId))
             {
                 var playerNames = inputOptions.FindAll(option => option.ResourceId == resultDetail.ResourceId);
-                resultDetail.HomeName = playerNames.Count < 2 || playerNames[0] == null ? string.Empty : playerNames[0].OptionName;
-                resultDetail.AwayName = playerNames.Count < 2 || playerNames[1] == null ? string.Empty : playerNames[1].OptionName;
+                resultDetail.HomeName = playerNames.Count < MaxPlayerSelected || playerNames[0] == null ? string.Empty : playerNames[0].OptionName;
+                resultDetail.AwayName = playerNames.Count < MaxPlayerSelected || playerNames[1] == null ? string.Empty : playerNames[1].OptionName;
             }
             else
             {
-
+                // do  not thing
             }
         }
     }

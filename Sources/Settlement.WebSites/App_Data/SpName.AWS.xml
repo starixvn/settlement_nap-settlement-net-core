@@ -15,7 +15,7 @@
     <Setting Key="NAP_Set_ResultDetailSettingUpd" SpName="NAP_Set_ResultDetailSettingUpd" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_ChildMatchSel" SpName="NAP_Set_ChildMatchSel" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_MatchSelBetDaq" SpName="NAP_Set_MatchSelBetDaq" DbName="DBPRO.bodb02.bodbAdminNet" />
-    <Setting Key="NAP_Set_PlayerInfoSel" SpName="NAP_Set_PlayerInfoSel_UAT3" DbName="DBPRO.bodb02.bodbAdminNet">
+    <Setting Key="NAP_Set_PlayerInfoSel" SpName="NAP_Set_PlayerInfoSel" DbName="DBPRO.bodb02.bodbAdminNet">
       <Mapping DataField="BetChoice" ObjectProperty="Value" />
     </Setting>
   </Function>
@@ -52,5 +52,6 @@
     <Setting Key="NAP_Set_SettlementStatusChecking" SpName="NAP_Set_SettlementStatusChecking" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Admin_Settlement_1_InstantCalculation_Push" SpName="NAP_Admin_Settlement_1_InstantCalculation_Push" DbName="DBTXN.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Settlement_InstantCalculation_UndoChecking" SpName="NAP_Settlement_InstantCalculation_UndoChecking" DbName="DBPRO.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Settlement_InstantCalculation_Checking" SpName="NAP_Settlement_InstantCalculation_Checking" DbName="DBTXN.bodb02.bodbAdminNet" />
   </Function>
 </Functions>
