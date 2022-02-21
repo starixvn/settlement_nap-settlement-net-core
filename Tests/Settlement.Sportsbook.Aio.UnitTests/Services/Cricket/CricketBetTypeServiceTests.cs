@@ -15,12 +15,18 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services.Cricket
     public class CricketBetTypeServiceTests
     {
         private readonly ICricketBetTypeService service;
+        private readonly IBetTypeNameService betTypeNameService;
+        private readonly IGroupNameService groupNameService;
+        private readonly IInputTypeService inputTypeService;
 
         public CricketBetTypeServiceTests()
         {
             var repository = Substitute.For<IDynamicRepository>();
+            betTypeNameService = Substitute.For<IBetTypeNameService>();
+            groupNameService = Substitute.For<IGroupNameService>();
+            inputTypeService = Substitute.For<IInputTypeService>();
             repository.Fetch<InputOption>(Arg.Any<GetPlayerInfoCriteria>()).Returns(GenerateInputData());
-            service = new CricketBetTypeService(repository);
+            service = new CricketBetTypeService(repository, betTypeNameService, groupNameService,inputTypeService);
         }
 
         private static IEnumerable<InputOption> GenerateInputData()

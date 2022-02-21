@@ -13,7 +13,10 @@ namespace Settlement.Sportsbook.Aio.Services.Cricket
         public ResultDetailMapperServiceImp()
         {
             var repository = new DynamicRepository();
-            earlyBetTypeNameService = new CricketBetTypeService(repository);
+            var betTypeNameService = new BetTypeNameServiceImp();
+            var inputTypeService = new InputTypeServiceImp();
+            var groupNameService = new GroupNameServiceImp();
+            earlyBetTypeNameService = new CricketBetTypeService(repository, betTypeNameService, groupNameService, inputTypeService);
         }
 
         public void Decorate(dynamic obj)
