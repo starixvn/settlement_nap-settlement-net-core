@@ -15,7 +15,8 @@ namespace Settlement.Sportsbook.Aio.Services.Basketball
         {
             var remotingRefService = new RemotingRefService();
             var refDataService = new RefDataService(remotingRefService);
-            basketballBetTypeService = new BasketballBetTypeServiceImp(refDataService);
+            var groupBetTypeService = new GroupBetTypeServiceImp();
+            basketballBetTypeService = new BasketballBetTypeServiceImp(refDataService, groupBetTypeService);
         }
 
         public void Decorate(dynamic obj)
