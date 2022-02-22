@@ -51,12 +51,14 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services.ESport
         [InlineData("913001", "Map 1 First Inhibitor Location")]
         [InlineData("913101", "Map 1 First Dragon Time")]
         [InlineData("913201", "Map 1 Will Elder Dragon Be Killed")]
-        [InlineData("913301", "Map 1 Will First Aegis Be Snatched")]
+        [InlineData("913301", "Map 1 Will Any Aegis Be Snatched Yes/No")]
         [InlineData("913401", "Map 1 First Tower Time")]
         [InlineData("913501", "Map 1 First Tower Location")]
         [InlineData("913601", "Map 1 First Roshan Time")]
         [InlineData("913701", "Map 1 First Barrack Time")]
         [InlineData("913801", "Map 1 First Barrack Location")]
+        [InlineData("913901", "Map 1 Total Bomb Detonations (excl. OT)")]
+        [InlineData("914001", "Map 1 Total Bomb Defuses (excl. OT)")]
         [InlineData("90680101", "Map 1 Round 1 Winner")]
         [InlineData("90690101", "Map 1 Round 1 Total Kills")]
         [InlineData("90890101", "Map 1 First to 1 Kills Time")]
@@ -64,6 +66,8 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services.ESport
         [InlineData("91010102", "Map 1 2nd Kill")]
         [InlineData("91010103", "Map 1 3rd Kill")]
         [InlineData("91010104", "Map 1 4th Kill")]
+        [InlineData("914101", "Map 1 Lane With Most Turrets Destroyed (KOG)")]
+        [InlineData("914201", "Map 1 First Turret Location (KOG)")]
         public void GetBetTypeName_Always_ReturnCorrectBetTypeName(string resourceId, string betTypeName)
         {
             var resultDetail = new ResultDetail();

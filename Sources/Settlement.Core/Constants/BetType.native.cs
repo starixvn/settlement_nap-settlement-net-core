@@ -157,6 +157,10 @@ namespace Settlement.Core.Constants
             public const int MapTotalBombDetonation = 9139;
 
             public const int MapTotalBombDefuses = 9140;
+
+            public const int MapLaneWithMostTurretsDestroyed = 9141;
+
+            public const int MapFirstTurretLocationKOG = 9142;
         }
 
         #endregion E-Sport early bet types

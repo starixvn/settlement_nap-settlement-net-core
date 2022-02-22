@@ -165,7 +165,7 @@ namespace Settlement.Sportsbook.Aio.Services.ESport
                 case BetType.ESportBetType.MapElderDragonKilled:
                     return $"Map {mapX} Will Elder Dragon Be Killed";
                 case BetType.ESportBetType.MapFirstAegisSnatched:
-                    return $"Map {mapX} Will First Aegis Be Snatched";
+                    return $"Map {mapX} Will Any Aegis Be Snatched Yes/No";
                 case BetType.ESportBetType.MapFirstTowerTime:
                     return $"Map {mapX} First Tower Time";
                 case BetType.ESportBetType.MapFirstTowerLocation:
@@ -188,9 +188,13 @@ namespace Settlement.Sportsbook.Aio.Services.ESport
                 case BetType.ESportBetType.MapFirstBarrackLocation:
                     return $"Map {mapX} First Barrack Location";
                 case BetType.ESportBetType.MapTotalBombDetonation:
-                    return $"Map {mapX} Total Bomb Detonation (excl. OT)";
+                    return $"Map {mapX} Total Bomb Detonations (excl. OT)";
                 case BetType.ESportBetType.MapTotalBombDefuses:
                     return $"Map {mapX} Total Bomb Defuses (excl. OT)";
+                case BetType.ESportBetType.MapLaneWithMostTurretsDestroyed:
+                    return $"Map {mapX} Lane With Most Turrets Destroyed (KOG)";
+                case BetType.ESportBetType.MapFirstTurretLocationKOG:
+                    return $"Map {mapX} First Turret Location (KOG)";
                 default:
                     return BetTypeNameGroupSix(betTypeId, resourceId);
             }
