@@ -70,7 +70,7 @@ namespace Settlement.Sportsbook.Aio.Services.Cricket
                 option.OptionName = oddsInfos[1];
             });
 
-            return inputOptions;
+            return inputOptions.OrderBy(option => option.OptionName).ToList();
         }
 
         private static bool IsExistedPlayerName(List<ResultDetail> resultDetails)

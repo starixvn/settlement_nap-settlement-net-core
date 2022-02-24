@@ -15,6 +15,9 @@
     <Setting Key="NAP_Set_ResultDetailSettingUpd" SpName="NAP_Set_ResultDetailSettingUpd" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_ChildMatchSel" SpName="NAP_Set_ChildMatchSel" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_MatchSelBetDaq" SpName="NAP_Set_MatchSelBetDaq" DbName="DBPRO.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_PlayerInfoSel" SpName="NAP_Set_PlayerInfoSel" DbName="DBPRO.bodb02.bodbAdminNet">
+      <Mapping DataField="BetChoice" ObjectProperty="Value" />
+    </Setting>
   </Function>
 
   <Function Name="MoveTickets">
