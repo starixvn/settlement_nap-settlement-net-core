@@ -16,7 +16,7 @@ namespace Settlement.Core.ActionFilters
             this.logger = new Logger();
         }
 
-        public async override void OnActionExecuted(ActionExecutedContext actionExecutedContext)
+        public override async void OnActionExecuted(ActionExecutedContext actionExecutedContext)
         {
             var context = actionExecutedContext.HttpContext;
             var request = context.Request;
@@ -35,7 +35,7 @@ namespace Settlement.Core.ActionFilters
             base.OnActionExecuted(actionExecutedContext);
         }
 
-        public async override void OnActionExecuting(ActionExecutingContext context)
+        public override async void OnActionExecuting(ActionExecutingContext context)
         {
             var model = context.ActionArguments;
             var serialString = JsonConvert.SerializeObject(model);
