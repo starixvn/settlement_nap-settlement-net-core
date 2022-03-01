@@ -59,5 +59,7 @@ namespace Settlement.Sportsbook.Soccer.Models
         {
             SettlementStatus = Convert.ToString(SettlementStatus, ConvertToBase).Reverse()
         };
+
+        public bool IsDeleted { get; set; }
     }
 }
