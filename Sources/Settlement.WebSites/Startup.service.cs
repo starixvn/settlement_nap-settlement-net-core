@@ -99,6 +99,7 @@ namespace Settlement.WebSites
                                             "http://localhost:58793",
 
                                             "https://settlement.nexdev.net",
+                                            "https://settlement-netcore.nexdev.net",
                                             "https://settlement-netcore-v1.nexdev.net",
                                             "https://settlement-netcore-v2.nexdev.net",
                                             "https://settlement-netcore-v3.nexdev.net",
