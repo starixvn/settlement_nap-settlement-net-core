@@ -100,6 +100,67 @@ namespace Settlement.Core.Constants
 
             public const int MapGamePointWinner = 713;
 
+            public const int MapFirstToKillTime = 9089;
+
+            public const int MapFirstBloodTime = 9090;
+
+            public const int MapTotalKillTenMin = 9091;
+
+            public const int MapTotalKillTwentyMin = 9093;
+
+            public const int MapHomeTotalKill = 9099;
+
+            public const int MapSpecificKill = 9101;
+
+            public const int MapMostTurretsDestroyedLane = 9113;
+
+            public const int MapFirstTurretLocation = 9114;
+
+            public const int MapTotalGold = 9115;
+
+            public const int MapFirstTyrantTime = 9121;
+
+            public const int MapFirstDarkTyrant = 9122;
+
+            public const int MapFirstOverlordTime = 9123;
+
+            public const int MapStormDragonKilled = 9124;
+
+            public const int MapFirstHerald = 9125;
+
+            public const int MapFirstHeraldTime = 9126;
+
+            public const int MapFirstBaronTime = 9127;
+
+            public const int MapNumberOfPlayersFirstBaronBuffed = 9128;
+
+            public const int MapFirstInhibitorTime = 9129;
+
+            public const int MapFirstInhibitorLocation = 9130;
+
+            public const int MapFirstDragonTime = 9131;
+
+            public const int MapElderDragonKilled = 9132;
+
+            public const int MapFirstAegisSnatched = 9133;
+
+            public const int MapFirstTowerTime = 9134;
+
+            public const int MapFirstTowerLocation = 9135;
+
+            public const int MapFirstRoshanTime = 9136;
+
+            public const int MapFirstBarrackTime = 9137;
+
+            public const int MapFirstBarrackLocation = 9138;
+
+            public const int MapTotalBombDetonation = 9139;
+
+            public const int MapTotalBombDefuses = 9140;
+
+            public const int MapLaneWithMostTurretsDestroyed = 9141;
+
+            public const int MapFirstTurretLocationKOG = 9142;
         }
 
         #endregion E-Sport early bet types

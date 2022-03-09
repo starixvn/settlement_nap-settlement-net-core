@@ -53,5 +53,7 @@ namespace Settlement.Sportsbook.Aio.Models
         public string EventStatus { get; set; }
 
         public int LeagueGroupId { get; set; }
+        
+        public int GameType { get; set; }
     }
 }

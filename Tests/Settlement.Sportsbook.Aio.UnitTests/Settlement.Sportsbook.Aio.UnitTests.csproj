@@ -30,4 +30,10 @@
     <ProjectReference Include="..\..\Sources\Settlement.Sportsbook.Aio\Settlement.Sportsbook.Aio.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Services\ESports\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Services\ESport\" />
+  </ItemGroup>
 </Project>
