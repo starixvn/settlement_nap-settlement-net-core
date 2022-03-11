@@ -93,7 +93,6 @@ namespace Settlement.Sportsbook.Aio.Services.Cricket
 
         public List<InputOption> GetInputOptions(int betTypeId, string resourceId,  List<InputOption> inputOptions)
         {
-           
             return InputType.PlayerSelectGroup.Contains(betTypeId) 
                 ? inputOptions.FindAll(option => option.ResourceId == resourceId).Take(MaxPlayerSelected).ToList() 
                 : inputOptions.FindAll(option => option.ResourceId == resourceId);

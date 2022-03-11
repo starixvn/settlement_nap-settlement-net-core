@@ -118,7 +118,7 @@ namespace Settlement.Sportsbook.Aio.Services.Cricket
                     resultDetail.GroupName = group.GroupName;
                 }
 
-                if (InputType.PlayerSelectGroup.Contains(betTypeId) || InputType.PlayerMultipleSelectGroup.Contains(betTypeId))
+                if (InputType.PlayerSelectGroup.Contains(betTypeId) || InputType.PlayerMultipleSelectGroup.Contains(betTypeId) || InputType.ScoreWithLabelGroup.Contains(betTypeId))
                 {
                     resultDetail.InputOptions = inputTypeService.GetInputOptions(betTypeId, resourceId, inputOptions);
                 }
