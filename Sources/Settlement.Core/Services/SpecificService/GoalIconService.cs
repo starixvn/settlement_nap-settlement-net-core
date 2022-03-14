@@ -1,10 +1,12 @@
-﻿using Settlement.Sportsbook.Soccer.Models;
+﻿using System.Collections.Generic;
 using Settlement.Core.Models;
 
-namespace Settlement.Sportsbook.Soccer.Services
+namespace Settlement.Core.Services
 {
     public interface IGoalIconService
     {
+        List<Match> GetGoalIconMatches(List<Match> matches);
+
         GoalIcon GetGoalIcon(GoalIconQueryModel query);
     }
 
@@ -12,9 +14,37 @@ namespace Settlement.Sportsbook.Soccer.Services
     {
         private readonly IFirstGoalLastGoalService firstGoalLastGoalService;
 
-        public GoalIconServiceImp(IFirstGoalLastGoalService firstGoalLastGoalService)
+        private readonly IRefDataService refDataService;
+
+        public GoalIconServiceImp(IFirstGoalLastGoalService firstGoalLastGoalService, IRefDataService refDataService)
         {
             this.firstGoalLastGoalService = firstGoalLastGoalService;
+            this.refDataService = refDataService;
+        }
+
+        public List<Match> GetGoalIconMatches(List<Match> matches)
+        {
+            foreach (var match in matches)
+            {
+                var query = Query(match);
+                match.RefDataService = refDataService;
+                match.GoalIcon = GetGoalIcon(query);
+            }
+
+            return matches;
+        }
+
+        private GoalIconQueryModel Query(Match sportsbook)
+        {
+            return new GoalIconQueryModel
+            {
+                BetStatus = sportsbook.BetStatus,
+                GoalRecord = sportsbook.GoalRecord,
+                FinalAwayScore = sportsbook.FinalAwayScore,
+                FinalHomeScore = sportsbook.FinalHomeScore,
+                IsExistFgLg = sportsbook.IsExistFgLg,
+                IsExistHtFgLg = sportsbook.IsExistHtFgLg
+            };
         }
 
         public GoalIcon GetGoalIcon(GoalIconQueryModel query)

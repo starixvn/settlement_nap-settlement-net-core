@@ -12,9 +12,8 @@ namespace Settlement.Core.Models
         private const int BreakTimeLive = 0;
         private const int HalftimeLive = 1;
         private const int FullTimeLive = 2;
-        private const int ConvertToBase = 2;
-        private const int isWaiting = 0;
-        private const int isSuccess = 2;
+        private const int IsWaiting = 0;
+        private const int IsSuccess = 2;
         private const string Dash = "-";
         private string goalRecord = string.Empty;
         private string eventStatus = string.Empty;
@@ -23,9 +22,17 @@ namespace Settlement.Core.Models
         private string instantHomeScore = string.Empty;
         private string instantAwayScore = string.Empty;
         private BackgroundColor backgroundColor;
-        private AutoCalculationSetting autoCalcSetting;
-        private MixParlay mixParlay;
-        private RemarkSettingModel remark;
+
+        private readonly List<int> mergedParlaySports = new List<int>
+        {
+            Constants.SportType.Badminton,
+            Constants.SportType.BasketBall,
+            Constants.SportType.Cricket,
+            Constants.SportType.ESports,
+            Constants.SportType.Tennis,
+            Constants.SportType.BeachVolleyball,
+            Constants.SportType.VolleyBall
+        };
 
         [JsonIgnore]
         public IRefDataService RefDataService { get; set; }
@@ -152,10 +159,7 @@ namespace Settlement.Core.Models
                 return goal.GetGoalRecord();
             }
 
-            set
-            {
-                goalRecord = string.IsNullOrWhiteSpace(value) ? string.Empty : value.ToUpperInvariant();
-            }
+            set => goalRecord = string.IsNullOrWhiteSpace(value) ? string.Empty : value.ToUpperInvariant();
         }
 
         public string EventStatus
@@ -180,11 +184,11 @@ namespace Settlement.Core.Models
                     return EventStatus;
                 }
 
-                if (IsCalculatingSingle == isWaiting)
+                if (IsCalculatingSingle == IsWaiting)
                 {
                     return Constants.EventStatus.Waiting;
                 }
-                else if (IsCalculatingSingle == isSuccess)
+                else if (IsCalculatingSingle == IsSuccess)
                 {
                     return EventStatus;
                 }
@@ -201,28 +205,16 @@ namespace Settlement.Core.Models
 
         public string SuspenderHalfTime
         {
-            get
-            {
-                return string.IsNullOrEmpty(suspenderHalfTime) ? Dash : suspenderHalfTime;
-            }
+            get => string.IsNullOrEmpty(suspenderHalfTime) ? Dash : suspenderHalfTime;
 
-            set
-            {
-                suspenderHalfTime = value;
-            }
+            set => suspenderHalfTime = value;
         }
 
         public string SuspenderFullTime
         {
-            get
-            {
-                return string.IsNullOrEmpty(suspenderFullTime) ? Dash : suspenderFullTime;
-            }
+            get => string.IsNullOrEmpty(suspenderFullTime) ? Dash : suspenderFullTime;
 
-            set
-            {
-                suspenderFullTime = value;
-            }
+            set => suspenderFullTime = value;
         }
 
         public string ExHalfTimeScore => ExHTResult != null ? $"({ExHTResult.SourceName}: {ExHTResult.HomeValue}-{ExHTResult.AwayValue})" : string.Empty;
@@ -233,16 +225,11 @@ namespace Settlement.Core.Models
 
         public int AutoSettingForLeague { get; set; }
 
-        public AutoCalculationSetting AutoCalcSetting => autoCalcSetting ?? (autoCalcSetting = new AutoCalculationSetting
-        {
-            MatchSetting = Convert.ToString(AutoSetting, ConvertToBase).Reverse(),
-            LeagueSetting = Convert.ToString(AutoSettingForLeague, ConvertToBase).Reverse()
-        });
+        public int AutoPayoutStatus { get; set; }
 
-        public RemarkSettingModel Remark => remark ?? (remark = new RemarkSettingModel
-        {
-            SettlementStatus = Convert.ToString(SettlementStatus, ConvertToBase).Reverse(),
-        });
+        public AutoCalculationSetting AutoCalcSetting => new AutoCalculationSetting(AutoSetting, AutoSettingForLeague);
+
+        public RemarkSettingModel Remark => new RemarkSettingModel(SettlementStatus);
 
         public bool IsNeedToCalculateFGLG { get; set; }
 
@@ -258,28 +245,16 @@ namespace Settlement.Core.Models
 
         public string InstantHomeScore
         {
-            get
-            {
-                return string.IsNullOrWhiteSpace(instantHomeScore) ? Dash : instantHomeScore;
-            }
+            get => string.IsNullOrWhiteSpace(instantHomeScore) ? Dash : instantHomeScore;
 
-            set
-            {
-                instantHomeScore = value;
-            }
+            set => instantHomeScore = value;
         }
 
         public string InstantAwayScore
         {
-            get
-            {
-                return string.IsNullOrWhiteSpace(instantAwayScore) ? Dash : instantAwayScore;
-            }
+            get => string.IsNullOrWhiteSpace(instantAwayScore) ? Dash : instantAwayScore;
 
-            set
-            {
-                instantAwayScore = value;
-            }
+            set => instantAwayScore = value;
         }
 
         public int InstantStatusId { get; set; }
@@ -372,20 +347,27 @@ namespace Settlement.Core.Models
             EventStatus = EventStatus,
             AutoSetting = AutoSetting,
             IsExistMarkedTicketParlay = IsExistMarkedTicketParlay,
+            IsExistRunningTicketParlay = IsExistRunningTicketParlay
         });
 
-        public MixParlay MixParlay => mixParlay ?? (mixParlay = new MixParlay
+        public MixParlay MixParlay => new MixParlay(
+            IsCalculated, IsKeyScore,
+            IsCalculatingSingle,
+            IsCalculatingMP, BetStatus ?? string.Empty, Remark);
+
+        public bool ShowLink
         {
-            Remark = Remark,
-            IsCalculatingSingle = IsCalculatingSingle,
-            IsCalculatingMp = IsCalculatingMP,
-            IsKeyScore = IsKeyScore,
-            IsCalculated = IsCalculated,
-            BetStatusValue = BetStatus ?? string.Empty,
-            IsExistMarkedTicketParlay = IsExistMarkedTicketParlay
-        });
+            get
+            {
+                if (IsMergedParlay)
+                {
+                    var isSingleNotCalculating = IsCalculatingSingle == null || IsCalculatingSingle == IsSuccess;
+                    return RemarkSetting && !Remark.IsUnderSettle && isSingleNotCalculating;
+                }
 
-        public bool ShowLink => RemarkSetting && !Remark.IsUnderSettle && IsCalculatingSingle == null && IsCalculatingMP == null;
+                return RemarkSetting && !Remark.IsUnderSettle && IsCalculatingSingle == null && IsCalculatingMP == null;
+            }
+        }
 
         private bool RemarkSetting => !Remark.IsUndecided && !Remark.IsPending && !Remark.IsMtdHold && !Remark.IsKeyHold;
 
@@ -405,7 +387,7 @@ namespace Settlement.Core.Models
             {
                 if (EventStatus.IgnoreCaseEquals(Constants.EventStatus.PostPoned))
                 {
-                    return IsExistMarkedTicket ? Background.YellowBlinking : Background.Yellow;
+                    return IsExistMergedAndMarkedTickets ? Background.YellowBlinking : Background.Yellow;
                 }
 
                 if (EventStatus.IgnoreCaseEquals(Constants.EventStatus.Completed))
@@ -415,10 +397,10 @@ namespace Settlement.Core.Models
 
                 if (Remark.IsPending && EventStatus.IgnoreCaseEquals(EventStatusExtensions.ResultPending))
                 {
-                    return IsExistMarkedTicket ? Background.BrightYellowBlinking : Background.BrightYellow;
+                    return IsExistMergedAndMarkedTickets ? Background.BrightYellowBlinking : Background.BrightYellow;
                 }
 
-                return IsExistMarkedTicket ? Background.WhiteBlinking : string.Empty;
+                return IsExistMergedAndMarkedTickets ? Background.WhiteBlinking : string.Empty;
             }
         }
 
@@ -434,15 +416,10 @@ namespace Settlement.Core.Models
 
         #endregion ExternalScore
 
-        private string GetBackgroundCompletedStatus
-        {
-            get
-            {
-                return IsOnlyMarkedTicket
-                    ? Background.WhiteBlinking
-                    : GetBackgroundRunningTicket;
-            }
-        }
+        private string GetBackgroundCompletedStatus =>
+            IsOnlyMarkedTicket
+                ? Background.WhiteBlinking
+                : GetBackgroundRunningTicket;
 
         private string GetBackgroundRunningTicket
         {
@@ -450,13 +427,34 @@ namespace Settlement.Core.Models
             {
                 if (IsExistRunningTicket)
                 {
-                    return IsExistMarkedTicket ? Background.PinkBlinking : Background.Pink;
+                    return IsExistMergedAndMarkedTickets ? Background.PinkBlinking : Background.Pink;
                 }
 
                 return string.Empty;
             }
         }
 
-        private bool IsOnlyMarkedTicket => IsExistMarkedTicket && !IsExistRunningTicket;
+        public bool IsMergedParlay => mergedParlaySports.Contains(SportType);
+
+        private bool IsExistMergedAndMarkedTickets
+        {
+            get
+            {
+                if (IsMergedParlay)
+                {
+                    return IsExistMarkedTicket || IsExistMarkedTicketParlay;
+                }
+
+                return IsExistMarkedTicket;
+            }
+        }
+
+        private bool IsOnlyMarkedTicket => IsExistMergedAndMarkedTickets && !IsExistRunningTicket;
+
+        public bool IsExistsConfirmedEarly { get; set; }
+
+        public int? EventStatusReason { get; set; }
+
+        public bool IsExistRunningTicketParlay { get; set; }
     }
 }

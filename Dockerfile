@@ -3,6 +3,7 @@ WORKDIR /src
 ENV TZ="America/La_Paz"
 
 COPY ./Sources/Settlement.Core ./Settlement.Core
+COPY ./Sources/Settlement.EventManagement ./Settlement.EventManagement
 COPY ./Sources/Settlement.Sportsbook.Aio ./Settlement.Sportsbook.Aio
 COPY ./Sources/Settlement.WebSites/Settlement.WebSites.csproj ./Settlement.WebSites/Settlement.WebSites.csproj
 COPY ./Sources/Settlement.Sportsbook.MoveTickets ./Settlement.Sportsbook.MoveTickets

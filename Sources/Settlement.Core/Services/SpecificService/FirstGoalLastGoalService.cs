@@ -1,7 +1,7 @@
 ﻿using System;
-using Settlement.Sportsbook.Soccer.Models;
+using Settlement.Core.Models;
 
-namespace Settlement.Sportsbook.Soccer.Services
+namespace Settlement.Core.Services
 {
     public interface IFirstGoalLastGoalService
     {

@@ -51,6 +51,14 @@ using ONEbook.UM.Configurations;
 using ONEbook.UM.AspNetCore;
 using ONEbook.UM.Helpers;
 using ONEbook.UM.Transport;
+using IMatchResultDetailService = Settlement.Sportsbook.MoveTickets.Services.IMatchResultDetailService;
+using IMatchService = Settlement.EventManagement.Services.IMatchService;
+using IScoreService = Settlement.Sportsbook.MoveTickets.Services.IScoreService;
+using IScoreSetService = Settlement.Sportsbook.MoveTickets.Services.IScoreSetService;
+using MatchResultDetailService = Settlement.Sportsbook.MoveTickets.Services.MatchResultDetailService;
+using MatchService = Settlement.EventManagement.Services.MatchService;
+using ScoreService = Settlement.Sportsbook.MoveTickets.Services.ScoreService;
+using ScoreSetService = Settlement.Sportsbook.MoveTickets.Services.ScoreSetService;
 
 namespace Settlement.WebSites
 {
@@ -181,7 +189,7 @@ namespace Settlement.WebSites
             services.AddTransient<SettlementActionsService, SettlementActionsServiceImp>();
             services.AddTransient<SportsbookService, SportsbookServiceImp>();
 
-            services.AddTransient<Sportsbook.Soccer.Services.IFirstGoalLastGoalService, Sportsbook.Soccer.Services.FirstGoalLastGoalServiceImp>();
+            services.AddTransient<Core.Services.IFirstGoalLastGoalService, Core.Services.FirstGoalLastGoalServiceImp>();
             services.AddTransient<Sportsbook.Soccer.Services.IMatchService, Sportsbook.Soccer.Services.MatchService>();
             services.AddTransient<IGoalIconService, GoalIconServiceImp>();
             services.AddTransient<IBetStatusAllService, BetStatusAllServiceImp>();
@@ -203,6 +211,14 @@ namespace Settlement.WebSites
             services.AddTransient<IInstantResourceService, InstantResourceServiceImp>();
             services.AddTransient<IInstantCalculateService, InstantCalculateServiceImp>();
             services.AddTransient<IRefundService, RefundServiceImp>();
+            services.AddTransient<IMultiSportService, MultiSportService>();
+            services.AddTransient<ITennisService, TennisService>();
+            services.AddTransient<IExternalScoreService, ExternalScoreService>();
+            services.AddTransient<EventManagement.Services.IMatchResultDetailService, EventManagement.Services.MatchResultDetailService>();
+            services.AddTransient<IMatchService, MatchService>();
+            services.AddTransient<EventManagement.Services.IScoreSetService, EventManagement.Services.ScoreSetService>();
+            services.AddTransient<EventManagement.Services.IScoreService, EventManagement.Services.ScoreService>();
+            services.AddTransient<EventManagement.Services.SpecificService.Tennis.IScoreService, EventManagement.Services.SpecificService.Tennis.ScoreService>();
         }
 
         private void ConfigureNapServices(IServiceCollection services)
@@ -277,6 +293,7 @@ namespace Settlement.WebSites
             services.AddMediatR(typeof(MoveTicketController).GetTypeInfo().Assembly);
             services.AddMediatR(typeof(OtherSportsController).GetTypeInfo().Assembly);
             services.AddMediatR(typeof(SoccerController).GetTypeInfo().Assembly);
+            services.AddMediatR(typeof(MultiSportController).GetTypeInfo().Assembly);
         }
 
         private static void ConfigureAutoMapper(IServiceCollection services)
@@ -287,6 +304,7 @@ namespace Settlement.WebSites
                 mc.AddProfile(typeof(SportsbookMoveTicketAutoMapperProfile));
                 mc.AddProfile(typeof(OtherSportsAutoMapperProfile));
                 mc.AddProfile(typeof(SoccerAutoMapperProfile));
+                mc.AddProfile(typeof(EventManagementAutoMapperProfile));
             });
 
             IMapper mapper = mapperConfig.CreateMapper();

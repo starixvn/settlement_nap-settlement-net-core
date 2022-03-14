@@ -1,23 +1,50 @@
-﻿namespace Settlement.Core.Models
+﻿using MessagePack;
+
+namespace Settlement.Core.Models
 {
+    [MessagePackObject]
     public class MixParlay
     {
+        public MixParlay(
+            bool isCalculated,
+            bool isKeyScore,
+            int? isCalculatingSingle,
+            int? isCalculatingMp,
+            string betStatus,
+            RemarkSettingModel remark)
+        {
+            IsCalculated = isCalculated;
+            IsCalculatingSingle = isCalculatingSingle;
+            IsCalculatingMp = isCalculatingMp;
+            BetStatus = betStatus;
+            Remark = remark;
+            IsKeyScore = isKeyScore;
+        }
+
+        [Key("isKeyScore")]
         public bool IsKeyScore { get; set; }
 
+        [Key("isCalculated")]
         public bool IsCalculated { get; set; }
 
+        [Key("isCalculatingSingle")]
         public int? IsCalculatingSingle { get; set; }
 
+        [Key("isCalculatingMp")]
         public int? IsCalculatingMp { get; set; }
 
-        public string BetStatusValue { get; set; }
+        [Key("betStatus")]
+        public string BetStatus { get; set; }
 
+        [Key("isExistMarkedTicketParlay")]
         public bool IsExistMarkedTicketParlay { get; set; }
 
+        [Key("remark")]
         public RemarkSettingModel Remark { get; set; }
 
-        private bool EnableCaclMixParlay => IsKeyScore && IsCalculated && !IsExistMarkedTicketParlay && !BetStatusValue.Contains(Constants.BetStatus.RefundHT);
+        private bool EnableCaclMixParlay => IsKeyScore && IsCalculated && !IsExistMarkedTicketParlay && !BetStatus.Contains(Constants.BetStatus.RefundHT);
 
+        [Key("hasMixParlay")]
         public bool HasMixParlay
         {
             get

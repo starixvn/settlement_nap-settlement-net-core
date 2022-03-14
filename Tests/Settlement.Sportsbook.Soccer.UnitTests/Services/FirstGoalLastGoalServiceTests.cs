@@ -1,6 +1,6 @@
 ﻿using NSubstitute;
-using Settlement.Sportsbook.Soccer.Models;
-using Settlement.Sportsbook.Soccer.Services;
+using Settlement.Core.Models;
+using Settlement.Core.Services;
 using Xunit;
 
 namespace Settlement.Sportsbook.Soccer.UnitTests.Services

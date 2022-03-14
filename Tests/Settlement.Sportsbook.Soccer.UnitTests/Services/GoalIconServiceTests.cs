@@ -1,6 +1,6 @@
 ﻿using NSubstitute;
-using Settlement.Sportsbook.Soccer.Models;
-using Settlement.Sportsbook.Soccer.Services;
+using Settlement.Core.Models;
+using Settlement.Core.Services;
 using Xunit;
 
 namespace Settlement.Sportsbook.Soccer.UnitTests.Services
@@ -9,12 +9,15 @@ namespace Settlement.Sportsbook.Soccer.UnitTests.Services
     {
         private readonly IFirstGoalLastGoalService firstGoalLastGoalService;
 
+        private readonly IRefDataService refDataService;
+
         private readonly IGoalIconService service;
 
         public GoalIconServiceTests()
         {
             firstGoalLastGoalService = Substitute.For<IFirstGoalLastGoalService>();
-            service = new GoalIconServiceImp(firstGoalLastGoalService);
+            refDataService = Substitute.For<IRefDataService>();
+            service = new GoalIconServiceImp(firstGoalLastGoalService, refDataService);
         }
 
         [Theory]
