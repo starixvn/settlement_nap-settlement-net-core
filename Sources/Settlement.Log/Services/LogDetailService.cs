@@ -29,7 +29,7 @@ namespace Settlement.Log.Services
         public async Task<List<LogDetailsModels>> GetLogDetailByMatchAndProduct(int matchId, string productType)
         {
             var criteria = new GetLogDetailByMatchAndProductCriteria { MatchId = matchId, ProductType = productType };
-            var logDetails =(await repository.FetchAsync<LogDetailsModels>(criteria)).ToList();
+            var logDetails = (await repository.FetchAsync<LogDetailsModels>(criteria)).ToList();
 
             foreach (var log in logDetails.Where(log => remarkService.IsFastMarketAction(log.ActionId)))
             {

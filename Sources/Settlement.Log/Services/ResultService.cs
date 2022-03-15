@@ -14,7 +14,7 @@ namespace Settlement.Log.Services
 
     public class ResultServiceImp : ResultService
     {
-        private static string[] eventCounterLabels = new[] { "N", "G", "C", "FK", "GK", "T", "B", "P" };
+        private static readonly string[] eventCounterLabels = new[] { "N", "G", "C", "FK", "GK", "T", "B", "P" };
 
         public string MinuteSetPieceResultName(string position, string result)
         {
