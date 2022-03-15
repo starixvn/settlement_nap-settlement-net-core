@@ -10,13 +10,13 @@ namespace Settlement.Sportsbook.MoveTickets.Services
         List<Match> GetScoreForMatchBySportType(List<Match> matches, List<ResultDetail> resultDetails, int sportType, int groupSport);
     }
 
-    public class MatchService : IMatchService
+    public class MatchServiceImp : IMatchService
     {
         private readonly IMatchResultDetailService matchResultDetailService;
 
         private readonly IRefDataService refDataService;
 
-        public MatchService(
+        public MatchServiceImp(
             IMatchResultDetailService matchResultDetailService,
             IRefDataService refDataService)
         {

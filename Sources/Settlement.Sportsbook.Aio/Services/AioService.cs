@@ -36,7 +36,7 @@ namespace Settlement.Sportsbook.Aio.Services
         Task<Boolean> ResultSetting(ResultSettingRequest request);
     }
 
-    public class AioService : IAioService
+    public class AioServiceImp : IAioService
     {
         private readonly IDynamicRepository repository;
 
@@ -52,7 +52,7 @@ namespace Settlement.Sportsbook.Aio.Services
 
         private readonly IConfiguration configuration;
 
-        public AioService(
+        public AioServiceImp(
             IDynamicRepository repository,
             PermissionService permissionService,
             IRefDataService refDataService,

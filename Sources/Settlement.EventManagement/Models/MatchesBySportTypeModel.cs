@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Settlement.Core.Models;
 
 namespace Settlement.EventManagement.Models
 {

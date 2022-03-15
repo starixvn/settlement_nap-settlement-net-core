@@ -16,7 +16,6 @@ using Fanex.NAP.Client.Helpers.Web;
 using Fanex.NAP.Client.Services;
 using Fanex.RemotingRef;
 using Kaden.XmlConverter;
-using MediatR;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
@@ -27,43 +26,21 @@ using Microsoft.Extensions.DependencyInjection;
 using Sentry;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.Aio;
-using Settlement.Sportsbook.Aio.Controllers;
-using Settlement.Sportsbook.Aio.MapperFactory;
-using Settlement.Sportsbook.Aio.Services;
 using Settlement.Sportsbook.MoveTickets;
-using Settlement.Sportsbook.MoveTickets.Controllers;
-using Settlement.Sportsbook.MoveTickets.Services;
 using Settlement.Sportsbook.OtherSports;
-using Settlement.Sportsbook.OtherSports.Controllers;
-using Settlement.Sportsbook.OtherSports.Services;
-using Settlement.Sportsbook.Soccer.Services;
 using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using Settlement.Sportsbook.Soccer;
-using Settlement.Sportsbook.Soccer.Controllers;
-using Settlement.Sportsbook.Soccer.Services.FullTimeBetStatus;
-using Settlement.Sportsbook.Soccer.Services.HalfTimeBetStatus;
 using ONEbook.UM.Configurations;
 using ONEbook.UM.AspNetCore;
 using ONEbook.UM.Helpers;
 using ONEbook.UM.Transport;
 using Settlement.Log;
-using Settlement.Log.Controllers;
-using Settlement.Log.Services;
 using Settlement.WebSites.Configurations;
-using IMatchResultDetailService = Settlement.Sportsbook.MoveTickets.Services.IMatchResultDetailService;
-using IMatchService = Settlement.EventManagement.Services.IMatchService;
-using IScoreService = Settlement.Sportsbook.MoveTickets.Services.IScoreService;
-using IScoreSetService = Settlement.Sportsbook.MoveTickets.Services.IScoreSetService;
 using LogServiceImp = Settlement.Core.Services.LogServiceImp;
-using MatchResultDetailService = Settlement.Sportsbook.MoveTickets.Services.MatchResultDetailService;
-using MatchService = Settlement.EventManagement.Services.MatchServiceImp;
-using ScoreService = Settlement.Sportsbook.MoveTickets.Services.ScoreService;
-using ScoreSetService = Settlement.Sportsbook.MoveTickets.Services.ScoreSetService;
 
 namespace Settlement.WebSites
 {
@@ -179,54 +156,12 @@ namespace Settlement.WebSites
 
         private static void ConfigInternalService(IServiceCollection services)
         {
-            services.AddTransient<IAioService, AioService>();
-            services.AddTransient<IMatchResultDetailService, MatchResultDetailService>();
-            services.AddTransient<Sportsbook.MoveTickets.Services.IMatchService, Sportsbook.MoveTickets.Services.MatchService>();
-            services.AddTransient<IMoveTicketService, MoveTicketService>();
-            services.AddTransient<IScoreService, ScoreService>();
-            services.AddTransient<IScoreSetService, ScoreSetService>();
-            services.AddTransient<IMapperFactory, MapperFactoryBase>();
-            services.AddTransient<IMapperFactory, MapperFactoryImp>();
-            services.AddTransient<IValidateApiKeyService, ValidateApiKeyServiceImp>();
-            services.AddTransient<ICriteriaFactory, CriteriaFactoryImp>();
-            services.AddTransient<ICreateQueryService, CreateQueryServiceImp>();
-
-            services.AddTransient<SettlementActionsService, SettlementActionsServiceImp>();
-            services.AddTransient<SportsbookService, SportsbookServiceImp>();
-
-            services.AddTransient<Core.Services.IFirstGoalLastGoalService, Core.Services.FirstGoalLastGoalServiceImp>();
-            services.AddTransient<Sportsbook.Soccer.Services.IMatchService, Sportsbook.Soccer.Services.MatchService>();
-            services.AddTransient<IGoalIconService, GoalIconServiceImp>();
-            services.AddTransient<IBetStatusAllService, BetStatusAllServiceImp>();
-            services.AddTransient<IGoalRecordService, GoalRecordServiceImp>();
-            services.AddTransient<ICalculateService, CalculateServiceImp>();
-            services.AddTransient<ISoccerBetStatusService, SoccerBetStatusServiceImp>();
-            services.AddTransient<IValidationService, ValidationServiceImp>();
-            services.AddTransient<Sportsbook.Soccer.Services.FullTimeBetStatus.IBetStatusService, Sportsbook.Soccer.Services.FullTimeBetStatus.BetStatusServiceImp>();
-            services.AddTransient<Sportsbook.Soccer.Services.FullTimeBetStatus.IFirstGoalLastGoalService, Sportsbook.Soccer.Services.FullTimeBetStatus.FirstGoalLastGoalServiceImp>();
-            services.AddTransient<IFullTimeService, FullTimeServiceImp>();
-            services.AddTransient<IHalftimeFullTimeService, HalftimeFullTimeServiceImp>();
-            services.AddTransient<IScoreAndGoalService, ScoreAndGoalServiceImp>();
-            services.AddTransient<Sportsbook.Soccer.Services.HalfTimeBetStatus.IBetStatusService, Sportsbook.Soccer.Services.HalfTimeBetStatus.BetStatusServiceImp>();
-            services.AddTransient<IHalftimeScoreAndGoalService, HalftimeScoreAndGoalServiceImp>();
-            services.AddTransient<IHalftimeService, HalftimeServiceImp>();
-            services.AddTransient<IResourceService, ResourceServiceImp>();
-            services.AddTransient<IActionResourceService, ActionResourceServiceImp>();
-            services.AddTransient<IInstantGoalCheckingService, InstantGoalCheckingServiceImp>();
-            services.AddTransient<IInstantResourceService, InstantResourceServiceImp>();
-            services.AddTransient<IInstantCalculateService, InstantCalculateServiceImp>();
-            services.AddTransient<IRefundService, RefundServiceImp>();
-            services.AddTransient<IMultiSportService, MultiSportServiceImp>();
-            services.AddTransient<ITennisService, TennisServiceImp>();
-            services.AddTransient<IExternalScoreService, ExternalScoreServiceImp>();
-            services.AddTransient<EventManagement.Services.IMatchResultDetailService, EventManagement.Services.MatchResultDetailServiceImp>();
-            services.AddTransient<IMatchService, MatchServiceImp>();
-            services.AddTransient<EventManagement.Services.IScoreSetService, EventManagement.Services.ScoreSetServiceImp>();
-            services.AddTransient<EventManagement.Services.IScoreService, EventManagement.Services.ScoreServiceImp>();
-            services.AddTransient<EventManagement.Services.SpecificService.Tennis.IScoreService, EventManagement.Services.SpecificService.Tennis.ScoreServiceImp>();
-
+            services.ConfigOtherSportsServices();
+            services.ConfigMoveTicketServices();
+            services.ConfigAioServices();
+            services.ConfigSoccerServices();
+            services.ConfigEventManagementServices();
             services.ConfigLogServices();
-            
         }
 
         private void ConfigureNapServices(IServiceCollection services)
@@ -298,11 +233,11 @@ namespace Settlement.WebSites
 
         private static void ConfigureMediator(IServiceCollection services)
         {
-            services.AddMediatR(typeof(AioController).GetTypeInfo().Assembly);
-            services.AddMediatR(typeof(MoveTicketController).GetTypeInfo().Assembly);
-            services.AddMediatR(typeof(OtherSportsController).GetTypeInfo().Assembly);
-            services.AddMediatR(typeof(SoccerController).GetTypeInfo().Assembly);
-            services.AddMediatR(typeof(MultiSportController).GetTypeInfo().Assembly);
+            services.ConfigAioMediator();
+            services.ConfigMoveTicketMediator();
+            services.ConfigOtherSportsMediator();
+            services.ConfigSoccerMediator();
+            services.ConfigEventManagementMediator();
             services.ConfigLogMediator();
         }
 

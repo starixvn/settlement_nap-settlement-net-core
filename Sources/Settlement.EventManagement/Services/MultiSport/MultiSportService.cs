@@ -160,8 +160,8 @@ namespace Settlement.EventManagement.Services
             var longCachingKey = LongCachingKey(leagueIds);
             const int shortCacheExpirationTime = 3;
             const int longCacheExpirationTime = 20;
-            cacheService.Set(shortCachingKey, matches, new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromSeconds(shortCacheExpirationTime)));
-            cacheService.Set(longCachingKey, matches, new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(longCacheExpirationTime)));
+            cacheService.SetAsync(shortCachingKey, matches, new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromSeconds(shortCacheExpirationTime)));
+            cacheService.SetAsync(longCachingKey, matches, new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(longCacheExpirationTime)));
         }
 
         private static List<SportTypeModel> OrderSport(List<SportTypeModel> sports)

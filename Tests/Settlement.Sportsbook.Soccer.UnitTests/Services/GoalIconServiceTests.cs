@@ -9,15 +9,12 @@ namespace Settlement.Sportsbook.Soccer.UnitTests.Services
     {
         private readonly IFirstGoalLastGoalService firstGoalLastGoalService;
 
-        private readonly IRefDataService refDataService;
-
         private readonly IGoalIconService service;
 
         public GoalIconServiceTests()
         {
             firstGoalLastGoalService = Substitute.For<IFirstGoalLastGoalService>();
-            refDataService = Substitute.For<IRefDataService>();
-            service = new GoalIconServiceImp(firstGoalLastGoalService, refDataService);
+            service = new GoalIconServiceImp(firstGoalLastGoalService);
         }
 
         [Theory]

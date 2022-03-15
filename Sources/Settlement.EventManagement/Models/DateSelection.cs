@@ -1,5 +1,4 @@
 ﻿using System;
-using MessagePack;
 
 namespace Settlement.EventManagement.Models
 {
