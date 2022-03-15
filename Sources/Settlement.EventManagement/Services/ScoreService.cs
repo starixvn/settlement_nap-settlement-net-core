@@ -16,7 +16,7 @@ namespace Settlement.EventManagement.Services
         MoreScores ScoreLoader(int sportType, List<ResultDetail> resultDetails, List<string> resources, Permission permission);
     }
 
-    public class ScoreService : IScoreService
+    public class ScoreServiceImp : IScoreService
     {
         private const string Halftime = "01";
         private const string Final = "00";
@@ -24,7 +24,7 @@ namespace Settlement.EventManagement.Services
 
         private readonly IScoreSetService scoreSetService;
 
-        public ScoreService(IScoreSetService scoreSetService)
+        public ScoreServiceImp(IScoreSetService scoreSetService)
         {
             this.scoreSetService = scoreSetService;
         }

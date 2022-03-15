@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Match = Settlement.EventManagement.Models.Match;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
 
@@ -10,38 +8,13 @@ namespace Settlement.EventManagement.Services
 {
     public interface IExternalScoreService
     {
-        void LoadExternalResultForSoccer(Match match, List<ResultDetail> resultDetails);
-
         void LoadExternalResultForOtherSports(Match match, List<ResultDetail> resultDetails, bool includeHalfTime);
 
         void LoadExternalResultForVolleyball(Match match, List<ResultDetail> resultDetails);
     }
 
-    public class ExternalScoreService : IExternalScoreService
+    public class ExternalScoreServiceImp : IExternalScoreService
     {
-        public void LoadExternalResultForSoccer(Match match, List<ResultDetail> resultDetails)
-        {
-            var internalResultDetails = resultDetails.Where(m => m.MatchId == match.MatchId && m.SourceId == SourceType.Normal).ToList();
-            var externalResultDetails = GetSBOResults(match.MatchId, resultDetails);
-            SetExternalResult(match, externalResultDetails);
-            if (externalResultDetails.Count > 0)
-            {
-                externalResultDetails.ForEach(item =>
-                {
-                    var result = internalResultDetails.Find(r => r.ResourceId == item.ResourceId);
-                    if (ConsistentResultDetail(result, item))
-                    {
-                        match.IsNotConsistentExHtScore = item.ResourceId == ResourceType.Halftime
-                                ? !string.Equals(match.SuspenderHalfTime, "-") || ExistResult(result)
-                                : match.IsNotConsistentExHtScore;
-                        match.IsNotConsistentExFtScore = item.ResourceId == ResourceType.Final
-                                ? !string.Equals(match.SuspenderFullTime, "-") || ExistResult(result)
-                                : match.IsNotConsistentExFtScore;
-                    }
-                });
-            }
-        }
-
         public void LoadExternalResultForVolleyball(Match match, List<ResultDetail> resultDetails)
         {
             var internalResultDetails = resultDetails.Where(m => m.MatchId == match.MatchId && m.SourceId == SourceType.Normal).ToList();

@@ -61,7 +61,7 @@ using IScoreService = Settlement.Sportsbook.MoveTickets.Services.IScoreService;
 using IScoreSetService = Settlement.Sportsbook.MoveTickets.Services.IScoreSetService;
 using LogServiceImp = Settlement.Core.Services.LogServiceImp;
 using MatchResultDetailService = Settlement.Sportsbook.MoveTickets.Services.MatchResultDetailService;
-using MatchService = Settlement.EventManagement.Services.MatchService;
+using MatchService = Settlement.EventManagement.Services.MatchServiceImp;
 using ScoreService = Settlement.Sportsbook.MoveTickets.Services.ScoreService;
 using ScoreSetService = Settlement.Sportsbook.MoveTickets.Services.ScoreSetService;
 
@@ -216,14 +216,14 @@ namespace Settlement.WebSites
             services.AddTransient<IInstantResourceService, InstantResourceServiceImp>();
             services.AddTransient<IInstantCalculateService, InstantCalculateServiceImp>();
             services.AddTransient<IRefundService, RefundServiceImp>();
-            services.AddTransient<IMultiSportService, MultiSportService>();
-            services.AddTransient<ITennisService, TennisService>();
-            services.AddTransient<IExternalScoreService, ExternalScoreService>();
-            services.AddTransient<EventManagement.Services.IMatchResultDetailService, EventManagement.Services.MatchResultDetailService>();
-            services.AddTransient<IMatchService, MatchService>();
-            services.AddTransient<EventManagement.Services.IScoreSetService, EventManagement.Services.ScoreSetService>();
-            services.AddTransient<EventManagement.Services.IScoreService, EventManagement.Services.ScoreService>();
-            services.AddTransient<EventManagement.Services.SpecificService.Tennis.IScoreService, EventManagement.Services.SpecificService.Tennis.ScoreService>();
+            services.AddTransient<IMultiSportService, MultiSportServiceImp>();
+            services.AddTransient<ITennisService, TennisServiceImp>();
+            services.AddTransient<IExternalScoreService, ExternalScoreServiceImp>();
+            services.AddTransient<EventManagement.Services.IMatchResultDetailService, EventManagement.Services.MatchResultDetailServiceImp>();
+            services.AddTransient<IMatchService, MatchServiceImp>();
+            services.AddTransient<EventManagement.Services.IScoreSetService, EventManagement.Services.ScoreSetServiceImp>();
+            services.AddTransient<EventManagement.Services.IScoreService, EventManagement.Services.ScoreServiceImp>();
+            services.AddTransient<EventManagement.Services.SpecificService.Tennis.IScoreService, EventManagement.Services.SpecificService.Tennis.ScoreServiceImp>();
 
             services.ConfigLogServices();
             

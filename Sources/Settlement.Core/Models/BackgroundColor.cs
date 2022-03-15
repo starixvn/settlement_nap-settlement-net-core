@@ -29,10 +29,6 @@ namespace Settlement.Core.Models
 
         public bool IsExistMarkedTicketParlay { get; set; }
 
-        public bool IsExistRunningTicketParlay { get; set; }
-
-        public string MatchNameColor => SportType == Constants.SportType.MuayThai ? Background.MuayThai : string.Empty;
-
         public string CalcSbBackgroundColor
         {
             get
@@ -85,8 +81,7 @@ namespace Settlement.Core.Models
                 }
                 if (IsMultiCaled != IsRefund)
                 {
-                    var colorCalculated = IsExistRunningTicketParlay ? Background.Pink : Background.Calculated;
-                    return IsMultiCaled ? colorCalculated : Background.Refund;
+                    return IsMultiCaled ? Background.Calculated : Background.Refund;
                 }
 
                 return string.Empty;

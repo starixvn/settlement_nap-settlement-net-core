@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -41,14 +42,14 @@ namespace Settlement.EventManagement.Controllers
             return new MessagePackResult<MultiSportModel>(matches);
         }
 
-        //[HttpPost]
-        //[Route("auto-refresh")]
-        //public async Task<IActionResult> RefreshMatches(RefreshMatchesRequest request)
-        //{
-        //    var matches = await mediator.Send(request).ConfigureAwait(false);
+        [HttpPost]
+        [Route("auto-refresh")]
+        public async Task<IActionResult> RefreshMatches(RefreshMatchesRequest request)
+        {
+            var matches = await mediator.Send(request).ConfigureAwait(false);
 
-        //    return new MessagePackResult<IList<MultiSportMatchWaiting>>(matches);
-        //}
+            return new MessagePackResult<IList<MultiSportMatchWaiting>>(matches);
+        }
 
         [HttpPost]
         [Route("getSport")]

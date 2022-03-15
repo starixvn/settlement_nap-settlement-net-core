@@ -1,9 +1,10 @@
-﻿using Settlement.Core.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Settlement.Core.Constants;
+using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.EventManagement.Services.SpecificService.Tennis;
+using Match = Settlement.EventManagement.Models.Match;
 
 namespace Settlement.EventManagement.Services
 {
@@ -17,8 +18,6 @@ namespace Settlement.EventManagement.Services
 
         List<Match> BadmintonResultDetail(List<Match> matches, List<ResultDetail> resultDetails, Permission permission);
 
-        List<Match> SoccerResultDetail(List<Match> matches, List<ResultDetail> resultDetails);
-
         List<Match> CricketResultDetail(List<Match> matches, List<ResultDetail> resultDetails, Permission permission);
 
         List<Match> BeachVolleyballResultDetail(List<Match> matches, List<ResultDetail> resultDetails);
@@ -28,28 +27,24 @@ namespace Settlement.EventManagement.Services
         List<Match> OtherSportsResultDetail(List<Match> matches, List<ResultDetail> resultDetails, bool includeHalfTime);
     }
 
-    public class MatchResultDetailService : IMatchResultDetailService
+    public class MatchResultDetailServiceImp : IMatchResultDetailService
     {
         private readonly ITennisService tennisService;
 
         private readonly IRefDataService refDataService;
 
-        private readonly IGoalIconService goalIconService;
-
         private readonly IExternalScoreService externalScoreService;
 
         private readonly IScoreService scoreService;
 
-        public MatchResultDetailService(
+        public MatchResultDetailServiceImp(
             ITennisService tennisService,
             IRefDataService refDataService,
-            IGoalIconService goalIconService,
             IExternalScoreService externalScoreService,
             IScoreService scoreService)
         {
             this.tennisService = tennisService;
             this.refDataService = refDataService;
-            this.goalIconService = goalIconService;
             this.externalScoreService = externalScoreService;
             this.scoreService = scoreService;
         }
@@ -128,16 +123,6 @@ namespace Settlement.EventManagement.Services
         {
             var resources = new List<string> { "0101", "0102", "0103", "0104", "0105" };
             return SetMatchInfo(matches, resultDetails, resources, permission);
-        }
-
-        public List<Match> SoccerResultDetail(List<Match> matches, List<ResultDetail> resultDetails)
-        {
-            foreach (var match in matches)
-            {
-                externalScoreService.LoadExternalResultForSoccer(match, resultDetails);
-            }
-
-            return goalIconService.GetGoalIconMatches(matches);
         }
 
         private static bool IsDisplayIntervalScore(Match match, List<ResultDetail> resultDetails)

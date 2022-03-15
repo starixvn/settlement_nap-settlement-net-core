@@ -10,6 +10,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Services\ExternalScoreService.cs.orig" />
+    <None Remove="Services\MatchResultDetailService.cs.orig" />
+    <None Remove="Services\MatchService.cs.orig" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="10.1.1" />
     <PackageReference Include="MediatR" Version="9.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />

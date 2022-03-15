@@ -1,10 +1,8 @@
 ﻿using Kaden.Extensions;
-using MessagePack;
 using System;
 
 namespace Settlement.Core.Models
 {
-    [MessagePackObject]
     public class AutoCalculationSetting
     {
         private const int DirectPayoutBit = 4;
@@ -13,7 +11,6 @@ namespace Settlement.Core.Models
 
         private const int MultiSportAutoPayoutBit = 5;
 
-        [Key("matchSetting")]
         public string MatchSetting { get; set; }
 
         public AutoCalculationSetting()
@@ -26,7 +23,6 @@ namespace Settlement.Core.Models
             LeagueSetting = Convert.ToString(autoSettingForLeague, ConvertToBase).Reverse();
         }
 
-        [Key("isAutoPayoutForMatch")]
         public bool IsAutoPayoutForMatch
         {
             get
@@ -45,19 +41,14 @@ namespace Settlement.Core.Models
             }
         }
 
-        [Key("isDirectPayoutForMatch")]
         public bool IsDirectPayoutForMatch => !string.IsNullOrWhiteSpace(MatchSetting) && MatchSetting.Length > DirectPayoutBit && MatchSetting[DirectPayoutBit].Equals('1');
 
-        [Key("isAutoPayoutForMultiSportMatch")]
         public bool IsAutoPayoutForMultiSportMatch => !string.IsNullOrWhiteSpace(MatchSetting) && MatchSetting.Length > MultiSportAutoPayoutBit && MatchSetting[MultiSportAutoPayoutBit].Equals('1');
 
-        [Key("isInstantForMatch")]
         public bool IsInstantForMatch => !string.IsNullOrWhiteSpace(MatchSetting) && MatchSetting.Length > 1 && MatchSetting[1].Equals('1');
 
-        [Key("leagueSetting")]
         public string LeagueSetting { get; set; }
 
-        [Key("isAutoPayoutForLeague")]
         public bool IsAutoPayoutForLeague
         {
             get
@@ -76,14 +67,11 @@ namespace Settlement.Core.Models
             }
         }
 
-        [Key("isDirectPayoutForLeague")]
         public bool IsDirectPayoutForLeague => !string.IsNullOrWhiteSpace(LeagueSetting) && LeagueSetting.Length > DirectPayoutBit && LeagueSetting[DirectPayoutBit].Equals('1');
 
-        [Key("isAutoPayoutForMultiSportLeague")]
         public bool IsAutoPayoutForMultiSportLeague
             => !string.IsNullOrWhiteSpace(LeagueSetting) && LeagueSetting.Length > MultiSportAutoPayoutBit && LeagueSetting[MultiSportAutoPayoutBit].Equals('1');
 
-        [Key("isInstantForLeague")]
         public bool IsInstantForLeague => !string.IsNullOrWhiteSpace(LeagueSetting) && LeagueSetting.Length > 1 && LeagueSetting[1].Equals('1');
     }
 }

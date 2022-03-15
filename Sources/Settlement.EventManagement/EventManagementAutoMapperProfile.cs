@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Settlement.Core.Models;
 using Settlement.EventManagement.Criteria;
 using Settlement.EventManagement.Models;
 using Settlement.EventManagement.Requests;
@@ -14,8 +13,9 @@ namespace Settlement.EventManagement
                 .ForMember(dest => dest.AutoSetting, map => map.MapFrom(src => src.AutoPayout));
             CreateMap<SportRequest, SportCriteria>();
             CreateMap<LeagueRequest, LeagueCriteria>();
-            //CreateMap<Match, MultiSportMatchWaiting>();
+            CreateMap<Match, MultiSportMatchWaiting>();
             CreateMap<Match, MultiSportMatch>();
+            CreateMap<RefreshMatchesRequest, GetWaitingMatchesMultiSportCriteria>();
         }
     }
 }

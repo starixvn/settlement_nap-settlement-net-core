@@ -1,17 +1,18 @@
-﻿using AutoMapper;
-using Fanex.Caching;
+﻿using System;
+using AutoMapper;
 using Fanex.Data.Repository;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Settlement.EventManagement.Criteria;
 using Settlement.EventManagement.Models;
 using Settlement.EventManagement.Requests;
+using Match = Settlement.EventManagement.Models.Match;
+using System.Threading;
+using Fanex.Caching;
 
 namespace Settlement.EventManagement.Services
 {
@@ -19,39 +20,39 @@ namespace Settlement.EventManagement.Services
     {
         Task<List<SportModel>> GetSportBook(FilterMultiSportRequest request);
 
-        //Task<List<Match>> GetWaitingMatches(RefreshMatchesRequest request);
+        Task<List<Match>> GetWaitingMatches(RefreshMatchesRequest request);
 
         Task<List<SportTypeModel>> GetSports(SportRequest request);
 
         Task<List<LeagueTypeModel>> GetLeagues(LeagueRequest request);
     }
 
-    public class MultiSportService : IMultiSportService
+    public class MultiSportServiceImp : IMultiSportService
     {
         private static int _isProcessing;
         private readonly IDynamicRepository repository;
         private readonly IRefDataService refDataService;
         private readonly IMatchService matchService;
-        private readonly ICacheService cacheService;
         private readonly IMapper mapper;
+        private readonly ICacheService cacheService;
         private readonly PermissionService permissionService;
         private static readonly List<int> PopularSport = new List<int> { SportType.Badminton, SportType.BasketBall, SportType.ESports, SportType.Tennis };
         private const string PopularGroup = "All Popular Sports";
         private const string OtherGroup = "All Other Sports";
 
-        public MultiSportService(
+        public MultiSportServiceImp(
             IDynamicRepository repository,
             IRefDataService refDataService,
             IMatchService matchService,
-            ICacheService cacheService,
             IMapper mapper,
+            ICacheService cacheService,
             PermissionService permissionService)
         {
             this.repository = repository;
             this.refDataService = refDataService;
             this.matchService = matchService;
-            this.cacheService = cacheService;
             this.permissionService = permissionService;
+            this.cacheService = cacheService;
             this.mapper = mapper;
         }
 
@@ -95,6 +96,72 @@ namespace Settlement.EventManagement.Services
             }
 
             return SortLeague(leagues.ToList());
+        }
+
+        public async Task<List<Match>> GetWaitingMatches(RefreshMatchesRequest request)
+        {
+            var matches = MatchesOnShortCaching(request.LeagueIds);
+
+            if (matches != null && matches.Count > 0)
+            {
+                return matches;
+            }
+
+            if (0 == Interlocked.Exchange(ref _isProcessing, 1))
+            {
+                try
+                {
+                    return await GetAndCachingMatches(request);
+                }
+                finally
+                {
+                    Interlocked.Exchange(ref _isProcessing, 0);
+                }
+            }
+
+            return MatchesOnLongCaching(request.LeagueIds);
+        }
+
+        private List<Match> MatchesOnShortCaching(string leagueIds)
+        {
+            var shortCachingKey = ShortCachingKey(leagueIds);
+            return cacheService.Get<List<Match>>(shortCachingKey);
+        }
+
+        private List<Match> MatchesOnLongCaching(string leagueIds)
+        {
+            var longCachingKey = LongCachingKey(leagueIds);
+            return cacheService.Get<List<Match>>(longCachingKey);
+        }
+
+        private static string ShortCachingKey(string leagueIds) => $"{CacheServiceKey.MemoryCacheMultiSportCacheKey}-{leagueIds}";
+
+        private static string LongCachingKey(string leagueIds) => $"{ShortCachingKey(leagueIds)}-longCaching";
+
+        private async Task<List<Match>> GetAndCachingMatches(RefreshMatchesRequest request)
+        {
+            var criteria = mapper.Map<RefreshMatchesRequest, GetWaitingMatchesMultiSportCriteria>(request);
+            var data = await FetchMatchesAndResultDetails(criteria);
+            var matchesByEachSport = GetMoreScore(data);
+            var matches = new List<Match>();
+            matchesByEachSport.ForEach(sport => sport.Matches.ForEach(match =>
+            {
+                matches.Add(match);
+            }));
+
+            SetToCache(request.LeagueIds, matches);
+
+            return matches;
+        }
+
+        private void SetToCache(string leagueIds, List<Match> matches)
+        {
+            var shortCachingKey = ShortCachingKey(leagueIds);
+            var longCachingKey = LongCachingKey(leagueIds);
+            const int shortCacheExpirationTime = 3;
+            const int longCacheExpirationTime = 20;
+            cacheService.Set(shortCachingKey, matches, new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromSeconds(shortCacheExpirationTime)));
+            cacheService.Set(longCachingKey, matches, new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(longCacheExpirationTime)));
         }
 
         private static List<SportTypeModel> OrderSport(List<SportTypeModel> sports)

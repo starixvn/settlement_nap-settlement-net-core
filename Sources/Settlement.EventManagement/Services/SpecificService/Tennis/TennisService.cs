@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Match = Settlement.EventManagement.Models.Match;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
 
@@ -13,7 +11,7 @@ namespace Settlement.EventManagement.Services.SpecificService.Tennis
         MoreScores ScoreLoader(Match match, List<ResultDetail> resultDetails, Permission permission);
     }
 
-    public class TennisService : ITennisService
+    public class TennisServiceImp : ITennisService
     {
         private readonly IScoreService scoreService;
 
@@ -21,7 +19,7 @@ namespace Settlement.EventManagement.Services.SpecificService.Tennis
 
         private readonly List<string> setResource = new List<string> { "01", "02", "03", "04", "05" };
 
-        public TennisService(
+        public TennisServiceImp(
             IScoreSetService scoreSetService,
             IScoreService scoreService)
         {

@@ -1,5 +1,4 @@
 ﻿using MessagePack;
-using Settlement.Core.Models;
 
 namespace Settlement.EventManagement.Models
 {
@@ -97,7 +96,7 @@ namespace Settlement.EventManagement.Models
         public int AutoPayoutStatus { get; set; }
 
         [Key("moreScores")]
-        public MoreScores MoreScores { get; set; }
+        public Core.Models.MoreScores MoreScores { get; set; }
 
         [Key("eventStatusColor")]
         public string EventStatusColor { get; set; }
@@ -112,7 +111,7 @@ namespace Settlement.EventManagement.Models
         public AutoCalculationSetting AutoCalcSetting { get; set; }
 
         [Key("remark")]
-        public RemarkSettingModel Remark { get; set; }
+        public Core.Models.RemarkSettingModel Remark { get; set; }
 
         [Key("mixParlay")]
         public MixParlay MixParlay { get; set; }

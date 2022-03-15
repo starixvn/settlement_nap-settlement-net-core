@@ -2,6 +2,7 @@
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
+using Match = Settlement.EventManagement.Models.Match;
 
 namespace Settlement.EventManagement.Services
 {
@@ -10,13 +11,13 @@ namespace Settlement.EventManagement.Services
         List<Match> GetScoreForMatchBySportType(List<Match> matches, List<ResultDetail> resultDetails, int sportType, int groupSport, Permission permission = null);
     }
 
-    public class MatchService : IMatchService
+    public class MatchServiceImp : IMatchService
     {
         private readonly IMatchResultDetailService matchResultDetailService;
 
         private readonly IRefDataService refDataService;
 
-        public MatchService(IRefDataService refDataService,
+        public MatchServiceImp(IRefDataService refDataService,
             IMatchResultDetailService matchResultDetailService)
         {
             this.matchResultDetailService = matchResultDetailService;
@@ -25,11 +26,6 @@ namespace Settlement.EventManagement.Services
 
         public List<Match> GetScoreForMatchBySportType(List<Match> matches, List<ResultDetail> resultDetails, int sportType, int groupSport, Permission permission = null)
         {
-            if (sportType == SportType.Soccer)
-            {
-                return matchResultDetailService.SoccerResultDetail(matches, resultDetails);
-            }
-
             if (sportType == SportType.Tennis)
             {
                 return matchResultDetailService.TennisResultDetail(matches, resultDetails, permission);

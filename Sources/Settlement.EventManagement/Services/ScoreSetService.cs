@@ -8,7 +8,7 @@ namespace Settlement.EventManagement.Services
         Score GetScore(ResultDetail item, Permission permission);
     }
 
-    public class ScoreSetService : IScoreSetService
+    public class ScoreSetServiceImp : IScoreSetService
     {
         public Score GetScore(ResultDetail item, Permission permission)
         {

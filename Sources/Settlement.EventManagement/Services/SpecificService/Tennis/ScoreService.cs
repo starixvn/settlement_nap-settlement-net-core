@@ -12,7 +12,7 @@ namespace Settlement.EventManagement.Services.SpecificService.Tennis
         Score ScoreSet(ResultDetail resultDetail);
     }
 
-    public class ScoreService : IScoreService
+    public class ScoreServiceImp : IScoreService
     {
         public Score TotalGame(string totalSetHomeValue, Score totalScore)
         {
