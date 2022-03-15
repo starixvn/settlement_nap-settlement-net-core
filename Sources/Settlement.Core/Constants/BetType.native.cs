@@ -184,5 +184,14 @@ namespace Settlement.Core.Constants
             public const int MapGameRacePoint = 712;
         }
         #endregion Badminton bet types
+
+        #region FastMarket
+        public const int NextOneMinuteSetPiece = 225;
+
+        public const int TimeMachineOverUnder = 228;
+
+        public const int TimeMachineHandicap = 229;
+
+        #endregion
     }
 }

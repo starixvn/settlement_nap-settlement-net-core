@@ -51,10 +51,15 @@ using ONEbook.UM.Configurations;
 using ONEbook.UM.AspNetCore;
 using ONEbook.UM.Helpers;
 using ONEbook.UM.Transport;
+using Settlement.Log;
+using Settlement.Log.Controllers;
+using Settlement.Log.Services;
+using Settlement.WebSites.Configurations;
 using IMatchResultDetailService = Settlement.Sportsbook.MoveTickets.Services.IMatchResultDetailService;
 using IMatchService = Settlement.EventManagement.Services.IMatchService;
 using IScoreService = Settlement.Sportsbook.MoveTickets.Services.IScoreService;
 using IScoreSetService = Settlement.Sportsbook.MoveTickets.Services.IScoreSetService;
+using LogServiceImp = Settlement.Core.Services.LogServiceImp;
 using MatchResultDetailService = Settlement.Sportsbook.MoveTickets.Services.MatchResultDetailService;
 using MatchService = Settlement.EventManagement.Services.MatchService;
 using ScoreService = Settlement.Sportsbook.MoveTickets.Services.ScoreService;
@@ -219,6 +224,9 @@ namespace Settlement.WebSites
             services.AddTransient<EventManagement.Services.IScoreSetService, EventManagement.Services.ScoreSetService>();
             services.AddTransient<EventManagement.Services.IScoreService, EventManagement.Services.ScoreService>();
             services.AddTransient<EventManagement.Services.SpecificService.Tennis.IScoreService, EventManagement.Services.SpecificService.Tennis.ScoreService>();
+
+            services.ConfigLogServices();
+            
         }
 
         private void ConfigureNapServices(IServiceCollection services)
@@ -233,6 +241,7 @@ namespace Settlement.WebSites
             services.AddSingleton<IUserService, UserService>();
             services.AddSingleton<ISecurityService, SecurityService>();
             services.AddSingleton<ISiteService, SiteService>();
+            services.AddTransient<IBalanceUpService, BalanceUpServiceImp>();
 
             RefDataTypeContainer
                 .ConnectTo(new Uri(Configuration.GetSection("Fanex.RemotingRef.Service.Url").Value))
@@ -294,6 +303,7 @@ namespace Settlement.WebSites
             services.AddMediatR(typeof(OtherSportsController).GetTypeInfo().Assembly);
             services.AddMediatR(typeof(SoccerController).GetTypeInfo().Assembly);
             services.AddMediatR(typeof(MultiSportController).GetTypeInfo().Assembly);
+            services.ConfigLogMediator();
         }
 
         private static void ConfigureAutoMapper(IServiceCollection services)
@@ -304,6 +314,7 @@ namespace Settlement.WebSites
                 mc.AddProfile(typeof(SportsbookMoveTicketAutoMapperProfile));
                 mc.AddProfile(typeof(OtherSportsAutoMapperProfile));
                 mc.AddProfile(typeof(SoccerAutoMapperProfile));
+                mc.AddProfile(typeof(LogAutoMapper));
                 mc.AddProfile(typeof(EventManagementAutoMapperProfile));
             });
 

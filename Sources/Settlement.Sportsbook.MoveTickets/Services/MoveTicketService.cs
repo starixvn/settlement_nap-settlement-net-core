@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Http;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
-using Settlement.Sportsbook.Core.Criteria;
 using Settlement.Sportsbook.MoveTickets.Criteria;
 using Settlement.Sportsbook.MoveTickets.Models;
 using Settlement.Sportsbook.MoveTickets.Requests;

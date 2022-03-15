@@ -8,7 +8,6 @@
 	<ItemGroup>
 	  <Compile Remove="Constants\GroupBetType.cs" />
 	  <Compile Remove="Constants\InputType.cs" />
-	  <Compile Remove="Criteria\GetRecalResultCriteria.cs" />
 	  <Compile Remove="Criteria\RefundParlayCriteria.cs" />
 	  <Compile Remove="Models\ChildMatchItem.cs" />
 	  <Compile Remove="Models\MatchResultDetail.cs" />

@@ -1,12 +1,12 @@
 ﻿using Fanex.Data.Repository;
 
-namespace Settlement.Sportsbook.Core.Criteria
+namespace Settlement.Sportsbook.MoveTickets.Criteria
 {
     public class GetChildMatchCriteria : CriteriaBase
     {
-        public string matchIds { get; set; }
+        public string MatchIds { get; set; }
 
-        public string mode { get; set; }
+        public string Mode { get; set; }
 
         public string SelectedResources { get; set; }
 
@@ -17,7 +17,7 @@ namespace Settlement.Sportsbook.Core.Criteria
 
         public override bool IsValid()
         {
-            return matchIds.Length > 0;
+            return MatchIds.Length > 0;
         }
     }
 }

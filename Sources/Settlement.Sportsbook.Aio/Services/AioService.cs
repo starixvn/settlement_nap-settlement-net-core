@@ -8,11 +8,11 @@ using Settlement.Sportsbook.Aio.Criteria;
 using Settlement.Sportsbook.Aio.MapperFactory;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Requests;
-using Settlement.Sportsbook.Core.Criteria;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Settlement.Core.Criteria;
 using ResultDetail = Settlement.Sportsbook.Aio.Models.ResultDetail;
 
 namespace Settlement.Sportsbook.Aio.Services
@@ -226,8 +226,8 @@ namespace Settlement.Sportsbook.Aio.Services
         private async Task<string> GetChildMatchIds(int matchId, string actionName, string selectedResources = "")
         {
             var criteria = new GetChildMatchCriteria();
-            criteria.matchIds = matchId.ToString();
-            criteria.mode = actionName;
+            criteria.MatchIds = matchId.ToString();
+            criteria.Mode = actionName;
             if (selectedResources != "")
             {
                 criteria.SelectedResources = selectedResources;
