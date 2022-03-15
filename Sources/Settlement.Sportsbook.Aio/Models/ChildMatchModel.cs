@@ -57,10 +57,7 @@ namespace Settlement.Sportsbook.Aio.Models
             ResultSetting = Convert.ToString(ResultSetting, ToBase).Reverse(),
         };
 
-        public RemarkSettingModel Remark => new RemarkSettingModel
-        {
-            SettlementStatus = Convert.ToString(SettlementStatus, ToBase).Reverse(),
-        };
+        public RemarkSettingModel Remark => new RemarkSettingModel(SettlementStatus);
 
         public bool IsHold
         {

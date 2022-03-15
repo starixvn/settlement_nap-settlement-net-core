@@ -11,8 +11,6 @@ namespace Settlement.Sportsbook.Soccer.Models
     {
         private string eventStatus = string.Empty;
 
-        private const int ConvertToBase = 2;
-
         [JsonIgnore]
         public IRefDataService RefDataService { get; set; }
 
@@ -55,10 +53,7 @@ namespace Settlement.Sportsbook.Soccer.Models
             }
         }
 
-        public RemarkSettingModel Remark => new RemarkSettingModel
-        {
-            SettlementStatus = Convert.ToString(SettlementStatus, ConvertToBase).Reverse()
-        };
+        public RemarkSettingModel Remark => new RemarkSettingModel(SettlementStatus);
 
         public bool IsDeleted { get; set; }
     }

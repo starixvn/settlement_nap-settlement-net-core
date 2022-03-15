@@ -15,8 +15,7 @@ namespace Settlement.Core.Models
 
         private const int KeyHoldPosition = 6;
 
-        [Key("settlementStatus")]
-        public string SettlementStatus { get; set; }
+        private string SettlementStatus { get; set; }
 
         public RemarkSettingModel()
         {
