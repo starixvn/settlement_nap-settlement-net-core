@@ -202,7 +202,7 @@ namespace Settlement.EventManagement.UnitTests.Services
             fakeData.Item2 = new List<ResultDetail> { resultDetail };
             repository.FetchMultipleAsync<Match, ResultDetail>(Arg.Any<ICriteria>()).Returns(fakeData);
             refDataService.GetLeagueName(Arg.Any<string>()).Returns(string.Empty);
-            matchService.GetScoreForMatchBySportType(Arg.Any<List<Match>>(), Arg.Any<List<ResultDetail>>(), Arg.Any<int>(), Arg.Any<int>()).Returns(new List<Match> { match });
+            matchService.GetScoreForMatchBySportType(Arg.Any<List<Match>>(), Arg.Any<List<ResultDetail>>(), Arg.Any<int>()).Returns(new List<Match> { match });
 
             var waitingMatches = await service.GetWaitingMatches(new RefreshMatchesRequest());
 
@@ -262,7 +262,7 @@ namespace Settlement.EventManagement.UnitTests.Services
             fakeData.Item2 = new List<ResultDetail> { resultDetail };
             repository.FetchMultipleAsync<Match, ResultDetail>(Arg.Any<ICriteria>()).Returns(fakeData);
             refDataService.GetLeagueName(Arg.Any<string>()).Returns(string.Empty);
-            matchService.GetScoreForMatchBySportType(Arg.Any<List<Match>>(), Arg.Any<List<ResultDetail>>(), Arg.Any<int>(), Arg.Any<int>()).Returns(fakeMatches);
+            matchService.GetScoreForMatchBySportType(Arg.Any<List<Match>>(), Arg.Any<List<ResultDetail>>(), Arg.Any<int>()).Returns(fakeMatches);
 
             // Act
             var sportBooks = await service.GetSportBook(new FilterMultiSportRequest());

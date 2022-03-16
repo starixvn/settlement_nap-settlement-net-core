@@ -236,7 +236,7 @@ namespace Settlement.EventManagement.Services
             var permission = permissionService.GetPermission(CacheServiceKey.MemoryCacheManualPermission);
             foreach (var item in matchesByEachSport)
             {
-                item.Matches = matchService.GetScoreForMatchBySportType(item.Matches, data.ResultDetails, item.SportType, 0, permission);
+                item.Matches = matchService.GetScoreForMatchBySportType(item.Matches, data.ResultDetails, item.SportType, permission);
             }
 
             return matchesByEachSport;

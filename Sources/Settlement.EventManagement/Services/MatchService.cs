@@ -8,7 +8,7 @@ namespace Settlement.EventManagement.Services
 {
     public interface IMatchService
     {
-        List<Match> GetScoreForMatchBySportType(List<Match> matches, List<ResultDetail> resultDetails, int sportType, int groupSport, Permission permission = null);
+        List<Match> GetScoreForMatchBySportType(List<Match> matches, List<ResultDetail> resultDetails, int sportType, Permission permission = null);
     }
 
     public class MatchServiceImp : IMatchService
@@ -24,7 +24,7 @@ namespace Settlement.EventManagement.Services
             this.refDataService = refDataService;
         }
 
-        public List<Match> GetScoreForMatchBySportType(List<Match> matches, List<ResultDetail> resultDetails, int sportType, int groupSport, Permission permission = null)
+        public List<Match> GetScoreForMatchBySportType(List<Match> matches, List<ResultDetail> resultDetails, int sportType, Permission permission = null)
         {
             if (sportType == SportType.Tennis)
             {
@@ -64,7 +64,6 @@ namespace Settlement.EventManagement.Services
             foreach (var result in matches)
             {
                 result.RefDataService = refDataService;
-                result.GroupSport = groupSport;
             }
 
             return LoadExternalResults(matches, resultDetails, sportType);

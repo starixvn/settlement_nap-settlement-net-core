@@ -28,7 +28,7 @@ namespace Settlement.EventManagement.UnitTests.Services
         public void GetScoreForMatchBySportType_IsTennis_InvokeTennisResultDetailMethodOnMatchResultDetailService()
         {
             // Act
-            service.GetScoreForMatchBySportType(new List<Match>(), new List<ResultDetail>(), SportType.Tennis, 4);
+            service.GetScoreForMatchBySportType(new List<Match>(), new List<ResultDetail>(), SportType.Tennis);
 
             // Assert
             matchResultDetailService.Received().TennisResultDetail(Arg.Any<List<Match>>(), Arg.Any<List<ResultDetail>>(), Arg.Any<Permission>());
@@ -38,7 +38,7 @@ namespace Settlement.EventManagement.UnitTests.Services
         public void GetScoreForMatchBySportType_IsBasketBall_InvokeBasketballResultDetailMethodOnMatchResultDetailService()
         {
             // Act
-            service.GetScoreForMatchBySportType(new List<Match>(), new List<ResultDetail>(), SportType.BasketBall, 12);
+            service.GetScoreForMatchBySportType(new List<Match>(), new List<ResultDetail>(), SportType.BasketBall);
 
             // Assert
             matchResultDetailService.Received().BasketballResultDetail(Arg.Any<List<Match>>(), Arg.Any<List<ResultDetail>>(), Arg.Any<Permission>());
@@ -48,7 +48,7 @@ namespace Settlement.EventManagement.UnitTests.Services
         public void GetScoreForMatchBySportType_IsESports_InvokeESportsResultDetailMethodOnMatchResultDetailService()
         {
             // Act
-            service.GetScoreForMatchBySportType(new List<Match>(), new List<ResultDetail>(), SportType.ESports, 9);
+            service.GetScoreForMatchBySportType(new List<Match>(), new List<ResultDetail>(), SportType.ESports);
 
             // Assert
             matchResultDetailService.Received().ESportsResultDetail(Arg.Any<List<Match>>(), Arg.Any<List<ResultDetail>>(), Arg.Any<Permission>());
@@ -58,7 +58,7 @@ namespace Settlement.EventManagement.UnitTests.Services
         public void GetScoreForMatchBySportType_IsBadminton_InvokeBadmintonResultDetailMethodOnMatchResultDetailService()
         {
             // Act
-            service.GetScoreForMatchBySportType(new List<Match>(), new List<ResultDetail>(), SportType.Badminton, 10);
+            service.GetScoreForMatchBySportType(new List<Match>(), new List<ResultDetail>(), SportType.Badminton);
 
             // Assert
             matchResultDetailService.Received().BadmintonResultDetail(Arg.Any<List<Match>>(), Arg.Any<List<ResultDetail>>(), Arg.Any<Permission>());
@@ -75,7 +75,7 @@ namespace Settlement.EventManagement.UnitTests.Services
             };
 
             // Act
-            var newMatches = service.GetScoreForMatchBySportType(matches, new List<ResultDetail>(), 90, 11);
+            var newMatches = service.GetScoreForMatchBySportType(matches, new List<ResultDetail>(), 90);
 
             // Assert
             Assert.True(matches.Count == newMatches.Count);
@@ -93,7 +93,7 @@ namespace Settlement.EventManagement.UnitTests.Services
             matchResultDetailService.OtherSportsResultDetail(Arg.Any<List<Match>>(), Arg.Any<List<ResultDetail>>(), false).Returns(matches);
 
             // Act
-            var newMatches = service.GetScoreForMatchBySportType(matches, new List<ResultDetail>(), 4, 11);
+            var newMatches = service.GetScoreForMatchBySportType(matches, new List<ResultDetail>(), 4);
 
             // Assert
             Assert.True(matches.Count == newMatches.Count);
@@ -111,7 +111,7 @@ namespace Settlement.EventManagement.UnitTests.Services
             matchResultDetailService.OtherSportsResultDetail(Arg.Any<List<Match>>(), Arg.Any<List<ResultDetail>>(), true).Returns(matches);
 
             // Act
-            var newMatches = service.GetScoreForMatchBySportType(matches, new List<ResultDetail>(), 3, 11);
+            var newMatches = service.GetScoreForMatchBySportType(matches, new List<ResultDetail>(), 3);
 
             // Assert
             Assert.True(matches.Count == newMatches.Count);
