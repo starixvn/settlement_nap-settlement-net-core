@@ -43,7 +43,7 @@ namespace Settlement.Sportsbook.MoveTickets.UnitTests.Services
             mapperConfig.AddProfile<SportsbookMoveTicketAutoMapperProfile>();
             var config = new MapperConfiguration(mapperConfig);
             mapper = new Mapper(config);
-            service = new MoveTicketService(repository, refDataService, mapper, matchService, currentSession, accessor, logService);
+            service = new MoveTicketServiceImp(repository, refDataService, mapper, matchService, currentSession, accessor, logService);
         }
 
         private Match CreateMatch(int matchId, string eventStatus, bool isMarkedTicket)

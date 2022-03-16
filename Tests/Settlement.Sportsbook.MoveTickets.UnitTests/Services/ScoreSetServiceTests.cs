@@ -12,8 +12,9 @@ namespace Settlement.Sportsbook.MoveTickets.UnitTests.Services
 
         public ScoreSetServiceTests()
         {
-            service = new ScoreSetService();
+            service = new ScoreSetServiceImp();
         }
+
         [Fact]
         public void GetScore_HasResultDetailWithSettlementStatusIdIsRefund_ReturnsROnScore()
         {
@@ -90,7 +91,6 @@ namespace Settlement.Sportsbook.MoveTickets.UnitTests.Services
             // Arrange
             var resultDetail = new ResultDetail { MatchId = 1, HomeValue = "1", AwayValue = "2", SettlementStatusId = SettlementStatus.Running };
             var expectedScore = new Score("1", "2");
-
 
             // Act
             var actualScore = service.GetScore(resultDetail);

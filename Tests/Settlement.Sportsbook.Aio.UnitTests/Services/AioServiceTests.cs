@@ -38,7 +38,7 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
             configuration = Substitute.For<Microsoft.Extensions.Configuration.IConfiguration>();
             var mapperConfig = new MapperConfigurationExpression();
             mapperConfig.AddProfile<SportsbookAioAutoMapperProfile>();
-            service = new AioService(repository, permissionService, refDataService,
+            service = new AioServiceImp(repository, permissionService, refDataService,
                                     mapperFactory, validateApiKeyService, createQueryService, configuration);
         }
 

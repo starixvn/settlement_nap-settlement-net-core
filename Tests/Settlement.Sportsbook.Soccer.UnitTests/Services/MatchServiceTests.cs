@@ -38,7 +38,7 @@ namespace Settlement.Sportsbook.Soccer.UnitTests.Services
             mapperConfig.AddProfile<SoccerAutoMapperProfile>();
             var config = new MapperConfiguration(mapperConfig);
             var mapper = new Mapper(config);
-            service = new MatchService(repository, permission, mapper, refDataService, goalIconService);
+            service = new MatchServiceImp(repository, permission, mapper, refDataService, goalIconService);
         }
 
         [Fact]
