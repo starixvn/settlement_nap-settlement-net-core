@@ -161,11 +161,15 @@ namespace Settlement.Sportsbook.Aio.Services
             var criteria = createQueryService.QuerySettle(request);
             await repository.ExecuteAsync(criteria);
 
+            var childMatchIds = request.SportType == SportType.Cricket && criteria.ErrCode == 0
+                ? await GetChildMatchIds(request.MatchId, criteria.Action, criteria.SelectedResources)
+                : string.Empty;
+
             var settleResult = new Result
             {
                 ErrCode = criteria.ErrCode,
                 ErrMsg = criteria.ErrMsg,
-                ChildMatchIds = request.SportType == SportType.Cricket && criteria.ErrCode == 0 ? await GetChildMatchIds(request.MatchId, criteria.Action, criteria.SelectedResources) : string.Empty,
+                ChildMatchIds = childMatchIds,
                 ServiceCommand = criteria.ServiceCommand
             };
 
@@ -225,9 +229,12 @@ namespace Settlement.Sportsbook.Aio.Services
 
         private async Task<string> GetChildMatchIds(int matchId, string actionName, string selectedResources = "")
         {
-            var criteria = new GetChildMatchCriteria();
-            criteria.MatchIds = matchId.ToString();
-            criteria.Mode = actionName;
+            var criteria = new GetChildMatchCriteria
+            {
+                MatchIds = matchId.ToString(),
+                Mode = actionName
+            };
+
             if (selectedResources != "")
             {
                 criteria.SelectedResources = selectedResources;
