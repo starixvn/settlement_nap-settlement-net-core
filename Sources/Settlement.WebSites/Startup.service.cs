@@ -175,7 +175,6 @@ namespace Settlement.WebSites
             services.AddSingleton<IGroupService, GroupService>();
             services.AddSingleton<IUserService, UserService>();
             services.AddSingleton<ISecurityService, SecurityService>();
-            services.AddSingleton<ISiteService, SiteService>();
             services.AddTransient<IBalanceUpService, BalanceUpServiceImp>();
 
             RefDataTypeContainer
