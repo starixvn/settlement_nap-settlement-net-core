@@ -1,4 +1,5 @@
 ﻿using MessagePack;
+using Settlement.Core.Constants;
 using Settlement.Core.Models;
 
 namespace Settlement.EventManagement.Models
@@ -7,8 +8,6 @@ namespace Settlement.EventManagement.Models
     public class MixParlay
     {
         private const int IsSuccess = 2;
-
-        private const string BetStatusHt = "Refund HT";
 
         private bool IsCalculated { get; }
 
@@ -40,7 +39,7 @@ namespace Settlement.EventManagement.Models
             IsKeyScore = isKeyScore;
         }
 
-        private bool EnableCalcMixParlay => IsKeyScore && IsCalculated && !BetStatusValue.Contains(BetStatusHt);
+        private bool EnableCalcMixParlay => IsKeyScore && IsCalculated && !BetStatusValue.Contains(BetStatus.RefundHT);
 
         [Key("isKeyScore")]
         public bool IsKeyScore { get; }

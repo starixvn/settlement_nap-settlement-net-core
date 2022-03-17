@@ -54,8 +54,6 @@ namespace Settlement.EventManagement.Models
 
         public int LeagueId { get; set; }
 
-        public int GroupSport { get; set; }
-
         public string SportName => RefDataService.GetSportName(SportType);
 
         public string LeagueName => RefDataService.GetLeagueName(LeagueId);

@@ -2,10 +2,6 @@
 {
     public class GoalRecordModel
     {
-        private const string BetStatusFullTime = "FL:{0}-{1};";
-        private const string BetStatusHalfTime = "1FL:{0}-{1};";
-        private const string RefundHalfTime = "Refund HT;";
-
         public bool IsExistFgLg { get; set; }
 
         public bool IsExistHtFgLg { get; set; }
@@ -18,7 +14,7 @@
 
         public string LastGoal { get; set; }
 
-        private string HalftimeBetStatusNotExistRefundHt => IsExistHtFgLg ? string.Format(BetStatusHalfTime, FirstGoal, LastGoal) : string.Empty;
+        private string HalftimeBetStatusNotExistRefundHt => IsExistHtFgLg ? $"1FL:{FirstGoal}-{LastGoal};" : string.Empty;
 
         public string HalftimeBetStatus
         {
@@ -26,14 +22,14 @@
             {
                 if (IsExistRefundHt)
                 {
-                    return IsExistHalfTime ? $"{RefundHalfTime}{string.Format(BetStatusHalfTime, FirstGoal, LastGoal)}" : RefundHalfTime;
+                    return IsExistHalfTime ? $"{Core.Constants.BetStatus.RefundHT};1FL:{FirstGoal}-{LastGoal};" : $"{Core.Constants.BetStatus.RefundHT};";
                 }
 
                 return HalftimeBetStatusNotExistRefundHt;
             }
         }
 
-        public string FullTimeBetStatus => IsExistFgLg ? string.Format(BetStatusFullTime, FirstGoal, LastGoal) : string.Empty;
+        public string FullTimeBetStatus => IsExistFgLg ? $"FL:{FirstGoal}-{LastGoal};" : string.Empty;
 
         public string BetStatus => $"{HalftimeBetStatus}{FullTimeBetStatus}";
     }

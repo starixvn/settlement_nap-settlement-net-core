@@ -253,7 +253,7 @@ namespace Settlement.WebSites
                 mc.AddProfile(typeof(EventManagementAutoMapperProfile));
             });
 
-            IMapper mapper = mapperConfig.CreateMapper();
+            var mapper = mapperConfig.CreateMapper();
             services.AddSingleton(mapper);
 
             services.AddMvc();
