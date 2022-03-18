@@ -46,5 +46,8 @@ namespace Settlement.Core.Models
 
         [Key("isTrader")]
         public bool IsTrader { get; set; }
+
+        [Key("autoSettlement")]
+        public bool AutoSettlement { get; set; }
     }
 }

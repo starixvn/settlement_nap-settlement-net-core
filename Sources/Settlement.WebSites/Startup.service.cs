@@ -162,6 +162,7 @@ namespace Settlement.WebSites
             services.ConfigSoccerServices();
             services.ConfigEventManagementServices();
             services.ConfigLogServices();
+            services.ConfigFastMarketsServices();
         }
 
         private void ConfigureNapServices(IServiceCollection services)
@@ -238,6 +239,7 @@ namespace Settlement.WebSites
             services.ConfigSoccerMediator();
             services.ConfigEventManagementMediator();
             services.ConfigLogMediator();
+            services.ConfigFastMarketsMediator();
         }
 
         private static void ConfigureAutoMapper(IServiceCollection services)
@@ -250,6 +252,7 @@ namespace Settlement.WebSites
                 mc.AddProfile(typeof(SoccerAutoMapperProfile));
                 mc.AddProfile(typeof(LogAutoMapper));
                 mc.AddProfile(typeof(EventManagementAutoMapperProfile));
+                mc.AddProfile(typeof(FastMarketAutoMapperProfile));
             });
 
             var mapper = mapperConfig.CreateMapper();

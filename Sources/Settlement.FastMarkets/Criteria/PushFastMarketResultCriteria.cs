@@ -1,0 +1,39 @@
+﻿using Fanex.Data.Repository;
+
+namespace Settlement.FastMarkets.Criteria
+{
+    public class PushFastMarketResultCriteria : NonQueryCommand
+    {
+        public int MatchId { get; set; }
+
+        public int AdminId { get; set; }
+
+        public string Results { get; set; }
+
+        public string EventCounters { get; set; }
+
+        public bool IsSettleDetermined { get; set; }
+
+        public string Action { get; set; }
+
+        public bool IsAuto { get; set; }
+
+        public bool IsReSettledTickets { get; set; }
+
+        public string Ip { get; set; }
+
+        public int ErrCode { get; set; }
+
+        public string ErrMsg { get; set; }
+
+        public override string GetSettingKey()
+        {
+            return "NAP_Admin_Settlement_Fast_Market_Auto_1s_Push";
+        }
+
+        public override bool IsValid()
+        {
+            return AdminId > 0 && MatchId > 0;
+        }
+    }
+}

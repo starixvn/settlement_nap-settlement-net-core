@@ -36,12 +36,6 @@ namespace Settlement.WebSites
             ConfigInternalService(services);
             ConfigureAutoMapper(services);
 
-            //services.AddControllers(option =>
-            //{
-            //    option.OutputFormatters.Add(new MessagePackOutputFormatter());
-            //    option.RespectBrowserAcceptHeader = true;
-            //});
-
             services.AddRazorPages();
             services.AddControllersWithViews();
         }
