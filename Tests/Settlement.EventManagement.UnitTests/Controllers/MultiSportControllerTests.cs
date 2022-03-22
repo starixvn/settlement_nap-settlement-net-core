@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using AutoMapper;
-using AutoMapper.Configuration;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using NSubstitute;
-using Settlement.Core.ActionResults;
 using Settlement.EventManagement.Controllers;
 using Settlement.EventManagement.Models;
 using Settlement.EventManagement.Requests;
@@ -57,7 +51,7 @@ namespace Settlement.EventManagement.UnitTests.Controllers
             multiSportService.GetSportBook(Arg.Any<FilterMultiSportRequest>()).Returns(sports);
 
             // Act
-            var result = await controller.Filter(new FilterMultiSportRequest()) as MessagePackResult<MultiSportModel>;
+            var result = await controller.Filter(new FilterMultiSportRequest());
 
             // Assert
             Assert.NotNull(result);
@@ -77,7 +71,7 @@ namespace Settlement.EventManagement.UnitTests.Controllers
             multiSportService.GetWaitingMatches(Arg.Any<RefreshMatchesRequest>()).Returns(matches);
 
             // Act
-            var result = await controller.RefreshMatches(new RefreshMatchesRequest()) as MessagePackResult<IList<MultiSportMatchWaiting>>;
+            var result = await controller.RefreshMatches(new RefreshMatchesRequest());
 
             // Assert
             Assert.NotNull(result);

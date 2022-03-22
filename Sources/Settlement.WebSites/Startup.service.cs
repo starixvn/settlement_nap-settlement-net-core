@@ -31,6 +31,7 @@ using Settlement.Sportsbook.OtherSports;
 using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
+using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
 using Settlement.Sportsbook.Soccer;
@@ -41,6 +42,10 @@ using ONEbook.UM.Transport;
 using Settlement.Log;
 using Settlement.WebSites.Configurations;
 using LogServiceImp = Settlement.Core.Services.LogServiceImp;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.ResponseCompression;
+using MessagePack.AspNetCoreMvcFormatter;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 
 namespace Settlement.WebSites
 {
@@ -257,8 +262,37 @@ namespace Settlement.WebSites
 
             var mapper = mapperConfig.CreateMapper();
             services.AddSingleton(mapper);
+        }
 
-            services.AddMvc();
+        private static void ConfigureMessagePack(IServiceCollection services)
+        {
+            services.AddMvc().AddMvcOptions(option =>
+            {
+                option.OutputFormatters.Add(new MessagePackOutputFormatter());
+                option.InputFormatters.Add(new MessagePackInputFormatter());
+            });
+
+            services.Configure<KestrelServerOptions>(options =>
+            {
+                options.AllowSynchronousIO = true;
+            });
+
+            services.Configure<IISServerOptions>(options =>
+            {
+                options.AllowSynchronousIO = true;
+            });
+
+            services.Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Optimal);
+            services.AddResponseCompression(options =>
+            {
+                options.MimeTypes = new[]{
+                    "text/html",
+                    "text/css",
+                    "application/javascript",
+                    "application/json",
+                    "application/x-msgpack"
+                };
+            });
         }
     }
 }
