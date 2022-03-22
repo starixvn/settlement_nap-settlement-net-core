@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Settlement.Core.Services;
+﻿using Settlement.Core.Services;
 using Settlement.FastMarkets.Constants;
 using Settlement.FastMarkets.Models;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Settlement.FastMarkets.Services
 {

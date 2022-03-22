@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Kaden.Extensions;
 using Settlement.FastMarkets.Constants;
-using Kaden.Extensions;
+using System;
 
 namespace Settlement.FastMarkets.Models
 {

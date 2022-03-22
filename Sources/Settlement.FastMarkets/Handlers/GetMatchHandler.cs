@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
-using MediatR;
+﻿using MediatR;
+using Settlement.Core.Services;
 using Settlement.FastMarkets.Models;
 using Settlement.FastMarkets.Requests;
+using Settlement.FastMarkets.Services;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Settlement.Core.Services;
-using Settlement.FastMarkets.Services;
 
 namespace Settlement.FastMarkets.Handlers
 {

@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using Kaden.XmlConverter;
+﻿using Kaden.XmlConverter;
 using Settlement.FastMarkets.Models;
 using Settlement.FastMarkets.Models.BetTypeModels;
+using System.Collections.Generic;
 
 namespace Settlement.FastMarkets.Services
 {

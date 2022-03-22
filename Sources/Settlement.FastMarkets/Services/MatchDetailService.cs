@@ -1,11 +1,11 @@
-﻿using System;
-using System.Threading.Tasks;
-using Fanex.Data.Repository;
+﻿using Fanex.Data.Repository;
 using Fanex.NAP.Client;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.FastMarkets.Criteria;
 using Settlement.FastMarkets.Requests;
+using System;
+using System.Threading.Tasks;
 using MatchDetail = Settlement.FastMarkets.Models.MatchDetail;
 
 namespace Settlement.FastMarkets.Services

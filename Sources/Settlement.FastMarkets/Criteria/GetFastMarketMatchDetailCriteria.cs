@@ -2,7 +2,7 @@
 
 namespace Settlement.FastMarkets.Criteria
 {
-    internal class GetFastMarketMatchDetailCriteria : CriteriaBase
+    public class GetFastMarketMatchDetailCriteria : CriteriaBase
     {
         public int MatchId { get; set; }
 

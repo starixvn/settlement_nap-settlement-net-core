@@ -1,9 +1,9 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 using Settlement.Core.ActionFilters;
 using Settlement.FastMarkets.Models;
 using Settlement.FastMarkets.Requests;
+using System.Threading.Tasks;
 
 namespace Settlement.FastMarkets.Controllers
 {

@@ -1,5 +1,4 @@
 ﻿using Fanex.Data.Repository;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Settlement.FastMarkets.Criteria
 {

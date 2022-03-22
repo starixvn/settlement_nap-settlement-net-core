@@ -1,7 +1,7 @@
-﻿using Settlement.Core.Models;
+﻿using Kaden.Extensions;
+using Settlement.Core.Models;
 using Settlement.Core.Services;
 using System;
-using Kaden.Extensions;
 
 namespace Settlement.FastMarkets.Models
 {

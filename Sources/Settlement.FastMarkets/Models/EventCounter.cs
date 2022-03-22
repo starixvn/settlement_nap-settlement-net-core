@@ -1,5 +1,5 @@
-﻿using System.Linq;
-using Settlement.FastMarkets.Constants;
+﻿using Settlement.FastMarkets.Constants;
+using System.Linq;
 
 namespace Settlement.FastMarkets.Models
 {

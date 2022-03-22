@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Settlement.Core.Services;
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
-using Settlement.Core.Services;
 
 namespace Settlement.FastMarkets.Models
 {

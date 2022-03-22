@@ -46,6 +46,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.ResponseCompression;
 using MessagePack.AspNetCoreMvcFormatter;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Settlement.EventManagement;
+using Settlement.FastMarkets;
 
 namespace Settlement.WebSites
 {

@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Settlement.FastMarkets.Models;
+﻿using Settlement.FastMarkets.Models;
 using Settlement.FastMarkets.Models.EventCounterModels;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Settlement.FastMarkets.Services
 {

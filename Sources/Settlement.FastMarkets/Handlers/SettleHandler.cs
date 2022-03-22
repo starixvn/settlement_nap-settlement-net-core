@@ -1,9 +1,9 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using MediatR;
+﻿using MediatR;
 using Settlement.Core.Models;
 using Settlement.FastMarkets.Requests;
 using Settlement.FastMarkets.Services;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Settlement.FastMarkets.Handlers
 {
