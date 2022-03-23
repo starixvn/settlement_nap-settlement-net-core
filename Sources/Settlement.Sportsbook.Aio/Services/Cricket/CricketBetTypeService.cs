@@ -1,8 +1,10 @@
-﻿using Settlement.Core.Constants;
-using Settlement.Sportsbook.Aio.Models;
+﻿using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Constants;
 using System;
 using System.Collections.Generic;
+using Fanex.Data.Repository;
+using Settlement.Sportsbook.Aio.Criteria.Cricket;
+using System.Linq;
 
 namespace Settlement.Sportsbook.Aio.Services.Cricket
 {
@@ -13,158 +15,131 @@ namespace Settlement.Sportsbook.Aio.Services.Cricket
 
     public class CricketBetTypeService : ICricketBetTypeService
     {
-        private readonly int InnsBetTypeMinLength = 5;
+        private readonly IDynamicRepository repository;
+        private readonly IBetTypeNameService betTypeNameService;
+        private readonly IGroupNameService groupNameService;
+        private readonly IInputTypeService inputTypeService;
+        private const int InnsBetTypeMinLength = 5;
+
+        public CricketBetTypeService(
+            IDynamicRepository repository, 
+            IBetTypeNameService betTypeNameService, 
+            IGroupNameService groupNameService,
+            IInputTypeService inputTypeService)
+        {
+            this.repository = repository;
+            this.betTypeNameService = betTypeNameService;
+            this.groupNameService = groupNameService;
+            this.inputTypeService = inputTypeService;
+        }
 
         public void GroupBetTypesAndGenerateNames(List<ResultDetail> resultDetails)
         {
+            
+            var inputOptions = new List<InputOption>();
+           
+            if (IsExistedPlayerName(resultDetails))
+            {
+                inputOptions = GetInputOptions(resultDetails);
+            }
+
             resultDetails.ForEach((resultDetail) =>
             {
-                GenerateBetTypeNameAndGroup(resultDetail);
+                GenerateBetTypeNameAndGroup(resultDetail, inputOptions);
             });
         }
 
-        private void GenerateBetTypeNameAndGroup(ResultDetail resultDetail)
+        private List<InputOption> GetInputOptions(List<ResultDetail> resultDetails)
+        {
+            const char semicolon = ',';
+
+            var matchInfo = resultDetails.FirstOrDefault();
+            if (matchInfo == null)
+            {
+                return new List<InputOption>();
+            }
+
+            var getPlayerCriteria = new GetPlayerInfoCriteria { MatchId = matchInfo.MatchId };
+            var inputOptions = repository.Fetch<InputOption>(getPlayerCriteria)
+                .Where((option) => option.OddsInfo.Contains(semicolon)).ToList();
+
+            inputOptions.ForEach((option) =>
+            {
+                var oddsInfos = option.OddsInfo.Split(semicolon);
+                option.PlayerId = Convert.ToInt32(oddsInfos[0]);
+                option.OptionName = oddsInfos[1];
+            });
+
+            return inputOptions.OrderBy(option => option.OptionName).ToList();
+        }
+
+        private static bool IsExistedPlayerName(List<ResultDetail> resultDetails)
+        {
+            return resultDetails.Exists((result) =>
+            {
+                var betTypeId = SplitBetType(result.ResourceId, 0, 4);
+                return GroupBetType.IncludedPlayerName.Contains(betTypeId) || InputType.PlayerSelectGroup.Contains(betTypeId) || InputType.PlayerMultipleSelectGroup.Contains(betTypeId);
+            });
+        }
+
+        private void GenerateBetTypeNameAndGroup(ResultDetail resultDetail, List<InputOption> inputOptions)
         {
             var resourceId = resultDetail.ResourceId;
             if (resourceId.Length < InnsBetTypeMinLength)
             {
                 var betTypeId = Convert.ToInt32(resourceId);
-                resultDetail.BetTypeName = GetNonInnsBetTypeName(betTypeId);
-                GroupNonInnsBetType(resultDetail, betTypeId);
-                GetNonInnsBetTypeInputType(resultDetail, betTypeId);
-            }
-            else
-            {
-                var betTypeId = SplitBetType(resourceId, 0, 5);
-                resultDetail.BetTypeName = GetInnsBetTypeName(betTypeId, resourceId);
-                GroupInnsBetType(resultDetail, betTypeId);
-                GetInnsBetTypeInputType(resultDetail, betTypeId);
-            }
-        }
+                resultDetail.BetTypeName = betTypeNameService.GetNonInnsBetTypeName(betTypeId);
 
-        private static string GetNonInnsBetTypeName(int betTypeId)
-        {
-            var betTypeName = string.Empty;
-            if (BetType.CricketBetTypeNames.ContainsKey(betTypeId))
-            {
-                betTypeName = BetType.CricketBetTypeNames[betTypeId];
-            }
-
-            return betTypeName;
-        }
-
-        private static string GetInnsBetTypeName(int betTypeId, string resourceId)
-        {
-            var betTypeName = string.Empty;
-            if (BetType.CricketBetTypeNames.ContainsKey(betTypeId))
-            {
-                betTypeName = BetType.CricketBetTypeNames[betTypeId];
-            }
-
-            if (!string.IsNullOrEmpty(betTypeName))
-            {
-                const int overPosition = 5;
-                const int overLength = 3;
-                const int ballPosition = 8;
-                const int ballLength = 2;
-                if (GroupBetType.IncludedOvers.Contains(betTypeId))
+                if (IsNonInnsBetTypeGroup(betTypeId))
                 {
-                    var betTypeOvers = SplitBetType(resourceId, overPosition, overLength);
-                    betTypeName = string.Format(betTypeName, betTypeOvers);
+                    var group = groupNameService.GroupNonInnsBetType(betTypeId);
+                    resultDetail.GroupId = group.GroupId;
+                    resultDetail.GroupName = group.GroupName;
                 }
-                else if (GroupBetType.IncludedOversAndBalls.Contains(betTypeId))
+
+                resultDetail.InputType = inputTypeService.GetNonInnsBetTypeInputType(betTypeId);
+            }
+            else
+            {
+                var betTypeId = SplitBetType(resourceId, 0, 4);
+                resultDetail.BetTypeName = betTypeNameService.GetInnsBetTypeName(betTypeId, resourceId);
+
+                if (GroupBetType.IncludedPlayerName.Contains(betTypeId) || GroupBetType.IncludedTwoPlayerName.Contains(betTypeId))
                 {
-                    var betTypeOvers = SplitBetType(resourceId, overPosition, overLength);
-                    var betTypeBalls = SplitBetType(resourceId, ballPosition, ballLength);
-                    betTypeName = string.Format(betTypeName, betTypeOvers, betTypeBalls);
+                    var value = inputTypeService.GetInnsInputLabel(resourceId, betTypeId, inputOptions);
+                    resultDetail.HomeName = value.HomeValue;
+                    resultDetail.AwayName = value.AwayValue;
                 }
-                else
+
+                if (IsInnsBetTypeGroup(betTypeId))
                 {
-                    // do  not thing
+                    var group = groupNameService.GroupInnsBetType(betTypeId, resourceId);
+                    resultDetail.GroupId = group.GroupId;
+                    resultDetail.GroupName = group.GroupName;
                 }
-            }
 
-            return betTypeName;
+                if (InputType.PlayerSelectGroup.Contains(betTypeId) || InputType.PlayerMultipleSelectGroup.Contains(betTypeId) || InputType.ScoreWithLabelGroup.Contains(betTypeId))
+                {
+                    resultDetail.InputOptions = inputTypeService.GetInputOptions(betTypeId, resourceId, inputOptions);
+                }
+
+                resultDetail.InputType = inputTypeService.GetInnsBetTypeInputType(betTypeId);
+            }
         }
 
-        private static void GroupNonInnsBetType(ResultDetail resultDetail, int betTypeId)
+        private static bool IsNonInnsBetTypeGroup(int betTypeId)
         {
-            if (GroupBetType.Other.Contains(betTypeId))
-            {
-                resultDetail.GroupId = GroupBetType.OtherId;
-                resultDetail.GroupName = GroupBetType.OtherName;
-            }
-            else if (GroupBetType.MatchBetType.Contains(betTypeId))
-            {
-                resultDetail.GroupId = GroupBetType.MatchBetTypeId;
-                resultDetail.GroupName = GroupBetType.MatchBetTypeName;
-            }
-            else
-            {
-                // do  not thing
-            }
+            return GroupBetType.Other.Contains(betTypeId) || GroupBetType.MatchBetType.Contains(betTypeId);
         }
 
-        private static void GroupInnsBetType(ResultDetail resultDetail, int betTypeId)
+        private static bool IsInnsBetTypeGroup(int betTypeId)
         {
-            if (GroupBetType.FirstInnsHome.Contains(betTypeId))
-            {
-                resultDetail.GroupId = GroupBetType.FirstInnsHomeId;
-                resultDetail.GroupName = GroupBetType.FirstInnsHomeName;
-            }
-            else if (GroupBetType.FirstInnsAway.Contains(betTypeId))
-            {
-                resultDetail.GroupId = GroupBetType.FirstInnsAwayId;
-                resultDetail.GroupName = GroupBetType.FirstInnsAwayName;
-            }
-            else if (GroupBetType.SecondInnsHome.Contains(betTypeId))
-            {
-                resultDetail.GroupId = GroupBetType.SecondInnsHomeId;
-                resultDetail.GroupName = GroupBetType.SecondInnsHomeName;
-            }
-            else if (GroupBetType.SecondInnsAway.Contains(betTypeId))
-            {
-                resultDetail.GroupId = GroupBetType.SecondInnsAwayId;
-                resultDetail.GroupName = GroupBetType.SecondInnsAwayName;
-            }
-            else
-            {
-                // do  not thing
-            }
+            return GroupBetType.InnsHome.Contains(betTypeId) 
+                   || GroupBetType.InnsAway.Contains(betTypeId) 
+                   || GroupBetType.Other.Contains(betTypeId) 
+                   || GroupBetType.MatchBetType.Contains(betTypeId);
         }
-
-        private static void GetNonInnsBetTypeInputType(ResultDetail resultDetail, int betTypeId)
-        {
-            if (InputType.HomeAwayGroup.Contains(betTypeId))
-            {
-                resultDetail.InputType = InputType.HomeAway;
-            }
-            else if (InputType.CoupleScoresGroup.Contains(betTypeId))
-            {
-                resultDetail.InputType = InputType.CoupleScores;
-            }
-            else
-            {
-                resultDetail.InputType = InputType.SingleScore;
-            }
-        }
-
-        private static void GetInnsBetTypeInputType(ResultDetail resultDetail, int betTypeId)
-        {
-            if (InputType.CaughtOrNotGroup.Contains(betTypeId))
-            {
-                resultDetail.InputType = InputType.CaughtOrNot;
-            }
-            else if (InputType.OneToSixGroup.Contains(betTypeId))
-            {
-                resultDetail.InputType = InputType.OneToSix;
-            }
-            else
-            {
-                resultDetail.InputType = InputType.SingleScore;
-            }
-        }
-
+        
         private static int SplitBetType(string resourceId, int startIndex, int length)
         {
             return Convert.ToInt32(resourceId.Substring(startIndex, length));

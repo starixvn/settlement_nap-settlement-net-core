@@ -1,6 +1,7 @@
 ﻿using Kaden.Extensions;
 using Settlement.Core.Constants;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Settlement.Sportsbook.Aio.Models
@@ -57,5 +58,15 @@ namespace Settlement.Sportsbook.Aio.Models
         {
             ResultSetting = Convert.ToString(ResultSetting, ToBase).Reverse(),
         };
+
+        public List<InputOption> InputOptions { get; set; }
+
+        public int MatchId { get; set; }
+
+        public string HomeName { get; set; }
+
+        public string AwayName { get; set; }
+
+        public string OtherInfo { get; set; }
     }
 }

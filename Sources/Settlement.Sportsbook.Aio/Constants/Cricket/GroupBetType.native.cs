@@ -20,43 +20,45 @@ namespace Settlement.Sportsbook.Aio.Constants
 
         public static List<int> Other => new List<int>
         {
-            9401, 9400, 9442, 9443
+            9401, 9400, 9442, 9443, 9708, 9709
         };
 
-        public static List<int> FirstInnsHome => new List<int>
+        public static List<int> InnsHome => new List<int>
         {
-            94841, 94901, 94221, 94101, 94281, 94341, 94541, 94601
+            9484, 9490, 9422, 9410, 9428, 9434, 9454, 9460, 9680, 9662,
+            9676, 9668, 9650, 9672, 9656, 9636, 9616, 9624, 9630, 9730, 9736
         };
 
-        public static List<int> FirstInnsAway => new List<int>
+        public static List<int> InnsAway => new List<int>
         {
-            94851, 94911, 94231, 94111, 94291, 94351, 94551, 94611
-        };
-
-        public static List<int> SecondInnsHome => new List<int>
-        {
-            94842, 94902, 94222, 94102, 94282, 94342, 94542, 94602
-        };
-
-        public static List<int> SecondInnsAway => new List<int>
-        {
-            94852, 94912, 94232, 94112, 94292, 94352, 94552, 94612
+            9485, 9491, 9423, 9411, 9429, 9435, 9455, 9461, 9690, 9663, 9686,
+            9671, 9651, 9675, 9657, 9637, 9617, 9625, 9631, 9731, 9737
         };
 
         public static List<int> MatchBetType => new List<int>
         {
-            9446, 9447, 9449, 9450, 9452, 9453
+            9446, 9447, 9449, 9450, 9452, 9453, 9615, 9451
         };
 
         public static List<int> IncludedOvers => new List<int>
         {
-            94841, 94101, 94281, 94341, 94851, 94111, 94291, 94351, 94842, 94102,
-            94282, 94342, 94852, 94112, 94292, 94352
+            9484, 9410, 9428, 9434, 9485, 9411, 9429, 9435,
+            9636, 9624, 9630, 9637, 9625, 9631
         };
 
         public static List<int> IncludedOversAndBalls => new List<int>
         {
-            94901, 94221, 94911, 94231, 94902, 94222, 94912, 94232,
+            9490, 9422, 9491, 9423, 9616, 9617
+        };
+
+        public static List<int> IncludedPlayerName => new List<int>
+        {
+            9680, 9676, 9730, 9736, 9690, 9686, 9731, 9737
+        };
+
+        public static List<int> IncludedTwoPlayerName => new List<int>
+        {
+            9662, 9663
         };
     }
 }

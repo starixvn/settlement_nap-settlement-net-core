@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Fanex.Data.Repository;
 using Settlement.Sportsbook.Aio.MapperFactory;
 using Settlement.Sportsbook.Aio.Models;
 
@@ -11,7 +12,11 @@ namespace Settlement.Sportsbook.Aio.Services.Cricket
 
         public ResultDetailMapperServiceImp()
         {
-            earlyBetTypeNameService = new CricketBetTypeService();
+            var repository = new DynamicRepository();
+            var betTypeNameService = new BetTypeNameServiceImp();
+            var inputTypeService = new InputTypeServiceImp();
+            var groupNameService = new GroupNameServiceImp();
+            earlyBetTypeNameService = new CricketBetTypeService(repository, betTypeNameService, groupNameService, inputTypeService);
         }
 
         public void Decorate(dynamic obj)

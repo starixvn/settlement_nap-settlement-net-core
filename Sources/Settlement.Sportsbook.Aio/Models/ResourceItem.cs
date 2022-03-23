@@ -37,5 +37,8 @@ namespace Settlement.Sportsbook.Aio.Models
                 isSettleDetermined = value.IgnoreCaseEquals("true") ? "1" : "0";
             }
         }
+
+        [XmlAttribute("OtherInfo")]
+        public string OtherInfo { get; set; }
     }
 }

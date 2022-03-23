@@ -97,6 +97,7 @@ namespace Settlement.Sportsbook.Aio.Services
             var mapperService = mapperFactory.GetMapperService($"{apiKey}-{ApiKeyConstant.ResultDetailKey}");
             if (mapperService != null)
             {
+                resultDetails.ForEach(result => result.MatchId = request.MatchId);
                 mapperService.Decorate(resultDetails);
             }
 
