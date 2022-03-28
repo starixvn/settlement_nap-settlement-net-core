@@ -47,6 +47,10 @@ using Settlement.Sportsbook.Soccer;
 using Settlement.Sportsbook.Soccer.Controllers;
 using Settlement.Sportsbook.Soccer.Services.FullTimeBetStatus;
 using Settlement.Sportsbook.Soccer.Services.HalfTimeBetStatus;
+using ONEbook.UM.Configurations;
+using ONEbook.UM.AspNetCore;
+using ONEbook.UM.Helpers;
+using ONEbook.UM.Transport;
 
 namespace Settlement.WebSites
 {
@@ -252,7 +256,7 @@ namespace Settlement.WebSites
                 .UseGetDbExceptionInfo(DatabaseInfoGetters.GetDbExceptionInfo);
         }
 
-        private static void ConfigureCore(IServiceCollection services)
+        private void ConfigureCore(IServiceCollection services)
         {
             services.AddScoped<IDynamicRepository, DynamicRepository>();
             services.AddScoped<IRemotingRefService, RemotingRefService>();
@@ -260,6 +264,10 @@ namespace Settlement.WebSites
             services.AddSingleton<PermissionService, PermissionServiceImp>();
             services.AddSingleton<XmlConvertService, XmlConvertServiceImp>();
             services.AddTransient<ILogService, LogServiceImp>();
+            services.AddSingleton<IUMCacheService, UMCacheService>();
+            services.AddSingleton<IUMRestClient, UMRestClient>();
+            services.AddSingleton(new UMClientConfiguration().Initialize(Configuration));
+            services.AddSingleton<ONEbook.UM.Services.IMaintenanceService, ONEbook.UM.Services.MaintenanceService>();
         }
 
         private static void ConfigureMediator(IServiceCollection services)
