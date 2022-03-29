@@ -49,26 +49,36 @@ namespace Settlement.Sportsbook.Aio.Services.Basketball
                 group = groupBetTypeService.GroupOtherBetType(resultDetail);
             }
 
-            if (resourceId.Length == halfBetTypeLength)
+            if (resourceId.Length == quarterBetTypeLength || resourceId.Length == halfBetTypeLength)
             {
-                var resourceIdHalfBetType =
-                    SplitBetType(resultDetail.ResourceId, 0, halfBetTypeLength - betTypeIndexLength);
-                group = IsHalfBetType(resourceIdHalfBetType)
-                    ? groupBetTypeService.GroupHalfBetType(resourceIdHalfBetType)
-                    : group;
-            }
-
-            if (resourceId.Length == quarterBetTypeLength)
-            {
-                var resourceIdQuarterBetType =
-                    SplitBetType(resultDetail.ResourceId, 0, quarterBetTypeLength - betTypeIndexLength);
-                group = IsQuarterBetType(resourceIdQuarterBetType)
-                    ? groupBetTypeService.GroupQuarterBetType(resourceIdQuarterBetType)
-                    : group;
+                group = GroupHalfBetType(resultDetail, group);
+                group = GroupQuarterBetType(resultDetail, group);
             }
 
             resultDetail.GroupName = group.GroupName;
             resultDetail.GroupId = group.GroupId;
+        }
+
+        private GroupNameModel GroupHalfBetType(ResultDetail resultDetail, GroupNameModel group)
+        {
+            const int halfBetTypeLength = 5;
+            const int betTypeIndexLength = 2;
+            var resourceIdHalfBetType =
+                SplitBetType(resultDetail.ResourceId, 0, halfBetTypeLength - betTypeIndexLength);
+            return IsHalfBetType(resourceIdHalfBetType)
+                ? groupBetTypeService.GroupHalfBetType(resourceIdHalfBetType)
+                : group;
+        }
+
+        private GroupNameModel GroupQuarterBetType(ResultDetail resultDetail, GroupNameModel group)
+        {
+            const int quarterBetTypeLength = 7;
+            const int betTypeIndexLength = 2;
+            var resourceIdQuarterBetType =
+                SplitBetType(resultDetail.ResourceId, 0, quarterBetTypeLength - betTypeIndexLength);
+            return IsQuarterBetType(resourceIdQuarterBetType)
+                ? groupBetTypeService.GroupQuarterBetType(resourceIdQuarterBetType)
+                : group;
         }
 
         private static bool IsHalfBetType(int resourceId)
