@@ -17,6 +17,9 @@ namespace Settlement.Sportsbook.Aio.Services.Basketball
     {
         private readonly IRefDataService refDataService;
         private readonly IGroupBetTypeService groupBetTypeService;
+        private const int halfBetTypeLength = 5;
+        private const int betTypeIndexLength = 2;
+        private const int quarterBetTypeLength = 7;
 
         public BasketballBetTypeServiceImp(IRefDataService refDataService,
             IGroupBetTypeService groupBetTypeService)
@@ -39,9 +42,6 @@ namespace Settlement.Sportsbook.Aio.Services.Basketball
         private void GroupBasketballBetType(ResultDetail resultDetail)
         {
             const int otherBetTypeLength = 3;
-            const int halfBetTypeLength = 5;
-            const int quarterBetTypeLength = 7;
-            const int betTypeIndexLength = 2;
             var resourceId = resultDetail.ResourceId;
             var group = new GroupNameModel();
             if (resourceId.Length == otherBetTypeLength)
@@ -49,26 +49,32 @@ namespace Settlement.Sportsbook.Aio.Services.Basketball
                 group = groupBetTypeService.GroupOtherBetType(resultDetail);
             }
 
-            if (resourceId.Length == halfBetTypeLength)
+            if (resourceId.Length == quarterBetTypeLength || resourceId.Length == halfBetTypeLength)
             {
-                var resourceIdHalfBetType =
-                    SplitBetType(resultDetail.ResourceId, 0, halfBetTypeLength - betTypeIndexLength);
-                group = IsHalfBetType(resourceIdHalfBetType)
-                    ? groupBetTypeService.GroupHalfBetType(resourceIdHalfBetType)
-                    : group;
-            }
-
-            if (resourceId.Length == quarterBetTypeLength)
-            {
-                var resourceIdQuarterBetType =
-                    SplitBetType(resultDetail.ResourceId, 0, quarterBetTypeLength - betTypeIndexLength);
-                group = IsQuarterBetType(resourceIdQuarterBetType)
-                    ? groupBetTypeService.GroupQuarterBetType(resourceIdQuarterBetType)
-                    : group;
+                group = GroupHalfBetType(resultDetail, group);
+                group = GroupQuarterBetType(resultDetail, group);
             }
 
             resultDetail.GroupName = group.GroupName;
             resultDetail.GroupId = group.GroupId;
+        }
+
+        private GroupNameModel GroupHalfBetType(ResultDetail resultDetail, GroupNameModel group)
+        {
+            var resourceIdHalfBetType =
+                SplitBetType(resultDetail.ResourceId, 0, halfBetTypeLength - betTypeIndexLength);
+            return IsHalfBetType(resourceIdHalfBetType)
+                ? groupBetTypeService.GroupHalfBetType(resourceIdHalfBetType)
+                : group;
+        }
+
+        private GroupNameModel GroupQuarterBetType(ResultDetail resultDetail, GroupNameModel group)
+        {
+            var resourceIdQuarterBetType =
+                SplitBetType(resultDetail.ResourceId, 0, quarterBetTypeLength - betTypeIndexLength);
+            return IsQuarterBetType(resourceIdQuarterBetType)
+                ? groupBetTypeService.GroupQuarterBetType(resourceIdQuarterBetType)
+                : group;
         }
 
         private static bool IsHalfBetType(int resourceId)
