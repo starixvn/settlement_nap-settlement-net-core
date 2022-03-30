@@ -1,4 +1,5 @@
-﻿using Settlement.Sportsbook.Soccer.Models;
+﻿using Kaden.Extensions;
+using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Requests;
 
 namespace Settlement.Sportsbook.Soccer.Services
@@ -6,6 +7,8 @@ namespace Settlement.Sportsbook.Soccer.Services
     public interface IBetStatusAllService
     {
         string GetBetStatus(SettleRequest singleQuery);
+
+        string GetBetStatusRefund(RefundRequest request);
     }
 
     public class BetStatusAllServiceImp : IBetStatusAllService
@@ -37,7 +40,31 @@ namespace Settlement.Sportsbook.Soccer.Services
             }
         }
 
-        private string NoGoal(SettleRequest singleQuery)
+        public string GetBetStatusRefund(RefundRequest request)
+        {
+            if (!request.IsExistFgLg && !request.IsExistHtFgLg)
+            {
+                return string.Empty;
+            }
+            else if (validationService.IsNullScoreAndGoalRecord(request))
+            {
+                return NoGoal(request);
+            }
+            else if (validationService.HasHalftimeScoreWithoutSemicolonOnGoalRecord(request))
+            {
+                return WithoutSemicolon(request);
+            }
+            else if (validationService.HasHalftimeScoreWithSemicolonOnGoalRecord(request))
+            {
+                return WithSemicolon(request);
+            }
+            else
+            {
+                return string.Empty;
+            }
+        }
+
+        private string NoGoal(SettleBaseRequest singleQuery)
         {
             var goalRecord = new GoalRecordModel
             {
@@ -50,7 +77,7 @@ namespace Settlement.Sportsbook.Soccer.Services
             return goalRecord.BetStatus;
         }
 
-        private string WithSemicolon(SettleRequest singleQuery)
+        private string WithSemicolon(SettleBaseRequest singleQuery)
         {
             var halfTimeBetStatus = BetStatusHalftimeWithSemicolon(singleQuery);
             var fullTimeBetStatus = BetStatusFullTimeWithSemicolon(singleQuery);
@@ -58,7 +85,22 @@ namespace Settlement.Sportsbook.Soccer.Services
             return $"{halfTimeBetStatus}{fullTimeBetStatus}";
         }
 
-        private string BetStatusHalftimeWithSemicolon(SettleRequest singleQuery)
+        private string WithoutSemicolon(SettleBaseRequest queryModel)
+        {
+            var firstGoal = goalRecordService.HomeOrAwayFirstGoal(queryModel.GoalRecord);
+
+            var goalRecord = new GoalRecordModel
+            {
+                IsExistFgLg = queryModel.IsExistFgLg,
+                IsExistHtFgLg = queryModel.IsExistHtFgLg,
+                FirstGoal = firstGoal,
+                LastGoal = "0"
+            };
+
+            return goalRecord.BetStatus;
+        }
+
+        private string BetStatusHalftimeWithSemicolon(SettleBaseRequest singleQuery)
         {
             var goalRecord = new GoalRecordModel { IsExistHtFgLg = singleQuery.IsExistHtFgLg };
             var goal = singleQuery.GoalRecord.Split(';')[0];
@@ -67,7 +109,7 @@ namespace Settlement.Sportsbook.Soccer.Services
             return goalRecord.HalftimeBetStatus;
         }
 
-        private string BetStatusFullTimeWithSemicolon(SettleRequest singleQuery)
+        private string BetStatusFullTimeWithSemicolon(SettleBaseRequest singleQuery)
         {
             var goalRecord = new GoalRecordModel { IsExistFgLg = singleQuery.IsExistFgLg };
             var goal = singleQuery.GoalRecord.Replace(";", string.Empty);

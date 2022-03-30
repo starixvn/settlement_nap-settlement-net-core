@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Settlement.Core.Models;
@@ -18,6 +19,7 @@ namespace Settlement.Sportsbook.Soccer.Handlers
         IRequestHandler<UndoCheckingRequest, UndoCheckingModel>,
         IRequestHandler<InstantCalculationRequest, Result>,
         IRequestHandler<MatchCheckingRequest, MatchGoalRecordModel>
+
     {
         private readonly IMatchService matchService;
 
@@ -25,22 +27,27 @@ namespace Settlement.Sportsbook.Soccer.Handlers
 
         private readonly IInstantCalculateService instantCalculateService;
 
-        public SoccerHandler(IMatchService matchService, ICalculateService calculateService, IInstantCalculateService instantCalculateService)
+        public SoccerHandler(IMatchService matchService, ICalculateService calculateService,
+            IInstantCalculateService instantCalculateService)
         {
             this.matchService = matchService;
             this.calculateService = calculateService;
             this.instantCalculateService = instantCalculateService;
         }
 
-        public async Task<Match> Handle(GetMatchRequest request, CancellationToken cancellationToken) =>
-            await matchService.GetMatch(request);
+        public async Task<Match> Handle(GetMatchRequest request, CancellationToken cancellationToken)
+        {
+            return request.IsRefundPage ? await matchService.GetMatchRefund(request) : await matchService.GetMatch(request);
+        }
 
         public async Task<MatchDetail> Handle(GetLastestMatchDetailRequest request, CancellationToken cancellationToken) =>
             await matchService.GetLastestMatchDetail(request);
 
         public async Task<Result> Handle(SettleRequest request, CancellationToken cancellationToken)
         {
-            return request.ActionName.Equals(ActionType.Uncalculate) ? await calculateService.UnCalculate(request) : await calculateService.Calculate(request);
+            return request.ActionName.Equals(ActionType.Uncalculate)
+                ? await calculateService.UnCalculate(request)
+                : await calculateService.Calculate(request);
         }
 
         public async Task<Result> Handle(CheckStatusRequest request, CancellationToken cancellationToken) =>

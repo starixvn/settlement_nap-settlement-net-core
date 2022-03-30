@@ -41,5 +41,26 @@ namespace Settlement.Sportsbook.Soccer.Controllers
         [Route("push-instant-score"), HttpPost]
         [LogRequestResponse]
         public async Task<IActionResult> PushInstantScore(InstantCalculationRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+
+        [Route("specific-bet-type"), HttpPost]
+        public async Task<IActionResult> LicenseeBetTypes(GetSpecificBetTypeRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+
+        [Route("checking-marked-tickets"), HttpPost]
+        public async Task<IActionResult> CheckingMarkedTickets(CheckingMarkedTicketsRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+
+        [Route("refund"), HttpPost]
+        [LogRequestResponse]
+        public async Task<IActionResult> Refund(RefundRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+
+        [Route("refund-running-third-party-ticket"), HttpPost]
+        [LogRequestResponse]
+        public async Task<IActionResult> RefundRunningThirdPartyTickets(RefundRunningThirdPartyTicketRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+
+        [Route("move-third-party-bet-ticket"), HttpPost]
+        [LogRequestResponse]
+        public async Task<IActionResult> MoveThirdPartyBetTickets(MoveBetRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+
+        [Route("third-party-bet-tickets-checking"), HttpPost]
+        public async Task<IActionResult> ThirdPartyBetTicketsChecking(GetMatchDetailThirdPartyBetTicketsRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
     }
 }

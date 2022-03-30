@@ -5,23 +5,23 @@ namespace Settlement.Sportsbook.Soccer.Services
 {
     public interface IValidationService
     {
-        bool HasHalftimeScoreWithoutSemicolonOnGoalRecord(SettleRequest request);
+        bool HasHalftimeScoreWithoutSemicolonOnGoalRecord(SettleBaseRequest request);
 
-        bool HasHalftimeScoreWithSemicolonOnGoalRecord(SettleRequest request);
+        bool HasHalftimeScoreWithSemicolonOnGoalRecord(SettleBaseRequest request);
 
-        bool IsNullScoreAndGoalRecord(SettleRequest request);
+        bool IsNullScoreAndGoalRecord(SettleBaseRequest request);
 
-        bool HasFinalScoreAndSemicolonOnGoalRecord(SettleRequest request);
+        bool HasFinalScoreAndSemicolonOnGoalRecord(SettleBaseRequest request);
 
-        bool IsNullHalftimeScoreAndGoalRecord(SettleRequest request);
+        bool IsNullHalftimeScoreAndGoalRecord(SettleBaseRequest request);
 
-        bool HasFinalScoreAndGoalRecord(SettleRequest request);
+        bool HasFinalScoreAndGoalRecord(SettleBaseRequest request);
 
-        bool IsExistFirstGoalLastGoal(SettleRequest request);
+        bool IsExistFirstGoalLastGoal(SettleBaseRequest request);
 
-        bool IsRefundHalftime(SettleRequest request);
+        bool IsRefundHalftime(SettleBaseRequest request);
 
-        bool IsRefundFullTime(SettleRequest request);
+        bool IsRefundFullTime(SettleBaseRequest request);
     }
 
     public class ValidationServiceImp : IValidationService
@@ -32,7 +32,7 @@ namespace Settlement.Sportsbook.Soccer.Services
 
         private const string Abandoned2H = "Abandoned 2H;";
 
-        public bool HasHalftimeScoreWithoutSemicolonOnGoalRecord(SettleRequest request)
+        public bool HasHalftimeScoreWithoutSemicolonOnGoalRecord(SettleBaseRequest request)
         {
             if (IsNullGoalRecord(request))
             {
@@ -43,7 +43,7 @@ namespace Settlement.Sportsbook.Soccer.Services
             return hasHalftimeScore && !request.GoalRecord.Contains(";");
         }
 
-        public bool HasHalftimeScoreWithSemicolonOnGoalRecord(SettleRequest request)
+        public bool HasHalftimeScoreWithSemicolonOnGoalRecord(SettleBaseRequest request)
         {
             if (IsNullGoalRecord(request))
             {
@@ -54,7 +54,7 @@ namespace Settlement.Sportsbook.Soccer.Services
             return hasHalftimeScore && request.GoalRecord.Contains(";");
         }
 
-        public bool IsNullScoreAndGoalRecord(SettleRequest request)
+        public bool IsNullScoreAndGoalRecord(SettleBaseRequest request)
         {
             var isNullHalftimeScore = IsNullHalftimeScore(request);
             var isNullFullTimeScore = IsNullFullTimeScore(request);
@@ -63,12 +63,12 @@ namespace Settlement.Sportsbook.Soccer.Services
             return isNullHalftimeScore && isNullFullTimeScore && isEmptyAndWithoutSemicolon;
         }
 
-        public bool HasFinalScoreAndSemicolonOnGoalRecord(SettleRequest request)
+        public bool HasFinalScoreAndSemicolonOnGoalRecord(SettleBaseRequest request)
         {
             return HasFinalScoreAndGoalRecord(request) && !string.IsNullOrEmpty(request.GoalRecord.Replace(";", string.Empty));
         }
 
-        public bool IsNullHalftimeScoreAndGoalRecord(SettleRequest request)
+        public bool IsNullHalftimeScoreAndGoalRecord(SettleBaseRequest request)
         {
             var notInputHalftimeScore = !request.HalfTimeAwayScore.HasValue && !request.HalfTimeHomeScore.HasValue;
             var isEmptyAndWithoutSemicolon = IsNullOrOnlySemicolonOnGoalRecord(request);
@@ -76,54 +76,54 @@ namespace Settlement.Sportsbook.Soccer.Services
             return notInputHalftimeScore && isEmptyAndWithoutSemicolon;
         }
 
-        public bool HasFinalScoreAndGoalRecord(SettleRequest request)
+        public bool HasFinalScoreAndGoalRecord(SettleBaseRequest request)
         {
             return HasFinalScore(request) && !IsNullGoalRecord(request);
         }
 
-        public bool IsRefundHalftime(SettleRequest request)
+        public bool IsRefundHalftime(SettleBaseRequest request)
         {
             return request.ActionName.Equals(ActionType.CalculateFullTime)
                     && !string.IsNullOrEmpty(request.BetStatus)
                     && request.BetStatus.Contains(RefundHalfTime);
         }
 
-        public bool IsRefundFullTime(SettleRequest request)
+        public bool IsRefundFullTime(SettleBaseRequest request)
         {
             return request.ActionName.Equals(ActionType.CalculateHalfTime)
                 && !string.IsNullOrEmpty(request.BetStatus)
                 && (request.BetStatus.Contains(RefundFullTime) || request.BetStatus.Contains(Abandoned2H));
         }
 
-        public bool IsExistFirstGoalLastGoal(SettleRequest request)
+        public bool IsExistFirstGoalLastGoal(SettleBaseRequest request)
         {
             return request.IsExistFgLg || request.IsExistHtFgLg;
         }
 
-        private static bool IsNullHalftimeScore(SettleRequest request)
+        private static bool IsNullHalftimeScore(SettleBaseRequest request)
         {
             return (!request.HalfTimeAwayScore.HasValue && !request.HalfTimeHomeScore.HasValue)
                    || (request.HalfTimeAwayScore.Equals(0) && request.HalfTimeHomeScore.Equals(0));
         }
 
-        private static bool IsNullFullTimeScore(SettleRequest request)
+        private static bool IsNullFullTimeScore(SettleBaseRequest request)
         {
             return (!request.FinalAwayScore.HasValue && !request.FinalHomeScore.HasValue)
                    || (request.FinalAwayScore.Equals(0) && request.FinalHomeScore.Equals(0));
         }
 
-        private static bool IsNullGoalRecord(SettleRequest request)
+        private static bool IsNullGoalRecord(SettleBaseRequest request)
         {
             return string.IsNullOrWhiteSpace(request.GoalRecord);
         }
 
-        private static bool IsNullOrOnlySemicolonOnGoalRecord(SettleRequest request)
+        private static bool IsNullOrOnlySemicolonOnGoalRecord(SettleBaseRequest request)
         {
             return IsNullGoalRecord(request)
                    || (!IsNullGoalRecord(request) && string.IsNullOrEmpty(request.GoalRecord.Replace(";", string.Empty)));
         }
 
-        private static bool HasFinalScore(SettleRequest request)
+        private static bool HasFinalScore(SettleBaseRequest request)
         {
             return request.FinalAwayScore.HasValue || request.FinalHomeScore.HasValue;
         }

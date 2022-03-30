@@ -1,0 +1,47 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Fanex.Data;
+using Fanex.Data.Repository;
+using Kaden.Extensions;
+using Settlement.Sportsbook.Soccer.Constants;
+
+namespace Settlement.Sportsbook.Soccer.Criteria
+{
+    public class MoveThirdPartyBetTicketCriteria : NonQueryCommand
+    {
+        public int MatchId { get; set; }
+
+        public int AdminId { get; set; }
+
+        public string Ip { get; set; }
+
+        public string NewMatchId { get; set; }
+
+        public string NewMatchCode { get; set; }
+
+        [SpParam(Ignored = true)]
+        public string ActionName { get; set; }
+
+        public int ErrCode { get; set; }
+
+        public string ErrMsg { get; set; }
+
+        public override string GetSettingKey()
+        {
+            if (ActionName.IgnoreCaseEquals(ActionType.BetDaq))
+            {
+                return "NAP_Admin_Settlement_BetDaq_Move";
+            }
+
+            return "NAP_Admin_Settlement_BetFair_Move";
+        }
+
+        public override bool IsValid()
+        {
+            return MatchId > 0;
+        }
+    }
+}
