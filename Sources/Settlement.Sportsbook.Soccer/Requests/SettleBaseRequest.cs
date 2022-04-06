@@ -28,6 +28,8 @@
 
         public bool IsExistHtFgLg { get; set; }
 
+        public bool IsExistFgNg { get; set; }
+
         public string GoalRecord
         {
             get
