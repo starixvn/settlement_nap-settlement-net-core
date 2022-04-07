@@ -34,6 +34,7 @@ namespace Settlement.WebSites.Configurations
             services.AddTransient<IInstantGoalCheckingService, InstantGoalCheckingServiceImp>();
             services.AddTransient<IInstantResourceService, InstantResourceServiceImp>();
             services.AddTransient<IInstantCalculateService, InstantCalculateServiceImp>();
+            services.AddTransient<IRefundService, RefundServiceImp>();
         }
 
         public static void ConfigSoccerMediator(this IServiceCollection services)
