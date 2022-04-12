@@ -8,7 +8,7 @@ using Settlement.EventManagement.Requests;
 namespace Settlement.EventManagement.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/multi-sports")]
     public class MultiSportController : ControllerBase
     {
         private readonly IMediator mediator;

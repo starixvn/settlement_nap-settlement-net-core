@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
+using Settlement.Sportsbook.OtherSports.Controllers;
 using Settlement.Sportsbook.OtherSports.Services;
 
 namespace Settlement.WebSites.Configurations
@@ -15,7 +16,7 @@ namespace Settlement.WebSites.Configurations
 
         public static void ConfigOtherSportsMediator(this IServiceCollection services)
         {
-            services.AddMediatR(typeof(OtherSportsConfig).GetTypeInfo().Assembly);
+            services.AddMediatR(typeof(OtherSportsController).GetTypeInfo().Assembly);
         }
     }
 }
