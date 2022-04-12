@@ -10,6 +10,8 @@
 
         public bool IsExistRefundHt { get; set; }
 
+        public bool IsExistFgNg { get; set; }
+
         public string FirstGoal { get; set; }
 
         public string LastGoal { get; set; }
@@ -29,7 +31,7 @@
             }
         }
 
-        public string FullTimeBetStatus => IsExistFgLg ? $"FL:{FirstGoal}-{LastGoal};" : string.Empty;
+        public string FullTimeBetStatus => IsExistFgLg || IsExistFgNg ? $"FL:{FirstGoal}-{LastGoal};" : string.Empty;
 
         public string BetStatus => $"{HalftimeBetStatus}{FullTimeBetStatus}";
     }

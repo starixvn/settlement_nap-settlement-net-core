@@ -97,7 +97,7 @@ namespace Settlement.Sportsbook.Soccer.Services
 
         public bool IsExistFirstGoalLastGoal(SettleBaseRequest request)
         {
-            return request.IsExistFgLg || request.IsExistHtFgLg;
+            return request.IsExistFgLg || request.IsExistHtFgLg || request.IsExistFgNg;
         }
 
         private static bool IsNullHalftimeScore(SettleBaseRequest request)

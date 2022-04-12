@@ -22,11 +22,5 @@ namespace Settlement.Sportsbook.Aio.Models
 
         [XmlAttribute("Away")]
         public string AwayValue { get; set; }
-
-        [XmlAttribute("IsDetermined")]
-        public bool IsSettleDetermined { get; set; }
-
-        [XmlAttribute("OtherInfo")]
-        public string OtherInfo { get; set; }
     }
 }
