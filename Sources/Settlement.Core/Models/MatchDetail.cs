@@ -95,5 +95,7 @@ namespace Settlement.Core.Models
                  || (BetStatus.IgnoreCaseContains(Constants.EventStatus.Refund) && !BetStatus.IgnoreCaseContains(Constants.EventStatus.RefundHT)));
 
         public string ExternalSourceName { get; set; }
+
+        public bool IsHtOnly { get; set; }
     }
 }

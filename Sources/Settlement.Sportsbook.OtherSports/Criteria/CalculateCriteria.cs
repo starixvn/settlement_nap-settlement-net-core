@@ -16,11 +16,7 @@ namespace Settlement.Sportsbook.OtherSports.Criteria
 
         public int HalfTimeAway { get; set; }
 
-        public string GoalRecord { get; set; }
-
         public string BetStatus { get; set; }
-
-        public string ResourceResult { get; set; }
 
         public string Action { get; set; }
 
@@ -29,12 +25,6 @@ namespace Settlement.Sportsbook.OtherSports.Criteria
         public int ErrCode { get; set; }
 
         public string ErrMsg { get; set; }
-
-        public string ServiceCommand { get; set; }
-
-        public string SelectedQuarter { get; set; }
-
-        public string QuarterResult { get; set; }
 
         public bool IsReSettledTickets { get; set; } = true;
 

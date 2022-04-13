@@ -6,8 +6,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using System.Collections.Generic;
+using Settlement.Sportsbook.OtherSports.Constants;
 using Settlement.Sportsbook.OtherSports.Criteria;
 using static Fanex.NAP.Client.Check;
+using MatchResultDetail = Settlement.Sportsbook.OtherSports.Models.MatchResultDetail;
 
 namespace Settlement.Sportsbook.OtherSports.Services
 {
@@ -28,16 +30,27 @@ namespace Settlement.Sportsbook.OtherSports.Services
 
         private readonly string halfTimeResource = "01";
 
+        private int BaseBallSet = 9;
+
+        private int FootballSet = 4;
+
+        private int HockeySet = 3;
+
         private readonly IMapper mapper;
+
+        private readonly IBetStatusService betStatusService;
 
         public SportsbookServiceImp(
             IDynamicRepository repository,
             IRefDataService refDataService,
-            IMapper mapper)
+            IMapper mapper,
+            IBetStatusService betStatusService
+            )
         {
             this.repository = repository;
             this.refDataService = refDataService;
             this.mapper = mapper;
+            this.betStatusService = betStatusService;
         }
 
         public async Task<MatchResultDetail> GetMatch(GetMatchRequest request)
@@ -61,10 +74,13 @@ namespace Settlement.Sportsbook.OtherSports.Services
             var externalResultDetails = repository.Fetch<ResultDetail>(providerCriteria);
             matchDetail = ProviderScore(matchDetail, externalResultDetails.ToList());
 
+            var ResultDetails = GroupSport.SettleByResultDetailSports.Contains(matchDetail.SportType) ? GenerateResultdetail(matchDetail) :
+                result.Item2.ToList();
+
             return new MatchResultDetail
             {
                 MatchDetail = matchDetail,
-                ResultDetail = result.Item2.ToList(),
+                ResultDetails = ResultDetails,
                 TicketCount = result.Item3.ToList()
             };
         }
@@ -88,6 +104,21 @@ namespace Settlement.Sportsbook.OtherSports.Services
             }
 
             return matchDetail;
+        }
+
+        private List<ResultDetail> GenerateResultdetail(MatchDetail matchDetail)
+        {
+            if (GroupSport.FootBall.Contains(matchDetail.SportType))
+            {
+                return betStatusService.GenerateResult(matchDetail, FootballSet, "Q");
+            }
+
+            if (GroupSport.Hockey.Contains(matchDetail.SportType))
+            {
+                return betStatusService.GenerateResult(matchDetail, HockeySet, "P");
+            }
+
+            return betStatusService.GenerateResult(matchDetail, BaseBallSet, "");
         }
 
         public async Task<MatchDetail> GetLastestResult(GetLastestResultRequest request)

@@ -1,4 +1,4 @@
-﻿using Settlement.Sportsbook.Soccer.Constants;
+﻿using Settlement.Core.Constants;
 using Settlement.Sportsbook.Soccer.Requests;
 
 namespace Settlement.Sportsbook.Soccer.Services

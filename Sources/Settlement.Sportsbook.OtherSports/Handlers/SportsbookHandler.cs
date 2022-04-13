@@ -6,6 +6,7 @@ using System.Threading;
 using Settlement.Sportsbook.OtherSports.Services;
 using Settlement.Sportsbook.OtherSports.Models;
 using Settlement.Core.Services;
+using Settlement.Sportsbook.OtherSports.Constants;
 
 namespace Settlement.Sportsbook.OtherSports.Handlers
 {
@@ -42,7 +43,14 @@ namespace Settlement.Sportsbook.OtherSports.Handlers
             };
         }
 
-        public async Task<Result> Handle(CalculateRequest request, CancellationToken cancellationToken) => await settlementActionsService.Calculate(request);
+        public async Task<Result> Handle(CalculateRequest request, CancellationToken cancellationToken)
+        {
+            if (request.SportType != null && GroupSport.SettleByResultDetailSports.Contains((int)request.SportType))
+            {
+                return await settlementActionsService.CalculateWithResultDetail(request);
+            }
+            return await settlementActionsService.Calculate(request);
+        }
 
         public async Task<MarkedTickets> Handle(CheckingMarkedTicketsRequest request, CancellationToken cancellationToken) => await settlementActionsService.CheckMarkedTickets(request);
 
