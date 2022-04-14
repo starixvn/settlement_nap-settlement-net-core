@@ -44,7 +44,7 @@ namespace Settlement.FastMarkets.Models
             }
         }
 
-        public int Result
+        public int? Result
         {
             get
             {
@@ -53,7 +53,7 @@ namespace Settlement.FastMarkets.Models
 
             set
             {
-                result = value;
+                result = (int)(value is null ? 0 : value);
             }
         }
 
@@ -75,7 +75,7 @@ namespace Settlement.FastMarkets.Models
             {
                 if (Result >= 0 && !Checked)
                 {
-                    var binaryResult = Convert.ToString(Result, 2).PadLeft(8, '0');
+                    var binaryResult = Convert.ToString((int)Result, 2).PadLeft(8, '0');
                     resultItem = ResultMapping(binaryResult.Reverse());
                 }
 
@@ -180,7 +180,7 @@ namespace Settlement.FastMarkets.Models
             {
                 if (BetType == FastMarketBetType.TimeMachineHDP)
                 {
-                    return Result % TimeMachineHomeAwayRange;
+                    return (int)Result % TimeMachineHomeAwayRange;
                 }
 
                 return 0;
@@ -193,7 +193,7 @@ namespace Settlement.FastMarkets.Models
             {
                 if (BetType == FastMarketBetType.TimeMachineHDP)
                 {
-                    return Result / TimeMachineHomeAwayRange;
+                    return (int)Result / TimeMachineHomeAwayRange;
                 }
 
                 return 0;
