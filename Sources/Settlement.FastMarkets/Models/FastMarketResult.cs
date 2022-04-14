@@ -24,22 +24,21 @@ namespace Settlement.FastMarkets.Models
         {
             get
             {
-                if (BetType == FastMarketBetType.NextOneMinute
-                    || BetType == FastMarketBetType.FirstNextOneMinute
-                    || BetType == FastMarketBetType.NextOneMinuteSetPiece
-                    || BetType == FastMarketBetType.CombinationNextOneMinute)
+                switch (BetType)
                 {
-                    return OneMinuteInterval(Position);
-                }
-                else if (BetType == FastMarketBetType.TimeMachineMinutes
-                    || BetType == FastMarketBetType.TimeMachineHDP)
-                {
-                    var interval = Position > FirstHalfInjuryTime ? Position - 1 : Position;
-                    return Position == FirstHalfInjuryTime ? "First Half Injury Time" : TimeMachineInterval(interval);
-                }
-                else
-                {
-                    return FiveMinutesInterval(Position);
+                    case FastMarketBetType.NextOneMinute:
+                    case FastMarketBetType.FirstNextOneMinute:
+                    case FastMarketBetType.NextOneMinuteSetPiece:
+                    case FastMarketBetType.CombinationNextOneMinute:
+                        return OneMinuteInterval(Position);
+                    case FastMarketBetType.TimeMachineMinutes:
+                    case FastMarketBetType.TimeMachineHDP:
+                    {
+                        var interval = Position > FirstHalfInjuryTime ? Position - 1 : Position;
+                        return Position == FirstHalfInjuryTime ? "First Half Injury Time" : TimeMachineInterval(interval);
+                    }
+                    default:
+                        return FiveMinutesInterval(Position);
                 }
             }
         }
@@ -48,12 +47,15 @@ namespace Settlement.FastMarkets.Models
         {
             get
             {
-                return BetType == FastMarketBetType.NextOneMinuteSetPiece && result == SetPiece.CornerFreeKickGoalKickAndPenalty ? PositionResult.Corner : result;
+                return BetType == FastMarketBetType.NextOneMinuteSetPiece &&
+                       result == SetPiece.CornerFreeKickGoalKickAndPenalty
+                    ? PositionResult.Corner
+                    : result;
             }
 
             set
             {
-                result = (int)(value is null ? 0 : value);
+                result = value ?? 0;
             }
         }
 
@@ -95,24 +97,15 @@ namespace Settlement.FastMarkets.Models
 
         private static string TimeMachineInterval(int position)
         {
-            const int NineMinute = 9;
+            const int nineMinute = 9;
 
-            if (position == 0)
+            return position switch
             {
-                return $"0{position}:00-01:00";
-            }
-
-            if (position < NineMinute)
-            {
-                return $"0{position}:01-0{position + 1}:00";
-            }
-
-            if (position == NineMinute)
-            {
-                return $"0{position}:01-{position + 1}:00";
-            }
-
-            return $"{position}:01-{position + 1}:00";
+                0 => $"0{position}:00-01:00",
+                < nineMinute => $"0{position}:01-0{position + 1}:00",
+                nineMinute => $"0{position}:01-{position + 1}:00",
+                _ => $"{position}:01-{position + 1}:00"
+            };
         }
 
         private static string FiveMinutesInterval(int position)
