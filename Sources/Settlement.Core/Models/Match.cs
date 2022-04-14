@@ -25,7 +25,6 @@ namespace Settlement.Core.Models
         private BackgroundColor backgroundColor;
         private AutoCalculationSetting autoCalcSetting;
         private MixParlay mixParlay;
-        private RemarkSettingModel remark;
 
         [JsonIgnore]
         public IRefDataService RefDataService { get; set; }
@@ -239,10 +238,7 @@ namespace Settlement.Core.Models
             LeagueSetting = Convert.ToString(AutoSettingForLeague, ConvertToBase).Reverse()
         });
 
-        public RemarkSettingModel Remark => remark ?? (remark = new RemarkSettingModel
-        {
-            SettlementStatus = Convert.ToString(SettlementStatus, ConvertToBase).Reverse(),
-        });
+        public RemarkSettingModel Remark => new RemarkSettingModel(SettlementStatus);
 
         public bool IsNeedToCalculateFGLG { get; set; }
 

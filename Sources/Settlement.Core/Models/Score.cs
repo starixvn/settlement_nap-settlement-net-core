@@ -1,5 +1,8 @@
-﻿namespace Settlement.Core.Models
+﻿using MessagePack;
+
+namespace Settlement.Core.Models
 {
+    [MessagePackObject]
     public class Score
     {
         public Score()
@@ -23,13 +26,23 @@
             Background = background;
         }
 
+        [Key("home")]
         public string Home { get; set; }
 
+        [Key("away")]
         public string Away { get; set; }
 
+        [Key("background")]
         public string Background { get; set; }
 
+        [Key("isDirty")]
         public bool IsDirty { get; set; }
+
+        [Key("isConfirmed")]
+        public bool IsConfirmed { get; set; }
+
+        [Key("isNotSettled")]
+        public bool IsNotSettled { get; set; }
 
         public bool EqualValue(Score score)
         {

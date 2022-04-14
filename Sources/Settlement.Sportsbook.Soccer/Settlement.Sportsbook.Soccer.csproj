@@ -7,6 +7,7 @@
 
   <ItemGroup>
     <Compile Remove="Criteria\GetExternalResultCriteria.cs" />
+    <Compile Remove="Models\GoalModel.cs" />
     <Compile Remove="Services\BetStatusService.cs" />
     <Compile Remove="Services\CriteriaService.cs" />
     <Compile Remove="Services\HandleResultDetail.cs" />

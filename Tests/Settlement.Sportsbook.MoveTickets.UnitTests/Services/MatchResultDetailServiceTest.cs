@@ -3,11 +3,7 @@ using NSubstitute;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.MoveTickets.Services;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace Settlement.Sportsbook.MoveTickets.UnitTests.Services
@@ -26,7 +22,7 @@ namespace Settlement.Sportsbook.MoveTickets.UnitTests.Services
 
             scoreService = Substitute.For<IScoreService>();
 
-            service = new MatchResultDetailService(refDataService, scoreService);
+            service = new MatchResultDetailServiceImp(refDataService, scoreService);
         }
 
         [Fact]

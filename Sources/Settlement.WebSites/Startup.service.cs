@@ -16,7 +16,6 @@ using Fanex.NAP.Client.Helpers.Web;
 using Fanex.NAP.Client.Services;
 using Fanex.RemotingRef;
 using Kaden.XmlConverter;
-using MediatR;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
@@ -27,30 +26,28 @@ using Microsoft.Extensions.DependencyInjection;
 using Sentry;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.Aio;
-using Settlement.Sportsbook.Aio.Controllers;
-using Settlement.Sportsbook.Aio.MapperFactory;
-using Settlement.Sportsbook.Aio.Services;
 using Settlement.Sportsbook.MoveTickets;
-using Settlement.Sportsbook.MoveTickets.Controllers;
-using Settlement.Sportsbook.MoveTickets.Services;
 using Settlement.Sportsbook.OtherSports;
-using Settlement.Sportsbook.OtherSports.Controllers;
-using Settlement.Sportsbook.OtherSports.Services;
-using Settlement.Sportsbook.Soccer.Services;
 using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
+using System.IO.Compression;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using Settlement.Sportsbook.Soccer;
-using Settlement.Sportsbook.Soccer.Controllers;
-using Settlement.Sportsbook.Soccer.Services.FullTimeBetStatus;
-using Settlement.Sportsbook.Soccer.Services.HalfTimeBetStatus;
 using ONEbook.UM.Configurations;
 using ONEbook.UM.AspNetCore;
 using ONEbook.UM.Helpers;
 using ONEbook.UM.Transport;
+using Settlement.Log;
+using Settlement.WebSites.Configurations;
+using LogServiceImp = Settlement.Core.Services.LogServiceImp;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.ResponseCompression;
+using MessagePack.AspNetCoreMvcFormatter;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Settlement.EventManagement;
+using Settlement.FastMarkets;
 
 namespace Settlement.WebSites
 {
@@ -166,43 +163,13 @@ namespace Settlement.WebSites
 
         private static void ConfigInternalService(IServiceCollection services)
         {
-            services.AddTransient<IAioService, AioService>();
-            services.AddTransient<IMatchResultDetailService, MatchResultDetailService>();
-            services.AddTransient<Sportsbook.MoveTickets.Services.IMatchService, Sportsbook.MoveTickets.Services.MatchService>();
-            services.AddTransient<IMoveTicketService, MoveTicketService>();
-            services.AddTransient<IScoreService, ScoreService>();
-            services.AddTransient<IScoreSetService, ScoreSetService>();
-            services.AddTransient<IMapperFactory, MapperFactoryBase>();
-            services.AddTransient<IMapperFactory, MapperFactoryImp>();
-            services.AddTransient<IValidateApiKeyService, ValidateApiKeyServiceImp>();
-            services.AddTransient<ICriteriaFactory, CriteriaFactoryImp>();
-            services.AddTransient<ICreateQueryService, CreateQueryServiceImp>();
-
-            services.AddTransient<SettlementActionsService, SettlementActionsServiceImp>();
-            services.AddTransient<SportsbookService, SportsbookServiceImp>();
-
-            services.AddTransient<Sportsbook.Soccer.Services.IFirstGoalLastGoalService, Sportsbook.Soccer.Services.FirstGoalLastGoalServiceImp>();
-            services.AddTransient<Sportsbook.Soccer.Services.IMatchService, Sportsbook.Soccer.Services.MatchService>();
-            services.AddTransient<IGoalIconService, GoalIconServiceImp>();
-            services.AddTransient<IBetStatusAllService, BetStatusAllServiceImp>();
-            services.AddTransient<IGoalRecordService, GoalRecordServiceImp>();
-            services.AddTransient<ICalculateService, CalculateServiceImp>();
-            services.AddTransient<ISoccerBetStatusService, SoccerBetStatusServiceImp>();
-            services.AddTransient<IValidationService, ValidationServiceImp>();
-            services.AddTransient<Sportsbook.Soccer.Services.FullTimeBetStatus.IBetStatusService, Sportsbook.Soccer.Services.FullTimeBetStatus.BetStatusServiceImp>();
-            services.AddTransient<Sportsbook.Soccer.Services.FullTimeBetStatus.IFirstGoalLastGoalService, Sportsbook.Soccer.Services.FullTimeBetStatus.FirstGoalLastGoalServiceImp>();
-            services.AddTransient<IFullTimeService, FullTimeServiceImp>();
-            services.AddTransient<IHalftimeFullTimeService, HalftimeFullTimeServiceImp>();
-            services.AddTransient<IScoreAndGoalService, ScoreAndGoalServiceImp>();
-            services.AddTransient<Sportsbook.Soccer.Services.HalfTimeBetStatus.IBetStatusService, Sportsbook.Soccer.Services.HalfTimeBetStatus.BetStatusServiceImp>();
-            services.AddTransient<IHalftimeScoreAndGoalService, HalftimeScoreAndGoalServiceImp>();
-            services.AddTransient<IHalftimeService, HalftimeServiceImp>();
-            services.AddTransient<IResourceService, ResourceServiceImp>();
-            services.AddTransient<IActionResourceService, ActionResourceServiceImp>();
-            services.AddTransient<IInstantGoalCheckingService, InstantGoalCheckingServiceImp>();
-            services.AddTransient<IInstantResourceService, InstantResourceServiceImp>();
-            services.AddTransient<IInstantCalculateService, InstantCalculateServiceImp>();
-            services.AddTransient<IRefundService, RefundServiceImp>();
+            services.ConfigOtherSportsServices();
+            services.ConfigMoveTicketServices();
+            services.ConfigAioServices();
+            services.ConfigSoccerServices();
+            services.ConfigEventManagementServices();
+            services.ConfigLogServices();
+            services.ConfigFastMarketsServices();
         }
 
         private void ConfigureNapServices(IServiceCollection services)
@@ -216,7 +183,7 @@ namespace Settlement.WebSites
             services.AddSingleton<IGroupService, GroupService>();
             services.AddSingleton<IUserService, UserService>();
             services.AddSingleton<ISecurityService, SecurityService>();
-            services.AddSingleton<ISiteService, SiteService>();
+            services.AddTransient<IBalanceUpService, BalanceUpServiceImp>();
 
             RefDataTypeContainer
                 .ConnectTo(new Uri(Configuration.GetSection("Fanex.RemotingRef.Service.Url").Value))
@@ -273,10 +240,13 @@ namespace Settlement.WebSites
 
         private static void ConfigureMediator(IServiceCollection services)
         {
-            services.AddMediatR(typeof(AioController).GetTypeInfo().Assembly);
-            services.AddMediatR(typeof(MoveTicketController).GetTypeInfo().Assembly);
-            services.AddMediatR(typeof(OtherSportsController).GetTypeInfo().Assembly);
-            services.AddMediatR(typeof(SoccerController).GetTypeInfo().Assembly);
+            services.ConfigAioMediator();
+            services.ConfigMoveTicketMediator();
+            services.ConfigOtherSportsMediator();
+            services.ConfigSoccerMediator();
+            services.ConfigEventManagementMediator();
+            services.ConfigLogMediator();
+            services.ConfigFastMarketsMediator();
         }
 
         private static void ConfigureAutoMapper(IServiceCollection services)
@@ -287,12 +257,44 @@ namespace Settlement.WebSites
                 mc.AddProfile(typeof(SportsbookMoveTicketAutoMapperProfile));
                 mc.AddProfile(typeof(OtherSportsAutoMapperProfile));
                 mc.AddProfile(typeof(SoccerAutoMapperProfile));
+                mc.AddProfile(typeof(LogAutoMapper));
+                mc.AddProfile(typeof(EventManagementAutoMapperProfile));
+                mc.AddProfile(typeof(FastMarketAutoMapperProfile));
             });
 
-            IMapper mapper = mapperConfig.CreateMapper();
+            var mapper = mapperConfig.CreateMapper();
             services.AddSingleton(mapper);
+        }
 
-            services.AddMvc();
+        private static void ConfigureMessagePack(IServiceCollection services)
+        {
+            services.AddMvc().AddMvcOptions(option =>
+            {
+                option.OutputFormatters.Add(new MessagePackOutputFormatter());
+                option.InputFormatters.Add(new MessagePackInputFormatter());
+            });
+
+            services.Configure<KestrelServerOptions>(options =>
+            {
+                options.AllowSynchronousIO = true;
+            });
+
+            services.Configure<IISServerOptions>(options =>
+            {
+                options.AllowSynchronousIO = true;
+            });
+
+            services.Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Optimal);
+            services.AddResponseCompression(options =>
+            {
+                options.MimeTypes = new[]{
+                    "text/html",
+                    "text/css",
+                    "application/javascript",
+                    "application/json",
+                    "application/x-msgpack"
+                };
+            });
         }
     }
 }

@@ -8,7 +8,7 @@ namespace Settlement.Sportsbook.MoveTickets.Services
         Score GetScore(ResultDetail item);
     }
 
-    public class ScoreSetService : IScoreSetService
+    public class ScoreSetServiceImp : IScoreSetService
     {
         public Score GetScore(ResultDetail item)
         {

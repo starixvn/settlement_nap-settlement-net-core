@@ -9,5 +9,6 @@
         public const string MemoryCacheManualPermission = "MemoryCache_Manual_Permission";
         public const string MemoryCacheAutoPermission = "MemoryCache_Auto_Permission";
         public const string MemoryCacheMultiSportCacheKey = "MemoryCache_MultiSportCacheKey";
+        public const string MemoryCacheBalanceUpDay = "MemoryCache_Common_BalanceUpDay";
     }
 }

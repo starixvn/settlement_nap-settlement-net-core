@@ -20,7 +20,7 @@ namespace Settlement.Sportsbook.MoveTickets.UnitTests.Services
         {
             refDataService = Substitute.For<IRefDataService>();
             matchResultDetailService = Substitute.For<IMatchResultDetailService>();
-            service = new MatchService(matchResultDetailService, refDataService);
+            service = new MatchServiceImp(matchResultDetailService, refDataService);
         }
 
         [Fact]

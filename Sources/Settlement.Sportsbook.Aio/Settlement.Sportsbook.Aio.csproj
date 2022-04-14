@@ -8,7 +8,6 @@
 	<ItemGroup>
 	  <Compile Remove="Constants\GroupBetType.cs" />
 	  <Compile Remove="Constants\InputType.cs" />
-	  <Compile Remove="Criteria\GetRecalResultCriteria.cs" />
 	  <Compile Remove="Criteria\RefundParlayCriteria.cs" />
 	  <Compile Remove="Models\ChildMatchItem.cs" />
 	  <Compile Remove="Models\MatchResultDetail.cs" />
@@ -27,7 +26,7 @@
 	<ItemGroup>
 		<PackageReference Include="AutoMapper" Version="10.1.1" />
 		<PackageReference Include="Fanex.Data.Repository" Version="4.2.2" />
-		<PackageReference Include="Fanex.NAP.Client.AspNetCore" Version="1.0.0.8" />
+		<PackageReference Include="Fanex.NAP.Client.AspNetCore" Version="2.0.0" />
 		<PackageReference Include="Kaden.Extensions" Version="2.0.0" />
 		<PackageReference Include="Kaden.XmlConverter" Version="2.0.0" />
 		<PackageReference Include="MediatR" Version="9.0.0" />

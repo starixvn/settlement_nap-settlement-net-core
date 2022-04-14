@@ -23,7 +23,7 @@ namespace Settlement.Sportsbook.MoveTickets.UnitTests.Services
         public ScoreServiceTests()
         {
             scoreSetService = Substitute.For<IScoreSetService>();
-            service = new ScoreService(scoreSetService);
+            service = new ScoreServiceImp(scoreSetService);
         }
 
         [Fact]

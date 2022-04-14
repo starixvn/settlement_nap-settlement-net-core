@@ -30,7 +30,7 @@ namespace Settlement.Sportsbook.Soccer.Services
         Task<List<MatchMoveBetTicket>> GetMatchDetailThirdPartyBetTicket(GetMatchDetailThirdPartyBetTicketsRequest request);
     }
 
-    public class MatchService : IMatchService
+    public class MatchServiceImp : IMatchService
     {
         private readonly IDynamicRepository repository;
 
@@ -42,7 +42,7 @@ namespace Settlement.Sportsbook.Soccer.Services
 
         private readonly IGoalIconService goalIconService;
 
-        public MatchService(
+        public MatchServiceImp(
             IDynamicRepository repository,
             PermissionService permission,
             IMapper mapper,

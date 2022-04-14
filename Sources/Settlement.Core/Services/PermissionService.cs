@@ -67,10 +67,12 @@ namespace Settlement.Core.Services
             CanRefund = HasPermission(SettlementFunctionKeys.SportsbookRefund, Constant.Policy.Host),
             CanCalculateMp = HasPermission(SettlementFunctionKeys.SportsbookCalculateMixParlay, Constant.Policy.Host),
             CanViewSettlementLog = HasPermission(SettlementFunctionKeys.ViewLogSettlement, Constant.Policy.Read),
+            CanAutoPayout = HasPermission(SettlementFunctionKeys.AutoPayoutSetting, Constant.Policy.Host),
             IsLeader = HasPermission(SettlementFunctionKeys.LeaderCalculate, Constant.Policy.Host),
             CanChangeScoreSource = HasPermission(SettlementFunctionKeys.ScoreSource, Constant.Policy.Host),
             CanMoveTickets = HasPermission(SettlementFunctionKeys.CricketMoveTickets, Constant.Policy.Host),
-            IsTrader = HasPermission(SettlementFunctionKeys.TraderSaveScore, Constant.Policy.Host)
+            IsTrader = HasPermission(SettlementFunctionKeys.TraderSaveScore, Constant.Policy.Host),
+            AutoSettlement = HasPermission(SettlementFunctionKeys.AutoSettlement, Constant.Policy.Host)
         };
     }
 }

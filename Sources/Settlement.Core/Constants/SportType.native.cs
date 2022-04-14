@@ -94,6 +94,8 @@
 
         public const int MuayThai = 44;
 
+        public const int BeachVolleyball = 45;
+
         public const int UnknownSportThaiSport = 46;
 
         public const int Kabaddi = 47;
@@ -102,9 +104,17 @@
 
         public const int Futsal = 49;
 
+        public const int Cricket = 50;
+
         public const int BeachSoccer = 51;
 
-        public const int Cricket = 50;
+        public const int Poker = 52;
+
+        public const int Chess = 53;
+
+        public const int Olympic = 54;
+
+        public const int Finance = 55;
 
         public const int UpcomingSport56 = 56;
 

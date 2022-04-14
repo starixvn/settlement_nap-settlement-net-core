@@ -1,5 +1,4 @@
 ﻿using Settlement.Sportsbook.Aio.Constants;
-
 namespace Settlement.Sportsbook.Aio.MapperFactory
 {
     public class CriteriaFactoryImp : CriteriaFactoryBase

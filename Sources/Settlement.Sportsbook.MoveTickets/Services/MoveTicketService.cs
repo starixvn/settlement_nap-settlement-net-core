@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Http;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
-using Settlement.Sportsbook.Core.Criteria;
 using Settlement.Sportsbook.MoveTickets.Criteria;
 using Settlement.Sportsbook.MoveTickets.Models;
 using Settlement.Sportsbook.MoveTickets.Requests;
@@ -31,7 +30,7 @@ namespace Settlement.Sportsbook.MoveTickets.Services
         Task<Result> MoveRunningTickets(MoveRunningTicketsRequest request);
     }
 
-    public class MoveTicketService : IMoveTicketService
+    public class MoveTicketServiceImp : IMoveTicketService
     {
         private readonly int actionIdMoveTicket = 81026;
         private readonly int actionIDMoveRunningTickets = 81035;
@@ -43,7 +42,7 @@ namespace Settlement.Sportsbook.MoveTickets.Services
         private readonly IHttpContextAccessor accessor;
         private readonly ILogService logService;
 
-        public MoveTicketService(
+        public MoveTicketServiceImp(
             IDynamicRepository repository,
             IRefDataService refDataService,
             IMapper mapper,

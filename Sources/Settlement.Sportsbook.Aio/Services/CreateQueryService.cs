@@ -7,6 +7,7 @@ using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Requests;
 using System.Collections.Generic;
 using Settlement.Core.Services;
+using Settlement.Core.Criteria;
 
 namespace Settlement.Sportsbook.Aio.Services
 {

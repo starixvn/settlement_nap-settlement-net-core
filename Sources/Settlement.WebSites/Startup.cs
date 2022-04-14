@@ -35,7 +35,7 @@ namespace Settlement.WebSites
 
             ConfigInternalService(services);
             ConfigureAutoMapper(services);
-
+            ConfigureMessagePack(services);
             services.AddRazorPages();
             services.AddControllersWithViews();
         }
@@ -44,7 +44,7 @@ namespace Settlement.WebSites
         public static void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseDeveloperExceptionPage();
-
+            app.UseResponseCompression();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();

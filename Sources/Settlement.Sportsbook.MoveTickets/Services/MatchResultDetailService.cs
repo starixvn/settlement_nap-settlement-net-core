@@ -11,13 +11,13 @@ namespace Settlement.Sportsbook.MoveTickets.Services
         List<Match> CricketResultDetail(List<Match> matches, List<ResultDetail> resultDetails);
     }
 
-    public class MatchResultDetailService : IMatchResultDetailService
+    public class MatchResultDetailServiceImp : IMatchResultDetailService
     {
         private readonly IRefDataService refDataService;
 
         private readonly IScoreService scoreService;
 
-        public MatchResultDetailService(
+        public MatchResultDetailServiceImp(
             IRefDataService refDataService,
             IScoreService scoreService)
         {

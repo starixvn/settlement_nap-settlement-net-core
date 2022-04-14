@@ -7,9 +7,6 @@ namespace Settlement.Sportsbook.MoveTickets.Models
 {
     public class MoveTicketsMatchDetail
     {
-        private const int ConvertToBase = 2;
-        private RemarkSettingModel remark;
-
         public IRefDataService RefDataService { get; set; }
 
         public int MatchId { get; set; }
@@ -36,9 +33,6 @@ namespace Settlement.Sportsbook.MoveTickets.Models
 
         public bool HasChildMatch { get; set; }
 
-        public RemarkSettingModel Remark => remark ??= new RemarkSettingModel
-        {
-            SettlementStatus = Convert.ToString(SettlementStatus, ConvertToBase).Reverse()
-        };
+        public RemarkSettingModel Remark => new RemarkSettingModel(SettlementStatus);
     }
 }

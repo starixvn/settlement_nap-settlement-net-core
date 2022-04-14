@@ -8,11 +8,11 @@ using Settlement.Sportsbook.Aio.Criteria;
 using Settlement.Sportsbook.Aio.MapperFactory;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Requests;
-using Settlement.Sportsbook.Core.Criteria;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Settlement.Core.Criteria;
 using ResultDetail = Settlement.Sportsbook.Aio.Models.ResultDetail;
 
 namespace Settlement.Sportsbook.Aio.Services
@@ -36,7 +36,7 @@ namespace Settlement.Sportsbook.Aio.Services
         Task<Boolean> ResultSetting(ResultSettingRequest request);
     }
 
-    public class AioService : IAioService
+    public class AioServiceImp : IAioService
     {
         private readonly IDynamicRepository repository;
 
@@ -52,7 +52,7 @@ namespace Settlement.Sportsbook.Aio.Services
 
         private readonly IConfiguration configuration;
 
-        public AioService(
+        public AioServiceImp(
             IDynamicRepository repository,
             PermissionService permissionService,
             IRefDataService refDataService,
@@ -161,11 +161,15 @@ namespace Settlement.Sportsbook.Aio.Services
             var criteria = createQueryService.QuerySettle(request);
             await repository.ExecuteAsync(criteria);
 
+            var childMatchIds = request.SportType == SportType.Cricket && criteria.ErrCode == 0
+                ? await GetChildMatchIds(request.MatchId, criteria.Action, criteria.SelectedResources)
+                : string.Empty;
+
             var settleResult = new Result
             {
                 ErrCode = criteria.ErrCode,
                 ErrMsg = criteria.ErrMsg,
-                ChildMatchIds = request.SportType == SportType.Cricket && criteria.ErrCode == 0 ? await GetChildMatchIds(request.MatchId, criteria.Action, criteria.SelectedResources) : string.Empty,
+                ChildMatchIds = childMatchIds,
                 ServiceCommand = criteria.ServiceCommand
             };
 
@@ -225,9 +229,12 @@ namespace Settlement.Sportsbook.Aio.Services
 
         private async Task<string> GetChildMatchIds(int matchId, string actionName, string selectedResources = "")
         {
-            var criteria = new GetChildMatchCriteria();
-            criteria.matchIds = matchId.ToString();
-            criteria.mode = actionName;
+            var criteria = new GetChildMatchCriteria
+            {
+                MatchIds = matchId.ToString(),
+                Mode = actionName
+            };
+
             if (selectedResources != "")
             {
                 criteria.SelectedResources = selectedResources;
