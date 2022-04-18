@@ -10,11 +10,14 @@ using Settlement.Sportsbook.OtherSports.Constants;
 using Settlement.Sportsbook.OtherSports.Criteria;
 using static Fanex.NAP.Client.Check;
 using MatchResultDetail = Settlement.Sportsbook.OtherSports.Models.MatchResultDetail;
+using Settlement.Core.Constants;
 
 namespace Settlement.Sportsbook.OtherSports.Services
 {
     public interface SportsbookService
     {
+        bool IsModifyResultDetailGroup(int sportType);
+
         Task<MatchResultDetail> GetMatch(GetMatchRequest request);
 
         Task<MatchDetail> GetLastestResult(GetLastestResultRequest request);
@@ -25,16 +28,6 @@ namespace Settlement.Sportsbook.OtherSports.Services
         private readonly IDynamicRepository repository;
 
         private readonly IRefDataService refDataService;
-
-        private readonly string fulltimeResource = "00";
-
-        private readonly string halfTimeResource = "01";
-
-        private int BaseBallSet = 9;
-
-        private int FootballSet = 4;
-
-        private int HockeySet = 3;
 
         private readonly IMapper mapper;
 
@@ -74,29 +67,40 @@ namespace Settlement.Sportsbook.OtherSports.Services
             var externalResultDetails = repository.Fetch<ResultDetail>(providerCriteria);
             matchDetail = ProviderScore(matchDetail, externalResultDetails.ToList());
 
-            var ResultDetails = GroupSport.SettleByResultDetailSports.Contains(matchDetail.SportType) ? GenerateResultdetail(matchDetail) :
-                result.Item2.ToList();
+            var resultDetails = IsModifyResultDetailGroup(matchDetail.SportType)
+                ? betStatusService.GenerateResultDetail(matchDetail) : result.Item2.ToList();
 
             return new MatchResultDetail
             {
                 MatchDetail = matchDetail,
-                ResultDetails = ResultDetails,
+                ResultDetails = resultDetails,
                 TicketCount = result.Item3.ToList()
             };
         }
 
-        private MatchDetail ProviderScore(MatchDetail matchDetail, List<ResultDetail> externalResultDetails)
+        public bool IsModifyResultDetailGroup(int sportType)
         {
-            var fulltimeExScore = externalResultDetails.FirstOrDefault(item => item.ResourceId == fulltimeResource);
-            if (fulltimeExScore != null && !string.IsNullOrEmpty(fulltimeExScore.HomeValue) && !string.IsNullOrEmpty(fulltimeExScore.AwayValue))
+            return GroupSport.FootBall.Contains(sportType) || GroupSport.Hockey.Contains(sportType) ||
+                   SportType.BaseBall == sportType;
+        }
+
+        private static MatchDetail ProviderScore(MatchDetail matchDetail, IReadOnlyCollection<ResultDetail> externalResultDetails)
+        {
+            const string fullTimeResource = "00";
+            const string halfTimeResource = "01";
+
+            var fullTimeExScore = externalResultDetails.FirstOrDefault(item => item.ResourceId == fullTimeResource);
+            if (fullTimeExScore != null && !string.IsNullOrEmpty(fullTimeExScore.HomeValue) &&
+                !string.IsNullOrEmpty(fullTimeExScore.AwayValue))
             {
-                matchDetail.ExternalSourceName = fulltimeExScore.SourceName;
-                matchDetail.ExFTAwayScore = int.Parse(fulltimeExScore.AwayValue);
-                matchDetail.ExFTHomeScore = int.Parse(fulltimeExScore.HomeValue);
+                matchDetail.ExternalSourceName = fullTimeExScore.SourceName;
+                matchDetail.ExFTAwayScore = int.Parse(fullTimeExScore.AwayValue);
+                matchDetail.ExFTHomeScore = int.Parse(fullTimeExScore.HomeValue);
             }
 
             var halftimeExScore = externalResultDetails.FirstOrDefault(item => item.ResourceId == halfTimeResource);
-            if (halftimeExScore != null && !string.IsNullOrEmpty(halftimeExScore.HomeValue) && !string.IsNullOrEmpty(halftimeExScore.AwayValue))
+            if (halftimeExScore != null && !string.IsNullOrEmpty(halftimeExScore.HomeValue) &&
+                !string.IsNullOrEmpty(halftimeExScore.AwayValue))
             {
                 matchDetail.ExternalSourceName = halftimeExScore.SourceName;
                 matchDetail.ExHTAwayScore = int.Parse(halftimeExScore.AwayValue);
@@ -104,21 +108,6 @@ namespace Settlement.Sportsbook.OtherSports.Services
             }
 
             return matchDetail;
-        }
-
-        private List<ResultDetail> GenerateResultdetail(MatchDetail matchDetail)
-        {
-            if (GroupSport.FootBall.Contains(matchDetail.SportType))
-            {
-                return betStatusService.GenerateResult(matchDetail, FootballSet, "Q");
-            }
-
-            if (GroupSport.Hockey.Contains(matchDetail.SportType))
-            {
-                return betStatusService.GenerateResult(matchDetail, HockeySet, "P");
-            }
-
-            return betStatusService.GenerateResult(matchDetail, BaseBallSet, "");
         }
 
         public async Task<MatchDetail> GetLastestResult(GetLastestResultRequest request)

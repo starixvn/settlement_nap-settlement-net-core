@@ -15,7 +15,7 @@ namespace Settlement.Sportsbook.OtherSports.Services
     {
         public ScoreSetModel GenerateBetStatus(CalculateRequest request);
 
-        public List<ResultDetail> GenerateResult(MatchDetail matchDetail, int setCount, string resourceId);
+        public List<ResultDetail> GenerateResultDetail(MatchDetail matchDetail);
     }
 
     public class BetStatusServiceImp : IBetStatusService
@@ -37,56 +37,60 @@ namespace Settlement.Sportsbook.OtherSports.Services
 
         public ScoreSetModel GenerateBetStatus(CalculateRequest request)
         {
-            var lastestBetStatus = GetBetStatus(request.MatchId);
+            var betStatus = GetBetStatus(request.MatchId);
             if (request.IsScoreDirect)
             {
                 return GetScore(request);
             }
 
             return request.Action == ActionType.CalculateHalfTime
-                ? GetHalfTimeScore(request.SelectedResources, request.SportType, lastestBetStatus)
+                ? GetHalfTimeScore(request.SelectedResources, request.SportType, betStatus)
                 : GetFullTimeScore(request.SelectedResources, request.SportType);
         }
 
-        public List<ResultDetail> GenerateResult(MatchDetail matchDetail, int setCount, string resourceId)
+        public List<ResultDetail> GenerateResultDetail(MatchDetail matchDetail)
         {
+            var setNumber = SetNumber(matchDetail.SportType);
+            var resultDetails = Enumerable.Repeat(1, setNumber).Select(i => new ResultDetail()).ToList();
             var arrayBetStatus = ArrayBetStatus(matchDetail.BetStatus);
-            var resultDetailOt = new ResultDetail
+            var index = 0;
+            foreach (var resultDetail in resultDetails)
             {
-                ResourceId = "OT"
-            };
-            var resultDetails = new List<ResultDetail>();
-            var betStatusEmpty = string.Join(string.Empty, arrayBetStatus).Length < 1;
+                var score = ScoreItemOnBetStatus(arrayBetStatus, index);
+                var resourceId = index + 1 == setNumber ? "OT" : $"{index + 1}";
 
-            for (var i = 0; i < arrayBetStatus.Length - 1; i++)
+                resultDetail.ResourceId = resourceId;
+                resultDetail.HomeValue = score.Home;
+                resultDetail.AwayValue = score.Away;
+                index++;
+            }
+            
+            return CreateResultFinal(matchDetail, resultDetails);
+        }
+
+        private static int SetNumber(int sportType)
+        {
+            const int footBallGroup = 5;
+            const int hockeyGroup = 4;
+            const int baseballGroup = 10;
+
+            if (GroupSport.FootBall.Contains(sportType))
             {
-                var resultDetail = new ResultDetail
-                {
-                    ResourceId = $"{i + 1}{resourceId}"
-                };
-                if (betStatusEmpty)
-                {
-                    resultDetails.Add(resultDetail);
-                    continue;
-                }
-
-                var score = arrayBetStatus[i].Trim().Split('-');
-                if (i == setCount)
-                {
-                    resultDetailOt.HomeValue = score[0];
-                    resultDetailOt.AwayValue = score[1];
-                }
-                else
-                {
-                    resultDetail.HomeValue = score[0];
-                    resultDetail.AwayValue = score[1];
-                }
-
-                resultDetails.Add(resultDetail);
+                return footBallGroup;
             }
 
-            resultDetails.Add(resultDetailOt);
-            return CreateResultFinal(matchDetail, resultDetails);
+            return GroupSport.Hockey.Contains(sportType) ? hockeyGroup : baseballGroup;
+        }
+
+        private static Score ScoreItemOnBetStatus(IReadOnlyList<string> betStatus, int currentIndex)
+        {
+            if (betStatus.Count > currentIndex)
+            {
+                var score = betStatus[currentIndex].Trim().Split('-');
+                return new Score(score[0], score[1]);
+            }
+
+            return new Score();
         }
 
         private static List<ResultDetail> CreateResultFinal(MatchDetail matchDetail, List<ResultDetail> resultDetails)
@@ -96,8 +100,8 @@ namespace Settlement.Sportsbook.OtherSports.Services
                 var halfTimeResult = new ResultDetail
                 {
                     ResourceId = ResourceType.Halftime,
-                    HomeValue = matchDetail.HalfTimeHomeScore.ToString() ?? "",
-                    AwayValue = matchDetail.HalfTimeAwayScore.ToString() ?? ""
+                    HomeValue = matchDetail.HalfTimeHomeScore.ToString(),
+                    AwayValue = matchDetail.HalfTimeAwayScore.ToString()
                 };
                 resultDetails.Add(halfTimeResult);
             }
@@ -105,8 +109,8 @@ namespace Settlement.Sportsbook.OtherSports.Services
             var fullTimeResult = new ResultDetail
             {
                 ResourceId = ResourceType.Final,
-                HomeValue = matchDetail.FinalHomeScore.ToString() ?? "",
-                AwayValue = matchDetail.FinalAwayScore.ToString() ?? ""
+                HomeValue = matchDetail.FinalHomeScore.ToString(),
+                AwayValue = matchDetail.FinalAwayScore.ToString()
             };
             resultDetails.Add(fullTimeResult);
             return resultDetails;

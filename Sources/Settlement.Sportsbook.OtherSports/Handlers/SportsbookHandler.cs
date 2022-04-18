@@ -45,10 +45,11 @@ namespace Settlement.Sportsbook.OtherSports.Handlers
 
         public async Task<Result> Handle(CalculateRequest request, CancellationToken cancellationToken)
         {
-            if (request.SportType != null && GroupSport.SettleByResultDetailSports.Contains((int)request.SportType))
+            if (sportsbookService.IsModifyResultDetailGroup(request.SportType))
             {
                 return await settlementActionsService.CalculateWithResultDetail(request);
             }
+
             return await settlementActionsService.Calculate(request);
         }
 

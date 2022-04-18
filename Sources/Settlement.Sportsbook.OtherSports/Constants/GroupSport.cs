@@ -11,14 +11,8 @@ namespace Settlement.Sportsbook.OtherSports.Constants
         };
 
         public static List<int> Hockey => new List<int>
-         {
-             SportType.IceHockey, SportType.FieldHockey
-         };
-
-        public static List<int> SettleByResultDetailSports => new List<int>
         {
-            SportType.Football, SportType.Rugby, SportType.NetBall, SportType.IceHockey, SportType.FieldHockey,
-            SportType.BaseBall
+             SportType.IceHockey, SportType.FieldHockey
         };
     }
 }
