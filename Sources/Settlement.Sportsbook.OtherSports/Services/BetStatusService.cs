@@ -57,7 +57,7 @@ namespace Settlement.Sportsbook.OtherSports.Services
             foreach (var resultDetail in resultDetails)
             {
                 var score = ScoreItemOnBetStatus(arrayBetStatus, index);
-                var resourceId = index + 1 == setNumber ? "OT" : $"{index + 1}";
+                var resourceId = GetResourceId(index, setNumber, matchDetail.SportType);
 
                 resultDetail.ResourceId = resourceId;
                 resultDetail.HomeValue = score.Home;
@@ -66,6 +66,11 @@ namespace Settlement.Sportsbook.OtherSports.Services
             }
             
             return CreateResultFinal(matchDetail, resultDetails);
+        }
+
+        private static string GetResourceId(int currentIndex, int maxSetNumber, int sportType)
+        {
+            return sportType!= SportType.Squash &&  currentIndex + 1 == maxSetNumber ? "OT" : $"{currentIndex + 1}";
         }
 
         private static int SetNumber(int sportType)
