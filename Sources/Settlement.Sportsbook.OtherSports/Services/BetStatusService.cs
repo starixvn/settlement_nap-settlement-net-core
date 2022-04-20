@@ -64,7 +64,7 @@ namespace Settlement.Sportsbook.OtherSports.Services
                 resultDetail.AwayValue = score.Away;
                 index++;
             }
-            
+
             return CreateResultFinal(matchDetail, resultDetails);
         }
 
@@ -184,19 +184,23 @@ namespace Settlement.Sportsbook.OtherSports.Services
             var finalHomeScore = 0;
             var finalAwayScore = 0;
             var halfTimeNode = sportType == SportType.BaseBall ? BaseballHTNode : FootballHTNode;
+            var resourceSet = resources.Where(item => item.ResourceId != ResourceType.Final
+                                                       && item.ResourceId != ResourceType.Halftime &&
+                                                       item.ResourceId != "OT").ToList();
 
-            for (var i = 0; i < resources.Count - 1; i++)
+            for (var i = 0; i < resourceSet.Count; i++)
             {
-                if (i == halfTimeNode)
+                var home = string.IsNullOrEmpty(resources[i].HomeValue) ? "0" : resources[i].HomeValue;
+                var away = string.IsNullOrEmpty(resources[i].AwayValue) ? "0" : resources[i].AwayValue;
+                finalHomeScore += int.Parse(home);
+                finalAwayScore += int.Parse(away);
+                if (i == halfTimeNode - 1)
                 {
                     htHomeScore += finalHomeScore;
                     htAwayScore += finalAwayScore;
                 }
-
-                finalHomeScore += int.Parse(resources[i].HomeValue);
-                finalAwayScore += int.Parse(resources[i].AwayValue);
                 var currentBetStatus = betStatus.Length > 0 ? "," : string.Empty;
-                betStatus.Append($"{currentBetStatus}{resources[i].HomeValue}-{resources[i].AwayValue}");
+                betStatus.Append($"{currentBetStatus}{home}-{away}");
             }
 
             var scoreSet = new ScoreSetModel
@@ -214,15 +218,12 @@ namespace Settlement.Sportsbook.OtherSports.Services
         private static ScoreSetModel OverTime(ScoreSetModel currentScore, List<ResourceItem> resources)
         {
             var otResource = resources.First(item => item.ResourceId == "OT");
-            if (otResource.HomeValue != null || otResource.AwayValue != null)
+            if (!string.IsNullOrEmpty(otResource.HomeValue) && !string.IsNullOrEmpty(otResource.AwayValue))
             {
-                var home = otResource.HomeValue ?? "0";
-                var away = otResource.AwayValue ?? "0";
+                currentScore.FinalHomeScore += int.Parse(otResource.HomeValue);
+                currentScore.FinalAwayScore += int.Parse(otResource.AwayValue);
 
-                currentScore.FinalHomeScore += int.Parse(home);
-                currentScore.FinalAwayScore += int.Parse(away);
-
-                currentScore.BetStatus.Append($",{home}-{away}");
+                currentScore.BetStatus.Append($",{otResource.HomeValue}-{otResource.AwayValue}");
             }
 
             return currentScore;
@@ -274,8 +275,8 @@ namespace Settlement.Sportsbook.OtherSports.Services
                 BetStatus = new StringBuilder(),
                 HtHomeScore = htResult != null && int.TryParse(htResult.HomeValue, out int value) ? value : 0,
                 HtAwayScore = htResult != null && int.TryParse(htResult.AwayValue, out int value2) ? value2 : 0,
-                FinalHomeScore = int.TryParse(ftResult.HomeValue, out int value3) ? value3 : 0,
-                FinalAwayScore = int.TryParse(ftResult.AwayValue, out int value4) ? value4 : 0
+                FinalHomeScore = ftResult != null && int.TryParse(ftResult.HomeValue, out int value3) ? value3 : 0,
+                FinalAwayScore = ftResult != null && int.TryParse(ftResult.AwayValue, out int value4) ? value4 : 0
             };
 
             return scoreSet;

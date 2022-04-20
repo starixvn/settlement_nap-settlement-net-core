@@ -89,6 +89,9 @@ namespace Settlement.Core.Models
             }
         }
 
+        public bool IsHalfTimeSettled => IsHalfTimeCal || (!string.IsNullOrWhiteSpace(BetStatus)
+                                                           && BetStatus.IgnoreCaseContains(Constants.EventStatus.RefundHT));
+
         public bool IsFullTimeSettled => IsCalculated || IsRefundFullTime;
 
         private bool IsRefundFullTime => !string.IsNullOrWhiteSpace(BetStatus) && (BetStatus.IgnoreCaseContains(Constants.EventStatus.Abandoned)

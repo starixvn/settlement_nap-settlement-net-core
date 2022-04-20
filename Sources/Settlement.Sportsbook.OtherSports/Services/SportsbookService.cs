@@ -20,7 +20,7 @@ namespace Settlement.Sportsbook.OtherSports.Services
 
         Task<MatchResultDetail> GetMatch(GetMatchRequest request);
 
-        Task<MatchDetail> GetLastestResult(GetLastestResultRequest request);
+        Task<MatchResultDetail> GetLastestResult(GetLastestResultRequest request);
     }
 
     public class SportsbookServiceImp : SportsbookService
@@ -69,12 +69,14 @@ namespace Settlement.Sportsbook.OtherSports.Services
 
             var resultDetails = IsModifyResultDetailGroup(matchDetail.SportType)
                 ? betStatusService.GenerateResultDetail(matchDetail) : result.Item2.ToList();
+            var hedgeMatch = await MatchHedgeDetail(request.MatchId);
 
             return new MatchResultDetail
             {
                 MatchDetail = matchDetail,
                 ResultDetails = resultDetails,
-                TicketCount = result.Item3.ToList()
+                TicketCount = result.Item3.ToList(),
+                HedgeMatchDetail = hedgeMatch
             };
         }
 
@@ -82,6 +84,13 @@ namespace Settlement.Sportsbook.OtherSports.Services
         {
             return GroupSport.FootBall.Contains(sportType) || GroupSport.Hockey.Contains(sportType) ||
                    SportType.BaseBall == sportType;
+        }
+
+        private async Task<MatchHedgeDetail> MatchHedgeDetail(int matchId)
+        {
+            var criteria = new GetMatchDetailHedgeMatchCriteria { MatchId = matchId };
+            var match = await repository.GetAsync<MatchHedgeDetail>(criteria);
+            return match ?? null;
         }
 
         private static MatchDetail ProviderScore(MatchDetail matchDetail, IReadOnlyCollection<ResultDetail> externalResultDetails)
@@ -110,13 +119,19 @@ namespace Settlement.Sportsbook.OtherSports.Services
             return matchDetail;
         }
 
-        public async Task<MatchDetail> GetLastestResult(GetLastestResultRequest request)
+        public async Task<MatchResultDetail> GetLastestResult(GetLastestResultRequest request)
         {
             var criteria = mapper.Map<GetLastestResultRequest, GetLastestResultCriteria>(request);
             var matchDetail = await repository.GetAsync<MatchDetail>(criteria);
             matchDetail.RefDataService = refDataService;
+            var resultDetails = IsModifyResultDetailGroup(matchDetail.SportType)
+                ? betStatusService.GenerateResultDetail(matchDetail) : new List<ResultDetail>();
 
-            return matchDetail;
+            return new MatchResultDetail
+            {
+                MatchDetail = matchDetail,
+                ResultDetails = resultDetails
+            };
         }
     }
 }

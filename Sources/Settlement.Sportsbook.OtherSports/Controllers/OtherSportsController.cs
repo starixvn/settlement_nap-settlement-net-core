@@ -22,13 +22,13 @@ namespace Settlement.Sportsbook.OtherSports.Controllers
         [LogRequestResponse]
         public async Task<IActionResult> GetMatch1(int matchId)
         {
-            var request = new  GetMatchRequest{
+            var request = new GetMatchRequest
+            {
                 MatchId = matchId
             };
 
             return Ok(await mediator.Send(request).ConfigureAwait(false));
         }
-
 
         [Route("get-match"), HttpPost]
         [LogRequestResponse]
