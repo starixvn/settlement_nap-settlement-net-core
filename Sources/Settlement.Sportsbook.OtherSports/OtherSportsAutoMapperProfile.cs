@@ -12,7 +12,7 @@ namespace Settlement.Sportsbook.OtherSports
             CreateMap<CalculateRequest, CalculateCriteria>().ForMember(dest => dest.FullTimeHome, map => map.MapFrom(src => src.FinalHomeScore))
                 .ForMember(dest => dest.FullTimeAway, map => map.MapFrom(src => src.FinalAwayScore));
             CreateMap<CheckingMarkedTicketsRequest, CheckingMarkedTicketsCriteria>();
-            CreateMap<RefundRequest, RefundAllCriteria>().ForMember(dest => dest.FullTimeHome, map => map.MapFrom(src => src.FinalHomeScore))
+            CreateMap<RefundRequest, RefundCriteria>().ForMember(dest => dest.FullTimeHome, map => map.MapFrom(src => src.FinalHomeScore))
                 .ForMember(dest => dest.FullTimeAway, map => map.MapFrom(src => src.FinalAwayScore));
             CreateMap<RefundParlayRequest, ParlayCriteria>();
             CreateMap<GetLastestResultRequest, GetLastestResultCriteria>();

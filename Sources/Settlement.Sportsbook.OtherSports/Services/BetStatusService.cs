@@ -100,7 +100,7 @@ namespace Settlement.Sportsbook.OtherSports.Services
 
         private static List<ResultDetail> CreateResultFinal(MatchDetail matchDetail, List<ResultDetail> resultDetails)
         {
-            if (GroupSport.FootBall.Contains(matchDetail.SportType))
+            if (GroupSport.FootBall.Contains(matchDetail.SportType) || matchDetail.SportType == SportType.BaseBall)
             {
                 var halfTimeResult = new ResultDetail
                 {

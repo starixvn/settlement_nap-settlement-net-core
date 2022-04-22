@@ -89,16 +89,23 @@ namespace Settlement.Sportsbook.OtherSports.Services
 
         public async Task<Result> Refund(RefundRequest request)
         {
-            var criteria = mapper.Map<RefundRequest, RefundAllCriteria>(request);
+            var criteria = mapper.Map<RefundRequest, RefundCriteria>(request);
             criteria.AdminId = currentSession.UserId;
             criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
             await repository.ExecuteAsync(criteria);
-
-            return new Result
+            var result = new Result
             {
                 ErrCode = criteria.ErrCode,
-                ErrMsg = criteria.ErrMsg,
+                ErrMsg = criteria.ErrMsg
             };
+
+            if (result.ErrCode == 0 && request.IsApplyHedging)
+            {
+                criteria.MatchId = request.HedgeMatchId;
+                await repository.ExecuteAsync(criteria);
+            }
+
+            return result;
         }
 
         public async Task<Result> RefundParlay(RefundParlayRequest request)
@@ -107,12 +114,19 @@ namespace Settlement.Sportsbook.OtherSports.Services
             criteria.AdminId = currentSession.UserId;
             criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
             await repository.ExecuteAsync(criteria);
-
-            return new Result
+            var result = new Result
             {
                 ErrCode = criteria.ErrCode,
                 ErrMsg = criteria.ErrMsg
             };
+
+            if (result.ErrCode == 0 && request.IsApplyHedging)
+            {
+                criteria.MatchId = request.HedgeMatchId;
+                await repository.ExecuteAsync(criteria);
+            }
+
+            return result;
         }
 
         private CalculateCriteria CreateCriteria(CalculateRequest request)
