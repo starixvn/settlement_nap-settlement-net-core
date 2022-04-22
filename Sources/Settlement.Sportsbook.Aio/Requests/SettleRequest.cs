@@ -26,5 +26,7 @@ namespace Settlement.Sportsbook.Aio.Requests
         public List<ResourceItem> SelectedResources { get; set; }
 
         public string ChildMatchIds { get; set; }
+
+        public int? RefResultStatus { get; set; }
     }
 }

@@ -70,7 +70,7 @@ namespace Settlement.Sportsbook.OtherSports.Services
 
         private static string GetResourceId(int currentIndex, int maxSetNumber, int sportType)
         {
-            return sportType!= SportType.Squash &&  currentIndex + 1 == maxSetNumber ? "OT" : $"{currentIndex + 1}";
+            return !GroupSport.Squash.Contains(sportType) && currentIndex + 1 == maxSetNumber ? "OT" : $"{currentIndex + 1}";
         }
 
         private static int SetNumber(int sportType)
@@ -79,7 +79,7 @@ namespace Settlement.Sportsbook.OtherSports.Services
             const int hockeyGroup = 4;
             const int baseballGroup = 10;
 
-            if (GroupSport.FootBall.Contains(sportType))
+            if (GroupSport.FootBall.Contains(sportType) || GroupSport.Squash.Contains(sportType))
             {
                 return footBallGroup;
             }
@@ -100,7 +100,7 @@ namespace Settlement.Sportsbook.OtherSports.Services
 
         private static List<ResultDetail> CreateResultFinal(MatchDetail matchDetail, List<ResultDetail> resultDetails)
         {
-            if (!GroupSport.Hockey.Contains(matchDetail.SportType))
+            if (GroupSport.FootBall.Contains(matchDetail.SportType))
             {
                 var halfTimeResult = new ResultDetail
                 {
@@ -217,8 +217,8 @@ namespace Settlement.Sportsbook.OtherSports.Services
 
         private static ScoreSetModel OverTime(ScoreSetModel currentScore, List<ResourceItem> resources)
         {
-            var otResource = resources.First(item => item.ResourceId == "OT");
-            if (!string.IsNullOrEmpty(otResource.HomeValue) && !string.IsNullOrEmpty(otResource.AwayValue))
+            var otResource = resources.Find(item => item.ResourceId == "OT");
+            if (!string.IsNullOrEmpty(otResource?.HomeValue) && !string.IsNullOrEmpty(otResource?.AwayValue))
             {
                 currentScore.FinalHomeScore += int.Parse(otResource.HomeValue);
                 currentScore.FinalAwayScore += int.Parse(otResource.AwayValue);

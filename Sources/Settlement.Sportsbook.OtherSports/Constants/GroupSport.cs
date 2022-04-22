@@ -7,12 +7,17 @@ namespace Settlement.Sportsbook.OtherSports.Constants
     {
         public static List<int> FootBall => new List<int>
         {
-            SportType.Football, SportType.Rugby, SportType.NetBall, SportType.Squash, SportType.SepakTakraw
+            SportType.Football, SportType.Rugby, SportType.NetBall
         };
 
         public static List<int> Hockey => new List<int>
         {
              SportType.IceHockey, SportType.FieldHockey
+        };
+
+        public static List<int> Squash => new List<int>
+        {
+            SportType.Squash, SportType.SepakTakraw
         };
     }
 }
