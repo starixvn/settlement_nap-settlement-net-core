@@ -13,8 +13,6 @@ namespace Settlement.Sportsbook.OtherSports.Requests
 
         public string Action { get; set; }
 
-        public bool IsApplyHedging { get; set; }
-
         public int HedgeMatchId { get; set; }
     }
 }

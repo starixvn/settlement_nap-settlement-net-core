@@ -11,8 +11,6 @@ namespace Settlement.Sportsbook.OtherSports.Requests
 
         public int SettleAbandonedMatchIbcParlay { get; set; }
 
-        public bool IsApplyHedging { get; set; }
-
         public int HedgeMatchId { get; set; }
     }
 }

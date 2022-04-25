@@ -32,7 +32,5 @@ namespace Settlement.Sportsbook.OtherSports.Requests
         public bool IsScoreDirect { get; set; }
 
         public int HedgeMatchId { get; set; }
-
-        public bool IsApplyHedging { get; set; }
     }
 }

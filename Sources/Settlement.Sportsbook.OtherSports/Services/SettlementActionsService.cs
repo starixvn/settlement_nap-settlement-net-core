@@ -40,8 +40,7 @@ namespace Settlement.Sportsbook.OtherSports.Services
             IHttpContextAccessor accessor,
             INapSession currentSession,
             IMapper mapper,
-            IBetStatusService betStatusService
-            )
+            IBetStatusService betStatusService)
         {
             this.repository = repository;
             this.currentSession = currentSession;
@@ -68,12 +67,17 @@ namespace Settlement.Sportsbook.OtherSports.Services
         {
             var criteria = CreateCriteria(request);
 
-            var result = Execute(criteria);
+            await repository.ExecuteAsync(criteria);
+            var result = new Result
+            {
+                ErrCode = criteria.ErrCode,
+                ErrMsg = criteria.ErrMsg
+            };
 
-            if (result.IsSuccessful && request.IsApplyHedging)
+            if (result.IsSuccessful && request.HedgeMatchId > 0)
             {
                 criteria.MatchId = request.HedgeMatchId;
-                Execute(criteria);
+                await repository.ExecuteAsync(criteria);
             }
 
             return result;
@@ -99,7 +103,7 @@ namespace Settlement.Sportsbook.OtherSports.Services
                 ErrMsg = criteria.ErrMsg
             };
 
-            if (result.ErrCode == 0 && request.IsApplyHedging)
+            if (result.ErrCode == 0 && request.HedgeMatchId > 0)
             {
                 criteria.MatchId = request.HedgeMatchId;
                 await repository.ExecuteAsync(criteria);
@@ -120,7 +124,7 @@ namespace Settlement.Sportsbook.OtherSports.Services
                 ErrMsg = criteria.ErrMsg
             };
 
-            if (result.ErrCode == 0 && request.IsApplyHedging)
+            if (result.ErrCode == 0 && request.HedgeMatchId > 0)
             {
                 criteria.MatchId = request.HedgeMatchId;
                 await repository.ExecuteAsync(criteria);
@@ -153,17 +157,6 @@ namespace Settlement.Sportsbook.OtherSports.Services
             }
 
             return calculate;
-        }
-
-        private Result Execute(CalculateCriteria criteria)
-        {
-            repository.Execute(criteria);
-
-            return new Result
-            {
-                ErrCode = criteria.ErrCode,
-                ErrMsg = criteria.ErrMsg
-            };
         }
     }
 }
