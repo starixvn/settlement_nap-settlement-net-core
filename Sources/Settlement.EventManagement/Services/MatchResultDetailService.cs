@@ -20,9 +20,9 @@ namespace Settlement.EventManagement.Services
 
         List<Match> CricketResultDetail(List<Match> matches, List<ResultDetail> resultDetails, Permission permission);
 
-        List<Match> BeachVolleyballResultDetail(List<Match> matches, List<ResultDetail> resultDetails);
+        List<Match> BeachVolleyballResultDetail(List<Match> matches, List<ResultDetail> resultDetails, Permission permission);
 
-        List<Match> VolleyballResultDetail(List<Match> matches, List<ResultDetail> resultDetails);
+        List<Match> VolleyballResultDetail(List<Match> matches, List<ResultDetail> resultDetails, Permission permission);
 
         List<Match> OtherSportsResultDetail(List<Match> matches, List<ResultDetail> resultDetails, bool includeHalfTime);
     }
@@ -80,25 +80,25 @@ namespace Settlement.EventManagement.Services
             return SetMatchInfo(matches, resultDetails, resources, permission);
         }
 
-        public List<Match> BeachVolleyballResultDetail(List<Match> matches, List<ResultDetail> resultDetails)
+        public List<Match> BeachVolleyballResultDetail(List<Match> matches, List<ResultDetail> resultDetails, Permission permission)
         {
             var resources = new List<string> { "0101", "0102", "0103" };
-            return VolleyballSetMatchInfo(matches, resultDetails, resources);
+            return VolleyballSetMatchInfo(matches, resultDetails, resources, permission);
         }
 
-        public List<Match> VolleyballResultDetail(List<Match> matches, List<ResultDetail> resultDetails)
+        public List<Match> VolleyballResultDetail(List<Match> matches, List<ResultDetail> resultDetails, Permission permission)
         {
             var resources = new List<string> { "0101", "0102", "0103", "0104", "0105" };
-            return VolleyballSetMatchInfo(matches, resultDetails, resources);
+            return VolleyballSetMatchInfo(matches, resultDetails, resources, permission);
         }
 
-        private List<Match> VolleyballSetMatchInfo(List<Match> matches, List<ResultDetail> resultDetails, List<string> resources)
+        private List<Match> VolleyballSetMatchInfo(List<Match> matches, List<ResultDetail> resultDetails, List<string> resources, Permission permission)
         {
             foreach (var match in matches)
             {
                 match.RefDataService = refDataService;
                 var resultDetailByMatchId = resultDetails.Where(m => m.MatchId == match.MatchId && m.SourceId == SourceType.Normal).ToList();
-                match.MoreScores = scoreService.ScoreLoader(match.SportType, resultDetailByMatchId, resources, null);
+                match.MoreScores = scoreService.ScoreLoader(match.SportType, resultDetailByMatchId, resources, permission);
                 match.IsHavingIntervalScore = IsDisplayIntervalScore(match, resultDetailByMatchId);
                 this.externalScoreService.LoadExternalResultForVolleyball(match, resultDetails);
             }

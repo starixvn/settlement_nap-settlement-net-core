@@ -53,12 +53,12 @@ namespace Settlement.EventManagement.Services
 
             if (sportType == SportType.BeachVolleyball)
             {
-                return matchResultDetailService.BeachVolleyballResultDetail(matches, resultDetails);
+                return matchResultDetailService.BeachVolleyballResultDetail(matches, resultDetails, permission);
             }
 
             if (sportType == SportType.VolleyBall)
             {
-                return matchResultDetailService.VolleyballResultDetail(matches, resultDetails);
+                return matchResultDetailService.VolleyballResultDetail(matches, resultDetails, permission);
             }
 
             foreach (var result in matches)
