@@ -1,0 +1,24 @@
+﻿using Newtonsoft.Json;
+using Settlement.Core.Services;
+using System.Collections.Generic;
+
+namespace Settlement.ThirdPartyProducts.Models
+{
+    public class LeagueModel
+    {
+        [JsonIgnore]
+        public RefDataService RefDataService { get; set; }
+
+        public int LeagueId { get; set; }
+
+        public int SportType { get; set; }
+
+        public string SportName => RefDataService.GetSportName(SportType);
+
+        public string LeagueName => RefDataService.GetLeagueName(LeagueId);
+
+        public bool IsAutoSettingForLeague { get; set; }
+
+        public List<MatchDetailModel> Matches { get; set; }
+    }
+}
