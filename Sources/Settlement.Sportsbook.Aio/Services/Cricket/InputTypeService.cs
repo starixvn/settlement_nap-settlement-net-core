@@ -20,6 +20,12 @@ namespace Settlement.Sportsbook.Aio.Services.Cricket
     {
         private const int MaxPlayerSelected = 2;
 
+        private const int OtherId = 856887;
+
+        private const string OtherValue = "00";
+
+        private const string OtherBetTypeName = "Other";
+
         public int GetNonInnsBetTypeInputType(int betTypeId)
         {
             if (InputType.HomeAwayGroup.Contains(betTypeId))
@@ -79,7 +85,6 @@ namespace Settlement.Sportsbook.Aio.Services.Cricket
                 {
                     HomeValue = option == null ? string.Empty : option.OptionName
                 };
-
             }
 
             var playerNames = inputOptions.FindAll(option => option.ResourceId == resourceId);
@@ -88,14 +93,38 @@ namespace Settlement.Sportsbook.Aio.Services.Cricket
                 HomeValue = playerNames.Count < MaxPlayerSelected ? string.Empty : playerNames[0].OptionName,
                 AwayValue = playerNames.Count < MaxPlayerSelected ? string.Empty : playerNames[1].OptionName
             };
-
         }
 
-        public List<InputOption> GetInputOptions(int betTypeId, string resourceId,  List<InputOption> inputOptions)
+        public List<InputOption> GetInputOptions(int betTypeId, string resourceId, List<InputOption> inputOptions)
         {
-            return InputType.PlayerSelectGroup.Contains(betTypeId) 
-                ? inputOptions.FindAll(option => option.ResourceId == resourceId).Take(MaxPlayerSelected).ToList() 
+            var listOption = InputType.PlayerSelectGroup.Contains(betTypeId)
+                ? inputOptions.FindAll(option => option.ResourceId == resourceId).Take(MaxPlayerSelected).ToList()
                 : inputOptions.FindAll(option => option.ResourceId == resourceId);
+
+            if (InputType.OptionOtherGroup.Contains(betTypeId))
+            {
+                AddOtherOption(listOption, resourceId);
+            }
+            return listOption;
+        }
+
+        private void AddOtherOption(List<InputOption> listOption, string resourceId)
+        {
+            var otherOptionIndex = listOption.FindIndex(option => option.Value == OtherValue);
+            if (otherOptionIndex >= 0)
+            {
+                listOption.RemoveAt(otherOptionIndex);
+            }
+
+            var optionOther = new InputOption
+            {
+                PlayerId = OtherId,
+                Value = OtherValue,
+                OptionName = OtherBetTypeName,
+                OddsInfo = $"{OtherValue},{OtherBetTypeName}",
+                ResourceId = resourceId
+            };
+            listOption.Add(optionOther);
         }
     }
 }
