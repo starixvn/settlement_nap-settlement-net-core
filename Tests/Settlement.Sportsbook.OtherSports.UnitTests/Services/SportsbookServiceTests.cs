@@ -22,6 +22,8 @@ namespace Settlement.Sportsbook.OtherSports.UnitTests.Services
 
         private readonly IRefDataService refDataService;
 
+        private readonly IBetStatusService betStatusService;
+
         public SportsbookServiceTests()
         {
             var mapperConfig = new MapperConfigurationExpression();
@@ -30,7 +32,8 @@ namespace Settlement.Sportsbook.OtherSports.UnitTests.Services
             var mapper = new Mapper(config);
             repository = Substitute.For<IDynamicRepository>();
             refDataService = Substitute.For<IRefDataService>();
-            service = new SportsbookServiceImp(repository, refDataService, mapper);
+            betStatusService = Substitute.For<IBetStatusService>();
+            service = new SportsbookServiceImp(repository, refDataService, mapper, betStatusService);
         }
 
         [Fact]

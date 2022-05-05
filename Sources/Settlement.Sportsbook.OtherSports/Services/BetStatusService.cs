@@ -203,6 +203,14 @@ namespace Settlement.Sportsbook.OtherSports.Services
                 betStatus.Append($"{currentBetStatus}{home}-{away}");
             }
 
+            if (sportType == SportType.Squash || sportType == SportType.SepakTakraw)
+            {
+                htHomeScore = int.Parse(resources.Find(item => item.ResourceId == ResourceType.Halftime)?.HomeValue ?? "0");
+                htAwayScore = int.Parse(resources.Find(item => item.ResourceId == ResourceType.Halftime)?.AwayValue ?? "0");
+                finalHomeScore = int.Parse(resources.Find(item => item.ResourceId == ResourceType.Final)?.HomeValue ?? "0");
+                finalAwayScore = int.Parse(resources.Find(item => item.ResourceId == ResourceType.Final)?.AwayValue ?? "0");
+            }
+
             var scoreSet = new ScoreSetModel
             {
                 BetStatus = betStatus,

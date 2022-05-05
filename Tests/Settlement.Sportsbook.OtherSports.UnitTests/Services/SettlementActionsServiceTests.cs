@@ -22,6 +22,8 @@ namespace Settlement.Sportsbook.OtherSports.UnitTests.Services
 
         private readonly IHttpContextAccessor accessor;
 
+        private readonly IBetStatusService betStatusService;
+
         public SettlementActionsServiceTests()
         {
             var mapperConfig = new MapperConfigurationExpression();
@@ -30,12 +32,13 @@ namespace Settlement.Sportsbook.OtherSports.UnitTests.Services
             var mapper = new Mapper(config);
             repository = Substitute.For<IDynamicRepository>();
             currentSession = Substitute.For<INapSession>();
+            betStatusService = Substitute.For<IBetStatusService>();
             accessor = Substitute.For<IHttpContextAccessor>();
             var context = new DefaultHttpContext();
             context.Connection.RemoteIpAddress = new System.Net.IPAddress(1);
             accessor.HttpContext = context;
 
-            service = new SettlementActionsServiceImp(repository, accessor, currentSession, mapper);
+            service = new SettlementActionsServiceImp(repository, accessor, currentSession, mapper, betStatusService);
         }
 
         [Fact]
@@ -58,7 +61,7 @@ namespace Settlement.Sportsbook.OtherSports.UnitTests.Services
         {
             const int errorCode = 100;
             const string errorMsg = "Error Message";
-            await repository.ExecuteAsync(Arg.Do<RefundAllCriteria>(x =>
+            await repository.ExecuteAsync(Arg.Do<RefundCriteria>(x =>
             {
                 x.ErrCode = errorCode;
                 x.ErrMsg = errorMsg;
