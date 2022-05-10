@@ -89,7 +89,7 @@ namespace Settlement.Sportsbook.OtherSports.Services
 
         private static Score ScoreItemOnBetStatus(IReadOnlyList<string> betStatus, int currentIndex)
         {
-            if (betStatus.Count > currentIndex && betStatus[currentIndex].Trim().IndexOf('-') > 0)
+            if (betStatus.Count > currentIndex && betStatus[currentIndex].Trim().IndexOf('-') >= 1)
             {
                 var score = betStatus[currentIndex].Trim().Split('-');
                 return new Score(score[0], score[1]);

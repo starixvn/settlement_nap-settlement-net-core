@@ -174,9 +174,6 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
         {
             createQueryService.QuerySettleChildMatch(Arg.Any<SettleChildMatchRequest>()).Returns(new SettleCriteria());
             createQueryService.CreateResources(Arg.Any<List<ResourceItem>>()).Returns("");
-            var count = 0;
-
-            await repository.ExecuteAsync(Arg.Do<SettleCriteria>(x => count++));
 
             var request = new SettleChildMatchRequest
             {
@@ -185,7 +182,7 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
 
             await service.SettleChildMatch(request);
 
-            Assert.Equal(2, count);
+            await repository.Received(2).ExecuteAsync(Arg.Any<SettleCriteria>());
         }
 
         [Fact]
@@ -193,9 +190,6 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
         {
             createQueryService.QuerySettleChildMatch(Arg.Any<SettleChildMatchRequest>()).Returns(new SettleCriteria());
             createQueryService.CreateResourceChildMatch(Arg.Any<ChildMatchModel>()).Returns("");
-            var count = 0;
-
-            await repository.ExecuteAsync(Arg.Do<SettleCriteria>(x => count++));
 
             var request = new SettleChildMatchRequest
             {
@@ -205,7 +199,7 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
 
             await service.SettleChildMatch(request);
 
-            Assert.Equal(2, count);
+            await repository.Received(2).ExecuteAsync(Arg.Any<SettleCriteria>());
         }
     }
 }

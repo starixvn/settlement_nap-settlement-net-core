@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
+using MatchResultDetail = Settlement.Sportsbook.OtherSports.Models.MatchResultDetail;
 
 namespace Settlement.Sportsbook.OtherSports.UnitTests.Services
 {

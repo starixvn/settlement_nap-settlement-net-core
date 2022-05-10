@@ -157,7 +157,7 @@ namespace Settlement.EventManagement.UnitTests.Services
             };
 
             // Act
-            var actual = service.BeachVolleyballResultDetail(matches, resultDetail);
+            var actual = service.BeachVolleyballResultDetail(matches, resultDetail, permission);
 
             // Assert
             Assert.True(actual.Count > 0);
@@ -167,7 +167,7 @@ namespace Settlement.EventManagement.UnitTests.Services
         public void BeachVolleyballResultDetail_EmptyMatch_ReturnsEmpty()
         {
             // Act
-            var actual = service.BeachVolleyballResultDetail(new List<Match>(), ResultDetail);
+            var actual = service.BeachVolleyballResultDetail(new List<Match>(), ResultDetail, permission);
 
             // Assert
             Assert.Empty(actual);
