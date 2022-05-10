@@ -15,7 +15,7 @@ namespace Settlement.ThirdPartyProducts.Models
         private AutoSetting autoCalcSetting;
 
         [JsonIgnore]
-        public RefDataService RefDataService { get; set; }
+        public IRefDataService RefDataService { get; set; }
 
         public int MatchId { get; set; }
 

@@ -3,11 +3,13 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using NSubstitute;
+using Settlement.Core.Models;
 using Settlement.EventManagement.Controllers;
 using Settlement.EventManagement.Models;
 using Settlement.EventManagement.Requests;
 using Settlement.EventManagement.Services;
 using Xunit;
+using Match = Settlement.EventManagement.Models.Match;
 
 namespace Settlement.EventManagement.UnitTests.Controllers
 {
@@ -81,11 +83,11 @@ namespace Settlement.EventManagement.UnitTests.Controllers
         public async Task GetSports_Always_ReturnsListSports()
         {
             var request = new SportRequest();
-            mediator.Send(Arg.Any<SportRequest>()).Returns(new List<SportTypeModel>());
+            mediator.Send(Arg.Any<SportRequest>()).Returns(new List<Sport>());
 
             var actual = await controller.GetSports(request) as OkObjectResult;
 
-            Assert.IsType<List<SportTypeModel>>(actual.Value);
+            Assert.IsType<List<Sport>>(actual.Value);
             Assert.Equal(200, actual.StatusCode);
         }
 

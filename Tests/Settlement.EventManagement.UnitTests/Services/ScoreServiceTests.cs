@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using NSubstitute;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
+using Settlement.Core.Services;
 using Settlement.EventManagement.Services;
 using Xunit;
 

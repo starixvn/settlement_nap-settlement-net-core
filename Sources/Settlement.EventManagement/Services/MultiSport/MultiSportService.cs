@@ -22,7 +22,7 @@ namespace Settlement.EventManagement.Services
 
         Task<List<Match>> GetWaitingMatches(RefreshMatchesRequest request);
 
-        Task<List<SportTypeModel>> GetSports(SportRequest request);
+        Task<List<Sport>> GetSports(SportRequest request);
 
         Task<List<LeagueTypeModel>> GetLeagues(LeagueRequest request);
     }
@@ -75,10 +75,10 @@ namespace Settlement.EventManagement.Services
             return sportBooks;
         }
 
-        public async Task<List<SportTypeModel>> GetSports(SportRequest request)
+        public async Task<List<Sport>> GetSports(SportRequest request)
         {
             var criteria = mapper.Map<SportRequest, SportCriteria>(request);
-            var sports = (await repository.FetchAsync<SportTypeModel>(criteria)).ToList();
+            var sports = (await repository.FetchAsync<Sport>(criteria)).ToList();
             sports.ForEach(x => x.SportName = refDataService.GetSportName(x.SportType));
 
             return OrderSport(sports.OrderBy(item => item.SportName).ToList());
@@ -164,11 +164,11 @@ namespace Settlement.EventManagement.Services
             cacheService.SetAsync(longCachingKey, matches, new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(longCacheExpirationTime)));
         }
 
-        private static List<SportTypeModel> OrderSport(List<SportTypeModel> sports)
+        private static List<Sport> OrderSport(List<Sport> sports)
         {
-            var list = new List<SportTypeModel>();
-            var otherGroup = new List<SportTypeModel>();
-            var otherSport = new List<SportTypeModel>();
+            var list = new List<Sport>();
+            var otherGroup = new List<Sport>();
+            var otherSport = new List<Sport>();
 
             sports.ForEach(item =>
             {
@@ -246,10 +246,10 @@ namespace Settlement.EventManagement.Services
         {
             var sportSorting = new List<int>
             {
-                SportType.Tennis,
-                SportType.ESports,
-                SportType.BasketBall,
-                SportType.Badminton,
+                Core.Constants.SportType.Tennis,
+                Core.Constants.SportType.ESports,
+                Core.Constants.SportType.BasketBall,
+                Core.Constants.SportType.Badminton,
             };
 
             var sportBook = matches.GroupBy(match => new { match.SportName, match.SportType })

@@ -32,25 +32,29 @@ namespace Settlement.ThirdPartyProducts.Services
 
         private readonly IDynamicRepository repository;
 
-        private readonly RefDataService refDataService;
+        private readonly IRefDataService refDataService;
 
         private readonly ScoreService scoreService;
 
+        private readonly IMapper mapper;
+
         public MatchServiceImp(
             ICacheService cacheService,
-            RefDataService refDataService,
+            IRefDataService refDataService,
             ScoreService scoreService,
+            IMapper mapper,
             IDynamicRepository repository)
         {
             this.cacheService = cacheService;
             this.refDataService = refDataService;
             this.scoreService = scoreService;
+            this.mapper = mapper;
             this.repository = repository;
         }
 
         public async Task<List<SportModel>> Search(FilterRequest request)
         {
-            var criteria = Mapper.Map<FilterRequest, MatchesCriteria>(request);
+            var criteria = mapper.Map<FilterRequest, MatchesCriteria>(request);
             var data = await repository.FetchMultipleAsync<MatchDetailModel, ResultDetail>(criteria);
             var matches = data.Item1.ToList();
             var resultDetails = data.Item2.ToList();
@@ -98,7 +102,7 @@ namespace Settlement.ThirdPartyProducts.Services
 
         public async Task<MatchDetailModel> GetMatch(MatchInfoRequest request)
         {
-            var criteria = Mapper.Map<MatchInfoRequest, MatchInfoCriteria>(request);
+            var criteria = mapper.Map<MatchInfoRequest, MatchInfoCriteria>(request);
             var data = await repository.FetchMultipleAsync<MatchDetailModel, ResultDetail>(criteria);
 
             var matchDetail = data.Item1.FirstOrDefault();
@@ -126,7 +130,7 @@ namespace Settlement.ThirdPartyProducts.Services
 
         private async Task<List<MatchDetailModel>> GetAndCachingMatches(MatchesWaitingRequest request)
         {
-            var criteria = Mapper.Map<MatchesWaitingRequest, MatchesWaitingCriteria>(request);
+            var criteria = mapper.Map<MatchesWaitingRequest, MatchesWaitingCriteria>(request);
             var data = await repository.FetchMultipleAsync<MatchDetailModel, ResultDetail>(criteria);
             var matches = data.Item1.ToList();
             var resultDetails = data.Item2.ToList();

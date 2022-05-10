@@ -1,6 +1,6 @@
 ﻿using Settlement.Core.Constants;
 using Settlement.Core.Models;
-using Settlement.Services;
+using Settlement.Core.Services;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -20,17 +20,17 @@ namespace Settlement.ThirdPartyProducts.Services
         private const string Halftime = "01";
         private const string Final = "00";
         private readonly List<string> basketBallResources = new List<string> { "Q1", "Q2", "Q3", "Q4", "OT" };
-        private readonly ScoreSetService scoreSetService;
+        private readonly IScoreSetService scoreSetService;
 
-        public ScoreServiceImp(ScoreSetService scoreSetService)
+        public ScoreServiceImp(IScoreSetService scoreSetService)
         {
             this.scoreSetService = scoreSetService;
         }
 
         public Score[] ScoreOfSets(List<ResultDetail> resultDetails, int sportType, bool isPopup)
         {
-            var isDisplayIntevalScore = resultDetails.Exists(item => !item.ResourceId.Equals(ResourceType.Halftime) && !item.ResourceId.Equals(ResourceType.Final));
-            if ((sportType == SportType.BasketBall && isDisplayIntevalScore) || isPopup)
+            var isDisplayIntervalScore = resultDetails.Exists(item => !item.ResourceId.Equals(ResourceType.Halftime) && !item.ResourceId.Equals(ResourceType.Final));
+            if ((sportType == SportType.BasketBall && isDisplayIntervalScore) || isPopup)
             {
                 var quarterScore = new Score[basketBallResources.Count];
                 var index = 0;
@@ -61,7 +61,7 @@ namespace Settlement.ThirdPartyProducts.Services
 
             var hasResult = resultDetail != null && resultDetail.MatchId > 0;
 
-            if (sportType == SportType.Soccer && hasResult)
+            if (sportType == Core.Constants.SportType.Soccer && hasResult)
             {
                 resultDetail.SettlementStatusId = SettlementStatus.Running;
             }

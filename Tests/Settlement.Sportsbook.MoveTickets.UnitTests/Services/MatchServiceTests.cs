@@ -27,7 +27,7 @@ namespace Settlement.Sportsbook.MoveTickets.UnitTests.Services
         public void GetScoreForMatchBySportType_IsCricket_ReturnsDefaultMatchesData()
         {
             // Act
-            service.GetScoreForMatchBySportType(new List<Match>(), new List<ResultDetail>(), SportType.Cricket, 10);
+            service.GetScoreForMatchBySportType(new List<Match>(), new List<ResultDetail>(), Core.Constants.SportType.Cricket, 10);
 
             // Assert
             matchResultDetailService.Received().CricketResultDetail(Arg.Any<List<Match>>(), Arg.Any<List<ResultDetail>>());

@@ -1,7 +1,5 @@
 ﻿using AutoMapper;
 using Fanex.Data.Repository;
-using Fanex.NAP.Core.Web.Session;
-using Kaden.Extensions;
 using Kaden.XmlConverter;
 using Settlement.ThirdPartyProducts.Criteria;
 using Settlement.ThirdPartyProducts.Models;
@@ -11,7 +9,8 @@ using Settlement.Core.Services;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
+using Microsoft.AspNetCore.Http;
+using Fanex.NAP.Client.Helpers.Web;
 
 namespace Settlement.ThirdPartyProducts.Services
 {
@@ -32,22 +31,30 @@ namespace Settlement.ThirdPartyProducts.Services
     {
         private readonly IDynamicRepository repository;
 
-        private readonly RefDataService refDataService;
+        private readonly IRefDataService refDataService;
 
         private readonly XmlConvertService xmlConvertService;
 
-        private readonly ICurrentSession currentSession;
+        private readonly INapSession currentSession;
+
+        private readonly IHttpContextAccessor accessor;
+
+        private readonly IMapper mapper;
 
         public BetBuilderServiceImp(
             IDynamicRepository repository,
-            RefDataService refDataService,
-             XmlConvertService xmlConvertService,
-            ICurrentSession currentSession)
+            IRefDataService refDataService,
+            XmlConvertService xmlConvertService,
+            INapSession currentSession,
+            IHttpContextAccessor accessor,
+            IMapper mapper)
         {
             this.repository = repository;
             this.refDataService = refDataService;
             this.xmlConvertService = xmlConvertService;
             this.currentSession = currentSession;
+            this.accessor = accessor;
+            this.mapper = mapper;
         }
 
         public async Task<NotificationStatusModel> GetNotificationStatus()
@@ -60,7 +67,7 @@ namespace Settlement.ThirdPartyProducts.Services
 
         public async Task<List<Sport>> GetSports(SportRequest request)
         {
-            var criteria = Mapper.Map<SportRequest, SportCriteria>(request);
+            var criteria = mapper.Map<SportRequest, SportCriteria>(request);
             var sports = (await repository.FetchAsync<Sport>(criteria)).ToList();
             sports.ForEach(item =>
             {
@@ -71,13 +78,13 @@ namespace Settlement.ThirdPartyProducts.Services
 
         public async Task<List<LeagueTypeModel>> GetLeagues(LeaguesRequest request)
         {
-            var criteria = Mapper.Map<LeaguesRequest, LeaguesCriteria>(request);
+            var criteria = mapper.Map<LeaguesRequest, LeaguesCriteria>(request);
             var leagues = (await repository.FetchAsync<LeagueTypeModel>(criteria)).ToList();
             foreach (var item in leagues)
             {
                 item.SportName = refDataService.GetSportName(item.SportType);
                 item.LeagueName = refDataService.GetLeagueName(item.LeagueId);
-                item.Group = string.Format("All {0} Leagues", item.SportName);
+                item.Group = $"All {item.SportName} Leagues";
             }
 
             return leagues.OrderBy(item => item.SportType).ThenBy(item => item.LeagueName).ToList();
@@ -119,7 +126,7 @@ namespace Settlement.ThirdPartyProducts.Services
             MatchId = matchId,
             AdminId = currentSession.UserId,
             Action = actionName,
-            Ip = HttpContext.Current.ClientIP(),
+            Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString(),
             Resources = resources
         };
     }

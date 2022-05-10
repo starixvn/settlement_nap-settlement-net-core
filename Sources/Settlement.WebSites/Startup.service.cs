@@ -48,6 +48,7 @@ using MessagePack.AspNetCoreMvcFormatter;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Settlement.EventManagement;
 using Settlement.FastMarkets;
+using Settlement.ThirdPartyProducts;
 
 namespace Settlement.WebSites
 {
@@ -170,6 +171,7 @@ namespace Settlement.WebSites
             services.ConfigEventManagementServices();
             services.ConfigLogServices();
             services.ConfigFastMarketsServices();
+            services.ThirdPartyProductsConfigServices();
         }
 
         private void ConfigureNapServices(IServiceCollection services)
@@ -184,7 +186,7 @@ namespace Settlement.WebSites
             services.AddSingleton<IUserService, UserService>();
             services.AddSingleton<ISecurityService, SecurityService>();
             services.AddTransient<IBalanceUpService, BalanceUpServiceImp>();
-
+           
             RefDataTypeContainer
                 .ConnectTo(new Uri(Configuration.GetSection("Fanex.RemotingRef.Service.Url").Value))
                 .FromApplication("Settlement");
@@ -232,6 +234,7 @@ namespace Settlement.WebSites
             services.AddSingleton<PermissionService, PermissionServiceImp>();
             services.AddSingleton<XmlConvertService, XmlConvertServiceImp>();
             services.AddTransient<ILogService, LogServiceImp>();
+            services.AddTransient<IScoreSetService, ScoreSetServiceImp>();
             services.AddSingleton<IUMCacheService, UMCacheService>();
             services.AddSingleton<IUMRestClient, UMRestClient>();
             services.AddSingleton(new UMClientConfiguration().Initialize(Configuration));
@@ -247,6 +250,7 @@ namespace Settlement.WebSites
             services.ConfigEventManagementMediator();
             services.ConfigLogMediator();
             services.ConfigFastMarketsMediator();
+            services.ThirdPartyProductsConfigMediator();
         }
 
         private static void ConfigureAutoMapper(IServiceCollection services)
@@ -260,6 +264,7 @@ namespace Settlement.WebSites
                 mc.AddProfile(typeof(LogAutoMapper));
                 mc.AddProfile(typeof(EventManagementAutoMapperProfile));
                 mc.AddProfile(typeof(FastMarketAutoMapperProfile));
+                mc.AddProfile(typeof(ThirdPartyProductsAutoMapperProfile));
             });
 
             var mapper = mapperConfig.CreateMapper();

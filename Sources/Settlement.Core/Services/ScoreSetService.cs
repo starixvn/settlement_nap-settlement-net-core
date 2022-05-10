@@ -1,7 +1,7 @@
 ﻿using Settlement.Core.Models;
 using Settlement.Core.Constants;
 
-namespace Settlement.EventManagement.Services
+namespace Settlement.Core.Services
 {
     public interface IScoreSetService
     {

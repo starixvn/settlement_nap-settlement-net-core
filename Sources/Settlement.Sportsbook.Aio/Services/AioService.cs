@@ -123,7 +123,7 @@ namespace Settlement.Sportsbook.Aio.Services
 
         private async Task<HedgeMatchDetail> GetOldMatch(Models.MatchDetail matchDetail, GetMatchRequest request, string apiKey)
         {
-            if (matchDetail != null && matchDetail.SportType == SportType.ESports)
+            if (matchDetail != null && matchDetail.SportType == Core.Constants.SportType.ESports)
             {
                 var getOldMatchCriteria = validateApiKeyService.CriteriaName(request, $"{apiKey}-{ApiKeyConstant.OldMatch}");
                 return await repository.GetAsync<HedgeMatchDetail>(getOldMatchCriteria);
@@ -161,7 +161,7 @@ namespace Settlement.Sportsbook.Aio.Services
             var criteria = createQueryService.QuerySettle(request);
             await repository.ExecuteAsync(criteria);
 
-            var childMatchIds = request.SportType == SportType.Cricket && criteria.ErrCode == 0
+            var childMatchIds = request.SportType == Core.Constants.SportType.Cricket && criteria.ErrCode == 0
                 ? await GetChildMatchIds(request.MatchId, criteria.Action, criteria.SelectedResources)
                 : string.Empty;
 

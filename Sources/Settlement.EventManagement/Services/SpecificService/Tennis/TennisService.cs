@@ -3,6 +3,7 @@ using System.Linq;
 using Match = Settlement.EventManagement.Models.Match;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
+using Settlement.Core.Services;
 
 namespace Settlement.EventManagement.Services.SpecificService.Tennis
 {

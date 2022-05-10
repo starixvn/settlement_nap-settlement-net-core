@@ -95,4 +95,15 @@
     <Setting Key="NAP_Set_FastMarket_MatchSelDetail_ReCal" SpName="NAP_Set_FastMarket_MatchSelDetail_ReCal" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_FastMarket_GoalSequenceSel" SpName="NAP_Set_FastMarket_GoalSequenceSel" DbName="DBPRO.bodb02.bodbAdminNet" />
   </Function>
+
+  <Function Name="Bet Builder">
+    <Setting Key="NAP_Admin_Settlement_BetBuilder_Push" SpName="NAP_Admin_Settlement_BetBuilder_Push" DbName="DBTXN.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_SMPSelectionDetailSel" SpName="NAP_Set_SMPSelectionDetailSel" DbName="DBPRO.bodb02.bodbAdminNet" />
+    <Setting Key="Nap_Set_LeagueSel_by_Vendor" SpName="Nap_Set_LeagueSel_by_Vendor" DbName="DBPRO.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_MatchSel_by_Vendor" SpName="NAP_Set_MatchSel_by_Vendor" DbName="DBTXN.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_WaitingSel_Queue_3rd" SpName="NAP_Set_WaitingSel_Queue_3rd" DbName="DBTXN.bodb02.bodbAdminNet" />
+    <Setting Key="Nap_Set_MatchBetbuilderStatusSel" SpName="Nap_Set_MatchBetbuilderStatusSel" DbName="DBACC.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_SportsSel_by_Vendor" SpName="NAP_Set_SportsSel_by_Vendor" DbName="DBPRO.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_MatchSelInfo_by_Vendor" SpName="NAP_Set_MatchSelInfo_by_Vendor" DbName="DBPRO.bodb02.bodbAdminNet" />
+  </Function>
 </Functions>

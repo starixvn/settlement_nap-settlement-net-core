@@ -1,9 +1,9 @@
 ﻿using Settlement.Core.Constants;
 using Settlement.Core.Models;
-using Settlement.EventManagement.Services;
+using Settlement.Core.Services;
 using Xunit;
 
-namespace Settlement.EventManagement.UnitTests.Services
+namespace Settlement.Core.UnitTests.Services
 {
     public class ScoreSetServiceTests
     {

@@ -1,6 +1,6 @@
-﻿namespace Settlement.EventManagement.Models
+﻿namespace Settlement.Core.Models
 {
-    public class SportTypeModel
+    public class Sport
     {
         public int SportType { get; set; }
 

@@ -4,9 +4,9 @@ using Settlement.ThirdPartyProducts.Requests;
 
 namespace Settlement.ThirdPartyProducts
 {
-    public class BetBuilderAutoMapper : Profile
+    public class ThirdPartyProductsAutoMapperProfile : Profile
     {
-        public BetBuilderAutoMapper()
+        public ThirdPartyProductsAutoMapperProfile()
         {
             CreateMap<LeaguesRequest, LeaguesCriteria>();
             CreateMap<FilterRequest, MatchesCriteria>();

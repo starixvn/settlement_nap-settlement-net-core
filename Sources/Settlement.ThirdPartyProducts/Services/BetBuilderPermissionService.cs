@@ -1,26 +1,46 @@
-﻿using Fanex.Caching;
+﻿using Fanex.NAP.Client.Configuration;
+using Fanex.NAP.Client.Helpers.Web;
+using Fanex.NAP.Client.Services;
 using Fanex.NAP.Core.Business;
-using Fanex.NAP.Core.Service.Interface;
-using Fanex.NAP.Core.Web.Session;
 using Settlement.Core.Configuration;
-using Settlement.Services;
-using Settlement.Services.Models;
+using Settlement.Core.Models;
 
 namespace Settlement.ThirdPartyProducts.Services
 {
+    public interface PermissionService
+    {
+        public Permission Permission { get; }
+    }
+
     public class BetBuilderPermissionServiceImp : PermissionService
     {
-        public BetBuilderPermissionServiceImp(ICurrentSession currentSession, IUserService userService, ICacheService cacheService)
-            : base(currentSession, userService, cacheService)
+        private readonly INapSession session;
+
+        private readonly IUserService userService;
+
+        private readonly INapSettings siteSettings;
+
+        public BetBuilderPermissionServiceImp(INapSession session, IUserService userService,  INapSettings siteSettings)
         {
+            this.session = session;
+            this.userService = userService;
+            this.siteSettings = siteSettings;
         }
+       
 
-        public override bool ReadPermission => HasPermission(SettlementFunctionKeys.MetricGamingSettlement, Constant.Policy.Read);
-
-        public override Permission Permission => new Permission
+        public Permission Permission => new Permission
         {
             CanCalculate = HasPermission(SettlementFunctionKeys.BetBuilder, Constant.Policy.Host),
             CanViewSettlementLog = HasPermission(SettlementFunctionKeys.ViewLogSettlement, Constant.Policy.Read)
         };
+
+        private bool HasPermission(string functionKey, Constant.Policy policy)
+        {
+            return session.UserId > 0 && userService.IsHavingPermission(
+                session.UserId,
+                siteSettings.SiteId,
+                functionKey,
+                policy);
+        }
     }
 }

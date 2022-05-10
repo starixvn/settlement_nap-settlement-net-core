@@ -7,7 +7,7 @@ namespace Settlement.ThirdPartyProducts.Models
     public class LeagueModel
     {
         [JsonIgnore]
-        public RefDataService RefDataService { get; set; }
+        public IRefDataService RefDataService { get; set; }
 
         public int LeagueId { get; set; }
 
