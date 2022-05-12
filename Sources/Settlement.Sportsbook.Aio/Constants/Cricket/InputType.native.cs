@@ -59,5 +59,10 @@ namespace Settlement.Sportsbook.Aio.Constants
         {
             9680, 9676, 9730, 9736, 9690, 9686, 9731, 9737
         };
+
+        public static List<int> OptionOtherGroup => new List<int>
+        {
+            9668, 9671, 9672, 9675
+        };
     }
 }

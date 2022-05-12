@@ -22,8 +22,8 @@ namespace Settlement.Sportsbook.Aio.Services.Cricket
         private const int InnsBetTypeMinLength = 5;
 
         public CricketBetTypeService(
-            IDynamicRepository repository, 
-            IBetTypeNameService betTypeNameService, 
+            IDynamicRepository repository,
+            IBetTypeNameService betTypeNameService,
             IGroupNameService groupNameService,
             IInputTypeService inputTypeService)
         {
@@ -35,9 +35,8 @@ namespace Settlement.Sportsbook.Aio.Services.Cricket
 
         public void GroupBetTypesAndGenerateNames(List<ResultDetail> resultDetails)
         {
-            
             var inputOptions = new List<InputOption>();
-           
+
             if (IsExistedPlayerName(resultDetails))
             {
                 inputOptions = GetInputOptions(resultDetails);
@@ -134,12 +133,12 @@ namespace Settlement.Sportsbook.Aio.Services.Cricket
 
         private static bool IsInnsBetTypeGroup(int betTypeId)
         {
-            return GroupBetType.InnsHome.Contains(betTypeId) 
-                   || GroupBetType.InnsAway.Contains(betTypeId) 
-                   || GroupBetType.Other.Contains(betTypeId) 
+            return GroupBetType.InnsHome.Contains(betTypeId)
+                   || GroupBetType.InnsAway.Contains(betTypeId)
+                   || GroupBetType.Other.Contains(betTypeId)
                    || GroupBetType.MatchBetType.Contains(betTypeId);
         }
-        
+
         private static int SplitBetType(string resourceId, int startIndex, int length)
         {
             return Convert.ToInt32(resourceId.Substring(startIndex, length));
