@@ -61,7 +61,7 @@ namespace Settlement.ThirdPartyProducts.Services
 
             var hasResult = resultDetail != null && resultDetail.MatchId > 0;
 
-            if (sportType == Core.Constants.SportType.Soccer && hasResult)
+            if (sportType == SportType.Soccer && hasResult)
             {
                 resultDetail.SettlementStatusId = SettlementStatus.Running;
             }

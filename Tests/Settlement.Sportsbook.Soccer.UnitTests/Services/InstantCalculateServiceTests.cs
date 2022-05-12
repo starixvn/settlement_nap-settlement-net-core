@@ -76,14 +76,14 @@ namespace Settlement.Sportsbook.Soccer.UnitFacts.Services
         }
 
         [Fact]
-        public async Task PushInstantCalculation_ActionIsUncalculate_CallUnCalculateOnInstantResourceServiceAndReturnsResultFromRepositoryExecuteAsync()
+        public async Task PushInstantCalculation_ActionIsUnCalculate_CallUnCalculateOnInstantResourceServiceAndReturnsResultFromRepositoryExecuteAsync()
         {
             // Arrange
             const int errorCode = 100;
             const string errorMsg = "Error Message";
             var request = new InstantCalculationRequest
             {
-                Action = ActionType.Uncalculate,
+                Action = ActionType.UnCalculate,
                 IsHalfTime = false
             };
             instantResourceService.UnCalculate(Arg.Any<InstantGoalCondition>()).Returns(new List<XmlResource>());

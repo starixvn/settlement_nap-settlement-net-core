@@ -32,20 +32,32 @@
   </Function>
 
   <Function Name="Provider">
+    <Setting Key="NAP_Set_ProviderExternalResultDetailLatestInfoSel" SpName="NAP_Set_ProviderExternalResultDetailLatestInfoSel" DbName="DBPRO.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_ProviderInfoUpd" SpName="NAP_Set_ProviderInfoUpd" DbName="DBPRO.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_ProviderInfoSel" SpName="NAP_Set_ProviderInfoSel" DbName="DBPRO.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_ProviderGameTypeMapping" SpName="NAP_Set_ProviderGameTypeMapping" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_ProviderExternalResultDetailESLatestInfoSel" SpName="NAP_Set_ProviderExternalResultDetailESLatestInfoSel" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_ProviderExternalResultDetailLatestInfoSel" SpName="NAP_Set_ProviderExternalResultDetailLatestInfoSel" DbName="DBPRO.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_OutsideSourceByLeagueSel" SpName="NAP_Set_OutsideSourceByLeagueSel" DbName="DBPRO.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_OutsideSourceByLeagueIns" SpName="NAP_Set_OutsideSourceByLeagueIns" DbName="DBPRO.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_ResultDetailSettingUpd" SpName="NAP_Set_ResultDetailSettingUpd" DbName="DBPRO.bodb02.bodbAdminNet" />
   </Function>
   <Function Name="Setting">
     <Setting Key="NAP_Set_ExternalResultDetailOSIns" SpName="NAP_Set_ExternalResultDetailOSIns" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_ExternalResultDetailESIns" SpName="NAP_Set_ExternalResultDetailESIns" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_AutoPayout_SettingLeagueUpd" SpName="NAP_Set_AutoPayout_SettingLeagueUpd" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_AutoPayout_SettingMatchUpd" SpName="NAP_Set_AutoPayout_SettingMatchUpd" DbName="DBPRO.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_SelSports" SpName="NAP_SelSports" DbName="DBPRO.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_LeagueSel" SpName="NAP_Set_LeagueSel" DbName="DBPRO.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_SettlementStatusUpd" SpName="NAP_Set_SettlementStatusUpd" DbName="DBPRO.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_WaitingTimeLeagueUpd" SpName="NAP_Set_WaitingTimeLeagueUpd" DbName="DBPRO.bodb02.bodbAdminNet" />
   </Function>
   <Function Name="Select match Info">
     <Setting Key="NAP_Set_MatchSelDetail" SpName="NAP_Set_MatchSelDetail" DbName="DBTXN.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_MatchSelDetail_ReCal" SpName="NAP_Set_MatchSelDetail_ReCal" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="Nap_Set_FantasyMatchSel" SpName="Nap_Set_FantasyMatchSel" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_BetDaq_MatchSel" SpName="NAP_Set_BetDaq_MatchSel" DbName="DBPRO.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_AutoPayout_MatchSelDetail" SpName="NAP_Set_AutoPayout_MatchSelDetail" DbName="DBPRO.bodb02.bodbAdminNet" />
   </Function>
   <Function Name="Execute Calculate and refund">
     <Setting Key="Calculate" SpName="NAP_Admin_Settlement_1_Push" DbName="DBTXN.bodb02.bodbAdminNet" />

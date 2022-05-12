@@ -44,7 +44,7 @@ namespace Settlement.Sportsbook.Soccer.Handlers
 
         public async Task<Result> Handle(SettleRequest request, CancellationToken cancellationToken)
         {
-            return request.ActionName.Equals(ActionType.Uncalculate)
+            return request.ActionName.Equals(ActionType.UnCalculate)
                 ? await calculateService.UnCalculate(request)
                 : await calculateService.Calculate(request);
         }

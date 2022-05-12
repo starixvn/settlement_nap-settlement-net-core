@@ -22,12 +22,7 @@ namespace Settlement.Sportsbook.Soccer.Criteria
 
         public override string GetSettingKey()
         {
-            if (ActionName.IgnoreCaseEquals(ActionType.BetDaq))
-            {
-                return "NAP_Admin_Settlement_Refund_BetDaq";
-            }
-
-            return "NAP_Admin_Settlement_Refund_BetFair";
+            return ActionName.IgnoreCaseEquals(ActionType.BetDaq) ? "NAP_Admin_Settlement_Refund_BetDaq" : "NAP_Admin_Settlement_Refund_BetFair";
         }
 
         public override bool IsValid()

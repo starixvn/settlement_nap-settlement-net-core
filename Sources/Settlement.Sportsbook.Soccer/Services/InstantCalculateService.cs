@@ -10,6 +10,7 @@ using Kaden.XmlConverter;
 using Microsoft.AspNetCore.Http;
 using Settlement.Core.Constants;
 using Settlement.Sportsbook.Soccer.Criteria;
+using Settlement.Core.Constants;
 
 namespace Settlement.Sportsbook.Soccer.Services
 {
@@ -102,7 +103,7 @@ namespace Settlement.Sportsbook.Soccer.Services
 
             List<XmlResource> resources;
 
-            if (request.Action.Equals(ActionType.Uncalculate))
+            if (request.Action.Equals(ActionType.UnCalculate))
             {
                 resources = instantResourceService.UnCalculate(goalCondition);
             }

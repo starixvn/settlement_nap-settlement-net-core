@@ -49,6 +49,7 @@ using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Settlement.EventManagement;
 using Settlement.FastMarkets;
 using Settlement.ThirdPartyProducts;
+using Settlement.Setting;
 
 namespace Settlement.WebSites
 {
@@ -172,6 +173,7 @@ namespace Settlement.WebSites
             services.ConfigLogServices();
             services.ConfigFastMarketsServices();
             services.ThirdPartyProductsConfigServices();
+            services.SettingConfigServices();
         }
 
         private void ConfigureNapServices(IServiceCollection services)
@@ -251,6 +253,7 @@ namespace Settlement.WebSites
             services.ConfigLogMediator();
             services.ConfigFastMarketsMediator();
             services.ThirdPartyProductsConfigMediator();
+            services.SettingConfigMediator();
         }
 
         private static void ConfigureAutoMapper(IServiceCollection services)
@@ -265,6 +268,7 @@ namespace Settlement.WebSites
                 mc.AddProfile(typeof(EventManagementAutoMapperProfile));
                 mc.AddProfile(typeof(FastMarketAutoMapperProfile));
                 mc.AddProfile(typeof(ThirdPartyProductsAutoMapperProfile));
+                mc.AddProfile(typeof(SettingAutoMapperProfile));
             });
 
             var mapper = mapperConfig.CreateMapper();
