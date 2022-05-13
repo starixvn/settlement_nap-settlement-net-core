@@ -12,5 +12,7 @@ namespace Settlement.Sportsbook.OtherSports.Requests
         public int? FinalAwayScore { get; set; }
 
         public string Action { get; set; }
+
+        public int HedgeMatchId { get; set; }
     }
 }

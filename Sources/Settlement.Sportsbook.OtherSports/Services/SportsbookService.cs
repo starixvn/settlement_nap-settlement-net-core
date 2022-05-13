@@ -6,16 +6,21 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using System.Collections.Generic;
+using Settlement.Sportsbook.OtherSports.Constants;
 using Settlement.Sportsbook.OtherSports.Criteria;
 using static Fanex.NAP.Client.Check;
+using MatchResultDetail = Settlement.Sportsbook.OtherSports.Models.MatchResultDetail;
+using Settlement.Core.Constants;
 
 namespace Settlement.Sportsbook.OtherSports.Services
 {
     public interface SportsbookService
     {
+        bool IsModifyResultDetailGroup(int sportType);
+
         Task<MatchResultDetail> GetMatch(GetMatchRequest request);
 
-        Task<MatchDetail> GetLastestResult(GetLastestResultRequest request);
+        Task<MatchResultDetail> GetLastestResult(GetLastestResultRequest request);
     }
 
     public class SportsbookServiceImp : SportsbookService
@@ -24,20 +29,21 @@ namespace Settlement.Sportsbook.OtherSports.Services
 
         private readonly IRefDataService refDataService;
 
-        private readonly string fulltimeResource = "00";
-
-        private readonly string halfTimeResource = "01";
-
         private readonly IMapper mapper;
+
+        private readonly IBetStatusService betStatusService;
 
         public SportsbookServiceImp(
             IDynamicRepository repository,
             IRefDataService refDataService,
-            IMapper mapper)
+            IMapper mapper,
+            IBetStatusService betStatusService
+            )
         {
             this.repository = repository;
             this.refDataService = refDataService;
             this.mapper = mapper;
+            this.betStatusService = betStatusService;
         }
 
         public async Task<MatchResultDetail> GetMatch(GetMatchRequest request)
@@ -61,26 +67,49 @@ namespace Settlement.Sportsbook.OtherSports.Services
             var externalResultDetails = repository.Fetch<ResultDetail>(providerCriteria);
             matchDetail = ProviderScore(matchDetail, externalResultDetails.ToList());
 
+            var resultDetails = IsModifyResultDetailGroup(matchDetail.SportType)
+                ? betStatusService.GenerateResultDetail(matchDetail) : result.Item2.ToList();
+            var hedgeMatch = await MatchHedgeDetail(request.MatchId);
+
             return new MatchResultDetail
             {
                 MatchDetail = matchDetail,
-                ResultDetail = result.Item2.ToList(),
-                TicketCount = result.Item3.ToList()
+                ResultDetails = resultDetails,
+                TicketCount = result.Item3.ToList(),
+                HedgeMatchDetail = hedgeMatch
             };
         }
 
-        private MatchDetail ProviderScore(MatchDetail matchDetail, List<ResultDetail> externalResultDetails)
+        public bool IsModifyResultDetailGroup(int sportType)
         {
-            var fulltimeExScore = externalResultDetails.FirstOrDefault(item => item.ResourceId == fulltimeResource);
-            if (fulltimeExScore != null && !string.IsNullOrEmpty(fulltimeExScore.HomeValue) && !string.IsNullOrEmpty(fulltimeExScore.AwayValue))
+            return GroupSport.FootBall.Contains(sportType) || GroupSport.Hockey.Contains(sportType)
+                   || GroupSport.Squash.Contains(sportType) || SportType.BaseBall == sportType;
+        }
+
+        private async Task<MatchHedgeDetail> MatchHedgeDetail(int matchId)
+        {
+            var criteria = new GetMatchDetailHedgeMatchCriteria { MatchId = matchId };
+            var match = await repository.GetAsync<MatchHedgeDetail>(criteria);
+            return match ?? null;
+        }
+
+        private static MatchDetail ProviderScore(MatchDetail matchDetail, IReadOnlyCollection<ResultDetail> externalResultDetails)
+        {
+            const string fullTimeResource = "00";
+            const string halfTimeResource = "01";
+
+            var fullTimeExScore = externalResultDetails.FirstOrDefault(item => item.ResourceId == fullTimeResource);
+            if (fullTimeExScore != null && !string.IsNullOrEmpty(fullTimeExScore.HomeValue) &&
+                !string.IsNullOrEmpty(fullTimeExScore.AwayValue))
             {
-                matchDetail.ExternalSourceName = fulltimeExScore.SourceName;
-                matchDetail.ExFTAwayScore = int.Parse(fulltimeExScore.AwayValue);
-                matchDetail.ExFTHomeScore = int.Parse(fulltimeExScore.HomeValue);
+                matchDetail.ExternalSourceName = fullTimeExScore.SourceName;
+                matchDetail.ExFTAwayScore = int.Parse(fullTimeExScore.AwayValue);
+                matchDetail.ExFTHomeScore = int.Parse(fullTimeExScore.HomeValue);
             }
 
             var halftimeExScore = externalResultDetails.FirstOrDefault(item => item.ResourceId == halfTimeResource);
-            if (halftimeExScore != null && !string.IsNullOrEmpty(halftimeExScore.HomeValue) && !string.IsNullOrEmpty(halftimeExScore.AwayValue))
+            if (halftimeExScore != null && !string.IsNullOrEmpty(halftimeExScore.HomeValue) &&
+                !string.IsNullOrEmpty(halftimeExScore.AwayValue))
             {
                 matchDetail.ExternalSourceName = halftimeExScore.SourceName;
                 matchDetail.ExHTAwayScore = int.Parse(halftimeExScore.AwayValue);
@@ -90,13 +119,19 @@ namespace Settlement.Sportsbook.OtherSports.Services
             return matchDetail;
         }
 
-        public async Task<MatchDetail> GetLastestResult(GetLastestResultRequest request)
+        public async Task<MatchResultDetail> GetLastestResult(GetLastestResultRequest request)
         {
             var criteria = mapper.Map<GetLastestResultRequest, GetLastestResultCriteria>(request);
             var matchDetail = await repository.GetAsync<MatchDetail>(criteria);
             matchDetail.RefDataService = refDataService;
+            var resultDetails = IsModifyResultDetailGroup(matchDetail.SportType)
+                ? betStatusService.GenerateResultDetail(matchDetail) : new List<ResultDetail>();
 
-            return matchDetail;
+            return new MatchResultDetail
+            {
+                MatchDetail = matchDetail,
+                ResultDetails = resultDetails
+            };
         }
     }
 }

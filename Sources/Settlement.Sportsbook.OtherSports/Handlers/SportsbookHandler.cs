@@ -1,11 +1,12 @@
-﻿using Settlement.Core.Models;
-using Settlement.Sportsbook.OtherSports.Requests;
+﻿using Settlement.Sportsbook.OtherSports.Requests;
 using System.Threading.Tasks;
 using MediatR;
 using System.Threading;
 using Settlement.Sportsbook.OtherSports.Services;
 using Settlement.Sportsbook.OtherSports.Models;
 using Settlement.Core.Services;
+using Settlement.Core.Models;
+using MatchResultDetail = Settlement.Sportsbook.OtherSports.Models.MatchResultDetail;
 
 namespace Settlement.Sportsbook.OtherSports.Handlers
 {
@@ -15,7 +16,7 @@ namespace Settlement.Sportsbook.OtherSports.Handlers
         IRequestHandler<CheckingMarkedTicketsRequest, MarkedTickets>,
         IRequestHandler<RefundRequest, Result>,
         IRequestHandler<RefundParlayRequest, Result>,
-        IRequestHandler<GetLastestResultRequest, MatchDetail>
+        IRequestHandler<GetLastestResultRequest, MatchResultDetail>
     {
         private readonly SportsbookService sportsbookService;
 
@@ -42,7 +43,15 @@ namespace Settlement.Sportsbook.OtherSports.Handlers
             };
         }
 
-        public async Task<Result> Handle(CalculateRequest request, CancellationToken cancellationToken) => await settlementActionsService.Calculate(request);
+        public async Task<Result> Handle(CalculateRequest request, CancellationToken cancellationToken)
+        {
+            if (sportsbookService.IsModifyResultDetailGroup(request.SportType))
+            {
+                return await settlementActionsService.CalculateWithResultDetail(request);
+            }
+
+            return await settlementActionsService.Calculate(request);
+        }
 
         public async Task<MarkedTickets> Handle(CheckingMarkedTicketsRequest request, CancellationToken cancellationToken) => await settlementActionsService.CheckMarkedTickets(request);
 
@@ -50,6 +59,6 @@ namespace Settlement.Sportsbook.OtherSports.Handlers
 
         public async Task<Result> Handle(RefundParlayRequest request, CancellationToken cancellationToken) => await settlementActionsService.RefundParlay(request);
 
-        public async Task<MatchDetail> Handle(GetLastestResultRequest request, CancellationToken cancellationToken) => await sportsbookService.GetLastestResult(request);
+        public async Task<MatchResultDetail> Handle(GetLastestResultRequest request, CancellationToken cancellationToken) => await sportsbookService.GetLastestResult(request);
     }
 }

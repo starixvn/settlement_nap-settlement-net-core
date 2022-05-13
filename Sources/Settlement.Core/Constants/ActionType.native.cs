@@ -1,4 +1,4 @@
-﻿namespace Settlement.Sportsbook.Soccer.Constants
+﻿namespace Settlement.Core.Constants
 {
     public static class ActionType
     {

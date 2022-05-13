@@ -30,6 +30,8 @@ namespace Settlement.Sportsbook.Aio.Criteria
 
         public string ServiceCommand { get; set; }
 
+        public int? RefResultStatus { get; set; }
+
         public string ChildMatchIds
         {
             get

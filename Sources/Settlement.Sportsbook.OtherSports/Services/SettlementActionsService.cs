@@ -6,12 +6,15 @@ using Settlement.Core.Models;
 using Settlement.Sportsbook.OtherSports.Criteria;
 using Settlement.Sportsbook.OtherSports.Requests;
 using System.Threading.Tasks;
+using Settlement.Core.Constants;
 
 namespace Settlement.Sportsbook.OtherSports.Services
 {
     public interface SettlementActionsService
     {
         Task<Result> Calculate(CalculateRequest request);
+
+        Task<Result> CalculateWithResultDetail(CalculateRequest request);
 
         Task<MarkedTickets> CheckMarkedTickets(CheckingMarkedTicketsRequest request);
 
@@ -30,16 +33,20 @@ namespace Settlement.Sportsbook.OtherSports.Services
 
         private readonly IMapper mapper;
 
+        private readonly IBetStatusService betStatusService;
+
         public SettlementActionsServiceImp(
             IDynamicRepository repository,
             IHttpContextAccessor accessor,
             INapSession currentSession,
-            IMapper mapper)
+            IMapper mapper,
+            IBetStatusService betStatusService)
         {
             this.repository = repository;
             this.currentSession = currentSession;
             this.accessor = accessor;
             this.mapper = mapper;
+            this.betStatusService = betStatusService;
         }
 
         public async Task<Result> Calculate(CalculateRequest request)
@@ -56,6 +63,26 @@ namespace Settlement.Sportsbook.OtherSports.Services
             };
         }
 
+        public async Task<Result> CalculateWithResultDetail(CalculateRequest request)
+        {
+            var criteria = CreateCriteria(request);
+
+            await repository.ExecuteAsync(criteria);
+            var result = new Result
+            {
+                ErrCode = criteria.ErrCode,
+                ErrMsg = criteria.ErrMsg
+            };
+
+            if (result.IsSuccessful && request.HedgeMatchId > 0)
+            {
+                criteria.MatchId = request.HedgeMatchId;
+                await repository.ExecuteAsync(criteria);
+            }
+
+            return result;
+        }
+
         public async Task<MarkedTickets> CheckMarkedTickets(CheckingMarkedTicketsRequest request)
         {
             var criteria = mapper.Map<CheckingMarkedTicketsRequest, CheckingMarkedTicketsCriteria>(request);
@@ -66,16 +93,23 @@ namespace Settlement.Sportsbook.OtherSports.Services
 
         public async Task<Result> Refund(RefundRequest request)
         {
-            var criteria = mapper.Map<RefundRequest, RefundAllCriteria>(request);
+            var criteria = mapper.Map<RefundRequest, RefundCriteria>(request);
             criteria.AdminId = currentSession.UserId;
             criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
             await repository.ExecuteAsync(criteria);
-
-            return new Result
+            var result = new Result
             {
                 ErrCode = criteria.ErrCode,
-                ErrMsg = criteria.ErrMsg,
+                ErrMsg = criteria.ErrMsg
             };
+
+            if (result.ErrCode == 0 && request.HedgeMatchId > 0)
+            {
+                criteria.MatchId = request.HedgeMatchId;
+                await repository.ExecuteAsync(criteria);
+            }
+
+            return result;
         }
 
         public async Task<Result> RefundParlay(RefundParlayRequest request)
@@ -84,12 +118,45 @@ namespace Settlement.Sportsbook.OtherSports.Services
             criteria.AdminId = currentSession.UserId;
             criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
             await repository.ExecuteAsync(criteria);
-
-            return new Result
+            var result = new Result
             {
                 ErrCode = criteria.ErrCode,
                 ErrMsg = criteria.ErrMsg
             };
+
+            if (result.ErrCode == 0 && request.HedgeMatchId > 0)
+            {
+                criteria.MatchId = request.HedgeMatchId;
+                await repository.ExecuteAsync(criteria);
+            }
+
+            return result;
+        }
+
+        private CalculateCriteria CreateCriteria(CalculateRequest request)
+        {
+            var score = betStatusService.GenerateBetStatus(request);
+
+            var calculate = new CalculateCriteria
+            {
+                AdminId = currentSession.UserId,
+                MatchId = request.MatchId,
+                BetStatus = score.BetStatus.ToString(),
+                Action = request.Action,
+                HalfTimeHome = score.HtHomeScore ?? 0,
+                HalfTimeAway = score.HtAwayScore ?? 0,
+                Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString(),
+                IsReSettledTickets = request.IsReSettledTickets,
+                RefResultStatus = request.RefResultStatus
+            };
+
+            if (request.Action.Equals(ActionType.CalculateFullTime) || request.Action.Equals(ActionType.CalculateAll))
+            {
+                calculate.FullTimeHome = score.FinalHomeScore ?? 0;
+                calculate.FullTimeAway = score.FinalAwayScore ?? 0;
+            }
+
+            return calculate;
         }
     }
 }

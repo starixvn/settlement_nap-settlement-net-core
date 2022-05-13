@@ -18,6 +18,18 @@ namespace Settlement.Sportsbook.OtherSports.Controllers
             this.mediator = mediator;
         }
 
+        [Route("get-match1"), HttpGet]
+        [LogRequestResponse]
+        public async Task<IActionResult> GetMatch1(int matchId)
+        {
+            var request = new GetMatchRequest
+            {
+                MatchId = matchId
+            };
+
+            return Ok(await mediator.Send(request).ConfigureAwait(false));
+        }
+
         [Route("get-match"), HttpPost]
         [LogRequestResponse]
         public async Task<IActionResult> GetMatch(GetMatchRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));

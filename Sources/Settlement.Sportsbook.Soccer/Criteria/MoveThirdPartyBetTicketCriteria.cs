@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Fanex.Data;
+﻿using Fanex.Data;
 using Fanex.Data.Repository;
 using Kaden.Extensions;
-using Settlement.Sportsbook.Soccer.Constants;
+using Settlement.Core.Constants;
 
 namespace Settlement.Sportsbook.Soccer.Criteria
 {
