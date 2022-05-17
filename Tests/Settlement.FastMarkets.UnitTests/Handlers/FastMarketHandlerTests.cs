@@ -12,7 +12,7 @@ using MatchDetail = Settlement.FastMarkets.Models.MatchDetail;
 
 namespace Settlement.FastMarkets.UnitTests.Handlers
 {
-    public class GetMatchHandlerTests
+    public class FastMarketHandlerTests
     {
         private readonly IMatchDetailService matchDetailService;
 
@@ -20,21 +20,62 @@ namespace Settlement.FastMarkets.UnitTests.Handlers
 
         private readonly IFastMarketService fastMarketService;
 
-        private readonly GetMatchHandler handler;
+        private readonly FastMarketHandler handler;
 
-        public GetMatchHandlerTests()
+        private readonly ISettingService settingService;
+
+        public FastMarketHandlerTests()
         {
             matchDetailService = Substitute.For<IMatchDetailService>();
             permissionService = Substitute.For<PermissionService>(null, null, null, null);
             fastMarketService = Substitute.For<IFastMarketService>();
-            handler = new GetMatchHandler(matchDetailService, permissionService, fastMarketService);
+            settingService = Substitute.For<ISettingService>();
+            handler = new FastMarketHandler(matchDetailService, permissionService, fastMarketService, settingService);
+        }
+
+        [Fact]
+        public async Task Handle_Always_ReturnResult()
+        {
+            var result = new Result();
+            settingService.UpdateWaterBreakSetting(Arg.Any<UpdateWaterBreakSettingRequest>()).Returns(result);
+
+            var actual = await handler.Handle(new UpdateWaterBreakSettingRequest(), new System.Threading.CancellationToken());
+
+            Assert.Equal(result, actual);
+        }
+
+        [Fact]
+        public async Task HandleSettleRequest_Always_ReturnCorrectResult()
+        {
+            var result = new Result();
+            fastMarketService.Calculate(Arg.Any<SettleRequest>()).Returns(result);
+
+            var actual = await handler.Handle(new SettleRequest(), new System.Threading.CancellationToken());
+
+            Assert.Equal(result, actual);
+        }
+
+        [Fact]
+        public async Task HandleCheckingMarkedTicketsRequest_Always_ReturnCorrectResult()
+        {
+            var result = new MarkedTickets();
+            matchDetailService.CheckingMarkedTickets(Arg.Any<CheckingMarkedTicketsRequest>()).Returns(result);
+
+            var actual = await handler.Handle(new CheckingMarkedTicketsRequest(), new System.Threading.CancellationToken());
+
+            Assert.Equal(result, actual);
         }
 
         [Fact]
         public async Task HandleGetMatchRequest_Always_ReturnCorrectResult()
         {
-            var result = new MatchDetail();
-            result.AutoSettingIcon.Disabled = true;
+            var result = new MatchDetail
+            {
+                AutoSettingIcon =
+                {
+                    Disabled = true
+                }
+            };
             matchDetailService.MatchInfo(Arg.Any<int>()).Returns(result);
             permissionService.Permission.Returns(new Permission());
 

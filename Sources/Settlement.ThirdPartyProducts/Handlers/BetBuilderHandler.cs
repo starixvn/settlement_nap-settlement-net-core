@@ -46,17 +46,23 @@ namespace Settlement.ThirdPartyProducts.Handlers
             SelectionDetail = await betBuilderService.GetSelection(request.MatchId)
         };
 
-        public async Task<List<Sport>> Handle(SportRequest request, CancellationToken cancellationToken) => await betBuilderService.GetSports(request);
+        public async Task<List<Sport>> Handle(SportRequest request, CancellationToken cancellationToken)
+            => await betBuilderService.GetSports(request);
 
-        public async Task<List<LeagueTypeModel>> Handle(LeaguesRequest request, CancellationToken cancellationToken) => await betBuilderService.GetLeagues(request);
+        public async Task<List<LeagueTypeModel>> Handle(LeaguesRequest request, CancellationToken cancellationToken)
+            => await betBuilderService.GetLeagues(request);
 
-        public async Task<List<MatchDetailModel>> Handle(MatchesWaitingRequest request, CancellationToken cancellationToken) => await matchService.RefreshMatches(request);
+        public async Task<List<MatchDetailModel>> Handle(MatchesWaitingRequest request, CancellationToken cancellationToken)
+            => await matchService.RefreshMatches(request);
 
-        public async Task<MatchDetailModel> Handle(MatchInfoRequest request, CancellationToken cancellationToken) => await matchService.GetMatch(request);
+        public async Task<MatchDetailModel> Handle(MatchInfoRequest request, CancellationToken cancellationToken)
+            => await matchService.GetMatch(request);
 
-        public async Task<NotificationStatusModel> Handle(GetNotificationRequest request, CancellationToken cancellationToken) => await betBuilderService.GetNotificationStatus();
+        public async Task<NotificationStatusModel> Handle(GetNotificationRequest request, CancellationToken cancellationToken)
+            => await betBuilderService.GetNotificationStatus();
 
-        public async Task<Result> Handle(CalculateRequest request, CancellationToken cancellationToken) => await betBuilderService.Calculate(request);
+        public async Task<Result> Handle(CalculateRequest request, CancellationToken cancellationToken)
+            => await betBuilderService.Calculate(request);
 
     }
 }

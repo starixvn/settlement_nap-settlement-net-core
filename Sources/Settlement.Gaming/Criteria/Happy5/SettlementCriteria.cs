@@ -1,18 +1,18 @@
 ﻿using Fanex.Data.Repository;
 
-namespace Settlement.FastMarkets.Criteria
+namespace Settlement.Gaming.Criteria.Happy5
 {
-    public class UpdateSettingMatchCriteria : NonQueryCommand
+    public class SettlementCriteria : NonQueryCommand
     {
-        private const int autoType = 3;
-
         public int MatchId { get; set; }
 
-        public int AutoType { get; } = autoType;
-
-        public bool IsEnabled { get; set; }
+        public string Action { get; set; }
 
         public int AdminId { get; set; }
+
+        public bool IsAuto { get; set; }
+
+        public string Resources { get; set; }
 
         public string Ip { get; set; }
 
@@ -22,7 +22,7 @@ namespace Settlement.FastMarkets.Criteria
 
         public override string GetSettingKey()
         {
-            return "NAP_Set_AutoPayout_SettingMatchUpd";
+            return "NAP_Admin_Settlement_s164";
         }
 
         public override bool IsValid()

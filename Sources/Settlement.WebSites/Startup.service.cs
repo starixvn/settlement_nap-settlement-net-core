@@ -48,6 +48,7 @@ using MessagePack.AspNetCoreMvcFormatter;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Settlement.EventManagement;
 using Settlement.FastMarkets;
+using Settlement.Gaming;
 using Settlement.ThirdPartyProducts;
 using Settlement.Setting;
 
@@ -174,6 +175,7 @@ namespace Settlement.WebSites
             services.ConfigFastMarketsServices();
             services.ThirdPartyProductsConfigServices();
             services.SettingConfigServices();
+            services.GamingConfigServices();
         }
 
         private void ConfigureNapServices(IServiceCollection services)
@@ -254,6 +256,7 @@ namespace Settlement.WebSites
             services.ConfigFastMarketsMediator();
             services.ThirdPartyProductsConfigMediator();
             services.SettingConfigMediator();
+            services.GamingConfigMediator();
         }
 
         private static void ConfigureAutoMapper(IServiceCollection services)
@@ -269,6 +272,7 @@ namespace Settlement.WebSites
                 mc.AddProfile(typeof(FastMarketAutoMapperProfile));
                 mc.AddProfile(typeof(ThirdPartyProductsAutoMapperProfile));
                 mc.AddProfile(typeof(SettingAutoMapperProfile));
+                mc.AddProfile(typeof(GamingMapperProfile));
             });
 
             var mapper = mapperConfig.CreateMapper();

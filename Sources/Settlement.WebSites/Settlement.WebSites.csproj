@@ -107,6 +107,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Settlement.EventManagement\Settlement.EventManagement.csproj" />
 		<ProjectReference Include="..\Settlement.FastMarkets\Settlement.FastMarkets.csproj" />
+		<ProjectReference Include="..\Settlement.Gaming\Settlement.Gaming.csproj" />
 		<ProjectReference Include="..\Settlement.Log\Settlement.Log.csproj" />
 		<ProjectReference Include="..\Settlement.Setting\Settlement.Setting.csproj" />
 		<ProjectReference Include="..\Settlement.Sportsbook.MoveTickets\Settlement.Sportsbook.MoveTickets.csproj" />

@@ -9,8 +9,6 @@ namespace Settlement.FastMarkets
         public FastMarketAutoMapperProfile()
         {
             CreateMap<SettleRequest, PushFastMarketResultCriteria>();
-            CreateMap<SettingMatchRequest, UpdateSettingMatchCriteria>();
-            CreateMap<SettingLeagueRequest, UpdateSettingLeagueCriteria>();
             CreateMap<UpdateWaterBreakSettingRequest, UpdateWaterBreakSettingCriteria>();
             CreateMap<UpdateWaterBreakSettingRequest, WriteLogUpdateWaterBreakCriteria>()
                 .ForMember(dest => dest.UserId, map => map.MapFrom(src => src.AdminId));

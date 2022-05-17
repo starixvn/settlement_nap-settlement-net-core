@@ -13,10 +13,6 @@ namespace Settlement.FastMarkets.Services
 {
     public interface ISettingService
     {
-        Task<Result> UpdateSettingMatch(SettingMatchRequest request);
-
-        Task<Result> UpdateSettingLeague(SettingLeagueRequest request);
-
         Task<Result> UpdateWaterBreakSetting(UpdateWaterBreakSettingRequest request);
     }
 
@@ -43,34 +39,6 @@ namespace Settlement.FastMarkets.Services
             this.mapper = mapper;
             this.accessor = accessor;
             this.currentSession = currentSession;
-        }
-
-        public async Task<Result> UpdateSettingMatch(SettingMatchRequest request)
-        {
-            var criteria = mapper.Map<SettingMatchRequest, UpdateSettingMatchCriteria>(request);
-            criteria.AdminId = currentSession.UserId;
-            criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
-            await repository.ExecuteAsync(criteria);
-
-            return new Result
-            {
-                ErrCode = criteria.ErrCode,
-                ErrMsg = criteria.ErrMsg
-            };
-        }
-
-        public async Task<Result> UpdateSettingLeague(SettingLeagueRequest request)
-        {
-            var criteria = mapper.Map<SettingLeagueRequest, UpdateSettingLeagueCriteria>(request);
-            criteria.AdminId = currentSession.UserId;
-            criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
-            await repository.ExecuteAsync(criteria);
-
-            return new Result
-            {
-                ErrCode = criteria.ErrCode,
-                ErrMsg = criteria.ErrMsg
-            };
         }
 
         public async Task<Result> UpdateWaterBreakSetting(UpdateWaterBreakSettingRequest request)

@@ -118,4 +118,20 @@
     <Setting Key="NAP_Set_SportsSel_by_Vendor" SpName="NAP_Set_SportsSel_by_Vendor" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_MatchSelInfo_by_Vendor" SpName="NAP_Set_MatchSelInfo_by_Vendor" DbName="DBPRO.bodb02.bodbAdminNet" />
   </Function>
+
+  <Function Name="Calculate NumberGame">
+    <Setting Key="NAP_Set_MatchSelNumberGame" SpName="NAP_Set_MatchSelNumberGame" DbName="DBPRO.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_MatchSelNumberGameDetail" SpName="NAP_Set_MatchSelNumberGameDetail" DbName="DBPRO.bodb02.bodbAdminNet">
+      <Mapping DataField="Number" ObjectProperty="NumberBall" />
+    </Setting>
+    <Setting Key="NAP_Admin_Settlement_s161_Manual" SpName="NAP_Admin_Settlement_s161_Manual" DbName="DBTXN.bodb02.bodbAdminNet" />
+  </Function>
+
+  <Function Name="Happy 5">
+    <Setting Key="NAP_Admin_Settlement_s164" SpName="NAP_Admin_Settlement_s164" DbName="DBTXN.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_MatchSel_s164" SpName="NAP_Set_MatchSel_s164" DbName="DBPRO.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_MatchSel_BingoBall" SpName="NAP_Set_MatchSel_BingoBall" DbName="DBPRO.bodb02.bodbAdminNet">
+      <Mapping DataField="Number" ObjectProperty="NumberBall" />
+    </Setting>
+  </Function>
 </Functions>

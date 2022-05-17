@@ -11,6 +11,9 @@ COPY ./Sources/Settlement.WebSites/Settlement.WebSites.csproj ./Settlement.WebSi
 COPY ./Sources/Settlement.Sportsbook.MoveTickets ./Settlement.Sportsbook.MoveTickets
 COPY ./Sources/Settlement.Sportsbook.OtherSports ./Settlement.Sportsbook.OtherSports
 COPY ./Sources/Settlement.Sportsbook.Soccer ./Settlement.Sportsbook.Soccer
+COPY ./Sources/Settlement.Gaming ./Settlement.Gaming
+COPY ./Sources/Settlement.ThirdPartyProducts ./Settlement.ThirdPartyProducts
+COPY ./Sources/Settlement.Setting ./Settlement.Setting
 
 RUN ls /src -l
 WORKDIR /src/Settlement.WebSites
