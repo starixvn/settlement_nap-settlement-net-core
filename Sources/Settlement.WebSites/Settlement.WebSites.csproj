@@ -6,6 +6,13 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="app\**" />
+	  <Content Remove="app\**" />
+	  <EmbeddedResource Remove="app\**" />
+	  <None Remove="app\**" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<None Remove="App_Data\SpName.AWS.xml" />
 		<None Remove="App_Data\SpName.LOCAL.xml" />
 		<None Remove="App_Data\SpName.LOCAL_1.xml" />

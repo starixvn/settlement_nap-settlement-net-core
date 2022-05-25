@@ -54,6 +54,7 @@ namespace Settlement.WebSites
             app.UseCors(allowOrigin);
             app.UseAuthentication();
             app.UseAuthorization();
+            
 
             app.UseEndpoints(endpoints =>
             {

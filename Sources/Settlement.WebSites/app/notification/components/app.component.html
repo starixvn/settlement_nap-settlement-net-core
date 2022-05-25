@@ -1,0 +1,19 @@
+
+<div *ngIf="model && model.numberError >0  ; else empty">
+    <ul class="error-notify">
+        <li *ngFor="let notification of model.notifications; even as isEven"
+        [ngClass]="{'even': isEven}">
+            <span class="bold">{{notification.matchCode}}</span>
+            (<b>{{notification.homeName}}</b> - {{notification.awayName}}) - {{notification.message}}
+            <div class="datetime">
+                <span class="icon"></span>
+                {{notification.startDate}}
+            </div>
+        </li>
+    </ul>
+</div>
+<ng-template #empty>
+    <ul class="error-notify">
+        <li>There is no information available</li>
+    </ul>
+</ng-template>

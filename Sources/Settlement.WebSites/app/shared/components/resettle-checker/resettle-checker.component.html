@@ -1,0 +1,10 @@
+<br>
+<div>
+    - Marked tickets will NOT be calculated.
+</div>
+<div>
+    - <strong>Settlement options for current match.</strong>
+</div>
+<div class="check-box">
+    <input type="checkbox" [(ngModel)]="checked" (change)="onCheckboxChange($event.target.checked)" id="isReSettledTickets" />&nbsp;<label for="isReSettledTickets">Recalculate settled tickets.</label>
+</div>

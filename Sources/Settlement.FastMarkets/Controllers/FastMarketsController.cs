@@ -9,6 +9,7 @@ namespace Settlement.FastMarkets.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [SessionAuthorize]
     public class FastMarketsController : ControllerBase
     {
         private readonly IMediator mediator;

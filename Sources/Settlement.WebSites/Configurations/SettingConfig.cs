@@ -10,6 +10,7 @@ namespace Settlement.WebSites.Configurations
     {
         public static void SettingConfigServices(this IServiceCollection services)
         {
+            services.AddTransient<NotificationService, NotificationServiceImp>();
             services.AddTransient<SettingService, SettingServiceImp>();
             services.AddTransient<ProviderSettingService, ProviderSettingServiceImp>();
             services.AddTransient<OutsideSourceSettingService, OutsideSourceSettingServiceImp>();

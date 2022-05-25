@@ -1,0 +1,6 @@
+﻿export class Result {
+    public errCode: number;
+    public errMsg: string;
+    public serviceCommand: string;
+    public isSuccessful: boolean;
+}

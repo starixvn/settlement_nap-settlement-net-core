@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using Settlement.Core.ActionFilters;
 using Settlement.EventManagement.Models;
 using Settlement.EventManagement.Requests;
 
@@ -9,6 +10,7 @@ namespace Settlement.EventManagement.Controllers
 {
     [ApiController]
     [Route("api/multi-sports")]
+    [SessionAuthorize]
     public class MultiSportController : ControllerBase
     {
         private readonly IMediator mediator;

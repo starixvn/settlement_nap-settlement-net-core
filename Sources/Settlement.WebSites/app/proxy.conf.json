@@ -1,0 +1,26 @@
+{
+  "/Settlement": {
+    "target": "http://localhost:58793/",
+    "secure": false
+  },
+  "/Content": {
+    "target": "http://localhost:58793/",
+    "secure": false
+  },
+  "/api": {
+    "target": "http://localhost:58793/",
+    "secure": false
+  },
+  "/state-api": {
+    "target": "http://localhost:58793/",
+    "secure": false
+  },
+  "/Auth":{
+    "target": "http://localhost:58793/",
+    "secure": false
+  },
+  "/sportsbook/badminton": {
+    "target": "http://localhost:58793/",
+    "secure": false
+  }
+}

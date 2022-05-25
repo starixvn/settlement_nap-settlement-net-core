@@ -1,0 +1,17 @@
+﻿export const CalculateAction = {
+    calculate: "CAL",
+    unCalculate: "UNDO",
+    refund: "REFUND",
+    earlyCalculate: "CAL_EAR",
+    earlyUnCalculate: "UNDO_EAR",
+    earlyRefund: "REFUND_EAR",
+    refundMarkedParlayAll: "MP-REFUND",
+    refundMarkedParlayFT: "MP-REFUND-FT",
+    calculateHalfTime: "CAL-HT",
+    calculateFullTime: "CAL-FT",
+    refundHalfTime: "REFUND-HT",
+    refundFullTime: "REFUND-FT",
+    copyHTScore: "COPY-HT",
+    copyFTScore: "COPY-FT",
+    copyAllScore: "COPY-ALL",
+};

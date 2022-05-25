@@ -1,0 +1,35 @@
+<mat-form-field [style.width]="multipleSelect.maxWidth">
+    <mat-label class="px-2">{{status}}</mat-label>
+    <mat-select #dropdown [formControl]="formControl" (openedChange)="checkOpenState($event)" (click)="scrollTop()" [disabled]="disabled" multiple>
+        <mat-select-trigger></mat-select-trigger>
+        <mat-option #allSelected *ngIf="items.length > 0" class="px-2 select-all" (click)="toggleAllSelection()"
+            [value]="0" [hidden]="multipleSelect.disableAllCheck">
+            {{multipleSelect.checkAllCheckBoxText}}</mat-option>
+        <cdk-virtual-scroll-viewport [itemSize]="20" *ngIf="groups.length > 0">
+            <mat-expansion-panel *ngFor="let group of groups" [expanded]="true" #panel>
+                <mat-expansion-panel-header>
+                    <mat-panel-title title="{{group.name}}">
+                        <mat-checkbox (click)="toggleGroupParent($event, group.name, group.selected)"
+                            [(ngModel)]="group.selected">
+                            {{group.name}}
+                        </mat-checkbox>
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+                <ng-container *ngFor="let item of items">
+                    <mat-option *ngIf="item.type == group.name && item.isShow" [value]="item" (click)="togglePerOneInType(group.name, item)"
+                        title="{{item.text}}">
+                        {{item.text}}
+                    </mat-option>
+                </ng-container>
+            </mat-expansion-panel>
+        </cdk-virtual-scroll-viewport>
+        <ng-container *ngIf="groups.length === 0">
+            <ng-container *ngFor="let item of items;let first = first" >
+            <div *ngIf="first" name="top"></div>
+            <mat-option *ngIf="item.isShow" [value]="item" [disabled]="!item.enable" (click)="togglePerOne(item)" title="{{item.text}}">
+                {{item.text}}
+            </mat-option>
+        </ng-container>
+    </ng-container>
+    </mat-select>
+</mat-form-field>
