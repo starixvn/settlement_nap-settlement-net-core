@@ -15,7 +15,6 @@ namespace Settlement.ThirdPartyProducts.Handlers
         IRequestHandler<LeaguesRequest, List<LeagueTypeModel>>,
         IRequestHandler<MatchesWaitingRequest, List<MatchDetailModel>>,
         IRequestHandler<MatchInfoRequest, MatchDetailModel>,
-        IRequestHandler<GetNotificationRequest, NotificationStatusModel>,
         IRequestHandler<CalculateRequest, Result>
     {
         private readonly MatchService matchService;
@@ -57,9 +56,6 @@ namespace Settlement.ThirdPartyProducts.Handlers
 
         public async Task<MatchDetailModel> Handle(MatchInfoRequest request, CancellationToken cancellationToken)
             => await matchService.GetMatch(request);
-
-        public async Task<NotificationStatusModel> Handle(GetNotificationRequest request, CancellationToken cancellationToken)
-            => await betBuilderService.GetNotificationStatus();
 
         public async Task<Result> Handle(CalculateRequest request, CancellationToken cancellationToken)
             => await betBuilderService.Calculate(request);

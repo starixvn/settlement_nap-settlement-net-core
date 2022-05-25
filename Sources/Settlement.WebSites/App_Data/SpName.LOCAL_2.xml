@@ -136,7 +136,7 @@
   </Function>
 
   <Function Name="Notifications">
-    <Setting Key="NAP_Set_GetNumberError" SpName="NAP_Set_GetNumberError_UAT1" DbName="DBTXN.bodb02.bodbAdminNet" />
-    <Setting Key="NAP_Set_SettledErrorSel" SpName="NAP_Set_SettledErrorSel_UAT1" DbName="DBTXN.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_GetNumberError" SpName="NAP_Set_GetNumberError" DbName="DBTXN.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_SettledErrorSel" SpName="NAP_Set_SettledErrorSel" DbName="DBTXN.bodb02.bodbAdminNet" />
   </Function>
 </Functions>

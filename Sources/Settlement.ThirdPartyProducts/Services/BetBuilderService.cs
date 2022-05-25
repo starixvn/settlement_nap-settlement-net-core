@@ -16,8 +16,6 @@ namespace Settlement.ThirdPartyProducts.Services
 {
     public interface BetBuilderService
     {
-        Task<NotificationStatusModel> GetNotificationStatus();
-
         Task<List<Sport>> GetSports(SportRequest request);
 
         Task<List<LeagueTypeModel>> GetLeagues(LeaguesRequest request);
@@ -55,14 +53,6 @@ namespace Settlement.ThirdPartyProducts.Services
             this.currentSession = currentSession;
             this.accessor = accessor;
             this.mapper = mapper;
-        }
-
-        public async Task<NotificationStatusModel> GetNotificationStatus()
-        {
-            return new NotificationStatusModel
-            {
-                IsExistTicketRunningBetBuilder = await repository.GetAsync<bool>(new NotificationStatusCriteria(true)),
-            };
         }
 
         public async Task<List<Sport>> GetSports(SportRequest request)

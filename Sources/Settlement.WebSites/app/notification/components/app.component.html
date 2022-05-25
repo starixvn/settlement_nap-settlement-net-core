@@ -10,6 +10,7 @@
                 {{notification.startDate}}
             </div>
         </li>
+        <li class="see-all" *ngIf="model.numberError > model.notifications.length"><a href="javascript:;" id="see-all">See All</a></li>
     </ul>
 </div>
 <ng-template #empty>

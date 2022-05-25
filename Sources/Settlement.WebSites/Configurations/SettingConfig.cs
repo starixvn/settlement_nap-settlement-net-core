@@ -14,6 +14,7 @@ namespace Settlement.WebSites.Configurations
             services.AddTransient<SettingService, SettingServiceImp>();
             services.AddTransient<ProviderSettingService, ProviderSettingServiceImp>();
             services.AddTransient<OutsideSourceSettingService, OutsideSourceSettingServiceImp>();
+            services.AddTransient<SendMailService, SendMailServiceImp>();
         }
 
         public static void SettingConfigMediator(this IServiceCollection services)

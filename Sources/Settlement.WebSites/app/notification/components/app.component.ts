@@ -23,12 +23,12 @@ export class AppComponent implements OnInit  {
     }
 
     public async ngOnInit() {
-        const top = Number(this.httpRequestService.getUrlParameter('top'));
-        this.model = await this.topNotification(top).toPromise() as ShowNotificationModel;
+        this.model = await this.topNotification().toPromise() as ShowNotificationModel;
     }
 
-    private topNotification(top: number) {
+    private topNotification() {
         const apiUrl = this.elementRef.nativeElement.getAttribute('api-url');
+        const top = this.elementRef.nativeElement.getAttribute('top');
         const url = `${apiUrl}/api/notifications/top-notification?top=${top}`;
         return this.httpRequestService.getJson(url);
     }

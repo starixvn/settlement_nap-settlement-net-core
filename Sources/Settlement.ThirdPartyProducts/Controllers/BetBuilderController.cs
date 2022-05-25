@@ -60,9 +60,5 @@ namespace Settlement.ThirdPartyProducts.Controllers
         [HttpPost]
         [Route("get-match")]
         public async Task<IActionResult> GetMatch(MatchInfoRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
-
-        [HttpGet]
-        [Route("get-notification")]
-        public async Task<IActionResult> GetNotification() => Ok(await mediator.Send(new GetNotificationRequest()).ConfigureAwait(false));
     }
 }

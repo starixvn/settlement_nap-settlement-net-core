@@ -8,7 +8,8 @@ using Settlement.Setting.Services;
 namespace Settlement.Setting.Handlers
 {
     public class NotificationHandler :
-        IRequestHandler<ShowNotificationRequest, ShowNotificationModel>,
+        IRequestHandler<ShowNotificationRequest, int>,
+        IRequestHandler<NotificationBetBuilderRequest, bool>,
         IRequestHandler<TopNotificationRequest, ShowNotificationModel>
     {
         private readonly NotificationService notificationService;
@@ -17,10 +18,15 @@ namespace Settlement.Setting.Handlers
         {
             this.notificationService = notificationService;
         }
-        public async Task<ShowNotificationModel> Handle(ShowNotificationRequest request, CancellationToken cancellationToken)
-            => await notificationService.GetNotifications();
+        public async Task<int> Handle(ShowNotificationRequest request, CancellationToken cancellationToken)
+            => await notificationService.NumberNotifications();
+
+        public async Task<bool> Handle(NotificationBetBuilderRequest request, CancellationToken cancellationToken)
+           => await notificationService.IsNotificationsBetBuilder();
 
         public async Task<ShowNotificationModel> Handle(TopNotificationRequest request, CancellationToken cancellationToken)
             => await notificationService.ShowTopNotifications(request.Top);
+
+
     }
 }

@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
+using Fanex.MailDeliver.MailClient;
 using Settlement.Sportsbook.Soccer;
 using ONEbook.UM.Configurations;
 using ONEbook.UM.AspNetCore;
@@ -228,6 +229,9 @@ namespace Settlement.WebSites
             ExceptionHandler
                 .UseConfig(new LoggingConfiguration())
                 .UseGetDbExceptionInfo(DatabaseInfoGetters.GetDbExceptionInfo);
+
+            AppSettings.AppMailId = Configuration.GetSection("MailServer:Id").Value;
+            AppSettings.AppMailAddress = Configuration.GetSection("MailServer:Address").Value;
         }
 
         private void ConfigureCore(IServiceCollection services)

@@ -1,4 +1,5 @@
-﻿using Fanex.Data.Repository;
+﻿using System.Collections.Generic;
+using Fanex.Data.Repository;
 using System.Linq;
 using System.Threading.Tasks;
 using Settlement.Setting.Models.Notification;
@@ -10,7 +11,9 @@ namespace Settlement.Setting.Services
 {
     public interface NotificationService
     {
-        Task<ShowNotificationModel> GetNotifications();
+        Task<bool> IsNotificationsBetBuilder();
+
+        Task<int> NumberNotifications();
 
         Task<ShowNotificationModel> ShowTopNotifications(int top);
     }
@@ -23,17 +26,26 @@ namespace Settlement.Setting.Services
 
         private readonly INapSession currentSession;
 
+        private readonly SendMailService sendMailService;
+
         public NotificationServiceImp(
             IDynamicRepository repository,
             IRefDataService refDataService,
-            INapSession currentSession)
+            INapSession currentSession,
+            SendMailService sendMailService)
         {
             this.repository = repository;
             this.refDataService = refDataService;
             this.currentSession = currentSession;
+            this.sendMailService = sendMailService;
         }
 
-        public async Task<ShowNotificationModel> GetNotifications()
+        public async Task<bool> IsNotificationsBetBuilder()
+        {
+            return await repository.GetAsync<bool>(new NotificationBetBuilderCriteria());
+        }
+
+        public async Task<int> NumberNotifications()
         {
             var criteria = new GetNumberOfNotificationCriteria
             {
@@ -41,14 +53,23 @@ namespace Settlement.Setting.Services
             };
 
             var notifications = (await repository.FetchAsync<NotificationModel>(criteria)).ToList();
-            notifications.ForEach(x => x.RefDataService = refDataService);
             var numberError = criteria.NumberError;
 
-            return new ShowNotificationModel
+            if (numberError > 0)
             {
-                NumberError = numberError,
-                Notifications = notifications
-            };
+                SendErrorMessage(notifications);
+            }
+
+            return numberError;
+        }
+
+        private void SendErrorMessage(List<NotificationModel> notifications)
+        {
+            foreach (var item in notifications)
+            {
+                item.RefDataService = refDataService;
+                sendMailService.SendMail(item);
+            }
         }
 
         public async Task<ShowNotificationModel> ShowTopNotifications(int top)

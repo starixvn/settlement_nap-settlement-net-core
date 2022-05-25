@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Settlement.Core.ActionFilters;
@@ -29,6 +25,11 @@ namespace Settlement.Setting.Controllers
         [HttpGet]
         [Route("top-notification")]
         public async Task<IActionResult> TopNotification(int top) => Ok(await mediator.Send(new TopNotificationRequest{ Top = top }).ConfigureAwait(false));
+
+        [HttpGet]
+        [Route("get-notification-bet-builder")]
+        public async Task<IActionResult> GetNotificationBetBuilder() => Ok(await mediator.Send(new NotificationBetBuilderRequest()).ConfigureAwait(false));
+
 
     }
 }
