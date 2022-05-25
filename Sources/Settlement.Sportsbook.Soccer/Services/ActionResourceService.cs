@@ -10,6 +10,8 @@ namespace Settlement.Sportsbook.Soccer.Services
 
         List<XmlResource> FullTimeResources(GoalAction goalAction);
 
+        XmlResource FullTimeResource(string firstGoal, int settlementStatusId);
+
         XmlResource FullTimeGoalRecord(string goalRecord, int settlementStatusId);
 
         XmlResource HalftimeGoalRecord(string goalRecord, int settlementStatusId);
@@ -26,10 +28,10 @@ namespace Settlement.Sportsbook.Soccer.Services
 
         public List<XmlResource> HalftimeResources(GoalAction goalAction)
         {
-            var fristGoal = goalRecordService.FirstGoalRecord(goalAction.FirstGoal, goalAction.IsRefund);
+            var firstGoal = goalRecordService.FirstGoalRecord(goalAction.FirstGoal, goalAction.IsRefund);
             var lastGoal = goalRecordService.LastGoalRecord(goalAction.LastGoal, goalAction.IsRefund);
             return new List<XmlResource> {
-                    SettleResource(ResourceKey.HalftimeFirstGoal, fristGoal, goalAction.FirstGoalSettlementStatusId),
+                    SettleResource(ResourceKey.HalftimeFirstGoal, firstGoal, goalAction.FirstGoalSettlementStatusId),
                     SettleResource(ResourceKey.HalftimeLastGoal, lastGoal, goalAction.LastGoalSettlementStatusId)
                 };
         }
@@ -37,6 +39,11 @@ namespace Settlement.Sportsbook.Soccer.Services
         public XmlResource HalftimeGoalRecord(string goalRecord, int settlementStatusId)
         {
             return SettleResource(ResourceKey.HalftimeGoalRecord, goalRecord, settlementStatusId);
+        }
+
+        public XmlResource FullTimeResource(string firstGoal, int settlementStatusId)
+        {
+            return SettleResource(ResourceKey.FullTimeFirstGoal, firstGoal, settlementStatusId);
         }
 
         public List<XmlResource> FullTimeResources(GoalAction goalAction)
@@ -54,7 +61,7 @@ namespace Settlement.Sportsbook.Soccer.Services
             return SettleResource(ResourceKey.FullTimeGoalRecord, goalRecord, settlementStatusId);
         }
 
-        private XmlResource SettleResource(string resourceId, string homeValue, int settlementStatusId)
+        private static XmlResource SettleResource(string resourceId, string homeValue, int settlementStatusId)
         {
             return new XmlResource
             {

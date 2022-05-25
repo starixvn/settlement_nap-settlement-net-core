@@ -42,6 +42,6 @@ namespace Settlement.Sportsbook.Aio.Handlers
 
         public async Task<Result> Handle(SettleChildMatchRequest request, CancellationToken cancellationToken) => await aioService.SettleChildMatch(request);
 
-        public async Task<Boolean> Handle(ResultSettingRequest request, CancellationToken cancellationToken) => await aioService.ResultSetting(request);
+        public async Task<bool> Handle(ResultSettingRequest request, CancellationToken cancellationToken) => await aioService.ResultSetting(request);
     }
 }

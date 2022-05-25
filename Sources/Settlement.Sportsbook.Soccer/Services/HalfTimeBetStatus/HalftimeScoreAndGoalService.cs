@@ -13,6 +13,8 @@ namespace Settlement.Sportsbook.Soccer.Services.HalfTimeBetStatus
         string BetStatusHasHalftimeScoreWithoutSemicolonOnGoalRecord(string goalRecordValue);
 
         string BetStatusHasHalftimeScoreWithSemicolonOnGoalRecord(string goalRecordValue);
+
+        string FullTimeBetStatus(string goalRecordValue);
     }
 
     public class HalftimeScoreAndGoalServiceImp : IHalftimeScoreAndGoalService
@@ -44,7 +46,7 @@ namespace Settlement.Sportsbook.Soccer.Services.HalfTimeBetStatus
             var maxLengthHalfTime = 7;
             if (oldBetStatus.Contains(";"))
             {
-                maxLengthHalfTime = maxLengthHalfTime + 1;
+                maxLengthHalfTime += 1;
             }
 
             var oldHalfTimeBetStatus = oldBetStatus.Substring(oldBetStatus.IgnoreCaseIndexOf("1FL"), maxLengthHalfTime);
@@ -71,6 +73,19 @@ namespace Settlement.Sportsbook.Soccer.Services.HalfTimeBetStatus
             goalRecord = goalRecordService.GoalRecordWithSemicolon(goalRecord, goal);
 
             return goalRecord.HalftimeBetStatus;
+        }
+
+        public string FullTimeBetStatus(string goalRecordValue)
+        {
+            var firstGoal = goalRecordService.HomeOrAwayFirstGoal(goalRecordValue);
+            var goalRecord = new GoalRecordModel
+            {
+                IsExistFgNg = true,
+                FirstGoal = firstGoal,
+                LastGoal = "0"
+            };
+
+            return goalRecord.FullTimeBetStatus;
         }
     }
 }

@@ -52,6 +52,8 @@ namespace Settlement.Sportsbook.Soccer.Models
 
         public bool IsExistHtFgLg { get; set; }
 
+        public bool IsExistFgNg { get; set; }
+
         public bool IsEnabledGoalRecordHt { get; set; }
 
         public bool IsEnabledGoalRecordFt { get; set; }

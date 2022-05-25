@@ -24,7 +24,16 @@ namespace Settlement.Sportsbook.Soccer.Services.HalfTimeBetStatus
                 halfTimeBetStatus = halftimeService.GetBetStatusForCalculateHalfTime(request);
             }
 
-            return halftimeService.ApplyNewBetStatusForHalfTime(request.BetStatus, halfTimeBetStatus);
+            var betStatus = halftimeService.AppendHalfTimeBetStatus(request.BetStatus, halfTimeBetStatus);
+
+            if (request.IsExistFgNg)
+            {
+                var fullTimeBetStatus = halftimeService.FullTimeBetStatusForCalculateHalfTime(request.GoalRecord);
+
+                return halftimeService.AppendFullTimeBetStatus(betStatus, fullTimeBetStatus);
+            }
+
+            return betStatus;
         }
     }
 }

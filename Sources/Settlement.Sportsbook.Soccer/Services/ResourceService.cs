@@ -37,14 +37,19 @@ namespace Settlement.Sportsbook.Soccer.Services
             var halftimeGoal = goalRecordService.HalftimeGoal(goalCondition.GoalRecord);
 
             var goalAction = CreateGoalAction(halftimeGoal, settlementStatusId);
-
             var resources = goalCondition.IsExistHtFgLg ? actionResourceService.HalftimeResources(goalAction) : new List<XmlResource>();
+
+            if (goalCondition.IsExistFgNg)
+            {
+                var firstGoal = goalRecordService.FirstGoalRecord(goalAction.FirstGoal, goalAction.IsRefund);
+                var resource = actionResourceService.FullTimeResource(firstGoal, settlementStatusId);
+                resources.Add(resource);
+            }
 
             if (goalCondition.IsEnabledGoalRecordHt)
             {
-                halftimeGoal = goalRecordService.HalftimeGoal(goalCondition.GoalRecord);
-                var resourcesGoal = actionResourceService.HalftimeGoalRecord(halftimeGoal, settlementStatusId);
-                resources.Add(resourcesGoal);
+                var resource = actionResourceService.HalftimeGoalRecord(halftimeGoal, settlementStatusId);
+                resources.Add(resource);
             }
 
             return resources;
@@ -199,7 +204,7 @@ namespace Settlement.Sportsbook.Soccer.Services
             return resources;
         }
 
-        private XmlResource InitialResource(string resourceId)
+        private static XmlResource InitialResource(string resourceId)
         {
             return new XmlResource
             {
@@ -210,7 +215,7 @@ namespace Settlement.Sportsbook.Soccer.Services
             };
         }
 
-        private GoalAction CreateGoalAction(string goal, int settlementStatusId)
+        private static GoalAction CreateGoalAction(string goal, int settlementStatusId)
         {
             return new GoalAction
             {
@@ -221,13 +226,13 @@ namespace Settlement.Sportsbook.Soccer.Services
             };
         }
 
-        private GoalAction CreateGoalAction(string halftimeGoal, int firtsGoalSettlementStatusId, int lastGoalSettlementStatusId)
+        private static GoalAction CreateGoalAction(string halftimeGoal, int firstGoalSettlementStatusId, int lastGoalSettlementStatusId)
         {
             return new GoalAction
             {
                 FirstGoal = halftimeGoal,
                 LastGoal = string.Empty,
-                FirstGoalSettlementStatusId = firtsGoalSettlementStatusId,
+                FirstGoalSettlementStatusId = firstGoalSettlementStatusId,
                 LastGoalSettlementStatusId = lastGoalSettlementStatusId
             };
         }

@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using NSubstitute;
+﻿using NSubstitute;
 using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Requests;
 using Settlement.Sportsbook.Soccer.Services;
@@ -83,44 +82,87 @@ namespace Settlement.Sportsbook.Soccer.UnitTests.Services.HalftimeBetStatus
         }
 
         [Fact]
-        public void ApplyNewBetStatusForHalfTime_EmptyBetStatus_ReturnsDefaultHalftimeBetStatus()
+        public void AppendHalfTimeBetStatus_EmptyBetStatus_ReturnsDefaultHalftimeBetStatus()
         {
             // Arrange
-            var halftimeBetStatus = "1FL:1-0;";
+            const string halftimeBetStatus = "1FL:1-0;";
 
             // Act
-            var actualBetStatus = service.ApplyNewBetStatusForHalfTime(string.Empty, halftimeBetStatus);
+            var actualBetStatus = service.AppendHalfTimeBetStatus(string.Empty, halftimeBetStatus);
 
             // Assert
             Assert.Equal(halftimeBetStatus, actualBetStatus);
         }
 
         [Fact]
-        public void ApplyNewBetStatusForHalfTime_NotEmptyBetStatus_ReturnsHalftimeBetStatusPlusOldBetStatus()
+        public void AppendHalfTimeBetStatus_NotEmptyBetStatus_ReturnsHalftimeBetStatusPlusOldBetStatus()
         {
             // Arrange
-            var oldBetStatus = "FL:1-0;";
-            var halftimeBetStatus = "1FL:1-0;";
-            var expectedBetStatus = "1FL:1-0;FL:1-0;";
+            const string oldBetStatus = "FL:1-0;";
+            const string halftimeBetStatus = "1FL:1-0;";
+            const string expectedBetStatus = "1FL:1-0;FL:1-0;";
 
             // Act
-            var actualBetStatus = service.ApplyNewBetStatusForHalfTime(oldBetStatus, halftimeBetStatus);
+            var actualBetStatus = service.AppendHalfTimeBetStatus(oldBetStatus, halftimeBetStatus);
 
             // Assert
             Assert.Equal(expectedBetStatus, actualBetStatus);
         }
 
         [Fact]
-        public void ApplyNewBetStatusForHalfTime_Exist1FLOnBetStatus_CallHasFirstGoalOnBetStatusMethodOfHalftimeScoreAndGoalService()
+        public void AppendHalfTimeBetStatus_Exist1FLOnBetStatus_CallHasFirstGoalOnBetStatusMethodOfHalftimeScoreAndGoalService()
         {
             // Arrange
-            var oldBetStatus = "1FL:1-0;";
+            const string oldBetStatus = "1FL:1-0;";
 
             // Act
-            service.ApplyNewBetStatusForHalfTime(oldBetStatus, string.Empty);
+            service.AppendHalfTimeBetStatus(oldBetStatus, string.Empty);
 
             // Assert
             halftimeScoreAndGoalService.Received().HasFirstGoalOnBetStatus(Arg.Any<string>(), Arg.Any<string>());
+        }
+
+        [Theory]
+        [InlineData("")]
+        [InlineData(";")]
+        public void FullTimeBetStatusForCalculateHalfTime_GoalRecordEmpty_ReturnsEmpty(string goalRecord)
+        {
+            // Act
+            var actual = service.FullTimeBetStatusForCalculateHalfTime(goalRecord);
+
+            // Assert
+            Assert.Empty(actual);
+        }
+
+        [Fact]
+        public void FullTimeBetStatusForCalculateHalfTime_GoalRecord_ReturnsExpectedBetStatus()
+        {
+            // Arrange
+            const string goalRecord = "AH;HHH";
+            const string expectedBetStatus = "FL:2:0";
+            halftimeScoreAndGoalService.FullTimeBetStatus(Arg.Any<string>()).Returns(expectedBetStatus);
+
+            // Act
+            var actualBetStatus = service.FullTimeBetStatusForCalculateHalfTime(goalRecord);
+
+            // Assert
+            Assert.Equal(expectedBetStatus, actualBetStatus);
+        }
+
+        [Theory]
+        [InlineData("1FL:1-0;", "", "1FL:1-0;")]
+        [InlineData("Refund;1FL:1-0;", "", "Refund;1FL:1-0;")]
+        [InlineData("", "FL:x-0;", "FL:x-0;")]
+        [InlineData("1FL:1-0;", "FL:2-0;", "1FL:1-0;FL:2-0;")]
+        [InlineData("FL:1-0;", "FL:2-0;", "FL:2-0;")]
+
+        public void AppendFullTimeBetStatus_BetStatus_ReturnsExpectedNewBetStatus(string betStatus, string fullTimeBetStatus, string expectedNewBetStatus)
+        {
+            // Act
+            var actualBetStatus = service.AppendFullTimeBetStatus(betStatus, fullTimeBetStatus);
+
+            // Assert
+            Assert.Equal(expectedNewBetStatus, actualBetStatus);
         }
     }
 }

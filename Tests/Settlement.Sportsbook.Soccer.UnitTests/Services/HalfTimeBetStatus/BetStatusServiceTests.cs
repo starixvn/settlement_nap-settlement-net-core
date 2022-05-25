@@ -23,7 +23,8 @@ namespace Settlement.Sportsbook.Soccer.UnitTests.Services.HalftimeBetStatus
             // Arrange
             var query = new SettleRequest
             {
-                IsExistHtFgLg = true
+                IsExistHtFgLg = true,
+                IsExistFgNg = true
             };
 
             // Act
@@ -33,7 +34,9 @@ namespace Settlement.Sportsbook.Soccer.UnitTests.Services.HalftimeBetStatus
             Received.InOrder(() =>
             {
                 halftimeService.Received().GetBetStatusForCalculateHalfTime(Arg.Any<SettleRequest>());
-                halftimeService.Received().ApplyNewBetStatusForHalfTime(Arg.Any<string>(), Arg.Any<string>());
+                halftimeService.Received().AppendHalfTimeBetStatus(Arg.Any<string>(), Arg.Any<string>());
+                halftimeService.Received().FullTimeBetStatusForCalculateHalfTime(Arg.Any<string>());
+                halftimeService.Received().AppendFullTimeBetStatus(Arg.Any<string>(), Arg.Any<string>());
             });
         }
 
@@ -50,7 +53,7 @@ namespace Settlement.Sportsbook.Soccer.UnitTests.Services.HalftimeBetStatus
             service.GetBetStatus(query);
 
             // Assert
-            halftimeService.Received().ApplyNewBetStatusForHalfTime(Arg.Any<string>(), Arg.Any<string>());
+            halftimeService.Received().AppendHalfTimeBetStatus(Arg.Any<string>(), Arg.Any<string>());
         }
     }
 }
