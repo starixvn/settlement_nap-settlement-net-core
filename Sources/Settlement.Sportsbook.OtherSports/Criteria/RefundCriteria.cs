@@ -12,6 +12,8 @@ namespace Settlement.Sportsbook.OtherSports.Criteria
 
         public string Ip { get; set; }
 
+        public string BetStatus { get; set; }
+
         [SpParam(Ignored = true)]
         public string Action { get; set; }
 
