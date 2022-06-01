@@ -51,11 +51,11 @@ namespace Settlement.EventManagement.UnitTests.Services
             service = new MultiSportServiceImp(repository, refDataService, matchService, mapper, cacheService, permissionService);
         }
 
-        private List<SportTypeModel> fakeSports => new List<SportTypeModel>
+        private List<Sport> fakeSports => new List<Sport>
         {
-            new SportTypeModel { SportType = SportType.OtherSports },
-            new SportTypeModel { SportType = SportType.Wrestling},
-            new SportTypeModel { SportType = SportType.Badminton }
+            new Sport { SportType = SportType.OtherSports },
+            new Sport { SportType = SportType.Wrestling},
+            new Sport { SportType = SportType.Badminton }
         };
 
         private List<LeagueTypeModel> fakeLeagues => new List<LeagueTypeModel>
@@ -70,7 +70,7 @@ namespace Settlement.EventManagement.UnitTests.Services
         {
             // Arrange
             var request = new SportRequest();
-            repository.FetchAsync<SportTypeModel>(Arg.Any<SportCriteria>()).Returns(fakeSports);
+            repository.FetchAsync<Sport>(Arg.Any<SportCriteria>()).Returns(fakeSports);
 
             // Act
             var sports = await service.GetSports(request);
@@ -84,7 +84,7 @@ namespace Settlement.EventManagement.UnitTests.Services
         {
             // Arrange
             var request = new SportRequest();
-            repository.FetchAsync<SportTypeModel>(Arg.Any<SportCriteria>()).Returns(fakeSports);
+            repository.FetchAsync<Sport>(Arg.Any<SportCriteria>()).Returns(fakeSports);
 
             // Act
             var sports = await service.GetSports(request);
@@ -100,13 +100,13 @@ namespace Settlement.EventManagement.UnitTests.Services
         {
             // Arrange
             var request = new SportRequest();
-            repository.FetchAsync<SportTypeModel>(Arg.Any<SportCriteria>()).Returns(fakeSports);
+            repository.FetchAsync<Sport>(Arg.Any<SportCriteria>()).Returns(fakeSports);
 
             // Act
             var sports = await service.GetSports(request);
 
             // Assert
-            Assert.Equal(SportType.OtherSports, sports.Last().SportType);
+            Assert.Equal(Core.Constants.SportType.OtherSports, sports.Last().SportType);
         }
 
         [Fact]
@@ -114,7 +114,7 @@ namespace Settlement.EventManagement.UnitTests.Services
         {
             // Arrange
             var request = new SportRequest();
-            repository.FetchAsync<SportTypeModel>(Arg.Any<SportCriteria>()).Returns(fakeSports);
+            repository.FetchAsync<Sport>(Arg.Any<SportCriteria>()).Returns(fakeSports);
 
             // Act
             var sports = await service.GetSports(request);
@@ -151,12 +151,12 @@ namespace Settlement.EventManagement.UnitTests.Services
 
             // Assert
 
-            Assert.Equal(SportType.OtherSports, leagues[1].SportType);
-            Assert.Equal(SportType.OtherSports, leagues[2].SportType);
+            Assert.Equal(Core.Constants.SportType.OtherSports, leagues[1].SportType);
+            Assert.Equal(Core.Constants.SportType.OtherSports, leagues[2].SportType);
         }
 
         [Fact]
-        public async Task GetLeagues_ExistPoppularSportLeague_ReturnWithGroupPopularSportAtTopList()
+        public async Task GetLeagues_ExistPopularSportLeague_ReturnWithGroupPopularSportAtTopList()
         {
             // Arrange
             var request = new LeagueRequest();
@@ -167,7 +167,7 @@ namespace Settlement.EventManagement.UnitTests.Services
             var leagues = await service.GetLeagues(request);
 
             // Assert
-            Assert.Equal(SportType.Badminton, leagues.First().SportType);
+            Assert.Equal(Core.Constants.SportType.Badminton, leagues.First().SportType);
         }
 
         [Fact]

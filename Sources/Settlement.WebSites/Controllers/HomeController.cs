@@ -47,6 +47,8 @@ namespace Settlement.WebSites.Controllers
             return Content("Test");
         }
 
+      
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

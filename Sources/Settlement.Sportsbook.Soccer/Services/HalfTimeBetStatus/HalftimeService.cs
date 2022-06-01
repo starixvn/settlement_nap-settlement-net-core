@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Kaden.Extensions;
 using Settlement.Sportsbook.Soccer.Requests;
 
@@ -67,30 +66,33 @@ namespace Settlement.Sportsbook.Soccer.Services.HalfTimeBetStatus
 
         public string AppendFullTimeBetStatus(string betStatus, string fullTimeBetStatus)
         {
+            var newBetStatus = new List<string>();
             if (IsModifyFirstGoalLastGoal(betStatus, fullTimeBetStatus))
             {
                 return fullTimeBetStatus;
             }
 
-            var arr = betStatus?.Split(';');
-            var newBetStatus = new List<string>();
-            var flag = false;
-
-            foreach (var item in arr)
+            if (!string.IsNullOrWhiteSpace(betStatus))
             {
-                switch (flag)
+                var arr = betStatus.Split(';');
+                var flag = false;
+
+                foreach (var item in arr)
                 {
-                    case false when item.IgnoreCaseContains("FL") && !item.IgnoreCaseContains("1FL"):
-                        flag = true;
-                        newBetStatus.Add(fullTimeBetStatus.Replace(";", string.Empty));
-                        break;
-                    case false when IsModifyFirstGoalLastGoal(item, fullTimeBetStatus):
-                        flag = true;
-                        newBetStatus.Add(fullTimeBetStatus);
-                        break;
-                    default:
-                        newBetStatus.Add(item);
-                        break;
+                    switch (flag)
+                    {
+                        case false when item.IgnoreCaseContains("FL") && !item.IgnoreCaseContains("1FL"):
+                            flag = true;
+                            newBetStatus.Add(fullTimeBetStatus.Replace(";", string.Empty));
+                            break;
+                        case false when IsModifyFirstGoalLastGoal(item, fullTimeBetStatus):
+                            flag = true;
+                            newBetStatus.Add(fullTimeBetStatus);
+                            break;
+                        default:
+                            newBetStatus.Add(item);
+                            break;
+                    }
                 }
             }
 

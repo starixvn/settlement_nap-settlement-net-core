@@ -26,7 +26,7 @@ namespace Settlement.Sportsbook.MoveTickets.Services
 
         public List<Match> GetScoreForMatchBySportType(List<Match> matches, List<ResultDetail> resultDetails, int sportType, int groupSport)
         {
-            if (sportType == SportType.Cricket)
+            if (sportType == Core.Constants.SportType.Cricket)
             {
                 return matchResultDetailService.CricketResultDetail(matches, resultDetails);
             }

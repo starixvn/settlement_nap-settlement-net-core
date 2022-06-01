@@ -55,28 +55,6 @@ namespace Settlement.FastMarkets.UnitTests.Controllers
         }
 
         [Fact]
-        public async Task UpdateSettingMatch_Always_ReturnCorrectType()
-        {
-            mediator.Send(Arg.Any<SettingMatchRequest>()).Returns(new Result());
-
-            var actual = await controller.UpdateSettingMatch(new SettingMatchRequest()) as OkObjectResult;
-
-            Assert.IsType<Result>(actual.Value);
-            Assert.Equal(200, actual.StatusCode);
-        }
-
-        [Fact]
-        public async Task UpdateSettingLeague_Always_ReturnCorrectType()
-        {
-            mediator.Send(Arg.Any<SettingLeagueRequest>()).Returns(new Result());
-
-            var actual = await controller.UpdateSettingLeague(new SettingLeagueRequest()) as OkObjectResult;
-
-            Assert.IsType<Result>(actual.Value);
-            Assert.Equal(200, actual.StatusCode);
-        }
-
-        [Fact]
         public async Task CheckingMarkedTickets_Always_ReturnCorrectType()
         {
             mediator.Send(Arg.Any<CheckingMarkedTicketsRequest>()).Returns(new MarkedTickets());

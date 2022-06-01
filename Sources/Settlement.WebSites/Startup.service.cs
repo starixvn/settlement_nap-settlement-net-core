@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
+using Fanex.MailDeliver.MailClient;
 using Settlement.Sportsbook.Soccer;
 using ONEbook.UM.Configurations;
 using ONEbook.UM.AspNetCore;
@@ -48,6 +49,9 @@ using MessagePack.AspNetCoreMvcFormatter;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Settlement.EventManagement;
 using Settlement.FastMarkets;
+using Settlement.Gaming;
+using Settlement.ThirdPartyProducts;
+using Settlement.Setting;
 
 namespace Settlement.WebSites
 {
@@ -170,6 +174,9 @@ namespace Settlement.WebSites
             services.ConfigEventManagementServices();
             services.ConfigLogServices();
             services.ConfigFastMarketsServices();
+            services.ThirdPartyProductsConfigServices();
+            services.SettingConfigServices();
+            services.GamingConfigServices();
         }
 
         private void ConfigureNapServices(IServiceCollection services)
@@ -184,7 +191,7 @@ namespace Settlement.WebSites
             services.AddSingleton<IUserService, UserService>();
             services.AddSingleton<ISecurityService, SecurityService>();
             services.AddTransient<IBalanceUpService, BalanceUpServiceImp>();
-
+           
             RefDataTypeContainer
                 .ConnectTo(new Uri(Configuration.GetSection("Fanex.RemotingRef.Service.Url").Value))
                 .FromApplication("Settlement");
@@ -222,6 +229,9 @@ namespace Settlement.WebSites
             ExceptionHandler
                 .UseConfig(new LoggingConfiguration())
                 .UseGetDbExceptionInfo(DatabaseInfoGetters.GetDbExceptionInfo);
+
+            AppSettings.AppMailId = Configuration.GetSection("MailServer:Id").Value;
+            AppSettings.AppMailAddress = Configuration.GetSection("MailServer:Address").Value;
         }
 
         private void ConfigureCore(IServiceCollection services)
@@ -232,6 +242,7 @@ namespace Settlement.WebSites
             services.AddSingleton<PermissionService, PermissionServiceImp>();
             services.AddSingleton<XmlConvertService, XmlConvertServiceImp>();
             services.AddTransient<ILogService, LogServiceImp>();
+            services.AddTransient<IScoreSetService, ScoreSetServiceImp>();
             services.AddSingleton<IUMCacheService, UMCacheService>();
             services.AddSingleton<IUMRestClient, UMRestClient>();
             services.AddSingleton(new UMClientConfiguration().Initialize(Configuration));
@@ -247,6 +258,9 @@ namespace Settlement.WebSites
             services.ConfigEventManagementMediator();
             services.ConfigLogMediator();
             services.ConfigFastMarketsMediator();
+            services.ThirdPartyProductsConfigMediator();
+            services.SettingConfigMediator();
+            services.GamingConfigMediator();
         }
 
         private static void ConfigureAutoMapper(IServiceCollection services)
@@ -260,6 +274,9 @@ namespace Settlement.WebSites
                 mc.AddProfile(typeof(LogAutoMapper));
                 mc.AddProfile(typeof(EventManagementAutoMapperProfile));
                 mc.AddProfile(typeof(FastMarketAutoMapperProfile));
+                mc.AddProfile(typeof(ThirdPartyProductsAutoMapperProfile));
+                mc.AddProfile(typeof(SettingAutoMapperProfile));
+                mc.AddProfile(typeof(GamingMapperProfile));
             });
 
             var mapper = mapperConfig.CreateMapper();

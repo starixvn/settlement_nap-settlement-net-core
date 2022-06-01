@@ -6,6 +6,13 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="app\**" />
+	  <Content Remove="app\**" />
+	  <EmbeddedResource Remove="app\**" />
+	  <None Remove="app\**" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<None Remove="App_Data\SpName.AWS.xml" />
 		<None Remove="App_Data\SpName.LOCAL.xml" />
 		<None Remove="App_Data\SpName.LOCAL_1.xml" />
@@ -90,6 +97,7 @@
 		<PackageReference Include="Fanex.Logging.Extensions.AspNetCore" Version="1.0.1-beta1" />
 		<PackageReference Include="Fanex.Logging.Extensions.Database" Version="1.0.8" />
 		<PackageReference Include="Fanex.Logging.Sentry" Version="1.0.6" />
+		<PackageReference Include="Fanex.MailDeliver.MailClient" Version="2.0.7" />
 		<PackageReference Include="Fanex.NAP.Client.AspNetCore" Version="2.0.0" />
 		<PackageReference Include="Fanex.NAP.Signin.AspNetCore" Version="2.0.0" />
 		<PackageReference Include="MediatR" Version="9.0.0" />
@@ -107,11 +115,14 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Settlement.EventManagement\Settlement.EventManagement.csproj" />
 		<ProjectReference Include="..\Settlement.FastMarkets\Settlement.FastMarkets.csproj" />
+		<ProjectReference Include="..\Settlement.Gaming\Settlement.Gaming.csproj" />
 		<ProjectReference Include="..\Settlement.Log\Settlement.Log.csproj" />
+		<ProjectReference Include="..\Settlement.Setting\Settlement.Setting.csproj" />
 		<ProjectReference Include="..\Settlement.Sportsbook.MoveTickets\Settlement.Sportsbook.MoveTickets.csproj" />
 		<ProjectReference Include="..\Settlement.Sportsbook.Aio\Settlement.Sportsbook.Aio.csproj" />
 		<ProjectReference Include="..\Settlement.Sportsbook.OtherSports\Settlement.Sportsbook.OtherSports.csproj" />
 		<ProjectReference Include="..\Settlement.Sportsbook.Soccer\Settlement.Sportsbook.Soccer.csproj" />
+		<ProjectReference Include="..\Settlement.ThirdPartyProducts\Settlement.ThirdPartyProducts.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

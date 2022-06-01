@@ -10,18 +10,14 @@ namespace Settlement.Core.Services
 
         string GetLeagueName(object leagueId);
 
-        string GetBetTypeName(object bettypeId);
+        string GetBetTypeName(object betTypeId);
 
-        string GetBetTypeName(object bettypeId, object resourceId);
-
-        string GetResourceDataByRefIdAndResourceId(object resourceId);
+        string GetBetTypeName(object betTypeId, object resourceId);
     }
 
     public class RefDataService : IRefDataService
     {
         private const string LanguageCode = "en";
-
-        private const string MetricGaming = "SuperLive";
 
         private readonly IRemotingRefService remotingRefService;
 
@@ -45,19 +41,14 @@ namespace Settlement.Core.Services
             return remotingRefService.GetLeagueName(leagueId.ToString(), LanguageCode, string.Empty);
         }
 
-        public string GetBetTypeName(object bettypeId)
+        public string GetBetTypeName(object betTypeId)
         {
-            return remotingRefService.GetBetTypeName(bettypeId.ToString(), LanguageCode);
+            return remotingRefService.GetBetTypeName(betTypeId.ToString(), LanguageCode);
         }
 
-        public string GetBetTypeName(object bettypeId, object resourceId)
+        public string GetBetTypeName(object betTypeId, object resourceId)
         {
-            return remotingRefService.GetBetTypeName(bettypeId.ToString(), LanguageCode, string.Empty, resourceId.ToString());
-        }
-
-        public string GetResourceDataByRefIdAndResourceId(object resourceId)
-        {
-            return remotingRefService.GetResourceDataByRefIdAndResourceId(MetricGaming, resourceId.ToString(), LanguageCode, string.Empty);
+            return remotingRefService.GetBetTypeName(betTypeId.ToString(), LanguageCode, string.Empty, resourceId.ToString());
         }
     }
 }

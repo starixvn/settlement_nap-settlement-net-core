@@ -1,0 +1,6 @@
+﻿<input class="hasDatepicker" placeholder="yyyy-mm-dd" readonly="readonly" name="dp" 
+[(ngModel)]="date" (ngModelChange)="onSelectDate($event)" 
+ngbDatepicker #d="ngbDatepicker" (click)="d.toggle();openDatepicker(d)">
+
+<img alt="Show Date Picker" src="Content/base/images/calendar.png" class="ui-datepicker-trigger" 
+(click)="d.toggle();openDatepicker(d)" />

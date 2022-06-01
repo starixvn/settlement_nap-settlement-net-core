@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using MediatR;
-using Settlement.EventManagement.Models;
+using Settlement.Core.Models;
 
 namespace Settlement.EventManagement.Requests
 {
-    public class SportRequest : IRequest<List<SportTypeModel>>
+    public class SportRequest : IRequest<List<Sport>>
     {
         public DateTime FromDate { get; set; }
 

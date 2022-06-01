@@ -1,0 +1,10 @@
+﻿<div class="modal-dialog-header">
+    <span>{{title}}</span>
+    <button type="button" class="close" aria-label="Close" (click)="activeModal.close()">
+        <span aria-hidden="true" ngbAutofocus>&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    <ng-template [ngTemplateOutlet]="template">
+    </ng-template>
+</div>

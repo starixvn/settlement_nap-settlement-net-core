@@ -9,6 +9,7 @@ namespace Settlement.FastMarkets.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [SessionAuthorize]
     public class FastMarketsController : ControllerBase
     {
         private readonly IMediator mediator;
@@ -31,14 +32,6 @@ namespace Settlement.FastMarkets.Controllers
         [HttpPost]
         [LogRequestResponse]
         public async Task<IActionResult> GetBetTypeInterval(BetTypeIntervalRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
-
-        [Route("update-setting-match")]
-        [HttpPost]
-        public async Task<IActionResult> UpdateSettingMatch(SettingMatchRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
-
-        [Route("update-setting-league")]
-        [HttpPost]
-        public async Task<IActionResult> UpdateSettingLeague(SettingLeagueRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
         [Route("checking-marked-tickets")]
         [HttpPost]

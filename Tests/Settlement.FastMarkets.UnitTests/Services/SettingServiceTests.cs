@@ -36,47 +36,7 @@ namespace Settlement.FastMarkets.UnitTests.Services
             accessor.HttpContext = context;
             service = new SettingServiceImp(dynamicRepository, xmlConvertService, mapper, currentSession, accessor);
         }
-
-        [Theory]
-        [InlineData(0, "", true)]
-        [InlineData(1000, "Error Message", false)]
-        public async Task UpdateSettingMatch_Always_ReturnsWithErrorCodeAndErrorMsgFromDynamicRepositoryExecute(int errorCode, string errorMessage, bool expected)
-        {
-            // Arrange
-            var query = new SettingMatchRequest();
-            dynamicRepository.ExecuteAsync(Arg.Do<UpdateSettingMatchCriteria>(x =>
-            {
-                x.ErrCode = errorCode;
-                x.ErrMsg = errorMessage;
-            })).Returns(1);
-
-            // Act
-            var result = await service.UpdateSettingMatch(query);
-
-            // Assert
-            Assert.Equal(expected, result.IsSuccessful);
-        }
-
-        [Theory]
-        [InlineData(0, "", true)]
-        [InlineData(1000, "Error Message", false)]
-        public async Task UpdateSettingLeague_Always_ReturnsWithErrorCodeAndErrorMsgFromDynamicRepositoryExecute(int errorCode, string errorMessage, bool expected)
-        {
-            // Arrange
-            var query = new SettingLeagueRequest();
-            dynamicRepository.ExecuteAsync(Arg.Do<UpdateSettingLeagueCriteria>(x =>
-            {
-                x.ErrCode = errorCode;
-                x.ErrMsg = errorMessage;
-            })).Returns(1);
-
-            // Act
-            var result = await service.UpdateSettingLeague(query);
-
-            // Assert
-            Assert.Equal(expected, result.IsSuccessful);
-        }
-
+        
         [Theory]
         [InlineData(0, "", true)]
         [InlineData(1000, "Error Message", false)]

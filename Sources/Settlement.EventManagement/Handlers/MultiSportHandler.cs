@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
+using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.EventManagement.Models;
 using Settlement.EventManagement.Requests;
@@ -12,7 +13,7 @@ namespace Settlement.EventManagement.Handlers
 {
     public class MultiSportHandler : IRequestHandler<FilterMultiSportRequest, MultiSportModel>,
         IRequestHandler<LeagueRequest, List<LeagueTypeModel>>,
-        IRequestHandler<SportRequest, List<SportTypeModel>>,
+        IRequestHandler<SportRequest, List<Sport>>,
         IRequestHandler<RefreshMatchesRequest, IList<MultiSportMatchWaiting>>
     {
         private readonly IMultiSportService multiSportService;
@@ -40,7 +41,7 @@ namespace Settlement.EventManagement.Handlers
             return await multiSportService.GetLeagues(request);
         }
 
-        public async Task<List<SportTypeModel>> Handle(SportRequest request, CancellationToken cancellationToken)
+        public async Task<List<Sport>> Handle(SportRequest request, CancellationToken cancellationToken)
         {
             return await multiSportService.GetSports(request);
         }
@@ -49,7 +50,7 @@ namespace Settlement.EventManagement.Handlers
             CancellationToken cancellationToken)
         {
             var list = await multiSportService.GetWaitingMatches(request);
-            return mapper.Map<IList<Match>, IList<MultiSportMatchWaiting>>(list);
+            return mapper.Map<IList<Models.Match>, IList<MultiSportMatchWaiting>>(list);
         }
     }
 }

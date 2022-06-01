@@ -1,6 +1,7 @@
 ﻿using NSubstitute;
 using Settlement.Core.Models;
 using System.Threading.Tasks;
+using Settlement.Core.Constants;
 using Settlement.Sportsbook.Soccer.Handlers;
 using Settlement.Sportsbook.Soccer.Requests;
 using Settlement.Sportsbook.Soccer.Services;
@@ -54,7 +55,7 @@ namespace Settlement.Sportsbook.Soccer.UnitTests.Handlers
             var result = new Result();
             calculateService.UnCalculate(Arg.Any<SettleRequest>()).Returns(result);
 
-            var actual = await handler.Handle(new SettleRequest { ActionName = ActionType.Uncalculate }, new System.Threading.CancellationToken());
+            var actual = await handler.Handle(new SettleRequest { ActionName = ActionType.UnCalculate }, new System.Threading.CancellationToken());
 
             Assert.Equal(result, actual);
         }

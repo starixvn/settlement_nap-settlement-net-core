@@ -8,7 +8,7 @@
 
         public const string CalculateFullTime = "CAL-FT";
 
-        public const string Uncalculate = "UNDO";
+        public const string UnCalculate = "UNDO";
 
         public const string RefundHalfTime = "REFUND-HT";
 

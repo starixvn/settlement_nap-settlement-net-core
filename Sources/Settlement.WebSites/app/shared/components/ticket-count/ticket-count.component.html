@@ -1,0 +1,25 @@
+<table class="table-ticket">
+    <thead>
+        <tr>
+            <td></td>
+            <td>
+                Running
+            </td>
+            <td>
+                Marked
+            </td>
+
+            <td>
+                Settled
+            </td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngIf="ticketCounts">
+            <td>{{ticketCounts.groupName}}</td>
+            <td>{{ticketCounts.betRunningCount}}</td>
+            <td>{{ticketCounts.betMarkedCount}}</td>
+            <td>{{ticketCounts.betSettledCount}}</td>
+        </tr>
+    </tbody>
+</table>

@@ -16,7 +16,6 @@ namespace Settlement.WebSites.Configurations
             services.AddTransient<IExternalScoreService, ExternalScoreServiceImp>();
             services.AddTransient<IMatchResultDetailService, MatchResultDetailServiceImp>();
             services.AddTransient<IMatchService, MatchServiceImp>();
-            services.AddTransient<IScoreSetService, ScoreSetServiceImp>();
             services.AddTransient<EventManagement.Services.IScoreService, EventManagement.Services.ScoreServiceImp>();
             services.AddTransient<EventManagement.Services.SpecificService.Tennis.IScoreService, EventManagement.Services.SpecificService.Tennis.ScoreServiceImp>();
         }

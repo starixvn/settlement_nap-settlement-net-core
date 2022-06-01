@@ -1,0 +1,114 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "newProjectRoot": "projects",
+  "projects": {
+    "notification": {
+      "root": "app",
+      "sourceRoot": "notification",
+      "projectType": "application",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "aot": true,
+            "outputPath": "../wwwroot/notification",
+            "index": "notification/index.cshtml",
+            "main": "notification/main.ts",
+            "tsConfig": "notification/tsconfig.app.json",
+            "polyfills": "polyfills.ts",
+            "styles": [],
+            "allowedCommonJsDependencies": [
+              "lodash"
+           ]
+          },
+          "configurations": {
+            "dev": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
+              "optimization": false,
+              "sourceMap": true,
+              "namedChunks": true,
+              "aot": false,
+              "extractLicenses": false,
+              "vendorChunk": true,
+              "buildOptimizer": false
+            },
+            "prod": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "environments/environment.ts",
+                  "with": "environments/environment.prod.ts"
+                }
+              ]
+            },
+            "production": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "aot": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": false,
+              "deployUrl": "@ViewBag.NetCoreRootUrl/notification/"
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "proxyConfig": "proxy.conf.json",
+            "port": 5001,
+            "aot": false
+          },
+          "configurations": {
+            "dev": {
+              "browserTarget": "notification:build:dev"
+            },
+            "prod": {
+              "browserTarget": "notification:build:prod"
+            },
+            "production": {
+              "browserTarget": "notification:build:production"
+            }
+          },
+          "defaultConfiguration": "dev"
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "notification:build"
+          }
+        }
+      }
+    }
+  },
+  "defaultProject": "notification",
+  "schematics": {
+    "@schematics/angular:component": {
+      "inlineTemplate": false,
+      "skipTests": false,
+      "style": "less"
+    }
+  },
+  "cli": {
+    "analytics": "09292d6d-1293-4179-9639-00a7cd991d80"
+  }
+}
