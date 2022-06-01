@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using MediatR;
 
-namespace Settlement.Sportsbook.Aio.Requests
+namespace Settlement.ThirdPartyProducts.Requests
 {
     public class VoidBetRequest : IRequest
     {

@@ -6,17 +6,18 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using Fanex.Data.Repository;
+using Kaden.XmlConverter;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Setting.Models.Notification;
 using Settlement.Setting.Services;
-using Settlement.Sportsbook.Aio.Criteria;
-using Settlement.Sportsbook.Aio.Models;
-using Settlement.Sportsbook.Aio.Requests;
+using Settlement.ThirdPartyProducts.Criteria;
+using Settlement.ThirdPartyProducts.Models;
+using Settlement.ThirdPartyProducts.Requests;
 
-namespace Settlement.Sportsbook.Aio.Services
+namespace Settlement.ThirdPartyProducts.Services
 {
     public interface IVoidBetApiService
     {
@@ -29,7 +30,7 @@ namespace Settlement.Sportsbook.Aio.Services
 
         private readonly IConfiguration configuration;
 
-        private readonly ICreateQueryService createQueryService;
+        private readonly XmlConvertService xmlConvertService;
 
         private readonly SendMailService sendMailService;
 
@@ -48,7 +49,7 @@ namespace Settlement.Sportsbook.Aio.Services
         public VoidBetApiServiceImp(
             IDynamicRepository repository,
             IConfiguration configuration,
-            ICreateQueryService createQueryService,
+            XmlConvertService xmlConvertService,
             IMapper mapper,
             SendMailService sendMailService,
             IRefDataService refDataService)
@@ -56,7 +57,7 @@ namespace Settlement.Sportsbook.Aio.Services
             this.repository = repository;
             this.configuration = configuration;
             this.mapper = mapper;
-            this.createQueryService = createQueryService;
+            this.xmlConvertService = xmlConvertService;
             this.sendMailService = sendMailService;
             this.refDataService = refDataService;
         }
@@ -102,13 +103,23 @@ namespace Settlement.Sportsbook.Aio.Services
         private async Task<List<VoidBetInfo>> GetTicketInfo(VoidBetRequest request)
         {
             var listResource = request.SelectedResources.Select(i => new ResourceItem(i)).ToList();
-            var getTicketInfoCriteria = new GetTicketInfoCriteria()
+            var getTicketInfoCriteria = new GetTicketInfoCriteria
             {
                 MatchId = request.MatchId,
-                SelectedResources = createQueryService.CreateResources(listResource)
+                SelectedResources = CreateResources(listResource)
             };
 
             return (await repository.FetchAsync<VoidBetInfo>(getTicketInfoCriteria)).ToList();
+        }
+
+        private string CreateResources(List<ResourceItem> selectedResources)
+        {
+            var resources = new Resources<ResourceItem>
+            {
+                ResourceItems = selectedResources
+            };
+
+            return xmlConvertService.Serialize(resources);
         }
     }
 }

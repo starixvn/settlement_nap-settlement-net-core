@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Settlement.Core.Models;
 
-namespace Settlement.Sportsbook.Aio.Models
+namespace Settlement.ThirdPartyProducts.Models
 {
     public class VoidBetApiModel
     {

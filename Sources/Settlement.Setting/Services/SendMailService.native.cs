@@ -30,7 +30,7 @@ namespace Settlement.Setting.Services
 
         public void SendMail(NotificationModel item)
         {
-             var mailRecord = new MailRecord
+            var mailRecord = new MailRecord
             {
                 MailTo = MailTo(item.SportType),
                 Title = "NAP - Settlement System",
@@ -39,15 +39,18 @@ namespace Settlement.Setting.Services
             };
 
             using var mailClient = new Fanex.MailDeliver.MailClient.API.MailDeliver();
-            
+
             mailClient.SendMail(mailRecord);
         }
 
-        private string Subject(NotificationModel item) {
+        private string Subject(NotificationModel item)
+        {
             return $"Settlement issue - [{item.Action}] - [{item.MatchCode}/{item.MatchId}] {item.HomeName} - {item.AwayName}";
 
         }
-        private string MailTo(int sportType) {
+
+        private string MailTo(int sportType)
+        {
             return sportType switch
             {
                 SportType.Soccer => configuration.GetSection("EmailGroups:Soccer").Value,
@@ -56,11 +59,12 @@ namespace Settlement.Setting.Services
             };
         }
 
-        private string MailBody(NotificationModel item) {
+        private string MailBody(NotificationModel item)
+        {
             var filePath = environment.WebRootPath;
-            var pathWithFolderName = $"{Path.Combine(filePath, "email-templates")}{Path.DirectorySeparatorChar}notification-error.html";
+            var pathWithFolderName = item.SportType == SportType.BasketBall ? $"{Path.Combine(filePath, "email-templates")}{Path.DirectorySeparatorChar}void-bet-email.html" :
+                $"{Path.Combine(filePath, "email-templates")}{Path.DirectorySeparatorChar}notification-error.html";
             return Engine.Razor.RunCompile(File.ReadAllText(pathWithFolderName), "Alert Template", model: item);
-
         }
     }
 }

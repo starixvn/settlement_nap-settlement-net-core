@@ -18,20 +18,15 @@ namespace Settlement.Sportsbook.Aio.Handlers
         IRequestHandler<CheckRunningOddsRequest, Result>,
         IRequestHandler<SaveScoreRequest, Result>,
         IRequestHandler<SettleChildMatchRequest, Result>,
-        IRequestHandler<ResultSettingRequest, Boolean>,
-        IRequestHandler<VoidBetRequest>
+        IRequestHandler<ResultSettingRequest, Boolean>
 
     {
         private readonly IAioService aioService;
 
-        private readonly IVoidBetApiService voidBetApiService;
-
         public AioHandler(
-            IAioService aioService,
-            IVoidBetApiService voidBetApiService)
+            IAioService aioService)
         {
             this.aioService = aioService;
-            this.voidBetApiService = voidBetApiService;
         }
 
         public async Task<AioMatch> Handle(GetMatchRequest request, CancellationToken cancellationToken) =>
@@ -58,11 +53,5 @@ namespace Settlement.Sportsbook.Aio.Handlers
 
         public async Task<bool> Handle(ResultSettingRequest request, CancellationToken cancellationToken) =>
             await aioService.ResultSetting(request);
-
-        public async Task<Unit> Handle(VoidBetRequest request, CancellationToken cancellationToken)
-        {
-            await voidBetApiService.VoidBetApi(request);
-            return Unit.Value;
-        }
     }
 }

@@ -54,10 +54,5 @@ namespace Settlement.Sportsbook.Aio.Controllers
         [HttpPost]
         [LogRequestResponse]
         public async Task<IActionResult> ResultSetting(ResultSettingRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
-
-        [Route("void-bet")]
-        [HttpPost]
-        [LogRequestResponse]
-        public async Task<IActionResult> VoidBet(VoidBetRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
     }
 }

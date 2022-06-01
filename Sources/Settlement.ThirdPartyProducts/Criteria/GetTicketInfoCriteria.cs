@@ -1,6 +1,6 @@
 ﻿using Fanex.Data.Repository;
 
-namespace Settlement.Sportsbook.Aio.Criteria
+namespace Settlement.ThirdPartyProducts.Criteria
 {
     public class GetTicketInfoCriteria : NonQueryCommand
     {

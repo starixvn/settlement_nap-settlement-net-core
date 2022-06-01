@@ -14,11 +14,13 @@ namespace Settlement.WebSites.Configurations
             services.AddTransient<BetBuilderService, BetBuilderServiceImp>();
             services.AddTransient<ScoreService, ScoreServiceImp>();
             services.AddSingleton<PermissionService, BetBuilderPermissionServiceImp>();
+            services.AddTransient<IVoidBetApiService, VoidBetApiServiceImp>();
         }
 
         public static void ThirdPartyProductsConfigMediator(this IServiceCollection services)
         {
             services.AddMediatR(typeof(BetBuilderController).GetTypeInfo().Assembly);
+            services.AddMediatR(typeof(VoidBetController).GetTypeInfo().Assembly);
         }
     }
 }

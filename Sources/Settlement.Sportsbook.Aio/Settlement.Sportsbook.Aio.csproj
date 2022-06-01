@@ -14,6 +14,7 @@
 	  <Compile Remove="Models\ResourceIdItem.cs" />
 	  <Compile Remove="Models\ResultAio.cs" />
 	  <Compile Remove="MapperFactory\GetFetchService.cs" />
+	  <Compile Remove="Models\VoidBetApiModel.cs" />
 	  <Compile Remove="Requests\CheckMarkedTicketsParlayRequest.cs" />
 	  <Compile Remove="Requests\RefundParlayRequest.cs" />
 	  <Compile Remove="Services\ESport\MoveMatchMapperService.cs" />
