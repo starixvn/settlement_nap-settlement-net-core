@@ -1,4 +1,4 @@
-﻿namespace Settlement.Sportsbook.Aio.Models
+﻿namespace Settlement.Core.Models
 {
     public class VoidBetInfo
     {

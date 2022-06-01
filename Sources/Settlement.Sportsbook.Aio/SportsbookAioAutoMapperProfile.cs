@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Settlement.Setting.Models.Notification;
 using Settlement.Sportsbook.Aio.Criteria;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Requests;
@@ -22,6 +23,7 @@ namespace Settlement.Sportsbook.Aio
            .ForMember(dest => dest.SelectedResources, map => map.Ignore())
            .ForMember(dest => dest.MatchId, map => map.Ignore());
             CreateMap<ChildMatchModel, ResourceItem>();
+            CreateMap<VoidBetRequest, NotificationModel>();
         }
     }
 }

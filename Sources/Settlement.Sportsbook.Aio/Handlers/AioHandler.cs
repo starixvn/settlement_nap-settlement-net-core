@@ -61,7 +61,7 @@ namespace Settlement.Sportsbook.Aio.Handlers
 
         public async Task<Unit> Handle(VoidBetRequest request, CancellationToken cancellationToken)
         {
-            await voidBetApiService.VoidBet(request);
+            await voidBetApiService.VoidBetApi(request);
             return Unit.Value;
         }
     }

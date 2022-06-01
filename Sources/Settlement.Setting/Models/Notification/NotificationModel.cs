@@ -1,11 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Text.Json.Serialization;
+using Settlement.Core.Models;
 using Settlement.Core.Services;
 
 namespace Settlement.Setting.Models.Notification
 {
     public class NotificationModel
     {
+        private IEnumerable<VoidBetInfo> voidBetInfos;
+
         [JsonIgnore]
         public IRefDataService RefDataService { get; set; }
 
@@ -38,5 +43,15 @@ namespace Settlement.Setting.Models.Notification
         }
 
         public int SportType { get; set; }
+
+        public IEnumerable<VoidBetInfo> VoidBetInfos
+        {
+            get => voidBetInfos ?? new List<VoidBetInfo>();
+
+            set
+            {
+                voidBetInfos = value;
+            }
+        }
     }
 }

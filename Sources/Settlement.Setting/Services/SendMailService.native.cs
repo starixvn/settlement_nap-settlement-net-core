@@ -39,6 +39,7 @@ namespace Settlement.Setting.Services
             };
 
             using var mailClient = new Fanex.MailDeliver.MailClient.API.MailDeliver();
+            
             mailClient.SendMail(mailRecord);
         }
 
