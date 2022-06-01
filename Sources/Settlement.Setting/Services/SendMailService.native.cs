@@ -47,9 +47,12 @@ namespace Settlement.Setting.Services
 
         }
         private string MailTo(int sportType) {
-           return sportType == SportType.Soccer
-                    ? configuration.GetSection("EmailGroups:Soccer").Value
-                    : configuration.GetSection("EmailGroups:OtherSport").Value;
+            return sportType switch
+            {
+                SportType.Soccer => configuration.GetSection("EmailGroups:Soccer").Value,
+                SportType.BasketBall => configuration.GetSection("EmailGroups:VoidBet").Value,
+                _ => configuration.GetSection("EmailGroups:OtherSport").Value,
+            };
         }
 
         private string MailBody(NotificationModel item) {
