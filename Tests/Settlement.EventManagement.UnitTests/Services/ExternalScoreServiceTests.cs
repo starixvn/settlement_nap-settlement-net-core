@@ -18,11 +18,13 @@ namespace Settlement.EventManagement.UnitTests.Services
         [Fact]
         public void LoadExternalResultForOtherSports_SportSupportFullTimeOnly_SetExResult()
         {
-            var match = new Match();
-            match.MatchId = 12345;
-            match.SuspenderFullTime = "testing";
-            match.FinalHomeScore = 1;
-            match.FinalAwayScore = 2;
+            var match = new Match
+            {
+                MatchId = 12345,
+                SuspenderFullTime = "testing",
+                FinalHomeScore = 1,
+                FinalAwayScore = 2
+            };
             var listResultDetail = new List<ResultDetail>
             {
                 new ResultDetail { MatchId = 12345, ResourceId = "01", HomeValue = "1", AwayValue = "1", SourceId = 1, SourceName = "SBO"},
@@ -37,13 +39,15 @@ namespace Settlement.EventManagement.UnitTests.Services
         [Fact]
         public void LoadExternalResultForOtherSports_SportSupportFullTimeAndHalfTime_SetExResult()
         {
-            var match = new Match();
-            match.MatchId = 12345;
-            match.SuspenderFullTime = "testing";
-            match.FinalHomeScore = 1;
-            match.FinalAwayScore = 2;
-            match.HalfTimeHomeScore = 3;
-            match.HalfTimeAwayScore = 4;
+            var match = new Match
+            {
+                MatchId = 12345,
+                SuspenderFullTime = "testing",
+                FinalHomeScore = 1,
+                FinalAwayScore = 2,
+                HalfTimeHomeScore = 3,
+                HalfTimeAwayScore = 4
+            };
             var listResultDetail = new List<ResultDetail>
             {
                 new ResultDetail { MatchId = 12345, ResourceId = "01", HomeValue = "1", AwayValue = "1", SourceId = 1, SourceName = "SBO"},
@@ -59,8 +63,10 @@ namespace Settlement.EventManagement.UnitTests.Services
         [Fact]
         public void LoadExternalResultForBeachVolleyball_ExternalResultIsNotNull__SetExScoreOfMatch()
         {
-            var match = new Match();
-            match.MatchId = 12345;
+            var match = new Match
+            {
+                MatchId = 12345
+            };
             var listResultDetail = new List<ResultDetail>
             {
                 new ResultDetail { MatchId = 12345, ResourceId = "00", HomeValue = "1", AwayValue = "2", SourceId = 1, SourceName = "SBO"},

@@ -26,7 +26,6 @@ namespace Settlement.ThirdPartyProducts.Services
             this.userService = userService;
             this.siteSettings = siteSettings;
         }
-       
 
         public Permission Permission => new Permission
         {

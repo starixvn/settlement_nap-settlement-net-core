@@ -41,8 +41,13 @@ namespace Settlement.Sportsbook.Soccer.UnitTests.Services
             soccerBetStatusService = Substitute.For<ISoccerBetStatusService>();
             xmlConvertService = Substitute.For<XmlConvertService>();
             resourceService = Substitute.For<IResourceService>();
-            var context = new DefaultHttpContext();
-            context.Connection.RemoteIpAddress = new System.Net.IPAddress(1);
+            var context = new DefaultHttpContext
+            {
+                Connection =
+                {
+                    RemoteIpAddress = new System.Net.IPAddress(1)
+                }
+            };
             accessor.HttpContext = context;
             var mapperConfig = new MapperConfigurationExpression();
             mapperConfig.AddProfile<SoccerAutoMapperProfile>();

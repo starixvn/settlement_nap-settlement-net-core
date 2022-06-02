@@ -33,13 +33,13 @@ namespace Settlement.EventManagement.UnitTests.Services
                 scoreService);
         }
 
-        private MoreScores FakedScore => new MoreScores
+        private static MoreScores FakedScore => new MoreScores
         {
             HalfTimeScore = new Score("1", "2"),
             FinalScore = new Score("3", "4")
         };
 
-        private List<Match> Matches => new List<Match> {
+        private static List<Match> Matches => new List<Match> {
             new Match { MatchId = 1 }
         };
 

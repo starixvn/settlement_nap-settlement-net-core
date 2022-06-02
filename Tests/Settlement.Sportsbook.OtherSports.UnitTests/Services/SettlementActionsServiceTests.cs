@@ -20,10 +20,6 @@ namespace Settlement.Sportsbook.OtherSports.UnitTests.Services
 
         private readonly SettlementActionsService service;
 
-        private readonly INapSession currentSession;
-
-        private readonly IHttpContextAccessor accessor;
-
         private readonly IBetStatusService betStatusService;
 
         public SettlementActionsServiceTests()
@@ -33,11 +29,16 @@ namespace Settlement.Sportsbook.OtherSports.UnitTests.Services
             var config = new MapperConfiguration(mapperConfig);
             var mapper = new Mapper(config);
             repository = Substitute.For<IDynamicRepository>();
-            currentSession = Substitute.For<INapSession>();
+            var currentSession = Substitute.For<INapSession>();
             betStatusService = Substitute.For<IBetStatusService>();
-            accessor = Substitute.For<IHttpContextAccessor>();
-            var context = new DefaultHttpContext();
-            context.Connection.RemoteIpAddress = new System.Net.IPAddress(1);
+            var accessor = Substitute.For<IHttpContextAccessor>();
+            var context = new DefaultHttpContext
+            {
+                Connection =
+                {
+                    RemoteIpAddress = new System.Net.IPAddress(1)
+                }
+            };
             accessor.HttpContext = context;
 
             service = new SettlementActionsServiceImp(repository, accessor, currentSession, mapper, betStatusService);
