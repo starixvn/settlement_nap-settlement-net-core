@@ -9,6 +9,7 @@ using Fanex.Data.Repository;
 using Kaden.XmlConverter;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Setting.Models.Notification;
@@ -39,12 +40,6 @@ namespace Settlement.ThirdPartyProducts.Services
         private readonly IRefDataService refDataService;
 
         private static readonly HttpClient httpClient = new HttpClient();
-
-        private const string UncalculateAction = "UNDO";
-
-        private const string VoidBet = "VoidBet";
-
-        private const string UndoVoidBet = "UndoVoidBet";
 
         public VoidBetApiServiceImp(
             IDynamicRepository repository,
@@ -77,16 +72,21 @@ namespace Settlement.ThirdPartyProducts.Services
 
         private async Task SendRequest(string thirdPartyUrl, VoidBetRequest request, VoidBetApiModel model)
         {
-            var actionRequest = request.Action == UncalculateAction ? UndoVoidBet : VoidBet;
-            var apiUrl = $"{thirdPartyUrl}{actionRequest}";
-            var now = DateTime.Now;
-            var requestContent = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8,
-                "application/json");
+            var apiUrl = JackTimeApi(thirdPartyUrl, request.Action);
+            var requestContent = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8,"application/json");
             var response = await httpClient.PostAsync(new Uri(apiUrl), requestContent);
-            await HandleResponse(response, request, now, model);
+            await HandleResponse(response, request, model);
         }
 
-        private async Task HandleResponse(HttpResponseMessage response, VoidBetRequest request, DateTime startTime, VoidBetApiModel model)
+        private static string JackTimeApi(string thirdPartyUrl, string actionName)
+        {
+            const string voidBet = "VoidBet";
+            const string undoVoidBet = "UndoVoidBet";
+            var actionRequest = actionName.Equals(ActionType.UnCalculate) ? undoVoidBet : voidBet;
+            return $"{thirdPartyUrl}{actionRequest}";
+        }
+
+        private async Task HandleResponse(HttpResponseMessage response, VoidBetRequest request, VoidBetApiModel model)
         {
             if (!response.IsSuccessStatusCode)
             {
@@ -94,7 +94,7 @@ namespace Settlement.ThirdPartyProducts.Services
                 mailModel.RefDataService = refDataService;
                 mailModel.Message = await response.Content.ReadAsStringAsync();
                 mailModel.Action = $"CO-{mailModel.Action}-JackTime";
-                mailModel.StartTime = startTime;
+                mailModel.StartTime = DateTime.Now;
                 mailModel.VoidBetInfos = model.VoidBetInfos;
                 sendMailService.SendMail(mailModel);
             }
