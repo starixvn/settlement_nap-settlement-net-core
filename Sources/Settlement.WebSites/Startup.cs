@@ -38,6 +38,7 @@ namespace Settlement.WebSites
             ConfigureMessagePack(services);
             services.AddRazorPages();
             services.AddControllersWithViews();
+            services.AddHttpClient();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -54,7 +55,6 @@ namespace Settlement.WebSites
             app.UseCors(allowOrigin);
             app.UseAuthentication();
             app.UseAuthorization();
-            
 
             app.UseEndpoints(endpoints =>
             {

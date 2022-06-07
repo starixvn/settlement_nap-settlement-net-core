@@ -16,6 +16,7 @@
     <PackageReference Include="Kaden.Extensions" Version="2.0.0" />
     <PackageReference Include="Kaden.XmlConverter" Version="2.0.0" />
     <PackageReference Include="MediatR" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
   </ItemGroup>
 
   <ItemGroup>

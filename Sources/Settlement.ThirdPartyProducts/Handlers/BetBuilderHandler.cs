@@ -24,7 +24,7 @@ namespace Settlement.ThirdPartyProducts.Handlers
         private readonly BetBuilderService betBuilderService;
 
         public BetBuilderHandler(
-            MatchService matchService, 
+            MatchService matchService,
             PermissionService permissionService,
             BetBuilderService betBuilderService)
         {
@@ -38,7 +38,7 @@ namespace Settlement.ThirdPartyProducts.Handlers
             SportLeagues = await matchService.Search(request),
             Permission = permissionService.Permission
         };
-        
+
         public async Task<SelectionPermissionModel> Handle(GetSelectionRequest request, CancellationToken cancellationToken) => new SelectionPermissionModel
         {
             Permission = permissionService.Permission,
@@ -59,6 +59,5 @@ namespace Settlement.ThirdPartyProducts.Handlers
 
         public async Task<Result> Handle(CalculateRequest request, CancellationToken cancellationToken)
             => await betBuilderService.Calculate(request);
-
     }
 }

@@ -1,16 +1,16 @@
 ﻿using AutoMapper;
 using Fanex.Data.Repository;
+using Fanex.NAP.Client.Helpers.Web;
 using Kaden.XmlConverter;
+using Microsoft.AspNetCore.Http;
+using Settlement.Core.Models;
+using Settlement.Core.Services;
 using Settlement.ThirdPartyProducts.Criteria;
 using Settlement.ThirdPartyProducts.Models;
 using Settlement.ThirdPartyProducts.Requests;
-using Settlement.Core.Models;
-using Settlement.Core.Services;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Fanex.NAP.Client.Helpers.Web;
 
 namespace Settlement.ThirdPartyProducts.Services
 {

@@ -1,8 +1,8 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using MediatR;
+﻿using MediatR;
 using Settlement.ThirdPartyProducts.Requests;
 using Settlement.ThirdPartyProducts.Services;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Settlement.ThirdPartyProducts.Handlers
 {

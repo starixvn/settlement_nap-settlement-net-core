@@ -1,10 +1,10 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Mvc;
+using Settlement.Core.ActionFilters;
 using Settlement.ThirdPartyProducts.Models;
 using Settlement.ThirdPartyProducts.Requests;
 using System;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Settlement.Core.ActionFilters;
 
 namespace Settlement.ThirdPartyProducts.Controllers
 {

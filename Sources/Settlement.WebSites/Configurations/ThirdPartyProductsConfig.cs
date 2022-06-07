@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.Net.Http;
+using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 using MediatR;
 using Settlement.ThirdPartyProducts.Controllers;

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Settlement.ThirdPartyProducts.Requests
 {
-    public class SportRequest: IRequest<List<Sport>>
+    public class SportRequest : IRequest<List<Sport>>
     {
         public DateTime FromDate { get; set; }
 

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Fanex.Data.Repository;
 using Kaden.XmlConverter;
 using Microsoft.Extensions.Configuration;
@@ -17,6 +11,12 @@ using Settlement.Setting.Services;
 using Settlement.ThirdPartyProducts.Criteria;
 using Settlement.ThirdPartyProducts.Models;
 using Settlement.ThirdPartyProducts.Requests;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Settlement.ThirdPartyProducts.Services
 {
@@ -39,7 +39,7 @@ namespace Settlement.ThirdPartyProducts.Services
 
         private readonly IRefDataService refDataService;
 
-        private static readonly HttpClient httpClient = new HttpClient();
+        private readonly IHttpClientFactory httpClientFactory;
 
         public VoidBetApiServiceImp(
             IDynamicRepository repository,
@@ -47,7 +47,9 @@ namespace Settlement.ThirdPartyProducts.Services
             XmlConvertService xmlConvertService,
             IMapper mapper,
             SendMailService sendMailService,
-            IRefDataService refDataService)
+            IRefDataService refDataService,
+         IHttpClientFactory httpClientFactory)
+
         {
             this.repository = repository;
             this.configuration = configuration;
@@ -55,6 +57,7 @@ namespace Settlement.ThirdPartyProducts.Services
             this.xmlConvertService = xmlConvertService;
             this.sendMailService = sendMailService;
             this.refDataService = refDataService;
+            this.httpClientFactory = httpClientFactory;
         }
 
         public async Task VoidBetApi(VoidBetRequest request)
@@ -73,7 +76,8 @@ namespace Settlement.ThirdPartyProducts.Services
         private async Task SendRequest(string thirdPartyUrl, VoidBetRequest request, VoidBetApiModel model)
         {
             var apiUrl = JackTimeApi(thirdPartyUrl, request.Action);
-            var requestContent = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8,"application/json");
+            var requestContent = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json");
+            var httpClient = httpClientFactory.CreateClient();
             var response = await httpClient.PostAsync(new Uri(apiUrl), requestContent);
             await HandleResponse(response, request, model);
         }
