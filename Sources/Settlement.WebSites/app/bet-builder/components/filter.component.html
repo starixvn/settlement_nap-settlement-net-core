@@ -1,0 +1,57 @@
+﻿<div class="filter-bar">
+    <div class="line">
+    </div>
+    <div class="filter-bar-inner">
+        <div class="row">
+            <div class="col-md-2 field">
+                <label for="FromDate" class="inner-label from-date">
+                    From
+                </label>
+                <ngbd-date-picker [date]="fromDate" (change)="onSelectFromDate($event)"></ngbd-date-picker>
+            </div>
+            <div class="col-md-2 field">
+                <label for="ToDate" class="inner-label to-date">
+                    To
+                </label>
+                <ngbd-date-picker [date]="toDate" (change)="onSelectToDate($event)"></ngbd-date-picker>
+            </div>
+
+            <div class="col-md-2 bet-builder">
+                <label for="status" class="inner-label">
+                    Bet Builder Status
+                </label>
+                <new-multiple-select (formValue)="onSelectStatus($event)" [multipleSelect]="statuses"></new-multiple-select>
+            </div>
+        </div>
+
+        <div class="row row-2">
+            <div class="col-md-2 field">
+                <label for="matchCode" class="inner-label">
+                    Match Code/ID
+                </label>
+                <input name="matchCode" maxlength="50" type="text" [(ngModel)]="matchCode" class="match-code">
+            </div>
+            <div class="col-md-2 field sport">
+                <label for="Sports" class="inner-label">
+                    Sports
+                </label>
+                <div>
+                    <new-multiple-select (formValue)="onSelectSport($event)" [multipleSelect]="sportSelect"></new-multiple-select>
+                </div>
+            </div>
+            <div class="col-md-4 leagues field">
+                <label for="leagueId" class="inner-label">
+                    League
+                </label>
+                <div>
+                    <new-multiple-select (formValue)="onSelectLeague($event)" [multipleSelect]="leagueSelect"></new-multiple-select>
+                </div>
+            </div>
+            <div class="col-md-1">
+                <button class="button" (click)="search()">Submit</button>
+            </div>
+        </div>
+    </div>
+    <div class="line">
+    </div>
+</div>

@@ -1,0 +1,316 @@
+﻿@sprite: "../../wwwroot/css/images/sprite.png";
+
+.different-result {
+    background: #fcc;
+}
+.mat-dialog-title {
+    padding-top: 6px;
+}
+.dialog-close { 
+    margin-top: 0px;
+}
+.filter-bar {
+    .hasDatepicker {
+        width: 85px;
+        height: 21px;
+        border: 1px solid #d4d4d4;
+        padding: 3px;
+        color: #000;
+    }
+
+    .row{
+        height: 21px;
+    }
+    .ui-datepicker-trigger {
+        margin-top: -2px !important;
+    }
+
+    .field{
+        height: 21px;
+    }
+
+    .from-date {
+        padding-left: 56px;
+    }
+
+    .to-date {
+        padding-left: 27px;
+    }
+
+    .row-2 {
+        margin-top: 5px;
+    }
+
+    .match-code {
+        width: 103px;
+    }
+
+    .leagues {
+        left: 8px;
+    }
+
+    .status {
+        width: 80px;
+    }
+
+    .bet-builder{
+        right: 52px;
+    }
+    
+    .sport{
+        left: 5px;
+    }
+
+    .form-control {
+        color: #000;
+        height: 23px !important;
+        padding: 1px;
+    }
+}
+
+.custom-dialog-container .mat-dialog-container {
+    padding: 0px !important;
+}
+
+
+.table-calculation {
+    font-family: Tahoma, Arial, Helvetica, sans-serif;
+    font-size: 11px;
+    width: 100%;
+    .name {
+        padding-left: 25px !important;
+    }
+    .interval-score {
+        min-width: 250px;
+        width: 250px;
+        .bg-calculated {
+            background-color: transparent;
+            color: #0273FF;
+        }
+    }
+    .event{
+        width: 1029px;
+    }
+    .home-team-name {
+        font-weight: bold;
+        color: #6678e0;
+        font-size: 12px;
+        padding-left: 3px;
+        text-align: left;
+    }
+
+    .away-team-name {
+        font-weight: bold;
+        color: #008d95;
+        font-size: 12px;
+        padding-left: 3px;
+        text-align: left;
+    }
+
+    .content-scroll {
+        width: 100%;
+        max-height: 790px;
+    }
+
+    .bet-builder {
+        width: 150px;
+        border-bottom: 1px solid #cbc9ca;
+    }
+
+    .auto-setting {
+        width: 75px;
+    }
+
+    .league-setting {
+        text-align: center;
+    }
+
+    .icon-yes {
+        background: url(@sprite) no-repeat -36px -293px;
+        height: 16px;
+        width: 45px;
+        margin-left: 0;
+    }
+
+    .icon-no {
+        background: url(@sprite) no-repeat -86px -293px;
+        height: 16px;
+        width: 45px;
+        margin-left: 0;
+    }
+
+    .icon-no-disable {
+        background: url(@sprite) no-repeat -136px -293px;
+        height: 16px;
+        width: 45px;
+        margin-left: 0;
+        cursor: default !important;
+    }
+    
+    .icon-auto-disable {
+        background: url(@sprite) no-repeat -186px -293px;
+        height: 16px;
+        width: 45px;
+        margin-left: 0;
+        cursor: default !important;
+    }
+}
+
+.sport-name {
+    font-weight: bold;
+    height: 21px;
+    cursor: pointer;
+    color: #1d3968;
+    background-color: #a9a9a9;
+    padding: 2px 0 0 2px;
+}
+
+.match-detail {
+    width: 750px !important;
+}
+
+.filter-selection {
+    position: relative;
+    width: 998px;
+
+    .footer {
+        padding: 3px 12px 0 0;
+        width: 998px;
+        height: 30px;
+        border: solid 1px #C8C8C8;
+        text-align: right;
+    }
+
+    table {
+        .selection-name {
+            width: 488px;
+        }
+        .result {
+            width: 120px;
+        }
+
+        .result-status {
+            width: 180px;
+        }
+
+        .select-proceed {
+            width: 90px;
+        }
+    }
+
+    .table-scroll {
+        max-height: 530px;
+        overflow-y: scroll;
+        overflow-x: hidden;
+        border-right: solid 1px #C8C8C8;
+
+        table {
+            width: 100%;
+            font-family: Tahoma, Arial, Helvetica, sans-serif;
+            font-size: 11px;
+           
+            td, th {
+                border: solid 1px #cbcbcb;
+                padding: 1px;
+            }
+
+            tbody > tr {
+                line-height: 23px;
+            }
+
+            .group-selecion {
+                background-color: #cbc9ca;
+                height: 20px;
+                font-weight: bold;
+                text-align: left;
+                cursor: pointer;
+
+                span {
+                    float: left;
+                    padding-left: 3px;
+                }
+                .group-check-box {
+                    padding-left: 8px;
+                }
+            }
+
+            input[type="checkbox"] {
+                margin-left: 35px;
+            }
+
+            select {
+                width: 80px;
+                border: 1px solid #888;
+                color: #000;
+            }
+
+            select[disabled] {
+                background: #ccc;
+            }
+
+            .selected {
+                width: 69px;
+            }
+        }
+    }
+}
+
+.message-box {
+    display: block;
+    margin-bottom: 20px;
+}
+
+.icon-refresh {
+    background: url(@sprite) no-repeat;
+    background-position: -8px -341px;
+    cursor: pointer;
+    height: 23px;
+    margin: 5px 0;
+    width: 90px;
+
+    &:hover {
+        background-position: -105px -341px;
+    }
+}
+
+
+.collapse-icon {
+    cursor: pointer;
+    height: 21px;
+    position: relative;
+    width: 21px;
+    padding-right: 10px;
+
+    &:before,
+    &:after {
+        background: #000;
+        content: '';
+        height: 2px;
+        left: 0;
+        position: absolute;
+        top: 6px;
+        width: 10px;
+        transition: transform 500ms ease;
+        transform-origin: center;
+    }
+
+    &.collapsed {
+        &:after {
+            transform: rotate(90deg);
+        }
+
+        &:before {
+            transform: rotate(180deg);
+        }
+    }
+}
+
+.quarter-score{
+    width: 25px;
+}
+
+.bet-builder-app {
+    padding: 5px;
+    font-family: Tahoma, Arial, Helvetica, sans-serif;
+    font-size: 11px;
+}

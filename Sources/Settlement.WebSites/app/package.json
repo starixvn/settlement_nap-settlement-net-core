@@ -7,6 +7,7 @@
   "scripts": {
     "ng": "ng",
     "notification": "ng build --configuration production --project=notification",
+    "bet-builder": "ng build --configuration production --project=bet-builder",
     "start": "ng serve",
     "test": "jest --debug --no-cache tennis/components/app.component.spec.ts",
     "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand basketball/components/app.component.spec.ts",

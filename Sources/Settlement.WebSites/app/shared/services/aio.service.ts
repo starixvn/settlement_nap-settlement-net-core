@@ -37,14 +37,11 @@ export class AioService {
     }
 
     public changeResultSetting(query: object): Observable<boolean> {
-        const newApiUrl = _.isEmpty(this.apiUrl) ? 'api/sportsbook-aio/result-setting' : `${this.apiUrl}/api/aio/result-setting`;
-        return this.httpRequestService.postJson(query, newApiUrl);
+        return this.httpRequestService.postJson(query, `${this.apiUrl}/api/aio/result-setting`);
     }
 
     private getLastestMatchResult(query: object) {
-        const newApiUrl = _.isEmpty(this.apiUrl) ? `api/sportsbook-aio/get-lastest-match-result` :
-            `${this.apiUrl}/api/aio/get-recal-result`;
-        return this.httpRequestService.postJson(query, newApiUrl);
+        return this.httpRequestService.postJson(query, `${this.apiUrl}/api/aio/get-recal-result`);
     }
 
     public saveScore(query: SaveScoreQuery) {
@@ -70,6 +67,11 @@ export class AioService {
     public checkingStatus(query: object) {
         const url = `api/sportsbook-refund/checking-status`;
         return this.httpRequestService.postJson(query, url);
+    }
+
+    public voidBet(query: object) {
+        const newApiUrl =  `${this.apiUrl}/api/void-bet/update`;
+        return this.httpRequestService.postJson(query, newApiUrl);
     }
 
     public verifyChangedSettledTickets(resultDetails: GeneralResultDetail[], query: object): Observable<boolean> {
@@ -132,7 +134,7 @@ export class AioService {
 
     public changeConfirmResultSetting(message: string, matchId: number, resourceIds: string,
         isEnabled: boolean, hedgeMatchDetail: HedgeMatchDetail, oldMatchDetail: HedgeMatchDetail = null) {
-        this.warningDialogMessage.title = Language.ConfirmationBoxTitle;
+        this.warningDialogMessage.title = Language.confirmationBox;
         this.warningDialogMessage.message = message;
         this.messageBoxService.confirm(this.warningDialogMessage, async () => {
             const query = new ResultSettingQuery(matchId, ResultSettingType.confirmRefund,

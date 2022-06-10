@@ -4,7 +4,6 @@ export * from './message-box.service.native';
 export * from './verify-date.service';
 export * from './close-popup.service.native';
 export * from './re-checkin.service.native';
-export * from './ticket.service';
 export * from './dialog-box.service.native';
 export * from './aio.service';
 export * from './generate-filter.service';
