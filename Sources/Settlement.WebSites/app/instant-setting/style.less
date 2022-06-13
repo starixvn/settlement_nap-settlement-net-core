@@ -1,0 +1,104 @@
+﻿@import "../../Styles/common.less";
+@sprite: "../../wwwroot/css/images/sprite.png";
+
+@title-color: #1d3968;
+
+.content {
+    width: auto;
+
+    .check-box {
+        padding-left: 180px;
+    }
+    
+    .button-payout-setting {
+        margin-left: 200px;
+    }
+}
+.auto-container, .time-container {
+    padding-top: 9px;
+    padding-left: 6px;
+
+    div {
+        padding: 3px 3px 15px 3px;
+        font-size: 9pt;
+
+        input[type="text"] {
+            width: 40px;
+        }
+    }
+}
+
+.league {
+    color: @title-color;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-bottom: -10px;
+}
+
+.icon(@pos-x, @pos-y) {
+    background: url(@sprite) no-repeat;
+    background-position: @pos-x @pos-y;
+    float: left;
+    height: 5px;
+    width: 3px;
+    margin-right: 2px;
+    margin-top: 8px;
+}
+
+.icon {
+    .icon(-71px, -67px);
+}
+.setting-container {
+    padding-top: 30px;
+    padding-left: 60px;
+    div {
+        font-size: 9pt;
+    }
+
+    .remark-icon-container(@width: 34px, @height: 14px, @marginleft: 4px) {
+        height: @height;
+        margin-left: @marginleft;
+        width: @width;
+    }
+
+    .remark-line {
+        padding-bottom: 16px;
+    }
+
+    .remark-status {
+        .remark-icon {
+            background: url(@sprite) no-repeat;
+            height: 14px;
+            margin-left: 4px;
+            width: 34px;
+            cursor: pointer;
+
+            &.icon-yes {
+                background-position: -120px -32px;
+            }
+
+            &.icon-no {
+                background-position: -64px -32px;
+            }
+
+            &.icon-no-disabled {
+                background-position: -8px -32px;
+                cursor: default;
+            }
+
+            &.icon-yes-disabled {
+                background-position: -234px -292px;
+                cursor: default;
+            }
+
+            &.tooltip-inner {
+                background: none !important;
+                background-color: #1E1E1E !important;
+            }
+        }
+    }
+}
+
+.message-box {
+    display: block;
+}

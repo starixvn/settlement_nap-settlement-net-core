@@ -3,7 +3,7 @@
     "target": "http://localhost:55201/",
     "secure": false
   },
-  "/Content": {
+  "/": {
     "target": "http://localhost:55201/",
     "secure": false
   },

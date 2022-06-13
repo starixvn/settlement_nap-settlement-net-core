@@ -1,0 +1,22 @@
+﻿<div class="time-container">
+    <div class="league" ng-bind-html="">
+        <div class="icon">
+        </div>
+        {{leagueName}}
+    </div>
+    <div *ngIf='pageType === "InstantTime"; else DirectTime'>Please input new value of waiting-time setting for Auto Instant Calculation on this League</div>
+    <ng-template #DirectTime><div>Please input new value of waiting-time setting for Direct Settlement on this League</div></ng-template>
+    <div>New waiting-time setting: <input type="text" [(ngModel)]="time" myOnlyInteger maxlength="3" /> seconds</div>
+    <div>
+        <button class="button" (click)="proceed()">
+            Proceed
+        </button>
+        <button class="button" (click)="cancel()">
+            Cancel
+        </button>
+    </div>
+    <div class="message-box" *ngIf="errorMessage">
+        <div class="icon error"></div>
+        <div class="message-info error">{{errorMessage}}</div>
+    </div>
+</div>
