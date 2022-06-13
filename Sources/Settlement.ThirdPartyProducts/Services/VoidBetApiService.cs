@@ -17,6 +17,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Fanex.Logging;
 
 namespace Settlement.ThirdPartyProducts.Services
 {
@@ -79,6 +80,7 @@ namespace Settlement.ThirdPartyProducts.Services
             var requestContent = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json");
             var httpClient = httpClientFactory.CreateClient();
             var response = await httpClient.PostAsync(new Uri(apiUrl), requestContent);
+            await LogService.InfoAsync(await requestContent.ReadAsStringAsync());
             await HandleResponse(response, request, model);
         }
 
@@ -106,14 +108,16 @@ namespace Settlement.ThirdPartyProducts.Services
 
         private async Task<List<VoidBetInfo>> GetTicketInfo(VoidBetRequest request)
         {
+            const int statusIdRefund = 103;
             var listResource = request.SelectedResources.Select(i => new ResourceItem(i)).ToList();
             var getTicketInfoCriteria = new GetTicketInfoCriteria
             {
                 MatchId = request.MatchId,
                 SelectedResources = CreateResources(listResource)
             };
+            var listVoidBetInfo = (await repository.FetchAsync<VoidBetInfo>(getTicketInfoCriteria)).ToList();
 
-            return (await repository.FetchAsync<VoidBetInfo>(getTicketInfoCriteria)).ToList();
+            return request.Action == ActionType.UnCalculate ? listVoidBetInfo.FindAll(item => item.StatusId == statusIdRefund) : listVoidBetInfo;
         }
 
         private string CreateResources(List<ResourceItem> selectedResources)

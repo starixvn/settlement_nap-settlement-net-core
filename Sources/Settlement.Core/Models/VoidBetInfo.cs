@@ -5,5 +5,7 @@
         public string TransId { get; set; }
 
         public string CustId { get; set; }
+
+        public int StatusId { get; set; }
     }
 }
