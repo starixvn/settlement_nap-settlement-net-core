@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using System.Collections.Generic;
+using Settlement.Core.Models;
 
 namespace Settlement.ThirdPartyProducts.Requests
 {
@@ -9,7 +10,7 @@ namespace Settlement.ThirdPartyProducts.Requests
 
         public string MatchCode { get; set; }
 
-        public List<string> SelectedResources { get; set; }
+        public List<VoidBetInfo> VoidBetInfos { get; set; }
 
         public string Action { get; set; }
 

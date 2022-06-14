@@ -17,13 +17,14 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Fanex.Logging;
 
 namespace Settlement.ThirdPartyProducts.Services
 {
     public interface IVoidBetApiService
     {
         Task VoidBetApi(VoidBetRequest request);
+
+        Task<List<VoidBetInfo>> GetTicketInfo(GetTicketInfo request);
     }
 
     public class VoidBetApiServiceImp : IVoidBetApiService
@@ -65,7 +66,7 @@ namespace Settlement.ThirdPartyProducts.Services
         {
             var voidBetApiModel = new VoidBetApiModel
             {
-                VoidBetInfos = await GetTicketInfo(request)
+                VoidBetInfos = request.VoidBetInfos
             };
             var thirdPartyUrl = configuration.GetSection("ThirdPartyJackTimeUrl").Value;
             if (!string.IsNullOrEmpty(thirdPartyUrl) && voidBetApiModel.VoidBetInfos.Any())
@@ -80,7 +81,6 @@ namespace Settlement.ThirdPartyProducts.Services
             var requestContent = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json");
             var httpClient = httpClientFactory.CreateClient();
             var response = await httpClient.PostAsync(new Uri(apiUrl), requestContent);
-            await LogService.InfoAsync(await requestContent.ReadAsStringAsync());
             await HandleResponse(response, request, model);
         }
 
@@ -106,9 +106,8 @@ namespace Settlement.ThirdPartyProducts.Services
             }
         }
 
-        private async Task<List<VoidBetInfo>> GetTicketInfo(VoidBetRequest request)
+        public async Task<List<VoidBetInfo>> GetTicketInfo(GetTicketInfo request)
         {
-            const int statusIdRefund = 103;
             var listResource = request.SelectedResources.Select(i => new ResourceItem(i)).ToList();
             var getTicketInfoCriteria = new GetTicketInfoCriteria
             {
@@ -117,7 +116,18 @@ namespace Settlement.ThirdPartyProducts.Services
             };
             var listVoidBetInfo = (await repository.FetchAsync<VoidBetInfo>(getTicketInfoCriteria)).ToList();
 
-            return request.Action == ActionType.UnCalculate ? listVoidBetInfo.FindAll(item => item.StatusId == statusIdRefund) : listVoidBetInfo;
+            return handleListVoidBet(listVoidBetInfo, request.Action);
+        }
+
+        private List<VoidBetInfo> handleListVoidBet(List<VoidBetInfo> voidBetInfos, string action)
+        {
+            const int statusIdRefund = 103;
+            if (action == ActionType.UnCalculate)
+            {
+                voidBetInfos = voidBetInfos.Where(item => item.StatusId == statusIdRefund).ToList();
+            }
+
+            return voidBetInfos;
         }
 
         private string CreateResources(List<ResourceItem> selectedResources)

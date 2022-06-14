@@ -22,5 +22,10 @@ namespace Settlement.ThirdPartyProducts.Controllers
         [HttpPost]
         [LogRequestResponse]
         public async Task<IActionResult> VoidBet(VoidBetRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+
+        [Route("get-ticket")]
+        [HttpPost]
+        [LogRequestResponse]
+        public async Task<IActionResult> GetTicket(GetTicketInfo request) => Ok(await mediator.Send(request).ConfigureAwait(false));
     }
 }
