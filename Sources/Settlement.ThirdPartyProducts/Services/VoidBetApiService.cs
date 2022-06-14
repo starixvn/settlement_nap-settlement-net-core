@@ -116,14 +116,14 @@ namespace Settlement.ThirdPartyProducts.Services
             };
             var listVoidBetInfo = (await repository.FetchAsync<VoidBetInfo>(getTicketInfoCriteria)).ToList();
 
-            return handleListVoidBet(listVoidBetInfo, request.Action);
+            return HandleListVoidBet(listVoidBetInfo, request.Action);
         }
 
-        private List<VoidBetInfo> handleListVoidBet(List<VoidBetInfo> voidBetInfos, string action)
+        private static List<VoidBetInfo> HandleListVoidBet(List<VoidBetInfo> voidBetInfos, string action)
         {
-            const int statusIdRefund = 103;
-            if (action == ActionType.UnCalculate)
+            if (action.Equals(ActionType.UnCalculate))
             {
+                const int statusIdRefund = 103;
                 voidBetInfos = voidBetInfos.Where(item => item.StatusId == statusIdRefund).ToList();
             }
 
