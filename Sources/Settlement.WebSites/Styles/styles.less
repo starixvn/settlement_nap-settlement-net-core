@@ -589,7 +589,7 @@ header {
 
                 .datetime {
                     .icon {
-                        background: url("images/sprite.png") no-repeat scroll -288px -62px transparent;
+                        background: url(@sprite) no-repeat scroll -288px -62px transparent;
                         padding-left: 16px;
                     }
 
@@ -610,264 +610,364 @@ header {
 /********************************************************/
 /*                     FILTER                    */
 /********************************************************/
-section {
-    .attention {
-        padding: 10px;
 
-        .icon {
-            background: url(@sprite) no-repeat -121px -50px;
-            height: 35px;
-            width: 35px;
+.attention {
+    padding: 10px;
+
+    .icon {
+        background: url(@sprite) no-repeat -121px -50px;
+        height: 35px;
+        width: 35px;
+        float: left;
+    }
+
+    .content {
+        color: #FF8933;
+        padding: 8px 0 0 40px;
+        font-size: 12px;
+    }
+}
+
+.specific-link {
+    color: Blue;
+    cursor: pointer;
+
+    &:hover {
+        color: #D2592D;
+    }
+}
+
+.filter-bar {
+    background: url("images/filter_bg.png") repeat scroll 0 0 rgba(0, 0, 0, 0);
+    color: #717171;
+    font-size: 11px;
+    padding-top: 4px;
+
+    .filter-bar-inner {
+        padding: 5px 20px;
+
+        .inner-label {
             float: left;
-        }
-
-        .content {
-            color: #FF8933;
-            padding: 8px 0 0 40px;
-            font-size: 12px;
+            margin: 2px 8px 0 8px;
+            font-weight: bold;
         }
     }
 
-    .specific-link {
-        color: Blue;
+    .line {
+        border-bottom: 1px solid #CDCDCD;
+        border-top: 1px solid #FFFFFF;
+        height: 0;
+        margin-bottom: 2px;
+    }
+
+    .ui-datepicker {
+        float: left;
+        background: url(@sprite) no-repeat -5px -58px;
+        width: 21px;
+        height: 21px;
+        cursor: pointer;
+    }
+
+    .ui-combobox-input {
+        height: 21px !important;
+    }
+
+    .select-status {
+        width: 100px;
+    }
+
+    .field > * {
+        vertical-align: middle;
+
+        input[type="checkbox"] {
+            margin: 0;
+        }
+    }
+
+    .field > input[type="checkbox"] {
+        margin: 0;
+    }
+
+    .select-sport-type {
+        width: 83px;
+    }
+
+    .select-league {
+        width: 300px;
+    }
+}
+/********************************************************/
+/*					      TAB TITLE                     */
+/********************************************************/
+#tab-title {
+    div {
+        float: left;
+        padding-top: 15px;
+    }
+
+    .icon {
+        margin: 13px 0 0 2px;
+        background: url(@sprite) no-repeat -71px -67px;
+        width: 3px;
+        height: 5px;
+    }
+
+    .name {
+        padding: 7px 7px 0 3px;
+        text-align: left;
+        color: #1d3968;
+        .bold;
+    }
+
+    .action {
+        padding: 7px 0 0 0;
+    }
+}
+/********************************************************/
+/*			RECALCULATION TABLE             */
+/********************************************************/
+#calc-popup {
+    width: 770px;
+    background: #fff;
+    padding-left: 5px;
+
+    a {
+        color: #0273FF;
         cursor: pointer;
 
         &:hover {
             color: #D2592D;
         }
     }
+    /*--- Override CSS for Refund popup page ---*/
+    .table-calculation {
+        min-width: 768px;
 
-    .filter-bar {
-        background: url("images/filter_bg.png") repeat scroll 0 0 rgba(0, 0, 0, 0);
-        color: #717171;
-        font-size: 11px;
-        padding-top: 4px;
-
-        .filter-bar-inner {
-            padding: 5px 20px;
-
-            .inner-label {
-                float: left;
-                margin: 2px 8px 0 8px;
-                font-weight: bold;
-            }
+        .score {
+            width: 40px;
         }
 
-        .line {
-            border-bottom: 1px solid #CDCDCD;
-            border-top: 1px solid #FFFFFF;
-            height: 0;
-            margin-bottom: 2px;
+        .ex-score {
+            width: 50px !important;
         }
 
-        .ui-datepicker-trigger {
-            margin-top: -5px;
+        .score-betstatus {
+            width: 23px;
         }
 
-        .ui-combobox-input {
-            height: 21px !important;
+        .marked-refund {
+            min-width: 70px;
+            width: 70px
         }
+    }
 
-        .select-status {
-            width: 100px;
-        }
+    .code-link {
+        color: #000;
+        cursor: default;
+        text-decoration: none;
+    }
 
-        .field > * {
-            vertical-align: middle;
+    .set-directly {
+        height: 25px;
+        width: 768px;
+        padding-top: 3px;
+        border-left: solid 1px #C8C8C8;
+        border-right: solid 1px #C8C8C8;
+        border-bottom: solid 1px #C8C8C8;
+        text-align: right;
+        padding-right: 2px;
 
-            input[type="checkbox"] {
-                margin: 0;
-            }
-        }
-
-        .field > input[type="checkbox"] {
+        input[type="checkbox"] {
             margin: 0;
         }
+    }
 
-        .select-sport-type {
-            width: 83px;
+    .set-directly > * {
+        vertical-align: middle;
+        cursor: pointer;
+    }
+
+    .set-directly > div {
+        float: left;
+    }
+    /* Hedge match */
+    .hedge-match {
+        width: fit-content;
+        padding-right: 5px;
+
+        input {
+            margin: inherit;
+            vertical-align: middle;
         }
 
-        .select-league {
-            width: 300px;
+        label {
+            vertical-align: middle;
+            padding-left: 3px;
         }
     }
-    /********************************************************/
-    /*					      TAB TITLE                     */
-    /********************************************************/
-    #tab-title {
-        div {
-            float: left;
-            padding-top: 15px;
-        }
 
-        .icon {
-            margin: 13px 0 0 2px;
-            background: url(@sprite) no-repeat -71px -67px;
-            width: 3px;
-            height: 5px;
-        }
-
-        .name {
-            padding: 7px 7px 0 3px;
-            text-align: left;
-            color: #1d3968;
-            .bold;
-        }
-
-        .action {
-            padding: 7px 0 0 0;
-        }
+    .check-box {
+        padding-left: 35px;
     }
-    /********************************************************/
-    /*			RECALCULATION TABLE             */
-    /********************************************************/
-    #calc-popup {
-        width: 770px;
-        background: #fff;
+
+    .check-box > * {
+        margin: 0;
+        vertical-align: middle;
+    }
+
+    #score-confirm {
         padding-left: 5px;
 
-        a {
-            color: #0273FF;
-            cursor: pointer;
-
-            &:hover {
-                color: #D2592D;
-            }
-        }
-        /*--- Override CSS for Refund popup page ---*/
-        .table-calculation {
-            min-width: 768px;
-
-            .score {
-                width: 40px;
-            }
-
-            .ex-score {
-                width: 50px !important;
-            }
-
-            .score-betstatus {
-                width: 23px;
-            }
-
-            .marked-refund {
-                min-width: 70px;
-                width: 70px
-            }
-        }
-
-        .code-link {
-            color: #000;
-            cursor: default;
-            text-decoration: none;
-        }
-
         .set-directly {
-            height: 25px;
-            width: 768px;
-            padding-top: 3px;
-            border-left: solid 1px #C8C8C8;
-            border-right: solid 1px #C8C8C8;
-            border-bottom: solid 1px #C8C8C8;
+            height: 27px;
+            width: 490px;
+        }
+    }
+
+    .table-ticket {
+        width: 410px;
+        margin-top: 9px;
+
+        thead {
+            color: #fff;
+            text-align: center;
+        }
+
+        tbody {
             text-align: right;
-            padding-right: 2px;
-
-            input[type="checkbox"] {
-                margin: 0;
-            }
         }
 
-        .set-directly > * {
-            vertical-align: middle;
-            cursor: pointer;
-        }
-
-        .set-directly > div {
-            float: left;
-        }
-        /* Hedge match */
-        .hedge-match {
-            width: fit-content;
+        td {
+            border: solid 1px #cbcbcb;
+            width: 100px;
             padding-right: 5px;
+        }
 
-            input {
-                margin: inherit;
-                vertical-align: middle;
+        td:nth-child(1) {
+            min-width: 70px;
+            border: solid 1px #cbcbcb;
+            background-color: #295091;
+            text-align: center;
+            color: #fff;
+        }
+    }
+    /* Calc Button */
+    .calc-action {
+        width: 479px;
+        border: 1px solid #c8c8c8;
+        margin: 10px 0;
+        text-align: center;
+        float: left;
+        font-weight: bold;
+        color: #FFF;
+
+        .show-button {
+            .button {
+                .button();
+                margin: 3px 0 0 5px;
             }
 
-            label {
-                vertical-align: middle;
-                padding-left: 3px;
+            .button-disabled {
+                .button_disabled();
+                margin: 3px 0 0 5px;
             }
         }
 
-        .check-box {
-            padding-left: 35px;
-        }
+        .row-1 {
+            clear: both;
+            color: #000;
 
-        .check-box > * {
-            margin: 0;
-            vertical-align: middle;
-        }
+            div {
+                border-bottom: 1px solid #c8c8c8;
+                font-weight: bold;
+                float: left;
+                height: 29px;
+                width: 80px;
+            }
 
-        #score-confirm {
-            padding-left: 5px;
+            .header {
+                line-height: 27px;
+            }
 
-            .set-directly {
-                height: 27px;
-                width: 490px;
+            .status {
+                width: 138px;
+                line-height: 27px;
+                border-left: 1px solid #c8c8c8;
+                border-right: 1px solid #c8c8c8;
+
+                &.bg-calculated {
+                    background-color: @bg_calculated;
+                }
+
+                &.bg-marked {
+                    background-color: @bg_marked;
+                }
+
+                &.bg-refund {
+                    background-color: @bg_refund;
+                }
+            }
+
+            .action-button {
+                width: 258px;
+                .show-button;
+
+                input[type="checkbox"] {
+                    margin: 8px 0 0;
+                }
             }
         }
 
-        .table-ticket {
-            width: 410px;
-            margin-top: 9px;
+        .row-2 {
+            height: 30px;
+            clear: both;
+            padding: 1px 0 0 122px;
 
-            thead {
-                color: #fff;
-                text-align: center;
+            .action-button {
+                input, div {
+                    float: left;
+                    margin: 3px;
+                }
+
+                .show-button;
+
+                .instant {
+                    width: 130px;
+                }
             }
 
-            tbody {
-                text-align: right;
-            }
-
-            td {
-                border: solid 1px #cbcbcb;
-                width: 100px;
-                padding-right: 5px;
-            }
-
-            td:nth-child(1) {
-                min-width: 70px;
-                border: solid 1px #cbcbcb;
-                background-color: #295091;
-                text-align: center;
-                color: #fff;
+            input[type="button"]:disabled {
+                .button_disabled();
             }
         }
-        /* Calc Button */
-        .calc-action {
-            width: 479px;
+    }
+    /* Ticket count*/
+    .ticket-count {
+        width: 485px;
+        float: left;
+    }
+    /* Goal Record */
+    .goal-column {
+        width: 280px;
+        float: left;
+    }
+
+    .goal-record {
+        .goal_record(right, 134px);
+    }
+
+    .ht-goal-record {
+        .goal_record(left, 134px);
+    }
+
+    .refund-action {
+        .row {
             border: 1px solid #c8c8c8;
             margin: 10px 0;
             text-align: center;
             float: left;
             font-weight: bold;
-            color: #FFF;
-
-            .show-button {
-                .button {
-                    .button();
-                    margin: 3px 0 0 5px;
-                }
-
-                .button-disabled {
-                    .button_disabled();
-                    margin: 3px 0 0 5px;
-                }
-            }
+            width: 332px;
 
             .row-1 {
                 clear: both;
@@ -878,245 +978,149 @@ section {
                     font-weight: bold;
                     float: left;
                     height: 29px;
-                    width: 80px;
+                    width: 70px;
                 }
 
                 .header {
                     line-height: 27px;
                 }
 
-                .status {
-                    width: 138px;
-                    line-height: 27px;
-                    border-left: 1px solid #c8c8c8;
-                    border-right: 1px solid #c8c8c8;
-
-                    &.bg-calculated {
-                        background-color: @bg_calculated;
-                    }
-
-                    &.bg-marked {
-                        background-color: @bg_marked;
-                    }
-
-                    &.bg-refund {
-                        background-color: @bg_refund;
-                    }
-                }
-
                 .action-button {
-                    width: 258px;
-                    .show-button;
-
-                    input[type="checkbox"] {
-                        margin: 8px 0 0;
-                    }
+                    border-left: 1px solid #c8c8c8;
+                    width: 130px;
+                    line-height: 27px;
                 }
             }
 
             .row-2 {
                 height: 30px;
                 clear: both;
-                padding: 1px 0 0 122px;
+                padding: 1px 0 0 30px;
+            }
 
-                .action-button {
-                    input, div {
-                        float: left;
-                        margin: 3px;
-                    }
-
-                    .show-button;
-
-                    .instant {
-                        width: 130px;
-                    }
-                }
-
-                input[type="button"]:disabled {
-                    .button_disabled();
+            .action-button {
+                input[type="checkbox"] {
+                    margin: 8px 0 0;
                 }
             }
         }
-        /* Ticket count*/
-        .ticket-count {
-            width: 485px;
-            float: left;
-        }
-        /* Goal Record */
-        .goal-column {
-            width: 280px;
-            float: left;
-        }
 
-        .goal-record {
-            .goal_record(right, 134px);
-        }
+        .display-button {
+            padding-top: 10px;
+            padding-left: 2px;
 
-        .ht-goal-record {
-            .goal_record(left, 134px);
-        }
+            .check-box {
+                padding-left: 10px;
+            }
 
-        .refund-action {
-            .row {
-                border: 1px solid #c8c8c8;
-                margin: 10px 0;
-                text-align: center;
+            .line-height-refund {
+                padding-top: 7px;
+            }
+
+            .icon {
+                background: url(@sprite) no-repeat -116px -68px;
+                width: 4px;
+                height: 4px;
                 float: left;
+                margin-top: 10px;
+                padding-left: 10px;
+            }
+
+            .normal-tickets {
+                font-size: 12px;
                 font-weight: bold;
-                width: 332px;
-
-                .row-1 {
-                    clear: both;
-                    color: #000;
-
-                    div {
-                        border-bottom: 1px solid #c8c8c8;
-                        font-weight: bold;
-                        float: left;
-                        height: 29px;
-                        width: 70px;
-                    }
-
-                    .header {
-                        line-height: 27px;
-                    }
-
-                    .action-button {
-                        border-left: 1px solid #c8c8c8;
-                        width: 130px;
-                        line-height: 27px;
-                    }
-                }
-
-                .row-2 {
-                    height: 30px;
-                    clear: both;
-                    padding: 1px 0 0 30px;
-                }
-
-                .action-button {
-                    input[type="checkbox"] {
-                        margin: 8px 0 0;
-                    }
-                }
+                color: @menu_text_o;
+                padding-top: 3px;
             }
 
-            .display-button {
-                padding-top: 10px;
-                padding-left: 2px;
-
-                .check-box {
-                    padding-left: 10px;
-                }
-
-                .line-height-refund {
-                    padding-top: 7px;
-                }
-
-                .icon {
-                    background: url(@sprite) no-repeat -116px -68px;
-                    width: 4px;
-                    height: 4px;
-                    float: left;
-                    margin-top: 10px;
-                    padding-left: 10px;
-                }
-
-                .normal-tickets {
-                    font-size: 12px;
-                    font-weight: bold;
-                    color: @menu_text_o;
-                    padding-top: 3px;
-                }
-
-                #IbcSpecificBettypes {
-                    display: none;
-                }
-            }
-
-            .refund-button {
-                .button_refund(131px);
-
-                &.button-disabled {
-                    .button_disabled(#D5D5D5,131px);
-                }
-            }
-
-            input[type="button"]:disabled {
-                .button_disabled(#D5D5D5, 131px);
-                margin: 3px;
-                float: left;
-                font-weight: bold;
-            }
-
-            .betdaq-button {
-                .button_refund(140px);
-            }
-
-            .refund-all-fglf {
-                .button_refund(140px);
+            #IbcSpecificBettypes {
+                display: none;
             }
         }
 
-        input[type="text"] {
-            height: 18px;
-            border: 1px solid #888888;
-            text-align: center;
-            font-size: 11px;
-        }
+        .refund-button {
+            .button_refund(131px);
 
-        .game-result {
-            max-height: 300px;
-            min-width: 784px;
-            overflow-y: scroll;
-            -ms-overflow-y: scroll;
-            overflow-x: hidden;
-            -ms-overflow-x: hidden;
-
-            .table-calculation {
-                min-width: 747px;
+            &.button-disabled {
+                .button_disabled(#D5D5D5,131px);
             }
         }
 
-        .icon-copy {
-            background: url(@sprite) no-repeat -213px -347px;
-            width: 10px;
-            height: 12px;
-            float: right;
-            margin-top: 3px;
-            margin-right: 3px;
-            margin-left: -15px;
-            cursor: pointer;
-
-            &:hover {
-                background: url(@sprite) no-repeat -198px -347px;
-            }
+        input[type="button"]:disabled {
+            .button_disabled(#D5D5D5, 131px);
+            margin: 3px;
+            float: left;
+            font-weight: bold;
         }
 
-        .table-provider {
-            .final-score {
-                color: #fd537d;
-            }
+        .betdaq-button {
+            .button_refund(140px);
         }
 
-        .disable-copy {
-            cursor: default !important;
-            background: url(@sprite) no-repeat -198px -347px !important;
+        .refund-all-fglf {
+            .button_refund(140px);
         }
     }
 
-    .score-width-soccer {
-        width: 32px;
+    input[type="text"] {
+        height: 18px;
+        border: 1px solid #888888;
+        text-align: center;
+        font-size: 11px;
     }
 
-    .score-width {
-        width: 20px;
+    .game-result {
+        max-height: 300px;
+        min-width: 784px;
+        overflow-y: scroll;
+        -ms-overflow-y: scroll;
+        overflow-x: hidden;
+        -ms-overflow-x: hidden;
+
+        .table-calculation {
+            min-width: 747px;
+        }
     }
 
-    .total-width {
-        width: 30px;
+    .icon-copy {
+        background: url(@sprite) no-repeat -213px -347px;
+        width: 10px;
+        height: 12px;
+        float: right;
+        margin-top: 3px;
+        margin-right: 3px;
+        margin-left: -15px;
+        cursor: pointer;
+
+        &:hover {
+            background: url(@sprite) no-repeat -198px -347px;
+        }
+    }
+
+    .table-provider {
+        .final-score {
+            color: #fd537d;
+        }
+    }
+
+    .disable-copy {
+        cursor: default !important;
+        background: url(@sprite) no-repeat -198px -347px !important;
     }
 }
+
+.score-width-soccer {
+    width: 32px;
+}
+
+.score-width {
+    width: 20px;
+}
+
+.total-width {
+    width: 30px;
+}
+
 
 /*--- Popup: Score-confirm for BetDaq Ticket Over/Under ---*/
 #score-confirm {

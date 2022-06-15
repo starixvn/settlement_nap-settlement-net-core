@@ -1,0 +1,26 @@
+<!DOCTYPE html><html lang="en"><head>
+      </head><body>@{
+        var path = @ViewBag.NetCoreRootUrl;
+    }
+    <base href="@path/">
+    <title>@ViewBag.Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+<link rel="stylesheet" href="number-game/styles.b4829e9b6b7dd4f63091.css" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="number-game/styles.b4829e9b6b7dd4f63091.css"></noscript>
+
+     @if (ViewBag.PageType == "MainPage")
+    {
+        <header>
+           @{ Html.RenderPartial("~/Views/Header.cshtml"); }
+        </header>
+    }
+    <div class="content">
+        <app-root>Loading...</app-root>
+    </div>
+    <script type="text/javascript">
+        var element = document.getElementById("NumberGame-menu");
+        element.className = "active-menu";
+    </script>
+<script src="number-game/runtime.12e53bd77baface2cb75.js" defer></script><script src="number-game/polyfills.f26cf2e5e947d51bbd14.js" defer></script><script src="number-game/main.b35bdbffd189d4e8a26d.js" defer></script>
+</body></html>

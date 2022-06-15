@@ -133,12 +133,12 @@ export class MatchesComponent implements Template, OnInit, OnDestroy {
         );
     }
 
-    public openPopupCalc( match: MatchDetail) {
-      this.popupService.popupCalc(match);
+    public openPopupCalc(match: MatchDetail) {
+      this.popupService.popupCalc(match, this.apiUrl);
     }
 
     public openPopupLog(match: MatchDetail) {
-        this.popupService.popupLog(match.matchId, this.multiSports.request.fromDate, this.multiSports.request.toDate );
+        this.popupService.popupLog(match.matchId, this.multiSports.request.fromDate, this.multiSports.request.toDate, this.apiUrl);
     }
 
     public getEventStatusColor(match: MatchDetail) {

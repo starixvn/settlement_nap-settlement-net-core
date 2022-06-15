@@ -1,0 +1,29 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    @{
+        var path = @Url.Content("~/");
+        var title = ViewBag.Title;
+    }
+    <base href=@path />
+    <title>@title</title>
+    @Styles.Render(BundleConfig.Bootstrap)
+    @Styles.Render(ManualCanculationBundle.ManualCalculationStyle)
+</head>
+<body>
+    <header>
+        @{
+            Html.RenderPartial("~/Areas/UserControl/Header.cshtml", (object)title);
+        }
+    </header>
+    <section>
+        <div id="body">
+            <div id="content" class="content"><app-root api-url="@ViewBag.ApiUrl">Loading...</app-root></div>
+        </div>
+    </section>
+    <script type="text/javascript">
+        var element = document.getElementById("NumberGame-menu");
+        element.className = "active-menu";
+    </script>
+</body>
+</html>

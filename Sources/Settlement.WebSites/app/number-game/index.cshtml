@@ -1,0 +1,28 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+      @{
+        var path = @ViewBag.NetCoreRootUrl;
+    }
+    <base href="@path/" />
+    <title>@ViewBag.Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+     @if (ViewBag.PageType == "MainPage")
+    {
+        <header>
+           @{ Html.RenderPartial("~/Views/Header.cshtml"); }
+        </header>
+    }
+    <div class="content">
+        <app-root>Loading...</app-root>
+    </div>
+    <script type="text/javascript">
+        var element = document.getElementById("NumberGame-menu");
+        element.className = "active-menu";
+    </script>
+</body>
+</html>
