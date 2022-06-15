@@ -33,7 +33,7 @@ export class EarlyBaseComponent {
         protected verificationBaseService: VerificationBaseService,
         protected aioService: AioService,
         protected toastrService: ToastrService) {
-        this.confirmationDialogMessage.title = Language.CalculateConfirmationBox;
+        this.confirmationDialogMessage.title = Language.confirmationBox;
     }
 
     public get selectedResources(): ResultDetail[] {

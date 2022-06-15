@@ -1,0 +1,14 @@
+{
+  "name": "Settlement",
+  "version": "0.0.0",
+  "private": true,
+  "devDependencies": {
+    "gulp": "4.0.2",
+    "gulp-less": "5.0.0",
+    "gulp-rename": "1.2.2",
+    "change-case": "3.0.0"
+  },
+  "dependencies": {
+    "chokidar": "^2.1.8"
+  }
+}

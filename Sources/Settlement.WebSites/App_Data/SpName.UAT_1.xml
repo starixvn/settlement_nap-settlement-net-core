@@ -18,6 +18,7 @@
     <Setting Key="NAP_Set_PlayerInfoSel" SpName="NAP_Set_PlayerInfoSel" DbName="DBPRO.bodb02.bodbAdminNet">
       <Mapping DataField="BetChoice" ObjectProperty="Value" />
     </Setting>
+    <Setting Key="NAP_Set_CashoutSel" SpName="NAP_Set_CashoutSel" DbName="DBTXN.bodb02.bodbAdminNet" />
   </Function>
 
   <Function Name="MoveTickets">

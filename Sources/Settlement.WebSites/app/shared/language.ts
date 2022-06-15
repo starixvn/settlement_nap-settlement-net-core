@@ -1,7 +1,6 @@
 ﻿export const Language = {
-    ConfirmationBoxTitle: 'Confirmation box',
+    confirmationBox: 'Confirmation box',
     CalculationWarning: 'Calculation warning',
-    CalculationConfirmBox: 'Calculate Confirmation Box',
     RefundWarning: 'Refund warning',
     SystemError: 'System error',
     SystemErrorMessage: 'Oops... you are here because of a system error, please notify the administrators',
@@ -11,7 +10,6 @@
     NotInputSelectedIntervals: 'Please input score for selected intervals.',
     NotSpecifyValidResults: 'Please specify valid results in the highlighted boxes.',
     NoFinalResultMessage: 'WARNING! "Final Result" must not be blank! Please input "Final Result" values!',
-    CalculateConfirmationBox: 'Calculate confirmation box',
     CalculationConfirmMessage: 'Please double check the score and confirm this match is OVER! '
         + 'You will not be able to cancel the CALCULATION and REUSE this match!',
     CalculationAdditionalConfirmation: 'Are you sure you want to proceed with the results below?',

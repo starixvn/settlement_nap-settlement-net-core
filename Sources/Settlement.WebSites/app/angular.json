@@ -98,9 +98,104 @@
           }
         }
       }
+    },
+    "bet-builder": {
+      "root": "app",
+      "sourceRoot": "bet-builder",
+      "projectType": "application",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "aot": true,
+            "outputPath": "../wwwroot/bet-builder",
+            "index": "bet-builder/index.cshtml",
+            "main": "bet-builder/main.ts",
+            "tsConfig": "bet-builder/tsconfig.app.json",
+            "polyfills": "polyfills.ts",
+            "styles": [
+              "shared/components/multiple-selection/multiple-select.component.less",
+              "shared/styles/material.style.less",
+              "shared/styles/styles.less",
+              "bet-builder/style.less"
+            ],
+            "allowedCommonJsDependencies": [
+              "lodash"
+           ]
+          },
+          "configurations": {
+            "dev": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
+              "optimization": false,
+              "sourceMap": true,
+              "namedChunks": true,
+              "aot": false,
+              "extractLicenses": false,
+              "vendorChunk": true,
+              "buildOptimizer": false
+            },
+            "prod": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "environments/environment.ts",
+                  "with": "environments/environment.prod.ts"
+                }
+              ]
+            },
+            "production": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "aot": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": false,
+              "deployUrl": "@ViewBag.NetCoreRootUrl/bet-builder/"
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "proxyConfig": "proxy.conf.json",
+            "port": 5001,
+            "aot": false
+          },
+          "configurations": {
+            "dev": {
+              "browserTarget": "bet-builder:build:dev"
+            },
+            "prod": {
+              "browserTarget": "bet-builder:build:prod"
+            },
+            "production": {
+              "browserTarget": "bet-builder:build:production"
+            }
+          },
+          "defaultConfiguration": "dev"
+        }
+      }
     }
   },
-  "defaultProject": "notification",
+  "defaultProject": "bet-builder",
   "schematics": {
     "@schematics/angular:component": {
       "inlineTemplate": false,

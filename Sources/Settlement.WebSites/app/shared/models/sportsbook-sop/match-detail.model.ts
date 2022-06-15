@@ -6,6 +6,8 @@
     public leagueId: number;
     public homeName: string;
     public awayName: string;
+    public homeId: number;
+    public awayId: number;
     public playTime: number;
     public bestOfMap: number;
     public map: MatchDetail;

@@ -15,26 +15,28 @@ namespace Settlement.FastMarkets.UnitTests.Services
 {
     public class SettingServiceTests
     {
-        private readonly IDynamicRepository dynamicRepository;
+        private readonly IDynamicRepository repository;
         private readonly ISettingService service;
-        private readonly XmlConvertService xmlConvertService;
-        private readonly INapSession currentSession;
-        private readonly IHttpContextAccessor accessor;
 
         public SettingServiceTests()
         {
-            dynamicRepository = Substitute.For<IDynamicRepository>();
-            xmlConvertService = Substitute.For<XmlConvertService>();
-            currentSession = Substitute.For<INapSession>();
-            accessor = Substitute.For<IHttpContextAccessor>();
+            repository = Substitute.For<IDynamicRepository>();
+            var xmlConvertService = Substitute.For<XmlConvertService>();
+            var currentSession = Substitute.For<INapSession>();
+            var accessor = Substitute.For<IHttpContextAccessor>();
             var mapperConfig = new MapperConfigurationExpression();
             mapperConfig.AddProfile<FastMarketAutoMapperProfile>();
             var config = new MapperConfiguration(mapperConfig);
             var mapper = new Mapper(config);
-            var context = new DefaultHttpContext();
-            context.Connection.RemoteIpAddress = new System.Net.IPAddress(1);
+            var context = new DefaultHttpContext
+            {
+                Connection =
+                {
+                    RemoteIpAddress = new System.Net.IPAddress(1)
+                }
+            };
             accessor.HttpContext = context;
-            service = new SettingServiceImp(dynamicRepository, xmlConvertService, mapper, currentSession, accessor);
+            service = new SettingServiceImp(repository, xmlConvertService, mapper, currentSession, accessor);
         }
         
         [Theory]
@@ -44,11 +46,11 @@ namespace Settlement.FastMarkets.UnitTests.Services
         {
             // Arrange
             var query = new UpdateWaterBreakSettingRequest();
-            dynamicRepository.ExecuteAsync(Arg.Do<UpdateWaterBreakSettingCriteria>(x =>
+            await repository.ExecuteAsync(Arg.Do<UpdateWaterBreakSettingCriteria>(x =>
             {
                 x.ErrCode = errorCode;
                 x.ErrMsg = errorMessage;
-            })).Returns(1);
+            }));
 
             // Act
             var result = await service.UpdateWaterBreakSetting(query);

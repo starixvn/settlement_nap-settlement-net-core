@@ -21,10 +21,6 @@ namespace Settlement.Sportsbook.OtherSports.UnitTests.Services
 
         private readonly SportsbookService service;
 
-        private readonly IRefDataService refDataService;
-
-        private readonly IBetStatusService betStatusService;
-
         public SportsbookServiceTests()
         {
             var mapperConfig = new MapperConfigurationExpression();
@@ -32,16 +28,15 @@ namespace Settlement.Sportsbook.OtherSports.UnitTests.Services
             var config = new MapperConfiguration(mapperConfig);
             var mapper = new Mapper(config);
             repository = Substitute.For<IDynamicRepository>();
-            refDataService = Substitute.For<IRefDataService>();
-            betStatusService = Substitute.For<IBetStatusService>();
+            var refDataService = Substitute.For<IRefDataService>();
+            var betStatusService = Substitute.For<IBetStatusService>();
             service = new SportsbookServiceImp(repository, refDataService, mapper, betStatusService);
         }
 
         [Fact]
         public async Task GetMatch_Always_FetchAndReturnMatchDetailModel()
         {
-            var matchDetails = new List<MatchDetail>();
-            matchDetails.Add(new MatchDetail());
+            var matchDetails = new List<MatchDetail> { new MatchDetail() };
             var fakeData = new ValueTuple<IEnumerable<MatchDetail>, IEnumerable<ResultDetail>, IEnumerable<TicketCounts>>(matchDetails, new List<ResultDetail>(), new List<TicketCounts>());
             repository.FetchMultipleAsync<MatchDetail, ResultDetail, TicketCounts>(Arg.Any<GetSportsbookMatchDetailCriteria>()).Returns(fakeData);
 

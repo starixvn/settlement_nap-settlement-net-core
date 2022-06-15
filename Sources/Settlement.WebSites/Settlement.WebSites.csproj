@@ -69,6 +69,20 @@
 		<Content Include="App_Data\SpName.xml">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
+		<Content Include="Styles\colors.less" />
+		<Content Include="Styles\common.less" />
+		<Content Include="Styles\grid.less" />
+		<Content Include="Styles\images\bg-menu-header.png" />
+		<Content Include="Styles\images\calendar.png" />
+		<Content Include="Styles\images\check-box.png" />
+		<Content Include="Styles\images\favicon.ico" />
+		<Content Include="Styles\images\filter_bg.png" />
+		<Content Include="Styles\images\loader.gif" />
+		<Content Include="Styles\images\lotto_ball.png" />
+		<Content Include="Styles\images\small-arrow-down.png" />
+		<Content Include="Styles\images\sprite.png" />
+		<Content Include="Styles\images\user.png" />
+		<Content Include="Styles\styles.less" />
 	</ItemGroup>
 
 	<ItemGroup>

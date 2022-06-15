@@ -1,0 +1,272 @@
+﻿/********************************************************/
+/*                     Functions                        */
+/********************************************************/
+
+.bg_linear_gradient (@value, @value_light) {
+    background: @value;
+    background: -moz-linear-gradient(@value_light, @value) @value;
+    background: -webkit-linear-gradient(@value_light, @value) @value;
+}
+
+.bg_linear_gradient_bt (@value, @value1) {
+    background: @value;
+    background: -moz-linear-gradient(@value1) repeat scroll 0 0 transparent;
+    background: -webkit-linear-gradient(@value1) repeat scroll 0 0 transparent;
+}
+
+.min_width(@value: 100px) {
+    min-width: @value;
+    width: @value;
+}
+
+.text_shadow(@value: 0em 0em 0.05em #000) {
+    text-shadow: @value;
+}
+
+.box_shadow (@value: 0 0 1px rgba(0,0,0,0.5)) {
+    box-shadow: @value;
+    -moz-box-shadow: @value;
+    -webkit-box-shadow: @value;
+}
+
+.icon(@width: 34px, @height: 14px, @marginleft: 4px) {
+    height: @height;
+    margin-left: @marginleft;
+    width: @width;
+}
+
+.link(@color: Yellow, @cursor: default, @textDecoration: none) {
+    color: @color;
+    cursor: @cursor;
+    text-decoration: @textDecoration;
+}
+
+.border_radius (@value: 3px) {
+    border-radius: @value;
+    -moz-border-radius: @value;
+    -webkit-border-radius: @value;
+}
+
+.transition (@value: all .1s ease-in-out) {
+    transition: @value;
+    -moz-transition: @value;
+    -webkit-transition: @value;
+    -o-transition: @value;
+}
+
+.match_home_away(@fontSize: 12px, @paddingLeft: 3px, @textAlign: left) {
+    font-size: @fontSize;
+    padding-left: @paddingLeft;
+    text-align: @textAlign;
+    float: left;
+}
+
+.first_last_goal(@url,@posisionX,@posisionY,@width) {
+    background: url(@url) no-repeat @posisionX @posisionY;
+    width: @width;
+    height: 16px;
+    float: left;
+}
+
+.button (@text: @white, @width: 88px) {
+    .border_radius(2px);
+    .text_shadow(0 1px rgba(0,0,0,0.3));
+    .box_shadow(inset 0px 1px 1px rgba(255,255,255,0.25));
+    border: solid 1px @menu_border;
+    .bg_linear_gradient(@menu_bg_light, #5578be);
+    background-color: #5578be;
+    color: @text;
+    text-decoration: none !important;
+    height: 22px;
+    width: @width;
+    padding: 2px 8px;
+    margin-right: 3px;
+    text-align: center;
+    font-weight: normal;
+
+    &:hover {
+        color: @text;
+        .bg_linear_gradient(#3b5fa3,@menu_bg_light);
+        .box_shadow( 0 0 4px 1px rgba(0, 0, 0, 0.1));
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+    &:active, &:focus {
+        .bg_linear_gradient(#5578be,@menu_bg_light);
+        .box_shadow( 0 0 4px 1px rgba(0, 0, 0, 0.1));
+    }
+}
+
+.button_refund_new (@text: @white, @width: 88px) {
+    .border_radius(2px);
+    .text_shadow(0 1px rgba(0,0,0,0.3));
+    .box_shadow(inset 0px 1px 1px rgba(255,255,255,0.25));
+    border: solid 1px @btn_refund_bg;
+    .bg_linear_gradient(@btn_refund_bg_light, @btn_refund_bg);
+    background-color: @btn_refund_bg;
+    color: @text;
+    text-decoration: none !important;
+    height: 22px;
+    width: @width;
+    padding: 2px 8px;
+    margin-right: 3px;
+    text-align: center;
+    font-weight: normal;
+
+    &:hover {
+        color: @text;
+        .bg_linear_gradient(@btn_refund_bg_hover, @btn_refund_bg_light);
+        .box_shadow( 0 0 4px 1px rgba(0, 0, 0, 0.1));
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+    &:active, &:focus {
+        .bg_linear_gradient(@btn_refund_bg, @btn_refund_bg_light);
+        .box_shadow( 0 0 4px 1px rgba(0, 0, 0, 0.1));
+    }
+}
+
+.button_refund (@width: 88px, @height: 22px, @menu_border: #4C6FB7) {
+    .border_radius(2px);
+    .box_shadow(inset 0px 1px 1px rgba(255,255,255,0.25));
+    border: solid 1px @menu_border;
+    .bg_linear_gradient(#E0E0E0,#FFFFFF);
+    color: #4C6FB7;
+    text-decoration: none !important;
+    height: @height;
+    width: @width;
+    padding: 2px 8px;
+    text-align: center;
+    font-weight: bold;
+    float: left;
+    margin: 3px;
+
+    &:hover {
+        color: #4E70B8;
+        .bg_linear_gradient(#FFFFFF, #E0E0E0);
+        .box_shadow( 0 0 4px 1px rgba(0, 0, 0, 0.1));
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+    &:active, &:focus {
+        .bg_linear_gradient(#FFFFFF,#E0E0E0);
+        .box_shadow( 0 0 4px 1px rgba(0, 0, 0, 0.1));
+    }
+}
+
+.button_disabled (@text: #D5D5D5, @width: 88px) {
+    .border_radius(2px);
+    .text_shadow(0 1px rgba(0,0,0,0.3));
+    .box_shadow(inset 0px 1px 1px rgba(255,255,255,0.25));
+    border: 1px solid #a9a9a9;
+    .bg_linear_gradient(#6A6A6A,#a9a9a9);
+    color: @text;
+    text-decoration: none !important;
+    height: 22px;
+    width: @width;
+    padding: 2px 8px;
+    text-align: center;
+    cursor: default;
+    font-weight: normal;
+
+    &:hover {
+        cursor: default;
+        .text_shadow(0 1px rgba(0,0,0,0.3));
+        .box_shadow(inset 0px 1px 1px rgba(255,255,255,0.25));
+        border: 1px solid #a9a9a9;
+        .bg_linear_gradient(#6A6A6A,#a9a9a9);
+        color: @text;
+    }
+}
+
+.toggle(@ordinateX: 15px, @ordinateY: 15px) {
+    background: url(@sprite) no-repeat @ordinateX @ordinateY;
+    width: 16px;
+    height: 16px;
+    float: left;
+    margin-top: 5px;
+    margin-right: 5px;
+}
+
+.goal_record(@float, @width) {
+    float: @float;
+    width: @width;
+    text-align: center;
+    clear: right;
+    margin: 10px -4px 0 0;
+
+    .header {
+        width: 134px;
+        background-color: @grid_header;
+        height: 23px;
+        color: #FFF;
+        line-height: 23px;
+        font-weight: bold;
+        clear: both;
+    }
+
+    .content {
+        .goal-row {
+            div {
+                border-bottom: 1px solid #C8C8C8;
+                border-right: 1px solid #C8C8C8;
+                line-height: 22px;
+                color: #6E6E6E;
+                width: 67px;
+                text-align: center;
+                float: left;
+            }
+
+            .goal-score {
+                border-right: 1px solid #BDBDBD;
+                border-left: 1px solid #C8C8C8;
+            }
+        }
+    }
+}
+
+.bettypes_block(@width: 250px, @col2: 50px) {
+    float: left;
+    text-align: center;
+    clear: right;
+    margin: 10px 0;
+
+    .header {
+        div {
+            background-color: @grid_header;
+            height: 23px;
+            color: #FFF;
+            line-height: 23px;
+            width: @width;
+            float: left;
+        }
+
+        .col-2 {
+            border-left: 1px solid #C8C8C8;
+            width: @col2;
+        }
+    }
+
+    .content {
+        div {
+            border-bottom: 1px solid #C8C8C8;
+            border-right: 1px solid #C8C8C8;
+            line-height: 22px;
+            color: #6E6E6E;
+            width: @width;
+            float: left;
+        }
+
+        .col-1 {
+            border-right: 1px solid #BDBDBD;
+            border-left: 1px solid #C8C8C8;
+        }
+
+        .col-2 {
+            width: @col2;
+        }
+    }
+}

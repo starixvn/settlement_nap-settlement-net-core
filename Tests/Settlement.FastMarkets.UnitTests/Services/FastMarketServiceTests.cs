@@ -88,13 +88,13 @@ namespace Settlement.FastMarkets.UnitTests.Services
         {
             // Arrange
             var query = new SettleRequest();
-            var results = "Results";
+            const string results = "Results";
             fastMarketResultService.Result(query.BetTypes, "CAL").Returns(results);
-            repository.ExecuteAsync(Arg.Do<PushFastMarketResultCriteria>(x =>
+            await repository.ExecuteAsync(Arg.Do<PushFastMarketResultCriteria>(x =>
             {
                 x.ErrCode = errorCode;
                 x.ErrMsg = errorMessage;
-            })).Returns(1);
+            }));
 
             // Act
             var result = await service.Calculate(query);

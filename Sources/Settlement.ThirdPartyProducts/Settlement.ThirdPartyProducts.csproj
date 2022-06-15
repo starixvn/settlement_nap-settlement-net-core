@@ -2,7 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <CodeAnalysisRuleSet>..\..\.sonarlint\settlement-netcorecsharp.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="..\..\.sonarlint\settlement-netcore\CSharp\SonarLint.xml" Link="SonarLint.xml" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="10.1.1" />
@@ -11,10 +16,12 @@
     <PackageReference Include="Kaden.Extensions" Version="2.0.0" />
     <PackageReference Include="Kaden.XmlConverter" Version="2.0.0" />
     <PackageReference Include="MediatR" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Settlement.Core\Settlement.Core.csproj" />
+    <ProjectReference Include="..\Settlement.Setting\Settlement.Setting.csproj" />
   </ItemGroup>
 
 </Project>

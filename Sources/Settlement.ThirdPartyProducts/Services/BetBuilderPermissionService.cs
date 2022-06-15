@@ -20,13 +20,12 @@ namespace Settlement.ThirdPartyProducts.Services
 
         private readonly INapSettings siteSettings;
 
-        public BetBuilderPermissionServiceImp(INapSession session, IUserService userService,  INapSettings siteSettings)
+        public BetBuilderPermissionServiceImp(INapSession session, IUserService userService, INapSettings siteSettings)
         {
             this.session = session;
             this.userService = userService;
             this.siteSettings = siteSettings;
         }
-       
 
         public Permission Permission => new Permission
         {
