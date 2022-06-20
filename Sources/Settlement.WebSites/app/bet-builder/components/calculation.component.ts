@@ -42,7 +42,6 @@ export class CalculationComponent implements OnInit {
   public selectedResultStatus: string[];
   public selectedTicketStatus: string[];
   public selectedSelection: string[];
-  public apiUrl: string;
 
   constructor(
     private readonly requestService: RequestService,
@@ -51,12 +50,7 @@ export class CalculationComponent implements OnInit {
     private readonly messageBoxService: MessageBoxService
   ) { }
 
-  getNewApi(apiUrl: string) {
-    this.apiUrl = apiUrl;
-  }
-
   public ngOnInit() {
-    this.requestService.apiUrl = this.apiUrl;
     this.matchId = Number(UrlHelper.getUrlParameter("matchId"));
     this.warningDialogMessage.title = Language.confirmationBox;
     this.resultStatusSelect = this.calculationFilterService.initialResultStatus();

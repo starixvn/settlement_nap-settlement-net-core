@@ -43,7 +43,6 @@ import { MessageBoxService, VerifyDateService } from "../../shared/services";
   ],
 })
 export class FilterComponent implements OnInit {
-  @Input() apiUrl: string;
   @Output() public readonly searchAction = new EventEmitter();
   private readonly warningDialogMessage: ModalDialogMessage = new ModalDialogMessage();
   public sportTypesSelected: string;
@@ -65,7 +64,6 @@ export class FilterComponent implements OnInit {
   ) {}
 
   public ngOnInit() {
-    this.requestService.apiUrl = this.apiUrl;
     this.initStatuses();
     this.requestService.getDate().subscribe((filter: DateFilter) => {
       this.fromDate = this.verifyDateService.convertToDateStruct(filter.fromDate);

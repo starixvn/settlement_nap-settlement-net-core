@@ -17,4 +17,3 @@ export * from './sport-type.model';
 export * from './more-score.model';
 export * from './score.model';
 export * from './result-detail.model';
-export * from './template.model';

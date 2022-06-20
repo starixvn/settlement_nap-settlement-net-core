@@ -168,7 +168,7 @@
               "extractLicenses": true,
               "vendorChunk": false,
               "buildOptimizer": false,
-              "deployUrl": "@path/bet-builder/"
+              "deployUrl": "bet-builder/"
             }
           }
         },
@@ -568,7 +568,7 @@
       }
     }
   },
-  "defaultProject": "number-game",
+  "defaultProject": "bet-builder",
   "schematics": {
     "@schematics/angular:component": {
       "inlineTemplate": false,
