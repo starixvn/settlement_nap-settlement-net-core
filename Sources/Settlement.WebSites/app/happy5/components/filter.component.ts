@@ -18,8 +18,8 @@ import { FilterBaseComponent } from '../../shared/components/gaming/filter-base.
 export class FilterComponent extends FilterBaseComponent implements OnInit, OnChanges {
     @Input() public change = 0;
     @Output() public readonly searchAction = new EventEmitter();
-    private readonly matchCode: string;
     private readonly allStatus = "All";
+    public matchCode: string;
     public status: string;
     public readonly statuses: string[] = ['All', 'Completed', 'Refund', 'Closed'];
 

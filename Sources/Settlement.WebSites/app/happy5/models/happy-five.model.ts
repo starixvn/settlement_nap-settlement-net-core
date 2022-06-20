@@ -2,5 +2,4 @@
 export class HappyFive {
     public permission: Permission;
     public leagues: Leagues[];
-    public apiUrl: string;
 }

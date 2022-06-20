@@ -3,4 +3,3 @@ export * from './filter.component';
 export * from './matches.component';
 export * from './recalculation.component';
 export * from './refund.component';
-export * from './log.component';

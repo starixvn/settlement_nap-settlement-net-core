@@ -1,6 +1,6 @@
 ﻿import { interval } from 'rxjs';
 import { ISubscription } from "rxjs/Subscription";
-import { Component, OnInit, OnDestroy, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import {
     BlockUIService,
     ReCheckInService,
@@ -39,24 +39,17 @@ export class AppComponent implements OnInit, OnDestroy  {
     public toDate: string;
     public intervallTimer = interval(this.period);
     public change = 0;
-    private apiUrl: string;
-    constructor(
-        private readonly elementRef: ElementRef<HTMLElement>,
-        private readonly queryService: QueryService,
-        private readonly blockUIService: BlockUIService,
+    constructor(private readonly blockUIService: BlockUIService,
         private readonly reCheckInService: ReCheckInService) {
     }
 
     public ngOnInit() {
-        this.apiUrl = this.elementRef.nativeElement.getAttribute('api-url');
-        this.queryService.apiUrl = this.apiUrl;
         this.blockUIService.blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
         this.reCheckIn();
     }
 
     public search($event) {
         this.happyFive = $event.happyFive;
-        this.happyFive.apiUrl = this.apiUrl;
         this.fromDate = $event.fromDate;
         this.toDate = $event.toDate;
     }

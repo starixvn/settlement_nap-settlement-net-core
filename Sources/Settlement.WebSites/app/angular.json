@@ -447,7 +447,7 @@
               "extractLicenses": true,
               "vendorChunk": false,
               "buildOptimizer": false,
-              "deployUrl": "@path/happy5/"
+              "deployUrl": "happy5/"
             }
           }
         },
@@ -568,7 +568,7 @@
       }
     }
   },
-  "defaultProject": "bet-builder",
+  "defaultProject": "happy5",
   "schematics": {
     "@schematics/angular:component": {
       "inlineTemplate": false,

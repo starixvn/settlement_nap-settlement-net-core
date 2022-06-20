@@ -41,7 +41,6 @@ export class ReCalculationComponent implements OnInit {
 
     public async ngOnInit() {
         this.toastrService.overlayContainer = this.toastContainer;
-        this.queryService.apiUrl = this.data.apiUrl;
         this.balls = await this.queryService.getBalls(this.match.matchId);
     }
 

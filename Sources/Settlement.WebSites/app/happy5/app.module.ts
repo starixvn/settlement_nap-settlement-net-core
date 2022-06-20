@@ -15,8 +15,7 @@ import {
     FilterComponent,
     MatchesComponent,
     ReCalculationComponent,
-    RefundComponent,
-    LogComponent,
+    RefundComponent
 } from './components';
 import { CustomHttpRequestInterceptor } from "../shared/custom-httprequest-interceptor.native";
 import { ToastContainerModule, ToastNoAnimationModule } from 'ngx-toastr';
@@ -46,7 +45,6 @@ import { ToastContainerModule, ToastNoAnimationModule } from 'ngx-toastr';
         DatepickerComponent,
         ReCalculationComponent,
         RefundComponent,
-        LogComponent,
         ModalDialogComponent,
         ModalContentDialogComponent,
         OnlyIntegerDirective,

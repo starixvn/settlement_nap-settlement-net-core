@@ -44,12 +44,12 @@ export class MatchesComponent implements OnChanges  {
     }
 
     public openReCalc(match: MatchDetail) {
-        const model = new PopupModel(match, this.happyFive.apiUrl);
+        const model = new PopupModel(match);
         this.popupService.popupReCalc(model);
     }
 
     public openRefund(match: MatchDetail) {
-        const model = new PopupModel(match, this.happyFive.apiUrl);
+        const model = new PopupModel(match);
         this.popupService.popupRefund(model);
     }
 

@@ -19,9 +19,7 @@ export class MatchDetail {
 
 export class PopupModel {
     public matchDetail: MatchDetail;
-    public apiUrl: string;
-    constructor(matchDetail: MatchDetail, apiUrl: string){
+    constructor(matchDetail: MatchDetail){
         this.matchDetail = matchDetail;
-        this.apiUrl = apiUrl;
     }
 }
