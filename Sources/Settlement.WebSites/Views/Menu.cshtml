@@ -4,6 +4,10 @@
     var session = new NapSession(new HttpContextAccessor());
     var menuItemList = session.MenuItemList;
     var env = ViewBag.Environment.Replace("LOCAL", "DEV");
+    var newListPages = new List<string>() { "home/log/", "home/number-game/", "home/happy5/", "home/bet-builder/" };
+    var netCoreRootUrl = ViewBag.NetCoreRootUrl;
+    var rootUrl = ViewBag.RootUrl;
+    var signOut = $"{rootUrl}/Auth/LogOut";
 }
 
 @if (menuItemList != null)
@@ -37,8 +41,9 @@
 
                 if (item.Count == 0)
                 {
+                    var menuUrl = newListPages.Any(n => n.Contains(menuItem.Url)) ? $"{netCoreRootUrl}/{menuItem.Url.Replace("home", "apps")}" : $"{rootUrl}/{menuItem.Url}";
                     <li class="@className">
-                       <a href="@Url.Content("~/" + menuItem.Url)" id="@(menuItem.Name.Replace(" ", string.Empty))-menu">
+                       <a href="@menuUrl" id="@(menuItem.Name.Replace(" ", string.Empty))-menu">
                                 @menuItem.Name
                        </a>
                     </li>
@@ -58,13 +63,16 @@
                                     <li class="@(subMenuItem.Name.Replace(" ", "-").ToLower())-sub sub-menu">@subMenuItem.Name</li>
                                     foreach (var menu in itemChild)
                                     {
-                                        <li class="@(menu.Name.Replace(" ", "-").ToLower())-sub"><a href="@Url.Content("~/" + menu.Url)" class="sub-menu-padding">@menu.Name</a></li>
+                                        var menuUrl = newListPages.Any(n => n.Contains(menu.Url)) ? $"{netCoreRootUrl}/{menu.Url.Replace("home", "apps")}" : $"{rootUrl}/{menu.Url}";
+
+                                        <li class="@(menu.Name.Replace(" ", "-").ToLower())-sub"><a href="@menuUrl" class="sub-menu-padding">@menu.Name</a></li>
                                     }
 
                                 }
                                 else
                                 {
-                                    <li class="@(subMenuItem.Name.Replace(" ", "-").ToLower())-sub"><a href="@Url.Content("~/" + subMenuItem.Url)">@subMenuItem.Name</a></li>
+                                    var menuUrl = newListPages.Any(n => n.Contains(subMenuItem.Url)) ? $"{netCoreRootUrl}/{subMenuItem.Url.Replace("home", "apps")}" : $"{rootUrl}/{subMenuItem.Url}";
+                                    <li class="@(subMenuItem.Name.Replace(" ", "-").ToLower())-sub"><a href="@menuUrl">@subMenuItem.Name</a></li>
                                 }
                             }
                         </ul>
@@ -93,7 +101,7 @@
             </h2>
             <ul>
                 <li>
-                    <a href="@Url.Content("~/Auth/LogOut")">Sign Out</a>
+                    <a href="@signOut">Sign Out</a>
                 </li>
             </ul>
         </div>

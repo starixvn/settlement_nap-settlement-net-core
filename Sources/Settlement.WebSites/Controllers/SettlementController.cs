@@ -17,7 +17,7 @@ namespace Settlement.WebSites.Controllers
         public IActionResult Index(int top)
         {
             ViewBag.Top = top;
-            ViewBag.NetCoreRootUrl = configuration.GetSection("NetCoreRootUrl").Value;
+            ViewBag.NetCoreRootUrl = configuration.GetSection("Settle.Domain:NetCoreRootUrl").Value;
             return View("~/wwwroot/notification/index.cshtml");
         }
     }

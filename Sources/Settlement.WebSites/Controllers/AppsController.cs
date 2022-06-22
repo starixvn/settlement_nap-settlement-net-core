@@ -80,7 +80,8 @@ namespace Settlement.WebSites.Controllers
         {
             ViewBag.Environment = configuration.GetSection("Environment").Value;
             ViewBag.Title = title;
-            ViewBag.NetCoreRootUrl = configuration.GetSection("NetCoreRootUrl").Value;
+            ViewBag.NetCoreRootUrl = configuration.GetSection("Settle.Domain:NetCoreRootUrl").Value;
+            ViewBag.RootUrl = configuration.GetSection("Settle.Domain:RootUrl").Value;
             ViewBag.PageType = pageType;
 
             return View(viewName);

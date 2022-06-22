@@ -11,7 +11,7 @@
     @if (string.IsNullOrEmpty(Context.Request.Query["isShowMenu"]) || Context.Request.Query["isShowMenu"] == "true")
     {
         <header>
-           @{ await Html.RenderPartialAsync("~/Views/Header.cshtml"); }
+           @{ await Html.RenderPartialAsync("~/Views/Menu.cshtml"); }
         </header>
     }
     <div class="content"><app-root api-url="@path">Loading...</app-root></div>
