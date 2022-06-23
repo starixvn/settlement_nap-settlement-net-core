@@ -9,10 +9,10 @@
     <link rel="stylesheet" href="css/styles.css">
 <link rel="stylesheet" href="number-game/styles.b4829e9b6b7dd4f63091.css" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="number-game/styles.b4829e9b6b7dd4f63091.css"></noscript>
 
-     @if (ViewBag.PageType == "MainPage")
+    @if (ViewBag.PageType == "MainPage")
     {
         <header>
-           @{ Html.RenderPartial("~/Views/Menu.cshtml"); }
+           @await Html.PartialAsync("~/Views/Menu.cshtml")
         </header>
     }
     <div class="content">

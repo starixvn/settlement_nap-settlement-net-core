@@ -7,12 +7,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="css/styles.css">
-<link rel="stylesheet" href="happy5/styles.d54890bc742c7df4f105.css" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="happy5/styles.d54890bc742c7df4f105.css"></noscript>
+<link rel="stylesheet" href="happy5/styles.33d662e266a8ce60ed2d.css" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="happy5/styles.33d662e266a8ce60ed2d.css"></noscript>
 
-     @if (ViewBag.PageType == "MainPage")
+    @if (ViewBag.PageType == "MainPage")
     {
         <header>
-           @{ Html.RenderPartial("~/Views/Menu.cshtml"); }
+           @await Html.PartialAsync("~/Views/Menu.cshtml")
         </header>
     }
     <div class="content">

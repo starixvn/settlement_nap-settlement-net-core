@@ -4,7 +4,11 @@
     var session = new NapSession(new HttpContextAccessor());
     var menuItemList = session.MenuItemList;
     var env = ViewBag.Environment.Replace("LOCAL", "DEV");
-    var newListPages = new List<string>() { "home/log/", "home/number-game/", "home/happy5/", "home/bet-builder/" };
+    var newListPages = new List<string>()
+    {
+        "home/log/", "home/number-game/", "home/happy5/", "home/bet-builder/", 
+        "home/move-running-tickets/", "home/move-tickets/"
+    };
     var netCoreRootUrl = ViewBag.NetCoreRootUrl;
     var rootUrl = ViewBag.RootUrl;
     var signOut = $"{rootUrl}/Auth/LogOut";

@@ -11,10 +11,10 @@
     <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
-     @if (ViewBag.PageType == "MainPage")
+    @if (ViewBag.PageType == "MainPage")
     {
         <header>
-           @{ Html.RenderPartial("~/Views/Menu.cshtml"); }
+           @await Html.PartialAsync("~/Views/Menu.cshtml")
         </header>
     }
     <div class="content">

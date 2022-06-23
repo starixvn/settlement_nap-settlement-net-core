@@ -11,70 +11,74 @@ namespace Settlement.WebSites.Controllers
     {
         private readonly IConfiguration configuration;
 
-        private const string SettingView = "~/wwwroot/instant-setting/index.cshtml";
 
         public AppsController(IConfiguration configuration)
         {
             this.configuration = configuration;
             
         }
-
-        public IActionResult Test()
-        {
-            ViewBag.Environment = configuration.GetSection("Environment").Value;
-            return View("~/Views/Home/Test.cshtml");
-        }
-
+        
         [HttpGet("change-waiting-time")]
         public IActionResult ChangeWaitingTime(string pageType)
         {
-            return SetView("Change waiting-time setting", pageType, SettingView);
+            return SetView("Change waiting-time setting", pageType, ViewPath.Setting);
         }
 
         [HttpGet("auto-setting-match")]
-        public ActionResult AutoSettingMatch()
+        public IActionResult AutoSettingMatch()
         {
-            return SetView("Match Auto Payout Setting", "AutoSettingMatch", SettingView);
+            return SetView("Match Auto Payout Setting", "AutoSettingMatch", ViewPath.Setting);
         }
 
         [HttpGet("auto-setting-league")]
-        public ActionResult AutoSettingLeague()
+        public IActionResult AutoSettingLeague()
         {
-            return SetView("League Auto Payout Setting", "AutoSettingLeague", SettingView);
+            return SetView("League Auto Payout Setting", "AutoSettingLeague", ViewPath.Setting);
         }
 
         [HttpGet("remark-setting")]
-        public ActionResult RemarkSetting()
+        public IActionResult RemarkSetting()
         {
-            return SetView("Hold Settings", "RemarkSetting", SettingView);
+            return SetView("Hold Settings", "RemarkSetting", ViewPath.Setting);
         }
 
         [HttpGet("bet-builder")]
         public IActionResult BetBuilder(string matchId)
         {
             var pageType = string.IsNullOrEmpty(matchId) ? "MainPage" : PagesType.Recalculate;
-            return SetView("Bet Builder", pageType, "~/wwwroot/bet-builder/index.cshtml");
+            return SetView("Bet Builder", pageType, ViewPath.BetBuilder);
         }
 
         [HttpGet("log")]
-        public ActionResult Log()
+        public IActionResult Log()
         {
-            return SetView("Settlement Log", string.Empty, "~/wwwroot/log/index.cshtml");
+            return SetView("Settlement Log", string.Empty, ViewPath.Log);
         }
 
-
         [HttpGet("happy5")]
-        public ActionResult Happy5(string matchId)
+        public IActionResult Happy5(string matchId)
         {
             var pageType = string.IsNullOrEmpty(matchId) ? "MainPage" : PagesType.Recalculate;
-            return SetView("Happy5", pageType, "~/wwwroot/happy5/index.cshtml");
+            return SetView("Happy5", pageType, ViewPath.Happy5);
         }
 
         [HttpGet("number-game")]
-        public ActionResult NumberGame(string matchId)
+        public IActionResult NumberGame(string matchId)
         {
             var pageType = string.IsNullOrEmpty(matchId) ? "MainPage" : PagesType.Recalculate;
-            return SetView("NumberGame", pageType, "~/wwwroot/number-game/index.cshtml");
+            return SetView("NumberGame", pageType, ViewPath.NumberGame);
+        }
+
+        [HttpGet("move-tickets")]
+        public IActionResult MoveTickets()
+        {
+            return SetView("Move Tickets", "Cricket", ViewPath.MoveTickets);
+        }
+
+        [HttpGet("move-running-tickets")]
+        public IActionResult MoveRunningTickets()
+        {
+            return SetView("Move Running Tickets", "RunningTickets", ViewPath.MoveTickets);
         }
         private ActionResult SetView(string title, string pageType, string viewName)
         {
