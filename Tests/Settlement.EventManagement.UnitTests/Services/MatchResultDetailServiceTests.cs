@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
 using NSubstitute;
 using Settlement.Core.Constants;
@@ -227,6 +228,26 @@ namespace Settlement.EventManagement.UnitTests.Services
 
             // Assert
             AssertExtension.AreEqual(ExpectedMatches, actualMatches);
+        }
+
+        [Fact]
+        public void ESportsResultDetail_HasMatchBOM30_CallServiceWithCorrectParam()
+        {
+            // Arrange
+            Matches[0].SportType = SportType.ESports;
+            Matches[0].BestOfMap = 11;
+            var match = new Match
+            {
+                SportType = SportType.ESports,
+                BestOfMap = 11,
+                MatchId = 1
+            };
+            var resources = new List<string> { "M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8", "M9", "M10", "M11" };
+            // Act
+            service.ESportsResultDetail(new List<Match> { match }, ResultDetail, permission);
+
+            // Assert
+            scoreService.Received().ScoreLoader(SportType.ESports, Arg.Any<List<ResultDetail>>(), Arg.Is<List<string>>(x => Enumerable.SequenceEqual(x, resources)), permission);
         }
 
         [Fact]

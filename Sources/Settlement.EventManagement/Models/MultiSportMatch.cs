@@ -136,5 +136,8 @@ namespace Settlement.EventManagement.Models
 
         [Key("isExistRunningTicketParlay")]
         public bool IsExistRunningTicketParlay { get; set; }
+
+        [Key("bestOfMap")]
+        public int BestOfMap { get; set; }
     }
 }

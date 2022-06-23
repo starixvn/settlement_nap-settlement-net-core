@@ -71,7 +71,7 @@ namespace Settlement.EventManagement.Services
         public List<Match> ESportsResultDetail(List<Match> matches, List<ResultDetail> resultDetails, Permission permission)
         {
             var resources = new List<string> { "M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8", "M9" };
-            return SetMatchInfo(matches, resultDetails, resources, permission);
+            return ESportSetMatchInfo(matches, resultDetails, resources, permission);
         }
 
         public List<Match> CricketResultDetail(List<Match> matches, List<ResultDetail> resultDetails, Permission permission)
@@ -104,6 +104,30 @@ namespace Settlement.EventManagement.Services
             }
 
             return matches;
+        }
+
+        private List<Match> ESportSetMatchInfo(List<Match> matches, List<ResultDetail> resultDetails, List<string> resources, Permission permission)
+        {
+            const int maxResultNormalEs = 9;
+            foreach (var match in matches)
+            {
+                match.RefDataService = refDataService;
+                match.IsMatchBestOfMapThirty = match.BestOfMap > maxResultNormalEs;
+                var resultDetailByMatchId = resultDetails.Where(m => m.MatchId == match.MatchId && m.SourceId == SourceType.Normal).ToList();
+                match.MoreScores = GetMoreScoresESport(match, resultDetailByMatchId, resources, permission);
+                match.IsHavingIntervalScore = IsDisplayIntervalScore(match, resultDetailByMatchId);
+            }
+            return matches;
+        }
+
+        private MoreScores GetMoreScoresESport(Match match, List<ResultDetail> resultDetailByMatchId, List<string> resources, Permission permission)
+        {
+            if (match.IsMatchBestOfMapThirty)
+            {
+                var resourcesBom30 = Enumerable.Range(1, match.BestOfMap).Select(i => $"M{i}").ToList();
+                return scoreService.ScoreLoader(match.SportType, resultDetailByMatchId, resourcesBom30, permission);
+            }
+            return scoreService.ScoreLoader(match.SportType, resultDetailByMatchId, resources, permission);
         }
 
         private List<Match> SetMatchInfo(List<Match> matches, List<ResultDetail> resultDetails, List<string> resources, Permission permission)
