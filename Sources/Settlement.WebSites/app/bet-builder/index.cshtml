@@ -20,5 +20,6 @@
     <div class="content">
         <app-root page-type="@ViewBag.PageType">Loading...</app-root>
     </div>
+    @await Html.PartialAsync("~/Views/Shared/_Matomo.cshtml")
 </body>
 </html>
