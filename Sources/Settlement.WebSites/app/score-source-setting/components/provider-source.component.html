@@ -1,0 +1,33 @@
+<div class="provider-manager" *ngIf="providers">
+    <label>Game</label>
+    <select [(ngModel)]="selectedGame" (ngModelChange)="getProviders()">
+        <option *ngFor="let game of games" [ngValue]="game">
+            {{game.name}}
+        </option>
+    </select>
+
+    <table class="provider-table">
+        <thead>
+            <tr>
+                <td class="order">Order</td>
+                <td class="name-header">Name</td>
+            </tr>
+        </thead>
+        <tbody class="table-drag" cdkDropList (cdkDropListDropped)="drop($event)" *ngIf="providers.length > 0; else noData">
+            <tr class="row-drag" *ngFor="let provider of providers; let i = index;" cdkDrag cdkDragLockAxis="y" cdkDragBoundary=".table-drag">
+                <td>{{i+1}}</td>
+                <td class="name-body">{{provider.sourceName}}</td>
+            </tr>
+        </tbody>
+    </table>
+    <button class="button btn-save" (click)="saveOrder()" [disabled]="!scoreSourcePermission">Save</button>
+</div>
+<div class="message-box" *ngIf="errorMessage">
+    <div class="icon error"></div>
+    <div class="message-info error">{{errorMessage}}</div>
+</div>
+<ng-template #noData>
+    <td colspan="100%" class="empty-data">
+        There is no information available
+    </td>
+</ng-template>

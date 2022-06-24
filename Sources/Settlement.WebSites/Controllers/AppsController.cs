@@ -80,6 +80,18 @@ namespace Settlement.WebSites.Controllers
         {
             return SetView("Move Running Tickets", "RunningTickets", ViewPath.MoveTickets);
         }
+
+        [HttpGet("provider-source")]
+        public IActionResult ProviderSource()
+        {
+            return SetView("Provider Manager", "ProviderSource", ViewPath.SourceSetting);
+        }
+
+        [HttpGet("outside-source")]
+        public IActionResult OutsideSource()
+        {
+            return SetView("Outside Source Manager", "OutsideSource", ViewPath.SourceSetting);
+        }
         private ActionResult SetView(string title, string pageType, string viewName)
         {
             ViewBag.Environment = configuration.GetSection("Environment").Value;

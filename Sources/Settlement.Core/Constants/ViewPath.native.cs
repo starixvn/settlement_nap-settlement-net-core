@@ -13,5 +13,7 @@
         public const string NumberGame = "~/wwwroot/number-game/index.cshtml";
 
         public const string MoveTickets = "~/wwwroot/move-tickets/index.cshtml";
+
+        public const string SourceSetting = "~/wwwroot/score-source-setting/index.cshtml";
     }
 }

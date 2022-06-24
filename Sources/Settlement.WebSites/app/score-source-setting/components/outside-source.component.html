@@ -1,0 +1,115 @@
+<div class="outside-source">
+    <div class="filter-bar">
+        <div class="line">
+        </div>
+        <div class="filter-bar-inner">
+            <div class="row">
+                <div class="col-md-2 field">
+                    <label class="inner-label">
+                        Sport
+                    </label>
+                    <div>
+                        <select [(ngModel)]="sportSelected" class="select-sport" (ngModelChange)="sportChange(sportSelected)">
+                            <option *ngFor="let item of sports" [ngValue]="item.sportType">{{item.sportName}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-2 field">
+                    <label for="SourceName" class="inner-label">
+                        Source Name/Link
+                    </label>
+                    <input id="SourceName" name="SourceName" class="search-name" type="text" value="" [(ngModel)]="sourceName">
+                </div>
+                <div class="col-md-2 field">
+                    <label class="inner-label">
+                        Game
+                    </label>
+                    <div *ngIf="!disableGameType">
+                        <new-multiple-select (formValue)="selectGame($event)" [multipleSelect]="gameSelect"></new-multiple-select>
+                    </div>
+                    <div *ngIf="disableGameType">
+                        <select disabled class="game-select">
+                            <option></option>
+                        </select>    
+                    </div>
+                </div>
+                <div class="col-md-2 field">
+                    <label class="inner-label">
+                        Status
+                    </label>
+                    <div>
+                        <new-multiple-select (formValue)="selectStatus($event)" [multipleSelect]="statusSelect"></new-multiple-select>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <button class="button" (click)="filter()">Submit</button>
+                </div>
+                <div class="col-md-2">
+                    <button class="button float-right btn-new" (click)="openAddSourceDialog()" [disabled]="!scoreSourcePermission">New Outside Source</button>
+                </div>
+            </div>
+        </div>
+        <div class="line"></div>
+    </div>
+    <ng-container *ngIf="outsideSources">
+        <div class="head-table">
+        <table class="outside-source-table">
+                <thead>
+                    <tr>
+                        <th rowspan="2" class="source-name">
+                            Outside source
+                        </th>
+                        <th rowspan="2" class="remark">
+                            Link
+                        </th>
+                        <th colspan="6">
+                            Game
+                        </th>
+                        <th rowspan="2" class="status">
+                            Status
+                        </th>
+                        <th rowspan="2" class="status">
+                            Action
+                        </th>
+                    </tr>
+                    <tr>
+                        <th *ngFor="let game of games" class="game">
+                            {{game.name}}
+                        </th>
+                    </tr>
+                </thead>
+        </table>
+        </div>
+        <div class="content-scroll" *ngIf="outsideSources.length > 0; else noData">
+            <table class="outside-source-table">
+                <tbody>
+                    <tr class="outside-source-row" *ngFor="let source of outsideSources" [ngClass]="{'inactive-row': !source.sourceStatus}">
+                        <td class="content-left source-name">
+                            {{source.sourceName}}
+                        </td>
+                        <td class="content-left remark">
+                            <a href="{{source.remark|externalLink}}" target="_blank">{{source.remark}}</a>
+                        </td>
+                        <td *ngFor="let game of source.games; let i=index" class="game">
+                            {{game.isActive|gameStatus: source.sportType}}
+                        </td>
+                        <td class="status">
+                            {{source.sourceStatus|sourceStatus}}
+                        </td>
+                        <td class="status">
+                            <div [ngClass]="{'code-link': scoreSourcePermission}" (click)="openEditSourceDialog(source)" >
+                                Edit
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <ng-template #noData>
+            <div class="empty-data">
+                There is no information available
+            </div>
+        </ng-template>
+    </ng-container>
+</div>
