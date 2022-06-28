@@ -260,5 +260,7 @@ namespace Settlement.EventManagement.Models
         public bool IsExistsConfirmedEarly { get; set; }
 
         public bool IsExistRunningTicketParlay { get; set; }
+
+        public int BestOfMap { get; set; }
     }
 }
