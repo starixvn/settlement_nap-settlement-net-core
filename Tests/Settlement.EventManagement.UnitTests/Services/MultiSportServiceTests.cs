@@ -2,6 +2,7 @@
 using AutoMapper.Configuration;
 using Fanex.Caching;
 using Fanex.Data.Repository;
+using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using NSubstitute;
 using Settlement.Core.Constants;
@@ -36,6 +37,7 @@ namespace Settlement.EventManagement.UnitTests.Services
 
         private readonly IMapper mapper;
 
+
         public MultiSportServiceTests()
         {
             repository = Substitute.For<IDynamicRepository>();
@@ -48,7 +50,18 @@ namespace Settlement.EventManagement.UnitTests.Services
             mapperConfig.AddProfile<EventManagementAutoMapperProfile>();
             var config = new MapperConfiguration(mapperConfig);
             mapper = new Mapper(config);
-            service = new MultiSportServiceImp(repository, refDataService, matchService, mapper, cacheService, permissionService);
+
+            var accessor = Substitute.For<IHttpContextAccessor>();
+            var context = new DefaultHttpContext
+            {
+                Connection =
+                {
+                    RemoteIpAddress = new System.Net.IPAddress(1)
+                }
+            };
+            accessor.HttpContext = context;
+
+            service = new MultiSportServiceImp(repository, refDataService, matchService, mapper, cacheService, permissionService, accessor);
         }
 
         private List<Sport> fakeSports => new List<Sport>

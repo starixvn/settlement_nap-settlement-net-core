@@ -61,6 +61,7 @@
     <Setting Key="NAP_Set_AutoPayout_MatchSelDetail" SpName="NAP_Set_AutoPayout_MatchSelDetail" DbName="DBPRO.bodb02.bodbAdminNet" />
   </Function>
   <Function Name="Execute Calculate and refund">
+    <Setting Key="CalculateMP" SpName="NAP_Admin_Settlement_MP_Push" DbName="DBTXN.bodb02.bodbAdminNet" />
     <Setting Key="Calculate" SpName="NAP_Admin_Settlement_1_Push" DbName="DBTXN.bodb02.bodbAdminNet" />
     <Setting Key="RefundParlay" SpName="NAP_Admin_Settlement_Refund_MP_Push" DbName="DBTXN.bodb02.bodbAdminNet" />
     <Setting Key="RefundAll" SpName="NAP_Admin_Settlement_Refund_All_Push" DbName="DBTXN.bodb02.bodbAdminNet" />

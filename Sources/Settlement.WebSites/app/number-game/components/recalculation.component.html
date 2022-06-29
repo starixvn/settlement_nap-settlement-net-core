@@ -30,7 +30,7 @@
                             <span *ngIf="ball.isNA;">N/A</span>
                         </ng-template>
                     </td>
-                    <td class="col-25">
+                    <td class="col-25 ball-padding">
                         <div *ngIf="!ball.isNA; else disabledColorBall" [ngClass]="['lotto-ball', getColorBall(ball)]">
                             {{ball.numberBall}}</div>
                         <ng-template #disabledColorBall>

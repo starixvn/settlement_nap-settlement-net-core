@@ -14,6 +14,7 @@
     "log": "ng build --configuration production --project=log",
     "move-tickets": "ng build --configuration production --project=move-tickets",
     "score-source-setting": "ng build --configuration production --project=score-source-setting",
+    "multi-sports": "ng build --configuration production --project=multi-sports",
     "start": "ng serve",
     "test": "jest --debug --no-cache tennis/components/app.component.spec.ts",
     "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand basketball/components/app.component.spec.ts",

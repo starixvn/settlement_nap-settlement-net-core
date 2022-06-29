@@ -1,0 +1,6 @@
+<filter (searchAction)="search($event)" (requestEmitter)="getRequest($event)"></filter>
+<league [multiSport]="multiSport" [request]="request"></league>
+<div *ngIf="blockUI" class="in modal-backdrop">
+    <div class="loading">
+    </div>
+</div>

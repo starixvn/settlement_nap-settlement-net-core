@@ -19,7 +19,7 @@ export class PopupService {
     }
 
     public popupLog(matchId: number, fromDate: string, toDate: string) {
-        const src = `apps/log/?matchCode=${matchId}&fromDate=${fromDate}&toDate=${toDate}&isShowMenu=false&productType=NBG`;
+        const src = `home/log/?matchCode=${matchId}&fromDate=${fromDate}&toDate=${toDate}&isShowMenu=false&productType=NBG`;
         const frameSrc = encodeURI(src);
         this.dialogData = new DialogDataIframe(Language.SettlementLog, frameSrc);
         this.dialogBoxService.popup(this.dialogData, '1011px', '800px');

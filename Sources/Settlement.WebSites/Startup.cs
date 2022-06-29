@@ -56,11 +56,22 @@ namespace Settlement.WebSites
             app.UseAuthentication();
             app.UseAuthorization();
 
+            //app.Use(async (context, next) =>
+            //{
+            //    if (context.Request.Path == "/")
+            //    {
+            //        context.Response.Redirect("Home/Index", true);
+
+            //        return;
+            //    }
+            //    await next();
+            //});
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    "default",
+                    "{controller=Home}/{action=Index}/{id?}");
             });
 
             NapClientManager

@@ -13,23 +13,30 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Security.Claims;
-using System.Threading;
+using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
+using Settlement.Core.Constants;
+using Fanex.NAP.Signin.AspNetCore.Attribute;
 
 namespace Settlement.WebSites.Controllers
 {
+   // [Route("[controller]")]
     public class HomeController : Controller
     {
         private readonly INapSession session;
 
-        public HomeController(INapSession session)
+        private readonly IConfiguration configuration;
+
+        public HomeController(INapSession session, IConfiguration configuration)
         {
             this.session = session;
+            this.configuration = configuration;
         }
 
-        [AllowAnonymous]
+        [HttpGet("index")]
         public IActionResult Index()
         {
+            ViewBag.NetCoreRootUrl = configuration.GetSection("Settle.Domain:NetCoreRootUrl").Value;
             ViewBag.IsSessionAvailable = HttpContext.Session.IsAvailable;
             ViewBag.UserId = session.UserId;
             ViewBag.Username = session.UserName;
@@ -41,27 +48,22 @@ namespace Settlement.WebSites.Controllers
             return View();
         }
 
-        [AllowAnonymous]
-        public IActionResult Test()
-        {
-            return Content("Test");
-        }
-
-      
-
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        [HttpGet("error")]
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
         [AllowAnonymous]
+        [HttpGet("expired-session")]
         public IActionResult ExpiredSession()
         {
             return View();
         }
 
         [AllowAnonymous]
+        [HttpGet("clear-session")]
         public IActionResult ClearSession()
         {
             HttpContext.Session.Clear();
@@ -71,7 +73,7 @@ namespace Settlement.WebSites.Controllers
 #if DEBUG
 
         [AllowAnonymous]
-        [HttpGet]
+        [HttpGet("FakeLogin")]
         public async Task<IActionResult> FakeLogin()
         {
             var criteria = new LoginParameter
@@ -113,5 +115,73 @@ namespace Settlement.WebSites.Controllers
         }
 
 #endif
+        [HttpGet("bet-builder")]
+        public IActionResult BetBuilder(string matchId)
+        {
+            var pageType = string.IsNullOrEmpty(matchId) ? "MainPage" : PagesType.Recalculate;
+            return SetView("Bet Builder", pageType, ViewPath.BetBuilder);
+        }
+
+        [HttpGet("log")]
+        public IActionResult Log()
+        {
+            return SetView("Settlement Log", string.Empty, ViewPath.Log);
+        }
+
+        [HttpGet("happy5")]
+        public IActionResult Happy5(string matchId)
+        {
+            var pageType = string.IsNullOrEmpty(matchId) ? "MainPage" : PagesType.Recalculate;
+            return SetView("Happy5", pageType, ViewPath.Happy5);
+        }
+
+        [HttpGet("number-game")]
+        public IActionResult NumberGame(string matchId)
+        {
+            var pageType = string.IsNullOrEmpty(matchId) ? "MainPage" : PagesType.Recalculate;
+            return SetView("NumberGame", pageType, ViewPath.NumberGame);
+        }
+
+        [HttpGet("move-tickets")]
+        public IActionResult MoveTickets()
+        {
+            return SetView("Move Tickets", "Cricket", ViewPath.MoveTickets);
+        }
+
+        [HttpGet("move-running-tickets")]
+        public IActionResult MoveRunningTickets()
+        {
+            return SetView("Move Running Tickets", "RunningTickets", ViewPath.MoveTickets);
+        }
+
+        [HttpGet("provider-source")]
+        public IActionResult ProviderSource()
+        {
+            return SetView("Provider Manager", "ProviderSource", ViewPath.SourceSetting);
+        }
+
+        [HttpGet("outside-source")]
+        public IActionResult OutsideSource()
+        {
+            return SetView("Outside Source Manager", "OutsideSource", ViewPath.SourceSetting);
+        }
+
+        [HttpGet("multi-sports")]
+        public ActionResult MultiSports()
+        {
+            return SetView("MultiSports", string.Empty, ViewPath.MultiSport);
+        }
+
+
+        private ActionResult SetView(string title, string pageType, string viewName)
+        {
+            ViewBag.Environment = configuration.GetSection("Environment").Value;
+            ViewBag.Title = title;
+            ViewBag.NetCoreRootUrl = configuration.GetSection("Settle.Domain:NetCoreRootUrl").Value;
+            ViewBag.RootUrl = configuration.GetSection("Settle.Domain:RootUrl").Value;
+            ViewBag.PageType = pageType;
+
+            return View(viewName);
+        }
     }
 }

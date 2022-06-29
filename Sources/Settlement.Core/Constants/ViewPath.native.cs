@@ -15,5 +15,7 @@
         public const string MoveTickets = "~/wwwroot/move-tickets/index.cshtml";
 
         public const string SourceSetting = "~/wwwroot/score-source-setting/index.cshtml";
+
+        public const string MultiSport = "~/wwwroot/multi-sports/index.cshtml";
     }
 }

@@ -43,11 +43,11 @@ export class MoveTicketsService {
   }
 
   public calculateMP(request: CalculateMPRequest) {
-    return this.httpRequestService.postJson(request, 'api/calculation/calculate-mix-parlay');
+    return this.httpRequestService.postJson(request, 'api/multi-sports/calculate-mix-parlay');
   }
 
   public popupLog(matchId: number, fromDate: string, toData: string ) {
-    const src = `apps/log?matchCode=${matchId}&fromDate=${fromDate}&toDate=${toData}&isShowMenu=false&productType=ALL`;
+    const src = `home/log?matchCode=${matchId}&fromDate=${fromDate}&toDate=${toData}&isShowMenu=false&productType=ALL`;
     const frameSrc = encodeURI(src);
     const dialogData = new DialogDataIframe(Language.SettlementLog, frameSrc);
     this.dialogBoxService.popup(dialogData, '1011px', '800px');

@@ -15,7 +15,6 @@ namespace Settlement.WebSites.Controllers
         public AppsController(IConfiguration configuration)
         {
             this.configuration = configuration;
-            
         }
         
         [HttpGet("change-waiting-time")]
@@ -42,56 +41,6 @@ namespace Settlement.WebSites.Controllers
             return SetView("Hold Settings", "RemarkSetting", ViewPath.Setting);
         }
 
-        [HttpGet("bet-builder")]
-        public IActionResult BetBuilder(string matchId)
-        {
-            var pageType = string.IsNullOrEmpty(matchId) ? "MainPage" : PagesType.Recalculate;
-            return SetView("Bet Builder", pageType, ViewPath.BetBuilder);
-        }
-
-        [HttpGet("log")]
-        public IActionResult Log()
-        {
-            return SetView("Settlement Log", string.Empty, ViewPath.Log);
-        }
-
-        [HttpGet("happy5")]
-        public IActionResult Happy5(string matchId)
-        {
-            var pageType = string.IsNullOrEmpty(matchId) ? "MainPage" : PagesType.Recalculate;
-            return SetView("Happy5", pageType, ViewPath.Happy5);
-        }
-
-        [HttpGet("number-game")]
-        public IActionResult NumberGame(string matchId)
-        {
-            var pageType = string.IsNullOrEmpty(matchId) ? "MainPage" : PagesType.Recalculate;
-            return SetView("NumberGame", pageType, ViewPath.NumberGame);
-        }
-
-        [HttpGet("move-tickets")]
-        public IActionResult MoveTickets()
-        {
-            return SetView("Move Tickets", "Cricket", ViewPath.MoveTickets);
-        }
-
-        [HttpGet("move-running-tickets")]
-        public IActionResult MoveRunningTickets()
-        {
-            return SetView("Move Running Tickets", "RunningTickets", ViewPath.MoveTickets);
-        }
-
-        [HttpGet("provider-source")]
-        public IActionResult ProviderSource()
-        {
-            return SetView("Provider Manager", "ProviderSource", ViewPath.SourceSetting);
-        }
-
-        [HttpGet("outside-source")]
-        public IActionResult OutsideSource()
-        {
-            return SetView("Outside Source Manager", "OutsideSource", ViewPath.SourceSetting);
-        }
         private ActionResult SetView(string title, string pageType, string viewName)
         {
             ViewBag.Environment = configuration.GetSection("Environment").Value;

@@ -1,0 +1,55 @@
+
+import { TreeViewComponent } from './../shared/components/multiple-selection/tree-view.component';
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { HttpClientModule, HttpClientJsonpModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import {
+    ModalDialogComponent,
+    DatepickerComponent,
+    MultipleSelectComponent,
+    ModalContentDialogComponent,
+} from '../shared/components';
+import {
+    AppComponent,
+    FilterComponent,
+} from './components';
+import { LeagueComponent } from './components/league.component';
+import { MaterialModule } from "./../shared/material-module";
+import {NewMultipleSelectComponent} from "./../shared/components/multiple-select/multiple-select.component";
+import { MaterialDialogComponent } from '../shared/components/material-dialog-iframe/material-dialog.component';
+import { PipesModule } from '../shared/pipes/pipes.module.native';
+import { CustomHttpRequestInterceptor } from '../shared/custom-httprequest-interceptor.native';
+import { DynamicHeightDirective } from '../shared/directives';
+@NgModule({
+    imports: [
+        BrowserModule,
+        FormsModule,
+        ReactiveFormsModule,
+        HttpClientModule,
+        HttpClientJsonpModule,
+        MaterialModule,
+        PipesModule,
+        NgbModule,
+    ],
+    declarations: [
+        AppComponent,
+        FilterComponent,
+        DatepickerComponent,
+        MultipleSelectComponent,
+        TreeViewComponent,
+        ModalDialogComponent,
+        ModalContentDialogComponent,
+        NewMultipleSelectComponent,
+        LeagueComponent,
+        MaterialDialogComponent,
+        DynamicHeightDirective,
+    ],
+    entryComponents: [ModalDialogComponent, ModalContentDialogComponent],
+    providers: [ { provide: HTTP_INTERCEPTORS, useClass: CustomHttpRequestInterceptor, multi: true }],
+    bootstrap: [AppComponent],
+})
+
+export class AppModule {
+}
