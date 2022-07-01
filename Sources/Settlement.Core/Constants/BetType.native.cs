@@ -193,5 +193,16 @@ namespace Settlement.Core.Constants
         public const int TimeMachineHandicap = 229;
 
         #endregion
+
+        #region Volleyball bet types
+        public static Dictionary<int, string> VolleyballBetTypeNames => new Dictionary<int, string>
+        {
+            {3901, "First Serve" },
+            {3914, "Will there be a 5th Set?" },
+            {3903, "Set {0} Race to {1} Points" },
+            {3909, "Set {0} Points {1} Winner" },
+            {3915, "Set {0} {1} Points Played" },
+        };
+        #endregion
     }
 }

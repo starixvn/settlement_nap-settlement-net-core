@@ -82,6 +82,7 @@ namespace Settlement.Sportsbook.Aio.MapperFactory
             CriteriaTypes.Add($"game-total-{ApiKeyConstant.LastestResultKey}", typeof(Criteria.GetRecalResultCriteria));
             CriteriaTypes.Add($"game-total-{ApiKeyConstant.ProviderKey}", typeof(Criteria.GetProviderCriteria));
             CriteriaTypes.Add($"game-total-{ApiKeyConstant.ChildMatchKey}", typeof(Criteria.Volleyball.GetChildMatchCriteria));
+            CriteriaTypes.Add($"game-total-{ApiKeyConstant.SaveScore}", typeof(Criteria.SaveScoreCriteria));
 
             CriteriaTypes.Add($"game-total-settle", typeof(Criteria.SettleCriteria));
         }
