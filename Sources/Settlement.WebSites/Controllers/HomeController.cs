@@ -16,11 +16,9 @@ using System.Security.Claims;
 using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
 using Settlement.Core.Constants;
-using Fanex.NAP.Signin.AspNetCore.Attribute;
 
 namespace Settlement.WebSites.Controllers
 {
-   // [Route("[controller]")]
     public class HomeController : Controller
     {
         private readonly INapSession session;
@@ -33,7 +31,7 @@ namespace Settlement.WebSites.Controllers
             this.configuration = configuration;
         }
 
-        [HttpGet("index")]
+        [AllowAnonymous]
         public IActionResult Index()
         {
             ViewBag.NetCoreRootUrl = configuration.GetSection("Settle.Domain:NetCoreRootUrl").Value;
@@ -49,21 +47,21 @@ namespace Settlement.WebSites.Controllers
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        [HttpGet("error")]
+        [Route("Home/error")]
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
         [AllowAnonymous]
-        [HttpGet("expired-session")]
+        [Route("Home/expired-session")]
         public IActionResult ExpiredSession()
         {
             return View();
         }
 
         [AllowAnonymous]
-        [HttpGet("clear-session")]
+        [Route("Home/clear-session")]
         public IActionResult ClearSession()
         {
             HttpContext.Session.Clear();
@@ -73,7 +71,7 @@ namespace Settlement.WebSites.Controllers
 #if DEBUG
 
         [AllowAnonymous]
-        [HttpGet("FakeLogin")]
+        [Route("Home/FakeLogin")]
         public async Task<IActionResult> FakeLogin()
         {
             var criteria = new LoginParameter
@@ -115,58 +113,58 @@ namespace Settlement.WebSites.Controllers
         }
 
 #endif
-        [HttpGet("bet-builder")]
+        [Route("Home/bet-builder/{matchId?}")]
         public IActionResult BetBuilder(string matchId)
         {
             var pageType = string.IsNullOrEmpty(matchId) ? "MainPage" : PagesType.Recalculate;
             return SetView("Bet Builder", pageType, ViewPath.BetBuilder);
         }
 
-        [HttpGet("log")]
+        [Route("Home/log")]
         public IActionResult Log()
         {
             return SetView("Settlement Log", string.Empty, ViewPath.Log);
         }
 
-        [HttpGet("happy5")]
+        [Route("Home/happy5/{matchId?}")]
         public IActionResult Happy5(string matchId)
         {
             var pageType = string.IsNullOrEmpty(matchId) ? "MainPage" : PagesType.Recalculate;
             return SetView("Happy5", pageType, ViewPath.Happy5);
         }
 
-        [HttpGet("number-game")]
+        [Route("Home/number-game/{matchId?}")]
         public IActionResult NumberGame(string matchId)
         {
             var pageType = string.IsNullOrEmpty(matchId) ? "MainPage" : PagesType.Recalculate;
             return SetView("NumberGame", pageType, ViewPath.NumberGame);
         }
 
-        [HttpGet("move-tickets")]
+        [Route("Home/move-tickets")]
         public IActionResult MoveTickets()
         {
             return SetView("Move Tickets", "Cricket", ViewPath.MoveTickets);
         }
 
-        [HttpGet("move-running-tickets")]
+        [Route("Home/move-running-tickets")]
         public IActionResult MoveRunningTickets()
         {
             return SetView("Move Running Tickets", "RunningTickets", ViewPath.MoveTickets);
         }
 
-        [HttpGet("provider-source")]
+        [Route("Home/provider-source")]
         public IActionResult ProviderSource()
         {
             return SetView("Provider Manager", "ProviderSource", ViewPath.SourceSetting);
         }
 
-        [HttpGet("outside-source")]
+        [Route("Home/outside-source")]
         public IActionResult OutsideSource()
         {
             return SetView("Outside Source Manager", "OutsideSource", ViewPath.SourceSetting);
         }
 
-        [HttpGet("multi-sports")]
+        [Route("Home/multi-sports")]
         public ActionResult MultiSports()
         {
             return SetView("MultiSports", string.Empty, ViewPath.MultiSport);
