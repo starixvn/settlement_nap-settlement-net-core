@@ -8,8 +8,10 @@ using Fanex.Data.Repository;
 using Fanex.NAP.Client.Helpers.Web;
 using Kaden.XmlConverter;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Settlement.Core.Constants;
 using Settlement.Sportsbook.Soccer.Criteria;
+
 using Settlement.Core.Constants;
 
 namespace Settlement.Sportsbook.Soccer.Services
@@ -37,13 +39,16 @@ namespace Settlement.Sportsbook.Soccer.Services
 
         private readonly IInstantResourceService instantResourceService;
 
+        private readonly IConfiguration configuration;
+
         public InstantCalculateServiceImp(
             IDynamicRepository repository,
             INapSession currentSession,
             IMapper mapper,
             IHttpContextAccessor accessor,
             XmlConvertService xmlConvertService,
-            IInstantResourceService instantResourceService)
+            IInstantResourceService instantResourceService,
+            IConfiguration configuration)
         {
             this.repository = repository;
             this.currentSession = currentSession;
@@ -51,6 +56,7 @@ namespace Settlement.Sportsbook.Soccer.Services
             this.accessor = accessor;
             this.xmlConvertService = xmlConvertService;
             this.instantResourceService = instantResourceService;
+            this.configuration = configuration;
         }
 
         public async Task<MatchGoalRecordModel> CalculateCheckingInfo(MatchCheckingRequest request)
@@ -81,7 +87,13 @@ namespace Settlement.Sportsbook.Soccer.Services
             criteria.ResourceResult = GetResourceResultInstantCalculate(request);
             criteria.AdminId = currentSession.UserId;
             criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
-            await repository.ExecuteAsync(criteria);
+            var listReplicatedServer = configuration.GetSection("SiteDBServer").Get<List<string>>();
+
+            foreach (var server in listReplicatedServer)
+            {
+                criteria.DbServer = server;
+                await repository.ExecuteAsync(criteria);
+            }
 
             return new Result
             {

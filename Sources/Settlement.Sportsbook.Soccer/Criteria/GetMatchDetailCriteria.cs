@@ -1,4 +1,6 @@
-﻿using Fanex.Data.Repository;
+﻿using System.Runtime.Serialization;
+using Fanex.Data;
+using Fanex.Data.Repository;
 
 namespace Settlement.Sportsbook.Soccer.Criteria
 {
@@ -8,9 +10,12 @@ namespace Settlement.Sportsbook.Soccer.Criteria
 
         public bool IsRefundPage { get; set; }
 
+        [SpParam(Ignored = true)]
+        public string DbServer { get; set; }
+
         public override string GetSettingKey()
         {
-            return "NAP_Set_MatchSelDetail";
+            return $"NAP_Set_MatchSelDetail_{DbServer}";
         }
 
         public override bool IsValid()

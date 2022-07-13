@@ -21,6 +21,7 @@ namespace Settlement.Sportsbook.Soccer
             CreateMap<CheckingMarkedTicketsRequest, CheckingMarkedTicketsCriteria>().ForMember(dest => dest.Action, opt => opt.MapFrom(src => src.ActionName));
             CreateMap<MoveThirdPartyBetTicketCriteria, MoveThirdPartyBetTicketCriteria>();
             CreateMap<MoveBetRequest, MoveThirdPartyBetTicketCriteria>();
+            CreateMap<SiteMatchDetail, MatchDetail>();
         }
     }
 }

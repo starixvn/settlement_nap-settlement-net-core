@@ -1,4 +1,5 @@
-﻿using Fanex.Data.Repository;
+﻿using Fanex.Data;
+using Fanex.Data.Repository;
 
 namespace Settlement.Sportsbook.Soccer.Criteria
 {
@@ -34,6 +35,9 @@ namespace Settlement.Sportsbook.Soccer.Criteria
 
         public string ChildMatchIds { get; set; }
 
+        [SpParam(Ignored = true)]
+        public string DbServer { get; set; }
+
         public override bool IsValid()
         {
             return AdminId > 0 && MatchId > 0;
@@ -41,7 +45,7 @@ namespace Settlement.Sportsbook.Soccer.Criteria
 
         public override string GetSettingKey()
         {
-            return "Calculate";
+            return $"Calculate_{DbServer}";
         }
     }
 }

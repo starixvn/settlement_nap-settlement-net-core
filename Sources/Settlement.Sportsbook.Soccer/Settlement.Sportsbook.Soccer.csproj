@@ -9,6 +9,7 @@
     <Compile Remove="Constants\ActionType.native.cs" />
     <Compile Remove="Criteria\GetExternalResultCriteria.cs" />
     <Compile Remove="Models\GoalModel.cs" />
+    <Compile Remove="Models\MainMatchDetail.cs" />
     <Compile Remove="Services\BetStatusService.cs" />
     <Compile Remove="Services\CriteriaService.cs" />
     <Compile Remove="Services\HandleResultDetail.cs" />

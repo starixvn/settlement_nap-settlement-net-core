@@ -42,18 +42,22 @@ namespace Settlement.Sportsbook.Soccer.Services
 
         private readonly IGoalIconService goalIconService;
 
+        private readonly IFetchDataService fetchDataService;
+
         public MatchServiceImp(
             IDynamicRepository repository,
             PermissionService permission,
             IMapper mapper,
             IRefDataService refDataService,
-            IGoalIconService goalIconService)
+            IGoalIconService goalIconService,
+            IFetchDataService fetchDataService)
         {
             this.repository = repository;
             this.permission = permission;
             this.mapper = mapper;
             this.refDataService = refDataService;
             this.goalIconService = goalIconService;
+            this.fetchDataService = fetchDataService;
         }
 
         public string GetBetStatus(int matchId)
@@ -70,20 +74,16 @@ namespace Settlement.Sportsbook.Soccer.Services
 
         public async Task<Match> GetMatch(GetMatchRequest request)
         {
-            var criteria = mapper.Map<GetMatchRequest, GetMatchDetailCriteria>(request);
-            var mappingTypes = new[] { typeof(MatchDetail), typeof(ResultDetail), typeof(TicketCounts), typeof(ChildMatchModel) };
-            var result = await repository.FetchMultipleAsync(criteria, mappingTypes);
-            var matchDetail = result[0].Cast<MatchDetail>().FirstOrDefault();
-            var resultDetails = result[1].Cast<ResultDetail>().ToList();
-            Argument.IsNotNull(matchDetail, $"Match ${criteria.MatchId} does not exist");
+            var match = await fetchDataService.GetMatchInfo(request);
+            var resultDetails = await GetResultDetail(request.MatchId);
+            var matchDetail = match.MatchDetail;
             matchDetail.RefDataService = refDataService;
             matchDetail = HandleResultDetailSoccer(matchDetail, resultDetails);
 
             var goalIconQuery = GoalIconQuery(matchDetail);
             matchDetail.GoalIcon = goalIconService.GetGoalIcon(goalIconQuery);
 
-            var hedgeMatchCriteria = new GetHedgeMatchCriteria { MatchId = request.MatchId };
-            var hedgeMatchDetail = await repository.GetAsync<HedgeMatchDetail>(hedgeMatchCriteria);
+            var hedgeMatchDetail = await GetHedgeMatch(request.MatchId);
 
             var fantasyMatch = new FantasyMatch();
             if (matchDetail.IsFantasyMatch)
@@ -91,21 +91,19 @@ namespace Settlement.Sportsbook.Soccer.Services
                 fantasyMatch = await GetRelatedMatches(matchDetail.MatchId);
             }
 
-            var childMatches = result[3].Cast<ChildMatchModel>().OrderBy(child => child.MatchCode)
+            var childMatches = match.ChildMatches.OrderBy(child => child.MatchCode)
                 .ThenBy(child => child.MatchId).ToList();
 
-            foreach (var match in childMatches)
+            foreach (var item in childMatches)
             {
-                match.RefDataService = refDataService;
+                item.RefDataService = refDataService;
             }
-
-            var ticketCount = result[2].Cast<TicketCounts>().ToList();
 
             return new Match
             {
                 MatchDetail = matchDetail,
                 ResultDetails = resultDetails,
-                TicketCounts = ticketCount,
+                TicketCounts = match.TicketCounts,
                 ChildMatches = childMatches,
                 FantasyMatch = fantasyMatch,
                 HedgeMatchDetail = hedgeMatchDetail,
@@ -158,6 +156,18 @@ namespace Settlement.Sportsbook.Soccer.Services
                 IsExistFgLg = match.IsExistFgLg,
                 IsExistHtFgLg = match.IsExistHtFgLg
             };
+        }
+
+        private async Task<List<ResultDetail>> GetResultDetail(int matchId)
+        {
+            var resultDetailCriteria = new GetResultDetailCriteria { MatchId = matchId };
+            return await repository.GetAsync<List<ResultDetail>>(resultDetailCriteria);
+        }
+
+        private async Task<HedgeMatchDetail> GetHedgeMatch(int matchId)
+        {
+            var hedgeMatchCriteria = new GetHedgeMatchCriteria { MatchId = matchId };
+            return await repository.GetAsync<HedgeMatchDetail>(hedgeMatchCriteria);
         }
 
         private async Task<FantasyMatch> GetRelatedMatches(int matchId)
