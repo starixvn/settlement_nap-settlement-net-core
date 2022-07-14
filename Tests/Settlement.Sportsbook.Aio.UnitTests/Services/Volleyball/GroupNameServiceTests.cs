@@ -1,0 +1,30 @@
+﻿using Settlement.Sportsbook.Aio.Models;
+using Settlement.Sportsbook.Aio.Services.Volleyball;
+using Xunit;
+
+namespace Settlement.Sportsbook.Aio.UnitTests.Services.Volleyball
+{
+    public class GroupBetTypeServiceTests
+    {
+        private readonly IGroupBetTypeService service;
+
+        public GroupBetTypeServiceTests()
+        {
+            service = new GroupBetTypeServiceImp();
+        }
+
+        [Theory]
+        [InlineData(3901, "Other", 2, "3901")]
+        [InlineData(3903, "Set 1", 0, "390301")]
+        [InlineData(3909, "Set 2", 1, "390902")]
+        [InlineData(3914, "Other", 3, "3914")]
+        public void SetGroupNameAndInputType_Always_GetCorrectGroupForBetType(int betTypeId, string groupName, int inputType, string resourceId)
+        {
+            var resultDetail = new ResultDetail { ResourceId = resourceId };
+            service.SetGroupNameAndInputType(resultDetail, betTypeId);
+
+            Assert.Equal(groupName, resultDetail.GroupName);
+            Assert.Equal(inputType, resultDetail.InputType);
+        }
+    }
+}
