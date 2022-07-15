@@ -63,7 +63,10 @@
 		<Content Include="App_Data\SpName.PROD.xml">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
-		<Content Include="App_Data\SpName.UAT_1.xml">
+    <Content Update="App_Data\SpName.PROD_2.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_Data\SpName.UAT_1.xml">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
 		<Content Include="App_Data\SpName.xml">
@@ -86,7 +89,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Include="Views\Auth\AccessDenied.cshtml" />
+    <None Include="Views\Auth\AccessDenied.cshtml" />
 		<None Include="Views\Auth\ChangePassword.cshtml" />
 		<None Include="Views\Auth\Error.cshtml" />
 		<None Include="Views\Auth\Index.cshtml" />
