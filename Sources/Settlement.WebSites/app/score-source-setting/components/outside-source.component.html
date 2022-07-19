@@ -88,8 +88,10 @@
                         <td class="content-left source-name">
                             {{source.sourceName}}
                         </td>
-                        <td class="content-left remark">
-                            <a href="{{source.remark|externalLink}}" target="_blank">{{source.remark}}</a>
+                        <td class="remark">
+                            <div class="content-left">
+                                <a href="{{source.remark|externalLink}}" target="_blank">{{source.remark}}</a>
+                            </div>
                         </td>
                         <td *ngFor="let game of source.games; let i=index" class="game">
                             {{game.isActive|gameStatus: source.sportType}}
