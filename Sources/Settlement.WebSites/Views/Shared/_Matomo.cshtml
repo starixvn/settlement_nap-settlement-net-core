@@ -1,5 +1,4 @@
-﻿@using Microsoft.AspNetCore.Http
-@{
+﻿@{
     var currentUsername = User.Identity.Name;
     var environment = ViewBag.Environment;
     var enableMatomo = !string.IsNullOrEmpty(currentUsername) && !currentUsername.Contains("starix") && environment == "PRO";

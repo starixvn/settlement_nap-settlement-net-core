@@ -13,6 +13,7 @@ using Settlement.EventManagement.Requests;
 using Match = Settlement.EventManagement.Models.Match;
 using System.Threading;
 using Fanex.Caching;
+using Microsoft.AspNetCore.Http;
 
 namespace Settlement.EventManagement.Services
 {
@@ -25,6 +26,8 @@ namespace Settlement.EventManagement.Services
         Task<List<Sport>> GetSports(SportRequest request);
 
         Task<List<LeagueTypeModel>> GetLeagues(LeagueRequest request);
+
+        Task<Result> Calculate(CalculateParlayRequest request);
     }
 
     public class MultiSportServiceImp : IMultiSportService
@@ -39,6 +42,7 @@ namespace Settlement.EventManagement.Services
         private static readonly List<int> PopularSport = new List<int> { SportType.Badminton, SportType.BasketBall, SportType.ESports, SportType.Tennis };
         private const string PopularGroup = "All Popular Sports";
         private const string OtherGroup = "All Other Sports";
+        private readonly IHttpContextAccessor accessor;
 
         public MultiSportServiceImp(
             IDynamicRepository repository,
@@ -46,7 +50,8 @@ namespace Settlement.EventManagement.Services
             IMatchService matchService,
             IMapper mapper,
             ICacheService cacheService,
-            PermissionService permissionService)
+            PermissionService permissionService,
+            IHttpContextAccessor accessor)
         {
             this.repository = repository;
             this.refDataService = refDataService;
@@ -54,6 +59,7 @@ namespace Settlement.EventManagement.Services
             this.permissionService = permissionService;
             this.cacheService = cacheService;
             this.mapper = mapper;
+            this.accessor = accessor;
         }
 
         public async Task<List<SportModel>> GetSportBook(FilterMultiSportRequest request)
@@ -246,10 +252,10 @@ namespace Settlement.EventManagement.Services
         {
             var sportSorting = new List<int>
             {
-                Core.Constants.SportType.Tennis,
-                Core.Constants.SportType.ESports,
-                Core.Constants.SportType.BasketBall,
-                Core.Constants.SportType.Badminton,
+                SportType.Tennis,
+                SportType.ESports,
+                SportType.BasketBall,
+                SportType.Badminton,
             };
 
             var sportBook = matches.GroupBy(match => new { match.SportName, match.SportType })
@@ -302,6 +308,21 @@ namespace Settlement.EventManagement.Services
             {
                 Matches = data.Item1.ToList(),
                 ResultDetails = data.Item2.ToList()
+            };
+        }
+
+        public async Task<Result> Calculate(CalculateParlayRequest request)
+        {
+            var criteria = mapper.Map<CalculateParlayRequest, ParlayCriteria>(request);
+            criteria.Action = ActionType.CalculateAll;
+            criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
+
+            await repository.ExecuteAsync(criteria);
+
+            return new Result
+            {
+                ErrCode = criteria.ErrCode,
+                ErrMsg = criteria.ErrMsg
             };
         }
     }

@@ -53,4 +53,6 @@ export class Match {
      public isMergedParlay: boolean;
      public isExistsConfirmedEarly: boolean;
      public isExistRunningTicketParlay: boolean;
+     public bestOfMap: number;
+     public isMatchBOMThirty: boolean;
 }

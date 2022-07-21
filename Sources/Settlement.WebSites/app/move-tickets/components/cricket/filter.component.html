@@ -1,0 +1,79 @@
+<div class="filter-bar">
+    <div class="line">
+    </div>
+    <div class="filter-bar-inner">
+        <div class="row">
+            <div class="col-md-2 field">
+                <label for="FromDate" class="inner-label from-date">
+                    From
+                </label>
+                <ngbd-date-picker [date]="fromDate" (change)="onSelectFromDate($event)"></ngbd-date-picker>
+            </div>
+            <div class="col-md-2 field">
+                <label for="ToDate" class="inner-label to-date">
+                    To
+                </label>
+                <ngbd-date-picker [date]="toDate" (change)="onSelectToDate($event)"></ngbd-date-picker>
+            </div>
+            <div class="col-md-2 field">
+                <label for="TicketStatus" class="inner-label">
+                    Ticket Status
+                </label>
+                <div>
+                    <new-multiple-select (formValue)= "onSelectTicketsStatus($event)" [multipleSelect]="ticketsStatusSelect"></new-multiple-select>
+                </div>
+            </div>
+            <div class="col-md-2 field">
+                <label for="MatchStatus" class="inner-label">
+                    Match Status
+                </label>
+                <div>
+                    <new-multiple-select (formValue)="onSelectMatchStatus($event)" [multipleSelect]="matchStatusSelect"></new-multiple-select>
+                </div>
+            </div>
+            <div class="col-md-2 remark field">
+                <label for="Remark" class="inner-label">
+                    Hold Status
+                </label>
+                <div>
+                    <new-multiple-select (formValue)="onSelectRemark($event)" [multipleSelect]="remarkSelect"></new-multiple-select>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin-top: 10px;">
+            <div class="col-md-2 field">
+                <label for="MatchCode" class="inner-label">
+                    Match Code/ID 
+                </label>
+                <input id="MatchCode" maxlength="50" name="MatchCode" style="width: 107px" type="text" value="" [(ngModel)]="matchCode">
+            </div>
+            <div class="col-md-2 field">
+                <label for="Sports" class="inner-label">
+                    Sports
+                </label>
+                <div>
+                    <select disabled class="sport-select">
+                        <option>Cricket</option>
+                    </select>
+                </div>
+            </div>
+            <div id="leagues" class="col-md-4 field">
+                <label for="Leagues" class="inner-label leagues">
+                    League
+                </label>
+                <div>
+                    <new-multiple-select [style.width]="leagueSelect.maxWidth" (formValue)="onSelectLeague($event)" [multipleSelect]="leagueSelect"></new-multiple-select>
+                </div>
+            </div>
+            <div class="col-md-1 field include-test">
+                <input id="IsIncludeTest" name="IsIncludeTest" type="checkbox" value="true" [(ngModel)]="isIncludeTestMatch">
+                <label for="IsIncludeTest" class="bold">&nbsp;Include Test Matches</label>
+            </div>
+            <div class="col-sm-1 submit field">
+                <button class="button" (click)="search()">Submit</button>
+            </div>
+        </div>
+    </div>
+    <div class="line">
+    </div>
+</div>

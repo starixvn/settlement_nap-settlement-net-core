@@ -9,8 +9,10 @@ export class ClosePopupService {
             buttonClose.click();
         }
 
-        window.parent[this.mainPage].handleChangedSingleMatch([matchId], false);
-        window.parent[this.dialog].closePopup();
+        if(window.parent != null && window.parent[this.mainPage] != null) {
+            window.parent[this.mainPage].handleChangedSingleMatch([matchId], false);
+            window.parent[this.dialog].closePopup();
+        }
     }
 
     public closePopupInstant(leagueId: number, time: number, type: string) {

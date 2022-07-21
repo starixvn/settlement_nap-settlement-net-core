@@ -1,0 +1,103 @@
+﻿<div [ngClass]="scrollName" *ngIf="matches">
+    <ng-template ngFor let-match [ngForOf]="matches">
+        <div class="clear-both">
+        </div>
+        <div (click)="onCollapsedClick(match)">
+            <div class="league">
+                <div class="btn-left">
+                </div>
+                <div class="btn-middle">
+                    <span>{{match.leagueName}}</span>
+                </div>
+                <div [ngClass]="getBackgroundIcon(match.collapsed)">
+                </div>
+            </div>
+        </div>
+        <div [hidden]="match.collapsed">
+            <div class="match">
+                <div class="match-name">
+                    {{match.matchName}} -
+                </div>
+                <div class="event-date">
+                    Event date: {{match.eventDate | date : 'mediumDate'}}
+                </div>
+            </div>
+
+            <table class="table-calculation">
+                <thead>
+                    <tr>
+                        <th class="index">
+                            #
+                        </th>
+                        <th class="match-date">
+                            Date
+                        </th>
+                        <th class="user-name">
+                            Username
+                        </th>
+                        <th class="action">
+                            Action
+                        </th>
+                        <th class="score">
+                            HT Score
+                        </th>
+                        <th class="score">
+                            FT Score
+                        </th>
+                        <th class="goal-record">
+                            Goal Record
+                        </th>
+                        <th class="result-string">
+                            Result String
+                        </th>
+                        <th>
+                            Remark
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let log of match.matchLogDetails; let i = index;">
+                        <td>
+                            {{i+1}}
+                        </td>
+                        <td>
+                            <div>{{log.settlementDate | date : 'mediumDate' }}</div>
+                            <div>{{log.settlementDate | date : 'hh:mm:ss a' }}</div>
+                        </td>
+                        <td>
+                            {{log.userName}}
+                        </td>
+                        <td>
+                            {{log.action}}
+                        </td>
+                        <td>
+                            {{log.halfTimeHomeScore}}-{{log.halfTimeAwayScore}}
+                        </td>
+                        <td>
+                            {{log.finalHomeScore}}-{{log.finalAwayScore}}
+                        </td>
+                        <td class="goal">
+                            {{log.goalRecord}}
+                        </td>
+                        <td>
+                            {{log.result}}
+                        </td>
+                        <td>
+                            <div class="remark-content" [innerHTML]="log.remark">
+                            </div>
+                        </td>
+                    </tr>
+                    <tr *ngIf="match.matchLogDetails == 0">
+                        <td colspan="9">There is no information available</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </ng-template>
+</div>
+<div *ngIf="matches == 0" class="no-data">
+    <div class="header">Event From {{fromDate | date : 'mediumDate'}} To {{toDate | date : 'mediumDate'}}</div>
+    <div class="empty-data">
+        There is no information available
+    </div>
+</div>

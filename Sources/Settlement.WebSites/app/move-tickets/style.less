@@ -1,0 +1,423 @@
+@import "../../Styles/common.less";
+@sprite: "../../wwwroot/css/images/sprite.png";
+
+.collapse-icon {
+    cursor: pointer;
+    height: 21px;
+    position: relative;
+    width: 21px;
+    padding-right: 10px;
+
+    &:before,
+    &:after {
+        background: #000;
+        content: '';
+        height: 2px;
+        left: 0;
+        position: absolute;
+        top: 6px;
+        width: 10px;
+        transition: transform 500ms ease;
+        transform-origin: center;
+    }
+
+    &.collapsed {
+        &:after {
+            transform: rotate(90deg);
+        }
+
+        &:before {
+            transform: rotate(180deg);
+        }
+    }
+}
+.league {
+    .table-calculation {
+        .league-name {
+            cursor: pointer;
+
+            .name {
+                padding-left: 25px;
+            }
+        }
+
+        .score-calculated {
+            color: #0273FF;
+        }
+    }
+}
+
+.sportbook {
+    .table-calculation {
+        .interval-score {
+            min-width: 250px;
+            width: 250px;
+        }
+        .move-tickets {
+            min-width: 100px;
+            width: 100px;
+            .button {
+                width: 85px;
+            }
+        }
+        .calc-mp-moved-tickets {
+            min-width: 120px;
+            width: 120px;
+            .button {
+                width: 105px;
+            }
+        }
+        .reference {
+            min-width: 500px;
+            width: 500px;
+            .action {
+                padding: 0 3px;
+                color: #fff;
+                background-color: #2296bd;
+            }
+
+            .failed {
+                background-color: #ff0000;
+            }
+
+            span {
+                font-size: 8px;
+            }
+
+            div, span {
+                float: left;
+                margin: 5px 1px;
+            }
+        }
+        .hold-status {
+            min-width: 50px;
+            width: 50px;
+        }
+    }
+    .sport-name {
+        font-weight: bold;
+        height: 21px;
+        cursor: pointer;
+        color: #1d3968;
+        background-color: #a9a9a9;
+        padding: 2px 0 0 2px;
+    }
+    .no-data {
+        height: 300px;
+    }
+}
+.match {
+    .table-calculation {
+        .sport-name {
+            font-weight: bold;
+            text-align: left;
+            line-height: 7px;
+            height: 21px;
+
+            td {
+                color: #1d3968;
+                vertical-align: middle;
+                border-bottom: 0.5px solid rgb(197, 183, 183);
+                background-color: #CBC9CA;
+            }
+        }
+
+        tbody {
+            background-color: inherit;
+        }
+
+        .league-name {
+            td {
+                padding-left: 50px;
+            }
+        }
+
+        .remark-status {
+            .title {
+                cursor: unset;
+            }
+        }
+    }
+
+    &:nth-child(even) {
+        background-color: #e5ebf2;
+    }
+}
+
+.content {
+
+    .head-table,
+    thead {
+        border: none !important;
+    }
+
+    .table-calculation {
+        .code {
+            width: 110px;
+        }
+        
+        .match-home,
+        .match-away {
+            float: none;
+        }
+        
+        .auto-setting {
+            .min_width(63px);
+
+            div {
+                background: url(@sprite) no-repeat;
+
+                &.icon-yes {
+                    background-position: -35px -292px;
+                    .icon(45px, 16px, 8px);
+                }
+
+                &.icon-direct {
+                    background-position: -35px -270px;
+                    .icon(62px, 16px, 1px);
+                }
+
+                &.icon-auto {
+                    background-position: -170px -270px;
+                    .icon(56px, 16px, 3px);
+                }
+
+                &.icon-auto-disable {
+                    background-position: -230px -270px;
+                    .icon(56px, 16px, 3px);
+                    cursor: default;
+                }
+
+                &.icon-no {
+                    background-position: -84px -292px;
+                    .icon(45px, 16px, 8px);
+                }
+
+                &.icon-no-disable {
+                    background-position: -135px -292px;
+                    .icon(45px, 16px, 8px);
+                    cursor: default;
+                }
+            }
+
+            .title {
+                cursor: pointer;
+            }
+        }
+        
+        .remark-status {
+            div {
+                &.tooltip-inner {
+                    background: none !important;
+                    background-color: #1E1E1E !important;
+                    white-space: pre-line !important;
+                    text-align: left !important;
+                    font-size: 11px !important;
+                }
+            }
+        }
+
+        .league-name {
+            td {
+                &.instant-time {
+                    div {
+                        float: left;
+                        margin: 2px 3px 0 0;
+                        font-weight: normal;
+                        font-size: 8.3pt;
+
+                        &.act-direct-time {
+                            background: url(@sprite) no-repeat;
+                            background-position: -105px -321px;
+                            width: 15px;
+                            height: 14px;
+                            margin-top: -3px;
+                            cursor: pointer;
+
+                            &:hover {
+                                background-position: -125px -321px;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        .interval-score {
+            .bg-calculated {
+                background-color: transparent;
+                color: #0273FF;
+            }
+        }
+
+        .confirm-score {
+            width: 100px;
+        }
+    }
+}
+
+.filter-bar {
+    .hasDatepicker {
+        width: 85px;
+        height: 21px;
+        border: 1px solid #d4d4d4;
+        padding: 3px;
+        color: #000;
+        float: left;
+    }
+    .field{
+        height: 21px;
+    }
+
+    .ui-datepicker-trigger {
+        margin-top: -2px !important;
+    }
+
+    .from-date {
+        padding-left: 57px;
+    }
+
+    .to-date {
+        padding-left: 22px;
+    }
+
+    .row-2 {
+        margin-top: 5px;
+    }
+
+    .match-code {
+        width: 103px;
+    }
+
+    .leagues {
+        padding-left: 32px;
+    }
+
+    .include-test {
+        left: -85px;
+        top: 2px;
+    }
+
+    .submit {
+        left: -98px;
+    }
+
+    .remark {
+        left: -60px;
+    }
+
+    .sport-select {
+        width: 220px;
+    }
+
+    .form-control {
+        color: #000;
+        height: 23px !important;
+        padding: 1px;
+    }
+    @media (max-width: 1024px) {
+        .include-test, .submit {
+            left: 0px;
+        }
+        .field {
+            display: inline-table;
+        }
+    }
+}
+.custom-dialog-container .mat-dialog-container {
+    border: 1px solid #d3d3d3;
+}
+
+.running-tickets-container {
+    width: 50%;
+    @media (max-width: 1360px) {
+        width: 75%;
+    }
+
+    @media (max-width: 1024px) {
+        width: 100%;
+    }
+    min-width: 480px;
+
+    .match-form {
+        background-color: #E5E5E5;
+        .mat-ripple-element {
+            display: block !important;
+            transition-duration: 225ms !important;
+        }
+
+        .match-id-input {
+            width: 33%;
+            padding: 10px;
+            display: inline-block;
+            vertical-align: top;
+    
+            input[type="text"] {
+                display: block;
+            }
+        }
+
+        button:disabled {
+            .border_radius(4px);
+            text-shadow: none;
+            box-shadow: none;
+            border: none;
+            height: auto;
+            width: auto;
+            background: none;
+            background-color: rgba(0,0,0,.12);
+            min-width: 64px;
+            line-height: 36px;
+            padding: 0 16px;
+        }
+    
+        .button-row {
+            padding: 10px;
+            text-align: left;
+
+            button {
+                margin-right: 10px;
+            }
+
+            input[type="checkbox"] {
+                margin: 0;
+                vertical-align: text-bottom;
+            }
+
+            label {
+                margin-left: 4px;
+            }
+        }
+    }
+
+    .table-container {
+        padding: 10px;
+
+        .table-calculation {
+            min-width: 100%;
+            margin-bottom: 10px;
+
+            .league-name {
+                font-weight: normal;
+                line-height: normal;
+            }
+
+            .code {
+                width: 14%;
+            }
+
+            .kick-off-time {
+                width: 8%;
+            }
+
+            .event-status {
+                width: 8%;
+                min-width: unset;
+            }
+
+            .hold-status {
+                width: 5%;
+            }
+        }
+    }
+}

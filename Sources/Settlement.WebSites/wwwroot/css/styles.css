@@ -2,7 +2,7 @@
 /*				     RULE                               */
 /********************************************************/
 /********************************************************/
-/*				   ERROR NOTIFICATION                   */
+/*				   NOTIFICATION                   */
 /********************************************************/
 /********************************************************/
 /*                     Functions                        */
@@ -1072,99 +1072,101 @@ header .notification-container .notificationWrap .error-notify .see-all {
 /********************************************************/
 /*                     FILTER                    */
 /********************************************************/
-section {
-  /********************************************************/
-  /*					      TAB TITLE                     */
-  /********************************************************/
-  /********************************************************/
-  /*			RECALCULATION TABLE             */
-  /********************************************************/
-}
-section .attention {
+.attention {
   padding: 10px;
 }
-section .attention .icon {
+.attention .icon {
   background: url("images/sprite.png") no-repeat -121px -50px;
   height: 35px;
   width: 35px;
   float: left;
 }
-section .attention .content {
+.attention .content {
   color: #FF8933;
   padding: 8px 0 0 40px;
   font-size: 12px;
 }
-section .specific-link {
+.specific-link {
   color: Blue;
   cursor: pointer;
 }
-section .specific-link:hover {
+.specific-link:hover {
   color: #D2592D;
 }
-section .filter-bar {
+.filter-bar {
   background: url("images/filter_bg.png") repeat scroll 0 0 rgba(0, 0, 0, 0);
   color: #717171;
   font-size: 11px;
   padding-top: 4px;
 }
-section .filter-bar .filter-bar-inner {
+.filter-bar .filter-bar-inner {
   padding: 5px 20px;
 }
-section .filter-bar .filter-bar-inner .inner-label {
+.filter-bar .filter-bar-inner .inner-label {
   float: left;
   margin: 2px 8px 0 8px;
   font-weight: bold;
 }
-section .filter-bar .line {
+.filter-bar .line {
   border-bottom: 1px solid #CDCDCD;
   border-top: 1px solid #FFFFFF;
   height: 0;
   margin-bottom: 2px;
 }
-section .filter-bar .ui-datepicker-trigger {
-  margin-top: -5px;
+.filter-bar .ui-datepicker {
+  float: left;
+  background: url("images/sprite.png") no-repeat -5px -58px;
+  width: 21px;
+  height: 21px;
+  cursor: pointer;
 }
-section .filter-bar .ui-combobox-input {
+.filter-bar .ui-combobox-input {
   height: 21px !important;
 }
-section .filter-bar .select-status {
+.filter-bar .select-status {
   width: 100px;
 }
-section .filter-bar .field > * {
+.filter-bar .field > * {
   vertical-align: middle;
 }
-section .filter-bar .field > * input[type="checkbox"] {
+.filter-bar .field > * input[type="checkbox"] {
   margin: 0;
 }
-section .filter-bar .field > input[type="checkbox"] {
+.filter-bar .field > input[type="checkbox"] {
   margin: 0;
 }
-section .filter-bar .select-sport-type {
+.filter-bar .select-sport-type {
   width: 83px;
 }
-section .filter-bar .select-league {
+.filter-bar .select-league {
   width: 300px;
 }
-section #tab-title div {
+/********************************************************/
+/*					      TAB TITLE                     */
+/********************************************************/
+#tab-title div {
   float: left;
   padding-top: 15px;
 }
-section #tab-title .icon {
+#tab-title .icon {
   margin: 13px 0 0 2px;
   background: url("images/sprite.png") no-repeat -71px -67px;
   width: 3px;
   height: 5px;
 }
-section #tab-title .name {
+#tab-title .name {
   padding: 7px 7px 0 3px;
   text-align: left;
   color: #1d3968;
   font-weight: bold !important;
 }
-section #tab-title .action {
+#tab-title .action {
   padding: 7px 0 0 0;
 }
-section #calc-popup {
+/********************************************************/
+/*			RECALCULATION TABLE             */
+/********************************************************/
+#calc-popup {
   width: 770px;
   background: #fff;
   padding-left: 5px;
@@ -1174,35 +1176,35 @@ section #calc-popup {
   /* Ticket count*/
   /* Goal Record */
 }
-section #calc-popup a {
+#calc-popup a {
   color: #0273FF;
   cursor: pointer;
 }
-section #calc-popup a:hover {
+#calc-popup a:hover {
   color: #D2592D;
 }
-section #calc-popup .table-calculation {
+#calc-popup .table-calculation {
   min-width: 768px;
 }
-section #calc-popup .table-calculation .score {
+#calc-popup .table-calculation .score {
   width: 40px;
 }
-section #calc-popup .table-calculation .ex-score {
+#calc-popup .table-calculation .ex-score {
   width: 50px !important;
 }
-section #calc-popup .table-calculation .score-betstatus {
+#calc-popup .table-calculation .score-betstatus {
   width: 23px;
 }
-section #calc-popup .table-calculation .marked-refund {
+#calc-popup .table-calculation .marked-refund {
   min-width: 70px;
   width: 70px;
 }
-section #calc-popup .code-link {
+#calc-popup .code-link {
   color: #000;
   cursor: default;
   text-decoration: none;
 }
-section #calc-popup .set-directly {
+#calc-popup .set-directly {
   height: 25px;
   width: 768px;
   padding-top: 3px;
@@ -1212,66 +1214,66 @@ section #calc-popup .set-directly {
   text-align: right;
   padding-right: 2px;
 }
-section #calc-popup .set-directly input[type="checkbox"] {
+#calc-popup .set-directly input[type="checkbox"] {
   margin: 0;
 }
-section #calc-popup .set-directly > * {
+#calc-popup .set-directly > * {
   vertical-align: middle;
   cursor: pointer;
 }
-section #calc-popup .set-directly > div {
+#calc-popup .set-directly > div {
   float: left;
 }
-section #calc-popup .hedge-match {
+#calc-popup .hedge-match {
   width: fit-content;
   padding-right: 5px;
 }
-section #calc-popup .hedge-match input {
+#calc-popup .hedge-match input {
   margin: inherit;
   vertical-align: middle;
 }
-section #calc-popup .hedge-match label {
+#calc-popup .hedge-match label {
   vertical-align: middle;
   padding-left: 3px;
 }
-section #calc-popup .check-box {
+#calc-popup .check-box {
   padding-left: 35px;
 }
-section #calc-popup .check-box > * {
+#calc-popup .check-box > * {
   margin: 0;
   vertical-align: middle;
 }
-section #calc-popup #score-confirm {
+#calc-popup #score-confirm {
   padding-left: 5px;
 }
-section #calc-popup #score-confirm .set-directly {
+#calc-popup #score-confirm .set-directly {
   height: 27px;
   width: 490px;
 }
-section #calc-popup .table-ticket {
+#calc-popup .table-ticket {
   width: 410px;
   margin-top: 9px;
 }
-section #calc-popup .table-ticket thead {
+#calc-popup .table-ticket thead {
   color: #fff;
   text-align: center;
 }
-section #calc-popup .table-ticket tbody {
+#calc-popup .table-ticket tbody {
   text-align: right;
 }
-section #calc-popup .table-ticket td {
+#calc-popup .table-ticket td {
   border: solid 1px #cbcbcb;
   width: 100px;
   padding-right: 5px;
 }
-section #calc-popup .table-ticket td:nth-child(1) {
+#calc-popup .table-ticket td:nth-child(1) {
   min-width: 70px;
   border: solid 1px #cbcbcb;
   background-color: #295091;
   text-align: center;
   color: #fff;
 }
-section #calc-popup .calc-action {
+#calc-popup .calc-action {
   width: 479px;
   border: 1px solid #c8c8c8;
   margin: 10px 0;
@@ -1280,7 +1282,7 @@ section #calc-popup .calc-action {
   font-weight: bold;
   color: #FFF;
 }
-section #calc-popup .calc-action .show-button .button {
+#calc-popup .calc-action .show-button .button {
   border-radius: 2px;
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
@@ -1303,7 +1305,7 @@ section #calc-popup .calc-action .show-button .button {
   font-weight: normal;
   margin: 3px 0 0 5px;
 }
-section #calc-popup .calc-action .show-button .button:hover {
+#calc-popup .calc-action .show-button .button:hover {
   color: #fff;
   background: #3b5fa3;
   background: -moz-linear-gradient(#5a7dc1, #3b5fa3) #3b5fa3;
@@ -1314,8 +1316,8 @@ section #calc-popup .calc-action .show-button .button:hover {
   cursor: pointer;
   text-decoration: none;
 }
-section #calc-popup .calc-action .show-button .button:active,
-section #calc-popup .calc-action .show-button .button:focus {
+#calc-popup .calc-action .show-button .button:active,
+#calc-popup .calc-action .show-button .button:focus {
   background: #5578be;
   background: -moz-linear-gradient(#5a7dc1, #5578be) #5578be;
   background: -webkit-linear-gradient(#5a7dc1, #5578be) #5578be;
@@ -1323,7 +1325,7 @@ section #calc-popup .calc-action .show-button .button:focus {
   -moz-box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.1);
   -webkit-box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.1);
 }
-section #calc-popup .calc-action .show-button .button:hover {
+#calc-popup .calc-action .show-button .button:hover {
   color: #fff;
   background: #3b5fa3;
   background: -moz-linear-gradient(#5a7dc1, #3b5fa3) #3b5fa3;
@@ -1334,8 +1336,8 @@ section #calc-popup .calc-action .show-button .button:hover {
   cursor: pointer;
   text-decoration: none;
 }
-section #calc-popup .calc-action .show-button .button:active,
-section #calc-popup .calc-action .show-button .button:focus {
+#calc-popup .calc-action .show-button .button:active,
+#calc-popup .calc-action .show-button .button:focus {
   background: #5578be;
   background: -moz-linear-gradient(#5a7dc1, #5578be) #5578be;
   background: -webkit-linear-gradient(#5a7dc1, #5578be) #5578be;
@@ -1343,7 +1345,7 @@ section #calc-popup .calc-action .show-button .button:focus {
   -moz-box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.1);
   -webkit-box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.1);
 }
-section #calc-popup .calc-action .show-button .button-disabled {
+#calc-popup .calc-action .show-button .button-disabled {
   border-radius: 2px;
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
@@ -1365,7 +1367,7 @@ section #calc-popup .calc-action .show-button .button-disabled {
   font-weight: normal;
   margin: 3px 0 0 5px;
 }
-section #calc-popup .calc-action .show-button .button-disabled:hover {
+#calc-popup .calc-action .show-button .button-disabled:hover {
   cursor: default;
   text-shadow: 0 1px rgba(0, 0, 0, 0.3);
   box-shadow: inset 0px 1px 1px rgba(255, 255, 255, 0.25);
@@ -1377,39 +1379,39 @@ section #calc-popup .calc-action .show-button .button-disabled:hover {
   background: -webkit-linear-gradient(#a9a9a9, #6A6A6A) #6A6A6A;
   color: #D5D5D5;
 }
-section #calc-popup .calc-action .row-1 {
+#calc-popup .calc-action .row-1 {
   clear: both;
   color: #000;
 }
-section #calc-popup .calc-action .row-1 div {
+#calc-popup .calc-action .row-1 div {
   border-bottom: 1px solid #c8c8c8;
   font-weight: bold;
   float: left;
   height: 29px;
   width: 80px;
 }
-section #calc-popup .calc-action .row-1 .header {
+#calc-popup .calc-action .row-1 .header {
   line-height: 27px;
 }
-section #calc-popup .calc-action .row-1 .status {
+#calc-popup .calc-action .row-1 .status {
   width: 138px;
   line-height: 27px;
   border-left: 1px solid #c8c8c8;
   border-right: 1px solid #c8c8c8;
 }
-section #calc-popup .calc-action .row-1 .status.bg-calculated {
+#calc-popup .calc-action .row-1 .status.bg-calculated {
   background-color: #dac093;
 }
-section #calc-popup .calc-action .row-1 .status.bg-marked {
+#calc-popup .calc-action .row-1 .status.bg-marked {
   background-color: #FF0000;
 }
-section #calc-popup .calc-action .row-1 .status.bg-refund {
+#calc-popup .calc-action .row-1 .status.bg-refund {
   background-color: #aeeff9;
 }
-section #calc-popup .calc-action .row-1 .action-button {
+#calc-popup .calc-action .row-1 .action-button {
   width: 258px;
 }
-section #calc-popup .calc-action .row-1 .action-button .button {
+#calc-popup .calc-action .row-1 .action-button .button {
   border-radius: 2px;
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
@@ -1432,7 +1434,7 @@ section #calc-popup .calc-action .row-1 .action-button .button {
   font-weight: normal;
   margin: 3px 0 0 5px;
 }
-section #calc-popup .calc-action .row-1 .action-button .button:hover {
+#calc-popup .calc-action .row-1 .action-button .button:hover {
   color: #fff;
   background: #3b5fa3;
   background: -moz-linear-gradient(#5a7dc1, #3b5fa3) #3b5fa3;
@@ -1443,8 +1445,8 @@ section #calc-popup .calc-action .row-1 .action-button .button:hover {
   cursor: pointer;
   text-decoration: none;
 }
-section #calc-popup .calc-action .row-1 .action-button .button:active,
-section #calc-popup .calc-action .row-1 .action-button .button:focus {
+#calc-popup .calc-action .row-1 .action-button .button:active,
+#calc-popup .calc-action .row-1 .action-button .button:focus {
   background: #5578be;
   background: -moz-linear-gradient(#5a7dc1, #5578be) #5578be;
   background: -webkit-linear-gradient(#5a7dc1, #5578be) #5578be;
@@ -1452,7 +1454,7 @@ section #calc-popup .calc-action .row-1 .action-button .button:focus {
   -moz-box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.1);
   -webkit-box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.1);
 }
-section #calc-popup .calc-action .row-1 .action-button .button:hover {
+#calc-popup .calc-action .row-1 .action-button .button:hover {
   color: #fff;
   background: #3b5fa3;
   background: -moz-linear-gradient(#5a7dc1, #3b5fa3) #3b5fa3;
@@ -1463,8 +1465,8 @@ section #calc-popup .calc-action .row-1 .action-button .button:hover {
   cursor: pointer;
   text-decoration: none;
 }
-section #calc-popup .calc-action .row-1 .action-button .button:active,
-section #calc-popup .calc-action .row-1 .action-button .button:focus {
+#calc-popup .calc-action .row-1 .action-button .button:active,
+#calc-popup .calc-action .row-1 .action-button .button:focus {
   background: #5578be;
   background: -moz-linear-gradient(#5a7dc1, #5578be) #5578be;
   background: -webkit-linear-gradient(#5a7dc1, #5578be) #5578be;
@@ -1472,7 +1474,7 @@ section #calc-popup .calc-action .row-1 .action-button .button:focus {
   -moz-box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.1);
   -webkit-box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.1);
 }
-section #calc-popup .calc-action .row-1 .action-button .button-disabled {
+#calc-popup .calc-action .row-1 .action-button .button-disabled {
   border-radius: 2px;
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
@@ -1494,7 +1496,7 @@ section #calc-popup .calc-action .row-1 .action-button .button-disabled {
   font-weight: normal;
   margin: 3px 0 0 5px;
 }
-section #calc-popup .calc-action .row-1 .action-button .button-disabled:hover {
+#calc-popup .calc-action .row-1 .action-button .button-disabled:hover {
   cursor: default;
   text-shadow: 0 1px rgba(0, 0, 0, 0.3);
   box-shadow: inset 0px 1px 1px rgba(255, 255, 255, 0.25);
@@ -1506,20 +1508,20 @@ section #calc-popup .calc-action .row-1 .action-button .button-disabled:hover {
   background: -webkit-linear-gradient(#a9a9a9, #6A6A6A) #6A6A6A;
   color: #D5D5D5;
 }
-section #calc-popup .calc-action .row-1 .action-button input[type="checkbox"] {
+#calc-popup .calc-action .row-1 .action-button input[type="checkbox"] {
   margin: 8px 0 0;
 }
-section #calc-popup .calc-action .row-2 {
+#calc-popup .calc-action .row-2 {
   height: 30px;
   clear: both;
   padding: 1px 0 0 122px;
 }
-section #calc-popup .calc-action .row-2 .action-button input,
-section #calc-popup .calc-action .row-2 .action-button div {
+#calc-popup .calc-action .row-2 .action-button input,
+#calc-popup .calc-action .row-2 .action-button div {
   float: left;
   margin: 3px;
 }
-section #calc-popup .calc-action .row-2 .action-button .button {
+#calc-popup .calc-action .row-2 .action-button .button {
   border-radius: 2px;
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
@@ -1542,7 +1544,7 @@ section #calc-popup .calc-action .row-2 .action-button .button {
   font-weight: normal;
   margin: 3px 0 0 5px;
 }
-section #calc-popup .calc-action .row-2 .action-button .button:hover {
+#calc-popup .calc-action .row-2 .action-button .button:hover {
   color: #fff;
   background: #3b5fa3;
   background: -moz-linear-gradient(#5a7dc1, #3b5fa3) #3b5fa3;
@@ -1553,8 +1555,8 @@ section #calc-popup .calc-action .row-2 .action-button .button:hover {
   cursor: pointer;
   text-decoration: none;
 }
-section #calc-popup .calc-action .row-2 .action-button .button:active,
-section #calc-popup .calc-action .row-2 .action-button .button:focus {
+#calc-popup .calc-action .row-2 .action-button .button:active,
+#calc-popup .calc-action .row-2 .action-button .button:focus {
   background: #5578be;
   background: -moz-linear-gradient(#5a7dc1, #5578be) #5578be;
   background: -webkit-linear-gradient(#5a7dc1, #5578be) #5578be;
@@ -1562,7 +1564,7 @@ section #calc-popup .calc-action .row-2 .action-button .button:focus {
   -moz-box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.1);
   -webkit-box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.1);
 }
-section #calc-popup .calc-action .row-2 .action-button .button:hover {
+#calc-popup .calc-action .row-2 .action-button .button:hover {
   color: #fff;
   background: #3b5fa3;
   background: -moz-linear-gradient(#5a7dc1, #3b5fa3) #3b5fa3;
@@ -1573,8 +1575,8 @@ section #calc-popup .calc-action .row-2 .action-button .button:hover {
   cursor: pointer;
   text-decoration: none;
 }
-section #calc-popup .calc-action .row-2 .action-button .button:active,
-section #calc-popup .calc-action .row-2 .action-button .button:focus {
+#calc-popup .calc-action .row-2 .action-button .button:active,
+#calc-popup .calc-action .row-2 .action-button .button:focus {
   background: #5578be;
   background: -moz-linear-gradient(#5a7dc1, #5578be) #5578be;
   background: -webkit-linear-gradient(#5a7dc1, #5578be) #5578be;
@@ -1582,7 +1584,7 @@ section #calc-popup .calc-action .row-2 .action-button .button:focus {
   -moz-box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.1);
   -webkit-box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.1);
 }
-section #calc-popup .calc-action .row-2 .action-button .button-disabled {
+#calc-popup .calc-action .row-2 .action-button .button-disabled {
   border-radius: 2px;
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
@@ -1604,7 +1606,7 @@ section #calc-popup .calc-action .row-2 .action-button .button-disabled {
   font-weight: normal;
   margin: 3px 0 0 5px;
 }
-section #calc-popup .calc-action .row-2 .action-button .button-disabled:hover {
+#calc-popup .calc-action .row-2 .action-button .button-disabled:hover {
   cursor: default;
   text-shadow: 0 1px rgba(0, 0, 0, 0.3);
   box-shadow: inset 0px 1px 1px rgba(255, 255, 255, 0.25);
@@ -1616,10 +1618,10 @@ section #calc-popup .calc-action .row-2 .action-button .button-disabled:hover {
   background: -webkit-linear-gradient(#a9a9a9, #6A6A6A) #6A6A6A;
   color: #D5D5D5;
 }
-section #calc-popup .calc-action .row-2 .action-button .instant {
+#calc-popup .calc-action .row-2 .action-button .instant {
   width: 130px;
 }
-section #calc-popup .calc-action .row-2 input[type="button"]:disabled {
+#calc-popup .calc-action .row-2 input[type="button"]:disabled {
   border-radius: 2px;
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
@@ -1640,7 +1642,7 @@ section #calc-popup .calc-action .row-2 input[type="button"]:disabled {
   cursor: default;
   font-weight: normal;
 }
-section #calc-popup .calc-action .row-2 input[type="button"]:disabled:hover {
+#calc-popup .calc-action .row-2 input[type="button"]:disabled:hover {
   cursor: default;
   text-shadow: 0 1px rgba(0, 0, 0, 0.3);
   box-shadow: inset 0px 1px 1px rgba(255, 255, 255, 0.25);
@@ -1652,22 +1654,22 @@ section #calc-popup .calc-action .row-2 input[type="button"]:disabled:hover {
   background: -webkit-linear-gradient(#a9a9a9, #6A6A6A) #6A6A6A;
   color: #D5D5D5;
 }
-section #calc-popup .ticket-count {
+#calc-popup .ticket-count {
   width: 485px;
   float: left;
 }
-section #calc-popup .goal-column {
+#calc-popup .goal-column {
   width: 280px;
   float: left;
 }
-section #calc-popup .goal-record {
+#calc-popup .goal-record {
   float: right;
   width: 134px;
   text-align: center;
   clear: right;
   margin: 10px -4px 0 0;
 }
-section #calc-popup .goal-record .header {
+#calc-popup .goal-record .header {
   width: 134px;
   background-color: #295091;
   height: 23px;
@@ -1676,7 +1678,7 @@ section #calc-popup .goal-record .header {
   font-weight: bold;
   clear: both;
 }
-section #calc-popup .goal-record .content .goal-row div {
+#calc-popup .goal-record .content .goal-row div {
   border-bottom: 1px solid #C8C8C8;
   border-right: 1px solid #C8C8C8;
   line-height: 22px;
@@ -1685,18 +1687,18 @@ section #calc-popup .goal-record .content .goal-row div {
   text-align: center;
   float: left;
 }
-section #calc-popup .goal-record .content .goal-row .goal-score {
+#calc-popup .goal-record .content .goal-row .goal-score {
   border-right: 1px solid #BDBDBD;
   border-left: 1px solid #C8C8C8;
 }
-section #calc-popup .ht-goal-record {
+#calc-popup .ht-goal-record {
   float: left;
   width: 134px;
   text-align: center;
   clear: right;
   margin: 10px -4px 0 0;
 }
-section #calc-popup .ht-goal-record .header {
+#calc-popup .ht-goal-record .header {
   width: 134px;
   background-color: #295091;
   height: 23px;
@@ -1705,7 +1707,7 @@ section #calc-popup .ht-goal-record .header {
   font-weight: bold;
   clear: both;
 }
-section #calc-popup .ht-goal-record .content .goal-row div {
+#calc-popup .ht-goal-record .content .goal-row div {
   border-bottom: 1px solid #C8C8C8;
   border-right: 1px solid #C8C8C8;
   line-height: 22px;
@@ -1714,11 +1716,11 @@ section #calc-popup .ht-goal-record .content .goal-row div {
   text-align: center;
   float: left;
 }
-section #calc-popup .ht-goal-record .content .goal-row .goal-score {
+#calc-popup .ht-goal-record .content .goal-row .goal-score {
   border-right: 1px solid #BDBDBD;
   border-left: 1px solid #C8C8C8;
 }
-section #calc-popup .refund-action .row {
+#calc-popup .refund-action .row {
   border: 1px solid #c8c8c8;
   margin: 10px 0;
   text-align: center;
@@ -1726,44 +1728,44 @@ section #calc-popup .refund-action .row {
   font-weight: bold;
   width: 332px;
 }
-section #calc-popup .refund-action .row .row-1 {
+#calc-popup .refund-action .row .row-1 {
   clear: both;
   color: #000;
 }
-section #calc-popup .refund-action .row .row-1 div {
+#calc-popup .refund-action .row .row-1 div {
   border-bottom: 1px solid #c8c8c8;
   font-weight: bold;
   float: left;
   height: 29px;
   width: 70px;
 }
-section #calc-popup .refund-action .row .row-1 .header {
+#calc-popup .refund-action .row .row-1 .header {
   line-height: 27px;
 }
-section #calc-popup .refund-action .row .row-1 .action-button {
+#calc-popup .refund-action .row .row-1 .action-button {
   border-left: 1px solid #c8c8c8;
   width: 130px;
   line-height: 27px;
 }
-section #calc-popup .refund-action .row .row-2 {
+#calc-popup .refund-action .row .row-2 {
   height: 30px;
   clear: both;
   padding: 1px 0 0 30px;
 }
-section #calc-popup .refund-action .row .action-button input[type="checkbox"] {
+#calc-popup .refund-action .row .action-button input[type="checkbox"] {
   margin: 8px 0 0;
 }
-section #calc-popup .refund-action .display-button {
+#calc-popup .refund-action .display-button {
   padding-top: 10px;
   padding-left: 2px;
 }
-section #calc-popup .refund-action .display-button .check-box {
+#calc-popup .refund-action .display-button .check-box {
   padding-left: 10px;
 }
-section #calc-popup .refund-action .display-button .line-height-refund {
+#calc-popup .refund-action .display-button .line-height-refund {
   padding-top: 7px;
 }
-section #calc-popup .refund-action .display-button .icon {
+#calc-popup .refund-action .display-button .icon {
   background: url("images/sprite.png") no-repeat -116px -68px;
   width: 4px;
   height: 4px;
@@ -1771,16 +1773,16 @@ section #calc-popup .refund-action .display-button .icon {
   margin-top: 10px;
   padding-left: 10px;
 }
-section #calc-popup .refund-action .display-button .normal-tickets {
+#calc-popup .refund-action .display-button .normal-tickets {
   font-size: 12px;
   font-weight: bold;
   color: #3b5b98;
   padding-top: 3px;
 }
-section #calc-popup .refund-action .display-button #IbcSpecificBettypes {
+#calc-popup .refund-action .display-button #IbcSpecificBettypes {
   display: none;
 }
-section #calc-popup .refund-action .refund-button {
+#calc-popup .refund-action .refund-button {
   border-radius: 2px;
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
@@ -1801,7 +1803,7 @@ section #calc-popup .refund-action .refund-button {
   float: left;
   margin: 3px;
 }
-section #calc-popup .refund-action .refund-button:hover {
+#calc-popup .refund-action .refund-button:hover {
   color: #4E70B8;
   background: #FFFFFF;
   background: -moz-linear-gradient(#E0E0E0, #FFFFFF) #FFFFFF;
@@ -1812,8 +1814,8 @@ section #calc-popup .refund-action .refund-button:hover {
   cursor: pointer;
   text-decoration: none;
 }
-section #calc-popup .refund-action .refund-button:active,
-section #calc-popup .refund-action .refund-button:focus {
+#calc-popup .refund-action .refund-button:active,
+#calc-popup .refund-action .refund-button:focus {
   background: #FFFFFF;
   background: -moz-linear-gradient(#E0E0E0, #FFFFFF) #FFFFFF;
   background: -webkit-linear-gradient(#E0E0E0, #FFFFFF) #FFFFFF;
@@ -1821,7 +1823,7 @@ section #calc-popup .refund-action .refund-button:focus {
   -moz-box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.1);
   -webkit-box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.1);
 }
-section #calc-popup .refund-action .refund-button.button-disabled {
+#calc-popup .refund-action .refund-button.button-disabled {
   border-radius: 2px;
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
@@ -1842,7 +1844,7 @@ section #calc-popup .refund-action .refund-button.button-disabled {
   cursor: default;
   font-weight: normal;
 }
-section #calc-popup .refund-action .refund-button.button-disabled:hover {
+#calc-popup .refund-action .refund-button.button-disabled:hover {
   cursor: default;
   text-shadow: 0 1px rgba(0, 0, 0, 0.3);
   box-shadow: inset 0px 1px 1px rgba(255, 255, 255, 0.25);
@@ -1854,7 +1856,7 @@ section #calc-popup .refund-action .refund-button.button-disabled:hover {
   background: -webkit-linear-gradient(#a9a9a9, #6A6A6A) #6A6A6A;
   color: #D5D5D5;
 }
-section #calc-popup .refund-action input[type="button"]:disabled {
+#calc-popup .refund-action input[type="button"]:disabled {
   border-radius: 2px;
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
@@ -1878,7 +1880,7 @@ section #calc-popup .refund-action input[type="button"]:disabled {
   float: left;
   font-weight: bold;
 }
-section #calc-popup .refund-action input[type="button"]:disabled:hover {
+#calc-popup .refund-action input[type="button"]:disabled:hover {
   cursor: default;
   text-shadow: 0 1px rgba(0, 0, 0, 0.3);
   box-shadow: inset 0px 1px 1px rgba(255, 255, 255, 0.25);
@@ -1890,7 +1892,7 @@ section #calc-popup .refund-action input[type="button"]:disabled:hover {
   background: -webkit-linear-gradient(#a9a9a9, #6A6A6A) #6A6A6A;
   color: #D5D5D5;
 }
-section #calc-popup .refund-action .betdaq-button {
+#calc-popup .refund-action .betdaq-button {
   border-radius: 2px;
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
@@ -1911,7 +1913,7 @@ section #calc-popup .refund-action .betdaq-button {
   float: left;
   margin: 3px;
 }
-section #calc-popup .refund-action .betdaq-button:hover {
+#calc-popup .refund-action .betdaq-button:hover {
   color: #4E70B8;
   background: #FFFFFF;
   background: -moz-linear-gradient(#E0E0E0, #FFFFFF) #FFFFFF;
@@ -1922,8 +1924,8 @@ section #calc-popup .refund-action .betdaq-button:hover {
   cursor: pointer;
   text-decoration: none;
 }
-section #calc-popup .refund-action .betdaq-button:active,
-section #calc-popup .refund-action .betdaq-button:focus {
+#calc-popup .refund-action .betdaq-button:active,
+#calc-popup .refund-action .betdaq-button:focus {
   background: #FFFFFF;
   background: -moz-linear-gradient(#E0E0E0, #FFFFFF) #FFFFFF;
   background: -webkit-linear-gradient(#E0E0E0, #FFFFFF) #FFFFFF;
@@ -1931,7 +1933,7 @@ section #calc-popup .refund-action .betdaq-button:focus {
   -moz-box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.1);
   -webkit-box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.1);
 }
-section #calc-popup .refund-action .refund-all-fglf {
+#calc-popup .refund-action .refund-all-fglf {
   border-radius: 2px;
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
@@ -1952,7 +1954,7 @@ section #calc-popup .refund-action .refund-all-fglf {
   float: left;
   margin: 3px;
 }
-section #calc-popup .refund-action .refund-all-fglf:hover {
+#calc-popup .refund-action .refund-all-fglf:hover {
   color: #4E70B8;
   background: #FFFFFF;
   background: -moz-linear-gradient(#E0E0E0, #FFFFFF) #FFFFFF;
@@ -1963,8 +1965,8 @@ section #calc-popup .refund-action .refund-all-fglf:hover {
   cursor: pointer;
   text-decoration: none;
 }
-section #calc-popup .refund-action .refund-all-fglf:active,
-section #calc-popup .refund-action .refund-all-fglf:focus {
+#calc-popup .refund-action .refund-all-fglf:active,
+#calc-popup .refund-action .refund-all-fglf:focus {
   background: #FFFFFF;
   background: -moz-linear-gradient(#E0E0E0, #FFFFFF) #FFFFFF;
   background: -webkit-linear-gradient(#E0E0E0, #FFFFFF) #FFFFFF;
@@ -1972,13 +1974,13 @@ section #calc-popup .refund-action .refund-all-fglf:focus {
   -moz-box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.1);
   -webkit-box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.1);
 }
-section #calc-popup input[type="text"] {
+#calc-popup input[type="text"] {
   height: 18px;
   border: 1px solid #888888;
   text-align: center;
   font-size: 11px;
 }
-section #calc-popup .game-result {
+#calc-popup .game-result {
   max-height: 300px;
   min-width: 784px;
   overflow-y: scroll;
@@ -1986,10 +1988,10 @@ section #calc-popup .game-result {
   overflow-x: hidden;
   -ms-overflow-x: hidden;
 }
-section #calc-popup .game-result .table-calculation {
+#calc-popup .game-result .table-calculation {
   min-width: 747px;
 }
-section #calc-popup .icon-copy {
+#calc-popup .icon-copy {
   background: url("images/sprite.png") no-repeat -213px -347px;
   width: 10px;
   height: 12px;
@@ -1999,23 +2001,23 @@ section #calc-popup .icon-copy {
   margin-left: -15px;
   cursor: pointer;
 }
-section #calc-popup .icon-copy:hover {
+#calc-popup .icon-copy:hover {
   background: url("images/sprite.png") no-repeat -198px -347px;
 }
-section #calc-popup .table-provider .final-score {
+#calc-popup .table-provider .final-score {
   color: #fd537d;
 }
-section #calc-popup .disable-copy {
+#calc-popup .disable-copy {
   cursor: default !important;
   background: url("images/sprite.png") no-repeat -198px -347px !important;
 }
-section .score-width-soccer {
+.score-width-soccer {
   width: 32px;
 }
-section .score-width {
+.score-width {
   width: 20px;
 }
-section .total-width {
+.total-width {
   width: 30px;
 }
 /*--- Popup: Score-confirm for BetDaq Ticket Over/Under ---*/

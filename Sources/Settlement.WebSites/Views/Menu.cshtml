@@ -1,0 +1,115 @@
+﻿@using Fanex.NAP.Client.AspNetCore.Session
+@using Microsoft.AspNetCore.Http
+@{
+    var session = new NapSession(new HttpContextAccessor());
+    var menuItemList = session.MenuItemList;
+    var env = ViewBag.Environment.Replace("LOCAL", "DEV");
+    var newListPages = new List<string>()
+    {
+        "/home/log/", "/home/number-game/", "/home/happy5/", "/home/bet-builder/", 
+        "/home/move-running-tickets/", "/home/move-tickets/",
+        "/home/provider-source/", "/home/outside-source/", "/home/multi-sports/"
+    };
+    var netCoreRootUrl = ViewBag.NetCoreRootUrl;
+    var rootUrl = ViewBag.RootUrl;
+    var signOut = $"{rootUrl}/Auth/LogOut";
+}
+
+@if (menuItemList != null)
+{
+    var menuItems = menuItemList.Where(i => i.ParentId <= 0).OrderBy(i => i.DisplayOrder).ToList();
+
+    <nav class="hidden-phone @env.ToLower()">
+        <ul class="menu">
+            <li class="logo"></li>
+            @if (!string.Equals(env, "PRO"))
+            {
+                <li class="env">(@env)</li>
+            }
+            <li class="line1"></li>
+            <li class="line2"></li>
+            @for (int i = 0; i < menuItems.Count; i++)
+            {
+                var menuItem = menuItems[i];
+                var item = menuItemList.Where(m => m.ParentId > 0 && m.ParentId == menuItem.Id).OrderBy(m => m.DisplayOrder).ToList();
+                var className = "normal ";
+
+                if (i == 0)
+                {
+                    className = "first";
+                }
+
+                if (i == menuItems.Count - 1 && i > 0)
+                {
+                    className = "last ";
+                }
+
+                if (item.Count == 0)
+                {
+                    var menuUrl = newListPages.Any(n => n.Contains(menuItem.Url)) ? $"{netCoreRootUrl}{menuItem.Url}" : $"{rootUrl}{menuItem.Url}";
+                    <li class="@className">
+                       <a href="@menuUrl" id="@(menuItem.Name.Replace(" ", string.Empty))-menu">
+                                @menuItem.Name
+                       </a>
+                    </li>
+                }
+                else
+                {
+                    className += "has-kids";
+
+                    <li class="@className">
+                        <a id="@(menuItem.Name.Replace(" ", string.Empty))-menu">@menuItem.Name</a>
+                        <ul>
+                            @foreach (var subMenuItem in item)
+                            {
+                                var itemChild = menuItemList.Where(m => m.ParentId > 0 && m.ParentId == subMenuItem.Id).OrderBy(m => m.DisplayOrder).ToList();
+                                if (itemChild.Count > 0)
+                                {
+                                    <li class="@(subMenuItem.Name.Replace(" ", "-").ToLower())-sub sub-menu">@subMenuItem.Name</li>
+                                    foreach (var menu in itemChild)
+                                    {
+                                        var menuUrl = newListPages.Any(n => n.Contains(menu.Url)) ? $"{netCoreRootUrl}{menu.Url}" : $"{rootUrl}{menu.Url}";
+
+                                        <li class="@(menu.Name.Replace(" ", "-").ToLower())-sub"><a href="@menuUrl" class="sub-menu-padding">@menu.Name</a></li>
+                                    }
+
+                                }
+                                else
+                                {
+                                    var menuUrl = newListPages.Any(n => n.Contains(subMenuItem.Url)) ? $"{netCoreRootUrl}{subMenuItem.Url}" : $"{rootUrl}{subMenuItem.Url}";
+                                    <li class="@(subMenuItem.Name.Replace(" ", "-").ToLower())-sub"><a href="@menuUrl">@subMenuItem.Name</a></li>
+                                }
+                            }
+                        </ul>
+                    </li>
+                }
+            }
+        </ul>
+    </nav>
+
+    <div class="user-info">
+        <div id="notification-container" class="notification-container" style="display: none;">
+            <div id="notification-toggle" class="notification-toggle">
+                <span id="unreadNotification" class="badge badge-danger" style="display: none;">
+                </span>
+            </div>
+            <div class="up-arrow">
+            </div>
+            <div id="notificationWrap" class="notificationWrap" style="display: none;">
+            </div>
+        </div>
+        <div id="toggle-img" class="toggle-up">
+        </div>
+        <div class="greeting">
+            <h2>
+                Welcome <span class='info-acc'>@User.Identity.Name</span><span class="info-more"></span>
+            </h2>
+            <ul>
+                <li>
+                    <a href="@signOut">Sign Out</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+}

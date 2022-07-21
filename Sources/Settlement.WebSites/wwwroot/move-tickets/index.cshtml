@@ -1,0 +1,28 @@
+<!DOCTYPE html><html lang="en"><head>
+   </head><body>@{
+        var path = @ViewBag.NetCoreRootUrl;
+    }
+    <base href="@path/">
+    <title>@ViewBag.Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+<link rel="stylesheet" href="move-tickets/styles.a93d02cdc0df05d8d06c.css" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="move-tickets/styles.a93d02cdc0df05d8d06c.css"></noscript>
+
+    <header>
+        @await Html.PartialAsync("~/Views/Menu.cshtml")
+    </header>
+    <section>
+        <div class="content">
+            <app-root page-type="@ViewBag.PageType">Loading...</app-root>
+        </div>
+    </section>
+    <script type="text/javascript">
+        var element = document.getElementById("MoveTickets-menu");
+        if (element !== null) {
+            element.className = "active-menu";
+        }
+    </script>
+    @await Html.PartialAsync("~/Views/Shared/_Matomo.cshtml")
+<script src="move-tickets/runtime.12e53bd77baface2cb75.js" defer></script><script src="move-tickets/polyfills.f26cf2e5e947d51bbd14.js" defer></script><script src="move-tickets/main.4749a723150dd12142f1.js" defer></script>
+</body></html>

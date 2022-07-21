@@ -61,6 +61,7 @@
     <Setting Key="NAP_Set_AutoPayout_MatchSelDetail" SpName="NAP_Set_AutoPayout_MatchSelDetail" DbName="DBPRO.bodb02.bodbAdminNet" />
   </Function>
   <Function Name="Execute Calculate and refund">
+    <Setting Key="CalculateMP" SpName="NAP_Admin_Settlement_MP_Push" DbName="DBTXN.bodb02.bodbAdminNet" />
     <Setting Key="Calculate" SpName="NAP_Admin_Settlement_1_Push" DbName="DBTXN.bodb02.bodbAdminNet" />
     <Setting Key="RefundParlay" SpName="NAP_Admin_Settlement_Refund_MP_Push" DbName="DBTXN.bodb02.bodbAdminNet" />
     <Setting Key="RefundAll" SpName="NAP_Admin_Settlement_Refund_All_Push" DbName="DBTXN.bodb02.bodbAdminNet" />
@@ -93,7 +94,7 @@
 
   <Function Name="SettlementLog">
     <Setting Key="NAP_UserLog_Settle_MatchSelByCode" SpName="NAP_UserLog_Settle_MatchSelByCode" DbName="DBAGE.bodb02.bodbAdminNet" />
-    <Setting Key="NAP_UserLog_Settle_MatchSelByID_by_Product" SpName="NAP_UserLog_Settle_MatchSelByID_by_Product" DbName="DBLOG.bodb_CustomerLog.bodbAdminNet" />
+    <Setting Key="NAP_UserLog_Settle_MatchSelByID_by_Product" SpName="NAP_UserLog_Settle_MatchSelByID_by_Product" DbName="DBLOG.bodb_CustomerLog.bodbAdminNet" TimeOut="20"/>
   </Function>
   <Function Name="Balance">
     <Setting Key="NAP_SelBalanceUpDay" SpName="Age_SelBalanceUpDay" DbName="DBAGE.bodb02.bodbAdminNet" />

@@ -1,0 +1,20 @@
+<div class="auto-container">
+    <div class="check-box">
+        <input type="radio" id="auto-payout-setting" [(ngModel)]="currentState" [value]="1">&nbsp;<label for="auto-payout-setting">Auto Payout</label> 
+    </div>
+    <div class="check-box">
+        <input type="radio" id="direct-setting" [(ngModel)]="currentState" [value]="5">&nbsp;<label for="direct-setting">Direct Auto Payout</label>
+    </div>
+    <div class="check-box">
+        <input type="radio" id="off-setting" [(ngModel)]="currentState" [value]="0">&nbsp;<label for="off-setting">OFF</label>
+    </div>
+    <div>
+        <button class="button button-payout-setting" (click)="submit()">
+            Submit
+        </button>
+    </div>
+    <div class="message-box" *ngIf="errorMessage">
+        <div class="icon error"></div>
+        <div class="message-info error">{{errorMessage}}</div>
+    </div>
+</div>

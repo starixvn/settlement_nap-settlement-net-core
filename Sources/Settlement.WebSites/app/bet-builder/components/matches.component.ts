@@ -3,7 +3,7 @@ import { interval } from 'rxjs';
 import { ISubscription } from "rxjs/Subscription";
 import { Component, OnInit, OnDestroy} from "@angular/core";
 import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { MultiSports, MatchDetail, SportLeagues, LeagueMatches, Template } from '../models';
+import { MultiSports, MatchDetail, SportLeagues, LeagueMatches } from '../models';
 import { LeagueSettingService, MatchSettingService, RefreshMatchService, PopupService } from '../services';
 import { Resources, BackgroundColor, EventStatus } from '../constants';
 import { MatchStatus } from '../../shared/constants';
@@ -15,7 +15,7 @@ import { MessageBoxService } from '../../shared/services';
     templateUrl: './matches.component.html'
 })
 
-export class MatchesComponent implements Template, OnInit, OnDestroy {
+export class MatchesComponent implements OnInit, OnDestroy {
     private readonly period = 5000;
     private subscriber: ISubscription;
     public multiSports: MultiSports;
@@ -24,17 +24,12 @@ export class MatchesComponent implements Template, OnInit, OnDestroy {
     public matchId: number;
     public modalRef: NgbModalRef;
     public intervalTimer = interval(this.period);
-    public apiUrl: string;
     constructor(
         private readonly messageBoxService: MessageBoxService,
         private readonly leagueSettingService: LeagueSettingService,
         private readonly matchSettingService: MatchSettingService,
         private readonly refreshMatchService: RefreshMatchService,
         private readonly popupService: PopupService) {
-    }
-
-    getNewApi(apiUrl: string) {
-        this.apiUrl = apiUrl;
     }
 
     public ngOnInit() {
@@ -133,12 +128,12 @@ export class MatchesComponent implements Template, OnInit, OnDestroy {
         );
     }
 
-    public openPopupCalc( match: MatchDetail) {
+    public openPopupCalc(match: MatchDetail) {
       this.popupService.popupCalc(match);
     }
 
     public openPopupLog(match: MatchDetail) {
-        this.popupService.popupLog(match.matchId, this.multiSports.request.fromDate, this.multiSports.request.toDate );
+        this.popupService.popupLog(match.matchId, this.multiSports.request.fromDate, this.multiSports.request.toDate);
     }
 
     public getEventStatusColor(match: MatchDetail) {

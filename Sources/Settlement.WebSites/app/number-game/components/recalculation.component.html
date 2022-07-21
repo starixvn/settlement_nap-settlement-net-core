@@ -1,0 +1,49 @@
+﻿<div cdkDrag cdkDragRootElement=".cdk-overlay-pane" >
+    <h1 mat-dialog-title  cdkDragHandle>Recalculate Number Game
+        <button type="button" class="close" (click)="closePopup()">X</button>
+    </h1>
+</div>
+<span toastContainer></span>
+<div *ngIf="matchDetail">
+    <div class="calculate-league">
+        <div class="icon">
+        </div>
+        {{matchDetail.eventName}} - {{matchDetail.kickOffTime | date : 'mediumDate' }}
+    </div>
+    <div class="recal">
+        <table>
+            <thead>
+                <tr>
+                    <td>Sequence</td>
+                    <td>Result</td>
+                    <td>Color</td>
+                    <td>Is N/A</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let ball of balls">
+                    <td class="col-25">{{ball.seq}}</td>
+                    <td class="col-30">
+                        <input *ngIf="!ball.isNA; else noNumberBall" maxlength="2" myOnlyInteger type="text"
+                            [(ngModel)]="ball.numberBall" [ngClass]="{'error':isWarningOnBall(ball.numberBall)}">
+                        <ng-template #noNumberBall>
+                            <span *ngIf="ball.isNA;">N/A</span>
+                        </ng-template>
+                    </td>
+                    <td class="col-25 ball-padding">
+                        <div *ngIf="!ball.isNA; else disabledColorBall" [ngClass]="['lotto-ball', getColorBall(ball)]">
+                            {{ball.numberBall}}</div>
+                        <ng-template #disabledColorBall>
+                            <div class="lotto-ball disable"></div>
+                        </ng-template>
+                    </td>
+                    <td class="col-20">
+                        <input type="checkbox" [(ngModel)]="ball.isNA" (ngModelChange)="onCheckBoxChange(ball)"
+                            [disabled]="ball.isDisableCheckbox" [checked]="ball.isNA" />
+                    </td>
+                </tr>
+                <tr><td colspan="4" class="align-left"><button class="button" (click)="reCalculate()">Re-Calculate</button></td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>

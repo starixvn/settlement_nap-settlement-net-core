@@ -16,6 +16,7 @@ namespace Settlement.EventManagement
             CreateMap<Match, MultiSportMatchWaiting>();
             CreateMap<Match, MultiSportMatch>();
             CreateMap<RefreshMatchesRequest, GetWaitingMatchesMultiSportCriteria>();
+            CreateMap<CalculateParlayRequest, ParlayCriteria>();
         }
     }
 }

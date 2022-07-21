@@ -24,7 +24,6 @@ import {
   GenerateListService,
   PopupService,
 } from "../services";
-import { Template } from "../models";
 import{ MatchesComponent } from './matches.component';
 import{ CalculationComponent } from './calculation.component';
 
@@ -54,7 +53,7 @@ export class AppComponent implements OnInit, OnDestroy {
   @ViewChild('container', { read: ViewContainerRef, static: true }) container: ViewContainerRef;
   public blockUI = false;
   public pageType: string;
-  public component: ComponentRef<Template>;
+  public component: ComponentRef<OnInit>;
   private readonly period = 60000;
   private subscriber: ISubscription;
   public intervallTimer = interval(this.period);
@@ -67,18 +66,17 @@ export class AppComponent implements OnInit, OnDestroy {
 
   public ngOnInit() {
     this.blockUIService.blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
-    this.createTemplateComponent();
+    this.createComponent();
     this.reCheckIn();
   }
 
-  private createTemplateComponent(): ComponentRef<Template> {
+  private createComponent() {
     const factory = this.getComponentFactory();
     this.component = this.container.createComponent(factory);
-    this.component.instance.getNewApi(this.elementRef.nativeElement.getAttribute('api-url'));
     return this.component;
   }
 
-  private getComponentFactory(): ComponentFactory<Template> {
+  private getComponentFactory(): ComponentFactory<OnInit> {
     const pageType = this.elementRef.nativeElement.getAttribute('page-type');
     switch (pageType) {
       case "MainPage":

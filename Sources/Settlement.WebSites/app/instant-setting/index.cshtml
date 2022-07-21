@@ -1,0 +1,17 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    @{
+        var path = @ViewBag.NetCoreRootUrl;
+    }
+    <title>@ViewBag.Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="@path/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="@path/css/styles.css" />
+</head>
+<body>
+    <div class="content">
+        <app-root page-type="@ViewBag.PageType" api-url="@path"></app-root>
+    </div>
+</body>
+</html>

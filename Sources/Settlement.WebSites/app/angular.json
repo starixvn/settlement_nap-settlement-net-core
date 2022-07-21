@@ -168,7 +168,7 @@
               "extractLicenses": true,
               "vendorChunk": false,
               "buildOptimizer": false,
-              "deployUrl": "@ViewBag.NetCoreRootUrl/bet-builder/"
+              "deployUrl": "bet-builder/"
             }
           }
         },
@@ -193,9 +193,663 @@
           "defaultConfiguration": "dev"
         }
       }
+    },
+    "instant-setting": {
+      "root": "app",
+      "sourceRoot": "instant-setting",
+      "projectType": "application",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "aot": true,
+            "outputPath": "../wwwroot/instant-setting",
+            "index": "instant-setting/index.cshtml",
+            "main": "instant-setting/main.ts",
+            "tsConfig": "instant-setting/tsconfig.app.json",
+            "polyfills": "polyfills.ts",
+            "styles": [
+              "instant-setting/style.less"
+            ],
+            "allowedCommonJsDependencies": [
+              "lodash"
+           ]
+          },
+          "configurations": {
+            "dev": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
+              "optimization": false,
+              "sourceMap": true,
+              "namedChunks": true,
+              "aot": false,
+              "extractLicenses": false,
+              "vendorChunk": true,
+              "buildOptimizer": false
+            },
+            "prod": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "environments/environment.ts",
+                  "with": "environments/environment.prod.ts"
+                }
+              ]
+            },
+            "production": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "aot": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": false,
+              "deployUrl": "@path/instant-setting/"
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "proxyConfig": "proxy.conf.json",
+            "port": 5001,
+            "aot": false
+          },
+          "configurations": {
+            "dev": {
+              "browserTarget": "instant-setting:build:dev"
+            },
+            "prod": {
+              "browserTarget": "instant-setting:build:prod"
+            },
+            "production": {
+              "browserTarget": "instant-setting:build:production"
+            }
+          },
+          "defaultConfiguration": "dev"
+        }
+      }
+    },
+    "log": {
+      "root": "app",
+      "sourceRoot": "log",
+      "projectType": "application",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "aot": true,
+            "outputPath": "../wwwroot/log",
+            "index": "log/index.cshtml",
+            "main": "log/main.ts",
+            "tsConfig": "log/tsconfig.app.json",
+            "polyfills": "polyfills.ts",
+            "styles": [
+              "log/style.less"
+            ],
+            "allowedCommonJsDependencies": [
+              "lodash"
+           ]
+          },
+          "configurations": {
+            "dev": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
+              "optimization": false,
+              "sourceMap": true,
+              "namedChunks": true,
+              "aot": false,
+              "extractLicenses": false,
+              "vendorChunk": true,
+              "buildOptimizer": false
+            },
+            "prod": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "environments/environment.ts",
+                  "with": "environments/environment.prod.ts"
+                }
+              ]
+            },
+            "production": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "aot": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": false,
+              "deployUrl": "@path/log/"
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "proxyConfig": "proxy.conf.json",
+            "port": 5001,
+            "aot": false
+          },
+          "configurations": {
+            "dev": {
+              "browserTarget": "log:build:dev"
+            },
+            "prod": {
+              "browserTarget": "log:build:prod"
+            },
+            "production": {
+              "browserTarget": "log:build:production"
+            }
+          },
+          "defaultConfiguration": "dev"
+        }
+      }
+    },
+    "happy5": {
+      "root": "app",
+      "sourceRoot": "happy5",
+      "projectType": "application",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "aot": true,
+            "outputPath": "../wwwroot/happy5",
+            "index": "happy5/index.cshtml",
+            "main": "happy5/main.ts",
+            "tsConfig": "happy5/tsconfig.app.json",
+            "polyfills": "polyfills.ts",
+            "styles": [
+              "node_modules/ngx-toastr/toastr.css",
+              "shared/styles/material.style.less",
+              "shared/styles/styles.less",
+              "happy5/style.less"
+            ],
+            "allowedCommonJsDependencies": [
+              "lodash"
+           ]
+          },
+          "configurations": {
+            "dev": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
+              "optimization": false,
+              "sourceMap": true,
+              "namedChunks": true,
+              "aot": false,
+              "extractLicenses": false,
+              "vendorChunk": true,
+              "buildOptimizer": false
+            },
+            "prod": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "environments/environment.ts",
+                  "with": "environments/environment.prod.ts"
+                }
+              ]
+            },
+            "production": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "aot": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": false,
+              "deployUrl": "happy5/"
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "proxyConfig": "proxy.conf.json",
+            "port": 5001,
+            "aot": false
+          },
+          "configurations": {
+            "dev": {
+              "browserTarget": "happy5:build:dev"
+            },
+            "prod": {
+              "browserTarget": "happy5:build:prod"
+            },
+            "production": {
+              "browserTarget": "happy5:build:production"
+            }
+          },
+          "defaultConfiguration": "dev"
+        }
+      }
+    },
+    "number-game": {
+      "root": "app",
+      "sourceRoot": "number-game",
+      "projectType": "application",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "../wwwroot/number-game",
+            "index": "number-game/index.cshtml",
+            "main": "number-game/main.ts",
+            "tsConfig": "number-game/tsconfig.app.json",
+            "polyfills": "polyfills.ts",
+            "styles": [
+              "node_modules/ngx-toastr/toastr.css",
+              "shared/styles/material.style.less",
+              "shared/styles/styles.less",
+              "number-game/style.less"
+            ],
+            "allowedCommonJsDependencies": [
+              "lodash"
+           ]
+          },
+          "configurations": {
+            "dev": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
+              "optimization": false,
+              "sourceMap": true,
+              "namedChunks": true,
+              "aot": false,
+              "extractLicenses": false,
+              "vendorChunk": true,
+              "buildOptimizer": false
+            },
+            "prod": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "environments/environment.ts",
+                  "with": "environments/environment.prod.ts"
+                }
+              ]
+            },
+            "production": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "aot": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": false,
+              "deployUrl": "number-game/"
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "proxyConfig": "proxy.conf.json",
+            "port": 5001,
+            "aot": false
+          },
+          "configurations": {
+            "dev": {
+              "browserTarget": "number-game:build:dev"
+            },
+            "prod": {
+              "browserTarget": "number-game:build:prod"
+            },
+            "production": {
+              "browserTarget": "number-game:build:production"
+            }
+          },
+          "defaultConfiguration": "dev"
+        }
+      }
+    },
+    "move-tickets": {
+      "root": "app",
+      "sourceRoot": "move-tickets",
+      "projectType": "application",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "aot": true,
+            "outputPath": "../wwwroot/move-tickets",
+            "index": "move-tickets/index.cshtml",
+            "main": "move-tickets/main.ts",
+            "tsConfig": "move-tickets/tsconfig.app.json",
+            "polyfills": "polyfills.ts",
+            "styles": [
+              "move-tickets/style.less",
+              "shared/styles/material.style.less",
+              "shared/components/multiple-selection/multiple-select.component.less"
+            ],
+            "allowedCommonJsDependencies": [
+              "lodash"
+           ]
+          },
+          "configurations": {
+            "dev": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
+              "optimization": false,
+              "sourceMap": true,
+              "namedChunks": true,
+              "aot": false,
+              "extractLicenses": false,
+              "vendorChunk": true,
+              "buildOptimizer": false
+            },
+            "prod": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "environments/environment.ts",
+                  "with": "environments/environment.prod.ts"
+                }
+              ]
+            },
+            "production": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "aot": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": false,
+              "deployUrl": "move-tickets/"
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "proxyConfig": "proxy.conf.json",
+            "port": 5001,
+            "aot": false
+          },
+          "configurations": {
+            "dev": {
+              "browserTarget": "move-tickets:build:dev"
+            },
+            "prod": {
+              "browserTarget": "move-tickets:build:prod"
+            },
+            "production": {
+              "browserTarget": "move-tickets:build:production"
+            }
+          },
+          "defaultConfiguration": "dev"
+        }
+      }
+    },
+    "score-source-setting": {
+      "root": "app",
+      "sourceRoot": "score-source-setting",
+      "projectType": "application",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "aot": true,
+            "outputPath": "../wwwroot/score-source-setting",
+            "index": "score-source-setting/index.cshtml",
+            "main": "score-source-setting/main.ts",
+            "tsConfig": "score-source-setting/tsconfig.app.json",
+            "polyfills": "polyfills.ts",
+            "styles": [
+              "score-source-setting/style.less",
+              "shared/styles/material.style.less"
+            ],
+            "allowedCommonJsDependencies": [
+              "lodash"
+           ]
+          },
+          "configurations": {
+            "dev": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
+              "optimization": false,
+              "sourceMap": true,
+              "namedChunks": true,
+              "aot": false,
+              "extractLicenses": false,
+              "vendorChunk": true,
+              "buildOptimizer": false
+            },
+            "prod": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "environments/environment.ts",
+                  "with": "environments/environment.prod.ts"
+                }
+              ]
+            },
+            "production": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "aot": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": false,
+              "deployUrl": "score-source-setting/"
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "proxyConfig": "proxy.conf.json",
+            "port": 5001,
+            "aot": false
+          },
+          "configurations": {
+            "dev": {
+              "browserTarget": "score-source-setting:build:dev"
+            },
+            "prod": {
+              "browserTarget": "score-source-setting:build:prod"
+            },
+            "production": {
+              "browserTarget": "score-source-setting:build:production"
+            }
+          },
+          "defaultConfiguration": "dev"
+        }
+      }
+    },
+    "multi-sports": {
+      "root": "app",
+      "sourceRoot": "multi-sports",
+      "projectType": "application",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "aot": true,
+            "outputPath": "../wwwroot/multi-sports",
+            "index": "multi-sports/index.cshtml",
+            "main": "multi-sports/main.ts",
+            "tsConfig": "multi-sports/tsconfig.app.json",
+            "polyfills": "polyfills.ts",
+            "styles": [
+              "multi-sports/style.less",
+              "shared/styles/material.style.less",
+              "shared/components/multiple-selection/multiple-select.component.less"
+            ],
+            "allowedCommonJsDependencies": [
+              "lodash"
+           ]
+          },
+          "configurations": {
+            "dev": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
+              "optimization": false,
+              "sourceMap": true,
+              "namedChunks": true,
+              "aot": false,
+              "extractLicenses": false,
+              "vendorChunk": true,
+              "buildOptimizer": false
+            },
+            "prod": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "environments/environment.ts",
+                  "with": "environments/environment.prod.ts"
+                }
+              ]
+            },
+            "production": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "aot": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": false,
+              "deployUrl": "multi-sports/"
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "proxyConfig": "proxy.conf.json",
+            "port": 5001,
+            "aot": false
+          },
+          "configurations": {
+            "dev": {
+              "browserTarget": "multi-sports:build:dev"
+            },
+            "prod": {
+              "browserTarget": "multi-sports:build:prod"
+            },
+            "production": {
+              "browserTarget": "multi-sports:build:production"
+            }
+          },
+          "defaultConfiguration": "dev"
+        }
+      }
     }
   },
-  "defaultProject": "bet-builder",
+  "defaultProject": "multi-sports",
   "schematics": {
     "@schematics/angular:component": {
       "inlineTemplate": false,

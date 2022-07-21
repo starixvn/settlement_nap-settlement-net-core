@@ -5,14 +5,10 @@ import { Observable } from 'rxjs';
 import { AutoSettingLeagueQuery, AutoSettingMatchQuery, Result } from '../../shared/models';
 @Injectable()
 export class RequestService {
-    public apiUrl = '';
+    private betBuilderApi = 'api/bet-builder';
     constructor(private readonly httpRequestService: HttpRequestService) {
     }
-
-    private get betBuilderApi() {
-        return `${this.apiUrl}/api/bet-builder`;
-    }
-
+   
     public getSport(params: object) {
         return this.httpRequestService.postJson(params, `${this.betBuilderApi}/get-sports`, false);
     }
@@ -54,10 +50,10 @@ export class RequestService {
     }
 
     public updateLeague(query: AutoSettingLeagueQuery): Observable<Result> {
-        return this.httpRequestService.postJson(query, `${this.apiUrl}/api/setting/update-setting-league`);
+        return this.httpRequestService.postJson(query, `api/setting/update-setting-league`);
     }
 
     public updateMatch(query: AutoSettingMatchQuery): Observable<Result> {
-        return this.httpRequestService.postJson(query, `${this.apiUrl}/api/setting/update-setting-match`);
+        return this.httpRequestService.postJson(query, `api/setting/update-setting-match`);
     }
 }

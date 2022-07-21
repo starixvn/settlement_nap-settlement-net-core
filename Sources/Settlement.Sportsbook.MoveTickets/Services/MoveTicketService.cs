@@ -147,7 +147,7 @@ namespace Settlement.Sportsbook.MoveTickets.Services
                 "Refund FT",
                 "Refund"
             };
-            return leagues.OrderBy(match => PositionByEventStatus(match))
+            return leagues.OrderBy(PositionByEventStatus)
                           .ThenBy(match => eventStatuses.IndexOf(match.NewEventStatus))
                           .ThenBy(match => match.KickOffTime)
                           .ThenBy(match => match.MatchId)
@@ -158,23 +158,23 @@ namespace Settlement.Sportsbook.MoveTickets.Services
         {
             const int firstPosition = 1;
             const int secondPosition = 2;
-            return IsSettleAndHasRuningTicket(match) ? firstPosition : secondPosition;
+            return IsSettleAndHasRunningTicket(match) ? firstPosition : secondPosition;
         }
 
-        private static bool IsSettleAndHasRuningTicket(Match match)
+        private static bool IsSettleAndHasRunningTicket(Match match)
         {
-            var isCacl = match.NewEventStatus.Equals(EventStatus.Refund, StringComparison.OrdinalIgnoreCase) || match.NewEventStatus.Equals(EventStatus.Completed, StringComparison.OrdinalIgnoreCase);
+            var isCalc = match.NewEventStatus.Equals(EventStatus.Refund, StringComparison.OrdinalIgnoreCase) || match.NewEventStatus.Equals(EventStatus.Completed, StringComparison.OrdinalIgnoreCase);
 
-            return isCacl && (match.IsExistMarkedTicket || match.IsExistRunningTicket || match.IsExistMarkedTicketParlay);
+            return isCalc && (match.IsExistMarkedTicket || match.IsExistRunningTicket || match.IsExistMarkedTicketParlay);
         }
 
         private async Task<MultiSportResult> FetchMatchesAndResultDetails(ICriteria criteria)
         {
-            var data = await repository.FetchMultipleAsync<Match, ResultDetail>(criteria);
+            var (firstResultSet, secondResultSet) = await repository.FetchMultipleAsync<Match, ResultDetail>(criteria);
             return new MultiSportResult
             {
-                Matches = data.Item1.ToList(),
-                ResultDetails = data.Item2.ToList()
+                Matches = firstResultSet.ToList(),
+                ResultDetails = secondResultSet.ToList()
             };
         }
 

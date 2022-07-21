@@ -6,35 +6,47 @@ using Settlement.Core.Constants;
 namespace Settlement.WebSites.Controllers
 {
     [SessionAuthorize]
+    [Route("[controller]")]
     public class AppsController : Controller
     {
-
         private readonly IConfiguration configuration;
+
 
         public AppsController(IConfiguration configuration)
         {
             this.configuration = configuration;
-            
+        }
+        
+        [HttpGet("change-waiting-time")]
+        public IActionResult ChangeWaitingTime(string pageType)
+        {
+            return SetView("Change waiting-time setting", pageType, ViewPath.Setting);
         }
 
-        public IActionResult Test()
+        [HttpGet("auto-setting-match")]
+        public IActionResult AutoSettingMatch()
         {
-            ViewBag.Environment = configuration.GetSection("Environment").Value;
-            return View("~/Views/Home/Test.cshtml");
+            return SetView("Match Auto Payout Setting", "AutoSettingMatch", ViewPath.Setting);
         }
 
-        [HttpGet]
-        public IActionResult BetBuilder(string matchId)
+        [HttpGet("auto-setting-league")]
+        public IActionResult AutoSettingLeague()
         {
-            var pageType = string.IsNullOrEmpty(matchId) ? "MainPage" : PagesType.Recalculate;
-            return SetView("Bet Builder", pageType, "~/wwwroot/bet-builder/index.cshtml");
+            return SetView("League Auto Payout Setting", "AutoSettingLeague", ViewPath.Setting);
+        }
+
+        [HttpGet("remark-setting")]
+        public IActionResult RemarkSetting()
+        {
+            return SetView("Hold Settings", "RemarkSetting", ViewPath.Setting);
         }
 
         private ActionResult SetView(string title, string pageType, string viewName)
         {
             ViewBag.Environment = configuration.GetSection("Environment").Value;
             ViewBag.Title = title;
-            ViewBag.NetCoreRootUrl = configuration.GetSection("NetCoreRootUrl").Value;
+            ViewBag.NetCoreRootUrl = configuration.GetSection("Settle.Domain:NetCoreRootUrl").Value;
+            ViewBag.RootUrl = configuration.GetSection("Settle.Domain:RootUrl").Value;
             ViewBag.PageType = pageType;
 
             return View(viewName);

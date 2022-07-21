@@ -1,0 +1,154 @@
+﻿@import "../../Styles/colors.less";
+@import "../../Styles/common.less";
+@sprite: "../../wwwroot/css/images/sprite.png";
+
+.hasDatepicker {
+    float: left;
+    width: 85px;
+}
+
+.match-code {
+    width: 110px;
+}
+
+.content .table-calculation {
+    min-width: 0;
+}
+
+.content .head-table, .content thead {
+    border: 0;
+    min-width: 990px;
+}
+
+.filter-bar {
+    margin-top: 0;
+}
+
+.table-calculation .index {
+    width: 25px;
+}
+
+.match-date {
+    width: 82px;
+}
+
+.user-name {
+    width: 80px;
+}
+
+.action {
+    width: 150px;
+}
+
+.goal-record {
+    width: 120px;
+}
+
+.goal {
+    text-transform: uppercase;
+}
+
+.result-string {
+    width: 155px;
+}
+
+.remark-content {
+    min-width: 100%;
+    border-bottom: 0;
+    overflow-x: auto;
+    width: 120px;
+}
+
+.event-date {
+    color: #ed1c24;
+    font-weight: normal;
+}
+
+.league div {
+    padding-top: 2px;
+    margin-top: 5px;
+    cursor: pointer;
+    float: left;
+}
+
+.btn-left {
+    background: url("@{sprite}") no-repeat -267px -85px;
+    width: 2px;
+    height: 25px;
+}
+
+.btn-middle {
+    border: 1px solid #CDCDCD;
+    .bg_linear_gradient(@menu_bg_log_o, @menu_bg_log);
+    background-color: @menu_bg_log;
+    color: @menu_text_o;
+    font-weight: bold;
+    font-size: 12px;
+    line-height: 21px;
+    padding-left: 15px;
+    padding-right: 32px;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.btn-right {
+    background: url("@{sprite}") no-repeat -274px -85px;
+    width: 19px;
+    height: 25px;
+}
+
+.btn-right-up {
+    background: url("@{sprite}") no-repeat -298px -85px;
+    width: 19px;
+    height: 25px;
+}
+
+.match {
+    color: #1d3968;
+    float: left;
+    font-size: 11px;
+    font-weight: bold;
+    line-height: 24px;
+    width: 99.8%;
+
+    div {
+        float: left;
+        line-height: 24px;
+        padding-left: 5px;
+
+        &.match-name {
+            color: #252525;
+        }
+    }
+}
+
+.header {
+    background: @grid_header;
+    border-bottom: solid 1px #CBC9CA;
+    color: white;
+    height: 20px;
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: bold;
+    padding-top: 2px;
+}
+
+.no-data {
+    height: 300px;
+}
+
+.show-menu {
+    max-height: 840px;
+    width: 100%;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    border-right: solid 1px #C8C8C8;
+}
+
+.hide-menu {
+    max-height: 690px;
+    width: 100%;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    border-right: solid 1px #C8C8C8;
+}

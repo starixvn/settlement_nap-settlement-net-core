@@ -38,7 +38,7 @@ describe("MultiSport - PopupService", () => {
   it("popupLog - should call dialogBoxService when called", () => {
     spyOn(dialogBoxService, "popup");
 
-    popupService.popupLog("", "", "");
+    popupService.popupLog(0, "", "");
 
     expect(dialogBoxService.popup).toHaveBeenCalled();
   });

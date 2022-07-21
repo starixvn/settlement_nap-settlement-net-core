@@ -1,0 +1,43 @@
+﻿<div cdkDrag cdkDragRootElement=".cdk-overlay-pane" >
+    <h1 mat-dialog-title  cdkDragHandle>Refund Happy 5
+        <button type="button" class="close" (click)="closePopup()">X</button>
+    </h1>
+</div>
+<span toastContainer></span>
+<div *ngIf="match">
+    <div class="calculate-league">
+        <div class="icon">
+        </div>
+        {{match.eventName}} - {{match.kickOffTime | date : 'mediumDate' }}
+    </div>
+    <div class="recal">
+        <table>
+            <thead>
+                <tr>
+                    <td>
+                        Sequence
+                    </td>
+                    <td>
+                        Result
+                    </td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let ball of balls">
+                    <td>{{ball.seq}}</td>
+                    <td class="align-center">
+                        <div *ngIf="ball.numberBall>0; else normal">
+                            <div [ngClass]="['lotto-ball', getColorBall(ball)]">{{ball.numberBall}}</div>
+                        </div>
+                        <ng-template #normal>
+                            N/A
+                        </ng-template>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="align-right"><button class="button" (click)="refund()">Refund</button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
