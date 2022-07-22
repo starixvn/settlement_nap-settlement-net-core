@@ -4,6 +4,7 @@ using AutoMapper;
 using Fanex.Data.Repository;
 using Microsoft.Extensions.Configuration;
 using Settlement.Core.Models;
+using Settlement.Sportsbook.Soccer.Constants;
 using Settlement.Sportsbook.Soccer.Criteria;
 using Settlement.Sportsbook.Soccer.Requests;
 
@@ -108,10 +109,16 @@ namespace Settlement.Sportsbook.Soccer.Services
         private async Task<Result> ValidateBeforePush(CalculateCriteria criteria)
         {
             var listReplicatedServer = configuration.GetSection("SiteDBServer").Get<List<string>>();
+            var checkingCriteria = new ValidateBeforePushCriteria
+            {
+                MatchId = criteria.MatchId,
+                SpName = criteria.SpName,
+                ActionId = ActionKey.ActionDictionary[criteria.Action]
+            };
             foreach (var server in listReplicatedServer)
             {
-                criteria.DbServer = server;
-                await repository.ExecuteAsync(criteria);
+                checkingCriteria.DbServer = server;
+                await repository.ExecuteAsync(checkingCriteria);
                 if (criteria.ErrCode > 0)
                 {
                     return new Result

@@ -54,7 +54,7 @@
     <Setting Key="NAP_Set_WaitingTimeLeagueUpd" SpName="NAP_Set_WaitingTimeLeagueUpd" DbName="DBPRO.bodb02.bodbAdminNet" />
   </Function>
   <Function Name="Select match Info">
-    <Setting Key="NAP_Set_MatchSelDetail_DBTXN" SpName="NAP_Set_MatchSelDetail" DbName="DBTXN.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_MatchSelDetail" SpName="NAP_Set_MatchSelDetail" DbName="DBTXN.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_MatchSelDetail_ReCal" SpName="NAP_Set_MatchSelDetail_ReCal" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="Nap_Set_FantasyMatchSel" SpName="Nap_Set_FantasyMatchSel" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_BetDaq_MatchSel" SpName="NAP_Set_BetDaq_MatchSel" DbName="DBPRO.bodb02.bodbAdminNet" />
@@ -76,6 +76,8 @@
     <Setting Key="NAP_Set_BetDaq_Checking" SpName="NAP_Set_BetDaq_Checking" DbName="DBTXN.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_BetFair_Checking" SpName="NAP_Set_BetFair_Checking" DbName="DBTXN.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_SpecificBettypes" SpName="NAP_Set_SpecificBettypes" DbName="DBPRO.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Admin_Settlement_Validation_DBTXN" SpName="NAP_Admin_Settlement_Validation" DbName="DBTXN.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_MatchSelDetail_Ticket_DBTXN" SpName="NAP_Set_MatchSelDetail_Ticket" DbName="DBTXN.bodb02.bodbAdminNet" />
   </Function>
   <Function Name="Betdaq">
     <Setting Key="NAP_Admin_Settlement_BetDaq_Move" SpName="NAP_Admin_Settlement_BetDaq_Move" DbName="DBTXN.bodb02.bodbAdminNet" />
@@ -144,8 +146,10 @@
   </Function>
 
   <Function Name="SiteDB">
-    <Setting Key="NAP_Set_MatchSelDetail_testsitedb" SpName="NAP_Set_MatchSelDetail" DbName="testsitedb.bodb02.bodbAdminNet" />
-    <Setting Key="NAP_Admin_Settlement_1_InstantCalculation_Push_testsitedb" SpName="NAP_Admin_Settlement_1_InstantCalculation_Push" DbName="testsitedb.bodb02.bodbAdminNet" />
-    <Setting Key="Calculate_testsitedb" SpName="NAP_Admin_Settlement_1_Push" DbName="testsitedb.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_MatchSelDetail_SITEDB" SpName="NAP_Set_MatchSelDetail" DbName="SITEDB.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Admin_Settlement_1_InstantCalculation_Push_SITEDB" SpName="NAP_Admin_Settlement_1_InstantCalculation_Push" DbName="SITEDB.bodb02.bodbAdminNet" />
+    <Setting Key="Calculate_SITEDB" SpName="NAP_Admin_Settlement_1_Push" DbName="SITEDB.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Admin_Settlement_Validation_SITEDB" SpName="NAP_Admin_Settlement_Validation" DbName="SITEDB.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_MatchSelDetail_Ticket_SITEDB" SpName="NAP_Set_MatchSelDetail_Ticket" DbName="SITEDB.bodb02.bodbAdminNet" />
   </Function>
 </Functions>

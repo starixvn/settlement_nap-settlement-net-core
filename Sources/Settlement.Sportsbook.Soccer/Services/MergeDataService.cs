@@ -11,11 +11,15 @@ namespace Settlement.Sportsbook.Soccer.Services
 
         public SiteMatchDetail MergeSiteMatch(List<SiteMatchDetail> siteMatches, List<TicketCounts> ticketCounts);
 
-        public List<ChildMatchModel> MergeDataChildMatches(List<ChildMatchModel> childMatches, List<SiteMatch> matches);
+        public List<ChildMatchModel> MergeDataChildMatches(List<ChildMatchModel> childMatches, List<SiteMatch> siteMatches);
     }
 
     public class MergeDataServiceImp : IMergeDataService
     {
+        private const int HalfTimeGroupId = 1;
+
+        private const int FullTimeGroupId = 2;
+
         public SiteMatchDetail MergeSiteMatch(List<SiteMatchDetail> siteMatches, List<TicketCounts> ticketCounts)
         {
             var siteMatch = new SiteMatchDetail
@@ -24,8 +28,11 @@ namespace Settlement.Sportsbook.Soccer.Services
                 IsExistFgNg = siteMatches.Any(match => match.IsExistFgNg),
                 IsExistHtFgLg = siteMatches.Any(match => match.IsExistHtFgLg),
                 IsExistFgLg = siteMatches.Any(match => match.IsExistFgLg),
-                HtStatus = GetStatus(ticketCounts.Find(item => item.GroupId == 1)),
-                FtStatus = GetStatus(ticketCounts.Find(item => item.GroupId == 2))
+                IsEnabledGoalRecordHt = siteMatches.Any(match => match.IsEnabledGoalRecordHt),
+                IsEnabledGoalRecordFt = siteMatches.Any(match => match.IsEnabledGoalRecordFt),
+                IsHtOnly = siteMatches.Any(match => match.IsHtOnly),
+                HtStatus = GetStatus(ticketCounts.First(item => item.GroupId == HalfTimeGroupId)),
+                FtStatus = GetStatus(ticketCounts.First(item => item.GroupId == FullTimeGroupId))
             };
             return siteMatch;
         }
@@ -90,14 +97,16 @@ namespace Settlement.Sportsbook.Soccer.Services
             return "Calculated";
         }
 
-        public List<ChildMatchModel> MergeDataChildMatches(List<ChildMatchModel> childMatches, List<SiteMatch> matches)
+        public List<ChildMatchModel> MergeDataChildMatches(List<ChildMatchModel> childMatches, List<SiteMatch> siteMatches)
         {
             childMatches.ForEach(match =>
             {
                 var listSiteChildMatch = new List<ChildMatchTicketInfos>();
-                matches.ForEach(item => listSiteChildMatch.Add(item.SiteChildMatches.Single(siteMatch => siteMatch.MatchId == match.MatchId)));
-                match.IsExistMarkedTicket = listSiteChildMatch.Any(m => m.IsExistMarkedTicket);
-                match.IsExistRunningTicket = listSiteChildMatch.Any(m => m.IsExistRunningTicket);
+                siteMatches.ForEach(item => listSiteChildMatch.Add(item.SiteChildMatches.First(siteMatch => siteMatch.MatchId == match.MatchId)));
+                match.IsExistMarkedTicket = match.IsExistMarkedTicket ||
+                                            (listSiteChildMatch.Count > 0 && listSiteChildMatch.Any(m => m.IsExistMarkedTicket));
+                match.IsExistRunningTicket = match.IsExistRunningTicket
+                                             || (listSiteChildMatch.Count > 0 && listSiteChildMatch.Any(m => m.IsExistRunningTicket));
             });
 
             return childMatches;

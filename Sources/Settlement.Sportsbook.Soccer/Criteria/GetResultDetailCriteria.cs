@@ -4,16 +4,16 @@ namespace Settlement.Sportsbook.Soccer.Criteria
 {
     public class GetResultDetailCriteria : CriteriaBase
     {
-        public int MatchId { get; set; }
+        public string MatchidList { get; set; }
 
         public override string GetSettingKey()
         {
-            return "NAP_Set_ResultDetailSel ";
+            return "NAP_Set_ResultDetailSel";
         }
 
         public override bool IsValid()
         {
-            return MatchId > 0;
+            return !string.IsNullOrEmpty(MatchidList);
         }
     }
 }

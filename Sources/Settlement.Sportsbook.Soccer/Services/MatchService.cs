@@ -94,9 +94,12 @@ namespace Settlement.Sportsbook.Soccer.Services
             var childMatches = match.ChildMatches.OrderBy(child => child.MatchCode)
                 .ThenBy(child => child.MatchId).ToList();
 
-            foreach (var item in childMatches)
+            if (childMatches != null)
             {
-                item.RefDataService = refDataService;
+                foreach (var item in childMatches)
+                {
+                    item.RefDataService = refDataService;
+                }
             }
 
             return new Match
@@ -160,8 +163,9 @@ namespace Settlement.Sportsbook.Soccer.Services
 
         private async Task<List<ResultDetail>> GetResultDetail(int matchId)
         {
-            var resultDetailCriteria = new GetResultDetailCriteria { MatchId = matchId };
-            return await repository.GetAsync<List<ResultDetail>>(resultDetailCriteria);
+            var resultDetailCriteria = new GetResultDetailCriteria { MatchidList = matchId.ToString() };
+            var resultDetail = await repository.GetAsync<List<ResultDetail>>(resultDetailCriteria);
+            return resultDetail ?? new List<ResultDetail>();
         }
 
         private async Task<HedgeMatchDetail> GetHedgeMatch(int matchId)

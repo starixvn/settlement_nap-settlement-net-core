@@ -10,12 +10,9 @@ namespace Settlement.Sportsbook.Soccer.Criteria
 
         public bool IsRefundPage { get; set; }
 
-        [SpParam(Ignored = true)]
-        public string DbServer { get; set; }
-
         public override string GetSettingKey()
         {
-            return $"NAP_Set_MatchSelDetail_{DbServer}";
+            return "NAP_Set_MatchSelDetail";
         }
 
         public override bool IsValid()

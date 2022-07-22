@@ -49,7 +49,7 @@ namespace Settlement.Sportsbook.Soccer.Services
             var baseMatchDetail = result[0].Cast<MatchDetail>().FirstOrDefault();
             Check.Argument.IsNotNull(baseMatchDetail, $"Match ${criteria.MatchId} does not exist");
 
-            var listSiteMatch = GetAllMatch(criteria);
+            var listSiteMatch = GetSiteMatchInfo(criteria);
             var ticketCounts = mergeDataService.MergeTicketCounts(listSiteMatch);
             var siteMatchInfo = mergeDataService.MergeSiteMatch(listSiteMatch.Select(item => item.SiteMatchInfo).ToList(), ticketCounts);
             var childMatches = mergeDataService.MergeDataChildMatches(result[1].Cast<ChildMatchModel>().ToList(), listSiteMatch);
@@ -62,7 +62,7 @@ namespace Settlement.Sportsbook.Soccer.Services
             };
         }
 
-        private List<SiteMatch> GetAllMatch(GetMatchDetailCriteria criteria)
+        private List<SiteMatch> GetSiteMatchInfo(GetMatchDetailCriteria criteria)
         {
             var listReplicatedServer = configuration.GetSection("SiteDBServer").Get<List<string>>();
             var mappingTypes = new[] { typeof(SiteMatchDetail), typeof(TicketCounts), typeof(ChildMatchTicketInfos) };
@@ -72,8 +72,7 @@ namespace Settlement.Sportsbook.Soccer.Services
 
             foreach (var server in listReplicatedServer)
             {
-                criteria.DbServer = server;
-                Task getMatchTask = Task.Factory.StartNew(() => GetMatchFromCriteria(criteria, mappingTypes, listMatch));
+                Task getMatchTask = Task.Factory.StartNew(() => GetMatchFromCriteria(criteria.MatchId, mappingTypes, listMatch, server));
                 tasks.Add(getMatchTask);
             }
 
@@ -82,8 +81,9 @@ namespace Settlement.Sportsbook.Soccer.Services
             return listMatch;
         }
 
-        private void GetMatchFromCriteria(GetMatchDetailCriteria criteria, Type[] mappingTypes, List<SiteMatch> listMatch)
+        private void GetMatchFromCriteria(int matchId, Type[] mappingTypes, List<SiteMatch> listMatch, string server)
         {
+            var criteria = new GetTicketInfoCriteria { MatchId = matchId, DbServer = server };
             var result = repository.FetchMultiple(criteria, mappingTypes);
             var tempMatch = new SiteMatch
             {
