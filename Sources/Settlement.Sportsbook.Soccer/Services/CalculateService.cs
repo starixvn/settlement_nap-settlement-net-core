@@ -92,6 +92,11 @@ namespace Settlement.Sportsbook.Soccer.Services
         private async Task<Result> Execute(CalculateCriteria criteria)
         {
             var listReplicatedServer = configuration.GetSection("SiteDBServer").Get<List<string>>();
+            var requestChecking = await ValidateBeforeExecute(criteria, listReplicatedServer);
+            if (requestChecking.ErrCode > 0)
+            {
+                return requestChecking;
+            }
 
             foreach (var server in listReplicatedServer)
             {
@@ -106,9 +111,8 @@ namespace Settlement.Sportsbook.Soccer.Services
             };
         }
 
-        private async Task<Result> ValidateBeforePush(CalculateCriteria criteria)
+        private async Task<Result> ValidateBeforeExecute(CalculateCriteria criteria, List<string> listReplicatedServer)
         {
-            var listReplicatedServer = configuration.GetSection("SiteDBServer").Get<List<string>>();
             var checkingCriteria = new ValidateBeforePushCriteria
             {
                 MatchId = criteria.MatchId,

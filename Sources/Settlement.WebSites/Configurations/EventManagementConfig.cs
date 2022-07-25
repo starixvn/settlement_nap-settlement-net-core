@@ -23,6 +23,7 @@ namespace Settlement.WebSites.Configurations
         public static void ConfigEventManagementMediator(this IServiceCollection services)
         {
             services.AddMediatR(typeof(MultiSportController).GetTypeInfo().Assembly);
+            services.AddMediatR(typeof(MatchesController).GetTypeInfo().Assembly);
         }
     }
 }

@@ -151,5 +151,7 @@ namespace Settlement.Sportsbook.Soccer.Models
         }
 
         public bool HasInstantCompleted { get; set; }
+
+        public List<SiteMatch> SiteMatch { get; set; } = new List<SiteMatch>();
     }
 }

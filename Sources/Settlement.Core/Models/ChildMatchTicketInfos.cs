@@ -1,4 +1,4 @@
-﻿namespace Settlement.Sportsbook.Soccer.Models
+﻿namespace Settlement.Core.Models
 {
     public class ChildMatchTicketInfos
     {

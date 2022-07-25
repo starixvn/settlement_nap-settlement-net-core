@@ -49,50 +49,40 @@ namespace Settlement.Sportsbook.Soccer.Services
             var baseMatchDetail = result[0].Cast<MatchDetail>().FirstOrDefault();
             Check.Argument.IsNotNull(baseMatchDetail, $"Match ${criteria.MatchId} does not exist");
 
-            var listSiteMatch = GetSiteMatchInfo(criteria);
-            var ticketCounts = mergeDataService.MergeTicketCounts(listSiteMatch);
-            var siteMatchInfo = mergeDataService.MergeSiteMatch(listSiteMatch.Select(item => item.SiteMatchInfo).ToList(), ticketCounts);
-            var childMatches = mergeDataService.MergeDataChildMatches(result[1].Cast<ChildMatchModel>().ToList(), listSiteMatch);
+            var siteMatch = GetSiteMatchInfo(criteria.MatchId);
+
+            baseMatchDetail.SiteMatch = siteMatch;
+
+            var ticketCounts = mergeDataService.MergeTicketCounts(siteMatch);
+            var matchDetail = mergeDataService.MergeSiteMatch(baseMatchDetail, ticketCounts);
+            var childMatches = mergeDataService.MergeDataChildMatches(result[1].Cast<ChildMatchModel>().ToList(), siteMatch);
 
             return new Match
             {
-                MatchDetail = mapper.Map(siteMatchInfo, baseMatchDetail),
+                MatchDetail = matchDetail,
                 TicketCounts = ticketCounts,
                 ChildMatches = childMatches
             };
         }
 
-        private List<SiteMatch> GetSiteMatchInfo(GetMatchDetailCriteria criteria)
+        private List<SiteMatch> GetSiteMatchInfo(int matchId)
         {
-            var listReplicatedServer = configuration.GetSection("SiteDBServer").Get<List<string>>();
-            var mappingTypes = new[] { typeof(SiteMatchDetail), typeof(TicketCounts), typeof(ChildMatchTicketInfos) };
-            var listMatch = new List<SiteMatch>();
+            var siteDbServer = configuration.GetSection("SiteDBServer").Get<List<string>>();
+            var mappingTypes = new[] { typeof(SiteMatch), typeof(TicketCounts), typeof(ChildMatchTicketInfos) };
 
-            var tasks = new List<Task>();
-
-            foreach (var server in listReplicatedServer)
-            {
-                Task getMatchTask = Task.Factory.StartNew(() => GetMatchFromCriteria(criteria.MatchId, mappingTypes, listMatch, server));
-                tasks.Add(getMatchTask);
-            }
-
-            Task.WaitAll(tasks.ToArray());
-
-            return listMatch;
+            return siteDbServer.Select(server => GetSiteMatchByServer(matchId, mappingTypes, server)).ToList();
         }
 
-        private void GetMatchFromCriteria(int matchId, Type[] mappingTypes, List<SiteMatch> listMatch, string server)
+        private SiteMatch GetSiteMatchByServer(int matchId, Type[] mappingTypes, string server)
         {
             var criteria = new GetTicketInfoCriteria { MatchId = matchId, DbServer = server };
             var result = repository.FetchMultiple(criteria, mappingTypes);
-            var tempMatch = new SiteMatch
-            {
-                SiteMatchInfo = result[0].Cast<SiteMatchDetail>().FirstOrDefault(),
-                TicketCounts = result[1].Cast<TicketCounts>().ToList(),
-                SiteChildMatches = result[2].Cast<ChildMatchTicketInfos>().ToList(),
-            };
 
-            listMatch.Add(tempMatch);
+            var siteMatch = result[0].Cast<SiteMatch>().FirstOrDefault();
+            siteMatch.TicketCounts = result[1].Cast<TicketCounts>().ToList();
+            siteMatch.SiteChildMatches = result[2].Cast<ChildMatchTicketInfos>().ToList();
+
+            return siteMatch;
         }
     }
 }

@@ -2,14 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using Settlement.Sportsbook.Soccer.Models;
+using Match = Settlement.Core.Models.Match;
 
 namespace Settlement.Sportsbook.Soccer.Services
 {
     public interface IMergeDataService
     {
-        public List<TicketCounts> MergeTicketCounts(List<SiteMatch> matches);
+        public List<TicketCounts> MergeTicketCounts(List<SiteMatch> siteMatches);
 
-        public SiteMatchDetail MergeSiteMatch(List<SiteMatchDetail> siteMatches, List<TicketCounts> ticketCounts);
+        public Models.MatchDetail MergeSiteMatch(Models.MatchDetail matchDetail, List<TicketCounts> ticketCounts);
 
         public List<ChildMatchModel> MergeDataChildMatches(List<ChildMatchModel> childMatches, List<SiteMatch> siteMatches);
     }
@@ -20,40 +21,30 @@ namespace Settlement.Sportsbook.Soccer.Services
 
         private const int FullTimeGroupId = 2;
 
-        public SiteMatchDetail MergeSiteMatch(List<SiteMatchDetail> siteMatches, List<TicketCounts> ticketCounts)
+        public Models.MatchDetail MergeSiteMatch(Models.MatchDetail matchDetail, List<TicketCounts> ticketCounts)
         {
-            var siteMatch = new SiteMatchDetail
-            {
-                IsExistResultAndFirstTeamScore = siteMatches.Any(match => match.IsExistResultAndFirstTeamScore),
-                IsExistFgNg = siteMatches.Any(match => match.IsExistFgNg),
-                IsExistHtFgLg = siteMatches.Any(match => match.IsExistHtFgLg),
-                IsExistFgLg = siteMatches.Any(match => match.IsExistFgLg),
-                IsEnabledGoalRecordHt = siteMatches.Any(match => match.IsEnabledGoalRecordHt),
-                IsEnabledGoalRecordFt = siteMatches.Any(match => match.IsEnabledGoalRecordFt),
-                IsHtOnly = siteMatches.Any(match => match.IsHtOnly),
-                HtStatus = GetStatus(ticketCounts.First(item => item.GroupId == HalfTimeGroupId)),
-                FtStatus = GetStatus(ticketCounts.First(item => item.GroupId == FullTimeGroupId))
-            };
-            return siteMatch;
+            var siteMatches = matchDetail.SiteMatch;
+            matchDetail.IsExistResultAndFirstTeamScore = siteMatches.Any(match => match.IsExistResultAndFirstTeamScore);
+            matchDetail.IsExistFgNg = siteMatches.Any(match => match.IsExistFgNg);
+            matchDetail.IsExistHtFgLg = siteMatches.Any(match => match.IsExistHtFgLg);
+            matchDetail.IsExistFgLg = siteMatches.Any(match => match.IsExistFgLg);
+            matchDetail.IsEnabledGoalRecordHt = siteMatches.Any(match => match.IsEnabledGoalRecordHt);
+            matchDetail.IsEnabledGoalRecordFt = siteMatches.Any(match => match.IsEnabledGoalRecordFt);
+            matchDetail.IsHtOnly = siteMatches.Any(match => match.IsHtOnly);
+            matchDetail.HtStatus = GetStatus(ticketCounts.First(item => item.GroupId == HalfTimeGroupId));
+            matchDetail.FtStatus = GetStatus(ticketCounts.First(item => item.GroupId == FullTimeGroupId));
+
+            return matchDetail;
         }
 
-        public List<TicketCounts> MergeTicketCounts(List<SiteMatch> matches)
+        public List<TicketCounts> MergeTicketCounts(List<SiteMatch> siteMatches)
         {
-            var isBaseMatch = true;
-            var baseTicketCount = new List<TicketCounts>();
-            matches.ForEach(match =>
+            foreach (var match in siteMatches.Skip(1))
             {
-                if (isBaseMatch)
-                {
-                    baseTicketCount = match.TicketCounts;
-                    isBaseMatch = false;
-                }
-                else
-                {
-                    SumTicket(baseTicketCount, match);
-                }
-            });
-            return baseTicketCount;
+                SumTicket(siteMatches[0].TicketCounts, match);
+            }
+
+            return siteMatches[0].TicketCounts;
         }
 
         private void SumTicket(List<TicketCounts> baseTicketCounts, SiteMatch match)
