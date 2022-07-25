@@ -45,12 +45,6 @@ namespace Settlement.Sportsbook.Soccer.Services
         {
             var criteria = createQueryCriteria.CreateCalculateCriteria(request);
 
-            var requestChecking = await ValidateBeforePush(criteria);
-            if (requestChecking.ErrCode > 0)
-            {
-                return requestChecking;
-            }
-
             var result = await Execute(criteria);
 
             if (result.IsSuccessful && request.IsApplyHedging)

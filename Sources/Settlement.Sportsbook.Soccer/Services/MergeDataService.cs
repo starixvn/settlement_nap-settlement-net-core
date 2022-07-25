@@ -13,6 +13,10 @@ namespace Settlement.Sportsbook.Soccer.Services
         public Models.MatchDetail MergeSiteMatch(Models.MatchDetail matchDetail, List<TicketCounts> ticketCounts);
 
         public List<ChildMatchModel> MergeDataChildMatches(List<ChildMatchModel> childMatches, List<SiteMatch> siteMatches);
+
+        public BetDaq MergeBetDaq(BetDaq baseBetDaq, List<BetDaq> nodeBetDaqs);
+
+        public BetFair MergeBetFair(BetFair baseBetDaq, List<BetFair> nodeBetDaqs);
     }
 
     public class MergeDataServiceImp : IMergeDataService
@@ -101,6 +105,26 @@ namespace Settlement.Sportsbook.Soccer.Services
             });
 
             return childMatches;
+        }
+
+        public BetDaq MergeBetDaq(BetDaq baseBetDaq, List<BetDaq> nodeBetDaqs)
+        {
+            baseBetDaq.IsExcludeBetDaq = nodeBetDaqs.Any(betDaq => betDaq.IsExcludeBetDaq) || baseBetDaq.IsExcludeBetDaq;
+            baseBetDaq.IsMoveBetDaq = nodeBetDaqs.Any(betDaq => betDaq.IsExcludeBetDaq) || baseBetDaq.IsExcludeBetDaq;
+            baseBetDaq.IsRefundRunningBetDaq = nodeBetDaqs.Any(betDaq => betDaq.IsExcludeBetDaq) || baseBetDaq.IsExcludeBetDaq;
+            baseBetDaq.IsSettleAbandonedMatchBetDaq = nodeBetDaqs.Any(betDaq => betDaq.IsExcludeBetDaq) || baseBetDaq.IsExcludeBetDaq;
+
+            return baseBetDaq;
+        }
+
+        public BetFair MergeBetFair(BetFair baseBetDaq, List<BetFair> nodeBetDaqs)
+        {
+            baseBetDaq.IsExcludeBetFair = nodeBetDaqs.Any(betDaq => betDaq.IsExcludeBetFair) || baseBetDaq.IsExcludeBetFair;
+            baseBetDaq.IsMoveBetFair = nodeBetDaqs.Any(betDaq => betDaq.IsMoveBetFair) || baseBetDaq.IsMoveBetFair;
+            baseBetDaq.IsRefundRunningBetFair = nodeBetDaqs.Any(betDaq => betDaq.IsRefundRunningBetFair) || baseBetDaq.IsRefundRunningBetFair;
+            baseBetDaq.IsSettleAbandonedMatchBetFair = nodeBetDaqs.Any(betDaq => betDaq.IsSettleAbandonedMatchBetFair) || baseBetDaq.IsSettleAbandonedMatchBetFair;
+
+            return baseBetDaq;
         }
     }
 }

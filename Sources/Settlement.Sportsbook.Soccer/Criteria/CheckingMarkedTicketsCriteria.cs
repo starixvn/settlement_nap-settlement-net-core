@@ -10,9 +10,11 @@ namespace Settlement.Sportsbook.Soccer.Criteria
 
         public bool IsExistMarkedTicket { get; set; }
 
+        public string DbServer { get; set; }
+
         public override string GetSettingKey()
         {
-            return "NAP_Set_CheckingMarkedTransaction";
+            return $"NAP_Set_CheckingMarkedTransaction_{DbServer}";
         }
 
         public override bool IsValid()

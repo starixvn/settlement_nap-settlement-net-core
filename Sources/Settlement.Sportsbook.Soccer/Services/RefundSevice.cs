@@ -13,6 +13,7 @@ using Settlement.Sportsbook.Soccer.Constants;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using Microsoft.Extensions.Configuration;
 
 namespace Settlement.Sportsbook.Soccer.Services
 {
@@ -43,6 +44,8 @@ namespace Settlement.Sportsbook.Soccer.Services
 
         private readonly IBetStatusAllService betStatusAllService;
 
+        private readonly IConfiguration configuration;
+
         public RefundServiceImp(
             IDynamicRepository repository,
             INapSession currentSession,
@@ -50,7 +53,8 @@ namespace Settlement.Sportsbook.Soccer.Services
             IHttpContextAccessor accessor,
             XmlConvertService xmlConvertService,
             IResourceService resourceService,
-            IBetStatusAllService betStatusAllService)
+            IBetStatusAllService betStatusAllService,
+            IConfiguration configuration)
         {
             this.repository = repository;
             this.currentSession = currentSession;
@@ -59,14 +63,27 @@ namespace Settlement.Sportsbook.Soccer.Services
             this.xmlConvertService = xmlConvertService;
             this.resourceService = resourceService;
             this.betStatusAllService = betStatusAllService;
+            this.configuration = configuration;
         }
 
         public async Task<MarkedTickets> CheckMarkedTickets(CheckingMarkedTicketsRequest request)
         {
+            var servers = configuration.GetSection("SiteDBServer").Get<List<string>>();
             var criteria = mapper.Map<CheckingMarkedTicketsRequest, CheckingMarkedTicketsCriteria>(request);
-            await repository.ExecuteAsync(criteria);
+            foreach (var server in servers)
+            {
+                criteria.DbServer = server;
+                await repository.ExecuteAsync(criteria);
+                if (criteria.IsExistMarkedTicket)
+                {
+                    return new MarkedTickets
+                    {
+                        IsExistMarkedTicket = criteria.IsExistMarkedTicket
+                    };
+                }
+            }
 
-            return new MarkedTickets { IsExistMarkedTicket = criteria.IsExistMarkedTicket };
+            return new MarkedTickets();
         }
 
         public async Task<Result> Refund(RefundRequest request)
@@ -93,20 +110,21 @@ namespace Settlement.Sportsbook.Soccer.Services
                 criteria.FullTimeHome = request.HalfTimeHomeScore ?? 0;
             }
 
-            await repository.ExecuteAsync(criteria);
-
-            var result = new Result
+            var validationResult = await ValidateBeforePushing(criteria);
+            if (validationResult.ErrCode > 0)
             {
-                ErrMsg = criteria.ErrMsg,
-                ErrCode = criteria.ErrCode
-            };
+                return validationResult;
+            }
 
-            return await RefundHedgeMatch(result, request, criteria);
+            ExecuteRefund(criteria);
+            RefundHedgeMatch(request, criteria);
+
+            return validationResult;
         }
 
-        private async Task<Result> RefundHedgeMatch(Result result, RefundRequest request, RefundCriteria criteria)
+        private void RefundHedgeMatch(RefundRequest request, RefundCriteria criteria)
         {
-            if (result.IsSuccessful && request.IsApplyHedging)
+            if (request.IsApplyHedging)
             {
                 if (!request.ActionName.Equals(ActionType.RefundHalfTime) && !request.IsDeterminedHedgeMatch)
                 {
@@ -116,10 +134,45 @@ namespace Settlement.Sportsbook.Soccer.Services
                 }
 
                 criteria.MatchId = request.HedgeMatchId;
-                await repository.ExecuteAsync(criteria);
+                ExecuteRefund(criteria);
+            }
+        }
+
+        private async Task<Result> ValidateBeforePushing(RefundCriteria criteria)
+        {
+            var servers = configuration.GetSection("SiteDBServer").Get<List<string>>();
+            var checkingCriteria = new ValidateBeforePushCriteria
+            {
+                MatchId = criteria.MatchId,
+                SpName = criteria.SpName,
+                ActionId = ActionKey.ActionDictionary[criteria.Action]
+            };
+            foreach (var server in servers)
+            {
+                checkingCriteria.DbServer = server;
+                await repository.ExecuteAsync(checkingCriteria);
+                if (criteria.ErrCode > 0)
+                {
+                    return new Result
+                    {
+                        ErrCode = criteria.ErrCode,
+                        ErrMsg = criteria.ErrMsg
+                    };
+                }
             }
 
-            return result;
+            return new Result();
+        }
+
+        private void ExecuteRefund(RefundCriteria criteria)
+        {
+            var servers = configuration.GetSection("SiteDBServer").Get<List<string>>();
+
+            foreach (var server in servers)
+            {
+                criteria.DbServer = server;
+                repository.Execute(criteria);
+            }
         }
 
         private string GetBetStatus(RefundRequest request)
@@ -192,7 +245,20 @@ namespace Settlement.Sportsbook.Soccer.Services
                 AdminId = currentSession.UserId,
             };
 
-            await repository.ExecuteAsync(criteria);
+            var servers = configuration.GetSection("SiteDBServer").Get<List<string>>();
+            foreach (var server in servers)
+            {
+                criteria.DbServer = server;
+                await repository.ExecuteAsync(criteria);
+                if (criteria.ErrCode > 0)
+                {
+                    return new Result
+                    {
+                        ErrCode = criteria.ErrCode,
+                        ErrMsg = criteria.ErrMsg
+                    };
+                }
+            }
 
             return new Result
             {
@@ -207,7 +273,20 @@ namespace Settlement.Sportsbook.Soccer.Services
             criteria.AdminId = currentSession.UserId;
             criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
 
-            await repository.ExecuteAsync(criteria);
+            var servers = configuration.GetSection("SiteDBServer").Get<List<string>>();
+            foreach (var server in servers)
+            {
+                criteria.DbServer = server;
+                await repository.ExecuteAsync(criteria);
+                if (criteria.ErrCode > 0)
+                {
+                    return new Result
+                    {
+                        ErrCode = criteria.ErrCode,
+                        ErrMsg = criteria.ErrMsg
+                    };
+                }
+            }
 
             return new Result
             {

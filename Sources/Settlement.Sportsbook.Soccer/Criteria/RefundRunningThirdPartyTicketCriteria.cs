@@ -20,9 +20,12 @@ namespace Settlement.Sportsbook.Soccer.Criteria
         [SpParam(Ignored = true)]
         public string ActionName { get; set; }
 
+        [SpParam(Ignored = true)]
+        public string DbServer { get; set; }
+
         public override string GetSettingKey()
         {
-            return ActionName.IgnoreCaseEquals(ActionType.BetDaq) ? "NAP_Admin_Settlement_Refund_BetDaq" : "NAP_Admin_Settlement_Refund_BetFair";
+            return ActionName.IgnoreCaseEquals(ActionType.BetDaq) ? $"NAP_Admin_Settlement_Refund_BetDaq_{DbServer}" : $"NAP_Admin_Settlement_Refund_BetFair_{DbServer}";
         }
 
         public override bool IsValid()

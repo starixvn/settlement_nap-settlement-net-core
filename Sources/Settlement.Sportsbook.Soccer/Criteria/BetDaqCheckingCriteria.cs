@@ -2,13 +2,15 @@
 
 namespace Settlement.Sportsbook.Soccer.Criteria
 {
-    internal class BetDaqCheckingCriteria : CriteriaBase
+    public class BetDaqCheckingCriteria : CriteriaBase
     {
         public int MatchId { get; set; }
 
+        public string DbServer { get; set; }
+
         public override string GetSettingKey()
         {
-            return "NAP_Set_BetDaq_Checking";
+            return $"NAP_Set_BetDaq_Checking_{DbServer}";
         }
 
         public override bool IsValid()

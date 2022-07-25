@@ -17,6 +17,10 @@ namespace Settlement.Sportsbook.Soccer.Services
     public interface IFetchDataService
     {
         public Task<Match> GetMatchInfo(GetMatchRequest request);
+
+        public Task<BetDaq> GetMultiServersBetDaq(BetDaqCheckingCriteria criteria);
+
+        public Task<BetFair> GetMultiServersBetFair(BetFairCheckingCriteria criteria);
     }
 
     public class FetchDateServiceImp : IFetchDataService
@@ -55,7 +59,8 @@ namespace Settlement.Sportsbook.Soccer.Services
 
             var ticketCounts = mergeDataService.MergeTicketCounts(siteMatch);
             var matchDetail = mergeDataService.MergeSiteMatch(baseMatchDetail, ticketCounts);
-            var childMatches = mergeDataService.MergeDataChildMatches(result[1].Cast<ChildMatchModel>().ToList(), siteMatch);
+            var childMatches =
+                mergeDataService.MergeDataChildMatches(result[1].Cast<ChildMatchModel>().ToList(), siteMatch);
 
             return new Match
             {
@@ -67,10 +72,7 @@ namespace Settlement.Sportsbook.Soccer.Services
 
         private List<SiteMatch> GetSiteMatchInfo(int matchId)
         {
-            var siteDbServer = configuration.GetSection("SiteDBServer").Get<List<string>>();
-            var mappingTypes = new[] { typeof(SiteMatch), typeof(TicketCounts), typeof(ChildMatchTicketInfos) };
-        private List<SiteMatch> GetSiteMatchInfo(int matchId)
-        {
+
             var siteDbServer = configuration.GetSection("SiteDBServer").Get<List<string>>();
             var mappingTypes = new[] { typeof(SiteMatch), typeof(TicketCounts), typeof(ChildMatchTicketInfos) };
 
@@ -87,6 +89,64 @@ namespace Settlement.Sportsbook.Soccer.Services
             siteMatch.SiteChildMatches = result[2].Cast<ChildMatchTicketInfos>().ToList();
 
             return siteMatch;
+        }
+
+        public async Task<BetDaq> GetMultiServersBetDaq(BetDaqCheckingCriteria criteria)
+        {
+            var servers = configuration.GetSection("SiteDBServer").Get<List<string>>();
+            var betDaqs = new List<BetDaq>();
+            foreach (var server in servers)
+            {
+                criteria.DbServer = server;
+                var betDaq = await repository.GetAsync<BetDaq>(criteria);
+                betDaqs.Add(betDaq);
+            }
+
+            var baseData = betDaqs.First();
+            var nodeData = betDaqs.Skip(1).ToList();
+
+            // merge function
+            var existConflictData = nodeData.Any(betDaq => baseData.IsExcludeBetDaq != betDaq.IsExcludeBetDaq
+                                                           || baseData.IsMoveBetDaq != betDaq.IsMoveBetDaq
+                                                           || baseData.IsRefundRunningBetDaq !=
+                                                           betDaq.IsRefundRunningBetDaq
+                                                           || baseData.IsSettleAbandonedMatchBetDaq !=
+                                                           betDaq.IsSettleAbandonedMatchBetDaq);
+            if (existConflictData)
+            {
+                return mergeDataService.MergeBetDaq(baseData, nodeData);
+            }
+
+            return baseData;
+        }
+
+        public async Task<BetFair> GetMultiServersBetFair(BetFairCheckingCriteria criteria)
+        {
+            var servers = configuration.GetSection("SiteDBServer").Get<List<string>>();
+            var betFairs = new List<BetFair>();
+            foreach (var server in servers)
+            {
+                criteria.DbServer = server;
+                var betFair = await repository.GetAsync<BetFair>(criteria);
+                betFairs.Add(betFair);
+            }
+
+            var baseData = betFairs.First();
+            var nodeData = betFairs.Skip(1).ToList();
+
+            // merge function
+            var existConflictData = nodeData.Any(betDaq => baseData.IsExcludeBetFair != betDaq.IsExcludeBetFair
+                                                           || baseData.IsMoveBetFair != betDaq.IsMoveBetFair
+                                                           || baseData.IsRefundRunningBetFair !=
+                                                           betDaq.IsRefundRunningBetFair
+                                                           || baseData.IsSettleAbandonedMatchBetFair !=
+                                                           betDaq.IsSettleAbandonedMatchBetFair);
+            if (existConflictData)
+            {
+                return mergeDataService.MergeBetFair(baseData, nodeData);
+            }
+
+            return baseData;
         }
     }
 }
