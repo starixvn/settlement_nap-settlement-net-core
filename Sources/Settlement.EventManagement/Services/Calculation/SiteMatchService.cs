@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
-using Settlement.Core.Constants;
+﻿using Settlement.Core.Constants;
 using Settlement.EventManagement.Models.Calculation;
 using System.Linq;
 
-namespace Settlement.Calculate.Services
+namespace Settlement.EventManagement.Services.Calculation
 {
     public interface SiteMatchService
     {
@@ -26,15 +25,15 @@ namespace Settlement.Calculate.Services
 
         public bool IsEventStatusOnSite(Match match)
         {
-            var isNull = match.SiteInfo.All(m => m.IsCalculatingSingle == null);
-            var isSuccess = match.SiteInfo.All(m => m.IsCalculatingSingle == IsSuccess);
+            var isNull = match.SiteMatch.All(m => m.IsCalculatingSingle == null);
+            var isSuccess = match.SiteMatch.All(m => m.IsCalculatingSingle == IsSuccess);
 
             return (match.IsCalculatingSingle == null && isNull) || (match.IsCalculatingSingle == IsSuccess && isSuccess);
         }
 
         public bool IsExistMarkedTickets(Match match)
         {
-            var isExistMarkedTicketOnSite = match.SiteInfo.Exists(m => m.IsExistMarkedTicket);
+            var isExistMarkedTicketOnSite = match.SiteMatch.Exists(m => m.IsExistMarkedTicket);
             return match.IsExistMarkedTicket || isExistMarkedTicketOnSite;
         }
 
@@ -48,7 +47,7 @@ namespace Settlement.Calculate.Services
 
         public string EarlySettlementStatus(Match match)
         {
-            var matchSite = match.SiteInfo;
+            var matchSite = match.SiteMatch;
             var isExistEarlyBetTypes = match.IsExistEarlyBetTypes || matchSite.Any(m => m.IsExistEarlyBetTypes);
             var isRunningEarlyBetTypes = match.IsRunningEarlyBetTypes || matchSite.Any(m => m.IsRunningEarlyBetTypes);
             var isWaitingEarlyBetTypes = match.IsWaitingEarlyBetTypes || matchSite.Any(m => m.IsWaitingEarlyBetTypes);
@@ -76,7 +75,7 @@ namespace Settlement.Calculate.Services
 
         public string AutoSettleFastMarket(Match match)
         {
-            var matchSite = match.SiteInfo;
+            var matchSite = match.SiteMatch;
             var isExistFastMarket = match.IsExistFastMarket || matchSite.Any(m => m.IsExistFastMarket);
             var isRunningFastMarket = match.IsRunningFastMarket || matchSite.Any(m => m.IsRunningFastMarket);
             var isExistFastMarketResult = match.IsExistFastMarketResult || matchSite.Any(m => m.IsExistFastMarketResult);
@@ -110,7 +109,7 @@ namespace Settlement.Calculate.Services
 
         private bool IsExistRunningTicket(Match match)
         {
-            var isExistRunningTicketOnSite = match.SiteInfo.Exists(m => m.IsExistRunningTicket);
+            var isExistRunningTicketOnSite = match.SiteMatch.Exists(m => m.IsExistRunningTicket);
             return match.IsExistRunningTicket || isExistRunningTicketOnSite;
         }
     }

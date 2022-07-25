@@ -69,6 +69,10 @@ namespace Settlement.Sportsbook.Soccer.Services
         {
             var siteDbServer = configuration.GetSection("SiteDBServer").Get<List<string>>();
             var mappingTypes = new[] { typeof(SiteMatch), typeof(TicketCounts), typeof(ChildMatchTicketInfos) };
+        private List<SiteMatch> GetSiteMatchInfo(int matchId)
+        {
+            var siteDbServer = configuration.GetSection("SiteDBServer").Get<List<string>>();
+            var mappingTypes = new[] { typeof(SiteMatch), typeof(TicketCounts), typeof(ChildMatchTicketInfos) };
 
             return siteDbServer.Select(server => GetSiteMatchByServer(matchId, mappingTypes, server)).ToList();
         }

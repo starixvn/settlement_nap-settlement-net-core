@@ -48,6 +48,10 @@ namespace Settlement.EventManagement.Models.Calculation
 
         public int? FinalAwayScore { get; set; }
 
+        public bool IsExistRunningTicketParlay { get; set; }
+
+        public bool IsExistMarkedTicketParlay { get; set; }
+
         public bool IsExistEarlyBetTypes { get; set; }
 
         public bool IsRunningEarlyBetTypes { get; set; }
@@ -74,6 +78,8 @@ namespace Settlement.EventManagement.Models.Calculation
 
         public string BetStatus { get; set; }
 
+        public int EventStatusReason { get; set; }
+
         public string EventStatus
         {
             get => eventStatus.MapToString(BetStatus, Remark.IsPending);
@@ -86,7 +92,15 @@ namespace Settlement.EventManagement.Models.Calculation
 
         public int SportType { get; set; }
 
-        public List<SiteMatch> SiteInfo { get; set; } = new List<SiteMatch>();
+        public string NewEventStatus { get; set; }
+
+        public string AutoSettleFastMarket { get; set; }
+
+        public string EarlySettleStatus { get; set; }
+
+        public string EventStatusColor { get; set; }
+
+        public List<SiteMatch> SiteMatch { get; set; } = new List<SiteMatch>();
 
         public override bool Equals(object obj)
         {
