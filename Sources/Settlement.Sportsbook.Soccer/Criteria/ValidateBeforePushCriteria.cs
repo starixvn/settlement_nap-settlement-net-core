@@ -7,7 +7,9 @@ namespace Settlement.Sportsbook.Soccer.Criteria
     {
         public int MatchId { get; set; }
 
-        public int ActionId { get; set; }
+        public string Action { get; set; }
+
+        public string Mode { get; set; }
 
         public bool IsAuto { get; set; } = false;
 

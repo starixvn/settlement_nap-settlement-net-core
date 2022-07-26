@@ -145,18 +145,19 @@ namespace Settlement.Sportsbook.Soccer.Services
             {
                 MatchId = criteria.MatchId,
                 SpName = criteria.SpName,
-                ActionId = ActionKey.ActionDictionary[criteria.Action]
+                Action = criteria.Action,
+                Mode = ActionKey.ActionDictionary[criteria.Action]
             };
             foreach (var server in servers)
             {
                 checkingCriteria.DbServer = server;
                 await repository.ExecuteAsync(checkingCriteria);
-                if (criteria.ErrCode > 0)
+                if (checkingCriteria.ErrCode > 0)
                 {
                     return new Result
                     {
-                        ErrCode = criteria.ErrCode,
-                        ErrMsg = criteria.ErrMsg
+                        ErrCode = checkingCriteria.ErrCode,
+                        ErrMsg = checkingCriteria.ErrMsg
                     };
                 }
             }

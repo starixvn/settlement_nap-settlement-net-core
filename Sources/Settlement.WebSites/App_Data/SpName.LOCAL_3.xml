@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Functions SiteName="NAP - Settlement site">
   <Function Name="Cricket">
     <Setting Key="NAP_Set_MatchSelInfo" SpName="NAP_Set_MatchSelInfo" DbName="DBPRO.bodb02.bodbAdminNet" />
@@ -63,27 +63,29 @@
   </Function>
   <Function Name="Execute Calculate and refund">
     <Setting Key="CalculateMP" SpName="NAP_Admin_Settlement_MP_Push" DbName="DBTXN.bodb02.bodbAdminNet" />
-    <Setting Key="Calculate" SpName="NAP_Admin_Settlement_1_Push" DbName="DBTXN.bodb02.bodbAdminNet" />
+    <Setting Key="Calculate_DBTXN" SpName="NAP_Admin_Settlement_1_Push" DbName="DBTXN.bodb02.bodbAdminNet" />
     <Setting Key="RefundParlay" SpName="NAP_Admin_Settlement_Refund_MP_Push" DbName="DBTXN.bodb02.bodbAdminNet" />
     <Setting Key="RefundAll" SpName="NAP_Admin_Settlement_Refund_All_Push" DbName="DBTXN.bodb02.bodbAdminNet" />
     <Setting Key="RefundFT" SpName="NAP_Admin_Settlement_RefundFT_Push" DbName="DBTXN.bodb02.bodbAdminNet" />
-    <Setting Key="Refund" SpName="NAP_Admin_Settlement_Refund_1_Push" DbName="DBTXN.bodb02.bodbAdminNet" />
-    <Setting Key="NAP_Set_CheckingMarkedTransaction" SpName="NAP_Set_CheckingMarkedTransaction" DbName="DBTXN.bodb02.bodbAdminNet" />
+    <Setting Key="Refund_DBTXN" SpName="NAP_Admin_Settlement_Refund_1_Push" DbName="DBTXN.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_CheckingMarkedTransaction_DBTXN" SpName="NAP_Set_CheckingMarkedTransaction" DbName="DBTXN.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_SettlementStatusChecking" SpName="NAP_Set_SettlementStatusChecking" DbName="DBPRO.bodb02.bodbAdminNet" />
-    <Setting Key="NAP_Admin_Settlement_1_InstantCalculation_Push" SpName="NAP_Admin_Settlement_1_InstantCalculation_Push" DbName="DBTXN.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Admin_Settlement_1_InstantCalculation_Push_DBTXN" SpName="NAP_Admin_Settlement_1_InstantCalculation_Push" DbName="DBTXN.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Settlement_InstantCalculation_UndoChecking" SpName="NAP_Settlement_InstantCalculation_UndoChecking" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Settlement_InstantCalculation_Checking" SpName="NAP_Settlement_InstantCalculation_Checking" DbName="DBTXN.bodb02.bodbAdminNet" />
-    <Setting Key="NAP_Set_BetDaq_Checking" SpName="NAP_Set_BetDaq_Checking" DbName="DBTXN.bodb02.bodbAdminNet" />
-    <Setting Key="NAP_Set_BetFair_Checking" SpName="NAP_Set_BetFair_Checking" DbName="DBTXN.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_BetDaq_Checking_DBTXN" SpName="NAP_Set_BetDaq_Checking" DbName="DBTXN.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_BetFair_Checking_DBTXN" SpName="NAP_Set_BetFair_Checking" DbName="DBTXN.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_SpecificBettypes" SpName="NAP_Set_SpecificBettypes" DbName="DBPRO.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Admin_Settlement_Validation_DBTXN" SpName="NAP_Admin_Settlement_Validation" DbName="DBTXN.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_MatchSelDetail_Ticket_DBTXN" SpName="NAP_Set_MatchSelDetail_Ticket" DbName="DBTXN.bodb02.bodbAdminNet" />
   </Function>
   <Function Name="Betdaq">
-    <Setting Key="NAP_Admin_Settlement_BetDaq_Move" SpName="NAP_Admin_Settlement_BetDaq_Move" DbName="DBTXN.bodb02.bodbAdminNet" />
-    <Setting Key="NAP_Admin_Settlement_Refund_BetDaq" SpName="NAP_Admin_Settlement_Refund_BetDaq_Push" DbName="DBTXN.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Admin_Settlement_BetDaq_Move_DBTXN" SpName="NAP_Admin_Settlement_BetDaq_Move" DbName="DBTXN.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Admin_Settlement_Refund_BetDaq_DBTXN" SpName="NAP_Admin_Settlement_Refund_BetDaq_Push" DbName="DBTXN.bodb02.bodbAdminNet" />
   </Function>
   <Function Name="Betfair">
-    <Setting Key="NAP_Admin_Settlement_BetFair_Move" SpName="NAP_Admin_Settlement_BetFair_Move" DbName="DBTXN.bodb02.bodbAdminNet" />
-    <Setting Key="NAP_Admin_Settlement_Refund_BetFair" SpName="NAP_Admin_Settlement_Refund_BetFair_Push" DbName="DBTXN.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Admin_Settlement_BetFair_Move_DBTXN" SpName="NAP_Admin_Settlement_BetFair_Move" DbName="DBTXN.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Admin_Settlement_Refund_BetFair_DBTXN" SpName="NAP_Admin_Settlement_Refund_BetFair_Push" DbName="DBTXN.bodb02.bodbAdminNet" />
   </Function>
 
   <Function Name="MultiSport">
@@ -142,4 +144,32 @@
     <Setting Key="NAP_Set_GetNumberError" SpName="NAP_Set_GetNumberError" DbName="DBTXN.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_SettledErrorSel" SpName="NAP_Set_SettledErrorSel" DbName="DBTXN.bodb02.bodbAdminNet" />
   </Function>
+
+  <Function Name="SiteDB">
+    <Setting Key="NAP_Set_MatchSelDetail_SITEDB" SpName="NAP_Set_MatchSelDetail" DbName="SITEDB.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Admin_Settlement_1_InstantCalculation_Push_SITEDB" SpName="NAP_Admin_Settlement_1_InstantCalculation_Push" DbName="SITEDB.bodb02.bodbAdminNet" />
+    <Setting Key="Calculate_SITEDB" SpName="NAP_Admin_Settlement_1_Push" DbName="SITEDB.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Admin_Settlement_Validation_SITEDB" SpName="NAP_Admin_Settlement_Validation" DbName="SITEDB.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_MatchSelDetail_Ticket_SITEDB" SpName="NAP_Set_MatchSelDetail_Ticket" DbName="SITEDB.bodb02.bodbAdminNet" />
+
+    <Function Name="NAP_Set_MatchSel">
+      <Setting Key="NAP_Set_MatchSel_DBTXN" SpName="NAP_Set_MatchSel" DbName="DBTXN.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Set_MatchSel_SITEDB" SpName="NAP_Set_MatchSel" DbName="SITEDB.bodb02.bodbAdminNet" />
+
+    </Function>
+
+    <Function Name="NAP_Set_WaitingSel">
+      <Setting Key="NAP_Set_WaitingSel_DBTXN" SpName="NAP_Set_WaitingSel" DbName="DBTXN.bodb02.bodbAdminNet" TimeOut="6" />
+      <Setting Key="NAP_Set_WaitingSel_SITEDB" SpName="NAP_Set_WaitingSel" DbName="DBTXN.bodb02.bodbAdminNet" TimeOut="6" />
+    </Function>
+    <Setting Key="NAP_Set_BetDaq_Checking_SITEDB" SpName="NAP_Set_BetDaq_Checking" DbName="SITEDB.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_BetFair_Checking_SITEDB" SpName="NAP_Set_BetFair_Checking" DbName="SITEDB.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_CheckingMarkedTransaction_SITEDB" SpName="NAP_Set_CheckingMarkedTransaction" DbName="SITEDB.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Admin_Settlement_BetDaq_Move_SITEDB" SpName="NAP_Admin_Settlement_BetDaq_Move" DbName="SITEDB.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Admin_Settlement_Refund_BetDaq_SITEDB" SpName="NAP_Admin_Settlement_Refund_BetDaq_Push" DbName="SITEDB.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Admin_Settlement_BetFair_Move_SITEDB" SpName="NAP_Admin_Settlement_BetFair_Move" DbName="SITEDB.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Admin_Settlement_Refund_BetFair_SITEDB" SpName="NAP_Admin_Settlement_Refund_BetFair_Push" DbName="SITEDB.bodb02.bodbAdminNet" />
+    <Setting Key="Refund_SITEDB" SpName="NAP_Admin_Settlement_Refund_1_Push" DbName="SITEDB.bodb02.bodbAdminNet" />
+  </Function>
+
 </Functions>
