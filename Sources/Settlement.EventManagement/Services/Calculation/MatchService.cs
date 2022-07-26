@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Match = Settlement.EventManagement.Models.Calculation.Match;
 using Microsoft.Extensions.Configuration;
-using Settlement.Calculate.Criteria;
+using Settlement.EventManagement.Criteria;
 
 namespace Settlement.EventManagement.Services.Calculation
 {
@@ -22,7 +22,7 @@ namespace Settlement.EventManagement.Services.Calculation
 
         private readonly ICacheService cacheService;
 
-        private readonly RefDataService refDataService;
+        private readonly IRefDataService refDataService;
 
         private readonly MergeDataService mergeDataService;
 
@@ -34,7 +34,7 @@ namespace Settlement.EventManagement.Services.Calculation
 
         public MatchServiceImp(
             IDynamicRepository repository,
-            RefDataService refDataService,
+            IRefDataService refDataService,
             ICacheService cacheService,
             MergeDataService mergeDataService,
             NewInfoMatchService newInfoMatchService,
@@ -52,30 +52,31 @@ namespace Settlement.EventManagement.Services.Calculation
 
         public async Task<List<Match>> GetMatches(FilterMatchRequest request)
         {
-            var baseMatches = new List<Match>();
+            var matches = new List<Match>();
             var isCentralDataBase = true;
             var criteria = mapper.Map<FilterMatchRequest, GetMatchesCriteria>(request);
-            var siteDbServer = configuration.GetSection("SiteDBServer").Value.Split(',').ToList();
+            var siteDbServer = configuration.GetSection("SiteDBServer").Get<List<string>>();
             foreach (var server in siteDbServer)
             {
                 criteria.DbServer = server;
-                var matches = await repository.FetchAsync<Match>(criteria);
+                var data = (await repository.FetchAsync<Match>(criteria)).ToList();
+
                 if (isCentralDataBase)
                 {
-                    baseMatches = matches.ToList();
+                    matches = data;
                     isCentralDataBase = false;
                 }
                 else
                 {
-                    mergeDataService.MergeMatches(baseMatches, matches.ToList());
+                    mergeDataService.MergeMatches(matches, data);
                 }
             }
 
-            var listMatchId = string.Join(",", baseMatches.Select(match => match.MatchId.ToString()).ToArray());
+            var listMatchId = string.Join(",", matches.Select(match => match.MatchId.ToString()).ToArray());
             //var resultDetailCriteria = new GetAllResultDetailCriteria { MatchIdList = listMatchId };
             //var listResultDetail = await repository.GetAsync<List<ResultDetail>>(resultDetailCriteria);
 
-            foreach (var match in baseMatches)
+            foreach (var match in matches)
             {
                 match.NewEventStatus = newInfoMatchService.NewEventStatus(match);
                 match.EventStatusColor = newInfoMatchService.EventStatusColor(match);
@@ -84,7 +85,7 @@ namespace Settlement.EventManagement.Services.Calculation
                 match.RefDataService = refDataService;
             }
 
-            return baseMatches;
+            return matches;
         }
     }
 }

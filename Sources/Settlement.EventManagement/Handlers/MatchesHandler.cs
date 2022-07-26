@@ -10,31 +10,33 @@ using Fanex.NAP.Client.Helpers.Web;
 using Settlement.Core.Services;
 using Settlement.EventManagement.Models.Calculation;
 using Settlement.EventManagement.Services;
+using Settlement.EventManagement.Services.Calculation;
 
 namespace Settlement.EventManagement.Handlers
 {
     public class MatchesHandler : IRequestHandler<FilterMatchRequest, CalculationLeagues>
     {
-        private readonly IMultiSportService multiSportService;
+        private readonly LeagueService leagueService;
+
+        private readonly MatchService matchService;
+
         private readonly PermissionService permissionService;
-        private readonly INapSession currentSession;
-        private readonly IMapper mapper;
 
         public MatchesHandler(PermissionService permissionService,
-            IMapper mapper,
-            INapSession currentSession)
+            LeagueService leagueService,
+            MatchService matchService)
         {
-            this.multiSportService = multiSportService;
             this.permissionService = permissionService;
-            this.mapper = mapper;
-            this.currentSession = currentSession;
+            this.leagueService = leagueService;
+            this.matchService = matchService;
         }
 
         public async Task<CalculationLeagues> Handle(FilterMatchRequest request, CancellationToken cancellationToken)
         {
+            var matches = await matchService.GetMatches(request);
             return new CalculationLeagues
             {
-               // Sports = await multiSportService.GetSportBook(request),
+                Leagues= leagueService.Leagues(matches),
                 Permission = permissionService.Permission
             };
         }

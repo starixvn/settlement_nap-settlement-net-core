@@ -12,7 +12,7 @@ namespace Settlement.EventManagement.Models.Calculation
         private string eventStatus = string.Empty;
 
         [JsonIgnore]
-        public RefDataService RefDataService { get; set; }
+        public IRefDataService RefDataService { get; set; }
 
         public int MatchId { get; set; }
 
@@ -74,7 +74,9 @@ namespace Settlement.EventManagement.Models.Calculation
 
         public bool IsExistMarkedTicket { get; set; }
 
-        public RemarkSettingModel Remark { get; set; }
+        public byte SettlementStatus { get; set; }
+
+        public RemarkSettingModel Remark => new RemarkSettingModel(SettlementStatus);
 
         public string BetStatus { get; set; }
 

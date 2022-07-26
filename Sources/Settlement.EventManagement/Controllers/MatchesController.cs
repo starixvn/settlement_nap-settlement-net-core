@@ -18,19 +18,19 @@ namespace Settlement.EventManagement.Controllers
             this.mediator = mediator;
         }
 
-        //[HttpPost]
-        //[Route("filter")]
-        //public async Task<IActionResult> Filter(FilterCalculateRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+        [HttpPost]
+        [Route("filter")]
+        public async Task<IActionResult> Filter(FilterMatchRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
 
         [HttpGet]
-        [Route("filter")]
-        public async Task<IActionResult> Filter()
+        [Route("filter1")]
+        public async Task<IActionResult> Filter1()
         {
             var request = new FilterMatchRequest
             {
                 SportType = 1,
-                FromDate = Convert.ToDateTime(DateTime.Now.AddDays(-1).ToShortDateString()),
+                FromDate = Convert.ToDateTime(DateTime.Now.AddDays(-2).ToShortDateString()),
                 ToDate = DateTime.Today,
             };
             return Ok(await mediator.Send(request).ConfigureAwait(false));

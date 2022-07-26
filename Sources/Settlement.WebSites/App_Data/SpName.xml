@@ -151,5 +151,16 @@
     <Setting Key="Calculate_SITEDB" SpName="NAP_Admin_Settlement_1_Push" DbName="SITEDB.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Admin_Settlement_Validation_SITEDB" SpName="NAP_Admin_Settlement_Validation" DbName="SITEDB.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_MatchSelDetail_Ticket_SITEDB" SpName="NAP_Set_MatchSelDetail_Ticket" DbName="SITEDB.bodb02.bodbAdminNet" />
+
+    <Function Name="NAP_Set_MatchSel">
+      <Setting Key="NAP_Set_MatchSel_DBTXN" SpName="NAP_Set_MatchSel" DbName="DBTXN.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Set_MatchSel_SITEDB" SpName="NAP_Set_MatchSel" DbName="SITEDB.bodb02.bodbAdminNet" />
+    </Function>
+
+    <Function Name="NAP_Set_WaitingSel">
+      <Setting Key="NAP_Set_WaitingSel_DBTXN" SpName="NAP_Set_WaitingSel" DbName="DBTXN.bodb02.bodbAdminNet" TimeOut="6" />
+      <Setting Key="NAP_Set_WaitingSel_SITEDB" SpName="NAP_Set_WaitingSel" DbName="DBTXN.bodb02.bodbAdminNet" TimeOut="6" />
+    </Function>
   </Function>
+
 </Functions>

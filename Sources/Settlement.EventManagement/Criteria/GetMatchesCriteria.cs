@@ -2,7 +2,7 @@
 using Fanex.Data.Repository;
 using System;
 
-namespace Settlement.Calculate.Criteria
+namespace Settlement.EventManagement.Criteria
 {
     public class GetMatchesCriteria : CriteriaBase
     {

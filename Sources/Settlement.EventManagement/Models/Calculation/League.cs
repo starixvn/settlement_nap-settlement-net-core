@@ -12,7 +12,6 @@ namespace Settlement.EventManagement.Models.Calculation
         [Key("name")]
         public string Name { get; set; }
 
-        [Key("matches")]
-        public List<Match> Matches { get; set; }
+        [Key("matches")] public List<Match> Matches { get; set; } = new List<Match>();
     }
 }
