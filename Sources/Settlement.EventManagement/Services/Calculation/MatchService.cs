@@ -1,14 +1,10 @@
 ﻿using Fanex.Caching;
 using Fanex.Data.Repository;
 using Settlement.Core.Services;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
-using Microsoft.AspNetCore.Http;
-using Settlement.Core.Models;
 using Match = Settlement.EventManagement.Models.Calculation.Match;
 using Microsoft.Extensions.Configuration;
 using Settlement.Calculate.Criteria;
@@ -62,7 +58,6 @@ namespace Settlement.EventManagement.Services.Calculation
             var siteDbServer = configuration.GetSection("SiteDBServer").Value.Split(',').ToList();
             foreach (var server in siteDbServer)
             {
-
                 criteria.DbServer = server;
                 var matches = await repository.FetchAsync<Match>(criteria);
                 if (isCentralDataBase)
@@ -86,6 +81,7 @@ namespace Settlement.EventManagement.Services.Calculation
                 match.EventStatusColor = newInfoMatchService.EventStatusColor(match);
                 match.EarlySettleStatus = newInfoMatchService.EarlySettlementStatus(match);
                 match.AutoSettleFastMarket = newInfoMatchService.AutoSettleFastMarket(match);
+                match.RefDataService = refDataService;
             }
 
             return baseMatches;
