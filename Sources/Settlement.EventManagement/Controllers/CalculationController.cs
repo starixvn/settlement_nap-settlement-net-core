@@ -28,7 +28,6 @@ namespace Settlement.EventManagement.Controllers
         [Route("filter")]
         public async Task<IActionResult> Filter(FilterMatchRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
-
         [HttpGet]
         [Route("filter1")]
         public async Task<IActionResult> Filter1()

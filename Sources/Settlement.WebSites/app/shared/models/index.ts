@@ -25,3 +25,6 @@ export * from './match-details/league-match.model';
 export * from './match-details/sport-match.model';
 export * from './match-details/reference-action.model';
 export * from './match-resource.model';
+export * from './date-filter.model';
+export * from './change-setting-result.model';
+export * from './changed-match-setting.model';

@@ -3,14 +3,13 @@ import { HttpRequestService } from "../../shared/services";
 import { Observable } from 'rxjs';
 import {
   FilterRequest,
-  DateFilter,
   MultiSport,
   ParlayQuery,
-  ChangeSettingResult,
-  GetRemarkQuery
+  GetRemarkQuery,
+  DateFilter
 } from '../models';
 import * as _ from 'lodash';
-import { AutoSettingLeagueQuery, AutoSettingMatchQuery, Result } from '../../shared/models';
+import { AutoSettingLeagueQuery, AutoSettingMatchQuery, ChangeSettingResult, Result } from '../../shared/models';
 
 @Injectable()
 

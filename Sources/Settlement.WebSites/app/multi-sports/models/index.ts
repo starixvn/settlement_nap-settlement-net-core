@@ -7,8 +7,6 @@ export * from './multi-sport.model';
 export * from './sport-filter.model';
 export * from './match-waiting-request.model';
 export * from './parlay-query.model';
-export * from './change-setting-result.model';
-export * from './changed-match-setting.model';
 export * from './change-setting-query.model';
 export * from './popup-properties.model';
 export * from './get-remark-query.model';

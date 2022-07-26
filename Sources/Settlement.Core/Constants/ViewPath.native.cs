@@ -17,5 +17,7 @@
         public const string SourceSetting = "~/wwwroot/score-source-setting/index.cshtml";
 
         public const string MultiSport = "~/wwwroot/multi-sports/index.cshtml";
+
+        public const string Calculation = "~/wwwroot/Calculate-page/index.cshtml";
     }
 }

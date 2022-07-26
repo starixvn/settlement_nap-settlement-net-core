@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { MultiSport, ChangeSettingResult } from "../models";
-import { Match, SportMatch, LeagueMatch } from "../../shared/models";
+import { MultiSport} from "../models";
+import { Match, SportMatch, LeagueMatch, ChangeSettingResult } from "../../shared/models";
 import { EventStatus } from '../constants';
 import * as _ from 'lodash';
 import { BackgroundColor, CalculationStatus } from '../../shared/constants';

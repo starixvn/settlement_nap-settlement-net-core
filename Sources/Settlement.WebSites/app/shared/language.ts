@@ -49,6 +49,7 @@
     CalcPopupTitle: "Calculation",
     RefundPopupTitle: "Refund",
     EarlyPopupTitle: "Early-Settlement",
+    FastMarketTile: "Fast Market",
     MultiSportsPopupTitle: "Multi-sports",
     BetBuilderPopupTitle: "Bet Builder",
     CalculateMixParlay: "Calculate Mix Parlay",

@@ -125,13 +125,6 @@ export class LeagueComponent extends LeagueBaseComponent implements OnInit, OnCh
     return this.handleActionsService.enableCalcMPOnMatch(match, this.permission.canCalculateMp);
   }
 
-  public getCalcColumnColor(match: Match) {
-    return match.isCalculated ? BackgroundColor.calculated
-      : match.isCalRefund ? BackgroundColor.calRefund
-        : match.isHalfTimeCal ? BackgroundColor.halfTimeCalculated
-          : '';
-  }
-
   public isShowCalculationLink(match: Match) {
     return match.showLink && (this.permission.canCalculate || (this.permission.isTrader && match.sportType === SportType.cricket))
       ? BackgroundColor.codeLink : '';
@@ -357,31 +350,6 @@ export class LeagueComponent extends LeagueBaseComponent implements OnInit, OnCh
 
     return match.isCalculatingSingle !== CalculationStatus.waiting && match.isCalculatingSingle !== CalculationStatus.calculating
       && match.isCalculatingMP !== CalculationStatus.waiting && match.isCalculatingMP !== CalculationStatus.calculating;
-  }
-
-  public getRemarkStatusTooltip(remark: Remark) {
-    let tooltip = "";
-    if (remark.isMtdHold) {
-      tooltip += "MTD. Hold\n";
-    }
-
-    if (remark.isUndecided) {
-      tooltip += "Undecided\n";
-    }
-
-    if (remark.isPending) {
-      tooltip += "Result Pending\n";
-    }
-
-    if (remark.isUnderSettle) {
-      tooltip += "Under Settlement\n";
-    }
-
-    if (remark.isKeyHold) {
-      tooltip += "Hold Key\n";
-    }
-
-    return tooltip;
   }
 
   public getBackgroundAutoSetting(match: Match) {

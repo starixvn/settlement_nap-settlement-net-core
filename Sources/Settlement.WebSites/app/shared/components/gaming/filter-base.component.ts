@@ -29,7 +29,7 @@ export class FilterBaseComponent {
         this.isDisabled = !this.verifyDate();
     }
 
-    private verifyDate() {
+    public verifyDate() {
         const isValid = this.verifyDateService.validDate(this.fromDate, this.toDate);
         if (isValid) {
             return true;

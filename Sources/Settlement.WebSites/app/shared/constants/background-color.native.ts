@@ -27,4 +27,6 @@ export const BackgroundColor = {
     yellow: "bg-postponed",
     brightYellowBlinking:  "bg-bright-yellow-blinking",
     brightYellow: "bg-pending",
+    autoSettleCompleted: "bg-completed-blinking",
+    autoSettleRunningBlinking:"bg-running-blinking",
 };

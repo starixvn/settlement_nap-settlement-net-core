@@ -80,6 +80,14 @@ namespace Settlement.EventManagement.Models.Calculation
 
         public bool IsExistMarkedTicket { get; set; }
 
+        public int? IsCalculatingMP { get; set; }
+
+        public bool IsCalculated { get; set; }
+
+        public bool IsHalfTimeCal { get; set; }
+
+        public bool IsCalRefund { get; set; }
+
         public byte SettlementStatus { get; set; }
 
         public RemarkSettingModel Remark => new RemarkSettingModel(SettlementStatus);
@@ -103,6 +111,19 @@ namespace Settlement.EventManagement.Models.Calculation
         public string NewEventStatus { get; set; }
 
         public string AutoSettleFastMarket { get; set; }
+
+        public int AutoSetting { get; set; }
+
+        public bool EnableFastMarket
+        {
+            get
+            {
+                var fastMarketMatchSetting = Convert.ToString(AutoSetting, 2).Reverse();
+                var enableFastMarket = !string.IsNullOrWhiteSpace(fastMarketMatchSetting) && fastMarketMatchSetting.Length > 2 && fastMarketMatchSetting[2].Equals('1');
+
+                return enableFastMarket;
+            }
+        }
 
         public string EarlySettleStatus { get; set; }
 

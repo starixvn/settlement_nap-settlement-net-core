@@ -9,32 +9,32 @@ import { Match, Remark } from "../../models";
 export class LeagueBaseComponent {
     public getTotalHomeGames(match: Match) {
         const homeTotalGames = _.includes(ResultType.havingTotalGames, match.sportType)
-          ? _.includes(ResultType.scoreInResultDetail, match.sportType)
-            ? match.moreScores.halfTimeScore.home
-            : match.homeTotalGames : null;
+            ? _.includes(ResultType.scoreInResultDetail, match.sportType)
+                ? match.moreScores.halfTimeScore.home
+                : match.homeTotalGames : null;
         return _.isNil(homeTotalGames) ? '-' : homeTotalGames.toString();
-        }
+    }
     public getTotalAwayGames(match: Match) {
         const awayTotalGames = _.includes(ResultType.havingTotalGames, match.sportType)
             ? _.includes(ResultType.scoreInResultDetail, match.sportType)
-            ? match.moreScores.halfTimeScore.away
-            : match.awayTotalGames : null;
+                ? match.moreScores.halfTimeScore.away
+                : match.awayTotalGames : null;
         return _.isNil(awayTotalGames) ? '-' : awayTotalGames.toString();
     }
 
     public getHalfTimeHomeScore(match: Match) {
         const halfTimeHomeScore = !_.includes(ResultType.notHavingHalfTimeScore, match.sportType)
             ? _.includes(ResultType.scoreInResultDetail, match.sportType)
-            ? match.moreScores.halfTimeScore.home
-            : match.halfTimeHomeScore : null;
+                ? match.moreScores.halfTimeScore.home
+                : match.halfTimeHomeScore : null;
         return _.isNil(halfTimeHomeScore) ? '-' : halfTimeHomeScore.toString();
     }
 
     public getHalfTimeAwayScore(match: Match) {
         const halfTimeAwayScore = !_.includes(ResultType.notHavingHalfTimeScore, match.sportType)
             ? _.includes(ResultType.scoreInResultDetail, match.sportType)
-            ? match.moreScores.halfTimeScore.away
-            : match.halfTimeAwayScore : null;
+                ? match.moreScores.halfTimeScore.away
+                : match.halfTimeAwayScore : null;
         return _.isNil(halfTimeAwayScore) ? '-' : halfTimeAwayScore.toString();
     }
 
@@ -59,7 +59,40 @@ export class LeagueBaseComponent {
     public getEventStatusColor(match: Match) {
         return _.isNull(match.isCalculatingSingle) ? match.eventStatusColor
             : match.isCalculatingSingle === CalculationStatus.waiting ? `${BackgroundColor.waiting} ${match.eventStatusColor}`
-            : match.isCalculatingSingle === CalculationStatus.calculating ? `${BackgroundColor.calculating} ${match.eventStatusColor}`
-                : match.eventStatusColor;
+                : match.isCalculatingSingle === CalculationStatus.calculating ? `${BackgroundColor.calculating} ${match.eventStatusColor}`
+                    : match.eventStatusColor;
     }
+
+    public getCalcColumnColor(match: Match) {
+        return match.isCalculated ? BackgroundColor.calculated
+            : match.isCalRefund ? BackgroundColor.calRefund
+                : match.isHalfTimeCal ? BackgroundColor.halfTimeCalculated
+                    : '';
+    }
+
+    public getRemarkStatusTooltip(remark: Remark) {
+        let tooltip = "";
+        if (remark.isMtdHold) {
+            tooltip += "MTD. Hold\n";
+        }
+
+        if (remark.isUndecided) {
+            tooltip += "Undecided\n";
+        }
+
+        if (remark.isPending) {
+            tooltip += "Result Pending\n";
+        }
+
+        if (remark.isUnderSettle) {
+            tooltip += "Under Settlement\n";
+        }
+
+        if (remark.isKeyHold) {
+            tooltip += "Hold Key\n";
+        }
+
+        return tooltip;
+    }
+
 }

@@ -113,6 +113,7 @@ namespace Settlement.WebSites.Controllers
         }
 
 #endif
+
         [Route("Home/bet-builder/{matchId?}")]
         public IActionResult BetBuilder(string matchId)
         {
@@ -170,6 +171,11 @@ namespace Settlement.WebSites.Controllers
             return SetView("MultiSports", string.Empty, ViewPath.MultiSport);
         }
 
+        [Route("Home/calculation")]
+        public ActionResult Settlement()
+        {
+            return SetView("Calculation", string.Empty, ViewPath.Calculation);
+        }
 
         private ActionResult SetView(string title, string pageType, string viewName)
         {
