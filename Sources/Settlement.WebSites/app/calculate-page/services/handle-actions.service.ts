@@ -9,11 +9,9 @@ export class HandleActionsService {
     const remark = result.match.remark;
     match.remark = remark;
     match.eventStatus = result.match.eventStatus;
-    match.newEventStatus = result.match.eventStatus;
+    match.newEventStatus =  result.match.newEventStatus;
     if (remark.isMtdHold || remark.isPending || remark.isUndecided || remark.isUnderSettle || remark.isKeyHold) {
       match.showLink = false;
-      match.isCheckedCalcMP = false;
-      match.mixParlay.hasMixParlay = false;
     } else {
       match.showLink = true;
     }

@@ -23,6 +23,8 @@ namespace Settlement.EventManagement.Services.Calculation
         bool IsNotConsistentScore(string suspenderConfirm, List<ResultDetail> resultDetail, List<ResultDetail> sourceResultDetail, string resource);
 
         GoalIcon GoalIcon(Match match);
+
+        bool IsExistMarkedTickets(Match match);
     }
 
     public class NewInfoMatchServiceImp : NewInfoMatchService
@@ -136,6 +138,7 @@ namespace Settlement.EventManagement.Services.Calculation
             return goalIconService.GetGoalIcon(goalIconQuery);
         }
 
+
         private GoalIconQueryModel GoalIconQuery(Match match)
         {
             return new GoalIconQueryModel
@@ -153,6 +156,11 @@ namespace Settlement.EventManagement.Services.Calculation
         {
             return match.EventStatus.IgnoreCaseEquals(EventStatus.Running)
                    && eventStatusReasons.Contains(match.EventStatusReason);
+        }
+
+        public bool IsExistMarkedTickets(Match match)
+        {
+            return siteMatchService.IsExistMarkedTickets(match);
         }
     }
 }

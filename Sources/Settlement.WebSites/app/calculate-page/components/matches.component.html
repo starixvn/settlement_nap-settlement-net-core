@@ -94,12 +94,12 @@
               <td rowspan="2" class="confirm-score"
                 [ngClass]="match.isNotConsistentExHtScore ? 'bg-white-blinking' : ''">
                 <div>{{match.suspenderHalfTime}}</div>
-                <div>{{match.exHalfTimeScore}}</div>
+                <div>{{match.confirmHalfTimeScore}}</div>
               </td>
               <td rowspan="2" class="confirm-score"
                 [ngClass]="match.isNotConsistentExFtScore ? 'bg-white-blinking' : ''">
                 <div>{{match.suspenderFullTime}}</div>
-                <div>{{match.exFullTimeScore}}</div>
+                <div>{{match.confirmFullTimeScore}}</div>
               </td>
               <td rowspan="2" class="remark-status">
                 <div placement="top" [ngClass]="{'act-change-setting title': isChangeSetting(match)}"

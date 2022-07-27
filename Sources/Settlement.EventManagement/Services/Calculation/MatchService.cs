@@ -83,6 +83,7 @@ namespace Settlement.EventManagement.Services.Calculation
                 match.ConfirmFullTimeScore = newInfoMatchService.ConfirmScore(listSourceByMatchId, ResourceType.Final);
                 match.IsNotConsistentExHtScore = newInfoMatchService.IsNotConsistentScore(match.SuspenderHalfTime, resultDetailByMatchId, listSourceByMatchId, ResourceType.Halftime);
                 match.IsNotConsistentExFtScore = newInfoMatchService.IsNotConsistentScore(match.SuspenderFullTime, resultDetailByMatchId, listSourceByMatchId, ResourceType.Final);
+                match.IsExistMarkedTicket = newInfoMatchService.IsExistMarkedTickets(match);
                 match.GoalIcon = newInfoMatchService.GoalIcon(match);
                 match.RefDataService = refDataService;
             }
