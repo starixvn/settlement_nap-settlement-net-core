@@ -4,9 +4,10 @@ using Settlement.EventManagement.Models;
 
 namespace Settlement.EventManagement.Requests
 {
-    public class RefreshMatchesRequest : IRequest<IList<MultiSportMatchWaiting>>
+    public class RefreshMultiSportRequest : IRequest<IList<MultiSportMatchWaiting>>
     {
         public string LeagueIds { get; set; }
+
         public string MatchIds { get; set; }
     }
 }

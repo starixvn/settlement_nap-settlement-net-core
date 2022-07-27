@@ -21,7 +21,7 @@ namespace Settlement.EventManagement.Services
     {
         Task<List<SportModel>> GetSportBook(FilterMultiSportRequest request);
 
-        Task<List<Match>> GetWaitingMatches(RefreshMatchesRequest request);
+        Task<List<Match>> GetWaitingMatches(RefreshMultiSportRequest request);
 
         Task<List<Sport>> GetSports(SportRequest request);
 
@@ -104,7 +104,7 @@ namespace Settlement.EventManagement.Services
             return SortLeague(leagues.ToList());
         }
 
-        public async Task<List<Match>> GetWaitingMatches(RefreshMatchesRequest request)
+        public async Task<List<Match>> GetWaitingMatches(RefreshMultiSportRequest request)
         {
             var matches = MatchesOnShortCaching(request.LeagueIds);
 
@@ -144,9 +144,9 @@ namespace Settlement.EventManagement.Services
 
         private static string LongCachingKey(string leagueIds) => $"{ShortCachingKey(leagueIds)}-longCaching";
 
-        private async Task<List<Match>> GetAndCachingMatches(RefreshMatchesRequest request)
+        private async Task<List<Match>> GetAndCachingMatches(RefreshMultiSportRequest request)
         {
-            var criteria = mapper.Map<RefreshMatchesRequest, GetWaitingMatchesMultiSportCriteria>(request);
+            var criteria = mapper.Map<RefreshMultiSportRequest, GetWaitingMultiSportCriteria>(request);
             var data = await FetchMatchesAndResultDetails(criteria);
             var matchesByEachSport = GetMoreScore(data);
             var matches = new List<Match>();

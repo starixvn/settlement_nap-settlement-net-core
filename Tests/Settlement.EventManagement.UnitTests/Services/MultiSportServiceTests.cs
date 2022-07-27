@@ -187,7 +187,7 @@ namespace Settlement.EventManagement.UnitTests.Services
         public async Task GetWaitingMatches_ExistMatchesOnCache_ReturnNotNullWhenHaveMatchInCache()
         {
             // Arrange
-            var request = new RefreshMatchesRequest();
+            var request = new RefreshMultiSportRequest();
             var data = new List<Match>
             {
                 new Match()
@@ -217,7 +217,7 @@ namespace Settlement.EventManagement.UnitTests.Services
             refDataService.GetLeagueName(Arg.Any<string>()).Returns(string.Empty);
             matchService.GetScoreForMatchBySportType(Arg.Any<List<Match>>(), Arg.Any<List<ResultDetail>>(), Arg.Any<int>()).Returns(new List<Match> { match });
 
-            var waitingMatches = await service.GetWaitingMatches(new RefreshMatchesRequest());
+            var waitingMatches = await service.GetWaitingMatches(new RefreshMultiSportRequest());
 
             Assert.NotNull(waitingMatches);
         }

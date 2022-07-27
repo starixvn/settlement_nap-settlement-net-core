@@ -9,7 +9,7 @@ namespace Settlement.EventManagement.Criteria
 
         public DateTime ToDate { get; set; }
 
-        public int SportType { get; set; }
+        public int SportType => Core.Constants.SportType.Soccer;
 
         public override string GetSettingKey()
         {

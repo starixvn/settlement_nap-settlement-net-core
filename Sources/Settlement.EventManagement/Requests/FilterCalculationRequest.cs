@@ -4,7 +4,7 @@ using Settlement.EventManagement.Models.Calculation;
 
 namespace Settlement.EventManagement
 {
-    public class FilterMatchRequest : IRequest<CalculationLeagues>
+    public class FilterCalculationRequest : IRequest<CalculationLeagues>
     {
         public DateTime FromDate { get; set; }
 

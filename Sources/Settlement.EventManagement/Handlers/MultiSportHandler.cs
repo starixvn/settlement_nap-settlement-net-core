@@ -15,7 +15,7 @@ namespace Settlement.EventManagement.Handlers
     public class MultiSportHandler : IRequestHandler<FilterMultiSportRequest, MultiSportModel>,
         IRequestHandler<LeagueRequest, List<LeagueTypeModel>>,
         IRequestHandler<SportRequest, List<Sport>>,
-        IRequestHandler<RefreshMatchesRequest, IList<MultiSportMatchWaiting>>,
+        IRequestHandler<RefreshMultiSportRequest, IList<MultiSportMatchWaiting>>,
         IRequestHandler<CalculateParlayRequest, Result>
     {
         private readonly IMultiSportService multiSportService;
@@ -48,7 +48,7 @@ namespace Settlement.EventManagement.Handlers
 
         public async Task<List<Sport>> Handle(SportRequest request, CancellationToken cancellationToken) => await multiSportService.GetSports(request);
 
-        public async Task<IList<MultiSportMatchWaiting>> Handle(RefreshMatchesRequest request, CancellationToken cancellationToken)
+        public async Task<IList<MultiSportMatchWaiting>> Handle(RefreshMultiSportRequest request, CancellationToken cancellationToken)
         {
             var list = await multiSportService.GetWaitingMatches(request);
             return mapper.Map<IList<Models.Match>, IList<MultiSportMatchWaiting>>(list);

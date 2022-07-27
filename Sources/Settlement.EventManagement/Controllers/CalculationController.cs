@@ -2,7 +2,6 @@
 using Settlement.Core.ActionFilters;
 using MediatR;
 using System.Threading.Tasks;
-using System;
 using Settlement.EventManagement.Requests;
 
 namespace Settlement.EventManagement.Controllers
@@ -26,19 +25,10 @@ namespace Settlement.EventManagement.Controllers
 
         [HttpPost]
         [Route("filter")]
-        public async Task<IActionResult> Filter(FilterMatchRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+        public async Task<IActionResult> Filter(FilterCalculationRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
-        [HttpGet]
-        [Route("filter1")]
-        public async Task<IActionResult> Filter1()
-        {
-            var request = new FilterMatchRequest
-            {
-                SportType = 1,
-                FromDate = Convert.ToDateTime(DateTime.Now.AddDays(-2).ToShortDateString()),
-                ToDate = DateTime.Today,
-            };
-            return Ok(await mediator.Send(request).ConfigureAwait(false));
-        }
+        [HttpPost]
+        [Route("auto-refresh")]
+        public async Task<IActionResult> RefreshMatches(RefreshCalculationRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
     }
 }

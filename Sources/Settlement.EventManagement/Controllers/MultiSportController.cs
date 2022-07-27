@@ -39,7 +39,7 @@ namespace Settlement.EventManagement.Controllers
 
         [HttpPost]
         [Route("auto-refresh")]
-        public async Task<IActionResult> RefreshMatches(RefreshMatchesRequest request)=> Ok(await mediator.Send(request).ConfigureAwait(false));
+        public async Task<IActionResult> RefreshMatches(RefreshMultiSportRequest request)=> Ok(await mediator.Send(request).ConfigureAwait(false));
         
         [HttpPost]
         [Route("getSport")]

@@ -2,7 +2,7 @@
 
 namespace Settlement.EventManagement.Criteria
 {
-    public class GetWaitingMatchesMultiSportCriteria : CriteriaBase
+    public class GetWaitingMultiSportCriteria : CriteriaBase
     {
         public string MatchIds { get; set; }
 

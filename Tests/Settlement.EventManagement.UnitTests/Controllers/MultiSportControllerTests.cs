@@ -70,10 +70,10 @@ namespace Settlement.EventManagement.UnitTests.Controllers
                 }
             };
 
-            multiSportService.GetWaitingMatches(Arg.Any<RefreshMatchesRequest>()).Returns(matches);
+            multiSportService.GetWaitingMatches(Arg.Any<RefreshMultiSportRequest>()).Returns(matches);
 
             // Act
-            var result = await controller.RefreshMatches(new RefreshMatchesRequest());
+            var result = await controller.RefreshMatches(new RefreshMultiSportRequest());
 
             // Assert
             Assert.NotNull(result);

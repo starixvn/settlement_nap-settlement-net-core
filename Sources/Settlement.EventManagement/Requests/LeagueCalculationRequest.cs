@@ -11,6 +11,5 @@ namespace Settlement.EventManagement.Requests
 
         public DateTime ToDate { get; set; }
 
-        public int SportType { get; set; }
     }
 }

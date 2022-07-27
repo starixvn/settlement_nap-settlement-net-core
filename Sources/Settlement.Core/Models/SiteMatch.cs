@@ -6,10 +6,6 @@ namespace Settlement.Core.Models
     {
         public bool IsExistResultAndFirstTeamScore { get; set; }
 
-        public string HtStatus { get; set; }
-
-        public string FtStatus { get; set; }
-
         public bool IsExistFgNg { get; set; }
 
         public bool IsExistHtFgLg { get; set; }
