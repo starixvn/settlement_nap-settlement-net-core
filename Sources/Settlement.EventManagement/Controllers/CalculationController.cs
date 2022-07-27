@@ -3,20 +3,26 @@ using Settlement.Core.ActionFilters;
 using MediatR;
 using System.Threading.Tasks;
 using System;
+using Settlement.EventManagement.Requests;
 
 namespace Settlement.EventManagement.Controllers
 {
     [ApiController]
-    [Route("api/matches")]
+    [Route("api/calculation")]
     [SessionAuthorize]
-    public class MatchesController : ControllerBase
+    public class CalculationController : ControllerBase
     {
         private readonly IMediator mediator;
 
-        public MatchesController(IMediator mediator)
+        public CalculationController(IMediator mediator)
         {
             this.mediator = mediator;
         }
+
+        [HttpPost]
+        [Route("get-league")]
+        public async Task<IActionResult> GetLeagues(LeagueCalculationRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+
 
         [HttpPost]
         [Route("filter")]

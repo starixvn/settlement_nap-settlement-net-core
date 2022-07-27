@@ -9,12 +9,16 @@ using AutoMapper;
 using Fanex.NAP.Client.Helpers.Web;
 using Settlement.Core.Services;
 using Settlement.EventManagement.Models.Calculation;
+using Settlement.EventManagement.Requests;
 using Settlement.EventManagement.Services;
 using Settlement.EventManagement.Services.Calculation;
+using Settlement.EventManagement.Models;
 
 namespace Settlement.EventManagement.Handlers
 {
-    public class MatchesHandler : IRequestHandler<FilterMatchRequest, CalculationLeagues>
+    public class CalculationHandler : 
+        IRequestHandler<FilterMatchRequest, CalculationLeagues>,
+        IRequestHandler<LeagueCalculationRequest, List<LeagueTypeModel>>
     {
         private readonly LeagueService leagueService;
 
@@ -22,7 +26,7 @@ namespace Settlement.EventManagement.Handlers
 
         private readonly PermissionService permissionService;
 
-        public MatchesHandler(PermissionService permissionService,
+        public CalculationHandler(PermissionService permissionService,
             LeagueService leagueService,
             MatchService matchService)
         {
@@ -40,5 +44,7 @@ namespace Settlement.EventManagement.Handlers
                 Permission = permissionService.Permission
             };
         }
+
+        public async Task<List<LeagueTypeModel>> Handle(LeagueCalculationRequest request, CancellationToken cancellationToken) => await leagueService.Leagues(request);
     }
 }
