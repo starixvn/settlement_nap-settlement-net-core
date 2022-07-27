@@ -17,6 +17,8 @@ namespace Settlement.EventManagement.Models.Calculation
 
         private string suspenderFullTime = string.Empty;
 
+        private string goalRecord = string.Empty;
+
         [JsonIgnore]
         public IRefDataService RefDataService { get; set; }
 
@@ -88,6 +90,10 @@ namespace Settlement.EventManagement.Models.Calculation
 
         public bool IsCalRefund { get; set; }
 
+        public bool IsExistFgLg { get; set; }
+
+        public bool IsExistHtFgLg { get; set; }
+
         public byte SettlementStatus { get; set; }
 
         public RemarkSettingModel Remark => new RemarkSettingModel(SettlementStatus);
@@ -150,6 +156,19 @@ namespace Settlement.EventManagement.Models.Calculation
         public string ConfirmHalfTimeScore { get; set; }
 
         public string ConfirmFullTimeScore { get; set; }
+
+        public string GoalRecord
+        {
+            get
+            {
+                var goal = new GoalRecord(IsCalRefund, goalRecord, BetStatus, HalfTimeHomeScore, HalfTimeAwayScore);
+                return goal.GetGoalRecord();
+            }
+
+            set => goalRecord = string.IsNullOrWhiteSpace(value) ? string.Empty : value.ToUpperInvariant();
+        }
+
+        public GoalIcon GoalIcon { get; set; } = new GoalIcon();
 
         public List<SiteMatch> SiteMatch { get; set; } = new List<SiteMatch>();
 

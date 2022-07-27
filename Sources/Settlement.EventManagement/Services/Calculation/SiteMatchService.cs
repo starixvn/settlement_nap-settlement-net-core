@@ -15,6 +15,10 @@ namespace Settlement.EventManagement.Services.Calculation
         string AutoSettleFastMarket(Match match);
 
         string EarlySettlementStatus(Match match);
+
+        bool IsExistFgLg(Match match);
+
+        bool IsExistHtFgLg(Match match);
     }
 
     public class SiteMatchServiceImp : SiteMatchService
@@ -48,9 +52,9 @@ namespace Settlement.EventManagement.Services.Calculation
         public string EarlySettlementStatus(Match match)
         {
             var matchSite = match.SiteMatch;
-            var isExistEarlyBetTypes = match.IsExistEarlyBetTypes || matchSite.Any(m => m.IsExistEarlyBetTypes);
-            var isRunningEarlyBetTypes = match.IsRunningEarlyBetTypes || matchSite.Any(m => m.IsRunningEarlyBetTypes);
-            var isWaitingEarlyBetTypes = match.IsWaitingEarlyBetTypes || matchSite.Any(m => m.IsWaitingEarlyBetTypes);
+            var isExistEarlyBetTypes = match.IsExistEarlyBetTypes || matchSite.Exists(m => m.IsExistEarlyBetTypes);
+            var isRunningEarlyBetTypes = match.IsRunningEarlyBetTypes || matchSite.Exists(m => m.IsRunningEarlyBetTypes);
+            var isWaitingEarlyBetTypes = match.IsWaitingEarlyBetTypes || matchSite.Exists(m => m.IsWaitingEarlyBetTypes);
             if (!isExistEarlyBetTypes && (match.ChildMatchType == MatchPen || match.IsOpenOdds))
             {
                 return "No Ticket";
@@ -76,9 +80,9 @@ namespace Settlement.EventManagement.Services.Calculation
         public string AutoSettleFastMarket(Match match)
         {
             var matchSite = match.SiteMatch;
-            var isExistFastMarket = match.IsExistFastMarket || matchSite.Any(m => m.IsExistFastMarket);
-            var isRunningFastMarket = match.IsRunningFastMarket || matchSite.Any(m => m.IsRunningFastMarket);
-            var isExistFastMarketResult = match.IsExistFastMarketResult || matchSite.Any(m => m.IsExistFastMarketResult);
+            var isExistFastMarket = match.IsExistFastMarket || matchSite.Exists(m => m.IsExistFastMarket);
+            var isRunningFastMarket = match.IsRunningFastMarket || matchSite.Exists(m => m.IsRunningFastMarket);
+            var isExistFastMarketResult = match.IsExistFastMarketResult || matchSite.Exists(m => m.IsExistFastMarketResult);
             if (!isExistFastMarket)
             {
                 return isExistFastMarketResult ? "No Ticket" : "N/A";
@@ -111,6 +115,18 @@ namespace Settlement.EventManagement.Services.Calculation
         {
             var isExistRunningTicketOnSite = match.SiteMatch.Exists(m => m.IsExistRunningTicket);
             return match.IsExistRunningTicket || isExistRunningTicketOnSite;
+        }
+
+        public bool IsExistFgLg(Match match)
+        {
+            var isExistFgLgOnSite = match.SiteMatch.Exists(m => m.IsExistFgLg);
+            return match.IsExistFgLg || isExistFgLgOnSite;
+        }
+
+        public bool IsExistHtFgLg(Match match)
+        {
+            var isExistHtFgLgOnSite = match.SiteMatch.Exists(m => m.IsExistHtFgLg);
+            return match.IsExistHtFgLg || isExistHtFgLgOnSite;
         }
     }
 }

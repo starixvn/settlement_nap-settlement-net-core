@@ -3,6 +3,7 @@ using System.Linq;
 using Kaden.Extensions;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
+using Settlement.Core.Services;
 using Match = Settlement.EventManagement.Models.Calculation.Match;
 
 namespace Settlement.EventManagement.Services.Calculation
@@ -20,6 +21,8 @@ namespace Settlement.EventManagement.Services.Calculation
         string ConfirmScore(List<ResultDetail> listResultDetail, string resource);
 
         bool IsNotConsistentScore(string suspenderConfirm, List<ResultDetail> resultDetail, List<ResultDetail> sourceResultDetail, string resource);
+
+        GoalIcon GoalIcon(Match match);
     }
 
     public class NewInfoMatchServiceImp : NewInfoMatchService
@@ -38,9 +41,14 @@ namespace Settlement.EventManagement.Services.Calculation
 
         private readonly SiteMatchService siteMatchService;
 
-        public NewInfoMatchServiceImp(SiteMatchService siteMatchService)
+        private readonly IGoalIconService goalIconService;
+
+        public NewInfoMatchServiceImp(
+            SiteMatchService siteMatchService,
+            IGoalIconService goalIconService)
         {
             this.siteMatchService = siteMatchService;
+            this.goalIconService = goalIconService;
         }
 
         public string EventStatusColor(Match match)
@@ -122,8 +130,25 @@ namespace Settlement.EventManagement.Services.Calculation
             return false;
         }
 
-     
-        
+        public GoalIcon GoalIcon(Match match)
+        {
+            var goalIconQuery = GoalIconQuery(match);
+            return goalIconService.GetGoalIcon(goalIconQuery);
+        }
+
+        private GoalIconQueryModel GoalIconQuery(Match match)
+        {
+            return new GoalIconQueryModel
+            {
+                BetStatus = match.BetStatus,
+                GoalRecord = match.GoalRecord,
+                FinalAwayScore = match.FinalAwayScore,
+                FinalHomeScore = match.FinalHomeScore,
+                IsExistFgLg = siteMatchService.IsExistFgLg(match),
+                IsExistHtFgLg = siteMatchService.IsExistHtFgLg(match)
+            };
+        }
+
         private bool IsCheckingEventStatusReasons(Match match)
         {
             return match.EventStatus.IgnoreCaseEquals(EventStatus.Running)
