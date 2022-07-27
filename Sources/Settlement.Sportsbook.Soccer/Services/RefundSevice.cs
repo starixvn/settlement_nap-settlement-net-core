@@ -146,7 +146,8 @@ namespace Settlement.Sportsbook.Soccer.Services
                 MatchId = criteria.MatchId,
                 SpName = criteria.SpName,
                 Action = criteria.Action,
-                Mode = ActionKey.ActionDictionary[criteria.Action]
+                Mode = ActionKey.ActionDictionary[criteria.Action],
+                SDTRecord = criteria.SDTRecord
             };
             foreach (var server in servers)
             {

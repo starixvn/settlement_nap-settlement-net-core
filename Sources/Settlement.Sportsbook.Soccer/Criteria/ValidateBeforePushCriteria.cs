@@ -17,6 +17,12 @@ namespace Settlement.Sportsbook.Soccer.Criteria
 
         public string SpName { get; set; }
 
+        public int SDTRecord { get; set; }
+
+        public int SettleAbandonedMatchIBCParlay { get; set; }
+
+        public bool IsSettleDetermined { get; set; }
+
         public int ErrCode { get; set; }
 
         public string ErrMsg { get; set; }
