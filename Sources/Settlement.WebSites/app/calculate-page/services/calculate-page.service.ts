@@ -23,15 +23,11 @@ export class CalculatePageService {
     return this.httpRequestService.getJson(url);
   }
 
-  // public search(params: FilterQuery): Observable<Matches> {
-  //   const url = `${this.matchedApi}/filter1`;
-  //   return this.httpRequestService.postJson(params, url);
-  // }
-
   public search(params: FilterQuery): Observable<Matches> {
-    const url = `${this.calculationApi}/filter1`;
-    return this.httpRequestService.getJson(url);
+    const url = `${this.calculationApi}/filter`;
+    return this.httpRequestService.postJson(params, url);
   }
+
 
   public getRemarkInfo(matchId: string): Observable<ChangeSettingResult> {
     const query = {
@@ -41,13 +37,16 @@ export class CalculatePageService {
     return this.httpRequestService.postJson(query, `api/setting/get-remark-info`);
   }
 
-  private getNewestMatches() {
+  private getNewestMatches(leagueId: string) {
+    const query = {
+      leagueId
+    };
     const url = `${this.calculationApi}/auto-refresh`;
-    return this.httpRequestService.getJson(url);
+    return this.httpRequestService.postJson(query,url, false);
   }
 
-  public refreshMatches(currentLeagues: League[]) {
-    this.getNewestMatches().subscribe((matchesWaiting: Match[]) => {
+  public refreshMatches(leagueId: string, currentLeagues: League[]) {
+    this.getNewestMatches(leagueId).subscribe((matchesWaiting: Match[]) => {
       this.changeInfoAfterRefreshMatches(currentLeagues, matchesWaiting);
     });
   }
@@ -84,6 +83,8 @@ export class CalculatePageService {
             match.showLink = this.backGroundService.isShowLink(newMatch);
             match.autoPayoutStatus = newMatch.autoPayoutStatus;
             match.autoSettleFastMarket = newMatch.autoSettleFastMarket;
+            match.isExistMarkedTicketParlay = newMatch.isExistMarkedTicketParlay;
+            match.isExistMarkedTicket = newMatch.isExistMarkedTicket;
           }
         });
       });

@@ -15,6 +15,7 @@ export class DetectChangesService {
     private isInfoDifferent(oldMatch: Match, newMatch: Match) {
         return oldMatch.eventStatus !== newMatch.eventStatus
         || oldMatch.earlySettleStatus !== newMatch.earlySettleStatus
+        || oldMatch.betStatus !== newMatch.betStatus
         //|| !_.isEqual(oldMatch.autoCalcSetting, newMatch.autoCalcSetting)
         || !_.isEqual(oldMatch.remark, newMatch.remark);
     }
@@ -32,12 +33,15 @@ export class DetectChangesService {
         || oldMatch.isCalculated !== newMatch.isCalculated
         || oldMatch.isRefund !== newMatch.isRefund
         || oldMatch.isCalRefund !== newMatch.isCalRefund
-        || oldMatch.isHalfTimeCal !== newMatch.isHalfTimeCal;
+        || oldMatch.isHalfTimeCal !== newMatch.isHalfTimeCal
+        || oldMatch.isExistMarkedTicketParlay !== newMatch.isExistMarkedTicketParlay
+        || oldMatch.isExistMarkedTicket !== newMatch.isExistMarkedTicket;
     }
 
     private isSuspenderDifferent(oldMatch: Match, newMatch: Match) {
         return oldMatch.suspenderHalfTime !== newMatch.suspenderHalfTime
         || oldMatch.suspenderFullTime !== newMatch.suspenderFullTime
-        || oldMatch.autoPayoutStatus !== newMatch.autoPayoutStatus;
+        || oldMatch.autoPayoutStatus !== newMatch.autoPayoutStatus
+        || oldMatch.autoSettleFastMarket !== newMatch.autoSettleFastMarket;
     }
 }

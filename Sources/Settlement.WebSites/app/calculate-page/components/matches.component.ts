@@ -1,6 +1,6 @@
 import { Component, Input, OnChanges, OnDestroy, OnInit } from '@angular/core';
 import { BackGroundService, CalculatePageService, PopupService } from '../services';
-import { League, Matches } from '../models';
+import { FilterQuery, League, Matches } from '../models';
 import { Match, Remark } from '../../shared/models';
 import { Permission } from '../../shared/models/sportsbook-sop';
 import { BackgroundColor, CalculationStatus } from '../../shared/constants';
@@ -16,8 +16,7 @@ import { interval } from 'rxjs';
 })
 export class MatchesComponent extends LeagueBaseComponent implements OnChanges, OnInit, OnDestroy {
   @Input() public matches: Matches;
-  @Input() public fromDate: string;
-  @Input() public toDate: string;
+  @Input() public filterQuery: FilterQuery;
   @Input() public rootURL: string;
   public leagues: League[];
   public permission: Permission;
@@ -49,18 +48,18 @@ export class MatchesComponent extends LeagueBaseComponent implements OnChanges, 
   private refreshMatches() {
     this.subscriber = this.intervalTimer.subscribe(() => {
       if (this.leagues.length > 0) {
-        this.calculatePageService.refreshMatches(this.leagues);
+        this.calculatePageService.refreshMatches(this.filterQuery.leagueId, this.leagues);
       }
     });
   }
 
   public getLog(matchId: string) {
-    this.popupService.popupLog(matchId, this.fromDate, this.toDate);
+    this.popupService.popupLog(matchId, this.filterQuery.fromDate, this.filterQuery.toDate);
   }
 
   public popupCalc(match: Match) {
     const src = `${this.rootURL}/sportsbook/soccer/calculation?matchId=${match.matchId}`;
-    this.popupService.openAndHandlePopup(src, Language.CalcPopupTitle, '920px', '920px', match);
+    this.popupService.openAndHandlePopup(src, Language.CalcPopupTitle, '800px', '800px', match);
   }
 
   public popupRefund(match: Match) {

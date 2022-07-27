@@ -42,13 +42,11 @@ export class FilterComponent extends FilterBaseComponent implements OnInit, OnCh
   }
 
   public async search() {
-    const fromDate = this.verifyDateService.dateFormat(this.fromDate);
-    const toDate = this.verifyDateService.dateFormat(this.toDate);
     this.query.fromDate = this.verifyDateService.dateFormat(this.fromDate);
     this.query.toDate = this.verifyDateService.dateFormat(this.toDate);
 
     this.calculatePageService.search(this.query).subscribe((matches: Matches) => {
-      this.searchAction.emit({ matches, fromDate, toDate });
+      this.searchAction.emit({ matches, filterQuery: this.query });
     });
   }
 

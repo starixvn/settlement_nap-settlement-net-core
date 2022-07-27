@@ -18,6 +18,6 @@
 
         public const string MultiSport = "~/wwwroot/multi-sports/index.cshtml";
 
-        public const string Calculation = "~/wwwroot/Calculate-page/index.cshtml";
+        public const string Calculation = "~/wwwroot/calculate-page/index.cshtml";
     }
 }

@@ -1,3 +1,3 @@
 <filter (searchAction)="search($event)"></filter>
-<matches *ngIf="matches"[matches]="matches" [rootURL]="rootApi"></matches>
+<matches *ngIf="matches"[matches]="matches" [rootURL]="rootApi" [filterQuery]="filterQuery" ></matches>
 <div *ngIf="blockUI" class="loading"></div>

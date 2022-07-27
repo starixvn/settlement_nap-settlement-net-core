@@ -13,6 +13,7 @@ import {
 import { CustomHttpRequestInterceptor } from "../shared/custom-httprequest-interceptor.native";
 import { MaterialModule } from '../shared/material-module';
 import { DynamicHeightDirective } from '../shared/directives';
+import { MaterialDialogComponent } from '../shared/components';
 
 @NgModule({
     imports: [
@@ -30,6 +31,7 @@ import { DynamicHeightDirective } from '../shared/directives';
         DatepickerComponent,
         MatchesComponent,
         DynamicHeightDirective,
+        MaterialDialogComponent,
     ],
     providers: [{ provide: HTTP_INTERCEPTORS, useClass: CustomHttpRequestInterceptor, multi: true }],
     bootstrap: [AppComponent],

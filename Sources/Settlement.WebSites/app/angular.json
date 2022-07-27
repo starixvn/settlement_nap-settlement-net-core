@@ -863,9 +863,7 @@
             "tsConfig": "calculate-page/tsconfig.app.json",
             "polyfills": "polyfills.ts",
             "styles": [
-              "node_modules/ngx-toastr/toastr.css",
               "shared/styles/material.style.less",
-              "shared/styles/styles.less",
               "calculate-page/style.less"
             ],
             "allowedCommonJsDependencies": [

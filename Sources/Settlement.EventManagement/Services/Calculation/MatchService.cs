@@ -189,8 +189,8 @@ namespace Settlement.EventManagement.Services.Calculation
             var longCachingKey = LongCachingKey(leagueId);
             const int shortCacheExpirationTime = 3;
             const int longCacheExpirationTime = 20;
-            cacheService.Set(shortCachingKey, matches, new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromSeconds(shortCacheExpirationTime)));
-            cacheService.Set(longCachingKey, matches, new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(longCacheExpirationTime)));
+            cacheService.SetAsync(shortCachingKey, matches, new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromSeconds(shortCacheExpirationTime)));
+            cacheService.SetAsync(longCachingKey, matches, new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(longCacheExpirationTime)));
         }
 
         private static string ShortCachingKey(int leagueId) => $"{CacheServiceKey.WaitingListCacheKey}-{leagueId}";

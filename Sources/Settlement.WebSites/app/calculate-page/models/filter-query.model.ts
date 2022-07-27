@@ -12,5 +12,6 @@ export class FilterQuery {
     matchCode: string;
     leagueId: string;
     statusId: number;
+    sportType = 1;
 
 }
