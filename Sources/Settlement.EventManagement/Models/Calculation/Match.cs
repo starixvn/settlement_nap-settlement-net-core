@@ -11,6 +11,12 @@ namespace Settlement.EventManagement.Models.Calculation
     {
         private string eventStatus = string.Empty;
 
+        private const string Dash = "-";
+
+        private string suspenderHalfTime = string.Empty;
+
+        private string suspenderFullTime = string.Empty;
+
         [JsonIgnore]
         public IRefDataService RefDataService { get; set; }
 
@@ -101,6 +107,28 @@ namespace Settlement.EventManagement.Models.Calculation
         public string EarlySettleStatus { get; set; }
 
         public string EventStatusColor { get; set; }
+
+        public bool IsNotConsistentExHtScore { get; set; }
+
+        public bool IsNotConsistentExFtScore { get; set; }
+
+        public string SuspenderHalfTime
+        {
+            get => string.IsNullOrEmpty(suspenderHalfTime) ? Dash : suspenderHalfTime;
+
+            set => suspenderHalfTime = value;
+        }
+
+        public string SuspenderFullTime
+        {
+            get => string.IsNullOrEmpty(suspenderFullTime) ? Dash : suspenderFullTime;
+
+            set => suspenderFullTime = value;
+        }
+
+        public string ConfirmHalfTimeScore { get; set; }
+
+        public string ConfirmFullTimeScore { get; set; }
 
         public List<SiteMatch> SiteMatch { get; set; } = new List<SiteMatch>();
 

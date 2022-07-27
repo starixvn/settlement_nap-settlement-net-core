@@ -171,5 +171,4 @@
     <Setting Key="NAP_Admin_Settlement_Refund_BetFair_SITEDB" SpName="NAP_Admin_Settlement_Refund_BetFair_Push" DbName="SITEDB.bodb02.bodbAdminNet" />
     <Setting Key="Refund_SITEDB" SpName="NAP_Admin_Settlement_Refund_1_Push" DbName="SITEDB.bodb02.bodbAdminNet" />
   </Function>
-
 </Functions>

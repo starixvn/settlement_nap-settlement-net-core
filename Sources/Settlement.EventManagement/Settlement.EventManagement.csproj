@@ -7,6 +7,7 @@
 
   <ItemGroup>
     <Compile Remove="Models\BetStatusHelper.cs" />
+    <Compile Remove="Models\Calculation\ResultDetail.cs" />
     <Compile Remove="Services\GoalIconService.cs" />
   </ItemGroup>
 

@@ -2,6 +2,7 @@
 using System.Linq;
 using Kaden.Extensions;
 using Settlement.Core.Constants;
+using Settlement.Core.Models;
 using Match = Settlement.EventManagement.Models.Calculation.Match;
 
 namespace Settlement.EventManagement.Services.Calculation
@@ -15,6 +16,10 @@ namespace Settlement.EventManagement.Services.Calculation
         string EarlySettlementStatus(Match match);
 
         string AutoSettleFastMarket(Match match);
+
+        string ConfirmScore(List<ResultDetail> listResultDetail, string resource);
+
+        bool IsNotConsistentScore(string suspenderConfirm, List<ResultDetail> resultDetail, List<ResultDetail> sourceResultDetail, string resource);
     }
 
     public class NewInfoMatchServiceImp : NewInfoMatchService
@@ -85,10 +90,43 @@ namespace Settlement.EventManagement.Services.Calculation
             return siteMatchService.AutoSettleFastMarket(match);
         }
 
+        public string ConfirmScore(List<ResultDetail> listResultDetail, string resource)
+        {
+            var resultDetail = listResultDetail.Find(result => result.ResourceId == resource
+                                                               && !string.IsNullOrWhiteSpace(result.AwayValue) 
+                                                               && !string.IsNullOrWhiteSpace(result.HomeValue));
+
+            return resultDetail != null
+                ? $"({resultDetail.SourceName}: {resultDetail.HomeValue}-{resultDetail.AwayValue})"
+                : string.Empty;
+        }
+
+        public bool IsNotConsistentScore(string suspenderConfirm, List<ResultDetail> resultDetail, List<ResultDetail> sourceResultDetail, string resource)
+        {
+            if (string.Equals(suspenderConfirm, "-"))
+            {
+                return false;
+            }
+
+            var resultDetailByResource = resultDetail.Find(r => r.ResourceId == resource);
+            var sourceResultDetailByResource = sourceResultDetail.Find(r => r.ResourceId == resource);
+
+            if (sourceResultDetailByResource != null)
+            {
+                return (resultDetailByResource != null
+                        && (resultDetailByResource.HomeValue != sourceResultDetailByResource.HomeValue || resultDetailByResource.AwayValue != sourceResultDetailByResource.AwayValue))
+                       || resultDetailByResource == null;
+
+
+            }
+            return false;
+        }
+
+     
+        
         private bool IsCheckingEventStatusReasons(Match match)
         {
-            return match.SportType == SportType.Soccer
-                   && match.EventStatus.IgnoreCaseEquals(EventStatus.Running)
+            return match.EventStatus.IgnoreCaseEquals(EventStatus.Running)
                    && eventStatusReasons.Contains(match.EventStatusReason);
         }
     }

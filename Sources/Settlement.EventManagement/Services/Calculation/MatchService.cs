@@ -7,7 +7,9 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Match = Settlement.EventManagement.Models.Calculation.Match;
 using Microsoft.Extensions.Configuration;
+using Settlement.Core.Models;
 using Settlement.EventManagement.Criteria;
+using Settlement.Core.Constants;
 
 namespace Settlement.EventManagement.Services.Calculation
 {
@@ -52,6 +54,29 @@ namespace Settlement.EventManagement.Services.Calculation
 
         public async Task<List<Match>> GetMatches(FilterMatchRequest request)
         {
+            var matches = await MatchesAllSites(request);
+            var listResultDetail = await ResultDetailByMatchIds(matches);
+            foreach (var match in matches)
+            {
+                var listSourceByMatchId = listResultDetail.Where(m => m.MatchId == match.MatchId && m.SourceId != SourceType.Normal).ToList();
+                var resultDetailByMatchId = listResultDetail.Where(m => m.MatchId == match.MatchId && m.SourceId == SourceType.Normal).ToList();
+
+                match.NewEventStatus = newInfoMatchService.NewEventStatus(match);
+                match.EventStatusColor = newInfoMatchService.EventStatusColor(match);
+                match.EarlySettleStatus = newInfoMatchService.EarlySettlementStatus(match);
+                match.AutoSettleFastMarket = newInfoMatchService.AutoSettleFastMarket(match);
+                match.ConfirmHalfTimeScore = newInfoMatchService.ConfirmScore(listSourceByMatchId, ResourceType.Halftime);
+                match.ConfirmFullTimeScore = newInfoMatchService.ConfirmScore(listSourceByMatchId, ResourceType.Final);
+                match.IsNotConsistentExHtScore = newInfoMatchService.IsNotConsistentScore(match.SuspenderHalfTime, resultDetailByMatchId, listSourceByMatchId, ResourceType.Halftime);
+                match.IsNotConsistentExFtScore = newInfoMatchService.IsNotConsistentScore(match.SuspenderFullTime, resultDetailByMatchId, listSourceByMatchId, ResourceType.Final);
+                match.RefDataService = refDataService;
+            }
+
+            return matches;
+        }
+
+        private async Task<List<Match>> MatchesAllSites(FilterMatchRequest request)
+        {
             var matches = new List<Match>();
             var isCentralDataBase = true;
             var criteria = mapper.Map<FilterMatchRequest, GetMatchesCriteria>(request);
@@ -72,20 +97,14 @@ namespace Settlement.EventManagement.Services.Calculation
                 }
             }
 
-            var listMatchId = string.Join(",", matches.Select(match => match.MatchId.ToString()).ToArray());
-            //var resultDetailCriteria = new GetAllResultDetailCriteria { MatchIdList = listMatchId };
-            //var listResultDetail = await repository.GetAsync<List<ResultDetail>>(resultDetailCriteria);
-
-            foreach (var match in matches)
-            {
-                match.NewEventStatus = newInfoMatchService.NewEventStatus(match);
-                match.EventStatusColor = newInfoMatchService.EventStatusColor(match);
-                match.EarlySettleStatus = newInfoMatchService.EarlySettlementStatus(match);
-                match.AutoSettleFastMarket = newInfoMatchService.AutoSettleFastMarket(match);
-                match.RefDataService = refDataService;
-            }
-
             return matches;
+        }
+
+        private async Task<List<ResultDetail>> ResultDetailByMatchIds(List<Match> matches)
+        {
+            var listMatchId = string.Join(",", matches.Select(match => match.MatchId.ToString()).ToArray());
+            var resultDetailCriteria = new GetResultDetailCriteria { MatchIdList = listMatchId };
+            return (await repository.FetchAsync<ResultDetail>(resultDetailCriteria)).ToList();
         }
     }
 }
