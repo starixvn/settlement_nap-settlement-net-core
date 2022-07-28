@@ -41,6 +41,12 @@ namespace Settlement.WebSites.Controllers
             return SetView("Hold Settings", "RemarkSetting", ViewPath.Setting);
         }
 
+        [HttpGet("fast-market")]
+        public IActionResult FastMarket()
+        {
+            return SetView("Fast Market", string.Empty, ViewPath.FastMarket);
+        }
+
         private ActionResult SetView(string title, string pageType, string viewName)
         {
             ViewBag.Environment = configuration.GetSection("Environment").Value;

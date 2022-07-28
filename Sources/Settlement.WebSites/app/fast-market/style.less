@@ -1,0 +1,483 @@
+﻿@sprite: "../../wwwroot/css/images/sprite.png";
+@popup-width: 880px;
+.modal-dialog {
+    top: 320px;
+    font-size: 12px;
+    text-transform: none;
+
+    .modal-header,
+    .modal-body {
+        padding: 8px;
+    }
+
+    h4 {
+        font-size: 13px;
+        font-weight: bold;
+    }
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    text-align: center;
+
+    td,
+    th {
+        border: solid 1px #cbcbcb;
+        padding: 1px;
+    }
+
+    thead {
+        background-color: #295091;
+        border: 1px solid #cbc9ca;
+        color: #fff;
+        padding-right: 15px;
+
+        tr {
+            border-collapse: collapse;
+            line-height: 17px;
+            text-align: center;
+
+            th {
+                vertical-align: middle;
+                text-align: center;
+                font-weight: normal;
+                width: 25px;
+                min-width: 25px;
+            }
+        }
+    }
+}
+
+.input-form {
+    width: 470px;
+    position: relative;
+    margin: 17px;
+
+    .action {
+        position: absolute;
+        right: 0;
+        margin-top: 10px;
+    }
+
+    .ok-button {
+        margin-right: 60px;
+        width: 50px;
+    }
+
+    .table-input-score {
+        tbody>tr {
+            height: 25px;
+        }
+
+
+        td {
+            width: 100px;
+            padding-right: 5px;
+            text-align: center;
+        }
+
+        thead>tr {
+            height: 25px;
+        }
+
+        .no-score {
+            width: 450px !important;
+        }
+
+        .action-column {
+            width: 119px;
+        }
+
+        .interval {
+            width: 150px
+        }
+
+        .delete-source {
+            width: 24px;
+            background: #f00;
+            margin-left: 4px;
+        }
+
+        .select-position {
+            width: 130px
+        }
+
+    }
+
+    .input-score {
+        height: 344px;
+        position: relative;
+        border-bottom: 1px solid #cbcbcb;
+
+
+        .absolute {
+            position: absolute;
+            bottom: 10px;
+        }
+
+        .table-scroll {
+            width: fit-content;
+            max-height: 262px;
+            overflow-y: scroll;
+            overflow-x: hidden;
+            border-right: solid 1px #C8C8C8;
+        }
+    }
+}
+
+.content {
+    width: @popup-width  !important;
+    font-size: 10px;
+    font-weight: normal;
+    label {
+        padding-left: 3px;
+    }
+
+    .league {
+        background-color: #ccc;
+        color: #1d3968;
+        font-weight: bold;
+        margin-bottom: 5px;
+        padding: 7px 7px 7px 3px;
+        width: 970px;
+
+        .auto-setting-btn {
+            float: right;
+        }
+
+        .auto-setting-label {
+            float: right;
+            margin-right: 10px;
+        }
+    }
+
+    .message-box {
+        display: block;
+    }
+
+    .icon-refresh {
+        background: url(@sprite) no-repeat;
+        background-position: -8px -341px;
+        cursor: pointer;
+        height: 23px;
+        margin: 5px 0;
+        width: 90px;
+
+        &:hover {
+            background-position: -105px -341px;
+        }
+    }
+
+    .table-water-break {
+        margin-left: 55px;
+        width: 456px !important;
+
+        tbody {
+            text-align: center !important;
+        }
+
+        td {
+            padding-right: 0 !important;
+
+            &:last-child {
+                width: 25% !important;
+            }
+
+            &.table-name {
+                text-decoration: underline;
+                font-weight: bold;
+            }
+        }
+
+        button {
+            line-height: 1.2 !important;
+        }
+
+        .mat-slide-toggle-bar,
+        .mat-slide-toggle-thumb {
+            transition: all 80ms linear !important;
+            transition-property: background-color !important;
+            transition-delay: 50ms !important;
+        }
+
+        .mat-slide-toggle-thumb-container {
+            transition: all 80ms linear !important;
+            transition-property: transform !important;
+        }
+    }
+
+    .table-ticket {
+        margin-bottom: 5px;
+        td:nth-child(1) {
+            background-color: #295091;
+            width: 100px !important;
+            color: #fff;
+            text-align: center;
+        }
+    }
+
+    .table-wrapper {
+        position: relative;
+        width: 970px;
+        margin-bottom: 7px;
+
+        .table-scroll {
+            max-height: 400px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            border-right: solid 1px #C8C8C8;
+        }
+    }
+
+    .sub-action-button {
+        padding-top: 3px;
+        width: 100%;
+        height: 30px;
+        border: 1px solid #c8c8c8;
+        border-top: none !important;
+        text-align: left;
+        padding-left: 10px !important;
+        position: relative;
+        padding-bottom: 3px;
+
+        span {
+            margin: 0;
+            position: absolute;
+            top: 50%;
+            -ms-transform: translateY(-50%);
+            transform: translateY(-50%);
+        }
+
+        input {
+            margin: 0;
+        }
+
+        label,
+        input {
+            vertical-align: middle;
+        }
+
+        button {
+            margin-left: 150px;
+            vertical-align: middle;
+        }
+    }
+
+    .table-calculation {
+        width: 627px;
+        min-width: 627px;
+
+        .choice {
+            width: 54px;
+        }
+
+        tbody>tr {
+            height: 22px;
+        }
+
+        thead tr>th {
+            border-top: 1px solid #cbc9ca;
+        }
+
+        thead tr.result>th {
+            width: 54px;
+        }
+
+        .ticket-status {
+            width: 165px;
+        }
+
+        .result {
+            width: 147px;
+        }
+
+        &.fast-markets {
+            width: 971px;
+            min-width: 910px;
+
+            .bettype-item {
+                background-color: #cbc9ca;
+                height: 20px;
+                font-weight: bold;
+                text-align: left;
+
+                .bettype-title {
+                    cursor: pointer;
+                    color: #000;
+
+                    span {
+                        float: left;
+                        padding-left: 3px;
+                    }
+
+                    .icon-warning {
+                        background: url(@sprite) no-repeat -304px -61px;
+                        width: 16px;
+                        height: 15px;
+                        margin-left: 5px;
+                    }
+                }
+
+                &.bg-empty-handicap {
+                    background: yellow;
+                    color: red;
+                }
+            }
+
+            .result {
+                width: 406px;
+
+                >th {
+                    margin-top: 3px;
+                }
+            }
+
+            .time-interval {
+                width: 136px;
+            }
+
+            .choice-result {
+                width: 54px;
+            }
+
+            .result-status {
+                width: 163px;
+            }
+
+            .select-proceed {
+                width: 67px;
+                padding: 0 10px;
+            }
+        }
+
+        .bettype {
+            width: 230px;
+        }
+
+        .goal {
+            padding-left: 20px;
+
+            .determined {
+                float: right;
+                padding-right: 38px;
+
+                &>* {
+                    vertical-align: middle;
+                }
+            }
+        }
+
+        .result-bettype {
+            width: 133px;
+            color: #000;
+        }
+
+        .border {
+            border: solid 1px red;
+        }
+
+        select[disabled] {
+            background-color: #cbc9ca;
+        }
+    }
+
+    .nav>li>a {
+        padding: 3px 10px;
+        font-weight: bold;
+    }
+
+    .nav-tabs {
+        width: 160px;
+        margin-bottom: 2px;
+
+        li.active>a {
+            background-color: #7192A3;
+            color: white;
+        }
+    }
+
+    .height-bettype {
+        max-height: 506px;
+        overflow: auto;
+        overflow-x: hidden;
+        -ms-overflow-x: hidden;
+    }
+
+    .action-button {
+        input[type="button"] {
+            margin-left: 5px;
+        }
+
+        &.fast-market {
+            width: 970px;
+            height: 36px;
+            border-top: solid 1px #C8C8C8;
+
+            >div {
+                float: right;
+            }
+        }
+
+        width: 627px;
+        border-left: solid 1px #C8C8C8;
+        border-right: solid 1px #C8C8C8;
+        border-bottom: solid 1px #C8C8C8;
+        padding: 5px;
+        text-align: center;
+    }
+
+    .fast_markets_icon(@width, @height, @position-left, @position-top) {
+        background: url(@sprite) no-repeat @position-left @position-top;
+        cursor: pointer;
+        height: @height;
+        margin: auto;
+        width: @width;
+    }
+
+    .icon-yes {
+        .fast_markets_icon(45px, 16px, -35px, -292px);
+    }
+
+    .icon-no {
+        .fast_markets_icon(45px, 16px, -84px, -292px);
+    }
+
+    .icon-no-disable {
+        .fast_markets_icon(45px, 16px, -135px, -292px);
+        cursor: auto;
+    }
+
+    .icon-yes-disable {
+        .fast_markets_icon(45px, 16px, -184px, -292px);
+        cursor: auto;
+    }
+
+    input[type="text"] {
+        width: 24px;
+        height: 18px;
+        border: 1px solid #888;
+        text-align: center;
+        font-size: 11px;
+    }
+
+    input[disabled] {
+        background: #ccc;
+    }
+}
+
+.invalidTime {
+    background-color: #ff0000;
+}
+
+.icon-add {
+    background: url(@sprite) no-repeat;
+    background-position: -35px -318px;
+    cursor: pointer;
+    height: 23px;
+    width: 20px;
+}
+
+.mat-dialog-container {
+    padding: 1px !important;
+}

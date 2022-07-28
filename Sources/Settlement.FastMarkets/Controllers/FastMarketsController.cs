@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Settlement.FastMarkets.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/fast-market")]
     [SessionAuthorize]
     public class FastMarketsController : ControllerBase
     {
