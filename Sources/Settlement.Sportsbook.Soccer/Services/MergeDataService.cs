@@ -28,13 +28,13 @@ namespace Settlement.Sportsbook.Soccer.Services
         public Models.MatchDetail MergeSiteMatch(Models.MatchDetail matchDetail, List<TicketCounts> ticketCounts)
         {
             var siteMatches = matchDetail.SiteMatch;
-            matchDetail.IsExistResultAndFirstTeamScore = siteMatches.Any(match => match.IsExistResultAndFirstTeamScore);
-            matchDetail.IsExistFgNg = siteMatches.Any(match => match.IsExistFgNg);
-            matchDetail.IsExistHtFgLg = siteMatches.Any(match => match.IsExistHtFgLg);
-            matchDetail.IsExistFgLg = siteMatches.Any(match => match.IsExistFgLg);
-            matchDetail.IsEnabledGoalRecordHt = siteMatches.Any(match => match.IsEnabledGoalRecordHt);
-            matchDetail.IsEnabledGoalRecordFt = siteMatches.Any(match => match.IsEnabledGoalRecordFt);
-            matchDetail.IsHtOnly = siteMatches.Any(match => match.IsHtOnly);
+            matchDetail.IsExistResultAndFirstTeamScore = siteMatches.Exists(match => match.IsExistResultAndFirstTeamScore);
+            matchDetail.IsExistFgNg = siteMatches.Exists(match => match.IsExistFgNg);
+            matchDetail.IsExistHtFgLg = siteMatches.Exists(match => match.IsExistHtFgLg);
+            matchDetail.IsExistFgLg = siteMatches.Exists(match => match.IsExistFgLg);
+            matchDetail.IsEnabledGoalRecordHt = siteMatches.Exists(match => match.IsEnabledGoalRecordHt);
+            matchDetail.IsEnabledGoalRecordFt = siteMatches.Exists(match => match.IsEnabledGoalRecordFt);
+            matchDetail.IsLive = siteMatches.Exists(match => match.IsLive);
             matchDetail.HtStatus = GetStatus(ticketCounts.First(item => item.GroupId == HalfTimeGroupId));
             matchDetail.FtStatus = GetStatus(ticketCounts.First(item => item.GroupId == FullTimeGroupId));
 

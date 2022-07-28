@@ -12,7 +12,7 @@ namespace Settlement.Core.Models
 
         public bool IsExistFgLg { get; set; }
 
-        public bool IsHtOnly { get; set; }
+        public bool IsLive { get; set; }
 
         public bool IsEnabledGoalRecordHt { get; set; }
 
