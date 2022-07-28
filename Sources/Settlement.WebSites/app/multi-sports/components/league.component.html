@@ -1,5 +1,10 @@
-<div class="sportbook">
-  <div class="head-table" *ngIf="sports">
+<div class="sportbook" *ngIf="sports">
+  <ng-template *ngTemplateOutlet="header"></ng-template>
+  <ng-template *ngTemplateOutlet="body"></ng-template>
+</div>
+
+<ng-template #header>
+  <div class="head-table">
     <table class="table-calculation">
       <thead>
         <tr>
@@ -31,6 +36,9 @@
       </thead>
     </table>
   </div>
+</ng-template>
+
+<ng-template #body>
   <div dynamicHeight class="table-matches-content" *ngIf="isExistedSport; else empty">
     <div *ngFor="let sport of sports">
       <div (click)="collapseSport(sport)" class="sport-name">
@@ -196,7 +204,7 @@
       </ng-template>
     </div>
   </div>
-</div>
+</ng-template>
 
 <ng-template #empty>
   <div class="no-data" *ngIf="sports">

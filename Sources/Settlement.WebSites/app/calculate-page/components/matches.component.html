@@ -1,4 +1,9 @@
-<div class="content">
+<div class="content" *ngIf="leagues">
+  <ng-template *ngTemplateOutlet="header"></ng-template>
+  <ng-template *ngTemplateOutlet="body"></ng-template>
+</div>
+
+<ng-template #header>
   <div class="head-table">
     <table class="table-calculation">
       <thead>
@@ -22,6 +27,9 @@
       </thead>
     </table>
   </div>
+</ng-template>
+
+<ng-template #body>
   <div dynamicHeight class="table-matches-content" *ngIf="leagues.length > 0; else empty">
     <div *ngFor="let leagueMatch of leagues">
       <table class="table-calculation">
@@ -123,7 +131,7 @@
       </table>
     </div>
   </div>
-</div>
+</ng-template>
 
 <ng-template #empty>
   <div class="no-data" *ngIf="leagues.length == 0">

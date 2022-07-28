@@ -4,19 +4,19 @@
     <div class="filter-bar-inner">
         <div class="row">
             <div class="field small-field">
-                <label for="FromDate" class="inner-label from-date">
+                <label class="inner-label from-date">
                     From
                 </label>
                 <ngbd-date-picker [date]="fromDate" (change)="onSelectFromDate($event)"></ngbd-date-picker>
             </div>
             <div class="field small-field">
-                <label for="ToDate" class="inner-label to-date">
+                <label class="inner-label to-date">
                     To
                 </label>
                 <ngbd-date-picker [date]="toDate" (change)="onSelectToDate($event)"></ngbd-date-picker>
             </div>
             <div class="field over-status">
-                <label for="OverStatus" class="inner-label">
+                <label class="inner-label">
                     Over Status
                 </label>
                 <div>
@@ -24,7 +24,7 @@
                 </div>
             </div>
             <div class="field medium-field">
-                <label for="TicketStatus" class="inner-label">
+                <label class="inner-label">
                     Ticket Status
                 </label>
                 <div>
@@ -32,7 +32,7 @@
                 </div>
             </div>
             <div class="field">
-                <label for="MatchStatus" class="inner-label">
+                <label class="inner-label">
                     Match Status
                 </label>
                 <div>
@@ -40,7 +40,7 @@
                 </div>
             </div>
             <div class="remark field">
-                <label for="Remark" class="inner-label">
+                <label class="inner-label">
                     Hold Status
                 </label>
                 <div>
@@ -50,13 +50,13 @@
         </div>
         <div class="row" style="margin-top: 10px;">
             <div class="field small-field">
-                <label for="MatchCode" class="inner-label">
+                <label for="matchCode" class="inner-label">
                     Match Code/ID 
                 </label>
-                <input id="MatchCode" maxlength="50" name="MatchCode" style="width: 107px" type="text" value="" [(ngModel)]="matchCode">
+                <input id="matchCode" maxlength="50" style="width: 107px" type="text" value="" [(ngModel)]="matchCode">
             </div>
             <div class="field sports">
-                <label for="Sports" class="inner-label">
+                <label class="inner-label">
                     Sports
                 </label>
                 <div>
@@ -64,7 +64,7 @@
                 </div>
             </div>
             <div id="leagues" class="field large-field">
-                <label for="Leagues" class="inner-label leagues">
+                <label class="inner-label leagues">
                     League
                 </label>
                 <div>
@@ -72,18 +72,17 @@
                 </div>
             </div>
             <div class="field include-test">
-                <input id="IsIncludeTest" name="IsIncludeTest" type="checkbox" value="true" [(ngModel)]="isIncludeTestMatch">
-                <label for="IsIncludeTest" class="bold">&nbsp;Include Test Matches</label>
+                <input id="isIncludeTest" type="checkbox" [(ngModel)]="isIncludeTestMatch">
+                <label for="isIncludeTest" class="bold">&nbsp;Include Test Matches</label>
             </div>
             <div class="field auto-payout">
-                <input id="AutoPayout" name="AutoPayout" type="checkbox" value="true" [(ngModel)]="isAutoPayout">
-                <label for="AutoPayout" class="bold">&nbsp;Auto Payout</label>
+                <input id="autoPayout" type="checkbox" [(ngModel)]="isAutoPayout">
+                <label for="autoPayout" class="bold">&nbsp;Auto Payout</label>
             </div>
             <div class="submit field">
                 <button class="button" (click)="search()">Submit</button>
             </div>
         </div>
     </div>
-    <div class="line">
-    </div>
+    <div class="line"></div>
 </div>
