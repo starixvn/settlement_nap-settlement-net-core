@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 using Microsoft.Extensions.Configuration;
+using Settlement.Core.Criteria;
 
 namespace Settlement.Sportsbook.Soccer.Services
 {
@@ -140,6 +141,25 @@ namespace Settlement.Sportsbook.Soccer.Services
 
         private async Task<Result> ValidateBeforePushing(RefundCriteria criteria)
         {
+            var validateEvent = await ValidateEvent(criteria);
+
+            if (validateEvent.ErrCode > 0)
+            {
+                return validateEvent;
+            }
+
+            var validateTicket = await ValidateTicket(criteria);
+
+            if (validateTicket.ErrCode > 0)
+            {
+                return validateTicket;
+            }
+
+            return new Result();
+        }
+
+        private async Task<Result> ValidateTicket(RefundCriteria criteria)
+        {
             var servers = configuration.GetSection("SiteDBServer").Get<List<string>>();
             var checkingCriteria = new ValidateBeforePushCriteria
             {
@@ -161,6 +181,30 @@ namespace Settlement.Sportsbook.Soccer.Services
                         ErrMsg = checkingCriteria.ErrMsg
                     };
                 }
+            }
+
+            return new Result();
+        }
+
+        private async Task<Result> ValidateEvent(RefundCriteria criteria)
+        {
+            var checkEventCriteria = new ValidateEventCriteria
+            {
+                MatchId = criteria.MatchId,
+                SpName = criteria.SpName,
+                Action = criteria.Action,
+                Mode = ActionKey.ActionDictionary[criteria.Action],
+                SDTRecord = criteria.SDTRecord
+            };
+            await repository.ExecuteAsync(checkEventCriteria);
+
+            if (checkEventCriteria.ErrCode > 0)
+            {
+                return new Result
+                {
+                    ErrCode = checkEventCriteria.ErrCode,
+                    ErrMsg = checkEventCriteria.ErrMsg
+                };
             }
 
             return new Result();

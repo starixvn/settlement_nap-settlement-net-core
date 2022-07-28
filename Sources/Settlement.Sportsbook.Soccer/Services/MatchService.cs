@@ -164,7 +164,7 @@ namespace Settlement.Sportsbook.Soccer.Services
         private async Task<List<ResultDetail>> GetResultDetail(int matchId)
         {
             var resultDetailCriteria = new GetResultDetailCriteria { MatchidList = matchId.ToString() };
-            var resultDetail = await repository.GetAsync<List<ResultDetail>>(resultDetailCriteria);
+            var resultDetail = (await repository.FetchAsync<ResultDetail>(resultDetailCriteria)).ToList();
             return resultDetail ?? new List<ResultDetail>();
         }
 

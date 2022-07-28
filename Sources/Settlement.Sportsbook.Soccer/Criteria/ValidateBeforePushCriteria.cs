@@ -32,7 +32,7 @@ namespace Settlement.Sportsbook.Soccer.Criteria
 
         public override string GetSettingKey()
         {
-            return $"NAP_Admin_Settlement_Validation_{DbServer}";
+            return $"NAP_Admin_Settlement_Validation_Ticket_{DbServer}";
         }
 
         public override bool IsValid()

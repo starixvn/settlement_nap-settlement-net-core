@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Fanex.Data.Repository;
 using Microsoft.Extensions.Configuration;
+using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.Sportsbook.Soccer.Constants;
 using Settlement.Sportsbook.Soccer.Criteria;
@@ -107,6 +108,26 @@ namespace Settlement.Sportsbook.Soccer.Services
 
         private async Task<Result> ValidateBeforeExecute(CalculateCriteria criteria, List<string> listReplicatedServer)
         {
+            var validateEvent = await ValidateEvent(criteria);
+
+            if (validateEvent.ErrCode > 0)
+            {
+                return validateEvent;
+            }
+
+            var validateTicket = await ValidateTicket(criteria);
+
+            if (validateTicket.ErrCode > 0)
+            {
+                return validateTicket;
+            }
+
+            return new Result();
+        }
+
+        private async Task<Result> ValidateTicket(CalculateCriteria criteria)
+        {
+            var servers = configuration.GetSection("SiteDBServer").Get<List<string>>();
             var checkingCriteria = new ValidateBeforePushCriteria
             {
                 MatchId = criteria.MatchId,
@@ -114,7 +135,7 @@ namespace Settlement.Sportsbook.Soccer.Services
                 Action = criteria.Action,
                 Mode = ActionKey.ActionDictionary[criteria.Action]
             };
-            foreach (var server in listReplicatedServer)
+            foreach (var server in servers)
             {
                 checkingCriteria.DbServer = server;
                 await repository.ExecuteAsync(checkingCriteria);
@@ -126,6 +147,29 @@ namespace Settlement.Sportsbook.Soccer.Services
                         ErrMsg = checkingCriteria.ErrMsg
                     };
                 }
+            }
+
+            return new Result();
+        }
+
+        private async Task<Result> ValidateEvent(CalculateCriteria criteria)
+        {
+            var checkEventCriteria = new ValidateEventCriteria
+            {
+                MatchId = criteria.MatchId,
+                SpName = criteria.SpName,
+                Action = criteria.Action,
+                Mode = ActionKey.ActionDictionary[criteria.Action]
+            };
+            await repository.ExecuteAsync(checkEventCriteria);
+
+            if (checkEventCriteria.ErrCode > 0)
+            {
+                return new Result
+                {
+                    ErrCode = checkEventCriteria.ErrCode,
+                    ErrMsg = checkEventCriteria.ErrMsg
+                };
             }
 
             return new Result();
