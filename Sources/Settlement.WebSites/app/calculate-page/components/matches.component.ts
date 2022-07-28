@@ -76,7 +76,7 @@ export class MatchesComponent extends LeagueBaseComponent implements OnChanges, 
 
   public popupFastMarkets(match: Match) {
     if (this.isMatchNotSingleOrMp(match)) {
-      const src = `${this.rootURL}/sportsbook/soccer/early-settlement?matchId=${match.matchId}`;
+      const src = `apps/fast-market?matchId=${match.matchId}`;
       this.popupService.openAndHandlePopup(src, Language.FastMarketTile, '985px', '921px', match);
     }
   }

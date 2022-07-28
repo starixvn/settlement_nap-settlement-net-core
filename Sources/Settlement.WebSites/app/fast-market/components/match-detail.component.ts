@@ -107,12 +107,7 @@ export class MatchDetailComponent implements OnInit {
         if (changeOnMatch) {
             const matchInfo = this.matchDetail;
             const autoSettleStatus = !_.includes(matchInfo.autoSettingIcon.match, Icon.yes);
-            const key = 'Sportsbook';
-            this.changeColorOnParentPage(matchInfo.matchId, autoSettleStatus, key);
+            // To do
         }
-    }
-
-    public changeColorOnParentPage(matchId: number, autoSettleStatus: boolean, key: string) {
-        window.parent[key].changeColorAutoSettleColumnAfterClosePopup(matchId, autoSettleStatus);
     }
 }
