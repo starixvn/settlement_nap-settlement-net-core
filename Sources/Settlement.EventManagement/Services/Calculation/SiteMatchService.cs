@@ -10,6 +10,8 @@ namespace Settlement.EventManagement.Services.Calculation
 
         bool IsExistMarkedTickets(Match match);
 
+        bool IsExistRunningTickets(Match match);
+
         string GetBackgroundCompletedStatus(Match match);
 
         string AutoSettleFastMarket(Match match);
@@ -41,6 +43,11 @@ namespace Settlement.EventManagement.Services.Calculation
             return match.IsExistMarkedTicket || isExistMarkedTicketOnSite;
         }
 
+        public bool IsExistRunningTickets(Match match)
+        {
+            var isExistRunningTicketOnSite = match.SiteMatch.Exists(m => m.IsExistRunningTicket);
+            return match.IsExistRunningTicket || isExistRunningTicketOnSite;
+        }
 
         public string GetBackgroundCompletedStatus(Match match)
         {

@@ -25,6 +25,8 @@ namespace Settlement.EventManagement.Services.Calculation
         GoalIcon GoalIcon(Match match);
 
         bool IsExistMarkedTickets(Match match);
+
+        bool IsExistRunningTickets(Match match);
     }
 
     public class NewInfoMatchServiceImp : NewInfoMatchService
@@ -88,7 +90,6 @@ namespace Settlement.EventManagement.Services.Calculation
             var isWaiting = match.SiteMatch.All(m => m.IsCalculatingSingle == IsWaiting);
             return match.IsCalculatingSingle == IsWaiting && isWaiting ? EventStatus.Waiting : EventStatus.Calculating;
         }
-        
 
         public string EarlySettlementStatus(Match match)
         {
@@ -103,7 +104,7 @@ namespace Settlement.EventManagement.Services.Calculation
         public string ConfirmScore(List<ResultDetail> listResultDetail, string resource)
         {
             var resultDetail = listResultDetail.Find(result => result.ResourceId == resource
-                                                               && !string.IsNullOrWhiteSpace(result.AwayValue) 
+                                                               && !string.IsNullOrWhiteSpace(result.AwayValue)
                                                                && !string.IsNullOrWhiteSpace(result.HomeValue));
 
             return resultDetail != null
@@ -126,8 +127,6 @@ namespace Settlement.EventManagement.Services.Calculation
                 return (resultDetailByResource != null
                         && (resultDetailByResource.HomeValue != sourceResultDetailByResource.HomeValue || resultDetailByResource.AwayValue != sourceResultDetailByResource.AwayValue))
                        || resultDetailByResource == null;
-
-
             }
             return false;
         }
@@ -138,6 +137,15 @@ namespace Settlement.EventManagement.Services.Calculation
             return goalIconService.GetGoalIcon(goalIconQuery);
         }
 
+        public bool IsExistMarkedTickets(Match match)
+        {
+            return siteMatchService.IsExistMarkedTickets(match);
+        }
+
+        public bool IsExistRunningTickets(Match match)
+        {
+            return siteMatchService.IsExistRunningTickets(match);
+        }
 
         private GoalIconQueryModel GoalIconQuery(Match match)
         {
@@ -156,11 +164,6 @@ namespace Settlement.EventManagement.Services.Calculation
         {
             return match.EventStatus.IgnoreCaseEquals(EventStatus.Running)
                    && eventStatusReasons.Contains(match.EventStatusReason);
-        }
-
-        public bool IsExistMarkedTickets(Match match)
-        {
-            return siteMatchService.IsExistMarkedTickets(match);
         }
     }
 }

@@ -83,7 +83,6 @@ export class CalculatePageService {
             match.showLink = this.backGroundService.isShowLink(newMatch);
             match.autoPayoutStatus = newMatch.autoPayoutStatus;
             match.autoSettleFastMarket = newMatch.autoSettleFastMarket;
-            match.isExistMarkedTicketParlay = newMatch.isExistMarkedTicketParlay;
             match.isExistMarkedTicket = newMatch.isExistMarkedTicket;
           }
         });

@@ -13,5 +13,10 @@ export class FilterQuery {
     leagueId: string;
     statusId: number;
     sportType = 1;
+    constructor(){
+        this.htOver = true;
+        this.ftOver = true;
+        this.earlyOver = true;
+    }
 
 }
