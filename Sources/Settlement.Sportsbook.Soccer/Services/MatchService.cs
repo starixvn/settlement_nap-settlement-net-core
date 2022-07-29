@@ -116,12 +116,9 @@ namespace Settlement.Sportsbook.Soccer.Services
 
         public async Task<Match> GetMatchRefund(GetMatchRequest request)
         {
-            var criteria = mapper.Map<GetMatchRequest, GetMatchDetailCriteria>(request);
-            var mappingTypes = new[] { typeof(MatchDetail), typeof(ResultDetail) };
-            var result = await repository.FetchMultipleAsync(criteria, mappingTypes);
-            var matchDetail = result[0].Cast<MatchDetail>().FirstOrDefault();
-            var resultDetails = result[1].Cast<ResultDetail>().ToList();
-            Argument.IsNotNull(matchDetail, $"Match ${criteria.MatchId} does not exist");
+            var match = await fetchDataService.GetMatchInfo(request);
+            var matchDetail = match.MatchDetail;
+            var resultDetails = await GetResultDetail(request.MatchId);
 
             matchDetail.RefDataService = refDataService;
             matchDetail = HandleResultDetailSoccer(matchDetail, resultDetails);
