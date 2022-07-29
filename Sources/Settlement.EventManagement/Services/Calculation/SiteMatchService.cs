@@ -21,6 +21,10 @@ namespace Settlement.EventManagement.Services.Calculation
         bool IsExistFgLg(Match match);
 
         bool IsExistHtFgLg(Match match);
+
+        bool IsExistMarkedTicketParlay(Match match);
+
+        bool IsExistRunningTicketParlay(Match match);
     }
 
     public class SiteMatchServiceImp : SiteMatchService
@@ -47,6 +51,18 @@ namespace Settlement.EventManagement.Services.Calculation
         {
             var isExistRunningTicketOnSite = match.SiteMatch.Exists(m => m.IsExistRunningTicket);
             return match.IsExistRunningTicket || isExistRunningTicketOnSite;
+        }
+
+        public bool IsExistMarkedTicketParlay(Match match)
+        {
+            var isExistMarkedTicketParlay = match.SiteMatch.Exists(m => m.IsExistMarkedTicketParlay);
+            return match.IsExistMarkedTicketParlay || isExistMarkedTicketParlay;
+        }
+
+        public bool IsExistRunningTicketParlay(Match match)
+        {
+            var isExistRunningTicketParlay = match.SiteMatch.Exists(m => m.IsExistRunningTicketParlay);
+            return match.IsExistMarkedTicketParlay || isExistRunningTicketParlay;
         }
 
         public string GetBackgroundCompletedStatus(Match match)

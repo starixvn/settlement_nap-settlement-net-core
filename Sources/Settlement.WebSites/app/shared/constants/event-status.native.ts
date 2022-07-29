@@ -1,4 +1,5 @@
 export const EventStatus = {
+    running: 'Running',
     waiting: 'Waiting',
     calculating: 'Calculating',
     completed: 'Completed',

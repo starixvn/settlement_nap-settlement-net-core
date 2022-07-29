@@ -3,7 +3,7 @@ import { BackGroundService, CalculatePageService, PopupService } from '../servic
 import { FilterQuery, League, Matches } from '../models';
 import { Match, Remark } from '../../shared/models';
 import { Permission } from '../../shared/models/sportsbook-sop';
-import { BackgroundColor, CalculationStatus } from '../../shared/constants';
+import { BackgroundColor, CalculationStatus, EventStatus } from '../../shared/constants';
 import * as _ from 'lodash';
 import { LeagueBaseComponent } from '../../shared/components/sport-listing/league-base.component';
 import { Language } from '../../shared/language';
@@ -92,15 +92,15 @@ export class MatchesComponent extends LeagueBaseComponent implements OnChanges, 
   }
 
   public getEarlySettleBackground(match: Match) {
-    const isRunning = !_.isNull(match.earlySettleStatus) && _.isEqual(match.earlySettleStatus.toLowerCase(), BackgroundColor.running)
-      && _.isEqual(match.eventStatus.toLowerCase(), BackgroundColor.completed);
-    const isCompleted = !_.isNull(match.earlySettleStatus) && _.isEqual(match.earlySettleStatus.toLowerCase(), BackgroundColor.completed);
+    const isRunning = !_.isNull(match.earlySettleStatus) && _.isEqual(match.earlySettleStatus.toLowerCase(), EventStatus.running.toLowerCase())
+      && _.isEqual(match.eventStatus.toLowerCase(), EventStatus.completed.toLowerCase());
+    const isCompleted = !_.isNull(match.earlySettleStatus) && _.isEqual(match.earlySettleStatus.toLowerCase(), EventStatus.completed.toLowerCase());
     const backgroundColor = isRunning ? BackgroundColor.autoSettleRunning : isCompleted ? BackgroundColor.calculated : '';
     return backgroundColor;
   }
 
   public getFastMarketsBackground(match: Match) {
-    const isRunning = !_.isNull(match.autoSettleFastMarket) && _.isEqual(match.autoSettleFastMarket.toLowerCase(), BackgroundColor.running);
+    const isRunning = !_.isNull(match.autoSettleFastMarket) && _.isEqual(match.autoSettleFastMarket.toLowerCase(), EventStatus.running.toLowerCase());
     const fastMarketBlinking = isRunning ? this.backGroundService.completedBackground(match) : this.backGroundService.fastMarkedCompletedBackground(match);
     return match.enableFastMarket ? this.getEarlySettleBackground(match) : fastMarketBlinking;
   }

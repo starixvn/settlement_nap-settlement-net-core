@@ -9,7 +9,7 @@ export class HandleActionsService {
     const remark = result.match.remark;
     match.remark = remark;
     match.eventStatus = result.match.eventStatus;
-    match.newEventStatus =  result.match.newEventStatus;
+    match.newEventStatus = result.match.newEventStatus;
     if (remark.isMtdHold || remark.isPending || remark.isUndecided || remark.isUnderSettle || remark.isKeyHold) {
       match.showLink = false;
     } else {
@@ -21,7 +21,7 @@ export class HandleActionsService {
 
   private handleEventStatusColor(match: Match, isPending: boolean) {
     if (_.isEqual(match.eventStatus, EventStatus.postponed)) {
-      return match.isExistMarkedTicket ? BackgroundColor.postponedBlinking : BackgroundColor.postponed;
+      return this.isExistMarkedTickets(match) ? BackgroundColor.postponedBlinking : BackgroundColor.postponed;
     }
 
     if (_.isEqual(match.eventStatus, EventStatus.completed)) {
@@ -29,21 +29,25 @@ export class HandleActionsService {
     }
 
     if (isPending) {
-      return match.isExistMarkedTicket ? BackgroundColor.pendingBlinking : BackgroundColor.pending;
+      return this.isExistMarkedTickets(match) ? BackgroundColor.pendingBlinking : BackgroundColor.pending;
     }
 
-    return match.isExistMarkedTicket ? BackgroundColor.whiteBlinking : '';
+    return this.isExistMarkedTickets(match) ? BackgroundColor.whiteBlinking : '';
   }
 
   private getBackgroundForCompletedMatch(match: Match) {
-    if (match.isExistMarkedTicket && !match.isExistRunningTicket) {
+    if (this.isExistMarkedTickets(match) && !match.isExistRunningTicket) {
       return BackgroundColor.whiteBlinking;
     }
 
     if (match.isExistRunningTicket) {
-      return match.isExistMarkedTicket ? BackgroundColor.runningTicketBlinking : BackgroundColor.halfTimeCalculated;
+      return this.isExistMarkedTickets(match) ? BackgroundColor.runningTicketBlinking : BackgroundColor.halfTimeCalculated;
     }
 
     return '';
+  }
+
+  private isExistMarkedTickets(match: Match) {
+    return match.isExistMarkedTicket || match.isExistMarkedTicketParlay;
   }
 }

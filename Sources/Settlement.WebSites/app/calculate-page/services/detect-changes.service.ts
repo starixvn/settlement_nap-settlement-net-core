@@ -34,6 +34,9 @@ export class DetectChangesService {
         || oldMatch.isRefund !== newMatch.isRefund
         || oldMatch.isCalRefund !== newMatch.isCalRefund
         || oldMatch.isHalfTimeCal !== newMatch.isHalfTimeCal
+        || oldMatch.isExistMarkedTicketParlay !== newMatch.isExistMarkedTicketParlay
+        || oldMatch.isExistRunningTicketParlay !== newMatch.isExistRunningTicketParlay
+        || oldMatch.isExistRunningTicket !== newMatch.isExistRunningTicket
         || oldMatch.isExistMarkedTicket !== newMatch.isExistMarkedTicket;
     }
 

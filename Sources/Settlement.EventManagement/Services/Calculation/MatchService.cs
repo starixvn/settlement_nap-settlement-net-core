@@ -74,6 +74,7 @@ namespace Settlement.EventManagement.Services.Calculation
                 var listSourceByMatchId = listResultDetail.Where(m => m.MatchId == match.MatchId && m.SourceId != SourceType.Normal).ToList();
                 var resultDetailByMatchId = listResultDetail.Where(m => m.MatchId == match.MatchId && m.SourceId == SourceType.Normal).ToList();
 
+                newInfoMatchService.TicketInfo(match);
                 match.NewEventStatus = newInfoMatchService.NewEventStatus(match);
                 match.EventStatusColor = newInfoMatchService.EventStatusColor(match);
                 match.EarlySettleStatus = newInfoMatchService.EarlySettlementStatus(match);
@@ -82,8 +83,6 @@ namespace Settlement.EventManagement.Services.Calculation
                 match.ConfirmFullTimeScore = newInfoMatchService.ConfirmScore(listSourceByMatchId, ResourceType.Final);
                 match.IsNotConsistentExHtScore = newInfoMatchService.IsNotConsistentScore(match.SuspenderHalfTime, resultDetailByMatchId, listSourceByMatchId, ResourceType.Halftime);
                 match.IsNotConsistentExFtScore = newInfoMatchService.IsNotConsistentScore(match.SuspenderFullTime, resultDetailByMatchId, listSourceByMatchId, ResourceType.Final);
-                match.IsExistMarkedTicket = newInfoMatchService.IsExistMarkedTickets(match);
-                match.IsExistRunningTicket = newInfoMatchService.IsExistRunningTickets(match);
                 match.GoalIcon = newInfoMatchService.GoalIcon(match);
                 match.RefDataService = refDataService;
             }

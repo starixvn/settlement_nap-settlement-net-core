@@ -84,6 +84,9 @@ export class CalculatePageService {
             match.autoPayoutStatus = newMatch.autoPayoutStatus;
             match.autoSettleFastMarket = newMatch.autoSettleFastMarket;
             match.isExistMarkedTicket = newMatch.isExistMarkedTicket;
+            match.isExistMarkedTicketParlay = newMatch.isExistMarkedTicketParlay;
+            match.isExistRunningTicketParlay = newMatch.isExistRunningTicketParlay;
+            match.isExistRunningTicket = newMatch.isExistRunningTicket;
           }
         });
       });
