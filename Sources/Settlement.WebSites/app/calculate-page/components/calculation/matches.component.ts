@@ -27,8 +27,7 @@ export class MatchesComponent extends MatchesBaseComponent implements OnChanges,
 
   public popupFastMarkets(match: Match) {
     if (this.isMatchNotSingleOrMp(match)) {
-      const src = `apps/fast-market?matchId=${match.matchId}`;
-      this.popupService.openAndHandlePopup(src, Language.FastMarketTile, '985px', '921px', match);
+      this.popupService.popupFastMarkets(match);
     }
   }
 
