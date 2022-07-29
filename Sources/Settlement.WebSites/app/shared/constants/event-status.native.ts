@@ -10,4 +10,5 @@ export const EventStatus = {
     postponed: 'Postponed',
     abandoned: 'Abandoned',
     abandonedFirstHalf: 'Abandoned 1H',
+    running: "Running",
 };

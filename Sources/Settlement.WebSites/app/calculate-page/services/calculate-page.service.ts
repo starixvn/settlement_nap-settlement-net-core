@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { FilterQuery, League, Matches } from "../models";
+import { FilterQuery, League, Calculation } from "../models";
 import { Observable } from "rxjs";
 import { HttpRequestService } from "../../shared/services";
 import { ChangeSettingResult, DateFilter, Match } from "../../shared/models";
@@ -23,26 +23,27 @@ export class CalculatePageService {
     return this.httpRequestService.getJson(url);
   }
 
-  public search(params: FilterQuery): Observable<Matches> {
+  public search(params: FilterQuery): Observable<Calculation> {
     const url = `${this.calculationApi}/filter`;
     return this.httpRequestService.postJson(params, url);
   }
 
 
   public getRemarkInfo(matchId: string): Observable<ChangeSettingResult> {
-    const query = {
-      matchId
-    };
-
+    const query = { matchId };
     return this.httpRequestService.postJson(query, `api/setting/get-remark-info`);
   }
 
   private getNewestMatches(leagueId: string) {
-    const query = {
-      leagueId
-    };
     const url = `${this.calculationApi}/auto-refresh`;
-    return this.httpRequestService.postJson(query,url, false);
+    const query = { leagueId };
+    return this.httpRequestService.postJson(query, url, false);
+  }
+
+  public getMatchDetail(matchId: number) {
+    const url = `api/fast-market/get-match`;
+    const query = { matchId };
+    return this.httpRequestService.postJson(query, url);
   }
 
   public refreshMatches(leagueId: string, currentLeagues: League[]) {
@@ -74,7 +75,6 @@ export class CalculatePageService {
             match.eventStatusColor = newMatch.eventStatusColor;
             match.newEventStatus = newMatch.newEventStatus;
             match.remark = newMatch.remark;
-            //match.autoCalcSetting = newMatch.autoCalcSetting;
             match.suspenderHalfTime = newMatch.suspenderHalfTime;
             match.suspenderFullTime = newMatch.suspenderFullTime;
             match.mixParlay = newMatch.mixParlay;
@@ -82,7 +82,7 @@ export class CalculatePageService {
             match.exFullTimeScore = newMatch.exFullTimeScore;
             match.showLink = this.backGroundService.isShowLink(newMatch);
             match.autoPayoutStatus = newMatch.autoPayoutStatus;
-            match.autoSettleFastMarket = newMatch.autoSettleFastMarket;
+            match.fastMarketStatus = newMatch.fastMarketStatus;
             match.isExistMarkedTicket = newMatch.isExistMarkedTicket;
             match.isExistMarkedTicketParlay = newMatch.isExistMarkedTicketParlay;
             match.isExistRunningTicketParlay = newMatch.isExistRunningTicketParlay;

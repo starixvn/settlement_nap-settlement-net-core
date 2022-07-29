@@ -14,7 +14,7 @@ namespace Settlement.EventManagement.Services.Calculation
 
         string GetBackgroundCompletedStatus(Match match);
 
-        string AutoSettleFastMarket(Match match);
+        string FastMarketStatus(Match match);
 
         string EarlySettlementStatus(Match match);
 
@@ -100,7 +100,7 @@ namespace Settlement.EventManagement.Services.Calculation
             return "Completed";
         }
 
-        public string AutoSettleFastMarket(Match match)
+        public string FastMarketStatus(Match match)
         {
             var matchSite = match.SiteMatch;
             var isExistFastMarket = match.IsExistFastMarket || matchSite.Exists(m => m.IsExistFastMarket);

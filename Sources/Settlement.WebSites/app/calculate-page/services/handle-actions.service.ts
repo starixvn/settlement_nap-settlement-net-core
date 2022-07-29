@@ -5,6 +5,7 @@ import { BackgroundColor, EventStatus } from '../../shared/constants';
 
 @Injectable()
 export class HandleActionsService {
+
   public handleChangeRemarkSetting(result: ChangeSettingResult, match: Match) {
     const remark = result.match.remark;
     match.remark = remark;

@@ -79,7 +79,7 @@ namespace Settlement.EventManagement.Services.Calculation
                 match.NewEventStatus = newInfoMatchService.NewEventStatus(match);
                 match.EventStatusColor = newInfoMatchService.EventStatusColor(match);
                 match.EarlySettleStatus = newInfoMatchService.EarlySettlementStatus(match);
-                match.AutoSettleFastMarket = newInfoMatchService.AutoSettleFastMarket(match);
+                match.FastMarketStatus = newInfoMatchService.FastMarketStatus(match);
                 match.ConfirmHalfTimeScore = newInfoMatchService.ConfirmScore(listSourceByMatchId, ResourceType.Halftime);
                 match.ConfirmFullTimeScore = newInfoMatchService.ConfirmScore(listSourceByMatchId, ResourceType.Final);
                 match.IsNotConsistentExHtScore = newInfoMatchService.IsNotConsistentScore(match.SuspenderHalfTime, resultDetailByMatchId, listSourceByMatchId, ResourceType.Halftime);

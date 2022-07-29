@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { BackgroundColor, CalculationStatus } from "../../shared/constants";
+import { BackgroundColor, CalculationStatus, EventStatus } from "../../shared/constants";
 import { Match } from "../../shared/models";
 import * as _ from 'lodash';
 
@@ -13,10 +13,10 @@ export class BackGroundService {
     }
 
     public completedBackground(match: Match) {
-        return _.isEqual(match.eventStatus.toLowerCase(), BackgroundColor.completed) ? BackgroundColor.autoSettleCompleted : BackgroundColor.autoSettleRunningBlinking;
+        return _.isEqual(match.eventStatus.toLowerCase(), EventStatus.completed.toLocaleLowerCase()) ? BackgroundColor.autoSettleCompleted : BackgroundColor.autoSettleRunningBlinking;
     }
 
     public fastMarkedCompletedBackground(match: Match) {
-        return _.isEqual(match.autoSettleFastMarket.toLowerCase(), BackgroundColor.completed) ? BackgroundColor.calculated : '';
+        return _.isEqual(match.fastMarketStatus, EventStatus.completed) ? BackgroundColor.calculated : '';
     }
 }

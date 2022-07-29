@@ -19,4 +19,5 @@ export class MatchDetail {
     public matchAutoSettingTooltip: string;
     public leagueAutoSettingTooltip: string;
     public goalIcon: GoalIcon;
+    public fastMarketStatus: string;
 }

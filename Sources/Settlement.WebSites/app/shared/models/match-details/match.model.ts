@@ -55,7 +55,7 @@ export class Match {
      public isExistRunningTicketParlay: boolean;
      public bestOfMap: number;
      public isMatchBOMThirty: boolean;
-     public autoSettleFastMarket: string;
+     public fastMarketStatus: string;
      public earlySettleBackground: string;
      public enableFastMarket: boolean;
 }

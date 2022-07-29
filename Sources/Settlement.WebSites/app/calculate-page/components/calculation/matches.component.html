@@ -42,7 +42,7 @@
           <ng-container *ngFor="let match of leagueMatch.matches">
             <tr class="row-3" [ngClass]="undecidedColor(match.remark)">
               <td class="code">
-                <div *ngIf="matches.permission.canViewSettlementLog; else noLogLink">
+                <div *ngIf="calculation.permission.canViewSettlementLog; else noLogLink">
                   <div class="code-link" (click)="getLog(match.matchId)">
                     {{match.matchCode}}
                   </div>
@@ -77,9 +77,9 @@
                 </ng-template>
               </td>
               <td rowspan="2" class="fast-market" [ngClass]="getFastMarketsBackground(match)">
-                <div *ngIf="match.autoSettleFastMarket.toLowerCase() === 'n/a'; else fastMarket">N/A</div>
+                <div *ngIf="match.fastMarketStatus.toLowerCase() === 'n/a'; else fastMarket">N/A</div>
                 <ng-template #fastMarket>
-                  <div>{{match.autoSettleFastMarket}}</div>
+                  <div>{{match.fastMarketStatus}}</div>
                   <div [ngClass]="isMatchNotSingleOrMp(match) ? 'code-link': ''" (click)="popupFastMarkets(match)">
                     Detail
                   </div>

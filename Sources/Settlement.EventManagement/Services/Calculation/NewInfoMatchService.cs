@@ -16,7 +16,7 @@ namespace Settlement.EventManagement.Services.Calculation
 
         string EarlySettlementStatus(Match match);
 
-        string AutoSettleFastMarket(Match match);
+        string FastMarketStatus(Match match);
 
         string ConfirmScore(List<ResultDetail> listResultDetail, string resource);
 
@@ -94,9 +94,9 @@ namespace Settlement.EventManagement.Services.Calculation
             return siteMatchService.EarlySettlementStatus(match);
         }
 
-        public string AutoSettleFastMarket(Match match)
+        public string FastMarketStatus(Match match)
         {
-            return siteMatchService.AutoSettleFastMarket(match);
+            return siteMatchService.FastMarketStatus(match);
         }
 
         public string ConfirmScore(List<ResultDetail> listResultDetail, string resource)

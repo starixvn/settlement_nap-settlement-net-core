@@ -124,7 +124,7 @@ namespace Settlement.EventManagement.Models.Calculation
 
         public string NewEventStatus { get; set; }
 
-        public string AutoSettleFastMarket { get; set; }
+        public string FastMarketStatus { get; set; }
 
         public int AutoSetting { get; set; }
 

@@ -44,6 +44,6 @@ export class DetectChangesService {
         return oldMatch.suspenderHalfTime !== newMatch.suspenderHalfTime
         || oldMatch.suspenderFullTime !== newMatch.suspenderFullTime
         || oldMatch.autoPayoutStatus !== newMatch.autoPayoutStatus
-        || oldMatch.autoSettleFastMarket !== newMatch.autoSettleFastMarket;
+        || oldMatch.fastMarketStatus !== newMatch.fastMarketStatus;
     }
 }

@@ -2,7 +2,7 @@ import { Component, ComponentFactory, ComponentFactoryResolver, ComponentRef, El
 import { BackGroundService, DetectChangesService, HandleActionsService, PopupService, RequestService } from '../services';
 import { BlockUIService, DialogBoxService, HttpRequestService, MessageBoxService, ReCheckInService, VerifyDateService } from '../../shared/services';
 import { interval } from 'rxjs';
-import { FilterQuery, Matches } from '../models';
+import { FilterQuery, Calculation } from '../models';
 import { PageComponent } from './calculation';
 import * as _ from 'lodash';
 import { AutoCalculatePageComponent, AutoCalculateService } from './auto-calculation';
@@ -31,7 +31,7 @@ export class AppComponent implements OnInit {
   public component: ComponentRef<PageBaseComponent>;
   private readonly period = 60000;
   public blockUI = false;
-  public matches: Matches;
+  public calculation: Calculation;
   public intervalTimer = interval(this.period);
   public change = 0;
   public filterQuery: FilterQuery;

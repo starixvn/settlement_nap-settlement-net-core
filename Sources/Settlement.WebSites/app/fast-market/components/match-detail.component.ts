@@ -62,7 +62,7 @@ export class MatchDetailComponent implements OnInit {
         const query = new AutoSettingMatchQuery(this.matchDetail.matchId, this.fastMarketAutoType, isEnabled);
 
         this.requestService.updateMatchAutoSettle(query)
-            .subscribe((response: Result) => { this.processUpdateSettingResult(true, response); });
+            .subscribe((response: Result) => { this.processUpdateSettingResult(response); });
     }
 
     public confirmUpdateLeagueAutoSettle() {
@@ -85,29 +85,17 @@ export class MatchDetailComponent implements OnInit {
     private updateLeagueAutoSettle(isApplyAll: boolean) {
         const isEnabled = this.matchDetail.autoSettingIcon.league !== Icon.yes;
         const query = new AutoSettingLeagueQuery(this.matchDetail.leagueId, this.fastMarketAutoType, isEnabled, isApplyAll);
-        const changeOnMatch = isApplyAll
-            && this.matchDetail.autoSettingIcon.league === this.matchDetail.autoSettingIcon.match;
-
         this.requestService.updateLeagueAutoSettle(query)
-            .subscribe((response: Result) => { this.processUpdateSettingResult(changeOnMatch, response); });
+            .subscribe((response: Result) => { this.processUpdateSettingResult(response); });
     }
 
-    private processUpdateSettingResult(changeOnMatch: boolean, result: Result) {
+    private processUpdateSettingResult(result: Result) {
         if (result.isSuccessful) {
-            this.changeColorOnManualCalculatePage(changeOnMatch);
             this.getMatchDetail(this.matchDetail.matchId);
         } else {
             this.warningDialogMessage.title = Language.alertBoxTitle;
             this.warningDialogMessage.message = result.errMsg;
             this.messageBoxService.alert(this.warningDialogMessage);
-        }
-    }
-
-    public changeColorOnManualCalculatePage(changeOnMatch: boolean) {
-        if (changeOnMatch) {
-            const matchInfo = this.matchDetail;
-            const autoSettleStatus = !_.includes(matchInfo.autoSettingIcon.match, Icon.yes);
-            // To do
         }
     }
 }

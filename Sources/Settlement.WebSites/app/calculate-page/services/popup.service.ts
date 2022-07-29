@@ -6,6 +6,8 @@ import * as _ from 'lodash';
 import { CalculationStatus, EventStatus } from '../../shared/constants';
 import { HandleActionsService } from './handle-actions.service';
 import { RequestService } from './request.service';
+import { MatchDetail } from '../../fast-market/models';
+import { Icon } from '../../fast-market/constants';
 
 @Injectable()
 export class PopupService {
@@ -26,6 +28,21 @@ export class PopupService {
         this.dialogBoxService.popup(dialogData, '500px', '270px').subscribe(() => {
             this.requestService.getRemarkInfo(match.matchId).subscribe((settingResult) => {
                 this.handleActionService.handleChangeRemarkSetting(settingResult, match);
+            });
+        });
+    }
+
+    public popupFastMarkets(match: Match) {
+        const src = `apps/fast-market?matchId=${match.matchId}`;
+        const frameSrc = encodeURI(src);
+        const dialogData = new DialogDataIframe(Language.FastMarketTile, frameSrc);
+        this.dialogBoxService.popup(dialogData, '985px', '921px').subscribe(result => {
+            if (result) {
+                this.handleChangedMatch(match);
+            }
+
+            this.calculatePageService.getMatchDetail(Number(match.matchId)).subscribe((result: MatchDetail) => {
+                match.enableFastMarket = _.includes(result.autoSettingIcon.match, Icon.yes)
             });
         });
     }
