@@ -25,6 +25,8 @@ namespace Settlement.EventManagement.Services.Calculation
         bool IsExistMarkedTicketParlay(Match match);
 
         bool IsExistRunningTicketParlay(Match match);
+
+        bool IsExistMarkedTicketsSingle(Match match);
     }
 
     public class SiteMatchServiceImp : SiteMatchService
@@ -41,10 +43,16 @@ namespace Settlement.EventManagement.Services.Calculation
             return (match.IsCalculatingSingle == null && isNull) || (match.IsCalculatingSingle == IsSuccess && isSuccess);
         }
 
-        public bool IsExistMarkedTickets(Match match)
+        public bool IsExistMarkedTicketsSingle(Match match)
         {
             var isExistMarkedTicketOnSite = match.SiteMatch.Exists(m => m.IsExistMarkedTicket);
             return match.IsExistMarkedTicket || isExistMarkedTicketOnSite;
+        }
+
+        public bool IsExistMarkedTickets(Match match)
+        {
+            var isExistMarkedTicketOnSite = match.SiteMatch.Exists(m => m.IsExistMarkedTicket);
+            return IsExistMarkedTicketParlay(match) || match.IsExistMarkedTicket || isExistMarkedTicketOnSite;
         }
 
         public bool IsExistRunningTickets(Match match)

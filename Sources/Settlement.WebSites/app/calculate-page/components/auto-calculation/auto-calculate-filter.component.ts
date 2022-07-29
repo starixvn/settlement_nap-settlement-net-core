@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
 import { CustomNgbDateParserFormatter } from '../../../shared/components/date-picker/custom-ngb-date-parser-formatter';
 import { MessageBoxService, VerifyDateService } from '../../../shared/services';
-import { Matches } from '../../models';
+import { Calculation } from '../../models';
 import { RequestService } from '../../services';
 import * as _ from 'lodash';
 import { FilterCalculateBaseComponent } from '../base-component';
@@ -51,7 +51,7 @@ export class AutoCalculateFilterComponent extends FilterCalculateBaseComponent i
     this.query.fromDate = this.verifyDateService.dateFormat(this.fromDate);
     this.query.toDate = this.verifyDateService.dateFormat(this.toDate);
 
-    this.requestService.search(this.query).subscribe((matches: Matches) => {
+    this.requestService.search(this.query).subscribe((matches: Calculation) => {
       this.searchAction.emit({ matches, filterQuery: this.query });
     });
   }

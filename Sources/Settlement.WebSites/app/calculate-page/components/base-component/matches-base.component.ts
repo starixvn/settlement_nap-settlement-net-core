@@ -1,6 +1,6 @@
 import { Component, Input, OnChanges, OnDestroy, OnInit } from '@angular/core';
 import { BackGroundService, RequestService, PopupService } from '../../services';
-import { FilterQuery, League, Matches } from '../../models';
+import { FilterQuery, League, Calculation } from '../../models';
 import { Match, Remark } from '../../../shared/models';
 import { Permission } from '../../../shared/models/sportsbook-sop';
 import { BackgroundColor, CalculationStatus } from '../../../shared/constants';
@@ -15,7 +15,7 @@ import { interval } from 'rxjs';
   template: ''
 })
 export class MatchesBaseComponent extends LeagueBaseComponent implements OnChanges, OnInit, OnDestroy {
-  @Input() public matches: Matches;
+  @Input() public calculation: Calculation;
   @Input() public filterQuery: FilterQuery;
   @Input() public rootURL: string;
   public leagues: League[];
@@ -31,8 +31,8 @@ export class MatchesBaseComponent extends LeagueBaseComponent implements OnChang
   }
 
   ngOnChanges() {
-    this.permission = this.matches.permission;
-    this.leagues = this.matches.leagues;
+    this.permission = this.calculation.permission;
+    this.leagues = this.calculation.leagues;
   }
 
   ngOnInit() {

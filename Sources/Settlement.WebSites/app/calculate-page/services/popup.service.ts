@@ -41,7 +41,7 @@ export class PopupService {
                 this.handleChangedMatch(match);
             }
 
-            this.calculatePageService.getMatchDetail(Number(match.matchId)).subscribe((result: MatchDetail) => {
+            this.requestService.getMatchDetail(Number(match.matchId)).subscribe((result: MatchDetail) => {
                 match.enableFastMarket = _.includes(result.autoSettingIcon.match, Icon.yes)
             });
         });

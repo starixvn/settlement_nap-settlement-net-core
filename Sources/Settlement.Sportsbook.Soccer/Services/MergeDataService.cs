@@ -96,15 +96,32 @@ namespace Settlement.Sportsbook.Soccer.Services
         {
             childMatches.ForEach(match =>
             {
-                var listSiteChildMatch = new List<ChildMatchTicketInfos>();
-                siteMatches.ForEach(item => listSiteChildMatch.Add(item.SiteChildMatches.First(siteMatch => siteMatch.MatchId == match.MatchId)));
+                var listSiteChildMatch = GetChildMachInfo(siteMatches, match.MatchId);
                 match.IsExistMarkedTicket = match.IsExistMarkedTicket ||
-                                            (listSiteChildMatch.Count > 0 && listSiteChildMatch.Any(m => m.IsExistMarkedTicket));
+                                            (listSiteChildMatch.Count > 0 && listSiteChildMatch.Exists(m => m.IsExistMarkedTicket));
                 match.IsExistRunningTicket = match.IsExistRunningTicket
-                                             || (listSiteChildMatch.Count > 0 && listSiteChildMatch.Any(m => m.IsExistRunningTicket));
+                                             || (listSiteChildMatch.Count > 0 && listSiteChildMatch.Exists(m => m.IsExistRunningTicket));
             });
 
             return childMatches;
+        }
+
+        private List<ChildMatchTicketInfos> GetChildMachInfo(List<SiteMatch> siteMatches, int matchId)
+        {
+            var listSiteChildMatch = new List<ChildMatchTicketInfos>();
+            siteMatches.ForEach(item =>
+            {
+                if (item.SiteChildMatches.Count > 0)
+                {
+                    var childMatch = item.SiteChildMatches.Find(siteMatch => siteMatch.MatchId == matchId);
+                    if (childMatch != null)
+                    {
+                        listSiteChildMatch.Add(childMatch);
+                    }
+                }
+            });
+
+            return listSiteChildMatch;
         }
 
         public BetDaq MergeBetDaq(BetDaq baseBetDaq, List<BetDaq> nodeBetDaqs)

@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { FilterQuery, League, Matches } from "../models";
+import { FilterQuery, League, Calculation } from "../models";
 import { Observable } from "rxjs";
 import { HttpRequestService } from "../../shared/services";
 import { ChangeSettingResult, DateFilter, Match } from "../../shared/models";
@@ -23,7 +23,7 @@ export class RequestService {
     return this.httpRequestService.getJson(url);
   }
 
-  public search(params: FilterQuery): Observable<Matches> {
+  public search(params: FilterQuery): Observable<Calculation> {
     const url = `${this.calculationApi}/filter`;
     return this.httpRequestService.postJson(params, url);
   }
@@ -49,6 +49,12 @@ export class RequestService {
     this.getNewestMatches(leagueId).subscribe((matchesWaiting: Match[]) => {
       this.changeInfoAfterRefreshMatches(currentLeagues, matchesWaiting);
     });
+  }
+
+  public getMatchDetail(matchId: number) {
+    const url = `api/fast-market/get-match`;
+    const query = { matchId };
+    return this.httpRequestService.postJson(query, url);
   }
 
   private changeInfoAfterRefreshMatches(currentLeagues: League[], matches: Match[]) {
@@ -82,8 +88,11 @@ export class RequestService {
             match.exFullTimeScore = newMatch.exFullTimeScore;
             match.showLink = this.backGroundService.isShowLink(newMatch);
             match.autoPayoutStatus = newMatch.autoPayoutStatus;
-            match.autoSettleFastMarket = newMatch.autoSettleFastMarket;
+            match.fastMarketStatus = newMatch.fastMarketStatus;
             match.isExistMarkedTicket = newMatch.isExistMarkedTicket;
+            match.isExistRunningTicket = newMatch.isExistRunningTicket;
+            match.isExistMarkedTicketParlay = newMatch.isExistMarkedTicketParlay;
+            match.isExistRunningTicketParlay = newMatch.isExistRunningTicketParlay;
           }
         });
       });

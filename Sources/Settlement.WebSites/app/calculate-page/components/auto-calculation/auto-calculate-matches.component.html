@@ -46,7 +46,7 @@
           <ng-container *ngFor="let match of leagueMatch.matches">
             <tr class="row-3" [ngClass]="undecidedColor(match.remark)">
               <td class="code">
-                <div *ngIf="matches.permission.canViewSettlementLog; else noLogLink">
+                <div *ngIf="permission.canViewSettlementLog; else noLogLink">
                   <div class="code-link" (click)="getLog(match.matchId)">
                     {{match.matchCode}}
                   </div>

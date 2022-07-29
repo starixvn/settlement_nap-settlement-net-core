@@ -1,8 +1,8 @@
-import { Component, ComponentRef, ElementRef, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit } from '@angular/core';
 import { ReCheckInService } from '../../../shared/services';
 import { ISubscription } from 'rxjs-compat/Subscription';
 import { interval } from 'rxjs';
-import { FilterQuery, Matches } from '../../models';
+import { FilterQuery, Calculation } from '../../models';
 
 @Component({
     selector: 'page-base',
@@ -15,7 +15,7 @@ export class PageBaseComponent implements OnInit {
     private subscriber: ISubscription;
     private readonly period = 60000;
     public blockUI = false;
-    public matches: Matches;
+    public calculation: Calculation;
     public intervalTimer = interval(this.period);
     public rootApi: string;
     public filterQuery: FilterQuery;
@@ -27,7 +27,7 @@ export class PageBaseComponent implements OnInit {
     }
 
     public search($event) {
-        this.matches = $event.matches;
+        this.calculation = $event.calculation;
         this.filterQuery = $event.filterQuery;
     }
 

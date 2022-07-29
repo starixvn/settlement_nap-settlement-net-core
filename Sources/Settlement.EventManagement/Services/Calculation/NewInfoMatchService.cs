@@ -74,7 +74,7 @@ namespace Settlement.EventManagement.Services.Calculation
                     : Background.BrightYellow;
             }
 
-            return siteMatchService.IsExistMarkedTickets(match) || siteMatchService.IsExistMarkedTicketParlay(match) ? Background.WhiteBlinking : string.Empty;
+            return siteMatchService.IsExistMarkedTickets(match) ? Background.WhiteBlinking : string.Empty;
         }
 
         public string NewEventStatus(Match match)
@@ -137,7 +137,7 @@ namespace Settlement.EventManagement.Services.Calculation
 
         public void TicketInfo(Match match)
         {
-            match.IsExistMarkedTicket = siteMatchService.IsExistMarkedTickets(match);
+            match.IsExistMarkedTicket = siteMatchService.IsExistMarkedTicketsSingle(match);
             match.IsExistRunningTicket = siteMatchService.IsExistRunningTickets(match);
             match.IsExistMarkedTicketParlay = siteMatchService.IsExistMarkedTicketParlay(match);
             match.IsExistRunningTicketParlay = siteMatchService.IsExistRunningTicketParlay(match);

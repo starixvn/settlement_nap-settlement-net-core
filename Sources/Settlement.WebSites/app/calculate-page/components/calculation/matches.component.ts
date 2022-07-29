@@ -41,7 +41,7 @@ export class MatchesComponent extends MatchesBaseComponent implements OnChanges,
   }
 
   public getFastMarketsBackground(match: Match) {
-    const isRunning = !_.isNull(match.autoSettleFastMarket) && _.isEqual(match.autoSettleFastMarket.toLowerCase(), EventStatus.running.toLowerCase());
+    const isRunning = !_.isNull(match.fastMarketStatus) && _.isEqual(match.fastMarketStatus.toLowerCase(), EventStatus.running.toLowerCase());
     const fastMarketBlinking = isRunning ? this.backGroundService.completedBackground(match) : this.backGroundService.fastMarkedCompletedBackground(match);
     return match.enableFastMarket ? this.getEarlySettleBackground(match) : fastMarketBlinking;
   }
