@@ -27,7 +27,9 @@ namespace Settlement.EventManagement.Services.Calculation
                     IsWaitingEarlyBetTypes = siteMatch.IsWaitingEarlyBetTypes,
                     IsExistFastMarket = siteMatch.IsExistFastMarket,
                     IsExistFastMarketResult = siteMatch.IsExistFastMarketResult,
-                    IsRunningFastMarket = siteMatch.IsRunningFastMarket
+                    IsRunningFastMarket = siteMatch.IsRunningFastMarket,
+                    IsExistFgLg = siteMatch.IsExistFgLg,
+                    IsExistHtFgLg = siteMatch.IsExistHtFgLg
                 };
             }
 
@@ -40,9 +42,13 @@ namespace Settlement.EventManagement.Services.Calculation
 
             var isExistMarked = match.IsExistMarkedTicket != siteMatch.IsExistMarkedTicket;
 
+            var isChangedTicket = match.IsExistFgLg != siteMatch.IsExistFgLg ||
+                                  match.IsExistHtFgLg != siteMatch.IsExistHtFgLg;
+
             return match.IsCalculatingSingle != siteMatch.IsCalculatingSingle
                 || isExistMarked
-                || isExistRunning;
+                || isExistRunning
+                || isChangedTicket;
         }
 
         private static bool IsChangeOnSpecialBetType(CalculationMatch match, CalculationMatch siteMatch)
