@@ -1,9 +1,12 @@
-import { Component, ElementRef, OnInit } from '@angular/core';
-import { BackGroundService, CalculatePageService, DetectChangesService, HandleActionsService, PopupService } from '../services';
+import { Component, ComponentFactory, ComponentFactoryResolver, ComponentRef, ElementRef, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
+import { BackGroundService, DetectChangesService, HandleActionsService, PopupService, RequestService } from '../services';
 import { BlockUIService, DialogBoxService, HttpRequestService, MessageBoxService, ReCheckInService, VerifyDateService } from '../../shared/services';
-import { ISubscription } from 'rxjs-compat/Subscription';
 import { interval } from 'rxjs';
 import { FilterQuery, Matches } from '../models';
+import { PageComponent } from './calculation';
+import * as _ from 'lodash';
+import { AutoCalculatePageComponent, AutoCalculateService } from './auto-calculation';
+import { PageBaseComponent } from './base-component';
 
 @Component({
   selector: 'app-root',
@@ -12,48 +15,49 @@ import { FilterQuery, Matches } from '../models';
     BlockUIService,
     VerifyDateService,
     MessageBoxService,
-    CalculatePageService,
+    RequestService,
     HttpRequestService,
     PopupService,
     ReCheckInService,
     DialogBoxService,
     HandleActionsService,
     BackGroundService,
-    DetectChangesService
+    DetectChangesService,
+    AutoCalculateService
   ],
 })
 export class AppComponent implements OnInit {
-  private subscriber: ISubscription;
+  @ViewChild('container', { read: ViewContainerRef, static: true }) container: ViewContainerRef;
+  public component: ComponentRef<PageBaseComponent>;
   private readonly period = 60000;
   public blockUI = false;
   public matches: Matches;
   public intervalTimer = interval(this.period);
   public change = 0;
-  public rootApi: string;
   public filterQuery: FilterQuery;
+  public autoCalculation: boolean;
   constructor(private readonly blockUIService: BlockUIService,
-    private readonly reCheckInService: ReCheckInService,
-    private readonly elementRef: ElementRef<HTMLElement>) { }
+    private readonly elementRef: ElementRef<HTMLElement>,
+    private readonly componentFactoryResolver: ComponentFactoryResolver,
+  ) { }
 
   ngOnInit(): void {
     this.blockUIService.blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
-    this.rootApi = this.elementRef.nativeElement.getAttribute('api-url');
-    this.reCheckIn();
-  }
-  public search($event) {
-    this.matches = $event.matches;
-    this.filterQuery = $event.filterQuery;
+    this.createTemplateComponent();
   }
 
-  private reCheckIn() {
-    this.subscriber = this.intervalTimer.subscribe(() => {
-      this.reCheckInService.reCheckin();
-    });
+  private createTemplateComponent() {
+    const factory = this.getComponentFactory();
+    this.component = this.container.createComponent(factory);
+    this.component.instance.rootApi =this.elementRef.nativeElement.getAttribute('api-url');
+    return this.component;
   }
 
-  public ngOnDestroy() {
-    if (this.subscriber) {
-      this.subscriber.unsubscribe();
-    }
+
+  private getComponentFactory(): ComponentFactory<PageBaseComponent> {
+    const pageType = this.elementRef.nativeElement.getAttribute('page-type');
+    return _.isEqual(pageType, 'Calculation')
+      ? this.componentFactoryResolver.resolveComponentFactory(PageComponent)
+      : this.componentFactoryResolver.resolveComponentFactory(AutoCalculatePageComponent);
   }
 }

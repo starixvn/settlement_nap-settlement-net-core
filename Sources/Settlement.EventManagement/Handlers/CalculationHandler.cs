@@ -7,14 +7,16 @@ using Settlement.EventManagement.Models.Calculation;
 using Settlement.EventManagement.Requests;
 using Settlement.EventManagement.Services.Calculation;
 using Settlement.EventManagement.Models;
+
 using Match = Settlement.EventManagement.Models.Calculation.Match;
 
 namespace Settlement.EventManagement.Handlers
 {
-    public class CalculationHandler : 
+    public class CalculationHandler :
         IRequestHandler<FilterCalculationRequest, CalculationLeagues>,
         IRequestHandler<LeagueCalculationRequest, List<LeagueTypeModel>>,
-        IRequestHandler<RefreshCalculationRequest, List<Match>>
+        IRequestHandler<RefreshCalculationRequest, List<Match>>,
+        IRequestHandler<FilterAutoCalculationRequest, CalculationLeagues>
     {
         private readonly LeagueService leagueService;
 
@@ -36,7 +38,7 @@ namespace Settlement.EventManagement.Handlers
             var matches = await matchService.GetMatches(request);
             return new CalculationLeagues
             {
-                Leagues= leagueService.Leagues(matches),
+                Leagues = leagueService.Leagues(matches),
                 Permission = permissionService.Permission
             };
         }
@@ -44,5 +46,15 @@ namespace Settlement.EventManagement.Handlers
         public async Task<List<LeagueTypeModel>> Handle(LeagueCalculationRequest request, CancellationToken cancellationToken) => await leagueService.Leagues(request);
 
         public async Task<List<Match>> Handle(RefreshCalculationRequest request, CancellationToken cancellationToken) => await matchService.GetWaitingMatches(request);
+
+        public async Task<CalculationLeagues> Handle(FilterAutoCalculationRequest request, CancellationToken cancellationToken)
+        {
+            var matches = await matchService.GetMatchesAutoCalculate(request);
+            return new CalculationLeagues()
+            {
+                Leagues = leagueService.Leagues(matches),
+                Permission = permissionService.Permission
+            };
+        }
     }
 }

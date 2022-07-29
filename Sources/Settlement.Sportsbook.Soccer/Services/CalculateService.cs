@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using Fanex.Data.Repository;
@@ -92,6 +93,8 @@ namespace Settlement.Sportsbook.Soccer.Services
             {
                 return requestChecking;
             }
+
+            criteria.SessionId = Guid.NewGuid().ToString();
 
             foreach (var server in listReplicatedServer)
             {

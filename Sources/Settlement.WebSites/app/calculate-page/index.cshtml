@@ -15,7 +15,7 @@
         @await Html.PartialAsync("~/Views/Menu.cshtml")
     </header>
     <section>
-        <div class="content"><app-root api-url="@ViewBag.RootUrl">Loading...</app-root></div>
+        <div class="content"><app-root api-url="@ViewBag.RootUrl" page-type="@ViewBag.PageType">Loading...</app-root></div>
     </section>
      <script type="text/javascript">
         var element = document.getElementById("Calculate-menu");

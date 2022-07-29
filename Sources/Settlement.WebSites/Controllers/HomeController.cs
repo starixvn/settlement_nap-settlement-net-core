@@ -174,7 +174,7 @@ namespace Settlement.WebSites.Controllers
         [Route("Home/calculation")]
         public ActionResult Settlement()
         {
-            return SetView("Calculation", string.Empty, ViewPath.Calculation);
+            return SetView("Calculation", "Calculation", ViewPath.Calculation);
         }
 
         private ActionResult SetView(string title, string pageType, string viewName)

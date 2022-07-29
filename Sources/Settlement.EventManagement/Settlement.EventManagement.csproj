@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Models\AutoCalculateMatch.cs" />
     <Compile Remove="Models\BetStatusHelper.cs" />
     <Compile Remove="Models\Calculation\ResultDetail.cs" />
     <Compile Remove="Services\GoalIconService.cs" />

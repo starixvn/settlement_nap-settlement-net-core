@@ -1,0 +1,84 @@
+<div class="filter-bar">
+    <div class="line"></div>
+    <div class="filter-bar-inner">
+        <div class="row">
+            <div class="col-md-2">
+                <label class="inner-label from-date">
+                    From
+                </label>
+                <ngbd-date-picker [date]="fromDate" (change)="onSelectFromDate($event)"></ngbd-date-picker>
+            </div>
+            <div class="to-date-field">
+                <label class="inner-label to-date">
+                    To
+                </label>
+                <ngbd-date-picker [date]="toDate" (change)="onSelectToDate($event)"></ngbd-date-picker>
+            </div>
+            <div class="col-md-7">
+                <div class="row">
+                    <div class="col-md-2 field">
+                        <input id="unCalcOnly" type="checkbox" [(ngModel)]="query.isUnCalculate">
+                        <label for="unCalcOnly" class="bold">&nbsp; Un-Calculated Game Only
+                        </label>
+                    </div>
+                    <div class="col-md-2 field">
+                        <input id="instantCalc" type="checkbox" [(ngModel)]="query.isInstant">
+                        <label for="instantCalc" class="bold">&nbsp; Instant Calc
+                        </label>
+                    </div>
+                    <div class="col-md-2 field">
+                        <input id="IsMarkedTicket" type="checkbox" value="true"
+                            [(ngModel)]="query.isMarkedTicket">
+                        <label for="IsMarkedTicket" class="bold">&nbsp;Marked Tickets</label>
+                    </div>
+
+                    <div class="col-md-2 field">
+                        <input id="isHtOverOnly" type="checkbox" [(ngModel)]="query.isHtOverOnly">
+                        <label for="isHtOverOnly" class="bold">&nbsp; HT Over Only</label>
+                    </div>
+
+                    <div class="col-md-2 field">
+                        <input id="isOverOnly" type="checkbox" [(ngModel)]="query.isOverOnly">
+                        <label for="isOverOnly" class="bold">&nbsp; Over Only</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin-top: 5px">
+            <div class="col-md-2">
+                <label for="matchCode" class="inner-label">
+                    Match Code/ID
+                </label>
+                <input id="matchCode" maxlength="50" style="width: 107px" type="text" [(ngModel)]="query.matchCode">
+            </div>
+            <div class="league-list">
+                <label style="margin-left: 4px;" class="inner-label">League</label>
+                <select [(ngModel)]="query.leagueId" class="league-select">
+                    <option *ngFor="let item of leagues" [value]="item.leagueId">{{item.leagueName}}</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="inner-label">
+                    Status
+                </label>
+                <select [(ngModel)]="query.statusId">
+                    <option *ngFor="let item of statuses" [value]="item.value">{{item.text}}</option>
+                </select>
+            </div>
+
+            <div class="col-md-2 field over-status">
+                <label class="inner-label">
+                    Auto Payout
+                </label>
+                <div>
+                    <new-multiple-select (formValue)="onSelectPayout($event)" [multipleSelect]="payoutSelect"></new-multiple-select>
+                </div>
+            </div>
+            <div class="col-md-1">
+                <button class="button" (click)="search()" [disabled]="isDisabled">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="line"></div>

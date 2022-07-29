@@ -1,0 +1,69 @@
+﻿using System.Collections.Generic;
+
+namespace Settlement.EventManagement.Models.Calculation
+{
+    public class ReferenceAction
+    {
+        private const int HalftimeAction = 178;
+
+        private const int FullTimeAction = 179;
+
+        private const int HalftimeAutoAction = 195;
+
+        private const int FullTimeAutoAction = 196;
+
+        private readonly Dictionary<int, string> actionNames = new Dictionary<int, string>
+        {
+            { 100, "All" },
+            { 101, "FT(M)" },
+            { 102, "HT(M)" },
+            { 103, "Uncalculate" },
+            { 104, "Parlay" },
+            { 151, "All Corner" },
+            { 157, "HT(A)" },
+            { 158, "FT(A)" },
+            { 161, "FT Corner" },
+            { 162, "HT Corner" },
+            { 163, "FT FGLG" },
+            { 164, "HT FGLG" },
+            { 178, "(HT)" },
+            { 179, "(FT)" },
+            { 182, "Uncalculate Ins.Settle" },
+            { 195, "(HT-A)" },
+            { 196, "(FT-A)" }
+        };
+
+        public int MatchId { get; set; }
+
+        public int ActionId { get; set; }
+
+        public bool IsFailed { get; set; }
+
+        public int HomeScore { get; set; }
+
+        public int AwayScore { get; set; }
+
+        public string ActionName
+        {
+            get
+            {
+                if (!actionNames.ContainsKey(ActionId))
+                {
+                    return string.Empty;
+                }
+
+                var actionName = actionNames[ActionId];
+                if (IsShowScore)
+                {
+                    actionName = $"{HomeScore}-{AwayScore} {actionName}";
+                }
+
+                return actionName;
+            }
+        }
+
+        public string ClassName => IsFailed ? "fail" : string.Empty;
+
+        private bool IsShowScore => ActionId == HalftimeAction || ActionId == FullTimeAction || ActionId == HalftimeAutoAction || ActionId == FullTimeAutoAction;
+    }
+}

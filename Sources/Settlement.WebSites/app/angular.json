@@ -1036,7 +1036,7 @@
       }
     }
   },
-  "defaultProject": "fast-market",
+  "defaultProject": "calculate-page",
   "schematics": {
     "@schematics/angular:component": {
       "inlineTemplate": false,

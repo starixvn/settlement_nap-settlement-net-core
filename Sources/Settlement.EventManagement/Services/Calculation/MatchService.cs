@@ -11,7 +11,6 @@ using Settlement.Core.Models;
 using Settlement.EventManagement.Criteria;
 using Settlement.Core.Constants;
 using Settlement.EventManagement.Requests;
-using System;
 using System.Threading;
 
 namespace Settlement.EventManagement.Services.Calculation
@@ -19,6 +18,8 @@ namespace Settlement.EventManagement.Services.Calculation
     public interface MatchService
     {
         Task<List<Match>> GetMatches(FilterCalculationRequest request);
+
+        Task<List<Match>> GetMatchesAutoCalculate(FilterAutoCalculationRequest request);
 
         Task<List<Match>> GetWaitingMatches(RefreshCalculationRequest request);
     }
@@ -29,7 +30,7 @@ namespace Settlement.EventManagement.Services.Calculation
 
         private readonly IDynamicRepository repository;
 
-        private readonly ICacheService cacheService;
+        private readonly CachingMatchesService cachingMatchesService;
 
         private readonly IRefDataService refDataService;
 
@@ -44,7 +45,7 @@ namespace Settlement.EventManagement.Services.Calculation
         public MatchServiceImp(
             IDynamicRepository repository,
             IRefDataService refDataService,
-            ICacheService cacheService,
+            CachingMatchesService cachingMatchesService,
             MergeDataService mergeDataService,
             NewInfoMatchService newInfoMatchService,
             IConfiguration configuration,
@@ -52,7 +53,7 @@ namespace Settlement.EventManagement.Services.Calculation
         {
             this.repository = repository;
             this.refDataService = refDataService;
-            this.cacheService = cacheService;
+            this.cachingMatchesService = cachingMatchesService;
             this.mergeDataService = mergeDataService;
             this.newInfoMatchService = newInfoMatchService;
             this.configuration = configuration;
@@ -149,7 +150,7 @@ namespace Settlement.EventManagement.Services.Calculation
 
         public async Task<List<Match>> GetWaitingMatches(RefreshCalculationRequest request)
         {
-            var matches = await cacheService.GetAsync<List<Match>>(ShortCachingKey(request.LeagueId));
+            var matches = await cachingMatchesService.GetShortCache(request.LeagueId);
 
             if (matches != null)
             {
@@ -168,7 +169,7 @@ namespace Settlement.EventManagement.Services.Calculation
                 }
             }
 
-            return await cacheService.GetAsync<List<Match>>(LongCachingKey(request.LeagueId)) ?? new List<Match>();
+            return await cachingMatchesService.GetLongCache(request.LeagueId);
         }
 
         private async Task<List<Match>> GetAndCachingMatches(RefreshCalculationRequest request)
@@ -178,23 +179,50 @@ namespace Settlement.EventManagement.Services.Calculation
 
             var matches = SetNewMatchInfo(waitingMatches, listResultDetail);
 
-            SetToCache(matches, request.LeagueId);
+            cachingMatchesService.SetToCache(matches, request.LeagueId);
 
             return matches;
         }
 
-        private void SetToCache(List<Match> matches, int leagueId)
+        public async Task<List<Match>> GetMatchesAutoCalculate(FilterAutoCalculationRequest request)
         {
-            var shortCachingKey = ShortCachingKey(leagueId);
-            var longCachingKey = LongCachingKey(leagueId);
-            const int shortCacheExpirationTime = 3;
-            const int longCacheExpirationTime = 20;
-            cacheService.SetAsync(shortCachingKey, matches, new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromSeconds(shortCacheExpirationTime)));
-            cacheService.SetAsync(longCachingKey, matches, new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(longCacheExpirationTime)));
+            var matches = await MatchesAutoCalculateAllSites(request);
+            var listResultDetail = await ResultDetailByMatchIds(matches);
+            await SetReferenceActionsForMatch(matches);
+
+            return SetNewMatchInfo(matches, listResultDetail);
         }
 
-        private static string ShortCachingKey(int leagueId) => $"{CacheServiceKey.WaitingListCacheKey}-{leagueId}";
+        private async Task SetReferenceActionsForMatch(List<Match> matches)
+        {
+            var matchIds = matches.Select(m => m.MatchId);
+            var referenceActions = await cachingMatchesService.GetReferenceActions(matchIds);
+            matches.ForEach(m => m.ReferenceActions = referenceActions.ContainsKey(m.MatchId) ? referenceActions[m.MatchId] : new List<Models.Calculation.ReferenceAction>());
+        }
 
-        private static string LongCachingKey(int leagueId) => $"{ShortCachingKey(leagueId)}-longCaching";
+        private async Task<List<Match>> MatchesAutoCalculateAllSites(FilterAutoCalculationRequest request)
+        {
+            var matches = new List<Match>();
+            var isCentralDataBase = true;
+            var criteria = mapper.Map<FilterAutoCalculationRequest, GetMatchesAutoCalculateCriteria>(request);
+            var siteDbServer = configuration.GetSection("SiteDBServer").Get<List<string>>();
+            foreach (var server in siteDbServer)
+            {
+                criteria.DbServer = server;
+                var data = (await repository.FetchAsync<Match>(criteria)).ToList();
+
+                if (isCentralDataBase)
+                {
+                    matches = data;
+                    isCentralDataBase = false;
+                }
+                else
+                {
+                    mergeDataService.MergeMatches(matches, data);
+                }
+            }
+
+            return matches;
+        }
     }
 }

@@ -1,3 +1,5 @@
-<filter (searchAction)="search($event)"></filter>
-<matches *ngIf="matches"[matches]="matches" [rootURL]="rootApi" [filterQuery]="filterQuery" ></matches>
-<div *ngIf="blockUI" class="loading"></div>
+<div #container></div>
+<div *ngIf="blockUI" class="in modal-backdrop">
+    <div class="loading">
+    </div>
+</div>

@@ -5,14 +5,14 @@ import { Language } from './../../shared/language';
 import * as _ from 'lodash';
 import { CalculationStatus, EventStatus } from '../../shared/constants';
 import { HandleActionsService } from './handle-actions.service';
-import { CalculatePageService } from './calculate-page.service';
+import { RequestService } from './request.service';
 
 @Injectable()
 export class PopupService {
     public apiUrl = "";
     constructor(private readonly dialogBoxService: DialogBoxService,
         private readonly handleActionService: HandleActionsService,
-        private readonly calculatePageService: CalculatePageService) { }
+        private readonly requestService: RequestService) { }
     public popupLog(matchCode: string, fromDate: string, toDate: string) {
         const src = `home/log?matchCode=${encodeURIComponent(matchCode)}&fromDate=${fromDate}&toDate=${toDate}&isShowMenu=false&productType=ALL`;
         const dialogData = new DialogDataIframe(Language.SettlementLog, src);
@@ -24,7 +24,7 @@ export class PopupService {
         const frameSrc = encodeURI(src);
         const dialogData = new DialogDataIframe(Language.remarkSettingTitle, frameSrc);
         this.dialogBoxService.popup(dialogData, '500px', '270px').subscribe(() => {
-            this.calculatePageService.getRemarkInfo(match.matchId).subscribe((settingResult) => {
+            this.requestService.getRemarkInfo(match.matchId).subscribe((settingResult) => {
                 this.handleActionService.handleChangeRemarkSetting(settingResult, match);
             });
         });

@@ -27,6 +27,8 @@ namespace Settlement.Sportsbook.Soccer.Criteria
 
         public string Ip { get; set; }
 
+        public string SessionId { get; set; }
+
         public int ErrCode { get; set; }
 
         public string ErrMsg { get; set; }

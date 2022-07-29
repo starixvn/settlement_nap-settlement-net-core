@@ -26,6 +26,7 @@ namespace Settlement.WebSites.Configurations
             services.AddTransient<SiteMatchService, SiteMatchServiceImp>();
             services.AddTransient<EventManagement.Services.IScoreService, EventManagement.Services.ScoreServiceImp>();
             services.AddTransient<EventManagement.Services.SpecificService.Tennis.IScoreService, EventManagement.Services.SpecificService.Tennis.ScoreServiceImp>();
+            services.AddTransient<CachingMatchesService, CachingMatchesServiceImp>();
         }
 
         public static void ConfigEventManagementMediator(this IServiceCollection services)

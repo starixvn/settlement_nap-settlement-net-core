@@ -12,11 +12,10 @@ export class FilterQuery {
     matchCode: string;
     leagueId: string;
     statusId: number;
-    sportType = 1;
-    constructor(){
-        this.htOver = true;
-        this.ftOver = true;
-        this.earlyOver = true;
-    }
-
+    sportType = 1;;
+    isUnCalculate: boolean;
+    isInstant: boolean;
+    isHtOverOnly: boolean;
+    isOverOnly: boolean;
+    autoSetting: string;
 }
