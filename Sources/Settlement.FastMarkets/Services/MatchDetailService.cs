@@ -1,10 +1,12 @@
 ﻿using Fanex.Data.Repository;
 using Fanex.NAP.Client;
+using Microsoft.Extensions.Configuration;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.FastMarkets.Criteria;
 using Settlement.FastMarkets.Requests;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using MatchDetail = Settlement.FastMarkets.Models.MatchDetail;
 
@@ -27,16 +29,20 @@ namespace Settlement.FastMarkets.Services
 
         private readonly IFastMarketResultService fastMarketResultService;
 
+        private readonly IConfiguration configuration;
+
         public MatchDetailServiceImp(
             IDynamicRepository repository,
             IRefDataService refDataService,
             IGoalIconService goalIconService,
-            IFastMarketResultService fastMarketResultService)
+            IFastMarketResultService fastMarketResultService,
+            IConfiguration configuration)
         {
             this.repository = repository;
             this.refDataService = refDataService;
             this.goalIconService = goalIconService;
             this.fastMarketResultService = fastMarketResultService;
+            this.configuration = configuration;
         }
 
         public async Task<MatchDetail> MatchInfo(int matchId)
@@ -72,9 +78,19 @@ namespace Settlement.FastMarkets.Services
         public async Task<MarkedTickets> CheckingMarkedTickets(CheckingMarkedTicketsRequest request)
         {
             var results = fastMarketResultService.Result(request.BetTypes, string.Empty);
-
+            var servers = configuration.GetSection("SiteDBServer").Get<List<string>>();
             var criteria = new CheckingMarkedTicketsCriteria { MatchId = request.MatchId, Results = results };
-            return await repository.GetAsync<MarkedTickets>(criteria);
+            foreach (var server in servers)
+            {
+                criteria.DbServer = server;
+                var markedTicket = await repository.GetAsync<MarkedTickets>(criteria);
+                if (markedTicket.IsExistMarkedTicket)
+                {
+                    return markedTicket;
+                }
+            }
+
+            return new MarkedTickets();
         }
     }
 }

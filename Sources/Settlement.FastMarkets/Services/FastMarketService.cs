@@ -2,6 +2,7 @@
 using Fanex.Data.Repository;
 using Fanex.NAP.Client.Helpers.Web;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Settlement.Core.Models;
 using Settlement.FastMarkets.Criteria;
 using Settlement.FastMarkets.Models;
@@ -39,6 +40,10 @@ namespace Settlement.FastMarkets.Services
 
         private readonly IHttpContextAccessor accessor;
 
+        private readonly MultipleServerFetcherService multipleServerFetcherService;
+
+        private readonly IConfiguration configuration;
+
         public FastMarketServiceImp(
             IDynamicRepository repository,
             IFastMarketResultService fastMarketResultService,
@@ -46,7 +51,9 @@ namespace Settlement.FastMarkets.Services
             IEventCounterService eventCounterService,
             IMapper mapper,
             INapSession currentSession,
-            IHttpContextAccessor accessor)
+            IHttpContextAccessor accessor,
+            MultipleServerFetcherService multipleServerFetcherService,
+            IConfiguration configuration)
         {
             this.repository = repository;
             this.fastMarketResultService = fastMarketResultService;
@@ -55,19 +62,21 @@ namespace Settlement.FastMarkets.Services
             this.mapper = mapper;
             this.currentSession = currentSession;
             this.accessor = accessor;
+            this.multipleServerFetcherService = multipleServerFetcherService;
+            this.configuration = configuration;
         }
 
         public async Task<FastMarketModel> Query(int matchId)
         {
             var criteria = new GetFastMarketMatchDetailCriteria { MatchId = matchId };
 
-            var mappingTypes = new[] { typeof(EventCounter), typeof(string), typeof(FastMarketResult), typeof(TicketCounts), typeof(ResultDetail) };
+            var mappingTypes = new[] { typeof(EventCounter), typeof(string), typeof(ResultDetail) };
             var fetchedData = await repository.FetchMultipleAsync(criteria, mappingTypes);
             var eventCounter = fetchedData[0].Cast<EventCounter>().ToList();
             var handicapValue = fetchedData[1].Cast<string>().FirstOrDefault();
-            var fastMarketResult = fetchedData[2].Cast<FastMarketResult>().ToList();
-            var ticketsCount = fetchedData[3].Cast<TicketCounts>().FirstOrDefault();
-            var resultDetail = fetchedData[4].Cast<ResultDetail>().ToList();
+            var resultDetail = fetchedData[2].Cast<ResultDetail>().ToList();
+
+            var (fastMarketResult, ticketsCount) = await multipleServerFetcherService.GetFastMarketTicketDetail(matchId);
             var groupFastMarketByBetType = fastMarketBetTypeService.BetTypesList(fastMarketResult, handicapValue);
 
             return new FastMarketModel
@@ -92,13 +101,53 @@ namespace Settlement.FastMarkets.Services
             criteria.EventCounters = eventCounter;
             criteria.Results = results;
 
-            await repository.ExecuteAsync(criteria);
-
-            return new Result
+            var validationResult = await ValidateBeforePushing(criteria);
+            if (validationResult.ErrCode > 0)
             {
-                ErrCode = criteria.ErrCode,
-                ErrMsg = criteria.ErrMsg
-            };
+                return validationResult;
+            }
+            ExecuteCalculate(criteria);
+
+            return validationResult;
+        }
+
+        private async Task<Result> ValidateBeforePushing(PushFastMarketResultCriteria criteria)
+        {
+            var servers = configuration.GetSection("SiteDBServer").Get<List<string>>();
+            //var checkingCriteria = new ValidateBeforePushCriteria
+            //{
+            //    MatchId = criteria.MatchId,
+            //    SpName = criteria.SpName,
+            //    Action = criteria.Action,
+            //    Mode = ActionKey.ActionDictionary[criteria.Action],
+            //    SDTRecord = criteria.SDTRecord
+            //};
+            //foreach (var server in servers)
+            //{
+            //    checkingCriteria.DbServer = server;
+            //    await repository.ExecuteAsync(checkingCriteria);
+            //    if (checkingCriteria.ErrCode > 0)
+            //    {
+            //        return new Result
+            //        {
+            //            ErrCode = checkingCriteria.ErrCode,
+            //            ErrMsg = checkingCriteria.ErrMsg
+            //        };
+            //    }
+            //}
+
+            return new Result();
+        }
+
+        private void ExecuteCalculate(PushFastMarketResultCriteria criteria)
+        {
+            var servers = configuration.GetSection("SiteDBServer").Get<List<string>>();
+
+            foreach (var server in servers)
+            {
+                criteria.DbServer = server;
+                repository.Execute(criteria);
+            }
         }
 
         public async Task<List<FastMarketResult>> GetLastestResult(GetLastestResultRequest request)

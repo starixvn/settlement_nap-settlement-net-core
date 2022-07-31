@@ -1,6 +1,7 @@
 ﻿using Kaden.Extensions;
 using Settlement.FastMarkets.Constants;
 using System;
+using System.Collections.Generic;
 
 namespace Settlement.FastMarkets.Models
 {
@@ -192,5 +193,7 @@ namespace Settlement.FastMarkets.Models
                 return 0;
             }
         }
+
+        public List<int> MultipleTicketStatus = new List<int>();
     }
 }
