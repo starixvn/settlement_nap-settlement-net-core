@@ -127,9 +127,9 @@ namespace Settlement.Sportsbook.Soccer.Services
         public BetDaq MergeBetDaq(BetDaq baseBetDaq, List<BetDaq> nodeBetDaqs)
         {
             baseBetDaq.IsExcludeBetDaq = nodeBetDaqs.Any(betDaq => betDaq.IsExcludeBetDaq) || baseBetDaq.IsExcludeBetDaq;
-            baseBetDaq.IsMoveBetDaq = nodeBetDaqs.Any(betDaq => betDaq.IsExcludeBetDaq) || baseBetDaq.IsExcludeBetDaq;
-            baseBetDaq.IsRefundRunningBetDaq = nodeBetDaqs.Any(betDaq => betDaq.IsExcludeBetDaq) || baseBetDaq.IsExcludeBetDaq;
-            baseBetDaq.IsSettleAbandonedMatchBetDaq = nodeBetDaqs.Any(betDaq => betDaq.IsExcludeBetDaq) || baseBetDaq.IsExcludeBetDaq;
+            baseBetDaq.IsMoveBetDaq = nodeBetDaqs.Any(betDaq => betDaq.IsMoveBetDaq) || baseBetDaq.IsMoveBetDaq;
+            baseBetDaq.IsRefundRunningBetDaq = nodeBetDaqs.Any(betDaq => betDaq.IsRefundRunningBetDaq) || baseBetDaq.IsRefundRunningBetDaq;
+            baseBetDaq.IsSettleAbandonedMatchBetDaq = nodeBetDaqs.Any(betDaq => betDaq.IsSettleAbandonedMatchBetDaq) || baseBetDaq.IsSettleAbandonedMatchBetDaq;
 
             return baseBetDaq;
         }

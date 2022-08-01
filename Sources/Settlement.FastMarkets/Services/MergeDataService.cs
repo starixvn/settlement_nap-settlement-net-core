@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Settlement.Core.Models;
+using Settlement.FastMarkets.Constants;
 using Settlement.FastMarkets.Models;
 
 namespace Settlement.FastMarkets.Services
@@ -41,6 +42,12 @@ namespace Settlement.FastMarkets.Services
             var conflictData = new List<FastMarketResult>();
             foreach(var siteResult in siteResults)
             {
+                var newResult = siteResult.Except(baseResult);
+                if (newResult.Any())
+                {
+                    baseResult.AddRange(newResult);
+                }
+
                 var conflictResults = baseResult.FindAll(result =>
                 {
                     var correspondingResult = siteResult.Find(r => r.BetType == result.BetType && r.Position == result.Position);
@@ -70,22 +77,22 @@ namespace Settlement.FastMarkets.Services
 
         private int MergeTicketStatus(FastMarketResult result)
         {
-            if (result.MultipleTicketStatus.Any(status => status == 1))
+            if (result.MultipleTicketStatus.Any(status => status == TicketStatus.Marked))
             {
-                return 1;
+                return TicketStatus.Marked;
             }
 
-            if (result.MultipleTicketStatus.Any(status => status == 2))
+            if (result.MultipleTicketStatus.Any(status => status == TicketStatus.Running))
             {
-                return 2;
+                return TicketStatus.Running;
             }
 
-            if (result.MultipleTicketStatus.Any(status => status == 3))
+            if (result.MultipleTicketStatus.Any(status => status == TicketStatus.Calculated))
             {
-                return 3;
+                return TicketStatus.Calculated;
             }
 
-            return 0;
+            return result.TicketStatus;
         }
 
         private TicketCounts ResolveTicketCounts(List<TicketCounts> data)

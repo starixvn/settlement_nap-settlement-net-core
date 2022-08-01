@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { BetType, FastMarketResult, GetLastestResultQuery, ResultItem, SpecialSession } from "../models";
 import * as _ from 'lodash';
-import { TimeMachineAction, FastMarketBetType, Language, ResultStatus, SessionId, TicketStatus, TimeType } from "../constants";
+import { TimeMachineAction, FastMarketBetType, Language, ResultStatus, SessionId, TicketStatus, TimeType, ErrorMessage } from "../constants";
 import { ModalDialogMessage } from "../../shared/models";
 import { MessageBoxService } from "../../shared/services";
 import { TimeMachineService } from "./time-machine.service";
@@ -23,29 +23,19 @@ export class VerificationService {
 
     public verifyBeforeCalculation(betTypes: BetType[], specialSessions: SpecialSession[], isRefundSDT = false) {
         if (!isRefundSDT && this.isSpecialSessionOverlapOnCalculation(betTypes, specialSessions)) {
-            this.warningDialogMessage.message = "WARNING! Cannot continue due to invalid intervals selected. Please check with special sessions and try again.";
-            this.messageBoxService.alert(this.warningDialogMessage);
-            return false;
+            return "WARNING! Cannot continue due to invalid intervals selected. Please check with special sessions and try again.";
         } else if (this.isFailEventCounterValidationForCalculate(betTypes)) {
-            this.warningDialogMessage.message = "The highlighted result is not consistent with the event counter, "
+            return "The highlighted result is not consistent with the event counter, "
                 + "please correct the result and try again.";
-            this.messageBoxService.alert(this.warningDialogMessage);
-            return false;
         } else if (this.isFailValidationForCalculate(betTypes, isRefundSDT)) {
-            this.warningDialogMessage.message = "Please specific results in the highlighted intervals.";
-            this.messageBoxService.alert(this.warningDialogMessage);
-            return false;
+            return "Please specific results in the highlighted intervals.";
         } else if (this.timeMachineService.validateBeforeCalculation(betTypes, TimeMachineAction.verifyCheckedInterval)) {
-            this.warningDialogMessage.message = "WARNING! Cannot continue due to gaps between selections. Please select intervals in consecutive manner.";
-            this.messageBoxService.alert(this.warningDialogMessage);
-            return false;
+            return "WARNING! Cannot continue due to gaps between selections. Please select intervals in consecutive manner.";
         } else if (this.timeMachineService.validateBeforeCalculation(betTypes, TimeMachineAction.verifyPreviousInterval)) {
-            this.warningDialogMessage.message = "WARNING! Cannot continue due to previous intervals are running or refunded. Please select them also and try again.";
-            this.messageBoxService.alert(this.warningDialogMessage);
-            return false;
+            return "WARNING! Cannot continue due to previous intervals are running or refunded. Please select them also and try again.";
         }
 
-        return true;
+        return '';
     }
 
     private isFailEventCounterValidationForCalculate(betTypes: BetType[]) {
@@ -203,18 +193,16 @@ export class VerificationService {
 
     public verifyBeforeUncalculation(betTypes: BetType[]) {
         if (this.timeMachineService.validateBeforeUncalculation(betTypes, TimeMachineAction.verifyPreviousInterval)) {
-            this.warningDialogMessage.message = "WARNING! Cannot continue due to prior intervals have been refunded. Please select them also and try again.";
-            this.messageBoxService.alert(this.warningDialogMessage);
-            return false;
+            return "WARNING! Cannot continue due to prior intervals have been refunded. Please select them also and try again.";
         } else if (this.timeMachineService.validateBeforeUncalculation(betTypes, TimeMachineAction.verifyFollowingInterval)) {
             this.warningDialogMessage.message = "WARNING! Settled subsequent intervals must also be uncalculated. Do you want to auto select them also?";
             this.messageBoxService.confirm(this.warningDialogMessage, () => {
                 this.autoCheckUncalculation(betTypes);
             });
-            return false;
+            return ErrorMessage.notShowAlert;
         }
 
-        return true;
+        return '';
     }
 
     private autoCheckUncalculation(betTypes: BetType[]) {
@@ -245,21 +233,19 @@ export class VerificationService {
                 this.autoCheckRefundOverUnder(betTypes);
             });
 
-            return false;
+            return ErrorMessage.notShowAlert;
         } else if (this.timeMachineService.validateBeforeRefund(betTypes, TimeMachineAction.verifyPreviousInterval)) {
-            this.warningDialogMessage.message = "WARNING! Cannot continue due to prior intervals are running. Please select them also and try again.";
-            this.messageBoxService.alert(this.warningDialogMessage);
-            return false;
+            return "WARNING! Cannot continue due to prior intervals are running. Please select them also and try again.";
         } else if (this.timeMachineService.validateBeforeRefund(betTypes, TimeMachineAction.verifyFollowingInterval, isRefundSDT)) {
             this.warningDialogMessage.message = "WARNING! All refunded and subsequent intervals must be refunded as well. Do you want to auto select them?";
             this.messageBoxService.confirm(this.warningDialogMessage, () => {
                 this.autoCheckRefund(betTypes);
             });
 
-            return false;
+            return ErrorMessage.notShowAlert;
         }
 
-        return true;
+        return '';
     }
 
     private autoCheckRefundOverUnder(betTypes: BetType[]) {
@@ -296,12 +282,10 @@ export class VerificationService {
     public verifyBeforeRefundSDT(betTypes: BetType[], specialSessions: SpecialSession[]) {
         if (!this.isAppliedSpecialSessionExist(specialSessions, betTypes)
             || this.isSpecialSessionOverlapOnRefundSDT(betTypes, specialSessions)) {
-            this.warningDialogMessage.message = "WARNING! Cannot continue due to invalid intervals selected. Please check with special sessions and try again.";
-            this.messageBoxService.alert(this.warningDialogMessage);
-            return false;
+            return "WARNING! Cannot continue due to invalid intervals selected. Please check with special sessions and try again.";
         }
 
-        return true;
+        return '';
     }
 
     private isAppliedSpecialSessionExist(specialSessions: SpecialSession[], betTypes: BetType[]) {

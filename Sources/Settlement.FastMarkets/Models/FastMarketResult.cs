@@ -195,5 +195,10 @@ namespace Settlement.FastMarkets.Models
         }
 
         public List<int> MultipleTicketStatus = new List<int>();
+
+        public override bool Equals(object obj)
+        {
+            return obj is FastMarketResult result && result.BetType == BetType && result.Position == Position;
+        }
     }
 }

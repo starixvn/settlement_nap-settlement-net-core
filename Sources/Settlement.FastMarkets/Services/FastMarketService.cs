@@ -3,6 +3,7 @@ using Fanex.Data.Repository;
 using Fanex.NAP.Client.Helpers.Web;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.FastMarkets.Criteria;
 using Settlement.FastMarkets.Models;
@@ -76,7 +77,7 @@ namespace Settlement.FastMarkets.Services
             var handicapValue = fetchedData[1].Cast<string>().FirstOrDefault();
             var resultDetail = fetchedData[2].Cast<ResultDetail>().ToList();
 
-            var (fastMarketResult, ticketsCount) = await multipleServerFetcherService.GetFastMarketTicketDetail(matchId);
+            var (fastMarketResult, ticketsCount) = await multipleServerFetcherService.GetFastMarketTicketDetail(matchId, criteria.ResourcesOutPut);
             var groupFastMarketByBetType = fastMarketBetTypeService.BetTypesList(fastMarketResult, handicapValue);
 
             return new FastMarketModel
@@ -113,28 +114,23 @@ namespace Settlement.FastMarkets.Services
 
         private async Task<Result> ValidateBeforePushing(PushFastMarketResultCriteria criteria)
         {
+            const string fastMarketMode = "FM";
             var servers = configuration.GetSection("SiteDBServer").Get<List<string>>();
-            //var checkingCriteria = new ValidateBeforePushCriteria
-            //{
-            //    MatchId = criteria.MatchId,
-            //    SpName = criteria.SpName,
-            //    Action = criteria.Action,
-            //    Mode = ActionKey.ActionDictionary[criteria.Action],
-            //    SDTRecord = criteria.SDTRecord
-            //};
-            //foreach (var server in servers)
-            //{
-            //    checkingCriteria.DbServer = server;
-            //    await repository.ExecuteAsync(checkingCriteria);
-            //    if (checkingCriteria.ErrCode > 0)
-            //    {
-            //        return new Result
-            //        {
-            //            ErrCode = checkingCriteria.ErrCode,
-            //            ErrMsg = checkingCriteria.ErrMsg
-            //        };
-            //    }
-            //}
+            var checkingCriteria = mapper.Map<PushFastMarketResultCriteria, ValidateBeforePushCriteria>(criteria);
+            checkingCriteria.Mode = fastMarketMode;
+            foreach (var server in servers)
+            {
+                checkingCriteria.DbServer = server;
+                await repository.ExecuteAsync(checkingCriteria);
+                if (checkingCriteria.ErrCode > 0)
+                {
+                    return new Result
+                    {
+                        ErrCode = checkingCriteria.ErrCode,
+                        ErrMsg = checkingCriteria.ErrMsg
+                    };
+                }
+            }
 
             return new Result();
         }

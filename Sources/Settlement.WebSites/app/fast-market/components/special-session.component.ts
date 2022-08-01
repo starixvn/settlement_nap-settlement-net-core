@@ -1,5 +1,5 @@
 import { ResultDetail, UpdateWaterBreakQuery, SpecialSession } from '../models';
-import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
 import { ThemePalette } from '@angular/material/core';
 import * as _ from 'lodash';
 import { RequestService } from '../services';
@@ -7,14 +7,16 @@ import { ModalDialogMessage, Result } from '../../shared/models';
 import { MessageBoxService } from '../../shared/services';
 import { Language } from '../../shared/language';
 import { SessionId } from '../constants';
+import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'special-session',
   templateUrl: './special-session.component.html'
 })
-export class SpecialSessionComponent implements OnChanges {
+export class SpecialSessionComponent implements OnChanges, OnInit {
   @Input() resultDetail: ResultDetail[];
   @Input() matchId: number;
+  @Input() toastContainer: ToastContainerDirective;
   @Output() public readonly waterBreakFilter = new EventEmitter();
   @Output() public readonly listSpecialSessions = new EventEmitter();
   public slideColor: ThemePalette = 'warn';
@@ -31,7 +33,8 @@ export class SpecialSessionComponent implements OnChanges {
   public checked = true;
 
   constructor(private readonly requestService: RequestService,
-    private readonly messageBoxService: MessageBoxService,) { }
+    private readonly messageBoxService: MessageBoxService,
+    private readonly toastrService: ToastrService) { }
 
   ngOnChanges(): void {
     this.verifyResult();
@@ -40,6 +43,10 @@ export class SpecialSessionComponent implements OnChanges {
     this.createBackupSessions(SessionId.suspendedTime);
     const specialSessions = this.getValidSpecialSessions();
     this.listSpecialSessions.emit(specialSessions);
+  }
+
+  ngOnInit(): void {
+    this.toastrService.overlayContainer = this.toastContainer;
   }
 
   public verifyResult() {
@@ -135,6 +142,7 @@ export class SpecialSessionComponent implements OnChanges {
   }
 
   public saveAndSelectWaterBreak(session: SpecialSession) {
+    this.toastrService.clear();
     session.isSaveButtonPressed = true;
     if (this.verifyBeforeSavingWaterBreak(session)) {
       const originalSession = _.isEqual(session.resourceId, SessionId.waterBreakOne)
@@ -148,6 +156,7 @@ export class SpecialSessionComponent implements OnChanges {
   }
 
   public saveAndSelectSuspendedTime(session: SpecialSession) {
+    this.toastrService.clear();
     session.isSaveButtonPressed = true;
     if (this.verifyBeforeSavingSuspendedTime(session)) {
       if (session.apply) {
@@ -216,9 +225,8 @@ export class SpecialSessionComponent implements OnChanges {
   }
 
   private alertOnSelection(message: string) {
-    this.modalDialogMessage.title = Language.InstantSetting.WarningTitle;
-    this.modalDialogMessage.message = message;
-    this.messageBoxService.alert(this.modalDialogMessage);
+    this.toastrService.clear();
+    this.toastrService.error(message);
   }
 
   private confirmSaveAndSelect(session: SpecialSession, message: string) {
@@ -298,9 +306,8 @@ export class SpecialSessionComponent implements OnChanges {
 
   private verifyBeforeSavingWaterBreak(session: SpecialSession) {
     if ((this.isWaterBreakTimeEmpty(session) || !_.isEmpty(session.color)) && session.apply) {
-      this.modalDialogMessage.title = Language.InstantSetting.WarningTitle;
-      this.modalDialogMessage.message = Language.fastMarket.errorWaterBreak;
-      this.messageBoxService.alert(this.modalDialogMessage);
+      this.toastrService.clear();
+      this.toastrService.error(Language.fastMarket.errorWaterBreak);
       return false;
     }
 
@@ -309,9 +316,8 @@ export class SpecialSessionComponent implements OnChanges {
 
   private verifyBeforeSavingSuspendedTime(session: SpecialSession) {
     if (this.isSuspendedTimeEmpty(session) && session.apply) {
-      this.modalDialogMessage.title = Language.InstantSetting.WarningTitle;
-      this.modalDialogMessage.message = Language.fastMarket.errorSuspendedTime;
-      this.messageBoxService.alert(this.modalDialogMessage);
+      this.toastrService.clear();
+      this.toastrService.error(Language.fastMarket.errorSuspendedTime);
       return false;
     }
 

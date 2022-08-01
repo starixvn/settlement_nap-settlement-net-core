@@ -12,7 +12,7 @@ namespace Settlement.FastMarkets.Services
 {
     public interface MultipleServerFetcherService
     {
-        public Task<(List<FastMarketResult> betTypes, TicketCounts ticketCounts)> GetFastMarketTicketDetail(int matchId);
+        public Task<(List<FastMarketResult> betTypes, TicketCounts ticketCounts)> GetFastMarketTicketDetail(int matchId, string resources);
     }
 
     public class MultipleServerFetcherServiceImp : MultipleServerFetcherService
@@ -32,9 +32,12 @@ namespace Settlement.FastMarkets.Services
             this.mergeDataService = mergeDataService;
         }
 
-        public async Task<(List<FastMarketResult> betTypes, TicketCounts ticketCounts)> GetFastMarketTicketDetail(int matchId)
+        public async Task<(List<FastMarketResult> betTypes, TicketCounts ticketCounts)> GetFastMarketTicketDetail(int matchId, string resources)
         {
-            var criteria = new GetFastMarketTicketDetailCriteria { MatchId = matchId };
+            var criteria = new GetFastMarketTicketDetailCriteria {
+                MatchId = matchId,
+                Resources = resources
+            };
             var servers = configuration.GetSection("SiteDBServer").Get<List<string>>();
             var multipleTicketDetails = new List<(List<FastMarketResult>, TicketCounts)>();
             foreach (var server in servers)

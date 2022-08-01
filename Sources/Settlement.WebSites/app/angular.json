@@ -957,6 +957,7 @@
             "tsConfig": "fast-market/tsconfig.app.json",
             "polyfills": "polyfills.ts",
             "styles": [
+              "node_modules/ngx-toastr/toastr.css",
               "shared/components/multiple-selection/multiple-select.component.less",
               "shared/styles/material.style.less",
               "fast-market/style.less"

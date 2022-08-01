@@ -19,17 +19,17 @@
                 </tr>
             </thead>
             <tbody>
-                <!-- <tr *ngIf="fastMarkets">
+                <tr *ngIf="fastMarkets">
                     <td>{{fastMarkets.ticketCount.groupName}}</td>
                     <td>{{fastMarkets.ticketCount.betRunningCount}}</td>
                     <td>{{fastMarkets.ticketCount.betMarkedCount}}</td>
                     <td>{{fastMarkets.ticketCount.betSettledCount}}</td>
-                </tr> -->
+                </tr>
             </tbody>
         </table>
     </div>
     <div class="col-6" *ngIf="fastMarkets">
-        <special-session [resultDetail]="fastMarkets.resultDetail" [matchId]="fastMarkets.matchId"
+        <special-session [resultDetail]="fastMarkets.resultDetail" [matchId]="fastMarkets.matchId" [toastContainer]="toastContainer"
             (waterBreakFilter)="filterAndSelectWaterBreak($event)" (listSpecialSessions)="getExistingSpecialSession($event)"></special-session>
     </div>
 </div>

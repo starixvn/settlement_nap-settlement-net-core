@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { RequestService } from '../services';
 import { HttpRequestService, BlockUIService, MessageBoxService, ClosePopupService } from '../../shared/services';
+import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 
 @Component({
     selector: 'app-root',
@@ -15,6 +16,7 @@ import { HttpRequestService, BlockUIService, MessageBoxService, ClosePopupServic
 })
 
 export class AppComponent implements OnInit {
+    @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
     public blockUI = false;
     constructor(private readonly blockUIService: BlockUIService) {
     }

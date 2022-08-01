@@ -9,6 +9,7 @@ import { ResultStatusPipe, TicketStatusPipe, IntervalPipe, SpecialTimePipe, Spec
 import { OnlyIntegerDirective, FocusDirective } from '../shared/directives';
 import { MaterialModule } from '../shared/material-module';
 import { CustomHttpRequestInterceptor } from '../shared/custom-httprequest-interceptor.native';
+import { ToastContainerModule, ToastNoAnimationModule } from 'ngx-toastr';
 
 @NgModule({
     imports: [
@@ -19,6 +20,14 @@ import { CustomHttpRequestInterceptor } from '../shared/custom-httprequest-inter
         HttpClientJsonpModule,
         NgbModule,
         MaterialModule,
+        ToastNoAnimationModule.forRoot({
+            disableTimeOut: true,
+            enableHtml: true,
+            tapToDismiss: false,
+            positionClass: 'inline',
+            maxOpened: 1,
+        }),
+        ToastContainerModule,
     ],
     declarations: [
         AppComponent,

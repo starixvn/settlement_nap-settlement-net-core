@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import * as _ from 'lodash';
 import { MessageBoxService } from '../../shared/services';
 import { ModalDialogMessage, AutoSettingMatchQuery, AutoSettingLeagueQuery } from '../../shared/models';
@@ -6,6 +6,7 @@ import { UrlHelper } from '../../helper';
 import { RequestService } from '../services/request.service';
 import { MatchDetail, Result } from '../models';
 import { Language, Icon, State } from '../constants';
+import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 
 @Component({
     selector: "match-detail",
@@ -13,18 +14,21 @@ import { Language, Icon, State } from '../constants';
 })
 
 export class MatchDetailComponent implements OnInit {
+    @Input() toastContainer: ToastContainerDirective;
     private readonly fastMarketAutoType = 3;
     public matchDetail: MatchDetail;
     public readonly warningDialogMessage: ModalDialogMessage = new ModalDialogMessage();
 
     constructor(
         private readonly requestService: RequestService,
-        private readonly messageBoxService: MessageBoxService) {
+        private readonly messageBoxService: MessageBoxService,
+        private readonly toastService: ToastrService) {
     }
 
     public ngOnInit() {
         const matchId = Number(UrlHelper.getUrlParameter("matchId"));
         this.getMatchDetail(matchId);
+        this.toastService.overlayContainer = this.toastContainer;
     }
 
     private getMatchDetail(matchId: number) {
@@ -50,6 +54,7 @@ export class MatchDetailComponent implements OnInit {
     }
 
     public confirmUpdateMatchAutoSettle() {
+        this.toastService.clear();
         if (!this.matchDetail.autoSettingIcon.disabled) {
             this.warningDialogMessage.title = Language.confirmationBoxTitle;
             this.warningDialogMessage.message = Language.updateMatchConfirmationMessage;
@@ -93,9 +98,7 @@ export class MatchDetailComponent implements OnInit {
         if (result.isSuccessful) {
             this.getMatchDetail(this.matchDetail.matchId);
         } else {
-            this.warningDialogMessage.title = Language.alertBoxTitle;
-            this.warningDialogMessage.message = result.errMsg;
-            this.messageBoxService.alert(this.warningDialogMessage);
+            this.toastService.error(result.errMsg);
         }
     }
 }

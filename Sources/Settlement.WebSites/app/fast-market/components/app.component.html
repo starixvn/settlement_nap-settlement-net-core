@@ -1,5 +1,6 @@
-﻿<match-detail></match-detail>
-<bet-types></bet-types>
+﻿<span toastContainer></span>
+<match-detail [toastContainer]="toastContainer"></match-detail>
+<bet-types [toastContainer]="toastContainer"></bet-types>
 <div *ngIf="blockUI" class="in modal-backdrop">
     <div class="loading">
     </div>

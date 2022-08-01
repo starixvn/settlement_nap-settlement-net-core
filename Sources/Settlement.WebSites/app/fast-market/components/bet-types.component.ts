@@ -1,4 +1,4 @@
-import { Component, OnInit, DoCheck } from '@angular/core';
+import { Component, OnInit, DoCheck, ViewChild, Input } from '@angular/core';
 import * as _ from 'lodash';
 import { RequestService, TimeMachineService, VerificationService } from '../services';
 import { MessageBoxService, ClosePopupService } from '../../shared/services';
@@ -25,9 +25,11 @@ import {
     ResultType,
     ControlType,
     SessionId,
+    ErrorMessage,
 } from '../constants';
 import { MatDialog } from '@angular/material/dialog';
 import { InputScoreFormComponent } from './input-score-form.component';
+import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 
 @Component({
     selector: "bet-types",
@@ -39,6 +41,7 @@ import { InputScoreFormComponent } from './input-score-form.component';
 })
 
 export class BetTypesComponent implements OnInit, DoCheck {
+    @Input() toastContainer: ToastContainerDirective;
     public fastMarkets: FastMarkets;
     public checkedProceed: boolean;
     public disabledCalculate = true;
@@ -56,7 +59,6 @@ export class BetTypesComponent implements OnInit, DoCheck {
     public readonly resultType = ResultType;
     public readonly fastMarketBetType = FastMarketBetType;
     public readonly modalDialogMessage = new ModalDialogMessage();
-    public readonly alertDialogMessage = new ModalDialogMessage();
     public tooltipNextFiveMinutes = Language.tooltipNextFiveMinutes;
     public readonly positionStep = 4;
     public existingSpecialSessions: SpecialSession[];
@@ -68,7 +70,8 @@ export class BetTypesComponent implements OnInit, DoCheck {
         private readonly closePopupService: ClosePopupService,
         private readonly timeMachineService: TimeMachineService,
         private readonly verificationService: VerificationService,
-        private readonly matDialog: MatDialog) {
+        private readonly matDialog: MatDialog,
+        private readonly toastrService: ToastrService) {
     }
 
     public ngOnInit() {
@@ -76,6 +79,7 @@ export class BetTypesComponent implements OnInit, DoCheck {
         this.modalDialogMessage.title = Language.confirmationBoxTitle;
         this.matchId = Number(UrlHelper.getUrlParameter("matchId"));
         this.getFastMarketResult(this.matchId);
+        this.toastrService.overlayContainer = this.toastContainer;
     }
 
     public ngDoCheck() {
@@ -92,13 +96,11 @@ export class BetTypesComponent implements OnInit, DoCheck {
     }
 
     public calculateAction() {
-        this.clearErrorMessage();
+        this.toastrService.clear();
         this.requestService.checkingStatus(
             this.fastMarkets.matchId, "CAL", false).subscribe((result: Result) => {
                 if (!result.isSuccessful) {
-                    this.alertDialogMessage.title = Language.alertBoxTitle;
-                    this.alertDialogMessage.message = result.errMsg;
-                    this.messageBoxService.alert(this.alertDialogMessage);
+                    this.toastrService.error(result.errMsg);
                 } else {
                     this.doCalculate();
                 }
@@ -106,14 +108,18 @@ export class BetTypesComponent implements OnInit, DoCheck {
     }
 
     private doCalculate() {
-        if (this.verificationService.verifyBeforeCalculation(this.fastMarkets.betTypes, this.existingSpecialSessions)) {
+        const errorMessage = this.verificationService.verifyBeforeCalculation(this.fastMarkets.betTypes, this.existingSpecialSessions);
+        if (_.isEmpty(errorMessage)) {
             this.confirmChangedResults();
+        } else {
+            this.toastrService.error(errorMessage)
         }
     }
 
     public unCalculateAction() {
-        this.clearErrorMessage();
-        if (this.verificationService.verifyBeforeUncalculation(this.fastMarkets.betTypes)) {
+        this.toastrService.clear();
+        const errorMessage = this.verificationService.verifyBeforeUncalculation(this.fastMarkets.betTypes);
+        if (_.isEmpty(errorMessage)) {
             let uncalMessage = "Are you sure you want to UNCALCULATE the selected result?";
             if (this.hasRunningResultStatus()) {
                 uncalMessage = "WARNING! Please double check the results selected to Uncalculate. ";
@@ -123,18 +129,18 @@ export class BetTypesComponent implements OnInit, DoCheck {
 
             this.modalDialogMessage.message = uncalMessage;
             this.messageBoxService.confirm(this.modalDialogMessage, () => this.doSubmitByAction("UNDO"));
+        } else if (!_.isEqual(errorMessage, ErrorMessage.notShowAlert)) {
+            this.toastrService.error(errorMessage);
         }
     }
 
     public refundAction() {
-        this.clearErrorMessage();
+        this.toastrService.clear();
         this.requestService.checkingStatus(
             this.fastMarkets.matchId, "REFUND",
             this.isRefundWithSettleDetermined).subscribe((result: Result) => {
                 if (!result.isSuccessful) {
-                    this.alertDialogMessage.title = Language.alertBoxTitle;
-                    this.alertDialogMessage.message = result.errMsg;
-                    this.messageBoxService.alert(this.alertDialogMessage);
+                    this.toastrService.error(result.errMsg);
                 } else {
                     this.doRefund();
                 }
@@ -143,17 +149,25 @@ export class BetTypesComponent implements OnInit, DoCheck {
 
     private doRefund() {
         if (this.isRefundWithSettleDetermined) {
-            if (this.verificationService.verifyBeforeRefundSDT(this.fastMarkets.betTypes, this.existingSpecialSessions)
-                && this.verificationService.verifyBeforeRefund(this.fastMarkets.betTypes, true)) {
+            const errorMessage = this.verificationService.verifyBeforeRefundSDT(this.fastMarkets.betTypes, this.existingSpecialSessions)
+                && this.verificationService.verifyBeforeRefund(this.fastMarkets.betTypes, true);
+            if (_.isEmpty(errorMessage)) {
                 this.modalDialogMessage.message = "You chose to Refund with settle determined tickets from selected intervals. Are you sure you want to proceed?";
                 this.messageBoxService.confirm(this.modalDialogMessage, () => {
                     if (this.verificationService.verifyBeforeCalculation(this.fastMarkets.betTypes, this.existingSpecialSessions, true)) {
                         this.pushRefundQuery();
                     }
                 });
+            } else if (!_.isEqual(errorMessage, ErrorMessage.notShowAlert)) {
+                this.toastrService.error(errorMessage);
             }
-        } else if (this.verificationService.verifyBeforeRefund(this.fastMarkets.betTypes)) {
-            this.pushRefundQuery();
+        } else {
+            const errorMessage = this.verificationService.verifyBeforeRefund(this.fastMarkets.betTypes);
+            if (_.isEmpty(errorMessage)) {
+                this.pushRefundQuery();
+            } else if (!_.isEqual(errorMessage, ErrorMessage.notShowAlert)) {
+                this.toastrService.error(errorMessage);
+            }
         }
     }
 
@@ -163,8 +177,7 @@ export class BetTypesComponent implements OnInit, DoCheck {
 
         this.requestService.checkingMarkedTickets(query).subscribe((markedTickets: MarkedTickets) => {
             if (markedTickets.isExistMarkedTicket) {
-                this.modalDialogMessage.message = SharedLanguage.MarkedTicket;
-                this.messageBoxService.alert(this.modalDialogMessage);
+                this.toastrService.error(SharedLanguage.MarkedTicket);
             } else {
                 this.modalDialogMessage.message = "Are you sure you want to REFUND the selected result?";
                 this.messageBoxService.confirm(this.modalDialogMessage, () => this.doSubmitByAction("REFUND"));
@@ -352,12 +365,12 @@ export class BetTypesComponent implements OnInit, DoCheck {
     }
 
     public onCollapsedClick(betType: BetType) {
-        this.clearErrorMessage();
+        this.toastrService.clear();
         betType.collapsed = !betType.collapsed;
     }
 
     public onCollapsedEventCounter(collapsed: boolean) {
-        this.clearErrorMessage();
+        this.toastrService.clear();
         this.fastMarkets.eventCounterCollapsed = !collapsed;
     }
 
@@ -385,7 +398,7 @@ export class BetTypesComponent implements OnInit, DoCheck {
     }
 
     public onChangeProceed(checked: boolean) {
-        this.clearErrorMessage();
+        this.toastrService.clear();
         this.fastMarkets.eventCounterChecked = checked;
         this.onChangeEventCounter();
         for (const betType of this.fastMarkets.betTypes) {
@@ -486,10 +499,6 @@ export class BetTypesComponent implements OnInit, DoCheck {
                 this.errorMessage = result.errMsg;
             }
         });
-    }
-
-    private clearErrorMessage() {
-        this.errorMessage = "";
     }
 
     private showOrHideButton(item: FastMarketResult) {

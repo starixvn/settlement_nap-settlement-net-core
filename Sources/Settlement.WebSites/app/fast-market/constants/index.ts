@@ -7,3 +7,4 @@ export * from './result-type.native';
 export * from './waterBreakSessionId.native';
 export * from './ticket-status.native';
 export * from './time-type.native';
+export * from './error-message.native';

@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { TimeMachineResult } from '../models/interval.model';
 import * as _ from 'lodash';
 import { RequestService } from '../services';
@@ -6,6 +6,7 @@ import { ModalDialogMessage } from '../../shared/models';
 import { BlockUIService, HttpRequestService, MessageBoxService } from '../../shared/services';
 import { Language } from '../../shared/language';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'input-score-form',
@@ -13,6 +14,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
   providers: [ MessageBoxService, HttpRequestService, BlockUIService, RequestService]
 })
 export class InputScoreFormComponent implements OnInit {
+  @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
   public intervals: TimeMachineResult[] = [];
   public results: TimeMachineResult[] = [];
   public originalInterval: TimeMachineResult[] = [];
@@ -25,12 +27,14 @@ export class InputScoreFormComponent implements OnInit {
     private readonly requestService: RequestService,
     private readonly messageBoxService: MessageBoxService,
     @Inject(MAT_DIALOG_DATA) public data: {matchId: number, apiUrl: string},
-    private readonly dialogRef: MatDialogRef<InputScoreFormComponent>) { }
+    private readonly dialogRef: MatDialogRef<InputScoreFormComponent>,
+    private readonly toastrService: ToastrService) { }
 
   ngOnInit(): void {
     this.getFastMarketResult(this.data.matchId);
     this.modalDialogMessage.title = Language.warningTitle;
     this.modalDialogConfirmMessage.title = Language.confirmationBox;
+    this.toastrService.overlayContainer = this.toastContainer;
   }
 
   public close() {
@@ -41,6 +45,7 @@ export class InputScoreFormComponent implements OnInit {
     this.intervals = _.filter(this.intervals, item => interval.position !== item.position);
   }
   public add() {
+    this.toastrService.clear();
     this.newInterval.position = Number(this.positionSelected);
     if (this.checkInputScore(this.newInterval, this.positionSelected) && this.checkExistInterval(this.newInterval)) {
       this.newInterval.positionName = _.find(this.results, item => item.position === this.newInterval.position).positionName;
@@ -57,8 +62,7 @@ export class InputScoreFormComponent implements OnInit {
 
   private checkExistInterval(interval: TimeMachineResult) {
     if (_.find(this.intervals, item => item.position === interval.position)) {
-      this.modalDialogMessage.message = Language.inputForm.isExistInterval;
-      this.messageBoxService.alert(this.modalDialogMessage);
+      this.toastrService.error(Language.inputForm.isExistInterval);
       return false;
     }
     return true;
@@ -66,14 +70,12 @@ export class InputScoreFormComponent implements OnInit {
 
   private checkInputScore(interval: TimeMachineResult, position: string) {
     if (_.isEmpty(interval.homeScore) || _.isEmpty(interval.awayScore) || _.isEqual(position, '')) {
-      this.modalDialogMessage.message = Language.inputForm.noInputScore;
-      this.messageBoxService.alert(this.modalDialogMessage);
+      this.toastrService.error(Language.inputForm.noInputScore);
       return false;
     }
 
     if (_.isEqual(interval.homeScore, '0') && _.isEqual(interval.awayScore, '0')) {
-      this.modalDialogMessage.message = Language.inputForm.scoreInvalid;
-      this.messageBoxService.alert(this.modalDialogMessage);
+      this.toastrService.error(Language.inputForm.scoreInvalid);
       return false;
     }
 
