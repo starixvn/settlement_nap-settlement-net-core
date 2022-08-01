@@ -9,6 +9,7 @@ using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.Soccer.Models;
+using Settlement.Sportsbook.Soccer.Requests;
 using Settlement.Sportsbook.Soccer.Services;
 using Xunit;
 using MatchDetail = Settlement.Core.Models.MatchDetail;

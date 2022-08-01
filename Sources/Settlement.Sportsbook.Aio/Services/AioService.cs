@@ -114,7 +114,7 @@ namespace Settlement.Sportsbook.Aio.Services
                 Permission = permissionService.Permission,
                 HedgeMatchDetail = hedgeMatchDetail,
                 ExternalResults = externalResults,
-                childMatches = childMatches,
+                ChildMatches = childMatches,
                 OldMatchDetail = oldMatch
             };
         }

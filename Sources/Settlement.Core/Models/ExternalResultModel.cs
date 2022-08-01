@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Settlement.Sportsbook.Aio.Models
+namespace Settlement.Core.Models
 {
     public class ExternalResultModel
     {

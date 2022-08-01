@@ -11,7 +11,8 @@ using MatchDetail = Settlement.Sportsbook.Soccer.Models.MatchDetail;
 
 namespace Settlement.Sportsbook.Soccer.Handlers
 {
-    public class SoccerHandler : IRequestHandler<GetMatchRequest, Match>,
+    public class CalculateHandler : IRequestHandler<GetMatchRequest, Match>,
+        IRequestHandler<GetMatchEarlyRequest, MatchEarly>,
         IRequestHandler<GetLastestMatchDetailRequest, MatchDetail>,
         IRequestHandler<SettleRequest, Result>,
         IRequestHandler<CheckStatusRequest, Result>,
@@ -26,7 +27,7 @@ namespace Settlement.Sportsbook.Soccer.Handlers
 
         private readonly IInstantCalculateService instantCalculateService;
 
-        public SoccerHandler(IMatchService matchService, ICalculateService calculateService,
+        public CalculateHandler(IMatchService matchService, ICalculateService calculateService,
             IInstantCalculateService instantCalculateService)
         {
             this.matchService = matchService;
@@ -37,6 +38,11 @@ namespace Settlement.Sportsbook.Soccer.Handlers
         public async Task<Match> Handle(GetMatchRequest request, CancellationToken cancellationToken)
         {
             return request.IsRefundPage ? await matchService.GetMatchRefund(request) : await matchService.GetMatch(request);
+        }
+        
+        public async Task<MatchEarly> Handle(GetMatchEarlyRequest request, CancellationToken cancellationToken)
+        {
+            return await matchService.GetMatchEarly(request);
         }
 
         public async Task<MatchDetail> Handle(GetLastestMatchDetailRequest request, CancellationToken cancellationToken) =>

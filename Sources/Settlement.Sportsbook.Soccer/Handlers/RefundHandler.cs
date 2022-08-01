@@ -12,7 +12,7 @@ using Settlement.Sportsbook.Soccer.Services;
 
 namespace Settlement.Sportsbook.Soccer.Handlers
 {
-    internal class SoccerRefundHandler :
+    internal class RefundHandler :
         IRequestHandler<GetSpecificBetTypeRequest, List<string>>,
         IRequestHandler<CheckingMarkedTicketsRequest, MarkedTickets>,
         IRequestHandler<RefundRequest, Result>,
@@ -25,7 +25,7 @@ namespace Settlement.Sportsbook.Soccer.Handlers
 
         private readonly IRefundService refundService;
 
-        public SoccerRefundHandler(IMatchService matchService, IRefundService refundService)
+        public RefundHandler(IMatchService matchService, IRefundService refundService)
         {
             this.matchService = matchService;
             this.refundService = refundService;
