@@ -15,19 +15,11 @@ export class ClosePopupService {
         }
     }
 
-    public closePopupInstant(leagueId: number, time: number, type: string) {
-        window.parent[this.mainPage].instantShowNewTimeSetting(leagueId, time, type);
-        window.parent[this.dialog].closePopup();
-    }
-
-    public closePopupPayoutSettingMatch(matchId: number, newState: number) {
-        window.parent[this.mainPage].refreshPayoutSettingMatch(matchId, newState);
-        window.parent[this.dialog].closePopup();
-    }
-
-    public closePopupPayoutSettingLeague(leagueId: number, newState: number, isApplyAll: boolean) {
-        window.parent[this.mainPage].refreshPayoutSettingLeague(leagueId, newState, isApplyAll);
-        window.parent[this.dialog].closePopup();
+    public angularClosePopup() {
+        const buttonClose = parent.document.getElementById('close-after-change');
+        if (buttonClose !== null) {
+            buttonClose.click();
+        }
     }
 
     public closePopupChangeRemarkSetting(matchId: string, isMTDHold: boolean,

@@ -7,5 +7,7 @@ namespace Settlement.EventManagement.Requests
     public class RefreshCalculationRequest : IRequest<List<Match>>
     {
         public int LeagueId { get; set; }
+
+        public bool IsAutoCalculatePage { get; set; }
     }
 }

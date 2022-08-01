@@ -74,7 +74,7 @@ export class TimeSettingComponent implements Template, OnInit {
             const query = new TimeSettingQuery(this.leagueId, this.time, this.autoType);
             this.requestService.proceed(query).subscribe((result: Result) => {
                 if (result.isSuccessful) {
-                    this.closePopupService.closePopupInstant(this.leagueId, this.time, this.pageType);
+                   this.closePopupService.angularClosePopup();
                 } else {
                     this.errorMessage = result.errMsg;
                 }

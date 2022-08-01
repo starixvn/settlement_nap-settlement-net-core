@@ -30,14 +30,7 @@ export class AutoCalculateFilterComponent extends FilterCalculateBaseComponent i
 
   public ngOnInit() {
     this.defaultDateFilter();
-    this.initData();
-  }
-
-  private async initData() {
-    const date = await this.requestService.getDate().toPromise();
-    this.fromDate = this.verifyDateService.convertToDateStruct(date.fromDate);
-    this.toDate = this.verifyDateService.convertToDateStruct(date.toDate);
-    this.renderLeague(this.fromDate, this.toDate);
+    this.initFilterData();
   }
 
   private defaultDateFilter() {
@@ -51,16 +44,12 @@ export class AutoCalculateFilterComponent extends FilterCalculateBaseComponent i
     this.query.fromDate = this.verifyDateService.dateFormat(this.fromDate);
     this.query.toDate = this.verifyDateService.dateFormat(this.toDate);
 
-    this.requestService.search(this.query).subscribe((matches: Calculation) => {
-      this.searchAction.emit({ matches, filterQuery: this.query });
+    this.requestService.searchAutoCalculation(this.query).subscribe((calculation: Calculation) => {
+      this.searchAction.emit({ calculation, filterQuery: this.query });
     });
   }
 
   public onSelectPayout(value: ItemsSelect[]) {
-    this.query.autoSetting = value.map(item => Number(item.value)).join();
-  }
-
-  public getCLassInstant(match: Match){
-    
+    this.query.autoSetting = value.length > 0 && value.length < this.payoutSelect.items.length ? value.map(item => Number(item.value)).join() : '';
   }
 }

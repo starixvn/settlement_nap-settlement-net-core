@@ -1,4 +1,5 @@
-﻿using Fanex.Caching;
+﻿using System;
+using Fanex.Caching;
 using Fanex.Data.Repository;
 using Settlement.Core.Services;
 using System.Collections.Generic;
@@ -150,7 +151,7 @@ namespace Settlement.EventManagement.Services.Calculation
 
         public async Task<List<Match>> GetWaitingMatches(RefreshCalculationRequest request)
         {
-            var matches = await cachingMatchesService.GetShortCache(request.LeagueId);
+            var matches = await cachingMatchesService.GetShortCache(request.LeagueId, request.IsAutoCalculatePage);
 
             if (matches != null)
             {
@@ -161,7 +162,7 @@ namespace Settlement.EventManagement.Services.Calculation
             {
                 try
                 {
-                    return await GetAndCachingMatches(request);
+                    return request.IsAutoCalculatePage ? await GetAndCachingAutoCalculationMatches(request) : await GetAndCachingMatches(request);
                 }
                 finally
                 {
@@ -169,7 +170,7 @@ namespace Settlement.EventManagement.Services.Calculation
                 }
             }
 
-            return await cachingMatchesService.GetLongCache(request.LeagueId);
+            return await cachingMatchesService.GetLongCache(request.LeagueId, request.IsAutoCalculatePage);
         }
 
         private async Task<List<Match>> GetAndCachingMatches(RefreshCalculationRequest request)
@@ -205,6 +206,44 @@ namespace Settlement.EventManagement.Services.Calculation
             var matches = new List<Match>();
             var isCentralDataBase = true;
             var criteria = mapper.Map<FilterAutoCalculationRequest, GetMatchesAutoCalculateCriteria>(request);
+            var siteDbServer = configuration.GetSection("SiteDBServer").Get<List<string>>();
+            foreach (var server in siteDbServer)
+            {
+                criteria.DbServer = server;
+                var data = (await repository.FetchAsync<Match>(criteria)).ToList();
+
+                if (isCentralDataBase)
+                {
+                    matches = data;
+                    isCentralDataBase = false;
+                }
+                else
+                {
+                    mergeDataService.MergeMatches(matches, data);
+                }
+            }
+
+            return matches;
+        }
+
+        private async Task<List<Match>> GetAndCachingAutoCalculationMatches(RefreshCalculationRequest request)
+        {
+            var waitingMatches = await WaitingAutoCalculationMatchesAllSites(request);
+            var listResultDetail = await ResultDetailByMatchIds(waitingMatches);
+            await SetReferenceActionsForMatch(waitingMatches);
+
+            var matches = SetNewMatchInfo(waitingMatches, listResultDetail);
+
+            cachingMatchesService.SetToCache(matches, request.LeagueId);
+
+            return matches;
+        }
+
+        private async Task<List<Match>> WaitingAutoCalculationMatchesAllSites(RefreshCalculationRequest request)
+        {
+            var matches = new List<Match>();
+            var isCentralDataBase = true;
+            var criteria = mapper.Map<RefreshCalculationRequest, GetWaitingAutoCalculationCriteria>(request);
             var siteDbServer = configuration.GetSection("SiteDBServer").Get<List<string>>();
             foreach (var server in siteDbServer)
             {

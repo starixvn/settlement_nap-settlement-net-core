@@ -1,4 +1,6 @@
-﻿export const Language = {
+﻿import { title } from "process";
+
+export const Language = {
     confirmationBox: 'Confirmation box',
     CalculationWarning: 'Calculation warning',
     RefundWarning: 'Refund warning',
@@ -235,5 +237,22 @@
         betDaq: "BETDAQ",
         betFair: "BETFAIR",
         MarkRemainTicket: '- Mark remaining tickets of {0} as "Running".'
+    },
+    instants: {
+    confirm: "Are you sure you want to update Instant Calculation Setting of this match?",
+    confirmOffLeague:"You have changed Instant Calc Setting of League from ON to OFF. Do you want to update OFF for Un-Calculated matches?",
+    confirmOnLeague:"You have changed Instant Calc Setting of League from OFF to ON. Do you want to update ON for Un-Calculated matches?",
+    titleOffInstant: "Click to turn off Instant Calculation.",
+    titleOnInstant: "Click to turn on Instant Calculation.",
+    titleInstantTime:"Click to change waiting-time setting of Instant Calculation.",
+    titleChangeTime: "Change waiting-time setting",
+    confirmExecuteInstant:"Are you sure you want to execute Instant Calculation on this match with the specific score?",
+
+    },
+    payout: {
+        title: "Click to change auto payout setting.",
+        titlePopup: "Match Auto Payout Setting",
+        titlePopupForLeague: "League Auto Payout Setting",
+        titleDirectTime:"Click to change waiting-time setting of Direct Settlement",
     }
 };

@@ -28,10 +28,7 @@ export class FilterComponent extends FilterCalculateBaseComponent implements OnI
     this.query.htOver = true;
     this.query.ftOver = true;
     this.query.earlyOver = true;
-    const date = await this.requestService.getDate().toPromise();
-    this.fromDate = this.verifyDateService.convertToDateStruct(date.fromDate);
-    this.toDate = this.verifyDateService.convertToDateStruct(date.toDate);
-    this.renderLeague(this.fromDate, this.toDate);
+    this.initFilterData();
   }
 
   public async search() {

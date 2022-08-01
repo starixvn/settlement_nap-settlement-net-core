@@ -39,8 +39,8 @@
               &nbsp;{{leagueMatch.name}}
             </td>
           </tr>
-          <ng-container *ngFor="let match of leagueMatch.matches">
-            <tr class="row-3" [ngClass]="undecidedColor(match.remark)">
+          <ng-container *ngFor="let match of leagueMatch.matches, let isEven=even">
+            <tr class="row-3" [ngClass]="rowColor(match.remark, !isEven)">
               <td class="code">
                 <div *ngIf="permission.canViewSettlementLog; else noLogLink">
                   <div class="code-link" (click)="getLog(match.matchId)">
@@ -116,7 +116,7 @@
                 </div>
               </td>
             </tr>
-            <tr class="row-3" [ngClass]="undecidedColor(match.remark)">
+            <tr class="row-3" [ngClass]="rowColor(match.remark, !isEven)">
               <td>{{match.matchId}}</td>
               <td>
                 <div class="match-away">{{match.awayName}}</div>

@@ -8,6 +8,7 @@ import { HandleActionsService } from './handle-actions.service';
 import { RequestService } from './request.service';
 import { MatchDetail } from '../../fast-market/models';
 import { Icon } from '../../fast-market/constants';
+import { CalculationMatch, League } from '../models';
 
 @Injectable()
 export class PopupService {
@@ -55,6 +56,46 @@ export class PopupService {
                 this.handleChangedMatch(match);
             }
         });
+    }
+
+    public openUpdatePayout(match: CalculationMatch, refreshFunc: () => void){
+        const currentState = match.autoCalcSetting.isAutoPayoutForMatch ? 1 : match.autoCalcSetting.isDirectPayoutForMatch ? 5 : 0
+        const src = `apps/auto-setting-match?matchId=${match.matchId}&currentState=${currentState}&pageType=AutoSettingMatch`;
+        const frameSrc = encodeURI(src);
+        const dialogData = new DialogDataIframe(Language.payout.titlePopup, frameSrc);
+        this.dialogBoxService.popup(dialogData, '500px', '270px').subscribe(result => {
+            if (result) {
+                refreshFunc();
+            }
+        }
+        );
+    }
+
+    public openUpdatePayoutForLeague(league: League, refreshFunc: () => void){
+        const currentState = league.matches[0].autoCalcSetting.isAutoPayoutForLeague ? 1 : league.matches[0].autoCalcSetting.isDirectPayoutForLeague ? 5 : 0
+        const src = `apps/auto-setting-league?leagueId=${league.leagueId}&currentState=${currentState}&pageType=AutoSettingMatch`;
+        const frameSrc = encodeURI(src);
+        const dialogData = new DialogDataIframe(Language.payout.titlePopupForLeague, frameSrc);
+        this.dialogBoxService.popup(dialogData, '500px', '270px').subscribe(result => {
+            if (result) {
+                refreshFunc();
+            }
+        }
+        );
+    }
+
+    public openUpdateTime(league: League, isInstant: boolean, refreshFunc: () => void){
+        const time = isInstant ? league.matches[0].instantWaitingTime : league.matches[0].directWaitingTime;
+        const page = isInstant ? 'InstantTime' : 'DirectTime';
+        const src = `apps/change-waiting-time?leagueId=${league.leagueId}&time==${time}&pageType=${page}`;
+        const frameSrc = encodeURI(src);
+        const dialogData = new DialogDataIframe(Language.payout.titlePopupForLeague, frameSrc);
+        this.dialogBoxService.popup(dialogData, '600px', '310px').subscribe(result => {
+            if (result) {
+                refreshFunc();
+            }
+        }
+        );
     }
 
     private handleChangedMatch(match: Match) {

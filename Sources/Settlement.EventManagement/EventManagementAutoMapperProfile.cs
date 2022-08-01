@@ -21,6 +21,7 @@ namespace Settlement.EventManagement
             CreateMap<LeagueCalculationRequest, LeagueCalculationCriteria>();
             CreateMap<RefreshCalculationRequest, GetWaitingCalculationCriteria>();
             CreateMap<FilterAutoCalculationRequest, GetMatchesAutoCalculateCriteria>();
+            CreateMap<RefreshCalculationRequest, GetWaitingAutoCalculationCriteria>();
         }
     }
 }

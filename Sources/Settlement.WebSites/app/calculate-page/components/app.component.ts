@@ -28,14 +28,8 @@ import { PageBaseComponent } from './base-component';
 })
 export class AppComponent implements OnInit {
   @ViewChild('container', { read: ViewContainerRef, static: true }) container: ViewContainerRef;
-  public component: ComponentRef<PageBaseComponent>;
-  private readonly period = 60000;
+  public component: ComponentRef<PageBaseComponent>;0;
   public blockUI = false;
-  public calculation: Calculation;
-  public intervalTimer = interval(this.period);
-  public change = 0;
-  public filterQuery: FilterQuery;
-  public autoCalculation: boolean;
   constructor(private readonly blockUIService: BlockUIService,
     private readonly elementRef: ElementRef<HTMLElement>,
     private readonly componentFactoryResolver: ComponentFactoryResolver,

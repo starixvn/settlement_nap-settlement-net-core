@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Fanex.Data.Repository;
@@ -66,7 +67,8 @@ namespace Settlement.Sportsbook.Soccer.Services
             if (result.IsSuccessful && request.IsApplyHedging)
             {
                 criteria.MatchId = request.HedgeMatchId;
-                await Execute(criteria);
+                criteria.DbServer = configuration.GetSection("SiteDBServer").Get<List<string>>().First();
+                await repository.ExecuteAsync(criteria);
             }
 
             return result;
@@ -88,7 +90,7 @@ namespace Settlement.Sportsbook.Soccer.Services
         private async Task<Result> Execute(CalculateCriteria criteria)
         {
             var listReplicatedServer = configuration.GetSection("SiteDBServer").Get<List<string>>();
-            var requestChecking = await ValidateBeforeExecute(criteria, listReplicatedServer);
+            var requestChecking = await ValidateBeforeExecute(criteria);
             if (requestChecking.ErrCode > 0)
             {
                 return requestChecking;
@@ -109,7 +111,7 @@ namespace Settlement.Sportsbook.Soccer.Services
             };
         }
 
-        private async Task<Result> ValidateBeforeExecute(CalculateCriteria criteria, List<string> listReplicatedServer)
+        private async Task<Result> ValidateBeforeExecute(CalculateCriteria criteria)
         {
             var validateEvent = await ValidateEvent(criteria);
 

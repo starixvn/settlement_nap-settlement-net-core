@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Match, ChangeSettingResult } from "../../shared/models";
 import * as _ from 'lodash';
 import { BackgroundColor, EventStatus } from '../../shared/constants';
+import { CalculationMatch, League } from '../models';
 
 @Injectable()
 export class HandleActionsService {
@@ -18,6 +19,23 @@ export class HandleActionsService {
     }
 
     match.eventStatusColor = this.handleEventStatusColor(match, remark.isPending);
+  }
+
+  public handleChangeInstantStatus(match: CalculationMatch) {
+    match.newEventStatus = EventStatus.waiting;
+    match.eventStatusColor = BackgroundColor.waiting;
+    match.isCalculatingSingle = 1;
+
+  }
+
+  public handleAutoInstantForMatch(leagueMatch: League, isAutoInstant: boolean) {
+    leagueMatch.matches.forEach(item => {
+      const eventStatus = item.eventStatus.toLocaleLowerCase();
+      if (!eventStatus.includes('refund ht')
+        || _.isEqual(eventStatus, EventStatus.running.toLocaleLowerCase()) || _.isEqual(eventStatus, EventStatus.closed)) {
+        item.autoCalcSetting.isInstantForMatch = isAutoInstant;
+      }
+    });
   }
 
   private handleEventStatusColor(match: Match, isPending: boolean) {

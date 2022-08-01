@@ -864,7 +864,8 @@
             "polyfills": "polyfills.ts",
             "styles": [
               "shared/styles/material.style.less",
-              "calculate-page/style.less"
+              "calculate-page/style.less",
+              "shared/styles/styles.less"
             ],
             "allowedCommonJsDependencies": [
               "lodash"

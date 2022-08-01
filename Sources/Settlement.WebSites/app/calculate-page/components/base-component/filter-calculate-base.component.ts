@@ -25,6 +25,13 @@ export class FilterCalculateBaseComponent extends FilterBaseComponent{
     super(verifyDateService, messageBoxService);
   }
 
+  public async initFilterData () {
+    const date = await this.requestService.getDate().toPromise();
+    this.fromDate = this.verifyDateService.convertToDateStruct(date.fromDate);
+    this.toDate = this.verifyDateService.convertToDateStruct(date.toDate);
+    this.renderLeague(this.fromDate, this.toDate);
+  }
+
   public onSelectFromDate(value: NgbDateStruct) {
     this.fromDate = value;
     this.isDisabled = !this.verifyDate();
@@ -40,7 +47,7 @@ export class FilterCalculateBaseComponent extends FilterBaseComponent{
   public async renderLeague(fromDate: NgbDateStruct, toDate: NgbDateStruct) {
     const allLeague = new League();
     allLeague.leagueId = 0;
-    allLeague.leagueName = '--- Show ALl Leagues ---';
+    allLeague.leagueName = '--- Show ALL Leagues ---';
 
     if (this.verifyDateService.validDate(this.fromDate, this.toDate)) {
       const fromDateValue = this.verifyDateService.dateFormat(fromDate);

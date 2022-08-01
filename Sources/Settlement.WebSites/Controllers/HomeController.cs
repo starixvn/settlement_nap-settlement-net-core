@@ -177,6 +177,12 @@ namespace Settlement.WebSites.Controllers
             return SetView("Calculation", "Calculation", ViewPath.Calculation);
         }
 
+        [Route("Home/auto-calculation")]
+        public ActionResult AutoCalculation()
+        {
+            return SetView("AutoCalculation", "AutoCalculation", ViewPath.Calculation);
+        }
+
         private ActionResult SetView(string title, string pageType, string viewName)
         {
             ViewBag.Environment = configuration.GetSection("Environment").Value;

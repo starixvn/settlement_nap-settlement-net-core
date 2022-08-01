@@ -1,3 +1,5 @@
+@sprite: "../../wwwroot/css/images/sprite.png";
+
 .hasDatepicker {
     width: 85px;
 }
@@ -16,8 +18,41 @@ input[type="text"] {
 
     .confirm-score {
         width: 100px;
+        min-width: 100px;
     }
-    
+
+    .league {
+        .name {
+            text-align: left;
+        }
+        td {
+            color: #1d3968;
+            background-color: #ccc;
+            vertical-align: middle;
+            border: 0;
+        }
+
+        .instant-time {
+            div {
+                float: left;
+                margin: 2px 3px 0 0;
+                font-weight: normal;
+                font-size: 8.3pt;
+            }
+
+            .instant-time-icon {
+                background: url(@sprite) no-repeat;
+                background-position: -105px -321px;
+                width: 15px;
+                height: 14px;
+                cursor: pointer;
+            }
+
+            .instant-time-icon:hover {
+                background-position: -125px -321px;
+            }
+        }
+    }
 }
 
 .filter-bar {
@@ -58,10 +93,11 @@ input[type="text"] {
 
 }
 
-.table-calculation{
-    thead{
+.table-calculation {
+    thead {
         display: block;
     }
+
     .event {
         width: 970px;
     }
@@ -71,17 +107,18 @@ input[type="text"] {
     padding-right: unset !important;
 }
 
-.league-list{
+.league-list {
     width: 25%;
+
     .league-select {
         width: 80%;
     }
 }
 
-.auto-calculation{
+.auto-calculation {
     .instant-calc {
         min-width: 185px;
-        border-bottom: 1px solid ;
+        border-bottom: 1px solid;
     }
 
     .reference-action {
@@ -106,7 +143,15 @@ input[type="text"] {
             background-color: #F00E0E;
         }
     }
-    .auto-setting, .auto-instant {
+
+    .auto-setting,
+    .auto-instant {
         min-width: 63px;
+        width: 63px;
+    }
+
+    .instant-status {
+        min-width: 120px;
+        width: 120px;
     }
 }

@@ -5,12 +5,18 @@ import { BackgroundColor, EventStatus } from '../../../shared/constants';
 import * as _ from 'lodash';
 import { Language } from '../../../shared/language';
 import { MatchesBaseComponent } from '../base-component/matches-base.component';
+import { CalculationMatch } from '../../models';
+import { ISubscription } from 'rxjs-compat/Subscription';
+import { interval } from 'rxjs';
 
 @Component({
   selector: 'matches',
   templateUrl: './matches.component.html'
 })
 export class MatchesComponent extends MatchesBaseComponent implements OnChanges, OnInit, OnDestroy {
+  private subscriber: ISubscription;
+  private readonly period = 5000;
+  private intervalTimer = interval(this.period);
   constructor(
     protected popupService: PopupService,
     protected requestService: RequestService,
@@ -18,20 +24,39 @@ export class MatchesComponent extends MatchesBaseComponent implements OnChanges,
     super(popupService, requestService, backGroundService);
   }
 
-  public popupEarly(match: Match) {
+  ngOnInit() {
+    this.refreshMatches();
+  }
+
+  ngOnDestroy() {
+    if (this.subscriber) {
+      this.subscriber.unsubscribe();
+    }
+  }
+
+  private refreshMatches() {
+    this.subscriber = this.intervalTimer.subscribe(() => {
+      if (this.leagues.length > 0) {
+        this.requestService.refreshMatches(this.filterQuery.leagueId, this.leagues);
+      }
+    });
+  }
+
+
+  public popupEarly(match: CalculationMatch) {
     if (this.isShowEarlySettleLink(match)) {
       const src = `${this.rootURL}/sportsbook/soccer/early-settlement?matchId=${match.matchId}`;
       this.popupService.openAndHandlePopup(src, Language.EarlyPopupTitle, '790px', '600px', match);
     }
   }
 
-  public popupFastMarkets(match: Match) {
+  public popupFastMarkets(match: CalculationMatch) {
     if (this.isMatchNotSingleOrMp(match)) {
       this.popupService.popupFastMarkets(match);
     }
   }
 
-  public getEarlySettleBackground(match: Match) {
+  public getEarlySettleBackground(match: CalculationMatch) {
     const isRunning = !_.isNull(match.earlySettleStatus) && _.isEqual(match.earlySettleStatus.toLowerCase(), EventStatus.running.toLowerCase())
       && _.isEqual(match.eventStatus.toLowerCase(), EventStatus.completed.toLowerCase());
     const isCompleted = !_.isNull(match.earlySettleStatus) && _.isEqual(match.earlySettleStatus.toLowerCase(), EventStatus.completed.toLowerCase());
@@ -39,13 +64,13 @@ export class MatchesComponent extends MatchesBaseComponent implements OnChanges,
     return backgroundColor;
   }
 
-  public getFastMarketsBackground(match: Match) {
+  public getFastMarketsBackground(match: CalculationMatch) {
     const isRunning = !_.isNull(match.fastMarketStatus) && _.isEqual(match.fastMarketStatus.toLowerCase(), EventStatus.running.toLowerCase());
     const fastMarketBlinking = isRunning ? this.backGroundService.completedBackground(match) : this.backGroundService.fastMarkedCompletedBackground(match);
     return match.enableFastMarket ? this.getEarlySettleBackground(match) : fastMarketBlinking;
   }
   
-  public isShowEarlySettleLink(match: Match) {
+  public isShowEarlySettleLink(match: CalculationMatch) {
     return this.backGroundService.isShowLink(match) && (this.permission.canCalculate || this.permission.canRefund || this.permission.canUncalculate) ? BackgroundColor.codeLink : '';
   }
 

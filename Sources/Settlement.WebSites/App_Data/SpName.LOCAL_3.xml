@@ -162,6 +162,16 @@
       <Setting Key="NAP_Set_WaitingSel_DBTXN" SpName="NAP_Set_WaitingSel" DbName="DBTXN.bodb02.bodbAdminNet" TimeOut="6" />
       <Setting Key="NAP_Set_WaitingSel_SITEDB" SpName="NAP_Set_WaitingSel" DbName="SITEDB.bodb02.bodbAdminNet" TimeOut="6" />
     </Function>
+
+    <Function Name="NAP_Set_AutoPayout_MatchSel">
+      <Setting Key="NAP_Set_AutoPayout_MatchSel_DBTXN" SpName="NAP_Set_AutoPayout_MatchSel" DbName="DBTXN.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Set_AutoPayout_MatchSel_SITEDB" SpName="NAP_Set_AutoPayout_MatchSel" DbName="SITEDB.bodb02.bodbAdminNet" />
+    </Function>
+
+    <Function Name="NAP_Set_AutoPayout_WaitingSel">
+      <Setting Key="NAP_Set_AutoPayout_WaitingSel_DBTXN" SpName="NAP_Set_AutoPayout_WaitingSel" DbName="DBTXN.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Set_AutoPayout_WaitingSel_SITEDB" SpName="NAP_Set_AutoPayout_WaitingSel" DbName="SITEDB.bodb02.bodbAdminNet" />
+    </Function>
     <Setting Key="NAP_Set_BetDaq_Checking_SITEDB" SpName="NAP_Set_BetDaq_Checking" DbName="SITEDB.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_BetFair_Checking_SITEDB" SpName="NAP_Set_BetFair_Checking" DbName="SITEDB.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_CheckingMarkedTransaction_SITEDB" SpName="NAP_Set_CheckingMarkedTransaction" DbName="SITEDB.bodb02.bodbAdminNet" />

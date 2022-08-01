@@ -1,4 +1,5 @@
 @import "common-style.less";
+
 .toast-container {
     position: inherit !important;
     padding-right: 5px;
@@ -20,7 +21,7 @@
     margin-top: 5px;
 }
 
-.hasDatepicker{
+.hasDatepicker {
     float: left;
 }
 
@@ -42,7 +43,7 @@
 
 .padding {
     padding: 5px;
-    padding-top: 0px!important
+    padding-top: 0px !important
 }
 
 .league {
@@ -232,10 +233,10 @@ table {
         right: 0%;
     }
 
-    .status{
+    .status {
         width: 70px;
     }
-    
+
 }
 
 .source-table {
@@ -538,7 +539,7 @@ tr.mismatched td:not(:first-child):not(:nth-child(2)):not(.calculated):not(.refu
     font-family: Tahoma, sans-serif;
     font-size: 13px;
     font-weight: 700;
-    line-height: 1.2 !important;
+    //line-height: 1.2 !important;
     cursor: move;
 }
 
@@ -634,7 +635,8 @@ tr.mismatched td:not(:first-child):not(:nth-child(2)):not(.calculated):not(.refu
 }
 
 .icon-yes {
-    background: url(@sprite) no-repeat -120px -32px;
+    background: url(@sprite) no-repeat;
+    background-position: -120px -32px;
     .icon(34px, 16px, 2px);
     cursor: pointer;
 }
@@ -642,6 +644,42 @@ tr.mismatched td:not(:first-child):not(:nth-child(2)):not(.calculated):not(.refu
 .icon-no {
     background: url(@sprite) no-repeat -64px -32px;
     .icon(34px, 16px, 2px);
+    cursor: pointer;
+}
+
+.icon-auto {
+    background: url(@sprite) no-repeat -170px -270px;
+    .icon(56px, 16px, 3px);
+    cursor: pointer;
+}
+
+.icon-auto-disable {
+    background: url(@sprite) no-repeat -230px -270px;
+    .icon(56px, 16px, 3px);
+    cursor: default;
+}
+
+.icon-off {
+    background: url(@sprite) no-repeat -84px -292px;
+    .icon(45px, 16px, 8px);
+    cursor: pointer;
+}
+
+.icon-off-disable {
+    background: url(@sprite) no-repeat -135px -292px;
+    .icon(45px, 16px, 8px);
+    cursor: pointer;
+}
+
+.icon-direct {
+    background: url(@sprite) no-repeat -35px -270px;
+    .icon(62px, 16px, 1px);
+    cursor: pointer;
+}
+
+.icon-direct-disable {
+    background: url(@sprite) no-repeat -103px -270px;
+    .icon(62px, 16px, 1px);
     cursor: pointer;
 }
 

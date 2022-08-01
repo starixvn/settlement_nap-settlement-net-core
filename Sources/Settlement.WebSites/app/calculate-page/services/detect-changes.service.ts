@@ -1,49 +1,74 @@
 import { Injectable } from '@angular/core';
-import { Match } from "../../shared/models";
 import * as _ from 'lodash';
+import { CalculationMatch } from '../models';
 
 @Injectable()
 export class DetectChangesService {
-    public detect(oldMatch: Match, newMatch: Match) {
+    public detect(oldMatch: CalculationMatch, newMatch: CalculationMatch) {
         return oldMatch.matchId === newMatch.matchId
-        && (this.isInfoDifferent(oldMatch, newMatch)
-        || this.isScoreDifferent(oldMatch, newMatch)
-        || this.isStatusDifferent(oldMatch, newMatch)
-        || this.isSuspenderDifferent(oldMatch, newMatch));
+            && (this.isInfoDifferent(oldMatch, newMatch)
+                || this.isScoreDifferent(oldMatch, newMatch)
+                || this.isStatusDifferent(oldMatch, newMatch)
+                || this.isSuspenderDifferent(oldMatch, newMatch));
     }
 
-    private isInfoDifferent(oldMatch: Match, newMatch: Match) {
-        return oldMatch.eventStatus !== newMatch.eventStatus
-        || oldMatch.earlySettleStatus !== newMatch.earlySettleStatus
-        || oldMatch.betStatus !== newMatch.betStatus
-        //|| !_.isEqual(oldMatch.autoCalcSetting, newMatch.autoCalcSetting)
-        || !_.isEqual(oldMatch.remark, newMatch.remark);
+    private isInfoDifferent(oldMatch: CalculationMatch, newMatch: CalculationMatch) {
+        return !_.isEqual(oldMatch.eventStatus, newMatch.eventStatus)
+            || !_.isEqual(oldMatch.earlySettleStatus, newMatch.earlySettleStatus)
+            || !_.isEqual(oldMatch.betStatus, newMatch.betStatus)
+            //|| !_.isEqual(oldMatch.autoCalcSetting, newMatch.autoCalcSetting)
+            || !_.isEqual(oldMatch.remark, newMatch.remark);
     }
 
-    private isScoreDifferent(oldMatch: Match, newMatch: Match) {
-        return oldMatch.halfTimeHomeScore !== newMatch.halfTimeHomeScore
-        || oldMatch.halfTimeAwayScore !== newMatch.halfTimeAwayScore
-        || oldMatch.finalHomeScore !== newMatch.finalHomeScore
-        || oldMatch.finalAwayScore !== newMatch.finalAwayScore;
+    private isScoreDifferent(oldMatch: CalculationMatch, newMatch: CalculationMatch) {
+        return !_.isEqual(oldMatch.halfTimeHomeScore, newMatch.halfTimeHomeScore)
+            || !_.isEqual(oldMatch.halfTimeAwayScore, newMatch.halfTimeAwayScore)
+            || !_.isEqual(oldMatch.finalHomeScore, newMatch.finalHomeScore)
+            || !_.isEqual(oldMatch.finalAwayScore, newMatch.finalAwayScore);
     }
 
-    private isStatusDifferent(oldMatch: Match, newMatch: Match) {
-        return oldMatch.isCalculatingSingle !== newMatch.isCalculatingSingle
-        || oldMatch.isCalculatingMP !== newMatch.isCalculatingMP
-        || oldMatch.isCalculated !== newMatch.isCalculated
-        || oldMatch.isRefund !== newMatch.isRefund
-        || oldMatch.isCalRefund !== newMatch.isCalRefund
-        || oldMatch.isHalfTimeCal !== newMatch.isHalfTimeCal
-        || oldMatch.isExistMarkedTicketParlay !== newMatch.isExistMarkedTicketParlay
-        || oldMatch.isExistRunningTicketParlay !== newMatch.isExistRunningTicketParlay
-        || oldMatch.isExistRunningTicket !== newMatch.isExistRunningTicket
-        || oldMatch.isExistMarkedTicket !== newMatch.isExistMarkedTicket;
+    private isStatusDifferent(oldMatch: CalculationMatch, newMatch: CalculationMatch) {
+        return !_.isEqual(oldMatch.isCalculatingSingle, newMatch.isCalculatingSingle)
+            || !_.isEqual(oldMatch.isCalculatingMP, newMatch.isCalculatingMP)
+            || !_.isEqual(oldMatch.isCalculated, newMatch.isCalculated)
+            || !_.isEqual(oldMatch.isRefund, newMatch.isRefund)
+            || !_.isEqual(oldMatch.isCalRefund, newMatch.isCalRefund)
+            || !_.isEqual(oldMatch.isHalfTimeCal, newMatch.isHalfTimeCal)
+            || !_.isEqual(oldMatch.isExistMarkedTicketParlay, newMatch.isExistMarkedTicketParlay)
+            || !_.isEqual(oldMatch.isExistRunningTicketParlay, newMatch.isExistRunningTicketParlay)
+            || !_.isEqual(oldMatch.isExistRunningTicket, newMatch.isExistRunningTicket)
+            || !_.isEqual(oldMatch.isExistMarkedTicket, newMatch.isExistMarkedTicket);
     }
 
-    private isSuspenderDifferent(oldMatch: Match, newMatch: Match) {
-        return oldMatch.suspenderHalfTime !== newMatch.suspenderHalfTime
-        || oldMatch.suspenderFullTime !== newMatch.suspenderFullTime
-        || oldMatch.autoPayoutStatus !== newMatch.autoPayoutStatus
-        || oldMatch.fastMarketStatus !== newMatch.fastMarketStatus;
+    private isSuspenderDifferent(oldMatch: CalculationMatch, newMatch: CalculationMatch) {
+        return !_.isEqual(oldMatch.suspenderHalfTime, newMatch.suspenderHalfTime)
+            || !_.isEqual(oldMatch.suspenderFullTime, newMatch.suspenderFullTime)
+            || !_.isEqual(oldMatch.autoPayoutStatus, newMatch.autoPayoutStatus)
+            || !_.isEqual(oldMatch.fastMarketStatus, newMatch.fastMarketStatus);
+    }
+
+    public detectDiffAutoCalculationMatch(oldMatch: CalculationMatch, newMatch: CalculationMatch) {
+        return oldMatch.matchId === newMatch.matchId
+            && (this.isStatusAutoCalculationDifferent(oldMatch, newMatch)
+            || this.isScoreAndTimeDifferent(oldMatch, newMatch));
+    }
+
+    private isScoreAndTimeDifferent(oldMatch: CalculationMatch, newMatch: CalculationMatch) {
+        return !_.isEqual(oldMatch.instantHomeScore, newMatch.instantHomeScore)
+            || !_.isEqual(oldMatch.instantAwayScore, newMatch.instantAwayScore)
+            || !_.isEqual(oldMatch.liveAwayScore, newMatch.liveAwayScore)
+            || !_.isEqual(oldMatch.liveHomeScore, newMatch.liveHomeScore)
+            || !_.isEqual(oldMatch.directWaitingTime, newMatch.directWaitingTime)
+            || !_.isEqual(oldMatch.instantWaitingTime, newMatch.instantWaitingTime)
+    }
+
+    private isStatusAutoCalculationDifferent(oldMatch: CalculationMatch, newMatch: CalculationMatch) {
+        return !_.isEqual(oldMatch.autoCalcSetting, newMatch.autoCalcSetting)
+        || !_.isEqual(oldMatch.instantScoreDiff, newMatch.instantScoreDiff)
+        || !_.isEqual(oldMatch.instantStatus, newMatch.instantStatus)
+        || !_.isEqual(oldMatch.instantStatusId, newMatch.instantStatusId)
+        || !_.isEqual(oldMatch.instantCalculationType, newMatch.instantCalculationType)
+        || !_.isEqual(oldMatch.isFTCalculated, newMatch.isFTCalculated)
+        || !_.isEqual(oldMatch.instantKey, newMatch.instantKey);
     }
 }

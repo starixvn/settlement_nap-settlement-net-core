@@ -1,4 +1,6 @@
 export class ReferenceAction {
-    public logDate: Date;
-    public isFailed: boolean;
+    logDate: Date;
+    isFailed: boolean;
+    actionName: string;
+    className: string;
 }

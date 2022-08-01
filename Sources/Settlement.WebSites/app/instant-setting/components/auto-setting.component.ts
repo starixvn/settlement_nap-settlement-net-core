@@ -74,7 +74,7 @@ export class AutoSettingComponent implements Template, OnInit {
       );
       this.requestService.updateSettingMatch(params).subscribe((result: Result) => {
           if (result.isSuccessful) {
-              this.closePopupService.closePopupPayoutSettingMatch(this.matchId, this.currentState);
+              this.closePopupService.angularClosePopup();
           } else {
               this.errorMessage = result.errMsg;
           }
@@ -113,7 +113,7 @@ export class AutoSettingComponent implements Template, OnInit {
       );
       this.requestService.updateSettingLeague(query).subscribe((result: Result) => {
           if (result.isSuccessful) {
-              this.closePopupService.closePopupPayoutSettingLeague(this.leagueId, this.currentState, isApplyAll);
+              this.closePopupService.angularClosePopup();
           } else {
               this.errorMessage = result.errMsg;
           }

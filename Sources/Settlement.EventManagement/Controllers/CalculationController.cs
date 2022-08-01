@@ -34,20 +34,8 @@ namespace Settlement.EventManagement.Controllers
         public async Task<IActionResult> RefreshMatches(RefreshCalculationRequest request) =>
             Ok(await mediator.Send(request).ConfigureAwait(false));
 
-        //[HttpPost]
-        //[Route("filter-auto-calculate")]
-        // public async Task<IActionResult> FilterAutoCalculate(FilterAutoCalculationRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
-
-        [HttpGet]
-        [Route("filter1")]
-        public async Task<IActionResult> Filter1()
-        {
-            var request = new FilterAutoCalculationRequest
-            {
-                FromDate = Convert.ToDateTime(DateTime.Now.AddDays(-2).ToShortDateString()),
-                ToDate = DateTime.Today,
-            };
-            return Ok(await mediator.Send(request).ConfigureAwait(false));
-        }
+        [HttpPost]
+        [Route("filter-auto-calculate")]
+        public async Task<IActionResult> FilterAutoCalculate(FilterAutoCalculationRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
     }
 }

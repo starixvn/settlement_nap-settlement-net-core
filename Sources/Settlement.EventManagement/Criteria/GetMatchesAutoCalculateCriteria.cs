@@ -1,6 +1,6 @@
-﻿using Fanex.Data.Repository;
-using System;
+﻿using System;
 using Fanex.Data;
+using Fanex.Data.Repository;
 
 namespace Settlement.EventManagement.Criteria
 {

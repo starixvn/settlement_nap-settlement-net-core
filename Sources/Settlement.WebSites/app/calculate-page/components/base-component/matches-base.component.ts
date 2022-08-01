@@ -1,7 +1,7 @@
-import { Component, Input, OnChanges, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnChanges} from '@angular/core';
 import { BackGroundService, RequestService, PopupService } from '../../services';
-import { FilterQuery, League, Calculation } from '../../models';
-import { Match, Remark } from '../../../shared/models';
+import { FilterQuery, League, Calculation, CalculationMatch } from '../../models';
+import {Remark } from '../../../shared/models';
 import { Permission } from '../../../shared/models/sportsbook-sop';
 import { BackgroundColor, CalculationStatus } from '../../../shared/constants';
 import * as _ from 'lodash';
@@ -14,15 +14,12 @@ import { interval } from 'rxjs';
   selector: 'matches-base',
   template: ''
 })
-export class MatchesBaseComponent extends LeagueBaseComponent implements OnChanges, OnInit, OnDestroy {
+export class MatchesBaseComponent extends LeagueBaseComponent implements OnChanges {
   @Input() public calculation: Calculation;
   @Input() public filterQuery: FilterQuery;
   @Input() public rootURL: string;
   public leagues: League[];
   public permission: Permission;
-  private subscriber: ISubscription;
-  private readonly period = 5000;
-  private intervalTimer = interval(this.period);
   constructor(
     protected popupService: PopupService,
     protected requestService: RequestService,
@@ -35,58 +32,42 @@ export class MatchesBaseComponent extends LeagueBaseComponent implements OnChang
     this.leagues = this.calculation.leagues;
   }
 
-  ngOnInit() {
-    this.refreshMatches();
-  }
-
-  ngOnDestroy() {
-    if (this.subscriber) {
-      this.subscriber.unsubscribe();
-    }
-  }
-
-  private refreshMatches() {
-    this.subscriber = this.intervalTimer.subscribe(() => {
-      if (this.leagues.length > 0) {
-        this.requestService.refreshMatches(this.filterQuery.leagueId, this.leagues);
-      }
-    });
-  }
-
   public getLog(matchId: string) {
     this.popupService.popupLog(matchId, this.filterQuery.fromDate, this.filterQuery.toDate);
   }
 
-  public popupCalc(match: Match) {
+  public popupCalc(match: CalculationMatch) {
     const src = `${this.rootURL}/sportsbook/soccer/calculation?matchId=${match.matchId}`;
     this.popupService.openAndHandlePopup(src, Language.CalcPopupTitle, '800px', '800px', match);
   }
 
-  public popupRefund(match: Match) {
+  public popupRefund(match: CalculationMatch) {
     const src = `${this.rootURL}/sportsbook/soccer/refund?matchId=${match.matchId}`;
     this.popupService.openAndHandlePopup(src, Language.RefundPopupTitle, '790px', '600px', match);
   }
 
-  public popupChangeRemarkSetting(match: Match) {
+  public popupChangeRemarkSetting(match: CalculationMatch) {
     if (this.isChangeSetting(match)) {
       this.popupService.popupChangeRemark(match);
     }
   }
 
-  public undecidedColor(remark: Remark) {
-    return remark.isMtdHold || remark.isUndecided || remark.isUnderSettle || remark.isKeyHold ? BackgroundColor.undecidedRow : '';
+  public rowColor(remark: Remark, isEven: boolean) {
+    const backgroundRemark =  remark.isMtdHold || remark.isUndecided || remark.isUnderSettle || remark.isKeyHold ? BackgroundColor.undecidedRow : '';
+    const backGroundEven = isEven ? 'even' : '';
+    return backgroundRemark + ' ' + backGroundEven;
   }
 
 
-  public isShowCalculationLink(match: Match) {
+  public isShowCalculationLink(match: CalculationMatch) {
     return this.backGroundService.isShowLink(match) && this.permission.canCalculate ? BackgroundColor.codeLink : '';
   }
 
-  public isShowRefundLink(match: Match) {
+  public isShowRefundLink(match: CalculationMatch) {
     return this.backGroundService.isShowLink(match) && this.permission.canRefund ? BackgroundColor.codeLink : '';
   }
 
-  public isChangeSetting(match: Match) {
+  public isChangeSetting(match: CalculationMatch) {
     return match.isCalculatingSingle !== CalculationStatus.waiting && match.isCalculatingSingle !== CalculationStatus.calculating
       && match.isCalculatingMP !== CalculationStatus.waiting && match.isCalculatingMP !== CalculationStatus.calculating;
   }
