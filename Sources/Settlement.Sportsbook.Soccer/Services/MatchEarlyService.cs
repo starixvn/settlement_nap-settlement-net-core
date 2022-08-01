@@ -36,13 +36,16 @@ namespace Settlement.Sportsbook.Soccer.Services
 
         private readonly IMapper mapper;
 
+        private readonly IFetchDataService fetchDataService;
+
         public MatchEarlyServiceImp(
             IDynamicRepository repository,
             PermissionService permission,
             IMapper mapper,
             IRefDataService refDataService,
             IGoalIconService goalIconService,
-            EarlyBetTypeNameService earlyBetTypeNameService)
+            EarlyBetTypeNameService earlyBetTypeNameService,
+            IFetchDataService fetchDataService)
         {
             this.repository = repository;
             this.permission = permission;
@@ -50,6 +53,7 @@ namespace Settlement.Sportsbook.Soccer.Services
             this.refDataService = refDataService;
             this.goalIconService = goalIconService;
             this.earlyBetTypeNameService = earlyBetTypeNameService;
+            this.fetchDataService = fetchDataService;
         }
 
         public async Task<MatchEarly> GetMatch(int matchId)
@@ -64,9 +68,9 @@ namespace Settlement.Sportsbook.Soccer.Services
             matchDetail.GoalIcon = goalIconService.GetGoalIcon(goalIconQuery);
 
             var resultDetailCriteria = new GetResultDetailEarlyCriteria { MatchId = matchId };
-            var (firstResultSet, secondResultSet) = await repository.FetchMultipleAsync<ResultDetailModel, TicketCounts>(resultDetailCriteria);
+            var (firstResultSet, secondResultSet) = await fetchDataService.GetEarlyResultDetails(resultDetailCriteria);
             var resultDetail = MappingBetTypeName(firstResultSet.ToList());
-            var ticketCount = secondResultSet.FirstOrDefault() ?? new TicketCounts();
+            var ticketCount = secondResultSet;
 
             return new MatchEarly
             {

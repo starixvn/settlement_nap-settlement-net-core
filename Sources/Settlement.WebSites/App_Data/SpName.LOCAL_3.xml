@@ -178,6 +178,11 @@
       <Setting Key="NAP_Admin_Settlement_Auto_1s_Push_SITEDB" SpName="NAP_Admin_Settlement_Auto_1s_Push" DbName="SITEDB.bodb02.bodbAdminNet" />
     </Function>
 
+    <Function Name="NAP_Set_MatchSelDetail_Auto_1s">
+      <Setting Key="NAP_Set_MatchSelDetail_Auto_1s_DBTXN" SpName="NAP_Set_MatchSelDetail_Auto_1s" DbName="DBTXN.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Set_MatchSelDetail_Auto_1s_SITEDB" SpName="NAP_Set_MatchSelDetail_Auto_1s" DbName="SITEDB.bodb02.bodbAdminNet" />
+    </Function>
+
     <Setting Key="NAP_Set_BetDaq_Checking_SITEDB" SpName="NAP_Set_BetDaq_Checking" DbName="SITEDB.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_BetFair_Checking_SITEDB" SpName="NAP_Set_BetFair_Checking" DbName="SITEDB.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_CheckingMarkedTransaction_SITEDB" SpName="NAP_Set_CheckingMarkedTransaction" DbName="SITEDB.bodb02.bodbAdminNet" />

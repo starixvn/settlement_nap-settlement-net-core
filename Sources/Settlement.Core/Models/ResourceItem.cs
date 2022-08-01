@@ -5,7 +5,6 @@ namespace Settlement.Core.Models
 {
     public class ResourceItem
     {
-        private string isSettleDetermined;
 
         public ResourceItem()
         {
@@ -29,16 +28,16 @@ namespace Settlement.Core.Models
         public string OtherInfo { get; set; }
 
         [XmlAttribute("IsDetermined")]
-        public string IsSettleDetermined
+        public string Determined
         {
             get
             {
-                return isSettleDetermined;
+                return IsSettleDetermined ? "1" : "0";
             }
-            set
-            {
-                isSettleDetermined = value.IgnoreCaseEquals("true") ? "1" : "0";
-            }
+            set { }
         }
+
+        [XmlIgnore]
+        public bool IsSettleDetermined { get; set; }
     }
 }

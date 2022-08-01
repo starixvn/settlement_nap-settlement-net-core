@@ -31,7 +31,7 @@ namespace Settlement.Sportsbook.Soccer.Models
 
         protected byte ResultSetting { get; set; }
 
-        public List<string> MultipleTicketStatus { get; set; }
+        public List<string> MultipleTicketStatus { get; } = new List<string>();
 
         public ResultDetailSetting ResultSettingData => new ResultDetailSetting
         {
