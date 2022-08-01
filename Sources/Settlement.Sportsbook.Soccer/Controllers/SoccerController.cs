@@ -22,6 +22,9 @@ namespace Settlement.Sportsbook.Soccer.Controllers
         [LogRequestResponse]
         public async Task<IActionResult> GetMatchEarly(GetMatchEarlyRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
+        [Route("settle-early"), HttpPost]
+        [LogRequestResponse]
+        public async Task<IActionResult> CalculateEarly(SettleEarlyRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
         [Route("get-match"), HttpPost]
         [LogRequestResponse]

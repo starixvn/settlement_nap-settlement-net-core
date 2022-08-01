@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using AutoMapper;
 using Fanex.Data.Repository;
 using Fanex.NAP.Client;
+using Microsoft.Extensions.Configuration;
+using Microsoft.VisualBasic;
+using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.Soccer.Criteria;
@@ -47,6 +51,7 @@ namespace Settlement.Sportsbook.Soccer.Services
             this.goalIconService = goalIconService;
             this.earlyBetTypeNameService = earlyBetTypeNameService;
         }
+
         public async Task<MatchEarly> GetMatch(int matchId)
         {
             var criteria = new GetMatchDetailCriteria { MatchId = matchId };

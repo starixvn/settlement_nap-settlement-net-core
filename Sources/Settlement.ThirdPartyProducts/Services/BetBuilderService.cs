@@ -103,7 +103,7 @@ namespace Settlement.ThirdPartyProducts.Services
 
         private string CreateResources(List<ResourcesItemModel> selectedResources)
         {
-            var resources = new Resources<ResourcesItemModel>
+            var resources = new Models.Resources<ResourcesItemModel>
             {
                 ResourceItems = selectedResources
             };

@@ -17,6 +17,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using ResourceItem = Settlement.ThirdPartyProducts.Models.ResourceItem;
 
 namespace Settlement.ThirdPartyProducts.Services
 {
@@ -132,7 +133,7 @@ namespace Settlement.ThirdPartyProducts.Services
 
         private string CreateResources(List<ResourceItem> selectedResources)
         {
-            var resources = new Resources<ResourceItem>
+            var resources = new Models.Resources<ResourceItem>
             {
                 ResourceItems = selectedResources
             };

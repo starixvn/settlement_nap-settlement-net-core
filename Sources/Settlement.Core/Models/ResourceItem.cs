@@ -1,9 +1,11 @@
 ﻿using System.Xml.Serialization;
+using Kaden.Extensions;
 
-namespace Settlement.Sportsbook.Aio.Models
+namespace Settlement.Core.Models
 {
     public class ResourceItem
     {
+        private string isSettleDetermined;
 
         public ResourceItem()
         {
@@ -26,5 +28,17 @@ namespace Settlement.Sportsbook.Aio.Models
         [XmlAttribute("OtherInfo")]
         public string OtherInfo { get; set; }
 
+        [XmlAttribute("IsDetermined")]
+        public string IsSettleDetermined
+        {
+            get
+            {
+                return isSettleDetermined;
+            }
+            set
+            {
+                isSettleDetermined = value.IgnoreCaseEquals("true") ? "1" : "0";
+            }
+        }
     }
 }

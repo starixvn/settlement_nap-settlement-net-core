@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using MediatR;
 using Settlement.Core.Models;
-using Settlement.Sportsbook.OtherSports.Models;
 
 namespace Settlement.Sportsbook.OtherSports.Requests
 {

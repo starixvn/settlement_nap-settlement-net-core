@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Xml.Serialization;
 
-namespace Settlement.Sportsbook.Aio.Models
+namespace Settlement.Core.Models
 {
     [XmlRoot("Resources")]
     public class Resources<T>

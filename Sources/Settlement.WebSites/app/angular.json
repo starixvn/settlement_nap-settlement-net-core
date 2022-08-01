@@ -1129,7 +1129,7 @@
       }
     }
   },
-  "defaultProject": "soccer",
+  "defaultProject": "calculate-page",
   "schematics": {
     "@schematics/angular:component": {
       "inlineTemplate": false,

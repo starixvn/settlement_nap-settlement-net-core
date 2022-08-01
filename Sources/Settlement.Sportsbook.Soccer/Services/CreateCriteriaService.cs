@@ -1,8 +1,11 @@
-﻿using AutoMapper;
+﻿using System.Collections.Generic;
+using AutoMapper;
 using Fanex.NAP.Client.Helpers.Web;
 using Kaden.XmlConverter;
 using Microsoft.AspNetCore.Http;
+using Microsoft.VisualBasic;
 using Settlement.Core.Constants;
+using Settlement.Core.Models;
 using Settlement.Sportsbook.Soccer.Criteria;
 using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Requests;
@@ -14,6 +17,8 @@ namespace Settlement.Sportsbook.Soccer.Services
         public CalculateCriteria CreateCalculateCriteria(SettleRequest request);
 
         public CalculateCriteria CreateUnCalculateCriteria(SettleRequest request);
+
+        public CalculateEarlyCriteria CreateCalculateEarlyCriteria(SettleEarlyRequest request);
     }
 
     public class CreateCriteriaServiceImp : ICreateCriteriaService
@@ -89,6 +94,31 @@ namespace Settlement.Sportsbook.Soccer.Services
             };
 
             return criteria;
+        }
+
+        public CalculateEarlyCriteria CreateCalculateEarlyCriteria(SettleEarlyRequest request)
+        {
+            var criteria = new CalculateEarlyCriteria
+            {
+                AdminId = currentSession.UserId,
+                MatchId = request.MatchId,
+                Action = request.ActionName,
+                Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString(),
+                IsReSettledTickets = request.IsReSettledTickets,
+                SelectedResources = CreateResources(request.SelectedResources)
+            };
+
+            return criteria;
+        }
+
+        private string CreateResources(List<ResourceItem> selectedResources)
+        {
+            var resources = new Resources<ResourceItem>
+            {
+                ResourceItems = selectedResources
+            };
+
+            return xmlConvertService.Serialize(resources);
         }
 
         private string GetResourceResultCalculate(SettleRequest request)

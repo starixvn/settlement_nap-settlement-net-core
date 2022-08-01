@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Settlement.Core.Models;
+using System.Collections.Generic;
 using System.Xml.Serialization;
 
 namespace Settlement.Sportsbook.Aio.Models

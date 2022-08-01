@@ -42,6 +42,7 @@ namespace Settlement.WebSites.Configurations
             services.AddTransient<IMergeDataService, MergeDataServiceImp>();
             services.AddTransient<MatchEarlyService, MatchEarlyServiceImp>();
             services.AddTransient<EarlyBetTypeNameService, EarlyBetTypeNameServiceImp>();
+            services.AddTransient<SettleEarlyService, SettleEarlyServiceImp>();
         }
 
         public static void ConfigSoccerMediator(this IServiceCollection services)
