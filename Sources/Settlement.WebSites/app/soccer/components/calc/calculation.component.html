@@ -1,0 +1,61 @@
+<span toastContainer></span>
+<div *ngIf="match" class="calculate-popup">
+    <div *ngIf="isMatchReady">
+        <calculation-match-detail [(matchDetail)]="matchDetail" (errorMsgEmitter)="getErrorMsg($event)"></calculation-match-detail>
+        <soccer-ticket-count [ticketCounts]="match.ticketCounts"></soccer-ticket-count>
+        <goal-history [goalRecord]="matchDetail.goalRecord"></goal-history>
+        <ng-container *ngIf="hedgeMatchDetail">
+            <div class="hedge-match">
+                <input type="checkbox" [(ngModel)]="applyHedgeMatch" [disabled]="hedgeMatchDetail.isUndecided"/>
+                <label [matTooltip]="hedgeMatchDetail.isUndecided ? 'Disabled due to undecided hedge match.' : null" for="ApplyHedgeMatch">Apply for hedge match '<strong>{{hedgeMatchDetail.matchCode}}</strong>' also.</label>
+            </div>
+        </ng-container>
+       
+        <div class="calc-action">
+            <div class="row-1">
+                <div class="header">
+                    First Half
+                </div>
+                <div class="status {{halftimeTicketStatusBackground}}">
+                    {{matchDetail.htStatus}}
+                </div>
+                <div class="action-button">
+                    <button *ngIf="match.permission.canCalculate" [ngClass]="{'button float-left': true, 'button-disabled': isDisableCalculate}" [disabled]="isDisableCalculate" (click)="calculateHalfTime()">Calculate HT</button>
+                </div>
+            </div>
+            <div class="row-1">
+                <div class="header">
+                    Full Time
+                </div>
+                <div class="status {{fullTimeTicketStatusBackground}}">
+                    {{matchDetail.ftStatus}}
+                </div>
+                <div class="action-button">
+                    <button *ngIf="match.permission.canCalculate" [ngClass]="{'button float-left': true, 'button-disabled':isDisableFulltimeCalculate }" [disabled]="isDisableFulltimeCalculate" (click)="calculateFullTime()">Calculate FT</button>
+                </div>
+            </div>
+            <div class="row-2">
+                <div class="action-button">
+                    <button *ngIf="match.permission.canCalculate" [ngClass]="{'button': true, 'button-disabled': isDisableFulltimeTextbox || isDisableCalculate }" [disabled]="isDisableFulltimeTextbox || isDisableCalculate" (click)="calculateAll()">
+                        Calculate All
+                    </button>
+                    
+                    <button *ngIf="match.permission.canUncalculate" class="button" (click)="unCalculate()">
+                        Uncalculate
+                    </button>
+                    <button *ngIf="match.permission.canUncalculateInstant" [ngClass]="{'button instant': true, 'button-disabled': !matchDetail.hasInstantCompleted}" [disabled]="!matchDetail.hasInstantCompleted" (click)="unCalcInstant()">
+                        Uncalculate Ins.Settle
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="clear-both">
+        </div>
+        <resettle-checker [checked]="isReSettledTickets" (proceedEvent)="onResettleCheckboxChange($event)"></resettle-checker>
+        <refund-child-match *ngIf="match.permission.canRefund && childMatches !== null && childMatches.length > 0" [matchDetail]="matchDetail" [(childMatches)]="childMatches"></refund-child-match>
+        <fantasy *ngIf="matchDetail.isFantasyMatch" [fantasyMatch]="match.fantasyMatch" (autoFillScore)="autoFillFantasyMatch($event)" (errorMsgEmitter)="getErrorMsg($event)"></fantasy>
+    </div>
+    <div *ngIf="!isMatchReady">
+        <not-ready-match></not-ready-match>
+    </div>
+</div>

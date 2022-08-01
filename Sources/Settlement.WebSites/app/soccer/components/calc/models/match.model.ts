@@ -1,0 +1,114 @@
+import { Remark } from "../../../../shared/models";
+import { Permission, TicketCount, ResultDetail, MatchDetailBase } from '../../../models';
+
+export interface Match {
+    matchDetail: MatchDetail;
+    permission: Permission;
+    ticketCounts: TicketCount[];
+    resultDetails: ResultDetail[];
+    hedgeMatchDetail: HedgeMatchDetail;
+    fantasyMatch: FantasyMatch;
+    childMatches: ChildMatch[];
+}
+
+export interface ChildMatch {
+    matchId: number;
+    matchCode: string;
+    isExistMarkedTicket: boolean;
+    isExistRunningTicket: boolean;
+    isPending: boolean;
+    isRefund: string;
+    eventStatus: string;
+    eventStatusColor: string;
+    betStatus: string;
+    checked: boolean;
+    homeName: string;
+    awayName: string;
+}
+
+export interface HedgeMatchDetail {
+    matchId: number;
+    matchCode: string;
+    isDeterminedHedgeMatch: boolean;
+    isUndecided: boolean;
+}
+
+export interface MatchDetail extends MatchDetailBase {
+    playTime: number,
+    exHTHomeScore: number,
+    exHTAwayScore: number,
+    exFTHomeScore: number,
+    exFTAwayScore: number,
+    isFantasyMatch: boolean,
+    isInstant: boolean,
+    hasInstantCompleted: boolean,
+    confirmHT: number,
+    confirmFT: number,
+    isHtOnly: boolean,
+    isLive: boolean
+}
+
+export interface FantasyMatch {
+    fantasyMatchDetail: FantasyMatchDetail;
+    relatedMatches: FantasyRelatedMatch[];
+}
+
+export interface FantasyMatchDetail {
+    fantasyHomeTeam: string;
+    fantasyAwayTeam: string;
+}
+
+export interface FantasyRelatedMatch {
+    matchId: number;
+    matchCode: string;
+    kickOffTime: string;
+    homeId: number;
+    awayId: number;
+    homeName: string;
+    awayName: string;
+    htHomeScore: string;
+    htAwayScore: string;
+    finalHomeScore: string;
+    finalAwayScore: string;
+    remark: Remark;
+    eventStatus: string;
+    betStatus: string;
+    isDeleted: boolean;
+}
+
+export interface UndoChecking {
+    homeScore: string;
+    awayScore: string;
+    goalRecord: string;
+    isHt: boolean;
+    instantKey: number;
+    firstGoalValue: string;
+    errCode: number;
+    errMsg: string;
+}
+
+export class GoalRecord {
+    public team: string;
+    public home: number;
+    public away: number;
+
+    constructor(team: string, home: number, away: number) {
+        this.team = team;
+        this.home = home;
+        this.away = away;
+    }
+}
+
+export class Score {
+    halfTimeHomeScore: number;
+    halfTimeAwayScore: number;
+    finalHomeScore: number;
+    finalAwayScore: number;
+
+    constructor(halfTimeHomeScore: number, halfTimeAwayScore: number, finalHomeScore: number, finalAwayScore: number) {
+        this.halfTimeHomeScore = halfTimeHomeScore;
+        this.halfTimeAwayScore = halfTimeAwayScore;
+        this.finalHomeScore = finalHomeScore;
+        this.finalAwayScore = finalAwayScore;
+    }
+}

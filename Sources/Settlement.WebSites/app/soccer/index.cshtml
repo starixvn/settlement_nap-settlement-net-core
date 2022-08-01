@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    @{
+        var path = @Url.Content("~/");
+    }
+    <base href=@path />
+    <title>@ViewBag.Title</title>
+    @Styles.Render(BundleConfig.Bootstrap)
+    @Styles.Render(ManualCanculationBundle.ManualCalculationStyle)
+</head>
+<body>
+    <section>
+        <div id="calc-popup">
+            <div id="content" class="content">
+                <app-root page-type="@ViewBag.PageType" api-url="@ViewBag.ApiUrl">Loading...</app-root>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

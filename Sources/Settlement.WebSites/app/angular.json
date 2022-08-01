@@ -1034,9 +1034,101 @@
           "defaultConfiguration": "dev"
         }
       }
+    },
+    "soccer": {
+      "root": "app",
+      "sourceRoot": "soccer",
+      "projectType": "application",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "aot": true,
+            "outputPath": "../wwwroot/soccer",
+            "index": "soccer/index.html",
+            "main": "soccer/main.ts",
+            "tsConfig": "soccer/tsconfig.app.json",
+            "polyfills": "polyfills.ts",
+            "styles": [
+              "node_modules/ngx-toastr/toastr.css",
+              "shared/styles/material.style.less",
+              "shared/styles/styles.less",
+              "soccer/style.less"
+            ],
+            "allowedCommonJsDependencies": [
+              "lodash"
+           ]
+          },
+          "configurations": {
+            "dev": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
+              "optimization": false,
+              "sourceMap": true,
+              "namedChunks": true,
+              "aot": false,
+              "extractLicenses": false,
+              "vendorChunk": true,
+              "buildOptimizer": false
+            },
+            "prod": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "environments/environment.ts",
+                  "with": "environments/environment.prod.ts"
+                }
+              ]
+            },
+            "production": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "aot": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": false,
+              "deployUrl": "soccer/"
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "proxyConfig": "proxy.conf.json",
+            "port": 5001,
+            "aot": false
+          },
+          "configurations": {
+            "dev": {
+              "browserTarget": "soccer:build:dev"
+            },
+            "prod": {
+              "browserTarget": "soccer:build:prod"
+            }
+          },
+          "defaultConfiguration": "dev"
+        }
+      }
     }
   },
-  "defaultProject": "calculate-page",
+  "defaultProject": "soccer",
   "schematics": {
     "@schematics/angular:component": {
       "inlineTemplate": false,

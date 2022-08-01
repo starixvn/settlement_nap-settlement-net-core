@@ -1,0 +1,63 @@
+import { MessageBoxService, BlockUIService, HttpRequestService } from './../../../shared/services';
+import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatchDetailComponent } from './match-detail.component';
+import { HttpClientModule } from '@angular/common/http';
+import { Match } from './models';
+import { ScoreBySettlementPipe } from '../../../shared/pipes/score-by-settlement.pipe';
+
+
+describe('Soccer - MatchDetailComponent', () => {
+    let component: MatchDetailComponent;
+    let fixture: ComponentFixture<MatchDetailComponent>;
+
+    beforeEach(waitForAsync(() => {
+        TestBed.configureTestingModule({
+            imports: [HttpClientModule],
+            declarations: [MatchDetailComponent, ScoreBySettlementPipe],
+            providers: [
+                HttpRequestService,
+                BlockUIService,
+                MessageBoxService]
+        })
+            .compileComponents()
+            .then(() => {
+                const matchDetail = {
+                    matchId: 123,
+                    matchCode: null,
+                    leagueName: "Expect",
+                    kickOffTime: null,
+                    homeId: null,
+                    homeName: null,
+                    awayName: null,
+                    playTime: null,
+                    goalRecord: null,
+                    goalIcon: {
+                        homeGoal: null,
+                        awayGoal: null,
+                        halfTimeHomeGoal: null,
+                        halfTimeAwayGoal: null,
+                    },
+                    childMatchType: null,
+                    halfTimeAwayScore: null,
+                    halfTimeHomeScore: null,
+                    finalAwayScore: null,
+                    finalHomeScore: null
+                };
+                fixture = TestBed.createComponent(MatchDetailComponent);
+                component = fixture.componentInstance;
+                const match = new Match();
+                match.matchDetail = matchDetail;
+                component.match = match;
+                fixture.detectChanges();
+            });
+    }));
+
+    it(`should create`, () => {
+        expect(component).toBeTruthy();
+    });
+
+    it(`should return right expected matchId`, () => {
+        const matchId = 123;
+        expect(component.matchDetail.matchId).toEqual(matchId);
+    });
+});

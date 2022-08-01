@@ -1,0 +1,50 @@
+ <h1 mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragBoundary=".cdk-overlay-container" cdkDragHandle>
+     <label class="title">
+         {{data.refundType.toUpperCase()}} Confirmation
+     </label>
+     <button type="button" class="close dialog-close" (click)="close()">X</button>
+ </h1>
+ <span toastContainer></span>
+ <div class="confirm-refund">
+     <div class="content">
+         Please double check and confirm which kind of {{data.refundType.toUpperCase()}} that you need to execute on
+         this
+         match!
+     </div>
+
+     <div class="action-button">
+         <div *ngIf="!isRefundAll">
+             <button class="button refund-button" [disabled]="subButtonRefundFT.isDisableRefundFTSus"
+                 (click)="refundSus(refundAction.refundFullTime)">
+                 Refund FT (Sus)
+             </button>
+
+             <button class="button refund-button" [disabled]="subButtonRefundFT.isDisableRefundFTNotSDT" (click)="refundNotSdtAndPos(refundAction.refundFullTime)">
+                 Refund FT (Not SDT)
+             </button>
+         </div>
+         <div *ngIf="isRefundAll">
+             <button type="checkbox" class="button refund-button" [disabled]="subButtonRefundAll.isDisableRefundAllSus" (click)="refundNotSdtAndPos(refundAction.refund)">
+                 Refund All (Pos)
+             </button>
+             <button class="button refund-button" [disabled]="subButtonRefundAll.isDisableRefundAllPos"
+                 (click)="refundSus(refundAction.refund)">
+                 Refund All (Sus)
+             </button>
+         </div>
+     </div>
+     <div class="clear-both">
+     </div>
+     <div class="mark-message" *ngIf="!isRefundAll">
+         <div><b>- Refund FT (Sus)</b> Refund FT tickets together with settle determined tickets (used for suspende in
+             2H)</div>
+         <div><b>- Refund FT (Not SDT)</b> Refund all FT tickets (without settle determined tickets)</div>
+     </div>
+     <div class="mark-message" *ngIf="isRefundAll">
+         <div><b>- Refund All (Pos)</b> Refund all tickets (used for postponed match)</div>
+         <div><b>- Refund All (Sus)</b> Refund tickets together with settle determined tickets (used for suspended
+             match)
+         </div>
+     </div>
+
+ </div>

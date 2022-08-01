@@ -17,6 +17,7 @@
     "multi-sports": "ng build --configuration production --project=multi-sports",
     "calculate-page": "ng build --configuration production --project=calculate-page",
     "fast-market": "ng build --configuration production --project=fast-market",
+    "soccer": "ng build --configuration production --project=soccer",
     "start": "ng serve",
     "test": "jest --debug --no-cache tennis/components/app.component.spec.ts",
     "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand basketball/components/app.component.spec.ts",
