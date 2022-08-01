@@ -79,8 +79,7 @@ export class RefundComponent implements Soccer {
       height: '500px',
       data: {
         type,
-        action,
-        apiUrl: this.requestService.apiUrl
+        action
       }
     });
   }
@@ -91,8 +90,7 @@ export class RefundComponent implements Soccer {
       height: '350px',
       data: {
         matchId: this.matchDetail.matchId,
-        refundType: isBetDaq ? RefundType.refundBetDaq : RefundType.refundBetFair,
-        apiUrl: this.requestService.apiUrl
+        refundType: isBetDaq ? RefundType.refundBetDaq : RefundType.refundBetFair
       }
     }).afterClosed().subscribe((value) => {
       this.toastrService.overlayContainer = this.toastContainer;
@@ -156,8 +154,7 @@ export class RefundComponent implements Soccer {
       maxHeight: '230px',
       data: {
         match: this.match,
-        refundType,
-        apiUrl: this.requestService.apiUrl
+        refundType
       },
       hasBackdrop: true
     }).afterClosed().subscribe((result) => {
@@ -176,8 +173,7 @@ export class RefundComponent implements Soccer {
       maxHeight: '360px',
       data: {
         match: this.match,
-        refundType,
-        apiUrl: this.requestService.apiUrl,
+        refundType
       },
       hasBackdrop: true
     }).afterClosed().subscribe((result) => {

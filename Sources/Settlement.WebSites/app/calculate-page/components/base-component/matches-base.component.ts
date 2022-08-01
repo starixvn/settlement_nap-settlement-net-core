@@ -17,7 +17,6 @@ import { interval } from 'rxjs';
 export class MatchesBaseComponent extends LeagueBaseComponent implements OnChanges {
   @Input() public calculation: Calculation;
   @Input() public filterQuery: FilterQuery;
-  @Input() public rootURL: string;
   public leagues: League[];
   public permission: Permission;
   constructor(
@@ -37,12 +36,12 @@ export class MatchesBaseComponent extends LeagueBaseComponent implements OnChang
   }
 
   public popupCalc(match: CalculationMatch) {
-    const src = `${this.rootURL}/sportsbook/soccer/calculation?matchId=${match.matchId}`;
+    const src = `apps/soccer-recalculate?matchId=${match.matchId}`;
     this.popupService.openAndHandlePopup(src, Language.CalcPopupTitle, '800px', '800px', match);
   }
 
   public popupRefund(match: CalculationMatch) {
-    const src = `${this.rootURL}/sportsbook/soccer/refund?matchId=${match.matchId}`;
+    const src = `apps/soccer-refund?matchId=${match.matchId}`;
     this.popupService.openAndHandlePopup(src, Language.RefundPopupTitle, '790px', '600px', match);
   }
 

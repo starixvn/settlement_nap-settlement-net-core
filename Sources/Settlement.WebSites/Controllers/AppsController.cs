@@ -47,6 +47,24 @@ namespace Settlement.WebSites.Controllers
             return SetView("Fast Market", string.Empty, ViewPath.FastMarket);
         }
 
+        [HttpGet("soccer-early")]
+        public IActionResult SoccerEarly()
+        {
+            return SetView("Early Settlement", PagesType.EarlySettle, ViewPath.Soccer);
+        }
+
+        [HttpGet("soccer-recalculate")]
+        public IActionResult SoccerRecalculate()
+        {
+            return SetView("Soccer Calculation", PagesType.Recalculate, ViewPath.Soccer);
+        }
+
+        [HttpGet("soccer-refund")]
+        public IActionResult SoccerRefund()
+        {
+            return SetView("Soccer Refund", PagesType.Refund, ViewPath.Soccer);
+        }
+
         private ActionResult SetView(string title, string pageType, string viewName)
         {
             ViewBag.Environment = configuration.GetSection("Environment").Value;

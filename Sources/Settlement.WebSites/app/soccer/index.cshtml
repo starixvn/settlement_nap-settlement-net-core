@@ -1,21 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    @{
-        var path = @Url.Content("~/");
+     @{
+        var path = @ViewBag.NetCoreRootUrl;
     }
-    <base href=@path />
+    <base href="@path/" />
     <title>@ViewBag.Title</title>
-    @Styles.Render(BundleConfig.Bootstrap)
-    @Styles.Render(ManualCanculationBundle.ManualCalculationStyle)
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
-    <section>
-        <div id="calc-popup">
-            <div id="content" class="content">
-                <app-root page-type="@ViewBag.PageType" api-url="@ViewBag.ApiUrl">Loading...</app-root>
-            </div>
-        </div>
-    </section>
+    <div class="calc-popup">
+        <app-root page-type="@ViewBag.PageType">Loading...</app-root>
+    </div>
 </body>
 </html>

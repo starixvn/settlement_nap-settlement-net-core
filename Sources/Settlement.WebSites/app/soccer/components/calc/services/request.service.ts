@@ -4,7 +4,7 @@ import { InstantCalculationQuery, SettleQuery } from "../models/query.model";
 
 @Injectable()
 export class RequestService {
-    public apiUrl: string;
+    private soccerApi = 'api/soccer';
     constructor(private readonly httpRequestService: HttpRequestService) {}
 
     public getMatch(matchId: number) {
@@ -12,7 +12,7 @@ export class RequestService {
             matchId,
             isRefundPage: false
         };
-        return this.httpRequestService.postJson(query, `${this.apiUrl}/api/soccer/get-match`);
+        return this.httpRequestService.postJson(query, `${this.soccerApi}/get-match`);
     }
 
     public checkNewStatus(matchId: number, actionName: string) {
@@ -21,7 +21,7 @@ export class RequestService {
             actionName
         };
 
-        return this.httpRequestService.postJson(query, `${this.apiUrl}/api/soccer/check-status`);
+        return this.httpRequestService.postJson(query, `${this.soccerApi}/check-status`);
     }
 
     public getLastestMatchResult(matchId: number) {
@@ -29,11 +29,11 @@ export class RequestService {
             matchId
         };
 
-        return this.httpRequestService.postJson(query, `${this.apiUrl}/api/soccer/get-lastest-match-detail`);
+        return this.httpRequestService.postJson(query, `${this.soccerApi}/get-lastest-match-detail`);
     }
 
     public calculate(query: SettleQuery) {
-        return this.httpRequestService.postJson(query, `${this.apiUrl}/api/soccer/calculate`);
+        return this.httpRequestService.postJson(query, `${this.soccerApi}/calculate`);
     }
 
     public undoCheckingScore(matchId: number) {
@@ -41,11 +41,10 @@ export class RequestService {
             matchId,
         };
 
-        return this.httpRequestService.postJson(query, `${this.apiUrl}/api/soccer/undo-checking-score`);
+        return this.httpRequestService.postJson(query, `${this.soccerApi}/undo-checking-score`);
     }
 
     public pushInstantScore(query: InstantCalculationQuery) {
-        return this.httpRequestService.postJson(query, `${this.apiUrl}/api/soccer/push-instant-score`);
+        return this.httpRequestService.postJson(query, `${this.soccerApi}/push-instant-score`);
     }
-
 }

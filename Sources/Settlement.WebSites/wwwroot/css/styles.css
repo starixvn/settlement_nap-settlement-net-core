@@ -7,56 +7,53 @@
 /********************************************************/
 /*                     Functions                        */
 /********************************************************/
-.content {
-  /********************************************************/
-  /*                      GRID                            */
-  /********************************************************/
-  /* Icon: first goal and last goal*/
-  /*--- Scroll Content ---*/
-}
-.content .head-table,
-.content thead {
+/********************************************************/
+/*                      GRID                            */
+/********************************************************/
+.head-table,
+thead {
   background-color: #295091;
   border: 1px solid #CBC9CA;
   padding-right: 15px;
 }
-.content .first-last-goal {
+/* Icon: first goal and last goal*/
+.first-last-goal {
   background: url("images/sprite.png") no-repeat -5px -189px;
   width: 33px;
   height: 16px;
   float: left;
 }
-.content .first-goal {
+.first-goal {
   background: url("images/sprite.png") no-repeat -5px -221px;
   width: 16px;
   height: 16px;
   float: left;
 }
-.content .last-goal {
+.last-goal {
   background: url("images/sprite.png") no-repeat -5px -204px;
   width: 16px;
   height: 16px;
   float: left;
 }
-.content .ht-first-last-goal {
+.ht-first-last-goal {
   background: url("images/sprite.png") no-repeat -5px -236px;
   width: 33px;
   height: 16px;
   float: left;
 }
-.content .ht-last-goal {
+.ht-last-goal {
   background: url("images/sprite.png") no-repeat -5px -271px;
   width: 16px;
   height: 16px;
   float: left;
 }
-.content .ht-first-goal {
+.ht-first-goal {
   background: url("images/sprite.png") no-repeat -5px -254px;
   width: 16px;
   height: 16px;
   float: left;
 }
-.content .table-calculation {
+.table-calculation {
   border-collapse: collapse;
   width: 100%;
   min-width: 1000px;
@@ -68,48 +65,48 @@
   /********************************************************/
   /*--- style link on grid ---*/
 }
-.content .table-calculation th {
+.table-calculation th {
   border-right: 1px solid #CBC9CA;
   font-weight: normal;
   vertical-align: middle;
   text-align: center;
 }
-.content .table-calculation td {
+.table-calculation td {
   border: solid 1px #CBCBCB;
   padding: 1px;
   vertical-align: middle;
 }
-.content .table-calculation td:first-child {
+.table-calculation td:first-child {
   border-left: solid 1px #C8C8C8;
 }
-.content .table-calculation thead {
+.table-calculation thead {
   color: white;
 }
-.content .table-calculation tbody {
+.table-calculation tbody {
   background: #FAFAFA;
 }
-.content .table-calculation tbody .even {
+.table-calculation tbody .even {
   background-color: #e5ebf2;
 }
-.content .table-calculation .league-name {
+.table-calculation .league-name {
   font-weight: bold;
   text-align: left;
   line-height: 7px;
   height: 21px;
 }
-.content .table-calculation .league-name td {
+.table-calculation .league-name td {
   color: #1d3968;
   background-color: #CCC;
   vertical-align: middle;
   border: 0;
 }
-.content .table-calculation .league-name td > input[type="checkbox"] {
+.table-calculation .league-name td > input[type="checkbox"] {
   margin-top: 0;
 }
-.content .table-calculation .league-name div {
+.table-calculation .league-name div {
   background: url("images/sprite.png") no-repeat;
 }
-.content .table-calculation .league-name div.leagues-icon-refresh {
+.table-calculation .league-name div.leagues-icon-refresh {
   background-position: -31px -62px;
   width: 16px;
   height: 14px;
@@ -118,31 +115,31 @@
   display: block;
   cursor: pointer;
 }
-.content .table-calculation .league-name div.leagues-icon-refresh:hover {
+.table-calculation .league-name div.leagues-icon-refresh:hover {
   background-position: -49px -62px;
 }
-.content .table-calculation .code {
+.table-calculation .code {
   min-width: 100px;
   width: 100px;
 }
-.content .table-calculation .kick-off-time {
+.table-calculation .kick-off-time {
   min-width: 70px;
   width: 70px;
 }
-.content .table-calculation .event {
+.table-calculation .event {
   min-width: 190px;
 }
-.content .table-calculation .group-score {
+.table-calculation .group-score {
   border-bottom: 1px solid #cbc9ca;
 }
-.content .table-calculation .event-bold {
+.table-calculation .event-bold {
   font-weight: bold;
 }
-.content .table-calculation .match-name {
+.table-calculation .match-name {
   text-align: left;
   min-width: 82px;
 }
-.content .table-calculation .match-home {
+.table-calculation .match-home {
   font-weight: bold;
   color: #6678E0;
   font-size: 12px;
@@ -150,10 +147,10 @@
   text-align: left;
   float: left;
 }
-.content .table-calculation .match-home.muay-thai {
+.table-calculation .match-home.muay-thai {
   color: #c00;
 }
-.content .table-calculation .match-away {
+.table-calculation .match-away {
   font-weight: bold;
   color: #008D95;
   font-size: 12px;
@@ -161,206 +158,207 @@
   text-align: left;
   float: left;
 }
-.content .table-calculation .match-away.muay-thai {
+.table-calculation .match-away.muay-thai {
   color: #4169e1;
 }
-.content .table-calculation .score {
+.table-calculation .score {
   min-width: 38px;
   width: 38px;
 }
-.content .table-calculation .score-game {
+.table-calculation .score-game {
   min-width: 42px;
   width: 42px;
 }
-.content .table-calculation .score-betstatus {
+.table-calculation .score-betstatus {
   min-width: 25px;
   width: 25px;
 }
-.content .table-calculation .event-status,
-.content .table-calculation .auto-status,
-.content .table-calculation .fast-market {
+.table-calculation .event-status,
+.table-calculation .auto-status,
+.table-calculation .fast-market {
   text-transform: capitalize;
   min-width: 68px;
   width: 68px;
 }
-.content .table-calculation .waiting {
+.table-calculation .waiting {
   font-weight: bold;
   color: Purple;
 }
-.content .table-calculation .calculating {
+.table-calculation .calculating {
   font-weight: bold;
   color: Red;
 }
-.content .table-calculation .header-action {
+.table-calculation .header-action {
   min-width: 160px;
   width: 160px;
 }
-.content .table-calculation .refund-column,
-.content .table-calculation .calc-column {
+.table-calculation .refund-column,
+.table-calculation .calc-column {
   min-width: 80px;
   width: 80px;
 }
-.content .table-calculation .calc-mp,
-.content .table-calculation .bet-count {
+.table-calculation .calc-mp,
+.table-calculation .bet-count {
   min-width: 65px;
   width: 65px;
 }
-.content .table-calculation .calc-mp-button {
+.table-calculation .calc-mp-button {
   margin: 0 auto;
   background: url("images/sprite.png") no-repeat -8px -169px;
   width: 62px;
   height: 19px;
 }
-.content .table-calculation .calc-mp-button:hover {
+.table-calculation .calc-mp-button:hover {
   background: url("images/sprite.png") no-repeat -73px -169px;
   cursor: pointer;
 }
-.content .table-calculation .remark {
+.table-calculation .remark {
   min-width: 120px;
   width: 120px;
 }
-.content .table-calculation .remark-status,
-.content .table-calculation .auto-setting-status {
+.table-calculation .remark-status,
+.table-calculation .auto-setting-status {
   min-width: 120px;
   width: 120px;
 }
-.content .table-calculation .remark-status div.auto-setting,
-.content .table-calculation .auto-setting-status div.auto-setting {
+.table-calculation .remark-status div.auto-setting,
+.table-calculation .auto-setting-status div.auto-setting {
   background: none;
 }
-.content .table-calculation .remark-status div.icon-yes,
-.content .table-calculation .auto-setting-status div.icon-yes {
+.table-calculation .remark-status div.icon-yes,
+.table-calculation .auto-setting-status div.icon-yes {
   background-position: -120px -32px;
   height: 14px;
   margin-left: 4px;
   width: 34px;
 }
-.content .table-calculation .remark-status div.icon-no,
-.content .table-calculation .auto-setting-status div.icon-no {
+.table-calculation .remark-status div.icon-no,
+.table-calculation .auto-setting-status div.icon-no {
   background-position: -64px -32px;
   height: 14px;
   margin-left: 4px;
   width: 34px;
 }
-.content .table-calculation .remark-status div.icon-no-disable,
-.content .table-calculation .auto-setting-status div.icon-no-disable {
+.table-calculation .remark-status div.icon-no-disable,
+.table-calculation .auto-setting-status div.icon-no-disable {
   background-position: -8px -32px;
   height: 14px;
   margin-left: 4px;
   width: 34px;
   cursor: default;
 }
-.content .table-calculation .remark-status div.icon-yes-disable,
-.content .table-calculation .auto-setting-status div.icon-yes-disable {
+.table-calculation .remark-status div.icon-yes-disable,
+.table-calculation .auto-setting-status div.icon-yes-disable {
   background-position: -234px -292px;
   height: 14px;
   margin-left: 4px;
   width: 34px;
 }
-.content .table-calculation .remark-status .act-change-setting,
-.content .table-calculation .auto-setting-status .act-change-setting {
+.table-calculation .remark-status .act-change-setting,
+.table-calculation .auto-setting-status .act-change-setting {
   color: #599ced;
   text-decoration: none;
 }
-.content .table-calculation .remark-status .act-change-setting:hover,
-.content .table-calculation .auto-setting-status .act-change-setting:hover {
+.table-calculation .remark-status .act-change-setting:hover,
+.table-calculation .auto-setting-status .act-change-setting:hover {
   color: #D2592D;
 }
-.content .table-calculation .remark-status .title,
-.content .table-calculation .auto-setting-status .title {
+.table-calculation .remark-status .title,
+.table-calculation .auto-setting-status .title {
   cursor: pointer;
 }
-.content .table-calculation .remark-status .setting-checkbox,
-.content .table-calculation .auto-setting-status .setting-checkbox {
+.table-calculation .remark-status .setting-checkbox,
+.table-calculation .auto-setting-status .setting-checkbox {
   background: url('images/check-box.png') no-repeat;
   width: 17px;
   height: 17px;
   margin-left: 14px;
 }
-.content .table-calculation .remark-status .setting-checkbox.checked,
-.content .table-calculation .auto-setting-status .setting-checkbox.checked {
+.table-calculation .remark-status .setting-checkbox.checked,
+.table-calculation .auto-setting-status .setting-checkbox.checked {
   background-position: 0 -17px;
 }
-.content .table-calculation .confirm {
+.table-calculation .confirm {
   min-width: 155px;
   border-bottom: 1px solid #CBC9CA;
 }
-.content .table-calculation .confirm-ht {
+.table-calculation .confirm-ht {
   min-width: 75px;
   width: 75px;
 }
-.content .table-calculation .confirm-ft {
+.table-calculation .confirm-ft {
   min-width: 80px;
   width: 80px;
 }
-.content .table-calculation .confirm-ht-only {
+.table-calculation .confirm-ht-only {
   min-width: 155px;
   width: 155px;
 }
-.content .table-calculation .hidden-checkbox {
+.table-calculation .hidden-checkbox {
   display: none;
 }
-.content .table-calculation .color-away-team {
+.table-calculation .color-away-team {
   color: #000;
 }
-.content .table-calculation .final-score {
+.table-calculation .final-score {
   color: #FD537D;
 }
-.content .table-calculation .final-score input[type="text"] {
+.table-calculation .final-score input[type="text"] {
   color: #FD537D;
 }
-.content .table-calculation .ht-score-color,
-.content .table-calculation .total-game-color {
+.table-calculation .ht-score-color,
+.table-calculation .total-game-color {
   color: #6877B4;
 }
-.content .table-calculation .bg-pending {
+.table-calculation .bg-pending {
   background-color: Yellow;
 }
-.content .table-calculation .bg-postponed {
+.table-calculation .bg-postponed {
   background-color: #FDFD87;
 }
-.content .table-calculation .bg-calculated {
+.table-calculation .bg-calculated {
   background-color: #dac093;
 }
-.content .table-calculation .bg-marked {
+.table-calculation .bg-marked {
   background-color: #FF0000;
 }
-.content .table-calculation .bg-refund {
+.table-calculation .bg-refund {
   background-color: #aeeff9;
 }
-.content .table-calculation .bg-halftime {
+.table-calculation .bg-halftime {
   background-color: #FBBDFB;
 }
-.content .table-calculation .bg-row-undecided {
+.table-calculation .bg-row-undecided {
   background-color: #f8d7d7 !important;
 }
-.content .table-calculation .bg-auto-settle-running {
+.table-calculation .bg-auto-settle-running {
   background-color: #FFCCCC;
 }
-.content .table-calculation .bg-invalid {
+.table-calculation .bg-invalid {
   background-color: #f00;
 }
-.content .table-calculation .no-link {
+.table-calculation .no-link {
   color: #599CED;
   cursor: default;
   text-decoration: none;
 }
-.content .table-calculation .code-link {
+.table-calculation .code-link {
   color: #599CED;
   cursor: pointer;
   text-decoration: none;
 }
-.content .table-calculation .code-link:hover {
+.table-calculation .code-link:hover {
   color: #D2592D;
   text-decoration: underline;
 }
-.content .table-calculation .first-letter {
+.table-calculation .first-letter {
   text-transform: capitalize;
 }
-.content .table-calculation .bg-result-confirmed {
+.table-calculation .bg-result-confirmed {
   background-color: #6FCF97;
 }
-.content .content-scroll {
+/*--- Scroll Content ---*/
+.content-scroll {
   width: 100%;
   max-height: 740px;
   overflow-y: scroll;
@@ -368,20 +366,20 @@
   overflow-x: hidden;
   -ms-overflow-x: hidden;
 }
-.content .content-scroll#large-page {
+.content-scroll#large-page {
   max-height: 770px;
 }
-.content .empty-data {
+.empty-data {
   background-color: #fff;
   border: solid 1px #CBC9CA;
   border-top: 0;
   text-align: center;
   padding: 4px;
 }
-.content .not-consistent {
+.not-consistent {
   background: #FF0000 !important;
 }
-.content .external-inconsistent {
+.external-inconsistent {
   background: #FF0000 !important;
 }
 /********************************************************/
@@ -1166,7 +1164,7 @@ header .notification-container .notificationWrap .error-notify .see-all {
 /********************************************************/
 /*			RECALCULATION TABLE             */
 /********************************************************/
-#calc-popup {
+.calc-popup {
   width: 770px;
   background: #fff;
   padding-left: 5px;
@@ -1176,35 +1174,35 @@ header .notification-container .notificationWrap .error-notify .see-all {
   /* Ticket count*/
   /* Goal Record */
 }
-#calc-popup a {
+.calc-popup a {
   color: #0273FF;
   cursor: pointer;
 }
-#calc-popup a:hover {
+.calc-popup a:hover {
   color: #D2592D;
 }
-#calc-popup .table-calculation {
+.calc-popup .table-calculation {
   min-width: 768px;
 }
-#calc-popup .table-calculation .score {
+.calc-popup .table-calculation .score {
   width: 40px;
 }
-#calc-popup .table-calculation .ex-score {
+.calc-popup .table-calculation .ex-score {
   width: 50px !important;
 }
-#calc-popup .table-calculation .score-betstatus {
+.calc-popup .table-calculation .score-betstatus {
   width: 23px;
 }
-#calc-popup .table-calculation .marked-refund {
+.calc-popup .table-calculation .marked-refund {
   min-width: 70px;
   width: 70px;
 }
-#calc-popup .code-link {
+.calc-popup .code-link {
   color: #000;
   cursor: default;
   text-decoration: none;
 }
-#calc-popup .set-directly {
+.calc-popup .set-directly {
   height: 25px;
   width: 768px;
   padding-top: 3px;
@@ -1214,66 +1212,66 @@ header .notification-container .notificationWrap .error-notify .see-all {
   text-align: right;
   padding-right: 2px;
 }
-#calc-popup .set-directly input[type="checkbox"] {
+.calc-popup .set-directly input[type="checkbox"] {
   margin: 0;
 }
-#calc-popup .set-directly > * {
+.calc-popup .set-directly > * {
   vertical-align: middle;
   cursor: pointer;
 }
-#calc-popup .set-directly > div {
+.calc-popup .set-directly > div {
   float: left;
 }
-#calc-popup .hedge-match {
+.calc-popup .hedge-match {
   width: fit-content;
   padding-right: 5px;
 }
-#calc-popup .hedge-match input {
+.calc-popup .hedge-match input {
   margin: inherit;
   vertical-align: middle;
 }
-#calc-popup .hedge-match label {
+.calc-popup .hedge-match label {
   vertical-align: middle;
   padding-left: 3px;
 }
-#calc-popup .check-box {
+.calc-popup .check-box {
   padding-left: 35px;
 }
-#calc-popup .check-box > * {
+.calc-popup .check-box > * {
   margin: 0;
   vertical-align: middle;
 }
-#calc-popup #score-confirm {
+.calc-popup #score-confirm {
   padding-left: 5px;
 }
-#calc-popup #score-confirm .set-directly {
+.calc-popup #score-confirm .set-directly {
   height: 27px;
   width: 490px;
 }
-#calc-popup .table-ticket {
+.calc-popup .table-ticket {
   width: 410px;
   margin-top: 9px;
 }
-#calc-popup .table-ticket thead {
+.calc-popup .table-ticket thead {
   color: #fff;
   text-align: center;
 }
-#calc-popup .table-ticket tbody {
+.calc-popup .table-ticket tbody {
   text-align: right;
 }
-#calc-popup .table-ticket td {
+.calc-popup .table-ticket td {
   border: solid 1px #cbcbcb;
   width: 100px;
   padding-right: 5px;
 }
-#calc-popup .table-ticket td:nth-child(1) {
+.calc-popup .table-ticket td:nth-child(1) {
   min-width: 70px;
   border: solid 1px #cbcbcb;
   background-color: #295091;
   text-align: center;
   color: #fff;
 }
-#calc-popup .calc-action {
+.calc-popup .calc-action {
   width: 479px;
   border: 1px solid #c8c8c8;
   margin: 10px 0;
@@ -1282,7 +1280,7 @@ header .notification-container .notificationWrap .error-notify .see-all {
   font-weight: bold;
   color: #FFF;
 }
-#calc-popup .calc-action .show-button .button {
+.calc-popup .calc-action .show-button .button {
   border-radius: 2px;
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
@@ -1305,7 +1303,7 @@ header .notification-container .notificationWrap .error-notify .see-all {
   font-weight: normal;
   margin: 3px 0 0 5px;
 }
-#calc-popup .calc-action .show-button .button:hover {
+.calc-popup .calc-action .show-button .button:hover {
   color: #fff;
   background: #3b5fa3;
   background: -moz-linear-gradient(#5a7dc1, #3b5fa3) #3b5fa3;
@@ -1316,8 +1314,8 @@ header .notification-container .notificationWrap .error-notify .see-all {
   cursor: pointer;
   text-decoration: none;
 }
-#calc-popup .calc-action .show-button .button:active,
-#calc-popup .calc-action .show-button .button:focus {
+.calc-popup .calc-action .show-button .button:active,
+.calc-popup .calc-action .show-button .button:focus {
   background: #5578be;
   background: -moz-linear-gradient(#5a7dc1, #5578be) #5578be;
   background: -webkit-linear-gradient(#5a7dc1, #5578be) #5578be;
@@ -1325,7 +1323,7 @@ header .notification-container .notificationWrap .error-notify .see-all {
   -moz-box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.1);
   -webkit-box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.1);
 }
-#calc-popup .calc-action .show-button .button:hover {
+.calc-popup .calc-action .show-button .button:hover {
   color: #fff;
   background: #3b5fa3;
   background: -moz-linear-gradient(#5a7dc1, #3b5fa3) #3b5fa3;
@@ -1336,8 +1334,8 @@ header .notification-container .notificationWrap .error-notify .see-all {
   cursor: pointer;
   text-decoration: none;
 }
-#calc-popup .calc-action .show-button .button:active,
-#calc-popup .calc-action .show-button .button:focus {
+.calc-popup .calc-action .show-button .button:active,
+.calc-popup .calc-action .show-button .button:focus {
   background: #5578be;
   background: -moz-linear-gradient(#5a7dc1, #5578be) #5578be;
   background: -webkit-linear-gradient(#5a7dc1, #5578be) #5578be;
@@ -1345,7 +1343,7 @@ header .notification-container .notificationWrap .error-notify .see-all {
   -moz-box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.1);
   -webkit-box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.1);
 }
-#calc-popup .calc-action .show-button .button-disabled {
+.calc-popup .calc-action .show-button .button-disabled {
   border-radius: 2px;
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
@@ -1367,7 +1365,7 @@ header .notification-container .notificationWrap .error-notify .see-all {
   font-weight: normal;
   margin: 3px 0 0 5px;
 }
-#calc-popup .calc-action .show-button .button-disabled:hover {
+.calc-popup .calc-action .show-button .button-disabled:hover {
   cursor: default;
   text-shadow: 0 1px rgba(0, 0, 0, 0.3);
   box-shadow: inset 0px 1px 1px rgba(255, 255, 255, 0.25);
@@ -1379,39 +1377,39 @@ header .notification-container .notificationWrap .error-notify .see-all {
   background: -webkit-linear-gradient(#a9a9a9, #6A6A6A) #6A6A6A;
   color: #D5D5D5;
 }
-#calc-popup .calc-action .row-1 {
+.calc-popup .calc-action .row-1 {
   clear: both;
   color: #000;
 }
-#calc-popup .calc-action .row-1 div {
+.calc-popup .calc-action .row-1 div {
   border-bottom: 1px solid #c8c8c8;
   font-weight: bold;
   float: left;
   height: 29px;
   width: 80px;
 }
-#calc-popup .calc-action .row-1 .header {
+.calc-popup .calc-action .row-1 .header {
   line-height: 27px;
 }
-#calc-popup .calc-action .row-1 .status {
+.calc-popup .calc-action .row-1 .status {
   width: 138px;
   line-height: 27px;
   border-left: 1px solid #c8c8c8;
   border-right: 1px solid #c8c8c8;
 }
-#calc-popup .calc-action .row-1 .status.bg-calculated {
+.calc-popup .calc-action .row-1 .status.bg-calculated {
   background-color: #dac093;
 }
-#calc-popup .calc-action .row-1 .status.bg-marked {
+.calc-popup .calc-action .row-1 .status.bg-marked {
   background-color: #FF0000;
 }
-#calc-popup .calc-action .row-1 .status.bg-refund {
+.calc-popup .calc-action .row-1 .status.bg-refund {
   background-color: #aeeff9;
 }
-#calc-popup .calc-action .row-1 .action-button {
+.calc-popup .calc-action .row-1 .action-button {
   width: 258px;
 }
-#calc-popup .calc-action .row-1 .action-button .button {
+.calc-popup .calc-action .row-1 .action-button .button {
   border-radius: 2px;
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
@@ -1434,7 +1432,7 @@ header .notification-container .notificationWrap .error-notify .see-all {
   font-weight: normal;
   margin: 3px 0 0 5px;
 }
-#calc-popup .calc-action .row-1 .action-button .button:hover {
+.calc-popup .calc-action .row-1 .action-button .button:hover {
   color: #fff;
   background: #3b5fa3;
   background: -moz-linear-gradient(#5a7dc1, #3b5fa3) #3b5fa3;
@@ -1445,8 +1443,8 @@ header .notification-container .notificationWrap .error-notify .see-all {
   cursor: pointer;
   text-decoration: none;
 }
-#calc-popup .calc-action .row-1 .action-button .button:active,
-#calc-popup .calc-action .row-1 .action-button .button:focus {
+.calc-popup .calc-action .row-1 .action-button .button:active,
+.calc-popup .calc-action .row-1 .action-button .button:focus {
   background: #5578be;
   background: -moz-linear-gradient(#5a7dc1, #5578be) #5578be;
   background: -webkit-linear-gradient(#5a7dc1, #5578be) #5578be;
@@ -1454,7 +1452,7 @@ header .notification-container .notificationWrap .error-notify .see-all {
   -moz-box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.1);
   -webkit-box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.1);
 }
-#calc-popup .calc-action .row-1 .action-button .button:hover {
+.calc-popup .calc-action .row-1 .action-button .button:hover {
   color: #fff;
   background: #3b5fa3;
   background: -moz-linear-gradient(#5a7dc1, #3b5fa3) #3b5fa3;
@@ -1465,8 +1463,8 @@ header .notification-container .notificationWrap .error-notify .see-all {
   cursor: pointer;
   text-decoration: none;
 }
-#calc-popup .calc-action .row-1 .action-button .button:active,
-#calc-popup .calc-action .row-1 .action-button .button:focus {
+.calc-popup .calc-action .row-1 .action-button .button:active,
+.calc-popup .calc-action .row-1 .action-button .button:focus {
   background: #5578be;
   background: -moz-linear-gradient(#5a7dc1, #5578be) #5578be;
   background: -webkit-linear-gradient(#5a7dc1, #5578be) #5578be;
@@ -1474,7 +1472,7 @@ header .notification-container .notificationWrap .error-notify .see-all {
   -moz-box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.1);
   -webkit-box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.1);
 }
-#calc-popup .calc-action .row-1 .action-button .button-disabled {
+.calc-popup .calc-action .row-1 .action-button .button-disabled {
   border-radius: 2px;
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
@@ -1496,7 +1494,7 @@ header .notification-container .notificationWrap .error-notify .see-all {
   font-weight: normal;
   margin: 3px 0 0 5px;
 }
-#calc-popup .calc-action .row-1 .action-button .button-disabled:hover {
+.calc-popup .calc-action .row-1 .action-button .button-disabled:hover {
   cursor: default;
   text-shadow: 0 1px rgba(0, 0, 0, 0.3);
   box-shadow: inset 0px 1px 1px rgba(255, 255, 255, 0.25);
@@ -1508,20 +1506,20 @@ header .notification-container .notificationWrap .error-notify .see-all {
   background: -webkit-linear-gradient(#a9a9a9, #6A6A6A) #6A6A6A;
   color: #D5D5D5;
 }
-#calc-popup .calc-action .row-1 .action-button input[type="checkbox"] {
+.calc-popup .calc-action .row-1 .action-button input[type="checkbox"] {
   margin: 8px 0 0;
 }
-#calc-popup .calc-action .row-2 {
+.calc-popup .calc-action .row-2 {
   height: 30px;
   clear: both;
   padding: 1px 0 0 122px;
 }
-#calc-popup .calc-action .row-2 .action-button input,
-#calc-popup .calc-action .row-2 .action-button div {
+.calc-popup .calc-action .row-2 .action-button input,
+.calc-popup .calc-action .row-2 .action-button div {
   float: left;
   margin: 3px;
 }
-#calc-popup .calc-action .row-2 .action-button .button {
+.calc-popup .calc-action .row-2 .action-button .button {
   border-radius: 2px;
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
@@ -1544,7 +1542,7 @@ header .notification-container .notificationWrap .error-notify .see-all {
   font-weight: normal;
   margin: 3px 0 0 5px;
 }
-#calc-popup .calc-action .row-2 .action-button .button:hover {
+.calc-popup .calc-action .row-2 .action-button .button:hover {
   color: #fff;
   background: #3b5fa3;
   background: -moz-linear-gradient(#5a7dc1, #3b5fa3) #3b5fa3;
@@ -1555,8 +1553,8 @@ header .notification-container .notificationWrap .error-notify .see-all {
   cursor: pointer;
   text-decoration: none;
 }
-#calc-popup .calc-action .row-2 .action-button .button:active,
-#calc-popup .calc-action .row-2 .action-button .button:focus {
+.calc-popup .calc-action .row-2 .action-button .button:active,
+.calc-popup .calc-action .row-2 .action-button .button:focus {
   background: #5578be;
   background: -moz-linear-gradient(#5a7dc1, #5578be) #5578be;
   background: -webkit-linear-gradient(#5a7dc1, #5578be) #5578be;
@@ -1564,7 +1562,7 @@ header .notification-container .notificationWrap .error-notify .see-all {
   -moz-box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.1);
   -webkit-box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.1);
 }
-#calc-popup .calc-action .row-2 .action-button .button:hover {
+.calc-popup .calc-action .row-2 .action-button .button:hover {
   color: #fff;
   background: #3b5fa3;
   background: -moz-linear-gradient(#5a7dc1, #3b5fa3) #3b5fa3;
@@ -1575,8 +1573,8 @@ header .notification-container .notificationWrap .error-notify .see-all {
   cursor: pointer;
   text-decoration: none;
 }
-#calc-popup .calc-action .row-2 .action-button .button:active,
-#calc-popup .calc-action .row-2 .action-button .button:focus {
+.calc-popup .calc-action .row-2 .action-button .button:active,
+.calc-popup .calc-action .row-2 .action-button .button:focus {
   background: #5578be;
   background: -moz-linear-gradient(#5a7dc1, #5578be) #5578be;
   background: -webkit-linear-gradient(#5a7dc1, #5578be) #5578be;
@@ -1584,7 +1582,7 @@ header .notification-container .notificationWrap .error-notify .see-all {
   -moz-box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.1);
   -webkit-box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.1);
 }
-#calc-popup .calc-action .row-2 .action-button .button-disabled {
+.calc-popup .calc-action .row-2 .action-button .button-disabled {
   border-radius: 2px;
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
@@ -1606,7 +1604,7 @@ header .notification-container .notificationWrap .error-notify .see-all {
   font-weight: normal;
   margin: 3px 0 0 5px;
 }
-#calc-popup .calc-action .row-2 .action-button .button-disabled:hover {
+.calc-popup .calc-action .row-2 .action-button .button-disabled:hover {
   cursor: default;
   text-shadow: 0 1px rgba(0, 0, 0, 0.3);
   box-shadow: inset 0px 1px 1px rgba(255, 255, 255, 0.25);
@@ -1618,10 +1616,10 @@ header .notification-container .notificationWrap .error-notify .see-all {
   background: -webkit-linear-gradient(#a9a9a9, #6A6A6A) #6A6A6A;
   color: #D5D5D5;
 }
-#calc-popup .calc-action .row-2 .action-button .instant {
+.calc-popup .calc-action .row-2 .action-button .instant {
   width: 130px;
 }
-#calc-popup .calc-action .row-2 input[type="button"]:disabled {
+.calc-popup .calc-action .row-2 input[type="button"]:disabled {
   border-radius: 2px;
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
@@ -1642,7 +1640,7 @@ header .notification-container .notificationWrap .error-notify .see-all {
   cursor: default;
   font-weight: normal;
 }
-#calc-popup .calc-action .row-2 input[type="button"]:disabled:hover {
+.calc-popup .calc-action .row-2 input[type="button"]:disabled:hover {
   cursor: default;
   text-shadow: 0 1px rgba(0, 0, 0, 0.3);
   box-shadow: inset 0px 1px 1px rgba(255, 255, 255, 0.25);
@@ -1654,22 +1652,22 @@ header .notification-container .notificationWrap .error-notify .see-all {
   background: -webkit-linear-gradient(#a9a9a9, #6A6A6A) #6A6A6A;
   color: #D5D5D5;
 }
-#calc-popup .ticket-count {
+.calc-popup .ticket-count {
   width: 485px;
   float: left;
 }
-#calc-popup .goal-column {
+.calc-popup .goal-column {
   width: 280px;
   float: left;
 }
-#calc-popup .goal-record {
+.calc-popup .goal-record {
   float: right;
   width: 134px;
   text-align: center;
   clear: right;
   margin: 10px -4px 0 0;
 }
-#calc-popup .goal-record .header {
+.calc-popup .goal-record .header {
   width: 134px;
   background-color: #295091;
   height: 23px;
@@ -1678,7 +1676,7 @@ header .notification-container .notificationWrap .error-notify .see-all {
   font-weight: bold;
   clear: both;
 }
-#calc-popup .goal-record .content .goal-row div {
+.calc-popup .goal-record .content .goal-row div {
   border-bottom: 1px solid #C8C8C8;
   border-right: 1px solid #C8C8C8;
   line-height: 22px;
@@ -1687,18 +1685,18 @@ header .notification-container .notificationWrap .error-notify .see-all {
   text-align: center;
   float: left;
 }
-#calc-popup .goal-record .content .goal-row .goal-score {
+.calc-popup .goal-record .content .goal-row .goal-score {
   border-right: 1px solid #BDBDBD;
   border-left: 1px solid #C8C8C8;
 }
-#calc-popup .ht-goal-record {
+.calc-popup .ht-goal-record {
   float: left;
   width: 134px;
   text-align: center;
   clear: right;
   margin: 10px -4px 0 0;
 }
-#calc-popup .ht-goal-record .header {
+.calc-popup .ht-goal-record .header {
   width: 134px;
   background-color: #295091;
   height: 23px;
@@ -1707,7 +1705,7 @@ header .notification-container .notificationWrap .error-notify .see-all {
   font-weight: bold;
   clear: both;
 }
-#calc-popup .ht-goal-record .content .goal-row div {
+.calc-popup .ht-goal-record .content .goal-row div {
   border-bottom: 1px solid #C8C8C8;
   border-right: 1px solid #C8C8C8;
   line-height: 22px;
@@ -1716,11 +1714,11 @@ header .notification-container .notificationWrap .error-notify .see-all {
   text-align: center;
   float: left;
 }
-#calc-popup .ht-goal-record .content .goal-row .goal-score {
+.calc-popup .ht-goal-record .content .goal-row .goal-score {
   border-right: 1px solid #BDBDBD;
   border-left: 1px solid #C8C8C8;
 }
-#calc-popup .refund-action .row {
+.calc-popup .refund-action .row {
   border: 1px solid #c8c8c8;
   margin: 10px 0;
   text-align: center;
@@ -1728,44 +1726,44 @@ header .notification-container .notificationWrap .error-notify .see-all {
   font-weight: bold;
   width: 332px;
 }
-#calc-popup .refund-action .row .row-1 {
+.calc-popup .refund-action .row .row-1 {
   clear: both;
   color: #000;
 }
-#calc-popup .refund-action .row .row-1 div {
+.calc-popup .refund-action .row .row-1 div {
   border-bottom: 1px solid #c8c8c8;
   font-weight: bold;
   float: left;
   height: 29px;
   width: 70px;
 }
-#calc-popup .refund-action .row .row-1 .header {
+.calc-popup .refund-action .row .row-1 .header {
   line-height: 27px;
 }
-#calc-popup .refund-action .row .row-1 .action-button {
+.calc-popup .refund-action .row .row-1 .action-button {
   border-left: 1px solid #c8c8c8;
   width: 130px;
   line-height: 27px;
 }
-#calc-popup .refund-action .row .row-2 {
+.calc-popup .refund-action .row .row-2 {
   height: 30px;
   clear: both;
   padding: 1px 0 0 30px;
 }
-#calc-popup .refund-action .row .action-button input[type="checkbox"] {
+.calc-popup .refund-action .row .action-button input[type="checkbox"] {
   margin: 8px 0 0;
 }
-#calc-popup .refund-action .display-button {
+.calc-popup .refund-action .display-button {
   padding-top: 10px;
   padding-left: 2px;
 }
-#calc-popup .refund-action .display-button .check-box {
+.calc-popup .refund-action .display-button .check-box {
   padding-left: 10px;
 }
-#calc-popup .refund-action .display-button .line-height-refund {
+.calc-popup .refund-action .display-button .line-height-refund {
   padding-top: 7px;
 }
-#calc-popup .refund-action .display-button .icon {
+.calc-popup .refund-action .display-button .icon {
   background: url("images/sprite.png") no-repeat -116px -68px;
   width: 4px;
   height: 4px;
@@ -1773,16 +1771,16 @@ header .notification-container .notificationWrap .error-notify .see-all {
   margin-top: 10px;
   padding-left: 10px;
 }
-#calc-popup .refund-action .display-button .normal-tickets {
+.calc-popup .refund-action .display-button .normal-tickets {
   font-size: 12px;
   font-weight: bold;
   color: #3b5b98;
   padding-top: 3px;
 }
-#calc-popup .refund-action .display-button #IbcSpecificBettypes {
+.calc-popup .refund-action .display-button #IbcSpecificBettypes {
   display: none;
 }
-#calc-popup .refund-action .refund-button {
+.calc-popup .refund-action .refund-button {
   border-radius: 2px;
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
@@ -1803,7 +1801,7 @@ header .notification-container .notificationWrap .error-notify .see-all {
   float: left;
   margin: 3px;
 }
-#calc-popup .refund-action .refund-button:hover {
+.calc-popup .refund-action .refund-button:hover {
   color: #4E70B8;
   background: #FFFFFF;
   background: -moz-linear-gradient(#E0E0E0, #FFFFFF) #FFFFFF;
@@ -1814,8 +1812,8 @@ header .notification-container .notificationWrap .error-notify .see-all {
   cursor: pointer;
   text-decoration: none;
 }
-#calc-popup .refund-action .refund-button:active,
-#calc-popup .refund-action .refund-button:focus {
+.calc-popup .refund-action .refund-button:active,
+.calc-popup .refund-action .refund-button:focus {
   background: #FFFFFF;
   background: -moz-linear-gradient(#E0E0E0, #FFFFFF) #FFFFFF;
   background: -webkit-linear-gradient(#E0E0E0, #FFFFFF) #FFFFFF;
@@ -1823,7 +1821,7 @@ header .notification-container .notificationWrap .error-notify .see-all {
   -moz-box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.1);
   -webkit-box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.1);
 }
-#calc-popup .refund-action .refund-button.button-disabled {
+.calc-popup .refund-action .refund-button.button-disabled {
   border-radius: 2px;
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
@@ -1844,7 +1842,7 @@ header .notification-container .notificationWrap .error-notify .see-all {
   cursor: default;
   font-weight: normal;
 }
-#calc-popup .refund-action .refund-button.button-disabled:hover {
+.calc-popup .refund-action .refund-button.button-disabled:hover {
   cursor: default;
   text-shadow: 0 1px rgba(0, 0, 0, 0.3);
   box-shadow: inset 0px 1px 1px rgba(255, 255, 255, 0.25);
@@ -1856,7 +1854,7 @@ header .notification-container .notificationWrap .error-notify .see-all {
   background: -webkit-linear-gradient(#a9a9a9, #6A6A6A) #6A6A6A;
   color: #D5D5D5;
 }
-#calc-popup .refund-action input[type="button"]:disabled {
+.calc-popup .refund-action input[type="button"]:disabled {
   border-radius: 2px;
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
@@ -1880,7 +1878,7 @@ header .notification-container .notificationWrap .error-notify .see-all {
   float: left;
   font-weight: bold;
 }
-#calc-popup .refund-action input[type="button"]:disabled:hover {
+.calc-popup .refund-action input[type="button"]:disabled:hover {
   cursor: default;
   text-shadow: 0 1px rgba(0, 0, 0, 0.3);
   box-shadow: inset 0px 1px 1px rgba(255, 255, 255, 0.25);
@@ -1892,7 +1890,7 @@ header .notification-container .notificationWrap .error-notify .see-all {
   background: -webkit-linear-gradient(#a9a9a9, #6A6A6A) #6A6A6A;
   color: #D5D5D5;
 }
-#calc-popup .refund-action .betdaq-button {
+.calc-popup .refund-action .betdaq-button {
   border-radius: 2px;
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
@@ -1913,7 +1911,7 @@ header .notification-container .notificationWrap .error-notify .see-all {
   float: left;
   margin: 3px;
 }
-#calc-popup .refund-action .betdaq-button:hover {
+.calc-popup .refund-action .betdaq-button:hover {
   color: #4E70B8;
   background: #FFFFFF;
   background: -moz-linear-gradient(#E0E0E0, #FFFFFF) #FFFFFF;
@@ -1924,8 +1922,8 @@ header .notification-container .notificationWrap .error-notify .see-all {
   cursor: pointer;
   text-decoration: none;
 }
-#calc-popup .refund-action .betdaq-button:active,
-#calc-popup .refund-action .betdaq-button:focus {
+.calc-popup .refund-action .betdaq-button:active,
+.calc-popup .refund-action .betdaq-button:focus {
   background: #FFFFFF;
   background: -moz-linear-gradient(#E0E0E0, #FFFFFF) #FFFFFF;
   background: -webkit-linear-gradient(#E0E0E0, #FFFFFF) #FFFFFF;
@@ -1933,7 +1931,7 @@ header .notification-container .notificationWrap .error-notify .see-all {
   -moz-box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.1);
   -webkit-box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.1);
 }
-#calc-popup .refund-action .refund-all-fglf {
+.calc-popup .refund-action .refund-all-fglf {
   border-radius: 2px;
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
@@ -1954,7 +1952,7 @@ header .notification-container .notificationWrap .error-notify .see-all {
   float: left;
   margin: 3px;
 }
-#calc-popup .refund-action .refund-all-fglf:hover {
+.calc-popup .refund-action .refund-all-fglf:hover {
   color: #4E70B8;
   background: #FFFFFF;
   background: -moz-linear-gradient(#E0E0E0, #FFFFFF) #FFFFFF;
@@ -1965,8 +1963,8 @@ header .notification-container .notificationWrap .error-notify .see-all {
   cursor: pointer;
   text-decoration: none;
 }
-#calc-popup .refund-action .refund-all-fglf:active,
-#calc-popup .refund-action .refund-all-fglf:focus {
+.calc-popup .refund-action .refund-all-fglf:active,
+.calc-popup .refund-action .refund-all-fglf:focus {
   background: #FFFFFF;
   background: -moz-linear-gradient(#E0E0E0, #FFFFFF) #FFFFFF;
   background: -webkit-linear-gradient(#E0E0E0, #FFFFFF) #FFFFFF;
@@ -1974,13 +1972,13 @@ header .notification-container .notificationWrap .error-notify .see-all {
   -moz-box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.1);
   -webkit-box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.1);
 }
-#calc-popup input[type="text"] {
+.calc-popup input[type="text"] {
   height: 18px;
   border: 1px solid #888888;
   text-align: center;
   font-size: 11px;
 }
-#calc-popup .game-result {
+.calc-popup .game-result {
   max-height: 300px;
   min-width: 784px;
   overflow-y: scroll;
@@ -1988,10 +1986,10 @@ header .notification-container .notificationWrap .error-notify .see-all {
   overflow-x: hidden;
   -ms-overflow-x: hidden;
 }
-#calc-popup .game-result .table-calculation {
+.calc-popup .game-result .table-calculation {
   min-width: 747px;
 }
-#calc-popup .icon-copy {
+.calc-popup .icon-copy {
   background: url("images/sprite.png") no-repeat -213px -347px;
   width: 10px;
   height: 12px;
@@ -2001,13 +1999,13 @@ header .notification-container .notificationWrap .error-notify .see-all {
   margin-left: -15px;
   cursor: pointer;
 }
-#calc-popup .icon-copy:hover {
+.calc-popup .icon-copy:hover {
   background: url("images/sprite.png") no-repeat -198px -347px;
 }
-#calc-popup .table-provider .final-score {
+.calc-popup .table-provider .final-score {
   color: #fd537d;
 }
-#calc-popup .disable-copy {
+.calc-popup .disable-copy {
   cursor: default !important;
   background: url("images/sprite.png") no-repeat -198px -347px !important;
 }
@@ -2021,15 +2019,15 @@ header .notification-container .notificationWrap .error-notify .see-all {
   width: 30px;
 }
 /*--- Popup: Score-confirm for BetDaq Ticket Over/Under ---*/
-#score-confirm {
+.score-confirm {
   display: none;
   background: #fff;
 }
-#score-confirm .button-line > div {
+.score-confirm .button-line > div {
   margin: 3px 0;
   float: left;
 }
-#score-confirm .button-disabled {
+.score-confirm .button-disabled {
   border-radius: 2px;
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
@@ -2050,7 +2048,7 @@ header .notification-container .notificationWrap .error-notify .see-all {
   cursor: default;
   font-weight: normal;
 }
-#score-confirm .button-disabled:hover {
+.score-confirm .button-disabled:hover {
   cursor: default;
   text-shadow: 0 1px rgba(0, 0, 0, 0.3);
   box-shadow: inset 0px 1px 1px rgba(255, 255, 255, 0.25);
@@ -2062,26 +2060,26 @@ header .notification-container .notificationWrap .error-notify .see-all {
   background: -webkit-linear-gradient(#a9a9a9, #6A6A6A) #6A6A6A;
   color: #D5D5D5;
 }
-#score-confirm .warning-message {
+.score-confirm .warning-message {
   color: Red;
   text-align: center;
   font-size: 12px;
 }
-#score-confirm .mark-message {
+.score-confirm .mark-message {
   padding-left: 3px;
   clear: both;
 }
-#score-confirm table.table-calculation {
+.score-confirm table.table-calculation {
   width: 490px;
   min-width: 490px;
 }
-#score-confirm input[type="text"] {
+.score-confirm input[type="text"] {
   height: 18px;
   border: 1px solid #888888;
   text-align: center;
   font-size: 11px;
 }
-#score-confirm .set-directly {
+.score-confirm .set-directly {
   height: 20px;
   width: 490px;
   border-left: solid 1px #C8C8C8;
@@ -2090,41 +2088,41 @@ header .notification-container .notificationWrap .error-notify .see-all {
   text-align: right;
   padding-right: 5px;
 }
-#score-confirm .set-directly > * {
+.score-confirm .set-directly > * {
   vertical-align: middle;
   cursor: pointer;
   margin: 0;
 }
-#score-confirm.score-confirm-special {
+.score-confirm.score-confirm-special {
   font-size: 11px;
   padding-left: 5px;
 }
-#score-confirm.score-confirm-special input,
-#score-confirm.score-confirm-special button {
+.score-confirm.score-confirm-special input,
+.score-confirm.score-confirm-special button {
   font-family: Tahoma, Arial, Helvetica, sans-serif;
 }
-#score-confirm.score-confirm-special .set-directly {
+.score-confirm.score-confirm-special .set-directly {
   width: 690px;
 }
-#score-confirm.score-confirm-special .set-directly > div {
+.score-confirm.score-confirm-special .set-directly > div {
   float: left;
 }
-#score-confirm.score-confirm-special a {
+.score-confirm.score-confirm-special a {
   color: #0273ff;
 }
-#score-confirm.score-confirm-special .table-calculation {
+.score-confirm.score-confirm-special .table-calculation {
   width: 690px;
 }
-#score-confirm.score-confirm-special .game-result {
+.score-confirm.score-confirm-special .game-result {
   max-height: 300px;
   overflow-y: scroll;
   margin-left: 30px;
   margin-right: 100px;
 }
-#score-confirm.score-confirm-special .game-result .table-calculation {
+.score-confirm.score-confirm-special .game-result .table-calculation {
   width: 545px;
 }
-#score-confirm.score-confirm-special .icon-square {
+.score-confirm.score-confirm-special .icon-square {
   background: url("images/sprite.png") no-repeat -116px -68px;
   width: 4px;
   height: 4px;
@@ -2132,17 +2130,17 @@ header .notification-container .notificationWrap .error-notify .see-all {
   margin-top: 10px;
   padding-left: 10px;
 }
-#score-confirm.score-confirm-special .normal-tickets {
+.score-confirm.score-confirm-special .normal-tickets {
   font-size: 12px;
   font-weight: bold;
   color: #3b5b98;
   padding-top: 3px;
 }
-#score-confirm.score-confirm-special .legend {
+.score-confirm.score-confirm-special .legend {
   padding-left: 20px;
   font-size: 12px;
 }
-#score-confirm .ui-combobox {
+.score-confirm .ui-combobox {
   z-index: 2000;
 }
 #refund-all-confirmation,
@@ -2202,19 +2200,19 @@ header .notification-container .notificationWrap .error-notify .see-all {
   padding-left: 3px;
 }
 /*--- Popup: Move Betdaq Ticket ---*/
-#bet-daq > div {
+.bet-daq > div {
   background-color: #fff;
   padding: 5px 5px;
   min-width: 200px;
 }
-#bet-daq .match-name {
+.bet-daq .match-name {
   padding-top: 3px;
 }
-#bet-daq .match-name > * {
+.bet-daq .match-name > * {
   vertical-align: middle;
   cursor: pointer;
 }
-#bet-daq .available-match {
+.bet-daq .available-match {
   color: #3b5b98;
   font-weight: bold;
 }

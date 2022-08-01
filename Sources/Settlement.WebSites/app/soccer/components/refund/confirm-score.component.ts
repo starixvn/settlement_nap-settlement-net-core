@@ -51,18 +51,16 @@ export class ConfirmScoreComponent implements OnInit {
 
   constructor(private readonly verifyActionService: VerifyActionService,
     private readonly verifyMatchService :VerifyMatchService,
-    private readonly requestService: RequestService,
     private readonly dialogRef: MatDialogRef<ConfirmScoreComponent>,
     private readonly dialog: MatDialog,
     private readonly toastrService: ToastrService,
-    @Inject(MAT_DIALOG_DATA) public data: { match: Match, refundType: string, apiUrl: string }) {
+    @Inject(MAT_DIALOG_DATA) public data: { match: Match, refundType: string }) {
     this.dialog.closeAll();
     this.dialogRef.disableClose = true;
     this.dialogMessage.title = Language.RefundConfirmationBox;
   }
 
   ngOnInit(): void {
-    this.requestService.apiUrl = this.data.apiUrl;
     this.toastrService.overlayContainer = this.toastContainer;
     this.matchDetail = this.data.match.matchDetail;
     this.isRefundAll = _.isEqual(this.data.refundType, RefundType.refundAll);
@@ -87,8 +85,7 @@ export class ConfirmScoreComponent implements OnInit {
       maxHeight: '500px',
       data: {
         type,
-        action: this.refundAction,
-        apiUrl: this.data.apiUrl
+        action: this.refundAction
       }
     });
   }

@@ -1,387 +1,386 @@
-﻿.content {
-    /********************************************************/
-    /*                      GRID                            */
-    /********************************************************/
-    .head-table, thead {
-        background-color: @grid_header;
-        border: 1px solid #CBC9CA;
-        padding-right: 15px;
-    }
-    /* Icon: first goal and last goal*/
-    .first-last-goal {
-        .first_last_goal(@sprite, -5px, -189px, 33px);
-    }
+﻿
+/********************************************************/
+/*                      GRID                            */
+/********************************************************/
+.head-table, thead {
+    background-color: @grid_header;
+    border: 1px solid #CBC9CA;
+    padding-right: 15px;
+}
+/* Icon: first goal and last goal*/
+.first-last-goal {
+    .first_last_goal(@sprite, -5px, -189px, 33px);
+}
 
-    .first-goal {
-        .first_last_goal(@sprite, -5px, -221px, 16px);
-    }
+.first-goal {
+    .first_last_goal(@sprite, -5px, -221px, 16px);
+}
 
-    .last-goal {
-        .first_last_goal(@sprite, -5px, -204px, 16px);
-    }
+.last-goal {
+    .first_last_goal(@sprite, -5px, -204px, 16px);
+}
 
-    .ht-first-last-goal {
-        .first_last_goal(@sprite, -5px, -236px, 33px);
-    }
+.ht-first-last-goal {
+    .first_last_goal(@sprite, -5px, -236px, 33px);
+}
 
-    .ht-last-goal {
-        .first_last_goal(@sprite, -5px, -271px, 16px);
-    }
+.ht-last-goal {
+    .first_last_goal(@sprite, -5px, -271px, 16px);
+}
 
-    .ht-first-goal {
-        .first_last_goal(@sprite, -5px, -254px, 16px);
-    }
+.ht-first-goal {
+    .first_last_goal(@sprite, -5px, -254px, 16px);
+}
 
-    .table-calculation {
-        border-collapse: collapse;
-        width: 100%;
-        min-width: 1000px;
-        line-height: 17px;
+.table-calculation {
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 1000px;
+    line-height: 17px;
+    text-align: center;
+
+    th {
+        border-right: 1px solid #CBC9CA;
+        font-weight: normal;
+        vertical-align: middle;
         text-align: center;
+    }
 
-        th {
-            border-right: 1px solid #CBC9CA;
-            font-weight: normal;
-            vertical-align: middle;
-            text-align: center;
+    td {
+        border: solid 1px #CBCBCB;
+        padding: 1px;
+        vertical-align: middle;
+
+        &:first-child {
+            border-left: solid 1px #C8C8C8;
         }
+    }
+
+    thead {
+        color: white;
+    }
+
+    tbody {
+        background: #FAFAFA;
+
+        .even {
+            background-color: #e5ebf2;
+        }
+    }
+    /*--- Calculation columns ---*/
+    .league-name {
+        font-weight: bold;
+        text-align: left;
+        line-height: 7px;
+        height: 21px;
 
         td {
-            border: solid 1px #CBCBCB;
-            padding: 1px;
+            color: #1d3968;
+            background-color: @grid_league;
             vertical-align: middle;
+            border: 0;
 
-            &:first-child {
-                border-left: solid 1px #C8C8C8;
+            > input[type="checkbox"] {
+                margin-top: 0;
             }
         }
 
-        thead {
-            color: white;
-        }
+        div {
+            background: url(@sprite) no-repeat;
 
-        tbody {
-            background: #FAFAFA;
-
-            .even {
-                background-color: #e5ebf2;
-            }
-        }
-        /*--- Calculation columns ---*/
-        .league-name {
-            font-weight: bold;
-            text-align: left;
-            line-height: 7px;
-            height: 21px;
-
-            td {
-                color: #1d3968;
-                background-color: @grid_league;
-                vertical-align: middle;
-                border: 0;
-
-                > input[type="checkbox"] {
-                    margin-top: 0;
-                }
-            }
-
-            div {
-                background: url(@sprite) no-repeat;
-
-                &.leagues-icon-refresh {
-                    background-position: -31px -62px;
-                    width: 16px;
-                    height: 14px;
-                    margin-right: 3px;
-                    float: right;
-                    display: block;
-                    cursor: pointer;
-
-                    &:hover {
-                        background-position: -49px -62px;
-                    }
-                }
-            }
-        }
-
-        .code {
-            .min_width(100px);
-        }
-
-        .kick-off-time {
-            .min_width(70px);
-        }
-
-        .event {
-            min-width: 190px;
-        }
-
-        .group-score {
-            border-bottom: 1px solid #cbc9ca;
-        }
-
-        .event-bold {
-            font-weight: bold;
-        }
-
-        .match-name {
-            text-align: left;
-            min-width: 82px;
-        }
-
-        .match-home {
-            font-weight: bold;
-            color: #6678E0;
-            .match_home_away(12px,3px,left);
-
-            &.muay-thai {
-                color: #c00;
-            }
-        }
-
-        .match-away {
-            font-weight: bold;
-            color: #008D95;
-            .match_home_away(12px,3px,left);
-
-            &.muay-thai {
-                color: #4169e1;
-            }
-        }
-
-        .score {
-            .min_width(38px);
-        }
-
-        .score-game {
-            .min_width(42px);
-        }
-
-        .score-betstatus {
-            .min_width(25px);
-        }
-
-        .event-status, .auto-status, .fast-market {
-            text-transform: capitalize;
-            .min_width(68px);
-        }
-
-        .waiting {
-            font-weight: bold;
-            color: Purple;
-        }
-
-        .calculating {
-            font-weight: bold;
-            color: Red;
-        }
-
-        .header-action {
-            .min_width(160px);
-        }
-
-        .refund-column, .calc-column {
-            .min_width(80px);
-        }
-
-        .calc-mp, .bet-count {
-            .min_width(65px);
-        }
-
-        .calc-mp-button {
-            margin: 0 auto;
-            background: url(@sprite) no-repeat -8px -169px;
-            width: 62px;
-            height: 19px;
-
-            &:hover {
-                background: url(@sprite) no-repeat -73px -169px;
+            &.leagues-icon-refresh {
+                background-position: -31px -62px;
+                width: 16px;
+                height: 14px;
+                margin-right: 3px;
+                float: right;
+                display: block;
                 cursor: pointer;
-            }
-        }
-
-        .remark {
-            .min_width(120px);
-        }
-
-        .remark-status, .auto-setting-status {
-            .min_width(120px);
-
-            div {
-                &.auto-setting {
-                    background: none;
-                }
-
-                &.icon-yes {
-                    background-position: -120px -32px;
-                    .icon();
-                }
-
-                &.icon-no {
-                    background-position: -64px -32px;
-                    .icon();
-                }
-
-                &.icon-no-disable {
-                    background-position: -8px -32px;
-                    .icon();
-                    cursor: default;
-                }
-
-                &.icon-yes-disable {
-                    background-position: -234px -292px;
-                    .icon();
-                }
-            }
-
-            .act-change-setting {
-                color: #599ced;
-                text-decoration: none;
 
                 &:hover {
-                    color: #D2592D;
-                }
-            }
-
-            .title {
-                cursor: pointer;
-            }
-
-            .setting-checkbox {
-                background: url('images/check-box.png') no-repeat;
-                width: 17px;
-                height: 17px;
-                margin-left: 14px;
-
-                &.checked {
-                    background-position: 0 -17px;
+                    background-position: -49px -62px;
                 }
             }
         }
+    }
 
-        .confirm {
-            min-width: 155px;
-            border-bottom: 1px solid @remark_border_bottom;
+    .code {
+        .min_width(100px);
+    }
+
+    .kick-off-time {
+        .min_width(70px);
+    }
+
+    .event {
+        min-width: 190px;
+    }
+
+    .group-score {
+        border-bottom: 1px solid #cbc9ca;
+    }
+
+    .event-bold {
+        font-weight: bold;
+    }
+
+    .match-name {
+        text-align: left;
+        min-width: 82px;
+    }
+
+    .match-home {
+        font-weight: bold;
+        color: #6678E0;
+        .match_home_away(12px,3px,left);
+
+        &.muay-thai {
+            color: #c00;
         }
+    }
 
-        .confirm-ht {
-            .min_width(75px);
+    .match-away {
+        font-weight: bold;
+        color: #008D95;
+        .match_home_away(12px,3px,left);
+
+        &.muay-thai {
+            color: #4169e1;
         }
+    }
 
-        .confirm-ft {
-            .min_width(80px);
+    .score {
+        .min_width(38px);
+    }
+
+    .score-game {
+        .min_width(42px);
+    }
+
+    .score-betstatus {
+        .min_width(25px);
+    }
+
+    .event-status, .auto-status, .fast-market {
+        text-transform: capitalize;
+        .min_width(68px);
+    }
+
+    .waiting {
+        font-weight: bold;
+        color: Purple;
+    }
+
+    .calculating {
+        font-weight: bold;
+        color: Red;
+    }
+
+    .header-action {
+        .min_width(160px);
+    }
+
+    .refund-column, .calc-column {
+        .min_width(80px);
+    }
+
+    .calc-mp, .bet-count {
+        .min_width(65px);
+    }
+
+    .calc-mp-button {
+        margin: 0 auto;
+        background: url(@sprite) no-repeat -8px -169px;
+        width: 62px;
+        height: 19px;
+
+        &:hover {
+            background: url(@sprite) no-repeat -73px -169px;
+            cursor: pointer;
         }
+    }
 
-        .confirm-ht-only {
-            .min_width(155px);
-        }
+    .remark {
+        .min_width(120px);
+    }
 
-        .hidden-checkbox {
-            display: none;
-        }
-        /********************************************************/
-        /*				     RULE                               */
-        /********************************************************/
-        .color-away-team {
-            color: @color_away_team;
-        }
+    .remark-status, .auto-setting-status {
+        .min_width(120px);
 
-        .final-score {
-            color: @final_score_color;
+        div {
+            &.auto-setting {
+                background: none;
+            }
 
-            input[type="text"] {
-                color: @final_score_color;
+            &.icon-yes {
+                background-position: -120px -32px;
+                .icon();
+            }
+
+            &.icon-no {
+                background-position: -64px -32px;
+                .icon();
+            }
+
+            &.icon-no-disable {
+                background-position: -8px -32px;
+                .icon();
+                cursor: default;
+            }
+
+            &.icon-yes-disable {
+                background-position: -234px -292px;
+                .icon();
             }
         }
 
-        .ht-score-color, .total-game-color {
-            color: @total_halftime_game_color;
-        }
-
-        .bg-pending {
-            background-color: @bg_pending;
-        }
-
-        .bg-postponed {
-            background-color: @bg_postponed;
-        }
-
-        .bg-calculated {
-            background-color: @bg_calculated;
-        }
-
-        .bg-marked {
-            background-color: @bg_marked;
-        }
-
-        .bg-refund {
-            background-color: @bg_refund;
-        }
-
-        .bg-halftime {
-            background-color: @bg_halftime;
-        }
-
-        .bg-row-undecided {
-            background-color: @bg_row_undecided !important;
-        }
-
-        .bg-auto-settle-running {
-            background-color: @auto_settle_running;
-        }
-
-        .bg-invalid {
-            background-color: #f00;
-        }
-        /*--- style link on grid ---*/
-        .no-link {
-            .link(@no_link,default,none);
-        }
-
-        .code-link {
-            .link(@no_link,pointer,none);
+        .act-change-setting {
+            color: #599ced;
+            text-decoration: none;
 
             &:hover {
-                color: @code_link_hover;
-                text-decoration: underline;
+                color: #D2592D;
             }
         }
 
-        .first-letter {
-            text-transform: capitalize;
+        .title {
+            cursor: pointer;
         }
 
-        .bg-result-confirmed {
-            background-color: @bg-result-confirmed;
-        }
-    }
-    /*--- Scroll Content ---*/
-    .content-scroll {
-        width: 100%;
-        max-height: 740px;
-        overflow-y: scroll;
-        -ms-overflow-y: scroll;
-        overflow-x: hidden;
-        -ms-overflow-x: hidden;
+        .setting-checkbox {
+            background: url('images/check-box.png') no-repeat;
+            width: 17px;
+            height: 17px;
+            margin-left: 14px;
 
-        &#large-page {
-            max-height: 770px;
+            &.checked {
+                background-position: 0 -17px;
+            }
         }
     }
 
-    .empty-data {
-        background-color: @empty_data_background;
-        border: solid 1px @empty_data_border;
-        border-top: 0;
-        text-align: center;
-        padding: 4px;
+    .confirm {
+        min-width: 155px;
+        border-bottom: 1px solid @remark_border_bottom;
     }
 
-    .not-consistent {
-        background: #FF0000 !important;
+    .confirm-ht {
+        .min_width(75px);
     }
 
-    .external-inconsistent {
-        background: #FF0000 !important;
+    .confirm-ft {
+        .min_width(80px);
     }
+
+    .confirm-ht-only {
+        .min_width(155px);
+    }
+
+    .hidden-checkbox {
+        display: none;
+    }
+    /********************************************************/
+    /*				     RULE                               */
+    /********************************************************/
+    .color-away-team {
+        color: @color_away_team;
+    }
+
+    .final-score {
+        color: @final_score_color;
+
+        input[type="text"] {
+            color: @final_score_color;
+        }
+    }
+
+    .ht-score-color, .total-game-color {
+        color: @total_halftime_game_color;
+    }
+
+    .bg-pending {
+        background-color: @bg_pending;
+    }
+
+    .bg-postponed {
+        background-color: @bg_postponed;
+    }
+
+    .bg-calculated {
+        background-color: @bg_calculated;
+    }
+
+    .bg-marked {
+        background-color: @bg_marked;
+    }
+
+    .bg-refund {
+        background-color: @bg_refund;
+    }
+
+    .bg-halftime {
+        background-color: @bg_halftime;
+    }
+
+    .bg-row-undecided {
+        background-color: @bg_row_undecided !important;
+    }
+
+    .bg-auto-settle-running {
+        background-color: @auto_settle_running;
+    }
+
+    .bg-invalid {
+        background-color: #f00;
+    }
+    /*--- style link on grid ---*/
+    .no-link {
+        .link(@no_link,default,none);
+    }
+
+    .code-link {
+        .link(@no_link,pointer,none);
+
+        &:hover {
+            color: @code_link_hover;
+            text-decoration: underline;
+        }
+    }
+
+    .first-letter {
+        text-transform: capitalize;
+    }
+
+    .bg-result-confirmed {
+        background-color: @bg-result-confirmed;
+    }
+}
+/*--- Scroll Content ---*/
+.content-scroll {
+    width: 100%;
+    max-height: 740px;
+    overflow-y: scroll;
+    -ms-overflow-y: scroll;
+    overflow-x: hidden;
+    -ms-overflow-x: hidden;
+
+    &#large-page {
+        max-height: 770px;
+    }
+}
+
+.empty-data {
+    background-color: @empty_data_background;
+    border: solid 1px @empty_data_border;
+    border-top: 0;
+    text-align: center;
+    padding: 4px;
+}
+
+.not-consistent {
+    background: #FF0000 !important;
+}
+
+.external-inconsistent {
+    background: #FF0000 !important;
 }

@@ -38,14 +38,13 @@ export class ConfirmRefundComponent implements OnInit {
     private readonly requestService: RequestService,
     private readonly toastrService: ToastrService,
     private readonly dialogRef: MatDialogRef<ConfirmRefundComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { match: Match, refundType: string, apiUrl: string }) {
+    @Inject(MAT_DIALOG_DATA) public data: { match: Match, refundType: string }) {
     this.dialogRef.disableClose = true;
     this.dialogMessage.title = Language.RefundConfirmationBox;
   }
 
   ngOnInit(): void {
     this.toastrService.overlayContainer = this.toastContainer;
-    this.requestService.apiUrl = this.data.apiUrl;
     this.matchDetail = this.data.match.matchDetail;
     this.isRefundAll = _.isEqual(this.data.refundType, RefundType.refundAll);
     const halfTimeStatusId = (_.find(this.data.match.resultDetails, item => _.isEqual(item.resourceId, ResourceIds.halfTime)) ??

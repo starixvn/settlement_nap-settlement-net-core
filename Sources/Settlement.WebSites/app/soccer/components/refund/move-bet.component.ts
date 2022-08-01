@@ -27,12 +27,10 @@ export class MoveBetComponent implements OnInit {
     private readonly requestService: RequestService,
     private readonly toastrService: ToastrService,
     private readonly dialogRef: MatDialogRef<MoveBetComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { matchId: number, refundType: string, apiUrl: string }
-  ) { }
+    @Inject(MAT_DIALOG_DATA) public data: { matchId: number, refundType: string }) { }
 
   async ngOnInit(): Promise<void> {
     this.toastrService.overlayContainer = this.toastContainer;
-    this.requestService.apiUrl = this.data.apiUrl;
     this.listMatch = await this.requestService.getMatchDetailThirdPartyBetTickets(this.data.matchId).toPromise();
     this.title = _.isEqual(this.data.refundType, RefundType.refundBetDaq) ? "Betdaq" : "BetFair";
 

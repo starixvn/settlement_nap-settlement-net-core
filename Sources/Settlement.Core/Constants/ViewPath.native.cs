@@ -21,5 +21,7 @@
         public const string Calculation = "~/wwwroot/calculate-page/index.cshtml";
 
         public const string FastMarket = "~/wwwroot/fast-market/index.cshtml";
+
+        public const string Soccer = "~/wwwroot/soccer/index.cshtml";
     }
 }

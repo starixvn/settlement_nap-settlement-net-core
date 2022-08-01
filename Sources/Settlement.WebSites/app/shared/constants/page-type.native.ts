@@ -1,5 +1,5 @@
 export const PageType = {
-    Calculation: "Calculation",
+    ReCalculate: "ReCalculate",
     Refund: "Refund",
     EarlySettlement: "EarlySettlement"
 }

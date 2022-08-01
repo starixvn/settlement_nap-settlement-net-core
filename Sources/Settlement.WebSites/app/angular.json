@@ -1047,14 +1047,13 @@
           "options": {
             "aot": true,
             "outputPath": "../wwwroot/soccer",
-            "index": "soccer/index.html",
+            "index": "soccer/index.cshtml",
             "main": "soccer/main.ts",
             "tsConfig": "soccer/tsconfig.app.json",
             "polyfills": "polyfills.ts",
             "styles": [
               "node_modules/ngx-toastr/toastr.css",
               "shared/styles/material.style.less",
-              "shared/styles/styles.less",
               "soccer/style.less"
             ],
             "allowedCommonJsDependencies": [

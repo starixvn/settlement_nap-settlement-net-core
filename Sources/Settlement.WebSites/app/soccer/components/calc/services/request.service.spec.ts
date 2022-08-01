@@ -23,7 +23,7 @@ describe('Soccer - request service', () => {
     beforeEach(() => {
         service = TestBed.inject(RequestService);
         httpRequestService = TestBed.inject(HttpRequestService);
-        service.apiUrl = 'Local';
+        service.soccerApi = 'Local';
     });
 
     it('should be created', () => {

@@ -6,6 +6,7 @@ import { GroupBetTypeService } from "./group-bettpe.service";
 import { SportType } from '../../../../shared/constants';
 @Injectable()
 export class HelperService {
+    private soccerApi = 'api/soccer';
     constructor(
         private readonly httpRequestService: HttpRequestService,
         private readonly closePopupService: ClosePopupService,
@@ -13,11 +14,11 @@ export class HelperService {
     ) { }
 
     public settle(query: SettleQuery) {
-        return this.httpRequestService.postJson(query, `api/soccer/settle-early`);
+        return this.httpRequestService.postJson(query, `${this.soccerApi}/settle-early`);
     }
 
     public getMatch(matchId: number) {
-        return this.httpRequestService.postJson({ matchId  }, `api/soccer/get-match-early`);
+        return this.httpRequestService.postJson({ matchId  }, `${this.soccerApi}/get-match-early`);
     }
 
     public getGroupBetType(resultDetails: ResultDetail[]) {
@@ -57,6 +58,6 @@ export class HelperService {
             isSettleDetermined: false,
             isEarly: true
         };
-        return this.httpRequestService.postJson(query, `api/soccer/check-status`, false);
+        return this.httpRequestService.postJson(query, `${this.soccerApi}/check-status`, false);
     }
 }

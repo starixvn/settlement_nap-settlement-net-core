@@ -7,7 +7,7 @@ import { RefundQuery } from "../model/query.model";
 
 @Injectable()
 export class RequestService {
-    public apiUrl: string;
+    private soccerApi = 'api/soccer';
     constructor(private readonly httpRequestService: HttpRequestService) {}
 
     public getMatch(matchId: number) {
@@ -15,7 +15,7 @@ export class RequestService {
             matchId,
             isRefundPage: true
         };
-        return this.httpRequestService.postJson(query, `${this.apiUrl}/api/soccer/get-match`);
+        return this.httpRequestService.postJson(query, `${this.soccerApi}/get-match`);
     }
 
     public checkNewStatus(matchId: number, actionName: string, isSettleAbandonedMatchIBC: boolean) {
@@ -25,7 +25,7 @@ export class RequestService {
             isSettleAbandonedMatchIBC
         };
 
-        return this.httpRequestService.postJson(query, `${this.apiUrl}/api/soccer/check-status`);
+        return this.httpRequestService.postJson(query, `${this.soccerApi}/check-status`);
     }
 
     public getSpecificBetType(type: string, action: string){
@@ -33,7 +33,7 @@ export class RequestService {
             type,
             action
         };
-        return this.httpRequestService.postJson(query, `${this.apiUrl}/api/soccer/specific-bet-type`);
+        return this.httpRequestService.postJson(query, `${this.soccerApi}/specific-bet-type`);
     }
 
     public checkingMarkedTicket(actionName: string, matchId: number) : Observable<MarkedTicketsModel> {
@@ -42,11 +42,11 @@ export class RequestService {
             actionName
         };
 
-        return this.httpRequestService.postJson(query, `${this.apiUrl}/api/soccer/checking-marked-tickets`, false);
+        return this.httpRequestService.postJson(query, `${this.soccerApi}/checking-marked-tickets`, false);
     }
 
     public refundMatch(query: RefundQuery){
-        return this.httpRequestService.postJson(query, `${this.apiUrl}/api/soccer/refund`);
+        return this.httpRequestService.postJson(query, `${this.soccerApi}/refund`);
     }
 
     public refundRunningThirdPartyTickets(matchId: number, actionName: string){
@@ -55,7 +55,7 @@ export class RequestService {
             actionName
         };
 
-        return this.httpRequestService.postJson(query, `${this.apiUrl}/api/soccer/refund-running-third-party-ticket`);
+        return this.httpRequestService.postJson(query, `${this.soccerApi}/refund-running-third-party-ticket`);
     }
 
     public getMatchDetailThirdPartyBetTickets(matchId:number): Observable<MatchMoveBet[]>{
@@ -63,7 +63,7 @@ export class RequestService {
             matchId
         };
 
-        return this.httpRequestService.postJson(query, `${this.apiUrl}/api/soccer/third-party-bet-tickets-checking`);
+        return this.httpRequestService.postJson(query, `${this.soccerApi}/third-party-bet-tickets-checking`);
     }
 
     public moveBetType(matchId:number, newMatchId: number, newMatchCode: string, actionName: string): Observable<Result>{
@@ -74,6 +74,6 @@ export class RequestService {
             actionName
         };
 
-        return this.httpRequestService.postJson(query, `${this.apiUrl}/api/soccer/move-third-party-bet-ticket`);
+        return this.httpRequestService.postJson(query, `${this.soccerApi}/move-third-party-bet-ticket`);
     }
 }
