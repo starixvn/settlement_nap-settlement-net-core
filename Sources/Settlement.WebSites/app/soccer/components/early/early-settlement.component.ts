@@ -30,8 +30,7 @@ import {
     YesNo,
     BetTypesSettleDetermined,
     CheckedSettleDetermined,
-    ResultValue,
-    ApiKeys,
+    ResultValue
 } from '../../constants';
 import {
     VerifyCalculateService,
@@ -75,7 +74,6 @@ export class EarlySettlementComponent implements Soccer {
     public matchId = Number(UrlHelper.getUrlParameter('matchId'));
     public groupMap: GroupMap[];
     public isShowRefundButton = false;
-    public apiUrl: string;
     constructor(
         private readonly verifyCalculateService: VerifyCalculateService,
         private readonly messageBoxService: MessageBoxService,
@@ -88,10 +86,9 @@ export class EarlySettlementComponent implements Soccer {
         this.confirmationDialogMessage.title = Language.confirmationBox;
     }
 
-    async getMatch(matchId: number, apiUrl: string = null) {
+    async getMatch(matchId: number) {
         this.toastrService.overlayContainer = this.toastContainer;
-        this.apiUrl = apiUrl;
-        this.match = await this.helperService.getMatch(matchId, ApiKeys.EarlyMatch).toPromise() as Match;
+        this.match = await this.helperService.getMatch(matchId).toPromise() as Match;
         this.groupMap = this.helperService.getGroupBetType(this.resultDetails);
     }
 
@@ -174,7 +171,7 @@ export class EarlySettlementComponent implements Soccer {
     public async refund() {
         this.clearErrorMessage();
         const resultStatus = await this.helperService.checkingStatus(this.matchId,
-            CalculateAction.refund, this.apiUrl).toPromise() as Result;
+            CalculateAction.refund).toPromise() as Result;
 
         if(resultStatus.isSuccessful) {
             const selectedResultDetails = this.resultDetails.filter((map) => map.checked);
@@ -198,8 +195,7 @@ export class EarlySettlementComponent implements Soccer {
     private async verifyBeforeRefund(selectedResultDetails: ResultDetail[]) {
         const result = await this.helperService.checkMarkedTickets(
             this.matchId,
-            selectedResultDetails,
-            this.apiUrl).toPromise() as MarkedTicketsModel;
+            selectedResultDetails).toPromise() as MarkedTicketsModel;
         return result.isExistMarkedTicket
                 ? Language.MarkedTicket
                 : this.verifyCalculateService.verifyPenaltyBettypeBeforeRefund(selectedResultDetails, this.resultDetails);
@@ -208,8 +204,7 @@ export class EarlySettlementComponent implements Soccer {
     public async calculate() {
         this.clearErrorMessage();
         const selectedResultDetails = this.resultDetails.filter((item) => item.checked);
-        const resultStatus = await this.helperService.checkingStatus(this.matchId,
-            CalculateAction.calculate, this.apiUrl).toPromise() as Result;
+        const resultStatus = await this.helperService.checkingStatus(this.matchId, CalculateAction.calculate).toPromise() as Result;
 
         if(resultStatus.isSuccessful) {
             const errorMessage = this.verifyBeforeCalculation(selectedResultDetails);
@@ -242,9 +237,7 @@ export class EarlySettlementComponent implements Soccer {
         if (this.isReSettledTickets) {
             this.confirmCalculation(resultDetails);
         } else {
-            const lastedMatchResult = await this.helperService.getLastestMatchResult(
-                this.matchId,
-                this.apiUrl).toPromise() as ResultDetail[];
+            const lastedMatchResult = await this.helperService.getLastestMatchResult(this.matchId).toPromise() as ResultDetail[];
             const needConfirm = this.verifyCalculateService.isChangedScore(resultDetails, lastedMatchResult);
 
             if (needConfirm) {
@@ -411,7 +404,7 @@ export class EarlySettlementComponent implements Soccer {
         this.confirmationDialogMessage.message = Language.holdResultConfirmMessage;
 
         this.messageBoxService.confirm(this.confirmationDialogMessage, async() => {
-            const result = await this.helperService.changeResultSetting(query, this.apiUrl).toPromise() as boolean;
+            const result = await this.helperService.changeResultSetting(query).toPromise() as boolean;
             this.setValueResult(resultDetail, groupMap, result);
         });
     }
@@ -423,7 +416,7 @@ export class EarlySettlementComponent implements Soccer {
         this.confirmationDialogMessage.message = Language.holdResultGroupConfirmMessage;
 
         this.messageBoxService.confirm(this.confirmationDialogMessage, async () => {
-            const result = await this.helperService.changeResultSetting(query, this.apiUrl).toPromise() as boolean;
+            const result = await this.helperService.changeResultSetting(query).toPromise() as boolean;
             this.setValueGroup(groupMap, result);
         });
     }

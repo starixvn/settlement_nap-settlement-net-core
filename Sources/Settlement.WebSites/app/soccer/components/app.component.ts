@@ -23,7 +23,6 @@ import { RefundComponent } from './refund/refund.component';
 export class AppComponent implements OnInit {
     @ViewChild('container', { read: ViewContainerRef, static: true }) container: ViewContainerRef;
     public blockUI = false;
-    public apiUrl: string;
     public component: ComponentRef<Soccer>;
     public matchId: number;
     constructor(
@@ -41,8 +40,7 @@ export class AppComponent implements OnInit {
         const factory = this.getComponentFactory();
         this.component = this.container.createComponent(factory);
         const matchId = Number(UrlHelper.getUrlParameter('matchId'));
-        this.apiUrl = this.elementRef.nativeElement.getAttribute('api-url');
-        this.component.instance.getMatch(matchId, this.apiUrl);
+        this.component.instance.getMatch(matchId);
         return this.component;
     }
 

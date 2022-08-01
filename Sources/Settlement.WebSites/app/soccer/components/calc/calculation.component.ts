@@ -48,9 +48,8 @@ export class CalculationComponent implements Soccer {
     this.dialogMessage.title = Language.confirmationBox;
   }
 
-  async getMatch(matchId: number, apiUrl: string) {
+  async getMatch(matchId: number) {
     this.toastrService.overlayContainer = this.toastContainer;
-    this.requestService.apiUrl = apiUrl;
     this.match = await this.requestService.getMatch(matchId).toPromise() as Match;
     this.matchDetail = this.match.matchDetail;
     this.isMatchReady = this.isReadyToSettle(this.matchDetail);

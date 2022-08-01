@@ -1,7 +1,7 @@
 ﻿using System;
-using Settlement.Core.Constants;
 using Settlement.Log.Models.BetTypeElement;
 using System.Collections.Generic;
+using static Settlement.Core.Constants.BetType;
 
 namespace Settlement.Log.Services
 {
@@ -29,7 +29,7 @@ namespace Settlement.Log.Services
         {
             if (string.IsNullOrWhiteSpace(item.Result))
             {
-                if (betTypeId == BetType.TimeMachineHandicap || betTypeId == BetType.TimeMachineOverUnder)
+                if (betTypeId == FastMarketBetType.TimeMachineHandicap || betTypeId == FastMarketBetType.TimeMachineOverUnder)
                 {
                     item.MinPosition = GetTimeMachinePosition(item.MinPosition);
                     item.MaxPosition = GetTimeMachinePosition(item.MaxPosition);
@@ -48,7 +48,7 @@ namespace Settlement.Log.Services
                 positionName.Add(value);
             }
 
-            if (betTypeId == BetType.TimeMachineHandicap || betTypeId == BetType.TimeMachineOverUnder)
+            if (betTypeId == FastMarketBetType.TimeMachineHandicap || betTypeId == FastMarketBetType.TimeMachineOverUnder)
             {
                 item.MinPosition = GetTimeMachinePosition(item.MinPosition);
                 item.MaxPosition = GetTimeMachinePosition(item.MaxPosition);
@@ -60,12 +60,12 @@ namespace Settlement.Log.Services
 
         private string PositionAndResultName(int betTypeId, string position, string result)
         {
-            if (betTypeId == BetType.TimeMachineOverUnder)
+            if (betTypeId == FastMarketBetType.TimeMachineOverUnder)
             {
                 var positionName = GetTimeMachinePosition(position);
                 return $"{positionName}({result})";
             }
-            else if (betTypeId == BetType.TimeMachineHandicap)
+            else if (betTypeId == FastMarketBetType.TimeMachineHandicap)
             {
                 var home = Convert.ToInt32(result) % TimeMachineHandicapScoreRange;
                 var away = Convert.ToInt32(result) / TimeMachineHandicapScoreRange;
@@ -73,7 +73,7 @@ namespace Settlement.Log.Services
 
                 return $"{positionName}({home}-{away})";
             }
-            else if (betTypeId == BetType.NextOneMinuteSetPiece)
+            else if (betTypeId == FastMarketBetType.NextOneMinuteSetPiece)
             {
                 return resultService.MinuteSetPieceResultName(position, result);
             }

@@ -1,10 +1,10 @@
 ﻿using Kaden.XmlConverter;
-using Settlement.Core.Constants;
 using Settlement.Log.Models.BetTypeElement;
 using Settlement.Log.Models.EventCounterElement;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using static Settlement.Core.Constants.BetType;
 
 namespace Settlement.Log.Services
 {
@@ -17,7 +17,7 @@ namespace Settlement.Log.Services
 
     public class RemarkNodeServiceImp : RemarkNodeService
     {
-        private static string[] eventCounterLabels = new[] { "", "G", "C", "FK", "GK", "T", "", "P" };
+        private static readonly string[] eventCounterLabels = new[] { "", "G", "C", "FK", "GK", "T", "", "P" };
 
         private readonly PositionService positionService;
 
@@ -56,7 +56,7 @@ namespace Settlement.Log.Services
                 var betTypeId = Convert.ToInt32(betType.Id);
                 var positionAndResult = positionService.PositionName(betTypeId, betType.Item);
 
-                remark.Append(betTypeId == BetType.TimeMachineOverUnder && !string.IsNullOrWhiteSpace(goalValue)
+                remark.Append(betTypeId == FastMarketBetType.TimeMachineOverUnder && !string.IsNullOrWhiteSpace(goalValue)
                     ? $"ResourceId: {betTypeId} | Result: {positionAndResult}, ({goalValue})<br/>"
                     : $"ResourceId: {betTypeId} | Result: {positionAndResult}<br/>");
             }

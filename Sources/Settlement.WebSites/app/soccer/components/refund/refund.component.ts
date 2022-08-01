@@ -52,8 +52,7 @@ export class RefundComponent implements Soccer {
     this.dialogMessage.title = Language.RefundConfirmationBox;
   }
 
-  async getMatch(matchId: number, apiUrl: string) {
-    this.requestService.apiUrl = apiUrl;
+  async getMatch(matchId: number) {
     this.toastrService.overlayContainer = this.toastContainer;
     this.match = await this.requestService.getMatch(matchId).toPromise() as Match;
     this.matchDetail = this.match.matchDetail;

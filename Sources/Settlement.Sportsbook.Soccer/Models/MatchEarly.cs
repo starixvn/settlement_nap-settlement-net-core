@@ -7,14 +7,10 @@ namespace Settlement.Sportsbook.Soccer.Models
     {
         public MatchDetail MatchDetail { get; set; }
 
-        public HedgeMatchDetail HedgeMatchDetail { get; set; }
+        public List<ResultDetailModel> ResultDetail { get; set; }
 
-        public List<ResultDetail> ResultDetail { get; set; }
-
-        public List<TicketCounts> TicketCounts { get; set; }
+        public TicketCounts TicketCounts { get; set; }
 
         public Permission Permission { get; set; }
-
-        public List<ExternalResultModel> ExternalResults { get; set; }
     }
 }

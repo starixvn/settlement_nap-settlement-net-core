@@ -1,6 +1,6 @@
-﻿namespace Settlement.Sportsbook.Aio.Models
+﻿namespace Settlement.Core.Models
 {
-    public class MatchResultSetting
+    public class ResultDetailSetting
     {
         private const int HoldResultPosition = 0;
 

@@ -9,16 +9,16 @@ namespace Settlement.Sportsbook.Soccer.Handlers
 {
     public class EarlyHandler : IRequestHandler<GetMatchEarlyRequest, MatchEarly>
     {
-        private readonly IMatchService matchService;
+        private readonly MatchEarlyService matchEarlyService;
 
-        public EarlyHandler(IMatchService matchService)
+        public EarlyHandler(MatchEarlyService matchEarlyService)
         {
-            this.matchService = matchService;
+            this.matchEarlyService = matchEarlyService;
         }
 
         public async Task<MatchEarly> Handle(GetMatchEarlyRequest request, CancellationToken cancellationToken)
         {
-            return await matchService.GetMatchEarly(request.MatchId);
+            return await matchEarlyService.GetMatch(request.MatchId);
         }
     }
 }

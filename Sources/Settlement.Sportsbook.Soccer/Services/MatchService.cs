@@ -20,8 +20,6 @@ namespace Settlement.Sportsbook.Soccer.Services
 
         Task<Match> GetMatch(GetMatchRequest request);
 
-        Task<MatchEarly> GetMatchEarly(int matchId);
-
         Task<Match> GetMatchRefund(GetMatchRequest request);
 
         Task<MatchDetail> GetLastestMatchDetail(GetLastestMatchDetailRequest request);
@@ -112,58 +110,6 @@ namespace Settlement.Sportsbook.Soccer.Services
                 FantasyMatch = fantasyMatch,
                 HedgeMatchDetail = hedgeMatchDetail,
                 Permission = permission.Permission
-            };
-        }
-
-        public async Task<MatchEarly> GetMatchEarly(int matchId)
-        {
-            var criteria = new GetMatchDetailCriteria { MatchId = matchId };
-            var matchDetail = await repository.GetAsync<MatchDetail>(criteria);
-            Check.Argument.IsNotNull(matchDetail, $"Match ${matchId} does not exist");
-
-            matchDetail.RefDataService = refDataService;
-
-            var goalIconQuery = GoalIconQuery(matchDetail);
-            matchDetail.GoalIcon = goalIconService.GetGoalIcon(goalIconQuery);
-
-            return matchDetail;
-
-            //var resultDetails = await GetResultDetail(request.MatchId);
-            //var matchDetail = match.MatchDetail;
-            //matchDetail.RefDataService = refDataService;
-            //matchDetail = HandleResultDetailSoccer(matchDetail, resultDetails);
-
-            //var goalIconQuery = GoalIconQuery(matchDetail);
-            //matchDetail.GoalIcon = goalIconService.GetGoalIcon(goalIconQuery);
-
-            //var hedgeMatchDetail = await GetHedgeMatch(request.MatchId);
-
-            //var fantasyMatch = new FantasyMatch();
-            //if (matchDetail.IsFantasyMatch)
-            //{
-            //    fantasyMatch = await GetRelatedMatches(matchDetail.MatchId);
-            //}
-
-            //var childMatches = match.ChildMatches.OrderBy(child => child.MatchCode)
-            //    .ThenBy(child => child.MatchId).ToList();
-
-            //if (childMatches != null)
-            //{
-            //    foreach (var item in childMatches)
-            //    {
-            //        item.RefDataService = refDataService;
-            //    }
-            //}
-
-            return new MatchEarly
-            {
-                MatchDetail = matchDetail,
-                //ResultDetails = resultDetails,
-                //TicketCounts = match.TicketCounts,
-                //ChildMatches = childMatches,
-                //FantasyMatch = fantasyMatch,
-                //HedgeMatchDetail = hedgeMatchDetail,
-                //Permission = permission.Permission
             };
         }
 

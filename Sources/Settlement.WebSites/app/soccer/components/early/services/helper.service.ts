@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { ResultDetail, SettleQuery } from "../../../models";
-import { AioService, ClosePopupService, HttpRequestService } from "../../../../shared/services";
+import { ClosePopupService, HttpRequestService } from "../../../../shared/services";
 import { ResultSettingQuery } from "../../../../shared/models";
 import { GroupBetTypeService } from "./group-bettpe.service";
 import { SportType } from '../../../../shared/constants';
@@ -9,22 +9,15 @@ export class HelperService {
     constructor(
         private readonly httpRequestService: HttpRequestService,
         private readonly closePopupService: ClosePopupService,
-        private readonly aioService: AioService,
         private readonly groupBetTypeService: GroupBetTypeService,
     ) { }
 
     public settle(query: SettleQuery) {
-        return this.aioService.push(query);
+        return this.httpRequestService.postJson(query, `api/soccer/settle-early`);
     }
 
-    public getMatch(matchId: number, apikey: string) {
-        const matchQuery = {
-            matchId,
-            apikey,
-            settleType: "MNL"
-        };
-
-        return this.aioService.getMatch(matchQuery);
+    public getMatch(matchId: number) {
+        return this.httpRequestService.postJson({ matchId  }, `api/soccer/get-match-early`);
     }
 
     public getGroupBetType(resultDetails: ResultDetail[]) {
@@ -35,35 +28,35 @@ export class HelperService {
         return this.closePopupService.closePopup(matchId);
     }
 
-    public getLastestMatchResult(matchId: number, apiUrl: string) {
+    public getLastestMatchResult(matchId: number) {
         const query = {
             matchId,
             sportType: SportType.soccer,
         };
 
-        return this.httpRequestService.postJson(query, `${apiUrl}/api/aio/get-recal-result`);
+        return this.httpRequestService.postJson(query, `api/aio/get-recal-result`);
     }
 
-    public changeResultSetting(query: ResultSettingQuery, apiUrl: string) {
-        return this.httpRequestService.postJson(query, `${apiUrl}/api/aio/result-setting`);
+    public changeResultSetting(query: ResultSettingQuery) {
+        return this.httpRequestService.postJson(query, `api/aio/result-setting`);
     }
 
-    public checkMarkedTickets(matchId: number, selectedResources: ResultDetail[], apiUrl: string)  {
+    public checkMarkedTickets(matchId: number, selectedResources: ResultDetail[])  {
         const query = {
             matchId,
             selectedResources,
             isMergedParlay: true,
         };
-        return this.httpRequestService.postJson(query, `${apiUrl}/api/aio/check-marked-tickets`, false);
+        return this.httpRequestService.postJson(query, `api/aio/check-marked-tickets`, false);
     }
 
-    public checkingStatus(matchId: number, actionName: string, apiUrl: string) {
+    public checkingStatus(matchId: number, actionName: string) {
         const query = {
             matchId,
             actionName,
             isSettleDetermined: false,
             isEarly: true
         };
-        return this.httpRequestService.postJson(query, `${apiUrl}/api/soccer/check-status`, false);
+        return this.httpRequestService.postJson(query, `api/soccer/check-status`, false);
     }
 }

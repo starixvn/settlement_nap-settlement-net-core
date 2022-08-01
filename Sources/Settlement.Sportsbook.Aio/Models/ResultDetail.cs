@@ -1,8 +1,8 @@
 ﻿using Kaden.Extensions;
 using Settlement.Core.Constants;
+using Settlement.Core.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Settlement.Sportsbook.Aio.Models
 {
@@ -54,7 +54,7 @@ namespace Settlement.Sportsbook.Aio.Models
 
         protected byte ResultSetting { get; set; }
 
-        public MatchResultSetting ResultSettingData => new MatchResultSetting
+        public ResultDetailSetting ResultSettingData => new ResultDetailSetting
         {
             ResultSetting = Convert.ToString(ResultSetting, ToBase).Reverse(),
         };

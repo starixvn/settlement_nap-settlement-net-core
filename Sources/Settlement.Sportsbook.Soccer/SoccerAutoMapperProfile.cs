@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Settlement.Core.Models;
 using Settlement.Sportsbook.Soccer.Criteria;
 using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Requests;
@@ -21,6 +22,7 @@ namespace Settlement.Sportsbook.Soccer
             CreateMap<CheckingMarkedTicketsRequest, CheckingMarkedTicketsCriteria>().ForMember(dest => dest.Action, opt => opt.MapFrom(src => src.ActionName));
             CreateMap<MoveThirdPartyBetTicketCriteria, MoveThirdPartyBetTicketCriteria>();
             CreateMap<MoveBetRequest, MoveThirdPartyBetTicketCriteria>();
+            CreateMap<Models.MatchDetail, GoalIconQueryModel>();
         }
     }
 }
