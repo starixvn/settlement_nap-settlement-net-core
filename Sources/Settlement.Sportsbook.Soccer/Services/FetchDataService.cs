@@ -22,6 +22,8 @@ namespace Settlement.Sportsbook.Soccer.Services
         public Task<BetDaq> GetMultiServersBetDaq(BetDaqCheckingCriteria criteria);
 
         public Task<BetFair> GetMultiServersBetFair(BetFairCheckingCriteria criteria);
+
+        public Task<(List<ResultDetailModel>, TicketCounts)> GetEarlyResultDetails(GetResultDetailEarlyCriteria criteria);
     }
 
     public class FetchDateServiceImp : IFetchDataService
@@ -148,6 +150,27 @@ namespace Settlement.Sportsbook.Soccer.Services
             }
 
             return baseData;
+        }
+
+        public async Task<(List<ResultDetailModel>, TicketCounts)> GetEarlyResultDetails(GetResultDetailEarlyCriteria criteria)
+        {
+            var servers = configuration.GetSection("SiteDBServer").Get<List<string>>();
+            var multipleTicketDetails = new List<(List<ResultDetailModel>, TicketCounts)>();
+            foreach (var server in servers)
+            {
+                var ticketDetails = await GetTicketDetailByServer(criteria, server);
+                multipleTicketDetails.Add(ticketDetails);
+            }
+
+            return mergeDataService.MergeEarlyResultDetails(multipleTicketDetails);
+        }
+
+        private async Task<(List<ResultDetailModel> betTypes, TicketCounts ticketCounts)> GetTicketDetailByServer(GetResultDetailEarlyCriteria criteria, string server)
+        {
+            criteria.DbServer = server;
+            var (betTypes, ticketCounts) = await repository.FetchMultipleAsync<ResultDetailModel, TicketCounts>(criteria);
+
+            return (betTypes.ToList(), ticketCounts.FirstOrDefault());
         }
     }
 }

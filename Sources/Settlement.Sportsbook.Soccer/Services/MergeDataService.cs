@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Settlement.Sportsbook.Soccer.Models;
 using Match = Settlement.Core.Models.Match;
+using Settlement.Sportsbook.Soccer.Constants;
 
 namespace Settlement.Sportsbook.Soccer.Services
 {
@@ -17,6 +18,8 @@ namespace Settlement.Sportsbook.Soccer.Services
         public BetDaq MergeBetDaq(BetDaq baseBetDaq, List<BetDaq> nodeBetDaqs);
 
         public BetFair MergeBetFair(BetFair baseBetDaq, List<BetFair> nodeBetDaqs);
+
+        public (List<ResultDetailModel> resultDetails, TicketCounts TicketCounts) MergeEarlyResultDetails(List<(List<ResultDetailModel> resultDetails, TicketCounts TicketCounts)> data);
     }
 
     public class MergeDataServiceImp : IMergeDataService
@@ -45,26 +48,31 @@ namespace Settlement.Sportsbook.Soccer.Services
         {
             foreach (var match in siteMatches.Skip(1))
             {
-                SumTicket(siteMatches[0].TicketCounts, match);
+                SumTicketCounts(siteMatches[0].TicketCounts, match);
             }
 
             return siteMatches[0].TicketCounts;
         }
 
-        private void SumTicket(List<TicketCounts> baseTicketCounts, SiteMatch match)
+        private void SumTicketCounts(List<TicketCounts> baseTicketCounts, SiteMatch match)
         {
             baseTicketCounts.ForEach(item =>
             {
                 var ticketCount = match.TicketCounts.FirstOrDefault(count => count.GroupId == item.GroupId);
                 if (ticketCount != null)
                 {
-                    item.BetRunningCount += ticketCount.BetRunningCount;
-                    item.BetMarkedCount += ticketCount.BetMarkedCount;
-                    item.BetSettledCount += ticketCount.BetSettledCount;
-                    item.BetWaitingCount += ticketCount.BetWaitingCount;
-                    item.BetCount += ticketCount.BetCount;
+                    SumTicket(item, ticketCount);
                 }
             });
+        }
+
+        private void SumTicket(TicketCounts baseTicketCounts, TicketCounts siteTicketCounts)
+        {
+            baseTicketCounts.BetRunningCount += siteTicketCounts.BetRunningCount;
+            baseTicketCounts.BetMarkedCount += siteTicketCounts.BetMarkedCount;
+            baseTicketCounts.BetSettledCount += siteTicketCounts.BetSettledCount;
+            baseTicketCounts.BetWaitingCount += siteTicketCounts.BetWaitingCount;
+            baseTicketCounts.BetCount += siteTicketCounts.BetCount;
         }
 
         private string GetStatus(TicketCounts ticketCount)
@@ -142,6 +150,92 @@ namespace Settlement.Sportsbook.Soccer.Services
             baseBetDaq.IsSettleAbandonedMatchBetFair = nodeBetDaqs.Any(betDaq => betDaq.IsSettleAbandonedMatchBetFair) || baseBetDaq.IsSettleAbandonedMatchBetFair;
 
             return baseBetDaq;
+        }
+
+        public (List<ResultDetailModel> resultDetails, TicketCounts TicketCounts) MergeEarlyResultDetails(List<(List<ResultDetailModel> resultDetails, TicketCounts TicketCounts)> data)
+        {
+            var multipleResultDetails = new List<List<ResultDetailModel>>();
+            var multipleTicketCounts = new List<TicketCounts>();
+            foreach (var item in data)
+            {
+                multipleResultDetails.Add(item.Item1);
+                multipleTicketCounts.Add(item.Item2);
+            }
+
+            var ResultDetailModels = ResolveResultDetails(multipleResultDetails);
+            var ticketCounts = ResolveTicketCounts(multipleTicketCounts);
+
+            return (ResultDetailModels, ticketCounts);
+        }
+
+        private List<ResultDetailModel> ResolveResultDetails(List<List<ResultDetailModel>> data)
+        {
+            var baseResult = data.First();
+            var siteResults = data.Skip(1).ToList();
+            var conflictData = new List<ResultDetailModel>();
+            foreach (var siteResult in siteResults)
+            {
+                var newResult = siteResult.Except(baseResult);
+                if (newResult.Any())
+                {
+                    baseResult.AddRange(newResult);
+                }
+
+                var conflictResults = baseResult.FindAll(result =>
+                {
+                    var correspondingResult = siteResult.Find(r => r.ResourceId == result.ResourceId);
+                    return correspondingResult != null && result.TicketStatus != correspondingResult.TicketStatus;
+                });
+
+                conflictData = conflictData.Union(conflictResults).ToList();
+            }
+
+            if (conflictData.Any())
+            {
+                foreach (var conflictResult in conflictData)
+                {
+                    conflictResult.MultipleTicketStatus.Add(conflictResult.TicketStatus);
+                    foreach (var siteResult in siteResults)
+                    {
+                        var correspondingResult = siteResult.Find(r => r.ResourceId == conflictResult.ResourceId);
+                        conflictResult.MultipleTicketStatus.Add(conflictResult.TicketStatus);
+                    }
+
+                    conflictResult.TicketStatus = MergeTicketStatus(conflictResult);
+                }
+            }
+
+            return baseResult;
+        }
+
+        private string MergeTicketStatus(ResultDetailModel result)
+        {
+            if (result.MultipleTicketStatus.Any(status => status == TicketStatus.Marked))
+            {
+                return TicketStatus.Marked;
+            }
+
+            if (result.MultipleTicketStatus.Any(status => status == TicketStatus.Running))
+            {
+                return TicketStatus.Running;
+            }
+
+            if (result.MultipleTicketStatus.Any(status => status == TicketStatus.Calculated))
+            {
+                return TicketStatus.Calculated;
+            }
+
+            return result.TicketStatus;
+        }
+
+        private TicketCounts ResolveTicketCounts(List<TicketCounts> data)
+        {
+            foreach (var ticketCounts in data.Skip(1))
+            {
+                SumTicket(data[0], ticketCounts);
+            }
+
+            return data[0];
         }
     }
 }

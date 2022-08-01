@@ -49,7 +49,7 @@ namespace Settlement.FastMarkets.Services
             return mergeDataService.MergeFastMarketTicketDetail(multipleTicketDetails);
         }
 
-        public async Task<(List<FastMarketResult> betTypes, TicketCounts ticketCounts)> GetTicketDetailByServer(GetFastMarketTicketDetailCriteria criteria, string server)
+        private async Task<(List<FastMarketResult> betTypes, TicketCounts ticketCounts)> GetTicketDetailByServer(GetFastMarketTicketDetailCriteria criteria, string server)
         {
             criteria.DbServer = server;
             var (betTypes, ticketCounts) = await repository.FetchMultipleAsync<FastMarketResult, TicketCounts>(criteria);
