@@ -1,5 +1,5 @@
 <!DOCTYPE html><html lang="en"><head>
-   </head><body>@{
+    </head><body>@{
         var path = @ViewBag.NetCoreRootUrl;
     }
     <base href="@path/">
@@ -7,24 +7,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="css/styles.css">
-<link rel="stylesheet" href="calculate-page/styles.d0c9d6ccf75a38567002.css" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="calculate-page/styles.d0c9d6ccf75a38567002.css"></noscript>
+<link rel="stylesheet" href="calculate-page/styles.1159ba108d3d38abdd00.css" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="calculate-page/styles.1159ba108d3d38abdd00.css"></noscript>
+
 
     <header>
         @await Html.PartialAsync("~/Views/Menu.cshtml")
     </header>
     <section>
-        <div class="content"><app-root api-url="@ViewBag.RootUrl" page-type="@ViewBag.PageType">Loading...</app-root></div>
+        <div class="content">
+            <app-root id="app" api-url="@ViewBag.RootUrl" page-type="@ViewBag.PageType">Loading...</app-root>
+        </div>
     </section>
-     <script type="text/javascript">
-        var element = document.getElementById("Calculate-menu");
-        var elementAutoCalc = document.getElementById("AutoCalculate-menu");
-        if (element !== null) {
-            element.className = "active-menu";
-        }
-        if (elementAutoCalc !== null) {
-            elementAutoCalc.className = "active-menu";
+    <script type="text/javascript">
+        var pageType = document.getElementById('app').getAttribute('page-type')
+        if (pageType == "Calculation") {
+            var element = document.getElementById("Calculate-menu");
+            if (element !== null) {
+                element.className = "active-menu";
+            }
+        } else {
+            var elementAutoCalc = document.getElementById("AutoCalculate-menu");
+            if (elementAutoCalc !== null) {
+                elementAutoCalc.className = "active-menu";
+            }
         }
     </script>
     @await Html.PartialAsync("~/Views/Shared/_Matomo.cshtml")
-<script src="calculate-page/runtime.12e53bd77baface2cb75.js" defer></script><script src="calculate-page/polyfills.f26cf2e5e947d51bbd14.js" defer></script><script src="calculate-page/main.4599b93e5b346563bd15.js" defer></script>
+<script src="calculate-page/runtime.12e53bd77baface2cb75.js" defer></script><script src="calculate-page/polyfills.f26cf2e5e947d51bbd14.js" defer></script><script src="calculate-page/main.c2f0b28fadbb8145d728.js" defer></script>
+
 </body></html>

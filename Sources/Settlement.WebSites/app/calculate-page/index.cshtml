@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-   @{
+    @{
         var path = @ViewBag.NetCoreRootUrl;
     }
     <base href="@path/" />
@@ -10,23 +11,31 @@
     <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="css/styles.css" />
 </head>
+
 <body>
     <header>
         @await Html.PartialAsync("~/Views/Menu.cshtml")
     </header>
     <section>
-        <div class="content"><app-root api-url="@ViewBag.RootUrl" page-type="@ViewBag.PageType">Loading...</app-root></div>
+        <div class="content">
+            <app-root id="app" api-url="@ViewBag.RootUrl" page-type="@ViewBag.PageType">Loading...</app-root>
+        </div>
     </section>
-     <script type="text/javascript">
-        var element = document.getElementById("Calculate-menu");
-        var elementAutoCalc = document.getElementById("AutoCalculate-menu");
-        if (element !== null) {
-            element.className = "active-menu";
-        }
-        if (elementAutoCalc !== null) {
-            elementAutoCalc.className = "active-menu";
+    <script type="text/javascript">
+        var pageType = document.getElementById('app').getAttribute('page-type')
+        if (pageType == "Calculation") {
+            var element = document.getElementById("Calculate-menu");
+            if (element !== null) {
+                element.className = "active-menu";
+            }
+        } else {
+            var elementAutoCalc = document.getElementById("AutoCalculate-menu");
+            if (elementAutoCalc !== null) {
+                elementAutoCalc.className = "active-menu";
+            }
         }
     </script>
     @await Html.PartialAsync("~/Views/Shared/_Matomo.cshtml")
 </body>
+
 </html>
