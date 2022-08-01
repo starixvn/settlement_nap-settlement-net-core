@@ -138,19 +138,19 @@ export class AutoCalculateMatchesComponent extends MatchesBaseComponent implemen
 
   public openUpdatePayout(match: CalculationMatch) {
     if (this.permission.canAutoPayout) {
-      this.popupService.openUpdatePayout(match, () => this.requestService.refreshMatches(this.filterQuery.leagueId, this.leagues, true, true));
+      this.popupService.openUpdatePayout(match);
     }
   }
 
   public openUpdatePayoutForLeague(league: League){
     if (this.permission.canAutoPayout) {
-      this.popupService.openUpdatePayoutForLeague(league, () => this.requestService.refreshMatches(this.filterQuery.leagueId, this.leagues, true, true));
+      this.popupService.openUpdatePayoutForLeague(league);
     }
   }
 
   public openUpdateTime(league: League, isInstant: boolean){
     if (this.permission.canAutoPayout) {
-      this.popupService.openUpdateTime(league, isInstant, () => this.requestService.refreshMatches(this.filterQuery.leagueId, this.leagues, true, true));
+      this.popupService.openUpdateTime(league, isInstant);
     }
   }
 

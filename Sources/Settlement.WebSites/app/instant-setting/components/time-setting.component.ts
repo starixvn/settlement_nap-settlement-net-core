@@ -37,7 +37,7 @@ export class TimeSettingComponent implements Template, OnInit {
     public async ngOnInit() {
         this.pageType = UrlHelper.getUrlParameter("pageType");
         this.leagueId = Number(UrlHelper.getUrlParameter("leagueId"));
-        this.leagueName =  await this.requestService.getLeagueName(this.leagueId).toPromise().then((league: League) => {
+        this.leagueName = await this.requestService.getLeagueName(this.leagueId).toPromise().then((league: League) => {
             return league.leagueName;
         });
 
@@ -74,7 +74,8 @@ export class TimeSettingComponent implements Template, OnInit {
             const query = new TimeSettingQuery(this.leagueId, this.time, this.autoType);
             this.requestService.proceed(query).subscribe((result: Result) => {
                 if (result.isSuccessful) {
-                   this.closePopupService.angularClosePopup();
+                    parent.document.getElementById('dialog-response').setAttribute('value', query.waitingTime.toString());
+                    this.closePopupService.angularClosePopup();
                 } else {
                     this.errorMessage = result.errMsg;
                 }

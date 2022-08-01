@@ -19,8 +19,12 @@
     </section>
      <script type="text/javascript">
         var element = document.getElementById("Calculate-menu");
+        var elementAutoCalc = document.getElementById("AutoCalculate-menu");
         if (element !== null) {
             element.className = "active-menu";
+        }
+        if (elementAutoCalc !== null) {
+            elementAutoCalc.className = "active-menu";
         }
     </script>
     @await Html.PartialAsync("~/Views/Shared/_Matomo.cshtml")

@@ -13,7 +13,7 @@ import {
 import { CustomHttpRequestInterceptor } from "../shared/custom-httprequest-interceptor.native";
 import { MaterialModule } from '../shared/material-module';
 import { DynamicHeightDirective } from '../shared/directives';
-import { MaterialDialogComponent, NewMultipleSelectComponent } from '../shared/components';
+import { MaterialDialogComponent, MaterialDialogWithResponseComponent, NewMultipleSelectComponent } from '../shared/components';
 import { AutoCalculatePageComponent, AutoCalculateMatchesComponent, AutoCalculateFilterComponent } from './components/auto-calculation';
 import { PageBaseComponent, FilterCalculateBaseComponent, MatchesBaseComponent } from './components/base-component';
 import { FilterBaseComponent } from '../shared/components/gaming/filter-base.component';
@@ -44,7 +44,8 @@ import { AppComponent } from './components/app.component';
         AutoCalculateMatchesComponent,
         AutoCalculatePageComponent,
         AutoCalculateFilterComponent,
-        NewMultipleSelectComponent
+        NewMultipleSelectComponent,
+        MaterialDialogWithResponseComponent
     ],
     providers: [{ provide: HTTP_INTERCEPTORS, useClass: CustomHttpRequestInterceptor, multi: true }],
     bootstrap: [AppComponent],

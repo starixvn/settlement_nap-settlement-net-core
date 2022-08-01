@@ -1,0 +1,8 @@
+<h1 mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>{{data.title}}
+    <button type="button" id="close-not-change" class="close dialog-close" (click)="close()">X</button>
+    <button type="button" id="close-after-change" (click)="closeWithChange()" hidden></button>
+    <input type="text" hidden id="dialog-response">
+</h1>
+<div mat-dialog-content id="content-log">
+    <iframe [src]="src" class="{{data.class}}" width="100%" height="99%" frameborder="0"></iframe>
+</div>

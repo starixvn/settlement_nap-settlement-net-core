@@ -56,7 +56,7 @@
             <td colspan="3"></td>
             <td class="auto-setting">
               <div
-                [class]="getCLassPayOut(leagueMatch.matches[0].autoCalcSetting.isAutoPayOutForLeague, leagueMatch.matches[0].autoCalcSetting.isDirectPayoutForLeague)"
+                [class]="getCLassPayOut(leagueMatch.matches[0].autoCalcSetting.isAutoPayoutForLeague, leagueMatch.matches[0].autoCalcSetting.isDirectPayoutForLeague)"
                 matTooltipPosition="above" [matTooltip]="language.payout.title"
                 (click)="openUpdatePayoutForLeague(leagueMatch)">
               </div>
@@ -139,7 +139,7 @@
                 <div>{{match.confirmFullTimeScore}}</div>
               </td>
               <td rowspan="2" class="auto-setting">
-                <div [class]="getCLassPayOut(match.isAutoPayoutForMatch, match.isDirectPayoutForMatch)" matTooltipPosition="above" [matTooltip]="language.payout.title"
+                <div [class]="getCLassPayOut(match.autoCalcSetting.isAutoPayoutForMatch, match.autoCalcSetting.isDirectPayoutForMatch)" matTooltipPosition="above" [matTooltip]="language.payout.title"
                   (click)="openUpdatePayout(match)"></div>
               </td>
               <td rowspan="2" class="remark-status">

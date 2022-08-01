@@ -57,9 +57,9 @@ export class AutoSettingComponent implements Template, OnInit {
     this.confirmationDialogMessage.message = this.getConfirmMessage(this.currentState);
     this.confirmationDialogMessage.hasActionOnNoBtn = true;
     this.messageBoxService.confirm(
-        this.confirmationDialogMessage,
-        () => this.updateSetting(true),
-        () => this.updateSetting(false),
+      this.confirmationDialogMessage,
+      () => this.updateSetting(true),
+      () => this.updateSetting(false),
     );
   }
 
@@ -73,16 +73,17 @@ export class AutoSettingComponent implements Template, OnInit {
         this.currentState !== 0,
       );
       this.requestService.updateSettingMatch(params).subscribe((result: Result) => {
-          if (result.isSuccessful) {
-              this.closePopupService.angularClosePopup();
-          } else {
-              this.errorMessage = result.errMsg;
-          }
+        if (result.isSuccessful) {
+          parent.document.getElementById('dialog-response').setAttribute('value', params.autoType.toString());
+          this.closePopupService.angularClosePopup();
+        } else {
+          this.errorMessage = result.errMsg;
+        }
       });
     });
   }
 
-  private getAutoType(){
+  private getAutoType() {
     const oldState = Number(UrlHelper.getUrlParameter('currentState'));
     return this.currentState === 0 && oldState === 0 ? 1 : this.currentState === 0 ? oldState : this.currentState;
   }
@@ -90,33 +91,34 @@ export class AutoSettingComponent implements Template, OnInit {
   public getConfirmMessage(newState: number) {
     const newStateName = this.getStateName(newState);
     return Language.AutoPayoutSetting.ConfirmMessageForLeague
-            .replace(/EXPECTED_STATE/g, newStateName);
+      .replace(/EXPECTED_STATE/g, newStateName);
   }
 
   public getStateName(state: number) {
-      switch (state) {
-          case 5:
-              return 'DIRECT';
-          case 1:
-              return 'AUTO';
-          default:
-              return 'OFF';
-      }
+    switch (state) {
+      case 5:
+        return 'DIRECT';
+      case 1:
+        return 'AUTO';
+      default:
+        return 'OFF';
+    }
   }
 
   private updateSetting(isApplyAll: boolean) {
-      const query = new AutoSettingLeagueQuery (
-          this.leagueId,
-          this.getAutoType(),
-          this.currentState !== 0,
-          isApplyAll,
-      );
-      this.requestService.updateSettingLeague(query).subscribe((result: Result) => {
-          if (result.isSuccessful) {
-              this.closePopupService.angularClosePopup();
-          } else {
-              this.errorMessage = result.errMsg;
-          }
-      });
+    const query = new AutoSettingLeagueQuery(
+      this.leagueId,
+      this.getAutoType(),
+      this.currentState !== 0,
+      isApplyAll,
+    );
+    this.requestService.updateSettingLeague(query).subscribe((result: Result) => {
+      if (result.isSuccessful) {
+        parent.document.getElementById('dialog-response').setAttribute('value', query.autoType.toString());
+        this.closePopupService.angularClosePopup();
+      } else {
+        this.errorMessage = result.errMsg;
+      }
+    });
   }
 }

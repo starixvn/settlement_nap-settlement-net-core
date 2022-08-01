@@ -61,7 +61,7 @@
                 <label class="inner-label">
                     Status
                 </label>
-                <select [(ngModel)]="query.statusId">
+                <select [(ngModel)]="query.statusId" [disabled]="query.isUnCalculate || query.isMarkedTicket">
                     <option *ngFor="let item of statuses" [value]="item.value">{{item.text}}</option>
                 </select>
             </div>

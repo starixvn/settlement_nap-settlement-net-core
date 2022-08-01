@@ -28,7 +28,7 @@ import { PageBaseComponent } from './base-component';
 })
 export class AppComponent implements OnInit {
   @ViewChild('container', { read: ViewContainerRef, static: true }) container: ViewContainerRef;
-  public component: ComponentRef<PageBaseComponent>;0;
+  public component: ComponentRef<PageBaseComponent>;
   public blockUI = false;
   constructor(private readonly blockUIService: BlockUIService,
     private readonly elementRef: ElementRef<HTMLElement>,

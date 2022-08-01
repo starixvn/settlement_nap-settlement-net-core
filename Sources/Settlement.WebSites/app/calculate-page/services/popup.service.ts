@@ -58,41 +58,63 @@ export class PopupService {
         });
     }
 
-    public openUpdatePayout(match: CalculationMatch, refreshFunc: () => void){
+    public openUpdatePayout(match: CalculationMatch) {
         const currentState = match.autoCalcSetting.isAutoPayoutForMatch ? 1 : match.autoCalcSetting.isDirectPayoutForMatch ? 5 : 0
         const src = `apps/auto-setting-match?matchId=${match.matchId}&currentState=${currentState}&pageType=AutoSettingMatch`;
         const frameSrc = encodeURI(src);
         const dialogData = new DialogDataIframe(Language.payout.titlePopup, frameSrc);
-        this.dialogBoxService.popup(dialogData, '500px', '270px').subscribe(result => {
-            if (result) {
-                refreshFunc();
+        this.dialogBoxService.popupHasResponse(dialogData, '500px', '270px').subscribe(result => {
+            if (!_.isUndefined(result)) {
+                if (_.isEqual(Number(result), 1)) {
+                    match.autoCalcSetting.isAutoPayoutForMatch = true;
+                    match.autoCalcSetting.isDirectPayoutForMatch = false;
+                } else if (_.isEqual(Number(result), 5)) {
+                    match.autoCalcSetting.isAutoPayoutForMatch = false;
+                    match.autoCalcSetting.isDirectPayoutForMatch = true;
+                } else {
+                    match.autoCalcSetting.isAutoPayoutForMatch = false;
+                    match.autoCalcSetting.isDirectPayoutForMatch = false;
+                }
             }
         }
         );
     }
 
-    public openUpdatePayoutForLeague(league: League, refreshFunc: () => void){
+    public openUpdatePayoutForLeague(league: League) {
         const currentState = league.matches[0].autoCalcSetting.isAutoPayoutForLeague ? 1 : league.matches[0].autoCalcSetting.isDirectPayoutForLeague ? 5 : 0
-        const src = `apps/auto-setting-league?leagueId=${league.leagueId}&currentState=${currentState}&pageType=AutoSettingMatch`;
+        const src = `apps/auto-setting-league?leagueId=${league.leagueId}&currentState=${currentState}&pageType=AutoSettingLeague`;
         const frameSrc = encodeURI(src);
         const dialogData = new DialogDataIframe(Language.payout.titlePopupForLeague, frameSrc);
-        this.dialogBoxService.popup(dialogData, '500px', '270px').subscribe(result => {
-            if (result) {
-                refreshFunc();
+        this.dialogBoxService.popupHasResponse(dialogData, '500px', '270px').subscribe(result => {
+            if (!_.isUndefined(Number(result))) {
+                if (_.isEqual(Number(result), 1)) {
+                    league.matches[0].autoCalcSetting.isAutoPayoutForLeague = true;
+                    league.matches[0].autoCalcSetting.isDirectPayoutForLeague = false;
+                } else if (_.isEqual(Number(result), 5)) {
+                    league.matches[0].autoCalcSetting.isAutoPayoutForLeague = false;
+                    league.matches[0].autoCalcSetting.isDirectPayoutForLeague = true;
+                } else {
+                    league.matches[0].autoCalcSetting.isAutoPayoutForLeague = false;
+                    league.matches[0].autoCalcSetting.isDirectPayoutForLeague = false;
+                }
             }
         }
         );
     }
 
-    public openUpdateTime(league: League, isInstant: boolean, refreshFunc: () => void){
+    public openUpdateTime(league: League, isInstant: boolean) {
         const time = isInstant ? league.matches[0].instantWaitingTime : league.matches[0].directWaitingTime;
         const page = isInstant ? 'InstantTime' : 'DirectTime';
         const src = `apps/change-waiting-time?leagueId=${league.leagueId}&time==${time}&pageType=${page}`;
         const frameSrc = encodeURI(src);
         const dialogData = new DialogDataIframe(Language.payout.titlePopupForLeague, frameSrc);
-        this.dialogBoxService.popup(dialogData, '600px', '310px').subscribe(result => {
-            if (result) {
-                refreshFunc();
+        this.dialogBoxService.popupHasResponse(dialogData, '600px', '310px').subscribe(result => {
+            if (!_.isUndefined(result)) {
+                if (isInstant) {
+                    league.matches[0].instantWaitingTime = Number(result) ?? 0;
+                } else {
+                    league.matches[0].directWaitingTime = Number(result) ?? 0;
+                }
             }
         }
         );

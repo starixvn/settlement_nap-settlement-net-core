@@ -8,4 +8,5 @@ export * from './ticket-count/ticket-count.component';
 export * from './material-dialog-iframe/material-dialog.component';
 export * from './multiple-select/multiple-select.component';
 export * from './not-ready-match/not-ready-match.component';
+export * from './material-dialog-iframe/material-dialog-with-response.component';
 
