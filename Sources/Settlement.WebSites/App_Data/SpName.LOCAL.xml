@@ -60,6 +60,7 @@
     <Setting Key="NAP_Set_BetDaq_MatchSel" SpName="NAP_Set_BetDaq_MatchSel" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_AutoPayout_MatchSelDetail" SpName="NAP_Set_AutoPayout_MatchSelDetail" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_ResultDetailSel" SpName="NAP_Set_ResultDetailSel" DbName="DBPRO.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_MatchSelDetail_Auto_1s" SpName="NAP_Set_MatchSelDetail_Auto_1s" DbName="DBTXN.bodb02.bodbAdminNet" />
   </Function>
   <Function Name="Execute Calculate and refund">
     <Setting Key="CalculateMP" SpName="NAP_Admin_Settlement_MP_Push" DbName="DBTXN.bodb02.bodbAdminNet" />
@@ -190,7 +191,6 @@
       <Setting Key="NAP_Admin_Settlement_Auto_1s_Push_SITEDB" SpName="NAP_Admin_Settlement_Auto_1s_Push" DbName="SITEDB.bodb02.bodbAdminNet" />
     </Function>
     
-    <Setting Key="NAP_Set_MatchSelDetail_Auto_1s" SpName="NAP_Set_MatchSelDetail_Auto_1s" DbName="DBTXN.bodb02.bodbAdminNet" />
     <Function Name="NAP_Set_MatchSelDetail_Auto_1s_Ticket">
       <Setting Key="NAP_Set_MatchSelDetail_Auto_1s_Ticket_DBTXN" SpName="NAP_Set_MatchSelDetail_Auto_1s_Ticket" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="NAP_Set_MatchSelDetail_Auto_1s_Ticket_SITEDB" SpName="NAP_Set_MatchSelDetail_Auto_1s_Ticket" DbName="SITEDB.bodb02.bodbAdminNet" />
@@ -204,5 +204,11 @@
     <Setting Key="NAP_Admin_Settlement_BetFair_Move_SITEDB" SpName="NAP_Admin_Settlement_BetFair_Move" DbName="SITEDB.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Admin_Settlement_Refund_BetFair_SITEDB" SpName="NAP_Admin_Settlement_Refund_BetFair_Push" DbName="SITEDB.bodb02.bodbAdminNet" />
     <Setting Key="Refund_SITEDB" SpName="NAP_Admin_Settlement_Refund_1_Push" DbName="SITEDB.bodb02.bodbAdminNet" />
+
+
+    <Function Name="NAP_Set_MatchSelHedge_Ticket">
+      <Setting Key="NAP_Set_MatchSelHedge_Ticket_DBTXN" SpName="NAP_Set_MatchSelHedge_Ticket" DbName="DBTXN.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Set_MatchSelHedge_Ticket_SITEDB" SpName="NAP_Set_MatchSelHedge_Ticket" DbName="SITEDB.bodb02.bodbAdminNet" />
+    </Function>
   </Function>
 </Functions>

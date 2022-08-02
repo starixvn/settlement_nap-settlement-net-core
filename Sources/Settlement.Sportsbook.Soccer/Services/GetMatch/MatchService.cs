@@ -126,6 +126,10 @@ namespace Settlement.Sportsbook.Soccer.GetMatch.Services
 
             var hedgeMatchCriteria = new GetHedgeMatchCriteria { MatchId = request.MatchId };
             var hedgeMatchDetail = await repository.GetAsync<HedgeMatchDetail>(hedgeMatchCriteria);
+            if (hedgeMatchDetail != null)
+            {
+                hedgeMatchDetail.IsDeterminedHedgeMatch = await fetchDataService.IsDeterminedHedgeMatch(hedgeMatchDetail.MatchId);
+            }
 
             var betDaqCriteria = new BetDaqCheckingCriteria { MatchId = request.MatchId };
             var betDaq = await fetchDataService.GetMultiServersBetDaq(betDaqCriteria);

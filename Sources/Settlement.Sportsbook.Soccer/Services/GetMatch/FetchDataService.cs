@@ -24,6 +24,8 @@ namespace Settlement.Sportsbook.Soccer.GetMatch.Services
         public Task<BetFair> GetMultiServersBetFair(BetFairCheckingCriteria criteria);
 
         public Task<(List<EarlyTicketDetail>, TicketCounts)> GetEarlyTicketDetails(GetResultDetailEarlyCriteria criteria);
+
+        public Task<bool> IsDeterminedHedgeMatch(int matchId);
     }
 
     public class FetchDateServiceImp : IFetchDataService
@@ -168,9 +170,27 @@ namespace Settlement.Sportsbook.Soccer.GetMatch.Services
         private async Task<(List<EarlyTicketDetail> betTypes, TicketCounts ticketCounts)> GetTicketDetailByServer(GetEarlyTicketInfoCriteria criteria, string server)
         {
             criteria.DbServer = server;
-            var (ticketCounts, ticketDetails) = await repository.FetchMultipleAsync<TicketCounts, EarlyTicketDetail>(criteria);
+            var (ticketDetails, ticketCounts) = await repository.FetchMultipleAsync<EarlyTicketDetail, TicketCounts>(criteria);
 
             return (ticketDetails.ToList(), ticketCounts.FirstOrDefault());
+        }
+
+        public async Task<bool> IsDeterminedHedgeMatch(int matchId)
+        {
+            var servers = configuration.GetSection("SiteDBServer").Get<List<string>>();
+            var criteria = new GetHedgeMatchDeterminedInfo { MatchId = matchId };
+            var determinedHedgeMatch = new DeterminedHedgeMatch();
+            foreach (var server in servers)
+            {
+                criteria.DbServer = server;
+                determinedHedgeMatch = await repository.GetAsync<DeterminedHedgeMatch>(criteria);
+                if (determinedHedgeMatch.IsDeterminedHedgeMatch)
+                {
+                    return determinedHedgeMatch.IsDeterminedHedgeMatch;
+                }
+            }
+
+            return determinedHedgeMatch.IsDeterminedHedgeMatch;
         }
     }
 }

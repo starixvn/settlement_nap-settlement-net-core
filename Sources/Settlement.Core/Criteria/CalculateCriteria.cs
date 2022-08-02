@@ -9,6 +9,7 @@ namespace Settlement.Core.Criteria
 
         public int MatchId { get; set; }
 
+        [SpParam(Ignored = true)]
         public int LeagueGroupId { get; set; }
 
         public int? FullTimeHome { get; set; }
