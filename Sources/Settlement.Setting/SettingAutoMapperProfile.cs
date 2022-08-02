@@ -5,6 +5,7 @@ using Settlement.Setting.Criteria.OutsideSourceManager;
 using Settlement.Setting.Requests.OutsideSourceManager;
 using Settlement.Setting.Criteria.ProviderManager;
 using Settlement.Setting.Requests.ProviderManager;
+using Settlement.Core.Criteria;
 
 namespace Settlement.Setting
 {

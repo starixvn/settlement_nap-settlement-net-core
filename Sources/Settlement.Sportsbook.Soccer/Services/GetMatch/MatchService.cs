@@ -1,14 +1,14 @@
-﻿using System.Collections.Generic;
-using AutoMapper;
+﻿using AutoMapper;
 using Fanex.Data.Repository;
+using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.Soccer.Criteria;
 using Settlement.Sportsbook.Soccer.Models;
+using Settlement.Sportsbook.Soccer.Requests;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Settlement.Core.Constants;
-using Settlement.Sportsbook.Soccer.Requests;
 using Match = Settlement.Sportsbook.Soccer.Models.Match;
 using MatchDetail = Settlement.Sportsbook.Soccer.Models.MatchDetail;
 

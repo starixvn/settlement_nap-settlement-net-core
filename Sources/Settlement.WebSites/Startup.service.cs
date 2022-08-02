@@ -193,7 +193,7 @@ namespace Settlement.WebSites
             services.AddSingleton<IUserService, UserService>();
             services.AddSingleton<ISecurityService, SecurityService>();
             services.AddTransient<IBalanceUpService, BalanceUpServiceImp>();
-           
+
             RefDataTypeContainer
                 .ConnectTo(new Uri(Configuration.GetSection("Fanex.RemotingRef.Service.Url").Value))
                 .FromApplication("Settlement");
@@ -249,6 +249,7 @@ namespace Settlement.WebSites
             services.AddSingleton<IUMRestClient, UMRestClient>();
             services.AddSingleton(new UMClientConfiguration().Initialize(Configuration));
             services.AddSingleton<ONEbook.UM.Services.IMaintenanceService, ONEbook.UM.Services.MaintenanceService>();
+            services.AddTransient<UpdateStatusMatchService, UpdateStatusMatchServiceImp>();
         }
 
         private static void ConfigureMediator(IServiceCollection services)

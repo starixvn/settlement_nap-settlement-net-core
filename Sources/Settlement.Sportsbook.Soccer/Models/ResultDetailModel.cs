@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using Kaden.Extensions;
+﻿using Kaden.Extensions;
 using Settlement.Core.Models;
+using System;
+using System.Collections.Generic;
 
 namespace Settlement.Sportsbook.Soccer.Models
 {

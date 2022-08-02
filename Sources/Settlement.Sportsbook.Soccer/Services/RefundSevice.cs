@@ -1,20 +1,19 @@
-﻿using Settlement.Core.Models;
-using Settlement.Sportsbook.Soccer.Criteria;
-using Settlement.Sportsbook.Soccer.Requests;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Fanex.Data.Repository;
 using Fanex.NAP.Client.Helpers.Web;
 using Kaden.XmlConverter;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Settlement.Core.Constants;
-using Settlement.Sportsbook.Soccer.Models;
+using Settlement.Core.Criteria;
+using Settlement.Core.Models;
 using Settlement.Sportsbook.Soccer.Constants;
+using Settlement.Sportsbook.Soccer.Criteria;
+using Settlement.Sportsbook.Soccer.Models;
+using Settlement.Sportsbook.Soccer.Requests;
 using System.Collections.Generic;
 using System.Linq;
-using System;
-using Microsoft.Extensions.Configuration;
-using Settlement.Core.Criteria;
+using System.Threading.Tasks;
 
 namespace Settlement.Sportsbook.Soccer.Services
 {

@@ -18,6 +18,7 @@ export class SettleQuery {
     public finalAwayScore: number;
     public isResettledTickets: boolean;
     public childMatchIds: string;
+    public leagueGroupId: number;
 
 
     constructor(matchDetail: MatchDetail, hedgeMatchId: number, actionName: string, isResettledTickets: boolean, childMatchIds: string) {
@@ -35,6 +36,7 @@ export class SettleQuery {
         this.finalAwayScore = matchDetail.finalAwayScore;
         this.isResettledTickets = isResettledTickets;
         this.childMatchIds = childMatchIds;
+        this.leagueGroupId = matchDetail.leagueGroupId;
 
         if (matchDetail.applyGoalRecord) {
             this.isEnabledGoalRecordFt = true;

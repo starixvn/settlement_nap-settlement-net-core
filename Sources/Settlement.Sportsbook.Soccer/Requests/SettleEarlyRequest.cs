@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using MediatR;
+﻿using MediatR;
 using Settlement.Core.Models;
+using System.Collections.Generic;
 
 namespace Settlement.Sportsbook.Soccer.Requests
 {

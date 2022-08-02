@@ -1,9 +1,8 @@
 ﻿using Settlement.Core.Models;
+using Settlement.Sportsbook.Soccer.Constants;
+using Settlement.Sportsbook.Soccer.Models;
 using System.Collections.Generic;
 using System.Linq;
-using Settlement.Sportsbook.Soccer.Models;
-using Match = Settlement.Core.Models.Match;
-using Settlement.Sportsbook.Soccer.Constants;
 
 namespace Settlement.Sportsbook.Soccer.GetMatch.Services
 {

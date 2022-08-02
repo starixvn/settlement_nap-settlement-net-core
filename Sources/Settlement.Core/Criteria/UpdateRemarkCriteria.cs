@@ -1,6 +1,6 @@
 ﻿using Fanex.Data.Repository;
 
-namespace Settlement.Setting.Criteria
+namespace Settlement.Core.Criteria
 {
     public class UpdateRemarkCriteria : NonQueryCommand
     {
@@ -11,6 +11,8 @@ namespace Settlement.Setting.Criteria
         public bool IsEnabled { get; set; }
 
         public int AdminId { get; set; }
+
+        public string Ip { get; set; }
 
         public override string GetSettingKey()
         {

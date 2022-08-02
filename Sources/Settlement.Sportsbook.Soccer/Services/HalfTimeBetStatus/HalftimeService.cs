@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using Kaden.Extensions;
+﻿using Kaden.Extensions;
 using Settlement.Sportsbook.Soccer.Requests;
+using System.Collections.Generic;
 
 namespace Settlement.Sportsbook.Soccer.Services.HalfTimeBetStatus
 {

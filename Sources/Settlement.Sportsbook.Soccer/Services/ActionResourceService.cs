@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using Settlement.Sportsbook.Soccer.Constants;
+﻿using Settlement.Sportsbook.Soccer.Constants;
 using Settlement.Sportsbook.Soccer.Models;
+using System.Collections.Generic;
 
 namespace Settlement.Sportsbook.Soccer.Services
 {

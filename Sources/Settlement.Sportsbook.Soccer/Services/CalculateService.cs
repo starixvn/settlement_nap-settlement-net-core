@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Fanex.Data.Repository;
 using Microsoft.Extensions.Configuration;
 using Settlement.Core.Criteria;
 using Settlement.Core.Models;
+using Settlement.Core.Services;
 using Settlement.Sportsbook.Soccer.Constants;
 using Settlement.Sportsbook.Soccer.Criteria;
 using Settlement.Sportsbook.Soccer.Requests;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Settlement.Sportsbook.Soccer.Services
 {
@@ -32,16 +32,20 @@ namespace Settlement.Sportsbook.Soccer.Services
 
         private readonly ICreateCriteriaService createQueryCriteria;
 
+        private readonly UpdateStatusMatchService updateStatusMatchService;
+
         public CalculateServiceImp
             (IMapper mapper,
             IDynamicRepository repository,
             IConfiguration configuration,
-            ICreateCriteriaService createQueryCriteria)
+            ICreateCriteriaService createQueryCriteria,
+            UpdateStatusMatchService updateStatusMatchService)
         {
             this.repository = repository;
             this.configuration = configuration;
             this.mapper = mapper;
             this.createQueryCriteria = createQueryCriteria;
+            this.updateStatusMatchService = updateStatusMatchService;
         }
 
         public async Task<Result> Calculate(SettleRequest request)
@@ -52,6 +56,10 @@ namespace Settlement.Sportsbook.Soccer.Services
             {
                 return requestChecking;
             }
+
+            await updateStatusMatchService.UpdateUnderSettleFlagAsync(criteria);
+            await updateStatusMatchService.AutoRefundChildMatch(criteria);
+
             var result = await Execute(criteria);
 
             if (result.IsSuccessful && request.IsApplyHedging)
