@@ -31,7 +31,7 @@ export class HandleActionsService {
   public handleAutoInstantForMatch(leagueMatch: League, isAutoInstant: boolean) {
     leagueMatch.matches.forEach(item => {
       const eventStatus = item.eventStatus.toLocaleLowerCase();
-      if (!eventStatus.includes('refund ht')
+      if (eventStatus.includes('refund ht')
         || _.isEqual(eventStatus, EventStatus.running.toLocaleLowerCase()) || _.isEqual(eventStatus, EventStatus.closed.toLocaleLowerCase())) {
         item.autoCalcSetting.isInstantForMatch = isAutoInstant;
       }
@@ -42,7 +42,7 @@ export class HandleActionsService {
     if (isApplyAll) {
       league.matches.forEach(match => {
         const eventStatus = match.eventStatus.toLocaleLowerCase();
-        if (!eventStatus.includes('refund ht')
+        if (eventStatus.includes('refund ht')
           || _.isEqual(eventStatus, EventStatus.running.toLocaleLowerCase()) || _.isEqual(eventStatus, EventStatus.closed.toLocaleLowerCase())) {
           match.autoCalcSetting.isAutoPayoutForMatch = league.autoCalcSetting.isAutoPayoutForLeague;
           match.autoCalcSetting.isDirectPayoutForMatch = league.autoCalcSetting.isDirectPayoutForLeague;

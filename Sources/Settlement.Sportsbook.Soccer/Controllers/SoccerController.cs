@@ -1,8 +1,8 @@
-﻿using System.Threading.Tasks;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Settlement.Core.ActionFilters;
 using Settlement.Sportsbook.Soccer.Requests;
+using System.Threading.Tasks;
 
 namespace Settlement.Sportsbook.Soccer.Controllers
 {

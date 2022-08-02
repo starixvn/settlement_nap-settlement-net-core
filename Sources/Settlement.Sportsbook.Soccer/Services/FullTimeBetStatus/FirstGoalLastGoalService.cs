@@ -1,4 +1,5 @@
 ﻿using Kaden.Extensions;
+using Settlement.Sportsbook.Soccer.Services;
 
 namespace Settlement.Sportsbook.Soccer.Services.FullTimeBetStatus
 {

@@ -2,12 +2,13 @@
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Settlement.Core.Services;
-using Settlement.Sportsbook.Soccer.Controllers;
 using Settlement.Sportsbook.Soccer.Services;
+using Settlement.Sportsbook.Soccer.Controllers;
+using Settlement.Sportsbook.Soccer.GetMatch.Services;
 using Settlement.Sportsbook.Soccer.Services.FullTimeBetStatus;
 using Settlement.Sportsbook.Soccer.Services.HalfTimeBetStatus;
-using MatchServiceImp = Settlement.Sportsbook.Soccer.Services.MatchServiceImp;
-using MergeDataServiceImp = Settlement.Sportsbook.Soccer.Services.MergeDataServiceImp;
+using MatchServiceImp = Settlement.Sportsbook.Soccer.GetMatch.Services.MatchServiceImp;
+using MergeDataServiceImp = Settlement.Sportsbook.Soccer.GetMatch.Services.MergeDataServiceImp;
 
 namespace Settlement.WebSites.Configurations
 {

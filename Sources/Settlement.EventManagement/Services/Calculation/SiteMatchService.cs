@@ -6,8 +6,6 @@ namespace Settlement.EventManagement.Services.Calculation
 {
     public interface SiteMatchService
     {
-        bool IsEventStatusOnSite(Match match);
-
         bool IsExistMarkedTickets(Match match);
 
         bool IsExistRunningTickets(Match match);
@@ -27,21 +25,13 @@ namespace Settlement.EventManagement.Services.Calculation
         bool IsExistRunningTicketParlay(Match match);
 
         bool IsExistMarkedTicketsSingle(Match match);
+
+        int? IsCalculatingSingle(Match match);
     }
 
     public class SiteMatchServiceImp : SiteMatchService
     {
-        private const int IsSuccess = 2;
-
         private const int MatchPen = 202;
-
-        public bool IsEventStatusOnSite(Match match)
-        {
-            var isNull = match.SiteMatch.All(m => m.IsCalculatingSingle == null);
-            var isSuccess = match.SiteMatch.All(m => m.IsCalculatingSingle == IsSuccess);
-
-            return (match.IsCalculatingSingle == null && isNull) || (match.IsCalculatingSingle == IsSuccess && isSuccess);
-        }
 
         public bool IsExistMarkedTicketsSingle(Match match)
         {
@@ -71,6 +61,31 @@ namespace Settlement.EventManagement.Services.Calculation
         {
             var isExistRunningTicketParlay = match.SiteMatch.Exists(m => m.IsExistRunningTicketParlay);
             return match.IsExistMarkedTicketParlay || isExistRunningTicketParlay;
+        }
+
+        public int? IsCalculatingSingle(Match match)
+        {
+            if (match.IsCalculatingSingle == CalculateStatus.IsWaiting || match.SiteMatch.Exists(m => m.IsCalculatingSingle == CalculateStatus.IsWaiting))
+            {
+                return CalculateStatus.IsWaiting;
+            }
+
+            if (match.IsCalculatingSingle == CalculateStatus.IsCalculating || match.SiteMatch.Exists(m => m.IsCalculatingSingle == CalculateStatus.IsCalculating))
+            {
+                return CalculateStatus.IsCalculating;
+            }
+
+            if (match.IsCalculatingSingle == CalculateStatus.IsFailed || match.SiteMatch.Exists(m => m.IsCalculatingSingle == CalculateStatus.IsFailed))
+            {
+                return CalculateStatus.IsFailed;
+            }
+
+            if (match.IsCalculatingSingle == CalculateStatus.IsSuccess && match.SiteMatch.All(m => m.IsCalculatingSingle == CalculateStatus.IsSuccess))
+            {
+                return CalculateStatus.IsSuccess;
+            }
+
+            return null;
         }
 
         public string GetBackgroundCompletedStatus(Match match)

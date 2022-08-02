@@ -5,7 +5,7 @@ using Settlement.Sportsbook.Soccer.Models;
 using Match = Settlement.Core.Models.Match;
 using Settlement.Sportsbook.Soccer.Constants;
 
-namespace Settlement.Sportsbook.Soccer.Services
+namespace Settlement.Sportsbook.Soccer.GetMatch.Services
 {
     public interface IMergeDataService
     {

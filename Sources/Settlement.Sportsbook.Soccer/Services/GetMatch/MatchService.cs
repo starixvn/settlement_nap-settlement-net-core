@@ -12,7 +12,7 @@ using Settlement.Sportsbook.Soccer.Requests;
 using Match = Settlement.Sportsbook.Soccer.Models.Match;
 using MatchDetail = Settlement.Sportsbook.Soccer.Models.MatchDetail;
 
-namespace Settlement.Sportsbook.Soccer.Services
+namespace Settlement.Sportsbook.Soccer.GetMatch.Services
 {
     public interface IMatchService
     {

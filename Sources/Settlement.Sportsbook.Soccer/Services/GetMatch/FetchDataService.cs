@@ -13,7 +13,7 @@ using Settlement.Sportsbook.Soccer.Requests;
 using Match = Settlement.Sportsbook.Soccer.Models.Match;
 using MatchDetail = Settlement.Sportsbook.Soccer.Models.MatchDetail;
 
-namespace Settlement.Sportsbook.Soccer.Services
+namespace Settlement.Sportsbook.Soccer.GetMatch.Services
 {
     public interface IFetchDataService
     {
@@ -75,7 +75,6 @@ namespace Settlement.Sportsbook.Soccer.Services
 
         private List<SiteMatch> GetSiteMatchInfo(int matchId)
         {
-
             var siteDbServer = configuration.GetSection("SiteDBServer").Get<List<string>>();
             var mappingTypes = new[] { typeof(SiteMatch), typeof(TicketCounts), typeof(ChildMatchTicketInfos) };
 

@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using static Settlement.Core.Constants.BetType;
 
-namespace Settlement.Sportsbook.Soccer.Services
+namespace Settlement.Sportsbook.Soccer.GetMatch.Services
 {
     public interface EarlyBetTypeNameService
     {

@@ -39,8 +39,6 @@ namespace Settlement.EventManagement.Services.Calculation
             EventStatus.Suspended,
         };
 
-        private const int IsWaiting = 0;
-
         private readonly SiteMatchService siteMatchService;
 
         private readonly IGoalIconService goalIconService;
@@ -80,13 +78,12 @@ namespace Settlement.EventManagement.Services.Calculation
         public string NewEventStatus(Match match)
         {
             var newEventStatus = IsCheckingEventStatusReasons(match) ? eventStatusReasonTitles[match.EventStatusReason - 1] : match.EventStatus;
-            if (siteMatchService.IsEventStatusOnSite(match))
+            if (match.IsCalculatingSingle != CalculateStatus.IsWaiting && match.IsCalculatingSingle != CalculateStatus.IsCalculating)
             {
                 return newEventStatus;
             }
 
-            var isWaiting = match.SiteMatch.All(m => m.IsCalculatingSingle == IsWaiting);
-            return match.IsCalculatingSingle == IsWaiting && isWaiting ? EventStatus.Waiting : EventStatus.Calculating;
+            return match.IsCalculatingSingle == CalculateStatus.IsWaiting ? EventStatus.Waiting : EventStatus.Calculating;
         }
 
         public string EarlySettlementStatus(Match match)
@@ -141,6 +138,7 @@ namespace Settlement.EventManagement.Services.Calculation
             match.IsExistRunningTicket = siteMatchService.IsExistRunningTickets(match);
             match.IsExistMarkedTicketParlay = siteMatchService.IsExistMarkedTicketParlay(match);
             match.IsExistRunningTicketParlay = siteMatchService.IsExistRunningTicketParlay(match);
+            match.IsCalculatingSingle = siteMatchService.IsCalculatingSingle(match);
         }
 
         private GoalIconQueryModel GoalIconQuery(Match match)

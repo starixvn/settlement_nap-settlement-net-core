@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Fanex.Data;
+﻿using Fanex.Data;
 using Fanex.Data.Repository;
 
 namespace Settlement.Sportsbook.Soccer.Criteria
@@ -43,7 +38,6 @@ namespace Settlement.Sportsbook.Soccer.Criteria
 
         [SpParam(Ignored = true)]
         public string SpName { get; } = "NAP_Admin_Settlement_Refund_1_Push";
-
 
         public override string GetSettingKey()
         {

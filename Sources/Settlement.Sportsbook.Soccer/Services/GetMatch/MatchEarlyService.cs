@@ -15,7 +15,7 @@ using Settlement.Sportsbook.Soccer.Criteria;
 using Settlement.Sportsbook.Soccer.Models;
 using MatchDetail = Settlement.Sportsbook.Soccer.Models.MatchDetail;
 
-namespace Settlement.Sportsbook.Soccer.Services
+namespace Settlement.Sportsbook.Soccer.GetMatch.Services
 {
     public interface MatchEarlyService
     {

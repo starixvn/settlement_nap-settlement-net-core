@@ -85,10 +85,12 @@ namespace Settlement.Sportsbook.Soccer.Services.HalfTimeBetStatus
                             flag = true;
                             newBetStatus.Add(fullTimeBetStatus.Replace(";", string.Empty));
                             break;
+
                         case false when IsModifyFirstGoalLastGoal(item, fullTimeBetStatus):
                             flag = true;
                             newBetStatus.Add(fullTimeBetStatus);
                             break;
+
                         default:
                             newBetStatus.Add(item);
                             break;
