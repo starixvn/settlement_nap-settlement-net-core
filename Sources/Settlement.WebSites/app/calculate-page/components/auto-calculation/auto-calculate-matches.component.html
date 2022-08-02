@@ -35,39 +35,39 @@
 
 <ng-template #body>
   <div dynamicHeight class="table-matches-content" *ngIf="leagues.length > 0; else empty">
-    <div *ngFor="let leagueMatch of leagues">
+    <div *ngFor="let league of leagues">
       <table class="table-calculation">
         <tbody class="auto-calculation">
           <tr class="league">
             <td colspan="7" class="name">
-              &nbsp;{{leagueMatch.name}}
+              &nbsp;{{league.name}}
             </td>
             <td class="auto-setting">
-              <div [class]="getCLassInstant(leagueMatch.matches[0].autoCalcSetting.isInstantForLeague)"
-                [matTooltip]="getTittleInstant(leagueMatch.matches[0].autoCalcSetting.isInstantForLeague)"
-                (click)="updateInstantForLeague(leagueMatch.matches[0], leagueMatch)" matTooltipPosition="above">
+              <div [class]="getClassInstant(league.autoCalcSetting.isInstantForLeague)"
+                [matTooltip]="getTittleInstant(league.autoCalcSetting.isInstantForLeague)"
+                (click)="updateInstantForLeague(league.autoCalcSetting, league)" matTooltipPosition="above">
               </div>
             </td>
             <td class="instant-time" colspan="2">
-              <div>Waiting time: {{leagueMatch.matches[0].instantWaitingTime}}sec </div>
+              <div>Waiting time: {{league.instantWaitingTime}}sec </div>
               <div *ngIf="permission.canAutoPayout" class="instant-time-icon "
-                [matTooltip]="language.instants.titleInstantTime" matTooltipPosition="above" (click)="openUpdateTime(leagueMatch, true)"></div>
+                [matTooltip]="language.instants.titleInstantTime" matTooltipPosition="above" (click)="openUpdateTime(league, true)"></div>
             </td>
             <td colspan="3"></td>
             <td class="auto-setting">
               <div
-                [class]="getCLassPayOut(leagueMatch.matches[0].autoCalcSetting.isAutoPayoutForLeague, leagueMatch.matches[0].autoCalcSetting.isDirectPayoutForLeague)"
+                [class]="getClassPayOut(league.autoCalcSetting.isAutoPayoutForLeague, league.autoCalcSetting.isDirectPayoutForLeague)"
                 matTooltipPosition="above" [matTooltip]="language.payout.title"
-                (click)="openUpdatePayoutForLeague(leagueMatch)">
+                (click)="openUpdatePayoutForLeague(league)">
               </div>
             </td>
             <td class="instant-time" colspan="2">
-              <div>Waiting time: {{leagueMatch.matches[0].directWaitingTime}}sec </div>
+              <div>Waiting time: {{league.directWaitingTime}}sec </div>
               <div *ngIf="permission.canAutoPayout" class="instant-time-icon "
-                [matTooltip]="language.payout.titleDirectTime" matTooltipPosition="above" (click)="openUpdateTime(leagueMatch, false)"></div>
+                [matTooltip]="language.payout.titleDirectTime" matTooltipPosition="above" (click)="openUpdateTime(league, false)"></div>
             </td>
           </tr>
-          <ng-container *ngFor="let match of leagueMatch.matches, let isEven=even">
+          <ng-container *ngFor="let match of league.matches, let isEven=even">
             <tr class="row-3" [ngClass]="rowColor(match.remark, !isEven)">
               <td class="code">
                 <div *ngIf="permission.canViewSettlementLog; else noLogLink">
@@ -99,7 +99,7 @@
               <td rowspan="2" class="event-status" [ngClass]="getEventStatusColor(match)">{{match.newEventStatus}}</td>
               <td class="score final-score">{{match.liveHomeScore ?? '-'}}</td>
               <td rowspan="2" class="auto-instant">
-                <div [class]="getCLassInstant(match.autoCalcSetting.isInstantForMatch)" matTooltipPosition="above"
+                <div [class]="getClassInstant(match.autoCalcSetting.isInstantForMatch)" matTooltipPosition="above"
                   [matTooltip]="getTittleInstant(match.autoCalcSetting.isInstantForMatch)"
                   (click)="updateInstant(match)">
                 </div>
@@ -139,7 +139,7 @@
                 <div>{{match.confirmFullTimeScore}}</div>
               </td>
               <td rowspan="2" class="auto-setting">
-                <div [class]="getCLassPayOut(match.autoCalcSetting.isAutoPayoutForMatch, match.autoCalcSetting.isDirectPayoutForMatch)" matTooltipPosition="above" [matTooltip]="language.payout.title"
+                <div [class]="getClassPayOut(match.autoCalcSetting.isAutoPayoutForMatch, match.autoCalcSetting.isDirectPayoutForMatch)" matTooltipPosition="above" [matTooltip]="language.payout.title"
                   (click)="openUpdatePayout(match)"></div>
               </td>
               <td rowspan="2" class="remark-status">

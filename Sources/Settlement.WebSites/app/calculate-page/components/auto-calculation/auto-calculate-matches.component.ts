@@ -6,7 +6,7 @@ import { CalculationMatch, League, MatchGoalRecord, UpdateInstantQuery } from '.
 import { BackgroundColor } from '../../../shared/constants';
 import { Language } from '../../../shared/language';
 import { MessageBoxService } from '../../../shared/services';
-import { AutoSettingLeagueQuery, AutoSettingMatchQuery, ModalDialogMessage } from '../../../shared/models';
+import { AutoSettingLeagueQuery, AutoSettingMatchQuery, ModalDialogMessage, AutoSetting } from '../../../shared/models';
 import { AutoSettingType, InstantStatus } from '../../constants';
 import { ISubscription } from 'rxjs-compat/Subscription';
 import { interval } from 'rxjs';
@@ -55,7 +55,7 @@ export class AutoCalculateMatchesComponent extends MatchesBaseComponent implemen
   }
 
 
-  public getCLassInstant(isInstant: boolean) {
+  public getClassInstant(isInstant: boolean) {
     if (this.permission.canAutoPayout) {
       return isInstant ? BackgroundColor.iconAuto : BackgroundColor.iconOff;
     } else {
@@ -63,7 +63,7 @@ export class AutoCalculateMatchesComponent extends MatchesBaseComponent implemen
     }
   }
 
-  public getCLassPayOut(isAutoPayout: boolean, isDirectPayout: boolean) {
+  public getClassPayOut(isAutoPayout: boolean, isDirectPayout: boolean) {
     if (this.permission.canAutoPayout) {
       return isAutoPayout ? BackgroundColor.iconAuto :
       isDirectPayout ? BackgroundColor.iconDirect : BackgroundColor.iconOff;
@@ -106,29 +106,29 @@ export class AutoCalculateMatchesComponent extends MatchesBaseComponent implemen
     }
   }
 
-  public updateInstantForLeague(match: CalculationMatch, league: League){
-    this.dialogConfirmMessage.message = league.matches[0].autoCalcSetting.isAutoPayoutForLeague ? Language.instants.confirmOffLeague : Language.instants.confirmOnLeague;
+  public updateInstantForLeague(autoCalcSetting: AutoSetting, league: League){
+    this.dialogConfirmMessage.message = autoCalcSetting.isAutoPayoutForLeague ? Language.instants.confirmOffLeague : Language.instants.confirmOnLeague;
     this.dialogConfirmMessage.hasActionOnNoBtn = true;
     this.messageBoxService.confirm(this.dialogConfirmMessage, () => {
-      this.doUpdateSettingLeague(match, league, true);
+      this.doUpdateSettingLeague(autoCalcSetting, league, true);
     }, () => {
-      this.doUpdateSettingLeague(match, league, false);
+      this.doUpdateSettingLeague(autoCalcSetting, league, false);
     });
   }
 
-  private async doUpdateSettingLeague(match: CalculationMatch, leagueMatch: League, isApplyAll: boolean) {
+  private async doUpdateSettingLeague(autoCalcSetting: AutoSetting, leagueMatch: League, isApplyAll: boolean) {
     this.dialogConfirmMessage.hasActionOnNoBtn = false;
     const query = new AutoSettingLeagueQuery(
       Number(leagueMatch.leagueId),
       this.autoSettingInstantType,
-      !match.autoCalcSetting.isInstantForLeague,
+      !autoCalcSetting.isInstantForLeague,
       isApplyAll
     );
     const result = await this.requestService.updateSettingLeague(query).toPromise();
     if (result.errCode === 0) {
-      match.autoCalcSetting.isInstantForLeague = !match.autoCalcSetting.isInstantForLeague;
+      autoCalcSetting.isInstantForLeague = !autoCalcSetting.isInstantForLeague;
       if (isApplyAll) {
-        this.handleActionService.handleAutoInstantForMatch(leagueMatch, match.autoCalcSetting.isInstantForLeague);
+        this.handleActionService.handleAutoInstantForMatch(leagueMatch, autoCalcSetting.isInstantForLeague);
       }
     } else {
       this.dialogConfirmMessage.message = result.errMsg;

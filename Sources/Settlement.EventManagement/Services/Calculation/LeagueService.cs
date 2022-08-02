@@ -43,7 +43,7 @@ namespace Settlement.EventManagement.Services.Calculation
             {
                 if (currentLeague.Equals(match.LeagueId))
                 {
-                    league.Matches.Add(match);
+                   league.Matches.Add(match);
                 }
                 else
                 {
@@ -51,6 +51,9 @@ namespace Settlement.EventManagement.Services.Calculation
                     {
                         Name = match.LeagueName,
                         LeagueId = match.LeagueId,
+                        AutoCalcSetting = match.AutoCalcSetting,
+                        InstantWaitingTime = match.InstantWaitingTime,
+                        DirectWaitingTime = match.DirectWaitingTime
                     };
 
                     league.Matches.Add(match);

@@ -13,6 +13,9 @@ namespace Settlement.EventManagement.Models
         [Key("name")]
         public string Name { get; set; }
 
+        [Key("autoCalcSetting")]
+        public AutoCalculationSetting AutoCalcSetting { get; set; } = new AutoCalculationSetting();
+
         [Key("matches")]
         public List<MultiSportMatch> Matches { get; set; }
 

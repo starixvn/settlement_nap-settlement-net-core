@@ -12,6 +12,16 @@ namespace Settlement.EventManagement.Models.Calculation
         [Key("name")]
         public string Name { get; set; }
 
-        [Key("matches")] public List<Match> Matches { get; set; } = new List<Match>();
+        [Key("directWaitingTime")]
+        public int DirectWaitingTime { get; set; }
+
+        [Key("instantWaitingTime")]
+        public int InstantWaitingTime { get; set; }
+
+        [Key("autoCalcSetting")]
+        public AutoCalculationSetting AutoCalcSetting { get; set; } = new AutoCalculationSetting();
+
+        [Key("matches")] 
+        public List<Match> Matches { get; set; } = new List<Match>();
     }
 }

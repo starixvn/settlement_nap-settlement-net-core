@@ -1,4 +1,5 @@
 import { Match } from './match.model';
+import { AutoSetting } from './auto-setting.model';
 
 export class LeagueMatch {
     public leagueId: number;
@@ -8,4 +9,5 @@ export class LeagueMatch {
     public isCheckedCalcMP: boolean;
     public disableCheckCalcMP: boolean;
     public isMergedParlay: boolean;
+    public autoCalcSetting: AutoSetting;
 }

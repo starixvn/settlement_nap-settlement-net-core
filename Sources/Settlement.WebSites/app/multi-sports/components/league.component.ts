@@ -7,7 +7,7 @@ import { ISubscription } from 'rxjs/Subscription';
 import { interval } from 'rxjs';
 import { MessageBoxService, SportMatchService } from './../../shared/services';
 import { Language } from './../../shared/language';
-import { ModalDialogMessage, Result, LeagueMatch, Match, Remark, SportMatch, AutoSettingLeagueQuery, AutoSettingMatchQuery, Score } from '../../shared/models';
+import { ModalDialogMessage, Result, LeagueMatch, Match, SportMatch, AutoSettingLeagueQuery, AutoSettingMatchQuery, Score, AutoSetting } from '../../shared/models';
 import { SportType, ResultType, BackgroundColor, CalculationStatus } from '../../shared/constants';
 import { LeagueBaseComponent } from '../../shared/components/sport-listing/league-base.component';
 import { Permission } from '../../shared/models/sportsbook-sop';
@@ -199,39 +199,39 @@ export class LeagueComponent extends LeagueBaseComponent implements OnInit, OnCh
     }
   }
 
-  public changeAutoLeague(match: Match, leagueMatch: LeagueMatch) {
+  public changeAutoLeague(autoCalcSetting: AutoSetting, leagueMatch: LeagueMatch) {
     if (!this.permission.canAutoPayout) {
       return;
     }
     this.dialogMessage.title = Language.AutoPayoutSetting.PopupTitle;
-    this.dialogMessage.message = this.autoSettingLeagueMessage(match);
+    this.dialogMessage.message = this.autoSettingLeagueMessage(autoCalcSetting);
     this.dialogMessage.hasActionOnNoBtn = true;
     this.messageBoxService.confirm(this.dialogMessage, () => {
-      this.doUpdateSettingLeague(match, leagueMatch, true);
+      this.doUpdateSettingLeague(autoCalcSetting, leagueMatch, true);
     }, () => {
-      this.doUpdateSettingLeague(match, leagueMatch, false);
+      this.doUpdateSettingLeague(autoCalcSetting, leagueMatch, false);
     });
   }
 
-  private autoSettingLeagueMessage(match: Match) {
+  private autoSettingLeagueMessage(autoCalcSetting: AutoSetting) {
     return Language.AutoPayoutSetting.ConfirmMessageForLeagueAutoSetting
-      .replace(/OLD_SETTING/g, match.autoCalcSetting.isAutoPayoutForLeague ? 'AUTO' : 'OFF')
-      .replace(/NEW_SETTING/g, !match.autoCalcSetting.isAutoPayoutForLeague ? 'AUTO' : 'OFF');
+      .replace(/OLD_SETTING/g, autoCalcSetting.isAutoPayoutForLeague ? 'AUTO' : 'OFF')
+      .replace(/NEW_SETTING/g, !autoCalcSetting.isAutoPayoutForLeague ? 'AUTO' : 'OFF');
   }
 
-  private async doUpdateSettingLeague(match: Match, leagueMatch: LeagueMatch, isApplyAll: boolean) {
+  private async doUpdateSettingLeague(autoCalcSetting: AutoSetting, leagueMatch: LeagueMatch, isApplyAll: boolean) {
     this.dialogMessage.hasActionOnNoBtn = false;
     const query = new AutoSettingLeagueQuery(
       Number(leagueMatch.leagueId),
       this.autoSettingType,
-      !match.autoCalcSetting.isAutoPayoutForLeague,
+      !autoCalcSetting.isAutoPayoutForLeague,
       isApplyAll
     );
     const result = await this.multiSportService.updateSettingLeague(query).toPromise();
     if (result.errCode === 0) {
-      match.autoCalcSetting.isAutoPayoutForLeague = !match.autoCalcSetting.isAutoPayoutForLeague;
+      autoCalcSetting.isAutoPayoutForLeague = !autoCalcSetting.isAutoPayoutForLeague;
       if (isApplyAll) {
-        this.affectAutoPayoutForMatch(leagueMatch, match.autoCalcSetting.isAutoPayoutForLeague);
+        this.affectAutoPayoutForMatch(leagueMatch, autoCalcSetting.isAutoPayoutForLeague);
       }
     } else {
       this.dialogMessage.title = Language.InstantSetting.WarningTitle;
@@ -248,11 +248,11 @@ export class LeagueComponent extends LeagueBaseComponent implements OnInit, OnCh
     });
   }
 
-  public getAutoSettingLeague(match: Match) {
+  public getAutoSettingLeague(autoCalcSetting: AutoSetting) {
     if (this.permission.canAutoPayout) {
-      return match.autoCalcSetting.isAutoPayoutForLeague ? BackgroundColor.iconAuto : BackgroundColor.iconNo;
+      return autoCalcSetting.isAutoPayoutForLeague ? BackgroundColor.iconAuto : BackgroundColor.iconNo;
     } else {
-      return match.autoCalcSetting.isAutoPayoutForLeague ? BackgroundColor.iconAutoDisabled : BackgroundColor.iconNoDisabled;
+      return autoCalcSetting.isAutoPayoutForLeague ? BackgroundColor.iconAutoDisabled : BackgroundColor.iconNoDisabled;
     }
   }
 

@@ -44,8 +44,8 @@ export class HandleActionsService {
         const eventStatus = match.eventStatus.toLocaleLowerCase();
         if (!eventStatus.includes('refund ht')
           || _.isEqual(eventStatus, EventStatus.running.toLocaleLowerCase()) || _.isEqual(eventStatus, EventStatus.closed.toLocaleLowerCase())) {
-          match.autoCalcSetting.isAutoPayoutForMatch = league.matches[0].autoCalcSetting.isAutoPayoutForLeague;
-          match.autoCalcSetting.isDirectPayoutForMatch = league.matches[0].autoCalcSetting.isDirectPayoutForLeague;
+          match.autoCalcSetting.isAutoPayoutForMatch = league.autoCalcSetting.isAutoPayoutForLeague;
+          match.autoCalcSetting.isDirectPayoutForMatch = league.autoCalcSetting.isDirectPayoutForLeague;
         }
       });
     }

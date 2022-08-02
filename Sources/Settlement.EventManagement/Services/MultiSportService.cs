@@ -271,30 +271,31 @@ namespace Settlement.EventManagement.Services
             return sportBook;
         }
 
-        private static List<LeagueModel> GroupLeague(IEnumerable<MultiSportMatch> sports)
+        private static List<LeagueModel> GroupLeague(IEnumerable<MultiSportMatch> matches)
         {
             var currentLeague = 0;
             var leagues = new List<LeagueModel>();
             var league = new LeagueModel();
-            foreach (var sport in sports)
+            foreach (var match in matches)
             {
-                if (!currentLeague.Equals(sport.LeagueId))
+                if (currentLeague.Equals(match.LeagueId))
                 {
-                    league = new LeagueModel
-                    {
-                        Name = sport.LeagueName,
-                        LeagueId = sport.LeagueId,
-                        Matches = new List<MultiSportMatch>(),
-                        SportType = sport.SportType
-                    };
-
-                    currentLeague = sport.LeagueId;
-                    league.Matches.Add(sport);
-                    leagues.Add(league);
+                    league.Matches.Add(match);
                 }
                 else
                 {
-                    league.Matches.Add(sport);
+                    league = new LeagueModel
+                    {
+                        Name = match.LeagueName,
+                        LeagueId = match.LeagueId,
+                        AutoCalcSetting = match.AutoCalcSetting,
+                        Matches = new List<MultiSportMatch>(),
+                        SportType = match.SportType
+                    };
+
+                    currentLeague = match.LeagueId;
+                    league.Matches.Add(match);
+                    leagues.Add(league);
                 }
             }
 

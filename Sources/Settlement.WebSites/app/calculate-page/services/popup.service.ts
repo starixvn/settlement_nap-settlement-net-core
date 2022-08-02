@@ -75,12 +75,11 @@ export class PopupService {
                     match.autoCalcSetting.isDirectPayoutForMatch = false;
                 }
             }
-        }
-        );
+        });
     }
 
     public openUpdatePayoutForLeague(league: League) {
-        const currentState = league.matches[0].autoCalcSetting.isAutoPayoutForLeague ? 1 : league.matches[0].autoCalcSetting.isDirectPayoutForLeague ? 5 : 0
+        const currentState = league.autoCalcSetting.isAutoPayoutForLeague ? 1 : league.autoCalcSetting.isDirectPayoutForLeague ? 5 : 0
         const src = `apps/auto-setting-league?leagueId=${league.leagueId}&currentState=${currentState}&pageType=AutoSettingLeague`;
         const frameSrc = encodeURI(src);
         const dialogData = new DialogDataIframe(Language.payout.titlePopupForLeague, frameSrc);
@@ -88,25 +87,23 @@ export class PopupService {
             if (!_.isUndefined(result)) {
                 const isEnable = Number(result.split(',')[0]);
                 if (_.isEqual(isEnable, 1)) {
-                    league.matches[0].autoCalcSetting.isAutoPayoutForLeague = true;
-                    league.matches[0].autoCalcSetting.isDirectPayoutForLeague = false;
+                    league.autoCalcSetting.isAutoPayoutForLeague = true;
+                    league.autoCalcSetting.isDirectPayoutForLeague = false;
                 } else if (_.isEqual(isEnable, 5)) {
-                    league.matches[0].autoCalcSetting.isAutoPayoutForLeague = false;
-                    league.matches[0].autoCalcSetting.isDirectPayoutForLeague = true;
+                    league.autoCalcSetting.isAutoPayoutForLeague = false;
+                    league.autoCalcSetting.isDirectPayoutForLeague = true;
                 } else {
-                    league.matches[0].autoCalcSetting.isAutoPayoutForLeague = false;
-                    league.matches[0].autoCalcSetting.isDirectPayoutForLeague = false;
+                    league.autoCalcSetting.isAutoPayoutForLeague = false;
+                    league.autoCalcSetting.isDirectPayoutForLeague = false;
                 }
 
                 this.handleActionService.updateAutoPayoutForMatch(league, _.isEqual(result.split(',')[1], 'true'));
             }
-            
-        }
-        );
+        });
     }
 
     public openUpdateTime(league: League, isInstant: boolean) {
-        const time = isInstant ? league.matches[0].instantWaitingTime : league.matches[0].directWaitingTime;
+        const time = isInstant ? league.instantWaitingTime : league.directWaitingTime;
         const page = isInstant ? 'InstantTime' : 'DirectTime';
         const src = `apps/change-waiting-time?leagueId=${league.leagueId}&time=${time}&pageType=${page}`;
         const frameSrc = encodeURI(src);
@@ -114,9 +111,9 @@ export class PopupService {
         this.dialogBoxService.popupHasResponse(dialogData, '600px', '310px').subscribe(result => {
             if (!_.isUndefined(result)) {
                 if (isInstant) {
-                    league.matches[0].instantWaitingTime = Number(result) ?? 0;
+                    league.instantWaitingTime = Number(result) ?? 0;
                 } else {
-                    league.matches[0].directWaitingTime = Number(result) ?? 0;
+                    league.directWaitingTime = Number(result) ?? 0;
                 }
             }
         }

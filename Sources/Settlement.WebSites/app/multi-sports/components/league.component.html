@@ -64,8 +64,8 @@
                 <td class="confirm-score"></td>
                 <td class="remark-status"></td>
                 <td class="auto-setting">
-                  <div class="cursor-pointer" [ngClass]="leagueMatch.matches[0] ? getAutoSettingLeague(leagueMatch.matches[0]) : ''" (click)="changeAutoLeague(leagueMatch.matches[0], leagueMatch)"
-                  [matTooltip]="getTextTooltipMatch(leagueMatch.matches[0].autoCalcSetting.isAutoPayoutForLeague)"></div>
+                  <div class="cursor-pointer" [ngClass]="getAutoSettingLeague(leagueMatch.autoCalcSetting)" (click)="changeAutoLeague(leagueMatch.autoCalcSetting, leagueMatch)"
+                  [matTooltip]="getTextTooltipMatch(leagueMatch.autoCalcSetting.isAutoPayoutForLeague)"></div>
                 </td>
               </tr>
               <ng-template [ngIf]="!leagueMatch.collapse">
