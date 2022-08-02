@@ -867,7 +867,7 @@ export class BetTypesComponent implements OnInit, DoCheck {
         this.matDialog.closeAll();
         this.matDialog.open(InputScoreFormComponent, {
             width: '510px',
-            height: '450px',
+            height: '500px',
             data:
             {
                 matchId : this.matchId,

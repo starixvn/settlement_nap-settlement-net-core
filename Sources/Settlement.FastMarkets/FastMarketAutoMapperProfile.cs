@@ -17,6 +17,8 @@ namespace Settlement.FastMarkets
             CreateMap<GetTimeMachineResultRequest, GetTimeMachineResultCriteria>();
             CreateMap<PushFastMarketResultCriteria, ValidateBeforePushCriteria>()
                 .ForMember(dest => dest.SelectedResources, map => map.MapFrom(src => src.Results));
+            CreateMap<PushFastMarketResultCriteria, ValidateEventCriteria>()
+                .ForMember(dest => dest.SelectedResources, map => map.MapFrom(src => src.Results));
         }
     }
 }

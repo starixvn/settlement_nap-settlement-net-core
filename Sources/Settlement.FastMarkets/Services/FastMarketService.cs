@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Settlement.Core.Criteria;
 using Settlement.Core.Models;
+using Settlement.FastMarkets.Constants;
 using Settlement.FastMarkets.Criteria;
 using Settlement.FastMarkets.Models;
 using Settlement.FastMarkets.Requests;
@@ -45,6 +46,8 @@ namespace Settlement.FastMarkets.Services
 
         private readonly IConfiguration configuration;
 
+        private readonly string fastMarketMode = "FM";
+
         public FastMarketServiceImp(
             IDynamicRepository repository,
             IFastMarketResultService fastMarketResultService,
@@ -71,13 +74,15 @@ namespace Settlement.FastMarkets.Services
         {
             var criteria = new GetFastMarketMatchDetailCriteria { MatchId = matchId };
 
-            var mappingTypes = new[] { typeof(EventCounter), typeof(string), typeof(ResultDetail) };
+            var mappingTypes = new[] { typeof(EventCounter), typeof(string), typeof(ResultDetail), typeof(FastMarketResult) };
             var fetchedData = await repository.FetchMultipleAsync(criteria, mappingTypes);
             var eventCounter = fetchedData[0].Cast<EventCounter>().ToList();
             var handicapValue = fetchedData[1].Cast<string>().FirstOrDefault();
             var resultDetail = fetchedData[2].Cast<ResultDetail>().ToList();
+            var fastMarketResult = fetchedData[3].Cast<FastMarketResult>().ToList();
 
-            var (fastMarketResult, ticketsCount) = await multipleServerFetcherService.GetFastMarketTicketDetail(matchId, criteria.ResourcesOutPut);
+            var (fastMarketTicketDetails, ticketsCount) = await multipleServerFetcherService.GetFastMarketTicketDetail(matchId);
+            GenerateTicketsStatus(fastMarketResult, fastMarketTicketDetails);
             var groupFastMarketByBetType = fastMarketBetTypeService.BetTypesList(fastMarketResult, handicapValue);
 
             return new FastMarketModel
@@ -89,6 +94,35 @@ namespace Settlement.FastMarkets.Services
                 TicketCount = ticketsCount,
                 ResultDetail = resultDetail
             };
+        }
+
+        private void GenerateTicketsStatus(List<FastMarketResult> fastMarketResults, List<FastMarketTicketDetail> fastMarketTicketDetails)
+        {
+            foreach (var result in fastMarketResults)
+            {
+                var ticketDetail = fastMarketTicketDetails.FirstOrDefault(detail => detail.BetType == result.BetType && detail.Position == result.Position);
+                result.TicketStatus = CreateTicketStatus(ticketDetail);
+            }
+        }
+
+        private int CreateTicketStatus(FastMarketTicketDetail ticketDetail)
+        {
+            if (ticketDetail == null || ticketDetail.TicketCount == 0)
+            {
+                return TicketStatus.NoTicket;
+            }
+
+            if (ticketDetail.TicketRunning > 0)
+            {
+                return TicketStatus.Running;
+            }
+
+            if (ticketDetail.TicketMarked > 0)
+            {
+                return TicketStatus.Marked;
+            }
+
+            return TicketStatus.Calculated;
         }
 
         public async Task<Result> Calculate(SettleRequest request)
@@ -114,7 +148,25 @@ namespace Settlement.FastMarkets.Services
 
         private async Task<Result> ValidateBeforePushing(PushFastMarketResultCriteria criteria)
         {
-            const string fastMarketMode = "FM";
+            var validateEvent = await ValidateEvent(criteria);
+
+            if (validateEvent.ErrCode > 0)
+            {
+                return validateEvent;
+            }
+
+            var validateTicket = await ValidateTickets(criteria);
+
+            if (validateTicket.ErrCode > 0)
+            {
+                return validateTicket;
+            }
+
+            return new Result();
+        }
+
+        private async Task<Result> ValidateTickets(PushFastMarketResultCriteria criteria)
+        {
             var servers = configuration.GetSection("SiteDBServer").Get<List<string>>();
             var checkingCriteria = mapper.Map<PushFastMarketResultCriteria, ValidateBeforePushCriteria>(criteria);
             checkingCriteria.Mode = fastMarketMode;
@@ -130,6 +182,24 @@ namespace Settlement.FastMarkets.Services
                         ErrMsg = checkingCriteria.ErrMsg
                     };
                 }
+            }
+
+            return new Result();
+        }
+
+        private async Task<Result> ValidateEvent(PushFastMarketResultCriteria criteria)
+        {
+            var checkingCriteria = mapper.Map<PushFastMarketResultCriteria, ValidateEventCriteria>(criteria);
+            checkingCriteria.Mode = fastMarketMode;
+            await repository.ExecuteAsync(checkingCriteria);
+
+            if (checkingCriteria.ErrCode > 0)
+            {
+                return new Result
+                {
+                    ErrCode = checkingCriteria.ErrCode,
+                    ErrMsg = checkingCriteria.ErrMsg
+                };
             }
 
             return new Result();

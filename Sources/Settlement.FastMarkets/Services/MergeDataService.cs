@@ -9,7 +9,7 @@ namespace Settlement.FastMarkets.Services
 {
     public interface MergeDataService
     {
-        public (List<FastMarketResult>, TicketCounts) MergeFastMarketTicketDetail(List<(List<FastMarketResult>, TicketCounts)> data);
+        public (List<FastMarketTicketDetail>, TicketCounts) MergeFastMarketTicketDetail(List<(List<FastMarketTicketDetail>, TicketCounts)> data);
     }
 
     public class MergeDataServiceImp : MergeDataService
@@ -19,80 +19,57 @@ namespace Settlement.FastMarkets.Services
 
         }
 
-        public (List<FastMarketResult>, TicketCounts) MergeFastMarketTicketDetail(List<(List<FastMarketResult>, TicketCounts)> data)
+        public (List<FastMarketTicketDetail>, TicketCounts) MergeFastMarketTicketDetail(List<(List<FastMarketTicketDetail>, TicketCounts)> data)
         {
-            var multipleFastMarketResults = new List<List<FastMarketResult>>();
+            var multipleFastMarketTickets = new List<List<FastMarketTicketDetail>>();
             var multipleTicketCounts = new List<TicketCounts>();
             foreach(var item in data)
             {
-                multipleFastMarketResults.Add(item.Item1);
+                multipleFastMarketTickets.Add(item.Item1);
                 multipleTicketCounts.Add(item.Item2);
             }
 
-            var fastMarketResults = ResolveFastMarketResults(multipleFastMarketResults);
+            var fastMarketTickets = ResolveFastMarketTickets(multipleFastMarketTickets);
             var ticketCounts = ResolveTicketCounts(multipleTicketCounts);
 
-            return (fastMarketResults, ticketCounts);
+            return (fastMarketTickets, ticketCounts);
         }
 
-        private List<FastMarketResult> ResolveFastMarketResults(List<List<FastMarketResult>> data)
+        private List<FastMarketTicketDetail> ResolveFastMarketTickets(List<List<FastMarketTicketDetail>> data)
         {
-            var baseResult = data.First();
-            var siteResults = data.Skip(1).ToList();
-            var conflictData = new List<FastMarketResult>();
-            foreach(var siteResult in siteResults)
+            var baseData = data.First();
+            var siteData = data.Skip(1).ToList();
+            foreach(var details in siteData)
             {
-                var newResult = siteResult.Except(baseResult);
+                var newResult = details.Except(baseData);
                 if (newResult.Any())
                 {
-                    baseResult.AddRange(newResult);
+                    baseData.AddRange(newResult);
                 }
 
-                var conflictResults = baseResult.FindAll(result =>
-                {
-                    var correspondingResult = siteResult.Find(r => r.BetType == result.BetType && r.Position == result.Position);
-                    return correspondingResult != null && result.TicketStatus != correspondingResult.TicketStatus;
-                });
-
-                conflictData = conflictData.Union(conflictResults).ToList();
+                SumTicketDetails(baseData, details);
             }
 
-            if (conflictData.Any())
-            {
-                foreach(var conflictResult in conflictData)
-                {
-                    conflictResult.MultipleTicketStatus.Add(conflictResult.TicketStatus);
-                    foreach(var siteResult in siteResults)
-                    {
-                        var correspondingResult = siteResult.Find(r => r.BetType == conflictResult.BetType && r.Position == conflictResult.Position);
-                        conflictResult.MultipleTicketStatus.Add(conflictResult.TicketStatus);
-                    }
-
-                    conflictResult.TicketStatus = MergeTicketStatus(conflictResult);
-                }
-            }
-
-            return baseResult;
+            return baseData;
         }
 
-        private int MergeTicketStatus(FastMarketResult result)
+        private void SumTicketDetails(List<FastMarketTicketDetail> baseData, List<FastMarketTicketDetail> siteData)
         {
-            if (result.MultipleTicketStatus.Any(status => status == TicketStatus.Marked))
+            baseData.ForEach(item =>
             {
-                return TicketStatus.Marked;
-            }
+                var ticketCount = siteData.FirstOrDefault(data => data.BetType == item.BetType && data.Position == item.Position);
+                if (ticketCount != null)
+                {
+                    SumTicketDetail(item, ticketCount);
+                }
+            });
+        }
 
-            if (result.MultipleTicketStatus.Any(status => status == TicketStatus.Running))
-            {
-                return TicketStatus.Running;
-            }
-
-            if (result.MultipleTicketStatus.Any(status => status == TicketStatus.Calculated))
-            {
-                return TicketStatus.Calculated;
-            }
-
-            return result.TicketStatus;
+        private void SumTicketDetail(FastMarketTicketDetail baseDetail, FastMarketTicketDetail siteDetail)
+        {
+            baseDetail.TicketCount += siteDetail.TicketCount;
+            baseDetail.TicketRunning += siteDetail.TicketRunning;
+            baseDetail.TicketMarked += siteDetail.TicketMarked;
         }
 
         private TicketCounts ResolveTicketCounts(List<TicketCounts> data)

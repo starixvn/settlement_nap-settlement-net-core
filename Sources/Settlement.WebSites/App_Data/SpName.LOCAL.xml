@@ -105,10 +105,21 @@
   </Function>
 
   <Function Name="Fast Market">
-    <Setting Key="NAP_Set_FastMarket_CheckingMarkedTransaction" SpName="NAP_Set_FastMarket_CheckingMarkedTransaction" DbName="DBTXN.bodb02.bodbAdminNet" />
+    <Function Name="NAP_Set_FastMarket_CheckingMarkedTransaction">
+      <Setting Key="NAP_Set_FastMarket_CheckingMarkedTransaction_DBTXN" SpName="NAP_Set_FastMarket_CheckingMarkedTransaction" DbName="DBTXN.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Set_FastMarket_CheckingMarkedTransaction_SITEDB" SpName="NAP_Set_FastMarket_CheckingMarkedTransaction" DbName="SITEDB.bodb02.bodbAdminNet" />
+    </Function>
+    <Function Name="NAP_Set_FastMarket_MatchSelDetail_Ticket">
+      <Setting Key="NAP_Set_FastMarket_MatchSelDetail_Ticket_DBTXN" SpName="NAP_Set_FastMarket_MatchSelDetail_Ticket" DbName="DBTXN.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Set_FastMarket_MatchSelDetail_Ticket_SITEDB" SpName="NAP_Set_FastMarket_MatchSelDetail_Ticket" DbName="SITEDB.bodb02.bodbAdminNet" />
+    </Function>
+    <Function Name="NAP_Admin_Settlement_Fast_Market_Auto_1s_Push">
+      <Setting Key="NAP_Admin_Settlement_Fast_Market_Auto_1s_Push_DBTXN" SpName="NAP_Admin_Settlement_Fast_Market_Auto_1s_Push" DbName="DBTXN.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Admin_Settlement_Fast_Market_Auto_1s_Push_SITEDB" SpName="NAP_Admin_Settlement_Fast_Market_Auto_1s_Push" DbName="SITEDB.bodb02.bodbAdminNet" />
+    </Function>
+
     <Setting Key="NAP_Set_FastMarket_MatchSelDetail" SpName="NAP_Set_FastMarket_MatchSelDetail" DbName="DBTXN.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_MatchSelInfo_Auto_1s" SpName="NAP_Set_MatchSelInfo_Auto_1s" DbName="DBPRO.bodb02.bodbAdminNet" />
-    <Setting Key="NAP_Admin_Settlement_Fast_Market_Auto_1s_Push" SpName="NAP_Admin_Settlement_Fast_Market_Auto_1s_Push" DbName="DBTXN.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_FastMarket_ResultDetailUpd" SpName="NAP_Set_FastMarket_ResultDetailUpd" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_FastMarket_MatchSelDetail_ReCal" SpName="NAP_Set_FastMarket_MatchSelDetail_ReCal" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_FastMarket_GoalSequenceSel" SpName="NAP_Set_FastMarket_GoalSequenceSel" DbName="DBPRO.bodb02.bodbAdminNet" />

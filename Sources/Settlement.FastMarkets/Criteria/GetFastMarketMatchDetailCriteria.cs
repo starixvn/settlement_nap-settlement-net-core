@@ -6,8 +6,6 @@ namespace Settlement.FastMarkets.Criteria
     {
         public int MatchId { get; set; }
 
-        public string ResourcesOutPut { get; set; }
-
         public override string GetSettingKey()
         {
             return "NAP_Set_FastMarket_MatchSelDetail";
