@@ -109,7 +109,7 @@ export class AutoSettingComponent implements OnInit {
     );
     this.requestService.updateSettingLeague(query).subscribe((result: Result) => {
       if (result.isSuccessful) {
-        parent.document.getElementById('dialog-response').setAttribute('value', query.autoType.toString());
+        parent.document.getElementById('dialog-response').setAttribute('value', `${this.currentState},${isApplyAll}`);
         this.closePopupService.angularClosePopup();
       } else {
         this.errorMessage = result.errMsg;

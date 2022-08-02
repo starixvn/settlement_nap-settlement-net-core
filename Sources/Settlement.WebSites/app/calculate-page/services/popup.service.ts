@@ -85,18 +85,22 @@ export class PopupService {
         const frameSrc = encodeURI(src);
         const dialogData = new DialogDataIframe(Language.payout.titlePopupForLeague, frameSrc);
         this.dialogBoxService.popupHasResponse(dialogData, '500px', '270px').subscribe(result => {
-            if (!_.isUndefined(Number(result))) {
-                if (_.isEqual(Number(result), 1)) {
+            if (!_.isUndefined(result)) {
+                const isEnable = Number(result.split(',')[0]);
+                if (_.isEqual(isEnable, 1)) {
                     league.matches[0].autoCalcSetting.isAutoPayoutForLeague = true;
                     league.matches[0].autoCalcSetting.isDirectPayoutForLeague = false;
-                } else if (_.isEqual(Number(result), 5)) {
+                } else if (_.isEqual(isEnable, 5)) {
                     league.matches[0].autoCalcSetting.isAutoPayoutForLeague = false;
                     league.matches[0].autoCalcSetting.isDirectPayoutForLeague = true;
                 } else {
                     league.matches[0].autoCalcSetting.isAutoPayoutForLeague = false;
                     league.matches[0].autoCalcSetting.isDirectPayoutForLeague = false;
                 }
+
+                this.handleActionService.updateAutoPayoutForMatch(league, _.isEqual(result.split(',')[1], 'true'));
             }
+            
         }
         );
     }

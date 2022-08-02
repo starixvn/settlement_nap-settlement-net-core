@@ -38,6 +38,19 @@ export class HandleActionsService {
     });
   }
 
+  public updateAutoPayoutForMatch(league: League, isApplyAll: boolean) {
+    if (isApplyAll) {
+      league.matches.forEach(match => {
+        const eventStatus = match.eventStatus.toLocaleLowerCase();
+        if (!eventStatus.includes('refund ht')
+          || _.isEqual(eventStatus, EventStatus.running.toLocaleLowerCase()) || _.isEqual(eventStatus, EventStatus.closed.toLocaleLowerCase())) {
+          match.autoCalcSetting.isAutoPayoutForMatch = league.matches[0].autoCalcSetting.isAutoPayoutForLeague;
+          match.autoCalcSetting.isDirectPayoutForMatch = league.matches[0].autoCalcSetting.isDirectPayoutForLeague;
+        }
+      });
+    }
+  }
+
   private handleEventStatusColor(match: Match, isPending: boolean) {
     if (_.isEqual(match.eventStatus, EventStatus.postponed)) {
       return this.isExistMarkedTickets(match) ? BackgroundColor.postponedBlinking : BackgroundColor.postponed;
