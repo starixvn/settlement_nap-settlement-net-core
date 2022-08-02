@@ -17,7 +17,8 @@ export class DetectChangesService {
             || !_.isEqual(oldMatch.earlySettleStatus, newMatch.earlySettleStatus)
             || !_.isEqual(oldMatch.betStatus, newMatch.betStatus)
             //|| !_.isEqual(oldMatch.autoCalcSetting, newMatch.autoCalcSetting)
-            || !_.isEqual(oldMatch.remark, newMatch.remark);
+            || !_.isEqual(oldMatch.remark, newMatch.remark)
+            || !_.isEqual(oldMatch.goalIcon, newMatch.goalIcon);
     }
 
     private isScoreDifferent(oldMatch: CalculationMatch, newMatch: CalculationMatch) {

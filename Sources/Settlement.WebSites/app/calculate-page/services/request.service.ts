@@ -120,6 +120,7 @@ export class RequestService {
           match.isExistRunningTicket = newMatch.isExistRunningTicket;
           match.isExistMarkedTicketParlay = newMatch.isExistMarkedTicketParlay;
           match.isExistRunningTicketParlay = newMatch.isExistRunningTicketParlay;
+          match.goalIcon = newMatch.goalIcon;
           if (isAutoCalculatePage) {
             this.mapNewestAutoCalculationMatch(match, newMatch);
           }

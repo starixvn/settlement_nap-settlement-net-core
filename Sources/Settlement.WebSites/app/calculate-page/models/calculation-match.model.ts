@@ -1,4 +1,4 @@
-import { AutoSetting, Match } from "../../shared/models";
+import { AutoSetting, GoalIcon, Match } from "../../shared/models";
 
 export class CalculationMatch extends Match{
    autoCalcSetting: AutoSetting;
@@ -14,4 +14,5 @@ export class CalculationMatch extends Match{
    liveHomeScore: string;
    directWaitingTime: number;
    instantWaitingTime: number;
+   goalIcon: GoalIcon;
 }

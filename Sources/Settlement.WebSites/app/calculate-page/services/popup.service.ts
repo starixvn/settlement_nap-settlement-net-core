@@ -105,7 +105,7 @@ export class PopupService {
     public openUpdateTime(league: League, isInstant: boolean) {
         const time = isInstant ? league.matches[0].instantWaitingTime : league.matches[0].directWaitingTime;
         const page = isInstant ? 'InstantTime' : 'DirectTime';
-        const src = `apps/change-waiting-time?leagueId=${league.leagueId}&time==${time}&pageType=${page}`;
+        const src = `apps/change-waiting-time?leagueId=${league.leagueId}&time=${time}&pageType=${page}`;
         const frameSrc = encodeURI(src);
         const dialogData = new DialogDataIframe(Language.payout.titlePopupForLeague, frameSrc);
         this.dialogBoxService.popupHasResponse(dialogData, '600px', '310px').subscribe(result => {

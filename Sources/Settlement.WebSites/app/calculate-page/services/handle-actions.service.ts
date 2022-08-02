@@ -32,7 +32,7 @@ export class HandleActionsService {
     leagueMatch.matches.forEach(item => {
       const eventStatus = item.eventStatus.toLocaleLowerCase();
       if (!eventStatus.includes('refund ht')
-        || _.isEqual(eventStatus, EventStatus.running.toLocaleLowerCase()) || _.isEqual(eventStatus, EventStatus.closed)) {
+        || _.isEqual(eventStatus, EventStatus.running.toLocaleLowerCase()) || _.isEqual(eventStatus, EventStatus.closed.toLocaleLowerCase())) {
         item.autoCalcSetting.isInstantForMatch = isAutoInstant;
       }
     });

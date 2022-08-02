@@ -10,5 +10,5 @@ export const EventStatus = {
     abandoned: 'Abandoned',
     abandonedFirstHalf: 'Abandoned 1H',
     running: "Running",
-    closed: "closed"
+    closed: "Closed"
 };

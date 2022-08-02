@@ -98,7 +98,8 @@ export class AutoCalculateMatchesComponent extends MatchesBaseComponent implemen
     );
     const result = await this.requestService.updateSettingMatch(query).toPromise();
     if (result.errCode === 0) {
-      match.autoCalcSetting.isInstantForMatch = !match.autoCalcSetting.isAutoPayoutForMatch;
+      match.autoCalcSetting.isInstantForMatch = !match.autoCalcSetting.isInstantForMatch;
+
     } else {
       this.dialogAlertMessage.message = result.errMsg;
       this.messageBoxService.alert(this.dialogAlertMessage);
@@ -127,7 +128,7 @@ export class AutoCalculateMatchesComponent extends MatchesBaseComponent implemen
     if (result.errCode === 0) {
       match.autoCalcSetting.isInstantForLeague = !match.autoCalcSetting.isInstantForLeague;
       if (isApplyAll) {
-        this.handleActionService.handleAutoInstantForMatch(leagueMatch, match.autoCalcSetting.isAutoPayoutForLeague);
+        this.handleActionService.handleAutoInstantForMatch(leagueMatch, match.autoCalcSetting.isInstantForLeague);
       }
     } else {
       this.dialogConfirmMessage.message = result.errMsg;
