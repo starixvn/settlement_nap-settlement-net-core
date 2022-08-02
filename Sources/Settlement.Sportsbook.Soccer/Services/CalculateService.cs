@@ -47,7 +47,11 @@ namespace Settlement.Sportsbook.Soccer.Services
         public async Task<Result> Calculate(SettleRequest request)
         {
             var criteria = createQueryCriteria.CreateCalculateCriteria(request);
-
+            var requestChecking = await ValidateBeforeExecute(criteria);
+            if (requestChecking.ErrCode > 0)
+            {
+                return requestChecking;
+            }
             var result = await Execute(criteria);
 
             if (result.IsSuccessful && request.IsApplyHedging)
@@ -62,13 +66,17 @@ namespace Settlement.Sportsbook.Soccer.Services
         public async Task<Result> UnCalculate(SettleRequest request)
         {
             var criteria = createQueryCriteria.CreateUnCalculateCriteria(request);
+            var requestChecking = await ValidateBeforeExecute(criteria);
+            if (requestChecking.ErrCode > 0)
+            {
+                return requestChecking;
+            }
             var result = await Execute(criteria);
 
             if (result.IsSuccessful && request.IsApplyHedging)
             {
                 criteria.MatchId = request.HedgeMatchId;
-                criteria.DbServer = configuration.GetSection("SiteDBServer").Get<List<string>>().First();
-                await repository.ExecuteAsync(criteria);
+                await Execute(criteria);
             }
 
             return result;
@@ -90,12 +98,6 @@ namespace Settlement.Sportsbook.Soccer.Services
         private async Task<Result> Execute(CalculateCriteria criteria)
         {
             var listReplicatedServer = configuration.GetSection("SiteDBServer").Get<List<string>>();
-            var requestChecking = await ValidateBeforeExecute(criteria);
-            if (requestChecking.ErrCode > 0)
-            {
-                return requestChecking;
-            }
-
             criteria.SessionId = Guid.NewGuid().ToString();
 
             foreach (var server in listReplicatedServer)
