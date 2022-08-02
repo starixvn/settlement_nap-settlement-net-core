@@ -12,7 +12,6 @@ import { BlockUIService } from "../../services";
 export class AppBaseComponent {
     @ViewChild('container', { read: ViewContainerRef, static: true }) container: ViewContainerRef;
     public component: ComponentRef<SportTemplate>;
-    public apiUrl: string;
     constructor(
         protected blockUIService: BlockUIService,
         protected elementRef: ElementRef<HTMLElement>,
@@ -23,8 +22,7 @@ export class AppBaseComponent {
         const factory = getComponentFactory();
         this.component = this.container.createComponent(factory);
         const matchId = Number(UrlHelper.getUrlParameter('matchId'));
-        this.apiUrl = this.elementRef.nativeElement.getAttribute('api-url');
-        this.component.instance.getMatch(matchId, this.apiUrl);
+        this.component.instance.getMatch(matchId);
         return this.component;
     }
 }

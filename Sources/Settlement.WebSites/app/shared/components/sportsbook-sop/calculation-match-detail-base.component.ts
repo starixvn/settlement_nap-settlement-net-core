@@ -11,7 +11,6 @@ import { LeagueOutsideSource } from '../../../score-source-setting/models';
     template: '',
 })
 export class CalculationMatchDetailBaseComponent {
-    @Input() public apiUrl: string;
     public matchDetail: MatchDetail;
 
     constructor(
@@ -20,12 +19,10 @@ export class CalculationMatchDetailBaseComponent {
     }
 
     public manageOutSideSourcePopup() {
-        this.aioService.apiUrl = this.apiUrl;
         this.aioService.getLeagueSources(this.matchDetail.leagueId).subscribe((source: LeagueOutsideSource) => {
             source.leagueName = this.matchDetail.leagueName;
             source.leagueId = this.matchDetail.leagueId;
             source.sportName = this.matchDetail.sportName;
-            source.apiUrl = this.aioService.apiUrl;
             this.dialog.closeAll();
             this.dialog.open(ManageLeagueComponent, {
                 width: '500px',

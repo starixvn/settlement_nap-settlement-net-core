@@ -12,7 +12,6 @@ describe('MoveTicketsService', () => {
   let httpRequestService: HttpRequestService;
   let moveTicketsService: MoveTicketsService;
   let dialogBoxService: DialogBoxService;
-  const apiUrl = 'localhost';
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -48,7 +47,7 @@ describe('MoveTicketsService', () => {
 
     // Act
     spyOn(httpRequestService, 'postJson');
-    moveTicketsService.getLeague(param, apiUrl);
+    moveTicketsService.getLeague(param);
 
     // Assert
     expect(httpRequestService.postJson).toHaveBeenCalledWith(param, url, false);
@@ -60,7 +59,7 @@ describe('MoveTicketsService', () => {
 
         // Act
         spyOn(httpRequestService, 'getJson');
-        moveTicketsService.getDate(apiUrl);
+        moveTicketsService.getDate();
 
         // Assert
         expect(httpRequestService.getJson).toHaveBeenCalledWith(url);
@@ -82,7 +81,7 @@ describe('MoveTicketsService', () => {
 
         // Act
         spyOn(httpRequestService, 'postJson');
-        moveTicketsService.filter(param, apiUrl);
+        moveTicketsService.filter(param);
 
         // Assert
         expect(httpRequestService.postJson)
@@ -98,7 +97,7 @@ describe('MoveTicketsService', () => {
 
     // Act
     spyOn(httpRequestService, 'postJson');
-    moveTicketsService.moveTickets(param, apiUrl);
+    moveTicketsService.moveTickets(param);
 
     // Assert
     expect(httpRequestService.postJson)
@@ -111,7 +110,7 @@ describe('MoveTicketsService', () => {
 
     // Act
     spyOn(httpRequestService, 'postJson');
-    moveTicketsService.getChildMatches(param, apiUrl);
+    moveTicketsService.getChildMatches(param);
 
     // Assert
     expect(httpRequestService.postJson)

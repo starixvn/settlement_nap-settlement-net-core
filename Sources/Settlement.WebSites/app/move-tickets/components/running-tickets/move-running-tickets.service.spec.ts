@@ -8,7 +8,6 @@ import { MoveRunningTicketsService } from "./move-running-tickets.service";
 describe('MoveTicketsService', () => {
     let httpRequestService: HttpRequestService;
     let moveRunningTicketsService: MoveRunningTicketsService;
-    const apiUrl = 'localhost';
 
     beforeEach(() => {
       TestBed.configureTestingModule({
@@ -37,7 +36,6 @@ describe('MoveTicketsService', () => {
       spyOn(httpRequestService, 'postJson');
       const request = new ValidateMatchesRequest();
       const expectedUrl = 'localhost/api/moveticket/validate-matches';
-      moveRunningTicketsService.apiUrl = apiUrl;
 
       moveRunningTicketsService.validateMatches(request);
 
@@ -48,7 +46,6 @@ describe('MoveTicketsService', () => {
       spyOn(httpRequestService, 'postJson');
       const request = new GetMoveTicketsRequest();
       const expectedUrl = 'localhost/api/moveticket/get-move-tickets-matches';
-      moveRunningTicketsService.apiUrl = apiUrl;
 
       moveRunningTicketsService.getMoveTicketsMatches(request);
 
@@ -59,7 +56,6 @@ describe('MoveTicketsService', () => {
       spyOn(httpRequestService, 'postJson');
       const request = new MoveRunningTicketsRequest();
       const expectedUrl = 'localhost/api/moveticket/move-running-tickets';
-      moveRunningTicketsService.apiUrl = apiUrl;
 
       moveRunningTicketsService.moveRunningTickets(request);
 

@@ -12,7 +12,6 @@ import { CalculationMatch, League } from '../models';
 
 @Injectable()
 export class PopupService {
-    public apiUrl = "";
     constructor(private readonly dialogBoxService: DialogBoxService,
         private readonly handleActionService: HandleActionsService,
         private readonly requestService: RequestService) { }

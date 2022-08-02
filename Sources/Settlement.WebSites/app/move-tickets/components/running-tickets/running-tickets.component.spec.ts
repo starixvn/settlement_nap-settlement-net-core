@@ -74,14 +74,6 @@ describe('MoveTickets - RunningTicketsComponent', () => {
       expect(component).toBeTruthy();
   });
 
-  it('init - should set apiUrl for service', () => {
-    const apiUrl = "localhost";
-
-    component.init(apiUrl);
-
-    expect(moveRunningTicketsService.apiUrl).toEqual(apiUrl);
-  });
-
   describe('isCheckMatchesButtonDisabled', () => {
     it('should return true when 1 matchId is empty', () => {
       const actual = component.isCheckMatchesButtonDisabled();

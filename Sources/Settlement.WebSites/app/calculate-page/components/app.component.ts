@@ -43,7 +43,6 @@ export class AppComponent implements OnInit {
   private createTemplateComponent() {
     const factory = this.getComponentFactory();
     this.component = this.container.createComponent(factory);
-    this.component.instance.rootApi =this.elementRef.nativeElement.getAttribute('api-url');
     return this.component;
   }
 

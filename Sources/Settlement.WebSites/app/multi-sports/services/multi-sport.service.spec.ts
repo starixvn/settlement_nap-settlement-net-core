@@ -43,7 +43,6 @@ describe('MultiSport - MultiSportService', () => {
     injector = getTestBed();
     httpRequestService = TestBed.inject(HttpRequestService);
     service = TestBed.inject(MultiSportService);
-    service.apiUrl = "local";
   });
 
   it('should be created', () => {

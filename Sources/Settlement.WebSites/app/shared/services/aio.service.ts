@@ -12,7 +12,8 @@ import { ClosePopupService } from '.';
 
 @Injectable()
 export class AioService {
-    public apiUrl = '';
+    private aioApi = `api/aio`;
+
     private readonly httpRequestService: HttpRequestService;
     public readonly warningDialogMessage: ModalDialogMessage = new ModalDialogMessage();
     constructor(httpRequestService: HttpRequestService,
@@ -22,30 +23,27 @@ export class AioService {
     }
 
     public getMatch(query: object) {
-        const newApiUrl = _.isEmpty(this.apiUrl) ? `api/sportsbook-aio/get-match` : `${this.apiUrl}/api/aio/get-match`;
-        return this.httpRequestService.postJson(query, newApiUrl);
+        return this.httpRequestService.postJson(query, `${this.aioApi}/get-match`);
     }
 
     public push(query: object) {
-        const newApiUrl = _.isEmpty(this.apiUrl) ? 'api/sportsbook-aio/settle' : `${this.apiUrl}/api/aio/settle`;
-        return this.httpRequestService.postJson(query, newApiUrl);
+        return this.httpRequestService.postJson(query, `${this.aioApi}/settle`);
     }
 
     public verifyNoRunningOdds(query: object) {
-        const newApiUrl = _.isEmpty(this.apiUrl) ? 'api/sportsbook-aio/no-running-odds' : `${this.apiUrl}/api/aio/no-running-odds`;
-        return this.httpRequestService.postJson(query, newApiUrl, false);
+        return this.httpRequestService.postJson(query, `${this.aioApi}/no-running-odds`, false);
     }
 
     public changeResultSetting(query: object): Observable<boolean> {
-        return this.httpRequestService.postJson(query, `${this.apiUrl}/api/aio/result-setting`);
+        return this.httpRequestService.postJson(query, `${this.aioApi}/result-setting`);
     }
 
     private getLastestMatchResult(query: object) {
-        return this.httpRequestService.postJson(query, `${this.apiUrl}/api/aio/get-recal-result`);
+        return this.httpRequestService.postJson(query, `${this.aioApi}/get-recal-result`);
     }
 
     public saveScore(query: SaveScoreQuery) {
-        return this.httpRequestService.postJson(query, `${this.apiUrl}/api/aio/save-score`);
+        return this.httpRequestService.postJson(query, `${this.aioApi}/save-score`);
     }
 
     public getLeagueSources(leagueId: number) {
@@ -53,25 +51,19 @@ export class AioService {
             leagueId
         };
 
-        return this.httpRequestService.postJson(query, `${this.apiUrl}/api/setting/get-league-outside-source`, false);
+        return this.httpRequestService.postJson(query, `api/setting/get-league-outside-source`, false);
     }
 
     public checkMarkedTickets(query: object) {
-        return this.httpRequestService.postJson(query, `${this.apiUrl}/api/aio/check-marked-tickets`, false);
+        return this.httpRequestService.postJson(query, `${this.aioApi}/check-marked-tickets`, false);
     }
 
     public pushChildMatch(query: object) {
-        return this.httpRequestService.postJson(query, `${this.apiUrl}/api/aio/settle-child-match`);
-    }
-
-    public checkingStatus(query: object) {
-        const url = `api/sportsbook-refund/checking-status`;
-        return this.httpRequestService.postJson(query, url);
+        return this.httpRequestService.postJson(query, `${this.aioApi}/settle-child-match`);
     }
 
     public voidBet(query: object) {
-        const newApiUrl =  `${this.apiUrl}/api/void-bet/update`;
-        return this.httpRequestService.postJson(query, newApiUrl);
+        return this.httpRequestService.postJson(query, `api/void-bet/update`);
     }
 
     public verifyChangedSettledTickets(resultDetails: GeneralResultDetail[], query: object): Observable<boolean> {

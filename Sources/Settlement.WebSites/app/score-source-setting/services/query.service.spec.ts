@@ -23,7 +23,6 @@ describe('QueryService', () => {
 
     injector = getTestBed();
     service = TestBed.inject(QueryService);
-    service.apiUrl = 'Local';
     httpRequestService = TestBed.inject(HttpRequestService);
     spyOn(httpRequestService, 'postJson');
   });

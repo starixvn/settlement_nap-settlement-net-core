@@ -16,7 +16,6 @@ export class PopupService {
     private readonly generalHeightPopup = '715px';
     private readonly listNewSport = [SportType.tennis, SportType.badminton, SportType.eSports, SportType.basketBall, SportType.cricket, SportType.volleyBall];
     public properties = new PopupProperties();
-    public apiUrl = "";
     constructor(private readonly dialogBoxService: DialogBoxService,
         private readonly handleActionsService: HandleActionsService,
         private readonly multiSportService: MultiSportService) {
@@ -34,9 +33,9 @@ export class PopupService {
         if (this.listNewSport.includes(match.sportType)) {
             let sportName = sports.find(item => item.id === match.sportType).name.toLowerCase();
             sportName = _.isEqual(sportName, 'volleyball') ? 'badminton' : sportName;
-            this.properties.src = `${this.apiUrl}/sportsbook/${sportName}/calculation?matchId=${match.matchId}&sportType=${match.sportType}`;
+            this.properties.src = `apps/sportsbook/${sportName}/calculation?matchId=${match.matchId}&sportType=${match.sportType}`;
         } else {
-            this.properties.src = `${this.apiUrl}/sportsbook/other-sports/calculation?matchId=${match.matchId}&sportType=${match.sportType}`;
+            this.properties.src = `apps/sportsbook/other-sports/calculation?matchId=${match.matchId}&sportType=${match.sportType}`;
         }
 
         this.openAndHandlePopup(this.properties, match, sports, multiSport);
@@ -50,9 +49,9 @@ export class PopupService {
         if (_.includes(this.listNewSport, match.sportType)) {
             let sportName = sports.find(item => item.id === match.sportType).name.toLowerCase();
             sportName = _.isEqual(sportName, 'volleyball') ? 'badminton' : sportName;
-            this.properties.src = `${this.apiUrl}/sportsbook/${sportName}/Refund?matchId=${match.matchId}&sportType=${match.sportType}`;
+            this.properties.src = `apps/sportsbook/${sportName}/Refund?matchId=${match.matchId}&sportType=${match.sportType}`;
         } else {
-            this.properties.src = `${this.apiUrl}/sportsbook/other-sports/refund?matchId=${match.matchId}&sportType=${match.sportType}`;
+            this.properties.src = `apps/sportsbook/other-sports/refund?matchId=${match.matchId}&sportType=${match.sportType}`;
         }
 
         this.openAndHandlePopup(this.properties, match, sports, multiSport);
@@ -62,7 +61,7 @@ export class PopupService {
         this.properties.title = Language.EarlyPopupTitle;
         let sportName = sports.find(item => item.id === match.sportType).name.toLowerCase();
         sportName = _.isEqual(sportName, 'volleyball') ? 'badminton' : sportName;
-        this.properties.src = `${this.apiUrl}/sportsbook/${sportName}/early-settlement?matchId=${match.matchId}&sportType=${match.sportType}`;
+        this.properties.src = `apps/sportsbook/${sportName}/early-settlement?matchId=${match.matchId}&sportType=${match.sportType}`;
         this.properties.width = match.sportType === SportType.cricket ? '1400px' :
             this.isPopupEarlySOP(match.sportType) ? '1480px' : '845px';
         this.properties.height = this.isPopupEarlySOP(match.sportType) ? '958px' : '910px';

@@ -22,7 +22,6 @@ describe('QueryService', () => {
     });
 
     service = TestBed.inject(QueryService);
-    service.apiUrl = 'Local';
     httpRequestService = TestBed.inject(HttpRequestService);
 });
 

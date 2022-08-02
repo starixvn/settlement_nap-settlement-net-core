@@ -7,7 +7,7 @@ import { BackgroundColor } from '../../../shared/constants';
 import { Language } from '../../../shared/language';
 import { MessageBoxService } from '../../../shared/services';
 import { AutoSettingLeagueQuery, AutoSettingMatchQuery, ModalDialogMessage } from '../../../shared/models';
-import { AutoSettingType, InstantStatus } from '../../Constants';
+import { AutoSettingType, InstantStatus } from '../../constants';
 import { ISubscription } from 'rxjs-compat/Subscription';
 import { interval } from 'rxjs';
 

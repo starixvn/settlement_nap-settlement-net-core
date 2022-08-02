@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ISubscription } from "rxjs/Subscription";
 import { interval } from 'rxjs';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -45,14 +45,11 @@ export class AppComponent implements OnInit, OnDestroy {
 
     constructor(
         private readonly blockUIService: BlockUIService,
-        private readonly reCheckInService: ReCheckInService,
-        private readonly popupService: PopupService,
-        private readonly elementRef: ElementRef<HTMLElement>) {
+        private readonly reCheckInService: ReCheckInService) {
     }
 
     public ngOnInit() {
         this.blockUIService.blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
-        this.popupService.apiUrl = this.elementRef.nativeElement.getAttribute('api-url');
         this.reCheckIn();
     }
 

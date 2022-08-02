@@ -125,7 +125,6 @@ describe('Bet Builder - Calculation Component', () => {
                 spyOn(calculationConstraintService, 'disableCalculate').and.returnValue(true);
                 spyOn(calculationConstraintService, 'disableUnCalculate').and.returnValue(false);
 
-                component.apiUrl = "";
                 modalRef = modalService.open(ModalContentDialogComponent);
             });
     }));

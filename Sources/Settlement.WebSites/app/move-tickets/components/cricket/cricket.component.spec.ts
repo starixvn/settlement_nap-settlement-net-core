@@ -73,15 +73,6 @@ describe('MoveTickets - CricketComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it('ngOnInit - should start recheckin interval', () => {
-        const mockUrl = "http://mock";
-        spyOn(blockUIService, 'blockUIEvent').and.returnValue(of(true));
-
-        component.init(mockUrl);
-
-        expect(component.apiUrl).toEqual(mockUrl);
-    });
-
     it('search - should set multi sport', () => {
         const multiSport = new MultiSport();
 

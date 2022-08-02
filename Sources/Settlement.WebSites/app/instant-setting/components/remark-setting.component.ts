@@ -7,7 +7,6 @@ import { MessageBoxService } from '../../shared/services';
 import { Language } from '../../shared/language';
 import { SettingType, TooltipMessage } from '../constants';
 import { HttpUrlEncodingCodec } from '@angular/common/http';
-import { Template } from "../models/template.model";
 
 @Component({
   selector: 'settlement-setting',
@@ -18,7 +17,7 @@ import { Template } from "../models/template.model";
   ],
 })
 
-export class RemarkSettingComponent implements Template, OnInit {
+export class RemarkSettingComponent implements OnInit {
   public matchId: string;
   public matchCode: string;
   public remark: Remark;
@@ -31,10 +30,6 @@ export class RemarkSettingComponent implements Template, OnInit {
     private readonly messageBoxService: MessageBoxService,
     private readonly urlEncoder: HttpUrlEncodingCodec,
   ) { }
-
-  getNewApi(apiUrl: string) {
-    this.requestService.apiUrl = apiUrl;
-  }
 
   ngOnInit() {
     this.matchId = UrlHelper.getUrlParameter('matchId');

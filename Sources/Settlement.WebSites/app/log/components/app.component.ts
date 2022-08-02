@@ -34,7 +34,6 @@ export class AppComponent implements OnInit, OnDestroy {
     private subscriber: ISubscription;
     private readonly period = 60000;
     public intervallTimer = interval(this.period);
-    public apiUrl: string;
     constructor(
         private readonly elementRef: ElementRef<HTMLElement>,
         private readonly blockUIService: BlockUIService,
@@ -42,7 +41,6 @@ export class AppComponent implements OnInit, OnDestroy {
     }
 
     public ngOnInit() {
-        this.apiUrl = this.elementRef.nativeElement.getAttribute('api-url');
         this.blockUIService.blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
         this.reCheckIn();
     }

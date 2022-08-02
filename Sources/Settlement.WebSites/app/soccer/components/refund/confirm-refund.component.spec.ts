@@ -44,7 +44,6 @@ describe('ConfirmRefundComponent', () => {
   const data = {
     match,
     refundType,
-    apiUrl: ""
   }
 
   const successfulResult = {

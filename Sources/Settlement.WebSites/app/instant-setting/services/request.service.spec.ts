@@ -23,7 +23,6 @@ describe('Auto Setting Service', () => {
 
   beforeEach(() => {
     service = TestBed.inject(RequestService);
-    service.apiUrl = 'Local';
     httpRequestService = TestBed.inject(HttpRequestService);
   });
 

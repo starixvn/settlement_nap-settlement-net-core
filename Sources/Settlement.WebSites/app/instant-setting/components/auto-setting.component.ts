@@ -5,14 +5,13 @@ import { MessageBoxService, ClosePopupService } from '../../shared/services';
 import { AutoSettingLeagueQuery, AutoSettingMatchQuery, ModalDialogMessage, Result } from '../../shared/models';
 import { Language } from '../../shared/language';
 import { RequestService } from '../services/request.service';
-import { Template } from "../models/template.model";
 
 @Component({
   selector: 'auto-setting',
   templateUrl: './auto-setting.component.html',
   providers: [RequestService],
 })
-export class AutoSettingComponent implements Template, OnInit {
+export class AutoSettingComponent implements OnInit {
   public currentState: number;
   private readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
   public pageType: string;
@@ -24,10 +23,6 @@ export class AutoSettingComponent implements Template, OnInit {
     private readonly requestService: RequestService,
     private readonly messageBoxService: MessageBoxService,
     private readonly closePopupService: ClosePopupService) {
-  }
-
-  getNewApi(apiUrl: string) {
-    this.requestService.apiUrl = apiUrl;
   }
 
   ngOnInit(): void {

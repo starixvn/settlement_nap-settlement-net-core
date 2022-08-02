@@ -12,7 +12,6 @@
 
 export class ReCalculationModel {
     public matchDetail: MatchDetail;
-    public apiUrl: string;
     constructor(matchDetail: MatchDetail){
         this.matchDetail = matchDetail;
     }

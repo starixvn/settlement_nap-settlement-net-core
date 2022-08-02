@@ -17,7 +17,6 @@ export class PageBaseComponent implements OnInit {
     public blockUI = false;
     public calculation: Calculation;
     public intervalTimer = interval(this.period);
-    public rootApi: string;
     public filterQuery: FilterQuery;
     constructor(protected reCheckInService: ReCheckInService,
         protected elementRef: ElementRef<HTMLElement>) { }

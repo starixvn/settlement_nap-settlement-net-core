@@ -45,7 +45,6 @@ describe('ConfirmScoreComponent', () => {
   const data = {
     match,
     refundType,
-    apiUrl: ""
   }
 
   beforeEach(async () => {

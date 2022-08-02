@@ -4,6 +4,7 @@
     @{
         var path = @ViewBag.NetCoreRootUrl;
     }
+    <base href="@path/" />
     <title>@ViewBag.Title</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="@path/lib/bootstrap/dist/css/bootstrap.min.css" />
@@ -11,7 +12,7 @@
 </head>
 <body>
     <div class="content">
-        <app-root page-type="@ViewBag.PageType" api-url="@path"></app-root>
+        <app-root page-type="@ViewBag.PageType"></app-root>
     </div>
 </body>
 </html>

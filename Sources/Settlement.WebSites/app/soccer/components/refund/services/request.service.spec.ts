@@ -23,7 +23,6 @@ describe('Soccer refund - request service', () => {
     beforeEach(() => {
         service = TestBed.inject(RequestService);
         httpRequestService = TestBed.inject(HttpRequestService);
-        service.apiUrl = 'Local';
     });
 
     it('should be created', () => {

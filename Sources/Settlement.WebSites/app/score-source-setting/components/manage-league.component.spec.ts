@@ -30,7 +30,6 @@ describe('ManageLeagueComponent', () => {
     sourceStatus: true,
     sportType: 1,
     sportName: 'e-sport',
-    apiUrl: ""
   };
 
   const mockScreenShotSource: OutsideSource = {
@@ -43,7 +42,6 @@ describe('ManageLeagueComponent', () => {
     sourceStatus: true,
     sportType: 1,
     sportName: 'e-sport',
-    apiUrl: ""
   };
 
   const data: LeagueOutsideSource = {
@@ -52,7 +50,6 @@ describe('ManageLeagueComponent', () => {
     leagueId: 1,
     leagueName: 'mockSource',
     sportName: 'mockSportName',
-    apiUrl: ""
   };
 
   const errorMessage = "Error message";
@@ -133,7 +130,6 @@ describe('ManageLeagueComponent', () => {
         sourceStatus: true,
         sportType: 1,
         sportName: 'e-sport',
-        apiUrl: ""
       };
 
       component.addSource(mockAddSource);
@@ -154,7 +150,6 @@ describe('ManageLeagueComponent', () => {
       sourceStatus: true,
       sportType: 1,
       sportName: 'e-sport',
-      apiUrl: ""
     };
     component.outsideSourceSort.push(mockDeleteSource);
 

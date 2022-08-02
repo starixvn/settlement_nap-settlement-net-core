@@ -3,7 +3,7 @@ import {  NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { FilterBaseComponent } from '../../../shared/components/gaming/filter-base.component';
 import { MessageBoxService, VerifyDateService } from '../../../shared/services';
 import { FilterQuery, LeagueQuery } from '../../models';
-import { Statuses } from '../../Constants';
+import { Statuses } from '../../constants';
 import { RequestService } from '../../services';
 import { League } from '../../../shared/models';
 import * as _ from 'lodash';

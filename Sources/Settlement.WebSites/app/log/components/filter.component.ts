@@ -18,7 +18,6 @@ import { Match, Filter, LogQuery, LogType } from '../models';
 
 export class FilterComponent implements OnInit {
     @Output() public readonly searchAction = new EventEmitter();
-    @Input() apiUrl: string;
     public readonly warningDialogMessage: ModalDialogMessage = new ModalDialogMessage();
     public filter = new Filter();
 
@@ -31,7 +30,7 @@ export class FilterComponent implements OnInit {
     public ngOnInit() {
          const matchCode = decodeURIComponent(UrlHelper.getUrlParameter('matchCode'));
         if (_.isEmpty(matchCode)) {
-             this.searchService.filter(this.apiUrl).subscribe((query: LogQuery) => {
+             this.searchService.filter().subscribe((query: LogQuery) => {
                 this.filter.productType = query.productType;
                 this.filter.fromDate = this.verifyDateService.convertToDateStruct(query.fromDate);
                 this.filter.toDate = this.verifyDateService.convertToDateStruct(query.toDate);
@@ -53,7 +52,7 @@ export class FilterComponent implements OnInit {
     public search() {
         const fromDate = this.verifyDateService.dateFormat(this.filter.fromDate);
         const toDate = this.verifyDateService.dateFormat(this.filter.toDate);
-        const query = new LogQuery(this.filter.matchCode, this.filter.productType, fromDate, toDate, this.apiUrl);
+        const query = new LogQuery(this.filter.matchCode, this.filter.productType, fromDate, toDate);
 
         if (this.isValidInput()) {
             this.searchService.search(query).subscribe((match: Match[]) => {

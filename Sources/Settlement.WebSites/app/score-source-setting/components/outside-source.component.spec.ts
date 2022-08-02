@@ -54,7 +54,6 @@ describe('OutsideSourceComponent', () => {
     dialog = TestBed.inject(MatDialog);
     generateFilterService = TestBed.inject(GenerateFilterService);
     queryService = TestBed.inject(QueryService);
-    queryService.apiUrl = "Local";
     component = fixture.componentInstance;
   });
 
@@ -87,7 +86,6 @@ describe('OutsideSourceComponent', () => {
   it('openEditSourceDialog - should call matDialog methods and edit input source', () => {
     const editedSource = new OutsideSource();
     editedSource.sourceId = 333;
-    editedSource.apiUrl = "Local";
     component.scoreSourcePermission = true;
     const mockDialogRef = {
       afterClosed: () => of({ event: 'Save', newData: editedSource})

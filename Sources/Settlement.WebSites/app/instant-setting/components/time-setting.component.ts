@@ -7,13 +7,12 @@ import { ModalDialogMessage, Result } from '../../shared/models';
 import { Language } from '../../shared/language';
 import { League, TimeSettingQuery } from '../models';
 import { AutoType } from '../constants/auto-type';
-import { Template } from "../models/template.model";
 @Component({
     selector: 'time-setting',
     templateUrl: './time-setting.component.html',
     providers: [RequestService],
 })
-export class TimeSettingComponent implements Template, OnInit {
+export class TimeSettingComponent implements OnInit {
     public pageType: string;
     public leagueId: number;
     public time: number;
@@ -28,10 +27,6 @@ export class TimeSettingComponent implements Template, OnInit {
         private readonly closePopupService: ClosePopupService) {
         this.warningDialogMessage.title = Language.InstantSetting.WarningTitle;
         this.confirmationDialogMessage.title = Language.confirmationBox;
-    }
-
-    getNewApi(apiUrl: string) {
-        this.requestService.apiUrl = apiUrl;
     }
 
     public async ngOnInit() {

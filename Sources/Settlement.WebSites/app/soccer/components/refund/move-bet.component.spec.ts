@@ -29,7 +29,6 @@ describe('MoveBetComponent', () => {
   const data = {
     matchId: 10000,
     refundType: RefundType.refundAll,
-    apiUrl: ""
   }
 
   const result = {

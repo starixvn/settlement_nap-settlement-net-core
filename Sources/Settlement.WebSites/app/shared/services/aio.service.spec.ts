@@ -94,7 +94,6 @@ describe('AioService', () => {
       }));
 
   it('saveScore - Call exact Url and param', fakeAsync(() => {
-    service.apiUrl = 'localhost';
     const query = new SaveScoreQuery();
 
     spyOn(httpRequestService, 'postJson');
@@ -115,7 +114,6 @@ describe('AioService', () => {
 
     it('should return false when no need to check for recalc tickets', fakeAsync(() => {
       let actualResult: boolean;
-      service.apiUrl = 'localhost';
       spyOn(httpRequestService, 'postJson').and.returnValue(of(lastestResults));
 
       service.verifyChangedSettledTickets(lastestResults, { matchId: 123 }).subscribe((result) => {
@@ -133,7 +131,6 @@ describe('AioService', () => {
       newResult.awayValue = '5';
       const newResults = [newResult];
       let actualResult: boolean;
-      service.apiUrl = 'localhost';
       spyOn(httpRequestService, 'postJson').and.returnValue(of(lastestResults));
 
       service.verifyChangedSettledTickets(newResults, { matchId: 123 }).subscribe((result) => {

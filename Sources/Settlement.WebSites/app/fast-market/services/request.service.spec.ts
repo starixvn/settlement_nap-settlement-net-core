@@ -24,7 +24,6 @@ describe('FastMarketService', () => {
     httpRequestService = TestBed.inject(HttpRequestService);
     spyOn(httpRequestService, 'postJson');
     spyOn(httpRequestService, 'getJson');
-    service.apiUrl = 'localhost';
   });
 
   it('should create a service', () => {

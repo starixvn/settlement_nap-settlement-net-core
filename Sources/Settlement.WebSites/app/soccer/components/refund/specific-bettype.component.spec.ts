@@ -17,7 +17,6 @@ describe('SpecificBettypeComponent', () => {
 
     const data = {
         type: "",
-        apiUrl: "",
         action: "",
     }
     beforeEach(async () => {

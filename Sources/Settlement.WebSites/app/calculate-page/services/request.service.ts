@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { FilterQuery, League, Calculation, UpdateInstantQuery, MatchGoalRecord, CalculationMatch } from "../models";
 import { Observable } from "rxjs";
 import { HttpRequestService } from "../../shared/services";
-import { AutoSettingLeagueQuery, AutoSettingMatchQuery, ChangeSettingResult, DateFilter, Match, Result } from "../../shared/models";
+import { AutoSettingLeagueQuery, AutoSettingMatchQuery, ChangeSettingResult, DateFilter, Result } from "../../shared/models";
 import * as _ from 'lodash';
 import { BackGroundService } from "./back-ground.service";
 import { DetectChangesService } from "./detect-changes.service";
@@ -40,7 +40,7 @@ export class RequestService {
       matchId
     };
 
-    return this.httpRequestService.postJson(query, `api/setting/get-remark-info`);
+    return this.httpRequestService.postJson(query, `${this.settingApi}/get-remark-info`);
   }
 
   private getNewestMatches(leagueId: string, isAutoCalculatePage: boolean, isBlockUI: boolean) {

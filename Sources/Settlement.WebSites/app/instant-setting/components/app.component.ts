@@ -15,7 +15,6 @@ import { BlockUIService, HttpRequestService, MessageBoxService, ClosePopupServic
 import { TimeSettingComponent } from './time-setting.component';
 import { AutoSettingComponent } from './auto-setting.component';
 import { RemarkSettingComponent } from './remark-setting.component';
-import { Template } from "../models/template.model";
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
@@ -30,7 +29,7 @@ import { Template } from "../models/template.model";
 export class AppComponent implements OnInit, AfterContentChecked {
     @ViewChild('container', { read: ViewContainerRef, static: true }) container: ViewContainerRef;
     public blockUI = false;
-    public component: ComponentRef<Template>;
+    public component: ComponentRef<OnInit>;
 
     constructor(
         private readonly componentFactoryResolver: ComponentFactoryResolver,
@@ -52,11 +51,10 @@ export class AppComponent implements OnInit, AfterContentChecked {
     private createComponent() {
         const factory = this.getComponentFactory();
         this.component = this.container.createComponent(factory);
-        this.component.instance.getNewApi(this.elementRef.nativeElement.getAttribute('api-url'));
         return this.component;
     }
 
-    private getComponentFactory(): ComponentFactory<Template> {
+    private getComponentFactory(): ComponentFactory<OnInit> {
         const pageType = this.elementRef.nativeElement.getAttribute('page-type');
         switch (pageType) {
             case "DirectTime":
