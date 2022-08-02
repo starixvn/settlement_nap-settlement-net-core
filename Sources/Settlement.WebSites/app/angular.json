@@ -1054,6 +1054,7 @@
             "styles": [
               "node_modules/ngx-toastr/toastr.css",
               "shared/styles/material.style.less",
+              "shared/styles/styles.less",
               "soccer/style.less"
             ],
             "allowedCommonJsDependencies": [
@@ -1129,7 +1130,7 @@
       }
     }
   },
-  "defaultProject": "calculate-page",
+  "defaultProject": "soccer",
   "schematics": {
     "@schematics/angular:component": {
       "inlineTemplate": false,
