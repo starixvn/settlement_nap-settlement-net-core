@@ -19,7 +19,7 @@ namespace Settlement.Sportsbook.Soccer.GetMatch.Services
 
         public BetFair MergeBetFair(BetFair baseBetDaq, List<BetFair> nodeBetDaqs);
 
-        public (List<ResultDetailModel> resultDetails, TicketCounts TicketCounts) MergeEarlyResultDetails(List<(List<ResultDetailModel> resultDetails, TicketCounts TicketCounts)> data);
+        public (List<EarlyTicketDetail> ticketDetails, TicketCounts ticketCounts) MergeEarlyTicketDetails(List<(List<EarlyTicketDetail>, TicketCounts)> data);
     }
 
     public class MergeDataServiceImp : IMergeDataService
@@ -152,80 +152,58 @@ namespace Settlement.Sportsbook.Soccer.GetMatch.Services
             return baseBetDaq;
         }
 
-        public (List<ResultDetailModel> resultDetails, TicketCounts TicketCounts) MergeEarlyResultDetails(List<(List<ResultDetailModel> resultDetails, TicketCounts TicketCounts)> data)
+        public (List<EarlyTicketDetail> ticketDetails, TicketCounts ticketCounts) MergeEarlyTicketDetails(List<(List<EarlyTicketDetail>, TicketCounts)> data)
         {
-            var multipleResultDetails = new List<List<ResultDetailModel>>();
+            var multipleTicketDetails = new List<List<EarlyTicketDetail>>();
             var multipleTicketCounts = new List<TicketCounts>();
             foreach (var item in data)
             {
-                multipleResultDetails.Add(item.Item1);
+                multipleTicketDetails.Add(item.Item1);
                 multipleTicketCounts.Add(item.Item2);
             }
 
-            var ResultDetailModels = ResolveResultDetails(multipleResultDetails);
+            var ticketDetails = ResolveTicketDetails(multipleTicketDetails);
             var ticketCounts = ResolveTicketCounts(multipleTicketCounts);
 
-            return (ResultDetailModels, ticketCounts);
+            return (ticketDetails, ticketCounts);
         }
 
-        private List<ResultDetailModel> ResolveResultDetails(List<List<ResultDetailModel>> data)
+        private List<EarlyTicketDetail> ResolveTicketDetails(List<List<EarlyTicketDetail>> data)
         {
-            var baseResult = data.First();
-            var siteResults = data.Skip(1).ToList();
-            var conflictData = new List<ResultDetailModel>();
-            foreach (var siteResult in siteResults)
+            var baseData = data.First();
+            var siteData = data.Skip(1).ToList();
+            foreach (var details in siteData)
             {
-                var newResult = siteResult.Except(baseResult);
+                var newResult = details.Except(baseData);
                 if (newResult.Any())
                 {
-                    baseResult.AddRange(newResult);
+                    baseData.AddRange(newResult);
                 }
 
-                var conflictResults = baseResult.FindAll(result =>
-                {
-                    var correspondingResult = siteResult.Find(r => r.ResourceId == result.ResourceId);
-                    return correspondingResult != null && result.TicketStatus != correspondingResult.TicketStatus;
-                });
-
-                conflictData = conflictData.Union(conflictResults).ToList();
+                SumTicketDetails(baseData, details);
             }
 
-            if (conflictData.Any())
-            {
-                foreach (var conflictResult in conflictData)
-                {
-                    conflictResult.MultipleTicketStatus.Add(conflictResult.TicketStatus);
-                    foreach (var siteResult in siteResults)
-                    {
-                        var correspondingResult = siteResult.Find(r => r.ResourceId == conflictResult.ResourceId);
-                        conflictResult.MultipleTicketStatus.Add(conflictResult.TicketStatus);
-                    }
-
-                    conflictResult.TicketStatus = MergeTicketStatus(conflictResult);
-                }
-            }
-
-            return baseResult;
+            return baseData;
         }
 
-        private string MergeTicketStatus(ResultDetailModel result)
+        private void SumTicketDetails(List<EarlyTicketDetail> baseData, List<EarlyTicketDetail> siteData)
         {
-            if (result.MultipleTicketStatus.Any(status => status == TicketStatus.Marked))
+            baseData.ForEach(item =>
             {
-                return TicketStatus.Marked;
-            }
+                var ticketCount = siteData.FirstOrDefault(data => data.ResourceId == item.ResourceId);
+                if (ticketCount != null)
+                {
+                    SumTicketDetail(item, ticketCount);
+                }
+            });
+        }
 
-            if (result.MultipleTicketStatus.Any(status => status == TicketStatus.Running))
-            {
-                return TicketStatus.Running;
-            }
-
-            if (result.MultipleTicketStatus.Any(status => status == TicketStatus.Calculated))
-            {
-                return TicketStatus.Calculated;
-            }
-
-            return result.TicketStatus;
+        private void SumTicketDetail(EarlyTicketDetail baseDetail, EarlyTicketDetail siteDetail)
+        {
+            baseDetail.InRunning += siteDetail.InRunning;
+            baseDetail.InWaiting += siteDetail.InWaiting;
+            baseDetail.BetMarkedCount += siteDetail.BetMarkedCount;
+            baseDetail.BetCount += siteDetail.BetCount;
         }
 
         private TicketCounts ResolveTicketCounts(List<TicketCounts> data)

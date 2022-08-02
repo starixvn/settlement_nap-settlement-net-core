@@ -60,9 +60,10 @@
     <Setting Key="NAP_Set_BetDaq_MatchSel" SpName="NAP_Set_BetDaq_MatchSel" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_AutoPayout_MatchSelDetail" SpName="NAP_Set_AutoPayout_MatchSelDetail" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_ResultDetailSel" SpName="NAP_Set_ResultDetailSel" DbName="DBPRO.bodb02.bodbAdminNet" />
-    <Function Name="NAP_Set_MatchSelDetail_Auto_1s">
-      <Setting Key="NAP_Set_MatchSelDetail_Auto_1s_DBTXN" SpName="NAP_Set_MatchSelDetail_Auto_1s" DbName="DBTXN.bodb02.bodbAdminNet" />
-      <Setting Key="NAP_Set_MatchSelDetail_Auto_1s_SITEDB" SpName="NAP_Set_MatchSelDetail_Auto_1s" DbName="SITEDB.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_MatchSelDetail_Auto_1s" SpName="NAP_Set_MatchSelDetail_Auto_1s" DbName="DBTXN.bodb02.bodbAdminNet" />
+    <Function Name="NAP_Set_MatchSelDetail_Auto_1s_Ticket">
+      <Setting Key="NAP_Set_MatchSelDetail_Auto_1s_Ticket_DBTXN" SpName="NAP_Set_MatchSelDetail_Auto_1s_Ticket" DbName="DBTXN.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Set_MatchSelDetail_Auto_1s_Ticket_SITEDB" SpName="NAP_Set_MatchSelDetail_Auto_1s_Ticket" DbName="SITEDB.bodb02.bodbAdminNet" />
     </Function>
   </Function>
   <Function Name="Execute Calculate and refund">

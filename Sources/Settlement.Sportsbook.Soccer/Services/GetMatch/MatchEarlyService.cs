@@ -11,6 +11,7 @@ using Microsoft.VisualBasic;
 using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
+using Settlement.Sportsbook.Soccer.Constants;
 using Settlement.Sportsbook.Soccer.Criteria;
 using Settlement.Sportsbook.Soccer.Models;
 using MatchDetail = Settlement.Sportsbook.Soccer.Models.MatchDetail;
@@ -68,8 +69,12 @@ namespace Settlement.Sportsbook.Soccer.GetMatch.Services
             matchDetail.GoalIcon = goalIconService.GetGoalIcon(goalIconQuery);
 
             var resultDetailCriteria = new GetResultDetailEarlyCriteria { MatchId = matchId };
-            var (firstResultSet, secondResultSet) = await fetchDataService.GetEarlyResultDetails(resultDetailCriteria);
-            var resultDetail = MappingBetTypeName(firstResultSet.ToList());
+            var fetchedResultDetails = await repository.FetchAsync<ResultDetailModel>(resultDetailCriteria);
+            var (firstResultSet, secondResultSet) = await fetchDataService.GetEarlyTicketDetails(resultDetailCriteria);
+            var resultDetail = fetchedResultDetails.ToList();
+            GenerateTicketsStatus(resultDetail, firstResultSet);
+
+            resultDetail = MappingBetTypeName(resultDetail);
             var ticketCount = secondResultSet;
 
             return new MatchEarly
@@ -81,10 +86,50 @@ namespace Settlement.Sportsbook.Soccer.GetMatch.Services
             };
         }
 
+        private void GenerateTicketsStatus(List<ResultDetailModel> results, List<EarlyTicketDetail> ticketDetails)
+        {
+            foreach (var result in results)
+            {
+                var ticketDetail = ticketDetails.FirstOrDefault(detail => detail.ResourceId == result.ResourceId);
+                result.TicketStatus = CreateTicketStatus(ticketDetail);
+            }
+        }
+
+        private string CreateTicketStatus(EarlyTicketDetail ticketDetail)
+        {
+            if (ticketDetail == null)
+            {
+                return TicketStatus.NotIncluded;
+            }
+
+            if (ticketDetail.InRunning > 0)
+            {
+                return TicketStatus.Running;
+            }
+
+            if (ticketDetail.InWaiting > 0 && ticketDetail.InWaiting == ticketDetail.BetCount)
+            {
+                return TicketStatus.Waiting;
+            }
+
+            if (ticketDetail.BetMarkedCount > 0)
+            {
+                return TicketStatus.Marked;
+            }
+
+            var betType = ticketDetail.ResourceId.Substring(0, 3);
+            if (EarlyBetTypes.SpecialBetTypes.Contains(betType) && ticketDetail.BetCount == 0)
+            {
+                return TicketStatus.NoTicket;
+            }    
+
+            return TicketStatus.Calculated;
+        }
+
         private List<ResultDetailModel> MappingBetTypeName(List<ResultDetailModel> list)
         {
             const int maxResource = 3;
-            var listEarly = list.Where(x => x.ResourceId.Length >= maxResource).ToList();
+            var listEarly = list.Where(x => x.ResourceId.Length >= maxResource && x.TicketStatus != TicketStatus.NotIncluded).ToList();
             foreach (var item in listEarly)
             {
                 var resourceId = item.ResourceId;

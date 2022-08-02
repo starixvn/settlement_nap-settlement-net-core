@@ -23,7 +23,7 @@ namespace Settlement.Sportsbook.Soccer.GetMatch.Services
 
         public Task<BetFair> GetMultiServersBetFair(BetFairCheckingCriteria criteria);
 
-        public Task<(List<ResultDetailModel>, TicketCounts)> GetEarlyResultDetails(GetResultDetailEarlyCriteria criteria);
+        public Task<(List<EarlyTicketDetail>, TicketCounts)> GetEarlyTicketDetails(GetResultDetailEarlyCriteria criteria);
     }
 
     public class FetchDateServiceImp : IFetchDataService
@@ -151,25 +151,26 @@ namespace Settlement.Sportsbook.Soccer.GetMatch.Services
             return baseData;
         }
 
-        public async Task<(List<ResultDetailModel>, TicketCounts)> GetEarlyResultDetails(GetResultDetailEarlyCriteria criteria)
+        public async Task<(List<EarlyTicketDetail>, TicketCounts)> GetEarlyTicketDetails(GetResultDetailEarlyCriteria criteria)
         {
             var servers = configuration.GetSection("SiteDBServer").Get<List<string>>();
-            var multipleTicketDetails = new List<(List<ResultDetailModel>, TicketCounts)>();
+            var multipleTicketDetails = new List<(List<EarlyTicketDetail>, TicketCounts)>();
+            var getTicketCriteria = new GetEarlyTicketInfoCriteria { MatchId = criteria.MatchId };
             foreach (var server in servers)
             {
-                var ticketDetails = await GetTicketDetailByServer(criteria, server);
+                var ticketDetails = await GetTicketDetailByServer(getTicketCriteria, server);
                 multipleTicketDetails.Add(ticketDetails);
             }
 
-            return mergeDataService.MergeEarlyResultDetails(multipleTicketDetails);
+            return mergeDataService.MergeEarlyTicketDetails(multipleTicketDetails);
         }
 
-        private async Task<(List<ResultDetailModel> betTypes, TicketCounts ticketCounts)> GetTicketDetailByServer(GetResultDetailEarlyCriteria criteria, string server)
+        private async Task<(List<EarlyTicketDetail> betTypes, TicketCounts ticketCounts)> GetTicketDetailByServer(GetEarlyTicketInfoCriteria criteria, string server)
         {
             criteria.DbServer = server;
-            var (betTypes, ticketCounts) = await repository.FetchMultipleAsync<ResultDetailModel, TicketCounts>(criteria);
+            var (ticketCounts, ticketDetails) = await repository.FetchMultipleAsync<TicketCounts, EarlyTicketDetail>(criteria);
 
-            return (betTypes.ToList(), ticketCounts.FirstOrDefault());
+            return (ticketDetails.ToList(), ticketCounts.FirstOrDefault());
         }
     }
 }
