@@ -8,7 +8,9 @@ export class BackGroundService {
     public isShowLink(match: Match) {
         const remark = match.remark
         const remarkSetting = remark.isMtdHold || remark.isUndecided || remark.isUnderSettle || remark.isUnderSettle || remark.isKeyHold;
-        const isSingleNotCalculating = _.isNull(match.isCalculatingSingle) || _.isEqual(match.isCalculatingSingle, CalculationStatus.success);
+        const isSingleNotCalculating = _.isNull(match.isCalculatingSingle) ||
+                                     (!_.isEqual(match.isCalculatingSingle, CalculationStatus.waiting)
+                                     && !_.isEqual(match.isCalculatingSingle, CalculationStatus.calculating));
         return !_.isNull(match.remark) && !remarkSetting && isSingleNotCalculating;
     }
 

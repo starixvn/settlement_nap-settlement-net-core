@@ -1,7 +1,7 @@
 import { Component, OnChanges, OnDestroy, OnInit } from '@angular/core';
 import { BackGroundService, RequestService, PopupService } from '../../services';
-import { Match} from '../../../shared/models';
-import { BackgroundColor, EventStatus } from '../../../shared/constants';
+import { Match } from '../../../shared/models';
+import { BackgroundColor, CalculationStatus, EventStatus } from '../../../shared/constants';
 import * as _ from 'lodash';
 import { Language } from '../../../shared/language';
 import { MatchesBaseComponent } from '../base-component/matches-base.component';
@@ -69,12 +69,15 @@ export class MatchesComponent extends MatchesBaseComponent implements OnChanges,
     const fastMarketBlinking = isRunning ? this.backGroundService.completedBackground(match) : this.backGroundService.fastMarkedCompletedBackground(match);
     return match.enableFastMarket ? this.getEarlySettleBackground(match) : fastMarketBlinking;
   }
-  
+
   public isShowEarlySettleLink(match: CalculationMatch) {
     return this.backGroundService.isShowLink(match) && (this.permission.canCalculate || this.permission.canRefund || this.permission.canUncalculate) ? BackgroundColor.codeLink : '';
   }
 
   public isMatchNotSingleOrMp(match: Match) {
-    return _.isNull(match.isCalculatingSingle) && _.isNull(match.isCalculatingMP);
+    return (_.isNull(match.isCalculatingSingle)
+      || (!_.isEqual(match.isCalculatingSingle, CalculationStatus.waiting)
+        && !_.isEqual(match.isCalculatingSingle, CalculationStatus.calculating)))
+      && _.isNull(match.isCalculatingMP);
   }
 }
