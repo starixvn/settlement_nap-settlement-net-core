@@ -178,7 +178,7 @@ namespace Settlement.Sportsbook.Soccer.GetMatch.Services
         public async Task<bool> IsDeterminedHedgeMatch(int matchId)
         {
             var servers = configuration.GetSection("SiteDBServer").Get<List<string>>();
-            var criteria = new GetHedgeMatchDeterminedInfo { MatchId = matchId };
+            var criteria = new GetHedgeMatchDeterminedInfo { HedgeMatchId = matchId };
             var determinedHedgeMatch = new DeterminedHedgeMatch();
             foreach (var server in servers)
             {
