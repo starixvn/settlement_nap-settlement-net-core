@@ -150,11 +150,6 @@
   </Function>
 
   <Function Name="SITEDB01">
-    <Function Name="NAP_Set_MatchSelDetail">
-      <Setting Key="NAP_Set_MatchSelDetail_DBTXN" SpName="NAP_Set_MatchSelDetail" DbName="DBTXN.bodb02.bodbAdminNet" />
-      <Setting Key="NAP_Set_MatchSelDetail_SITEDB01" SpName="NAP_Set_MatchSelDetail" DbName="SITEDB01.bodb02.bodbAdminNet" />
-    </Function>
-
     <Function Name="NAP_Admin_Settlement_1_InstantCalculation_Push">
       <Setting Key="NAP_Admin_Settlement_1_InstantCalculation_Push_DBTXN" SpName="NAP_Admin_Settlement_1_InstantCalculation_Push" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="NAP_Admin_Settlement_1_InstantCalculation_Push_SITEDB01" SpName="NAP_Admin_Settlement_1_InstantCalculation_Push" DbName="SITEDB01.bodb02.bodbAdminNet" />
