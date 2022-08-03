@@ -3,6 +3,7 @@ using Fanex.Data.Repository;
 using Fanex.NAP.Client.Helpers.Web;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using Settlement.Core.Constants;
 using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.FastMarkets.Constants;
@@ -83,7 +84,6 @@ namespace Settlement.FastMarkets.Services
 
             var (fastMarketTicketDetails, ticketsCount) = await multipleServerFetcherService.GetFastMarketTicketDetail(matchId);
             MergeFastMarketTicketsToResults(fastMarketResult, fastMarketTicketDetails);
-            GenerateTicketsStatus(fastMarketResult, fastMarketTicketDetails);
             var groupFastMarketByBetType = fastMarketBetTypeService.BetTypesList(fastMarketResult, handicapValue);
 
             return new FastMarketModel
@@ -104,6 +104,8 @@ namespace Settlement.FastMarkets.Services
             {
                 fastMarketResults.AddRange(newTicketDetails);
             }
+
+            GenerateTicketsStatus(fastMarketResults, fastMarketTicketDetails);
         }
 
         private void GenerateTicketsStatus(List<FastMarketResult> fastMarketResults, List<FastMarketResult> fastMarketTicketDetails)

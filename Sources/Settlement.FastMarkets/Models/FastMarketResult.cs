@@ -204,5 +204,10 @@ namespace Settlement.FastMarkets.Models
         {
             return obj is FastMarketResult result && result.BetType == BetType && result.Position == Position;
         }
+
+        public override int GetHashCode()
+        {
+            return BetType * Position;
+        }
     }
 }

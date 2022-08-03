@@ -23,7 +23,7 @@ namespace Settlement.Sportsbook.Soccer.GetMatch.Services
 
         public Task<BetFair> GetMultiServersBetFair(BetFairCheckingCriteria criteria);
 
-        public Task<(List<EarlyTicketDetail>, TicketCounts)> GetEarlyTicketDetails(GetResultDetailEarlyCriteria criteria);
+        public Task<(List<ResultDetailModel>, TicketCounts)> GetEarlyTicketDetails(GetResultDetailEarlyCriteria criteria);
 
         public Task<bool> IsDeterminedHedgeMatch(int matchId);
     }
@@ -153,10 +153,10 @@ namespace Settlement.Sportsbook.Soccer.GetMatch.Services
             return baseData;
         }
 
-        public async Task<(List<EarlyTicketDetail>, TicketCounts)> GetEarlyTicketDetails(GetResultDetailEarlyCriteria criteria)
+        public async Task<(List<ResultDetailModel>, TicketCounts)> GetEarlyTicketDetails(GetResultDetailEarlyCriteria criteria)
         {
             var servers = configuration.GetSection("SiteDBServer").Get<List<string>>();
-            var multipleTicketDetails = new List<(List<EarlyTicketDetail>, TicketCounts)>();
+            var multipleTicketDetails = new List<(List<ResultDetailModel>, TicketCounts)>();
             var getTicketCriteria = new GetEarlyTicketInfoCriteria { MatchId = criteria.MatchId };
             foreach (var server in servers)
             {
@@ -167,10 +167,10 @@ namespace Settlement.Sportsbook.Soccer.GetMatch.Services
             return mergeDataService.MergeEarlyTicketDetails(multipleTicketDetails);
         }
 
-        private async Task<(List<EarlyTicketDetail> betTypes, TicketCounts ticketCounts)> GetTicketDetailByServer(GetEarlyTicketInfoCriteria criteria, string server)
+        private async Task<(List<ResultDetailModel> betTypes, TicketCounts ticketCounts)> GetTicketDetailByServer(GetEarlyTicketInfoCriteria criteria, string server)
         {
             criteria.DbServer = server;
-            var (ticketDetails, ticketCounts) = await repository.FetchMultipleAsync<EarlyTicketDetail, TicketCounts>(criteria);
+            var (ticketDetails, ticketCounts) = await repository.FetchMultipleAsync<ResultDetailModel, TicketCounts>(criteria);
 
             return (ticketDetails.ToList(), ticketCounts.FirstOrDefault());
         }

@@ -18,7 +18,7 @@ namespace Settlement.Sportsbook.Soccer.GetMatch.Services
 
         public BetFair MergeBetFair(BetFair baseBetDaq, List<BetFair> nodeBetDaqs);
 
-        public (List<EarlyTicketDetail> ticketDetails, TicketCounts ticketCounts) MergeEarlyTicketDetails(List<(List<EarlyTicketDetail>, TicketCounts)> data);
+        public (List<ResultDetailModel> ticketDetails, TicketCounts ticketCounts) MergeEarlyTicketDetails(List<(List<ResultDetailModel>, TicketCounts)> data);
     }
 
     public class MergeDataServiceImp : IMergeDataService
@@ -151,9 +151,9 @@ namespace Settlement.Sportsbook.Soccer.GetMatch.Services
             return baseBetDaq;
         }
 
-        public (List<EarlyTicketDetail> ticketDetails, TicketCounts ticketCounts) MergeEarlyTicketDetails(List<(List<EarlyTicketDetail>, TicketCounts)> data)
+        public (List<ResultDetailModel> ticketDetails, TicketCounts ticketCounts) MergeEarlyTicketDetails(List<(List<ResultDetailModel>, TicketCounts)> data)
         {
-            var multipleTicketDetails = new List<List<EarlyTicketDetail>>();
+            var multipleTicketDetails = new List<List<ResultDetailModel>>();
             var multipleTicketCounts = new List<TicketCounts>();
             foreach (var item in data)
             {
@@ -167,7 +167,7 @@ namespace Settlement.Sportsbook.Soccer.GetMatch.Services
             return (ticketDetails, ticketCounts);
         }
 
-        private List<EarlyTicketDetail> ResolveTicketDetails(List<List<EarlyTicketDetail>> data)
+        private List<ResultDetailModel> ResolveTicketDetails(List<List<ResultDetailModel>> data)
         {
             var baseData = data.First();
             var siteData = data.Skip(1).ToList();
@@ -185,7 +185,7 @@ namespace Settlement.Sportsbook.Soccer.GetMatch.Services
             return baseData;
         }
 
-        private void SumTicketDetails(List<EarlyTicketDetail> baseData, List<EarlyTicketDetail> siteData)
+        private void SumTicketDetails(List<ResultDetailModel> baseData, List<ResultDetailModel> siteData)
         {
             baseData.ForEach(item =>
             {
@@ -197,7 +197,7 @@ namespace Settlement.Sportsbook.Soccer.GetMatch.Services
             });
         }
 
-        private void SumTicketDetail(EarlyTicketDetail baseDetail, EarlyTicketDetail siteDetail)
+        private void SumTicketDetail(ResultDetailModel baseDetail, ResultDetailModel siteDetail)
         {
             baseDetail.InRunning += siteDetail.InRunning;
             baseDetail.InWaiting += siteDetail.InWaiting;

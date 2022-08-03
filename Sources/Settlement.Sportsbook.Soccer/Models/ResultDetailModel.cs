@@ -38,9 +38,22 @@ namespace Settlement.Sportsbook.Soccer.Models
             ResultSetting = Convert.ToString(ResultSetting, ToBase).Reverse(),
         };
 
+        public int InRunning { get; set; }
+
+        public int InWaiting { get; set; }
+
+        public int BetMarkedCount { get; set; }
+
+        public int BetCount { get; set; }
+
         public override bool Equals(object obj)
         {
             return obj is ResultDetailModel result && result.ResourceId == ResourceId;
+        }
+
+        public override int GetHashCode()
+        {
+            return Map;
         }
     }
 }

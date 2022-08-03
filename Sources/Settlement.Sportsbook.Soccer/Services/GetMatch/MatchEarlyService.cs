@@ -68,7 +68,7 @@ namespace Settlement.Sportsbook.Soccer.GetMatch.Services
             var fetchedResultDetails = await repository.FetchAsync<ResultDetailModel>(resultDetailCriteria);
             var (firstResultSet, secondResultSet) = await fetchDataService.GetEarlyTicketDetails(resultDetailCriteria);
             var resultDetail = fetchedResultDetails.ToList();
-            GenerateTicketsStatus(resultDetail, firstResultSet);
+            MergeEarlyTicketsToResults(resultDetail, firstResultSet);
 
             resultDetail = MappingBetTypeName(resultDetail);
             var ticketCount = secondResultSet;
@@ -82,7 +82,18 @@ namespace Settlement.Sportsbook.Soccer.GetMatch.Services
             };
         }
 
-        private void GenerateTicketsStatus(List<ResultDetailModel> results, List<EarlyTicketDetail> ticketDetails)
+        public void MergeEarlyTicketsToResults(List<ResultDetailModel> resultDetails, List<ResultDetailModel> ticketDetails)
+        {
+            var newTicketDetails = ticketDetails.Where(ticketDetail => !resultDetails.Any(result => result.Equals(ticketDetail)));
+            if (newTicketDetails.Any())
+            {
+                resultDetails.AddRange(newTicketDetails);
+            }
+
+            GenerateTicketsStatus(resultDetails, ticketDetails);
+        }
+
+        private void GenerateTicketsStatus(List<ResultDetailModel> results, List<ResultDetailModel> ticketDetails)
         {
             foreach (var result in results)
             {
@@ -91,7 +102,7 @@ namespace Settlement.Sportsbook.Soccer.GetMatch.Services
             }
         }
 
-        private string CreateTicketStatus(EarlyTicketDetail ticketDetail)
+        private string CreateTicketStatus(ResultDetailModel ticketDetail)
         {
             if (ticketDetail == null)
             {
