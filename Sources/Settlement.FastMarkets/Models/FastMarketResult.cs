@@ -194,7 +194,11 @@ namespace Settlement.FastMarkets.Models
             }
         }
 
-        public List<int> MultipleTicketStatus = new List<int>();
+        public int TicketCount { get; set; }
+
+        public int TicketRunning { get; set; }
+
+        public int TicketMarked { get; set; }
 
         public override bool Equals(object obj)
         {

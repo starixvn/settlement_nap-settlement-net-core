@@ -82,6 +82,7 @@ namespace Settlement.FastMarkets.Services
             var fastMarketResult = fetchedData[3].Cast<FastMarketResult>().ToList();
 
             var (fastMarketTicketDetails, ticketsCount) = await multipleServerFetcherService.GetFastMarketTicketDetail(matchId);
+            MergeFastMarketTicketsToResults(fastMarketResult, fastMarketTicketDetails);
             GenerateTicketsStatus(fastMarketResult, fastMarketTicketDetails);
             var groupFastMarketByBetType = fastMarketBetTypeService.BetTypesList(fastMarketResult, handicapValue);
 
@@ -96,7 +97,16 @@ namespace Settlement.FastMarkets.Services
             };
         }
 
-        private void GenerateTicketsStatus(List<FastMarketResult> fastMarketResults, List<FastMarketTicketDetail> fastMarketTicketDetails)
+        public void MergeFastMarketTicketsToResults(List<FastMarketResult> fastMarketResults, List<FastMarketResult> fastMarketTicketDetails)
+        {
+            var newTicketDetails = fastMarketTicketDetails.Where(ticketDetail => !fastMarketResults.Any(result => result.Equals(ticketDetail)));
+            if (newTicketDetails.Any())
+            {
+                fastMarketResults.AddRange(newTicketDetails);
+            }
+        }
+
+        private void GenerateTicketsStatus(List<FastMarketResult> fastMarketResults, List<FastMarketResult> fastMarketTicketDetails)
         {
             foreach (var result in fastMarketResults)
             {
@@ -105,7 +115,7 @@ namespace Settlement.FastMarkets.Services
             }
         }
 
-        private int CreateTicketStatus(FastMarketTicketDetail ticketDetail)
+        private int CreateTicketStatus(FastMarketResult ticketDetail)
         {
             if (ticketDetail == null || ticketDetail.TicketCount == 0)
             {

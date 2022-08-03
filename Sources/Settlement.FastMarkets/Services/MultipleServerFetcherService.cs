@@ -12,7 +12,7 @@ namespace Settlement.FastMarkets.Services
 {
     public interface MultipleServerFetcherService
     {
-        public Task<(List<FastMarketTicketDetail> ticketDetails, TicketCounts ticketCounts)> GetFastMarketTicketDetail(int matchId);
+        public Task<(List<FastMarketResult> ticketDetails, TicketCounts ticketCounts)> GetFastMarketTicketDetail(int matchId);
     }
 
     public class MultipleServerFetcherServiceImp : MultipleServerFetcherService
@@ -32,13 +32,13 @@ namespace Settlement.FastMarkets.Services
             this.mergeDataService = mergeDataService;
         }
 
-        public async Task<(List<FastMarketTicketDetail> ticketDetails, TicketCounts ticketCounts)> GetFastMarketTicketDetail(int matchId)
+        public async Task<(List<FastMarketResult> ticketDetails, TicketCounts ticketCounts)> GetFastMarketTicketDetail(int matchId)
         {
             var criteria = new GetFastMarketTicketDetailCriteria {
                 MatchId = matchId
             };
             var servers = configuration.GetSection("SiteDBServer").Get<List<string>>();
-            var multipleTicketDetails = new List<(List<FastMarketTicketDetail>, TicketCounts)>();
+            var multipleTicketDetails = new List<(List<FastMarketResult>, TicketCounts)>();
             foreach (var server in servers)
             {
                 var ticketDetails = await GetTicketDetailByServer(criteria, server);
@@ -48,10 +48,10 @@ namespace Settlement.FastMarkets.Services
             return mergeDataService.MergeFastMarketTicketDetail(multipleTicketDetails);
         }
 
-        private async Task<(List<FastMarketTicketDetail> betTypes, TicketCounts ticketCounts)> GetTicketDetailByServer(GetFastMarketTicketDetailCriteria criteria, string server)
+        private async Task<(List<FastMarketResult> betTypes, TicketCounts ticketCounts)> GetTicketDetailByServer(GetFastMarketTicketDetailCriteria criteria, string server)
         {
             criteria.DbServer = server;
-            var (ticketCounts, betTypeTickets) = await repository.FetchMultipleAsync<TicketCounts, FastMarketTicketDetail>(criteria);
+            var (ticketCounts, betTypeTickets) = await repository.FetchMultipleAsync<TicketCounts, FastMarketResult>(criteria);
 
             return (betTypeTickets.ToList(), ticketCounts.FirstOrDefault());
         }

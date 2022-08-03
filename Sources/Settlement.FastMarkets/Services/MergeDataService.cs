@@ -9,7 +9,7 @@ namespace Settlement.FastMarkets.Services
 {
     public interface MergeDataService
     {
-        public (List<FastMarketTicketDetail>, TicketCounts) MergeFastMarketTicketDetail(List<(List<FastMarketTicketDetail>, TicketCounts)> data);
+        public (List<FastMarketResult>, TicketCounts) MergeFastMarketTicketDetail(List<(List<FastMarketResult>, TicketCounts)> data);
     }
 
     public class MergeDataServiceImp : MergeDataService
@@ -19,9 +19,9 @@ namespace Settlement.FastMarkets.Services
 
         }
 
-        public (List<FastMarketTicketDetail>, TicketCounts) MergeFastMarketTicketDetail(List<(List<FastMarketTicketDetail>, TicketCounts)> data)
+        public (List<FastMarketResult>, TicketCounts) MergeFastMarketTicketDetail(List<(List<FastMarketResult>, TicketCounts)> data)
         {
-            var multipleFastMarketTickets = new List<List<FastMarketTicketDetail>>();
+            var multipleFastMarketTickets = new List<List<FastMarketResult>>();
             var multipleTicketCounts = new List<TicketCounts>();
             foreach(var item in data)
             {
@@ -35,7 +35,7 @@ namespace Settlement.FastMarkets.Services
             return (fastMarketTickets, ticketCounts);
         }
 
-        private List<FastMarketTicketDetail> ResolveFastMarketTickets(List<List<FastMarketTicketDetail>> data)
+        private List<FastMarketResult> ResolveFastMarketTickets(List<List<FastMarketResult>> data)
         {
             var baseData = data.First();
             var siteData = data.Skip(1).ToList();
@@ -53,7 +53,7 @@ namespace Settlement.FastMarkets.Services
             return baseData;
         }
 
-        private void SumTicketDetails(List<FastMarketTicketDetail> baseData, List<FastMarketTicketDetail> siteData)
+        private void SumTicketDetails(List<FastMarketResult> baseData, List<FastMarketResult> siteData)
         {
             baseData.ForEach(item =>
             {
@@ -65,7 +65,7 @@ namespace Settlement.FastMarkets.Services
             });
         }
 
-        private void SumTicketDetail(FastMarketTicketDetail baseDetail, FastMarketTicketDetail siteDetail)
+        private void SumTicketDetail(FastMarketResult baseDetail, FastMarketResult siteDetail)
         {
             baseDetail.TicketCount += siteDetail.TicketCount;
             baseDetail.TicketRunning += siteDetail.TicketRunning;
