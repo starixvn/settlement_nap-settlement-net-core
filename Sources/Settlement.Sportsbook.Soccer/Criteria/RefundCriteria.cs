@@ -33,6 +33,8 @@ namespace Settlement.Sportsbook.Soccer.Criteria
 
         public string ErrMsg { get; set; }
 
+        public string BroadcastSessionId { get; set; }
+
         [SpParam(Ignored = true)]
         public string DbServer { get; set; }
 

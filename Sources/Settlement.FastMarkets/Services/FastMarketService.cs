@@ -3,7 +3,6 @@ using Fanex.Data.Repository;
 using Fanex.NAP.Client.Helpers.Web;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
-using Settlement.Core.Constants;
 using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.FastMarkets.Constants;

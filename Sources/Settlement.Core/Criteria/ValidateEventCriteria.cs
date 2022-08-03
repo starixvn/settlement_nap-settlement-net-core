@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Fanex.Data;
-using Fanex.Data.Repository;
+﻿using Fanex.Data.Repository;
 
 namespace Settlement.Core.Criteria
 {

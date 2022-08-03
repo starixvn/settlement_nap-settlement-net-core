@@ -10,6 +10,8 @@ using Settlement.Sportsbook.Soccer.Requests;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Settlement.Core.Constants;
+using System.Linq;
 
 namespace Settlement.Sportsbook.Soccer.Services
 {
@@ -34,6 +36,8 @@ namespace Settlement.Sportsbook.Soccer.Services
 
         private readonly UpdateStatusMatchService updateStatusMatchService;
 
+        private readonly int[] listLeagueGroupHasChildMatch = { 42, 74, 108 };
+
         public CalculateServiceImp
             (IMapper mapper,
             IDynamicRepository repository,
@@ -57,15 +61,20 @@ namespace Settlement.Sportsbook.Soccer.Services
                 return requestChecking;
             }
 
-            await updateStatusMatchService.UpdateUnderSettleFlagAsync(criteria);
-            await updateStatusMatchService.AutoRefundChildMatch(criteria);
+            await updateStatusMatchService.UpdateUnderSettleFlag(criteria.MatchId, criteria.Action);
+            var updateMatchCriteria = mapper.Map<CalculateCriteria, UpdateMatchInfoCriteria>(criteria);
+            await repository.ExecuteAsync(updateMatchCriteria);
 
             var result = await Execute(criteria);
 
-            if (result.IsSuccessful && request.IsApplyHedging)
+            if (result.IsSuccessful)
             {
-                criteria.MatchId = request.HedgeMatchId;
-                await Execute(criteria);
+                await AutoRefundChildMatch(criteria);
+                if (request.IsApplyHedging)
+                {
+                    criteria.MatchId = request.HedgeMatchId;
+                    await Execute(criteria);
+                }
             }
 
             return result;
@@ -79,12 +88,21 @@ namespace Settlement.Sportsbook.Soccer.Services
             {
                 return requestChecking;
             }
+
+            await updateStatusMatchService.UpdateUnderSettleFlag(criteria.MatchId, criteria.Action);
+            var updateMatchCriteria = mapper.Map<CalculateCriteria, UpdateMatchInfoCriteria>(criteria);
+            await repository.ExecuteAsync(updateMatchCriteria);
+
             var result = await Execute(criteria);
 
-            if (result.IsSuccessful && request.IsApplyHedging)
+            if (result.IsSuccessful)
             {
-                criteria.MatchId = request.HedgeMatchId;
-                await Execute(criteria);
+                await AutoRefundChildMatch(criteria);
+                if (request.IsApplyHedging)
+                {
+                    criteria.MatchId = request.HedgeMatchId;
+                    await Execute(criteria);
+                }
             }
 
             return result;
@@ -103,10 +121,28 @@ namespace Settlement.Sportsbook.Soccer.Services
             };
         }
 
+        private async Task AutoRefundChildMatch(CalculateCriteria criteria)
+        {
+            var isRefundChildMatch = !string.IsNullOrEmpty(criteria.ChildMatchIds)
+                                     && listLeagueGroupHasChildMatch.Contains(criteria.LeagueGroupId)
+                                     && (criteria.Action == ActionType.CalculateAll
+                                         || criteria.Action == ActionType.CalculateFullTime);
+            var finalScoreNotDraw = criteria.FullTimeAway != criteria.FullTimeHome;
+            if (isRefundChildMatch && finalScoreNotDraw)
+            {
+                var autoRefundCriteria = new UpdateStatusChildMatchCriteria
+                {
+                    ParentId = criteria.MatchId,
+                    ChildMatchIds = criteria.ChildMatchIds
+                };
+
+                await repository.ExecuteAsync(autoRefundCriteria);
+            }
+        }
+
         private async Task<Result> Execute(CalculateCriteria criteria)
         {
             var listReplicatedServer = configuration.GetSection("SiteDBServer").Get<List<string>>();
-            criteria.SessionId = Guid.NewGuid().ToString();
 
             foreach (var server in listReplicatedServer)
             {

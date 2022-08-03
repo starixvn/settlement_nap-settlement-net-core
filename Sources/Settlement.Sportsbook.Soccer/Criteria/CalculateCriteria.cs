@@ -1,7 +1,7 @@
 ﻿using Fanex.Data;
 using Fanex.Data.Repository;
 
-namespace Settlement.Core.Criteria
+namespace Settlement.Sportsbook.Soccer.Criteria
 {
     public class CalculateCriteria : NonQueryCommand
     {
@@ -30,15 +30,13 @@ namespace Settlement.Core.Criteria
 
         public string Ip { get; set; }
 
-        public string SessionId { get; set; }
+        public string BroadcastSessionId { get; set; }
 
         public int ErrCode { get; set; }
 
         public string ErrMsg { get; set; }
 
         public bool IsReSettledTickets { get; set; } = true;
-
-        public int? RefResultStatus { get; set; }
 
         public string ChildMatchIds { get; set; }
 

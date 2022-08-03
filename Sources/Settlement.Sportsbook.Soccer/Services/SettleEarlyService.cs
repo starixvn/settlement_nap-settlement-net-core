@@ -51,7 +51,7 @@ namespace Settlement.Sportsbook.Soccer.Services
                 return requestChecking;
             }
 
-            criteria.SessionId = Guid.NewGuid().ToString();
+            criteria.BroadcastSessionId = Guid.NewGuid().ToString();
 
             foreach (var server in listReplicatedServer)
             {

@@ -23,7 +23,7 @@ namespace Settlement.Sportsbook.Soccer.Criteria
 
         public bool IsReSettledTickets { get; set; }
 
-        public string SessionId { get; set; }
+        public string BroadcastSessionId { get; set; }
 
         [SpParam(Ignored = true)]
         public string DbServer { get; set; }

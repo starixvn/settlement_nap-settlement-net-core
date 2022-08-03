@@ -1,14 +1,15 @@
-﻿using AutoMapper;
+﻿using System;
+using AutoMapper;
 using Fanex.NAP.Client.Helpers.Web;
 using Kaden.XmlConverter;
 using Microsoft.AspNetCore.Http;
 using Settlement.Core.Constants;
-using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.Sportsbook.Soccer.Criteria;
 using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Requests;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Settlement.Sportsbook.Soccer.Services
 {
@@ -19,6 +20,8 @@ namespace Settlement.Sportsbook.Soccer.Services
         public CalculateCriteria CreateUnCalculateCriteria(SettleRequest request);
 
         public CalculateEarlyCriteria CreateCalculateEarlyCriteria(SettleEarlyRequest request);
+
+        public RefundCriteria CreateRefundCriteria(RefundRequest request);
     }
 
     public class CreateCriteriaServiceImp : ICreateCriteriaService
@@ -35,12 +38,15 @@ namespace Settlement.Sportsbook.Soccer.Services
 
         private readonly XmlConvertService xmlConvertService;
 
+        private readonly IBetStatusAllService betStatusAllService;
+
         public CreateCriteriaServiceImp(INapSession currentSession,
             IResourceService resourceService,
             IHttpContextAccessor accessor,
             ISoccerBetStatusService soccerBetStatusService,
             XmlConvertService xmlConvertService,
-            IMapper mapper)
+            IMapper mapper,
+            IBetStatusAllService betStatusAllService)
         {
             this.currentSession = currentSession;
             this.resourceService = resourceService;
@@ -48,6 +54,7 @@ namespace Settlement.Sportsbook.Soccer.Services
             this.soccerBetStatusService = soccerBetStatusService;
             this.xmlConvertService = xmlConvertService;
             this.mapper = mapper;
+            this.betStatusAllService = betStatusAllService;
         }
 
         public CalculateCriteria CreateCalculateCriteria(SettleRequest request)
@@ -64,7 +71,9 @@ namespace Settlement.Sportsbook.Soccer.Services
                 HalfTimeAway = request.HalfTimeAwayScore ?? 0,
                 Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString(),
                 IsReSettledTickets = request.IsReSettledTickets,
-                ChildMatchIds = request.ChildMatchIds
+                ChildMatchIds = request.ChildMatchIds,
+                LeagueGroupId = request.LeagueGroupId,
+                BroadcastSessionId = Guid.NewGuid().ToString()
             };
 
             if (request.ActionName.Equals(ActionType.CalculateFullTime) || request.ActionName.Equals(ActionType.CalculateAll))
@@ -90,7 +99,8 @@ namespace Settlement.Sportsbook.Soccer.Services
                 HalfTimeAway = request.HalfTimeAwayScore ?? 0,
                 Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString(),
                 IsReSettledTickets = request.IsReSettledTickets,
-                ChildMatchIds = request.ChildMatchIds
+                ChildMatchIds = request.ChildMatchIds,
+                BroadcastSessionId = Guid.NewGuid().ToString()
             };
 
             return criteria;
@@ -105,10 +115,82 @@ namespace Settlement.Sportsbook.Soccer.Services
                 Action = request.ActionName,
                 Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString(),
                 IsReSettledTickets = request.IsReSettledTickets,
-                SelectedResources = CreateResources(request.SelectedResources)
+                SelectedResources = CreateResources(request.SelectedResources),
+                BroadcastSessionId = Guid.NewGuid().ToString()
             };
 
             return criteria;
+        }
+
+        public RefundCriteria CreateRefundCriteria(RefundRequest request)
+        {
+            var criteria = new RefundCriteria
+            {
+                MatchId = request.MatchId,
+                Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString(),
+                AdminId = currentSession.UserId,
+                GoalSequence = request.GoalRecord,
+                HalfTimeHome = request.HalfTimeHomeScore ?? 0,
+                HalfTimeAway = request.HalfTimeAwayScore ?? 0,
+                FullTimeAway = request.FinalAwayScore ?? 0,
+                FullTimeHome = request.FinalHomeScore ?? 0,
+                Action = request.ActionName,
+                BetStatus = GetBetStatus(request),
+                ResourceResult = GetResourceResult(request),
+                BroadcastSessionId = Guid.NewGuid().ToString()
+            };
+
+            if (IsAbandonedMatch(request) && request.ActionName.Equals(ActionType.RefundAll))
+            {
+                criteria.FullTimeAway = request.HalfTimeAwayScore ?? 0;
+                criteria.FullTimeHome = request.HalfTimeHomeScore ?? 0;
+            }
+
+            return criteria;
+        }
+
+        private static bool IsAbandonedMatch(RefundRequest request)
+        {
+            return request.IsSettleAbandonedMatchIbc || request.IsSettleAbandonedMatchBetDaq || request.IsSettleAbandonedMatchBetFair;
+        }
+
+        private string GetResourceResult(RefundRequest request)
+        {
+            var goalCondition = mapper.Map<RefundRequest, GoalCondition>(request);
+            List<XmlResource> resources;
+            var actionName = request.ActionName;
+
+            if (IsAbandonedMatch(request) && actionName.Equals(ActionType.RefundFullTime))
+            {
+                resources = resourceService.FullTimeResourcesSettleDetermined(goalCondition);
+            }
+            else if (IsAbandonedMatch(request) && actionName.Equals(ActionType.RefundAll))
+            {
+                resources = resourceService.AllResourcesSettleDetermined(goalCondition);
+            }
+            else
+            {
+                resources = actionName switch
+                {
+                    ActionType.RefundHalfTime => resourceService.HalftimeResources(goalCondition, SettlementStatus.RefundHT),
+                    ActionType.RefundFullTime => resourceService.FullTimeResources(goalCondition, SettlementStatus.RefundFT),
+                    _ => resourceService.AllResources(goalCondition, SettlementStatus.Refund),
+                };
+            }
+
+            return resources.Count > 0
+                ? xmlConvertService.Serialize(new XmlResults { Resources = resources })
+                : string.Empty;
+        }
+
+        private string GetBetStatus(RefundRequest request)
+        {
+            if (request.ActionName.Equals(ActionType.RefundHalfTime))
+            {
+                return string.Empty;
+            }
+
+            return IsAbandonedMatch(request) ? betStatusAllService.GetBetStatusRefund(request) : request.BetStatus;
         }
 
         private string CreateResources(List<ResourceItem> selectedResources)

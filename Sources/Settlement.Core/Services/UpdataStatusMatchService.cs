@@ -2,62 +2,50 @@
 using Settlement.Core.Constants;
 using Settlement.Core.Criteria;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using Fanex.NAP.Client.Helpers.Web;
+using Microsoft.AspNetCore.Http;
 
 namespace Settlement.Core.Services
 {
     public interface UpdateStatusMatchService
     {
-        Task UpdateUnderSettleFlagAsync(CalculateCriteria criteria);
-
-        Task AutoRefundChildMatch(CalculateCriteria criteria);
+        Task UpdateUnderSettleFlag(int matchId, string action);
     }
 
     public class UpdateStatusMatchServiceImp : UpdateStatusMatchService
     {
         private const int UnderSettlementId = 4;
 
-        private readonly int[] listLeagueGroupHasChildMatch = { 42, 74, 108 };
-
         private readonly IDynamicRepository repository;
 
-        public UpdateStatusMatchServiceImp(IDynamicRepository repository)
+        private readonly INapSession currentSession;
+
+        private readonly IHttpContextAccessor accessor;
+
+        public UpdateStatusMatchServiceImp(IDynamicRepository repository,
+            IHttpContextAccessor accessor,
+            INapSession currentSession)
         {
             this.repository = repository;
+            this.accessor = accessor;
+            this.currentSession = currentSession;
         }
 
-        public async Task UpdateUnderSettleFlagAsync(CalculateCriteria criteria)
+        public async Task UpdateUnderSettleFlag(int matchId, string action)
         {
-            if (criteria.Action != ActionType.CalculateHalfTime)
+            if (action != ActionType.CalculateHalfTime && action != ActionType.RefundHalfTime)
             {
                 var updateStatusCriteria = new UpdateRemarkCriteria
                 {
-                    MatchId = criteria.MatchId,
-                    AdminId = criteria.AdminId,
-                    Ip = criteria.Ip,
+                    MatchId = matchId,
+                    AdminId = currentSession.UserId,
+                    Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString(),
                     Type = UnderSettlementId,
-                    IsEnabled = criteria.Action != ActionType.UnCalculate
+                    IsEnabled = action != ActionType.UnCalculate
                 };
                 await repository.ExecuteAsync(updateStatusCriteria);
-            }
-        }
-
-        public async Task AutoRefundChildMatch(CalculateCriteria criteria)
-        {
-            var isRefundChildMatch = !string.IsNullOrEmpty(criteria.ChildMatchIds)
-                                     && listLeagueGroupHasChildMatch.Contains(criteria.LeagueGroupId)
-                                     && (criteria.Action == ActionType.CalculateAll
-                                     || criteria.Action == ActionType.CalculateFullTime);
-            var finalScoreNotDraw = criteria.FullTimeAway != criteria.FullTimeHome;
-            if (isRefundChildMatch && finalScoreNotDraw)
-            {
-                var autoRefundCriteria = new UpdateStatusChildMatchCriteria
-                {
-                    ParentId = criteria.MatchId,
-                    ChildMatchIds = criteria.ChildMatchIds
-                };
-
-                await repository.ExecuteAsync(autoRefundCriteria);
             }
         }
     }

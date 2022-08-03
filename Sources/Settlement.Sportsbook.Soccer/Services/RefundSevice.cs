@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System;
+using AutoMapper;
 using Fanex.Data.Repository;
 using Fanex.NAP.Client.Helpers.Web;
 using Kaden.XmlConverter;
@@ -9,11 +10,11 @@ using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.Sportsbook.Soccer.Constants;
 using Settlement.Sportsbook.Soccer.Criteria;
-using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Requests;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Settlement.Core.Services;
 
 namespace Settlement.Sportsbook.Soccer.Services
 {
@@ -38,32 +39,26 @@ namespace Settlement.Sportsbook.Soccer.Services
 
         private readonly IHttpContextAccessor accessor;
 
-        private readonly XmlConvertService xmlConvertService;
-
-        private readonly IResourceService resourceService;
-
-        private readonly IBetStatusAllService betStatusAllService;
+        private readonly UpdateStatusMatchService updateStatusMatchService;
 
         private readonly IConfiguration configuration;
 
+        private readonly ICreateCriteriaService createCriteriaService;
+
         public RefundServiceImp(
             IDynamicRepository repository,
-            INapSession currentSession,
             IMapper mapper,
             IHttpContextAccessor accessor,
-            XmlConvertService xmlConvertService,
-            IResourceService resourceService,
-            IBetStatusAllService betStatusAllService,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            ICreateCriteriaService createCriteriaService,
+            UpdateStatusMatchService updateStatusMatchService)
         {
             this.repository = repository;
-            this.currentSession = currentSession;
             this.mapper = mapper;
             this.accessor = accessor;
-            this.xmlConvertService = xmlConvertService;
-            this.resourceService = resourceService;
-            this.betStatusAllService = betStatusAllService;
             this.configuration = configuration;
+            this.createCriteriaService = createCriteriaService;
+            this.updateStatusMatchService = updateStatusMatchService;
         }
 
         public async Task<MarkedTickets> CheckMarkedTickets(CheckingMarkedTicketsRequest request)
@@ -88,33 +83,17 @@ namespace Settlement.Sportsbook.Soccer.Services
 
         public async Task<Result> Refund(RefundRequest request)
         {
-            var criteria = new RefundCriteria
-            {
-                MatchId = request.MatchId,
-                Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString(),
-                AdminId = currentSession.UserId,
-                GoalSequence = request.GoalRecord,
-                HalfTimeHome = request.HalfTimeHomeScore ?? 0,
-                HalfTimeAway = request.HalfTimeAwayScore ?? 0,
-                FullTimeAway = request.FinalAwayScore ?? 0,
-                FullTimeHome = request.FinalHomeScore ?? 0,
-                Action = request.ActionName,
-                SDTRecord = SettleDetermineTicket(request),
-                BetStatus = GetBetStatus(request),
-                ResourceResult = GetResourceResult(request)
-            };
-
-            if (IsAbandonedMatch(request) && request.ActionName.Equals(ActionType.RefundAll))
-            {
-                criteria.FullTimeAway = request.HalfTimeAwayScore ?? 0;
-                criteria.FullTimeHome = request.HalfTimeHomeScore ?? 0;
-            }
-
+            var criteria = createCriteriaService.CreateRefundCriteria(request);
+            criteria.SDTRecord = SettleDetermineTicket(request);
             var validationResult = await ValidateBeforePushing(criteria);
             if (validationResult.ErrCode > 0)
             {
                 return validationResult;
             }
+
+            await updateStatusMatchService.UpdateUnderSettleFlag(criteria.MatchId, criteria.Action);
+            var updateMatchCriteria = mapper.Map<RefundCriteria, UpdateMatchInfoCriteria>(criteria);
+            await repository.ExecuteAsync(updateMatchCriteria);
 
             ExecuteRefund(criteria);
             RefundHedgeMatch(request, criteria);
@@ -136,6 +115,22 @@ namespace Settlement.Sportsbook.Soccer.Services
                 criteria.MatchId = request.HedgeMatchId;
                 ExecuteRefund(criteria);
             }
+        }
+
+        private static byte SettleDetermineTicket(RefundRequest request)
+        {
+            var dictionary = new Dictionary<int, bool>
+            {
+                { 1, request.IsSettleAbandonedMatchBetDaq},
+                { 2, request.IsSettleAbandonedMatchBetFair },
+                { 4, request.IsSettleAbandonedMatchIbc },
+                { 8, request.ExcludeTicketBetDaqInRefund },
+                { 16, request.ExcludeTicketBetFairInRefund }
+            };
+
+            var value = dictionary.Where(item => item.Value).Sum(item => item.Key);
+
+            return (byte)value;
         }
 
         private async Task<Result> ValidateBeforePushing(RefundCriteria criteria)
@@ -218,66 +213,6 @@ namespace Settlement.Sportsbook.Soccer.Services
                 criteria.DbServer = server;
                 repository.Execute(criteria);
             }
-        }
-
-        private string GetBetStatus(RefundRequest request)
-        {
-            if (request.ActionName.Equals(ActionType.RefundHalfTime))
-            {
-                return string.Empty;
-            }
-
-            return IsAbandonedMatch(request) ? betStatusAllService.GetBetStatusRefund(request) : request.BetStatus;
-        }
-
-        private string GetResourceResult(RefundRequest request)
-        {
-            var goalCondition = mapper.Map<RefundRequest, GoalCondition>(request);
-            List<XmlResource> resources;
-            var actionName = request.ActionName;
-
-            if (IsAbandonedMatch(request) && actionName.Equals(ActionType.RefundFullTime))
-            {
-                resources = resourceService.FullTimeResourcesSettleDetermined(goalCondition);
-            }
-            else if (IsAbandonedMatch(request) && actionName.Equals(ActionType.RefundAll))
-            {
-                resources = resourceService.AllResourcesSettleDetermined(goalCondition);
-            }
-            else
-            {
-                resources = actionName switch
-                {
-                    ActionType.RefundHalfTime => resourceService.HalftimeResources(goalCondition, SettlementStatus.RefundHT),
-                    ActionType.RefundFullTime => resourceService.FullTimeResources(goalCondition, SettlementStatus.RefundFT),
-                    _ => resourceService.AllResources(goalCondition, SettlementStatus.Refund),
-                };
-            }
-
-            return resources.Count > 0
-                ? xmlConvertService.Serialize(new XmlResults { Resources = resources })
-                : string.Empty;
-        }
-
-        private static byte SettleDetermineTicket(RefundRequest request)
-        {
-            var dictionary = new Dictionary<int, bool>
-            {
-                { 1, request.IsSettleAbandonedMatchBetDaq},
-                { 2, request.IsSettleAbandonedMatchBetFair },
-                { 4, request.IsSettleAbandonedMatchIbc },
-                { 8, request.ExcludeTicketBetDaqInRefund },
-                { 16, request.ExcludeTicketBetFairInRefund }
-            };
-
-            var value = dictionary.Where(item => item.Value).Sum(item => item.Key);
-
-            return (byte)value;
-        }
-
-        private static bool IsAbandonedMatch(RefundRequest request)
-        {
-            return request.IsSettleAbandonedMatchIbc || request.IsSettleAbandonedMatchBetDaq || request.IsSettleAbandonedMatchBetFair;
         }
 
         public async Task<Result> RefundRunningThirdPartyTickets(RefundRunningThirdPartyTicketRequest request)
