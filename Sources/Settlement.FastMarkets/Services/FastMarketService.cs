@@ -147,74 +147,74 @@ namespace Settlement.FastMarkets.Services
             criteria.EventCounters = eventCounter;
             criteria.Results = results;
 
-            var validationResult = await ValidateBeforePushing(criteria);
-            if (validationResult.ErrCode > 0)
-            {
-                return validationResult;
-            }
+            //var validationResult = await ValidateBeforePushing(criteria);
+            //if (validationResult.ErrCode > 0)
+            //{
+            //    return validationResult;
+            //}
             ExecuteCalculate(criteria);
 
-            return validationResult;
-        }
-
-        private async Task<Result> ValidateBeforePushing(PushFastMarketResultCriteria criteria)
-        {
-            var validateEvent = await ValidateEvent(criteria);
-
-            if (validateEvent.ErrCode > 0)
-            {
-                return validateEvent;
-            }
-
-            var validateTicket = await ValidateTickets(criteria);
-
-            if (validateTicket.ErrCode > 0)
-            {
-                return validateTicket;
-            }
-
             return new Result();
         }
 
-        private async Task<Result> ValidateTickets(PushFastMarketResultCriteria criteria)
-        {
-            var servers = configuration.GetSection("SiteDBServer").Get<List<string>>();
-            var checkingCriteria = mapper.Map<PushFastMarketResultCriteria, ValidateBeforePushCriteria>(criteria);
-            checkingCriteria.Mode = fastMarketMode;
-            foreach (var server in servers)
-            {
-                checkingCriteria.DbServer = server;
-                await repository.ExecuteAsync(checkingCriteria);
-                if (checkingCriteria.ErrCode > 0)
-                {
-                    return new Result
-                    {
-                        ErrCode = checkingCriteria.ErrCode,
-                        ErrMsg = checkingCriteria.ErrMsg
-                    };
-                }
-            }
+        //private async Task<Result> ValidateBeforePushing(PushFastMarketResultCriteria criteria)
+        //{
+        //    var validateEvent = await ValidateEvent(criteria);
 
-            return new Result();
-        }
+        //    if (validateEvent.ErrCode > 0)
+        //    {
+        //        return validateEvent;
+        //    }
 
-        private async Task<Result> ValidateEvent(PushFastMarketResultCriteria criteria)
-        {
-            var checkingCriteria = mapper.Map<PushFastMarketResultCriteria, ValidateEventCriteria>(criteria);
-            checkingCriteria.Mode = fastMarketMode;
-            await repository.ExecuteAsync(checkingCriteria);
+        //    var validateTicket = await ValidateTickets(criteria);
 
-            if (checkingCriteria.ErrCode > 0)
-            {
-                return new Result
-                {
-                    ErrCode = checkingCriteria.ErrCode,
-                    ErrMsg = checkingCriteria.ErrMsg
-                };
-            }
+        //    if (validateTicket.ErrCode > 0)
+        //    {
+        //        return validateTicket;
+        //    }
 
-            return new Result();
-        }
+        //    return new Result();
+        //}
+
+        //private async Task<Result> ValidateTickets(PushFastMarketResultCriteria criteria)
+        //{
+        //    var servers = configuration.GetSection("SiteDBServer").Get<List<string>>();
+        //    var checkingCriteria = mapper.Map<PushFastMarketResultCriteria, ValidateBeforePushCriteria>(criteria);
+        //    checkingCriteria.Mode = fastMarketMode;
+        //    foreach (var server in servers)
+        //    {
+        //        checkingCriteria.DbServer = server;
+        //        await repository.ExecuteAsync(checkingCriteria);
+        //        if (checkingCriteria.ErrCode > 0)
+        //        {
+        //            return new Result
+        //            {
+        //                ErrCode = checkingCriteria.ErrCode,
+        //                ErrMsg = checkingCriteria.ErrMsg
+        //            };
+        //        }
+        //    }
+
+        //    return new Result();
+        //}
+
+        //private async Task<Result> ValidateEvent(PushFastMarketResultCriteria criteria)
+        //{
+        //    var checkingCriteria = mapper.Map<PushFastMarketResultCriteria, ValidateEventCriteria>(criteria);
+        //    checkingCriteria.Mode = fastMarketMode;
+        //    await repository.ExecuteAsync(checkingCriteria);
+
+        //    if (checkingCriteria.ErrCode > 0)
+        //    {
+        //        return new Result
+        //        {
+        //            ErrCode = checkingCriteria.ErrCode,
+        //            ErrMsg = checkingCriteria.ErrMsg
+        //        };
+        //    }
+
+        //    return new Result();
+        //}
 
         private void ExecuteCalculate(PushFastMarketResultCriteria criteria)
         {

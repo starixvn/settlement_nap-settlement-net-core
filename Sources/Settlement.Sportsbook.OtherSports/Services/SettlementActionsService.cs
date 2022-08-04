@@ -7,8 +7,6 @@ using Settlement.Sportsbook.OtherSports.Criteria;
 using Settlement.Sportsbook.OtherSports.Requests;
 using System.Threading.Tasks;
 using Settlement.Core.Constants;
-using Settlement.Core.Criteria;
-using Settlement.Core.Services;
 
 namespace Settlement.Sportsbook.OtherSports.Services
 {
@@ -37,22 +35,18 @@ namespace Settlement.Sportsbook.OtherSports.Services
 
         private readonly IBetStatusService betStatusService;
 
-        private readonly UpdateStatusMatchService updateStatusMatchService;
-
         public SettlementActionsServiceImp(
             IDynamicRepository repository,
             IHttpContextAccessor accessor,
             INapSession currentSession,
             IMapper mapper,
-            IBetStatusService betStatusService,
-            UpdateStatusMatchService updateStatusMatchService)
+            IBetStatusService betStatusService)
         {
             this.repository = repository;
             this.currentSession = currentSession;
             this.accessor = accessor;
             this.mapper = mapper;
             this.betStatusService = betStatusService;
-            this.updateStatusMatchService = updateStatusMatchService;
         }
 
         public async Task<Result> Calculate(CalculateRequest request)

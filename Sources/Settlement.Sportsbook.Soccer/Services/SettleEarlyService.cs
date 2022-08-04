@@ -6,7 +6,13 @@ using Settlement.Sportsbook.Soccer.Criteria;
 using Settlement.Sportsbook.Soccer.Requests;
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using Fanex.Settlement.ScaleOut.Criteria;
+using Fanex.Settlement.ScaleOut.Request;
+using Fanex.Settlement.ScaleOut.Services;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Settlement.Sportsbook.Soccer.Constants;
 
 namespace Settlement.Sportsbook.Soccer.Services
 {
@@ -23,21 +29,26 @@ namespace Settlement.Sportsbook.Soccer.Services
 
         private readonly IDynamicRepository repository;
 
+        private readonly ScaleOutSettleService scaleOutSettleService;
+
         private const string Mode = "EAR";
 
         public SettleEarlyServiceImp(
             ICreateCriteriaService createCriteriaService,
             IConfiguration configuration,
-            IDynamicRepository repository)
+            IDynamicRepository repository,
+            ScaleOutSettleService scaleOutSettleService)
         {
             this.createCriteriaService = createCriteriaService;
             this.configuration = configuration;
             this.repository = repository;
+            this.scaleOutSettleService = scaleOutSettleService;
         }
 
         public async Task<Result> CalculateEarly(SettleEarlyRequest request)
         {
             var criteria = createCriteriaService.CreateCalculateEarlyCriteria(request);
+            await UpdateMatchInfo(criteria);
             var result = await Execute(criteria);
             return result;
         }
@@ -68,73 +79,34 @@ namespace Settlement.Sportsbook.Soccer.Services
 
         private async Task<Result> ValidateBeforeExecute(CalculateEarlyCriteria criteria)
         {
-            var validateEvent = await ValidateEvent(criteria);
-
-            if (validateEvent.ErrCode > 0)
-            {
-                return validateEvent;
-            }
-
-            var validateTicket = await ValidateTicket(criteria);
-
-            if (validateTicket.ErrCode > 0)
-            {
-                return validateTicket;
-            }
-
-            return new Result();
-        }
-
-        private async Task<Result> ValidateTicket(CalculateEarlyCriteria criteria)
-        {
-            var servers = configuration.GetSection("SiteDBServer").Get<List<string>>();
-            var checkingCriteria = new ValidateBeforePushCriteria
+            var request = new EventTicketRequest
             {
                 MatchId = criteria.MatchId,
-                SpName = criteria.SpName,
                 Action = criteria.Action,
-                SelectedResources = criteria.SelectedResources,
-                Mode = Mode
+                SpName = criteria.SpName,
+                Mode = Mode,
+                SelectedResources = criteria.SelectedResources
             };
-            foreach (var server in servers)
+            var resultMessage = await scaleOutSettleService.ValidateEventAndTicket(request);
+            return new Result
             {
-                checkingCriteria.DbServer = server;
-                await repository.ExecuteAsync(checkingCriteria);
-                if (checkingCriteria.ErrCode > 0)
-                {
-                    return new Result
-                    {
-                        ErrCode = checkingCriteria.ErrCode,
-                        ErrMsg = checkingCriteria.ErrMsg
-                    };
-                }
-            }
-
-            return new Result();
+                ErrCode = resultMessage.ErrorCode,
+                ErrMsg = resultMessage.ErrorMessage
+            };
         }
 
-        private async Task<Result> ValidateEvent(CalculateEarlyCriteria criteria)
+        private async Task UpdateMatchInfo(CalculateEarlyCriteria criteria)
         {
-            var checkEventCriteria = new ValidateEventCriteria
+            await scaleOutSettleService.UpdateUnderSettlementFlag(criteria.MatchId, criteria.AdminId, criteria.Action);
+            var requestUpdateInfo = new UpdateMatchInfoRequest
             {
-                MatchId = criteria.MatchId,
-                SpName = criteria.SpName,
                 Action = criteria.Action,
-                SelectedResources = criteria.SelectedResources,
-                Mode = Mode
+                AdminId = criteria.AdminId,
+                MatchId = criteria.MatchId,
+                ResourceResult = criteria.SelectedResources
             };
-            await repository.ExecuteAsync(checkEventCriteria);
 
-            if (checkEventCriteria.ErrCode > 0)
-            {
-                return new Result
-                {
-                    ErrCode = checkEventCriteria.ErrCode,
-                    ErrMsg = checkEventCriteria.ErrMsg
-                };
-            }
-
-            return new Result();
+            await scaleOutSettleService.UpdateMatchInfo(requestUpdateInfo);
         }
     }
 }

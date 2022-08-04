@@ -14,7 +14,9 @@ using Settlement.Sportsbook.Soccer.Requests;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Fanex.Settlement.ScaleOut.Services;
 using Settlement.Core.Services;
+using Fanex.Settlement.ScaleOut.Request;
 
 namespace Settlement.Sportsbook.Soccer.Services
 {
@@ -39,11 +41,11 @@ namespace Settlement.Sportsbook.Soccer.Services
 
         private readonly IHttpContextAccessor accessor;
 
-        private readonly UpdateStatusMatchService updateStatusMatchService;
-
         private readonly IConfiguration configuration;
 
         private readonly ICreateCriteriaService createCriteriaService;
+
+        private readonly ScaleOutSettleService scaleOutSettleService;
 
         public RefundServiceImp(
             IDynamicRepository repository,
@@ -51,16 +53,16 @@ namespace Settlement.Sportsbook.Soccer.Services
             IHttpContextAccessor accessor,
             IConfiguration configuration,
             ICreateCriteriaService createCriteriaService,
-            UpdateStatusMatchService updateStatusMatchService,
-            INapSession currentSession)
+            INapSession currentSession,
+            ScaleOutSettleService scaleOutSettleService)
         {
             this.repository = repository;
             this.mapper = mapper;
             this.accessor = accessor;
             this.configuration = configuration;
             this.createCriteriaService = createCriteriaService;
-            this.updateStatusMatchService = updateStatusMatchService;
             this.currentSession = currentSession;
+            this.scaleOutSettleService = scaleOutSettleService;
         }
 
         public async Task<MarkedTickets> CheckMarkedTickets(CheckingMarkedTicketsRequest request)
@@ -87,14 +89,13 @@ namespace Settlement.Sportsbook.Soccer.Services
         {
             var criteria = createCriteriaService.CreateRefundCriteria(request);
             criteria.SDTRecord = SettleDetermineTicket(request);
-            var validationResult = await ValidateBeforePushing(criteria);
+            var validationResult = await ValidateBeforeExecute(criteria);
             if (validationResult.ErrCode > 0)
             {
                 return validationResult;
             }
 
-            await updateStatusMatchService.UpdateUnderSettleFlag(criteria.MatchId, criteria.Action);
-
+            await UpdateMatchInfo(criteria);
             ExecuteRefund(criteria);
             RefundHedgeMatch(request, criteria);
 
@@ -133,75 +134,41 @@ namespace Settlement.Sportsbook.Soccer.Services
             return (byte)value;
         }
 
-        private async Task<Result> ValidateBeforePushing(RefundCriteria criteria)
+        private async Task<Result> ValidateBeforeExecute(RefundCriteria criteria)
         {
-            var validateEvent = await ValidateEvent(criteria);
-
-            if (validateEvent.ErrCode > 0)
-            {
-                return validateEvent;
-            }
-
-            var validateTicket = await ValidateTicket(criteria);
-
-            if (validateTicket.ErrCode > 0)
-            {
-                return validateTicket;
-            }
-
-            return new Result();
-        }
-
-        private async Task<Result> ValidateTicket(RefundCriteria criteria)
-        {
-            var servers = configuration.GetSection("SiteDBServer").Get<List<string>>();
-            var checkingCriteria = new ValidateBeforePushCriteria
+            var request = new EventTicketRequest
             {
                 MatchId = criteria.MatchId,
-                SpName = criteria.SpName,
                 Action = criteria.Action,
-                Mode = ActionKey.ActionDictionary[criteria.Action],
-                SDTRecord = criteria.SDTRecord
+                SpName = criteria.SpName,
+                Mode = ActionKey.ActionDictionary[criteria.Action]
             };
-            foreach (var server in servers)
+            var resultMessage = await scaleOutSettleService.ValidateEventAndTicket(request);
+            return new Result
             {
-                checkingCriteria.DbServer = server;
-                await repository.ExecuteAsync(checkingCriteria);
-                if (checkingCriteria.ErrCode > 0)
-                {
-                    return new Result
-                    {
-                        ErrCode = checkingCriteria.ErrCode,
-                        ErrMsg = checkingCriteria.ErrMsg
-                    };
-                }
-            }
-
-            return new Result();
+                ErrCode = resultMessage.ErrorCode,
+                ErrMsg = resultMessage.ErrorMessage
+            };
         }
 
-        private async Task<Result> ValidateEvent(RefundCriteria criteria)
+        private async Task UpdateMatchInfo(RefundCriteria criteria)
         {
-            var checkEventCriteria = new ValidateEventCriteria
+            await scaleOutSettleService.UpdateUnderSettlementFlag(criteria.MatchId, criteria.AdminId, criteria.Action);
+            var requestUpdateInfo = new UpdateMatchInfoRequest
             {
                 MatchId = criteria.MatchId,
-                SpName = criteria.SpName,
                 Action = criteria.Action,
-                Mode = ActionKey.ActionDictionary[criteria.Action],
+                AdminId = criteria.AdminId,
+                BetStatus = criteria.BetStatus,
+                FullTimeAway = criteria.FullTimeAway,
+                FullTimeHome = criteria.FullTimeHome,
+                HalfTimeAway = criteria.HalfTimeAway ?? 0,
+                HalfTimeHome = criteria.HalfTimeHome ?? 0,
+                ResourceResult = criteria.ResourceResult,
                 SDTRecord = criteria.SDTRecord
             };
-            await repository.ExecuteAsync(checkEventCriteria);
 
-            if (checkEventCriteria.ErrCode > 0)
-            {
-                return new Result
-                {
-                    ErrCode = checkEventCriteria.ErrCode,
-                    ErrMsg = checkEventCriteria.ErrMsg
-                };
-            }
-
-            return new Result();
+            await scaleOutSettleService.UpdateMatchInfo(requestUpdateInfo);
         }
 
         private void ExecuteRefund(RefundCriteria criteria)

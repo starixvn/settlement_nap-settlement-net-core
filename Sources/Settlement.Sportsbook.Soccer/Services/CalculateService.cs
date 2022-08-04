@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System;
+using AutoMapper;
 using Fanex.Data.Repository;
 using Microsoft.Extensions.Configuration;
 using Settlement.Core.Criteria;
@@ -7,11 +8,10 @@ using Settlement.Core.Services;
 using Settlement.Sportsbook.Soccer.Constants;
 using Settlement.Sportsbook.Soccer.Criteria;
 using Settlement.Sportsbook.Soccer.Requests;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Settlement.Core.Constants;
-using System.Linq;
+using Fanex.Settlement.ScaleOut.Request;
+using Fanex.Settlement.ScaleOut.Services;
 
 namespace Settlement.Sportsbook.Soccer.Services
 {
@@ -34,40 +34,37 @@ namespace Settlement.Sportsbook.Soccer.Services
 
         private readonly ICreateCriteriaService createQueryCriteria;
 
-        private readonly UpdateStatusMatchService updateStatusMatchService;
-
-        private readonly int[] listLeagueGroupHasChildMatch = { 42, 74, 108 };
+        private readonly ScaleOutSettleService scaleOutSettleService;
 
         public CalculateServiceImp
             (IMapper mapper,
             IDynamicRepository repository,
             IConfiguration configuration,
             ICreateCriteriaService createQueryCriteria,
-            UpdateStatusMatchService updateStatusMatchService)
+            ScaleOutSettleService scaleOutSettleService)
         {
             this.repository = repository;
             this.configuration = configuration;
             this.mapper = mapper;
             this.createQueryCriteria = createQueryCriteria;
-            this.updateStatusMatchService = updateStatusMatchService;
+            this.scaleOutSettleService = scaleOutSettleService;
         }
 
         public async Task<Result> Calculate(SettleRequest request)
         {
             var criteria = createQueryCriteria.CreateCalculateCriteria(request);
-            var requestChecking = await ValidateBeforeExecute(criteria);
-            if (requestChecking.ErrCode > 0)
+            var matchChecking = await ValidateBeforeExecute(criteria);
+            if (matchChecking.ErrCode > 0)
             {
-                return requestChecking;
+                return matchChecking;
             }
 
-            await updateStatusMatchService.UpdateUnderSettleFlag(criteria.MatchId, criteria.Action);
-
+            await UpdateMatchInfo(criteria);
             var result = await Execute(criteria);
 
             if (result.IsSuccessful)
             {
-                await AutoRefundChildMatch(criteria);
+                await RefundChildMatch(criteria);
                 if (request.IsApplyHedging)
                 {
                     criteria.MatchId = request.HedgeMatchId;
@@ -87,13 +84,12 @@ namespace Settlement.Sportsbook.Soccer.Services
                 return requestChecking;
             }
 
-            await updateStatusMatchService.UpdateUnderSettleFlag(criteria.MatchId, criteria.Action);
+            await UpdateMatchInfo(criteria);
 
             var result = await Execute(criteria);
 
             if (result.IsSuccessful)
             {
-                await AutoRefundChildMatch(criteria);
                 if (request.IsApplyHedging)
                 {
                     criteria.MatchId = request.HedgeMatchId;
@@ -117,25 +113,6 @@ namespace Settlement.Sportsbook.Soccer.Services
             };
         }
 
-        private async Task AutoRefundChildMatch(CalculateCriteria criteria)
-        {
-            var isRefundChildMatch = !string.IsNullOrEmpty(criteria.ChildMatchIds)
-                                     && listLeagueGroupHasChildMatch.Contains(criteria.LeagueGroupId)
-                                     && (criteria.Action == ActionType.CalculateAll
-                                         || criteria.Action == ActionType.CalculateFullTime);
-            var finalScoreNotDraw = criteria.FullTimeAway != criteria.FullTimeHome;
-            if (isRefundChildMatch && finalScoreNotDraw)
-            {
-                var autoRefundCriteria = new UpdateStatusChildMatchCriteria
-                {
-                    ParentId = criteria.MatchId,
-                    ChildMatchIds = criteria.ChildMatchIds
-                };
-
-                await repository.ExecuteAsync(autoRefundCriteria);
-            }
-        }
-
         private async Task<Result> Execute(CalculateCriteria criteria)
         {
             var listReplicatedServer = configuration.GetSection("SiteDBServer").Get<List<string>>();
@@ -155,71 +132,53 @@ namespace Settlement.Sportsbook.Soccer.Services
 
         private async Task<Result> ValidateBeforeExecute(CalculateCriteria criteria)
         {
-            var validateEvent = await ValidateEvent(criteria);
-
-            if (validateEvent.ErrCode > 0)
-            {
-                return validateEvent;
-            }
-
-            var validateTicket = await ValidateTicket(criteria);
-
-            if (validateTicket.ErrCode > 0)
-            {
-                return validateTicket;
-            }
-
-            return new Result();
-        }
-
-        private async Task<Result> ValidateTicket(CalculateCriteria criteria)
-        {
-            var servers = configuration.GetSection("SiteDBServer").Get<List<string>>();
-            var checkingCriteria = new ValidateBeforePushCriteria
+            var request = new EventTicketRequest
             {
                 MatchId = criteria.MatchId,
-                SpName = criteria.SpName,
                 Action = criteria.Action,
+                SpName = criteria.SpName,
                 Mode = ActionKey.ActionDictionary[criteria.Action]
             };
-            foreach (var server in servers)
+            var resultMessage = await scaleOutSettleService.ValidateEventAndTicket(request);
+            return new Result
             {
-                checkingCriteria.DbServer = server;
-                await repository.ExecuteAsync(checkingCriteria);
-                if (checkingCriteria.ErrCode > 0)
-                {
-                    return new Result
-                    {
-                        ErrCode = checkingCriteria.ErrCode,
-                        ErrMsg = checkingCriteria.ErrMsg
-                    };
-                }
-            }
-
-            return new Result();
+                ErrCode = resultMessage.ErrorCode,
+                ErrMsg = resultMessage.ErrorMessage
+            };
         }
 
-        private async Task<Result> ValidateEvent(CalculateCriteria criteria)
+        private async Task UpdateMatchInfo(CalculateCriteria criteria)
         {
-            var checkEventCriteria = new ValidateEventCriteria
+            await scaleOutSettleService.UpdateUnderSettlementFlag(criteria.MatchId, criteria.AdminId, criteria.Action);
+            var requestUpdateInfo = new UpdateMatchInfoRequest
             {
                 MatchId = criteria.MatchId,
-                SpName = criteria.SpName,
                 Action = criteria.Action,
-                Mode = ActionKey.ActionDictionary[criteria.Action]
+                AdminId = criteria.AdminId,
+                BetStatus = criteria.BetStatus,
+                FullTimeAway = criteria.FullTimeAway,
+                FullTimeHome = criteria.FullTimeHome,
+                GoalRecord = criteria.GoalRecord,
+                HalfTimeAway = criteria.HalfTimeAway,
+                HalfTimeHome = criteria.HalfTimeHome,
+                ResourceResult = criteria.ResourceResult
             };
-            await repository.ExecuteAsync(checkEventCriteria);
 
-            if (checkEventCriteria.ErrCode > 0)
+            await scaleOutSettleService.UpdateMatchInfo(requestUpdateInfo);
+        }
+
+        private async Task RefundChildMatch(CalculateCriteria criteria)
+        {
+            var requestRefundChildMatch = new RefundChildMatchRequest
             {
-                return new Result
-                {
-                    ErrCode = checkEventCriteria.ErrCode,
-                    ErrMsg = checkEventCriteria.ErrMsg
-                };
-            }
-
-            return new Result();
+                ParentId = criteria.MatchId,
+                ChildMatchIds = criteria.ChildMatchIds,
+                LeagueGroupId = criteria.LeagueGroupId,
+                AwayValue = criteria.FullTimeAway,
+                HomeValue = criteria.FullTimeHome,
+                ActionName = criteria.Action
+            };
+            await scaleOutSettleService.UpdateAutoRefundChildMatch(requestRefundChildMatch);
         }
     }
 }

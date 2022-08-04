@@ -15,10 +15,6 @@ namespace Settlement.FastMarkets
                 .ForMember(dest => dest.UserId, map => map.MapFrom(src => src.AdminId));
             CreateMap<GetLastestResultRequest, GetLastestResultCriteria>();
             CreateMap<GetTimeMachineResultRequest, GetTimeMachineResultCriteria>();
-            CreateMap<PushFastMarketResultCriteria, ValidateBeforePushCriteria>()
-                .ForMember(dest => dest.SelectedResources, map => map.MapFrom(src => src.Results));
-            CreateMap<PushFastMarketResultCriteria, ValidateEventCriteria>()
-                .ForMember(dest => dest.SelectedResources, map => map.MapFrom(src => src.Results));
         }
     }
 }

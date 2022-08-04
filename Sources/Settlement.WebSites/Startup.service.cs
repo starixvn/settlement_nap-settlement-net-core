@@ -35,6 +35,8 @@ using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
 using Fanex.MailDeliver.MailClient;
+using Fanex.Settlement.ScaleOut;
+using Fanex.Settlement.ScaleOut.Services;
 using Settlement.Sportsbook.Soccer;
 using ONEbook.UM.Configurations;
 using ONEbook.UM.AspNetCore;
@@ -249,7 +251,7 @@ namespace Settlement.WebSites
             services.AddSingleton<IUMRestClient, UMRestClient>();
             services.AddSingleton(new UMClientConfiguration().Initialize(Configuration));
             services.AddSingleton<ONEbook.UM.Services.IMaintenanceService, ONEbook.UM.Services.MaintenanceService>();
-            services.AddTransient<UpdateStatusMatchService, UpdateStatusMatchServiceImp>();
+            services.AddTransient<ScaleOutSettleService, ScaleOutSettleServiceImp>();
         }
 
         private static void ConfigureMediator(IServiceCollection services)
@@ -280,6 +282,7 @@ namespace Settlement.WebSites
                 mc.AddProfile(typeof(ThirdPartyProductsAutoMapperProfile));
                 mc.AddProfile(typeof(SettingAutoMapperProfile));
                 mc.AddProfile(typeof(GamingMapperProfile));
+                mc.AddProfile(typeof(ScaleOutMappingProfile));
             });
 
             var mapper = mapperConfig.CreateMapper();
