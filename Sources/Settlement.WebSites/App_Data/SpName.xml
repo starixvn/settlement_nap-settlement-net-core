@@ -222,7 +222,7 @@
 
     <Function Name="NAP_Admin_Settlement_BetFair_Move">
       <Setting Key="NAP_Admin_Settlement_BetFair_Move_DBTXN" SpName="NAP_Admin_Settlement_BetFair_Move" DbName="DBTXN.bodb02.bodbAdminNet" />
-      <Setting Key="NAP_Admin_Settlement_BetFair_Move_Push_SITEDB01" SpName="NAP_Admin_Settlement_BetFair_Move" DbName="SITEDB01.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Admin_Settlement_BetFair_Move_SITEDB01" SpName="NAP_Admin_Settlement_BetFair_Move" DbName="SITEDB01.bodb02.bodbAdminNet" />
     </Function>
 
     <Function Name="NAP_Admin_Settlement_Refund_BetFair_Push">
