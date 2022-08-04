@@ -113,7 +113,6 @@
     <PackageReference Include="Fanex.NAP.Client.AspNetCore" Version="2.0.0.1-beta3" />
 		<PackageReference Include="Fanex.NAP.Signin.AspNetCore" Version="2.0.0.2-beta5" />
 		<PackageReference Include="Fanex.RemotingRef" Version="1.5.0.1-beta2" />
-		<PackageReference Include="Fanex.Settlement.ScaleOut" Version="2.0.0.5" />
     <PackageReference Include="MediatR" Version="9.0.0" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="9.0.0" />
     <PackageReference Include="MessagePack" Version="2.4.35" />

@@ -46,7 +46,7 @@ export class MatchesComponent extends MatchesBaseComponent implements OnChanges,
   public popupEarly(match: CalculationMatch) {
     if (this.isShowEarlySettleLink(match)) {
       const src = `apps/soccer-early?matchId=${match.matchId}`;
-      this.popupService.openAndHandlePopup(src, Language.EarlyPopupTitle, '910px', '890px', match);
+      this.popupService.openAndHandlePopup(src, Language.EarlyPopupTitle, '910px', '910px', match);
     }
   }
 
