@@ -1,6 +1,7 @@
 export const BackgroundColor = {
     iconNo: 'icon-no',
     iconYes: 'icon-yes',
+    iconOn: 'icon-on',
     undecidedRow: 'bg-row-undecided',
     waiting: 'waiting',
     calculating: 'calculating',
@@ -17,6 +18,7 @@ export const BackgroundColor = {
     iconOff: 'icon-off',
     iconOffDisabled: 'icon-off-disable',
     iconNoDisabled: 'icon-no-disable',
+    iconOnDisabled: 'icon-on-disable',
     iconDirect: 'icon-direct',
     iconDirectDisabled: 'icon-direct-disable',
     pending: 'bg-pending',

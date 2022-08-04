@@ -57,9 +57,9 @@ export class AutoCalculateMatchesComponent extends MatchesBaseComponent implemen
 
   public getClassInstant(isInstant: boolean) {
     if (this.permission.canAutoPayout) {
-      return isInstant ? BackgroundColor.iconAuto : BackgroundColor.iconOff;
+      return isInstant ? BackgroundColor.iconOn : BackgroundColor.iconOff;
     } else {
-      return isInstant ? BackgroundColor.iconAutoDisabled : BackgroundColor.iconOffDisabled;
+      return isInstant ? BackgroundColor.iconOnDisabled : BackgroundColor.iconOffDisabled;
     }
   }
 

@@ -97,7 +97,6 @@ namespace Settlement.Sportsbook.Soccer.Services
 
         private async Task UpdateMatchInfo(CalculateEarlyCriteria criteria)
         {
-            await scaleOutSettleService.UpdateUnderSettlementFlag(criteria.MatchId, criteria.AdminId, criteria.Action);
             var requestUpdateInfo = new UpdateMatchInfoRequest
             {
                 Action = criteria.Action,

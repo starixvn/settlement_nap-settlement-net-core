@@ -61,19 +61,15 @@ namespace Settlement.Sportsbook.Soccer.Services
             }
 
             await UpdateMatchInfo(criteria);
-            var result = await Execute(criteria);
-
-            if (result.IsSuccessful)
+            Execute(criteria);
+            await RefundChildMatch(criteria);
+            if (request.IsApplyHedging)
             {
-                await RefundChildMatch(criteria);
-                if (request.IsApplyHedging)
-                {
-                    criteria.MatchId = request.HedgeMatchId;
-                    await Execute(criteria);
-                }
+                criteria.MatchId = request.HedgeMatchId;
+                Execute(criteria);
             }
 
-            return result;
+            return matchChecking;
         }
 
         public async Task<Result> UnCalculate(SettleRequest request)
@@ -86,19 +82,15 @@ namespace Settlement.Sportsbook.Soccer.Services
             }
 
             await UpdateMatchInfo(criteria);
+            Execute(criteria);
 
-            var result = await Execute(criteria);
-
-            if (result.IsSuccessful)
+            if (request.IsApplyHedging)
             {
-                if (request.IsApplyHedging)
-                {
-                    criteria.MatchId = request.HedgeMatchId;
-                    await Execute(criteria);
-                }
+                criteria.MatchId = request.HedgeMatchId;
+                Execute(criteria);
             }
 
-            return result;
+            return requestChecking;
         }
 
         public async Task<Result> CheckStatus(CheckStatusRequest request)
@@ -114,19 +106,13 @@ namespace Settlement.Sportsbook.Soccer.Services
             };
         }
 
-        private async Task<Result> Execute(CalculateCriteria criteria)
+        private void Execute(CalculateCriteria criteria)
         {
             foreach (var server in appSettingsKey.SiteDbServer)
             {
                 criteria.DbServer = server;
-                await repository.ExecuteAsync(criteria);
+                repository.Execute(criteria);
             }
-
-            return new Result
-            {
-                ErrCode = criteria.ErrCode,
-                ErrMsg = criteria.ErrMsg
-            };
         }
 
         private async Task<Result> ValidateBeforeExecute(CalculateCriteria criteria)
