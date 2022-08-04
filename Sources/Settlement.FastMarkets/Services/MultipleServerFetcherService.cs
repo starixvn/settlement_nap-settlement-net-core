@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Fanex.Data.Repository;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Settlement.Core.Models;
 using Settlement.FastMarkets.Criteria;
 using Settlement.FastMarkets.Models;
@@ -19,27 +20,25 @@ namespace Settlement.FastMarkets.Services
     {
         private readonly IDynamicRepository repository;
 
-        private readonly IConfiguration configuration;
+        private readonly AppSettingsKey appSettingsKey;
 
         private readonly MergeDataService mergeDataService;
 
         public MultipleServerFetcherServiceImp(IDynamicRepository repository,
             IConfiguration configuration,
-            MergeDataService mergeDataService)
+            MergeDataService mergeDataService,
+            IOptions<AppSettingsKey> appSettingsKey)
         {
             this.repository = repository;
-            this.configuration = configuration;
+            this.appSettingsKey = appSettingsKey.Value;
             this.mergeDataService = mergeDataService;
         }
 
         public async Task<(List<FastMarketResult> ticketDetails, TicketCounts ticketCounts)> GetFastMarketTicketDetail(int matchId)
         {
-            var criteria = new GetFastMarketTicketDetailCriteria {
-                MatchId = matchId
-            };
-            var servers = configuration.GetSection("SiteDBServer").Get<List<string>>();
+            var criteria = new GetFastMarketTicketDetailCriteria { MatchId = matchId };
             var multipleTicketDetails = new List<(List<FastMarketResult>, TicketCounts)>();
-            foreach (var server in servers)
+            foreach (var server in appSettingsKey.SiteDbServer)
             {
                 var ticketDetails = await GetTicketDetailByServer(criteria, server);
                 multipleTicketDetails.Add(ticketDetails);

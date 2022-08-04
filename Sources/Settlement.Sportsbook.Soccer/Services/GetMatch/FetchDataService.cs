@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
 using Match = Settlement.Sportsbook.Soccer.Models.Match;
 using MatchDetail = Settlement.Sportsbook.Soccer.Models.MatchDetail;
 
@@ -34,18 +35,18 @@ namespace Settlement.Sportsbook.Soccer.GetMatch.Services
 
         private readonly IMapper mapper;
 
-        private readonly IConfiguration configuration;
+        private readonly AppSettingsKey appSettingsKey;
 
         private readonly IMergeDataService mergeDataService;
 
         public FetchDateServiceImp(IDynamicRepository repository,
             IMapper mapper,
-            IConfiguration configuration,
+            IOptions<AppSettingsKey> appSettingsKey,
             IMergeDataService mergeDataService)
         {
             this.repository = repository;
             this.mapper = mapper;
-            this.configuration = configuration;
+            this.appSettingsKey = appSettingsKey.Value;
             this.mergeDataService = mergeDataService;
         }
 
@@ -77,10 +78,9 @@ namespace Settlement.Sportsbook.Soccer.GetMatch.Services
 
         private List<SiteMatch> GetSiteMatchInfo(int matchId)
         {
-            var siteDbServer = configuration.GetSection("SiteDBServer").Get<List<string>>();
             var mappingTypes = new[] { typeof(SiteMatch), typeof(TicketCounts), typeof(ChildMatchTicketInfos) };
 
-            return siteDbServer.Select(server => GetSiteMatchByServer(matchId, mappingTypes, server)).ToList();
+            return appSettingsKey.SiteDbServer.Select(server => GetSiteMatchByServer(matchId, mappingTypes, server)).ToList();
         }
 
         private SiteMatch GetSiteMatchByServer(int matchId, Type[] mappingTypes, string server)
@@ -97,9 +97,8 @@ namespace Settlement.Sportsbook.Soccer.GetMatch.Services
 
         public async Task<BetDaq> GetMultiServersBetDaq(BetDaqCheckingCriteria criteria)
         {
-            var servers = configuration.GetSection("SiteDBServer").Get<List<string>>();
             var betDaqs = new List<BetDaq>();
-            foreach (var server in servers)
+            foreach (var server in appSettingsKey.SiteDbServer)
             {
                 criteria.DbServer = server;
                 var betDaq = await repository.GetAsync<BetDaq>(criteria);
@@ -126,9 +125,8 @@ namespace Settlement.Sportsbook.Soccer.GetMatch.Services
 
         public async Task<BetFair> GetMultiServersBetFair(BetFairCheckingCriteria criteria)
         {
-            var servers = configuration.GetSection("SiteDBServer").Get<List<string>>();
             var betFairs = new List<BetFair>();
-            foreach (var server in servers)
+            foreach (var server in appSettingsKey.SiteDbServer)
             {
                 criteria.DbServer = server;
                 var betFair = await repository.GetAsync<BetFair>(criteria);
@@ -155,10 +153,9 @@ namespace Settlement.Sportsbook.Soccer.GetMatch.Services
 
         public async Task<(List<ResultDetailModel>, TicketCounts)> GetEarlyTicketDetails(GetResultDetailEarlyCriteria criteria)
         {
-            var servers = configuration.GetSection("SiteDBServer").Get<List<string>>();
             var multipleTicketDetails = new List<(List<ResultDetailModel>, TicketCounts)>();
             var getTicketCriteria = new GetEarlyTicketInfoCriteria { MatchId = criteria.MatchId };
-            foreach (var server in servers)
+            foreach (var server in appSettingsKey.SiteDbServer)
             {
                 var ticketDetails = await GetTicketDetailByServer(getTicketCriteria, server);
                 multipleTicketDetails.Add(ticketDetails);
@@ -177,10 +174,9 @@ namespace Settlement.Sportsbook.Soccer.GetMatch.Services
 
         public async Task<bool> IsDeterminedHedgeMatch(int matchId)
         {
-            var servers = configuration.GetSection("SiteDBServer").Get<List<string>>();
             var criteria = new GetHedgeMatchDeterminedInfo { HedgeMatchId = matchId };
             var determinedHedgeMatch = new DeterminedHedgeMatch();
-            foreach (var server in servers)
+            foreach (var server in appSettingsKey.SiteDbServer)
             {
                 criteria.DbServer = server;
                 determinedHedgeMatch = await repository.GetAsync<DeterminedHedgeMatch>(criteria);

@@ -11,6 +11,7 @@ using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Requests;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
 
 namespace Settlement.Sportsbook.Soccer.Services
 {
@@ -37,7 +38,7 @@ namespace Settlement.Sportsbook.Soccer.Services
 
         private readonly IInstantResourceService instantResourceService;
 
-        private readonly IConfiguration configuration;
+        private readonly AppSettingsKey appSettingsKey;
 
         public InstantCalculateServiceImp(
             IDynamicRepository repository,
@@ -46,7 +47,7 @@ namespace Settlement.Sportsbook.Soccer.Services
             IHttpContextAccessor accessor,
             XmlConvertService xmlConvertService,
             IInstantResourceService instantResourceService,
-            IConfiguration configuration)
+            IOptions<AppSettingsKey> appSettingsKey)
         {
             this.repository = repository;
             this.currentSession = currentSession;
@@ -54,7 +55,7 @@ namespace Settlement.Sportsbook.Soccer.Services
             this.accessor = accessor;
             this.xmlConvertService = xmlConvertService;
             this.instantResourceService = instantResourceService;
-            this.configuration = configuration;
+            this.appSettingsKey = appSettingsKey.Value;
         }
 
         public async Task<MatchGoalRecordModel> CalculateCheckingInfo(MatchCheckingRequest request)
@@ -85,9 +86,8 @@ namespace Settlement.Sportsbook.Soccer.Services
             criteria.ResourceResult = GetResourceResultInstantCalculate(request);
             criteria.AdminId = currentSession.UserId;
             criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
-            var listReplicatedServer = configuration.GetSection("SiteDBServer").Get<List<string>>();
 
-            foreach (var server in listReplicatedServer)
+            foreach (var server in appSettingsKey.SiteDbServer)
             {
                 criteria.DbServer = server;
                 await repository.ExecuteAsync(criteria);

@@ -12,6 +12,7 @@ using Settlement.FastMarkets.Requests;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
 
 namespace Settlement.FastMarkets.Services
 {
@@ -44,7 +45,7 @@ namespace Settlement.FastMarkets.Services
 
         private readonly MultipleServerFetcherService multipleServerFetcherService;
 
-        private readonly IConfiguration configuration;
+        private readonly AppSettingsKey appSettingsKey;
 
         private readonly string fastMarketMode = "FM";
 
@@ -57,7 +58,7 @@ namespace Settlement.FastMarkets.Services
             INapSession currentSession,
             IHttpContextAccessor accessor,
             MultipleServerFetcherService multipleServerFetcherService,
-            IConfiguration configuration)
+            IOptions<AppSettingsKey> appSettingsKey)
         {
             this.repository = repository;
             this.fastMarketResultService = fastMarketResultService;
@@ -67,7 +68,7 @@ namespace Settlement.FastMarkets.Services
             this.currentSession = currentSession;
             this.accessor = accessor;
             this.multipleServerFetcherService = multipleServerFetcherService;
-            this.configuration = configuration;
+            this.appSettingsKey = appSettingsKey.Value;
         }
 
         public async Task<FastMarketModel> Query(int matchId)
@@ -218,9 +219,7 @@ namespace Settlement.FastMarkets.Services
 
         private void ExecuteCalculate(PushFastMarketResultCriteria criteria)
         {
-            var servers = configuration.GetSection("SiteDBServer").Get<List<string>>();
-
-            foreach (var server in servers)
+            foreach (var server in appSettingsKey.SiteDbServer)
             {
                 criteria.DbServer = server;
                 repository.Execute(criteria);

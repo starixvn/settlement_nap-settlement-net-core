@@ -13,6 +13,7 @@ using Settlement.EventManagement.Criteria;
 using Settlement.Core.Constants;
 using Settlement.EventManagement.Requests;
 using System.Threading;
+using Microsoft.Extensions.Options;
 
 namespace Settlement.EventManagement.Services.Calculation
 {
@@ -39,7 +40,7 @@ namespace Settlement.EventManagement.Services.Calculation
 
         private readonly NewInfoMatchService newInfoMatchService;
 
-        private readonly IConfiguration configuration;
+        private readonly AppSettingsKey appSettingsKey;
 
         private readonly IMapper mapper;
 
@@ -49,7 +50,7 @@ namespace Settlement.EventManagement.Services.Calculation
             CachingMatchesService cachingMatchesService,
             MergeDataService mergeDataService,
             NewInfoMatchService newInfoMatchService,
-            IConfiguration configuration,
+            IOptions<AppSettingsKey> appSettingsKey,
             IMapper mapper)
         {
             this.repository = repository;
@@ -57,7 +58,7 @@ namespace Settlement.EventManagement.Services.Calculation
             this.cachingMatchesService = cachingMatchesService;
             this.mergeDataService = mergeDataService;
             this.newInfoMatchService = newInfoMatchService;
-            this.configuration = configuration;
+            this.appSettingsKey = appSettingsKey.Value;
             this.mapper = mapper;
         }
 
@@ -97,8 +98,7 @@ namespace Settlement.EventManagement.Services.Calculation
             var matches = new List<Match>();
             var isCentralDataBase = true;
             var criteria = mapper.Map<FilterCalculationRequest, GetMatchesCriteria>(request);
-            var siteDbServer = configuration.GetSection("SiteDBServer").Get<List<string>>();
-            foreach (var server in siteDbServer)
+            foreach (var server in appSettingsKey.SiteDbServer)
             {
                 criteria.DbServer = server;
                 var data = (await repository.FetchAsync<Match>(criteria)).ToList();
@@ -122,8 +122,7 @@ namespace Settlement.EventManagement.Services.Calculation
             var matches = new List<Match>();
             var isCentralDataBase = true;
             var criteria = mapper.Map<RefreshCalculationRequest, GetWaitingCalculationCriteria>(request);
-            var siteDbServer = configuration.GetSection("SiteDBServer").Get<List<string>>();
-            foreach (var server in siteDbServer)
+            foreach (var server in appSettingsKey.SiteDbServer)
             {
                 criteria.DbServer = server;
                 var data = (await repository.FetchAsync<Match>(criteria)).ToList();
@@ -206,8 +205,7 @@ namespace Settlement.EventManagement.Services.Calculation
             var matches = new List<Match>();
             var isCentralDataBase = true;
             var criteria = mapper.Map<FilterAutoCalculationRequest, GetMatchesAutoCalculateCriteria>(request);
-            var siteDbServer = configuration.GetSection("SiteDBServer").Get<List<string>>();
-            foreach (var server in siteDbServer)
+            foreach (var server in appSettingsKey.SiteDbServer)
             {
                 criteria.DbServer = server;
                 var data = (await repository.FetchAsync<Match>(criteria)).ToList();
@@ -244,8 +242,7 @@ namespace Settlement.EventManagement.Services.Calculation
             var matches = new List<Match>();
             var isCentralDataBase = true;
             var criteria = mapper.Map<RefreshCalculationRequest, GetWaitingAutoCalculationCriteria>(request);
-            var siteDbServer = configuration.GetSection("SiteDBServer").Get<List<string>>();
-            foreach (var server in siteDbServer)
+            foreach (var server in appSettingsKey.SiteDbServer)
             {
                 criteria.DbServer = server;
                 var data = (await repository.FetchAsync<Match>(criteria)).ToList();

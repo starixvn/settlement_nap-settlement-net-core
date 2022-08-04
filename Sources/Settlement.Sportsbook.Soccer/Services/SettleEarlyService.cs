@@ -12,6 +12,7 @@ using Fanex.Settlement.ScaleOut.Criteria;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.Extensions.Options;
 using Settlement.Sportsbook.Soccer.Constants;
 
 namespace Settlement.Sportsbook.Soccer.Services
@@ -25,7 +26,7 @@ namespace Settlement.Sportsbook.Soccer.Services
     {
         private readonly ICreateCriteriaService createCriteriaService;
 
-        private readonly IConfiguration configuration;
+        private readonly AppSettingsKey appSettingsKey;
 
         private readonly IDynamicRepository repository;
 
@@ -35,12 +36,12 @@ namespace Settlement.Sportsbook.Soccer.Services
 
         public SettleEarlyServiceImp(
             ICreateCriteriaService createCriteriaService,
-            IConfiguration configuration,
+            IOptions<AppSettingsKey> appSettingsKey,
             IDynamicRepository repository,
             ScaleOutSettleService scaleOutSettleService)
         {
             this.createCriteriaService = createCriteriaService;
-            this.configuration = configuration;
+            this.appSettingsKey = appSettingsKey.Value;
             this.repository = repository;
             this.scaleOutSettleService = scaleOutSettleService;
         }
@@ -55,7 +56,6 @@ namespace Settlement.Sportsbook.Soccer.Services
 
         private async Task<Result> Execute(CalculateEarlyCriteria criteria)
         {
-            var listReplicatedServer = configuration.GetSection("SiteDBServer").Get<List<string>>();
             var requestChecking = await ValidateBeforeExecute(criteria);
             if (requestChecking.ErrCode > 0)
             {
@@ -64,7 +64,7 @@ namespace Settlement.Sportsbook.Soccer.Services
 
             criteria.BroadcastSessionId = Guid.NewGuid().ToString();
 
-            foreach (var server in listReplicatedServer)
+            foreach (var server in appSettingsKey.SiteDbServer)
             {
                 criteria.DbServer = server;
                 await repository.ExecuteAsync(criteria);

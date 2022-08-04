@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 using Fanex.Settlement.ScaleOut.Services;
 using Settlement.Core.Services;
 using Fanex.Settlement.ScaleOut.Request;
+using Microsoft.Extensions.Options;
 
 namespace Settlement.Sportsbook.Soccer.Services
 {
@@ -41,7 +42,7 @@ namespace Settlement.Sportsbook.Soccer.Services
 
         private readonly IHttpContextAccessor accessor;
 
-        private readonly IConfiguration configuration;
+        private readonly AppSettingsKey appSettingsKey;
 
         private readonly ICreateCriteriaService createCriteriaService;
 
@@ -51,7 +52,7 @@ namespace Settlement.Sportsbook.Soccer.Services
             IDynamicRepository repository,
             IMapper mapper,
             IHttpContextAccessor accessor,
-            IConfiguration configuration,
+            IOptions<AppSettingsKey> appSettingsKey,
             ICreateCriteriaService createCriteriaService,
             INapSession currentSession,
             ScaleOutSettleService scaleOutSettleService)
@@ -59,7 +60,7 @@ namespace Settlement.Sportsbook.Soccer.Services
             this.repository = repository;
             this.mapper = mapper;
             this.accessor = accessor;
-            this.configuration = configuration;
+            this.appSettingsKey = appSettingsKey.Value;
             this.createCriteriaService = createCriteriaService;
             this.currentSession = currentSession;
             this.scaleOutSettleService = scaleOutSettleService;
@@ -67,9 +68,8 @@ namespace Settlement.Sportsbook.Soccer.Services
 
         public async Task<MarkedTickets> CheckMarkedTickets(CheckingMarkedTicketsRequest request)
         {
-            var servers = configuration.GetSection("SiteDBServer").Get<List<string>>();
             var criteria = mapper.Map<CheckingMarkedTicketsRequest, CheckingMarkedTicketsCriteria>(request);
-            foreach (var server in servers)
+            foreach (var server in appSettingsKey.SiteDbServer)
             {
                 criteria.DbServer = server;
                 await repository.ExecuteAsync(criteria);
@@ -173,9 +173,7 @@ namespace Settlement.Sportsbook.Soccer.Services
 
         private void ExecuteRefund(RefundCriteria criteria)
         {
-            var servers = configuration.GetSection("SiteDBServer").Get<List<string>>();
-
-            foreach (var server in servers)
+            foreach (var server in appSettingsKey.SiteDbServer)
             {
                 criteria.DbServer = server;
                 repository.Execute(criteria);
@@ -192,8 +190,7 @@ namespace Settlement.Sportsbook.Soccer.Services
                 AdminId = currentSession.UserId,
             };
 
-            var servers = configuration.GetSection("SiteDBServer").Get<List<string>>();
-            foreach (var server in servers)
+            foreach (var server in appSettingsKey.SiteDbServer)
             {
                 criteria.DbServer = server;
                 await repository.ExecuteAsync(criteria);
@@ -219,9 +216,7 @@ namespace Settlement.Sportsbook.Soccer.Services
             var criteria = mapper.Map<MoveBetRequest, MoveThirdPartyBetTicketCriteria>(request);
             criteria.AdminId = currentSession.UserId;
             criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
-
-            var servers = configuration.GetSection("SiteDBServer").Get<List<string>>();
-            foreach (var server in servers)
+            foreach (var server in appSettingsKey.SiteDbServer)
             {
                 criteria.DbServer = server;
                 await repository.ExecuteAsync(criteria);

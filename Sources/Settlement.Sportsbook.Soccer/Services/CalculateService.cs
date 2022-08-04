@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
+using Microsoft.Extensions.Options;
 
 namespace Settlement.Sportsbook.Soccer.Services
 {
@@ -30,7 +31,7 @@ namespace Settlement.Sportsbook.Soccer.Services
 
         private readonly IMapper mapper;
 
-        private readonly IConfiguration configuration;
+        private readonly AppSettingsKey appSettingsKey;
 
         private readonly ICreateCriteriaService createQueryCriteria;
 
@@ -39,12 +40,12 @@ namespace Settlement.Sportsbook.Soccer.Services
         public CalculateServiceImp
             (IMapper mapper,
             IDynamicRepository repository,
-            IConfiguration configuration,
+            IOptions<AppSettingsKey> appSettingsKey,
             ICreateCriteriaService createQueryCriteria,
             ScaleOutSettleService scaleOutSettleService)
         {
             this.repository = repository;
-            this.configuration = configuration;
+            this.appSettingsKey = appSettingsKey.Value;
             this.mapper = mapper;
             this.createQueryCriteria = createQueryCriteria;
             this.scaleOutSettleService = scaleOutSettleService;
@@ -115,9 +116,7 @@ namespace Settlement.Sportsbook.Soccer.Services
 
         private async Task<Result> Execute(CalculateCriteria criteria)
         {
-            var listReplicatedServer = configuration.GetSection("SiteDBServer").Get<List<string>>();
-
-            foreach (var server in listReplicatedServer)
+            foreach (var server in appSettingsKey.SiteDbServer)
             {
                 criteria.DbServer = server;
                 await repository.ExecuteAsync(criteria);

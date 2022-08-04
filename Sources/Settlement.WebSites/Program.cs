@@ -1,7 +1,10 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
+using Microsoft.Extensions.Options;
+using Settlement.Core.Models;
 
 namespace Settlement.WebSites
 {
@@ -26,6 +29,12 @@ namespace Settlement.WebSites
                         serverOptions.Limits.MinRequestBodyDataRate =
                             new MinDataRate(bytesPerSecond, gracePeriod);
                     }).UseStartup<Startup>();
+                })
+                .ConfigureServices((hostContext, services) =>
+                {
+                    services
+                        .Configure<AppSettingsKey>(hostContext.Configuration)
+                        .AddSingleton(sp => sp.GetRequiredService<IOptions<AppSettingsKey>>().Value);
                 });
     }
 }
