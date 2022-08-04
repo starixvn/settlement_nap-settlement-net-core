@@ -41,10 +41,10 @@ namespace Settlement.EventManagement.Services.Calculation
         private static bool IsChangedOnTicket(CalculationMatch match, CalculationMatch siteMatch)
         {
             var isExistRunning = match.IsExistRunningTicket != siteMatch.IsExistRunningTicket
-                            || match.IsExistRunningTicketParlay != siteMatch.IsExistRunningTicketParlay; ;
+                            || match.IsExistRunningTicketParlay != siteMatch.IsExistRunningTicketParlay;
 
             var isExistMarked = match.IsExistMarkedTicket != siteMatch.IsExistMarkedTicket
-                        || match.IsExistMarkedTicketParlay != siteMatch.IsExistMarkedTicketParlay; ;
+                        || match.IsExistMarkedTicketParlay != siteMatch.IsExistMarkedTicketParlay;
 
             var isChangedTicket = match.IsExistFgLg != siteMatch.IsExistFgLg ||
                                   match.IsExistHtFgLg != siteMatch.IsExistHtFgLg;
@@ -62,7 +62,7 @@ namespace Settlement.EventManagement.Services.Calculation
                                 || match.IsWaitingEarlyBetTypes != siteMatch.IsWaitingEarlyBetTypes
                                 || match.IsExistRunningTicketParlay != siteMatch.IsExistRunningTicketParlay;
 
-            var isExistFastMarket = match.IsExistFastMarket != siteMatch.IsExistMarkedTicket
+            var isExistFastMarket = match.IsExistFastMarket != siteMatch.IsExistFastMarket
                                     || match.IsExistFastMarketResult != siteMatch.IsExistFastMarketResult
                                     || match.IsRunningFastMarket != siteMatch.IsRunningFastMarket;
 
