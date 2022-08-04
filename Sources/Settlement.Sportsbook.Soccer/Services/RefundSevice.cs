@@ -51,7 +51,8 @@ namespace Settlement.Sportsbook.Soccer.Services
             IHttpContextAccessor accessor,
             IConfiguration configuration,
             ICreateCriteriaService createCriteriaService,
-            UpdateStatusMatchService updateStatusMatchService)
+            UpdateStatusMatchService updateStatusMatchService,
+            INapSession currentSession)
         {
             this.repository = repository;
             this.mapper = mapper;
@@ -59,6 +60,7 @@ namespace Settlement.Sportsbook.Soccer.Services
             this.configuration = configuration;
             this.createCriteriaService = createCriteriaService;
             this.updateStatusMatchService = updateStatusMatchService;
+            this.currentSession = currentSession;
         }
 
         public async Task<MarkedTickets> CheckMarkedTickets(CheckingMarkedTicketsRequest request)
