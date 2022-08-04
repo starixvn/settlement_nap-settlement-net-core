@@ -19,8 +19,6 @@ namespace Settlement.Sportsbook.Soccer.Criteria
 
         public string ErrMsg { get; set; }
 
-        public bool IsAuto { get; set; } = false;
-
         public bool IsReSettledTickets { get; set; }
 
         public string BroadcastSessionId { get; set; }

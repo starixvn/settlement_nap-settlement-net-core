@@ -55,7 +55,7 @@ namespace Settlement.Sportsbook.Soccer.GetMatch.Services
 
         public async Task<MatchEarly> GetMatch(int matchId)
         {
-            var criteria = new GetMatchDetailCriteria { MatchId = matchId };
+            var criteria = new GetMatchDetailEarlyCriteria { MatchId = matchId };
             var matchDetail = await repository.GetAsync<MatchDetail>(criteria);
             Check.Argument.IsNotNull(matchDetail, $"Match ${matchId} does not exist");
 
@@ -73,12 +73,16 @@ namespace Settlement.Sportsbook.Soccer.GetMatch.Services
             resultDetail = MappingBetTypeName(resultDetail);
             var ticketCount = secondResultSet;
 
+            var hedgeMatchCriteria = new GetHedgeMatchCriteria { MatchId = matchId };
+            var hedgeMatchDetail = await repository.GetAsync<HedgeMatchDetail>(hedgeMatchCriteria);
+
             return new MatchEarly
             {
                 MatchDetail = matchDetail,
                 ResultDetail = resultDetail,
                 TicketCounts = ticketCount,
                 Permission = permission.Permission,
+                HedgeMatchDetail = hedgeMatchDetail
             };
         }
 

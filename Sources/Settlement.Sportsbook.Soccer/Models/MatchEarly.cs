@@ -12,5 +12,7 @@ namespace Settlement.Sportsbook.Soccer.Models
         public TicketCounts TicketCounts { get; set; }
 
         public Permission Permission { get; set; }
+
+        public HedgeMatchDetail HedgeMatchDetail { get; set; }
     }
 }
