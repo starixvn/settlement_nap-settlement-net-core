@@ -22,6 +22,7 @@ namespace Settlement.WebSites.Configurations
             services.AddTransient<ISettingService, SettingServiceImp>();
             services.AddTransient<MergeDataService, MergeDataServiceImp>();
             services.AddTransient<MultipleServerFetcherService, MultipleServerFetcherServiceImp>();
+            services.AddTransient<CreateQueryService, CreateQueryServiceImp>();
         }
 
         public static void ConfigFastMarketsMediator(this IServiceCollection services)

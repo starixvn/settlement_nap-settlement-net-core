@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Fanex.Data.Repository;
 using Fanex.NAP.Client.Helpers.Web;
+using Fanex.Settlement.ScaleOut.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Settlement.Core.Criteria;
@@ -13,6 +14,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
+using Fanex.Settlement.ScaleOut.Request;
+using Settlement.FastMarkets.Models.TimeMachineOldResult;
 
 namespace Settlement.FastMarkets.Services
 {
@@ -31,44 +34,36 @@ namespace Settlement.FastMarkets.Services
     {
         private readonly IDynamicRepository repository;
 
-        private readonly IFastMarketResultService fastMarketResultService;
-
         private readonly IFastMarketBetTypeService fastMarketBetTypeService;
 
-        private readonly IEventCounterService eventCounterService;
-
         private readonly IMapper mapper;
-
-        private readonly INapSession currentSession;
-
-        private readonly IHttpContextAccessor accessor;
 
         private readonly MultipleServerFetcherService multipleServerFetcherService;
 
         private readonly AppSettingsKey appSettingsKey;
 
+        private readonly CreateQueryService createQueryService;
+
+        private readonly ScaleOutSettleService scaleOutSettleService;
+
         private readonly string fastMarketMode = "FM";
 
         public FastMarketServiceImp(
             IDynamicRepository repository,
-            IFastMarketResultService fastMarketResultService,
             IFastMarketBetTypeService fastMarketBetTypeService,
-            IEventCounterService eventCounterService,
             IMapper mapper,
-            INapSession currentSession,
-            IHttpContextAccessor accessor,
             MultipleServerFetcherService multipleServerFetcherService,
-            IOptions<AppSettingsKey> appSettingsKey)
+            IOptions<AppSettingsKey> appSettingsKey,
+            ScaleOutSettleService scaleOutSettleService,
+            CreateQueryService createQueryService)
         {
             this.repository = repository;
-            this.fastMarketResultService = fastMarketResultService;
             this.fastMarketBetTypeService = fastMarketBetTypeService;
-            this.eventCounterService = eventCounterService;
             this.mapper = mapper;
-            this.currentSession = currentSession;
-            this.accessor = accessor;
             this.multipleServerFetcherService = multipleServerFetcherService;
             this.appSettingsKey = appSettingsKey.Value;
+            this.scaleOutSettleService = scaleOutSettleService;
+            this.createQueryService = createQueryService;
         }
 
         public async Task<FastMarketModel> Query(int matchId)
@@ -139,20 +134,35 @@ namespace Settlement.FastMarkets.Services
 
         public async Task<Result> Calculate(SettleRequest request)
         {
-            var eventCounter = eventCounterService.Result(request);
-            var results = fastMarketResultService.Result(request.BetTypes, request.Action);
+            var criteria = await createQueryService.QuerySettle(request);
 
-            var criteria = mapper.Map<SettleRequest, PushFastMarketResultCriteria>(request);
-            criteria.AdminId = currentSession.UserId;
-            criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
-            criteria.EventCounters = eventCounter;
-            criteria.Results = results;
+            var validationRequest = new EventTicketRequest
+            {
+                MatchId = criteria.MatchId,
+                Action = criteria.Action,
+                SpName = criteria.SpName,
+                Mode = "FM"
+            }; 
 
-            //var validationResult = await ValidateBeforePushing(criteria);
-            //if (validationResult.ErrCode > 0)
-            //{
-            //    return validationResult;
-            //}
+            var validationResult = await scaleOutSettleService.ValidateEventAndTicket(validationRequest);
+            if (validationResult.ErrorCode > 0)
+            {
+                return new Result
+                {
+                    ErrCode = validationResult.ErrorCode,
+                    ErrMsg = validationResult.ErrorMessage
+                };
+            }
+            var requestUpdateInfo = new UpdateMatchInfoRequest
+            {
+                MatchId = criteria.MatchId,
+                Action = criteria.Action,
+                AdminId = criteria.AdminId,
+                ResourceResult = criteria.Results,
+            };
+
+            await scaleOutSettleService.UpdateMatchInfo(requestUpdateInfo);
+
             ExecuteCalculate(criteria);
 
             return new Result();

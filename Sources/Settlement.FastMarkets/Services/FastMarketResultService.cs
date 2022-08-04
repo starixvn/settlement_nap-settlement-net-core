@@ -1,13 +1,21 @@
-﻿using Kaden.XmlConverter;
+﻿using Fanex.Data.Repository;
+using Kaden.XmlConverter;
+using Settlement.Core.Models;
+using Settlement.FastMarkets.Criteria;
 using Settlement.FastMarkets.Models;
 using Settlement.FastMarkets.Models.BetTypeModels;
+using Settlement.FastMarkets.Models.TimeMachineOldResult;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Settlement.FastMarkets.Services
 {
     public interface IFastMarketResultService
     {
         string Result(List<BetType> betTypeList, string action);
+
+        Task<string> OldResults(List<BetType> betTypes, int matchId);
     }
 
     public class FastMarketResultServiceImp : IFastMarketResultService
@@ -16,10 +24,14 @@ namespace Settlement.FastMarkets.Services
 
         private readonly XmlConvertService xmlConvertService;
 
-        public FastMarketResultServiceImp(IBetTypeElementService betTypeElementService, XmlConvertService xmlConvertService)
+        private readonly IDynamicRepository repository;
+
+        public FastMarketResultServiceImp(IBetTypeElementService betTypeElementService, XmlConvertService xmlConvertService,
+            IDynamicRepository repository)
         {
             this.betTypeElementService = betTypeElementService;
             this.xmlConvertService = xmlConvertService;
+            this.repository = repository;
         }
 
         public string Result(List<BetType> betTypeList, string action)
@@ -31,6 +43,49 @@ namespace Settlement.FastMarkets.Services
             };
 
             return xmlConvertService.Serialize(betTypesRoot);
+        }
+
+        public async Task<string> OldResults(List<BetType> betTypes, int matchId)
+        {
+            var criteria = new GetFastMarketMatchDetailCriteria { MatchId = matchId };
+            var mappingTypes = new[] { typeof(EventCounter), typeof(string), typeof(ResultDetail), typeof(OldResult) };
+            var fetchedData = await repository.FetchMultipleAsync(criteria, mappingTypes);
+            var oldResults = fetchedData[3].Cast<OldResult>().Where(result => result.BetType == 228).ToList();
+            var timeMachineBetType = betTypes.FirstOrDefault(betType => betType.BetTypeId == 228);
+            if (timeMachineBetType != null)
+            {
+                var timeMachineOUResults = timeMachineBetType.FastMarketResults;
+                oldResults = oldResults.Where(result => timeMachineOUResults.Any(r => r.BetType == result.BetType && r.Position == result.Position)).ToList();
+            }
+            else
+            {
+                oldResults = new List<OldResult>();
+            }
+
+            var accumulatedScore = 0;
+            foreach (var result in oldResults)
+            {
+                accumulatedScore += result.Result;
+                result.AccumulatedResult = accumulatedScore;
+            }
+
+            if (oldResults.Any())
+            {
+                var resultElement = new OldResultElement
+                {
+                    BetTypeId = 228,
+                    Results = oldResults
+                };
+
+                var resultRoot = new OldResultRoot
+                {
+                    oldResultElements = new List<OldResultElement> { resultElement }
+                };
+
+                return xmlConvertService.Serialize(resultRoot);
+            }
+
+            return string.Empty;
         }
     }
 }

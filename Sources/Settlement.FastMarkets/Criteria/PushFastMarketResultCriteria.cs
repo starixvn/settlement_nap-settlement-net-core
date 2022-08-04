@@ -23,8 +23,13 @@ namespace Settlement.FastMarkets.Criteria
 
         public string Ip { get; set; }
 
+        public string OldResults { get; set; }
+
         [SpParam(Ignored = true)]
         public string DbServer { get; set; }
+
+        [SpParam(Ignored = true)]
+        public string SpName { get => "NAP_Admin_Settlement_Fast_Market_Auto_1s_Push"; }
 
         public int ErrCode { get; set; }
 
