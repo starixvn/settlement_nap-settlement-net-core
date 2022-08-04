@@ -92,8 +92,6 @@ namespace Settlement.Sportsbook.Soccer.Services
             }
 
             await updateStatusMatchService.UpdateUnderSettleFlag(criteria.MatchId, criteria.Action);
-            var updateMatchCriteria = mapper.Map<RefundCriteria, UpdateMatchInfoCriteria>(criteria);
-            await repository.ExecuteAsync(updateMatchCriteria);
 
             ExecuteRefund(criteria);
             RefundHedgeMatch(request, criteria);

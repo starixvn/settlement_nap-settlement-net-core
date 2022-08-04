@@ -3,7 +3,7 @@ import { BackGroundService, RequestService, PopupService, HandleActionsService }
 import * as _ from 'lodash';
 import { MatchesBaseComponent } from '../base-component';
 import { CalculationMatch, League, MatchGoalRecord, UpdateInstantQuery } from '../../models';
-import { BackgroundColor } from '../../../shared/constants';
+import { BackgroundColor, CalculationStatus } from '../../../shared/constants';
 import { Language } from '../../../shared/language';
 import { MessageBoxService } from '../../../shared/services';
 import { AutoSettingLeagueQuery, AutoSettingMatchQuery, ModalDialogMessage, AutoSetting } from '../../../shared/models';
@@ -82,13 +82,19 @@ export class AutoCalculateMatchesComponent extends MatchesBaseComponent implemen
   }
 
   public updateInstant(match: CalculationMatch) {
-    var isPermission = this.permission.canAutoPayout && _.isNull(match.isCalculatingSingle) && _.isNull(match.isCalculatingMP);
+    var isPermission = this.permission.canAutoPayout && this.notInQueue(match) && _.isNull(match.isCalculatingMP);
     if (isPermission) {
       this.dialogConfirmMessage.message = Language.instants.confirm;
       this.messageBoxService.confirm(this.dialogConfirmMessage, () => {
         this.doUpdateInstant(match);
       });
     }
+  }
+
+  private notInQueue(match: CalculationMatch){
+    return _.isNull(match.isCalculatingSingle) ||
+    (!_.isEqual(match.isCalculatingSingle, CalculationStatus.waiting)
+    && !_.isEqual(match.isCalculatingSingle, CalculationStatus.calculating))
   }
   private async doUpdateInstant(match: CalculationMatch) {
     const query = new AutoSettingMatchQuery(
@@ -138,7 +144,8 @@ export class AutoCalculateMatchesComponent extends MatchesBaseComponent implemen
 
 
   public openUpdatePayout(match: CalculationMatch) {
-    if (this.permission.canAutoPayout) {
+    var isPermission = this.permission.canAutoPayout && this.notInQueue(match) && _.isNull(match.isCalculatingMP);
+    if (isPermission) {
       this.popupService.openUpdatePayout(match);
     }
   }

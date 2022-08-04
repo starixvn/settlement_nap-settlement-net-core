@@ -62,8 +62,6 @@ namespace Settlement.Sportsbook.Soccer.Services
             }
 
             await updateStatusMatchService.UpdateUnderSettleFlag(criteria.MatchId, criteria.Action);
-            var updateMatchCriteria = mapper.Map<CalculateCriteria, UpdateMatchInfoCriteria>(criteria);
-            await repository.ExecuteAsync(updateMatchCriteria);
 
             var result = await Execute(criteria);
 
@@ -90,8 +88,6 @@ namespace Settlement.Sportsbook.Soccer.Services
             }
 
             await updateStatusMatchService.UpdateUnderSettleFlag(criteria.MatchId, criteria.Action);
-            var updateMatchCriteria = mapper.Map<CalculateCriteria, UpdateMatchInfoCriteria>(criteria);
-            await repository.ExecuteAsync(updateMatchCriteria);
 
             var result = await Execute(criteria);
 
