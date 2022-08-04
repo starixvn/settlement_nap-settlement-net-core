@@ -24,8 +24,6 @@ namespace Settlement.Sportsbook.Soccer
             CreateMap<MoveThirdPartyBetTicketCriteria, MoveThirdPartyBetTicketCriteria>();
             CreateMap<MoveBetRequest, MoveThirdPartyBetTicketCriteria>();
             CreateMap<Models.MatchDetail, GoalIconQueryModel>();
-            CreateMap<CalculateCriteria, UpdateMatchInfoCriteria>();
-            CreateMap<RefundCriteria, UpdateMatchInfoCriteria>();
         }
     }
 }

@@ -61,9 +61,6 @@ namespace Settlement.Sportsbook.OtherSports.Services
             criteria.AdminId = currentSession.UserId;
             criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
 
-            await updateStatusMatchService.UpdateUnderSettleFlag(criteria.MatchId, criteria.Action);
-            await UpdateMatchInfo(criteria);
-
             await repository.ExecuteAsync(criteria);
 
             return new Result
@@ -76,9 +73,6 @@ namespace Settlement.Sportsbook.OtherSports.Services
         public async Task<Result> CalculateWithResultDetail(CalculateRequest request)
         {
             var criteria = CreateCriteria(request);
-
-            await updateStatusMatchService.UpdateUnderSettleFlag(criteria.MatchId, criteria.Action);
-            await UpdateMatchInfo(criteria);
 
             await repository.ExecuteAsync(criteria);
             var result = new Result
@@ -145,12 +139,6 @@ namespace Settlement.Sportsbook.OtherSports.Services
             }
 
             return result;
-        }
-
-        private async Task UpdateMatchInfo(CalculateCriteria criteria)
-        {
-            var updateMatchCriteria = mapper.Map<CalculateCriteria, UpdateMatchInfoCriteria>(criteria);
-            await repository.ExecuteAsync(updateMatchCriteria);
         }
 
         private CalculateCriteria CreateCriteria(CalculateRequest request)

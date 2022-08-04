@@ -19,7 +19,6 @@ namespace Settlement.Sportsbook.OtherSports
                 .ForMember(dest => dest.FullTimeAway, map => map.MapFrom(src => src.FinalAwayScore));
             CreateMap<RefundParlayRequest, ParlayCriteria>();
             CreateMap<GetLastestResultRequest, GetLastestResultCriteria>();
-            CreateMap<CalculateCriteria, UpdateMatchInfoCriteria>();
         }
     }
 }
