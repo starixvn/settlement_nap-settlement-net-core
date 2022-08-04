@@ -67,7 +67,7 @@
               </td>
               <td class="score">{{match.halfTimeHomeScore ?? '-'}}</td>
               <td class="score">{{match.finalHomeScore ?? '-'}}</td>
-              <td rowspan="2" class="auto-status" [ngClass]="getEarlySettleBackground(match)">
+              <td rowspan="2" class="auto-status" [ngClass]="getStatusBackground(match.earlySettleStatus, match.eventStatus)">
                 <div *ngIf="match.earlySettleStatus.toLowerCase() === 'n/a'; else earlySettle">N/A</div>
                 <ng-template #earlySettle>
                   <div>{{match.earlySettleStatus}}</div>

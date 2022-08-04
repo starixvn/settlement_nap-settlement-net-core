@@ -70,6 +70,7 @@ export class DetectChangesService {
         || !_.isEqual(oldMatch.instantStatusId, newMatch.instantStatusId)
         || !_.isEqual(oldMatch.instantCalculationType, newMatch.instantCalculationType)
         || !_.isEqual(oldMatch.isFTCalculated, newMatch.isFTCalculated)
-        || !_.isEqual(oldMatch.instantKey, newMatch.instantKey);
+        || !_.isEqual(oldMatch.instantKey, newMatch.instantKey)
+        || !_.isEqual(oldMatch.referenceActions, newMatch.referenceActions);
     }
 }

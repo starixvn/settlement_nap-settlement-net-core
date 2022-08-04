@@ -43,17 +43,17 @@ export class RequestService {
     return this.httpRequestService.postJson(query, `${this.settingApi}/get-remark-info`);
   }
 
-  private getNewestMatches(leagueId: string, isAutoCalculatePage: boolean, isBlockUI: boolean) {
+  private getNewestMatches(leagueId: string, isAutoCalculatePage: boolean) {
     const query = {
       leagueId,
       isAutoCalculatePage
     };
     const url = `${this.calculationApi}/auto-refresh`;
-    return this.httpRequestService.postJson(query, url, isBlockUI);
+    return this.httpRequestService.postJson(query, url, false);
   }
 
-  public refreshMatches(leagueId: string, currentLeagues: League[], isAutoCalculatePage = false, isBlockUI = false) {
-    this.getNewestMatches(leagueId, isAutoCalculatePage, isBlockUI).subscribe((matchesWaiting: CalculationMatch[]) => {
+  public refreshMatches(leagueId: string, currentLeagues: League[], isAutoCalculatePage = false) {
+    this.getNewestMatches(leagueId, isAutoCalculatePage).subscribe((matchesWaiting: CalculationMatch[]) => {
       this.changeInfoAfterRefreshMatches(currentLeagues, matchesWaiting, isAutoCalculatePage);
     });
   }
@@ -143,5 +143,6 @@ export class RequestService {
     oldMatch.liveHomeScore = newMatch.liveHomeScore;
     oldMatch.directWaitingTime = newMatch.directWaitingTime;
     oldMatch.instantWaitingTime = newMatch.instantWaitingTime;
+    oldMatch.referenceActions = newMatch.referenceActions;
   }
 }

@@ -56,10 +56,10 @@ export class MatchesComponent extends MatchesBaseComponent implements OnChanges,
     }
   }
 
-  public getEarlySettleBackground(match: CalculationMatch) {
-    const isRunning = !_.isNull(match.earlySettleStatus) && _.isEqual(match.earlySettleStatus.toLowerCase(), EventStatus.running.toLowerCase())
-      && _.isEqual(match.eventStatus.toLowerCase(), EventStatus.completed.toLowerCase());
-    const isCompleted = !_.isNull(match.earlySettleStatus) && _.isEqual(match.earlySettleStatus.toLowerCase(), EventStatus.completed.toLowerCase());
+  public getStatusBackground(currentStatus: string, eventStatus: string) {
+    const isRunning = !_.isNull(currentStatus) && _.isEqual(currentStatus.toLowerCase(), EventStatus.running.toLowerCase())
+      && _.isEqual(eventStatus.toLowerCase(), EventStatus.completed.toLowerCase());
+    const isCompleted = !_.isNull(currentStatus) && _.isEqual(currentStatus.toLowerCase(), EventStatus.completed.toLowerCase());
     const backgroundColor = isRunning ? BackgroundColor.autoSettleRunning : isCompleted ? BackgroundColor.calculated : '';
     return backgroundColor;
   }
@@ -67,7 +67,7 @@ export class MatchesComponent extends MatchesBaseComponent implements OnChanges,
   public getFastMarketsBackground(match: CalculationMatch) {
     const isRunning = !_.isNull(match.fastMarketStatus) && _.isEqual(match.fastMarketStatus.toLowerCase(), EventStatus.running.toLowerCase());
     const fastMarketBlinking = isRunning ? this.backGroundService.completedBackground(match) : this.backGroundService.fastMarkedCompletedBackground(match);
-    return match.enableFastMarket ? this.getEarlySettleBackground(match) : fastMarketBlinking;
+    return match.enableFastMarket ? this.getStatusBackground(match.fastMarketStatus, match.eventStatus) : fastMarketBlinking;
   }
 
   public isShowEarlySettleLink(match: CalculationMatch) {
