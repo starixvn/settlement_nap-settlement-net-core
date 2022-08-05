@@ -3,6 +3,7 @@ using Fanex.NAP.Client.Helpers.Web;
 using Microsoft.AspNetCore.Http;
 using Settlement.FastMarkets.Criteria;
 using Settlement.FastMarkets.Requests;
+using System;
 using System.Threading.Tasks;
 
 namespace Settlement.FastMarkets.Services
@@ -43,6 +44,7 @@ namespace Settlement.FastMarkets.Services
             criteria.EventCounters = eventCounter;
             criteria.Results = results;
             criteria.OldResults = await fastMarketResultService.OldResults(request.BetTypes, request.MatchId);
+            criteria.BroadcastSessionId = Guid.NewGuid().ToString();
 
             return criteria;
         }

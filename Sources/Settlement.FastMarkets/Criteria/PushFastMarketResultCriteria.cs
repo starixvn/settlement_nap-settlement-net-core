@@ -25,6 +25,8 @@ namespace Settlement.FastMarkets.Criteria
 
         public string OldResults { get; set; }
 
+        public string BroadcastSessionId { get; set; }
+
         [SpParam(Ignored = true)]
         public string DbServer { get; set; }
 
