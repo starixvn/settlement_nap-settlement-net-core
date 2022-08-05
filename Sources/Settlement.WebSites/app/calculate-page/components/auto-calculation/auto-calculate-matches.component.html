@@ -108,8 +108,8 @@
                 <span [ngClass]="getColorInstant(match)">
                   <div *ngIf="match.instantStatusId == instantStatus.confirm; else noNeed">
                     <div *ngIf="match.instantCalculationType != instantCalcFt || !match.isFTCalculated">
-                      Confirm <br>
-                      <span (click)="updateInstantStatus(match)" style="cursor: pointer">{{match.instantStatus}}</span>
+                      <div class="confirm-instant">Confirm</div>
+                      <button class="button-instant btn btn-outline-primary" (click)="updateInstantStatus(match)">{{match.instantStatus}}</button>
                     </div>
                   </div>
                   <ng-template #noNeed>
