@@ -70,12 +70,12 @@ namespace Settlement.FastMarkets.Services
         {
             var criteria = new GetFastMarketMatchDetailCriteria { MatchId = matchId };
 
-            var mappingTypes = new[] { typeof(EventCounter), typeof(string), typeof(ResultDetail), typeof(FastMarketResult) };
+            var mappingTypes = new[] { typeof(EventCounter), typeof(string), typeof(FastMarketResult), typeof(ResultDetail) };
             var fetchedData = await repository.FetchMultipleAsync(criteria, mappingTypes);
             var eventCounter = fetchedData[0].Cast<EventCounter>().ToList();
             var handicapValue = fetchedData[1].Cast<string>().FirstOrDefault();
-            var resultDetail = fetchedData[2].Cast<ResultDetail>().ToList();
-            var fastMarketResult = fetchedData[3].Cast<FastMarketResult>().ToList();
+            var fastMarketResult = fetchedData[2].Cast<FastMarketResult>().ToList();
+            var resultDetail = fetchedData[3].Cast<ResultDetail>().ToList();
 
             var (fastMarketTicketDetails, ticketsCount) = await multipleServerFetcherService.GetFastMarketTicketDetail(matchId);
             MergeFastMarketTicketsToResults(fastMarketResult, fastMarketTicketDetails);
