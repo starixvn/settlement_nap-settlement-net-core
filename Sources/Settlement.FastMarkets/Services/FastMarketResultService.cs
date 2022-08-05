@@ -52,6 +52,18 @@ namespace Settlement.FastMarkets.Services
             var fetchedData = await repository.FetchMultipleAsync(criteria, mappingTypes);
             var oldResults = fetchedData[3].Cast<OldResult>().Where(result => result.BetType == 228).ToList();
             var timeMachineBetType = betTypes.FirstOrDefault(betType => betType.BetTypeId == 228);
+            var accumulatedScore = 0;
+            foreach (var result in oldResults)
+            {
+                var settledStatuses = new List<int> { 4, 5, 7 };
+                if (settledStatuses.Contains(result.ResultStatus))
+                {
+                    accumulatedScore += result.Result;
+                }
+
+                result.AccumulatedResult = accumulatedScore;
+            }
+
             if (timeMachineBetType != null)
             {
                 var timeMachineOUResults = timeMachineBetType.FastMarketResults;
@@ -62,30 +74,28 @@ namespace Settlement.FastMarkets.Services
                 oldResults = new List<OldResult>();
             }
 
-            var accumulatedScore = 0;
-            foreach (var result in oldResults)
-            {
-                accumulatedScore += result.Result;
-                result.AccumulatedResult = accumulatedScore;
-            }
-
             if (oldResults.Any())
             {
-                var resultElement = new OldResultElement
-                {
-                    BetTypeId = 228,
-                    Results = oldResults
-                };
-
-                var resultRoot = new OldResultRoot
-                {
-                    oldResultElements = new List<OldResultElement> { resultElement }
-                };
-
-                return xmlConvertService.Serialize(resultRoot);
+                return GenerateOldResultsResource(oldResults);
             }
 
             return string.Empty;
+        }
+
+        private string GenerateOldResultsResource(List<OldResult> oldResults)
+        {
+            var resultElement = new OldResultElement
+            {
+                BetTypeId = 228,
+                Results = oldResults
+            };
+
+            var resultRoot = new OldResultRoot
+            {
+                oldResultElements = new List<OldResultElement> { resultElement }
+            };
+
+            return xmlConvertService.Serialize(resultRoot);
         }
     }
 }

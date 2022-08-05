@@ -154,8 +154,11 @@ export class BetTypesComponent implements OnInit, DoCheck {
             if (_.isEmpty(errorMessage)) {
                 this.modalDialogMessage.message = "You chose to Refund with settle determined tickets from selected intervals. Are you sure you want to proceed?";
                 this.messageBoxService.confirm(this.modalDialogMessage, () => {
-                    if (this.verificationService.verifyBeforeCalculation(this.fastMarkets.betTypes, this.existingSpecialSessions, true)) {
+                    const errorMessage = this.verificationService.verifyBeforeCalculation(this.fastMarkets.betTypes, this.existingSpecialSessions, true);
+                    if (_.isEmpty(errorMessage)) {
                         this.pushRefundQuery();
+                    } else {
+                        this.toastrService.error(errorMessage);
                     }
                 });
             } else if (!_.isEqual(errorMessage, ErrorMessage.notShowAlert)) {

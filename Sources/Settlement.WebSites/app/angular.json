@@ -1130,7 +1130,7 @@
       }
     }
   },
-  "defaultProject": "soccer",
+  "defaultProject": "fast-market",
   "schematics": {
     "@schematics/angular:component": {
       "inlineTemplate": false,

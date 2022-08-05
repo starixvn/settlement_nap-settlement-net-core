@@ -15,5 +15,8 @@ namespace Settlement.FastMarkets.Models.TimeMachineOldResult
 
         [XmlElement("oa")]
         public int AccumulatedResult { get; set; }
+
+        [XmlIgnore]
+        public int ResultStatus { get; set; }
     }
 }
