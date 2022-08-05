@@ -159,6 +159,7 @@ namespace Settlement.FastMarkets.Services
                 Action = criteria.Action,
                 AdminId = criteria.AdminId,
                 ResourceResult = criteria.Results,
+                Mode = fastMarketMode
             };
 
             await scaleOutSettleService.UpdateMatchInfo(requestUpdateInfo);
