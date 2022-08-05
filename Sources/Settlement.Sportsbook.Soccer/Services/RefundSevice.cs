@@ -174,7 +174,7 @@ namespace Settlement.Sportsbook.Soccer.Services
         private void ExecuteRefund(RefundCriteria criteria)
         {
             var servers = configuration.GetSection("SiteDBServer").Get<List<string>>();
-
+            criteria.BroadcastSessionId = Guid.NewGuid().ToString();
             foreach (var server in servers)
             {
                 criteria.DbServer = server;
@@ -228,7 +228,7 @@ namespace Settlement.Sportsbook.Soccer.Services
             var validationRequest = new EventTicketRequest
             {
                 MatchId = criteria.MatchId,
-                Action = "MoveTicket" ,
+                Action = "MoveTicket",
                 SpName = criteria.SpName,
                 Mode = request.ActionName
             };

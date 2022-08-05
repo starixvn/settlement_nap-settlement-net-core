@@ -62,8 +62,6 @@ namespace Settlement.Sportsbook.Soccer.Services
                 return requestChecking;
             }
 
-            criteria.BroadcastSessionId = Guid.NewGuid().ToString();
-
             foreach (var server in appSettingsKey.SiteDbServer)
             {
                 criteria.DbServer = server;

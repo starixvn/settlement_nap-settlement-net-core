@@ -72,8 +72,7 @@ namespace Settlement.Sportsbook.Soccer.Services
                 Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString(),
                 IsReSettledTickets = request.IsReSettledTickets,
                 ChildMatchIds = request.ChildMatchIds,
-                LeagueGroupId = request.LeagueGroupId,
-                BroadcastSessionId = Guid.NewGuid().ToString()
+                LeagueGroupId = request.LeagueGroupId
             };
 
             if (request.ActionName.Equals(ActionType.CalculateFullTime) || request.ActionName.Equals(ActionType.CalculateAll))
@@ -99,8 +98,7 @@ namespace Settlement.Sportsbook.Soccer.Services
                 HalfTimeAway = request.HalfTimeAwayScore ?? 0,
                 Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString(),
                 IsReSettledTickets = request.IsReSettledTickets,
-                ChildMatchIds = request.ChildMatchIds,
-                BroadcastSessionId = Guid.NewGuid().ToString()
+                ChildMatchIds = request.ChildMatchIds
             };
 
             return criteria;
@@ -136,8 +134,7 @@ namespace Settlement.Sportsbook.Soccer.Services
                 FullTimeHome = request.FinalHomeScore ?? 0,
                 Action = request.ActionName,
                 BetStatus = GetBetStatus(request),
-                ResourceResult = GetResourceResult(request),
-                BroadcastSessionId = Guid.NewGuid().ToString()
+                ResourceResult = GetResourceResult(request)
             };
 
             if (IsAbandonedMatch(request) && request.ActionName.Equals(ActionType.RefundAll))
