@@ -48,9 +48,9 @@ namespace Settlement.FastMarkets.Services
         public async Task<string> OldResults(List<BetType> betTypes, int matchId)
         {
             var criteria = new GetFastMarketMatchDetailCriteria { MatchId = matchId };
-            var mappingTypes = new[] { typeof(EventCounter), typeof(string), typeof(ResultDetail), typeof(OldResult) };
+            var mappingTypes = new[] { typeof(EventCounter), typeof(string), typeof(OldResult), typeof(ResultDetail) };
             var fetchedData = await repository.FetchMultipleAsync(criteria, mappingTypes);
-            var oldResults = fetchedData[3].Cast<OldResult>().Where(result => result.BetType == 228).ToList();
+            var oldResults = fetchedData[2].Cast<OldResult>().Where(result => result.BetType == 228).ToList();
             var timeMachineBetType = betTypes.FirstOrDefault(betType => betType.BetTypeId == 228);
             var accumulatedScore = 0;
             foreach (var result in oldResults)
