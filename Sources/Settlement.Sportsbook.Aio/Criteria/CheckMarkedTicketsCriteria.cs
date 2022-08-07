@@ -1,4 +1,5 @@
-﻿using Fanex.Data.Repository;
+﻿using Fanex.Data;
+using Fanex.Data.Repository;
 
 namespace Settlement.Sportsbook.Aio.Criteria
 {
@@ -12,9 +13,12 @@ namespace Settlement.Sportsbook.Aio.Criteria
 
         public bool IsMergedParlay { get; set; }
 
+        [SpParam(Ignored = true)]
+        public string DbServer { get; set; }
+
         public override string GetSettingKey()
         {
-            return "NAP_Set_EarlySettlement_CheckingMarkedTransaction";
+            return $"NAP_Set_EarlySettlement_CheckingMarkedTransaction_{DbServer}";
         }
 
         public override bool IsValid()

@@ -17,6 +17,8 @@ namespace Settlement.WebSites.Configurations
             services.AddTransient<IValidateApiKeyService, ValidateApiKeyServiceImp>();
             services.AddTransient<ICriteriaFactory, CriteriaFactoryImp>();
             services.AddTransient<ICreateQueryService, CreateQueryServiceImp>();
+            services.AddTransient<MergeDataService, MergeDataServiceImp>();
+            services.AddTransient<MultipleServerAioService, MultipleServerAioServiceImp>();
         }
 
         public static void ConfigAioMediator(this IServiceCollection services)

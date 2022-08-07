@@ -68,5 +68,17 @@ namespace Settlement.Sportsbook.Aio.Models
         public string AwayName { get; set; }
 
         public string OtherInfo { get; set; }
+
+        public int BetCount { get; set; }
+
+        public int InWaiting { get; set; }
+
+        public int InRunning { get; set; }
+
+        public int BetMarkedCount { get; set; }
+
+        public int BetSettledCount { get; set; }
+
+        public int BetRefundedCount { get; set; }
     }
 }

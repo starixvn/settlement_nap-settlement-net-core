@@ -50,6 +50,8 @@ namespace Settlement.Sportsbook.Aio.Services
 
         private readonly IConfiguration configuration;
 
+        private readonly MultipleServerAioService multipleServerAioService;
+
         public AioServiceImp(
             IDynamicRepository repository,
             PermissionService permissionService,
@@ -57,7 +59,8 @@ namespace Settlement.Sportsbook.Aio.Services
             IMapperFactory mapperFactory,
             IValidateApiKeyService validateApiKeyService,
             ICreateQueryService createQueryService,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            MultipleServerAioService multipleServerAioService)
         {
             this.repository = repository;
             this.permissionService = permissionService;
@@ -66,6 +69,7 @@ namespace Settlement.Sportsbook.Aio.Services
             this.validateApiKeyService = validateApiKeyService;
             this.createQueryService = createQueryService;
             this.configuration = configuration;
+            this.multipleServerAioService = multipleServerAioService;
         }
 
         public async Task<AioMatch> GetMatch(GetMatchRequest request)
@@ -88,9 +92,8 @@ namespace Settlement.Sportsbook.Aio.Services
                 }
             }
 
-            var resultDetailCriteria = validateApiKeyService.CriteriaName(request, $"{apiKey}-{ApiKeyConstant.ResultDetailKey}");
-            var (firstResultSet, secondResultSet) = await repository.FetchMultipleAsync<Models.ResultDetail, TicketCounts>(resultDetailCriteria);
-            var resultDetails = firstResultSet.ToList();
+            var resultDetailCriteria = (GetResultDetailCriteria) validateApiKeyService.CriteriaName(request, $"{apiKey}-{ApiKeyConstant.ResultDetailKey}");
+            var (resultDetails, ticketCounts) = await multipleServerAioService.FetchResultDetails(resultDetailCriteria, matchDetail.SportType);
 
             var mapperService = mapperFactory.GetMapperService($"{apiKey}-{ApiKeyConstant.ResultDetailKey}");
             if (mapperService != null)
@@ -99,7 +102,6 @@ namespace Settlement.Sportsbook.Aio.Services
                 mapperService.Decorate(resultDetails);
             }
 
-            var ticketCounts = secondResultSet.FirstOrDefault() ?? new TicketCounts();
             var hedgeMatchCriteria = validateApiKeyService.CriteriaName(request, $"{apiKey}-{ApiKeyConstant.HedgeMatchInfoKey}");
             var hedgeMatchDetail = await repository.GetAsync<HedgeMatchDetail>(hedgeMatchCriteria);
             var oldMatch = await GetOldMatch(matchDetail, request, apiKey);
@@ -140,38 +142,12 @@ namespace Settlement.Sportsbook.Aio.Services
 
         public async Task<MarkedTickets> CheckMarkedTickets(CheckMarkedTicketsRequest request)
         {
-            var criteria = new CheckMarkedTicketsCriteria
-            {
-                MatchId = request.MatchId,
-                ResourceIds = GetResourceIds(request.SelectedResources),
-                IsMergedParlay = request.IsMergedParlay
-            };
-            await repository.ExecuteAsync(criteria);
-
-            return new MarkedTickets
-            {
-                IsExistMarkedTicket = criteria.IsExistMarkedTicket
-            };
+            return await multipleServerAioService.CheckMarkedTickets(request);
         }
 
         public async Task<Result> Settle(SettleRequest request)
         {
-            var criteria = createQueryService.QuerySettle(request);
-            await repository.ExecuteAsync(criteria);
-
-            var childMatchIds = request.SportType == Core.Constants.SportType.Cricket && criteria.ErrCode == 0
-                ? await GetChildMatchIds(request.MatchId, criteria.Action, criteria.SelectedResources)
-                : string.Empty;
-
-            var settleResult = new Result
-            {
-                ErrCode = criteria.ErrCode,
-                ErrMsg = criteria.ErrMsg,
-                ChildMatchIds = childMatchIds,
-                ServiceCommand = criteria.ServiceCommand
-            };
-
-            return settleResult;
+            return await multipleServerAioService.Settle(request);
         }
 
         public async Task<Result> VerifyNoRunningOdds(CheckRunningOddsRequest request)
@@ -225,35 +201,6 @@ namespace Settlement.Sportsbook.Aio.Services
             return new List<ChildMatchModel>();
         }
 
-        private async Task<string> GetChildMatchIds(int matchId, string actionName, string selectedResources = "")
-        {
-            var criteria = new GetChildMatchCriteria
-            {
-                MatchIds = matchId.ToString(),
-                Mode = actionName
-            };
-
-            if (selectedResources != "")
-            {
-                criteria.SelectedResources = selectedResources;
-            }
-            var listMatch = await repository.FetchAsync<ChildMatch>(criteria);
-            var matchIds = listMatch.Select(item => item.matchId).ToList();
-
-            return matchIds.Count > 0 ? string.Join(',', matchIds.ToList()) : string.Empty;
-        }
-
-        private static string GetResourceIds(List<ResourceItem> betTypes)
-        {
-            var listResourceId = new List<string>();
-            foreach (var betType in betTypes)
-            {
-                listResourceId.Add(betType.ResourceId);
-            }
-
-            return string.Join(",", listResourceId);
-        }
-
         public async Task<bool> ResultSetting(ResultSettingRequest request)
         {
             var criteria = createQueryService.QueryChangeSetting(request);
@@ -264,31 +211,7 @@ namespace Settlement.Sportsbook.Aio.Services
 
         public async Task<Result> SettleChildMatch(SettleChildMatchRequest request)
         {
-            var criteria = createQueryService.QuerySettleChildMatch(request);
-            if (request.ChildMatches?.Count > 0)
-            {
-                foreach (var match in request.ChildMatches)
-                {
-                    criteria.MatchId = match.MatchId;
-                    criteria.SelectedResources = createQueryService.CreateResourceChildMatch(match);
-                    await repository.ExecuteAsync(criteria);
-                    createQueryService.WriteLogChildMatch(criteria);
-                }
-            }
-            else
-            {
-                var listChildMatch = request.ChildMatchIds.Split(',').ToList();
-
-                criteria.SelectedResources = createQueryService.CreateResources(request.SelectedResources);
-
-                foreach (var match in listChildMatch)
-                {
-                    criteria.MatchId = int.Parse(match);
-                    await repository.ExecuteAsync(criteria);
-                }
-            }
-
-            return new Result();
+            return await multipleServerAioService.SettleChildMatch(request);
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using Fanex.Data.Repository;
+﻿using System;
+using Fanex.Data;
+using Fanex.Data.Repository;
 
 namespace Settlement.Sportsbook.Aio.Criteria
 {
@@ -32,6 +34,14 @@ namespace Settlement.Sportsbook.Aio.Criteria
 
         public int? RefResultStatus { get; set; }
 
+        public string BroadcastSessionId = Guid.NewGuid().ToString();
+
+        [SpParam(Ignored = true)]
+        public string DbServer { get; set; }
+
+        [SpParam(Ignored = true)]
+        public readonly string SpName = "NAP_Admin_Settlement_Profile_Push";
+
         public string ChildMatchIds
         {
             get
@@ -46,7 +56,7 @@ namespace Settlement.Sportsbook.Aio.Criteria
 
         public override string GetSettingKey()
         {
-            return "NAP_Admin_Settlement_Profile_Push";
+            return $"NAP_Admin_Settlement_Profile_Push_{DbServer}";
         }
 
         public override bool IsValid()

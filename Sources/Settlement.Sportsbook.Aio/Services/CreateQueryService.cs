@@ -29,7 +29,7 @@ namespace Settlement.Sportsbook.Aio.Services
 
         GetRecalResultCriteria QueryRecalResult(GetRecalResultRequest request);
 
-        void WriteLogChildMatch(SettleCriteria criteria);
+        void WriteLogChildMatch(SettleCriteria criteria, Result result);
     }
 
     public class CreateQueryServiceImp : ICreateQueryService
@@ -155,13 +155,11 @@ namespace Settlement.Sportsbook.Aio.Services
             return criteria;
         }
 
-        public void WriteLogChildMatch(SettleCriteria criteria)
+        public void WriteLogChildMatch(SettleCriteria criteria, Result result)
         {
-            if (!string.IsNullOrWhiteSpace(criteria.ErrMsg))
+            if (!string.IsNullOrWhiteSpace(result.ErrMsg))
             {
-                logService.ActionLog(criteria.MatchId, criteria.ErrMsg, actionCalculate);
-                criteria.ErrCode = 0;
-                criteria.ErrMsg = string.Empty;
+                logService.ActionLog(criteria.MatchId, result.ErrMsg, actionCalculate);
             }
         }
     }

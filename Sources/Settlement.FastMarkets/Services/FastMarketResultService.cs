@@ -33,7 +33,7 @@ namespace Settlement.FastMarkets.Services
             this.xmlConvertService = xmlConvertService;
             this.repository = repository;
         }
-
+        
         public string Result(List<BetType> betTypeList, string action)
         {
             var betType = betTypeElementService.GetBetTypes(betTypeList, action);
