@@ -2,6 +2,7 @@
 using Fanex.Data.Repository;
 using Kaden.Extensions;
 using Settlement.Core.Constants;
+using System;
 
 namespace Settlement.Sportsbook.Soccer.Criteria
 {
@@ -16,6 +17,8 @@ namespace Settlement.Sportsbook.Soccer.Criteria
         public int ErrCode { get; set; }
 
         public string ErrMsg { get; set; }
+
+        public string BroadcastSessionId = Guid.NewGuid().ToString();
 
         [SpParam(Ignored = true)]
         public string ActionName { get; set; }
