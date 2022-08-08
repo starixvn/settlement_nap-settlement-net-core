@@ -5,7 +5,7 @@ namespace Settlement.FastMarkets.Models.TimeMachineOldResult
 {
     public class OldResultElement
     {
-        [XmlElement("Id")]
+        [XmlAttribute("Id")]
         public int BetTypeId { get; set; }
 
         [XmlElement("r")]

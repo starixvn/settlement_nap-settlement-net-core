@@ -7,13 +7,13 @@ namespace Settlement.FastMarkets.Models.TimeMachineOldResult
         [XmlIgnore]
         public int BetType { get; set; }
 
-        [XmlElement("p")]
+        [XmlAttribute("p")]
         public int Position { get; set; }
 
         [XmlIgnore]
         public int Result { get; set; }
 
-        [XmlElement("oa")]
+        [XmlAttribute("oa")]
         public int AccumulatedResult { get; set; }
 
         [XmlIgnore]
