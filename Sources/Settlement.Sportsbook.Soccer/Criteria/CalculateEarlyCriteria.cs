@@ -1,4 +1,5 @@
-﻿using Fanex.Data;
+﻿using System;
+using Fanex.Data;
 using Fanex.Data.Repository;
 
 namespace Settlement.Sportsbook.Soccer.Criteria
@@ -21,7 +22,7 @@ namespace Settlement.Sportsbook.Soccer.Criteria
 
         public bool IsReSettledTickets { get; set; }
 
-        public string BroadcastSessionId { get; set; }
+        public string BroadcastSessionId { get; set; } = Guid.NewGuid().ToString();
 
         [SpParam(Ignored = true)]
         public string DbServer { get; set; }

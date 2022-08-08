@@ -149,11 +149,11 @@
                           [ngClass]="getCalcMPStatus(match).toLowerCase()">{{getCalcMPStatus(match)}}</span>
                       </ng-template>
                     </td>
-                    <td rowspan="2" class="confirm-score" [ngClass]="match.confirmHalfTimeColor">
+                    <td rowspan="2" class="confirm-score" [ngClass]="{'bg-white-blinking' : match.isNotConsistentExHtScore}">
                       <div>{{match.suspenderHalfTime}}</div>
                       <div *ngIf="!isHideHtScore(match)">{{match.exHalfTimeScore}}</div>
                     </td>
-                    <td rowspan="2" class="confirm-score" [ngClass]="match.confirmFullTimeColor">
+                    <td rowspan="2" class="confirm-score" [ngClass]="{'bg-white-blinking' : match.isNotConsistentExFtScore}">
                       <div>{{match.suspenderFullTime}}</div>
                       <div *ngIf="!isHideFinalScore(match)">{{match.exFullTimeScore}}</div>
                     </td>

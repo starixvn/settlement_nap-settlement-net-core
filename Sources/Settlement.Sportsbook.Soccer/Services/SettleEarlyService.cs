@@ -49,6 +49,11 @@ namespace Settlement.Sportsbook.Soccer.Services
         public async Task<Result> CalculateEarly(SettleEarlyRequest request)
         {
             var criteria = createCriteriaService.CreateCalculateEarlyCriteria(request);
+            var requestChecking = await ValidateBeforeExecute(criteria);
+            if (requestChecking.ErrCode > 0)
+            {
+                return requestChecking;
+            }
             await UpdateMatchInfo(criteria);
             var result = await Execute(criteria);
             return result;
@@ -56,12 +61,6 @@ namespace Settlement.Sportsbook.Soccer.Services
 
         private async Task<Result> Execute(CalculateEarlyCriteria criteria)
         {
-            var requestChecking = await ValidateBeforeExecute(criteria);
-            if (requestChecking.ErrCode > 0)
-            {
-                return requestChecking;
-            }
-
             foreach (var server in appSettingsKey.SiteDbServer)
             {
                 criteria.DbServer = server;

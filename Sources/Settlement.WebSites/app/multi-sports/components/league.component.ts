@@ -11,6 +11,7 @@ import { ModalDialogMessage, Result, LeagueMatch, Match, SportMatch, AutoSetting
 import { SportType, ResultType, BackgroundColor, CalculationStatus } from '../../shared/constants';
 import { LeagueBaseComponent } from '../../shared/components/sport-listing/league-base.component';
 import { Permission } from '../../shared/models/sportsbook-sop';
+import { BackGroundService } from '../services';
 
 @Component({
   selector: 'league',
@@ -43,7 +44,8 @@ export class LeagueComponent extends LeagueBaseComponent implements OnInit, OnCh
     private readonly popupService: PopupService,
     private readonly handleActionsService: HandleActionsService,
     private readonly sportMatchService: SportMatchService,
-    private readonly cd: ChangeDetectorRef) {
+    private readonly cd: ChangeDetectorRef,
+    private readonly backGroundService: BackGroundService) {
     super();
   }
 
@@ -126,16 +128,16 @@ export class LeagueComponent extends LeagueBaseComponent implements OnInit, OnCh
   }
 
   public isShowCalculationLink(match: Match) {
-    return match.showLink && (this.permission.canCalculate || (this.permission.isTrader && match.sportType === SportType.cricket))
+    return this.backGroundService.isShowLink(match) && (this.permission.canCalculate || (this.permission.isTrader && match.sportType === SportType.cricket))
       ? BackgroundColor.codeLink : '';
   }
 
   public isShowRefundLink(match: Match) {
-    return match.showLink && this.permission.canRefund ? BackgroundColor.codeLink : '';
+    return this.backGroundService.isShowLink(match) && this.permission.canRefund ? BackgroundColor.codeLink : '';
   }
 
   public isShowEarlySettleLink(match: Match) {
-    return match.showLink && (this.permission.canCalculate || this.permission.canUncalculate || this.permission.canRefund
+    return this.backGroundService.isShowLink(match) && (this.permission.canCalculate || this.permission.canUncalculate || this.permission.canRefund
       || (this.permission.isTrader && match.sportType === SportType.cricket))
       ? BackgroundColor.codeLink : '';
   }
@@ -330,7 +332,6 @@ export class LeagueComponent extends LeagueBaseComponent implements OnInit, OnCh
           const matches = league.matches.filter((x) => x.isCheckedCalcMP);
           _.forEach(matches, (match: Match) => {
             match.isCalculatingMP = CalculationStatus.waiting;
-            match.showLink = false;
           });
         });
       });

@@ -33,7 +33,7 @@ export class PopupService {
         if (this.listNewSport.includes(match.sportType)) {
             let sportName = sports.find(item => item.id === match.sportType).name.toLowerCase();
             sportName = _.isEqual(sportName, 'volleyball') ? 'badminton' : sportName;
-            this.properties.src = `apps/sportsbook/${sportName}/calculation?matchId=${match.matchId}&sportType=${match.sportType}`;
+            this.properties.src = `apps/${sportName}-recalculate?matchId=${match.matchId}&sportType=${match.sportType}`;
         } else {
             this.properties.src = `apps/sportsbook/other-sports/calculation?matchId=${match.matchId}&sportType=${match.sportType}`;
         }
@@ -49,7 +49,7 @@ export class PopupService {
         if (_.includes(this.listNewSport, match.sportType)) {
             let sportName = sports.find(item => item.id === match.sportType).name.toLowerCase();
             sportName = _.isEqual(sportName, 'volleyball') ? 'badminton' : sportName;
-            this.properties.src = `apps/sportsbook/${sportName}/Refund?matchId=${match.matchId}&sportType=${match.sportType}`;
+            this.properties.src = `apps/${sportName}-refund?matchId=${match.matchId}&sportType=${match.sportType}`;
         } else {
             this.properties.src = `apps/sportsbook/other-sports/refund?matchId=${match.matchId}&sportType=${match.sportType}`;
         }
@@ -61,7 +61,7 @@ export class PopupService {
         this.properties.title = Language.EarlyPopupTitle;
         let sportName = sports.find(item => item.id === match.sportType).name.toLowerCase();
         sportName = _.isEqual(sportName, 'volleyball') ? 'badminton' : sportName;
-        this.properties.src = `apps/sportsbook/${sportName}/early-settlement?matchId=${match.matchId}&sportType=${match.sportType}`;
+        this.properties.src = `apps/sportsbook/${sportName}-early?matchId=${match.matchId}&sportType=${match.sportType}`;
         this.properties.width = match.sportType === SportType.cricket ? '1400px' :
             this.isPopupEarlySOP(match.sportType) ? '1480px' : '845px';
         this.properties.height = this.isPopupEarlySOP(match.sportType) ? '958px' : '910px';

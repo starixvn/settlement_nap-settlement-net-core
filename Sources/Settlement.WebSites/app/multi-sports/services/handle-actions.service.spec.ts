@@ -1,8 +1,8 @@
 import { TestBed } from "@angular/core/testing";
-import { MultiSport, ChangeSettingResult, ChangedMatchSetting } from "../models";
+import { MultiSport } from "../models";
 import { HandleActionsService } from "./handle-actions.service";
 import { EventStatus } from "../constants";
-import { LeagueMatch, Match, MixParlay, Remark, SportMatch } from "../../shared/models";
+import { ChangedMatchSetting, ChangeSettingResult, LeagueMatch, Match, MixParlay, Remark, SportMatch } from "../../shared/models";
 import { BackgroundColor, SportType } from "../../shared/constants";
 import { Permission } from "../../shared/models/sportsbook-sop/permission.model";
 describe('MultiSport - HandleActionsService', () => {

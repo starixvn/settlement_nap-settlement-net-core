@@ -62,8 +62,8 @@ export class RefreshMatchService {
             match.suspenderHalfTime = newMatch.suspenderHalfTime;
             match.suspenderFullTime = newMatch.suspenderFullTime;
             match.mixParlay = newMatch.mixParlay;
-            match.confirmHalfTimeColor = newMatch.confirmHalfTimeColor;
-            match.confirmFullTimeColor = newMatch.confirmFullTimeColor;
+            match.isNotConsistentExFtScore = newMatch.isNotConsistentExFtScore;
+            match.isNotConsistentExHtScore = newMatch.isNotConsistentExHtScore;
             match.exHalfTimeScore = newMatch.exHalfTimeScore;
             match.exFullTimeScore = newMatch.exFullTimeScore;
             match.showLink = this.isShowLink(newMatch);

@@ -26,9 +26,6 @@ namespace Settlement.EventManagement.Models.MultiSports
         [Key("kickOffTime")]
         public string KickOffTime { get; set; }
 
-        [Key("showLink")]
-        public bool ShowLink { get; set; }
-
         [Key("matchId")]
         public int MatchId { get; set; }
 
@@ -116,12 +113,6 @@ namespace Settlement.EventManagement.Models.MultiSports
         [Key("mixParlay")]
         public MixParlay MixParlay { get; set; }
 
-        [Key("confirmHalfTimeColor")]
-        public string ConfirmHalfTimeColor { get; set; }
-
-        [Key("confirmFullTimeColor")]
-        public string ConfirmFullTimeColor { get; set; }
-
         [Key("exHalfTimeScore")]
         public string ExHalfTimeScore { get; set; }
 
@@ -139,5 +130,11 @@ namespace Settlement.EventManagement.Models.MultiSports
 
         [Key("bestOfMap")]
         public int BestOfMap { get; set; }
+
+        [Key("isNotConsistentExHtScore")]
+        public bool IsNotConsistentExHtScore { get; set; }
+
+        [Key("isNotConsistentExFtScore")]
+        public bool IsNotConsistentExFtScore { get; set; }
     }
 }

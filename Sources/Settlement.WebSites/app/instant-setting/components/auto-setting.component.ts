@@ -69,7 +69,7 @@ export class AutoSettingComponent implements OnInit {
       );
       this.requestService.updateSettingMatch(params).subscribe((result: Result) => {
         if (result.isSuccessful) {
-          parent.document.getElementById('dialog-response').setAttribute('value', params.autoType.toString());
+          parent.document.getElementById('dialog-response').setAttribute('value', this.currentState.toString());
           this.closePopupService.angularClosePopup();
         } else {
           this.errorMessage = result.errMsg;

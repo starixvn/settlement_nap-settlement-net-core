@@ -39,7 +39,9 @@ export class DetectChangesService {
         || oldMatch.isExistRunningTicket !== newMatch.isExistRunningTicket
         || oldMatch.isExistMarkedTicket !== newMatch.isExistMarkedTicket
         || oldMatch.isExistMarkedTicketParlay !== newMatch.isExistMarkedTicketParlay
-        || oldMatch.isHalfTimeCal !== newMatch.isHalfTimeCal;
+        || oldMatch.isHalfTimeCal !== newMatch.isHalfTimeCal
+        || oldMatch.isNotConsistentExFtScore !== newMatch.isNotConsistentExFtScore
+        || oldMatch.isNotConsistentExHtScore !== newMatch.isNotConsistentExHtScore;
     }
 
     private isSuspenderDifferent(oldMatch: Match, newMatch: Match) {

@@ -8,8 +8,6 @@
 
   <Function Name="Aio">
     <Setting Key="NAP_Set_MatchSelDetail_Resources" SpName="NAP_Set_MatchSelDetail_Resources" DbName="DBTXN.bodb02.bodbAdminNet" />
-    <Setting Key="NAP_Admin_Settlement_Profile_Push" SpName="NAP_Admin_Settlement_Profile_Push" DbName="DBTXN.bodb02.bodbAdminNet" />
-    <Setting Key="NAP_Set_EarlySettlement_CheckingMarkedTransaction" SpName="NAP_Set_EarlySettlement_CheckingMarkedTransaction" DbName="DBTXN.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Admin_Settlement_Refund_MP_Push" SpName="NAP_Admin_Settlement_Refund_MP_Push" DbName="DBTXN.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Admin_Settlement_Validation_PrePush" SpName="NAP_Admin_Settlement_Validation_PrePush" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_ResultDetailSettingUpd" SpName="NAP_Set_ResultDetailSettingUpd" DbName="DBPRO.bodb02.bodbAdminNet" />
@@ -235,6 +233,21 @@
     <Function Name="NAP_Set_MatchSelHedge_Ticket">
       <Setting Key="NAP_Set_MatchSelHedge_Ticket_DBTXN" SpName="NAP_Set_MatchSelHedge_Ticket" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="NAP_Set_MatchSelHedge_Ticket_SITEDB01" SpName="NAP_Set_MatchSelHedge_Ticket" DbName="SITEDB01.bodb02.bodbAdminNet" />
+    </Function>
+
+    <Function Name="NAP_Admin_Settlement_Profile_Push">
+      <Setting Key="NAP_Admin_Settlement_Profile_Push_DBTXN" SpName="NAP_Admin_Settlement_Profile_Push" DbName="DBTXN.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Admin_Settlement_Profile_Push_SITEDB01" SpName="NAP_Admin_Settlement_Profile_Push" DbName="SITEDB01.bodb02.bodbAdminNet" />
+    </Function>
+
+    <Function Name="NAP_Set_EarlySettlement_CheckingMarkedTransaction">
+      <Setting Key="NAP_Set_EarlySettlement_CheckingMarkedTransaction_DBTXN" SpName="NAP_Set_EarlySettlement_CheckingMarkedTransaction" DbName="DBTXN.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Set_EarlySettlement_CheckingMarkedTransaction_SITEDB01" SpName="NAP_Set_EarlySettlement_CheckingMarkedTransaction" DbName="SITEDB01.bodb02.bodbAdminNet" />
+    </Function>
+
+    <Function Name="NAP_Set_MatchSelDetail_Resources_Ticket">
+      <Setting Key="NAP_Set_MatchSelDetail_Resources_Ticket_DBTXN" SpName="NAP_Set_MatchSelDetail_Resources" DbName="DBTXN.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Set_MatchSelDetail_Resources_Ticket_SITEDB01" SpName="NAP_Set_MatchSelDetail_Resources" DbName="SITEDB01.bodb02.bodbAdminNet" />
     </Function>
 
     <Function Name="NAP_Set_MatchOtherSportsSel">

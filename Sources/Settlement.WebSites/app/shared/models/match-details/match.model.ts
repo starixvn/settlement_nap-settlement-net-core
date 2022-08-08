@@ -44,8 +44,8 @@ export class Match {
      public awayTotalGames: number;
      public mixParlay: MixParlay;
      public leagueId: number;
-     public confirmHalfTimeColor: string;
-     public confirmFullTimeColor: string;
+     // public confirmHalfTimeColor: string;
+     // public confirmFullTimeColor: string;
      public exHalfTimeScore: string;
      public exFullTimeScore: string;
      public referenceActions: ReferenceAction[];
@@ -58,4 +58,6 @@ export class Match {
      public fastMarketStatus: string;
      public earlySettleBackground: string;
      public enableFastMarket: boolean;
+     public isNotConsistentExFtScore: boolean;
+     public isNotConsistentExHtScore: boolean;
 }

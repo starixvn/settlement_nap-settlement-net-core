@@ -114,7 +114,6 @@ namespace Settlement.Sportsbook.Soccer.Services
                 Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString(),
                 IsReSettledTickets = request.IsReSettledTickets,
                 SelectedResources = CreateResources(request.SelectedResources),
-                BroadcastSessionId = Guid.NewGuid().ToString()
             };
 
             return criteria;

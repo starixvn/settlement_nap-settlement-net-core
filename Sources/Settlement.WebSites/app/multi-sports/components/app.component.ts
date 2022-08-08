@@ -12,7 +12,7 @@ import {
     GenerateFilterService,
     SportMatchService,
 } from '../../shared/services';
-import { MultiSportService, RefreshMatchService, PopupService, DetectChangesService, HandleActionsService} from '../services';
+import { MultiSportService, RefreshMatchService, PopupService, DetectChangesService, HandleActionsService, BackGroundService} from '../services';
 import { MultiSport, MatchWaitingRequest } from '../models';
 
 @Component({
@@ -33,6 +33,7 @@ import { MultiSport, MatchWaitingRequest } from '../models';
         DetectChangesService,
         HandleActionsService,
         SportMatchService,
+        BackGroundService 
     ],
 })
 export class AppComponent implements OnInit, OnDestroy {
