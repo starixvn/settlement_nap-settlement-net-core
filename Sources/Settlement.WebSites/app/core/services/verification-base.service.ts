@@ -1,0 +1,418 @@
+import * as _ from 'lodash';
+import { Injectable, PipeTransform } from "@angular/core";
+import { ExternalResultDetail, ResultDetail, GeneralMatch, ExternalResult } from "../../shared/models/sportsbook-sop";
+import { ResultStatusId, TicketStatusText, ScoreSourceType, SettlementStatusId, SportType } from "../../shared/constants";
+import { Language } from "../../shared/language";
+import { ResultByTeamNamePipe } from '../../shared/pipes/result-by-team-name.pipe';
+import { GeneralResultDetail } from '../../shared/models';
+
+@Injectable()
+export class VerificationBaseService {
+    constructor(protected resultByTeamNamePipe: ResultByTeamNamePipe) {
+    }
+
+    public invalidInputScore(resultDetails: ResultDetail[], isScoreDirect: boolean, totalGames: string) {
+        const findMap = _.find(resultDetails, (map: ResultDetail) =>
+            _.isEmpty(map.homeValue) || _.isEmpty(map.awayValue));
+
+        const total = _.find(resultDetails, (map: ResultDetail) =>
+            map.resourceId === totalGames
+            && Number(map.homeValue) === 0
+            && Number(map.awayValue) === 0);
+
+        return findMap || (total && !isScoreDirect);
+    }
+
+    public getCalculationConfirmMessage(resultDetails: ResultDetail[], pipe: PipeTransform) {
+        let confirmMessage = `${Language.CalculationConfirmMessage}<br/>${Language.CalculationAdditionalConfirmation}<br/>`;
+        resultDetails.forEach((x: ResultDetail) => {
+            const resourceName = pipe.transform(x.resourceId);
+            const value = `${x.homeValue ? x.homeValue : 0}-${x.awayValue ? x.awayValue : 0}`;
+            confirmMessage += `${resourceName}: ${value}<br/>`;
+        });
+
+        return confirmMessage;
+    }
+
+    public isTicketOnGame(resultDetails: ResultDetail[], resourcesIdsTotal: string, resourcesIdsMatch: string) {
+        return _.filter(resultDetails, (item) => !_.isEqual(item.resourceId, resourcesIdsMatch)
+            && !_.isEqual(item.resourceId, resourcesIdsTotal)
+            && item.ticketStatus !== TicketStatusText.noTicket
+            || (_.isEqual(item.resourceId, resourcesIdsMatch) && item.isSpecialBettype)).length > 0;
+    }
+
+    public isExistMismatchScore(resultDetails: ResultDetail[]) {
+        let isFlag = false;
+        resultDetails.forEach((map) => {
+            if (map.isScoreMismatched && map.checked) {
+                isFlag = true;
+            }
+        });
+
+        return isFlag;
+    }
+
+    public allMapHaveScoreSources(resultDetails: ResultDetail[]) {
+        let result = true;
+        _.forEach(resultDetails, (map) => {
+            if (!this.isExistScoreSources(map)) {
+                result = false;
+            }
+        });
+
+        return result;
+    }
+
+    public isExistScoreSources(map: ResultDetail) {
+        const providerScore = _.find(map.externalScores, (source) => source.sourceId < ScoreSourceType.screenshot
+            && this.isExistedHomeAwayScore(source.homeValue, source.awayValue));
+        const outsideScore = _.find(map.externalScores, (source) => source.sourceId >= ScoreSourceType.screenshot
+            && this.isExistedHomeAwayScore(source.homeValue, source.awayValue));
+
+        return providerScore && outsideScore;
+    }
+
+    public isExistedHomeAwayScore(homeValue: string, awayValue: string) {
+        return !_.isEmpty(homeValue) && !_.isEmpty(awayValue);
+    }
+
+    public autoFillScore(map: ResultDetail) {
+        if (map.resultStatusId !== ResultStatusId.ManualCompleted && map.resultStatusId !== ResultStatusId.AutoCompleted) {
+            if (this.isExistScoreSources(map)) {
+                const correctScore = _.find(map.externalScores, (source) =>
+                    this.isExistedHomeAwayScore(source.homeValue, source.awayValue));
+                if (map.isScoreMismatched) {
+                    map.homeValue = '';
+                    map.awayValue = '';
+                } else {
+                    map.homeValue = correctScore.homeValue;
+                    map.awayValue = correctScore.awayValue;
+                }
+            } else {
+                map.homeValue = '';
+                map.awayValue = '';
+            }
+        }
+    }
+
+    public isScoreConsecutive(resultDetails: GeneralResultDetail[], firstResourceId: string) {
+        if (resultDetails.length === 1) {
+            return false;
+        }
+
+        return _.every(resultDetails, (map) =>
+            _.find(resultDetails, (resultDetail) => Number(resultDetail.resourceId) === Number(map.resourceId) - 1)
+            || map.resourceId === firstResourceId);
+    }
+
+    public isOutsideScoreConsecutive(externalScores: ExternalResultDetail[], firstResourceId: string) {
+        if (externalScores.length === 1) {
+            return false;
+        }
+
+        return _.every(externalScores, (score) =>
+            _.find(externalScores, (previousScore) => Number(previousScore.resourceId) === Number(score.resourceId) - 1)
+            || score.resourceId === firstResourceId);
+    }
+
+    public isMismatchedWarning(map: ResultDetail) {
+        const correctScore = _.find(map.externalScores, (source) => this.isExistedHomeAwayScore(source.homeValue, source.awayValue));
+        if (correctScore) {
+            return !this.isScoreMatched(map, correctScore);
+        }
+
+        return false;
+    }
+
+    private isScoreMatched(map: ResultDetail, scoreToCompare: ExternalResultDetail) {
+        if (!map.homeValue || !map.awayValue) {
+            return _.every(map.externalScores, (result: ExternalResultDetail) =>
+                (_.isEmpty(result.homeValue) || _.isEmpty(result.awayValue)) ||
+                (_.isEqual(scoreToCompare.homeValue, result.homeValue) &&
+                    _.isEqual(scoreToCompare.awayValue, result.awayValue))
+            );
+        }
+
+        return _.every(map.externalScores, (result: ExternalResultDetail) =>
+            (_.isEmpty(result.homeValue) || _.isEmpty(result.awayValue)) ||
+            (_.isEqual(map.homeValue, result.homeValue) &&
+                _.isEqual(map.awayValue, result.awayValue))
+        );
+    }
+
+    public verifyFinalResource(resultDetails: ResultDetail[], resourcesIdFinal: string, newFinal: string, totalScore: string) {
+        const final = resultDetails.find((map) => _.isEqual(map.resourceId, resourcesIdFinal) && map.checked
+            && map.homeValue && map.awayValue);
+        if (final) {
+            const oldScore = `${final.homeValue}-${final.awayValue}`;
+
+            if (!_.isEmpty(newFinal) && !_.isEqual(newFinal, oldScore)) {
+                return Language.TotalScoreNotMatchConfirmation
+                    .replace(/TOTAL_SCORE/g, totalScore)
+                    .replace(/OLD_SCORE/g, oldScore)
+                    .replace(/NEW_SCORE/g, newFinal);
+            }
+        }
+        return "";
+    }
+
+    public changeToNewFinalResource(oldFinal: ResultDetail, newFinal: string) {
+        const scoreList = newFinal.split('-');
+        oldFinal.homeValue = scoreList[0];
+        oldFinal.awayValue = scoreList[1];
+        oldFinal.isScoreMismatched = this.isMismatchedWarning(oldFinal);
+    }
+
+    public getNewFinalResource(resultDetails: ResultDetail[], resourcesIdFinal: string, isSumScore: boolean) {
+        const maps = resultDetails.filter((map) => !_.isEqual(map.resourceId, resourcesIdFinal)
+            && this.isExistedHomeAwayScore(map.homeValue, map.awayValue));
+        let newHomeScore: number;
+        let newAwayScore: number;
+        if (_.isEmpty(maps)) {
+            return "";
+        }
+        if (isSumScore) {
+            newHomeScore = _.sumBy(maps, (map) => Number(map.homeValue));
+            newAwayScore = _.sumBy(maps, (map) => Number(map.awayValue));
+        } else {
+            newHomeScore = _.countBy(maps, (map) => Number(map.homeValue) > Number(map.awayValue)).true ?? 0;
+            newAwayScore = _.countBy(maps, (map) => Number(map.homeValue) < Number(map.awayValue)).true ?? 0;
+        }
+
+        return `${newHomeScore}-${newAwayScore}`;
+    }
+
+    public isEarlyMismatchedWarning(map: ResultDetail) {
+        const correctScore = _.find(map.externalScores, (source) => !_.isEmpty(source.homeValue));
+        if (correctScore) {
+            return !this.isEarlyResultMatched(map, correctScore);
+        }
+
+        return false;
+    }
+
+    private isEarlyResultMatched(result: ResultDetail, scoreToCompare: ExternalResultDetail) {
+        if (!result.homeValue) {
+            return _.every(result.externalScores, (externalResult: ExternalResultDetail) =>
+                _.isEmpty(externalResult.homeValue) ||
+                _.isEqual(scoreToCompare.homeValue, externalResult.homeValue)
+            );
+        }
+
+        return _.every(result.externalScores, (externalResult: ExternalResultDetail) =>
+            _.isEmpty(externalResult.homeValue) ||
+            _.isEqual(result.homeValue, externalResult.homeValue)
+        );
+    }
+
+    public autoFillEarlyResult(result: ResultDetail) {
+        if (result.resultStatusId !== ResultStatusId.ManualCompleted && result.resultStatusId !== ResultStatusId.AutoCompleted) {
+            if (this.isExistEarlyResultSources(result) && !this.isEarlyMismatchedWarning(result)) {
+                const correctScore = _.find(result.externalScores, (source) => !_.isEmpty(source.homeValue));
+                result.homeValue = correctScore.homeValue;
+            } else {
+                result.homeValue = '';
+            }
+        }
+    }
+
+    public isExistEarlyResultSources(result: ResultDetail) {
+        const providerResult = _.find(result.externalScores, (source) => source.sourceId < ScoreSourceType.screenshot
+            && !_.isEmpty(source.homeValue));
+        const outsideResult = _.find(result.externalScores, (source) => source.sourceId >= ScoreSourceType.screenshot
+            && !_.isEmpty(source.homeValue));
+
+        return providerResult && outsideResult;
+    }
+
+    public allResultsHaveScoreSources(resultDetails: ResultDetail[]) {
+        const checkedResults = resultDetails.filter((result: ResultDetail) => result.checked);
+        let allResultsHaveScoreSources = true;
+        _.forEach(checkedResults, (result) => {
+            if (!this.isExistEarlyResultSources(result)) {
+                allResultsHaveScoreSources = false;
+            }
+        });
+
+        return allResultsHaveScoreSources;
+    }
+
+    public enableUncalculateButton(resultDetails: ResultDetail[]) {
+        return _.filter(resultDetails, (map) => map.settlementStatusId !== SettlementStatusId.Running).length > 0;
+    }
+
+    public isFullTimeMismatched(resultDetails: ResultDetail[], isScoreDirect: boolean, resourcesIdFinal: string, isSumScore: boolean) {
+        const final = resultDetails.find((map) => _.isEqual(map.resourceId, resourcesIdFinal)
+            && map.homeValue && map.awayValue);
+        const maps = resultDetails.filter((map) => !_.isEqual(map.resourceId, resourcesIdFinal)
+            && this.isExistedHomeAwayScore(map.homeValue, map.awayValue));
+        if (final && maps.length > 0 && !isScoreDirect) {
+            return this.checkMismatchFinalResource(final, maps, isSumScore);
+        }
+        return false;
+    }
+
+    private checkMismatchFinalResource(finalResource: ResultDetail, maps: ResultDetail[], isSumScore: boolean) {
+        let totalHome: number;
+        let totalAway: number;
+        if (isSumScore) {
+            totalHome = _.sumBy(maps, (map) => Number(map.homeValue));
+            totalAway = _.sumBy(maps, (map) => Number(map.awayValue));
+
+        } else {
+            totalHome = _.countBy(maps, (map) => Number(map.homeValue) > Number(map.awayValue)).true ?? 0;
+            totalAway = _.countBy(maps, (map) => Number(map.homeValue) < Number(map.awayValue)).true ?? 0;
+        }
+
+        return !_.isEqual(finalResource.homeValue, totalHome.toString()) || !_.isEqual(finalResource.awayValue, totalAway.toString());
+    }
+
+    public getChangedScores(resultDetails: ResultDetail[], originalResultDetails: ResultDetail[]) {
+        let outsideScores: ExternalResultDetail[] = [];
+        const mapsChecked = resultDetails.filter((map) => map.checked);
+        _.forEach(mapsChecked, (map) => {
+            const currentSources = map.externalScores.filter((source) => source.sourceId >= ScoreSourceType.screenshot);
+            const originalMap = originalResultDetails.find((item) => _.isEqual(item.resourceId, map.resourceId));
+            const originalSources = originalMap.externalScores.filter((source) => source.sourceId >= ScoreSourceType.screenshot);
+            const changedScores = _.differenceWith(currentSources, originalSources, _.isEqual);
+            if (changedScores.length > 0) {
+                outsideScores = outsideScores.concat(changedScores);
+            }
+        });
+
+        return outsideScores;
+    }
+
+    public getOutsideScores(resultDetails: ResultDetail[]) {
+        const outsideScores: ExternalResultDetail[] = [];
+        const mapsChecked = resultDetails.filter((map) => map.checked);
+        _.forEach(mapsChecked, (map) => {
+            const mapScore = new ExternalResultDetail(0, map.resourceId, '', '', map.homeValue, map.awayValue);
+            outsideScores.push(mapScore);
+            _.forEach(map.externalScores, (score) => {
+                if (score.sourceId > ScoreSourceType.emptySource) {
+                    outsideScores.push(score);
+                }
+            });
+        });
+
+        return outsideScores;
+    }
+
+    public generateExternalScores(match: GeneralMatch, resultDetails: ResultDetail[], sportType: number) {
+        const listGroupExternalResult = this.groupExternalResult(match.externalResults, sportType);
+        const newSportsSOP = [SportType.tennis, SportType.cricket, SportType.badminton, SportType.basketBall];
+        _.forEach(resultDetails, (map: ResultDetail) => {
+            const scores: ExternalResultDetail[] = [];
+            _.forEach(listGroupExternalResult, (result: ExternalResult) => {
+                const score = result.resultDetails.find((item) => _.isEqual(item.resourceId, map.resourceId));
+                if (_.isNil(score)) {
+                    if(result.sourceId === ScoreSourceType.trader && (newSportsSOP.includes(sportType))
+                        && !_.isEqual(map.resultStatus, "Refund")
+                        && (!_.isEmpty(map.homeValue) || !_.isEmpty(map.awayValue))) {
+                        const tempScore = new ExternalResultDetail(result.sourceId, map.resourceId, result.sourceName, result.remark);
+                        tempScore.homeValue = map.homeValue;
+                        tempScore.awayValue = map.awayValue;
+                        tempScore.homeName = this.resultByTeamNamePipe.transform(tempScore.homeValue, match.matchDetail);
+                        tempScore.awayName = this.resultByTeamNamePipe.transform(tempScore.awayValue, match.matchDetail);
+                        tempScore.fromResultDetail = true;
+                        scores.push(tempScore);
+                    } else {
+                        scores.push(new ExternalResultDetail(result.sourceId, map.resourceId, result.sourceName, result.remark));
+                    }
+                } else {
+                    score.homeName = this.resultByTeamNamePipe.transform(score.homeValue, match.matchDetail, map.groupBetType);
+                    score.awayName = this.resultByTeamNamePipe.transform(score.awayValue, match.matchDetail, map.groupBetType);
+                    scores.push(score);
+                }
+            });
+
+            map.externalScores = scores;
+        });
+    }
+
+    private groupExternalResult(externalResults: ExternalResult[], sportType: number) {
+        let listProvidersScore: ExternalResult[] = [];
+        listProvidersScore.push(this.traderScore(externalResults));
+        listProvidersScore = _.concat(listProvidersScore, this.providersScore(externalResults));
+        return _.concat(listProvidersScore, this.outSidesScore(externalResults));
+    }
+
+    private traderScore(externalResults: ExternalResult[]) {
+        const traderScore = _.find(externalResults, (item: ExternalResult) => item.sourceId === ScoreSourceType.trader);
+        if (traderScore) {
+            return traderScore;
+        } else {
+            return new ExternalResult(ScoreSourceType.trader, []);
+        }
+    }
+
+    private providersScore(externalResults: ExternalResult[]) {
+        const maximumProviders = 2;
+        const listProvidersScore: ExternalResult[] = [];
+        const providersScore = _.filter(externalResults, (item: ExternalResult) =>
+        item.sourceId !== ScoreSourceType.trader && item.sourceId < ScoreSourceType.screenshot);
+        for (let i = 0; i < maximumProviders ; i++) {
+            if (_.isNil(providersScore[i])) {
+                listProvidersScore.push(new ExternalResult(ScoreSourceType.emptySource, []));
+            } else {
+                listProvidersScore.push(providersScore[i]);
+            }
+        }
+
+        return listProvidersScore;
+    }
+
+    private outSidesScore(externalResults: ExternalResult[]) {
+        return  _.take(_.filter(externalResults, (item: ExternalResult) => item.sourceId >= ScoreSourceType.screenshot), 4);
+    }
+
+    public getTraderScores(resultDetails: ResultDetail[]) {
+        const outsideScores: ExternalResultDetail[] = [];
+        const mapsChecked = resultDetails.filter((map) => map.checked);
+        _.forEach(mapsChecked, (map) => {
+            const traderScore = map.externalScores.find((source) => source.sourceId  === ScoreSourceType.trader);
+                    outsideScores.push(traderScore);
+        });
+        return outsideScores;
+    }
+
+    public getChangedTraderScores(resultDetails: ResultDetail[], originalResultDetails: ResultDetail[]) {
+        let outsideScores: ExternalResultDetail[] = [];
+        const mapsChecked = resultDetails.filter((map) => map.checked);
+        _.forEach(mapsChecked, (map) => {
+            const currentSources = map.externalScores.filter((source) => source.sourceId === ScoreSourceType.trader);
+            const originalMap = originalResultDetails.find((item) => _.isEqual(item.resourceId, map.resourceId));
+            const originalSources = originalMap.externalScores.filter((source) => source.sourceId  === ScoreSourceType.trader);
+            const changedScores = _.differenceWith(currentSources, originalSources, _.isEqual);
+            if (changedScores.length > 0) {
+                outsideScores = outsideScores.concat(changedScores);
+            }
+        });
+
+        return outsideScores;
+    }
+
+    public sumTotalResultWin(resultDetails: GeneralResultDetail[], firstResourceId: string, totalGames: GeneralResultDetail) {
+        if (resultDetails.length > 0 && this.isScoreConsecutive(resultDetails, firstResourceId)) {
+            totalGames.homeValue = (_.countBy(resultDetails, (map) => Number(map.homeValue) > Number(map.awayValue)).true ?? 0).toString();
+            totalGames.awayValue = (_.countBy(resultDetails, (map) => Number(map.homeValue) < Number(map.awayValue)).true ?? 0).toString();
+        } else {
+            totalGames.homeValue = "";
+            totalGames.awayValue = "";
+        }
+    }
+
+    public sumTotalScores(resultDetails: GeneralResultDetail[], firstResourceId: string,
+        totalPoints: GeneralResultDetail, checkConsecutive = true) {
+        if (resultDetails.length > 0 &&
+            ((checkConsecutive && this.isScoreConsecutive(resultDetails, firstResourceId)) || !checkConsecutive)) {
+            totalPoints.homeValue = _.sumBy(resultDetails, (map) => Number(map.homeValue)).toString();
+            totalPoints.awayValue = _.sumBy(resultDetails, (map) => Number(map.awayValue)).toString();
+        } else {
+            totalPoints.homeValue = "";
+            totalPoints.awayValue = "";
+        }
+    }
+
+}

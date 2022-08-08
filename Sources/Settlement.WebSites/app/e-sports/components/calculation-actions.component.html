@@ -1,0 +1,140 @@
+﻿<span toastContainer></span>
+<div class="padding" *ngIf="match">
+    <div *ngIf="isReadyMatch">
+        <calculation-match-detail [match]="match" [apiUrl]="apiUrl"></calculation-match-detail>
+        <ticket-count [ticketCounts]="match.ticketCounts"></ticket-count>
+        <div class="calculation-actions">
+            <div *ngIf="hedgeMatchDetail" class="hedge-match">
+                <input type="checkbox" [(ngModel)]="applyHedgeMatch" id="ApplyHedgeMatch" />
+                <label for="ApplyHedgeMatch">Apply for hedge match '<strong>{{hedgeMatchDetail.matchCode}}</strong>'
+                    also.</label>
+            </div>
+            <div *ngIf="oldMatchDetail" class="hedge-match">
+                <input type="checkbox" [(ngModel)]="isSettleOldMatch" id="settleOldMatch" />
+                <label for="settleOldMatch">Aplly for moved match '<strong>{{oldMatchDetail.matchCode}}</strong>'
+                    also.</label>
+            </div>
+            <div class="table-score" [ngClass]='match.resultDetails.length > 10 ? "table-score-wrapper" : "" '>
+                <ng-template *ngTemplateOutlet="header"></ng-template>
+                <ng-template *ngTemplateOutlet="body"></ng-template>
+                <ng-template *ngTemplateOutlet="footer"></ng-template>
+            </div>
+            <div>
+                <resettle-checker [checked]="isReSettledTickets" (proceedEvent)="onResettleCheckboxChange($event)">
+                </resettle-checker>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="!isReadyMatch">
+        <not-ready-match></not-ready-match>
+    </div>
+</div>
+<ng-template #header>
+    <div class="table-header">
+        <table>
+            <thead>
+                <tr>
+                    <th rowspan="2" class="map">Map/FT</th>
+                    <th rowspan="2" class="ticket-status">Ticket Status</th>
+                    <th rowspan="2" colspan="2" class="map">Final Score</th>
+                    <th rowspan="2" class="map" *ngIf="isLeader">Trader Score</th>
+                    <th [colSpan]="2" *ngIf="isLeader">Provider Score</th>
+                    <th [colSpan]="(match.resultDetails[0].externalScores.length - 3) * 2">Outside Score</th>
+                    <th rowspan="2" class="status">
+                        Select to Proceed
+                    </th>
+                </tr>
+                <tr>
+                    <ng-container *ngFor=" let result of match.resultDetails[0].externalScores | slice:1; let i=index">
+                        <th class="map" *ngIf="i < 2 && isLeader">{{result.sourceName|externalSourceName}}</th>
+                        <th class="map" *ngIf="i === 2" colspan="2">{{result.sourceName}}</th>
+                        <th class="map" colspan="2" *ngIf="i > 2">
+                            <div class="outside-source-text" [matTooltip]="getTextTooltip(result.sourceName, 12)">
+                                <a href="{{result.remark|externalLink}}" target="_blank"
+                                    class="source-link">{{result.sourceName}}</a>
+                            </div>
+                        </th>
+                    </ng-container>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</ng-template>
+
+
+<ng-template #body>
+    <div [ngClass]='match.resultDetails.length > 10 ? "table-score-scroll" : "" '>
+        <table class="disable-margin">
+            <tbody>
+                <tr *ngFor="let map of match.resultDetails; let i=index; let last=last;"
+                    [ngClass]="{'mismatched': map.isScoreMismatched, 'confirmed-refund': isLeader && map.resultSettingData.isConfirmedRefund}">
+                    <td class="map">{{ map.resourceId | resourceName}}</td>
+                    <td [ngClass]="map.ticketStatus.toLowerCase()" class="ticket-status">{{map.ticketStatus}}</td>
+                    <td [ngClass]="[getClass(map)]" class="map-score">
+                        <input type="text" myOnlyInteger [id]="last ? 'final-input' : ''" tabindex="{{i*2 + 1}}"
+                            [disabled]="isFinalScoreDisabled(last)" [(ngModel)]="map.homeValue"
+                            (ngModelChange)="last ? false : changeScore(); checkMapIsMatched(map)" [ngClass]="{
+                    'final-score' : last ,
+                    'warning' :isErrorOnVerification(map, map.homeValue)}" />
+                    </td>
+                    <td [ngClass]="getClass(map)" class="map-score">
+                        <input type="text" myOnlyInteger [id]="last ? 'final-input' : ''"
+                            [disabled]="isFinalScoreDisabled(last)" [(ngModel)]="map.awayValue"
+                            (ngModelChange)="last ? false : changeScore(); checkMapIsMatched(map)" [ngClass]="{
+                        'final-score' : last,
+                        'warning' :isErrorOnVerification(map, map.awayValue)}" tabindex="{{(i+1) * 2}}" />
+                    </td>
+                    <ng-container *ngFor="let result of map.externalScores; let x=index">
+                        <td *ngIf="x < 3 && isLeader" class="map">
+                            {{result.homeValue}}-{{result.awayValue}}
+                        </td>
+                        <ng-container *ngIf="x >= 3">
+                            <td [ngClass]="{'striped': x % 2 === 0}" class="map-score">
+                                <input type="text" myOnlyInteger [(ngModel)]="result.homeValue"
+                                    id="outside-{{i+1}}-{{x-2}}-home" [disabled]="isFinalScoreDisabled(last, true)"
+                                    (change)="verifyAndAutoFillScore(map, last)"
+                                    (ngModelChange)="updateOutsideScore(result.sourceId)" />
+                            </td>
+                            <td [ngClass]="{'striped': x % 2 === 0}" class="map-score">
+                                <input type="text" myOnlyInteger [(ngModel)]="result.awayValue"
+                                    id="outside-{{i+1}}-{{x-2}}-away" [disabled]="isFinalScoreDisabled(last, true)"
+                                    (change)="verifyAndAutoFillScore(map, last)"
+                                    (ngModelChange)="updateOutsideScore(result.sourceId)" />
+                            </td>
+                        </ng-container>
+                    </ng-container>
+                    <td class="status">
+                        <input type="checkbox" [id]="last ? 'final-checkbox' : 'checkbox-map-' + (i + 1)"
+                            [(ngModel)]="map.checked" [disabled]="last? false : match.isScoreDirect"
+                            (ngModelChange)="last ? selectedOnFullTime() : selectedOnMap()" />
+                    </td>
+                </tr>
+        </table>
+    </div>
+</ng-template>
+
+<ng-template #footer>
+    <div class="footer">
+        <div *ngIf="matchDetail.bestOfMap>0" class="input-directly">
+            <span>
+                <input type="checkbox" [(ngModel)]="isScoreDirect" (ngModelChange)="changeInputDirectly()"
+                    id="isScoreDirect" [disabled]="disableScoreDirect" />
+                <label for="isScoreDirect">Input Full Time Score directly</label>
+            </span>
+            <span class="maps-only">
+                <input type="checkbox" [(ngModel)]="isMapsOnly" id="mapsOnly" [disabled]="!isLeader" />
+                <label for="mapsOnly">Maps Only Match</label>
+            </span>
+        </div>
+        <div class="button-row">
+            <button class="button" (click)="calculate()">Calculate</button>
+            <button *ngIf="match.permission.canUncalculate"
+                [ngClass]="{'button': true, 'button-disabled': !enableUncalculate}" [disabled]="!enableUncalculate"
+                (click)="uncalculate()">
+                Uncalculate
+            </button>
+            <button class="new-refund-button save-score" [disabled]="isSaveScoreDisabled()" (click)="saveScore()">Save
+                Score</button>
+        </div>
+    </div>
+</ng-template>

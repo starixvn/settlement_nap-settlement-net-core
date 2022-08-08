@@ -1128,9 +1128,104 @@
           "defaultConfiguration": "dev"
         }
       }
+    },
+    "e-sports": {
+      "root": "app",
+      "sourceRoot": "e-sports",
+      "projectType": "application",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "aot": true,
+            "outputPath": "../wwwroot/e-sports",
+            "index": "e-sports/index.cshtml",
+            "main": "e-sports/main.ts",
+            "tsConfig": "e-sports/tsconfig.app.json",
+            "polyfills": "polyfills.ts",
+            "styles": [
+              "node_modules/ngx-toastr/toastr.css",
+              "shared/styles/material.style.less",
+              "shared/styles/styles.less",
+              "e-sports/style.less"
+            ],
+            "allowedCommonJsDependencies": [
+              "lodash"
+           ]
+          },
+          "configurations": {
+            "dev": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
+              "optimization": false,
+              "sourceMap": true,
+              "namedChunks": true,
+              "aot": false,
+              "extractLicenses": false,
+              "vendorChunk": true,
+              "buildOptimizer": false
+            },
+            "prod": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "environments/environment.ts",
+                  "with": "environments/environment.prod.ts"
+                }
+              ]
+            },
+            "production": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "aot": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": false,
+              "deployUrl": "e-sports/"
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "proxyConfig": "proxy.conf.json",
+            "port": 5001,
+            "aot": false
+          },
+          "configurations": {
+            "dev": {
+              "browserTarget": "e-sports:build:dev"
+            },
+            "prod": {
+              "browserTarget": "e-sports:build:prod"
+            },
+            "production": {
+              "browserTarget": "e-sports:build:production"
+            }
+          },
+          "defaultConfiguration": "dev"
+        }
+      }
     }
   },
-  "defaultProject": "fast-market",
+  "defaultProject": "e-sports",
   "schematics": {
     "@schematics/angular:component": {
       "inlineTemplate": false,

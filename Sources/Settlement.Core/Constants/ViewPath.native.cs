@@ -23,5 +23,7 @@
         public const string FastMarket = "~/wwwroot/fast-market/index.cshtml";
 
         public const string Soccer = "~/wwwroot/soccer/index.cshtml";
+
+        public const string ESports = "~/wwwroot/e-sports/index.cshtml";
     }
 }

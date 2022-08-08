@@ -1,0 +1,68 @@
+﻿<span toastContainer></span>
+<div class="padding" *ngIf="match">
+    <match-detail [match]="match" [isEarlySettlement]="false"></match-detail>
+    <div class="refund-actions">
+        <div class="normal-tickets">
+            <div class="icon">
+            </div>
+            Normal Tickets
+        </div>
+        <div *ngIf="hedgeMatchDetail" class="hedge-match">
+            <input type="checkbox" [(ngModel)]="applyHedgeMatch" id="ApplyHedgeMatch" />
+            <label for="ApplyHedgeMatch">Apply for hedge match '<strong>{{hedgeMatchDetail.matchCode}}</strong>'
+                also.</label>
+        </div>
+        <div *ngIf="oldMatchDetail" class="hedge-match">
+            <input type="checkbox" [(ngModel)]="isRefundOldMatch" id="settleOldMatch" />
+            <label for="settleOldMatch">Aplly for moved match '<strong>{{oldMatchDetail.matchCode}}</strong>'
+                also.</label>
+        </div>
+        <div [ngClass]="{'table-score':1, 'table-score-wrapper': resultDetails != null && resultDetails.length > 10}">
+            <div class="table-header">
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="resource-name">Map/FT</th>
+                            <th class="process">
+                                Select to Proceed
+                            </th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+            <ng-template *ngTemplateOutlet="body"></ng-template>
+            <ng-template *ngTemplateOutlet="footer"></ng-template>
+        </div>
+    </div>
+</div>
+
+<ng-template #body>
+    <div [ngClass]="{'table-score-scroll': resultDetails != null && resultDetails.length > 10}">
+        <table>
+            <tbody>
+                <tr *ngFor="let map of resultDetails; let last=last;" [ngClass]="{'confirmed-refund': permission.isLeader && map.resultSettingData.isConfirmedRefund}">
+                    <td class="resource-name">{{ map.resourceId | resourceName}}</td>
+                    <td class="process" [ngClass]="map.ticketStatus.toLowerCase()">
+                        <input type="checkbox" [(ngModel)]="map.checked"
+                            [disabled]="last? false : match.isScoreDirect" />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</ng-template>
+
+<ng-template #footer>
+    <div class="footer">
+        <div>
+            <button *ngIf="permission.isLeader" [ngClass]="{'btn btn-outline-primary button-confirmed': true}"
+                [disabled]="selectedResources.length === 0"
+                (click)="confirmRefund(hedgeMatchDetail, applyHedgeMatch, oldMatchDetail, isRefundOldMatch)">
+                Confirm/Undo-confirm Refund
+            </button>
+            <button [ngClass]="{'refund-button': true, 'button-disabled': selectedResources.length === 0}"
+                [disabled]="selectedResources.length === 0" (click)="refund()">Refund</button>
+
+        </div>
+    </div>
+</ng-template>

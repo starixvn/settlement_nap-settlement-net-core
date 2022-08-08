@@ -50,19 +50,37 @@ namespace Settlement.WebSites.Controllers
         [HttpGet("soccer-early")]
         public IActionResult SoccerEarly()
         {
-            return SetView("Early Settlement", PagesType.EarlySettle, ViewPath.Soccer);
+            return SetView("Soccer - Early Settlement", PagesType.EarlySettle, ViewPath.Soccer);
         }
 
         [HttpGet("soccer-recalculate")]
         public IActionResult SoccerRecalculate()
         {
-            return SetView("Soccer Calculation", PagesType.Recalculate, ViewPath.Soccer);
+            return SetView("Soccer - Calculation", PagesType.Recalculate, ViewPath.Soccer);
         }
 
         [HttpGet("soccer-refund")]
         public IActionResult SoccerRefund()
         {
-            return SetView("Soccer Refund", PagesType.Refund, ViewPath.Soccer);
+            return SetView("Soccer - Refund", PagesType.Refund, ViewPath.Soccer);
+        }
+
+        [HttpGet("e-sports-early")]
+        public IActionResult ESportsEarly()
+        {
+            return SetView("E-Sports - Early Settlement", PagesType.EarlySettle, ViewPath.ESports);
+        }
+
+        [HttpGet("e-sports-recalculate")]
+        public IActionResult ESportsRecalculate()
+        {
+            return SetView("E-Sports - Calculation", PagesType.Recalculate, ViewPath.ESports);
+        }
+
+        [HttpGet("e-sports-refund")]
+        public IActionResult ESportsRefund()
+        {
+            return SetView("E-Sports - Refund", PagesType.Refund, ViewPath.ESports);
         }
 
         private ActionResult SetView(string title, string pageType, string viewName)
