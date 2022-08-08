@@ -100,7 +100,7 @@ namespace Settlement.Sportsbook.Soccer.Services
                 Action = criteria.Action,
                 AdminId = criteria.AdminId,
                 MatchId = criteria.MatchId,
-                ResourceResult = criteria.SelectedResources
+                SelectedResources = criteria.SelectedResources
             };
 
             await scaleOutSettleService.UpdateMatchInfo(requestUpdateInfo);
