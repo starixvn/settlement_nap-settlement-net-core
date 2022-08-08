@@ -9,6 +9,8 @@ namespace Settlement.Sportsbook.Aio.Criteria
 
         public string SettleType { get; set; }
 
+        public int SportType { get; set; }
+
         [SpParam(Ignored = true)]
         public string DbServer { get; set; }
 

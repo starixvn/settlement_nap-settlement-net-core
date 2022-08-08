@@ -8,6 +8,8 @@ namespace Settlement.Sportsbook.Aio.Criteria
 
         public string SettleType { get; set; }
 
+        public int SportType { get; set; }
+
         public override string GetSettingKey()
         {
             return "NAP_Set_MatchSelDetail_Resources";

@@ -49,6 +49,7 @@ namespace Settlement.Sportsbook.Aio.Services
 
         public async Task<(List<Models.ResultDetail>, TicketCounts)> FetchResultDetails(GetResultDetailCriteria criteria, int sportType)
         {
+            criteria.SportType = sportType;
             var fetchedResultDetails = await repository.FetchAsync<Models.ResultDetail>(criteria);
             var (ticketDetails, ticketCount) = await GetEarlyTicketDetails(criteria);
             var resultDetails = fetchedResultDetails.ToList();
@@ -118,7 +119,8 @@ namespace Settlement.Sportsbook.Aio.Services
             var criteria = new GetTicketDetailsCriteria
             {
                 MatchId = getResultDetailCriteria.MatchId,
-                SettleType = getResultDetailCriteria.SettleType
+                SettleType = getResultDetailCriteria.SettleType,
+                SportType = getResultDetailCriteria.SportType
             };
 
             foreach(var server in appSettingsKey.SiteDbServer)
