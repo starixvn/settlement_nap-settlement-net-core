@@ -23,7 +23,6 @@
 
   <Function Name="MoveTickets">
     <Setting Key="NAP_Set_AutoPayout_ReferenceActionByMatchSel" SpName="NAP_Set_AutoPayout_ReferenceActionByMatchSel" DbName="DBLOG.bodb_CustomerLog.bodbAdminNet" />
-    <Setting Key="NAP_Set_MatchOtherSportsSel" SpName="NAP_Set_MatchOtherSportsSel" DbName="DBTXN.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Admin_Settlement_50_MoveTicket" SpName="NAP_Admin_Settlement_50_MoveTicket" DbName="DBTXN.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_GetChildMatchByParent" SpName="NAP_Set_GetChildMatchByParent" DbName="DBTXN.bodb02.bodbAdminNet" />
     <Setting Key="WriteLog_UserLog_Settle" SpName="WriteLog_UserLog_Settle" DbName="DBLOG.bodb_CustomerLog.bodbAdminNet" />
@@ -81,10 +80,8 @@
   </Function>
 
   <Function Name="MultiSport">
-    <Setting Key="NAP_Set_MatchOtherSportsSel" SpName="NAP_Set_MatchOtherSportsSel" DbName="DBTXN.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_OtherSportsSel" SpName="NAP_Set_OtherSportsSel" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_SportLeagueSel" SpName="NAP_Set_SportLeagueSel" DbName="DBPRO.bodb02.bodbAdminNet" />
-    <Setting Key="NAP_Set_WaitingOtherSportSel" SpName="NAP_Set_WaitingOtherSportSel" DbName="DBTXN.bodb02.bodbAdminNet" TimeOut="20" />
   </Function>
 
   <Function Name="SettlementLog">
@@ -238,6 +235,15 @@
     <Function Name="NAP_Set_MatchSelHedge_Ticket">
       <Setting Key="NAP_Set_MatchSelHedge_Ticket_DBTXN" SpName="NAP_Set_MatchSelHedge_Ticket" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="NAP_Set_MatchSelHedge_Ticket_SITEDB01" SpName="NAP_Set_MatchSelHedge_Ticket" DbName="SITEDB01.bodb02.bodbAdminNet" />
+    </Function>
+
+    <Function Name="NAP_Set_MatchOtherSportsSel">
+      <Setting Key="NAP_Set_MatchOtherSportsSel_DBTXN" SpName="NAP_Set_MatchOtherSportsSel" DbName="DBTXN.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Set_MatchOtherSportsSel_SITEDB01" SpName="NAP_Set_MatchOtherSportsSel" DbName="SITEDB01.bodb02.bodbAdminNet" />
+    </Function>
+    <Function Name="NAP_Set_WaitingOtherSportSel">
+      <Setting Key="NAP_Set_WaitingOtherSportSel_DBTXN" SpName="NAP_Set_WaitingOtherSportSel" DbName="DBTXN.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Set_WaitingOtherSportSel_SITEDB01" SpName="NAP_Set_WaitingOtherSportSel" DbName="SITEDB01.bodb02.bodbAdminNet" />
     </Function>
   </Function>
 </Functions>

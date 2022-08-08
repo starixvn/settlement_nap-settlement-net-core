@@ -4,8 +4,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Settlement.EventManagement.Controllers;
 using Settlement.EventManagement.Services;
 using Settlement.EventManagement.Services.Calculation;
+using Settlement.EventManagement.Services.MultiSports;
 using Settlement.EventManagement.Services.SpecificService.Tennis;
-using MatchServiceImp = Settlement.EventManagement.Services.MatchServiceImp;
+using CompareMatchService = Settlement.EventManagement.Services.Calculation.CompareMatchService;
+using CompareMatchServiceImp = Settlement.EventManagement.Services.Calculation.CompareMatchServiceImp;
+using CompareMultiSportMatchService = Settlement.EventManagement.Services.MultiSports.CompareMatchService;
+using CompareMultiSportMatchServiceImp = Settlement.EventManagement.Services.MultiSports.CompareMatchServiceImp;
+using MatchServiceImp = Settlement.EventManagement.Services.MultiSports.MatchServiceImp;
 
 namespace Settlement.WebSites.Configurations
 {
@@ -27,6 +32,9 @@ namespace Settlement.WebSites.Configurations
             services.AddTransient<EventManagement.Services.IScoreService, EventManagement.Services.ScoreServiceImp>();
             services.AddTransient<EventManagement.Services.SpecificService.Tennis.IScoreService, EventManagement.Services.SpecificService.Tennis.ScoreServiceImp>();
             services.AddTransient<CachingMatchesService, CachingMatchesServiceImp>();
+            services.AddTransient<CompareMultiSportMatchService, CompareMultiSportMatchServiceImp>();
+            services.AddTransient<GetDataFilterService, GetDataFilterServiceImp>();
+
         }
 
         public static void ConfigEventManagementMediator(this IServiceCollection services)

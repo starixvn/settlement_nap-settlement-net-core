@@ -4,17 +4,19 @@ using Kaden.Extensions;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
+using Settlement.EventManagement.Models;
 using Match = Settlement.EventManagement.Models.Calculation.Match;
+using MultiSportMatch = Settlement.EventManagement.Models.MultiSports.Match;
 
-namespace Settlement.EventManagement.Services.Calculation
+namespace Settlement.EventManagement.Services
 {
     public interface NewInfoMatchService
     {
-        string NewEventStatus(Match match);
+        string NewEventStatus(BaseMatch match);
 
-        string EventStatusColor(Match match);
+        string EventStatusColor(BaseMatch match);
 
-        string EarlySettlementStatus(Match match);
+        string EarlySettlementStatus(BaseMatch match);
 
         string FastMarketStatus(Match match);
 
@@ -24,7 +26,9 @@ namespace Settlement.EventManagement.Services.Calculation
 
         GoalIcon GoalIcon(Match match);
 
-        void TicketInfo(Match match);
+        void TicketInfo(BaseMatch match);
+
+        bool IsExistsConfirmedEarly(MultiSportMatch match);
     }
 
     public class NewInfoMatchServiceImp : NewInfoMatchService
@@ -51,7 +55,7 @@ namespace Settlement.EventManagement.Services.Calculation
             this.goalIconService = goalIconService;
         }
 
-        public string EventStatusColor(Match match)
+        public string EventStatusColor(BaseMatch match)
         {
             if (match.EventStatus.IgnoreCaseEquals(EventStatus.PostPoned))
             {
@@ -75,7 +79,7 @@ namespace Settlement.EventManagement.Services.Calculation
             return siteMatchService.IsExistMarkedTickets(match) ? Background.WhiteBlinking : string.Empty;
         }
 
-        public string NewEventStatus(Match match)
+        public string NewEventStatus(BaseMatch match)
         {
             var newEventStatus = IsCheckingEventStatusReasons(match) ? eventStatusReasonTitles[match.EventStatusReason - 1] : match.EventStatus;
             if (match.IsCalculatingSingle != CalculateStatus.IsWaiting && match.IsCalculatingSingle != CalculateStatus.IsCalculating)
@@ -86,7 +90,7 @@ namespace Settlement.EventManagement.Services.Calculation
             return match.IsCalculatingSingle == CalculateStatus.IsWaiting ? EventStatus.Waiting : EventStatus.Calculating;
         }
 
-        public string EarlySettlementStatus(Match match)
+        public string EarlySettlementStatus(BaseMatch match)
         {
             return siteMatchService.EarlySettlementStatus(match);
         }
@@ -132,13 +136,18 @@ namespace Settlement.EventManagement.Services.Calculation
             return goalIconService.GetGoalIcon(goalIconQuery);
         }
 
-        public void TicketInfo(Match match)
+        public void TicketInfo(BaseMatch match)
         {
             match.IsExistMarkedTicket = siteMatchService.IsExistMarkedTicketsSingle(match);
             match.IsExistRunningTicket = siteMatchService.IsExistRunningTickets(match);
             match.IsExistMarkedTicketParlay = siteMatchService.IsExistMarkedTicketParlay(match);
             match.IsExistRunningTicketParlay = siteMatchService.IsExistRunningTicketParlay(match);
             match.IsCalculatingSingle = siteMatchService.IsCalculatingSingle(match);
+        }
+
+        public bool IsExistsConfirmedEarly(MultiSportMatch match)
+        {
+            return siteMatchService.IsExistsConfirmedEarly(match);
         }
 
         private GoalIconQueryModel GoalIconQuery(Match match)
@@ -154,7 +163,7 @@ namespace Settlement.EventManagement.Services.Calculation
             };
         }
 
-        private bool IsCheckingEventStatusReasons(Match match)
+        private bool IsCheckingEventStatusReasons(BaseMatch match)
         {
             return match.EventStatus.IgnoreCaseEquals(EventStatus.Running)
                    && eventStatusReasons.Contains(match.EventStatusReason);

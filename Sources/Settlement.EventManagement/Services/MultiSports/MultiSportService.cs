@@ -8,24 +8,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Settlement.EventManagement.Criteria;
-using Settlement.EventManagement.Models;
 using Settlement.EventManagement.Requests;
-using Match = Settlement.EventManagement.Models.Match;
+using Match = Settlement.EventManagement.Models.MultiSports.Match;
 using System.Threading;
 using Fanex.Caching;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
+using Settlement.EventManagement.Models.MultiSports;
 
-namespace Settlement.EventManagement.Services
+namespace Settlement.EventManagement.Services.MultiSports
 {
     public interface IMultiSportService
     {
         Task<List<SportModel>> GetSportBook(FilterMultiSportRequest request);
 
         Task<List<Match>> GetWaitingMatches(RefreshMultiSportRequest request);
-
-        Task<List<Sport>> GetSports(SportRequest request);
-
-        Task<List<LeagueTypeModel>> GetLeagues(LeagueRequest request);
 
         Task<Result> Calculate(CalculateParlayRequest request);
     }
@@ -34,44 +31,39 @@ namespace Settlement.EventManagement.Services
     {
         private static int _isProcessing;
         private readonly IDynamicRepository repository;
-        private readonly IRefDataService refDataService;
         private readonly IMatchService matchService;
         private readonly IMapper mapper;
         private readonly ICacheService cacheService;
         private readonly PermissionService permissionService;
-        private static readonly List<int> PopularSport = new List<int> { SportType.Badminton, SportType.BasketBall, SportType.ESports, SportType.Tennis };
-        private const string PopularGroup = "All Popular Sports";
-        private const string OtherGroup = "All Other Sports";
         private readonly IHttpContextAccessor accessor;
+        private readonly AppSettingsKey appSettingsKey;
 
         public MultiSportServiceImp(
             IDynamicRepository repository,
-            IRefDataService refDataService,
             IMatchService matchService,
             IMapper mapper,
             ICacheService cacheService,
             PermissionService permissionService,
-            IHttpContextAccessor accessor)
+            IHttpContextAccessor accessor,
+            IOptions<AppSettingsKey> appSettingsKey)
         {
             this.repository = repository;
-            this.refDataService = refDataService;
             this.matchService = matchService;
             this.permissionService = permissionService;
             this.cacheService = cacheService;
             this.mapper = mapper;
             this.accessor = accessor;
+            this.appSettingsKey = appSettingsKey.Value;
         }
 
         public async Task<List<SportModel>> GetSportBook(FilterMultiSportRequest request)
         {
-            var criteria = mapper.Map<FilterMultiSportRequest, SportsbookCriteria>(request);
-            var data = await FetchMatchesAndResultDetails(criteria);
+            var data = await FetchMatchesAndResultDetails(request);
             var matchesByEachSport = GetMoreScore(data);
 
             var matches = new List<MultiSportMatch>();
             matchesByEachSport.ForEach(sport => sport.Matches.ForEach(match =>
             {
-                match.RefDataService = refDataService;
                 var multiSportMatch = mapper.Map<Match, MultiSportMatch>(match);
                 matches.Add(multiSportMatch);
             }));
@@ -79,29 +71,6 @@ namespace Settlement.EventManagement.Services
             var sportBooks = GroupSport(matches);
 
             return sportBooks;
-        }
-
-        public async Task<List<Sport>> GetSports(SportRequest request)
-        {
-            var criteria = mapper.Map<SportRequest, SportCriteria>(request);
-            var sports = (await repository.FetchAsync<Sport>(criteria)).ToList();
-            sports.ForEach(x => x.SportName = refDataService.GetSportName(x.SportType));
-
-            return OrderSport(sports.OrderBy(item => item.SportName).ToList());
-        }
-
-        public async Task<List<LeagueTypeModel>> GetLeagues(LeagueRequest request)
-        {
-            var criteria = mapper.Map<LeagueRequest, LeagueCriteria>(request);
-            var leagues = (await repository.FetchAsync<LeagueTypeModel>(criteria)).ToList();
-            foreach (var item in leagues)
-            {
-                item.SportName = refDataService.GetSportName(item.SportType);
-                item.LeagueName = refDataService.GetLeagueName(item.LeagueId);
-                item.Group = $"All {item.SportName} Leagues";
-            }
-
-            return SortLeague(leagues.ToList());
         }
 
         public async Task<List<Match>> GetWaitingMatches(RefreshMultiSportRequest request)
@@ -146,9 +115,12 @@ namespace Settlement.EventManagement.Services
 
         private async Task<List<Match>> GetAndCachingMatches(RefreshMultiSportRequest request)
         {
-            var criteria = mapper.Map<RefreshMultiSportRequest, GetWaitingMultiSportCriteria>(request);
-            var data = await FetchMatchesAndResultDetails(criteria);
-            var matchesByEachSport = GetMoreScore(data);
+            var waitingMatches = await WaitingMatchesAllSites(request);
+            var listResultDetail = await ResultDetailByMatchIds(waitingMatches);
+
+            matchService.SetNewMatchInfo(waitingMatches, listResultDetail);
+
+            var matchesByEachSport = GetMoreScore(new MultiSportResult { Matches = waitingMatches, ResultDetails = listResultDetail });
             var matches = new List<Match>();
             matchesByEachSport.ForEach(sport => sport.Matches.ForEach(match =>
             {
@@ -156,6 +128,30 @@ namespace Settlement.EventManagement.Services
             }));
 
             SetToCache(request.LeagueIds, matches);
+
+            return matches;
+        }
+
+        private async Task<List<Match>> WaitingMatchesAllSites(RefreshMultiSportRequest request)
+        {
+            var matches = new List<Match>();
+            var isCentralDataBase = true;
+            var criteria = mapper.Map<RefreshMultiSportRequest, GetWaitingMultiSportCriteria>(request);
+            foreach (var server in appSettingsKey.SiteDbServer)
+            {
+                criteria.DbServer = server;
+                var data = (await repository.FetchAsync<Match>(criteria)).ToList();
+
+                if (isCentralDataBase)
+                {
+                    matches = data;
+                    isCentralDataBase = false;
+                }
+                else
+                {
+                    matchService.MergeMatches(matches, data);
+                }
+            }
 
             return matches;
         }
@@ -168,70 +164,6 @@ namespace Settlement.EventManagement.Services
             const int longCacheExpirationTime = 20;
             cacheService.SetAsync(shortCachingKey, matches, new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromSeconds(shortCacheExpirationTime)));
             cacheService.SetAsync(longCachingKey, matches, new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(longCacheExpirationTime)));
-        }
-
-        private static List<Sport> OrderSport(List<Sport> sports)
-        {
-            var list = new List<Sport>();
-            var otherGroup = new List<Sport>();
-            var otherSport = new List<Sport>();
-
-            sports.ForEach(item =>
-            {
-                if (PopularSport.IndexOf(item.SportType) > -1)
-                {
-                    item.Group = PopularGroup;
-                    list.Add(item);
-                }
-                else
-                {
-                    item.Group = OtherGroup;
-                    if (item.SportType == SportType.OtherSports)
-                    {
-                        otherSport.Add(item);
-                    }
-                    else
-                    {
-                        otherGroup.Add(item);
-                    }
-                }
-            });
-
-            list.AddRange(otherGroup);
-            list.AddRange(otherSport);
-
-            return list;
-        }
-
-        private static List<LeagueTypeModel> SortLeague(List<LeagueTypeModel> leagues)
-        {
-            var popularGroup = new List<LeagueTypeModel>();
-            var otherGroup = new List<LeagueTypeModel>();
-            var otherSport = new List<LeagueTypeModel>();
-            leagues.ForEach(item =>
-            {
-                if (PopularSport.IndexOf(item.SportType) > -1)
-                {
-                    popularGroup.Add(item);
-                }
-                else
-                {
-                    if (item.SportType == SportType.OtherSports)
-                    {
-                        otherSport.Add(item);
-                    }
-                    else
-                    {
-                        otherGroup.Add(item);
-                    }
-                }
-            });
-
-            var list = popularGroup.OrderBy(item => item.SportName).ThenBy(item => item.LeagueName).ToList();
-            list.AddRange(otherGroup.OrderBy(item => item.SportName).ThenBy(item => item.LeagueName).ToList());
-            list.AddRange(otherSport.OrderBy(item => item.LeagueName).ToList());
-
-            return list;
         }
 
         private List<MatchesBySportTypeModel> GetMoreScore(MultiSportResult data)
@@ -302,14 +234,47 @@ namespace Settlement.EventManagement.Services
             return leagues.ToList();
         }
 
-        private async Task<MultiSportResult> FetchMatchesAndResultDetails(ICriteria criteria)
+        private async Task<MultiSportResult> FetchMatchesAndResultDetails(FilterMultiSportRequest request)
         {
-            var data = await repository.FetchMultipleAsync<Match, ResultDetail>(criteria);
+            var matches = await MatchesAllSites(request);
+            var resultDetails = await ResultDetailByMatchIds(matches);
+            matchService.SetNewMatchInfo(matches, resultDetails);
             return new MultiSportResult
             {
-                Matches = data.Item1.ToList(),
-                ResultDetails = data.Item2.ToList()
+                Matches = matches,
+                ResultDetails = resultDetails
             };
+        }
+
+        private async Task<List<Match>> MatchesAllSites(FilterMultiSportRequest request)
+        {
+            var matches = new List<Match>();
+            var isCentralDataBase = true;
+            var criteria = mapper.Map<FilterMultiSportRequest, SportsbookCriteria>(request);
+            foreach (var server in appSettingsKey.SiteDbServer)
+            {
+                criteria.DbServer = server;
+                var data = (await repository.FetchAsync<Match>(criteria)).ToList();
+
+                if (isCentralDataBase)
+                {
+                    matches = data;
+                    isCentralDataBase = false;
+                }
+                else
+                {
+                    matchService.MergeMatches(matches, data);
+                }
+            }
+
+            return matches;
+        }
+
+        private async Task<List<ResultDetail>> ResultDetailByMatchIds(List<Match> matches)
+        {
+            var listMatchId = string.Join(",", matches.Select(match => match.MatchId.ToString()).ToArray());
+            var resultDetailCriteria = new GetResultDetailCriteria { MatchIdList = listMatchId };
+            return (await repository.FetchAsync<ResultDetail>(resultDetailCriteria)).ToList();
         }
 
         public async Task<Result> Calculate(CalculateParlayRequest request)

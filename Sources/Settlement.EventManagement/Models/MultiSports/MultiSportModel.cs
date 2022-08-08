@@ -2,7 +2,7 @@
 using Settlement.Core.Models;
 using System.Collections.Generic;
 
-namespace Settlement.EventManagement.Models
+namespace Settlement.EventManagement.Models.MultiSports
 {
     [MessagePackObject]
     public class MultiSportModel

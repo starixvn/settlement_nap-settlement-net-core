@@ -1,6 +1,6 @@
 ﻿using System;
 using MediatR;
-using Settlement.EventManagement.Models;
+using Settlement.EventManagement.Models.MultiSports;
 
 namespace Settlement.EventManagement
 {

@@ -1,7 +1,7 @@
 ﻿using MessagePack;
 using System.Collections.Generic;
 
-namespace Settlement.EventManagement.Models
+namespace Settlement.EventManagement.Models.MultiSports
 {
     [MessagePackObject]
     public class SportModel

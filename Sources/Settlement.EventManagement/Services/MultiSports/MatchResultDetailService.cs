@@ -4,9 +4,9 @@ using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.EventManagement.Services.SpecificService.Tennis;
-using Match = Settlement.EventManagement.Models.Match;
+using Match = Settlement.EventManagement.Models.MultiSports.Match;
 
-namespace Settlement.EventManagement.Services
+namespace Settlement.EventManagement.Services.MultiSports
 {
     public interface IMatchResultDetailService
     {

@@ -1,69 +1,79 @@
 ﻿using Settlement.Core.Constants;
 using Settlement.EventManagement.Models.Calculation;
 using System.Linq;
+using Settlement.EventManagement.Models;
+using MultiSportMatch = Settlement.EventManagement.Models.MultiSports.Match;
 
-namespace Settlement.EventManagement.Services.Calculation
+namespace Settlement.EventManagement.Services
 {
     public interface SiteMatchService
     {
-        bool IsExistMarkedTickets(Match match);
+        bool IsExistMarkedTickets(BaseMatch match);
 
-        bool IsExistRunningTickets(Match match);
+        bool IsExistRunningTickets(BaseMatch match);
 
-        string GetBackgroundCompletedStatus(Match match);
+        string GetBackgroundCompletedStatus(BaseMatch match);
 
         string FastMarketStatus(Match match);
 
-        string EarlySettlementStatus(Match match);
+        string EarlySettlementStatus(BaseMatch match);
 
         bool IsExistFgLg(Match match);
 
         bool IsExistHtFgLg(Match match);
 
-        bool IsExistMarkedTicketParlay(Match match);
+        bool IsExistMarkedTicketParlay(BaseMatch match);
 
-        bool IsExistRunningTicketParlay(Match match);
+        bool IsExistRunningTicketParlay(BaseMatch match);
 
-        bool IsExistMarkedTicketsSingle(Match match);
+        bool IsExistMarkedTicketsSingle(BaseMatch match);
 
-        int? IsCalculatingSingle(Match match);
+        bool IsExistsConfirmedEarly(MultiSportMatch match);
+
+        int? IsCalculatingSingle(BaseMatch match);
     }
 
     public class SiteMatchServiceImp : SiteMatchService
     {
         private const int MatchPen = 202;
 
-        public bool IsExistMarkedTicketsSingle(Match match)
+        public bool IsExistMarkedTicketsSingle(BaseMatch match)
         {
             var isExistMarkedTicketOnSite = match.SiteMatch.Exists(m => m.IsExistMarkedTicket);
             return match.IsExistMarkedTicket || isExistMarkedTicketOnSite;
         }
 
-        public bool IsExistMarkedTickets(Match match)
+        public bool IsExistMarkedTickets(BaseMatch match)
         {
             var isExistMarkedTicketOnSite = match.SiteMatch.Exists(m => m.IsExistMarkedTicket);
             return IsExistMarkedTicketParlay(match) || match.IsExistMarkedTicket || isExistMarkedTicketOnSite;
         }
 
-        public bool IsExistRunningTickets(Match match)
+        public bool IsExistRunningTickets(BaseMatch match)
         {
             var isExistRunningTicketOnSite = match.SiteMatch.Exists(m => m.IsExistRunningTicket);
             return match.IsExistRunningTicket || isExistRunningTicketOnSite;
         }
 
-        public bool IsExistMarkedTicketParlay(Match match)
+        public bool IsExistMarkedTicketParlay(BaseMatch match)
         {
             var isExistMarkedTicketParlay = match.SiteMatch.Exists(m => m.IsExistMarkedTicketParlay);
             return match.IsExistMarkedTicketParlay || isExistMarkedTicketParlay;
         }
 
-        public bool IsExistRunningTicketParlay(Match match)
+        public bool IsExistRunningTicketParlay(BaseMatch match)
         {
             var isExistRunningTicketParlay = match.SiteMatch.Exists(m => m.IsExistRunningTicketParlay);
             return match.IsExistMarkedTicketParlay || isExistRunningTicketParlay;
         }
 
-        public int? IsCalculatingSingle(Match match)
+        public bool IsExistsConfirmedEarly(MultiSportMatch match)
+        {
+            var isExistsConfirmedEarly = match.SiteMatch.Exists(m => m.IsExistsConfirmedEarly);
+            return match.IsExistsConfirmedEarly || isExistsConfirmedEarly;
+        }
+
+        public int? IsCalculatingSingle(BaseMatch match)
         {
             if (match.IsCalculatingSingle == CalculateStatus.IsWaiting || match.SiteMatch.Exists(m => m.IsCalculatingSingle == CalculateStatus.IsWaiting))
             {
@@ -88,38 +98,47 @@ namespace Settlement.EventManagement.Services.Calculation
             return null;
         }
 
-        public string GetBackgroundCompletedStatus(Match match)
+        public string GetBackgroundCompletedStatus(BaseMatch match)
         {
             return IsOnlyMarkedTicket(match)
                 ? Background.WhiteBlinking
                 : GetBackgroundRunningTicket(match);
         }
 
-        public string EarlySettlementStatus(Match match)
+        public string EarlySettlementStatus(BaseMatch match)
         {
             var matchSite = match.SiteMatch;
             var isExistEarlyBetTypes = match.IsExistEarlyBetTypes || matchSite.Exists(m => m.IsExistEarlyBetTypes);
             var isRunningEarlyBetTypes = match.IsRunningEarlyBetTypes || matchSite.Exists(m => m.IsRunningEarlyBetTypes);
             var isWaitingEarlyBetTypes = match.IsWaitingEarlyBetTypes || matchSite.Exists(m => m.IsWaitingEarlyBetTypes);
-            if (!isExistEarlyBetTypes && (match.ChildMatchType == MatchPen || match.IsOpenOdds))
+            var isExistEarlyBettypesParlay = match.IsExistEarlyBettypesParlay || matchSite.Exists(m => m.IsExistEarlyBettypesParlay);
+            var isRunningEarlyBettypesParlay = match.IsRunningEarlyBettypesParlay || matchSite.Exists(m => m.IsRunningEarlyBettypesParlay);
+            var isWaitingEarlyBettypesParlay = match.IsWaitingEarlyBettypesParlay || matchSite.Exists(m => m.IsWaitingEarlyBettypesParlay);
+            if (!isExistEarlyBetTypes && !isExistEarlyBettypesParlay)
             {
-                return "No Ticket";
+                return match.ChildMatchType == MatchPen || match.IsOpenOdds ? "No Ticket" : "N/A";
             }
 
-            if (!isExistEarlyBetTypes)
-            {
-                return "N/A";
-            }
-
-            if (isRunningEarlyBetTypes)
+            if (isRunningEarlyBetTypes || (match.IsMergedParlay && isRunningEarlyBettypesParlay))
             {
                 return "Running";
             }
 
-            if (isWaitingEarlyBetTypes)
+            if (isWaitingEarlyBetTypes || (match.IsMergedParlay && isWaitingEarlyBettypesParlay))
             {
                 return "Waiting";
             }
+
+            if (isRunningEarlyBettypesParlay)
+            {
+                return "Parlay Running";
+            }
+
+            if (isWaitingEarlyBettypesParlay)
+            {
+                return "Parlay Waiting";
+            }
+
             return "Completed";
         }
 
@@ -142,7 +161,7 @@ namespace Settlement.EventManagement.Services.Calculation
             return "Completed";
         }
 
-        private string GetBackgroundRunningTicket(Match match)
+        private string GetBackgroundRunningTicket(BaseMatch match)
         {
             if (IsExistMarkedTickets(match))
             {
@@ -152,12 +171,12 @@ namespace Settlement.EventManagement.Services.Calculation
             return IsExistRunningTicket(match) ? Background.Pink : string.Empty;
         }
 
-        private bool IsOnlyMarkedTicket(Match match)
+        private bool IsOnlyMarkedTicket(BaseMatch match)
         {
             return IsExistMarkedTickets(match) && !IsExistRunningTicket(match);
         }
 
-        private bool IsExistRunningTicket(Match match)
+        private bool IsExistRunningTicket(BaseMatch match)
         {
             var isExistRunningTicketOnSite = match.SiteMatch.Exists(m => m.IsExistRunningTicket);
             return match.IsExistRunningTicket || isExistRunningTicketOnSite;

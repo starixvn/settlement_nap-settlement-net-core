@@ -1,4 +1,5 @@
-﻿using Fanex.Data.Repository;
+﻿using Fanex.Data;
+using Fanex.Data.Repository;
 
 namespace Settlement.EventManagement.Criteria
 {
@@ -6,9 +7,12 @@ namespace Settlement.EventManagement.Criteria
     {
         public string MatchIds { get; set; }
 
+        [SpParam(Ignored = true)]
+        public string DbServer { get; set; }
+
         public override string GetSettingKey()
         {
-            return "NAP_Set_WaitingOtherSportSel";
+            return $"NAP_Set_WaitingOtherSportSel_{DbServer}";
         }
 
         public override bool IsValid()

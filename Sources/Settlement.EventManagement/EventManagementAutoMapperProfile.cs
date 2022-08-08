@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Settlement.EventManagement.Criteria;
 using Settlement.EventManagement.Models;
+using Settlement.EventManagement.Models.MultiSports;
 using Settlement.EventManagement.Requests;
 
 namespace Settlement.EventManagement

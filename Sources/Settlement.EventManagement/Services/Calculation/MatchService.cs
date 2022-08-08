@@ -1,13 +1,10 @@
-﻿using System;
-using Fanex.Caching;
-using Fanex.Data.Repository;
+﻿using Fanex.Data.Repository;
 using Settlement.Core.Services;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Match = Settlement.EventManagement.Models.Calculation.Match;
-using Microsoft.Extensions.Configuration;
 using Settlement.Core.Models;
 using Settlement.EventManagement.Criteria;
 using Settlement.Core.Constants;

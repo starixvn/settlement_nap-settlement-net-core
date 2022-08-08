@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Settlement.EventManagement.Models
+namespace Settlement.EventManagement.Models.MultiSports
 {
     internal class MatchesBySportTypeModel
     {

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Settlement.Core.Models;
 
-namespace Settlement.EventManagement.Models
+namespace Settlement.EventManagement.Models.MultiSports
 {
     public class MultiSportResult
     {

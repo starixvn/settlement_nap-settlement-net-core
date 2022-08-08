@@ -40,6 +40,14 @@ namespace Settlement.Core.Models
 
         public bool IsRunningFastMarket { get; set; }
 
+        public bool IsExistsConfirmedEarly { get; set; }
+
+        public bool IsExistEarlyBettypesParlay { get; set; }
+
+        public bool IsRunningEarlyBettypesParlay { get; set; }
+
+        public bool IsWaitingEarlyBettypesParlay { get; set; }
+
         public List<ChildMatchTicketInfos> SiteChildMatches { get; set; }
 
         public List<TicketCounts> TicketCounts { get; set; }

@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Match = Settlement.EventManagement.Models.Match;
+using Match = Settlement.EventManagement.Models.MultiSports.Match;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
 
-namespace Settlement.EventManagement.Services
+namespace Settlement.EventManagement.Services.MultiSports
 {
     public interface IExternalScoreService
     {

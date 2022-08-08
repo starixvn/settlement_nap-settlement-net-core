@@ -1,8 +1,9 @@
 ﻿using MessagePack;
 using System.Collections.Generic;
 using System.Linq;
+using Settlement.EventManagement.Models;
 
-namespace Settlement.EventManagement.Models
+namespace Settlement.EventManagement.Models.MultiSports
 {
     [MessagePackObject]
     public class LeagueModel

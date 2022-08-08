@@ -1,10 +1,34 @@
 ﻿using MessagePack;
 
-namespace Settlement.EventManagement.Models
+namespace Settlement.EventManagement.Models.MultiSports
 {
     [MessagePackObject]
-    public class MultiSportMatchWaiting
+    public class MultiSportMatch
     {
+        [Key("leagueId")]
+        public int LeagueId { get; set; }
+
+        [Key("sportName")]
+        public string SportName { get; set; }
+
+        [Key("leagueName")]
+        public string LeagueName { get; set; }
+
+        [Key("homeName")]
+        public string HomeName { get; set; }
+
+        [Key("awayName")]
+        public string AwayName { get; set; }
+
+        [Key("matchCode")]
+        public string MatchCode { get; set; }
+
+        [Key("kickOffTime")]
+        public string KickOffTime { get; set; }
+
+        [Key("showLink")]
+        public bool ShowLink { get; set; }
+
         [Key("matchId")]
         public int MatchId { get; set; }
 
@@ -112,5 +136,8 @@ namespace Settlement.EventManagement.Models
 
         [Key("isExistRunningTicketParlay")]
         public bool IsExistRunningTicketParlay { get; set; }
+
+        [Key("bestOfMap")]
+        public int BestOfMap { get; set; }
     }
 }
