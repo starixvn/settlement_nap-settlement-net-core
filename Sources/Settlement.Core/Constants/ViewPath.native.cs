@@ -27,5 +27,11 @@
         public const string ESports = "~/wwwroot/e-sports/index.cshtml";
 
         public const string Basketball = "~/wwwroot/basketball/index.cshtml";
+
+        public const string Badminton = "~/wwwroot/badminton/index.cshtml";
+
+        public const string Tennis = "~/wwwroot/tennis/index.cshtml";
+
+        public const string Cricket = "~/wwwroot/cricket/index.cshtml";
     }
 }

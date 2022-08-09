@@ -22,7 +22,8 @@ export class AppBaseComponent {
         const factory = getComponentFactory();
         this.component = this.container.createComponent(factory);
         const matchId = Number(UrlHelper.getUrlParameter('matchId'));
-        this.component.instance.getMatch(matchId);
+        const rootUrl = this.elementRef.nativeElement.getAttribute('root-url') ?? '';
+        this.component.instance.getMatch(matchId, rootUrl);
         return this.component;
     }
 }

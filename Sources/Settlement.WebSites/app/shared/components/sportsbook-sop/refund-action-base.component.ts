@@ -111,4 +111,16 @@ export class RefundActionBaseComponent {
             this.closePopupService.closePopup(matchId);
         }
     }
+
+    protected cloneResultDetail() {
+        this.resultDetails.forEach((map) => {
+            if (map.settlementStatusId === SettlementStatusId.Calculated) {
+                map.originalHomeValue = _.clone(map.homeValue);
+                map.originalAwayValue = _.clone(map.awayValue);
+            } else {
+                map.originalHomeValue = '0';
+                map.originalAwayValue = '0';
+            }
+        });
+    }
 }

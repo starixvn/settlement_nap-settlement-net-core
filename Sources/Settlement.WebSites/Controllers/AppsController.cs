@@ -101,6 +101,54 @@ namespace Settlement.WebSites.Controllers
             return SetView("Basketball - Refund", PagesType.Refund, ViewPath.Basketball);
         }
 
+        [HttpGet("tennis-recalculate")]
+        public IActionResult TennisRecalculate()
+        {
+            return SetView("Tennis - Calculation", PagesType.Recalculate, ViewPath.Tennis);
+        }
+
+        [HttpGet("tennis-refund")]
+        public IActionResult TennisRefund()
+        {
+            return SetView("Tennis - Refund", PagesType.Refund, ViewPath.Tennis);
+        }
+
+        [HttpGet("badminton-early")]
+        public IActionResult BadmintonEarly()
+        {
+            return SetView("Badminton - Early Settlement", PagesType.EarlySettle, ViewPath.Badminton);
+        }
+
+        [HttpGet("badminton-recalculate")]
+        public IActionResult BadmintonRecalculate()
+        {
+            return SetView("Badminton - Calculation", PagesType.Recalculate, ViewPath.Badminton);
+        }
+
+        [HttpGet("badminton-refund")]
+        public IActionResult BadmintonRefund()
+        {
+            return SetView("Badminton - Refund", PagesType.Refund, ViewPath.Badminton);
+        }
+
+        [HttpGet("cricket-early")]
+        public IActionResult CricketEarly()
+        {
+            return SetView("Cricket - Early Settlement", PagesType.EarlySettle, ViewPath.Cricket);
+        }
+
+        [HttpGet("cricket-recalculate")]
+        public IActionResult CricketRecalculate()
+        {
+            return SetView("Cricket - Calculation", PagesType.Recalculate, ViewPath.Cricket);
+        }
+
+        [HttpGet("cricket-refund")]
+        public IActionResult CricketRefund()
+        {
+            return SetView("Cricket - Refund", PagesType.Refund, ViewPath.Cricket);
+        }
+
         private ActionResult SetView(string title, string pageType, string viewName)
         {
             ViewBag.Environment = configuration.GetSection("Environment").Value;

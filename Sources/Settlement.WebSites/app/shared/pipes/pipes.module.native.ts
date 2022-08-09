@@ -7,6 +7,7 @@ import { ResultStatusPipe } from './result-status.pipe';
 import { TicketStatusPipe } from './ticket-status.pipe';
 import { ResultTypePipe } from './result-type.pipe';
 import { IntervalScorePipe } from './interval-score.pipe';
+import { ResultPipe } from './result.pipe';
 
 @NgModule({
     exports: [
@@ -18,6 +19,7 @@ import { IntervalScorePipe } from './interval-score.pipe';
         TicketStatusPipe,
         ResultTypePipe,
         IntervalScorePipe,
+        ResultPipe,
     ],
     declarations: [
         ScoreBySettlementPipe,
@@ -28,6 +30,7 @@ import { IntervalScorePipe } from './interval-score.pipe';
         TicketStatusPipe,
         ResultTypePipe,
         IntervalScorePipe,
+        ResultPipe,
     ],
 })
 export class PipesModule {

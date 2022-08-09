@@ -1,3 +1,3 @@
 export interface SportTemplate {
-    getMatch(matchId: number): void;
+    getMatch(matchId: number, rootUrl?: string): void;
 }

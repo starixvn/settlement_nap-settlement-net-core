@@ -1,0 +1,45 @@
+﻿<span toastContainer></span>
+<div class="padding" *ngIf="match">
+    <match-detail [match]="match" [isEarlySettlement]="false"></match-detail>
+    <div class="refund-actions">
+        <div class="normal-tickets">
+            <div class="icon">
+            </div>
+            Normal Tickets
+        </div>
+        <div *ngIf="hedgeMatchDetail" class="hedge-match">
+            <input type="checkbox" [(ngModel)]="applyHedgeMatch" id="ApplyHedgeMatch" />
+            <label for="ApplyHedgeMatch">Apply for hedge match '<strong>{{hedgeMatchDetail.matchCode}}</strong>'
+                also.</label>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Innings/Match</th>
+                    <th class="select-checkbox">
+                        Select to Proceed
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let map of match.resultDetails; let last=last;" [ngClass]="{'confirmed-refund': permission.isLeader && map.resultSettingData.isConfirmedRefund}" >
+                    <td class="inning-match">{{map.resourceId | resultNamePipe : match.matchDetail}}</td>
+                    <td [ngClass]="map.settlementStatusId | intervalBackground">
+                        <input type="checkbox" [(ngModel)]="map.checked" />
+                    </td>
+                </tr>
+
+                <tr>
+                    <td colspan="2">
+                        <button *ngIf="match.permission.isLeader"
+                            [ngClass]="{'btn btn-outline-primary button-confirmed': true}"
+                            [disabled]="selectedResources.length === 0" (click)="confirmRefund(hedgeMatchDetail, applyHedgeMatch)">
+                            Confirm/Undo-confirm Refund
+                        </button>
+                        <button [ngClass]="{'refund-button': true, 'button-disabled': selectedResources.length === 0}"
+                            [disabled]="selectedResources.length === 0" (click)="refund()">Refund</button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -8,6 +8,6 @@ namespace Settlement.Sportsbook.Aio.Constants
         public static readonly string Marked = "Marked";
         public static readonly string Calculated = "Calculated";
         public static readonly string Refunded = "Refunded";
-        public static readonly string NotIncluded = "Not Included";
+        public static readonly string NotIncluded = "Invalid";
     }
 }

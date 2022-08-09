@@ -1,0 +1,142 @@
+﻿<span toastContainer></span>
+<div *ngIf="match">
+    <div *ngIf="isReadyMatch">
+        <calculation-match-detail [match]="match" [apiUrl]="apiUrl"></calculation-match-detail>
+        <ticket-count [ticketCounts]="match.ticketCounts"></ticket-count>
+        <div class="calculation-actions">
+            <div *ngIf="hedgeMatchDetail" class="hedge-match">
+                <input type="checkbox" [(ngModel)]="applyHedgeMatch" id="ApplyHedgeMatch" />
+                <label for="ApplyHedgeMatch">Apply for hedge match '<strong>{{hedgeMatchDetail.matchCode}}</strong>'
+                    also.</label>
+            </div>
+            <div>
+                <table>
+                    <ng-template *ngTemplateOutlet="header"></ng-template>
+                    <ng-template *ngTemplateOutlet="body"></ng-template>
+                </table>
+            </div>
+            <div>
+                <resettle-checker [checked]="isReSettledTickets" (proceedEvent)="onResettleCheckboxChange($event)">
+                </resettle-checker>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="!isReadyMatch">
+        <not-ready-match></not-ready-match>
+    </div>
+</div>
+
+<ng-template #header>
+    <thead>
+        <tr>
+            <th rowspan="2" class="innings">Innings/Match</th>
+            <th rowspan="2" class="ticket-status">Ticket Status</th>
+            <th rowspan="2" colspan="2" class="map" *ngIf="canCalculate || canUncalculate">Final Score</th>
+            <th rowspan="2" class="map" [colSpan]="isTrader ? 2 : 1" *ngIf="isLeader || isTrader">Trader Score</th>
+            <th [colSpan]="2" class="map" *ngIf="isLeader && (canCalculate || canUncalculate)">Provider Score</th>
+            <th [colSpan]="(match.resultDetails[0].externalScores.length - 3) * 2"
+                *ngIf="canCalculate || canUncalculate">Outside Score</th>
+            <th rowspan="2" class="status">
+                Select to Proceed
+            </th>
+        </tr>
+        <tr>
+            <ng-container *ngFor=" let result of match.resultDetails[0].externalScores | slice:1; let i=index">
+                <th class="map" *ngIf="i < 2 && isLeader && (canCalculate || canUncalculate)">
+                    {{result.sourceName|externalSourceName}}</th>
+                <th class="map" *ngIf="i === 2 && (canCalculate || canUncalculate)" colspan="2">{{result.sourceName}}
+                </th>
+                <th class="map" colspan="2" *ngIf="i > 2 && (canCalculate || canUncalculate)">
+                    <div class="outside-source-text" [matTooltip]="getTextTooltip(result.sourceName, 12)">
+                        <a href="{{result.remark|externalLink}}" target="_blank"
+                            class="source-link">{{result.sourceName}}</a>
+                    </div>
+                </th>
+            </ng-container>
+        </tr>
+    </thead>
+</ng-template>
+
+<ng-template #body>
+    <tbody>
+        <tr *ngFor="let map of match.resultDetails; let i=index, let last=last"
+            [ngClass]="{'mismatched': map.isScoreMismatched, 'confirmed-refund': isLeader && map.resultSettingData.isConfirmedRefund}">
+            <td class="inning-match">{{map.resourceId | resultNamePipe : matchDetail}}</td>
+            <td [ngClass]="map.ticketStatus.toLowerCase()">{{map.ticketStatus}}
+            </td>
+            <td *ngIf="map.resourceId !== '00' && (canCalculate || canUncalculate)" colspan="2"
+                [ngClass]="map.settlementStatusId | intervalBackground">
+                <input type="text" [ngClass]="{'warning' :isErrorOnVerification(map)}" myOnlyInteger tabindex="{{i}}"
+                    [(ngModel)]="map.homeValue" maxlength='4' (change)="checkMapIsMatched(map)"
+                    [disabled]="!isLeader" />
+            </td>
+            <td *ngIf="map.resourceId === '00' && (canCalculate || canUncalculate)"
+                [ngClass]="map.settlementStatusId | intervalBackground">
+                <input type="text" [ngClass]="{'warning' :isErrorOnVerification(map)}"
+                    class="match-score-left final-score" myOnlyInteger [(ngModel)]="map.homeValue" tabindex="{{i}}"
+                    maxlength='4' (change)="checkMapIsMatched(map)" [disabled]="!isLeader" />
+            </td>
+            <td *ngIf="map.resourceId === '00' && (canCalculate || canUncalculate)"
+                [ngClass]="map.settlementStatusId | intervalBackground">
+                <input type="text" [ngClass]="{'warning' :isErrorOnVerification(map)}"
+                    class="match-score-right final-score" myOnlyInteger [(ngModel)]="map.awayValue" tabindex="{{i+1}}"
+                    maxlength='4' (change)="checkMapIsMatched(map)" [disabled]="!isLeader" />
+            </td>
+            <ng-container *ngFor="let result of map.externalScores; let x=index">
+                <ng-container *ngIf="isTrader && x == 0">
+                    <td *ngIf="map.resourceId !== '00'" colspan="2">
+                        <input type="text" [(ngModel)]="result.homeValue" (change)="changeTraderScore(map)" />
+                    </td>
+                    <td *ngIf="map.resourceId === '00'" colspan="1">
+                        <input type="text" myOnlyInteger class="match-score-left final-score" [(ngModel)]="result.homeValue"
+                            (change)="changeTraderScore(map)" />
+                    </td>
+                    <td *ngIf="map.resourceId === '00'" colspan="1">
+                        <input type="text" myOnlyInteger class="match-score-right final-score" [(ngModel)]="result.awayValue"
+                            (change)="changeTraderScore(map)" />
+                    </td>
+                </ng-container>
+                <ng-container *ngIf="canCalculate || canUncalculate">
+                    <td *ngIf="map.resourceId !== '00' && isLeader && ((x < 3 && x > 0) || ( x==0 && !isTrader))">
+                        {{result.homeValue | resultValuePipe}}
+                    </td>
+                    <td *ngIf="map.resourceId === '00' && isLeader && ((x < 3 && x > 0) || ( x==0 && !isTrader))">
+                        {{result.homeValue}}-{{result.awayValue}}
+                    </td>
+                </ng-container>
+                <ng-container *ngIf="x >= 3 && (canCalculate || canUncalculate)">
+                    <td *ngIf="map.resourceId !== '00'" colspan="2" [ngClass]="{'striped': x % 2 === 0}">
+                        <input type="text" myOnlyInteger [(ngModel)]="result.homeValue" (change)="verifyAndAutoFillScore(map)"
+                            id="outside-{{i+1}}-{{x-2}}-home" />
+                    </td>
+                    <td *ngIf="map.resourceId === '00'" colspan="1" [ngClass]="{'striped': x % 2 === 0}">
+                        <input type="text" myOnlyInteger class="match-score-left final-score" [(ngModel)]="result.homeValue"
+                            (change)="verifyAndAutoFillScore(map)" id="outside-{{i+1}}-{{x-2}}-home" />
+                    </td>
+                    <td *ngIf="map.resourceId === '00'" colspan="1" [ngClass]="{'striped': x % 2 === 0}">
+                        <input type="text" myOnlyInteger class="match-score-right final-score" [(ngModel)]="result.awayValue"
+                            (change)="verifyAndAutoFillScore(map)" id="outside-{{i+1}}-{{x-2}}-away" />
+                    </td>
+
+                </ng-container>
+            </ng-container>
+            <td>
+                <input type="checkbox" [id]="last ? 'match-winner-checkbox' : 'checkbox-inning-' + (i + 1)"
+                    [(ngModel)]="map.checked" (ngModelChange)="selectToProceed()" />
+            </td>
+        </tr>
+        <tr>
+            <td colSpan="100%" class="button-group">
+                <button class="button" *ngIf="match.permission.canCalculate" (click)="calculate()">Calculate</button>
+                <button *ngIf="match.permission.canUncalculate" [ngClass]="{'button': true, 'button-disabled': isDisabledUnCalculate}"
+                    [disabled]="isDisabledUnCalculate"
+                    (click)="uncalculate()">Uncalculate</button>
+                <button class="new-refund-button save-score" *ngIf="canCalculate || canUncalculate"
+                    [disabled]="isSaveScoreDisabled()" (click)="saveScore()">Save Score</button>
+                <button class="new-refund-button save-trader-score" *ngIf="isTrader" [disabled]="isSaveScoreDisabled()"
+                    (click)="saveTraderScore()">Save Trader Score</button>
+
+            </td>
+        </tr>
+    </tbody>
+</ng-template>

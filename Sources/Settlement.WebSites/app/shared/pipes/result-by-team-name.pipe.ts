@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 
 @Pipe({ name: 'resultByTeamName' })
 export class ResultByTeamNamePipe implements PipeTransform {
-    public transform(result: string, matchDetail: MatchDetail, betTypeGroup = 0) {
+    public transform(result: string, matchDetail: MatchDetail = null, betTypeGroup = 0) {
         if (!_.isEmpty(result)) {
             if (_.isEqual(result, 'H')) {
                 return matchDetail.homeName;

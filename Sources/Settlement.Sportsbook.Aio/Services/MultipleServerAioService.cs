@@ -55,7 +55,7 @@ namespace Settlement.Sportsbook.Aio.Services
             var resultDetails = fetchedResultDetails.ToList();
             MergeTicketsToResults(resultDetails, ticketDetails, sportType, criteria.SettleType);
 
-            return (resultDetails, ticketCount);
+            return (resultDetails.Where(result => result.TicketStatus != TicketStatus.NotIncluded).ToList(), ticketCount);
         }
 
         private void MergeTicketsToResults(List<Models.ResultDetail> resultDetails, List<Models.ResultDetail> ticketDetails, int sportType, string settleType)
@@ -179,6 +179,7 @@ namespace Settlement.Sportsbook.Aio.Services
         public async Task<Result> Settle(SettleRequest request)
         {
             var criteria = createQueryService.QuerySettle(request);
+            await SetUnderSettleFlag(request, criteria);
             var result = await Execute(criteria);
             var childMatchIds = request.SportType == SportType.Cricket && result.ErrCode == 0
                 ? await GetChildMatchIds(request.MatchId, criteria.Action, criteria.SelectedResources)
@@ -193,6 +194,16 @@ namespace Settlement.Sportsbook.Aio.Services
             };
 
             return settleResult;
+        }
+
+        private async Task SetUnderSettleFlag(SettleRequest request, SettleCriteria criteria)
+        {
+            var actionToSetFlag = new List<string> { SettleType.Calculate, SettleType.Undo, SettleType.Refund };
+            const string resourceIdToSetFlag = "00";
+            if (actionToSetFlag.Contains(request.ActionName) && request.SelectedResources.Any(resource => resource.ResourceId == resourceIdToSetFlag))
+            {
+                await scaleOutSettleService.UpdateUnderSettlementFlag(criteria.MatchId, criteria.AdminId, criteria.Action);
+            }
         }
 
         private async Task<Result> Execute(SettleCriteria criteria)

@@ -161,6 +161,7 @@ export const Language = {
             mismatchedResult: 'WARNING! There are inconsistent results! Please check inputted values.'
         },
         saveScore: 'Are you sure you want to save changes made to selected Outside Scores?',
+        invalidResultByBetType: 'WARNING! Cannot continue due to invalid value inputted. Please check and try again.'
     },
     intervalsAndMatch: {
         matchNotSelected: "WARNING! Changed values may affect other results. Do you want to select Match/Full Time score also?",
