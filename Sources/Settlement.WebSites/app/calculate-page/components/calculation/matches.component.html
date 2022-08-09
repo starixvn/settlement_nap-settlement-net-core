@@ -66,7 +66,7 @@
                 <span [class]="match.goalIcon.halfTimeHomeGoal ?? ''"></span>
               </td>
               <td class="score">{{match.halfTimeHomeScore ?? '-'}}</td>
-              <td class="score">{{match.finalHomeScore ?? '-'}}</td>
+              <td class="final-score  score">{{match.finalHomeScore ?? '-'}}</td>
               <td rowspan="2" class="auto-status" [ngClass]="getStatusBackground(match.earlySettleStatus, match.eventStatus)">
                 <div *ngIf="match.earlySettleStatus.toLowerCase() === 'n/a'; else earlySettle">N/A</div>
                 <ng-template #earlySettle>
@@ -124,7 +124,7 @@
                 <span [class]="match.goalIcon.halfTimeAwayGoal ?? ''"></span>
               </td>
               <td class="score">{{match.halfTimeAwayScore ?? '-'}}</td>
-              <td class="score">{{match.finalAwayScore ?? '-'}}</td>
+              <td class="final-score score">{{match.finalAwayScore ?? '-'}}</td>
             </tr>
           </ng-container>
         </tbody>
