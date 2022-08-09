@@ -80,5 +80,15 @@ namespace Settlement.Sportsbook.Aio.Models
         public int BetSettledCount { get; set; }
 
         public int BetRefundedCount { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            return obj is ResultDetail result && result.ResourceId == ResourceId;
+        }
+
+        public override int GetHashCode()
+        {
+            return Map;
+        }
     }
 }

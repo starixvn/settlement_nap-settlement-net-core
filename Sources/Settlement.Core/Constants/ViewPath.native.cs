@@ -25,5 +25,7 @@
         public const string Soccer = "~/wwwroot/soccer/index.cshtml";
 
         public const string ESports = "~/wwwroot/e-sports/index.cshtml";
+
+        public const string Basketball = "~/wwwroot/basketball/index.cshtml";
     }
 }

@@ -66,6 +66,11 @@ export class AioService {
         return this.httpRequestService.postJson(query, `api/void-bet/update`);
     }
 
+    public getTicketInfo(query: object) {
+        const newApiUrl =  `api/void-bet/get-ticket`;
+        return this.httpRequestService.postJson(query, newApiUrl);
+    }
+
     public verifyChangedSettledTickets(resultDetails: GeneralResultDetail[], query: object): Observable<boolean> {
         const calculated = "Complete";
         const refunded = "Refund";

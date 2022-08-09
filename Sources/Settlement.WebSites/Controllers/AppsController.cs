@@ -83,6 +83,24 @@ namespace Settlement.WebSites.Controllers
             return SetView("E-Sports - Refund", PagesType.Refund, ViewPath.ESports);
         }
 
+        [HttpGet("basketball-early")]
+        public IActionResult BasketballEarly()
+        {
+            return SetView("Basketball - Early Settlement", PagesType.EarlySettle, ViewPath.Basketball);
+        }
+
+        [HttpGet("basketball-recalculate")]
+        public IActionResult BasketballRecalculate()
+        {
+            return SetView("Basketball - Calculation", PagesType.Recalculate, ViewPath.Basketball);
+        }
+
+        [HttpGet("basketball-refund")]
+        public IActionResult BasketballRefund()
+        {
+            return SetView("Basketball - Refund", PagesType.Refund, ViewPath.Basketball);
+        }
+
         private ActionResult SetView(string title, string pageType, string viewName)
         {
             ViewBag.Environment = configuration.GetSection("Environment").Value;
