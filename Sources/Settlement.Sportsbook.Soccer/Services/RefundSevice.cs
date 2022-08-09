@@ -95,14 +95,13 @@ namespace Settlement.Sportsbook.Soccer.Services
                 return validationResult;
             }
 
-            await UpdateMatchInfo(criteria);
-            ExecuteRefund(criteria);
-            RefundHedgeMatch(request, criteria);
+            await ExecuteRefund(criteria);
+            await RefundHedgeMatch(request, criteria);
 
             return validationResult;
         }
 
-        private void RefundHedgeMatch(RefundRequest request, RefundCriteria criteria)
+        private async Task RefundHedgeMatch(RefundRequest request, RefundCriteria criteria)
         {
             if (request.IsApplyHedging)
             {
@@ -114,7 +113,7 @@ namespace Settlement.Sportsbook.Soccer.Services
                 }
 
                 criteria.MatchId = request.HedgeMatchId;
-                ExecuteRefund(criteria);
+                await ExecuteRefund(criteria);
             }
         }
 
@@ -172,8 +171,9 @@ namespace Settlement.Sportsbook.Soccer.Services
             await scaleOutSettleService.UpdateMatchInfo(requestUpdateInfo);
         }
 
-        private void ExecuteRefund(RefundCriteria criteria)
+        private async Task ExecuteRefund(RefundCriteria criteria)
         {
+            await UpdateMatchInfo(criteria);
             var servers = configuration.GetSection("SiteDBServer").Get<List<string>>();
             criteria.BroadcastSessionId = Guid.NewGuid().ToString();
             foreach (var server in servers)

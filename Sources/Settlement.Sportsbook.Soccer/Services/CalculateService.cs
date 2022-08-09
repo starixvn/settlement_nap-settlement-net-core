@@ -59,14 +59,12 @@ namespace Settlement.Sportsbook.Soccer.Services
             {
                 return matchChecking;
             }
-
-            await UpdateMatchInfo(criteria);
-            Execute(criteria);
+            await ExecuteAsync(criteria);
             await RefundChildMatch(criteria);
             if (request.IsApplyHedging)
             {
                 criteria.MatchId = request.HedgeMatchId;
-                Execute(criteria);
+                await ExecuteAsync(criteria);
             }
 
             return matchChecking;
@@ -81,13 +79,12 @@ namespace Settlement.Sportsbook.Soccer.Services
                 return requestChecking;
             }
 
-            await UpdateMatchInfo(criteria);
-            Execute(criteria);
+            await ExecuteAsync(criteria);
 
             if (request.IsApplyHedging)
             {
                 criteria.MatchId = request.HedgeMatchId;
-                Execute(criteria);
+                await ExecuteAsync(criteria);
             }
 
             return requestChecking;
@@ -106,8 +103,9 @@ namespace Settlement.Sportsbook.Soccer.Services
             };
         }
 
-        private void Execute(CalculateCriteria criteria)
+        private async Task ExecuteAsync(CalculateCriteria criteria)
         {
+            await UpdateMatchInfo(criteria);
             criteria.BroadcastSessionId = Guid.NewGuid().ToString();
             foreach (var server in appSettingsKey.SiteDbServer)
             {
