@@ -155,6 +155,11 @@
       <Setting Key="Calculate_DBSID01" SpName="NAP_Admin_Settlement_1_Push_UAT1" DbName="DBSID01.bodb02.bodbAdminNet" />
     </Function>
 
+    <Function Name="CalculateMP">
+      <Setting Key="CalculateMP_DBTXN" SpName="NAP_Admin_Settlement_MP_Push" DbName="DBTXN.bodb02.bodbAdminNet" />
+      <Setting Key="CalculateMP_DBSID01" SpName="NAP_Admin_Settlement_MP_Push" DbName="DBSID01.bodb02.bodbAdminNet" />
+    </Function>
+
     <Function Name="NAP_Admin_Settlement_Validation_Ticket">
       <Setting Key="NAP_Admin_Settlement_Validation_Ticket_DBTXN" SpName="NAP_Admin_Settlement_Validation_Ticket_UAT1" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="NAP_Admin_Settlement_Validation_Ticket_DBSID01" SpName="NAP_Admin_Settlement_Validation_Ticket_UAT1" DbName="DBSID01.bodb02.bodbAdminNet" />

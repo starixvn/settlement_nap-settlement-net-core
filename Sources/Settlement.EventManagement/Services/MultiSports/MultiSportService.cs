@@ -283,13 +283,21 @@ namespace Settlement.EventManagement.Services.MultiSports
             criteria.Action = ActionType.CalculateAll;
             criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
 
-            await repository.ExecuteAsync(criteria);
-
-            return new Result
+            foreach (var server in appSettingsKey.SiteDbServer)
             {
-                ErrCode = criteria.ErrCode,
-                ErrMsg = criteria.ErrMsg
-            };
+                criteria.DbServer = server;
+                await repository.ExecuteAsync(criteria);
+                if (criteria.ErrCode > 0)
+                {
+                    return new Result
+                    {
+                        ErrCode = criteria.ErrCode,
+                        ErrMsg = criteria.ErrMsg
+                    };
+                }
+            }
+
+            return new Result();
         }
     }
 }

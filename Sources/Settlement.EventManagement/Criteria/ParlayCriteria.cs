@@ -1,4 +1,5 @@
-﻿using Fanex.Data.Repository;
+﻿using Fanex.Data;
+using Fanex.Data.Repository;
 
 namespace Settlement.EventManagement.Criteria
 {
@@ -16,9 +17,12 @@ namespace Settlement.EventManagement.Criteria
 
         public string ErrMsg { get; set; }
 
+        [SpParam(Ignored = true)]
+        public string DbServer { get; set; }
+
         public override string GetSettingKey()
         {
-            return "CalculateMP";
+            return $"CalculateMP_{DbServer}";
         }
 
         public override bool IsValid()
