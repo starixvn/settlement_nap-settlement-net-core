@@ -141,7 +141,8 @@ namespace Settlement.FastMarkets.Services
                 MatchId = criteria.MatchId,
                 Action = criteria.Action,
                 SpName = criteria.SpName,
-                Mode = fastMarketMode
+                Mode = fastMarketMode,
+                SelectedResources = criteria.Results
             }; 
 
             var validationResult = await scaleOutSettleService.ValidateEventAndTicket(validationRequest);
