@@ -102,15 +102,16 @@ namespace Settlement.Sportsbook.Soccer.GetMatch.Services
             foreach (var result in results)
             {
                 var ticketDetail = ticketDetails.FirstOrDefault(detail => detail.ResourceId == result.ResourceId);
-                result.TicketStatus = CreateTicketStatus(ticketDetail);
+                var betType = result.ResourceId.Substring(0, 3);
+                result.TicketStatus = CreateTicketStatus(ticketDetail, betType);
             }
         }
 
-        private string CreateTicketStatus(ResultDetailModel ticketDetail)
+        private string CreateTicketStatus(ResultDetailModel ticketDetail, string betType)
         {
             if (ticketDetail == null)
             {
-                return TicketStatus.NotIncluded;
+                return EarlyBetTypes.SpecialBetTypes.Contains(betType) ? TicketStatus.NoTicket : TicketStatus.NotIncluded;
             }
 
             if (ticketDetail.InRunning > 0)
@@ -128,7 +129,6 @@ namespace Settlement.Sportsbook.Soccer.GetMatch.Services
                 return TicketStatus.Marked;
             }
 
-            var betType = ticketDetail.ResourceId.Substring(0, 3);
             if (EarlyBetTypes.SpecialBetTypes.Contains(betType) && ticketDetail.BetCount == 0)
             {
                 return TicketStatus.NoTicket;
