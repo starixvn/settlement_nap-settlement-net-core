@@ -250,8 +250,8 @@
     </Function>
 
     <Function Name="NAP_Set_MatchSelDetail_Resources_Ticket">
-      <Setting Key="NAP_Set_MatchSelDetail_Resources_Ticket_DBTXN" SpName="NAP_Set_MatchSelDetail_Resources" DbName="DBTXN.bodb02.bodbAdminNet" />
-      <Setting Key="NAP_Set_MatchSelDetail_Resources_Ticket_DBSID01" SpName="NAP_Set_MatchSelDetail_Resources" DbName="DBSID01.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Set_MatchSelDetail_Resources_Ticket_DBTXN" SpName="NAP_Set_MatchSelDetail_Resources_Ticket" DbName="DBTXN.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Set_MatchSelDetail_Resources_Ticket_DBSID01" SpName="NAP_Set_MatchSelDetail_Resources_Ticket" DbName="DBSID01.bodb02.bodbAdminNet" />
     </Function>
 
     <Function Name="NAP_Set_MatchOtherSportsSel">
