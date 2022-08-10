@@ -1,4 +1,5 @@
 ﻿using Kaden.Extensions;
+using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using System;
 using System.Collections.Generic;
@@ -45,6 +46,16 @@ namespace Settlement.Sportsbook.Soccer.Models
         public int BetMarkedCount { get; set; }
 
         public int BetCount { get; set; }
+
+        public virtual bool IsNotExistedValue
+        {
+            get
+            {
+                return SettlementStatusId == SettlementStatus.Running && string.IsNullOrWhiteSpace(HomeValue) && string.IsNullOrWhiteSpace(AwayValue);
+            }
+        }
+
+        public bool IsSpecialBettype { get; set; }
 
         public override bool Equals(object obj)
         {
