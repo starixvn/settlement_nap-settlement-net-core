@@ -105,12 +105,6 @@ namespace Settlement.WebSites
                                             "http://localhost:55201",
                                             "http://localhost:58793",
 
-                                            "https://settlement.nexdev.net",
-                                            "https://settlement-netcore.nexdev.net",
-                                            "https://settlement-netcore-v1.nexdev.net",
-                                            "https://settlement-netcore-v2.nexdev.net",
-                                            "https://settlement-netcore-v3.nexdev.net",
-
                                             "https://nap-settlement.playthefun.com",
                                             "https://napsettlement.playthefun.com",
                                             "https://napsettlementcore.playthefun.com",

@@ -9,7 +9,9 @@
         "/home/log/", "/home/number-game/", "/home/happy5/", "/home/bet-builder/", 
         "/home/move-running-tickets/", "/home/move-tickets/",
         "/home/provider-source/", "/home/outside-source/", "/home/multi-sports/",
-        "/home/calculation/"
+        "/home/calculation/",
+        "/Settlement/Sportsbook/", "/Settlement/AutoPayout/"
+
     };
     var netCoreRootUrl = ViewBag.NetCoreRootUrl;
     var rootUrl = ViewBag.RootUrl;
@@ -47,7 +49,24 @@
 
                 if (item.Count == 0)
                 {
-                    var menuUrl = newListPages.Any(n => n.Contains(menuItem.Url)) ? $"{netCoreRootUrl}{menuItem.Url}" : $"{rootUrl}{menuItem.Url}";
+                    var menuUrl = $"{rootUrl}{menuItem.Url}";
+                    if (newListPages.Any(n => n.Contains(menuItem.Url)))
+                    {
+                        if (menuItem.Url.Equals("/Settlement/Sportsbook/"))
+                        {
+                            menuUrl = $"{netCoreRootUrl}/home/calculation";
+                        }
+                        else if (menuItem.Url.Equals("/Settlement/AutoPayout/"))
+                        {
+
+                            menuUrl = $"{netCoreRootUrl}/home/auto-calculation";
+                        }
+                        else
+                        {
+                            menuUrl = $"{netCoreRootUrl}{menuItem.Url}";
+                        }
+                    }
+
                     <li class="@className">
                        <a href="@menuUrl" id="@(menuItem.Name.Replace(" ", string.Empty))-menu">
                                 @menuItem.Name
