@@ -13,7 +13,6 @@ namespace Settlement.FastMarkets
             CreateMap<UpdateWaterBreakSettingRequest, UpdateWaterBreakSettingCriteria>();
             CreateMap<UpdateWaterBreakSettingRequest, WriteLogUpdateWaterBreakCriteria>()
                 .ForMember(dest => dest.UserId, map => map.MapFrom(src => src.AdminId));
-            CreateMap<GetLastestResultRequest, GetLastestResultCriteria>();
             CreateMap<GetTimeMachineResultRequest, GetTimeMachineResultCriteria>();
         }
     }

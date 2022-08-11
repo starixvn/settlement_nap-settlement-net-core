@@ -109,7 +109,6 @@
     <Setting Key="NAP_Set_MatchSelInfo_Auto_1s" SpName="NAP_Set_MatchSelInfo_Auto_1s" DbName="DBPRO.bodb02.bodbAdminNet" />
 
     <Setting Key="NAP_Set_FastMarket_ResultDetailUpd" SpName="NAP_Set_FastMarket_ResultDetailUpd" DbName="DBPRO.bodb02.bodbAdminNet" />
-    <Setting Key="NAP_Set_FastMarket_MatchSelDetail_ReCal" SpName="NAP_Set_FastMarket_MatchSelDetail_ReCal" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_FastMarket_GoalSequenceSel" SpName="NAP_Set_FastMarket_GoalSequenceSel" DbName="DBPRO.bodb02.bodbAdminNet" />
   </Function>
 

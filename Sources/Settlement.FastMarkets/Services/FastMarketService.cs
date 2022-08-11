@@ -183,10 +183,13 @@ namespace Settlement.FastMarkets.Services
 
         public async Task<List<FastMarketResult>> GetLastestResult(GetLastestResultRequest request)
         {
-            var criteria = mapper.Map<GetLastestResultRequest, GetLastestResultCriteria>(request);
-            var result = await repository.FetchAsync<FastMarketResult>(criteria);
+            var criteria = new GetFastMarketMatchDetailCriteria { MatchId = request.MatchId };
 
-            return result.ToList();
+            var mappingTypes = new[] { typeof(EventCounter), typeof(string), typeof(FastMarketResult), typeof(ResultDetail) };
+            var fetchedData = await repository.FetchMultipleAsync(criteria, mappingTypes);
+            var result = fetchedData[2].Cast<FastMarketResult>().ToList();
+
+            return result;
         }
 
         public async Task<List<TimeMachineResult>> GetTimeMachineResult(GetTimeMachineResultRequest request)
