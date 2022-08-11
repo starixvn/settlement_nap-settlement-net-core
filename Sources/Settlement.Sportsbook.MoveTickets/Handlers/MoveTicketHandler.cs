@@ -19,11 +19,13 @@ namespace Settlement.Sportsbook.MoveTickets.Handlers
     {
         private readonly IMoveTicketService moveTicketService;
         private readonly PermissionService permissionService;
+        private readonly MoveTicketMultipleServerService moveTicketMultipleServerService;
 
-        public MoveTicketHandler(IMoveTicketService moveTicketService, PermissionService permissionService)
+        public MoveTicketHandler(IMoveTicketService moveTicketService, PermissionService permissionService, MoveTicketMultipleServerService moveTicketMultipleServerService)
         {
             this.moveTicketService = moveTicketService;
             this.permissionService = permissionService;
+            this.moveTicketMultipleServerService = moveTicketMultipleServerService;
         }
 
         public async Task<MultiSportModel> Handle(GetMatchRequest request, CancellationToken cancellationToken)
@@ -35,14 +37,14 @@ namespace Settlement.Sportsbook.MoveTickets.Handlers
             };
         }
 
-        public async Task<Result> Handle(MoveTicketRequest request, CancellationToken cancellationToken) => await moveTicketService.MoveTicket(request);
+        public async Task<Result> Handle(MoveTicketRequest request, CancellationToken cancellationToken) => await moveTicketMultipleServerService.MoveTicket(request);
 
         public async Task<List<ChildMatch>> Handle(GetChildMatchRequest request, CancellationToken cancellationToken) => await moveTicketService.GetChildMatch(request);
 
-        public async Task<Result> Handle(ValidateMatchesRequest request, CancellationToken cancellationToken) => await moveTicketService.ValidateMovingRunningTickets(request);
+        public async Task<Result> Handle(ValidateMatchesRequest request, CancellationToken cancellationToken) => await moveTicketMultipleServerService.ValidateMovingRunningTickets(request);
 
         public async Task<List<MoveTicketsMatchDetail>> Handle(GetMoveTicketsMatchesRequest request, CancellationToken cancellationToken) => await moveTicketService.GetMoveTicketsMatches(request);
 
-        public async Task<Result> Handle(MoveRunningTicketsRequest request, CancellationToken cancellationToken) => await moveTicketService.MoveRunningTickets(request);
+        public async Task<Result> Handle(MoveRunningTicketsRequest request, CancellationToken cancellationToken) => await moveTicketMultipleServerService.MoveRunningTickets(request);
     }
 }

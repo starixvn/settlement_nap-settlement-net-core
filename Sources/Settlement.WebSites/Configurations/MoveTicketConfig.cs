@@ -15,6 +15,10 @@ namespace Settlement.WebSites.Configurations
             services.AddTransient<IMoveTicketService, MoveTicketServiceImp>();
             services.AddTransient<IScoreService, ScoreServiceImp>();
             services.AddTransient<IScoreSetService, ScoreSetServiceImp>();
+            services.AddTransient<CompareMatchService, CompareMatchServiceImp>();
+            services.AddTransient<MoveTicketMultipleServerService, MoveTicketMultipleServerServiceImp>();
+            services.AddTransient<NewInfoMatchService, NewInfoMatchServiceImp>();
+            services.AddTransient<SiteMatchService, SiteMatchServiceImp>();
         }
 
         public static void ConfigMoveTicketMediator(this IServiceCollection services)

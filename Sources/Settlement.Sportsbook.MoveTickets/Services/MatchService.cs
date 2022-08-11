@@ -2,12 +2,17 @@
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Settlement.Sportsbook.MoveTickets.Services
 {
     public interface IMatchService
     {
         List<Match> GetScoreForMatchBySportType(List<Match> matches, List<ResultDetail> resultDetails, int sportType, int groupSport);
+
+        List<Match> MergeMatches(List<Match> baseMatches, List<Match> siteMatches);
+
+        List<Match> SetNewMatchInfo(List<Match> matches, List<ResultDetail> listResultDetail);
     }
 
     public class MatchServiceImp : IMatchService
@@ -16,12 +21,20 @@ namespace Settlement.Sportsbook.MoveTickets.Services
 
         private readonly IRefDataService refDataService;
 
+        private readonly CompareMatchService compareMatchService;
+
+        private readonly NewInfoMatchService newInfoMatchService;
+
         public MatchServiceImp(
             IMatchResultDetailService matchResultDetailService,
-            IRefDataService refDataService)
+            IRefDataService refDataService,
+            CompareMatchService compareMatchService,
+            NewInfoMatchService newInfoMatchService)
         {
             this.matchResultDetailService = matchResultDetailService;
             this.refDataService = refDataService;
+            this.compareMatchService = compareMatchService;
+            this.newInfoMatchService = newInfoMatchService;
         }
 
         public List<Match> GetScoreForMatchBySportType(List<Match> matches, List<ResultDetail> resultDetails, int sportType, int groupSport)
@@ -38,6 +51,48 @@ namespace Settlement.Sportsbook.MoveTickets.Services
             }
 
             return matches;
+        }
+
+        public List<Match> SetNewMatchInfo(List<Match> matches, List<ResultDetail> listResultDetail)
+        {
+            foreach (var match in matches)
+            {
+                var listSourceByMatchId = listResultDetail.Where(m => m.MatchId == match.MatchId && m.SourceId != SourceType.Normal).ToList();
+
+                newInfoMatchService.TicketInfo(match);
+                match.NewEventStatus = newInfoMatchService.NewEventStatus(match);
+                match.EventStatusColor = newInfoMatchService.EventStatusColor(match);
+                match.EarlySettleStatus = newInfoMatchService.EarlySettlementStatus(match);
+                match.RefDataService = refDataService;
+            }
+
+            return matches;
+        }
+
+        public List<Match> MergeMatches(List<Match> baseMatches, List<Match> siteMatches)
+        {
+            var peekNewMatches = siteMatches.Except(baseMatches).ToList();
+
+            if (peekNewMatches.Any())
+            {
+                baseMatches.AddRange(peekNewMatches);
+            }
+
+            AddSiteInfo(baseMatches, siteMatches);
+
+            return baseMatches;
+        }
+
+        private void AddSiteInfo(List<Match> baseMatches, List<Match> siteMatches)
+        {
+            foreach (var match in baseMatches)
+            {
+                var matchSiteInfo = compareMatchService.GetDifferentMatchSiteInfo(match, siteMatches);
+                if (matchSiteInfo != null)
+                {
+                    match.SiteMatch.Add(matchSiteInfo);
+                }
+            }
         }
     }
 }
