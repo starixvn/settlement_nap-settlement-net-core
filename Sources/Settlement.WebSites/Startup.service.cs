@@ -141,10 +141,12 @@ namespace Settlement.WebSites
         private void ConfigureRedis(IServiceCollection services)
         {
             var redisConfig = Configuration.GetSection("AuthSettings:RedisConfig").Value;
-            var redis = ConnectionMultiplexer.Connect(redisConfig);
+            var redisMultiplexer = ConnectionMultiplexer.Connect(redisConfig);
 
             services.AddDataProtection()
-                .PersistKeysToStackExchangeRedis(redis, "Fanex.Settlement-ProtectionKeys");
+                .PersistKeysToStackExchangeRedis(redisMultiplexer , "Fanex.Settlement-ProtectionKeys");
+
+            services.AddSingleton(redisMultiplexer);
 
             services.AddStackExchangeRedisCache(options =>
             {
