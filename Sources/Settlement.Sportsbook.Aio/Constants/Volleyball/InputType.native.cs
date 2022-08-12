@@ -8,8 +8,8 @@ namespace Settlement.Sportsbook.Aio.Constants.Volleyball
 {
     public static class InputType
     {
-        public const int CoupleScoreId = 0;
-        public const int HomeAwayNoneId = 1;
+        public const int HomeAwayNoneId = 0;
+        public const int CoupleScoreId = 1;
         public const int HomeAwayId = 2;
         public const int YesNoId = 3;
 
