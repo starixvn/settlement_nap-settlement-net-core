@@ -179,40 +179,41 @@ namespace Settlement.Sportsbook.Aio.Services
         public async Task<Result> Settle(SettleRequest request)
         {
             var criteria = createQueryService.QuerySettle(request);
-            await SetUnderSettleFlag(request, criteria);
-            var result = await Execute(criteria);
+            var result = await Execute(criteria, request.SelectedResources);
             var childMatchIds = request.SportType == SportType.Cricket && result.ErrCode == 0
                 ? await GetChildMatchIds(request.MatchId, criteria.Action, criteria.SelectedResources)
                 : string.Empty;
 
             var settleResult = new Result
             {
-                ErrCode = criteria.ErrCode,
-                ErrMsg = criteria.ErrMsg,
+                ErrCode = result.ErrCode,
+                ErrMsg = result.ErrMsg,
                 ChildMatchIds = childMatchIds,
-                ServiceCommand = criteria.ServiceCommand
+                ServiceCommand = result.ServiceCommand
             };
 
             return settleResult;
         }
 
-        private async Task SetUnderSettleFlag(SettleRequest request, SettleCriteria criteria)
+        private async Task SetUnderSettleFlag(SettleCriteria criteria, List<ResourceItem> selectedResources)
         {
             var actionToSetFlag = new List<string> { SettleType.Calculate, SettleType.Undo, SettleType.Refund };
             const string resourceIdToSetFlag = "00";
-            if (actionToSetFlag.Contains(request.ActionName) && request.SelectedResources.Any(resource => resource.ResourceId == resourceIdToSetFlag))
+            if (actionToSetFlag.Contains(criteria.Action) && selectedResources.Any(resource => resource.ResourceId == resourceIdToSetFlag))
             {
                 await scaleOutSettleService.UpdateUnderSettlementFlag(criteria.MatchId, criteria.AdminId, criteria.Action);
             }
         }
 
-        private async Task<Result> Execute(SettleCriteria criteria)
+        private async Task<Result> Execute(SettleCriteria criteria, List<ResourceItem> selectedResources)
         {
             var requestChecking = await ValidateBeforeExecute(criteria);
             if (requestChecking.ErrCode > 0)
             {
                 return requestChecking;
             }
+
+            await SetUnderSettleFlag(criteria, selectedResources);
 
             await UpdateMatchInfo(criteria);
 
@@ -283,7 +284,7 @@ namespace Settlement.Sportsbook.Aio.Services
                 {
                     criteria.MatchId = match.MatchId;
                     criteria.SelectedResources = createQueryService.CreateResourceChildMatch(match);
-                    var result = await Execute(criteria);
+                    var result = await Execute(criteria, request.SelectedResources);
                     createQueryService.WriteLogChildMatch(criteria, result);
                 }
             }
@@ -296,7 +297,7 @@ namespace Settlement.Sportsbook.Aio.Services
                 foreach (var match in listChildMatch)
                 {
                     criteria.MatchId = int.Parse(match);
-                    await Execute(criteria);
+                    await Execute(criteria, request.SelectedResources);
                 }
             }
 
