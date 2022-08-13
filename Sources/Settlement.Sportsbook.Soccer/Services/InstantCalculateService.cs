@@ -12,6 +12,8 @@ using Settlement.Sportsbook.Soccer.Requests;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
+using Fanex.Settlement.ScaleOut.Request;
+using Fanex.Settlement.ScaleOut.Services;
 
 namespace Settlement.Sportsbook.Soccer.Services
 {
@@ -38,6 +40,8 @@ namespace Settlement.Sportsbook.Soccer.Services
 
         private readonly IInstantResourceService instantResourceService;
 
+        private readonly ScaleOutSettleService scaleOutSettleService;
+
         private readonly AppSettingsKey appSettingsKey;
 
         public InstantCalculateServiceImp(
@@ -47,7 +51,8 @@ namespace Settlement.Sportsbook.Soccer.Services
             IHttpContextAccessor accessor,
             XmlConvertService xmlConvertService,
             IInstantResourceService instantResourceService,
-            IOptions<AppSettingsKey> appSettingsKey)
+            IOptions<AppSettingsKey> appSettingsKey,
+            ScaleOutSettleService scaleOutSettleService)
         {
             this.repository = repository;
             this.currentSession = currentSession;
@@ -56,18 +61,34 @@ namespace Settlement.Sportsbook.Soccer.Services
             this.xmlConvertService = xmlConvertService;
             this.instantResourceService = instantResourceService;
             this.appSettingsKey = appSettingsKey.Value;
+            this.scaleOutSettleService = scaleOutSettleService;
         }
 
         public async Task<MatchGoalRecordModel> CalculateCheckingInfo(MatchCheckingRequest request)
         {
             var criteria = mapper.Map<MatchCheckingRequest, InstantCheckingCriteria>(request);
+            var matchGoalRecord = new MatchGoalRecordModel();
 
-            var matchChecking = await repository.GetAsync<MatchGoalRecordModel>(criteria);
+            foreach (var server in appSettingsKey.SiteDbServer)
+            {
+                criteria.DbServer = server;
+                var matchChecking = await repository.GetAsync<MatchGoalRecordModel>(criteria);
+                if (criteria.ErrCode > 0)
+                {
+                    matchChecking.ErrCode = criteria.ErrCode;
+                    matchChecking.ErrMsg = criteria.ErrMsg;
 
-            matchChecking.ErrCode = criteria.ErrCode;
-            matchChecking.ErrMsg = criteria.ErrMsg;
+                    return matchChecking;
+                }
+                else
+                {
+                    matchGoalRecord.GoalRecord = matchChecking.GoalRecord;
+                    matchGoalRecord.IsExistFgNg = matchGoalRecord.IsExistFgNg || matchChecking.IsExistFgNg;
+                    matchGoalRecord.IsExistHtFgNg = matchGoalRecord.IsExistHtFgNg || matchChecking.IsExistHtFgNg;
+                }
+            }
 
-            return matchChecking;
+            return matchGoalRecord;
         }
 
         public async Task<UndoCheckingModel> UndoCheckingScore(int matchId)
@@ -87,17 +108,24 @@ namespace Settlement.Sportsbook.Soccer.Services
             criteria.AdminId = currentSession.UserId;
             criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
 
+            var result = await ValidateBeforeExecute(request);
+            if (result.ErrCode == 0)
+            {
+                await UpdateResult(request);
+                await UpdateMatchInfo(criteria, request.IsHalfTime);
+                Execute(criteria);
+            }
+
+            return result;
+        }
+
+        private void Execute(PushInstantCalculationCriteria criteria)
+        {
             foreach (var server in appSettingsKey.SiteDbServer)
             {
                 criteria.DbServer = server;
-                await repository.ExecuteAsync(criteria);
+                repository.Execute(criteria);
             }
-
-            return new Result
-            {
-                ErrCode = criteria.ErrCode,
-                ErrMsg = criteria.ErrMsg
-            };
         }
 
         private string GetResourceResultInstantCalculate(InstantCalculationRequest request)
@@ -129,6 +157,71 @@ namespace Settlement.Sportsbook.Soccer.Services
             return resources.Count > 0
                 ? xmlConvertService.Serialize(new XmlResults { Resources = resources })
                 : string.Empty;
+        }
+
+        private async Task<Result> ValidateBeforeExecute(InstantCalculationRequest request)
+        {
+            var requestChecking = new EventTicketRequest
+            {
+                MatchId = request.MatchId,
+                Action = request.Action,
+                SpName = "NAP_Admin_Settlement_1_InstantCalculation_Push",
+                IsAuto = false,
+                Mode = request.Mode,
+                InstantKey = request.InstantKey
+            };
+            var resultMessage = await scaleOutSettleService.ValidateEventAndTicket(requestChecking);
+
+            return new Result
+            {
+                ErrCode = resultMessage.ErrorCode,
+                ErrMsg = resultMessage.ErrorMessage
+            };
+        }
+
+        private async Task UpdateMatchInfo(PushInstantCalculationCriteria criteria, bool isHalfTime)
+        {
+            var requestUpdateInfo = new UpdateMatchInfoRequest
+            {
+                MatchId = criteria.MatchId,
+                Action = criteria.Action,
+                AdminId = currentSession.UserId,
+                ResourceResult = criteria.ResourceResult,
+                IsAuto = false,
+                Mode = criteria.Mode
+            };
+
+            if (isHalfTime)
+            {
+                requestUpdateInfo.HalfTimeHome = int.Parse(criteria.HomeScore);
+                requestUpdateInfo.HalfTimeAway = int.Parse(criteria.AwayScore);
+            }
+            else
+            {
+                requestUpdateInfo.FullTimeHome = int.Parse(criteria.HomeScore);
+                requestUpdateInfo.FullTimeAway = int.Parse(criteria.AwayScore);
+            }
+
+            await scaleOutSettleService.UpdateMatchInfo(requestUpdateInfo);
+        }
+
+        public async Task UpdateResult(InstantCalculationRequest request)
+        {
+            if (request.Action == "CAL")
+            {
+                var updateResultCriteria = new AddAutoResultCriteria
+                {
+                    MatchId = request.MatchId,
+                    HomeValue = int.Parse(request.HomeScore),
+                    AwayValue = int.Parse(request.AwayScore),
+                    InstantKey = request.InstantKey,
+                    StatusId = 1,
+                    TypeId = request.IsHalfTime ? InstantCalculationType.CalcHt : InstantCalculationType.CalcFt,
+                    ChildMatchType = request.ChildMatchType
+                };
+
+                await repository.ExecuteAsync(updateResultCriteria);
+            }
         }
     }
 }

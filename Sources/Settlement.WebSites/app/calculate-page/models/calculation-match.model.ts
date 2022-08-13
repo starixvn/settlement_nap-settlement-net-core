@@ -15,4 +15,5 @@ export class CalculationMatch extends Match{
    directWaitingTime: number;
    instantWaitingTime: number;
    goalIcon: GoalIcon;
+   childMatchType: number;
 }

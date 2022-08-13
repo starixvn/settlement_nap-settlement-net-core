@@ -13,12 +13,14 @@ export class UpdateInstantQuery{
    isExistFgNg:boolean;
    goalRecord:boolean;
    firstGoalValue:boolean;
+   childMatchType: number;
    constructor(match: CalculationMatch){
         this.homeScore = match.instantHomeScore;
         this.awayScore = match.instantAwayScore;
         this.matchId = match.matchId;
         this.isHalfTime = _.isEqual(match.instantCalculationType, InstantCalculationType.calcHt);
         this.instantKey = match.instantKey;
-        this.action = "Calc";
+        this.action = "CAL";
+        this.childMatchType = match.childMatchType;
    }
 }

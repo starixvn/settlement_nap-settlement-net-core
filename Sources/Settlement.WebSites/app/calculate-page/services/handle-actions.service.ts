@@ -3,6 +3,7 @@ import { Match, ChangeSettingResult } from "../../shared/models";
 import * as _ from 'lodash';
 import { BackgroundColor, EventStatus } from '../../shared/constants';
 import { CalculationMatch, League } from '../models';
+import { InstantStatus } from "../constants";
 
 @Injectable()
 export class HandleActionsService {
@@ -25,7 +26,7 @@ export class HandleActionsService {
     match.newEventStatus = EventStatus.waiting;
     match.eventStatusColor = BackgroundColor.waiting;
     match.isCalculatingSingle = 1;
-
+    match.instantStatusId = InstantStatus.complete;
   }
 
   public handleAutoInstantForMatch(leagueMatch: League, isAutoInstant: boolean) {

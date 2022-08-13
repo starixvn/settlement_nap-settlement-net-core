@@ -72,10 +72,10 @@
     <Setting Key="NAP_Admin_Settlement_Validation_Event" SpName="NAP_Admin_Settlement_Validation_Event_UAT1" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_SettlementStatusChecking" SpName="NAP_Set_SettlementStatusChecking" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Settlement_InstantCalculation_UndoChecking" SpName="NAP_Settlement_InstantCalculation_UndoChecking" DbName="DBPRO.bodb02.bodbAdminNet" />
-    <Setting Key="NAP_Settlement_InstantCalculation_Checking" SpName="NAP_Settlement_InstantCalculation_Checking" DbName="DBTXN.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_SpecificBettypes" SpName="NAP_Set_SpecificBettypes" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_AutoRefund_ResultIns" SpName="NAP_Set_AutoRefund_ResultIns_UAT1" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Admin_MatchInfoUpd" SpName="NAP_Admin_MatchInfoUpd_UAT1" DbName="DBPRO.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_AutoPayoutResultIns" SpName="NAP_Set_AutoPayoutResultIns" DbName="DBPRO.bodb02.bodbAdminNet" />
   </Function>
 
   <Function Name="MultiSport">
@@ -271,7 +271,12 @@
 
     <Function Name="NAP_Admin_Settlement_50_MoveTicket">
       <Setting Key="NAP_Admin_Settlement_50_MoveTicket_DBTXN" SpName="NAP_Admin_Settlement_50_MoveTicket_UAT1" DbName="DBTXN.bodb02.bodbAdminNet" />
-      <Setting Key="NAP_Admin_Settlement_50_MoveTicket_DBSID01" SpName="NAP_Admin_Settlement_50_MoveTicket_UAT1" DbName="DBTXN.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Admin_Settlement_50_MoveTicket_DBSID01" SpName="NAP_Admin_Settlement_50_MoveTicket_UAT1" DbName="DBSID01.bodb02.bodbAdminNet" />
+    </Function>
+
+    <Function Name="NAP_Settlement_InstantCalculation_Checking">
+      <Setting Key="NAP_Settlement_InstantCalculation_Checking_DBTXN" SpName="NAP_Settlement_InstantCalculation_Checking_UAT1" DbName="DBTXN.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Settlement_InstantCalculation_Checking_DBSID01" SpName="NAP_Settlement_InstantCalculation_Checking_UAT1" DbName="DBSID01.bodb02.bodbAdminNet" />
     </Function>
   </Function>
 </Functions>

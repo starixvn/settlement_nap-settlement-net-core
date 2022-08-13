@@ -186,7 +186,7 @@ export class AutoCalculateMatchesComponent extends MatchesBaseComponent implemen
   private doUpdateInstantStatus(match: CalculationMatch, query: UpdateInstantQuery, result: MatchGoalRecord) {
     this.dialogConfirmMessage.message = Language.instants.confirmExecuteInstant;
     this.messageBoxService.confirm(this.dialogConfirmMessage, () => {
-      this.requestService.updateInstantStatus(query).subscribe(result => {
+      this.requestService.pushInstantStatus(query, result).subscribe(result => {
         if (result.errCode === 0) {
           this.handleActionService.handleChangeInstantStatus(match);
         } else {

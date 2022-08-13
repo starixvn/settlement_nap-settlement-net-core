@@ -25,6 +25,8 @@ namespace Settlement.Sportsbook.Soccer.Requests
 
         public string FirstGoalValue { get; set; }
 
+        public int ChildMatchType { get; set; }
+
         public string Mode => IsHalfTime ? "INST-HT" : "INST-FT";
     }
 }
