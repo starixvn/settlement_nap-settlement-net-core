@@ -152,6 +152,16 @@
             <ng-template #volleyballFinalResult>
               <ng-container [ngSwitch]="item.inputType">
                 <ng-container *ngSwitchCase="0">
+                  <select [(ngModel)]="item.homeValue" [ngClass]="{'warning':item.isResultWarning}"
+                      [disabled]="!item.checked || !permission.isLeader" (ngModelChange)="checkResultIsMatched(item)"
+                      [matTooltip]="getDropdownTooltip(item.homeValue, 25)" matTooltipPosition="above">
+                    <option></option>
+                    <option value="H">{{match.matchDetail.homeName}}</option>
+                    <option value="A">{{match.matchDetail.awayName}}</option>
+                    <option value="N">None</option>
+                  </select>
+                </ng-container>
+                <ng-container *ngSwitchCase="1">
                   <div>
                     <div class="team-name"
                         [matTooltip]="getTextTooltip(match.matchDetail.homeName, 15)"
@@ -180,16 +190,6 @@
                               && (item.awayValue===null || item.awayValue==='') || item.isResultWarningByBetType }" />
                       </div>
                   </div>
-                </ng-container>
-                <ng-container *ngSwitchCase="1">
-                  <select [(ngModel)]="item.homeValue" [ngClass]="{'warning':item.isResultWarning}"
-                      [disabled]="!item.checked || !permission.isLeader" (ngModelChange)="checkResultIsMatched(item)"
-                      [matTooltip]="getDropdownTooltip(item.homeValue, 25)" matTooltipPosition="above">
-                    <option></option>
-                    <option value="H">{{match.matchDetail.homeName}}</option>
-                    <option value="A">{{match.matchDetail.awayName}}</option>
-                    <option value="N">None</option>
-                  </select>
                 </ng-container>
                 <ng-container *ngSwitchCase="2">
                   <select [(ngModel)]="item.homeValue" [ngClass]="{'warning':item.isResultWarning}"
@@ -220,15 +220,15 @@
               <ng-template #volleyballProvider>
                 <ng-container [ngSwitch]="item.inputType">
                   <ng-container *ngSwitchCase="0">
-                    <div>{{result.homeValue | resultByTeamName: null: 3}}</div>
-                    <div>{{result.awayValue | resultByTeamName: null: 3}}</div>
-                  </ng-container>
-                  <ng-container *ngSwitchCase="1">
                     <div class="outside-source-text"
                         [matTooltip]="getTextTooltip(result.homeName, 13)"
                         matTooltipPosition="above">
                         {{result.homeName}}
                     </div>
+                  </ng-container>
+                  <ng-container *ngSwitchCase="1">
+                    <div>{{result.homeValue | resultByTeamName: null: 3}}</div>
+                    <div>{{result.awayValue | resultByTeamName: null: 3}}</div>
                   </ng-container>
                   <ng-container *ngSwitchCase="2">
                     <div class="outside-source-text"
@@ -259,6 +259,15 @@
                   <ng-template #volleyballOutsideSource>
                     <ng-container [ngSwitch]="item.inputType">
                       <ng-container *ngSwitchCase="0">
+                        <select [(ngModel)]="result.homeValue" [disabled]="!item.checked" (ngModelChange)="verifyAndAutoFillResult(item)"
+                          [matTooltip]="getDropdownTooltip(result.homeValue, 9)" matTooltipPosition="above">
+                          <option></option>
+                          <option value="H">{{match.matchDetail.homeName}}</option>
+                          <option value="A">{{match.matchDetail.awayName}}</option>
+                          <option value="N">None</option>
+                        </select>
+                      </ng-container>
+                      <ng-container *ngSwitchCase="1">
                         <div class="score">
                           <input type="text" maxlength="getCoupleScoreMaxLength(item)"
                               integerAndNone (change)="verifyResultByBetType(result); verifyAndAutoFillResult(item)"
@@ -269,15 +278,6 @@
                               integerAndNone (change)="verifyResultByBetType(result); verifyAndAutoFillResult(item)"
                               [disabled]="!item.checked" [(ngModel)]="result.awayValue"/>
                         </div>
-                      </ng-container>
-                      <ng-container *ngSwitchCase="1">
-                        <select [(ngModel)]="result.homeValue" [disabled]="!item.checked" (ngModelChange)="verifyAndAutoFillResult(item)"
-                          [matTooltip]="getDropdownTooltip(result.homeValue, 9)" matTooltipPosition="above">
-                          <option></option>
-                          <option value="H">{{match.matchDetail.homeName}}</option>
-                          <option value="A">{{match.matchDetail.awayName}}</option>
-                          <option value="N">None</option>
-                        </select>
                       </ng-container>
                       <ng-container *ngSwitchCase="2">
                         <select [(ngModel)]="result.homeValue" [disabled]="!item.checked"
