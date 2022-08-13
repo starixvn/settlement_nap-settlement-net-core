@@ -208,12 +208,13 @@ namespace Settlement.Sportsbook.Aio.Services
 
         private async Task<Result> Execute(SettleCriteria criteria)
         {
-            await UpdateMatchInfo(criteria);
             var requestChecking = await ValidateBeforeExecute(criteria);
             if (requestChecking.ErrCode > 0)
             {
                 return requestChecking;
             }
+
+            await UpdateMatchInfo(criteria);
 
             foreach (var server in appSettingsKey.SiteDbServer)
             {

@@ -24,16 +24,8 @@
 		<None Remove="appsettings.LOCAL_3.json.orig" />
     <None Remove="App_Data\SpName.AWS.xml" />
     <None Remove="App_Data\SpName.LOCAL.xml" />
-    <None Remove="App_Data\SpName.LOCAL_1.xml" />
-    <None Remove="App_Data\SpName.LOCAL_2.xml" />
-    <None Remove="App_Data\SpName.LOCAL_3.xml" />
     <None Remove="App_Data\SpName.PROD.xml" />
-    <None Remove="App_Data\SpName.SIT_1.xml" />
-    <None Remove="App_Data\SpName.SIT_2.xml" />
-    <None Remove="App_Data\SpName.SIT_3.xml" />
     <None Remove="App_Data\SpName.UAT_1.xml" />
-    <None Remove="App_Data\SpName.UAT_2.xml" />
-    <None Remove="App_Data\SpName.UAT_3.xml" />
     <None Remove="App_Data\SpName.xml" />
   </ItemGroup>
 
