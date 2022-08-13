@@ -69,6 +69,7 @@ namespace Settlement.Sportsbook.Aio.Services
             baseDetail.BetMarkedCount += siteDetail.BetMarkedCount;
             baseDetail.BetSettledCount += siteDetail.BetSettledCount;
             baseDetail.BetRefundedCount += siteDetail.BetRefundedCount;
+            baseDetail.BetCount += siteDetail.BetCount;
         }
 
         private TicketCounts ResolveTicketCounts(List<TicketCounts> data)
