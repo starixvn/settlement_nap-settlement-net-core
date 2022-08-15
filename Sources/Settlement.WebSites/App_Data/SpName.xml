@@ -76,6 +76,7 @@
     <Setting Key="NAP_Set_AutoRefund_ResultIns" SpName="NAP_Set_AutoRefund_ResultIns_UAT1" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Admin_MatchInfoUpd" SpName="NAP_Admin_MatchInfoUpd_UAT1" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_AutoPayoutResultIns" SpName="NAP_Set_AutoPayoutResultIns" DbName="DBPRO.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Admin_Settlement_ValidationFM_Event" SpName="NAP_Admin_Settlement_ValidationFM_Event_UAT1" DbName="DBPRO.bodb02.bodbAdminNet" />
   </Function>
 
   <Function Name="MultiSport">
@@ -277,6 +278,11 @@
     <Function Name="NAP_Settlement_InstantCalculation_Checking">
       <Setting Key="NAP_Settlement_InstantCalculation_Checking_DBTXN" SpName="NAP_Settlement_InstantCalculation_Checking_UAT1" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="NAP_Settlement_InstantCalculation_Checking_DBSID01" SpName="NAP_Settlement_InstantCalculation_Checking_UAT1" DbName="DBSID01.bodb02.bodbAdminNet" />
+    </Function>
+
+    <Function Name="NAP_Admin_Settlement_ValidationFM_Ticket">
+      <Setting Key="NAP_Admin_Settlement_ValidationFM_Ticket_DBTXN" SpName="NAP_Admin_Settlement_ValidationFM_Ticket_UAT1" DbName="DBTXN.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Admin_Settlement_ValidationFM_Ticket_DBSID01" SpName="NAP_Admin_Settlement_ValidationFM_Ticket_UAT1" DbName="DBSID01.bodb02.bodbAdminNet" />
     </Function>
   </Function>
 </Functions>
