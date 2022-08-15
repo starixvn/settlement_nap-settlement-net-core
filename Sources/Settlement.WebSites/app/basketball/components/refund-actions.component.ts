@@ -7,7 +7,7 @@ import { SportType } from '../../shared/constants';
 import { BasketballApiKeys, ResourcesIds } from '../constants';
 import * as _ from 'lodash';
 import { RefundActionBaseComponent } from '../../shared/components/sportsbook-sop/refund-action-base.component';
-import { VerificationService } from '../services';
+import { BasketballService, VerificationService } from '../services';
 import { SportTemplate } from '../../shared/models/sportsbook-sop';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 
@@ -27,7 +27,8 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
         private readonly messageBoxService: MessageBoxService,
         protected closePopupService: ClosePopupService,
         protected aioService: AioService,
-        protected toastrService: ToastrService) {
+        protected toastrService: ToastrService,
+        private readonly basketballService: BasketballService) {
         super(closePopupService, aioService, toastrService);
         this.confirmationDialogMessage.title = Language.confirmationBox;
     }
@@ -46,11 +47,11 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
     }
 
     public init() {
-        this.match.resultDetails = this.match.resultDetails.filter(item => item.resourceId !== ResourcesIds.ot);
         this.matchId = this.match.matchDetail.matchId;
         this.hedgeMatchDetail = this.match.hedgeMatchDetail;
         this.applyHedgeMatch = this.hedgeMatchDetail != null;
-        this.resultDetails = this.match.resultDetails.filter(item => item.resourceId.length === 2);
+        this.resultDetails = this.basketballService.getResultDetail(this.match.resultDetails);
+        this.resultDetails = this.resultDetails.filter(item => item.resourceId !== ResourcesIds.ot);
         this.matchDetail = this.match.matchDetail;
         this.permission = this.match.permission;
     }
