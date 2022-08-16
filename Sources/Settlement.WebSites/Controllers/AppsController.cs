@@ -152,13 +152,13 @@ namespace Settlement.WebSites.Controllers
         [HttpGet("other-sports-recalculate")]
         public IActionResult OtherSportsRecalculate()
         {
-            return SetView("Badminton - Calculation", PagesType.Recalculate, ViewPath.OtherSports);
+            return SetView("Other Sports - Calculation", PagesType.Recalculate, ViewPath.OtherSports);
         }
 
         [HttpGet("other-sports-refund")]
         public IActionResult OtherSportsRefund()
         {
-            return SetView("Badminton - Refund", PagesType.Refund, ViewPath.OtherSports);
+            return SetView("Other Sports - Refund", PagesType.Refund, ViewPath.OtherSports);
         }
 
         private ActionResult SetView(string title, string pageType, string viewName)
