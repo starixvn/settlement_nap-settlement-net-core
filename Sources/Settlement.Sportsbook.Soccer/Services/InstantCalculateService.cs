@@ -3,7 +3,6 @@ using Fanex.Data.Repository;
 using Fanex.NAP.Client.Helpers.Web;
 using Kaden.XmlConverter;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Sportsbook.Soccer.Criteria;
@@ -140,6 +139,11 @@ namespace Settlement.Sportsbook.Soccer.Services
             };
 
             List<XmlResource> resources;
+
+            if (request.HomeScore == "0" && request.AwayScore == "0")
+            {
+                return string.Empty;
+            }
 
             if (request.Action.Equals(ActionType.UnCalculate))
             {
