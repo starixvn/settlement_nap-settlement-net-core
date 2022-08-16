@@ -4,7 +4,7 @@ export const Statuses = [
     {  value: "2", text: "Closed" },
     { value: "5", text: "Postponed" },
     { value: "3", text: "Completed" },
-    { value: "16", text: "Completed (Running ticket)" },
+    { value: "16", text: "Completed (Running tickets)" },
     { value: "4", text: "Refund" },
     { value: "6", text: "Abandoned" },
     { value: "10", text: "MTD Hold" },

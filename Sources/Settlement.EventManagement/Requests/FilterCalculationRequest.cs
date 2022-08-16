@@ -20,33 +20,7 @@ namespace Settlement.EventManagement
 
         public byte StatusId { get; set; }
 
-        public byte FilterBy
-        {
-            get
-            {
-                const int noneFilter = 0;
-                const int unCalculateFilter = 1;
-                const int unCalculateMultipleFilter = 2;
-                const int allFilter = 3;
-
-                if (UnCalculate && UnCalculateMultiple)
-                {
-                    return allFilter;
-                }
-                else if (UnCalculateMultiple)
-                {
-                    return unCalculateMultipleFilter;
-                }
-                else if (UnCalculate)
-                {
-                    return unCalculateFilter;
-                }
-                else
-                {
-                    return noneFilter;
-                }
-            }
-        }
+        public byte FilterOver { get; set; }
 
         public bool UnCalculate { get; set; }
 

@@ -25,9 +25,7 @@ export class FilterComponent extends FilterCalculateBaseComponent implements OnI
   async ngOnInit() {
     this.query.statusId = Number(this.statuses[0].value);
     this.query.leagueId = '0';
-    this.query.htOver = true;
-    this.query.ftOver = true;
-    this.query.earlyOver = true;
+    this.query.filterOver = 0;
     this.initFilterData();
   }
 

@@ -18,7 +18,7 @@ namespace Settlement.EventManagement.Criteria
 
         public byte StatusId { get; set; }
 
-        public byte FilterBy { get; set; }
+        public byte FilterOver { get; set; }
 
         public bool IsReLoad { get; set; }
 

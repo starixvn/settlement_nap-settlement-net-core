@@ -16,20 +16,16 @@
             </div>
             <div class="col-md-7">
                 <div class="row">
-                    <div class="col-md-1 field">
-                        <input id="htOver" type="checkbox" [(ngModel)]="query.htOver">
-                        <label for="htOver" class="bold">&nbsp; HT Over
+                    <div class="col-md-3 field">
+                        <label class="inner-label">
+                            Over Status
                         </label>
-                    </div>
-                    <div class="col-md-1 field">
-                        <input id="ftOver" type="checkbox" [(ngModel)]="query.ftOver">
-                        <label for="ftOver" class="bold">&nbsp; FT Over
-                        </label>
-                    </div>
-                    <div class="col-md-1 field">
-                        <input id="earlyOver" type="checkbox" [(ngModel)]="query.earlyOver">
-                        <label for="earlyOver" class="bold">&nbsp; Early Over
-                        </label>
+                        <select [(ngModel)]="query.filterOver">
+                            <option value="0">All</option>
+                            <option value="1">Early Over</option>
+                            <option value="2">HT Over</option>
+                            <option value="3">FT Over</option>
+                        </select>
                     </div>
                 
                     <div class="col-md-2 field">

@@ -1,8 +1,6 @@
 export class FilterQuery {
     matchId: string;
-    htOver: boolean;
-    ftOver: boolean;
-    earlyOver: boolean;
+    filterOver: number;
     fastMarketsOnly: boolean;
     autoSettlementOnly: boolean;
     isMarkedTicket: boolean;
