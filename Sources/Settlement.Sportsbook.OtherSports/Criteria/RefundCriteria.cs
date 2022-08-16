@@ -1,6 +1,7 @@
 ﻿using Fanex.Data;
 using Fanex.Data.Repository;
 using Settlement.Core.Constants;
+using System;
 
 namespace Settlement.Sportsbook.OtherSports.Criteria
 {
@@ -21,13 +22,21 @@ namespace Settlement.Sportsbook.OtherSports.Criteria
 
         public int? FullTimeAway { get; set; }
 
+        [SpParam(Ignored = true)]
+        public string DbServer { get; set; }
+
+        [SpParam(Ignored = true)]
+        public string SpName { get => Action == ActionType.RefundFullTime ? "NAP_Admin_Settlement_RefundFT_Push" : "NAP_Admin_Settlement_Refund_All_Push"; }
+
+        public string BroadcastSessionId = Guid.NewGuid().ToString();
+
         public int ErrCode { get; set; }
 
         public string ErrMsg { get; set; }
 
         public override string GetSettingKey()
         {
-            return Action == ActionType.RefundFullTime ? "RefundFT" : "RefundAll";
+            return Action == ActionType.RefundFullTime ? $"RefundFT_{DbServer}" : $"RefundAll_{DbServer}";
         }
 
         public override bool IsValid()

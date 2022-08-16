@@ -13,6 +13,8 @@ namespace Settlement.WebSites.Configurations
             services.AddTransient<SettlementActionsService, SettlementActionsServiceImp>();
             services.AddTransient<SportsbookService, SportsbookServiceImp>();
             services.AddTransient<IBetStatusService, BetStatusServiceImp>();
+            services.AddTransient<MultipleServerService, MultipleServerServiceImp>();
+            services.AddTransient<MergeDataService, MergeDataServiceImp>();
         }
 
         public static void ConfigOtherSportsMediator(this IServiceCollection services)

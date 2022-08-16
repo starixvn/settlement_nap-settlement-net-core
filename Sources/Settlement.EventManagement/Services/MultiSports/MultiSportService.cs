@@ -15,6 +15,8 @@ using Fanex.Caching;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Settlement.EventManagement.Models.MultiSports;
+using Fanex.Settlement.ScaleOut.Request;
+using Settlement.EventManagement.Models;
 
 namespace Settlement.EventManagement.Services.MultiSports
 {
@@ -279,25 +281,91 @@ namespace Settlement.EventManagement.Services.MultiSports
 
         public async Task<Result> Calculate(CalculateParlayRequest request)
         {
-            var criteria = mapper.Map<CalculateParlayRequest, ParlayCriteria>(request);
-            criteria.Action = ActionType.CalculateAll;
-            criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
-
-            foreach (var server in appSettingsKey.SiteDbServer)
+            var validateResult = await ValidateCalculateParlay(request);
+            var listMatchIds = validateResult.MatchIdsValid.Split(',');
+            if (listMatchIds.Any())
             {
-                criteria.DbServer = server;
-                await repository.ExecuteAsync(criteria);
-                if (criteria.ErrCode > 0)
+                var updateResultRequest = new UpdateMatchInfoRequest
                 {
-                    return new Result
-                    {
-                        ErrCode = criteria.ErrCode,
-                        ErrMsg = criteria.ErrMsg
-                    };
+                    Action = ActionType.CalculateAll,
+                    AdminId = request.AdminId,
+                    Mode = "MP",
+                };
+
+                foreach (var matchId in listMatchIds)
+                {
+                    updateResultRequest.MatchId = Convert.ToInt32(matchId);
+                    await matchService.UpdateMatchInfo(updateResultRequest);
+                }
+
+                var criteria = new ParlayCriteria
+                {
+                    MatchIds = validateResult.MatchIdsValid,
+                    Action = ActionType.CalculateAll,
+                    Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString(),
+                    AdminId = request.AdminId
+                };
+
+                foreach (var server in appSettingsKey.SiteDbServer)
+                {
+                    criteria.DbServer = server;
+                    repository.Execute(criteria);
                 }
             }
 
-            return new Result();
+            return new Result
+            {
+                ErrCode = validateResult.ErrCode,
+                ErrMsg = validateResult.ErrMsg
+            };
+        }
+
+        private async Task<ValidateParlayResult> ValidateCalculateParlay(CalculateParlayRequest request)
+        {
+            var validateEventCriteria = new ValidateCalculateParlayCriteria
+            {
+                MatchIds = request.MatchIds,
+                Action = ActionType.CalculateAll
+            };
+
+            await repository.ExecuteAsync(validateEventCriteria);
+            var errorMessage = "All matches are being calculated, except following matches ";
+            const string postErrorMessage = " Please contact Starix IT for further support!";
+            var showError = false;
+            if (!string.IsNullOrEmpty(validateEventCriteria.ErrMsg))
+            {
+                showError = true;
+                errorMessage += validateEventCriteria.ErrMsg;
+            }
+
+            var validateTicketCriteria = new ValidateTicketParlayCriteria
+            {
+                MatchIdsValid = validateEventCriteria.MatchIdsValid,
+                Action = ActionType.CalculateAll
+            };
+
+            foreach (var server in appSettingsKey.SiteDbServer)
+            {
+                validateTicketCriteria.MatchIds = validateTicketCriteria.MatchIdsValid;
+                validateTicketCriteria.DbServer = server;
+                await repository.ExecuteAsync(validateTicketCriteria);
+                if (!string.IsNullOrEmpty(validateTicketCriteria.ErrMsg))
+                {
+                    showError = true;
+                    errorMessage += validateTicketCriteria.ErrMsg;
+                }
+            }
+
+            errorMessage += postErrorMessage;
+            return showError ? new ValidateParlayResult
+            {
+                ErrCode = validateEventCriteria.ErrCode,
+                ErrMsg = errorMessage,
+                MatchIdsValid = validateTicketCriteria.MatchIdsValid
+            } : new ValidateParlayResult
+            {
+                MatchIdsValid = validateTicketCriteria.MatchIdsValid
+            };
         }
     }
 }

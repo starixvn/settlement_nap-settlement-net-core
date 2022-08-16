@@ -1,5 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using Fanex.Settlement.ScaleOut.Request;
+using Fanex.Settlement.ScaleOut.Services;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
@@ -14,6 +17,8 @@ namespace Settlement.EventManagement.Services.MultiSports
         List<Match> MergeMatches(List<Match> baseMatches, List<Match> siteMatches);
 
         List<Match> SetNewMatchInfo(List<Match> matches, List<ResultDetail> listResultDetail);
+
+        Task UpdateMatchInfo(UpdateMatchInfoRequest request);
     }
 
     public class MatchServiceImp : IMatchService
@@ -26,15 +31,19 @@ namespace Settlement.EventManagement.Services.MultiSports
 
         private readonly NewInfoMatchService newInfoMatchService;
 
+        private readonly ScaleOutSettleService scaleOutSettleService;
+
         public MatchServiceImp(IRefDataService refDataService,
             IMatchResultDetailService matchResultDetailService,
             CompareMatchService compareMatchService,
-            NewInfoMatchService newInfoMatchService)
+            NewInfoMatchService newInfoMatchService,
+            ScaleOutSettleService scaleOutSettleService)
         {
             this.matchResultDetailService = matchResultDetailService;
             this.refDataService = refDataService;
             this.compareMatchService = compareMatchService;
             this.newInfoMatchService = newInfoMatchService;
+            this.scaleOutSettleService = scaleOutSettleService;
         }
 
         public List<Match> SetNewMatchInfo(List<Match> matches, List<ResultDetail> listResultDetail)
@@ -191,6 +200,11 @@ namespace Settlement.EventManagement.Services.MultiSports
                     match.SiteMatch.Add(matchSiteInfo);
                 }
             }
+        }
+
+        public async Task UpdateMatchInfo(UpdateMatchInfoRequest request)
+        {
+            await scaleOutSettleService.UpdateMatchInfo(request);
         }
     }
 }
