@@ -35,7 +35,7 @@ export class PopupService {
             sportName = _.isEqual(sportName, 'volleyball') ? 'badminton' : sportName;
             this.properties.src = `apps/${sportName}-recalculate?matchId=${match.matchId}&sportType=${match.sportType}`;
         } else {
-            this.properties.src = `apps/sportsbook/other-sports/calculation?matchId=${match.matchId}&sportType=${match.sportType}`;
+            this.properties.src = `apps/other-sports-recalculate?matchId=${match.matchId}&sportType=${match.sportType}`;
         }
 
         this.openAndHandlePopup(this.properties, match, sports, multiSport);
@@ -51,7 +51,7 @@ export class PopupService {
             sportName = _.isEqual(sportName, 'volleyball') ? 'badminton' : sportName;
             this.properties.src = `apps/${sportName}-refund?matchId=${match.matchId}&sportType=${match.sportType}`;
         } else {
-            this.properties.src = `apps/sportsbook/other-sports/refund?matchId=${match.matchId}&sportType=${match.sportType}`;
+            this.properties.src = `apps/other-sports-refund?matchId=${match.matchId}&sportType=${match.sportType}`;
         }
 
         this.openAndHandlePopup(this.properties, match, sports, multiSport);

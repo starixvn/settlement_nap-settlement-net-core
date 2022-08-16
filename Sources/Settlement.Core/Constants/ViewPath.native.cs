@@ -33,5 +33,7 @@
         public const string Tennis = "~/wwwroot/tennis/index.cshtml";
 
         public const string Cricket = "~/wwwroot/cricket/index.cshtml";
+
+        public const string OtherSports = "~/wwwroot/other-sports/index.cshtml";
     }
 }

@@ -22,13 +22,13 @@ namespace Settlement.Sportsbook.OtherSports.Services
 
         public void MergeMatchDetail(MatchDetail matchDetail, List<TicketCounts> ticketCounts)
         {
-            matchDetail.HtStatus = GetStatus(ticketCounts.First(item => item.GroupId == HalfTimeGroupId));
-            matchDetail.FtStatus = GetStatus(ticketCounts.First(item => item.GroupId == FullTimeGroupId));
+            matchDetail.HtStatus = GetStatus(ticketCounts.FirstOrDefault(item => item.GroupId == HalfTimeGroupId));
+            matchDetail.FtStatus = GetStatus(ticketCounts.FirstOrDefault(item => item.GroupId == FullTimeGroupId));
         }
 
         private string GetStatus(TicketCounts ticketCount)
         {
-            if (ticketCount.BetCount == 0)
+            if (ticketCount == null || ticketCount.BetCount == 0)
             {
                 return "No Ticket";
             }
