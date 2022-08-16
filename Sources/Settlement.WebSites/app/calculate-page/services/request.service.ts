@@ -1,3 +1,4 @@
+import { BetStatus } from './../../soccer/constants/bet-status.native';
 import { Injectable } from "@angular/core";
 import { FilterQuery, League, Calculation, UpdateInstantQuery, MatchGoalRecord, CalculationMatch } from "../models";
 import { Observable } from "rxjs";
@@ -80,6 +81,9 @@ export class RequestService {
     query.isExistFgNg = result.isExistFgNg;
     query.isExistHtFgNg = result.isExistHtFgNg;
     query.goalRecord = result.goalRecord;
+    query.isExistFg = result.isExistFg;
+    query.isExistHtFg = result.isExistHtFg;
+    query.betStatus = result.betStatus;
     return this.httpRequestService.postJson(query, `${this.soccerApi}/push-instant-score`);
   }
 

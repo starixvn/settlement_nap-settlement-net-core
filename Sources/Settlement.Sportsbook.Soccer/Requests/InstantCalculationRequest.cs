@@ -21,11 +21,17 @@ namespace Settlement.Sportsbook.Soccer.Requests
 
         public bool IsExistFgNg { get; set; }
 
+        public bool IsExistsFG { get; set; }
+
+        public bool IsExistsHTFG { get; set; }
+
         public string GoalRecord { get; set; }
 
         public string FirstGoalValue { get; set; }
 
         public int ChildMatchType { get; set; }
+
+        public string BetStatus { get; set; }
 
         public string Mode => IsHalfTime ? "INST-HT" : "INST-FT";
     }

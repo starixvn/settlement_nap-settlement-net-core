@@ -2,7 +2,7 @@ import { InstantCalculationType } from "../constants";
 import { CalculationMatch } from "./calculation-match.model";
 import * as _ from 'lodash';
 
-export class UpdateInstantQuery{
+export class UpdateInstantQuery {
    homeScore: string;
    awayScore: string;
    matchId: string;
@@ -10,17 +10,20 @@ export class UpdateInstantQuery{
    instantKey: number;
    action: string;
    isExistHtFgNg: boolean;
-   isExistFgNg:boolean;
-   goalRecord:boolean;
-   firstGoalValue:boolean;
+   isExistFgNg: boolean;
+   isExistFg: boolean;
+   isExistHtFg: boolean;
+   goalRecord: string;
+   firstGoalValue: string;
+   betStatus: string;
    childMatchType: number;
-   constructor(match: CalculationMatch){
-        this.homeScore = match.instantHomeScore;
-        this.awayScore = match.instantAwayScore;
-        this.matchId = match.matchId;
-        this.isHalfTime = _.isEqual(match.instantCalculationType, InstantCalculationType.calcHt);
-        this.instantKey = match.instantKey;
-        this.action = "CAL";
-        this.childMatchType = match.childMatchType;
+   constructor(match: CalculationMatch) {
+      this.homeScore = match.instantHomeScore;
+      this.awayScore = match.instantAwayScore;
+      this.matchId = match.matchId;
+      this.isHalfTime = _.isEqual(match.instantCalculationType, InstantCalculationType.calcHt);
+      this.instantKey = match.instantKey;
+      this.action = "CAL";
+      this.childMatchType = match.childMatchType;
    }
 }

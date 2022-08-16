@@ -83,6 +83,9 @@ export interface UndoChecking {
     isHt: boolean;
     instantKey: number;
     firstGoalValue: string;
+    isExistFG: boolean;
+    isExistHTFG: boolean;
+    betStatus: string;
     errCode: number;
     errMsg: string;
 }

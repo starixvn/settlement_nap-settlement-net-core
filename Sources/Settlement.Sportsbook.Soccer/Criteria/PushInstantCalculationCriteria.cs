@@ -19,6 +19,8 @@ namespace Settlement.Sportsbook.Soccer.Criteria
 
         public string Mode { get; set; }
 
+        public string BetStatus { get; set; }
+
         public string Ip { get; set; }
 
         public string ResourceResult { get; set; }

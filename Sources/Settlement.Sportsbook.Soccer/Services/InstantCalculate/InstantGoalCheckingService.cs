@@ -1,6 +1,6 @@
 ﻿using Settlement.Sportsbook.Soccer.Models;
 
-namespace Settlement.Sportsbook.Soccer.Services
+namespace Settlement.Sportsbook.Soccer.Services.InstantCalculate
 {
     public interface IInstantGoalCheckingService
     {

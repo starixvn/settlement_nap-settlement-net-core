@@ -9,6 +9,7 @@ using Settlement.Sportsbook.Soccer.Services.FullTimeBetStatus;
 using Settlement.Sportsbook.Soccer.Services.HalfTimeBetStatus;
 using MatchServiceImp = Settlement.Sportsbook.Soccer.GetMatch.Services.MatchServiceImp;
 using MergeDataServiceImp = Settlement.Sportsbook.Soccer.GetMatch.Services.MergeDataServiceImp;
+using Settlement.Sportsbook.Soccer.Services.InstantCalculate;
 
 namespace Settlement.WebSites.Configurations
 {

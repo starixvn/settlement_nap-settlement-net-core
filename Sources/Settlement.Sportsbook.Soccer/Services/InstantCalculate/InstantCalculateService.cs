@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
+using Settlement.Sportsbook.Soccer.Services.InstantCalculate;
 
 namespace Settlement.Sportsbook.Soccer.Services
 {
@@ -67,7 +68,7 @@ namespace Settlement.Sportsbook.Soccer.Services
         {
             var criteria = mapper.Map<MatchCheckingRequest, InstantCheckingCriteria>(request);
             var matchGoalRecord = new MatchGoalRecordModel();
-
+            var firstMatch = true;
             foreach (var server in appSettingsKey.SiteDbServer)
             {
                 criteria.DbServer = server;
@@ -79,12 +80,8 @@ namespace Settlement.Sportsbook.Soccer.Services
 
                     return matchChecking;
                 }
-                else
-                {
-                    matchGoalRecord.GoalRecord = matchChecking.GoalRecord;
-                    matchGoalRecord.IsExistFgNg = matchGoalRecord.IsExistFgNg || matchChecking.IsExistFgNg;
-                    matchGoalRecord.IsExistHtFgNg = matchGoalRecord.IsExistHtFgNg || matchChecking.IsExistHtFgNg;
-                }
+                MergeData(matchGoalRecord, matchChecking, firstMatch);
+                firstMatch = false;
             }
 
             return matchGoalRecord;
@@ -104,6 +101,7 @@ namespace Settlement.Sportsbook.Soccer.Services
         {
             var criteria = mapper.Map<InstantCalculationRequest, PushInstantCalculationCriteria>(request);
             criteria.ResourceResult = GetResourceResultInstantCalculate(request);
+            criteria.BetStatus = BetStatus(request);
             criteria.AdminId = currentSession.UserId;
             criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
 
@@ -116,6 +114,39 @@ namespace Settlement.Sportsbook.Soccer.Services
             }
 
             return result;
+        }
+
+        private string BetStatus(InstantCalculationRequest request)
+        {
+            var betStatus = request.BetStatus;
+            if (request.Action == ActionType.UnCalculate)
+            {
+                if (request.HomeScore == "0" && request.AwayScore == "0")
+                {
+                    betStatus = instantResourceService.BetStatusUncalc(request);
+                }
+            }
+            else
+            {
+                betStatus += instantResourceService.BetStatusHTFL(request);
+                betStatus += instantResourceService.BetStatusFL(request);
+            }
+
+            return betStatus;
+        }
+
+        private void MergeData(MatchGoalRecordModel baseMatch, MatchGoalRecordModel siteMatch, bool isBaseMatch)
+        {
+            if (isBaseMatch)
+            {
+                baseMatch.GoalRecord = siteMatch.GoalRecord;
+                baseMatch.BetStatus = siteMatch.BetStatus;
+            }
+
+            baseMatch.IsExistFgNg = baseMatch.IsExistFgNg || siteMatch.IsExistFgNg;
+            baseMatch.IsExistHtFgNg = baseMatch.IsExistHtFgNg || siteMatch.IsExistHtFgNg;
+            baseMatch.IsExistFG = baseMatch.IsExistFG || siteMatch.IsExistFG;
+            baseMatch.IsExistHTFG = baseMatch.IsExistHTFG || siteMatch.IsExistHTFG;
         }
 
         private void Execute(PushInstantCalculationCriteria criteria)
@@ -209,7 +240,7 @@ namespace Settlement.Sportsbook.Soccer.Services
             await scaleOutSettleService.UpdateMatchInfo(requestUpdateInfo);
         }
 
-        public async Task UpdateResult(InstantCalculationRequest request)
+        private async Task UpdateResult(InstantCalculationRequest request)
         {
             if (request.Action == "CAL")
             {

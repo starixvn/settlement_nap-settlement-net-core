@@ -1,5 +1,5 @@
 ﻿using Settlement.Sportsbook.Soccer.Models;
-using Settlement.Sportsbook.Soccer.Services;
+using Settlement.Sportsbook.Soccer.Services.InstantCalculate;
 using Xunit;
 
 namespace Settlement.Sportsbook.Soccer.UnitTests.Services

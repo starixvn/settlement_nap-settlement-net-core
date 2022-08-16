@@ -57,6 +57,7 @@ export class InstantCalculationQuery {
     public isHalfTime: boolean;
     public instantKey: number;
     public firstGoalValue: string;
+    public betStatus: string;
 
     constructor(matchId: number, score: UndoChecking) {
         this.matchId = matchId;
@@ -67,5 +68,6 @@ export class InstantCalculationQuery {
         this.instantKey = score.instantKey;
         this.firstGoalValue = score.firstGoalValue;
         this.goalRecord = score.goalRecord;
+        this.betStatus = score.betStatus;
     }
 }
