@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Fanex.Data.Repository;
 using Fanex.NAP.Client.Helpers.Web;
 using Kaden.XmlConverter;
@@ -140,7 +140,7 @@ namespace Settlement.Sportsbook.Soccer.Services
 
             List<XmlResource> resources;
 
-            if (request.HomeScore == "0" && request.AwayScore == "0")
+            if (request.HomeScore == "0" && request.AwayScore == "0" && !request.Action.Equals(ActionType.UnCalculate))
             {
                 return string.Empty;
             }
