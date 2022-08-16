@@ -301,5 +301,10 @@
       <Setting Key="RefundAll_DBTXN" SpName="NAP_Admin_Settlement_Refund_All_Push" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="RefundAll_DBSID01" SpName="NAP_Admin_Settlement_Refund_All_Push" DbName="DBSID01.bodb02.bodbAdminNet" />
     </Function>
+
+    <Function Name="NAP_Set_AutoInstant_GetTicketInfo">
+      <Setting Key="NAP_Set_AutoInstant_GetTicketInfo_DBTXN" SpName="NAP_Set_AutoInstant_GetTicketInfo" DbName="DBTXN.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Set_AutoInstant_GetTicketInfo_DBSID01" SpName="NAP_Set_AutoInstant_GetTicketInfo" DbName="DBSID01.bodb02.bodbAdminNet" />
+    </Function>
   </Function>
 </Functions>

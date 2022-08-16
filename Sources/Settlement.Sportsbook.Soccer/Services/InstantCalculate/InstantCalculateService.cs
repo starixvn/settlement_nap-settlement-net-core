@@ -93,7 +93,7 @@ namespace Settlement.Sportsbook.Soccer.Services
             var undoCheckingScore = await repository.GetAsync<UndoCheckingModel>(criteria);
             undoCheckingScore.ErrCode = criteria.ErrCode;
             undoCheckingScore.ErrMsg = criteria.ErrMsg;
-
+            await GetTicketInfo(matchId, undoCheckingScore);
             return undoCheckingScore;
         }
 
@@ -114,6 +114,19 @@ namespace Settlement.Sportsbook.Soccer.Services
             }
 
             return result;
+        }
+
+        private async Task GetTicketInfo(int matchId, UndoCheckingModel model)
+        {
+            var criteria = new InstantTicketCheckingCriteria { MatchId = matchId };
+            foreach (var server in appSettingsKey.SiteDbServer)
+            {
+                criteria.DbServer = server;
+                var matchChecking = await repository.GetAsync<MatchGoalRecordModel>(criteria);
+
+                model.IsExistFG = model.IsExistFG || matchChecking.IsExistFG;
+                model.IsExistHTFG = model.IsExistHTFG || matchChecking.IsExistHTFG;
+            }
         }
 
         private string BetStatus(InstantCalculationRequest request)

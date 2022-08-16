@@ -287,7 +287,7 @@
       <Setting Key="NAP_Admin_Settlement_Validation_MP_Ticket_DBTXN" SpName="NAP_Admin_Settlement_Validation_MP_Ticket_UAT1" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="NAP_Admin_Settlement_Validation_MP_Ticket_DBSID01" SpName="NAP_Admin_Settlement_Validation_MP_Ticket_UAT1" DbName="DBSID01.bodb02.bodbAdminNet" />
     </Function>
-    
+
     <Function Name="RefundParlay">
       <Setting Key="RefundParlay_DBTXN" SpName="NAP_Admin_Settlement_Refund_MP_Push_UAT1" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="RefundParlay_DBSID01" SpName="NAP_Admin_Settlement_Refund_MP_Push_UAT1" DbName="DBSID01.bodb02.bodbAdminNet" />
@@ -301,6 +301,11 @@
     <Function Name="RefundAll">
       <Setting Key="RefundAll_DBTXN" SpName="NAP_Admin_Settlement_Refund_All_Push_UAT1" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="RefundAll_DBSID01" SpName="NAP_Admin_Settlement_Refund_All_Push_UAT1" DbName="DBSID01.bodb02.bodbAdminNet" />
+    </Function>
+
+    <Function Name="NAP_Set_AutoInstant_GetTicketInfo">
+      <Setting Key="NAP_Set_AutoInstant_GetTicketInfo_DBTXN" SpName="NAP_Set_AutoInstant_GetTicketInfo_UAT1" DbName="DBTXN.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Set_AutoInstant_GetTicketInfo_DBSID01" SpName="NAP_Set_AutoInstant_GetTicketInfo_UAT1" DbName="DBSID01.bodb02.bodbAdminNet" />
     </Function>
   </Function>
 </Functions>
