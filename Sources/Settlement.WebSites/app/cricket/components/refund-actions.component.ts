@@ -3,11 +3,10 @@ import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 import * as _ from 'lodash';
 import { MessageBoxService, ClosePopupService, AioService } from '../../shared/services';
 import { CalculateAction } from '../../shared/constants';
-import { Result, MarkedTicketsModel, ModalDialogMessage } from '../../shared/models';
+import { Result, MarkedTicketsModel, ModalDialogMessage, ResultCommand } from '../../shared/models';
 import { Language } from '../../shared/language';
 import {
-    SettleQuery, NetPositionQuery,
-    ResultCricket, SettleChildMatchQuery, Match
+    SettleQuery, NetPositionQuery, SettleChildMatchQuery, Match
 } from '../models';
 import { ApiKeys } from '../constants';
 import { CricketService } from '../services';
@@ -27,9 +26,8 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
         private readonly messageBoxService: MessageBoxService,
         private readonly cricketService: CricketService,
         protected toastrService: ToastrService,
-        protected closePopupService: ClosePopupService,
         protected aioService: AioService) {
-        super(closePopupService, aioService, toastrService);
+        super(aioService, toastrService);
     }
 
     async getMatch(matchId: number, rootUrl: string): Promise<void> {
@@ -79,45 +77,37 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
             CalculateAction.refund,
             this.isReSettledTickets,
             this.match.permission.isLeader);
-        const result = await this.aioService.push(query).toPromise() as ResultCricket;
+        const result = await this.aioService.push(query).toPromise() as Result;
         if (result.isSuccessful) {
-            await this.handleChildMatch(result.childMatchIds, query);
-            this.handelNetPosition(CalculateAction.refund, result.serviceCommand, query);
+            this.settleHedgeMatch(query);
+            this.handleChildMatch(result.childMatchIds, query);
+            this.handelNetPosition(CalculateAction.unCalculate, result.resultCommand);
         } else {
             this.toastrService.error(result.errMsg);
         }
     }
 
-    private async handelNetPosition(type: string, serviceCommand: string, query: SettleQuery) {
-        if (!_.isNil(serviceCommand) && !_.isEmpty(serviceCommand)) {
-            const netPositionQuery = new NetPositionQuery(this.match.matchDetail.matchId, type, false, serviceCommand);
+    private async handelNetPosition(type: string, resultCommand: ResultCommand[]) {
+        if (!_.isNil(resultCommand) && resultCommand.length > 0) {
+            const netPositionQuery = new NetPositionQuery(this.matchDetail.matchId, type, resultCommand, true);
             const result = await this.cricketService.netPosition(netPositionQuery).toPromise() as Result;
             if (result.isSuccessful) {
-                this.pushHedgeMatch(query);
+                this.messageBoxService.closePopup();
             } else {
                 this.toastrService.error(result.errMsg);
             }
         } else {
-            this.pushHedgeMatch(query);
-        }
-    }
-    private async handelNetPositionHedgeMatch(type: string, matchId: number, serviceCommand: string) {
-        if (!_.isNil(serviceCommand) && !_.isEmpty(serviceCommand)) {
-            const query = new NetPositionQuery(matchId, type, true, serviceCommand);
-            await this.cricketService.netPosition(query).toPromise();
+            this.messageBoxService.closePopup();
         }
     }
 
-    private async pushHedgeMatch(query: SettleQuery) {
-        const matchId = query.matchId;
+    private async settleHedgeMatch(settleQuery: SettleQuery) {
         const hedgeMatchId = this.applyHedgeMatch ? this.match.hedgeMatchDetail.matchId : 0;
         if (hedgeMatchId > 0) {
-            query.matchId = hedgeMatchId;
-            const result = await this.aioService.push(query).toPromise() as Result;
-            await this.handelNetPositionHedgeMatch(CalculateAction.refund, hedgeMatchId, result.serviceCommand);
-            this.closePopupService.closePopup(matchId);
-        } else {
-            this.closePopupService.closePopup(matchId);
+            settleQuery.matchId = hedgeMatchId;
+            await this.aioService.push(settleQuery).toPromise();
+            const netPositionQuery = new NetPositionQuery(hedgeMatchId, settleQuery.actionName, [], false);
+            await this.cricketService.netPosition(netPositionQuery).toPromise();
         }
     }
 

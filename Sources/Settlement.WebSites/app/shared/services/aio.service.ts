@@ -139,7 +139,7 @@ export class AioService {
             await this.changeResultSetting(query).toPromise().then(async () => {
                 await this.confirmHedgeMatch(query, hedgeMatchDetail);
                 await this.confirmOldMatch(query, oldMatchDetail);
-                this.closePopupService.closePopupOnly();
+                this.messageBoxService.closePopup();
             });
         });
     }

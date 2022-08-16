@@ -2,12 +2,12 @@
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 import {
   Match, SettleQuery,
-  HedgeMatchDetail, ResultCricket, SettleChildMatchQuery
+  HedgeMatchDetail, SettleChildMatchQuery
 } from '../models';
 import * as _ from 'lodash';
 import { Language } from '../../shared/language';
-import { MessageBoxService, ClosePopupService, AioService } from '../../shared/services';
-import { ItemsSelect, Result } from '../../shared/models';
+import { MessageBoxService, AioService } from '../../shared/services';
+import { ItemsSelect, Result, ResultCommand } from '../../shared/models';
 import { ResultStatusId, CalculateAction, SportType } from '../../shared/constants';
 import { EarlyConstraintService, VerificationService } from '../services';
 import { ApiKeys, KickOffTime, ResourcesIds, ResultControlGroup, ResultStatus, TicketStatus } from '../constants';
@@ -30,7 +30,6 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
   constructor(
     private readonly earlyConstraintService: EarlyConstraintService,
     private readonly verificationService: VerificationService,
-    private readonly closePopupService: ClosePopupService,
     protected messageBoxService: MessageBoxService,
     protected aioService: AioService,
     protected verificationBaseService: VerificationBaseService,
@@ -222,10 +221,11 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
   }
 
   private async push(query: SettleQuery) {
-    const result = await this.aioService.push(query).toPromise() as ResultCricket;
+    const result = await this.aioService.push(query).toPromise() as Result;
     if (result.isSuccessful) {
-      await this.handleChildMatch(result.childMatchIds, query);
+      this.handleChildMatch(result.childMatchIds, query);
       this.pushHedgeMatch(query);
+      this.messageBoxService.closePopup();
     } else {
       this.toastrService.error(result.errMsg);
     }
@@ -239,17 +239,13 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     }
   }
 
+
   private async pushHedgeMatch(query: SettleQuery) {
-    const matchId = query.matchId;
     const hedgeMatchId = this.applyHedgeMatch ? this.match.hedgeMatchDetail.matchId : 0;
     if (hedgeMatchId > 0) {
       query.matchId = hedgeMatchId;
-      await this.aioService.push(query).toPromise().then(() => {
-        this.closePopupService.closePopup(matchId);
-      });
-    } else {
-      this.closePopupService.closePopup(matchId);
-    }
+      await this.aioService.push(query).toPromise();
+    } 
   }
 
   public saveScore() {

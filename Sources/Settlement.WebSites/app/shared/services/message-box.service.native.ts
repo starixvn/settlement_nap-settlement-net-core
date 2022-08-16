@@ -6,6 +6,7 @@ import { ModalDialogMessage } from '../models';
 export class MessageBoxService {
     constructor(private readonly modalService: NgbModal) {
     }
+
     public alert(dialogModel: ModalDialogMessage) {
         const modal = this.modalService.open(ModalDialogComponent);
         modal.componentInstance.title = dialogModel.title;
@@ -28,5 +29,12 @@ export class MessageBoxService {
                 rejectedFunc();
             }
         });
+    }
+
+    public closePopup() {
+        const buttonClose = parent.document.getElementById('close-after-change');
+        if (buttonClose !== null) {
+            buttonClose.click();
+        }
     }
 }

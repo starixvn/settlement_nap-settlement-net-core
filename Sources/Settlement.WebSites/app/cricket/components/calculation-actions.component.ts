@@ -1,8 +1,8 @@
 ﻿import { Component, ViewChild } from '@angular/core';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 import * as _ from 'lodash';
-import { MessageBoxService, ClosePopupService, AioService } from '../../shared/services';
-import { ModalDialogMessage, Result } from '../../shared/models';
+import { MessageBoxService, AioService } from '../../shared/services';
+import { ModalDialogMessage, Result, ResultCommand } from '../../shared/models';
 import { Language } from '../../shared/language';
 import { SettlementStatusId, SportType, CalculateAction, ResultStatusId } from '../../shared/constants';
 import {
@@ -10,7 +10,6 @@ import {
     MatchDetail,
     HedgeMatchDetail,
     NetPositionQuery,
-    ResultCricket,
     SettleChildMatchQuery,
     Match
 } from '../models';
@@ -41,7 +40,6 @@ export class CalculationActionsComponent implements SportTemplate {
 
     constructor(
         private readonly messageBoxService: MessageBoxService,
-        private readonly closePopupService: ClosePopupService,
         private readonly cricketService: CricketService,
         private readonly verificationService: VerificationService,
         private readonly aioService: AioService,
@@ -226,39 +224,37 @@ export class CalculationActionsComponent implements SportTemplate {
     private async sendRequest(resource: ResultDetail[]): Promise<void> {
         const settleQuery = new SettleQuery(this.match.matchDetail.matchId, resource, CalculateAction.calculate,
             this.isReSettledTickets, this.isLeader);
-        const result = await this.aioService.push(settleQuery).toPromise() as ResultCricket;
+        const result = await this.aioService.push(settleQuery).toPromise() as Result;
         if (result.isSuccessful) {
+            this.settleHedgeMatch(settleQuery);
             this.handleChildMatch(result.childMatchIds, settleQuery);
-            this.handelNetPosition(CalculateAction.calculate, false, result.serviceCommand, settleQuery);
+            this.handelNetPosition(CalculateAction.calculate, result.resultCommand);
         } else {
             this.toastrService.error(result.errMsg);
         }
     }
 
-    private async handelNetPosition(type: string, IsApplyHedging: boolean, serviceCommand: string, settleQuery: SettleQuery) {
-        if (!_.isNil(serviceCommand) && !_.isEmpty(serviceCommand)) {
-            const netPositionQuery = new NetPositionQuery(this.matchDetail.matchId, type, IsApplyHedging, serviceCommand);
+    private async handelNetPosition(type: string, resultCommand: ResultCommand[]) {
+        if (!_.isNil(resultCommand) && resultCommand.length > 0) {
+            const netPositionQuery = new NetPositionQuery(this.matchDetail.matchId, type, resultCommand, true);
             const result = await this.cricketService.netPosition(netPositionQuery).toPromise() as Result;
             if (result.isSuccessful) {
-                this.settleHedgeMatch(settleQuery);
+                this.messageBoxService.closePopup();
             } else {
                 this.toastrService.error(result.errMsg);
             }
         } else {
-            this.settleHedgeMatch(settleQuery);
+            this.messageBoxService.closePopup();
         }
     }
 
     private async settleHedgeMatch(settleQuery: SettleQuery) {
-        const matchId = settleQuery.matchId;
         const hedgeMatchId = this.applyHedgeMatch ? this.match.hedgeMatchDetail.matchId : 0;
         if (hedgeMatchId > 0) {
             settleQuery.matchId = hedgeMatchId;
-            const result = await this.aioService.push(settleQuery).toPromise() as Result;
-            this.handelNetPositionWithoutResult(settleQuery.actionName, hedgeMatchId, true, result.serviceCommand);
-            this.closePopupService.closePopup(matchId);
-        } else {
-            this.closePopupService.closePopup(matchId);
+            await this.aioService.push(settleQuery).toPromise();
+            const netPositionQuery = new NetPositionQuery(hedgeMatchId, settleQuery.actionName, [], false);
+            await this.cricketService.netPosition(netPositionQuery).toPromise();
         }
     }
 
@@ -279,24 +275,20 @@ export class CalculationActionsComponent implements SportTemplate {
         });
     }
 
-    private doUncalculation() {
+    private async doUncalculation() {
         const selectedResources = _.filter(this.match.resultDetails, (item) => item.checked);
         selectedResources.forEach((item) => {
             item.homeValue = "";
             item.awayValue = "";
         });
 
-        this.sendRequestUnCal(CalculateAction.unCalculate, selectedResources);
-    }
-
-    private async sendRequestUnCal(type: string, resource: ResultDetail[]): Promise<void> {
-        const unCalQuery = new SettleQuery(this.match.matchDetail.matchId, resource, type,
+        const unCalQuery = new SettleQuery(this.match.matchDetail.matchId, selectedResources, CalculateAction.unCalculate,
             this.isReSettledTickets, this.isLeader);
-        const result = await this.aioService.push(unCalQuery).toPromise() as ResultCricket;
+        const result = await this.aioService.push(unCalQuery).toPromise() as Result;
         if (result.isSuccessful) {
-            await this.handleChildMatch(result.childMatchIds, unCalQuery);
-            await this.handelNetPositionWithoutResult(type, this.matchDetail.matchId, false, result.serviceCommand);
             this.settleHedgeMatch(unCalQuery);
+            this.handleChildMatch(result.childMatchIds, unCalQuery);
+            this.handelNetPosition(CalculateAction.unCalculate, result.resultCommand);
         } else {
             this.toastrService.error(result.errMsg);
         }
@@ -307,13 +299,6 @@ export class CalculationActionsComponent implements SportTemplate {
             const settleChildMatchQuery = new SettleChildMatchQuery(childMatchIds, settleQuery.selectedResources,
                 settleQuery.actionName, settleQuery.isReSettledTickets);
             await this.aioService.pushChildMatch(settleChildMatchQuery).toPromise();
-        }
-    }
-
-    private async handelNetPositionWithoutResult(type: string, matchId: number, IsApplyHedging: boolean, serviceCommand: string) {
-        if (!_.isNil(serviceCommand) && !_.isEmpty(serviceCommand)) {
-            const netPositionQuery = new NetPositionQuery(matchId, type, IsApplyHedging, serviceCommand);
-            await this.cricketService.netPosition(netPositionQuery).toPromise();
         }
     }
 

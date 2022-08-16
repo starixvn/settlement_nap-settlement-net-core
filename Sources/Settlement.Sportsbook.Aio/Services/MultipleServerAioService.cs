@@ -180,16 +180,15 @@ namespace Settlement.Sportsbook.Aio.Services
         {
             var criteria = createQueryService.QuerySettle(request);
             var result = await Execute(criteria, request.SelectedResources);
-            var childMatchIds = request.SportType == SportType.Cricket && result.ErrCode == 0
-                ? await GetChildMatchIds(request.MatchId, criteria.Action, criteria.SelectedResources)
-                : string.Empty;
+            var isChildMatch = request.SportType == SportType.Cricket && result.ErrCode == 0;
+            var childMatchIds = isChildMatch ? await GetChildMatchIds(request.MatchId, criteria.Action, criteria.SelectedResources) : string.Empty;
 
             var settleResult = new Result
             {
                 ErrCode = result.ErrCode,
                 ErrMsg = result.ErrMsg,
                 ChildMatchIds = childMatchIds,
-                ServiceCommand = result.ServiceCommand
+                ResultCommand = result.ResultCommand
             };
 
             return settleResult;
@@ -207,6 +206,7 @@ namespace Settlement.Sportsbook.Aio.Services
 
         private async Task<Result> Execute(SettleCriteria criteria, List<ResourceItem> selectedResources)
         {
+            var command = new List<ResultCommand>();
             var requestChecking = await ValidateBeforeExecute(criteria);
             if (requestChecking.ErrCode > 0)
             {
@@ -220,9 +220,20 @@ namespace Settlement.Sportsbook.Aio.Services
             foreach (var server in appSettingsKey.SiteDbServer)
             {
                 criteria.DbServer = server;
-                repository.Execute(criteria);
+                await repository.ExecuteAsync(criteria);
+                var serviceCommand = criteria.ServiceCommand;
+                if (!string.IsNullOrWhiteSpace(serviceCommand))
+                {
+
+                    command.Add(new ResultCommand
+                    {
+                        DbServer = server,
+                        ServiceCommand = serviceCommand
+                    });
+                }
             }
 
+            requestChecking.ResultCommand = command;
             return requestChecking;
         }
 
@@ -257,7 +268,7 @@ namespace Settlement.Sportsbook.Aio.Services
             await scaleOutSettleService.UpdateMatchInfo(requestUpdateInfo);
         }
 
-        private async Task<string> GetChildMatchIds(int matchId, string actionName, string selectedResources = "")
+        private async Task<string> GetChildMatchIds(int matchId, string actionName, string selectedResources)
         {
             var criteria = new GetChildMatchCriteria
             {
@@ -265,10 +276,11 @@ namespace Settlement.Sportsbook.Aio.Services
                 Mode = actionName
             };
 
-            if (selectedResources != "")
+            if (!string.IsNullOrWhiteSpace(selectedResources))
             {
                 criteria.SelectedResources = selectedResources;
             }
+
             var listMatch = await repository.FetchAsync<ChildMatch>(criteria);
             var matchIds = listMatch.Select(item => item.matchId).ToList();
 

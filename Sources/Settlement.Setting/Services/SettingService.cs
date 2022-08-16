@@ -57,7 +57,7 @@ namespace Settlement.Setting.Services
             {
                 ErrCode = criteria.ErrCode,
                 ErrMsg = criteria.ErrMsg,
-                ServiceCommand = criteria.UpdatedMatchIds
+                ChildMatchIds = criteria.UpdatedMatchIds
             };
         }
 

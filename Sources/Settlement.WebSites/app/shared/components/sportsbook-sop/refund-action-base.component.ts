@@ -1,6 +1,6 @@
 import { CalculateAction, SettlementStatusId, TicketStatusText } from "../../constants";
 import { Language } from "../../language";
-import { AioService, ClosePopupService } from "../../services";
+import { AioService } from "../../services";
 import { HedgeMatchDetail, MatchDetail, Permission, ResultDetail, SettleQuery } from "../../models/sportsbook-sop";
 import * as _ from "lodash";
 import { Component } from "@angular/core";
@@ -17,7 +17,6 @@ export class RefundActionBaseComponent {
     public applyHedgeMatch: boolean;
 
     constructor(
-        protected closePopupService: ClosePopupService,
         protected aioService: AioService,
         protected toastrService: ToastrService) {
     }
@@ -99,17 +98,12 @@ export class RefundActionBaseComponent {
         return !_.isNil(resultNotConfirmed);
     }
 
-    public refundHedgeMatch(query: SettleQuery) {
-        const matchId = query.matchId;
+    public async refundHedgeMatch(query: SettleQuery) {
         const hedgeMatchId = this.applyHedgeMatch ? this.hedgeMatchDetail.matchId : 0;
         if (hedgeMatchId > 0) {
             query.matchId = hedgeMatchId;
-            this.aioService.push(query).toPromise().then(() => {
-                this.closePopupService.closePopup(matchId);
-            });
-        } else {
-            this.closePopupService.closePopup(matchId);
-        }
+            await this.aioService.push(query).toPromise();
+        } 
     }
 
     protected cloneResultDetail() {

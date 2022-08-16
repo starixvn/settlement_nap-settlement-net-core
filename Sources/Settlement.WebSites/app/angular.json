@@ -1712,7 +1712,7 @@
       }
     }
   },
-  "defaultProject": "basketball",
+  "defaultProject": "cricket",
   "schematics": {
     "@schematics/angular:component": {
       "inlineTemplate": false,

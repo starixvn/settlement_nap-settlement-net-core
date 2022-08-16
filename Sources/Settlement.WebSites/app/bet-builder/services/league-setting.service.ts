@@ -39,7 +39,7 @@ export class LeagueSettingService {
         );
         const result = await this.requestService.updateLeague(query).toPromise();
         if (result.isSuccessful) {
-            this.reSetMatchOfLeague(league, result.serviceCommand);
+            this.reSetMatchOfLeague(league, result.childMatchIds);
         } else {
             this.modalDialogMessage.message = result.errMsg;
             this.messageBoxService.alert(this.modalDialogMessage);

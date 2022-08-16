@@ -1,5 +1,6 @@
 ﻿import { ResultDetail } from '../../shared/models/sportsbook-sop/result-detail.model';
-import { CalculateAction, SportType } from '../../shared/constants';
+import { SportType } from '../../shared/constants';
+import { ResultCommand } from '../../shared/models/result.model';
 export class SettleQuery {
     matchId: number;
     selectedResources: ResultDetail[];
@@ -37,13 +38,13 @@ export class MatchQuery {
 export class NetPositionQuery {
     matchId: number;
     action: string;
-    isApplyHedging: boolean;
-    serviceCommand: string;
-    constructor(matchId: number, action: string, isApplyHedging: boolean, serviceCommand: string) {
+    isCallNPService: boolean;
+    resultCommand: ResultCommand[];
+    constructor(matchId: number, action: string, resultCommand: ResultCommand[], isCallNPService: boolean) {
         this.matchId = matchId;
         this.action = action;
-        this.isApplyHedging = isApplyHedging;
-        this.serviceCommand = serviceCommand;
+        this.isCallNPService = isCallNPService;
+        this.resultCommand = resultCommand;
     }
 }
 
