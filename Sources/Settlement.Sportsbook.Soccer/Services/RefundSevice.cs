@@ -141,7 +141,8 @@ namespace Settlement.Sportsbook.Soccer.Services
                 Action = criteria.Action,
                 SpName = criteria.SpName,
                 Mode = ActionKey.ActionDictionary[criteria.Action],
-                SDTRecord = criteria.SDTRecord
+                SDTRecord = criteria.SDTRecord,
+                ResourceResult = criteria.ResourceResult
             };
             var resultMessage = await scaleOutSettleService.ValidateEventAndTicket(request);
             return new Result
