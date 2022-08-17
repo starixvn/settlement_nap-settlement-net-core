@@ -12,6 +12,8 @@ namespace Settlement.Sportsbook.OtherSports.Services
         void MergeMatchDetail(MatchDetail matchDetail, List<TicketCounts> ticketCounts);
 
         List<TicketCounts> MergeTicketCounts(List<List<TicketCounts>> multipleTicketCounts);
+
+        void GroupTicketCount(List<TicketCounts> ticketCounts);
     }
 
     public class MergeDataServiceImp : MergeDataService
@@ -80,6 +82,14 @@ namespace Settlement.Sportsbook.OtherSports.Services
             baseTicketCounts.BetSettledCount += siteTicketCounts.BetSettledCount;
             baseTicketCounts.BetWaitingCount += siteTicketCounts.BetWaitingCount;
             baseTicketCounts.BetCount += siteTicketCounts.BetCount;
+        }
+
+        public void GroupTicketCount(List<TicketCounts> ticketCounts)
+        {
+            foreach (var ticketCount in ticketCounts.Skip(1))
+            {
+                SumTicket(ticketCounts[0], ticketCount);
+            }
         }
     }
 }

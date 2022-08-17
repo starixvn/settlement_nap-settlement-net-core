@@ -65,6 +65,7 @@ namespace Settlement.Sportsbook.OtherSports.Services
             var multipleTicketCounts = await GetTicketInfo(ticketInfoCriteria);
             var ticketCounts = mergeDataService.MergeTicketCounts(multipleTicketCounts);
             mergeDataService.MergeMatchDetail(matchDetail, ticketCounts);
+            mergeDataService.GroupTicketCount(ticketCounts);
 
             return (matchDetail, ticketCounts);
         }
