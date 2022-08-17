@@ -282,9 +282,10 @@ namespace Settlement.EventManagement.Services.MultiSports
         public async Task<Result> Calculate(CalculateParlayRequest request)
         {
             var validateResult = await ValidateCalculateParlay(request);
-            var listMatchIds = validateResult.MatchIdsValid.Split(',');
-            if (listMatchIds.Any())
+            
+            if (!string.IsNullOrEmpty(validateResult.MatchIdsValid))
             {
+                var listMatchIds = validateResult.MatchIdsValid.Split(',');
                 var updateResultRequest = new UpdateMatchInfoRequest
                 {
                     Action = ActionType.CalculateAll,
@@ -338,6 +339,16 @@ namespace Settlement.EventManagement.Services.MultiSports
                 errorMessage += validateEventCriteria.ErrMsg;
             }
 
+            if (string.IsNullOrEmpty(validateEventCriteria.MatchIdsValid))
+            {
+                errorMessage += postErrorMessage;
+                return new ValidateParlayResult
+                {
+                    ErrCode = validateEventCriteria.ErrCode,
+                    ErrMsg = errorMessage,
+                };
+            }
+
             var validateTicketCriteria = new ValidateTicketParlayCriteria
             {
                 MatchIdsValid = validateEventCriteria.MatchIdsValid,
@@ -346,20 +357,25 @@ namespace Settlement.EventManagement.Services.MultiSports
 
             foreach (var server in appSettingsKey.SiteDbServer)
             {
-                validateTicketCriteria.MatchIds = validateTicketCriteria.MatchIdsValid;
-                validateTicketCriteria.DbServer = server;
-                await repository.ExecuteAsync(validateTicketCriteria);
-                if (!string.IsNullOrEmpty(validateTicketCriteria.ErrMsg))
+                if (!string.IsNullOrEmpty(validateTicketCriteria.MatchIdsValid))
                 {
-                    showError = true;
-                    errorMessage += validateTicketCriteria.ErrMsg;
+                    validateTicketCriteria.MatchIds = validateTicketCriteria.MatchIdsValid;
+                    validateTicketCriteria.DbServer = server;
+                    validateTicketCriteria.MatchIdsValid = null;
+                    await repository.ExecuteAsync(validateTicketCriteria);
+                    if (!string.IsNullOrEmpty(validateTicketCriteria.ErrMsg))
+                    {
+                        showError = true;
+                        errorMessage += validateTicketCriteria.ErrMsg;
+                    }
                 }
             }
 
             errorMessage += postErrorMessage;
+            var errorCode = validateEventCriteria.ErrCode > 0 ? validateEventCriteria.ErrCode : validateTicketCriteria.ErrCode;
             return showError ? new ValidateParlayResult
             {
-                ErrCode = validateEventCriteria.ErrCode,
+                ErrCode = errorCode,
                 ErrMsg = errorMessage,
                 MatchIdsValid = validateTicketCriteria.MatchIdsValid
             } : new ValidateParlayResult
@@ -367,5 +383,34 @@ namespace Settlement.EventManagement.Services.MultiSports
                 MatchIdsValid = validateTicketCriteria.MatchIdsValid
             };
         }
+
+        //private Task<ValidateParlayResult> ValidateParlayEvent(CalculateParlayRequest request)
+        //{
+        //    var validateEventCriteria = new ValidateCalculateParlayCriteria
+        //    {
+        //        MatchIds = request.MatchIds,
+        //        Action = ActionType.CalculateAll
+        //    };
+
+        //    await repository.ExecuteAsync(validateEventCriteria);
+        //    var errorMessage = "All matches are being calculated, except following matches ";
+        //    const string postErrorMessage = " Please contact Starix IT for further support!";
+        //    var showError = false;
+        //    if (!string.IsNullOrEmpty(validateEventCriteria.ErrMsg))
+        //    {
+        //        showError = true;
+        //        errorMessage += validateEventCriteria.ErrMsg;
+        //    }
+
+        //    if (string.IsNullOrEmpty(validateEventCriteria.MatchIdsValid))
+        //    {
+        //        errorMessage += postErrorMessage;
+        //        return new ValidateParlayResult
+        //        {
+        //            ErrCode = validateEventCriteria.ErrCode,
+        //            ErrMsg = errorMessage,
+        //        };
+        //    }
+        //}
     }
 }

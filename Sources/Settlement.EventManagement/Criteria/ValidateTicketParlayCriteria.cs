@@ -20,8 +20,6 @@ namespace Settlement.EventManagement.Criteria
 
         public string MatchIdsValid { get; set; }
 
-        public string MatchIdsInvalid { get; set; }
-
         [SpParam(Ignored = true)]
         public string DbServer { get; set; }
 
