@@ -61,7 +61,7 @@ namespace Settlement.Sportsbook.Aio.Services
         private void MergeTicketsToResults(List<Models.ResultDetail> resultDetails, List<Models.ResultDetail> ticketDetails, int sportType, string settleType)
         {
             var newTicketDetails = ticketDetails.Where(ticketDetail => !resultDetails.Any(result => result.Equals(ticketDetail)));
-            if (sportType != SportType.ESports && newTicketDetails.Any())
+            if (newTicketDetails.Any())
             {
                 resultDetails.AddRange(newTicketDetails);
             }
