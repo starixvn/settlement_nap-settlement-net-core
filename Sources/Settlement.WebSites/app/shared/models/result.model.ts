@@ -7,6 +7,7 @@
 }
 
 export class ResultCommand {
+    public dbServer: string;
     public siteDbGroupId: number;
     public serviceCommand: string;
 }

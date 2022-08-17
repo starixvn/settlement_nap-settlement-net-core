@@ -236,6 +236,7 @@ namespace Settlement.Sportsbook.Aio.Services
                 var siteDbGroupId = await scaleOutSettleService.GetSiteGroupId(server);
                 commandList.Add(new ResultCommand
                 {
+                    DbServer = server,
                     SiteDbGroupId = siteDbGroupId,
                     ServiceCommand = serviceCommand
                 });
