@@ -43,6 +43,7 @@ namespace Settlement.WebSites
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public static void Configure(IApplicationBuilder app)
         {
+            app.UseCors(allowOrigin);
             app.UseDeveloperExceptionPage();
             app.UseResponseCompression();
             app.UseHttpsRedirection();
@@ -51,7 +52,6 @@ namespace Settlement.WebSites
             app.UseSession();
             app.UseMiddleware<ErrorHandler>();
             app.UseRouting();
-            app.UseCors(allowOrigin);
             app.UseAuthentication();
             app.UseAuthorization();
 

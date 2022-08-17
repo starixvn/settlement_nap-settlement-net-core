@@ -206,7 +206,7 @@ namespace Settlement.Sportsbook.Aio.Services
 
         private async Task<Result> Execute(SettleCriteria criteria, List<ResourceItem> selectedResources)
         {
-            var command = new List<ResultCommand>();
+            var commandList = new List<ResultCommand>();
             var requestChecking = await ValidateBeforeExecute(criteria);
             if (requestChecking.ErrCode > 0)
             {
@@ -222,19 +222,26 @@ namespace Settlement.Sportsbook.Aio.Services
                 criteria.DbServer = server;
                 await repository.ExecuteAsync(criteria);
                 var serviceCommand = criteria.ServiceCommand;
-                if (!string.IsNullOrWhiteSpace(serviceCommand))
-                {
-
-                    command.Add(new ResultCommand
-                    {
-                        DbServer = server,
-                        ServiceCommand = serviceCommand
-                    });
-                }
+                commandList = await SetResultCommand(commandList, serviceCommand, server);
             }
 
-            requestChecking.ResultCommand = command;
+            requestChecking.ResultCommand = commandList;
             return requestChecking;
+        }
+
+        private async Task<List<ResultCommand>> SetResultCommand(List<ResultCommand> commandList, string serviceCommand, string server)
+        {
+            if (!string.IsNullOrWhiteSpace(serviceCommand))
+            {
+                var siteDbGroupId = await scaleOutSettleService.GetSiteGroupId(server);
+                commandList.Add(new ResultCommand
+                {
+                    SiteDbGroupId = siteDbGroupId,
+                    ServiceCommand = serviceCommand
+                });
+            }
+
+            return commandList;
         }
 
         private async Task<Result> ValidateBeforeExecute(SettleCriteria criteria)
