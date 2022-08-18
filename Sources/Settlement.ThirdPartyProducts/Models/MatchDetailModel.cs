@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using System;
+using System.Collections.Generic;
 
 namespace Settlement.ThirdPartyProducts.Models
 {
@@ -72,6 +73,8 @@ namespace Settlement.ThirdPartyProducts.Models
         public int AutoSetting { get; set; }
 
         public int AutoSettingForLeague { get; set; }
+
+        public List<SiteMatch> SiteMatch { get; set; } = new List<SiteMatch>();
 
         public AutoSetting AutoCalcSetting => autoCalcSetting ?? (autoCalcSetting = new AutoSetting
         {

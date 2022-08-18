@@ -23,19 +23,23 @@ namespace Settlement.ThirdPartyProducts.Handlers
 
         private readonly BetBuilderService betBuilderService;
 
+        private readonly BetBuilderMatchesService betBuilderMatchesService;
+
         public BetBuilderHandler(
             MatchService matchService,
             PermissionService permissionService,
-            BetBuilderService betBuilderService)
+            BetBuilderService betBuilderService,
+            BetBuilderMatchesService betBuilderMatchesService)
         {
             this.matchService = matchService;
             this.permissionService = permissionService;
             this.betBuilderService = betBuilderService;
+            this.betBuilderMatchesService = betBuilderMatchesService;
         }
 
         public async Task<MultiSportsModel> Handle(FilterRequest request, CancellationToken cancellationToken) => new MultiSportsModel
         {
-            SportLeagues = await matchService.Search(request),
+            SportLeagues = await betBuilderMatchesService.Search(request),
             Permission = permissionService.Permission
         };
 
@@ -52,7 +56,7 @@ namespace Settlement.ThirdPartyProducts.Handlers
             => await betBuilderService.GetLeagues(request);
 
         public async Task<List<MatchDetailModel>> Handle(MatchesWaitingRequest request, CancellationToken cancellationToken)
-            => await matchService.RefreshMatches(request);
+            => await betBuilderMatchesService.RefreshMatches(request);
 
         public async Task<MatchDetailModel> Handle(MatchInfoRequest request, CancellationToken cancellationToken)
             => await matchService.GetMatch(request);

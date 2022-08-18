@@ -109,7 +109,7 @@
           "options": {
             "aot": true,
             "outputPath": "../wwwroot/bet-builder",
-            "index": "bet-builder/index.cshtml",
+            "index": "bet-builder/index.html",
             "main": "bet-builder/main.ts",
             "tsConfig": "bet-builder/tsconfig.app.json",
             "polyfills": "polyfills.ts",
@@ -1712,7 +1712,7 @@
       }
     }
   },
-  "defaultProject": "cricket",
+  "defaultProject": "bet-builder",
   "schematics": {
     "@schematics/angular:component": {
       "inlineTemplate": false,
