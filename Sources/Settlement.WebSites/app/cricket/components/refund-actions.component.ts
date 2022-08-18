@@ -79,19 +79,19 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
             this.match.permission.isLeader);
         const result = await this.aioService.push(query).toPromise() as Result;
         if (result.isSuccessful) {
-            this.settleHedgeMatch(query);
-            this.handleChildMatch(result.childMatchIds, query);
-            this.handelNetPosition(CalculateAction.unCalculate, result.resultCommand);
+            this.handleChildMatch(query, result.childMatchIds);
+            this.handelNetPosition(query, result.resultCommand);
         } else {
             this.toastrService.error(result.errMsg);
         }
     }
 
-    private async handelNetPosition(type: string, resultCommand: ResultCommand[]) {
+    private async handelNetPosition(query: SettleQuery, resultCommand: ResultCommand[]) {
         if (!_.isNil(resultCommand) && resultCommand.length > 0) {
-            const netPositionQuery = new NetPositionQuery(this.matchDetail.matchId, type, resultCommand, true);
+            const netPositionQuery = new NetPositionQuery(this.matchDetail.matchId, query.actionName, resultCommand, true);
             const result = await this.cricketService.netPosition(netPositionQuery).toPromise() as Result;
             if (result.isSuccessful) {
+                this.settleHedgeMatch(query);
                 this.messageBoxService.closePopup();
             } else {
                 this.toastrService.error(result.errMsg);
@@ -105,13 +105,13 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
         const hedgeMatchId = this.applyHedgeMatch ? this.match.hedgeMatchDetail.matchId : 0;
         if (hedgeMatchId > 0) {
             settleQuery.matchId = hedgeMatchId;
-            await this.aioService.push(settleQuery).toPromise();
-            const netPositionQuery = new NetPositionQuery(hedgeMatchId, settleQuery.actionName, [], false);
+            const result = await this.aioService.push(settleQuery).toPromise() as Result;
+            const netPositionQuery = new NetPositionQuery(hedgeMatchId, CalculateAction.unCalculate, result.resultCommand, false);
             await this.cricketService.netPosition(netPositionQuery).toPromise();
         }
     }
 
-    private async handleChildMatch(childMatchIds: string, settleQuery: SettleQuery) {
+    private async handleChildMatch(settleQuery: SettleQuery, childMatchIds: string) {
         if (!_.isEmpty(childMatchIds)) {
             const settleChildMatchQuery = new SettleChildMatchQuery(childMatchIds, settleQuery.selectedResources,
                 settleQuery.actionName, settleQuery.isReSettledTickets);

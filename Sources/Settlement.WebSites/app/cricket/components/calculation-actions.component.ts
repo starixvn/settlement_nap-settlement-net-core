@@ -226,19 +226,19 @@ export class CalculationActionsComponent implements SportTemplate {
             this.isReSettledTickets, this.isLeader);
         const result = await this.aioService.push(settleQuery).toPromise() as Result;
         if (result.isSuccessful) {
-            this.settleHedgeMatch(settleQuery);
-            this.handleChildMatch(result.childMatchIds, settleQuery);
-            this.handelNetPosition(CalculateAction.calculate, result.resultCommand);
+            this.handleChildMatch(settleQuery, result.childMatchIds);
+            this.handelNetPosition(settleQuery, result.resultCommand);
         } else {
             this.toastrService.error(result.errMsg);
         }
     }
 
-    private async handelNetPosition(type: string, resultCommand: ResultCommand[]) {
+    private async handelNetPosition(settleQuery: SettleQuery, resultCommand: ResultCommand[]) {
         if (!_.isNil(resultCommand) && resultCommand.length > 0) {
-            const netPositionQuery = new NetPositionQuery(this.matchDetail.matchId, type, resultCommand, true);
+            const netPositionQuery = new NetPositionQuery(this.matchDetail.matchId, settleQuery.actionName, resultCommand, true);
             const result = await this.cricketService.netPosition(netPositionQuery).toPromise() as Result;
             if (result.isSuccessful) {
+                this.settleHedgeMatch(settleQuery);
                 this.messageBoxService.closePopup();
             } else {
                 this.toastrService.error(result.errMsg);
@@ -252,8 +252,8 @@ export class CalculationActionsComponent implements SportTemplate {
         const hedgeMatchId = this.applyHedgeMatch ? this.match.hedgeMatchDetail.matchId : 0;
         if (hedgeMatchId > 0) {
             settleQuery.matchId = hedgeMatchId;
-            await this.aioService.push(settleQuery).toPromise();
-            const netPositionQuery = new NetPositionQuery(hedgeMatchId, settleQuery.actionName, [], false);
+            const result = await this.aioService.push(settleQuery).toPromise() as Result;
+            const netPositionQuery = new NetPositionQuery(hedgeMatchId, settleQuery.actionName, result.resultCommand, false);
             await this.cricketService.netPosition(netPositionQuery).toPromise();
         }
     }
@@ -282,19 +282,18 @@ export class CalculationActionsComponent implements SportTemplate {
             item.awayValue = "";
         });
 
-        const unCalQuery = new SettleQuery(this.match.matchDetail.matchId, selectedResources, CalculateAction.unCalculate,
+        const query = new SettleQuery(this.match.matchDetail.matchId, selectedResources, CalculateAction.unCalculate,
             this.isReSettledTickets, this.isLeader);
-        const result = await this.aioService.push(unCalQuery).toPromise() as Result;
+        const result = await this.aioService.push(query).toPromise() as Result;
         if (result.isSuccessful) {
-            this.settleHedgeMatch(unCalQuery);
-            this.handleChildMatch(result.childMatchIds, unCalQuery);
-            this.handelNetPosition(CalculateAction.unCalculate, result.resultCommand);
+            this.handleChildMatch(query, result.childMatchIds);
+            this.handelNetPosition(query, result.resultCommand);
         } else {
             this.toastrService.error(result.errMsg);
         }
     }
 
-    private async handleChildMatch(childMatchIds: string, settleQuery: SettleQuery) {
+    private async handleChildMatch(settleQuery: SettleQuery, childMatchIds: string) {
         if (!_.isEmpty(childMatchIds)) {
             const settleChildMatchQuery = new SettleChildMatchQuery(childMatchIds, settleQuery.selectedResources,
                 settleQuery.actionName, settleQuery.isReSettledTickets);
