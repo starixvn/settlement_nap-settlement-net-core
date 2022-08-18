@@ -26,7 +26,7 @@ namespace Settlement.Sportsbook.OtherSports.Services
 
         Task<MarkedTickets> CheckMarkedTickets(CheckingMarkedTicketsCriteria criteria);
 
-        Task<Result> Calculate(CalculateCriteria criteria);
+        Task<Result> Calculate(CalculateCriteria calculateCriteria);
     }
 
     public class MultipleServerServiceImp : MultipleServerService

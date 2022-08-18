@@ -67,7 +67,6 @@ export class BetTypesComponent implements OnInit, DoCheck {
     constructor(
         private readonly requestService: RequestService,
         private readonly messageBoxService: MessageBoxService,
-        private readonly closePopupService: ClosePopupService,
         private readonly timeMachineService: TimeMachineService,
         private readonly verificationService: VerificationService,
         private readonly matDialog: MatDialog,
@@ -497,7 +496,7 @@ export class BetTypesComponent implements OnInit, DoCheck {
 
         this.requestService.doSubmitByAction(query).subscribe((result: Result) => {
             if (result.isSuccessful) {
-                this.closePopupService.closePopup(this.fastMarkets.matchId);
+                this.messageBoxService.closePopup();
             } else {
                 this.errorMessage = result.errMsg;
             }
@@ -803,7 +802,11 @@ export class BetTypesComponent implements OnInit, DoCheck {
     }
 
     public verifyInterval(interval: FastMarketResult) {
-        interval.hasBackground = _.isEmpty(interval.result);
+        if (_.isEmpty(interval.result.toString())) {
+            interval.result = null;
+        }
+
+        interval.hasBackground = _.isNull(interval.result);
     }
 
     public verifyHomeAway(interval: FastMarketResult) {
