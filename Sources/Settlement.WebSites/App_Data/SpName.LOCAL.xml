@@ -27,6 +27,7 @@
     <Setting Key="NAP_Admin_Settlement_50_MoveTicketInfo" SpName="NAP_Admin_Settlement_50_MoveTicketInfo" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Admin_Match_Update" SpName="NAP_Admin_Match_Update" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_UpdateMatch_Remark " SpName="NAP_UpdateMatch_Remark " DbName="DBPRO.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Admin_Settlement_CopyResult" SpName="NAP_Admin_Settlement_CopyResult" DbName="DBPRO.bodb02.bodbAdminNet" />
   </Function>
 
   <Function Name="Provider">
@@ -125,15 +126,16 @@
     <Setting Key="NAP_Set_MatchSelNumberGameDetail" SpName="NAP_Set_MatchSelNumberGameDetail" DbName="DBPRO.bodb02.bodbAdminNet">
       <Mapping DataField="Number" ObjectProperty="NumberBall" />
     </Setting>
-    <Setting Key="NAP_Admin_Settlement_s161_Manual" SpName="NAP_Admin_Settlement_s161_Manual" DbName="DBTXN.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Admin_Match_NumberGame_Upd" SpName="NAP_Admin_Match_NumberGame_Upd" DbName="DBPRO.bodb02.bodbAdminNet" />
   </Function>
 
   <Function Name="Happy 5">
-    <Setting Key="NAP_Admin_Settlement_s164" SpName="NAP_Admin_Settlement_s164" DbName="DBTXN.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_MatchSel_s164" SpName="NAP_Set_MatchSel_s164" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_MatchSel_BingoBall" SpName="NAP_Set_MatchSel_BingoBall" DbName="DBPRO.bodb02.bodbAdminNet">
       <Mapping DataField="Number" ObjectProperty="NumberBall" />
     </Setting>
+    <Setting Key="NAP_Admin_Settlement_s164_Validation_Event" SpName="NAP_Admin_Settlement_s164_Validation_Event" DbName="DBPRO.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Admin_Match_s164_Upd" SpName="NAP_Admin_Match_s164_Upd" DbName="DBPRO.bodb02.bodbAdminNet" />
   </Function>
 
   <Function Name="Notifications">
@@ -313,6 +315,26 @@
     <Function Name="NAP_Set_MatchSel_by_Vendor_Ticket">
       <Setting Key="NAP_Set_MatchSel_by_Vendor_Ticket_DBTXN" SpName="NAP_Set_MatchSel_by_Vendor_Ticket" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="NAP_Set_MatchSel_by_Vendor_Ticket_DBSID01" SpName="NAP_Set_MatchSel_by_Vendor_Ticket" DbName="DBSID01.bodb02.bodbAdminNet" />
+    </Function>
+
+    <Function Name="NAP_Admin_Settlement_s164_Validation">
+      <Setting Key="NAP_Admin_Settlement_s164_Validation_DBTXN" SpName="NAP_Admin_Settlement_s164_Validation" DbName="DBTXN.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Admin_Settlement_s164_Validation_DBSID01" SpName="NAP_Admin_Settlement_s164_Validation" DbName="DBSID01.bodb02.bodbAdminNet" />
+    </Function>
+
+    <Function Name="NAP_Admin_Settlement_s164">
+      <Setting Key="NAP_Admin_Settlement_s164_DBTXN" SpName="NAP_Admin_Settlement_s164" DbName="DBTXN.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Admin_Settlement_s164_DBSID01" SpName="NAP_Admin_Settlement_s164" DbName="DBSID01.bodb02.bodbAdminNet" />
+    </Function>
+
+    <Function Name="NAP_Admin_Settlement_s161_Manual">
+      <Setting Key="NAP_Admin_Settlement_s161_Manual_DBTXN" SpName="NAP_Admin_Settlement_s161_Manual" DbName="DBTXN.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Admin_Settlement_s161_Manual_DBSID01" SpName="NAP_Admin_Settlement_s161_Manual" DbName="DBSID01.bodb02.bodbAdminNet" />
+    </Function>
+
+    <Function Name="NAP_Admin_Settlement_NumberGame_Validation">
+      <Setting Key="NAP_Admin_Settlement_NumberGame_Validation_DBTXN" SpName="NAP_Admin_Settlement_NumberGame_Validation" DbName="DBTXN.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Admin_Settlement_NumberGame_Validation_DBSID01" SpName="NAP_Admin_Settlement_NumberGame_Validation" DbName="DBSID01.bodb02.bodbAdminNet" />
     </Function>
   </Function>
 </Functions>

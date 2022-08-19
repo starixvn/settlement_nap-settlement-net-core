@@ -10,7 +10,7 @@ namespace Settlement.FastMarkets.Models.TimeMachineOldResult
         [XmlAttribute("p")]
         public int Position { get; set; }
 
-        [XmlIgnore]
+        [XmlAttribute("or")]
         public int Result { get; set; }
 
         [XmlAttribute("oa")]
