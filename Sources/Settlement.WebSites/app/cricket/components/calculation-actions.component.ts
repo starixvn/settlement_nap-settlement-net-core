@@ -239,7 +239,6 @@ export class CalculationActionsComponent implements SportTemplate {
             const result = await this.cricketService.netPosition(netPositionQuery).toPromise() as Result;
             if (result.isSuccessful) {
                 this.settleHedgeMatch(settleQuery);
-                this.messageBoxService.closePopup();
             } else {
                 this.toastrService.error(result.errMsg);
             }
@@ -253,8 +252,19 @@ export class CalculationActionsComponent implements SportTemplate {
         if (hedgeMatchId > 0) {
             settleQuery.matchId = hedgeMatchId;
             const result = await this.aioService.push(settleQuery).toPromise() as Result;
-            const netPositionQuery = new NetPositionQuery(hedgeMatchId, settleQuery.actionName, result.resultCommand, false);
-            await this.cricketService.netPosition(netPositionQuery).toPromise();
+            if (result.resultCommand.length > 0) {
+                const netPositionQuery = new NetPositionQuery(hedgeMatchId, settleQuery.actionName, result.resultCommand, false);
+                const resultHedgeMatch = await this.cricketService.netPosition(netPositionQuery).toPromise() as Result;
+                if (resultHedgeMatch.isSuccessful) {
+                    this.messageBoxService.closePopup();
+                } else {
+                    this.toastrService.error(result.errMsg);
+                }
+            } else {
+                this.messageBoxService.closePopup();
+            }
+        } else {
+            this.messageBoxService.closePopup();
         }
     }
 
