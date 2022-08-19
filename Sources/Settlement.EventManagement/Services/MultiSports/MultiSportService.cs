@@ -285,33 +285,8 @@ namespace Settlement.EventManagement.Services.MultiSports
             
             if (!string.IsNullOrEmpty(validateResult.MatchIdsValid))
             {
-                var listMatchIds = validateResult.MatchIdsValid.Split(',');
-                var updateResultRequest = new UpdateMatchInfoRequest
-                {
-                    Action = ActionType.CalculateAll,
-                    AdminId = request.AdminId,
-                    Mode = "MP",
-                };
-
-                foreach (var matchId in listMatchIds)
-                {
-                    updateResultRequest.MatchId = Convert.ToInt32(matchId);
-                    await matchService.UpdateMatchInfo(updateResultRequest);
-                }
-
-                var criteria = new ParlayCriteria
-                {
-                    MatchIds = validateResult.MatchIdsValid,
-                    Action = ActionType.CalculateAll,
-                    Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString(),
-                    AdminId = request.AdminId
-                };
-
-                foreach (var server in appSettingsKey.SiteDbServer)
-                {
-                    criteria.DbServer = server;
-                    repository.Execute(criteria);
-                }
+                await UpdateResultParlay(validateResult, request);
+                ExecuteCalculateParlay(validateResult, request);
             }
 
             return new Result
@@ -321,7 +296,84 @@ namespace Settlement.EventManagement.Services.MultiSports
             };
         }
 
+        private async Task UpdateResultParlay(ValidateParlayResult validateResult, CalculateParlayRequest request)
+        {
+            var listMatchIds = validateResult.MatchIdsValid.Split(',');
+            var updateResultRequest = new UpdateMatchInfoRequest
+            {
+                Action = ActionType.CalculateAll,
+                AdminId = request.AdminId,
+                Mode = "MP",
+            };
+
+            foreach (var matchId in listMatchIds)
+            {
+                updateResultRequest.MatchId = Convert.ToInt32(matchId);
+                await matchService.UpdateMatchInfo(updateResultRequest);
+            }
+        }
+
+        private void ExecuteCalculateParlay(ValidateParlayResult validateResult, CalculateParlayRequest request)
+        {
+            var criteria = new ParlayCriteria
+            {
+                MatchIds = validateResult.MatchIdsValid,
+                Action = ActionType.CalculateAll,
+                Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString(),
+                AdminId = request.AdminId
+            };
+
+            foreach (var server in appSettingsKey.SiteDbServer)
+            {
+                criteria.DbServer = server;
+                repository.Execute(criteria);
+            }
+        }
+
         private async Task<ValidateParlayResult> ValidateCalculateParlay(CalculateParlayRequest request)
+        {
+            var validateEventResult = await ValidateParlayEvent(request);
+            var errorMessage = "All matches are being calculated, except following matches ";
+            const string postErrorMessage = " Please contact Starix IT for further support!";
+            if (string.IsNullOrEmpty(validateEventResult.MatchIdsValid))
+            {
+                errorMessage += validateEventResult.ErrMsg;
+                errorMessage += postErrorMessage;
+                return new ValidateParlayResult
+                {
+                    ErrCode = validateEventResult.ErrCode,
+                    ErrMsg = errorMessage,
+                };
+            }
+
+            var showError = false;
+            var validateTicketResult = await ValidateParlayTicket(validateEventResult);
+
+            if (!string.IsNullOrEmpty(validateEventResult.ErrMsg))
+            {
+                showError = true;
+                errorMessage += validateEventResult.ErrMsg;
+            }
+
+            if (!string.IsNullOrEmpty(validateTicketResult.ErrMsg))
+            {
+                showError = true;
+                errorMessage += validateTicketResult.ErrMsg;
+            }
+
+            var errorCode = validateEventResult.ErrCode > 0 ? validateEventResult.ErrCode : validateTicketResult.ErrCode;
+            return showError ? new ValidateParlayResult
+            {
+                ErrCode = errorCode,
+                ErrMsg = errorMessage,
+                MatchIdsValid = validateTicketResult.MatchIdsValid
+            } : new ValidateParlayResult
+            {
+                MatchIdsValid = validateTicketResult.MatchIdsValid
+            };
+        }
+
+        private async Task<ValidateParlayResult> ValidateParlayEvent(CalculateParlayRequest request)
         {
             var validateEventCriteria = new ValidateCalculateParlayCriteria
             {
@@ -330,31 +382,24 @@ namespace Settlement.EventManagement.Services.MultiSports
             };
 
             await repository.ExecuteAsync(validateEventCriteria);
-            var errorMessage = "All matches are being calculated, except following matches ";
-            const string postErrorMessage = " Please contact Starix IT for further support!";
-            var showError = false;
-            if (!string.IsNullOrEmpty(validateEventCriteria.ErrMsg))
-            {
-                showError = true;
-                errorMessage += validateEventCriteria.ErrMsg;
-            }
 
-            if (string.IsNullOrEmpty(validateEventCriteria.MatchIdsValid))
+            return new ValidateParlayResult
             {
-                errorMessage += postErrorMessage;
-                return new ValidateParlayResult
-                {
-                    ErrCode = validateEventCriteria.ErrCode,
-                    ErrMsg = errorMessage,
-                };
-            }
+                ErrCode = validateEventCriteria.ErrCode,
+                ErrMsg = validateEventCriteria.ErrMsg,
+                MatchIdsValid = validateEventCriteria.MatchIdsValid
+            };
+        }
 
+        private async Task<ValidateParlayResult> ValidateParlayTicket(ValidateParlayResult validateEventResult)
+        {
             var validateTicketCriteria = new ValidateTicketParlayCriteria
             {
-                MatchIdsValid = validateEventCriteria.MatchIdsValid,
+                MatchIdsValid = validateEventResult.MatchIdsValid,
                 Action = ActionType.CalculateAll
             };
 
+            var errorMessage = "";
             foreach (var server in appSettingsKey.SiteDbServer)
             {
                 if (!string.IsNullOrEmpty(validateTicketCriteria.MatchIdsValid))
@@ -365,52 +410,17 @@ namespace Settlement.EventManagement.Services.MultiSports
                     await repository.ExecuteAsync(validateTicketCriteria);
                     if (!string.IsNullOrEmpty(validateTicketCriteria.ErrMsg))
                     {
-                        showError = true;
                         errorMessage += validateTicketCriteria.ErrMsg;
                     }
                 }
             }
 
-            errorMessage += postErrorMessage;
-            var errorCode = validateEventCriteria.ErrCode > 0 ? validateEventCriteria.ErrCode : validateTicketCriteria.ErrCode;
-            return showError ? new ValidateParlayResult
+            return new ValidateParlayResult
             {
-                ErrCode = errorCode,
+                ErrCode = validateTicketCriteria.ErrCode,
                 ErrMsg = errorMessage,
-                MatchIdsValid = validateTicketCriteria.MatchIdsValid
-            } : new ValidateParlayResult
-            {
                 MatchIdsValid = validateTicketCriteria.MatchIdsValid
             };
         }
-
-        //private Task<ValidateParlayResult> ValidateParlayEvent(CalculateParlayRequest request)
-        //{
-        //    var validateEventCriteria = new ValidateCalculateParlayCriteria
-        //    {
-        //        MatchIds = request.MatchIds,
-        //        Action = ActionType.CalculateAll
-        //    };
-
-        //    await repository.ExecuteAsync(validateEventCriteria);
-        //    var errorMessage = "All matches are being calculated, except following matches ";
-        //    const string postErrorMessage = " Please contact Starix IT for further support!";
-        //    var showError = false;
-        //    if (!string.IsNullOrEmpty(validateEventCriteria.ErrMsg))
-        //    {
-        //        showError = true;
-        //        errorMessage += validateEventCriteria.ErrMsg;
-        //    }
-
-        //    if (string.IsNullOrEmpty(validateEventCriteria.MatchIdsValid))
-        //    {
-        //        errorMessage += postErrorMessage;
-        //        return new ValidateParlayResult
-        //        {
-        //            ErrCode = validateEventCriteria.ErrCode,
-        //            ErrMsg = errorMessage,
-        //        };
-        //    }
-        //}
     }
 }
