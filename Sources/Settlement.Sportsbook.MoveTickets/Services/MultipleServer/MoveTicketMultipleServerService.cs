@@ -31,6 +31,9 @@ namespace Settlement.Sportsbook.MoveTickets.Services
     {
         private readonly int actionIdMoveTicket = 81026;
         private readonly int actionIDMoveRunningTickets = 81035;
+        private readonly string actionMoveTicket = "MoveTicket";
+        private readonly string modeCricket = "50";
+        private readonly string modeRunnigTicket = "43";
         private readonly IDynamicRepository repository;
         private readonly IMapper mapper;
         private readonly INapSession currentSession;
@@ -65,7 +68,7 @@ namespace Settlement.Sportsbook.MoveTickets.Services
             var validateRequest = new EventTicketRequest
             {
                 MatchId = criteria.MatchId,
-                Action = "MoveTicket",
+                Action = actionMoveTicket,
                 SpName = criteria.SpName,
                 Mode = "50"
             };
@@ -109,17 +112,52 @@ namespace Settlement.Sportsbook.MoveTickets.Services
             var criteria = mapper.Map<MoveRunningTicketsRequest, MoveRunningTicketsCriteria>(request);
             criteria.AdminId = currentSession.UserId;
             criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
-            await repository.ExecuteAsync(criteria);
-
-            if (criteria.ErrCode != 0)
+            var validateResult = await VerifyBeforeMovingRunningTickets(criteria);
+            if (validateResult.ErrCode != 0)
             {
                 logService.ActionLog(request.MatchId, criteria.ErrMsg, actionIDMoveRunningTickets);
+                return validateResult;
             }
 
+            ExecuteMoveRunningTicket(criteria);
+
+            return validateResult;
+        }
+
+        public void ExecuteMoveRunningTicket(MoveRunningTicketsCriteria criteria)
+        {
+            foreach (var server in appSettingsKey.SiteDbServer)
+            {
+                criteria.DbServer = server;
+                repository.Execute(criteria);
+            }
+
+            var copyResultCriteria = new CopyResultCriteria
+            {
+                MatchId = criteria.MatchId,
+                AdminId = criteria.AdminId,
+                IsOverrideResult = criteria.IsOverrideResult,
+                DestinationMatchId = criteria.DestinationMatchId
+            };
+
+            repository.Execute(copyResultCriteria);
+        }
+
+        private async Task<Result> VerifyBeforeMovingRunningTickets(MoveRunningTicketsCriteria criteria)
+        {
+            var request = new EventTicketRequest
+            {
+                MatchId = criteria.MatchId,
+                Action = actionMoveTicket,
+                SpName = criteria.SpName,
+                Mode = modeRunnigTicket,
+                DestinationMatchId = criteria.DestinationMatchId
+            };
+            var resultMessage = await scaleOutSettleService.ValidateEventAndTicket(request);
             return new Result
             {
-                ErrCode = criteria.ErrCode,
-                ErrMsg = criteria.ErrMsg
+                ErrCode = resultMessage.ErrorCode,
+                ErrMsg = resultMessage.ErrorMessage
             };
         }
 

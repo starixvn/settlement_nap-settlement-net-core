@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 using Fanex.NAP.Client.Helpers.Web;
 using Microsoft.AspNetCore.Http;
 using Settlement.Core.Constants;
+using Fanex.Settlement.ScaleOut.Services;
+using Fanex.Settlement.ScaleOut.Request;
+using Microsoft.Extensions.Options;
 
 namespace Settlement.Gaming.Services.Happy5
 {
@@ -28,18 +31,26 @@ namespace Settlement.Gaming.Services.Happy5
 
         private readonly IHttpContextAccessor accessor;
 
+        private readonly ScaleOutSettleThirdPartyService scaleOutSettleThirdPartyService;
+
+        private readonly AppSettingsKey appSettingsKey;
+
         public SettlementServiceImp(
             IDynamicRepository repository,
             INapSession currentSession,
             PermissionService permissionService,
             IHttpContextAccessor accessor,
-            BallService ballService)
+            BallService ballService,
+            ScaleOutSettleThirdPartyService scaleOutSettleThirdPartyService,
+            IOptions<AppSettingsKey> options)
         {
             this.repository = repository;
             this.currentSession = currentSession;
             this.permissionService = permissionService;
             this.accessor = accessor;
             this.ballService = ballService;
+            this.scaleOutSettleThirdPartyService = scaleOutSettleThirdPartyService;
+            this.appSettingsKey = options.Value;
         }
 
         public async Task<Result> Settle(Happy5SettlementRequest request)
@@ -55,14 +66,45 @@ namespace Settlement.Gaming.Services.Happy5
         private async Task<Result> SettleWhenHavePermission(Happy5SettlementRequest request)
         {
             var criteria = CreateCriteria(request);
+            var validateResult = await ValidateBeforeSettle(criteria);
+            if (validateResult.ErrCode != 0)
+            {
+                return validateResult;
+            }
 
-            await repository.ExecuteAsync(criteria);
+            var getOldResultCriteria = new GetOldResultCriteria { MatchId = request.MatchId };
+            await repository.ExecuteAsync(getOldResultCriteria);
+
+            criteria.StrOldResult = getOldResultCriteria.OldResult;
+            Execute(criteria);
+
+            return validateResult;
+        }
+
+        private async Task<Result> ValidateBeforeSettle(SettlementCriteria criteria)
+        {
+            var request = new EventTicketHappyFiveRequest
+            {
+                MatchId = criteria.MatchId,
+                Action = criteria.Action
+            };
+
+            var result = await scaleOutSettleThirdPartyService.ValidateEventAndTicketHappyFive(request);
 
             return new Result
             {
-                ErrCode = criteria.ErrCode,
-                ErrMsg = criteria.ErrMsg
+                ErrCode = result.ErrorCode,
+                ErrMsg = result.ErrorMessage
             };
+        }
+
+        private void Execute(SettlementCriteria criteria)
+        {
+            foreach (var server in appSettingsKey.SiteDbServer)
+            {
+                criteria.DbServer = server;
+                repository.Execute(criteria);
+            }
         }
 
         private SettlementCriteria CreateCriteria(Happy5SettlementRequest request)

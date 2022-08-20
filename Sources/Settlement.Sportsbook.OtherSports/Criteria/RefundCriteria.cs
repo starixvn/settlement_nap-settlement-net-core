@@ -18,10 +18,6 @@ namespace Settlement.Sportsbook.OtherSports.Criteria
         [SpParam(Ignored = true)]
         public string Action { get; set; }
 
-        public int? FullTimeHome { get; set; }
-
-        public int? FullTimeAway { get; set; }
-
         [SpParam(Ignored = true)]
         public string DbServer { get; set; }
 

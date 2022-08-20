@@ -136,6 +136,7 @@
     </Setting>
     <Setting Key="NAP_Admin_Settlement_s164_Validation_Event" SpName="NAP_Admin_Settlement_s164_Validation_Event" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Admin_Match_s164_Upd" SpName="NAP_Admin_Match_s164_Upd" DbName="DBPRO.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Admin_GetOldResult_s164_Sel" SpName="NAP_Admin_GetOldResult_s164_Sel" DbName="DBPRO.bodb02.bodbAdminNet" />
   </Function>
 
   <Function Name="Notifications">
