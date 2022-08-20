@@ -141,6 +141,7 @@ namespace Settlement.Sportsbook.Soccer.Services
             }
             else
             {
+                betStatus = instantResourceService.RemoveOldValue(betStatus);
                 betStatus += instantResourceService.BetStatusHTFL(request);
                 betStatus += instantResourceService.BetStatusFL(request);
             }

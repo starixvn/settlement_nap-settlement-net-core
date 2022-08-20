@@ -19,6 +19,8 @@ namespace Settlement.Sportsbook.Soccer.Services.InstantCalculate
         string BetStatusHTFL(InstantCalculationRequest request);
 
         string BetStatusUncalc(InstantCalculationRequest request);
+
+        string RemoveOldValue(string betStatus);
     }
 
     public class InstantResourceServiceImp : IInstantResourceService
@@ -39,7 +41,7 @@ namespace Settlement.Sportsbook.Soccer.Services.InstantCalculate
 
         private readonly string Fl = "FL";
 
-        private readonly string HalfTimeFL = "1FL";
+        private readonly string HalfTimeFl = "1FL";
 
         public InstantResourceServiceImp(
             IInstantGoalCheckingService instantGoalCheckingService,
@@ -99,15 +101,34 @@ namespace Settlement.Sportsbook.Soccer.Services.InstantCalculate
             return resources;
         }
 
+        public string RemoveOldValue(string betStatus)
+        {
+            if (betStatus != null)
+            {
+                return string.Empty;
+            }
+
+            var indexOfHalfTimeFL = betStatus.IndexOf(HalfTimeFl);
+            if (indexOfHalfTimeFL > 0)
+            {
+                betStatus.Remove(indexOfHalfTimeFL, 8);
+            }
+
+            var indexOfFL = betStatus.IndexOf(Fl);
+            if (indexOfHalfTimeFL > 0)
+            {
+                betStatus.Remove(indexOfFL, 8);
+            }
+
+            return betStatus;
+        }
+
         public string BetStatusFL(InstantCalculationRequest request)
         {
-            var betStatus = request.BetStatus ?? string.Empty;
-            var indexOf1FL = betStatus.IndexOf(HalfTimeFL);
-            var indexOfSemicolumm = request.GoalRecord.IndexOf(";");
-            var betStatusNot1FL = indexOf1FL > 0 ? betStatus.Remove(indexOf1FL, 8) : betStatus;
-            if (betStatus.Length > indexOfSemicolumm + 1 && !betStatusNot1FL.Contains(Fl) && request.IsExistsFG)
+            var goalOnly = request.GoalRecord.Replace(";", string.Empty);
+            if (goalOnly.Length > 0 && request.IsExistsFG)
             {
-                return request.GoalRecord[(indexOfSemicolumm + 1)..][0] == HomeValue ? FGHomeBetStatus : FGAwayBetStatus;
+                return request.GoalRecord[0] == HomeValue ? FGHomeBetStatus : FGAwayBetStatus;
             }
 
             return string.Empty;
@@ -115,12 +136,11 @@ namespace Settlement.Sportsbook.Soccer.Services.InstantCalculate
 
         public string BetStatusHTFL(InstantCalculationRequest request)
         {
-            var betStatus = request.BetStatus ?? string.Empty;
-            var indexOfSemicolumm = request.GoalRecord.IndexOf(";");
+            var goalOnly = request.GoalRecord.Replace(";", string.Empty);
 
-            if (indexOfSemicolumm > 0 && !betStatus.Contains(HalfTimeFL) && request.IsExistsHTFG)
+            if (goalOnly.Length > 0 && request.IsExistsHTFG)
             {
-                return request.GoalRecord[..(indexOfSemicolumm - 1)][0] == HomeValue ? HTFGHomeBetStatus : HTFGAwayBetStatus;
+                return request.GoalRecord[0] == HomeValue ? HTFGHomeBetStatus : HTFGAwayBetStatus;
             }
 
             return string.Empty;
@@ -131,7 +151,7 @@ namespace Settlement.Sportsbook.Soccer.Services.InstantCalculate
             var betStatus = request.BetStatus;
             if (request.IsExistsFG)
             {
-                var indexOf1FL = betStatus.IndexOf(HalfTimeFL);
+                var indexOf1FL = betStatus.IndexOf(HalfTimeFl);
                 betStatus.Remove(indexOf1FL, 8);
             }
 
