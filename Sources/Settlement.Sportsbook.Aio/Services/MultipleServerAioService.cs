@@ -105,7 +105,7 @@ namespace Settlement.Sportsbook.Aio.Services
                 return TicketStatus.Calculated;
             }
 
-            if (ticketDetail.BetRefundedCount > 0 && settleType == SettleType.Early)
+            if (ticketDetail.BetRefundedCount > 0 && settleType != SettleType.Early)
             {
                 return TicketStatus.Refunded;
             }
