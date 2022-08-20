@@ -1,6 +1,6 @@
 import { Component, Input, ViewChild } from '@angular/core';
 import * as _ from 'lodash';
-import { MessageBoxService, ClosePopupService, AioService } from '../../shared/services';
+import { MessageBoxService, AioService } from '../../shared/services';
 import { MarkedTicketsModel, Result, ModalDialogMessage } from '../../shared/models';
 import { CalculateAction, EventStatus } from '../../shared/constants';
 import { Language } from '../../shared/language';
@@ -21,9 +21,8 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
   constructor(
     private readonly messageBoxService: MessageBoxService,
     protected aioService: AioService,
-    protected closePopupService: ClosePopupService,
     protected toastrService: ToastrService) {
-    super(closePopupService, aioService, toastrService);
+    super(aioService, toastrService);
     this.confirmationDialogMessage.title = Language.confirmationBox;
   }
 

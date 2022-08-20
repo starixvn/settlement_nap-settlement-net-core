@@ -246,6 +246,7 @@ namespace Settlement.WebSites
             services.AddSingleton(new UMClientConfiguration().Initialize(Configuration));
             services.AddSingleton<ONEbook.UM.Services.IMaintenanceService, ONEbook.UM.Services.MaintenanceService>();
             services.AddTransient<ScaleOutSettleService, ScaleOutSettleServiceImp>();
+            services.AddTransient<ScaleOutSettleThirdPartyService, ScaleOutSettleThirdPartyServiceImp>();
         }
 
         private static void ConfigureMediator(IServiceCollection services)

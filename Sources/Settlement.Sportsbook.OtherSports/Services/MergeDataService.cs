@@ -90,6 +90,8 @@ namespace Settlement.Sportsbook.OtherSports.Services
             {
                 SumTicket(ticketCounts[0], ticketCount);
             }
+
+            ticketCounts[0].GroupId = 0;
         }
     }
 }

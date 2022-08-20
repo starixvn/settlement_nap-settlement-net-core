@@ -10,8 +10,8 @@ export class BadmintonService {
   constructor(private readonly intervalBackgroundPipe: IntervalBackgroundPipe) {
   }
   public getResultDetail(resultDetailList: ResultDetail[]): ResultDetail[] {
-    const resultDetail = resultDetailList.filter((map) => map.resourceId.length < 5 && _.isNil(map.betTypeName));
-    const last = resultDetail.pop();
+    let resultDetail = resultDetailList.filter((map) => map.resourceId.length < 5 && _.isNil(map.betTypeName) && map.resourceId !== ResourcesIds.totalGames);
+    const last = resultDetailList.find((map) => map.resourceId === ResourcesIds.totalGames);
     const totalPoints = new ResultDetail();
     totalPoints.resourceId = ResourcesIds.totalPoints;
     totalPoints.ticketStatus = last.ticketStatus;
@@ -30,6 +30,7 @@ export class BadmintonService {
       totalPoints.settlementStatusId = last.settlementStatusId;
     }
 
+    resultDetail = _.orderBy(resultDetail, map => map.resourceId);
     resultDetail.push(totalPoints);
     resultDetail.push(last);
     return resultDetail;

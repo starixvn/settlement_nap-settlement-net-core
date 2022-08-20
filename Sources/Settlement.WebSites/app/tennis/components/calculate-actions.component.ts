@@ -1,6 +1,6 @@
 import { Component, Input, ViewChild } from '@angular/core';
 import * as _ from 'lodash';
-import { MessageBoxService, ClosePopupService, AioService } from '../../shared/services';
+import { MessageBoxService, AioService } from '../../shared/services';
 import { ModalDialogMessage, Result } from '../../shared/models';
 import { Language } from '../../shared/language';
 import { SettlementStatusId, CalculateAction, SportType, ResultStatusId } from '../../shared/constants';
@@ -29,7 +29,6 @@ export class CalculateActionsComponent implements SportTemplate {
   public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
   constructor(
     private readonly messageBoxService: MessageBoxService,
-    private readonly closePopupService: ClosePopupService,
     private readonly tennisService: TennisService,
     private readonly verificationService: VerificationService,
     private readonly aioService: AioService,
@@ -293,10 +292,10 @@ export class CalculateActionsComponent implements SportTemplate {
     if (hedgeMatchId > 0) {
       query.matchId = hedgeMatchId;
       await this.aioService.push(query).toPromise().then(() => {
-        this.closePopupService.closePopup(matchId);
+        this.messageBoxService.closePopup();
       });
     } else {
-      this.closePopupService.closePopup(matchId);
+      this.messageBoxService.closePopup();
     }
   }
 

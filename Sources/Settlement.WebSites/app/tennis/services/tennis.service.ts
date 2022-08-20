@@ -12,29 +12,29 @@ export class TennisService {
   }
 
   public getResultDetail(resultDetailList: ResultDetail[]): ResultDetail[] {
-    const resultDetail = resultDetailList.filter((map) => map.resourceId.length < 5);
-    const last = resultDetail.pop();
+    let resultDetail = resultDetailList.filter((map) => map.resourceId.length < 5 && map.resourceId !== ResourcesIds.totalSets);
+    const totalSets = resultDetailList.find((map) => map.resourceId === ResourcesIds.totalSets);
     const totalGames = new ResultDetail();
     totalGames.resourceId = ResourcesIds.totalGames;
-    totalGames.ticketStatus = last.ticketStatus;
-    totalGames.resultSettingData = last.resultSettingData;
-    totalGames.resultStatusId = last.resultStatusId;
-    if (this.isRefundMatch(last)) {
+    totalGames.ticketStatus = totalSets.ticketStatus;
+    totalGames.resultSettingData = totalSets.resultSettingData;
+    totalGames.resultStatusId = totalSets.resultStatusId;
+    if (this.isRefundMatch(totalSets)) {
       totalGames.settlementStatusId = SettlementStatusId.Refund;
     } else {
-      const games = resultDetail.filter((game) => game.resourceId !== ResourcesIds.totalSets
-        && !_.isEmpty(game.homeValue) && !_.isEmpty(game.awayValue)
+      const games = resultDetail.filter((game) => !_.isEmpty(game.homeValue) && !_.isEmpty(game.awayValue)
         && game.settlementStatusId !== SettlementStatusId.Refund);
 
-      totalGames.settlementStatusId = last.settlementStatusId;
+      totalGames.settlementStatusId = totalSets.settlementStatusId;
       if (games.length > 0) {
         totalGames.homeValue = _.sumBy(games, (game) => Number(game.homeValue)).toString();
         totalGames.awayValue = _.sumBy(games, (game) => Number(game.awayValue)).toString();
       }
     }
 
+    resultDetail = _.orderBy(resultDetail, (map) => map.resourceId);
     resultDetail.push(totalGames);
-    resultDetail.push(last);
+    resultDetail.push(totalSets);
     return resultDetail;
   }
 
