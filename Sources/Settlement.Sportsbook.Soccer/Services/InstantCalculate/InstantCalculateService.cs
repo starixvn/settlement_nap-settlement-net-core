@@ -14,6 +14,7 @@ using Microsoft.Extensions.Options;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
 using Settlement.Sportsbook.Soccer.Services.InstantCalculate;
+using MediatR;
 
 namespace Settlement.Sportsbook.Soccer.Services
 {
@@ -101,7 +102,6 @@ namespace Settlement.Sportsbook.Soccer.Services
         {
             var criteria = mapper.Map<InstantCalculationRequest, PushInstantCalculationCriteria>(request);
             criteria.ResourceResult = GetResourceResultInstantCalculate(request);
-            criteria.BetStatus = BetStatus(request);
             criteria.AdminId = currentSession.UserId;
             criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
 
@@ -109,7 +109,7 @@ namespace Settlement.Sportsbook.Soccer.Services
             if (result.ErrCode == 0)
             {
                 await UpdateResult(request);
-                await UpdateMatchInfo(criteria, request.IsHalfTime);
+                await UpdateMatchInfo(request, request.IsHalfTime, criteria.ResourceResult);
                 Execute(criteria);
             }
 
@@ -227,27 +227,28 @@ namespace Settlement.Sportsbook.Soccer.Services
             };
         }
 
-        private async Task UpdateMatchInfo(PushInstantCalculationCriteria criteria, bool isHalfTime)
+        private async Task UpdateMatchInfo(InstantCalculationRequest request, bool isHalfTime, string resourceResult)
         {
             var requestUpdateInfo = new UpdateMatchInfoRequest
             {
-                MatchId = criteria.MatchId,
-                Action = criteria.Action,
+                MatchId = request.MatchId,
+                Action = request.Action,
                 AdminId = currentSession.UserId,
-                ResourceResult = criteria.ResourceResult,
+                ResourceResult = resourceResult,
                 IsAuto = false,
-                Mode = criteria.Mode
+                Mode = request.Mode,
+                BetStatus = BetStatus(request)
             };
 
             if (isHalfTime)
             {
-                requestUpdateInfo.HalfTimeHome = int.Parse(criteria.HomeScore);
-                requestUpdateInfo.HalfTimeAway = int.Parse(criteria.AwayScore);
+                requestUpdateInfo.HalfTimeHome = int.Parse(request.HomeScore);
+                requestUpdateInfo.HalfTimeAway = int.Parse(request.AwayScore);
             }
             else
             {
-                requestUpdateInfo.FullTimeHome = int.Parse(criteria.HomeScore);
-                requestUpdateInfo.FullTimeAway = int.Parse(criteria.AwayScore);
+                requestUpdateInfo.FullTimeHome = int.Parse(request.HomeScore);
+                requestUpdateInfo.FullTimeAway = int.Parse(request.AwayScore);
             }
 
             await scaleOutSettleService.UpdateMatchInfo(requestUpdateInfo);
