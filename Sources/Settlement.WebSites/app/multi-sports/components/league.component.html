@@ -151,11 +151,11 @@
                     </td>
                     <td rowspan="2" class="confirm-score" [ngClass]="{'bg-white-blinking' : match.isNotConsistentExHtScore}">
                       <div>{{match.suspenderHalfTime}}</div>
-                      <div *ngIf="!isHideHtScore(match)">{{match.exHalfTimeScore}}</div>
+                      <div *ngIf="!isHideHtScore(match)">{{match.confirmHalfTimeScore}}</div>
                     </td>
                     <td rowspan="2" class="confirm-score" [ngClass]="{'bg-white-blinking' : match.isNotConsistentExFtScore}">
                       <div>{{match.suspenderFullTime}}</div>
-                      <div *ngIf="!isHideFinalScore(match)">{{match.exFullTimeScore}}</div>
+                      <div *ngIf="!isHideFinalScore(match)">{{match.confirmFullTimeScore}}</div>
                     </td>
                     <td rowspan="2" class="remark-status">
                       <div placement="top" [ngClass]="{'act-change-setting title': isChangeSetting(match)}"

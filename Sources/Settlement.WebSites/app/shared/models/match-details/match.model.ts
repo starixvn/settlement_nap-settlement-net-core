@@ -60,4 +60,6 @@ export class Match {
      public enableFastMarket: boolean;
      public isNotConsistentExFtScore: boolean;
      public isNotConsistentExHtScore: boolean;
+     public confirmFullTimeScore: string;
+     public confirmHalfTimeScore: string;
 }

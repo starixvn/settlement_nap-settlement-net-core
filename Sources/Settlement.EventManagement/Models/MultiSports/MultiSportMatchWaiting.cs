@@ -112,5 +112,11 @@ namespace Settlement.EventManagement.Models.MultiSports
 
         [Key("isNotConsistentExFtScore")]
         public bool IsNotConsistentExFtScore { get; set; }
+
+        [Key("confirmHalfTimeScore")]
+        public string ConfirmHalfTimeScore { get; set; }
+
+        [Key("confirmFullTimeScore")]
+        public string ConfirmFullTimeScore { get; set; }
     }
 }
