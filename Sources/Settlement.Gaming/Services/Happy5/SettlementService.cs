@@ -72,6 +72,7 @@ namespace Settlement.Gaming.Services.Happy5
                 return validateResult;
             }
 
+            await UpdateMatchInfo(request);
             var getOldResultCriteria = new GetOldResultCriteria { MatchId = request.MatchId };
             await repository.ExecuteAsync(getOldResultCriteria);
 
@@ -98,6 +99,19 @@ namespace Settlement.Gaming.Services.Happy5
             };
         }
 
+        public async Task UpdateMatchInfo(Happy5SettlementRequest request)
+        {
+            var updateMatchCriteria = new UpdateMatchCriteria
+            {
+                MatchId = request.MatchId,
+                Resources = ballService.ResourcesBalls(request.Balls),
+                Action = request.Action,
+                AdminId = currentSession.UserId,
+            };
+
+            await repository.ExecuteAsync(updateMatchCriteria);
+        }
+
         private void Execute(SettlementCriteria criteria)
         {
             foreach (var server in appSettingsKey.SiteDbServer)
@@ -109,13 +123,10 @@ namespace Settlement.Gaming.Services.Happy5
 
         private SettlementCriteria CreateCriteria(Happy5SettlementRequest request)
         {
-            var resources = ballService.ResourcesBalls(request.Balls);
-
             return new SettlementCriteria
             {
                 MatchId = request.MatchId,
                 Action = request.Action,
-                Resources = resources,
                 AdminId = currentSession.UserId,
                 Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString(),
             };

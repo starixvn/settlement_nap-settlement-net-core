@@ -13,8 +13,6 @@ namespace Settlement.Gaming.Criteria.Happy5
 
         public bool IsAuto { get; set; }
 
-        public string Resources { get; set; }
-
         public string Ip { get; set; }
 
         public string StrOldResult { get; set; }
