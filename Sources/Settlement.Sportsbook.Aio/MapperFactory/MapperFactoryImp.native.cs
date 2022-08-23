@@ -17,6 +17,7 @@ namespace Settlement.Sportsbook.Aio.MapperFactory
             AddMapperService($"basketball-{ApiKeyConstant.ResultDetailKey}", typeof(Services.Basketball.ResultDetailMapperServiceImp));
             AddMapperService($"game-total-{ApiKeyConstant.ProviderKey}", typeof(Services.ProviderMapperService));
             AddMapperService($"game-total-{ApiKeyConstant.ChildMatchKey}", typeof(Services.Volleyball.ChildMatchService));
+            AddMapperService($"game-total-{ApiKeyConstant.ResultDetailKey}", typeof(Services.Volleyball.ResultDetailMapperServiceImp));
         }
     }
 }

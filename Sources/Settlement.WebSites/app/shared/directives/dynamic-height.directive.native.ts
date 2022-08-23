@@ -40,7 +40,7 @@ export class DynamicHeightDirective implements AfterViewInit {
             height = this.minHeight;
         }
 
-        this.renderer.setStyle(this.domElement, "height", `${height}px`);
+        this.renderer.setStyle(this.domElement, "max-height", `${height}px`);
     }
 
     private calcTopOffset(): number {
