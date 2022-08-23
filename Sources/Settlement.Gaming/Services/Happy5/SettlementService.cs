@@ -66,11 +66,11 @@ namespace Settlement.Gaming.Services.Happy5
         private async Task<Result> SettleWhenHavePermission(Happy5SettlementRequest request)
         {
             var criteria = CreateCriteria(request);
-            var validateResult = await ValidateBeforeSettle(criteria);
-            if (validateResult.ErrCode != 0)
-            {
-                return validateResult;
-            }
+            //var validateResult = await ValidateBeforeSettle(criteria);
+            //if (validateResult.ErrCode != 0)
+            //{
+            //    return validateResult;
+            //}
 
             await UpdateMatchInfo(request);
             var getOldResultCriteria = new GetOldResultCriteria { MatchId = request.MatchId };
@@ -79,25 +79,25 @@ namespace Settlement.Gaming.Services.Happy5
             criteria.StrOldResult = getOldResultCriteria.OldResult;
             Execute(criteria);
 
-            return validateResult;
+            return new Result();
         }
 
-        private async Task<Result> ValidateBeforeSettle(SettlementCriteria criteria)
-        {
-            var request = new EventTicketHappyFiveRequest
-            {
-                MatchId = criteria.MatchId,
-                Action = criteria.Action
-            };
+        //private async Task<Result> ValidateBeforeSettle(SettlementCriteria criteria)
+        //{
+        //    var request = new EventTicketHappyFiveRequest
+        //    {
+        //        MatchId = criteria.MatchId,
+        //        Action = criteria.Action
+        //    };
 
-            var result = await scaleOutSettleThirdPartyService.ValidateEventAndTicketHappyFive(request);
+        //    var result = await scaleOutSettleThirdPartyService.ValidateEventAndTicketHappyFive(request);
 
-            return new Result
-            {
-                ErrCode = result.ErrorCode,
-                ErrMsg = result.ErrorMessage
-            };
-        }
+        //    return new Result
+        //    {
+        //        ErrCode = result.ErrorCode,
+        //        ErrMsg = result.ErrorMessage
+        //    };
+        //}
 
         public async Task UpdateMatchInfo(Happy5SettlementRequest request)
         {

@@ -81,7 +81,7 @@ export class AppComponent implements OnInit, OnDestroy {
     switch (pageType) {
       case "MainPage":
         return this.componentFactoryResolver.resolveComponentFactory(MatchesComponent);
-      case "Recalculate":
+      case "ReCalculate":
          return this.componentFactoryResolver.resolveComponentFactory(CalculationComponent);
       default:
         throw new Error('Not implemented yet');

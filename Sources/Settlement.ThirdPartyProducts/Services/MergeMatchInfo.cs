@@ -1,9 +1,6 @@
 ﻿using Settlement.ThirdPartyProducts.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Settlement.ThirdPartyProducts.Services
 {
@@ -12,6 +9,10 @@ namespace Settlement.ThirdPartyProducts.Services
         string ParlayStatus(MatchDetailModel match);
 
         int QueueStatus(MatchDetailModel match);
+
+        void AddSiteMatch(List<MatchDetailModel> matches, List<Models.SiteMatch> siteMatches);
+
+        void MergeStatusTicket(List<ResourceSelectionItemModel> baseList, List<ResourceSelectionItemModel> siteList);
     }
 
     public class MergeMatchInfoImp : MergeMatchInfo
@@ -21,6 +22,18 @@ namespace Settlement.ThirdPartyProducts.Services
         private const int Calculating = 1;
 
         private const int None = 2;
+
+        public void AddSiteMatch(List<MatchDetailModel> matches, List<Models.SiteMatch> siteMatches)
+        {
+            matches.ForEach(item =>
+            {
+                var siteMatch = siteMatches.FirstOrDefault(match => match.MatchId == item.MatchId);
+                if (siteMatch != null && (item.SiteMatch.Count == 0 || IsChangedOnTicket(item.SiteMatch.First(), siteMatch)))
+                {
+                    item.SiteMatch.Add(siteMatch);
+                }
+            });
+        }
 
         public string ParlayStatus(MatchDetailModel match)
         {
@@ -52,6 +65,25 @@ namespace Settlement.ThirdPartyProducts.Services
             }
 
             return None;
+        }
+
+        public void MergeStatusTicket(List<ResourceSelectionItemModel> baseList, List<ResourceSelectionItemModel> siteList)
+        {
+            foreach (var item in baseList)
+            {
+                var siteItem = siteList.FirstOrDefault(i => i.MarketId == item.MarketId);
+                if (siteItem != null)
+                {
+                    item.IsRunning = item.IsRunning || siteItem.IsRunning;
+                }
+            }
+        }
+
+        private bool IsChangedOnTicket(Models.SiteMatch match, Models.SiteMatch siteMatch)
+        {
+            return match.TotalTickets != siteMatch.TotalTickets
+                || match.TotalTicketsRunning != siteMatch.TotalTicketsRunning
+                || match.QueueStatus != siteMatch.QueueStatus;
         }
     }
 }

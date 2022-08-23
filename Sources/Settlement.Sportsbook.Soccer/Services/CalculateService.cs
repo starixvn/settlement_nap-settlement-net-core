@@ -1,14 +1,10 @@
 ﻿using System;
 using AutoMapper;
 using Fanex.Data.Repository;
-using Microsoft.Extensions.Configuration;
-using Settlement.Core.Criteria;
 using Settlement.Core.Models;
-using Settlement.Core.Services;
 using Settlement.Sportsbook.Soccer.Constants;
 using Settlement.Sportsbook.Soccer.Criteria;
 using Settlement.Sportsbook.Soccer.Requests;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;

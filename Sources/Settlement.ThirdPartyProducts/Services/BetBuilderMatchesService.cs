@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Fanex.Caching;
 using Fanex.Data.Repository;
+using Microsoft.Extensions.Options;
+using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.ThirdPartyProducts.Criteria;
 using Settlement.ThirdPartyProducts.Models;
@@ -19,6 +21,10 @@ namespace Settlement.ThirdPartyProducts.Services
         Task<List<SportModel>> Search(FilterRequest request);
 
         Task<List<MatchDetailModel>> RefreshMatches(MatchesWaitingRequest request);
+
+        Task<List<ResultDetail>> ResultDetailByMatchIds(List<MatchDetailModel> matches);
+
+        Task<List<MatchDetailModel>> AddTicketInfo(List<MatchDetailModel> matches);
     }
 
     public class BetBuilderMatchesServiceImp : BetBuilderMatchesService
@@ -29,42 +35,46 @@ namespace Settlement.ThirdPartyProducts.Services
 
         private readonly IMapper mapper;
 
-        private readonly MatchService matchService;
-
         private readonly MergeMatchInfo mergeMatchInfo;
 
         private readonly CachingMatchesService cachingMatchesService;
+
+        private readonly BetBuilderService betBuilderService;
+
+        private readonly AppSettingsKey appSettingsKey;
 
         private static int _isProcessing;
 
         public BetBuilderMatchesServiceImp(IDynamicRepository repository,
                 IRefDataService refDataService,
                 IMapper mapper,
-                MatchService matchService,
                 MergeMatchInfo mergeMatchInfo,
-                CachingMatchesService cachingMatchesService)
+                CachingMatchesService cachingMatchesService,
+                BetBuilderService betBuilderService,
+                IOptions<AppSettingsKey> appSettingsKey)
         {
             this.repository = repository;
             this.refDataService = refDataService;
             this.mapper = mapper;
-            this.matchService = matchService;
             this.mergeMatchInfo = mergeMatchInfo;
             this.cachingMatchesService = cachingMatchesService;
+            this.betBuilderService = betBuilderService;
+            this.appSettingsKey = appSettingsKey.Value;
         }
 
         public async Task<List<SportModel>> Search(FilterRequest request)
         {
             var criteria = mapper.Map<FilterRequest, MatchesCriteria>(request);
             var matches = await GetMatches(criteria);
-            var resultDetails = await matchService.ResultDetailByMatchIds(matches);
+            var resultDetails = await ResultDetailByMatchIds(matches);
 
             matches.ForEach(match =>
             {
                 match.RefDataService = refDataService;
-                match.MoreScores = matchService.GetScoreByMatchId(resultDetails, match.MatchId, match.SportType, false);
+                match.MoreScores = betBuilderService.GetScoreByMatchId(resultDetails, match.MatchId, match.SportType, false);
             });
 
-            var leagues = matchService.CreateLeagues(matches);
+            var leagues = betBuilderService.CreateLeagues(matches);
             var sportbook = leagues.GroupBy(item => new { item.SportType, item.SportName }).Select(item => new SportModel
             {
                 Id = item.Key.SportType,
@@ -99,16 +109,37 @@ namespace Settlement.ThirdPartyProducts.Services
             return cachingMatchesService.MatchesOnLongCaching(request.LeagueIds);
         }
 
+        public async Task<List<ResultDetail>> ResultDetailByMatchIds(List<MatchDetailModel> matches)
+        {
+            var listMatchId = string.Join(",", matches.Select(match => match.MatchId.ToString()).ToArray());
+            var resultDetailCriteria = new GetResultDetailCriteria { MatchIdList = listMatchId };
+            return (await repository.FetchAsync<ResultDetail>(resultDetailCriteria)).ToList();
+        }
+
+        public async Task<List<MatchDetailModel>> AddTicketInfo(List<MatchDetailModel> matches)
+        {
+            var listMatchId = string.Join(",", matches.Select(match => match.MatchId.ToString()).ToArray());
+            var criteria = new TicketsInfoCriteria { MatchIds = listMatchId };
+
+            foreach (var server in appSettingsKey.SiteDbServer)
+            {
+                criteria.DbServer = server;
+                var data = (await repository.FetchAsync<Models.SiteMatch>(criteria)).ToList();
+                mergeMatchInfo.AddSiteMatch(matches, data);
+            }
+            return matches;
+        }
+
         private async Task<List<MatchDetailModel>> GetAndCachingMatches(MatchesWaitingRequest request)
         {
-            var criteria = mapper.Map<MatchesWaitingRequest, MatchesCriteria>(request);
+            var criteria = mapper.Map<MatchesWaitingRequest, MatchesWaitingCriteria>(request);
             var matches = await GetMatches(criteria);
-            var resultDetails = await matchService.ResultDetailByMatchIds(matches);
+            var resultDetails = await ResultDetailByMatchIds(matches);
 
             matches.ForEach(match =>
             {
                 match.RefDataService = refDataService;
-                match.MoreScores = matchService.GetScoreByMatchId(resultDetails, match.MatchId, match.SportType, false);
+                match.MoreScores = betBuilderService.GetScoreByMatchId(resultDetails, match.MatchId, match.SportType, false);
             });
 
             cachingMatchesService.SetToCache(request.LeagueIds, matches);
@@ -119,7 +150,7 @@ namespace Settlement.ThirdPartyProducts.Services
         private async Task<List<MatchDetailModel>> GetMatches(CriteriaBase criteria)
         {
             var matches = (await repository.FetchAsync<MatchDetailModel>(criteria)).ToList();
-            await matchService.AddTicketInfo(matches);
+            await AddTicketInfo(matches);
             SetNewMatchInfo(matches);
             return matches;
         }

@@ -109,7 +109,7 @@
           "options": {
             "aot": true,
             "outputPath": "../wwwroot/bet-builder",
-            "index": "bet-builder/index.html",
+            "index": "bet-builder/index.cshtml",
             "main": "bet-builder/main.ts",
             "tsConfig": "bet-builder/tsconfig.app.json",
             "polyfills": "polyfills.ts",

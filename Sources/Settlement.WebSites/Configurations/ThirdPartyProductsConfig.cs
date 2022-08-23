@@ -19,6 +19,7 @@ namespace Settlement.WebSites.Configurations
             services.AddTransient<BetBuilderMatchesService, BetBuilderMatchesServiceImp>();
             services.AddTransient<CachingMatchesService, CachingMatchesServiceImp>();
             services.AddTransient<MergeMatchInfo, MergeMatchInfoImp>();
+            services.AddTransient<BetBuilderCalculateService, BetBuilderCalculateServiceImp>();
         }
 
         public static void ThirdPartyProductsConfigMediator(this IServiceCollection services)

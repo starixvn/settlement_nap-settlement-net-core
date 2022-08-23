@@ -140,7 +140,7 @@ namespace Settlement.WebSites
             var redisMultiplexer = ConnectionMultiplexer.Connect(redisConfig);
 
             services.AddDataProtection()
-                .PersistKeysToStackExchangeRedis(redisMultiplexer , "Fanex.Settlement-ProtectionKeys");
+                .PersistKeysToStackExchangeRedis(redisMultiplexer, "Fanex.Settlement-ProtectionKeys");
 
             services.AddSingleton(redisMultiplexer);
 

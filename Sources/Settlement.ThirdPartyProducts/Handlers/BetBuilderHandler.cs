@@ -46,7 +46,7 @@ namespace Settlement.ThirdPartyProducts.Handlers
         public async Task<SelectionPermissionModel> Handle(GetSelectionRequest request, CancellationToken cancellationToken) => new SelectionPermissionModel
         {
             Permission = permissionService.Permission,
-            SelectionDetail = await betBuilderService.GetSelection(request.MatchId)
+            SelectionDetail = await matchService.GetSelection(request.MatchId)
         };
 
         public async Task<List<Sport>> Handle(SportRequest request, CancellationToken cancellationToken)
@@ -62,6 +62,6 @@ namespace Settlement.ThirdPartyProducts.Handlers
             => await matchService.GetMatch(request);
 
         public async Task<Result> Handle(CalculateRequest request, CancellationToken cancellationToken)
-            => await betBuilderService.Calculate(request);
+            => await matchService.Calculate(request);
     }
 }

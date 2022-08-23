@@ -11,6 +11,7 @@ using Settlement.ThirdPartyProducts.Requests;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
 
 namespace Settlement.ThirdPartyProducts.Services
 {
@@ -20,9 +21,11 @@ namespace Settlement.ThirdPartyProducts.Services
 
         Task<List<LeagueTypeModel>> GetLeagues(LeaguesRequest request);
 
-        Task<List<SelectionDetailModel>> GetSelection(int matchId);
+        List<LeagueModel> CreateLeagues(List<MatchDetailModel> matches);
 
-        Task<Result> Calculate(CalculateRequest request);
+        MoreScores GetScoreByMatchId(List<ResultDetail> resultDetails, int matchId, int sportType, bool isPopup);
+
+        Task<string> GetResourcesMarket(int matchId);
     }
 
     public class BetBuilderServiceImp : BetBuilderService
@@ -31,28 +34,32 @@ namespace Settlement.ThirdPartyProducts.Services
 
         private readonly IRefDataService refDataService;
 
+        private readonly IMapper mapper;
+
+        private readonly ScoreService scoreService;
+
         private readonly XmlConvertService xmlConvertService;
 
-        private readonly INapSession currentSession;
+        private readonly MergeMatchInfo mergeMatchInfo;
 
-        private readonly IHttpContextAccessor accessor;
-
-        private readonly IMapper mapper;
+        private readonly AppSettingsKey appSettingsKey;
 
         public BetBuilderServiceImp(
             IDynamicRepository repository,
             IRefDataService refDataService,
+            IMapper mapper,
+            ScoreService scoreService,
             XmlConvertService xmlConvertService,
-            INapSession currentSession,
-            IHttpContextAccessor accessor,
-            IMapper mapper)
+            MergeMatchInfo mergeMatchInfo,
+            IOptions<AppSettingsKey> appSettingsKey)
         {
             this.repository = repository;
             this.refDataService = refDataService;
-            this.xmlConvertService = xmlConvertService;
-            this.currentSession = currentSession;
-            this.accessor = accessor;
             this.mapper = mapper;
+            this.scoreService = scoreService;
+            this.xmlConvertService = xmlConvertService;
+            this.mergeMatchInfo = mergeMatchInfo;
+            this.appSettingsKey = appSettingsKey.Value;
         }
 
         public async Task<List<Sport>> GetSports(SportRequest request)
@@ -80,44 +87,88 @@ namespace Settlement.ThirdPartyProducts.Services
             return leagues.OrderBy(item => item.SportType).ThenBy(item => item.LeagueName).ToList();
         }
 
-        public async Task<List<SelectionDetailModel>> GetSelection(int matchId)
+        public List<LeagueModel> CreateLeagues(List<MatchDetailModel> matches)
         {
-            var criteria = new SelectionDetailCriteria { MatchId = matchId };
-            return (await repository.FetchAsync<SelectionDetailModel>(criteria)).ToList();
+            var leagueIds = matches.GroupBy(m => m.LeagueId).Select(m => m.Key).ToList();
+            var leagues = new List<LeagueModel>();
+            foreach (var leagueId in leagueIds)
+            {
+                var matchesByLeagueId = matches.Where(m => m.LeagueId == leagueId).ToList();
+                var league = LeagueItem(leagueId, matchesByLeagueId);
+                leagues.Add(league);
+            }
+
+            return leagues.OrderBy(item => item.SportType).ToList();
         }
 
-        public async Task<Result> Calculate(CalculateRequest request)
+        public MoreScores GetScoreByMatchId(List<ResultDetail> resultDetails, int matchId, int sportType, bool isPopup)
         {
-            var resourcesResult = CreateResources(request.Resources);
-
-            var criteria = CreateCriteria(request.MatchId, request.ActionName, resourcesResult);
-
-            await repository.ExecuteAsync(criteria);
-
-            return new Result
+            var resultDetailByMatchId = resultDetails.Where(m => m.MatchId == matchId).ToList();
+            return new MoreScores
             {
-                ErrCode = criteria.ErrCode,
-                ErrMsg = criteria.ErrMsg
+                HalfTimeScore = scoreService.HalftimeScore(resultDetailByMatchId, sportType),
+                FinalScore = scoreService.FinalScore(resultDetailByMatchId, sportType),
+                Sets = scoreService.ScoreOfSets(resultDetailByMatchId, sportType, isPopup),
             };
         }
 
-        private string CreateResources(List<ResourcesItemModel> selectedResources)
+        public async Task<string> GetResourcesMarket(int matchId)
         {
-            var resources = new Models.Resources<ResourcesItemModel>
+            var criteria = new SelectionTicketDetailCriteria { MatchId = matchId };
+            var baseList = new List<ResourceSelectionItemModel>();
+            foreach (var server in appSettingsKey.SiteDbServer)
             {
-                ResourceItems = selectedResources
-            };
+                criteria.DbServer = server;
+                var listMarket = (await repository.FetchAsync<ResourceSelectionItemModel>(criteria)).ToList();
+                MergeMarket(baseList, listMarket);
+            }
 
-            return xmlConvertService.Serialize(resources);
+            return baseList.Count > 0 ? xmlConvertService.Serialize(new Models.Resources<ResourceSelectionItemModel> { ResourceItems = baseList })
+                : string.Empty;
         }
 
-        private CalculationCriteria CreateCriteria(int matchId, string actionName, string resources) => new CalculationCriteria
+        private void MergeMarket(List<ResourceSelectionItemModel> baseList, List<ResourceSelectionItemModel> siteList)
         {
-            MatchId = matchId,
-            AdminId = currentSession.UserId,
-            Action = actionName,
-            Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString(),
-            Resources = resources
-        };
+            mergeMatchInfo.MergeStatusTicket(baseList, siteList);
+            var newItem = siteList.Except(baseList);
+            if (newItem.Any())
+            {
+                baseList.AddRange(newItem);
+            }
+        }
+
+        private LeagueModel LeagueItem(int leagueId, List<MatchDetailModel> matches)
+        {
+            var isAutoSettingForLeague = matches[0].AutoCalcSetting.IsAutoSettingForLeague;
+            var sportType = matches[0].SportType;
+            return new LeagueModel
+            {
+                SportType = sportType,
+                LeagueId = leagueId,
+                IsAutoSettingForLeague = isAutoSettingForLeague,
+                Matches = SortMatch(matches),
+                RefDataService = refDataService
+            };
+        }
+
+        private static List<MatchDetailModel> SortMatch(IEnumerable<MatchDetailModel> matches)
+        {
+            var eventStatuses = new List<string>
+            {
+                "Running",
+                "Result Pending",
+                "Postponed",
+                "Internal",
+                "Closed",
+                "Completed",
+                "Refund HT",
+                "Refund FT",
+                "Refund"
+            };
+            return matches.OrderBy(match => eventStatuses.IndexOf(match.EventStatus))
+                          .ThenBy(match => match.KickOffTime)
+                          .ThenBy(match => match.MatchId)
+                          .ToList();
+        }
     }
 }
