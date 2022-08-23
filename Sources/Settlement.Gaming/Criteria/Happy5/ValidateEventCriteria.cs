@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Settlement.Gaming.Criteria.Happy5
 {
-    class ValidateEventCriteria : NonQueryCommand
+    public class ValidateEventCriteria : NonQueryCommand
     {
         public int MatchId { get; set; }
 

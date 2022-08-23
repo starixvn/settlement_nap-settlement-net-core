@@ -10,6 +10,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Fanex.NAP.Client.Helpers.Web;
 using Microsoft.AspNetCore.Http;
+using Fanex.Settlement.ScaleOut.Services;
+using Microsoft.Extensions.Options;
+using Fanex.Settlement.ScaleOut.Request;
 
 namespace Settlement.Gaming.Services.NumberGame
 {
@@ -32,18 +35,26 @@ namespace Settlement.Gaming.Services.NumberGame
 
         private readonly IHttpContextAccessor accessor;
 
+        private readonly ScaleOutSettleThirdPartyService scaleOutSettleThirdPartyService;
+
+        private readonly AppSettingsKey appSettingsKey;
+
         public SettlementServiceImp(
             IDynamicRepository repository,
             INapSession currentSession,
             PermissionService permissionService,
             XmlConvertService xmlConvertService,
-            IHttpContextAccessor accessor)
+            IHttpContextAccessor accessor,
+            ScaleOutSettleThirdPartyService scaleOutSettleThirdPartyService,
+            IOptions<AppSettingsKey> options)
         {
             this.repository = repository;
             this.currentSession = currentSession;
             this.permissionService = permissionService;
             this.xmlConvertService = xmlConvertService;
             this.accessor = accessor;
+            this.scaleOutSettleThirdPartyService = scaleOutSettleThirdPartyService;
+            this.appSettingsKey = options.Value;
         }
 
         public async Task<Result> Settle(NumberGameSettlementRequest request)
@@ -57,14 +68,62 @@ namespace Settlement.Gaming.Services.NumberGame
         private async Task<Result> SettleWhenHavePermission(NumberGameSettlementRequest request)
         {
             var criteria = CreateCriteria(request);
+            var validateDeploymentCriteria = new GetDeploymentInfoRequest
+            {
+                SPName = "dbo.NAP_Admin_Settlement_s161_Manual"
+            };
 
-            await repository.ExecuteAsync(criteria);
+            var validateDeploymentResult = await scaleOutSettleThirdPartyService.GetDeploymentInfo(validateDeploymentCriteria);
+            if (validateDeploymentResult.ErrorCode != 0)
+            {
+                return new Result
+                {
+                    ErrCode = validateDeploymentResult.ErrorCode,
+                    ErrMsg = validateDeploymentResult.ErrorMessage
+                };
+            }
+
+            await UpdateResult(criteria);
+            await UpdateMatchInfo(criteria);
+            Execute(criteria);
 
             return new Result
             {
                 ErrCode = criteria.ErrCode,
                 ErrMsg = criteria.ErrMsg
             };
+        }
+
+        private async Task UpdateResult(RecalculateNumberGameCriteria criteria)
+        {
+            var updateMatchCriteria = new UpdateResultCriteria
+            {
+                MatchId = criteria.MatchId,
+                BallResults = criteria.BallResults,
+            };
+
+            await repository.ExecuteAsync(updateMatchCriteria);
+        }
+
+        private async Task UpdateMatchInfo(RecalculateNumberGameCriteria criteria)
+        {
+            var updateRequest = new UpdateMatchInfo3rdRequest
+            {
+                Command = "completed",
+                MatchId = criteria.MatchId,
+                creator = currentSession.UserId
+            };
+
+            await scaleOutSettleThirdPartyService.UpdateMatchInfo3rd(updateRequest);
+        }
+
+        private void Execute(RecalculateNumberGameCriteria criteria)
+        {
+            foreach (var server in appSettingsKey.SiteDbServer)
+            {
+                criteria.DbServer = server;
+                repository.Execute(criteria);
+            }
         }
 
         private RecalculateNumberGameCriteria CreateCriteria(NumberGameSettlementRequest request)

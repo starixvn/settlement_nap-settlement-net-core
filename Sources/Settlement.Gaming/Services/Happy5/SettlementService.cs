@@ -66,12 +66,28 @@ namespace Settlement.Gaming.Services.Happy5
         private async Task<Result> SettleWhenHavePermission(Happy5SettlementRequest request)
         {
             var criteria = CreateCriteria(request);
-            //var validateResult = await ValidateBeforeSettle(criteria);
-            //if (validateResult.ErrCode != 0)
-            //{
-            //    return validateResult;
-            //}
+            var validateResult = await ValidateBeforeSettle(criteria);
+            if (validateResult.ErrCode != 0)
+            {
+                return validateResult;
+            }
 
+            var validateDeploymentCriteria = new GetDeploymentInfoRequest
+            {
+                SPName = "NAP_Admin_Settlement_s164"
+            };
+
+            var validateDeploymentResult = await scaleOutSettleThirdPartyService.GetDeploymentInfo(validateDeploymentCriteria);
+            if (validateDeploymentResult.ErrorCode != 0)
+            {
+                return new Result
+                {
+                    ErrCode = validateDeploymentResult.ErrorCode,
+                    ErrMsg = validateDeploymentResult.ErrorMessage
+                };
+            }
+
+            await UpdateResult(request);
             await UpdateMatchInfo(request);
             var getOldResultCriteria = new GetOldResultCriteria { MatchId = request.MatchId };
             await repository.ExecuteAsync(getOldResultCriteria);
@@ -79,37 +95,48 @@ namespace Settlement.Gaming.Services.Happy5
             criteria.StrOldResult = getOldResultCriteria.OldResult;
             Execute(criteria);
 
-            return new Result();
+            return validateResult;
         }
 
-        //private async Task<Result> ValidateBeforeSettle(SettlementCriteria criteria)
-        //{
-        //    var request = new EventTicketHappyFiveRequest
-        //    {
-        //        MatchId = criteria.MatchId,
-        //        Action = criteria.Action
-        //    };
-
-        //    var result = await scaleOutSettleThirdPartyService.ValidateEventAndTicketHappyFive(request);
-
-        //    return new Result
-        //    {
-        //        ErrCode = result.ErrorCode,
-        //        ErrMsg = result.ErrorMessage
-        //    };
-        //}
-
-        public async Task UpdateMatchInfo(Happy5SettlementRequest request)
+        private async Task<Result> ValidateBeforeSettle(SettlementCriteria criteria)
         {
-            var updateMatchCriteria = new UpdateMatchCriteria
+            var validateCriteria = new ValidateEventCriteria
+            {
+                MatchId = criteria.MatchId,
+                Action = criteria.Action
+            };
+
+            await repository.ExecuteAsync(validateCriteria);
+
+            return new Result
+            {
+                ErrCode = validateCriteria.ErrCode,
+                ErrMsg = validateCriteria.ErrMsg
+            };
+        }
+
+        private async Task UpdateResult(Happy5SettlementRequest request)
+        {
+            var updateMatchCriteria = new UpdateResultCriteria
             {
                 MatchId = request.MatchId,
-                Resources = ballService.ResourcesBalls(request.Balls),
-                Action = request.Action,
-                AdminId = currentSession.UserId,
+                Resources = ballService.ResourcesBalls(request.Balls)
             };
 
             await repository.ExecuteAsync(updateMatchCriteria);
+        }
+
+        private async Task UpdateMatchInfo(Happy5SettlementRequest request)
+        {
+            var updateRequest = new UpdateMatchInfo3rdRequest
+            {
+                Command = "completed",
+                Action = request.Action,
+                MatchId = request.MatchId,
+                creator = currentSession.UserId
+            };
+
+            await scaleOutSettleThirdPartyService.UpdateMatchInfo3rd(updateRequest);
         }
 
         private void Execute(SettlementCriteria criteria)

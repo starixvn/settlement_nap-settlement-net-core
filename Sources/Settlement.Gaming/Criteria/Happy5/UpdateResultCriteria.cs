@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Settlement.Gaming.Criteria.Happy5
 {
-    class UpdateMatchCriteria : NonQueryCommand
+    public class UpdateResultCriteria : NonQueryCommand
     {
         public int MatchId { get; set; }
 
@@ -19,9 +19,11 @@ namespace Settlement.Gaming.Criteria.Happy5
 
         public string Resources { get; set; }
 
+        public int SportType = 164;
+
         public override string GetSettingKey()
         {
-            return "NAP_Admin_Match_s164_Upd";
+            return "NAP_Admin_Result_Update_BingoBall";
         }
 
         public override bool IsValid()
