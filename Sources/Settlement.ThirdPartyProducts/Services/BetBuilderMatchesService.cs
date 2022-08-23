@@ -43,6 +43,8 @@ namespace Settlement.ThirdPartyProducts.Services
 
         private readonly AppSettingsKey appSettingsKey;
 
+        private const int AllStatus = 3;
+
         private static int _isProcessing;
 
         public BetBuilderMatchesServiceImp(IDynamicRepository repository,
@@ -67,7 +69,7 @@ namespace Settlement.ThirdPartyProducts.Services
             var criteria = mapper.Map<FilterRequest, MatchesCriteria>(request);
             var matches = await GetMatches(criteria);
             var resultDetails = await ResultDetailByMatchIds(matches);
-
+            matches = FilterMatch(request, matches);
             matches.ForEach(match =>
             {
                 match.RefDataService = refDataService;
@@ -128,6 +130,17 @@ namespace Settlement.ThirdPartyProducts.Services
                 mergeMatchInfo.AddSiteMatch(matches, data);
             }
             return matches;
+        }
+
+        private List<MatchDetailModel> FilterMatch(FilterRequest request, List<MatchDetailModel> matches)
+        {
+            var listStatus = request.Status.Split(',').ToList();
+            if (listStatus.Count == 0 || listStatus.Count == AllStatus || !string.IsNullOrEmpty(request.MatchCode))
+            {
+                return matches;
+            }
+
+            return matches.Where(match => request.Status.IndexOf(match.ParlayStatus) > -1).ToList();
         }
 
         private async Task<List<MatchDetailModel>> GetAndCachingMatches(MatchesWaitingRequest request)

@@ -83,7 +83,6 @@ namespace Settlement.ThirdPartyProducts.Services
                 item.LeagueName = refDataService.GetLeagueName(item.LeagueId);
                 item.Group = $"All {item.SportName} Leagues";
             }
-
             return leagues.OrderBy(item => item.SportType).ThenBy(item => item.LeagueName).ToList();
         }
 
@@ -165,6 +164,7 @@ namespace Settlement.ThirdPartyProducts.Services
                 "Refund FT",
                 "Refund"
             };
+
             return matches.OrderBy(match => eventStatuses.IndexOf(match.EventStatus))
                           .ThenBy(match => match.KickOffTime)
                           .ThenBy(match => match.MatchId)
