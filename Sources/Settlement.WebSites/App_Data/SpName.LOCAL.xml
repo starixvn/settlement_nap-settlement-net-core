@@ -119,7 +119,6 @@
     <Setting Key="NAP_Set_SportsSel_by_Vendor" SpName="NAP_Set_SportsSel_by_Vendor" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_MatchSelInfo_by_Vendor" SpName="NAP_Set_MatchSelInfo_by_Vendor" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Admin_ChangedMarket_Sel" SpName="NAP_Admin_ChangedMarket_Sel" DbName="DBPRO.bodb02.bodbAdminNet" />
-    <Setting Key ="NAP_Admin_Settlement_Betbuilder_Validation_Event" SpName="NAP_Admin_Settlement_Betbuilder_Validation_Event" DbName="DBPRO.bodb02.bodbAdminNet" />
   </Function>
 
   <Function Name="Calculate NumberGame">

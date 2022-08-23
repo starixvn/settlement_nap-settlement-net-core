@@ -58,6 +58,8 @@ export class InstantCalculationQuery {
     public instantKey: number;
     public firstGoalValue: string;
     public betStatus: string;
+    public isExistFG : boolean;
+    public isExistHTFG : boolean;
 
     constructor(matchId: number, score: UndoChecking) {
         this.matchId = matchId;
@@ -69,5 +71,7 @@ export class InstantCalculationQuery {
         this.firstGoalValue = score.firstGoalValue;
         this.goalRecord = score.goalRecord;
         this.betStatus = score.betStatus;
+        this.isExistFG = score.isExistFG;
+        this.isExistHTFG = score.isExistHTFG;
     }
 }

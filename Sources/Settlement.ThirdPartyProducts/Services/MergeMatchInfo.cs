@@ -38,7 +38,7 @@ namespace Settlement.ThirdPartyProducts.Services
         public string ParlayStatus(MatchDetailModel match)
         {
             var totalTickets = match.SiteMatch.Select(x => x.TotalTickets).Sum();
-            var totalTicketRunning = match.SiteMatch.Select(x => x.TotalTickets).Sum();
+            var totalTicketRunning = match.SiteMatch.Select(x => x.TotalTicketsRunning).Sum();
             if (totalTickets == 0)
             {
                 return "No Ticket";

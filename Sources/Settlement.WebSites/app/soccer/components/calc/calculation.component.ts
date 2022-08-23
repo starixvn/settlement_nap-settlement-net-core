@@ -241,7 +241,7 @@ export class CalculationComponent implements Soccer {
       const query = new InstantCalculationQuery(matchId, scoreResult);
       const result = await this.requestService.pushInstantScore(query).toPromise() as Result;
       if (result.isSuccessful) {
-        this.closePopupService.closePopup(matchId);
+        this.closePopupService.closePopup();
       } else {
         this.toastrService.error(result.errMsg);
       }
@@ -272,7 +272,7 @@ export class CalculationComponent implements Soccer {
     const query = new SettleQuery(this.matchDetail, hedgeMatchId, actionName, this.isReSettledTickets, childMatchIds);
     const result = await this.requestService.calculate(query).toPromise() as Result;
     if (result.isSuccessful) {
-      this.closePopupService.closePopup(this.matchDetail.matchId);
+      this.closePopupService.closePopup();
     } else {
       this.toastrService.error(result.errMsg);
     }

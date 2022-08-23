@@ -15,8 +15,6 @@ namespace Settlement.ThirdPartyProducts.Services
 {
     public interface BetBuilderCalculateService
     {
-        Task<(Result, string)> ValidateBeforeSettle(CalculationCriteria criteria);
-
         Task UpdateMatchInfo(CalculationCriteria criteria, string invalidMarketIds);
 
         string CreateResources(List<ResourcesItemModel> selectedResources);
@@ -55,25 +53,6 @@ namespace Settlement.ThirdPartyProducts.Services
             this.currentSession = currentSession;
             this.accessor = accessor;
             this.scaleOutSettleService = scaleOutSettleService;
-        }
-
-        public async Task<(Result, string)> ValidateBeforeSettle(CalculationCriteria criteria)
-        {
-            var validateRequest = new BetBuilderRequest
-            {
-                MatchId = criteria.MatchId,
-                Action = criteria.Action,
-                SelectedResources = criteria.SelectedSelection,
-                IsAuto = criteria.IsAuto,
-            };
-            var (resultValidate, invalidMarketIds) = await scaleOutSettleThirdPartyService.ValidateBetBuilder(validateRequest);
-            var result = new Result
-            {
-                ErrCode = resultValidate.ErrorCode,
-                ErrMsg = resultValidate.ErrorMessage
-            };
-
-            return (result, invalidMarketIds);
         }
 
         public async Task UpdateMatchInfo(CalculationCriteria criteria, string selectedMarket)

@@ -25,8 +25,8 @@ export class HelperService {
         return this.groupBetTypeService.getGroupBetType(resultDetails);
     }
 
-    public closePopup(matchId: number) {
-        return this.closePopupService.closePopup(matchId);
+    public closePopup() {
+        return this.closePopupService.closePopup();
     }
 
     public getLastestMatchResult(matchId: number) {

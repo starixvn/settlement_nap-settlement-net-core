@@ -126,7 +126,7 @@ namespace Settlement.Sportsbook.Soccer.Services.InstantCalculate
         public string BetStatusFL(InstantCalculationRequest request)
         {
             var goalOnly = request.GoalRecord.Replace(";", string.Empty);
-            if (goalOnly.Length > 0 && request.IsExistsFG)
+            if (goalOnly.Length > 0 && request.IsExistFG)
             {
                 return request.GoalRecord[0] == HomeValue ? FGHomeBetStatus : FGAwayBetStatus;
             }
@@ -138,7 +138,7 @@ namespace Settlement.Sportsbook.Soccer.Services.InstantCalculate
         {
             var goalOnly = request.GoalRecord.Replace(";", string.Empty);
 
-            if (goalOnly.Length > 0 && request.IsExistsHTFG)
+            if (goalOnly.Length > 0 && request.IsExistHTFG)
             {
                 return request.GoalRecord[0] == HomeValue ? HTFGHomeBetStatus : HTFGAwayBetStatus;
             }
@@ -149,18 +149,18 @@ namespace Settlement.Sportsbook.Soccer.Services.InstantCalculate
         public string BetStatusUncalc(InstantCalculationRequest request)
         {
             var betStatus = request.BetStatus;
-            if (request.IsExistsFG)
+            if (request.IsExistFG)
             {
                 var indexOf1FL = betStatus.IndexOf(HalfTimeFl);
-                betStatus.Remove(indexOf1FL, 8);
+                betStatus = betStatus.Remove(indexOf1FL, 8);
             }
 
-            if (request.IsExistsHTFG)
+            if (request.IsExistHTFG)
             {
                 var indexOfFL = betStatus.IndexOf(Fl);
-                betStatus.Remove(indexOfFL, 8);
+                betStatus = betStatus.Remove(indexOfFL, 7);
             }
-            return request.BetStatus;
+            return betStatus;
         }
 
         private XmlResource InitialResource(string resourceId)

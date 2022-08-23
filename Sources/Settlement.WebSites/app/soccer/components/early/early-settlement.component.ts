@@ -264,7 +264,7 @@ export class EarlySettlementComponent implements Soccer {
     private push(query: SettleQuery) {
         this.helperService.settle(query).subscribe((result: Result) => {
             if (result.errCode === 0) {
-                this.helperService.closePopup(query.matchId);
+                this.helperService.closePopup();
             } else {
                 this.toastrService.error(result.errMsg);
             }

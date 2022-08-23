@@ -96,7 +96,7 @@ export class RefundComponent implements Soccer {
       this.toastrService.overlayContainer = this.toastContainer;
       if (value) {
         if (value.result.isSuccessful) {
-          this.closePopupService.closePopup(this.matchDetail.matchId);
+          this.closePopupService.closePopup();
         } else {
           this.toastrService.clear();
           this.toastrService.error(value.result.errMsg);
@@ -204,7 +204,7 @@ export class RefundComponent implements Soccer {
       actionName, this.betDaq, this.betFair, this.isDeterminedHedgeMatch);
     const result = await this.requestService.refundMatch(query).toPromise() as Result;
     if (result.isSuccessful) {
-      this.closePopupService.closePopup(this.matchDetail.matchId);
+      this.closePopupService.closePopup();
     } else {
       this.toastrService.error(result.errMsg);
     }
@@ -215,7 +215,7 @@ export class RefundComponent implements Soccer {
     const refundType = isBetDaq ? RefundType.refundBetDaq : RefundType.refundBetFair;
     const result = await this.requestService.refundRunningThirdPartyTickets(this.matchDetail.matchId, refundType).toPromise() as Result;
     if (result.isSuccessful) {
-      this.closePopupService.closePopup(this.matchDetail.matchId);
+      this.closePopupService.closePopup();
     } else {
       this.toastrService.error(result.errMsg);
     }
