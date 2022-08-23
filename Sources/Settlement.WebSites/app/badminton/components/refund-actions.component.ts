@@ -1,7 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 import * as _ from 'lodash';
-import { MessageBoxService, ClosePopupService, AioService } from '../../shared/services';
+import { MessageBoxService, AioService } from '../../shared/services';
 import { CalculateAction, EventStatus, SportType } from '../../shared/constants';
 import { Result, MarkedTicketsModel, ModalDialogMessage } from '../../shared/models';
 import { Language } from '../../shared/language';
@@ -24,9 +24,8 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
   constructor(
     private readonly messageBoxService: MessageBoxService,
     protected toastrService: ToastrService,
-    protected closePopupService: ClosePopupService,
     protected aioService: AioService) {
-    super(closePopupService, aioService, toastrService);
+    super(aioService, toastrService);
     this.confirmationDialogMessage.title = Language.confirmationBox;
   }
 

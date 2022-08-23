@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Functions SiteName="NAP - Settlement site">
   <Function Name="Cricket">
-    <Setting Key="NAP_Set_MatchSelInfo" SpName="NAP_Set_MatchSelInfo" DbName="DBPRO.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_MatchSelInfo" SpName="NAP_Set_MatchSelInfo_UAT1" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_MatchSelDetail_Resources_ReCal" SpName="NAP_Set_MatchSelDetail_Resources_ReCal" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_MatchSelHedge" SpName="NAP_Set_MatchSelHedge" DbName="DBPRO.bodb02.bodbAdminNet" />
   </Function>

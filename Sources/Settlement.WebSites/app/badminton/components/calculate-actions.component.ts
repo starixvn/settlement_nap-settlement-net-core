@@ -1,7 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 import * as _ from 'lodash';
-import { MessageBoxService, ClosePopupService, AioService } from '../../shared/services';
+import { MessageBoxService, AioService } from '../../shared/services';
 import { MatchResource, ModalDialogMessage, Result } from '../../shared/models';
 import { Language } from '../../shared/language';
 import { SettlementStatusId, CalculateAction, SportType, ResultStatusId } from '../../shared/constants';
@@ -38,7 +38,6 @@ export class CalculateActionsComponent implements SportTemplate {
   constructor(
     private readonly aioService: AioService,
     private readonly messageBoxService: MessageBoxService,
-    private readonly closePopupService: ClosePopupService,
     private readonly badmintonService: BadmintonService,
     private readonly verificationService: VerificationService,
     private readonly toastrService: ToastrService,
@@ -382,10 +381,10 @@ export class CalculateActionsComponent implements SportTemplate {
     if (hedgeMatchId > 0) {
       query.matchId = hedgeMatchId;
       this.aioService.push(query).toPromise().then(() => {
-        this.closePopupService.closePopup(matchId);
+        this.messageBoxService.closePopup();
       });
     } else {
-      this.closePopupService.closePopup(matchId);
+      this.messageBoxService.closePopup();
     }
   }
 

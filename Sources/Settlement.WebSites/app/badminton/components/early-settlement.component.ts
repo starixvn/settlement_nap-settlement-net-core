@@ -3,7 +3,7 @@ import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 import { Match, SettleQuery } from '../models';
 import * as _ from 'lodash';
 import { Language } from '../../shared/language';
-import { MessageBoxService, ClosePopupService, AioService } from '../../shared/services';
+import { MessageBoxService, AioService } from '../../shared/services';
 import { Result } from '../../shared/models';
 import {
   ResultStatusId, CalculateAction, SportType, TicketStatusText
@@ -35,7 +35,6 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
 
   constructor(
     private readonly earlyConstraintService: EarlyConstraintService,
-    protected closePopupService: ClosePopupService,
     protected verificationService: VerificationService,
     protected messageBoxService: MessageBoxService,
     protected aioService: AioService,
@@ -201,10 +200,10 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     if (hedgeMatchId > 0) {
       query.matchId = hedgeMatchId;
       this.aioService.push(query).toPromise().then(() => {
-        this.closePopupService.closePopup(matchId);
+        this.messageBoxService.closePopup();
       });
     } else {
-      this.closePopupService.closePopup(matchId);
+      this.messageBoxService.closePopup();
     }
   }
 
