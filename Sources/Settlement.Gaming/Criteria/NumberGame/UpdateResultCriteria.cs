@@ -1,16 +1,10 @@
 ﻿using Fanex.Data.Repository;
 
-namespace Settlement.Gaming.Services.NumberGame
+namespace Settlement.Gaming.Criteria.NumberGame
 {
     public class UpdateResultCriteria : NonQueryCommand
     {
         public int MatchId { get; set; }
-
-        public string Action { get; set; }
-
-        public int AdminId { get; set; }
-
-        public bool IsAuto { get; set; }
 
         public string BallResults { get; set; }
 

@@ -11,15 +11,9 @@ namespace Settlement.Gaming.Criteria.Happy5
     {
         public int MatchId { get; set; }
 
-        public string Action { get; set; }
-
-        public int AdminId { get; set; }
-
-        public bool IsAuto { get; set; }
-
         public string Resources { get; set; }
 
-        public int SportType = 164;
+        public int SportType { get; } = 164;
 
         public override string GetSettingKey()
         {
