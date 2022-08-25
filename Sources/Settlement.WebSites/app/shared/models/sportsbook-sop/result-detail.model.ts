@@ -31,4 +31,5 @@ export class ResultDetail extends GeneralResultDetail {
     public multipleResultSelect: MultipleSelect;
     public otherInfo: string;
     public isResultWarningByBetType: boolean;
+    public ordNo: number;
 }

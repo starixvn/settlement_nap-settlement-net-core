@@ -73,6 +73,7 @@ export class CalculationActionsComponent implements SportTemplate {
                 map.originalAwayValue = '0';
             }
         });
+        this.match.resultDetails = _.orderBy(this.match.resultDetails, (map) => map.ordNo);
         this.init();
     }
 

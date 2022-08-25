@@ -36,6 +36,8 @@ namespace Settlement.Sportsbook.Aio.Models
 
         public int Map { get; set; }
 
+        public int OrdNo { get; set; }
+
         public virtual string ResultStatus
         {
             get

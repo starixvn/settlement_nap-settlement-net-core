@@ -134,7 +134,6 @@
     <Setting Key="NAP_Set_MatchSel_BingoBall" SpName="NAP_Set_MatchSel_BingoBall" DbName="DBPRO.bodb02.bodbAdminNet">
       <Mapping DataField="Number" ObjectProperty="NumberBall" />
     </Setting>
-    <Setting Key="NAP_Admin_Settlement_s164_Validation_Event" SpName="NAP_Admin_Settlement_s164_Validation_Event" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Admin_Result_Update_BingoBall" SpName="NAP_Admin_Result_Update_BingoBall" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Admin_GetOldResult_s164_Sel" SpName="NAP_Admin_GetOldResult_s164_Sel" DbName="DBPRO.bodb02.bodbAdminNet" />
   </Function>

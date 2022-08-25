@@ -30,7 +30,7 @@ export class BadmintonService {
       totalPoints.settlementStatusId = last.settlementStatusId;
     }
 
-    resultDetail = _.orderBy(resultDetail, map => map.resourceId);
+    resultDetail = _.orderBy(resultDetail, map => map.ordNo);
     resultDetail.push(totalPoints);
     resultDetail.push(last);
     return resultDetail;

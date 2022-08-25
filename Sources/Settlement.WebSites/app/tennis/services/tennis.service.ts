@@ -32,7 +32,7 @@ export class TennisService {
       }
     }
 
-    resultDetail = _.orderBy(resultDetail, (map) => map.resourceId);
+    resultDetail = _.orderBy(resultDetail, (map) => map.ordNo);
     resultDetail.push(totalGames);
     resultDetail.push(totalSets);
     return resultDetail;

@@ -66,11 +66,6 @@ namespace Settlement.Gaming.Services.Happy5
         private async Task<Result> SettleWhenHavePermission(Happy5SettlementRequest request)
         {
             var criteria = CreateCriteria(request);
-            var validateResult = await ValidateBeforeSettle(criteria);
-            if (validateResult.ErrCode != 0)
-            {
-                return validateResult;
-            }
 
             var validateDeploymentCriteria = new GetDeploymentInfoRequest
             {
@@ -78,40 +73,21 @@ namespace Settlement.Gaming.Services.Happy5
             };
 
             var validateDeploymentResult = await scaleOutSettleThirdPartyService.GetDeploymentInfo(validateDeploymentCriteria);
-            if (validateDeploymentResult.ErrorCode != 0)
+            if (validateDeploymentResult.ErrorCode == 0)
             {
-                return new Result
-                {
-                    ErrCode = validateDeploymentResult.ErrorCode,
-                    ErrMsg = validateDeploymentResult.ErrorMessage
-                };
+                await UpdateResult(request);
+                await UpdateMatchInfo(request);
+                var getOldResultCriteria = new GetOldResultCriteria { MatchId = request.MatchId };
+                await repository.ExecuteAsync(getOldResultCriteria);
+
+                criteria.StrOldResult = getOldResultCriteria.OldResult;
+                Execute(criteria);
             }
-
-            await UpdateResult(request);
-            await UpdateMatchInfo(request);
-            var getOldResultCriteria = new GetOldResultCriteria { MatchId = request.MatchId };
-            await repository.ExecuteAsync(getOldResultCriteria);
-
-            criteria.StrOldResult = getOldResultCriteria.OldResult;
-            Execute(criteria);
-
-            return validateResult;
-        }
-
-        private async Task<Result> ValidateBeforeSettle(SettlementCriteria criteria)
-        {
-            var validateCriteria = new ValidateEventCriteria
-            {
-                MatchId = criteria.MatchId,
-                Action = criteria.Action
-            };
-
-            await repository.ExecuteAsync(validateCriteria);
 
             return new Result
             {
-                ErrCode = validateCriteria.ErrCode,
-                ErrMsg = validateCriteria.ErrMsg
+                ErrCode = validateDeploymentResult.ErrorCode,
+                ErrMsg = validateDeploymentResult.ErrorMessage
             };
         }
 
