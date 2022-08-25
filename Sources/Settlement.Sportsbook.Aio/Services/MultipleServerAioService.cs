@@ -270,7 +270,8 @@ namespace Settlement.Sportsbook.Aio.Services
                 Action = criteria.Action,
                 AdminId = criteria.AdminId,
                 MatchId = criteria.MatchId,
-                SelectedResources = criteria.SelectedResources
+                SelectedResources = criteria.SelectedResources,
+                BetStatus = criteria.BetStatus
             };
 
             await scaleOutSettleService.UpdateMatchInfo(requestUpdateInfo);
