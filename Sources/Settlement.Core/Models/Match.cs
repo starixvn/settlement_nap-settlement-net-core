@@ -420,5 +420,14 @@ namespace Settlement.Core.Models
 
         public bool IsExistEarlyBettypesParlay { get; set; }
 
+        public override bool Equals(object obj)
+        {
+            return obj is Match match && match.MatchId == MatchId;
+        }
+
+        public override int GetHashCode()
+        {
+            return MatchId;
+        }
     }
 }
