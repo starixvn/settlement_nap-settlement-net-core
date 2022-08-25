@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { AioService, ClosePopupService, MessageBoxService } from '../../../shared/services';
+import { AioService, MessageBoxService } from '../../../shared/services';
 import { CalculateAction } from '../../../shared/constants';
 import { ScorePipe } from '../../pipes';
 import { Language } from '../../../shared/language';
@@ -30,7 +30,6 @@ export class GameTotalRefundComponent implements SportTemplate {
     private readonly messageBoxService: MessageBoxService,
     private readonly aioService: AioService,
     private readonly gameTotalService: GameTotalService,
-    private readonly closePopupService: ClosePopupService,
     private readonly toastrService: ToastrService) {
     this.confirmationDialogMessage.title = Language.confirmationBox;
   }
@@ -101,10 +100,10 @@ export class GameTotalRefundComponent implements SportTemplate {
     if (hedgeMatchId > 0) {
       query.matchId = hedgeMatchId;
       this.aioService.push(query).toPromise().then(() => {
-        this.closePopupService.closePopup(matchId);
+        this.messageBoxService.closePopup();
       });
     } else {
-      this.closePopupService.closePopup(matchId);
+      this.messageBoxService.closePopup();
     }
   }
 

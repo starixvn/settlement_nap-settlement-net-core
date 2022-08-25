@@ -8,7 +8,7 @@ import { ScoreMatchByPermissionPipe } from '../../pipes';
 import { ResourceHeaderPipe } from '../../pipes/resource-header.pipe';
 import { RequestService } from '../../services/request.service';
 import { ModalContentDialogComponent, ModalDialogComponent } from '../../../shared/components';
-import { BlockUIService, ClosePopupService, HttpRequestService, MessageBoxService } from '../../../shared/services';
+import { BlockUIService, HttpRequestService, MessageBoxService } from '../../../shared/services';
 
 import { GameTotalMatchRefundComponent } from './game-total-match-refund.component';
 import { GameTotalMatchVerificationService } from './game-total-match-verification.service';
@@ -24,7 +24,6 @@ describe('GameTotalMatchRefundComponent', () => {
   let requestService: RequestService;
   let gameTotalMatchService: GameTotalMatchService;
   let verificationService: GameTotalMatchVerificationService;
-  let closePopupService: ClosePopupService;
   let toastrService: ToastrService;
   const markedTicket: MarkedTicketsModel = {
     isExistMarkedTicket: true

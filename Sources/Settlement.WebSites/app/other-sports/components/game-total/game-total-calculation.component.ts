@@ -2,7 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 import { MatchResource, ModalDialogMessage, Result } from '../../../shared/models';
 import { MatchAio, SettleQuery } from '../../models';
 import { ResultPipe, ScorePipe } from '../../pipes';
-import { AioService, ClosePopupService, MessageBoxService } from '../../../shared/services';
+import { AioService, MessageBoxService } from '../../../shared/services';
 import * as _ from 'lodash';
 import { ExternalResultDetail, HedgeMatchDetail, MatchDetail, Permission, ResultDetail, SportTemplate } from '../../../shared/models/sportsbook-sop';
 import { CalculateAction, MatchStatus, ResultStatusId, SettlementStatusId, SportType } from '../../../shared/constants';
@@ -45,7 +45,6 @@ export class GameTotalCalculationComponent implements SportTemplate {
     private readonly aioService: AioService,
     private readonly gameTotalService: GameTotalService,
     private readonly verificationService: GameTotalVerificationService,
-    private readonly closePopupService: ClosePopupService,
     private readonly toastrService: ToastrService) {
     this.confirmDialogMessage.title = Language.confirmationBox;
   }
@@ -276,10 +275,10 @@ export class GameTotalCalculationComponent implements SportTemplate {
       query.matchId = hedgeMatchId;
       query.childMatchIds = "";
       this.aioService.push(query).toPromise().then(() => {
-        this.closePopupService.closePopup(matchId);
+        this.messageBoxService.closePopup();
       });
     } else {
-      this.closePopupService.closePopup(matchId);
+      this.messageBoxService.closePopup();
     }
   }
 

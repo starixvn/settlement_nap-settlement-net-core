@@ -3,14 +3,14 @@ import * as _ from "lodash";
 import { KickOffTime, ResourcesIds } from "../../constants";
 import { MatchDetail } from "../../models";
 import { ResultDetail } from "../../../shared/models/sportsbook-sop";
-import { ClosePopupService } from "../../../shared/services";
+import { MessageBoxService } from "../../../shared/services";
 import { RequestService } from "../../services/request.service";
 import { Result } from "../../../shared/models";
 import { CalculateAction, MatchStatus } from '../../../shared/constants';
 
 @Injectable()
 export class GameTotalMatchService {
-    constructor(private readonly closePopupService: ClosePopupService,
+    constructor(private readonly messageBoxService: MessageBoxService,
             private readonly requestService: RequestService){}
 
     public isReadyMatch(matchDetail: MatchDetail) {
@@ -105,7 +105,7 @@ export class GameTotalMatchService {
 
     private getMessage(matchId: number, result: Result){
         if (result.isSuccessful) {
-            this.closePopupService.closePopup(matchId);
+            this.messageBoxService.closePopup();
             return "";
         } else {
             return result.errMsg;

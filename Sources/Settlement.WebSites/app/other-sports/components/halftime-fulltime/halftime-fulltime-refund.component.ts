@@ -3,7 +3,7 @@ import { RequestService } from '../../services/request.service';
 import { MatchDetail, OtherSportsMatch, Permission, QueryMatch, RequestSettleWithInterval } from '../../models';
 import * as _ from 'lodash';
 import { VerificationService } from './verification.service';
-import { ClosePopupService, MessageBoxService } from '../../../shared/services';
+import { MessageBoxService } from '../../../shared/services';
 import { Language } from '../../../shared/language';
 import { MarkedTicketsModel, ModalDialogMessage, Result } from '../../../shared/models';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
@@ -29,8 +29,7 @@ export class HalfTimeFullTimeRefundComponent implements SportTemplate {
   constructor(private readonly requestService: RequestService,
     private readonly messageBoxService: MessageBoxService,
     private readonly halfTimeFullTimeService: HalfTimeFullTimeService,
-    private readonly toastrService: ToastrService,
-    private readonly closePopupService: ClosePopupService) {
+    private readonly toastrService: ToastrService) {
     this.confirmDialogMessage.title = Language.RefundConfirmationBox;
   }
   async getMatch(matchId: number) {
@@ -92,7 +91,7 @@ export class HalfTimeFullTimeRefundComponent implements SportTemplate {
     if (!response.isSuccessful) {
       this.toastrService.error(response.errMsg);
     } else {
-      this.closePopupService.closePopup(this.matchDetail.matchId);
+      this.messageBoxService.closePopup();
     }
   }
 }

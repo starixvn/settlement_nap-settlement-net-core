@@ -7,7 +7,7 @@ import { CalculateAction, MatchStatus } from '../../../shared/constants';
 import { Language } from '../../../shared/language';
 import { ModalDialogMessage, Result } from '../../../shared/models';
 import { HedgeMatchDetail, ResultDetail, SportTemplate } from '../../../shared/models/sportsbook-sop';
-import { ClosePopupService, MessageBoxService } from '../../../shared/services';
+import { MessageBoxService } from '../../../shared/services';
 import { GameTotalMatchService } from './game-total-match.service';
 import * as _ from 'lodash';
 import { GameTotalMatchVerificationService } from './game-total-match-verification.service';
@@ -36,7 +36,6 @@ export class GameTotalMatchCalculationComponent implements SportTemplate {
 
   constructor(private readonly messageBoxService: MessageBoxService,
     private readonly requestService: RequestService,
-    private readonly closePopupService: ClosePopupService,
     private readonly toastrService: ToastrService,
     private readonly gameTotalMatchService: GameTotalMatchService,
     private readonly verificationService: GameTotalMatchVerificationService) {
@@ -233,7 +232,7 @@ export class GameTotalMatchCalculationComponent implements SportTemplate {
 
     const result = await this.requestService.calculate(settleQuery).toPromise() as Result;
     if (result.isSuccessful) {
-      this.closePopupService.closePopup(this.matchDetail.matchId);
+      this.messageBoxService.closePopup();
     } else {
       this.toastrService.error(result.errMsg);
     }

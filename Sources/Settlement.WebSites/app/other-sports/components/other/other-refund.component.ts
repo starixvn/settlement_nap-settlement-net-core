@@ -5,7 +5,7 @@ import { MarkedTicketsModel, ModalDialogMessage } from '../../../shared/models';
 import { CalculateAction } from '../../../shared/constants';
 import { HedgeMatchDetail, SportTemplate } from '../../../shared/models/sportsbook-sop';
 import { RequestService } from '../../services/request.service';
-import { ClosePopupService, MessageBoxService } from '../../../shared/services';
+import { MessageBoxService } from '../../../shared/services';
 import { Language } from '../../../shared/language';
 import { MatchDetail, OtherSportsMatch, QueryMatch } from '../../models';
 import { OtherService } from './other.service';
@@ -24,7 +24,6 @@ export class OtherRefundComponent implements SportTemplate {
     constructor(private readonly requestService: RequestService,
         private readonly messageBoxService: MessageBoxService,
         private readonly toastrService: ToastrService,
-        private readonly closePopupService: ClosePopupService,
         private readonly otherService : OtherService) {
         this.confirmDialogMessage.title = Language.RefundConfirmationBox;
     }
@@ -62,7 +61,7 @@ export class OtherRefundComponent implements SportTemplate {
         if (!response.isSuccessful) {
             this.toastrService.error(response.errMsg);
         } else {
-            this.closePopupService.closePopup(this.matchDetail.matchId);
+            this.messageBoxService.closePopup();
         }
     }
 }

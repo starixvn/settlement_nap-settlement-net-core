@@ -3,7 +3,7 @@ import { RequestService } from '../../services/request.service';
 import { Match, MatchDetail, OtherSportsMatch, Permission, QueryMatch, RequestSettleWithInterval } from '../../models';
 import * as _ from 'lodash';
 import { VerificationService } from './verification.service';
-import { ClosePopupService, MessageBoxService } from '../../../shared/services';
+import { MessageBoxService } from '../../../shared/services';
 import { Language } from '../../../shared/language';
 import { ModalDialogMessage, Result } from '../../../shared/models';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
@@ -47,8 +47,7 @@ export class HalfTimeFullTimeCalculationComponent implements SportTemplate {
     private readonly verificationService: VerificationService,
     private readonly messageBoxService: MessageBoxService,
     private readonly halfTimeFullTimeService: HalfTimeFullTimeService,
-    private readonly toastrService: ToastrService,
-    private readonly closePopupService: ClosePopupService) {
+    private readonly toastrService: ToastrService) {
     this.confirmDialogMessage.title = Language.confirmationBox;
   }
 
@@ -324,7 +323,7 @@ export class HalfTimeFullTimeCalculationComponent implements SportTemplate {
 
     const result = await this.requestService.calculate(settleQuery).toPromise() as Result;
     if (result.isSuccessful) {
-      this.closePopupService.closePopup(this.matchDetail.matchId);
+      this.messageBoxService.closePopup();
     } else {
       this.toastrService.error(result.errMsg);
     }

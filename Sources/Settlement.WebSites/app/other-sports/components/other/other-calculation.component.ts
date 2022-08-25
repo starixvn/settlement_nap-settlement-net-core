@@ -7,7 +7,7 @@ import { BackgroundColor, CalculateAction, TicketStatusText } from "../../../sha
 import { Language } from "../../../shared/language";
 import { ModalDialogMessage } from "../../../shared/models";
 import { HedgeMatchDetail, SportTemplate } from "../../../shared/models/sportsbook-sop";
-import { ClosePopupService, MessageBoxService } from "../../../shared/services";
+import { MessageBoxService } from "../../../shared/services";
 import { OtherService } from "./other.service";
 import { VerificationService } from "./verification.service";
 
@@ -42,7 +42,6 @@ export class OtherCalculationComponent implements SportTemplate {
     private readonly otherService: OtherService,
     private readonly verificationService: VerificationService,
     private readonly toastrService: ToastrService,
-    private readonly closePopupService: ClosePopupService,
     private readonly messageBoxService: MessageBoxService) {
       this.confirmationDialogMessage.title = Language.confirmationBox;
   }
@@ -284,7 +283,7 @@ export class OtherCalculationComponent implements SportTemplate {
 
     const result = await this.otherService.settle(type, this.isReSettledTickets, this.matchDetail, this.refResultStatus, hedgeMatchId);
     if (result.isSuccessful) {
-      this.closePopupService.closePopup(this.matchDetail.matchId);
+      this.messageBoxService.closePopup();
     } else {
       this.toastrService.error(result.errMsg);
     }
