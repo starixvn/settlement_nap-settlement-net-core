@@ -6,6 +6,10 @@ namespace Settlement.Sportsbook.MoveTickets.Criteria
     {
         public int MatchId { get; set; }
 
+        public string Command { get; } = "C";
+
+        public bool IsMovedMatch { get; } = true;
+
         public override string GetSettingKey()
         {
             return $"NAP_UpdateMatch_Remark";

@@ -6,7 +6,6 @@ namespace Settlement.Sportsbook.MoveTickets.Criteria
     {
         public int MatchId { get; set; }
 
-
         public override string GetSettingKey()
         {
             return "NAP_Admin_Settlement_50_MoveTicketInfo";
