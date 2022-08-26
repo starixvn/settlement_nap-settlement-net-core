@@ -107,6 +107,7 @@ namespace Settlement.Sportsbook.Aio.Services
             var oldMatch = await GetOldMatch(matchDetail, request, apiKey);
 
             var childMatches = await GetChildMatch(resultDetails, request, apiKey);
+            resultDetails = resultDetails.OrderBy(result => result.OrdNo).ToList();
 
             return new AioMatch
             {
