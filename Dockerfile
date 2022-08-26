@@ -1,7 +1,7 @@
 FROM hub.nexdev.net/base/dotnet/core/sdk:5.0.102-ca-patch-buster-slim AS builder
 WORKDIR /src
-ENV TZ="America/La_Paz"
 
+COPY ./.sonarlint/. ./.sonarlint
 COPY ./Sources/Settlement.Core/. ./Sources/Settlement.Core
 COPY ./Sources/Settlement.EventManagement/. ./Sources/Settlement.EventManagement
 COPY ./Sources/Settlement.FastMarkets/. ./Sources/Settlement.FastMarkets
@@ -34,4 +34,5 @@ RUN sed -i 's/MinProtocol = TLSv1.2/MinProtocol = TLSv1/g' /usr/lib/ssl/openssl.
 WORKDIR /app
 COPY --from=builder /app .
 
+ENV TZ="America/La_Paz"
 ENTRYPOINT ["dotnet", "Settlement.WebSites.dll"]
