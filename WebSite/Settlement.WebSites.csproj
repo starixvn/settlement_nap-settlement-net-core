@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <CodeAnalysisRuleSet>..\..\.sonarlint\settlement-netcorecsharp.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>.sonarlint\settlement-netcorecsharp.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
 
   <ItemGroup>
@@ -31,7 +31,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <AdditionalFiles Include="..\..\.sonarlint\settlement-netcore\CSharp\SonarLint.xml" Link="SonarLint.xml" />
+    <AdditionalFiles Include=".sonarlint\settlement-netcore\CSharp\SonarLint.xml" Link="SonarLint.xml" />
     <Content Include="App_Data\SpName.LOCAL.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -121,16 +121,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Settlement.EventManagement\Settlement.EventManagement.csproj" />
-    <ProjectReference Include="..\Settlement.FastMarkets\Settlement.FastMarkets.csproj" />
-    <ProjectReference Include="..\Settlement.Gaming\Settlement.Gaming.csproj" />
-    <ProjectReference Include="..\Settlement.Log\Settlement.Log.csproj" />
-    <ProjectReference Include="..\Settlement.Setting\Settlement.Setting.csproj" />
-    <ProjectReference Include="..\Settlement.Sportsbook.MoveTickets\Settlement.Sportsbook.MoveTickets.csproj" />
-    <ProjectReference Include="..\Settlement.Sportsbook.Aio\Settlement.Sportsbook.Aio.csproj" />
-    <ProjectReference Include="..\Settlement.Sportsbook.OtherSports\Settlement.Sportsbook.OtherSports.csproj" />
-    <ProjectReference Include="..\Settlement.Sportsbook.Soccer\Settlement.Sportsbook.Soccer.csproj" />
-    <ProjectReference Include="..\Settlement.ThirdPartyProducts\Settlement.ThirdPartyProducts.csproj" />
+    <ProjectReference Include="..\Sources\Settlement.EventManagement\Settlement.EventManagement.csproj" />
+    <ProjectReference Include="..\Sources\Settlement.FastMarkets\Settlement.FastMarkets.csproj" />
+    <ProjectReference Include="..\Sources\Settlement.Gaming\Settlement.Gaming.csproj" />
+    <ProjectReference Include="..\Sources\Settlement.Log\Settlement.Log.csproj" />
+    <ProjectReference Include="..\Sources\Settlement.Setting\Settlement.Setting.csproj" />
+    <ProjectReference Include="..\Sources\Settlement.Sportsbook.MoveTickets\Settlement.Sportsbook.MoveTickets.csproj" />
+    <ProjectReference Include="..\Sources\Settlement.Sportsbook.Aio\Settlement.Sportsbook.Aio.csproj" />
+    <ProjectReference Include="..\Sources\Settlement.Sportsbook.OtherSports\Settlement.Sportsbook.OtherSports.csproj" />
+    <ProjectReference Include="..\Sources\Settlement.Sportsbook.Soccer\Settlement.Sportsbook.Soccer.csproj" />
+    <ProjectReference Include="..\Sources\Settlement.ThirdPartyProducts\Settlement.ThirdPartyProducts.csproj" />
   </ItemGroup>
 
   <ItemGroup>
