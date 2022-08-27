@@ -9,6 +9,7 @@ using Settlement.Core.Constants;
 using Fanex.Settlement.ScaleOut.Services;
 using Fanex.Settlement.ScaleOut.Request;
 using Microsoft.Extensions.Options;
+using MediatR;
 
 namespace Settlement.Gaming.Services.Happy5
 {
@@ -75,12 +76,9 @@ namespace Settlement.Gaming.Services.Happy5
             var validateDeploymentResult = await scaleOutSettleThirdPartyService.GetDeploymentInfo(validateDeploymentCriteria);
             if (validateDeploymentResult.ErrorCode == 0)
             {
+                criteria.StrOldResult = await GetOldResult(request.MatchId);
                 await UpdateResult(request);
                 await UpdateMatchInfo(request);
-                var getOldResultCriteria = new GetOldResultCriteria { MatchId = request.MatchId };
-                await repository.ExecuteAsync(getOldResultCriteria);
-
-                criteria.StrOldResult = getOldResultCriteria.OldResult;
                 Execute(criteria);
             }
 
@@ -89,6 +87,13 @@ namespace Settlement.Gaming.Services.Happy5
                 ErrCode = validateDeploymentResult.ErrorCode,
                 ErrMsg = validateDeploymentResult.ErrorMessage
             };
+        }
+
+        private async Task<string> GetOldResult(int matchId)
+        {
+            var getOldResultCriteria = new GetOldResultCriteria { MatchId = matchId };
+            await repository.ExecuteAsync(getOldResultCriteria);
+            return getOldResultCriteria.StrOldResult;
         }
 
         private async Task UpdateResult(Happy5SettlementRequest request)

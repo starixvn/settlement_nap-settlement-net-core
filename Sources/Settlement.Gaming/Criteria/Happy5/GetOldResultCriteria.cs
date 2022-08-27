@@ -7,7 +7,7 @@ namespace Settlement.Gaming.Criteria.Happy5
     {
         public int MatchId { get; set; }
 
-        public string OldResult { get; set; }
+        public string StrOldResult { get; set; }
 
         public override string GetSettingKey()
         {
