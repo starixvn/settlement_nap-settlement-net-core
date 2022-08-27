@@ -20,6 +20,7 @@ export class GetMatchesQuery {
 export class SettleQuery {
     matchId: number;
     balls: Ball[];
+    action: string;
 
     constructor(matchId: number, balls: Ball[]) {
         this.matchId = matchId;

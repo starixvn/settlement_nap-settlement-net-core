@@ -101,7 +101,7 @@ export class ReCalculationComponent implements OnInit {
     private doReCalculate() {
         this.balls.forEach((ball) => ball.color = _.includes(RedBall, Number(ball.numberBall)) ? "r" : "b");
         const query = new SettleQuery(this.matchDetail.matchId, this.balls.filter((ball) => !ball.isNA));
-
+        query.action = this.queryService.getAction(this.balls);
         this.queryService.settle(query).subscribe((result: Result) => {
             if (result.isSuccessful) {
                 this.queryService.getBallsByMatchId(this.matchDetail.matchId).subscribe((balls: Ball[]) => {

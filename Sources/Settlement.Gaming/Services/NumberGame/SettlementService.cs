@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Http;
 using Fanex.Settlement.ScaleOut.Services;
 using Microsoft.Extensions.Options;
 using Fanex.Settlement.ScaleOut.Request;
+using System;
 
 namespace Settlement.Gaming.Services.NumberGame
 {
@@ -70,7 +71,7 @@ namespace Settlement.Gaming.Services.NumberGame
             var criteria = CreateCriteria(request);
             var validateDeploymentCriteria = new GetDeploymentInfoRequest
             {
-                SPName = "dbo.NAP_Admin_Settlement_s161_Manual"
+                SPName = "NAP_Admin_Settlement_s161_Manual"
             };
 
             var validateDeploymentResult = await scaleOutSettleThirdPartyService.GetDeploymentInfo(validateDeploymentCriteria);
@@ -84,7 +85,7 @@ namespace Settlement.Gaming.Services.NumberGame
             }
 
             await UpdateResult(criteria);
-            await UpdateMatchInfo(criteria);
+            await UpdateMatchInfo(request);
             Execute(criteria);
 
             return new Result
@@ -105,13 +106,14 @@ namespace Settlement.Gaming.Services.NumberGame
             await repository.ExecuteAsync(updateMatchCriteria);
         }
 
-        private async Task UpdateMatchInfo(RecalculateNumberGameCriteria criteria)
+        private async Task UpdateMatchInfo(NumberGameSettlementRequest request)
         {
             var updateRequest = new UpdateMatchInfo3rdRequest
             {
                 Command = "completed",
-                MatchId = criteria.MatchId,
-                creator = currentSession.UserId
+                MatchId = request.MatchId,
+                creator = currentSession.UserId,
+                Action = request.Action
             };
 
             await scaleOutSettleThirdPartyService.UpdateMatchInfo3rd(updateRequest);

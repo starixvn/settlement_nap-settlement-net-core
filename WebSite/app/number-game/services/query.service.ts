@@ -1,6 +1,7 @@
 ﻿import { Injectable } from '@angular/core';
+import { CalculateAction } from '../../shared/constants';
 import { HttpRequestService } from '../../shared/services';
-import { GetMatchesQuery, SettleQuery } from '../models';
+import { Ball, GetMatchesQuery, SettleQuery } from '../models';
 @Injectable()
 export class QueryService {
     private numberGameApi = 'api/number-game';
@@ -24,5 +25,11 @@ export class QueryService {
 
     public settle(query: SettleQuery) {
         return this.httpRequestService.postJson(query, `${this.numberGameApi}/settle`);
+    }
+
+    public getAction(balls: Ball[]): string{
+        const refundBalls  = balls.filter(ball => ball.isNA);
+        return refundBalls.length == balls.length ? CalculateAction.refund 
+            : refundBalls.length > 0 ? CalculateAction.refundFullTime : CalculateAction.calculate;
     }
 }
