@@ -109,13 +109,13 @@ namespace Settlement.Sportsbook.Soccer.Services.InstantCalculate
             }
 
             var indexOfHalfTimeFL = betStatus.IndexOf(HalfTimeFl);
-            if (indexOfHalfTimeFL > 0)
+            if (indexOfHalfTimeFL > -1)
             {
                 betStatus.Remove(indexOfHalfTimeFL, 8);
             }
 
             var indexOfFL = betStatus.IndexOf(Fl);
-            if (indexOfHalfTimeFL > 0)
+            if (indexOfHalfTimeFL > -1)
             {
                 betStatus.Remove(indexOfFL, 8);
             }
