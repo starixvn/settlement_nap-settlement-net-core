@@ -244,7 +244,7 @@ export class CalculationActionsComponent implements SportTemplate {
                 this.toastrService.error(result.errMsg);
             }
         } else {
-            this.messageBoxService.closePopup();
+            this.settleHedgeMatch(settleQuery);
         }
     }
 
