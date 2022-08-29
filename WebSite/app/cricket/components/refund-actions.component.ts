@@ -96,7 +96,7 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
                 this.toastrService.error(result.errMsg);
             }
         } else {
-            this.messageBoxService.closePopup();
+            this.settleHedgeMatch(query);
         }
     }
 
