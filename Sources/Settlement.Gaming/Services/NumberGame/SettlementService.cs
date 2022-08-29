@@ -112,7 +112,7 @@ namespace Settlement.Gaming.Services.NumberGame
             {
                 Command = "completed",
                 MatchId = request.MatchId,
-                creator = currentSession.UserId,
+                Creator = currentSession.UserId,
                 Action = request.Action
             };
 

@@ -136,13 +136,7 @@ namespace Settlement.FastMarkets.Services
         {
             var criteria = await createQueryService.QuerySettle(request);
 
-            var validationRequest = new EventTicketFastMarketRequest
-            {
-                MatchId = criteria.MatchId,
-                Action = criteria.Action,
-                SelectedResources = criteria.Results,
-                IsSettleDetermined = criteria.IsSettleDetermined
-            }; 
+            var validationRequest = mapper.Map<SettleRequest, EventTicketFastMarketRequest>(request);
 
             var validationResult = await scaleOutSettleService.ValidateEventAndTicketFastMarket(validationRequest);
             if (validationResult.ErrorCode > 0)

@@ -114,7 +114,7 @@ namespace Settlement.Gaming.Services.Happy5
                 Command = "completed",
                 Action = request.Action,
                 MatchId = request.MatchId,
-                creator = currentSession.UserId
+                Creator = currentSession.UserId
             };
 
             await scaleOutSettleThirdPartyService.UpdateMatchInfo3rd(updateRequest);
