@@ -25,11 +25,10 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
     public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
     constructor(private readonly verificationService: VerificationService,
         private readonly messageBoxService: MessageBoxService,
-        protected closePopupService: ClosePopupService,
         protected aioService: AioService,
         protected toastrService: ToastrService,
         private readonly basketballService: BasketballService) {
-        super(closePopupService, aioService, toastrService);
+        super(aioService, toastrService);
         this.confirmationDialogMessage.title = Language.confirmationBox;
     }
 

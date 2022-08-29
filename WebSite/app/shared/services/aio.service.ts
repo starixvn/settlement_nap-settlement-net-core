@@ -17,8 +17,7 @@ export class AioService {
     private readonly httpRequestService: HttpRequestService;
     public readonly warningDialogMessage: ModalDialogMessage = new ModalDialogMessage();
     constructor(httpRequestService: HttpRequestService,
-        private readonly messageBoxService: MessageBoxService,
-        private readonly closePopupService: ClosePopupService) {
+        private readonly messageBoxService: MessageBoxService) {
         this.httpRequestService = httpRequestService;
     }
 
@@ -139,7 +138,7 @@ export class AioService {
             await this.changeResultSetting(query).toPromise().then(async () => {
                 await this.confirmHedgeMatch(query, hedgeMatchDetail);
                 await this.confirmOldMatch(query, oldMatchDetail);
-                this.messageBoxService.closePopup();
+                this.messageBoxService.closePopupNotChanged();
             });
         });
     }

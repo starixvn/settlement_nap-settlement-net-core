@@ -37,4 +37,11 @@ export class MessageBoxService {
             buttonClose.click();
         }
     }
+
+    public closePopupNotChanged(){
+        const buttonClose = parent.document.getElementById('close-not-change');
+        if (buttonClose !== null) {
+            buttonClose.click();
+        }
+    }
 }

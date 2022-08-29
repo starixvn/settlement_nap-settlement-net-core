@@ -35,7 +35,6 @@ export class CalculationActionsComponent implements SportTemplate {
 
     constructor(
         private readonly messageBoxService: MessageBoxService,
-        private readonly closePopupService: ClosePopupService,
         private readonly verificationService: VerificationService,
         private readonly eSportsService: ESportsService,
         private readonly aioService: AioService,
@@ -215,10 +214,9 @@ export class CalculationActionsComponent implements SportTemplate {
     private async push(query: SettleQuery): Promise<void> {
         const result = await this.aioService.push(query).toPromise() as Result;
         if (result.errCode === 0) {
-            const mainMatchId = query.matchId;
             await this.hedgeMatch(query);
             await this.settleOldMatch(query);
-            this.closePopupService.closePopup(mainMatchId);
+            this.messageBoxService.closePopup();
         } else {
             this.toastrService.error(result.errMsg);
         }

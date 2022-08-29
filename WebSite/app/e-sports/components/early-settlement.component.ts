@@ -5,7 +5,7 @@ import { ResultDetail, HedgeMatchDetail, ExternalResultDetail, SportTemplate } f
 import * as _ from 'lodash';
 import { Language } from '../../shared/language';
 import { ResultControlGroup, Resources, TicketStatus, ApiKeys, ResultStatus, ResultControl, KickOffTime } from '../constants';
-import { MessageBoxService, ClosePopupService, AioService } from '../../shared/services';
+import { MessageBoxService, AioService } from '../../shared/services';
 import { Result } from '../../shared/models';
 import { ResultStatusId, CalculateAction, SportType } from '../../shared/constants';
 import { EarlyConstraintService, VerificationService, ESportsService } from '../services';
@@ -33,7 +33,6 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         private readonly earlyConstraintService: EarlyConstraintService,
         private readonly verificationService: VerificationService,
         private readonly eSportsService: ESportsService,
-        protected closePopupService: ClosePopupService,
         protected messageBoxService: MessageBoxService,
         protected aioService: AioService,
         protected toastrService: ToastrService) {
@@ -194,10 +193,9 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     private async push(query: SettleQuery) {
         const result = await this.aioService.push(query).toPromise() as Result;
         if (result.errCode === 0) {
-            const mainMatchId = query.matchId;
             this.pushHedgeMatch(query);
             this.pushOldMatch(query);
-            this.closePopupService.closePopup(mainMatchId);
+            this.messageBoxService.closePopup();
         } else {
             this.toastrService.error(result.errMsg);
         }

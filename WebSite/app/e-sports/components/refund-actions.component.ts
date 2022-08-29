@@ -22,9 +22,8 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
     constructor(
         private readonly messageBoxService: MessageBoxService,
         protected toastrService: ToastrService,
-        protected closePopupService: ClosePopupService,
         protected aioService: AioService) {
-        super(closePopupService, aioService, toastrService);
+        super(aioService, toastrService);
     }
 
     async getMatch(matchId: number): Promise<void> {
@@ -65,10 +64,9 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
         const query = this.generateRefundQuery(ApiKeys.Settle);
         const result = await this.aioService.push(query).toPromise() as Result;
         if (result.errCode === 0) {
-            const mainMatchId = query.matchId;
             await this.refundHedgeMatch(query);
             await this.refundOldMatch(query);
-            this.closePopupService.closePopup(mainMatchId);
+            this.messageBoxService.closePopup();
         } else {
             this.toastrService.error(result.errMsg);
         }

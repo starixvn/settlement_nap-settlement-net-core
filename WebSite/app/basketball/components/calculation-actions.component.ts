@@ -32,7 +32,6 @@ export class CalculationActionsComponent implements SportTemplate {
     constructor(
         private readonly basketballService: BasketballService,
         private readonly messageBoxService: MessageBoxService,
-        private readonly closePopupService: ClosePopupService,
         private readonly aioService: AioService,
         private readonly verificationService: VerificationService,
         private readonly toastrService: ToastrService) {
@@ -443,10 +442,10 @@ export class CalculationActionsComponent implements SportTemplate {
         if (hedgeMatchId > 0) {
             query.matchId = hedgeMatchId;
             this.aioService.push(query).toPromise().then(() => {
-                this.closePopupService.closePopup(matchId);
+                this.messageBoxService.closePopup();
             });
         } else {
-            this.closePopupService.closePopup(matchId);
+            this.messageBoxService.closePopup();
         }
     }
 

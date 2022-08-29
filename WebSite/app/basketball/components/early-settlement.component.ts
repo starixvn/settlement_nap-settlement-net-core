@@ -26,7 +26,6 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     constructor(
         private readonly earlyService: EarlyService,
         private readonly verificationService: VerificationService,
-        protected closePopupService: ClosePopupService,
         protected messageBoxService: MessageBoxService,
         protected aioService: AioService,
         protected toastrService: ToastrService) {
@@ -193,10 +192,10 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         if (hedgeMatchId > 0) {
             query.matchId = hedgeMatchId;
             this.aioService.push(query).toPromise().then(() => {
-                this.closePopupService.closePopup(matchId);
+                this.messageBoxService.closePopup();
             });
         } else {
-            this.closePopupService.closePopup(matchId);
+            this.messageBoxService.closePopup();
         }
     }
 
