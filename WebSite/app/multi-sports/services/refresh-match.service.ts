@@ -69,6 +69,8 @@ export class RefreshMatchService {
             match.showLink = this.isShowLink(newMatch);
             match.autoPayoutStatus = newMatch.autoPayoutStatus;
             match.isExistRunningTicketParlay = newMatch.isExistRunningTicketParlay;
+            match.confirmFullTimeScore = newMatch.confirmFullTimeScore;
+            match.confirmHalfTimeScore = newMatch.confirmHalfTimeScore;
             this.sportMatchService.getMatchIntervalScore(match, this.permission);
             this.handleActionsService.resetCheckboxCalcMixParlay(match, currentSportMatches, multiSport);
           }

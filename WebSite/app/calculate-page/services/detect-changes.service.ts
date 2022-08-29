@@ -61,6 +61,8 @@ export class DetectChangesService {
             || !_.isEqual(oldMatch.liveHomeScore, newMatch.liveHomeScore)
             || !_.isEqual(oldMatch.directWaitingTime, newMatch.directWaitingTime)
             || !_.isEqual(oldMatch.instantWaitingTime, newMatch.instantWaitingTime)
+            || !_.isEqual(oldMatch.confirmHalfTimeScore, newMatch.confirmHalfTimeScore)
+            ||!_.isEqual(oldMatch.confirmFullTimeScore, newMatch.confirmFullTimeScore);
     }
 
     private isStatusAutoCalculationDifferent(oldMatch: CalculationMatch, newMatch: CalculationMatch) {
