@@ -130,7 +130,8 @@
     <Setting Key="NAP_Set_GetNumberError" SpName="NAP_Set_GetNumberError" DbName="DBTXN.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_SettledErrorSel" SpName="NAP_Set_SettledErrorSel" DbName="DBTXN.bodb02.bodbAdminNet" />
   </Function>
-  <Function Name="DBSID01">
+
+  <Function Name="Scale Out DB">
     <Function Name="Get_SiteDBGroupID">
       <Setting Key="Get_SiteDBGroupID_DBTXN" SpName="Get_SiteDBGroupID" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="Get_SiteDBGroupID_DBSID01" SpName="Get_SiteDBGroupID" DbName="DBSID01.bodb02.bodbAdminNet" />
