@@ -76,7 +76,7 @@ namespace Settlement.Sportsbook.MoveTickets.Services
             var resultMessage = await scaleOutSettleService.ValidateEventAndTicket(validateRequest);
             if (resultMessage.ErrorCode > 0)
             {
-                logService.ActionLog(request.MatchId, criteria.ErrMsg, actionIdMoveTicket);
+                logService.ActionLog(request.MatchId, resultMessage.ErrorMessage, actionIdMoveTicket);
                 return new Result
                 {
                     ErrCode = resultMessage.ErrorCode,
