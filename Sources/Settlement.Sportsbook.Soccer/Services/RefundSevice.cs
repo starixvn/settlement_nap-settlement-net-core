@@ -38,11 +38,11 @@ namespace Settlement.Sportsbook.Soccer.Services
 
         private readonly IHttpContextAccessor accessor;
 
-        private readonly AppSettingsKey appSettingsKey;
-
         private readonly ICreateCriteriaService createCriteriaService;
 
         private readonly ScaleOutSettleService scaleOutSettleService;
+
+        private readonly AppSettingsKey appSettingsKey;
 
         public RefundServiceImp(
             IDynamicRepository repository,

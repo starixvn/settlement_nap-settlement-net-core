@@ -340,5 +340,9 @@
       <Setting Key="NAP_Set_SPDeploymentInfo_DBTXN" SpName="NAP_Set_SPDeploymentInfo" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="NAP_Set_SPDeploymentInfo_DBSID01" SpName="NAP_Set_SPDeploymentInfo" DbName="DBSID01.bodb02.bodbAdminNet" />
     </Function>
+    <Function Name="NAP_Set_CashoutSel">
+      <Setting Key="NAP_Set_CashoutSel_DBTXN" SpName="NAP_Set_CashoutSel" DbName="DBTXN.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Set_CashoutSel_DBSID01" SpName="NAP_Set_CashoutSel" DbName="DBSID01.bodb02.bodbAdminNet" />
+    </Function>
   </Function>
 </Functions>

@@ -1,4 +1,5 @@
-﻿using Fanex.Data.Repository;
+﻿using Fanex.Data;
+using Fanex.Data.Repository;
 
 namespace Settlement.ThirdPartyProducts.Criteria
 {
@@ -8,14 +9,11 @@ namespace Settlement.ThirdPartyProducts.Criteria
 
         public string SelectedResources { get; set; }
 
-        public override string GetSettingKey()
-        {
-            return "NAP_Set_CashoutSel";
-        }
+        [SpParam(Ignored = true)]
+        public string DbServer { get; set; }
 
-        public override bool IsValid()
-        {
-            return MatchId > 0;
-        }
+        public override string GetSettingKey() => $"NAP_Set_CashoutSel_{DbServer}";
+
+        public override bool IsValid() => MatchId > 0;
     }
 }

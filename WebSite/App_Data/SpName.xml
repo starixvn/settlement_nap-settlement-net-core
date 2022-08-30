@@ -14,7 +14,6 @@
     <Setting Key="NAP_Set_PlayerInfoSel" SpName="NAP_Set_PlayerInfoSel" DbName="DBPRO.bodb02.bodbAdminNet">
       <Mapping DataField="BetChoice" ObjectProperty="Value" />
     </Setting>
-    <Setting Key="NAP_Set_CashoutSel" SpName="NAP_Set_CashoutSel_UAT1" DbName="DBTXN.bodb02.bodbAdminNet" />
   </Function>
   <Function Name="MoveTickets">
     <Setting Key="NAP_Set_AutoPayout_ReferenceActionByMatchSel" SpName="NAP_Set_AutoPayout_ReferenceActionByMatchSel" DbName="DBLOG.bodb_CustomerLog.bodbAdminNet" />
@@ -291,6 +290,10 @@
     <Function Name="NAP_Set_SPDeploymentInfo">
       <Setting Key="NAP_Set_SPDeploymentInfo_DBTXN" SpName="NAP_Set_SPDeploymentInfo_UAT1" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="NAP_Set_SPDeploymentInfo_DBSID01" SpName="NAP_Set_SPDeploymentInfo_UAT1" DbName="DBSID01.bodb02.bodbAdminNet" />
+    </Function>
+    <Function Name="NAP_Set_CashoutSel">
+      <Setting Key="NAP_Set_CashoutSel_DBTXN" SpName="NAP_Set_CashoutSel_UAT1" DbName="DBTXN.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Set_CashoutSel_DBSID01" SpName="NAP_Set_CashoutSel_UAT1" DbName="DBSID01.bodb02.bodbAdminNet" />
     </Function>
   </Function>
 </Functions>
