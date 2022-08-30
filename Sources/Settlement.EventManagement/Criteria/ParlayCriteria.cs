@@ -1,5 +1,6 @@
 ﻿using Fanex.Data;
 using Fanex.Data.Repository;
+using System;
 
 namespace Settlement.EventManagement.Criteria
 {
@@ -16,6 +17,8 @@ namespace Settlement.EventManagement.Criteria
         public int ErrCode { get; set; }
 
         public string ErrMsg { get; set; }
+
+        public string BroadcastSessionId { get; set; } = Guid.NewGuid().ToString();
 
         [SpParam(Ignored = true)]
         public string DbServer { get; set; }
