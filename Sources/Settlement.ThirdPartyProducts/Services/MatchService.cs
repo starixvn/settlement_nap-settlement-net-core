@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Fanex.Data.Repository;
-using Kaden.XmlConverter;
 using Microsoft.Extensions.Options;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
@@ -80,8 +79,11 @@ namespace Settlement.ThirdPartyProducts.Services
 
         public async Task<List<SelectionDetailModel>> GetSelection(int matchId)
         {
-            var criteria = new SelectionDetailCriteria { MatchId = matchId };
-            criteria.Resources = await betBuilderService.GetResourcesMarket(matchId);
+            var criteria = new SelectionDetailCriteria
+            {
+                MatchId = matchId,
+                Resources = await betBuilderService.GetResourcesMarket(matchId)
+            };
 
             return (await repository.FetchAsync<SelectionDetailModel>(criteria)).ToList();
         }

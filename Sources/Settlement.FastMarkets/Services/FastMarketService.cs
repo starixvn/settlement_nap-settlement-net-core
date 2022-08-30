@@ -1,10 +1,6 @@
 ﻿using AutoMapper;
 using Fanex.Data.Repository;
-using Fanex.NAP.Client.Helpers.Web;
 using Fanex.Settlement.ScaleOut.Services;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
-using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.FastMarkets.Constants;
 using Settlement.FastMarkets.Criteria;
@@ -13,9 +9,9 @@ using Settlement.FastMarkets.Requests;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Fanex.Settlement.ScaleOut.Constants;
 using Microsoft.Extensions.Options;
 using Fanex.Settlement.ScaleOut.Request;
-using Settlement.FastMarkets.Models.TimeMachineOldResult;
 
 namespace Settlement.FastMarkets.Services
 {
@@ -45,8 +41,6 @@ namespace Settlement.FastMarkets.Services
         private readonly CreateQueryService createQueryService;
 
         private readonly ScaleOutSettleService scaleOutSettleService;
-
-        private readonly string fastMarketMode = "FM";
 
         public FastMarketServiceImp(
             IDynamicRepository repository,
@@ -92,7 +86,7 @@ namespace Settlement.FastMarkets.Services
             };
         }
 
-        public void MergeFastMarketTicketsToResults(List<FastMarketResult> fastMarketResults, List<FastMarketResult> fastMarketTicketDetails)
+        private void MergeFastMarketTicketsToResults(List<FastMarketResult> fastMarketResults, List<FastMarketResult> fastMarketTicketDetails)
         {
             var newTicketDetails = fastMarketTicketDetails.Where(ticketDetail => !fastMarketResults.Any(result => result.Equals(ticketDetail)));
             if (newTicketDetails.Any())
@@ -103,7 +97,7 @@ namespace Settlement.FastMarkets.Services
             GenerateTicketsStatus(fastMarketResults, fastMarketTicketDetails);
         }
 
-        private void GenerateTicketsStatus(List<FastMarketResult> fastMarketResults, List<FastMarketResult> fastMarketTicketDetails)
+        private static void GenerateTicketsStatus(List<FastMarketResult> fastMarketResults, List<FastMarketResult> fastMarketTicketDetails)
         {
             foreach (var result in fastMarketResults)
             {
@@ -112,7 +106,7 @@ namespace Settlement.FastMarkets.Services
             }
         }
 
-        private int CreateTicketStatus(FastMarketResult ticketDetail)
+        private static int CreateTicketStatus(FastMarketResult ticketDetail)
         {
             if (ticketDetail == null || ticketDetail.TicketCount == 0)
             {
@@ -124,12 +118,7 @@ namespace Settlement.FastMarkets.Services
                 return TicketStatus.Running;
             }
 
-            if (ticketDetail.TicketMarked > 0)
-            {
-                return TicketStatus.Marked;
-            }
-
-            return TicketStatus.Calculated;
+            return ticketDetail.TicketMarked > 0 ? TicketStatus.Marked : TicketStatus.Calculated;
         }
 
         public async Task<Result> Calculate(SettleRequest request)
@@ -154,7 +143,7 @@ namespace Settlement.FastMarkets.Services
                 AdminId = criteria.AdminId,
                 Results = criteria.Results,
                 EventCounters = criteria.EventCounters,
-                Mode = fastMarketMode,
+                Mode = Mode.FastMarket,
                 IsSettleDetermined = criteria.IsSettleDetermined
             };
 

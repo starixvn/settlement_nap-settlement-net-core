@@ -1,21 +1,22 @@
 ﻿using Fanex.Data.Repository;
 using Fanex.NAP.Client.Helpers.Web;
+using Fanex.Settlement.ScaleOut.Constants;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
 using Kaden.XmlConverter;
 using Microsoft.AspNetCore.Http;
-using Settlement.Core.Models;
 using Settlement.ThirdPartyProducts.Criteria;
 using Settlement.ThirdPartyProducts.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Settlement.Core.Constants;
 
 namespace Settlement.ThirdPartyProducts.Services
 {
     public interface BetBuilderCalculateService
     {
-        Task UpdateMatchInfo(CalculationCriteria criteria, string invalidMarketIds);
+        Task UpdateMatchInfo(CalculationCriteria criteria, string selectedMarket);
 
         string CreateResources(List<ResourcesItemModel> selectedResources);
 
@@ -28,8 +29,6 @@ namespace Settlement.ThirdPartyProducts.Services
     {
         private readonly IDynamicRepository repository;
 
-        private readonly ScaleOutSettleThirdPartyService scaleOutSettleThirdPartyService;
-
         private readonly XmlConvertService xmlConvertService;
 
         private readonly INapSession currentSession;
@@ -38,17 +37,13 @@ namespace Settlement.ThirdPartyProducts.Services
 
         private readonly ScaleOutSettleService scaleOutSettleService;
 
-        private const string BetBuilderMode = "BB";
-
         public BetBuilderCalculateServiceImp(IDynamicRepository repository,
-            ScaleOutSettleThirdPartyService scaleOutSettleThirdPartyService,
             XmlConvertService xmlConvertService,
             INapSession currentSession,
             IHttpContextAccessor accessor,
             ScaleOutSettleService scaleOutSettleService)
         {
             this.repository = repository;
-            this.scaleOutSettleThirdPartyService = scaleOutSettleThirdPartyService;
             this.xmlConvertService = xmlConvertService;
             this.currentSession = currentSession;
             this.accessor = accessor;
@@ -64,7 +59,7 @@ namespace Settlement.ThirdPartyProducts.Services
                 SelectedSelection = criteria.SelectedSelection,
                 IsAuto = false,
                 Action = criteria.Action,
-                Mode = BetBuilderMode
+                Mode = Mode.BetBuilder
             };
 
             await scaleOutSettleService.UpdateMatchInfo(requestUpdate);
@@ -72,7 +67,7 @@ namespace Settlement.ThirdPartyProducts.Services
 
         public string CreateResources(List<ResourcesItemModel> selectedResources)
         {
-            var resources = new Models.Resources<ResourcesItemModel>
+            var resources = new Resources<ResourcesItemModel>
             {
                 ResourceItems = selectedResources
             };
@@ -91,15 +86,15 @@ namespace Settlement.ThirdPartyProducts.Services
 
         public async Task<string> GetInfoMarket(CalculationCriteria criteria)
         {
-            var GetMarketIdCriteria = new GetMarketIdCriteria
+            var getMarketIdCriteria = new GetMarketIdCriteria
             {
                 MatchId = criteria.MatchId,
                 Action = criteria.Action,
                 SelectedSelection = criteria.SelectedSelection,
-                ResultStatusId = criteria.Action == "UNDO" ? 3 : 5
+                ResultStatusId = criteria.Action == ActionType.UnCalculate ? ResultStatus.Running : ResultStatus.ManuallySettled
             };
 
-            var listMarketIds = (await repository.FetchAsync<string>(GetMarketIdCriteria)).ToList();
+            var listMarketIds = (await repository.FetchAsync<string>(getMarketIdCriteria)).ToList();
             var resources = new ResourcesMarketIdModel
             {
                 Items = listMarketIds.Select(item => new ResourceMarketItemModel { MarketId = item }).ToList()

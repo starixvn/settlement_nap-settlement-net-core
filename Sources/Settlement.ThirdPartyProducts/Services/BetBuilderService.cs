@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
 using Fanex.Data.Repository;
-using Fanex.NAP.Client.Helpers.Web;
 using Kaden.XmlConverter;
-using Microsoft.AspNetCore.Http;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.ThirdPartyProducts.Criteria;

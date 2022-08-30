@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Settlement.Core.Constants;
 using MatchDetail = Settlement.Sportsbook.Soccer.Models.MatchDetail;
 
 namespace Settlement.Sportsbook.Soccer.GetMatch.Services
@@ -66,12 +67,11 @@ namespace Settlement.Sportsbook.Soccer.GetMatch.Services
 
             var resultDetailCriteria = new GetResultDetailEarlyCriteria { MatchId = matchId };
             var fetchedResultDetails = await repository.FetchAsync<ResultDetailModel>(resultDetailCriteria);
-            var (firstResultSet, secondResultSet) = await fetchDataService.GetEarlyTicketDetails(resultDetailCriteria);
+            var (firstResultSet, ticketCount) = await fetchDataService.GetEarlyTicketDetails(resultDetailCriteria);
             var resultDetail = fetchedResultDetails.ToList();
             MergeEarlyTicketsToResults(resultDetail, firstResultSet);
 
             resultDetail = MappingBetTypeName(resultDetail);
-            var ticketCount = secondResultSet;
 
             var hedgeMatchCriteria = new GetHedgeMatchCriteria { MatchId = matchId };
             var hedgeMatchDetail = await repository.GetAsync<HedgeMatchDetail>(hedgeMatchCriteria);
@@ -86,7 +86,7 @@ namespace Settlement.Sportsbook.Soccer.GetMatch.Services
             };
         }
 
-        public void MergeEarlyTicketsToResults(List<ResultDetailModel> resultDetails, List<ResultDetailModel> ticketDetails)
+        private void MergeEarlyTicketsToResults(List<ResultDetailModel> resultDetails, List<ResultDetailModel> ticketDetails)
         {
             var newTicketDetails = ticketDetails.Where(ticketDetail => !resultDetails.Any(result => result.Equals(ticketDetail)));
             if (newTicketDetails.Any())
@@ -107,11 +107,13 @@ namespace Settlement.Sportsbook.Soccer.GetMatch.Services
             }
         }
 
-        private string CreateTicketStatus(ResultDetailModel ticketDetail, string betType)
+        private static string CreateTicketStatus(ResultDetailModel ticketDetail, string betType)
         {
+            var specialBetTypes = new List<string> { BetType.SoccerBetType.AwayPenaltyShootout.ToString(), BetType.SoccerBetType.HomePenaltyShootout.ToString() };
+
             if (ticketDetail == null)
             {
-                return EarlyBetTypes.SpecialBetTypes.Contains(betType) ? TicketStatus.NoTicket : TicketStatus.NotIncluded;
+                return specialBetTypes.Contains(betType) ? TicketStatus.NoTicket : TicketStatus.NotIncluded;
             }
 
             if (ticketDetail.InRunning > 0)
@@ -129,7 +131,7 @@ namespace Settlement.Sportsbook.Soccer.GetMatch.Services
                 return TicketStatus.Marked;
             }
 
-            if (EarlyBetTypes.SpecialBetTypes.Contains(betType) && ticketDetail.BetCount == 0)
+            if (specialBetTypes.Contains(betType) && ticketDetail.BetCount == 0)
             {
                 return TicketStatus.NoTicket;
             }    

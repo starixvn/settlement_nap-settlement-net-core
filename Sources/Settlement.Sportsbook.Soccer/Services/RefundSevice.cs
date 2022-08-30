@@ -2,11 +2,8 @@
 using AutoMapper;
 using Fanex.Data.Repository;
 using Fanex.NAP.Client.Helpers.Web;
-using Kaden.XmlConverter;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
 using Settlement.Core.Constants;
-using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.Sportsbook.Soccer.Constants;
 using Settlement.Sportsbook.Soccer.Criteria;
@@ -15,8 +12,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Fanex.Settlement.ScaleOut.Services;
-using Settlement.Core.Services;
 using Fanex.Settlement.ScaleOut.Request;
+using Microsoft.Extensions.Options;
 
 namespace Settlement.Sportsbook.Soccer.Services
 {
@@ -41,7 +38,7 @@ namespace Settlement.Sportsbook.Soccer.Services
 
         private readonly IHttpContextAccessor accessor;
 
-        private readonly IConfiguration configuration;
+        private readonly AppSettingsKey appSettingsKey;
 
         private readonly ICreateCriteriaService createCriteriaService;
 
@@ -51,7 +48,7 @@ namespace Settlement.Sportsbook.Soccer.Services
             IDynamicRepository repository,
             IMapper mapper,
             IHttpContextAccessor accessor,
-            IConfiguration configuration,
+            IOptions<AppSettingsKey> appSettingsKey,
             ICreateCriteriaService createCriteriaService,
             INapSession currentSession,
             ScaleOutSettleService scaleOutSettleService)
@@ -59,7 +56,7 @@ namespace Settlement.Sportsbook.Soccer.Services
             this.repository = repository;
             this.mapper = mapper;
             this.accessor = accessor;
-            this.configuration = configuration;
+            this.appSettingsKey = appSettingsKey.Value;
             this.createCriteriaService = createCriteriaService;
             this.currentSession = currentSession;
             this.scaleOutSettleService = scaleOutSettleService;
@@ -67,9 +64,8 @@ namespace Settlement.Sportsbook.Soccer.Services
 
         public async Task<MarkedTickets> CheckMarkedTickets(CheckingMarkedTicketsRequest request)
         {
-            var servers = configuration.GetSection("SiteDBServer").Get<List<string>>();
             var criteria = mapper.Map<CheckingMarkedTicketsRequest, CheckingMarkedTicketsCriteria>(request);
-            foreach (var server in servers)
+            foreach (var server in appSettingsKey.SiteDbServer)
             {
                 criteria.DbServer = server;
                 await repository.ExecuteAsync(criteria);
@@ -175,12 +171,11 @@ namespace Settlement.Sportsbook.Soccer.Services
         private async Task ExecuteRefund(RefundCriteria criteria)
         {
             await UpdateMatchInfo(criteria);
-            var servers = configuration.GetSection("SiteDBServer").Get<List<string>>();
-            criteria.BroadcastSessionId = Guid.NewGuid().ToString();
-            foreach (var server in servers)
+
+            foreach (var server in appSettingsKey.SiteDbServer)
             {
                 criteria.DbServer = server;
-                repository.Execute(criteria);
+                await repository.ExecuteAsync(criteria);
             }
         }
 
@@ -196,7 +191,7 @@ namespace Settlement.Sportsbook.Soccer.Services
 
             var validationRequest = new EventTicketRequest
             {
-                MatchId = criteria.MatchId,
+                MatchId = request.MatchId,
                 Action = request.ActionName,
                 SpName = criteria.SpName,
                 Mode = "REFUND"
@@ -212,11 +207,10 @@ namespace Settlement.Sportsbook.Soccer.Services
                 };
             }
 
-            var servers = configuration.GetSection("SiteDBServer").Get<List<string>>();
-            foreach (var server in servers)
+            foreach (var server in appSettingsKey.SiteDbServer)
             {
                 criteria.DbServer = server;
-                repository.Execute(criteria);
+                await repository.ExecuteAsync(criteria);
             }
 
             return new Result();
@@ -245,11 +239,10 @@ namespace Settlement.Sportsbook.Soccer.Services
                 };
             }
 
-            var servers = configuration.GetSection("SiteDBServer").Get<List<string>>();
-            foreach (var server in servers)
+            foreach (var server in appSettingsKey.SiteDbServer)
             {
                 criteria.DbServer = server;
-                repository.Execute(criteria);
+                await repository.ExecuteAsync(criteria);
             }
 
             return new Result();

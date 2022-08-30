@@ -1,5 +1,4 @@
-﻿using System;
-using AutoMapper;
+﻿using AutoMapper;
 using Fanex.NAP.Client.Helpers.Web;
 using Kaden.XmlConverter;
 using Microsoft.AspNetCore.Http;
@@ -9,7 +8,6 @@ using Settlement.Sportsbook.Soccer.Criteria;
 using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Requests;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Settlement.Sportsbook.Soccer.Services
 {

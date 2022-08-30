@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Fanex.Caching;
 using Fanex.Data.Repository;
 using Microsoft.Extensions.Options;
 using Settlement.Core.Models;
@@ -7,10 +6,8 @@ using Settlement.Core.Services;
 using Settlement.ThirdPartyProducts.Criteria;
 using Settlement.ThirdPartyProducts.Models;
 using Settlement.ThirdPartyProducts.Requests;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -23,8 +20,6 @@ namespace Settlement.ThirdPartyProducts.Services
         Task<List<MatchDetailModel>> RefreshMatches(MatchesWaitingRequest request);
 
         Task<List<ResultDetail>> ResultDetailByMatchIds(List<MatchDetailModel> matches);
-
-        Task<List<MatchDetailModel>> AddTicketInfo(List<MatchDetailModel> matches);
     }
 
     public class BetBuilderMatchesServiceImp : BetBuilderMatchesService
@@ -43,9 +38,7 @@ namespace Settlement.ThirdPartyProducts.Services
 
         private readonly AppSettingsKey appSettingsKey;
 
-        private const int AllStatus = 3;
-
-        private static int _isProcessing;
+        private static int isProcessing;
 
         public BetBuilderMatchesServiceImp(IDynamicRepository repository,
                 IRefDataService refDataService,
@@ -96,7 +89,7 @@ namespace Settlement.ThirdPartyProducts.Services
                 return matches;
             }
 
-            if (0 == Interlocked.Exchange(ref _isProcessing, 1))
+            if (0 == Interlocked.Exchange(ref isProcessing, 1))
             {
                 try
                 {
@@ -104,7 +97,7 @@ namespace Settlement.ThirdPartyProducts.Services
                 }
                 finally
                 {
-                    Interlocked.Exchange(ref _isProcessing, 0);
+                    Interlocked.Exchange(ref isProcessing, 0);
                 }
             }
 
@@ -118,7 +111,7 @@ namespace Settlement.ThirdPartyProducts.Services
             return (await repository.FetchAsync<ResultDetail>(resultDetailCriteria)).ToList();
         }
 
-        public async Task<List<MatchDetailModel>> AddTicketInfo(List<MatchDetailModel> matches)
+        private async Task AddTicketInfo(List<MatchDetailModel> matches)
         {
             var listMatchId = string.Join(",", matches.Select(match => match.MatchId.ToString()).ToArray());
             var criteria = new TicketsInfoCriteria { MatchIds = listMatchId };
@@ -129,13 +122,13 @@ namespace Settlement.ThirdPartyProducts.Services
                 var data = (await repository.FetchAsync<Models.SiteMatch>(criteria)).ToList();
                 mergeMatchInfo.AddSiteMatch(matches, data);
             }
-            return matches;
         }
 
-        private List<MatchDetailModel> FilterMatch(FilterRequest request, List<MatchDetailModel> matches)
+        private static List<MatchDetailModel> FilterMatch(FilterRequest request, List<MatchDetailModel> matches)
         {
+            const int allStatus = 3;
             var listStatus = request.Status.Split(',').ToList();
-            if (listStatus.Count == 0 || listStatus.Count == AllStatus || !string.IsNullOrEmpty(request.MatchCode))
+            if (listStatus.Count == 0 || listStatus.Count == allStatus || !string.IsNullOrEmpty(request.MatchCode))
             {
                 return matches;
             }
@@ -168,15 +161,13 @@ namespace Settlement.ThirdPartyProducts.Services
             return matches;
         }
 
-        private List<MatchDetailModel> SetNewMatchInfo(List<MatchDetailModel> matches)
+        private void SetNewMatchInfo(List<MatchDetailModel> matches)
         {
             foreach (var match in matches)
             {
                 match.ParlayStatus = mergeMatchInfo.ParlayStatus(match);
                 match.QueueStatus = mergeMatchInfo.QueueStatus(match);
             }
-
-            return matches;
         }
     }
 }

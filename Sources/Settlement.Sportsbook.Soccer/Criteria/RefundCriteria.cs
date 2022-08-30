@@ -1,5 +1,6 @@
 ﻿using Fanex.Data;
 using Fanex.Data.Repository;
+using System;
 
 namespace Settlement.Sportsbook.Soccer.Criteria
 {
@@ -33,7 +34,7 @@ namespace Settlement.Sportsbook.Soccer.Criteria
 
         public string ErrMsg { get; set; }
 
-        public string BroadcastSessionId { get; set; }
+        public string BroadcastSessionId = Guid.NewGuid().ToString();
 
         [SpParam(Ignored = true)]
         public string DbServer { get; set; }
@@ -41,14 +42,8 @@ namespace Settlement.Sportsbook.Soccer.Criteria
         [SpParam(Ignored = true)]
         public string SpName { get; } = "NAP_Admin_Settlement_Refund_1_Push";
 
-        public override string GetSettingKey()
-        {
-            return $"Refund_{DbServer}";
-        }
+        public override string GetSettingKey() => $"Refund_{DbServer}";
 
-        public override bool IsValid()
-        {
-            return MatchId > 0;
-        }
+        public override bool IsValid()  => MatchId > 0;
     }
 }

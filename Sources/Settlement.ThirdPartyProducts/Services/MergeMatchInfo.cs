@@ -1,6 +1,7 @@
 ﻿using Settlement.ThirdPartyProducts.Models;
 using System.Collections.Generic;
 using System.Linq;
+using Settlement.Core.Constants;
 
 namespace Settlement.ThirdPartyProducts.Services
 {
@@ -17,13 +18,7 @@ namespace Settlement.ThirdPartyProducts.Services
 
     public class MergeMatchInfoImp : MergeMatchInfo
     {
-        private const int Waitting = 0;
-
-        private const int Calculating = 1;
-
-        private const int None = 2;
-
-        public void AddSiteMatch(List<MatchDetailModel> matches, List<Models.SiteMatch> siteMatches)
+        public void AddSiteMatch(List<MatchDetailModel> matches, List<SiteMatch> siteMatches)
         {
             matches.ForEach(item =>
             {
@@ -44,27 +39,17 @@ namespace Settlement.ThirdPartyProducts.Services
                 return "No Ticket";
             }
 
-            if (totalTicketRunning > 0)
-            {
-                return "Running";
-            }
-
-            return "Completed";
+            return totalTicketRunning > 0 ? "Running" : "Completed";
         }
 
         public int QueueStatus(MatchDetailModel match)
         {
-            if (match.SiteMatch.FirstOrDefault(i => i.QueueStatus == Waitting) != null)
+            if (match.SiteMatch.FirstOrDefault(i => i.QueueStatus == CalculateStatus.IsWaiting) != null)
             {
-                return Waitting;
+                return CalculateStatus.IsWaiting;
             }
 
-            if (match.SiteMatch.FirstOrDefault(i => i.QueueStatus == Calculating) != null)
-            {
-                return Calculating;
-            }
-
-            return None;
+            return match.SiteMatch.FirstOrDefault(i => i.QueueStatus == CalculateStatus.IsCalculating) != null ? CalculateStatus.IsCalculating : CalculateStatus.IsSuccess;
         }
 
         public void MergeStatusTicket(List<ResourceSelectionItemModel> baseList, List<ResourceSelectionItemModel> siteList)
@@ -79,7 +64,7 @@ namespace Settlement.ThirdPartyProducts.Services
             }
         }
 
-        private bool IsChangedOnTicket(Models.SiteMatch match, Models.SiteMatch siteMatch)
+        private static bool IsChangedOnTicket(Models.SiteMatch match, Models.SiteMatch siteMatch)
         {
             return match.TotalTickets != siteMatch.TotalTickets
                 || match.TotalTicketsRunning != siteMatch.TotalTicketsRunning

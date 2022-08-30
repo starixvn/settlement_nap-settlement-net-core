@@ -1,9 +1,6 @@
-﻿using AutoMapper;
-using Fanex.Caching;
+﻿using Fanex.Caching;
 using Settlement.Core.Constants;
-using Settlement.ThirdPartyProducts.Criteria;
 using Settlement.ThirdPartyProducts.Models;
-using Settlement.ThirdPartyProducts.Requests;
 using System;
 using System.Collections.Generic;
 

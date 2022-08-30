@@ -1,19 +1,12 @@
 ﻿using Fanex.Data.Repository;
-using Microsoft.Extensions.Configuration;
-using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.Sportsbook.Soccer.Criteria;
 using Settlement.Sportsbook.Soccer.Requests;
-using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
-using Fanex.Settlement.ScaleOut.Criteria;
+using Fanex.Settlement.ScaleOut.Constants;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.Options;
-using Settlement.Sportsbook.Soccer.Constants;
 
 namespace Settlement.Sportsbook.Soccer.Services
 {
@@ -31,8 +24,6 @@ namespace Settlement.Sportsbook.Soccer.Services
         private readonly IDynamicRepository repository;
 
         private readonly ScaleOutSettleService scaleOutSettleService;
-
-        private const string Mode = "EAR";
 
         public SettleEarlyServiceImp(
             ICreateCriteriaService createCriteriaService,
@@ -81,7 +72,7 @@ namespace Settlement.Sportsbook.Soccer.Services
                 MatchId = criteria.MatchId,
                 Action = criteria.Action,
                 SpName = criteria.SpName,
-                Mode = Mode,
+                Mode = Mode.Early,
                 SelectedResources = criteria.SelectedResources
             };
             var resultMessage = await scaleOutSettleService.ValidateEventAndTicket(request);

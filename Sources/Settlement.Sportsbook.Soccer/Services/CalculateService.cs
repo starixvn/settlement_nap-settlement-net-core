@@ -57,6 +57,7 @@ namespace Settlement.Sportsbook.Soccer.Services
             }
             await ExecuteAsync(criteria);
             await RefundChildMatch(criteria);
+
             if (request.IsApplyHedging)
             {
                 criteria.MatchId = request.HedgeMatchId;
@@ -102,11 +103,11 @@ namespace Settlement.Sportsbook.Soccer.Services
         private async Task ExecuteAsync(CalculateCriteria criteria)
         {
             await UpdateMatchInfo(criteria);
-            criteria.BroadcastSessionId = Guid.NewGuid().ToString();
+
             foreach (var server in appSettingsKey.SiteDbServer)
             {
                 criteria.DbServer = server;
-                repository.Execute(criteria);
+                await repository.ExecuteAsync(criteria);
             }
         }
 
@@ -121,6 +122,7 @@ namespace Settlement.Sportsbook.Soccer.Services
                 ResourceResult = criteria.ResourceResult
             };
             var resultMessage = await scaleOutSettleService.ValidateEventAndTicket(request);
+
             return new Result
             {
                 ErrCode = resultMessage.ErrorCode,
@@ -159,6 +161,7 @@ namespace Settlement.Sportsbook.Soccer.Services
                 HomeValue = criteria.FullTimeHome,
                 ActionName = criteria.Action
             };
+
             await scaleOutSettleService.UpdateAutoRefundChildMatch(requestRefundChildMatch);
         }
     }

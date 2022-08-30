@@ -14,7 +14,6 @@ using Microsoft.Extensions.Options;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
 using Settlement.Sportsbook.Soccer.Services.InstantCalculate;
-using MediatR;
 
 namespace Settlement.Sportsbook.Soccer.Services
 {
@@ -81,6 +80,7 @@ namespace Settlement.Sportsbook.Soccer.Services
 
                     return matchChecking;
                 }
+
                 MergeData(matchGoalRecord, matchChecking, firstMatch);
                 firstMatch = false;
             }
@@ -106,11 +106,11 @@ namespace Settlement.Sportsbook.Soccer.Services
             criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
 
             var result = await ValidateBeforeExecute(request);
-            if (result.ErrCode == 0)
+            if (result.IsSuccessful)
             {
                 await UpdateResult(request);
                 await UpdateMatchInfo(request, request.IsHalfTime, criteria.ResourceResult);
-                Execute(criteria);
+                await Execute(criteria);
             }
 
             return result;
@@ -132,7 +132,7 @@ namespace Settlement.Sportsbook.Soccer.Services
         private string BetStatus(InstantCalculationRequest request)
         {
             var betStatus = request.BetStatus;
-            if (request.Action == ActionType.UnCalculate)
+            if (request.Action.Equals(ActionType.UnCalculate))
             {
                 if (request.HomeScore == "0" && request.AwayScore == "0")
                 {
@@ -163,12 +163,12 @@ namespace Settlement.Sportsbook.Soccer.Services
             baseMatch.IsExistHTFG = baseMatch.IsExistHTFG || siteMatch.IsExistHTFG;
         }
 
-        private void Execute(PushInstantCalculationCriteria criteria)
+        private async Task Execute(PushInstantCalculationCriteria criteria)
         {
             foreach (var server in appSettingsKey.SiteDbServer)
             {
                 criteria.DbServer = server;
-                repository.Execute(criteria);
+                await repository.ExecuteAsync(criteria);
             }
         }
 
@@ -257,7 +257,7 @@ namespace Settlement.Sportsbook.Soccer.Services
 
         private async Task UpdateResult(InstantCalculationRequest request)
         {
-            if (request.Action == "CAL")
+            if (request.Action.Equals(ActionType.CalculateAll))
             {
                 var updateResultCriteria = new AddAutoResultCriteria
                 {

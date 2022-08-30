@@ -12,7 +12,6 @@ namespace Settlement.Core.Services
     {
         public Score GetScore(ResultDetail item, Permission permission)
         {
-            const int resultConfirmedStatus = 3;
             if (item.SettlementStatusId == SettlementStatus.Refund)
             {
                 return new Score(SetStatus.Refund);
@@ -35,7 +34,7 @@ namespace Settlement.Core.Services
 
             var score = new Score(ConvertScore(item.HomeValue), ConvertScore(item.AwayValue))
             {
-                IsConfirmed = item.SourceId == 0 && item.ResultStatusId == resultConfirmedStatus,
+                IsConfirmed = item.SourceId == 0 && item.ResultStatusId == ResultStatus.Running,
                 IsNotSettled = true
             };
 
