@@ -13,12 +13,6 @@ export class HandleActionsService {
     match.remark = remark;
     match.eventStatus = result.match.eventStatus;
     match.newEventStatus = result.match.newEventStatus;
-    if (remark.isMtdHold || remark.isPending || remark.isUndecided || remark.isUnderSettle || remark.isKeyHold) {
-      match.showLink = false;
-    } else {
-      match.showLink = true;
-    }
-
     match.eventStatusColor = this.handleEventStatusColor(match, remark.isPending);
   }
 

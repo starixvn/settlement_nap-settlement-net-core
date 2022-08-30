@@ -66,7 +66,6 @@ export class RefreshMatchService {
             match.isNotConsistentExHtScore = newMatch.isNotConsistentExHtScore;
             match.exHalfTimeScore = newMatch.exHalfTimeScore;
             match.exFullTimeScore = newMatch.exFullTimeScore;
-            match.showLink = this.isShowLink(newMatch);
             match.autoPayoutStatus = newMatch.autoPayoutStatus;
             match.isExistRunningTicketParlay = newMatch.isExistRunningTicketParlay;
             match.confirmFullTimeScore = newMatch.confirmFullTimeScore;
@@ -77,27 +76,5 @@ export class RefreshMatchService {
         });
       })
     );
-  }
-
-  private isShowLink(match: Match) {
-    const isNotOnHold =
-      !match.remark.isMtdHold && !match.remark.isPending && !match.remark.isUndecided && !match.remark.isUnderSettle;
-    if (match.isMergedParlay) {
-      return isNotOnHold && this.isShowLinkMergedParlay(match);
-    }
-
-    return isNotOnHold && this.isShowLinkNormal(match);
-  }
-
-  private isShowLinkMergedParlay(match: Match) {
-    return match.isCalculatingSingle !== CalculationStatus.waiting &&
-      match.isCalculatingSingle !== CalculationStatus.calculating;
-  }
-
-  private isShowLinkNormal(match: Match) {
-    return match.isCalculatingSingle !== CalculationStatus.waiting &&
-      match.isCalculatingSingle !== CalculationStatus.calculating &&
-      match.isCalculatingMP !== CalculationStatus.waiting &&
-      match.isCalculatingMP !== CalculationStatus.calculating;
   }
 }

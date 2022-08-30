@@ -98,11 +98,9 @@ export class HandleActionsService {
       match.eventStatus = result.match.eventStatus;
       match.newEventStatus = result.match.eventStatus;
       if (remark.isMtdHold || remark.isPending || remark.isUndecided || remark.isUnderSettle || remark.isKeyHold) {
-        match.showLink = false;
         match.isCheckedCalcMP = false;
         match.mixParlay.hasMixParlay = false;
       } else {
-        match.showLink = true;
         match.mixParlay.hasMixParlay = this.getMixParlayStatus(match);
       }
 

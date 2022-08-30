@@ -7,15 +7,16 @@ import * as _ from 'lodash';
 export class BackGroundService {
     public isShowLink(match: Match) {
         const remark = match.remark
-        const remarkSetting = remark.isMtdHold || remark.isUndecided || remark.isPending  || remark.isUnderSettle || remark.isKeyHold;
+        const remarkSetting = remark.isMtdHold || remark.isUndecided || remark.isPending || remark.isUnderSettle || remark.isKeyHold;
         const isSingleNotCalculating = _.isNull(match.isCalculatingSingle) ||
-                                     (!_.isEqual(match.isCalculatingSingle, CalculationStatus.waiting)
-                                     && !_.isEqual(match.isCalculatingSingle, CalculationStatus.calculating));
-       if(match.isMergedParlay){
-        return !_.isNull(match.remark) && !remarkSetting && isSingleNotCalculating;
-       } else {
-        return !_.isNull(match.remark) && !remarkSetting && isSingleNotCalculating && _.isNull(match.isCalculatingMP);
-       }
-        
+            (!_.isEqual(match.isCalculatingSingle, CalculationStatus.waiting)
+                && !_.isEqual(match.isCalculatingSingle, CalculationStatus.calculating));
+        if (match.isMergedParlay) {
+            return !_.isNull(match.remark) && !remarkSetting && isSingleNotCalculating;
+        } else {
+            const isMPNotCalculating = _.isNull(match.isCalculatingMP) || (!_.isEqual(match.isCalculatingMP, CalculationStatus.waiting) &&
+                !_.isEqual(match.isCalculatingMP, CalculationStatus.calculating))
+            return !_.isNull(match.remark) && !remarkSetting && isSingleNotCalculating && isMPNotCalculating;
+        }
     }
 }
