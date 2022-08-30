@@ -22,7 +22,7 @@ namespace Settlement.Sportsbook.OtherSports.Criteria
         [SpParam(Ignored = true)]
         public string SpName { get => Action == ActionType.RefundFullTime ? "NAP_Admin_Settlement_RefundFT_Push" : "NAP_Admin_Settlement_Refund_All_Push"; }
 
-        public string BroadcastSessionId = Guid.NewGuid().ToString();
+        public string BroadcastSessionId { get; set; } = Guid.NewGuid().ToString();
 
         public int ErrCode { get; set; }
 

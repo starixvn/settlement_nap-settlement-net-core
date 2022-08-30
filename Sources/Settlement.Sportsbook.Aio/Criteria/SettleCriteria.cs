@@ -34,7 +34,7 @@ namespace Settlement.Sportsbook.Aio.Criteria
 
         public int? RefResultStatus { get; set; }
 
-        public string BroadcastSessionId = Guid.NewGuid().ToString();
+        public string BroadcastSessionId { get; set; } = Guid.NewGuid().ToString();
 
         [SpParam(Ignored = true)]
         public string DbServer { get; set; }

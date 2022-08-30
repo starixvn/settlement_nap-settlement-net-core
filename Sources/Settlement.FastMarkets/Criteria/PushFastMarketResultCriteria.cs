@@ -26,7 +26,7 @@ namespace Settlement.FastMarkets.Criteria
 
         public string OldResults { get; set; }
 
-        public string BroadcastSessionId = Guid.NewGuid().ToString();
+        public string BroadcastSessionId { get; set; } = Guid.NewGuid().ToString();
 
         [SpParam(Ignored = true)]
         public string DbServer { get; set; }

@@ -26,7 +26,7 @@ namespace Settlement.Sportsbook.OtherSports.Criteria
         [SpParam(Ignored = true)]
         public string SpName { get; } = "NAP_Admin_Settlement_Refund_MP_Push";
 
-        public string BroadcastSessionId = Guid.NewGuid().ToString();
+        public string BroadcastSessionId { get; set; } = Guid.NewGuid().ToString();
 
         public override string GetSettingKey()
         {

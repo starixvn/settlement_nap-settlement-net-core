@@ -18,7 +18,7 @@ namespace Settlement.Sportsbook.Soccer.Criteria
 
         public string ErrMsg { get; set; }
 
-        public string BroadcastSessionId = Guid.NewGuid().ToString();
+        public string BroadcastSessionId { get; set; } = Guid.NewGuid().ToString();
 
         [SpParam(Ignored = true)]
         public string ActionName { get; set; }

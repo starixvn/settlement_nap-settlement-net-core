@@ -31,7 +31,7 @@ namespace Settlement.Sportsbook.Soccer.Criteria
 
         public string Ip { get; set; }
 
-        public string BroadcastSessionId = Guid.NewGuid().ToString();
+        public string BroadcastSessionId { get; set; } = Guid.NewGuid().ToString();
 
         public int ErrCode { get; set; }
 
