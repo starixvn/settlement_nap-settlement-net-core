@@ -125,12 +125,16 @@
     <Setting Key="NAP_Admin_Result_Update_BingoBall" SpName="NAP_Admin_Result_Update_BingoBall" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Admin_GetOldResult_s164_Sel" SpName="NAP_Admin_GetOldResult_s164_Sel_UAT1" DbName="DBPRO.bodb02.bodbAdminNet" />
   </Function>
-  <Function Name="Notifications">
-    <Setting Key="NAP_Set_GetNumberError" SpName="NAP_Set_GetNumberError" DbName="DBTXN.bodb02.bodbAdminNet" />
-    <Setting Key="NAP_Set_SettledErrorSel" SpName="NAP_Set_SettledErrorSel" DbName="DBTXN.bodb02.bodbAdminNet" />
-  </Function>
-
+ 
   <Function Name="Scale Out DB">
+    <Function Name="NAP_Set_GetNumberError">
+      <Setting Key="NAP_Set_GetNumberError_DBTXN" SpName="NAP_Set_GetNumberError" DbName="DBTXN.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Set_GetNumberError_DBSID01" SpName="NAP_Set_GetNumberError" DbName="DBSID01.bodb02.bodbAdminNet" />
+    </Function>
+    <Function Name="NAP_Set_SettledErrorSel">
+      <Setting Key="NAP_Set_SettledErrorSel_DBTXN" SpName="NAP_Set_SettledErrorSel" DbName="DBTXN.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Set_SettledErrorSel_DBSID01" SpName="NAP_Set_SettledErrorSel" DbName="DBSID01.bodb02.bodbAdminNet" />
+    </Function>
     <Function Name="Get_SiteDBGroupID">
       <Setting Key="Get_SiteDBGroupID_DBTXN" SpName="Get_SiteDBGroupID" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="Get_SiteDBGroupID_DBSID01" SpName="Get_SiteDBGroupID" DbName="DBSID01.bodb02.bodbAdminNet" />

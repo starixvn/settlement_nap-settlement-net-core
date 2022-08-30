@@ -1,2 +1,10 @@
-<html><head><script src="@ViewBag.NetCoreRootUrl/notification/runtime.12e53bd77baface2cb75.js" defer></script><script src="@ViewBag.NetCoreRootUrl/notification/polyfills.f26cf2e5e947d51bbd14.js" defer></script><script src="@ViewBag.NetCoreRootUrl/notification/main.8637a2ce1beb399d2b06.js" defer></script></head><body><app-root top="@ViewBag.Top"></app-root>
+<!DOCTYPE html><html lang="en"><head>
+    </head><body>@{
+        var path = @ViewBag.NetCoreRootUrl;
+    }
+    <base href="@path/">
+
+
+    <app-root top="@ViewBag.PageType"></app-root>
+<script src="@ViewBag.NetCoreRootUrl/notification/runtime.12e53bd77baface2cb75.js" defer></script><script src="@ViewBag.NetCoreRootUrl/notification/polyfills.66f7d172d5d6c55a8226.js" defer></script><script src="@ViewBag.NetCoreRootUrl/notification/main.a1d35accfb17c366e8ab.js" defer></script>
 </body></html>

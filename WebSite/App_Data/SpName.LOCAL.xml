@@ -59,10 +59,7 @@
     <Setting Key="NAP_Set_AutoPayout_MatchSelDetail" SpName="NAP_Set_AutoPayout_MatchSelDetail" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_ResultDetailSel" SpName="NAP_Set_ResultDetailSel" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_MatchSelDetail_Auto_1s" SpName="NAP_Set_MatchSelDetail_Auto_1s" DbName="DBPRO.bodb02.bodbAdminNet" />
-    <Function Name="NAP_Set_MatchSelDetail_Auto_1s_Ticket">
-      <Setting Key="NAP_Set_MatchSelDetail_Auto_1s_Ticket_DBTXN" SpName="NAP_Set_MatchSelDetail_Auto_1s_Ticket" DbName="DBTXN.bodb02.bodbAdminNet" />
-      <Setting Key="NAP_Set_MatchSelDetail_Auto_1s_Ticket_DBSID01" SpName="NAP_Set_MatchSelDetail_Auto_1s_Ticket" DbName="DBSID01.bodb02.bodbAdminNet" />
-    </Function>
+    
   </Function>
   <Function Name="Execute Calculate and refund">
     <Setting Key="NAP_Admin_Settlement_Validation_Event" SpName="NAP_Admin_Settlement_Validation_Event" DbName="DBPRO.bodb02.bodbAdminNet" />
@@ -90,22 +87,8 @@
   </Function>
 
   <Function Name="Fast Market">
-    <Function Name="NAP_Set_FastMarket_CheckingMarkedTransaction">
-      <Setting Key="NAP_Set_FastMarket_CheckingMarkedTransaction_DBTXN" SpName="NAP_Set_FastMarket_CheckingMarkedTransaction" DbName="DBTXN.bodb02.bodbAdminNet" />
-      <Setting Key="NAP_Set_FastMarket_CheckingMarkedTransaction_DBSID01" SpName="NAP_Set_FastMarket_CheckingMarkedTransaction" DbName="DBSID01.bodb02.bodbAdminNet" />
-    </Function>
-    <Function Name="NAP_Set_FastMarket_MatchSelDetail_Ticket">
-      <Setting Key="NAP_Set_FastMarket_MatchSelDetail_Ticket_DBTXN" SpName="NAP_Set_FastMarket_MatchSelDetail_Ticket" DbName="DBTXN.bodb02.bodbAdminNet" />
-      <Setting Key="NAP_Set_FastMarket_MatchSelDetail_Ticket_DBSID01" SpName="NAP_Set_FastMarket_MatchSelDetail_Ticket" DbName="DBSID01.bodb02.bodbAdminNet" />
-    </Function>
-    <Function Name="NAP_Admin_Settlement_Fast_Market_Auto_1s_Push">
-      <Setting Key="NAP_Admin_Settlement_Fast_Market_Auto_1s_Push_DBTXN" SpName="NAP_Admin_Settlement_Fast_Market_Auto_1s_Push" DbName="DBTXN.bodb02.bodbAdminNet" />
-      <Setting Key="NAP_Admin_Settlement_Fast_Market_Auto_1s_Push_DBSID01" SpName="NAP_Admin_Settlement_Fast_Market_Auto_1s_Push" DbName="DBSID01.bodb02.bodbAdminNet" />
-    </Function>
-
     <Setting Key="NAP_Set_FastMarket_MatchSelDetail" SpName="NAP_Set_FastMarket_MatchSelDetail" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_MatchSelInfo_Auto_1s" SpName="NAP_Set_MatchSelInfo_Auto_1s" DbName="DBPRO.bodb02.bodbAdminNet" />
-
     <Setting Key="NAP_Set_FastMarket_ResultDetailUpd" SpName="NAP_Set_FastMarket_ResultDetailUpd" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_FastMarket_GoalSequenceSel" SpName="NAP_Set_FastMarket_GoalSequenceSel" DbName="DBPRO.bodb02.bodbAdminNet" />
   </Function>
@@ -137,13 +120,18 @@
     <Setting Key="NAP_Admin_Result_Update_BingoBall" SpName="NAP_Admin_Result_Update_BingoBall" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Admin_GetOldResult_s164_Sel" SpName="NAP_Admin_GetOldResult_s164_Sel" DbName="DBPRO.bodb02.bodbAdminNet" />
   </Function>
-
-  <Function Name="Notifications">
-    <Setting Key="NAP_Set_GetNumberError" SpName="NAP_Set_GetNumberError" DbName="DBTXN.bodb02.bodbAdminNet" />
-    <Setting Key="NAP_Set_SettledErrorSel" SpName="NAP_Set_SettledErrorSel" DbName="DBTXN.bodb02.bodbAdminNet" />
-  </Function>
-
+  
   <Function Name="Scale Out DB">
+    <Function Name="NAP_Set_GetNumberError">
+      <Setting Key="NAP_Set_GetNumberError_DBTXN" SpName="NAP_Set_GetNumberError" DbName="DBTXN.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Set_GetNumberError_DBSID01" SpName="NAP_Set_GetNumberError" DbName="DBSID01.bodb02.bodbAdminNet" />
+    </Function>
+    
+    <Function Name="NAP_Set_SettledErrorSel">
+      <Setting Key="NAP_Set_SettledErrorSel_DBTXN" SpName="NAP_Set_SettledErrorSel" DbName="DBTXN.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Set_SettledErrorSel_DBSID01" SpName="NAP_Set_SettledErrorSel" DbName="DBSID01.bodb02.bodbAdminNet" />
+    </Function>
+
     <Function Name="Get_SiteDBGroupID">
       <Setting Key="Get_SiteDBGroupID_DBTXN" SpName="Get_SiteDBGroupID" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="Get_SiteDBGroupID_DBSID01" SpName="Get_SiteDBGroupID" DbName="DBSID01.bodb02.bodbAdminNet" />
@@ -339,6 +327,24 @@
     <Function Name="NAP_Set_SPDeploymentInfo">
       <Setting Key="NAP_Set_SPDeploymentInfo_DBTXN" SpName="NAP_Set_SPDeploymentInfo" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="NAP_Set_SPDeploymentInfo_DBSID01" SpName="NAP_Set_SPDeploymentInfo" DbName="DBSID01.bodb02.bodbAdminNet" />
+    </Function>
+
+    <Function Name="NAP_Set_FastMarket_CheckingMarkedTransaction">
+      <Setting Key="NAP_Set_FastMarket_CheckingMarkedTransaction_DBTXN" SpName="NAP_Set_FastMarket_CheckingMarkedTransaction" DbName="DBTXN.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Set_FastMarket_CheckingMarkedTransaction_DBSID01" SpName="NAP_Set_FastMarket_CheckingMarkedTransaction" DbName="DBSID01.bodb02.bodbAdminNet" />
+    </Function>
+    <Function Name="NAP_Set_FastMarket_MatchSelDetail_Ticket">
+      <Setting Key="NAP_Set_FastMarket_MatchSelDetail_Ticket_DBTXN" SpName="NAP_Set_FastMarket_MatchSelDetail_Ticket" DbName="DBTXN.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Set_FastMarket_MatchSelDetail_Ticket_DBSID01" SpName="NAP_Set_FastMarket_MatchSelDetail_Ticket" DbName="DBSID01.bodb02.bodbAdminNet" />
+    </Function>
+    <Function Name="NAP_Admin_Settlement_Fast_Market_Auto_1s_Push">
+      <Setting Key="NAP_Admin_Settlement_Fast_Market_Auto_1s_Push_DBTXN" SpName="NAP_Admin_Settlement_Fast_Market_Auto_1s_Push" DbName="DBTXN.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Admin_Settlement_Fast_Market_Auto_1s_Push_DBSID01" SpName="NAP_Admin_Settlement_Fast_Market_Auto_1s_Push" DbName="DBSID01.bodb02.bodbAdminNet" />
+    </Function>
+
+    <Function Name="NAP_Set_MatchSelDetail_Auto_1s_Ticket">
+      <Setting Key="NAP_Set_MatchSelDetail_Auto_1s_Ticket_DBTXN" SpName="NAP_Set_MatchSelDetail_Auto_1s_Ticket" DbName="DBTXN.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Set_MatchSelDetail_Auto_1s_Ticket_DBSID01" SpName="NAP_Set_MatchSelDetail_Auto_1s_Ticket" DbName="DBSID01.bodb02.bodbAdminNet" />
     </Function>
     <Function Name="NAP_Set_CashoutSel">
       <Setting Key="NAP_Set_CashoutSel_DBTXN" SpName="NAP_Set_CashoutSel" DbName="DBTXN.bodb02.bodbAdminNet" />

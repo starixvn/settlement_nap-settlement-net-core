@@ -161,6 +161,12 @@ namespace Settlement.WebSites.Controllers
             return SetView("Other Sports - Refund", PagesType.Refund, ViewPath.OtherSports);
         }
 
+        [HttpGet("notification")]
+        public IActionResult Notification(int top)
+        {
+            return SetView("Notification", top.ToString(), ViewPath.Notification);
+        }
+
         private ActionResult SetView(string title, string pageType, string viewName)
         {
             ViewBag.Environment = configuration.GetSection("Environment").Value;

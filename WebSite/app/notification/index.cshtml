@@ -1,1 +1,12 @@
-﻿<app-root top="@ViewBag.Top"></app-root>
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    @{
+        var path = @ViewBag.NetCoreRootUrl;
+    }
+    <base href="@path/" />
+</head>
+<body>
+    <app-root top="@ViewBag.PageType"></app-root>
+</body>
+</html>
