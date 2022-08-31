@@ -31,7 +31,7 @@ namespace Settlement.Sportsbook.Soccer.Criteria
 
         public string Ip { get; set; }
 
-        public string BroadcastSessionId { get; set; } = Guid.NewGuid().ToString();
+        public string BroadcastSessionId { get; } = Guid.NewGuid().ToString();
 
         public int ErrCode { get; set; }
 
@@ -45,7 +45,7 @@ namespace Settlement.Sportsbook.Soccer.Criteria
         public string DbServer { get; set; }
 
         [SpParam(Ignored = true)]
-        public string SpName = "NAP_Admin_Settlement_1_Push";
+        public string SpName { get; } = "NAP_Admin_Settlement_1_Push";
 
         public override bool IsValid() => AdminId > 0 && MatchId > 0;
 

@@ -18,7 +18,7 @@ namespace Settlement.Sportsbook.Soccer.Criteria
 
         public string ErrMsg { get; set; }
 
-        public string BroadcastSessionId { get; set; } = Guid.NewGuid().ToString();
+        public string BroadcastSessionId { get; } = Guid.NewGuid().ToString();
 
         [SpParam(Ignored = true)]
         public string ActionName { get; set; }
@@ -29,14 +29,8 @@ namespace Settlement.Sportsbook.Soccer.Criteria
         [SpParam(Ignored = true)]
         public string SpName { get => ActionName.IgnoreCaseEquals(ActionType.BetDaq) ? "NAP_Admin_Settlement_Refund_BetDaq_Push" : "NAP_Admin_Settlement_Refund_BetFair_Push"; } 
 
-        public override string GetSettingKey()
-        {
-            return ActionName.IgnoreCaseEquals(ActionType.BetDaq) ? $"NAP_Admin_Settlement_Refund_BetDaq_Push_{DbServer}" : $"NAP_Admin_Settlement_Refund_BetFair_Push_{DbServer}";
-        }
+        public override string GetSettingKey() => ActionName.IgnoreCaseEquals(ActionType.BetDaq) ? $"NAP_Admin_Settlement_Refund_BetDaq_Push_{DbServer}" : $"NAP_Admin_Settlement_Refund_BetFair_Push_{DbServer}";
 
-        public override bool IsValid()
-        {
-            return MatchId > 0;
-        }
+        public override bool IsValid() => MatchId > 0;
     }
 }

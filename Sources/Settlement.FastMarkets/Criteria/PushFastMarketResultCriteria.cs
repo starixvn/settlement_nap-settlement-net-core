@@ -26,13 +26,13 @@ namespace Settlement.FastMarkets.Criteria
 
         public string OldResults { get; set; }
 
-        public string BroadcastSessionId { get; set; } = Guid.NewGuid().ToString();
+        public string BroadcastSessionId { get; } = Guid.NewGuid().ToString();
 
         [SpParam(Ignored = true)]
         public string DbServer { get; set; }
 
         [SpParam(Ignored = true)]
-        public string SpName { get => "NAP_Admin_Settlement_Fast_Market_Auto_1s_Push"; }
+        public string SpName { get; } = "NAP_Admin_Settlement_Fast_Market_Auto_1s_Push"; 
 
         public int ErrCode { get; set; }
 

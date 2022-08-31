@@ -34,13 +34,13 @@ namespace Settlement.Sportsbook.Aio.Criteria
 
         public int? RefResultStatus { get; set; }
 
-        public string BroadcastSessionId { get; set; } = Guid.NewGuid().ToString();
+        public string BroadcastSessionId { get; } = Guid.NewGuid().ToString();
 
         [SpParam(Ignored = true)]
         public string DbServer { get; set; }
 
         [SpParam(Ignored = true)]
-        public readonly string SpName = "NAP_Admin_Settlement_Profile_Push";
+        public string SpName { get; } = "NAP_Admin_Settlement_Profile_Push";
 
         public string ChildMatchIds
         {
@@ -54,14 +54,8 @@ namespace Settlement.Sportsbook.Aio.Criteria
             }
         }
 
-        public override string GetSettingKey()
-        {
-            return $"NAP_Admin_Settlement_Profile_Push_{DbServer}";
-        }
+        public override string GetSettingKey() => $"NAP_Admin_Settlement_Profile_Push_{DbServer}";
 
-        public override bool IsValid()
-        {
-            return AdminId > 0 && MatchId > 0;
-        }
+        public override bool IsValid() => AdminId > 0 && MatchId > 0;
     }
 }

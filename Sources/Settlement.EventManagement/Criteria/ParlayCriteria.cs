@@ -18,19 +18,13 @@ namespace Settlement.EventManagement.Criteria
 
         public string ErrMsg { get; set; }
 
-        public string BroadcastSessionId { get; set; } = Guid.NewGuid().ToString();
+        public string BroadcastSessionId { get; } = Guid.NewGuid().ToString();
 
         [SpParam(Ignored = true)]
         public string DbServer { get; set; }
 
-        public override string GetSettingKey()
-        {
-            return $"CalculateMP_{DbServer}";
-        }
+        public override string GetSettingKey() => $"CalculateMP_{DbServer}";
 
-        public override bool IsValid()
-        {
-            return AdminId > 0 && MatchIds.Length > 0;
-        }
+        public override bool IsValid() => AdminId > 0 && MatchIds.Length > 0;
     }
 }

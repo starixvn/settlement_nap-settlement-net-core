@@ -22,20 +22,14 @@ namespace Settlement.Sportsbook.OtherSports.Criteria
         [SpParam(Ignored = true)]
         public string SpName { get => Action == ActionType.RefundFullTime ? "NAP_Admin_Settlement_RefundFT_Push" : "NAP_Admin_Settlement_Refund_All_Push"; }
 
-        public string BroadcastSessionId { get; set; } = Guid.NewGuid().ToString();
+        public string BroadcastSessionId { get; } = Guid.NewGuid().ToString();
 
         public int ErrCode { get; set; }
 
         public string ErrMsg { get; set; }
 
-        public override string GetSettingKey()
-        {
-            return Action == ActionType.RefundFullTime ? $"RefundFT_{DbServer}" : $"RefundAll_{DbServer}";
-        }
+        public override string GetSettingKey() => Action == ActionType.RefundFullTime ? $"RefundFT_{DbServer}" : $"RefundAll_{DbServer}";
 
-        public override bool IsValid()
-        {
-            return MatchId > 0;
-        }
+        public override bool IsValid() => MatchId > 0;
     }
 }

@@ -22,13 +22,13 @@ namespace Settlement.Sportsbook.Soccer.Criteria
 
         public bool IsReSettledTickets { get; set; }
 
-        public string BroadcastSessionId { get; set; } = Guid.NewGuid().ToString();
+        public string BroadcastSessionId { get; } = Guid.NewGuid().ToString();
 
         [SpParam(Ignored = true)]
         public string DbServer { get; set; }
 
         [SpParam(Ignored = true)]
-        public string SpName = "NAP_Admin_Settlement_Auto_1s_Push";
+        public string SpName { get; } = "NAP_Admin_Settlement_Auto_1s_Push";
 
         public override string GetSettingKey() => $"NAP_Admin_Settlement_Auto_1s_Push_{DbServer}";
 

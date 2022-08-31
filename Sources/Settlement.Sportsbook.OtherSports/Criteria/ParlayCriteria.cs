@@ -26,16 +26,10 @@ namespace Settlement.Sportsbook.OtherSports.Criteria
         [SpParam(Ignored = true)]
         public string SpName { get; } = "NAP_Admin_Settlement_Refund_MP_Push";
 
-        public string BroadcastSessionId { get; set; } = Guid.NewGuid().ToString();
+        public string BroadcastSessionId { get; } = Guid.NewGuid().ToString();
 
-        public override string GetSettingKey()
-        {
-            return $"RefundParlay_{DbServer}";
-        }
+        public override string GetSettingKey() => $"RefundParlay_{DbServer}";
 
-        public override bool IsValid()
-        {
-            return AdminId > 0 && MatchId > 0;
-        }
+        public override bool IsValid() => AdminId > 0 && MatchId > 0;
     }
 }
