@@ -105,9 +105,8 @@
                     </td>
                     <td rowspan="2" class="calc-mp-moved-tickets">
                       <button class="button"
-                        [ngClass]="{'button-disabled': !permission.canMoveTickets}"
-                        [disabled]="!permission.canMoveTickets"
-                        (click)="calculateMPMovedTickets(match)" >
+                        [ngClass]="{'button-disabled': true}"
+                        [disabled]="true">
                         Calc MP (Moved)
                       </button>
                     </td>
