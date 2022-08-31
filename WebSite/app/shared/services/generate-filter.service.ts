@@ -45,6 +45,7 @@ export class GenerateFilterService {
             { id: 3, value: "3", text: "Kick-off/In-play" },
             { id: 4, value: "4", text: "Postponed" },
             { id: 5, value: "5", text: "Completed" },
+            { id: 8, value: "8", text: "Completed (Running Ticket)" },
             { id: 6, value: "6", text: "Refund" },
             { id: 7, value: "7", text: "Internal" }];
 
