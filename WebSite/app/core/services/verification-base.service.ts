@@ -301,7 +301,7 @@ export class VerificationBaseService {
 
     public generateExternalScores(match: GeneralMatch, resultDetails: ResultDetail[], sportType: number) {
         const listGroupExternalResult = this.groupExternalResult(match.externalResults, sportType);
-        const newSportsSOP = [SportType.tennis, SportType.cricket, SportType.badminton, SportType.basketBall];
+        const newSportsSOP = [SportType.tennis, SportType.cricket, SportType.badminton, SportType.basketBall, SportType.volleyBall];
         _.forEach(resultDetails, (map: ResultDetail) => {
             const scores: ExternalResultDetail[] = [];
             _.forEach(listGroupExternalResult, (result: ExternalResult) => {
