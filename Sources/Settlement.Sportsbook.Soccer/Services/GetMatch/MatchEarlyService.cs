@@ -76,6 +76,8 @@ namespace Settlement.Sportsbook.Soccer.GetMatch.Services
             var hedgeMatchCriteria = new GetHedgeMatchCriteria { MatchId = matchId };
             var hedgeMatchDetail = await repository.GetAsync<HedgeMatchDetail>(hedgeMatchCriteria);
 
+            resultDetail = resultDetail.OrderBy(result => result.OrdNo).ToList();
+
             return new MatchEarly
             {
                 MatchDetail = matchDetail,

@@ -57,6 +57,8 @@ namespace Settlement.Sportsbook.Soccer.Models
 
         public bool IsSpecialBettype { get; set; }
 
+        public int OrdNo { get; set; }
+
         public override bool Equals(object obj)
         {
             return obj is ResultDetailModel result && result.ResourceId == ResourceId;
