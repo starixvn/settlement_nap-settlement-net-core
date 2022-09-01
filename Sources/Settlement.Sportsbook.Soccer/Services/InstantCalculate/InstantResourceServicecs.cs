@@ -108,16 +108,20 @@ namespace Settlement.Sportsbook.Soccer.Services.InstantCalculate
                 return string.Empty;
             }
 
-            var indexOfHalfTimeFL = betStatus.IndexOf(HalfTimeFl);
-            if (indexOfHalfTimeFL > -1)
-            {
-                betStatus.Remove(indexOfHalfTimeFL, 8);
-            }
+            betStatus = removeBetStatus(HTFGHomeBetStatus, betStatus);
+            betStatus = removeBetStatus(HTFGAwayBetStatus, betStatus);
+            betStatus = removeBetStatus(FGHomeBetStatus, betStatus);
+            betStatus = removeBetStatus(FGAwayBetStatus, betStatus);
 
-            var indexOfFL = betStatus.IndexOf(Fl);
-            if (indexOfHalfTimeFL > -1)
+            return betStatus;
+        }
+
+        private string removeBetStatus(string key, string betStatus)
+        {
+            var indexOfKey = betStatus.IndexOf(key);
+            if (indexOfKey > -1)
             {
-                betStatus.Remove(indexOfFL, 8);
+                return betStatus.Remove(indexOfKey, 8);
             }
 
             return betStatus;
@@ -151,14 +155,14 @@ namespace Settlement.Sportsbook.Soccer.Services.InstantCalculate
             var betStatus = request.BetStatus;
             if (request.IsExistFG)
             {
-                var indexOf1FL = betStatus.IndexOf(HalfTimeFl);
-                betStatus = betStatus.Remove(indexOf1FL, 8);
+                betStatus = removeBetStatus(FGHomeBetStatus, betStatus);
+                betStatus = removeBetStatus(FGAwayBetStatus, betStatus);
             }
 
             if (request.IsExistHTFG)
             {
-                var indexOfFL = betStatus.IndexOf(Fl);
-                betStatus = betStatus.Remove(indexOfFL, 7);
+                betStatus = removeBetStatus(HTFGHomeBetStatus, betStatus);
+                betStatus = removeBetStatus(HTFGAwayBetStatus, betStatus);
             }
             return betStatus;
         }
