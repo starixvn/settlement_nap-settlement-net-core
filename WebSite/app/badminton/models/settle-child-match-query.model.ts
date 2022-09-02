@@ -5,13 +5,15 @@ export class SettleChildMatchQuery {
     childMatches: ChildMatch[];
     actionName: string;
     isReSettledTickets: boolean;
-
+    selectedResources: ResultDetail[];
     constructor(
         childMatches: ChildMatch[],
         actionName: string,
-        isReSettledTickets: boolean) {
+        isReSettledTickets: boolean,
+        selectedResources: ResultDetail[]) {
         this.childMatches = childMatches;
         this.actionName = actionName;
         this.isReSettledTickets = isReSettledTickets;
+        this.selectedResources = selectedResources;
     }
 }

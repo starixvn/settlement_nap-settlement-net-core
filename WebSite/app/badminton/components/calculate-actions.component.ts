@@ -577,7 +577,7 @@ export class CalculateActionsComponent implements SportTemplate {
   private async handleChildMatch(settleQuery: SettleQuery, type: string) {
     if (this.childMatchSelected.length > 0 && type === CalculateAction.calculate) {
       const settleChildMatchQuery = new SettleChildMatchQuery(this.childMatchSelected,
-        settleQuery.actionName, settleQuery.isReSettledTickets);
+        settleQuery.actionName, settleQuery.isReSettledTickets, settleQuery.selectedResources);
       await this.aioService.pushChildMatch(settleChildMatchQuery).toPromise();
     }
   }
