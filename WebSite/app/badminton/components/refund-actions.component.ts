@@ -74,6 +74,7 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
     const result = await this.aioService.push(query).toPromise() as Result;
     if (result.errCode === 0) {
       this.refundHedgeMatch(query);
+      this.messageBoxService.closePopup();
     } else {
       this.toastrService.error(result.errMsg);
     }

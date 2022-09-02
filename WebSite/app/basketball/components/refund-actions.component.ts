@@ -84,6 +84,7 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
         if (result.errCode === 0) {
             this.undoVoidBet(getTicketInfos);
             this.refundHedgeMatch(query);
+            this.messageBoxService.closePopup();
         } else {
             this.toastrService.error(result.errMsg);
         }
