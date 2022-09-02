@@ -136,12 +136,12 @@ namespace Settlement.Sportsbook.Soccer.Services
             {
                 if (request.HomeScore == "0" && request.AwayScore == "0")
                 {
-                    betStatus = instantResourceService.BetStatusUncalc(request);
+                    betStatus = instantResourceService.RemoveBetStatus(request);
                 }
             }
             else
             {
-                betStatus = instantResourceService.RemoveOldValue(betStatus);
+                betStatus = instantResourceService.RemoveBetStatus(request);
                 betStatus += instantResourceService.BetStatusHTFL(request);
                 betStatus += instantResourceService.BetStatusFL(request);
             }

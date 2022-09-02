@@ -162,7 +162,8 @@ namespace Settlement.Sportsbook.Soccer.Services
                 HalfTimeAway = criteria.HalfTimeAway ?? 0,
                 HalfTimeHome = criteria.HalfTimeHome ?? 0,
                 ResourceResult = criteria.ResourceResult,
-                SDTRecord = criteria.SDTRecord
+                SDTRecord = criteria.SDTRecord,
+                GoalRecord = criteria.GoalSequence
             };
 
             await scaleOutSettleService.UpdateMatchInfo(requestUpdateInfo);
