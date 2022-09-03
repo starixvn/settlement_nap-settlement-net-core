@@ -28,7 +28,7 @@ export class AppComponent implements OnInit  {
 
     private topNotification() {
         const top = this.elementRef.nativeElement.getAttribute('top');
-        const url = `api/notifications/top-notification?top=${top}`;
+        const url = `/api/notifications/top-notification?top=${top}`;
         return this.httpRequestService.getJson(url);
     }
 }

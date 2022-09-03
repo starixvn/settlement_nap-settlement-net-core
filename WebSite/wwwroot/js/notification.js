@@ -1,146 +1,118 @@
-﻿//var Notification = (function ($) {
-//    /*jshint strict:false */
+﻿
+var notification = {
+    timeout: 40000, // 40s
+    fiveMinutesTimeout: 300000, //5m
+    numberOfItems: 10
+}
 
-//    return {
-//        notificationWrap: null,
-//        unreadNotification: null,
-//        interval: null,
-//        timeout: 40000, // 40s
-//        fiveMinutesTimeout: 300000, //5m
-//        numberOfItems: 10,
-//        initialize: function () {
-//            $("#notification-container").show();
-//            this.unreadNotification = $("#unreadNotification");
-//            this.notificationWrap = $("#notificationWrap");
+window.onload = initializeNotification;
 
-//            this.initEvent();
-//            this.interval = setTimeout(this.showIconNumberOfNotifications);
-//            setTimeout(this.get3rdProductsNotification);
-//        },
-//        initEvent: function () {
-//            $("#notification-toggle").click(function (event) {
-//                event.stopPropagation(); // prevent any parent handlers from being notified of the event
-//                Notification.toggleNotificationPanel();
-//            });
-//            $("#notificationWrap").click(function (event) {
-//                event.stopPropagation();
-//            });
-//            $("#notificationWrap").delegate("#see-all", "click", function (event) {
-//                event.stopPropagation();
-//                Notification.getTopMessages(0);
-//            });
-//        },
+function initializeNotification() {
+    setTimeout(showIconNumberOfNotifications);
+    setTimeout(showIconBetBuilder);
 
-//        get3rdProductsNotification: function () {
-//            $.ajax({
-//                type: "GET",
-//                url: "/api/notifications/get-notification-bet-builder",
-//                crossDomain: true,
-//                xhrFields: {
-//                    withCredentials: true
-//                },
-//                dataType: "json",
-//                success: function (result) {
-//                    if (result) {
-//                        var icon = "<span class='products-notification'> </span>";
-//                        if ($("#3rdProducts-menu > span.products-notification").length === 0) {
-//                            $("#3rdProducts-menu").append(icon);
-//                        }
-                       
-//                        if ($(".bet-builder-sub > span.products-notification").length === 0) {
-//                            $(".bet-builder-sub").append(icon);
-//                        }
-//                    } else {
-//                        $(".products-notification").remove();
-//                    }
-//                    // recall
-//                    setTimeout(Notification.get3rdProductsNotification, Notification.fiveMinutesTimeout);
-//                }
-//            });
-//        },
+    var notificationToggle = document.getElementById('notification-toggle');
+    notificationToggle.addEventListener('click', function (event) {
+        event.stopPropagation();
+        toggleNotificationPanel();
+    });
 
-//        showIconNumberOfNotifications: function () {
-//            $.ajax({
-//                type: "GET",
-//                url: "/api/notifications/get-notification",
-//                crossDomain: true,
-//                xhrFields: {
-//                    withCredentials: true
-//                },
-//                dataType: "json",
-//                success: function (data) {
-//                    if (data > 0) {
-//                        Notification.unreadNotification.html(data);
-//                        Notification.unreadNotification.show();
-//                    }
-//                    else {
-//                        Notification.unreadNotification.html('');
-//                        Notification.unreadNotification.hide();
-//                    }
-//                },
-//                complete: function () {
-//                    // recall
-//                    Notification.interval = setTimeout(Notification.showIconNumberOfNotifications, Notification.timeout);
-//                }
-//            });
-//        },
-//        getTopMessages: function (top) {
-//            Notification.notificationWrap.html('');
-//            $.ajax({
-//                type: "GET",
-//                xhrFields: {
-//                    withCredentials: true
-//                },
-//                url: "/apps/notification?top=" + top,
-//                dataType: "html",
-//                success: function (data) {
-//                    if (data && data.length > 0) {
-//                        Notification.notificationWrap.append(data);
-//                    }
-//                },
-//                error: function () {
-//                    alert(Languages.SystemError);
-//                }
-//            });
-//        },
+    var notificationWrap = document.getElementById('notificationWrap');
+    document.addEventListener('click', function handleClickOutsideBox(event) {
+        if (!notificationWrap.contains(event.target)) {
+            notificationWrap.style.display = 'none';
+        }
+    });
 
-//        stopInterval: function () {
-//            clearInterval(Notification.interval);
-//        },
+    var toggleIcon = document.getElementById('toggle-img');
+    toggleIcon.addEventListener('click', function () {
+        var filterBar = document.getElementsByClassName("filter-bar");
+        var toggleUp = document.getElementsByClassName("toggle-up");
+        if (toggleUp.length > 0) {
+            if (filterBar.length > 0) {
+                filterBar[0].style.display = "none";
+            }
 
-//        toggleNotificationPanel: function () {
-//            var visible = Notification.notificationWrap.is(":visible");
-//            if (visible) {
-//                $(document).unbind("click");
-//                Notification.showIconNumberOfNotifications(); // start Interval
-//                Notification.notificationWrap.toggle();
-//            }
-//            else {
-//                Notification.notificationWrap.toggle();
+            toggleUp[0].classList.add("toggle-down");
+            toggleUp[0].classList.remove("toggle-up");
+        } else {
+            var toggleDown = document.getElementsByClassName("toggle-down");
+            if (filterBar.length > 0) {
+                filterBar[0].style.display = "block";
+            }
+            
+            toggleDown[0].classList.add("toggle-up");
+            toggleDown[0].classList.remove("toggle-down");
+        }
+    });
+}
 
-//                Notification.stopInterval(); // stop Interval when user open notification panel
-//                Notification.getTopMessages(Notification.numberOfItems);
+function toggleNotificationPanel() {
+    var notificationWrap = document.getElementById('notificationWrap');
+    var visible = notificationWrap.style.display;
+    if (visible === "none") {
+        notificationWrap.style.display = "block";
+        getTopMessages(notification.numberOfItems);
+    } else {
+        notificationWrap.style.display = "none";
+    }
+}
 
-//                $(document).one("click", function () {
-//                    Notification.notificationWrap.toggle();
-//                    Notification.showIconNumberOfNotifications(); // start Interval
-//                });
-//            }
-//        }
-//    };
-//}(jQuery));
-var timeout = 10000;
-var fiveMinutesTimeout = 10000;
+function getTopMessages(top) {
+var urlNotification = "api/notifications/top-notification?top=" + top;
+    fetch(urlNotification)
+        .then((response) => {
+            return response.json();
+        })
+        .then((data) => {
+            var notifications = data.notifications;
+            var temp = "<ul class='error-notify'>";
+
+            if (notifications.length > 0) {
+                var i = 0;
+                notifications.forEach((item) => {
+                    var oddEven = i % 2 ? "" : "even" ;
+                    i++;
+                    temp += "<li class= '" + oddEven +"'>";
+                    temp += "    <span class='bold'>" + item.matchCode + "</span>";
+                    temp += "(<b>"+item.homeName+"</b> - "+ item.awayName +") - "+ item.message;
+                    temp += "<div class='datetime'><span class='icon'></span>" + item.startDate + "</div>";
+                    temp += "</li>";
+
+                });
+
+                if (data.numberError > notifications.length) {
+                    temp += "<li class='see-all'><a href='javascript:;' id='see-all'>See All</a></li>";
+                }
+
+            } else {
+                temp += "<li>There is no information available</li>";
+            }
+
+            temp += "</ul>";
+
+            var notificationWrap = document.getElementById('notificationWrap');
+            notificationWrap.innerHTML = temp;
+
+            if (data.numberError > notifications.length) {
+                var seeAll = document.getElementById('see-all');
+                seeAll.addEventListener('click', function (event) {
+                    event.stopPropagation();
+                    getTopMessages(0);
+                });
+            }
+    });
+}
 
 function showIconNumberOfNotifications() {
     var unreadNotification = document.getElementById('unreadNotification');
-    var urlNotification = '/api/notifications/get-notification';
+    var urlNotification = 'api/notifications/get-notification';
     var xmlHttp = new XMLHttpRequest();
 
     xmlHttp.onreadystatechange = function () {
         if (xmlHttp.readyState === XMLHttpRequest.DONE) {  
-            var result = xmlHttp.responseText;
-            if (result !== "") {
+            var result = JSON.parse(xmlHttp.responseText);
+            if (result > 0) {
                 unreadNotification.innerHTML = result;
                 unreadNotification.style.display = "block";
             }
@@ -148,18 +120,17 @@ function showIconNumberOfNotifications() {
                 unreadNotification.innerHTML = "";
                 unreadNotification.style.display = "none";
             }
-            setTimeout(showIconNumberOfNotifications, timeout);
+            setTimeout(showIconNumberOfNotifications, notification.timeout);
         }
     };
 
     xmlHttp.open('GET', urlNotification, true);
-    xmlHttp.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
     xmlHttp.send();
 }
 
 function showIconBetBuilder() {
     var parentMenu = document.getElementById('3rdProducts-menu');
-    var urlNotificationBetBuilder = '/api/notifications/get-notification-bet-builder';
+    var urlNotificationBetBuilder = 'api/notifications/get-notification-bet-builder';
     var xmlHttp = new XMLHttpRequest();
 
     xmlHttp.onreadystatechange = function () {
@@ -179,17 +150,15 @@ function showIconBetBuilder() {
                 }
             }
             else {
-                document.classList.remove("products-notification");
+                if (document.getElementsByClassName("products-notification").length > 0) {
+                    document.classList.remove("products-notification");
+                }
             }
 
-            setTimeout(showIconBetBuilder, fiveMinutesTimeout);
+            setTimeout(showIconBetBuilder, notification.fiveMinutesTimeout);
         }
     };
 
     xmlHttp.open('GET', urlNotificationBetBuilder, true);
-    xmlHttp.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
     xmlHttp.send();
 }
-
-setTimeout(showIconNumberOfNotifications, timeout);
-setTimeout(showIconBetBuilder, fiveMinutesTimeout);

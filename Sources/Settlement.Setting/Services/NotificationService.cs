@@ -48,7 +48,7 @@ namespace Settlement.Setting.Services
 
         public async Task<bool> IsNotificationsBetBuilder()
         {
-            return true;// await repository.GetAsync<bool>(new NotificationBetBuilderCriteria());
+            return await repository.GetAsync<bool>(new NotificationBetBuilderCriteria());
         }
 
         public async Task<int> NumberNotifications()

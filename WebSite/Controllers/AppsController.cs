@@ -164,7 +164,7 @@ namespace Settlement.WebSites.Controllers
         [HttpGet("notification")]
         public IActionResult Notification(int top)
         {
-            return SetView("Notification", top.ToString(), ViewPath.Notification);
+            return SetView("notification", top.ToString(), ViewPath.Notification);
         }
 
         private ActionResult SetView(string title, string pageType, string viewName)
