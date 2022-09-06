@@ -16,23 +16,23 @@ namespace Settlement.Core.ActionFilters
             this.logger = new Logger();
         }
 
-        public override async void OnActionExecuted(ActionExecutedContext actionExecutedContext)
+        public override async void OnActionExecuted(ActionExecutedContext context)
         {
-            var context = actionExecutedContext.HttpContext;
-            var request = context.Request;
+            var httpContext = context.HttpContext;
+            var request = httpContext.Request;
             var stringBuilder = new StringBuilder();
             stringBuilder.AppendLine($"Url: {request.GetDisplayUrl()}");
             stringBuilder.AppendLine($"UserAgent: {request.Headers["User-Agent"]}");
-            stringBuilder.AppendLine($"Username: {context.User.Identity.Name}");
-            if (actionExecutedContext.Result != null)
+            stringBuilder.AppendLine($"Username: {httpContext.User.Identity.Name}");
+            if (context.Result != null)
             {
-                var objectResult = actionExecutedContext.Result as OkObjectResult;
+                var objectResult = context.Result as OkObjectResult;
                 var result = JsonConvert.SerializeObject(objectResult.Value);
                 stringBuilder.AppendLine(result);
             }
             await logger.InfoAsync(stringBuilder.ToString());
 
-            base.OnActionExecuted(actionExecutedContext);
+            base.OnActionExecuted(context);
         }
 
         public override async void OnActionExecuting(ActionExecutingContext context)

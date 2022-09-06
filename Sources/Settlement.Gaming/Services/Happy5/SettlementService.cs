@@ -9,7 +9,8 @@ using Settlement.Core.Constants;
 using Fanex.Settlement.ScaleOut.Services;
 using Fanex.Settlement.ScaleOut.Request;
 using Microsoft.Extensions.Options;
-using MediatR;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Settlement.Gaming.Services.Happy5
 {
@@ -36,6 +37,8 @@ namespace Settlement.Gaming.Services.Happy5
 
         private readonly AppSettingsKey appSettingsKey;
 
+        private readonly ScaleOutSettleService scaleOutSettleService;
+
         public SettlementServiceImp(
             IDynamicRepository repository,
             INapSession currentSession,
@@ -43,7 +46,8 @@ namespace Settlement.Gaming.Services.Happy5
             IHttpContextAccessor accessor,
             BallService ballService,
             ScaleOutSettleThirdPartyService scaleOutSettleThirdPartyService,
-            IOptions<AppSettingsKey> options)
+            IOptions<AppSettingsKey> options,
+            ScaleOutSettleService scaleOutSettleService)
         {
             this.repository = repository;
             this.currentSession = currentSession;
@@ -52,6 +56,7 @@ namespace Settlement.Gaming.Services.Happy5
             this.ballService = ballService;
             this.scaleOutSettleThirdPartyService = scaleOutSettleThirdPartyService;
             this.appSettingsKey = options.Value;
+            this.scaleOutSettleService = scaleOutSettleService;
         }
 
         public async Task<Result> Settle(Happy5SettlementRequest request)
@@ -79,7 +84,7 @@ namespace Settlement.Gaming.Services.Happy5
                 criteria.StrOldResult = await GetOldResult(request.MatchId);
                 await UpdateResult(request);
                 await UpdateMatchInfo(request);
-                Execute(criteria);
+                await Execute(criteria);
             }
 
             return new Result
@@ -87,6 +92,39 @@ namespace Settlement.Gaming.Services.Happy5
                 ErrCode = validateDeploymentResult.ErrorCode,
                 ErrMsg = validateDeploymentResult.ErrorMessage
             };
+        }
+
+        private async Task<Result> Execute(SettlementCriteria criteria)
+        {
+            var results = new List<Result>();
+            foreach (var server in appSettingsKey.SiteDbServer)
+            {
+                criteria.DbServer = server;
+                await repository.ExecuteAsync(criteria);
+                results = await ResultMessage(results, server, criteria.ErrMsg);
+            }
+
+            return new Result
+            {
+                ErrCode = results.Count,
+                ErrMsg = string.Join("<br/>", results.Select(r => r.ErrMsg).ToArray())
+            };
+        }
+
+        private async Task<List<Result>> ResultMessage(List<Result> results, string server, string message)
+        {
+            if (!string.IsNullOrWhiteSpace(message))
+            {
+                var siteDbGroupId = await scaleOutSettleService.GetSiteGroupId(server);
+                var result = new Result
+                {
+                    ErrMsg = $"- SiteDbGroupId {siteDbGroupId}: {message}"
+                };
+
+                results.Add(result);
+            }
+
+            return results;
         }
 
         private async Task<string> GetOldResult(int matchId)
@@ -118,15 +156,6 @@ namespace Settlement.Gaming.Services.Happy5
             };
 
             await scaleOutSettleThirdPartyService.UpdateMatchInfo3rd(updateRequest);
-        }
-
-        private void Execute(SettlementCriteria criteria)
-        {
-            foreach (var server in appSettingsKey.SiteDbServer)
-            {
-                criteria.DbServer = server;
-                repository.Execute(criteria);
-            }
         }
 
         private SettlementCriteria CreateCriteria(Happy5SettlementRequest request)

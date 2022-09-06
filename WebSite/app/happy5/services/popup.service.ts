@@ -31,7 +31,7 @@ export class PopupService {
         this.dialog.closeAll();
         this.dialog.open(ReCalculationComponent, {
             width: '450px',
-            height: '350px',
+            height: '400px',
             data: model
         }).afterClosed().subscribe((balls: Ball[]) => {
             if (!_.isEmpty(balls)) {
@@ -47,7 +47,7 @@ export class PopupService {
         this.dialog.closeAll();
         this.dialog.open(RefundComponent, {
             width: '450px',
-            height: '350px',
+            height: '400px',
             data: model
         }).afterClosed().subscribe((balls: Ball[]) => {
             if (!_.isEmpty(balls)) {

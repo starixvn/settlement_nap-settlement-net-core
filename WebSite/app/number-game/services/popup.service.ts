@@ -29,7 +29,7 @@ export class PopupService {
         this.dialog.closeAll();
         this.dialog.open(ReCalculationComponent, {
             width: '800px',
-            height: '300px',
+            height: '350px',
             data: model
         }).afterClosed().subscribe((result: Ball[]) => {
             if (!_.isEmpty(result)) {
