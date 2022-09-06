@@ -75,9 +75,8 @@ export class MatchesComponent extends MatchesBaseComponent implements OnChanges,
   }
 
   public isMatchNotSingleOrMp(match: Match) {
-    return (_.isNull(match.isCalculatingSingle)
+    return _.isNull(match.isCalculatingSingle)
       || (!_.isEqual(match.isCalculatingSingle, CalculationStatus.waiting)
-        && !_.isEqual(match.isCalculatingSingle, CalculationStatus.calculating)))
-      && _.isNull(match.isCalculatingMP);
+        && !_.isEqual(match.isCalculatingSingle, CalculationStatus.calculating));
   }
 }
