@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Http;
 using Fanex.Settlement.ScaleOut.Services;
 using Microsoft.Extensions.Options;
 using Fanex.Settlement.ScaleOut.Request;
-using System;
+using Settlement.Core.Constants;
 
 namespace Settlement.Gaming.Services.NumberGame
 {
@@ -30,37 +30,37 @@ namespace Settlement.Gaming.Services.NumberGame
 
         private readonly INapSession currentSession;
 
-        private readonly PermissionService permissionService;
-
         private readonly XmlConvertService xmlConvertService;
 
         private readonly IHttpContextAccessor accessor;
 
         private readonly ScaleOutSettleThirdPartyService scaleOutSettleThirdPartyService;
 
+        private readonly ScaleOutSettleService scaleOutSettleService;
+
         private readonly AppSettingsKey appSettingsKey;
 
         public SettlementServiceImp(
             IDynamicRepository repository,
             INapSession currentSession,
-            PermissionService permissionService,
             XmlConvertService xmlConvertService,
             IHttpContextAccessor accessor,
             ScaleOutSettleThirdPartyService scaleOutSettleThirdPartyService,
+            ScaleOutSettleService scaleOutSettleService,
             IOptions<AppSettingsKey> options)
         {
             this.repository = repository;
             this.currentSession = currentSession;
-            this.permissionService = permissionService;
             this.xmlConvertService = xmlConvertService;
             this.accessor = accessor;
             this.scaleOutSettleThirdPartyService = scaleOutSettleThirdPartyService;
+            this.scaleOutSettleService = scaleOutSettleService;
             this.appSettingsKey = options.Value;
         }
 
         public async Task<Result> Settle(NumberGameSettlementRequest request)
         {
-            var permission = permissionService.Permission;
+            var permission = request.Permission;
             var hasPermission = permission.CanCalculate || permission.CanItAdmin;
 
             return hasPermission ? await SettleWhenHavePermission(request) : NoPermission;
@@ -86,13 +86,7 @@ namespace Settlement.Gaming.Services.NumberGame
 
             await UpdateResult(criteria);
             await UpdateMatchInfo(request);
-            Execute(criteria);
-
-            return new Result
-            {
-                ErrCode = criteria.ErrCode,
-                ErrMsg = criteria.ErrMsg
-            };
+            return await Execute(criteria);
         }
 
         private async Task UpdateResult(RecalculateNumberGameCriteria criteria)
@@ -110,7 +104,7 @@ namespace Settlement.Gaming.Services.NumberGame
         {
             var updateRequest = new UpdateMatchInfo3rdRequest
             {
-                Command = "completed",
+                Command = EventStatus.Completed,
                 MatchId = request.MatchId,
                 Creator = currentSession.UserId,
                 Action = request.Action
@@ -119,13 +113,37 @@ namespace Settlement.Gaming.Services.NumberGame
             await scaleOutSettleThirdPartyService.UpdateMatchInfo3rd(updateRequest);
         }
 
-        private void Execute(RecalculateNumberGameCriteria criteria)
+        private async Task<Result> Execute(RecalculateNumberGameCriteria criteria)
         {
+            var results = new List<Result>();
             foreach (var server in appSettingsKey.SiteDbServer)
             {
                 criteria.DbServer = server;
-                repository.Execute(criteria);
+                await repository.ExecuteAsync(criteria);
+                results = await ResultMessage(results, server, criteria.ErrMsg);
             }
+
+            return new Result
+            {
+                ErrCode = results.Count,
+                ErrMsg = string.Join("<br/>", results.Select(r => r.ErrMsg).ToArray())
+            };
+        }
+
+        private async Task<List<Result>> ResultMessage(List<Result> results, string server, string message)
+        {
+            if (!string.IsNullOrWhiteSpace(message))
+            {
+                var siteDbGroupId = await scaleOutSettleService.GetSiteGroupId(server);
+                var result = new Result
+                {
+                    ErrMsg = $"- SiteDbGroupId {siteDbGroupId}: {message}"
+                };
+
+                results.Add(result);
+            }
+
+            return results;
         }
 
         private RecalculateNumberGameCriteria CreateCriteria(NumberGameSettlementRequest request)

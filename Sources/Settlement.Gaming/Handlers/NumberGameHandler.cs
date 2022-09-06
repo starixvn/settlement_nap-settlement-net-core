@@ -48,6 +48,9 @@ namespace Settlement.Gaming.Handlers
         }
 
         public async Task<Result> Handle(NumberGameSettlementRequest request, CancellationToken cancellationToken)
-            => await settlementService.Settle(request);
+        {
+            request.Permission = permissionService.Permission;
+            return await settlementService.Settle(request);
+        }
     }
 }
