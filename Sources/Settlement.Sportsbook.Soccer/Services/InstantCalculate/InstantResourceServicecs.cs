@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Settlement.Core.Constants;
 using Settlement.Sportsbook.Soccer.Constants;
 using Settlement.Sportsbook.Soccer.Models;
@@ -28,15 +29,19 @@ namespace Settlement.Sportsbook.Soccer.Services.InstantCalculate
 
         private readonly IGoalRecordService goalRecordService;
 
-        private readonly char HomeValue = 'H';
+        private readonly char homeValue = 'H';
 
-        private readonly string FGHomeBetStatus = "FL:1-0;";
+        private readonly string fgHomeBetStatus = "FL:1-0;";
 
-        private readonly string FGAwayBetStatus = "FL:2-0;";
+        private readonly string fgAwayBetStatus = "FL:2-0;";
 
-        private readonly string HTFGHomeBetStatus = "1FL:1-0;";
+        private readonly string htfgHomeBetStatus = "1FL:1-0;";
 
-        private readonly string HTFGAwayBetStatus = "1FL:2-0;";
+        private readonly string htfgAwayBetStatus = "1FL:2-0;";
+
+        private readonly string fl = "FL";
+
+        private readonly string halfTimeFl = "1FL";
 
         public InstantResourceServiceImp(
             IInstantGoalCheckingService instantGoalCheckingService,
@@ -99,9 +104,12 @@ namespace Settlement.Sportsbook.Soccer.Services.InstantCalculate
         public string BetStatusFL(InstantCalculationRequest request)
         {
             var goalOnly = request.GoalRecord.Replace(";", string.Empty);
+            var indexOfHtFl = request.BetStatus.IndexOf(halfTimeFl);
+            var betStatusExcludeHtFl = indexOfHtFl > -1 ? request.BetStatus.Remove(indexOfHtFl, 8) : request.BetStatus;
+            var isNotExistBetStatusFl = !betStatusExcludeHtFl.Contains(fl);
             if (goalOnly.Length > 0 && request.IsExistFG)
             {
-                return request.GoalRecord[0] == HomeValue ? FGHomeBetStatus : FGAwayBetStatus;
+                return request.GoalRecord[0] == homeValue ? fgHomeBetStatus : fgAwayBetStatus;
             }
 
             return string.Empty;
@@ -110,10 +118,10 @@ namespace Settlement.Sportsbook.Soccer.Services.InstantCalculate
         public string BetStatusHTFL(InstantCalculationRequest request)
         {
             var goalOnly = request.GoalRecord.Replace(";", string.Empty);
-
-            if (goalOnly.Length > 0 && request.IsExistHTFG)
+            var isNotExistBetStatusHtFl = !request.BetStatus.Contains(halfTimeFl);
+            if (goalOnly.Length > 0 && request.IsExistHTFG && isNotExistBetStatusHtFl)
             {
-                return request.GoalRecord[0] == HomeValue ? HTFGHomeBetStatus : HTFGAwayBetStatus;
+                return request.GoalRecord[0] == homeValue ? htfgHomeBetStatus : htfgAwayBetStatus;
             }
 
             return string.Empty;
@@ -130,25 +138,14 @@ namespace Settlement.Sportsbook.Soccer.Services.InstantCalculate
 
             if (request.IsExistHTFG)
             {
-                betStatus = removeString(HTFGHomeBetStatus, betStatus);
-                betStatus = removeString(HTFGAwayBetStatus, betStatus);
+                var indexOfKey = betStatus.IndexOf(halfTimeFl);
+                betStatus = indexOfKey > -1 ? betStatus.Remove(indexOfKey, htfgHomeBetStatus.Length) : betStatus;
             }
 
             if (request.IsExistFG)
             {
-                betStatus = removeString(FGHomeBetStatus, betStatus);
-                betStatus = removeString(FGAwayBetStatus, betStatus);
-            }
-
-            return betStatus;
-        }
-
-        private string removeString(string key, string betStatus)
-        {
-            var indexOfKey = betStatus.IndexOf(key);
-            if (indexOfKey > -1)
-            {
-                return betStatus.Remove(indexOfKey, key.Length);
+                var indexOfKey = betStatus.IndexOf(fl);
+                betStatus = indexOfKey > -1 ? betStatus.Remove(indexOfKey, fgHomeBetStatus.Length) : betStatus;
             }
 
             return betStatus;
