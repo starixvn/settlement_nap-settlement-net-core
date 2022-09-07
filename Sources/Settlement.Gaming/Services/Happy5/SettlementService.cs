@@ -84,7 +84,7 @@ namespace Settlement.Gaming.Services.Happy5
                 criteria.StrOldResult = await GetOldResult(request.MatchId);
                 await UpdateResult(request);
                 await UpdateMatchInfo(request);
-                await Execute(criteria);
+                return await Execute(criteria);
             }
 
             return new Result

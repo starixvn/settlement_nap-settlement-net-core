@@ -66,10 +66,10 @@ export class AutoCalculateMatchesComponent extends MatchesBaseComponent implemen
   public getClassPayOut(isAutoPayout: boolean, isDirectPayout: boolean) {
     if (this.permission.canAutoPayout) {
       return isAutoPayout ? BackgroundColor.iconAuto :
-      isDirectPayout ? BackgroundColor.iconDirect : BackgroundColor.iconOff;
+        isDirectPayout ? BackgroundColor.iconDirect : BackgroundColor.iconOff;
     } else {
       return isAutoPayout ? BackgroundColor.iconAutoDisabled :
-      isDirectPayout ? BackgroundColor.iconDirectDisabled : BackgroundColor.iconOffDisabled;
+        isDirectPayout ? BackgroundColor.iconDirectDisabled : BackgroundColor.iconOffDisabled;
     }
   }
 
@@ -82,7 +82,7 @@ export class AutoCalculateMatchesComponent extends MatchesBaseComponent implemen
   }
 
   public updateInstant(match: CalculationMatch) {
-    var isPermission = this.permission.canAutoPayout && this.notInQueue(match) && _.isNull(match.isCalculatingMP);
+    var isPermission = this.permission.canAutoPayout && this.notInQueue(match);
     if (isPermission) {
       this.dialogConfirmMessage.message = Language.instants.confirm;
       this.messageBoxService.confirm(this.dialogConfirmMessage, () => {
@@ -91,11 +91,12 @@ export class AutoCalculateMatchesComponent extends MatchesBaseComponent implemen
     }
   }
 
-  private notInQueue(match: CalculationMatch){
+  private notInQueue(match: CalculationMatch) {
     return _.isNull(match.isCalculatingSingle) ||
-    (!_.isEqual(match.isCalculatingSingle, CalculationStatus.waiting)
-    && !_.isEqual(match.isCalculatingSingle, CalculationStatus.calculating))
+      (!_.isEqual(match.isCalculatingSingle, CalculationStatus.waiting)
+        && !_.isEqual(match.isCalculatingSingle, CalculationStatus.calculating))
   }
+
   private async doUpdateInstant(match: CalculationMatch) {
     const query = new AutoSettingMatchQuery(
       Number(match.matchId),
@@ -112,7 +113,7 @@ export class AutoCalculateMatchesComponent extends MatchesBaseComponent implemen
     }
   }
 
-  public updateInstantForLeague(autoCalcSetting: AutoSetting, league: League){
+  public updateInstantForLeague(autoCalcSetting: AutoSetting, league: League) {
     this.dialogConfirmMessage.message = autoCalcSetting.isAutoPayoutForLeague ? Language.instants.confirmOffLeague : Language.instants.confirmOnLeague;
     this.dialogConfirmMessage.hasActionOnNoBtn = true;
     this.messageBoxService.confirm(this.dialogConfirmMessage, () => {
@@ -144,19 +145,19 @@ export class AutoCalculateMatchesComponent extends MatchesBaseComponent implemen
 
 
   public openUpdatePayout(match: CalculationMatch) {
-    var isPermission = this.permission.canAutoPayout && this.notInQueue(match) && _.isNull(match.isCalculatingMP);
+    var isPermission = this.permission.canAutoPayout && this.notInQueue(match);
     if (isPermission) {
       this.popupService.openUpdatePayout(match);
     }
   }
 
-  public openUpdatePayoutForLeague(league: League){
+  public openUpdatePayoutForLeague(league: League) {
     if (this.permission.canAutoPayout) {
       this.popupService.openUpdatePayoutForLeague(league);
     }
   }
 
-  public openUpdateTime(league: League, isInstant: boolean){
+  public openUpdateTime(league: League, isInstant: boolean) {
     if (this.permission.canAutoPayout) {
       this.popupService.openUpdateTime(league, isInstant);
     }
