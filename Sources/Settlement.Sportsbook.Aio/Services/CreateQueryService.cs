@@ -44,8 +44,6 @@ namespace Settlement.Sportsbook.Aio.Services
 
         private readonly ILogService logService;
 
-        private readonly int actionCalculate = 100;
-
         public CreateQueryServiceImp(XmlConvertService xmlConvertService,
                                     INapSession currentSession,
                                     IHttpContextAccessor accessor,
@@ -159,6 +157,7 @@ namespace Settlement.Sportsbook.Aio.Services
         {
             if (!string.IsNullOrWhiteSpace(result.ErrMsg))
             {
+                const int actionCalculate = 100;
                 logService.ActionLog(criteria.MatchId, result.ErrMsg, actionCalculate);
             }
         }

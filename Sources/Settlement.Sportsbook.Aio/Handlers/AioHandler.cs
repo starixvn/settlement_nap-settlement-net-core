@@ -7,6 +7,8 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
+using Settlement.Core.Services;
 
 namespace Settlement.Sportsbook.Aio.Handlers
 {
@@ -23,14 +25,25 @@ namespace Settlement.Sportsbook.Aio.Handlers
     {
         private readonly IAioService aioService;
 
+        private readonly PermissionService permissionService;
+
+        private readonly AppSettingsKey appSettingsKey;
+
         public AioHandler(
-            IAioService aioService)
+            IAioService aioService,
+            PermissionService permissionService,
+            IOptions<AppSettingsKey> appSettingsKey)
         {
             this.aioService = aioService;
+            this.permissionService = permissionService;
+            this.appSettingsKey = appSettingsKey.Value;
         }
 
-        public async Task<AioMatch> Handle(GetMatchRequest request, CancellationToken cancellationToken) =>
-            await aioService.GetMatch(request);
+        public async Task<AioMatch> Handle(GetMatchRequest request, CancellationToken cancellationToken)
+        {
+            request.Permission = permissionService.Permission;
+            return await aioService.GetMatch(request);
+        }
 
         public async Task<Result> Handle(SettleRequest request, CancellationToken cancellationToken) =>
             await aioService.Settle(request);
@@ -42,8 +55,15 @@ namespace Settlement.Sportsbook.Aio.Handlers
             Handle(CheckMarkedTicketsRequest request, CancellationToken cancellationToken) =>
             await aioService.CheckMarkedTickets(request);
 
-        public async Task<Result> Handle(CheckRunningOddsRequest request, CancellationToken cancellationToken) =>
-            await aioService.VerifyNoRunningOdds(request);
+        public async Task<Result> Handle(CheckRunningOddsRequest request, CancellationToken cancellationToken)
+        {
+            if (appSettingsKey.EnableVerifyingRunningOdds)
+            {
+                return await aioService.VerifyNoRunningOdds(request); 
+            }
+
+            return new Result();
+        }
 
         public async Task<Result> Handle(SaveScoreRequest request, CancellationToken cancellationToken) =>
             await aioService.SaveScore(request);

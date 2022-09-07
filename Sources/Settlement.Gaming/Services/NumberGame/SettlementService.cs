@@ -75,18 +75,18 @@ namespace Settlement.Gaming.Services.NumberGame
             };
 
             var validateDeploymentResult = await scaleOutSettleThirdPartyService.GetDeploymentInfo(validateDeploymentCriteria);
-            if (validateDeploymentResult.ErrorCode != 0)
+            if (validateDeploymentResult.ErrorCode == 0)
             {
-                return new Result
-                {
-                    ErrCode = validateDeploymentResult.ErrorCode,
-                    ErrMsg = validateDeploymentResult.ErrorMessage
-                };
+                await UpdateResult(criteria);
+                await UpdateMatchInfo(request);
+                return await Execute(criteria);
             }
 
-            await UpdateResult(criteria);
-            await UpdateMatchInfo(request);
-            return await Execute(criteria);
+            return new Result
+            {
+                ErrCode = validateDeploymentResult.ErrorCode,
+                ErrMsg = validateDeploymentResult.ErrorMessage
+            };
         }
 
         private async Task UpdateResult(RecalculateNumberGameCriteria criteria)

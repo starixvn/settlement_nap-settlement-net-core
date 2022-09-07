@@ -107,7 +107,7 @@ namespace Settlement.EventManagement.Services.Calculation
                 }
                 else
                 {
-                    mergeDataService.MergeMatches(matches, data);
+                   matches =  mergeDataService.MergeMatches(matches, data);
                 }
             }
 
@@ -131,7 +131,7 @@ namespace Settlement.EventManagement.Services.Calculation
                 }
                 else
                 {
-                    mergeDataService.MergeMatches(matches, data);
+                   matches =  mergeDataService.MergeMatches(matches, data);
                 }
             }
 
@@ -214,7 +214,7 @@ namespace Settlement.EventManagement.Services.Calculation
                 }
                 else
                 {
-                    mergeDataService.MergeMatches(matches, data);
+                   matches = mergeDataService.MergeMatches(matches, data);
                 }
             }
 
@@ -251,7 +251,7 @@ namespace Settlement.EventManagement.Services.Calculation
                 }
                 else
                 {
-                    mergeDataService.MergeMatches(matches, data);
+                  matches = mergeDataService.MergeMatches(matches, data);
                 }
             }
 

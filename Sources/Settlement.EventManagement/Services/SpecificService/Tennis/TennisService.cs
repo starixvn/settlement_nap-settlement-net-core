@@ -30,10 +30,12 @@ namespace Settlement.EventManagement.Services.SpecificService.Tennis
 
         public MoreScores ScoreLoader(Match match, List<ResultDetail> resultDetails, Permission permission)
         {
-            var moreScore = new MoreScores();
-            moreScore.Sets = setResource.Select(x => new Score("-")).ToArray();
-            moreScore.HalfTimeScore = new Score("-");
-            moreScore.FinalScore = new Score("-");
+            var moreScore = new MoreScores
+            {
+                Sets = setResource.Select(x => new Score("-")).ToArray(),
+                HalfTimeScore = new Score("-"),
+                FinalScore = new Score("-")
+            };
             var home = 0;
             var away = 0;
             var items = resultDetails.OrderBy(n => n.ResourceId).ToList();

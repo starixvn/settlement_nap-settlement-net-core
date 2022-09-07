@@ -120,7 +120,7 @@ namespace Settlement.EventManagement.Services.MultiSports
             var waitingMatches = await WaitingMatchesAllSites(request);
             var listResultDetail = await ResultDetailByMatchIds(waitingMatches);
 
-            matchService.SetNewMatchInfo(waitingMatches, listResultDetail);
+            waitingMatches = matchService.SetNewMatchInfo(waitingMatches, listResultDetail);
 
             var matchesByEachSport = GetMoreScore(new MultiSportResult { Matches = waitingMatches, ResultDetails = listResultDetail });
             var matches = new List<Match>();
@@ -151,7 +151,7 @@ namespace Settlement.EventManagement.Services.MultiSports
                 }
                 else
                 {
-                    matchService.MergeMatches(matches, data);
+                   matches = matchService.MergeMatches(matches, data);
                 }
             }
 
@@ -240,7 +240,7 @@ namespace Settlement.EventManagement.Services.MultiSports
         {
             var matches = await MatchesAllSites(request);
             var resultDetails = await ResultDetailByMatchIds(matches);
-            matchService.SetNewMatchInfo(matches, resultDetails);
+            matches = matchService.SetNewMatchInfo(matches, resultDetails);
             return new MultiSportResult
             {
                 Matches = matches,
@@ -265,7 +265,7 @@ namespace Settlement.EventManagement.Services.MultiSports
                 }
                 else
                 {
-                    matchService.MergeMatches(matches, data);
+                  matches = matchService.MergeMatches(matches, data);
                 }
             }
 

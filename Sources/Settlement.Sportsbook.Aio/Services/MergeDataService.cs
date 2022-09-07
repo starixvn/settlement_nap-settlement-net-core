@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Settlement.Core.Models;
 
@@ -12,11 +11,7 @@ namespace Settlement.Sportsbook.Aio.Services
 
     public class MergeDataServiceImp : MergeDataService
     {
-        public MergeDataServiceImp()
-        {
-        }
-
-        public (List<Models.ResultDetail> ticketDetails, TicketCounts ticketCounts) MergeTicketDetails(List<(List<Models.ResultDetail>, TicketCounts)> data)
+       public (List<Models.ResultDetail> ticketDetails, TicketCounts ticketCounts) MergeTicketDetails(List<(List<Models.ResultDetail>, TicketCounts)> data)
         {
             var multipleTicketDetails = new List<List<Models.ResultDetail>>();
             var multipleTicketCounts = new List<TicketCounts>();

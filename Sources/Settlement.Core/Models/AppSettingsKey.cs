@@ -7,5 +7,7 @@ namespace Settlement.Core.Models
         public List<string> SiteDbServer { get; set; }
 
         public string ThirdPartyJackTimeUrl { get; set; }
+
+        public bool EnableVerifyingRunningOdds { get; set; }
     }
 }

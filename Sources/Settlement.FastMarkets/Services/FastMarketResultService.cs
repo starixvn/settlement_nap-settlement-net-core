@@ -66,8 +66,8 @@ namespace Settlement.FastMarkets.Services
 
             if (timeMachineBetType != null)
             {
-                var timeMachineOUResults = timeMachineBetType.FastMarketResults;
-                oldResults = oldResults.Where(result => timeMachineOUResults.Any(r => r.BetType == result.BetType && r.Position == result.Position)).ToList();
+                var timeMachineOuResults = timeMachineBetType.FastMarketResults;
+                oldResults = oldResults.Where(result => timeMachineOuResults.Any(r => r.BetType == result.BetType && r.Position == result.Position)).ToList();
             }
             else
             {

@@ -1,12 +1,10 @@
 ﻿using Fanex.Data.Repository;
 using Fanex.NAP.Client;
-using Microsoft.Extensions.Configuration;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.FastMarkets.Criteria;
 using Settlement.FastMarkets.Requests;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using MatchDetail = Settlement.FastMarkets.Models.MatchDetail;

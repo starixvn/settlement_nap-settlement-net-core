@@ -27,8 +27,6 @@ namespace Settlement.Gaming.Services.Happy5
 
         private readonly INapSession currentSession;
 
-        private readonly PermissionService permissionService;
-
         private readonly BallService ballService;
 
         private readonly IHttpContextAccessor accessor;
@@ -42,7 +40,6 @@ namespace Settlement.Gaming.Services.Happy5
         public SettlementServiceImp(
             IDynamicRepository repository,
             INapSession currentSession,
-            PermissionService permissionService,
             IHttpContextAccessor accessor,
             BallService ballService,
             ScaleOutSettleThirdPartyService scaleOutSettleThirdPartyService,
@@ -51,7 +48,6 @@ namespace Settlement.Gaming.Services.Happy5
         {
             this.repository = repository;
             this.currentSession = currentSession;
-            this.permissionService = permissionService;
             this.accessor = accessor;
             this.ballService = ballService;
             this.scaleOutSettleThirdPartyService = scaleOutSettleThirdPartyService;
@@ -61,7 +57,7 @@ namespace Settlement.Gaming.Services.Happy5
 
         public async Task<Result> Settle(Happy5SettlementRequest request)
         {
-            var permission = permissionService.Permission;
+            var permission = request.Permission;
             var isRecalculation = permission.CanCalculate && request.Action.Equals(ActionType.CalculateAll);
             var isRefund = permission.CanRefund && request.Action.Equals(ActionType.RefundAll);
             var hasPermission = isRecalculation || isRefund || permission.CanItAdmin;

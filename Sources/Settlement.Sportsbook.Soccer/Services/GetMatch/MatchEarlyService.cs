@@ -115,7 +115,7 @@ namespace Settlement.Sportsbook.Soccer.GetMatch.Services
 
             if (ticketDetail == null)
             {
-                return specialBetTypes.Contains(betType) ? TicketStatus.NoTicket : TicketStatus.NotIncluded;
+                return specialBetTypes.Contains(betType) ? TicketStatus.NoTicket : TicketStatus.NotIncludedOnSoccer;
             }
 
             if (ticketDetail.InRunning > 0)
@@ -144,7 +144,7 @@ namespace Settlement.Sportsbook.Soccer.GetMatch.Services
         private List<ResultDetailModel> MappingBetTypeName(List<ResultDetailModel> list)
         {
             const int maxResource = 3;
-            var listEarly = list.Where(x => x.ResourceId.Length >= maxResource && x.TicketStatus != TicketStatus.NotIncluded).ToList();
+            var listEarly = list.Where(x => x.ResourceId.Length >= maxResource && x.TicketStatus != TicketStatus.NotIncludedOnSoccer).ToList();
             foreach (var item in listEarly)
             {
                 var resourceId = item.ResourceId;

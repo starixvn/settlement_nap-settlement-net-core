@@ -112,17 +112,17 @@ namespace Settlement.EventManagement.Services
 
             if (IsNotExistedEarlyBetTypes(match))
             {
-                return match.ChildMatchType == MatchPen || match.IsOpenOdds ? "No Ticket" : "N/A";
+                return match.ChildMatchType == MatchPen || match.IsOpenOdds ? TicketStatus.NoTicket : TicketStatus.Normal;
             }
 
             if (IsExistedRunningEarlyBetTypes(match) || (match.IsMergedParlay && isRunningEarlyBetTypesParlay))
             {
-                return "Running";
+                return TicketStatus.Running;
             }
 
             if (IsExistedWaitingEarlyBetTypes(match) || (match.IsMergedParlay && isWaitingEarlyBetTypesParlay))
             {
-                return "Waiting";
+                return TicketStatus.Waiting;
             }
 
             return EarlyParlayStatus(isRunningEarlyBetTypesParlay, isWaitingEarlyBetTypesParlay);
@@ -152,10 +152,10 @@ namespace Settlement.EventManagement.Services
         {
             if (isRunningEarlyBetTypesParlay)
             {
-                return "Parlay Running";
+                return TicketStatus.ParlayRunning;
             }
 
-            return isWaitingEarlyBetTypesParlay ? "Parlay Waiting" : "Completed";
+            return isWaitingEarlyBetTypesParlay ? TicketStatus.ParlayWaiting : TicketStatus.Completed;
         }
 
         private static bool IsNotExistedEarlyBetTypes(BaseMatch match)
@@ -175,10 +175,10 @@ namespace Settlement.EventManagement.Services
             var isExistFastMarketResult = match.IsExistFastMarketResult || matchSite.Exists(m => m.IsExistFastMarketResult);
             if (!isExistFastMarket)
             {
-                return isExistFastMarketResult ? "No Ticket" : "N/A";
+                return isExistFastMarketResult ? TicketStatus.NoTicket : TicketStatus.Normal;
             }
 
-            return isRunningFastMarket ? "Running" : "Completed";
+            return isRunningFastMarket ? TicketStatus.Running : TicketStatus.Completed;
         }
 
         private string GetBackgroundRunningTicket(BaseMatch match)

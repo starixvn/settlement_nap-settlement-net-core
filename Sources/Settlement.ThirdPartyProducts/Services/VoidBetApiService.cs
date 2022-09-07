@@ -52,7 +52,7 @@ namespace Settlement.ThirdPartyProducts.Services
             SendMailService sendMailService,
             IRefDataService refDataService,
             IHttpClientFactory httpClientFactory,
-             IOptions<AppSettingsKey> appSettingsKey)
+            IOptions<AppSettingsKey> appSettingsKey)
 
         {
             this.repository = repository;

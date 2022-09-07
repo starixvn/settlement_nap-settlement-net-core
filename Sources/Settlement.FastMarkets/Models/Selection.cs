@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Settlement.Core.Constants;
 
 namespace Settlement.FastMarkets.Models
 {
@@ -16,7 +17,7 @@ namespace Settlement.FastMarkets.Models
         {
             get
             {
-                return !Text.Equals("No Ticket") && isChecked;
+                return !Text.Equals(TicketStatus.NoTicket) && isChecked;
             }
             set
             {

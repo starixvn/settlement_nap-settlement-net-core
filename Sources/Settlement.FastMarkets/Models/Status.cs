@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Settlement.Core.Constants;
 
 namespace Settlement.FastMarkets.Models
 {
@@ -23,9 +24,9 @@ namespace Settlement.FastMarkets.Models
 
         private const int RefundDeterminedResult = 7;
 
-        public static Dictionary<int, string> TicketStatus => new Dictionary<int, string>
+        private static Dictionary<int, string> TicketStatusName => new Dictionary<int, string>
         {
-            { RunningTicket, "Running" }, { CalculatedTicket, "Calculated" }, { NoTicket, "No Ticket" }, { MarkedTicket, "Marked" }
+            { RunningTicket, TicketStatus.Running }, { CalculatedTicket, TicketStatus.Calculated }, { NoTicket, TicketStatus.NoTicket }, { MarkedTicket, TicketStatus.Marked }
         };
 
         public static Dictionary<int, string> ResultStatus => new Dictionary<int, string>
@@ -36,7 +37,7 @@ namespace Settlement.FastMarkets.Models
 
         public static string GetTicketStatusNameById(int id)
         {
-            return TicketStatus.FirstOrDefault(x => x.Key == id).Value;
+            return TicketStatusName.FirstOrDefault(x => x.Key == id).Value;
         }
 
         public static string GetResultStatusNameById(int id)

@@ -21,10 +21,6 @@ namespace Settlement.Sportsbook.OtherSports.Services
 
     public class BetStatusServiceImp : IBetStatusService
     {
-        private const string RefundFtBetStatus = "Refund FT;";
-
-        private const string RefundBetStatus = "Refund";
-
         private const int BaseballHTNode = 5;
 
         private const int FootballHTNode = 2;
@@ -163,10 +159,9 @@ namespace Settlement.Sportsbook.OtherSports.Services
             }
 
             betStatus = ProcessBetStatus(betStatus, lastestBetStatus, halfTimeNode);
-
-            if (!string.IsNullOrEmpty(lastestBetStatus) && lastestBetStatus.Contains(RefundFtBetStatus))
+            if (!string.IsNullOrEmpty(lastestBetStatus) && lastestBetStatus.Contains($"{BetStatus.RefundFT};"))
             {
-                betStatus.Insert(0, RefundFtBetStatus);
+                betStatus.Insert(0, $"{BetStatus.RefundFT};");
             }
 
             return new ScoreSetModel
@@ -276,7 +271,7 @@ namespace Settlement.Sportsbook.OtherSports.Services
             var scoreOnly = string.Empty;
             if (!string.IsNullOrEmpty(betStatus))
             {
-                scoreOnly = betStatus.Contains(RefundBetStatus) ? betStatus.Remove(betStatus.IndexOf('R'), betStatus.IndexOf(';')).Trim(',', ';') : betStatus;
+                scoreOnly = betStatus.Contains(BetStatus.Refund) ? betStatus.Remove(betStatus.IndexOf('R'), betStatus.IndexOf(';')).Trim(',', ';') : betStatus;
             }
 
             return scoreOnly;

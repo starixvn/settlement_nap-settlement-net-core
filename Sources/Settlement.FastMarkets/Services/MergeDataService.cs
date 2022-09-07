@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Settlement.Core.Models;
-using Settlement.FastMarkets.Constants;
 using Settlement.FastMarkets.Models;
 
 namespace Settlement.FastMarkets.Services
@@ -14,11 +12,7 @@ namespace Settlement.FastMarkets.Services
 
     public class MergeDataServiceImp : MergeDataService
     {
-        public MergeDataServiceImp()
-        {
-
-        }
-
+       
         public (List<FastMarketResult>, TicketCounts) MergeFastMarketTicketDetail(List<(List<FastMarketResult>, TicketCounts)> data)
         {
             var multipleFastMarketTickets = new List<List<FastMarketResult>>();
@@ -35,7 +29,7 @@ namespace Settlement.FastMarkets.Services
             return (fastMarketTickets, ticketCounts);
         }
 
-        private List<FastMarketResult> ResolveFastMarketTickets(List<List<FastMarketResult>> data)
+        private static List<FastMarketResult> ResolveFastMarketTickets(List<List<FastMarketResult>> data)
         {
             var baseData = data.First();
             var siteData = data.Skip(1).ToList();
@@ -53,7 +47,7 @@ namespace Settlement.FastMarkets.Services
             return baseData;
         }
 
-        private void SumTicketDetails(List<FastMarketResult> baseData, List<FastMarketResult> siteData)
+        private static void SumTicketDetails(List<FastMarketResult> baseData, List<FastMarketResult> siteData)
         {
             baseData.ForEach(item =>
             {
@@ -65,14 +59,14 @@ namespace Settlement.FastMarkets.Services
             });
         }
 
-        private void SumTicketDetail(FastMarketResult baseDetail, FastMarketResult siteDetail)
+        private static void SumTicketDetail(FastMarketResult baseDetail, FastMarketResult siteDetail)
         {
             baseDetail.TicketCount += siteDetail.TicketCount;
             baseDetail.TicketRunning += siteDetail.TicketRunning;
             baseDetail.TicketMarked += siteDetail.TicketMarked;
         }
 
-        private TicketCounts ResolveTicketCounts(List<TicketCounts> data)
+        private static TicketCounts ResolveTicketCounts(List<TicketCounts> data)
         {
             foreach (var ticketCounts in data.Skip(1))
             {
@@ -82,7 +76,7 @@ namespace Settlement.FastMarkets.Services
             return data[0];
         }
 
-        private void SumTicket(TicketCounts baseTicketCounts, TicketCounts siteTicketCounts)
+        private static void SumTicket(TicketCounts baseTicketCounts, TicketCounts siteTicketCounts)
         {
             baseTicketCounts.BetRunningCount += siteTicketCounts.BetRunningCount;
             baseTicketCounts.BetMarkedCount += siteTicketCounts.BetMarkedCount;

@@ -31,7 +31,6 @@ namespace Settlement.Sportsbook.Aio.Services
         private readonly AppSettingsKey appSettingsKey;
         private readonly ScaleOutSettleService scaleOutSettleService;
         private readonly ICreateQueryService createQueryService;
-
         private readonly MergeDataService mergeDataService;
 
         public MultipleServerAioServiceImp(IDynamicRepository repository,
@@ -78,7 +77,7 @@ namespace Settlement.Sportsbook.Aio.Services
             }
         }
 
-        private string CreateTicketStatus(Models.ResultDetail ticketDetail, int sportType, string settleType)
+        private static string CreateTicketStatus(Models.ResultDetail ticketDetail, int sportType, string settleType)
         {
             if (ticketDetail == null)
             {

@@ -60,26 +60,23 @@ namespace Settlement.Log.Services
 
         private string PositionAndResultName(int betTypeId, string position, string result)
         {
-            if (betTypeId == FastMarketBetType.TimeMachineOverUnder)
+            switch (betTypeId)
             {
-                var positionName = GetTimeMachinePosition(position);
-                return $"{positionName}({result})";
-            }
-            else if (betTypeId == FastMarketBetType.TimeMachineHandicap)
-            {
-                var home = Convert.ToInt32(result) % TimeMachineHandicapScoreRange;
-                var away = Convert.ToInt32(result) / TimeMachineHandicapScoreRange;
-                var positionName = GetTimeMachinePosition(position);
+                case FastMarketBetType.TimeMachineOverUnder:
+                {
+                    var positionName = GetTimeMachinePosition(position);
+                    return $"{positionName}({result})";
+                }
+                case FastMarketBetType.TimeMachineHandicap:
+                {
+                    var home = Convert.ToInt32(result) % TimeMachineHandicapScoreRange;
+                    var away = Convert.ToInt32(result) / TimeMachineHandicapScoreRange;
+                    var positionName = GetTimeMachinePosition(position);
 
-                return $"{positionName}({home}-{away})";
-            }
-            else if (betTypeId == FastMarketBetType.NextOneMinuteSetPiece)
-            {
-                return resultService.MinuteSetPieceResultName(position, result);
-            }
-            else
-            {
-                return resultService.ResultName(position, result);
+                    return $"{positionName}({home}-{away})";
+                }
+                default:
+                    return betTypeId == FastMarketBetType.NextOneMinuteSetPiece ? resultService.MinuteSetPieceResultName(position, result) : resultService.ResultName(position, result);
             }
         }
 

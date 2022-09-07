@@ -43,7 +43,7 @@ namespace Settlement.Setting.Services
             mailClient.SendMail(mailRecord);
         }
 
-        private string Subject(NotificationModel item)
+        private static string Subject(NotificationModel item)
         {
             return $"Settlement issue - [{item.Action}] - [{item.MatchCode}/{item.MatchId}] {item.HomeName} - {item.AwayName}";
 

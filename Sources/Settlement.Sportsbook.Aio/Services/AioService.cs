@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
 using ResultDetail = Settlement.Sportsbook.Aio.Models.ResultDetail;
 
 namespace Settlement.Sportsbook.Aio.Services
@@ -31,14 +32,12 @@ namespace Settlement.Sportsbook.Aio.Services
 
         Task<Result> SettleChildMatch(SettleChildMatchRequest request);
 
-        Task<Boolean> ResultSetting(ResultSettingRequest request);
+        Task<bool> ResultSetting(ResultSettingRequest request);
     }
 
     public class AioServiceImp : IAioService
     {
         private readonly IDynamicRepository repository;
-
-        private readonly PermissionService permissionService;
 
         private readonly IRefDataService refDataService;
 
@@ -48,27 +47,21 @@ namespace Settlement.Sportsbook.Aio.Services
 
         private readonly IValidateApiKeyService validateApiKeyService;
 
-        private readonly IConfiguration configuration;
-
         private readonly MultipleServerAioService multipleServerAioService;
 
         public AioServiceImp(
             IDynamicRepository repository,
-            PermissionService permissionService,
             IRefDataService refDataService,
             IMapperFactory mapperFactory,
             IValidateApiKeyService validateApiKeyService,
             ICreateQueryService createQueryService,
-            IConfiguration configuration,
             MultipleServerAioService multipleServerAioService)
         {
             this.repository = repository;
-            this.permissionService = permissionService;
             this.refDataService = refDataService;
             this.mapperFactory = mapperFactory;
             this.validateApiKeyService = validateApiKeyService;
             this.createQueryService = createQueryService;
-            this.configuration = configuration;
             this.multipleServerAioService = multipleServerAioService;
         }
 
@@ -114,7 +107,7 @@ namespace Settlement.Sportsbook.Aio.Services
                 MatchDetail = matchDetail,
                 ResultDetails = resultDetails,
                 TicketCounts = ticketCounts,
-                Permission = permissionService.Permission,
+                Permission = request.Permission,
                 HedgeMatchDetail = hedgeMatchDetail,
                 ExternalResults = externalResults,
                 ChildMatches = childMatches,
@@ -136,7 +129,7 @@ namespace Settlement.Sportsbook.Aio.Services
         public async Task<List<Models.ResultDetail>> GetRecalResult(GetRecalResultRequest request)
         {
             var criteria = createQueryService.QueryRecalResult(request);
-            var resultDetails = await repository.FetchAsync<Models.ResultDetail>(criteria);
+            var resultDetails = await repository.FetchAsync<ResultDetail>(criteria);
 
             return resultDetails.ToList();
         }
@@ -153,11 +146,6 @@ namespace Settlement.Sportsbook.Aio.Services
 
         public async Task<Result> VerifyNoRunningOdds(CheckRunningOddsRequest request)
         {
-            if (configuration.GetSection("EnableVerifyingRunningOdds").Value == "0")
-            {
-                return new Result();
-            }
-
             var criteria = new VerificationCriteria
             {
                 MatchId = request.MatchId,

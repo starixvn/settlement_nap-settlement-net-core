@@ -1,9 +1,7 @@
 ﻿using Settlement.Core.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Settlement.Core.Constants;
 
 namespace Settlement.Sportsbook.OtherSports.Services
 {
@@ -32,25 +30,25 @@ namespace Settlement.Sportsbook.OtherSports.Services
         {
             if (ticketCount == null || ticketCount.BetCount == 0)
             {
-                return "No Ticket";
+                return TicketStatus.NoTicket;
             }
 
             if (ticketCount.BetRunningCount > 0)
             {
-                return "Running";
+                return TicketStatus.Running;
             }
 
             if (ticketCount.BetMarkedCount > 0)
             {
-                return "Marked";
+                return TicketStatus.Marked;
             }
 
             if (ticketCount.BetWaitingCount > 0 && ticketCount.BetWaitingCount == ticketCount.BetCount)
             {
-                return "Waiting";
+                return TicketStatus.Waiting;
             }
 
-            return "Calculated";
+            return TicketStatus.Calculated;
         }
 
         public List<TicketCounts> MergeTicketCounts(List<List<TicketCounts>> multipleTicketCounts)
