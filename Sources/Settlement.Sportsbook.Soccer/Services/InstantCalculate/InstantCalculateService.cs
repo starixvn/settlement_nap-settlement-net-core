@@ -131,7 +131,7 @@ namespace Settlement.Sportsbook.Soccer.Services
 
         private string BetStatus(InstantCalculationRequest request)
         {
-            var betStatus = request.BetStatus;
+            var betStatus = request.BetStatus ?? string.Empty;
             if (request.Action.Equals(ActionType.UnCalculate))
             {
                 if (request.HomeScore == "0" && request.AwayScore == "0")
@@ -141,9 +141,8 @@ namespace Settlement.Sportsbook.Soccer.Services
             }
             else
             {
-                betStatus = instantResourceService.RemoveBetStatus(request);
-                betStatus += instantResourceService.BetStatusHTFL(request);
-                betStatus += instantResourceService.BetStatusFL(request);
+                betStatus += request.IsHalfTime ? instantResourceService.BetStatusHtFl(request, betStatus) : string.Empty;
+                betStatus += instantResourceService.BetStatusFl(request, betStatus);
             }
 
             return betStatus;

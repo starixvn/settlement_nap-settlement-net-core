@@ -151,7 +151,7 @@ namespace Settlement.EventManagement.Services.MultiSports
                 }
                 else
                 {
-                   matches = matchService.MergeMatches(matches, data);
+                    matches = matchService.MergeMatches(matches, data);
                 }
             }
 
@@ -265,7 +265,7 @@ namespace Settlement.EventManagement.Services.MultiSports
                 }
                 else
                 {
-                  matches = matchService.MergeMatches(matches, data);
+                    matches = matchService.MergeMatches(matches, data);
                 }
             }
 
@@ -282,7 +282,7 @@ namespace Settlement.EventManagement.Services.MultiSports
         public async Task<Result> Calculate(CalculateParlayRequest request)
         {
             var validateResult = await ValidateCalculateParlay(request);
-            
+
             if (!string.IsNullOrEmpty(validateResult.MatchIdsValid))
             {
                 await UpdateResultParlay(validateResult, request);
@@ -399,7 +399,7 @@ namespace Settlement.EventManagement.Services.MultiSports
                 Action = ActionType.CalculateAll
             };
 
-            var errorMessage = "";
+            var errorMessage = string.Empty;
             foreach (var server in appSettingsKey.SiteDbServer)
             {
                 if (!string.IsNullOrEmpty(validateTicketCriteria.MatchIdsValid))

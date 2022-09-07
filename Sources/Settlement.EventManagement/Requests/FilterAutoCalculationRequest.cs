@@ -31,7 +31,7 @@ namespace Settlement.EventManagement
         {
             get
             {
-                return autoSetting ?? "";
+                return autoSetting ?? string.Empty;
             }
 
             set

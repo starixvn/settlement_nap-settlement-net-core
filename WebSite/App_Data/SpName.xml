@@ -164,8 +164,8 @@
       <Setting Key="NAP_Set_MatchSel_DBSID01" SpName="NAP_Set_MatchSel_UAT1" DbName="DBSID01.bodb02.bodbAdminNet" />
     </Function>
     <Function Name="NAP_Set_WaitingSel">
-      <Setting Key="NAP_Set_WaitingSel_DBTXN" SpName="NAP_Set_WaitingSel_UAT1" DbName="DBTXN.bodb02.bodbAdminNet" TimeOut="6" />
-      <Setting Key="NAP_Set_WaitingSel_DBSID01" SpName="NAP_Set_WaitingSel_UAT1" DbName="DBSID01.bodb02.bodbAdminNet" TimeOut="6" />
+      <Setting Key="NAP_Set_WaitingSel_DBTXN" SpName="NAP_Set_WaitingSel_UAT1" DbName="DBTXN.bodb02.bodbAdminNet" TimeOut="20" />
+      <Setting Key="NAP_Set_WaitingSel_DBSID01" SpName="NAP_Set_WaitingSel_UAT1" DbName="DBSID01.bodb02.bodbAdminNet" TimeOut="20" />
     </Function>
     <Function Name="NAP_Set_AutoPayout_MatchSel">
       <Setting Key="NAP_Set_AutoPayout_MatchSel_DBTXN" SpName="NAP_Set_AutoPayout_MatchSel_UAT1" DbName="DBTXN.bodb02.bodbAdminNet" />

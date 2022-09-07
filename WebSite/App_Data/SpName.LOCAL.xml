@@ -168,8 +168,8 @@
     </Function>
 
     <Function Name="NAP_Set_WaitingSel">
-      <Setting Key="NAP_Set_WaitingSel_DBTXN" SpName="NAP_Set_WaitingSel" DbName="DBTXN.bodb02.bodbAdminNet" TimeOut="6" />
-      <Setting Key="NAP_Set_WaitingSel_DBSID01" SpName="NAP_Set_WaitingSel" DbName="DBSID01.bodb02.bodbAdminNet" TimeOut="6" />
+      <Setting Key="NAP_Set_WaitingSel_DBTXN" SpName="NAP_Set_WaitingSel" DbName="DBTXN.bodb02.bodbAdminNet" TimeOut="20" />
+      <Setting Key="NAP_Set_WaitingSel_DBSID01" SpName="NAP_Set_WaitingSel" DbName="DBSID01.bodb02.bodbAdminNet" TimeOut="20" />
     </Function>
 
     <Function Name="NAP_Set_AutoPayout_MatchSel">
