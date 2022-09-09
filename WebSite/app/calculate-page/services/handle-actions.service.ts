@@ -14,6 +14,7 @@ export class HandleActionsService {
     match.eventStatus = result.match.eventStatus;
     match.newEventStatus = result.match.newEventStatus;
     match.eventStatusColor = this.handleEventStatusColor(match, remark.isPending);
+    match.autoCalcSetting = result.match.autoCalcSetting;
   }
 
   public handleChangeInstantStatus(match: CalculationMatch) {

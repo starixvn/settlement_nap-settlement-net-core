@@ -127,6 +127,8 @@ export class RequestService {
           match.confirmFullTimeScore= newMatch.confirmFullTimeScore;
           match.confirmHalfTimeScore = newMatch.confirmHalfTimeScore;
           match.goalIcon = newMatch.goalIcon;
+          match.isNotConsistentExHtScore = newMatch.isNotConsistentExHtScore;
+          match.isNotConsistentExFtScore = newMatch.isNotConsistentExFtScore;
           if (isAutoCalculatePage) {
             this.mapNewestAutoCalculationMatch(match, newMatch);
           }

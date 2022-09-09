@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Kaden.Extensions;
 using Settlement.Core.Models;
 
@@ -8,6 +9,8 @@ namespace Settlement.Setting.Models
     {
         private string eventStatus = string.Empty;
         private string originalEventStatus = string.Empty;
+        private AutoCalculationSetting autoCalcSetting;
+        private const int ConvertToBase = 2;
 
         private readonly List<string> eventStatusReasonTitles = new List<string>
         {
@@ -46,5 +49,12 @@ namespace Settlement.Setting.Models
         public RemarkSettingModel Remark => new RemarkSettingModel(SettlementStatus);
 
         public int? EventStatusReason { get; set; }
+
+        public int AutoSetting { get; set; }
+
+        public AutoCalculationSetting AutoCalcSetting => autoCalcSetting ?? (autoCalcSetting = new AutoCalculationSetting
+        {
+            MatchSetting = Convert.ToString(AutoSetting, ConvertToBase).Reverse()
+        });
     }
 }

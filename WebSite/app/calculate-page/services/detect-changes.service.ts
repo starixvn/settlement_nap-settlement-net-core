@@ -38,7 +38,9 @@ export class DetectChangesService {
             || !_.isEqual(oldMatch.isExistMarkedTicketParlay, newMatch.isExistMarkedTicketParlay)
             || !_.isEqual(oldMatch.isExistRunningTicketParlay, newMatch.isExistRunningTicketParlay)
             || !_.isEqual(oldMatch.isExistRunningTicket, newMatch.isExistRunningTicket)
-            || !_.isEqual(oldMatch.isExistMarkedTicket, newMatch.isExistMarkedTicket);
+            || !_.isEqual(oldMatch.isExistMarkedTicket, newMatch.isExistMarkedTicket)
+            || oldMatch.isNotConsistentExFtScore !== newMatch.isNotConsistentExFtScore
+            || oldMatch.isNotConsistentExHtScore !== newMatch.isNotConsistentExHtScore;
     }
 
     private isSuspenderDifferent(oldMatch: CalculationMatch, newMatch: CalculationMatch) {
