@@ -28,16 +28,10 @@ namespace Settlement.Sportsbook.Soccer.Criteria
         public string ErrMsg { get; set; }
 
         [SpParam(Ignored = true)]
-        public string SpName { get => ActionName.IgnoreCaseEquals(ActionType.BetDaq) ? "NAP_Admin_Settlement_BetDaq_Move" : "NAP_Admin_Settlement_BetFair_Move"; }
+        public string SpName { get; set; }
 
-        public override string GetSettingKey()
-        {
-            return ActionName.IgnoreCaseEquals(ActionType.BetDaq) ? $"NAP_Admin_Settlement_BetDaq_Move_{DbServer}" : $"NAP_Admin_Settlement_BetFair_Move_{DbServer}";
-        }
+        public override string GetSettingKey() => $"{SpName}_{DbServer}";
 
-        public override bool IsValid()
-        {
-            return MatchId > 0;
-        }
+        public override bool IsValid() => MatchId > 0;
     }
 }

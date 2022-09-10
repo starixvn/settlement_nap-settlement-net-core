@@ -64,7 +64,7 @@ namespace Settlement.EventManagement.Services
         public bool IsExistRunningTicketParlay(BaseMatch match)
         {
             var isExistRunningTicketParlay = match.SiteMatch.Exists(m => m.IsExistRunningTicketParlay);
-            return match.IsExistMarkedTicketParlay || isExistRunningTicketParlay;
+            return match.IsExistRunningTicketParlay || isExistRunningTicketParlay;
         }
 
         public bool IsExistsConfirmedEarly(MultiSportMatch match)

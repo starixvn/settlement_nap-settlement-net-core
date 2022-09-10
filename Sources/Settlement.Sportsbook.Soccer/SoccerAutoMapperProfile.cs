@@ -21,7 +21,6 @@ namespace Settlement.Sportsbook.Soccer
             CreateMap<RefundRequest, GoalCondition>();
             CreateMap<GetSpecificBetTypeRequest, SpecificBetTypesCriteria>();
             CreateMap<CheckingMarkedTicketsRequest, CheckingMarkedTicketsCriteria>().ForMember(dest => dest.Action, opt => opt.MapFrom(src => src.ActionName));
-            CreateMap<MoveThirdPartyBetTicketCriteria, MoveThirdPartyBetTicketCriteria>();
             CreateMap<MoveBetRequest, MoveThirdPartyBetTicketCriteria>();
             CreateMap<Models.MatchDetail, GoalIconQueryModel>();
         }

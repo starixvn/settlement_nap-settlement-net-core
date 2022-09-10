@@ -31,7 +31,7 @@ namespace Settlement.Sportsbook.Soccer.Controllers
         public async Task<IActionResult> GetMatch(GetMatchRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
         [Route("get-lastest-match-detail"), HttpPost]
-        public async Task<IActionResult> GetLastestMatchDetail(GetLastestMatchDetailRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+        public async Task<IActionResult> GetLatestMatchDetail(GetLastestMatchDetailRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
         [Route("calculate"), HttpPost]
         [LogRequestResponse]

@@ -44,8 +44,6 @@ export class Match {
      public awayTotalGames: number;
      public mixParlay: MixParlay;
      public leagueId: number;
-     // public confirmHalfTimeColor: string;
-     // public confirmFullTimeColor: string;
      public exHalfTimeScore: string;
      public exFullTimeScore: string;
      public referenceActions: ReferenceAction[];

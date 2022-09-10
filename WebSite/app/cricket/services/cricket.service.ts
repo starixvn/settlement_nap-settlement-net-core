@@ -18,7 +18,7 @@ export class CricketService {
             netPositionApi = `${this.rootUrl}/settlement/net-position/uncalculate`;
         }
 
-        return this.httpRequestService.postJson(query, netPositionApi, false);
+        return this.httpRequestService.postJson(query, netPositionApi, true);
     }
 
     public resultNameById(resourceId: string, matchDetail: MatchDetail){

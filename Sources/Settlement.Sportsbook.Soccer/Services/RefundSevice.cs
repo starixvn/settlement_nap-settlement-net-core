@@ -13,6 +13,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Fanex.Settlement.ScaleOut.Services;
 using Fanex.Settlement.ScaleOut.Request;
+using Kaden.Extensions;
 using Microsoft.Extensions.Options;
 
 namespace Settlement.Sportsbook.Soccer.Services
@@ -219,14 +220,13 @@ namespace Settlement.Sportsbook.Soccer.Services
 
         public async Task<Result> MoveThirdPartyBetTickets(MoveBetRequest request)
         {
-            var criteria = mapper.Map<MoveBetRequest, MoveThirdPartyBetTicketCriteria>(request);
-            criteria.AdminId = currentSession.UserId;
-            criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
+            var spName = request.ActionName.IgnoreCaseEquals(ActionType.BetDaq) ? "NAP_Admin_Settlement_BetDaq_Move" : "NAP_Admin_Settlement_BetFair_Move";
             var validationRequest = new EventTicketRequest
             {
-                MatchId = criteria.MatchId,
+                MatchId = request.MatchId,
+                DestinationMatchId = request.NewMatchId,
                 Action = "MoveTicket",
-                SpName = criteria.SpName,
+                SpName = spName,
                 Mode = request.ActionName
             };
 
@@ -240,6 +240,10 @@ namespace Settlement.Sportsbook.Soccer.Services
                 };
             }
 
+            var criteria = mapper.Map<MoveBetRequest, MoveThirdPartyBetTicketCriteria>(request);
+            criteria.AdminId = currentSession.UserId;
+            criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
+            criteria.SpName = spName;
             foreach (var server in appSettingsKey.SiteDbServer)
             {
                 criteria.DbServer = server;
