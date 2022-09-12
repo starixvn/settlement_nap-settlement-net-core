@@ -58,7 +58,7 @@ export class OtherService {
         matchDetail.originalFinalAwayScore = matchDetail.finalAwayScore;
         matchDetail.originalHalfTimeHomeScore = matchDetail.halfTimeHomeScore;
         matchDetail.originalHalfTimeAwayScore = matchDetail.halfTimeAwayScore;
-        const showHalfTimetScore = (permission.isLeader || matchDetail.isHalfTimeCal) && !matchDetail.isCalRefund;
+        const showHalfTimetScore = (permission.isLeader || matchDetail.isHalfTimeCal) && !matchDetail.betStatus.includes("Refund;");
         const showFinalScore = (permission.isLeader || matchDetail.isCalculated) && !matchDetail.isCalRefund;
         matchDetail.finalHomeScore = showFinalScore ? matchDetail.finalHomeScore : null;
         matchDetail.finalAwayScore = showFinalScore ? matchDetail.finalAwayScore : null;
