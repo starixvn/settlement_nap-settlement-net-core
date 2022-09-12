@@ -97,12 +97,12 @@ export class OtherCalculationComponent implements SportTemplate {
   }
 
   private getHtConfirmStatus() {
-    return !this.matchDetail.isCalculated && !this.matchDetail.isCalRefund
+    return !this.matchDetail.isHalfTimeCal && !this.matchDetail.isCalRefund
       && this.verificationService.isHtScoreConfirmed(this.matchDetail);
   }
 
   private getFinalConfirmStatus() {
-    return !this.matchDetail.isHalfTimeCal && !this.matchDetail.isCalRefund
+    return !this.matchDetail.isCalculated && !this.matchDetail.isCalRefund
       && this.verificationService.isFinalScoreConfirmed(this.matchDetail);
   }
 
