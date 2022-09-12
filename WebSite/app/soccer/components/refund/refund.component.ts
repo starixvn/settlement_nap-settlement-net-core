@@ -10,7 +10,7 @@ import { BetDaq, BetFair, HedgeMatchDetail, Match, MatchDetail } from './model/m
 import { RequestService } from './services/request.service';
 import { VerifyMatchService } from './services/verify-match.service';
 import { SpecificBettypeComponent } from './specific-bettype.component';
-import { ClosePopupService, MessageBoxService } from '../../../shared/services';
+import { MessageBoxService } from '../../../shared/services';
 import { VerifyActionService } from './services/verify-action.service';
 import { RefundQuery } from './model/query.model';
 import { ConfirmRefundComponent } from './confirm-refund.component';
@@ -47,7 +47,6 @@ export class RefundComponent implements Soccer {
     private readonly toastrService: ToastrService,
     private readonly messageBoxService: MessageBoxService,
     private readonly verifyActionService: VerifyActionService,
-    private readonly closePopupService: ClosePopupService,
     private readonly dialog: MatDialog) {
     this.dialogMessage.title = Language.RefundConfirmationBox;
   }
@@ -96,7 +95,7 @@ export class RefundComponent implements Soccer {
       this.toastrService.overlayContainer = this.toastContainer;
       if (value) {
         if (value.result.isSuccessful) {
-          this.closePopupService.closePopup();
+          this.messageBoxService.closePopupNotChanged();
         } else {
           this.toastrService.clear();
           this.toastrService.error(value.result.errMsg);
@@ -204,7 +203,7 @@ export class RefundComponent implements Soccer {
       actionName, this.betDaq, this.betFair, this.isDeterminedHedgeMatch);
     const result = await this.requestService.refundMatch(query).toPromise() as Result;
     if (result.isSuccessful) {
-      this.closePopupService.closePopup();
+      this.messageBoxService.closePopup();
     } else {
       this.toastrService.error(result.errMsg);
     }
@@ -215,7 +214,7 @@ export class RefundComponent implements Soccer {
     const refundType = isBetDaq ? RefundType.refundBetDaq : RefundType.refundBetFair;
     const result = await this.requestService.refundRunningThirdPartyTickets(this.matchDetail.matchId, refundType).toPromise() as Result;
     if (result.isSuccessful) {
-      this.closePopupService.closePopup();
+      this.messageBoxService.closePopup();
     } else {
       this.toastrService.error(result.errMsg);
     }
