@@ -179,8 +179,13 @@ export class FullTimeCalculationComponent implements SportTemplate {
   }
 
   public changeBetStatus() {
-    this.matchDetail.betStatus = Number(this.matchDetail.betStatus) > this.maxRound || Number(this.matchDetail.betStatus) === 0 ? this.oldBetStatus : this.matchDetail.betStatus;
+    this.matchDetail.betStatus = Number(this.matchDetail.betStatus) > this.maxRound || this.isZero(this.matchDetail.betStatus) ? this.oldBetStatus : this.matchDetail.betStatus;
     this.oldBetStatus = this.matchDetail.betStatus;
+  }
+
+  private isZero(value: string)
+  {
+    return !_.isEmpty(value) && Number(value) === 0;
   }
 
   public copyScore() {
