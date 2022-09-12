@@ -28,6 +28,7 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
         protected toastrService: ToastrService,
         protected aioService: AioService) {
         super(aioService, toastrService);
+        this.confirmationDialogMessage.title = Language.confirmationBox;
     }
 
     async getMatch(matchId: number, rootUrl: string): Promise<void> {
