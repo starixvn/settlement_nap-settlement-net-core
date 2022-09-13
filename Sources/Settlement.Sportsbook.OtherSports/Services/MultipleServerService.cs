@@ -147,7 +147,8 @@ namespace Settlement.Sportsbook.OtherSports.Services
             {
                 MatchId = refundCriteria.MatchId,
                 Action = refundCriteria.Action,
-                AdminId = refundCriteria.AdminId
+                AdminId = refundCriteria.AdminId,
+                BetStatus = refundCriteria.BetStatus
             };
 
             await scaleOutSettleService.UpdateMatchInfo(requestUpdateInfo);

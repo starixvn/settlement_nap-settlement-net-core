@@ -24,6 +24,8 @@ namespace Settlement.Sportsbook.OtherSports.Criteria
 
         public string BroadcastSessionId { get; } = Guid.NewGuid().ToString();
 
+        public string BetStatus { get; set; }
+
         public int ErrCode { get; set; }
 
         public string ErrMsg { get; set; }
