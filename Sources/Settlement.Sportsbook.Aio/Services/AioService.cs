@@ -1,5 +1,4 @@
 ﻿using Fanex.Data.Repository;
-using Microsoft.Extensions.Configuration;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.Aio.Constants;
@@ -11,7 +10,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Options;
 using ResultDetail = Settlement.Sportsbook.Aio.Models.ResultDetail;
 
 namespace Settlement.Sportsbook.Aio.Services
@@ -68,7 +66,7 @@ namespace Settlement.Sportsbook.Aio.Services
         public async Task<AioMatch> GetMatch(GetMatchRequest request)
         {
             var apiKey = validateApiKeyService.GetApiKey(request.ApiKey);
-            var matchCriteria = validateApiKeyService.CriteriaName(request, $"{apiKey}-{ ApiKeyConstant.MatchInfoKey}");
+            var matchCriteria = validateApiKeyService.CriteriaName(request, $"{apiKey}-{ApiKeyConstant.MatchInfoKey}");
             var matchDetail = await repository.GetAsync<Models.MatchDetail>(matchCriteria);
             var externalResults = new List<ExternalResultModel>();
             if (matchDetail != null)
@@ -85,7 +83,7 @@ namespace Settlement.Sportsbook.Aio.Services
                 }
             }
 
-            var resultDetailCriteria = (GetResultDetailCriteria) validateApiKeyService.CriteriaName(request, $"{apiKey}-{ApiKeyConstant.ResultDetailKey}");
+            var resultDetailCriteria = (GetResultDetailCriteria)validateApiKeyService.CriteriaName(request, $"{apiKey}-{ApiKeyConstant.ResultDetailKey}");
             var (resultDetails, ticketCounts) = await multipleServerAioService.FetchResultDetails(resultDetailCriteria, matchDetail.SportType);
 
             var mapperService = mapperFactory.GetMapperService($"{apiKey}-{ApiKeyConstant.ResultDetailKey}");
@@ -166,7 +164,7 @@ namespace Settlement.Sportsbook.Aio.Services
         public async Task<Result> SaveScore(SaveScoreRequest request)
         {
             var requestQuery = createQueryService.QuerySaveScore(request);
-            var criteria = validateApiKeyService.CreateNonQueryCommand(requestQuery, $"{requestQuery.ApiKey}-{ ApiKeyConstant.SaveScore}") as IReturnValue;
+            var criteria = validateApiKeyService.CreateNonQueryCommand(requestQuery, $"{requestQuery.ApiKey}-{ApiKeyConstant.SaveScore}") as IReturnValue;
             await repository.ExecuteAsync((INonQueryCommand)criteria);
             return new Result
             {
