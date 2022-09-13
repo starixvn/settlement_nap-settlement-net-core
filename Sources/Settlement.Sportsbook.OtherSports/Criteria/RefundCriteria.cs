@@ -7,6 +7,8 @@ namespace Settlement.Sportsbook.OtherSports.Criteria
 {
     public class RefundCriteria : NonQueryCommand
     {
+        private string betStatus;
+
         public int MatchId { get; set; }
 
         public int AdminId { get; set; }
@@ -24,7 +26,15 @@ namespace Settlement.Sportsbook.OtherSports.Criteria
 
         public string BroadcastSessionId { get; } = Guid.NewGuid().ToString();
 
-        public string BetStatus { get; set; }
+        public string BetStatus
+        {
+            get {
+                return Action == ActionType.RefundFullTime ? betStatus : null;
+            }
+            set {
+                betStatus = value;
+            }
+        }
 
         public int ErrCode { get; set; }
 
