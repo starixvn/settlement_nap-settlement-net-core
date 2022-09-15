@@ -1,3 +1,4 @@
+import { ResourceIds } from './../../../soccer/constants/resourceIds.native';
 import { Injectable } from '@angular/core';
 import { Match, MatchDetail } from '../../models';
 import * as _ from 'lodash';
@@ -7,6 +8,7 @@ import { HalfTimeFullTimeService } from './halftime-fulltime.service';
 import { ResultDetail } from '../../../shared/models/sportsbook-sop';
 import { CalculateAction } from '../../../shared/constants';
 import { map } from 'rxjs/operators';
+import { ResourcesIds } from '../../constants/resource-ids.native';
 
 @Injectable()
 export class VerificationService {
@@ -69,6 +71,10 @@ export class VerificationService {
             return isCalcAll ? isFinalEmpty || isHalfTimeEmpty : isFinalEmpty;
         }
         return _.find(resultDetails, item => {
+            if(_.isEqual(item.resourceId, ResourcesIds.ot)) {
+                return (_.isEmpty(item.homeValue) && !_.isEmpty(item.awayValue))
+                 || (_.isEmpty(item.awayValue) && !_.isEmpty(item.homeValue))
+            }
             return _.isEmpty(item.homeValue) || _.isEmpty(item.awayValue);
         });
     }

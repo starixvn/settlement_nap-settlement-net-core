@@ -200,6 +200,8 @@ export class HalfTimeFullTimeCalculationComponent implements SportTemplate {
       return this.clickCalcHalfTime && _.isEmpty(score);
     } else if (_.isEqual(resultDetail.resourceId, ResourcesIds.fullTime)) {
       return this.clickCalcFullTime && _.isEmpty(score);
+    } else if (_.isEqual(resultDetail.resourceId, ResourcesIds.ot)) {
+      return this.clickCalcFullTime && _.isEmpty(score) && (!_.isEmpty(resultDetail.homeValue) || !_.isEmpty(resultDetail.awayValue));
     } else {
       const index = this.resultWithoutOverTime.indexOf(resultDetail);
       return !(this.isScoreDirect || index < 0 || index >= this.numberNodeChecking()) && _.isEmpty(score);
@@ -332,7 +334,7 @@ export class HalfTimeFullTimeCalculationComponent implements SportTemplate {
   public calculateFullTime() {
     this.clearStatus();
     this.clickCalcFullTime = true;
-    if (this.verificationService.verifyAllScore(this.halfTime, this.fullTime, this.resultWithoutOverTime, this.isScoreDirect)) {
+    if (this.verificationService.verifyAllScore(this.halfTime, this.fullTime, this.results, this.isScoreDirect)) {
       this.toastrService.error(Language.warningInputScore);
     } else if (this.isScoreFTInconsistent) {
       this.toastrService.error(Language.inconsistentValues);
@@ -345,7 +347,7 @@ export class HalfTimeFullTimeCalculationComponent implements SportTemplate {
     this.clearStatus();
     this.clickCalcHalfTime = true;
     this.clickCalcFullTime = true;
-    if (this.verificationService.verifyAllScore(this.halfTime, this.fullTime, this.resultWithoutOverTime, this.isScoreDirect, true)) {
+    if (this.verificationService.verifyAllScore(this.halfTime, this.fullTime, this.results, this.isScoreDirect, true)) {
       this.toastrService.error(Language.warningInputScore);
     } else if (this.isScoreFTInconsistent || this.isScoreHTInconsistent) {
       this.toastrService.error(Language.inconsistentValues);
