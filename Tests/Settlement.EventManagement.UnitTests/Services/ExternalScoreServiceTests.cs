@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using Settlement.Core.Models;
 using Settlement.EventManagement.Services;
-using Match = Settlement.EventManagement.Models.Match;
+using Match = Settlement.EventManagement.Models.MultiSports.Match;
 using Xunit;
+using Settlement.EventManagement.Services.MultiSports;
 
 namespace Settlement.EventManagement.UnitTests.Services
 {

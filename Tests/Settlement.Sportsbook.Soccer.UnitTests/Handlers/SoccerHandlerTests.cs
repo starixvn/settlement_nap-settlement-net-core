@@ -8,7 +8,7 @@ using Settlement.Sportsbook.Soccer.Services;
 using Xunit;
 using Match = Settlement.Sportsbook.Soccer.Models.Match;
 using MatchDetail = Settlement.Sportsbook.Soccer.Models.MatchDetail;
-using Settlement.Core.Constants;
+using Settlement.Sportsbook.Soccer.GetMatch.Services;
 
 namespace Settlement.Sportsbook.Soccer.UnitTests.Handlers
 {

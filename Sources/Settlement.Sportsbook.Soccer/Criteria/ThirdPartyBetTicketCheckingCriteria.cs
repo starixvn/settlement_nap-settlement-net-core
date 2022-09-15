@@ -2,7 +2,7 @@
 
 namespace Settlement.Sportsbook.Soccer.Criteria
 {
-    internal class GetMatchDetailThirdPartyBetTicketCriteria : CriteriaBase
+    public class GetMatchDetailThirdPartyBetTicketCriteria : CriteriaBase
     {
         public int MatchId { get; set; }
 

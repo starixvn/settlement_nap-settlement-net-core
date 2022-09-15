@@ -6,10 +6,9 @@ using NSubstitute;
 using Settlement.Core.Models;
 using Settlement.EventManagement.Controllers;
 using Settlement.EventManagement.Models;
+using Settlement.EventManagement.Models.MultiSports;
 using Settlement.EventManagement.Requests;
-using Settlement.EventManagement.Services;
 using Xunit;
-using Match = Settlement.EventManagement.Models.Match;
 
 namespace Settlement.EventManagement.UnitTests.Controllers
 {
@@ -19,11 +18,8 @@ namespace Settlement.EventManagement.UnitTests.Controllers
 
         private readonly IMediator mediator;
 
-        private readonly IMultiSportService multiSportService;
-
         public MultiSportControllerTests()
         {
-            multiSportService = Substitute.For<IMultiSportService>();
             mediator = Substitute.For<IMediator>();
             controller = new MultiSportController(mediator);
         }
@@ -43,40 +39,29 @@ namespace Settlement.EventManagement.UnitTests.Controllers
         public async Task Filter_Always_ReturnsListMatchesOnSports()
         {
             // Arrange
-            var sports = new List<SportModel> {
-                new SportModel {
-                     Id = 1,
-                     Name = "Soccer"
-                }
-            };
-
-            multiSportService.GetSportBook(Arg.Any<FilterMultiSportRequest>()).Returns(sports);
+            mediator.Send(Arg.Any<FilterMultiSportRequest>()).Returns(new MultiSportModel());
 
             // Act
-            var result = await controller.Filter(new FilterMultiSportRequest());
+            var actual = await controller.Filter(new FilterMultiSportRequest()) as OkObjectResult;
 
             // Assert
-            Assert.NotNull(result);
+            Assert.IsType<MultiSportModel>(actual.Value);
+            Assert.Equal(200, actual.StatusCode);
         }
 
         [Fact]
         public async Task RefreshMathces_Always_ReturnsListMatches()
         {
             // Arrange
-            var matches = new List<Match> {
-                new Match {
-                     MatchCode = "ABC",
-                     MatchId = 12345
-                }
-            };
 
-            multiSportService.GetWaitingMatches(Arg.Any<RefreshMultiSportRequest>()).Returns(matches);
+            mediator.Send(Arg.Any<RefreshMultiSportRequest>()).Returns(new List<MultiSportMatchWaiting>());
 
             // Act
-            var result = await controller.RefreshMatches(new RefreshMultiSportRequest());
+            var actual = await controller.RefreshMatches(new RefreshMultiSportRequest()) as OkObjectResult;
 
             // Assert
-            Assert.NotNull(result);
+            Assert.IsType<MultiSportModel>(actual.Value);
+            Assert.Equal(200, actual.StatusCode);
         }
 
         [Fact]

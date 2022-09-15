@@ -10,15 +10,18 @@ using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Requests;
 using Settlement.Sportsbook.Soccer.Services;
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
+using Fanex.Settlement.ScaleOut.Models;
 using Newtonsoft.Json;
 using Settlement.Core.Constants;
-using Settlement.Sportsbook.Soccer.Constants;
 using Xunit;
 using Settlement.Sportsbook.Soccer.Services.InstantCalculate;
+using Microsoft.Extensions.Options;
+using Settlement.Core.Models;
+using Fanex.Settlement.ScaleOut.Services;
+using Fanex.Settlement.ScaleOut.Request;
 
-namespace Settlement.Sportsbook.Soccer.UnitFacts.Services
+namespace Settlement.Sportsbook.Soccer.UnitTests.Services.Instant
 {
     public class InstantCalculateServiceFacts
     {
@@ -32,6 +35,8 @@ namespace Settlement.Sportsbook.Soccer.UnitFacts.Services
 
         private readonly IInstantResourceService instantResourceService;
 
+        private readonly ScaleOutSettleService scaleOutSettleService;
+
         private readonly IInstantCalculateService service;
 
         public InstantCalculateServiceFacts()
@@ -41,6 +46,7 @@ namespace Settlement.Sportsbook.Soccer.UnitFacts.Services
             accessor = Substitute.For<IHttpContextAccessor>();
             xmlConvertService = Substitute.For<XmlConvertService>();
             instantResourceService = Substitute.For<IInstantResourceService>();
+            scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
             var context = new DefaultHttpContext();
             context.Connection.RemoteIpAddress = new System.Net.IPAddress(1);
             accessor.HttpContext = context;
@@ -48,11 +54,13 @@ namespace Settlement.Sportsbook.Soccer.UnitFacts.Services
             mapperConfig.AddProfile<SoccerAutoMapperProfile>();
             var config = new MapperConfiguration(mapperConfig);
             var mapper = new Mapper(config);
-            service = new InstantCalculateServiceImp(repository, currentSession, mapper, accessor, xmlConvertService, instantResourceService);
+            var appSettings = new AppSettingsKey { SiteDbServer = new List<string> { "DB01", "DB02", "DB03" } };
+            var option = Options.Create(appSettings);
+            service = new InstantCalculateServiceImp(repository, currentSession, mapper, accessor, xmlConvertService, instantResourceService, option, scaleOutSettleService);
         }
 
         [Fact]
-        public async Task CalculateCheckingInfo_Always_ReturnsMatchInfoFromRepositoryGet()
+        public async Task CalculateCheckingInfo_ExistError_ReturnsMatchInfoFromRepositoryGet()
         {
             // Arrange
             const int errorCode = 100;
@@ -62,7 +70,7 @@ namespace Settlement.Sportsbook.Soccer.UnitFacts.Services
                 {
                     x.ErrCode = errorCode;
                     x.ErrMsg = errorMsg;
-                })).Returns(new MatchGoalRecordModel());
+                })).Returns(new MatchGoalRecordModel { IsExistHtFgNg = true });
 
             // Act
             var actualMatch = await service.CalculateCheckingInfo(new MatchCheckingRequest());
@@ -71,7 +79,41 @@ namespace Settlement.Sportsbook.Soccer.UnitFacts.Services
             var expectedMatch = new MatchGoalRecordModel
             {
                 ErrCode = errorCode,
-                ErrMsg = errorMsg
+                ErrMsg = errorMsg,
+                IsExistHtFgNg = true
+            };
+            Assert.Equal(JsonConvert.SerializeObject(expectedMatch), JsonConvert.SerializeObject(actualMatch));
+        }
+
+        [Fact]
+        public async Task CalculateCheckingInfo_NotExistError_ReturnsMatchInfoFromRepositoryGet()
+        {
+            // Arrange
+            var matchCheckingCentral = new MatchGoalRecordModel
+            {
+                GoalRecord = "123",
+                BetStatus = "1234",
+                IsExistFgNg = true
+            };
+            var matchCheckingSite = new MatchGoalRecordModel { IsExistHtFgNg = true };
+
+            var matchCheckingSiteSecond = new MatchGoalRecordModel { IsExistFG = true, IsExistHTFG = true };
+
+            repository
+                .GetAsync<MatchGoalRecordModel>(Arg.Any<InstantCheckingCriteria>()).Returns(matchCheckingCentral, matchCheckingSite, matchCheckingSiteSecond);
+
+            // Act
+            var actualMatch = await service.CalculateCheckingInfo(new MatchCheckingRequest());
+
+            // Assert
+            var expectedMatch = new MatchGoalRecordModel
+            {
+                IsExistHtFgNg = true,
+                IsExistFgNg = true,
+                IsExistFG = true,
+                IsExistHTFG = true,
+                GoalRecord = "123",
+                BetStatus = "1234"
             };
             Assert.Equal(JsonConvert.SerializeObject(expectedMatch), JsonConvert.SerializeObject(actualMatch));
         }
@@ -88,11 +130,7 @@ namespace Settlement.Sportsbook.Soccer.UnitFacts.Services
                 IsHalfTime = false
             };
             instantResourceService.UnCalculate(Arg.Any<InstantGoalCondition>()).Returns(new List<XmlResource>());
-            await repository.ExecuteAsync(Arg.Do<PushInstantCalculationCriteria>(x =>
-            {
-                x.ErrCode = errorCode;
-                x.ErrMsg = errorMsg;
-            }));
+            scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage { ErrorCode = errorCode, ErrorMessage = errorMsg });
 
             // Act
             var result = await service.PushInstantCalculation(request);
@@ -115,11 +153,7 @@ namespace Settlement.Sportsbook.Soccer.UnitFacts.Services
                 IsHalfTime = true
             };
             instantResourceService.Halftime(Arg.Any<InstantGoalCondition>()).Returns(new List<XmlResource>());
-            await repository.ExecuteAsync(Arg.Do<PushInstantCalculationCriteria>(x =>
-            {
-                x.ErrCode = errorCode;
-                x.ErrMsg = errorMsg;
-            }));
+            scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage { ErrorCode = errorCode, ErrorMessage = errorMsg });
 
             // Act
             var result = await service.PushInstantCalculation(request);
@@ -142,11 +176,7 @@ namespace Settlement.Sportsbook.Soccer.UnitFacts.Services
                 IsHalfTime = false
             };
             instantResourceService.FullTime(Arg.Any<InstantGoalCondition>()).Returns(new List<XmlResource>());
-            await repository.ExecuteAsync(Arg.Do<PushInstantCalculationCriteria>(x =>
-            {
-                x.ErrCode = errorCode;
-                x.ErrMsg = errorMsg;
-            }));
+            scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage { ErrorCode = errorCode, ErrorMessage = errorMsg }); ;
 
             // Act
             var result = await service.PushInstantCalculation(request);
@@ -155,6 +185,27 @@ namespace Settlement.Sportsbook.Soccer.UnitFacts.Services
             instantResourceService.Received().FullTime(Arg.Any<InstantGoalCondition>());
 
             Assert.True(result.ErrCode == errorCode && result.ErrMsg == errorMsg);
+        }
+
+        [Fact]
+        public async Task PushInstantCalculation_NotExistError_CallUpdateResultAndMatchInfoBeforePush()
+        {
+            // Arrange
+            var request = new InstantCalculationRequest { Action = ActionType.CalculateAll, HomeScore = "0", AwayScore = "0" };
+            scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
+
+            // Act
+            var result = await service.PushInstantCalculation(request);
+
+            // Assert
+            Received.InOrder(() =>
+            {
+                repository.Received().ExecuteAsync(Arg.Any<AddAutoResultCriteria>());
+                scaleOutSettleService.Received().UpdateMatchInfo(Arg.Any<UpdateMatchInfoRequest>());
+                repository.Received().ExecuteAsync(Arg.Any<PushInstantCalculationCriteria>());
+                repository.Received().ExecuteAsync(Arg.Any<PushInstantCalculationCriteria>());
+                repository.Received().ExecuteAsync(Arg.Any<PushInstantCalculationCriteria>());
+            });
         }
     }
 }

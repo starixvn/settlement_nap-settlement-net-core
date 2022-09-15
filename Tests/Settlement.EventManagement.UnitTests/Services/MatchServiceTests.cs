@@ -1,11 +1,13 @@
-﻿using Settlement.EventManagement.Services;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using NSubstitute;
 using Settlement.Core.Constants;
 using Settlement.Core.Services;
 using Xunit;
 using Settlement.Core.Models;
-using Match = Settlement.EventManagement.Models.Match;
+using Match = Settlement.EventManagement.Models.MultiSports.Match;
+using Settlement.EventManagement.Services.MultiSports;
+using Fanex.Settlement.ScaleOut.Services;
+using Settlement.EventManagement.Services;
 
 namespace Settlement.EventManagement.UnitTests.Services
 {
@@ -17,11 +19,21 @@ namespace Settlement.EventManagement.UnitTests.Services
 
         private readonly IMatchService service;
 
+        private readonly ScaleOutSettleService scaleOutSettleService;
+
+        private readonly NewInfoMatchService newInfoMatchService;
+
+        private readonly CompareMatchService compareMatchService;
+
         public MatchServiceTests()
         {
             matchResultDetailService = Substitute.For<IMatchResultDetailService>();
             refDataService = Substitute.For<IRefDataService>();
-            service = new MatchServiceImp(refDataService, matchResultDetailService);
+            scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
+            newInfoMatchService = Substitute.For<NewInfoMatchService>();
+            compareMatchService = Substitute.For<CompareMatchService>();
+
+            service = new MatchServiceImp(refDataService, matchResultDetailService, compareMatchService, newInfoMatchService, scaleOutSettleService);
         }
 
         [Fact]

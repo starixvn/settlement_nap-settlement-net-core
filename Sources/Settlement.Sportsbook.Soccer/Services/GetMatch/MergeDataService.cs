@@ -1,5 +1,4 @@
 ﻿using Settlement.Core.Models;
-using Settlement.Sportsbook.Soccer.Constants;
 using Settlement.Sportsbook.Soccer.Models;
 using System.Collections.Generic;
 using System.Linq;
@@ -131,22 +130,22 @@ namespace Settlement.Sportsbook.Soccer.GetMatch.Services
             return listSiteChildMatch;
         }
 
-        public BetDaq MergeBetDaq(BetDaq baseBetDaq, List<BetDaq> nodeBetDaqs)
+        public BetDaq MergeBetDaq(BetDaq baseBetDaq, List<BetDaq> siteBetDaqs)
         {
-            baseBetDaq.IsExcludeBetDaq = nodeBetDaqs.Any(betDaq => betDaq.IsExcludeBetDaq) || baseBetDaq.IsExcludeBetDaq;
-            baseBetDaq.IsMoveBetDaq = nodeBetDaqs.Any(betDaq => betDaq.IsMoveBetDaq) || baseBetDaq.IsMoveBetDaq;
-            baseBetDaq.IsRefundRunningBetDaq = nodeBetDaqs.Any(betDaq => betDaq.IsRefundRunningBetDaq) || baseBetDaq.IsRefundRunningBetDaq;
-            baseBetDaq.IsSettleAbandonedMatchBetDaq = nodeBetDaqs.Any(betDaq => betDaq.IsSettleAbandonedMatchBetDaq) || baseBetDaq.IsSettleAbandonedMatchBetDaq;
+            baseBetDaq.IsExcludeBetDaq = siteBetDaqs.Any(betDaq => betDaq.IsExcludeBetDaq) || baseBetDaq.IsExcludeBetDaq;
+            baseBetDaq.IsMoveBetDaq = siteBetDaqs.Any(betDaq => betDaq.IsMoveBetDaq) || baseBetDaq.IsMoveBetDaq;
+            baseBetDaq.IsRefundRunningBetDaq = siteBetDaqs.Any(betDaq => betDaq.IsRefundRunningBetDaq) || baseBetDaq.IsRefundRunningBetDaq;
+            baseBetDaq.IsSettleAbandonedMatchBetDaq = siteBetDaqs.Any(betDaq => betDaq.IsSettleAbandonedMatchBetDaq) || baseBetDaq.IsSettleAbandonedMatchBetDaq;
 
             return baseBetDaq;
         }
 
-        public BetFair MergeBetFair(BetFair baseBetDaq, List<BetFair> nodeBetDaqs)
+        public BetFair MergeBetFair(BetFair baseBetDaq, List<BetFair> siteBetDaqs)
         {
-            baseBetDaq.IsExcludeBetFair = nodeBetDaqs.Any(betDaq => betDaq.IsExcludeBetFair) || baseBetDaq.IsExcludeBetFair;
-            baseBetDaq.IsMoveBetFair = nodeBetDaqs.Any(betDaq => betDaq.IsMoveBetFair) || baseBetDaq.IsMoveBetFair;
-            baseBetDaq.IsRefundRunningBetFair = nodeBetDaqs.Any(betDaq => betDaq.IsRefundRunningBetFair) || baseBetDaq.IsRefundRunningBetFair;
-            baseBetDaq.IsSettleAbandonedMatchBetFair = nodeBetDaqs.Any(betDaq => betDaq.IsSettleAbandonedMatchBetFair) || baseBetDaq.IsSettleAbandonedMatchBetFair;
+            baseBetDaq.IsExcludeBetFair = siteBetDaqs.Any(betDaq => betDaq.IsExcludeBetFair) || baseBetDaq.IsExcludeBetFair;
+            baseBetDaq.IsMoveBetFair = siteBetDaqs.Any(betDaq => betDaq.IsMoveBetFair) || baseBetDaq.IsMoveBetFair;
+            baseBetDaq.IsRefundRunningBetFair = siteBetDaqs.Any(betDaq => betDaq.IsRefundRunningBetFair) || baseBetDaq.IsRefundRunningBetFair;
+            baseBetDaq.IsSettleAbandonedMatchBetFair = siteBetDaqs.Any(betDaq => betDaq.IsSettleAbandonedMatchBetFair) || baseBetDaq.IsSettleAbandonedMatchBetFair;
 
             return baseBetDaq;
         }

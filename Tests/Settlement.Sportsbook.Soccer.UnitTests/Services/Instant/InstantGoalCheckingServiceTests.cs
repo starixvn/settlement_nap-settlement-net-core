@@ -2,7 +2,7 @@
 using Settlement.Sportsbook.Soccer.Services.InstantCalculate;
 using Xunit;
 
-namespace Settlement.Sportsbook.Soccer.UnitTests.Services
+namespace Settlement.Sportsbook.Soccer.UnitTests.Services.Instant
 {
     public class InstantGoalCheckingServiceTests
     {

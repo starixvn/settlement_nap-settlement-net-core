@@ -131,7 +131,7 @@ namespace Settlement.Sportsbook.Soccer.Services.InstantCalculate
 
         public string RemoveBetStatus(InstantCalculationRequest request)
         {
-            if (request.BetStatus == null)
+            if (string.IsNullOrEmpty(request.BetStatus))
             {
                 return string.Empty;
             }

@@ -4,16 +4,18 @@ using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.Configuration;
 using Fanex.NAP.Client.Helpers.Web;
-using Kaden.XmlConverter;
+using Fanex.Settlement.ScaleOut.Models;
 using Microsoft.AspNetCore.Http;
 using Settlement.Sportsbook.Soccer.Services;
 using NSubstitute;
 using Settlement.Core.Constants;
-using Settlement.Sportsbook.Soccer.Constants;
 using Xunit;
 using Settlement.Sportsbook.Soccer.Requests;
 using Settlement.Sportsbook.Soccer.Criteria;
-using Settlement.Sportsbook.Soccer.Models;
+using Settlement.Core.Models;
+using Microsoft.Extensions.Options;
+using Fanex.Settlement.ScaleOut.Services;
+using Fanex.Settlement.ScaleOut.Request;
 
 namespace Settlement.Sportsbook.Soccer.UnitTests.Services
 {
@@ -25,11 +27,11 @@ namespace Settlement.Sportsbook.Soccer.UnitTests.Services
 
         private readonly IHttpContextAccessor accessor;
 
-        private readonly XmlConvertService xmlConvertService;
-
         private readonly IResourceService resourceService;
 
-        private readonly IBetStatusAllService betStatusAllService;
+        private readonly ScaleOutSettleService scaleOutSettleService;
+
+        private readonly ICreateCriteriaService createCriteriaService;
 
         private readonly IRefundService service;
 
@@ -38,9 +40,9 @@ namespace Settlement.Sportsbook.Soccer.UnitTests.Services
             repository = Substitute.For<IDynamicRepository>();
             currentSession = Substitute.For<INapSession>();
             accessor = Substitute.For<IHttpContextAccessor>();
-            betStatusAllService = Substitute.For<IBetStatusAllService>();
-            xmlConvertService = Substitute.For<XmlConvertService>();
             resourceService = Substitute.For<IResourceService>();
+            createCriteriaService = Substitute.For<ICreateCriteriaService>();
+            scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
             var context = new DefaultHttpContext();
             context.Connection.RemoteIpAddress = new System.Net.IPAddress(1);
             accessor.HttpContext = context;
@@ -48,13 +50,15 @@ namespace Settlement.Sportsbook.Soccer.UnitTests.Services
             mapperConfig.AddProfile<SoccerAutoMapperProfile>();
             var config = new MapperConfiguration(mapperConfig);
             var mapper = new Mapper(config);
-            service = new RefundServiceImp(repository, currentSession, mapper, accessor, xmlConvertService, resourceService, betStatusAllService);
+            var appSettings = new AppSettingsKey { SiteDbServer = new List<string> { "DB01", "DB02", "DB03" } };
+            var option = Options.Create(appSettings);
+            service = new RefundServiceImp(repository, mapper, accessor, option, createCriteriaService, currentSession, scaleOutSettleService);
         }
 
         [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public async Task CheckMarkedTickets_Always_ReturnCorrectResult(bool result)
+        [InlineData(true, 1)]
+        [InlineData(false, 3)]
+        public async Task CheckMarkedTickets_Always_ReturnCorrectResult(bool result, byte executeTime)
         {
             await repository.ExecuteAsync(Arg.Do<CheckingMarkedTicketsCriteria>(x =>
             {
@@ -68,25 +72,30 @@ namespace Settlement.Sportsbook.Soccer.UnitTests.Services
             var actual = await service.CheckMarkedTickets(request);
 
             Assert.Equal(result, actual.IsExistMarkedTicket);
+            await repository.Received(executeTime).ExecuteAsync(Arg.Any<CheckingMarkedTicketsCriteria>());
         }
 
-        [Fact]
-        public async Task RefundRunningThirdPartyTickets_Always_ReturnsTrueAsync()
+        [Theory]
+        [InlineData(0, null, 3)]
+        [InlineData(1, "Error", 0)]
+        public async Task RefundRunningThirdPartyTickets_Always_ReturnsTrue(byte errorCode, string errorMsg, byte executeTime)
         {
             // Arrange
-            const int errorCode = 1;
-            const string errorMsg = "Error";
-            await repository.ExecuteAsync(Arg.Do<RefundRunningThirdPartyTicketCriteria>(x => { x.ErrCode = errorCode; x.ErrMsg = errorMsg; }));
-
+            scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>())
+                .Returns(new ResultMessage { ErrorCode = errorCode, ErrorMessage = errorMsg });
+            await repository.ExecuteAsync(Arg.Any<RefundRunningThirdPartyTicketCriteria>());
             // Act
             var result = await service.RefundRunningThirdPartyTickets(new RefundRunningThirdPartyTicketRequest());
 
             // Assert
-            Assert.True(result.ErrCode == errorCode && result.ErrMsg.Equals(errorMsg));
+            Assert.True(result.ErrCode == errorCode && result.ErrMsg == errorMsg);
+            await repository.Received(executeTime).ExecuteAsync(Arg.Any<RefundRunningThirdPartyTicketCriteria>());
         }
 
-        [Fact]
-        public async Task MoveThirdPartyBetTickets_Always_ReturnsTrueAsync()
+        [Theory]
+        [InlineData(0, null, 3)]
+        [InlineData(1, "Error", 0)]
+        public async Task MoveThirdPartyBetTickets_Always_ReturnsTrue(byte errorCode, string errorMsg, byte executeTime)
         {
             // Arrange
             var request = new MoveBetRequest
@@ -96,77 +105,16 @@ namespace Settlement.Sportsbook.Soccer.UnitTests.Services
                 NewMatchCode = "ABC",
                 ActionName = string.Empty
             };
-
-            const int errorCode = 1;
-            const string errorMsg = "Error";
+            scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>())
+                .Returns(new ResultMessage { ErrorCode = errorCode, ErrorMessage = errorMsg });
             await repository.ExecuteAsync(Arg.Do<MoveThirdPartyBetTicketCriteria>(x => { x.ErrCode = errorCode; x.ErrMsg = errorMsg; }));
 
             // Act
             var result = await service.MoveThirdPartyBetTickets(request);
 
             // Assert
-            Assert.True(result.ErrCode == errorCode && result.ErrMsg.Equals(errorMsg));
-        }
-
-        [Fact]
-        public void RefundCriteria_ActionHalftime_CallInOrderFunctionOnService()
-        {
-            var query = new RefundRequest()
-            {
-                ActionName = ActionType.RefundHalfTime,
-            };
-
-            resourceService.HalftimeResources(Arg.Any<GoalCondition>(), Arg.Any<int>())
-                .Returns(new List<XmlResource>());
-
-            service.Refund(query);
-
-            resourceService.Received().HalftimeResources(Arg.Any<GoalCondition>(), Arg.Any<int>());
-            repository.Received().ExecuteAsync(Arg.Any<RefundCriteria>());
-        }
-
-        [Fact]
-        public void RefundCriteria_ActionFullTime_CallInOrderFunctionOnService()
-        {
-            var query = new RefundRequest()
-            {
-                ActionName = ActionType.RefundFullTime,
-                IsSettleAbandonedMatchIbc = true
-            };
-
-            resourceService.FullTimeResourcesSettleDetermined(Arg.Any<GoalCondition>())
-                .Returns(new List<XmlResource>());
-
-            service.Refund(query);
-
-            Received.InOrder(() =>
-            {
-                betStatusAllService.GetBetStatusRefund(Arg.Any<RefundRequest>());
-                resourceService.FullTimeResourcesSettleDetermined(Arg.Any<GoalCondition>());
-                repository.ExecuteAsync(Arg.Any<RefundCriteria>());
-            });
-        }
-
-        [Fact]
-        public void RefundCriteria_ActionAll_CallInOrderFunctionOnService()
-        {
-            var query = new RefundRequest()
-            {
-                ActionName = ActionType.RefundAll,
-                IsSettleAbandonedMatchIbc = true
-            };
-
-            resourceService.AllResourcesSettleDetermined(Arg.Any<GoalCondition>())
-                .Returns(new List<XmlResource>());
-
-            service.Refund(query);
-
-            Received.InOrder(() =>
-            {
-                betStatusAllService.GetBetStatusRefund(Arg.Any<RefundRequest>());
-                resourceService.AllResourcesSettleDetermined(Arg.Any<GoalCondition>());
-                repository.ExecuteAsync(Arg.Any<RefundCriteria>());
-            });
+            Assert.True(result.ErrCode == errorCode && result.ErrMsg == errorMsg);
+            await repository.Received(executeTime).ExecuteAsync(Arg.Any<MoveThirdPartyBetTicketCriteria>());
         }
 
         [Theory]
@@ -174,20 +122,39 @@ namespace Settlement.Sportsbook.Soccer.UnitTests.Services
         [InlineData(1, "Error", false)]
         public async Task Refund_Always_ReturnCorrectResult(int errorCode, string errorMsg, bool result)
         {
-            var query = new RefundRequest
+            var criteria = new RefundCriteria
             {
-                ActionName = ActionType.RefundAll
+                Action = ActionType.RefundAll
             };
-            resourceService.AllResources(Arg.Any<GoalCondition>(), Arg.Any<int>()).Returns(new List<XmlResource>());
-            await repository.ExecuteAsync(Arg.Do<RefundCriteria>(x =>
-            {
-                x.ErrCode = errorCode;
-                x.ErrMsg = errorMsg;
-            }));
+            createCriteriaService.CreateRefundCriteria(Arg.Any<RefundRequest>()).Returns(criteria);
+            scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>())
+                .Returns(new ResultMessage { ErrorCode = errorCode, ErrorMessage = errorMsg });
 
-            var actual = await service.Refund(query);
+            var actual = await service.Refund(new RefundRequest());
 
             Assert.Equal(result, actual.IsSuccessful);
+        }
+
+        [Fact]
+        public async Task Refund_Always_UpdateMatch()
+        {
+            var query = new RefundRequest()
+            {
+                GoalRecord = "AH",
+                ActionName = ActionType.CalculateAll,
+            };
+            var criteria = new RefundCriteria()
+            {
+                Action = ActionType.CalculateAll
+            };
+            createCriteriaService.CreateRefundCriteria(Arg.Any<RefundRequest>()).Returns(criteria);
+            scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
+
+            await service.Refund(query);
+
+            await scaleOutSettleService.Received()
+                .UpdateUnderSettlementFlag(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<string>());
+            await scaleOutSettleService.Received().UpdateMatchInfo(Arg.Any<UpdateMatchInfoRequest>());
         }
 
         [Fact]
@@ -199,12 +166,17 @@ namespace Settlement.Sportsbook.Soccer.UnitTests.Services
                 IsApplyHedging = true,
                 HedgeMatchId = 123
             };
-            resourceService.HalftimeResources(Arg.Any<GoalCondition>(), Arg.Any<int>()).Returns(new List<XmlResource>());
+            var criteria = new RefundCriteria()
+            {
+                Action = ActionType.CalculateAll
+            };
+            createCriteriaService.CreateRefundCriteria(Arg.Any<RefundRequest>()).Returns(criteria);
+            scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
             await repository.ExecuteAsync(Arg.Any<RefundCriteria>());
 
             await service.Refund(query);
 
-            await repository.Received(2).ExecuteAsync(Arg.Any<RefundCriteria>());
+            await repository.Received(6).ExecuteAsync(Arg.Any<RefundCriteria>());
         }
     }
 }

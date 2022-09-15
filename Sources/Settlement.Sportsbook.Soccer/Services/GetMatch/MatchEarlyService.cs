@@ -3,7 +3,6 @@ using Fanex.Data.Repository;
 using Fanex.NAP.Client;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
-using Settlement.Sportsbook.Soccer.Constants;
 using Settlement.Sportsbook.Soccer.Criteria;
 using Settlement.Sportsbook.Soccer.Models;
 using System;
@@ -136,7 +135,7 @@ namespace Settlement.Sportsbook.Soccer.GetMatch.Services
             if (specialBetTypes.Contains(betType) && ticketDetail.BetCount == 0)
             {
                 return TicketStatus.NoTicket;
-            }    
+            }
 
             return TicketStatus.Calculated;
         }

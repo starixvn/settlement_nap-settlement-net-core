@@ -1,14 +1,16 @@
 ﻿using Settlement.Sportsbook.Soccer.Services;
 using System.Collections.Generic;
+using System.Text;
 using Newtonsoft.Json;
 using NSubstitute;
 using Settlement.Core.Constants;
 using Settlement.Sportsbook.Soccer.Constants;
 using Settlement.Sportsbook.Soccer.Models;
+using Settlement.Sportsbook.Soccer.Requests;
 using Xunit;
 using Settlement.Sportsbook.Soccer.Services.InstantCalculate;
 
-namespace Settlement.Sportsbook.Soccer.UnitFacts.Services
+namespace Settlement.Sportsbook.Soccer.UnitTests.Services.Instant
 {
     public class InstantResourceServiceFacts
     {
@@ -300,6 +302,74 @@ namespace Settlement.Sportsbook.Soccer.UnitFacts.Services
 
             // Assert
             Assert.Empty(actual);
+        }
+
+        [Theory]
+        [InlineData(false, "H;", "", "")]
+        [InlineData(true, "H;", "", "FL:1-0;")]
+        [InlineData(true, "H;", "1FL:2-0;", "FL:1-0;")]
+        [InlineData(true, "A;", "1FL:1-0;", "FL:2-0;")]
+        [InlineData(true, "A;", "FL:1-0;", "")]
+        public void BetStatusFl_Always_ReturnBetStatus(bool isExistFg, string goalRecord, string betStatus, string expected)
+        {
+            //arrange
+            var request = new InstantCalculationRequest
+            {
+                IsExistFG = isExistFg,
+                GoalRecord = goalRecord
+            };
+
+            //act
+            var actual = service.BetStatusFl(request, betStatus);
+
+            //assert
+            Assert.Equal(expected, actual);
+        }
+
+        [Theory]
+        [InlineData(false, "H;", "", "")]
+        [InlineData(true, ";H", "", "")]
+        [InlineData(true, "A;", "", "1FL:2-0;")]
+        [InlineData(true, "A;", "1FL:1-0;", "")]
+        [InlineData(true, "A;", "FL:1-0;", "1FL:2-0;")]
+        [InlineData(true, "H;", "FL:1-0;", "1FL:1-0;")]
+        public void BetStatusHtFl_Always_ReturnBetStatus(bool isExistHTFG, string goalRecord, string betStatus, string expected)
+        {
+            //arrange
+            var request = new InstantCalculationRequest
+            {
+                IsExistHTFG = isExistHTFG,
+                GoalRecord = goalRecord
+            };
+
+            //act
+            var actual = service.BetStatusHtFl(request, betStatus);
+
+            //assert
+            Assert.Equal(expected, actual);
+        }
+
+        [Theory]
+        [InlineData("", true, true, "")]
+        [InlineData("1FL:2-0;", true, true, "")]
+        [InlineData("FL:2-0;", true, true, "")]
+        [InlineData("1FL:2-0;FL:2-0;", true, true, "")]
+        [InlineData("1FL:2-0;FL:2-0;", false, false, "1FL:2-0;FL:2-0;")]
+        public void RemoveBetStatus_Always_RemoveBetStatus(string betStatus, bool isExistHTFG, bool isExistFG, string expected)
+        {
+            //arrange
+            var request = new InstantCalculationRequest
+            {
+                BetStatus = betStatus,
+                IsExistHTFG = isExistHTFG,
+                IsExistFG = isExistFG
+            };
+
+            //act
+            var actual = service.RemoveBetStatus(request);
+
+            //assert
+            Assert.Equal(expected, actual);
         }
     }
 }

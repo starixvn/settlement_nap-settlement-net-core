@@ -80,5 +80,57 @@ namespace Settlement.Sportsbook.Soccer.UnitTests.Services
             // Assert
             Assert.Equal(JsonConvert.SerializeObject(expectedGoal), JsonConvert.SerializeObject(actualGoal)); ;
         }
+
+        [Theory]
+        [InlineData("H;", "H")]
+        [InlineData("A;H", "A")]
+        [InlineData("H", "H")]
+        public void HalftimeGoal_Always_ReturnHalfTimeGoal(string goalRecord, string expected)
+        {
+            //act
+            var actual = service.HalftimeGoal(goalRecord);
+
+            //assert
+            Assert.Equal(expected, actual);
+        }
+
+        [Theory]
+        [InlineData("H;", "")]
+        [InlineData("A;H", "H")]
+        [InlineData("H", "")]
+        public void FullTimeGoal_Always_ReturnFullTimeGoal(string goalRecord, string expected)
+        {
+            //act
+            var actual = service.FullTimeGoal(goalRecord);
+
+            //assert
+            Assert.Equal(expected, actual);
+        }
+
+        [Theory]
+        [InlineData("", false, "N")]
+        [InlineData("", true, "")]
+        [InlineData("A;H", true, "H")]
+        public void LastGoalRecord_Always_ReturnLastGoal(string goalRecord, bool isRefund, string expected)
+        {
+            //act
+            var actual = service.LastGoalRecord(goalRecord, isRefund);
+
+            //assert
+            Assert.Equal(expected, actual);
+        }
+
+        [Theory]
+        [InlineData("", false, "N")]
+        [InlineData("", true, "")]
+        [InlineData("A;H", true, "A")]
+        public void FirstGoalRecord_Always_ReturnFirstGoal(string goalRecord, bool isRefund, string expected)
+        {
+            //act
+            var actual = service.FirstGoalRecord(goalRecord, isRefund);
+
+            //assert
+            Assert.Equal(expected, actual);
+        }
     }
 }
