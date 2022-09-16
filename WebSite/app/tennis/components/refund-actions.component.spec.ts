@@ -246,7 +246,7 @@ describe('Tennis - Refund actions component', () => {
         match.resultDetails,
         CalculateAction.refund,
         false,
-        "",
+        "Refund;",
         TennisApiKeys.Settle);
       spyOn(aioService, 'push').and.returnValue(of(successfulResult));
 

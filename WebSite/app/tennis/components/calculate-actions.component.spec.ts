@@ -17,7 +17,6 @@ import {
   HttpRequestService,
   BlockUIService,
   MessageBoxService,
-  ClosePopupService,
   AioService,
   IntervalCalculationService
 } from '../../shared/services';
@@ -38,11 +37,9 @@ describe('Tennis - Calculate actions component', () => {
   let component: CalculateActionsComponent;
   let fixture: ComponentFixture<CalculateActionsComponent>;
   let aioService: AioService;
-  let closePopupService: ClosePopupService;
   let messageBoxService: MessageBoxService;
   let verificationService: VerificationService;
   let toastrService: ToastrService;
-  let tennisService: TennisService;
   const buttonName = "btn-danger";
   const errorMessage = "Error message";
   const successfulResult = {
@@ -92,7 +89,6 @@ describe('Tennis - Calculate actions component', () => {
         MessageBoxService,
         HttpRequestService,
         BlockUIService,
-        ClosePopupService,
         TennisService,
         AioService,
         VerificationService,
@@ -124,9 +120,7 @@ describe('Tennis - Calculate actions component', () => {
         fixture = TestBed.createComponent(CalculateActionsComponent);
         component = fixture.componentInstance;
         aioService = fixture.debugElement.injector.get(AioService);
-        closePopupService = fixture.debugElement.injector.get(ClosePopupService);
         messageBoxService = fixture.debugElement.injector.get(MessageBoxService);
-        tennisService = fixture.debugElement.injector.get(TennisService);
         verificationService = fixture.debugElement.injector.get(VerificationService);
         toastrService = fixture.debugElement.injector.get(ToastrService);
       });
@@ -164,7 +158,7 @@ describe('Tennis - Calculate actions component', () => {
       spyOn(verificationService, 'allMapHaveScoreSources').and.returnValue(true);
       spyOn(verificationService, 'isExistMismatchScore').and.returnValue(false);
       spyOn(aioService, 'push').and.returnValue(of(successfulResult));
-      spyOn(closePopupService, 'closePopup');
+      spyOn(messageBoxService, 'closePopup');
       spyOn(verificationService, 'getOutsideScores').and.returnValue([]);
       spyOn(verificationService, 'getChangedScores').and.returnValue([]);
       spyOn(aioService, 'saveScore').and.returnValue(of(successfulResult));
@@ -192,7 +186,7 @@ describe('Tennis - Calculate actions component', () => {
       spyOn(verificationService, 'allMapHaveScoreSources').and.returnValue(true);
       spyOn(verificationService, 'isExistMismatchScore').and.returnValue(false);
       spyOn(aioService, 'push').and.returnValue(of(unSuccessfulResult));
-      spyOn(closePopupService, 'closePopup');
+      spyOn(messageBoxService, 'closePopup');
       spyOn(verificationService, 'getOutsideScores').and.returnValue([]);
       spyOn(verificationService, 'getChangedScores').and.returnValue([]);
       spyOn(aioService, 'saveScore').and.returnValue(of(successfulResult));
@@ -219,7 +213,7 @@ describe('Tennis - Calculate actions component', () => {
       spyOn(verificationService, 'allMapHaveScoreSources').and.returnValue(true);
       spyOn(verificationService, 'isExistMismatchScore').and.returnValue(false);
       spyOn(aioService, 'push').and.returnValue(of(successfulResult));
-      spyOn(closePopupService, 'closePopup');
+      spyOn(messageBoxService, 'closePopup');
       spyOn(verificationService, 'getOutsideScores').and.returnValue([]);
       spyOn(verificationService, 'getChangedScores').and.returnValue([]);
       spyOn(aioService, 'saveScore').and.returnValue(of(unSuccessfulResult));
@@ -245,7 +239,7 @@ describe('Tennis - Calculate actions component', () => {
       spyOn(aioService, 'verifyNoRunningOdds').and.returnValue(of(successfulResult));
       spyOn(verificationService, 'allMapHaveScoreSources').and.returnValue(false);
       spyOn(verificationService, 'isExistMismatchScore').and.returnValue(true);
-      spyOn(closePopupService, 'closePopup');
+      spyOn(messageBoxService, 'closePopup');
       spyOn(verificationService, 'getOutsideScores').and.returnValue([]);
       spyOn(verificationService, 'getChangedScores').and.returnValue([]);
       spyOn(aioService, 'saveScore').and.returnValue(of(successfulResult));
@@ -353,7 +347,7 @@ describe('Tennis - Calculate actions component', () => {
       spyOn(verificationService, 'allMapHaveScoreSources').and.returnValue(true);
       spyOn(verificationService, 'isExistMismatchScore').and.returnValue(false);
       spyOn(aioService, 'push').and.returnValue(of(successfulResult));
-      spyOn(closePopupService, 'closePopup');
+      spyOn(messageBoxService, 'closePopup');
       spyOn(verificationService, 'getOutsideScores').and.returnValue([]);
       spyOn(verificationService, 'getChangedScores').and.returnValue([]);
       spyOn(aioService, 'saveScore').and.returnValue(of(successfulResult));
@@ -393,7 +387,7 @@ describe('Tennis - Calculate actions component', () => {
         match.resultDetails = resultDetails;
         component.match = match;
         spyOn(aioService, 'push').and.returnValue(of(successfulResult));
-        spyOn(closePopupService, 'closePopup');
+        spyOn(messageBoxService, 'closePopup');
         spyOn(toastrService, 'error');
         component.uncalculate();
 
@@ -402,7 +396,7 @@ describe('Tennis - Calculate actions component', () => {
         tick();
 
         expect(toastrService.error).not.toHaveBeenCalled();
-        expect(closePopupService.closePopup).toHaveBeenCalled();
+        expect(messageBoxService.closePopup).toHaveBeenCalled();
       }));
 
     it('Pass all validation and uncalculation is unsuccessful. Should return an error.', fakeAsync(() => {
@@ -432,7 +426,7 @@ describe('Tennis - Calculate actions component', () => {
       match.resultDetails = resultDetails;
       component.match = match;
       spyOn(aioService, 'push').and.returnValue(of(successfulResult));
-      spyOn(closePopupService, 'closePopup');
+      spyOn(messageBoxService, 'closePopup');
 
       component.uncalculate();
 

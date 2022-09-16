@@ -123,7 +123,7 @@ describe('RefundComponent', () => {
     spyOn(requestService, 'getMatch').and.returnValue(of(match));
     spyOn(verifyMatchService, 'setDisableRefund').and.returnValue(new MainRefundButtonStatus(true, true, true));
 
-    await component.getMatch(1, 'abc');
+    await component.getMatch(1);
 
     expect(requestService.getMatch).toHaveBeenCalled();
     expect(component.buttonRefundStatus).toEqual(new MainRefundButtonStatus(true, true, true));
@@ -160,11 +160,11 @@ describe('RefundComponent', () => {
         afterClosed: () => of({ result })
       };
       spyOn(dialog, 'open').and.returnValue(mockDialogRef);
-      spyOn(closePopupService, 'closePopup');
+      spyOn(messageBoxService, 'closePopupNotChanged');
 
       component.openPopupMoveBet(true);
 
-      expect(closePopupService.closePopup).toHaveBeenCalled();
+      expect(messageBoxService.closePopupNotChanged).toHaveBeenCalled();
     });
 
     it('should show error p when sub popup move bet close and return unSuccessful', () => {
@@ -234,7 +234,7 @@ describe('RefundComponent', () => {
       spyOn(requestService, 'checkingMarkedTicket').and.returnValue(of(resultMarkedTickets));
       spyOn(requestService, 'checkNewStatus').and.returnValue(of(successfulResult));
       spyOn(requestService, 'refundMatch').and.returnValue(of(successfulResult));
-      spyOn(closePopupService, 'closePopup');
+      spyOn(messageBoxService, 'closePopup');
 
       await component.refundHalftime();
       tick();
@@ -242,7 +242,7 @@ describe('RefundComponent', () => {
       buttonYes.click();
       tick();
 
-      expect(closePopupService.closePopup).toHaveBeenCalled();
+      expect(messageBoxService.closePopup).toHaveBeenCalled();
     }));
 
     it('should show error when refund return fail', fakeAsync(async () => {

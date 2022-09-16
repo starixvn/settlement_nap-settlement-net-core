@@ -1,7 +1,7 @@
 <span toastContainer></span>
 <div class="padding" *ngIf="match">
   <div *ngIf="isReadyMatch">
-    <calculate-match-detail [match]="match" [apiUrl]="apiUrl"></calculate-match-detail>
+    <calculate-match-detail [match]="match"></calculate-match-detail>
     <ticket-count [ticketCounts]="match.ticketCounts"></ticket-count>
     <div class="calculation-actions">
       <div *ngIf="hedgeMatchDetail" class="hedge-match">

@@ -2,12 +2,14 @@
 import { HttpClientModule } from '@angular/common/http';
 import { fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { url } from 'inspector';
 import { BlockUIService, HttpRequestService, MessageBoxService } from '../../../../shared/services';
 import { RefundQuery } from '../model/query.model';
 import { RequestService } from './request.service';
 describe('Soccer refund - request service', () => {
     let service: RequestService;
     let httpRequestService: HttpRequestService;
+    const url = 'api/soccer';
     beforeEach(() => TestBed.configureTestingModule({
         providers: [
             RequestService,
@@ -34,7 +36,7 @@ describe('Soccer refund - request service', () => {
             () => {
                 // Arrange
                 const matchId = 7000000;
-                const url = 'Local/api/soccer/get-match';
+                const apiUrl = `${url}/get-match`;
                 const query = {
                     matchId,
                     isRefundPage: true,
@@ -46,7 +48,7 @@ describe('Soccer refund - request service', () => {
                 tick();
 
                 // Assert
-                expect(httpRequestService.postJson).toHaveBeenCalledWith(query, url);
+                expect(httpRequestService.postJson).toHaveBeenCalledWith(query, apiUrl);
             }));
 
     it('checkNewStatus - Call exact Url and param',
@@ -54,7 +56,7 @@ describe('Soccer refund - request service', () => {
             () => {
                 // Arrange
                 const matchId = 7000000;
-                const url = 'Local/api/soccer/check-status';
+                const apiUrl = `${url}/check-status`;
                 const query = {
                     matchId,
                     actionName: "calc",
@@ -67,14 +69,14 @@ describe('Soccer refund - request service', () => {
                 tick();
 
                 // Assert
-                expect(httpRequestService.postJson).toHaveBeenCalledWith(query, url);
+                expect(httpRequestService.postJson).toHaveBeenCalledWith(query, apiUrl);
             }));
 
     it('getSpecificBetType - Call exact Url and param',
         fakeAsync(
             () => {
                 // Arrange
-                const url = 'Local/api/soccer/specific-bet-type';
+                const apiUrl = `${url}/specific-bet-type`;
                 const query = {
                     type: "BetDaq",
                     action: "ALL"
@@ -87,13 +89,13 @@ describe('Soccer refund - request service', () => {
                 tick();
 
                 // Assert
-                expect(httpRequestService.postJson).toHaveBeenCalledWith(query, url);
+                expect(httpRequestService.postJson).toHaveBeenCalledWith(query, apiUrl);
             }));
 
     it('checkingMarkedTicket - Call exact Url and param', fakeAsync(
         () => {
             // Arrange
-            const url = 'Local/api/soccer/checking-marked-tickets';
+            const apiUrl = `${url}/checking-marked-tickets`;
             const query = {
                 matchId: 10000,
                 actionName: "Refund FT"
@@ -106,13 +108,13 @@ describe('Soccer refund - request service', () => {
             tick();
 
             // Assert
-            expect(httpRequestService.postJson).toHaveBeenCalledWith(query, url, false);
+            expect(httpRequestService.postJson).toHaveBeenCalledWith(query, apiUrl, false);
         }));
 
     it('refundMatch - Call exact Url and param', fakeAsync(
         () => {
             // Arrange
-            const url = 'Local/api/soccer/refund';
+            const apiUrl = `${url}/refund`;
             const query: RefundQuery = {
                 matchId: 10000,
                 actionName: "Refund FT",
@@ -141,12 +143,12 @@ describe('Soccer refund - request service', () => {
             tick();
 
             // Assert
-            expect(httpRequestService.postJson).toHaveBeenCalledWith(query, url);
+            expect(httpRequestService.postJson).toHaveBeenCalledWith(query, apiUrl);
         }));
     it('refundRunningThirdPartyTickets - Call exact Url and param', fakeAsync(
         () => {
             // Arrange
-            const url = 'Local/api/soccer/refund-running-third-party-ticket';
+            const apiUrl = `${url}/refund-running-third-party-ticket`;
             const query = {
                 matchId: 10000,
                 actionName: "Refund FT"
@@ -159,14 +161,14 @@ describe('Soccer refund - request service', () => {
             tick();
 
             // Assert
-            expect(httpRequestService.postJson).toHaveBeenCalledWith(query, url);
+            expect(httpRequestService.postJson).toHaveBeenCalledWith(query, apiUrl);
         }));
 
 
     it('getMatchDetailThirdPartyBetTickets - Call exact Url and param', fakeAsync(
         () => {
             // Arrange
-            const url = 'Local/api/soccer/third-party-bet-tickets-checking';
+            const apiUrl = `${url}/third-party-bet-tickets-checking`;
             const query = {
                 matchId: 10000,
 
@@ -178,13 +180,13 @@ describe('Soccer refund - request service', () => {
             tick();
 
             // Assert
-            expect(httpRequestService.postJson).toHaveBeenCalledWith(query, url);
+            expect(httpRequestService.postJson).toHaveBeenCalledWith(query, apiUrl);
         }));
 
     it('moveBetType - Call exact Url and param', fakeAsync(
         () => {
             // Arrange
-            const url = 'Local/api/soccer/move-third-party-bet-ticket';
+            const apiUrl = `${url}/move-third-party-bet-ticket`;
             const query = {
                 matchId: 10000,
                 newMatchId: 20000,
@@ -198,7 +200,7 @@ describe('Soccer refund - request service', () => {
             tick();
 
             // Assert
-            expect(httpRequestService.postJson).toHaveBeenCalledWith(query, url);
+            expect(httpRequestService.postJson).toHaveBeenCalledWith(query, apiUrl);
         }));
 
 });

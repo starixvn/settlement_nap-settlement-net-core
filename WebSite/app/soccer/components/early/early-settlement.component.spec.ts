@@ -41,7 +41,7 @@ import {
     ResultValue
 } from '../../constants';
 import { Language } from '../../../shared/language';
-import { ResultSettingModel, ResultSettingQuery } from '../../../shared/models';
+import { ResultSettingModel } from '../../../shared/models';
 import { MatchDetailComponent } from './match-detail.component';
 import { ScoreBySettlementPipe } from '../../../shared/pipes/score-by-settlement.pipe';
 import { ToastContainerDirective, ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
@@ -52,11 +52,9 @@ describe('Soccer - EarlySettlementComponent', () => {
     let closePopupService: ClosePopupService;
     let messageBoxService: MessageBoxService;
     let verifyCalculateService: VerifyCalculateService;
-    let verifyRefundService: VerifyRefundService;
     let autoFillService: AutoFillService;
     let penaltyShootoutService: PenaltyShootoutService;
     let penaltyWoodWorkService: PenaltyWoodWorkService;
-    let aioService: AioService;
     let helperService: HelperService;
     let toastrService: ToastrService;
     const buttonName = "btn-danger";
@@ -184,10 +182,8 @@ describe('Soccer - EarlySettlementComponent', () => {
                 component.match = match;
                 fixture.detectChanges();
                 verifyCalculateService = fixture.debugElement.injector.get(VerifyCalculateService);
-                aioService = fixture.debugElement.injector.get(AioService);
                 closePopupService = fixture.debugElement.injector.get(ClosePopupService);
-                messageBoxService = fixture.debugElement.injector.get(MessageBoxService);
-                verifyRefundService = fixture.debugElement.injector.get(VerifyRefundService);
+                messageBoxService = fixture.debugElement.injector.get(MessageBoxService);   
                 autoFillService = fixture.debugElement.injector.get(AutoFillService);
                 penaltyShootoutService = fixture.debugElement.injector.get(PenaltyShootoutService);
                 penaltyWoodWorkService = fixture.debugElement.injector.get(PenaltyWoodWorkService);
@@ -208,7 +204,7 @@ describe('Soccer - EarlySettlementComponent', () => {
         match.matchDetail = matchDetail;
         match.resultDetail = [resultDetail];
         spyOn(helperService, 'getMatch').and.returnValue(of(match));
-        await component.getMatch(12345, '');
+        await component.getMatch(12345);
         expect(component.match.matchDetail.matchId).toEqual(12345);
     });
 
@@ -329,7 +325,7 @@ describe('Soccer - EarlySettlementComponent', () => {
             component.match = match;
             resultDetail.checked = true;
             resultDetail.resultStatusId = ResultStatusId.RunningOne;
-            spyOn(aioService, 'push').and.returnValue(of(successfulResult));
+            spyOn(helperService, 'settle').and.returnValue(of(successfulResult));
             spyOn(closePopupService, 'closePopup');
 
             component.unCalculate();
@@ -345,7 +341,7 @@ describe('Soccer - EarlySettlementComponent', () => {
             component.match = match;
             resultDetail.checked = true;
             resultDetail.resultStatusId = ResultStatusId.AutoCompleted;
-            spyOn(aioService, 'push').and.returnValue(of(unSuccessfulResult));
+            spyOn(helperService, 'settle').and.returnValue(of(unSuccessfulResult));
 
             component.unCalculate();
             const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;

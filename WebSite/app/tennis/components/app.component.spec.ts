@@ -56,39 +56,39 @@ describe('AppComponent', () => {
       ],
     }).overrideModule(BrowserDynamicTestingModule, {
       set: {
-        entryComponents: [ CalculateActionsComponent, RefundActionsComponent],
+        entryComponents: [CalculateActionsComponent, RefundActionsComponent],
       },
-  })
-    .compileComponents()
-    .then(() => {
+    })
+      .compileComponents()
+      .then(() => {
         fixture = TestBed.createComponent(AppComponent);
         component = fixture.componentInstance;
         elementRef = fixture.debugElement.injector.get(ElementRef);
-    });
+      });
   }));
 
   it('should create the app', () => {
     expect(component).toBeTruthy();
-});
+  });
 
-it('should render calculate-actions tag', () => {
-    elementRef.nativeElement.setAttribute("page-type", PageType.Calculation)
+  it('should render calculate-actions tag', () => {
+    elementRef.nativeElement.setAttribute("page-type", PageType.ReCalculate)
     fixture.detectChanges();
     const compiled = fixture.debugElement.nativeElement;
     expect(compiled.querySelectorAll("calculate-actions").length).toBeGreaterThanOrEqual(1);
-});
+  });
 
-it('should render refund-actions tag', () => {
+  it('should render refund-actions tag', () => {
     elementRef.nativeElement.setAttribute("page-type", PageType.Refund)
     fixture.detectChanges();
     const compiled = fixture.debugElement.nativeElement;
     expect(compiled.querySelectorAll("refund-actions").length).toBeGreaterThanOrEqual(1);
-});
+  });
 
-it('should throw exception: Not implemented yet', () => {
+  it('should throw exception: Not implemented yet', () => {
     elementRef.nativeElement.setAttribute("page-type", "")
     expect(() => {
-        fixture.detectChanges();
+      fixture.detectChanges();
     }).toThrow("Not implemented yet");
-});
+  });
 });

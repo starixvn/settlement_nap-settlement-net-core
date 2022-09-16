@@ -8,6 +8,7 @@ import { SettleQuery, InstantCalculationQuery } from "../models/query.model";
 describe('Soccer - request service', () => {
     let service: RequestService;
     let httpRequestService: HttpRequestService;
+    const ApiUrl = 'api/soccer';
     beforeEach(() => TestBed.configureTestingModule({
         providers: [
             RequestService,
@@ -23,7 +24,6 @@ describe('Soccer - request service', () => {
     beforeEach(() => {
         service = TestBed.inject(RequestService);
         httpRequestService = TestBed.inject(HttpRequestService);
-        service.soccerApi = 'Local';
     });
 
     it('should be created', () => {
@@ -32,7 +32,7 @@ describe('Soccer - request service', () => {
 
     it('getMatch - Call exact Url and param', fakeAsync(() => {
         const matchId = 7000000;
-        const url = 'Local/api/soccer/get-match';
+        const url = `${ApiUrl}/get-match`;
         const query = {
             matchId,
             isRefundPage: false,
@@ -46,7 +46,7 @@ describe('Soccer - request service', () => {
 
     it('checkNewStatus - Call exact Url and param', fakeAsync(() => {
         const matchId = 7000000;
-        const url = 'Local/api/soccer/check-status';
+        const url = `${ApiUrl}/check-status`;
         const query = {
             matchId,
             actionName: "calc",
@@ -60,7 +60,7 @@ describe('Soccer - request service', () => {
 
     it('getLastestMatchResult - Call exact Url and param', fakeAsync(() => {
         const matchId = 7000000;
-        const url = 'Local/api/soccer/get-lastest-match-detail';
+        const url = `${ApiUrl}/get-lastest-match-detail`;
         const query = {
             matchId
         };
@@ -73,7 +73,7 @@ describe('Soccer - request service', () => {
 
     it('calculate - Call exact Url and param', fakeAsync(() => {
         const query = {} as SettleQuery;
-        const url = 'Local/api/soccer/calculate';
+        const url = `${ApiUrl}/calculate`;
 
         spyOn(httpRequestService, 'postJson');
         service.calculate(query);
@@ -83,7 +83,7 @@ describe('Soccer - request service', () => {
 
     it('undoCheckingScore - Call exact Url and param', fakeAsync(() => {
         const matchId = 7000000;
-        const url = 'Local/api/soccer/undo-checking-score';
+        const url = `${ApiUrl}/undo-checking-score`;
         const query = {
             matchId
         };
@@ -96,7 +96,7 @@ describe('Soccer - request service', () => {
 
     it('pushInstantScore - Call exact Url and param', fakeAsync(() => {
         const query = {} as InstantCalculationQuery;
-        const url = 'Local/api/soccer/push-instant-score';
+        const url = `${ApiUrl}/push-instant-score`;
 
         spyOn(httpRequestService, 'postJson');
         service.pushInstantScore(query);

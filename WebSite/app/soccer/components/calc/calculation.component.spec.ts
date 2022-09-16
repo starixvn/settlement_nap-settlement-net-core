@@ -69,6 +69,9 @@ describe('CalculationComponent', () => {
     isHt: false,
     instantKey: 0,
     firstGoalValue: '',
+    isExistFG: false,
+    isExistHTFG: false,
+    betStatus: '',
     errCode: 0,
     errMsg: '',
   }
@@ -156,7 +159,7 @@ describe('CalculationComponent', () => {
   it('getMatch - should get match information', async () => {
     spyOn(requestService, 'getMatch').and.returnValue(of(match));
 
-    await component.getMatch(12345, '');
+    await component.getMatch(12345);
 
     expect(component.matchDetail.matchId).toEqual(12345);
   });

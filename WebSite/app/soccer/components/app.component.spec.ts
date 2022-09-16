@@ -64,7 +64,7 @@ describe(`Soccer - AppComponent`, () => {
     });
 
     it('should render calculation tag', () => {
-        elementRef.nativeElement.setAttribute("page-type", PageType.Calculation)
+        elementRef.nativeElement.setAttribute("page-type", PageType.ReCalculate)
         fixture.detectChanges();
         const compiled = fixture.debugElement.nativeElement;
         expect(compiled.querySelectorAll("calculation").length).toBeGreaterThanOrEqual(1);
