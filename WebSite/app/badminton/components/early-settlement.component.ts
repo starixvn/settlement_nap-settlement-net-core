@@ -186,6 +186,9 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
   }
 
   private async push(query: SettleQuery) {
+    if(_.isEqual(this.matchDetail.sportType, SportType.volleyBall)){
+      query.betStatus = this.matchDetail.betStatus;
+    }
     const result = await this.aioService.push(query).toPromise() as Result;
     if (result.errCode === 0) {
       this.pushHedgeMatch(query);

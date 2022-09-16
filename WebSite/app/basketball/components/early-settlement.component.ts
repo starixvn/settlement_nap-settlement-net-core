@@ -132,7 +132,8 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
             const query = new SettleQuery(this.match.matchDetail.matchId,
                 this.selectedResources,
                 CalculateAction.earlyCalculate,
-                this.isReSettledTickets);
+                this.isReSettledTickets,
+                this.matchDetail.betStatus);
             query.isLeader = this.permission.isLeader;
             this.doSaveResult(CalculateAction.calculate,
                 this.match.originalResultDetail,
