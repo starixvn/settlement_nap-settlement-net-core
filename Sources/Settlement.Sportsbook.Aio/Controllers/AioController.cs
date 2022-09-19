@@ -20,12 +20,12 @@ namespace Settlement.Sportsbook.Aio.Controllers
 
         [Route("get-match")]
         [HttpPost]
-        [LogRequestResponse]
+        [LogGetRequest]
         public async Task<IActionResult> GetMatch(GetMatchRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
         [Route("settle")]
         [HttpPost]
-        [LogRequestResponse]
+        [LogPushRequest]
         public async Task<IActionResult> Settle(SettleRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
         [Route("check-marked-tickets")]
@@ -42,17 +42,17 @@ namespace Settlement.Sportsbook.Aio.Controllers
 
         [HttpPost]
         [Route("save-score")]
-        [LogRequestResponse]
+        [LogPushRequest]
         public async Task<IActionResult> SaveScore(SaveScoreRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
         [Route("settle-child-match")]
         [HttpPost]
-        [LogRequestResponse]
+        [LogPushRequest]
         public async Task<IActionResult> SettleChildMatch(SettleChildMatchRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
         [Route("result-setting")]
         [HttpPost]
-        [LogRequestResponse]
+        [LogPushRequest]
         public async Task<IActionResult> ResultSetting(ResultSettingRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
     }
 }

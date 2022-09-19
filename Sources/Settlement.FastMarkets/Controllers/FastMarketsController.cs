@@ -25,12 +25,12 @@ namespace Settlement.FastMarkets.Controllers
 
         [Route("get-match")]
         [HttpPost]
-        [LogRequestResponse]
+        [LogGetRequest]
         public async Task<IActionResult> GetMatch(MatchDetailRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
         [Route("get-bettype-interval")]
         [HttpPost]
-        [LogRequestResponse]
+        [LogGetRequest]
         public async Task<IActionResult> GetBetTypeInterval(BetTypeIntervalRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
         [Route("checking-marked-tickets")]
@@ -39,7 +39,7 @@ namespace Settlement.FastMarkets.Controllers
 
         [Route("settle")]
         [HttpPost]
-        [LogRequestResponse]
+        [LogPushRequest]
         public async Task<IActionResult> Settle(SettleRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
         [Route("update-water-break")]

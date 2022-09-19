@@ -54,7 +54,7 @@ namespace Settlement.ThirdPartyProducts.Controllers
         public async Task<IActionResult> GetSelection(GetSelectionRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
         [Route("settle"), HttpPost]
-        [LogRequestResponse]
+        [LogPushRequest]
         public async Task<IActionResult> Settle(CalculateRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
         [HttpPost]
