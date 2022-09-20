@@ -6,6 +6,7 @@ import { CalculateAction } from '../../shared/constants';
 import { NetPositionQuery } from '../models';
 import { ResultNameByIdPipe } from '../pipes';
 import { MatchDetail } from '../../shared/models/sportsbook-sop/match-detail.model';
+import { ResultCommand } from '../../shared/models';
 
 describe('CricketService', () => {
     let service: CricketService = null;
@@ -33,6 +34,7 @@ describe('CricketService', () => {
 
     beforeEach(inject([CricketService], (cricketService: CricketService) => {
         service = cricketService;
+        service.rootUrl = 'Local';
     }));
 
     it('should create a service', () => {
@@ -41,13 +43,13 @@ describe('CricketService', () => {
 
     describe('net position', () => {
         it('should call right apiUrl for uncalculate', fakeAsync(() => {
-            const url = 'settlement/net-position/uncalculate';
+            const url = 'Local/settlement/net-position/uncalculate';
             const action = CalculateAction.unCalculate
             const query: NetPositionQuery = {
                 action,
                 matchId: 100,
-                isApplyHedging: false,
-                serviceCommand: 'mock'
+                isCallNPService: true,
+                resultCommand: [new ResultCommand]
             };
 
             spyOn(httpRequestService, 'postJson');
@@ -55,17 +57,17 @@ describe('CricketService', () => {
             tick();
 
             // Assert
-            expect(httpRequestService.postJson).toHaveBeenCalledWith(query, url, false);
+            expect(httpRequestService.postJson).toHaveBeenCalledWith(query, url, true);
         }));
 
         it('should call right apiUrl for calculate', fakeAsync(() => {
-            const url = 'settlement/net-position/calculate';
+            const url = 'Local/settlement/net-position/calculate';
             const action = CalculateAction.calculate
             const query: NetPositionQuery = {
                 action,
                 matchId: 100,
-                isApplyHedging: false,
-                serviceCommand: 'mock'
+                isCallNPService: false,
+                resultCommand: [new ResultCommand]
             };
 
             spyOn(httpRequestService, 'postJson');
@@ -73,7 +75,7 @@ describe('CricketService', () => {
             tick();
 
             // Assert
-            expect(httpRequestService.postJson).toHaveBeenCalledWith(query, url, false);
+            expect(httpRequestService.postJson).toHaveBeenCalledWith(query, url, true);
         }));
     });
 

@@ -21,7 +21,7 @@ import {
   IntervalCalculationService,
 } from '../../shared/services';
 import { Match, HedgeMatchDetail, } from '../models';
-import { BadmintonService, GameTotalService, VerificationService } from '../services';
+import { BadmintonService, VerificationService } from '../services';
 import { ResultSettingModel } from '../../shared/models';
 import { MatchDetail, Permission, ResultDetail, ExternalResultDetail } from '../../shared/models/sportsbook-sop';
 import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
@@ -31,6 +31,8 @@ import { ExternalSourceNamePipe } from '../../shared/pipes/external-source-name.
 import { ResultByTeamNamePipe } from '../../shared/pipes/result-by-team-name.pipe';
 import { ToastContainerDirective, ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 import { UrlHelper } from '../../helper';
+import { ResultPipe } from '../../shared/pipes/result.pipe';
+import { BadmintonApiKeys } from '../constants';
 
 
 export class CreateDataTest {
@@ -59,7 +61,6 @@ describe('Badminton - Calculate actions component', () => {
   let messageBoxService: MessageBoxService;
   let badmintonService: BadmintonService;
   let verificationService: VerificationService;
-  let gameTotalService: GameTotalService;
   let toastrService: ToastrService;
   const buttonName = "btn-danger";
   const errorMessage = "Error message";
@@ -107,6 +108,7 @@ describe('Badminton - Calculate actions component', () => {
         ModalContentDialogComponent,
         ResettleCheckerComponent,
         TicketCountComponent,
+        ResultPipe
       ],
       providers: [
         IntervalBackgroundPipe,
@@ -123,7 +125,6 @@ describe('Badminton - Calculate actions component', () => {
         IntervalCalculationService,
         ToastContainerDirective,
         ToastrService,
-        GameTotalService,
         { provide: MessageBoxService, useClass: MessageBoxService },
       ],
       schemas: [NO_ERRORS_SCHEMA],
@@ -151,7 +152,6 @@ describe('Badminton - Calculate actions component', () => {
         badmintonService = fixture.debugElement.injector.get(BadmintonService);
         verificationService = fixture.debugElement.injector.get(VerificationService);
         toastrService = fixture.debugElement.injector.get(ToastrService);
-        gameTotalService = fixture.debugElement.injector.get(GameTotalService);
         spyOn(toastrService, 'clear');
       });
   }));
@@ -161,6 +161,9 @@ describe('Badminton - Calculate actions component', () => {
   });
 
   describe("calculate", () => {
+    beforeEach(() => {
+      component.apiKeys = BadmintonApiKeys;
+    });
     it('should alert fail to verify selected maps and score', async () => {
       match.resultDetails = [];
       component.match = match;
@@ -395,7 +398,7 @@ describe('Badminton - Calculate actions component', () => {
         );
         component.match = match;
         spyOn(aioService, "push").and.returnValue(of(successfulResult));
-        spyOn(closePopupService, "closePopup");
+        spyOn(messageBoxService, "closePopup");
         component.uncalculate();
 
         const buttonYes = document.getElementsByClassName(
@@ -404,7 +407,7 @@ describe('Badminton - Calculate actions component', () => {
         buttonYes.click();
         tick();
 
-        expect(closePopupService.closePopup).toHaveBeenCalled();
+        expect(messageBoxService.closePopup).toHaveBeenCalled();
       })
     );
 
@@ -447,7 +450,7 @@ describe('Badminton - Calculate actions component', () => {
       spyOn(aioService, 'getMatch').and.returnValue(of(match));
       spyOn(UrlHelper, 'getUrlParameter').and.returnValue(6);
 
-      await component.getMatch(12345, '');
+      await component.getMatch(12345);
 
       expect(component.applyHedgeMatch).toBe(true);
       expect(component.enableUncalculate).toBe(true);
@@ -459,7 +462,7 @@ describe('Badminton - Calculate actions component', () => {
       spyOn(aioService, 'getMatch').and.returnValue(of(match));
       spyOn(UrlHelper, 'getUrlParameter').and.returnValue(9);
 
-      await component.getMatch(12345, '');
+      await component.getMatch(12345);
 
       expect(verificationService.isTicketOnGame).toHaveBeenCalled();
       expect(verificationService.generateExternalScores).toHaveBeenCalled();
@@ -540,6 +543,7 @@ describe('Badminton - Calculate actions component', () => {
     });
 
     it('saveScore - should push successfully when user confirm save score', fakeAsync(() => {
+      component.apiKeys = BadmintonApiKeys;
       spyOn(aioService, 'saveScore').and.returnValue(of(successfulResult));
       spyOn(verificationService, 'getChangedScores').and.returnValue([]);
       spyOn(verificationService, 'getOutsideScores').and.returnValue([]);

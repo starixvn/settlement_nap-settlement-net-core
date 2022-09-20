@@ -31,7 +31,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
   public isShowRefundButton = false;
   public isReadyMatch: boolean;
   public originalMatch: Match;
-  private apiKeys = null;
+  public apiKeys = null;
 
   constructor(
     private readonly earlyConstraintService: EarlyConstraintService,
@@ -198,7 +198,6 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
   }
 
   private pushHedgeMatch(query: SettleQuery) {
-    const matchId = query.matchId;
     const hedgeMatchId = this.applyHedgeMatch ? this.match.hedgeMatchDetail.matchId : 0;
     if (hedgeMatchId > 0) {
       query.matchId = hedgeMatchId;

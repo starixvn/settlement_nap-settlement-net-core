@@ -1,10 +1,4 @@
-﻿using Fanex.Data;
-using Fanex.Data.Repository;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Fanex.Data.Repository;
 
 namespace Settlement.EventManagement.Criteria
 {
@@ -24,7 +18,7 @@ namespace Settlement.EventManagement.Criteria
 
         public override string GetSettingKey()
         {
-            return $"NAP_Admin_Settlement_Validation_MP";
+            return "NAP_Admin_Settlement_Validation_MP";
         }
 
         public override bool IsValid()

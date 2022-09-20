@@ -79,7 +79,7 @@ export class EarlyConstraintService extends EarlyBaseService {
     });
   }
 
-  public isEmptyHomeOrAway(item: ResultDetail) {
+  private isEmptyHomeOrAway(item: ResultDetail) {
     return item.homeValue === null || _.isEmpty(item.homeValue)
     || item.awayValue === null || _.isEmpty(item.awayValue);
   }
@@ -133,9 +133,9 @@ export class EarlyConstraintService extends EarlyBaseService {
       const home = Number(resultDetail.homeValue);
       const away = Number(resultDetail.awayValue);
       const isResultTypeDifferent = this.isNoneValue(resultDetail.homeValue) !== this.isNoneValue(resultDetail.awayValue);
-      const isNumbericResult = !this.isNoneValue(resultDetail.homeValue) && !this.isNoneValue(resultDetail.awayValue);
-      const isResultEqual = isNumbericResult && Number(resultDetail.homeValue) === Number(resultDetail.awayValue);
-      const isPointResultInvalid = isNumbericResult && (home > maxPoint || away > maxPoint || (home !== maxPoint && away !== maxPoint));
+      const isNumericResult = !this.isNoneValue(resultDetail.homeValue) && !this.isNoneValue(resultDetail.awayValue);
+      const isResultEqual = isNumericResult && Number(resultDetail.homeValue) === Number(resultDetail.awayValue);
+      const isPointResultInvalid = isNumericResult && (home > maxPoint || away > maxPoint || (home !== maxPoint && away !== maxPoint));
 
       return isResultEqual || isResultTypeDifferent || isPointResultInvalid;
   }
@@ -145,8 +145,8 @@ export class EarlyConstraintService extends EarlyBaseService {
       const home = Number(resultDetail.homeValue);
       const away = Number(resultDetail.awayValue);
       const isResultTypeDifferent = this.isNoneValue(resultDetail.homeValue) !== this.isNoneValue(resultDetail.awayValue);
-      const isNumbericResult = !this.isNoneValue(resultDetail.homeValue) && !this.isNoneValue(resultDetail.awayValue);
-      const isResultInvalid = isNumbericResult && home + away !== maxPoint;
+      const isNumericResult = !this.isNoneValue(resultDetail.homeValue) && !this.isNoneValue(resultDetail.awayValue);
+      const isResultInvalid = isNumericResult && home + away !== maxPoint;
 
       return isResultTypeDifferent || isResultInvalid;
   }

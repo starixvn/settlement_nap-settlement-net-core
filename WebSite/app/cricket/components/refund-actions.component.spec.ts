@@ -43,7 +43,7 @@ describe("Cricket - Refund Component", () => {
   let component: RefundActionsComponent;
   let fixture: ComponentFixture<RefundActionsComponent>;
   let cricketService: CricketService;
-  let closePopupService: ClosePopupService;
+  let messageBoxService: MessageBoxService;
   let aioService: AioService;
   let toastrService: ToastrService;
   const buttonName = "btn-danger";
@@ -52,6 +52,7 @@ describe("Cricket - Refund Component", () => {
     errCode: 0,
     errMsg: "",
     isSuccessful: true,
+    resultCommand: ''
   };
   const unSuccessfulResult = {
     errCode: 1,
@@ -63,7 +64,7 @@ describe("Cricket - Refund Component", () => {
     errCode: 0,
     errMsg: "",
     isSuccessful: true,
-    serviceCommand: 'mock command'
+    resultCommand: 'mock command'
   };
   const existMarkedTicket = {
     isExistMarkedTicket: true,
@@ -140,7 +141,7 @@ describe("Cricket - Refund Component", () => {
         component = fixture.componentInstance;
         component.match = match;
         cricketService = fixture.debugElement.injector.get(CricketService);
-        closePopupService = fixture.debugElement.injector.get(ClosePopupService);
+        messageBoxService = fixture.debugElement.injector.get(MessageBoxService);
         aioService = fixture.debugElement.injector.get(AioService);
         toastrService = fixture.debugElement.injector.get(ToastrService);
         component.resultDetails = [resultDetail];
@@ -210,7 +211,7 @@ describe("Cricket - Refund Component", () => {
         of(notExistMarkedTicket)
       );
       spyOn(aioService, "push").and.returnValue(of(successfulResult));
-      spyOn(closePopupService, "closePopup");
+      spyOn(messageBoxService, "closePopup");
 
       component.refund();
       tick();
@@ -222,7 +223,7 @@ describe("Cricket - Refund Component", () => {
 
       expect(toastrService.error).not.toHaveBeenCalled();
       expect(aioService.push).toHaveBeenCalledTimes(1);
-      expect(closePopupService.closePopup).toHaveBeenCalled();
+      expect(messageBoxService.closePopup).toHaveBeenCalled();
     }));
 
     it("should call net position when successfully refund and return result with command", fakeAsync(async () => {
@@ -230,7 +231,7 @@ describe("Cricket - Refund Component", () => {
         of(notExistMarkedTicket)
       );
       spyOn(aioService, "push").and.returnValue(of(successfulResultWithCommand));
-      spyOn(closePopupService, "closePopup");
+      spyOn(messageBoxService, "closePopup");
       spyOn(cricketService, "netPosition").and.returnValue(of(successfulResult));
 
       component.refund();
@@ -244,7 +245,7 @@ describe("Cricket - Refund Component", () => {
       expect(toastrService.error).not.toHaveBeenCalled();
       expect(aioService.push).toHaveBeenCalledTimes(1);
       expect(cricketService.netPosition).toHaveBeenCalled();
-      expect(closePopupService.closePopup).toHaveBeenCalled();
+      expect(messageBoxService.closePopup).toHaveBeenCalled();
     }));
 
     it("should call net position when successfully refund and return result with command for both main and hedge match", fakeAsync(async () => {
@@ -255,7 +256,7 @@ describe("Cricket - Refund Component", () => {
         of(notExistMarkedTicket)
       );
       spyOn(aioService, "push").and.returnValue(of(successfulResultWithCommand));
-      spyOn(closePopupService, "closePopup");
+      spyOn(messageBoxService, "closePopup");
       spyOn(cricketService, "netPosition").and.returnValue(of(successfulResult));
 
       component.refund();
@@ -269,7 +270,7 @@ describe("Cricket - Refund Component", () => {
       expect(toastrService.error).not.toHaveBeenCalled();
       expect(aioService.push).toHaveBeenCalledTimes(2);
       expect(cricketService.netPosition).toHaveBeenCalledTimes(2);
-      expect(closePopupService.closePopup).toHaveBeenCalled();
+      expect(messageBoxService.closePopup).toHaveBeenCalled();
     }));
 
     it("should pass all validation and successfully refund and there are hedge match", fakeAsync(async () => {
@@ -280,7 +281,7 @@ describe("Cricket - Refund Component", () => {
         of(notExistMarkedTicket)
       );
       spyOn(aioService, "push").and.returnValue(of(successfulResult));
-      spyOn(closePopupService, "closePopup");
+      spyOn(messageBoxService, "closePopup");
 
       component.refund();
       tick();
@@ -292,7 +293,7 @@ describe("Cricket - Refund Component", () => {
 
       expect(toastrService.error).not.toHaveBeenCalled();
       expect(aioService.push).toHaveBeenCalledTimes(2);
-      expect(closePopupService.closePopup).toHaveBeenCalled();
+      expect(messageBoxService.closePopup).toHaveBeenCalled();
     }));
 
     it("should return error message when unsuccessfully refund", fakeAsync(async () => {

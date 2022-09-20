@@ -8,7 +8,7 @@ import { ModalDialogComponent, ModalContentDialogComponent, ResettleCheckerCompo
 import { EarlySettlementComponent } from './early-settlement.component';
 import { EarlyService, BasketballService, VerificationService } from '../services';
 import { Match } from '../models';
-import { MessageBoxService, HttpRequestService, BlockUIService, ClosePopupService, AioService } from '../../shared/services';
+import { MessageBoxService, HttpRequestService, BlockUIService, AioService } from '../../shared/services';
 import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
 import { Language } from '../../shared/language';
 import * as _ from 'lodash';
@@ -29,7 +29,6 @@ describe('Component: EarlySettlementComponent', () => {
     let earlyService: EarlyService;
     let aioService: AioService;
     let messageBoxService: MessageBoxService;
-    let closePopupService: ClosePopupService;
     let verificationService: VerificationService;
     let toastrService: ToastrService;
     const buttonName = "btn-danger";
@@ -98,7 +97,6 @@ describe('Component: EarlySettlementComponent', () => {
                 NgbModal,
                 EarlyService,
                 BasketballService,
-                ClosePopupService,
                 VerificationService,
                 IntervalBackgroundPipe,
                 ResultByTeamNamePipe,
@@ -127,7 +125,6 @@ describe('Component: EarlySettlementComponent', () => {
                 earlyService = fixture.debugElement.injector.get(EarlyService);
                 messageBoxService = fixture.debugElement.injector.get(MessageBoxService);
                 aioService = fixture.debugElement.injector.get(AioService);
-                closePopupService = fixture.debugElement.injector.get(ClosePopupService);
                 verificationService = fixture.debugElement.injector.get(VerificationService);
                 toastrService = fixture.debugElement.injector.get(ToastrService);
 
@@ -171,7 +168,7 @@ describe('Component: EarlySettlementComponent', () => {
         it('should call close popup when UnCalculate has been successfully', fakeAsync(() => {
             component.match = match;
             spyOn(aioService, 'push').and.returnValue(of(successfulResult));
-            spyOn(closePopupService, 'closePopup');
+            spyOn(messageBoxService, 'closePopup');
             spyOn(toastrService, 'error');
 
             fixture.detectChanges();
@@ -181,13 +178,13 @@ describe('Component: EarlySettlementComponent', () => {
             tick();
 
             expect(toastrService.error).not.toHaveBeenCalled();
-            expect(closePopupService.closePopup).toHaveBeenCalled();
+            expect(messageBoxService.closePopup).toHaveBeenCalled();
         }));
 
         it('should return error message when unCalculate is unsuccessful', fakeAsync(() => {
             component.match = match;
             spyOn(aioService, 'push').and.returnValue(of(unSuccessfulResult));
-            spyOn(closePopupService, 'closePopup');
+            spyOn(messageBoxService, 'closePopup');
             spyOn(toastrService, 'error');
 
             fixture.detectChanges();
@@ -197,7 +194,7 @@ describe('Component: EarlySettlementComponent', () => {
             tick();
 
             expect(toastrService.error).toHaveBeenCalledWith(errorMessage);
-            expect(closePopupService.closePopup).not.toHaveBeenCalled();
+            expect(messageBoxService.closePopup).not.toHaveBeenCalled();
         }));
     });
 
@@ -214,7 +211,7 @@ describe('Component: EarlySettlementComponent', () => {
             component.match = match;
             spyOn(aioService, 'checkMarkedTickets').and.returnValue(of(noMarkedTicket));
             spyOn(aioService, 'push').and.returnValue(of(successfulResult));
-            spyOn(closePopupService, 'closePopup');
+            spyOn(messageBoxService, 'closePopup');
             spyOn(toastrService, 'error');
 
             fixture.detectChanges();
@@ -224,7 +221,7 @@ describe('Component: EarlySettlementComponent', () => {
             tick();
 
             expect(toastrService.error).not.toHaveBeenCalled();
-            expect(closePopupService.closePopup).toHaveBeenCalled();
+            expect(messageBoxService.closePopup).toHaveBeenCalled();
         }));
 
         it('should alert when exist marked tickets', fakeAsync(async () => {
@@ -242,7 +239,7 @@ describe('Component: EarlySettlementComponent', () => {
             component.match = match;
             spyOn(aioService, 'checkMarkedTickets').and.returnValue(of(noMarkedTicket));
             spyOn(aioService, 'push').and.returnValue(of(unSuccessfulResult));
-            spyOn(closePopupService, 'closePopup');
+            spyOn(messageBoxService, 'closePopup');
             spyOn(toastrService, 'error');
 
             component.init();
@@ -252,7 +249,7 @@ describe('Component: EarlySettlementComponent', () => {
             tick();
 
             expect(toastrService.error).toHaveBeenCalledWith(errorMessage);
-            expect(closePopupService.closePopup).not.toHaveBeenCalled();
+            expect(messageBoxService.closePopup).not.toHaveBeenCalled();
         }));
 
         it("should alert when exist result not confirm", fakeAsync(async () => {
@@ -369,7 +366,7 @@ describe('Component: EarlySettlementComponent', () => {
             spyOn(verificationService, 'getOutsideScores').and.returnValue([]);
             spyOn(verificationService, 'getChangedScores').and.returnValue([]);
             spyOn(aioService, 'saveScore').and.returnValue(of(successfulResult));
-            spyOn(closePopupService, 'closePopup');
+            spyOn(messageBoxService, 'closePopup');
             spyOn(aioService, 'verifyChangedSettledTickets').and.returnValue(of(true));
             spyOn(aioService, 'push').and.returnValue(of(successfulResult));
             spyOn(toastrService, 'error');

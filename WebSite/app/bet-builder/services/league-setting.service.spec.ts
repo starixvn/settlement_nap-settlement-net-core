@@ -16,7 +16,7 @@ describe('BetBuilder - League setting Service', () => {
         errCode: 0,
         errMsg: "",
         isSuccessful: true,
-        serviceCommand: '1,2'
+        childMatchIds: '1,2'
     };
 
     const unSuccessfulResult = {

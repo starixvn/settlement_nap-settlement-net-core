@@ -7,7 +7,7 @@ import { Language } from '../../shared/language';
 import { SettlementStatusId, CalculateAction, SportType, ResultStatusId } from '../../shared/constants';
 import { Match, HedgeMatchDetail, SettleQuery, ChildMatch, SettleChildMatchQuery } from '../models';
 import { ResourceNameByIdPipe } from '../pipes';
-import { BadmintonService, GameTotalService, VerificationService } from '../services';
+import { BadmintonService, VerificationService } from '../services';
 import { BadmintonApiKeys, KickOffTime, ResourcesIds, Resources, VolleyballApiKeys } from '../constants';
 import { ExternalResultDetail, Permission, ResultDetail, SaveScoreQuery, SportTemplate } from '../../shared/models/sportsbook-sop';
 import { UrlHelper } from '../../helper';
@@ -15,9 +15,6 @@ import { UrlHelper } from '../../helper';
 @Component({
   selector: 'calculation-actions',
   templateUrl: './calculate-actions.component.html',
-  providers: [
-    GameTotalService
-  ],
 })
 export class CalculateActionsComponent implements SportTemplate {
   @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
@@ -32,7 +29,7 @@ export class CalculateActionsComponent implements SportTemplate {
   public isReadyMatch: boolean;
   public readonly totalPointsId = ResourcesIds.totalPoints;
   public permission: Permission;
-  private apiKeys = null;
+  public apiKeys = null;
   public collapse = false;
 
   constructor(
@@ -40,8 +37,7 @@ export class CalculateActionsComponent implements SportTemplate {
     private readonly messageBoxService: MessageBoxService,
     private readonly badmintonService: BadmintonService,
     private readonly verificationService: VerificationService,
-    private readonly toastrService: ToastrService,
-    private readonly gameTotalService: GameTotalService) {
+    private readonly toastrService: ToastrService) {
     this.confirmationDialogMessage.title = Language.confirmationBox;
   }
 
@@ -277,7 +273,7 @@ export class CalculateActionsComponent implements SportTemplate {
       item.awayValue = (Number(item.awayValue)).toString();
     });
 
-    const betStatus = this.gameTotalService.getBetStatus(false, this.match);
+    const betStatus = this.badmintonService.getBetStatus(false, this.match);
     const childMatchIds = this.childMatchSelected.map(item => item.matchId).join(',');
     this.doSaveScoreAndCalculate(CalculateAction.calculate, selectedResources, betStatus, childMatchIds);
   }
@@ -355,7 +351,7 @@ export class CalculateActionsComponent implements SportTemplate {
       item.awayValue = "";
     });
 
-    const betStatus = this.gameTotalService.getBetStatus(true, this.match);
+    const betStatus = this.badmintonService.getBetStatus(true, this.match);
     const childMatchIds = this.childMatchSelected.map(item => item.matchId).join(',');
     this.sendRequest(CalculateAction.unCalculate, selectedResources, betStatus, childMatchIds);
   }

@@ -9,6 +9,8 @@ import { AutoSettingLeagueQuery, AutoSettingMatchQuery, Result } from '../../sha
 describe('Bet Builder - RequestService', () => {
     let service: RequestService;
     let httpRequestService: HttpRequestService;
+    const Url = 'api/bet-builder';
+    const urlApiSetting = 'api/setting';
     beforeEach(() => TestBed.configureTestingModule({
         providers: [
             RequestService,
@@ -31,7 +33,7 @@ describe('Bet Builder - RequestService', () => {
     });
 
     it('getSport - Call exact Url and param', fakeAsync(() => {
-        const url = 'Local/api/bet-builder/get-sports';
+        const url = `${Url}/get-sports`;
         const query = {} as object;
 
         spyOn(httpRequestService, 'postJson');
@@ -41,7 +43,7 @@ describe('Bet Builder - RequestService', () => {
     }));
 
     it('getLeague - Call exact Url and param', fakeAsync(() => {
-        const url = 'Local/api/bet-builder/get-leagues';
+        const url = `${Url}/get-leagues`;
         const query = {} as object;
 
         spyOn(httpRequestService, 'postJson');
@@ -51,7 +53,7 @@ describe('Bet Builder - RequestService', () => {
     }));
 
     it('getDate - Call exact Url and param',fakeAsync(() => {
-        const url = 'Local/api/bet-builder/get-date';
+        const url = `${Url}/get-date`;
 
         spyOn(httpRequestService, 'getJson');
         service.getDate();
@@ -60,7 +62,7 @@ describe('Bet Builder - RequestService', () => {
     }));
 
     it('search - Call exact Url and param', fakeAsync(() => {
-        const url = 'Local/api/bet-builder/search';
+        const url = `${Url}/search`;
         const query = {} as GetMatchesQuery;
 
         spyOn(httpRequestService, 'postJson');
@@ -70,7 +72,7 @@ describe('Bet Builder - RequestService', () => {
     }));
 
     it('getMatch - Call exact Url and param', fakeAsync(() => {
-        const url = 'Local/api/bet-builder/get-match';
+        const url = `${Url}/get-match`;
         const matchId = 7000000;
         const query = {
             matchId,
@@ -83,7 +85,7 @@ describe('Bet Builder - RequestService', () => {
     }));
 
     it('getSelection - Call exact Url and param', fakeAsync(() => {
-        const url = 'Local/api/bet-builder/get-selection';
+        const url = `${Url}/get-selection`;
         const matchId = 7000000;
         const query = {
             matchId,
@@ -96,7 +98,7 @@ describe('Bet Builder - RequestService', () => {
     }));
 
     it('push - Call exact Url and param', fakeAsync(() => {
-        const url = 'Local/api/bet-builder/settle';
+        const url = `${Url}/settle`;
         const query = {} as object;
 
         spyOn(httpRequestService, 'postJson');
@@ -106,7 +108,7 @@ describe('Bet Builder - RequestService', () => {
     }));
 
     it('refreshMatches - Call exact Url and param', fakeAsync(() => {
-        const url = 'Local/api/bet-builder/refresh-matches';
+        const url = `${Url}/refresh-matches`;
         const query = {} as MatchWaitingRequest;
 
         spyOn(httpRequestService, 'postJson');
@@ -116,7 +118,7 @@ describe('Bet Builder - RequestService', () => {
     }));
 
     it('updateLeague - Call exact Url and param', fakeAsync(() => {
-        const url = 'Local/api/setting/update-setting-league';
+        const url = `${urlApiSetting}/update-setting-league`;
         const query = {} as AutoSettingLeagueQuery;
 
         spyOn(httpRequestService, 'postJson');
@@ -126,7 +128,7 @@ describe('Bet Builder - RequestService', () => {
     }));
 
     it('updateMatch - Call exact Url and param', fakeAsync(() => {
-        const url = 'Local/api/setting/update-setting-match';
+        const url = `${urlApiSetting}/update-setting-match`;
         const query = {} as AutoSettingMatchQuery;
 
         spyOn(httpRequestService, 'postJson');

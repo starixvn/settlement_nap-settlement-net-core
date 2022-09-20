@@ -9,7 +9,7 @@ import { RefundComponent } from './refund.component';
 import { RequestService } from './services/request.service';
 import { VerifyActionService } from './services/verify-action.service';
 import { VerifyMatchService } from './services/verify-match.service';
-import { BlockUIService, ClosePopupService, HttpRequestService, MessageBoxService } from '../../../shared/services';
+import { BlockUIService, HttpRequestService, MessageBoxService } from '../../../shared/services';
 import { ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 import { HttpClientModule } from '@angular/common/http';
 import { MainRefundButtonStatus } from './model/button-status';
@@ -28,7 +28,6 @@ describe('RefundComponent', () => {
   let requestService: RequestService;
   let verifyMatchService: VerifyMatchService;
   let dialog: MatDialog;
-  let closePopupService: ClosePopupService;
   let toastrService: ToastrService;
   let messageBoxService: MessageBoxService;
   let verifyActionService: VerifyActionService;
@@ -77,7 +76,6 @@ describe('RefundComponent', () => {
         VerifyActionService,
         HttpRequestService,
         BlockUIService,
-        ClosePopupService,
         MessageBoxService,
         { provide: MessageBoxService, useClass: MessageBoxService },
         { provide: ToastrService, useClass: ToastrService },
@@ -105,7 +103,6 @@ describe('RefundComponent', () => {
     verifyMatchService = fixture.debugElement.injector.get(VerifyMatchService);
     verifyActionService = fixture.debugElement.injector.get(VerifyActionService);
     dialog = fixture.debugElement.injector.get(MatDialog);
-    closePopupService = fixture.debugElement.injector.get(ClosePopupService);
     toastrService = fixture.debugElement.injector.get(ToastrService);
     messageBoxService = fixture.debugElement.injector.get(MessageBoxService);
     component = fixture.componentInstance;
@@ -371,12 +368,12 @@ describe('RefundComponent', () => {
       component.matchDetail = matchDetail;
       component.matchDetail.matchId = 100;
       spyOn(requestService, 'refundRunningThirdPartyTickets').and.returnValue(of(successfulResult));
-      spyOn(closePopupService, 'closePopup');
+      spyOn(messageBoxService, 'closePopup');
 
       await component.refundRunningThirdPartyTickets(true);
 
       expect(requestService.refundRunningThirdPartyTickets).toHaveBeenCalledWith(100, RefundType.refundBetDaq);
-      expect(closePopupService.closePopup).toHaveBeenCalled();
+      expect(messageBoxService.closePopup).toHaveBeenCalled();
     });
 
     it('should close popup when refund successful', async () => {

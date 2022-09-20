@@ -1,3 +1,4 @@
+import { BadmintonApiKeys } from './../../badminton/constants/api-keys.native';
 import { TestBed, waitForAsync, ComponentFixture, fakeAsync, tick } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
@@ -8,7 +9,7 @@ import { ModalDialogComponent, ModalContentDialogComponent } from '../../shared/
 import { RefundActionsComponent } from './refund-actions.component';
 import { BasketballService, BetStatusService, VerificationService } from '../services';
 import { Match, HedgeMatchDetail, VoidBetInfo } from '../models';
-import { MessageBoxService, HttpRequestService, BlockUIService, ClosePopupService, AioService } from '../../shared/services';
+import { MessageBoxService, HttpRequestService, BlockUIService, AioService } from '../../shared/services';
 import { Language } from '../../shared/language';
 import { SettlementStatusId } from '../../shared/constants';
 import { ResourceNameByIdPipe } from '../pipes/resource-name-by-id.pipe';
@@ -25,9 +26,9 @@ describe('Component: RefundActionsComponent', () => {
     let component: RefundActionsComponent;
     let fixture: ComponentFixture<RefundActionsComponent>;
     let messageBoxService: MessageBoxService;
-    let closePopupService: ClosePopupService;
     let aioService: AioService;
     let toastrService: ToastrService;
+    let basketballService: BasketballService;
     const buttonName = "btn-danger";
     const errorMessage = "Error message";
     const successfulResult = {
@@ -80,7 +81,6 @@ describe('Component: RefundActionsComponent', () => {
                 BlockUIService,
                 NgbModal,
                 BasketballService,
-                ClosePopupService,
                 MessageBoxService,
                 AioService,
                 IntervalBackgroundPipe,
@@ -110,9 +110,9 @@ describe('Component: RefundActionsComponent', () => {
                 fixture = TestBed.createComponent(RefundActionsComponent);
                 component = fixture.componentInstance;
                 messageBoxService = fixture.debugElement.injector.get(MessageBoxService);
-                closePopupService = fixture.debugElement.injector.get(ClosePopupService);
                 aioService = fixture.debugElement.injector.get(AioService);
                 toastrService = fixture.debugElement.injector.get(ToastrService);
+                basketballService = fixture.debugElement.injector.get(BasketballService);
             });
     }));
 
@@ -149,7 +149,7 @@ describe('Component: RefundActionsComponent', () => {
             component.matchDetail = matchDetail;
             spyOn(aioService, 'checkMarkedTickets').and.returnValue(of(noMarkedTicket));
             spyOn(aioService, 'push').and.returnValue(of(successfulResult));
-            spyOn(closePopupService, 'closePopup');
+            spyOn(messageBoxService, 'closePopup');
             spyOn(aioService, 'getTicketInfo').and.returnValue(of([]));
             spyOn(toastrService, 'error');
 
@@ -161,7 +161,7 @@ describe('Component: RefundActionsComponent', () => {
 
             expect(toastrService.error).not.toHaveBeenCalled();
             expect(aioService.push).toHaveBeenCalledTimes(1);
-            expect(closePopupService.closePopup).toHaveBeenCalled();
+            expect(messageBoxService.closePopup).toHaveBeenCalled();
         }));
 
         it('should call close popup when have not marked tickets, '
@@ -177,7 +177,7 @@ describe('Component: RefundActionsComponent', () => {
                 spyOn(aioService, 'checkMarkedTickets').and.returnValue(of(noMarkedTicket));
                 spyOn(aioService, 'push').and.returnValue(of(successfulResult));
                 spyOn(aioService, 'getTicketInfo').and.returnValue(of([]));
-                spyOn(closePopupService, 'closePopup');
+                spyOn(messageBoxService, 'closePopup');
                 spyOn(toastrService, 'error');
 
 
@@ -189,7 +189,7 @@ describe('Component: RefundActionsComponent', () => {
 
                 expect(toastrService.error).not.toHaveBeenCalled();
                 expect(aioService.push).toHaveBeenCalledTimes(2);
-                expect(closePopupService.closePopup).toHaveBeenCalled();
+                expect(messageBoxService.closePopup).toHaveBeenCalled();
             }));
 
         it('should alert when exist marked tickets', fakeAsync(async () => {
@@ -210,7 +210,7 @@ describe('Component: RefundActionsComponent', () => {
             spyOn(aioService, 'checkMarkedTickets').and.returnValue(of(noMarkedTicket));
             spyOn(aioService, 'push').and.returnValue(of(unSuccessfulResult));
             spyOn(aioService, 'getTicketInfo').and.returnValue(of([]));
-            spyOn(closePopupService, 'closePopup');
+            spyOn(messageBoxService, 'closePopup');
             spyOn(toastrService, 'error');
 
             component.refund();
@@ -220,7 +220,7 @@ describe('Component: RefundActionsComponent', () => {
             tick();
 
             expect(toastrService.error).toHaveBeenCalledWith(errorMessage);
-            expect(closePopupService.closePopup).not.toHaveBeenCalled();
+            expect(messageBoxService.closePopup).not.toHaveBeenCalled();
         }));
 
         it('should call void bet when result is successful and exist ticket ', fakeAsync(async () => {
@@ -234,7 +234,7 @@ describe('Component: RefundActionsComponent', () => {
             spyOn(aioService, 'push').and.returnValue(of(successfulResult));
             spyOn(aioService, 'getTicketInfo').and.returnValue(of([voidBetInfo]));
             spyOn(aioService, 'voidBet').and.returnValue(of(""));
-            spyOn(closePopupService, 'closePopup');
+            spyOn(messageBoxService, 'closePopup');
             spyOn(toastrService, 'error');
 
             component.refund();
@@ -262,23 +262,14 @@ describe('Component: RefundActionsComponent', () => {
             expect(toastrService.error).toHaveBeenCalledWith("WARNING! Cannot continue due to selected results are not confirmed to refund. Please confirm refund and try again.");
         }));
     });
+    it('init - should set components properties, apply hedge match', () => {
+        component.match = match;
+        spyOn(basketballService, 'getResultDetail').and.returnValue([]);
 
-    describe('ngOnInit', () => {
-        it('should set components properties, enable parlay and apply hedge match', () => {
-            component.match = match;
-            component.init();
-            expect(component.matchId).toEqual(match.matchDetail.matchId);
-            expect(component.hedgeMatchDetail).toEqual(match.hedgeMatchDetail);
-            expect(component.applyHedgeMatch).toBe(true);
-        });
+        component.init();
 
-        it('should disable parlay and unapply hedge match', () => {
-            match.hedgeMatchDetail = null;
-            match.resultDetails[5].settlementStatusId = SettlementStatusId.Running;
-            component.match = match;
-            component.init();
-
-            expect(component.applyHedgeMatch).toBe(false);
-        });
+        expect(component.matchId).toEqual(match.matchDetail.matchId);
+        expect(component.hedgeMatchDetail).toEqual(match.hedgeMatchDetail);
+        expect(component.applyHedgeMatch).toBe(true);
     });
 });

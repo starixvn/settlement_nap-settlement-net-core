@@ -420,7 +420,7 @@ describe("E-sport - Early Settlement Component", () => {
     spyOn(verificationService, 'isMismatchedWarning');
     spyOn(verificationService, 'autoFillScore');
 
-    await component.getMatch(12345, '');
+    await component.getMatch(12345);
 
     expect(component.match.matchDetail.matchId).toEqual(match.matchDetail.matchId);
   });

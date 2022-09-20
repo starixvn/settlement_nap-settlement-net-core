@@ -4,6 +4,8 @@ import { ResourcesIds } from '../constants';
 import { SettlementStatusId } from '../../shared/constants';
 import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
 import { ResultDetail } from '../../shared/models/sportsbook-sop';
+import { Match } from "../models";
+import { SportType } from "../../shared/constants";
 
 @Injectable()
 export class BadmintonService {
@@ -44,5 +46,28 @@ export class BadmintonService {
   public getIntervalBackground(settlementStatusId: number) {
     return this.intervalBackgroundPipe.transform(settlementStatusId);
   }
+
+  public getBetStatus(isUnCal: boolean, match: Match) {
+    if (match.matchDetail.sportType !== SportType.volleyBall) {
+        return null;
+    }
+
+    const betStatus: string[] = [];
+    const refund = !match.resultDetails.find((map) => map.resourceId === ResourcesIds.totalGames).checked
+      && match.matchDetail.betStatus
+      && _.includes(match.matchDetail.betStatus, 'Refund')
+      ? 'Refund;' : '';
+    if (!match.isScoreDirect) {
+      const submitedSets = match.resultDetails.filter((map) =>
+        map.resourceId !== ResourcesIds.totalPoints && map.resourceId !== ResourcesIds.totalGames);
+      submitedSets.forEach((map) => {
+        betStatus.push(map.checked
+          ? !isUnCal ? `${Number(map.homeValue)}-${Number(map.awayValue)}` : `0-0`
+          : `${Number(map.originalHomeValue)}-${Number(map.originalAwayValue)}`);
+      });
+    }
+
+    return refund + betStatus.join(',');
+}
 
 }

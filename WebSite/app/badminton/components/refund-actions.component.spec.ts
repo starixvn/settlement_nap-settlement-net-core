@@ -17,10 +17,8 @@ import {
   AioService
 } from '../../shared/services';
 import { HedgeMatchDetail, Match } from '../models';
-import { BadmintonApiKeys, ResourcesIds } from '../constants';
+import { BadmintonApiKeys } from '../constants';
 import { of } from 'rxjs';
-import { Language } from '../../shared/language';
-import { CalculateAction, SettlementStatusId } from '../../shared/constants';
 import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
 import { ScoreBySettlementPipe } from '../../shared/pipes/score-by-settlement.pipe';
 import { MatchDetail, Permission, ResultDetail, SettleQuery } from '../../shared/models/sportsbook-sop';
@@ -32,7 +30,7 @@ describe('Badminton - Refund actions component', () => {
   let component: RefundActionsComponent;
   let fixture: ComponentFixture<RefundActionsComponent>;
   let aioService: AioService;
-  let closePopupService: ClosePopupService;
+  let messageBoxService: MessageBoxService;
   const buttonName = "btn-danger";
   const matchDetail = new MatchDetail();
   matchDetail.matchId = 1;
@@ -104,10 +102,11 @@ describe('Badminton - Refund actions component', () => {
         fixture = TestBed.createComponent(RefundActionsComponent);
         component = fixture.componentInstance;
         aioService = fixture.debugElement.injector.get(AioService);
-        closePopupService = fixture.debugElement.injector.get(ClosePopupService);
-        spyOn(closePopupService, 'closePopup').and.callFake(() => { });
+        messageBoxService = fixture.debugElement.injector.get(MessageBoxService);
+        spyOn(messageBoxService, 'closePopup').and.callFake(() => { });
         toastrService = fixture.debugElement.injector.get(ToastrService);
         spyOn(toastrService, 'clear');
+        component.apiKeys = BadmintonApiKeys;
       });
   }));
 
@@ -118,7 +117,7 @@ describe('Badminton - Refund actions component', () => {
   it('getMatch - should call get-match service and set components properties', async () => {
     spyOn(aioService, 'getMatch').and.returnValue(of(match));
 
-    await component.getMatch(1234, '');
+    await component.getMatch(1234);
 
     expect(aioService.getMatch).toHaveBeenCalled();
   });
@@ -144,7 +143,7 @@ describe('Badminton - Refund actions component', () => {
       buttonYes.click();
       tick();
 
-      expect(closePopupService.closePopup).toHaveBeenCalled();
+      expect(messageBoxService.closePopup).toHaveBeenCalled();
     }));
 
     it('should push twice when match is applied hedge match', fakeAsync(async () => {

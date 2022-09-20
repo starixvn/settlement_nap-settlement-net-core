@@ -373,7 +373,7 @@ describe("Cricket - Early Settlement Component", () => {
       spyOn(verificationBaseService, 'getOutsideScores').and.returnValue([]);
       spyOn(verificationBaseService, 'getChangedScores').and.returnValue([]);
       spyOn(aioService, 'saveScore').and.returnValue(of(successfulResult));
-      spyOn(closePopupService, 'closePopup');
+      spyOn(messageBoxService, 'closePopup');
       spyOn(aioService, 'verifyChangedSettledTickets').and.returnValue(of(false));
       spyOn(aioService, 'push').and.returnValue(of(successfulResult));
       spyOn(toastrService, 'clear');
@@ -384,7 +384,7 @@ describe("Cricket - Early Settlement Component", () => {
       buttonYes.click();
       tick();
 
-      expect(closePopupService.closePopup).toHaveBeenCalled();
+      expect(messageBoxService.closePopup).toHaveBeenCalled();
     }));
 
     it('should confirm when score settled is changed', fakeAsync(() => {
@@ -581,7 +581,7 @@ describe("Cricket - Early Settlement Component", () => {
     spyOn(verificationService, 'isMismatchedWarning');
     spyOn(verificationService, 'autoFillScore');
 
-    await component.getMatch(12345, '');
+    await component.getMatch(12345);
 
     expect(component.match.matchDetail.matchId).toEqual(match.matchDetail.matchId);
   });

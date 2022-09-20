@@ -23,7 +23,6 @@ import {
   HttpRequestService,
   BlockUIService,
   MessageBoxService,
-  ClosePopupService,
   AioService,
 } from "../../shared/services";
 import {
@@ -65,8 +64,8 @@ describe("Esport - Calculation Actions Component", () => {
   let component: CalculationActionsComponent;
   let fixture: ComponentFixture<CalculationActionsComponent>;
   let aioService: AioService;
-  let closePopupService: ClosePopupService;
   let verificationService: VerificationService;
+  let messageBoxService: MessageBoxService;
   let toastrService: ToastrService;
   const buttonName = "btn-danger";
   const errorMessage = "Error message";
@@ -112,7 +111,6 @@ describe("Esport - Calculation Actions Component", () => {
         AioService,
         HttpRequestService,
         BlockUIService,
-        ClosePopupService,
         NgbModal,
         ResourceNameByIdPipe,
         IntervalBackgroundPipe,
@@ -144,8 +142,8 @@ describe("Esport - Calculation Actions Component", () => {
         component.match = match;
         aioService = fixture.debugElement.injector.get(AioService);
         toastrService = fixture.debugElement.injector.get(ToastrService);
-        closePopupService = fixture.debugElement.injector.get(ClosePopupService);
         verificationService = fixture.debugElement.injector.get(VerificationService);
+        messageBoxService = fixture.debugElement.injector.get(MessageBoxService);
       });
   }));
 
@@ -242,7 +240,7 @@ describe("Esport - Calculation Actions Component", () => {
       "Should error message is empty and close popup.",
       fakeAsync(() => {
         spyOn(aioService, "push").and.returnValue(of(successfulResult));
-        spyOn(closePopupService, "closePopup");
+        spyOn(messageBoxService, "closePopup");
         spyOn(toastrService, 'error');
         component.uncalculate();
         tick();
@@ -279,7 +277,7 @@ describe("Esport - Calculation Actions Component", () => {
       match.hedgeMatchDetail = new HedgeMatchDetail();
       spyOn(aioService, 'getMatch').and.returnValue(of(match));
       component.match = match;
-      await component.getMatch(match.matchDetail.matchId, 'url');
+      await component.getMatch(match.matchDetail.matchId);
 
       expect(component.applyHedgeMatch).toBe(true);
       expect(component.enableUncalculate).toBe(true);
@@ -293,7 +291,7 @@ describe("Esport - Calculation Actions Component", () => {
       spyOn(verificationService, 'autoFillScore');
       spyOn(aioService, 'getMatch').and.returnValue(of(match));
       component.match = match;
-      await component.getMatch(match.matchDetail.matchId, 'url');
+      await component.getMatch(match.matchDetail.matchId);
 
       expect(verificationService.enableUncalculateButton).toHaveBeenCalled();
       expect(verificationService.hasTicketBetOnMap).toHaveBeenCalled();

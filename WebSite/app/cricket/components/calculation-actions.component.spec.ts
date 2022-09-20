@@ -1,5 +1,6 @@
+import { ResultCommand } from './../../shared/models/result.model';
 import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
-import { AioService, BlockUIService, ClosePopupService, HttpRequestService, MessageBoxService } from '../../shared/services';
+import { AioService, BlockUIService, HttpRequestService, MessageBoxService } from '../../shared/services';
 import { ModalContentDialogComponent, ModalDialogComponent, NotReadyMatchComponent, ResettleCheckerComponent, TicketCountComponent } from '../../shared/components';
 import { CalculationActionsComponent } from './calculation-actions.component';
 import { CricketService, VerificationService } from '../services';
@@ -48,7 +49,6 @@ describe('CalculationActionsComponent', () => {
   let fixture: ComponentFixture<CalculationActionsComponent>;
   let messageBoxService: MessageBoxService;
   let verificationService: VerificationService;
-  let closePopupService: ClosePopupService;
   let aioService: AioService;
   let cricketService: CricketService;
   let verificationBaseService: VerificationBaseService;
@@ -59,6 +59,7 @@ describe('CalculationActionsComponent', () => {
     errCode: 0,
     errMsg: null,
     isSuccessful: true,
+    resultCommand: ''
   };
   const unSuccessfulResult = {
     errCode: 1,
@@ -70,7 +71,7 @@ describe('CalculationActionsComponent', () => {
     errCode: 0,
     errMsg: "",
     isSuccessful: true,
-    serviceCommand: 'mock command'
+    resultCommand: 'mock command'
   };
 
   const permission = new Permission();
@@ -105,7 +106,6 @@ describe('CalculationActionsComponent', () => {
       schemas: [NO_ERRORS_SCHEMA],
       providers: [
         MessageBoxService,
-        ClosePopupService,
         CricketService,
         VerificationService,
         HttpRequestService,
@@ -140,7 +140,6 @@ describe('CalculationActionsComponent', () => {
     cricketService = fixture.debugElement.injector.get(CricketService);
     messageBoxService = fixture.debugElement.injector.get(MessageBoxService);
     verificationService = fixture.debugElement.injector.get(VerificationService);
-    closePopupService = fixture.debugElement.injector.get(ClosePopupService);
     aioService = fixture.debugElement.injector.get(AioService);
     verificationBaseService = fixture.debugElement.injector.get(VerificationBaseService);
     toastrService = fixture.debugElement.injector.get(ToastrService);
@@ -149,6 +148,85 @@ describe('CalculationActionsComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+
+  it('saveScore - should push successfully when user confirm save score', fakeAsync(() => {
+    const resultDetail = new ResultDetail();
+    match.resultDetails = [resultDetail];
+    spyOn(aioService, 'saveScore').and.returnValue(of(successfulResult));
+    spyOn(verificationBaseService, 'getChangedScores').and.returnValue([]);
+    spyOn(verificationBaseService, 'getOutsideScores').and.returnValue([]);
+    component.match = match;
+
+    component.saveScore();
+    const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
+    buttonYes.click();
+    tick();
+
+    expect(aioService.saveScore).toHaveBeenCalled();
+    expect(component.match.resultDetails[0].checked).toBe(false);
+  }));
+
+  describe('uncalculate', () => {
+    beforeEach(() => {
+      const resultDetails = CreateDataTest.CreateResultDetail(
+        "00",
+        "1",
+        "2",
+        true
+      );
+      match.resultDetails = resultDetails;
+      component.match = match;
+      component.matchDetail = matchDetail;
+    });
+
+    it('Pass all validation and uncalculation is successful.'
+      + 'Should error message is empty and close popup.', fakeAsync(() => {
+        const hedgeMatch = new HedgeMatchDetail();
+        hedgeMatch.matchId = 123;
+        match.hedgeMatchDetail = hedgeMatch;
+        component.applyHedgeMatch = true;
+        spyOn(aioService, 'push').and.returnValue(of(successfulResult));
+        spyOn(messageBoxService, 'closePopup');
+        spyOn(toastrService, 'error');
+        component.uncalculate();
+
+        const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
+        buttonYes.click();
+        tick();
+        expect(toastrService.error).not.toHaveBeenCalled();
+      }));
+
+    it("should call netPosition when uncalculate is successful and return command", fakeAsync(() => {
+      const hedgeMatch = new HedgeMatchDetail();
+      hedgeMatch.matchId = 123;
+      match.hedgeMatchDetail = hedgeMatch;
+      component.applyHedgeMatch = true;
+      spyOn(aioService, 'push').and.returnValue(of(successfulResultWithCommand));
+      spyOn(messageBoxService, 'closePopup');
+      spyOn(cricketService, 'netPosition').and.returnValue(of(successfulResult));
+      component.uncalculate();
+
+      const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
+      buttonYes.click();
+      tick();
+
+      expect(cricketService.netPosition).toHaveBeenCalledTimes(2);
+    }));
+
+    it('Pass all validation and uncalculation is unsuccessful.'
+      + 'Should return an error.', fakeAsync(() => {
+        spyOn(aioService, 'push').and.returnValue(of(unSuccessfulResult));
+        spyOn(toastrService, 'error');
+        component.uncalculate();
+
+        const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
+        buttonYes.click();
+        tick();
+
+        expect(toastrService.error).toHaveBeenCalledWith(errorMessage);
+      }));
   });
 
   describe('calculate', () => {
@@ -191,7 +269,7 @@ describe('CalculationActionsComponent', () => {
       spyOn(aioService, 'verifyNoRunningOdds').and.returnValue(of(successfulResult));
       spyOn(verificationService, 'allMapHaveScoreSources').and.returnValue(false);
       spyOn(verificationBaseService, 'isExistMismatchScore').and.returnValue(true);
-      spyOn(closePopupService, 'closePopup');
+      spyOn(messageBoxService, 'closePopup');
       spyOn(verificationBaseService, 'getOutsideScores').and.returnValue([]);
       spyOn(verificationBaseService, 'getChangedScores').and.returnValue([]);
       spyOn(aioService, 'saveScore').and.returnValue(of(successfulResult));
@@ -230,7 +308,7 @@ describe('CalculationActionsComponent', () => {
       spyOn(verificationService, 'invalidInputScore').and.returnValue(false);
       spyOn(aioService, 'verifyNoRunningOdds').and.returnValue(of(successfulResult));
       spyOn(aioService, 'push').and.returnValue(of(successfulResult));
-      spyOn(closePopupService, 'closePopup');
+      spyOn(messageBoxService, 'closePopup');
       spyOn(verificationService, 'allMapHaveScoreSources').and.returnValue(true);
       spyOn(verificationBaseService, 'isExistMismatchScore').and.returnValue(false);
       spyOn(verificationBaseService, 'getOutsideScores').and.returnValue([]);
@@ -255,7 +333,7 @@ describe('CalculationActionsComponent', () => {
       spyOn(verificationService, 'invalidInputScore').and.returnValue(false);
       spyOn(aioService, 'verifyNoRunningOdds').and.returnValue(of(successfulResult));
       spyOn(aioService, 'push').and.returnValue(of(successfulResult));
-      spyOn(closePopupService, 'closePopup');
+      spyOn(messageBoxService, 'closePopup');
       spyOn(verificationService, 'allMapHaveScoreSources').and.returnValue(true);
       spyOn(verificationBaseService, 'isExistMismatchScore').and.returnValue(false);
       spyOn(verificationBaseService, 'getOutsideScores').and.returnValue([]);
@@ -324,7 +402,7 @@ describe('CalculationActionsComponent', () => {
       spyOn(verificationService, 'invalidInputScore').and.returnValue(false);
       spyOn(aioService, 'verifyNoRunningOdds').and.returnValue(of(successfulResult));
       spyOn(cricketService, 'netPosition').and.returnValue(of(successfulResult));
-      spyOn(closePopupService, 'closePopup');
+      spyOn(messageBoxService, 'closePopup');
       spyOn(verificationService, 'allMapHaveScoreSources').and.returnValue(true);
       spyOn(verificationBaseService, 'isExistMismatchScore').and.returnValue(false);
       spyOn(aioService, 'verifyChangedSettledTickets').and.returnValue(false);
@@ -346,6 +424,7 @@ describe('CalculationActionsComponent', () => {
       component.match.hedgeMatchDetail = new HedgeMatchDetail();
       component.match.hedgeMatchDetail.matchId = 1234;
       component.applyHedgeMatch = true;
+      successfulResult.resultCommand = 'abc';
       spyOn(aioService, 'push').and.returnValue(of(successfulResultWithCommand));
       spyOn(verificationService, 'invalidInputScore').and.returnValue(false);
       spyOn(aioService, 'verifyNoRunningOdds').and.returnValue(of(successfulResult));
@@ -356,7 +435,7 @@ describe('CalculationActionsComponent', () => {
       spyOn(verificationBaseService, 'getOutsideScores').and.returnValue([]);
       spyOn(verificationBaseService, 'getChangedScores').and.returnValue([]);
       spyOn(aioService, 'saveScore').and.returnValue(of(successfulResult));
-      spyOn(closePopupService, 'closePopup');
+      spyOn(messageBoxService, 'closePopup');
 
       component.calculate();
       tick();
@@ -381,188 +460,111 @@ describe('CalculationActionsComponent', () => {
       expect(toastrService.error).toHaveBeenCalledWith(Language.confirmRefund.calculateResultNotConfirmed);
     }));
 
+  });
 
-    describe('uncalculate', () => {
-      beforeEach(() => {
-        const resultDetails = CreateDataTest.CreateResultDetail(
-          "00",
-          "1",
-          "2",
-          true
-        );
-        match.resultDetails = resultDetails;
-        component.match = match;
-        component.matchDetail = matchDetail;
-      });
 
-      it('Pass all validation and uncalculation is successful.'
-        + 'Should error message is empty and close popup.', fakeAsync(() => {
-          const hedgeMatch = new HedgeMatchDetail();
-          hedgeMatch.matchId = 123;
-          match.hedgeMatchDetail = hedgeMatch;
-          component.applyHedgeMatch = true;
-          spyOn(aioService, 'push').and.returnValue(of(successfulResult));
-          spyOn(closePopupService, 'closePopup');
-          spyOn(toastrService, 'error');
-          component.uncalculate();
+  describe('getMatch', () => {
+    it('should call getMatch function with correct param', () => {
+      const matchId = 123;
+      const matchQuery = {
+        matchId,
+        apikey: ApiKeys.NormalMatch,
+        settleType: "MNL"
+      };
+      spyOn(aioService, 'getMatch').and.returnValue(of(match));
+      component.getMatch(matchId, 'url');
 
-          const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
-          buttonYes.click();
-          tick();
-          expect(toastrService.error).not.toHaveBeenCalled();
-        }));
-
-      it("should call netPosition when uncalculate is successful and return command", fakeAsync(() => {
-        const hedgeMatch = new HedgeMatchDetail();
-        hedgeMatch.matchId = 123;
-        match.hedgeMatchDetail = hedgeMatch;
-        component.applyHedgeMatch = true;
-        spyOn(aioService, 'push').and.returnValue(of(successfulResultWithCommand));
-        spyOn(closePopupService, 'closePopup');
-        spyOn(cricketService, 'netPosition').and.returnValue(of(successfulResult));
-        component.uncalculate();
-
-        const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
-        buttonYes.click();
-        tick();
-
-        expect(cricketService.netPosition).toHaveBeenCalledTimes(2);
-      }));
-
-      it('Pass all validation and uncalculation is unsuccessful.'
-        + 'Should return an error.', fakeAsync(() => {
-          spyOn(aioService, 'push').and.returnValue(of(unSuccessfulResult));
-          spyOn(toastrService, 'error');
-          component.uncalculate();
-
-          const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
-          buttonYes.click();
-          tick();
-
-          expect(toastrService.error).toHaveBeenCalledWith(errorMessage);
-        }));
+      expect(aioService.getMatch).toHaveBeenCalledWith(matchQuery);
     });
 
-    describe('getMatch', () => {
-      it('should call getMatch function with correct param', () => {
-        const matchId = 123;
-        const matchQuery = {
-          matchId,
-          apikey: ApiKeys.NormalMatch,
-          settleType: "MNL"
-        };
-        spyOn(aioService, 'getMatch').and.returnValue(of(match));
-        component.getMatch(matchId, 'url');
+    it('should reset home value when result is refund', async () => {
+      const matchId = 123;
+      const resultDetails = CreateDataTest.CreateResultDetail(
+        "00",
+        "1",
+        "2",
+        true
+      );
+      resultDetails[0].settlementStatusId = SettlementStatusId.Refund;
+      resultDetails[0].homeValue = '1';
+      match.resultDetails = resultDetails;
+      spyOn(aioService, 'getMatch').and.returnValue(of(match));
+      await component.getMatch(matchId, 'url');
 
-        expect(aioService.getMatch).toHaveBeenCalledWith(matchQuery);
-      });
-
-      it('should reset home value when result is refund', async () => {
-        const matchId = 123;
-        const resultDetails = CreateDataTest.CreateResultDetail(
-          "00",
-          "1",
-          "2",
-          true
-        );
-        resultDetails[0].settlementStatusId = SettlementStatusId.Refund;
-        resultDetails[0].homeValue = '1';
-        match.resultDetails = resultDetails;
-        spyOn(aioService, 'getMatch').and.returnValue(of(match));
-        await component.getMatch(matchId, 'url');
-
-        expect(resultDetails[0].homeValue).toEqual('');
-      });
+      expect(resultDetails[0].homeValue).toEqual('');
     });
+  });
 
-    it('should return true when have not input value', () => {
-      component.isPressedCalculate = true;
-      const result = new ResultDetail();
-      result.checked = true;
-      const isError = component.isErrorOnVerification(result);
-      expect(isError).toBe(true);
-    });
+  it('should return true when have not input value', () => {
+    component.isPressedCalculate = true;
+    const result = new ResultDetail();
+    result.checked = true;
+    const isError = component.isErrorOnVerification(result);
+    expect(isError).toBe(true);
+  });
 
-    it('selectedOnMap - should set false for isClickOnCalculate', () => {
-      component.isPressedCalculate = true;
+  it('selectedOnMap - should set false for isClickOnCalculate', () => {
+    component.isPressedCalculate = true;
 
-      component.selectToProceed();
+    component.selectToProceed();
 
-      expect(component.isPressedCalculate).toBe(false);
-    });
+    expect(component.isPressedCalculate).toBe(false);
+  });
 
-    it('isSaveScoreDisabled - should return false when exist map checked', () => {
-      const map = new ResultDetail();
-      map.checked = true;
-      match.resultDetails = [map];
-      component.match = match;
+  it('isSaveScoreDisabled - should return false when exist map checked', () => {
+    const map = new ResultDetail();
+    map.checked = true;
+    match.resultDetails = [map];
+    component.match = match;
 
-      const result = component.isSaveScoreDisabled();
+    const result = component.isSaveScoreDisabled();
 
-      expect(result).toBe(false);
-    });
+    expect(result).toBe(false);
+  });
 
-    it('autoFillScoreOnLoad - should auto fill maps and final', () => {
-      const resultDetail = new ResultDetail();
-      resultDetail.resourceId = 'H1';
-      resultDetail.homeValue = '1';
-      resultDetail.awayValue = '1';
-      const final = new ResultDetail();
-      final.resourceId = '00';
-      final.homeValue = '1';
-      final.awayValue = '1';
-      match.resultDetails = [resultDetail, final];
-      component.match = match;
-      component.matchDetail = matchDetail;
-      spyOn(verificationService, 'isMismatchedWarning').and.returnValue(false);
+  it('autoFillScoreOnLoad - should auto fill maps and final', () => {
+    const resultDetail = new ResultDetail();
+    resultDetail.resourceId = 'H1';
+    resultDetail.homeValue = '1';
+    resultDetail.awayValue = '1';
+    const final = new ResultDetail();
+    final.resourceId = '00';
+    final.homeValue = '1';
+    final.awayValue = '1';
+    match.resultDetails = [resultDetail, final];
+    component.match = match;
+    component.matchDetail = matchDetail;
+    spyOn(verificationService, 'isMismatchedWarning').and.returnValue(false);
 
-      component.autoFillScoreOnLoad([resultDetail, final]);
+    component.autoFillScoreOnLoad([resultDetail, final]);
 
-      expect(final.isScoreMismatched).toBe(false);
-    });
+    expect(final.isScoreMismatched).toBe(false);
+  });
 
-    it('verifyAndAutoFillScore - should verify and auto fill score', () => {
-      const resultDetail = new ResultDetail();
-      resultDetail.resourceId = '00';
-      resultDetail.homeValue = '1';
-      resultDetail.awayValue = '1';
-      match.resultDetails = [resultDetail];
-      component.match = match;
-      component.matchDetail = matchDetail;
-      spyOn(verificationService, 'isMismatchedWarning').and.returnValue(false);
-      spyOn(verificationService, 'autoFillScore');
+  it('verifyAndAutoFillScore - should verify and auto fill score', () => {
+    const resultDetail = new ResultDetail();
+    resultDetail.resourceId = '00';
+    resultDetail.homeValue = '1';
+    resultDetail.awayValue = '1';
+    match.resultDetails = [resultDetail];
+    component.match = match;
+    component.matchDetail = matchDetail;
+    spyOn(verificationService, 'isMismatchedWarning').and.returnValue(false);
+    spyOn(verificationService, 'autoFillScore');
 
-      component.verifyAndAutoFillScore(resultDetail);
+    component.verifyAndAutoFillScore(resultDetail);
 
-      expect(resultDetail.isScoreMismatched).toBe(false);
-      expect(verificationService.autoFillScore).toHaveBeenCalled();
-    });
+    expect(resultDetail.isScoreMismatched).toBe(false);
+    expect(verificationService.autoFillScore).toHaveBeenCalled();
+  });
 
-    it('saveScore - should push successfully when user confirm save score', fakeAsync(() => {
-      const resultDetail = new ResultDetail();
-      match.resultDetails = [resultDetail];
-      spyOn(aioService, 'saveScore').and.returnValue(of(successfulResult));
-      spyOn(verificationBaseService, 'getChangedScores').and.returnValue([]);
-      spyOn(verificationBaseService, 'getOutsideScores').and.returnValue([]);
-      component.match = match;
+  it('checkMapIsMatched - should call verification service', () => {
+    const resultDetail = new ResultDetail();
+    spyOn(verificationService, 'isMismatchedWarning').and.returnValue(true);
 
-      component.saveScore();
-      const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
-      buttonYes.click();
-      tick();
+    component.checkMapIsMatched(resultDetail);
 
-      expect(aioService.saveScore).toHaveBeenCalled();
-      expect(component.match.resultDetails[0].checked).toBe(false);
-    }));
-
-    it('checkMapIsMatched - should call verification service', () => {
-      const resultDetail = new ResultDetail();
-      spyOn(verificationService, 'isMismatchedWarning').and.returnValue(true);
-
-      component.checkMapIsMatched(resultDetail);
-
-      expect(resultDetail.isScoreMismatched).toBe(true);
-    });
+    expect(resultDetail.isScoreMismatched).toBe(true);
   });
 
   describe('saveTraderScore', () => {

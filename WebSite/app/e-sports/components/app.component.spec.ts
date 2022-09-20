@@ -5,11 +5,6 @@ import { BrowserModule } from "@angular/platform-browser";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { HttpClientModule } from "@angular/common/http";
 import {
-  BlockUIService,
-  MessageBoxService,
-  AioService,
-} from "../../shared/services";
-import {
   AppComponent,
   CalculationMatchDetailComponent,
   CalculationActionsComponent,
@@ -81,7 +76,7 @@ describe("Component: App", () => {
   });
 
   it('should render calculation-actions tag', () => {
-      elementRef.nativeElement.setAttribute("page-type", PageType.Calculation)
+      elementRef.nativeElement.setAttribute("page-type", PageType.ReCalculate)
       fixture.detectChanges();
       const compiled = fixture.debugElement.nativeElement;
       expect(compiled.querySelectorAll("calculation-actions").length).toBeGreaterThanOrEqual(1);

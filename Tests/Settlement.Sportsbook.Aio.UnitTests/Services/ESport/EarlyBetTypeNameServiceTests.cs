@@ -46,7 +46,7 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services.ESport
         [InlineData("912501", "Map 1 First Herald")]
         [InlineData("912601", "Map 1 First Herald Time")]
         [InlineData("912701", "Map 1 First Baron Time")]
-        [InlineData("912801", "Map 1 First Barron No. Players Buff")]
+        [InlineData("912801", "Map 1 First Baron No. Players Buff")]
         [InlineData("912901", "Map 1 First Inhibitor Time")]
         [InlineData("913001", "Map 1 First Inhibitor Location")]
         [InlineData("913101", "Map 1 First Dragon Time")]

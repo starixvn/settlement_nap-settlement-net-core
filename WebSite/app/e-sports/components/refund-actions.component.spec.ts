@@ -42,7 +42,6 @@ describe("E-sport - Refund Component", () => {
   let aioService: AioService;
   let closePopupService: ClosePopupService;
   let toastrService: ToastrService;
-  const apiUrl = 'mock Url';
   const buttonName = "btn-danger";
   const errorMessage = "Error message";
   const successfulResult = {
@@ -146,7 +145,7 @@ describe("E-sport - Refund Component", () => {
       settleType: "MNL"
     };
     spyOn(aioService, 'getMatch').and.returnValue(of(match));
-    component.getMatch(matchId, apiUrl);
+    component.getMatch(matchId);
 
     expect(aioService.getMatch).toHaveBeenCalledWith(matchQuery);
   });

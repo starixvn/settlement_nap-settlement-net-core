@@ -34,6 +34,7 @@ import { ResultStatusPipe } from '../../shared/pipes/result-status.pipe';
 import { TicketStatusPipe } from '../../shared/pipes/ticket-status.pipe';
 import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
 import { ToastContainerDirective, ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
+import { BadmintonApiKeys } from '../constants';
 
 describe('EarlySettlementComponent', () => {
   let component: EarlySettlementComponent;
@@ -139,6 +140,7 @@ describe('EarlySettlementComponent', () => {
         toastrService = fixture.debugElement.injector.get(ToastrService);
         spyOn(toastrService, 'clear');
         spyOn(toastrService, 'error');
+        component.apiKeys = BadmintonApiKeys;
       });
   }));
 
@@ -161,7 +163,7 @@ describe('EarlySettlementComponent', () => {
 
     component.autoFillResultOnLoad(resultDetails);
 
-    expect(component.matchDetail.isSavedScore).toBe(false);
+    expect(component.match.matchDetail.isSavedScore).toBe(false);
     expect(verificationService.autoFillEarlyResult).toHaveBeenCalled();
     expect(verificationService.isEarlyMismatchedWarning).toHaveBeenCalled();
   });
@@ -209,9 +211,9 @@ describe('EarlySettlementComponent', () => {
   describe("refund", () => {
     beforeEach(() => {
       component.match = match;
-      component.match.matchDetail = matchDetail;
       match.resultDetails = [resultDetail];
       component.permission = new Permission();
+      component.matchDetail = matchDetail;
     });
     it("should pass all validation and success", fakeAsync(async () => {
       spyOn(aioService, "checkMarkedTickets").and.returnValue(
@@ -269,7 +271,7 @@ describe('EarlySettlementComponent', () => {
   describe("uncalculate", () => {
     beforeEach(() => {
       component.match = match;
-      component.match.matchDetail = matchDetail;
+      component.matchDetail = matchDetail;
       match.resultDetails = [resultDetail];
       component.permission = new Permission();
     });
@@ -307,7 +309,7 @@ describe('EarlySettlementComponent', () => {
       match.resultDetails = [resultDetail];
       const permission = new Permission();
       permission.isLeader = true;
-      component.permission = permission;
+      component.permission = permission;     
     });
 
     it('Pass all validation and calculation is successful. error should have not been involved',fakeAsync(async () => {
@@ -354,6 +356,7 @@ describe('EarlySettlementComponent', () => {
       const resultDetails: ResultDetail[] = [resultDetail, resultDetail];
       component.resultDetails = resultDetails;
       component.match = match;
+      component.matchDetail = matchDetail;
       spyOn(messageBoxService, 'confirm');
       spyOn(earlyConstraintService, 'verifyBeforeCalculation').and.returnValue('');
       spyOn(aioService, 'checkingNoRunningOdds').and.returnValue(null);
@@ -439,14 +442,13 @@ describe('EarlySettlementComponent', () => {
   it('getMatch - should get match and init component info', async () => {
     spyOn(aioService, 'getMatch').and.returnValue(of(match));
     spyOn(verificationService, 'generateExternalScores');
-    spyOn(earlyConstraintService, 'getGroupMap').and.returnValue([]);
     spyOn(earlyConstraintService, 'renderResultStatus');
     spyOn(earlyConstraintService, 'renderTicketStatus');
     spyOn(earlyConstraintService, 'renderResultType');
     spyOn(verificationService, 'isMismatchedWarning');
     spyOn(verificationService, 'autoFillScore');
 
-    await component.getMatch(12345, '');
+    await component.getMatch(12345);
 
     expect(component.match.matchDetail.matchId).toEqual(match.matchDetail.matchId);
   });

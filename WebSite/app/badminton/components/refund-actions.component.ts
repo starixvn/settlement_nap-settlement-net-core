@@ -20,7 +20,7 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
   public match: Match;
   public readonly isReSettledTickets: boolean;
   public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
-  private apiKeys = null;
+  public apiKeys = null;
   constructor(
     private readonly messageBoxService: MessageBoxService,
     protected toastrService: ToastrService,

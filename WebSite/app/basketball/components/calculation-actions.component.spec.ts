@@ -7,7 +7,7 @@ import { ElementRef, NO_ERRORS_SCHEMA } from "@angular/core";
 import { FormsModule } from '@angular/forms';
 import { CalculationActionsComponent } from './calculation-actions.component';
 import { BasketballService, BetStatusService, VerificationService } from '../services';
-import { MessageBoxService, HttpRequestService, BlockUIService, ClosePopupService, AioService } from '../../shared/services';
+import { MessageBoxService, HttpRequestService, BlockUIService, AioService } from '../../shared/services';
 import { ModalDialogComponent } from "../../shared/components/modal-dialog/modal-dialog.component";
 import { Match, HedgeMatchDetail, VoidBetInfo } from '../models';
 import { TicketCountComponent, ResettleCheckerComponent, ModalContentDialogComponent } from '../../shared/components';
@@ -26,7 +26,6 @@ describe('Basketball - Calculation Actions Component', () => {
     let fixture: ComponentFixture<CalculationActionsComponent>;
     let basketballService: BasketballService;
     let messageBoxService: MessageBoxService;
-    let closePopupService: ClosePopupService;
     let verificationService: VerificationService;
     let aioService: AioService;
     let betStatusService: BetStatusService;
@@ -98,7 +97,6 @@ describe('Basketball - Calculation Actions Component', () => {
                 MessageBoxService,
                 HttpRequestService,
                 BetStatusService,
-                ClosePopupService,
                 BlockUIService,
                 AioService,
                 VerificationService,
@@ -130,7 +128,6 @@ describe('Basketball - Calculation Actions Component', () => {
                 component = fixture.componentInstance;
                 basketballService = fixture.debugElement.injector.get(BasketballService);
                 messageBoxService = fixture.debugElement.injector.get(MessageBoxService);
-                closePopupService = fixture.debugElement.injector.get(ClosePopupService);
                 aioService = fixture.debugElement.injector.get(AioService);
                 verificationService = fixture.debugElement.injector.get(VerificationService);
                 betStatusService = fixture.debugElement.injector.get(BetStatusService);
@@ -358,7 +355,7 @@ describe('Basketball - Calculation Actions Component', () => {
             spyOn(basketballService, 'isDisabledUndoButton').and.returnValue(true);
             spyOn(aioService, 'getMatch').and.returnValue(of(match));
 
-            await component.getMatch(12345, '');
+            await component.getMatch(12345);
 
             expect(component.applyHedgeMatch).toBe(true);
             expect(component.isDisabledUndo).toBe(true);
@@ -370,7 +367,7 @@ describe('Basketball - Calculation Actions Component', () => {
             spyOn(verificationService, 'generateExternalScores');
             spyOn(aioService, 'getMatch').and.returnValue(of(match));
 
-            await component.getMatch(12345, '');
+            await component.getMatch(12345);
 
             expect(basketballService.getResultDetail).toHaveBeenCalled();
             expect(verificationService.generateExternalScores).toHaveBeenCalled();
@@ -558,7 +555,7 @@ describe('Basketball - Calculation Actions Component', () => {
             spyOn(verificationService, 'allMapHaveScoreSources').and.returnValue(true);
             spyOn(verificationService, 'isExistMismatchScore').and.returnValue(false);
             spyOn(betStatusService, 'getBetStatus').and.returnValue("");
-            spyOn(closePopupService, 'closePopup');
+            spyOn(messageBoxService, 'closePopup');
             spyOn(verificationService, 'getOutsideScores').and.returnValue([]);
             spyOn(verificationService, 'getChangedScores').and.returnValue([]);
             spyOn(aioService, 'getTicketInfo').and.returnValue(of([]));
@@ -590,7 +587,7 @@ describe('Basketball - Calculation Actions Component', () => {
             spyOn(verificationService, 'isExistMismatchScore').and.returnValue(false);
             spyOn(betStatusService, 'getBetStatus').and.returnValue("");
             spyOn(aioService, 'push').and.returnValue(of(successfulResult));
-            spyOn(closePopupService, 'closePopup');
+            spyOn(messageBoxService, 'closePopup');
             spyOn(verificationService, 'getOutsideScores').and.returnValue([]);
             spyOn(verificationService, 'getChangedScores').and.returnValue([]);
             spyOn(aioService, 'getTicketInfo').and.returnValue(of([]));
@@ -620,7 +617,7 @@ describe('Basketball - Calculation Actions Component', () => {
             spyOn(verificationService, 'isExistMismatchScore').and.returnValue(false);
             spyOn(betStatusService, 'getBetStatus').and.returnValue("");
             spyOn(aioService, 'push').and.returnValue(of(unSuccessfulResult));
-            spyOn(closePopupService, 'closePopup');
+            spyOn(messageBoxService, 'closePopup');
             spyOn(verificationService, 'getOutsideScores').and.returnValue([]);
             spyOn(verificationService, 'getChangedScores').and.returnValue([]);
             spyOn(aioService, 'getTicketInfo').and.returnValue(of([]));
@@ -655,7 +652,7 @@ describe('Basketball - Calculation Actions Component', () => {
             spyOn(verificationService, 'isExistMismatchScore').and.returnValue(false);
             spyOn(betStatusService, 'getBetStatus').and.returnValue("");
             spyOn(aioService, 'push').and.returnValue(of(successfulResult));
-            spyOn(closePopupService, 'closePopup');
+            spyOn(messageBoxService, 'closePopup');
             spyOn(verificationService, 'getOutsideScores').and.returnValue([]);
             spyOn(verificationService, 'getChangedScores').and.returnValue([]);
             spyOn(aioService, 'getTicketInfo').and.returnValue(of([voidBetInfo]));
@@ -685,7 +682,7 @@ describe('Basketball - Calculation Actions Component', () => {
             spyOn(verificationService, 'isExistMismatchScore').and.returnValue(false);
             spyOn(betStatusService, 'getBetStatus').and.returnValue("");
             spyOn(aioService, 'push').and.returnValue(of(successfulResult));
-            spyOn(closePopupService, 'closePopup');
+            spyOn(messageBoxService, 'closePopup');
             spyOn(verificationService, 'getOutsideScores').and.returnValue([]);
             spyOn(verificationService, 'getChangedScores').and.returnValue([]);
             spyOn(aioService, 'saveScore').and.returnValue(of(unSuccessfulResult));
@@ -784,7 +781,7 @@ describe('Basketball - Calculation Actions Component', () => {
                 spyOn(aioService, 'getTicketInfo').and.returnValue(of([]));
                 spyOn(aioService, 'voidBet').and.returnValue(of(""));
                 spyOn(betStatusService, "getBetStatus").and.returnValue("");
-                spyOn(closePopupService, "closePopup");
+                spyOn(messageBoxService, "closePopup");
                 spyOn(toastrService, 'error');
 
                 component.uncalculate();
@@ -797,7 +794,7 @@ describe('Basketball - Calculation Actions Component', () => {
 
 
                 expect(toastrService.error).not.toHaveBeenCalled();
-                expect(closePopupService.closePopup).toHaveBeenCalled();
+                expect(messageBoxService.closePopup).toHaveBeenCalled();
             }));
 
         it("call void bet when match exist ticket valid", fakeAsync(() => {
@@ -813,7 +810,7 @@ describe('Basketball - Calculation Actions Component', () => {
             spyOn(aioService, 'getTicketInfo').and.returnValue(of([voidBetInfo]));
             spyOn(aioService, 'voidBet').and.returnValue(of(""));
             spyOn(betStatusService, "getBetStatus").and.returnValue("");
-            spyOn(closePopupService, "closePopup");
+            spyOn(messageBoxService, "closePopup");
 
             component.uncalculate();
 
