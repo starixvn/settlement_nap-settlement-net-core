@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Settlement.Sportsbook.Soccer.Models
+﻿namespace Settlement.Sportsbook.Soccer.Models
 {
     public class MatchGoalRecordModel
     {
@@ -12,7 +6,13 @@ namespace Settlement.Sportsbook.Soccer.Models
 
         public bool IsExistFgNg { get; set; }
 
+        public bool IsExistFG { get; set; }
+
+        public bool IsExistHTFG { get; set; }
+
         public string GoalRecord { get; set; }
+
+        public string BetStatus { get; set; }
 
         public int ErrCode { get; set; }
 

@@ -52,7 +52,7 @@ namespace Settlement.Sportsbook.Aio.Models
 
         public string RelatedResourceId => ChildMatchConstant.ResourceRelated.TryGetValue(ChildMatchType, out relatedResourceId) ? relatedResourceId : defaultValue;
 
-        public MatchResultSetting ResultSettingData => new MatchResultSetting
+        public ResultDetailSetting ResultSettingData => new ResultDetailSetting
         {
             ResultSetting = Convert.ToString(ResultSetting, ToBase).Reverse(),
         };

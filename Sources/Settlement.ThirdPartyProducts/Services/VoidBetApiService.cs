@@ -2,6 +2,7 @@
 using Fanex.Data.Repository;
 using Kaden.XmlConverter;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
@@ -17,6 +18,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using ResourceItem = Settlement.ThirdPartyProducts.Models.ResourceItem;
 
 namespace Settlement.ThirdPartyProducts.Services
 {
@@ -31,8 +33,6 @@ namespace Settlement.ThirdPartyProducts.Services
     {
         private readonly IDynamicRepository repository;
 
-        private readonly IConfiguration configuration;
-
         private readonly XmlConvertService xmlConvertService;
 
         private readonly SendMailService sendMailService;
@@ -43,23 +43,25 @@ namespace Settlement.ThirdPartyProducts.Services
 
         private readonly IHttpClientFactory httpClientFactory;
 
+        private readonly AppSettingsKey appSettingsKey;
+
         public VoidBetApiServiceImp(
             IDynamicRepository repository,
-            IConfiguration configuration,
             XmlConvertService xmlConvertService,
             IMapper mapper,
             SendMailService sendMailService,
             IRefDataService refDataService,
-         IHttpClientFactory httpClientFactory)
+            IHttpClientFactory httpClientFactory,
+            IOptions<AppSettingsKey> appSettingsKey)
 
         {
             this.repository = repository;
-            this.configuration = configuration;
             this.mapper = mapper;
             this.xmlConvertService = xmlConvertService;
             this.sendMailService = sendMailService;
             this.refDataService = refDataService;
             this.httpClientFactory = httpClientFactory;
+            this.appSettingsKey = appSettingsKey.Value;
         }
 
         public async Task VoidBetApi(VoidBetRequest request)
@@ -68,10 +70,9 @@ namespace Settlement.ThirdPartyProducts.Services
             {
                 VoidBetInfos = request.VoidBetInfos
             };
-            var thirdPartyUrl = configuration.GetSection("ThirdPartyJackTimeUrl").Value;
-            if (!string.IsNullOrEmpty(thirdPartyUrl) && voidBetApiModel.VoidBetInfos.Any())
+            if (!string.IsNullOrEmpty(appSettingsKey.ThirdPartyJackTimeUrl) && voidBetApiModel.VoidBetInfos.Any())
             {
-                await SendRequest(thirdPartyUrl, request, voidBetApiModel);
+                await SendRequest(appSettingsKey.ThirdPartyJackTimeUrl, request, voidBetApiModel);
             }
         }
 
@@ -114,7 +115,15 @@ namespace Settlement.ThirdPartyProducts.Services
                 MatchId = request.MatchId,
                 SelectedResources = CreateResources(listResource)
             };
-            var listVoidBetInfo = (await repository.FetchAsync<VoidBetInfo>(getTicketInfoCriteria)).ToList();
+
+            var listVoidBetInfo = new List<VoidBetInfo>();
+
+            foreach (var server in appSettingsKey.SiteDbServer)
+            {
+                getTicketInfoCriteria.DbServer = server;
+                var listVoidBet = (await repository.FetchAsync<VoidBetInfo>(getTicketInfoCriteria)).ToList();
+                listVoidBetInfo.AddRange(listVoidBet);
+            }
 
             return HandleListVoidBet(listVoidBetInfo, request.Action);
         }
@@ -132,7 +141,7 @@ namespace Settlement.ThirdPartyProducts.Services
 
         private string CreateResources(List<ResourceItem> selectedResources)
         {
-            var resources = new Resources<ResourceItem>
+            var resources = new Models.Resources<ResourceItem>
             {
                 ResourceItems = selectedResources
             };

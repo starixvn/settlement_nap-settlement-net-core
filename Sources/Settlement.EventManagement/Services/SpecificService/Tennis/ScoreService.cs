@@ -31,14 +31,12 @@ namespace Settlement.EventManagement.Services.SpecificService.Tennis
 
             if (HasScore(resultDetail.SettlementStatusId))
             {
-                int homeValue;
-                if (int.TryParse(resultDetail.HomeValue, out homeValue))
+                if (int.TryParse(resultDetail.HomeValue, out var homeValue))
                 {
                     homeScore += homeValue;
                 }
 
-                int awayValue;
-                if (int.TryParse(resultDetail.AwayValue, out awayValue))
+                if (int.TryParse(resultDetail.AwayValue, out var awayValue))
                 {
                     awayScore += awayValue;
                 }

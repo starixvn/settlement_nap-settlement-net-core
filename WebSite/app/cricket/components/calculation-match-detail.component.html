@@ -1,0 +1,32 @@
+﻿<div class="padding">
+    <div class="calculate-league">
+        <div class="icon">
+        </div>
+        CRICKET - {{matchDetail.leagueName}}
+        <button *ngIf="match.permission.canChangeScoreSource" class=" button manage-outside"
+            (click)="manageOutSideSourcePopup()">Manage Outside Source</button>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th class="code">Match Code/ID</th>
+                <th class="kick-off-time">Kick-off Time</th>
+                <th class="team">Team</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{matchDetail.matchCode}}</td>
+                <td rowspan="2">
+                    {{matchDetail.kickOffTime | date : 'mediumDate'}}
+                    <br />
+                    {{matchDetail.kickOffTime | date : 'hh:mm:ss a'}}
+                </td>
+                <td class="home-team-name">{{matchDetail.homeName}}</td>
+            </tr>
+            <tr>
+                <td>{{matchDetail.matchId}}</td>
+                <td class="away-team-name">{{matchDetail.awayName}}</td>
+            </tr>
+        </tbody>
+    </table>

@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Settlement.Sportsbook.Soccer.Models;
 
-namespace Settlement.Sportsbook.Soccer
+namespace Settlement.Sportsbook.Soccer.Requests
 {
     public class GetMatchRequest : IRequest<Match>
     {

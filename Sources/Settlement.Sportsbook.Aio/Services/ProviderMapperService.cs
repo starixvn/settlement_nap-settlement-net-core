@@ -1,8 +1,8 @@
 ﻿using Settlement.Sportsbook.Aio.MapperFactory;
-using Settlement.Sportsbook.Aio.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Settlement.Core.Models;
 
 namespace Settlement.Sportsbook.Aio.Services
 {

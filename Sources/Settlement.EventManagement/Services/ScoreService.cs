@@ -90,13 +90,13 @@ namespace Settlement.EventManagement.Services
             {
                 var home = games.Sum(m =>
                 {
-                    int.TryParse(m.HomeValue, out int homeValue);
+                    int.TryParse(m.HomeValue, out var homeValue);
                     return homeValue;
                 });
 
                 var away = games.Sum(m =>
                 {
-                    int.TryParse(m.AwayValue, out int awayValue);
+                    int.TryParse(m.AwayValue, out var awayValue);
                     return awayValue;
                 });
 

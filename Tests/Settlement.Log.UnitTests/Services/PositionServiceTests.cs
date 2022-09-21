@@ -49,7 +49,7 @@ namespace Settlement.Log.UnitTests.Services
             };
 
             // Act
-            var positionName = service.PositionName(BetType.TimeMachineHandicap, item);
+            var positionName = service.PositionName(BetType.FastMarketBetType.TimeMachineHandicap, item);
 
             // Assert
             Assert.Equal(position, positionName);
@@ -70,7 +70,7 @@ namespace Settlement.Log.UnitTests.Services
 
             // Act
             resultService.MinuteSetPieceResultName(Arg.Any<string>(), Arg.Any<string>()).Returns(position);
-            var positionName = service.PositionName(BetType.NextOneMinuteSetPiece, item);
+            var positionName = service.PositionName(BetType.FastMarketBetType.NextOneMinuteSetPiece, item);
 
             // Assert
             Assert.Equal(position, positionName);
@@ -132,7 +132,7 @@ namespace Settlement.Log.UnitTests.Services
             };
 
             // Act
-            var positionName = service.PositionName(BetType.TimeMachineHandicap, item);
+            var positionName = service.PositionName(BetType.FastMarketBetType.TimeMachineHandicap, item);
 
             // Assert
             Assert.Equal(position, positionName);

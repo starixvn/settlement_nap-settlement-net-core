@@ -1,0 +1,177 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <CodeAnalysisRuleSet>..\.sonarlint\settlement-netcorecsharp.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="app\**" />
+    <Content Remove="app\**" />
+    <EmbeddedResource Remove="app\**" />
+    <None Remove="app\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+	  <Content Remove="appsettings.LOCAL_1.json" />
+	  <Content Remove="appsettings.LOCAL_2.json" />
+	  <Content Remove="appsettings.LOCAL_3.json" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Remove="appsettings.LOCAL_1.json.orig" />
+		<None Remove="appsettings.LOCAL_2.json.orig" />
+		<None Remove="appsettings.LOCAL_3.json.orig" />
+    <None Remove="App_Data\SpName.AWS.xml" />
+    <None Remove="App_Data\SpName.LOCAL.xml" />
+    <None Remove="App_Data\SpName.PROD.xml" />
+    <None Remove="App_Data\SpName.SIT.xml" />
+    <None Remove="App_Data\SpName.UAT_1.xml" />
+    <None Remove="App_Data\SpName.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="..\.sonarlint\settlement-netcore\CSharp\SonarLint.xml" Link="SonarLint.xml" />
+    <Content Include="App_Data\SpName.LOCAL.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_Data\SpName.AWS.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_Data\SpName.PROD.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="appsettings.Development.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="appsettings.SIT.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="appsettings.UAT.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="App_Data\SpName.PROD_2.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_Data\SpName.UAT.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_Data\SpName.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Styles\colors.less" />
+    <Content Include="Styles\common.less" />
+    <Content Include="Styles\grid.less" />
+    <Content Include="Styles\images\bg-menu-header.png" />
+    <Content Include="Styles\images\calendar.png" />
+    <Content Include="Styles\images\check-box.png" />
+    <Content Include="Styles\images\favicon.ico" />
+    <Content Include="Styles\images\filter_bg.png" />
+    <Content Include="Styles\images\loader.gif" />
+    <Content Include="Styles\images\lotto_ball.png" />
+    <Content Include="Styles\images\small-arrow-down.png" />
+    <Content Include="Styles\images\sprite.png" />
+    <Content Include="Styles\images\user.png" />
+    <Content Include="Styles\styles.less" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Views\Auth\AccessDenied.cshtml" />
+    <None Include="Views\Auth\ChangePassword.cshtml" />
+    <None Include="Views\Auth\Error.cshtml" />
+    <None Include="Views\Auth\Index.cshtml" />
+    <None Include="Views\Auth\NotFound.cshtml" />
+    <None Include="Views\Auth\Offline.cshtml" />
+    <None Include="Views\Home\ExpiredSession.cshtml" />
+    <None Include="Views\Home\Index.cshtml" />
+    <None Include="Views\Shared\Error.cshtml" />
+    <None Include="Views\Shared\_Layout.cshtml" />
+    <None Include="Views\Shared\_ValidationScriptsPartial.cshtml" />
+    <None Include="Views\_ViewImports.cshtml" />
+    <None Include="Views\_ViewStart.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="10.1.1" />
+    <PackageReference Include="Fanex.Caching.AspNetCore" Version="2.2.3-beta2" />
+		<PackageReference Include="Fanex.Caching.Redis" Version="2.2.3-beta4" />
+    <PackageReference Include="Fanex.Caching.Redis.AspNetCore" Version="2.2.3-beta2" />
+    <PackageReference Include="Fanex.Data" Version="4.2.2" />
+    <PackageReference Include="Fanex.Data.Repository" Version="4.2.2" />
+    <PackageReference Include="Fanex.Data.SqlServer" Version="4.2.2" />
+    <PackageReference Include="Fanex.Logging.Extensions.AspNetCore" Version="1.0.1-beta1" />
+    <PackageReference Include="Fanex.Logging.Extensions.Database" Version="1.0.8" />
+    <PackageReference Include="Fanex.Logging.Sentry" Version="1.0.6" />
+    <PackageReference Include="Fanex.MailDeliver.MailClient" Version="2.0.7" />
+    <PackageReference Include="Fanex.NAP.Client.AspNetCore" Version="2.0.0.1-beta3" />
+		<PackageReference Include="Fanex.NAP.Signin.AspNetCore" Version="2.0.0.2-beta5" />
+		<PackageReference Include="Fanex.RemotingRef" Version="1.5.0.1-beta2" />
+		<PackageReference Include="Fanex.Settlement.ScaleOut" Version="1.1.7" />
+    <PackageReference Include="MediatR" Version="9.0.0" />
+    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="9.0.0" />
+    <PackageReference Include="MessagePack" Version="2.4.35" />
+    <PackageReference Include="MessagePack.AspNetCoreMvcFormatter" Version="2.4.35" />
+    <PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="5.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="5.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="ONEbook.UM" Version="3.1.3" />
+    <PackageReference Include="ONEbook.UM.AspNetCore" Version="3.1.0" />
+    <PackageReference Include="ONEbook.UM.Transport" Version="3.1.1" />
+    <PackageReference Include="StackExchange.Redis" Version="2.6.48" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Sources\Settlement.EventManagement\Settlement.EventManagement.csproj" />
+    <ProjectReference Include="..\Sources\Settlement.FastMarkets\Settlement.FastMarkets.csproj" />
+    <ProjectReference Include="..\Sources\Settlement.Gaming\Settlement.Gaming.csproj" />
+    <ProjectReference Include="..\Sources\Settlement.Log\Settlement.Log.csproj" />
+    <ProjectReference Include="..\Sources\Settlement.Setting\Settlement.Setting.csproj" />
+    <ProjectReference Include="..\Sources\Settlement.Sportsbook.MoveTickets\Settlement.Sportsbook.MoveTickets.csproj" />
+    <ProjectReference Include="..\Sources\Settlement.Sportsbook.Aio\Settlement.Sportsbook.Aio.csproj" />
+    <ProjectReference Include="..\Sources\Settlement.Sportsbook.OtherSports\Settlement.Sportsbook.OtherSports.csproj" />
+    <ProjectReference Include="..\Sources\Settlement.Sportsbook.Soccer\Settlement.Sportsbook.Soccer.csproj" />
+    <ProjectReference Include="..\Sources\Settlement.ThirdPartyProducts\Settlement.ThirdPartyProducts.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="appsettings.SIT_3.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="appsettings.UAT_3.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="appsettings.AWS.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="appsettings.LOCAL.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="appsettings.LOCAL_1.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="appsettings.LOCAL_2.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="appsettings.LOCAL_3.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="appsettings.PROD.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="appsettings.SIT.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="appsettings.SIT_2.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="appsettings.UAT.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="appsettings.UAT_2.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,180 @@
+@sprite: "../../wwwroot/css/images/sprite.png";
+
+.hasDatepicker {
+    width: 85px;
+}
+
+
+.content {
+    .table-matches-content {
+        overflow-y: scroll;
+    }
+
+    .confirm-score {
+        width: 100px;
+        min-width: 100px;
+    }
+
+    .league {
+        .name {
+            text-align: left;
+        }
+
+        td {
+            color: #1d3968;
+            background-color: #ccc;
+            vertical-align: middle;
+            border: 0;
+        }
+
+        .instant-time {
+            div {
+                float: left;
+                margin: 2px 3px 0 0;
+                font-weight: normal;
+                font-size: 8.3pt;
+            }
+
+            .instant-time-icon {
+                background: url(@sprite) no-repeat;
+                background-position: -105px -321px;
+                width: 15px;
+                height: 14px;
+                cursor: pointer;
+            }
+
+            .instant-time-icon:hover {
+                background-position: -125px -321px;
+            }
+        }
+    }
+}
+
+.filter-bar {
+    input[type="text"] {
+        height: 21px;
+        border: 1px solid #d4d4d4;
+        padding: 3px;
+        color: #000;
+        text-align: left;
+    }
+
+    .hasDatepicker {
+        width: 85px;
+        float: left;
+    }
+
+    .field {
+        height: 21px;
+    }
+
+    .ui-datepicker-trigger {
+        margin-top: -2px !important;
+    }
+
+    .from-date {
+        padding-left: 57px;
+    }
+
+    .to-date {
+        padding-left: 22px;
+    }
+
+    .to-date-field {
+        width: 206px;
+    }
+
+    @media (min-width: 1530px) {
+        .from-date {
+            padding-left: 57px;
+        }
+
+        .to-date {
+            padding-left: 22px;
+        }
+    }
+
+}
+
+.table-calculation {
+    thead {
+        display: block;
+    }
+
+    .event {
+        width: 970px;
+    }
+}
+
+.head-table {
+    padding-right: unset !important;
+}
+
+.league-list {
+    width: 25%;
+
+    .league-select {
+        width: 80%;
+    }
+}
+
+.auto-calculation {
+
+    .red {
+        color: red;
+    }
+    .instant-calc {
+        min-width: 185px;
+        border-bottom: 1px solid;
+    }
+
+    .confirm-instant {
+        padding: 4px;
+        color: red;
+        float: left;
+    }
+
+    .button-instant{
+        font-weight: bold;
+        width: 66px;
+        line-height: 2;
+        padding: unset !important;
+    }
+    .mat-button-wrapper{
+        margin-left: -7px;
+    }
+
+    .reference-action {
+        min-width: 350px;
+
+        div {
+            float: left;
+            margin: 5px 1px;
+        }
+
+        .action {
+            padding: 0 3px;
+            color: #fff;
+            background-color: #2296BD;
+        }
+
+        .separation {
+            font-size: 8px;
+        }
+
+        .fail {
+            background-color: #F00E0E;
+        }
+    }
+
+    .auto-setting,
+    .auto-instant {
+        min-width: 63px;
+        width: 63px;
+    }
+
+    .instant-status {
+        min-width: 120px;
+        width: 120px;
+    }
+}

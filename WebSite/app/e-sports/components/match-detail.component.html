@@ -1,0 +1,60 @@
+﻿<div class="calculate-league">
+    <div class="icon">
+    </div>
+    E-SPORTS - {{matchDetail.leagueName}}
+</div>
+<div [ngClass]="{'data_wrapper': resultDetails != null && resultDetails.length > 10}">
+    <div [ngClass]='isEarlySettlement ? "table-scroller margin-early" : "table-scroller margin-refund"'>
+        <table>
+            <thead class="match-detail">
+                <tr>
+                    <th class="code">
+                        <span> Match Code/ID</span>
+                    </th>
+                    <th class="kick-off-time">
+                        <span>Kick-off Time</span>
+                    </th>
+                    <th [ngClass]='isEarlySettlement ? "team team-early-width" : "team team-refund-width"'>
+                        <span>Team
+                        </span>
+                    </th>
+                    <th *ngFor="let map of resultDetails; let i= index; let last=last;">
+                        {{last ? "Final Score" : map.resourceId}}
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="code">{{matchDetail.matchCode}}</td>
+                    <td rowspan="2" class="kick-off-time">
+                        {{matchDetail.kickOffTime | date : 'mediumDate' }}
+                        <br />
+                        {{matchDetail.kickOffTime | date : 'hh:mm:ss a' }}
+                    </td>
+                    <td [ngClass]="{'home-team-name team':1, 'team-early-width': isEarlySettlement, 'team-refund-width': !isEarlySettlement}">{{matchDetail.homeName}}</td>
+                    <td *ngFor="let map of resultDetails; let i= index; let last=last;"
+                    [ngClass]="{'score': 1, 'final-score': lodash.isEqual(map.resourceId, resourcesIds.final), 'calculated': lodash.isEqual(map.settlementStatusId, settlementStatus.Calculated),
+                                'refunded': lodash.isEqual(map.settlementStatusId, settlementStatus.Refund)}">
+                        <ng-container *ngIf="map.isDisplayedForMember; else emptyScore">
+                            {{map.homeValue | scoreBySettlement:map.settlementStatusId}}
+                        </ng-container>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="code">{{matchDetail.matchId}}</td>
+                    <td [ngClass]="{'away-team-name team':1, 'team-early-width': isEarlySettlement, 'team-refund-width': !isEarlySettlement}">{{matchDetail.awayName}}</td>
+                    <td *ngFor="let map of resultDetails; let i= index; let last=last;"
+                    [ngClass]="{'score': 1, 'final-score': lodash.isEqual(map.resourceId, resourcesIds.final), 'calculated': lodash.isEqual(map.settlementStatusId, settlementStatus.Calculated),
+                                'refunded': lodash.isEqual(map.settlementStatusId, settlementStatus.Refund)}">
+                        <ng-container *ngIf="map.isDisplayedForMember; else emptyScore">
+                            {{map.awayValue | scoreBySettlement:map.settlementStatusId}}
+                        </ng-container>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<div *ngIf="isEarlySettlement" (click)="refresh()" class="icon-refresh">
+</div>
+<ng-template #emptyScore>-</ng-template>

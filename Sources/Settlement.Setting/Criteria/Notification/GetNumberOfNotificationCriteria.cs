@@ -1,4 +1,5 @@
-﻿using Fanex.Data.Repository;
+﻿using Fanex.Data;
+using Fanex.Data.Repository;
 
 namespace Settlement.Setting.Criteria.Notification
 {
@@ -8,14 +9,11 @@ namespace Settlement.Setting.Criteria.Notification
 
         public int NumberError { get; set; }
 
-        public override string GetSettingKey()
-        {
-            return "NAP_Set_GetNumberError";
-        }
+        [SpParam(Ignored = true)]
+        public string DbServer { get; set; }
 
-        public override bool IsValid()
-        {
-            return AdminId > 0;
-        }
+        public override string GetSettingKey() => $"NAP_Set_GetNumberError_{DbServer}";
+
+        public override bool IsValid() => AdminId > 0;
     }
 }

@@ -10,5 +10,9 @@ namespace Settlement.Gaming.Requests
         public int MatchId { get; set; }
 
         public List<BallModel> Balls { get; set; }
+
+        public string Action { get; set; }
+
+        public Permission Permission { get; set; }
     }
 }

@@ -6,8 +6,8 @@ using Settlement.Sportsbook.Aio.Criteria;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Requests;
 using System.Collections.Generic;
+using Settlement.Core.Models;
 using Settlement.Core.Services;
-using Settlement.Core.Criteria;
 
 namespace Settlement.Sportsbook.Aio.Services
 {
@@ -29,7 +29,7 @@ namespace Settlement.Sportsbook.Aio.Services
 
         GetRecalResultCriteria QueryRecalResult(GetRecalResultRequest request);
 
-        void WriteLogChildMatch(SettleCriteria criteria);
+        void WriteLogChildMatch(SettleCriteria criteria, Result result);
     }
 
     public class CreateQueryServiceImp : ICreateQueryService
@@ -43,8 +43,6 @@ namespace Settlement.Sportsbook.Aio.Services
         private readonly IMapper mapper;
 
         private readonly ILogService logService;
-
-        private readonly int actionCalculate = 100;
 
         public CreateQueryServiceImp(XmlConvertService xmlConvertService,
                                     INapSession currentSession,
@@ -155,13 +153,12 @@ namespace Settlement.Sportsbook.Aio.Services
             return criteria;
         }
 
-        public void WriteLogChildMatch(SettleCriteria criteria)
+        public void WriteLogChildMatch(SettleCriteria criteria, Result result)
         {
-            if (!string.IsNullOrWhiteSpace(criteria.ErrMsg))
+            if (!string.IsNullOrWhiteSpace(result.ErrMsg))
             {
-                logService.ActionLog(criteria.MatchId, criteria.ErrMsg, actionCalculate);
-                criteria.ErrCode = 0;
-                criteria.ErrMsg = string.Empty;
+                const int actionCalculate = 100;
+                logService.ActionLog(criteria.MatchId, result.ErrMsg, actionCalculate);
             }
         }
     }

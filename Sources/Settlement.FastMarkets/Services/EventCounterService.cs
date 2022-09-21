@@ -1,4 +1,5 @@
 ﻿using Kaden.XmlConverter;
+using Settlement.Core.Constants;
 using Settlement.FastMarkets.Models.EventCounterModels;
 using Settlement.FastMarkets.Requests;
 
@@ -11,8 +12,6 @@ namespace Settlement.FastMarkets.Services
 
     public class EventCounterServiceImp : IEventCounterService
     {
-        private const string Calculate = "CAL";
-
         private readonly IEventCounterElementService eventCounterElementService;
 
         private readonly XmlConvertService xmlConvertService;
@@ -26,7 +25,7 @@ namespace Settlement.FastMarkets.Services
 
         public string Result(SettleRequest request)
         {
-            if (request.Action.Equals(Calculate) || request.IsSettleDetermined)
+            if (request.Action.Equals(ActionType.CalculateAll) || request.IsSettleDetermined)
             {
                 var eventCounter = eventCounterElementService.GetEventCounters(request.EventCounters);
 

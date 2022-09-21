@@ -1,4 +1,5 @@
-﻿using Fanex.Data.Repository;
+﻿using Fanex.Data;
+using Fanex.Data.Repository;
 
 namespace Settlement.Gaming.Criteria.NumberGame
 {
@@ -16,9 +17,15 @@ namespace Settlement.Gaming.Criteria.NumberGame
 
         public string ErrMsg { get; set; }
 
+        [SpParam(Ignored = true)]
+        public string DbServer { get; set; }
+
+        [SpParam(Ignored = true)]
+        public string SpName { get; } = "NAP_Admin_Settlement_s161_Manual";
+
         public override string GetSettingKey()
         {
-            return "NAP_Admin_Settlement_s161_Manual";
+            return $"NAP_Admin_Settlement_s161_Manual_{DbServer}";
         }
 
         public override bool IsValid()

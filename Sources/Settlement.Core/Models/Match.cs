@@ -13,8 +13,6 @@ namespace Settlement.Core.Models
         private const int HalftimeLive = 1;
         private const int FullTimeLive = 2;
         private const int ConvertToBase = 2;
-        private const int isWaiting = 0;
-        private const int isSuccess = 2;
         private const string Dash = "-";
         private string goalRecord = string.Empty;
         private string eventStatus = string.Empty;
@@ -25,6 +23,17 @@ namespace Settlement.Core.Models
         private BackgroundColor backgroundColor;
         private AutoCalculationSetting autoCalcSetting;
         private MixParlay mixParlay;
+
+        private readonly List<int> mergedParlaySports = new List<int>
+        {
+            Core.Constants.SportType.Badminton,
+            Core.Constants.SportType.BasketBall,
+            Core.Constants.SportType.Cricket,
+            Core.Constants.SportType.ESports,
+            Core.Constants.SportType.Tennis,
+            Core.Constants.SportType.BeachVolleyball,
+            Core.Constants.SportType.VolleyBall
+        };
 
         [JsonIgnore]
         public IRefDataService RefDataService { get; set; }
@@ -143,6 +152,8 @@ namespace Settlement.Core.Models
 
         public ResultDetail ExFTResult { get; set; }
 
+        public string NewEventStatus { get; set; }
+
         public string GoalRecord
         {
             get
@@ -170,33 +181,11 @@ namespace Settlement.Core.Models
 
         public GoalIcon GoalIcon { get; set; } = new GoalIcon();
 
-        public string NewEventStatus
-        {
-            get
-            {
-                if (IsCalculatingSingle == null)
-                {
-                    return EventStatus;
-                }
-
-                if (IsCalculatingSingle == isWaiting)
-                {
-                    return Constants.EventStatus.Waiting;
-                }
-                else if (IsCalculatingSingle == isSuccess)
-                {
-                    return EventStatus;
-                }
-                else
-                {
-                    return Constants.EventStatus.Calculating;
-                }
-            }
-        }
-
         public string AutoSettleFastMarket { get; set; }
 
         public string EarlySettleStatus { get; set; }
+
+        public string EventStatusColor { get; set; }
 
         public string SuspenderHalfTime
         {
@@ -395,28 +384,7 @@ namespace Settlement.Core.Models
 
         public bool IsExistMarkedTicketParlay { get; set; }
 
-        public string EventStatusColor
-        {
-            get
-            {
-                if (EventStatus.IgnoreCaseEquals(Constants.EventStatus.PostPoned))
-                {
-                    return IsExistMarkedTicket ? Background.YellowBlinking : Background.Yellow;
-                }
-
-                if (EventStatus.IgnoreCaseEquals(Constants.EventStatus.Completed))
-                {
-                    return GetBackgroundCompletedStatus;
-                }
-
-                if (Remark.IsPending && EventStatus.IgnoreCaseEquals(EventStatusExtensions.ResultPending))
-                {
-                    return IsExistMarkedTicket ? Background.BrightYellowBlinking : Background.BrightYellow;
-                }
-
-                return IsExistMarkedTicket ? Background.WhiteBlinking : string.Empty;
-            }
-        }
+        public bool IsExistRunningTicketParlay { get; set; }
 
         public string ConfirmHalfTimeColor => IsNotConsistentExHtScore ? Background.WhiteBlinking : string.Empty;
 
@@ -430,29 +398,36 @@ namespace Settlement.Core.Models
 
         #endregion ExternalScore
 
-        private string GetBackgroundCompletedStatus
+        public List<SiteMatch> SiteMatch { get; set; } = new List<SiteMatch>();
+
+        public int EventStatusReason { get; set; }
+
+        public int ChildMatchType { get; set; }
+
+        public bool IsOpenOdds { get; set; }
+
+        public bool IsMergedParlay => mergedParlaySports.Contains(SportType);
+
+        public bool IsRunningEarlyBettypesParlay { get; set; }
+
+        public bool IsWaitingEarlyBettypesParlay { get; set; }
+
+        public bool IsRunningEarlyBetTypes { get; set; }
+
+        public bool IsWaitingEarlyBetTypes { get; set; }
+
+        public bool IsExistEarlyBetTypes { get; set; }
+
+        public bool IsExistEarlyBettypesParlay { get; set; }
+
+        public override bool Equals(object obj)
         {
-            get
-            {
-                return IsOnlyMarkedTicket
-                    ? Background.WhiteBlinking
-                    : GetBackgroundRunningTicket;
-            }
+            return obj is Match match && match.MatchId == MatchId;
         }
 
-        private string GetBackgroundRunningTicket
+        public override int GetHashCode()
         {
-            get
-            {
-                if (IsExistRunningTicket)
-                {
-                    return IsExistMarkedTicket ? Background.PinkBlinking : Background.Pink;
-                }
-
-                return string.Empty;
-            }
+            return MatchId;
         }
-
-        private bool IsOnlyMarkedTicket => IsExistMarkedTicket && !IsExistRunningTicket;
     }
 }

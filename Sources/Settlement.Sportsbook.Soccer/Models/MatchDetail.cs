@@ -1,8 +1,8 @@
-﻿using Settlement.Core.Services;
+﻿using Kaden.Extensions;
+using Settlement.Core.Models;
+using Settlement.Core.Services;
 using System;
 using System.Collections.Generic;
-using Kaden.Extensions;
-using Settlement.Core.Models;
 using System.Text.Json.Serialization;
 
 namespace Settlement.Sportsbook.Soccer.Models
@@ -151,5 +151,9 @@ namespace Settlement.Sportsbook.Soccer.Models
         }
 
         public bool HasInstantCompleted { get; set; }
+
+        public List<SiteMatch> SiteMatch { get; set; } = new List<SiteMatch>();
+
+        public int ChildMatchType { get; set; }
     }
 }

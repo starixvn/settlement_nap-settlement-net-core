@@ -1,0 +1,45 @@
+<div class="calculate-league">
+  <div class="icon">
+  </div>
+  {{matchDetail.sportName.toUpperCase()}} - {{matchDetail.leagueName}}
+</div>
+<table>
+  <thead class="match-detail">
+    <tr>
+      <th class="code">Match Code/ID</th>
+      <th class="kick-off-time">Kick-off Time</th>
+      <th class="team">Team</th>
+      <th *ngFor="let map of resultDetail; let i= index; let last=last;">
+        {{map.resourceId | resourceHeader: match.matchDetail.sportType}}
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>{{matchDetail.matchCode}}</td>
+      <td rowspan="2">
+        {{matchDetail.kickOffTime | date : 'mediumDate' }}
+        <br />
+        {{matchDetail.kickOffTime | date : 'hh:mm:ss a' }}
+      </td>
+      <td class="home-team-name">{{matchDetail.homeName}}</td>
+      <td *ngFor="let map of resultDetail; let i= index; let last=last;" [ngClass]="map.className">
+        <ng-container *ngIf="map.isDisplayedForMember; else emptyScore">
+          {{map.homeValue | scoreBySettlement:map.settlementStatusId}}
+        </ng-container>
+      </td>
+    </tr>
+    <tr>
+      <td>{{matchDetail.matchId}}</td>
+      <td class="away-team-name">{{matchDetail.awayName}}</td>
+      <td *ngFor="let map of resultDetail; let i= index; let last=last;" [ngClass]="map.className">
+        <ng-container *ngIf="map.isDisplayedForMember; else emptyScore">
+          {{map.awayValue | scoreBySettlement:map.settlementStatusId}}
+        </ng-container>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<div *ngIf="isEarlySettlement" (click)="refresh()" class="icon-refresh">
+</div>
+<ng-template #emptyScore>-</ng-template>

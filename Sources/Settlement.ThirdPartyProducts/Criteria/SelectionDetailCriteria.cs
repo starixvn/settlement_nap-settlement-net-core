@@ -6,6 +6,8 @@ namespace Settlement.ThirdPartyProducts.Criteria
     {
         public int MatchId { get; set; }
 
+        public string Resources { get; set; }
+
         public override string GetSettingKey()
         {
             return "NAP_Set_SMPSelectionDetailSel";

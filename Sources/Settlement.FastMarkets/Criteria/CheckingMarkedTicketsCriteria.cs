@@ -1,4 +1,5 @@
-﻿using Fanex.Data.Repository;
+﻿using Fanex.Data;
+using Fanex.Data.Repository;
 
 namespace Settlement.FastMarkets.Criteria
 {
@@ -8,9 +9,12 @@ namespace Settlement.FastMarkets.Criteria
 
         public string Results { get; set; }
 
+        [SpParam(Ignored = true)]
+        public string DbServer { get; set; }
+
         public override string GetSettingKey()
         {
-            return "NAP_Set_FastMarket_CheckingMarkedTransaction";
+            return $"NAP_Set_FastMarket_CheckingMarkedTransaction_{DbServer}";
         }
 
         public override bool IsValid()

@@ -35,18 +35,22 @@ namespace Settlement.Sportsbook.OtherSports.Services
 
         private readonly IBetStatusService betStatusService;
 
+        private readonly MultipleServerService multipleServerService;
+
         public SettlementActionsServiceImp(
             IDynamicRepository repository,
             IHttpContextAccessor accessor,
             INapSession currentSession,
             IMapper mapper,
-            IBetStatusService betStatusService)
+            IBetStatusService betStatusService,
+            MultipleServerService multipleServerService)
         {
             this.repository = repository;
             this.currentSession = currentSession;
             this.accessor = accessor;
             this.mapper = mapper;
             this.betStatusService = betStatusService;
+            this.multipleServerService = multipleServerService;
         }
 
         public async Task<Result> Calculate(CalculateRequest request)
@@ -54,30 +58,20 @@ namespace Settlement.Sportsbook.OtherSports.Services
             var criteria = mapper.Map<CalculateRequest, CalculateCriteria>(request);
             criteria.AdminId = currentSession.UserId;
             criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
-            await repository.ExecuteAsync(criteria);
 
-            return new Result
-            {
-                ErrCode = criteria.ErrCode,
-                ErrMsg = criteria.ErrMsg
-            };
+            return await multipleServerService.Calculate(criteria);
         }
 
         public async Task<Result> CalculateWithResultDetail(CalculateRequest request)
         {
             var criteria = CreateCriteria(request);
 
-            await repository.ExecuteAsync(criteria);
-            var result = new Result
-            {
-                ErrCode = criteria.ErrCode,
-                ErrMsg = criteria.ErrMsg
-            };
+            var result = await multipleServerService.Calculate(criteria);
 
             if (result.IsSuccessful && request.HedgeMatchId > 0)
             {
                 criteria.MatchId = request.HedgeMatchId;
-                await repository.ExecuteAsync(criteria);
+                await multipleServerService.Calculate(criteria);
             }
 
             return result;
@@ -86,9 +80,7 @@ namespace Settlement.Sportsbook.OtherSports.Services
         public async Task<MarkedTickets> CheckMarkedTickets(CheckingMarkedTicketsRequest request)
         {
             var criteria = mapper.Map<CheckingMarkedTicketsRequest, CheckingMarkedTicketsCriteria>(request);
-            await repository.ExecuteAsync(criteria);
-
-            return new MarkedTickets { IsExistMarkedTicket = criteria.IsExistMarkedTicket };
+            return await multipleServerService.CheckMarkedTickets(criteria);
         }
 
         public async Task<Result> Refund(RefundRequest request)
@@ -96,17 +88,13 @@ namespace Settlement.Sportsbook.OtherSports.Services
             var criteria = mapper.Map<RefundRequest, RefundCriteria>(request);
             criteria.AdminId = currentSession.UserId;
             criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
-            await repository.ExecuteAsync(criteria);
-            var result = new Result
-            {
-                ErrCode = criteria.ErrCode,
-                ErrMsg = criteria.ErrMsg
-            };
 
+            var result = await multipleServerService.Refund(criteria);
+            
             if (result.ErrCode == 0 && request.HedgeMatchId > 0)
             {
                 criteria.MatchId = request.HedgeMatchId;
-                await repository.ExecuteAsync(criteria);
+                await multipleServerService.Refund(criteria);
             }
 
             return result;
@@ -117,17 +105,12 @@ namespace Settlement.Sportsbook.OtherSports.Services
             var criteria = mapper.Map<RefundParlayRequest, ParlayCriteria>(request);
             criteria.AdminId = currentSession.UserId;
             criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
-            await repository.ExecuteAsync(criteria);
-            var result = new Result
-            {
-                ErrCode = criteria.ErrCode,
-                ErrMsg = criteria.ErrMsg
-            };
+            var result = await multipleServerService.RefundParlay(criteria);
 
             if (result.ErrCode == 0 && request.HedgeMatchId > 0)
             {
                 criteria.MatchId = request.HedgeMatchId;
-                await repository.ExecuteAsync(criteria);
+                await multipleServerService.RefundParlay(criteria);
             }
 
             return result;

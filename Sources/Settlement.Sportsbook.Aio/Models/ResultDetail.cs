@@ -1,8 +1,8 @@
 ﻿using Kaden.Extensions;
 using Settlement.Core.Constants;
+using Settlement.Core.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Settlement.Sportsbook.Aio.Models
 {
@@ -36,6 +36,8 @@ namespace Settlement.Sportsbook.Aio.Models
 
         public int Map { get; set; }
 
+        public int OrdNo { get; set; }
+
         public virtual string ResultStatus
         {
             get
@@ -54,7 +56,7 @@ namespace Settlement.Sportsbook.Aio.Models
 
         protected byte ResultSetting { get; set; }
 
-        public MatchResultSetting ResultSettingData => new MatchResultSetting
+        public ResultDetailSetting ResultSettingData => new ResultDetailSetting
         {
             ResultSetting = Convert.ToString(ResultSetting, ToBase).Reverse(),
         };
@@ -68,5 +70,27 @@ namespace Settlement.Sportsbook.Aio.Models
         public string AwayName { get; set; }
 
         public string OtherInfo { get; set; }
+
+        public int BetCount { get; set; }
+
+        public int InWaiting { get; set; }
+
+        public int InRunning { get; set; }
+
+        public int BetMarkedCount { get; set; }
+
+        public int BetSettledCount { get; set; }
+
+        public int BetRefundedCount { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            return obj is ResultDetail result && result.ResourceId == ResourceId;
+        }
+
+        public override int GetHashCode()
+        {
+            return Map;
+        }
     }
 }

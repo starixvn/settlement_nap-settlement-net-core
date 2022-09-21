@@ -33,51 +33,55 @@ namespace Settlement.Sportsbook.OtherSports.Services
 
         private readonly IBetStatusService betStatusService;
 
+        private readonly MultipleServerService multipleServerService;
+
         public SportsbookServiceImp(
             IDynamicRepository repository,
             IRefDataService refDataService,
             IMapper mapper,
-            IBetStatusService betStatusService
+            IBetStatusService betStatusService,
+            MultipleServerService multipleServerService
             )
         {
             this.repository = repository;
             this.refDataService = refDataService;
             this.mapper = mapper;
             this.betStatusService = betStatusService;
+            this.multipleServerService = multipleServerService;
         }
 
         public async Task<MatchResultDetail> GetMatch(GetMatchRequest request)
         {
-            var criteria = new GetSportsbookMatchDetailCriteria
-            {
-                MatchId = request.MatchId,
-                IsRefundPage = request.IsRefundPage
-            };
-            var result = await repository.FetchMultipleAsync<MatchDetail, ResultDetail, TicketCounts>(criteria);
-            var matchDetail = result.Item1.FirstOrDefault();
-            Argument.IsNotNull(matchDetail, $"Match ${criteria.MatchId} does not exist");
+            var (matchDetail, ticketCounts) = await multipleServerService.GetMatchInfo(request);
+            Argument.IsNotNull(matchDetail, $"Match ${request.MatchId} does not exist");
 
             matchDetail.RefDataService = refDataService;
 
             var providerCriteria = new GetExternalResultCriteria
             {
-                MatchId = criteria.MatchId
+                MatchId = request.MatchId
             };
 
             var externalResultDetails = repository.Fetch<ResultDetail>(providerCriteria);
             matchDetail = ProviderScore(matchDetail, externalResultDetails.ToList());
 
             var resultDetails = IsModifyResultDetailGroup(matchDetail.SportType)
-                ? betStatusService.GenerateResultDetail(matchDetail) : result.Item2.ToList();
+                ? betStatusService.GenerateResultDetail(matchDetail) : await GetResultDetail(request.MatchId);
             var hedgeMatch = await MatchHedgeDetail(request.MatchId);
 
             return new MatchResultDetail
             {
                 MatchDetail = matchDetail,
                 ResultDetails = resultDetails,
-                TicketCount = result.Item3.ToList(),
+                TicketCount = ticketCounts,
                 HedgeMatchDetail = hedgeMatch
             };
+        }
+
+        private async Task<List<ResultDetail>> GetResultDetail(int matchId)
+        {
+            var resultDetailCriteria = new GetResultDetailCriteria { MatchidList = matchId.ToString() };
+            return (await repository.FetchAsync<ResultDetail>(resultDetailCriteria)).ToList();
         }
 
         public bool IsModifyResultDetailGroup(int sportType)

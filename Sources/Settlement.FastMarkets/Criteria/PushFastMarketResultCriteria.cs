@@ -1,4 +1,6 @@
-﻿using Fanex.Data.Repository;
+﻿using Fanex.Data;
+using Fanex.Data.Repository;
+using System;
 
 namespace Settlement.FastMarkets.Criteria
 {
@@ -22,18 +24,22 @@ namespace Settlement.FastMarkets.Criteria
 
         public string Ip { get; set; }
 
+        public string OldResults { get; set; }
+
+        public string BroadcastSessionId { get; } = Guid.NewGuid().ToString();
+
+        [SpParam(Ignored = true)]
+        public string DbServer { get; set; }
+
+        [SpParam(Ignored = true)]
+        public string SpName { get; } = "NAP_Admin_Settlement_Fast_Market_Auto_1s_Push"; 
+
         public int ErrCode { get; set; }
 
         public string ErrMsg { get; set; }
 
-        public override string GetSettingKey()
-        {
-            return "NAP_Admin_Settlement_Fast_Market_Auto_1s_Push";
-        }
+        public override string GetSettingKey() => $"NAP_Admin_Settlement_Fast_Market_Auto_1s_Push_{DbServer}";
 
-        public override bool IsValid()
-        {
-            return AdminId > 0 && MatchId > 0;
-        }
+        public override bool IsValid() => AdminId > 0 && MatchId > 0;
     }
 }

@@ -4,7 +4,6 @@ namespace Settlement.Core.Constants
 {
     public static class BetType
     {
-        #region Cricket early bet types
 
         public static Dictionary<int, string> CricketBetTypeNames => new Dictionary<int, string>
         {
@@ -69,9 +68,6 @@ namespace Settlement.Core.Constants
             {9737, "{0} Inns Player Fours" },
         };
 
-        #endregion Cricket early bet types
-
-        #region E-Sport early bet types
 
         public static class ESportBetType
         {
@@ -109,10 +105,6 @@ namespace Settlement.Core.Constants
 
             public const int MapRoundTotalKills = 9069;
 
-            public const int MapGameRacePoint = 712;
-
-            public const int MapGamePointWinner = 713;
-
             public const int MapFirstToKillTime = 9089;
 
             public const int MapFirstBloodTime = 9090;
@@ -120,8 +112,6 @@ namespace Settlement.Core.Constants
             public const int MapTotalKillTenMin = 9091;
 
             public const int MapTotalKillTwentyMin = 9093;
-
-            public const int MapHomeTotalKill = 9099;
 
             public const int MapSpecificKill = 9101;
 
@@ -176,24 +166,23 @@ namespace Settlement.Core.Constants
             public const int MapFirstTurretLocationKOG = 9142;
         }
 
-        #endregion E-Sport early bet types
 
-        #region Badminton bet types
         public static class BadmintonBetType
         {
             public const int MapGameRacePoint = 712;
         }
-        #endregion Badminton bet types
 
-        #region FastMarket
-        public const int NextOneMinuteSetPiece = 225;
+        public static class FastMarketBetType
+        {
 
-        public const int TimeMachineOverUnder = 228;
+            public const int NextOneMinuteSetPiece = 225;
 
-        public const int TimeMachineHandicap = 229;
+            public const int TimeMachineOverUnder = 228;
 
-        #endregion
+            public const int TimeMachineHandicap = 229;
 
+        }
+        
         #region Volleyball bet types
         public static Dictionary<int, string> VolleyballBetTypeNames => new Dictionary<int, string>
         {
@@ -204,5 +193,42 @@ namespace Settlement.Core.Constants
             {3915, "Set {0} {1} Points Played" },
         };
         #endregion
+
+        public static class SoccerBetType
+        {
+            public const int FirstGoalMethod = 424;
+
+            public const int TimeOfFirstGoal = 455;
+
+            public const int TimeOfFirstCorner = 479;
+
+            public const int TimeOfSecondCorner = 481;
+
+            public const int ExtraTimeNextGoal = 395;
+
+            public const int AwayPenaltyShootout = 381;
+
+            public const int HomePenaltyShootout = 382;
+
+            public const int PenaltyWoodwork = 383;
+
+            public const int PenaltyShootoutBothOneNeither = 384;
+
+            public const int PenaltyShootout1X2 = 385;
+
+            public const int PenaltyShootoutSuddenDead = 390;
+
+            public const int PenaltyShootoutOddEven = 393;
+
+            public const int PenaltyShootoutExactTotalGoals = 391;
+
+            public const int HomePenaltyShootoutOverUnder = 387;
+
+            public const int AwayPenaltyShootoutOverUnder = 386;
+
+            public const int PenaltyShootoutCombo = 376;
+
+        }
+
     }
 }

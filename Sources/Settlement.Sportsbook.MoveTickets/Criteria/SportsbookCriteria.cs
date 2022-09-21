@@ -1,4 +1,5 @@
-﻿using Fanex.Data.Repository;
+﻿using Fanex.Data;
+using Fanex.Data.Repository;
 using System;
 
 namespace Settlement.Sportsbook.MoveTickets.Criteria
@@ -25,9 +26,12 @@ namespace Settlement.Sportsbook.MoveTickets.Criteria
 
         public byte Page { get; } = 1;
 
+        [SpParam(Ignored = true)]
+        public string DbServer { get; set; }
+
         public override string GetSettingKey()
         {
-            return "NAP_Set_MatchOtherSportsSel";
+            return $"NAP_Set_MatchOtherSportsSel_{DbServer}";
         }
 
         public override bool IsValid()

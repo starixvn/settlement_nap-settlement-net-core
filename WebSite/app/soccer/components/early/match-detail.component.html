@@ -1,0 +1,66 @@
+<div class="league">
+    <div class="icon">
+    </div>
+    {{matchDetail.leagueName}}
+</div>
+<table class="table-calculation">
+    <thead>
+        <tr>
+            <th class="code">
+                Match Code/ID
+            </th>
+            <th class="kick-off-time">
+                Kick-off Time
+            </th>
+            <th class="team">
+                Team
+            </th>
+            <th class="score">HT Score</th>
+            <th class="score">Final Score</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="code">
+                <div class="no-link">{{matchDetail.matchCode}}</div>
+            </td>
+            <td class="kick-off-time" rowspan="2">
+                {{matchDetail.kickOffTime | date : 'mediumDate' }}
+                <br />
+                {{matchDetail.kickOffTime | date : 'hh:mm:ss a' }}
+            </td>
+            <td>
+                <div class="match-home">
+                    {{matchDetail.homeName}}
+                </div>
+                <span class="{{matchDetail.goalIcon.homeGoal}}"></span>
+                <span class="{{matchDetail.goalIcon.halfTimeHomeGoal}}"></span>
+            </td>
+            <td class="ht-score">{{matchDetail.halfTimeHomeScore | scoreBySettlement:0}}</td>
+            <td class="final-score">{{matchDetail.finalHomeScore | scoreBySettlement:0}}</td>
+        </tr>
+        <tr>
+            <td>
+                {{matchDetail.matchId}}
+            </td>
+            <td>
+                <div class="match-away">
+                    {{matchDetail.awayName}}
+                </div>
+                <span class="{{matchDetail.goalIcon.awayGoal}}"></span>
+                <span class="{{matchDetail.goalIcon.halfTimeAwayGoal}}"></span>
+            </td>
+            <td class="ht-score">{{matchDetail.halfTimeAwayScore | scoreBySettlement:0}}</td>
+            <td class="final-score">{{matchDetail.finalAwayScore | scoreBySettlement:0}}</td>
+        </tr>
+    </tbody>
+    <tfoot>
+        <tr>
+            <td class="align-right" colspan="5">Goal Record:
+                <strong class="text-uppercase">{{matchDetail.goalRecord}}</strong>
+            </td>
+        </tr>
+    </tfoot>
+</table>
+<div (click)="refresh()" class="icon-refresh">
+</div>

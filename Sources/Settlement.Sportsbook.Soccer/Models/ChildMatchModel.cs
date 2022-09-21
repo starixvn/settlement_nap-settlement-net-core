@@ -1,7 +1,7 @@
-﻿using System;
-using Kaden.Extensions;
+﻿using Kaden.Extensions;
 using Newtonsoft.Json;
 using Settlement.Core.Services;
+using System;
 
 namespace Settlement.Sportsbook.Soccer.Models
 {

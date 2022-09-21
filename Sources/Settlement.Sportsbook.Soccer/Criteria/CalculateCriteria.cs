@@ -1,4 +1,6 @@
-﻿using Fanex.Data.Repository;
+﻿using Fanex.Data;
+using Fanex.Data.Repository;
+using System;
 
 namespace Settlement.Sportsbook.Soccer.Criteria
 {
@@ -7,6 +9,9 @@ namespace Settlement.Sportsbook.Soccer.Criteria
         public int AdminId { get; set; }
 
         public int MatchId { get; set; }
+
+        [SpParam(Ignored = true)]
+        public int LeagueGroupId { get; set; }
 
         public int? FullTimeHome { get; set; }
 
@@ -26,6 +31,8 @@ namespace Settlement.Sportsbook.Soccer.Criteria
 
         public string Ip { get; set; }
 
+        public string BroadcastSessionId { get; } = Guid.NewGuid().ToString();
+
         public int ErrCode { get; set; }
 
         public string ErrMsg { get; set; }
@@ -34,14 +41,14 @@ namespace Settlement.Sportsbook.Soccer.Criteria
 
         public string ChildMatchIds { get; set; }
 
-        public override bool IsValid()
-        {
-            return AdminId > 0 && MatchId > 0;
-        }
+        [SpParam(Ignored = true)]
+        public string DbServer { get; set; }
 
-        public override string GetSettingKey()
-        {
-            return "Calculate";
-        }
+        [SpParam(Ignored = true)]
+        public string SpName { get; } = "NAP_Admin_Settlement_1_Push";
+
+        public override bool IsValid() => AdminId > 0 && MatchId > 0;
+
+        public override string GetSettingKey() => $"Calculate_{DbServer}";
     }
 }

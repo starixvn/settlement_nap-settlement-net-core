@@ -2,6 +2,7 @@
 using Fanex.Data.Repository;
 using Fanex.NAP.Client.Helpers.Web;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
@@ -19,45 +20,31 @@ namespace Settlement.Sportsbook.MoveTickets.Services
     {
         Task<List<SportModel>> GetSportBook(GetMatchRequest request);
 
-        Task<Result> MoveTicket(MoveTicketRequest request);
-
         Task<List<ChildMatch>> GetChildMatch(GetChildMatchRequest request);
 
-        Task<Result> ValidateMovingRunningTickets(ValidateMatchesRequest request);
-
         Task<List<MoveTicketsMatchDetail>> GetMoveTicketsMatches(GetMoveTicketsMatchesRequest request);
-
-        Task<Result> MoveRunningTickets(MoveRunningTicketsRequest request);
     }
 
     public class MoveTicketServiceImp : IMoveTicketService
     {
-        private readonly int actionIdMoveTicket = 81026;
-        private readonly int actionIDMoveRunningTickets = 81035;
         private readonly IDynamicRepository repository;
         private readonly IRefDataService refDataService;
         private readonly IMapper mapper;
         private readonly IMatchService matchService;
-        private readonly INapSession currentSession;
-        private readonly IHttpContextAccessor accessor;
-        private readonly ILogService logService;
+        private readonly AppSettingsKey appSettingsKey;
 
         public MoveTicketServiceImp(
             IDynamicRepository repository,
             IRefDataService refDataService,
             IMapper mapper,
             IMatchService matchService,
-            INapSession currentSession,
-            IHttpContextAccessor accessor,
-            ILogService logService)
+            IOptions<AppSettingsKey> appSettingsKey)
         {
             this.repository = repository;
             this.refDataService = refDataService;
             this.mapper = mapper;
             this.matchService = matchService;
-            this.currentSession = currentSession;
-            this.accessor = accessor;
-            this.logService = logService;
+            this.appSettingsKey = appSettingsKey.Value;
         }
 
         public async Task<List<SportModel>> GetSportBook(GetMatchRequest request)
@@ -168,33 +155,46 @@ namespace Settlement.Sportsbook.MoveTickets.Services
             return isCalc && (match.IsExistMarkedTicket || match.IsExistRunningTicket || match.IsExistMarkedTicketParlay);
         }
 
-        private async Task<MultiSportResult> FetchMatchesAndResultDetails(ICriteria criteria)
+        private async Task<MultiSportResult> FetchMatchesAndResultDetails(SportsbookCriteria criteria)
         {
-            var (firstResultSet, secondResultSet) = await repository.FetchMultipleAsync<Match, ResultDetail>(criteria);
+            var matches = await MatchesAllSites(criteria);
+            var resultDetails = await ResultDetailByMatchIds(matches);
+            matchService.SetNewMatchInfo(matches, resultDetails);
             return new MultiSportResult
             {
-                Matches = firstResultSet.ToList(),
-                ResultDetails = secondResultSet.ToList()
+                Matches = matches,
+                ResultDetails = resultDetails
             };
         }
 
-        public async Task<Result> MoveTicket(MoveTicketRequest request)
+        private async Task<List<Match>> MatchesAllSites(SportsbookCriteria criteria)
         {
-            var criteria = mapper.Map<MoveTicketRequest, MoveTicketCriteria>(request);
-            criteria.AdminId = currentSession.UserId;
-            criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
-            await repository.ExecuteAsync(criteria);
-
-            if (criteria.ErrCode != 0)
+            var matches = new List<Match>();
+            var isCentralDataBase = true;
+            foreach (var server in appSettingsKey.SiteDbServer)
             {
-                logService.ActionLog(request.MatchId, criteria.ErrMsg, actionIdMoveTicket);
+                criteria.DbServer = server;
+                var data = (await repository.FetchAsync<Match>(criteria)).ToList();
+
+                if (isCentralDataBase)
+                {
+                    matches = data;
+                    isCentralDataBase = false;
+                }
+                else
+                {
+                    matchService.MergeMatches(matches, data);
+                }
             }
 
-            return new Result
-            {
-                ErrCode = criteria.ErrCode,
-                ErrMsg = criteria.ErrMsg
-            };
+            return matches;
+        }
+
+        private async Task<List<ResultDetail>> ResultDetailByMatchIds(List<Match> matches)
+        {
+            var listMatchId = string.Join(",", matches.Select(match => match.MatchId.ToString()).ToArray());
+            var resultDetailCriteria = new GetResultDetailCriteria { MatchIdList = listMatchId };
+            return (await repository.FetchAsync<ResultDetail>(resultDetailCriteria)).ToList();
         }
 
         public async Task<List<ChildMatch>> GetChildMatch(GetChildMatchRequest request)
@@ -204,19 +204,6 @@ namespace Settlement.Sportsbook.MoveTickets.Services
             var listMatch = await repository.FetchAsync<ChildMatch>(criteria);
 
             return listMatch.ToList();
-        }
-
-        public async Task<Result> ValidateMovingRunningTickets(ValidateMatchesRequest request)
-        {
-            var criteria = mapper.Map<ValidateMatchesRequest, ValidateMatchesCriteria>(request);
-
-            await repository.ExecuteAsync(criteria);
-
-            return new Result
-            {
-                ErrCode = criteria.ErrCode,
-                ErrMsg = criteria.ErrMsg
-            };
         }
 
         public async Task<List<MoveTicketsMatchDetail>> GetMoveTicketsMatches(GetMoveTicketsMatchesRequest request)
@@ -230,25 +217,6 @@ namespace Settlement.Sportsbook.MoveTickets.Services
             }
 
             return matches.ToList();
-        }
-
-        public async Task<Result> MoveRunningTickets(MoveRunningTicketsRequest request)
-        {
-            var criteria = mapper.Map<MoveRunningTicketsRequest, MoveRunningTicketsCriteria>(request);
-            criteria.AdminId = currentSession.UserId;
-            criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
-            await repository.ExecuteAsync(criteria);
-
-            if (criteria.ErrCode != 0)
-            {
-                logService.ActionLog(request.MatchId, criteria.ErrMsg, actionIDMoveRunningTickets);
-            }
-
-            return new Result
-            {
-                ErrCode = criteria.ErrCode,
-                ErrMsg = criteria.ErrMsg
-            };
         }
     }
 }

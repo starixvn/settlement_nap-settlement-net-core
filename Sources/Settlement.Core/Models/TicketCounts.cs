@@ -27,10 +27,20 @@
             }
         }
 
+        public int BetCount { get; set; }
+
         public int BetRunningCount { get; set; }
 
         public int BetSettledCount { get; set; }
 
         public int BetMarkedCount { get; set; }
+
+        public int BetWaitingCount { get; set; }
+
+        public int BetParlayCount { get; set; }
+
+        public int BetParlayRunningCount { get; set; }
+
+        public int BetParlayWaitingCount { get; set; }
     }
 }

@@ -2,6 +2,7 @@
 using Settlement.Sportsbook.Aio.Services;
 using System;
 using System.Collections.Generic;
+using Settlement.Core.Models;
 using Xunit;
 
 namespace Settlement.Sportsbook.Aio.UnitTests.Services

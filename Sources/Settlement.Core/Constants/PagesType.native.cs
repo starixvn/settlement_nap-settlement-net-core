@@ -4,8 +4,8 @@
     {
         public const string Refund = "Refund";
 
-        public const string EalySettle = "EarlySettlement";
+        public const string EarlySettle = "EarlySettlement";
 
-        public const string Recalculate = "Recalculate";
+        public const string Recalculate = "ReCalculate";
     }
 }

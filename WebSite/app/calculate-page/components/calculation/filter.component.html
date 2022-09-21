@@ -1,0 +1,75 @@
+<div class="filter-bar">
+    <div class="line"></div>
+    <div class="filter-bar-inner">
+        <div class="row">
+            <div class="col-md-2">
+                <label class="inner-label from-date">
+                    From
+                </label>
+                <ngbd-date-picker [date]="fromDate" (change)="onSelectFromDate($event)"></ngbd-date-picker>
+            </div>
+            <div class="to-date-field">
+                <label class="inner-label to-date">
+                    To
+                </label>
+                <ngbd-date-picker [date]="toDate" (change)="onSelectToDate($event)"></ngbd-date-picker>
+            </div>
+            <div class="col-md-7">
+                <div class="row">
+                    <div class="col-md-3 field">
+                        <label class="inner-label">
+                            Over Status
+                        </label>
+                        <select [(ngModel)]="query.filterOver">
+                            <option value="0">All</option>
+                            <option value="1">Early Over</option>
+                            <option value="2">HT Over</option>
+                            <option value="3">FT Over</option>
+                        </select>
+                    </div>
+                
+                    <div class="col-md-2 field">
+                        <input id="fastMarketsOnly" type="checkbox" [(ngModel)]="query.fastMarketsOnly">
+                        <label for="fastMarketsOnly" class="bold">&nbsp;Fast Markets Only</label>
+                    </div>
+                    <div class="col-md-2 field">
+                        <input id="IsMarkedTicket" type="checkbox" value="true"
+                            [(ngModel)]="query.isMarkedTicket">
+                        <label for="IsMarkedTicket" class="bold">&nbsp;Marked Tickets</label>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="inner-label">
+                            Status
+                        </label>
+                        <select [(ngModel)]="query.statusId" [disabled]="query.isMarkedTicket || query.autoSettlementOnly || query.fastMarketsOnly">
+                            <option *ngFor="let item of statuses" [value]="item.value">{{item.text}}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin-top: 5px">
+            <div class="col-md-2">
+                <label for="matchCode" class="inner-label">
+                    Match Code/ID
+                </label>
+                <input id="matchCode" maxlength="50" style="width: 107px" type="text" [(ngModel)]="query.matchCode">
+            </div>
+            <div class="league-list">
+                <label style="margin-left: 4px;" class="inner-label">League</label>
+                <select [(ngModel)]="query.leagueId" class="league-select">
+                    <option *ngFor="let item of leagues" [value]="item.leagueId">{{item.leagueName}}</option>
+                </select>
+            </div>
+            <div class="col-md-1 field">
+                <input id="isIncludeTest" type="checkbox" [(ngModel)]="query.isIncludeTest">
+                <label for="isIncludeTest" class="bold">&nbsp;Include Test Matches</label>
+            </div>
+            <div class="col-md-1">
+                <button class="button" (click)="search()" [disabled]="isDisabled">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="line"></div>

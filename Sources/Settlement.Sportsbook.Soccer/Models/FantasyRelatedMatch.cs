@@ -1,8 +1,7 @@
 ﻿using Kaden.Extensions;
-using System;
-using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
+using System;
 using System.Text.Json.Serialization;
 
 namespace Settlement.Sportsbook.Soccer.Models

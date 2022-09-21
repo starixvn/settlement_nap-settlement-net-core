@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Settlement.Setting.Models.Notification;
 using Fanex.NAP.Client.Helpers.Web;
+using Microsoft.Extensions.Options;
+using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Setting.Criteria.Notification;
 
@@ -28,13 +30,17 @@ namespace Settlement.Setting.Services
 
         private readonly SendMailService sendMailService;
 
+        private readonly AppSettingsKey appSettingsKey;
+
         public NotificationServiceImp(
             IDynamicRepository repository,
+            IOptions<AppSettingsKey> appSettingsKey,
             IRefDataService refDataService,
             INapSession currentSession,
             SendMailService sendMailService)
         {
             this.repository = repository;
+            this.appSettingsKey = appSettingsKey.Value;
             this.refDataService = refDataService;
             this.currentSession = currentSession;
             this.sendMailService = sendMailService;
@@ -47,13 +53,20 @@ namespace Settlement.Setting.Services
 
         public async Task<int> NumberNotifications()
         {
+            var numberError = 0;
+            var notifications = new List<NotificationModel>();
             var criteria = new GetNumberOfNotificationCriteria
             {
                 AdminId = currentSession.UserId
             };
 
-            var notifications = (await repository.FetchAsync<NotificationModel>(criteria)).ToList();
-            var numberError = criteria.NumberError;
+            foreach (var server in appSettingsKey.SiteDbServer)
+            {
+                criteria.DbServer = server;
+                var list = (await repository.FetchAsync<NotificationModel>(criteria)).ToList();
+                notifications.AddRange(list);
+                numberError += criteria.NumberError;
+            }
 
             if (numberError > 0)
             {
@@ -74,19 +87,28 @@ namespace Settlement.Setting.Services
 
         public async Task<ShowNotificationModel> ShowTopNotifications(int top)
         {
+            var numberError = 0;
+            var notifications = new List<NotificationModel>();
             var criteria = new ShowTopNotificationCriteria
             {
                 Top = top,
                 AdminId = currentSession.UserId
             };
 
-            var result = await repository.FetchMultipleAsync<int, NotificationModel>(criteria);
-            var notifications = result.Item2.ToList();
+            foreach (var server in appSettingsKey.SiteDbServer)
+            {
+                criteria.DbServer = server;
+                var result = await repository.FetchMultipleAsync<int, NotificationModel>(criteria);
+
+                numberError += result.Item1.FirstOrDefault();
+                notifications.AddRange(result.Item2);
+            }
+            
             notifications.ForEach(x => x.RefDataService = refDataService);
 
             return new ShowNotificationModel
             {
-                NumberError = result.Item1.FirstOrDefault(),
+                NumberError = numberError,
                 Notifications = notifications
             };
         }

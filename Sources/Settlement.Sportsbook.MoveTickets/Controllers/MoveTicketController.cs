@@ -36,12 +36,12 @@ namespace Settlement.Sportsbook.MoveTickets.Controllers
 
         [Route("get-move-tickets-matches")]
         [HttpPost]
-        [LogRequestResponse]
+        [LogGetRequest]
         public async Task<IActionResult> GetMoveTicketsMatches(GetMoveTicketsMatchesRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
         [Route("move-running-tickets")]
         [HttpPost]
-        [LogRequestResponse]
+        [LogPushRequest]
         public async Task<IActionResult> MoveRunningTickets(MoveRunningTicketsRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
     }
 }

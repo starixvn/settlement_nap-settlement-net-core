@@ -1,0 +1,317 @@
+<span toastContainer></span>
+<div class="padding" *ngIf="match">
+  <div *ngIf="isReadyMatch">
+    <match-detail [match]="originalMatch" [isEarlySettlement]="true"></match-detail>
+    <ticket-count [ticketCounts]="match.ticketCounts"></ticket-count>
+    <div class="table-wrapper">
+      <div class="table-header">
+        <ng-template *ngTemplateOutlet="header"></ng-template>
+      </div>
+
+      <div class="table-scroll">
+        <ng-template *ngTemplateOutlet="body"></ng-template>
+      </div>
+      <div class="footer">
+        <div *ngIf="hedgeMatchDetail" class="hedge-match">
+          <input type="checkbox" [(ngModel)]="applyHedgeMatch" id="ApplyHedgeMatch" />
+          <label for="ApplyHedgeMatch">
+            Apply for hedge match '<strong>{{hedgeMatchDetail.matchCode}}</strong>' also.
+          </label>
+        </div>
+        <div>
+          <button *ngIf="permission.canCalculate" [ngClass]="{'button': true, 'button-disabled': isDisabledCalculate}"
+            (click)="calculate()" [disabled]="isDisabledCalculate">
+            Calculate
+          </button>
+          <button *ngIf="permission.canUncalculate" [ngClass]="{'button': true, 'button-disabled': isDisabledUnCalculate}"
+            (click)="unCalculate()" [disabled]="isDisabledUnCalculate">
+            Uncalculate
+          </button>
+          <button class="new-refund-button save-score" [disabled]="isDisabledSaveScore" (click)="saveResult()">Save Score</button>
+        </div>
+      </div>
+      <div class="footer" *ngIf="permission.canRefund">
+        <div class="sub-footer">
+          <span>
+            <input type="checkbox" [(ngModel)]="isShowRefundButton" id="displayRefundButton" />&nbsp;<label for="displayRefundButton">Show/Hide Refund button</label>
+          </span>
+          <button *ngIf="isShowRefundButton && permission.isLeader" [ngClass]="{'btn btn-outline-primary button-confirmed': true}"
+                 [disabled]="isDisabledCalculate" (click)="confirmRefund(hedgeMatchDetail, applyHedgeMatch)">
+                Confirm/Undo-confirm Refund
+            </button>
+          <button *ngIf="isShowRefundButton" [ngClass]="{'button new-refund-button': true, 'button-disabled': isDisabledCalculate, 'margin-left-button': permission.isLeader}"
+            (click)="refund()" [disabled]="isDisabledCalculate">
+            Refund
+          </button>
+        </div>
+      </div>
+    </div>
+    <resettle-checker (proceedEvent)="onResettleCheckboxChange($event)" [checked]="isReSettledTickets"></resettle-checker>
+  </div>
+  <div *ngIf="!isReadyMatch">
+    <not-ready-match></not-ready-match>
+  </div>
+</div>
+
+<ng-template #header>
+  <table>
+    <thead>
+      <tr>
+        <th rowspan="2" class="bettype-name">
+          Result Type
+          <div class="early-filter">
+              <new-multiple-select (formValue)= "onSelectResultType($event)" [multipleSelect]="resultTypeSelect"></new-multiple-select>
+          </div>
+        </th>
+        <th rowspan="2" class="ticket-status">
+          Ticket Status
+          <div class="early-filter">
+              <new-multiple-select (formValue)= "onSelectTicketsStatus($event)" [multipleSelect]="ticketsStatusSelect"></new-multiple-select>
+          </div>
+        </th>
+        <th rowspan="2" class="final-result">
+            Final Result
+        </th>
+        <th rowspan="2" class="map" *ngIf="permission.isLeader">
+            Trader Result
+        </th>
+        <th colspan="2" *ngIf="permission.isLeader">
+            Provider Result
+        </th>
+        <th [colSpan]="(match.resultDetails[0].externalScores.length - 3) * 2">
+            Outside Result
+        </th>
+        <th rowspan="2" class="result">
+            Result Status
+            <div class="early-filter">
+                <new-multiple-select (formValue)= "onSelectResultsStatus($event)" [multipleSelect]="resultStatusSelect"></new-multiple-select>
+            </div>
+        </th>
+        <th rowspan="2" class="select-proceed">
+            Select to Proceed
+        </th>
+        <th rowspan="2" class="hold-result">
+            Hold Result
+        </th>
+      </tr>
+      <tr>
+        <ng-container *ngFor=" let result of match.resultDetails[0].externalScores | slice:1; let i=index">
+            <th class="map" *ngIf="i < 2 && permission.isLeader">
+                <div class="outside-source-text" [matTooltip]="getTextTooltip(result.sourceName, 15)" >
+                    {{result.sourceName|externalSourceName}}
+                </div>
+            </th>
+            <th class="map" *ngIf="i === 2">
+                <div class="outside-source-text">
+                    {{result.sourceName}}
+                </div>
+            </th>
+            <th class="map" *ngIf="i > 2">
+                <div class="outside-source-text" [matTooltip]="getTextTooltip(result.sourceName, 15)" >
+                    <a href="{{result.remark|externalLink}}" target="_blank" class="source-link">{{result.sourceName}}</a>
+                </div>
+            </th>
+        </ng-container>
+      </tr>
+    </thead>
+  </table>
+</ng-template>
+
+<ng-template #body>
+  <table>
+    <tbody>
+      <ng-template ngFor let-map [ngForOf]="groupMap">
+        <tr class="group-map">
+          <td
+            [colSpan]="permission.isLeader ? match.resultDetails[0].externalScores.length + 4 : match.resultDetails[0].externalScores.length + 1"
+            (click)="onCollapsedClick(map)">
+            <span>{{map.collapsed?"+ ":"- "}}</span>
+            <span>{{map.groupName}}</span>
+          </td>
+          <td class="align-right">
+            <input type="checkbox" class="select-checkbox" [(ngModel)]="map.checked" (ngModelChange)="onChangeGroupMap(map)"
+              [disabled]="map.collapsed || map.isHoldResult" />
+          </td>
+          <td class="hold-result"><div [ngClass]="getResultSettingIcon(map.isHoldResult)" (click)="changeSettingGroup(map)"></div></td>
+        </tr>
+        <tr *ngFor="let item of map.resultDetail | resultType: resultTypeSelected | ticketStatus: ticketStatusSelected | resultStatusPipe: resultStatusSelected;" [hidden]="map.collapsed" 
+        [ngClass]="{'result-row': 1, 'mismatched': item.isScoreMismatched, 'confirmed-refund': permission.isLeader && item.resultSettingData.isConfirmedRefund}">
+          <td class="align-left bettype-name">{{item.betTypeName}}</td>
+          <td class="ticket-status" [ngClass]="item.ticketStatus.toLowerCase()">{{item.ticketStatus}}</td>
+          <td class="final-result">
+            <ng-container *ngIf="matchDetail.sportType === 9; else volleyballFinalResult">
+              <select [(ngModel)]="item.homeValue" [ngClass]="{'warning':item.isResultWarning}"
+                  [disabled]="!item.checked || !permission.isLeader" (ngModelChange)="checkResultIsMatched(item)"
+                  [matTooltip]="getDropdownTooltip(item.homeValue, 25)" matTooltipPosition="above">
+                <option></option>
+                <option value="H">{{match.matchDetail.homeName}}</option>
+                <option value="A">{{match.matchDetail.awayName}}</option>
+                <option value="N">None</option>
+              </select>
+            </ng-container>
+            <ng-template #volleyballFinalResult>
+              <ng-container [ngSwitch]="item.inputType">
+                <ng-container *ngSwitchCase="0">
+                  <select [(ngModel)]="item.homeValue" [ngClass]="{'warning':item.isResultWarning}"
+                      [disabled]="!item.checked || !permission.isLeader" (ngModelChange)="checkResultIsMatched(item)"
+                      [matTooltip]="getDropdownTooltip(item.homeValue, 25)" matTooltipPosition="above">
+                    <option></option>
+                    <option value="H">{{match.matchDetail.homeName}}</option>
+                    <option value="A">{{match.matchDetail.awayName}}</option>
+                    <option value="N">None</option>
+                  </select>
+                </ng-container>
+                <ng-container *ngSwitchCase="1">
+                  <div>
+                    <div class="team-name"
+                        [matTooltip]="getTextTooltip(match.matchDetail.homeName, 15)"
+                        matTooltipPosition="above">
+                        {{match.matchDetail.homeName}}
+                    </div>
+                    <div class="team-result">
+                        <input type="text" maxlength="3"
+                            integerAndNone (change)="verifyResultByBetType(item); checkResultIsMatched(item)"
+                            [disabled]="!item.checked || !permission.isLeader"
+                            [(ngModel)]="item.homeValue" [ngClass]="{'warning':item.isResultWarning
+                        && (item.homeValue===null || item.homeValue==='') || item.isResultWarningByBetType }" />
+                    </div>
+                  </div>
+                  <div>
+                      <div class="team-name"
+                          [matTooltip]="getTextTooltip(match.matchDetail.awayName, 15)"
+                          matTooltipPosition="above">
+                          {{match.matchDetail.awayName}}
+                      </div>
+                      <div class="team-result">
+                          <input type="text" maxlength="3"
+                            integerAndNone (change)="verifyResultByBetType(item); checkResultIsMatched(item)"
+                              [disabled]="!item.checked || !permission.isLeader"
+                              [(ngModel)]="item.awayValue" [ngClass]="{'warning':item.isResultWarning
+                              && (item.awayValue===null || item.awayValue==='') || item.isResultWarningByBetType }" />
+                      </div>
+                  </div>
+                </ng-container>
+                <ng-container *ngSwitchCase="2">
+                  <select [(ngModel)]="item.homeValue" [ngClass]="{'warning':item.isResultWarning}"
+                      [disabled]="!item.checked || !permission.isLeader" (ngModelChange)="checkResultIsMatched(item)"
+                      [matTooltip]="getDropdownTooltip(item.homeValue, 25)" matTooltipPosition="above">
+                    <option></option>
+                    <option value="H">{{match.matchDetail.homeName}}</option>
+                    <option value="A">{{match.matchDetail.awayName}}</option>
+                  </select>
+                </ng-container>
+                <ng-container *ngSwitchCase="3">
+                  <select [(ngModel)]="item.homeValue" [ngClass]="{'warning':item.isResultWarning}"
+                      [disabled]="!item.checked || !permission.isLeader" (ngModelChange)="checkResultIsMatched(item)"
+                      [matTooltip]="getDropdownTooltip(item.homeValue, 25)" matTooltipPosition="above">
+                    <option></option>
+                    <option value="Y">Yes</option>
+                    <option value="N">No</option>
+                  </select>
+                </ng-container>
+              </ng-container>
+            </ng-template>
+          </td>
+          <ng-container *ngFor="let result of item.externalScores; let x=index">
+            <td *ngIf="x < 3 && permission.isLeader" class="map">
+              <div *ngIf="matchDetail.sportType === 9; else volleyballProvider" class="outside-source-text" [matTooltip]="getTextTooltip(result.homeName, 13)"  matTooltipPosition="above">
+                  {{result.homeValue | resultByTeamName: match.matchDetail: 0}} 
+              </div>
+              <ng-template #volleyballProvider>
+                <ng-container [ngSwitch]="item.inputType">
+                  <ng-container *ngSwitchCase="0">
+                    <div class="outside-source-text"
+                        [matTooltip]="getTextTooltip(result.homeName, 13)"
+                        matTooltipPosition="above">
+                        {{result.homeName}}
+                    </div>
+                  </ng-container>
+                  <ng-container *ngSwitchCase="1">
+                    <div>{{result.homeValue | resultByTeamName: null: 3}}</div>
+                    <div>{{result.awayValue | resultByTeamName: null: 3}}</div>
+                  </ng-container>
+                  <ng-container *ngSwitchCase="2">
+                    <div class="outside-source-text"
+                        [matTooltip]="getTextTooltip(result.homeName, 13)"
+                        matTooltipPosition="above">
+                        {{result.homeName}}
+                    </div>
+                  </ng-container>
+                  <ng-container *ngSwitchCase="3">
+                    <div class="outside-source-text">
+                        {{result.homeValue | resultByTeamName: null: 3}}
+                    </div>
+                  </ng-container>
+                </ng-container>
+              </ng-template>
+            </td>
+            <ng-container *ngIf="x >= 3">
+                <td class="map" [ngClass]="{'striped': x % 2 === 0, 'can-settle': canSettleResult(item)}">
+                  <ng-container *ngIf="matchDetail.sportType === 9; else volleyballOutsideSource"> 
+                    <select [(ngModel)]="result.homeValue" [disabled]="!item.checked" (ngModelChange)="verifyAndAutoFillResult(item)"
+                        [matTooltip]="getDropdownTooltip(result.homeValue, 9)" matTooltipPosition="above">
+                      <option></option>
+                      <option value="H">{{match.matchDetail.homeName}}</option>
+                      <option value="A">{{match.matchDetail.awayName}}</option>
+                      <option value="N">None</option>
+                    </select>
+                  </ng-container>
+                  <ng-template #volleyballOutsideSource>
+                    <ng-container [ngSwitch]="item.inputType">
+                      <ng-container *ngSwitchCase="0">
+                        <select [(ngModel)]="result.homeValue" [disabled]="!item.checked" (ngModelChange)="verifyAndAutoFillResult(item)"
+                          [matTooltip]="getDropdownTooltip(result.homeValue, 9)" matTooltipPosition="above">
+                          <option></option>
+                          <option value="H">{{match.matchDetail.homeName}}</option>
+                          <option value="A">{{match.matchDetail.awayName}}</option>
+                          <option value="N">None</option>
+                        </select>
+                      </ng-container>
+                      <ng-container *ngSwitchCase="1">
+                        <div class="score">
+                          <input type="text" maxlength="getCoupleScoreMaxLength(item)"
+                              integerAndNone (change)="verifyResultByBetType(result); verifyAndAutoFillResult(item)"
+                              [disabled]="!item.checked" [(ngModel)]="result.homeValue"/>
+                        </div>
+                        <div class="score">
+                          <input type="text" maxlength="getCoupleScoreMaxLength(item)"
+                              integerAndNone (change)="verifyResultByBetType(result); verifyAndAutoFillResult(item)"
+                              [disabled]="!item.checked" [(ngModel)]="result.awayValue"/>
+                        </div>
+                      </ng-container>
+                      <ng-container *ngSwitchCase="2">
+                        <select [(ngModel)]="result.homeValue" [disabled]="!item.checked"
+                            (ngModelChange)="verifyAndAutoFillResult(item)"
+                            [matTooltip]="getDropdownTooltip(result.homeValue, 9)"
+                            matTooltipPosition="above">
+                          <option></option>
+                          <option value="H">{{match.matchDetail.homeName}}</option>
+                          <option value="A">{{match.matchDetail.awayName}}</option>
+                        </select>
+                      </ng-container>
+                      <ng-container *ngSwitchCase="3">
+                        <select [(ngModel)]="result.homeValue" [disabled]="!item.checked"
+                            (ngModelChange)="verifyAndAutoFillResult(item)">
+                            <option></option>
+                            <option value="Y">Yes</option>
+                            <option value="N">No</option>
+                        </select>
+                      </ng-container>
+                    </ng-container>
+                  </ng-template>
+                </td>
+              </ng-container>
+            </ng-container>
+          <td [ngClass]="{'calculated': isCompleted(item.resultStatusId, item.settlementStatusId)
+                          , 'refunded': isRefunded(item.resultStatusId, item.settlementStatusId)}">
+            {{item.resultStatus}}
+          </td>
+          <td class="select-proceed">
+            <input type="checkbox" [disabled]="item.resultSettingData.isHoldResult" [(ngModel)]="item.checked" (change)="onChangeBetType(item, map);" />
+          </td>
+          <td class="hold-result"><div [ngClass]="getResultSettingIcon(item.resultSettingData.isHoldResult)" (click)="isChangeSetting(item, map)"></div></td>
+        </tr>
+      </ng-template>
+    </tbody>
+  </table>
+</ng-template>

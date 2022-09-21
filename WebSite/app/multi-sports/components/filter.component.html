@@ -1,0 +1,88 @@
+<div class="filter-bar">
+    <div class="line">
+    </div>
+    <div class="filter-bar-inner">
+        <div class="row">
+            <div class="field small-field">
+                <label class="inner-label from-date">
+                    From
+                </label>
+                <ngbd-date-picker [date]="fromDate" (change)="onSelectFromDate($event)"></ngbd-date-picker>
+            </div>
+            <div class="field small-field">
+                <label class="inner-label to-date">
+                    To
+                </label>
+                <ngbd-date-picker [date]="toDate" (change)="onSelectToDate($event)"></ngbd-date-picker>
+            </div>
+            <div class="field over-status">
+                <label class="inner-label">
+                    Over Status
+                </label>
+                <div>
+                    <new-multiple-select (formValue)="onSelectOverStatus($event)" [multipleSelect]="overStatusSelect"></new-multiple-select>
+                </div>
+            </div>
+            <div class="field medium-field">
+                <label class="inner-label">
+                    Ticket Status
+                </label>
+                <div>
+                    <new-multiple-select (formValue)="onSelectTicketsStatus($event)" [multipleSelect]="ticketsStatusSelect"></new-multiple-select>
+                </div>
+            </div>
+            <div class="field">
+                <label class="inner-label">
+                    Match Status
+                </label>
+                <div>
+                    <new-multiple-select (formValue)="onSelectMatchStatus($event)" [multipleSelect]="matchStatusSelect"></new-multiple-select>
+                </div>
+            </div>
+            <div class="remark field">
+                <label class="inner-label">
+                    Hold Status
+                </label>
+                <div>
+                    <new-multiple-select (formValue)="onSelectHoldStatus($event)" [multipleSelect]="holdStatusSelect"></new-multiple-select>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin-top: 10px;">
+            <div class="field small-field">
+                <label for="matchCode" class="inner-label">
+                    Match Code/ID 
+                </label>
+                <input id="matchCode" maxlength="50" style="width: 107px" type="text" value="" [(ngModel)]="matchCode">
+            </div>
+            <div class="field sports">
+                <label class="inner-label">
+                    Sports
+                </label>
+                <div>
+                    <new-multiple-select [style.width]="sportSelect.maxWidth" (formValue)="onSelectSport($event)" [multipleSelect]="sportSelect"></new-multiple-select>
+                </div>
+            </div>
+            <div id="leagues" class="field large-field">
+                <label class="inner-label leagues">
+                    League
+                </label>
+                <div>
+                    <new-multiple-select [style.width]="leagueSelect.maxWidth" (formValue)="onSelectLeague($event)" [multipleSelect]="leagueSelect"></new-multiple-select>
+                </div>
+            </div>
+            <div class="field include-test">
+                <input id="isIncludeTest" type="checkbox" [(ngModel)]="isIncludeTestMatch">
+                <label for="isIncludeTest" class="bold">&nbsp;Include Test Matches</label>
+            </div>
+            <div class="field auto-payout">
+                <input id="autoPayout" type="checkbox" [(ngModel)]="isAutoPayout">
+                <label for="autoPayout" class="bold">&nbsp;Auto Payout</label>
+            </div>
+            <div class="submit field">
+                <button class="button" (click)="search()">Submit</button>
+            </div>
+        </div>
+    </div>
+    <div class="line"></div>
+</div>

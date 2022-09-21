@@ -1,6 +1,7 @@
 ﻿using Kaden.Extensions;
 using Settlement.FastMarkets.Constants;
 using System;
+using System.Collections.Generic;
 
 namespace Settlement.FastMarkets.Models
 {
@@ -191,6 +192,22 @@ namespace Settlement.FastMarkets.Models
 
                 return 0;
             }
+        }
+
+        public int TicketCount { get; set; }
+
+        public int TicketRunning { get; set; }
+
+        public int TicketMarked { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            return obj is FastMarketResult result && result.BetType == BetType && result.Position == Position;
+        }
+
+        public override int GetHashCode()
+        {
+            return BetType * Position;
         }
     }
 }

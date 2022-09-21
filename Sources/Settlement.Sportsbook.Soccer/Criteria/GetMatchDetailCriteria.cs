@@ -8,14 +8,8 @@ namespace Settlement.Sportsbook.Soccer.Criteria
 
         public bool IsRefundPage { get; set; }
 
-        public override string GetSettingKey()
-        {
-            return "NAP_Set_MatchSelDetail";
-        }
+        public override string GetSettingKey() => "NAP_Set_MatchSelDetail";
 
-        public override bool IsValid()
-        {
-            return MatchId > 0;
-        }
+        public override bool IsValid() => MatchId > 0;
     }
 }

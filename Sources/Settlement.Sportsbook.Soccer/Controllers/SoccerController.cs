@@ -1,8 +1,8 @@
-﻿using System.Threading.Tasks;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Settlement.Core.ActionFilters;
 using Settlement.Sportsbook.Soccer.Requests;
+using System.Threading.Tasks;
 
 namespace Settlement.Sportsbook.Soccer.Controllers
 {
@@ -18,15 +18,23 @@ namespace Settlement.Sportsbook.Soccer.Controllers
             this.mediator = mediator;
         }
 
+        [Route("get-match-early"), HttpPost]
+        [LogGetRequest]
+        public async Task<IActionResult> GetMatchEarly(GetMatchEarlyRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+
+        [Route("settle-early"), HttpPost]
+        [LogPushRequest]
+        public async Task<IActionResult> CalculateEarly(SettleEarlyRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+
         [Route("get-match"), HttpPost]
-        [LogRequestResponse]
+        [LogGetRequest]
         public async Task<IActionResult> GetMatch(GetMatchRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
         [Route("get-lastest-match-detail"), HttpPost]
-        public async Task<IActionResult> GetLastestMatchDetail(GetLastestMatchDetailRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+        public async Task<IActionResult> GetLatestMatchDetail(GetLastestMatchDetailRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
         [Route("calculate"), HttpPost]
-        [LogRequestResponse]
+        [LogPushRequest]
         public async Task<IActionResult> Calculate(SettleRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
         [Route("check-status"), HttpPost]
@@ -39,7 +47,7 @@ namespace Settlement.Sportsbook.Soccer.Controllers
         public async Task<IActionResult> UndoCheckingScore(UndoCheckingRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
         [Route("push-instant-score"), HttpPost]
-        [LogRequestResponse]
+        [LogPushRequest]
         public async Task<IActionResult> PushInstantScore(InstantCalculationRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
         [Route("specific-bet-type"), HttpPost]
@@ -49,15 +57,15 @@ namespace Settlement.Sportsbook.Soccer.Controllers
         public async Task<IActionResult> CheckingMarkedTickets(CheckingMarkedTicketsRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
         [Route("refund"), HttpPost]
-        [LogRequestResponse]
+        [LogPushRequest]
         public async Task<IActionResult> Refund(RefundRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
         [Route("refund-running-third-party-ticket"), HttpPost]
-        [LogRequestResponse]
+        [LogPushRequest]
         public async Task<IActionResult> RefundRunningThirdPartyTickets(RefundRunningThirdPartyTicketRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
         [Route("move-third-party-bet-ticket"), HttpPost]
-        [LogRequestResponse]
+        [LogPushRequest]
         public async Task<IActionResult> MoveThirdPartyBetTickets(MoveBetRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
         [Route("third-party-bet-tickets-checking"), HttpPost]

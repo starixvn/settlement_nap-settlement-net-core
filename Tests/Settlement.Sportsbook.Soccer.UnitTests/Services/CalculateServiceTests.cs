@@ -2,18 +2,18 @@
 using System.Threading.Tasks;
 using Fanex.Data.Repository;
 using AutoMapper;
-using Fanex.NAP.Client.Helpers.Web;
-using Kaden.XmlConverter;
-using Microsoft.AspNetCore.Http;
 using NSubstitute;
-using Settlement.Sportsbook.Soccer.Constants;
-using Settlement.Sportsbook.Soccer.Models;
-using Settlement.Sportsbook.Soccer.Requests;
 using Settlement.Sportsbook.Soccer.Services;
-using Xunit;
 using AutoMapper.Configuration;
+using Fanex.Settlement.ScaleOut.Models;
+using Microsoft.Extensions.Options;
+using Settlement.Core.Models;
+using Fanex.Settlement.ScaleOut.Services;
 using Settlement.Core.Constants;
 using Settlement.Sportsbook.Soccer.Criteria;
+using Settlement.Sportsbook.Soccer.Requests;
+using Xunit;
+using Fanex.Settlement.ScaleOut.Request;
 
 namespace Settlement.Sportsbook.Soccer.UnitTests.Services
 {
@@ -21,107 +21,24 @@ namespace Settlement.Sportsbook.Soccer.UnitTests.Services
     {
         private readonly IDynamicRepository repository;
 
-        private readonly INapSession currentSession;
+        private readonly ScaleOutSettleService scaleOutSettleService;
 
-        private readonly IHttpContextAccessor accessor;
-
-        private readonly ISoccerBetStatusService soccerBetStatusService;
-
-        private readonly XmlConvertService xmlConvertService;
-
-        private readonly IResourceService resourceService;
+        private readonly ICreateCriteriaService createCriteriaService;
 
         private readonly ICalculateService service;
 
         public CalculateServiceTests()
         {
             repository = Substitute.For<IDynamicRepository>();
-            currentSession = Substitute.For<INapSession>();
-            accessor = Substitute.For<IHttpContextAccessor>();
-            soccerBetStatusService = Substitute.For<ISoccerBetStatusService>();
-            xmlConvertService = Substitute.For<XmlConvertService>();
-            resourceService = Substitute.For<IResourceService>();
-            var context = new DefaultHttpContext
-            {
-                Connection =
-                {
-                    RemoteIpAddress = new System.Net.IPAddress(1)
-                }
-            };
-            accessor.HttpContext = context;
+            createCriteriaService = Substitute.For<ICreateCriteriaService>();
+            scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
             var mapperConfig = new MapperConfigurationExpression();
             mapperConfig.AddProfile<SoccerAutoMapperProfile>();
             var config = new MapperConfiguration(mapperConfig);
             var mapper = new Mapper(config);
-            service = new CalculateServiceImp(repository, currentSession, mapper, accessor, soccerBetStatusService, xmlConvertService, resourceService);
-        }
-
-        [Fact]
-        public void CalculateCriteria_ActionHalftime_CallInOrderFunctionOnService()
-        {
-            // Arrange
-            var query = new SettleRequest()
-            {
-                GoalRecord = "AH",
-                ActionName = ActionType.CalculateHalfTime
-            };
-
-            resourceService.HalftimeResources(Arg.Any<GoalCondition>(), Arg.Any<int>())
-                .Returns(new List<XmlResource>());
-
-            // Act
-            service.Calculate(query);
-
-            // Assert
-            Received.InOrder(() =>
-            {
-                resourceService.Received().HalftimeResources(Arg.Any<GoalCondition>(), Arg.Any<int>());
-                soccerBetStatusService.Received().CreateBetStatus(Arg.Any<SettleRequest>());
-            });
-        }
-
-        [Fact]
-        public void CalculateCriteria_ActionFullTime_CallInOrderFunctionOnService()
-        {
-            // Arrange
-            var query = new SettleRequest
-            {
-                GoalRecord = "AH",
-                ActionName = ActionType.CalculateFullTime
-            };
-            resourceService.FullTimeResources(Arg.Any<GoalCondition>(), Arg.Any<int>()).Returns(new List<XmlResource>());
-
-            // Act
-            service.Calculate(query);
-
-            // Assert
-            Received.InOrder(() =>
-            {
-                resourceService.Received().FullTimeResources(Arg.Any<GoalCondition>(), Arg.Any<int>());
-                soccerBetStatusService.Received().CreateBetStatus(Arg.Any<SettleRequest>());
-            });
-        }
-
-        [Fact]
-        public void CalculateCriteria_IsSoccerAndActionAll_CallInOrderFunctionOnService()
-        {
-            // Arrange
-            var query = new SettleRequest
-            {
-                GoalRecord = "AH",
-                ActionName = ActionType.CalculateAll
-            };
-            resourceService.AllResources(Arg.Any<GoalCondition>(), Arg.Any<int>()).Returns(new List<XmlResource>());
-
-            // Act
-            service.Calculate(query);
-
-            // Assert
-            Received.InOrder(() =>
-            {
-                resourceService.Received().AllResources(Arg.Any<GoalCondition>(), Arg.Any<int>());
-                soccerBetStatusService.Received().CreateBetStatus(Arg.Any<SettleRequest>());
-            });
+            var appSettings = new AppSettingsKey { SiteDbServer = new List<string> { "DB01", "DB02", "DB03" } };
+            var appSettingsOptions = Options.Create(appSettings);
+            service = new CalculateServiceImp(mapper, repository, appSettingsOptions, createCriteriaService, scaleOutSettleService);
         }
 
         [Theory]
@@ -134,16 +51,39 @@ namespace Settlement.Sportsbook.Soccer.UnitTests.Services
                 GoalRecord = "AH",
                 ActionName = ActionType.CalculateAll
             };
-            resourceService.AllResources(Arg.Any<GoalCondition>(), Arg.Any<int>()).Returns(new List<XmlResource>());
-            await repository.ExecuteAsync(Arg.Do<CalculateCriteria>(x =>
+            var criteria = new CalculateCriteria
             {
-                x.ErrCode = errorCode;
-                x.ErrMsg = errorMsg;
-            }));
+                Action = ActionType.CalculateAll
+            };
+            createCriteriaService.CreateCalculateCriteria(Arg.Any<SettleRequest>()).Returns(criteria);
+            scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage { ErrorCode = errorCode, ErrorMessage = errorMsg });
 
             var actual = await service.Calculate(query);
 
             Assert.Equal(result, actual.IsSuccessful);
+        }
+
+        [Fact]
+        public async Task Settle_Always_UpdateMatchAndChildMatch()
+        {
+            var query = new SettleRequest
+            {
+                GoalRecord = "AH",
+                ActionName = ActionType.CalculateAll,
+            };
+            var criteria = new CalculateCriteria
+            {
+                Action = ActionType.CalculateAll
+            };
+            createCriteriaService.CreateCalculateCriteria(Arg.Any<SettleRequest>()).Returns(criteria);
+            scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
+
+            await service.Calculate(query);
+
+            await scaleOutSettleService.Received()
+                .UpdateUnderSettlementFlag(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<string>());
+            await scaleOutSettleService.Received().UpdateMatchInfo(Arg.Any<UpdateMatchInfoRequest>());
+            await scaleOutSettleService.Received().UpdateAutoRefundChildMatch(Arg.Any<RefundChildMatchRequest>());
         }
 
         [Fact]
@@ -156,18 +96,23 @@ namespace Settlement.Sportsbook.Soccer.UnitTests.Services
                 IsApplyHedging = true,
                 HedgeMatchId = 123
             };
-            resourceService.AllResources(Arg.Any<GoalCondition>(), Arg.Any<int>()).Returns(new List<XmlResource>());
+            var criteria = new CalculateCriteria
+            {
+                Action = ActionType.CalculateAll
+            };
+            createCriteriaService.CreateCalculateCriteria(Arg.Any<SettleRequest>()).Returns(criteria);
+            scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
             await repository.ExecuteAsync(Arg.Any<CalculateCriteria>());
 
             await service.Calculate(query);
 
-            await repository.Received(2).ExecuteAsync(Arg.Any<CalculateCriteria>());
+            await repository.Received(6).ExecuteAsync(Arg.Any<CalculateCriteria>());
         }
 
         [Theory]
         [InlineData(0, "", true)]
         [InlineData(1, "Error", false)]
-        public async Task CheckMarkedTickets_Always_ReturnCorrectResult(int errorCode, string errorMsg, bool result)
+        public async Task CheckStatus_Always_ReturnCorrectResult(int errorCode, string errorMsg, bool result)
         {
             await repository.ExecuteAsync(Arg.Do<CheckStatusCriteria>(x =>
             {

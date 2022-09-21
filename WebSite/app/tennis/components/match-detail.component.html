@@ -1,0 +1,43 @@
+<div class="calculate-league">
+  <div class="icon">
+  </div>
+  TENNIS - {{matchDetail.leagueName}}
+</div>
+<table>
+  <thead class="match-detail">
+    <tr>
+      <th class="code">Match Code/ID</th>
+      <th class="kick-off-time">Kick-off Time</th>
+      <th class="team">Team</th>
+      <th *ngFor="let set of resultDetail; let i= index; let last=last;">
+        {{set.resourceId | resourceHeader}}
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>{{matchDetail.matchCode}}</td>
+      <td rowspan="2">
+        {{matchDetail.kickOffTime | date : 'mediumDate' }}
+        <br />
+        {{matchDetail.kickOffTime | date : 'hh:mm:ss a' }}
+      </td>
+      <td class="home-team-name">{{matchDetail.homeName}}</td>
+      <td *ngFor="let set of resultDetail; let i= index; let last=last;" [ngClass]="set.className">
+        <ng-container *ngIf="set.isDisplayedForMember; else emptyScore">
+          {{set.homeValue | scoreBySettlement:set.settlementStatusId}}
+        </ng-container>
+      </td>
+    </tr>
+    <tr>
+      <td>{{matchDetail.matchId}}</td>
+      <td class="away-team-name">{{matchDetail.awayName}}</td>
+      <td *ngFor="let set of resultDetail; let i= index; let last=last;" [ngClass]="set.className">
+        <ng-container *ngIf="set.isDisplayedForMember; else emptyScore">
+          {{set.awayValue | scoreBySettlement:set.settlementStatusId}}
+        </ng-container>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<ng-template #emptyScore>-</ng-template>

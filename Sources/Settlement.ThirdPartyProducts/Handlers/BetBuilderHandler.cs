@@ -23,26 +23,30 @@ namespace Settlement.ThirdPartyProducts.Handlers
 
         private readonly BetBuilderService betBuilderService;
 
+        private readonly BetBuilderMatchesService betBuilderMatchesService;
+
         public BetBuilderHandler(
             MatchService matchService,
             PermissionService permissionService,
-            BetBuilderService betBuilderService)
+            BetBuilderService betBuilderService,
+            BetBuilderMatchesService betBuilderMatchesService)
         {
             this.matchService = matchService;
             this.permissionService = permissionService;
             this.betBuilderService = betBuilderService;
+            this.betBuilderMatchesService = betBuilderMatchesService;
         }
 
         public async Task<MultiSportsModel> Handle(FilterRequest request, CancellationToken cancellationToken) => new MultiSportsModel
         {
-            SportLeagues = await matchService.Search(request),
+            SportLeagues = await betBuilderMatchesService.Search(request),
             Permission = permissionService.Permission
         };
 
         public async Task<SelectionPermissionModel> Handle(GetSelectionRequest request, CancellationToken cancellationToken) => new SelectionPermissionModel
         {
             Permission = permissionService.Permission,
-            SelectionDetail = await betBuilderService.GetSelection(request.MatchId)
+            SelectionDetail = await matchService.GetSelection(request.MatchId)
         };
 
         public async Task<List<Sport>> Handle(SportRequest request, CancellationToken cancellationToken)
@@ -52,12 +56,12 @@ namespace Settlement.ThirdPartyProducts.Handlers
             => await betBuilderService.GetLeagues(request);
 
         public async Task<List<MatchDetailModel>> Handle(MatchesWaitingRequest request, CancellationToken cancellationToken)
-            => await matchService.RefreshMatches(request);
+            => await betBuilderMatchesService.RefreshMatches(request);
 
         public async Task<MatchDetailModel> Handle(MatchInfoRequest request, CancellationToken cancellationToken)
             => await matchService.GetMatch(request);
 
         public async Task<Result> Handle(CalculateRequest request, CancellationToken cancellationToken)
-            => await betBuilderService.Calculate(request);
+            => await matchService.Calculate(request);
     }
 }

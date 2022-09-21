@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Settlement.EventManagement.Criteria;
 using Settlement.EventManagement.Models;
+using Settlement.EventManagement.Models.MultiSports;
 using Settlement.EventManagement.Requests;
 
 namespace Settlement.EventManagement
@@ -15,8 +16,13 @@ namespace Settlement.EventManagement
             CreateMap<LeagueRequest, LeagueCriteria>();
             CreateMap<Match, MultiSportMatchWaiting>();
             CreateMap<Match, MultiSportMatch>();
-            CreateMap<RefreshMatchesRequest, GetWaitingMatchesMultiSportCriteria>();
+            CreateMap<RefreshMultiSportRequest, GetWaitingMultiSportCriteria>();
             CreateMap<CalculateParlayRequest, ParlayCriteria>();
+            CreateMap<FilterCalculationRequest, GetMatchesCriteria>();
+            CreateMap<LeagueCalculationRequest, LeagueCalculationCriteria>();
+            CreateMap<RefreshCalculationRequest, GetWaitingCalculationCriteria>();
+            CreateMap<FilterAutoCalculationRequest, GetMatchesAutoCalculateCriteria>();
+            CreateMap<RefreshCalculationRequest, GetWaitingAutoCalculationCriteria>();
         }
     }
 }

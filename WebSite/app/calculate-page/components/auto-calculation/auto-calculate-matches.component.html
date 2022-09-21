@@ -1,0 +1,183 @@
+<div class="content" *ngIf="leagues">
+  <ng-template *ngTemplateOutlet="header"></ng-template>
+  <ng-template *ngTemplateOutlet="body"></ng-template>
+</div>
+
+<ng-template #header>
+  <div class="head-table">
+    <table class="table-calculation">
+      <thead class="auto-calculation">
+        <tr>
+          <th rowspan="2" class="code">Match Code/ID</th>
+          <th rowspan="2" class="kick-off-time">Kick-off Time</th>
+          <th rowspan="2" class="event">Event</th>
+          <th rowspan="2" class="score">HT Score</th>
+          <th rowspan="2" class="score">Final score</th>
+          <th rowspan="2" class="event-status">Event Status</th>
+          <th rowspan="2" class="score">Live Score</th>
+          <th colspan="2" class="instant-calc">Instant Calculation</th>
+          <th rowspan="2" class="header-action">Action</th>
+          <th colspan="2" class="confirm">Confirm</th>
+          <th rowspan="2" class="auto-setting">Auto Payout Setting</th>
+          <th rowspan="2" class="remark">Hold Status</th>
+          <th rowspan="2" class="reference-action">Reference Actions</th>
+        </tr>
+        <tr>
+          <th class="auto-setting">Setting</th>
+          <th class="instant-status">Status</th>
+          <th class="confirm-score">Half Time</th>
+          <th class="confirm-score">Full Time</th>
+        </tr>
+      </thead>
+    </table>
+  </div>
+</ng-template>
+
+<ng-template #body>
+  <div dynamicHeight class="table-matches-content" *ngIf="leagues.length > 0; else empty">
+    <div *ngFor="let league of leagues">
+      <table class="table-calculation">
+        <tbody class="auto-calculation">
+          <tr class="league">
+            <td colspan="7" class="name">
+              &nbsp;{{league.name}}
+            </td>
+            <td class="auto-setting">
+              <div [class]="getClassInstant(league.autoCalcSetting.isInstantForLeague)"
+                [matTooltip]="getTittleInstant(league.autoCalcSetting.isInstantForLeague)"
+                (click)="updateInstantForLeague(league.autoCalcSetting, league)" matTooltipPosition="above">
+              </div>
+            </td>
+            <td class="instant-time" colspan="2">
+              <div>Waiting time: {{league.instantWaitingTime}}sec </div>
+              <div *ngIf="permission.canAutoPayout" class="instant-time-icon "
+                [matTooltip]="language.instants.titleInstantTime" matTooltipPosition="above" (click)="openUpdateTime(league, true)"></div>
+            </td>
+            <td colspan="3"></td>
+            <td class="auto-setting">
+              <div
+                [class]="getClassPayOut(league.autoCalcSetting.isAutoPayoutForLeague, league.autoCalcSetting.isDirectPayoutForLeague)"
+                matTooltipPosition="above" [matTooltip]="language.payout.title"
+                (click)="openUpdatePayoutForLeague(league)">
+              </div>
+            </td>
+            <td class="instant-time" colspan="2">
+              <div>Waiting time: {{league.directWaitingTime}}sec </div>
+              <div *ngIf="permission.canAutoPayout" class="instant-time-icon "
+                [matTooltip]="language.payout.titleDirectTime" matTooltipPosition="above" (click)="openUpdateTime(league, false)"></div>
+            </td>
+          </tr>
+          <ng-container *ngFor="let match of league.matches, let isEven=even">
+            <tr class="row-3" [ngClass]="rowColor(match.remark, !isEven)">
+              <td class="code">
+                <div *ngIf="permission.canViewSettlementLog; else noLogLink">
+                  <div class="code-link" (click)="getLog(match.matchId)">
+                    {{match.matchCode}}
+                  </div>
+                </div>
+                <ng-template #noLogLink>
+                  <div class="no-link">
+                    {{match.matchCode}}
+                  </div>
+                </ng-template>
+              </td>
+              <td class="kick-off-time" rowspan="2">
+                {{match.kickOffTime | date : 'mediumDate' }}
+                {{match.kickOffTime | date : 'hh:mm:ss a' }}
+              </td>
+
+              <td class="event">
+                <div class="match-home">
+                  {{match.homeName}}
+                </div>
+                <span [class]="match.goalIcon.homeGoal ?? ''"></span>
+                <span [class]="match.goalIcon.halfTimeHomeGoal ?? ''"></span>
+              </td>
+              <td class="score">{{match.halfTimeHomeScore ?? '-'}}</td>
+              <td class="final-score score">{{match.finalHomeScore ?? '-'}}</td>
+
+              <td rowspan="2" class="event-status" [ngClass]="getEventStatusColor(match)">{{match.newEventStatus}}</td>
+              <td class="score final-score">{{match.liveHomeScore ?? '-'}}</td>
+              <td rowspan="2" class="auto-instant">
+                <div [class]="getClassInstant(match.autoCalcSetting.isInstantForMatch)" matTooltipPosition="above"
+                  [matTooltip]="getTittleInstant(match.autoCalcSetting.isInstantForMatch)"
+                  (click)="updateInstant(match)">
+                </div>
+              </td>
+              <td rowspan="2" class='instant-status' [ngClass]="getClassInstantStatus(match)">
+                <span [ngClass]="getColorInstant(match)">
+                  <div *ngIf="match.instantStatusId == instantStatus.confirm; else noNeed">
+                    <div *ngIf="match.instantCalculationType != instantCalcFt || !match.isFTCalculated">
+                      <div class="confirm-instant">Confirm</div>
+                      <button class="button-instant btn btn-outline-primary" (click)="updateInstantStatus(match)">{{match.instantStatus}}</button>
+                    </div>
+                  </div>
+                  <ng-template #noNeed>
+                    {{match.instantStatus}}
+                  </ng-template>
+                </span>
+              </td>
+              <td rowspan="2" class="calc-column" [ngClass]="getCalcColumnColor(match)">
+                <div [ngClass]="isShowCalculationLink(match)"
+                  (click)="isShowCalculationLink(match) ? popupCalc(match) : ''">
+                  Calc
+                </div>
+              </td>
+              <td rowspan="2" class="refund-column">
+                <div [ngClass]="isShowRefundLink(match)" (click)="isShowRefundLink(match) ? popupRefund(match) : ''">
+                  Refund
+                </div>
+              </td>
+              <td rowspan="2" class="confirm-score"
+                [ngClass]="{'bg-calculated': match.isHalfTimeCal, 'bg-white-blinking': match.isNotConsistentExHtScore}">
+                <div>{{match.suspenderHalfTime}}</div>
+                <div>{{match.confirmHalfTimeScore}}</div>
+              </td>
+              <td rowspan="2" class="confirm-score"
+                [ngClass]="{'bg-calculated': match.isCalculated, 'bg-white-blinking': match.isNotConsistentExFtScore}">
+                <div>{{match.suspenderFullTime}}</div>
+                <div>{{match.confirmFullTimeScore}}</div>
+              </td>
+              <td rowspan="2" class="auto-setting">
+                <div [class]="getClassPayOut(match.autoCalcSetting.isAutoPayoutForMatch, match.autoCalcSetting.isDirectPayoutForMatch)" matTooltipPosition="above" [matTooltip]="language.payout.title"
+                  (click)="openUpdatePayout(match)"></div>
+              </td>
+              <td rowspan="2" class="remark-status">
+                <div placement="top" [ngClass]="{'act-change-setting title': isChangeSetting(match)}"
+                  [ngbTooltip]="getRemarkStatusTooltip(match.remark)" (click)="popupChangeRemarkSetting(match)">
+                  {{match.remark.isKeyHold || match.remark.isMtdHold || match.remark.isPending || match.remark.isUndecided || match.remark.isUnderSettle ? 'YES' : 'NO'}}
+                </div>
+              </td>
+              <td rowspan="2" class="reference-action">
+                <div *ngFor="let reference of match.referenceActions, let last=last;">
+                  <div *ngIf="!isNullOrEmpty(reference.actionName)" class="action " [ngClass]="reference.className">
+                    {{reference.actionName}}</div>
+                  <div *ngIf="!last" class="separation">&gt;&gt;</div>
+                </div>
+              </td>
+            </tr>
+            <tr class="row-3" [ngClass]="rowColor(match.remark, !isEven)">
+              <td>{{match.matchId}}</td>
+              <td>
+                <div class="match-away">{{match.awayName}}</div>
+                <span [class]="match.goalIcon.awayGoal ?? ''"></span>
+                <span [class]="match.goalIcon.halfTimeAwayGoal ?? ''"></span>
+              </td>
+              <td class="score">{{match.halfTimeAwayScore ?? '-'}}</td>
+              <td class="final-score score">{{match.finalAwayScore ?? '-'}}</td>
+              <td class="score final-score">{{match.liveAwayScore ?? '-'}}</td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #empty>
+  <div class="no-data" *ngIf="leagues.length == 0">
+    <div class="empty-data">
+      There is no information available
+    </div>
+  </div>
+</ng-template>

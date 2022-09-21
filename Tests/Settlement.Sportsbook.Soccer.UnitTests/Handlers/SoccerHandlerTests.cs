@@ -8,13 +8,13 @@ using Settlement.Sportsbook.Soccer.Services;
 using Xunit;
 using Match = Settlement.Sportsbook.Soccer.Models.Match;
 using MatchDetail = Settlement.Sportsbook.Soccer.Models.MatchDetail;
-using Settlement.Core.Constants;
+using Settlement.Sportsbook.Soccer.GetMatch.Services;
 
 namespace Settlement.Sportsbook.Soccer.UnitTests.Handlers
 {
     public class SoccerHandlerTests
     {
-        private readonly SoccerHandler handler;
+        private readonly CalculateHandler handler;
 
         private readonly IMatchService matchService;
         private readonly ICalculateService calculateService;
@@ -24,7 +24,7 @@ namespace Settlement.Sportsbook.Soccer.UnitTests.Handlers
             matchService = Substitute.For<IMatchService>();
             calculateService = Substitute.For<ICalculateService>();
             var instantCalculateService = Substitute.For<IInstantCalculateService>();
-            handler = new SoccerHandler(matchService, calculateService, instantCalculateService);
+            handler = new CalculateHandler(matchService, calculateService, instantCalculateService);
         }
 
         [Fact]

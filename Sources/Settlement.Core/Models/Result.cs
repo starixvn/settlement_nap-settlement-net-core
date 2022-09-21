@@ -1,4 +1,6 @@
-﻿namespace Settlement.Core.Models
+﻿using System.Collections.Generic;
+
+namespace Settlement.Core.Models
 {
     public class Result
     {
@@ -6,7 +8,7 @@
 
         public string ErrMsg { get; set; }
 
-        public string ServiceCommand { get; set; }
+        public List<ResultCommand> ResultCommand { get; set; }
 
         public string ChildMatchIds { get; set; }
 

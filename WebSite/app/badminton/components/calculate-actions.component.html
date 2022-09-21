@@ -1,0 +1,164 @@
+<span toastContainer></span>
+<div class="padding" *ngIf="match">
+  <div *ngIf="isReadyMatch">    
+    <calculate-match-detail [match]="match"></calculate-match-detail>
+    <ticket-count [ticketCounts]="match.ticketCounts"></ticket-count>
+    <div class="calculation-actions">
+      <div *ngIf="hedgeMatchDetail" class="hedge-match">
+        <input type="checkbox" [(ngModel)]="applyHedgeMatch" id="ApplyHedgeMatch" />
+        <label for="ApplyHedgeMatch">Apply for hedge match '<strong>{{hedgeMatchDetail.matchCode}}</strong>' also.</label>
+      </div>
+      <table>
+        <ng-template *ngTemplateOutlet="header"></ng-template>
+        <ng-template *ngTemplateOutlet="body"></ng-template>
+      </table>
+      <resettle-checker (proceedEvent)="onResettleCheckboxChange($event)" [checked]="isReSettledTickets"></resettle-checker>
+    </div>
+    <div *ngIf="match.childMatches.length > 0 && permission.canRefund">
+      <div class="child-match">
+          <span class="collapse-icon" [ngClass]="collapse ? 'collapsed' : ''"
+              (click)="collapseChildMatch()">&emsp;Related Matches</span>
+      </div>
+      <div *ngIf="!collapse">
+          <ng-template *ngTemplateOutlet="childMatches"></ng-template>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="!isReadyMatch">
+    <not-ready-match></not-ready-match>
+  </div>
+</div>
+
+<ng-template #header>
+  <thead>
+    <tr>
+      <th rowspan="2" class="map">Game/Match</th>
+      <th rowspan="2" class="ticket-status">Ticket Status</th>
+      <th rowspan="2" colspan="2" class="map">Final Score</th>
+      <th rowspan="2" class="map" *ngIf="isLeader">Trader Score</th>
+      <th colspan="2" class="map" *ngIf="isLeader">Provider Score</th>
+      <th [colSpan]="(match.resultDetails[0].externalScores.length - 3) * 2">Outside Score</th>
+      <th rowspan="2" class="status">
+          Select to Proceed
+      </th>
+    </tr>
+    <tr>
+      <ng-container *ngFor=" let result of match.resultDetails[0].externalScores | slice:1; let i=index">
+          <th class="map" *ngIf="i < 2 && isLeader">{{result.sourceName|externalSourceName}}</th>
+          <th class="map" *ngIf="i === 2" colspan="2">{{result.sourceName}}</th>
+          <th class="map" colspan="2" *ngIf="i > 2">
+            <div class="outside-source-text" [matTooltip]="getTextTooltip(result.sourceName, 12)">
+              <a href="{{result.remark}}" target="_blank"
+                  class="source-link">{{result.sourceName}}</a>
+            </div>
+          </th>
+      </ng-container>
+    </tr>
+  </thead>
+</ng-template>
+
+<ng-template #body>
+  <tbody>
+    <tr *ngFor="let map of match.resultDetails; let i=index; let last=last;"
+      [ngClass]="{'mismatched': map.isScoreMismatched, 'confirmed-refund': isConfirmed(map)}">
+      <td>{{ map.resourceId | resourceName: match.matchDetail.sportType}}</td>
+      <td [ngClass]="map.ticketStatus.toLowerCase()" class="set-status" *ngIf="map.resourceId !== totalPointsId && !last">{{map.ticketStatus}}</td>
+      <td [ngClass]="map.ticketStatus.toLowerCase()" class="match-status" *ngIf="map.resourceId === totalPointsId" rowspan="2">{{map.ticketStatus}}</td>
+      <td [ngClass]="getClass(map)">
+        <input type="text" myOnlyInteger tabindex="{{i*2 + 1}}" [disabled]="isFinalScoreDisabled(map)"
+            [(ngModel)]="map.homeValue" (ngModelChange)="checkMapIsMatched(map)" [ngClass]="{
+              'final-score' : last ,
+              'warning' : map.resourceId === totalPointsId ? false : isErrorOnVerification(map, map.homeValue)}"/>
+      </td>
+      <td [ngClass]="getClass(map)">
+          <input type="text" myOnlyInteger [disabled]="isFinalScoreDisabled(map)" [(ngModel)]="map.awayValue"
+              (ngModelChange)="checkMapIsMatched(map)" [ngClass]="{
+                  'final-score' : last,
+                  'warning' : map.resourceId === totalPointsId ? false : isErrorOnVerification(map, map.awayValue)}"
+              tabindex="{{(i+1) * 2}}" />
+      </td>
+      <ng-container *ngFor="let result of map.externalScores; let x=index">
+        <td *ngIf="x < 3 && isLeader">
+            {{result.homeValue}}-{{result.awayValue}}
+        </td>
+        <ng-container *ngIf="x >= 3">
+            <td [ngClass]="{'striped': x % 2 === 1}">
+                <input type="text" myOnlyInteger [(ngModel)]="result.homeValue" [disabled]="isFinalScoreDisabled(map, true)"
+                    (change)="verifyAndAutoFillScore(map, last)" (ngModelChange)="updateOutsideScore(result.sourceId)"/>
+            </td>
+            <td [ngClass]="{'striped': x % 2 === 1}">
+                <input type="text" myOnlyInteger [(ngModel)]="result.awayValue" [disabled]="isFinalScoreDisabled(map, true)"
+                    (change)="verifyAndAutoFillScore(map, last)" (ngModelChange)="updateOutsideScore(result.sourceId)"/>
+            </td>
+        </ng-container>
+      </ng-container>
+      <td *ngIf="map.resourceId === totalPointsId" rowspan="2">
+        <input id="final-checkbox" type="checkbox" [(ngModel)]="match.resultDetails[i+1].checked"
+          (ngModelChange)="selectedOnLastMap()" />
+      </td>
+      <td *ngIf="map.resourceId !== totalPointsId && !last">
+        <input id="checkbox-map-{{i + 1}}" type="checkbox" [(ngModel)]="map.checked" [disabled]="match.isScoreDirect"
+          (ngModelChange)="selectedOnMap()" />
+      </td>
+    </tr>
+    <tr>
+      <td colspan="100%" class="input-directly">
+        <input type="checkbox" [(ngModel)]="match.isScoreDirect" (ngModelChange)="changeInputDirectly()"
+          id="isScoreDirect" [disabled]="disableScoreDirect" />
+        <label for="isScoreDirect">Input Match score directly</label>
+      </td>
+    </tr>
+
+    <tr>
+      <td colSpan="100%" class="button-group">
+          <button class="button" (click)="calculate()">Calculate</button>
+          <button *ngIf="match.permission.canUncalculate" [ngClass]="{'button': true, 'button-disabled': !enableUncalculate}"
+              [disabled]="!enableUncalculate" (click)="uncalculate()">
+              Uncalculate
+          </button>
+          <button class="new-refund-button save-score" [disabled]="isSaveScoreDisabled()"
+              (click)="saveScore()">Save Score</button>
+      </td>
+    </tr>
+  </tbody>
+</ng-template>
+
+<ng-template #childMatches>
+  <div class="table-child-match">
+    <table>
+        <thead>
+            <tr>
+                <th class="code">Match Code/ID</th>
+                <th class="team-name">Team</th>
+                <th>Total Set</th>
+                <th class="eventStatus">Event Status</th>
+                <th>Hold Status</th>
+                <th>Select To Calculate</th>
+            </tr>
+        </thead>
+        <tbody>
+            <ng-container *ngFor="let childMatch of match.childMatches">
+                <tr>
+                    <td>{{childMatch.matchCode}}</td>
+                    <td class="home-team-name">{{match.matchDetail.homeName}}  ({{childMatch.leagueName}})</td>
+                    <td [ngClass]="getChildMatchesClass(childMatch)">{{childMatch.homeValue | result}}</td>
+                    <td rowspan="2">{{childMatch.eventStatus}}</td>
+                    <td rowspan="2">{{childMatch.isHold ? 'YES' : 'NO'}}</td>
+                    <td rowspan="2">
+                        <input type="checkbox" [(ngModel)]="childMatch.checked" [disabled]="childMatch.isHold"/>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>{{childMatch.matchId}}</td>
+                    <td class="away-team-name">{{match.matchDetail.awayName}}  ({{childMatch.leagueName}})</td>
+                    <td [ngClass]="getChildMatchesClass(childMatch)">{{childMatch.awayValue | result}}</td>
+                </tr>
+            </ng-container>
+
+        </tbody>
+    </table>
+    <span>- Marked tickets will not be settled.</span><br>
+    <span>- Matches that are on-hold will not be settled along side main match.</span>
+  </div>
+</ng-template>

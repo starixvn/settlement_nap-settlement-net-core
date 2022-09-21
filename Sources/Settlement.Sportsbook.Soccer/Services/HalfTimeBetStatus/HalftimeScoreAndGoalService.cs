@@ -1,6 +1,5 @@
 ﻿using Kaden.Extensions;
 using Settlement.Sportsbook.Soccer.Models;
-using Settlement.Sportsbook.Soccer.Requests;
 
 namespace Settlement.Sportsbook.Soccer.Services.HalfTimeBetStatus
 {

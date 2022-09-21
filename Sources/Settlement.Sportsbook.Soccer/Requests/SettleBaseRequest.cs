@@ -10,6 +10,8 @@
 
         public int AdminId { get; set; }
 
+        public int LeagueGroupId { get; set; }
+
         public string ActionName { get; set; }
 
         public int? HalfTimeHomeScore { get; set; }

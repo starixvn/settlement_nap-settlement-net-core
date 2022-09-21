@@ -4,6 +4,7 @@ using Settlement.Setting.Criteria;
 using Settlement.Setting.Models;
 using Settlement.Setting.Requests;
 using Settlement.Core.Models;
+using Settlement.Core.Criteria;
 using System.Threading.Tasks;
 using Fanex.NAP.Client.Helpers.Web;
 using Microsoft.AspNetCore.Http;
@@ -56,7 +57,7 @@ namespace Settlement.Setting.Services
             {
                 ErrCode = criteria.ErrCode,
                 ErrMsg = criteria.ErrMsg,
-                ServiceCommand = criteria.UpdatedMatchIds
+                ChildMatchIds = criteria.UpdatedMatchIds
             };
         }
 

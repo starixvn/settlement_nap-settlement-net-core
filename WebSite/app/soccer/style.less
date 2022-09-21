@@ -1,0 +1,517 @@
+@sprite: "../../wwwroot/css/images/sprite.png";
+
+.calc-popup{
+    width: 100%;
+}
+.calculate-popup {
+    padding-left: 3px;
+    width: 790px !important;
+}
+
+.refund-popup {
+    padding-left: 3px;
+    width: 778px !important;
+}
+
+.early-popup {
+    padding-left: 3px;
+    width: 890px !important;
+    .table-calculation {
+        min-width: 890px !important;
+    }
+}
+
+.part-title() {
+    color: @title-color;
+    font-weight: bold;
+    padding: 7px 0;
+}
+
+
+.league {
+    color: #1d3968;
+    font-weight: bold;
+    padding: 7px 0;
+}
+
+.code {
+    min-width: 100px;
+    width: 100px;
+}
+
+.match-code {
+    color: #599ced;
+}
+
+.kick-off-time {
+    min-width: 70px;
+    width: 70px;
+}
+
+.team {
+    width: 100%;
+}
+
+.modal-dialog {
+    top: 30%;
+    font-size: 12px;
+    text-transform: none;
+
+
+    .modal-header,
+    .modal-body {
+        padding: 8px;
+    }
+
+    h4 {
+        font-size: 13px;
+        font-weight: bold;
+    }
+}
+
+
+.message-box {
+    display: block;
+
+    .icon {
+        margin-top: 0;
+        height: 15px !important;
+        width: 16px !important;
+    }
+}
+
+.bg-invalid {
+    background-color: red !important;
+}
+
+.bg-not-taken {
+    background-color: #ffff00;
+}
+
+input[disabled],
+select[disabled] {
+    background: #ccc;
+}
+
+input[type=text] {
+    border: 1px solid #888;
+    text-align: center;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    line-height: 22px;
+    text-align: center;
+
+    td,
+    th {
+        border: solid 1px #cbcbcb;
+        padding: 1px;
+    }
+
+    thead {
+        background-color: #295091;
+        border: 1px solid #cbc9ca;
+        color: #fff;
+        padding-right: 15px;
+
+        tr {
+            border-collapse: collapse;
+            line-height: 17px;
+            text-align: center;
+
+            th {
+                vertical-align: middle;
+                text-align: center;
+                font-weight: normal;
+                width: 25px;
+            }
+        }
+    }
+}
+
+.table-ticket {
+    margin-bottom: 10px;
+
+    td:nth-child(1) {
+        width: 100px !important;
+    }
+}
+
+.list-new-match>* {
+    vertical-align: middle;
+}
+
+.set-directly {
+    width: 100% !important;
+
+    &>*:not(:last-child) {
+        margin-right: 5px !important;
+    }
+
+    padding-right: 3px !important;
+}
+
+.confirm-score {
+    font-size: 12px;
+    padding: 0 5px;
+
+    .input-confirm-score {
+        width: 80%;
+    }
+
+    .score {
+        width: 8%;
+    }
+
+    .warning-message {
+        color: red;
+        text-align: center;
+        font-size: 12px;
+    }
+
+    .league-name {
+        padding: 7px 7px 0 3px;
+        text-align: left;
+        color: #1d3968;
+        font-weight: bold !important;
+    }
+
+    .event {
+        width: 84%;
+    }
+
+    input[type=text] {
+        width: 32px;
+    }
+
+    .match-home {
+        font-weight: bold;
+        color: #6678e0;
+        font-size: 12px;
+        padding-left: 3px;
+        text-align: left;
+        float: left;
+    }
+
+    .match-away {
+        font-weight: bold;
+        color: #008d95;
+        font-size: 12px;
+        padding-left: 3px;
+        text-align: left;
+        float: left;
+    }
+
+    .goal-record {
+        border: solid 1px #cbcbcb;
+        margin-top: -1px;
+        width: 80%;
+        height: 27px;
+        text-align: right;
+
+        input[type=checkbox] {
+            margin-top: 1px;
+        }
+
+        input[type=text] {
+            width: 72px;
+            margin-right: 3px;
+            margin-top: 2px;
+        }
+    }
+
+    .goal-record>* {
+        vertical-align: middle;
+    }
+
+    .button {
+        margin: 3px 5px 3px 0;
+    }
+
+    .specific-link {
+        color: #0273ff !important;
+        cursor: pointer;
+    }
+}
+
+.table-wrapper {
+    padding-top: 5px;
+    position: relative;
+    width: 886px;
+
+    .footer {
+        div {
+            padding-top: 3px;
+            width: 886px;
+            height: 30px;
+            border: solid 1px #C8C8C8;
+            text-align: center;
+        }
+    }
+
+    table {
+        .bettype-name {
+            width: 260px;
+            padding: 4px 0;
+        }
+
+        .ticket-status {
+            width: 110px;
+
+            .proceed {
+                margin-left: -16px;
+            }
+        }
+
+        .result-value {
+            width: 200px;
+        }
+
+        .result-status {
+            width: 135px;
+        }
+
+        .select-proceed {
+            width: 58px;
+            line-height: 15px;
+        }
+
+        .height-select {
+            height: 38px;
+        }
+
+        .hold-result {
+            width: 76px;
+        }
+    }
+
+    .table-scroll {
+        max-height: 470px;
+        overflow-y: scroll;
+        overflow-x: hidden;
+        border-right: solid 1px #C8C8C8;
+
+        table {
+            tbody>tr {
+                line-height: 28px;
+            }
+
+            td {
+                padding: 0 5px;
+
+                select {
+                    width: 190px;
+                    border: 1px solid #888;
+                    color: #000;
+                    margin-top: 4px;
+                }
+
+                .line {
+                    width: 1px;
+                    background: #888;
+                    height: 28px;
+                }
+
+                .box-two-control {
+                    div {
+                        float: left;
+                        margin-left: 3px;
+                    }
+
+                    div:first-child {
+                        padding-left: 3px;
+                    }
+
+
+                }
+
+                .score-penalty {
+                    width: 190px;
+                }
+
+                .score-odd-even {
+                    width: 89px;
+                }
+
+            }
+
+            .settle-determined {
+                >* {
+                    vertical-align: middle;
+                    padding-top: 4px;
+                    padding-right: 5px;
+                    cursor: pointer;
+                }
+
+                padding-right: 135px;
+
+            }
+
+            .group-map {
+                background-color: #cbc9ca;
+                height: 20px;
+                font-weight: bold;
+                text-align: left;
+                cursor: pointer;
+
+                span {
+                    float: left;
+                    padding-left: 3px;
+                }
+            }
+        }
+    }
+}
+
+
+.set-results {
+    float: right;
+    margin-top: -30px;
+    width: 138px;
+}
+
+.table-calculation {
+    .event-refund {
+        width: 560px;
+    }
+
+    .event {
+        width: 430px;
+    }
+
+}
+
+.goal-record-input {
+    width: 78px !important;
+}
+
+soccer-ticket-count {
+    .ticket-count {
+        width: 500px !important;
+    }
+}
+
+.cdk-overlay-container {
+    .mat-tooltip {
+        font-size: 11px;
+        margin-bottom: 0 !important;
+        margin-top: 0 !important;
+    }
+}
+
+.calc-action {
+    .row-2 {
+        padding-left: 124px !important;
+        text-align: left !important;
+    }
+}
+
+.refund-action {
+    padding-top: 10px;
+    padding-left: 2px;
+
+    .icon-refund {
+        background: url(@sprite) no-repeat -116px -68px;
+        width: 4px;
+        height: 4px;
+        float: left;
+        margin-top: 10px;
+        padding-left: 10px;
+    }
+
+    .normal-tickets {
+        font-size: 12px;
+        font-weight: bold;
+        color: #3b5b98;
+        padding-top: 3px;
+    }
+
+    .check-box {
+        padding-left: 10px !important;
+    }
+
+    .refund-betdaq {
+        width: 200px !important;
+    }
+}
+
+.cdk-drag-preview {
+    box-sizing: border-box;
+    border-radius: 4px;
+    box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2), 0 8px 10px 1px rgba(0, 0, 0, 0.14),
+        0 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+.mat-dialog-container {
+    padding: 1px !important;
+}
+
+.available-match {
+    color: #3b5b98;
+    font-weight: bold;
+}
+
+.specific-bettype {
+    height: 450px;
+    margin: 8px 0 8px 8px;
+    overflow-x: hidden;
+    font-size: 12px;
+}
+
+div>.cdk-overlay-backdrop {
+    position: fixed !important;
+}
+
+.title {
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.confirm-refund {
+    font-size: 12px;
+    padding: 0 5px;
+
+    .content {
+        margin: 5px 0;
+    }
+
+    .refund-button {
+        width: 145px;
+        height: 22px;
+    }
+
+    .mark-message {
+        margin-top: 5px;
+        padding-left: 3px;
+        margin-bottom: 10px;
+    }
+}
+
+.list-new-match {
+    max-height: 200px;
+    overflow-x: hidden;
+}
+
+.move {
+    margin-top: 8px;
+}
+
+.message-info {
+    padding-top: 2px;
+    float: left;
+    font-size: 12px;
+
+    &.error {
+        color: #f40000;
+        max-width: 735px;
+    }
+}
+
+.move-match{
+    padding: 5px;
+    input[type=radio] {
+        margin: 4px;
+    }
+}

@@ -1,0 +1,159 @@
+<div class="sportbook">
+  <div class="head-table" *ngIf="sports">
+    <table class="table-calculation">
+      <thead>
+        <tr>
+          <th rowspan="2" class="code">Match Code/ID</th>
+          <th rowspan="2" class="kick-off-time">Kick-off Time</th>
+          <th rowspan="2" class="event">Event</th>
+          <th rowspan="2" class="interval-score">Interval Score</th>
+          <th rowspan="2" class="score">Total Games/ Points</th>
+          <th rowspan="2" class="score">HT Score</th>
+          <th rowspan="2" class="score">Final score</th>
+          <th rowspan="2" class="event-status">Early Settle Status</th>
+          <th rowspan="2" class="event-status">Event Status</th>
+          <th rowspan="2" class="hold-status">Hold Status</th>
+          <th colspan="2" class="confirm">Action</th>
+          <th rowspan="2" class="reference">Reference Actions</th>
+        </tr>
+        <tr>
+          <th class="move-tickets">Move Tickets</th>
+          <th class="calc-mp-moved-tickets">Calc MP Moved Tickets</th>
+        </tr>
+      </thead>
+    </table>
+  </div>
+  <div class="content-scroll" *ngIf="isExistedSport; else empty">
+    <div *ngFor="let sport of sports">
+      <div (click)="collapseSport(sport)" class="sport-name">
+        <span class="collapse-icon" [ngClass]="sport.collapse ? 'collapsed' : ''"></span>
+        &nbsp;{{sport.name}}
+      </div>
+      <ng-template [ngIf]="!sport.collapse">
+        <div class="league" *ngFor="let leagueMatch of sport.leagues">
+          <table class="table-calculation">
+            <tbody>
+              <tr class="league-name">
+                <td colspan="13" class="name" (click)="collapseLeague(leagueMatch)">
+                  <span class="collapse-icon" [ngClass]="leagueMatch.collapse ? 'collapsed' : ''"></span>
+                  &nbsp;{{leagueMatch.name}}
+                </td>
+              </tr>
+              <ng-template [ngIf]="!leagueMatch.collapse">
+                <ng-container *ngFor="let match of leagueMatch.matches">
+                  <tr class="row-3" [ngClass]="undecidedColor(match.remark)">
+                    <td class="code">
+                      <div *ngIf="multiSport.permission.canViewSettlementLog; else noLogLink">
+                        <div class="code-link" (click)="getLog(match.matchId)">
+                          {{match.matchCode}}
+                        </div>
+                      </div>
+                      <ng-template #noLogLink>
+                        <div class="no-link">
+                          {{match.matchCode}}
+                        </div>
+                      </ng-template>
+                    </td>
+                    <td class="kick-off-time" rowspan="2">
+                      {{match.kickOffTime | date : 'mediumDate' }}
+                      {{match.kickOffTime | date : 'hh:mm:ss a' }}
+                    </td>
+                    <td class="match-home">{{match.homeName}}</td>
+                    <td class="interval-score">
+                      <div *ngIf="match.isHavingIntervalScore">
+                        <div *ngIf="match.sportType != cricketSportType else intervalHomeScoreCricket">
+                          <span *ngFor="let score of match.intervalScore; let i = index; let last = last;"
+                            [ngClass]="score.background">
+                            {{score.home}}<span *ngIf="!last">; </span>
+                          </span>
+                        </div>
+                        <ng-template #intervalHomeScoreCricket>
+                          <span *ngFor="let score of match.intervalScore  | intervalScore : 'Home' ; let i = index; let last = last;"
+                          [ngClass]="score.background">
+                            {{score.home}}<span *ngIf="!last">; </span>
+                          </span>
+                        </ng-template>
+                      </div>
+                    </td>
+                    <td class="score total-game-color">{{getTotalHomeGames(match)}}</td>
+                    <td class="score total-game-color">{{getHalfTimeHomeScore(match)}}</td>
+                    <td class="score final-score">{{getFinalHomeScore(match)}}</td>
+                    <td rowspan="2" class="auto-status" *ngIf="canAutoSettlemt(match.sportType); else noEarlySettle"
+                      [ngClass]="getEarlySettleBackground(match)">
+                      <div *ngIf="match.earlySettleStatus.toLowerCase() === 'n/a'; else earlySettle">N/A</div>
+                      <ng-template #earlySettle>
+                        <div>{{match.earlySettleStatus}}</div>
+                      </ng-template>
+                    </td>
+                    <ng-template #noEarlySettle>
+                      <td rowspan="2" class="auto-status"></td>
+                    </ng-template>
+                    <td rowspan="2" class="event-status" [ngClass]="getEventStatusColor(match)">{{match.newEventStatus}}
+                    </td>
+                    <td rowspan="2" class="hold-status">
+                      <div placement="top" [ngbTooltip]="getRemarkStatusTooltip(match.remark)">
+                        {{match.remark.isKeyHold || match.remark.isMtdHold || match.remark.isPending || match.remark.isUndecided || match.remark.isUnderSettle ? 'YES' : 'NO'}}
+                      </div>
+                    </td>
+                    <td rowspan="2" class="move-tickets">
+                      <button class="button"
+                        [ngClass]="{'button-disabled': !permission.canMoveTickets}"
+                        [disabled]="!permission.canMoveTickets"
+                        (click)="moveTickets(match)" >
+                        Move Tickets
+                      </button>
+                    </td>
+                    <td rowspan="2" class="calc-mp-moved-tickets">
+                      <button class="button"
+                        [ngClass]="{'button-disabled': true}"
+                        [disabled]="true">
+                        Calc MP (Moved)
+                      </button>
+                    </td>
+                    <td rowspan="2" class="reference">
+                      <ng-container *ngFor="let reference of match.referenceActions; let last = last">
+                        <div class="action" [ngClass]="{'failed' : reference.isFailed}">{{reference.logDate | date : 'MMM d'}}</div>
+                        <span *ngIf="!last">&gt;&gt;</span>
+                      </ng-container>
+                    </td>
+                  </tr>
+                  <tr class="row-3" [ngClass]="undecidedColor(match.remark)">
+                    <td>{{match.matchId}}</td>
+                    <td class="match-away">{{match.awayName}}</td>
+                    <td class="interval-score">
+                      <div *ngIf="match.isHavingIntervalScore">
+                        <div *ngIf="match.sportType !== cricketSportType else intervalAwayScoreCricket">
+                          <span *ngFor="let score of match.intervalScore  ; let i = index; let last = last;"
+                            [ngClass]="score.background">
+                            {{score.away}}<span *ngIf="!last">; </span>
+                          </span>
+                        </div>
+                        <ng-template #intervalAwayScoreCricket>
+                          <span *ngFor="let score of match.intervalScore | intervalScore : 'Away'; let i = index; let last = last;"
+                          [ngClass]="score.background">
+                            {{score.home}}<span *ngIf="!last">; </span>
+                          </span>
+                        </ng-template>
+                      </div>
+                    </td>
+                    <td class="score total-game-color">{{getTotalAwayGames(match)}}</td>
+                    <td class="score total-game-color">{{getHalfTimeAwayScore(match)}}</td>
+                    <td class="score final-score">{{getFinalAwayScore(match)}}</td>
+                  </tr>
+                </ng-container>
+              </ng-template>
+            </tbody>
+          </table>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</div>
+
+<ng-template #empty>
+  <div class="no-data" *ngIf="sports">
+    <div class="empty-data">
+      There is no information available
+    </div>
+  </div>
+</ng-template>

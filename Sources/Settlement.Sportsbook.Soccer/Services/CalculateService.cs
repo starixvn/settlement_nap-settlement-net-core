@@ -1,15 +1,14 @@
-﻿using System.Threading.Tasks;
+﻿using System;
 using AutoMapper;
 using Fanex.Data.Repository;
-using Fanex.NAP.Client.Helpers.Web;
-using Kaden.XmlConverter;
-using Microsoft.AspNetCore.Http;
-using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Sportsbook.Soccer.Constants;
 using Settlement.Sportsbook.Soccer.Criteria;
-using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Requests;
+using System.Threading.Tasks;
+using Fanex.Settlement.ScaleOut.Request;
+using Fanex.Settlement.ScaleOut.Services;
+using Microsoft.Extensions.Options;
 
 namespace Settlement.Sportsbook.Soccer.Services
 {
@@ -26,122 +25,66 @@ namespace Settlement.Sportsbook.Soccer.Services
     {
         private readonly IDynamicRepository repository;
 
-        private readonly INapSession currentSession;
-
         private readonly IMapper mapper;
 
-        private readonly IHttpContextAccessor accessor;
+        private readonly AppSettingsKey appSettingsKey;
 
-        private readonly ISoccerBetStatusService soccerBetStatusService;
+        private readonly ICreateCriteriaService createQueryCriteria;
 
-        private readonly XmlConvertService xmlConvertService;
+        private readonly ScaleOutSettleService scaleOutSettleService;
 
-        private readonly IResourceService resourceService;
-
-        public CalculateServiceImp(
+        public CalculateServiceImp
+            (IMapper mapper,
             IDynamicRepository repository,
-            INapSession currentSession,
-            IMapper mapper,
-            IHttpContextAccessor accessor,
-            ISoccerBetStatusService soccerBetStatusService,
-            XmlConvertService xmlConvertService,
-            IResourceService resourceService)
+            IOptions<AppSettingsKey> appSettingsKey,
+            ICreateCriteriaService createQueryCriteria,
+            ScaleOutSettleService scaleOutSettleService)
         {
             this.repository = repository;
-            this.currentSession = currentSession;
+            this.appSettingsKey = appSettingsKey.Value;
             this.mapper = mapper;
-            this.accessor = accessor;
-            this.soccerBetStatusService = soccerBetStatusService;
-            this.xmlConvertService = xmlConvertService;
-            this.resourceService = resourceService;
+            this.createQueryCriteria = createQueryCriteria;
+            this.scaleOutSettleService = scaleOutSettleService;
         }
 
         public async Task<Result> Calculate(SettleRequest request)
         {
-            var criteria = new CalculateCriteria
+            var criteria = createQueryCriteria.CreateCalculateCriteria(request);
+            var matchChecking = await ValidateBeforeExecute(criteria);
+            if (matchChecking.ErrCode > 0)
             {
-                AdminId = currentSession.UserId,
-                MatchId = request.MatchId,
-                GoalRecord = string.IsNullOrWhiteSpace(request.GoalRecord) ? string.Empty : request.GoalRecord.ToUpperInvariant(),
-                ResourceResult = GetResourceResultCalculate(request),
-                BetStatus = soccerBetStatusService.CreateBetStatus(request),
-                Action = request.ActionName,
-                HalfTimeHome = request.HalfTimeHomeScore ?? 0,
-                HalfTimeAway = request.HalfTimeAwayScore ?? 0,
-                Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString(),
-                IsReSettledTickets = request.IsReSettledTickets,
-                ChildMatchIds = request.ChildMatchIds
-            };
-
-            if (request.ActionName.Equals(ActionType.CalculateFullTime) || request.ActionName.Equals(ActionType.CalculateAll))
-            {
-                criteria.FullTimeHome = request.FinalHomeScore ?? 0;
-                criteria.FullTimeAway = request.FinalAwayScore ?? 0;
+                return matchChecking;
             }
+            await ExecuteAsync(criteria);
+            await RefundChildMatch(criteria);
 
-            var result = await Execute(criteria);
-
-            if (result.IsSuccessful && request.IsApplyHedging)
+            if (request.IsApplyHedging)
             {
                 criteria.MatchId = request.HedgeMatchId;
-                await Execute(criteria);
+                await ExecuteAsync(criteria);
             }
 
-            return result;
-        }
-
-        private string GetResourceResultCalculate(SettleRequest request)
-        {
-            var goalCondition = mapper.Map<SettleRequest, GoalCondition>(request);
-            var actionName = request.ActionName;
-            var resources = actionName switch
-            {
-                ActionType.CalculateHalfTime => resourceService.HalftimeResources(goalCondition, SettlementStatus.Completed),
-                ActionType.CalculateFullTime => resourceService.FullTimeResources(goalCondition, SettlementStatus.Completed),
-                _ => resourceService.AllResources(goalCondition, SettlementStatus.Completed),
-            };
-
-            return resources.Count > 0
-                ? xmlConvertService.Serialize(new XmlResults { Resources = resources })
-                : string.Empty;
+            return matchChecking;
         }
 
         public async Task<Result> UnCalculate(SettleRequest request)
         {
-            var criteria = new CalculateCriteria
+            var criteria = createQueryCriteria.CreateUnCalculateCriteria(request);
+            var requestChecking = await ValidateBeforeExecute(criteria);
+            if (requestChecking.ErrCode > 0)
             {
-                AdminId = currentSession.UserId,
-                MatchId = request.MatchId,
-                GoalRecord = string.IsNullOrWhiteSpace(request.GoalRecord) ? string.Empty : request.GoalRecord.ToUpperInvariant(),
-                ResourceResult = GetResourceResultUnCalculate(request),
-                BetStatus = string.Empty,
-                Action = request.ActionName,
-                HalfTimeHome = request.HalfTimeHomeScore ?? 0,
-                HalfTimeAway = request.HalfTimeAwayScore ?? 0,
-                Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString(),
-                IsReSettledTickets = request.IsReSettledTickets,
-                ChildMatchIds = request.ChildMatchIds
-            };
-
-            var result = await Execute(criteria);
-
-            if (result.IsSuccessful && request.IsApplyHedging)
-            {
-                criteria.MatchId = request.HedgeMatchId;
-                await Execute(criteria);
+                return requestChecking;
             }
 
-            return result;
-        }
+            await ExecuteAsync(criteria);
 
-        private string GetResourceResultUnCalculate(SettleRequest request)
-        {
-            var goalCondition = mapper.Map<SettleRequest, GoalCondition>(request);
-            var resources = resourceService.UnCalculateResources(goalCondition);
+            if (request.IsApplyHedging)
+            {
+                criteria.MatchId = request.HedgeMatchId;
+                await ExecuteAsync(criteria);
+            }
 
-            return resources.Count > 0
-                ? xmlConvertService.Serialize(new XmlResults { Resources = resources })
-                : string.Empty;
+            return requestChecking;
         }
 
         public async Task<Result> CheckStatus(CheckStatusRequest request)
@@ -157,15 +100,69 @@ namespace Settlement.Sportsbook.Soccer.Services
             };
         }
 
-        private async Task<Result> Execute(CalculateCriteria criteria)
+        private async Task ExecuteAsync(CalculateCriteria criteria)
         {
-            await repository.ExecuteAsync(criteria);
+            await UpdateMatchInfo(criteria);
+
+            foreach (var server in appSettingsKey.SiteDbServer)
+            {
+                criteria.DbServer = server;
+                await repository.ExecuteAsync(criteria);
+            }
+        }
+
+        private async Task<Result> ValidateBeforeExecute(CalculateCriteria criteria)
+        {
+            var request = new EventTicketRequest
+            {
+                MatchId = criteria.MatchId,
+                Action = criteria.Action,
+                SpName = criteria.SpName,
+                Mode = ActionKey.ActionDictionary[criteria.Action],
+                ResourceResult = criteria.ResourceResult
+            };
+            var resultMessage = await scaleOutSettleService.ValidateEventAndTicket(request);
 
             return new Result
             {
-                ErrCode = criteria.ErrCode,
-                ErrMsg = criteria.ErrMsg
+                ErrCode = resultMessage.ErrorCode,
+                ErrMsg = resultMessage.ErrorMessage
             };
+        }
+
+        private async Task UpdateMatchInfo(CalculateCriteria criteria)
+        {
+            await scaleOutSettleService.UpdateUnderSettlementFlag(criteria.MatchId, criteria.AdminId, criteria.Action);
+            var requestUpdateInfo = new UpdateMatchInfoRequest
+            {
+                MatchId = criteria.MatchId,
+                Action = criteria.Action,
+                AdminId = criteria.AdminId,
+                BetStatus = criteria.BetStatus,
+                FullTimeAway = criteria.FullTimeAway,
+                FullTimeHome = criteria.FullTimeHome,
+                GoalRecord = criteria.GoalRecord,
+                HalfTimeAway = criteria.HalfTimeAway,
+                HalfTimeHome = criteria.HalfTimeHome,
+                ResourceResult = criteria.ResourceResult
+            };
+
+            await scaleOutSettleService.UpdateMatchInfo(requestUpdateInfo);
+        }
+
+        private async Task RefundChildMatch(CalculateCriteria criteria)
+        {
+            var requestRefundChildMatch = new RefundChildMatchRequest
+            {
+                ParentId = criteria.MatchId,
+                ChildMatchIds = criteria.ChildMatchIds,
+                LeagueGroupId = criteria.LeagueGroupId,
+                AwayValue = criteria.FullTimeAway,
+                HomeValue = criteria.FullTimeHome,
+                ActionName = criteria.Action
+            };
+
+            await scaleOutSettleService.UpdateAutoRefundChildMatch(requestRefundChildMatch);
         }
     }
 }

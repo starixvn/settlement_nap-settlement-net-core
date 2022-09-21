@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Settlement.Core.Models;
 using Settlement.Sportsbook.Aio.Models;
 
 namespace Settlement.Sportsbook.Aio.Requests
@@ -11,5 +12,6 @@ namespace Settlement.Sportsbook.Aio.Requests
 
         public string SettleType { get; set; }
 
+        public Permission Permission { get; set; }
     }
 }

@@ -1,0 +1,95 @@
+
+<div class="fantasy-match">
+    <div class="icon"></div>
+    <div class="fantasy-related-title">Related Matches</div>
+    <table class="table-fantasy-matches">
+        <thead>
+            <tr>
+                <th rowspan="2" class="code">
+                    Match Code/ID
+                </th>
+                <th rowspan="2" class="kick-off">
+                    Kick-off Time
+                </th>
+                <th rowspan="2" class="team">
+                    Team
+                </th>
+                <th colspan="2" class="group-score">
+                    Score <span class="icon-copy" [ngClass]="{'disable-copy': isDeleted}" (click)="isDeleted ? '' : verifyAndFillFantasyMatch()"></span>
+                </th>
+                <th rowspan="2" class="event-status">
+                    Event Status
+                </th>
+                <th rowspan="2" class="hold-status">
+                    Hold Status
+                </th>
+            </tr>
+            <tr>
+                <th class="score">
+                    HT
+                </th>
+                <th class="score">
+                    Final
+                </th>
+            </tr>
+        </thead>
+        <ng-container *ngIf="relatedMatches.length > 0; else noInformation">
+            <tbody>
+                <ng-container *ngFor="let item of relatedMatches; let i = index">
+                    <tr [ngClass]="{'even': i % 2 !== 0}">
+                        <td class="code">
+                            {{item.matchCode}}
+                        </td>
+                        <td class="kick-off" rowspan="2">
+                            {{item.kickOffTime | date : 'mediumDate' }}
+                            {{item.kickOffTime | date : 'hh:mm:ss a' }}
+                        </td>
+                        <td class="team match-home">
+                            {{item.homeName}}
+                        </td>
+                        <td class="score">
+                            <span>{{item.htHomeScore | score}}</span>
+                        </td>
+                        <td class="score">
+                            <span>{{item.finalHomeScore | score}}</span>
+                        </td>
+                        <td rowspan="2" class="event-status" [ngClass]="{'bg-pending': isMatchRefunded(item)}">
+                            {{item.eventStatus}}
+                        </td>
+                        <td rowspan="2" class="hold-status">
+                            {{item.remark.isKeyHold || item.remark.isMtdHold || item.remark.isPending || item.remark.isUndecided || item.remark.isUnderSettle ? 'YES' : 'NO'}}
+                        </td>
+                    </tr>
+                    <tr [ngClass]="{'even': i % 2 !== 0}">
+                        <td class="code">
+                            {{item.matchId}}
+                        </td>
+                        <td class="team match-away">
+                            {{item.awayName}}
+                        </td>
+                        <td class="score">
+                            <span>{{item.htAwayScore | score}}</span>
+                        </td>
+                        <td class="score">
+                            <span>{{item.finalAwayScore | score}}</span>
+                        </td>
+                    </tr>
+                </ng-container>
+            </tbody>
+        </ng-container>
+    </table>
+    <div *ngIf="isDeleted" class="message-box" >
+        <div class="icon error"></div>
+        <div class="message-info error">Related Match is deleted, please check again.</div>
+    </div>
+</div>
+
+<ng-template #noInformation>
+    <tbody>
+        <tr>
+            <td colspan="6">
+                There is no information available
+            </td>
+        </tr>
+    </tbody>
+</ng-template>

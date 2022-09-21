@@ -6,6 +6,7 @@ using Settlement.FastMarkets.Criteria;
 using Settlement.FastMarkets.Requests;
 using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
 using MatchDetail = Settlement.FastMarkets.Models.MatchDetail;
 
 namespace Settlement.FastMarkets.Services
@@ -27,16 +28,20 @@ namespace Settlement.FastMarkets.Services
 
         private readonly IFastMarketResultService fastMarketResultService;
 
+        private readonly AppSettingsKey appSettingsKey;
+
         public MatchDetailServiceImp(
             IDynamicRepository repository,
             IRefDataService refDataService,
             IGoalIconService goalIconService,
-            IFastMarketResultService fastMarketResultService)
+            IFastMarketResultService fastMarketResultService,
+            IOptions<AppSettingsKey> appSettingsKey)
         {
             this.repository = repository;
             this.refDataService = refDataService;
             this.goalIconService = goalIconService;
             this.fastMarketResultService = fastMarketResultService;
+            this.appSettingsKey = appSettingsKey.Value;
         }
 
         public async Task<MatchDetail> MatchInfo(int matchId)
@@ -72,9 +77,18 @@ namespace Settlement.FastMarkets.Services
         public async Task<MarkedTickets> CheckingMarkedTickets(CheckingMarkedTicketsRequest request)
         {
             var results = fastMarketResultService.Result(request.BetTypes, string.Empty);
-
             var criteria = new CheckingMarkedTicketsCriteria { MatchId = request.MatchId, Results = results };
-            return await repository.GetAsync<MarkedTickets>(criteria);
+            foreach (var server in appSettingsKey.SiteDbServer)
+            {
+                criteria.DbServer = server;
+                var markedTicket = await repository.GetAsync<MarkedTickets>(criteria);
+                if (markedTicket.IsExistMarkedTicket)
+                {
+                    return markedTicket;
+                }
+            }
+
+            return new MarkedTickets();
         }
     }
 }

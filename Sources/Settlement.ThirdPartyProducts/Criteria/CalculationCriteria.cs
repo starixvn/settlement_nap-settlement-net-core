@@ -1,4 +1,5 @@
-﻿using Fanex.Data.Repository;
+﻿using Fanex.Data;
+using Fanex.Data.Repository;
 
 namespace Settlement.ThirdPartyProducts.Criteria
 {
@@ -8,7 +9,9 @@ namespace Settlement.ThirdPartyProducts.Criteria
 
         public int MatchId { get; set; }
 
-        public string Resources { get; set; }
+        public string SelectedSelection { get; set; }
+
+        public string SelectedMarket { get; set; }
 
         public string Action { get; set; }
 
@@ -20,9 +23,12 @@ namespace Settlement.ThirdPartyProducts.Criteria
 
         public string ErrMsg { get; set; }
 
+        [SpParam(Ignored = true)]
+        public string DbServer { get; set; }
+
         public override string GetSettingKey()
         {
-            return "NAP_Admin_Settlement_BetBuilder_Push";
+            return $"NAP_Admin_Settlement_BetBuilder_Push_{DbServer}";
         }
 
         public override bool IsValid()

@@ -1,0 +1,1 @@
+export const ScoreResources = ['Q1', 'Q2', 'Q3', 'Q4', 'OT', '00', '01'];

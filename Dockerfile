@@ -1,26 +1,26 @@
 FROM hub.nexdev.net/base/dotnet/core/sdk:5.0.102-ca-patch-buster-slim AS builder
 WORKDIR /src
-ENV TZ="America/La_Paz"
 
-COPY ./Sources/Settlement.Core ./Settlement.Core
-COPY ./Sources/Settlement.EventManagement ./Settlement.EventManagement
-COPY ./Sources/Settlement.FastMarkets ./Settlement.FastMarkets
-COPY ./Sources/Settlement.Log ./Settlement.Log
-COPY ./Sources/Settlement.Sportsbook.Aio ./Settlement.Sportsbook.Aio
-COPY ./Sources/Settlement.WebSites/Settlement.WebSites.csproj ./Settlement.WebSites/Settlement.WebSites.csproj
-COPY ./Sources/Settlement.Sportsbook.MoveTickets ./Settlement.Sportsbook.MoveTickets
-COPY ./Sources/Settlement.Sportsbook.OtherSports ./Settlement.Sportsbook.OtherSports
-COPY ./Sources/Settlement.Sportsbook.Soccer ./Settlement.Sportsbook.Soccer
-COPY ./Sources/Settlement.Gaming ./Settlement.Gaming
-COPY ./Sources/Settlement.ThirdPartyProducts ./Settlement.ThirdPartyProducts
-COPY ./Sources/Settlement.Setting ./Settlement.Setting
+COPY ./.sonarlint/. ./.sonarlint
+COPY ./Sources/Settlement.Core/. ./Sources/Settlement.Core
+COPY ./Sources/Settlement.EventManagement/. ./Sources/Settlement.EventManagement
+COPY ./Sources/Settlement.FastMarkets/. ./Sources/Settlement.FastMarkets
+COPY ./Sources/Settlement.Log/. ./Sources/Settlement.Log
+COPY ./Sources/Settlement.Sportsbook.Aio/. ./Sources/Settlement.Sportsbook.Aio
+COPY ./Sources/Settlement.Sportsbook.MoveTickets/. ./Sources/Settlement.Sportsbook.MoveTickets
+COPY ./Sources/Settlement.Sportsbook.OtherSports/. ./Sources/Settlement.Sportsbook.OtherSports
+COPY ./Sources/Settlement.Sportsbook.Soccer/. ./Sources/Settlement.Sportsbook.Soccer
+COPY ./Sources/Settlement.Gaming/. ./Sources/Settlement.Gaming
+COPY ./Sources/Settlement.ThirdPartyProducts/. ./Sources/Settlement.ThirdPartyProducts
+COPY ./Sources/Settlement.Setting/. ./Sources/Settlement.Setting
+COPY ./WebSite/Settlement.WebSites.csproj ./WebSite/Settlement.WebSites.csproj
 
 RUN ls /src -l
-WORKDIR /src/Settlement.WebSites
+WORKDIR /src/WebSite
 RUN dotnet nuget add source http://nuget.nexdev.net/api/v2
 RUN dotnet restore -v diag
 
-COPY ./Sources/Settlement.WebSites .
+COPY ./WebSite .
 
 RUN dotnet publish -r linux-x64 --self-contained false -c Release -o /app
 
@@ -34,4 +34,5 @@ RUN sed -i 's/MinProtocol = TLSv1.2/MinProtocol = TLSv1/g' /usr/lib/ssl/openssl.
 WORKDIR /app
 COPY --from=builder /app .
 
+ENV TZ="America/La_Paz"
 ENTRYPOINT ["dotnet", "Settlement.WebSites.dll"]

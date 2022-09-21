@@ -1,0 +1,70 @@
+<span toastContainer></span>
+<div *ngIf="matchDetail" class="padding">
+    <div>
+        <div class="league">
+            <div class="icon"></div>
+            {{matchDetail.sportName.toUpperCase()}} - {{matchDetail.leagueName}}
+        </div>
+        <table>
+            <ng-template *ngTemplateOutlet="header"></ng-template>
+            <ng-template *ngTemplateOutlet="body"></ng-template>
+        </table>
+    </div>
+
+    <div class="refund-action">
+        <div class="display-button">
+            <div class="icon"></div>
+            <div class="normal-tickets">Normal Tickets</div>
+            <div *ngIf="hedgeMatchDetail" class="hedge-match">
+                <input type="checkbox" [(ngModel)]="applyHedgeMatch" id="ApplyHedgeMatch" />
+                <label for="ApplyHedgeMatch">Apply for hedge match '<strong>{{hedgeMatchDetail.matchCode}}</strong>' also.</label>
+            </div>
+            <div>
+                <button *ngIf="hasHalfTime" class="refund-button" (click)="refund(actionName.refundFullTime, false)">Refund FT</button>
+                <button class="refund-button" (click)="refund(actionName.refund, false)">Refund All</button>
+            </div>
+            <div class="clear-both">
+                <button *ngIf="hasHalfTime" class="refund-button" (click)="refund(actionName.refundFullTime, true)">Refund Parlay FT</button>
+                <button class="refund-button" (click)="refund(actionName.refund, true)">Refund Parlay All</button>
+            </div>
+        </div>
+    </div>
+</div>
+<ng-template #header>
+    <thead>
+        <tr>
+            <th class="code">Match Code/ID</th>
+            <th class="kick-off-time">Kick-off Time</th>
+            <th class="team">Team</th>
+            <th *ngFor="let item of resultDetails, let i= index" class="score-set">
+                {{item.resourceId | resourceHeader: false: matchDetail.sportType}}
+            </th>
+        </tr>
+    </thead>
+</ng-template>
+
+<ng-template #body>
+    <tbody>
+        <tr>
+            <td class="no-link">{{matchDetail.matchCode}}</td>
+            <td rowspan="2">
+                {{matchDetail.kickOffTime | date : 'mediumDate'  }}
+                <br />
+                {{matchDetail.kickOffTime | date : 'hh:mm:ss a' }}
+            </td>
+            <td class="home-team-name">{{matchDetail.homeName}}</td>
+            <td *ngFor="let map of resultDetails; let i= index; let last=last;" class="score-set"
+                [ngClass]="{'final-score': map.resourceId=='00'}">
+                {{map.homeValue | score}}
+            </td>
+        </tr>
+        <tr>
+            <td>{{matchDetail.matchId}}</td>
+            <td class="away-team-name">{{matchDetail.awayName}}</td>
+            <td *ngFor="let map of resultDetails; let i= index; let last=last;" class="score-set"
+                [ngClass]="{'final-score': map.resourceId=='00'}">
+                {{map.awayValue | score}}
+            </td>
+        </tr>
+    </tbody>
+</ng-template>

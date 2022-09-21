@@ -1,4 +1,6 @@
-﻿using Fanex.Data.Repository;
+﻿using Fanex.Data;
+using Fanex.Data.Repository;
+using System;
 
 namespace Settlement.Sportsbook.OtherSports.Criteria
 {
@@ -30,14 +32,16 @@ namespace Settlement.Sportsbook.OtherSports.Criteria
 
         public int? RefResultStatus { get; set; }
 
-        public override bool IsValid()
-        {
-            return AdminId > 0 && MatchId > 0;
-        }
+        public string BroadcastSessionId { get; } =  Guid.NewGuid().ToString();
 
-        public override string GetSettingKey()
-        {
-            return "Calculate";
-        }
+        [SpParam(Ignored = true)]
+        public string DbServer { get; set; }
+
+        [SpParam(Ignored = true)]
+        public string SpName { get; } = "NAP_Admin_Settlement_1_Push";
+
+        public override bool IsValid() => AdminId > 0 && MatchId > 0;
+
+        public override string GetSettingKey() => $"Calculate_{DbServer}";
     }
 }

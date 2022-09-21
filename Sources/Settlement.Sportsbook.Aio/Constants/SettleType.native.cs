@@ -11,5 +11,7 @@
         public const string Early = "EAR";
 
         public const string CalculateMixParlay = "CAL-MP";
+
+        public const string Undo = "UNDO";
     }
 }

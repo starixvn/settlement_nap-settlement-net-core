@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30907.101
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Settlement.WebSites", "Sources\Settlement.WebSites\Settlement.WebSites.csproj", "{ECAAA459-2B59-4B77-9B04-96F76E944B63}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Settlement.WebSites", "WebSite\Settlement.WebSites.csproj", "{ECAAA459-2B59-4B77-9B04-96F76E944B63}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sources", "Sources", "{D19D8BE5-5331-437B-BE2D-FDF1B5F02781}"
 EndProject
@@ -51,9 +51,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Settlement.Setting", "Sourc
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Settlement.Gaming", "Sources\Settlement.Gaming\Settlement.Gaming.csproj", "{EF50F660-46A1-4E1F-BD56-58BAEFA74621}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Settlement.Setting.UnitTests", "Tests\Settlement.Setting.UnitTests\Settlement.Setting.UnitTests.csproj", "{B10F2A8B-C53C-4B02-B90B-3D8FD641A1A4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Settlement.Setting.UnitTests", "Tests\Settlement.Setting.UnitTests\Settlement.Setting.UnitTests.csproj", "{B10F2A8B-C53C-4B02-B90B-3D8FD641A1A4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Settlement.ThirdPartyProducts.UnitTests", "Tests\Settlement.ThirdPartyProducts.UnitTests\Settlement.ThirdPartyProducts.UnitTests.csproj", "{D6B2DFFC-4FCD-4207-BF2B-89596CF15668}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Settlement.ThirdPartyProducts.UnitTests", "Tests\Settlement.ThirdPartyProducts.UnitTests\Settlement.ThirdPartyProducts.UnitTests.csproj", "{D6B2DFFC-4FCD-4207-BF2B-89596CF15668}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebSite", "WebSite", "{BEF621AC-70FA-4D33-91E9-865ABDF47EE4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -154,7 +156,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{ECAAA459-2B59-4B77-9B04-96F76E944B63} = {D19D8BE5-5331-437B-BE2D-FDF1B5F02781}
+		{ECAAA459-2B59-4B77-9B04-96F76E944B63} = {BEF621AC-70FA-4D33-91E9-865ABDF47EE4}
 		{03F51B3F-145E-4698-BD4C-E7ECDDCCC218} = {D19D8BE5-5331-437B-BE2D-FDF1B5F02781}
 		{0318FAF0-0F10-4D19-A03A-BA495310F4D4} = {D19D8BE5-5331-437B-BE2D-FDF1B5F02781}
 		{C2438490-1481-4F3E-8673-FD5B1AB1ACDF} = {0318FAF0-0F10-4D19-A03A-BA495310F4D4}

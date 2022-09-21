@@ -17,5 +17,25 @@
         public const string SourceSetting = "~/wwwroot/score-source-setting/index.cshtml";
 
         public const string MultiSport = "~/wwwroot/multi-sports/index.cshtml";
+
+        public const string Calculation = "~/wwwroot/calculate-page/index.cshtml";
+
+        public const string FastMarket = "~/wwwroot/fast-market/index.cshtml";
+
+        public const string Soccer = "~/wwwroot/soccer/index.cshtml";
+
+        public const string ESports = "~/wwwroot/e-sports/index.cshtml";
+
+        public const string Basketball = "~/wwwroot/basketball/index.cshtml";
+
+        public const string Badminton = "~/wwwroot/badminton/index.cshtml";
+
+        public const string Tennis = "~/wwwroot/tennis/index.cshtml";
+
+        public const string Cricket = "~/wwwroot/cricket/index.cshtml";
+
+        public const string OtherSports = "~/wwwroot/other-sports/index.cshtml";
+
+        public const string Notification = "~/wwwroot/notification/index.cshtml";
     }
 }

@@ -17,7 +17,5 @@
         public const string RefundAll = "REFUND";
 
         public const string BetDaq = "BETDAQ";
-
-        public const string BetFair = "BETFAIR";
     }
 }

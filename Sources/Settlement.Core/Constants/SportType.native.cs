@@ -60,10 +60,6 @@
 
         public const int OtherSports = 99;
 
-        public const int HorseRacing = 151;
-
-        public const int Casino = 251;
-
         public const int Squash = 30;
 
         public const int Winter = 29;
@@ -96,8 +92,6 @@
 
         public const int BeachVolleyball = 45;
 
-        public const int UnknownSportThaiSport = 46;
-
         public const int Kabaddi = 47;
 
         public const int SepakTakraw = 48;
@@ -119,16 +113,6 @@
         public const int UpcomingSport56 = 56;
 
         public const int NumberGame = 161;
-
-        public const int Bingo = 252;
-
-        public const int Greyhound = 152;
-
-        public const int Harness = 153;
-
-        public const int HorseRacingFixedOdds = 154;
-
-        public const int VirtualSport = 180;
 
         public const int Happy5 = 164;
     }

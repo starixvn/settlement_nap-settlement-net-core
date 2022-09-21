@@ -1,0 +1,57 @@
+﻿<div class="calculate-league">
+    <div class="icon">
+    </div>
+    CRICKET - {{matchDetail.leagueName}}
+  </div>
+<table>
+    <thead class="match-detail">
+        <tr>
+            <th class="code">Match Code/ID</th>
+            <th class="kick-off-time">Kick-off Time</th>
+            <th class="team">Team</th>
+            <th class="inning-score">1</th>
+            <th class="inning-score">2</th>
+            <th class="match-score">Final Score</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>{{matchDetail.matchCode}}</td>
+            <td rowspan="2">
+                {{matchDetail.kickOffTime | date : 'mediumDate' }}
+                <br />
+                {{matchDetail.kickOffTime | date : 'hh:mm:ss a' }}
+            </td>
+            <td class="home-team-name">{{matchDetail.homeName}}</td>
+            <td *ngFor="let map of homeScore"
+                [ngClass]="getClass(map)">
+                <ng-container *ngIf="map.isDisplayedForMember; else emptyScore">
+                    {{map.homeValue | scoreBySettlement:map.settlementStatusId}}
+                </ng-container>
+            </td>
+            <td [ngClass]="getClass(matchScore)">
+                <ng-container *ngIf="matchScore.isDisplayedForMember; else emptyScore">
+                    {{matchScore.homeValue | scoreBySettlement:matchScore.settlementStatusId}}
+                </ng-container>
+            </td>
+        </tr>
+        <tr>
+            <td>{{matchDetail.matchId}}</td>
+            <td class="away-team-name">{{matchDetail.awayName}}</td>
+            <td *ngFor="let map of awayScore"
+                [ngClass]="getClass(map)">
+                <ng-container *ngIf="map.isDisplayedForMember; else emptyScore">
+                    {{map.homeValue | scoreBySettlement:map.settlementStatusId}}
+                </ng-container>
+            </td>
+            <td [ngClass]="getClass(matchScore)">
+                <ng-container *ngIf="matchScore.isDisplayedForMember; else emptyScore">
+                    {{matchScore.awayValue | scoreBySettlement:matchScore.settlementStatusId}}
+                </ng-container>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<ng-template #emptyScore>-</ng-template>
+<div *ngIf="isEarlySettlement" (click)="refresh()" class="icon-refresh">
+</div>

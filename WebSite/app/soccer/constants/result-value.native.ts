@@ -1,0 +1,15 @@
+export const ResultValue = {
+    Home: "1",
+    Away: "2",
+    Draw: "X",
+    Both: "B",
+    One: "O",
+    NoGoal: "N",
+    Score: "S",
+    Miss: "M",
+    NotTaken: "NT",
+    HomeScoreAwayNotTaken: "1SNT",
+    HomeMissAwayNotTaken: "1MNT",
+    HomeNotTakenAwayScore: "NT2S",
+    HomeNotTakenAwayMiss: "NT2M",
+};

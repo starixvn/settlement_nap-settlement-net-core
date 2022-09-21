@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using Kaden.Extensions;
+﻿using Kaden.Extensions;
 using Settlement.Sportsbook.Soccer.Requests;
+using System.Collections.Generic;
 
 namespace Settlement.Sportsbook.Soccer.Services.HalfTimeBetStatus
 {
@@ -85,10 +85,12 @@ namespace Settlement.Sportsbook.Soccer.Services.HalfTimeBetStatus
                             flag = true;
                             newBetStatus.Add(fullTimeBetStatus.Replace(";", string.Empty));
                             break;
+
                         case false when IsModifyFirstGoalLastGoal(item, fullTimeBetStatus):
                             flag = true;
                             newBetStatus.Add(fullTimeBetStatus);
                             break;
+
                         default:
                             newBetStatus.Add(item);
                             break;

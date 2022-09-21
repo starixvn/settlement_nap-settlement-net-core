@@ -1,0 +1,37 @@
+.calc-popup{
+    width: 100%;
+}
+
+.map {
+    width: 80px;
+
+    .outside-source-text {
+        width: 80px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: inline-block;
+        padding: 0 4px;
+        vertical-align: middle;
+    }
+}
+
+.refund-actions {
+    table {
+        min-width: 300px;
+        width: 50%;
+    }
+
+    .resource-name {
+        width: 45%;
+    }
+
+    .game-match {
+        width: 70%
+    }
+}
+
+
+tr.mismatched td:not(:first-child):not(.set-status):not(.match-status):not(.calculated):not(.refunded) {
+    background: #f00;
+}

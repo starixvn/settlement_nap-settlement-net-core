@@ -1,0 +1,154 @@
+<span toastContainer></span>
+<div *ngIf="match">
+  <div *ngIf="isReadyMatch">
+    <div class="padding">
+      <div class="league">
+        <div class="icon">
+        </div>
+        {{matchDetail.sportName.toUpperCase()}} - {{matchDetail.leagueName}}
+      </div>
+      <table>
+        <ng-template *ngTemplateOutlet="header"></ng-template>
+        <ng-template *ngTemplateOutlet="body"></ng-template>
+      </table>
+      
+      <div *ngIf="permission.isLeader" class='result'>
+        <ng-template *ngTemplateOutlet="externalSource"></ng-template>
+      </div>
+
+      <ticket-count [ticketCounts]="match.ticketCount[0]"></ticket-count>
+      <div *ngIf="hedgeMatchDetail" class="hedge-match">
+        <input type="checkbox" [(ngModel)]="applyHedgeMatch" id="ApplyHedgeMatch" />
+        <label for="ApplyHedgeMatch">Apply for hedge match '<strong>{{hedgeMatchDetail.matchCode}}</strong>'
+          also.</label>
+      </div>
+      <div class="calc-action">
+        <div *ngIf="hasHalfTime">
+          <div class="row-1">
+            <div class="header">First Half</div>
+            <div class="status {{halftimeTicketStatusBackground}}">
+              {{matchDetail.htStatus}}
+            </div>
+            <div class="action-button">
+              <button *ngIf="permission.canCalculate" class="button float-left" (click)="calculateHalfTime()">Calculate HT</button>
+            </div>
+          </div>
+          <div class="row-1">
+            <div class="header">Full Time</div>
+            <div class="status {{fullTimeTicketStatusBackground}}">
+              {{matchDetail.ftStatus}}
+            </div>
+            <div class="action-button">
+              <button *ngIf="permission.canCalculate" class="button float-left" (click)="calculateFullTime()">Calculate FT</button>
+            </div>
+          </div>
+        </div>
+       
+        <div class="row-2">
+          <div class="action-button">
+            <button *ngIf="permission.canCalculate"
+              class="button"
+              (click)="calculateAll()">
+              Calculate All
+            </button>
+
+            <button *ngIf="permission.canUncalculate"
+              [ngClass]="{'button': true, 'button-disabled': !matchDetail.isUnCalculate}"
+              [disabled]="!matchDetail.isUnCalculate" (click)="unCalculate()">
+              Uncalculate
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="clear-both"></div>
+      <resettle-checker (proceedEvent)="onResettleCheckboxChange($event)" [checked]="isReSettledTickets">
+      </resettle-checker>
+    </div>
+  </div>
+
+  <div *ngIf="!isReadyMatch">
+    <not-ready-match></not-ready-match>
+  </div>
+</div>
+<ng-template #header>
+  <thead>
+    <tr>
+      <th class="code">Match Code/ID</th>
+      <th class="kick-off-time">Kick-off Time</th>
+      <th class="team">Team</th>
+      <th *ngFor="let item of resultDetails, let i= index" class="score">
+        {{item.resourceId | resourceHeader: false: matchDetail.sportType}}
+      </th>
+    </tr>
+  </thead>
+</ng-template>
+
+<ng-template #body>
+  <tbody>
+    <tr>
+      <td>{{matchDetail.matchCode}}</td>
+      <td rowspan="2">
+        {{matchDetail.kickOffTime | date : 'mediumDate'}}
+        <br />
+        {{matchDetail.kickOffTime | date : 'hh:mm:ss a'}}
+      </td>
+      <td class="home-team-name">{{matchDetail.homeName}}</td>
+      <td [ngClass]="[getClass(item)]" *ngFor="let item of resultDetails; let i=index;let last=last">
+        <input type="text" myOnlyInteger tabindex="{{i*2 + 1}}" [disabled]="isFinalScoreDisabled(item.resourceId)"
+          [(ngModel)]="item.homeValue" (ngModelChange)="changeScore()" [ngClass]="{
+            'final-score' : last ,
+            'warning' : isErrorOnVerification(item, item.homeValue)}" />
+      </td>
+    </tr>
+    <tr>
+      <td>{{matchDetail.matchId}}</td>
+      <td class="away-team-name">{{matchDetail.awayName}}</td>
+      <td [ngClass]="[getClass(item)]" *ngFor="let item of resultDetails; let i=index;let last=last">
+        <input type="text" myOnlyInteger tabindex="{{i*2 + 2}}" [disabled]="isFinalScoreDisabled(item.resourceId)"
+          [(ngModel)]="item.awayValue" (ngModelChange)="changeScore()" [ngClass]="{
+          'final-score' : last ,
+          'warning' : isErrorOnVerification(item, item.awayValue)}" />
+      </td>
+    </tr>
+    <tr>
+      <td colspan="15" class="input-directly">
+        <input type="checkbox" [(ngModel)]="isScoreDirect" (ngModelChange)="changeInputDirectly()" id="isScoreDirect" />
+        <label for="isScoreDirect">Input HT Score and Final Score directly</label>
+      </td>
+    </tr>
+  </tbody>
+</ng-template>
+<ng-template ng-template #externalSource>
+  <table>
+    <thead>
+      <tr>
+        <th colSpan="2">{{externalSourceName}}
+          <span *ngIf="externalSourceName !== '-'" class="icon-copy" [ngClass]="{'disable-copy': !isScoreDirect}"
+            (click)="actionCopyScore()"></span>
+        </th>
+      </tr>
+      <tr>
+        <th class="score" *ngIf="hasHalfTime">HT</th>
+        <th class="score">FT</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="score" *ngIf="hasHalfTime"> 
+          {{matchDetail.exHTHomeScore | score}}
+        </td>
+        <td class="final-score">
+          {{matchDetail.exFTHomeScore | score}}
+        </td>
+      </tr>
+      <tr>
+        <td class="score" *ngIf="hasHalfTime">
+          {{matchDetail.exHTAwayScore | score}}
+        </td>
+        <td class="final-score">
+          {{matchDetail.exFTAwayScore | score}}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</ng-template>
