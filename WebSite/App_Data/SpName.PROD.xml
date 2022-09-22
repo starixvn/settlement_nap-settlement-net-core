@@ -177,8 +177,8 @@
     </Function>
 
     <Function Name="NAP_Set_AutoPayout_WaitingSel">
-      <Setting Key="NAP_Set_AutoPayout_WaitingSel_DBTXN" SpName="NAP_Set_AutoPayout_WaitingSel" DbName="DBTXN.bodb02.bodbAdminNet" />
-      <Setting Key="NAP_Set_AutoPayout_WaitingSel_DBSID01" SpName="NAP_Set_AutoPayout_WaitingSel" DbName="DBSID01.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Set_AutoPayout_WaitingSel_DBTXN" SpName="NAP_Set_AutoPayout_WaitingSel" DbName="DBTXN.bodb02.bodbAdminNet" TimeOut="20" />
+      <Setting Key="NAP_Set_AutoPayout_WaitingSel_DBSID01" SpName="NAP_Set_AutoPayout_WaitingSel" DbName="DBSID01.bodb02.bodbAdminNet" TimeOut="20" />
     </Function>
 
     <Function Name="NAP_Admin_Settlement_Auto_1s_Push">

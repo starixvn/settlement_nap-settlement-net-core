@@ -59,7 +59,6 @@
     <Setting Key="NAP_Set_AutoPayout_MatchSelDetail" SpName="NAP_Set_AutoPayout_MatchSelDetail" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_ResultDetailSel" SpName="NAP_Set_ResultDetailSel" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_MatchSelDetail_Auto_1s" SpName="NAP_Set_MatchSelDetail_Auto_1s" DbName="DBPRO.bodb02.bodbAdminNet" />
-
   </Function>
   <Function Name="Execute Calculate and refund">
     <Setting Key="NAP_Admin_Settlement_Validation_Event" SpName="NAP_Admin_Settlement_Validation_Event" DbName="DBPRO.bodb02.bodbAdminNet" />
@@ -178,8 +177,8 @@
     </Function>
 
     <Function Name="NAP_Set_AutoPayout_WaitingSel">
-      <Setting Key="NAP_Set_AutoPayout_WaitingSel_DBTXN" SpName="NAP_Set_AutoPayout_WaitingSel" DbName="DBTXN.bodb02.bodbAdminNet" />
-      <Setting Key="NAP_Set_AutoPayout_WaitingSel_DBSID01" SpName="NAP_Set_AutoPayout_WaitingSel" DbName="DBSID01.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Set_AutoPayout_WaitingSel_DBTXN" SpName="NAP_Set_AutoPayout_WaitingSel" DbName="DBTXN.bodb02.bodbAdminNet" TimeOut="20" />
+      <Setting Key="NAP_Set_AutoPayout_WaitingSel_DBSID01" SpName="NAP_Set_AutoPayout_WaitingSel" DbName="DBSID01.bodb02.bodbAdminNet" TimeOut="20" />
     </Function>
 
     <Function Name="NAP_Admin_Settlement_Auto_1s_Push">
