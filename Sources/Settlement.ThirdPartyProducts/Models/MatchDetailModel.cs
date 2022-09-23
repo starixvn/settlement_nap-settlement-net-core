@@ -85,5 +85,19 @@ namespace Settlement.ThirdPartyProducts.Models
         public MoreScores MoreScores { get; set; }
 
         public bool IsShowLink { get; set; } = true;
+
+        public int TotalTickets { get; set; }
+
+        public int TotalTicketsRunning { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            return obj is MatchDetailModel match && match.MatchId == MatchId;
+        }
+
+        public override int GetHashCode()
+        {
+            return MatchId;
+        }
     }
 }

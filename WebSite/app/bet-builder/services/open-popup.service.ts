@@ -22,7 +22,7 @@ export class PopupService {
         const dialogData = new DialogDataIframe(Language.BetBuilderPopupTitle, frameSrc);
         this.dialogBoxService.popup(dialogData, '1011px', '800px').subscribe(result => {
             if (result) {
-                match.eventStatus = EventStatus.waiting;
+                match.parlayStatus = EventStatus.waiting;
                 match.isShowLink = false;
             }
         });

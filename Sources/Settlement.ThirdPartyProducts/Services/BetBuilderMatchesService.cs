@@ -139,7 +139,7 @@ namespace Settlement.ThirdPartyProducts.Services
         private async Task<List<MatchDetailModel>> GetAndCachingMatches(MatchesWaitingRequest request)
         {
             var criteria = mapper.Map<MatchesWaitingRequest, MatchesWaitingCriteria>(request);
-            var matches = await GetMatches(criteria);
+            var matches = await GetMatchesWaiting(criteria);
             var resultDetails = await ResultDetailByMatchIds(matches);
 
             matches.ForEach(match =>
@@ -153,12 +153,44 @@ namespace Settlement.ThirdPartyProducts.Services
             return matches;
         }
 
+        private async Task<List<MatchDetailModel>> GetMatchesWaiting(MatchesWaitingCriteria criteria)
+        {
+            var matches = new List<MatchDetailModel>();
+            var isCentralDataBase = true;
+            foreach (var server in appSettingsKey.SiteDbServer)
+            {
+                criteria.DbServer = server;
+                var data = (await repository.FetchAsync<MatchDetailModel>(criteria)).ToList();
+                if (isCentralDataBase)
+                {
+                    matches = data;
+                    isCentralDataBase = false;
+                }
+                else
+                {
+                    matches = mergeMatchInfo.MergeMatches(matches, data);
+                }
+            }
+
+            SetNewWaitingMatchInfo(matches);
+            return matches;
+        }
+
         private async Task<List<MatchDetailModel>> GetMatches(CriteriaBase criteria)
         {
             var matches = (await repository.FetchAsync<MatchDetailModel>(criteria)).ToList();
             await AddTicketInfo(matches);
             SetNewMatchInfo(matches);
             return matches;
+        }
+
+        private void SetNewWaitingMatchInfo(List<MatchDetailModel> matches)
+        {
+            foreach (var match in matches)
+            {
+                match.ParlayStatus = mergeMatchInfo.ParlayStatus(match, match.TotalTickets, match.TotalTicketsRunning);
+                match.QueueStatus = mergeMatchInfo.QueueStatus(match, match.QueueStatus);
+            }
         }
 
         private void SetNewMatchInfo(List<MatchDetailModel> matches)

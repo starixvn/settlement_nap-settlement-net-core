@@ -1,3 +1,4 @@
+using Fanex.Data;
 using Fanex.Data.Repository;
 
 namespace Settlement.ThirdPartyProducts.Criteria
@@ -10,9 +11,12 @@ namespace Settlement.ThirdPartyProducts.Criteria
 
         public string LeagueIds { get; set; }
 
+        [SpParam(Ignored = true)]
+        public string DbServer { get; set; }
+
         public override string GetSettingKey()
         {
-            return "NAP_Set_WaitingSel_Queue_3rd";
+            return $"NAP_Set_WaitingSel_Queue_3rd_{DbServer}";
         }
 
         public override bool IsValid()
