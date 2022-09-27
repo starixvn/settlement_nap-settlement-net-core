@@ -8,10 +8,8 @@ using Settlement.Core.Models;
 using Settlement.Sportsbook.OtherSports.Constants;
 using Settlement.Sportsbook.OtherSports.Criteria;
 using Settlement.Sportsbook.OtherSports.Requests;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Settlement.Sportsbook.OtherSports.Services
@@ -111,8 +109,10 @@ namespace Settlement.Sportsbook.OtherSports.Services
                 FullTimeAway = calculateCriteria.FullTimeAway,
                 FullTimeHome = calculateCriteria.FullTimeHome,
                 HalfTimeAway = calculateCriteria.HalfTimeAway,
-                HalfTimeHome = calculateCriteria.HalfTimeHome,
+                HalfTimeHome = calculateCriteria.HalfTimeHome
             };
+
+            await IsHtTicketSettled(requestUpdateInfo);
 
             await scaleOutSettleService.UpdateMatchInfo(requestUpdateInfo);
 
@@ -151,6 +151,8 @@ namespace Settlement.Sportsbook.OtherSports.Services
                 BetStatus = refundCriteria.BetStatus
             };
 
+            await IsHtTicketSettled(requestUpdateInfo);
+
             await scaleOutSettleService.UpdateMatchInfo(requestUpdateInfo);
 
             foreach (var server in appSettingsKey.SiteDbServer)
@@ -162,9 +164,25 @@ namespace Settlement.Sportsbook.OtherSports.Services
             return requestChecking;
         }
 
+        private async Task IsHtTicketSettled(UpdateMatchInfoRequest request)
+        {
+            if (request.Action == ActionType.CalculateFullTime || request.Action == ActionType.RefundFullTime)
+            {
+                const int halfTimeGroupId = 1;
+                var criteria = new GetTicketInfoCriteria
+                {
+                    MatchId = request.MatchId,
+                    IsRefundPage = request.Action == ActionType.RefundFullTime
+                };
+                var multipleTicketCounts = await GetTicketInfo(criteria);
+                var ticketCounts = mergeDataService.MergeTicketCounts(multipleTicketCounts);
+                var ticketHt = ticketCounts.FirstOrDefault(item => item.GroupId == halfTimeGroupId);
+                request.IsHtTicketSettled = ticketHt != null && ticketHt.BetRunningCount == 0;
+            }
+        }
+
         private async Task<Result> ValidateBeforeExecute(EventTicketRequest request)
         {
-            
             var resultMessage = await scaleOutSettleService.ValidateEventAndTicket(request);
             return new Result
             {
