@@ -30,10 +30,6 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using ONEbook.UM.AspNetCore;
-using ONEbook.UM.Configurations;
-using ONEbook.UM.Helpers;
-using ONEbook.UM.Transport;
 using Sentry;
 using Settlement.Core.Services;
 using Settlement.EventManagement;
@@ -46,6 +42,7 @@ using Settlement.Sportsbook.MoveTickets;
 using Settlement.Sportsbook.OtherSports;
 using Settlement.Sportsbook.Soccer;
 using Settlement.ThirdPartyProducts;
+using Settlement.WebSites.App_Start;
 using Settlement.WebSites.Configurations;
 using StackExchange.Redis;
 using System;
@@ -241,10 +238,6 @@ namespace Settlement.WebSites
             services.AddSingleton<XmlConvertService, XmlConvertServiceImp>();
             services.AddTransient<ILogService, LogServiceImp>();
             services.AddTransient<IScoreSetService, ScoreSetServiceImp>();
-            services.AddSingleton<IUMCacheService, UMCacheService>();
-            services.AddSingleton<IUMRestClient, UMRestClient>();
-            services.AddSingleton(new UMClientConfiguration().Initialize(Configuration));
-            services.AddSingleton<ONEbook.UM.Services.IMaintenanceService, ONEbook.UM.Services.MaintenanceService>();
             services.AddTransient<ScaleOutSettleService, ScaleOutSettleServiceImp>();
             services.AddTransient<ScaleOutSettleThirdPartyService, ScaleOutSettleThirdPartyServiceImp>();
         }
@@ -282,6 +275,12 @@ namespace Settlement.WebSites
 
             var mapper = mapperConfig.CreateMapper();
             services.AddSingleton(mapper);
+        }
+
+        private void OnebookUM(IServiceCollection services)
+        {
+            OnebookUMInitializer.RegisterServiceCollection(services, Configuration);
+            OnebookUMInitializer.InitializeUmClientManager();
         }
 
         private static void ConfigureMessagePack(IServiceCollection services)

@@ -1,9 +1,12 @@
 using Fanex.NAP.Client;
 using Fanex.NAP.Client.Configuration;
 using Fanex.NAP.Client.Helpers.Web;
+using Fanex.NAP.Signin.AspNetCore.Attribute;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using ONEbook.UM.AspNetCore.Filters;
 using Settlement.WebSites.Middleware;
 
 namespace Settlement.WebSites
@@ -27,6 +30,7 @@ namespace Settlement.WebSites
             ConfigureRedis(services);
             ConfigureSession(services);
 
+            OnebookUM(services);
             ConfigureNapServices(services);
             ConfigureFanex();
             ConfigureCore(services);
@@ -36,7 +40,11 @@ namespace Settlement.WebSites
             ConfigureAutoMapper(services);
             ConfigureMessagePack(services);
             services.AddRazorPages();
-            services.AddControllersWithViews();
+            services.AddControllersWithViews(options =>
+            {
+                options.Filters.Add(new ServiceFilterAttribute(typeof(CheckUMFilterAttribute)));
+                options.Filters.Add(new SessionAuthorizeAttribute());
+            });
             services.AddHttpClient();
         }
 
@@ -58,7 +66,7 @@ namespace Settlement.WebSites
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
-                    "default", 
+                    "default",
                     "{controller=Home}/{action=Index}/{id?}");
             });
 
