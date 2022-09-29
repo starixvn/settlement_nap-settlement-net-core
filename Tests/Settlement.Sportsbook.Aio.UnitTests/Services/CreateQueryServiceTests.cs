@@ -1,17 +1,18 @@
-﻿using System.Collections.Generic;
-using AutoMapper;
+﻿using AutoMapper;
 using AutoMapper.Configuration;
-using Fanex.NAP.Client;
 using Fanex.NAP.Client.Helpers.Web;
 using Kaden.XmlConverter;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using NSubstitute;
+using Settlement.Core.Models;
+using Settlement.Core.Services;
+using Settlement.Core.UnitTests;
 using Settlement.Sportsbook.Aio.Criteria;
+using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Requests;
 using Settlement.Sportsbook.Aio.Services;
-using Settlement.Core.Services;
-using Settlement.Sportsbook.Aio.Models;
+using System.Collections.Generic;
 using Xunit;
 
 namespace Settlement.Sportsbook.Aio.UnitTests.Services
@@ -72,7 +73,7 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
             var result = service.QuerySettle(request);
 
             // Assert
-            Assert.Equal(JsonConvert.SerializeObject(expectedData), JsonConvert.SerializeObject(result));
+            Assert.Equal(JsonConvert.SerializeObject(expectedData).RemoveSessionId(), JsonConvert.SerializeObject(result).RemoveSessionId());
         }
 
         [Fact]
@@ -105,10 +106,15 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
             var criteria = new SettleCriteria
             {
                 MatchId = 1,
+                ErrMsg = ""
+            };
+
+            var result = new Result
+            {
                 ErrMsg = "Message"
             };
 
-            service.WriteLogChildMatch(criteria);
+            service.WriteLogChildMatch(criteria, result);
 
             Assert.Equal("", criteria.ErrMsg);
             logService.Received(1).ActionLog(Arg.Any<int>(), Arg.Any<string>(), 100);
@@ -134,7 +140,7 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
 
             var result = service.QuerySettleChildMatch(request);
 
-            Assert.Equal(JsonConvert.SerializeObject(expectedData), JsonConvert.SerializeObject(result));
+            Assert.Equal(JsonConvert.SerializeObject(expectedData).RemoveSessionId(), JsonConvert.SerializeObject(result).RemoveSessionId());
         }
 
         [Fact]
@@ -199,6 +205,27 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
             var expectedData = xmlConvertService.Serialize(resources);
 
             var result = service.CreateMatchResources(ListResources);
+
+            Assert.Equal(expectedData, result);
+        }
+
+        [Fact]
+        public void CreateResources_Always_ReturnExpectedData()
+        {
+            var ListResources = new List<ResourceItem>
+            {
+                new ResourceItem { ResourceId = "00"},
+                new ResourceItem { ResourceId = "01"}
+            };
+
+            var resources = new Resources<ResourceItem>
+            {
+                ResourceItems = ListResources
+            };
+
+            var expectedData = xmlConvertService.Serialize(resources);
+
+            var result = service.CreateResources(ListResources);
 
             Assert.Equal(expectedData, result);
         }

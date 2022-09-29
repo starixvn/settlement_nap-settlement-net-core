@@ -1,15 +1,14 @@
-﻿using AutoMapper;
-using AutoMapper.Configuration;
+﻿using AutoMapper.Configuration;
 using Fanex.Data.Repository;
 using NSubstitute;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
+using Settlement.Sportsbook.Aio.Constants;
 using Settlement.Sportsbook.Aio.Criteria;
 using Settlement.Sportsbook.Aio.MapperFactory;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Requests;
 using Settlement.Sportsbook.Aio.Services;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
@@ -24,8 +23,8 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
         private readonly ICreateQueryService createQueryService;
         private readonly IMapperFactory mapperFactory;
         private readonly IValidateApiKeyService validateApiKeyService;
+        private readonly MultipleServerAioService multipleServerAioService;
         private readonly IAioService service;
-        private readonly Microsoft.Extensions.Configuration.IConfiguration configuration;
 
         public AioServiceTests()
         {
@@ -34,12 +33,12 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
             refDataService = Substitute.For<IRefDataService>();
             createQueryService = Substitute.For<ICreateQueryService>();
             mapperFactory = Substitute.For<IMapperFactory>();
+            multipleServerAioService = Substitute.For<MultipleServerAioService>();
             validateApiKeyService = Substitute.For<IValidateApiKeyService>();
-            configuration = Substitute.For<Microsoft.Extensions.Configuration.IConfiguration>();
             var mapperConfig = new MapperConfigurationExpression();
             mapperConfig.AddProfile<SportsbookAioAutoMapperProfile>();
-            service = new AioServiceImp(repository, permissionService, refDataService,
-                                    mapperFactory, validateApiKeyService, createQueryService, configuration);
+            service = new AioServiceImp(repository, refDataService,
+                                    mapperFactory, validateApiKeyService, createQueryService, multipleServerAioService);
         }
 
         [Fact]
@@ -50,6 +49,7 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
 
             var actual = await service.GetRecalResult(request);
 
+            createQueryService.Received().QueryRecalResult(request);
             Assert.Single(actual);
         }
 
@@ -60,16 +60,17 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
             var request = new GetMatchRequest();
 
             var fakeMatch = new Models.MatchDetail { MatchId = 1 };
+            var hedgeMatch = new HedgeMatchDetail { MatchId = 2 };
             repository.GetAsync<Models.MatchDetail>(Arg.Any<ICriteria>()).Returns(fakeMatch);
 
-            var listResultDetial = new List<Models.ResultDetail> {
+            var listResultDetail = new List<Models.ResultDetail> {
                 new Models.ResultDetail { ResourceId="00" }
             };
-
-            var tuple = ValueTuple.Create<IEnumerable<Models.ResultDetail>, IEnumerable<TicketCounts>>(listResultDetial, new List<TicketCounts>());
-
-            repository.FetchMultipleAsync<Models.ResultDetail, TicketCounts>(Arg.Any<ICriteria>()).Returns(tuple);
-
+            var resultAndTicket = (listResultDetail, new TicketCounts());
+            multipleServerAioService.FetchResultDetails(Arg.Any<GetResultDetailCriteria>(), Arg.Any<int>()).Returns(resultAndTicket);
+            validateApiKeyService.GetApiKey(Arg.Any<string>()).Returns("");
+            validateApiKeyService.CriteriaName(Arg.Any<GetMatchRequest>(), $"-{ApiKeyConstant.ResultDetailKey}").Returns(new GetResultDetailCriteria());
+            repository.GetAsync<HedgeMatchDetail>(Arg.Any<GetHedgeMatchCriteria>()).Returns(hedgeMatch);
             // Act
             var result = await service.GetMatch(request);
 
@@ -77,8 +78,8 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
             var expectedModel = new AioMatch
             {
                 MatchDetail = fakeMatch,
-                ResultDetails = listResultDetial,
-                HedgeMatchDetail = new HedgeMatchDetail(),
+                ResultDetails = listResultDetail,
+                HedgeMatchDetail = hedgeMatch,
                 TicketCounts = new TicketCounts(),
                 Permission = new Permission(),
                 ExternalResults = new List<ExternalResultModel>()
@@ -87,47 +88,12 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
             Assert.Equal(expectedModel.MatchDetail.MatchId, result.MatchDetail.MatchId);
         }
 
-        [Theory]
-        [InlineData(0, "", true)]
-        [InlineData(1, "Error", false)]
-        public async Task Settle_Always_ReturnCorrectResult(int errorCode, string errorMsg, bool result)
+        [Fact]
+        public async Task CheckMarkedTickets_Always_CallMultipleService()
         {
-            createQueryService.QuerySettle(Arg.Any<SettleRequest>()).Returns(new SettleCriteria());
-            await repository.ExecuteAsync(Arg.Do<SettleCriteria>(x =>
-            {
-                x.ErrCode = errorCode;
-                x.ErrMsg = errorMsg;
-            }));
+            await service.CheckMarkedTickets(new CheckMarkedTicketsRequest());
 
-            var actual = await service.Settle(new SettleRequest());
-
-            Assert.Equal(result, actual.IsSuccessful);
-        }
-
-        [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public async Task CheckMarkedTickets_Always_ReturnCorrectResult(bool result)
-        {
-            await repository.ExecuteAsync(Arg.Do<CheckMarkedTicketsCriteria>(x =>
-            {
-                x.IsExistMarkedTicket = result;
-            }));
-            var request = new CheckMarkedTicketsRequest
-            {
-                MatchId = 12345,
-                SelectedResources = new List<ResourceItem>
-                {
-                    new ResourceItem
-                    {
-                        ResourceId = "00"
-                    }
-                }
-            };
-
-            var actual = await service.CheckMarkedTickets(request);
-
-            Assert.Equal(result, actual.IsExistMarkedTicket);
+            await multipleServerAioService.Received().CheckMarkedTickets(Arg.Any<CheckMarkedTicketsRequest>());
         }
 
         [Theory]
@@ -141,9 +107,11 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
                 x.ErrMsg = errorMsg;
             }));
 
-            var request = new CheckRunningOddsRequest();
-            var selectedResource = new CheckOddsItem();
-            request.SelectedResources = new List<CheckOddsItem> { selectedResource };
+            var request = new CheckRunningOddsRequest
+            {
+                SelectedResources = new List<CheckOddsItem>()
+            };
+            createQueryService.CreateMatchResources(Arg.Any<List<CheckOddsItem>>()).Returns("xml");
             var actual = await service.VerifyNoRunningOdds(request);
 
             Assert.Equal(result, actual.IsSuccessful);
@@ -170,36 +138,33 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
         }
 
         [Fact]
-        public async Task SettleChildMatch_Always_CallQueryWithEveryMatch()
+        public async Task SettleChildMatch_Always_CallMultipleService()
         {
-            createQueryService.QuerySettleChildMatch(Arg.Any<SettleChildMatchRequest>()).Returns(new SettleCriteria());
-            createQueryService.CreateResources(Arg.Any<List<ResourceItem>>()).Returns("");
+            await service.SettleChildMatch(new SettleChildMatchRequest());
 
-            var request = new SettleChildMatchRequest
-            {
-                ChildMatchIds = "1,2"
-            };
-
-            await service.SettleChildMatch(request);
-
-            await repository.Received(2).ExecuteAsync(Arg.Any<SettleCriteria>());
+            await multipleServerAioService.Received().SettleChildMatch(Arg.Any<SettleChildMatchRequest>());
         }
 
         [Fact]
-        public async Task SettleChildMatch_Always_CallCriteriaWithWithEveryMatch()
+        public async Task Settle_Always_CallMultipleService()
         {
-            createQueryService.QuerySettleChildMatch(Arg.Any<SettleChildMatchRequest>()).Returns(new SettleCriteria());
-            createQueryService.CreateResourceChildMatch(Arg.Any<ChildMatchModel>()).Returns("");
+            await service.Settle(new SettleRequest());
 
-            var request = new SettleChildMatchRequest
-            {
-                ChildMatches = new List<ChildMatchModel>
-                    { new ChildMatchModel(), new ChildMatchModel() }
-            };
+            await multipleServerAioService.Received().Settle(Arg.Any<SettleRequest>());
+        }
 
-            await service.SettleChildMatch(request);
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task ResultSetting_Always_ReturnCorrectResult(bool result)
+        {
+            var criteria = new ResultSettingCriteria { IsEnabled = result };
+            createQueryService.QueryChangeSetting(Arg.Any<ResultSettingRequest>()).Returns(criteria);
+            await repository.ExecuteAsync(Arg.Any<ResultSettingCriteria>());
 
-            await repository.Received(2).ExecuteAsync(Arg.Any<SettleCriteria>());
+            var actual = await service.ResultSetting(new ResultSettingRequest());
+
+            Assert.Equal(result, actual);
         }
     }
 }

@@ -149,7 +149,7 @@ export class HalfTimeFullTimeService {
             return this.compareScore(resultDetails, lastestResults);
         }
     }
-
+    
     private compareScore(resultDetails: ResultDetail[], lastestResults: ResultDetail[]) {
         let needConfirm = false;
         resultDetails = _.filter(resultDetails, item => !_.isEqual(item.resourceId, ResourcesIds.fullTime)
