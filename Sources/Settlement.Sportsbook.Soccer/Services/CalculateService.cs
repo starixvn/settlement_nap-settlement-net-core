@@ -1,14 +1,13 @@
-﻿using System;
-using AutoMapper;
+﻿using AutoMapper;
 using Fanex.Data.Repository;
+using Fanex.Settlement.ScaleOut.Request;
+using Fanex.Settlement.ScaleOut.Services;
+using Microsoft.Extensions.Options;
 using Settlement.Core.Models;
 using Settlement.Sportsbook.Soccer.Constants;
 using Settlement.Sportsbook.Soccer.Criteria;
 using Settlement.Sportsbook.Soccer.Requests;
 using System.Threading.Tasks;
-using Fanex.Settlement.ScaleOut.Request;
-using Fanex.Settlement.ScaleOut.Services;
-using Microsoft.Extensions.Options;
 
 namespace Settlement.Sportsbook.Soccer.Services
 {
