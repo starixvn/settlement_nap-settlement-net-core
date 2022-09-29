@@ -53,7 +53,6 @@ namespace Settlement.WebSites
         {
             app.UseDeveloperExceptionPage();
             app.UseResponseCompression();
-            app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
             app.UseSession();
