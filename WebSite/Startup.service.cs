@@ -1,6 +1,5 @@
 using AutoMapper;
 using Fanex.Caching;
-using Fanex.Caching.Redis;
 using Fanex.Data;
 using Fanex.Data.Repository;
 using Fanex.Data.SqlServer;
@@ -102,28 +101,8 @@ namespace Settlement.WebSites
                                             "http://localhost:55201",
                                             "http://localhost:58793",
 
-                                            "https://nap-settlement.playthefun.com",
-                                            "https://napsettlement.playthefun.com",
-                                            "https://napsettlementcore.playthefun.com",
-                                            "https://napsettlementcore2.playthefun.com",
-                                            "https://napsettlementcore3.playthefun.com",
-
-                                            "https://napsettlement.starixuat.com",
-                                            "https://napsettlementcore.starixuat.com",
-                                            "https://napsettlementcore2.starixuat.com",
-                                            "https://napsettlementcore3.starixuat.com",
-
-                                            "https://settlement.sportsfun.app",
-                                            "https://settlementcore.sportsfun.app",
-
                                             "https://settlement.oneops.net",
-                                            "https://settlementcore.oneops.net",
-
-                                            "https://settlement2.oneops.net",
-                                            "https://settlementcore2.oneops.net",
-
-                                            "https://settlement3.oneops.net",
-                                            "https://settlementcore3.oneops.net")
+                                            "https://settlementcore.oneops.net")
                               .AllowAnyMethod()
                               .AllowAnyHeader()
                               .AllowCredentials();
@@ -147,7 +126,7 @@ namespace Settlement.WebSites
                 options.InstanceName = "Fanex.Settlement.Session-";
             });
 
-            services.AddRedisCache(Configuration.GetSection("fanex.caching.redis"));
+            services.AddMemoryCache();
         }
 
         private void ConfigureSession(IServiceCollection services)
