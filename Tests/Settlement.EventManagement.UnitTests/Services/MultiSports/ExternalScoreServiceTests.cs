@@ -1,11 +1,10 @@
-﻿using System.Collections.Generic;
-using Settlement.Core.Models;
-using Settlement.EventManagement.Services;
-using Match = Settlement.EventManagement.Models.MultiSports.Match;
-using Xunit;
+﻿using Settlement.Core.Models;
 using Settlement.EventManagement.Services.MultiSports;
+using System.Collections.Generic;
+using Xunit;
+using Match = Settlement.EventManagement.Models.MultiSports.Match;
 
-namespace Settlement.EventManagement.UnitTests.Services
+namespace Settlement.EventManagement.UnitTests.Services.MultiSports
 {
     public class ExternalScoreServiceTests
     {

@@ -1,15 +1,15 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using NSubstitute;
+﻿using NSubstitute;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.EventManagement.Services.MultiSports;
 using Settlement.EventManagement.Services.SpecificService.Tennis;
+using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 using Match = Settlement.EventManagement.Models.MultiSports.Match;
 
-namespace Settlement.EventManagement.UnitTests.Services
+namespace Settlement.EventManagement.UnitTests.Services.MultiSports
 {
     public class MatchResultDetailServiceTests
     {
@@ -246,7 +246,7 @@ namespace Settlement.EventManagement.UnitTests.Services
             service.ESportsResultDetail(new List<Match> { match }, ResultDetail, permission);
 
             // Assert
-            scoreService.Received().ScoreLoader(SportType.ESports, Arg.Any<List<ResultDetail>>(), Arg.Is<List<string>>(x => Enumerable.SequenceEqual(x, resources)), permission);
+            scoreService.Received().ScoreLoader(SportType.ESports, Arg.Any<List<ResultDetail>>(), Arg.Is<List<string>>(x => x.SequenceEqual(resources)), permission);
         }
 
         [Fact]
