@@ -15,14 +15,12 @@
     <Setting Key="NAP_Set_PlayerInfoSel" SpName="NAP_Set_PlayerInfoSel" DbName="DBPRO.bodb02.bodbAdminNet">
       <Mapping DataField="BetChoice" ObjectProperty="Value" />
     </Setting>
-    <Setting Key="NAP_Set_CashoutSel" SpName="NAP_Set_CashoutSel" DbName="DBTXN.bodb02.bodbAdminNet" />
   </Function>
 
   <Function Name="MoveTickets">
     <Setting Key="NAP_Set_AutoPayout_ReferenceActionByMatchSel" SpName="NAP_Set_AutoPayout_ReferenceActionByMatchSel" DbName="DBLOG.bodb_CustomerLog.bodbAdminNet" />
     <Setting Key="NAP_Set_GetChildMatchByParent" SpName="NAP_Set_GetChildMatchByParent" DbName="DBTXN.bodb02.bodbAdminNet" />
     <Setting Key="WriteLog_UserLog_Settle" SpName="WriteLog_UserLog_Settle" DbName="DBLOG.bodb_CustomerLog.bodbAdminNet" />
-    <Setting Key="NAP_Admin_Settlement_Checking" SpName="NAP_Admin_Settlement_Checking" DbName="DBTXN.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Admin_Settlement_MoveTicketChecking" SpName="NAP_Admin_Settlement_MoveTicketChecking" DbName="DBTXN.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Admin_Settlement_50_MoveTicketInfo" SpName="NAP_Admin_Settlement_50_MoveTicketInfo" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Admin_Match_Update" SpName="NAP_Admin_Match_Update" DbName="DBPRO.bodb02.bodbAdminNet" />
@@ -73,7 +71,7 @@
   </Function>
 
   <Function Name="MultiSport">
-    <Setting Key="NAP_Set_OtherSportsSel" SpName="NAP_Set_OtherSportsSel" DbName="DBPRO.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_OtherSportsSel" SpName="NAP_Set_OtherSportsSel" DbName="DBPRO.bodb02.bodbAdminNet" TimeOut="20" />
     <Setting Key="NAP_Set_SportLeagueSel" SpName="NAP_Set_SportLeagueSel" DbName="DBPRO.bodb02.bodbAdminNet" />
   </Function>
 
@@ -123,234 +121,282 @@
     <Function Name="NAP_Set_GetNumberError">
       <Setting Key="NAP_Set_GetNumberError_DBTXN" SpName="NAP_Set_GetNumberError" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="NAP_Set_GetNumberError_DBSID01" SpName="NAP_Set_GetNumberError" DbName="DBSID01.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Set_GetNumberError_DBSID02" SpName="NAP_Set_GetNumberError" DbName="DBSID02.bodb02.bodbAdminNet" />
     </Function>
 
     <Function Name="NAP_Set_SettledErrorSel">
       <Setting Key="NAP_Set_SettledErrorSel_DBTXN" SpName="NAP_Set_SettledErrorSel" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="NAP_Set_SettledErrorSel_DBSID01" SpName="NAP_Set_SettledErrorSel" DbName="DBSID01.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Set_SettledErrorSel_DBSID02" SpName="NAP_Set_SettledErrorSel" DbName="DBSID02.bodb02.bodbAdminNet" />
     </Function>
 
     <Function Name="Get_SiteDBGroupID">
       <Setting Key="Get_SiteDBGroupID_DBTXN" SpName="Get_SiteDBGroupID" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="Get_SiteDBGroupID_DBSID01" SpName="Get_SiteDBGroupID" DbName="DBSID01.bodb02.bodbAdminNet" />
+      <Setting Key="Get_SiteDBGroupID_DBSID02" SpName="Get_SiteDBGroupID" DbName="DBSID02.bodb02.bodbAdminNet" />
     </Function>
 
     <Function Name="NAP_Admin_Settlement_1_InstantCalculation_Push">
       <Setting Key="NAP_Admin_Settlement_1_InstantCalculation_Push_DBTXN" SpName="NAP_Admin_Settlement_1_InstantCalculation_Push" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="NAP_Admin_Settlement_1_InstantCalculation_Push_DBSID01" SpName="NAP_Admin_Settlement_1_InstantCalculation_Push" DbName="DBSID01.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Admin_Settlement_1_InstantCalculation_Push_DBSID02" SpName="NAP_Admin_Settlement_1_InstantCalculation_Push" DbName="DBSID02.bodb02.bodbAdminNet" />
     </Function>
 
     <Function Name="Calculate">
       <Setting Key="Calculate_DBTXN" SpName="NAP_Admin_Settlement_1_Push" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="Calculate_DBSID01" SpName="NAP_Admin_Settlement_1_Push" DbName="DBSID01.bodb02.bodbAdminNet" />
+      <Setting Key="Calculate_DBSID02" SpName="NAP_Admin_Settlement_1_Push" DbName="DBSID02.bodb02.bodbAdminNet" />
     </Function>
 
     <Function Name="CalculateMP">
       <Setting Key="CalculateMP_DBTXN" SpName="NAP_Admin_Settlement_MP_Push" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="CalculateMP_DBSID01" SpName="NAP_Admin_Settlement_MP_Push" DbName="DBSID01.bodb02.bodbAdminNet" />
+      <Setting Key="CalculateMP_DBSID02" SpName="NAP_Admin_Settlement_MP_Push" DbName="DBSID02.bodb02.bodbAdminNet" />
     </Function>
 
     <Function Name="NAP_Admin_Settlement_Validation_Ticket">
       <Setting Key="NAP_Admin_Settlement_Validation_Ticket_DBTXN" SpName="NAP_Admin_Settlement_Validation_Ticket" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="NAP_Admin_Settlement_Validation_Ticket_DBSID01" SpName="NAP_Admin_Settlement_Validation_Ticket" DbName="DBSID01.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Admin_Settlement_Validation_Ticket_DBSID02" SpName="NAP_Admin_Settlement_Validation_Ticket" DbName="DBSID02.bodb02.bodbAdminNet" />
     </Function>
 
     <Function Name="NAP_Set_MatchSelDetail_Ticket">
       <Setting Key="NAP_Set_MatchSelDetail_Ticket_DBTXN" SpName="NAP_Set_MatchSelDetail_Ticket" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="NAP_Set_MatchSelDetail_Ticket_DBSID01" SpName="NAP_Set_MatchSelDetail_Ticket" DbName="DBSID01.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Set_MatchSelDetail_Ticket_DBSID02" SpName="NAP_Set_MatchSelDetail_Ticket" DbName="DBSID02.bodb02.bodbAdminNet" />
     </Function>
 
     <Function Name="NAP_Set_MatchSel">
-      <Setting Key="NAP_Set_MatchSel_DBTXN" SpName="NAP_Set_MatchSel" DbName="DBTXN.bodb02.bodbAdminNet" />
-      <Setting Key="NAP_Set_MatchSel_DBSID01" SpName="NAP_Set_MatchSel" DbName="DBSID01.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Set_MatchSel_DBTXN" SpName="NAP_Set_MatchSel" DbName="DBTXN.bodb02.bodbAdminNet" TimeOut="20" />
+      <Setting Key="NAP_Set_MatchSel_DBSID01" SpName="NAP_Set_MatchSel" DbName="DBSID01.bodb02.bodbAdminNet" TimeOut="20" />
+      <Setting Key="NAP_Set_MatchSel_DBSID02" SpName="NAP_Set_MatchSel" DbName="DBSID02.bodb02.bodbAdminNet" TimeOut="20" />
     </Function>
 
     <Function Name="NAP_Set_WaitingSel">
       <Setting Key="NAP_Set_WaitingSel_DBTXN" SpName="NAP_Set_WaitingSel" DbName="DBTXN.bodb02.bodbAdminNet" TimeOut="20" />
       <Setting Key="NAP_Set_WaitingSel_DBSID01" SpName="NAP_Set_WaitingSel" DbName="DBSID01.bodb02.bodbAdminNet" TimeOut="20" />
+      <Setting Key="NAP_Set_WaitingSel_DBSID02" SpName="NAP_Set_WaitingSel" DbName="DBSID02.bodb02.bodbAdminNet" TimeOut="20" />
     </Function>
 
     <Function Name="NAP_Set_AutoPayout_MatchSel">
-      <Setting Key="NAP_Set_AutoPayout_MatchSel_DBTXN" SpName="NAP_Set_AutoPayout_MatchSel" DbName="DBTXN.bodb02.bodbAdminNet" />
-      <Setting Key="NAP_Set_AutoPayout_MatchSel_DBSID01" SpName="NAP_Set_AutoPayout_MatchSel" DbName="DBSID01.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Set_AutoPayout_MatchSel_DBTXN" SpName="NAP_Set_AutoPayout_MatchSel" DbName="DBTXN.bodb02.bodbAdminNet" TimeOut="20" />
+      <Setting Key="NAP_Set_AutoPayout_MatchSel_DBSID01" SpName="NAP_Set_AutoPayout_MatchSel" DbName="DBSID01.bodb02.bodbAdminNet" TimeOut="20" />
+      <Setting Key="NAP_Set_AutoPayout_MatchSel_DBSID02" SpName="NAP_Set_AutoPayout_MatchSel" DbName="DBSID02.bodb02.bodbAdminNet" TimeOut="20" />
     </Function>
 
     <Function Name="NAP_Set_AutoPayout_WaitingSel">
       <Setting Key="NAP_Set_AutoPayout_WaitingSel_DBTXN" SpName="NAP_Set_AutoPayout_WaitingSel" DbName="DBTXN.bodb02.bodbAdminNet" TimeOut="20" />
       <Setting Key="NAP_Set_AutoPayout_WaitingSel_DBSID01" SpName="NAP_Set_AutoPayout_WaitingSel" DbName="DBSID01.bodb02.bodbAdminNet" TimeOut="20" />
+      <Setting Key="NAP_Set_AutoPayout_WaitingSel_DBSID02" SpName="NAP_Set_AutoPayout_WaitingSel" DbName="DBSID02.bodb02.bodbAdminNet" TimeOut="20" />
     </Function>
 
     <Function Name="NAP_Admin_Settlement_Auto_1s_Push">
       <Setting Key="NAP_Admin_Settlement_Auto_1s_Push_DBTXN" SpName="NAP_Admin_Settlement_Auto_1s_Push" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="NAP_Admin_Settlement_Auto_1s_Push_DBSID01" SpName="NAP_Admin_Settlement_Auto_1s_Push" DbName="DBSID01.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Admin_Settlement_Auto_1s_Push_DBSID02" SpName="NAP_Admin_Settlement_Auto_1s_Push" DbName="DBSID02.bodb02.bodbAdminNet" />
     </Function>
 
     <Function Name="NAP_Set_BetDaq_Checking">
       <Setting Key="NAP_Set_BetDaq_Checking_DBTXN" SpName="NAP_Set_BetDaq_Checking" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="NAP_Set_BetDaq_Checking_DBSID01" SpName="NAP_Set_BetDaq_Checking" DbName="DBSID01.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Set_BetDaq_Checking_DBSID02" SpName="NAP_Set_BetDaq_Checking" DbName="DBSID02.bodb02.bodbAdminNet" />
     </Function>
 
     <Function Name="NAP_Set_BetFair_Checking">
       <Setting Key="NAP_Set_BetFair_Checking_DBTXN" SpName="NAP_Set_BetFair_Checking" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="NAP_Set_BetFair_Checking_DBSID01" SpName="NAP_Set_BetFair_Checking" DbName="DBSID01.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Set_BetFair_Checking_DBSID02" SpName="NAP_Set_BetFair_Checking" DbName="DBSID02.bodb02.bodbAdminNet" />
     </Function>
 
     <Function Name="NAP_Set_CheckingMarkedTransaction">
       <Setting Key="NAP_Set_CheckingMarkedTransaction_DBTXN" SpName="NAP_Set_CheckingMarkedTransaction" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="NAP_Set_CheckingMarkedTransaction_DBSID01" SpName="NAP_Set_CheckingMarkedTransaction" DbName="DBSID01.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Set_CheckingMarkedTransaction_DBSID02" SpName="NAP_Set_CheckingMarkedTransaction" DbName="DBSID02.bodb02.bodbAdminNet" />
     </Function>
 
     <Function Name="NAP_Admin_Settlement_BetDaq_Move">
       <Setting Key="NAP_Admin_Settlement_BetDaq_Move_DBTXN" SpName="NAP_Admin_Settlement_BetDaq_Move" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="NAP_Admin_Settlement_BetDaq_Move_DBSID01" SpName="NAP_Admin_Settlement_BetDaq_Move" DbName="DBSID01.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Admin_Settlement_BetDaq_Move_DBSID02" SpName="NAP_Admin_Settlement_BetDaq_Move" DbName="DBSID02.bodb02.bodbAdminNet" />
     </Function>
 
     <Function Name="NAP_Admin_Settlement_Refund_BetDaq_Push">
       <Setting Key="NAP_Admin_Settlement_Refund_BetDaq_Push_DBTXN" SpName="NAP_Admin_Settlement_Refund_BetDaq_Push" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="NAP_Admin_Settlement_Refund_BetDaq_Push_DBSID01" SpName="NAP_Admin_Settlement_Refund_BetDaq_Push" DbName="DBSID01.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Admin_Settlement_Refund_BetDaq_Push_DBSID02" SpName="NAP_Admin_Settlement_Refund_BetDaq_Push" DbName="DBSID02.bodb02.bodbAdminNet" />
     </Function>
 
     <Function Name="NAP_Admin_Settlement_BetFair_Move">
       <Setting Key="NAP_Admin_Settlement_BetFair_Move_DBTXN" SpName="NAP_Admin_Settlement_BetFair_Move" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="NAP_Admin_Settlement_BetFair_Move_DBSID01" SpName="NAP_Admin_Settlement_BetFair_Move" DbName="DBSID01.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Admin_Settlement_BetFair_Move_DBSID02" SpName="NAP_Admin_Settlement_BetFair_Move" DbName="DBSID02.bodb02.bodbAdminNet" />
     </Function>
 
     <Function Name="NAP_Admin_Settlement_Refund_BetFair_Push">
       <Setting Key="NAP_Admin_Settlement_Refund_BetFair_Push_DBTXN" SpName="NAP_Admin_Settlement_Refund_BetFair_Push" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="NAP_Admin_Settlement_Refund_BetFair_Push_DBSID01" SpName="NAP_Admin_Settlement_Refund_BetFair_Push" DbName="DBSID01.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Admin_Settlement_Refund_BetFair_Push_DBSID02" SpName="NAP_Admin_Settlement_Refund_BetFair_Push" DbName="DBSID02.bodb02.bodbAdminNet" />
     </Function>
 
     <Function Name="Refund">
       <Setting Key="Refund_DBTXN" SpName="NAP_Admin_Settlement_Refund_1_Push" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="Refund_DBSID01" SpName="NAP_Admin_Settlement_Refund_1_Push" DbName="DBSID01.bodb02.bodbAdminNet" />
+      <Setting Key="Refund_DBSID02" SpName="NAP_Admin_Settlement_Refund_1_Push" DbName="DBSID02.bodb02.bodbAdminNet" />
     </Function>
 
     <Function Name="NAP_Set_MatchSelHedge_Ticket">
       <Setting Key="NAP_Set_MatchSelHedge_Ticket_DBTXN" SpName="NAP_Set_MatchSelHedge_Ticket" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="NAP_Set_MatchSelHedge_Ticket_DBSID01" SpName="NAP_Set_MatchSelHedge_Ticket" DbName="DBSID01.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Set_MatchSelHedge_Ticket_DBSID02" SpName="NAP_Set_MatchSelHedge_Ticket" DbName="DBSID02.bodb02.bodbAdminNet" />
     </Function>
 
     <Function Name="NAP_Admin_Settlement_Profile_Push">
       <Setting Key="NAP_Admin_Settlement_Profile_Push_DBTXN" SpName="NAP_Admin_Settlement_Profile_Push" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="NAP_Admin_Settlement_Profile_Push_DBSID01" SpName="NAP_Admin_Settlement_Profile_Push" DbName="DBSID01.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Admin_Settlement_Profile_Push_DBSID02" SpName="NAP_Admin_Settlement_Profile_Push" DbName="DBSID02.bodb02.bodbAdminNet" />
     </Function>
 
     <Function Name="NAP_Set_EarlySettlement_CheckingMarkedTransaction">
       <Setting Key="NAP_Set_EarlySettlement_CheckingMarkedTransaction_DBTXN" SpName="NAP_Set_EarlySettlement_CheckingMarkedTransaction" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="NAP_Set_EarlySettlement_CheckingMarkedTransaction_DBSID01" SpName="NAP_Set_EarlySettlement_CheckingMarkedTransaction" DbName="DBSID01.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Set_EarlySettlement_CheckingMarkedTransaction_DBSID02" SpName="NAP_Set_EarlySettlement_CheckingMarkedTransaction" DbName="DBSID02.bodb02.bodbAdminNet" />
     </Function>
 
     <Function Name="NAP_Set_MatchSelDetail_Resources_Ticket">
       <Setting Key="NAP_Set_MatchSelDetail_Resources_Ticket_DBTXN" SpName="NAP_Set_MatchSelDetail_Resources_Ticket" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="NAP_Set_MatchSelDetail_Resources_Ticket_DBSID01" SpName="NAP_Set_MatchSelDetail_Resources_Ticket" DbName="DBSID01.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Set_MatchSelDetail_Resources_Ticket_DBSID02" SpName="NAP_Set_MatchSelDetail_Resources_Ticket" DbName="DBSID02.bodb02.bodbAdminNet" />
     </Function>
 
     <Function Name="NAP_Set_MatchOtherSportsSel">
       <Setting Key="NAP_Set_MatchOtherSportsSel_DBTXN" SpName="NAP_Set_MatchOtherSportsSel" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="NAP_Set_MatchOtherSportsSel_DBSID01" SpName="NAP_Set_MatchOtherSportsSel" DbName="DBSID01.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Set_MatchOtherSportsSel_DBSID02" SpName="NAP_Set_MatchOtherSportsSel" DbName="DBSID02.bodb02.bodbAdminNet" />
     </Function>
     <Function Name="NAP_Set_WaitingOtherSportSel">
       <Setting Key="NAP_Set_WaitingOtherSportSel_DBTXN" SpName="NAP_Set_WaitingOtherSportSel" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="NAP_Set_WaitingOtherSportSel_DBSID01" SpName="NAP_Set_WaitingOtherSportSel" DbName="DBSID01.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Set_WaitingOtherSportSel_DBSID02" SpName="NAP_Set_WaitingOtherSportSel" DbName="DBSID02.bodb02.bodbAdminNet" />
     </Function>
 
     <Function Name="NAP_Admin_Settlement_MoveTicket">
       <Setting Key="NAP_Admin_Settlement_MoveTicket_DBTXN" SpName="NAP_Admin_Settlement_MoveTicket" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="NAP_Admin_Settlement_MoveTicket_DBSID01" SpName="NAP_Admin_Settlement_MoveTicket" DbName="DBSID01.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Admin_Settlement_MoveTicket_DBSID02" SpName="NAP_Admin_Settlement_MoveTicket" DbName="DBSID02.bodb02.bodbAdminNet" />
     </Function>
 
     <Function Name="NAP_Admin_Settlement_50_MoveTicket">
       <Setting Key="NAP_Admin_Settlement_50_MoveTicket_DBTXN" SpName="NAP_Admin_Settlement_50_MoveTicket" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="NAP_Admin_Settlement_50_MoveTicket_DBSID01" SpName="NAP_Admin_Settlement_50_MoveTicket" DbName="DBSID01.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Admin_Settlement_50_MoveTicket_DBSID02" SpName="NAP_Admin_Settlement_50_MoveTicket" DbName="DBSID02.bodb02.bodbAdminNet" />
     </Function>
 
     <Function Name="NAP_Settlement_InstantCalculation_Checking">
       <Setting Key="NAP_Settlement_InstantCalculation_Checking_DBTXN" SpName="NAP_Settlement_InstantCalculation_Checking" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="NAP_Settlement_InstantCalculation_Checking_DBSID01" SpName="NAP_Settlement_InstantCalculation_Checking" DbName="DBSID01.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Settlement_InstantCalculation_Checking_DBSID02" SpName="NAP_Settlement_InstantCalculation_Checking" DbName="DBSID02.bodb02.bodbAdminNet" />
     </Function>
 
     <Function Name="NAP_Admin_Settlement_ValidationFM_Ticket">
       <Setting Key="NAP_Admin_Settlement_ValidationFM_Ticket_DBTXN" SpName="NAP_Admin_Settlement_ValidationFM_Ticket" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="NAP_Admin_Settlement_ValidationFM_Ticket_DBSID01" SpName="NAP_Admin_Settlement_ValidationFM_Ticket" DbName="DBSID01.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Admin_Settlement_ValidationFM_Ticket_DBSID02" SpName="NAP_Admin_Settlement_ValidationFM_Ticket" DbName="DBSID02.bodb02.bodbAdminNet" />
     </Function>
 
     <Function Name="NAP_Admin_Settlement_Validation_MP_Ticket">
       <Setting Key="NAP_Admin_Settlement_Validation_MP_Ticket_DBTXN" SpName="NAP_Admin_Settlement_Validation_MP_Ticket" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="NAP_Admin_Settlement_Validation_MP_Ticket_DBSID01" SpName="NAP_Admin_Settlement_Validation_MP_Ticket" DbName="DBSID01.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Admin_Settlement_Validation_MP_Ticket_DBSID02" SpName="NAP_Admin_Settlement_Validation_MP_Ticket" DbName="DBSID02.bodb02.bodbAdminNet" />
     </Function>
 
     <Function Name="RefundParlay">
       <Setting Key="RefundParlay_DBTXN" SpName="NAP_Admin_Settlement_Refund_MP_Push" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="RefundParlay_DBSID01" SpName="NAP_Admin_Settlement_Refund_MP_Push" DbName="DBSID01.bodb02.bodbAdminNet" />
+      <Setting Key="RefundParlay_DBSID02" SpName="NAP_Admin_Settlement_Refund_MP_Push" DbName="DBSID02.bodb02.bodbAdminNet" />
     </Function>
 
     <Function Name="RefundFT">
       <Setting Key="RefundFT_DBTXN" SpName="NAP_Admin_Settlement_RefundFT_Push" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="RefundFT_DBSID01" SpName="NAP_Admin_Settlement_RefundFT_Push" DbName="DBSID01.bodb02.bodbAdminNet" />
+      <Setting Key="RefundFT_DBSID02" SpName="NAP_Admin_Settlement_RefundFT_Push" DbName="DBSID02.bodb02.bodbAdminNet" />
     </Function>
 
     <Function Name="RefundAll">
       <Setting Key="RefundAll_DBTXN" SpName="NAP_Admin_Settlement_Refund_All_Push" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="RefundAll_DBSID01" SpName="NAP_Admin_Settlement_Refund_All_Push" DbName="DBSID01.bodb02.bodbAdminNet" />
+      <Setting Key="RefundAll_DBSID02" SpName="NAP_Admin_Settlement_Refund_All_Push" DbName="DBSID02.bodb02.bodbAdminNet" />
     </Function>
 
     <Function Name="NAP_Set_AutoInstant_GetTicketInfo">
       <Setting Key="NAP_Set_AutoInstant_GetTicketInfo_DBTXN" SpName="NAP_Set_AutoInstant_GetTicketInfo" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="NAP_Set_AutoInstant_GetTicketInfo_DBSID01" SpName="NAP_Set_AutoInstant_GetTicketInfo" DbName="DBSID01.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Set_AutoInstant_GetTicketInfo_DBSID02" SpName="NAP_Set_AutoInstant_GetTicketInfo" DbName="DBSID02.bodb02.bodbAdminNet" />
     </Function>
     <Function Name="NAP_Set_MatchSel_by_Vendor_Ticket">
       <Setting Key="NAP_Set_MatchSel_by_Vendor_Ticket_DBTXN" SpName="NAP_Set_MatchSel_by_Vendor_Ticket" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="NAP_Set_MatchSel_by_Vendor_Ticket_DBSID01" SpName="NAP_Set_MatchSel_by_Vendor_Ticket" DbName="DBSID01.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Set_MatchSel_by_Vendor_Ticket_DBSID02" SpName="NAP_Set_MatchSel_by_Vendor_Ticket" DbName="DBSID02.bodb02.bodbAdminNet" />
     </Function>
 
     <Function Name="NAP_Admin_Settlement_s164">
       <Setting Key="NAP_Admin_Settlement_s164_DBTXN" SpName="NAP_Admin_Settlement_s164" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="NAP_Admin_Settlement_s164_DBSID01" SpName="NAP_Admin_Settlement_s164" DbName="DBSID01.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Admin_Settlement_s164_DBSID02" SpName="NAP_Admin_Settlement_s164" DbName="DBSID02.bodb02.bodbAdminNet" />
     </Function>
 
     <Function Name="NAP_Admin_Settlement_s161_Manual">
       <Setting Key="NAP_Admin_Settlement_s161_Manual_DBTXN" SpName="NAP_Admin_Settlement_s161_Manual" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="NAP_Admin_Settlement_s161_Manual_DBSID01" SpName="NAP_Admin_Settlement_s161_Manual" DbName="DBSID01.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Admin_Settlement_s161_Manual_DBSID02" SpName="NAP_Admin_Settlement_s161_Manual" DbName="DBSID02.bodb02.bodbAdminNet" />
     </Function>
 
     <Function Name="NAP_Admin_Settlement_BetBuilder_Push">
       <Setting Key="NAP_Admin_Settlement_BetBuilder_Push_DBTXN" SpName="NAP_Admin_Settlement_BetBuilder_Push" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="NAP_Admin_Settlement_BetBuilder_Push_DBSID01" SpName="NAP_Admin_Settlement_BetBuilder_Push" DbName="DBSID01.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Admin_Settlement_BetBuilder_Push_DBSID02" SpName="NAP_Admin_Settlement_BetBuilder_Push" DbName="DBSID02.bodb02.bodbAdminNet" />
     </Function>
     <Function Name="NAP_Set_SMPSelectionDetailSel_Ticket">
       <Setting Key="NAP_Set_SMPSelectionDetailSel_Ticket_DBTXN" SpName="NAP_Set_SMPSelectionDetailSel_Ticket" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="NAP_Set_SMPSelectionDetailSel_Ticket_DBSID01" SpName="NAP_Set_SMPSelectionDetailSel_Ticket" DbName="DBSID01.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Set_SMPSelectionDetailSel_Ticket_DBSID02" SpName="NAP_Set_SMPSelectionDetailSel_Ticket" DbName="DBSID02.bodb02.bodbAdminNet" />
     </Function>
 
     <Function Name="NAP_Set_SPDeploymentInfo">
       <Setting Key="NAP_Set_SPDeploymentInfo_DBTXN" SpName="NAP_Set_SPDeploymentInfo" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="NAP_Set_SPDeploymentInfo_DBSID01" SpName="NAP_Set_SPDeploymentInfo" DbName="DBSID01.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Set_SPDeploymentInfo_DBSID02" SpName="NAP_Set_SPDeploymentInfo" DbName="DBSID02.bodb02.bodbAdminNet" />
     </Function>
 
     <Function Name="NAP_Set_FastMarket_CheckingMarkedTransaction">
       <Setting Key="NAP_Set_FastMarket_CheckingMarkedTransaction_DBTXN" SpName="NAP_Set_FastMarket_CheckingMarkedTransaction" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="NAP_Set_FastMarket_CheckingMarkedTransaction_DBSID01" SpName="NAP_Set_FastMarket_CheckingMarkedTransaction" DbName="DBSID01.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Set_FastMarket_CheckingMarkedTransaction_DBSID02" SpName="NAP_Set_FastMarket_CheckingMarkedTransaction" DbName="DBSID02.bodb02.bodbAdminNet" />
     </Function>
     <Function Name="NAP_Set_FastMarket_MatchSelDetail_Ticket">
       <Setting Key="NAP_Set_FastMarket_MatchSelDetail_Ticket_DBTXN" SpName="NAP_Set_FastMarket_MatchSelDetail_Ticket" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="NAP_Set_FastMarket_MatchSelDetail_Ticket_DBSID01" SpName="NAP_Set_FastMarket_MatchSelDetail_Ticket" DbName="DBSID01.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Set_FastMarket_MatchSelDetail_Ticket_DBSID02" SpName="NAP_Set_FastMarket_MatchSelDetail_Ticket" DbName="DBSID02.bodb02.bodbAdminNet" />
     </Function>
     <Function Name="NAP_Admin_Settlement_Fast_Market_Auto_1s_Push">
       <Setting Key="NAP_Admin_Settlement_Fast_Market_Auto_1s_Push_DBTXN" SpName="NAP_Admin_Settlement_Fast_Market_Auto_1s_Push" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="NAP_Admin_Settlement_Fast_Market_Auto_1s_Push_DBSID01" SpName="NAP_Admin_Settlement_Fast_Market_Auto_1s_Push" DbName="DBSID01.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Admin_Settlement_Fast_Market_Auto_1s_Push_DBSID02" SpName="NAP_Admin_Settlement_Fast_Market_Auto_1s_Push" DbName="DBSID02.bodb02.bodbAdminNet" />
     </Function>
 
     <Function Name="NAP_Set_MatchSelDetail_Auto_1s_Ticket">
       <Setting Key="NAP_Set_MatchSelDetail_Auto_1s_Ticket_DBTXN" SpName="NAP_Set_MatchSelDetail_Auto_1s_Ticket" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="NAP_Set_MatchSelDetail_Auto_1s_Ticket_DBSID01" SpName="NAP_Set_MatchSelDetail_Auto_1s_Ticket" DbName="DBSID01.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Set_MatchSelDetail_Auto_1s_Ticket_DBSID02" SpName="NAP_Set_MatchSelDetail_Auto_1s_Ticket" DbName="DBSID02.bodb02.bodbAdminNet" />
     </Function>
     <Function Name="NAP_Set_CashoutSel">
       <Setting Key="NAP_Set_CashoutSel_DBTXN" SpName="NAP_Set_CashoutSel" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="NAP_Set_CashoutSel_DBSID01" SpName="NAP_Set_CashoutSel" DbName="DBSID01.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Set_CashoutSel_DBSID02" SpName="NAP_Set_CashoutSel" DbName="DBSID02.bodb02.bodbAdminNet" />
     </Function>
     <Function Name="NAP_Set_WaitingSel_Queue_3rd">
       <Setting Key="NAP_Set_WaitingSel_Queue_3rd_DBTXN" SpName="NAP_Set_WaitingSel_Queue_3rd" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="NAP_Set_WaitingSel_Queue_3rd_DBSID01" SpName="NAP_Set_WaitingSel_Queue_3rd" DbName="DBSID01.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Set_WaitingSel_Queue_3rd_DBSID02" SpName="NAP_Set_WaitingSel_Queue_3rd" DbName="DBSID02.bodb02.bodbAdminNet" />
     </Function>
   </Function>
 </Functions>

@@ -1,6 +1,5 @@
 using AutoMapper;
 using Fanex.Caching;
-using Fanex.Caching.Redis;
 using Fanex.Data;
 using Fanex.Data.Repository;
 using Fanex.Data.SqlServer;
@@ -30,10 +29,6 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using ONEbook.UM.AspNetCore;
-using ONEbook.UM.Configurations;
-using ONEbook.UM.Helpers;
-using ONEbook.UM.Transport;
 using Sentry;
 using Settlement.Core.Services;
 using Settlement.EventManagement;
@@ -46,6 +41,7 @@ using Settlement.Sportsbook.MoveTickets;
 using Settlement.Sportsbook.OtherSports;
 using Settlement.Sportsbook.Soccer;
 using Settlement.ThirdPartyProducts;
+using Settlement.WebSites.App_Start;
 using Settlement.WebSites.Configurations;
 using StackExchange.Redis;
 using System;
@@ -105,28 +101,8 @@ namespace Settlement.WebSites
                                             "http://localhost:55201",
                                             "http://localhost:58793",
 
-                                            "https://nap-settlement.playthefun.com",
-                                            "https://napsettlement.playthefun.com",
-                                            "https://napsettlementcore.playthefun.com",
-                                            "https://napsettlementcore2.playthefun.com",
-                                            "https://napsettlementcore3.playthefun.com",
-
-                                            "https://napsettlement.starixuat.com",
-                                            "https://napsettlementcore.starixuat.com",
-                                            "https://napsettlementcore2.starixuat.com",
-                                            "https://napsettlementcore3.starixuat.com",
-
-                                            "https://settlement.sportsfun.app",
-                                            "https://settlementcore.sportsfun.app",
-
                                             "https://settlement.oneops.net",
-                                            "https://settlementcore.oneops.net",
-
-                                            "https://settlement2.oneops.net",
-                                            "https://settlementcore2.oneops.net",
-
-                                            "https://settlement3.oneops.net",
-                                            "https://settlementcore3.oneops.net")
+                                            "https://settlementcore.oneops.net")
                               .AllowAnyMethod()
                               .AllowAnyHeader()
                               .AllowCredentials();
@@ -150,7 +126,7 @@ namespace Settlement.WebSites
                 options.InstanceName = "Fanex.Settlement.Session-";
             });
 
-            services.AddRedisCache(Configuration.GetSection("fanex.caching.redis"));
+            services.AddMemoryCache();
         }
 
         private void ConfigureSession(IServiceCollection services)
@@ -241,10 +217,6 @@ namespace Settlement.WebSites
             services.AddSingleton<XmlConvertService, XmlConvertServiceImp>();
             services.AddTransient<ILogService, LogServiceImp>();
             services.AddTransient<IScoreSetService, ScoreSetServiceImp>();
-            services.AddSingleton<IUMCacheService, UMCacheService>();
-            services.AddSingleton<IUMRestClient, UMRestClient>();
-            services.AddSingleton(new UMClientConfiguration().Initialize(Configuration));
-            services.AddSingleton<ONEbook.UM.Services.IMaintenanceService, ONEbook.UM.Services.MaintenanceService>();
             services.AddTransient<ScaleOutSettleService, ScaleOutSettleServiceImp>();
             services.AddTransient<ScaleOutSettleThirdPartyService, ScaleOutSettleThirdPartyServiceImp>();
         }
@@ -282,6 +254,12 @@ namespace Settlement.WebSites
 
             var mapper = mapperConfig.CreateMapper();
             services.AddSingleton(mapper);
+        }
+
+        private void OnebookUM(IServiceCollection services)
+        {
+            OnebookUMInitializer.RegisterServiceCollection(services, Configuration);
+            OnebookUMInitializer.InitializeUmClientManager();
         }
 
         private static void ConfigureMessagePack(IServiceCollection services)

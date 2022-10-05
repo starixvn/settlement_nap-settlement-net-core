@@ -10,10 +10,6 @@ using Settlement.Core.Services;
 using Settlement.Sportsbook.MoveTickets.Criteria;
 using Settlement.Sportsbook.MoveTickets.Models;
 using Settlement.Sportsbook.MoveTickets.Requests;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Settlement.Sportsbook.MoveTickets.Services
@@ -32,7 +28,6 @@ namespace Settlement.Sportsbook.MoveTickets.Services
         private readonly int actionIdMoveTicket = 81026;
         private readonly int actionIDMoveRunningTickets = 81035;
         private readonly string actionMoveTicket = "MoveTicket";
-        private readonly string modeCricket = "50";
         private readonly string modeRunnigTicket = "43";
         private readonly IDynamicRepository repository;
         private readonly IMapper mapper;
@@ -92,13 +87,13 @@ namespace Settlement.Sportsbook.MoveTickets.Services
             foreach (var server in appSettingsKey.SiteDbServer)
             {
                 criteria.DbServer = server;
-                repository.Execute(criteria);
+                await repository.ExecuteAsync(criteria);
             }
 
             var updateChildMatchCriteria = new UpdateChildMatchCriteria { MatchId = moveTicketInfo.ChildMatchId };
-            repository.Execute(updateChildMatchCriteria);
+            await repository.ExecuteAsync(updateChildMatchCriteria);
             var updateChildMatchRemarkCriteria = new UpdateChildMatchRemarkCriteria { MatchId = moveTicketInfo.ChildMatchId };
-            repository.Execute(updateChildMatchRemarkCriteria);
+            await repository.ExecuteAsync(updateChildMatchRemarkCriteria);
 
             return new Result
             {
@@ -124,7 +119,7 @@ namespace Settlement.Sportsbook.MoveTickets.Services
             return validateResult;
         }
 
-        public void ExecuteMoveRunningTicket(MoveRunningTicketsCriteria criteria)
+        private void ExecuteMoveRunningTicket(MoveRunningTicketsCriteria criteria)
         {
             foreach (var server in appSettingsKey.SiteDbServer)
             {
@@ -173,6 +168,5 @@ namespace Settlement.Sportsbook.MoveTickets.Services
                 ErrMsg = criteria.ErrMsg
             };
         }
-
     }
 }
