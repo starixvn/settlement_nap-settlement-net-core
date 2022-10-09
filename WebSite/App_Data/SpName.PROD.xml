@@ -71,7 +71,7 @@
   </Function>
 
   <Function Name="MultiSport">
-    <Setting Key="NAP_Set_OtherSportsSel" SpName="NAP_Set_OtherSportsSel" DbName="DBPRO.bodb02.bodbAdminNet" TimeOut="20" />
+    <Setting Key="NAP_Set_OtherSportsSel" SpName="NAP_Set_OtherSportsSel" DbName="DBPRO.bodb02.bodbAdminNet" TimeOut="120" />
     <Setting Key="NAP_Set_SportLeagueSel" SpName="NAP_Set_SportLeagueSel" DbName="DBPRO.bodb02.bodbAdminNet" />
   </Function>
 
@@ -167,27 +167,27 @@
     </Function>
 
     <Function Name="NAP_Set_MatchSel">
-      <Setting Key="NAP_Set_MatchSel_DBTXN" SpName="NAP_Set_MatchSel" DbName="DBTXN.bodb02.bodbAdminNet" TimeOut="20" />
-      <Setting Key="NAP_Set_MatchSel_DBSID01" SpName="NAP_Set_MatchSel" DbName="DBSID01.bodb02.bodbAdminNet" TimeOut="20" />
-      <Setting Key="NAP_Set_MatchSel_DBSID02" SpName="NAP_Set_MatchSel" DbName="DBSID02.bodb02.bodbAdminNet" TimeOut="20" />
+      <Setting Key="NAP_Set_MatchSel_DBTXN" SpName="NAP_Set_MatchSel" DbName="DBTXN.bodb02.bodbAdminNet" TimeOut="120" />
+      <Setting Key="NAP_Set_MatchSel_DBSID01" SpName="NAP_Set_MatchSel" DbName="DBSID01.bodb02.bodbAdminNet" TimeOut="120" />
+      <Setting Key="NAP_Set_MatchSel_DBSID02" SpName="NAP_Set_MatchSel" DbName="DBSID02.bodb02.bodbAdminNet" TimeOut="120" />
     </Function>
 
     <Function Name="NAP_Set_WaitingSel">
-      <Setting Key="NAP_Set_WaitingSel_DBTXN" SpName="NAP_Set_WaitingSel" DbName="DBTXN.bodb02.bodbAdminNet" TimeOut="20" />
-      <Setting Key="NAP_Set_WaitingSel_DBSID01" SpName="NAP_Set_WaitingSel" DbName="DBSID01.bodb02.bodbAdminNet" TimeOut="20" />
-      <Setting Key="NAP_Set_WaitingSel_DBSID02" SpName="NAP_Set_WaitingSel" DbName="DBSID02.bodb02.bodbAdminNet" TimeOut="20" />
+      <Setting Key="NAP_Set_WaitingSel_DBTXN" SpName="NAP_Set_WaitingSel" DbName="DBTXN.bodb02.bodbAdminNet" TimeOut="60" />
+      <Setting Key="NAP_Set_WaitingSel_DBSID01" SpName="NAP_Set_WaitingSel" DbName="DBSID01.bodb02.bodbAdminNet" TimeOut="60" />
+      <Setting Key="NAP_Set_WaitingSel_DBSID02" SpName="NAP_Set_WaitingSel" DbName="DBSID02.bodb02.bodbAdminNet" TimeOut="60" />
     </Function>
 
     <Function Name="NAP_Set_AutoPayout_MatchSel">
-      <Setting Key="NAP_Set_AutoPayout_MatchSel_DBTXN" SpName="NAP_Set_AutoPayout_MatchSel" DbName="DBTXN.bodb02.bodbAdminNet" TimeOut="20" />
-      <Setting Key="NAP_Set_AutoPayout_MatchSel_DBSID01" SpName="NAP_Set_AutoPayout_MatchSel" DbName="DBSID01.bodb02.bodbAdminNet" TimeOut="20" />
-      <Setting Key="NAP_Set_AutoPayout_MatchSel_DBSID02" SpName="NAP_Set_AutoPayout_MatchSel" DbName="DBSID02.bodb02.bodbAdminNet" TimeOut="20" />
+      <Setting Key="NAP_Set_AutoPayout_MatchSel_DBTXN" SpName="NAP_Set_AutoPayout_MatchSel" DbName="DBTXN.bodb02.bodbAdminNet" TimeOut="120" />
+      <Setting Key="NAP_Set_AutoPayout_MatchSel_DBSID01" SpName="NAP_Set_AutoPayout_MatchSel" DbName="DBSID01.bodb02.bodbAdminNet" TimeOut="120" />
+      <Setting Key="NAP_Set_AutoPayout_MatchSel_DBSID02" SpName="NAP_Set_AutoPayout_MatchSel" DbName="DBSID02.bodb02.bodbAdminNet" TimeOut="120" />
     </Function>
 
     <Function Name="NAP_Set_AutoPayout_WaitingSel">
-      <Setting Key="NAP_Set_AutoPayout_WaitingSel_DBTXN" SpName="NAP_Set_AutoPayout_WaitingSel" DbName="DBTXN.bodb02.bodbAdminNet" TimeOut="20" />
-      <Setting Key="NAP_Set_AutoPayout_WaitingSel_DBSID01" SpName="NAP_Set_AutoPayout_WaitingSel" DbName="DBSID01.bodb02.bodbAdminNet" TimeOut="20" />
-      <Setting Key="NAP_Set_AutoPayout_WaitingSel_DBSID02" SpName="NAP_Set_AutoPayout_WaitingSel" DbName="DBSID02.bodb02.bodbAdminNet" TimeOut="20" />
+      <Setting Key="NAP_Set_AutoPayout_WaitingSel_DBTXN" SpName="NAP_Set_AutoPayout_WaitingSel" DbName="DBTXN.bodb02.bodbAdminNet" TimeOut="60" />
+      <Setting Key="NAP_Set_AutoPayout_WaitingSel_DBSID01" SpName="NAP_Set_AutoPayout_WaitingSel" DbName="DBSID01.bodb02.bodbAdminNet" TimeOut="60" />
+      <Setting Key="NAP_Set_AutoPayout_WaitingSel_DBSID02" SpName="NAP_Set_AutoPayout_WaitingSel" DbName="DBSID02.bodb02.bodbAdminNet" TimeOut="60" />
     </Function>
 
     <Function Name="NAP_Admin_Settlement_Auto_1s_Push">
