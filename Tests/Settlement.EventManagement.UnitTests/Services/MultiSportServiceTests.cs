@@ -3,23 +3,23 @@ using AutoMapper.Configuration;
 using Fanex.Caching;
 using Fanex.Data.Repository;
 using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
 using NSubstitute;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.EventManagement.Criteria;
 using Settlement.EventManagement.Models;
+using Settlement.EventManagement.Models.MultiSports;
 using Settlement.EventManagement.Requests;
-using Settlement.EventManagement.Services;
+using Settlement.EventManagement.Services.MultiSports;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
-using Match = Settlement.EventManagement.Models.Match;
+using Match = Settlement.EventManagement.Models.MultiSports.Match;
 
-namespace Settlement.EventManagement.UnitTests.Services
+namespace Settlement.EventManagement.UnitTests.Services.MultiSports
 {
     public class MultiSportServiceTests
     {
@@ -36,7 +36,6 @@ namespace Settlement.EventManagement.UnitTests.Services
         private readonly PermissionService permissionService;
 
         private readonly IMapper mapper;
-
 
         public MultiSportServiceTests()
         {

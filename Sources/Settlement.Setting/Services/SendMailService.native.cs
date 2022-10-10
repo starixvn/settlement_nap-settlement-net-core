@@ -1,11 +1,11 @@
-﻿using System.IO;
-using Fanex.MailDeliver.Model;
+﻿using Fanex.MailDeliver.Model;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using RazorEngine;
 using RazorEngine.Templating;
 using Settlement.Core.Constants;
 using Settlement.Setting.Models.Notification;
+using System.IO;
 
 namespace Settlement.Setting.Services
 {
@@ -46,7 +46,6 @@ namespace Settlement.Setting.Services
         private static string Subject(NotificationModel item)
         {
             return $"Settlement issue - [{item.Action}] - [{item.MatchCode}/{item.MatchId}] {item.HomeName} - {item.AwayName}";
-
         }
 
         private string MailTo(int sportType)
@@ -62,9 +61,21 @@ namespace Settlement.Setting.Services
         private string MailBody(NotificationModel item)
         {
             var filePath = environment.WebRootPath;
-            var pathWithFolderName = item.SportType == SportType.BasketBall ? $"{Path.Combine(filePath, "email-templates")}{Path.DirectorySeparatorChar}void-bet-email.html" :
-                $"{Path.Combine(filePath, "email-templates")}{Path.DirectorySeparatorChar}notification-error.html";
-            return Engine.Razor.RunCompile(File.ReadAllText(pathWithFolderName), "Alert Template", model: item);
+            string templateKey;
+            string template;
+
+            if (item.SportType == SportType.BasketBall)
+            {
+                templateKey = "void-bet-key";
+                template = $"{Path.Combine(filePath, "email-templates")}{Path.DirectorySeparatorChar}void-bet-email.html";
+            }
+            else
+            {
+                templateKey = "notification-key";
+                template = $"{Path.Combine(filePath, "email-templates")}{Path.DirectorySeparatorChar}notification-error.html";
+            }
+
+            return Engine.Razor.RunCompile(File.ReadAllText(template), templateKey, null, item);
         }
     }
 }
