@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
 using Fanex.Data.Repository;
+using Fanex.Settlement.ScaleOut.Constants;
+using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
+using Microsoft.Extensions.Options;
 using Settlement.Core.Models;
 using Settlement.FastMarkets.Constants;
 using Settlement.FastMarkets.Criteria;
@@ -9,9 +12,6 @@ using Settlement.FastMarkets.Requests;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Fanex.Settlement.ScaleOut.Constants;
-using Microsoft.Extensions.Options;
-using Fanex.Settlement.ScaleOut.Request;
 
 namespace Settlement.FastMarkets.Services
 {
@@ -125,7 +125,7 @@ namespace Settlement.FastMarkets.Services
         {
             var criteria = await createQueryService.QuerySettle(request);
 
-            var validationRequest = mapper.Map<SettleRequest, EventTicketFastMarketRequest>(request);
+            var validationRequest = mapper.Map<PushFastMarketResultCriteria, EventTicketFastMarketRequest>(criteria);
 
             var validationResult = await scaleOutSettleService.ValidateEventAndTicketFastMarket(validationRequest);
             if (validationResult.ErrorCode > 0)
