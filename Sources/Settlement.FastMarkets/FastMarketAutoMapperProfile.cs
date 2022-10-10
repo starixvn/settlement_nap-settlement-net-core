@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Fanex.Settlement.ScaleOut.Request;
-using Settlement.Core.Criteria;
 using Settlement.FastMarkets.Criteria;
 using Settlement.FastMarkets.Requests;
 
@@ -15,7 +14,7 @@ namespace Settlement.FastMarkets
             CreateMap<UpdateWaterBreakSettingRequest, WriteLogUpdateWaterBreakCriteria>()
                 .ForMember(dest => dest.UserId, map => map.MapFrom(src => src.AdminId));
             CreateMap<GetTimeMachineResultRequest, GetTimeMachineResultCriteria>();
-            CreateMap<SettleRequest, EventTicketFastMarketRequest>();
+            CreateMap<PushFastMarketResultCriteria, EventTicketFastMarketRequest>();
         }
     }
 }
