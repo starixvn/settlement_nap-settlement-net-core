@@ -9,6 +9,7 @@
     public type: string;
     public countChilds: number;
     public isShow: boolean;
+    public includeSearchText = true;
 
     constructor(
         id: number,

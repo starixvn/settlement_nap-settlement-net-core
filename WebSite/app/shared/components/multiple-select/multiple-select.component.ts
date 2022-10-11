@@ -27,6 +27,9 @@ export class NewMultipleSelectComponent implements OnChanges, AfterViewInit {
   onlyCallWithSecondTime = 0;
   element: Element;
   isOpened = false;
+  searchText = "";
+  itemAfterFilter: ItemsSelect[];
+  notExistItemIncludeSearchText = false;
   @ViewChild('allSelected') allSelected: MatOption;
   @ViewChild('dropdown') dropdown: MatSelect;
   @ViewChildren('panel') panel: QueryList<MatExpansionPanel>;
@@ -40,6 +43,7 @@ export class NewMultipleSelectComponent implements OnChanges, AfterViewInit {
     if (changes.multipleSelect) {
       this.dataChanged = changes.multipleSelect.currentValue;
       this.items = this.dataChanged.items;
+      this.itemAfterFilter = _.cloneDeep(this.items);
       this.onlyCallWithSecondTime = 0;
       this.createGroupType();
       this.initSelected();
@@ -57,13 +61,17 @@ export class NewMultipleSelectComponent implements OnChanges, AfterViewInit {
 
   public clickOutside() {
     document.body.addEventListener('click', (event) => {
-      const ignoreClickOnMeElement = document.getElementsByClassName("cdk-overlay-pane")[0];
-      if (ignoreClickOnMeElement == null || !this.isOpened) {
+      const ignoreClickOnMyElement = document.getElementsByClassName("cdk-overlay-pane")[0];
+      if (!this.isOpened || ignoreClickOnMyElement == null) {
         return;
       }
-      const isClickOutSideElement = !ignoreClickOnMeElement.contains(event.target as Element)
+
+      const isClickOutSideElement = !ignoreClickOnMyElement.contains(event.target as Element)
         && !this.element.contains(event.target as Element);
       if (isClickOutSideElement) {
+        this.searchText = "";
+        this.search();
+        this.changeStatus();
         this.dropdown.close();
       }
     }, false);
@@ -81,13 +89,13 @@ export class NewMultipleSelectComponent implements OnChanges, AfterViewInit {
 
   public togglePerOneInType(groupName: string, itemSelect: ItemsSelect) {
     this.togglePerOne(itemSelect);
-    const first = this.groups.find(item => item.name === groupName);
-    if (first.selected) {
-      first.selected = !first.selected;
+    const group = this.groups.find(item => item.name === groupName);
+    if (group.selected) {
+      group.selected = !group.selected;
     } else {
       const countChilds = this.valueSelected.filter(item => item.type === groupName).map(item => item);
-      if (first.countChilds === countChilds.length) {
-        first.selected = !first.selected;
+      if (group.countChilds === countChilds.length) {
+        group.selected = !group.selected;
       }
     }
   }
@@ -149,6 +157,10 @@ export class NewMultipleSelectComponent implements OnChanges, AfterViewInit {
     this.formControl.setValue(this.valueSelected);
     this.formValue.emit(this.formControl.value);
 
+    if (!_.isEmpty(this.searchText)) {
+      this.status = "";
+      return;
+    }
     if (this.items.length === 0) {
       this.status = this.multipleSelect.noData;
       return;
@@ -169,7 +181,7 @@ export class NewMultipleSelectComponent implements OnChanges, AfterViewInit {
   }
 
   public checkAllOption() {
-    if (this.formControl.value.length === this.items.length && !this.multipleSelect.disableAllCheck) {
+    if (this.formControl.value.length === this.items.length && !this.multipleSelect.disableCheckAll) {
       this.allSelected.select();
       this.cd.detectChanges();
     }
@@ -195,11 +207,28 @@ export class NewMultipleSelectComponent implements OnChanges, AfterViewInit {
     }
   }
 
-  public scrollTop(){
+  public scrollTop() {
     const top = document.getElementsByName('top');
     if (top !== null) {
       _.forEach(top, item => item.scrollIntoView());
     }
+  }
+
+  public hasSearchText(){
+    return this.multipleSelect.enableSearchBox && !_.isEmpty(this.searchText);
+  }
+
+  public search() {
+    if (this.hasSearchText()) {
+      this.status = "";
+    }
+    this.multipleSelect.items.forEach(item => item.includeSearchText = this.includeSearchText(item));
+    this.notExistItemIncludeSearchText = _.isUndefined(this.multipleSelect.items.find(item => item.includeSearchText));
+  }
+
+  private includeSearchText(item: ItemsSelect) {
+    var includeSearchText = this.hasSearchText() ? _.includes(item.text.toLowerCase(), this.searchText.toLowerCase()) : true;
+    return includeSearchText;
   }
 }
 

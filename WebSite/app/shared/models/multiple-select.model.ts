@@ -17,7 +17,8 @@ export class MultipleSelect {
     public showHeader: boolean = DefaultSetting.SHOW_HEADER;
     public items: ItemsSelect[] = [];
     public haveGroup: boolean;
-    public disableAllCheck: boolean;
+    public disableCheckAll: boolean;
+    public enableSearchBox: boolean;
 
     public getValueItems() {
         let value = '';
