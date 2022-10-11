@@ -207,6 +207,7 @@ export class FilterComponent implements OnInit {
         this.leagueSelect.maxWidth = '450px';
         this.leagueSelect.isCheckAll = true;
         this.leagueSelect.haveGroup = true;
+        this.leagueSelect.enableSearchBox = true;
     }
 
     private async updateLeagues() {

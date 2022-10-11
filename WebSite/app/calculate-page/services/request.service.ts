@@ -44,17 +44,17 @@ export class RequestService {
     return this.httpRequestService.postJson(query, `${this.settingApi}/get-remark-info`);
   }
 
-  private getNewestMatches(leagueId: string, isAutoCalculatePage: boolean) {
+  private getNewestMatches(leagueIds: string, isAutoCalculatePage: boolean) {
     const query = {
-      leagueId,
+      leagueIds,
       isAutoCalculatePage
     };
     const url = `${this.calculationApi}/auto-refresh`;
     return this.httpRequestService.postJson(query, url, false);
   }
 
-  public refreshMatches(leagueId: string, currentLeagues: League[], isAutoCalculatePage = false) {
-    this.getNewestMatches(leagueId, isAutoCalculatePage).subscribe((matchesWaiting: CalculationMatch[]) => {
+  public refreshMatches(leagueIds: string, currentLeagues: League[], isAutoCalculatePage = false) {
+    this.getNewestMatches(leagueIds, isAutoCalculatePage).subscribe((matchesWaiting: CalculationMatch[]) => {
       this.changeInfoAfterRefreshMatches(currentLeagues, matchesWaiting, isAutoCalculatePage);
     });
   }

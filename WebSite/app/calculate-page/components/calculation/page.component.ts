@@ -1,5 +1,5 @@
-import { Component, ElementRef} from '@angular/core';
-import {  ReCheckInService } from '../../../shared/services';
+import { Component, ElementRef } from '@angular/core';
+import { ReCheckInService } from '../../../shared/services';
 import { PageBaseComponent } from '../base-component';
 
 @Component({
@@ -10,7 +10,12 @@ import { PageBaseComponent } from '../base-component';
   ],
 })
 export class PageComponent extends PageBaseComponent {
+  public disableRefund: boolean;
   constructor(protected reCheckInService: ReCheckInService,
     protected elementRef: ElementRef<HTMLElement>,
-    ) {super(reCheckInService, elementRef); }
+  ) { super(reCheckInService, elementRef); }
+
+    public getInfoDisableRefund(event) {
+      this.disableRefund = event;
+    }
 }

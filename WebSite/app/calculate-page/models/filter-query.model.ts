@@ -8,7 +8,7 @@ export class FilterQuery {
     fromDate: string;
     toDate: string;
     matchCode: string;
-    leagueId: string;
+    leagueIds: string;
     statusId: number;
     sportType = 1;;
     isUnCalculate: boolean;
@@ -16,4 +16,5 @@ export class FilterQuery {
     isHtOverOnly: boolean;
     isOverOnly: boolean;
     autoSetting: string;
+    matchType: number;
 }

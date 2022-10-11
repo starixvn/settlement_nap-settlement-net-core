@@ -1,8 +1,6 @@
 import { Component, ComponentFactory, ComponentFactoryResolver, ComponentRef, ElementRef, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
-import { BackGroundService, DetectChangesService, HandleActionsService, PopupService, RequestService } from '../services';
+import { BackGroundService, DetectChangesService, GenerateFilterService, HandleActionsService, PopupService, RequestService } from '../services';
 import { BlockUIService, DialogBoxService, HttpRequestService, MessageBoxService, ReCheckInService, VerifyDateService } from '../../shared/services';
-import { interval } from 'rxjs';
-import { FilterQuery, Calculation } from '../models';
 import { PageComponent } from './calculation';
 import * as _ from 'lodash';
 import { AutoCalculatePageComponent, AutoCalculateService } from './auto-calculation';
@@ -23,7 +21,8 @@ import { PageBaseComponent } from './base-component';
     HandleActionsService,
     BackGroundService,
     DetectChangesService,
-    AutoCalculateService
+    AutoCalculateService,
+    GenerateFilterService
   ],
 })
 export class AppComponent implements OnInit {

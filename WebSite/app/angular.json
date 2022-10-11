@@ -1712,7 +1712,7 @@
       }
     }
   },
-  "defaultProject": "bet-builder",
+  "defaultProject": "calculate-page",
   "schematics": {
     "@schematics/angular:component": {
       "inlineTemplate": false,

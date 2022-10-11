@@ -60,4 +60,5 @@ export class Match {
      public isNotConsistentExHtScore: boolean;
      public confirmFullTimeScore: string;
      public confirmHalfTimeScore: string;
+     public offerLive: boolean;
 }

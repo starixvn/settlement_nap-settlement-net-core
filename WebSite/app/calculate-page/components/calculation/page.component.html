@@ -1,2 +1,2 @@
-<filter (searchAction)="search($event)"></filter>
-<matches *ngIf="calculation"[calculation]="calculation" [filterQuery]="filterQuery" ></matches>
+<filter (searchAction)="search($event)" (disableRefund)="getInfoDisableRefund($event)"></filter>
+<matches *ngIf="calculation"[calculation]="calculation" [filterQuery]="filterQuery" [disableRefund]="disableRefund" ></matches>

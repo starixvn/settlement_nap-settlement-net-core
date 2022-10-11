@@ -1,13 +1,13 @@
-﻿using System.Collections.Generic;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using NSubstitute;
-using Settlement.Sportsbook.Soccer.Controllers;
-using System.Threading.Tasks;
-using Xunit;
 using Settlement.Core.Models;
+using Settlement.Sportsbook.Soccer.Controllers;
 using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Requests;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Xunit;
 using Match = Settlement.Sportsbook.Soccer.Models.Match;
 using MatchDetail = Settlement.Sportsbook.Soccer.Models.MatchDetail;
 
@@ -33,7 +33,7 @@ namespace Settlement.Sportsbook.Soccer.UnitTests.Controllers
 
             var actual = await controller.GetMatchEarly(request) as OkObjectResult;
 
-            Assert.IsType<Match>(actual.Value);
+            Assert.IsType<MatchEarly>(actual.Value);
             Assert.Equal(200, actual.StatusCode);
         }
 

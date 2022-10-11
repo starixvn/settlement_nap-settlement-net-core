@@ -108,7 +108,7 @@ export class EarlyConstraintService extends EarlyBaseService {
 
     private createMultipleResultSelect() {
         const multipleResultSelect = new MultipleSelect();
-        multipleResultSelect.disableAllCheck = true;
+        multipleResultSelect.disableCheckAll = true;
 
         return multipleResultSelect;
     }

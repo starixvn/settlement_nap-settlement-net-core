@@ -49,7 +49,7 @@ export class AutoCalculateMatchesComponent extends MatchesBaseComponent implemen
   private refreshMatches() {
     this.subscriber = this.intervalTimer.subscribe(() => {
       if (this.leagues.length > 0) {
-        this.requestService.refreshMatches(this.filterQuery.leagueId, this.leagues, true);
+        this.requestService.refreshMatches(this.filterQuery.leagueIds, this.leagues, true);
       }
     });
   }

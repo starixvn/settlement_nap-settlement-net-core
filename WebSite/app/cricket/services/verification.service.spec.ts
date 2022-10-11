@@ -108,11 +108,11 @@ describe('E-Sports - VerificationService', () => {
             resultDetail.inputType = 6;
             const externalResult = new ExternalResultDetail(100, '12345', '');
             externalResult.multipleResultSelect = new MultipleSelect();
-            externalResult.multipleResultSelect.disableAllCheck = true;
+            externalResult.multipleResultSelect.disableCheckAll = true;
 
             service.autoFillItemSelect(resultDetail, externalResult);
 
-            expect(resultDetail.multipleResultSelect.disableAllCheck).toBe(true);
+            expect(resultDetail.multipleResultSelect.disableCheckAll).toBe(true);
         });
 
         it('should uncheck all items', () => {

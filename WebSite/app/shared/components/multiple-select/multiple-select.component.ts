@@ -29,6 +29,7 @@ export class NewMultipleSelectComponent implements OnChanges, AfterViewInit {
   isOpened = false;
   searchText = "";
   itemAfterFilter: ItemsSelect[];
+  searchTextEmpty = true;
   notExistItemIncludeSearchText = false;
   @ViewChild('allSelected') allSelected: MatOption;
   @ViewChild('dropdown') dropdown: MatSelect;
@@ -77,7 +78,7 @@ export class NewMultipleSelectComponent implements OnChanges, AfterViewInit {
     }, false);
   }
 
-  public togglePerOne(item: ItemsSelect) {
+  public selectPerOne(item: ItemsSelect) {
     if (this.allSelected.selected) {
       this.allSelected.deselect();
     }
@@ -87,8 +88,8 @@ export class NewMultipleSelectComponent implements OnChanges, AfterViewInit {
     this.checkAllOption();
   }
 
-  public togglePerOneInType(groupName: string, itemSelect: ItemsSelect) {
-    this.togglePerOne(itemSelect);
+  public selectOneInGroup(groupName: string, itemSelect: ItemsSelect) {
+    this.selectPerOne(itemSelect);
     const group = this.groups.find(item => item.name === groupName);
     if (group.selected) {
       group.selected = !group.selected;
@@ -100,7 +101,7 @@ export class NewMultipleSelectComponent implements OnChanges, AfterViewInit {
     }
   }
 
-  public toggleAllSelection() {
+  public selectAllSelection() {
     if (this.allSelected.selected) {
       this.valueSelected = this.items;
       this.groups.forEach(item => item.selected = true);
@@ -118,7 +119,7 @@ export class NewMultipleSelectComponent implements OnChanges, AfterViewInit {
     this.changeStatus();
   }
 
-  public toggleGroupParent($event, groupName: string, selected: boolean) {
+  public selectGroupParent($event, groupName: string, selected: boolean) {
     const allItemsInGroup = this.items.filter(item => item.type === groupName).map(item => item);
     if (!selected) {
       allItemsInGroup.forEach(item => {
@@ -214,21 +215,24 @@ export class NewMultipleSelectComponent implements OnChanges, AfterViewInit {
     }
   }
 
-  public hasSearchText(){
+  public hasSearchText() {
     return this.multipleSelect.enableSearchBox && !_.isEmpty(this.searchText);
   }
 
   public search() {
     if (this.hasSearchText()) {
       this.status = "";
+      this.searchTextEmpty = false;
+    } else {
+      this.changeStatus();
+      this.searchTextEmpty = true;
     }
     this.multipleSelect.items.forEach(item => item.includeSearchText = this.includeSearchText(item));
     this.notExistItemIncludeSearchText = _.isUndefined(this.multipleSelect.items.find(item => item.includeSearchText));
   }
 
   private includeSearchText(item: ItemsSelect) {
-    var includeSearchText = this.hasSearchText() ? _.includes(item.text.toLowerCase(), this.searchText.toLowerCase()) : true;
-    return includeSearchText;
+    return this.hasSearchText() ? _.includes(item.text.toLowerCase(), this.searchText.toLowerCase()) : true;
   }
 }
 

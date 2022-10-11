@@ -9,7 +9,7 @@ import { Language } from '../../language';
     template: "",
 })
 export class FilterBaseComponent {
-    private readonly warningDialogMessage: ModalDialogMessage = new ModalDialogMessage();
+    public readonly warningDialogMessage: ModalDialogMessage = new ModalDialogMessage();
     public fromDate: NgbDateStruct;
     public toDate: NgbDateStruct;
     public isDisabled = false;

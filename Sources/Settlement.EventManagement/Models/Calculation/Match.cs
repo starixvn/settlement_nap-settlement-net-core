@@ -1,6 +1,5 @@
 ﻿using Kaden.Extensions;
 using Settlement.Core.Models;
-using Settlement.Core.Services;
 using System;
 using System.Collections.Generic;
 
@@ -53,6 +52,8 @@ namespace Settlement.EventManagement.Models.Calculation
         }
 
         public GoalIcon GoalIcon { get; set; } = new GoalIcon();
+
+        public bool OfferLive { get; set; }
 
         #region InstantCalculate
 
@@ -113,7 +114,7 @@ namespace Settlement.EventManagement.Models.Calculation
 
         private string TypeName => InstantCalculationType == Core.Constants.InstantCalculationType.CalcHt ? "HT" : "FT";
 
-        private string ConfirmScore => $"{ InstantHomeScore }-{ InstantAwayScore} ({ TypeName})";
+        private string ConfirmScore => $"{InstantHomeScore}-{InstantAwayScore} ({TypeName})";
 
         private bool RemarkSetting => !Remark.IsUndecided && !Remark.IsPending && !Remark.IsMtdHold && !Remark.IsKeyHold;
 

@@ -255,5 +255,6 @@ export const Language = {
         titlePopup: "Match Auto Payout Setting",
         titlePopupForLeague: "League Auto Payout Setting",
         titleDirectTime:"Click to change waiting-time setting of Direct Settlement",
-    }
+    },
+    calculatePageWarning: "Please input Match Code/ID, select at least 1 League, Match Type, or Over Status.",
 };
