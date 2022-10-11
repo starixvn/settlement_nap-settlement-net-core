@@ -100,7 +100,7 @@
     <PackageReference Include="Fanex.Data.SqlServer" Version="4.2.2" />
     <PackageReference Include="Fanex.Logging.Extensions.AspNetCore" Version="1.0.1-beta1" />
     <PackageReference Include="Fanex.Logging.Extensions.Database" Version="1.0.8" />
-    <PackageReference Include="Fanex.Logging.Sentry" Version="1.0.6" />
+    <PackageReference Include="Fanex.Logging.Sentry.RavenClient" Version="1.0.1" />
     <PackageReference Include="Fanex.MailDeliver.MailClient" Version="2.0.7" />
     <PackageReference Include="Fanex.NAP.Client.AspNetCore" Version="2.0.0.1" />
 		<PackageReference Include="Fanex.NAP.Signin.AspNetCore" Version="2.0.0.4" />

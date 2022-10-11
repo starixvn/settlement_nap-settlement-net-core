@@ -7,7 +7,7 @@ using Fanex.Logging;
 using Fanex.Logging.Extensions;
 using Fanex.Logging.Extensions.AspNetCore;
 using Fanex.Logging.Extensions.Database;
-using Fanex.Logging.Sentry;
+using Fanex.Logging.Sentry.RavenClient;
 using Fanex.MailDeliver.MailClient;
 using Fanex.NAP.Client.AspNetCore.Configuration;
 using Fanex.NAP.Client.AspNetCore.Session;
@@ -29,7 +29,6 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Sentry;
 using Settlement.Core.Services;
 using Settlement.EventManagement;
 using Settlement.FastMarkets;
@@ -43,6 +42,7 @@ using Settlement.Sportsbook.Soccer;
 using Settlement.ThirdPartyProducts;
 using Settlement.WebSites.App_Start;
 using Settlement.WebSites.Configurations;
+using SharpRaven;
 using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
@@ -99,10 +99,7 @@ namespace Settlement.WebSites
                         builder.WithOrigins("http://localhost:5001",
                                             "https://localhost:44346",
                                             "http://localhost:55201",
-                                            "http://localhost:58793",
-
-                                            "https://settlement.oneops.net",
-                                            "https://settlementcore.oneops.net")
+                                            "http://localhost:58793")
                               .AllowAnyMethod()
                               .AllowAnyHeader()
                               .AllowCredentials();
@@ -155,7 +152,6 @@ namespace Settlement.WebSites
 
         private void ConfigureNapServices(IServiceCollection services)
         {
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddTransient<ILogger, Logger>();
             services.AddSingleton<INapSettings>(new NapSettings(Configuration));
             services.AddSingleton<INapSession, NapSession>();
@@ -258,8 +254,7 @@ namespace Settlement.WebSites
 
         private void OnebookUM(IServiceCollection services)
         {
-            OnebookUMInitializer.RegisterServiceCollection(services, Configuration);
-            OnebookUMInitializer.InitializeUmClientManager();
+            services.RegisterServiceCollection(Configuration);
         }
 
         private static void ConfigureMessagePack(IServiceCollection services)

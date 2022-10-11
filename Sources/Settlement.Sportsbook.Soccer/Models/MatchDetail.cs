@@ -13,6 +13,10 @@ namespace Settlement.Sportsbook.Soccer.Models
         private const int MarkedRefundAllPosition = 5;
         private string goalRecord = string.Empty;
 
+        public int MatchId { get; set; }
+
+        public string MatchCode { get; set; }
+
         [JsonIgnore]
         public IRefDataService RefDataService { get; set; }
 
@@ -38,15 +42,11 @@ namespace Settlement.Sportsbook.Soccer.Models
 
         public string SportName => RefDataService.GetSportName(SportType);
 
-        public string MatchCode { get; set; }
-
         public DateTime KickOffTime { get; set; }
 
         public string EventStatus { get; set; }
 
         public bool IsHtOnly { get; set; }
-
-        public int MatchId { get; set; }
 
         public bool IsExistFgLg { get; set; }
 

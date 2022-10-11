@@ -15,15 +15,16 @@ namespace Settlement.Core.ActionFilters
             var httpContext = context.HttpContext;
             var request = httpContext.Request;
             var stringBuilder = new StringBuilder();
-            stringBuilder.AppendLine($"Url: {request.GetDisplayUrl()}");
-            stringBuilder.AppendLine($"UserAgent: {request.Headers["User-Agent"]}");
-            stringBuilder.AppendLine($"Username: {httpContext.User.Identity?.Name}");
             if (context.Result != null)
             {
                 var objectResult = context.Result as OkObjectResult;
                 var result = JsonConvert.SerializeObject(objectResult?.Value);
-                stringBuilder.AppendLine($"Get data: {result}");
+                stringBuilder.AppendLine($"Url ({request.GetDisplayUrl()}) get: {result}");
             }
+
+            stringBuilder.AppendLine($"UserAgent: {request.Headers["User-Agent"]}");
+            stringBuilder.AppendLine($"Username: {httpContext.User.Identity?.Name}");
+
             await logger.InfoAsync(stringBuilder.ToString());
 
             base.OnActionExecuted(context);

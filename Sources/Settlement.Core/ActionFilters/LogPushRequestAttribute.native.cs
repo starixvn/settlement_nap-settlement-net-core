@@ -17,9 +17,8 @@ namespace Settlement.Core.ActionFilters
             var request = httpContext.Request;
 
             var stringBuilder = new StringBuilder();
-            stringBuilder.AppendLine($"Url: {request.GetDisplayUrl()}");
+            stringBuilder.AppendLine($"Url ({request.GetDisplayUrl()}) push: {serialString}");
             stringBuilder.AppendLine($"Username: {httpContext.User.Identity?.Name}");
-            stringBuilder.AppendLine($"Push data: {serialString}");
 
             await logger.InfoAsync(stringBuilder.ToString());
 
