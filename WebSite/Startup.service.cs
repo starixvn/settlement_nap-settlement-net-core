@@ -99,10 +99,7 @@ namespace Settlement.WebSites
                         builder.WithOrigins("http://localhost:5001",
                                             "https://localhost:44346",
                                             "http://localhost:55201",
-                                            "http://localhost:58793",
-
-                                            "https://settlement.oneops.net",
-                                            "https://settlementcore.oneops.net")
+                                            "http://localhost:58793")
                               .AllowAnyMethod()
                               .AllowAnyHeader()
                               .AllowCredentials();
@@ -155,7 +152,6 @@ namespace Settlement.WebSites
 
         private void ConfigureNapServices(IServiceCollection services)
         {
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddTransient<ILogger, Logger>();
             services.AddSingleton<INapSettings>(new NapSettings(Configuration));
             services.AddSingleton<INapSession, NapSession>();
@@ -258,8 +254,7 @@ namespace Settlement.WebSites
 
         private void OnebookUM(IServiceCollection services)
         {
-            OnebookUMInitializer.RegisterServiceCollection(services, Configuration);
-            OnebookUMInitializer.InitializeUmClientManager();
+            services.RegisterServiceCollection(Configuration);
         }
 
         private static void ConfigureMessagePack(IServiceCollection services)
