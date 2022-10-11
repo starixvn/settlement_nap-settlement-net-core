@@ -8,7 +8,7 @@ using NSubstitute;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.EventManagement.Criteria;
-using Settlement.EventManagement.Models.MultiSports;
+using Settlement.EventManagement.Requests;
 using Settlement.EventManagement.Services.MultiSports;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -60,96 +60,111 @@ namespace Settlement.EventManagement.UnitTests.Services.MultiSports
             service = new MultiSportServiceImp(repository, matchService, mapper, cacheService, permissionService, accessor, option);
         }
 
-        //[Fact]
-        //public async Task GetWaitingMatches_ExistMatchesOnCache_ReturnNotNullWhenHaveMatchInCache()
-        //{
-        //    // Arrange
-        //    var request = new RefreshMultiSportRequest();
-        //    var data = new List<Match>
-        //    {
-        //        new Match()
-        //    };
-        //    cacheService.Get<List<Match>>(Arg.Any<string>()).Returns(data);
-
-        //    // Act
-        //    var matches = await service.GetWaitingMatches(request);
-
-        //    // Assert
-        //    Assert.NotNull(matches);
-        //}
-
-        //[Fact]
-        //public async Task GetWaitingMatches_NotExistMatchesOnCache_ReturnQuerriedMatches()
-        //{
-        //    var match = new Match();
-        //    match.MatchId = 700000;
-        //    match.SportType = 2;
-        //    var resultDetail = new ResultDetail();
-        //    resultDetail.MatchId = 700000;
-        //    resultDetail.ResourceId = "01";
-        //    var fakeData = new ValueTuple<IEnumerable<Match>, IEnumerable<ResultDetail>>();
-        //    fakeData.Item1 = new List<Match> { match };
-        //    fakeData.Item2 = new List<ResultDetail> { resultDetail };
-        //    repository.FetchMultipleAsync<Match, ResultDetail>(Arg.Any<ICriteria>()).Returns(fakeData);
-        //    refDataService.GetLeagueName(Arg.Any<string>()).Returns(string.Empty);
-        //    matchService.GetScoreForMatchBySportType(Arg.Any<List<Match>>(), Arg.Any<List<ResultDetail>>(), Arg.Any<int>()).Returns(new List<Match> { match });
-
-        //    var waitingMatches = await service.GetWaitingMatches(new RefreshMultiSportRequest());
-
-        //    Assert.NotNull(waitingMatches);
-        //}
-
-        private Match CreateMatch(int matchId, bool isMarkedTicket, int leagueId = 1)
+        [Fact]
+        public async Task GetWaitingMatches_ExistMatchesOnCache_ReturnNotNullWhenHaveMatchInCache()
         {
-            return new Match
+            // Arrange
+            var request = new RefreshMultiSportRequest();
+            var data = new List<Match>
             {
-                MatchId = matchId,
-                SportType = 2,
-                IsExistMarkedTicket = isMarkedTicket,
-                LeagueId = leagueId,
-                RefDataService = refDataService,
+                new Match()
             };
-        }
+            cacheService.Get<List<Match>>(Arg.Any<string>()).Returns(data);
 
-        private MultiSportMatch CreateMultiSportMatch(int matchId, bool isMarkedTicket, int leagueId = 1)
-        {
-            var match = new Match
-            {
-                MatchId = matchId,
-                SportType = 2,
-                IsExistMarkedTicket = isMarkedTicket,
-                RefDataService = refDataService,
-                LeagueId = leagueId,
-            };
-            return mapper.Map<Match, MultiSportMatch>(match);
+            // Act
+            var matches = await service.GetWaitingMatches(request);
+
+            // Assert
+            Assert.NotNull(matches);
         }
 
         [Fact]
-        public async Task GetSportBook_Always_ReturnMatchInfoFromMultiSide()
+        public async Task GetWaitingMatches_NotExistMatchesOnCache_ReturnQuerriedMatches()
         {
-            var fakeMatches = new List<Match>
+            var match = new Match
             {
-                CreateMatch(1, false)
+                MatchId = 700000,
+                SportType = 2
             };
-
-            var fakeMatchesSite = new List<Match>
+            var resultDetail = new ResultDetail
             {
-                CreateMatch(1, true),
-                CreateMatch(2, false)
+                MatchId = 700000,
+                ResourceId = "01"
             };
+            var listMatch = new List<Match> { match };
+            repository.FetchAsync<Match>(Arg.Any<ICriteria>()).Returns(listMatch);
+            repository.FetchAsync<ResultDetail>(Arg.Any<ICriteria>()).Returns(new List<ResultDetail> { resultDetail });
+            refDataService.GetLeagueName(Arg.Any<string>()).Returns(string.Empty);
+            matchService.GetScoreForMatchBySportType(Arg.Any<List<Match>>(), Arg.Any<List<ResultDetail>>(), Arg.Any<int>()).Returns(new List<Match> { match });
+            matchService.MergeMatches(Arg.Any<List<Match>>(), Arg.Any<List<Match>>()).Returns(listMatch);
+            matchService.SetNewMatchInfo(Arg.Any<List<Match>>(), Arg.Any<List<ResultDetail>>()).Returns(listMatch);
+            var waitingMatches = await service.GetWaitingMatches(new RefreshMultiSportRequest());
 
-            repository.FetchAsync<Match>(Arg.Any<SportsbookCriteria>()).Returns(fakeMatches, fakeMatchesSite);
-            repository.FetchAsync<ResultDetail>(Arg.Any<GetResultDetailCriteria>()).Returns(new List<ResultDetail>());
+            Assert.NotNull(waitingMatches);
+        }
 
+        [Fact]
+        public async Task GetSportBook_Always_ReturnQuerriedMatches()
+        {
+            var match = new Match
+            {
+                MatchId = 700000,
+                SportType = 2,
+                LeagueId = 1,
+                RefDataService = refDataService
+            };
+            var listMatch = new List<Match> { match };
+            repository.FetchAsync<Match>(Arg.Any<ICriteria>()).Returns(listMatch);
+            repository.FetchAsync<ResultDetail>(Arg.Any<ICriteria>()).Returns(new List<ResultDetail>());
+            refDataService.GetLeagueName(Arg.Any<string>()).Returns(string.Empty);
+            matchService.GetScoreForMatchBySportType(Arg.Any<List<Match>>(), Arg.Any<List<ResultDetail>>(), Arg.Any<int>()).Returns(new List<Match> { match });
+            matchService.MergeMatches(Arg.Any<List<Match>>(), Arg.Any<List<Match>>()).Returns(listMatch);
+            matchService.SetNewMatchInfo(Arg.Any<List<Match>>(), Arg.Any<List<ResultDetail>>()).Returns(listMatch);
             var sportBooks = await service.GetSportBook(new FilterMultiSportRequest());
-            var actualMatches = sportBooks[0].Leagues[0].Matches;
-            var expected = new List<MultiSportMatch>
-            {
-                CreateMultiSportMatch(1, true),
-                CreateMultiSportMatch(2, false)
-            };
 
-            AssertExtension.AreEqual(expected, actualMatches);
+            var actualMatches = sportBooks[0].Leagues[0].Matches;
+
+            Assert.NotNull(actualMatches);
+        }
+
+        [Fact]
+        public async Task Calculate_ValidateFailedAndNotExistIdValid_StopAndReturnError()
+        {
+            await repository.ExecuteAsync(Arg.Do<ValidateCalculateParlayCriteria>(x =>
+            {
+                x.ErrCode = 1;
+                x.MatchIdsValid = "";
+                x.ErrMsg = "ABC";
+            }));
+
+            var actual = await service.Calculate(new CalculateParlayRequest());
+
+            Assert.Equal(1, actual.ErrCode);
+            Assert.Equal("All matches are being calculated, except following matches ABC Please contact Starix IT for further support!", actual.ErrMsg);
+            repository.DidNotReceive().Execute(Arg.Any<ParlayCriteria>());
+        }
+
+        [Fact]
+        public async Task Calculate_ValidateFailedAndExistIdsValid_SettleIdsValid()
+        {
+            await repository.ExecuteAsync(Arg.Do<ValidateCalculateParlayCriteria>(x =>
+            {
+                x.ErrCode = 1;
+                x.MatchIdsValid = "123, 456, 789";
+                x.ErrMsg = "ABC";
+            }));
+            await repository.ExecuteAsync(Arg.Do<ValidateTicketParlayCriteria>(x =>
+            {
+                x.ErrCode = 1;
+                x.ErrMsg = "ZYZ";
+                x.MatchIdsValid = "123, 456, 789";
+            }));
+
+            var actual = await service.Calculate(new CalculateParlayRequest());
+
+            Assert.Equal(1, actual.ErrCode);
+            Assert.Equal("All matches are being calculated, except following matches ABCZYZZYZ", actual.ErrMsg);
+            repository.Received(2).Execute(Arg.Any<ParlayCriteria>());
         }
     }
 }

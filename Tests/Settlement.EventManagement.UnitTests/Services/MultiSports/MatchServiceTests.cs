@@ -7,6 +7,7 @@ using Settlement.Core.Services;
 using Settlement.EventManagement.Services;
 using Settlement.EventManagement.Services.MultiSports;
 using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 using Match = Settlement.EventManagement.Models.MultiSports.Match;
 
@@ -154,11 +155,38 @@ namespace Settlement.EventManagement.UnitTests.Services.MultiSports
         }
 
         [Fact]
-        public void UpdateMatchInfo_Always_CallServiceSacleOut()
+        public void UpdateMatchInfo_Always_CallServiceScaleOut()
         {
             service.UpdateMatchInfo(new UpdateMatchInfoRequest());
 
             scaleOutSettleService.Received().UpdateMatchInfo(Arg.Any<UpdateMatchInfoRequest>());
+        }
+
+        [Fact]
+        public void SetNewMatchInfo_Always_returnMatchMerged()
+        {
+            newInfoMatchService.TicketInfo(Arg.Do<Match>(item =>
+            {
+                item.IsExistMarkedTicket = item.IsExistRunningTicket = item.IsExistMarkedTicketParlay = item.IsExistRunningTicketParlay = true;
+                item.IsCalculatingSingle = 1;
+            }));
+            newInfoMatchService.NewEventStatus(Arg.Any<Match>()).Returns("EventStatus");
+            newInfoMatchService.EventStatusColor(Arg.Any<Match>()).Returns("EventStatusColor");
+            newInfoMatchService.EarlySettlementStatus(Arg.Any<Match>()).Returns("Early");
+            newInfoMatchService.ConfirmScore(Arg.Any<List<ResultDetail>>(), ResourceType.Halftime).Returns("1");
+            newInfoMatchService.ConfirmScore(Arg.Any<List<ResultDetail>>(), ResourceType.Final).Returns("2");
+            newInfoMatchService.IsExistsConfirmedEarly(Arg.Any<Match>()).Returns(true);
+
+            var matches = service.SetNewMatchInfo(new List<Match> { new Match() }, new List<ResultDetail>());
+            var match = matches.First();
+
+            Assert.True(match.IsExistsConfirmedEarly && match.IsExistMarkedTicket && match.IsExistRunningTicket && match.IsExistMarkedTicketParlay
+                        && match.IsExistRunningTicketParlay && (match.IsCalculatingSingle == 1));
+            Assert.Equal("EventStatus", match.NewEventStatus);
+            Assert.Equal("EventStatusColor", match.EventStatusColor);
+            Assert.Equal("Early", match.EarlySettleStatus);
+            Assert.Equal("1", match.ConfirmHalfTimeScore);
+            Assert.Equal("2", match.ConfirmFullTimeScore);
         }
     }
 }
