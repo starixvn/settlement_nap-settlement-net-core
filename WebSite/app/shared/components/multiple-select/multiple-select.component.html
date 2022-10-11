@@ -10,7 +10,7 @@
             [value]="0" [hidden]="multipleSelect.disableCheckAll || searchTextNotEmpty">
             {{multipleSelect.checkAllCheckBoxText}}</mat-option>
 
-        <cdk-virtual-scroll-viewport [itemSize]="20" *ngIf="groups.length > 0 && searchTextEmpty">
+        <cdk-virtual-scroll-viewport [itemSize]="20" *ngIf="groups.length > 0" [hidden]="!searchTextEmpty">
             <div *ngFor="let group of groups">
                 <div style="cursor: pointer;" (click)="collapse(group)">
                     <mat-checkbox *ngIf="!multipleSelect.disableSelectGroup; else onlyGroupName" class="select-group"

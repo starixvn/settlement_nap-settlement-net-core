@@ -4,6 +4,8 @@ import * as _ from 'lodash';
 @Injectable()
 
 export class GenerateFilterService {
+    private readonly RunningGroup = 'All "Running" Status';
+    private readonly CompletedGroup = 'All "Completed" Status';
     popularSportType = [9, 2, 43, 5];
     constructor() {
     }
@@ -52,6 +54,19 @@ export class GenerateFilterService {
         return this.createListOption(options);
     }
 
+    public renderMatchStatusGroupSelect() {
+        const options = [
+            { id: 1, value: "1", text: "Closed", group: this.RunningGroup },
+            { id: 2, value: "2", text: "Running", group: this.RunningGroup },
+            { id: 3, value: "3", text: "Internal", group: this.RunningGroup },
+            { id: 4, value: "4", text: "Postponed", group: this.RunningGroup },
+            { id: 8, value: "8", text: "Completed", group: this.CompletedGroup },
+            { id: 9, value: "9", text: "Refund", group: this.CompletedGroup }];
+
+        return this.createGroupItems(options);
+    }
+
+
     public renderTicketStatus() {
         const selection = [
             { id: 1, value: "1", text: "Marked" },
@@ -62,11 +77,20 @@ export class GenerateFilterService {
         return this.createListOption(selection);
     }
 
+    public renderAutoPayout() {
+        const selection = [
+            { id: 1, value: "1", text: "Auto PayOut" },
+            { id: 2, value: "2", text: "OFF" }];
+
+        return this.createListOption(selection);
+    }
+
     public renderOverStatus() {
         const selection = [
-            { id: 1, value: "1", text: "Early Over Only" },
-            { id: 2, value: "2", text: "Over Only" },
-            { id: 3, value: "3", text: "Over" }];
+            { id: 1, value: "1", text: "Early Result Over" },
+            { id: 2, value: "2", text: "Main Result Over" },
+            { id: 3, value: "3", text: "Match Over" },
+            { id: 4, value: "4", text: "Settled with Running Ticket" }];
 
         return this.createListOption(selection);
     }
@@ -96,7 +120,7 @@ export class GenerateFilterService {
                 item.leagueId,
                 item.leagueId.toString(),
                 item.leagueName,
-                true,
+                false,
                 true,
                 true,
                 []);
@@ -106,6 +130,23 @@ export class GenerateFilterService {
         return tickets;
     }
 
+    public createGroupItems(items) {
+        const tickets = new Array<ItemsSelect>();
+        items.forEach((item) => {
+            const temp = new ItemsSelect(
+                item.id,
+                item.value,
+                item.text,
+                false,
+                true,
+                true,
+                []);
+                temp.type = item.group;
+            tickets.push(temp);
+        });
+
+        return tickets;
+    }
     public renderNewestLeagues(newLeague: League[], oldLeagues: ItemsSelect[]) {
         const newestLeagues = _.filter(newLeague, item => !_.some(oldLeagues, league => league.id === item.leagueId));
         if(newestLeagues.length > 0 ) {

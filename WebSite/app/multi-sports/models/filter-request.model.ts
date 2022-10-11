@@ -1,7 +1,6 @@
 export interface FilterRequest {
     fromDate: string;
     toDate: string;
-    ticketStatus: string;
     matchStatus: string;
     holdStatus: string;
     overStatus: string;
@@ -9,5 +8,5 @@ export interface FilterRequest {
     leagueIds: string;
     sportTypes: string;
     isIncludeTest: boolean;
-    autoPayout: number;
+    autoPayout: string;
 }

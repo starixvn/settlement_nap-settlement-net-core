@@ -15,7 +15,7 @@
                 </label>
                 <ngbd-date-picker [date]="toDate" (change)="onSelectToDate($event)"></ngbd-date-picker>
             </div>
-            <div class="field over-status">
+            <div class="field medium-field">
                 <label class="inner-label">
                     Over Status
                 </label>
@@ -23,12 +23,12 @@
                     <new-multiple-select (formValue)="onSelectOverStatus($event)" [multipleSelect]="overStatusSelect"></new-multiple-select>
                 </div>
             </div>
-            <div class="field medium-field">
+            <div class="field">
                 <label class="inner-label">
-                    Ticket Status
+                    Auto Payout
                 </label>
                 <div>
-                    <new-multiple-select (formValue)="onSelectTicketsStatus($event)" [multipleSelect]="ticketsStatusSelect"></new-multiple-select>
+                    <new-multiple-select (formValue)="onSelectAutoPayout($event)" [multipleSelect]="autoPayoutSelect"></new-multiple-select>
                 </div>
             </div>
             <div class="field">
@@ -75,9 +75,13 @@
                 <input id="isIncludeTest" type="checkbox" [(ngModel)]="isIncludeTestMatch">
                 <label for="isIncludeTest" class="bold">&nbsp;Include Test Matches</label>
             </div>
-            <div class="field auto-payout">
-                <input id="autoPayout" type="checkbox" [(ngModel)]="isAutoPayout">
-                <label for="autoPayout" class="bold">&nbsp;Auto Payout</label>
+            <div class="field">
+                <label class="inner-label">
+                    Match Type
+                </label>
+                <select [(ngModel)]="matchType">
+                    <option *ngFor="let item of matchTypes" [value]="item.value">{{item.text}}</option>
+                </select>
             </div>
             <div class="submit field">
                 <button class="button" (click)="search()">Submit</button>

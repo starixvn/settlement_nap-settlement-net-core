@@ -1,4 +1,4 @@
-import { DefaultValue, Resources } from '../constants';
+import { DefaultValue, MatchType, Resources } from '../constants';
 import { Component, OnInit, Output, EventEmitter } from "@angular/core";
 import { DatePipe } from "@angular/common";
 import { NgbDateStruct, NgbDateParserFormatter } from "@ng-bootstrap/ng-bootstrap";
@@ -31,19 +31,21 @@ export class FilterComponent implements OnInit {
     public toDate: NgbDateStruct;
     public sportTypesSelected: string;
     public leaguesSelected: string;
-    public ticketStatusSelected: string;
+    public autoPayoutSelected: string;
     public matchStatusSelected: string;
     public holdStatusSelected: string;
     public overStatusSelected: string;
+    public matchType = 0;
     public isIncludeTestMatch = false;
-    public isAutoPayout = false;
+    public matchTypes = MatchType;
     public sportSelect = new MultipleSelect();
     public leagueSelect = new MultipleSelect();
     public readonly holdStatusSelect = new MultipleSelect();
-    public readonly ticketsStatusSelect = new MultipleSelect();
+    public readonly autoPayoutSelect = new MultipleSelect();
     public readonly matchStatusSelect = new MultipleSelect();
     public readonly overStatusSelect = new MultipleSelect();
     public getLeagueParams: LeagueFilterRequest;
+    private readonly widthMultiSelect = "190px";
 
     constructor(
         private readonly multiSportService: MultiSportService,
@@ -67,10 +69,11 @@ export class FilterComponent implements OnInit {
     private generateFilter(){
         this.overStatusSelect.items = this.generateFilterService.renderOverStatus();
         this.holdStatusSelect.items = this.generateFilterService.renderRemarks();
-        this.matchStatusSelect.items = this.generateFilterService.renderMatchStatus();
-        this.ticketsStatusSelect.items = this.generateFilterService.renderTicketStatus();
-        this.ticketsStatusSelect.maxWidth = '190px';
-        this.sportSelect.maxWidth = '220px';
+        this.matchStatusSelect.items = this.generateFilterService.renderMatchStatusGroupSelect();
+        this.autoPayoutSelect.items = this.generateFilterService.renderAutoPayout();
+        this.overStatusSelect.maxWidth = this.widthMultiSelect;
+        this.sportSelect.maxWidth = this.widthMultiSelect;
+        this.matchStatusSelect.haveGroup = true;
     }
 
     public async search() {
@@ -79,7 +82,7 @@ export class FilterComponent implements OnInit {
         const params: FilterRequest = {
             fromDate,
             toDate,
-            ticketStatus: this.ticketStatusSelected,
+            autoPayout: this.autoPayoutSelected,
             matchStatus: this.matchStatusSelected,
             matchCode: this.matchCode,
             leagueIds: this.leaguesSelected,
@@ -87,7 +90,6 @@ export class FilterComponent implements OnInit {
             overStatus: this.overStatusSelected,
             sportTypes: this.sportTypesSelected,
             isIncludeTest: this.isIncludeTestMatch,
-            autoPayout: Number(this.isAutoPayout),
         };
         if (!this.isValidInput(this.fromDate, this.toDate)) {
             this.showWarningMessage(Resources.invalidDate);
@@ -133,8 +135,8 @@ export class FilterComponent implements OnInit {
         this.renderLeague(this.fromDate, this.toDate, this.sportTypesSelected);
     }
 
-    public onSelectTicketsStatus(value: ItemsSelect[]) {
-        this.ticketStatusSelected = value.length > 0 ? value.map(item => Number(item.value)).join() : DefaultValue.unCheckAll;
+    public onSelectAutoPayout(value: ItemsSelect[]) {
+        this.autoPayoutSelected = value.length > 0 ? value.map(item => Number(item.value)).join() : DefaultValue.unCheckAll;
     }
 
     public onSelectMatchStatus(value: ItemsSelect[]) {
@@ -181,7 +183,7 @@ export class FilterComponent implements OnInit {
         this.sportSelect = new MultipleSelect();
         this.sportSelect.haveGroup = true;
         this.sportSelect.isCheckAll = true;
-        this.sportSelect.maxWidth = '220px';
+        this.sportSelect.maxWidth = this.widthMultiSelect;
         this.sportSelect.items = this.generateFilterService.renderSportTypes(listSport);
         this.sportTypesSelected = this.sportSelect.items.map(item => Number(item.value)).join();
     }
@@ -203,11 +205,10 @@ export class FilterComponent implements OnInit {
         const showAllLeagues = "--- Show All Leagues ---";
         this.leagueSelect = new MultipleSelect();
         this.leagueSelect.allItemsCheckedText = showAllLeagues;
-        this.leagueSelect.checkAllCheckBoxText = showAllLeagues;
-        this.leagueSelect.maxWidth = '450px';
-        this.leagueSelect.isCheckAll = true;
-        this.leagueSelect.haveGroup = true;
+        this.leagueSelect.maxWidth = '350px';
         this.leagueSelect.enableSearchBox = true;
+        this.leagueSelect.haveGroup = true;
+        this.leagueSelect.disableCheckAll = true;
     }
 
     private async updateLeagues() {
