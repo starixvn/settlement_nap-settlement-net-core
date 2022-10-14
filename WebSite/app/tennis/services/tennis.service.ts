@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import { Injectable } from '@angular/core';
 import { ResultDetail } from '../../shared/models/sportsbook-sop';
 import { ResourcesIds } from '../constants';
-import { SettlementStatusId } from '../../shared/constants';
+import { ResultStatusId, SettlementStatusId } from '../../shared/constants';
 import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
 
 @Injectable()
@@ -23,7 +23,7 @@ export class TennisService {
       totalGames.settlementStatusId = SettlementStatusId.Refund;
     } else {
       const games = resultDetail.filter((game) => !_.isEmpty(game.homeValue) && !_.isEmpty(game.awayValue)
-        && game.settlementStatusId !== SettlementStatusId.Refund);
+        && game.resultStatusId == ResultStatusId.ManualCompleted);
 
       totalGames.settlementStatusId = totalSets.settlementStatusId;
       if (games.length > 0) {
