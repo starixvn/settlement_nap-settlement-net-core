@@ -1,5 +1,4 @@
-﻿using System;
-using MediatR;
+﻿using MediatR;
 using Settlement.EventManagement.Models.MultiSports;
 
 namespace Settlement.EventManagement
@@ -22,10 +21,12 @@ namespace Settlement.EventManagement
 
         public bool IsIncludeTest { get; set; }
 
-        public int AutoPayout { get; set; }
+        public string AutoPayout { get; set; }
 
         public string HoldStatus { get; set; }
 
         public string OverStatus { get; set; }
+
+        public string MatchType { get; set; }
     }
 }

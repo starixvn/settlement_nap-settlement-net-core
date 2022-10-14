@@ -15,6 +15,8 @@ import {
     League
 } from '../models';
 import * as _ from 'lodash';
+import { Language } from '../../shared/language';
+import { stringify } from 'querystring';
 
 @Component({
     selector: 'filter',
@@ -45,7 +47,7 @@ export class FilterComponent implements OnInit {
     public readonly matchStatusSelect = new MultipleSelect();
     public readonly overStatusSelect = new MultipleSelect();
     public getLeagueParams: LeagueFilterRequest;
-    private readonly widthMultiSelect = "190px";
+    private readonly widthMultiSelect = "200px";
 
     constructor(
         private readonly multiSportService: MultiSportService,
@@ -71,15 +73,14 @@ export class FilterComponent implements OnInit {
         this.holdStatusSelect.items = this.generateFilterService.renderRemarks();
         this.matchStatusSelect.items = this.generateFilterService.renderMatchStatusGroupSelect();
         this.autoPayoutSelect.items = this.generateFilterService.renderAutoPayout();
-        this.overStatusSelect.maxWidth = this.widthMultiSelect;
-        this.sportSelect.maxWidth = this.widthMultiSelect;
+        this.overStatusSelect.maxWidth = this.sportSelect.maxWidth = this.matchStatusSelect.maxWidth = this.widthMultiSelect;
         this.matchStatusSelect.haveGroup = true;
     }
 
     public async search() {
         const fromDate = this.verifyDateService.dateFormat(this.fromDate);
         const toDate = this.verifyDateService.dateFormat(this.toDate);
-        const params: FilterRequest = {
+        const query: FilterRequest = {
             fromDate,
             toDate,
             autoPayout: this.autoPayoutSelected,
@@ -90,7 +91,9 @@ export class FilterComponent implements OnInit {
             overStatus: this.overStatusSelected,
             sportTypes: this.sportTypesSelected,
             isIncludeTest: this.isIncludeTestMatch,
+            matchType: this.matchType.toString()
         };
+
         if (!this.isValidInput(this.fromDate, this.toDate)) {
             this.showWarningMessage(Resources.invalidDate);
             return;
@@ -101,12 +104,12 @@ export class FilterComponent implements OnInit {
             return;
         }
 
-        if (this.leaguesSelected.length < 1) {
-            this.showWarningMessage(Resources.atLeastLeague);
+        if(this.validateQuery(query)){
+            this.showWarningMessage(Language.calculatePageWarning);
             return;
         }
 
-        const multiSport = await this.multiSportService.filter(params).toPromise();
+        const multiSport = await this.multiSportService.filter(query).toPromise();
         const matchIds = this.getAllMatchId(multiSport.sports);
         this.searchAction.emit(multiSport);
         const request = new MatchWaitingRequest(this.leaguesSelected, matchIds, fromDate, toDate);
@@ -127,7 +130,7 @@ export class FilterComponent implements OnInit {
     }
 
     public onSelectLeague(value: ItemsSelect[]) {
-        this.leaguesSelected = value.map(item => Number(item.value)).join();
+        this.leaguesSelected = value.length > 0 ? value.map(item => Number(item.value)).join() : DefaultValue.unCheckAll;
     }
 
     public onSelectSport(value: ItemsSelect[]) {
@@ -136,7 +139,7 @@ export class FilterComponent implements OnInit {
     }
 
     public onSelectAutoPayout(value: ItemsSelect[]) {
-        this.autoPayoutSelected = value.length > 0 ? value.map(item => Number(item.value)).join() : DefaultValue.unCheckAll;
+        this.autoPayoutSelected = value.length > 0 ? value.map(item => Number(item.value)).join() : '';
     }
 
     public onSelectMatchStatus(value: ItemsSelect[]) {
@@ -219,4 +222,11 @@ export class FilterComponent implements OnInit {
             this.leagueSelect.items = newLeague;
         }
     }
+
+    private validateQuery(query: FilterRequest) {
+        return (_.isEmpty(query.matchCode) || _.isUndefined(query.matchCode))
+          && _.isEqual(query.leagueIds, DefaultValue.unCheckAll)
+          && _.isEqual(query.overStatus.toString(), DefaultValue.unCheckAll)
+          && _.isEqual(query.matchType.toString(), this.matchTypes[0].value);
+      }
 }

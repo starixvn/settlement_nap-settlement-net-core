@@ -9,7 +9,7 @@
                 </label>
                 <ngbd-date-picker [date]="fromDate" (change)="onSelectFromDate($event)"></ngbd-date-picker>
             </div>
-            <div class="field small-field">
+            <div class="date">
                 <label class="inner-label to-date">
                     To
                 </label>
@@ -23,20 +23,20 @@
                     <new-multiple-select (formValue)="onSelectOverStatus($event)" [multipleSelect]="overStatusSelect"></new-multiple-select>
                 </div>
             </div>
+            <div class="field medium-field">
+                <label class="inner-label">
+                    Match Status
+                </label>
+                <div>
+                    <new-multiple-select (formValue)="onSelectMatchStatus($event)" [multipleSelect]="matchStatusSelect"></new-multiple-select>
+                </div>
+            </div>
             <div class="field">
                 <label class="inner-label">
                     Auto Payout
                 </label>
                 <div>
                     <new-multiple-select (formValue)="onSelectAutoPayout($event)" [multipleSelect]="autoPayoutSelect"></new-multiple-select>
-                </div>
-            </div>
-            <div class="field">
-                <label class="inner-label">
-                    Match Status
-                </label>
-                <div>
-                    <new-multiple-select (formValue)="onSelectMatchStatus($event)" [multipleSelect]="matchStatusSelect"></new-multiple-select>
                 </div>
             </div>
             <div class="remark field">

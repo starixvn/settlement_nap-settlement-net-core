@@ -1,5 +1,4 @@
-﻿using System;
-using Fanex.Data;
+﻿using Fanex.Data;
 using Fanex.Data.Repository;
 
 namespace Settlement.EventManagement.Criteria
@@ -22,11 +21,13 @@ namespace Settlement.EventManagement.Criteria
 
         public bool IsIncludeTest { get; set; }
 
-        public int AutoSetting { get; set; }
+        public string AutoSetting { get; set; }
 
         public string HoldStatus { get; set; }
 
         public string OverStatus { get; set; }
+
+        public string MatchType { get; set; }
 
         [SpParam(Ignored = true)]
         public string DbServer { get; set; }

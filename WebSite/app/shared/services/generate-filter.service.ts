@@ -60,8 +60,8 @@ export class GenerateFilterService {
             { id: 2, value: "2", text: "Running", group: this.RunningGroup },
             { id: 3, value: "3", text: "Internal", group: this.RunningGroup },
             { id: 4, value: "4", text: "Postponed", group: this.RunningGroup },
-            { id: 8, value: "8", text: "Completed", group: this.CompletedGroup },
-            { id: 9, value: "9", text: "Refund", group: this.CompletedGroup }];
+            { id: 5, value: "5", text: "Completed", group: this.CompletedGroup },
+            { id: 6, value: "6", text: "Refund", group: this.CompletedGroup }];
 
         return this.createGroupItems(options);
     }
@@ -80,7 +80,7 @@ export class GenerateFilterService {
     public renderAutoPayout() {
         const selection = [
             { id: 1, value: "1", text: "Auto PayOut" },
-            { id: 2, value: "2", text: "OFF" }];
+            { id: 0, value: "0", text: "OFF" }];
 
         return this.createListOption(selection);
     }

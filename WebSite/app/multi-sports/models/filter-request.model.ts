@@ -8,5 +8,6 @@ export interface FilterRequest {
     leagueIds: string;
     sportTypes: string;
     isIncludeTest: boolean;
+    matchType: string;
     autoPayout: string;
 }
