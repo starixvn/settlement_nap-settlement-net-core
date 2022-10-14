@@ -23,8 +23,6 @@ export class FilterComponent extends FilterBaseComponent implements OnInit {
   @Output() public readonly searchAction = new EventEmitter();
   @Output() public readonly disableRefund = new EventEmitter();
   private readonly defaultValue = '0';
-  private holdStatusSelected: string;
-  private matchStatusSelected: string;
   public query = new FilterQuery();
   public overStatus = OverStatus;
   public matchTypes = MatchType;
@@ -114,12 +112,13 @@ export class FilterComponent extends FilterBaseComponent implements OnInit {
   public onSelectLeague(value: ItemsSelect[]) {
     this.query.leagueIds = value.map(item => Number(item.value)).join();
   }
+
   public onSelectMatchStatus(value: ItemsSelect[]) {
-    this.matchStatusSelected = value.length > 0 ? value.map(item => Number(item.value)).join() : this.defaultValue;
+    this.query.matchStatus = value.length > 0 ? value.map(item => Number(item.value)).join() : this.defaultValue;
   }
 
   public onSelectHoldStatus(value: ItemsSelect[]) {
-    this.holdStatusSelected = value.length > 0 ? value.map(item => Number(item.value)).join() : this.defaultValue;
+    this.query.holdStatus = value.length > 0 ? value.map(item => Number(item.value)).join() : this.defaultValue;
   }
 
   private validateQuery(){

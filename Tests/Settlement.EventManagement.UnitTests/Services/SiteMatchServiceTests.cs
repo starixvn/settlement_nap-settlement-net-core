@@ -191,6 +191,77 @@ namespace Settlement.EventManagement.UnitTests.Services
             Assert.Equal(expected, result);
         }
 
+        [Theory]
+        [InlineData(true, false, false, false, false, false, TicketStatus.Completed)]
+        [InlineData(false, true, false, false, false, false, TicketStatus.Completed)]
+        [InlineData(false, true, true, false, false, false, TicketStatus.Running)]
+        [InlineData(true, false, false, true, false, false, TicketStatus.Running)]
+        [InlineData(false, false, false, false, true, false, TicketStatus.NoTicket)]
+        [InlineData(false, false, false, false, false, true, TicketStatus.NoTicket)]
+        [InlineData(false, false, false, false, false, false, TicketStatus.Normal)]
+        public void FastMarketStatus_Always_ReturnCorrect(bool mainIsExistFastMarket, bool siteIsExistFastMarket,
+            bool mainIsRunningFastMarket, bool siteIsRunningFastMarket,
+            bool mainIsExistFastMarketResult, bool siteIsExistFastMarketResult, string expected)
+        {
+            var match = new Models.Calculation.Match
+            {
+                IsExistFastMarket = mainIsExistFastMarket,
+                IsRunningFastMarket = mainIsRunningFastMarket,
+                IsExistFastMarketResult = mainIsExistFastMarketResult,
+                SiteMatch = new List<SiteMatch>
+                {
+                    new()
+                    {
+                        IsExistFastMarket = siteIsExistFastMarket,
+                        IsRunningFastMarket = siteIsRunningFastMarket,
+                        IsExistFastMarketResult = siteIsExistFastMarketResult,
+                    }
+                }
+            };
 
+            var result = service.FastMarketStatus(match);
+
+            Assert.Equal(expected, result);
+        }
+
+        [Theory]
+        [InlineData(true, false, true)]
+        [InlineData(false, true, true)]
+        [InlineData(false, false, false)]
+        public void IsExistFgLg_Always_ReturnCorrect(bool main, bool site, bool expected)
+        {
+            var match = new Models.Calculation.Match
+            {
+                IsExistFgLg = main,
+                SiteMatch = new List<SiteMatch>
+                {
+                    new () { IsExistFgLg = site }
+                }
+            };
+
+            var result = service.IsExistFgLg(match);
+
+            Assert.Equal(expected, result);
+        }
+
+        [Theory]
+        [InlineData(true, false, true)]
+        [InlineData(false, true, true)]
+        [InlineData(false, false, false)]
+        public void IsExistHtFgLg_Always_ReturnCorrect(bool main, bool site, bool expected)
+        {
+            var match = new Models.Calculation.Match
+            {
+                IsExistHtFgLg = main,
+                SiteMatch = new List<SiteMatch>
+                {
+                    new () { IsExistHtFgLg = site }
+                }
+            };
+
+            var result = service.IsExistHtFgLg(match);
+
+            Assert.Equal(expected, result);
+        }
     }
 }

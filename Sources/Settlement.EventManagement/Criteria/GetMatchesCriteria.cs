@@ -20,6 +20,8 @@ namespace Settlement.EventManagement.Criteria
 
         public string MatchStatus { get; set; }
 
+        public string HoldStatus { get; set; }
+
         public int MatchType { get; set; }
 
         public bool IsIncludeTest { get; set; }

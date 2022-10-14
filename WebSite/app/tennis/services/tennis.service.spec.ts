@@ -7,6 +7,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
 import { ResultDetail } from '../../shared/models/sportsbook-sop';
 import { HttpClient, HttpHandler } from '@angular/common/http';
+import { ResultStatusId } from '../../shared/constants';
+import { ResourcesIds } from '../constants';
 
 describe('TennisService', () => {
   let service: TennisService = null;
@@ -49,19 +51,28 @@ describe('TennisService', () => {
   });
 
   it('getResultDetail - should add total games to result details', () => {
-    const resultDetail = new ResultDetail();
-    resultDetail.resourceId = '01';
-    resultDetail.homeValue = '1';
-    resultDetail.awayValue = '2';
-    resultDetail.settlementStatusId = 0;
-    const totalSet = new ResultDetail();
-    totalSet.resourceId = '00';
-    totalSet.settlementStatusId = 0;
-    const resultDetails = [resultDetail, resultDetail, resultDetail, totalSet];
+      const resultOne = new ResultDetail();
+      const resultTwo = new ResultDetail();
+      const totalGames = new ResultDetail();
+      const totalPoint = new ResultDetail();
+      totalPoint.resourceId = ResourcesIds.totalGames;
+      totalPoint.resultStatusId = ResultStatusId.ManualCompleted;
+      totalGames.resourceId = ResourcesIds.totalGames;
+      totalGames.resultStatusId = ResultStatusId.ManualCompleted;
+      resultOne.resourceId = "0101";
+      resultTwo.resourceId = "0102";
+      resultOne.resultStatusId = ResultStatusId.ManualCompleted;
+      resultOne.homeValue = "1";
+      resultOne.awayValue = "1";
+      resultTwo.homeValue = "1";
+      resultTwo.awayValue = "2";
+      resultTwo.resultStatusId = ResultStatusId.ManualCompleted;
+      totalPoint.awayValue = "3";
+      totalPoint.homeValue = "2";
 
-    const result = service.getResultDetail(resultDetails);
+      const actual = service.getResultDetail([resultOne, resultTwo, totalGames]);
 
-    expect(result.length).toEqual(5);
+      expect(actual).toEqual([resultOne, resultTwo, totalPoint, totalGames]);
   });
 
   it('getIntervalBackground - should call pipes transform', () => {

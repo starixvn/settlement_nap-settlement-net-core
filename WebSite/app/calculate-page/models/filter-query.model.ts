@@ -1,20 +1,11 @@
 export class FilterQuery {
-    matchId: string;
-    filterOver: number;
-    fastMarketsOnly: boolean;
-    autoSettlementOnly: boolean;
-    isMarkedTicket: boolean;
-    isIncludeTest: boolean;
     fromDate: string;
     toDate: string;
-    matchCode: string;
     leagueIds: string;
-    statusId: number;
-    sportType = 1;;
-    isUnCalculate: boolean;
-    isInstant: boolean;
-    isHtOverOnly: boolean;
-    isOverOnly: boolean;
-    autoSetting: string;
+    matchCode: string;
+    matchStatus: string;
+    filterOver: number;
+    holdStatus: string;
     matchType: number;
+    isIncludeTest: boolean;
 }
