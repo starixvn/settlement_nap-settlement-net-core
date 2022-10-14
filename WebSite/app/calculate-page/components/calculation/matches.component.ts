@@ -5,7 +5,7 @@ import { BackgroundColor, CalculationStatus, EventStatus } from '../../../shared
 import * as _ from 'lodash';
 import { Language } from '../../../shared/language';
 import { MatchesBaseComponent } from '../base-component/matches-base.component';
-import { CalculationMatch } from '../../models';
+import { CalculationMatch, FilterQuery } from '../../models';
 import { ISubscription } from 'rxjs-compat/Subscription';
 import { interval } from 'rxjs';
 
@@ -15,6 +15,7 @@ import { interval } from 'rxjs';
 })
 export class MatchesComponent extends MatchesBaseComponent implements OnChanges, OnInit, OnDestroy {
   @Input() public disableRefund: boolean;
+  @Input() public filterQuery: FilterQuery;
   private subscriber: ISubscription;
   private readonly period = 5000;
   private intervalTimer = interval(this.period);
@@ -47,6 +48,9 @@ export class MatchesComponent extends MatchesBaseComponent implements OnChanges,
     });
   }
 
+  public getLog(matchId: string) {
+    this.popupService.popupLog(matchId, this.filterQuery.fromDate, this.filterQuery.toDate);
+  }
 
   public popupEarly(match: CalculationMatch) {
     if (this.isShowEarlySettleLink(match)) {

@@ -37,12 +37,12 @@ export class GenerateFilterService {
             { id: 3, value: "3", text: "Internal", group: this.RunningGroup },
             { id: 4, value: "4", text: "Postponed", group: this.RunningGroup },
             { id: 5, value: "5", text: "Irregular Time 1H", group: this.RunningGroup },
-            { id: 8, value: "8", text: "Irregular Time", group: this.RunningGroup },
-            { id: 6, value: "6", text: "Wrong Team Name", group: this.RunningGroup },
-            { id: 7, value: "7", text: "Suspended", group: this.RunningGroup },
-            { id: 8, value: "8", text: "Completed", group: this.CompletedGroup },
-            { id: 9, value: "9", text: "Refund", group: this.CompletedGroup },
-            { id: 10, value: "10", text: "Abandoned", group: this.CompletedGroup }];
+            { id: 6, value: "6", text: "Irregular Time", group: this.RunningGroup },
+            { id: 7, value: "8", text: "Wrong Team Name", group: this.RunningGroup },
+            { id: 8, value: "8", text: "Suspended", group: this.RunningGroup },
+            { id: 9, value: "9", text: "Completed", group: this.CompletedGroup },
+            { id: 10, value: "10", text: "Refund", group: this.CompletedGroup },
+            { id: 11, value: "11", text: "Abandoned", group: this.CompletedGroup }];
 
         return this.createListOption(options);
     }

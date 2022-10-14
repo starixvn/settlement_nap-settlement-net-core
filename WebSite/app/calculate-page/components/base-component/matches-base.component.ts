@@ -16,7 +16,6 @@ import { interval } from 'rxjs';
 })
 export class MatchesBaseComponent extends LeagueBaseComponent implements OnChanges {
   @Input() public calculation: Calculation;
-  @Input() public filterQuery: FilterQuery;
   public leagues: League[];
   public permission: Permission;
   constructor(
@@ -29,10 +28,6 @@ export class MatchesBaseComponent extends LeagueBaseComponent implements OnChang
   ngOnChanges() {
     this.permission = this.calculation.permission;
     this.leagues = this.calculation.leagues;
-  }
-
-  public getLog(matchId: string) {
-    this.popupService.popupLog(matchId, this.filterQuery.fromDate, this.filterQuery.toDate);
   }
 
   public popupCalc(match: CalculationMatch) {

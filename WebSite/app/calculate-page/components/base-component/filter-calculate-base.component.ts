@@ -14,7 +14,6 @@ import * as _ from 'lodash';
 })
 export class FilterCalculateBaseComponent extends FilterBaseComponent{
   @Output() public readonly searchAction = new EventEmitter();
-  public query = new FilterQuery();
   public statuses = Statuses;
   public leagues: League[];
 

@@ -1,6 +1,6 @@
-﻿using System;
-using MediatR;
+﻿using MediatR;
 using Settlement.EventManagement.Models.Calculation;
+using System;
 
 namespace Settlement.EventManagement
 {
@@ -12,24 +12,16 @@ namespace Settlement.EventManagement
 
         public string MatchCode { get; set; }
 
-        public int SportType { get; set; }
-
-        public int LeagueId { get; set; }
+        public string LeagueIds { get; set; }
 
         public bool IsIncludeTest { get; set; }
 
-        public byte StatusId { get; set; }
+        public string MatchStatus { get; set; }
 
-        public byte FilterOver { get; set; }
+        public int FilterOver { get; set; }
 
-        public bool UnCalculate { get; set; }
+        public string HoldStatus { get; set; }
 
-        public bool UnCalculateMultiple { get; set; }
-
-        public bool AutoSettlementOnly { get; set; }
-
-        public bool FastMarketsOnly { get; set; }
-
-        public bool IsMarkedTicket { get; set; }
+        public int MatchType { get; set; }
     }
 }

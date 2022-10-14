@@ -12,21 +12,15 @@ namespace Settlement.EventManagement.Criteria
 
         public int SportType { get; set; }
 
-        public int LeagueId { get; set; }
+        public string LeagueIds { get; set; }
 
         public string MatchCode { get; set; }
 
-        public byte StatusId { get; set; }
+        public int FilterOver { get; set; }
 
-        public byte FilterOver { get; set; }
+        public string MatchStatus { get; set; }
 
-        public bool IsReLoad { get; set; }
-
-        public bool AutoSettlementOnly { get; set; }
-
-        public bool FastMarketsOnly { get; set; }
-        
-        public bool IsMarkedTicket { get; set; }
+        public int MatchType { get; set; }
 
         public bool IsIncludeTest { get; set; }
 

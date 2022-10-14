@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { NgbDateParserFormatter, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { CustomNgbDateParserFormatter } from '../../../shared/components/date-picker/custom-ngb-date-parser-formatter';
 import { MessageBoxService, VerifyDateService } from '../../../shared/services';
-import { Calculation, LeagueQuery } from '../../models';
+import { Calculation, FilterAutoQuery, LeagueQuery } from '../../models';
 import { RequestService } from '../../services';
 import * as _ from 'lodash';
 import { FilterCalculateBaseComponent } from '../base-component';
@@ -18,6 +18,7 @@ import { AutoCalculateService } from './auto-calculate.service';
 })
 export class AutoCalculateFilterComponent extends FilterCalculateBaseComponent implements OnInit {
   private readonly completedWithRunningTicket = "16";
+  public readonly query = new FilterAutoQuery();
   public payoutSelect= new MultipleSelect();
   constructor(
     protected verifyDateService: VerifyDateService,
@@ -70,7 +71,7 @@ export class AutoCalculateFilterComponent extends FilterCalculateBaseComponent i
 
   private defaultDateFilter() {
     this.query.statusId = Number(this.statuses[0].value);
-    this.query.leagueIds = '0';
+    this.query.leagueId = '0';
     this.payoutSelect.items = this.autoCalculateService.createAutoPayoutFilter();
     this.statuses = this.statuses.filter(status => status.value !== this.completedWithRunningTicket);
   }

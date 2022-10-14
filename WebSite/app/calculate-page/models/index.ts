@@ -5,3 +5,4 @@ export * from './calculation.model';
 export * from './calculation-match.model';
 export * from './update-instant-query.model';
 export * from './match-goal-record.model';
+export * from './filter-auto-query.model';
