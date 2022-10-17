@@ -1,5 +1,7 @@
 ﻿using Fanex.Data.Repository;
+using Microsoft.Extensions.Options;
 using NSubstitute;
+using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.FastMarkets.Criteria;
 using Settlement.FastMarkets.Models;
@@ -7,6 +9,7 @@ using Settlement.FastMarkets.Services;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
+using MatchDetail = Settlement.FastMarkets.Models.MatchDetail;
 
 namespace Settlement.FastMarkets.UnitTests.Services
 {
@@ -26,7 +29,9 @@ namespace Settlement.FastMarkets.UnitTests.Services
             fastMarketResultService = Substitute.For<IFastMarketResultService>();
             fastMarketResultService.Result(Arg.Any<List<BetType>>(), Arg.Any<string>()).Returns("XML");
             dynamicRepository.Get<Core.Models.MarkedTickets>(Arg.Any<CriteriaBase>()).Returns(new Core.Models.MarkedTickets());
-            service = new MatchDetailServiceImp(dynamicRepository, refDataService, goalIconService, fastMarketResultService);
+            var appSetting = new AppSettingsKey();
+            var option = Options.Create(appSetting);
+            service = new MatchDetailServiceImp(dynamicRepository, refDataService, goalIconService, fastMarketResultService, option);
         }
 
         [Fact]

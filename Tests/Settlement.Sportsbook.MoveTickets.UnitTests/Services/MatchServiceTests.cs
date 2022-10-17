@@ -1,5 +1,4 @@
 ﻿using NSubstitute;
-using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.MoveTickets.Services;
@@ -14,13 +13,19 @@ namespace Settlement.Sportsbook.MoveTickets.UnitTests.Services
 
         private readonly IRefDataService refDataService;
 
+        private readonly CompareMatchService compareMatchService;
+
+        private readonly NewInfoMatchService newInfoMatchService;
+
         private readonly IMatchService service;
 
         public MatchServiceTests()
         {
             refDataService = Substitute.For<IRefDataService>();
+            compareMatchService = Substitute.For<CompareMatchService>();
+            newInfoMatchService = Substitute.For<NewInfoMatchService>();
             matchResultDetailService = Substitute.For<IMatchResultDetailService>();
-            service = new MatchServiceImp(matchResultDetailService, refDataService);
+            service = new MatchServiceImp(matchResultDetailService, refDataService, compareMatchService, newInfoMatchService);
         }
 
         [Fact]

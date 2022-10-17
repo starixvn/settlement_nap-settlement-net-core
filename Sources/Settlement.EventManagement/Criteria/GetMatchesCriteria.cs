@@ -10,7 +10,7 @@ namespace Settlement.EventManagement.Criteria
 
         public DateTime ToDate { get; set; }
 
-        public int SportType { get; set; }
+        public int SportType = 1;
 
         public string LeagueIds { get; set; }
 
