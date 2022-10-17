@@ -10,7 +10,6 @@ export class FilterAutoQuery {
     matchCode: string;
     leagueId: string;
     statusId: number;
-    sportType = 1;;
     isUnCalculate: boolean;
     isInstant: boolean;
     isHtOverOnly: boolean;

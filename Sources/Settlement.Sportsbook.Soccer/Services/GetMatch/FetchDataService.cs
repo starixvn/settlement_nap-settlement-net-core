@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Fanex.Data.Repository;
 using Fanex.NAP.Client;
+using Microsoft.Extensions.Options;
 using Settlement.Core.Models;
 using Settlement.Sportsbook.Soccer.Criteria;
 using Settlement.Sportsbook.Soccer.Models;
@@ -9,7 +10,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Options;
 using Match = Settlement.Sportsbook.Soccer.Models.Match;
 using MatchDetail = Settlement.Sportsbook.Soccer.Models.MatchDetail;
 
@@ -84,12 +84,13 @@ namespace Settlement.Sportsbook.Soccer.GetMatch.Services
 
         private SiteMatch GetSiteMatchByServer(int matchId, Type[] mappingTypes, string server)
         {
+            const int childMatchResultPosition = 2;
             var criteria = new GetTicketInfoCriteria { MatchId = matchId, DbServer = server };
             var result = repository.FetchMultiple(criteria, mappingTypes);
 
             var siteMatch = result[0].Cast<SiteMatch>().FirstOrDefault();
             siteMatch.TicketCounts = result[1].Cast<TicketCounts>().ToList();
-            siteMatch.SiteChildMatches = result[2].Cast<ChildMatchTicketInfos>().ToList();
+            siteMatch.SiteChildMatches = result[childMatchResultPosition].Cast<ChildMatchTicketInfos>().ToList();
 
             return siteMatch;
         }

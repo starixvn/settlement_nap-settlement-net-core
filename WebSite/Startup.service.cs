@@ -204,7 +204,7 @@ namespace Settlement.WebSites
             AppSettings.AppMailAddress = Configuration.GetSection("MailServer:Address").Value;
         }
 
-        private void ConfigureCore(IServiceCollection services)
+        private static void ConfigureCore(IServiceCollection services)
         {
             services.AddScoped<IDynamicRepository, DynamicRepository>();
             services.AddScoped<IRemotingRefService, RemotingRefService>();

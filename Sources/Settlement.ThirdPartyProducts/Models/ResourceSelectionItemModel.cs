@@ -7,7 +7,7 @@ namespace Settlement.ThirdPartyProducts.Models
         [XmlAttribute("Id")]
         public int MarketId { get; set; }
 
-        [XmlIgnore()]
+        [XmlIgnore]
         public bool IsRunning { get; set; }
 
         [XmlAttribute("s")]
@@ -16,9 +16,6 @@ namespace Settlement.ThirdPartyProducts.Models
             get
             {
                 return IsRunning ? 1 : 0;
-            }
-            set
-            {
             }
         }
 

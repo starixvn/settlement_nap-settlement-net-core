@@ -1,7 +1,7 @@
-﻿using Settlement.Core.Models;
+﻿using Settlement.Core.Constants;
+using Settlement.Core.Models;
 using System.Collections.Generic;
 using System.Linq;
-using Settlement.Core.Constants;
 
 namespace Settlement.Sportsbook.OtherSports.Services
 {
@@ -26,7 +26,7 @@ namespace Settlement.Sportsbook.OtherSports.Services
             matchDetail.FtStatus = GetStatus(ticketCounts.FirstOrDefault(item => item.GroupId == FullTimeGroupId));
         }
 
-        private string GetStatus(TicketCounts ticketCount)
+        private static string GetStatus(TicketCounts ticketCount)
         {
             if (ticketCount == null || ticketCount.BetCount == 0)
             {
@@ -61,7 +61,7 @@ namespace Settlement.Sportsbook.OtherSports.Services
             return multipleTicketCounts[0];
         }
 
-        private void SumTicketCounts(List<TicketCounts> baseTicketCounts, List<TicketCounts> siteTicketCounts)
+        private static void SumTicketCounts(List<TicketCounts> baseTicketCounts, List<TicketCounts> siteTicketCounts)
         {
             baseTicketCounts.ForEach(item =>
             {
@@ -73,7 +73,7 @@ namespace Settlement.Sportsbook.OtherSports.Services
             });
         }
 
-        private void SumTicket(TicketCounts baseTicketCounts, TicketCounts siteTicketCounts)
+        private static void SumTicket(TicketCounts baseTicketCounts, TicketCounts siteTicketCounts)
         {
             baseTicketCounts.BetRunningCount += siteTicketCounts.BetRunningCount;
             baseTicketCounts.BetMarkedCount += siteTicketCounts.BetMarkedCount;

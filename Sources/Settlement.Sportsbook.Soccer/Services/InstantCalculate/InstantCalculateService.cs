@@ -1,19 +1,18 @@
 using AutoMapper;
 using Fanex.Data.Repository;
 using Fanex.NAP.Client.Helpers.Web;
-using Kaden.XmlConverter;
+using Fanex.Settlement.ScaleOut.Request;
+using Fanex.Settlement.ScaleOut.Services;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Sportsbook.Soccer.Criteria;
 using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Requests;
+using Settlement.Sportsbook.Soccer.Services.InstantCalculate;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Options;
-using Fanex.Settlement.ScaleOut.Request;
-using Fanex.Settlement.ScaleOut.Services;
-using Settlement.Sportsbook.Soccer.Services.InstantCalculate;
 
 namespace Settlement.Sportsbook.Soccer.Services
 {
@@ -36,8 +35,6 @@ namespace Settlement.Sportsbook.Soccer.Services
 
         private readonly IHttpContextAccessor accessor;
 
-        private readonly XmlConvertService xmlConvertService;
-
         private readonly IInstantResourceService instantResourceService;
 
         private readonly ScaleOutSettleService scaleOutSettleService;
@@ -49,7 +46,6 @@ namespace Settlement.Sportsbook.Soccer.Services
             INapSession currentSession,
             IMapper mapper,
             IHttpContextAccessor accessor,
-            XmlConvertService xmlConvertService,
             IInstantResourceService instantResourceService,
             IOptions<AppSettingsKey> appSettingsKey,
             ScaleOutSettleService scaleOutSettleService)
@@ -58,7 +54,6 @@ namespace Settlement.Sportsbook.Soccer.Services
             this.currentSession = currentSession;
             this.mapper = mapper;
             this.accessor = accessor;
-            this.xmlConvertService = xmlConvertService;
             this.instantResourceService = instantResourceService;
             this.appSettingsKey = appSettingsKey.Value;
             this.scaleOutSettleService = scaleOutSettleService;
@@ -148,7 +143,7 @@ namespace Settlement.Sportsbook.Soccer.Services
             return betStatus;
         }
 
-        private void MergeData(MatchGoalRecordModel baseMatch, MatchGoalRecordModel siteMatch, bool isBaseMatch)
+        private static void MergeData(MatchGoalRecordModel baseMatch, MatchGoalRecordModel siteMatch, bool isBaseMatch)
         {
             if (isBaseMatch)
             {
@@ -202,9 +197,7 @@ namespace Settlement.Sportsbook.Soccer.Services
                 resources = instantResourceService.FullTime(goalCondition);
             }
 
-            return resources.Count > 0
-                ? xmlConvertService.Serialize(new XmlResults { Resources = resources })
-                : string.Empty;
+            return instantResourceService.GenerateResource(resources);
         }
 
         private async Task<Result> ValidateBeforeExecute(InstantCalculationRequest request)

@@ -1,5 +1,5 @@
-﻿using System;
-using Fanex.Data.Repository;
+﻿using Fanex.Data.Repository;
+using System;
 
 namespace Settlement.EventManagement.Criteria
 {
@@ -9,7 +9,7 @@ namespace Settlement.EventManagement.Criteria
 
         public DateTime ToDate { get; set; }
 
-        public int SportType => Core.Constants.SportType.Soccer;
+        public int SportType { get; } = Core.Constants.SportType.Soccer;
 
         public override string GetSettingKey()
         {

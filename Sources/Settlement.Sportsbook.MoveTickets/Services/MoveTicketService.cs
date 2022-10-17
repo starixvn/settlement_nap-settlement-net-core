@@ -1,7 +1,5 @@
 ﻿using AutoMapper;
 using Fanex.Data.Repository;
-using Fanex.NAP.Client.Helpers.Web;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
@@ -159,7 +157,7 @@ namespace Settlement.Sportsbook.MoveTickets.Services
         {
             var matches = await MatchesAllSites(criteria);
             var resultDetails = await ResultDetailByMatchIds(matches);
-            matchService.SetNewMatchInfo(matches, resultDetails);
+            matchService.SetNewMatchInfo(matches);
             return new MultiSportResult
             {
                 Matches = matches,

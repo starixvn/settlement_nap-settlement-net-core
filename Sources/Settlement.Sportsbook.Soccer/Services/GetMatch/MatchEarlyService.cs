@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Fanex.Data.Repository;
 using Fanex.NAP.Client;
+using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.Soccer.Criteria;
@@ -9,7 +10,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Settlement.Core.Constants;
 using MatchDetail = Settlement.Sportsbook.Soccer.Models.MatchDetail;
 
 namespace Settlement.Sportsbook.Soccer.GetMatch.Services
@@ -87,7 +87,7 @@ namespace Settlement.Sportsbook.Soccer.GetMatch.Services
             };
         }
 
-        private void MergeEarlyTicketsToResults(List<ResultDetailModel> resultDetails, List<ResultDetailModel> ticketDetails)
+        private static void MergeEarlyTicketsToResults(List<ResultDetailModel> resultDetails, List<ResultDetailModel> ticketDetails)
         {
             var newTicketDetails = ticketDetails.Where(ticketDetail => !resultDetails.Any(result => result.Equals(ticketDetail)));
             if (newTicketDetails.Any())
@@ -98,7 +98,7 @@ namespace Settlement.Sportsbook.Soccer.GetMatch.Services
             GenerateTicketsStatus(resultDetails, ticketDetails);
         }
 
-        private void GenerateTicketsStatus(List<ResultDetailModel> results, List<ResultDetailModel> ticketDetails)
+        private static void GenerateTicketsStatus(List<ResultDetailModel> results, List<ResultDetailModel> ticketDetails)
         {
             foreach (var result in results)
             {

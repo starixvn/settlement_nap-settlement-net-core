@@ -8,6 +8,10 @@ namespace Settlement.Sportsbook.Soccer.Criteria
 {
     public class RefundRunningThirdPartyTicketCriteria : NonQueryCommand
     {
+        private readonly string betDaqPush = "NAP_Admin_Settlement_Refund_BetDaq_Push";
+
+        private readonly string betFairPush = "NAP_Admin_Settlement_Refund_BetFair_Push";
+
         public int MatchId { get; set; }
 
         public int AdminId { get; set; }
@@ -27,9 +31,9 @@ namespace Settlement.Sportsbook.Soccer.Criteria
         public string DbServer { get; set; }
 
         [SpParam(Ignored = true)]
-        public string SpName { get => ActionName.IgnoreCaseEquals(ActionType.BetDaq) ? "NAP_Admin_Settlement_Refund_BetDaq_Push" : "NAP_Admin_Settlement_Refund_BetFair_Push"; } 
+        public string SpName { get => ActionName.IgnoreCaseEquals(ActionType.BetDaq) ? betDaqPush : betFairPush; }
 
-        public override string GetSettingKey() => ActionName.IgnoreCaseEquals(ActionType.BetDaq) ? $"NAP_Admin_Settlement_Refund_BetDaq_Push_{DbServer}" : $"NAP_Admin_Settlement_Refund_BetFair_Push_{DbServer}";
+        public override string GetSettingKey() => ActionName.IgnoreCaseEquals(ActionType.BetDaq) ? $"{betDaqPush}_{DbServer}" : $"{betFairPush}_{DbServer}";
 
         public override bool IsValid() => MatchId > 0;
     }

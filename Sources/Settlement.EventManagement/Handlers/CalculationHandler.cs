@@ -50,7 +50,7 @@ namespace Settlement.EventManagement.Handlers
         public async Task<CalculationLeagues> Handle(FilterAutoCalculationRequest request, CancellationToken cancellationToken)
         {
             var matches = await matchService.GetMatchesAutoCalculate(request);
-            return new CalculationLeagues()
+            return new CalculationLeagues
             {
                 Leagues = leagueService.Leagues(matches),
                 Permission = permissionService.Permission

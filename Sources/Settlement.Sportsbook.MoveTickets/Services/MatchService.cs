@@ -1,5 +1,4 @@
-﻿using Settlement.Core.Constants;
-using Settlement.Core.Models;
+﻿using Settlement.Core.Models;
 using Settlement.Core.Services;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +11,7 @@ namespace Settlement.Sportsbook.MoveTickets.Services
 
         List<Match> MergeMatches(List<Match> baseMatches, List<Match> siteMatches);
 
-        List<Match> SetNewMatchInfo(List<Match> matches, List<ResultDetail> listResultDetail);
+        List<Match> SetNewMatchInfo(List<Match> matches);
     }
 
     public class MatchServiceImp : IMatchService
@@ -53,12 +52,10 @@ namespace Settlement.Sportsbook.MoveTickets.Services
             return matches;
         }
 
-        public List<Match> SetNewMatchInfo(List<Match> matches, List<ResultDetail> listResultDetail)
+        public List<Match> SetNewMatchInfo(List<Match> matches)
         {
             foreach (var match in matches)
             {
-                var listSourceByMatchId = listResultDetail.Where(m => m.MatchId == match.MatchId && m.SourceId != SourceType.Normal).ToList();
-
                 newInfoMatchService.TicketInfo(match);
                 match.NewEventStatus = newInfoMatchService.NewEventStatus(match);
                 match.EventStatusColor = newInfoMatchService.EventStatusColor(match);

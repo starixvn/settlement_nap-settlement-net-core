@@ -6,6 +6,7 @@ using Settlement.Core.Services;
 using Settlement.ThirdPartyProducts.Criteria;
 using Settlement.ThirdPartyProducts.Models;
 using Settlement.ThirdPartyProducts.Requests;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -133,7 +134,7 @@ namespace Settlement.ThirdPartyProducts.Services
                 return matches;
             }
 
-            return matches.Where(match => request.Status.IndexOf(match.ParlayStatus) > -1).ToList();
+            return matches.Where(match => request.Status.IndexOf(match.ParlayStatus, StringComparison.CurrentCulture) > -1).ToList();
         }
 
         private async Task<List<MatchDetailModel>> GetAndCachingMatches(MatchesWaitingRequest request)

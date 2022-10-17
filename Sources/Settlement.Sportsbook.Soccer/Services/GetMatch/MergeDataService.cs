@@ -13,9 +13,9 @@ namespace Settlement.Sportsbook.Soccer.GetMatch.Services
 
         public List<ChildMatchModel> MergeDataChildMatches(List<ChildMatchModel> childMatches, List<SiteMatch> siteMatches);
 
-        public BetDaq MergeBetDaq(BetDaq baseBetDaq, List<BetDaq> nodeBetDaqs);
+        public BetDaq MergeBetDaq(BetDaq baseBetDaq, List<BetDaq> siteBetDaqs);
 
-        public BetFair MergeBetFair(BetFair baseBetDaq, List<BetFair> nodeBetDaqs);
+        public BetFair MergeBetFair(BetFair baseBetFair, List<BetFair> siteBetFairs);
 
         public (List<ResultDetailModel> ticketDetails, TicketCounts ticketCounts) MergeEarlyTicketDetails(List<(List<ResultDetailModel>, TicketCounts)> data);
     }
@@ -52,7 +52,7 @@ namespace Settlement.Sportsbook.Soccer.GetMatch.Services
             return siteMatches[0].TicketCounts;
         }
 
-        private void SumTicketCounts(List<TicketCounts> baseTicketCounts, SiteMatch match)
+        private static void SumTicketCounts(List<TicketCounts> baseTicketCounts, SiteMatch match)
         {
             baseTicketCounts.ForEach(item =>
             {
@@ -64,7 +64,7 @@ namespace Settlement.Sportsbook.Soccer.GetMatch.Services
             });
         }
 
-        private void SumTicket(TicketCounts baseTicketCounts, TicketCounts siteTicketCounts)
+        private static void SumTicket(TicketCounts baseTicketCounts, TicketCounts siteTicketCounts)
         {
             baseTicketCounts.BetRunningCount += siteTicketCounts.BetRunningCount;
             baseTicketCounts.BetMarkedCount += siteTicketCounts.BetMarkedCount;
@@ -73,7 +73,7 @@ namespace Settlement.Sportsbook.Soccer.GetMatch.Services
             baseTicketCounts.BetCount += siteTicketCounts.BetCount;
         }
 
-        private string GetStatus(TicketCounts ticketCount)
+        private static string GetStatus(TicketCounts ticketCount)
         {
             if (ticketCount.BetCount == 0)
             {
@@ -112,7 +112,7 @@ namespace Settlement.Sportsbook.Soccer.GetMatch.Services
             return childMatches;
         }
 
-        private List<ChildMatchTicketInfos> GetChildMachInfo(List<SiteMatch> siteMatches, int matchId)
+        private static List<ChildMatchTicketInfos> GetChildMachInfo(List<SiteMatch> siteMatches, int matchId)
         {
             var listSiteChildMatch = new List<ChildMatchTicketInfos>();
             siteMatches.ForEach(item =>
@@ -140,14 +140,14 @@ namespace Settlement.Sportsbook.Soccer.GetMatch.Services
             return baseBetDaq;
         }
 
-        public BetFair MergeBetFair(BetFair baseBetDaq, List<BetFair> siteBetDaqs)
+        public BetFair MergeBetFair(BetFair baseBetFair, List<BetFair> siteBetFairs)
         {
-            baseBetDaq.IsExcludeBetFair = siteBetDaqs.Any(betDaq => betDaq.IsExcludeBetFair) || baseBetDaq.IsExcludeBetFair;
-            baseBetDaq.IsMoveBetFair = siteBetDaqs.Any(betDaq => betDaq.IsMoveBetFair) || baseBetDaq.IsMoveBetFair;
-            baseBetDaq.IsRefundRunningBetFair = siteBetDaqs.Any(betDaq => betDaq.IsRefundRunningBetFair) || baseBetDaq.IsRefundRunningBetFair;
-            baseBetDaq.IsSettleAbandonedMatchBetFair = siteBetDaqs.Any(betDaq => betDaq.IsSettleAbandonedMatchBetFair) || baseBetDaq.IsSettleAbandonedMatchBetFair;
+            baseBetFair.IsExcludeBetFair = siteBetFairs.Any(betDaq => betDaq.IsExcludeBetFair) || baseBetFair.IsExcludeBetFair;
+            baseBetFair.IsMoveBetFair = siteBetFairs.Any(betDaq => betDaq.IsMoveBetFair) || baseBetFair.IsMoveBetFair;
+            baseBetFair.IsRefundRunningBetFair = siteBetFairs.Any(betDaq => betDaq.IsRefundRunningBetFair) || baseBetFair.IsRefundRunningBetFair;
+            baseBetFair.IsSettleAbandonedMatchBetFair = siteBetFairs.Any(betDaq => betDaq.IsSettleAbandonedMatchBetFair) || baseBetFair.IsSettleAbandonedMatchBetFair;
 
-            return baseBetDaq;
+            return baseBetFair;
         }
 
         public (List<ResultDetailModel> ticketDetails, TicketCounts ticketCounts) MergeEarlyTicketDetails(List<(List<ResultDetailModel>, TicketCounts)> data)
@@ -166,7 +166,7 @@ namespace Settlement.Sportsbook.Soccer.GetMatch.Services
             return (ticketDetails, ticketCounts);
         }
 
-        private List<ResultDetailModel> ResolveTicketDetails(List<List<ResultDetailModel>> data)
+        private static List<ResultDetailModel> ResolveTicketDetails(List<List<ResultDetailModel>> data)
         {
             var baseData = data.First();
             var siteData = data.Skip(1).ToList();
@@ -184,7 +184,7 @@ namespace Settlement.Sportsbook.Soccer.GetMatch.Services
             return baseData;
         }
 
-        private void SumTicketDetails(List<ResultDetailModel> baseData, List<ResultDetailModel> siteData)
+        private static void SumTicketDetails(List<ResultDetailModel> baseData, List<ResultDetailModel> siteData)
         {
             baseData.ForEach(item =>
             {
@@ -196,7 +196,7 @@ namespace Settlement.Sportsbook.Soccer.GetMatch.Services
             });
         }
 
-        private void SumTicketDetail(ResultDetailModel baseDetail, ResultDetailModel siteDetail)
+        private static void SumTicketDetail(ResultDetailModel baseDetail, ResultDetailModel siteDetail)
         {
             baseDetail.InRunning += siteDetail.InRunning;
             baseDetail.InWaiting += siteDetail.InWaiting;
@@ -204,7 +204,7 @@ namespace Settlement.Sportsbook.Soccer.GetMatch.Services
             baseDetail.BetCount += siteDetail.BetCount;
         }
 
-        private TicketCounts ResolveTicketCounts(List<TicketCounts> data)
+        private static TicketCounts ResolveTicketCounts(List<TicketCounts> data)
         {
             foreach (var ticketCounts in data.Skip(1))
             {

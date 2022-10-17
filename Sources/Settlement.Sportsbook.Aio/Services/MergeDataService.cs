@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Settlement.Core.Models;
+using System.Collections.Generic;
 using System.Linq;
-using Settlement.Core.Models;
 
 namespace Settlement.Sportsbook.Aio.Services
 {
@@ -11,7 +11,7 @@ namespace Settlement.Sportsbook.Aio.Services
 
     public class MergeDataServiceImp : MergeDataService
     {
-       public (List<Models.ResultDetail> ticketDetails, TicketCounts ticketCounts) MergeTicketDetails(List<(List<Models.ResultDetail>, TicketCounts)> data)
+        public (List<Models.ResultDetail> ticketDetails, TicketCounts ticketCounts) MergeTicketDetails(List<(List<Models.ResultDetail>, TicketCounts)> data)
         {
             var multipleTicketDetails = new List<List<Models.ResultDetail>>();
             var multipleTicketCounts = new List<TicketCounts>();
@@ -27,7 +27,7 @@ namespace Settlement.Sportsbook.Aio.Services
             return (ticketDetails, ticketCounts);
         }
 
-        private List<Models.ResultDetail> ResolveTicketDetails(List<List<Models.ResultDetail>> data)
+        private static List<Models.ResultDetail> ResolveTicketDetails(List<List<Models.ResultDetail>> data)
         {
             var baseData = data.First();
             var siteData = data.Skip(1).ToList();
@@ -45,7 +45,7 @@ namespace Settlement.Sportsbook.Aio.Services
             return baseData;
         }
 
-        private void SumTicketDetails(List<Models.ResultDetail> baseData, List<Models.ResultDetail> siteData)
+        private static void SumTicketDetails(List<Models.ResultDetail> baseData, List<Models.ResultDetail> siteData)
         {
             baseData.ForEach(item =>
             {
@@ -57,7 +57,7 @@ namespace Settlement.Sportsbook.Aio.Services
             });
         }
 
-        private void SumTicketDetail(Models.ResultDetail baseDetail, Models.ResultDetail siteDetail)
+        private static void SumTicketDetail(Models.ResultDetail baseDetail, Models.ResultDetail siteDetail)
         {
             baseDetail.InRunning += siteDetail.InRunning;
             baseDetail.InWaiting += siteDetail.InWaiting;
@@ -67,7 +67,7 @@ namespace Settlement.Sportsbook.Aio.Services
             baseDetail.BetCount += siteDetail.BetCount;
         }
 
-        private TicketCounts ResolveTicketCounts(List<TicketCounts> data)
+        private static TicketCounts ResolveTicketCounts(List<TicketCounts> data)
         {
             foreach (var ticketCounts in data.Skip(1))
             {
@@ -77,7 +77,7 @@ namespace Settlement.Sportsbook.Aio.Services
             return data[0];
         }
 
-        private void SumTicket(TicketCounts baseTicketCounts, TicketCounts siteTicketCounts)
+        private static void SumTicket(TicketCounts baseTicketCounts, TicketCounts siteTicketCounts)
         {
             baseTicketCounts.BetRunningCount += siteTicketCounts.BetRunningCount;
             baseTicketCounts.BetMarkedCount += siteTicketCounts.BetMarkedCount;

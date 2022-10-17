@@ -1,9 +1,9 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.DataProtection.KeyManagement;
+﻿using Kaden.XmlConverter;
 using Settlement.Core.Constants;
 using Settlement.Sportsbook.Soccer.Constants;
 using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Requests;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -22,6 +22,8 @@ namespace Settlement.Sportsbook.Soccer.Services.InstantCalculate
         string BetStatusHtFl(InstantCalculationRequest request, string betStatus);
 
         string RemoveBetStatus(InstantCalculationRequest request);
+
+        string GenerateResource(List<XmlResource> resources);
     }
 
     public class InstantResourceServiceImp : IInstantResourceService
@@ -29,6 +31,8 @@ namespace Settlement.Sportsbook.Soccer.Services.InstantCalculate
         private readonly IInstantGoalCheckingService instantGoalCheckingService;
 
         private readonly IGoalRecordService goalRecordService;
+
+        private readonly XmlConvertService xmlConvertService;
 
         private readonly char homeValue = 'H';
 
@@ -46,10 +50,12 @@ namespace Settlement.Sportsbook.Soccer.Services.InstantCalculate
 
         public InstantResourceServiceImp(
             IInstantGoalCheckingService instantGoalCheckingService,
-            IGoalRecordService goalRecordService)
+            IGoalRecordService goalRecordService,
+            XmlConvertService xmlConvertService)
         {
             this.instantGoalCheckingService = instantGoalCheckingService;
             this.goalRecordService = goalRecordService;
+            this.xmlConvertService = xmlConvertService;
         }
 
         public List<XmlResource> Halftime(InstantGoalCondition goalCondition)
@@ -105,7 +111,7 @@ namespace Settlement.Sportsbook.Soccer.Services.InstantCalculate
         public string BetStatusFl(InstantCalculationRequest request, string betStatus)
         {
             var goalOnly = request.GoalRecord.Replace(";", string.Empty);
-            var indexOfHtFl = betStatus.IndexOf(halfTimeFl);
+            var indexOfHtFl = betStatus.IndexOf(halfTimeFl, StringComparison.CurrentCulture);
             var betStatusExcludeHtFl = indexOfHtFl > -1 ? betStatus.Remove(indexOfHtFl, 8) : betStatus;
             var isNotExistBetStatusFl = !betStatusExcludeHtFl.Contains(fl);
             if (goalOnly.Length > 0 && request.IsExistFG && isNotExistBetStatusFl)
@@ -140,13 +146,13 @@ namespace Settlement.Sportsbook.Soccer.Services.InstantCalculate
 
             if (request.IsExistHTFG)
             {
-                var indexOfKey = betStatus.IndexOf(halfTimeFl);
+                var indexOfKey = betStatus.IndexOf(halfTimeFl, StringComparison.CurrentCulture);
                 betStatus = indexOfKey > -1 ? betStatus.Remove(indexOfKey, htfgHomeBetStatus.Length) : betStatus;
             }
 
             if (request.IsExistFG)
             {
-                var indexOfKey = betStatus.IndexOf(fl);
+                var indexOfKey = betStatus.IndexOf(fl, StringComparison.CurrentCulture);
                 betStatus = indexOfKey > -1 ? betStatus.Remove(indexOfKey, fgHomeBetStatus.Length) : betStatus;
             }
 
@@ -205,6 +211,13 @@ namespace Settlement.Sportsbook.Soccer.Services.InstantCalculate
                 FirstGoalSettlementStatusId = SettlementStatus.Completed,
                 LastGoalSettlementStatusId = SettlementStatus.Completed
             };
+        }
+
+        public string GenerateResource(List<XmlResource> resources)
+        {
+            return resources.Count > 0
+                ? xmlConvertService.Serialize(new XmlResults { Resources = resources })
+                : string.Empty;
         }
     }
 }

@@ -1,22 +1,23 @@
-﻿using System;
-using AutoMapper;
+﻿using AutoMapper;
+using Fanex.Caching;
 using Fanex.Data.Repository;
+using Fanex.Settlement.ScaleOut.Request;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
+using Settlement.EventManagement.Criteria;
+using Settlement.EventManagement.Models;
+using Settlement.EventManagement.Models.MultiSports;
+using Settlement.EventManagement.Requests;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Settlement.EventManagement.Criteria;
-using Settlement.EventManagement.Requests;
-using Match = Settlement.EventManagement.Models.MultiSports.Match;
+using System.Text;
 using System.Threading;
-using Fanex.Caching;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Options;
-using Settlement.EventManagement.Models.MultiSports;
-using Fanex.Settlement.ScaleOut.Request;
-using Settlement.EventManagement.Models;
+using System.Threading.Tasks;
+using Match = Settlement.EventManagement.Models.MultiSports.Match;
 
 namespace Settlement.EventManagement.Services.MultiSports
 {
@@ -399,7 +400,7 @@ namespace Settlement.EventManagement.Services.MultiSports
                 Action = ActionType.CalculateAll
             };
 
-            var errorMessage = string.Empty;
+            var errorMessage = new StringBuilder();
             foreach (var server in appSettingsKey.SiteDbServer)
             {
                 if (!string.IsNullOrEmpty(validateTicketCriteria.MatchIdsValid))
@@ -410,7 +411,7 @@ namespace Settlement.EventManagement.Services.MultiSports
                     await repository.ExecuteAsync(validateTicketCriteria);
                     if (!string.IsNullOrEmpty(validateTicketCriteria.ErrMsg))
                     {
-                        errorMessage += validateTicketCriteria.ErrMsg;
+                        errorMessage.Append(validateTicketCriteria.ErrMsg);
                     }
                 }
             }
@@ -418,7 +419,7 @@ namespace Settlement.EventManagement.Services.MultiSports
             return new ValidateParlayResult
             {
                 ErrCode = validateTicketCriteria.ErrCode,
-                ErrMsg = errorMessage,
+                ErrMsg = errorMessage.ToString(),
                 MatchIdsValid = validateTicketCriteria.MatchIdsValid
             };
         }

@@ -1,11 +1,9 @@
 ﻿using System.Xml.Serialization;
-using Kaden.Extensions;
 
 namespace Settlement.Core.Models
 {
     public class ResourceItem
     {
-
         public ResourceItem()
         {
         }
@@ -34,7 +32,6 @@ namespace Settlement.Core.Models
             {
                 return IsSettleDetermined ? "1" : "0";
             }
-            set { }
         }
 
         [XmlIgnore]

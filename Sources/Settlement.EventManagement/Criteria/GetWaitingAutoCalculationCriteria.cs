@@ -5,7 +5,7 @@ namespace Settlement.EventManagement.Criteria
 {
     public class GetWaitingAutoCalculationCriteria : CriteriaBase
     {
-        public int SportType => Core.Constants.SportType.Soccer;
+        public int SportType { get; } = Core.Constants.SportType.Soccer;
 
         public int LeagueId { get; set; }
 

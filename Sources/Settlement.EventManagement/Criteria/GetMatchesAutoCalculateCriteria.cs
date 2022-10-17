@@ -1,6 +1,6 @@
-﻿using System;
-using Fanex.Data;
+﻿using Fanex.Data;
 using Fanex.Data.Repository;
+using System;
 
 namespace Settlement.EventManagement.Criteria
 {
@@ -10,7 +10,7 @@ namespace Settlement.EventManagement.Criteria
 
         public DateTime ToDate { get; set; }
 
-        public int SportType { get; set; }
+        public int SportType { get; } = 1;
 
         public int LeagueId { get; set; }
 

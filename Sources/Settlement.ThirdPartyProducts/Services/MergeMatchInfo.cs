@@ -51,7 +51,8 @@ namespace Settlement.ThirdPartyProducts.Services
                 return CalculateStatus.IsWaiting;
             }
 
-            return queueStatusCentral == CalculateStatus.IsCalculating || match.SiteMatch.FirstOrDefault(i => i.QueueStatus == CalculateStatus.IsCalculating) != null ? CalculateStatus.IsCalculating : CalculateStatus.IsSuccess;
+            return queueStatusCentral == CalculateStatus.IsCalculating
+                   || match.SiteMatch.FirstOrDefault(i => i.QueueStatus == CalculateStatus.IsCalculating) != null ? CalculateStatus.IsCalculating : CalculateStatus.IsSuccess;
         }
 
         public void MergeStatusTicket(List<ResourceSelectionItemModel> baseList, List<ResourceSelectionItemModel> siteList)

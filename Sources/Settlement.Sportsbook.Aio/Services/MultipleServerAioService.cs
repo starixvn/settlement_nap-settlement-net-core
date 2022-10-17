@@ -1,16 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Fanex.Data.Repository;
+﻿using Fanex.Data.Repository;
+using Fanex.Settlement.ScaleOut.Request;
+using Fanex.Settlement.ScaleOut.Services;
 using Microsoft.Extensions.Options;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
-using Settlement.Sportsbook.Aio.Criteria;
 using Settlement.Sportsbook.Aio.Constants;
+using Settlement.Sportsbook.Aio.Criteria;
 using Settlement.Sportsbook.Aio.Requests;
-using Fanex.Settlement.ScaleOut.Services;
-using Fanex.Settlement.ScaleOut.Request;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Settlement.Sportsbook.Aio.Services
 {
@@ -57,7 +56,7 @@ namespace Settlement.Sportsbook.Aio.Services
             return (resultDetails.Where(result => result.TicketStatus != TicketStatus.NotIncluded).ToList(), ticketCount);
         }
 
-        private void MergeTicketsToResults(List<Models.ResultDetail> resultDetails, List<Models.ResultDetail> ticketDetails, int sportType, string settleType)
+        private static void MergeTicketsToResults(List<Models.ResultDetail> resultDetails, List<Models.ResultDetail> ticketDetails, int sportType, string settleType)
         {
             var newTicketDetails = ticketDetails.Where(ticketDetail => !resultDetails.Any(result => result.Equals(ticketDetail)));
             if (newTicketDetails.Any())
@@ -68,7 +67,7 @@ namespace Settlement.Sportsbook.Aio.Services
             GenerateTicketsStatus(resultDetails, ticketDetails, sportType, settleType);
         }
 
-        private void GenerateTicketsStatus(List<Models.ResultDetail> results, List<Models.ResultDetail> ticketDetails, int sportType, string settleType)
+        private static void GenerateTicketsStatus(List<Models.ResultDetail> results, List<Models.ResultDetail> ticketDetails, int sportType, string settleType)
         {
             foreach (var result in results)
             {
@@ -122,7 +121,7 @@ namespace Settlement.Sportsbook.Aio.Services
                 SportType = getResultDetailCriteria.SportType
             };
 
-            foreach(var server in appSettingsKey.SiteDbServer)
+            foreach (var server in appSettingsKey.SiteDbServer)
             {
                 var ticketDetails = await GetTicketDetailsByServer(criteria, server);
                 multipleTicketDetails.Add(ticketDetails);
