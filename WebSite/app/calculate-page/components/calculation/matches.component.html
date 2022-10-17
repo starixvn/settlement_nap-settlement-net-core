@@ -65,7 +65,7 @@
                 </div>
                 <span [class]="match.goalIcon.homeGoal ?? ''"></span>
                 <span [class]="match.goalIcon.halfTimeHomeGoal ?? ''"></span>
-                <span *ngIf="!match.offerLive" class="red">&nbsp;(LIVE)</span>
+                <span *ngIf="match.offerLive" class="red">&nbsp;(LIVE)</span>
               </td>
               <td class="score">{{match.halfTimeHomeScore ?? '-'}}</td>
               <td class="final-score  score">{{match.finalHomeScore ?? '-'}}</td>
@@ -129,7 +129,7 @@
                 <div class="match-away">{{match.awayName}}</div>
                 <span [class]="match.goalIcon.awayGoal ?? ''"></span>
                 <span [class]="match.goalIcon.halfTimeAwayGoal ?? ''"></span>
-                <span *ngIf="!match.offerLive" class="red">&nbsp;(LIVE)</span>
+                <span *ngIf="match.offerLive" class="red">&nbsp;(LIVE)</span>
               </td>
               <td class="score">{{match.halfTimeAwayScore ?? '-'}}</td>
               <td class="final-score score">{{match.finalAwayScore ?? '-'}}</td>

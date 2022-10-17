@@ -51,7 +51,7 @@ export class FilterComponent extends FilterBaseComponent implements OnInit {
     this.query.fromDate = this.verifyDateService.dateFormat(this.fromDate);
     this.query.toDate = this.verifyDateService.dateFormat(this.toDate);
 
-    if(this.validateQuery()){
+    if (this.validateQuery()) {
       return;
     }
 
@@ -110,7 +110,7 @@ export class FilterComponent extends FilterBaseComponent implements OnInit {
   }
 
   public onSelectLeague(value: ItemsSelect[]) {
-    this.query.leagueIds = value.map(item => Number(item.value)).join();
+    this.query.leagueIds = value.length > 0 ? value.map(item => Number(item.value)).join() : this.defaultValue;
   }
 
   public onSelectMatchStatus(value: ItemsSelect[]) {
@@ -121,11 +121,11 @@ export class FilterComponent extends FilterBaseComponent implements OnInit {
     this.query.holdStatus = value.length > 0 ? value.map(item => Number(item.value)).join() : this.defaultValue;
   }
 
-  private validateQuery(){
-    if((_.isEmpty(this.query.matchCode) || _.isUndefined(this.query.matchCode))
-    && _.isEmpty(this.query.leagueIds)
-    && _.isEqual(this.query.filterOver.toString(), this.overStatus[0].value)
-    && _.isEqual(this.query.matchType.toString(), this.matchTypes[0].value)){
+  private validateQuery() {
+    if ((_.isEmpty(this.query.matchCode) || _.isUndefined(this.query.matchCode))
+      && _.isEmpty(this.query.leagueIds)
+      && _.isEqual(this.query.filterOver.toString(), this.overStatus[0].value)
+      && _.isEqual(this.query.matchType.toString(), this.matchTypes[0].value)) {
       this.warningDialogMessage.title = Language.warningTitle;
       this.warningDialogMessage.message = Language.calculatePageWarning;
       this.messageBoxService.alert(this.warningDialogMessage);
