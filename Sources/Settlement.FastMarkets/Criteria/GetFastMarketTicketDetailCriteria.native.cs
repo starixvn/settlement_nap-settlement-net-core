@@ -3,18 +3,18 @@ using Fanex.Data.Repository;
 
 namespace Settlement.FastMarkets.Criteria
 {
-    public class CheckingMarkedTicketsCriteria : CriteriaBase
+    public class GetFastMarketTicketDetailCriteria : CriteriaBase
     {
         public int MatchId { get; set; }
 
-        public string Results { get; set; }
+        public string Resources { get; set; }
 
         [SpParam(Ignored = true)]
         public string DbServer { get; set; }
 
         public override string GetSettingKey()
         {
-            return $"NAP_Set_FastMarket_CheckingMarkedTransaction_{DbServer}";
+            return $"NAP_Set_FastMarket_MatchSelDetail_Ticket_{DbServer}";
         }
 
         public override bool IsValid()
