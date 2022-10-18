@@ -34,7 +34,7 @@
     "tslint-app": "tslint multi-sports/**/*.ts -e multi-sports/**/*.spec.ts",
     "tslint": "tslint -p tsconfig.json",
     "tslint-fix": "tslint --fix -p tsconfig.json",
-	  "test-coverage": "jest --ci -u --coverage"
+    "test-coverage": "jest --ci -u --coverage"
   },
   "dependencies": {
     "6": "0.0.1",
