@@ -38,7 +38,7 @@ export class GenerateFilterService {
             { id: 4, value: "4", text: "Postponed", group: this.RunningGroup },
             { id: 5, value: "5", text: "Irregular Time 1H", group: this.RunningGroup },
             { id: 6, value: "6", text: "Irregular Time", group: this.RunningGroup },
-            { id: 7, value: "8", text: "Wrong Team Name", group: this.RunningGroup },
+            { id: 7, value: "7", text: "Wrong Team Name", group: this.RunningGroup },
             { id: 8, value: "8", text: "Suspended", group: this.RunningGroup },
             { id: 9, value: "9", text: "Completed", group: this.CompletedGroup },
             { id: 10, value: "10", text: "Refund", group: this.CompletedGroup },

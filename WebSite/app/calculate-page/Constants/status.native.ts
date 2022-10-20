@@ -22,6 +22,6 @@ export const OverStatus = [
     { value: "0", text: "All" },
     { value: "1", text: "Early Over" },
     { value: "2", text: "HT Over" },
-    { value: "5", text: "FT Over" },
-    { value: "3", text: "Settled with Running Ticket" },
+    { value: "3", text: "FT Over" },
+    { value: "4", text: "Settled with Running Ticket" },
 ]

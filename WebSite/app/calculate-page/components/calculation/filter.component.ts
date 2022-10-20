@@ -123,7 +123,7 @@ export class FilterComponent extends FilterBaseComponent implements OnInit {
 
   private validateQuery() {
     if ((_.isEmpty(this.query.matchCode) || _.isUndefined(this.query.matchCode))
-      && _.isEmpty(this.query.leagueIds)
+      && _.isEqual(this.query.leagueIds, this.defaultValue)
       && _.isEqual(this.query.filterOver.toString(), this.overStatus[0].value)
       && _.isEqual(this.query.matchType.toString(), this.matchTypes[0].value)) {
       this.warningDialogMessage.title = Language.warningTitle;
