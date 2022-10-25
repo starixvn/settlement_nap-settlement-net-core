@@ -35,8 +35,8 @@ namespace Settlement.FastMarkets.UnitTests.Services
             {
                 BetTypeId = betTypeId,
                 FastMarketResults = new List<FastMarketResult> {
-                   new FastMarketResult { BetType= betTypeId, Position =0, Checked = true, IsShow = true, ResultItem = resultItem0},
-                   new FastMarketResult { BetType= betTypeId, Position =1, Checked = true, IsShow = true, ResultItem = resultItem1},
+                   new () { BetType= betTypeId, Position =0, Checked = true, IsShow = true, ResultItem = resultItem0},
+                   new ()  { BetType= betTypeId, Position =1, Checked = true, IsShow = true, ResultItem = resultItem1},
                }
             };
 
@@ -73,13 +73,13 @@ namespace Settlement.FastMarkets.UnitTests.Services
 
             // Assert
             var items = new List<ItemElement> {
-                new ItemElement {Position =0, Result = string.Empty },
-                new ItemElement {Position =1, Result = string.Empty },
+                new ()  {Position =0, Result = string.Empty },
+                new ()  {Position =1, Result = string.Empty },
             };
 
             var expectedBetTypes = new List<BetTypeElement>
             {
-                new BetTypeElement
+                new ()
                 {
                     Id = betTypeId,
                     Items = items
@@ -102,13 +102,13 @@ namespace Settlement.FastMarkets.UnitTests.Services
 
             // Assert
             var items = new List<ItemElement> {
-                new ItemElement {Position =0, Result = "44" },
-                new ItemElement {Position =1, Result = "68" },
+                new ()  {Position =0, Result = "44" },
+                new ()  {Position =1, Result = "68" },
             };
 
             var expectedBetTypes = new List<BetTypeElement>
             {
-                new BetTypeElement
+                new ()
                 {
                     Id = betTypeId,
                     Items = items
@@ -131,13 +131,13 @@ namespace Settlement.FastMarkets.UnitTests.Services
 
             // Assert
             var items = new List<ItemElement> {
-                new ItemElement {Position =0, Result = "70" },
-                new ItemElement {Position =1, Result = "68" },
+                new ()  {Position =0, Result = "70" },
+                new ()  {Position =1, Result = "68" },
             };
 
             var expectedBetTypes = new List<BetTypeElement>
             {
-                new BetTypeElement
+                new ()
                 {
                     Id = betTypeId,
                     Items = items
@@ -155,7 +155,7 @@ namespace Settlement.FastMarkets.UnitTests.Services
                 BetTypeId = 228,
                 FastMarketResults = new List<FastMarketResult>
                 {
-                    new FastMarketResult { BetType = 228, Position = 1, Checked = true, IsShow = true, Result = 1 }
+                    new ()  { BetType = 228, Position = 1, Checked = true, IsShow = true, Result = 1 }
                 }
             };
             var betTypes = new List<BetType>();

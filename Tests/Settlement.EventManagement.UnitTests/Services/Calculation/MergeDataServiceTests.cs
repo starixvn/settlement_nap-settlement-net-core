@@ -20,7 +20,7 @@ namespace Settlement.EventManagement.UnitTests.Services.Calculation
         }
 
         [Fact]
-        public void MergeMatches_Always_InfoSiteMatch()
+        public void MergeMatches_Always_ReturnCorrectListMatch()
         {
             var baseMatches = new List<Match>
             {
