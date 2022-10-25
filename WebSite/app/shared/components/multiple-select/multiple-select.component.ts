@@ -119,9 +119,9 @@ export class NewMultipleSelectComponent implements OnChanges, AfterViewInit {
     this.changeStatus();
   }
 
-  public selectGroupParent($event, groupName: string, selected: boolean) {
-    const allItemsInGroup = this.items.filter(item => item.type === groupName).map(item => item);
-    if (!selected) {
+  public selectGroupParent($event, group: Group) {
+    const allItemsInGroup = this.items.filter(item => item.type === group.name).map(item => item);
+    if (!group.selected) {
       allItemsInGroup.forEach(item => {
         item.checked = true;
         if (this.valueSelected.indexOf(item) < 0) {
@@ -129,7 +129,7 @@ export class NewMultipleSelectComponent implements OnChanges, AfterViewInit {
         }
       });
     } else {
-      this.valueSelected = this.valueSelected.filter(item => item.type !== groupName).map(item => item);
+      this.valueSelected = this.valueSelected.filter(item => item.type !== group.name).map(item => item);
       allItemsInGroup.forEach(item => item.checked = false);
     }
     this.changeStatus();
@@ -234,5 +234,8 @@ export class NewMultipleSelectComponent implements OnChanges, AfterViewInit {
   private includeSearchText(item: ItemsSelect) {
     return this.hasSearchText() ? _.includes(item.text.toLowerCase(), this.searchText.toLowerCase()) : true;
   }
-}
 
+  public collapse(group: Group){
+    group.collapse = !group.collapse;
+  }
+}
