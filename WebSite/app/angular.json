@@ -1712,7 +1712,7 @@
       }
     }
   },
-  "defaultProject": "calculate-page",
+  "defaultProject": "multi-sports",
   "schematics": {
     "@schematics/angular:component": {
       "inlineTemplate": false,

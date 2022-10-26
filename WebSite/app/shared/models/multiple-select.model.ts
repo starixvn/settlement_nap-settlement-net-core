@@ -19,6 +19,7 @@ export class MultipleSelect {
     public haveGroup: boolean;
     public disableCheckAll: boolean;
     public enableSearchBox: boolean;
+    public disableSelectGroup: boolean;
 
     public getValueItems() {
         let value = '';

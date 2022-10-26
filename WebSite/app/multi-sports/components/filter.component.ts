@@ -212,6 +212,7 @@ export class FilterComponent implements OnInit {
         this.leagueSelect.enableSearchBox = true;
         this.leagueSelect.haveGroup = true;
         this.leagueSelect.disableCheckAll = true;
+        this.leagueSelect.disableSelectGroup = true;
     }
 
     private async updateLeagues() {

@@ -87,9 +87,9 @@ export class GenerateFilterService {
 
     public renderOverStatus() {
         const selection = [
-            { id: 1, value: "1", text: "Early Result Over" },
-            { id: 2, value: "2", text: "Main Result Over" },
-            { id: 3, value: "3", text: "Match Over" },
+            { id: 1, value: "1", text: "Early Over" },
+            { id: 2, value: "2", text: "Main Over" },
+            { id: 3, value: "3", text: "Over" },
             { id: 4, value: "4", text: "Settled with Running Ticket" }];
 
         return this.createListOption(selection);
