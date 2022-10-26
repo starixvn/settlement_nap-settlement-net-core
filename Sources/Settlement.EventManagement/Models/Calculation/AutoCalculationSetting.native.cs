@@ -1,7 +1,4 @@
-﻿using System;
-using Kaden.Extensions;
-
-namespace Settlement.EventManagement.Models.Calculation
+﻿namespace Settlement.EventManagement.Models.Calculation
 {
     public class AutoCalculationSetting
     {

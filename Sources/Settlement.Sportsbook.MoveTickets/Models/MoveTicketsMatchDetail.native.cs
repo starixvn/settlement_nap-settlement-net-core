@@ -1,7 +1,5 @@
-﻿using Kaden.Extensions;
-using Settlement.Core.Models;
+﻿using Settlement.Core.Models;
 using Settlement.Core.Services;
-using System;
 
 namespace Settlement.Sportsbook.MoveTickets.Models
 {

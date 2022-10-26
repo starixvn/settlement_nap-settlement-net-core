@@ -1,8 +1,5 @@
-﻿using Kaden.XmlConverter;
-using Settlement.Log.Models.BetTypeElement;
+﻿using Settlement.Log.Models.BetTypeElement;
 using Settlement.Log.Models.EventCounterElement;
-using System;
-using System.Collections.Generic;
 using System.Text;
 using static Settlement.Core.Constants.BetType;
 
@@ -41,7 +38,7 @@ namespace Settlement.Log.Services
             foreach (var item in eventCountersRoot.Items)
             {
                 var resultLog = ParseEventCounterResult(item.Result);
-                eventCounterLog.Add($"{item.Position}:{ resultLog}");
+                eventCounterLog.Add($"{item.Position}:{resultLog}");
             }
 
             return $"Event Counter: {string.Join("; ", eventCounterLog)}<br/>";

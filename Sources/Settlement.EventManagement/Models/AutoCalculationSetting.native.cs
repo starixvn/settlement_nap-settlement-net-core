@@ -1,6 +1,4 @@
-﻿using System;
-using Kaden.Extensions;
-using MessagePack;
+﻿using MessagePack;
 
 namespace Settlement.EventManagement.Models
 {

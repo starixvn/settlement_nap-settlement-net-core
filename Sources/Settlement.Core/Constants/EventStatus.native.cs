@@ -14,5 +14,6 @@
         public const string IrregularTime = "Irregular Time";
         public const string WrongTeamName = "Wrong Team Name";
         public const string Suspended = "Suspended";
+        public const string ResultPending = "Result Pending";
     }
 }

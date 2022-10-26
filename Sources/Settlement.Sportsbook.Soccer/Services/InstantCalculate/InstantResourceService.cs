@@ -1,11 +1,7 @@
-﻿using Kaden.XmlConverter;
-using Settlement.Core.Constants;
+﻿using Settlement.Core.Constants;
 using Settlement.Sportsbook.Soccer.Constants;
 using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Requests;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Settlement.Sportsbook.Soccer.Services.InstantCalculate
 {

@@ -1,8 +1,5 @@
-﻿using Kaden.Extensions;
-using Settlement.Core.Constants;
+﻿using Settlement.Core.Constants;
 using Settlement.Core.Models;
-using System;
-using System.Collections.Generic;
 
 namespace Settlement.Sportsbook.Aio.Models
 {

@@ -1,8 +1,4 @@
-﻿using Kaden.Extensions;
-using System;
-using System.Collections.Generic;
-
-namespace Settlement.Gaming.Models.Happy5
+﻿namespace Settlement.Gaming.Models.Happy5
 {
     public class MatchDetail
     {

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using Kaden.Extensions;
-using Settlement.Core.Constants;
+﻿using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.EventManagement.Models;
@@ -68,7 +66,7 @@ namespace Settlement.EventManagement.Services
                 return siteMatchService.GetBackgroundCompletedStatus(match);
             }
 
-            if (match.Remark.IsPending && match.EventStatus.IgnoreCaseEquals(EventStatusExtensions.ResultPending))
+            if (match.Remark.IsPending && match.EventStatus.IgnoreCaseEquals(EventStatus.ResultPending))
             {
                 return siteMatchService.IsExistMarkedTickets(match)
                     ? Background.BrightYellowBlinking

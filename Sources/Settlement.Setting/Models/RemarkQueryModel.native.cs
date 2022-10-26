@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Kaden.Extensions;
-using Settlement.Core.Models;
+﻿using Settlement.Core.Models;
 
 namespace Settlement.Setting.Models
 {

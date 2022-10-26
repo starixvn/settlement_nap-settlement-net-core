@@ -1,13 +1,9 @@
 ﻿using Fanex.Data.Repository;
-using Kaden.XmlConverter;
 using Settlement.Core.Models;
 using Settlement.FastMarkets.Criteria;
 using Settlement.FastMarkets.Models;
 using Settlement.FastMarkets.Models.BetTypeModels;
 using Settlement.FastMarkets.Models.TimeMachineOldResult;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Settlement.FastMarkets.Services
 {
@@ -33,7 +29,7 @@ namespace Settlement.FastMarkets.Services
             this.xmlConvertService = xmlConvertService;
             this.repository = repository;
         }
-        
+
         public string Result(List<BetType> betTypeList, string action)
         {
             var betType = betTypeElementService.GetBetTypes(betTypeList, action);

@@ -1,7 +1,4 @@
-﻿using Kaden.Extensions;
-using Settlement.FastMarkets.Constants;
-using System;
-using System.Collections.Generic;
+﻿using Settlement.FastMarkets.Constants;
 
 namespace Settlement.FastMarkets.Models
 {
@@ -32,12 +29,13 @@ namespace Settlement.FastMarkets.Models
                     case FastMarketBetType.NextOneMinuteSetPiece:
                     case FastMarketBetType.CombinationNextOneMinute:
                         return OneMinuteInterval(Position);
+
                     case FastMarketBetType.TimeMachineMinutes:
                     case FastMarketBetType.TimeMachineHDP:
-                    {
-                        var interval = Position > FirstHalfInjuryTime ? Position - 1 : Position;
-                        return Position == FirstHalfInjuryTime ? "First Half Injury Time" : TimeMachineInterval(interval);
-                    }
+                        {
+                            var interval = Position > FirstHalfInjuryTime ? Position - 1 : Position;
+                            return Position == FirstHalfInjuryTime ? "First Half Injury Time" : TimeMachineInterval(interval);
+                        }
                     default:
                         return FiveMinutesInterval(Position);
                 }

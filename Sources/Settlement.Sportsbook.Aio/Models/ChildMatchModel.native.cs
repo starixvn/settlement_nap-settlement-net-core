@@ -1,10 +1,6 @@
-﻿using System;
-using System.Globalization;
-using System.Linq;
-using Kaden.Extensions;
-using Settlement.Core.Models;
-using Settlement.Core.Services;
+﻿using Settlement.Core.Models;
 using Settlement.Sportsbook.Aio.Constants;
+using System.Globalization;
 
 namespace Settlement.Sportsbook.Aio.Models
 {

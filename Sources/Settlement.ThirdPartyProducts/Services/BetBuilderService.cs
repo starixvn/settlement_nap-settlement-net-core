@@ -1,15 +1,11 @@
 ﻿using AutoMapper;
 using Fanex.Data.Repository;
-using Kaden.XmlConverter;
+using Microsoft.Extensions.Options;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.ThirdPartyProducts.Criteria;
 using Settlement.ThirdPartyProducts.Models;
 using Settlement.ThirdPartyProducts.Requests;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Options;
 
 namespace Settlement.ThirdPartyProducts.Services
 {

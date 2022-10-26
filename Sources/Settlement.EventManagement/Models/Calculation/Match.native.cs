@@ -1,7 +1,4 @@
-﻿using Kaden.Extensions;
-using Settlement.Core.Models;
-using System;
-using System.Collections.Generic;
+﻿using Settlement.Core.Models;
 
 namespace Settlement.EventManagement.Models.Calculation
 {

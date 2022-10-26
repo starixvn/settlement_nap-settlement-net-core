@@ -1,8 +1,6 @@
 ﻿using Fanex.Data;
 using Fanex.Data.Repository;
-using Kaden.Extensions;
 using Settlement.Core.Constants;
-using System;
 
 namespace Settlement.Sportsbook.Soccer.Criteria
 {

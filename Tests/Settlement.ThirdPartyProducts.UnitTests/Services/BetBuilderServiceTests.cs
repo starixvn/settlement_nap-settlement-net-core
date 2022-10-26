@@ -2,18 +2,13 @@
 using AutoMapper;
 using AutoMapper.Configuration;
 using Fanex.Data.Repository;
-using Kaden.XmlConverter;
 using Microsoft.Extensions.Options;
-using NSubstitute;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.ThirdPartyProducts.Criteria;
 using Settlement.ThirdPartyProducts.Models;
 using Settlement.ThirdPartyProducts.Requests;
 using Settlement.ThirdPartyProducts.Services;
-using System.Linq;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace Settlement.ThirdPartyProducts.UnitTests.Services
 {

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Kaden.Extensions;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 

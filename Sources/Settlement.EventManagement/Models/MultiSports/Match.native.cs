@@ -1,5 +1,4 @@
-﻿using Kaden.Extensions;
-using Settlement.Core.Models;
+﻿using Settlement.Core.Models;
 
 namespace Settlement.EventManagement.Models.MultiSports
 {

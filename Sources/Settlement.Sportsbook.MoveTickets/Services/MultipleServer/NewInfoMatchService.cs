@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using Kaden.Extensions;
-using Settlement.Core.Constants;
+﻿using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 
@@ -55,7 +53,7 @@ namespace Settlement.Sportsbook.MoveTickets.Services
                 return siteMatchService.GetBackgroundCompletedStatus(match);
             }
 
-            if (match.Remark.IsPending && match.EventStatus.IgnoreCaseEquals(EventStatusExtensions.ResultPending))
+            if (match.Remark.IsPending && match.EventStatus.IgnoreCaseEquals(EventStatus.ResultPending))
             {
                 return siteMatchService.IsExistMarkedTickets(match)
                     ? Background.BrightYellowBlinking

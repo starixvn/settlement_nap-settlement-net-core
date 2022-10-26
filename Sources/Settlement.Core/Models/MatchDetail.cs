@@ -1,5 +1,4 @@
-﻿using Kaden.Extensions;
-using Settlement.Core.Services;
+﻿using Settlement.Core.Services;
 using System.Text.Json.Serialization;
 
 namespace Settlement.Core.Models

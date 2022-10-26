@@ -1,5 +1,4 @@
-﻿using Kaden.XmlConverter;
-using Settlement.Core.Constants;
+﻿using Settlement.Core.Constants;
 using Settlement.FastMarkets.Models.EventCounterModels;
 using Settlement.FastMarkets.Requests;
 

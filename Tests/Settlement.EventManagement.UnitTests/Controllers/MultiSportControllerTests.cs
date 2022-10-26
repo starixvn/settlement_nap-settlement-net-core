@@ -1,14 +1,10 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using NSubstitute;
 using Settlement.Core.Models;
 using Settlement.EventManagement.Controllers;
 using Settlement.EventManagement.Models;
 using Settlement.EventManagement.Models.MultiSports;
 using Settlement.EventManagement.Requests;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace Settlement.EventManagement.UnitTests.Controllers
 {
@@ -31,7 +27,7 @@ namespace Settlement.EventManagement.UnitTests.Controllers
             var actual = controller.GetDate() as OkObjectResult;
 
             // Assert
-            Assert.IsType<DateSelection>(actual.Value);
+            Assert.IsType<DateSelection>(actual?.Value);
             Assert.Equal(200, actual.StatusCode);
         }
 

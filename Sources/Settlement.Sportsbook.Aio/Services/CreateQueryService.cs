@@ -1,13 +1,11 @@
 ﻿using AutoMapper;
 using Fanex.NAP.Client.Helpers.Web;
-using Kaden.XmlConverter;
 using Microsoft.AspNetCore.Http;
+using Settlement.Core.Models;
+using Settlement.Core.Services;
 using Settlement.Sportsbook.Aio.Criteria;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Requests;
-using System.Collections.Generic;
-using Settlement.Core.Models;
-using Settlement.Core.Services;
 
 namespace Settlement.Sportsbook.Aio.Services
 {

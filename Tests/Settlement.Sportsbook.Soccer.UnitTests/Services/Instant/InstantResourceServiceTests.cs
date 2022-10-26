@@ -1,14 +1,10 @@
-﻿using Kaden.XmlConverter;
-using Newtonsoft.Json;
-using NSubstitute;
+﻿using Newtonsoft.Json;
 using Settlement.Core.Constants;
 using Settlement.Sportsbook.Soccer.Constants;
 using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Requests;
 using Settlement.Sportsbook.Soccer.Services;
 using Settlement.Sportsbook.Soccer.Services.InstantCalculate;
-using System.Collections.Generic;
-using Xunit;
 
 namespace Settlement.Sportsbook.Soccer.UnitTests.Services.Instant
 {

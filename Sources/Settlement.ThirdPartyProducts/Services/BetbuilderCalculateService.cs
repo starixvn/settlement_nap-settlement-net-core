@@ -3,14 +3,10 @@ using Fanex.NAP.Client.Helpers.Web;
 using Fanex.Settlement.ScaleOut.Constants;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
-using Kaden.XmlConverter;
 using Microsoft.AspNetCore.Http;
+using Settlement.Core.Constants;
 using Settlement.ThirdPartyProducts.Criteria;
 using Settlement.ThirdPartyProducts.Models;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Settlement.Core.Constants;
 
 namespace Settlement.ThirdPartyProducts.Services
 {

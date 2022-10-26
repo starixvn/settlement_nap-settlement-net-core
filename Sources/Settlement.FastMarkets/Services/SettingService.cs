@@ -1,13 +1,11 @@
 ﻿using AutoMapper;
 using Fanex.Data.Repository;
 using Fanex.NAP.Client.Helpers.Web;
-using Kaden.XmlConverter;
 using Microsoft.AspNetCore.Http;
 using Settlement.Core.Models;
 using Settlement.FastMarkets.Criteria;
 using Settlement.FastMarkets.Models;
 using Settlement.FastMarkets.Requests;
-using System.Threading.Tasks;
 
 namespace Settlement.FastMarkets.Services
 {

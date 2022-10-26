@@ -1,5 +1,4 @@
-﻿using Kaden.XmlConverter;
-using NSubstitute;
+﻿using NSubstitute;
 using Settlement.Log.Models.BetTypeElement;
 using Settlement.Log.Services;
 using Xunit;
@@ -65,7 +64,7 @@ namespace Settlement.Log.UnitTests.Services
             // Arrange
             const int betTypeId = 12;
             const string position = "Position";
-            var content = $"<BetTypes><BetType Id=\"{ betTypeId}\"><Item Position=\"{position}\"/></BetType></BetTypes>";
+            var content = $"<BetTypes><BetType Id=\"{betTypeId}\"><Item Position=\"{position}\"/></BetType></BetTypes>";
             var item = new ItemElement
             {
                 Position = position,
@@ -89,7 +88,7 @@ namespace Settlement.Log.UnitTests.Services
             const string position = "Position";
             const string result = "Result";
             const string positionAndResult = "Position And Result";
-            var content = $"<BetTypes><BetType Id=\"{ betTypeId}\"><Item Position=\"{position}\" Result=\"{result}\"/></BetType></BetTypes>";
+            var content = $"<BetTypes><BetType Id=\"{betTypeId}\"><Item Position=\"{position}\" Result=\"{result}\"/></BetType></BetTypes>";
 
             positionService.PositionName(Arg.Any<int>(), Arg.Any<ItemElement>()).Returns(positionAndResult);
 

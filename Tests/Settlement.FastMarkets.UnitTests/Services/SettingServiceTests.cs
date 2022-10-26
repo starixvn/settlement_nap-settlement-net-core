@@ -1,15 +1,11 @@
-﻿using Fanex.Data.Repository;
-using Kaden.XmlConverter;
-using NSubstitute;
+﻿using AutoMapper;
+using AutoMapper.Configuration;
+using Fanex.Data.Repository;
+using Fanex.NAP.Client.Helpers.Web;
+using Microsoft.AspNetCore.Http;
 using Settlement.FastMarkets.Criteria;
 using Settlement.FastMarkets.Requests;
 using Settlement.FastMarkets.Services;
-using System.Threading.Tasks;
-using Fanex.NAP.Client.Helpers.Web;
-using Microsoft.AspNetCore.Http;
-using AutoMapper.Configuration;
-using AutoMapper;
-using Xunit;
 
 namespace Settlement.FastMarkets.UnitTests.Services
 {
@@ -38,7 +34,7 @@ namespace Settlement.FastMarkets.UnitTests.Services
             accessor.HttpContext = context;
             service = new SettingServiceImp(repository, xmlConvertService, mapper, currentSession, accessor);
         }
-        
+
         [Theory]
         [InlineData(0, "", true)]
         [InlineData(1000, "Error Message", false)]
