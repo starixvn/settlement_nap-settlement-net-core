@@ -87,7 +87,10 @@
                       {{match.kickOffTime | date : 'mediumDate' }}
                       {{match.kickOffTime | date : 'hh:mm:ss a' }}
                     </td>
-                    <td class="match-home">{{match.homeName}}</td>
+                    <td>
+                      <div class="match-home">{{match.homeName}}</div>
+                      <span *ngIf="match.offerLive" class="red">&nbsp;(LIVE)</span>
+                    </td>
                     <td class="interval-score">
                       <div *ngIf="match.isHavingIntervalScore">
                         <div *ngIf="match.sportType != sportTypeCricket else intervalHomeScoreCricket"
@@ -170,7 +173,10 @@
                   </tr>
                   <tr class="row-3" [ngClass]="undecidedColor(match.remark)">
                     <td>{{match.matchId}}</td>
-                    <td class="match-away">{{match.awayName}}</td>
+                    <td>
+                      <div class="match-away">{{match.awayName}}</div>
+                      <span *ngIf="match.offerLive" class="red">&nbsp;(LIVE)</span>
+                    </td>
                     <td class="interval-score">
                       <div *ngIf="match.isHavingIntervalScore">
                         <div *ngIf="match.sportType !== sportTypeCricket else intervalAwayScoreCricket"
@@ -207,7 +213,7 @@
 </ng-template>
 
 <ng-template #empty>
-  <div class="no-data" *ngIf="sports">
+  <div *ngIf="sports">
     <div class="empty-data">
       There is no information available
     </div>

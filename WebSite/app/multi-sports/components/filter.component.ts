@@ -27,6 +27,7 @@ import { stringify } from 'querystring';
 export class FilterComponent implements OnInit {
     @Output() public readonly searchAction = new EventEmitter();
     @Output() public readonly requestEmitter = new EventEmitter();
+    @Output() public readonly disableRefund = new EventEmitter();
     public readonly warningDialogMessage = new ModalDialogMessage();
     public matchCode = "";
     public fromDate: NgbDateStruct;
@@ -112,6 +113,7 @@ export class FilterComponent implements OnInit {
         const multiSport = await this.multiSportService.filter(query).toPromise();
         const matchIds = this.getAllMatchId(multiSport.sports);
         this.searchAction.emit(multiSport);
+        this.disableRefund.emit(_.isEmpty(this.matchCode) && !_.isEqual(this.overStatusSelected, DefaultValue.unCheckAll));
         const request = new MatchWaitingRequest(this.leaguesSelected, matchIds, fromDate, toDate);
         this.requestEmitter.emit(request);
         this.updateLeagues();

@@ -142,5 +142,8 @@ namespace Settlement.EventManagement.Models.MultiSports
 
         [Key("confirmFullTimeScore")]
         public string ConfirmFullTimeScore { get; set; }
+
+        [Key("offerLive")]
+        public bool OfferLive { get; set; }
     }
 }

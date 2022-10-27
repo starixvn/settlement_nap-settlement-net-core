@@ -43,6 +43,7 @@ export class AppComponent implements OnInit, OnDestroy {
     public multiSport = new MultiSport();
     public intervalTimer = interval(this.period);
     public request: MatchWaitingRequest;
+    public disableRefund: boolean;
 
     constructor(
         private readonly blockUIService: BlockUIService,
@@ -73,4 +74,8 @@ export class AppComponent implements OnInit, OnDestroy {
     public getRequest(request: MatchWaitingRequest) {
         this.request = request;
     }
+
+    public getInfoDisableRefund(event) {
+        this.disableRefund = event;
+      }
 }

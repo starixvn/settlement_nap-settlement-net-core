@@ -50,8 +50,6 @@ namespace Settlement.EventManagement.Models.Calculation
 
         public GoalIcon GoalIcon { get; set; } = new GoalIcon();
 
-        public bool OfferLive { get; set; }
-
         #region InstantCalculate
 
         public int AutoSettingForLeague { get; set; }

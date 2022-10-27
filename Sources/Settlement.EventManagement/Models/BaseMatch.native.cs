@@ -149,5 +149,7 @@ namespace Settlement.EventManagement.Models
         public int ChildMatchType { get; set; }
 
         public List<SiteMatch> SiteMatch { get; set; } = new List<SiteMatch>();
+
+        public bool OfferLive { get; set; }
     }
 }

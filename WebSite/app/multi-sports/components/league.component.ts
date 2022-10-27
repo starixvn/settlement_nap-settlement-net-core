@@ -22,6 +22,7 @@ export class LeagueComponent extends LeagueBaseComponent implements OnInit, OnCh
   @Input() public toDate: string;
   @Input() public multiSport: MultiSport;
   @Input() public request: MatchWaitingRequest;
+  @Input() public disableRefund: boolean;
   private readonly period = 5000;
   private readonly autoSettingType = 1;
   private readonly autoSettingCompleted = 2;
@@ -133,7 +134,7 @@ export class LeagueComponent extends LeagueBaseComponent implements OnInit, OnCh
   }
 
   public isShowRefundLink(match: Match) {
-    return this.backGroundService.isShowLink(match) && this.permission.canRefund ? BackgroundColor.codeLink : '';
+    return this.backGroundService.isShowLink(match) && this.permission.canRefund && !this.disableRefund ? BackgroundColor.codeLink : '';
   }
 
   public isShowEarlySettleLink(match: Match) {
