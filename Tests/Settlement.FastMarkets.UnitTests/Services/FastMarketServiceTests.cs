@@ -1,10 +1,17 @@
 ﻿using AutoMapper;
 using AutoMapper.Configuration;
 using Fanex.Data.Repository;
+using Fanex.Settlement.ScaleOut.Models;
+using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
 using Microsoft.Extensions.Options;
 using NSubstitute;
 using Settlement.Core.Models;
+using Settlement.Core.Services;
+using Settlement.FastMarkets.Constants;
+using Settlement.FastMarkets.Criteria;
+using Settlement.FastMarkets.Models;
+using Settlement.FastMarkets.Requests;
 using Settlement.FastMarkets.Services;
 
 namespace Settlement.FastMarkets.UnitTests.Services
@@ -17,6 +24,8 @@ namespace Settlement.FastMarkets.UnitTests.Services
         private readonly ScaleOutSettleService scaleOutSettleService;
         private readonly MultipleServerFetcherService multipleServerFetcherService;
         private readonly CreateQueryService createQueryService;
+        private readonly IRefDataService refDataService;
+        private readonly IResultLabelService resultLabelService;
 
         public FastMarketServiceTests()
         {
@@ -27,10 +36,12 @@ namespace Settlement.FastMarkets.UnitTests.Services
 
             repository = Substitute.For<IDynamicRepository>();
             scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
-            fastMarketBetTypeService = Substitute.For<IFastMarketBetTypeService>();
             multipleServerFetcherService = Substitute.For<MultipleServerFetcherService>();
             createQueryService = Substitute.For<CreateQueryService>();
-            var appSettingKey = new AppSettingsKey();
+            refDataService = Substitute.For<IRefDataService>();
+            resultLabelService = Substitute.For<IResultLabelService>();
+            fastMarketBetTypeService = new FastMarketBetTypeServiceImp(refDataService, resultLabelService);
+            var appSettingKey = new AppSettingsKey { SiteDbServer = new List<string> { "01", "02" } };
             var option = Options.Create(appSettingKey);
             service = new FastMarketServiceImp(repository,
                 fastMarketBetTypeService,
@@ -41,56 +52,131 @@ namespace Settlement.FastMarkets.UnitTests.Services
                 createQueryService);
         }
 
-        //[Fact]
-        //public async Task Query_Always_ReturnsTrue()
-        //{
-        //    // Arrange
-        //    const int matchId = 100;
-        //    var groupFastMasrketByBetType = new List<BetType>();
-        //    var result = new IEnumerable<object>[5];
+        [Theory]
+        [InlineData(0, 0, 0, TicketStatus.NoTicket)]
+        [InlineData(1, 1, 0, TicketStatus.Running)]
+        [InlineData(1, 0, 1, TicketStatus.Marked)]
+        [InlineData(1, 0, 0, TicketStatus.Calculated)]
+        public async Task Query_Always_ReturnsTrue(int ticketCount, int ticketRunning, int ticketMarked,
+            int ticketStatus)
+        {
+            // Arrange
+            const int matchId = 100;
+            var fastMarketResult = new List<FastMarketResult>
+            {
+                new()
+                {
+                    BetType = 1,
+                    Position = 1,
+                    TicketCount = ticketCount,
+                    TicketMarked = ticketMarked,
+                    TicketRunning = ticketRunning
+                }
+            };
+            var ticketsCount = new TicketCounts { GroupId = 1 };
+            var result = new IEnumerable<object>[5];
 
-        //    result[0] = new List<EventCounter> { new EventCounter { Position = 1 } };
-        //    result[1] = new List<string> { "a" };
-        //    result[2] = new List<FastMarketResult> { new FastMarketResult { Position = 1 } };
-        //    result[3] = new List<TicketCounts> { new TicketCounts { GroupId = 1 } };
-        //    result[4] = new List<ResultDetail> { new ResultDetail { ResourceId = "1" } };
+            result[0] = new List<EventCounter> { new() { Position = 1 } };
+            result[1] = new List<string> { "a" };
+            result[2] = new List<FastMarketResult> { new() { Position = 1, BetType = 1 } };
+            result[3] = new List<ResultDetail> { new() { ResourceId = "1" } };
 
-        //    repository
-        //        .FetchMultipleAsync(Arg.Is<GetFastMarketMatchDetailCriteria>(x => x.MatchId == matchId), Arg.Any<Type[]>())
-        //        .Returns(result);
+            multipleServerFetcherService.GetFastMarketTicketDetail(Arg.Any<int>())
+                .Returns((fastMarketResult, ticketsCount));
+            repository
+                .FetchMultipleAsync(Arg.Is<GetFastMarketMatchDetailCriteria>(x => x.MatchId == matchId),
+                    Arg.Any<Type[]>())
+                .Returns(result);
 
-        //    fastMarketBetTypeService.BetTypesList(Arg.Any<List<FastMarketResult>>(), Arg.Any<string>()).Returns(groupFastMasrketByBetType);
+            // Act
+            var viewModel = await service.Query(matchId);
 
-        //    // Act
-        //    var viewModel = await service.Query(matchId);
+            // Assert
+            Assert.True(viewModel.TicketCount.GroupId == 1
+                        && viewModel.BetTypes[0].FastMarketResults[0].TicketStatus == ticketStatus
+                        && viewModel.HandicapValue.Length == 1
+                        && viewModel.EventCounters.Count == 1
+                        && viewModel.BetTypes.Count == 1);
+        }
 
-        //    // Assert
-        //    Assert.True(viewModel.TicketCount.GroupId == 1
-        //        && viewModel.HandicapValue.Length == 1
-        //        && viewModel.EventCounters.Count == 1
-        //        && viewModel.BetTypes.Count == 0);
-        //}
+        [Fact]
+        public async Task Calculate_ValidateFailed_StopProcessAndReturn()
+        {
+            // Arrange
+            var query = new SettleRequest();
+            var resultValidate = new ResultMessage
+            {
+                ErrorMessage = "Error",
+                ErrorCode = 1
+            };
+            createQueryService.QuerySettle(Arg.Any<SettleRequest>()).Returns(new PushFastMarketResultCriteria());
+            scaleOutSettleService.ValidateEventAndTicketFastMarket(Arg.Any<EventTicketFastMarketRequest>())
+                .Returns(resultValidate);
 
-        //[Theory]
-        //[InlineData(0, "", true)]
-        //[InlineData(1000, "Error Message", false)]
-        //public async Task Calculate_Always_CallRepositoryExecuteWithResultsFromFastMarketResultService(int errorCode, string errorMessage, bool expected)
-        //{
-        //    // Arrange
-        //    var query = new SettleRequest();
-        //    const string results = "Results";
-        //    fastMarketResultService.Result(query.BetTypes, "CAL").Returns(results);
-        //    await repository.ExecuteAsync(Arg.Do<PushFastMarketResultCriteria>(x =>
-        //    {
-        //        x.ErrCode = errorCode;
-        //        x.ErrMsg = errorMessage;
-        //    }));
+            // Act
+            var result = await service.Calculate(query);
 
-        //    // Act
-        //    var result = await service.Calculate(query);
+            // Assert
+            Assert.False(result.IsSuccessful);
+            await scaleOutSettleService.DidNotReceive().UpdateMatchInfo(Arg.Any<UpdateMatchInfoRequest>());
+        }
 
-        //    // Assert
-        //    Assert.Equal(expected, result.IsSuccessful);
-        //}
+        [Fact]
+        public async Task Calculate_validatePassed_UpdateAndSettle()
+        {
+            // Arrange
+            var query = new SettleRequest();
+            createQueryService.QuerySettle(Arg.Any<SettleRequest>()).Returns(new PushFastMarketResultCriteria());
+            scaleOutSettleService.ValidateEventAndTicketFastMarket(Arg.Any<EventTicketFastMarketRequest>())
+                .Returns(new ResultMessage());
+            ;
+
+            // Act
+            var result = await service.Calculate(query);
+
+            // Assert
+            await scaleOutSettleService.Received().UpdateMatchInfo(Arg.Any<UpdateMatchInfoRequest>());
+            repository.Received(2).Execute(Arg.Any<PushFastMarketResultCriteria>());
+        }
+
+        [Fact]
+        public async Task GetLastestResult_Always_ReturnCorrectly()
+        {
+            const int matchId = 100;
+            var result = new IEnumerable<object>[4];
+
+            result[0] = new List<EventCounter> { new() };
+            result[1] = new List<string> { "a" };
+            result[2] = new List<FastMarketResult> { new() { Position = 1, BetType = 2 } };
+            result[3] = new List<ResultDetail> { new() };
+
+            repository
+                .FetchMultipleAsync(Arg.Is<GetFastMarketMatchDetailCriteria>(x => x.MatchId == matchId),
+                    Arg.Any<Type[]>())
+                .Returns(result);
+
+            var actual = await service.GetLastestResult(new GetLastestResultRequest { MatchId = matchId });
+
+            Assert.True(actual[0].Position == 1 && actual[0].BetType == 2);
+        }
+
+        [Fact]
+        public async Task GetTimeMachineResult_Always_ReturnCorrectly()
+        {
+            var matchId = 100;
+            var listTimeMachine = new List<TimeMachineResult>
+            {
+                new()
+                {
+                    Position = 1
+                }
+            };
+            repository.FetchAsync<TimeMachineResult>(
+                Arg.Is<GetTimeMachineResultCriteria>(item => item.MatchId == matchId)).Returns(listTimeMachine);
+
+            var actual = await service.GetTimeMachineResult(new GetTimeMachineResultRequest { MatchId = matchId });
+
+            Assert.Equal(1, actual[0].Position);
+        }
     }
 }

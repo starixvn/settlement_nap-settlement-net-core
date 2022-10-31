@@ -2,43 +2,42 @@
 using Settlement.FastMarkets.Models.EventCounterModels;
 using Settlement.FastMarkets.Requests;
 
-namespace Settlement.FastMarkets.Services
+namespace Settlement.FastMarkets.Services;
+
+public interface IEventCounterService
 {
-    public interface IEventCounterService
+    string Result(SettleRequest request);
+}
+
+public class EventCounterServiceImp : IEventCounterService
+{
+    private readonly IEventCounterElementService eventCounterElementService;
+
+    private readonly XmlConvertService xmlConvertService;
+
+    public EventCounterServiceImp(IEventCounterElementService eventCounterElementService,
+        XmlConvertService xmlConvertService)
     {
-        string Result(SettleRequest request);
+        this.eventCounterElementService = eventCounterElementService;
+        this.xmlConvertService = xmlConvertService;
     }
 
-    public class EventCounterServiceImp : IEventCounterService
+    public string Result(SettleRequest request)
     {
-        private readonly IEventCounterElementService eventCounterElementService;
-
-        private readonly XmlConvertService xmlConvertService;
-
-        public EventCounterServiceImp(IEventCounterElementService eventCounterElementService,
-            XmlConvertService xmlConvertService)
+        if (request.Action.Equals(ActionType.CalculateAll) || request.IsSettleDetermined)
         {
-            this.eventCounterElementService = eventCounterElementService;
-            this.xmlConvertService = xmlConvertService;
+            var eventCounter = eventCounterElementService.GetEventCounters(request.EventCounters);
+
+            var eventCountersRoot = new EventCountersRoot
+            {
+                EventCounter = eventCounter
+            };
+
+            return xmlConvertService.Serialize(eventCountersRoot);
         }
-
-        public string Result(SettleRequest request)
+        else
         {
-            if (request.Action.Equals(ActionType.CalculateAll) || request.IsSettleDetermined)
-            {
-                var eventCounter = eventCounterElementService.GetEventCounters(request.EventCounters);
-
-                var eventCountersRoot = new EventCountersRoot
-                {
-                    EventCounter = eventCounter
-                };
-
-                return xmlConvertService.Serialize(eventCountersRoot);
-            }
-            else
-            {
-                return string.Empty;
-            }
+            return string.Empty;
         }
     }
 }

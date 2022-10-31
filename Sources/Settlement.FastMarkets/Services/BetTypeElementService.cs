@@ -1,87 +1,83 @@
-﻿using Settlement.FastMarkets.Constants;
+﻿using Settlement.Core.Constants;
+using Settlement.FastMarkets.Constants;
 using Settlement.FastMarkets.Models;
 using Settlement.FastMarkets.Models.BetTypeModels;
-using System.Collections.Generic;
-using System.Linq;
-using Settlement.Core.Constants;
 using BetType = Settlement.FastMarkets.Models.BetType;
 
-namespace Settlement.FastMarkets.Services
+namespace Settlement.FastMarkets.Services;
+
+public interface IBetTypeElementService
 {
-    public interface IBetTypeElementService
+    List<BetTypeElement> GetBetTypes(List<BetType> betTypeList, string action);
+}
+
+public class BetTypeElementServiceImp : IBetTypeElementService
+{
+    public List<BetTypeElement> GetBetTypes(List<BetType> betTypeList, string action)
     {
-        List<BetTypeElement> GetBetTypes(List<BetType> betTypeList, string action);
+        var betTypes = new List<BetTypeElement>();
+
+        foreach (var betType in betTypeList)
+        {
+            var betTypeElement = CreateBetTypeElement(betType.FastMarketResults, action);
+            betTypes.Add(betTypeElement);
+        }
+
+        return betTypes;
     }
 
-    public class BetTypeElementServiceImp : IBetTypeElementService
+    private static string GetResult(FastMarketResult fastMarket, string actionName)
     {
-
-        public List<BetTypeElement> GetBetTypes(List<BetType> betTypeList, string action)
+        if (actionName.Equals(ActionType.UnCalculate))
         {
-            var betTypes = new List<BetTypeElement>();
-
-            foreach (var betType in betTypeList)
-            {
-                var betTypeElement = CreateBetTypeElement(betType.FastMarketResults, action);
-                betTypes.Add(betTypeElement);
-            }
-
-            return betTypes;
+            return string.Empty;
         }
 
-        private static string GetResult(FastMarketResult fastMarket, string actionName)
+        if (fastMarket.BetType == FastMarketBetType.TimeMachineMinutes || fastMarket.BetType == FastMarketBetType.TimeMachineHDP)
         {
-            if (actionName.Equals(ActionType.UnCalculate))
-            {
-                return string.Empty;
-            }
+            return fastMarket.Result.ToString();
+        }
+        else if (fastMarket.BetType == FastMarketBetType.NextOneMinuteSetPiece)
+        {
+            return NextOneMinuteSetPiece(fastMarket.ResultItem).ToString();
+        }
+        else
+        {
+            return fastMarket.ResultItem.Value.ToString();
+        }
+    }
 
-            if (fastMarket.BetType == FastMarketBetType.TimeMachineMinutes || fastMarket.BetType == FastMarketBetType.TimeMachineHDP)
-            {
-                return fastMarket.Result.ToString();
-            }
-            else if (fastMarket.BetType == FastMarketBetType.NextOneMinuteSetPiece)
-            {
-                return NextOneMinuteSetPiece(fastMarket.ResultItem).ToString();
-            }
-            else
-            {
-                return fastMarket.ResultItem.Value.ToString();
-            }
+    private static int NextOneMinuteSetPiece(ResultItem item)
+    {
+        return item.Goal ? SetPiece.CornerFreeKickGoalKickAndPenalty : item.Value;
+    }
+
+    private BetTypeElement CreateBetTypeElement(List<FastMarketResult> fastMarkets, string actionName)
+    {
+        var items = fastMarkets.Select(x => CreateItemElement(x, actionName)).ToList();
+        var betTypeId = 0;
+        var firstItem = fastMarkets.FirstOrDefault();
+
+        if (firstItem != null)
+        {
+            betTypeId = firstItem.BetType;
         }
 
-        private static int NextOneMinuteSetPiece(ResultItem item)
+        return new BetTypeElement
         {
-            return item.Goal ? SetPiece.CornerFreeKickGoalKickAndPenalty : item.Value;
-        }
+            Id = betTypeId,
+            Items = items
+        };
+    }
 
-        private BetTypeElement CreateBetTypeElement(List<FastMarketResult> fastMarkets, string actionName)
+    private ItemElement CreateItemElement(FastMarketResult fastMarket, string actionName)
+    {
+        var result = GetResult(fastMarket, actionName);
+
+        return new ItemElement
         {
-            var items = fastMarkets.Select(x => CreateItemElement(x, actionName)).ToList();
-            var betTypeId = 0;
-            var firstItem = fastMarkets.FirstOrDefault();
-
-            if (firstItem != null)
-            {
-                betTypeId = firstItem.BetType;
-            }
-
-            return new BetTypeElement
-            {
-                Id = betTypeId,
-                Items = items
-            };
-        }
-
-        private ItemElement CreateItemElement(FastMarketResult fastMarket, string actionName)
-        {
-            var result = GetResult(fastMarket, actionName);
-
-            return new ItemElement
-            {
-                Position = fastMarket.Position,
-                Result = result
-            };
-        }
+            Position = fastMarket.Position,
+            Result = result
+        };
     }
 }

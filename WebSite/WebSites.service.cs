@@ -48,9 +48,9 @@ namespace Settlement.WebSites;
 
 public static class WebSites
 {
-    public static string AllowOrigin = "AllowOrigin";
+    public static readonly string AllowOrigin = "AllowOrigin";
 
-    public static int BytesPerSecond = 240;
+    public static readonly int BytesPerSecond = 240;
 
     public static readonly TimeSpan GacePeriod = TimeSpan.FromSeconds(30);
 
