@@ -29,12 +29,12 @@
     "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand basketball/components/app.component.spec.ts",
     "test:watch": "jest --watch soccer/components/app.component.spec.ts",
     "test:coverage": "jest --runInBand --coverage multi-sports/components/league.component.spec",
+	  "test-coverage": "jest --ci -u --coverage", 
     "karma": "ng test",
     "stylelint": "stylelint app/**/*.less",
     "tslint-app": "tslint multi-sports/**/*.ts -e multi-sports/**/*.spec.ts",
     "tslint": "tslint -p tsconfig.json",
-    "tslint-fix": "tslint --fix -p tsconfig.json",
-    "test-coverage": "jest --ci -u --coverage"
+    "tslint-fix": "tslint --fix -p tsconfig.json"
   },
   "dependencies": {
     "6": "0.0.1",
