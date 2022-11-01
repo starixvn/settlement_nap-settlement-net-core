@@ -1,7 +1,4 @@
 ﻿using Settlement.Core.Models;
-using Settlement.Sportsbook.Aio.Services;
-using System.Collections.Generic;
-using Xunit;
 using ResultDetail = Settlement.Sportsbook.Aio.Models.ResultDetail;
 
 namespace Settlement.Sportsbook.Aio.UnitTests.Services

@@ -1,3 +1,3 @@
-﻿global using Fanex.Settlement.Converter.Services;
-global using NSubstitute;
+﻿global using NSubstitute;
+global using Settlement.Sportsbook.MoveTickets.Services;
 global using Xunit;

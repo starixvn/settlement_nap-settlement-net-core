@@ -10,7 +10,6 @@ using Settlement.Core.Services;
 using Settlement.Sportsbook.MoveTickets.Criteria;
 using Settlement.Sportsbook.MoveTickets.Models;
 using Settlement.Sportsbook.MoveTickets.Requests;
-using System.Threading.Tasks;
 
 namespace Settlement.Sportsbook.MoveTickets.Services
 {
@@ -110,7 +109,7 @@ namespace Settlement.Sportsbook.MoveTickets.Services
             var validateResult = await VerifyBeforeMovingRunningTickets(criteria);
             if (validateResult.ErrCode != 0)
             {
-                logService.ActionLog(request.MatchId, criteria.ErrMsg, actionIDMoveRunningTickets);
+                logService.ActionLog(request.MatchId, validateResult.ErrMsg, actionIDMoveRunningTickets);
                 return validateResult;
             }
 

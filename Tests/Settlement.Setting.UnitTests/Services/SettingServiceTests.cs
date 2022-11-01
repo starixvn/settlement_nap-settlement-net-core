@@ -3,14 +3,10 @@ using AutoMapper.Configuration;
 using Fanex.Data.Repository;
 using Fanex.NAP.Client.Helpers.Web;
 using Microsoft.AspNetCore.Http;
-using NSubstitute;
 using Settlement.Core.Criteria;
 using Settlement.Setting.Criteria;
 using Settlement.Setting.Models;
 using Settlement.Setting.Requests;
-using Settlement.Setting.Services;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace Settlement.Setting.UnitTests.Services
 {

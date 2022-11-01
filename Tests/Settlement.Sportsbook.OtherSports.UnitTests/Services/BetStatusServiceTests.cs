@@ -1,12 +1,8 @@
 ﻿using Fanex.Data.Repository;
-using NSubstitute;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Sportsbook.OtherSports.Criteria;
 using Settlement.Sportsbook.OtherSports.Requests;
-using Settlement.Sportsbook.OtherSports.Services;
-using System.Collections.Generic;
-using Xunit;
 using ResourceItem = Settlement.Core.Models.ResourceItem;
 
 namespace Settlement.Sportsbook.OtherSports.UnitTests.Services

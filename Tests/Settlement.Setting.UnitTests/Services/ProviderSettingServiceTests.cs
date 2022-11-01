@@ -6,7 +6,6 @@ using Settlement.Setting.Criteria.ProviderManager;
 using Settlement.Setting.Models;
 using Settlement.Setting.Requests;
 using Settlement.Setting.Requests.ProviderManager;
-using Settlement.Setting.Services;
 
 namespace Settlement.Setting.UnitTests.Services
 {

@@ -1,6 +1,5 @@
 ﻿using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Services.Badminton;
-using Xunit;
 
 namespace Settlement.Sportsbook.Aio.UnitTests.Services.Badminton
 {

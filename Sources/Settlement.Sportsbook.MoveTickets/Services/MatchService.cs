@@ -1,7 +1,5 @@
 ﻿using Settlement.Core.Models;
 using Settlement.Core.Services;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Settlement.Sportsbook.MoveTickets.Services
 {
@@ -69,12 +67,7 @@ namespace Settlement.Sportsbook.MoveTickets.Services
         public List<Match> MergeMatches(List<Match> baseMatches, List<Match> siteMatches)
         {
             var peekNewMatches = siteMatches.Except(baseMatches).ToList();
-
-            if (peekNewMatches.Any())
-            {
-                baseMatches.AddRange(peekNewMatches);
-            }
-
+            baseMatches.AddRange(peekNewMatches);
             AddSiteInfo(baseMatches, siteMatches);
 
             return baseMatches;

@@ -1,6 +1,5 @@
 ﻿using AutoMapper.Configuration;
 using Fanex.Data.Repository;
-using NSubstitute;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.Aio.Constants;
@@ -8,17 +7,12 @@ using Settlement.Sportsbook.Aio.Criteria;
 using Settlement.Sportsbook.Aio.MapperFactory;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Requests;
-using Settlement.Sportsbook.Aio.Services;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace Settlement.Sportsbook.Aio.UnitTests.Services
 {
     public class AioServiceTests
     {
         private readonly IDynamicRepository repository;
-        private readonly PermissionService permissionService;
         private readonly IRefDataService refDataService;
         private readonly ICreateQueryService createQueryService;
         private readonly IMapperFactory mapperFactory;
@@ -29,7 +23,6 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services
         public AioServiceTests()
         {
             repository = Substitute.For<IDynamicRepository>();
-            permissionService = Substitute.For<PermissionService>(null, null, null, null);
             refDataService = Substitute.For<IRefDataService>();
             createQueryService = Substitute.For<ICreateQueryService>();
             mapperFactory = Substitute.For<IMapperFactory>();

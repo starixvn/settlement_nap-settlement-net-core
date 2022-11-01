@@ -2,7 +2,7 @@
 
 namespace Settlement.Sportsbook.MoveTickets.Criteria
 {
-    internal class ValidateMatchesCriteria : NonQueryCommand
+    public class ValidateMatchesCriteria : NonQueryCommand
     {
         public int MatchId { get; set; }
 

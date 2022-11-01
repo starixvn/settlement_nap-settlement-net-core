@@ -6,7 +6,6 @@ using Settlement.Setting.Criteria.OutsideSourceManager;
 using Settlement.Setting.Models.OutsideSourceManager;
 using Settlement.Setting.Requests;
 using Settlement.Setting.Requests.OutsideSourceManager;
-using Settlement.Setting.Services;
 
 namespace Settlement.Setting.UnitTests.Services
 {

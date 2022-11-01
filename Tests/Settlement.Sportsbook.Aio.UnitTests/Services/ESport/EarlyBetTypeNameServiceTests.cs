@@ -1,8 +1,6 @@
-﻿using NSubstitute;
-using Settlement.Core.Services;
+﻿using Settlement.Core.Services;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Services.ESport;
-using Xunit;
 
 namespace Settlement.Sportsbook.Aio.UnitTests.Services.ESport
 {

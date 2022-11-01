@@ -8,9 +8,6 @@ using Settlement.Core.Models;
 using Settlement.Sportsbook.OtherSports.Constants;
 using Settlement.Sportsbook.OtherSports.Criteria;
 using Settlement.Sportsbook.OtherSports.Requests;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Settlement.Sportsbook.OtherSports.Services
 {

@@ -1,6 +1,5 @@
 ﻿using Settlement.Core.Constants;
 using Settlement.Core.Models;
-using System.Linq;
 
 namespace Settlement.Sportsbook.MoveTickets.Services
 {
@@ -44,7 +43,7 @@ namespace Settlement.Sportsbook.MoveTickets.Services
             var isExistRunningTicketOnSite = match.SiteMatch.Exists(m => m.IsExistRunningTicket);
             return match.IsExistRunningTicket || isExistRunningTicketOnSite;
         }
-      
+
         public bool IsExistMarkedTicketParlay(Match match)
         {
             var isExistMarkedTicketParlay = match.SiteMatch.Exists(m => m.IsExistMarkedTicketParlay);
@@ -54,7 +53,7 @@ namespace Settlement.Sportsbook.MoveTickets.Services
         public bool IsExistRunningTicketParlay(Match match)
         {
             var isExistRunningTicketParlay = match.SiteMatch.Exists(m => m.IsExistRunningTicketParlay);
-            return match.IsExistMarkedTicketParlay || isExistRunningTicketParlay;
+            return match.IsExistRunningTicketParlay || isExistRunningTicketParlay;
         }
 
         public int? IsCalculatingSingle(Match match)
@@ -129,7 +128,7 @@ namespace Settlement.Sportsbook.MoveTickets.Services
 
         private static bool IsExistedRunningEarlyBetTypes(Match match)
         {
-           return match.IsRunningEarlyBetTypes || match.SiteMatch.Exists(m => m.IsRunningEarlyBetTypes);
+            return match.IsRunningEarlyBetTypes || match.SiteMatch.Exists(m => m.IsRunningEarlyBetTypes);
         }
 
         private static string EarlyParlayStatus(bool isRunningEarlyBetTypesParlay, bool isWaitingEarlyBetTypesParlay)

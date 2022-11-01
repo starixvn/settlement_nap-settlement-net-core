@@ -1,6 +1,5 @@
 ﻿using Settlement.Core.Constants;
 using Settlement.Core.Models;
-using Settlement.Core.Services;
 
 namespace Settlement.Sportsbook.MoveTickets.Services
 {
@@ -29,14 +28,9 @@ namespace Settlement.Sportsbook.MoveTickets.Services
 
         private readonly SiteMatchService siteMatchService;
 
-        private readonly IGoalIconService goalIconService;
-
-        public NewInfoMatchServiceImp(
-            SiteMatchService siteMatchService,
-            IGoalIconService goalIconService)
+        public NewInfoMatchServiceImp(SiteMatchService siteMatchService)
         {
             this.siteMatchService = siteMatchService;
-            this.goalIconService = goalIconService;
         }
 
         public string EventStatusColor(Match match)

@@ -2,7 +2,7 @@
 
 namespace Settlement.Sportsbook.MoveTickets.Criteria
 {
-    class GetMoveTicketInfoCriteria : CriteriaBase
+    public class GetMoveTicketInfoCriteria : CriteriaBase
     {
         public int MatchId { get; set; }
 
@@ -17,4 +17,3 @@ namespace Settlement.Sportsbook.MoveTickets.Criteria
         }
     }
 }
-

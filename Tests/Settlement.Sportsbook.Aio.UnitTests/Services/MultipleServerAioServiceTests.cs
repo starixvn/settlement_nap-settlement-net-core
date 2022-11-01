@@ -4,17 +4,12 @@ using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using NSubstitute;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Sportsbook.Aio.Constants;
 using Settlement.Sportsbook.Aio.Criteria;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Requests;
-using Settlement.Sportsbook.Aio.Services;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Xunit;
 using ResultDetail = Settlement.Sportsbook.Aio.Models.ResultDetail;
 
 namespace Settlement.Sportsbook.Aio.UnitTests.Services
