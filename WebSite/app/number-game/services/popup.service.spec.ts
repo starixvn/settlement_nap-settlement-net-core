@@ -47,7 +47,7 @@ describe("Popup Service", () => {
 
     it('popupReCalc - should call matDialog methods and edit input match', () => {
       const matchDetail = {} as MatchDetail;
-      const model = new ReCalculationModel(matchDetail, "");
+      const model = new ReCalculationModel(matchDetail);
       const ball1 = new Ball(1, 1, 2);
       const ball2 = new Ball(1, 2, 3);
       const ball3 = new Ball(1, 3, 4);

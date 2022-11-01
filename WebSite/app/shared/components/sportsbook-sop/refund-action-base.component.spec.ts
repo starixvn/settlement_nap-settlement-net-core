@@ -80,7 +80,6 @@ describe("Refund Base Component", () => {
         it('should push request when click ok on confirm box', fakeAsync(async () => {
             result.resultSettingData.isConfirmedRefund = true;
             spyOn(aioService, 'changeResultSetting').and.returnValue(of(true));
-            spyOn(closePopupService, 'closePopupOnly');
             const query = new ResultSettingQuery(0, ResultSettingType.confirmRefund,
                 false, '');
 
@@ -111,7 +110,6 @@ describe("Refund Base Component", () => {
             result.resultSettingData.isConfirmedRefund = true;
             result.settlementStatusId = SettlementStatusId.Running;
             spyOn(aioService, 'changeResultSetting').and.returnValue(of(true));
-            spyOn(closePopupService, 'closePopupOnly');
             const query = new ResultSettingQuery(0, ResultSettingType.confirmRefund,
                 true, '');
 

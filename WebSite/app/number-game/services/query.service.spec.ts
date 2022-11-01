@@ -34,7 +34,7 @@ describe('NumberGameService', () => {
 
   it('getBallsByMatchId - Call exact Url', fakeAsync(() => {
     const matchId = 123456;
-    const url = `Local/api/number-game/get-ball?matchId=${matchId}`;
+    const url = `api/number-game/get-ball?matchId=${matchId}`;
 
     spyOn(httpRequestService, 'getJson');
     service.getBallsByMatchId(matchId);
@@ -43,7 +43,7 @@ describe('NumberGameService', () => {
   }));
 
   it('search - Call exact Url and param', fakeAsync(() => {
-      const url = 'Local/api/number-game/search';
+      const url = 'api/number-game/search';
       const param = new GetMatchesQuery('700000', '', '2020-01-01', '2020-01-02');
 
       spyOn(httpRequestService, 'postJson');
@@ -53,7 +53,7 @@ describe('NumberGameService', () => {
   }));
 
   it('filter - Call exact Url', fakeAsync(() => {
-      const url = 'Local/api/number-game/filter-default';
+      const url = 'api/number-game/filter-default';
 
       spyOn(httpRequestService, 'getJson');
       service.filter();
@@ -62,7 +62,7 @@ describe('NumberGameService', () => {
   }));
 
   it('settle - Call exact Url and param', fakeAsync(() => {
-      const url = 'Local/api/number-game/settle';
+      const url = 'api/number-game/settle';
       const balls: Ball[] = [new Ball(700000, 1, 1)];
       const param = new SettleQuery(700000, balls);
 

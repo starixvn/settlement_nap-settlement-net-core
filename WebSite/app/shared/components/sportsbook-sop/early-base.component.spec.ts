@@ -598,7 +598,6 @@ describe("Early Base Component", () => {
         it('should push request when click ok on confirm box', fakeAsync(async () => {
             resultSetting.resultSettingData.isConfirmedRefund = true;
             spyOn(aioService, 'changeResultSetting').and.returnValue(of(true));
-            spyOn(closePopupService, 'closePopupOnly');
             const query = new ResultSettingQuery(0, ResultSettingType.confirmRefund,
                 false, '');
 
@@ -639,7 +638,6 @@ describe("Early Base Component", () => {
             resultSetting.resultSettingData.isConfirmedRefund = true;
             resultSetting.settlementStatusId = SettlementStatusId.Running;
             spyOn(aioService, 'changeResultSetting').and.returnValue(of(true));
-            spyOn(closePopupService, 'closePopupOnly');
             const query = new ResultSettingQuery(0, ResultSettingType.confirmRefund,
                 true, '');
 

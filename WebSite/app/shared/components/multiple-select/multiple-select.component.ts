@@ -36,7 +36,7 @@ export class NewMultipleSelectComponent implements OnChanges, AfterViewInit {
   @ViewChildren('panel') panel: QueryList<MatExpansionPanel>;
 
   constructor(private readonly cd: ChangeDetectorRef,
-    private readonly viewContainerRef: ViewContainerRef) {
+    viewContainerRef: ViewContainerRef) {
     this.element = viewContainerRef.element.nativeElement;
   }
 

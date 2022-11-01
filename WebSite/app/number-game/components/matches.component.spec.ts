@@ -86,9 +86,9 @@ describe('NumberGame - Matches Component', () => {
 
     describe('openPopup function', () => {
         it('should open Popup log when click on link.', () => {
-            const matchCode = "mock";
+            const matchId = 123;
             spyOn(popupService, 'popupLog');
-            component.openLog(matchCode);
+            component.openLog(matchId);
             expect(popupService.popupLog).toHaveBeenCalled();
         });
 
