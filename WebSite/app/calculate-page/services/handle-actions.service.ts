@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Match, ChangeSettingResult, ItemsSelect } from "../../shared/models";
+import { Match, ChangeSettingResult } from "../../shared/models";
 import * as _ from 'lodash';
 import { BackgroundColor, EventStatus } from '../../shared/constants';
 import { CalculationMatch, League } from '../models';
-import { InstantStatus } from "../constants";
+import { InstantStatus } from '../constants';
 
 @Injectable()
 export class HandleActionsService {

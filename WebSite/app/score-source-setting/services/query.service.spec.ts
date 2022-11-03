@@ -32,7 +32,7 @@ describe('QueryService', () => {
   });
 
   it('getScoreSourcePermission - should get with correct param', () => {
-    const url = 'Local/api/setting/get-score-source-permission';
+    const url = 'api/setting/get-score-source-permission';
     spyOn(httpRequestService, 'getJson');
     service.getScoreSourcePermission();
 
@@ -41,7 +41,7 @@ describe('QueryService', () => {
 
   it('getSources - should post with correct param', () => {
     const query = new GetOutsideSourceQuery();
-    const url = 'Local/api/setting/get-outside-source';
+    const url = 'api/setting/get-outside-source';
 
     service.getSources(query);
 
@@ -50,7 +50,7 @@ describe('QueryService', () => {
 
   it('add - should post with correct param', () => {
     const query = new OutsideSource();
-    const url = 'Local/api/setting/add-outside-source';
+    const url = 'api/setting/add-outside-source';
 
     service.add(query);
 
@@ -59,7 +59,7 @@ describe('QueryService', () => {
 
   it('updateOutsideSource - should post with correct param', () => {
     const query = new OutsideSource();
-    const url = 'Local/api/setting/update-outside-source';
+    const url = 'api/setting/update-outside-source';
 
     service.updateOutsideSource(query);
 
@@ -69,7 +69,7 @@ describe('QueryService', () => {
   it('updateLeagueSources - should post with correct param', () => {
     const query = new UpdateLeagueSourceQuery();
 
-    const url = 'Local/api/setting/update-league-outside-source';
+    const url = 'api/setting/update-league-outside-source';
 
     service.updateLeagueSources(query);
 
@@ -78,7 +78,7 @@ describe('QueryService', () => {
 
   it('getProviders - should post with correct param', () => {
     const query = new GetProviderQuery();
-    const url = 'Local/api/setting/get-provider-source';
+    const url = 'api/setting/get-provider-source';
 
     service.getProviders(query);
 
@@ -87,7 +87,7 @@ describe('QueryService', () => {
 
   it('push - should post with correct param', () => {
     const query = new UpdateProviderQuery();
-    const url = 'Local/api/setting/update-provider-source';
+    const url = 'api/setting/update-provider-source';
 
     service.updateProvider(query);
 
