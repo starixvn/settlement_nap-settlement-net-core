@@ -1,9 +1,7 @@
 ﻿using AutoMapper;
 using Fanex.Caching;
-using Fanex.Data.Repository;
 using Fanex.Settlement.ScaleOut.Request;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Options;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
@@ -11,12 +9,7 @@ using Settlement.EventManagement.Criteria;
 using Settlement.EventManagement.Models;
 using Settlement.EventManagement.Models.MultiSports;
 using Settlement.EventManagement.Requests;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using Match = Settlement.EventManagement.Models.MultiSports.Match;
 
 namespace Settlement.EventManagement.Services.MultiSports
