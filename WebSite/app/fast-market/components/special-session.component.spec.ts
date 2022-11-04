@@ -14,12 +14,14 @@ import { Result } from '../../shared/models';
 import { of } from 'rxjs';
 import { SessionId } from '../constants';
 import * as _ from 'lodash';
+import { ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 
 describe('SpecialSessionComponent', () => {
   let component: SpecialSessionComponent;
   let fixture: ComponentFixture<SpecialSessionComponent>;
   let requestService: RequestService;
   let messageBoxService: MessageBoxService;
+  let toastrService: ToastrService;
 
   const resultDetail = new ResultDetail();
   beforeEach(async () => {
@@ -33,6 +35,7 @@ describe('SpecialSessionComponent', () => {
         RequestService,
         HttpRequestService,
         BlockUIService,
+        ToastrService,
         { provide: MessageBoxService, useClass: MessageBoxService },
       ],
       imports: [
@@ -40,7 +43,9 @@ describe('SpecialSessionComponent', () => {
         FormsModule,
         MaterialModule,
         HttpClientModule,
-
+        ToastNoAnimationModule.forRoot(),
+        ToastContainerModule,
+        ToastrModule.forRoot()
       ],
     }).overrideModule(BrowserDynamicTestingModule, {
       set: {
@@ -55,6 +60,7 @@ describe('SpecialSessionComponent', () => {
     requestService = TestBed.inject(RequestService);
     messageBoxService = TestBed.inject(MessageBoxService);
     component = fixture.componentInstance;
+    toastrService = fixture.debugElement.injector.get(ToastrService);
     component.resultDetail = [resultDetail];
     fixture.detectChanges();
   });
@@ -137,11 +143,11 @@ describe('SpecialSessionComponent', () => {
 
     it('should alert when no change was made', () => {
       component.originalWaterBreakOne = _.cloneDeep(waterBreak);
-      spyOn(messageBoxService, 'alert');
+      spyOn(toastrService, 'error');
 
       component.saveAndSelectWaterBreak(waterBreak);
 
-      expect(messageBoxService.alert).toHaveBeenCalled();
+      expect(toastrService.error).toHaveBeenCalled();
     });
 
     it('should successfully select water break when water break is applied and no change was made', fakeAsync(() => {
@@ -177,11 +183,11 @@ describe('SpecialSessionComponent', () => {
     it('should alert when fail on verifying before action', () => {
       waterBreak = new SpecialSession('1234');
       waterBreak.apply = true;
-      spyOn(messageBoxService, 'alert');
+      spyOn(toastrService, 'error');
 
       component.saveAndSelectWaterBreak(waterBreak);
 
-      expect(messageBoxService.alert).toHaveBeenCalled();
+      expect(toastrService.error).toHaveBeenCalled();
     });
   });
 

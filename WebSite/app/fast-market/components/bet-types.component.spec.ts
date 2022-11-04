@@ -21,7 +21,7 @@ import {
     ResultDetail,
     IntervalEvent
  } from '../models';
-import { MessageBoxService, HttpRequestService, BlockUIService, ClosePopupService } from '../../shared/services';
+import { MessageBoxService, HttpRequestService, BlockUIService } from '../../shared/services';
 import { RequestService } from '../services/request.service';
 import { FilterComponent } from './filter.component';
 import { TicketStatusPipe, ResultStatusPipe, IntervalPipe, SpecialTimeEventCounterPipe, SpecialTimePipe } from '../pipes';
@@ -32,15 +32,16 @@ import { ResultItemLabel } from '../models/result-item-label.model';
 import { TimeMachineService, VerificationService } from '../services';
 import { SpecialSessionComponent } from './special-session.component';
 import { MaterialModule } from '../../shared/material-module';
+import { ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 
 describe('Component: BetTypesComponent', () => {
     let component: BetTypesComponent;
     let fixture: ComponentFixture<BetTypesComponent>;
     let requestService: RequestService;
     let messageBoxService: MessageBoxService;
-    let closePopupService: ClosePopupService;
     let verificationService: VerificationService;
     let timeMachineService: TimeMachineService;
+    let toastrService: ToastrService;
     const eventCounter = new EventCounter();
     const betType = new BetType();
     betType.checked = false;
@@ -171,10 +172,10 @@ describe('Component: BetTypesComponent', () => {
                 HttpRequestService,
                 BlockUIService,
                 RequestService,
-                ClosePopupService,
                 NgbModal,
                 TimeMachineService,
                 VerificationService,
+                ToastrService,
                 { provide: MessageBoxService, useClass: MessageBoxService },
                 { provide: ElementRef, useValue: new MockElementRef()} ,
             ],
@@ -183,6 +184,9 @@ describe('Component: BetTypesComponent', () => {
                 HttpClientModule,
                 NgbModule,
                 MaterialModule,
+                ToastNoAnimationModule.forRoot(),
+                ToastContainerModule,
+                ToastrModule.forRoot()
             ],
         })
             .overrideModule(BrowserDynamicTestingModule, {
@@ -196,9 +200,9 @@ describe('Component: BetTypesComponent', () => {
                 component = fixture.componentInstance;
                 requestService = fixture.debugElement.injector.get(RequestService);
                 messageBoxService = fixture.debugElement.injector.get(MessageBoxService);
-                closePopupService = fixture.debugElement.injector.get(ClosePopupService);
                 verificationService = fixture.debugElement.injector.get(VerificationService);
                 timeMachineService = fixture.debugElement.injector.get(TimeMachineService);
+                toastrService = fixture.debugElement.injector.get(ToastrService);
             });
     }));
 
@@ -208,29 +212,32 @@ describe('Component: BetTypesComponent', () => {
 
     it('onCollapsedClick - should collapse bet type', () => {
         betType.collapsed = true;
+        spyOn(toastrService, 'clear');
 
         component.onCollapsedClick(betType);
 
-        expect(component.errorMessage).toEqual('');
-        expect(betType.collapsed).toBe(false);
+        expect(betType.collapsed).toBeFalsy();
+        expect(toastrService.clear).toHaveBeenCalled();
     });
 
     describe('onCollapsedEventCounter', () => {
         it('should collapse when input false', () => {
             component.fastMarkets = fastMarkets;
+            spyOn(toastrService, 'clear');
 
             component.onCollapsedEventCounter(false);
 
-            expect(component.errorMessage).toEqual('');
+            expect(toastrService.clear).toHaveBeenCalled();
             expect(component.fastMarkets.eventCounterCollapsed).toBe(true);
         });
 
-        it('should uncollapse when input true', () => {
+        it('should unCollapse when input true', () => {
             component.fastMarkets = fastMarkets;
+            spyOn(toastrService, 'clear');
 
             component.onCollapsedEventCounter(true);
 
-            expect(component.errorMessage).toEqual('');
+            expect(toastrService.clear).toHaveBeenCalled();
             expect(component.fastMarkets.eventCounterCollapsed).toBe(false);
         });
     });
@@ -279,10 +286,11 @@ describe('Component: BetTypesComponent', () => {
             const message = 'Are you sure you want to CALCULATE the selected result?';
             component.fastMarkets = fastMarkets;
             spyOn(requestService, 'doSubmitByAction').and.returnValue(of(successfulResult));
-            spyOn(closePopupService, 'closePopup');
+            spyOn(messageBoxService, 'closePopup');
             spyOn(verificationService, 'verifyBeforeCalculation').and.returnValue(true);
             spyOn(verificationService, 'verifyChangedSettledTickets').and.returnValue(of(true));
             spyOn(requestService, 'checkingStatus').and.returnValue(of(successfulResult));
+            spyOn(toastrService, 'clear');
 
             component.calculateAction();
             tick();
@@ -295,8 +303,8 @@ describe('Component: BetTypesComponent', () => {
             tick();
 
             expect(component.modalDialogMessage.message).toEqual(message);
-            expect(component.errorMessage).toEqual('');
-            expect(closePopupService.closePopup).toHaveBeenCalled();
+            expect(toastrService.clear).toHaveBeenCalled();
+            expect(messageBoxService.closePopup).toHaveBeenCalled();
         }));
 
         it('should calculate fail and return error message', fakeAsync(() => {
@@ -321,8 +329,9 @@ describe('Component: BetTypesComponent', () => {
             const uncalMessage = 'Are you sure you want to UNCALCULATE the selected result?';
             component.fastMarkets = fastMarkets;
             spyOn(requestService, 'doSubmitByAction').and.returnValue(of(successfulResult));
-            spyOn(closePopupService, 'closePopup');
+            spyOn(messageBoxService, 'closePopup');
             spyOn(verificationService, 'verifyBeforeUncalculation').and.returnValue(true);
+            spyOn(toastrService, 'clear');
 
             component.unCalculateAction();
             const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
@@ -330,8 +339,8 @@ describe('Component: BetTypesComponent', () => {
             tick();
 
             expect(component.modalDialogMessage.message).toEqual(uncalMessage);
-            expect(component.errorMessage).toEqual('');
-            expect(closePopupService.closePopup).toHaveBeenCalled();
+            expect(toastrService.clear).toHaveBeenCalled();
+            expect(messageBoxService.closePopup).toHaveBeenCalled();
         }));
 
         it('should fail and return error message', fakeAsync(() => {
@@ -374,9 +383,10 @@ describe('Component: BetTypesComponent', () => {
             component.fastMarkets = fastMarkets;
             spyOn(requestService, 'checkingMarkedTickets').and.returnValue(of(noMarkedTicket));
             spyOn(requestService, 'doSubmitByAction').and.returnValue(of(successfulResult));
-            spyOn(closePopupService, 'closePopup');
+            spyOn(messageBoxService, 'closePopup');
             spyOn(verificationService, 'verifyBeforeRefund').and.returnValue(true);
             spyOn(requestService, 'checkingStatus').and.returnValue(of(successfulResult));
+            spyOn(toastrService, 'clear');
 
             component.refundAction();
             tick();
@@ -385,8 +395,8 @@ describe('Component: BetTypesComponent', () => {
             tick();
 
             expect(component.modalDialogMessage.message).toEqual(uncalMessage);
-            expect(component.errorMessage).toEqual('');
-            expect(closePopupService.closePopup).toHaveBeenCalled();
+            expect(toastrService.clear).toHaveBeenCalled();
+            expect(messageBoxService.closePopup).toHaveBeenCalled();
         }));
 
         it('should fail and return error message', fakeAsync(() => {
@@ -408,15 +418,14 @@ describe('Component: BetTypesComponent', () => {
         it('should alert when there is marked ticket', fakeAsync(() => {
             component.fastMarkets = fastMarkets;
             spyOn(requestService, 'checkingMarkedTickets').and.returnValue(of(existMarkedTicket));
-            spyOn(messageBoxService, 'alert');
             spyOn(requestService, 'checkingStatus').and.returnValue(of(successfulResult));
+            spyOn(toastrService, 'error');
 
             component.refundAction();
             tick();
             const expectedMessage = Language.MarkedTicket;
 
-            expect(component.modalDialogMessage.message).toEqual(expectedMessage);
-            expect(messageBoxService.alert).toHaveBeenCalled();
+            expect(toastrService.error).toHaveBeenCalledWith(expectedMessage);
         }));
     });
 
@@ -771,24 +780,6 @@ describe('Component: BetTypesComponent', () => {
         component.onChangeProceed(true);
 
         expect(component.fastMarkets).toEqual(fastMarkets);
-    });
-
-    describe('verifyInterval', () => {
-        it('should set hasBackGround when result is blank', () => {
-            const interval = new FastMarketResult();
-            interval.position = 1;
-            interval.result = null;
-            const counter = new EventCounter();
-            counter.position = 1;
-            counter.eventResultItem = new EventResultItem();
-            counter.eventResultItem.goal = '3';
-            component.fastMarkets = fastMarkets;
-            spyOn(timeMachineService, 'getCorrespondingEventCounter').and.returnValue(counter);
-
-            component.verifyInterval(interval);
-
-            expect(interval.hasBackground).toBe(true);
-        });
     });
 
     it('filterAndSelectWaterBreak - should set water break time and refund determine check box', () => {

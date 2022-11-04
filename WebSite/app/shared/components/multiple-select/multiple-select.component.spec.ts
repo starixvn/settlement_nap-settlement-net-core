@@ -9,7 +9,7 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
 import { MatRippleModule, MatOption, MatOptionModule } from '@angular/material/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from "@angular/platform-browser";
-import { MultipleSelect, ItemsSelect, Group } from './../../models';
+import { MultipleSelect, ItemsSelect, Group } from '../../models';
 import { SimpleChange, ChangeDetectorRef } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -113,7 +113,7 @@ describe('MultipleSelectComponent', () => {
     });
   });
 
-  describe('togglePerOne', () => {
+  describe('selectPerOne', () => {
     beforeEach(() => {
       component.allSelected = TestBed.createComponent(MatOption).componentInstance;
       items.push(item);
@@ -125,7 +125,7 @@ describe('MultipleSelectComponent', () => {
     it('should uncheck checkAll when checkAll is checked.', () => {
       component.allSelected.select();
       item.checked = true;
-      component.togglePerOne(item);
+      component.selectPerOne(item);
 
       expect(item.checked).toBeFalsy();
       expect(component.allSelected.selected).toBe(false);
@@ -133,14 +133,14 @@ describe('MultipleSelectComponent', () => {
 
     it('should set valueSelected when called.', () => {
       item.checked = false;
-      component.togglePerOne(item);
+      component.selectPerOne(item);
 
       expect(item.checked).toBeTruthy();
       expect(component.valueSelected).toEqual(items);
     });
   });
 
-  describe('togglePerOneInType', () => {
+  describe('selectOneInGroup', () => {
     beforeEach(() => {
       groups = [];
     });
@@ -149,8 +149,8 @@ describe('MultipleSelectComponent', () => {
       group.selected = true;
       groups.push(group);
       component.groups = groups;
-      spyOn(component, 'togglePerOne');
-      component.togglePerOneInType(group.name, item);
+      spyOn(component, 'selectPerOne');
+      component.selectOneInGroup(group.name, item);
 
       expect(groups.pop().selected).toEqual(false);
     });
@@ -161,14 +161,14 @@ describe('MultipleSelectComponent', () => {
       component.valueSelected.push(item);
       groups.push(group);
       component.groups = groups;
-      spyOn(component, 'togglePerOne');
-      component.togglePerOneInType(group.name, item);
+      spyOn(component, 'selectPerOne');
+      component.selectOneInGroup(group.name, item);
 
       expect(groups.pop().selected).toEqual(true);
     });
   });
 
-  describe('toggleGroupParent', () => {
+  describe('selectGroupParent', () => {
 
     beforeEach(() => {
       groups = [];
@@ -181,14 +181,16 @@ describe('MultipleSelectComponent', () => {
 
     it('should check all child option when parent is unchecked.', () => {
       component.valueSelected = [];
-      component.toggleGroupParent(event, group.name, false);
+      group.selected = false;
+      component.selectGroupParent(event, group);
 
       expect(component.valueSelected.includes(item)).toEqual(true);
     });
 
     it('should uncheck all child option when parent is checked.', () => {
       component.valueSelected = items;
-      component.toggleGroupParent(event, group.name, true);
+      group.selected = true;
+      component.selectGroupParent(event, group);
 
       expect(component.valueSelected.includes(item)).toEqual(false);
     });
@@ -297,5 +299,73 @@ describe('MultipleSelectComponent', () => {
 
       expect(component.groups.pop().countChilds).toEqual(2);
     });
+  });
+
+  describe('hasSearchText', () => {
+    it('should return false when do not support search', () =>{
+      multipleSelect.enableSearchBox = false;
+      component.multipleSelect = multipleSelect;
+      
+      const actual = component.hasSearchText();
+
+      expect(actual).toBeFalsy();
+    });
+
+    it('should return true when support search and has search text', () =>{
+      multipleSelect.enableSearchBox = true;
+      component.multipleSelect = multipleSelect;
+      component.searchText = "1"
+      
+      const actual = component.hasSearchText();
+
+      expect(actual).toBeTruthy();
+    });
+  });
+
+  describe('search', () => {
+    it('should set include Search Text when enable search and has search text', () => {
+      multipleSelect.enableSearchBox = true;
+      component.multipleSelect = multipleSelect;
+      component.searchText = "text";
+      const item = new ItemsSelect(1, "1", "Mock-text", null, null, null, []);
+      const itemSecond = new ItemsSelect(2, "2", "Mock", null, null, null, []);
+      items.push(item);
+      items.push(itemSecond);
+      component.multipleSelect.items = items;
+
+      component.search();
+
+      expect(item.includeSearchText).toBeTruthy();
+      expect(itemSecond.includeSearchText).toBeFalsy();
+      expect(component.notExistItemIncludeSearchText).toBeFalsy();
+      expect(component.status).toEqual("");
+      expect(component.searchTextEmpty).toBeFalsy();
+    });
+    it('should set include Search Text when enable search and not exist search text', () => {
+      multipleSelect.enableSearchBox = true;
+      component.multipleSelect = multipleSelect;
+      component.searchText = "";
+      const item = new ItemsSelect(1, "1", "Mock-text", null, null, null, []);
+      const itemSecond = new ItemsSelect(2, "2", "Mock", null, null, null, []);
+      items.push(item);
+      items.push(itemSecond);
+      component.multipleSelect.items = items;
+      component.items = items;
+      component.formControl.reset();
+
+      component.search();
+
+      expect(item.includeSearchText).toBeTruthy();
+      expect(itemSecond.includeSearchText).toBeTruthy();
+      expect(component.notExistItemIncludeSearchText).toBeFalsy();
+      expect(component.status).toEqual(component.multipleSelect.noneItemCheckedText);
+      expect(component.searchTextEmpty).toBeTruthy();
+    });
+  });
+  it('collapse - Set Value collapse', ()=> {
+    group.collapse = true;
+    component.collapse(group);
+
+    expect(group.collapse).toBeFalsy();
   });
 });

@@ -15,12 +15,13 @@ import { Language } from '../../shared/language';
 import { of } from 'rxjs';
 import 'rxjs/add/operator/toPromise';
 import { observeOn } from 'rxjs/operators';
+import { ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 
 describe('InputScoreFormComponent', () => {
   let component: InputScoreFormComponent;
   let fixture: ComponentFixture<InputScoreFormComponent>;
   let messageBoxService: MessageBoxService;
-  let requestService: RequestService;
+  let toastrService: ToastrService;
 
   const data = 7000000;
   let interval = new TimeMachineResult();
@@ -35,6 +36,7 @@ describe('InputScoreFormComponent', () => {
         MessageBoxService,
         HttpRequestService,
         BlockUIService,
+        ToastrService,
         { provide: MessageBoxService, useClass: MessageBoxService },
         { provide: MatDialogRef, useValue: {} },
         { provide: MAT_DIALOG_DATA, useValue: data }],
@@ -42,7 +44,10 @@ describe('InputScoreFormComponent', () => {
         FormsModule,
         HttpClientModule,
         NgbModule,
-        MaterialModule
+        MaterialModule,
+        ToastNoAnimationModule.forRoot(),
+        ToastContainerModule,
+        ToastrModule.forRoot()
       ],
     }).overrideModule(BrowserDynamicTestingModule, {
       set: {
@@ -56,7 +61,7 @@ describe('InputScoreFormComponent', () => {
     fixture = TestBed.createComponent(InputScoreFormComponent);
     component = fixture.componentInstance;
     messageBoxService = fixture.debugElement.injector.get(MessageBoxService);
-    requestService = fixture.debugElement.injector.get(RequestService);
+    toastrService = fixture.debugElement.injector.get(ToastrService);
     fixture.detectChanges();
   });
 
@@ -70,12 +75,11 @@ describe('InputScoreFormComponent', () => {
     })
     it('should show alert when have at least one input is empty.', () => {
       component.newInterval.homeScore = '';
-      spyOn(messageBoxService, 'alert');
+      spyOn(toastrService, 'error');
 
       component.add();
 
-      expect(messageBoxService.alert).toHaveBeenCalled();
-      expect(component.modalDialogMessage.message).toEqual(Language.inputForm.noInputScore);
+      expect(toastrService.error).toHaveBeenCalledWith(Language.inputForm.noInputScore);
     });
 
     it('should show alert when interval has been exist', () => {
@@ -85,12 +89,11 @@ describe('InputScoreFormComponent', () => {
       component.newInterval = interval;
       component.positionSelected = '1';
       component.intervals = [interval];
-      spyOn(messageBoxService, 'alert');
+      spyOn(toastrService, 'error');
 
       component.add();
 
-      expect(messageBoxService.alert).toHaveBeenCalled();
-      expect(component.modalDialogMessage.message).toEqual(Language.inputForm.isExistInterval);
+      expect(toastrService.error).toHaveBeenCalledWith(Language.inputForm.isExistInterval);
     });
 
     it('should show alert when both home score and away score are equal zero.', () => {
@@ -100,12 +103,11 @@ describe('InputScoreFormComponent', () => {
       component.newInterval = interval;
       component.positionSelected = '1';
 
-      spyOn(messageBoxService, 'alert');
+      spyOn(toastrService, 'error');
 
       component.add();
 
-      expect(messageBoxService.alert).toHaveBeenCalled();
-      expect(component.modalDialogMessage.message).toEqual(Language.inputForm.scoreInvalid);
+      expect(toastrService.error).toHaveBeenCalledWith(Language.inputForm.scoreInvalid);
     });
 
     it('should call related method when input pass all validation.', () => {

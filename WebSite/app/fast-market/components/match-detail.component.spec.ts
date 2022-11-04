@@ -8,19 +8,20 @@ import { ElementRef } from "@angular/core";
 import { ModalDialogComponent, ModalContentDialogComponent } from '../../shared/components';
 import { MatchDetailComponent } from './match-detail.component';
 import { MatchDetail, AutoSettingIcon } from '../models';
-import { FastMarketBetType } from '../constants';
 import { MessageBoxService, HttpRequestService, BlockUIService } from '../../shared/services';
 import { RequestService } from '../services/request.service';
 import { UrlHelper } from '../../helper';
+import { ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 
 describe('Component: MatchDetailComponent', () => {
     let component: MatchDetailComponent;
     let fixture: ComponentFixture<MatchDetailComponent>;
     let fastMarketService: RequestService;
     let messageBoxService: MessageBoxService;
+    let toastrService: ToastrService;
     const buttonName = "btn-danger";
     const errorMessage = "Error message";
-    const matchDetail = new MatchDetail ();
+    const matchDetail = new MatchDetail();
     matchDetail.matchId = 700000;
     matchDetail.autoSettingIcon = new AutoSettingIcon();
     matchDetail.autoSettingIcon.match = 'icon-yes';
@@ -41,7 +42,7 @@ describe('Component: MatchDetailComponent', () => {
 
     class MockElementRef implements ElementRef {
         nativeElement = {};
-      }
+    }
 
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
@@ -55,13 +56,17 @@ describe('Component: MatchDetailComponent', () => {
                 BlockUIService,
                 RequestService,
                 NgbModal,
+                ToastrService,
                 { provide: MessageBoxService, useClass: MessageBoxService },
-                { provide: ElementRef , useValue: new MockElementRef()} ,
+                { provide: ElementRef, useValue: new MockElementRef() },
             ],
             imports: [
                 FormsModule,
                 HttpClientModule,
                 NgbModule,
+                ToastNoAnimationModule.forRoot(),
+                ToastContainerModule,
+                ToastrModule.forRoot()
             ],
         })
             .overrideModule(BrowserDynamicTestingModule, {
@@ -75,6 +80,7 @@ describe('Component: MatchDetailComponent', () => {
                 component = fixture.componentInstance;
                 fastMarketService = fixture.debugElement.injector.get(RequestService);
                 messageBoxService = fixture.debugElement.injector.get(MessageBoxService);
+                toastrService = fixture.debugElement.injector.get(ToastrService);
             });
     }));
 
@@ -108,7 +114,6 @@ describe('Component: MatchDetailComponent', () => {
             component.matchDetail = matchDetail;
             spyOn(fastMarketService, 'updateMatchAutoSettle').and.returnValue(of(successfulResult));
             spyOn(fastMarketService, 'getMatchDetail').and.returnValue(of(matchDetail));
-            spyOn(component, 'changeColorOnManualCalculatePage');
 
             component.confirmUpdateMatchAutoSettle();
             const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
@@ -123,14 +128,14 @@ describe('Component: MatchDetailComponent', () => {
 
             component.matchDetail = matchDetail;
             spyOn(fastMarketService, 'updateMatchAutoSettle').and.returnValue(of(unSuccessfulResult));
-            spyOn(messageBoxService, 'alert');
+            spyOn(toastrService, 'error');
 
             component.confirmUpdateMatchAutoSettle();
             const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
             buttonYes.click();
             tick();
 
-            expect(messageBoxService.alert).toHaveBeenCalled();
+            expect(toastrService.error).toHaveBeenCalled();
         }));
     });
 
@@ -149,7 +154,6 @@ describe('Component: MatchDetailComponent', () => {
             component.matchDetail = matchDetail;
             spyOn(fastMarketService, 'updateLeagueAutoSettle').and.returnValue(of(successfulResult));
             spyOn(fastMarketService, 'getMatchDetail').and.returnValue(of(matchDetail));
-            spyOn(component, 'changeColorOnManualCalculatePage');
 
             component.confirmUpdateLeagueAutoSettle();
             const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
@@ -164,7 +168,6 @@ describe('Component: MatchDetailComponent', () => {
             component.matchDetail = matchDetail;
             spyOn(fastMarketService, 'updateLeagueAutoSettle').and.returnValue(of(successfulResult));
             spyOn(fastMarketService, 'getMatchDetail').and.returnValue(of(matchDetail));
-            spyOn(component, 'changeColorOnManualCalculatePage');
 
             component.confirmUpdateLeagueAutoSettle();
             const buttonNo = document.getElementsByClassName('btn-default')[0] as HTMLElement;
@@ -179,23 +182,14 @@ describe('Component: MatchDetailComponent', () => {
 
             component.matchDetail = matchDetail;
             spyOn(fastMarketService, 'updateLeagueAutoSettle').and.returnValue(of(unSuccessfulResult));
-            spyOn(messageBoxService, 'alert');
+            spyOn(toastrService, 'error');
 
             component.confirmUpdateLeagueAutoSettle();
             const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
             buttonYes.click();
             tick();
 
-            expect(messageBoxService.alert).toHaveBeenCalled();
+            expect(toastrService.error).toHaveBeenCalled();
         }));
-    });
-
-    it('changeColorOnManualCalculatePage - should change color on parent page', () => {
-        component.matchDetail = matchDetail;
-        spyOn(component, 'changeColorOnParentPage');
-
-        component.changeColorOnManualCalculatePage(true);
-
-        expect(component.changeColorOnParentPage).toHaveBeenCalled();
     });
 });
