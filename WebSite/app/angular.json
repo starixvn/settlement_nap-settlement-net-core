@@ -204,7 +204,7 @@
           "options": {
             "aot": true,
             "outputPath": "../wwwroot/instant-setting",
-            "index": "instant-setting/index.cshtml",
+            "index": "instant-setting/index.html",
             "main": "instant-setting/main.ts",
             "tsConfig": "instant-setting/tsconfig.app.json",
             "polyfills": "polyfills.ts",
@@ -1712,7 +1712,7 @@
       }
     }
   },
-  "defaultProject": "multi-sports",
+  "defaultProject": "instant-setting",
   "schematics": {
     "@schematics/angular:component": {
       "inlineTemplate": false,

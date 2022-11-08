@@ -110,19 +110,23 @@ describe('TimeSettingComponent', () => {
       it('should pass all validation and successfully close pop-up', fakeAsync(() => {
         component.time = 10;
         spyOn(requestService, 'proceed').and.returnValue(of(successfulResult));
-        spyOn(closePopupService, 'closePopupInstant');
+        spyOn(messageBoxService, 'closePopup');
+        const element = document.createElement("dialog-response");
+        spyOn(document, 'getElementById').and.returnValue(element);
 
         component.proceed();
         const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
         buttonYes.click();
         tick();
 
-        expect(closePopupService.closePopupInstant).toHaveBeenCalled();
+        expect(messageBoxService.closePopup).toHaveBeenCalled();
       }));
 
       it('should return error message when result is unsuccessful', fakeAsync(() => {
         component.time = 10;
         spyOn(requestService, 'proceed').and.returnValue(of(unSuccessfulResult));
+        const element = document.createElement("dialog-response");
+        spyOn(document, 'getElementById').and.returnValue(element);
 
         component.proceed();
         const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
