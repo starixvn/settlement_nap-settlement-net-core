@@ -211,7 +211,6 @@ public static class WebSites
         services.AddTransient<ILogService, LogServiceImp>();
         services.AddTransient<IScoreSetService, ScoreSetServiceImp>();
         services.AddTransient<ScaleOutSettleService, ScaleOutSettleServiceImp>();
-        services.AddTransient<GeneralService, GeneralServiceImp>();
         services.AddTransient<ScaleOutSettleThirdPartyService, ScaleOutSettleThirdPartyServiceImp>();
         services.AddTransient<GeneralService, GeneralServiceImp>();
     }
