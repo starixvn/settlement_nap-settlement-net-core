@@ -1,151 +1,149 @@
 ﻿using Settlement.FastMarkets.Constants;
 using Settlement.FastMarkets.Models;
 using Settlement.FastMarkets.Models.EventCounterModels;
-using System.Collections.Generic;
 
-namespace Settlement.FastMarkets.Services
+namespace Settlement.FastMarkets.Services;
+
+public interface IEventCounterResultService
 {
-    public interface IEventCounterResultService
+    EventCounterElement GoalResult(List<EventCounter> eventCounters);
+
+    EventCounterElement CornerResult(List<EventCounter> eventCounters);
+
+    EventCounterElement FreeKickResult(List<EventCounter> eventCounters);
+
+    EventCounterElement GoalKickResult(List<EventCounter> eventCounters);
+
+    EventCounterElement ThrowInResult(List<EventCounter> eventCounters);
+
+    EventCounterElement PenaltyResult(List<EventCounter> eventCounters);
+}
+
+public class EventCounterResultServiceImp : IEventCounterResultService
+{
+    public EventCounterElement GoalResult(List<EventCounter> eventCounters)
     {
-        EventCounterElement GoalResult(List<EventCounter> eventCounters);
+        var items = new List<ItemElement>();
+        foreach (var eventCounter in eventCounters)
+        {
+            var item = new ItemElement
+            {
+                Position = eventCounter.Position,
+                Result = eventCounter.EventResultItem.Goal
+            };
 
-        EventCounterElement CornerResult(List<EventCounter> eventCounters);
+            items.Add(item);
+        }
 
-        EventCounterElement FreeKickResult(List<EventCounter> eventCounters);
-
-        EventCounterElement GoalKickResult(List<EventCounter> eventCounters);
-
-        EventCounterElement ThrowInResult(List<EventCounter> eventCounters);
-
-        EventCounterElement PenaltyResult(List<EventCounter> eventCounters);
+        return new EventCounterElement
+        {
+            Id = EventCounterResource.Goal,
+            Items = items
+        };
     }
 
-    public class EventCounterResultServiceImp : IEventCounterResultService
+    public EventCounterElement CornerResult(List<EventCounter> eventCounters)
     {
-        public EventCounterElement GoalResult(List<EventCounter> eventCounters)
+        var items = new List<ItemElement>();
+        foreach (var eventCounter in eventCounters)
         {
-            var items = new List<ItemElement>();
-            foreach (var eventCounter in eventCounters)
+            var item = new ItemElement
             {
-                var item = new ItemElement
-                {
-                    Position = eventCounter.Position,
-                    Result = eventCounter.EventResultItem.Goal
-                };
-
-                items.Add(item);
-            }
-
-            return new EventCounterElement
-            {
-                Id = EventCounterResource.Goal,
-                Items = items
+                Position = eventCounter.Position,
+                Result = eventCounter.EventResultItem.Corner
             };
+
+            items.Add(item);
         }
 
-        public EventCounterElement CornerResult(List<EventCounter> eventCounters)
+        return new EventCounterElement
         {
-            var items = new List<ItemElement>();
-            foreach (var eventCounter in eventCounters)
-            {
-                var item = new ItemElement
-                {
-                    Position = eventCounter.Position,
-                    Result = eventCounter.EventResultItem.Corner
-                };
+            Id = EventCounterResource.Corner,
+            Items = items
+        };
+    }
 
-                items.Add(item);
-            }
-
-            return new EventCounterElement
+    public EventCounterElement FreeKickResult(List<EventCounter> eventCounters)
+    {
+        var items = new List<ItemElement>();
+        foreach (var eventCounter in eventCounters)
+        {
+            var item = new ItemElement
             {
-                Id = EventCounterResource.Corner,
-                Items = items
+                Position = eventCounter.Position,
+                Result = eventCounter.EventResultItem.FreeKick
             };
+
+            items.Add(item);
         }
 
-        public EventCounterElement FreeKickResult(List<EventCounter> eventCounters)
+        return new EventCounterElement
         {
-            var items = new List<ItemElement>();
-            foreach (var eventCounter in eventCounters)
-            {
-                var item = new ItemElement
-                {
-                    Position = eventCounter.Position,
-                    Result = eventCounter.EventResultItem.FreeKick
-                };
+            Id = EventCounterResource.FreeKick,
+            Items = items
+        };
+    }
 
-                items.Add(item);
-            }
-
-            return new EventCounterElement
+    public EventCounterElement GoalKickResult(List<EventCounter> eventCounters)
+    {
+        var items = new List<ItemElement>();
+        foreach (var eventCounter in eventCounters)
+        {
+            var item = new ItemElement
             {
-                Id = EventCounterResource.FreeKick,
-                Items = items
+                Position = eventCounter.Position,
+                Result = eventCounter.EventResultItem.GoalKick
             };
+
+            items.Add(item);
         }
 
-        public EventCounterElement GoalKickResult(List<EventCounter> eventCounters)
+        return new EventCounterElement
         {
-            var items = new List<ItemElement>();
-            foreach (var eventCounter in eventCounters)
-            {
-                var item = new ItemElement
-                {
-                    Position = eventCounter.Position,
-                    Result = eventCounter.EventResultItem.GoalKick
-                };
+            Id = EventCounterResource.GoalKick,
+            Items = items
+        };
+    }
 
-                items.Add(item);
-            }
-
-            return new EventCounterElement
+    public EventCounterElement ThrowInResult(List<EventCounter> eventCounters)
+    {
+        var items = new List<ItemElement>();
+        foreach (var eventCounter in eventCounters)
+        {
+            var item = new ItemElement
             {
-                Id = EventCounterResource.GoalKick,
-                Items = items
+                Position = eventCounter.Position,
+                Result = eventCounter.EventResultItem.ThrowIn
             };
+
+            items.Add(item);
         }
 
-        public EventCounterElement ThrowInResult(List<EventCounter> eventCounters)
+        return new EventCounterElement
         {
-            var items = new List<ItemElement>();
-            foreach (var eventCounter in eventCounters)
-            {
-                var item = new ItemElement
-                {
-                    Position = eventCounter.Position,
-                    Result = eventCounter.EventResultItem.ThrowIn
-                };
+            Id = EventCounterResource.ThrowIn,
+            Items = items
+        };
+    }
 
-                items.Add(item);
-            }
-
-            return new EventCounterElement
+    public EventCounterElement PenaltyResult(List<EventCounter> eventCounters)
+    {
+        var items = new List<ItemElement>();
+        foreach (var eventCounter in eventCounters)
+        {
+            var item = new ItemElement
             {
-                Id = EventCounterResource.ThrowIn,
-                Items = items
+                Position = eventCounter.Position,
+                Result = eventCounter.EventResultItem.Penalty
             };
+
+            items.Add(item);
         }
 
-        public EventCounterElement PenaltyResult(List<EventCounter> eventCounters)
+        return new EventCounterElement
         {
-            var items = new List<ItemElement>();
-            foreach (var eventCounter in eventCounters)
-            {
-                var item = new ItemElement
-                {
-                    Position = eventCounter.Position,
-                    Result = eventCounter.EventResultItem.Penalty
-                };
-
-                items.Add(item);
-            }
-
-            return new EventCounterElement
-            {
-                Id = EventCounterResource.Penalty,
-                Items = items
-            };
-        }
+            Id = EventCounterResource.Penalty,
+            Items = items
+        };
     }
 }

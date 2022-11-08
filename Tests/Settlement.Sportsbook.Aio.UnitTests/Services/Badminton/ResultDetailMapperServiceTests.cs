@@ -1,26 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
-using NSubstitute;
+﻿using Newtonsoft.Json;
 using Settlement.Sportsbook.Aio.MapperFactory;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Services.Badminton;
-using Xunit;
 
 namespace Settlement.Sportsbook.Aio.UnitTests.Services.Badminton
 {
     public class ResultDetailMapperServiceTests
     {
-        private readonly IBadmintonBetTypeService badmintonBetTypeService;
-
         private readonly IMapperService service;
 
         public ResultDetailMapperServiceTests()
         {
-            badmintonBetTypeService = Substitute.For<IBadmintonBetTypeService>();
             service = new ResultDetailMapperServiceImp();
         }
 

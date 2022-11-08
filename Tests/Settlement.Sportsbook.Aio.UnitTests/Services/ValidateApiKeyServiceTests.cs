@@ -1,10 +1,6 @@
 ﻿using Fanex.Data.Repository;
-using NSubstitute;
 using Settlement.Sportsbook.Aio.Criteria;
 using Settlement.Sportsbook.Aio.MapperFactory;
-using Settlement.Sportsbook.Aio.Services;
-using System;
-using Xunit;
 
 namespace Settlement.Sportsbook.Aio.UnitTests.Services
 {

@@ -1,9 +1,4 @@
-﻿using Settlement.Sportsbook.Aio.Models;
-using Settlement.Sportsbook.Aio.Services;
-using System;
-using System.Collections.Generic;
-using Settlement.Core.Models;
-using Xunit;
+﻿using Settlement.Core.Models;
 
 namespace Settlement.Sportsbook.Aio.UnitTests.Services
 {

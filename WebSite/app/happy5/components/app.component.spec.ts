@@ -9,8 +9,7 @@ import {
     FilterComponent,
     MatchesComponent,
     ReCalculationComponent,
-    RefundComponent,
-    LogComponent
+    RefundComponent
 } from './index';
 import {
     DatepickerComponent,
@@ -29,8 +28,7 @@ describe('Component: App', () => {
                 MatchesComponent,
                 DatepickerComponent,
                 ReCalculationComponent,
-                RefundComponent,
-                LogComponent
+                RefundComponent
             ],
             providers: [
                 BlockUIService,

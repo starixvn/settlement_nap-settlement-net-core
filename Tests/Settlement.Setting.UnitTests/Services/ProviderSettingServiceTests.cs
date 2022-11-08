@@ -1,18 +1,11 @@
 ﻿using AutoMapper;
 using AutoMapper.Configuration;
 using Fanex.Data.Repository;
-using Kaden.XmlConverter;
-using NSubstitute;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Settlement.Setting;
 using Settlement.Setting.Criteria;
 using Settlement.Setting.Criteria.ProviderManager;
 using Settlement.Setting.Models;
 using Settlement.Setting.Requests;
 using Settlement.Setting.Requests.ProviderManager;
-using Settlement.Setting.Services;
-using Xunit;
 
 namespace Settlement.Setting.UnitTests.Services
 {

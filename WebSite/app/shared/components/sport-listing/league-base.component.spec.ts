@@ -4,12 +4,9 @@ import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { BackgroundColor, SportType } from '../../constants';
 import {
-  SportMatch,
   MoreScore,
   Score,
-  AutoSetting,
   MixParlay,
-  LeagueMatch,
   Match,
   Remark } from '../../models';
 import { LeagueBaseComponent } from './league-base.component';
@@ -24,25 +21,6 @@ describe('LeagueBaseComponent', () => {
     const parlay = new MixParlay();
     parlay.hasMixParlay = true;
     match.mixParlay = parlay;
-    const buttonName = "btn-danger";
-    const errorMessage = "Error message";
-
-    const league: LeagueMatch = {
-        leagueId: 7000000,
-        matches: [match],
-        name: 'mock league',
-        collapse: false,
-        isCheckedCalcMP: true,
-        disableCheckCalcMP: false,
-        isMergedParlay: false,
-    };
-
-    const sport: SportMatch = {
-        id: 100000,
-        name: 'mock sport',
-        leagues: [league],
-        collapse: false,
-    };
 
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({

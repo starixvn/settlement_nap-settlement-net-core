@@ -1,13 +1,12 @@
 ﻿using MediatR;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using Settlement.Core.Services;
+using Settlement.EventManagement.Models;
 using Settlement.EventManagement.Models.Calculation;
 using Settlement.EventManagement.Requests;
 using Settlement.EventManagement.Services.Calculation;
-using Settlement.EventManagement.Models;
-
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Match = Settlement.EventManagement.Models.Calculation.Match;
 
 namespace Settlement.EventManagement.Handlers
@@ -36,6 +35,7 @@ namespace Settlement.EventManagement.Handlers
         public async Task<CalculationLeagues> Handle(FilterCalculationRequest request, CancellationToken cancellationToken)
         {
             var matches = await matchService.GetMatches(request);
+
             return new CalculationLeagues
             {
                 Leagues = leagueService.Leagues(matches),
@@ -50,7 +50,7 @@ namespace Settlement.EventManagement.Handlers
         public async Task<CalculationLeagues> Handle(FilterAutoCalculationRequest request, CancellationToken cancellationToken)
         {
             var matches = await matchService.GetMatchesAutoCalculate(request);
-            return new CalculationLeagues()
+            return new CalculationLeagues
             {
                 Leagues = leagueService.Leagues(matches),
                 Permission = permissionService.Permission

@@ -1,12 +1,8 @@
-﻿using Kaden.XmlConverter;
-using NSubstitute;
-using Settlement.FastMarkets.Models;
+﻿using Settlement.FastMarkets.Models;
 using Settlement.FastMarkets.Models.EventCounterModels;
 using Settlement.FastMarkets.Requests;
 using Settlement.FastMarkets.Services;
-using System.Collections.Generic;
 using System.Xml;
-using Xunit;
 
 namespace Settlement.FastMarkets.UnitTests.Services
 {

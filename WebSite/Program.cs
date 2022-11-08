@@ -1,40 +1,84 @@
-using Microsoft.AspNetCore.Hosting;
+using Fanex.NAP.Client;
+using Fanex.NAP.Client.Configuration;
+using Fanex.NAP.Client.Helpers.Web;
+using Fanex.NAP.Signin.AspNetCore.Attribute;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using System;
-using Microsoft.Extensions.Options;
+using ONEbook.UM.AspNetCore.Filters;
 using Settlement.Core.Models;
+using Settlement.WebSites;
+using Settlement.WebSites.Middleware;
 
-namespace Settlement.WebSites
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.ConfigureCORS();
+
+builder.Services.ConfigureAuthorization();
+
+builder.Services.ConfigureAuthentication(builder.Configuration);
+
+builder.Services.ConfigureRedis(builder.Configuration);
+
+builder.Services.ConfigureSession(builder.Configuration);
+
+builder.Services.OnebookUM(builder.Configuration);
+
+builder.Services.ConfigureNapServices(builder.Configuration);
+
+WebSites.ConfigureFanex(builder.Configuration);
+
+builder.Services.ConfigureAutoMapper();
+
+builder.Services.ConfigureCore();
+
+builder.Services.ConfigureMediator();
+
+builder.Services.ConfigInternalService();
+
+builder.Services.ConfigureMessagePack();
+
+builder.Services.Configure<AppSettingsKey>(builder.Configuration);
+
+builder.Services.AddRazorPages();
+builder.Services.AddControllersWithViews(options =>
 {
-    public static class Program
-    {
-        private const int bytesPerSecond = 240;
+    options.Filters.Add(new ServiceFilterAttribute(typeof(CheckUMFilterAttribute)));
+    options.Filters.Add(new SessionAuthorizeAttribute());
+});
+builder.Services.AddHttpClient();
 
-        private static readonly TimeSpan gracePeriod = TimeSpan.FromSeconds(30);
+builder.WebHost.ConfigureKestrel(serverOptions =>
+{
+    serverOptions.Limits.MinRequestBodyDataRate = new MinDataRate(WebSites.BytesPerSecond, WebSites.GacePeriod);
+});
 
-        public static void Main(string[] args)
-        {
-            CreateHostBuilder(args).Build().Run();
-        }
+// WEB Application
+var app = builder.Build();
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseUrls($"http://0.0.0.0:5000");
-                    webBuilder.ConfigureKestrel(serverOptions =>
-                    {
-                        serverOptions.Limits.MinRequestBodyDataRate =
-                            new MinDataRate(bytesPerSecond, gracePeriod);
-                    }).UseStartup<Startup>();
-                })
-                .ConfigureServices((hostContext, services) =>
-                {
-                    services
-                        .Configure<AppSettingsKey>(hostContext.Configuration)
-                        .AddSingleton(sp => sp.GetRequiredService<IOptions<AppSettingsKey>>().Value);
-                });
-    }
-}
+app.UseDeveloperExceptionPage();
+app.UseResponseCompression();
+app.UseStaticFiles();
+app.UseCookiePolicy();
+app.UseSession();
+app.UseMiddleware<ErrorHandler>();
+app.UseRouting();
+app.UseCors(WebSites.AllowOrigin);
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllerRoute(
+        "default",
+        "{controller=Home}/{action=Index}/{id?}");
+});
+
+NapClientManager
+    .UseConfig(app.Services.GetRequiredService<INapSettings>())
+    .UseSession(app.Services.GetRequiredService<INapSession>());
+
+#if DEBUG
+app.Run();
+#else
+await app.RunAsync("http://0.0.0.0:5000");
+#endif

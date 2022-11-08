@@ -19,6 +19,7 @@
           <th rowspan="2" class="header-action">Action</th>
           <th colspan="2" class="confirm">Confirm</th>
           <th rowspan="2" class="remark">Hold Status</th>
+          <th rowspan="2" class="remark">Auto Payout Setting</th>
         </tr>
         <tr>
           <th class="confirm-score">Half Time</th>
@@ -35,7 +36,7 @@
       <table class="table-calculation">
         <tbody>
           <tr class="league-name">
-            <td colspan="13" class="name">
+            <td colspan="15" class="name">
               &nbsp;{{leagueMatch.name}}
             </td>
           </tr>
@@ -64,6 +65,7 @@
                 </div>
                 <span [class]="match.goalIcon.homeGoal ?? ''"></span>
                 <span [class]="match.goalIcon.halfTimeHomeGoal ?? ''"></span>
+                <span *ngIf="match.offerLive" class="red">&nbsp;(LIVE)</span>
               </td>
               <td class="score">{{match.halfTimeHomeScore ?? '-'}}</td>
               <td class="final-score  score">{{match.finalHomeScore ?? '-'}}</td>
@@ -115,6 +117,11 @@
                   {{match.remark.isKeyHold || match.remark.isMtdHold || match.remark.isPending || match.remark.isUndecided || match.remark.isUnderSettle ? 'YES' : 'NO'}}
                 </div>
               </td>
+              <td rowspan="2" class="remark-status">
+                <div>
+                 {{match.autoCalcSetting.isAutoPayoutForMatch ? "AUTO" : match.autoCalcSetting.isDirectPayoutForMatch ? "DIRECT" : "OFF" }}
+                </div>
+              </td>
             </tr>
             <tr class="row-3" [ngClass]="rowColor(match.remark, !isEven)">
               <td>{{match.matchId}}</td>
@@ -122,6 +129,7 @@
                 <div class="match-away">{{match.awayName}}</div>
                 <span [class]="match.goalIcon.awayGoal ?? ''"></span>
                 <span [class]="match.goalIcon.halfTimeAwayGoal ?? ''"></span>
+                <span *ngIf="match.offerLive" class="red">&nbsp;(LIVE)</span>
               </td>
               <td class="score">{{match.halfTimeAwayScore ?? '-'}}</td>
               <td class="final-score score">{{match.finalAwayScore ?? '-'}}</td>

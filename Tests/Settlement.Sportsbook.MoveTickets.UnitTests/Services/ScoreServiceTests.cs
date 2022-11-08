@@ -1,13 +1,5 @@
 ﻿using Newtonsoft.Json;
-using NSubstitute;
 using Settlement.Core.Models;
-using Settlement.Sportsbook.MoveTickets.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace Settlement.Sportsbook.MoveTickets.UnitTests.Services
 {

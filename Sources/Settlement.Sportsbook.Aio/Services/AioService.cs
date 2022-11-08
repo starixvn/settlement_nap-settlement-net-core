@@ -1,4 +1,5 @@
 ﻿using Fanex.Data.Repository;
+using Fanex.NAP.Client;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.Aio.Constants;
@@ -69,18 +70,17 @@ namespace Settlement.Sportsbook.Aio.Services
             var matchCriteria = validateApiKeyService.CriteriaName(request, $"{apiKey}-{ApiKeyConstant.MatchInfoKey}");
             var matchDetail = await repository.GetAsync<Models.MatchDetail>(matchCriteria);
             var externalResults = new List<ExternalResultModel>();
-            if (matchDetail != null)
+            Check.Argument.IsNotNull(matchDetail, $"Match ${request.MatchId} does not exist");
+
+            matchDetail.RefDataService = refDataService;
+            var providerMapperService = mapperFactory.GetMapperService($"{apiKey}-{ApiKeyConstant.ProviderKey}");
+            if (providerMapperService != null)
             {
-                matchDetail.RefDataService = refDataService;
-                var providerMapperService = mapperFactory.GetMapperService($"{apiKey}-{ApiKeyConstant.ProviderKey}");
-                if (providerMapperService != null)
-                {
-                    var providerCriteria = validateApiKeyService.CriteriaName(request, $"{apiKey}-{ApiKeyConstant.ProviderKey}");
-                    var providerResult = await repository.FetchAsync<ExternalResultDetailModel>(providerCriteria);
-                    var provider = new Tuple<List<ExternalResultDetailModel>, List<ExternalResultModel>>(providerResult.ToList(), new List<ExternalResultModel>());
-                    providerMapperService.Decorate(provider);
-                    externalResults = provider.Item2;
-                }
+                var providerCriteria = validateApiKeyService.CriteriaName(request, $"{apiKey}-{ApiKeyConstant.ProviderKey}");
+                var providerResult = await repository.FetchAsync<ExternalResultDetailModel>(providerCriteria);
+                var provider = new Tuple<List<ExternalResultDetailModel>, List<ExternalResultModel>>(providerResult.ToList(), new List<ExternalResultModel>());
+                providerMapperService.Decorate(provider);
+                externalResults = provider.Item2;
             }
 
             var resultDetailCriteria = (GetResultDetailCriteria)validateApiKeyService.CriteriaName(request, $"{apiKey}-{ApiKeyConstant.ResultDetailKey}");

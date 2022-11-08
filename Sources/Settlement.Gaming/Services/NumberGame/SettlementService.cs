@@ -1,19 +1,15 @@
 ﻿using Fanex.Data.Repository;
+using Fanex.NAP.Client.Helpers.Web;
+using Fanex.Settlement.ScaleOut.Request;
+using Fanex.Settlement.ScaleOut.Services;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
+using Settlement.Core.Constants;
 using Settlement.Core.Models;
-using Kaden.XmlConverter;
-using System.Threading.Tasks;
-using Settlement.Gaming.Requests;
 using Settlement.Gaming.Criteria.NumberGame;
 using Settlement.Gaming.Models;
 using Settlement.Gaming.Models.NumberGame;
-using System.Collections.Generic;
-using System.Linq;
-using Fanex.NAP.Client.Helpers.Web;
-using Microsoft.AspNetCore.Http;
-using Fanex.Settlement.ScaleOut.Services;
-using Microsoft.Extensions.Options;
-using Fanex.Settlement.ScaleOut.Request;
-using Settlement.Core.Constants;
+using Settlement.Gaming.Requests;
 
 namespace Settlement.Gaming.Services.NumberGame
 {

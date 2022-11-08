@@ -1,167 +1,102 @@
-﻿using AutoMapper;
+﻿using AutoFixture;
+using AutoMapper;
 using AutoMapper.Configuration;
-using Fanex.Caching;
 using Fanex.Data.Repository;
-using NSubstitute;
+using Microsoft.Extensions.Options;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using Settlement.ThirdPartyProducts.Criteria;
 using Settlement.ThirdPartyProducts.Models;
 using Settlement.ThirdPartyProducts.Requests;
-using Settlement.ThirdPartyProducts.Services;
-using Xunit;
 
-namespace Settlement.ThirdPartyProducts.UnitTests.Services
+namespace Settlement.ThirdPartyProducts.UnitTests.Services;
+
+public class MatchServiceTests
 {
-    public class MatchServiceTests
+    private readonly MatchService service;
+
+    private readonly IDynamicRepository repository;
+
+    private readonly IRefDataService refDataService;
+
+    private readonly BetBuilderCalculateService betBuilderCalculateService;
+
+    private readonly BetBuilderMatchesService betBuilderMatchesService;
+
+    private readonly BetBuilderService betBuilderService;
+
+    public MatchServiceTests()
     {
-        private readonly MatchService service;
+        repository = Substitute.For<IDynamicRepository>();
+        refDataService = Substitute.For<IRefDataService>();
+        betBuilderCalculateService = Substitute.For<BetBuilderCalculateService>();
+        betBuilderMatchesService = Substitute.For<BetBuilderMatchesService>();
+        betBuilderService = Substitute.For<BetBuilderService>();
+        repository.Fetch<MatchDetailModel>(Arg.Any<CriteriaBase>()).Returns(new List<MatchDetailModel>());
+        var mapperConfig = new MapperConfigurationExpression();
+        mapperConfig.AddProfile<ThirdPartyProductsAutoMapperProfile>();
+        var config = new MapperConfiguration(mapperConfig);
+        var mapper = new Mapper(config);
+        var appSetting = new AppSettingsKey { SiteDbServer = new List<string> { "01", "02" } };
+        var option = Options.Create(appSetting);
+        service = new MatchServiceImp(refDataService, mapper, repository, betBuilderCalculateService, betBuilderMatchesService, betBuilderService, option);
+    }
 
-        private readonly IDynamicRepository repository;
-
-        private readonly IRefDataService refDataService;
-
-        private readonly ICacheService cacheService;
-
-
-        public MatchServiceTests()
+    [Fact]
+    public async Task GetMatch_Always_ReturnsIsExistedMatch()
+    {
+        // Arrange
+        var resultDetail = new ResultDetail
         {
-
-            cacheService = Substitute.For<ICacheService>();
-            repository = Substitute.For<IDynamicRepository>();
-            refDataService = Substitute.For<IRefDataService>();
-            var scoreService = Substitute.For<ScoreService>();
-            repository.Fetch<MatchDetailModel>(Arg.Any<CriteriaBase>()).Returns(new List<MatchDetailModel>());
-            var mapperConfig = new MapperConfigurationExpression();
-            mapperConfig.AddProfile<ThirdPartyProductsAutoMapperProfile>();
-            var config = new MapperConfiguration(mapperConfig);
-            var mapper = new Mapper(config);
-
-            service = new MatchServiceImp(cacheService, refDataService, scoreService, mapper, repository);
-        }
-
-        private MatchDetailModel CreateMatch(int matchId, string eventStatus)
+            MatchId = 1,
+            ResourceId = "01"
+        };
+        var fakeMatches = new MatchDetailModel
         {
-            return new MatchDetailModel
-            {
-                MatchId = matchId,
-                SportType = 2,
-                EventStatus = eventStatus,
-                RefDataService = refDataService
-            };
-        }
+            MatchId = 1
+        };
 
-        [Fact]
-        public async Task Search_Always_ReturnsExpectedOrderMatch()
-        {
-            // Arrange
-            var resultDetail = new ResultDetail
-            {
-                MatchId = 1,
-                ResourceId = "01"
-            };
-            var fakeMatches = new List<MatchDetailModel> {
-                CreateMatch(2, "Completed"),
-                CreateMatch(1, "Completed"),
-                CreateMatch(3, "Result Pending"),
-                CreateMatch(4, "Closed"),
-                CreateMatch(5, "Refund FT"),
-                CreateMatch(6, "Refund HT"),
-                CreateMatch(7, "Refund"),
-                CreateMatch(8, "Running"),
-                CreateMatch(9, "Postponed"),
-                CreateMatch(10, "Internal"),
-            };
+        repository.GetAsync<MatchDetailModel>(Arg.Any<ICriteria>()).Returns(fakeMatches);
 
-            var fakeData = new ValueTuple<IEnumerable<MatchDetailModel>, IEnumerable<ResultDetail>>
-            {
-                Item1 = fakeMatches,
-                Item2 = new List<ResultDetail> { resultDetail }
-            };
+        // Act
+        var actualMatch = await service.GetMatch(new MatchInfoRequest());
 
-            repository.FetchMultipleAsync<MatchDetailModel, ResultDetail>(Arg.Any<ICriteria>()).Returns(fakeData);
+        Assert.NotNull(actualMatch);
+        await betBuilderMatchesService.Received().ResultDetailByMatchIds(Arg.Any<List<MatchDetailModel>>());
+        betBuilderService.Received()
+            .GetScoreByMatchId(Arg.Any<List<ResultDetail>>(), Arg.Any<int>(), Arg.Any<int>(), true);
+    }
 
-            // Act
-            var sportBooks = await service.Search(new FilterRequest());
-            var actualMatches = sportBooks[0].Leagues[0].Matches;
+    [Fact]
+    public async Task GetSelection_Always_ReturnsNotNull()
+    {
+        // Arrange
+        var fixture = new Fixture();
+        var fakeSelection = fixture.CreateMany<SelectionDetailModel>(4).ToList();
+        repository.FetchAsync<SelectionDetailModel>(Arg.Any<SelectionDetailCriteria>()).Returns(fakeSelection);
 
-            Assert.True(actualMatches.Count == 10);
-        }
+        // Act
+        var selection = await service.GetSelection(1);
 
-        [Fact]
-        public async Task GetMatch_Always_ReturnsIsExistedMatch()
-        {
-            // Arrange
-            var resultDetail = new ResultDetail
-            {
-                MatchId = 1,
-                ResourceId = "01"
-            };
-            var fakeMatches = new List<MatchDetailModel> {
-                CreateMatch(1, "Completed")
-            };
+        // Assert
+        Assert.True(selection.Count == 4);
+    }
 
-            var fakeData = new ValueTuple<IEnumerable<MatchDetailModel>, IEnumerable<ResultDetail>>
-            {
-                Item1 = fakeMatches,
-                Item2 = new List<ResultDetail> { resultDetail }
-            };
+    [Fact]
+    public async Task Calculate_Always_CallRelatedMethods()
+    {
+        // Arrange
+        betBuilderCalculateService.CreateCriteria(100, "test", Arg.Any<string>()).Returns(new CalculationCriteria());
 
-            repository.FetchMultipleAsync<MatchDetailModel, ResultDetail>(Arg.Any<ICriteria>()).Returns(fakeData);
+        // Act
+        var result = await service.Calculate(new CalculateRequest { MatchId = 100, ActionName = "test" });
 
-            // Act
-            var actualMatch = await service.GetMatch(new MatchInfoRequest());
-
-            Assert.NotNull(actualMatch);
-        }
-
-        [Fact]
-        public void MatchesWaiting_ShortCacheNotNull_ReturnsMatchesFromCacheService()
-        {
-            // Arrange
-            var request = new MatchesWaitingRequest();
-            var data = new List<MatchDetailModel>
-            {
-                new MatchDetailModel()
-            };
-            cacheService.Get<List<MatchDetailModel>>(Arg.Any<string>()).Returns(data);
-
-            // Act
-            var actualMatches = service.RefreshMatches(request);
-
-            // Assert
-            Assert.NotNull(actualMatches);
-        }
-
-        [Fact]
-        public async Task MatchesWaiting_ShortCacheIsNull_ReturnsNumberMatchesFromRepository()
-        {
-            //Arrange
-            var request = new MatchesWaitingRequest();
-            var match = new MatchDetailModel
-            {
-                MatchId = 700000,
-                SportType = 2
-            };
-            var resultDetail = new ResultDetail
-            {
-                MatchId = 700000,
-                ResourceId = "01"
-            };
-            var fakeData = new ValueTuple<IEnumerable<MatchDetailModel>, IEnumerable<ResultDetail>>
-            {
-                Item1 = new List<MatchDetailModel> { match },
-                Item2 = new List<ResultDetail> { resultDetail }
-            };
-            repository.FetchMultipleAsync<MatchDetailModel, ResultDetail>(Arg.Any<ICriteria>()).Returns(fakeData);
-     
-            //Act
-            var actualMatches = await service.RefreshMatches(request);
-
-            //Assert
-            Assert.NotNull(actualMatches);
-        }
+        // Assert
+        Assert.Null(result.ErrMsg);
+        betBuilderCalculateService.Received().CreateResources(Arg.Any<List<ResourcesItemModel>>());
+        betBuilderCalculateService.Received().CreateCriteria(100, "test", Arg.Any<string>());
+        await betBuilderCalculateService.Received().GetInfoMarket(Arg.Any<CalculationCriteria>());
+        await betBuilderCalculateService.Received().UpdateMatchInfo(Arg.Any<CalculationCriteria>(), Arg.Any<string>());
+        await repository.Received(2).ExecuteAsync(Arg.Any<CalculationCriteria>());
     }
 }

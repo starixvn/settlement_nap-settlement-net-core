@@ -1,8 +1,8 @@
-import { Component, OnChanges, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnDestroy, OnInit } from '@angular/core';
 import { BackGroundService, RequestService, PopupService, HandleActionsService } from '../../services';
 import * as _ from 'lodash';
 import { MatchesBaseComponent } from '../base-component';
-import { CalculationMatch, League, MatchGoalRecord, UpdateInstantQuery } from '../../models';
+import { CalculationMatch, FilterAutoQuery, League, MatchGoalRecord, UpdateInstantQuery } from '../../models';
 import { BackgroundColor, CalculationStatus } from '../../../shared/constants';
 import { Language } from '../../../shared/language';
 import { MessageBoxService } from '../../../shared/services';
@@ -16,6 +16,7 @@ import { interval } from 'rxjs';
   templateUrl: './auto-calculate-matches.component.html'
 })
 export class AutoCalculateMatchesComponent extends MatchesBaseComponent implements OnChanges, OnInit, OnDestroy {
+  @Input() public filterQuery: FilterAutoQuery;
   private readonly dialogConfirmMessage = new ModalDialogMessage();
   private readonly dialogAlertMessage = new ModalDialogMessage();
   public instantStatus = InstantStatus;
@@ -143,6 +144,9 @@ export class AutoCalculateMatchesComponent extends MatchesBaseComponent implemen
     }
   }
 
+  public getLog(matchId: string) {
+    this.popupService.popupLog(matchId, this.filterQuery.fromDate, this.filterQuery.toDate);
+  }
 
   public openUpdatePayout(match: CalculationMatch) {
     var isPermission = this.permission.canAutoPayout && this.notInQueue(match);

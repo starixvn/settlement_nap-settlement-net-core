@@ -1,8 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Settlement.FastMarkets.Models;
+﻿using Settlement.FastMarkets.Models;
 using Settlement.FastMarkets.Services;
-using Xunit;
 
 namespace Settlement.FastMarkets.UnitTests.Services
 {

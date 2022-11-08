@@ -16,34 +16,28 @@
             </div>
             <div class="col-md-7">
                 <div class="row">
-                    <div class="col-md-3 field">
+                    <div class="field margin">
                         <label class="inner-label">
                             Over Status
                         </label>
                         <select [(ngModel)]="query.filterOver">
-                            <option value="0">All</option>
-                            <option value="1">Early Over</option>
-                            <option value="2">HT Over</option>
-                            <option value="3">FT Over</option>
+                            <option *ngFor="let item of overStatus" [value]="item.value">{{item.text}}</option>
                         </select>
                     </div>
-                
-                    <div class="col-md-2 field">
-                        <input id="fastMarketsOnly" type="checkbox" [(ngModel)]="query.fastMarketsOnly">
-                        <label for="fastMarketsOnly" class="bold">&nbsp;Fast Markets Only</label>
-                    </div>
-                    <div class="col-md-2 field">
-                        <input id="IsMarkedTicket" type="checkbox" value="true"
-                            [(ngModel)]="query.isMarkedTicket">
-                        <label for="IsMarkedTicket" class="bold">&nbsp;Marked Tickets</label>
-                    </div>
-                    <div class="col-md-3">
+
+                    <div class="field margin">
                         <label class="inner-label">
-                            Status
+                            Match Status
                         </label>
-                        <select [(ngModel)]="query.statusId" [disabled]="query.isMarkedTicket || query.autoSettlementOnly || query.fastMarketsOnly">
-                            <option *ngFor="let item of statuses" [value]="item.value">{{item.text}}</option>
-                        </select>
+                        <new-multiple-select (formValue)="onSelectMatchStatus($event)"
+                            [multipleSelect]="matchStatusSelect"></new-multiple-select>
+                    </div>
+                    <div class="field margin">
+                        <label class="inner-label">
+                            Hold Status
+                        </label>
+                        <new-multiple-select (formValue)="onSelectHoldStatus($event)"
+                            [multipleSelect]="holdStatusSelect"></new-multiple-select>
                     </div>
                 </div>
             </div>
@@ -57,11 +51,20 @@
             </div>
             <div class="league-list">
                 <label style="margin-left: 4px;" class="inner-label">League</label>
-                <select [(ngModel)]="query.leagueId" class="league-select">
-                    <option *ngFor="let item of leagues" [value]="item.leagueId">{{item.leagueName}}</option>
+                <div>
+                    <new-multiple-select [style.width]="leagueSelect.maxWidth" (formValue)="onSelectLeague($event)"
+                        [multipleSelect]="leagueSelect"></new-multiple-select>
+                </div>
+            </div>
+            <div class="field">
+                <label class="inner-label">
+                    Match Type
+                </label>
+                <select [(ngModel)]="query.matchType">
+                    <option *ngFor="let item of matchTypes" [value]="item.value">{{item.text}}</option>
                 </select>
             </div>
-            <div class="col-md-1 field">
+            <div class="include-test field">
                 <input id="isIncludeTest" type="checkbox" [(ngModel)]="query.isIncludeTest">
                 <label for="isIncludeTest" class="bold">&nbsp;Include Test Matches</label>
             </div>
@@ -71,5 +74,3 @@
         </div>
     </div>
 </div>
-
-<div class="line"></div>

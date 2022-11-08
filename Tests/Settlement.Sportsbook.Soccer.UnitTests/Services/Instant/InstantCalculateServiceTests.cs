@@ -2,24 +2,23 @@
 using AutoMapper.Configuration;
 using Fanex.Data.Repository;
 using Fanex.NAP.Client.Helpers.Web;
-using Kaden.XmlConverter;
+using Fanex.Settlement.ScaleOut.Models;
+using Fanex.Settlement.ScaleOut.Request;
+using Fanex.Settlement.ScaleOut.Services;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using NSubstitute;
+using Settlement.Core.Constants;
+using Settlement.Core.Models;
 using Settlement.Sportsbook.Soccer.Criteria;
 using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Requests;
 using Settlement.Sportsbook.Soccer.Services;
+using Settlement.Sportsbook.Soccer.Services.InstantCalculate;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Fanex.Settlement.ScaleOut.Models;
-using Newtonsoft.Json;
-using Settlement.Core.Constants;
 using Xunit;
-using Settlement.Sportsbook.Soccer.Services.InstantCalculate;
-using Microsoft.Extensions.Options;
-using Settlement.Core.Models;
-using Fanex.Settlement.ScaleOut.Services;
-using Fanex.Settlement.ScaleOut.Request;
 
 namespace Settlement.Sportsbook.Soccer.UnitTests.Services.Instant
 {
@@ -30,8 +29,6 @@ namespace Settlement.Sportsbook.Soccer.UnitTests.Services.Instant
         private readonly INapSession currentSession;
 
         private readonly IHttpContextAccessor accessor;
-
-        private readonly XmlConvertService xmlConvertService;
 
         private readonly IInstantResourceService instantResourceService;
 
@@ -44,7 +41,6 @@ namespace Settlement.Sportsbook.Soccer.UnitTests.Services.Instant
             repository = Substitute.For<IDynamicRepository>();
             currentSession = Substitute.For<INapSession>();
             accessor = Substitute.For<IHttpContextAccessor>();
-            xmlConvertService = Substitute.For<XmlConvertService>();
             instantResourceService = Substitute.For<IInstantResourceService>();
             scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
             var context = new DefaultHttpContext();
@@ -56,7 +52,7 @@ namespace Settlement.Sportsbook.Soccer.UnitTests.Services.Instant
             var mapper = new Mapper(config);
             var appSettings = new AppSettingsKey { SiteDbServer = new List<string> { "DB01", "DB02", "DB03" } };
             var option = Options.Create(appSettings);
-            service = new InstantCalculateServiceImp(repository, currentSession, mapper, accessor, xmlConvertService, instantResourceService, option, scaleOutSettleService);
+            service = new InstantCalculateServiceImp(repository, currentSession, mapper, accessor, instantResourceService, option, scaleOutSettleService);
         }
 
         [Fact]

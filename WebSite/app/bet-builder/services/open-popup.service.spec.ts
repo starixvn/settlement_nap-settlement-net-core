@@ -58,7 +58,7 @@ describe("MultiSport - PopupService", () => {
 
       popupService.popupCalc(match);
 
-      expect(match.eventStatus).toEqual(EventStatus.waiting);
+      expect(match.parlayStatus).toEqual(EventStatus.waiting);
       expect(match.isShowLink).toBe(false);
     });
   });

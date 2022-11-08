@@ -1,15 +1,11 @@
 ﻿using AutoMapper;
 using Fanex.Data.Repository;
-using Kaden.XmlConverter;
+using Settlement.Core.Models;
+using Settlement.Core.Services;
 using Settlement.Setting.Criteria.OutsideSourceManager;
 using Settlement.Setting.Models.OutsideSourceManager;
 using Settlement.Setting.Requests;
 using Settlement.Setting.Requests.OutsideSourceManager;
-using Settlement.Core.Models;
-using Settlement.Core.Services;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Settlement.Setting.Services
 {
@@ -37,8 +33,8 @@ namespace Settlement.Setting.Services
         private readonly IMapper mapper;
 
         public OutsideSourceSettingServiceImp(
-            IDynamicRepository repository, 
-            XmlConvertService xmlConvertService, 
+            IDynamicRepository repository,
+            XmlConvertService xmlConvertService,
             IRefDataService refDataService,
             IMapper mapper)
         {

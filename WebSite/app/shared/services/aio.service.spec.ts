@@ -61,7 +61,7 @@ describe('AioService', () => {
       () => {
         // Arrange
         const matchId = '7000000';
-        const url = 'api/sportsbook-aio/get-match';
+        const url = 'api/aio/get-match';
         const query = {
           matchId,
           apikey: "api-key",
@@ -81,7 +81,7 @@ describe('AioService', () => {
       () => {
         // Arrange
         const matchId = 7000000;
-        const url = 'api/sportsbook-aio/settle';
+        const url = 'api/aio/settle';
         const query = { matchId };
 
         // Act
@@ -100,7 +100,7 @@ describe('AioService', () => {
     service.saveScore(query);
     tick();
 
-    expect(httpRequestService.postJson).toHaveBeenCalledWith(query, 'localhost/api/aio/save-score');
+    expect(httpRequestService.postJson).toHaveBeenCalledWith(query, 'api/aio/save-score');
   }));
 
 
@@ -165,7 +165,6 @@ describe('AioService', () => {
     it('should push request when click ok on confirm box', fakeAsync(async () => {
       result.resultSettingData.isConfirmedRefund = true;
       spyOn(service, 'changeResultSetting').and.returnValue(of(true));
-      spyOn(closePopupService, 'closePopupOnly');
       const query = new ResultSettingQuery(0, ResultSettingType.confirmRefund,
         false, '');
 
@@ -208,7 +207,6 @@ describe('AioService', () => {
       result.resultSettingData.isConfirmedRefund = true;
       result.settlementStatusId = SettlementStatusId.Running;
       spyOn(service, 'changeResultSetting').and.returnValue(of(true));
-      spyOn(closePopupService, 'closePopupOnly');
       const query = new ResultSettingQuery(0, ResultSettingType.confirmRefund,
         true, '');
 

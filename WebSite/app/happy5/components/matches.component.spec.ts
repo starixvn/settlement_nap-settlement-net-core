@@ -9,7 +9,6 @@ import {
 } from "../../shared/components";
 import { MatchesComponent,
     ReCalculationComponent,
-    LogComponent,
     RefundComponent,
 } from './index';
 import { Permission, Ball, HappyFive, Leagues, MatchDetail } from '../models';
@@ -25,7 +24,6 @@ describe('Happy 5 - Matches Component', () => {
             declarations: [
                 MatchesComponent,
                 ReCalculationComponent,
-                LogComponent,
                 RefundComponent,
                 ModalDialogComponent,
                 ModalContentDialogComponent,

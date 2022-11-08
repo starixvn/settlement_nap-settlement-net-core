@@ -1,7 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
     <CodeAnalysisRuleSet>..\.sonarlint\settlement-netcorecsharp.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
 
@@ -22,22 +23,13 @@
 		<None Remove="appsettings.LOCAL_1.json.orig" />
 		<None Remove="appsettings.LOCAL_2.json.orig" />
 		<None Remove="appsettings.LOCAL_3.json.orig" />
-    <None Remove="App_Data\SpName.AWS.xml" />
-    <None Remove="App_Data\SpName.LOCAL.xml" />
-    <None Remove="App_Data\SpName.PROD.xml" />
     <None Remove="App_Data\SpName.UAT_1.xml" />
     <None Remove="App_Data\SpName.xml" />
   </ItemGroup>
 
   <ItemGroup>
     <AdditionalFiles Include="..\.sonarlint\settlement-netcore\CSharp\SonarLint.xml" Link="SonarLint.xml" />
-    <Content Include="App_Data\SpName.LOCAL.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="App_Data\SpName.AWS.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="App_Data\SpName.PROD.xml">
+    <Content Include="App_Data\SpName.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Update="appsettings.Development.json">
@@ -50,12 +42,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Update="App_Data\SpName.PROD_2.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="App_Data\SpName.UAT.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="App_Data\SpName.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Styles\colors.less" />
@@ -105,6 +91,7 @@
     <PackageReference Include="Fanex.NAP.Client.AspNetCore" Version="2.0.0.1" />
 		<PackageReference Include="Fanex.NAP.Signin.AspNetCore" Version="2.0.0.4" />
 		<PackageReference Include="Fanex.RemotingRef" Version="1.5.0.1-beta2" />
+		<PackageReference Include="Fanex.Settlement.Converter" Version="1.0.0.1" />
 		<PackageReference Include="Fanex.Settlement.ScaleOut" Version="1.2.4" />
     <PackageReference Include="MediatR" Version="9.0.0" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="9.0.0" />

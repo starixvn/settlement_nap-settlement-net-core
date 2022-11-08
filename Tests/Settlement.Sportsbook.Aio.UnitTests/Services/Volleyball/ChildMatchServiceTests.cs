@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net;
-using Settlement.Core.Constants;
+﻿using Settlement.Core.Constants;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Services.Volleyball;
-using Xunit;
 
 namespace Settlement.Sportsbook.Aio.UnitTests.Services.Volleyball
 {

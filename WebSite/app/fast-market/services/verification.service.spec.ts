@@ -87,45 +87,38 @@ describe('VerificationService', () => {
                 waterBreakTime.endMinute = 3;
                 waterBreakTime.endSecond = 1;
                 waterBreakTime.startSecond = 1;
-                warningDialogMessage.message = "WARNING! Cannot continue due to invalid intervals selected. Please check with special sessions and try again.";
             });
 
             it('should pass when bettype is over under but suspendedTime is empty', () => {
                 betType.betTypeId = 228;
-                spyOn(messageBoxService, 'alert');
+                const actual = service.verifyBeforeCalculation([betType], [], false);
 
-                service.verifyBeforeCalculation([betType], [], false);
-
-                expect(messageBoxService.alert).not.toHaveBeenCalled();
+                expect(actual).toEqual("");
             });
 
             it('should alert when bettype is over under and suspended time', () => {
                 betType.betTypeId = 228;
-                spyOn(messageBoxService, 'alert');
 
-                service.verifyBeforeCalculation([betType], [suspendedTime], false);
+                const actual = service.verifyBeforeCalculation([betType], [suspendedTime], false);
 
-                expect(messageBoxService.alert).toHaveBeenCalledWith(warningDialogMessage);
+                expect(actual).toEqual("WARNING! Cannot continue due to invalid intervals selected. Please check with special sessions and try again.");
             });
 
             it('should alert when sessions are both waterBreak and suspendedTime, and one of them is invalid', () => {
                 betType.betTypeId = 225
-                spyOn(messageBoxService, 'alert');
 
-                service.verifyBeforeCalculation([betType], [suspendedTime, waterBreakTime], false);
+                const actual = service.verifyBeforeCalculation([betType], [suspendedTime, waterBreakTime], false);
 
-                expect(messageBoxService.alert).toHaveBeenCalledWith(warningDialogMessage);
+                expect(actual).toEqual("WARNING! Cannot continue due to invalid intervals selected. Please check with special sessions and try again.");
             });
 
             it('should pass when sessions are both waterBreak and suspendedTime but all result is valid', () => {
                 result.positionName = "40:01-41:00";
                 betType.betTypeId = 225
 
-                spyOn(messageBoxService, 'alert');
+                const actual = service.verifyBeforeCalculation([betType], [], false);
 
-                service.verifyBeforeCalculation([betType], [], false);
-
-                expect(messageBoxService.alert).not.toHaveBeenCalled();
+                expect(actual).toEqual("");
             });
         });
 
@@ -134,25 +127,23 @@ describe('VerificationService', () => {
             result.checked = true;
             result.isShow = true;
             result.validationItem.goal = false;
-            warningDialogMessage.message = "The highlighted result is not consistent with the event counter, "
+            const message = "The highlighted result is not consistent with the event counter, "
                 + "please correct the result and try again.";
-            spyOn(messageBoxService, 'alert');
 
-            service.verifyBeforeCalculation([betType], [specialTime], true);
+            const actual = service.verifyBeforeCalculation([betType], [specialTime], true);
 
-            expect(messageBoxService.alert).toHaveBeenCalledWith(warningDialogMessage);
+            expect(actual).toEqual(message);
         }));
 
         describe('should alert on calculation validation', () => {
             it('when result is error', fakeAsync(() => {
                 result.hasBackground = true;
                 result.isShow = true;
-                warningDialogMessage.message = "Please specific results in the highlighted intervals.";
-                spyOn(messageBoxService, 'alert');
+                const message = "Please specific results in the highlighted intervals.";
 
-                service.verifyBeforeCalculation([betType], [specialTime], true);
+                const actual = service.verifyBeforeCalculation([betType], [specialTime], true);
 
-                expect(messageBoxService.alert).toHaveBeenCalledWith(warningDialogMessage);
+                expect(actual).toEqual(message);
             }));
 
             it('when time machine OU first result error', () => {
@@ -160,27 +151,26 @@ describe('VerificationService', () => {
                 result.checked = true;
                 result.hasBackground = true;
                 result.isShow = true;
-                spyOn(messageBoxService, 'alert');
+                const message = "Please specific results in the highlighted intervals.";
 
-                service.verifyBeforeCalculation([betType], [specialTime], true);
+                const actual = service.verifyBeforeCalculation([betType], [specialTime], true);
 
-                expect(messageBoxService.alert).toHaveBeenCalled();
+                expect(actual).toEqual(message);
             });
         });
 
         it('should alert when failing on validation checked intervals before calculation', fakeAsync(() => {
-            warningDialogMessage.message = "WARNING! Cannot continue due to gaps between selections. Please select intervals in consecutive manner.";
+            const message = "WARNING! Cannot continue due to gaps between selections. Please select intervals in consecutive manner.";
             spyOn(timeMachineService, 'validateBeforeCalculation').and.returnValue(true);
-            spyOn(messageBoxService, 'alert');
 
-            service.verifyBeforeCalculation([betType], [specialTime], true);
+            const actual = service.verifyBeforeCalculation([betType], [specialTime], true);
 
-            expect(messageBoxService.alert).toHaveBeenCalledWith(warningDialogMessage);
+            expect(actual).toEqual(message);
         }));
 
         it('should alert when failing on validation previous intervals before calculation', fakeAsync(() => {
-            warningDialogMessage.message =
-            "WARNING! Cannot continue due to previous intervals are running or refunded. Please select them also and try again.";
+            var message =
+                "WARNING! Cannot continue due to previous intervals are running or refunded. Please select them also and try again.";
             spyOn(timeMachineService, 'validateBeforeCalculation').and.callFake((arg1, arg2) => {
                 if (arg2 === 2) {
                     return false;
@@ -188,31 +178,28 @@ describe('VerificationService', () => {
                     return true;
                 }
             });
-            spyOn(messageBoxService, 'alert');
 
-            service.verifyBeforeCalculation([betType], [specialTime], true);
+            var actual = service.verifyBeforeCalculation([betType], [specialTime], true);
 
-            expect(messageBoxService.alert).toHaveBeenCalledWith(warningDialogMessage);
+            expect(actual).toEqual(message);
         }));
 
         it('should return true when success on validation', fakeAsync(() => {
             spyOn(timeMachineService, 'validateBeforeCalculation').and.returnValue(false);
-            spyOn(messageBoxService, 'alert');
 
             const actual = service.verifyBeforeCalculation([betType], [specialTime], true);
 
-            expect(actual).toBe(true);
+            expect(actual).toEqual("");
         }));
     });
 
     describe('verifyBeforeUnCalculation', () => {
         it('should alert when failing on validation previous intervals before uncalculation', () => {
-            spyOn(messageBoxService, 'alert');
             spyOn(timeMachineService, 'validateBeforeUncalculation').and.returnValue(true);
 
-            service.verifyBeforeUncalculation([]);
+            var actual = service.verifyBeforeUncalculation([]);
 
-            expect(messageBoxService.alert).toHaveBeenCalled();
+            expect(actual).toEqual("WARNING! Cannot continue due to prior intervals have been refunded. Please select them also and try again.");
         });
 
         it('should auto check following intervals when failing on validation following intervals before uncalculation', fakeAsync(() => {
@@ -236,12 +223,14 @@ describe('VerificationService', () => {
             spyOn(timeMachineService, 'getTimeMachineHDPBetType').and.returnValue(betType);
             spyOn(timeMachineService, 'isIntervalSettled').and.returnValue(true);
 
-            service.verifyBeforeUncalculation([]);
+            const result = service.verifyBeforeUncalculation([]);
             const buttonYes = document.getElementsByClassName('btn-danger')[0] as HTMLElement;
             buttonYes.click();
             tick();
 
             expect(interval1.checked).toBe(true);
+            expect(result).toEqual("Stop flow without error");
+
         }));
 
         it('should return true when success on validation', () => {
@@ -249,13 +238,12 @@ describe('VerificationService', () => {
 
             const result = service.verifyBeforeUncalculation([]);
 
-            expect(result).toBe(true);
+            expect(result).toEqual("");
         });
     });
 
     describe('verifyBeforeRefund', () => {
         it('should alert when failing on validation previous intervals before refund', () => {
-            spyOn(messageBoxService, 'alert');
             spyOn(timeMachineService, 'validateBeforeRefund').and.callFake((arg1, arg2) => {
                 if (arg2 === 4) {
                     return false;
@@ -264,9 +252,9 @@ describe('VerificationService', () => {
                 }
             });
 
-            service.verifyBeforeRefund([]);
+            const result = service.verifyBeforeRefund([]);
 
-            expect(messageBoxService.alert).toHaveBeenCalled();
+            expect(result).toEqual("WARNING! Cannot continue due to prior intervals are running. Please select them also and try again.");
         });
 
         it('should auto check following intervals when failing on validation following intervals before refund', fakeAsync(() => {
@@ -287,12 +275,13 @@ describe('VerificationService', () => {
             spyOn(timeMachineService, 'getTimeMachineOUBetType').and.returnValue(betType);
             spyOn(timeMachineService, 'isTimeMachineOUFailOnRefund').and.returnValue(true);
 
-            service.verifyBeforeRefund([betType]);
+            const result = service.verifyBeforeRefund([betType]);
             const buttonYes = document.getElementsByClassName('btn-danger')[0] as HTMLElement;
             buttonYes.click();
             tick();
 
             expect(interval1.checked).toBe(true);
+            expect(result).toEqual("Stop flow without error");
         }));
 
         it('should auto check OU time machine bettype', fakeAsync(() => {
@@ -324,7 +313,7 @@ describe('VerificationService', () => {
 
             const result = service.verifyBeforeRefund([]);
 
-            expect(result).toBe(true);
+            expect(result).toEqual("");
         });
     });
 
@@ -337,22 +326,19 @@ describe('VerificationService', () => {
 
         describe('should alert', () => {
             it('when no special session exist', () => {
-                spyOn(messageBoxService, 'alert');
+                const actual = service.verifyBeforeRefundSDT([betType], [specialTime]);
 
-                service.verifyBeforeRefundSDT([betType], [specialTime]);
-
-                expect(messageBoxService.alert).toHaveBeenCalled();
+                expect(actual).toEqual("WARNING! Cannot continue due to invalid intervals selected. Please check with special sessions and try again.");
             });
 
             it('when no special session exist with time machine', () => {
                 result.betType = 228;
                 result.checked = true;
                 result.isShow = true;
-                spyOn(messageBoxService, 'alert');
 
-                service.verifyBeforeRefundSDT([betType], [specialTime]);
+                const actual = service.verifyBeforeRefundSDT([betType], [specialTime]);
 
-                expect(messageBoxService.alert).toHaveBeenCalled();
+                expect(actual).toEqual("WARNING! Cannot continue due to invalid intervals selected. Please check with special sessions and try again.");
             });
 
             it('when time machine bet type overlap with special session on minute', () => {
@@ -361,11 +347,10 @@ describe('VerificationService', () => {
                 result.position = 11;
                 result.positionName = '11:01-12:00';
                 betType.betTypeId = 228;
-                spyOn(messageBoxService, 'alert');
 
-                service.verifyBeforeRefundSDT([betType], [specialTime]);
+                const actual = service.verifyBeforeRefundSDT([betType], [specialTime]);
 
-                expect(messageBoxService.alert).toHaveBeenCalled();
+                expect(actual).toEqual("WARNING! Cannot continue due to invalid intervals selected. Please check with special sessions and try again.");
             });
 
             it('when time machine bet type overlap with special session on second', () => {
@@ -373,11 +358,10 @@ describe('VerificationService', () => {
                 specialTime.startSecond = 49;
                 result.position = 20;
                 result.positionName = '19:01-20:00';
-                spyOn(messageBoxService, 'alert');
 
-                service.verifyBeforeRefundSDT([betType], [specialTime]);
+                const actual = service.verifyBeforeRefundSDT([betType], [specialTime]);
 
-                expect(messageBoxService.alert).toHaveBeenCalled();
+                expect(actual).toEqual("WARNING! Cannot continue due to invalid intervals selected. Please check with special sessions and try again.");
             });
 
             it('when other bet type overlap with suspended time and water break', () => {
@@ -392,27 +376,24 @@ describe('VerificationService', () => {
                 betType.betTypeId = 222;
                 result.position = 10;
                 result.positionName = '10:01-11:00';
-                spyOn(messageBoxService, 'alert');
 
-                service.verifyBeforeRefundSDT([betType], [specialTime, waterBreak]);
+                const actual = service.verifyBeforeRefundSDT([betType], [specialTime, waterBreak]);
 
-                expect(messageBoxService.alert).toHaveBeenCalled();
+                expect(actual).toEqual("WARNING! Cannot continue due to invalid intervals selected. Please check with special sessions and try again.");
             });
 
             it('when other bet type overlap with suspended time', () => {
-                spyOn(messageBoxService, 'alert');
 
-                service.verifyBeforeRefundSDT([betType], [specialTime]);
+                const actual = service.verifyBeforeRefundSDT([betType], [specialTime]);
 
-                expect(messageBoxService.alert).toHaveBeenCalled();
+                expect(actual).toEqual("WARNING! Cannot continue due to invalid intervals selected. Please check with special sessions and try again.");
             });
 
             it('when other bet type overlap with water break', () => {
-                spyOn(messageBoxService, 'alert');
 
-                service.verifyBeforeRefundSDT([betType], [waterBreak]);
+                const actual = service.verifyBeforeRefundSDT([betType], [waterBreak]);
 
-                expect(messageBoxService.alert).toHaveBeenCalled();
+                expect(actual).toEqual("WARNING! Cannot continue due to invalid intervals selected. Please check with special sessions and try again.");
             });
         });
 
@@ -422,7 +403,7 @@ describe('VerificationService', () => {
 
             const actual = service.verifyBeforeRefundSDT([betType], [specialTime]);
 
-            expect(actual).toBe(true);
+            expect(actual).toEqual("");
         });
     });
 

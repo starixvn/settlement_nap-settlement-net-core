@@ -1,13 +1,9 @@
-﻿using Settlement.Sportsbook.Soccer.Services;
-using System.Collections.Generic;
-using System.Text;
-using Newtonsoft.Json;
-using NSubstitute;
+﻿using Newtonsoft.Json;
 using Settlement.Core.Constants;
 using Settlement.Sportsbook.Soccer.Constants;
 using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Requests;
-using Xunit;
+using Settlement.Sportsbook.Soccer.Services;
 using Settlement.Sportsbook.Soccer.Services.InstantCalculate;
 
 namespace Settlement.Sportsbook.Soccer.UnitTests.Services.Instant
@@ -18,13 +14,16 @@ namespace Settlement.Sportsbook.Soccer.UnitTests.Services.Instant
 
         private readonly IGoalRecordService goalRecordService;
 
+        private readonly XmlConvertService xmlConvertService;
+
         private readonly IInstantResourceService service;
 
         public InstantResourceServiceFacts()
         {
             instantGoalCheckingService = Substitute.For<IInstantGoalCheckingService>();
             goalRecordService = Substitute.For<IGoalRecordService>();
-            service = new InstantResourceServiceImp(instantGoalCheckingService, goalRecordService);
+            xmlConvertService = Substitute.For<XmlConvertService>();
+            service = new InstantResourceServiceImp(instantGoalCheckingService, goalRecordService, xmlConvertService);
         }
 
         [Fact]

@@ -3,7 +3,7 @@
 
 //multiple-select
 
-.mat-select-trigger{
+.mat-select-trigger {
     display: block !important;
 }
 
@@ -20,6 +20,7 @@
     height: 24px;
     padding-top: 0px;
 }
+
 .select-all {
     border-bottom: 1px solid;
 }
@@ -163,7 +164,7 @@
     left: 0;
 }
 
-.cdk-overlay-backdrop{
+.cdk-overlay-backdrop {
     position: unset !important;
 }
 
@@ -173,6 +174,36 @@
 
 .custom-dialog-container .mat-dialog-container {
     padding: 0px !important;
+}
+
+.icon-collapse {
+    border-style: solid;
+    border-width: 0 2px 2px 0;
+    content: "";
+    padding: 2px;
+    transform: rotate(45deg);
+    vertical-align: middle;
+    float: right;
+    margin: 5px 10px 0px 0px ;
+}
+
+.collapse-group {
+    transform: rotate(225deg);
+    margin-top: 10px;
+}
+
+#checkbox-collapse{
+    accent-color: #9b59b6;
+}
+
+.select-group {
+    padding-left: 14px;
+    display: inline;
+    font-size: 12px;
+}
+
+.item-group{
+    margin-left: 15px;
 }
 
 // Dialog-Style
@@ -210,4 +241,16 @@
 .dialog-close:hover {
     background: #fff;
     border-radius: 4px;
+}
+
+.mat-search-box {
+    height: 22px;
+    margin: -4px 0 0 5px !important;
+    position: absolute;
+    color: #000 !important;
+    cursor: pointer;
+}
+
+.above {
+    z-index: 1001;
 }

@@ -1,7 +1,7 @@
 export const Statuses = [
     { value: "0", text: "All" },
     { value: "1", text: "Running" },
-    {  value: "2", text: "Closed" },
+    { value: "2", text: "Closed" },
     { value: "5", text: "Postponed" },
     { value: "3", text: "Completed" },
     { value: "16", text: "Completed (Running tickets)" },
@@ -17,3 +17,11 @@ export const Statuses = [
     { value: "14", text: "Wrong Team Name" },
     { value: "15", text: "Suspended" }
 ];
+
+export const OverStatus = [
+    { value: "0", text: "All" },
+    { value: "1", text: "Early Over" },
+    { value: "2", text: "HT Over" },
+    { value: "3", text: "FT Over" },
+    { value: "4", text: "Settled with Running Ticket" },
+]

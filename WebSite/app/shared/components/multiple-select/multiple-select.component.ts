@@ -27,12 +27,16 @@ export class NewMultipleSelectComponent implements OnChanges, AfterViewInit {
   onlyCallWithSecondTime = 0;
   element: Element;
   isOpened = false;
+  searchText = "";
+  itemAfterFilter: ItemsSelect[];
+  searchTextEmpty = true;
+  notExistItemIncludeSearchText = false;
   @ViewChild('allSelected') allSelected: MatOption;
   @ViewChild('dropdown') dropdown: MatSelect;
   @ViewChildren('panel') panel: QueryList<MatExpansionPanel>;
 
   constructor(private readonly cd: ChangeDetectorRef,
-    private readonly viewContainerRef: ViewContainerRef) {
+    viewContainerRef: ViewContainerRef) {
     this.element = viewContainerRef.element.nativeElement;
   }
 
@@ -40,6 +44,7 @@ export class NewMultipleSelectComponent implements OnChanges, AfterViewInit {
     if (changes.multipleSelect) {
       this.dataChanged = changes.multipleSelect.currentValue;
       this.items = this.dataChanged.items;
+      this.itemAfterFilter = _.cloneDeep(this.items);
       this.onlyCallWithSecondTime = 0;
       this.createGroupType();
       this.initSelected();
@@ -57,19 +62,23 @@ export class NewMultipleSelectComponent implements OnChanges, AfterViewInit {
 
   public clickOutside() {
     document.body.addEventListener('click', (event) => {
-      const ignoreClickOnMeElement = document.getElementsByClassName("cdk-overlay-pane")[0];
-      if (ignoreClickOnMeElement == null || !this.isOpened) {
+      const ignoreClickOnMyElement = document.getElementsByClassName("cdk-overlay-pane")[0];
+      if (!this.isOpened || ignoreClickOnMyElement == null) {
         return;
       }
-      const isClickOutSideElement = !ignoreClickOnMeElement.contains(event.target as Element)
+
+      const isClickOutSideElement = !ignoreClickOnMyElement.contains(event.target as Element)
         && !this.element.contains(event.target as Element);
       if (isClickOutSideElement) {
+        this.searchText = "";
+        this.search();
+        this.changeStatus();
         this.dropdown.close();
       }
     }, false);
   }
 
-  public togglePerOne(item: ItemsSelect) {
+  public selectPerOne(item: ItemsSelect) {
     if (this.allSelected.selected) {
       this.allSelected.deselect();
     }
@@ -79,20 +88,20 @@ export class NewMultipleSelectComponent implements OnChanges, AfterViewInit {
     this.checkAllOption();
   }
 
-  public togglePerOneInType(groupName: string, itemSelect: ItemsSelect) {
-    this.togglePerOne(itemSelect);
-    const first = this.groups.find(item => item.name === groupName);
-    if (first.selected) {
-      first.selected = !first.selected;
+  public selectOneInGroup(groupName: string, itemSelect: ItemsSelect) {
+    this.selectPerOne(itemSelect);
+    const group = this.groups.find(item => item.name === groupName);
+    if (group.selected) {
+      group.selected = !group.selected;
     } else {
       const countChilds = this.valueSelected.filter(item => item.type === groupName).map(item => item);
-      if (first.countChilds === countChilds.length) {
-        first.selected = !first.selected;
+      if (group.countChilds === countChilds.length) {
+        group.selected = !group.selected;
       }
     }
   }
 
-  public toggleAllSelection() {
+  public selectAllSelection() {
     if (this.allSelected.selected) {
       this.valueSelected = this.items;
       this.groups.forEach(item => item.selected = true);
@@ -110,9 +119,9 @@ export class NewMultipleSelectComponent implements OnChanges, AfterViewInit {
     this.changeStatus();
   }
 
-  public toggleGroupParent($event, groupName: string, selected: boolean) {
-    const allItemsInGroup = this.items.filter(item => item.type === groupName).map(item => item);
-    if (!selected) {
+  public selectGroupParent($event, group: Group) {
+    const allItemsInGroup = this.items.filter(item => item.type === group.name).map(item => item);
+    if (!group.selected) {
       allItemsInGroup.forEach(item => {
         item.checked = true;
         if (this.valueSelected.indexOf(item) < 0) {
@@ -120,7 +129,7 @@ export class NewMultipleSelectComponent implements OnChanges, AfterViewInit {
         }
       });
     } else {
-      this.valueSelected = this.valueSelected.filter(item => item.type !== groupName).map(item => item);
+      this.valueSelected = this.valueSelected.filter(item => item.type !== group.name).map(item => item);
       allItemsInGroup.forEach(item => item.checked = false);
     }
     this.changeStatus();
@@ -149,6 +158,10 @@ export class NewMultipleSelectComponent implements OnChanges, AfterViewInit {
     this.formControl.setValue(this.valueSelected);
     this.formValue.emit(this.formControl.value);
 
+    if (!_.isEmpty(this.searchText)) {
+      this.status = "";
+      return;
+    }
     if (this.items.length === 0) {
       this.status = this.multipleSelect.noData;
       return;
@@ -169,7 +182,7 @@ export class NewMultipleSelectComponent implements OnChanges, AfterViewInit {
   }
 
   public checkAllOption() {
-    if (this.formControl.value.length === this.items.length && !this.multipleSelect.disableAllCheck) {
+    if (this.formControl.value.length === this.items.length && !this.multipleSelect.disableCheckAll) {
       this.allSelected.select();
       this.cd.detectChanges();
     }
@@ -195,11 +208,34 @@ export class NewMultipleSelectComponent implements OnChanges, AfterViewInit {
     }
   }
 
-  public scrollTop(){
+  public scrollTop() {
     const top = document.getElementsByName('top');
     if (top !== null) {
       _.forEach(top, item => item.scrollIntoView());
     }
   }
-}
 
+  public hasSearchText() {
+    return this.multipleSelect.enableSearchBox && !_.isEmpty(this.searchText);
+  }
+
+  public search() {
+    if (this.hasSearchText()) {
+      this.status = "";
+      this.searchTextEmpty = false;
+    } else {
+      this.changeStatus();
+      this.searchTextEmpty = true;
+    }
+    this.multipleSelect.items.forEach(item => item.includeSearchText = this.includeSearchText(item));
+    this.notExistItemIncludeSearchText = _.isUndefined(this.multipleSelect.items.find(item => item.includeSearchText));
+  }
+
+  private includeSearchText(item: ItemsSelect) {
+    return this.hasSearchText() ? _.includes(item.text.toLowerCase(), this.searchText.toLowerCase()) : true;
+  }
+
+  public collapse(group: Group){
+    group.collapse = !group.collapse;
+  }
+}

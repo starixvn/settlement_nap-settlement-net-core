@@ -1,6 +1,6 @@
 import { BetStatus } from './../../soccer/constants/bet-status.native';
 import { Injectable } from "@angular/core";
-import { FilterQuery, League, Calculation, UpdateInstantQuery, MatchGoalRecord, CalculationMatch } from "../models";
+import { FilterQuery, League, Calculation, UpdateInstantQuery, MatchGoalRecord, CalculationMatch, FilterAutoQuery } from "../models";
 import { Observable } from "rxjs";
 import { HttpRequestService } from "../../shared/services";
 import { AutoSettingLeagueQuery, AutoSettingMatchQuery, ChangeSettingResult, DateFilter, Result } from "../../shared/models";
@@ -31,7 +31,7 @@ export class RequestService {
     return this.httpRequestService.postJson(params, url);
   }
 
-  public searchAutoCalculation(params: FilterQuery): Observable<Calculation> {
+  public searchAutoCalculation(params: FilterAutoQuery): Observable<Calculation> {
     const url = `${this.calculationApi}/filter-auto-calculate`;
     return this.httpRequestService.postJson(params, url);
   }
@@ -44,17 +44,17 @@ export class RequestService {
     return this.httpRequestService.postJson(query, `${this.settingApi}/get-remark-info`);
   }
 
-  private getNewestMatches(leagueId: string, isAutoCalculatePage: boolean) {
+  private getNewestMatches(leagueIds: string, isAutoCalculatePage: boolean) {
     const query = {
-      leagueId,
+      leagueIds,
       isAutoCalculatePage
     };
     const url = `${this.calculationApi}/auto-refresh`;
     return this.httpRequestService.postJson(query, url, false);
   }
 
-  public refreshMatches(leagueId: string, currentLeagues: League[], isAutoCalculatePage = false) {
-    this.getNewestMatches(leagueId, isAutoCalculatePage).subscribe((matchesWaiting: CalculationMatch[]) => {
+  public refreshMatches(leagueIds: string, currentLeagues: League[], isAutoCalculatePage = false) {
+    this.getNewestMatches(leagueIds, isAutoCalculatePage).subscribe((matchesWaiting: CalculationMatch[]) => {
       this.changeInfoAfterRefreshMatches(currentLeagues, matchesWaiting, isAutoCalculatePage);
     });
   }

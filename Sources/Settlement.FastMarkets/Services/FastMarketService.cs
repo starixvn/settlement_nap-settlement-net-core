@@ -9,177 +9,169 @@ using Settlement.FastMarkets.Constants;
 using Settlement.FastMarkets.Criteria;
 using Settlement.FastMarkets.Models;
 using Settlement.FastMarkets.Requests;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace Settlement.FastMarkets.Services
+namespace Settlement.FastMarkets.Services;
+
+public interface IFastMarketService
 {
-    public interface IFastMarketService
+    Task<FastMarketModel> Query(int matchId);
+
+    Task<Result> Calculate(SettleRequest request);
+
+    Task<List<FastMarketResult>> GetLastestResult(GetLastestResultRequest request);
+
+    Task<List<TimeMachineResult>> GetTimeMachineResult(GetTimeMachineResultRequest request);
+}
+
+public class FastMarketServiceImp : IFastMarketService
+{
+    private readonly IDynamicRepository repository;
+
+    private readonly IFastMarketBetTypeService fastMarketBetTypeService;
+
+    private readonly IMapper mapper;
+
+    private readonly MultipleServerFetcherService multipleServerFetcherService;
+
+    private readonly AppSettingsKey appSettingsKey;
+
+    private readonly CreateQueryService createQueryService;
+
+    private readonly ScaleOutSettleService scaleOutSettleService;
+
+    public FastMarketServiceImp(
+        IDynamicRepository repository,
+        IFastMarketBetTypeService fastMarketBetTypeService,
+        IMapper mapper,
+        MultipleServerFetcherService multipleServerFetcherService,
+        IOptions<AppSettingsKey> appSettingsKey,
+        ScaleOutSettleService scaleOutSettleService,
+        CreateQueryService createQueryService)
     {
-        Task<FastMarketModel> Query(int matchId);
-
-        Task<Result> Calculate(SettleRequest request);
-
-        Task<List<FastMarketResult>> GetLastestResult(GetLastestResultRequest request);
-
-        Task<List<TimeMachineResult>> GetTimeMachineResult(GetTimeMachineResultRequest request);
+        this.repository = repository;
+        this.fastMarketBetTypeService = fastMarketBetTypeService;
+        this.mapper = mapper;
+        this.multipleServerFetcherService = multipleServerFetcherService;
+        this.appSettingsKey = appSettingsKey.Value;
+        this.scaleOutSettleService = scaleOutSettleService;
+        this.createQueryService = createQueryService;
     }
 
-    public class FastMarketServiceImp : IFastMarketService
+    public async Task<FastMarketModel> Query(int matchId)
     {
-        private readonly IDynamicRepository repository;
+        var criteria = new GetFastMarketMatchDetailCriteria { MatchId = matchId };
 
-        private readonly IFastMarketBetTypeService fastMarketBetTypeService;
+        var mappingTypes = new[] { typeof(EventCounter), typeof(string), typeof(FastMarketResult), typeof(ResultDetail) };
+        var fetchedData = await repository.FetchMultipleAsync(criteria, mappingTypes);
+        var eventCounter = fetchedData[0].Cast<EventCounter>().ToList();
+        var handicapValue = fetchedData[1].Cast<string>().FirstOrDefault();
+        var fastMarketResult = fetchedData[2].Cast<FastMarketResult>().ToList();
+        var resultDetail = fetchedData[3].Cast<ResultDetail>().ToList();
 
-        private readonly IMapper mapper;
+        var (fastMarketTicketDetails, ticketsCount) = await multipleServerFetcherService.GetFastMarketTicketDetail(matchId);
+        MergeFastMarketTicketsToResults(fastMarketResult, fastMarketTicketDetails);
+        var groupFastMarketByBetType = fastMarketBetTypeService.BetTypesList(fastMarketResult, handicapValue);
 
-        private readonly MultipleServerFetcherService multipleServerFetcherService;
-
-        private readonly AppSettingsKey appSettingsKey;
-
-        private readonly CreateQueryService createQueryService;
-
-        private readonly ScaleOutSettleService scaleOutSettleService;
-
-        public FastMarketServiceImp(
-            IDynamicRepository repository,
-            IFastMarketBetTypeService fastMarketBetTypeService,
-            IMapper mapper,
-            MultipleServerFetcherService multipleServerFetcherService,
-            IOptions<AppSettingsKey> appSettingsKey,
-            ScaleOutSettleService scaleOutSettleService,
-            CreateQueryService createQueryService)
+        return new FastMarketModel
         {
-            this.repository = repository;
-            this.fastMarketBetTypeService = fastMarketBetTypeService;
-            this.mapper = mapper;
-            this.multipleServerFetcherService = multipleServerFetcherService;
-            this.appSettingsKey = appSettingsKey.Value;
-            this.scaleOutSettleService = scaleOutSettleService;
-            this.createQueryService = createQueryService;
+            MatchId = matchId,
+            EventCounters = eventCounter,
+            HandicapValue = handicapValue,
+            BetTypes = groupFastMarketByBetType,
+            TicketCount = ticketsCount,
+            ResultDetail = resultDetail
+        };
+    }
+
+    private static void MergeFastMarketTicketsToResults(List<FastMarketResult> fastMarketResults, List<FastMarketResult> fastMarketTicketDetails)
+    {
+        var newTicketDetails = fastMarketTicketDetails.Where(ticketDetail => !fastMarketResults.Any(result => result.Equals(ticketDetail)));
+        fastMarketResults.AddRange(newTicketDetails);
+        GenerateTicketsStatus(fastMarketResults, fastMarketTicketDetails);
+    }
+
+    private static void GenerateTicketsStatus(List<FastMarketResult> fastMarketResults, List<FastMarketResult> fastMarketTicketDetails)
+    {
+        foreach (var result in fastMarketResults)
+        {
+            var ticketDetail = fastMarketTicketDetails.FirstOrDefault(detail => detail.BetType == result.BetType && detail.Position == result.Position);
+            result.TicketStatus = CreateTicketStatus(ticketDetail);
+        }
+    }
+
+    private static int CreateTicketStatus(FastMarketResult ticketDetail)
+    {
+        if (ticketDetail == null || ticketDetail.TicketCount == 0)
+        {
+            return TicketStatus.NoTicket;
         }
 
-        public async Task<FastMarketModel> Query(int matchId)
+        if (ticketDetail.TicketRunning > 0)
         {
-            var criteria = new GetFastMarketMatchDetailCriteria { MatchId = matchId };
+            return TicketStatus.Running;
+        }
 
-            var mappingTypes = new[] { typeof(EventCounter), typeof(string), typeof(FastMarketResult), typeof(ResultDetail) };
-            var fetchedData = await repository.FetchMultipleAsync(criteria, mappingTypes);
-            var eventCounter = fetchedData[0].Cast<EventCounter>().ToList();
-            var handicapValue = fetchedData[1].Cast<string>().FirstOrDefault();
-            var fastMarketResult = fetchedData[2].Cast<FastMarketResult>().ToList();
-            var resultDetail = fetchedData[3].Cast<ResultDetail>().ToList();
+        return ticketDetail.TicketMarked > 0 ? TicketStatus.Marked : TicketStatus.Calculated;
+    }
 
-            var (fastMarketTicketDetails, ticketsCount) = await multipleServerFetcherService.GetFastMarketTicketDetail(matchId);
-            MergeFastMarketTicketsToResults(fastMarketResult, fastMarketTicketDetails);
-            var groupFastMarketByBetType = fastMarketBetTypeService.BetTypesList(fastMarketResult, handicapValue);
+    public async Task<Result> Calculate(SettleRequest request)
+    {
+        var criteria = await createQueryService.QuerySettle(request);
 
-            return new FastMarketModel
+        var validationRequest = mapper.Map<PushFastMarketResultCriteria, EventTicketFastMarketRequest>(criteria);
+
+        var validationResult = await scaleOutSettleService.ValidateEventAndTicketFastMarket(validationRequest);
+        if (validationResult.ErrorCode > 0)
+        {
+            return new Result
             {
-                MatchId = matchId,
-                EventCounters = eventCounter,
-                HandicapValue = handicapValue,
-                BetTypes = groupFastMarketByBetType,
-                TicketCount = ticketsCount,
-                ResultDetail = resultDetail
+                ErrCode = validationResult.ErrorCode,
+                ErrMsg = validationResult.ErrorMessage
             };
         }
-
-        private void MergeFastMarketTicketsToResults(List<FastMarketResult> fastMarketResults, List<FastMarketResult> fastMarketTicketDetails)
+        var requestUpdateInfo = new UpdateMatchInfoRequest
         {
-            var newTicketDetails = fastMarketTicketDetails.Where(ticketDetail => !fastMarketResults.Any(result => result.Equals(ticketDetail)));
-            if (newTicketDetails.Any())
-            {
-                fastMarketResults.AddRange(newTicketDetails);
-            }
+            MatchId = criteria.MatchId,
+            Action = criteria.Action,
+            AdminId = criteria.AdminId,
+            Results = criteria.Results,
+            EventCounters = criteria.EventCounters,
+            Mode = Mode.FastMarket,
+            IsSettleDetermined = criteria.IsSettleDetermined
+        };
 
-            GenerateTicketsStatus(fastMarketResults, fastMarketTicketDetails);
-        }
+        await scaleOutSettleService.UpdateMatchInfo(requestUpdateInfo);
 
-        private static void GenerateTicketsStatus(List<FastMarketResult> fastMarketResults, List<FastMarketResult> fastMarketTicketDetails)
+        ExecuteCalculate(criteria);
+
+        return new Result();
+    }
+
+    private void ExecuteCalculate(PushFastMarketResultCriteria criteria)
+    {
+        foreach (var server in appSettingsKey.SiteDbServer)
         {
-            foreach (var result in fastMarketResults)
-            {
-                var ticketDetail = fastMarketTicketDetails.FirstOrDefault(detail => detail.BetType == result.BetType && detail.Position == result.Position);
-                result.TicketStatus = CreateTicketStatus(ticketDetail);
-            }
+            criteria.DbServer = server;
+            repository.Execute(criteria);
         }
+    }
 
-        private static int CreateTicketStatus(FastMarketResult ticketDetail)
-        {
-            if (ticketDetail == null || ticketDetail.TicketCount == 0)
-            {
-                return TicketStatus.NoTicket;
-            }
+    public async Task<List<FastMarketResult>> GetLastestResult(GetLastestResultRequest request)
+    {
+        var criteria = new GetFastMarketMatchDetailCriteria { MatchId = request.MatchId };
 
-            if (ticketDetail.TicketRunning > 0)
-            {
-                return TicketStatus.Running;
-            }
+        var mappingTypes = new[] { typeof(EventCounter), typeof(string), typeof(FastMarketResult), typeof(ResultDetail) };
+        var fetchedData = await repository.FetchMultipleAsync(criteria, mappingTypes);
+        var result = fetchedData[2].Cast<FastMarketResult>().ToList();
 
-            return ticketDetail.TicketMarked > 0 ? TicketStatus.Marked : TicketStatus.Calculated;
-        }
+        return result;
+    }
 
-        public async Task<Result> Calculate(SettleRequest request)
-        {
-            var criteria = await createQueryService.QuerySettle(request);
+    public async Task<List<TimeMachineResult>> GetTimeMachineResult(GetTimeMachineResultRequest request)
+    {
+        var criteria = mapper.Map<GetTimeMachineResultRequest, GetTimeMachineResultCriteria>(request);
+        var result = await repository.FetchAsync<TimeMachineResult>(criteria);
 
-            var validationRequest = mapper.Map<PushFastMarketResultCriteria, EventTicketFastMarketRequest>(criteria);
-
-            var validationResult = await scaleOutSettleService.ValidateEventAndTicketFastMarket(validationRequest);
-            if (validationResult.ErrorCode > 0)
-            {
-                return new Result
-                {
-                    ErrCode = validationResult.ErrorCode,
-                    ErrMsg = validationResult.ErrorMessage
-                };
-            }
-            var requestUpdateInfo = new UpdateMatchInfoRequest
-            {
-                MatchId = criteria.MatchId,
-                Action = criteria.Action,
-                AdminId = criteria.AdminId,
-                Results = criteria.Results,
-                EventCounters = criteria.EventCounters,
-                Mode = Mode.FastMarket,
-                IsSettleDetermined = criteria.IsSettleDetermined
-            };
-
-            await scaleOutSettleService.UpdateMatchInfo(requestUpdateInfo);
-
-            ExecuteCalculate(criteria);
-
-            return new Result();
-        }
-
-        private void ExecuteCalculate(PushFastMarketResultCriteria criteria)
-        {
-            foreach (var server in appSettingsKey.SiteDbServer)
-            {
-                criteria.DbServer = server;
-                repository.Execute(criteria);
-            }
-        }
-
-        public async Task<List<FastMarketResult>> GetLastestResult(GetLastestResultRequest request)
-        {
-            var criteria = new GetFastMarketMatchDetailCriteria { MatchId = request.MatchId };
-
-            var mappingTypes = new[] { typeof(EventCounter), typeof(string), typeof(FastMarketResult), typeof(ResultDetail) };
-            var fetchedData = await repository.FetchMultipleAsync(criteria, mappingTypes);
-            var result = fetchedData[2].Cast<FastMarketResult>().ToList();
-
-            return result;
-        }
-
-        public async Task<List<TimeMachineResult>> GetTimeMachineResult(GetTimeMachineResultRequest request)
-        {
-            var criteria = mapper.Map<GetTimeMachineResultRequest, GetTimeMachineResultCriteria>(request);
-            var result = await repository.FetchAsync<TimeMachineResult>(criteria);
-
-            return result.ToList();
-        }
+        return result.ToList();
     }
 }

@@ -1,8 +1,7 @@
-import { TestBed, waitForAsync, ComponentFixture, inject, fakeAsync, tick } from '@angular/core/testing';
+import { TestBed, waitForAsync, ComponentFixture} from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { HttpClientModule } from '@angular/common/http';
-import { of } from 'rxjs';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ElementRef } from "@angular/core";
 import { ModalDialogComponent, ModalContentDialogComponent, MultipleSelectComponent, TreeViewComponent } from '../../shared/components';
@@ -16,6 +15,7 @@ import { OnlyIntegerDirective, FocusDirective } from '../../shared/directives';
 import { BrowserModule } from '@angular/platform-browser';
 import { MaterialModule } from '../../shared/material-module';
 import { SpecialSessionComponent } from './special-session.component';
+import { ToastContainerDirective, ToastContainerModule, ToastNoAnimationModule, ToastrModule } from 'ngx-toastr';
 
 describe('Component: AppComponent', () => {
     let component: AppComponent;
@@ -57,6 +57,7 @@ describe('Component: AppComponent', () => {
                 HttpClientModule,
                 NgbModule,
                 MaterialModule,
+                ToastNoAnimationModule.forRoot(),
             ],
         })
             .overrideModule(BrowserDynamicTestingModule, {

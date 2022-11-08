@@ -1,8 +1,5 @@
-﻿using System.Collections.Generic;
-using Kaden.Extensions;
-using Settlement.Core.Constants;
+﻿using Settlement.Core.Constants;
 using Settlement.Core.Models;
-using Settlement.Core.Services;
 
 namespace Settlement.Sportsbook.MoveTickets.Services
 {
@@ -31,14 +28,9 @@ namespace Settlement.Sportsbook.MoveTickets.Services
 
         private readonly SiteMatchService siteMatchService;
 
-        private readonly IGoalIconService goalIconService;
-
-        public NewInfoMatchServiceImp(
-            SiteMatchService siteMatchService,
-            IGoalIconService goalIconService)
+        public NewInfoMatchServiceImp(SiteMatchService siteMatchService)
         {
             this.siteMatchService = siteMatchService;
-            this.goalIconService = goalIconService;
         }
 
         public string EventStatusColor(Match match)
@@ -55,7 +47,7 @@ namespace Settlement.Sportsbook.MoveTickets.Services
                 return siteMatchService.GetBackgroundCompletedStatus(match);
             }
 
-            if (match.Remark.IsPending && match.EventStatus.IgnoreCaseEquals(EventStatusExtensions.ResultPending))
+            if (match.Remark.IsPending && match.EventStatus.IgnoreCaseEquals(EventStatus.ResultPending))
             {
                 return siteMatchService.IsExistMarkedTickets(match)
                     ? Background.BrightYellowBlinking

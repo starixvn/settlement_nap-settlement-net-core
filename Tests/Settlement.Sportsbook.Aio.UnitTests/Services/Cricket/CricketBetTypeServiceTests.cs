@@ -1,10 +1,7 @@
 ﻿using Fanex.Data.Repository;
-using NSubstitute;
 using Settlement.Sportsbook.Aio.Criteria.Cricket;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Services.Cricket;
-using System.Collections.Generic;
-using Xunit;
 
 namespace Settlement.Sportsbook.Aio.UnitTests.Services.Cricket
 {

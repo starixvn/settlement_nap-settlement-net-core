@@ -21,13 +21,13 @@ import {
   SportMatch,
   MoreScore,
   Score,
-  AutoSetting,
   MixParlay,
   LeagueMatch,
   Match,
   Remark
 } from '../../shared/models';
 import { BackgroundColor, SportType } from '../../shared/constants';
+import { AutoSetting } from '../../shared/models/match-details/auto-setting.model';
 import { Permission } from '../../shared/models/sportsbook-sop/permission.model';
 
 describe('LeagueComponent', () => {
@@ -36,7 +36,6 @@ describe('LeagueComponent', () => {
   let refreshMatchService: RefreshMatchService;
   let multiSportService: MultiSportService;
   let messageBoxService: MessageBoxService;
-  let handleActionsService: HandleActionsService;
   let sportMatchService: SportMatchService;
   let popupService: PopupService;
   let match = new Match();
@@ -48,6 +47,14 @@ describe('LeagueComponent', () => {
   match.mixParlay = parlay;
   const buttonName = "btn-danger";
   const errorMessage = "Error message";
+  let autoSetting: AutoSetting = {
+    isAutoPayoutForLeague: true,
+    isAutoPayoutForMatch: true,
+    isDirectPayoutForLeague: true,
+    isDirectPayoutForMatch: true,
+    isInstantForLeague: true,
+    isInstantForMatch: true,
+  };
 
   const league: LeagueMatch = {
     leagueId: 7000000,
@@ -57,6 +64,7 @@ describe('LeagueComponent', () => {
     isCheckedCalcMP: true,
     disableCheckCalcMP: false,
     isMergedParlay: false,
+    autoCalcSetting: null
   };
 
   const sport: SportMatch = {
@@ -522,7 +530,7 @@ describe('LeagueComponent', () => {
       component.permission.canAutoPayout = true;
       match.autoCalcSetting.isAutoPayoutForLeague = true;
 
-      const result = component.getAutoSettingLeague(match);
+      const result = component.getAutoSettingLeague(autoSetting);
 
       expect(result).toEqual(BackgroundColor.iconAuto);
     });
@@ -531,7 +539,7 @@ describe('LeagueComponent', () => {
       component.permission.canAutoPayout = true;
       match.autoCalcSetting.isAutoPayoutForLeague = false;
 
-      const result = component.getAutoSettingLeague(match);
+      const result = component.getAutoSettingLeague(autoSetting);
 
       expect(result).toEqual(BackgroundColor.iconNo);
     });
@@ -539,7 +547,7 @@ describe('LeagueComponent', () => {
     it('should return icon no disabled when have no permission and is not auto payout', () => {
       component.permission.canAutoPayout = false;
 
-      const result = component.getAutoSettingLeague(match);
+      const result = component.getAutoSettingLeague(autoSetting);
 
       expect(result).toEqual(BackgroundColor.iconNoDisabled);
     });
@@ -548,7 +556,7 @@ describe('LeagueComponent', () => {
       component.permission.canAutoPayout = false;
       match.autoCalcSetting.isAutoPayoutForLeague = true;
 
-      const result = component.getAutoSettingLeague(match);
+      const result = component.getAutoSettingLeague(autoSetting);
 
       expect(result).toEqual(BackgroundColor.iconAutoDisabled);
     });
@@ -1041,7 +1049,7 @@ describe('LeagueComponent', () => {
       component.permission = permission;
       spyOn(messageBoxService, 'confirm');
 
-      component.changeAutoLeague(match, league);
+      component.changeAutoLeague(autoSetting, league);
 
       expect(messageBoxService.confirm).not.toHaveBeenCalled();
     });
@@ -1052,7 +1060,7 @@ describe('LeagueComponent', () => {
       component.permission = permission;
       spyOn(multiSportService, 'updateSettingLeague').and.returnValue(of(successfulResult));
 
-      component.changeAutoLeague(match, league);
+      component.changeAutoLeague(autoSetting, league);
       const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
       buttonYes.click();
       tick();
@@ -1065,7 +1073,7 @@ describe('LeagueComponent', () => {
       spyOn(multiSportService, 'updateSettingLeague').and.returnValue(of(unsuccessfulResult));
       spyOn(messageBoxService, 'alert');
 
-      component.changeAutoLeague(match, league);
+      component.changeAutoLeague(autoSetting, league);
       const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
       buttonYes.click();
       tick();

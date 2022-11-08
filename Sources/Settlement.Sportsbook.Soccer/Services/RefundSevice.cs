@@ -1,20 +1,15 @@
-﻿using System;
-using AutoMapper;
+﻿using AutoMapper;
 using Fanex.Data.Repository;
 using Fanex.NAP.Client.Helpers.Web;
+using Fanex.Settlement.ScaleOut.Request;
+using Fanex.Settlement.ScaleOut.Services;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Sportsbook.Soccer.Constants;
 using Settlement.Sportsbook.Soccer.Criteria;
 using Settlement.Sportsbook.Soccer.Requests;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Fanex.Settlement.ScaleOut.Services;
-using Fanex.Settlement.ScaleOut.Request;
-using Kaden.Extensions;
-using Microsoft.Extensions.Options;
 
 namespace Settlement.Sportsbook.Soccer.Services
 {

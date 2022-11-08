@@ -1,11 +1,11 @@
-import { Component, OnChanges, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnDestroy, OnInit } from '@angular/core';
 import { BackGroundService, RequestService, PopupService } from '../../services';
 import { Match } from '../../../shared/models';
 import { BackgroundColor, CalculationStatus, EventStatus } from '../../../shared/constants';
 import * as _ from 'lodash';
 import { Language } from '../../../shared/language';
 import { MatchesBaseComponent } from '../base-component/matches-base.component';
-import { CalculationMatch } from '../../models';
+import { CalculationMatch, FilterQuery } from '../../models';
 import { ISubscription } from 'rxjs-compat/Subscription';
 import { interval } from 'rxjs';
 
@@ -14,6 +14,8 @@ import { interval } from 'rxjs';
   templateUrl: './matches.component.html'
 })
 export class MatchesComponent extends MatchesBaseComponent implements OnChanges, OnInit, OnDestroy {
+  @Input() public disableRefund: boolean;
+  @Input() public filterQuery: FilterQuery;
   private subscriber: ISubscription;
   private readonly period = 5000;
   private intervalTimer = interval(this.period);
@@ -34,14 +36,21 @@ export class MatchesComponent extends MatchesBaseComponent implements OnChanges,
     }
   }
 
+  public isShowRefundLink(match: CalculationMatch) {
+    return this.backGroundService.isShowLink(match) && this.permission.canRefund && !this.disableRefund  ? BackgroundColor.codeLink : '';
+  }
+
   private refreshMatches() {
     this.subscriber = this.intervalTimer.subscribe(() => {
       if (this.leagues.length > 0) {
-        this.requestService.refreshMatches(this.filterQuery.leagueId, this.leagues);
+        this.requestService.refreshMatches(this.filterQuery.leagueIds, this.leagues);
       }
     });
   }
 
+  public getLog(matchId: string) {
+    this.popupService.popupLog(matchId, this.filterQuery.fromDate, this.filterQuery.toDate);
+  }
 
   public popupEarly(match: CalculationMatch) {
     if (this.isShowEarlySettleLink(match)) {

@@ -1,16 +1,12 @@
 ﻿using AutoMapper;
 using Fanex.Data.Repository;
-using Kaden.XmlConverter;
+using Settlement.Core.Models;
 using Settlement.Setting.Criteria;
 using Settlement.Setting.Criteria.ProviderManager;
 using Settlement.Setting.Models;
 using Settlement.Setting.Models.ProviderManager;
 using Settlement.Setting.Requests;
 using Settlement.Setting.Requests.ProviderManager;
-using Settlement.Core.Models;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Settlement.Setting.Services
 {

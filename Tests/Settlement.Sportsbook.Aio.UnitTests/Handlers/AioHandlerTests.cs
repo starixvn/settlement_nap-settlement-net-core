@@ -1,5 +1,7 @@
-﻿using NSubstitute;
+﻿using Microsoft.Extensions.Options;
+using NSubstitute;
 using Settlement.Core.Models;
+using Settlement.Core.Services;
 using Settlement.Sportsbook.Aio.Handlers;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Requests;
@@ -14,12 +16,17 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Handlers
     {
         private readonly AioHandler handler;
 
+        private readonly PermissionService permission;
+
         private readonly IAioService service;
 
         public AioHandlerTests()
         {
             service = Substitute.For<IAioService>();
-            handler = new AioHandler(service);
+            permission = Substitute.For<PermissionService>(null, null, null, null);
+            var appSettings = new AppSettingsKey { EnableVerifyingRunningOdds = true };
+            var appSettingsOptions = Options.Create(appSettings);
+            handler = new AioHandler(service, permission, appSettingsOptions);
         }
 
         [Fact]
@@ -69,12 +76,24 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Handlers
         [Fact]
         public async Task HandleCheckRunningOddsRequest_Always_ReturnCorrectResult()
         {
-            var result = new Result();
+            var result = new Result { ErrCode = 1 };
             service.VerifyNoRunningOdds(Arg.Any<CheckRunningOddsRequest>()).Returns(result);
 
             var actual = await handler.Handle(new CheckRunningOddsRequest(), new System.Threading.CancellationToken());
 
             Assert.Equal(result, actual);
+        }
+
+        [Fact]
+        public async Task HandleCheckRunningOddsRequest_TurnOffConfig_ReturnNewResult()
+        {
+            var appSettings = new AppSettingsKey { EnableVerifyingRunningOdds = false };
+            var appSettingsOptions = Options.Create(appSettings);
+            AioHandler handlerTemp = new AioHandler(service, permission, appSettingsOptions);
+            var actual = await handlerTemp.Handle(new CheckRunningOddsRequest(), new System.Threading.CancellationToken());
+
+            Assert.True(actual.IsSuccessful);
+            await service.DidNotReceive().VerifyNoRunningOdds(Arg.Any<CheckRunningOddsRequest>());
         }
 
         [Fact]

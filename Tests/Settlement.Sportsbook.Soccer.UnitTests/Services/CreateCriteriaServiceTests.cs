@@ -1,15 +1,11 @@
 ﻿using AutoMapper;
 using AutoMapper.Configuration;
 using Fanex.NAP.Client.Helpers.Web;
-using Kaden.XmlConverter;
 using Microsoft.AspNetCore.Http;
-using NSubstitute;
-using Settlement.Sportsbook.Soccer.Services;
-using System.Collections.Generic;
 using Settlement.Core.Constants;
 using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Requests;
-using Xunit;
+using Settlement.Sportsbook.Soccer.Services;
 
 namespace Settlement.Sportsbook.Soccer.UnitTests.Services
 {

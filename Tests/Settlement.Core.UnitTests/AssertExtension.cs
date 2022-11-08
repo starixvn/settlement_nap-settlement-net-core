@@ -10,5 +10,11 @@ namespace Settlement.Core.UnitTests
         {
             Assert.Equal(JsonConvert.SerializeObject(expected), JsonConvert.SerializeObject(actual));
         }
+
+        public static string RemoveSessionId(this string value)
+        {
+            var index = value.IndexOf($"\"BroadcastSessionId\"");
+            return value.Remove(index, 60);
+        }
     }
 }

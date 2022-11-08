@@ -1,75 +1,72 @@
-﻿using NSubstitute;
-using Settlement.Log.Services;
-using Xunit;
+﻿using Settlement.Log.Services;
 
-namespace Settlement.Log.UnitTests.Services
+namespace Settlement.Log.UnitTests.Services;
+
+public class RemarkServiceTests
 {
-    public class RemarkServiceTests
+    private readonly RemarkNodeService remarkNodeService;
+    private readonly RemarkService service;
+
+    public RemarkServiceTests()
     {
-        private readonly RemarkNodeService remarkNodeService;
-        private readonly RemarkService service;
+        remarkNodeService = Substitute.For<RemarkNodeService>();
+        service = new RemarkServiceImp(remarkNodeService);
+    }
 
-        public RemarkServiceTests()
-        {
-            remarkNodeService = Substitute.For<RemarkNodeService>();
-            service = new RemarkServiceImp(remarkNodeService);
-        }
+    [Theory]
+    [InlineData(165)]
+    [InlineData(166)]
+    [InlineData(167)]
+    public void IsFastMarketAction_FromActionIdIsFastMarketActionId_ReturnsTrue(int actionId)
+    {
+        // Act
+        var isFastMarketAction = service.IsFastMarketAction(actionId);
 
-        [Theory]
-        [InlineData(165)]
-        [InlineData(166)]
-        [InlineData(167)]
-        public void IsFastMarketAction_FromActionIdIsFastMarketActionId_ReturnsTrue(int actionId)
-        {
-            // Act
-            var isFastMarketAction = service.IsFastMarketAction(actionId);
+        // Assert
+        Assert.True(isFastMarketAction);
+    }
 
-            // Assert
-            Assert.True(isFastMarketAction);
-        }
+    [Fact]
+    public void IsFastMarketAction_FromActionIdIsNotFastMarketActionId_ReturnsFalse()
+    {
+        // Arrange
+        const int actionId = 100;
 
-        [Fact]
-        public void IsFastMarketAction_FromActionIdIsNotFastMarketActionId_ReturnsFalse()
-        {
-            // Arrange
-            const int actionId = 100;
+        // Act
+        var isFastMarketAction = service.IsFastMarketAction(actionId);
 
-            // Act
-            var isFastMarketAction = service.IsFastMarketAction(actionId);
+        // Assert
+        Assert.False(isFastMarketAction);
+    }
 
-            // Assert
-            Assert.False(isFastMarketAction);
-        }
+    [Fact]
+    public void RemarkValue_FromValueNotContainsBrokenBar_ReturnsEmpty()
+    {
+        // Arrange
+        var value = string.Empty;
 
-        [Fact]
-        public void RemarkValue_FromValueNotContainsBrokenBar_ReturnsEmpty()
-        {
-            // Arrange
-            var value = string.Empty;
+        // Act
+        var remarkValue = service.RemarkValue(value);
 
-            // Act
-            var remarkValue = service.RemarkValue(value);
+        // Assert
+        Assert.Empty(remarkValue);
+    }
 
-            // Assert
-            Assert.Empty(remarkValue);
-        }
+    [Fact]
+    public void RemarkValue_FromValueContainsBrokenBar_ReturnsFromRemarkNodeServiceWithSecondElementAndFirstElement()
+    {
+        // Arrange
+        const string first = "First";
+        const string second = "Second";
+        const string remarkByNode = "Remark By Node";
+        var value = $"{first}|{second}|";
+        remarkNodeService.BetTypes(second, string.Empty).Returns(remarkByNode);
 
-        [Fact]
-        public void RemarkValue_FromValueContainsBrokenBar_ReturnsFromRemarkNodeServiceWithSecondElementAndFirstElement()
-        {
-            // Arrange
-            const string first = "First";
-            const string second = "Second";
-            const string remarkByNode = "Remark By Node";
-            var value = $"{first}|{second}|";
-            remarkNodeService.BetTypes(second, string.Empty).Returns(remarkByNode);
+        // Act
+        var remarkValue = service.RemarkValue(value);
 
-            // Act
-            var remarkValue = service.RemarkValue(value);
-
-            // Assert
-            const string expectedRemark = remarkByNode + first;
-            Assert.Equal(expectedRemark, remarkValue);
-        }
+        // Assert
+        const string expectedRemark = remarkByNode + first;
+        Assert.Equal(expectedRemark, remarkValue);
     }
 }

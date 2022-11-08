@@ -1,6 +1,4 @@
-﻿using Kaden.Extensions;
-
-namespace Settlement.Sportsbook.Soccer.Services.FullTimeBetStatus
+﻿namespace Settlement.Sportsbook.Soccer.Services.FullTimeBetStatus
 {
     public interface IFirstGoalLastGoalService
     {
