@@ -212,6 +212,7 @@ public static class WebSites
         services.AddTransient<IScoreSetService, ScoreSetServiceImp>();
         services.AddTransient<ScaleOutSettleService, ScaleOutSettleServiceImp>();
         services.AddTransient<ScaleOutSettleThirdPartyService, ScaleOutSettleThirdPartyServiceImp>();
+        services.AddTransient<GeneralService, GeneralServiceImp>();
     }
 
     public static void ConfigureMediator(this IServiceCollection services)

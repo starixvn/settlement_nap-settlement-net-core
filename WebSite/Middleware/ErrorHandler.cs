@@ -1,5 +1,6 @@
 ﻿using Fanex.Logging.Extensions;
 using Fanex.Logging.Extensions.Database;
+using ONEbook.UM.Services;
 using ILogger = Fanex.Logging.ILogger;
 
 namespace Settlement.WebSites.Middleware;
@@ -8,12 +9,14 @@ public class ErrorHandler
 {
     private readonly RequestDelegate next;
     private readonly ILogger logger;
+    private readonly IMaintenanceService maintenanceService;
     public IConfiguration Configuration { get; }
 
-    public ErrorHandler(RequestDelegate next, ILogger logger, IConfiguration configuration)
+    public ErrorHandler(RequestDelegate next, ILogger logger, IConfiguration configuration, IMaintenanceService maintenanceService)
     {
         this.next = next;
         this.logger = logger;
+        this.maintenanceService = maintenanceService;
         Configuration = configuration;
     }
 
@@ -31,6 +34,8 @@ public class ErrorHandler
 
     private async Task HandleException(HttpContext context, Exception exception)
     {
+        maintenanceService.RemoveUnderMaintenanceTimeCache();
+
         var logMessage = new LogMessage(exception.Message)
                     .AddSection("Database Info", DatabaseInfoGetters.GetDbExceptionInfo(exception))
                     .AddSection("Server Info", CommonInfoGetters.GetServerInfo())
