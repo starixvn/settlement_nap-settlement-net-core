@@ -7,7 +7,7 @@ import { ToastContainerDirective, ToastContainerModule, ToastNoAnimationModule, 
 import { ScorePipe } from '../../pipes';
 import { RequestService } from '../../services/request.service';
 import { ModalContentDialogComponent, ModalDialogComponent, NotReadyMatchComponent, ResettleCheckerComponent, TicketCountComponent } from '../../../shared/components';
-import { BlockUIService, ClosePopupService, HttpRequestService, MessageBoxService } from '../../../shared/services';
+import { BlockUIService, HttpRequestService, MessageBoxService } from '../../../shared/services';
 
 import { OtherCalculationComponent } from './other-calculation.component';
 import { OtherService } from './other.service';
@@ -24,7 +24,7 @@ describe('OtherCalculationComponent', () => {
   let otherService: OtherService;
   let verificationService: VerificationService;
   let toastrService: ToastrService;
-  let closePopupService: ClosePopupService;
+  let messageBoxService: MessageBoxService;
 
   const successfulResult = {
     errCode: 0,
@@ -63,7 +63,7 @@ describe('OtherCalculationComponent', () => {
         RequestService,
         OtherService,
         VerificationService,
-        ClosePopupService,
+        MessageBoxService,
         HttpRequestService,
         HttpClient,
         BlockUIService,
@@ -88,7 +88,7 @@ describe('OtherCalculationComponent', () => {
     otherService = fixture.debugElement.injector.get(OtherService);
     verificationService = fixture.debugElement.injector.get(VerificationService);
     toastrService = fixture.debugElement.injector.get(ToastrService);
-    closePopupService = fixture.debugElement.injector.get(ClosePopupService);
+    messageBoxService = fixture.debugElement.injector.get(MessageBoxService);
     spyOn(toastrService, 'clear');
     spyOn(toastrService, 'error');
     fixture.detectChanges();
@@ -116,7 +116,7 @@ describe('OtherCalculationComponent', () => {
     spyOn(verificationService, 'isHtScoreConfirmed');
     spyOn(verificationService, 'isFinalScoreConfirmed');
 
-    await component.getMatch(matchId, '');
+    await component.getMatch(matchId);
 
     expect(component.matchDetail.matchId).toEqual(matchId);
     expect(verificationService.isScoreInconsistent).toHaveBeenCalled();
@@ -388,7 +388,7 @@ describe('OtherCalculationComponent', () => {
       spyOn(verificationService, 'isScoreSourceInsufficient').and.returnValue(true);
       spyOn(verificationService, 'verifyChangedSettledTickets').and.returnValue(of(false));
       spyOn(otherService, 'settle').and.returnValue(successfulResult);
-      spyOn(closePopupService, 'closePopup');
+      spyOn(messageBoxService, 'closePopup');
       component.matchDetail = {} as MatchDetail;
       component.permission = { isLeader: true } as Permission;
 
@@ -404,7 +404,7 @@ describe('OtherCalculationComponent', () => {
       buttonYes.click();
       tick();
 
-      expect(closePopupService.closePopup).toHaveBeenCalled();
+      expect(messageBoxService.closePopup).toHaveBeenCalled();
     }));
 
     it('should confirm and calculate successfully when score is mismatched and there is leader', fakeAsync(() => {
@@ -412,7 +412,7 @@ describe('OtherCalculationComponent', () => {
       spyOn(verificationService, 'isScoreSourceInsufficient').and.returnValue(false);
       spyOn(verificationService, 'verifyChangedSettledTickets').and.returnValue(of(false));
       spyOn(otherService, 'settle').and.returnValue(successfulResult);
-      spyOn(closePopupService, 'closePopup');
+      spyOn(messageBoxService, 'closePopup');
       component.matchDetail = {} as MatchDetail;
       component.permission = { isLeader: true } as Permission;
       component.isHtScoreMismatched = true;
@@ -429,7 +429,7 @@ describe('OtherCalculationComponent', () => {
       buttonYes.click();
       tick();
 
-      expect(closePopupService.closePopup).toHaveBeenCalled();
+      expect(messageBoxService.closePopup).toHaveBeenCalled();
     }));
 
     it('should confirm and set re-settle tickets when re-settle is necessary', fakeAsync(() => {
@@ -450,7 +450,7 @@ describe('OtherCalculationComponent', () => {
   describe('uncalculate', () => {
     it('should confirm twice and close pop up when uncalculate successfully', fakeAsync(() => {
       spyOn(otherService, 'settle').and.returnValue(successfulResult);
-      spyOn(closePopupService, 'closePopup');
+      spyOn(messageBoxService, 'closePopup');
       component.applyHedgeMatch = true;
       component.hedgeMatchDetail = {} as HedgeMatchDetail;
       component.matchDetail = {} as MatchDetail;
@@ -463,7 +463,7 @@ describe('OtherCalculationComponent', () => {
       buttonYes.click();
       tick();
 
-      expect(closePopupService.closePopup).toHaveBeenCalled();
+      expect(messageBoxService.closePopup).toHaveBeenCalled();
     }));
 
     it('should pop error when uncalculate unsuccessfully', fakeAsync(() => {

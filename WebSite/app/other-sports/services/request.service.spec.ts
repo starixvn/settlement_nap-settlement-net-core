@@ -39,7 +39,7 @@ describe('RequestService', () => {
       () => {
         // Arrange
         const matchId = '7000000';
-        const url = apiUrl + '/api/othersports/get-match';
+        const url = apiUrl + '/get-match';
         const query = {
           matchId,
           action: "REFUND"
@@ -59,7 +59,7 @@ describe('RequestService', () => {
       () => {
         // Arrange
         const matchId = 7000000;
-        const url = apiUrl + '/api/othersports/calculate';
+        const url = apiUrl + '/calculate';
         const query = new RequestSettle(matchId, 'CAL', false, "", 0, 0);
 
         // Act
@@ -76,7 +76,7 @@ describe('RequestService', () => {
       () => {
         // Arrange
         const matchId = 7000000;
-        const url = apiUrl + '/api/othersports/refund';
+        const url = apiUrl + '/refund';
         const query = new RequestSettle(matchId, 'REFUND', false, "", 0, 0);
 
         // Act
@@ -93,7 +93,7 @@ describe('RequestService', () => {
       () => {
         // Arrange
         const matchId = 7000000;
-        const url = apiUrl + '/api/othersports/refund-parlay';
+        const url = apiUrl + '/refund-parlay';
         const query = {
           matchId,
           action: "REFUND",
@@ -114,7 +114,7 @@ describe('RequestService', () => {
       () => {
         // Arrange
         const matchId = 7000000;
-        const url = apiUrl + '/api/othersports/check-marked-tickets';
+        const url = apiUrl + '/check-marked-tickets';
         const query = {
           matchId,
           action: "REFUND",

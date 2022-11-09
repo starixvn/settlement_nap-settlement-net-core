@@ -5,7 +5,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
 import { RequestService } from '../../services/request.service';
-import { BlockUIService, ClosePopupService, HttpRequestService, MessageBoxService } from '../../../shared/services';
+import { BlockUIService, HttpRequestService, MessageBoxService } from '../../../shared/services';
 import { HalfTimeFullTimeService } from './halftime-fulltime.service';
 import { VerificationService } from './verification.service';
 import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
@@ -25,7 +25,6 @@ describe('HalfTimeFullTimeRefundComponent', () => {
     let halfTimeFullTimeService: HalfTimeFullTimeService;
     let toastrService: ToastrService;
     let messageBoxService: MessageBoxService;
-    let closePopupService: ClosePopupService;
 
     const matchDetail = new MatchDetail();
     const halfTime = new ResultDetail();
@@ -78,7 +77,7 @@ describe('HalfTimeFullTimeRefundComponent', () => {
             ],
             providers: [
                 RequestService,
-                ClosePopupService,
+                MessageBoxService,
                 BlockUIService,
                 HttpRequestService,
                 HalfTimeFullTimeService,
@@ -102,7 +101,6 @@ describe('HalfTimeFullTimeRefundComponent', () => {
         halfTimeFullTimeService = fixture.debugElement.injector.get(HalfTimeFullTimeService);
         toastrService = fixture.debugElement.injector.get(ToastrService);
         messageBoxService = fixture.debugElement.injector.get(MessageBoxService);
-        closePopupService = fixture.debugElement.injector.get(ClosePopupService);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });
@@ -114,7 +112,7 @@ describe('HalfTimeFullTimeRefundComponent', () => {
         component.resultDetails = [halfTime, fullTime];
         const query = new QueryMatch(1, true);
 
-        component.getMatch(1, "");
+        component.getMatch(1);
         tick();
 
         expect(requestService.getMatch).toHaveBeenCalledWith(query);
@@ -223,7 +221,7 @@ describe('HalfTimeFullTimeRefundComponent', () => {
             };
             matchDetail.matchId = 1234
             component.matchDetail = matchDetail;
-            spyOn(closePopupService, 'closePopup');
+            spyOn(messageBoxService, 'closePopup');
             spyOn(requestService, 'checkMarkedTickets').and.returnValue(of(notExistMarkedTicket));
             spyOn(requestService, 'refundParlay').and.returnValue(of(successfulResult));
 
@@ -238,7 +236,7 @@ describe('HalfTimeFullTimeRefundComponent', () => {
             buttonYes.click();
             tick();
 
-            expect(closePopupService.closePopup).toHaveBeenCalled();
+            expect(messageBoxService.closePopup).toHaveBeenCalled();
             expect(requestService.checkMarkedTickets).toHaveBeenCalledWith(params)
         }));
     });

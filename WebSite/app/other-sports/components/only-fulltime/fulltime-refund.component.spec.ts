@@ -125,22 +125,22 @@ describe('RefundActionsComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  describe('getMatch', () => {
-    it('getMatch - should call getMatch function with correct param', () => {
+  describe('getMatch',  () => {
+    it('getMatch - should call getMatch function with correct param', fakeAsync( () => {
       const matchId = 123;
       const query = new QueryMatch(matchId, true);
 
-      component.getMatch(matchId, '');
+       component.getMatch(matchId);
 
       expect(requestService.getMatch).toHaveBeenCalledWith(query);
-    });
+    }));
 
     it('should disable score direct', async () => {
       const matchId = 123;
       match.matchDetail.finalHomeScore = null;
       match.matchDetail.finalAwayScore = null;
 
-      await component.getMatch(matchId, '');
+      await component.getMatch(matchId);
       expect(component.matchDetail.finalAwayScore).toEqual(null);
       expect(component.matchDetail.finalHomeScore).toEqual(null);
     });

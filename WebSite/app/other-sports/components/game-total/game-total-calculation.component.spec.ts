@@ -1,6 +1,6 @@
 import { ComponentFixture, fakeAsync, TestBed, tick } from "@angular/core/testing";
 import { IntervalBackgroundPipe } from "../../../shared/pipes/interval-background.pipe";
-import { AioService, BlockUIService, ClosePopupService, HttpRequestService, MessageBoxService } from "../../../shared/services";
+import { AioService, BlockUIService, HttpRequestService, MessageBoxService } from "../../../shared/services";
 import { GameTotalCalculationComponent } from "./game-total-calculation.component";
 import { GameTotalVerificationService } from "./game-total-verification.service";
 import { GameTotalService } from "./game-total.service";
@@ -28,7 +28,6 @@ describe('GameTotalCalculationComponent', () => {
     let messageBoxService: MessageBoxService;
     let verificationService: GameTotalVerificationService;
     let aioService: AioService;
-    let closePopupService: ClosePopupService;
     let toastrService: ToastrService;
 
     const permission = {
@@ -98,7 +97,6 @@ describe('GameTotalCalculationComponent', () => {
                 BlockUIService,
                 HttpRequestService,
                 GameTotalVerificationService,
-                ClosePopupService,
                 MessageBoxService,
                 IntervalBackgroundPipe,
                 ResourceNameByIdPipe,
@@ -122,7 +120,6 @@ describe('GameTotalCalculationComponent', () => {
         messageBoxService = fixture.debugElement.injector.get(MessageBoxService);
         verificationService = fixture.debugElement.injector.get(GameTotalVerificationService);
         gameTotalService = fixture.debugElement.injector.get(GameTotalService);
-        closePopupService = fixture.debugElement.injector.get(ClosePopupService);
         toastrService = fixture.debugElement.injector.get(ToastrService);
         spyOn(toastrService, 'clear');
         spyOn(toastrService, 'error');
@@ -143,7 +140,7 @@ describe('GameTotalCalculationComponent', () => {
                 settleType: "MNL"
             };
             spyOn(aioService, 'getMatch').and.returnValue(of(match));
-            component.getMatch(matchId, 'url');
+            component.getMatch(matchId);
 
             expect(aioService.getMatch).toHaveBeenCalledWith(matchQuery);
         });
@@ -154,7 +151,7 @@ describe('GameTotalCalculationComponent', () => {
             spyOn(aioService, 'getMatch').and.returnValue(of(match));
             spyOn(gameTotalService, 'resetHomeAway');
             spyOn(verificationService, 'isScoreMismatched');
-            await component.getMatch(1, 'url');
+            await component.getMatch(1);
 
             expect(gameTotalService.resetHomeAway).toHaveBeenCalledWith([resultDetail], true);
             expect(component.isReadyMatch).toBeFalsy();
@@ -402,7 +399,7 @@ describe('GameTotalCalculationComponent', () => {
             spyOn(aioService, 'verifyChangedSettledTickets').and.returnValue(of(false));
             spyOn(gameTotalService, 'getConfirmMessage').and.returnValue(message);
             spyOn(aioService, 'push').and.returnValue(of(successfulResult));
-            spyOn(closePopupService, 'closePopup');
+            spyOn(messageBoxService, 'closePopup');
             spyOn(verificationService, 'isInsufficient').and.returnValue(false);
 
 
@@ -432,7 +429,7 @@ describe('GameTotalCalculationComponent', () => {
             spyOn(aioService, 'verifyChangedSettledTickets').and.returnValue(of(false));
             spyOn(gameTotalService, 'getConfirmMessage').and.returnValue(message);
             spyOn(aioService, 'push').and.returnValue(of(successfulResult));
-            spyOn(closePopupService, 'closePopup');
+            spyOn(messageBoxService, 'closePopup');
             spyOn(aioService, 'pushChildMatch').and.returnValue(of(successfulResult));
             spyOn(verificationService, 'isInsufficient').and.returnValue(false);
 
@@ -466,7 +463,7 @@ describe('GameTotalCalculationComponent', () => {
             spyOn(aioService, 'verifyChangedSettledTickets').and.returnValue(of(false));
             spyOn(gameTotalService, 'getConfirmMessage').and.returnValue(message);
             spyOn(aioService, 'push').and.returnValue(of(successfulResult));
-            spyOn(closePopupService, 'closePopup');
+            spyOn(messageBoxService, 'closePopup');
             spyOn(verificationService, 'isInsufficient').and.returnValue(true);
 
 
@@ -501,7 +498,7 @@ describe('GameTotalCalculationComponent', () => {
             spyOn(aioService, 'verifyChangedSettledTickets').and.returnValue(of(false));
             spyOn(gameTotalService, 'getConfirmMessage').and.returnValue(message);
             spyOn(aioService, 'push').and.returnValue(of(successfulResult));
-            spyOn(closePopupService, 'closePopup');
+            spyOn(messageBoxService, 'closePopup');
             spyOn(verificationService, 'isInsufficient').and.returnValue(false);
 
 
@@ -552,7 +549,7 @@ describe('GameTotalCalculationComponent', () => {
         match.resultDetails = [resultDetail];
         component.match = match;
         spyOn(aioService, 'push').and.returnValue(of(successfulResult));
-        spyOn(closePopupService, 'closePopup');
+        spyOn(messageBoxService, 'closePopup');
 
         component.uncalculation();
         const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
@@ -560,7 +557,7 @@ describe('GameTotalCalculationComponent', () => {
         tick();
 
         expect(aioService.push).toHaveBeenCalled();
-        expect(closePopupService.closePopup).toHaveBeenCalled();
+        expect(messageBoxService.closePopup).toHaveBeenCalled();
     }));
 
     it('changeInputDirectly - should set correct when check input directly', () => {
