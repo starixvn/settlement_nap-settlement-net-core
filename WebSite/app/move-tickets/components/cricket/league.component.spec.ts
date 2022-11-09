@@ -48,6 +48,7 @@ describe('MoveTickets - LeagueComponent', () => {
     isCheckedCalcMP: true,
     disableCheckCalcMP: false,
     isMergedParlay: true,
+    autoCalcSetting: null
   };
 
   const sport: SportMatch = {

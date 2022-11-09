@@ -101,7 +101,7 @@ describe('FilterComponent', () => {
                 expect(component.fromDate).toEqual({ year: 2020, month: 6, day: 20 });
                 expect(component.toDate).toEqual({ year: 2020, month: 6, day: 19 });
                 expect(component.remarkSelect.items.length).toEqual(6);
-                expect(component.matchStatusSelect.items.length).toEqual(7);
+                expect(component.matchStatusSelect.items.length).toEqual(8);
                 expect(component.ticketsStatusSelect.items.length).toEqual(4);
             });
     }));

@@ -40,7 +40,7 @@ describe('MoveTicketsService', () => {
 
   it(`getLeague - Call right Url and param`, () => {
     // Arrange
-    const url = `localhost/api/multi-sports/getLeague`;
+    const url = `api/multi-sports/getLeague`;
     const param = {
       apikey: ApiKeys.MultiSportGetCombobox,
     };
@@ -55,7 +55,7 @@ describe('MoveTicketsService', () => {
 
   it('getDate - Call right Url', () => {
         // Arrange
-        const url = "localhost/api/multi-sports/get-date";
+        const url = "api/multi-sports/get-date";
 
         // Act
         spyOn(httpRequestService, 'getJson');
@@ -85,7 +85,7 @@ describe('MoveTicketsService', () => {
 
         // Assert
         expect(httpRequestService.postJson)
-          .toHaveBeenCalledWith(param, "localhost/api/moveticket/get-match");
+          .toHaveBeenCalledWith(param, "api/moveticket/get-match");
     }
   );
 
@@ -101,7 +101,7 @@ describe('MoveTicketsService', () => {
 
     // Assert
     expect(httpRequestService.postJson)
-      .toHaveBeenCalledWith(param, "localhost/api/moveticket/move-ticket");
+      .toHaveBeenCalledWith(param, "api/moveticket/move-ticket");
   });
 
   it('getChildMatches - Call right Url and param', () => {
@@ -114,7 +114,7 @@ describe('MoveTicketsService', () => {
 
     // Assert
     expect(httpRequestService.postJson)
-      .toHaveBeenCalledWith(param, "localhost/api/moveticket/get-child-match");
+      .toHaveBeenCalledWith(param, "api/moveticket/get-child-match");
   });
 
   it('calculateMP - Call right Url and param', () => {
@@ -127,13 +127,13 @@ describe('MoveTicketsService', () => {
 
     // Assert
     expect(httpRequestService.postJson)
-      .toHaveBeenCalledWith(param, "api/calculation/calculate-mix-parlay");
+      .toHaveBeenCalledWith(param, "api/multi-sports/calculate-mix-parlay");
   });
 
   it('popupLog - should open dialog box', () => {
     spyOn(dialogBoxService, 'popup');
 
-    moveTicketsService.popupLog('1', '', '');
+    moveTicketsService.popupLog(1, '', '');
 
     expect(dialogBoxService.popup).toHaveBeenCalled();
   });
