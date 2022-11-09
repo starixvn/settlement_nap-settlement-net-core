@@ -56,7 +56,7 @@ describe('Component: App', () => {
         })
         .overrideModule(BrowserDynamicTestingModule, {
             set: {
-                entryComponents: [EarlySettlementComponent, CalculationActionsComponent, RefundActionsComponent],
+                entryComponents: [EarlySettlementComponent, CalculationActionsComponent, RefundActionsComponent, MatchDetailComponent],
             },
         })
             .compileComponents()

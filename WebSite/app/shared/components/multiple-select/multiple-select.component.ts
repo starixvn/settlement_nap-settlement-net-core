@@ -60,7 +60,7 @@ export class NewMultipleSelectComponent implements OnChanges, AfterViewInit {
   }
 
   public clickOutside() {
-    document.body.addEventListener('click', (event) => {
+    document.addEventListener('click', (event) => {
       const ignoreClickOnMyElement = document.getElementsByClassName("cdk-overlay-pane")[0];
       if (!this.isOpened || ignoreClickOnMyElement == null) {
         return;

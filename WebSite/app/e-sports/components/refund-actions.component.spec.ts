@@ -14,7 +14,6 @@ import {
   HttpRequestService,
   BlockUIService,
   MessageBoxService,
-  ClosePopupService,
   AioService,
 } from "../../shared/services";
 import {
@@ -40,7 +39,7 @@ describe("E-sport - Refund Component", () => {
   let component: RefundActionsComponent;
   let fixture: ComponentFixture<RefundActionsComponent>;
   let aioService: AioService;
-  let closePopupService: ClosePopupService;
+  let messageBoxService: MessageBoxService;
   let toastrService: ToastrService;
   const buttonName = "btn-danger";
   const errorMessage = "Error message";
@@ -96,7 +95,6 @@ describe("E-sport - Refund Component", () => {
         MessageBoxService,
         HttpRequestService,
         BlockUIService,
-        ClosePopupService,
         VerificationService,
         NgbModal,
         ResultByTeamNamePipe,
@@ -124,7 +122,7 @@ describe("E-sport - Refund Component", () => {
         fixture = TestBed.createComponent(RefundActionsComponent);
         
         aioService = fixture.debugElement.injector.get(AioService);
-        closePopupService = fixture.debugElement.injector.get(ClosePopupService);
+        messageBoxService = fixture.debugElement.injector.get(MessageBoxService);
         toastrService = fixture.debugElement.injector.get(ToastrService);
         component = fixture.componentInstance;
         component.match = match;
@@ -165,7 +163,7 @@ describe("E-sport - Refund Component", () => {
       component.applyHedgeMatch = false;
       spyOn(aioService, "checkMarkedTickets").and.returnValue(of(notExistMarkedTicket));
       spyOn(aioService, "push").and.returnValue(of(successfulResult));
-      spyOn(closePopupService, "closePopup");
+      spyOn(messageBoxService, "closePopup");
 
       component.refund();
       tick();
@@ -177,7 +175,7 @@ describe("E-sport - Refund Component", () => {
 
       expect(toastrService.error).not.toHaveBeenCalled();
       expect(aioService.push).toHaveBeenCalledTimes(1);
-      expect(closePopupService.closePopup).toHaveBeenCalled();
+      expect(messageBoxService.closePopup).toHaveBeenCalled();
     }));
 
     it("should pass all validation and successfully refund and there are hedge match", fakeAsync(async () => {
@@ -188,7 +186,7 @@ describe("E-sport - Refund Component", () => {
       component.hedgeMatchDetail = match.hedgeMatchDetail;
       spyOn(aioService, "checkMarkedTickets").and.returnValue(of(notExistMarkedTicket));
       spyOn(aioService, "push").and.returnValue(of(successfulResult));
-      spyOn(closePopupService, "closePopup");
+      spyOn(messageBoxService, "closePopup");
 
       component.refund();
       tick();
@@ -200,7 +198,7 @@ describe("E-sport - Refund Component", () => {
 
       expect(toastrService.error).not.toHaveBeenCalled();
       expect(aioService.push).toHaveBeenCalledTimes(2);
-      expect(closePopupService.closePopup).toHaveBeenCalled();
+      expect(messageBoxService.closePopup).toHaveBeenCalled();
     }));
 
     it("should show error message when unsuccessfully refund", fakeAsync(async () => {

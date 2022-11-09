@@ -6,14 +6,13 @@ import { AutoCalculateFilterComponent } from './auto-calculation/auto-calculate-
 import { AutoCalculateMatchesComponent } from './auto-calculation/auto-calculate-matches.component';
 import { DatepickerComponent } from '../../shared/components/date-picker/date-picker.component';
 import { ModalDialogComponent, NewMultipleSelectComponent } from "../../shared/components";
-import { FilterCalculateBaseComponent, MatchesBaseComponent, PageBaseComponent } from './base-component';
+import { MatchesBaseComponent, PageBaseComponent } from './base-component';
 import { PageComponent} from './calculation/page.component'
 import { FilterComponent} from './calculation/filter.component'
 import { MatchesComponent} from './calculation/matches.component'
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-import { BlockUIService } from '../../shared/services';
 import { BrowserModule } from '@angular/platform-browser';
 import { MaterialModule } from '../../shared/material-module';
 import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
@@ -35,7 +34,6 @@ describe('AppComponent', () => {
         DatepickerComponent,
         ModalDialogComponent,
         NewMultipleSelectComponent,
-        FilterCalculateBaseComponent, 
         MatchesBaseComponent, 
         PageBaseComponent 
        ],
