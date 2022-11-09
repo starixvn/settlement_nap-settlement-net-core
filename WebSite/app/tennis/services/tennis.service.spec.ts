@@ -55,6 +55,10 @@ describe('TennisService', () => {
       const resultTwo = new ResultDetail();
       const totalGames = new ResultDetail();
       const totalPoint = new ResultDetail();
+      const totalSets = new ResultDetail();
+      totalSets.resourceId = ResourcesIds.totalSets;
+      totalSets.ticketStatus = "";
+
       totalPoint.resourceId = ResourcesIds.totalGames;
       totalPoint.resultStatusId = ResultStatusId.ManualCompleted;
       totalGames.resourceId = ResourcesIds.totalGames;
@@ -66,13 +70,14 @@ describe('TennisService', () => {
       resultOne.awayValue = "1";
       resultTwo.homeValue = "1";
       resultTwo.awayValue = "2";
+      resultTwo.ticketStatus  = "";
       resultTwo.resultStatusId = ResultStatusId.ManualCompleted;
-      totalPoint.awayValue = "3";
-      totalPoint.homeValue = "2";
+    
+      totalPoint.resultStatusId = 5;
+      totalPoint.resourceId = "06"
 
-      const actual = service.getResultDetail([resultOne, resultTwo, totalGames]);
-
-      expect(actual).toEqual([resultOne, resultTwo, totalPoint, totalGames]);
+      const actual = service.getResultDetail([resultOne, resultTwo, totalSets, totalGames]);
+      expect([actual[0],actual[1],actual[2]]).toEqual([resultOne, resultTwo, totalPoint]);
   });
 
   it('getIntervalBackground - should call pipes transform', () => {
