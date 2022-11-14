@@ -1,4 +1,5 @@
-import { Component, ElementRef} from '@angular/core';
+import { FilterAutoQuery } from './../../models/filter-auto-query.model';
+import { Component, ElementRef } from '@angular/core';
 import { ReCheckInService } from '../../../shared/services';
 import { PageBaseComponent } from '../base-component';
 
@@ -7,8 +8,14 @@ import { PageBaseComponent } from '../base-component';
   templateUrl: './auto-calculate-page.component.html'
 })
 export class AutoCalculatePageComponent extends PageBaseComponent {
+  public filterQuery: FilterAutoQuery;
   constructor(protected reCheckInService: ReCheckInService,
-    protected elementRef: ElementRef<HTMLElement>) { 
-      super(reCheckInService, elementRef);
-    }
+    protected elementRef: ElementRef<HTMLElement>) {
+    super(reCheckInService, elementRef);
+  }
+
+  public search($event) {
+    this.calculation = $event.calculation;
+    this.filterQuery = $event.filterQuery;
+  }
 }

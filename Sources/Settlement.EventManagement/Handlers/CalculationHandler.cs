@@ -4,9 +4,6 @@ using Settlement.EventManagement.Models;
 using Settlement.EventManagement.Models.Calculation;
 using Settlement.EventManagement.Requests;
 using Settlement.EventManagement.Services.Calculation;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using Match = Settlement.EventManagement.Models.Calculation.Match;
 
 namespace Settlement.EventManagement.Handlers
@@ -15,7 +12,8 @@ namespace Settlement.EventManagement.Handlers
         IRequestHandler<FilterCalculationRequest, CalculationLeagues>,
         IRequestHandler<LeagueCalculationRequest, List<LeagueTypeModel>>,
         IRequestHandler<RefreshCalculationRequest, List<Match>>,
-        IRequestHandler<FilterAutoCalculationRequest, CalculationLeagues>
+        IRequestHandler<FilterAutoCalculationRequest, CalculationLeagues>,
+        IRequestHandler<RefreshAutoCalculationRequest, List<Match>>
     {
         private readonly LeagueService leagueService;
 
@@ -46,6 +44,9 @@ namespace Settlement.EventManagement.Handlers
         public async Task<List<LeagueTypeModel>> Handle(LeagueCalculationRequest request, CancellationToken cancellationToken) => await leagueService.Leagues(request);
 
         public async Task<List<Match>> Handle(RefreshCalculationRequest request, CancellationToken cancellationToken) => await matchService.GetWaitingMatches(request);
+
+        public async Task<List<Match>> Handle(RefreshAutoCalculationRequest request,
+            CancellationToken cancellationToken) => await matchService.GetWaitingAutoMatches(request);
 
         public async Task<CalculationLeagues> Handle(FilterAutoCalculationRequest request, CancellationToken cancellationToken)
         {

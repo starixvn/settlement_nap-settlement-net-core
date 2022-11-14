@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Fanex.Caching;
-using Fanex.Data.Repository;
+﻿using Fanex.Caching;
 using Settlement.Core.Constants;
 using Settlement.EventManagement.Criteria;
 using Settlement.EventManagement.Models.Calculation;
@@ -12,11 +7,11 @@ namespace Settlement.EventManagement.Services.Calculation
 {
     public interface CachingMatchesService
     {
-        void SetToCache(List<Match> matches, int leagueId, bool autoCalculate = false);
+        void SetToCache(List<Match> matches, string leagueIds, bool autoCalculate = false);
 
-        Task<List<Match>> GetShortCache(int leagueId, bool autoCalculate = false);
+        Task<List<Match>> GetShortCache(string leagueIds, bool autoCalculate = false);
 
-        Task<List<Match>> GetLongCache(int leagueId, bool autoCalculate = false);
+        Task<List<Match>> GetLongCache(string leagueIds, bool autoCalculate = false);
 
         Task<Dictionary<int, List<ReferenceAction>>> GetReferenceActions(IEnumerable<int> matchIds);
     }
@@ -34,29 +29,29 @@ namespace Settlement.EventManagement.Services.Calculation
             this.repository = repository;
         }
 
-        public void SetToCache(List<Match> matches, int leagueId, bool autoCalculate = false)
+        public void SetToCache(List<Match> matches, string leagueIds, bool autoCalculate = false)
         {
-            var shortCachingKey = ShortCachingKey(leagueId, autoCalculate);
-            var longCachingKey = LongCachingKey(leagueId, autoCalculate);
+            var shortCachingKey = ShortCachingKey(leagueIds, autoCalculate);
+            var longCachingKey = LongCachingKey(leagueIds, autoCalculate);
             const int shortCacheExpirationTime = 3;
             const int longCacheExpirationTime = 20;
             cacheService.SetAsync(shortCachingKey, matches, new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromSeconds(shortCacheExpirationTime)));
             cacheService.SetAsync(longCachingKey, matches, new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(longCacheExpirationTime)));
         }
 
-        private static string ShortCachingKey(int leagueId, bool autoCalculate) => autoCalculate ? $"{CacheServiceKey.WaitingAutoPayoutCacheKey}-{leagueId}"
-                                                                                                : $"{CacheServiceKey.WaitingListCacheKey}-{leagueId}";
+        private static string ShortCachingKey(string leagueIds, bool autoCalculate) => autoCalculate ? $"{CacheServiceKey.WaitingAutoPayoutCacheKey}-{leagueIds}"
+                                                                                                : $"{CacheServiceKey.WaitingListCacheKey}-{leagueIds}";
 
-        private static string LongCachingKey(int leagueId, bool autoCalculate) => $"{ShortCachingKey(leagueId, autoCalculate)}-longCaching";
+        private static string LongCachingKey(string leagueIds, bool autoCalculate) => $"{ShortCachingKey(leagueIds, autoCalculate)}-longCaching";
 
-        public async Task<List<Match>> GetShortCache(int leagueId, bool autoCalculate = false)
+        public async Task<List<Match>> GetShortCache(string leagueIds, bool autoCalculate = false)
         {
-            return await cacheService.GetAsync<List<Match>>(ShortCachingKey(leagueId, autoCalculate));
+            return await cacheService.GetAsync<List<Match>>(ShortCachingKey(leagueIds, autoCalculate));
         }
 
-        public async Task<List<Match>> GetLongCache(int leagueId, bool autoCalculate = false)
+        public async Task<List<Match>> GetLongCache(string leagueIds, bool autoCalculate = false)
         {
-            return await cacheService.GetAsync<List<Match>>(LongCachingKey(leagueId, autoCalculate)) ?? new List<Match>();
+            return await cacheService.GetAsync<List<Match>>(LongCachingKey(leagueIds, autoCalculate)) ?? new List<Match>();
         }
 
         public async Task<Dictionary<int, List<ReferenceAction>>> GetReferenceActions(IEnumerable<int> matchIds)

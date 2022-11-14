@@ -1,16 +1,10 @@
-﻿using Fanex.Data.Repository;
-using Settlement.Core.Services;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
-using Match = Settlement.EventManagement.Models.Calculation.Match;
-using Settlement.Core.Models;
-using Settlement.EventManagement.Criteria;
+﻿using AutoMapper;
 using Settlement.Core.Constants;
+using Settlement.Core.Models;
+using Settlement.Core.Services;
+using Settlement.EventManagement.Criteria;
 using Settlement.EventManagement.Requests;
-using System.Threading;
-using Microsoft.Extensions.Options;
+using Match = Settlement.EventManagement.Models.Calculation.Match;
 
 namespace Settlement.EventManagement.Services.Calculation
 {
@@ -21,6 +15,8 @@ namespace Settlement.EventManagement.Services.Calculation
         Task<List<Match>> GetMatchesAutoCalculate(FilterAutoCalculationRequest request);
 
         Task<List<Match>> GetWaitingMatches(RefreshCalculationRequest request);
+
+        Task<List<Match>> GetWaitingAutoMatches(RefreshAutoCalculationRequest request);
     }
 
     public class MatchServiceImp : MatchService
@@ -107,7 +103,7 @@ namespace Settlement.EventManagement.Services.Calculation
                 }
                 else
                 {
-                   matches =  mergeDataService.MergeMatches(matches, data);
+                    matches = mergeDataService.MergeMatches(matches, data);
                 }
             }
 
@@ -131,7 +127,7 @@ namespace Settlement.EventManagement.Services.Calculation
                 }
                 else
                 {
-                   matches =  mergeDataService.MergeMatches(matches, data);
+                    matches = mergeDataService.MergeMatches(matches, data);
                 }
             }
 
@@ -147,7 +143,7 @@ namespace Settlement.EventManagement.Services.Calculation
 
         public async Task<List<Match>> GetWaitingMatches(RefreshCalculationRequest request)
         {
-            var matches = await cachingMatchesService.GetShortCache(request.LeagueId, request.IsAutoCalculatePage);
+            var matches = await cachingMatchesService.GetShortCache(request.LeagueIds);
 
             if (matches != null)
             {
@@ -158,7 +154,7 @@ namespace Settlement.EventManagement.Services.Calculation
             {
                 try
                 {
-                    return request.IsAutoCalculatePage ? await GetAndCachingAutoCalculationMatches(request) : await GetAndCachingMatches(request);
+                    return await GetAndCachingMatches(request);
                 }
                 finally
                 {
@@ -166,7 +162,31 @@ namespace Settlement.EventManagement.Services.Calculation
                 }
             }
 
-            return await cachingMatchesService.GetLongCache(request.LeagueId, request.IsAutoCalculatePage);
+            return await cachingMatchesService.GetLongCache(request.LeagueIds);
+        }
+
+        public async Task<List<Match>> GetWaitingAutoMatches(RefreshAutoCalculationRequest request)
+        {
+            var matches = await cachingMatchesService.GetShortCache(request.LeagueId.ToString(), true);
+
+            if (matches != null)
+            {
+                return matches;
+            }
+
+            if (0 == Interlocked.Exchange(ref _isProcessing, 1))
+            {
+                try
+                {
+                    return await GetAndCachingAutoCalculationMatches(request);
+                }
+                finally
+                {
+                    Interlocked.Exchange(ref _isProcessing, 0);
+                }
+            }
+
+            return await cachingMatchesService.GetLongCache(request.LeagueId.ToString(), true);
         }
 
         private async Task<List<Match>> GetAndCachingMatches(RefreshCalculationRequest request)
@@ -176,7 +196,7 @@ namespace Settlement.EventManagement.Services.Calculation
 
             var matches = SetNewMatchInfo(waitingMatches, listResultDetail);
 
-            cachingMatchesService.SetToCache(matches, request.LeagueId);
+            cachingMatchesService.SetToCache(matches, request.LeagueIds);
 
             return matches;
         }
@@ -214,14 +234,14 @@ namespace Settlement.EventManagement.Services.Calculation
                 }
                 else
                 {
-                   matches = mergeDataService.MergeMatches(matches, data);
+                    matches = mergeDataService.MergeMatches(matches, data);
                 }
             }
 
             return matches;
         }
 
-        private async Task<List<Match>> GetAndCachingAutoCalculationMatches(RefreshCalculationRequest request)
+        private async Task<List<Match>> GetAndCachingAutoCalculationMatches(RefreshAutoCalculationRequest request)
         {
             var waitingMatches = await WaitingAutoCalculationMatchesAllSites(request);
             var listResultDetail = await ResultDetailByMatchIds(waitingMatches);
@@ -229,16 +249,16 @@ namespace Settlement.EventManagement.Services.Calculation
 
             var matches = SetNewMatchInfo(waitingMatches, listResultDetail);
 
-            cachingMatchesService.SetToCache(matches, request.LeagueId);
+            cachingMatchesService.SetToCache(matches, request.LeagueId.ToString());
 
             return matches;
         }
 
-        private async Task<List<Match>> WaitingAutoCalculationMatchesAllSites(RefreshCalculationRequest request)
+        private async Task<List<Match>> WaitingAutoCalculationMatchesAllSites(RefreshAutoCalculationRequest request)
         {
             var matches = new List<Match>();
             var isCentralDataBase = true;
-            var criteria = mapper.Map<RefreshCalculationRequest, GetWaitingAutoCalculationCriteria>(request);
+            var criteria = mapper.Map<RefreshAutoCalculationRequest, GetWaitingAutoCalculationCriteria>(request);
             foreach (var server in appSettingsKey.SiteDbServer)
             {
                 criteria.DbServer = server;
@@ -251,7 +271,7 @@ namespace Settlement.EventManagement.Services.Calculation
                 }
                 else
                 {
-                  matches = mergeDataService.MergeMatches(matches, data);
+                    matches = mergeDataService.MergeMatches(matches, data);
                 }
             }
 

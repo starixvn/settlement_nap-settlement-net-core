@@ -1,8 +1,6 @@
-﻿using System;
+﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Settlement.Core.ActionFilters;
-using MediatR;
-using System.Threading.Tasks;
 using Settlement.EventManagement.Requests;
 
 namespace Settlement.EventManagement.Controllers
@@ -32,6 +30,11 @@ namespace Settlement.EventManagement.Controllers
         [HttpPost]
         [Route("auto-refresh")]
         public async Task<IActionResult> RefreshMatches(RefreshCalculationRequest request) =>
+            Ok(await mediator.Send(request).ConfigureAwait(false));
+
+        [HttpPost]
+        [Route("auto-refresh-auto-calculation")]
+        public async Task<IActionResult> RefreshAutoCalculateMatches(RefreshAutoCalculationRequest request) =>
             Ok(await mediator.Send(request).ConfigureAwait(false));
 
         [HttpPost]
