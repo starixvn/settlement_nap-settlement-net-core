@@ -17,6 +17,8 @@ namespace Settlement.ThirdPartyProducts.Models
             {
                 return IsRunning ? 1 : 0;
             }
+
+            set { }
         }
 
         public override bool Equals(object obj)

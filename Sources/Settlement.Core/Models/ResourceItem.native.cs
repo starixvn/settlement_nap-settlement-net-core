@@ -32,6 +32,8 @@ namespace Settlement.Core.Models
             {
                 return IsSettleDetermined ? "1" : "0";
             }
+
+            set { }
         }
 
         [XmlIgnore]
