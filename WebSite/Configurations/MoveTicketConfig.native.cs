@@ -1,29 +1,27 @@
-﻿using System.Reflection;
-using MediatR;
-using Microsoft.Extensions.DependencyInjection;
+﻿using MediatR;
 using Settlement.Sportsbook.MoveTickets.Controllers;
 using Settlement.Sportsbook.MoveTickets.Services;
+using System.Reflection;
 
-namespace Settlement.WebSites.Configurations
+namespace Settlement.WebSites.Configurations;
+
+public static class MoveTicketConfig
 {
-    public static class MoveTicketConfig
+    public static void ConfigMoveTicketServices(this IServiceCollection services)
     {
-        public static void ConfigMoveTicketServices(this IServiceCollection services)
-        {
-            services.AddTransient<IMatchResultDetailService, MatchResultDetailServiceImp>();
-            services.AddTransient<IMatchService, MatchServiceImp>();
-            services.AddTransient<IMoveTicketService, MoveTicketServiceImp>();
-            services.AddTransient<IScoreService, ScoreServiceImp>();
-            services.AddTransient<IScoreSetService, ScoreSetServiceImp>();
-            services.AddTransient<CompareMatchService, CompareMatchServiceImp>();
-            services.AddTransient<MoveTicketMultipleServerService, MoveTicketMultipleServerServiceImp>();
-            services.AddTransient<NewInfoMatchService, NewInfoMatchServiceImp>();
-            services.AddTransient<SiteMatchService, SiteMatchServiceImp>();
-        }
+        services.AddTransient<IMatchResultDetailService, MatchResultDetailServiceImp>();
+        services.AddTransient<IMatchService, MatchServiceImp>();
+        services.AddTransient<IMoveTicketService, MoveTicketServiceImp>();
+        services.AddTransient<IScoreService, ScoreServiceImp>();
+        services.AddTransient<IScoreSetService, ScoreSetServiceImp>();
+        services.AddTransient<CompareMatchService, CompareMatchServiceImp>();
+        services.AddTransient<MoveTicketMultipleServerService, MoveTicketMultipleServerServiceImp>();
+        services.AddTransient<NewInfoMatchService, NewInfoMatchServiceImp>();
+        services.AddTransient<SiteMatchService, SiteMatchServiceImp>();
+    }
 
-        public static void ConfigMoveTicketMediator(this IServiceCollection services)
-        {
-            services.AddMediatR(typeof(MoveTicketController).GetTypeInfo().Assembly);
-        }
+    public static void ConfigMoveTicketMediator(this IServiceCollection services)
+    {
+        services.AddMediatR(typeof(MoveTicketController).GetTypeInfo().Assembly);
     }
 }
