@@ -1,7 +1,5 @@
-﻿using Settlement.Core.Models;
-using System.Collections.Generic;
-using System.Linq;
-using Settlement.Core.Constants;
+﻿using Settlement.Core.Constants;
+using Settlement.Core.Models;
 using Settlement.Core.Services;
 
 namespace Settlement.EventManagement.Services
@@ -84,7 +82,7 @@ namespace Settlement.EventManagement.Services
             var games = resultDetails.Where(m => m.ResourceId.LongCount() == 4
                                 && !string.IsNullOrWhiteSpace(m.HomeValue)
                                 && !string.IsNullOrWhiteSpace(m.AwayValue)
-                                && m.SettlementStatusId != SettlementStatus.Refund).ToList();
+                                && m.ResultStatusId == ResultStatus.ManuallySettled).ToList();
 
             if (games.Count > 0)
             {

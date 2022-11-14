@@ -1,5 +1,4 @@
 ﻿using Fanex.Data;
-using Fanex.Data.Repository;
 
 namespace Settlement.EventManagement.Criteria
 {
@@ -7,7 +6,7 @@ namespace Settlement.EventManagement.Criteria
     {
         public int SportType { get; } = Core.Constants.SportType.Soccer;
 
-        public int LeagueId { get; set; }
+        public string LeagueIds { get; set; }
 
         [SpParam(Ignored = true)]
         public string DbServer { get; set; }

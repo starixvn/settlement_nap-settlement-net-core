@@ -29,7 +29,7 @@ namespace Settlement.EventManagement.Services.SpecificService.Tennis
             var homeScore = 0;
             var awayScore = 0;
 
-            if (HasScore(resultDetail.SettlementStatusId))
+            if (resultDetail.ResultStatusId == ResultStatus.ManuallySettled)
             {
                 if (int.TryParse(resultDetail.HomeValue, out var homeValue))
                 {
@@ -43,11 +43,6 @@ namespace Settlement.EventManagement.Services.SpecificService.Tennis
             }
 
             return new Score(homeScore.ToString(), awayScore.ToString());
-        }
-
-        private static bool HasScore(byte? statusId)
-        {
-            return Equals(statusId, SettlementStatus.Completed) || Equals(statusId, SettlementStatus.Running);
         }
     }
 }
