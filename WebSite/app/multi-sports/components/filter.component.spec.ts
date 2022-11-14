@@ -102,8 +102,9 @@ describe('MultiSport - FilterComponent', () => {
                 expect(component.toDate).toEqual({ year: 2020, month: 6, day: 20 });
                 expect(component.sportSelect.items.length).toBeGreaterThanOrEqual(1);
                 expect(component.holdStatusSelect.items.length).toEqual(6);
-                expect(component.matchStatusSelect.items.length).toEqual(7);
-                expect(component.ticketsStatusSelect.items.length).toEqual(4);
+                expect(component.matchStatusSelect.items.length).toEqual(6);
+                expect(component.overStatusSelect.items.length).toEqual(4);
+                expect(component.autoPayoutSelect.items.length).toEqual(2);
             });
     }));
 
@@ -123,16 +124,6 @@ describe('MultiSport - FilterComponent', () => {
 
             expect(messageBoxService.alert).toHaveBeenCalled();
             expect(component.warningDialogMessage.message).toEqual(Resources.atLeastSport);
-        });
-
-        it('should show error message select league when have not selected any league.', () => {
-            spyOn(verifyDateService, 'validDate').and.returnValue(true);
-            component.sportTypesSelected = "2";
-            component.leaguesSelected = "";
-            component.search();
-
-            expect(messageBoxService.alert).toHaveBeenCalled();
-            expect(component.warningDialogMessage.message).toEqual(Resources.atLeastLeague);
         });
 
         it('should call filter method and event emit when pass all validation.', async () => {
@@ -180,23 +171,6 @@ describe('MultiSport - FilterComponent', () => {
             component.onSelectSport(items);
 
             expect(component.leagueSelect.items.length).toEqual(0);
-        });
-    });
-
-    describe('onSelectTicketsStatus() method', () => {
-        it('should return right value when selected.', () => {
-            const items: ItemsSelect[] = [];
-            items.push(new ItemsSelect(1, "2", "1", true, true, true, []));
-            component.onSelectTicketsStatus(items);
-
-            expect(component.ticketStatusSelected).toEqual("2");
-        });
-
-        it('should return default value when not selected.', () => {
-            const items: ItemsSelect[] = [];
-            component.onSelectTicketsStatus(items);
-
-            expect(component.ticketStatusSelected).toEqual("0");
         });
     });
 

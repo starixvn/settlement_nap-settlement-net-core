@@ -52,7 +52,14 @@ describe('MultiSport - RefreshMatchService', () => {
   newMatch.remark = new Remark();
   newMatch.suspenderFullTime = '';
   newMatch.suspenderHalfTime = '';
-  newMatch.showLink = false;
+  newMatch.autoPayoutStatus = 1;
+  newMatch.confirmFullTimeScore = "1";
+  newMatch.confirmHalfTimeScore = "2";
+  newMatch.exFullTimeScore = "1";
+  newMatch.exHalfTimeScore = "2";
+  newMatch.isExistRunningTicketParlay = true;
+  newMatch.isNotConsistentExFtScore = true;
+  newMatch.isNotConsistentExHtScore = true;
   const league: LeagueMatch = {
     leagueId: 7000000,
     matches: [match],
@@ -60,7 +67,8 @@ describe('MultiSport - RefreshMatchService', () => {
     collapse: false,
     isCheckedCalcMP: false,
     disableCheckCalcMP: false,
-    isMergedParlay: true
+    isMergedParlay: true,
+    autoCalcSetting: new AutoSetting()
   };
 
   const sport: SportMatch = {

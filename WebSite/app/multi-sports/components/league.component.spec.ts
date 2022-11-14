@@ -6,7 +6,7 @@ import {
   MultiSport,
   MatchWaitingRequest
 } from '../models';
-import { RefreshMatchService, MultiSportService, PopupService, HandleActionsService, DetectChangesService } from '../services';
+import { RefreshMatchService, MultiSportService, PopupService, HandleActionsService, DetectChangesService, BackGroundService } from '../services';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
@@ -37,6 +37,8 @@ describe('LeagueComponent', () => {
   let multiSportService: MultiSportService;
   let messageBoxService: MessageBoxService;
   let sportMatchService: SportMatchService;
+  let handleActionsService: HandleActionsService;
+  let backGroundService: BackGroundService;
   let popupService: PopupService;
   let match = new Match();
   match.sportType = SportType.eSports;
@@ -111,7 +113,8 @@ describe('LeagueComponent', () => {
         PopupService,
         HandleActionsService,
         DetectChangesService,
-        SportMatchService
+        SportMatchService,
+        BackGroundService,
       ],
       imports: [
         FormsModule,
@@ -137,6 +140,7 @@ describe('LeagueComponent', () => {
     popupService = fixture.debugElement.injector.get(PopupService);
     handleActionsService = fixture.debugElement.injector.get(HandleActionsService);
     sportMatchService = fixture.debugElement.injector.get(SportMatchService);
+    backGroundService = fixture.debugElement.injector.get(BackGroundService);
   });
 
   it('should create', () => {
@@ -284,23 +288,47 @@ describe('LeagueComponent', () => {
   });
 
   describe('isShowCalculationLink', () => {
-    it('should show calculating link', () => {
-      match.showLink = true;
+    it('should show calculating link when has permission', () => {
       match.sportType = SportType.eSports;
-      const per = new Permission();
-      per.canCalculate = true;
-      component.permission = per;
+      const permission = new Permission();
+      permission.canCalculate = true;
+      component.permission = permission;
+      spyOn(backGroundService, 'isShowLink').and.returnValue(true);
 
       const result = component.isShowCalculationLink(match);
 
       expect(result).toEqual(BackgroundColor.codeLink);
     });
 
-    it('should hide calculation link', () => {
-      match.showLink = false;
-      const per = new Permission();
-      per.canCalculate = false;
-      component.permission = per;
+    it('should show calculating link when has permission trader and sport cricket', () => {
+      match.sportType = SportType.cricket;
+      const permission = new Permission();
+      permission.canCalculate = false;
+      permission.isTrader = true;
+      component.permission = permission;
+      spyOn(backGroundService, 'isShowLink').and.returnValue(true);
+
+      const result = component.isShowCalculationLink(match);
+
+      expect(result).toEqual(BackgroundColor.codeLink);
+    });
+
+    it('should hide calculation link when missing permission', () => {
+      const permission = new Permission();
+      permission.canCalculate = false;
+      component.permission = permission;
+      spyOn(backGroundService, 'isShowLink').and.returnValue(true);
+
+      const result = component.isShowCalculationLink(match);
+
+      expect(result).toEqual('');
+    });
+
+    it('should hide calculation link when failed validation show link', () => {
+      const permission = new Permission();
+      permission.canCalculate = true;
+      component.permission = permission;
+      spyOn(backGroundService, 'isShowLink').and.returnValue(false);
 
       const result = component.isShowCalculationLink(match);
 
@@ -309,23 +337,33 @@ describe('LeagueComponent', () => {
   });
 
   describe('isShowRefundLink', () => {
-    it('should show refund link', () => {
-      match.showLink = true;
+    it('should show refund link when has permission refund', () => {
       match.sportType = SportType.eSports;
-      const per = new Permission();
-      per.canRefund = true;
-      component.permission = per;
+      const permission = new Permission();
+      permission.canRefund = true;
+      component.permission = permission;
+      spyOn(backGroundService, 'isShowLink').and.returnValue(true);
 
       const result = component.isShowRefundLink(match);
 
       expect(result).toEqual(BackgroundColor.codeLink);
     });
 
-    it('should hide refund link', () => {
-      match.showLink = false;
-      const per = new Permission();
-      per.canRefund = false;
-      component.permission = per;
+    it('should hide refund link when missing permission', () => {
+      const permission = new Permission();
+      component.permission = permission;
+      spyOn(backGroundService, 'isShowLink').and.returnValue(true);
+
+      const result = component.isShowRefundLink(match);
+
+      expect(result).toEqual('');
+    });
+
+    it('should hide calculation link when failed validation show link', () => {
+      const permission = new Permission();
+      permission.canCalculate = true;
+      component.permission = permission;
+      spyOn(backGroundService, 'isShowLink').and.returnValue(false);
 
       const result = component.isShowRefundLink(match);
 
@@ -334,26 +372,52 @@ describe('LeagueComponent', () => {
   });
 
   describe('isShowEarlySettleLink', () => {
-    it('should show early settle link', () => {
+    test.each([
+      [true, false, false],
+      [false, true, false],
+      [false, false, true],
+    ])('should show early settle link has permission settle', (canRefund: boolean, canUncalculate: boolean, canCalculate: boolean) => {
       match.showLink = true;
       match.sportType = SportType.eSports;
-      const per = new Permission();
-      per.canCalculate = true;
-      per.canUncalculate = true;
-      per.canRefund = true;
-      component.permission = per;
+      const permission = new Permission();
+      permission.canCalculate = canUncalculate;
+      permission.canUncalculate = canCalculate;
+      permission.canRefund = canRefund;
+      component.permission = permission;
+      spyOn(backGroundService, 'isShowLink').and.returnValue(true);
+
 
       const result = component.isShowEarlySettleLink(match);
 
       expect(result).toEqual(BackgroundColor.codeLink);
     });
 
-    it('should hide early settle link', () => {
-      match.showLink = false;
-      const per = new Permission();
-      per.canCalculate = false;
-      per.canUncalculate = false;
-      per.canRefund = false;
+    it('should hide refund link when has permission trader and match is cricket', () => {
+      const permission = new Permission();
+      permission.isTrader = true;
+      match.sportType = SportType.cricket;
+      component.permission = permission;
+      spyOn(backGroundService, 'isShowLink').and.returnValue(true);
+
+      const result = component.isShowEarlySettleLink(match);
+
+      expect(result).toEqual(BackgroundColor.codeLink);
+    });
+
+    it('should hide early settle link when validate failed', () => {
+      const permission = new Permission();
+      permission.canCalculate = true;
+      component.permission = permission;
+      spyOn(backGroundService, 'isShowLink').and.returnValue(false);
+
+      const result = component.isShowEarlySettleLink(match);
+
+      expect(result).toEqual('');
+    });
+
+    it('should hide early settle link when missing permission', () => {
+      component.permission = new Permission();
+      spyOn(backGroundService, 'isShowLink').and.returnValue(true);
 
       const result = component.isShowEarlySettleLink(match);
 
@@ -530,7 +594,7 @@ describe('LeagueComponent', () => {
       component.permission.canAutoPayout = true;
       match.autoCalcSetting.isAutoPayoutForLeague = true;
 
-      const result = component.getAutoSettingLeague(autoSetting);
+      const result = component.getAutoSettingLeague(match.autoCalcSetting);
 
       expect(result).toEqual(BackgroundColor.iconAuto);
     });
@@ -539,7 +603,7 @@ describe('LeagueComponent', () => {
       component.permission.canAutoPayout = true;
       match.autoCalcSetting.isAutoPayoutForLeague = false;
 
-      const result = component.getAutoSettingLeague(autoSetting);
+      const result = component.getAutoSettingLeague(match.autoCalcSetting);
 
       expect(result).toEqual(BackgroundColor.iconNo);
     });
@@ -547,7 +611,7 @@ describe('LeagueComponent', () => {
     it('should return icon no disabled when have no permission and is not auto payout', () => {
       component.permission.canAutoPayout = false;
 
-      const result = component.getAutoSettingLeague(autoSetting);
+      const result = component.getAutoSettingLeague(match.autoCalcSetting);
 
       expect(result).toEqual(BackgroundColor.iconNoDisabled);
     });
@@ -556,7 +620,7 @@ describe('LeagueComponent', () => {
       component.permission.canAutoPayout = false;
       match.autoCalcSetting.isAutoPayoutForLeague = true;
 
-      const result = component.getAutoSettingLeague(autoSetting);
+      const result = component.getAutoSettingLeague(match.autoCalcSetting);
 
       expect(result).toEqual(BackgroundColor.iconAutoDisabled);
     });
@@ -1060,7 +1124,7 @@ describe('LeagueComponent', () => {
       component.permission = permission;
       spyOn(multiSportService, 'updateSettingLeague').and.returnValue(of(successfulResult));
 
-      component.changeAutoLeague(autoSetting, league);
+      component.changeAutoLeague(match.autoCalcSetting, league);
       const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
       buttonYes.click();
       tick();
@@ -1073,7 +1137,7 @@ describe('LeagueComponent', () => {
       spyOn(multiSportService, 'updateSettingLeague').and.returnValue(of(unsuccessfulResult));
       spyOn(messageBoxService, 'alert');
 
-      component.changeAutoLeague(autoSetting, league);
+      component.changeAutoLeague(match.autoCalcSetting, league);
       const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
       buttonYes.click();
       tick();
@@ -1096,7 +1160,7 @@ describe('LeagueComponent', () => {
       match.bestOfMap = 11;
       match.sportType = SportType.eSports;
       const score = new Score('1', '1', '');
-      for(let i =0; i < 11; i ++ ){
+      for (let i = 0; i < 11; i++) {
         match.intervalScore.push(score);
 
       }

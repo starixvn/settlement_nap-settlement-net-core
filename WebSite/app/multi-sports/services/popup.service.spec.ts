@@ -12,7 +12,7 @@ import { of } from "rxjs";
 import { HandleActionsService } from "./handle-actions.service";
 import { MultiSportService } from "./multi-sport.service";
 import { HttpClient, HttpHandler } from "@angular/common/http";
-import { LeagueMatch, Match, MixParlay, SportMatch } from "../../shared/models";
+import { AutoSetting, LeagueMatch, Match, MixParlay, SportMatch } from "../../shared/models";
 import { CalculationStatus, SportType } from "../../shared/constants";
 import { Permission } from "../../shared/models/sportsbook-sop/permission.model";
 
@@ -31,7 +31,8 @@ describe("MultiSport - PopupService", () => {
     collapse: false,
     isCheckedCalcMP: false,
     disableCheckCalcMP: false,
-    isMergedParlay: true
+    isMergedParlay: true,
+    autoCalcSetting: new AutoSetting()
   };
 
   const sport: SportMatch = {
@@ -97,12 +98,28 @@ describe("MultiSport - PopupService", () => {
       const mockSport = new SportMatch();
       mockSport.name = "tennis";
       match.sportType = SportType.tennis;
+      match.matchId = "123";
       mockSport.id = SportType.tennis;
       listSport = [mockSport];
       spyOn(popupService, "openAndHandlePopup");
       popupService.popupCalc(match, listSport, multiSport);
 
-      const srcExpected = `sportsbook/tennis/calculation?matchId=${match.matchId}`;
+      const srcExpected = `apps/tennis-recalculate?matchId=${match.matchId}&sportType=${match.sportType}`;
+      expect(popupService.properties.src).toEqual(srcExpected);
+      expect(popupService.openAndHandlePopup).toHaveBeenCalled();
+    });
+
+    it("should call badminton dialog when sportType is Volleyball", () => {
+      const mockSport = new SportMatch();
+      mockSport.name = "volleyball";
+      match.sportType = SportType.volleyBall;
+      match.matchId = "123";
+      mockSport.id = SportType.volleyBall;
+      listSport = [mockSport];
+      spyOn(popupService, "openAndHandlePopup");
+      popupService.popupCalc(match, listSport, multiSport);
+
+      const srcExpected = `apps/badminton-recalculate?matchId=${match.matchId}&sportType=${match.sportType}`;
       expect(popupService.properties.src).toEqual(srcExpected);
       expect(popupService.openAndHandlePopup).toHaveBeenCalled();
     });
@@ -113,7 +130,7 @@ describe("MultiSport - PopupService", () => {
       spyOn(popupService, "openAndHandlePopup");
       popupService.popupCalc(match, listSport, multiSport);
 
-      const srcExpected = `sportsbook/other-sports/calculation?matchId=${match.matchId}&sportType=${match.sportType}`;
+      const srcExpected = `apps/other-sports-recalculate?matchId=${match.matchId}&sportType=${match.sportType}`;
       expect(popupService.properties.src).toEqual(srcExpected);
       expect(popupService.openAndHandlePopup).toHaveBeenCalled();
     });
@@ -137,7 +154,22 @@ describe("MultiSport - PopupService", () => {
 
       popupService.popupRefund(match, listSport, multiSport);
 
-      const srcExpected = `sportsbook/tennis/Refund?matchId=${match.matchId}`;
+      const srcExpected = `apps/tennis-refund?matchId=${match.matchId}&sportType=${match.sportType}`;
+      expect(popupService.properties.src).toEqual(srcExpected);
+      expect(popupService.openAndHandlePopup).toHaveBeenCalled();
+    });
+
+    it("should call badminton dialog when sportType is Volleyball", () => {
+      const mockSport = new SportMatch();
+      mockSport.name = "volleyball";
+      match.sportType = SportType.volleyBall;
+      match.matchId = "123";
+      mockSport.id = SportType.volleyBall;
+      listSport = [mockSport];
+      spyOn(popupService, "openAndHandlePopup");
+      popupService.popupRefund(match, listSport, multiSport);
+
+      const srcExpected = `apps/badminton-refund?matchId=${match.matchId}&sportType=${match.sportType}`;
       expect(popupService.properties.src).toEqual(srcExpected);
       expect(popupService.openAndHandlePopup).toHaveBeenCalled();
     });
@@ -148,7 +180,7 @@ describe("MultiSport - PopupService", () => {
       spyOn(popupService, "openAndHandlePopup");
 
       popupService.popupRefund(match, listSport, multiSport);
-      const srcExpected = `sportsbook/other-sports/refund?matchId=${match.matchId}&sportType=${match.sportType}`;
+      const srcExpected = `apps/other-sports-refund?matchId=${match.matchId}&sportType=${match.sportType}`;
       expect(popupService.properties.src).toEqual(srcExpected);
       expect(popupService.openAndHandlePopup).toHaveBeenCalled();
     });
@@ -190,7 +222,21 @@ describe("MultiSport - PopupService", () => {
       spyOn(popupService, "openAndHandlePopup");
       popupService.popupEarly(match, listSport, multiSport);
 
-      const srcExpected = `sportsbook/tennis/early-settlement?matchId=${match.matchId}`;
+      const srcExpected = `apps/tennis-early?matchId=${match.matchId}&sportType=${match.sportType}`;
+      expect(popupService.properties.src).toEqual(srcExpected);
+      expect(popupService.openAndHandlePopup).toHaveBeenCalled();
+    });
+
+    it("should call badminton dialog when sportType is Volleyball", () => {
+      const mockSport = new SportMatch();
+      mockSport.name = "volleyball";
+      mockSport.id = SportType.volleyBall;
+      match.sportType = SportType.volleyBall;
+      listSport = [mockSport];
+      spyOn(popupService, "openAndHandlePopup");
+      popupService.popupEarly(match, listSport, multiSport);
+
+      const srcExpected = `apps/badminton-early?matchId=${match.matchId}&sportType=${match.sportType}`;
       expect(popupService.properties.src).toEqual(srcExpected);
       expect(popupService.openAndHandlePopup).toHaveBeenCalled();
     });
