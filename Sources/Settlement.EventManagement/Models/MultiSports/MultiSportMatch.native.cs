@@ -145,5 +145,8 @@ namespace Settlement.EventManagement.Models.MultiSports
 
         [Key("offerLive")]
         public bool OfferLive { get; set; }
+
+        [Key("isPending")]
+        public bool IsPending { get; set; }
     }
 }

@@ -72,7 +72,7 @@
 
   <Function Name="MultiSport">
     <Setting Key="NAP_Set_OtherSportsSel" SpName="NAP_Set_OtherSportsSel" DbName="DBPRO.bodb02.bodbAdminNet" TimeOut="120" />
-    <Setting Key="NAP_Set_SportLeagueSel" SpName="NAP_Set_SportLeagueSel" DbName="DBPRO.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_SportLeagueSel" SpName="NAP_Set_SportLeagueSel_xtest" DbName="DBPRO.bodb02.bodbAdminNet" />
   </Function>
 
   <Function Name="SettlementLog">
@@ -167,9 +167,9 @@
     </Function>
 
     <Function Name="NAP_Set_MatchSel">
-      <Setting Key="NAP_Set_MatchSel_DBTXN" SpName="NAP_Set_MatchSel" DbName="DBTXN.bodb02.bodbAdminNet" TimeOut="120" />
-      <Setting Key="NAP_Set_MatchSel_DBSID01" SpName="NAP_Set_MatchSel" DbName="DBSID01.bodb02.bodbAdminNet" TimeOut="120" />
-      <Setting Key="NAP_Set_MatchSel_DBSID02" SpName="NAP_Set_MatchSel" DbName="DBSID02.bodb02.bodbAdminNet" TimeOut="120" />
+      <Setting Key="NAP_Set_MatchSel_DBTXN" SpName="NAP_Set_MatchSel_xtest" DbName="DBTXN.bodb02.bodbAdminNet" TimeOut="120" />
+      <Setting Key="NAP_Set_MatchSel_DBSID01" SpName="NAP_Set_MatchSel_xtest" DbName="DBSID01.bodb02.bodbAdminNet" TimeOut="120" />
+      <Setting Key="NAP_Set_MatchSel_DBSID02" SpName="NAP_Set_MatchSel_xtest" DbName="DBSID02.bodb02.bodbAdminNet" TimeOut="120" />
     </Function>
 
     <Function Name="NAP_Set_WaitingSel">
@@ -269,9 +269,9 @@
     </Function>
 
     <Function Name="NAP_Set_MatchOtherSportsSel">
-      <Setting Key="NAP_Set_MatchOtherSportsSel_DBTXN" SpName="NAP_Set_MatchOtherSportsSel" DbName="DBTXN.bodb02.bodbAdminNet" />
-      <Setting Key="NAP_Set_MatchOtherSportsSel_DBSID01" SpName="NAP_Set_MatchOtherSportsSel" DbName="DBSID01.bodb02.bodbAdminNet" />
-      <Setting Key="NAP_Set_MatchOtherSportsSel_DBSID02" SpName="NAP_Set_MatchOtherSportsSel" DbName="DBSID02.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Set_MatchOtherSportsSel_DBTXN" SpName="NAP_Set_MatchOtherSportsSel_xtest" DbName="DBTXN.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Set_MatchOtherSportsSel_DBSID01" SpName="NAP_Set_MatchOtherSportsSel_xtest" DbName="DBSID01.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Set_MatchOtherSportsSel_DBSID02" SpName="NAP_Set_MatchOtherSportsSel_xtest" DbName="DBSID02.bodb02.bodbAdminNet" />
     </Function>
     <Function Name="NAP_Set_WaitingOtherSportSel">
       <Setting Key="NAP_Set_WaitingOtherSportSel_DBTXN" SpName="NAP_Set_WaitingOtherSportSel" DbName="DBTXN.bodb02.bodbAdminNet" />

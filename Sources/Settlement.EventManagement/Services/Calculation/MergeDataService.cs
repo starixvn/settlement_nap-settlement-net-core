@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Match = Settlement.EventManagement.Models.Calculation.Match;
+﻿using Match = Settlement.EventManagement.Models.Calculation.Match;
 
 namespace Settlement.EventManagement.Services.Calculation
 {
@@ -21,12 +19,7 @@ namespace Settlement.EventManagement.Services.Calculation
         public List<Match> MergeMatches(List<Match> baseMatches, List<Match> siteMatches)
         {
             var peekNewMatches = siteMatches.Except(baseMatches).ToList();
-
-            if (peekNewMatches.Any())
-            {
-                baseMatches.AddRange(peekNewMatches);
-            }
-
+            baseMatches.AddRange(peekNewMatches);
             AddSiteInfo(baseMatches, siteMatches);
 
             return baseMatches;

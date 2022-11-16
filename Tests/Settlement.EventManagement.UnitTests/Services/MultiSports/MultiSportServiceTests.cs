@@ -4,15 +4,12 @@ using Fanex.Caching;
 using Fanex.Data.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
-using NSubstitute;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.EventManagement.Criteria;
+using Settlement.EventManagement.Models.MultiSports;
 using Settlement.EventManagement.Requests;
 using Settlement.EventManagement.Services.MultiSports;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Xunit;
 using Match = Settlement.EventManagement.Models.MultiSports.Match;
 
 namespace Settlement.EventManagement.UnitTests.Services.MultiSports
@@ -120,6 +117,11 @@ namespace Settlement.EventManagement.UnitTests.Services.MultiSports
             matchService.GetScoreForMatchBySportType(Arg.Any<List<Match>>(), Arg.Any<List<ResultDetail>>(), Arg.Any<int>()).Returns(new List<Match> { match });
             matchService.MergeMatches(Arg.Any<List<Match>>(), Arg.Any<List<Match>>()).Returns(listMatch);
             matchService.SetNewMatchInfo(Arg.Any<List<Match>>(), Arg.Any<List<ResultDetail>>()).Returns(listMatch);
+            matchService.OrderMatches(Arg.Any<List<MultiSportMatch>>()).Returns(new List<MultiSportMatch> { new ()
+            {
+                MatchId = 700000,
+                LeagueId = 1
+            }});
             var sportBooks = await service.GetSportBook(new FilterMultiSportRequest());
 
             var actualMatches = sportBooks[0].Leagues[0].Matches;

@@ -44,7 +44,7 @@ namespace Settlement.EventManagement.Services
         public Score HalftimeScore(int sportType, List<ResultDetail> resultDetails, Permission permission)
         {
             return totalPointSports.Contains(sportType)
-                ? TotalPoints(resultDetails)
+                ? TotalPoints(resultDetails, sportType == SportType.BeachVolleyball)
                 : ScoreByResource(resultDetails, Halftime, permission);
         }
 
@@ -72,7 +72,7 @@ namespace Settlement.EventManagement.Services
             return hasResult ? scoreSetService.GetScore(resultDetail, permission) : new Score("-");
         }
 
-        private static Score TotalPoints(List<ResultDetail> resultDetails)
+        private static Score TotalPoints(List<ResultDetail> resultDetails, bool isBeachVolleyball)
         {
             if (IsRefundMatch(resultDetails))
             {
@@ -81,8 +81,11 @@ namespace Settlement.EventManagement.Services
 
             var games = resultDetails.Where(m => m.ResourceId.LongCount() == 4
                                 && !string.IsNullOrWhiteSpace(m.HomeValue)
-                                && !string.IsNullOrWhiteSpace(m.AwayValue)
-                                && m.ResultStatusId == ResultStatus.ManuallySettled).ToList();
+                                && !string.IsNullOrWhiteSpace(m.AwayValue)).ToList();
+
+            games = games.Where(m => (isBeachVolleyball && m.SettlementStatusId != SettlementStatus.Refund)
+                                     || (!isBeachVolleyball && m.ResultStatusId == ResultStatus.ManuallySettled))
+                .ToList();
 
             if (games.Count > 0)
             {

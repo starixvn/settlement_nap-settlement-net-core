@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Fanex.Settlement.ScaleOut.Request;
+﻿using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
@@ -19,6 +16,8 @@ namespace Settlement.EventManagement.Services.MultiSports
         List<Match> SetNewMatchInfo(List<Match> matches, List<ResultDetail> listResultDetail);
 
         Task UpdateMatchInfo(UpdateMatchInfoRequest request);
+
+        List<Match> OrderMatches(List<Match> matches);
     }
 
     public class MatchServiceImp : IMatchService
@@ -180,10 +179,7 @@ namespace Settlement.EventManagement.Services.MultiSports
         {
             var peekNewMatches = siteMatches.Except(baseMatches).ToList();
 
-            if (peekNewMatches.Any())
-            {
-                baseMatches.AddRange(peekNewMatches);
-            }
+            baseMatches.AddRange(peekNewMatches);
 
             AddSiteInfo(baseMatches, siteMatches);
 
@@ -205,6 +201,39 @@ namespace Settlement.EventManagement.Services.MultiSports
         public async Task UpdateMatchInfo(UpdateMatchInfoRequest request)
         {
             await scaleOutSettleService.UpdateMatchInfo(request);
+        }
+
+        public List<Match> OrderMatches(List<Match> matches)
+        {
+            var eventStatusSorting = new List<string>
+            {
+                EventStatus.Running,
+                EventStatus.PostPoned,
+                EventStatus.Internal,
+                EventStatus.Closed
+            };
+
+            var sportBook = matches.OrderBy(match =>
+                {
+                    const int top = 1;
+                    const int bottom = 99;
+                    if (match.OriginalEventStatus.ToLowerInvariant() == EventStatus.Completed && match.IsExistRunningTicket)
+                    {
+                        return top;
+                    }
+                    return eventStatusSorting.Contains(match.OriginalEventStatus.ToLowerInvariant())
+                            ? eventStatusSorting.IndexOf(match.OriginalEventStatus.ToLowerInvariant()) + 2
+                            : bottom;
+                })
+                .ThenBy(match => match.IsCalRefund)
+                .ThenBy(match => match.IsPending)
+                .ThenBy(match => match.KickOffTime)
+                .ThenBy(match => match.SportType)
+                .ThenBy(match => match.LeagueId)
+                .ThenBy(match => match.MatchCode)
+                .ToList();
+
+            return sportBook;
         }
     }
 }

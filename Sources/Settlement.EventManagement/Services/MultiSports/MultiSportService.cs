@@ -55,16 +55,17 @@ namespace Settlement.EventManagement.Services.MultiSports
         public async Task<List<SportModel>> GetSportBook(FilterMultiSportRequest request)
         {
             var data = await FetchMatchesAndResultDetails(request);
-            var matchesByEachSport = GetMoreScore(data);
+            var matches = GetMoreScore(data);
+            var matchesSorted = matchService.OrderMatches(matches);
 
-            var matches = new List<MultiSportMatch>();
-            matchesByEachSport.ForEach(sport => sport.Matches.ForEach(match =>
+            var multiSportMatches = new List<MultiSportMatch>();
+            matchesSorted.ForEach(match =>
             {
                 var multiSportMatch = mapper.Map<Match, MultiSportMatch>(match);
-                matches.Add(multiSportMatch);
-            }));
+                multiSportMatches.Add(multiSportMatch);
+            });
 
-            var sportBooks = GroupSport(matches);
+            var sportBooks = GroupSport(multiSportMatches);
 
             return sportBooks;
         }
@@ -116,12 +117,7 @@ namespace Settlement.EventManagement.Services.MultiSports
 
             waitingMatches = matchService.SetNewMatchInfo(waitingMatches, listResultDetail);
 
-            var matchesByEachSport = GetMoreScore(new MultiSportResult { Matches = waitingMatches, ResultDetails = listResultDetail });
-            var matches = new List<Match>();
-            matchesByEachSport.ForEach(sport => sport.Matches.ForEach(match =>
-            {
-                matches.Add(match);
-            }));
+            var matches = GetMoreScore(new MultiSportResult { Matches = waitingMatches, ResultDetails = listResultDetail });
 
             SetToCache(request.LeagueIds, matches);
 
@@ -162,18 +158,20 @@ namespace Settlement.EventManagement.Services.MultiSports
             cacheService.SetAsync(longCachingKey, matches, new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(longCacheExpirationTime)));
         }
 
-        private List<MatchesBySportTypeModel> GetMoreScore(MultiSportResult data)
+        private List<Match> GetMoreScore(MultiSportResult data)
         {
             var matchesByEachSport = data.Matches.GroupBy(match => match.SportType)
                 .Select(sports => new MatchesBySportTypeModel { SportType = sports.Key, Matches = sports.ToList() })
                 .ToList();
             var permission = permissionService.GetPermission(CacheServiceKey.MemoryCacheManualPermission);
+            var listMatch = new List<Match>();
             foreach (var item in matchesByEachSport)
             {
                 item.Matches = matchService.GetScoreForMatchBySportType(item.Matches, data.ResultDetails, item.SportType, permission);
+                listMatch.AddRange(item.Matches);
             }
 
-            return matchesByEachSport;
+            return listMatch;
         }
 
         private List<SportModel> GroupSport(List<MultiSportMatch> matches)

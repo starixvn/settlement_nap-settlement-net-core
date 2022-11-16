@@ -59,8 +59,8 @@ namespace Settlement.EventManagement.Services.Calculation
         {
             var matches = await MatchesAllSites(request);
             var listResultDetail = await ResultDetailByMatchIds(matches);
-
-            return SetNewMatchInfo(matches, listResultDetail);
+            var matchesInfoMerged = SetNewMatchInfo(matches, listResultDetail);
+            return SortingMatches(matchesInfoMerged, request);
         }
 
         private List<Match> SetNewMatchInfo(List<Match> matches, List<ResultDetail> listResultDetail)
@@ -276,6 +276,24 @@ namespace Settlement.EventManagement.Services.Calculation
             }
 
             return matches;
+        }
+
+        private static List<Match> SortingMatches(List<Match> matches, FilterCalculationRequest request)
+        {
+            if (request.FilterOver > 0)
+            {
+                return matches.OrderBy(match => match.EventStatus).ThenBy(match => match.MatchCode).ToList();
+            }
+
+            return matches.OrderBy(match =>
+                    match.EventStatus == EventStatus.Completed && match.IsExistMarkedTicket &&
+                    match.IsExistRunningTicket)
+                .ThenBy(match => match.EventDate)
+                .ThenBy(match => match.KickOffTime)
+                .ThenBy(match => match.LeagueId)
+                .ThenBy(match => match.MatchId)
+                .ThenBy(match => match.BetStatus)
+                .ToList();
         }
     }
 }

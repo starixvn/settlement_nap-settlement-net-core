@@ -1,9 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Match = Settlement.EventManagement.Models.MultiSports.Match;
-using Settlement.Core.Constants;
+﻿using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
+using Match = Settlement.EventManagement.Models.MultiSports.Match;
 
 namespace Settlement.EventManagement.Services.SpecificService.Tennis
 {
@@ -36,25 +34,17 @@ namespace Settlement.EventManagement.Services.SpecificService.Tennis
                 HalfTimeScore = new Score("-"),
                 FinalScore = new Score("-")
             };
-            var home = 0;
-            var away = 0;
-            var items = resultDetails.OrderBy(n => n.ResourceId).ToList();
 
+            var items = resultDetails.OrderBy(n => n.ResourceId).ToList();
+            var totalGame = scoreService.ScoreSet(items);
             foreach (var item in items)
             {
                 if (setResource.Contains(item.ResourceId))
                 {
                     var scoreSet = scoreSetService.GetScore(item, permission);
                     moreScore.Sets[int.Parse(item.ResourceId) - 1] = scoreSet;
-
-                    var totalGames = scoreService.ScoreSet(item);
-
-                    home += int.Parse(totalGames.Home);
-                    away += int.Parse(totalGames.Away);
                 }
             }
-
-            var totalGame = new Score(home.ToString(), away.ToString());
             var totalSet = items.FirstOrDefault(n => n.ResourceId == ResourceType.Final);
 
             match.EventStatus = GetEventStatus(totalSet, match.EventStatus);

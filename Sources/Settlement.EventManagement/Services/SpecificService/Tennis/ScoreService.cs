@@ -9,7 +9,7 @@ namespace Settlement.EventManagement.Services.SpecificService.Tennis
 
         Score TotalGame(string totalSetHomeValue, Score totalScore);
 
-        Score ScoreSet(ResultDetail resultDetail);
+        Score ScoreSet(List<ResultDetail> resultDetails);
     }
 
     public class ScoreServiceImp : IScoreService
@@ -24,25 +24,30 @@ namespace Settlement.EventManagement.Services.SpecificService.Tennis
             return !string.IsNullOrWhiteSpace(totalSetHomeValue) && totalSetHomeValue.Equals(SetStatus.Refund);
         }
 
-        public Score ScoreSet(ResultDetail resultDetail)
+        public Score ScoreSet(List<ResultDetail> resultDetails)
         {
-            var homeScore = 0;
-            var awayScore = 0;
+            var resultHasScore = resultDetails.Where(m => m.ResourceId.LongCount() == 4
+                                                          && !string.IsNullOrWhiteSpace(m.HomeValue)
+                                                          && !string.IsNullOrWhiteSpace(m.AwayValue)
+                                                          && m.ResultStatusId == ResultStatus.ManuallySettled).ToList();
 
-            if (resultDetail.ResultStatusId == ResultStatus.ManuallySettled)
+            if (resultHasScore.Count > 0)
             {
-                if (int.TryParse(resultDetail.HomeValue, out var homeValue))
+                var home = resultHasScore.Sum(m =>
                 {
-                    homeScore += homeValue;
-                }
+                    int.TryParse(m.HomeValue, out var homeValue);
+                    return homeValue;
+                });
 
-                if (int.TryParse(resultDetail.AwayValue, out var awayValue))
+                var away = resultHasScore.Sum(m =>
                 {
-                    awayScore += awayValue;
-                }
+                    int.TryParse(m.AwayValue, out var awayValue);
+                    return awayValue;
+                });
+                return new Score(home.ToString(), away.ToString());
             }
 
-            return new Score(homeScore.ToString(), awayScore.ToString());
+            return new Score("-");
         }
     }
 }

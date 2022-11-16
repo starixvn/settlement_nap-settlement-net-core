@@ -98,6 +98,8 @@ namespace Settlement.EventManagement.Models
             }
         }
 
+        public string OriginalEventStatus => eventStatus;
+
         public string BetStatus { get; set; }
 
         public RemarkSettingModel Remark => new RemarkSettingModel(SettlementStatus);

@@ -8,7 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Services\FastMarketResultServiceTests.cs" />
     <Compile Remove="Services\FastMarketsPermissionServiceTests.cs" />
     <Compile Remove="UnitTest1.cs" />
   </ItemGroup>
