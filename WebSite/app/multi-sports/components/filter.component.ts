@@ -16,7 +16,6 @@ import {
 } from '../models';
 import * as _ from 'lodash';
 import { Language } from '../../shared/language';
-import { stringify } from 'querystring';
 
 @Component({
     selector: 'filter',
@@ -27,7 +26,6 @@ import { stringify } from 'querystring';
 export class FilterComponent implements OnInit {
     @Output() public readonly searchAction = new EventEmitter();
     @Output() public readonly requestEmitter = new EventEmitter();
-    @Output() public readonly disableRefund = new EventEmitter();
     public readonly warningDialogMessage = new ModalDialogMessage();
     public matchCode = "";
     public fromDate: NgbDateStruct;
@@ -113,8 +111,7 @@ export class FilterComponent implements OnInit {
         const multiSport = await this.multiSportService.filter(query).toPromise();
         const matchIds = this.getAllMatchId(multiSport.sports);
         this.searchAction.emit(multiSport);
-        this.disableRefund.emit(_.isEmpty(this.matchCode) && !_.isEqual(this.overStatusSelected, DefaultValue.unCheckAll));
-        const request = new MatchWaitingRequest(this.leaguesSelected, matchIds, fromDate, toDate);
+        const request = new MatchWaitingRequest(this.leaguesSelected, matchIds, fromDate, toDate, this.overStatusSelected, this.matchCode);
         this.requestEmitter.emit(request);
         this.updateLeagues();
     }

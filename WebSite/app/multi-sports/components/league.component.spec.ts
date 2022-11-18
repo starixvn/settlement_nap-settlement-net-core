@@ -337,6 +337,9 @@ describe('LeagueComponent', () => {
   });
 
   describe('isShowRefundLink', () => {
+    beforeEach(() => {
+      component.request = new MatchWaitingRequest("", "", "", "", "", "123");
+    });
     it('should show refund link when has permission refund', () => {
       match.sportType = SportType.eSports;
       const permission = new Permission();
@@ -359,10 +362,22 @@ describe('LeagueComponent', () => {
       expect(result).toEqual('');
     });
 
-    it('should hide calculation link when failed validation show link', () => {
+    it('should hide refund link when failed validation show link', () => {
       const permission = new Permission();
       permission.canCalculate = true;
       component.permission = permission;
+      spyOn(backGroundService, 'isShowLink').and.returnValue(false);
+
+      const result = component.isShowRefundLink(match);
+
+      expect(result).toEqual('');
+    });
+
+    it('should hide refund link when disable link', () => {
+      const permission = new Permission();
+      permission.canCalculate = true;
+      component.permission = permission;
+      component.request = new MatchWaitingRequest("", "", "", "", "", "");
       spyOn(backGroundService, 'isShowLink').and.returnValue(false);
 
       const result = component.isShowRefundLink(match);
@@ -488,6 +503,9 @@ describe('LeagueComponent', () => {
   });
 
   describe('getEarlySettleBackground', () => {
+    beforeEach(() => {
+      component.request = new MatchWaitingRequest("", "", "", "", "", "");
+    });
     it('should return background running when early settle is running', () => {
       match.earlySettleStatus = 'running';
       match.eventStatus = 'completed';
@@ -497,13 +515,24 @@ describe('LeagueComponent', () => {
       expect(result).toEqual(' bg-auto-settle-running');
     });
 
-    it('should return background blinking when early confirmed', () => {
+    it('should return background blinking when early confirmed and filter earlyOverOnly', () => {
       match.isExistsConfirmedEarly = true;
       match.earlySettleStatus = 'running';
+      component.request = new MatchWaitingRequest("", "", "", "", "1", "");
 
       const result = component.getEarlySettleBackground(match);
 
       expect(result).toEqual('bg-green-blinking bg-auto-settle-running');
+    });
+
+    it('should return background not blinking when early confirmed but filter not only earlyOver', () => {
+      match.isExistsConfirmedEarly = true;
+      match.earlySettleStatus = 'running';
+      component.request = new MatchWaitingRequest("", "", "", "", "1 , 2", "");
+
+      const result = component.getEarlySettleBackground(match);
+
+      expect(result).toEqual(' bg-auto-settle-running');
     });
 
     it('should return background calculated when early settle is completed', () => {
@@ -526,7 +555,7 @@ describe('LeagueComponent', () => {
   });
 
   it('getLog - should call popupService', () => {
-    const request = new MatchWaitingRequest('12345', '', '01/01/2020', '01/02/2020');
+    const request = new MatchWaitingRequest('12345', '', '01/01/2020', '01/02/2020',"", "");
     component.request = request;
     spyOn(popupService, 'popupLog');
 

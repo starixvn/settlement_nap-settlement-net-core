@@ -219,4 +219,8 @@ export class NewMultipleSelectComponent implements OnChanges, AfterViewInit {
   public collapse(group: Group){
     group.collapse = !group.collapse;
   }
+
+  public openSearch(){
+    return this.isOpened && this.multipleSelect.enableSearchBox;
+  }
 }

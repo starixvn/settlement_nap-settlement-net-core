@@ -1,6 +1,6 @@
 import { MultiSport, MatchWaitingRequest, ParlayQuery } from './../models';
 import { Component, Input, OnInit, OnChanges, SimpleChanges, OnDestroy, ViewChildren, QueryList, ElementRef, ChangeDetectorRef } from '@angular/core';
-import { EventStatus } from '../constants';
+import { DefaultValue, EventStatus } from '../constants';
 import * as _ from 'lodash';
 import { RefreshMatchService, MultiSportService, PopupService, HandleActionsService } from '../services/';
 import { ISubscription } from 'rxjs/Subscription';
@@ -18,15 +18,13 @@ import { BackGroundService } from '../services';
   templateUrl: './league.component.html'
 })
 export class LeagueComponent extends LeagueBaseComponent implements OnInit, OnChanges, OnDestroy {
-  @Input() public fromDate: string;
-  @Input() public toDate: string;
   @Input() public multiSport: MultiSport;
   @Input() public request: MatchWaitingRequest;
-  @Input() public disableRefund: boolean;
   private readonly period = 5000;
   private readonly autoSettingType = 1;
   private readonly autoSettingCompleted = 2;
   private readonly autoSettingFailed = 3;
+  private readonly earlyOverOnlyValue = "1";
   private subscriber: ISubscription;
   private matchIdsCalcMp: string[] = [];
   public sports: SportMatch[];
@@ -134,7 +132,8 @@ export class LeagueComponent extends LeagueBaseComponent implements OnInit, OnCh
   }
 
   public isShowRefundLink(match: Match) {
-    return this.backGroundService.isShowLink(match) && this.permission.canRefund && !this.disableRefund ? BackgroundColor.codeLink : '';
+    const disableRefund = _.isEmpty(this.request.matchCode) && !_.isEqual(this.request.overStatus, DefaultValue.unCheckAll);
+    return this.backGroundService.isShowLink(match) && this.permission.canRefund && !disableRefund ? BackgroundColor.codeLink : '';
   }
 
   public isShowEarlySettleLink(match: Match) {
@@ -159,7 +158,8 @@ export class LeagueComponent extends LeagueBaseComponent implements OnInit, OnCh
   }
 
   public getEarlySettleBackground(match: Match) {
-    const backgroundColorBlinking = match.isExistsConfirmedEarly ? BackgroundColor.confirmedEarlyBlinking : '';
+    const earlyOverFilterOnly = _.isEqual(this.request.overStatus, this.earlyOverOnlyValue);
+    const backgroundColorBlinking = match.isExistsConfirmedEarly && earlyOverFilterOnly ? BackgroundColor.confirmedEarlyBlinking : '';
     const isRunning = !_.isNull(match.earlySettleStatus) && _.isEqual(match.earlySettleStatus.toLowerCase(), BackgroundColor.running)
       && _.isEqual(match.eventStatus.toLowerCase(), BackgroundColor.completed);
     const isCompleted = !_.isNull(match.earlySettleStatus) && _.isEqual(match.earlySettleStatus.toLowerCase(), BackgroundColor.completed);
