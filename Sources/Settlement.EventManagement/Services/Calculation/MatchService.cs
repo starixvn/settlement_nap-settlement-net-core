@@ -282,18 +282,25 @@ namespace Settlement.EventManagement.Services.Calculation
         {
             if (request.FilterOver > 0)
             {
-                return matches.OrderBy(match => match.EventStatus).ThenBy(match => match.MatchCode).ToList();
+                var eventStatusSorting = new List<string>
+                {
+                    EventStatus.Running,
+                    EventStatus.PostPoned,
+                    EventStatus.Internal,
+                    EventStatus.Closed
+                };
+
+                return matches.OrderBy(match => eventStatusSorting.IndexOf(match.OriginalEventStatus)).ThenBy(match => match.MatchCode).ToList();
             }
 
-            return matches.OrderBy(match =>
-                    match.EventStatus == EventStatus.Completed && match.IsExistMarkedTicket &&
-                    match.IsExistRunningTicket)
-                .ThenBy(match => match.EventDate)
-                .ThenBy(match => match.KickOffTime)
-                .ThenBy(match => match.LeagueId)
-                .ThenBy(match => match.MatchId)
-                .ThenBy(match => match.BetStatus)
-                .ToList();
+            return matches.OrderBy(match => !(match.OriginalEventStatus.ToLowerInvariant() == EventStatus.Completed && match.IsExistRunningTicket))
+                    .ThenBy(match => match.OriginalEventStatus.ToLowerInvariant() == EventStatus.Completed && !match.IsExistRunningTicket)
+                    .ThenBy(match => match.EventDate)
+                    .ThenBy(match => match.KickOffTime)
+                    .ThenBy(match => match.LeagueId)
+                    .ThenBy(match => match.SettlementStatus != 0)
+                    .ThenBy(match => match.MatchCode)
+                    .ToList();
         }
     }
 }

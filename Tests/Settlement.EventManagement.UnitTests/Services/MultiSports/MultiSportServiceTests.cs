@@ -117,7 +117,7 @@ namespace Settlement.EventManagement.UnitTests.Services.MultiSports
             matchService.GetScoreForMatchBySportType(Arg.Any<List<Match>>(), Arg.Any<List<ResultDetail>>(), Arg.Any<int>()).Returns(new List<Match> { match });
             matchService.MergeMatches(Arg.Any<List<Match>>(), Arg.Any<List<Match>>()).Returns(listMatch);
             matchService.SetNewMatchInfo(Arg.Any<List<Match>>(), Arg.Any<List<ResultDetail>>()).Returns(listMatch);
-            matchService.OrderMatches(Arg.Any<List<MultiSportMatch>>()).Returns(new List<MultiSportMatch> { new ()
+            matchService.SortingMatches(Arg.Any<List<MultiSportMatch>>()).Returns(new List<MultiSportMatch> { new ()
             {
                 MatchId = 700000,
                 LeagueId = 1

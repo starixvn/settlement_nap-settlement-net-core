@@ -17,7 +17,7 @@ namespace Settlement.EventManagement.Services.MultiSports
 
         Task UpdateMatchInfo(UpdateMatchInfoRequest request);
 
-        List<Match> OrderMatches(List<Match> matches);
+        List<Match> SortingMatches(List<Match> matches);
     }
 
     public class MatchServiceImp : IMatchService
@@ -203,33 +203,14 @@ namespace Settlement.EventManagement.Services.MultiSports
             await scaleOutSettleService.UpdateMatchInfo(request);
         }
 
-        public List<Match> OrderMatches(List<Match> matches)
+        public List<Match> SortingMatches(List<Match> matches)
         {
-            var eventStatusSorting = new List<string>
-            {
-                EventStatus.Running,
-                EventStatus.PostPoned,
-                EventStatus.Internal,
-                EventStatus.Closed
-            };
-
-            var sportBook = matches.OrderBy(match =>
-                {
-                    const int top = 1;
-                    const int bottom = 99;
-                    if (match.OriginalEventStatus.ToLowerInvariant() == EventStatus.Completed && match.IsExistRunningTicket)
-                    {
-                        return top;
-                    }
-                    return eventStatusSorting.Contains(match.OriginalEventStatus.ToLowerInvariant())
-                            ? eventStatusSorting.IndexOf(match.OriginalEventStatus.ToLowerInvariant()) + 2
-                            : bottom;
-                })
-                .ThenBy(match => match.IsCalRefund)
-                .ThenBy(match => match.IsPending)
+            var sportBook = matches.OrderBy(match => !(match.OriginalEventStatus.ToLowerInvariant() == EventStatus.Completed && match.IsExistRunningTicket))
+                .ThenBy(match => match.OriginalEventStatus.ToLowerInvariant() == EventStatus.Completed && !match.IsExistRunningTicket)
+                .ThenBy(match => match.EventDate)
                 .ThenBy(match => match.KickOffTime)
-                .ThenBy(match => match.SportType)
                 .ThenBy(match => match.LeagueId)
+                .ThenBy(match => match.SettlementStatus != 0)
                 .ThenBy(match => match.MatchCode)
                 .ToList();
 

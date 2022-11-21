@@ -56,7 +56,7 @@ namespace Settlement.EventManagement.Services.MultiSports
         {
             var data = await FetchMatchesAndResultDetails(request);
             var matches = GetMoreScore(data);
-            var matchesSorted = matchService.OrderMatches(matches);
+            var matchesSorted = matchService.SortingMatches(matches);
 
             var multiSportMatches = new List<MultiSportMatch>();
             matchesSorted.ForEach(match =>
