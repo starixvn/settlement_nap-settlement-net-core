@@ -100,9 +100,7 @@ describe('FilterComponent', () => {
             .then(() => {
                 expect(component.fromDate).toEqual({ year: 2020, month: 6, day: 20 });
                 expect(component.toDate).toEqual({ year: 2020, month: 6, day: 19 });
-                expect(component.remarkSelect.items.length).toEqual(6);
-                expect(component.matchStatusSelect.items.length).toEqual(8);
-                expect(component.ticketsStatusSelect.items.length).toEqual(4);
+                expect(component.matchStatusSelect.items.length).toEqual(6);
             });
     }));
 
@@ -155,42 +153,6 @@ describe('FilterComponent', () => {
         component.onSelectLeague(items);
 
         expect(component.leaguesSelected).not.toEqual("");
-    });
-
-    describe('onSelectTicketsStatus() method', () => {
-        it('should return right value when selected.', () => {
-            const items: ItemsSelect[] = [];
-            items.push(new ItemsSelect(1, "2", "1", true, true, true, []));
-            component.onSelectTicketsStatus(items);
-
-            expect(component.ticketStatusSelected).toEqual("2");
-        });
-
-        it('should return default value when not selected.', () => {
-            const items: ItemsSelect[] = [];
-            component.onSelectTicketsStatus(items);
-
-            expect(component.ticketStatusSelected).toEqual("0");
-        });
-    });
-
-    describe('onSelectRemark() method', () => {
-
-        it('should return right value when selected.', () => {
-            const items: ItemsSelect[] = [];
-            items.push(new ItemsSelect(1, "1", "1", true, true, true, []));
-            items.push(new ItemsSelect(2, "2", "2", true, true, true, []));
-            component.onSelectRemark(items);
-
-            expect(component.remarkSelected).toEqual("1,2");
-        });
-
-        it('should return default value when not selected.', () => {
-            const items: ItemsSelect[] = [];
-            component.onSelectRemark(items);
-
-            expect(component.remarkSelected).toEqual("0");
-        });
     });
 
     it('onSelectFromDate - should return right value leagues correct date.', () => {

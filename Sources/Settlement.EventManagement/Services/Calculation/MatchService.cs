@@ -295,7 +295,6 @@ namespace Settlement.EventManagement.Services.Calculation
 
             return matches.OrderBy(match => !(match.OriginalEventStatus.ToLowerInvariant() == EventStatus.Completed && match.IsExistRunningTicket))
                     .ThenBy(match => match.OriginalEventStatus.ToLowerInvariant() == EventStatus.Completed && !match.IsExistRunningTicket)
-                    .ThenBy(match => match.EventDate)
                     .ThenBy(match => match.KickOffTime)
                     .ThenBy(match => match.LeagueId)
                     .ThenBy(match => match.SettlementStatus != 0)

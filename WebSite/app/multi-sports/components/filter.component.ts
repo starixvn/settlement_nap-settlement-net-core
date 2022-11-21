@@ -224,7 +224,7 @@ export class FilterComponent implements OnInit {
     }
 
     private validateQuery(query: FilterRequest) {
-        return (_.isEmpty(query.matchCode) || _.isUndefined(query.matchCode))
+        return _.isEmpty(query.matchCode)
           && _.isEqual(query.leagueIds, DefaultValue.unCheckAll)
           && _.isEqual(query.overStatus.toString(), DefaultValue.unCheckAll)
           && _.isEqual(query.matchType.toString(), this.matchTypes[0].value);

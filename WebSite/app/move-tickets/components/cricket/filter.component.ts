@@ -15,6 +15,7 @@ import { SportType } from '../../../shared/constants';
 import { Language } from "../../../shared/language";
 import { DefaultValue } from "../../constants";
 import { MoveTicketsService } from "./move-tickets.service";
+import * as _ from "lodash";
 
 @Component({
     selector: 'filter',
@@ -31,13 +32,9 @@ export class FilterComponent implements OnInit {
     public toDate: NgbDateStruct;
     public sportTypesSelected: string;
     public leaguesSelected: string;
-    public ticketStatusSelected: string;
     public matchStatusSelected: string;
-    public remarkSelected: string;
     public isIncludeTestMatch = false;
     public leagueSelect = new MultipleSelect();
-    public readonly remarkSelect = new MultipleSelect();
-    public readonly ticketsStatusSelect = new MultipleSelect();
     public readonly matchStatusSelect = new MultipleSelect();
 
     constructor(
@@ -60,10 +57,8 @@ export class FilterComponent implements OnInit {
                 this.renderLeague(this.fromDate, this.toDate, this.sportTypesSelected);
             });
 
-        this.remarkSelect.items = this.generateFilterService.renderRemarks();
-        this.matchStatusSelect.items = this.generateFilterService.renderMatchStatus();
-        this.ticketsStatusSelect.items = this.generateFilterService.renderTicketStatus();
-        this.ticketsStatusSelect.maxWidth = '220px';
+        this.matchStatusSelect.items = this.generateFilterService.renderMatchStatusGroupSelect();
+        this.matchStatusSelect.haveGroup = true;
     }
 
     public search() {
@@ -72,11 +67,9 @@ export class FilterComponent implements OnInit {
         const params: FilterRequest = {
             fromDate,
             toDate,
-            ticketStatus: this.ticketStatusSelected,
             matchStatus: this.matchStatusSelected,
             matchCode: this.matchCode,
             leagueIds: this.leaguesSelected,
-            holdStatus: this.remarkSelected,
             sportTypes: this.sportTypesSelected,
             isIncludeTest: this.isIncludeTestMatch,
         };
@@ -90,7 +83,7 @@ export class FilterComponent implements OnInit {
             return;
         }
 
-        if (this.leaguesSelected.length < 1) {
+        if (this.leaguesSelected.length < 1 && _.isEmpty(this.matchCode)) {
             this.showWarningMessage(Language.atLeastLeague);
             return;
         }
@@ -106,16 +99,8 @@ export class FilterComponent implements OnInit {
         this.leaguesSelected = value.map(item => Number(item.value)).join();
     }
 
-    public onSelectTicketsStatus(value: ItemsSelect[]) {
-        this.ticketStatusSelected = value.length > 0 ? value.map(item => Number(item.value)).join() : DefaultValue.unCheckAll;
-    }
-
     public onSelectMatchStatus(value: ItemsSelect[]) {
         this.matchStatusSelected = value.length > 0 ? value.map(item => Number(item.value)).join() : DefaultValue.unCheckAll;
-    }
-
-    public onSelectRemark(value: ItemsSelect[]) {
-        this.remarkSelected = value.length > 0 ? value.map(item => Number(item.value)).join() : DefaultValue.unCheckAll;
     }
 
     public onSelectFromDate(value: NgbDateStruct) {
@@ -161,9 +146,8 @@ export class FilterComponent implements OnInit {
         const showAllLeagues = "--- Show All Leagues ---";
         this.leagueSelect = new MultipleSelect();
         this.leagueSelect.allItemsCheckedText = showAllLeagues;
-        this.leagueSelect.checkAllCheckBoxText = showAllLeagues;
         this.leagueSelect.maxWidth = '450px';
-        this.leagueSelect.isCheckAll = true;
-        this.leagueSelect.haveGroup = true;
+        this.leagueSelect.enableSearchBox = true;
+        this.leagueSelect.disableCheckAll = true;
     }
 }
