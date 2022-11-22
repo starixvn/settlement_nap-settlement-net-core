@@ -39,8 +39,8 @@
                 </mat-option>
             </ng-container>
         </cdk-virtual-scroll-viewport>
-        <div *ngIf="multipleSelect.enableSearchBox && notExistItemIncludeSearchText">
+        <mat-label class="mat-option-text" *ngIf="multipleSelect.enableSearchBox && notExistItemIncludeSearchText">
             &nbsp;No Data
-        </div>
+        </mat-label>
     </mat-select>
 </mat-form-field>

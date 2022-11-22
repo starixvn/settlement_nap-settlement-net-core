@@ -280,15 +280,7 @@ public class MatchServiceImp : MatchService
     {
         if (request.FilterOver > 0)
         {
-            var eventStatusSorting = new List<string>
-                {
-                    EventStatus.Running,
-                    EventStatus.PostPoned,
-                    EventStatus.Internal,
-                    EventStatus.Closed
-                };
-
-            return matches.OrderBy(match => eventStatusSorting.IndexOf(match.OriginalEventStatus)).ThenBy(match => match.MatchCode).ToList();
+            return matches.OrderBy(match => match.OriginalEventStatus.ToLowerInvariant()).ThenBy(match => match.MatchCode).ToList();
         }
 
         return matches.OrderBy(match => !(match.OriginalEventStatus.ToLowerInvariant() == EventStatus.Completed && match.IsExistRunningTicket))
