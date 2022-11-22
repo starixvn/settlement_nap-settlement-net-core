@@ -1,13 +1,10 @@
-﻿using System.Collections.Generic;
-using MediatR;
-using Settlement.EventManagement.Models.MultiSports;
+﻿using Settlement.EventManagement.Models.MultiSports;
 
-namespace Settlement.EventManagement.Requests
+namespace Settlement.EventManagement.Requests;
+
+public class RefreshMultiSportRequest : IRequest<IList<MultiSportMatchWaiting>>
 {
-    public class RefreshMultiSportRequest : IRequest<IList<MultiSportMatchWaiting>>
-    {
-        public string LeagueIds { get; set; }
+    public string LeagueIds { get; set; }
 
-        public string MatchIds { get; set; }
-    }
+    public string MatchIds { get; set; }
 }

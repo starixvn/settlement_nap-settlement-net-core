@@ -1,115 +1,112 @@
-﻿using Fanex.Settlement.ScaleOut.Request;
-using Fanex.Settlement.ScaleOut.Services;
-using Settlement.Core.Constants;
-using Settlement.Core.Models;
+﻿using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Match = Settlement.EventManagement.Models.MultiSports.Match;
 
-namespace Settlement.EventManagement.Services.MultiSports
+namespace Settlement.EventManagement.Services.MultiSports;
+
+public interface IMatchService
 {
-    public interface IMatchService
+    List<Match> GetScoreForMatchBySportType(List<Match> matches, List<ResultDetail> resultDetails, int sportType, Permission permission = null);
+
+    List<Match> MergeMatches(List<Match> baseMatches, List<Match> siteMatches);
+
+    List<Match> SetNewMatchInfo(List<Match> matches, List<ResultDetail> listResultDetail);
+
+    Task UpdateMatchInfo(UpdateMatchInfoRequest request);
+
+    List<Match> SortingMatches(List<Match> matches);
+}
+
+public class MatchServiceImp : IMatchService
+{
+    private readonly IMatchResultDetailService matchResultDetailService;
+
+    private readonly IRefDataService refDataService;
+
+    private readonly CompareMatchService compareMatchService;
+
+    private readonly NewInfoMatchService newInfoMatchService;
+
+    private readonly ScaleOutSettleService scaleOutSettleService;
+
+    public MatchServiceImp(IRefDataService refDataService,
+        IMatchResultDetailService matchResultDetailService,
+        CompareMatchService compareMatchService,
+        NewInfoMatchService newInfoMatchService,
+        ScaleOutSettleService scaleOutSettleService)
     {
-        List<Match> GetScoreForMatchBySportType(List<Match> matches, List<ResultDetail> resultDetails, int sportType, Permission permission = null);
-
-        List<Match> MergeMatches(List<Match> baseMatches, List<Match> siteMatches);
-
-        List<Match> SetNewMatchInfo(List<Match> matches, List<ResultDetail> listResultDetail);
-
-        Task UpdateMatchInfo(UpdateMatchInfoRequest request);
-
-        List<Match> SortingMatches(List<Match> matches);
+        this.matchResultDetailService = matchResultDetailService;
+        this.refDataService = refDataService;
+        this.compareMatchService = compareMatchService;
+        this.newInfoMatchService = newInfoMatchService;
+        this.scaleOutSettleService = scaleOutSettleService;
     }
 
-    public class MatchServiceImp : IMatchService
+    public List<Match> SetNewMatchInfo(List<Match> matches, List<ResultDetail> listResultDetail)
     {
-        private readonly IMatchResultDetailService matchResultDetailService;
-
-        private readonly IRefDataService refDataService;
-
-        private readonly CompareMatchService compareMatchService;
-
-        private readonly NewInfoMatchService newInfoMatchService;
-
-        private readonly ScaleOutSettleService scaleOutSettleService;
-
-        public MatchServiceImp(IRefDataService refDataService,
-            IMatchResultDetailService matchResultDetailService,
-            CompareMatchService compareMatchService,
-            NewInfoMatchService newInfoMatchService,
-            ScaleOutSettleService scaleOutSettleService)
+        foreach (var match in matches)
         {
-            this.matchResultDetailService = matchResultDetailService;
-            this.refDataService = refDataService;
-            this.compareMatchService = compareMatchService;
-            this.newInfoMatchService = newInfoMatchService;
-            this.scaleOutSettleService = scaleOutSettleService;
+            var listSourceByMatchId = listResultDetail.Where(m => m.MatchId == match.MatchId && m.SourceId != SourceType.Normal).ToList();
+
+            newInfoMatchService.TicketInfo(match);
+            match.NewEventStatus = newInfoMatchService.NewEventStatus(match);
+            match.EventStatusColor = newInfoMatchService.EventStatusColor(match);
+            match.EarlySettleStatus = newInfoMatchService.EarlySettlementStatus(match);
+            match.ConfirmHalfTimeScore = newInfoMatchService.ConfirmScore(listSourceByMatchId, ResourceType.Halftime);
+            match.ConfirmFullTimeScore = newInfoMatchService.ConfirmScore(listSourceByMatchId, ResourceType.Final);
+            match.IsExistsConfirmedEarly = newInfoMatchService.IsExistsConfirmedEarly(match);
+            match.RefDataService = refDataService;
         }
 
-        public List<Match> SetNewMatchInfo(List<Match> matches, List<ResultDetail> listResultDetail)
+        return matches;
+    }
+
+    public List<Match> GetScoreForMatchBySportType(List<Match> matches, List<ResultDetail> resultDetails, int sportType, Permission permission = null)
+    {
+        if (sportType == SportType.Tennis)
         {
-            foreach (var match in matches)
-            {
-                var listSourceByMatchId = listResultDetail.Where(m => m.MatchId == match.MatchId && m.SourceId != SourceType.Normal).ToList();
-
-                newInfoMatchService.TicketInfo(match);
-                match.NewEventStatus = newInfoMatchService.NewEventStatus(match);
-                match.EventStatusColor = newInfoMatchService.EventStatusColor(match);
-                match.EarlySettleStatus = newInfoMatchService.EarlySettlementStatus(match);
-                match.ConfirmHalfTimeScore = newInfoMatchService.ConfirmScore(listSourceByMatchId, ResourceType.Halftime);
-                match.ConfirmFullTimeScore = newInfoMatchService.ConfirmScore(listSourceByMatchId, ResourceType.Final);
-                match.IsExistsConfirmedEarly = newInfoMatchService.IsExistsConfirmedEarly(match);
-                match.RefDataService = refDataService;
-            }
-
-            return matches;
+            return matchResultDetailService.TennisResultDetail(matches, resultDetails, permission);
         }
 
-        public List<Match> GetScoreForMatchBySportType(List<Match> matches, List<ResultDetail> resultDetails, int sportType, Permission permission = null)
+        if (sportType == SportType.BasketBall)
         {
-            if (sportType == SportType.Tennis)
-            {
-                return matchResultDetailService.TennisResultDetail(matches, resultDetails, permission);
-            }
-
-            if (sportType == SportType.BasketBall)
-            {
-                return matchResultDetailService.BasketballResultDetail(matches, resultDetails, permission);
-            }
-
-            if (sportType == SportType.ESports)
-            {
-                return matchResultDetailService.ESportsResultDetail(matches, resultDetails, permission);
-            }
-
-            if (sportType == SportType.Badminton)
-            {
-                return matchResultDetailService.BadmintonResultDetail(matches, resultDetails, permission);
-            }
-
-            if (sportType == SportType.Cricket)
-            {
-                return matchResultDetailService.CricketResultDetail(matches, resultDetails, permission);
-            }
-
-            if (sportType == SportType.BeachVolleyball)
-            {
-                return matchResultDetailService.BeachVolleyballResultDetail(matches, resultDetails, permission);
-            }
-
-            if (sportType == SportType.VolleyBall)
-            {
-                return matchResultDetailService.VolleyballResultDetail(matches, resultDetails, permission);
-            }
-
-            foreach (var result in matches)
-            {
-                result.RefDataService = refDataService;
-            }
-
-            return LoadExternalResults(matches, resultDetails, sportType);
+            return matchResultDetailService.BasketballResultDetail(matches, resultDetails, permission);
         }
 
-        private readonly List<int> fullTimeSports = new List<int>
+        if (sportType == SportType.ESports)
+        {
+            return matchResultDetailService.ESportsResultDetail(matches, resultDetails, permission);
+        }
+
+        if (sportType == SportType.Badminton)
+        {
+            return matchResultDetailService.BadmintonResultDetail(matches, resultDetails, permission);
+        }
+
+        if (sportType == SportType.Cricket)
+        {
+            return matchResultDetailService.CricketResultDetail(matches, resultDetails, permission);
+        }
+
+        if (sportType == SportType.BeachVolleyball)
+        {
+            return matchResultDetailService.BeachVolleyballResultDetail(matches, resultDetails, permission);
+        }
+
+        if (sportType == SportType.VolleyBall)
+        {
+            return matchResultDetailService.VolleyballResultDetail(matches, resultDetails, permission);
+        }
+
+        foreach (var result in matches)
+        {
+            result.RefDataService = refDataService;
+        }
+
+        return LoadExternalResults(matches, resultDetails, sportType);
+    }
+
+    private readonly List<int> fullTimeSports = new List<int>
         {
             SportType.IceHockey,
             SportType.VolleyBall,
@@ -157,7 +154,7 @@ namespace Settlement.EventManagement.Services.MultiSports
             SportType.SepakTakraw,
         };
 
-        private readonly List<int> halfTimeFullTimeSports = new List<int>
+    private readonly List<int> halfTimeFullTimeSports = new List<int>
         {
             SportType.Football,
             SportType.BaseBall,
@@ -165,55 +162,54 @@ namespace Settlement.EventManagement.Services.MultiSports
             SportType.NetBall
         };
 
-        private List<Match> LoadExternalResults(List<Match> matches, List<ResultDetail> resultDetails, int sportType)
+    private List<Match> LoadExternalResults(List<Match> matches, List<ResultDetail> resultDetails, int sportType)
+    {
+        if (fullTimeSports.Contains(sportType))
         {
-            if (fullTimeSports.Contains(sportType))
+            return matchResultDetailService.OtherSportsResultDetail(matches, resultDetails, false);
+        }
+
+        return halfTimeFullTimeSports.Contains(sportType) ? matchResultDetailService.OtherSportsResultDetail(matches, resultDetails, true) : matches;
+    }
+
+    public List<Match> MergeMatches(List<Match> baseMatches, List<Match> siteMatches)
+    {
+        var peekNewMatches = siteMatches.Except(baseMatches).ToList();
+
+        baseMatches.AddRange(peekNewMatches);
+
+        AddSiteInfo(baseMatches, siteMatches);
+
+        return baseMatches;
+    }
+
+    private void AddSiteInfo(List<Match> baseMatches, List<Match> siteMatches)
+    {
+        foreach (var match in baseMatches)
+        {
+            var matchSiteInfo = compareMatchService.GetDifferentMatchSiteInfo(match, siteMatches);
+            if (matchSiteInfo != null)
             {
-                return matchResultDetailService.OtherSportsResultDetail(matches, resultDetails, false);
-            }
-
-            return halfTimeFullTimeSports.Contains(sportType) ? matchResultDetailService.OtherSportsResultDetail(matches, resultDetails, true) : matches;
-        }
-
-        public List<Match> MergeMatches(List<Match> baseMatches, List<Match> siteMatches)
-        {
-            var peekNewMatches = siteMatches.Except(baseMatches).ToList();
-
-            baseMatches.AddRange(peekNewMatches);
-
-            AddSiteInfo(baseMatches, siteMatches);
-
-            return baseMatches;
-        }
-
-        private void AddSiteInfo(List<Match> baseMatches, List<Match> siteMatches)
-        {
-            foreach (var match in baseMatches)
-            {
-                var matchSiteInfo = compareMatchService.GetDifferentMatchSiteInfo(match, siteMatches);
-                if (matchSiteInfo != null)
-                {
-                    match.SiteMatch.Add(matchSiteInfo);
-                }
+                match.SiteMatch.Add(matchSiteInfo);
             }
         }
+    }
 
-        public async Task UpdateMatchInfo(UpdateMatchInfoRequest request)
-        {
-            await scaleOutSettleService.UpdateMatchInfo(request);
-        }
+    public async Task UpdateMatchInfo(UpdateMatchInfoRequest request)
+    {
+        await scaleOutSettleService.UpdateMatchInfo(request);
+    }
 
-        public List<Match> SortingMatches(List<Match> matches)
-        {
-            var sportBook = matches.OrderBy(match => !(match.OriginalEventStatus.ToLowerInvariant() == EventStatus.Completed && match.IsExistRunningTicket))
-                .ThenBy(match => match.OriginalEventStatus.ToLowerInvariant() == EventStatus.Completed && !match.IsExistRunningTicket)
-                .ThenBy(match => match.KickOffTime)
-                .ThenBy(match => match.LeagueId)
-                .ThenBy(match => match.SettlementStatus != 0)
-                .ThenBy(match => match.MatchCode)
-                .ToList();
+    public List<Match> SortingMatches(List<Match> matches)
+    {
+        var sportBook = matches.OrderBy(match => !(match.OriginalEventStatus.ToLowerInvariant() == EventStatus.Completed && match.IsExistRunningTicket))
+            .ThenBy(match => match.OriginalEventStatus.ToLowerInvariant() == EventStatus.Completed && !match.IsExistRunningTicket)
+            .ThenBy(match => match.KickOffTime)
+            .ThenBy(match => match.LeagueId)
+            .ThenBy(match => match.SettlementStatus != 0)
+            .ThenBy(match => match.MatchCode)
+            .ToList();
 
-            return sportBook;
-        }
+        return sportBook;
     }
 }

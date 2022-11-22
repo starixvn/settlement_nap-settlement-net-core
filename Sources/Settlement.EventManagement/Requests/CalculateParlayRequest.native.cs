@@ -1,12 +1,10 @@
-﻿using MediatR;
-using Settlement.Core.Models;
+﻿using Settlement.Core.Models;
 
-namespace Settlement.EventManagement.Requests
+namespace Settlement.EventManagement.Requests;
+
+public class CalculateParlayRequest : IRequest<Result>
 {
-    public class CalculateParlayRequest : IRequest<Result>
-    {
-        public string MatchIds { get; set; }
+    public string MatchIds { get; set; }
 
-        public int AdminId { get; set; }
-    }
+    public int AdminId { get; set; }
 }

@@ -1,66 +1,64 @@
-﻿using Settlement.Core.Constants;
-using Settlement.Core.Models;
+﻿using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Match = Settlement.EventManagement.Models.MultiSports.Match;
 
-namespace Settlement.EventManagement.Services.SpecificService.Tennis
+namespace Settlement.EventManagement.Services.SpecificService.Tennis;
+
+public interface ITennisService
 {
-    public interface ITennisService
+    MoreScores ScoreLoader(Match match, List<ResultDetail> resultDetails, Permission permission);
+}
+
+public class TennisServiceImp : ITennisService
+{
+    private readonly IScoreService scoreService;
+
+    private readonly IScoreSetService scoreSetService;
+
+    private readonly List<string> setResource = new List<string> { "01", "02", "03", "04", "05" };
+
+    public TennisServiceImp(
+        IScoreSetService scoreSetService,
+        IScoreService scoreService)
     {
-        MoreScores ScoreLoader(Match match, List<ResultDetail> resultDetails, Permission permission);
+        this.scoreSetService = scoreSetService;
+        this.scoreService = scoreService;
     }
 
-    public class TennisServiceImp : ITennisService
+    public MoreScores ScoreLoader(Match match, List<ResultDetail> resultDetails, Permission permission)
     {
-        private readonly IScoreService scoreService;
-
-        private readonly IScoreSetService scoreSetService;
-
-        private readonly List<string> setResource = new List<string> { "01", "02", "03", "04", "05" };
-
-        public TennisServiceImp(
-            IScoreSetService scoreSetService,
-            IScoreService scoreService)
+        var moreScore = new MoreScores
         {
-            this.scoreSetService = scoreSetService;
-            this.scoreService = scoreService;
-        }
+            Sets = setResource.Select(x => new Score("-")).ToArray(),
+            HalfTimeScore = new Score("-"),
+            FinalScore = new Score("-")
+        };
 
-        public MoreScores ScoreLoader(Match match, List<ResultDetail> resultDetails, Permission permission)
+        var items = resultDetails.OrderBy(n => n.ResourceId).ToList();
+        var totalGame = scoreService.ScoreSet(items);
+        foreach (var item in items)
         {
-            var moreScore = new MoreScores
+            if (setResource.Contains(item.ResourceId))
             {
-                Sets = setResource.Select(x => new Score("-")).ToArray(),
-                HalfTimeScore = new Score("-"),
-                FinalScore = new Score("-")
-            };
-
-            var items = resultDetails.OrderBy(n => n.ResourceId).ToList();
-            var totalGame = scoreService.ScoreSet(items);
-            foreach (var item in items)
-            {
-                if (setResource.Contains(item.ResourceId))
-                {
-                    var scoreSet = scoreSetService.GetScore(item, permission);
-                    moreScore.Sets[int.Parse(item.ResourceId) - 1] = scoreSet;
-                }
+                var scoreSet = scoreSetService.GetScore(item, permission);
+                moreScore.Sets[int.Parse(item.ResourceId) - 1] = scoreSet;
             }
-            var totalSet = items.FirstOrDefault(n => n.ResourceId == ResourceType.Final);
-
-            match.EventStatus = GetEventStatus(totalSet, match.EventStatus);
-
-            if (totalSet != null && totalSet.MatchId > 0)
-            {
-                moreScore.FinalScore = scoreSetService.GetScore(totalSet, permission);
-                moreScore.HalfTimeScore = scoreService.TotalGame(moreScore.FinalScore.Home, totalGame);
-            }
-
-            return moreScore;
         }
+        var totalSet = items.FirstOrDefault(n => n.ResourceId == ResourceType.Final);
 
-        private string GetEventStatus(ResultDetail totalSet, string currentStatus)
+        match.EventStatus = GetEventStatus(totalSet, match.EventStatus);
+
+        if (totalSet != null && totalSet.MatchId > 0)
         {
-            return totalSet != null && scoreService.IsRefundMatch(totalSet.HomeValue) ? "Refund" : currentStatus;
+            moreScore.FinalScore = scoreSetService.GetScore(totalSet, permission);
+            moreScore.HalfTimeScore = scoreService.TotalGame(moreScore.FinalScore.Home, totalGame);
         }
+
+        return moreScore;
+    }
+
+    private string GetEventStatus(ResultDetail totalSet, string currentStatus)
+    {
+        return totalSet != null && scoreService.IsRefundMatch(totalSet.HomeValue) ? "Refund" : currentStatus;
     }
 }

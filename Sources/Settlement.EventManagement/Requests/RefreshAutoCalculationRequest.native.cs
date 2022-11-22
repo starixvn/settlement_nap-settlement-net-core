@@ -1,5 +1,4 @@
-﻿using MediatR;
-using Settlement.EventManagement.Models.Calculation;
+﻿using Settlement.EventManagement.Models.Calculation;
 
 namespace Settlement.EventManagement.Requests;
 

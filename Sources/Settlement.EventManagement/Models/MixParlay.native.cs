@@ -1,65 +1,62 @@
-﻿using MessagePack;
-using Settlement.Core.Constants;
-using Settlement.Core.Models;
+﻿using Settlement.Core.Models;
 
-namespace Settlement.EventManagement.Models
+namespace Settlement.EventManagement.Models;
+
+[MessagePackObject]
+public class MixParlay
 {
-    [MessagePackObject]
-    public class MixParlay
+    private const int IsSuccess = 2;
+
+    private bool IsCalculated { get; }
+
+    private int? IsCalculatingSingle { get; }
+
+    private int? IsCalculatingMp { get; }
+
+    private string BetStatusValue { get; }
+
+    private RemarkSettingModel Remark { get; }
+
+    public MixParlay()
     {
-        private const int IsSuccess = 2;
+    }
 
-        private bool IsCalculated { get; }
+    public MixParlay(
+        bool isCalculated,
+        bool isKeyScore,
+        int? isCalculatingSingle,
+        int? isCalculatingMp,
+        string betStatusValue,
+        RemarkSettingModel remark)
+    {
+        IsCalculated = isCalculated;
+        IsCalculatingSingle = isCalculatingSingle;
+        IsCalculatingMp = isCalculatingMp;
+        BetStatusValue = betStatusValue;
+        Remark = remark;
+        IsKeyScore = isKeyScore;
+    }
 
-        private int? IsCalculatingSingle { get; }
+    private bool EnableCalcMixParlay => IsKeyScore && IsCalculated && !BetStatusValue.Contains(BetStatus.RefundHT);
 
-        private int? IsCalculatingMp { get; }
+    [Key("isKeyScore")]
+    public bool IsKeyScore { get; }
 
-        private string BetStatusValue { get; }
-
-        private RemarkSettingModel Remark { get; }
-
-        public MixParlay()
+    [Key("hasMixParlay")]
+    public bool HasMixParlay
+    {
+        get
         {
+            var isCalculatingSingle = IsCalculatingSingle == null || IsCalculatingSingle == IsSuccess;
+            var isCalculatingParlay = (IsCalculatingMp == null || IsCalculatingMp == IsSuccess) && EnableCalcMixParlay;
+            var isRemark = Remark.IsPending || IsUndecidedMarked(Remark);
+
+            return !isRemark && isCalculatingSingle && isCalculatingParlay;
         }
+    }
 
-        public MixParlay(
-            bool isCalculated,
-            bool isKeyScore,
-            int? isCalculatingSingle,
-            int? isCalculatingMp,
-            string betStatusValue,
-            RemarkSettingModel remark)
-        {
-            IsCalculated = isCalculated;
-            IsCalculatingSingle = isCalculatingSingle;
-            IsCalculatingMp = isCalculatingMp;
-            BetStatusValue = betStatusValue;
-            Remark = remark;
-            IsKeyScore = isKeyScore;
-        }
-
-        private bool EnableCalcMixParlay => IsKeyScore && IsCalculated && !BetStatusValue.Contains(BetStatus.RefundHT);
-
-        [Key("isKeyScore")]
-        public bool IsKeyScore { get; }
-
-        [Key("hasMixParlay")]
-        public bool HasMixParlay
-        {
-            get
-            {
-                var isCalculatingSingle = IsCalculatingSingle == null || IsCalculatingSingle == IsSuccess;
-                var isCalculatingParlay = (IsCalculatingMp == null || IsCalculatingMp == IsSuccess) && EnableCalcMixParlay;
-                var isRemark = Remark.IsPending || IsUndecidedMarked(Remark);
-
-                return !isRemark && isCalculatingSingle && isCalculatingParlay;
-            }
-        }
-
-        private static bool IsUndecidedMarked(RemarkSettingModel remark)
-        {
-            return remark.IsMtdHold || remark.IsKeyHold || remark.IsUndecided || remark.IsUnderSettle;
-        }
+    private static bool IsUndecidedMarked(RemarkSettingModel remark)
+    {
+        return remark.IsMtdHold || remark.IsKeyHold || remark.IsUndecided || remark.IsUnderSettle;
     }
 }

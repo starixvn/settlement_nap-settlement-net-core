@@ -1,23 +1,19 @@
-﻿using Fanex.Data;
-using Fanex.Data.Repository;
+﻿namespace Settlement.EventManagement.Criteria;
 
-namespace Settlement.EventManagement.Criteria
+public class GetWaitingMultiSportCriteria : CriteriaBase
 {
-    public class GetWaitingMultiSportCriteria : CriteriaBase
+    public string MatchIds { get; set; }
+
+    [SpParam(Ignored = true)]
+    public string DbServer { get; set; }
+
+    public override string GetSettingKey()
     {
-        public string MatchIds { get; set; }
+        return $"NAP_Set_WaitingOtherSportSel_{DbServer}";
+    }
 
-        [SpParam(Ignored = true)]
-        public string DbServer { get; set; }
-
-        public override string GetSettingKey()
-        {
-            return $"NAP_Set_WaitingOtherSportSel_{DbServer}";
-        }
-
-        public override bool IsValid()
-        {
-            return !string.IsNullOrEmpty(MatchIds);
-        }
+    public override bool IsValid()
+    {
+        return !string.IsNullOrWhiteSpace(MatchIds);
     }
 }

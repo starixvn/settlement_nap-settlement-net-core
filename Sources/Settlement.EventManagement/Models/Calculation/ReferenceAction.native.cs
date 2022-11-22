@@ -1,18 +1,16 @@
-﻿using System.Collections.Generic;
+﻿namespace Settlement.EventManagement.Models.Calculation;
 
-namespace Settlement.EventManagement.Models.Calculation
+public class ReferenceAction
 {
-    public class ReferenceAction
-    {
-        private const int HalftimeAction = 178;
+    private const int HalftimeAction = 178;
 
-        private const int FullTimeAction = 179;
+    private const int FullTimeAction = 179;
 
-        private const int HalftimeAutoAction = 195;
+    private const int HalftimeAutoAction = 195;
 
-        private const int FullTimeAutoAction = 196;
+    private const int FullTimeAutoAction = 196;
 
-        private readonly Dictionary<int, string> actionNames = new Dictionary<int, string>
+    private readonly Dictionary<int, string> actionNames = new Dictionary<int, string>
         {
             { 100, "All" },
             { 101, "FT(M)" },
@@ -33,37 +31,36 @@ namespace Settlement.EventManagement.Models.Calculation
             { 196, "(FT-A)" }
         };
 
-        public int MatchId { get; set; }
+    public int MatchId { get; set; }
 
-        public int ActionId { get; set; }
+    public int ActionId { get; set; }
 
-        public bool IsFailed { get; set; }
+    public bool IsFailed { get; set; }
 
-        public int HomeScore { get; set; }
+    public int HomeScore { get; set; }
 
-        public int AwayScore { get; set; }
+    public int AwayScore { get; set; }
 
-        public string ActionName
+    public string ActionName
+    {
+        get
         {
-            get
+            if (!actionNames.ContainsKey(ActionId))
             {
-                if (!actionNames.ContainsKey(ActionId))
-                {
-                    return string.Empty;
-                }
-
-                var actionName = actionNames[ActionId];
-                if (IsShowScore)
-                {
-                    actionName = $"{HomeScore}-{AwayScore} {actionName}";
-                }
-
-                return actionName;
+                return string.Empty;
             }
+
+            var actionName = actionNames[ActionId];
+            if (IsShowScore)
+            {
+                actionName = $"{HomeScore}-{AwayScore} {actionName}";
+            }
+
+            return actionName;
         }
-
-        public string ClassName => IsFailed ? "fail" : string.Empty;
-
-        private bool IsShowScore => ActionId == HalftimeAction || ActionId == FullTimeAction || ActionId == HalftimeAutoAction || ActionId == FullTimeAutoAction;
     }
+
+    public string ClassName => IsFailed ? "fail" : string.Empty;
+
+    private bool IsShowScore => ActionId == HalftimeAction || ActionId == FullTimeAction || ActionId == HalftimeAutoAction || ActionId == FullTimeAutoAction;
 }
