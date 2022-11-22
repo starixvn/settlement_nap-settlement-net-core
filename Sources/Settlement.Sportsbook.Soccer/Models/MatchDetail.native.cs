@@ -119,7 +119,7 @@ namespace Settlement.Sportsbook.Soccer.Models
         {
             get
             {
-                var fantasyLeagueGroup = new List<int> { 16371, 65550, 89611 };
+                var fantasyLeagueGroup = new List<int> { 125351, 16371, 65550, 89611 };
 
                 return fantasyLeagueGroup.Contains(LeagueId);
             }
