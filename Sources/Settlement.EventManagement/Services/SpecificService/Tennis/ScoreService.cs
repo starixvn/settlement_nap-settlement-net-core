@@ -25,8 +25,7 @@ public class ScoreServiceImp : IScoreService
 
     public Score ScoreSet(List<ResultDetail> resultDetails)
     {
-        var resultHasScore = resultDetails.Where(m => m.ResourceId.LongCount() == 4
-                                                      && !string.IsNullOrWhiteSpace(m.HomeValue)
+        var resultHasScore = resultDetails.Where(m => !string.IsNullOrWhiteSpace(m.HomeValue)
                                                       && !string.IsNullOrWhiteSpace(m.AwayValue)
                                                       && m.ResultStatusId == ResultStatus.ManuallySettled).ToList();
 

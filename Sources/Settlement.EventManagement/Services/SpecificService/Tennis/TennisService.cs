@@ -34,17 +34,14 @@ public class TennisServiceImp : ITennisService
             FinalScore = new Score("-")
         };
 
-        var items = resultDetails.OrderBy(n => n.ResourceId).ToList();
+        var items = resultDetails.Where(item => setResource.Contains(item.ResourceId)).OrderBy(n => n.ResourceId).ToList();
         var totalGame = scoreService.ScoreSet(items);
         foreach (var item in items)
         {
-            if (setResource.Contains(item.ResourceId))
-            {
-                var scoreSet = scoreSetService.GetScore(item, permission);
-                moreScore.Sets[int.Parse(item.ResourceId) - 1] = scoreSet;
-            }
+            var scoreSet = scoreSetService.GetScore(item, permission);
+            moreScore.Sets[int.Parse(item.ResourceId) - 1] = scoreSet;
         }
-        var totalSet = items.FirstOrDefault(n => n.ResourceId == ResourceType.Final);
+        var totalSet = resultDetails.FirstOrDefault(n => n.ResourceId == ResourceType.Final);
 
         match.EventStatus = GetEventStatus(totalSet, match.EventStatus);
 
