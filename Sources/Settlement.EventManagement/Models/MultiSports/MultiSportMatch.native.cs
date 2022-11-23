@@ -143,7 +143,4 @@ public class MultiSportMatch
 
     [Key("offerLive")]
     public bool OfferLive { get; set; }
-
-    [Key("isPending")]
-    public bool IsPending { get; set; }
 }

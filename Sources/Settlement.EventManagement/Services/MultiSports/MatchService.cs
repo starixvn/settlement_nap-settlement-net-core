@@ -207,7 +207,8 @@ public class MatchServiceImp : IMatchService
             .ThenBy(match => match.KickOffTime)
             .ThenBy(match => match.LeagueId)
             .ThenBy(match => match.SettlementStatus != 0)
-            .ThenBy(match => match.MatchCode)
+            .ThenBy(match => match.MatchCode.Length)
+            .ThenBy(match => match.MatchCode.ToLowerInvariant())
             .ToList();
 
         return sportBook;

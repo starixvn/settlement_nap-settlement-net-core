@@ -94,11 +94,15 @@ public class BaseMatch
 
         set
         {
+            if (OriginalEventStatus == null)
+            {
+                OriginalEventStatus = value;
+            }
             eventStatus = value;
         }
     }
 
-    public string OriginalEventStatus => eventStatus;
+    public string OriginalEventStatus { get; set; }
 
     public string BetStatus { get; set; }
 

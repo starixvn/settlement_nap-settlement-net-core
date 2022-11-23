@@ -39,8 +39,6 @@ public class Match : BaseMatch
 
     public ResultDetail ExFTResult { get; set; }
 
-    public bool IsPending { get; set; }
-
     public override bool Equals(object obj)
     {
         return obj is Match match && match.MatchId == MatchId;

@@ -280,7 +280,9 @@ public class MatchServiceImp : MatchService
     {
         if (request.FilterOver > 0)
         {
-            return matches.OrderBy(match => match.OriginalEventStatus.ToLowerInvariant()).ThenBy(match => match.MatchCode).ToList();
+            return matches.OrderBy(match => match.OriginalEventStatus.ToLowerInvariant())
+                .ThenBy(match => match.MatchCode.Length)
+                .ThenBy(match => match.MatchCode.ToLowerInvariant()).ToList();
         }
 
         return matches.OrderBy(match => !(match.OriginalEventStatus.ToLowerInvariant() == EventStatus.Completed && match.IsExistRunningTicket))
@@ -288,7 +290,8 @@ public class MatchServiceImp : MatchService
                 .ThenBy(match => match.KickOffTime)
                 .ThenBy(match => match.LeagueId)
                 .ThenBy(match => match.SettlementStatus != 0)
-                .ThenBy(match => match.MatchCode)
+                .ThenBy(match => match.MatchCode.Length)
+                .ThenBy(match => match.MatchCode.ToLowerInvariant())
                 .ToList();
     }
 }

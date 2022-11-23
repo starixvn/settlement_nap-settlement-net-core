@@ -79,7 +79,7 @@ export class GenerateFilterService {
 
     public renderAutoPayout() {
         const selection = [
-            { id: 1, value: "1", text: "Auto PayOut" },
+            { id: 1, value: "1", text: "Auto Payout" },
             { id: 0, value: "0", text: "OFF" }];
 
         return this.createListOption(selection);
