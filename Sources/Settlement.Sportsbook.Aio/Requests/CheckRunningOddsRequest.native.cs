@@ -1,16 +1,13 @@
-﻿using System.Collections.Generic;
-using MediatR;
-using Settlement.Core.Models;
+﻿using Settlement.Core.Models;
 using Settlement.Sportsbook.Aio.Models;
 
-namespace Settlement.Sportsbook.Aio.Requests
+namespace Settlement.Sportsbook.Aio.Requests;
+
+public class CheckRunningOddsRequest : IRequest<Result>
 {
-    public class CheckRunningOddsRequest : IRequest<Result>
-    {
-        public int MatchId { get; set; }
+    public int MatchId { get; set; }
 
-        public List<CheckOddsItem> SelectedResources { get; set; }
+    public List<CheckOddsItem> SelectedResources { get; set; }
 
-        public string Action { get; set; }
-    }
+    public string Action { get; set; }
 }

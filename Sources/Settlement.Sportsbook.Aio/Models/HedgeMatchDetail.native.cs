@@ -1,9 +1,8 @@
-﻿namespace Settlement.Sportsbook.Aio.Models
-{
-    public class HedgeMatchDetail
-    {
-        public int MatchId { get; set; }
+﻿namespace Settlement.Sportsbook.Aio.Models;
 
-        public string MatchCode { get; set; }
-    }
+public class HedgeMatchDetail
+{
+    public int MatchId { get; set; }
+
+    public string MatchCode { get; set; }
 }

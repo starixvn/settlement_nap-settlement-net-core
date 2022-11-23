@@ -1,25 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace Settlement.Sportsbook.Aio.MapperFactory;
 
-namespace Settlement.Sportsbook.Aio.MapperFactory
+public interface IMapperFactory
 {
-    public interface IMapperFactory
+    IMapperService GetMapperService(string apiKey);
+}
+
+public class MapperFactoryBase : IMapperFactory
+{
+    private static readonly Dictionary<string, Type> MapperServices = new Dictionary<string, Type>();
+
+    protected static void AddMapperService(string apiKey, Type type)
     {
-        IMapperService GetMapperService(string apiKey);
+        MapperServices.Add(apiKey, type);
     }
 
-    public class MapperFactoryBase : IMapperFactory
+    public virtual IMapperService GetMapperService(string apiKey)
     {
-        private static readonly Dictionary<string, Type> MapperServices = new Dictionary<string, Type>();
-
-        protected static void AddMapperService(string apiKey, Type type)
-        {
-            MapperServices.Add(apiKey, type);
-        }
-
-        public virtual IMapperService GetMapperService(string apiKey)
-        {
-            return MapperServices.ContainsKey(apiKey) ? Activator.CreateInstance(MapperServices[apiKey]) as IMapperService : null;
-        }
+        return MapperServices.ContainsKey(apiKey) ? Activator.CreateInstance(MapperServices[apiKey]) as IMapperService : null;
     }
 }

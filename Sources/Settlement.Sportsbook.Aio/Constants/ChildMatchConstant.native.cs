@@ -1,10 +1,8 @@
-﻿using System.Collections.Generic;
+﻿namespace Settlement.Sportsbook.Aio.Constants;
 
-namespace Settlement.Sportsbook.Aio.Constants
+public static class ChildMatchConstant
 {
-    public static class ChildMatchConstant
-    {
-        public static Dictionary<int, string> ResourceRelated => new()
+    public static Dictionary<int, string> ResourceRelated => new()
         {
             { 11, "01" },
             { 12, "0101" },
@@ -14,7 +12,7 @@ namespace Settlement.Sportsbook.Aio.Constants
             { 17, "0105" }
         };
 
-        public static Dictionary<int, string> LeagueName => new()
+    public static Dictionary<int, string> LeagueName => new()
         {
             { 11, "Points Handicap" },
             { 12, "First Set Winner" },
@@ -24,7 +22,7 @@ namespace Settlement.Sportsbook.Aio.Constants
             { 17, "Fifth Set Winner" }
         };
 
-        public static Dictionary<int, string> ChildMatchValid => new()
+    public static Dictionary<int, string> ChildMatchValid => new()
         {
             { 1, "" },
             { 2, "11, 12, 14" },
@@ -32,5 +30,4 @@ namespace Settlement.Sportsbook.Aio.Constants
             { 4, "11, 12, 14, 15, 16" },
             { 5, "11, 12, 14, 15, 16, 17" }
         };
-    }
 }

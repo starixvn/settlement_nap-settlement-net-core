@@ -1,13 +1,10 @@
-﻿using MediatR;
-using Settlement.Sportsbook.Aio.Models;
-using System.Collections.Generic;
+﻿using Settlement.Sportsbook.Aio.Models;
 
-namespace Settlement.Sportsbook.Aio.Requests
+namespace Settlement.Sportsbook.Aio.Requests;
+
+public class GetRecalResultRequest : IRequest<List<ResultDetail>>
 {
-    public class GetRecalResultRequest : IRequest<List<ResultDetail>>
-    {
-        public int MatchId { get; set; }
+    public int MatchId { get; set; }
 
-        public int SportType { get; set; }
-    }
+    public int SportType { get; set; }
 }

@@ -1,5 +1,4 @@
-﻿using Fanex.Data.Repository;
-using Fanex.NAP.Client;
+﻿using Fanex.NAP.Client;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.Aio.Constants;
@@ -7,198 +6,193 @@ using Settlement.Sportsbook.Aio.Criteria;
 using Settlement.Sportsbook.Aio.MapperFactory;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Requests;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using ResultDetail = Settlement.Sportsbook.Aio.Models.ResultDetail;
 
-namespace Settlement.Sportsbook.Aio.Services
+namespace Settlement.Sportsbook.Aio.Services;
+
+public interface IAioService
 {
-    public interface IAioService
+    Task<AioMatch> GetMatch(GetMatchRequest request);
+
+    Task<Result> Settle(SettleRequest request);
+
+    Task<List<Models.ResultDetail>> GetRecalResult(GetRecalResultRequest request);
+
+    Task<MarkedTickets> CheckMarkedTickets(CheckMarkedTicketsRequest request);
+
+    Task<Result> VerifyNoRunningOdds(CheckRunningOddsRequest request);
+
+    Task<Result> SaveScore(SaveScoreRequest request);
+
+    Task<Result> SettleChildMatch(SettleChildMatchRequest request);
+
+    Task<bool> ResultSetting(ResultSettingRequest request);
+}
+
+public class AioServiceImp : IAioService
+{
+    private readonly IDynamicRepository repository;
+
+    private readonly IRefDataService refDataService;
+
+    private readonly ICreateQueryService createQueryService;
+
+    private readonly IMapperFactory mapperFactory;
+
+    private readonly IValidateApiKeyService validateApiKeyService;
+
+    private readonly MultipleServerAioService multipleServerAioService;
+
+    public AioServiceImp(
+        IDynamicRepository repository,
+        IRefDataService refDataService,
+        IMapperFactory mapperFactory,
+        IValidateApiKeyService validateApiKeyService,
+        ICreateQueryService createQueryService,
+        MultipleServerAioService multipleServerAioService)
     {
-        Task<AioMatch> GetMatch(GetMatchRequest request);
-
-        Task<Result> Settle(SettleRequest request);
-
-        Task<List<Models.ResultDetail>> GetRecalResult(GetRecalResultRequest request);
-
-        Task<MarkedTickets> CheckMarkedTickets(CheckMarkedTicketsRequest request);
-
-        Task<Result> VerifyNoRunningOdds(CheckRunningOddsRequest request);
-
-        Task<Result> SaveScore(SaveScoreRequest request);
-
-        Task<Result> SettleChildMatch(SettleChildMatchRequest request);
-
-        Task<bool> ResultSetting(ResultSettingRequest request);
+        this.repository = repository;
+        this.refDataService = refDataService;
+        this.mapperFactory = mapperFactory;
+        this.validateApiKeyService = validateApiKeyService;
+        this.createQueryService = createQueryService;
+        this.multipleServerAioService = multipleServerAioService;
     }
 
-    public class AioServiceImp : IAioService
+    public async Task<AioMatch> GetMatch(GetMatchRequest request)
     {
-        private readonly IDynamicRepository repository;
+        var apiKey = validateApiKeyService.GetApiKey(request.ApiKey);
+        var matchCriteria = validateApiKeyService.CriteriaName(request, $"{apiKey}-{ApiKeyConstant.MatchInfoKey}");
+        var matchDetail = await repository.GetAsync<Models.MatchDetail>(matchCriteria);
+        var externalResults = new List<ExternalResultModel>();
+        Check.Argument.IsNotNull(matchDetail, $"Match ${request.MatchId} does not exist");
 
-        private readonly IRefDataService refDataService;
-
-        private readonly ICreateQueryService createQueryService;
-
-        private readonly IMapperFactory mapperFactory;
-
-        private readonly IValidateApiKeyService validateApiKeyService;
-
-        private readonly MultipleServerAioService multipleServerAioService;
-
-        public AioServiceImp(
-            IDynamicRepository repository,
-            IRefDataService refDataService,
-            IMapperFactory mapperFactory,
-            IValidateApiKeyService validateApiKeyService,
-            ICreateQueryService createQueryService,
-            MultipleServerAioService multipleServerAioService)
+        matchDetail.RefDataService = refDataService;
+        var providerMapperService = mapperFactory.GetMapperService($"{apiKey}-{ApiKeyConstant.ProviderKey}");
+        if (providerMapperService != null)
         {
-            this.repository = repository;
-            this.refDataService = refDataService;
-            this.mapperFactory = mapperFactory;
-            this.validateApiKeyService = validateApiKeyService;
-            this.createQueryService = createQueryService;
-            this.multipleServerAioService = multipleServerAioService;
+            var providerCriteria = validateApiKeyService.CriteriaName(request, $"{apiKey}-{ApiKeyConstant.ProviderKey}");
+            var providerResult = await repository.FetchAsync<ExternalResultDetailModel>(providerCriteria);
+            var provider = new Tuple<List<ExternalResultDetailModel>, List<ExternalResultModel>>(providerResult.ToList(), new List<ExternalResultModel>());
+            providerMapperService.Decorate(provider);
+            externalResults = provider.Item2;
         }
 
-        public async Task<AioMatch> GetMatch(GetMatchRequest request)
+        var resultDetailCriteria = (GetResultDetailCriteria)validateApiKeyService.CriteriaName(request, $"{apiKey}-{ApiKeyConstant.ResultDetailKey}");
+        var (resultDetails, ticketCounts) = await multipleServerAioService.FetchResultDetails(resultDetailCriteria, matchDetail.SportType);
+
+        var mapperService = mapperFactory.GetMapperService($"{apiKey}-{ApiKeyConstant.ResultDetailKey}");
+        if (mapperService != null)
         {
-            var apiKey = validateApiKeyService.GetApiKey(request.ApiKey);
-            var matchCriteria = validateApiKeyService.CriteriaName(request, $"{apiKey}-{ApiKeyConstant.MatchInfoKey}");
-            var matchDetail = await repository.GetAsync<Models.MatchDetail>(matchCriteria);
-            var externalResults = new List<ExternalResultModel>();
-            Check.Argument.IsNotNull(matchDetail, $"Match ${request.MatchId} does not exist");
-
-            matchDetail.RefDataService = refDataService;
-            var providerMapperService = mapperFactory.GetMapperService($"{apiKey}-{ApiKeyConstant.ProviderKey}");
-            if (providerMapperService != null)
-            {
-                var providerCriteria = validateApiKeyService.CriteriaName(request, $"{apiKey}-{ApiKeyConstant.ProviderKey}");
-                var providerResult = await repository.FetchAsync<ExternalResultDetailModel>(providerCriteria);
-                var provider = new Tuple<List<ExternalResultDetailModel>, List<ExternalResultModel>>(providerResult.ToList(), new List<ExternalResultModel>());
-                providerMapperService.Decorate(provider);
-                externalResults = provider.Item2;
-            }
-
-            var resultDetailCriteria = (GetResultDetailCriteria)validateApiKeyService.CriteriaName(request, $"{apiKey}-{ApiKeyConstant.ResultDetailKey}");
-            var (resultDetails, ticketCounts) = await multipleServerAioService.FetchResultDetails(resultDetailCriteria, matchDetail.SportType);
-
-            var mapperService = mapperFactory.GetMapperService($"{apiKey}-{ApiKeyConstant.ResultDetailKey}");
-            if (mapperService != null)
-            {
-                resultDetails.ForEach(result => result.MatchId = request.MatchId);
-                mapperService.Decorate(resultDetails);
-            }
-
-            var hedgeMatchCriteria = validateApiKeyService.CriteriaName(request, $"{apiKey}-{ApiKeyConstant.HedgeMatchInfoKey}");
-            var hedgeMatchDetail = await repository.GetAsync<HedgeMatchDetail>(hedgeMatchCriteria);
-            var oldMatch = await GetOldMatch(matchDetail, request, apiKey);
-
-            var childMatches = await GetChildMatch(resultDetails, request, apiKey);
-            resultDetails = resultDetails.OrderBy(result => result.OrdNo).ToList();
-
-            return new AioMatch
-            {
-                MatchDetail = matchDetail,
-                ResultDetails = resultDetails,
-                TicketCounts = ticketCounts,
-                Permission = request.Permission,
-                HedgeMatchDetail = hedgeMatchDetail,
-                ExternalResults = externalResults,
-                ChildMatches = childMatches,
-                OldMatchDetail = oldMatch
-            };
+            resultDetails.ForEach(result => result.MatchId = request.MatchId);
+            mapperService.Decorate(resultDetails);
         }
 
-        private async Task<HedgeMatchDetail> GetOldMatch(Models.MatchDetail matchDetail, GetMatchRequest request, string apiKey)
-        {
-            if (matchDetail != null && matchDetail.SportType == Core.Constants.SportType.ESports)
-            {
-                var getOldMatchCriteria = validateApiKeyService.CriteriaName(request, $"{apiKey}-{ApiKeyConstant.OldMatch}");
-                return await repository.GetAsync<HedgeMatchDetail>(getOldMatchCriteria);
-            }
+        var hedgeMatchCriteria = validateApiKeyService.CriteriaName(request, $"{apiKey}-{ApiKeyConstant.HedgeMatchInfoKey}");
+        var hedgeMatchDetail = await repository.GetAsync<HedgeMatchDetail>(hedgeMatchCriteria);
+        var oldMatch = await GetOldMatch(matchDetail, request, apiKey);
 
-            return null;
+        var childMatches = await GetChildMatch(resultDetails, request, apiKey);
+        resultDetails = resultDetails.OrderBy(result => result.OrdNo).ToList();
+
+        return new AioMatch
+        {
+            MatchDetail = matchDetail,
+            ResultDetails = resultDetails,
+            TicketCounts = ticketCounts,
+            Permission = request.Permission,
+            HedgeMatchDetail = hedgeMatchDetail,
+            ExternalResults = externalResults,
+            ChildMatches = childMatches,
+            OldMatchDetail = oldMatch
+        };
+    }
+
+    private async Task<HedgeMatchDetail> GetOldMatch(Models.MatchDetail matchDetail, GetMatchRequest request, string apiKey)
+    {
+        if (matchDetail != null && matchDetail.SportType == Core.Constants.SportType.ESports)
+        {
+            var getOldMatchCriteria = validateApiKeyService.CriteriaName(request, $"{apiKey}-{ApiKeyConstant.OldMatch}");
+            return await repository.GetAsync<HedgeMatchDetail>(getOldMatchCriteria);
         }
 
-        public async Task<List<Models.ResultDetail>> GetRecalResult(GetRecalResultRequest request)
-        {
-            var criteria = createQueryService.QueryRecalResult(request);
-            var resultDetails = await repository.FetchAsync<ResultDetail>(criteria);
+        return null;
+    }
 
-            return resultDetails.ToList();
+    public async Task<List<Models.ResultDetail>> GetRecalResult(GetRecalResultRequest request)
+    {
+        var criteria = createQueryService.QueryRecalResult(request);
+        var resultDetails = await repository.FetchAsync<ResultDetail>(criteria);
+
+        return resultDetails.ToList();
+    }
+
+    public async Task<MarkedTickets> CheckMarkedTickets(CheckMarkedTicketsRequest request)
+    {
+        return await multipleServerAioService.CheckMarkedTickets(request);
+    }
+
+    public async Task<Result> Settle(SettleRequest request)
+    {
+        return await multipleServerAioService.Settle(request);
+    }
+
+    public async Task<Result> VerifyNoRunningOdds(CheckRunningOddsRequest request)
+    {
+        var criteria = new VerificationCriteria
+        {
+            MatchId = request.MatchId,
+            Action = request.Action,
+            CheckType = request.SelectedResources.Count > 1,
+            SelectedResource = createQueryService.CreateMatchResources(request.SelectedResources)
+        };
+
+        await repository.ExecuteAsync(criteria);
+
+        return new Result
+        {
+            ErrCode = criteria.ErrCode,
+            ErrMsg = criteria.ErrMsg
+        };
+    }
+
+    public async Task<Result> SaveScore(SaveScoreRequest request)
+    {
+        var requestQuery = createQueryService.QuerySaveScore(request);
+        var criteria = validateApiKeyService.CreateNonQueryCommand(requestQuery, $"{requestQuery.ApiKey}-{ApiKeyConstant.SaveScore}") as IReturnValue;
+        await repository.ExecuteAsync((INonQueryCommand)criteria);
+        return new Result
+        {
+            ErrCode = criteria.ErrCode,
+            ErrMsg = criteria.ErrMsg
+        };
+    }
+
+    private async Task<List<ChildMatchModel>> GetChildMatch(List<ResultDetail> resultDetail, GetMatchRequest request, string apiKey)
+    {
+        var childMatchMapperService = mapperFactory.GetMapperService($"{apiKey}-{ApiKeyConstant.ChildMatchKey}");
+        if (childMatchMapperService != null)
+        {
+            var getChildMatchCriteria = validateApiKeyService.CriteriaName(request, $"{apiKey}-{ApiKeyConstant.ChildMatchKey}");
+            var childMatchList = await repository.FetchAsync<ChildMatchModel>(getChildMatchCriteria);
+            var childMatchTuple = new Tuple<List<ChildMatchModel>, List<ResultDetail>>(childMatchList.ToList(), resultDetail);
+            childMatchMapperService.Decorate(childMatchTuple);
+            return childMatchTuple.Item1.ToList();
         }
 
-        public async Task<MarkedTickets> CheckMarkedTickets(CheckMarkedTicketsRequest request)
-        {
-            return await multipleServerAioService.CheckMarkedTickets(request);
-        }
+        return new List<ChildMatchModel>();
+    }
 
-        public async Task<Result> Settle(SettleRequest request)
-        {
-            return await multipleServerAioService.Settle(request);
-        }
+    public async Task<bool> ResultSetting(ResultSettingRequest request)
+    {
+        var criteria = createQueryService.QueryChangeSetting(request);
 
-        public async Task<Result> VerifyNoRunningOdds(CheckRunningOddsRequest request)
-        {
-            var criteria = new VerificationCriteria
-            {
-                MatchId = request.MatchId,
-                Action = request.Action,
-                CheckType = request.SelectedResources.Count > 1,
-                SelectedResource = createQueryService.CreateMatchResources(request.SelectedResources)
-            };
+        await repository.ExecuteAsync(criteria);
+        return criteria.IsEnabled;
+    }
 
-            await repository.ExecuteAsync(criteria);
-
-            return new Result
-            {
-                ErrCode = criteria.ErrCode,
-                ErrMsg = criteria.ErrMsg
-            };
-        }
-
-        public async Task<Result> SaveScore(SaveScoreRequest request)
-        {
-            var requestQuery = createQueryService.QuerySaveScore(request);
-            var criteria = validateApiKeyService.CreateNonQueryCommand(requestQuery, $"{requestQuery.ApiKey}-{ApiKeyConstant.SaveScore}") as IReturnValue;
-            await repository.ExecuteAsync((INonQueryCommand)criteria);
-            return new Result
-            {
-                ErrCode = criteria.ErrCode,
-                ErrMsg = criteria.ErrMsg
-            };
-        }
-
-        private async Task<List<ChildMatchModel>> GetChildMatch(List<ResultDetail> resultDetail, GetMatchRequest request, string apiKey)
-        {
-            var childMatchMapperService = mapperFactory.GetMapperService($"{apiKey}-{ApiKeyConstant.ChildMatchKey}");
-            if (childMatchMapperService != null)
-            {
-                var getChildMatchCriteria = validateApiKeyService.CriteriaName(request, $"{apiKey}-{ApiKeyConstant.ChildMatchKey}");
-                var childMatchList = await repository.FetchAsync<ChildMatchModel>(getChildMatchCriteria);
-                var childMatchTuple = new Tuple<List<ChildMatchModel>, List<ResultDetail>>(childMatchList.ToList(), resultDetail);
-                childMatchMapperService.Decorate(childMatchTuple);
-                return childMatchTuple.Item1.ToList();
-            }
-
-            return new List<ChildMatchModel>();
-        }
-
-        public async Task<bool> ResultSetting(ResultSettingRequest request)
-        {
-            var criteria = createQueryService.QueryChangeSetting(request);
-
-            await repository.ExecuteAsync(criteria);
-            return criteria.IsEnabled;
-        }
-
-        public async Task<Result> SettleChildMatch(SettleChildMatchRequest request)
-        {
-            return await multipleServerAioService.SettleChildMatch(request);
-        }
+    public async Task<Result> SettleChildMatch(SettleChildMatchRequest request)
+    {
+        return await multipleServerAioService.SettleChildMatch(request);
     }
 }

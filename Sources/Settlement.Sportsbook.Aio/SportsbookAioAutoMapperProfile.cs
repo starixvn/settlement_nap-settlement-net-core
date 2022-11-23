@@ -1,28 +1,26 @@
-﻿using AutoMapper;
-using Settlement.Core.Models;
+﻿using Settlement.Core.Models;
 using Settlement.Sportsbook.Aio.Criteria;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Requests;
 
-namespace Settlement.Sportsbook.Aio
+namespace Settlement.Sportsbook.Aio;
+
+public class SportsbookAioAutoMapperProfile : Profile
 {
-    public class SportsbookAioAutoMapperProfile : Profile
+    public SportsbookAioAutoMapperProfile()
     {
-        public SportsbookAioAutoMapperProfile()
-        {
-            CreateMap<GetMatchRequest, GetMatchDetailCriteria>();
-            CreateMap<GetMatchRequest, GetResultDetailCriteria>();
-            CreateMap<GetRecalResultRequest, GetRecalResultCriteria>();
-            CreateMap<CheckMarkedTicketsRequest, CheckMarkedTicketsCriteria>();
-            CreateMap<GetMatchRequest, GetHedgeMatchCriteria>();
-            CreateMap<SettleRequest, SettleCriteria>()
-                .ForMember(dest => dest.Action, map => map.MapFrom(src => src.ActionName))
-                .ForMember(dest => dest.SelectedResources, map => map.Ignore());
-            CreateMap<SettleChildMatchRequest, SettleCriteria>()
-           .ForMember(dest => dest.Action, map => map.MapFrom(src => src.ActionName))
-           .ForMember(dest => dest.SelectedResources, map => map.Ignore())
-           .ForMember(dest => dest.MatchId, map => map.Ignore());
-            CreateMap<ChildMatchModel, ResourceItem>();
-        }
+        CreateMap<GetMatchRequest, GetMatchDetailCriteria>();
+        CreateMap<GetMatchRequest, GetResultDetailCriteria>();
+        CreateMap<GetRecalResultRequest, GetRecalResultCriteria>();
+        CreateMap<CheckMarkedTicketsRequest, CheckMarkedTicketsCriteria>();
+        CreateMap<GetMatchRequest, GetHedgeMatchCriteria>();
+        CreateMap<SettleRequest, SettleCriteria>()
+            .ForMember(dest => dest.Action, map => map.MapFrom(src => src.ActionName))
+            .ForMember(dest => dest.SelectedResources, map => map.Ignore());
+        CreateMap<SettleChildMatchRequest, SettleCriteria>()
+       .ForMember(dest => dest.Action, map => map.MapFrom(src => src.ActionName))
+       .ForMember(dest => dest.SelectedResources, map => map.Ignore())
+       .ForMember(dest => dest.MatchId, map => map.Ignore());
+        CreateMap<ChildMatchModel, ResourceItem>();
     }
 }

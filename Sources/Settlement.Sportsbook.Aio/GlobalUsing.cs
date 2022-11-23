@@ -1,2 +1,9 @@
-﻿global using Fanex.Settlement.Converter.Helpers;
+﻿global using AutoMapper;
+global using Fanex.Data;
+global using Fanex.Data.Repository;
+global using Fanex.Settlement.Converter.Helpers;
 global using Fanex.Settlement.Converter.Services;
+global using MediatR;
+global using Microsoft.AspNetCore.Mvc;
+global using Settlement.Core.ActionFilters;
+global using System.Runtime.Serialization;

@@ -1,5 +1,4 @@
-﻿using Fanex.Data.Repository;
-using Fanex.Settlement.ScaleOut.Request;
+﻿using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
 using Microsoft.Extensions.Options;
 using Settlement.Core.Constants;
@@ -7,320 +6,316 @@ using Settlement.Core.Models;
 using Settlement.Sportsbook.Aio.Constants;
 using Settlement.Sportsbook.Aio.Criteria;
 using Settlement.Sportsbook.Aio.Requests;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace Settlement.Sportsbook.Aio.Services
+namespace Settlement.Sportsbook.Aio.Services;
+
+public interface MultipleServerAioService
 {
-    public interface MultipleServerAioService
+    public Task<(List<Models.ResultDetail>, TicketCounts)> FetchResultDetails(GetResultDetailCriteria criteria, int sportType);
+
+    public Task<MarkedTickets> CheckMarkedTickets(CheckMarkedTicketsRequest request);
+
+    public Task<Result> Settle(SettleRequest request);
+
+    public Task<Result> SettleChildMatch(SettleChildMatchRequest request);
+}
+
+public class MultipleServerAioServiceImp : MultipleServerAioService
+{
+    private readonly IDynamicRepository repository;
+    private readonly AppSettingsKey appSettingsKey;
+    private readonly ScaleOutSettleService scaleOutSettleService;
+    private readonly ICreateQueryService createQueryService;
+    private readonly MergeDataService mergeDataService;
+
+    public MultipleServerAioServiceImp(IDynamicRepository repository,
+        IOptions<AppSettingsKey> appSettingsKey,
+        ScaleOutSettleService scaleOutSettleService,
+        ICreateQueryService createQueryService,
+        MergeDataService mergeDataService)
     {
-        public Task<(List<Models.ResultDetail>, TicketCounts)> FetchResultDetails(GetResultDetailCriteria criteria, int sportType);
-
-        public Task<MarkedTickets> CheckMarkedTickets(CheckMarkedTicketsRequest request);
-
-        public Task<Result> Settle(SettleRequest request);
-
-        public Task<Result> SettleChildMatch(SettleChildMatchRequest request);
+        this.repository = repository;
+        this.appSettingsKey = appSettingsKey.Value;
+        this.scaleOutSettleService = scaleOutSettleService;
+        this.createQueryService = createQueryService;
+        this.mergeDataService = mergeDataService;
     }
 
-    public class MultipleServerAioServiceImp : MultipleServerAioService
+    public async Task<(List<Models.ResultDetail>, TicketCounts)> FetchResultDetails(GetResultDetailCriteria criteria, int sportType)
     {
-        private readonly IDynamicRepository repository;
-        private readonly AppSettingsKey appSettingsKey;
-        private readonly ScaleOutSettleService scaleOutSettleService;
-        private readonly ICreateQueryService createQueryService;
-        private readonly MergeDataService mergeDataService;
+        criteria.SportType = sportType;
+        var fetchedResultDetails = await repository.FetchAsync<Models.ResultDetail>(criteria);
+        var (ticketDetails, ticketCount) = await GetEarlyTicketDetails(criteria);
+        var resultDetails = fetchedResultDetails.ToList();
+        MergeTicketsToResults(resultDetails, ticketDetails, sportType, criteria.SettleType);
 
-        public MultipleServerAioServiceImp(IDynamicRepository repository,
-            IOptions<AppSettingsKey> appSettingsKey,
-            ScaleOutSettleService scaleOutSettleService,
-            ICreateQueryService createQueryService,
-            MergeDataService mergeDataService)
+        return (resultDetails.Where(result => result.TicketStatus != TicketStatus.NotIncluded).ToList(), ticketCount);
+    }
+
+    private static void MergeTicketsToResults(List<Models.ResultDetail> resultDetails, List<Models.ResultDetail> ticketDetails, int sportType, string settleType)
+    {
+        var newTicketDetails = ticketDetails.Where(ticketDetail => !resultDetails.Any(result => result.Equals(ticketDetail)));
+        if (newTicketDetails.Any())
         {
-            this.repository = repository;
-            this.appSettingsKey = appSettingsKey.Value;
-            this.scaleOutSettleService = scaleOutSettleService;
-            this.createQueryService = createQueryService;
-            this.mergeDataService = mergeDataService;
+            resultDetails.AddRange(newTicketDetails);
         }
 
-        public async Task<(List<Models.ResultDetail>, TicketCounts)> FetchResultDetails(GetResultDetailCriteria criteria, int sportType)
-        {
-            criteria.SportType = sportType;
-            var fetchedResultDetails = await repository.FetchAsync<Models.ResultDetail>(criteria);
-            var (ticketDetails, ticketCount) = await GetEarlyTicketDetails(criteria);
-            var resultDetails = fetchedResultDetails.ToList();
-            MergeTicketsToResults(resultDetails, ticketDetails, sportType, criteria.SettleType);
+        GenerateTicketsStatus(resultDetails, ticketDetails, sportType, settleType);
+    }
 
-            return (resultDetails.Where(result => result.TicketStatus != TicketStatus.NotIncluded).ToList(), ticketCount);
+    private static void GenerateTicketsStatus(List<Models.ResultDetail> results, List<Models.ResultDetail> ticketDetails, int sportType, string settleType)
+    {
+        foreach (var result in results)
+        {
+            var ticketDetail = ticketDetails.FirstOrDefault(detail => detail.ResourceId == result.ResourceId);
+            result.TicketStatus = CreateTicketStatus(ticketDetail, sportType, settleType);
+        }
+    }
+
+    private static string CreateTicketStatus(Models.ResultDetail ticketDetail, int sportType, string settleType)
+    {
+        if (ticketDetail == null)
+        {
+            return sportType == SportType.ESports ? TicketStatus.NoTicket : TicketStatus.NotIncluded;
         }
 
-        private static void MergeTicketsToResults(List<Models.ResultDetail> resultDetails, List<Models.ResultDetail> ticketDetails, int sportType, string settleType)
+        if (ticketDetail.BetCount == 0 || ticketDetail.BetCount == ticketDetail.InWaiting)
         {
-            var newTicketDetails = ticketDetails.Where(ticketDetail => !resultDetails.Any(result => result.Equals(ticketDetail)));
-            if (newTicketDetails.Any())
-            {
-                resultDetails.AddRange(newTicketDetails);
-            }
-
-            GenerateTicketsStatus(resultDetails, ticketDetails, sportType, settleType);
+            return TicketStatus.NoTicket;
         }
 
-        private static void GenerateTicketsStatus(List<Models.ResultDetail> results, List<Models.ResultDetail> ticketDetails, int sportType, string settleType)
+        if (ticketDetail.InRunning > 0)
         {
-            foreach (var result in results)
-            {
-                var ticketDetail = ticketDetails.FirstOrDefault(detail => detail.ResourceId == result.ResourceId);
-                result.TicketStatus = CreateTicketStatus(ticketDetail, sportType, settleType);
-            }
+            return TicketStatus.Running;
         }
 
-        private static string CreateTicketStatus(Models.ResultDetail ticketDetail, int sportType, string settleType)
+        if (ticketDetail.BetMarkedCount > 0)
         {
-            if (ticketDetail == null)
-            {
-                return sportType == SportType.ESports ? TicketStatus.NoTicket : TicketStatus.NotIncluded;
-            }
+            return TicketStatus.Marked;
+        }
 
-            if (ticketDetail.BetCount == 0 || ticketDetail.BetCount == ticketDetail.InWaiting)
-            {
-                return TicketStatus.NoTicket;
-            }
-
-            if (ticketDetail.InRunning > 0)
-            {
-                return TicketStatus.Running;
-            }
-
-            if (ticketDetail.BetMarkedCount > 0)
-            {
-                return TicketStatus.Marked;
-            }
-
-            if (ticketDetail.BetSettledCount > 0)
-            {
-                return TicketStatus.Calculated;
-            }
-
-            if (ticketDetail.BetRefundedCount > 0 && settleType != SettleType.Early)
-            {
-                return TicketStatus.Refunded;
-            }
-
+        if (ticketDetail.BetSettledCount > 0)
+        {
             return TicketStatus.Calculated;
         }
 
-        private async Task<(List<Models.ResultDetail>, TicketCounts)> GetEarlyTicketDetails(GetResultDetailCriteria getResultDetailCriteria)
+        if (ticketDetail.BetRefundedCount > 0 && settleType != SettleType.Early)
         {
-            var multipleTicketDetails = new List<(List<Models.ResultDetail>, TicketCounts)>();
-            var criteria = new GetTicketDetailsCriteria
-            {
-                MatchId = getResultDetailCriteria.MatchId,
-                SettleType = getResultDetailCriteria.SettleType,
-                SportType = getResultDetailCriteria.SportType
-            };
-
-            foreach (var server in appSettingsKey.SiteDbServer)
-            {
-                var ticketDetails = await GetTicketDetailsByServer(criteria, server);
-                multipleTicketDetails.Add(ticketDetails);
-            }
-
-            return mergeDataService.MergeTicketDetails(multipleTicketDetails);
+            return TicketStatus.Refunded;
         }
 
-        private async Task<(List<Models.ResultDetail>, TicketCounts)> GetTicketDetailsByServer(GetTicketDetailsCriteria criteria, string server)
+        return TicketStatus.Calculated;
+    }
+
+    private async Task<(List<Models.ResultDetail>, TicketCounts)> GetEarlyTicketDetails(GetResultDetailCriteria getResultDetailCriteria)
+    {
+        var multipleTicketDetails = new List<(List<Models.ResultDetail>, TicketCounts)>();
+        var criteria = new GetTicketDetailsCriteria
+        {
+            MatchId = getResultDetailCriteria.MatchId,
+            SettleType = getResultDetailCriteria.SettleType,
+            SportType = getResultDetailCriteria.SportType
+        };
+
+        foreach (var server in appSettingsKey.SiteDbServer)
+        {
+            var ticketDetails = await GetTicketDetailsByServer(criteria, server);
+            multipleTicketDetails.Add(ticketDetails);
+        }
+
+        return mergeDataService.MergeTicketDetails(multipleTicketDetails);
+    }
+
+    private async Task<(List<Models.ResultDetail>, TicketCounts)> GetTicketDetailsByServer(GetTicketDetailsCriteria criteria, string server)
+    {
+        criteria.DbServer = server;
+        var (ticketDetails, ticketCounts) = await repository.FetchMultipleAsync<Models.ResultDetail, TicketCounts>(criteria);
+
+        return (ticketDetails.ToList(), ticketCounts.FirstOrDefault() ?? new TicketCounts());
+    }
+
+    public async Task<MarkedTickets> CheckMarkedTickets(CheckMarkedTicketsRequest request)
+    {
+        var criteria = new CheckMarkedTicketsCriteria
+        {
+            MatchId = request.MatchId,
+            ResourceIds = GetResourceIds(request.SelectedResources),
+            IsMergedParlay = request.IsMergedParlay
+        };
+
+        foreach (var server in appSettingsKey.SiteDbServer)
         {
             criteria.DbServer = server;
-            var (ticketDetails, ticketCounts) = await repository.FetchMultipleAsync<Models.ResultDetail, TicketCounts>(criteria);
-
-            return (ticketDetails.ToList(), ticketCounts.FirstOrDefault() ?? new TicketCounts());
-        }
-
-        public async Task<MarkedTickets> CheckMarkedTickets(CheckMarkedTicketsRequest request)
-        {
-            var criteria = new CheckMarkedTicketsCriteria
+            await repository.ExecuteAsync(criteria);
+            if (criteria.IsExistMarkedTicket)
             {
-                MatchId = request.MatchId,
-                ResourceIds = GetResourceIds(request.SelectedResources),
-                IsMergedParlay = request.IsMergedParlay
-            };
-
-            foreach (var server in appSettingsKey.SiteDbServer)
-            {
-                criteria.DbServer = server;
-                await repository.ExecuteAsync(criteria);
-                if (criteria.IsExistMarkedTicket)
+                return new MarkedTickets
                 {
-                    return new MarkedTickets
-                    {
-                        IsExistMarkedTicket = criteria.IsExistMarkedTicket
-                    };
-                }
-            }
-
-            return new MarkedTickets();
-        }
-
-        private static string GetResourceIds(List<ResourceItem> betTypes)
-        {
-            var listResourceId = new List<string>();
-            foreach (var betType in betTypes)
-            {
-                listResourceId.Add(betType.ResourceId);
-            }
-
-            return string.Join(",", listResourceId);
-        }
-
-        public async Task<Result> Settle(SettleRequest request)
-        {
-            var criteria = createQueryService.QuerySettle(request);
-            var result = await Execute(criteria, request.SelectedResources);
-            var isChildMatch = request.SportType == SportType.Cricket && result.ErrCode == 0;
-            var childMatchIds = isChildMatch ? await GetChildMatchIds(request.MatchId, criteria.Action, criteria.SelectedResources) : string.Empty;
-
-            var settleResult = new Result
-            {
-                ErrCode = result.ErrCode,
-                ErrMsg = result.ErrMsg,
-                ChildMatchIds = childMatchIds,
-                ResultCommand = result.ResultCommand
-            };
-
-            return settleResult;
-        }
-
-        private async Task SetUnderSettleFlag(SettleCriteria criteria, List<ResourceItem> selectedResources)
-        {
-            var actionToSetFlag = new List<string> { SettleType.Calculate, SettleType.Undo, SettleType.Refund };
-            const string resourceIdToSetFlag = "00";
-            if (actionToSetFlag.Contains(criteria.Action) && selectedResources.Any(resource => resource.ResourceId == resourceIdToSetFlag))
-            {
-                await scaleOutSettleService.UpdateUnderSettlementFlag(criteria.MatchId, criteria.AdminId, criteria.Action);
+                    IsExistMarkedTicket = criteria.IsExistMarkedTicket
+                };
             }
         }
 
-        private async Task<Result> Execute(SettleCriteria criteria, List<ResourceItem> selectedResources)
+        return new MarkedTickets();
+    }
+
+    private static string GetResourceIds(List<ResourceItem> betTypes)
+    {
+        var listResourceId = new List<string>();
+        foreach (var betType in betTypes)
         {
-            var commandList = new List<ResultCommand>();
-            var requestChecking = await ValidateBeforeExecute(criteria);
-            if (requestChecking.ErrCode > 0)
-            {
-                return requestChecking;
-            }
+            listResourceId.Add(betType.ResourceId);
+        }
 
-            await SetUnderSettleFlag(criteria, selectedResources);
+        return string.Join(",", listResourceId);
+    }
 
-            await UpdateMatchInfo(criteria);
+    public async Task<Result> Settle(SettleRequest request)
+    {
+        var criteria = createQueryService.QuerySettle(request);
+        var result = await Execute(criteria, request.SelectedResources);
+        var isChildMatch = request.SportType == SportType.Cricket && result.ErrCode == 0;
+        var childMatchIds = isChildMatch ? await GetChildMatchIds(request.MatchId, criteria.Action, criteria.SelectedResources) : string.Empty;
 
-            foreach (var server in appSettingsKey.SiteDbServer)
-            {
-                criteria.DbServer = server;
-                await repository.ExecuteAsync(criteria);
-                var serviceCommand = criteria.ServiceCommand;
-                commandList = await SetResultCommand(commandList, serviceCommand, server);
-            }
+        var settleResult = new Result
+        {
+            ErrCode = result.ErrCode,
+            ErrMsg = result.ErrMsg,
+            ChildMatchIds = childMatchIds,
+            ResultCommand = result.ResultCommand
+        };
 
-            requestChecking.ResultCommand = commandList;
+        return settleResult;
+    }
+
+    private async Task SetUnderSettleFlag(SettleCriteria criteria, List<ResourceItem> selectedResources)
+    {
+        var actionToSetFlag = new List<string> { SettleType.Calculate, SettleType.Undo, SettleType.Refund };
+        const string resourceIdToSetFlag = "00";
+        if (actionToSetFlag.Contains(criteria.Action) && selectedResources.Any(resource => resource.ResourceId == resourceIdToSetFlag))
+        {
+            await scaleOutSettleService.UpdateUnderSettlementFlag(criteria.MatchId, criteria.AdminId, criteria.Action);
+        }
+    }
+
+    private async Task<Result> Execute(SettleCriteria criteria, List<ResourceItem> selectedResources)
+    {
+        var commandList = new List<ResultCommand>();
+        var requestChecking = await ValidateBeforeExecute(criteria);
+        if (requestChecking.ErrCode > 0)
+        {
             return requestChecking;
         }
 
-        private async Task<List<ResultCommand>> SetResultCommand(List<ResultCommand> commandList, string serviceCommand, string server)
+        await SetUnderSettleFlag(criteria, selectedResources);
+
+        await UpdateMatchInfo(criteria);
+
+        foreach (var server in appSettingsKey.SiteDbServer)
         {
-            if (!string.IsNullOrWhiteSpace(serviceCommand))
+            criteria.DbServer = server;
+            await repository.ExecuteAsync(criteria);
+            var serviceCommand = criteria.ServiceCommand;
+            commandList = await SetResultCommand(commandList, serviceCommand, server);
+        }
+
+        requestChecking.ResultCommand = commandList;
+        return requestChecking;
+    }
+
+    private async Task<List<ResultCommand>> SetResultCommand(List<ResultCommand> commandList, string serviceCommand, string server)
+    {
+        if (!string.IsNullOrWhiteSpace(serviceCommand))
+        {
+            var siteDbGroupId = await scaleOutSettleService.GetSiteGroupId(server);
+            commandList.Add(new ResultCommand
             {
-                var siteDbGroupId = await scaleOutSettleService.GetSiteGroupId(server);
-                commandList.Add(new ResultCommand
-                {
-                    DbServer = server,
-                    SiteDbGroupId = siteDbGroupId,
-                    ServiceCommand = serviceCommand
-                });
+                DbServer = server,
+                SiteDbGroupId = siteDbGroupId,
+                ServiceCommand = serviceCommand
+            });
+        }
+
+        return commandList;
+    }
+
+    private async Task<Result> ValidateBeforeExecute(SettleCriteria criteria)
+    {
+        var request = new EventTicketRequest
+        {
+            MatchId = criteria.MatchId,
+            Action = criteria.Action,
+            SpName = criteria.SpName,
+            Mode = ActionKey.ActionDictionary[criteria.Action],
+            SelectedResources = criteria.SelectedResources
+        };
+        var resultMessage = await scaleOutSettleService.ValidateEventAndTicket(request);
+        return new Result
+        {
+            ErrCode = resultMessage.ErrorCode,
+            ErrMsg = resultMessage.ErrorMessage
+        };
+    }
+
+    private async Task UpdateMatchInfo(SettleCriteria criteria)
+    {
+        var requestUpdateInfo = new UpdateMatchInfoRequest
+        {
+            Action = criteria.Action,
+            AdminId = criteria.AdminId,
+            MatchId = criteria.MatchId,
+            SelectedResources = criteria.SelectedResources,
+            BetStatus = criteria.BetStatus
+        };
+
+        await scaleOutSettleService.UpdateMatchInfo(requestUpdateInfo);
+    }
+
+    private async Task<string> GetChildMatchIds(int matchId, string actionName, string selectedResources)
+    {
+        var criteria = new GetChildMatchCriteria
+        {
+            MatchIds = matchId.ToString(),
+            Mode = actionName
+        };
+
+        if (!string.IsNullOrWhiteSpace(selectedResources))
+        {
+            criteria.SelectedResources = selectedResources;
+        }
+
+        var listMatch = await repository.FetchAsync<ChildMatch>(criteria);
+        var matchIds = listMatch.Select(item => item.matchId).ToList();
+
+        return matchIds.Count > 0 ? string.Join(',', matchIds.ToList()) : string.Empty;
+    }
+
+    public async Task<Result> SettleChildMatch(SettleChildMatchRequest request)
+    {
+        var criteria = createQueryService.QuerySettleChildMatch(request);
+        if (request.ChildMatches?.Count > 0)
+        {
+            foreach (var match in request.ChildMatches)
+            {
+                criteria.MatchId = match.MatchId;
+                criteria.SelectedResources = createQueryService.CreateResourceChildMatch(match);
+                var result = await Execute(criteria, request.SelectedResources);
+                createQueryService.WriteLogChildMatch(criteria, result);
             }
-
-            return commandList;
         }
-
-        private async Task<Result> ValidateBeforeExecute(SettleCriteria criteria)
+        else
         {
-            var request = new EventTicketRequest
-            {
-                MatchId = criteria.MatchId,
-                Action = criteria.Action,
-                SpName = criteria.SpName,
-                Mode = ActionKey.ActionDictionary[criteria.Action],
-                SelectedResources = criteria.SelectedResources
-            };
-            var resultMessage = await scaleOutSettleService.ValidateEventAndTicket(request);
-            return new Result
-            {
-                ErrCode = resultMessage.ErrorCode,
-                ErrMsg = resultMessage.ErrorMessage
-            };
-        }
+            var listChildMatch = request.ChildMatchIds.Split(',').ToList();
 
-        private async Task UpdateMatchInfo(SettleCriteria criteria)
-        {
-            var requestUpdateInfo = new UpdateMatchInfoRequest
-            {
-                Action = criteria.Action,
-                AdminId = criteria.AdminId,
-                MatchId = criteria.MatchId,
-                SelectedResources = criteria.SelectedResources,
-                BetStatus = criteria.BetStatus
-            };
+            criteria.SelectedResources = createQueryService.CreateResources(request.SelectedResources);
 
-            await scaleOutSettleService.UpdateMatchInfo(requestUpdateInfo);
-        }
-
-        private async Task<string> GetChildMatchIds(int matchId, string actionName, string selectedResources)
-        {
-            var criteria = new GetChildMatchCriteria
+            foreach (var match in listChildMatch)
             {
-                MatchIds = matchId.ToString(),
-                Mode = actionName
-            };
-
-            if (!string.IsNullOrWhiteSpace(selectedResources))
-            {
-                criteria.SelectedResources = selectedResources;
+                criteria.MatchId = int.Parse(match);
+                await Execute(criteria, request.SelectedResources);
             }
-
-            var listMatch = await repository.FetchAsync<ChildMatch>(criteria);
-            var matchIds = listMatch.Select(item => item.matchId).ToList();
-
-            return matchIds.Count > 0 ? string.Join(',', matchIds.ToList()) : string.Empty;
         }
 
-        public async Task<Result> SettleChildMatch(SettleChildMatchRequest request)
-        {
-            var criteria = createQueryService.QuerySettleChildMatch(request);
-            if (request.ChildMatches?.Count > 0)
-            {
-                foreach (var match in request.ChildMatches)
-                {
-                    criteria.MatchId = match.MatchId;
-                    criteria.SelectedResources = createQueryService.CreateResourceChildMatch(match);
-                    var result = await Execute(criteria, request.SelectedResources);
-                    createQueryService.WriteLogChildMatch(criteria, result);
-                }
-            }
-            else
-            {
-                var listChildMatch = request.ChildMatchIds.Split(',').ToList();
-
-                criteria.SelectedResources = createQueryService.CreateResources(request.SelectedResources);
-
-                foreach (var match in listChildMatch)
-                {
-                    criteria.MatchId = int.Parse(match);
-                    await Execute(criteria, request.SelectedResources);
-                }
-            }
-
-            return new Result();
-        }
+        return new Result();
     }
 }

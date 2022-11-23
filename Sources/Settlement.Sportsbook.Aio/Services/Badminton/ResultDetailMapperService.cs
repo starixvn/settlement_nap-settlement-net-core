@@ -1,25 +1,22 @@
 ﻿using Settlement.Sportsbook.Aio.MapperFactory;
 using Settlement.Sportsbook.Aio.Models;
-using System.Collections.Generic;
-using System.Linq;
 
-namespace Settlement.Sportsbook.Aio.Services.Badminton
+namespace Settlement.Sportsbook.Aio.Services.Badminton;
+
+public class ResultDetailMapperServiceImp : IMapperService
 {
-    public class ResultDetailMapperServiceImp : IMapperService
+    private readonly IBadmintonBetTypeService badmintonBetTypeService;
+
+    public ResultDetailMapperServiceImp()
     {
-        private readonly IBadmintonBetTypeService badmintonBetTypeService;
+        badmintonBetTypeService = new BadmintonBetTypeServiceImp();
+    }
 
-        public ResultDetailMapperServiceImp()
-        {
-            badmintonBetTypeService = new BadmintonBetTypeServiceImp();
-        }
-
-        public void Decorate(dynamic obj)
-        {
-            const int maxLengthResourceId = 7;
-            var list = obj as List<ResultDetail>;
-            var listEarly = list.Where(x => x.ResourceId.Length == maxLengthResourceId).ToList();
-            listEarly.ForEach(x => badmintonBetTypeService.GetBetTypeName(x));
-        }
+    public void Decorate(dynamic obj)
+    {
+        const int maxLengthResourceId = 7;
+        var list = obj as List<ResultDetail>;
+        var listEarly = list.Where(x => x.ResourceId.Length == maxLengthResourceId).ToList();
+        listEarly.ForEach(x => badmintonBetTypeService.GetBetTypeName(x));
     }
 }

@@ -1,10 +1,8 @@
-﻿using System.Collections.Generic;
+﻿namespace Settlement.Sportsbook.Aio.Constants;
 
-namespace Settlement.Sportsbook.Aio.Constants
+public static class ActionKey
 {
-    public static class ActionKey
-    {
-        public static Dictionary<string, string> ActionDictionary => new Dictionary<string, string>
+    public static Dictionary<string, string> ActionDictionary => new Dictionary<string, string>
         {
             {"CAL", "ALL"},
             {"REFUND", "ALL"},
@@ -13,5 +11,4 @@ namespace Settlement.Sportsbook.Aio.Constants
             {"UNDO_EAR", "EAR"},
             {"REFUND_EAR", "EAR"}
         };
-    }
 }
