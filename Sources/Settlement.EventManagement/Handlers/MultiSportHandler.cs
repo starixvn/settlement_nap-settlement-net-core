@@ -1,4 +1,5 @@
-﻿using Fanex.NAP.Client.Helpers.Web;
+﻿using Fanex.Logging;
+using Fanex.NAP.Client.Helpers.Web;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.EventManagement.Models;
@@ -37,9 +38,15 @@ public class MultiSportHandler : IRequestHandler<FilterMultiSportRequest, MultiS
 
     public async Task<MultiSportModel> Handle(FilterMultiSportRequest request, CancellationToken cancellationToken)
     {
+        var log = new Logger();
+        var watch = System.Diagnostics.Stopwatch.StartNew();
+        var Sports = await multiSportService.GetSportBook(request);
+        watch.Stop();
+        await log.InfoAsync($"DevLog: Total Time {watch.ElapsedMilliseconds} msec");
+
         return new MultiSportModel
         {
-            Sports = await multiSportService.GetSportBook(request),
+            Sports = Sports,
             Permission = permissionService.Permission
         };
     }
