@@ -1,11 +1,10 @@
-﻿namespace Settlement.EventManagement.Criteria;
+﻿using Settlement.Core.Criteria;
 
-public class GetWaitingMultiSportCriteria : CriteriaBase
+namespace Settlement.EventManagement.Criteria;
+
+public class GetWaitingMultiSportCriteria : MultipleSiteCriteria
 {
     public string MatchIds { get; set; }
-
-    [SpParam(Ignored = true)]
-    public string DbServer { get; set; }
 
     public override string GetSettingKey()
     {

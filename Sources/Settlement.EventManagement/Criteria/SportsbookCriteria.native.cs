@@ -1,6 +1,8 @@
-﻿namespace Settlement.EventManagement.Criteria;
+﻿using Settlement.Core.Criteria;
 
-public class SportsbookCriteria : CriteriaBase
+namespace Settlement.EventManagement.Criteria;
+
+public class SportsbookCriteria : MultipleSiteCriteria
 {
     public DateTime FromDate { get; set; }
 
@@ -25,9 +27,6 @@ public class SportsbookCriteria : CriteriaBase
     public string OverStatus { get; set; }
 
     public string MatchType { get; set; }
-
-    [SpParam(Ignored = true)]
-    public string DbServer { get; set; }
 
     public override string GetSettingKey()
     {

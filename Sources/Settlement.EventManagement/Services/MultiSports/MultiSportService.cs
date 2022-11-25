@@ -1,5 +1,6 @@
 ﻿using Fanex.Caching;
 using Settlement.Core.Constants;
+using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.EventManagement.Criteria;
@@ -106,7 +107,8 @@ public class MultiSportServiceImp : IMultiSportService
 
     private async Task<List<Match>> GetAndCachingMatches(RefreshMultiSportRequest request)
     {
-        var waitingMatches = await WaitingMatchesAllSites(request);
+        var criteria = mapper.Map<RefreshMultiSportRequest, GetWaitingMultiSportCriteria>(request);
+        var waitingMatches = await GetMatchesAllSites(criteria, false);
         var listResultDetail = await ResultDetailByMatchIds(waitingMatches);
 
         waitingMatches = matchService.SetNewMatchInfo(waitingMatches, listResultDetail);
@@ -118,28 +120,35 @@ public class MultiSportServiceImp : IMultiSportService
         return matches;
     }
 
-    private async Task<List<Match>> WaitingMatchesAllSites(RefreshMultiSportRequest request)
+    private async Task<List<Match>> GetMatchesAllSites(MultipleSiteCriteria criteria, bool main = true)
     {
-        var matches = new List<Match>();
-        var isCentralDataBase = true;
-        var criteria = mapper.Map<RefreshMultiSportRequest, GetWaitingMultiSportCriteria>(request);
-        foreach (var server in appSettingsKey.SiteDbServer)
-        {
-            criteria.DbServer = server;
-            var data = (await repository.FetchAsync<Match>(criteria)).ToList();
+        var watch = System.Diagnostics.Stopwatch.StartNew();
+        var fetchMatchTasks = appSettingsKey
+            .SiteDbServer
+            .Select(s => FetchMatches(s, criteria))
+            .ToList();
+        await Task.WhenAll(fetchMatchTasks);
+        watch.Stop();
 
-            if (isCentralDataBase)
-            {
-                matches = data;
-                isCentralDataBase = false;
-            }
-            else
-            {
-                matches = matchService.MergeMatches(matches, data);
-            }
+        var matchesInAllServers = fetchMatchTasks.Select(t => t.Result.ToList()).ToList();
+        if (main)
+        {
+            Console.WriteLine($"- Get Match: {watch.ElapsedMilliseconds}\r {matchesInAllServers.Sum(item => item.Count)}\n");
+        }
+        var matches = matchesInAllServers[0];
+
+        for (var i = 1; i < appSettingsKey.SiteDbServer.Count; i++)
+        {
+            matchService.MergeMatches(matches, matchesInAllServers[i]);
         }
 
         return matches;
+    }
+
+    private Task<IEnumerable<Match>> FetchMatches(string server, MultipleSiteCriteria criteria)
+    {
+        criteria.DbServer = server;
+        return repository.FetchAsync<Match>(criteria);
     }
 
     private void SetToCache(string leagueIds, List<Match> matches)
@@ -224,7 +233,8 @@ public class MultiSportServiceImp : IMultiSportService
 
     private async Task<MultiSportResult> FetchMatchesAndResultDetails(FilterMultiSportRequest request)
     {
-        var matches = await MatchesAllSites(request);
+        var criteria = mapper.Map<FilterMultiSportRequest, SportsbookCriteria>(request);
+        var matches = await GetMatchesAllSites(criteria);
         var resultDetails = await ResultDetailByMatchIds(matches);
         matches = matchService.SetNewMatchInfo(matches, resultDetails);
 
