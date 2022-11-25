@@ -56,21 +56,16 @@ public class MultiSportServiceImp : IMultiSportService
         var matches = GetMoreScore(data);
         watch.Stop();
 
-
         var watchSort = System.Diagnostics.Stopwatch.StartNew();
         var matchesSorted = matchService.SortingMatches(matches);
         watchSort.Stop();
 
         var watchMap = System.Diagnostics.Stopwatch.StartNew();
-        var multiSportMatches = new List<MultiSportMatch>();
-        matchesSorted.ForEach(match =>
-        {
-            var multiSportMatch = mapper.Map<Match, MultiSportMatch>(match);
-            multiSportMatches.Add(multiSportMatch);
-        });
+        var multiSportMatches = mapper.Map<IList<Match>, IList<MultiSportMatch>>(matchesSorted);
+
         watchMap.Stop();
 
-        var sportBooks = GroupSport(multiSportMatches);
+        var sportBooks = GroupSport(multiSportMatches.ToList());
         var total = watch.ElapsedMilliseconds + watchSort.ElapsedMilliseconds + watchMap.ElapsedMilliseconds;
         await log.InfoAsync($"DevLog: Another Steps: Generate score {watch.ElapsedMilliseconds} + Sort {watchSort.ElapsedMilliseconds} + Map model {watchMap.ElapsedMilliseconds} = {total}");
         return sportBooks;
@@ -220,7 +215,7 @@ public class MultiSportServiceImp : IMultiSportService
                 {
                     Name = match.LeagueName,
                     LeagueId = match.LeagueId,
-                    AutoCalcSetting = match.AutoCalcSetting,
+                    IsAutoPayoutForLeague = match.IsAutoPayoutForLeague,
                     Matches = new List<MultiSportMatch>(),
                     SportType = match.SportType
                 };

@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
-import { MultiSport} from "../models";
-import { Match, SportMatch, LeagueMatch, ChangeSettingResult } from "../../shared/models";
-import { EventStatus } from '../constants';
+import { MultiSport, Match, SportMatch, LeagueMatch } from "../models";
+import { ChangeSettingResult } from "../../shared/models";
 import * as _ from 'lodash';
-import { BackgroundColor, CalculationStatus } from '../../shared/constants';
+import { BackgroundColor, CalculationStatus, EventStatus } from '../../shared/constants';
 
 @Injectable()
 export class HandleActionsService {

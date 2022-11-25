@@ -9,10 +9,9 @@ import {
     VerifyDateService,
     ReCheckInService,
     DialogBoxService,
-    GenerateFilterService,
-    SportMatchService,
+    GenerateFilterService
 } from '../../shared/services';
-import { MultiSportService, RefreshMatchService, PopupService, DetectChangesService, HandleActionsService, BackGroundService} from '../services';
+import { MultiSportService, RefreshMatchService, PopupService, DetectChangesService, HandleActionsService, BackGroundService, SportMatchService} from '../services';
 import { MultiSport, MatchWaitingRequest } from '../models';
 
 @Component({

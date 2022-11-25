@@ -4,7 +4,7 @@ import { DatePipe } from "@angular/common";
 import { NgbDateStruct, NgbDateParserFormatter } from "@ng-bootstrap/ng-bootstrap";
 import { CustomNgbDateParserFormatter } from '../../shared/components/date-picker/custom-ngb-date-parser-formatter';
 import { MultiSportService } from '../services';
-import { ModalDialogMessage, MultipleSelect, ItemsSelect, SportMatch } from '../../shared/models';
+import { ModalDialogMessage, MultipleSelect, ItemsSelect } from '../../shared/models';
 import { GenerateFilterService, MessageBoxService, VerifyDateService } from '../../shared/services';
 import {
     Sport,
@@ -12,7 +12,8 @@ import {
     LeagueFilterRequest,
     MatchWaitingRequest,
     SportFilterRequest,
-    League
+    League,
+    SportMatch
 } from '../models';
 import * as _ from 'lodash';
 import { Language } from '../../shared/language';

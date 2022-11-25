@@ -1,11 +1,10 @@
 ﻿import { Injectable } from '@angular/core';
 import * as _ from 'lodash';
-import { HttpRequestService, SportMatchService } from '../../shared/services';
-import { MatchWaitingRequest, MultiSport } from '../models';
-import { SportMatch, Match } from '../../shared/models';
+import { HttpRequestService } from '../../shared/services';
+import { MatchWaitingRequest, MultiSport, SportMatch, Match } from '../models';
 import { DetectChangesService } from './detect-changes.service';
 import { HandleActionsService } from './handle-actions.service';
-import { CalculationStatus } from '../../shared/constants';
+import { SportMatchService } from './sport-match.service';
 import { Permission } from '../../shared/models/sportsbook-sop/permission.model';
 @Injectable()
 export class RefreshMatchService {
@@ -58,7 +57,7 @@ export class RefreshMatchService {
             match.isHavingIntervalScore = newMatch.isHavingIntervalScore;
             match.remark = newMatch.remark;
             match.isExistMarkedTicketParlay = newMatch.isExistMarkedTicketParlay;
-            match.autoCalcSetting = newMatch.autoCalcSetting;
+            match.isAutoPayoutForMatch = newMatch.isAutoPayoutForMatch;
             match.suspenderHalfTime = newMatch.suspenderHalfTime;
             match.suspenderFullTime = newMatch.suspenderFullTime;
             match.mixParlay = newMatch.mixParlay;

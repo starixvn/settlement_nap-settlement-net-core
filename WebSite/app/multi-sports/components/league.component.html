@@ -64,8 +64,8 @@
                 <td class="confirm-score"></td>
                 <td class="remark-status"></td>
                 <td class="auto-setting">
-                  <div class="cursor-pointer" [ngClass]="getAutoSettingLeague(leagueMatch.autoCalcSetting)" (click)="changeAutoLeague(leagueMatch.autoCalcSetting, leagueMatch)"
-                  [matTooltip]="getTextTooltipMatch(leagueMatch.autoCalcSetting.isAutoPayoutForLeague)"></div>
+                  <div class="cursor-pointer" [ngClass]="getAutoSettingLeague(leagueMatch.isAutoPayoutForLeague)" (click)="changeAutoLeague(leagueMatch)"
+                  [matTooltip]="getTextTooltipMatch(leagueMatch.isAutoPayoutForLeague)"></div>
                 </td>
               </tr>
               <ng-template [ngIf]="!leagueMatch.collapse">
@@ -168,7 +168,7 @@
                       </div>
                     </td>
                     <td rowspan="2" class="auto-setting" [ngClass]="getBackgroundAutoSetting(match)">
-                      <div [ngClass]="getAutoSetting(match)" class="cursor-pointer" (click)="changeAutoSetting(match)" [matTooltip]="getTextTooltipMatch(match.autoCalcSetting.isAutoPayoutForMatch)"></div>
+                      <div [ngClass]="getAutoSetting(match)" class="cursor-pointer" (click)="changeAutoSetting(match)" [matTooltip]="getTextTooltipMatch(match.isAutoPayoutForMatch)"></div>
                     </td>
                   </tr>
                   <tr class="row-3" [ngClass]="undecidedColor(match.remark)">

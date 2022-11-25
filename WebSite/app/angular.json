@@ -1712,7 +1712,7 @@
       }
     }
   },
-  "defaultProject": "instant-setting",
+  "defaultProject": "multi-sports",
   "schematics": {
     "@schematics/angular:component": {
       "inlineTemplate": false,

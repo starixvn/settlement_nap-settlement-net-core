@@ -81,8 +81,11 @@ public class MultiSportMatchWaiting
     [Key("isHavingIntervalScore")]
     public bool IsHavingIntervalScore { get; set; }
 
-    [Key("autoCalcSetting")]
-    public AutoCalculationSetting AutoCalcSetting { get; set; }
+    [Key("isAutoPayoutForMatch")]
+    public bool IsAutoPayoutForMatch { get; set; }
+
+    [Key("isAutoPayoutForLeague")]
+    public bool IsAutoPayoutForLeague { get; set; }
 
     [Key("remark")]
     public Core.Models.RemarkSettingModel Remark { get; set; }
