@@ -1,5 +1,4 @@
-﻿using Fanex.Logging;
-using Settlement.Core.Models;
+﻿using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.EventManagement.Criteria;
 using Settlement.EventManagement.Models;
@@ -51,23 +50,16 @@ public class MultiSportServiceImp : IMultiSportService
     public async Task<List<SportModel>> GetSportBook(FilterMultiSportRequest request)
     {
         var data = await FetchMatchesAndResultDetails(request);
-        var log = new Logger();
-        var watch = System.Diagnostics.Stopwatch.StartNew();
         var matches = GetMoreScore(data);
-        watch.Stop();
 
-        var watchSort = System.Diagnostics.Stopwatch.StartNew();
         var matchesSorted = matchService.SortingMatches(matches);
-        watchSort.Stop();
 
-        var watchMap = System.Diagnostics.Stopwatch.StartNew();
+        var watch = System.Diagnostics.Stopwatch.StartNew();
         var multiSportMatches = mapper.Map<IList<Match>, IList<MultiSportMatch>>(matchesSorted);
-
-        watchMap.Stop();
+        watch.Stop();
+        Console.WriteLine($"Mapping: Match -> MultiSportMatch:\t{watch.ElapsedMilliseconds}\r\n");
 
         var sportBooks = GroupSport(multiSportMatches.ToList());
-        var total = watch.ElapsedMilliseconds + watchSort.ElapsedMilliseconds + watchMap.ElapsedMilliseconds;
-        await log.InfoAsync($"DevLog: Another Steps: Generate score {watch.ElapsedMilliseconds} + Sort {watchSort.ElapsedMilliseconds} + Map model {watchMap.ElapsedMilliseconds} = {total}");
         return sportBooks;
     }
 
@@ -231,13 +223,10 @@ public class MultiSportServiceImp : IMultiSportService
 
     private async Task<MultiSportResult> FetchMatchesAndResultDetails(FilterMultiSportRequest request)
     {
-        var log = new Logger();
-        var watch = System.Diagnostics.Stopwatch.StartNew();
         var matches = await MatchesAllSites(request);
         var resultDetails = await ResultDetailByMatchIds(matches);
         matches = matchService.SetNewMatchInfo(matches, resultDetails);
-        watch.Stop();
-        await log.InfoAsync($"DevLog: Get And Merge: {watch.ElapsedMilliseconds}");
+
         return new MultiSportResult
         {
             Matches = matches,
@@ -250,15 +239,16 @@ public class MultiSportServiceImp : IMultiSportService
         var matches = new List<Match>();
         var isCentralDataBase = true;
         var criteria = mapper.Map<FilterMultiSportRequest, SportsbookCriteria>(request);
-        var log = new Logger();
-        var times = new List<long>();
+        var mergerWatch = System.Diagnostics.Stopwatch.StartNew();
+
         foreach (var server in appSettingsKey.SiteDbServer)
         {
             criteria.DbServer = server;
-            var watchGet = System.Diagnostics.Stopwatch.StartNew();
+            var watch = System.Diagnostics.Stopwatch.StartNew();
             var data = (await repository.FetchAsync<Match>(criteria)).ToList();
-            watchGet.Stop();
-            times.Add(watchGet.ElapsedMilliseconds);
+            watch.Stop();
+            Console.WriteLine($"- {server} get match ({data.Count}):\t{watch.ElapsedMilliseconds}\r\n");
+
             if (isCentralDataBase)
             {
                 matches = data;
@@ -269,8 +259,8 @@ public class MultiSportServiceImp : IMultiSportService
                 matches = matchService.MergeMatches(matches, data);
             }
         }
-        await log.InfoAsync($"DevLog: DB00: {times[0]}, DB01: {times[1]}, DB02: {times[2]}, Total: {times.Sum()}, MatchCount: {matches.Count}");
-
+        mergerWatch.Stop();
+        Console.WriteLine($"- MergeMatches:\t{mergerWatch.ElapsedMilliseconds}\r\n");
         return matches;
     }
 
