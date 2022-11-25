@@ -1,4 +1,5 @@
-﻿using Settlement.Core.Models;
+﻿using MessagePack;
+using Settlement.Core.Models;
 
 namespace Settlement.EventManagement.Models.MultiSports;
 
@@ -8,24 +9,32 @@ public class Match : BaseMatch
 
     private const int DirectPayoutBit = 4;
 
+    [Key("isHavingIntervalScore")]
     public bool IsHavingIntervalScore { get; set; }
 
+    [Key("moreScores")]
     public Core.Models.MoreScores MoreScores { get; set; }
 
+    [Key("sportName")]
     public string SportName => RefDataService.GetSportName(SportType);
 
     #region Match Status
 
+    [Key("isRefund")]
     public bool IsRefund { get; set; }
 
+    [Key("isMultiCaled")]
     public bool IsMultiCaled { get; set; }
 
     #endregion Match Status
 
+    [IgnoreMember]
     public int AutoSettingForLeague { get; set; }
 
+    [Key("autoPayoutStatus")]
     public int AutoPayoutStatus { get; set; }
 
+    [Key("isAutoPayoutForLeague")]
     public bool IsAutoPayoutForLeague
     {
         get
@@ -46,6 +55,7 @@ public class Match : BaseMatch
         }
     }
 
+    [Key("isAutoPayoutForMatch")]
     public bool IsAutoPayoutForMatch
     {
         get
@@ -65,19 +75,25 @@ public class Match : BaseMatch
         }
     }
 
+    [IgnoreMember]
     public bool IsKeyScore => BetStatus.IsKeyScore(HalfTimeHomeScore, HalfTimeAwayScore, FinalHomeScore, FinalAwayScore);
 
+    [Key("mixParlay")]
     public MixParlay MixParlay => new MixParlay(
         IsCalculated, IsKeyScore,
         IsCalculatingSingle,
         IsCalculatingMP, BetStatus ?? string.Empty, Remark);
 
+    [Key("isExistsConfirmedEarly")]
     public bool IsExistsConfirmedEarly { get; set; }
 
+    [Key("bestOfMap")]
     public int BestOfMap { get; set; }
 
+    [IgnoreMember]
     public ResultDetail ExHTResult { get; set; }
 
+    [IgnoreMember]
     public ResultDetail ExFTResult { get; set; }
 
     public override bool Equals(object obj)

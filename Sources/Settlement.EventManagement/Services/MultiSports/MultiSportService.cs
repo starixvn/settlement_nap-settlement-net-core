@@ -1,4 +1,6 @@
-﻿using Settlement.Core.Models;
+﻿using Fanex.Caching;
+using Settlement.Core.Constants;
+using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.EventManagement.Criteria;
 using Settlement.EventManagement.Models;
@@ -55,11 +57,10 @@ public class MultiSportServiceImp : IMultiSportService
         var matchesSorted = matchService.SortingMatches(matches);
 
         var watch = System.Diagnostics.Stopwatch.StartNew();
-        var multiSportMatches = mapper.Map<IList<Match>, IList<MultiSportMatch>>(matchesSorted);
         watch.Stop();
         Console.WriteLine($"Mapping: Match -> MultiSportMatch:\t{watch.ElapsedMilliseconds}\r\n");
 
-        var sportBooks = GroupSport(multiSportMatches.ToList());
+        var sportBooks = GroupSport(matchesSorted);
         return sportBooks;
     }
 
@@ -167,7 +168,7 @@ public class MultiSportServiceImp : IMultiSportService
         return listMatch;
     }
 
-    private List<SportModel> GroupSport(List<MultiSportMatch> matches)
+    private List<SportModel> GroupSport(List<Match> matches)
     {
         var sportSorting = new List<int>
             {
@@ -190,7 +191,7 @@ public class MultiSportServiceImp : IMultiSportService
         return sportBook;
     }
 
-    private static List<LeagueModel> GroupLeague(IEnumerable<MultiSportMatch> matches)
+    private static List<LeagueModel> GroupLeague(IEnumerable<Match> matches)
     {
         var currentLeague = 0;
         var leagues = new List<LeagueModel>();
@@ -208,7 +209,7 @@ public class MultiSportServiceImp : IMultiSportService
                     Name = match.LeagueName,
                     LeagueId = match.LeagueId,
                     IsAutoPayoutForLeague = match.IsAutoPayoutForLeague,
-                    Matches = new List<MultiSportMatch>(),
+                    Matches = new List<Match>(),
                     SportType = match.SportType
                 };
 

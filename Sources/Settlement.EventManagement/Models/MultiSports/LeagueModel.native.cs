@@ -13,7 +13,7 @@ public class LeagueModel
     public bool IsAutoPayoutForLeague { get; set; }
 
     [Key("matches")]
-    public List<MultiSportMatch> Matches { get; set; }
+    public List<Match> Matches { get; set; }
 
     [Key("sportType")]
     public int SportType { get; set; }
