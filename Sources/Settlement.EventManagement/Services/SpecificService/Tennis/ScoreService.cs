@@ -1,53 +1,50 @@
-﻿using Settlement.Core.Constants;
-using Settlement.Core.Models;
+﻿using Settlement.Core.Models;
 
-namespace Settlement.EventManagement.Services.SpecificService.Tennis
+namespace Settlement.EventManagement.Services.SpecificService.Tennis;
+
+public interface IScoreService
 {
-    public interface IScoreService
+    bool IsRefundMatch(string totalSetHomeValue);
+
+    Score TotalGame(string totalSetHomeValue, Score totalScore);
+
+    Score ScoreSet(List<ResultDetail> resultDetails);
+}
+
+public class ScoreServiceImp : IScoreService
+{
+    public Score TotalGame(string totalSetHomeValue, Score totalScore)
     {
-        bool IsRefundMatch(string totalSetHomeValue);
-
-        Score TotalGame(string totalSetHomeValue, Score totalScore);
-
-        Score ScoreSet(ResultDetail resultDetail);
+        return IsRefundMatch(totalSetHomeValue) ? new Score(SetStatus.Refund, SetStatus.Refund) : totalScore;
     }
 
-    public class ScoreServiceImp : IScoreService
+    public bool IsRefundMatch(string totalSetHomeValue)
     {
-        public Score TotalGame(string totalSetHomeValue, Score totalScore)
-        {
-            return IsRefundMatch(totalSetHomeValue) ? new Score(SetStatus.Refund, SetStatus.Refund) : totalScore;
-        }
+        return !string.IsNullOrWhiteSpace(totalSetHomeValue) && totalSetHomeValue.Equals(SetStatus.Refund);
+    }
 
-        public bool IsRefundMatch(string totalSetHomeValue)
-        {
-            return !string.IsNullOrWhiteSpace(totalSetHomeValue) && totalSetHomeValue.Equals(SetStatus.Refund);
-        }
+    public Score ScoreSet(List<ResultDetail> resultDetails)
+    {
+        var resultHasScore = resultDetails.Where(m => !string.IsNullOrWhiteSpace(m.HomeValue)
+                                                      && !string.IsNullOrWhiteSpace(m.AwayValue)
+                                                      && m.ResultStatusId == ResultStatus.ManuallySettled).ToList();
 
-        public Score ScoreSet(ResultDetail resultDetail)
+        if (resultHasScore.Count > 0)
         {
-            var homeScore = 0;
-            var awayScore = 0;
-
-            if (HasScore(resultDetail.SettlementStatusId))
+            var home = resultHasScore.Sum(m =>
             {
-                if (int.TryParse(resultDetail.HomeValue, out var homeValue))
-                {
-                    homeScore += homeValue;
-                }
+                int.TryParse(m.HomeValue, out var homeValue);
+                return homeValue;
+            });
 
-                if (int.TryParse(resultDetail.AwayValue, out var awayValue))
-                {
-                    awayScore += awayValue;
-                }
-            }
-
-            return new Score(homeScore.ToString(), awayScore.ToString());
+            var away = resultHasScore.Sum(m =>
+            {
+                int.TryParse(m.AwayValue, out var awayValue);
+                return awayValue;
+            });
+            return new Score(home.ToString(), away.ToString());
         }
 
-        private static bool HasScore(byte? statusId)
-        {
-            return Equals(statusId, SettlementStatus.Completed) || Equals(statusId, SettlementStatus.Running);
-        }
+        return new Score("-");
     }
 }

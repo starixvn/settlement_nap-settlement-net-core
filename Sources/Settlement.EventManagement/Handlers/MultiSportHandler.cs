@@ -1,9 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using AutoMapper;
-using Fanex.NAP.Client.Helpers.Web;
-using MediatR;
+﻿using Fanex.NAP.Client.Helpers.Web;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.EventManagement.Models;
@@ -12,57 +7,56 @@ using Settlement.EventManagement.Requests;
 using Settlement.EventManagement.Services;
 using Settlement.EventManagement.Services.MultiSports;
 
-namespace Settlement.EventManagement.Handlers
-{
-    public class MultiSportHandler : IRequestHandler<FilterMultiSportRequest, MultiSportModel>,
+namespace Settlement.EventManagement.Handlers;
+
+public class MultiSportHandler : IRequestHandler<FilterMultiSportRequest, MultiSportModel>,
         IRequestHandler<LeagueRequest, List<LeagueTypeModel>>,
         IRequestHandler<SportRequest, List<Sport>>,
         IRequestHandler<RefreshMultiSportRequest, IList<MultiSportMatchWaiting>>,
         IRequestHandler<CalculateParlayRequest, Result>
+{
+    private readonly IMultiSportService multiSportService;
+    private readonly PermissionService permissionService;
+    private readonly INapSession currentSession;
+    private readonly IMapper mapper;
+    private readonly GetDataFilterService getDataFilterService;
+
+    public MultiSportHandler(
+        IMultiSportService multiSportService,
+        PermissionService permissionService,
+        IMapper mapper,
+        INapSession currentSession,
+        GetDataFilterService getDataFilterService)
     {
-        private readonly IMultiSportService multiSportService;
-        private readonly PermissionService permissionService;
-        private readonly INapSession currentSession;
-        private readonly IMapper mapper;
-        private readonly GetDataFilterService getDataFilterService;
+        this.multiSportService = multiSportService;
+        this.permissionService = permissionService;
+        this.mapper = mapper;
+        this.currentSession = currentSession;
+        this.getDataFilterService = getDataFilterService;
+    }
 
-        public MultiSportHandler(
-            IMultiSportService multiSportService,
-            PermissionService permissionService,
-            IMapper mapper,
-            INapSession currentSession,
-            GetDataFilterService getDataFilterService)
+    public async Task<MultiSportModel> Handle(FilterMultiSportRequest request, CancellationToken cancellationToken)
+    {
+        return new MultiSportModel
         {
-            this.multiSportService = multiSportService;
-            this.permissionService = permissionService;
-            this.mapper = mapper;
-            this.currentSession = currentSession;
-            this.getDataFilterService = getDataFilterService;
-        }
+            Sports = await multiSportService.GetSportBook(request),
+            Permission = permissionService.Permission
+        };
+    }
 
-        public async Task<MultiSportModel> Handle(FilterMultiSportRequest request, CancellationToken cancellationToken)
-        {
-            return new MultiSportModel
-            {
-                Sports = await multiSportService.GetSportBook(request),
-                Permission = permissionService.Permission
-            };
-        }
+    public async Task<List<LeagueTypeModel>> Handle(LeagueRequest request, CancellationToken cancellationToken) => await getDataFilterService.GetLeagues(request);
 
-        public async Task<List<LeagueTypeModel>> Handle(LeagueRequest request, CancellationToken cancellationToken) => await getDataFilterService.GetLeagues(request);
+    public async Task<List<Sport>> Handle(SportRequest request, CancellationToken cancellationToken) => await getDataFilterService.GetSports(request);
 
-        public async Task<List<Sport>> Handle(SportRequest request, CancellationToken cancellationToken) => await getDataFilterService.GetSports(request);
+    public async Task<IList<MultiSportMatchWaiting>> Handle(RefreshMultiSportRequest request, CancellationToken cancellationToken)
+    {
+        var list = await multiSportService.GetWaitingMatches(request);
+        return mapper.Map<IList<Models.MultiSports.Match>, IList<MultiSportMatchWaiting>>(list);
+    }
 
-        public async Task<IList<MultiSportMatchWaiting>> Handle(RefreshMultiSportRequest request, CancellationToken cancellationToken)
-        {
-            var list = await multiSportService.GetWaitingMatches(request);
-            return mapper.Map<IList<Models.MultiSports.Match>, IList<MultiSportMatchWaiting>>(list);
-        }
-
-        public async Task<Result> Handle(CalculateParlayRequest request, CancellationToken cancellationToken)
-        {
-            request.AdminId = currentSession.UserId;
-            return await multiSportService.Calculate(request);
-        }
+    public async Task<Result> Handle(CalculateParlayRequest request, CancellationToken cancellationToken)
+    {
+        request.AdminId = currentSession.UserId;
+        return await multiSportService.Calculate(request);
     }
 }

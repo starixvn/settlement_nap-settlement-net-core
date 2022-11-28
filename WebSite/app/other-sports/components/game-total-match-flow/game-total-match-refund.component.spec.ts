@@ -62,7 +62,6 @@ const unsuccessfulResult = {
           ToastrModule.forRoot()
         ],
         providers: [
-          ClosePopupService,
           GameTotalMatchService,
           GameTotalMatchVerificationService,
           BlockUIService,
@@ -87,7 +86,6 @@ const unsuccessfulResult = {
     verificationService = fixture.debugElement.injector.get(GameTotalMatchVerificationService);
     gameTotalMatchService = fixture.debugElement.injector.get(GameTotalMatchService);
     requestService = fixture.debugElement.injector.get(RequestService);
-    closePopupService = fixture.debugElement.injector.get(ClosePopupService);
     toastrService = fixture.debugElement.injector.get(ToastrService);
     spyOn(toastrService, 'clear');
     spyOn(toastrService, 'error');
@@ -110,7 +108,7 @@ const unsuccessfulResult = {
     spyOn(requestService, 'getMatch').and.returnValue(of(otherSportMatch));
     spyOn(gameTotalMatchService, 'getResultDetail').and.returnValue([]);
 
-    await component.getMatch(12345, 'local');
+    await component.getMatch(12345);
 
     expect(component.matchDetail.matchId).toEqual(12345);
   });
@@ -125,7 +123,6 @@ const unsuccessfulResult = {
       component.matchDetail = new MatchDetail();
       spyOn(requestService, 'checkMarkedTickets').and.returnValue(of(noMarkedTicket));
       spyOn(requestService, 'refund').and.returnValue(of(successfulResult));
-      spyOn(closePopupService, 'closePopup');
 
       component.refund();
       tick();
@@ -136,14 +133,14 @@ const unsuccessfulResult = {
       expect(toastrService.error).not.toHaveBeenCalled();
     }));
 
-    it('should raise error when exist marked ticket', async () => {
-      component.matchDetail = new MatchDetail();
-      spyOn(requestService, 'checkMarkedTickets').and.returnValue(of(markedTicket));
-
-      await component.refund();
-
-      expect(toastrService.error).toHaveBeenCalledWith("ERROR! Cannot proceed due to marked tickets. Please unmark them and try again.");
-    });
+    it('should raise error when exist marked ticket',fakeAsync( async () => {
+        component.matchDetail = new MatchDetail();
+        spyOn(requestService, 'checkMarkedTickets').and.returnValue(of(markedTicket));
+  
+        await component.refund();
+  
+        expect(toastrService.error).toHaveBeenCalledWith("ERROR! Cannot proceed due to marked tickets. Please unmark them and try again.");
+      }));
 
     it('should raise error when refund unsuccessfully', fakeAsync( async () => {
       component.resultDetails = [{
@@ -174,7 +171,6 @@ const unsuccessfulResult = {
       component.matchDetail = new MatchDetail();
       spyOn(requestService, 'checkMarkedTickets').and.returnValue(of(noMarkedTicket));
       spyOn(requestService, 'refundParlay').and.returnValue(of(successfulResult));
-      spyOn(closePopupService, 'closePopup');
 
       await component.refundParlay();
       tick();
@@ -185,14 +181,14 @@ const unsuccessfulResult = {
       expect(toastrService.error).not.toHaveBeenCalled();
     }));
 
-    it('should raise error when exist marked ticket', async () => {
-      component.matchDetail = new MatchDetail();
-      spyOn(requestService, 'checkMarkedTickets').and.returnValue(of(markedTicket));
-
-      await component.refundParlay();
-
-      expect(toastrService.error).toHaveBeenCalledWith("ERROR! Cannot proceed due to marked tickets. Please unmark them and try again.");
-    });
+    it('should raise error when exist marked ticket', fakeAsync(async () => {
+        component.matchDetail = new MatchDetail();
+        spyOn(requestService, 'checkMarkedTickets').and.returnValue(of(markedTicket));
+  
+        await component.refundParlay();
+  
+        expect(toastrService.error).toHaveBeenCalledWith("ERROR! Cannot proceed due to marked tickets. Please unmark them and try again.");
+      }));
 
     it('should raise error when refund unsuccessfully', fakeAsync( async () => {
       component.matchDetail = new MatchDetail();

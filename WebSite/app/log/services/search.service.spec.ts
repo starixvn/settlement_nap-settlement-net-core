@@ -36,11 +36,11 @@ describe('Log - SearchService', () => {
     it('filter - Call exact Url',
         fakeAsync(() => {
             // Arrange
-            const expectedUrl = '/api/log/filter';
+            const expectedUrl = 'api/log/filter';
 
             // Act
             spyOn(httpRequestService, 'getJson');
-            service.filter("");
+            service.filter();
             tick();
 
             // Assert
@@ -50,8 +50,8 @@ describe('Log - SearchService', () => {
     it('search - Call exact Url and param',
     fakeAsync(() => {
         // Arrange
-        const expectedUrl = '/api/log/getLog';
-        const param = new LogQuery('700000', '', '2020-01-01', '2020-01-02', "");
+        const expectedUrl = 'api/log/getLog';
+        const param = new LogQuery('700000', '', '2020-01-01', '2020-01-02');
 
         // Act
         spyOn(httpRequestService, 'postJson');

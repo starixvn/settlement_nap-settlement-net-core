@@ -1,17 +1,15 @@
-﻿using System.Collections.Generic;
-using Settlement.Core.Models;
+﻿using Settlement.Core.Models;
 
-namespace Settlement.EventManagement.Models.MultiSports
+namespace Settlement.EventManagement.Models.MultiSports;
+
+public class MultiSportResult
 {
-    public class MultiSportResult
+    public MultiSportResult()
     {
-        public MultiSportResult()
-        {
-            Matches = new List<Match>();
-        }
-
-        public List<Match> Matches { get; set; }
-
-        public List<ResultDetail> ResultDetails { get; set; }
+        Matches = new List<Match>();
     }
+
+    public List<Match> Matches { get; set; }
+
+    public List<ResultDetail> ResultDetails { get; set; }
 }

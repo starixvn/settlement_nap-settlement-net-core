@@ -7,214 +7,210 @@ using Settlement.Core.Services;
 using Settlement.Sportsbook.MoveTickets.Criteria;
 using Settlement.Sportsbook.MoveTickets.Models;
 using Settlement.Sportsbook.MoveTickets.Requests;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace Settlement.Sportsbook.MoveTickets.Services
+namespace Settlement.Sportsbook.MoveTickets.Services;
+
+public interface IMoveTicketService
 {
-    public interface IMoveTicketService
+    Task<List<SportModel>> GetSportBook(GetMatchRequest request);
+
+    Task<List<ChildMatch>> GetChildMatch(GetChildMatchRequest request);
+
+    Task<List<MoveTicketsMatchDetail>> GetMoveTicketsMatches(GetMoveTicketsMatchesRequest request);
+}
+
+public class MoveTicketServiceImp : IMoveTicketService
+{
+    private readonly IDynamicRepository repository;
+    private readonly IRefDataService refDataService;
+    private readonly IMapper mapper;
+    private readonly IMatchService matchService;
+    private readonly AppSettingsKey appSettingsKey;
+
+    public MoveTicketServiceImp(
+        IDynamicRepository repository,
+        IRefDataService refDataService,
+        IMapper mapper,
+        IMatchService matchService,
+        IOptions<AppSettingsKey> appSettingsKey)
     {
-        Task<List<SportModel>> GetSportBook(GetMatchRequest request);
-
-        Task<List<ChildMatch>> GetChildMatch(GetChildMatchRequest request);
-
-        Task<List<MoveTicketsMatchDetail>> GetMoveTicketsMatches(GetMoveTicketsMatchesRequest request);
+        this.repository = repository;
+        this.refDataService = refDataService;
+        this.mapper = mapper;
+        this.matchService = matchService;
+        this.appSettingsKey = appSettingsKey.Value;
     }
 
-    public class MoveTicketServiceImp : IMoveTicketService
+    public async Task<List<SportModel>> GetSportBook(GetMatchRequest request)
     {
-        private readonly IDynamicRepository repository;
-        private readonly IRefDataService refDataService;
-        private readonly IMapper mapper;
-        private readonly IMatchService matchService;
-        private readonly AppSettingsKey appSettingsKey;
+        var criteria = mapper.Map<GetMatchRequest, SportsbookCriteria>(request);
+        var data = await FetchMatchesAndResultDetails(criteria);
+        var matchesByEachSport = GetMoreScore(data);
 
-        public MoveTicketServiceImp(
-            IDynamicRepository repository,
-            IRefDataService refDataService,
-            IMapper mapper,
-            IMatchService matchService,
-            IOptions<AppSettingsKey> appSettingsKey)
+        var matches = new List<Match>();
+        matchesByEachSport.ForEach(sport => sport.Matches.ForEach(match =>
         {
-            this.repository = repository;
-            this.refDataService = refDataService;
-            this.mapper = mapper;
-            this.matchService = matchService;
-            this.appSettingsKey = appSettingsKey.Value;
+            match.RefDataService = refDataService;
+            matches.Add(match);
+        }));
+
+        GetReferenceAction(matches);
+
+        var sportBooks = matches.GroupBy(match => new { match.SportName, match.SportType })
+                                .Select(sports => new SportModel
+                                {
+                                    Id = sports.Key.SportType,
+                                    Name = sports.Key.SportName,
+                                    Leagues = GroupLeague(sports)
+                                }).ToList();
+
+        return sportBooks;
+    }
+
+    private void GetReferenceAction(List<Match> data)
+    {
+        var listMatchId = data.Select(match => match.MatchId).ToList();
+        var matchIds = string.Join(',', listMatchId);
+        var criteria = new GetReferenceActionCriteria
+        {
+            MatchIds = matchIds
+        };
+
+        var referenceActions = repository.Fetch<ReferenceAction>(criteria);
+
+        foreach (var match in data)
+        {
+            var referenceActionByMatchId = referenceActions.Where(item => item.MatchId == match.MatchId).ToList();
+            match.ReferenceActions = referenceActionByMatchId;
+        }
+    }
+
+    private List<MatchesBySportTypeModel> GetMoreScore(MultiSportResult data)
+    {
+        var matchesByEachSport = data.Matches.GroupBy(match => match.SportType)
+                                            .Select(sports => new MatchesBySportTypeModel { SportType = sports.Key, Matches = sports.ToList() })
+                                            .ToList();
+        foreach (var item in matchesByEachSport)
+        {
+            item.Matches = matchService.GetScoreForMatchBySportType(item.Matches, data.ResultDetails, item.SportType, 0);
         }
 
-        public async Task<List<SportModel>> GetSportBook(GetMatchRequest request)
+        return matchesByEachSport;
+    }
+
+    private static List<LeagueModel> GroupLeague(IEnumerable<Match> sports)
+    {
+        return sports.GroupBy(sport => new
         {
-            var criteria = mapper.Map<GetMatchRequest, SportsbookCriteria>(request);
-            var data = await FetchMatchesAndResultDetails(criteria);
-            var matchesByEachSport = GetMoreScore(data);
-
-            var matches = new List<Match>();
-            matchesByEachSport.ForEach(sport => sport.Matches.ForEach(match =>
-            {
-                match.RefDataService = refDataService;
-                matches.Add(match);
-            }));
-
-            GetReferenceAction(matches);
-
-            var sportBooks = matches.GroupBy(match => new { match.SportName, match.SportType })
-                                    .Select(sports => new SportModel
-                                    {
-                                        Id = sports.Key.SportType,
-                                        Name = sports.Key.SportName,
-                                        Leagues = GroupLeague(sports)
-                                    }).ToList();
-
-            return sportBooks;
-        }
-
-        private void GetReferenceAction(List<Match> data)
+            sport.LeagueName,
+            sport.LeagueId
+        })
+        .OrderBy(league => league.Key.LeagueName)
+        .Select(league => new LeagueModel
         {
-            var listMatchId = data.Select(match => match.MatchId).ToList();
-            var matchIds = string.Join(',', listMatchId);
-            var criteria = new GetReferenceActionCriteria
+            Name = league.Key.LeagueName,
+            LeagueId = league.Key.LeagueId,
+            Matches = SortMatch(league)
+        }).ToList();
+    }
+
+    private static List<Match> SortMatch(IEnumerable<Match> leagues)
+    {
+        var eventStatuses = new List<string>
             {
-                MatchIds = matchIds
+                "running",
+                "result pending",
+                "postponed",
+                "internal",
+                "closed",
+                "completed",
+                "refund ht",
+                "refund ft",
+                "refund"
             };
 
-            var referenceActions = repository.Fetch<ReferenceAction>(criteria);
+        return leagues.OrderBy(PositionByEventStatus)
+                      .ThenBy(match => eventStatuses.IndexOf(match.NewEventStatus.ToLowerInvariant()))
+                      .ThenBy(match => match.KickOffTime)
+                      .ThenBy(match => match.MatchId)
+                      .ToList();
+    }
 
-            foreach (var match in data)
+    private static int PositionByEventStatus(Match match)
+    {
+        const int firstPosition = 1;
+        const int secondPosition = 2;
+        return IsSettleAndHasRunningTicket(match) ? firstPosition : secondPosition;
+    }
+
+    private static bool IsSettleAndHasRunningTicket(Match match)
+    {
+        var isCalc = match.NewEventStatus.Equals(EventStatus.Refund, StringComparison.OrdinalIgnoreCase) || match.NewEventStatus.Equals(EventStatus.Completed, StringComparison.OrdinalIgnoreCase);
+
+        return isCalc && (match.IsExistMarkedTicket || match.IsExistRunningTicket || match.IsExistMarkedTicketParlay);
+    }
+
+    private async Task<MultiSportResult> FetchMatchesAndResultDetails(SportsbookCriteria criteria)
+    {
+        var matches = await MatchesAllSites(criteria);
+        var resultDetails = await ResultDetailByMatchIds(matches);
+        matchService.SetNewMatchInfo(matches);
+        return new MultiSportResult
+        {
+            Matches = matches,
+            ResultDetails = resultDetails
+        };
+    }
+
+    private async Task<List<Match>> MatchesAllSites(SportsbookCriteria criteria)
+    {
+        var matches = new List<Match>();
+        var isCentralDataBase = true;
+        foreach (var server in appSettingsKey.SiteDbServer)
+        {
+            criteria.DbServer = server;
+            var data = (await repository.FetchAsync<Match>(criteria)).ToList();
+
+            if (isCentralDataBase)
             {
-                var referenceActionByMatchId = referenceActions.Where(item => item.MatchId == match.MatchId).ToList();
-                match.ReferenceActions = referenceActionByMatchId;
+                matches = data;
+                isCentralDataBase = false;
+            }
+            else
+            {
+                matchService.MergeMatches(matches, data);
             }
         }
 
-        private List<MatchesBySportTypeModel> GetMoreScore(MultiSportResult data)
-        {
-            var matchesByEachSport = data.Matches.GroupBy(match => match.SportType)
-                                                .Select(sports => new MatchesBySportTypeModel { SportType = sports.Key, Matches = sports.ToList() })
-                                                .ToList();
-            foreach (var item in matchesByEachSport)
-            {
-                item.Matches = matchService.GetScoreForMatchBySportType(item.Matches, data.ResultDetails, item.SportType, 0);
-            }
+        return matches;
+    }
 
-            return matchesByEachSport;
+    private async Task<List<ResultDetail>> ResultDetailByMatchIds(List<Match> matches)
+    {
+        var listMatchId = string.Join(",", matches.Select(match => match.MatchId.ToString()).ToArray());
+        var resultDetailCriteria = new GetResultDetailCriteria { MatchIdList = listMatchId };
+        return (await repository.FetchAsync<ResultDetail>(resultDetailCriteria)).ToList();
+    }
+
+    public async Task<List<ChildMatch>> GetChildMatch(GetChildMatchRequest request)
+    {
+        var criteria = mapper.Map<GetChildMatchRequest, GetChildMatchCriteria>(request);
+
+        var listMatch = await repository.FetchAsync<ChildMatch>(criteria);
+
+        return listMatch.ToList();
+    }
+
+    public async Task<List<MoveTicketsMatchDetail>> GetMoveTicketsMatches(GetMoveTicketsMatchesRequest request)
+    {
+        var criteria = mapper.Map<GetMoveTicketsMatchesRequest, GetMoveTicketsMatchesCriteria>(request);
+
+        var matches = await repository.FetchAsync<MoveTicketsMatchDetail>(criteria);
+        foreach (var match in matches)
+        {
+            match.RefDataService = refDataService;
         }
 
-        private static List<LeagueModel> GroupLeague(IEnumerable<Match> sports)
-        {
-            return sports.GroupBy(sport => new
-            {
-                sport.LeagueName,
-                sport.LeagueId
-            })
-            .OrderBy(league => league.Key.LeagueName)
-            .Select(league => new LeagueModel
-            {
-                Name = league.Key.LeagueName,
-                LeagueId = league.Key.LeagueId,
-                Matches = SortMatch(league)
-            }).ToList();
-        }
-
-        private static List<Match> SortMatch(IEnumerable<Match> leagues)
-        {
-            var eventStatuses = new List<string>
-            {
-                "Running",
-                "Result Pending",
-                "Postponed",
-                "Internal",
-                "Closed",
-                "Completed",
-                "Refund HT",
-                "Refund FT",
-                "Refund"
-            };
-            return leagues.OrderBy(PositionByEventStatus)
-                          .ThenBy(match => eventStatuses.IndexOf(match.NewEventStatus))
-                          .ThenBy(match => match.KickOffTime)
-                          .ThenBy(match => match.MatchId)
-                          .ToList();
-        }
-
-        private static int PositionByEventStatus(Match match)
-        {
-            const int firstPosition = 1;
-            const int secondPosition = 2;
-            return IsSettleAndHasRunningTicket(match) ? firstPosition : secondPosition;
-        }
-
-        private static bool IsSettleAndHasRunningTicket(Match match)
-        {
-            var isCalc = match.NewEventStatus.Equals(EventStatus.Refund, StringComparison.OrdinalIgnoreCase) || match.NewEventStatus.Equals(EventStatus.Completed, StringComparison.OrdinalIgnoreCase);
-
-            return isCalc && (match.IsExistMarkedTicket || match.IsExistRunningTicket || match.IsExistMarkedTicketParlay);
-        }
-
-        private async Task<MultiSportResult> FetchMatchesAndResultDetails(SportsbookCriteria criteria)
-        {
-            var matches = await MatchesAllSites(criteria);
-            var resultDetails = await ResultDetailByMatchIds(matches);
-            matchService.SetNewMatchInfo(matches);
-            return new MultiSportResult
-            {
-                Matches = matches,
-                ResultDetails = resultDetails
-            };
-        }
-
-        private async Task<List<Match>> MatchesAllSites(SportsbookCriteria criteria)
-        {
-            var matches = new List<Match>();
-            var isCentralDataBase = true;
-            foreach (var server in appSettingsKey.SiteDbServer)
-            {
-                criteria.DbServer = server;
-                var data = (await repository.FetchAsync<Match>(criteria)).ToList();
-
-                if (isCentralDataBase)
-                {
-                    matches = data;
-                    isCentralDataBase = false;
-                }
-                else
-                {
-                    matchService.MergeMatches(matches, data);
-                }
-            }
-
-            return matches;
-        }
-
-        private async Task<List<ResultDetail>> ResultDetailByMatchIds(List<Match> matches)
-        {
-            var listMatchId = string.Join(",", matches.Select(match => match.MatchId.ToString()).ToArray());
-            var resultDetailCriteria = new GetResultDetailCriteria { MatchIdList = listMatchId };
-            return (await repository.FetchAsync<ResultDetail>(resultDetailCriteria)).ToList();
-        }
-
-        public async Task<List<ChildMatch>> GetChildMatch(GetChildMatchRequest request)
-        {
-            var criteria = mapper.Map<GetChildMatchRequest, GetChildMatchCriteria>(request);
-
-            var listMatch = await repository.FetchAsync<ChildMatch>(criteria);
-
-            return listMatch.ToList();
-        }
-
-        public async Task<List<MoveTicketsMatchDetail>> GetMoveTicketsMatches(GetMoveTicketsMatchesRequest request)
-        {
-            var criteria = mapper.Map<GetMoveTicketsMatchesRequest, GetMoveTicketsMatchesCriteria>(request);
-
-            var matches = await repository.FetchAsync<MoveTicketsMatchDetail>(criteria);
-            foreach (var match in matches)
-            {
-                match.RefDataService = refDataService;
-            }
-
-            return matches.ToList();
-        }
+        return matches.ToList();
     }
 }

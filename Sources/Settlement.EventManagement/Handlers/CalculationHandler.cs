@@ -1,60 +1,59 @@
-﻿using MediatR;
-using Settlement.Core.Services;
+﻿using Settlement.Core.Services;
 using Settlement.EventManagement.Models;
 using Settlement.EventManagement.Models.Calculation;
 using Settlement.EventManagement.Requests;
 using Settlement.EventManagement.Services.Calculation;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using Match = Settlement.EventManagement.Models.Calculation.Match;
 
-namespace Settlement.EventManagement.Handlers
-{
-    public class CalculationHandler :
+namespace Settlement.EventManagement.Handlers;
+
+public class CalculationHandler :
         IRequestHandler<FilterCalculationRequest, CalculationLeagues>,
         IRequestHandler<LeagueCalculationRequest, List<LeagueTypeModel>>,
         IRequestHandler<RefreshCalculationRequest, List<Match>>,
-        IRequestHandler<FilterAutoCalculationRequest, CalculationLeagues>
+        IRequestHandler<FilterAutoCalculationRequest, CalculationLeagues>,
+        IRequestHandler<RefreshAutoCalculationRequest, List<Match>>
+{
+    private readonly LeagueService leagueService;
+
+    private readonly MatchService matchService;
+
+    private readonly PermissionService permissionService;
+
+    public CalculationHandler(PermissionService permissionService,
+        LeagueService leagueService,
+        MatchService matchService)
     {
-        private readonly LeagueService leagueService;
+        this.permissionService = permissionService;
+        this.leagueService = leagueService;
+        this.matchService = matchService;
+    }
 
-        private readonly MatchService matchService;
+    public async Task<CalculationLeagues> Handle(FilterCalculationRequest request, CancellationToken cancellationToken)
+    {
+        var matches = await matchService.GetMatches(request);
 
-        private readonly PermissionService permissionService;
-
-        public CalculationHandler(PermissionService permissionService,
-            LeagueService leagueService,
-            MatchService matchService)
+        return new CalculationLeagues
         {
-            this.permissionService = permissionService;
-            this.leagueService = leagueService;
-            this.matchService = matchService;
-        }
+            Leagues = leagueService.Leagues(matches),
+            Permission = permissionService.Permission
+        };
+    }
 
-        public async Task<CalculationLeagues> Handle(FilterCalculationRequest request, CancellationToken cancellationToken)
+    public async Task<List<LeagueTypeModel>> Handle(LeagueCalculationRequest request, CancellationToken cancellationToken) => await leagueService.Leagues(request);
+
+    public async Task<List<Match>> Handle(RefreshCalculationRequest request, CancellationToken cancellationToken) => await matchService.GetWaitingMatches(request);
+
+    public async Task<List<Match>> Handle(RefreshAutoCalculationRequest request,
+        CancellationToken cancellationToken) => await matchService.GetWaitingAutoMatches(request);
+
+    public async Task<CalculationLeagues> Handle(FilterAutoCalculationRequest request, CancellationToken cancellationToken)
+    {
+        var matches = await matchService.GetMatchesAutoCalculate(request);
+        return new CalculationLeagues
         {
-            var matches = await matchService.GetMatches(request);
-
-            return new CalculationLeagues
-            {
-                Leagues = leagueService.Leagues(matches),
-                Permission = permissionService.Permission
-            };
-        }
-
-        public async Task<List<LeagueTypeModel>> Handle(LeagueCalculationRequest request, CancellationToken cancellationToken) => await leagueService.Leagues(request);
-
-        public async Task<List<Match>> Handle(RefreshCalculationRequest request, CancellationToken cancellationToken) => await matchService.GetWaitingMatches(request);
-
-        public async Task<CalculationLeagues> Handle(FilterAutoCalculationRequest request, CancellationToken cancellationToken)
-        {
-            var matches = await matchService.GetMatchesAutoCalculate(request);
-            return new CalculationLeagues
-            {
-                Leagues = leagueService.Leagues(matches),
-                Permission = permissionService.Permission
-            };
-        }
+            Leagues = leagueService.Leagues(matches),
+            Permission = permissionService.Permission
+        };
     }
 }

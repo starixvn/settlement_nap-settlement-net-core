@@ -7,7 +7,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
 import { RequestService } from '../../services/request.service';
-import { BlockUIService, ClosePopupService, HttpRequestService, MessageBoxService } from '../../../shared/services';
+import { BlockUIService, HttpRequestService, MessageBoxService } from '../../../shared/services';
 import { HalfTimeFullTimeService } from './halftime-fulltime.service';
 import { VerificationService } from './verification.service';
 import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
@@ -27,7 +27,6 @@ describe('HalfTimeFullTimeCalculationComponent', () => {
   let verificationService: VerificationService;
   let toastrService: ToastrService;
   let messageBoxService: MessageBoxService;
-  let closePopupService: ClosePopupService;
 
   const matchDetail = new MatchDetail();
   const halfTime = new ResultDetail();
@@ -80,7 +79,6 @@ describe('HalfTimeFullTimeCalculationComponent', () => {
       ],
       providers: [
         RequestService,
-        ClosePopupService,
         BlockUIService,
         HttpRequestService,
         HalfTimeFullTimeService,
@@ -105,7 +103,6 @@ describe('HalfTimeFullTimeCalculationComponent', () => {
     verificationService = fixture.debugElement.injector.get(VerificationService);
     toastrService = fixture.debugElement.injector.get(ToastrService);
     messageBoxService = fixture.debugElement.injector.get(MessageBoxService);
-    closePopupService = fixture.debugElement.injector.get(ClosePopupService);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -127,7 +124,7 @@ describe('HalfTimeFullTimeCalculationComponent', () => {
     spyOn(halfTimeFullTimeService, 'halfTimeConfirmed');
     const query = new QueryMatch(1, false);
 
-    component.getMatch(1, "");
+    component.getMatch(1);
     tick();
 
     expect(requestService.getMatch).toHaveBeenCalledWith(query);
@@ -540,7 +537,7 @@ describe('HalfTimeFullTimeCalculationComponent', () => {
       spyOn(verificationService, 'isConsistent').and.returnValue(false);
       spyOn(verificationService, 'VerifyChangedSettledTickets').and.returnValue(of(false));
       spyOn(requestService, 'calculate').and.returnValue(of(successfulResult));
-      spyOn(closePopupService, 'closePopup');
+      spyOn(messageBoxService, 'closePopup');
 
       component.calculateHalfTime();
       tick();
@@ -552,7 +549,7 @@ describe('HalfTimeFullTimeCalculationComponent', () => {
       tick();
 
       expect(requestService.calculate).toHaveBeenCalled();
-      expect(closePopupService.closePopup).toHaveBeenCalled();
+      expect(messageBoxService.closePopup).toHaveBeenCalled();
     }));
 
     it('should show error when calculate fail', fakeAsync(() => {
@@ -633,7 +630,7 @@ describe('HalfTimeFullTimeCalculationComponent', () => {
   it('unCalculate - should call api calculate after pass 2 confirm box', fakeAsync(() => {
     component.matchDetail = matchDetail;
     spyOn(requestService, 'calculate').and.returnValue(of(successfulResult));
-    spyOn(closePopupService, 'closePopup');
+    spyOn(messageBoxService, 'closePopup');
 
     component.unCalculate();
     tick();
@@ -645,7 +642,7 @@ describe('HalfTimeFullTimeCalculationComponent', () => {
     tick();
 
     expect(requestService.calculate).toHaveBeenCalled();
-    expect(closePopupService.closePopup).toHaveBeenCalled();
+    expect(messageBoxService.closePopup).toHaveBeenCalled();
   }));
 
    describe('getConfirmedBackground', () => {

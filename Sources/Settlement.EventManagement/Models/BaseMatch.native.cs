@@ -2,19 +2,20 @@
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 
-namespace Settlement.EventManagement.Models
+namespace Settlement.EventManagement.Models;
+
+[MessagePackObject]
+public class BaseMatch
 {
-    public class BaseMatch
-    {
-        private string eventStatus = string.Empty;
+    private string eventStatus = string.Empty;
 
-        private const string Dash = "-";
+    private const string Dash = "-";
 
-        private string suspenderHalfTime = string.Empty;
+    private string suspenderHalfTime = string.Empty;
 
-        private string suspenderFullTime = string.Empty;
+    private string suspenderFullTime = string.Empty;
 
-        private readonly List<int> mergedParlaySports = new List<int>
+    private readonly List<int> mergedParlaySports = new List<int>
         {
             Core.Constants.SportType.Badminton,
             Core.Constants.SportType.BasketBall,
@@ -25,129 +26,187 @@ namespace Settlement.EventManagement.Models
             Core.Constants.SportType.VolleyBall
         };
 
-        [JsonIgnore]
-        public IRefDataService RefDataService { get; set; }
+    [JsonIgnore, IgnoreMember]
+    public IRefDataService RefDataService { get; set; }
 
-        public int MatchId { get; set; }
+    [Key("matchId")]
+    public int MatchId { get; set; }
 
-        public int LeagueId { get; set; }
+    [Key("leagueId")]
+    public int LeagueId { get; set; }
 
-        public string LeagueName => RefDataService.GetLeagueName(LeagueId);
+    [Key("leagueName")]
+    public string LeagueName => RefDataService.GetLeagueName(LeagueId);
 
-        [JsonIgnore]
-        public int HomeId { get; set; }
+    [JsonIgnore, IgnoreMember]
+    public int HomeId { get; set; }
 
-        public string HomeName => RefDataService.GetTeamName(HomeId) + (IsNeutral ? " (N)" : string.Empty);
+    [Key("homeName")]
+    public string HomeName => RefDataService.GetTeamName(HomeId) + (IsNeutral ? " (N)" : string.Empty);
 
-        [JsonIgnore]
-        public int AwayId { get; set; }
+    [JsonIgnore, IgnoreMember]
+    public int AwayId { get; set; }
 
-        public string AwayName => RefDataService.GetTeamName(AwayId);
+    [Key("awayName")]
+    public string AwayName => RefDataService.GetTeamName(AwayId);
 
-        public string MatchCode { get; set; }
+    [Key("matchCode")]
+    public string MatchCode { get; set; }
 
-        public DateTime KickOffTime { get; set; }
+    [IgnoreMember]
+    public DateTime KickOffTime { get; set; }
 
-        [JsonIgnore]
-        public DateTime EventDate { get; set; }
+    [Key("kickOffTime")]
+    public string KickOff => KickOffTime.ToString();
 
-        [JsonIgnore]
-        public bool IsNeutral { get; set; }
+    [JsonIgnore, IgnoreMember]
+    public DateTime EventDate { get; set; }
 
-        public int? HalfTimeHomeScore { get; set; }
+    [JsonIgnore, IgnoreMember]
+    public bool IsNeutral { get; set; }
 
-        public int? HalfTimeAwayScore { get; set; }
+    [Key("halfTimeHomeScore")]
+    public int? HalfTimeHomeScore { get; set; }
 
-        public int? FinalHomeScore { get; set; }
+    [Key("halfTimeAwayScore")]
+    public int? HalfTimeAwayScore { get; set; }
 
-        public int? FinalAwayScore { get; set; }
+    [Key("finalHomeScore")]
+    public int? FinalHomeScore { get; set; }
 
-        public bool IsExistRunningTicketParlay { get; set; }
+    [Key("finalAwayScore")]
+    public int? FinalAwayScore { get; set; }
 
-        public bool IsExistMarkedTicketParlay { get; set; }
+    [Key("isExistRunningTicketParlay")]
+    public bool IsExistRunningTicketParlay { get; set; }
 
-        public bool IsExistEarlyBetTypes { get; set; }
+    [Key("isExistMarkedTicketParlay")]
+    public bool IsExistMarkedTicketParlay { get; set; }
 
-        public bool IsRunningEarlyBetTypes { get; set; }
+    [IgnoreMember]
+    public bool IsExistEarlyBetTypes { get; set; }
 
-        public bool IsWaitingEarlyBetTypes { get; set; }
+    [IgnoreMember]
+    public bool IsRunningEarlyBetTypes { get; set; }
 
-        public int? IsCalculatingSingle { get; set; }
+    [IgnoreMember]
+    public bool IsWaitingEarlyBetTypes { get; set; }
 
-        public bool IsOpenOdds { get; set; }
+    [Key("isCalculatingSingle")]
+    public int? IsCalculatingSingle { get; set; }
 
-        public bool IsExistRunningTicket { get; set; }
+    [IgnoreMember]
+    public bool IsOpenOdds { get; set; }
 
-        public int? IsCalculatingMP { get; set; }
+    [Key("isExistRunningTicket")]
+    public bool IsExistRunningTicket { get; set; }
 
-        public bool IsCalculated { get; set; }
+    [Key("isCalculatingMP")]
+    public int? IsCalculatingMP { get; set; }
 
-        public bool IsHalfTimeCal { get; set; }
+    [Key("isCalculated")]
+    public bool IsCalculated { get; set; }
 
-        public bool IsCalRefund { get; set; }
+    [Key("isHalfTimeCal")]
+    public bool IsHalfTimeCal { get; set; }
 
-        public int EventStatusReason { get; set; }
+    [Key("isCalRefund")]
+    public bool IsCalRefund { get; set; }
 
-        public string EventStatus
+    [IgnoreMember]
+    public int EventStatusReason { get; set; }
+
+    [Key("eventStatus")]
+    public string EventStatus
+    {
+        get => eventStatus.MapToString(BetStatus, Remark.IsPending);
+
+        set
         {
-            get => eventStatus.MapToString(BetStatus, Remark.IsPending);
-
-            set
+            if (OriginalEventStatus == null)
             {
-                eventStatus = value;
+                OriginalEventStatus = value;
             }
+            eventStatus = value;
         }
-
-        public string BetStatus { get; set; }
-
-        public RemarkSettingModel Remark => new RemarkSettingModel(SettlementStatus);
-
-        public byte SettlementStatus { get; set; }
-
-        public int SportType { get; set; }
-
-        public string NewEventStatus { get; set; }
-
-        public int AutoSetting { get; set; }
-
-        public string EarlySettleStatus { get; set; }
-
-        public string EventStatusColor { get; set; }
-
-        public bool IsNotConsistentExHtScore { get; set; }
-
-        public bool IsNotConsistentExFtScore { get; set; }
-
-        public string SuspenderHalfTime
-        {
-            get => string.IsNullOrEmpty(suspenderHalfTime) ? Dash : suspenderHalfTime;
-
-            set => suspenderHalfTime = value;
-        }
-
-        public string SuspenderFullTime
-        {
-            get => string.IsNullOrEmpty(suspenderFullTime) ? Dash : suspenderFullTime;
-
-            set => suspenderFullTime = value;
-        }
-
-        public string ConfirmHalfTimeScore { get; set; }
-
-        public string ConfirmFullTimeScore { get; set; }
-
-        public bool IsExistMarkedTicket { get; set; }
-
-        public bool IsExistEarlyBettypesParlay { get; set; }
-
-        public bool IsRunningEarlyBettypesParlay { get; set; }
-
-        public bool IsWaitingEarlyBettypesParlay { get; set; }
-
-        public bool IsMergedParlay => mergedParlaySports.Contains(SportType);
-
-        public int ChildMatchType { get; set; }
-
-        public List<SiteMatch> SiteMatch { get; set; } = new List<SiteMatch>();
     }
+
+    [IgnoreMember]
+    public string OriginalEventStatus { get; set; }
+
+    [Key("betStatus")]
+    public string BetStatus { get; set; }
+
+    [Key("remark")]
+    public RemarkSettingModel Remark => new RemarkSettingModel(SettlementStatus);
+
+    [IgnoreMember]
+    public byte SettlementStatus { get; set; }
+
+    [Key("sportType")]
+    public int SportType { get; set; }
+
+    [Key("newEventStatus")]
+    public string NewEventStatus { get; set; }
+
+    [IgnoreMember]
+    public int AutoSetting { get; set; }
+
+    [Key("earlySettleStatus")]
+    public string EarlySettleStatus { get; set; }
+
+    [Key("eventStatusColor")]
+    public string EventStatusColor { get; set; }
+
+    [Key("isNotConsistentExHtScore")]
+    public bool IsNotConsistentExHtScore { get; set; }
+
+    [Key("isNotConsistentExFtScore")]
+    public bool IsNotConsistentExFtScore { get; set; }
+
+    [Key("suspenderHalfTime")]
+    public string SuspenderHalfTime
+    {
+        get => string.IsNullOrEmpty(suspenderHalfTime) ? Dash : suspenderHalfTime;
+
+        set => suspenderHalfTime = value;
+    }
+
+    [Key("suspenderFullTime")]
+    public string SuspenderFullTime
+    {
+        get => string.IsNullOrEmpty(suspenderFullTime) ? Dash : suspenderFullTime;
+
+        set => suspenderFullTime = value;
+    }
+
+    [Key("confirmHalfTimeScore")]
+    public string ConfirmHalfTimeScore { get; set; }
+
+    [Key("confirmFullTimeScore")]
+    public string ConfirmFullTimeScore { get; set; }
+
+    [Key("isExistMarkedTicket")]
+    public bool IsExistMarkedTicket { get; set; }
+
+    [IgnoreMember]
+    public bool IsExistEarlyBettypesParlay { get; set; }
+
+    [IgnoreMember]
+    public bool IsRunningEarlyBettypesParlay { get; set; }
+
+    [IgnoreMember]
+    public bool IsWaitingEarlyBettypesParlay { get; set; }
+
+    [Key("isMergedParlay")]
+    public bool IsMergedParlay => mergedParlaySports.Contains(SportType);
+
+    [IgnoreMember]
+    public int ChildMatchType { get; set; }
+
+    [IgnoreMember]
+    public List<SiteMatch> SiteMatch { get; set; } = new List<SiteMatch>();
+
+    [Key("offerLive")]
+    public bool OfferLive { get; set; }
 }

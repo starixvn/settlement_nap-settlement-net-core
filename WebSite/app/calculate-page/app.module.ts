@@ -15,7 +15,7 @@ import { MaterialModule } from '../shared/material-module';
 import { DynamicHeightDirective } from '../shared/directives';
 import { MaterialDialogComponent, MaterialDialogWithResponseComponent, NewMultipleSelectComponent } from '../shared/components';
 import { AutoCalculatePageComponent, AutoCalculateMatchesComponent, AutoCalculateFilterComponent } from './components/auto-calculation';
-import { PageBaseComponent, FilterCalculateBaseComponent, MatchesBaseComponent } from './components/base-component';
+import { PageBaseComponent, MatchesBaseComponent } from './components/base-component';
 import { FilterBaseComponent } from '../shared/components/gaming/filter-base.component';
 import { AppComponent } from './components/app.component';
 
@@ -40,7 +40,6 @@ import { AppComponent } from './components/app.component';
         DynamicHeightDirective,
         MaterialDialogComponent,
         PageComponent,
-        FilterCalculateBaseComponent,
         AutoCalculateMatchesComponent,
         AutoCalculatePageComponent,
         AutoCalculateFilterComponent,

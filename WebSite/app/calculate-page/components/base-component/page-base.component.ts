@@ -17,17 +17,11 @@ export class PageBaseComponent implements OnInit {
     public blockUI = false;
     public calculation: Calculation;
     public intervalTimer = interval(this.period);
-    public filterQuery: FilterQuery;
     constructor(protected reCheckInService: ReCheckInService,
         protected elementRef: ElementRef<HTMLElement>) { }
 
     ngOnInit(): void {
         this.reCheckIn();
-    }
-
-    public search($event) {
-        this.calculation = $event.calculation;
-        this.filterQuery = $event.filterQuery;
     }
 
     private reCheckIn() {

@@ -172,7 +172,7 @@ export class AutoCalculateMatchesComponent extends MatchesBaseComponent implemen
   }
 
   public getColorInstant(match: CalculationMatch) {
-    return match.instantStatus.includes('LIVE') ? "red" : "";
+    return match.instantStatus.includes('LIVE') ? "live-red" : "";
   }
 
   public async updateInstantStatus(match: CalculationMatch) {
@@ -190,18 +190,17 @@ export class AutoCalculateMatchesComponent extends MatchesBaseComponent implemen
 
   private doUpdateInstantStatus(match: CalculationMatch, query: UpdateInstantQuery, result: MatchGoalRecord) {
     this.dialogConfirmMessage.message = Language.instants.confirmExecuteInstant;
-    this.messageBoxService.confirm(this.dialogConfirmMessage, () => {
-      this.requestService.pushInstantStatus(query, result).subscribe(result => {
-        if (result.errCode === 0) {
-          this.handleActionService.handleChangeInstantStatus(match);
-        } else {
-          this.dialogAlertMessage.message = result.errMsg;
-          this.messageBoxService.alert(this.dialogAlertMessage);
-        }
+    this.messageBoxService.confirm(this.dialogConfirmMessage, async () => {
+      const resultPushScore = await this.requestService.pushInstantStatus(query, result).toPromise();
+      if (resultPushScore.errCode === 0) {
+        this.handleActionService.handleChangeInstantStatus(match);
+      } else {
+        this.dialogAlertMessage.message = resultPushScore.errMsg;
+        this.messageBoxService.alert(this.dialogAlertMessage);
       }
-      );
     });
   }
+
   public isNullOrEmpty(value: string) {
     return _.isNull(value) || _.isEmpty(value);
   }

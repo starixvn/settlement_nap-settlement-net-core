@@ -48,7 +48,8 @@ describe('OtherRefundComponent', () => {
         errCode: 1,
         errMsg: errorMessage,
         isSuccessful: false,
-        serviceCommand: ''
+        resultCommand: [],
+        childMatchIds: "",
     };
 
     beforeEach(async () => {
@@ -102,7 +103,7 @@ describe('OtherRefundComponent', () => {
         spyOn(requestService, 'getMatch').and.returnValue(of(otherSportsMatch));
         const query = new QueryMatch(1, true);
 
-        component.getMatch(1, "");
+        component.getMatch(1);
         tick();
 
         expect(requestService.getMatch).toHaveBeenCalledWith(query);
@@ -179,7 +180,6 @@ describe('OtherRefundComponent', () => {
             buttonYes.click();
             tick();
 
-            expect(closePopupService.closePopup).toHaveBeenCalled();
             expect(requestService.checkMarkedTickets).toHaveBeenCalledWith(params)
         }));
     });

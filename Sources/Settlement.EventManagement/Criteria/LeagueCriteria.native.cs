@@ -1,26 +1,22 @@
-﻿using System;
-using Fanex.Data.Repository;
+﻿namespace Settlement.EventManagement.Criteria;
 
-namespace Settlement.EventManagement.Criteria
+public class LeagueCriteria : CriteriaBase
 {
-    public class LeagueCriteria : CriteriaBase
+    public DateTime FromDate { get; set; }
+
+    public DateTime ToDate { get; set; }
+
+    public string SportTypes { get; set; }
+
+    public byte Page { get; set; }
+
+    public override string GetSettingKey()
     {
-        public DateTime FromDate { get; set; }
+        return "NAP_Set_SportLeagueSel";
+    }
 
-        public DateTime ToDate { get; set; }
-
-        public string SportTypes { get; set; }
-
-        public byte Page { get; set; }
-
-        public override string GetSettingKey()
-        {
-            return "NAP_Set_SportLeagueSel";
-        }
-
-        public override bool IsValid()
-        {
-            return FromDate <= ToDate;
-        }
+    public override bool IsValid()
+    {
+        return FromDate <= ToDate;
     }
 }

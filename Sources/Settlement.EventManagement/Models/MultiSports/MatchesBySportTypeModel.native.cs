@@ -1,11 +1,8 @@
-﻿using System.Collections.Generic;
+﻿namespace Settlement.EventManagement.Models.MultiSports;
 
-namespace Settlement.EventManagement.Models.MultiSports
+internal class MatchesBySportTypeModel
 {
-    internal class MatchesBySportTypeModel
-    {
-        public int SportType { get; set; }
+    public int SportType { get; set; }
 
-        public List<Match> Matches { get; set; }
-    }
+    public List<Match> Matches { get; set; }
 }

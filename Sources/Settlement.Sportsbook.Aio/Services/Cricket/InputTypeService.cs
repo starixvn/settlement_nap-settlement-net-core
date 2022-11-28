@@ -1,130 +1,127 @@
 ﻿using Settlement.Sportsbook.Aio.Constants;
 using Settlement.Sportsbook.Aio.Models;
-using System.Collections.Generic;
-using System.Linq;
 
-namespace Settlement.Sportsbook.Aio.Services.Cricket
+namespace Settlement.Sportsbook.Aio.Services.Cricket;
+
+public interface IInputTypeService
 {
-    public interface IInputTypeService
+    int GetNonInnsBetTypeInputType(int betTypeId);
+
+    int GetInnsBetTypeInputType(int betTypeId);
+
+    SaveScoreModel GetInnsInputLabel(string resourceId, int betTypeId, List<InputOption> inputOptions);
+
+    List<InputOption> GetInputOptions(int betTypeId, string resourceId, List<InputOption> inputOptions);
+}
+
+public class InputTypeServiceImp : IInputTypeService
+{
+    private const int MaxPlayerSelected = 2;
+
+    private const int OtherId = 856887;
+
+    private const string OtherValue = "00";
+
+    private const string OtherBetTypeName = "Other";
+
+    public int GetNonInnsBetTypeInputType(int betTypeId)
     {
-        int GetNonInnsBetTypeInputType(int betTypeId);
+        if (InputType.HomeAwayGroup.Contains(betTypeId))
+        {
+            return InputType.HomeAway;
+        }
 
-        int GetInnsBetTypeInputType(int betTypeId);
-
-        SaveScoreModel GetInnsInputLabel(string resourceId, int betTypeId, List<InputOption> inputOptions);
-
-        List<InputOption> GetInputOptions(int betTypeId, string resourceId, List<InputOption> inputOptions);
+        return InputType.CoupleScoresGroup.Contains(betTypeId) ? InputType.CoupleScores : InputType.SingleScore;
     }
 
-    public class InputTypeServiceImp : IInputTypeService
+    public int GetInnsBetTypeInputType(int betTypeId)
     {
-        private const int MaxPlayerSelected = 2;
-
-        private const int OtherId = 856887;
-
-        private const string OtherValue = "00";
-
-        private const string OtherBetTypeName = "Other";
-
-        public int GetNonInnsBetTypeInputType(int betTypeId)
+        if (InputType.CaughtOrNotGroup.Contains(betTypeId))
         {
-            if (InputType.HomeAwayGroup.Contains(betTypeId))
-            {
-                return InputType.HomeAway;
-            }
-
-            return InputType.CoupleScoresGroup.Contains(betTypeId) ? InputType.CoupleScores : InputType.SingleScore;
+            return InputType.CaughtOrNot;
         }
-
-        public int GetInnsBetTypeInputType(int betTypeId)
+        else if (InputType.OneToSixGroup.Contains(betTypeId))
         {
-            if (InputType.CaughtOrNotGroup.Contains(betTypeId))
-            {
-                return InputType.CaughtOrNot;
-            }
-            else if (InputType.OneToSixGroup.Contains(betTypeId))
-            {
-                return InputType.OneToSix;
-            }
-            else if (InputType.PlayerSelectGroup.Contains(betTypeId))
-            {
-                return InputType.PlayerSelect;
-            }
-            else if (InputType.PlayerMultipleSelectGroup.Contains(betTypeId))
-            {
-                return InputType.PlayerMultipleSelect;
-            }
-            else if (InputType.DismissalMethodGroup.Contains(betTypeId))
-            {
-                return InputType.DismissalMethod;
-            }
-            else if (InputType.YesNoGroup.Contains(betTypeId))
-            {
-                return InputType.YesNo;
-            }
-            else if (InputType.ScoreWithLabelGroup.Contains(betTypeId))
-            {
-                return InputType.ScoreWithLabel;
-            }
-            else if (InputType.CoupleScoresGroup.Contains(betTypeId))
-            {
-                return InputType.CoupleScores;
-            }
-            else
-            {
-                return InputType.SingleScore;
-            }
+            return InputType.OneToSix;
         }
-
-        public SaveScoreModel GetInnsInputLabel(string resourceId, int betTypeId, List<InputOption> inputOptions)
+        else if (InputType.PlayerSelectGroup.Contains(betTypeId))
         {
-            if (GroupBetType.IncludedPlayerName.Contains(betTypeId))
-            {
-                var option = inputOptions.Find(option => option.ResourceId == resourceId);
-                return new SaveScoreModel
-                {
-                    HomeValue = option == null ? string.Empty : option.OptionName
-                };
-            }
+            return InputType.PlayerSelect;
+        }
+        else if (InputType.PlayerMultipleSelectGroup.Contains(betTypeId))
+        {
+            return InputType.PlayerMultipleSelect;
+        }
+        else if (InputType.DismissalMethodGroup.Contains(betTypeId))
+        {
+            return InputType.DismissalMethod;
+        }
+        else if (InputType.YesNoGroup.Contains(betTypeId))
+        {
+            return InputType.YesNo;
+        }
+        else if (InputType.ScoreWithLabelGroup.Contains(betTypeId))
+        {
+            return InputType.ScoreWithLabel;
+        }
+        else if (InputType.CoupleScoresGroup.Contains(betTypeId))
+        {
+            return InputType.CoupleScores;
+        }
+        else
+        {
+            return InputType.SingleScore;
+        }
+    }
 
-            var playerNames = inputOptions.FindAll(option => option.ResourceId == resourceId);
+    public SaveScoreModel GetInnsInputLabel(string resourceId, int betTypeId, List<InputOption> inputOptions)
+    {
+        if (GroupBetType.IncludedPlayerName.Contains(betTypeId))
+        {
+            var option = inputOptions.Find(option => option.ResourceId == resourceId);
             return new SaveScoreModel
             {
-                HomeValue = playerNames.Count < MaxPlayerSelected ? string.Empty : playerNames[0].OptionName,
-                AwayValue = playerNames.Count < MaxPlayerSelected ? string.Empty : playerNames[1].OptionName
+                HomeValue = option == null ? string.Empty : option.OptionName
             };
         }
 
-        public List<InputOption> GetInputOptions(int betTypeId, string resourceId, List<InputOption> inputOptions)
+        var playerNames = inputOptions.FindAll(option => option.ResourceId == resourceId);
+        return new SaveScoreModel
         {
-            var listOption = InputType.PlayerSelectGroup.Contains(betTypeId)
-                ? inputOptions.FindAll(option => option.ResourceId == resourceId).Take(MaxPlayerSelected).ToList()
-                : inputOptions.FindAll(option => option.ResourceId == resourceId);
+            HomeValue = playerNames.Count < MaxPlayerSelected ? string.Empty : playerNames[0].OptionName,
+            AwayValue = playerNames.Count < MaxPlayerSelected ? string.Empty : playerNames[1].OptionName
+        };
+    }
 
-            if (InputType.OptionOtherGroup.Contains(betTypeId))
-            {
-                AddOtherOption(listOption, resourceId);
-            }
-            return listOption;
+    public List<InputOption> GetInputOptions(int betTypeId, string resourceId, List<InputOption> inputOptions)
+    {
+        var listOption = InputType.PlayerSelectGroup.Contains(betTypeId)
+            ? inputOptions.FindAll(option => option.ResourceId == resourceId).Take(MaxPlayerSelected).ToList()
+            : inputOptions.FindAll(option => option.ResourceId == resourceId);
+
+        if (InputType.OptionOtherGroup.Contains(betTypeId))
+        {
+            AddOtherOption(listOption, resourceId);
+        }
+        return listOption;
+    }
+
+    private void AddOtherOption(List<InputOption> listOption, string resourceId)
+    {
+        var otherOptionIndex = listOption.FindIndex(option => option.Value == OtherValue);
+        if (otherOptionIndex >= 0)
+        {
+            listOption.RemoveAt(otherOptionIndex);
         }
 
-        private void AddOtherOption(List<InputOption> listOption, string resourceId)
+        var optionOther = new InputOption
         {
-            var otherOptionIndex = listOption.FindIndex(option => option.Value == OtherValue);
-            if (otherOptionIndex >= 0)
-            {
-                listOption.RemoveAt(otherOptionIndex);
-            }
-
-            var optionOther = new InputOption
-            {
-                PlayerId = OtherId,
-                Value = OtherValue,
-                OptionName = OtherBetTypeName,
-                OddsInfo = $"{OtherValue},{OtherBetTypeName}",
-                ResourceId = resourceId
-            };
-            listOption.Add(optionOther);
-        }
+            PlayerId = OtherId,
+            Value = OtherValue,
+            OptionName = OtherBetTypeName,
+            OddsInfo = $"{OtherValue},{OtherBetTypeName}",
+            ResourceId = resourceId
+        };
+        listOption.Add(optionOther);
     }
 }

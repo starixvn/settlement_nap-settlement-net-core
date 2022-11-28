@@ -1,30 +1,28 @@
 ﻿using Settlement.Core.Models;
-using System.Collections.Generic;
 using System.Xml.Serialization;
 
-namespace Settlement.Sportsbook.Aio.Models
+namespace Settlement.Sportsbook.Aio.Models;
+
+public class CheckOddsItem
 {
-    public class CheckOddsItem
+    private readonly List<ResourceItem> resourceIdItems = new List<ResourceItem>();
+
+    [XmlAttribute("MatchId")]
+    public int MatchId { get; set; }
+
+    [XmlElement("ResourceId")]
+    public List<ResourceItem> ResourceIdItems
     {
-        private readonly List<ResourceItem> resourceIdItems = new List<ResourceItem>();
-
-        [XmlAttribute("MatchId")]
-        public int MatchId { get; set; }
-
-        [XmlElement("ResourceId")]
-        public List<ResourceItem> ResourceIdItems
+        get
         {
-            get
+            ResourceIds.ForEach(item =>
             {
-                ResourceIds.ForEach(item =>
-                {
-                    resourceIdItems.Add(new ResourceItem(item));
-                });
-                return resourceIdItems;
-            }
+                resourceIdItems.Add(new ResourceItem(item));
+            });
+            return resourceIdItems;
         }
-
-        [XmlIgnore]
-        public List<string> ResourceIds { get; set; }
     }
+
+    [XmlIgnore]
+    public List<string> ResourceIds { get; set; }
 }

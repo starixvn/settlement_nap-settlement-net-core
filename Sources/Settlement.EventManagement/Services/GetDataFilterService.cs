@@ -1,130 +1,123 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
-using Fanex.Data.Repository;
-using Settlement.Core.Constants;
-using Settlement.Core.Models;
+﻿using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.EventManagement.Criteria;
 using Settlement.EventManagement.Models;
 using Settlement.EventManagement.Requests;
 
-namespace Settlement.EventManagement.Services
-{
-    public interface GetDataFilterService
-    {
-        Task<List<Sport>> GetSports(SportRequest request);
+namespace Settlement.EventManagement.Services;
 
-        Task<List<LeagueTypeModel>> GetLeagues(LeagueRequest request);
+public interface GetDataFilterService
+{
+    Task<List<Sport>> GetSports(SportRequest request);
+
+    Task<List<LeagueTypeModel>> GetLeagues(LeagueRequest request);
+}
+
+public class GetDataFilterServiceImp : GetDataFilterService
+{
+    private static readonly List<int> PopularSport = new List<int> { SportType.Badminton, SportType.BasketBall, SportType.ESports, SportType.Tennis };
+    private const string PopularGroup = "All Popular Sports";
+    private const string OtherGroup = "All Other Sports";
+
+    private readonly IMapper mapper;
+
+    private readonly IDynamicRepository repository;
+
+    private readonly IRefDataService refDataService;
+
+    public GetDataFilterServiceImp(IMapper mapper,
+        IDynamicRepository repository,
+        IRefDataService refDataService)
+    {
+        this.repository = repository;
+        this.refDataService = refDataService;
+        this.mapper = mapper;
     }
 
-    public class GetDataFilterServiceImp : GetDataFilterService
+    public async Task<List<Sport>> GetSports(SportRequest request)
     {
-        private static readonly List<int> PopularSport = new List<int> { SportType.Badminton, SportType.BasketBall, SportType.ESports, SportType.Tennis };
-        private const string PopularGroup = "All Popular Sports";
-        private const string OtherGroup = "All Other Sports";
+        var criteria = mapper.Map<SportRequest, SportCriteria>(request);
+        var sports = (await repository.FetchAsync<Sport>(criteria)).ToList();
+        sports.ForEach(x => x.SportName = refDataService.GetSportName(x.SportType));
 
-        private readonly IMapper mapper;
+        return OrderSport(sports.OrderBy(item => item.SportName).ToList());
+    }
 
-        private readonly IDynamicRepository repository;
-
-        private readonly IRefDataService refDataService;
-
-        public GetDataFilterServiceImp(IMapper mapper,
-            IDynamicRepository repository,
-            IRefDataService refDataService)
+    public async Task<List<LeagueTypeModel>> GetLeagues(LeagueRequest request)
+    {
+        var criteria = mapper.Map<LeagueRequest, LeagueCriteria>(request);
+        var leagues = (await repository.FetchAsync<LeagueTypeModel>(criteria)).ToList();
+        foreach (var item in leagues)
         {
-            this.repository = repository;
-            this.refDataService = refDataService;
-            this.mapper = mapper;
+            item.SportName = refDataService.GetSportName(item.SportType);
+            item.LeagueName = refDataService.GetLeagueName(item.LeagueId);
+            item.Group = $"All {item.SportName} Leagues";
         }
 
-        public async Task<List<Sport>> GetSports(SportRequest request)
-        {
-            var criteria = mapper.Map<SportRequest, SportCriteria>(request);
-            var sports = (await repository.FetchAsync<Sport>(criteria)).ToList();
-            sports.ForEach(x => x.SportName = refDataService.GetSportName(x.SportType));
+        return SortLeague(leagues.ToList());
+    }
 
-            return OrderSport(sports.OrderBy(item => item.SportName).ToList());
-        }
+    private static List<Sport> OrderSport(List<Sport> sports)
+    {
+        var list = new List<Sport>();
+        var otherGroup = new List<Sport>();
+        var otherSport = new List<Sport>();
 
-        public async Task<List<LeagueTypeModel>> GetLeagues(LeagueRequest request)
+        sports.ForEach(item =>
         {
-            var criteria = mapper.Map<LeagueRequest, LeagueCriteria>(request);
-            var leagues = (await repository.FetchAsync<LeagueTypeModel>(criteria)).ToList();
-            foreach (var item in leagues)
+            if (PopularSport.IndexOf(item.SportType) > -1)
             {
-                item.SportName = refDataService.GetSportName(item.SportType);
-                item.LeagueName = refDataService.GetLeagueName(item.LeagueId);
-                item.Group = $"All {item.SportName} Leagues";
+                item.Group = PopularGroup;
+                list.Add(item);
             }
-
-            return SortLeague(leagues.ToList());
-        }
-
-        private static List<Sport> OrderSport(List<Sport> sports)
-        {
-            var list = new List<Sport>();
-            var otherGroup = new List<Sport>();
-            var otherSport = new List<Sport>();
-
-            sports.ForEach(item =>
+            else
             {
-                if (PopularSport.IndexOf(item.SportType) > -1)
+                item.Group = OtherGroup;
+                if (item.SportType == SportType.OtherSports)
                 {
-                    item.Group = PopularGroup;
-                    list.Add(item);
+                    otherSport.Add(item);
                 }
                 else
                 {
-                    item.Group = OtherGroup;
-                    if (item.SportType == SportType.OtherSports)
-                    {
-                        otherSport.Add(item);
-                    }
-                    else
-                    {
-                        otherGroup.Add(item);
-                    }
+                    otherGroup.Add(item);
                 }
-            });
+            }
+        });
 
-            list.AddRange(otherGroup);
-            list.AddRange(otherSport);
+        list.AddRange(otherGroup);
+        list.AddRange(otherSport);
 
-            return list;
-        }
+        return list;
+    }
 
-        private static List<LeagueTypeModel> SortLeague(List<LeagueTypeModel> leagues)
+    private static List<LeagueTypeModel> SortLeague(List<LeagueTypeModel> leagues)
+    {
+        var popularGroup = new List<LeagueTypeModel>();
+        var otherGroup = new List<LeagueTypeModel>();
+        var otherSport = new List<LeagueTypeModel>();
+        leagues.ForEach(item =>
         {
-            var popularGroup = new List<LeagueTypeModel>();
-            var otherGroup = new List<LeagueTypeModel>();
-            var otherSport = new List<LeagueTypeModel>();
-            leagues.ForEach(item =>
+            if (PopularSport.IndexOf(item.SportType) > -1)
             {
-                if (PopularSport.IndexOf(item.SportType) > -1)
+                popularGroup.Add(item);
+            }
+            else
+            {
+                if (item.SportType == SportType.OtherSports)
                 {
-                    popularGroup.Add(item);
+                    otherSport.Add(item);
                 }
                 else
                 {
-                    if (item.SportType == SportType.OtherSports)
-                    {
-                        otherSport.Add(item);
-                    }
-                    else
-                    {
-                        otherGroup.Add(item);
-                    }
+                    otherGroup.Add(item);
                 }
-            });
+            }
+        });
 
-            var list = popularGroup.OrderBy(item => item.SportName).ThenBy(item => item.LeagueName).ToList();
-            list.AddRange(otherGroup.OrderBy(item => item.SportName).ThenBy(item => item.LeagueName).ToList());
-            list.AddRange(otherSport.OrderBy(item => item.LeagueName).ToList());
+        var list = popularGroup.OrderBy(item => item.SportName).ThenBy(item => item.LeagueName).ToList();
+        list.AddRange(otherGroup.OrderBy(item => item.SportName).ThenBy(item => item.LeagueName).ToList());
+        list.AddRange(otherSport.OrderBy(item => item.LeagueName).ToList());
 
-            return list;
-        }
+        return list;
     }
 }

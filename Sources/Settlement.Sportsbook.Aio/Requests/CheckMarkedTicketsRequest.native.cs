@@ -1,15 +1,12 @@
-﻿using MediatR;
-using Settlement.Core.Models;
-using System.Collections.Generic;
+﻿using Settlement.Core.Models;
 
-namespace Settlement.Sportsbook.Aio.Requests
+namespace Settlement.Sportsbook.Aio.Requests;
+
+public class CheckMarkedTicketsRequest : IRequest<MarkedTickets>
 {
-    public class CheckMarkedTicketsRequest : IRequest<MarkedTickets>
-    {
-        public int MatchId { get; set; }
+    public int MatchId { get; set; }
 
-        public List<ResourceItem> SelectedResources { get; set; }
+    public List<ResourceItem> SelectedResources { get; set; }
 
-        public bool IsMergedParlay { get; set; }
-    }
+    public bool IsMergedParlay { get; set; }
 }

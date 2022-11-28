@@ -4,7 +4,7 @@ import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FullTimeVerificationService } from './fulltime-verification.service';
 import { ModalContentDialogComponent, ModalDialogComponent, NotReadyMatchComponent, ResettleCheckerComponent, TicketCountComponent } from '../../../shared/components';
 import { FullTimeCalculationComponent } from './fulltime-calculation.component';
-import { BlockUIService, ClosePopupService, HttpRequestService, MessageBoxService } from '../../../shared/services';
+import { BlockUIService, HttpRequestService, MessageBoxService } from '../../../shared/services';
 import { FormsModule } from '@angular/forms';
 import { Match, MatchDetail, OtherSportsMatch, Permission, QueryMatch } from '../../models';
 import { TicketCount } from '../../../shared/models';
@@ -20,7 +20,6 @@ describe('FullTimeCalculationComponent', () => {
   let component: FullTimeCalculationComponent;
   let fixture: ComponentFixture<FullTimeCalculationComponent>;
   let requestService: RequestService;
-  let closePopupService: ClosePopupService;
   let messageBoxService: MessageBoxService;
   let verificationService: FullTimeVerificationService;
   let toastrService: ToastrService;
@@ -100,7 +99,6 @@ describe('FullTimeCalculationComponent', () => {
       ],
       providers: [
         RequestService,
-        ClosePopupService,
         BlockUIService,
         HttpRequestService,
         FullTimeService,
@@ -122,12 +120,11 @@ describe('FullTimeCalculationComponent', () => {
     fixture = TestBed.createComponent(FullTimeCalculationComponent);
     component = fixture.componentInstance;
     requestService = fixture.debugElement.injector.get(RequestService);
-    closePopupService = fixture.debugElement.injector.get(ClosePopupService);
     messageBoxService = fixture.debugElement.injector.get(MessageBoxService);
     verificationService = fixture.debugElement.injector.get(FullTimeVerificationService);
     toastrService = fixture.debugElement.injector.get(ToastrService);
     fixture.detectChanges();
-    spyOn(closePopupService, 'closePopup').and.callFake(() => { });
+    spyOn(messageBoxService, 'closePopup').and.callFake(() => { });
   });
 
   it('should create', () => {
@@ -139,7 +136,7 @@ describe('FullTimeCalculationComponent', () => {
       const matchId = 123;
       const query = new QueryMatch(matchId, false);
       spyOn(requestService, 'getMatch').and.returnValue(of(otherSportsMatch));
-      component.getMatch(matchId, '');
+      component.getMatch(matchId);
 
       expect(requestService.getMatch).toHaveBeenCalledWith(query);
     });
@@ -151,7 +148,7 @@ describe('FullTimeCalculationComponent', () => {
       otherSportsMatch.match.matchDetail.betStatus = 'Refund;';
       spyOn(requestService, 'getMatch').and.returnValue(of(otherSportsMatch));
 
-      await component.getMatch(matchId, '');
+      await component.getMatch(matchId);
 
       expect(component.matchDetail.finalAwayScore).toEqual(null);
       expect(component.matchDetail.finalHomeScore).toEqual(null);
@@ -166,7 +163,7 @@ describe('FullTimeCalculationComponent', () => {
       otherSportsMatch.match.matchDetail.betStatus = '';
       spyOn(requestService, 'getMatch').and.returnValue(of(otherSportsMatch));
 
-      await component.getMatch(matchId, '');
+      await component.getMatch(matchId);
 
       expect(component.matchDetail.finalAwayScore).toEqual(2);
       expect(component.matchDetail.finalHomeScore).toEqual(1);
@@ -271,7 +268,7 @@ describe('FullTimeCalculationComponent', () => {
       buttonYes.click();
       tick();
 
-      expect(closePopupService.closePopup).toHaveBeenCalled();
+      expect(messageBoxService.closePopup).toHaveBeenCalled();
     }));
 
     it('should set messageError when settle unsuccessful', fakeAsync(async () => {
@@ -352,7 +349,7 @@ describe('FullTimeCalculationComponent', () => {
       buttonYes.click();
       tick();
 
-      expect(closePopupService.closePopup).toHaveBeenCalled();
+      expect(messageBoxService.closePopup).toHaveBeenCalled();
     }));
 
     it('should ser messageError when settle unsuccessful', fakeAsync(() => {

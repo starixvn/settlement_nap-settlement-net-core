@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import { Injectable } from '@angular/core';
 import { ResourcesIds } from '../constants';
-import { SettlementStatusId } from '../../shared/constants';
+import { ResultStatusId, SettlementStatusId } from '../../shared/constants';
 import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
 import { ResultDetail } from '../../shared/models/sportsbook-sop';
 import { Match } from "../models";
@@ -23,7 +23,7 @@ export class BadmintonService {
     } else {
       const games = resultDetail.filter((game) => game.resourceId !== ResourcesIds.totalGames
         && !_.isEmpty(game.homeValue) && !_.isEmpty(game.awayValue)
-        && game.settlementStatusId !== SettlementStatusId.Refund);
+        && game.resultStatusId == ResultStatusId.ManualCompleted);
 
       if (games.length > 0) {
         totalPoints.homeValue = _.sumBy(games, (game) => Number(game.homeValue)).toString();

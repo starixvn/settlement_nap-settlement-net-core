@@ -1,42 +1,37 @@
-﻿using Fanex.Data;
-using Fanex.Data.Repository;
-using System;
+﻿namespace Settlement.EventManagement.Criteria;
 
-namespace Settlement.EventManagement.Criteria
+public class GetMatchesCriteria : CriteriaBase
 {
-    public class GetMatchesCriteria : CriteriaBase
+    public DateTime FromDate { get; set; }
+
+    public DateTime ToDate { get; set; }
+
+    public int SportType { get; } = 1;
+
+    public string LeagueIds { get; set; }
+
+    public string MatchCode { get; set; }
+
+    public int FilterOver { get; set; }
+
+    public string MatchStatus { get; set; }
+
+    public string HoldStatus { get; set; }
+
+    public int MatchType { get; set; }
+
+    public bool IsIncludeTest { get; set; }
+
+    [SpParam(Ignored = true)]
+    public string DbServer { get; set; }
+
+    public override string GetSettingKey()
     {
-        public DateTime FromDate { get; set; }
+        return $"NAP_Set_MatchSel_{DbServer}";
+    }
 
-        public DateTime ToDate { get; set; }
-
-        public int SportType { get; } = 1;
-
-        public string LeagueIds { get; set; }
-
-        public string MatchCode { get; set; }
-
-        public int FilterOver { get; set; }
-
-        public string MatchStatus { get; set; }
-
-        public string HoldStatus { get; set; }
-
-        public int MatchType { get; set; }
-
-        public bool IsIncludeTest { get; set; }
-
-        [SpParam(Ignored = true)]
-        public string DbServer { get; set; }
-
-        public override string GetSettingKey()
-        {
-            return $"NAP_Set_MatchSel_{DbServer}";
-        }
-
-        public override bool IsValid()
-        {
-            return FromDate <= ToDate;
-        }
+    public override bool IsValid()
+    {
+        return FromDate <= ToDate;
     }
 }

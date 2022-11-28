@@ -1,19 +1,16 @@
-﻿using Fanex.Data.Repository;
+﻿namespace Settlement.Sportsbook.Aio.Criteria;
 
-namespace Settlement.Sportsbook.Aio.Criteria
+public class GetMatchDetailCriteria : CriteriaBase
 {
-    public class GetMatchDetailCriteria : CriteriaBase
+    public int MatchId { get; set; }
+
+    public override string GetSettingKey()
     {
-        public int MatchId { get; set; }
+        return "NAP_Set_MatchSelInfo";
+    }
 
-        public override string GetSettingKey()
-        {
-            return "NAP_Set_MatchSelInfo";
-        }
-
-        public override bool IsValid()
-        {
-            return MatchId > 0;
-        }
+    public override bool IsValid()
+    {
+        return MatchId > 0;
     }
 }

@@ -131,7 +131,7 @@ describe('OtherService', () => {
 
     describe('initScoreByPermission', () => {
         it('should show score when match is not refunded and there is leader', () => {
-            const match = { finalHomeScore: 2, halfTimeHomeScore: 1, finalAwayScore: 4, halfTimeAwayScore: 3 } as MatchDetail;
+            const match = { finalHomeScore: 2, halfTimeHomeScore: 1, finalAwayScore: 4, halfTimeAwayScore: 3,betStatus: "" } as MatchDetail;
             const permission = { isLeader: true } as Permission;
 
             service.initScoreByPermission(match, permission);
@@ -149,7 +149,8 @@ describe('OtherService', () => {
                 finalAwayScore: 4,
                 halfTimeAwayScore: 3,
                 isHalfTimeCal: true,
-                isCalculated: true } as MatchDetail;
+                isCalculated: true,
+                betStatus: "" } as MatchDetail;
             const permission = {} as Permission;
 
             service.initScoreByPermission(match, permission);
@@ -166,7 +167,9 @@ describe('OtherService', () => {
                 halfTimeHomeScore: 1,
                 finalAwayScore: 4,
                 halfTimeAwayScore: 3,
-                isCalRefund: true } as MatchDetail;
+                isCalRefund: true,
+                betStatus: "Refund;"
+        } as MatchDetail;
             const permission = { isLeader: true } as Permission;
 
             service.initScoreByPermission(match, permission);

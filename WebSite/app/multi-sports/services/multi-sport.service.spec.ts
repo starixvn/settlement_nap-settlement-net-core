@@ -50,7 +50,7 @@ describe('MultiSport - MultiSportService', () => {
   });
 
   it(`getSport - Call right Url and param`, () => {
-        const url = `local/api/multi-sports/getSport`;
+        const url = `api/multi-sports/getSport`;
         const param = {
           apikey: ApiKeys.MultiSportGetCombobox,
         };
@@ -62,7 +62,7 @@ describe('MultiSport - MultiSportService', () => {
   });
 
   it(`getLeague - Call right Url and param`, () => {
-    const url = `local/api/multi-sports/getLeague`;
+    const url = `api/multi-sports/getLeague`;
     const param = {
       apikey: ApiKeys.MultiSportGetCombobox,
     };
@@ -74,7 +74,7 @@ describe('MultiSport - MultiSportService', () => {
   });
 
   it('getDate - Call right Url', () => {
-        const url = "local/api/multi-sports/get-date";
+        const url = "api/multi-sports/get-date";
         spyOn(httpRequestService, 'getJson');
         service.getDate();
 
@@ -85,22 +85,22 @@ describe('MultiSport - MultiSportService', () => {
         const param: FilterRequest = {
           fromDate: "22/03/2019",
           toDate: "30/03/2019",
-          ticketStatus: '',
           matchCode: '',
           matchStatus: '',
           leagueIds: '',
           sportTypes: '',
           isIncludeTest: true,
-          autoPayout: 0,
           holdStatus: '',
-          overStatus: ''
+          overStatus: '',
+          matchType: '',
+          autoPayout: ''
         };
 
         spyOn(httpRequestService, 'postMessagePack');
         service.filter(param);
 
         expect(httpRequestService.postMessagePack)
-          .toHaveBeenCalledWith(param, "local/api/multi-sports/filter");
+          .toHaveBeenCalledWith(param, "api/multi-sports/filter");
     }
   );
 
@@ -108,16 +108,16 @@ describe('MultiSport - MultiSportService', () => {
     const param: ParlayQuery = {
       matchIds: '12345,1234',
     };
-    const url = 'api/calculation/calculate-mix-parlay';
+    const url = 'api/multi-sports/calculate-mix-parlay';
     spyOn(httpRequestService, 'postJson');
 
     service.calculateMixParlay(param);
 
-    expect(httpRequestService.postJson).toHaveBeenCalledWith(param, url, false);
+    expect(httpRequestService.postJson).toHaveBeenCalledWith(param, url);
   }));
 
   it('getRemarkInfo - Call exact Url and param', () => {
-    const url = 'local/api/setting/get-remark-info';
+    const url = 'api/setting/get-remark-info';
     const param: GetRemarkQuery = {
         matchId: '12345'
     };
@@ -131,7 +131,7 @@ describe('MultiSport - MultiSportService', () => {
   it('updateSettingMatch - should post with correct param', () => {
     const query = {} as AutoSettingMatchQuery;
 
-    const url = 'local/api/setting/update-setting-match';
+    const url = 'api/setting/update-setting-match';
     spyOn(httpRequestService, 'postJson');
     service.updateSettingMatch(query);
 
@@ -141,7 +141,7 @@ describe('MultiSport - MultiSportService', () => {
   it('updateSettingLeague - should post with correct param', () => {
     const query = {} as AutoSettingLeagueQuery;
 
-    const url = 'local/api/setting/update-setting-league';
+    const url = 'api/setting/update-setting-league';
     spyOn(httpRequestService, 'postJson');
     service.updateSettingLeague(query);
 

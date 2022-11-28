@@ -44,19 +44,26 @@ export class RequestService {
     return this.httpRequestService.postJson(query, `${this.settingApi}/get-remark-info`);
   }
 
-  private getNewestMatches(leagueIds: string, isAutoCalculatePage: boolean) {
+  private getNewestMatches(leagueIds: string) {
     const query = {
-      leagueIds,
-      isAutoCalculatePage
+      leagueIds
     };
     const url = `${this.calculationApi}/auto-refresh`;
     return this.httpRequestService.postJson(query, url, false);
   }
 
-  public refreshMatches(leagueIds: string, currentLeagues: League[], isAutoCalculatePage = false) {
-    this.getNewestMatches(leagueIds, isAutoCalculatePage).subscribe((matchesWaiting: CalculationMatch[]) => {
-      this.changeInfoAfterRefreshMatches(currentLeagues, matchesWaiting, isAutoCalculatePage);
-    });
+  private getNewestAutoMatches(leagueId: string) {
+    const query = {
+      leagueId,
+    };
+    const url = `${this.calculationApi}/auto-refresh-auto-calculation`;
+    return this.httpRequestService.postJson(query, url, false);
+  }
+
+  public async refreshMatches(leagueIds: string, currentLeagues: League[], isAutoCalculatePage = false) {
+    const matchesWaiting = isAutoCalculatePage ? await this.getNewestAutoMatches(leagueIds).toPromise() as CalculationMatch[] :
+    await this.getNewestMatches(leagueIds).toPromise() as CalculationMatch[];
+    this.changeInfoAfterRefreshMatches(currentLeagues, matchesWaiting, isAutoCalculatePage);
   }
 
   public getMatchDetail(matchId: number) {

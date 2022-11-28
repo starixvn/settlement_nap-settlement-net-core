@@ -1,15 +1,10 @@
-﻿using MediatR;
-using Settlement.EventManagement.Models;
-using System;
-using System.Collections.Generic;
+﻿using Settlement.EventManagement.Models;
 
-namespace Settlement.EventManagement.Requests
+namespace Settlement.EventManagement.Requests;
+
+public class LeagueCalculationRequest : IRequest<List<LeagueTypeModel>>
 {
-    public class LeagueCalculationRequest : IRequest<List<LeagueTypeModel>>
-    {
-        public DateTime FromDate { get; set; }
+    public DateTime FromDate { get; set; }
 
-        public DateTime ToDate { get; set; }
-
-    }
+    public DateTime ToDate { get; set; }
 }

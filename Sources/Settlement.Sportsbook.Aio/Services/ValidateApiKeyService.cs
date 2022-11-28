@@ -1,68 +1,66 @@
-﻿using Fanex.Data.Repository;
-using Settlement.Sportsbook.Aio.MapperFactory;
+﻿using Settlement.Sportsbook.Aio.MapperFactory;
 
-namespace Settlement.Sportsbook.Aio.Services
+namespace Settlement.Sportsbook.Aio.Services;
+
+public interface IValidateApiKeyService
 {
-    public interface IValidateApiKeyService
+    string GetApiKey(string apiKey);
+
+    ICriteria CriteriaName(object queryModel, string apiKey);
+
+    INonQueryCommand CreateNonQueryCommand(object queryModel, string apiKey);
+}
+
+public class ValidateApiKeyServiceImp : IValidateApiKeyService
+{
+    private readonly ICriteriaFactory criteriaFactory;
+
+    public ValidateApiKeyServiceImp(ICriteriaFactory simpleCriteriaFactory)
     {
-        string GetApiKey(string apiKey);
-
-        ICriteria CriteriaName(object queryModel, string apiKey);
-
-        INonQueryCommand CreateNonQueryCommand(object queryModel, string apiKey);
+        criteriaFactory = simpleCriteriaFactory;
     }
 
-    public class ValidateApiKeyServiceImp : IValidateApiKeyService
+    public string GetApiKey(string apiKey)
     {
-        private readonly ICriteriaFactory criteriaFactory;
-
-        public ValidateApiKeyServiceImp(ICriteriaFactory simpleCriteriaFactory)
+        if (string.IsNullOrEmpty(apiKey))
         {
-            criteriaFactory = simpleCriteriaFactory;
+            throw new EmptyKeyException($"apikey({apiKey}) is empty");
         }
 
-        public string GetApiKey(string apiKey)
-        {
-            if (string.IsNullOrEmpty(apiKey))
-            {
-                throw new EmptyKeyException($"apikey({ apiKey}) is empty");
-            }
+        return apiKey;
+    }
 
-            return apiKey;
+    public ICriteria CriteriaName(object queryModel, string apiKey)
+    {
+        var criteriaType = criteriaFactory.GetCriteriaType(apiKey);
+        if (criteriaType == null)
+        {
+            throw new EmptyKeyException($"Data api is not found. Please check the method GetCriteriaType({apiKey})");
         }
 
-        public ICriteria CriteriaName(object queryModel, string apiKey)
+        var criteria = criteriaFactory.CreateCriteria(criteriaType, queryModel);
+        if (criteria == null)
         {
-            var criteriaType = criteriaFactory.GetCriteriaType(apiKey);
-            if (criteriaType == null)
-            {
-                throw new EmptyKeyException($"Data api is not found. Please check the method GetCriteriaType({ apiKey })");
-            }
-
-            var criteria = criteriaFactory.CreateCriteria(criteriaType, queryModel);
-            if (criteria == null)
-            {
-                throw new EmptyKeyException($"Data api is not found. Please check the method CreateCriteria({ apiKey })");
-            }
-
-            return criteria;
+            throw new EmptyKeyException($"Data api is not found. Please check the method CreateCriteria({apiKey})");
         }
 
-        public INonQueryCommand CreateNonQueryCommand(object queryModel, string apiKey)
+        return criteria;
+    }
+
+    public INonQueryCommand CreateNonQueryCommand(object queryModel, string apiKey)
+    {
+        var criteriaType = criteriaFactory.GetCriteriaType(apiKey);
+        if (criteriaType == null)
         {
-            var criteriaType = criteriaFactory.GetCriteriaType(apiKey);
-            if (criteriaType == null)
-            {
-                throw new EmptyKeyException($"Data api is not found. Please check the method GetCriteriaType({ apiKey })");
-            }
-
-            var criteria = criteriaFactory.CreateNonQueryCommand(criteriaType, queryModel);
-            if (criteria == null)
-            {
-                throw new EmptyKeyException($"Data api is not found. Please check the method CreateCriteria({ apiKey })");
-            }
-
-            return criteria;
+            throw new EmptyKeyException($"Data api is not found. Please check the method GetCriteriaType({apiKey})");
         }
+
+        var criteria = criteriaFactory.CreateNonQueryCommand(criteriaType, queryModel);
+        if (criteria == null)
+        {
+            throw new EmptyKeyException($"Data api is not found. Please check the method CreateCriteria({apiKey})");
+        }
+
+        return criteria;
     }
 }

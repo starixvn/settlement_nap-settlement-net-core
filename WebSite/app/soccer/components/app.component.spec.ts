@@ -1,3 +1,4 @@
+import { ModalDialogComponent } from './../../shared/components/modal-dialog/modal-dialog.component';
 import { AppComponent } from './app.component';
 import { waitForAsync, TestBed, ComponentFixture } from '@angular/core/testing';
 import { BlockUIService, ClosePopupService, HttpRequestService, MessageBoxService } from '../../shared/services';
@@ -37,6 +38,7 @@ describe(`Soccer - AppComponent`, () => {
                 CalculationComponent,
                 RefundComponent,
                 EarlySettlementComponent,
+                ModalDialogComponent,
                 GroupNameByIdPipe,
             ],
             providers: [
@@ -48,7 +50,7 @@ describe(`Soccer - AppComponent`, () => {
             schemas: [NO_ERRORS_SCHEMA],
         }).overrideModule(BrowserDynamicTestingModule, {
             set: {
-              entryComponents: [EarlySettlementComponent, CalculationComponent, RefundComponent],
+              entryComponents: [EarlySettlementComponent, CalculationComponent, RefundComponent, ModalDialogComponent],
             },
         })
             .compileComponents()
@@ -87,7 +89,7 @@ describe(`Soccer - AppComponent`, () => {
     it('should throw exception: Not implemented yet', () => {
         elementRef.nativeElement.setAttribute("page-type", "")
         expect(() => {
-            fixture.detectChanges();
+            component.ngOnInit();
         }).toThrow("Not implemented yet");
     });
 });

@@ -17,7 +17,7 @@ describe('AutoSettingComponent', () => {
   let modalService: NgbModal;
   let requestService: RequestService;
   let httpRequestService: HttpRequestService;
-  let closePopupService: ClosePopupService;
+  let messageBoxService: MessageBoxService;
   const mockUrlParameter = '7000000';
   const stateId = {
     direct: 5,
@@ -34,6 +34,13 @@ describe('AutoSettingComponent', () => {
     errMsg: "",
     isSuccessful: true,
   };
+
+  const mockFailResult = {
+    errCode: 1,
+    errMsg: "",
+    isSuccessful: false,
+  };
+
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
@@ -71,10 +78,10 @@ describe('AutoSettingComponent', () => {
     modalService = fixture.debugElement.injector.get(NgbModal);
     requestService = fixture.debugElement.injector.get(RequestService);
     httpRequestService = fixture.debugElement.injector.get(HttpRequestService);
-    closePopupService = fixture.debugElement.injector.get(ClosePopupService);
+    messageBoxService = fixture.debugElement.injector.get(MessageBoxService);
     spyOn(httpRequestService, 'postJson').and.returnValue(mockResult);
-    spyOn(closePopupService, 'closePopupPayoutSettingMatch').and.returnValue(1);
-    spyOn(closePopupService, 'closePopupPayoutSettingLeague').and.returnValue(1);
+    spyOn(messageBoxService, 'closePopup').and.returnValue(1);
+    // spyOn(messageBoxService, 'closePopup').and.returnValue(1);
     spyOn(UrlHelper, 'getUrlParameter').and.returnValue(mockUrlParameter);
 
     fixture.detectChanges();
@@ -85,12 +92,16 @@ describe('AutoSettingComponent', () => {
   });
 
   describe('submit', () => {
-    it('should invoke updateSettingMatch when pageType is AutoSettingMatch', fakeAsync(() => {
+    it('should invoke updateSettingMatch & close popup when pageType is AutoSettingMatch', fakeAsync(() => {
         // Arrange
         component.pageType = 'AutoSettingMatch';
 
-        // Act
         spyOn(requestService, 'updateSettingMatch').and.returnValue(of(mockResult));
+
+        const element = document.createElement("dialog-response");
+        spyOn(document, 'getElementById').and.returnValue(element);
+        // Act
+
         component.submit();
         const buttonYes = document.getElementsByClassName('btn-danger')[0] as HTMLElement;
         buttonYes.click();
@@ -98,14 +109,18 @@ describe('AutoSettingComponent', () => {
 
         // Assert
         expect(requestService.updateSettingMatch).toHaveBeenCalled();
+        expect(messageBoxService.closePopup).toHaveBeenCalled();
+
     }));
 
-    it('should invoke updateSettingLeague when pageType is AutoSettingLeague', fakeAsync(() => {
+    it('should invoke updateSettingLeague & close popup when pageType is AutoSettingLeague', fakeAsync(() => {
       // Arrange
       component.pageType = 'AutoSettingLeague';
-
-      // Act
+      const element = document.createElement("dialog-response");
+      spyOn(document, 'getElementById').and.returnValue(element);
       spyOn(requestService, 'updateSettingLeague').and.returnValue(of(mockResult));
+      // Act
+     
       component.submit();
       const buttonYes = document.getElementsByClassName('btn-danger')[0] as HTMLElement;
       buttonYes.click();
@@ -113,6 +128,7 @@ describe('AutoSettingComponent', () => {
 
       // Assert
       expect(requestService.updateSettingLeague).toHaveBeenCalled();
+      expect(messageBoxService.closePopup).toHaveBeenCalled();
     }));
   });
 

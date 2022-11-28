@@ -173,7 +173,7 @@ export class CalculationActionsComponent implements SportTemplate {
 
         if (firstHalf && (this.changeScoreOnQuarter(isChange) || this.onLoadAndCheckScore(isChange, firstHalf))) {
             this.verificationService.sumScoreHalfTime(firstHalfResult, firstHalf);
-            this.verifyAndAutoFillScore(this.firstHalf);
+            this.verifyAndAutoFillScore(this.firstHalf, !isChange);
         }
 
         if (fulltime && (this.changeScoreOnQuarter(isChange) || this.onLoadAndCheckScore(isChange, fulltime))) {

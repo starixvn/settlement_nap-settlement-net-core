@@ -1,15 +1,12 @@
 import { Component, Input, OnChanges} from '@angular/core';
 import { BackGroundService, RequestService, PopupService } from '../../services';
-import { FilterQuery, League, Calculation, CalculationMatch } from '../../models';
+import { League, Calculation, CalculationMatch } from '../../models';
 import {Remark } from '../../../shared/models';
 import { Permission } from '../../../shared/models/sportsbook-sop';
 import { BackgroundColor, CalculationStatus } from '../../../shared/constants';
 import * as _ from 'lodash';
 import { LeagueBaseComponent } from '../../../shared/components/sport-listing/league-base.component';
 import { Language } from '../../../shared/language';
-import { ISubscription } from 'rxjs-compat/Subscription';
-import { interval } from 'rxjs';
-
 @Component({
   selector: 'matches-base',
   template: ''
@@ -49,7 +46,7 @@ export class MatchesBaseComponent extends LeagueBaseComponent implements OnChang
   public rowColor(remark: Remark, isEven: boolean) {
     const backgroundRemark =  remark.isMtdHold || remark.isUndecided || remark.isUnderSettle || remark.isKeyHold ? BackgroundColor.undecidedRow : '';
     const backGroundEven = isEven ? 'even' : '';
-    return backgroundRemark + ' ' + backGroundEven;
+    return `${backgroundRemark} ${backGroundEven}`;
   }
 
 

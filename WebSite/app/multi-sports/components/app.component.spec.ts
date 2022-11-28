@@ -94,7 +94,7 @@ describe('MultiSport - AppComponent', () => {
     });
 
     it('getRequest - should set request', () => {
-        const request = new MatchWaitingRequest('', '', '' , '');
+        const request = new MatchWaitingRequest('', '', '' , '', "", "");
 
         component.getRequest(request);
 

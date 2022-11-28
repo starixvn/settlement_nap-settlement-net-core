@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { SettlementStatusId } from '../../../shared/constants';
+import { ResultStatusId, SettlementStatusId } from '../../../shared/constants';
 import { ResultDetail } from '../../../shared/models/sportsbook-sop';
 import * as _ from 'lodash';
 import {ResourcesIds } from '../../constants';
@@ -23,7 +23,7 @@ export class GameTotalService {
         } else {
             const games = resultDetail.filter((game) => game.resourceId !== ResourcesIds.totalSets
                 && !_.isEmpty(game.homeValue) && !_.isEmpty(game.awayValue)
-                && game.settlementStatusId !== SettlementStatusId.Refund);
+                && game.settlementStatusId != SettlementStatusId.Refund);
 
             totalPoints.settlementStatusId = last.settlementStatusId;
             if (games.length > 0) {

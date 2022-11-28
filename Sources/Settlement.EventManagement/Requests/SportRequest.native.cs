@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using MediatR;
-using Settlement.Core.Models;
+﻿using Settlement.Core.Models;
 
-namespace Settlement.EventManagement.Requests
+namespace Settlement.EventManagement.Requests;
+
+public class SportRequest : IRequest<List<Sport>>
 {
-    public class SportRequest : IRequest<List<Sport>>
-    {
-        public DateTime FromDate { get; set; }
+    public DateTime FromDate { get; set; }
 
-        public DateTime ToDate { get; set; }
-    }
+    public DateTime ToDate { get; set; }
 }

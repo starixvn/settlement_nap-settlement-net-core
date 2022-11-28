@@ -1,14 +1,15 @@
 import { DatePipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { NgbDateParserFormatter, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { CustomNgbDateParserFormatter } from '../../../shared/components/date-picker/custom-ngb-date-parser-formatter';
 import { MessageBoxService, VerifyDateService } from '../../../shared/services';
 import { Calculation, FilterAutoQuery, LeagueQuery } from '../../models';
 import { RequestService } from '../../services';
 import * as _ from 'lodash';
-import { FilterCalculateBaseComponent } from '../base-component';
 import { ItemsSelect, League, Match, MultipleSelect } from '../../../shared/models';
 import { AutoCalculateService } from './auto-calculate.service';
+import { Statuses } from '../../constants';
+import { FilterBaseComponent } from '../../../shared/components/gaming/filter-base.component';
 
 @Component({
   selector: 'auto-calculate-filter',
@@ -16,17 +17,20 @@ import { AutoCalculateService } from './auto-calculate.service';
   providers: [DatePipe,
     { provide: NgbDateParserFormatter, useFactory: () => new CustomNgbDateParserFormatter('MMM dd, y') }],
 })
-export class AutoCalculateFilterComponent extends FilterCalculateBaseComponent implements OnInit {
+export class AutoCalculateFilterComponent extends FilterBaseComponent implements OnInit {
+  @Output() public readonly searchAction = new EventEmitter();
+  public statuses = Statuses;
+  public leagues: League[];
   private readonly completedWithRunningTicket = "16";
   public readonly query = new FilterAutoQuery();
-  public payoutSelect= new MultipleSelect();
+  public payoutSelect = new MultipleSelect();
   constructor(
     protected verifyDateService: VerifyDateService,
     protected messageBoxService: MessageBoxService,
-    protected requestService: RequestService,
+    private readonly requestService: RequestService,
     private readonly autoCalculateService: AutoCalculateService
   ) {
-    super(verifyDateService, messageBoxService, requestService);
+    super(verifyDateService, messageBoxService);
   }
 
   public ngOnInit() {
@@ -34,7 +38,14 @@ export class AutoCalculateFilterComponent extends FilterCalculateBaseComponent i
     this.initFilterData();
   }
 
-  public async initFilterData () {
+  private defaultDateFilter() {
+    this.query.statusId = Number(this.statuses[0].value);
+    this.query.leagueId = '0';
+    this.payoutSelect.items = this.autoCalculateService.createAutoPayoutFilter();
+    this.statuses = this.statuses.filter(status => status.value !== this.completedWithRunningTicket);
+  }
+
+  public async initFilterData() {
     const date = await this.requestService.getDate().toPromise();
     this.fromDate = this.verifyDateService.convertToDateStruct(date.fromDate);
     this.toDate = this.verifyDateService.convertToDateStruct(date.toDate);
@@ -53,7 +64,7 @@ export class AutoCalculateFilterComponent extends FilterCalculateBaseComponent i
     this.renderLeague(this.fromDate, this.toDate);
   }
 
-  public async renderLeague(fromDate: NgbDateStruct, toDate: NgbDateStruct) {
+  private async renderLeague(fromDate: NgbDateStruct, toDate: NgbDateStruct) {
     const allLeague = new League();
     allLeague.leagueId = 0;
     allLeague.leagueName = '--- Show ALL Leagues ---';
@@ -67,13 +78,6 @@ export class AutoCalculateFilterComponent extends FilterCalculateBaseComponent i
     } else {
       this.leagues = [allLeague];
     }
-  }
-
-  private defaultDateFilter() {
-    this.query.statusId = Number(this.statuses[0].value);
-    this.query.leagueId = '0';
-    this.payoutSelect.items = this.autoCalculateService.createAutoPayoutFilter();
-    this.statuses = this.statuses.filter(status => status.value !== this.completedWithRunningTicket);
   }
 
   public async search() {

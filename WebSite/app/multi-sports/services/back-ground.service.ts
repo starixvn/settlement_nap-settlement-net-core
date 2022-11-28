@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
-import { BackgroundColor, CalculationStatus, EventStatus } from "../../shared/constants";
-import { Match } from "../../shared/models";
+import { CalculationStatus } from "../../shared/constants";
+import { Match } from "../models";
 import * as _ from 'lodash';
 
 @Injectable()

@@ -23,9 +23,9 @@ namespace Settlement.EventManagement.UnitTests.Services.Calculation
         }
 
         [Theory]
-        [InlineData(false, 123, CacheServiceKey.WaitingListCacheKey + "-123")]
-        [InlineData(true, 1234, CacheServiceKey.WaitingAutoPayoutCacheKey + "-1234")]
-        public void SetToCache_Always_SetLongAndShortCache(bool autoCalc, int leagueId, string logKey)
+        [InlineData(false, "123", CacheServiceKey.WaitingListCacheKey + "-123")]
+        [InlineData(true, "1234", CacheServiceKey.WaitingAutoPayoutCacheKey + "-1234")]
+        public void SetToCache_Always_SetLongAndShortCache(bool autoCalc, string leagueId, string logKey)
         {
             service.SetToCache(new List<Match>(), leagueId, autoCalc);
 
@@ -34,9 +34,9 @@ namespace Settlement.EventManagement.UnitTests.Services.Calculation
         }
 
         [Theory]
-        [InlineData(false, 123, CacheServiceKey.WaitingListCacheKey + "-123")]
-        [InlineData(true, 1234, CacheServiceKey.WaitingAutoPayoutCacheKey + "-1234")]
-        public void GetShortCache_Always_CallServiceWithCorrectParams(bool autoCalc, int leagueId, string logKey)
+        [InlineData(false, "123", CacheServiceKey.WaitingListCacheKey + "-123")]
+        [InlineData(true, "1234", CacheServiceKey.WaitingAutoPayoutCacheKey + "-1234")]
+        public void GetShortCache_Always_CallServiceWithCorrectParams(bool autoCalc, string leagueId, string logKey)
         {
             service.GetShortCache(leagueId, autoCalc);
 
@@ -44,9 +44,9 @@ namespace Settlement.EventManagement.UnitTests.Services.Calculation
         }
 
         [Theory]
-        [InlineData(false, 123, CacheServiceKey.WaitingListCacheKey + "-123-longCaching")]
-        [InlineData(true, 1234, CacheServiceKey.WaitingAutoPayoutCacheKey + "-1234-longCaching")]
-        public void GetLongCache_Always_CallServiceWithCorrectParams(bool autoCalc, int leagueId, string logKey)
+        [InlineData(false, "123", CacheServiceKey.WaitingListCacheKey + "-123-longCaching")]
+        [InlineData(true, "1234", CacheServiceKey.WaitingAutoPayoutCacheKey + "-1234-longCaching")]
+        public void GetLongCache_Always_CallServiceWithCorrectParams(bool autoCalc, string leagueId, string logKey)
         {
             service.GetLongCache(leagueId, autoCalc);
 

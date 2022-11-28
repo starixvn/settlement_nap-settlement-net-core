@@ -16,27 +16,11 @@
                 <ngbd-date-picker [date]="toDate" (change)="onSelectToDate($event)"></ngbd-date-picker>
             </div>
             <div class="col-md-2 field">
-                <label for="TicketStatus" class="inner-label">
-                    Ticket Status
-                </label>
-                <div>
-                    <new-multiple-select (formValue)= "onSelectTicketsStatus($event)" [multipleSelect]="ticketsStatusSelect"></new-multiple-select>
-                </div>
-            </div>
-            <div class="col-md-2 field">
                 <label for="MatchStatus" class="inner-label">
                     Match Status
                 </label>
                 <div>
                     <new-multiple-select (formValue)="onSelectMatchStatus($event)" [multipleSelect]="matchStatusSelect"></new-multiple-select>
-                </div>
-            </div>
-            <div class="col-md-2 remark field">
-                <label for="Remark" class="inner-label">
-                    Hold Status
-                </label>
-                <div>
-                    <new-multiple-select (formValue)="onSelectRemark($event)" [multipleSelect]="remarkSelect"></new-multiple-select>
                 </div>
             </div>
         </div>

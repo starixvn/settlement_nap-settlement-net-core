@@ -1,7 +1,6 @@
-﻿namespace Settlement.Sportsbook.Aio.MapperFactory
+﻿namespace Settlement.Sportsbook.Aio.MapperFactory;
+
+public interface IMapperService
 {
-    public interface IMapperService
-    {
-        void Decorate(dynamic obj);
-    }
+    void Decorate(dynamic obj);
 }

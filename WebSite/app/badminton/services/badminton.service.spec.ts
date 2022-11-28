@@ -9,7 +9,7 @@ import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/t
 import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
 import { ResultDetail } from '../../shared/models/sportsbook-sop/result-detail.model';
 import { ResourcesIds } from '../constants';
-import { SettlementStatusId, SportType } from '../../shared/constants';
+import { ResultStatusId, SettlementStatusId, SportType } from '../../shared/constants';
 import { MatchDetail } from '../../shared/models/sportsbook-sop';
 
 
@@ -77,15 +77,17 @@ describe('BadmintonService', () => {
       const totalGames = new ResultDetail();
       const totalPoint = new ResultDetail();
       totalPoint.resourceId = ResourcesIds.totalPoints;
-      totalPoint.settlementStatusId = SettlementStatusId.Calculated;
+      totalPoint.resultStatusId = ResultStatusId.ManualCompleted;
       totalGames.resourceId = ResourcesIds.totalGames;
-      totalGames.settlementStatusId = SettlementStatusId.Calculated;
+      totalGames.resultStatusId = ResultStatusId.ManualCompleted;
       resultOne.resourceId = "0101";
       resultTwo.resourceId = "0102";
+      resultOne.resultStatusId = ResultStatusId.ManualCompleted;
       resultOne.homeValue = "1";
       resultOne.awayValue = "1";
       resultTwo.homeValue = "1";
       resultTwo.awayValue = "2";
+      resultTwo.resultStatusId = ResultStatusId.ManualCompleted;
       totalPoint.awayValue = "3";
       totalPoint.homeValue = "2";
 

@@ -1,11 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using NSubstitute;
-using Settlement.Core.Constants;
+﻿using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.EventManagement.Services;
-using Xunit;
 
 namespace Settlement.EventManagement.UnitTests.Services
 {
@@ -138,6 +134,37 @@ namespace Settlement.EventManagement.UnitTests.Services
 
             // Assert
             var expectedScore = new Score("-");
+            AssertExtension.AreEqual(expectedScore, actualScore);
+        }
+
+        [Fact]
+        public void HalftimeScore_NonBeachVolleyballAndMatchSettled_ReturnsExpectedScore()
+        {
+            // Arrange
+            var resultDetail = new List<ResultDetail>
+            {
+                new ResultDetail
+                {
+                    ResourceId = "0001",
+                    HomeValue = "1",
+                    AwayValue = "1",
+                    SettlementStatusId = 0,
+                    ResultStatusId = 5
+                },
+                new ResultDetail
+                {
+                    ResourceId = "0002",
+                    HomeValue = "2",
+                    AwayValue = "2",
+                    SettlementStatusId = 0
+                }
+            };
+
+            // Act
+            var actualScore = service.HalftimeScore(SportType.Badminton, resultDetail, permission);
+
+            // Assert
+            var expectedScore = new Score("1", "1");
             AssertExtension.AreEqual(expectedScore, actualScore);
         }
 

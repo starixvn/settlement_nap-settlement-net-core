@@ -8,7 +8,7 @@ import { ResourceHeaderPipe, ResourceNameByIdPipe, ResultPipe, ScorePipe } from 
 import { RequestService } from '../../services/request.service';
 import { ModalContentDialogComponent, ModalDialogComponent, NotReadyMatchComponent, ResettleCheckerComponent, TicketCountComponent } from '../../../shared/components';
 import { IntervalBackgroundPipe } from '../../../shared/pipes/interval-background.pipe';
-import { BlockUIService, ClosePopupService, HttpRequestService, MessageBoxService } from '../../../shared/services';
+import { BlockUIService, HttpRequestService, MessageBoxService } from '../../../shared/services';
 
 import { GameTotalMatchCalculationComponent } from './game-total-match-calculation.component';
 import { GameTotalMatchVerificationService } from './game-total-match-verification.service';
@@ -26,7 +26,7 @@ describe('GameTotalMatchCalculationComponent', () => {
   let requestService: RequestService;
   let gameTotalMatchService: GameTotalMatchService;
   let verificationService: GameTotalMatchVerificationService;
-  let closePopupService: ClosePopupService;
+  let messageBoxService : MessageBoxService;
   let toastrService: ToastrService;
   const permission = {
     isLeader: true,
@@ -68,7 +68,7 @@ const unsuccessfulResult = {
         ToastrModule.forRoot()
       ],
       providers: [
-        ClosePopupService,
+        MessageBoxService,
         GameTotalMatchService,
         GameTotalMatchVerificationService,
         BlockUIService,
@@ -95,7 +95,7 @@ const unsuccessfulResult = {
     verificationService = fixture.debugElement.injector.get(GameTotalMatchVerificationService);
     gameTotalMatchService = fixture.debugElement.injector.get(GameTotalMatchService);
     requestService = fixture.debugElement.injector.get(RequestService);
-    closePopupService = fixture.debugElement.injector.get(ClosePopupService);
+    messageBoxService = fixture.debugElement.injector.get(MessageBoxService);
     toastrService = fixture.debugElement.injector.get(ToastrService);
     spyOn(toastrService, 'clear');
     spyOn(toastrService, 'error');
@@ -119,7 +119,7 @@ const unsuccessfulResult = {
     spyOn(gameTotalMatchService, 'getResultDetail').and.returnValue([new ResultDetail()]);
     spyOn(verificationService, 'isScoreMismatched');
 
-    await component.getMatch(12345, 'localhost');
+    await component.getMatch(12345);
 
     expect(requestService.getMatch).toHaveBeenCalled();
     expect(gameTotalMatchService.resetHomeAway).toHaveBeenCalled();
@@ -402,7 +402,7 @@ const unsuccessfulResult = {
       spyOn(verificationService, 'isScoreConfirmed').and.returnValue(true);
       spyOn(verificationService, 'verifyChangedSettledTickets').and.returnValue(of(false));
       spyOn(requestService, 'calculate').and.returnValue(of(successfulResult));
-      spyOn(closePopupService, 'closePopup');
+      spyOn(messageBoxService, 'closePopup');
 
       component.calculation();
       tick();
@@ -413,7 +413,7 @@ const unsuccessfulResult = {
       buttonYes.click();
       tick();
 
-      expect(closePopupService.closePopup).toHaveBeenCalled();
+      expect(messageBoxService.closePopup).toHaveBeenCalled();
     }));
 
     it('should show error when calculate unsuccessfully though all verification passed', fakeAsync(() => {
@@ -424,7 +424,7 @@ const unsuccessfulResult = {
       spyOn(verificationService, 'isScoreInvalid').and.returnValue('');
       spyOn(verificationService, 'isScoreConfirmed').and.returnValue(true);
       spyOn(requestService, 'calculate').and.returnValue(of(unsuccessfulResult));
-      spyOn(closePopupService, 'closePopup');
+      spyOn(messageBoxService, 'closePopup');
 
       component.calculation();
       tick();
@@ -445,7 +445,7 @@ const unsuccessfulResult = {
       spyOn(verificationService, 'isScoreEmpty').and.returnValue(true)
       spyOn(verificationService, 'verifyChangedSettledTickets').and.returnValue(of(false));
       spyOn(requestService, 'calculate').and.returnValue(of(successfulResult));
-      spyOn(closePopupService, 'closePopup');
+      spyOn(messageBoxService, 'closePopup');
 
       component.calculation();
       tick();
@@ -459,7 +459,7 @@ const unsuccessfulResult = {
       buttonYes.click();
       tick();
 
-      expect(closePopupService.closePopup).toHaveBeenCalled();
+      expect(messageBoxService.closePopup).toHaveBeenCalled();
     }));
 
     it('should confirm 3 times and calculate successfully when leader try to calculate mismatched score', fakeAsync(() => {
@@ -469,7 +469,7 @@ const unsuccessfulResult = {
       spyOn(verificationService, 'isScoreConfirmed').and.returnValue(true);
       spyOn(verificationService, 'verifyChangedSettledTickets').and.returnValue(of(false));
       spyOn(requestService, 'calculate').and.returnValue(of(successfulResult));
-      spyOn(closePopupService, 'closePopup');
+      spyOn(messageBoxService, 'closePopup');
 
       component.calculation();
       tick();
@@ -483,7 +483,7 @@ const unsuccessfulResult = {
       buttonYes.click();
       tick();
 
-      expect(closePopupService.closePopup).toHaveBeenCalled();
+      expect(messageBoxService.closePopup).toHaveBeenCalled();
     }));
 
     it('should show error when score is invalid', () => {
@@ -530,7 +530,7 @@ const unsuccessfulResult = {
     component.matchDetail = matchDetail;
     spyOn(verificationService, 'getResultDetailInAction').and.returnValue([]);
     spyOn(requestService, 'calculate').and.returnValue(of(successfulResult));
-    spyOn(closePopupService, 'closePopup');
+    spyOn(messageBoxService, 'closePopup');
 
     component.uncalculate();
     tick();
@@ -541,6 +541,6 @@ const unsuccessfulResult = {
     buttonYes.click();
     tick();
 
-    expect(closePopupService.closePopup).toHaveBeenCalled();
+    expect(messageBoxService.closePopup).toHaveBeenCalled();
   }));
 });

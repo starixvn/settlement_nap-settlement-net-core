@@ -1,46 +1,38 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Match = Settlement.EventManagement.Models.Calculation.Match;
+﻿using Match = Settlement.EventManagement.Models.Calculation.Match;
 
-namespace Settlement.EventManagement.Services.Calculation
+namespace Settlement.EventManagement.Services.Calculation;
+
+public interface MergeDataService
 {
-    public interface MergeDataService
+    List<Match> MergeMatches(List<Match> baseMatches, List<Match> siteMatches);
+}
+
+public class MergeDataServiceImp : MergeDataService
+{
+    private readonly CompareMatchService compareMatchService;
+
+    public MergeDataServiceImp(CompareMatchService compareMatchService)
     {
-        List<Match> MergeMatches(List<Match> baseMatches, List<Match> siteMatches);
+        this.compareMatchService = compareMatchService;
     }
 
-    public class MergeDataServiceImp : MergeDataService
+    public List<Match> MergeMatches(List<Match> baseMatches, List<Match> siteMatches)
     {
-        private readonly CompareMatchService compareMatchService;
+        var peekNewMatches = siteMatches.Except(baseMatches).ToList();
+        baseMatches.AddRange(peekNewMatches);
+        AddSiteInfo(baseMatches, siteMatches);
 
-        public MergeDataServiceImp(CompareMatchService compareMatchService)
+        return baseMatches;
+    }
+
+    private void AddSiteInfo(List<Match> baseMatches, List<Match> siteMatches)
+    {
+        foreach (var match in baseMatches)
         {
-            this.compareMatchService = compareMatchService;
-        }
-
-        public List<Match> MergeMatches(List<Match> baseMatches, List<Match> siteMatches)
-        {
-            var peekNewMatches = siteMatches.Except(baseMatches).ToList();
-
-            if (peekNewMatches.Any())
+            var matchSiteInfo = compareMatchService.GetDifferentMatchSiteInfo(match, siteMatches);
+            if (matchSiteInfo != null)
             {
-                baseMatches.AddRange(peekNewMatches);
-            }
-
-            AddSiteInfo(baseMatches, siteMatches);
-
-            return baseMatches;
-        }
-
-        private void AddSiteInfo(List<Match> baseMatches, List<Match> siteMatches)
-        {
-            foreach (var match in baseMatches)
-            {
-                var matchSiteInfo = compareMatchService.GetDifferentMatchSiteInfo(match, siteMatches);
-                if (matchSiteInfo != null)
-                {
-                    match.SiteMatch.Add(matchSiteInfo);
-                }
+                match.SiteMatch.Add(matchSiteInfo);
             }
         }
     }

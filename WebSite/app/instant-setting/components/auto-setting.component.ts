@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { UrlHelper } from '../../helper';
 import * as _ from 'lodash';
-import { MessageBoxService, ClosePopupService } from '../../shared/services';
+import { MessageBoxService } from '../../shared/services';
 import { AutoSettingLeagueQuery, AutoSettingMatchQuery, ModalDialogMessage, Result } from '../../shared/models';
 import { Language } from '../../shared/language';
 import { RequestService } from '../services/request.service';
@@ -21,8 +21,7 @@ export class AutoSettingComponent implements OnInit {
 
   constructor(
     private readonly requestService: RequestService,
-    private readonly messageBoxService: MessageBoxService,
-    private readonly closePopupService: ClosePopupService) {
+    private readonly messageBoxService: MessageBoxService) {
   }
 
   ngOnInit(): void {
@@ -70,7 +69,7 @@ export class AutoSettingComponent implements OnInit {
       this.requestService.updateSettingMatch(params).subscribe((result: Result) => {
         if (result.isSuccessful) {
           parent.document.getElementById('dialog-response').setAttribute('value', this.currentState.toString());
-          this.closePopupService.angularClosePopup();
+          this.messageBoxService.closePopup();
         } else {
           this.errorMessage = result.errMsg;
         }
@@ -109,8 +108,8 @@ export class AutoSettingComponent implements OnInit {
     );
     this.requestService.updateSettingLeague(query).subscribe((result: Result) => {
       if (result.isSuccessful) {
-        parent.document.getElementById('dialog-response').setAttribute('value', `${this.currentState},${isApplyAll}`);
-        this.closePopupService.angularClosePopup();
+        parent.document.getElementById('dialog-response')?.setAttribute('value', `${this.currentState},${isApplyAll}`);
+        this.messageBoxService.closePopup();
       } else {
         this.errorMessage = result.errMsg;
       }

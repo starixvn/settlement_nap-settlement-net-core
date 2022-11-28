@@ -6,9 +6,6 @@ using Settlement.Core.Services;
 using Settlement.Sportsbook.Soccer.Criteria;
 using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Requests;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Match = Settlement.Sportsbook.Soccer.Models.Match;
 using MatchDetail = Settlement.Sportsbook.Soccer.Models.MatchDetail;
 
@@ -93,12 +90,9 @@ namespace Settlement.Sportsbook.Soccer.GetMatch.Services
             var childMatches = match.ChildMatches.OrderBy(child => child.MatchCode)
                 .ThenBy(child => child.MatchId).ToList();
 
-            if (childMatches != null)
+            foreach (var item in childMatches)
             {
-                foreach (var item in childMatches)
-                {
-                    item.RefDataService = refDataService;
-                }
+                item.RefDataService = refDataService;
             }
 
             return new Match

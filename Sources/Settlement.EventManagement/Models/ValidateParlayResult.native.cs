@@ -1,13 +1,12 @@
-﻿namespace Settlement.EventManagement.Models
+﻿namespace Settlement.EventManagement.Models;
+
+public class ValidateParlayResult
 {
-    public class ValidateParlayResult
-    {
-        public int ErrCode { get; set; }
+    public int ErrCode { get; set; }
 
-        public string ErrMsg { get; set; }
+    public string ErrMsg { get; set; }
 
-        public string MatchIdsValid { get; set; }
+    public string MatchIdsValid { get; set; }
 
-        public string MatchIdsInvalid { get; set; }
-    }
+    public string MatchIdsInvalid { get; set; }
 }

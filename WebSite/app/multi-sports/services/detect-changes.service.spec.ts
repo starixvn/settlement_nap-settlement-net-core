@@ -1,5 +1,6 @@
 import { TestBed } from "@angular/core/testing";
-import { AutoSetting, Match, MoreScore, Remark } from "../../shared/models";
+import { Match } from "../models";
+import { AutoSetting, MoreScore, Remark } from "../../shared/models";
 import { DetectChangesService } from "./detect-changes.service";
 
 describe('MultiSport - DetectChangesService', () => {
@@ -51,7 +52,6 @@ describe('MultiSport - DetectChangesService', () => {
             newMatch.betStatus = '1-0';
             newMatch.earlySettleStatus = 'running';
             newMatch.moreScores = new MoreScore();
-            newMatch.autoCalcSetting = new AutoSetting();
             newMatch.remark = new Remark();
 
             const result = service.detect(oldMatch, newMatch);

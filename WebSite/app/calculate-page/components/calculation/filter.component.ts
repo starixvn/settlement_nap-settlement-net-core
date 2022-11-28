@@ -30,7 +30,7 @@ export class FilterComponent extends FilterBaseComponent implements OnInit {
   public leagueSelect = new MultipleSelect();
   public matchStatusSelect = new MultipleSelect();
   public holdStatusSelect = new MultipleSelect();
-  private readonly leagueWidth = "85%";
+  private readonly leagueWidth = "70%";
   private readonly MatchStatusWidth = "200px";
   constructor(
     protected verifyDateService: VerifyDateService,

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Match } from "../../shared/models";
+import { Match } from "../models";
 import * as _ from 'lodash';
 
 @Injectable()
@@ -17,8 +17,8 @@ export class DetectChangesService {
             || oldMatch.betStatus !== newMatch.betStatus
             || oldMatch.earlySettleStatus !== newMatch.earlySettleStatus
             || oldMatch.isExistRunningTicketParlay !== newMatch.isExistRunningTicketParlay
+            || oldMatch.isAutoPayoutForMatch !== newMatch.isAutoPayoutForMatch
             || !_.isEqual(oldMatch.moreScores, newMatch.moreScores)
-            || !_.isEqual(oldMatch.autoCalcSetting, newMatch.autoCalcSetting)
             || !_.isEqual(oldMatch.remark, newMatch.remark);
     }
 

@@ -24,7 +24,6 @@ export class NewMultipleSelectComponent implements OnChanges, AfterViewInit {
   status = "";
   items: ItemsSelect[];
   valueSelected: ItemsSelect[] = [];
-  onlyCallWithSecondTime = 0;
   element: Element;
   isOpened = false;
   searchText = "";
@@ -45,10 +44,10 @@ export class NewMultipleSelectComponent implements OnChanges, AfterViewInit {
       this.dataChanged = changes.multipleSelect.currentValue;
       this.items = this.dataChanged.items;
       this.itemAfterFilter = _.cloneDeep(this.items);
-      this.onlyCallWithSecondTime = 0;
       this.createGroupType();
       this.initSelected();
       this.cd.detectChanges();
+
     }
 
     if (changes.disabled) {
@@ -61,7 +60,7 @@ export class NewMultipleSelectComponent implements OnChanges, AfterViewInit {
   }
 
   public clickOutside() {
-    document.body.addEventListener('click', (event) => {
+    document.addEventListener('click', (event) => {
       const ignoreClickOnMyElement = document.getElementsByClassName("cdk-overlay-pane")[0];
       if (!this.isOpened || ignoreClickOnMyElement == null) {
         return;
@@ -138,20 +137,8 @@ export class NewMultipleSelectComponent implements OnChanges, AfterViewInit {
   }
 
   public checkOpenState(open: boolean) {
-    if (this.onlyCallWithSecondTime < 3 && this.onlyCallWithSecondTime > 0) {
-      if (!open) {
-        this.panel.forEach(item => {
-          item.expanded = false;
-        });
-      } else {
-        this.panel.forEach(item => {
-          item.expanded = true;
-        });
-      }
-    }
     this.isOpened = open;
     this.checkAllOption();
-    this.onlyCallWithSecondTime++;
   }
 
   public changeStatus() {
@@ -208,12 +195,6 @@ export class NewMultipleSelectComponent implements OnChanges, AfterViewInit {
     }
   }
 
-  public scrollTop() {
-    const top = document.getElementsByName('top');
-    if (top !== null) {
-      _.forEach(top, item => item.scrollIntoView());
-    }
-  }
 
   public hasSearchText() {
     return this.multipleSelect.enableSearchBox && !_.isEmpty(this.searchText);
@@ -237,5 +218,9 @@ export class NewMultipleSelectComponent implements OnChanges, AfterViewInit {
 
   public collapse(group: Group){
     group.collapse = !group.collapse;
+  }
+
+  public openSearch(){
+    return this.isOpened && this.multipleSelect.enableSearchBox;
   }
 }

@@ -1,87 +1,84 @@
 ﻿using Settlement.Core.Models;
-using System.Collections.Generic;
-using System.Linq;
 
-namespace Settlement.Sportsbook.Aio.Services
+namespace Settlement.Sportsbook.Aio.Services;
+
+public interface MergeDataService
 {
-    public interface MergeDataService
+    public (List<Models.ResultDetail> ticketDetails, TicketCounts ticketCounts) MergeTicketDetails(List<(List<Models.ResultDetail>, TicketCounts)> data);
+}
+
+public class MergeDataServiceImp : MergeDataService
+{
+    public (List<Models.ResultDetail> ticketDetails, TicketCounts ticketCounts) MergeTicketDetails(List<(List<Models.ResultDetail>, TicketCounts)> data)
     {
-        public (List<Models.ResultDetail> ticketDetails, TicketCounts ticketCounts) MergeTicketDetails(List<(List<Models.ResultDetail>, TicketCounts)> data);
+        var multipleTicketDetails = new List<List<Models.ResultDetail>>();
+        var multipleTicketCounts = new List<TicketCounts>();
+        foreach (var item in data)
+        {
+            multipleTicketDetails.Add(item.Item1);
+            multipleTicketCounts.Add(item.Item2);
+        }
+
+        var ticketDetails = ResolveTicketDetails(multipleTicketDetails);
+        var ticketCounts = ResolveTicketCounts(multipleTicketCounts);
+
+        return (ticketDetails, ticketCounts);
     }
 
-    public class MergeDataServiceImp : MergeDataService
+    private static List<Models.ResultDetail> ResolveTicketDetails(List<List<Models.ResultDetail>> data)
     {
-        public (List<Models.ResultDetail> ticketDetails, TicketCounts ticketCounts) MergeTicketDetails(List<(List<Models.ResultDetail>, TicketCounts)> data)
+        var baseData = data.First();
+        var siteData = data.Skip(1).ToList();
+        foreach (var details in siteData)
         {
-            var multipleTicketDetails = new List<List<Models.ResultDetail>>();
-            var multipleTicketCounts = new List<TicketCounts>();
-            foreach (var item in data)
+            var newResult = details.Except(baseData);
+            if (newResult.Any())
             {
-                multipleTicketDetails.Add(item.Item1);
-                multipleTicketCounts.Add(item.Item2);
+                baseData.AddRange(newResult);
             }
 
-            var ticketDetails = ResolveTicketDetails(multipleTicketDetails);
-            var ticketCounts = ResolveTicketCounts(multipleTicketCounts);
-
-            return (ticketDetails, ticketCounts);
+            SumTicketDetails(baseData, details);
         }
 
-        private static List<Models.ResultDetail> ResolveTicketDetails(List<List<Models.ResultDetail>> data)
-        {
-            var baseData = data.First();
-            var siteData = data.Skip(1).ToList();
-            foreach (var details in siteData)
-            {
-                var newResult = details.Except(baseData);
-                if (newResult.Any())
-                {
-                    baseData.AddRange(newResult);
-                }
+        return baseData;
+    }
 
-                SumTicketDetails(baseData, details);
+    private static void SumTicketDetails(List<Models.ResultDetail> baseData, List<Models.ResultDetail> siteData)
+    {
+        baseData.ForEach(item =>
+        {
+            var ticketCount = siteData.FirstOrDefault(data => data.ResourceId == item.ResourceId);
+            if (ticketCount != null)
+            {
+                SumTicketDetail(item, ticketCount);
             }
+        });
+    }
 
-            return baseData;
-        }
+    private static void SumTicketDetail(Models.ResultDetail baseDetail, Models.ResultDetail siteDetail)
+    {
+        baseDetail.InRunning += siteDetail.InRunning;
+        baseDetail.InWaiting += siteDetail.InWaiting;
+        baseDetail.BetMarkedCount += siteDetail.BetMarkedCount;
+        baseDetail.BetSettledCount += siteDetail.BetSettledCount;
+        baseDetail.BetRefundedCount += siteDetail.BetRefundedCount;
+        baseDetail.BetCount += siteDetail.BetCount;
+    }
 
-        private static void SumTicketDetails(List<Models.ResultDetail> baseData, List<Models.ResultDetail> siteData)
+    private static TicketCounts ResolveTicketCounts(List<TicketCounts> data)
+    {
+        foreach (var ticketCounts in data.Skip(1))
         {
-            baseData.ForEach(item =>
-            {
-                var ticketCount = siteData.FirstOrDefault(data => data.ResourceId == item.ResourceId);
-                if (ticketCount != null)
-                {
-                    SumTicketDetail(item, ticketCount);
-                }
-            });
+            SumTicket(data[0], ticketCounts);
         }
 
-        private static void SumTicketDetail(Models.ResultDetail baseDetail, Models.ResultDetail siteDetail)
-        {
-            baseDetail.InRunning += siteDetail.InRunning;
-            baseDetail.InWaiting += siteDetail.InWaiting;
-            baseDetail.BetMarkedCount += siteDetail.BetMarkedCount;
-            baseDetail.BetSettledCount += siteDetail.BetSettledCount;
-            baseDetail.BetRefundedCount += siteDetail.BetRefundedCount;
-            baseDetail.BetCount += siteDetail.BetCount;
-        }
+        return data[0];
+    }
 
-        private static TicketCounts ResolveTicketCounts(List<TicketCounts> data)
-        {
-            foreach (var ticketCounts in data.Skip(1))
-            {
-                SumTicket(data[0], ticketCounts);
-            }
-
-            return data[0];
-        }
-
-        private static void SumTicket(TicketCounts baseTicketCounts, TicketCounts siteTicketCounts)
-        {
-            baseTicketCounts.BetRunningCount += siteTicketCounts.BetRunningCount;
-            baseTicketCounts.BetMarkedCount += siteTicketCounts.BetMarkedCount;
-            baseTicketCounts.BetSettledCount += siteTicketCounts.BetSettledCount;
-        }
+    private static void SumTicket(TicketCounts baseTicketCounts, TicketCounts siteTicketCounts)
+    {
+        baseTicketCounts.BetRunningCount += siteTicketCounts.BetRunningCount;
+        baseTicketCounts.BetMarkedCount += siteTicketCounts.BetMarkedCount;
+        baseTicketCounts.BetSettledCount += siteTicketCounts.BetSettledCount;
     }
 }

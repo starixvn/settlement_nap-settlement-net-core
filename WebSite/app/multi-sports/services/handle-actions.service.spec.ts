@@ -1,9 +1,8 @@
 import { TestBed } from "@angular/core/testing";
-import { MultiSport } from "../models";
+import { LeagueMatch, Match, MultiSport, SportMatch } from "../models";
 import { HandleActionsService } from "./handle-actions.service";
-import { EventStatus } from "../constants";
-import { ChangedMatchSetting, ChangeSettingResult, LeagueMatch, Match, MixParlay, Remark, SportMatch } from "../../shared/models";
-import { BackgroundColor, SportType } from "../../shared/constants";
+import { AutoSetting, ChangedMatchSetting, ChangeSettingResult, MixParlay, Remark, } from "../../shared/models";
+import { BackgroundColor, EventStatus, SportType } from "../../shared/constants";
 import { Permission } from "../../shared/models/sportsbook-sop/permission.model";
 describe('MultiSport - HandleActionsService', () => {
     let service: HandleActionsService;
@@ -15,7 +14,8 @@ describe('MultiSport - HandleActionsService', () => {
         collapse: false,
         isCheckedCalcMP: true,
         disableCheckCalcMP: false,
-        isMergedParlay: false
+        isMergedParlay: false,
+        isAutoPayoutForLeague: false
     };
 
     const sport: SportMatch = {
@@ -176,17 +176,21 @@ describe('MultiSport - HandleActionsService', () => {
         changeSetting.match.remark = new Remark();
 
         it('should show link when no marked status', () => {
+            match.isCheckedCalcMP = true;
             service.handleChangeRemarkSetting(changeSetting, match, [sport], multiSport);
 
-            expect(match.showLink).toBe(true);
+            expect(match.isCheckedCalcMP).toBe(true);
         });
 
-        it('should lock link when exist marked status', () => {
+        it('should disable misparlay when exist marked status', () => {
             changeSetting.match.remark.isKeyHold = true;
+            match.mixParlay = new MixParlay();
+            match.isCheckedCalcMP = true;
 
             service.handleChangeRemarkSetting(changeSetting, match, [sport], multiSport);
 
-            expect(match.showLink).toBe(false);
+            expect(match.isCheckedCalcMP).toBe(false);
+            expect(match.mixParlay.hasMixParlay).toBe(false);
         });
     })
 });

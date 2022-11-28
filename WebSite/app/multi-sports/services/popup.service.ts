@@ -1,13 +1,12 @@
 import { Injectable } from '@angular/core';
-import { MultiSport, PopupProperties } from './../models';
+import { MultiSport, PopupProperties, Match, SportMatch } from './../models';
 import { DialogBoxService } from './../../shared/services';
-import { DialogDataIframe, Match, SportMatch } from './../../shared/models';
+import { DialogDataIframe } from './../../shared/models';
 import { Language } from './../../shared/language';
-import { EventStatus } from './../constants';
 import { HandleActionsService } from './handle-actions.service';
 import { MultiSportService } from './multi-sport.service';
 import * as _ from 'lodash';
-import { CalculationStatus, SportType } from '../../shared/constants';
+import { CalculationStatus, SportType, EventStatus } from '../../shared/constants';
 
 @Injectable()
 

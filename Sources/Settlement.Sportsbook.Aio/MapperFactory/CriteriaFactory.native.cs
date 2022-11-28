@@ -1,40 +1,36 @@
-﻿using Fanex.Data.Repository;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
+﻿using Newtonsoft.Json;
 
-namespace Settlement.Sportsbook.Aio.MapperFactory
+namespace Settlement.Sportsbook.Aio.MapperFactory;
+
+public interface ICriteriaFactory
 {
-    public interface ICriteriaFactory
+    Type GetCriteriaType(string apiKey);
+
+    ICriteria CreateCriteria(Type criteriaType, object queryModel);
+
+    INonQueryCommand CreateNonQueryCommand(Type commandType, object queryModel);
+}
+
+public class CriteriaFactoryBase : ICriteriaFactory
+{
+    protected static readonly Dictionary<string, Type> CriteriaTypes = new Dictionary<string, Type>();
+
+    public virtual ICriteria CreateCriteria(Type criteriaType, object queryModel)
     {
-        Type GetCriteriaType(string apiKey);
+        var criteria = JsonConvert.DeserializeObject(JsonConvert.SerializeObject(queryModel), criteriaType);
 
-        ICriteria CreateCriteria(Type criteriaType, object queryModel);
-
-        INonQueryCommand CreateNonQueryCommand(Type commandType, object queryModel);
+        return (ICriteria)criteria;
     }
 
-    public class CriteriaFactoryBase : ICriteriaFactory
+    public virtual INonQueryCommand CreateNonQueryCommand(Type commandType, object queryModel)
     {
-        protected static readonly Dictionary<string, Type> CriteriaTypes = new Dictionary<string, Type>();
+        var nonQueryCommand = JsonConvert.DeserializeObject(JsonConvert.SerializeObject(queryModel), commandType);
 
-        public virtual ICriteria CreateCriteria(Type criteriaType, object queryModel)
-        {
-            var criteria = JsonConvert.DeserializeObject(JsonConvert.SerializeObject(queryModel), criteriaType);
+        return (INonQueryCommand)nonQueryCommand;
+    }
 
-            return (ICriteria)criteria;
-        }
-
-        public virtual INonQueryCommand CreateNonQueryCommand(Type commandType, object queryModel)
-        {
-            var nonQueryCommand = JsonConvert.DeserializeObject(JsonConvert.SerializeObject(queryModel), commandType);
-
-            return (INonQueryCommand)nonQueryCommand;
-        }
-
-        public Type GetCriteriaType(string apiKey)
-        {
-            return CriteriaTypes.ContainsKey(apiKey) ? CriteriaTypes[apiKey] : null;
-        }
+    public Type GetCriteriaType(string apiKey)
+    {
+        return CriteriaTypes.ContainsKey(apiKey) ? CriteriaTypes[apiKey] : null;
     }
 }

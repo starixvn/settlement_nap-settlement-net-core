@@ -143,7 +143,7 @@ describe('GameTotalRefundComponent', () => {
                 settleType: "MNL"
             };
             spyOn(aioService, 'getMatch').and.returnValue(of(match));
-            component.getMatch(matchId, 'url');
+            component.getMatch(matchId);
 
             expect(aioService.getMatch).toHaveBeenCalledWith(matchQuery);
         });
@@ -155,7 +155,7 @@ describe('GameTotalRefundComponent', () => {
             spyOn(gameTotalService, 'getClass');
             spyOn(aioService, 'getMatch').and.returnValue(of(match));
             spyOn(gameTotalService, 'resetHomeAway');
-            await component.getMatch(1, 'url');
+            await component.getMatch(1);
 
             expect(gameTotalService.getClass).toHaveBeenCalledTimes(2);
             expect(component.permission).toEqual(match.permission);

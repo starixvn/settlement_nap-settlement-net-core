@@ -2,7 +2,7 @@
 import { UrlHelper } from '../../helper';
 import * as _ from 'lodash';
 import { RequestService } from "../services/request.service";
-import { MessageBoxService, ClosePopupService } from '../../shared/services';
+import { MessageBoxService } from '../../shared/services';
 import { ModalDialogMessage, Result } from '../../shared/models';
 import { Language } from '../../shared/language';
 import { League, TimeSettingQuery } from '../models';
@@ -23,8 +23,7 @@ export class TimeSettingComponent implements OnInit {
     public readonly warningDialogMessage: ModalDialogMessage = new ModalDialogMessage();
     constructor(
         private readonly requestService: RequestService,
-        private readonly messageBoxService: MessageBoxService,
-        private readonly closePopupService: ClosePopupService) {
+        private readonly messageBoxService: MessageBoxService) {
         this.warningDialogMessage.title = Language.InstantSetting.WarningTitle;
         this.confirmationDialogMessage.title = Language.confirmationBox;
     }
@@ -70,7 +69,7 @@ export class TimeSettingComponent implements OnInit {
             this.requestService.proceed(query).subscribe((result: Result) => {
                 if (result.isSuccessful) {
                     parent.document.getElementById('dialog-response').setAttribute('value', query.waitingTime.toString());
-                    this.closePopupService.angularClosePopup();
+                   this.messageBoxService.closePopup();
                 } else {
                     this.errorMessage = result.errMsg;
                 }
