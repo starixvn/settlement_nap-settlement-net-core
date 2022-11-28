@@ -49,12 +49,35 @@ public class MatchServiceTests
     {
         var match = new Match
         {
-            MatchId = 700000,
+            MatchId = 1,
             SportType = 2,
             LeagueId = 1,
-            RefDataService = refDataService
+            RefDataService = refDataService,
+            EventStatus = EventStatus.Completed,
+            MatchCode = "123456"
         };
-        var listMatch = new List<Match> { match };
+        var matchCompletedWithRunning = new Match
+        {
+            MatchId = 2,
+            SportType = 2,
+            LeagueId = 1,
+            RefDataService = refDataService,
+            EventStatus = EventStatus.Completed,
+            IsExistRunningTicket = true,
+            MatchCode = "12345"
+        };
+
+        var matchRunning = new Match
+        {
+            MatchId = 3,
+            SportType = 2,
+            LeagueId = 1,
+            RefDataService = refDataService,
+            EventStatus = EventStatus.Running,
+            IsExistRunningTicket = true,
+            MatchCode = "1234"
+        };
+        var listMatch = new List<Match> { match, matchCompletedWithRunning, matchRunning };
         repository.FetchAsync<Match>(Arg.Any<ICriteria>()).Returns(listMatch);
         repository.FetchAsync<ResultDetail>(Arg.Any<ICriteria>()).Returns(new List<ResultDetail>());
         refDataService.GetLeagueName(Arg.Any<string>()).Returns(string.Empty);
@@ -62,6 +85,7 @@ public class MatchServiceTests
         var sportBooks = await service.GetMatches(new FilterCalculationRequest());
 
         Assert.NotNull(sportBooks);
+        Assert.Equal("2,3,1", string.Join(',', sportBooks.Select(item => item.MatchId.ToString()).ToList()));
         newInfoMatchService.Received().TicketInfo(Arg.Any<Match>());
         newInfoMatchService.Received().NewEventStatus(Arg.Any<Match>());
         newInfoMatchService.Received().EventStatusColor(Arg.Any<Match>());
@@ -70,7 +94,7 @@ public class MatchServiceTests
         newInfoMatchService.Received().ConfirmScore(Arg.Any<List<ResultDetail>>(), ResourceType.Halftime);
         newInfoMatchService.Received().ConfirmScore(Arg.Any<List<ResultDetail>>(), ResourceType.Final);
         newInfoMatchService.Received().GoalIcon(Arg.Any<Match>());
-        newInfoMatchService.Received(2).IsNotConsistentScore(Arg.Any<string>(), Arg.Any<List<ResultDetail>>(), Arg.Any<List<ResultDetail>>(), Arg.Any<string>());
+        newInfoMatchService.Received(6).IsNotConsistentScore(Arg.Any<string>(), Arg.Any<List<ResultDetail>>(), Arg.Any<List<ResultDetail>>(), Arg.Any<string>());
         newInfoMatchService.Received().GoalIcon(Arg.Any<Match>());
     }
 

@@ -102,7 +102,7 @@ public class MultiSportServiceImp : IMultiSportService
     private async Task<List<Match>> GetAndCachingMatches(RefreshMultiSportRequest request)
     {
         var criteria = mapper.Map<RefreshMultiSportRequest, GetWaitingMultiSportCriteria>(request);
-        var waitingMatches = await GetMatchesAllSites(criteria, false);
+        var waitingMatches = await GetMatchesAllSites(criteria);
         var listResultDetail = await ResultDetailByMatchIds(waitingMatches);
 
         waitingMatches = matchService.SetNewMatchInfo(waitingMatches, listResultDetail);
@@ -114,26 +114,20 @@ public class MultiSportServiceImp : IMultiSportService
         return matches;
     }
 
-    private async Task<List<Match>> GetMatchesAllSites(MultipleSiteCriteria criteria, bool main = true)
+    private async Task<List<Match>> GetMatchesAllSites(MultipleSiteCriteria criteria)
     {
-        var watch = System.Diagnostics.Stopwatch.StartNew();
         var fetchMatchTasks = appSettingsKey
             .SiteDbServer
             .Select(s => FetchMatches(s, criteria))
             .ToList();
-        await Task.WhenAll(fetchMatchTasks);
-        watch.Stop();
+        var listMatch = await Task.WhenAll(fetchMatchTasks.ToArray());
 
-        var matchesInAllServers = fetchMatchTasks.Select(t => t.Result.ToList()).ToList();
+        var matchesInAllServers = listMatch.Select(m => m.ToList()).ToList();
         var matches = matchesInAllServers[0];
 
         for (var i = 1; i < appSettingsKey.SiteDbServer.Count; i++)
         {
             matchService.MergeMatches(matches, matchesInAllServers[i]);
-        }
-        if (main)
-        {
-            Console.WriteLine($"- Get Match: {matches.Count} - {watch.ElapsedMilliseconds}ms\n");
         }
 
         return matches;

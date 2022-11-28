@@ -1,5 +1,5 @@
-import { MatchWaitingRequest, MultiSport} from '../models';
-import { BlockUIService, HttpRequestService, MessageBoxService, SportMatchService } from '../../shared/services';
+import { LeagueMatch, Match, MatchWaitingRequest, MultiSport, SportMatch} from '../models';
+import { BlockUIService, HttpRequestService, MessageBoxService } from '../../shared/services';
 import { TestBed } from '@angular/core/testing';
 
 import { RefreshMatchService } from './refresh-match.service';
@@ -9,9 +9,10 @@ import { HttpClientModule } from '@angular/common/http';
 import { of } from 'rxjs';
 import { MultiSportService } from './multi-sport.service';
 import { HandleActionsService } from './handle-actions.service';
-import { AutoSetting, LeagueMatch, Match, MixParlay, MoreScore, Remark, Score, SportMatch } from '../../shared/models';
+import { MixParlay, MoreScore, Remark, Score } from '../../shared/models';
 import { SportType } from '../../shared/constants';
 import { Permission } from '../../shared/models/sportsbook-sop/permission.model';
+import { SportMatchService } from './sport-match.service';
 
 describe('MultiSport - RefreshMatchService', () => {
   let httpRequestService: HttpRequestService;
@@ -27,7 +28,6 @@ describe('MultiSport - RefreshMatchService', () => {
   newMatch.moreScores = new MoreScore(),
   newMatch.moreScores.sets = [new Score('1', '0', '')];
   newMatch.intervalScore = [new Score('1', '0', '')];
-  newMatch.autoCalcSetting = new AutoSetting();
   newMatch.betStatus = '';
   newMatch.earlySettleStatus = '';
   newMatch.eventStatus = '';
@@ -68,7 +68,7 @@ describe('MultiSport - RefreshMatchService', () => {
     isCheckedCalcMP: false,
     disableCheckCalcMP: false,
     isMergedParlay: true,
-    autoCalcSetting: new AutoSetting()
+    isAutoPayoutForLeague: false
   };
 
   const sport: SportMatch = {
@@ -115,7 +115,7 @@ describe('MultiSport - RefreshMatchService', () => {
       spyOn(httpRequestService, 'postMessagePack').and.returnValue(of([newMatch]));
       spyOn(detectChangesService, 'detect').and.returnValue(false);
 
-      refreshMatchService.refreshMatches([sport], new MatchWaitingRequest('', '', '', ''), multiSport);
+      refreshMatchService.refreshMatches([sport], new MatchWaitingRequest('', '', '', '' ,'',''), multiSport);
 
       expect(match).not.toEqual(newMatch);
     });
@@ -125,7 +125,7 @@ describe('MultiSport - RefreshMatchService', () => {
         spyOn(detectChangesService, 'detect').and.returnValue(true);
         spyOn(handleActionsService, 'resetCheckboxCalcMixParlay');
 
-        refreshMatchService.refreshMatches([sport], new MatchWaitingRequest('', '', '', ''), multiSport);
+        refreshMatchService.refreshMatches([sport], new MatchWaitingRequest('', '', '', '','',''), multiSport);
 
         expect(match).toEqual(newMatch);
         expect(handleActionsService.resetCheckboxCalcMixParlay).toHaveBeenCalled();

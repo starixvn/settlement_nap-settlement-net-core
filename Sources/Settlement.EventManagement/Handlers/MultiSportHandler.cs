@@ -37,14 +37,9 @@ public class MultiSportHandler : IRequestHandler<FilterMultiSportRequest, MultiS
 
     public async Task<MultiSportModel> Handle(FilterMultiSportRequest request, CancellationToken cancellationToken)
     {
-        var watch = System.Diagnostics.Stopwatch.StartNew();
-        var sports = await multiSportService.GetSportBook(request);
-        watch.Stop();
-        Console.WriteLine($"- End:\t{watch.ElapsedMilliseconds}ms\r\n");
-
         return new MultiSportModel
         {
-            Sports = sports,
+            Sports = await multiSportService.GetSportBook(request),
             Permission = permissionService.Permission
         };
     }

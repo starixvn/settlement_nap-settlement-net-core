@@ -1,8 +1,9 @@
 import { getTestBed, TestBed } from "@angular/core/testing";
-import { Permission } from "../models/sportsbook-sop";
-import { BackgroundColor, SportType } from "../constants";
-import { AutoSetting, LeagueMatch, Match, MoreScore, Score, SportMatch } from "../models";
+import { MoreScore, Score } from "../../shared/models";
+import { BackgroundColor, SportType } from "../../shared/constants";
+import { LeagueMatch, Match, SportMatch } from "../models";
 import { SportMatchService } from "./sport-match.service";
+import { Permission } from "../../shared/models/sportsbook-sop/permission.model";
 
 describe('SportMatchService', () => {
     let service: SportMatchService;
@@ -30,7 +31,7 @@ describe('SportMatchService', () => {
         isCheckedCalcMP: false,
         disableCheckCalcMP: false,
         isMergedParlay: false,
-        autoCalcSetting: new AutoSetting
+        isAutoPayoutForLeague: false
     };
 
     const sport: SportMatch = {

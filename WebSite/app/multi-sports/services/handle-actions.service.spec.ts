@@ -1,9 +1,8 @@
 import { TestBed } from "@angular/core/testing";
-import { MultiSport } from "../models";
+import { LeagueMatch, Match, MultiSport, SportMatch } from "../models";
 import { HandleActionsService } from "./handle-actions.service";
-import { EventStatus } from "../constants";
-import { AutoSetting, ChangedMatchSetting, ChangeSettingResult, LeagueMatch, Match, MixParlay, Remark, SportMatch } from "../../shared/models";
-import { BackgroundColor, SportType } from "../../shared/constants";
+import { AutoSetting, ChangedMatchSetting, ChangeSettingResult, MixParlay, Remark, } from "../../shared/models";
+import { BackgroundColor, EventStatus, SportType } from "../../shared/constants";
 import { Permission } from "../../shared/models/sportsbook-sop/permission.model";
 describe('MultiSport - HandleActionsService', () => {
     let service: HandleActionsService;
@@ -16,7 +15,7 @@ describe('MultiSport - HandleActionsService', () => {
         isCheckedCalcMP: true,
         disableCheckCalcMP: false,
         isMergedParlay: false,
-        autoCalcSetting: new AutoSetting()
+        isAutoPayoutForLeague: false
     };
 
     const sport: SportMatch = {

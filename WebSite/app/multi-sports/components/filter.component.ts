@@ -27,6 +27,7 @@ import { Language } from '../../shared/language';
 export class FilterComponent implements OnInit {
     @Output() public readonly searchAction = new EventEmitter();
     @Output() public readonly requestEmitter = new EventEmitter();
+    @Output() public readonly enableRefresh = new EventEmitter();
     public readonly warningDialogMessage = new ModalDialogMessage();
     public matchCode = "";
     public fromDate: NgbDateStruct;
@@ -109,11 +110,13 @@ export class FilterComponent implements OnInit {
             return;
         }
 
+        this.enableRefresh.emit(false);
         const multiSport = await this.multiSportService.filter(query).toPromise();
         const matchIds = this.getAllMatchId(multiSport.sports);
         this.searchAction.emit(multiSport);
         const request = new MatchWaitingRequest(this.leaguesSelected, matchIds, fromDate, toDate, this.overStatusSelected, this.matchCode);
         this.requestEmitter.emit(request);
+        this.enableRefresh.emit(true);
         this.updateLeagues();
     }
 

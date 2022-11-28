@@ -1,3 +1,4 @@
+import { PopupProperties } from './../models/popup-properties.model';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ISubscription } from "rxjs/Subscription";
 import { interval } from 'rxjs';
@@ -11,7 +12,7 @@ import {
     DialogBoxService,
     GenerateFilterService
 } from '../../shared/services';
-import { MultiSportService, RefreshMatchService, PopupService, DetectChangesService, HandleActionsService, BackGroundService, SportMatchService} from '../services';
+import { MultiSportService, RefreshMatchService, PopupService, DetectChangesService, HandleActionsService, BackGroundService, SportMatchService } from '../services';
 import { MultiSport, MatchWaitingRequest } from '../models';
 
 @Component({
@@ -32,7 +33,7 @@ import { MultiSport, MatchWaitingRequest } from '../models';
         DetectChangesService,
         HandleActionsService,
         SportMatchService,
-        BackGroundService 
+        BackGroundService
     ],
 })
 export class AppComponent implements OnInit, OnDestroy {
@@ -41,6 +42,7 @@ export class AppComponent implements OnInit, OnDestroy {
     public blockUI = false;
     public multiSport = new MultiSport();
     public intervalTimer = interval(this.period);
+    public enableRefreshMatch = false;
     public request: MatchWaitingRequest;
 
     constructor(
@@ -71,5 +73,9 @@ export class AppComponent implements OnInit, OnDestroy {
 
     public getRequest(request: MatchWaitingRequest) {
         this.request = request;
+    }
+
+    public getRefreshMatchFlag(enable: boolean) {
+        this.enableRefreshMatch = enable;
     }
 }

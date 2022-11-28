@@ -19,6 +19,7 @@ import { BackGroundService, SportMatchService } from '../services';
 export class LeagueComponent implements OnInit, OnChanges, OnDestroy {
   @Input() public multiSport: MultiSport;
   @Input() public request: MatchWaitingRequest;
+  @Input() public enableRefresh: boolean;
   private readonly period = 5000;
   private readonly autoSettingType = 1;
   private readonly autoSettingCompleted = 2;
@@ -47,7 +48,7 @@ export class LeagueComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (!changes.multiSport.firstChange) {
+    if (!_.isUndefined(changes.multiSport) && !changes.multiSport.firstChange) {
       this.permission = this.multiSport.permission;
       this.refreshMatchesService.permission = this.permission;
       this.sports = this.sportMatchService.getSportsWithIntervalScore(this.multiSport.sports, this.permission);
@@ -98,7 +99,7 @@ export class LeagueComponent implements OnInit, OnChanges, OnDestroy {
 
   private refreshMatches() {
     this.subscriber = this.intervalTimer.subscribe(() => {
-      if (this.isExistedSport) {
+      if (this.enableRefresh && this.isExistedSport) {
         this.refreshMatchesService.refreshMatches(this.sports, this.request, this.multiSport);
       }
     });

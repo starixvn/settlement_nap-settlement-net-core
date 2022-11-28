@@ -1,4 +1,4 @@
-export const EventStatus1 = {
+export const EventStatus = {
     waiting: 'Waiting',
     calculating: 'Calculating',
     completed: 'Completed',

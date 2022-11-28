@@ -4,13 +4,16 @@ import {
 } from '.';
 import {
   MultiSport,
-  MatchWaitingRequest
+  MatchWaitingRequest,
+  SportMatch,
+  LeagueMatch,
+  Match
 } from '../models';
-import { RefreshMatchService, MultiSportService, PopupService, HandleActionsService, DetectChangesService, BackGroundService } from '../services';
+import { RefreshMatchService, MultiSportService, PopupService, HandleActionsService, DetectChangesService, BackGroundService, SportMatchService } from '../services';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-import { HttpRequestService, BlockUIService, MessageBoxService, DialogBoxService, SportMatchService } from '../../shared/services';
+import { HttpRequestService, BlockUIService, MessageBoxService, DialogBoxService } from '../../shared/services';
 import { SimpleChange, QueryList, ElementRef } from '@angular/core';
 import { MaterialModule } from '../../shared/material-module';
 import { of } from 'rxjs';
@@ -18,12 +21,9 @@ import { ModalDialogComponent, ModalContentDialogComponent } from '../../shared/
 import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { IntervalScorePipe } from '../../shared/pipes/interval-score.pipe';
 import {
-  SportMatch,
   MoreScore,
   Score,
   MixParlay,
-  LeagueMatch,
-  Match,
   Remark
 } from '../../shared/models';
 import { BackgroundColor, SportType } from '../../shared/constants';
@@ -49,15 +49,6 @@ describe('LeagueComponent', () => {
   match.mixParlay = parlay;
   const buttonName = "btn-danger";
   const errorMessage = "Error message";
-  let autoSetting: AutoSetting = {
-    isAutoPayoutForLeague: true,
-    isAutoPayoutForMatch: true,
-    isDirectPayoutForLeague: true,
-    isDirectPayoutForMatch: true,
-    isInstantForLeague: true,
-    isInstantForMatch: true,
-  };
-
   const league: LeagueMatch = {
     leagueId: 7000000,
     matches: [match],
@@ -66,7 +57,7 @@ describe('LeagueComponent', () => {
     isCheckedCalcMP: true,
     disableCheckCalcMP: false,
     isMergedParlay: false,
-    autoCalcSetting: null
+    isAutoPayoutForLeague: false
   };
 
   const sport: SportMatch = {
@@ -115,6 +106,7 @@ describe('LeagueComponent', () => {
         DetectChangesService,
         SportMatchService,
         BackGroundService,
+        SportMatchService
       ],
       imports: [
         FormsModule,
@@ -150,6 +142,7 @@ describe('LeagueComponent', () => {
   it('ngOnInit - should set permission and refresh matches', fakeAsync(() => {
     component.multiSport = multiSport;
     component.sports = multiSport.sports;
+    component.enableRefresh = true;
     spyOn(refreshMatchService, 'refreshMatches');
 
     component.ngOnInit();
@@ -569,13 +562,9 @@ describe('LeagueComponent', () => {
       component.permission = new Permission();
     });
 
-    beforeAll(() => {
-      match.autoCalcSetting = new AutoSetting();
-    });
-
     it('should return icon auto when have permission and match is auto payout', () => {
       component.permission.canAutoPayout = true;
-      match.autoCalcSetting.isAutoPayoutForMatch = true;
+      match.isAutoPayoutForMatch = true;
 
       const result = component.getAutoSetting(match);
 
@@ -584,7 +573,7 @@ describe('LeagueComponent', () => {
 
     it('should return icon no when have permission and is not auto payout', () => {
       component.permission.canAutoPayout = true;
-      match.autoCalcSetting.isAutoPayoutForMatch = false;
+      match.isAutoPayoutForMatch = false;
 
       const result = component.getAutoSetting(match);
 
@@ -593,7 +582,7 @@ describe('LeagueComponent', () => {
 
     it('should return icon no disabled when have no permission and is not auto payout', () => {
       component.permission.canAutoPayout = false;
-      match.autoCalcSetting.isAutoPayoutForMatch = false;
+      match.isAutoPayoutForMatch = false;
 
       const result = component.getAutoSetting(match);
 
@@ -602,7 +591,7 @@ describe('LeagueComponent', () => {
 
     it('should return icon auto disabled when have no permission and is auto payout', () => {
       component.permission.canAutoPayout = false;
-      match.autoCalcSetting.isAutoPayoutForMatch = true;
+      match.isAutoPayoutForMatch = true;
 
       const result = component.getAutoSetting(match);
 
@@ -615,24 +604,20 @@ describe('LeagueComponent', () => {
       component.permission = new Permission();
     });
 
-    beforeAll(() => {
-      match.autoCalcSetting = new AutoSetting();
-    });
-
     it('should return icon auto when have permission and match is auto payout', () => {
       component.permission.canAutoPayout = true;
-      match.autoCalcSetting.isAutoPayoutForLeague = true;
+      match.isAutoPayoutForLeague = true;
 
-      const result = component.getAutoSettingLeague(match.autoCalcSetting);
+      const result = component.getAutoSettingLeague(match.isAutoPayoutForLeague);
 
       expect(result).toEqual(BackgroundColor.iconAuto);
     });
 
     it('should return icon no when have permission and is not auto payout', () => {
       component.permission.canAutoPayout = true;
-      match.autoCalcSetting.isAutoPayoutForLeague = false;
+      match.isAutoPayoutForLeague = false;
 
-      const result = component.getAutoSettingLeague(match.autoCalcSetting);
+      const result = component.getAutoSettingLeague(match.isAutoPayoutForLeague);
 
       expect(result).toEqual(BackgroundColor.iconNo);
     });
@@ -640,16 +625,16 @@ describe('LeagueComponent', () => {
     it('should return icon no disabled when have no permission and is not auto payout', () => {
       component.permission.canAutoPayout = false;
 
-      const result = component.getAutoSettingLeague(match.autoCalcSetting);
+      const result = component.getAutoSettingLeague(match.isAutoPayoutForLeague);
 
       expect(result).toEqual(BackgroundColor.iconNoDisabled);
     });
 
     it('should return icon auto disabled when have no permission and is auto payout', () => {
       component.permission.canAutoPayout = false;
-      match.autoCalcSetting.isAutoPayoutForLeague = true;
+      match.isAutoPayoutForLeague = true;
 
-      const result = component.getAutoSettingLeague(match.autoCalcSetting);
+      const result = component.getAutoSettingLeague(match.isAutoPayoutForLeague);
 
       expect(result).toEqual(BackgroundColor.iconAutoDisabled);
     });
@@ -1110,7 +1095,7 @@ describe('LeagueComponent', () => {
 
     it('should change auto status when successfully updated', fakeAsync(() => {
       permission.canAutoPayout = true;
-      match.autoCalcSetting.isAutoPayoutForMatch = false;
+      match.isAutoPayoutForMatch = false;
       component.permission = permission;
       spyOn(multiSportService, 'updateSettingMatch').and.returnValue(of(successfulResult));
 
@@ -1119,7 +1104,7 @@ describe('LeagueComponent', () => {
       buttonYes.click();
       tick();
 
-      expect(match.autoCalcSetting.isAutoPayoutForMatch).toBe(true);
+      expect(match.isAutoPayoutForMatch).toBe(true);
     }));
 
     it('should alert when fail to update', fakeAsync(() => {
@@ -1142,23 +1127,23 @@ describe('LeagueComponent', () => {
       component.permission = permission;
       spyOn(messageBoxService, 'confirm');
 
-      component.changeAutoLeague(autoSetting, league);
+      component.changeAutoLeague(league);
 
       expect(messageBoxService.confirm).not.toHaveBeenCalled();
     });
 
     it('should change auto status when successfully updated', fakeAsync(() => {
       permission.canAutoPayout = true;
-      match.autoCalcSetting.isAutoPayoutForLeague = false;
+      league.isAutoPayoutForLeague = false;
       component.permission = permission;
       spyOn(multiSportService, 'updateSettingLeague').and.returnValue(of(successfulResult));
 
-      component.changeAutoLeague(match.autoCalcSetting, league);
+      component.changeAutoLeague(league);
       const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
       buttonYes.click();
       tick();
 
-      expect(match.autoCalcSetting.isAutoPayoutForLeague).toBe(true);
+      expect(league.isAutoPayoutForLeague).toBe(true);
     }));
 
     it('should alert when fail to update', fakeAsync(() => {
@@ -1166,7 +1151,7 @@ describe('LeagueComponent', () => {
       spyOn(multiSportService, 'updateSettingLeague').and.returnValue(of(unsuccessfulResult));
       spyOn(messageBoxService, 'alert');
 
-      component.changeAutoLeague(match.autoCalcSetting, league);
+      component.changeAutoLeague(league);
       const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
       buttonYes.click();
       tick();

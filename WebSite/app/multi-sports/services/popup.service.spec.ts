@@ -1,6 +1,9 @@
 import {
+  LeagueMatch,
+  Match,
   MultiSport,
   PopupProperties,
+  SportMatch,
 } from "../models";
 import { BlockUIService, DialogBoxService, HttpRequestService, MessageBoxService } from "../../shared/services";
 import { TestBed, getTestBed } from "@angular/core/testing";
@@ -12,7 +15,7 @@ import { of } from "rxjs";
 import { HandleActionsService } from "./handle-actions.service";
 import { MultiSportService } from "./multi-sport.service";
 import { HttpClient, HttpHandler } from "@angular/common/http";
-import { AutoSetting, LeagueMatch, Match, MixParlay, SportMatch } from "../../shared/models";
+import { AutoSetting, MixParlay } from "../../shared/models";
 import { CalculationStatus, SportType } from "../../shared/constants";
 import { Permission } from "../../shared/models/sportsbook-sop/permission.model";
 
@@ -32,7 +35,7 @@ describe("MultiSport - PopupService", () => {
     isCheckedCalcMP: false,
     disableCheckCalcMP: false,
     isMergedParlay: true,
-    autoCalcSetting: new AutoSetting()
+    isAutoPayoutForLeague: false
   };
 
   const sport: SportMatch = {

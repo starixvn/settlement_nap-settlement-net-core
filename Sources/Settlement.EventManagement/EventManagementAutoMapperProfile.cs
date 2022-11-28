@@ -13,7 +13,6 @@ public class EventManagementAutoMapperProfile : Profile
         CreateMap<SportRequest, SportCriteria>();
         CreateMap<LeagueRequest, LeagueCriteria>();
         CreateMap<Match, MultiSportMatchWaiting>();
-        CreateMap<Match, MultiSportMatch>();
         CreateMap<RefreshMultiSportRequest, GetWaitingMultiSportCriteria>();
         CreateMap<CalculateParlayRequest, ParlayCriteria>();
         CreateMap<FilterCalculationRequest, GetMatchesCriteria>();
