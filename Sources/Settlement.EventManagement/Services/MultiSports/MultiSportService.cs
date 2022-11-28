@@ -1,6 +1,4 @@
-﻿using Fanex.Caching;
-using Settlement.Core.Constants;
-using Settlement.Core.Criteria;
+﻿using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.EventManagement.Criteria;
@@ -56,10 +54,6 @@ public class MultiSportServiceImp : IMultiSportService
         var matches = GetMoreScore(data);
 
         var matchesSorted = matchService.SortingMatches(matches);
-
-        var watch = System.Diagnostics.Stopwatch.StartNew();
-        watch.Stop();
-        Console.WriteLine($"Mapping: Match -> MultiSportMatch:\t{watch.ElapsedMilliseconds}\r\n");
 
         var sportBooks = GroupSport(matchesSorted);
         return sportBooks;
@@ -131,15 +125,15 @@ public class MultiSportServiceImp : IMultiSportService
         watch.Stop();
 
         var matchesInAllServers = fetchMatchTasks.Select(t => t.Result.ToList()).ToList();
-        if (main)
-        {
-            Console.WriteLine($"- Get Match: {watch.ElapsedMilliseconds}\r {matchesInAllServers.Sum(item => item.Count)}\n");
-        }
         var matches = matchesInAllServers[0];
 
         for (var i = 1; i < appSettingsKey.SiteDbServer.Count; i++)
         {
             matchService.MergeMatches(matches, matchesInAllServers[i]);
+        }
+        if (main)
+        {
+            Console.WriteLine($"- Get Match: {matches.Count} - {watch.ElapsedMilliseconds}ms\n");
         }
 
         return matches;
@@ -243,36 +237,6 @@ public class MultiSportServiceImp : IMultiSportService
             Matches = matches,
             ResultDetails = resultDetails
         };
-    }
-
-    private async Task<List<Match>> MatchesAllSites(FilterMultiSportRequest request)
-    {
-        var matches = new List<Match>();
-        var isCentralDataBase = true;
-        var criteria = mapper.Map<FilterMultiSportRequest, SportsbookCriteria>(request);
-        var mergerWatch = System.Diagnostics.Stopwatch.StartNew();
-
-        foreach (var server in appSettingsKey.SiteDbServer)
-        {
-            criteria.DbServer = server;
-            var watch = System.Diagnostics.Stopwatch.StartNew();
-            var data = (await repository.FetchAsync<Match>(criteria)).ToList();
-            watch.Stop();
-            Console.WriteLine($"- {server} get match ({data.Count}):\t{watch.ElapsedMilliseconds}\r\n");
-
-            if (isCentralDataBase)
-            {
-                matches = data;
-                isCentralDataBase = false;
-            }
-            else
-            {
-                matches = matchService.MergeMatches(matches, data);
-            }
-        }
-        mergerWatch.Stop();
-        Console.WriteLine($"- MergeMatches:\t{mergerWatch.ElapsedMilliseconds}\r\n");
-        return matches;
     }
 
     private async Task<List<ResultDetail>> ResultDetailByMatchIds(List<Match> matches)

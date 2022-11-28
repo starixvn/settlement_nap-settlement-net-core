@@ -40,7 +40,7 @@ public class MultiSportHandler : IRequestHandler<FilterMultiSportRequest, MultiS
         var watch = System.Diagnostics.Stopwatch.StartNew();
         var sports = await multiSportService.GetSportBook(request);
         watch.Stop();
-        Console.WriteLine($"End:\t{watch.ElapsedMilliseconds}\r\n");
+        Console.WriteLine($"- End:\t{watch.ElapsedMilliseconds}ms\r\n");
 
         return new MultiSportModel
         {
