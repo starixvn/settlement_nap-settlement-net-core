@@ -1,5 +1,6 @@
 ﻿using Fanex.Logging.Extensions;
 using Fanex.Logging.Extensions.Database;
+using Microsoft.AspNetCore.Http.Extensions;
 using ONEbook.UM.Services;
 using ILogger = Fanex.Logging.ILogger;
 
@@ -32,15 +33,27 @@ public class ErrorHandler
         }
     }
 
+    private static Dictionary<string, object> GetRequestInfo(HttpContext context)
+    {
+        return new Dictionary<string, object>
+        {
+            { "Url", context.Request.GetDisplayUrl() },
+            { "Username", context.User.Identity?.Name },
+            { "User IP", context.Request.Headers["X-Forwarded-For"] },
+        };
+    }
+
     private async Task HandleException(HttpContext context, Exception exception)
     {
         maintenanceService.RemoveUnderMaintenanceTimeCache();
 
         var logMessage = new LogMessage(exception.Message)
+                    .AddSection("Request Info", GetRequestInfo(context))
                     .AddSection("Database Info", DatabaseInfoGetters.GetDbExceptionInfo(exception))
                     .AddSection("Server Info", CommonInfoGetters.GetServerInfo())
                     .AddSection("Exception Info", CommonInfoGetters.GetExceptionInfo(exception))
                     .ToString();
+
         await logger.ErrorAsync(logMessage);
 
         var method = context.Request.Method.ToLowerInvariant();
