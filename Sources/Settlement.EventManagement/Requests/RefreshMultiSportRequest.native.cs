@@ -2,7 +2,7 @@
 
 namespace Settlement.EventManagement.Requests;
 
-public class RefreshMultiSportRequest : IRequest<IList<MultiSportMatchWaiting>>
+public class RefreshMultiSportRequest : IRequest<IList<Match>>
 {
     public string LeagueIds { get; set; }
 

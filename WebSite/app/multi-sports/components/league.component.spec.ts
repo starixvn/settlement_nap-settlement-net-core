@@ -27,7 +27,6 @@ import {
   Remark
 } from '../../shared/models';
 import { BackgroundColor, SportType } from '../../shared/constants';
-import { AutoSetting } from '../../shared/models/match-details/auto-setting.model';
 import { Permission } from '../../shared/models/sportsbook-sop/permission.model';
 
 describe('LeagueComponent', () => {

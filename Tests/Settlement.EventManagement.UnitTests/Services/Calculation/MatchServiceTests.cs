@@ -81,7 +81,6 @@ public class MatchServiceTests
         repository.FetchAsync<Match>(Arg.Any<ICriteria>()).Returns(listMatch);
         repository.FetchAsync<ResultDetail>(Arg.Any<ICriteria>()).Returns(new List<ResultDetail>());
         refDataService.GetLeagueName(Arg.Any<string>()).Returns(string.Empty);
-        mergeDataService.MergeMatches(Arg.Any<List<Match>>(), Arg.Any<List<Match>>()).Returns(listMatch);
         var sportBooks = await service.GetMatches(new FilterCalculationRequest());
 
         Assert.NotNull(sportBooks);
@@ -112,7 +111,6 @@ public class MatchServiceTests
         repository.FetchAsync<Match>(Arg.Any<ICriteria>()).Returns(listMatch);
         repository.FetchAsync<ResultDetail>(Arg.Any<ICriteria>()).Returns(new List<ResultDetail>());
         refDataService.GetLeagueName(Arg.Any<string>()).Returns(string.Empty);
-        mergeDataService.MergeMatches(Arg.Any<List<Match>>(), Arg.Any<List<Match>>()).Returns(listMatch);
         cachingMatchesService.GetReferenceActions(Arg.Any<IEnumerable<int>>())
             .Returns(new Dictionary<int, List<ReferenceAction>>());
 

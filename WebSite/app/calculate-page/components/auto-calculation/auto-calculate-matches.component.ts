@@ -17,6 +17,7 @@ import { interval } from 'rxjs';
 })
 export class AutoCalculateMatchesComponent extends MatchesBaseComponent implements OnChanges, OnInit, OnDestroy {
   @Input() public filterQuery: FilterAutoQuery;
+  @Input() public disableRefresh: boolean;
   private readonly dialogConfirmMessage = new ModalDialogMessage();
   private readonly dialogAlertMessage = new ModalDialogMessage();
   public instantStatus = InstantStatus;
@@ -49,7 +50,7 @@ export class AutoCalculateMatchesComponent extends MatchesBaseComponent implemen
 
   private refreshMatches() {
     this.subscriber = this.intervalTimer.subscribe(() => {
-      if (this.leagues.length > 0) {
+      if (!this.disableRefresh && this.leagues.length > 0) {
         this.requestService.refreshMatches(this.filterQuery.leagueId, this.leagues, true);
       }
     });

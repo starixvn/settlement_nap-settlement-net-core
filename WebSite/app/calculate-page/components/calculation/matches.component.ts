@@ -16,6 +16,7 @@ import { interval } from 'rxjs';
 export class MatchesComponent extends MatchesBaseComponent implements OnChanges, OnInit, OnDestroy {
   @Input() public disableRefund: boolean;
   @Input() public filterQuery: FilterQuery;
+  @Input() public disableRefresh: boolean;
   private subscriber: ISubscription;
   private readonly period = 5000;
   private intervalTimer = interval(this.period);
@@ -42,7 +43,7 @@ export class MatchesComponent extends MatchesBaseComponent implements OnChanges,
 
   private refreshMatches() {
     this.subscriber = this.intervalTimer.subscribe(() => {
-      if (this.leagues.length > 0) {
+      if (!this.disableRefresh && this.leagues.length > 0) {
         this.requestService.refreshMatches(this.filterQuery.leagueIds, this.leagues);
       }
     });

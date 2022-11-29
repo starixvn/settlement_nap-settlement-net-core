@@ -128,7 +128,7 @@ public class MultiSportServiceImp : IMultiSportService
 
         for (var i = 1; i < appSettingsKey.SiteDbServer.Count; i++)
         {
-            await matchService.AddSiteInfo(baseMatches, matchesInAllServers[i]);
+            matchService.AddSiteInfo(baseMatches, matchesInAllServers[i]);
         }
 
         return baseMatches;
