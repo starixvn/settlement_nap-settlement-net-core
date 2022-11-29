@@ -128,29 +128,6 @@ public class MatchServiceTests
     }
 
     [Fact]
-    public void MergeMatches_Always_InfoSiteMatch()
-    {
-        var baseMatches = new List<Match>
-            {
-                new Match { MatchId = 123 }
-            };
-
-        var siteMatches = new List<Match>
-            {
-                new Match { MatchId = 123 },
-                new Match {MatchId = 456}
-            };
-
-        compareMatchService.GetDifferentMatchSiteInfo(Arg.Any<Match>(), Arg.Any<List<Match>>())
-            .Returns(new SiteMatch { IsCalculatingSingle = 1 });
-
-        var listMatch = service.MergeMatches(baseMatches, siteMatches);
-
-        Assert.Equal(2, listMatch.Count);
-        Assert.Equal(1, listMatch[0].SiteMatch[0].IsCalculatingSingle);
-    }
-
-    [Fact]
     public void UpdateMatchInfo_Always_CallServiceScaleOut()
     {
         service.UpdateMatchInfo(new UpdateMatchInfoRequest());

@@ -123,14 +123,15 @@ public class MultiSportServiceImp : IMultiSportService
         var listMatch = await Task.WhenAll(fetchMatchTasks.ToArray());
 
         var matchesInAllServers = listMatch.Select(m => m.ToList()).ToList();
-        var matches = matchesInAllServers[0];
+
+        var baseMatches = matchesInAllServers.SelectMany(m => m).Distinct().ToList();
 
         for (var i = 1; i < appSettingsKey.SiteDbServer.Count; i++)
         {
-            matchService.MergeMatches(matches, matchesInAllServers[i]);
+            await matchService.AddSiteInfo(baseMatches, matchesInAllServers[i]);
         }
 
-        return matches;
+        return baseMatches;
     }
 
     private Task<IEnumerable<Match>> FetchMatches(string server, MultipleSiteCriteria criteria)

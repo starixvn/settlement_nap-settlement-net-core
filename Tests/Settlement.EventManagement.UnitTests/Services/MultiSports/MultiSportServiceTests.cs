@@ -75,7 +75,7 @@ public class MultiSportServiceTests
     }
 
     [Fact]
-    public async Task GetWaitingMatches_NotExistMatchesOnCache_ReturnQuerriedMatches()
+    public async Task GetWaitingMatches_NotExistMatchesOnCache_ReturnQueriedMatches()
     {
         var match = new Match
         {
@@ -92,7 +92,6 @@ public class MultiSportServiceTests
         repository.FetchAsync<ResultDetail>(Arg.Any<ICriteria>()).Returns(new List<ResultDetail> { resultDetail });
         refDataService.GetLeagueName(Arg.Any<string>()).Returns(string.Empty);
         matchService.GetScoreForMatchBySportType(Arg.Any<List<Match>>(), Arg.Any<List<ResultDetail>>(), Arg.Any<int>()).Returns(new List<Match> { match });
-        matchService.MergeMatches(Arg.Any<List<Match>>(), Arg.Any<List<Match>>()).Returns(listMatch);
         matchService.SetNewMatchInfo(Arg.Any<List<Match>>(), Arg.Any<List<ResultDetail>>()).Returns(listMatch);
         var waitingMatches = await service.GetWaitingMatches(new RefreshMultiSportRequest());
 
@@ -100,7 +99,7 @@ public class MultiSportServiceTests
     }
 
     [Fact]
-    public async Task GetSportBook_Always_ReturnQuerriedMatches()
+    public async Task GetSportBook_Always_ReturnQueriedMatches()
     {
         var match = new Match
         {
@@ -114,7 +113,6 @@ public class MultiSportServiceTests
         repository.FetchAsync<ResultDetail>(Arg.Any<ICriteria>()).Returns(new List<ResultDetail>());
         refDataService.GetLeagueName(Arg.Any<string>()).Returns(string.Empty);
         matchService.GetScoreForMatchBySportType(Arg.Any<List<Match>>(), Arg.Any<List<ResultDetail>>(), Arg.Any<int>()).Returns(new List<Match> { match });
-        matchService.MergeMatches(Arg.Any<List<Match>>(), Arg.Any<List<Match>>()).Returns(listMatch);
         matchService.SetNewMatchInfo(Arg.Any<List<Match>>(), Arg.Any<List<ResultDetail>>()).Returns(listMatch);
         matchService.SortingMatches(Arg.Any<List<Match>>()).Returns(new List<Match> { match });
         var sportBooks = await service.GetSportBook(new FilterMultiSportRequest());
