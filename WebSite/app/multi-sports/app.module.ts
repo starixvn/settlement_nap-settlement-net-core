@@ -10,6 +10,7 @@ import {
     DatepickerComponent,
     MultipleSelectComponent,
     ModalContentDialogComponent,
+    MaterialDialogWithResponseComponent,
 } from '../shared/components';
 import {
     AppComponent,
@@ -41,6 +42,7 @@ import { DynamicHeightDirective } from '../shared/directives';
         TreeViewComponent,
         ModalDialogComponent,
         ModalContentDialogComponent,
+        MaterialDialogWithResponseComponent,
         NewMultipleSelectComponent,
         LeagueComponent,
         MaterialDialogComponent,

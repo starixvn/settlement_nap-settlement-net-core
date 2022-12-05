@@ -9,4 +9,5 @@ export class LeagueMatch {
     public disableCheckCalcMP: boolean;
     public isMergedParlay: boolean;
     public isAutoPayoutForLeague: boolean;
+    public autoWaitingTime: number;
 }

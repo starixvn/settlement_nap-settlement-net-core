@@ -12,6 +12,9 @@ public class LeagueModel
     [Key("isAutoPayoutForLeague")]
     public bool IsAutoPayoutForLeague { get; set; }
 
+    [Key("autoWaitingTime")]
+    public int AutoWaitingTime { get; set; }
+
     [Key("matches")]
     public List<Match> Matches { get; set; }
 

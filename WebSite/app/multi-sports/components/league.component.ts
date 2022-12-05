@@ -20,6 +20,7 @@ export class LeagueComponent implements OnInit, OnChanges, OnDestroy {
   @Input() public multiSport: MultiSport;
   @Input() public request: MatchWaitingRequest;
   @Input() public enableRefresh: boolean;
+  public language = Language;
   private readonly period = 5000;
   private readonly autoSettingType = 1;
   private readonly autoSettingCompleted = 2;
@@ -522,5 +523,11 @@ export class LeagueComponent implements OnInit, OnChanges, OnDestroy {
           : match.isCalRefund ? BackgroundColor.calRefund
               : match.isHalfTimeCal ? BackgroundColor.halfTimeCalculated
                   : '';
+  }
+
+  public openUpdateTime(league: LeagueMatch) {
+    if (this.permission.canAutoPayout) {
+      this.popupService.openUpdateTime(league);
+    }
   }
 }
