@@ -508,20 +508,20 @@ describe('LeagueComponent', () => {
       expect(result).toEqual(' bg-auto-settle-running');
     });
 
-    it('should return background blinking when early confirmed and filter earlyOverOnly', () => {
+    it('should return background blinking when early confirmed, earlyOver and 1 other Over Status option selected.', () => {
       match.isExistsConfirmedEarly = true;
       match.earlySettleStatus = 'running';
-      component.request = new MatchWaitingRequest("", "", "", "", "1", "");
+      component.request = new MatchWaitingRequest("", "", "", "", "1,3", "");
 
       const result = component.getEarlySettleBackground(match);
 
       expect(result).toEqual('bg-green-blinking bg-auto-settle-running');
     });
 
-    it('should return background not blinking when early confirmed but filter not only earlyOver', () => {
+    it('should return background not blinking when early confirmed but filter only earlyOver', () => {
       match.isExistsConfirmedEarly = true;
       match.earlySettleStatus = 'running';
-      component.request = new MatchWaitingRequest("", "", "", "", "1 , 2", "");
+      component.request = new MatchWaitingRequest("", "", "", "", "1", "");
 
       const result = component.getEarlySettleBackground(match);
 

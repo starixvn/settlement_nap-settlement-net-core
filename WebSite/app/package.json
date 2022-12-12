@@ -25,7 +25,7 @@
     "cricket": "ng build --configuration production --project=cricket",
     "other-sports": "ng build --configuration production --project=other-sports",
     "start": "ng serve",
-    "test": "jest --debug --no-cache instant-setting",
+    "test": "jest --debug --no-cache multi-sports/components/league.component.spec",
     "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand basketball/components/app.component.spec.ts",
     "test:watch": "jest --watch soccer/components/app.component.spec.ts",
     "test:coverage": "jest --runInBand --coverage multi-sports/components/league.component.spec",
