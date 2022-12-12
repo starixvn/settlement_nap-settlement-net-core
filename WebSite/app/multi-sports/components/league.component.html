@@ -65,7 +65,7 @@
                   <ng-container *ngIf="sport.id === sportTypeCricket">
                     <div>Waiting time: {{leagueMatch.autoWaitingTime}}sec </div>
                     <div *ngIf="permission.canAutoPayout" class="act-direct-time"
-                      (click)="openUpdateTime(leagueMatch)"></div>
+                    [matTooltip]="language.payout.titleDirectTime" matTooltipPosition="above" (click)="openUpdateTime(leagueMatch)"></div>
                   </ng-container>
                 </td>
                 <td class="auto-setting">

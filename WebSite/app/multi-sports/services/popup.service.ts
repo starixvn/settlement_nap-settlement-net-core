@@ -143,7 +143,7 @@ export class PopupService {
     public openUpdateTime(league: LeagueMatch) {
         const src = `apps/change-waiting-time?leagueId=${league.leagueId}&time=${league.autoWaitingTime}&pageType=DirectTime&autoType=1`;
         const frameSrc = encodeURI(src);
-        const dialogData = new DialogDataIframe(Language.payout.titleWaitingTime, frameSrc);
+        const dialogData = new DialogDataIframe(Language.payout.titlePopupForLeague, frameSrc);
         this.dialogBoxService.popupHasResponse(dialogData, '600px', '310px').subscribe(result => {
             if (!_.isUndefined(result)) {
                     league.autoWaitingTime  = Number(result) ?? 0;
