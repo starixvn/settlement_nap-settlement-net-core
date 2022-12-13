@@ -99,7 +99,7 @@ public class MatchServiceImp : MatchService
         {
             mergeDataService.AddSiteInfo(baseMatches, matchesInAllServers[i]);
         }
-        return matchesInAllServers[0];
+        return baseMatches;
     }
 
     private Task<IEnumerable<Match>> FetchMatches(string server, MultipleSiteCriteria criteria)
@@ -188,7 +188,6 @@ public class MatchServiceImp : MatchService
         if (request.FilterOver > 0)
         {
             return matches.OrderBy(match => match.OriginalEventStatus.ToLowerInvariant())
-                .ThenBy(match => match.MatchCode.Length)
                 .ThenBy(match => match.MatchCode.ToLowerInvariant()).ToList();
         }
 
@@ -197,7 +196,6 @@ public class MatchServiceImp : MatchService
                 .ThenBy(match => match.KickOffTime)
                 .ThenBy(match => match.LeagueId)
                 .ThenBy(match => match.SettlementStatus != 0)
-                .ThenBy(match => match.MatchCode.Length)
                 .ThenBy(match => match.MatchCode.ToLowerInvariant())
                 .ToList();
     }
