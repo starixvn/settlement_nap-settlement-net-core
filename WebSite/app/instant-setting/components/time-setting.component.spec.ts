@@ -81,6 +81,10 @@ describe('TimeSettingComponent', () => {
             return 'DirectTime';
           }
 
+          if(param === "autoType"){
+            return "";
+          }
+
           return mockIdAndTime;
         })
         spyOn(requestService, 'getLeagueName').and.returnValue(of(mockLeague));
@@ -94,15 +98,25 @@ describe('TimeSettingComponent', () => {
       }));
 
       it('should set InstantTime setting for autoType', fakeAsync(async() => {
-        const mockIdAndTime = '1000';
         const mockLeague: League = { leagueName: 'Champion League'};
         component.pageType = 'InstantTime';
-        spyOn(UrlHelper, 'getUrlParameter').and.returnValue(mockIdAndTime);
+        spyOn(UrlHelper, 'getUrlParameter').and.returnValue("");
         spyOn(requestService, 'getLeagueName').and.returnValue(of(mockLeague));
 
         await component.ngOnInit();
 
         expect(component.autoType).toEqual(AutoType.instant);
+      }));
+
+      it('should set time setting for autoType', fakeAsync(async() => {
+        const mockLeague: League = { leagueName: 'Champion League'};
+        component.pageType = 'AutoPayOut';
+        spyOn(UrlHelper, 'getUrlParameter').and.returnValue("");
+        spyOn(requestService, 'getLeagueName').and.returnValue(of(mockLeague));
+
+        await component.ngOnInit();
+
+        expect(component.autoType).toEqual(AutoType.autoPayout);
       }));
     });
 

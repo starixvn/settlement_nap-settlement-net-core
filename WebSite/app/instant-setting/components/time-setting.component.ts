@@ -47,8 +47,7 @@ export class TimeSettingComponent implements OnInit {
     }
 
     public cancel() {
-        const key = 'DialogBox';
-        window.parent[key].closePopup();
+        this.messageBoxService.closePopupNotChanged();
     }
 
     private verifyTimeSetting() {
