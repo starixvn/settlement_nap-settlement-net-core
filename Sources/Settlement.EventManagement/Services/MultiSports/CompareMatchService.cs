@@ -18,6 +18,7 @@ public class CompareMatchServiceImp : CompareMatchService
             return new SiteMatch
             {
                 IsCalculatingSingle = siteMatch.IsCalculatingSingle,
+                IsCalculatingMP = siteMatch.IsCalculatingMP,
                 IsExistMarkedTicket = siteMatch.IsExistMarkedTicket,
                 IsExistRunningTicket = siteMatch.IsExistRunningTicket,
                 IsExistEarlyBetTypes = siteMatch.IsExistEarlyBetTypes,
@@ -43,9 +44,10 @@ public class CompareMatchServiceImp : CompareMatchService
         var isExistMarked = match.IsExistMarkedTicket != siteMatch.IsExistMarkedTicket
                     || match.IsExistMarkedTicketParlay != siteMatch.IsExistMarkedTicketParlay;
 
-        return match.IsCalculatingSingle != siteMatch.IsCalculatingSingle
-            || isExistMarked
-            || isExistRunning;
+        return match.IsCalculatingSingle != siteMatch.IsCalculatingSingle ||
+               match.IsCalculatingMP != siteMatch.IsCalculatingMP
+                || isExistMarked
+                || isExistRunning;
     }
 
     private static bool IsChangeOnSpecialBetType(MultiSportMatch match, MultiSportMatch siteMatch)

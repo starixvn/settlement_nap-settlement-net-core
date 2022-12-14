@@ -138,7 +138,8 @@ public class NewInfoMatchServiceImp : NewInfoMatchService
         match.IsExistRunningTicket = siteMatchService.IsExistRunningTickets(match);
         match.IsExistMarkedTicketParlay = siteMatchService.IsExistMarkedTicketParlay(match);
         match.IsExistRunningTicketParlay = siteMatchService.IsExistRunningTicketParlay(match);
-        match.IsCalculatingSingle = siteMatchService.IsCalculatingSingle(match);
+        match.IsCalculatingSingle = siteMatchService.IsCalculating(match.IsCalculatingSingle, match.SiteMatch.Select(i => i.IsCalculatingSingle).ToList());
+        match.IsCalculatingMP = siteMatchService.IsCalculating(match.IsCalculatingMP, match.SiteMatch.Select(i => i.IsCalculatingMP).ToList());
     }
 
     public bool IsExistsConfirmedEarly(MultiSportMatch match)

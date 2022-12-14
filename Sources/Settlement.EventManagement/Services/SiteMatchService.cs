@@ -28,7 +28,7 @@ public interface SiteMatchService
 
     bool IsExistsConfirmedEarly(MultiSportMatch match);
 
-    int? IsCalculatingSingle(BaseMatch match);
+    int? IsCalculating(int? baseValue, List<int?> siteValues);
 }
 
 public class SiteMatchServiceImp : SiteMatchService
@@ -71,24 +71,24 @@ public class SiteMatchServiceImp : SiteMatchService
         return match.IsExistsConfirmedEarly || isExistsConfirmedEarly;
     }
 
-    public int? IsCalculatingSingle(BaseMatch match)
+    public int? IsCalculating(int? baseValue, List<int?> siteValues)
     {
-        if (match.IsCalculatingSingle == CalculateStatus.IsWaiting || match.SiteMatch.Exists(m => m.IsCalculatingSingle == CalculateStatus.IsWaiting))
+        if (baseValue == CalculateStatus.IsWaiting || siteValues.Exists(m => m == CalculateStatus.IsWaiting))
         {
             return CalculateStatus.IsWaiting;
         }
 
-        if (match.IsCalculatingSingle == CalculateStatus.IsCalculating || match.SiteMatch.Exists(m => m.IsCalculatingSingle == CalculateStatus.IsCalculating))
+        if (baseValue == CalculateStatus.IsCalculating || siteValues.Exists(m => m == CalculateStatus.IsCalculating))
         {
             return CalculateStatus.IsCalculating;
         }
 
-        if (match.IsCalculatingSingle == CalculateStatus.IsFailed || match.SiteMatch.Exists(m => m.IsCalculatingSingle == CalculateStatus.IsFailed))
+        if (baseValue == CalculateStatus.IsFailed || siteValues.Exists(m => m == CalculateStatus.IsFailed))
         {
             return CalculateStatus.IsFailed;
         }
 
-        if (match.IsCalculatingSingle == CalculateStatus.IsSuccess && match.SiteMatch.All(m => m.IsCalculatingSingle == CalculateStatus.IsSuccess))
+        if (baseValue == CalculateStatus.IsSuccess && siteValues.All(m => m == CalculateStatus.IsSuccess))
         {
             return CalculateStatus.IsSuccess;
         }
