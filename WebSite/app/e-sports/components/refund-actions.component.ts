@@ -19,6 +19,7 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
     public isRefundOldMatch: boolean;
     public oldMatchDetail: HedgeMatchDetail;
     public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
+    private readonly leaguePinGoal = 151;
     constructor(
         private readonly messageBoxService: MessageBoxService,
         protected toastrService: ToastrService,
@@ -49,7 +50,7 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
         const paramsCheckingMarkedTickets = this.generateCheckMarkedTicketsQuery();
         const response = await this.aioService.checkMarkedTickets(paramsCheckingMarkedTickets).toPromise() as MarkedTicketsModel;
         this.toastrService.clear();
-        if(this.existResultNotConfirmed()) {
+        if(this.matchDetail.leagueGroupId != this.leaguePinGoal && this.existResultNotConfirmed()) {
             this.toastrService.error(Language.confirmRefund.refundResultNotConfirmed);
         } else if (response.isExistMarkedTicket) {
             this.toastrService.error(Language.MarkedTicket);

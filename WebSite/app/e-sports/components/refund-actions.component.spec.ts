@@ -243,5 +243,33 @@ describe("E-sport - Refund Component", () => {
       expect(toastrService.error).toHaveBeenCalledWith(Language.confirmRefund.refundResultNotConfirmed);
     }));
 
+    it("should refund successfully when match pinGoal and not confirm refund ", fakeAsync(async () => {
+      component.match = match;
+      component.applyHedgeMatch = false;
+      component.match.matchDetail = matchDetail;
+      component.match.matchDetail.leagueGroupId = 151;
+      const result = new ResultDetail();
+      result.resultSettingData = new ResultSettingModel();
+      result.resultSettingData.isConfirmedRefund = false;
+      result.checked = true;
+      component.match = match;
+      component.resultDetails = [result];
+      spyOn(aioService, "checkMarkedTickets").and.returnValue(of(notExistMarkedTicket));
+      spyOn(aioService, "push").and.returnValue(of(successfulResult));
+      spyOn(messageBoxService, "closePopup");
+
+      component.refund();
+      tick();
+      const buttonYes = document.getElementsByClassName(
+        buttonName
+      )[0] as HTMLElement;
+      buttonYes.click();
+      tick();
+
+      expect(toastrService.error).not.toHaveBeenCalled();
+      expect(aioService.push).toHaveBeenCalledTimes(1);
+      expect(messageBoxService.closePopup).toHaveBeenCalled();
+    }));
+
   });
 });
