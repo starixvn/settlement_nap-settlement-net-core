@@ -23,7 +23,7 @@ export class BadmintonService {
     } else {
       const games = resultDetail.filter((game) => game.resourceId !== ResourcesIds.totalGames
         && !_.isEmpty(game.homeValue) && !_.isEmpty(game.awayValue)
-        && game.resultStatusId == ResultStatusId.ManualCompleted);
+        && (game.resultStatusId == ResultStatusId.ManualCompleted || game.resultStatusId == ResultStatusId.AutoCompleted));
 
       if (games.length > 0) {
         totalPoints.homeValue = _.sumBy(games, (game) => Number(game.homeValue)).toString();

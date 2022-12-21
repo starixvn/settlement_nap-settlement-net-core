@@ -73,6 +73,7 @@ public class ScoreServiceImp : IScoreService
 
     private static Score TotalPoints(List<ResultDetail> resultDetails, bool isBeachVolleyball)
     {
+        var statusSettled = new List<byte?> { ResultStatus.AutoSettled, ResultStatus.ManuallySettled };
         if (IsRefundMatch(resultDetails))
         {
             return new Score(SetStatus.Refund);
@@ -83,7 +84,7 @@ public class ScoreServiceImp : IScoreService
                             && !string.IsNullOrWhiteSpace(m.AwayValue)).ToList();
 
         games = games.Where(m => (isBeachVolleyball && m.SettlementStatusId != SettlementStatus.Refund)
-                                 || (!isBeachVolleyball && m.ResultStatusId == ResultStatus.ManuallySettled))
+                                 || (!isBeachVolleyball && statusSettled.Contains(m.ResultStatusId)))
             .ToList();
 
         if (games.Count > 0)
