@@ -155,7 +155,7 @@ namespace Settlement.EventManagement.UnitTests.Services
         [InlineData(CalculateStatus.IsCalculating, CalculateStatus.IsSuccess, CalculateStatus.IsCalculating)]
         [InlineData(CalculateStatus.IsFailed, CalculateStatus.IsSuccess, CalculateStatus.IsFailed)]
         [InlineData(null, null, null)]
-        public void IsCalculatingSingle_Always_ReturnCorrect(int? mainStatus, int? siteStatus, int? expected)
+        public void IsCalculating_Always_ReturnCorrect(int? mainStatus, int? siteStatus, int? expected)
         {
             var match = new Match
             {
@@ -166,7 +166,7 @@ namespace Settlement.EventManagement.UnitTests.Services
                 }
             };
 
-            var result = service.IsCalculatingSingle(match);
+            var result = service.IsCalculating(match.IsCalculatingSingle, match.SiteMatch.Select(i => i.IsCalculatingSingle).ToList());
 
             Assert.Equal(expected, result);
         }

@@ -1,5 +1,4 @@
-﻿using MessagePack;
-using Settlement.Core.Models;
+﻿using Settlement.Core.Models;
 
 namespace Settlement.EventManagement.Models.MultiSports;
 
@@ -95,6 +94,9 @@ public class Match : BaseMatch
 
     [IgnoreMember]
     public ResultDetail ExFTResult { get; set; }
+
+    [IgnoreMember]
+    public int AutoWaitingTime { get; set; }
 
     public override bool Equals(object obj)
     {

@@ -55,17 +55,23 @@
                   &nbsp;{{leagueMatch.name}}
                 </td>
                 <td class="text-center calc-mp">
-                  <input *ngIf="!leagueMatch.isMergedParlay"
-                    type="checkbox" #calcMPOnLeague [disabled]="disableSelectCalcMPOnLeague(leagueMatch)"
-                    [(ngModel)]="leagueMatch.isCheckedCalcMP"
+                  <input *ngIf="!leagueMatch.isMergedParlay" type="checkbox" #calcMPOnLeague
+                    [disabled]="disableSelectCalcMPOnLeague(leagueMatch)" [(ngModel)]="leagueMatch.isCheckedCalcMP"
                     (change)="selectCalcMPOnLeague(leagueMatch, $event.target.checked)">
                 </td>
                 <td class="confirm-score"></td>
                 <td class="confirm-score"></td>
-                <td class="remark-status"></td>
+                <td class="remark-status instant-time">
+                  <ng-container *ngIf="sport.id === sportTypeCricket">
+                    <div>Waiting time: {{leagueMatch.autoWaitingTime}}sec </div>
+                    <div *ngIf="permission.canAutoPayout" class="act-direct-time"
+                    [matTooltip]="language.payout.titleDirectTime" matTooltipPosition="above" (click)="openUpdateTime(leagueMatch)"></div>
+                  </ng-container>
+                </td>
                 <td class="auto-setting">
-                  <div class="cursor-pointer" [ngClass]="getAutoSettingLeague(leagueMatch.isAutoPayoutForLeague)" (click)="changeAutoLeague(leagueMatch)"
-                  [matTooltip]="getTextTooltipMatch(leagueMatch.isAutoPayoutForLeague)"></div>
+                  <div class="cursor-pointer" [ngClass]="getAutoSettingLeague(leagueMatch.isAutoPayoutForLeague)"
+                    (click)="changeAutoLeague(leagueMatch)"
+                    [matTooltip]="getTextTooltipMatch(leagueMatch.isAutoPayoutForLeague)"></div>
                 </td>
               </tr>
               <ng-template [ngIf]="!leagueMatch.collapse">
@@ -102,9 +108,11 @@
                           </span>
                         </div>
                         <ng-template #intervalHomeScoreCricket>
-                          <div [ngClass]="{'bg-result-confirmed': isExistIntervalConfirmed(match.intervalScore | intervalScore : 'Home')}">
-                            <span *ngFor="let score of match.intervalScore  | intervalScore : 'Home' ; let i = index; let last = last;"
-                            [ngClass]="score.background">
+                          <div
+                            [ngClass]="{'bg-result-confirmed': isExistIntervalConfirmed(match.intervalScore | intervalScore : 'Home')}">
+                            <span
+                              *ngFor="let score of match.intervalScore  | intervalScore : 'Home' ; let i = index; let last = last;"
+                              [ngClass]="score.background">
                               {{score.home}}<span *ngIf="!last">; </span>
                             </span>
                           </div>
@@ -112,14 +120,17 @@
                       </div>
                     </td>
                     <td class="score total-game-color">{{getTotalHomeGames(match)}}</td>
-                    <td class="score total-game-color" [ngClass]="{'bg-result-confirmed': isHalfTimeConfirmed(match)}">{{getHalfTimeHomeScore(match)}}</td>
-                    <td class="score final-score" [ngClass]="{'bg-result-confirmed': isFinalConfirmed(match)}">{{getFinalHomeScore(match)}}</td>
+                    <td class="score total-game-color" [ngClass]="{'bg-result-confirmed': isHalfTimeConfirmed(match)}">
+                      {{getHalfTimeHomeScore(match)}}</td>
+                    <td class="score final-score" [ngClass]="{'bg-result-confirmed': isFinalConfirmed(match)}">
+                      {{getFinalHomeScore(match)}}</td>
                     <td rowspan="2" class="auto-status" *ngIf="canAutoSettlement(match.sportType); else noEarlySettle"
                       [ngClass]="getEarlySettleBackground(match)">
                       <div *ngIf="match.earlySettleStatus.toLowerCase() === 'n/a'; else earlySettle">N/A</div>
                       <ng-template #earlySettle>
                         <div>{{match.earlySettleStatus}}</div>
-                        <div [ngClass]="isShowEarlySettleLink(match)" (click)="isShowEarlySettleLink(match) ? popupEarly(match) : ''">
+                        <div [ngClass]="isShowEarlySettleLink(match)"
+                          (click)="isShowEarlySettleLink(match) ? popupEarly(match) : ''">
                           Detail
                         </div>
                       </ng-template>
@@ -130,45 +141,52 @@
                     <td rowspan="2" class="event-status" [ngClass]="getEventStatusColor(match)">{{match.newEventStatus}}
                     </td>
                     <td rowspan="2" class="calc-column" [ngClass]="getCalcColumnColor(match)">
-                      <div [ngClass]="isShowCalculationLink(match)" (click)="isShowCalculationLink(match) ? popupCalc(match) : ''" >
+                      <div [ngClass]="isShowCalculationLink(match)"
+                        (click)="isShowCalculationLink(match) ? popupCalc(match) : ''">
                         Calc
                       </div>
                     </td>
                     <td rowspan="2" class="refund-column">
-                      <div [ngClass]="isShowRefundLink(match)" (click)="isShowRefundLink(match) ? popupRefund(match) : ''">
+                      <div [ngClass]="isShowRefundLink(match)"
+                        (click)="isShowRefundLink(match) ? popupRefund(match) : ''">
                         Refund
                       </div>
                     </td>
                     <td rowspan="2" class="calc-mp" [ngClass]="getCalcMPColor(match)">
                       <ng-container *ngIf="!match.isMergedParlay; else notSupportMP">
-                        <input type="checkbox" *ngIf="match.isCalculatingMP !== 0 && match.isCalculatingMP !== 1; else calcMPStatus"
-                        [(ngModel)]="match.isCheckedCalcMP" (ngModelChange)="selectCalcMPOnMatch(leagueMatch)" [disabled]="!enableCalcMPOnMatch(match)">
+                        <input type="checkbox"
+                          *ngIf="match.isCalculatingMP !== 0 && match.isCalculatingMP !== 1; else calcMPStatus"
+                          [(ngModel)]="match.isCheckedCalcMP" (ngModelChange)="selectCalcMPOnMatch(leagueMatch)"
+                          [disabled]="!enableCalcMPOnMatch(match)">
                         <ng-template #calcMPStatus>
                           <span [ngClass]="getCalcMPStatus(match).toLowerCase()">{{getCalcMPStatus(match)}}</span>
                         </ng-template>
                       </ng-container>
                       <ng-template #notSupportMP>
-                        <span *ngIf="match.isCalculatingSingle === 100 || match.isCalculatingMP === 0 || match.isCalculatingMP === 1"
+                        <span
+                          *ngIf="match.isCalculatingSingle === 100 || match.isCalculatingMP === 0 || match.isCalculatingMP === 1"
                           [ngClass]="getCalcMPStatus(match).toLowerCase()">{{getCalcMPStatus(match)}}</span>
                       </ng-template>
                     </td>
-                    <td rowspan="2" class="confirm-score" [ngClass]="{'bg-white-blinking' : match.isNotConsistentExHtScore}">
+                    <td rowspan="2" class="confirm-score"
+                      [ngClass]="{'bg-white-blinking' : match.isNotConsistentExHtScore}">
                       <div>{{match.suspenderHalfTime}}</div>
                       <div *ngIf="!isHideHtScore(match)">{{match.confirmHalfTimeScore}}</div>
                     </td>
-                    <td rowspan="2" class="confirm-score" [ngClass]="{'bg-white-blinking' : match.isNotConsistentExFtScore}">
+                    <td rowspan="2" class="confirm-score"
+                      [ngClass]="{'bg-white-blinking' : match.isNotConsistentExFtScore}">
                       <div>{{match.suspenderFullTime}}</div>
                       <div *ngIf="!isHideFinalScore(match)">{{match.confirmFullTimeScore}}</div>
                     </td>
                     <td rowspan="2" class="remark-status">
                       <div placement="top" [ngClass]="{'act-change-setting title': isChangeSetting(match)}"
-                        [ngbTooltip]="getRemarkStatusTooltip(match.remark)"
-                        (click)="popupChangeRemarkSetting(match)">
+                        [ngbTooltip]="getRemarkStatusTooltip(match.remark)" (click)="popupChangeRemarkSetting(match)">
                         {{match.remark.isKeyHold || match.remark.isMtdHold || match.remark.isPending || match.remark.isUndecided || match.remark.isUnderSettle ? 'YES' : 'NO'}}
                       </div>
                     </td>
                     <td rowspan="2" class="auto-setting" [ngClass]="getBackgroundAutoSetting(match)">
-                      <div [ngClass]="getAutoSetting(match)" class="cursor-pointer" (click)="changeAutoSetting(match)" [matTooltip]="getTextTooltipMatch(match.isAutoPayoutForMatch)"></div>
+                      <div [ngClass]="getAutoSetting(match)" class="cursor-pointer" (click)="changeAutoSetting(match)"
+                        [matTooltip]="getTextTooltipMatch(match.isAutoPayoutForMatch)"></div>
                     </td>
                   </tr>
                   <tr class="row-3" [ngClass]="undecidedColor(match.remark)">
@@ -186,12 +204,14 @@
                             {{score.away}}<span *ngIf="!last">; </span>
                             <span *ngIf="last && match.isMatchBOMThirty">;...</span>
                           </span>
-          
+
                         </div>
                         <ng-template #intervalAwayScoreCricket>
-                          <div [ngClass]="{'bg-result-confirmed': isExistIntervalConfirmed(match.intervalScore  | intervalScore : 'Away')}">
-                            <span *ngFor="let score of match.intervalScore | intervalScore : 'Away'; let i = index; let last = last;"
-                            [ngClass]="score.background">
+                          <div
+                            [ngClass]="{'bg-result-confirmed': isExistIntervalConfirmed(match.intervalScore  | intervalScore : 'Away')}">
+                            <span
+                              *ngFor="let score of match.intervalScore | intervalScore : 'Away'; let i = index; let last = last;"
+                              [ngClass]="score.background">
                               {{score.home}}<span *ngIf="!last">; </span>
                             </span>
                           </div>
@@ -199,8 +219,10 @@
                       </div>
                     </td>
                     <td class="score total-game-color">{{getTotalAwayGames(match)}}</td>
-                    <td class="score total-game-color" [ngClass]="{'bg-result-confirmed': isHalfTimeConfirmed(match)}">{{getHalfTimeAwayScore(match)}}</td>
-                    <td class="score final-score" [ngClass]="{'bg-result-confirmed': isFinalConfirmed(match)}">{{getFinalAwayScore(match)}}</td>
+                    <td class="score total-game-color" [ngClass]="{'bg-result-confirmed': isHalfTimeConfirmed(match)}">
+                      {{getHalfTimeAwayScore(match)}}</td>
+                    <td class="score final-score" [ngClass]="{'bg-result-confirmed': isFinalConfirmed(match)}">
+                      {{getFinalAwayScore(match)}}</td>
                   </tr>
                 </ng-container>
               </ng-template>
@@ -219,8 +241,3 @@
     </div>
   </div>
 </ng-template>
-
-
-
-
-

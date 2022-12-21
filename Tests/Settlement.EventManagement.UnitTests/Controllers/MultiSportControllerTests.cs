@@ -46,7 +46,7 @@ namespace Settlement.EventManagement.UnitTests.Controllers
         }
 
         [Fact]
-        public async Task RefreshMathces_Always_ReturnsListMatches()
+        public async Task RefreshMatches_Always_ReturnsListMatches()
         {
             // Arrange
 

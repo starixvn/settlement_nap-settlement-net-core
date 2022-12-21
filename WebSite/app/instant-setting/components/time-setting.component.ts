@@ -36,7 +36,8 @@ export class TimeSettingComponent implements OnInit {
         });
 
         this.time = Number(UrlHelper.getUrlParameter("time"));
-        this.autoType = this.getAutoType();
+        const autoTypeByUrl = UrlHelper.getUrlParameter("autoType");
+        this.autoType = _.isEmpty(autoTypeByUrl) ? this.getAutoType() : Number(autoTypeByUrl);
     }
 
     public proceed() {
@@ -46,8 +47,7 @@ export class TimeSettingComponent implements OnInit {
     }
 
     public cancel() {
-        const key = 'DialogBox';
-        window.parent[key].closePopup();
+        this.messageBoxService.closePopupNotChanged();
     }
 
     private verifyTimeSetting() {
@@ -78,6 +78,6 @@ export class TimeSettingComponent implements OnInit {
     }
 
     private getAutoType() {
-        return this.pageType === 'DirectTime' ? AutoType.direct : AutoType.instant;
+        return this.pageType === 'DirectTime' ? AutoType.direct : this.pageType === "AutoPayOut"? AutoType.autoPayout :  AutoType.instant;
     }
 }

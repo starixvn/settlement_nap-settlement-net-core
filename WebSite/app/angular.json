@@ -204,7 +204,7 @@
           "options": {
             "aot": true,
             "outputPath": "../wwwroot/instant-setting",
-            "index": "instant-setting/index.html",
+            "index": "instant-setting/index.cshtml",
             "main": "instant-setting/main.ts",
             "tsConfig": "instant-setting/tsconfig.app.json",
             "polyfills": "polyfills.ts",

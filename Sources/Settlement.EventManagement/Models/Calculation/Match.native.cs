@@ -56,8 +56,6 @@ public class Match : BaseMatch
 
     public AutoCalculationSetting AutoCalcSetting => new AutoCalculationSetting(AutoSetting, AutoSettingForLeague);
 
-    public int DirectWaitingTime { get; set; }
-
     public int InstantWaitingTime { get; set; }
 
     public int? LiveHomeScore { get; set; }

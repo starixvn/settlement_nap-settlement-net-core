@@ -57,7 +57,8 @@ describe('LeagueComponent', () => {
     isCheckedCalcMP: true,
     disableCheckCalcMP: false,
     isMergedParlay: false,
-    isAutoPayoutForLeague: false
+    isAutoPayoutForLeague: false,
+    autoWaitingTime: 0
   };
 
   const sport: SportMatch = {

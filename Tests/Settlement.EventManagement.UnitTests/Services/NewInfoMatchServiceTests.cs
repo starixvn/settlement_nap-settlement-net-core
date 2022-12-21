@@ -164,7 +164,7 @@ namespace Settlement.EventManagement.UnitTests.Services
             siteMatchService.IsExistRunningTickets(Arg.Any<Match>()).Returns(true);
             siteMatchService.IsExistMarkedTicketParlay(Arg.Any<Match>()).Returns(true);
             siteMatchService.IsExistRunningTicketParlay(Arg.Any<Match>()).Returns(true);
-            siteMatchService.IsCalculatingSingle(Arg.Any<Match>()).Returns(1);
+            siteMatchService.IsCalculating(Arg.Any<int?>(), Arg.Any<List<int?>>()).Returns(1);
 
             service.TicketInfo(match);
 

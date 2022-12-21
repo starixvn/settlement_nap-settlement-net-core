@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { MultiSport, PopupProperties, Match, SportMatch } from './../models';
+import { MultiSport, PopupProperties, Match, SportMatch, LeagueMatch } from './../models';
 import { DialogBoxService } from './../../shared/services';
 import { DialogDataIframe } from './../../shared/models';
 import { Language } from './../../shared/language';
@@ -138,5 +138,17 @@ export class PopupService {
             this.properties.width = '780px';
             this.properties.height = '600px';
         }
+    }
+
+    public openUpdateTime(league: LeagueMatch) {
+        const src = `apps/change-waiting-time?leagueId=${league.leagueId}&time=${league.autoWaitingTime}&pageType=DirectTime&autoType=1`;
+        const frameSrc = encodeURI(src);
+        const dialogData = new DialogDataIframe(Language.payout.titlePopupForLeague, frameSrc);
+        this.dialogBoxService.popupHasResponse(dialogData, '600px', '310px').subscribe(result => {
+            if (!_.isUndefined(result)) {
+                    league.autoWaitingTime  = Number(result) ?? 0;
+                }
+            }
+        );
     }
 }

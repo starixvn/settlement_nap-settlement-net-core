@@ -209,4 +209,7 @@ public class BaseMatch
 
     [Key("offerLive")]
     public bool OfferLive { get; set; }
+
+    [Key("directWaitingTime")]
+    public int DirectWaitingTime { get; set; }
 }

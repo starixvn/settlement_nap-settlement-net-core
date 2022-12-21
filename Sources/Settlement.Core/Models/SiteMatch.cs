@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Settlement.Core.Models
+﻿namespace Settlement.Core.Models
 {
     public class SiteMatch
     {
@@ -19,6 +17,8 @@ namespace Settlement.Core.Models
         public bool IsEnabledGoalRecordFt { get; set; }
 
         public int? IsCalculatingSingle { get; set; }
+
+        public int? IsCalculatingMP { get; set; }
 
         public bool IsExistMarkedTicket { get; set; }
 
