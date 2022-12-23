@@ -5,6 +5,7 @@ using Settlement.EventManagement.Controllers;
 using Settlement.EventManagement.Models;
 using Settlement.EventManagement.Models.MultiSports;
 using Settlement.EventManagement.Requests;
+using Match = Settlement.EventManagement.Models.MultiSports.Match;
 
 namespace Settlement.EventManagement.UnitTests.Controllers
 {
@@ -50,13 +51,13 @@ namespace Settlement.EventManagement.UnitTests.Controllers
         {
             // Arrange
 
-            mediator.Send(Arg.Any<RefreshMultiSportRequest>()).Returns(new List<MultiSportMatchWaiting>());
+            mediator.Send(Arg.Any<RefreshMultiSportRequest>()).Returns(new List<Match>());
 
             // Act
             var actual = await controller.RefreshMatches(new RefreshMultiSportRequest()) as OkObjectResult;
 
             // Assert
-            Assert.IsType<List<MultiSportMatchWaiting>>(actual.Value);
+            Assert.IsType<List<Match>>(actual.Value);
             Assert.Equal(200, actual.StatusCode);
         }
 

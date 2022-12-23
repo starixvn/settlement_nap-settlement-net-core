@@ -1,6 +1,8 @@
-﻿namespace Settlement.EventManagement.Criteria;
+﻿using Settlement.Core.Criteria;
 
-public class GetMatchesAutoCalculateCriteria : CriteriaBase
+namespace Settlement.EventManagement.Criteria;
+
+public class GetMatchesAutoCalculateCriteria : MultipleSiteCriteria
 {
     public DateTime FromDate { get; set; }
 
@@ -27,9 +29,6 @@ public class GetMatchesAutoCalculateCriteria : CriteriaBase
     public string AutoSetting { get; set; }
 
     public bool IsMarkedTicket { get; set; }
-
-    [SpParam(Ignored = true)]
-    public string DbServer { get; set; }
 
     public override string GetSettingKey()
     {

@@ -1,6 +1,8 @@
-﻿namespace Settlement.EventManagement.Criteria;
+﻿using Settlement.Core.Criteria;
 
-public class GetMatchesCriteria : CriteriaBase
+namespace Settlement.EventManagement.Criteria;
+
+public class GetMatchesCriteria : MultipleSiteCriteria
 {
     public DateTime FromDate { get; set; }
 
@@ -21,9 +23,6 @@ public class GetMatchesCriteria : CriteriaBase
     public int MatchType { get; set; }
 
     public bool IsIncludeTest { get; set; }
-
-    [SpParam(Ignored = true)]
-    public string DbServer { get; set; }
 
     public override string GetSettingKey()
     {

@@ -13,6 +13,7 @@ import { PageBaseComponent } from '../base-component';
 export class PageComponent extends PageBaseComponent {
   public disableRefund: boolean;
   public filterQuery: FilterQuery;
+  public disableRefresh: boolean;
   constructor(protected reCheckInService: ReCheckInService,
     protected elementRef: ElementRef<HTMLElement>,
   ) { super(reCheckInService, elementRef); }
@@ -24,5 +25,9 @@ export class PageComponent extends PageBaseComponent {
     public search($event) {
       this.calculation = $event.calculation;
       this.filterQuery = $event.filterQuery;
+  }
+
+  public getInfoDisableRefresh(event){
+    this.disableRefresh = event;
   }
 }

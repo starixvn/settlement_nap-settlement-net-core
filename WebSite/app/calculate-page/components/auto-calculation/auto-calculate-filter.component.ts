@@ -19,6 +19,7 @@ import { FilterBaseComponent } from '../../../shared/components/gaming/filter-ba
 })
 export class AutoCalculateFilterComponent extends FilterBaseComponent implements OnInit {
   @Output() public readonly searchAction = new EventEmitter();
+  @Output() public readonly disableRefresh = new EventEmitter();
   public statuses = Statuses;
   public leagues: League[];
   private readonly completedWithRunningTicket = "16";
@@ -84,8 +85,10 @@ export class AutoCalculateFilterComponent extends FilterBaseComponent implements
     this.query.fromDate = this.verifyDateService.dateFormat(this.fromDate);
     this.query.toDate = this.verifyDateService.dateFormat(this.toDate);
 
+    this.disableRefresh.emit(true);
     this.requestService.searchAutoCalculation(this.query).subscribe((calculation: Calculation) => {
       this.searchAction.emit({ calculation, filterQuery: this.query });
+      this.disableRefresh.emit(false);
     });
   }
 

@@ -1,8 +1,5 @@
-﻿using NSubstitute;
-using Settlement.Core.Models;
+﻿using Settlement.Core.Models;
 using Settlement.EventManagement.Services.Calculation;
-using System.Collections.Generic;
-using Xunit;
 using Match = Settlement.EventManagement.Models.Calculation.Match;
 
 namespace Settlement.EventManagement.UnitTests.Services.Calculation
@@ -20,7 +17,7 @@ namespace Settlement.EventManagement.UnitTests.Services.Calculation
         }
 
         [Fact]
-        public void MergeMatches_Always_ReturnCorrectListMatch()
+        public void AddInfoMatch_Always_ReturnCorrectListMatch()
         {
             var baseMatches = new List<Match>
             {
@@ -30,16 +27,14 @@ namespace Settlement.EventManagement.UnitTests.Services.Calculation
             var siteMatches = new List<Match>
             {
                 new () { MatchId = 123 },
-                new () {MatchId = 456}
             };
 
             compareMatchService.GetDifferentMatchSiteInfo(Arg.Any<Match>(), Arg.Any<List<Match>>())
                 .Returns(new SiteMatch { IsCalculatingSingle = 1 });
 
-            var listMatch = service.MergeMatches(baseMatches, siteMatches);
+            service.AddSiteInfo(baseMatches, siteMatches);
 
-            Assert.Equal(2, listMatch.Count);
-            Assert.Equal(1, listMatch[0].SiteMatch[0].IsCalculatingSingle);
+            Assert.Equal(1, baseMatches[0].SiteMatch[0].IsCalculatingSingle);
         }
     }
 }

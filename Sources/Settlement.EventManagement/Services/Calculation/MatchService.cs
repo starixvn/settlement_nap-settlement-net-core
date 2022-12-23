@@ -1,7 +1,7 @@
-﻿using Settlement.Core.Models;
+﻿using Settlement.Core.Criteria;
+using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.EventManagement.Criteria;
-using Settlement.EventManagement.Requests;
 using Match = Settlement.EventManagement.Models.Calculation.Match;
 
 namespace Settlement.EventManagement.Services.Calculation;
@@ -12,9 +12,7 @@ public interface MatchService
 
     Task<List<Match>> GetMatchesAutoCalculate(FilterAutoCalculationRequest request);
 
-    Task<List<Match>> GetWaitingMatches(RefreshCalculationRequest request);
-
-    Task<List<Match>> GetWaitingAutoMatches(RefreshAutoCalculationRequest request);
+    Task<List<Match>> GetWaitingMatches(string leagueIds, bool isAutoPage);
 }
 
 public class MatchServiceImp : MatchService
@@ -55,7 +53,8 @@ public class MatchServiceImp : MatchService
 
     public async Task<List<Match>> GetMatches(FilterCalculationRequest request)
     {
-        var matches = await MatchesAllSites(request);
+        var criteria = mapper.Map<FilterCalculationRequest, GetMatchesCriteria>(request);
+        var matches = await GetMatchesAllSites(criteria);
         var listResultDetail = await ResultDetailByMatchIds(matches);
         var matchesInfoMerged = SetNewMatchInfo(matches, listResultDetail);
         return SortingMatches(matchesInfoMerged, request);
@@ -84,52 +83,29 @@ public class MatchServiceImp : MatchService
         return matches;
     }
 
-    private async Task<List<Match>> MatchesAllSites(FilterCalculationRequest request)
+    private async Task<List<Match>> GetMatchesAllSites(MultipleSiteCriteria criteria)
     {
-        var matches = new List<Match>();
-        var isCentralDataBase = true;
-        var criteria = mapper.Map<FilterCalculationRequest, GetMatchesCriteria>(request);
-        foreach (var server in appSettingsKey.SiteDbServer)
+        var fetchMatchTasks = appSettingsKey
+            .SiteDbServer
+            .Select(s => FetchMatches(s, criteria))
+            .ToList();
+        var listMatch = await Task.WhenAll(fetchMatchTasks.ToArray());
+
+        var matchesInAllServers = listMatch.Select(m => m.ToList()).ToList();
+
+        var baseMatches = matchesInAllServers.SelectMany(m => m).Distinct().ToList();
+
+        for (var i = 1; i < appSettingsKey.SiteDbServer.Count; i++)
         {
-            criteria.DbServer = server;
-            var data = (await repository.FetchAsync<Match>(criteria)).ToList();
-
-            if (isCentralDataBase)
-            {
-                matches = data;
-                isCentralDataBase = false;
-            }
-            else
-            {
-                matches = mergeDataService.MergeMatches(matches, data);
-            }
+            mergeDataService.AddSiteInfo(baseMatches, matchesInAllServers[i]);
         }
-
-        return matches;
+        return baseMatches;
     }
 
-    private async Task<List<Match>> WaitingMatchesAllSites(RefreshCalculationRequest request)
+    private Task<IEnumerable<Match>> FetchMatches(string server, MultipleSiteCriteria criteria)
     {
-        var matches = new List<Match>();
-        var isCentralDataBase = true;
-        var criteria = mapper.Map<RefreshCalculationRequest, GetWaitingCalculationCriteria>(request);
-        foreach (var server in appSettingsKey.SiteDbServer)
-        {
-            criteria.DbServer = server;
-            var data = (await repository.FetchAsync<Match>(criteria)).ToList();
-
-            if (isCentralDataBase)
-            {
-                matches = data;
-                isCentralDataBase = false;
-            }
-            else
-            {
-                matches = mergeDataService.MergeMatches(matches, data);
-            }
-        }
-
-        return matches;
+        criteria.DbServer = server;
+        return repository.FetchAsync<Match>(criteria);
     }
 
     private async Task<List<ResultDetail>> ResultDetailByMatchIds(List<Match> matches)
@@ -139,9 +115,9 @@ public class MatchServiceImp : MatchService
         return (await repository.FetchAsync<ResultDetail>(resultDetailCriteria)).ToList();
     }
 
-    public async Task<List<Match>> GetWaitingMatches(RefreshCalculationRequest request)
+    public async Task<List<Match>> GetWaitingMatches(string leagueIds, bool isAutoPage)
     {
-        var matches = await cachingMatchesService.GetShortCache(request.LeagueIds);
+        var matches = await cachingMatchesService.GetShortCache(leagueIds, isAutoPage);
 
         if (matches != null)
         {
@@ -152,7 +128,7 @@ public class MatchServiceImp : MatchService
         {
             try
             {
-                return await GetAndCachingMatches(request);
+                return isAutoPage ? await GetAndCachingAutoCalculationMatches(leagueIds) : await GetAndCachingMatches(leagueIds);
             }
             finally
             {
@@ -160,48 +136,26 @@ public class MatchServiceImp : MatchService
             }
         }
 
-        return await cachingMatchesService.GetLongCache(request.LeagueIds);
+        return await cachingMatchesService.GetLongCache(leagueIds, isAutoPage);
     }
 
-    public async Task<List<Match>> GetWaitingAutoMatches(RefreshAutoCalculationRequest request)
+    private async Task<List<Match>> GetAndCachingMatches(string leagueIds)
     {
-        var matches = await cachingMatchesService.GetShortCache(request.LeagueId.ToString(), true);
-
-        if (matches != null)
-        {
-            return matches;
-        }
-
-        if (0 == Interlocked.Exchange(ref _isProcessing, 1))
-        {
-            try
-            {
-                return await GetAndCachingAutoCalculationMatches(request);
-            }
-            finally
-            {
-                Interlocked.Exchange(ref _isProcessing, 0);
-            }
-        }
-
-        return await cachingMatchesService.GetLongCache(request.LeagueId.ToString(), true);
-    }
-
-    private async Task<List<Match>> GetAndCachingMatches(RefreshCalculationRequest request)
-    {
-        var waitingMatches = await WaitingMatchesAllSites(request);
+        var criteria = new GetWaitingCalculationCriteria { LeagueIds = leagueIds };
+        var waitingMatches = await GetMatchesAllSites(criteria);
         var listResultDetail = await ResultDetailByMatchIds(waitingMatches);
 
         var matches = SetNewMatchInfo(waitingMatches, listResultDetail);
 
-        cachingMatchesService.SetToCache(matches, request.LeagueIds);
+        cachingMatchesService.SetToCache(matches, leagueIds);
 
         return matches;
     }
 
     public async Task<List<Match>> GetMatchesAutoCalculate(FilterAutoCalculationRequest request)
     {
-        var matches = await MatchesAutoCalculateAllSites(request);
+        var criteria = mapper.Map<FilterAutoCalculationRequest, GetMatchesAutoCalculateCriteria>(request);
+        var matches = await GetMatchesAllSites(criteria);
         var listResultDetail = await ResultDetailByMatchIds(matches);
         await SetReferenceActionsForMatch(matches);
 
@@ -215,63 +169,16 @@ public class MatchServiceImp : MatchService
         matches.ForEach(m => m.ReferenceActions = referenceActions.ContainsKey(m.MatchId) ? referenceActions[m.MatchId] : new List<Models.Calculation.ReferenceAction>());
     }
 
-    private async Task<List<Match>> MatchesAutoCalculateAllSites(FilterAutoCalculationRequest request)
+    private async Task<List<Match>> GetAndCachingAutoCalculationMatches(string leagueId)
     {
-        var matches = new List<Match>();
-        var isCentralDataBase = true;
-        var criteria = mapper.Map<FilterAutoCalculationRequest, GetMatchesAutoCalculateCriteria>(request);
-        foreach (var server in appSettingsKey.SiteDbServer)
-        {
-            criteria.DbServer = server;
-            var data = (await repository.FetchAsync<Match>(criteria)).ToList();
-
-            if (isCentralDataBase)
-            {
-                matches = data;
-                isCentralDataBase = false;
-            }
-            else
-            {
-                matches = mergeDataService.MergeMatches(matches, data);
-            }
-        }
-
-        return matches;
-    }
-
-    private async Task<List<Match>> GetAndCachingAutoCalculationMatches(RefreshAutoCalculationRequest request)
-    {
-        var waitingMatches = await WaitingAutoCalculationMatchesAllSites(request);
+        var criteria = new GetWaitingAutoCalculationCriteria { LeagueId = int.Parse(leagueId) };
+        var waitingMatches = await GetMatchesAllSites(criteria);
         var listResultDetail = await ResultDetailByMatchIds(waitingMatches);
         await SetReferenceActionsForMatch(waitingMatches);
 
         var matches = SetNewMatchInfo(waitingMatches, listResultDetail);
 
-        cachingMatchesService.SetToCache(matches, request.LeagueId.ToString());
-
-        return matches;
-    }
-
-    private async Task<List<Match>> WaitingAutoCalculationMatchesAllSites(RefreshAutoCalculationRequest request)
-    {
-        var matches = new List<Match>();
-        var isCentralDataBase = true;
-        var criteria = mapper.Map<RefreshAutoCalculationRequest, GetWaitingAutoCalculationCriteria>(request);
-        foreach (var server in appSettingsKey.SiteDbServer)
-        {
-            criteria.DbServer = server;
-            var data = (await repository.FetchAsync<Match>(criteria)).ToList();
-
-            if (isCentralDataBase)
-            {
-                matches = data;
-                isCentralDataBase = false;
-            }
-            else
-            {
-                matches = mergeDataService.MergeMatches(matches, data);
-            }
-        }
+        cachingMatchesService.SetToCache(matches, leagueId);
 
         return matches;
     }
@@ -281,7 +188,6 @@ public class MatchServiceImp : MatchService
         if (request.FilterOver > 0)
         {
             return matches.OrderBy(match => match.OriginalEventStatus.ToLowerInvariant())
-                .ThenBy(match => match.MatchCode.Length)
                 .ThenBy(match => match.MatchCode.ToLowerInvariant()).ToList();
         }
 
@@ -290,7 +196,6 @@ public class MatchServiceImp : MatchService
                 .ThenBy(match => match.KickOffTime)
                 .ThenBy(match => match.LeagueId)
                 .ThenBy(match => match.SettlementStatus != 0)
-                .ThenBy(match => match.MatchCode.Length)
                 .ThenBy(match => match.MatchCode.ToLowerInvariant())
                 .ToList();
     }

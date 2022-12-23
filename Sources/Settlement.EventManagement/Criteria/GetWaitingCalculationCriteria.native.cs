@@ -1,13 +1,12 @@
-﻿namespace Settlement.EventManagement.Criteria;
+﻿using Settlement.Core.Criteria;
 
-public class GetWaitingCalculationCriteria : CriteriaBase
+namespace Settlement.EventManagement.Criteria;
+
+public class GetWaitingCalculationCriteria : MultipleSiteCriteria
 {
     public int SportType { get; } = Core.Constants.SportType.Soccer;
 
     public string LeagueIds { get; set; }
-
-    [SpParam(Ignored = true)]
-    public string DbServer { get; set; }
 
     public override string GetSettingKey()
     {

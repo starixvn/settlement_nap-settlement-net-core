@@ -158,13 +158,16 @@ export class LeagueComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   public getEarlySettleBackground(match: Match) {
-    const earlyOverFilterOnly = _.isEqual(this.request.overStatus, this.earlyOverOnlyValue);
-    const backgroundColorBlinking = match.isExistsConfirmedEarly && earlyOverFilterOnly ? BackgroundColor.confirmedEarlyBlinking : '';
+    const backgroundColorBlinking = match.isExistsConfirmedEarly && this.isEarlyOverAndOtherStatus(this.request.overStatus) ? BackgroundColor.confirmedEarlyBlinking : '';
     const isRunning = !_.isNull(match.earlySettleStatus) && _.isEqual(match.earlySettleStatus.toLowerCase(), BackgroundColor.running)
       && _.isEqual(match.eventStatus.toLowerCase(), BackgroundColor.completed);
     const isCompleted = !_.isNull(match.earlySettleStatus) && _.isEqual(match.earlySettleStatus.toLowerCase(), BackgroundColor.completed);
     const backgroundColor = isRunning ? BackgroundColor.autoSettleRunning : isCompleted ? BackgroundColor.calculated : '';
     return backgroundColorBlinking + ' ' + backgroundColor;
+  }
+
+  private isEarlyOverAndOtherStatus(overStatus: string) {
+    return _.includes(overStatus, this.earlyOverOnlyValue) && overStatus.length > 1;
   }
 
   public getAutoSetting(match: Match) {

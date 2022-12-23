@@ -42,10 +42,10 @@ public class CalculationHandler :
 
     public async Task<List<LeagueTypeModel>> Handle(LeagueCalculationRequest request, CancellationToken cancellationToken) => await leagueService.Leagues(request);
 
-    public async Task<List<Match>> Handle(RefreshCalculationRequest request, CancellationToken cancellationToken) => await matchService.GetWaitingMatches(request);
+    public async Task<List<Match>> Handle(RefreshCalculationRequest request, CancellationToken cancellationToken) => await matchService.GetWaitingMatches(request.LeagueIds, false);
 
     public async Task<List<Match>> Handle(RefreshAutoCalculationRequest request,
-        CancellationToken cancellationToken) => await matchService.GetWaitingAutoMatches(request);
+        CancellationToken cancellationToken) => await matchService.GetWaitingMatches(request.LeagueId.ToString(), true);
 
     public async Task<CalculationLeagues> Handle(FilterAutoCalculationRequest request, CancellationToken cancellationToken)
     {
