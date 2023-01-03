@@ -5,4 +5,6 @@ export class AutoSetting {
     isDirectPayoutForMatch: boolean;
     isInstantForLeague: boolean;
     isInstantForMatch: boolean;
+    matchSetting: string;
+    leagueSetting: string;
 }

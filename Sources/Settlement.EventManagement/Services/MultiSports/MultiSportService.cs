@@ -206,8 +206,8 @@ public class MultiSportServiceImp : IMultiSportService
                 {
                     Name = match.LeagueName,
                     LeagueId = match.LeagueId,
-                    IsAutoPayoutForLeague = match.IsAutoPayoutForLeague,
                     AutoWaitingTime = match.AutoWaitingTime,
+                    AutoCalcSetting = match.AutoCalcSetting,
                     Matches = new List<Match>(),
                     SportType = match.SportType
                 };

@@ -52,8 +52,6 @@ public class Match : BaseMatch
 
     #region InstantCalculate
 
-    public int AutoSettingForLeague { get; set; }
-
     public AutoCalculationSetting AutoCalcSetting => new AutoCalculationSetting(AutoSetting, AutoSettingForLeague);
 
     public int InstantWaitingTime { get; set; }

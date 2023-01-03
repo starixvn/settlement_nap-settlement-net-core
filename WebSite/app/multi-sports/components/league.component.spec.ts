@@ -24,7 +24,8 @@ import {
   MoreScore,
   Score,
   MixParlay,
-  Remark
+  Remark,
+  AutoSetting
 } from '../../shared/models';
 import { BackgroundColor, SportType } from '../../shared/constants';
 import { Permission } from '../../shared/models/sportsbook-sop/permission.model';
@@ -43,6 +44,7 @@ describe('LeagueComponent', () => {
   match.sportType = SportType.eSports;
   match.isCheckedCalcMP = true;
   match.isExistMarkedTicketParlay = false;
+  match.autoCalcSetting = new AutoSetting();
   const parlay = new MixParlay();
   parlay.hasMixParlay = true;
   match.mixParlay = parlay;
@@ -57,7 +59,8 @@ describe('LeagueComponent', () => {
     disableCheckCalcMP: false,
     isMergedParlay: false,
     isAutoPayoutForLeague: false,
-    autoWaitingTime: 0
+    autoWaitingTime: 0,
+    autoCalcSetting: new AutoSetting()
   };
 
   const sport: SportMatch = {
@@ -559,84 +562,83 @@ describe('LeagueComponent', () => {
 
   describe('getAutoSetting', () => {
     beforeEach(() => {
-      component.permission = new Permission();
+      match.autoCalcSetting = new AutoSetting();
+    });
+    it('should return BOTH when match is both auto payout and direct payout', () => {
+      match.autoCalcSetting.isAutoPayoutForMatch = true;
+      match.autoCalcSetting.isDirectPayoutForMatch = true
+
+      const result = component.getAutoSetting(match.autoCalcSetting);
+
+      expect(result).toEqual("BOTH");
     });
 
-    it('should return icon auto when have permission and match is auto payout', () => {
-      component.permission.canAutoPayout = true;
-      match.isAutoPayoutForMatch = true;
+    it('should return AUTO when match only access auto payout', () => {
+      match.autoCalcSetting.isAutoPayoutForMatch = true;
+      match.autoCalcSetting.isDirectPayoutForMatch = false;
 
-      const result = component.getAutoSetting(match);
+      const result = component.getAutoSetting(match.autoCalcSetting);
 
-      expect(result).toEqual(BackgroundColor.iconAuto);
+      expect(result).toEqual("AUTO");
     });
 
-    it('should return icon no when have permission and is not auto payout', () => {
-      component.permission.canAutoPayout = true;
-      match.isAutoPayoutForMatch = false;
+    it('should return DIRECT when match only access direct payout', () => {
+      match.autoCalcSetting.isAutoPayoutForMatch = false;
+      match.autoCalcSetting.isDirectPayoutForMatch = true;
 
-      const result = component.getAutoSetting(match);
+      const result = component.getAutoSetting(match.autoCalcSetting);
 
-      expect(result).toEqual(BackgroundColor.iconNo);
+      expect(result).toEqual("DIRECT");
     });
 
-    it('should return icon no disabled when have no permission and is not auto payout', () => {
-      component.permission.canAutoPayout = false;
-      match.isAutoPayoutForMatch = false;
+    it('should return OFF when match when not access auto', () => {
+      match.autoCalcSetting.isAutoPayoutForMatch = false;
+      match.autoCalcSetting.isDirectPayoutForMatch = false;
 
-      const result = component.getAutoSetting(match);
+      const result = component.getAutoSetting(match.autoCalcSetting);
 
-      expect(result).toEqual(BackgroundColor.iconNoDisabled);
-    });
-
-    it('should return icon auto disabled when have no permission and is auto payout', () => {
-      component.permission.canAutoPayout = false;
-      match.isAutoPayoutForMatch = true;
-
-      const result = component.getAutoSetting(match);
-
-      expect(result).toEqual(BackgroundColor.iconAutoDisabled);
+      expect(result).toEqual("OFF");
     });
   });
 
   describe('getAutoSettingLeague', () => {
     beforeEach(() => {
-      component.permission = new Permission();
+      match.autoCalcSetting = new AutoSetting();
+    });
+    it('should return OFF when league not access auto', () => {
+      match.autoCalcSetting.isAutoPayoutForLeague = false;
+      match.autoCalcSetting.isDirectPayoutForLeague = false;
+
+      const result = component.getAutoSettingLeague(match.autoCalcSetting);
+
+      expect(result).toEqual("OFF");
     });
 
-    it('should return icon auto when have permission and match is auto payout', () => {
-      component.permission.canAutoPayout = true;
-      match.isAutoPayoutForLeague = true;
+    it('should return BOTH when league access both auto type', () => {
+      match.autoCalcSetting.isAutoPayoutForLeague = true;
+      match.autoCalcSetting.isDirectPayoutForLeague = true;
 
-      const result = component.getAutoSettingLeague(match.isAutoPayoutForLeague);
+      const result = component.getAutoSettingLeague(match.autoCalcSetting);
 
-      expect(result).toEqual(BackgroundColor.iconAuto);
+      expect(result).toEqual("BOTH");
     });
 
-    it('should return icon no when have permission and is not auto payout', () => {
-      component.permission.canAutoPayout = true;
-      match.isAutoPayoutForLeague = false;
+    it('should return AUTO when league only access auto payout', () => {
+      match.autoCalcSetting.isAutoPayoutForLeague = true;
+      match.autoCalcSetting.isDirectPayoutForLeague = false;
 
-      const result = component.getAutoSettingLeague(match.isAutoPayoutForLeague);
+      const result = component.getAutoSettingLeague(match.autoCalcSetting);
 
-      expect(result).toEqual(BackgroundColor.iconNo);
+      expect(result).toEqual("AUTO");
     });
 
-    it('should return icon no disabled when have no permission and is not auto payout', () => {
-      component.permission.canAutoPayout = false;
+    it('should return DIRECT when league only access direct payout', () => {
+      match.autoCalcSetting.isAutoPayoutForLeague = false;
+      match.autoCalcSetting.isDirectPayoutForLeague = true;
 
-      const result = component.getAutoSettingLeague(match.isAutoPayoutForLeague);
+      const result = component.getAutoSettingLeague(match.autoCalcSetting);
 
-      expect(result).toEqual(BackgroundColor.iconNoDisabled);
-    });
-
-    it('should return icon auto disabled when have no permission and is auto payout', () => {
-      component.permission.canAutoPayout = false;
-      match.isAutoPayoutForLeague = true;
-
-      const result = component.getAutoSettingLeague(match.isAutoPayoutForLeague);
-
-      expect(result).toEqual(BackgroundColor.iconAutoDisabled);
+      expect(result).toEqual("DIRECT");
     });
   });
 
@@ -1086,77 +1088,43 @@ describe('LeagueComponent', () => {
     it('should do nothing when not having permission', () => {
       permission.canAutoPayout = false;
       component.permission = permission;
-      spyOn(messageBoxService, 'confirm');
+      spyOn(popupService, 'openUpdatePayoutForMatch');
 
       component.changeAutoSetting(match);
 
-      expect(messageBoxService.confirm).not.toHaveBeenCalled();
+      expect(popupService.openUpdatePayoutForMatch).not.toHaveBeenCalled();
     });
 
-    it('should change auto status when successfully updated', fakeAsync(() => {
+    it('should update popup change setting when has permission', () => {
       permission.canAutoPayout = true;
-      match.isAutoPayoutForMatch = false;
       component.permission = permission;
-      spyOn(multiSportService, 'updateSettingMatch').and.returnValue(of(successfulResult));
+      spyOn(popupService, 'openUpdatePayoutForMatch');
 
       component.changeAutoSetting(match);
-      const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
-      buttonYes.click();
-      tick();
 
-      expect(match.isAutoPayoutForMatch).toBe(true);
-    }));
-
-    it('should alert when fail to update', fakeAsync(() => {
-      component.permission = permission;
-      spyOn(multiSportService, 'updateSettingMatch').and.returnValue(of(unsuccessfulResult));
-      spyOn(messageBoxService, 'alert');
-
-      component.changeAutoSetting(match);
-      const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
-      buttonYes.click();
-      tick();
-
-      expect(messageBoxService.alert).toHaveBeenCalled();
-    }));
+      expect(popupService.openUpdatePayoutForMatch).toHaveBeenCalled();
+    });
   });
 
   describe('changeAutoLeague', () => {
     it('should do nothing when not having permission', () => {
       permission.canAutoPayout = false;
       component.permission = permission;
-      spyOn(messageBoxService, 'confirm');
+      spyOn(popupService, 'openUpdatePayoutForLeague');
 
       component.changeAutoLeague(league);
 
-      expect(messageBoxService.confirm).not.toHaveBeenCalled();
+      expect(popupService.openUpdatePayoutForLeague).not.toHaveBeenCalled();
     });
 
-    it('should change auto status when successfully updated', fakeAsync(() => {
+    it('should update popup change setting when has permission', fakeAsync(() => {
       permission.canAutoPayout = true;
-      league.isAutoPayoutForLeague = false;
       component.permission = permission;
-      spyOn(multiSportService, 'updateSettingLeague').and.returnValue(of(successfulResult));
+      spyOn(popupService, 'openUpdatePayoutForLeague');
 
       component.changeAutoLeague(league);
-      const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
-      buttonYes.click();
-      tick();
 
-      expect(league.isAutoPayoutForLeague).toBe(true);
-    }));
-
-    it('should alert when fail to update', fakeAsync(() => {
-      component.permission = permission;
-      spyOn(multiSportService, 'updateSettingLeague').and.returnValue(of(unsuccessfulResult));
-      spyOn(messageBoxService, 'alert');
-
-      component.changeAutoLeague(league);
-      const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
-      buttonYes.click();
-      tick();
-
-      expect(messageBoxService.alert).toHaveBeenCalled();
+      expect(popupService.openUpdatePayoutForLeague).toHaveBeenCalled();
     }));
   });
 

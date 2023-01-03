@@ -1,3 +1,4 @@
+import { AutoSetting } from './../../shared/models/match-details/auto-setting.model';
 import { Match } from './match.model';
 
 export class LeagueMatch {
@@ -10,4 +11,5 @@ export class LeagueMatch {
     public isMergedParlay: boolean;
     public isAutoPayoutForLeague: boolean;
     public autoWaitingTime: number;
+    public autoCalcSetting: AutoSetting;
 }

@@ -31,6 +31,7 @@
         }
     }
 }
+
 .league {
     .table-calculation {
         .league-name {
@@ -53,11 +54,24 @@
             min-width: 250px;
             width: 250px;
         }
+
         .auto-setting {
             min-width: 63px;
             width: 63px;
         }
+
+        .auto-setting-text {
+            text-align: center;
+            color: #6678E0;
+            font-size: 13px;
+            font-weight: 100;
+        }
+
+        .auto-setting-text:hover {
+            color: #000;
+        }
     }
+
     .sport-name {
         font-weight: bold;
         height: 21px;
@@ -67,6 +81,7 @@
         padding: 2px 0 0 2px;
     }
 }
+
 .match {
     .table-calculation {
         .sport-name {
@@ -119,104 +134,61 @@
         .code {
             width: 110px;
         }
-        
+
         .match-home,
         .match-away {
             float: left;
         }
-        
-        .auto-setting {
-            .min_width(63px);
 
-            div {
-                background: url(@sprite) no-repeat;
+    }
 
-                &.icon-yes {
-                    background-position: -35px -292px;
-                    .icon(45px, 16px, 8px);
-                }
-
-                &.icon-direct {
-                    background-position: -35px -270px;
-                    .icon(62px, 16px, 1px);
-                }
-
-                &.icon-auto {
-                    background-position: -170px -270px;
-                    .icon(56px, 16px, 3px);
-                }
-
-                &.icon-auto-disable {
-                    background-position: -230px -270px;
-                    .icon(56px, 16px, 3px);
-                    cursor: default;
-                }
-
-                &.icon-no {
-                    background-position: -84px -292px;
-                    .icon(45px, 16px, 8px);
-                }
-
-                &.icon-no-disable {
-                    background-position: -135px -292px;
-                    .icon(45px, 16px, 8px);
-                    cursor: default;
-                }
-            }
-
-            .title {
-                cursor: pointer;
+    .remark-status {
+        div {
+            &.tooltip-inner {
+                background: none !important;
+                background-color: #1E1E1E !important;
+                white-space: pre-line !important;
+                text-align: left !important;
+                font-size: 11px !important;
             }
         }
-        
-        .remark-status {
-            div {
-                &.tooltip-inner {
-                    background: none !important;
-                    background-color: #1E1E1E !important;
-                    white-space: pre-line !important;
-                    text-align: left !important;
-                    font-size: 11px !important;
-                }
-            }
-        }
+    }
 
-        .league-name {
-            td {
-                &.instant-time {
-                    div {
-                        float: left;
-                        margin: 2px 3px 0 0;
-                        font-weight: normal;
-                        font-size: 8.3pt;
+    .league-name {
+        td {
+            &.instant-time {
+                div {
+                    float: left;
+                    margin: 2px 3px 0 0;
+                    font-weight: normal;
+                    font-size: 8.3pt;
 
-                        &.act-direct-time {
-                            background: url(@sprite) no-repeat;
-                            background-position: -105px -321px;
-                            width: 15px;
-                            height: 14px;
-                            margin-top: -3px;
-                            cursor: pointer;
+                    &.act-direct-time {
+                        background: url(@sprite) no-repeat;
+                        background-position: -105px -321px;
+                        width: 15px;
+                        height: 14px;
+                        margin-top: -3px;
+                        cursor: pointer;
 
-                            &:hover {
-                                background-position: -125px -321px;
-                            }
+                        &:hover {
+                            background-position: -125px -321px;
                         }
                     }
                 }
             }
         }
+    }
 
-        .interval-score {
-            .bg-calculated {
-                background-color: transparent;
-                color: #0273FF;
-            }
+    .interval-score {
+        .bg-calculated {
+            background-color: transparent;
+            color: #0273FF;
         }
+    }
 
-        .confirm-score {
-            width: 100px;
-        }
+    .confirm-score {
+        width: 100px;
     }
 }
 
@@ -225,7 +197,8 @@
         width: 85px;
         float: left;
     }
-    .field{
+
+    .field {
         height: 21px;
     }
 
@@ -237,12 +210,12 @@
         .from-date {
             padding-left: 57px;
         }
-    
+
         .to-date {
             padding-left: 22px;
         }
 
-        .date{
+        .date {
             padding-right: 20px;
         }
     }
@@ -265,16 +238,20 @@
         height: 23px !important;
         padding: 1px;
     }
+
     @media (max-width: 1024px) {
-        .include-test, .submit {
+
+        .include-test,
+        .submit {
             left: 0px;
         }
+
         .field {
             display: inline-table;
         }
     }
 
-    @media (max-width: 1360px){
+    @media (max-width: 1360px) {
         .include-test {
             margin-top: 15px;
         }
@@ -283,12 +260,14 @@
             margin-top: 15px;
         }
     }
-    @media (min-width: 1780px){
+
+    @media (min-width: 1780px) {
         .over-status {
             margin-left: 85px;
         }
     }
 }
+
 .custom-dialog-container .mat-dialog-container {
     border: 1px solid #d3d3d3;
 }
@@ -328,28 +307,38 @@
         }
 
         .auto-payout {
-            width:  @autoPayout;
+            width: @autoPayout;
         }
     }
 }
 
 .auto-setting-completed {
-    background: #00B050;
+    background: #6FCF97;
 }
 
 .auto-setting-failed {
     background: #E17356;
 }
 
-.cursor-pointer{
+.cursor-pointer {
     cursor: pointer;
 }
 
-.include-test{
+.include-test {
     padding-top: 2px;
 }
+
 .red {
     color: #FF0000;
     font-weight: bold;
     float: left;
+}
+
+.autoCalcSetting {
+    text-align: center;
+    color: #6678E0;
+}
+
+.autoCalcSetting:hover {
+    color: #000;
 }

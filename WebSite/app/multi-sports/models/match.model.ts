@@ -2,6 +2,7 @@
 import { Score } from "../../shared/models/match-details/score.model";
 import { MoreScore } from "../../shared/models/match-details/more-score.model";
 import { MixParlay } from "../../shared/models/match-details/mix-parlay.model";
+import { AutoSetting } from "../../shared/models";
 
 export class Match {
      public matchId: string;
@@ -57,4 +58,6 @@ export class Match {
      public confirmFullTimeScore: string;
      public confirmHalfTimeScore: string;
      public offerLive: boolean;
+     public applyDirect: boolean;
+     public autoCalcSetting : AutoSetting;
 }

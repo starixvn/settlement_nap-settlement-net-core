@@ -9,8 +9,8 @@ public class LeagueModel
     [Key("name")]
     public string Name { get; set; }
 
-    [Key("isAutoPayoutForLeague")]
-    public bool IsAutoPayoutForLeague { get; set; }
+    [Key("autoCalcSetting")]
+    public AutoCalculationSetting AutoCalcSetting { get; set; } = new AutoCalculationSetting();
 
     [Key("autoWaitingTime")]
     public int AutoWaitingTime { get; set; }

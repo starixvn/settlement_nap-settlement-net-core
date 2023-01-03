@@ -57,7 +57,7 @@ export class RefreshMatchService {
             match.isHavingIntervalScore = newMatch.isHavingIntervalScore;
             match.remark = newMatch.remark;
             match.isExistMarkedTicketParlay = newMatch.isExistMarkedTicketParlay;
-            match.isAutoPayoutForMatch = newMatch.isAutoPayoutForMatch;
+            match.autoCalcSetting = newMatch.autoCalcSetting;
             match.suspenderHalfTime = newMatch.suspenderHalfTime;
             match.suspenderFullTime = newMatch.suspenderFullTime;
             match.mixParlay = newMatch.mixParlay;
