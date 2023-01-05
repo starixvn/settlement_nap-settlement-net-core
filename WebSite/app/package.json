@@ -24,6 +24,7 @@
     "tennis": "ng build --configuration production --project=tennis",
     "cricket": "ng build --configuration production --project=cricket",
     "other-sports": "ng build --configuration production --project=other-sports",
+    "outright": "ng build --configuration production --project=outright",
     "start": "ng serve",
     "test": "jest --debug --no-cache multi-sports/components/league.component.spec",
     "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand basketball/components/app.component.spec.ts",
