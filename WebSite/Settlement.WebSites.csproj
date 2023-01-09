@@ -112,6 +112,7 @@
     <ProjectReference Include="..\Sources\Settlement.FastMarkets\Settlement.FastMarkets.csproj" />
     <ProjectReference Include="..\Sources\Settlement.Gaming\Settlement.Gaming.csproj" />
     <ProjectReference Include="..\Sources\Settlement.Log\Settlement.Log.csproj" />
+    <ProjectReference Include="..\Sources\Settlement.Outright\Settlement.Outright.csproj" />
     <ProjectReference Include="..\Sources\Settlement.Setting\Settlement.Setting.csproj" />
     <ProjectReference Include="..\Sources\Settlement.Sportsbook.MoveTickets\Settlement.Sportsbook.MoveTickets.csproj" />
     <ProjectReference Include="..\Sources\Settlement.Sportsbook.Aio\Settlement.Sportsbook.Aio.csproj" />

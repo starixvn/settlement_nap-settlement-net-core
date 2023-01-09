@@ -8,6 +8,9 @@ namespace Settlement.Core.Models
         [Key("canCalculate")]
         public bool CanCalculate { get; set; }
 
+        [Key("canCalculateOutright")]
+        public bool CanCalculateOutright { get; set; }
+
         [Key("canMarkPending")]
         public bool CanMarkPending { get; set; }
 
@@ -19,6 +22,9 @@ namespace Settlement.Core.Models
 
         [Key("canUncalculateInstant")]
         public bool CanUncalculateInstant { get; set; }
+
+        [Key("canUncalculateOutright")]
+        public bool CanUncalculateOutright { get; set; }
 
         [Key("canRefund")]
         public bool CanRefund { get; set; }

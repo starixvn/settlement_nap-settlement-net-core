@@ -30,6 +30,7 @@ using Settlement.EventManagement;
 using Settlement.FastMarkets;
 using Settlement.Gaming;
 using Settlement.Log;
+using Settlement.Outright;
 using Settlement.Setting;
 using Settlement.Sportsbook.Aio;
 using Settlement.Sportsbook.MoveTickets;
@@ -145,6 +146,7 @@ public static class WebSites
         services.ThirdPartyProductsConfigServices();
         services.SettingConfigServices();
         services.GamingConfigServices();
+        services.OutrightConfigServices();
     }
 
     public static void ConfigureNapServices(this IServiceCollection services, IConfiguration configuration)
@@ -227,6 +229,7 @@ public static class WebSites
         services.ThirdPartyProductsConfigMediator();
         services.SettingConfigMediator();
         services.GamingConfigMediator();
+        services.OutrightConfigMediator();
     }
 
     public static void ConfigureAutoMapper(this IServiceCollection services)
@@ -244,6 +247,7 @@ public static class WebSites
             mc.AddProfile(typeof(SettingAutoMapperProfile));
             mc.AddProfile(typeof(GamingMapperProfile));
             mc.AddProfile(typeof(ScaleOutMappingProfile));
+            mc.AddProfile(typeof(OutrightMapperProfile));
         });
 
         var mapper = mapperConfig.CreateMapper();

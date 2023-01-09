@@ -71,6 +71,15 @@
     <Setting Key="NAP_Admin_Settlement_Validation_MP" SpName="NAP_Admin_Settlement_Validation_MP" DbName="DBPRO.bodb02.bodbAdminNet" />
   </Function>
 
+  <Funtion Name="Outright">
+    <Setting Key="NAP_Set_LeagueSelOutright" SpName="NAP_Set_LeagueSelOutright" DbName="DBPRO.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_OutrightSelInfo" SpName="NAP_Set_OutrightSelInfo" DbName="DBPRO.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_UserLog_Settle_OutrightSelByCode" SpName="NAP_UserLog_Settle_OutrightSelByCode" DbName="DBLOG.bodb_CustomerLog.bodbAdminNet" />
+    <Setting Key="NAP_UserLog_Settle_OutrightSelByLeagueID" SpName="NAP_UserLog_Settle_OutrightSelByLeagueID" DbName="DBLOG.bodb_CustomerLog.bodbAdminNet" />
+    <Setting Key="NAP_Set_OutrightSelInfoByLeagueID" SpName="NAP_Set_OutrightSelInfoByLeagueID" DbName="DBPRO.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Admin_Outright_Update" SpName="NAP_Admin_Outright_Update" DbName="DBPRO.bodb02.bodbAdminNet" />
+  </Funtion>
+
   <Function Name="MultiSport">
     <Setting Key="NAP_Set_OtherSportsSel" SpName="NAP_Set_OtherSportsSel" DbName="DBPRO.bodb02.bodbAdminNet" TimeOut="120" />
     <Setting Key="NAP_Set_SportLeagueSel" SpName="NAP_Set_SportLeagueSel" DbName="DBPRO.bodb02.bodbAdminNet" />
@@ -119,6 +128,12 @@
   </Function>
 
   <Function Name="Scale Out DB">
+    <Function Name="NAP_Admin_Settlement_Outright">
+      <Setting Key="NAP_Admin_Settlement_Outright_DBTXN" SpName="NAP_Admin_Settlement_Outright" DbName="DBTXN.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Admin_Settlement_Outright_DBSID01" SpName="NAP_Admin_Settlement_Outright" DbName="DBSID01.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Admin_Settlement_Outright_DBSID02" SpName="NAP_Admin_Settlement_Outright" DbName="DBSID02.bodb02.bodbAdminNet" />
+    </Function>
+
     <Function Name="NAP_Set_GetNumberError">
       <Setting Key="NAP_Set_GetNumberError_DBTXN" SpName="NAP_Set_GetNumberError" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="NAP_Set_GetNumberError_DBSID01" SpName="NAP_Set_GetNumberError" DbName="DBSID01.bodb02.bodbAdminNet" />

@@ -5,7 +5,6 @@ using Fanex.NAP.Client.Services;
 using Fanex.NAP.Core.Business;
 using Settlement.Core.Configuration;
 using Settlement.Core.Models;
-using System;
 
 namespace Settlement.Core.Services
 {
@@ -72,7 +71,7 @@ namespace Settlement.Core.Services
             CanChangeScoreSource = HasPermission(SettlementFunctionKeys.ScoreSource, Constant.Policy.Host),
             CanMoveTickets = HasPermission(SettlementFunctionKeys.CricketMoveTickets, Constant.Policy.Host),
             IsTrader = HasPermission(SettlementFunctionKeys.TraderSaveScore, Constant.Policy.Host),
-            AutoSettlement = HasPermission(SettlementFunctionKeys.AutoSettlement, Constant.Policy.Host)
+            AutoSettlement = HasPermission(SettlementFunctionKeys.AutoSettlement, Constant.Policy.Host),
         };
     }
 }
