@@ -9,6 +9,8 @@ import { PipesModule } from '../shared/pipes/pipes.module.native';
 import { DatepickerComponent } from "../shared/components/date-picker/date-picker.component";
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientJsonpModule, HttpClientModule } from '@angular/common/http';
+import { OutrightService } from './services/outright.service';
+import { VerifyDateService } from '../shared/services';
 
 
 @NgModule({
@@ -28,6 +30,10 @@ import { HttpClientJsonpModule, HttpClientModule } from '@angular/common/http';
         NgbModule,
         HttpClientModule,
         HttpClientJsonpModule,
+    ],
+    providers: [
+        OutrightService,
+        VerifyDateService
     ]
 })
 export class AppModule { }

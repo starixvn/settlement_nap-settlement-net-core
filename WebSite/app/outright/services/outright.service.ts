@@ -8,7 +8,7 @@ export class OutrightService {
 
     constructor(private httpRequestService: HttpRequestService) {}
 
-    public getSport() {
+    public getSport(params: any) {
         return []
     }
 

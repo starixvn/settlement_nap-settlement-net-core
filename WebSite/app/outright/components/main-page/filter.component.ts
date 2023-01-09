@@ -5,6 +5,7 @@ import { League, Sport } from '../../models';
 import { CustomNgbDateParserFormatter } from '../../../shared/components/date-picker/custom-ngb-date-parser-formatter';
 import { Statuses } from '../../constants/Status';
 import { VerifyDateService } from '../../../shared/services';
+import { OutrightService } from '../../services/outright.service';
 // import { CustomNgbDateParserFormatter } from 'shared/components/date-picker/custom-ngb-date-parser-formatter';
 
 @Component({
@@ -26,8 +27,10 @@ export class FilterComponent implements OnInit {
 
     public statusOptions: any[] = Statuses;
     public statusSelected: string;
-    
-    constructor() { }
+
+    constructor(
+        private verifyDateService: VerifyDateService,
+        private outrightService: OutrightService) { }
 
     ngOnInit(
     ): void {
@@ -66,6 +69,18 @@ export class FilterComponent implements OnInit {
 
         this.sportOptions = [soccer];
     }
+
+    private async getSports(fromDate: NgbDateStruct, toDate: NgbDateStruct) {
+        const fromDateValue = this.verifyDateService.dateFormat(fromDate);
+        const toDateValue = this.verifyDateService.dateFormat(toDate);
+    //    const sports = await this.outrightService.getSport(params).toPromise() as  Sport[];
+        this.sportOptions = [];
+    }
+
+    private isValidInput(fromDate: NgbDateStruct, toDate: NgbDateStruct) {
+        return this.verifyDateService.validDate(fromDate, toDate);
+    }
+
 
     search() { }
 
