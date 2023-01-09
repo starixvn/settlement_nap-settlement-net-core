@@ -1,14 +1,72 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { NgbDateParserFormatter, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
+import { League, Sport } from '../../models';
+import { CustomNgbDateParserFormatter } from '../../../shared/components/date-picker/custom-ngb-date-parser-formatter';
+import { Statuses } from '../../constants/Status';
+import { VerifyDateService } from '../../../shared/services';
+// import { CustomNgbDateParserFormatter } from 'shared/components/date-picker/custom-ngb-date-parser-formatter';
 
 @Component({
-  selector: 'filter',
-  templateUrl: './filter.component.html'
+    selector: 'filter',
+    templateUrl: './filter.component.html',
+    providers: [DatePipe,
+        { provide: NgbDateParserFormatter, useFactory: () => new CustomNgbDateParserFormatter('MMM dd, y') }],
 })
 export class FilterComponent implements OnInit {
 
-  constructor() { }
+    public fromDate: NgbDateStruct;
+    public toDate: NgbDateStruct;
 
-  ngOnInit(): void {
-  }
+    public sportSelected: string;
+    public sportOptions: Sport[] = [];
+
+    public leagueSelected: string;
+    public leagueOptions: League[] = [];
+
+    public statusOptions: any[] = Statuses;
+    public statusSelected: string;
+    
+    constructor() { }
+
+    ngOnInit(
+    ): void {
+        this.renderLeague();
+        this.renderSport();
+    }
+
+    public onSelectFromDate(value: NgbDateStruct) {
+        if (value.day !== undefined) {
+            this.fromDate = value;
+            // this.getSport(this.fromDate, this.toDate);
+        }
+    }
+
+    public onSelectToDate(value: NgbDateStruct) {
+        if (value.day !== undefined) {
+            this.toDate = value;
+            // this.getSport(this.fromDate, this.toDate);
+        }
+    }
+
+    private async renderLeague() {
+        const all: League = {
+            leagueId: 0,
+            leagueName: '--- Show ALL Leagues ---'
+        }
+
+        this.leagueOptions = [all];
+    }
+
+    private renderSport() {
+        const soccer: Sport = {
+            sportId: 1,
+            sportName: 'Soccer'
+        }
+
+        this.sportOptions = [soccer];
+    }
+
+    search() { }
 
 }
