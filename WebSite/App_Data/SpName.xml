@@ -48,6 +48,7 @@
     <Setting Key="NAP_Set_LeagueSel" SpName="NAP_Set_LeagueSel" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_SettlementStatusUpd" SpName="NAP_Set_SettlementStatusUpd" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_WaitingTimeLeagueUpd" SpName="NAP_Set_WaitingTimeLeagueUpd" DbName="DBPRO.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_AutoSettingSel" SpName="NAP_Set_AutoSettingSel_xpre" DbName="DBPRO.bodb02.bodbAdminNet" />
   </Function>
   <Function Name="Select match Info">
     <Setting Key="NAP_Set_MatchSelDetail" SpName="NAP_Set_MatchSelDetail" DbName="DBPRO.bodb02.bodbAdminNet" />

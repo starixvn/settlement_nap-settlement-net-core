@@ -54,4 +54,12 @@ export class MultiSportService {
   public updateSettingLeague(query: AutoSettingLeagueQuery): Observable<Result> {
     return this.httpRequestService.postJson(query, `${this.settingApi}/update-setting-league`);
   }
+
+  public getSetting(leagueId: number, matchId: number) {
+    const params = {
+      leagueId,
+      matchId
+    }
+    return this.httpRequestService.postJson(params, `${this.settingApi}/get-setting`, false);
+  }
 }

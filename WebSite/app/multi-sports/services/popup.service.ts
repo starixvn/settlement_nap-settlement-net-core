@@ -1,8 +1,8 @@
 import { AutoSettingPosition } from './../constants/change-setting-type.native';
 import { Injectable } from '@angular/core';
-import { MultiSport, PopupProperties, Match, SportMatch, LeagueMatch } from './../models';
+import { MultiSport, PopupProperties, Match, SportMatch, LeagueMatch, AutoCalcSetting } from './../models';
 import { DialogBoxService } from './../../shared/services';
-import { DialogDataIframe } from './../../shared/models';
+import { AutoSetting, DialogDataIframe } from './../../shared/models';
 import { Language } from './../../shared/language';
 import { HandleActionsService } from './handle-actions.service';
 import { MultiSportService } from './multi-sport.service';
@@ -143,7 +143,7 @@ export class PopupService {
     }
 
     public openUpdateTime(league: LeagueMatch) {
-        const autoType = _.isEqual(league.matches[0].sportType, SportType.cricket) ? AutoType.autoPayout : AutoType.direct ;
+        const autoType = _.isEqual(league.matches[0].sportType, SportType.cricket) ? AutoType.autoPayout : AutoType.direct;
         const src = `apps/change-waiting-time?leagueId=${league.leagueId}&time=${league.autoWaitingTime}&pageType=DirectTime&autoType=${autoType}`;
         const frameSrc = encodeURI(src);
         const dialogData = new DialogDataIframe(Language.payout.titlePopupForLeague, frameSrc);
@@ -155,23 +155,23 @@ export class PopupService {
         );
     }
 
-    public openUpdatePayoutForLeague(league: LeagueMatch) {
-        const src = `apps/auto-setting-league?leagueId=${league.leagueId}&currentState=${league.autoCalcSetting.leagueSetting}&pageType=AutoSettingLeague&multiSelect=true`;
+    public async openUpdatePayoutForLeague(league: LeagueMatch) {
+        const autoSetting = await this.multiSportService.getSetting(league.leagueId, 0).toPromise() as AutoCalcSetting;
+        this.applyNewSetting(league.autoCalcSetting, autoSetting.setting, false);
+
+        const src = `apps/auto-setting-league?leagueId=${league.leagueId}&currentState=${autoSetting.setting}&pageType=AutoSettingLeague&multiSelect=true`;
         const frameSrc = encodeURI(src);
         const dialogData = new DialogDataIframe(Language.payout.titlePopupForLeague, frameSrc);
         this.dialogBoxService.popupHasResponse(dialogData, '500px', '270px').subscribe(result => {
             if (!_.isNull(result)) {
-                league.autoCalcSetting.leagueSetting = result.split(',')[0];
-                const settings = league.autoCalcSetting.leagueSetting.split("");
-                league.autoCalcSetting.isAutoPayoutForLeague = settings[AutoSettingPosition.autoPayout] == "1";
-                league.autoCalcSetting.isDirectPayoutForLeague = settings[AutoSettingPosition.directPayout] == "1";
+                this.applyNewSetting(league.autoCalcSetting, result.split(',')[0], false);
                 this.affectAutoPayoutForMatch(league, _.isEqual(result.split(',')[1], 'true'));
             }
         });
     }
 
     private affectAutoPayoutForMatch(leagueMatch: LeagueMatch, isApplyAll: boolean) {
-        if(isApplyAll){
+        if (isApplyAll) {
             leagueMatch.matches.forEach(item => {
                 if (_.isEqual(item.eventStatus.toLowerCase(), EventStatus.running.toLowerCase()) || _.isEqual(item.eventStatus.toLowerCase(), EventStatus.closed.toLowerCase())) {
                     item.autoCalcSetting.isAutoPayoutForMatch = leagueMatch.autoCalcSetting.isAutoPayoutForLeague;
@@ -182,18 +182,32 @@ export class PopupService {
         }
     }
 
-    public openUpdatePayoutForMatch(match: Match) {
-        const src = `apps/auto-setting-league?matchId=${match.matchId}&currentState=${match.autoCalcSetting.matchSetting}&pageType=AutoSettingMatch&multiSelect=true`;
+    public async openUpdatePayoutForMatch(match: Match) {
+        const autoSetting = await this.multiSportService.getSetting(0, Number(match.matchId)).toPromise() as AutoCalcSetting;
+        this.applyNewSetting(match.autoCalcSetting, autoSetting.setting);
+        
+        const src = `apps/auto-setting-league?matchId=${match.matchId}&currentState=${autoSetting.setting}&pageType=AutoSettingMatch&multiSelect=true`;
         const frameSrc = encodeURI(src);
         const dialogData = new DialogDataIframe(Language.payout.titlePopupForLeague, frameSrc);
         this.dialogBoxService.popupHasResponse(dialogData, '500px', '270px').subscribe(result => {
             if (!_.isNull(result)) {
-                const settings = result.split("");
-                match.autoCalcSetting.isAutoPayoutForMatch = settings[AutoSettingPosition.autoPayout] == "1";
-                match.autoCalcSetting.isDirectPayoutForMatch = settings[AutoSettingPosition.directPayout] == "1";
-                match.autoCalcSetting.matchSetting = result;
+                this.applyNewSetting(match.autoCalcSetting, result);
             }
         });
+    }
+
+
+    private applyNewSetting(autoSetting: AutoSetting, setting: string, isMatch = true) {
+        const settings = setting.split("");
+        if (isMatch) {
+            autoSetting.isAutoPayoutForMatch = settings[AutoSettingPosition.autoPayout] == "1";
+            autoSetting.isDirectPayoutForMatch = settings[AutoSettingPosition.directPayout] == "1";
+            autoSetting.matchSetting = setting;
+        } else {
+            autoSetting.isAutoPayoutForLeague = settings[AutoSettingPosition.autoPayout] == "1";
+            autoSetting.isDirectPayoutForLeague = settings[AutoSettingPosition.directPayout] == "1";
+            autoSetting.leagueSetting = setting;
+        }
     }
 
 }

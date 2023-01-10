@@ -10,7 +10,7 @@ public class Match : BaseMatch
 
     private readonly List<int> sportSupportDirect = new List<int>
     {
-        Core.Constants.SportType.Cricket,
+        Core.Constants.SportType.VolleyBall,
         Core.Constants.SportType.Badminton,
         Core.Constants.SportType.Cricket
     };

@@ -55,4 +55,17 @@ public class MatchSettingController : ControllerBase
     [HttpPost]
     [Route("mark-undecided")]
     public async Task<IActionResult> MarkUndecided(UpdateRemarkRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+
+    [HttpPost]
+    [Route("get-setting")]
+    public async Task<IActionResult> GetSetting(GetSettingRequest request)
+    {
+        var setting = await mediator.Send(request).ConfigureAwait(false);
+        var settingValue = new
+        {
+            setting
+        };
+
+        return Ok(settingValue);
+    }
 }
