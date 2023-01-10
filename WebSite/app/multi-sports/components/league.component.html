@@ -60,17 +60,15 @@
                     (change)="selectCalcMPOnLeague(leagueMatch, $event.target.checked)">
                 </td>
                 <td class="confirm-score"></td>
-                <td class="confirm-score"></td>
-                <td class="remark-status instant-time">
+                <td colspan="2" class="remark-status instant-time">
                   <ng-container *ngIf="leagueMatch.matches[0].applyDirect">
-                    <div>Waiting time: {{leagueMatch.autoWaitingTime}}sec </div>
                     <div *ngIf="permission.canAutoPayout" class="act-direct-time"
                     [matTooltip]="language.payout.titleDirectTime" matTooltipPosition="above" (click)="openUpdateTime(leagueMatch)"></div>
+                    <div>Waiting time: {{leagueMatch.autoWaitingTime}}sec </div>
                   </ng-container>
                 </td>
-                <td class="auto-setting auto-setting-text">
-                  <div class="cursor-pointer"
-                    (click)="changeAutoLeague(leagueMatch)">{{getAutoSettingLeague(leagueMatch.autoCalcSetting)}}</div>
+                <td [ngClass]="{'code-link enable': permission.canAutoPayout, 'auto-setting auto-setting-text': true}">
+                  <div class="cursor-pointer" (click)="changeAutoLeague(leagueMatch)">{{getAutoSettingLeague(leagueMatch.autoCalcSetting)}}</div>
                 </td>
               </tr>
               <ng-template [ngIf]="!leagueMatch.collapse">

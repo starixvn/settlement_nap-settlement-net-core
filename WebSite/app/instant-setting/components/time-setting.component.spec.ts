@@ -110,11 +110,16 @@ describe('TimeSettingComponent', () => {
 
       it('should set time setting for autoType', fakeAsync(async() => {
         const mockLeague: League = { leagueName: 'Champion League'};
-        component.pageType = 'AutoPayOut';
-        spyOn(UrlHelper, 'getUrlParameter').and.returnValue("");
+        spyOn(UrlHelper, 'getUrlParameter').and.callFake((arg) => {
+           if(arg === 'pageType'){
+              return 'AutoPayOut';
+           } 
+           return "";
+        })
         spyOn(requestService, 'getLeagueName').and.returnValue(of(mockLeague));
 
-        await component.ngOnInit();
+        component.ngOnInit();
+        tick();
 
         expect(component.autoType).toEqual(AutoType.autoPayout);
       }));

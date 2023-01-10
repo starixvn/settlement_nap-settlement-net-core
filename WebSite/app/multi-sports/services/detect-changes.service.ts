@@ -17,7 +17,6 @@ export class DetectChangesService {
             || oldMatch.betStatus !== newMatch.betStatus
             || oldMatch.earlySettleStatus !== newMatch.earlySettleStatus
             || oldMatch.isExistRunningTicketParlay !== newMatch.isExistRunningTicketParlay
-            || oldMatch.isAutoPayoutForMatch !== newMatch.isAutoPayoutForMatch
             || !_.isEqual(oldMatch.moreScores, newMatch.moreScores)
             || !_.isEqual(oldMatch.remark, newMatch.remark);
     }

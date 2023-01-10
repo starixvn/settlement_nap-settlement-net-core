@@ -309,8 +309,11 @@ export class LeagueComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   public getBackgroundAutoSetting(match: Match) {
-    return _.isEqual(match.autoPayoutStatus, this.autoSettingCompleted) ? 'auto-setting-completed' :
+    const enableLink = this.permission.canAutoPayout ?  BackgroundColor.codeLink : "";
+    const colorStatus =  _.isEqual(match.autoPayoutStatus, this.autoSettingCompleted) ? 'auto-setting-completed' :
       _.isEqual(match.autoPayoutStatus, this.autoSettingFailed) ? 'auto-setting-failed' : '';
+
+    return `${enableLink} ${colorStatus}`;
   }
 
   public isExistIntervalConfirmed(intervalScores: Score[]) {

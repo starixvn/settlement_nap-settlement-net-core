@@ -37,8 +37,6 @@ export class Match {
      public isRefund: boolean;
      public earlySettleStatus: string;
      public betStatus: string;
-     public isAutoPayoutForLeague: boolean;
-     public isAutoPayoutForMatch: boolean;
      public isHavingIntervalScore: boolean;
      public homeTotalGames: number;
      public awayTotalGames: number;

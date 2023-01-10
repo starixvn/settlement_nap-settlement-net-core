@@ -1,8 +1,7 @@
 ﻿import { Component, ViewChild } from '@angular/core';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 import {
-  Match, SettleQuery,
-  HedgeMatchDetail, SettleChildMatchQuery
+  Match, SettleQuery, SettleChildMatchQuery
 } from '../models';
 import * as _ from 'lodash';
 import { Language } from '../../shared/language';
@@ -23,8 +22,6 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
   @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
   public match: Match;
   public matchClone: Match;
-  public applyHedgeMatch: boolean;
-  public hedgeMatchDetail: HedgeMatchDetail;
   public isShowRefundButton = false;
   public isReadyMatch: boolean;
   constructor(
@@ -56,8 +53,6 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     this.permission = this.match.permission;
     this.matchId = this.match.matchDetail.matchId;
     this.matchDetail = this.match.matchDetail;
-    this.hedgeMatchDetail = this.match.hedgeMatchDetail;
-    this.applyHedgeMatch = this.hedgeMatchDetail != null;
     this.match.resultDetails = this.match.resultDetails.filter((map) => map.resourceId.length > maxLength);
     this.verificationBaseService.generateExternalScores(this.match, this.match.resultDetails, SportType.cricket);
     this.resetResult(this.match.resultDetails);
@@ -224,7 +219,6 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     const result = await this.aioService.push(query).toPromise() as Result;
     if (result.isSuccessful) {
       this.handleChildMatch(result.childMatchIds, query);
-      this.pushHedgeMatch(query);
       this.messageBoxService.closePopup();
     } else {
       this.toastrService.error(result.errMsg);
@@ -237,15 +231,6 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         settleQuery.actionName, settleQuery.isReSettledTickets);
       await this.aioService.pushChildMatch(settleChildMatchQuery).toPromise();
     }
-  }
-
-
-  private async pushHedgeMatch(query: SettleQuery) {
-    const hedgeMatchId = this.applyHedgeMatch ? this.match.hedgeMatchDetail.matchId : 0;
-    if (hedgeMatchId > 0) {
-      query.matchId = hedgeMatchId;
-      await this.aioService.push(query).toPromise();
-    } 
   }
 
   public saveScore() {

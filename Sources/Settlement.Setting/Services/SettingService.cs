@@ -105,6 +105,7 @@ namespace Settlement.Setting.Services
 
         public async Task<string> GetSetting(GetSettingRequest request)
         {
+            const int convertToBase = 2;
             var criteria = new GetSettingCriteria
             {
                 MatchId = request.MatchId,
@@ -113,7 +114,7 @@ namespace Settlement.Setting.Services
 
             var setting = await repository.GetAsync<int>(criteria);
 
-            return Convert.ToString(setting, 2).Reverse();
+            return Convert.ToString(setting, convertToBase).Reverse();
         }
     }
 }

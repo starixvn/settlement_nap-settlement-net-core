@@ -1,5 +1,6 @@
+import { AutoCalcSetting } from './../models/auto-setting.model';
 import { getTestBed, TestBed } from "@angular/core/testing";
-import { MoreScore, Score } from "../../shared/models";
+import { AutoSetting, MoreScore, Score } from "../../shared/models";
 import { BackgroundColor, SportType } from "../../shared/constants";
 import { LeagueMatch, Match, SportMatch } from "../models";
 import { SportMatchService } from "./sport-match.service";
@@ -31,7 +32,8 @@ describe('SportMatchService', () => {
         isCheckedCalcMP: false,
         disableCheckCalcMP: false,
         isMergedParlay: false,
-        isAutoPayoutForLeague: false
+        autoCalcSetting: new AutoSetting,
+        autoWaitingTime: 0
     };
 
     const sport: SportMatch = {

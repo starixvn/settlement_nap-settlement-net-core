@@ -1,5 +1,5 @@
 import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from "@angular/core/testing";
-import { GroupMap, HedgeMatchDetail, MatchDetail, Permission, ResultDetail } from "../../models/sportsbook-sop";
+import { GroupMap, MatchDetail, Permission, ResultDetail } from "../../models/sportsbook-sop";
 import { ItemsSelect, ResultSettingModel, ResultSettingQuery } from "../../models";
 import { AioService, BlockUIService, ClosePopupService, HttpRequestService, MessageBoxService } from "../../services";
 import { EarlyBaseComponent } from "./early-base.component";
@@ -55,7 +55,6 @@ describe("Early Base Component", () => {
     resultDetail.checked = true;
     const matchDetail = new MatchDetail();
     const permission = new Permission();
-    const hedgeMatchDetail = new HedgeMatchDetail();
     const resultSetting = new ResultDetail();
     resultSetting.resultSettingData = new ResultSettingModel();
 
@@ -569,7 +568,7 @@ describe("Early Base Component", () => {
 
             spyOn(toastrService, 'error');
 
-            component.confirmRefund(hedgeMatchDetail, false);
+            component.confirmRefund();
 
             expect(toastrService.error).toHaveBeenCalled();
         })
@@ -580,7 +579,7 @@ describe("Early Base Component", () => {
             resultSetting.resultSettingData.isConfirmedRefund = false;
             spyOn(toastrService, 'error');
 
-            component.undoConfirmedResult([resultSetting], 0, '', null);
+            component.undoConfirmedResult([resultSetting], 0, '');
 
             expect(toastrService.error).toHaveBeenCalledWith("WARNING! Cannot continue due to selected results have different confirm states! Please select confirmed or not confirmed results only.");
         });
@@ -590,7 +589,7 @@ describe("Early Base Component", () => {
 
             spyOn(messageBoxService, 'confirm');
 
-            component.undoConfirmedResult([resultSetting], 0, '', null);
+            component.undoConfirmedResult([resultSetting], 0, '');
 
             expect(messageBoxService.confirm).toHaveBeenCalled();
         });
@@ -601,7 +600,7 @@ describe("Early Base Component", () => {
             const query = new ResultSettingQuery(0, ResultSettingType.confirmRefund,
                 false, '');
 
-            component.undoConfirmedResult([resultSetting], 0, '', null);
+            component.undoConfirmedResult([resultSetting], 0, '');
 
             const buttonYes = document.getElementsByClassName("btn-danger")[0] as HTMLElement;
             buttonYes.click();
@@ -619,7 +618,7 @@ describe("Early Base Component", () => {
 
             spyOn(toastrService, 'error');
 
-            component.confirmResult([resultSetting], 0, '', null);
+            component.confirmResult([resultSetting], 0, '');
 
             expect(toastrService.error).toHaveBeenCalledWith("WARNING! Cannot continue due to selected results are Refund and have no Running ticket.");
         });
@@ -629,7 +628,7 @@ describe("Early Base Component", () => {
             resultSetting.settlementStatusId = SettlementStatusId.Running;
             spyOn(messageBoxService, 'confirm');
 
-            component.confirmResult([resultSetting], 0, '', null);
+            component.confirmResult([resultSetting], 0, '');
 
             expect(messageBoxService.confirm).toHaveBeenCalled();
         });
@@ -640,8 +639,7 @@ describe("Early Base Component", () => {
             spyOn(aioService, 'changeResultSetting').and.returnValue(of(true));
             const query = new ResultSettingQuery(0, ResultSettingType.confirmRefund,
                 true, '');
-
-            component.confirmResult([resultSetting], 0, '', null);
+            component.confirmResult([resultSetting], 0, '');
 
             const buttonYes = document.getElementsByClassName("btn-danger")[0] as HTMLElement;
             buttonYes.click();

@@ -15,8 +15,9 @@ describe('MultiSport - HandleActionsService', () => {
         isCheckedCalcMP: true,
         disableCheckCalcMP: false,
         isMergedParlay: false,
-        isAutoPayoutForLeague: false
-    };
+        autoCalcSetting: new AutoSetting,
+        autoWaitingTime: 0
+        };
 
     const sport: SportMatch = {
     id: 100000,

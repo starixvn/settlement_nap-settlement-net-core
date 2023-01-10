@@ -58,7 +58,6 @@ describe('LeagueComponent', () => {
     isCheckedCalcMP: true,
     disableCheckCalcMP: false,
     isMergedParlay: false,
-    isAutoPayoutForLeague: false,
     autoWaitingTime: 0,
     autoCalcSetting: new AutoSetting()
   };

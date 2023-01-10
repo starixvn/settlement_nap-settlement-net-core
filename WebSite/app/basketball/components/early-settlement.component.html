@@ -12,12 +12,6 @@
                 <ng-template *ngTemplateOutlet="body"></ng-template>
             </div>
             <div class="footer">
-                <div *ngIf="hedgeMatchDetail" class="hedge-match">
-                    <input type="checkbox" [(ngModel)]="applyHedgeMatch" id="ApplyHedgeMatch" />
-                    <label for="ApplyHedgeMatch">
-                        Apply for hedge match '<strong>{{hedgeMatchDetail.matchCode}}</strong>' also.
-                    </label>
-                </div>
                 <div>
                     <button *ngIf="permission.canCalculate"
                         [ngClass]="{'button': true, 'button-disabled': isDisabledCalculate}" (click)="calculate()"
@@ -41,7 +35,7 @@
                     </span>
                     <button *ngIf="isShowRefundButton && permission.isLeader"
                         [ngClass]="{'btn btn-outline-primary button-confirmed': true}" [disabled]="isDisabledCalculate"
-                        (click)="confirmRefund(hedgeMatchDetail, applyHedgeMatch)">
+                        (click)="confirmRefund()">
                         Confirm/Undo-confirm Refund
                     </button>
                     <button *ngIf="isShowRefundButton"
