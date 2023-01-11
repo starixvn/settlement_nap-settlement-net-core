@@ -68,7 +68,7 @@ public class FilterServiceImp : FilterService
     {
         var criteria = mapper.Map<LeagueRequest, GetOutrightLeaguesCriteria>(request);
 
-        return (await repository.FetchAsync<League>(criteria)).ToList();
+        return await repository.FetchAsync<League>(criteria);
     }
 
     public async Task<OutrightModel> Filter(FilterRequest request)
@@ -109,7 +109,7 @@ public class FilterServiceImp : FilterService
             }
         }
 
-        return leagues.ToList();
+        return leagues;
     }
 
     private IEnumerable<Sport> Sports => repository.Fetch<Sport>(new GetSportListCriteria());

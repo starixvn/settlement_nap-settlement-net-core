@@ -33,12 +33,11 @@ public class OutrightController : ControllerBase
     [Route("filter")]
     public async Task<IActionResult> Filter(FilterRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
-    //[HttpPost]
-    //[Route("get-matches")]
-    //public async Task<IActionResult> GetMatches(GetMatchesRequest request) =>
-    //    Ok(await mediator.Send(request).ConfigureAwait(false));
+    [HttpPost]
+    [Route("get-league-info")]
+    public async Task<IActionResult> GetLeagueInfo(GetLeagueInfoRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
-    //[HttpPost]
-    //[Route("settle")]
-    //public async Task<IActionResult> Settle(SettleRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+    [HttpPost]
+    [Route("settle")]
+    public async Task<IActionResult> Settle(SettleRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 }

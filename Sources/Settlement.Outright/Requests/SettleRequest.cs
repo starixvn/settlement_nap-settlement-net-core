@@ -1,5 +1,13 @@
-﻿namespace Settlement.Outright.Requests;
+﻿using MediatR;
+using Settlement.Core.Models;
 
-public class SettleRequest
+namespace Settlement.Outright.Requests;
+
+public class SettleRequest : IRequest<Result>
 {
+    public string MatchIds { get; set; }
+
+    public string TeamIds { get; set; }
+
+    public string Action { get; set; }
 }
