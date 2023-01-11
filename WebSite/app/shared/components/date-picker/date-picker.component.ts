@@ -1,4 +1,4 @@
-﻿import { Component, ElementRef, Input, Output, OnInit, EventEmitter } from '@angular/core';
+﻿import { Component, ElementRef, Input, Output, EventEmitter } from '@angular/core';
 import { NgbDateParserFormatter, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
@@ -9,14 +9,12 @@ import { NgbDateParserFormatter, NgbDateStruct } from '@ng-bootstrap/ng-bootstra
     },
 })
 export class DatepickerComponent {
-    @Input() private readonly date: NgbDateStruct;
+    @Input() public date: NgbDateStruct;
     @Output() private readonly change = new EventEmitter();
     private dynamicId;
     private readonly elementRef: ElementRef<HTMLElement>;
-    private readonly ngbDateParserFormatter: NgbDateParserFormatter;
-    constructor(elementRef: ElementRef<HTMLElement>, ngbDateParserFormatter: NgbDateParserFormatter) {
+    constructor(elementRef: ElementRef<HTMLElement>) {
         this.elementRef = elementRef;
-        this.ngbDateParserFormatter = ngbDateParserFormatter;
     }
 
     public onSelectDate(value: NgbDateStruct) {

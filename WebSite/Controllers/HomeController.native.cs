@@ -5,17 +5,12 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Settlement.Core.Constants;
 using Settlement.WebSites.Models;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Security.Claims;
-using Microsoft.Extensions.Configuration;
-using System.Threading.Tasks;
-using Settlement.Core.Constants;
 
 namespace Settlement.WebSites.Controllers
 {

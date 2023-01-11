@@ -6,8 +6,8 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
     templateUrl: './modal-content-dialog.component.html'
 })
 export class ModalContentDialogComponent {
-    @Input() private readonly title = 'Title';
-    @Input() private readonly template: TemplateRef<string>;
+    @Input() readonly title = 'Title';
+    @Input() readonly template: TemplateRef<string>;
 
     constructor(public activeModal: NgbActiveModal) { }
 }

@@ -1,6 +1,4 @@
-﻿import { title } from "process";
-
-export const Language = {
+﻿export const Language = {
     confirmationBox: 'Confirmation box',
     CalculationWarning: 'Calculation warning',
     RefundWarning: 'Refund warning',

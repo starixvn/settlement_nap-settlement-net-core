@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { MaterialDialogComponent, MaterialDialogWithResponseComponent } from '../components';
+import { MaterialDialogComponent } from '../components/material-dialog-iframe/material-dialog.component';
+import { MaterialDialogWithResponseComponent } from '../components/material-dialog-iframe/material-dialog-with-response.component';
 import { DialogDataIframe } from '../models';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs/internal/Observable';

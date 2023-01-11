@@ -4,13 +4,13 @@ import { NewMultipleSelectComponent } from './multiple-select.component';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule, MatSelect } from '@angular/material/select';
-import { MatExpansionModule, MatExpansionPanel } from '@angular/material/expansion';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { ScrollingModule } from '@angular/cdk/scrolling';
-import { MatRippleModule, MatOption, MatOptionModule } from '@angular/material/core';
+import { MatRippleModule, MatOption } from '@angular/material/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from "@angular/platform-browser";
 import { MultipleSelect, ItemsSelect, Group } from '../../models';
-import { SimpleChange, ChangeDetectorRef } from '@angular/core';
+import { SimpleChange } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('MultipleSelectComponent', () => {
