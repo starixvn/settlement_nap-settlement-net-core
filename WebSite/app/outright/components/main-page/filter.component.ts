@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { NgbDateParserFormatter, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { League, Sport } from '../../models';
 import { CustomNgbDateParserFormatter } from '../../../shared/components/date-picker/custom-ngb-date-parser-formatter';
-import { Statuses } from '../../constants/Status';
+import { allLeague, Statuses } from '../../constants/Options';
 import { VerifyDateService } from '../../../shared/services';
 import { OutrightService } from '../../services/outright.service';
 // import { CustomNgbDateParserFormatter } from 'shared/components/date-picker/custom-ngb-date-parser-formatter';
@@ -34,48 +34,54 @@ export class FilterComponent implements OnInit {
 
     ngOnInit(
     ): void {
-        this.renderLeague();
-        this.renderSport();
+        this.initFilterData();
+    }
+
+    private initFilterData() {
+        this.outrightService.getFilterView().subscribe((res: any) => {
+
+            this.fromDate = this.verifyDateService.convertToDateStruct(res.fromDate);
+
+            this.toDate = this.verifyDateService.convertToDateStruct(res.toDate);
+
+            this.sportOptions = res.sports;
+
+            this.leagueOptions = [allLeague, ...res.leagues];
+
+            this.leagueSelected = '0';
+            this.sportSelected = '1';
+            this.statusSelected = '0';
+        })
     }
 
     public onSelectFromDate(value: NgbDateStruct) {
         if (value.day !== undefined) {
             this.fromDate = value;
-            // this.getSport(this.fromDate, this.toDate);
+            this.renderLeague(this.fromDate, this.toDate, this.sportSelected)
         }
     }
 
     public onSelectToDate(value: NgbDateStruct) {
         if (value.day !== undefined) {
             this.toDate = value;
-            // this.getSport(this.fromDate, this.toDate);
+            this.renderLeague(this.fromDate, this.toDate, this.sportSelected)
         }
     }
 
-    private async renderLeague() {
-        const all: League = {
-            leagueId: 0,
-            leagueName: '--- Show ALL Leagues ---'
-        }
-
-        this.leagueOptions = [all];
+    public onSelectSport(value: any) {
+        this.sportSelected = value;
+        this.renderLeague(this.fromDate, this.toDate, this.sportSelected)
     }
 
-    private renderSport() {
-        const soccer: Sport = {
-            sportId: 1,
-            sportName: 'Soccer'
-        }
-
-        this.sportOptions = [soccer];
-    }
-
-    private async getSports(fromDate: NgbDateStruct, toDate: NgbDateStruct) {
+    private async renderLeague(fromDate: NgbDateStruct, toDate: NgbDateStruct, sportType: string) {
         const fromDateValue = this.verifyDateService.dateFormat(fromDate);
         const toDateValue = this.verifyDateService.dateFormat(toDate);
-    //    const sports = await this.outrightService.getSport(params).toPromise() as  Sport[];
-        this.sportOptions = [];
+
+        this.outrightService.getLeagues({ fromDate: fromDateValue, toDate: toDateValue, sportType }).subscribe(res => {
+            this.leagueOptions = [allLeague, ...res]
+        })
     }
+
 
     private isValidInput(fromDate: NgbDateStruct, toDate: NgbDateStruct) {
         return this.verifyDateService.validDate(fromDate, toDate);

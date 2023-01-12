@@ -10,7 +10,7 @@ import { DatepickerComponent } from "../shared/components/date-picker/date-picke
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientJsonpModule, HttpClientModule } from '@angular/common/http';
 import { OutrightService } from './services/outright.service';
-import { VerifyDateService } from '../shared/services';
+import { BlockUIService, HttpRequestService, MessageBoxService, VerifyDateService } from '../shared/services';
 
 
 @NgModule({
@@ -33,7 +33,10 @@ import { VerifyDateService } from '../shared/services';
     ],
     providers: [
         OutrightService,
-        VerifyDateService
+        VerifyDateService,
+        HttpRequestService,
+        BlockUIService,
+        MessageBoxService 
     ]
 })
 export class AppModule { }

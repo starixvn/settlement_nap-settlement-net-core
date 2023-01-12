@@ -1,4 +1,4 @@
-<table class="table-match">
+<table class="table-calculation">
   <ng-template *ngTemplateOutlet="header"></ng-template>
   <ng-template *ngTemplateOutlet="body"></ng-template>
 </table>
@@ -21,7 +21,7 @@
     <ng-template *ngFor="let item; in: leagueMatches">
       <tr>
         <td colspan="4">
-          <div class="league-row">
+          <div class="league-name">
             <span>
               {{ item.leagueName }}
             </span>
