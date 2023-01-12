@@ -1694,48 +1694,40 @@
       }
     }, 
     "outright": {
-      "root": "app",
+      "root": "",
       "sourceRoot": "outright",
       "projectType": "application",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "aot": true,
             "outputPath": "../wwwroot/outright",
-            "index": "outright/index.html",
+            "index": "outright/index.cshtml",
             "main": "outright/main.ts",
             "tsConfig": "outright/tsconfig.app.json",
             "polyfills": "polyfills.ts",
             "styles": [
               "outright/style.less",
-              "shared/styles/material.style.less"
-            ],
-            "allowedCommonJsDependencies": [
-              "lodash"
-           ]
+              "./node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css",
+              "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
+              "shared/styles/material.style.scss"
+             ],
+             "allowedCommonJsDependencies": [
+               "lodash"
+            ]
           },
           "configurations": {
-            "dev": {
+            "production": {
               "budgets": [
                 {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "6kb"
-                }
-              ],
-              "optimization": false,
-              "sourceMap": true,
-              "namedChunks": true,
-              "aot": false,
-              "extractLicenses": false,
-              "vendorChunk": true,
-              "buildOptimizer": false
-            },
-            "prod": {
-              "budgets": [
+                  "type": "initial",
+                  "maximumWarning": "4mb",
+                  "maximumError": "5mb"
+                },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "6kb"
+                  "maximumWarning": "4mb",
+                  "maximumError": "5mb"
                 }
               ],
               "fileReplacements": [
@@ -1743,49 +1735,40 @@
                   "replace": "environments/environment.ts",
                   "with": "environments/environment.prod.ts"
                 }
-              ]
-            },
-            "production": {
-              "budgets": [
-                {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "6kb"
-                }
               ],
-              "optimization": true,
               "outputHashing": "all",
-              "sourceMap": false,
-              "namedChunks": false,
-              "aot": false,
-              "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": false,
+              "baseHref": "@path",
               "deployUrl": "outright/"
+            },
+            "development": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true
             }
-          }
+          },
+          "defaultConfiguration": "production"
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
             "proxyConfig": "proxy.conf.json",
-            "port": 5001,
-            "aot": false
+            "port": 5001
           },
           "configurations": {
-            "dev": {
-              "browserTarget": "outright:build:dev"
-            },
-            "prod": {
-              "browserTarget": "outright:build:prod"
-            },
             "production": {
-              "browserTarget": "outright:build:production"
+              "browserTarget": "app:build:production"
+            },
+            "development": {
+              "browserTarget": "app:build:development"
             }
           },
-          "defaultConfiguration": "dev"
+          "defaultConfiguration": "development"
         }
       }
-    }
+    },
   },
   "schematics": {
     "@schematics/angular:component": {
