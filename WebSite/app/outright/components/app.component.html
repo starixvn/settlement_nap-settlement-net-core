@@ -1,2 +1,5 @@
-<filter></filter>
-<page></page>
+<filter (searchAction)="search($event)"></filter>
+<league-team [outright]="outright"></league-team>
+<div *ngIf="blockUI" class="in modal-backdrop">
+  <div class="loading"></div>
+</div>

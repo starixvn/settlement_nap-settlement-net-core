@@ -1,7 +1,6 @@
-import { Match } from "./match.model";
-
+import { Team } from "./team.model";
 export class LeagueMatch {
     public leagueId: number;
-    public name: string;
-    public matches: Match[];
+    public leagueName: string;
+    public teams: Team[];
 }

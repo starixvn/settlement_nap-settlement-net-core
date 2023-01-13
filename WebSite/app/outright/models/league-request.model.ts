@@ -1,5 +1,5 @@
 export interface LeagueRequest {
     fromDate: string,
     toDate: string,
-    sportType: string
+    sportType: number
 }

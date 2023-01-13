@@ -290,9 +290,9 @@
     }
   }
 }
-.custom-dialog-container .mat-dialog-container {
-  border: 1px solid #d3d3d3;
-}
+// .custom-dialog-container .mat-dialog-container {
+//   border: 1px solid #d3d3d3;
+// }
 
 .setFilterWidth(@screenWidth, @rowWidth, @field, @smallField, @mediumField, @largeField, @includeTest, @submit, @sports, @autoPayout) {
   @media (min-width: @screenWidth) {
@@ -334,25 +334,83 @@
   }
 }
 
-.auto-setting-completed {
-  background: #00b050;
+// .auto-setting-completed {
+//   background: #00b050;
+// }
+
+// .auto-setting-failed {
+//   background: #e17356;
+// }
+
+// .cursor-pointer {
+//   cursor: pointer;
+// }
+
+// .include-test {
+//   padding-top: 2px;
+// }
+// .red {
+//   color: #ff0000;
+//   font-weight: bold;
+//   float: left;
+// }
+
+.league-name {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #1d3968;
+  background-color: #ccc;
+  background-image: unset;
+
+  .leangue-name__content {
+    display: flex;
+    align-items: center;
+    column-gap: 10px;
+    .code {
+      color: white;
+      background-color: #5578be;
+      padding: 5px 5px;
+    }
+    button {
+      border: none;
+      outline: none;
+      color: #0273ff;
+      background-color: #ccc;
+      text-align: center;
+    }
+  }
 }
 
-.auto-setting-failed {
-  background: #e17356;
-}
-
-.cursor-pointer {
+.event-id {
+  span {
+    color: #0273ff;
   cursor: pointer;
+  }
 }
 
-.include-test {
-  padding-top: 2px;
+.event-id,
+.ko-time {
+  width: 100px;
 }
-.red {
-  color: #ff0000;
-  font-weight: bold;
-  float: left;
+.empty-data {
+  width: 100%;
 }
 
+// .table-body {
+//   overflow-y: scroll;
+//   height: 500px;
+//   display: block;
+// }
 
+
+table tbody {
+    display: block;
+    overflow-y: auto;
+  }
+  
+  table thead, table tbody tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+  }
