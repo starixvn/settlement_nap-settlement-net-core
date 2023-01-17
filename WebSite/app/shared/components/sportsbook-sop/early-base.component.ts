@@ -71,18 +71,27 @@ export class EarlyBaseComponent {
     }
 
     public onSelectTicketsStatus(value: ItemsSelect[]) {
-        this.ticketStatusSelected = value.length > 0 ? value.map(item => item.value).join() : '';
-        this.autoUncheckAfterFilter();
+        const valueSelected = value.length > 0 ? value.map(item => item.value).join() : '';
+        if(!_.isEqual(valueSelected, this.ticketStatusSelected)){
+            this.ticketStatusSelected = valueSelected;
+            this.autoUncheckAfterFilter();
+        }
     }
 
     public onSelectResultsStatus(value: ItemsSelect[]) {
-        this.resultStatusSelected = value.length > 0 ? value.map(item => item.value).join() : '';
-        this.autoUncheckAfterFilter();
+        const valueSelected = value.length > 0 ? value.map(item => item.value).join() : '';
+        if(!_.isEqual(valueSelected, this.ticketStatusSelected)){
+            this.resultStatusSelected = valueSelected;
+            this.autoUncheckAfterFilter();
+        }
     }
 
     public onSelectResultType(value: ItemsSelect[]) {
-        this.resultTypeSelected = value.length > 0 ? value.map(item => item.value).join() : '';
-        this.autoUncheckAfterFilter();
+        const valueSelected = value.length > 0 ? value.map(item => item.value).join() : '';
+        if(!_.isEqual(valueSelected, this.ticketStatusSelected)){
+            this.resultTypeSelected = valueSelected;
+            this.autoUncheckAfterFilter();
+        }
     }
 
     public autoUncheckAfterFilter() {

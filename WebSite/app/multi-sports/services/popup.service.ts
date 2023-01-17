@@ -188,7 +188,7 @@ export class PopupService {
         
         const src = `apps/auto-setting-league?matchId=${match.matchId}&currentState=${autoSetting.setting}&pageType=AutoSettingMatch&multiSelect=true`;
         const frameSrc = encodeURI(src);
-        const dialogData = new DialogDataIframe(Language.payout.titlePopupForLeague, frameSrc);
+        const dialogData = new DialogDataIframe(Language.payout.titlePopup, frameSrc);
         this.dialogBoxService.popupHasResponse(dialogData, '500px', '270px').subscribe(result => {
             if (!_.isNull(result)) {
                 this.applyNewSetting(match.autoCalcSetting, result);
