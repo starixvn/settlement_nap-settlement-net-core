@@ -1,13 +1,13 @@
 ﻿using AutoMapper;
 using Fanex.Data.Repository;
-using Fanex.Settlement.ScaleOut.Criteria;
-using Fanex.Settlement.ScaleOut.Models;
-using Fanex.Settlement.ScaleOut.Services;
-using Microsoft.Extensions.Options;
+using Fanex.NAP.Client.Helpers.Web;
+using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Outright.Criteria;
 using Settlement.Outright.Requests;
+using Settlement.Services.Outright;
+using System.Text;
 
 namespace Settlement.Outright.Services;
 
@@ -15,7 +15,7 @@ public interface OutrightSettleService
 {
     Task<LeagueInfo> GetLeagueInfo(GetLeagueInfoRequest request);
 
-    Task<Result> Settle(SettleRequest request);
+    Task<Result> Uncalculate(OutrightUndoRequest request);
 }
 
 public class OutrightSettleServiceImp : OutrightSettleService
@@ -26,115 +26,90 @@ public class OutrightSettleServiceImp : OutrightSettleService
 
     private readonly IRefDataService refDataService;
 
-    private readonly ScaleOutSettleThirdPartyService scaleOutSettleService;
+    private readonly OutrightSettleProcessService outrightSettleProcessService;
 
-    private readonly AppSettingsKey appSettingsKey;
+    private readonly OutrightPermissionService permission;
+
+    private readonly INapSession currentSession;
+
+    private const string SpName = "NAP_Admin_Settlement_Outright";
 
     public OutrightSettleServiceImp(IDynamicRepository repository,
         IMapper mapper,
         IRefDataService refDataService,
-        ScaleOutSettleThirdPartyService scaleOutSettleService,
-        IOptions<AppSettingsKey> appSettingsKey)
+        OutrightSettleProcessService outrightSettleProcessService,
+        OutrightPermissionService permission,
+        INapSession currentSession
+        )
     {
         this.repository = repository;
         this.mapper = mapper;
         this.refDataService = refDataService;
-        this.scaleOutSettleService = scaleOutSettleService;
-        this.appSettingsKey = appSettingsKey.Value;
+        this.outrightSettleProcessService = outrightSettleProcessService;
+        this.permission = permission;
+        this.currentSession = currentSession;
     }
 
     public async Task<LeagueInfo> GetLeagueInfo(GetLeagueInfoRequest request)
     {
         var criteria = mapper.Map<GetLeagueInfoRequest, GetLeagueInfoCriteria>(request);
 
-        var listTeam = await repository.FetchAsync<Team>(criteria);
+        var listTeam = (await repository.FetchAsync<Team>(criteria)).ToList();
+
+        listTeam.ForEach(team => team.RefDataService = refDataService);
 
         return new LeagueInfo
         {
             Teams = listTeam,
-            LeagueName = refDataService.GetLeagueName(request.LeagueId)
+            LeagueName = refDataService.GetLeagueName(request.LeagueId),
+            Permission = permission.Permission
         };
     }
 
-    public async Task<Result> Settle(SettleRequest request)
+    public async Task<Result> Uncalculate(OutrightUndoRequest request)
     {
-        //var validateResult = await scaleOutSettleService.GetDeploymentInfo(new GetDeploymentInfoRequest { SPName = criteria.SpName });
+        var validateDeployment = await outrightSettleProcessService.ValidateDeployment(SpName);
 
-        //if (validateResult.ErrorCode > 0)
-        //{
-        //    return new Result
-        //    {
-        //        ErrCode = validateResult.ErrorCode,
-        //        ErrMsg = validateResult.ErrorMessage
-        //    }; ;
-        //}
-
-        //var updateResult = await UpdateResult(criteria);
-        //if (!updateResult.IsSuccessful)
-        //{
-        //    return updateResult;
-        //}
-
-        //return await OutrightSettleMultiSite(criteria);
-
-        return new Result();
-    }
-
-    private async Task<Result> UpdateResult(OutrightSettleCriteria criteria)
-    {
-        var updateResultCriteria = new UpdateResultOutrightCriteria
+        if (!validateDeployment.IsSuccessful)
         {
-            MatchId = criteria.MatchId,
-            Action = criteria.Action,
-            Status = criteria.Status
-        };
-
-        await repository.ExecuteAsync(updateResultCriteria);
-
-        return new Result
-        {
-            ErrCode = updateResultCriteria.ErrCode,
-            ErrMsg = updateResultCriteria.ErrMsg
-        };
-    }
-
-    private async Task<Result> OutrightSettleMultiSite(OutrightSettleCriteria criteria)
-    {
-        var results = new List<Result>();
-        foreach (var server in appSettingsKey.SiteDbServer)
-        {
-            criteria.DbServer = server;
-            await repository.ExecuteAsync(criteria);
-            results = await ResultMessage(results, server, criteria.ErrMsg);
+            return validateDeployment;
         }
 
-        return new Result
+        var listMatch = request.MatchIds.Split(',');
+        var teamIds = request.TeamIds.Split(",");
+        var errorMsg = new StringBuilder();
+        var tasks = listMatch.Select((match, i) => Task.Run(async () =>
         {
-            ErrCode = results.Count,
-            ErrMsg = string.Join("<br/>", results.Select(r => r.ErrMsg).ToArray())
-        };
-    }
-
-    private async Task<List<Result>> ResultMessage(List<Result> results, string server, string message)
-    {
-        if (!string.IsNullOrWhiteSpace(message))
-        {
-            var siteDbGroupId = await GetSiteGroupId(server);
-            var result = new Result
+            var criteria = new OutrightSettleCriteria
+            { Action = ActionType.UnCalculate, AdminId = currentSession.UserId };
+            criteria.MatchId = int.Parse(listMatch[i]);
+            var result = await UpdateResultAndUndo(criteria);
+            if (!result.IsSuccessful)
             {
-                ErrMsg = $"- SiteDbGroupId {siteDbGroupId}: {message}"
-            };
+                errorMsg = AppendMessage(errorMsg, teamIds[i], result.ErrMsg);
+            }
+        }));
+        await Task.WhenAll(tasks);
 
-            results.Add(result);
-        }
-
-        return results;
+        return new Result { ErrMsg = errorMsg.ToString() };
     }
 
-    private async Task<int> GetSiteGroupId(string dbServer)
+    private StringBuilder AppendMessage(StringBuilder message, string teamId, string errorMessage)
     {
-        var criteria = new GetSiteGroupCriteria { DbServer = dbServer };
-        var site = await repository.GetAsync<SiteGroup>(criteria);
-        return site.SiteDbGroupId;
+        var teamName = $"{refDataService.GetTeamName(teamId)}";
+        var error = $"{teamName}: {errorMessage}";
+        message.Append($"{error}<br/>");
+        return message;
+    }
+
+    private async Task<Result> UpdateResultAndUndo(OutrightSettleCriteria criteria)
+    {
+        var updateResult = await outrightSettleProcessService.UpdateResultUndo(criteria);
+        if (!updateResult.IsSuccessful)
+        {
+            return updateResult;
+        }
+
+        return await outrightSettleProcessService.OutrightSettleMultiSite(criteria);
     }
 }

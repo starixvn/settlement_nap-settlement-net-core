@@ -9,17 +9,21 @@ public class OutrightHandler :
         IRequestHandler<LeagueRequest, IEnumerable<League>>,
         IRequestHandler<FilterRequest, OutrightModel>,
         IRequestHandler<GetLeagueInfoRequest, LeagueInfo>,
-        IRequestHandler<SettleRequest, Result>
+        IRequestHandler<OutrightUndoRequest, Result>,
+        IRequestHandler<GetLogRequest, IEnumerable<OutrightLog>>
 
 {
     private readonly FilterService getDataFilterService;
 
     private readonly OutrightSettleService settleService;
 
-    public OutrightHandler(FilterService getDataFilterService, OutrightSettleService settleService)
+    private readonly OutrightLogService outrightLogService;
+
+    public OutrightHandler(FilterService getDataFilterService, OutrightSettleService settleService, OutrightLogService outrightLogService)
     {
         this.getDataFilterService = getDataFilterService;
         this.settleService = settleService;
+        this.outrightLogService = outrightLogService;
     }
 
     public async Task<IEnumerable<League>> Handle(LeagueRequest request, CancellationToken cancellationToken) => await getDataFilterService.GetLeague(request);
@@ -28,5 +32,7 @@ public class OutrightHandler :
 
     public async Task<LeagueInfo> Handle(GetLeagueInfoRequest request, CancellationToken cancellationToken) => await settleService.GetLeagueInfo(request);
 
-    public async Task<Result> Handle(SettleRequest request, CancellationToken cancellationToken) => await settleService.Settle(request);
+    public async Task<Result> Handle(OutrightUndoRequest request, CancellationToken cancellationToken) => await settleService.Uncalculate(request);
+
+    public async Task<IEnumerable<OutrightLog>> Handle(GetLogRequest request, CancellationToken cancellationToken) => await outrightLogService.GetLogForView(request);
 }

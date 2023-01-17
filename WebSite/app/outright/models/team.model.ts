@@ -1,12 +1,5 @@
-export interface Team {
-    orId: number;
-    leagueId:number;
-    teamId:number;
-    matchCode: string;
-    kickOffTime: string;
-    status: string;
-    sportType: number;
-    teamName: string;
-    leagueName: string;
+import { Match } from './match.model';
+export interface Team extends Match {
     isDeadheat: boolean;
+    selected: boolean;
 }

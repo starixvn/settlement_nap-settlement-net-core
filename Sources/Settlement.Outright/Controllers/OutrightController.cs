@@ -38,6 +38,10 @@ public class OutrightController : ControllerBase
     public async Task<IActionResult> GetLeagueInfo(GetLeagueInfoRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
     [HttpPost]
-    [Route("settle")]
-    public async Task<IActionResult> Settle(SettleRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+    [Route("uncalculate")]
+    public async Task<IActionResult> Uncalculate(OutrightUndoRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+
+    [HttpPost]
+    [Route("get-log")]
+    public async Task<IActionResult> GetLeagues(GetLogRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 }

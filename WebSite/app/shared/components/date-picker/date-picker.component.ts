@@ -1,12 +1,15 @@
 ﻿import { Component, ElementRef, Input, Output, EventEmitter } from '@angular/core';
-import { NgbDateParserFormatter, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
+import { FormsModule } from '@angular/forms';
+import { NgbDateStruct, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
     selector: 'ngbd-date-picker',
     templateUrl: './date-picker.component.html',
+    standalone: true,
     host: {
         '(document:click)': 'onClick($event)',
     },
+    imports:[NgbModule, FormsModule]
 })
 export class DatepickerComponent {
     @Input() public date: NgbDateStruct;

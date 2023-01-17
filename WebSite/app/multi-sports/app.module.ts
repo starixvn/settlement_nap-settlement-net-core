@@ -31,11 +31,11 @@ import { DynamicHeightDirective } from '../shared/directives';
         MaterialModule,
         PipesModule,
         NgbModule,
+        DatepickerComponent
     ],
     declarations: [
         AppComponent,
         FilterComponent,
-        DatepickerComponent,
         TreeViewComponent,
         ModalDialogComponent,
         ModalContentDialogComponent,

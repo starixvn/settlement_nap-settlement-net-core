@@ -1,79 +1,40 @@
 ﻿using Settlement.Core.Services;
-using Settlement.Outright.Criteria;
 using Settlement.Outright.Requests;
 
-namespace Settlement.Outright.Services;
-
-public interface OutrightLogService
+namespace Settlement.Outright.Services
 {
-    Task<List<OutrightLog>> GetOutrightLogByMatchCode(GetLogRequest request);
-
-    Task<List<OutrightLog>> GetOutrightLogByOutrightId(GetLogRequest request);
-}
-
-public class OutrightLogServiceImp : OutrightLogService
-{
-    private readonly OutrightLogQueryService outrightLogQueryService;
-
-    private readonly IRefDataService refDataService;
-
-    public OutrightLogServiceImp(OutrightLogQueryService outrightLogQueryService,
-        IRefDataService refDataService)
+    public interface OutrightLogService
     {
-        this.outrightLogQueryService = outrightLogQueryService;
-        this.refDataService = refDataService;
+        Task<IEnumerable<OutrightLog>> GetLogForView(GetLogRequest request);
     }
 
-    public async Task<List<OutrightLog>> GetOutrightLogByMatchCode(GetLogRequest request)
+    public class OutrightLogServiceImp : OutrightLogService
     {
-        var calculationLogs = await outrightLogQueryService.GetOutrightLogs(request);
-        var eventLogList = new List<OutrightLog>();
+        private readonly OutrightLogProcessService outrightLogService;
 
-        foreach (var item in calculationLogs)
+        private readonly IBalanceUpService balanceUpService;
+
+        public OutrightLogServiceImp(OutrightLogProcessService outrightLogService, IBalanceUpService balanceUpService)
         {
-            request.MatchId = item.OrId;
-            eventLogList.AddRange(await GetOutrightLogByOutrightId(request));
+            this.outrightLogService = outrightLogService;
+            this.balanceUpService = balanceUpService;
         }
 
-        return eventLogList
-              .GroupBy(m => m.LeagueId)
-              .Select(x => new OutrightLog
-              {
-                  LeagueId = x.Key,
-                  RefDataService = refDataService,
-                  OutrightLogDetails = x.SelectMany(y => y.OutrightLogDetails).OrderBy(s => s.LogDate).ToList()
-              })
-              .ToList();
-    }
-
-    public async Task<List<OutrightLog>> GetOutrightLogByOutrightId(GetLogRequest request)
-    {
-        var eventLogList = new List<OutrightLog>();
-        var outrightLog = await outrightLogQueryService.GetOutrightLog(request) ?? null;
-        if (outrightLog != null)
+        public async Task<IEnumerable<OutrightLog>> GetLogForView(GetLogRequest request)
         {
-            var getOutrightLogDetailCriteria = new GetOutrightLogDetailCriteria
+            IEnumerable<OutrightLog> logs;
+            request.BalanceUpDay = balanceUpService.GetBalanceUpDay().BalanceUpDay;
+            if (request.MatchId != null && request.MatchId > 0)
             {
-                MatchId = outrightLog.OrId,
-                LeagueId = outrightLog.LeagueId,
-                ToDate = request.ToDate,
-                FromDate = request.FromDate
-            };
-
-            var logDetails = (await outrightLogQueryService.GetOutrightLogDetails(getOutrightLogDetailCriteria)).ToList();
-            if (logDetails.Any())
-            {
-                logDetails.ForEach(x =>
-                {
-                    x.TeamId = outrightLog.TeamId;
-                    x.RefDataService = refDataService;
-                });
-
-                outrightLog.OutrightLogDetails = logDetails;
-                eventLogList.Add(outrightLog);
+                logs = await outrightLogService.GetOutrightLogByOutrightId(request);
+                request.MatchCode = request.MatchId.ToString() ?? "";
             }
-        }
+            else
+            {
+                logs = await outrightLogService.GetOutrightLogByMatchCode(request);
+            }
 
-        return eventLogList;
+            return logs;
+        }
     }
 }

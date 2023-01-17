@@ -1,4 +1,4 @@
-import { DatePipe } from '@angular/common';
+import { DatePipe, CommonModule } from '@angular/common';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { NgbDateParserFormatter, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { League, Sport } from '../../models';
@@ -8,11 +8,15 @@ import { MessageBoxService, VerifyDateService } from '../../../shared/services';
 import { OutrightService } from '../../services/outright.service';
 import { FilterRequest } from '../../models/filter-request.model';
 import { ModalDialogMessage } from '../../../shared/models';
+import { DatepickerComponent } from '../../../shared/components/date-picker/date-picker.component';
+import { FormsModule } from '@angular/forms';
 // import { CustomNgbDateParserFormatter } from 'shared/components/date-picker/custom-ngb-date-parser-formatter';
 
 @Component({
     selector: 'filter',
     templateUrl: './filter.component.html',
+    standalone: true,
+    imports: [CommonModule,FormsModule, DatepickerComponent],
     providers: [DatePipe,
         { provide: NgbDateParserFormatter, useFactory: () => new CustomNgbDateParserFormatter('MMM dd, y') }],
 })

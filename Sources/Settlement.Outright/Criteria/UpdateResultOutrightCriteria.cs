@@ -10,6 +10,10 @@ public class UpdateResultOutrightCriteria : NonQueryCommand
 
     public string Action { get; set; }
 
+    public DateTime? EventDate { get; set; }
+
+    public bool IsDeadheat { get; set; }
+
     public int ErrCode { get; set; }
 
     public string ErrMsg { get; set; }

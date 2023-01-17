@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Settlement.Core.Models
+﻿namespace Settlement.Core.Models
 {
     public class Result
     {
@@ -12,6 +10,6 @@ namespace Settlement.Core.Models
 
         public string ChildMatchIds { get; set; }
 
-        public bool IsSuccessful => string.IsNullOrEmpty(ErrMsg) || (ErrCode == 0);
+        public bool IsSuccessful => string.IsNullOrEmpty(ErrMsg) && (ErrCode == 0);
     }
 }

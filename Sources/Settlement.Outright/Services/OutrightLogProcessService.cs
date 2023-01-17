@@ -1,55 +1,79 @@
 ﻿using Settlement.Core.Services;
+using Settlement.Outright.Criteria;
 using Settlement.Outright.Requests;
 
-namespace Settlement.Outright.Services
-{
-    public interface OutrightLogProcessService
-    {
-        Task<IEnumerable<OutrightLog>> GetLogForView(GetLogRequest request);
+namespace Settlement.Outright.Services;
 
-        Task<IEnumerable<OutrightLog>> GetLogForExcel(GetLogRequest request);
+public interface OutrightLogProcessService
+{
+    Task<List<OutrightLog>> GetOutrightLogByMatchCode(GetLogRequest request);
+
+    Task<List<OutrightLog>> GetOutrightLogByOutrightId(GetLogRequest request);
+}
+
+public class OutrightLogProcessServiceImp : OutrightLogProcessService
+{
+    private readonly OutrightLogQueryService outrightLogQueryService;
+
+    private readonly IRefDataService refDataService;
+
+    public OutrightLogProcessServiceImp(OutrightLogQueryService outrightLogQueryService,
+        IRefDataService refDataService)
+    {
+        this.outrightLogQueryService = outrightLogQueryService;
+        this.refDataService = refDataService;
     }
 
-    public class OutrightLogProcessServiceImp : OutrightLogProcessService
+    public async Task<List<OutrightLog>> GetOutrightLogByMatchCode(GetLogRequest request)
     {
-        private readonly OutrightLogService outrightLogService;
+        var calculationLogs = await outrightLogQueryService.GetOutrightLogs(request);
+        var eventLogList = new List<OutrightLog>();
 
-        private readonly IBalanceUpService balanceUpService;
-
-        public OutrightLogProcessServiceImp(OutrightLogService outrightLogService, IBalanceUpService balanceUpService)
+        foreach (var item in calculationLogs)
         {
-            this.outrightLogService = outrightLogService;
-            this.balanceUpService = balanceUpService;
+            request.MatchId = item.OrId;
+            eventLogList.AddRange(await GetOutrightLogByOutrightId(request));
         }
 
-        public async Task<IEnumerable<OutrightLog>> GetLogForExcel(GetLogRequest request)
-        {
-            request.BalanceUpDay = balanceUpService.GetBalanceUpDay().BalanceUpDay;
-            var logs = await outrightLogService.GetOutrightLogByMatchCode(request);
-            if (logs.Any() && request.MatchCode.All(char.IsNumber))
-            {
-                request.MatchId = int.Parse(request.MatchCode);
-                logs = await outrightLogService.GetOutrightLogByOutrightId(request);
-            }
+        return eventLogList
+              .GroupBy(m => m.LeagueId)
+              .Select(x => new OutrightLog
+              {
+                  LeagueId = x.Key,
+                  RefDataService = refDataService,
+                  OutrightLogDetails = x.SelectMany(y => y.OutrightLogDetails).OrderBy(s => s.LogDate).ToList()
+              })
+              .ToList();
+    }
 
-            return logs;
+    public async Task<List<OutrightLog>> GetOutrightLogByOutrightId(GetLogRequest request)
+    {
+        var eventLogList = new List<OutrightLog>();
+        var outrightLog = await outrightLogQueryService.GetOutrightLog(request) ?? null;
+        if (outrightLog != null)
+        {
+            var getOutrightLogDetailCriteria = new GetOutrightLogDetailCriteria
+            {
+                MatchId = outrightLog.OrId,
+                LeagueId = outrightLog.LeagueId,
+                ToDate = request.ToDate,
+                FromDate = request.FromDate
+            };
+
+            var logDetails = (await outrightLogQueryService.GetOutrightLogDetails(getOutrightLogDetailCriteria)).ToList();
+            if (logDetails.Any())
+            {
+                logDetails.ForEach(x =>
+                {
+                    x.TeamId = outrightLog.TeamId;
+                    x.RefDataService = refDataService;
+                });
+
+                outrightLog.OutrightLogDetails = logDetails;
+                eventLogList.Add(outrightLog);
+            }
         }
 
-        public async Task<IEnumerable<OutrightLog>> GetLogForView(GetLogRequest request)
-        {
-            IEnumerable<OutrightLog> logs;
-            request.BalanceUpDay = balanceUpService.GetBalanceUpDay().BalanceUpDay;
-            if (request.MatchId != null && request.MatchId > 0)
-            {
-                logs = await outrightLogService.GetOutrightLogByOutrightId(request);
-                request.MatchCode = request.MatchId.ToString() ?? "";
-            }
-            else
-            {
-                logs = await outrightLogService.GetOutrightLogByMatchCode(request);
-            }
-
-            return logs;
-        }
+        return eventLogList;
     }
 }
