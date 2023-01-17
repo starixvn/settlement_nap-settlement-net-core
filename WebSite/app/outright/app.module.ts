@@ -12,6 +12,8 @@ import { OutrightService } from './services/outright.service';
 import { BlockUIService, HttpRequestService, MessageBoxService, VerifyDateService } from '../shared/services';
 import { LeagueTeamComponent } from './components/main-page/league-team.component';
 import { DynamicHeightDirective } from '../shared/directives';
+import { ModalDialogComponent } from '../shared/components/modal-dialog/modal-dialog.component';
+import { LogComponent } from './components';
 
 
 @NgModule({
@@ -21,6 +23,7 @@ import { DynamicHeightDirective } from '../shared/directives';
         LeagueTeamComponent,
         DatepickerComponent,
         DynamicHeightDirective,
+        LogComponent
     ],
     bootstrap: [AppComponent],
     imports: [
@@ -39,6 +42,8 @@ import { DynamicHeightDirective } from '../shared/directives';
         HttpRequestService,
         BlockUIService,
         MessageBoxService 
-    ]
+    ],
+    entryComponents: [ModalDialogComponent],
+
 })
 export class AppModule { }

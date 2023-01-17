@@ -1,224 +1,6 @@
 @import "../../Styles/common.less";
 @sprite: "../../wwwroot/css/images/sprite.png";
 
-.collapse-icon {
-  cursor: pointer;
-  height: 21px;
-  position: relative;
-  width: 21px;
-  padding-right: 10px;
-
-  &:before,
-  &:after {
-    background: #000;
-    content: "";
-    height: 2px;
-    left: 0;
-    position: absolute;
-    top: 6px;
-    width: 10px;
-    transition: transform 500ms ease;
-    transform-origin: center;
-  }
-
-  &.collapsed {
-    &:after {
-      transform: rotate(90deg);
-    }
-
-    &:before {
-      transform: rotate(180deg);
-    }
-  }
-}
-.league {
-  .table-calculation {
-    .league-name {
-      cursor: pointer;
-
-      .name {
-        padding-left: 25px;
-      }
-    }
-
-    .score-calculated {
-      color: #0273ff;
-    }
-  }
-}
-
-.sportbook {
-  .table-calculation {
-    .interval-score {
-      min-width: 250px;
-      width: 250px;
-    }
-    .auto-setting {
-      min-width: 63px;
-      width: 63px;
-    }
-  }
-  .sport-name {
-    font-weight: bold;
-    height: 21px;
-    cursor: pointer;
-    color: #1d3968;
-    background-color: #a9a9a9;
-    padding: 2px 0 0 2px;
-  }
-}
-.match {
-  .table-calculation {
-    .sport-name {
-      font-weight: bold;
-      text-align: left;
-      line-height: 7px;
-      height: 21px;
-
-      td {
-        color: #1d3968;
-        vertical-align: middle;
-        border-bottom: 0.5px solid rgb(197, 183, 183);
-        background-color: #cbc9ca;
-      }
-    }
-
-    tbody {
-      background-color: inherit;
-    }
-
-    .league-name {
-      td {
-        padding-left: 50px;
-      }
-    }
-
-    .remark-status {
-      .title {
-        cursor: unset;
-      }
-    }
-  }
-
-  &:nth-child(even) {
-    background-color: #e5ebf2;
-  }
-}
-
-.content {
-  .table-matches-content {
-    overflow-y: scroll;
-  }
-
-  .head-table,
-  thead {
-    border: none !important;
-  }
-
-  .table-calculation {
-    .code {
-      width: 110px;
-    }
-
-    .match-home,
-    .match-away {
-      float: left;
-    }
-
-    .auto-setting {
-      .min_width(63px);
-
-      div {
-        background: url(@sprite) no-repeat;
-
-        &.icon-yes {
-          background-position: -35px -292px;
-          .icon(45px, 16px, 8px);
-        }
-
-        &.icon-direct {
-          background-position: -35px -270px;
-          .icon(62px, 16px, 1px);
-        }
-
-        &.icon-auto {
-          background-position: -170px -270px;
-          .icon(56px, 16px, 3px);
-        }
-
-        &.icon-auto-disable {
-          background-position: -230px -270px;
-          .icon(56px, 16px, 3px);
-          cursor: default;
-        }
-
-        &.icon-no {
-          background-position: -84px -292px;
-          .icon(45px, 16px, 8px);
-        }
-
-        &.icon-no-disable {
-          background-position: -135px -292px;
-          .icon(45px, 16px, 8px);
-          cursor: default;
-        }
-      }
-
-      .title {
-        cursor: pointer;
-      }
-    }
-
-    .remark-status {
-      div {
-        &.tooltip-inner {
-          background: none !important;
-          background-color: #1e1e1e !important;
-          white-space: pre-line !important;
-          text-align: left !important;
-          font-size: 11px !important;
-        }
-      }
-    }
-
-    .league-name {
-      td {
-        &.instant-time {
-          div {
-            float: left;
-            margin: 2px 3px 0 0;
-            font-weight: normal;
-            font-size: 8.3pt;
-
-            &.act-direct-time {
-              background: url(@sprite) no-repeat;
-              background-position: -105px -321px;
-              width: 15px;
-              height: 14px;
-              margin-top: -3px;
-              cursor: pointer;
-
-              &:hover {
-                background-position: -125px -321px;
-              }
-            }
-          }
-        }
-      }
-    }
-
-    .interval-score {
-      .bg-calculated {
-        background-color: transparent;
-        color: #0273ff;
-      }
-    }
-
-    .confirm-score {
-      width: 100px;
-    }
-  }
-}
 
 .filter-bar {
   .hasDatepicker {
@@ -290,9 +72,6 @@
     }
   }
 }
-// .custom-dialog-container .mat-dialog-container {
-//   border: 1px solid #d3d3d3;
-// }
 
 .setFilterWidth(@screenWidth, @rowWidth, @field, @smallField, @mediumField, @largeField, @includeTest, @submit, @sports, @autoPayout) {
   @media (min-width: @screenWidth) {
@@ -334,26 +113,7 @@
   }
 }
 
-// .auto-setting-completed {
-//   background: #00b050;
-// }
 
-// .auto-setting-failed {
-//   background: #e17356;
-// }
-
-// .cursor-pointer {
-//   cursor: pointer;
-// }
-
-// .include-test {
-//   padding-top: 2px;
-// }
-// .red {
-//   color: #ff0000;
-//   font-weight: bold;
-//   float: left;
-// }
 
 .league-name {
   display: flex;
@@ -396,12 +156,6 @@
 .empty-data {
   width: 100%;
 }
-
-// .table-body {
-//   overflow-y: scroll;
-//   height: 500px;
-//   display: block;
-// }
 
 
 table tbody {

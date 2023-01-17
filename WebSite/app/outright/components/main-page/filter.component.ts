@@ -4,9 +4,10 @@ import { NgbDateParserFormatter, NgbDateStruct } from '@ng-bootstrap/ng-bootstra
 import { League, Sport } from '../../models';
 import { CustomNgbDateParserFormatter } from '../../../shared/components/date-picker/custom-ngb-date-parser-formatter';
 import { allLeague, Statuses } from '../../constants/Options';
-import { VerifyDateService } from '../../../shared/services';
+import { MessageBoxService, VerifyDateService } from '../../../shared/services';
 import { OutrightService } from '../../services/outright.service';
 import { FilterRequest } from '../../models/filter-request.model';
+import { ModalDialogMessage } from '../../../shared/models';
 // import { CustomNgbDateParserFormatter } from 'shared/components/date-picker/custom-ngb-date-parser-formatter';
 
 @Component({
@@ -34,9 +35,13 @@ export class FilterComponent implements OnInit {
 
     public moveBetsDay: NgbDateStruct;
 
+    public warningDialogMessage: ModalDialogMessage = new ModalDialogMessage();
+
+
     constructor(
         private verifyDateService: VerifyDateService,
-        private outrightService: OutrightService) { }
+        private outrightService: OutrightService,
+        private messageBoxService: MessageBoxService) { }
 
     ngOnInit(
     ): void {

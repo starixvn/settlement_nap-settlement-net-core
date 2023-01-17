@@ -1,1 +1,55 @@
-<p>log works!</p>
+<div class="filter-bar">
+  <div class="line"></div>
+  <div class="filter-bar-inner">
+    <div class="row">
+      <div class="field" style="width: auto;">
+        <label class="inner-label">
+          Match Id/ Match Code
+        </label>
+        <input type="text" />
+      </div>
+      <div class="field small-field">
+        <label class="inner-label from-date">
+          From
+        </label>
+        <ngbd-date-picker [date]="fromDate" (change)="onSelectFromDate($event)"></ngbd-date-picker>
+      </div>
+      <div class="date">
+        <label class="inner-label to-date">
+          To
+        </label>
+        <ngbd-date-picker [date]="toDate" (change)="onSelectToDate($event)"></ngbd-date-picker>
+      </div>
+      <div class="submit field">
+        <button class="button" (click)="search()">Submit</button>
+    </div>
+    </div>
+  </div>
+</div>
+
+<div>
+  <table class="table-calculation">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Log Time</th>
+        <th>Handled By</th>
+        <th>Team Name</th>
+        <th>Action</th>
+        <th>Result String</th>
+        <th>Remark</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
