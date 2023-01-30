@@ -4,21 +4,21 @@ import { NgbDateParserFormatter, NgbDateStruct } from '@ng-bootstrap/ng-bootstra
 import { League, Sport } from '../../models';
 import { CustomNgbDateParserFormatter } from '../../../shared/components/date-picker/custom-ngb-date-parser-formatter';
 import { allLeague, Statuses } from '../../constants/Options';
-import { MessageBoxService, VerifyDateService } from '../../../shared/services';
+import { HttpRequestService, MessageBoxService, VerifyDateService } from '../../../shared/services';
 import { OutrightService } from '../../services/outright.service';
 import { FilterRequest } from '../../models/filter-request.model';
 import { ModalDialogMessage } from '../../../shared/models';
 import { DatepickerComponent } from '../../../shared/components/date-picker/date-picker.component';
 import { FormsModule } from '@angular/forms';
-// import { CustomNgbDateParserFormatter } from 'shared/components/date-picker/custom-ngb-date-parser-formatter';
 
 @Component({
     selector: 'filter',
     templateUrl: './filter.component.html',
     standalone: true,
-    imports: [CommonModule,FormsModule, DatepickerComponent],
-    providers: [DatePipe,
-        { provide: NgbDateParserFormatter, useFactory: () => new CustomNgbDateParserFormatter('MMM dd, y') }],
+    imports: [CommonModule, FormsModule, DatepickerComponent],
+    providers: [DatePipe, VerifyDateService, OutrightService, HttpRequestService, MessageBoxService,
+        // { provide: NgbDateParserFormatter, useFactory: () => new CustomNgbDateParserFormatter('MMM dd, y') }
+    ],
 })
 export class FilterComponent implements OnInit {
     @Output() public readonly searchAction = new EventEmitter();
@@ -63,6 +63,7 @@ export class FilterComponent implements OnInit {
             this.leagueSelected = 0;
             this.sportSelected = 1;
             this.statusSelected = 0;
+
         })
     }
 
@@ -113,8 +114,6 @@ export class FilterComponent implements OnInit {
             leagueId: this.leagueSelected,
             moveBetsDay
         }
-
-        console.log(request)
 
         if (!this.isValidInput(this.fromDate, this.toDate)) {
             return;

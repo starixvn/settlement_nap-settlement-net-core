@@ -1,13 +1,20 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { OutrightService } from '../../services/outright.service';
-import { VerifyDateService } from '../../../shared/services';
+import { HttpRequestService, MessageBoxService, VerifyDateService } from '../../../shared/services';
 import { LogRequest } from '../../models/log-request.model';
 import { OutrightLog } from '../..//models/outright-log.model';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { DatepickerComponent } from '../../../shared/components/date-picker/date-picker.component';
 
 @Component({
     selector: 'log',
-    templateUrl: './log.component.html'
+    templateUrl: './log.component.html',
+    standalone: true,
+    imports: [CommonModule, FormsModule, DatepickerComponent],
+    providers: [VerifyDateService, OutrightService, HttpRequestService, MessageBoxService]
+
 })
 export class LogComponent implements OnInit {
 
@@ -15,11 +22,7 @@ export class LogComponent implements OnInit {
     public toDate: NgbDateStruct;
     public matchCode: string;
     public leagueId: number;
-    public outrightLog: OutrightLog;
-
-    public get outrightLogDetails() {
-        return this.outrightLog?.outrightDetails ?? [];
-    }
+    public outrightLogs: OutrightLog[];
 
     constructor(private readonly verifyDateService: VerifyDateService,
         private readonly outrightService: OutrightService
@@ -52,9 +55,19 @@ export class LogComponent implements OnInit {
             leagueId: this.leagueId
         }
 
+        console.log('request', request);
+
         this.outrightService.getLogs(request).subscribe(res => {
 
         })
+    }
+
+    public onCollapsedClick(outrightLog: OutrightLog) {
+        outrightLog.collapsed = !outrightLog.collapsed;
+    }
+
+    public getBackgroundIcon(isCollapsed: boolean) {
+        return isCollapsed ? "btn-right-up" : "btn-right";
     }
 
 }

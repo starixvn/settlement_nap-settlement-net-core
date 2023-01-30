@@ -7,6 +7,7 @@ import { environment } from '../environments/environment';
 import AppComponent from './components/app.component';
 import { ToastrModule } from 'ngx-toastr';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatDialogModule } from '@angular/material/dialog';
 
 if (environment.production) {
     enableProdMode();
@@ -14,11 +15,15 @@ if (environment.production) {
 
 bootstrapApplication(AppComponent, {
     providers: [importProvidersFrom(BrowserAnimationsModule),
-                importProvidersFrom(ToastrModule.forRoot({
-                  disableTimeOut: true,
-                  enableHtml: true,
-                  tapToDismiss: false,
-                  positionClass: 'inline',
-                  maxOpened: 1,
-                }))]
-  }).catch(err => console.error(err));
+    importProvidersFrom(ToastrModule.forRoot({
+        disableTimeOut: true,
+        enableHtml: true,
+        tapToDismiss: false,
+        positionClass: 'inline',
+        maxOpened: 1,
+    })),
+    importProvidersFrom(HttpClientModule),
+    importProvidersFrom(MatDialogModule),
+
+    ]
+}).catch(err => console.error(err));

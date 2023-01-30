@@ -17,40 +17,44 @@
 </ng-template>
 
 <ng-template #body>
- <!-- <div dynamicHeight> -->
-    <tbody dynamicHeight class="table-body" >
-        <ng-container *ngIf="leagueMatch.length; else empty">
-          <ng-container *ngFor="let item of leagueMatch">
-            <tr>
-              <td colspan="4">
-                <div class="league-name">
-                  <div class="leangue-name__content">
-                    <span class="name">
-                      {{ item.leagueName }}
-                    </span>
-                    <span class="code"> Code: {{ item.teams[0].matchCode }} </span>
-                    <button>View Log</button>
-                  </div>
-                  <div class="league-action">
-                    <button class="button">Calculate</button>
-                    <button class="button">Uncalculate</button>
-                  </div>
+  <div dynamicHeight>
+    <tbody class="table-body">
+      <ng-container *ngIf="leagueMatch.length; else empty">
+        <ng-container *ngFor="let item of leagueMatch">
+          <tr>
+            <td colspan="4">
+              <div class="league-name">
+                <div class="leangue-name__content">
+                  <span class="name">
+                    {{ item.leagueName }}
+                  </span>
+                  <span class="code">
+                    Code: {{ item.teams[0].matchCode }}
+                  </span>
+                  <button (click)="(viewLog)">View Log</button>
                 </div>
-              </td>
-            </tr>
-            <tr *ngFor="let team of item.teams">
-              <td class="event-id"><span role="button">{{ team.orId }}</span></td>
-              <td class="ko-time">
-                {{ team.kickOffTime | date: "mediumDate" }}
-                {{ team.kickOffTime | date: "hh:mm:ss a" }}
-              </td>
-              <td>{{ team.teamName }}</td>
-              <td>{{ team.status }}</td>
-            </tr>
-          </ng-container>
+                <div class="league-action">
+                  <button class="button">Calculate</button>
+                  <button class="button">Uncalculate</button>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr *ngFor="let team of item.teams">
+            <td class="event-id">
+              <span role="button">{{ team.orId }}</span>
+            </td>
+            <td class="ko-time">
+              {{ team.kickOffTime | date: "mediumDate" }}
+              {{ team.kickOffTime | date: "hh:mm:ss a" }}
+            </td>
+            <td>{{ team.teamName }}</td>
+            <td>{{ team.status }}</td>
+          </tr>
         </ng-container>
-      </tbody>
- <!-- </div> -->
+      </ng-container>
+    </tbody>
+  </div>
 </ng-template>
 `
 <ng-template #empty>

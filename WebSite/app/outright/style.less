@@ -1,7 +1,6 @@
 @import "../../Styles/common.less";
 @sprite: "../../wwwroot/css/images/sprite.png";
 
-
 .filter-bar {
   .hasDatepicker {
     width: 85px;
@@ -113,8 +112,6 @@
   }
 }
 
-
-
 .league-name {
   display: flex;
   justify-content: space-between;
@@ -145,7 +142,7 @@
 .event-id {
   span {
     color: #0273ff;
-  cursor: pointer;
+    cursor: pointer;
   }
 }
 
@@ -169,12 +166,36 @@
   width: 760px;
 
   .even {
-    background-color: #e5ebf2
+    background-color: #e5ebf2;
   }
 
-
- .align-left{
-  padding-left: 5px;
- }
+  .align-left {
+    padding-left: 5px;
+  }
 }
 
+// .table-calculation {
+//   tbody {
+//     display: block;
+//     overflow-y: auto;
+//   }
+
+//   thead,
+//   tbody tr {
+//     display: table;
+//     width: 100%;
+//     table-layout: fixed;
+//   }
+// }
+
+table tbody {
+  display: block;
+  overflow-y: auto;
+}
+
+table thead,
+table tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}

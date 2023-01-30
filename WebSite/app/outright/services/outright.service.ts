@@ -12,13 +12,13 @@ import { OutrightLog } from "../models/outright-log.model";
 @Injectable()
 export class OutrightService {
     private outrightApi = "api/outright";
-    private outrightLogApi = "api/outrightLog"
     private settingApi = "";
 
     constructor(private httpRequestService: HttpRequestService) { }
 
 
     public getLeagues(request: LeagueRequest) {
+        console.log('request', request);
         return this.httpRequestService.postJson<League[]>(request, `${this.outrightApi}/get-league`);
     }
 
@@ -50,6 +50,6 @@ export class OutrightService {
     }
 
     public getLogs(request: LogRequest): Observable<OutrightLog> {
-        return this.httpRequestService.postJson<OutrightLog>(request, `${this.outrightLogApi}/get-log`)
+        return this.httpRequestService.postJson<OutrightLog>(request, `${this.outrightApi}/get-log`)
     }
 }

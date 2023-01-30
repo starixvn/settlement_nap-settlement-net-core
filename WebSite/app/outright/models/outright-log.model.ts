@@ -1,10 +1,11 @@
 export interface OutrightLog {
-  orId: number;
-  matchCode: string;
-  teamId: number;
-  leagueId: number;
-  leagueName: string;
-  outrightDetails: OutrightLogDetail[]
+    orId: number;
+    matchCode: string;
+    teamId: number;
+    leagueId: number;
+    leagueName: string;
+    collapsed?: boolean;
+    outrightDetails: OutrightLogDetail[]
 }
 
 
