@@ -19,6 +19,7 @@ Thumbs.db
 *.cache
 *.ilk
 *.orig
+.angular/
 [Bb]in
 [Dd]ebug*/
 *.lib
