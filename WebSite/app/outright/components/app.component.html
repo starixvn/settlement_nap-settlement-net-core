@@ -1,1 +1,9 @@
-<uncalculate-popup></uncalculate-popup>
+<!-- <uncalculate-popup></uncalculate-popup> -->
+<filter
+  (searchAction)="search($event)"
+  (requestEmitter)="getRequest($event)"
+></filter>
+<league-team [outright]="outright" [request]="filterRequest"></league-team>
+<div *ngIf="blockUI" class="in modal-backdrop">
+  <div class="loading"></div>
+</div>

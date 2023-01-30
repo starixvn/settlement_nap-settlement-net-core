@@ -6,23 +6,29 @@
         <label class="inner-label">
           Match Id/ Match Code
         </label>
-        <input type="text" />
+        <input type="text" maxlength="50" type="text" [(ngModel)]="matchCode" />
       </div>
       <div class="field small-field">
         <label class="inner-label from-date">
           From
         </label>
-        <ngbd-date-picker [date]="fromDate" (change)="onSelectFromDate($event)"></ngbd-date-picker>
+        <ngbd-date-picker
+          [date]="fromDate"
+          (change)="onSelectFromDate($event)"
+        ></ngbd-date-picker>
       </div>
       <div class="date">
         <label class="inner-label to-date">
           To
         </label>
-        <ngbd-date-picker [date]="toDate" (change)="onSelectToDate($event)"></ngbd-date-picker>
+        <ngbd-date-picker
+          [date]="toDate"
+          (change)="onSelectToDate($event)"
+        ></ngbd-date-picker>
       </div>
       <div class="submit field">
         <button class="button" (click)="search()">Submit</button>
-    </div>
+      </div>
     </div>
   </div>
 </div>
@@ -41,15 +47,20 @@
       </tr>
     </thead>
     <tbody>
-      <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-      </tr>
+      <ng-container *ngFor="let item of outrightLogDetails">
+        <tr>
+          <td>{{ item.logId }}</td>
+          <td>
+            {{ item.logDate | date: "mediumDate" }}
+            {{ item.logDate | date: "hh:mm:ss a" }}
+          </td>
+          <td>{{ item.Username }}</td>
+          <td>{{ item.teamName }}</td>
+          <td>{{ item.actionNameEn }}</td>
+          <td>{{ item.Result }}</td>
+          <td>{{ item.Remark }}</td>
+        </tr>
+      </ng-container>
     </tbody>
   </table>
 </div>

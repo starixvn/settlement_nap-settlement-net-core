@@ -6,10 +6,14 @@ import { firstValueFrom, Observable } from 'rxjs';
 import { Result } from "../../shared/models";
 import { FilterRequest } from "../models/filter-request.model";
 import { Outright } from "../models/outright.model";
+import { LogRequest } from "../models/log-request.model";
+import { OutrightLog } from "../models/outright-log.model";
 
 @Injectable()
 export class OutrightService {
     private outrightApi = "api/outright";
+    private outrightLogApi = "api/outrightLog"
+    private settingApi = "";
 
     constructor(private httpRequestService: HttpRequestService) { }
 
@@ -23,8 +27,8 @@ export class OutrightService {
     }
 
 
-    public filter(request: FilterRequest){
-        return this.httpRequestService.postJson<Outright>(request,`${this.outrightApi}/filter`)
+    public filter(request: FilterRequest) {
+        return this.httpRequestService.postJson<Outright>(request, `${this.outrightApi}/filter`)
     }
 
     public getMatches(leagueId: number, statusId: number) {
@@ -43,5 +47,9 @@ export class OutrightService {
         }
         const response = this.httpRequestService.postJson<Result>(query, `${this.outrightApi}/uncalculate`);
         return firstValueFrom(response);
+    }
+
+    public getLogs(request: LogRequest): Observable<OutrightLog> {
+        return this.httpRequestService.postJson<OutrightLog>(request, `${this.outrightLogApi}/get-log`)
     }
 }

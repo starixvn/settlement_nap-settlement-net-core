@@ -255,4 +255,7 @@
         titleDirectTime:"Click to change waiting-time setting of Direct Settlement",
     },
     calculatePageWarning: "Please input Match Code/ID, select at least 1 League, Match Type, or Over Status.",
+    outright: {
+       titleLogPopup: 'Outright Settlement Log' 
+    }
 };

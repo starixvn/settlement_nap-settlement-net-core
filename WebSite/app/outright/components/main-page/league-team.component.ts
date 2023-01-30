@@ -1,4 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { PopupService } from '../../services/popup.service';
+import { FilterRequest } from '../../models/filter-request.model';
 import { Outright } from '../../models/outright.model';
 
 @Component({
@@ -7,14 +10,19 @@ import { Outright } from '../../models/outright.model';
 })
 export class LeagueTeamComponent implements OnInit {
     @Input() outright: Outright
+    @Input() request: FilterRequest;
+
 
     public get leagueMatch() {
-        console.log(this.outright)
         return this.outright?.leagueMatch ?? [];
     }
-    constructor() { }
+    constructor(private popupService: PopupService) { }
 
     ngOnInit(): void {
+    }
+
+    public viewLog() {
+
     }
 
 }
