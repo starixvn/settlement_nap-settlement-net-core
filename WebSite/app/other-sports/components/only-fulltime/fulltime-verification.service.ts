@@ -19,6 +19,7 @@ export class FullTimeVerificationService {
 
         const finalScore = `${matchDetail.finalHomeScore}-${matchDetail.finalAwayScore}`;
         if (finalScore.length > 3 || (finalScore.indexOf("1-0") === -1 && finalScore.indexOf("0-1") === -1 &&
+            finalScore.indexOf("3-0") === -1 && finalScore.indexOf("0-3") === -1 && finalScore.indexOf("3-3") === -1 &&
             finalScore.indexOf("5-0") === -1 && finalScore.indexOf("0-5") === -1 && finalScore.indexOf("5-5") === -1)) {
             return "Please input the correct Final Score.";
         }
