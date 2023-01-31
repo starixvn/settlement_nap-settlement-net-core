@@ -13,8 +13,8 @@ import { LogComponent } from '../popup/log.component';
     selector: 'league-team',
     templateUrl: './league-team.component.html',
     standalone: true,
-    imports: [CommonModule, MatDialogModule],
-    providers: [DatePipe, DialogBoxService, DynamicHeightDirective,
+    imports: [CommonModule, MatDialogModule, DynamicHeightDirective],
+    providers: [DatePipe, DialogBoxService,
         { provide: NgbDateParserFormatter, useFactory: () => new CustomNgbDateParserFormatter('MMM dd, y') }],
 
 })

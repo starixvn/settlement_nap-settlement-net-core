@@ -10,6 +10,7 @@ import { debounceTime, throttleTime } from "rxjs/operators";
 
 @Directive({
     selector: "[dynamicHeight]",
+    standalone: true
 })
 export class DynamicHeightDirective implements AfterViewInit {
     @Input() minHeight: number;

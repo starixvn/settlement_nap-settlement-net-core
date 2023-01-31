@@ -14,8 +14,8 @@ import { DynamicHeightDirective } from '../../shared/directives';
     selector: 'app-root',
     templateUrl: './app.component.html',
     standalone: true,
-    imports: [CommonModule, UncalculatePopupComponent, FilterComponent, LeagueTeamComponent, LogComponent,],
-    providers: [BlockUIService, DynamicHeightDirective]
+    imports: [CommonModule, UncalculatePopupComponent, FilterComponent, LeagueTeamComponent, LogComponent, DynamicHeightDirective],
+    providers: [BlockUIService]
 })
 export default class AppComponent implements OnInit {
     public blockUI = false;
