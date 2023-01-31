@@ -1,85 +1,97 @@
-<div class="filter-bar">
-  <div class="line"></div>
-  <div class="filter-bar-inner">
-    <div class="row">
-      <div class="field">
-        <label for="MatchCode" class="inner-label">
-          MatchCode/ID
-        </label>
-        <input
-          type="text"
-          maxlength="50"
-          type="text"
-          [(ngModel)]="matchCode"
-          class="match-code"
-        />
-      </div>
-      <div class="field small-field">
-        <label class="inner-label from-date">
-          From
-        </label>
-        <ngbd-date-picker
-          [date]="fromDate"
-          (change)="onSelectFromDate($event)"
-        ></ngbd-date-picker>
-      </div>
-      <div class="date">
-        <label class="inner-label to-date">
-          To
-        </label>
-        <ngbd-date-picker
-          [date]="toDate"
-          (change)="onSelectToDate($event)"
-        ></ngbd-date-picker>
-      </div>
-      <div class="submit field">
-        <button class="button" (click)="search()">Submit</button>
-      </div>
-    </div>
+<div mat-dialog-title>
+  <div class="log-popup__title">
+    <div class="title">Outright Settlement Log</div>
+    <button class="__btnClose" (click)="close()">
+      <span aria-hidden="true">&times;</span>
+    </button>
   </div>
 </div>
 
-<div *ngFor="let item of outrightLogs">
-  <div (click)="onCollapsedClick(item)">
-    <div class="league">
-      <div class="btn-left"></div>
-      <div class="btn-middle">
-        <span>{{ item.leagueName }}</span>
+<div class="content" style="padding: 10px;">
+  <div class="filter-bar">
+    <div class="line"></div>
+    <div class="filter-bar-inner">
+      <div class="row">
+        <div class="field" style="width: auto;">
+          <label for="MatchCode" class="inner-label">
+            MatchCode/ID
+          </label>
+          <input
+            type="text"
+            maxlength="50"
+            type="text"
+            [(ngModel)]="matchCode"
+            class="match-code"
+            required
+          />
+        </div>
+        <div class="field small-field" style="width: auto;">
+          <label class="inner-label from-date">
+            From
+          </label>
+          <ngbd-date-picker
+            [date]="fromDate"
+            (change)="onSelectFromDate($event)"
+          ></ngbd-date-picker>
+        </div>
+        <div class="date" style="width: auto;">
+          <label class="inner-label to-date">
+            To
+          </label>
+          <ngbd-date-picker
+            [date]="toDate"
+            (change)="onSelectToDate($event)"
+          ></ngbd-date-picker>
+        </div>
+        <div class="submit field">
+          <button class="button" (click)="search()">Submit</button>
+        </div>
       </div>
-      <div [ngClass]="getBackgroundIcon(item.collapsed)"></div>
     </div>
   </div>
-  <div [hidden]="item.collapsed">
-    <table class="table-calculation">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Log Time</th>
-          <th>Handled By</th>
-          <th>Team Name</th>
-          <th>Action</th>
-          <th>Result String</th>
-          <th>Remark</th>
-        </tr>
-      </thead>
-      <tbody>
-        <ng-container
-          *ngFor="let log of item.outrightLogDetails; let i = index"
-        >
+
+  <div *ngFor="let item of outrightLogs">
+    <div (click)="onCollapsedClick(item)">
+      <div class="league">
+        <div class="btn-left"></div>
+        <div class="btn-middle">
+          <span>{{ item.leagueName }}</span>
+        </div>
+        <div [ngClass]="getBackgroundIcon(item.collapsed)"></div>
+      </div>
+    </div>
+    <div [hidden]="item.collapsed">
+      <table class="table-calculation">
+        <thead>
           <tr>
-            <td>{{ i + 1 }}</td>
-            <td>
-              {{ log.logDate | date: "mediumDate" }}
-              {{ log.logDate | date: "hh:mm:ss a" }}
-            </td>
-            <td>{{ log.Username }}</td>
-            <td>{{ log.teamName }}</td>
-            <td>{{ log.actionNameEn }}</td>
-            <td>{{ log.Result }}</td>
-            <td>{{ log.Remark }}</td>
+            <th>#</th>
+            <th>Log Time</th>
+            <th>Handled By</th>
+            <th>Team Name</th>
+            <th>Action</th>
+            <th>Result String</th>
+            <th>Remark</th>
           </tr>
-        </ng-container>
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          <ng-container
+            *ngFor="let log of item.outrightLogDetails; let i = index"
+          >
+            <tr>
+              <td>{{ i + 1 }}</td>
+              <td>
+                {{ log.logDate | date: "mediumDate" }}
+                {{ log.logDate | date: "hh:mm:ss a" }}
+              </td>
+              <td>{{ log.Username }}</td>
+              <td>{{ log.teamName }}</td>
+              <td>{{ log.actionNameEn }}</td>
+              <td>{{ log.Result }}</td>
+              <td>{{ log.Remark }}</td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>

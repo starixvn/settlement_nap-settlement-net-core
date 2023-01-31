@@ -18,12 +18,12 @@ export class DynamicHeightDirective implements AfterViewInit {
     private domElement: HTMLElement;
 
     constructor(private renderer: Renderer2, private elementRef: ElementRef) {
-    this.domElement = this.elementRef.nativeElement as HTMLElement;
+        this.domElement = this.elementRef.nativeElement as HTMLElement;
 
-    // register on window resize event
-    fromEvent(window, "resize")
-        .pipe(throttleTime(500), debounceTime(500))
-        .subscribe(() => this.setHeight());
+        // register on window resize event
+        fromEvent(window, "resize")
+            .pipe(throttleTime(500), debounceTime(500))
+            .subscribe(() => this.setHeight());
     }
 
     ngAfterViewInit() {
@@ -31,6 +31,7 @@ export class DynamicHeightDirective implements AfterViewInit {
     }
 
     private setHeight() {
+
         const windowHeight = window?.innerHeight;
         const topOffset = this.topOffset || this.calcTopOffset();
         let height = windowHeight - topOffset;
@@ -47,7 +48,7 @@ export class DynamicHeightDirective implements AfterViewInit {
         try {
             const rect = this.domElement.getBoundingClientRect();
             const scrollTop =
-            window.pageYOffset || document.documentElement.scrollTop;
+                window.pageYOffset || document.documentElement.scrollTop;
 
             return rect.top + scrollTop;
         } catch (e) {

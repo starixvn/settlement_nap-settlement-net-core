@@ -8,13 +8,14 @@ import { FilterComponent } from './main-page/filter.component';
 import { LeagueTeamComponent } from './main-page/league-team.component';
 import { CommonModule } from '@angular/common';
 import { LogComponent } from './popup/log.component';
+import { DynamicHeightDirective } from '../../shared/directives';
 
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
     standalone: true,
-    imports: [CommonModule, UncalculatePopupComponent, FilterComponent, LeagueTeamComponent, LogComponent],
-    providers: [BlockUIService]
+    imports: [CommonModule, UncalculatePopupComponent, FilterComponent, LeagueTeamComponent, LogComponent,],
+    providers: [BlockUIService, DynamicHeightDirective]
 })
 export default class AppComponent implements OnInit {
     public blockUI = false;
