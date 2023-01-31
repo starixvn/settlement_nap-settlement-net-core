@@ -1,13 +1,71 @@
-<div *ngIf="blockUI; else table" class="loading"></div>
-<ng-template #table>
-    <div class="table-calculate-outright">
-        <span toastContainer></span>
-        <div class="calculate-league">
-            <div class="icon">
-            </div>
-            {{leagueSettle.sportName | uppercase}} - {{leagueSettle.leagueName}}
+<div mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragBoundary=".cdk-overlay-container"
+    cdkDragHandle>
+    <label class="title">
+        Outright Calculation
+    </label>
+    <button type="button" class="close dialog-close" (click)="close()" tabindex="8">X</button>
+</div>
+<div class="table-calculate-outright">
+    <span toastContainer></span>
+    <div *ngIf="blockUI" class="loading"></div>
+    <div class="league">
+        <div class="icon">
         </div>
+        {{leagueSettle.sportName | uppercase}} - {{leagueSettle.leagueName}}
+    </div>
+    <div class="header">
+        <ng-template *ngTemplateOutlet="header"></ng-template>
+    </div>
+    <div class="table-scroll">
+        <ng-template *ngTemplateOutlet="body"></ng-template>
+    </div>
 
+    <div class="footer" *ngIf="teams.length > 0">
+        <button [ngClass]="{'button': true, 'button-disabled': disableCalculate()}" [disabled]="disableCalculate()"
+            (click)="calculate()">
+            Calculate
+        </button>
+
+    </div>
+
+
+    <ng-template #body>
+        <table>
+            <tbody>
+                <tr *ngIf="(teams | status: statusSelected).length == 0">
+                    <td colspan="100%">There is no information available</td>
+                </tr>
+
+                <tr *ngFor="let team of teams | status: statusSelected; let i=index"
+                    [ngClass]="{'even': i % 2, 'won-color': team.status === 'WON'}">
+                    <td class="align-left" style="width: auto">
+                        {{team.teamName}}
+                    </td>
+                    <td [ngClass]="{'settled': team.oddsStatus === 'Completed', 'status': true}">
+                        <select [(ngModel)]="team.status" [disabled]="!team.selected"
+                            (ngModelChange)="changeStatus(team)">
+                            <option *ngFor="let status of teamStatus" [value]="status.text | uppercase"
+                                [hidden]="!status.isShow"> {{status.text}}</option>
+                        </select>
+                    </td>
+                    <td class="code">
+                        <input type="checkbox" [(ngModel)]="team.isDeadheat"
+                            [disabled]="team.disableDeadheat || !team.selected" (click)="clearError()" />
+                    </td>
+                    <td class="code">
+                        <ngbd-date-picker [date]="team.dateTime" [minDate]="moveBetsDay" [maxDate]="today">
+                        </ngbd-date-picker>
+                    </td>
+                    <td class="code">
+                        <input id="checkbox-map-{{i + 1}}" type="checkbox" [(ngModel)]="team.selected"
+                            (click)="clearError()" />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </ng-template>
+
+    <ng-template #header>
         <table>
             <thead>
                 <tr>
@@ -17,7 +75,8 @@
                     <th class="status">
                         Status
                         <select [(ngModel)]="statusSelected" (ngModelChange)="selectStatus()">
-                            <option *ngFor="let status of filterStatuses" [value]="status | uppercase"> {{status}}</option>
+                            <option *ngFor="let status of filterStatuses" [value]="status | uppercase"> {{status}}
+                            </option>
                         </select>
                     </th>
                     <th class="code">
@@ -31,40 +90,5 @@
                     </th>
                 </tr>
             </thead>
-            <tbody>
-                <tr *ngIf="(teams | status: statusSelected).length == 0">
-                    <td colspan="100%">There is no information available</td>
-                </tr>
-
-                <tr *ngFor="let team of teams | status: statusSelected; let i=index" [ngClass]="{'even': i % 2, 'won-color': team.status === 'WON'}">
-                    <td class="align-left">
-                        {{team.teamName}}
-                    </td>
-                    <td [ngClass]="{'settled': team.oddsStatus === 'Completed'}">
-                        <select [(ngModel)]="team.status" [disabled]="!team.selected" (ngModelChange)="changeStatus(team)">
-                            <option *ngFor="let status of teamStatus" [value]="status.text | uppercase" [hidden]="!status.isShow"> {{status.text}}</option>
-                        </select>
-                    </td>
-                    <td>
-                        <input type="checkbox" [(ngModel)]="team.isDeadheat" [disabled]="team.disableDeadheat || !team.selected" (click)="clearError()"/>
-                    </td>
-                    <td>
-                        <ngbd-date-picker  [date]="team.dateTime" [minDate]="moveBetsDay" [maxDate]="maxDate"></ngbd-date-picker>
-                    </td>
-                    <td>
-                        <input id="checkbox-map-{{i + 1}}" type="checkbox" [(ngModel)]="team.selected" (click)="clearError()"/>
-                    </td>
-                </tr>
-                <tr>
-                    <td colSpan="100%" class="align-left" *ngIf="teams.length > 0">
-                        <button
-                            [ngClass]="{'button': true, 'button-disabled': disableCalculate()}"
-                            [disabled]="disableCalculate()" (click)="calculate()">
-                            Calculate
-                        </button>
-                    </td>
-                </tr>
-            </tbody>
         </table>
-    </div>
-</ng-template>
+    </ng-template>

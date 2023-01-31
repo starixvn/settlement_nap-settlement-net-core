@@ -1,59 +1,66 @@
-<div *ngIf="blockUI; else table" class="loading"></div>
-<ng-template #table>
-    <div class="table-outright">
-        <span toastContainer></span>
-        <div class="calculate-league">
-            <div class="icon">
-            </div>
-           {{leagueSettle.sportName | uppercase}} - {{leagueSettle.leagueName}}
-        </div>
+<div mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragBoundary=".cdk-overlay-container"
+    cdkDragHandle>
+    <label class="title">
+        Outright Uncalculation
+    </label>
+    <button type="button" class="close dialog-close" (click)="close()" tabindex="8">X</button>
+</div>
 
-        <table>
-            <thead>
-                <tr>
-                    <th style="width: auto">
-                        Team
-                    </th>
-                    <th class="code">
-                        Result
-                    </th>
-                    <th class="code">
-                        Dead Heat
-                    </th>
-                    <th class="code">
-                        Select Team
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let team of teams; let i=index" [ngClass]="{'even': i % 2}">
-                    <td class="align-left">
-                        {{team.teamName}}
-                    </td>
-                    <td>
-                        {{team.status}}
-                    </td>
-                    <td>
-                        <div class="tick" *ngIf="team.isDeadheat">
-                        </div>
-                    </td>
-                    <td>
-                        <input id="checkbox-map-{{i + 1}}" type="checkbox" [(ngModel)]="team.selected" (click)="clearError()"/>
-                    </td>
-                </tr>
-                <tr>
-                    <td colSpan="100%" class="align-left" *ngIf="teams.length > 0">
-                        <button
-                            [ngClass]="{'button': true, 'button-disabled': disableUncalculate()}"
-                            [disabled]="disableUncalculate()" (click)="uncalculate()">
-                            Uncalculate
-                        </button>
-                    </td>
-                </tr>
-                <tr *ngIf="teams.length == 0">
-                    <td colspan="100%">There is no information available</td>
-                </tr>
-            </tbody>
-        </table>
+
+<div class="table-outright">
+    <span toastContainer></span>
+    <div *ngIf="blockUI" class="loading"></div>
+    <div class="calculate-league">
+        <div class="icon">
+        </div>
+        {{leagueSettle.sportName | uppercase}} - {{leagueSettle.leagueName}}
     </div>
-</ng-template>
+
+    <table>
+        <thead>
+            <tr>
+                <th style="width: auto">
+                    Team
+                </th>
+                <th class="code">
+                    Result
+                </th>
+                <th class="code">
+                    Dead Heat
+                </th>
+                <th class="code">
+                    Select Team
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let team of teams; let i=index" [ngClass]="{'even': i % 2}">
+                <td class="align-left">
+                    {{team.teamName}}
+                </td>
+                <td>
+                    {{team.status}}
+                </td>
+                <td>
+                    <div class="tick" *ngIf="team.isDeadheat">
+                    </div>
+                </td>
+                <td>
+                    <input id="checkbox-map-{{i + 1}}" type="checkbox" [(ngModel)]="team.selected"
+                        (click)="clearError()" />
+                </td>
+            </tr>
+            <tr>
+                <td colSpan="100%" class="align-left" *ngIf="teams.length > 0">
+                    <button [ngClass]="{'button': true, 'button-disabled': disableUncalculate()}"
+                        [disabled]="disableUncalculate()" (click)="uncalculate()">
+                        Uncalculate
+                    </button>
+                </td>
+            </tr>
+            <tr *ngIf="teams.length == 0">
+                <td colspan="100%">There is no information available</td>
+            </tr>
+        </tbody>
+    </table>
+</div>

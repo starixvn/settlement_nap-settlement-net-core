@@ -1,13 +1,11 @@
 
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 import { enableProdMode, importProvidersFrom } from '@angular/core';
 import { bootstrapApplication } from '@angular/platform-browser';
-import { CustomHttpRequestInterceptor } from '../shared/custom-httprequest-interceptor.native';
 import { environment } from '../environments/environment';
 import AppComponent from './components/app.component';
 import { ToastrModule } from 'ngx-toastr';
-import { BrowserAnimationsModule, NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { MatDialogModule } from '@angular/material/dialog';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 if (environment.production) {
   enableProdMode();
@@ -15,16 +13,11 @@ if (environment.production) {
 
 bootstrapApplication(AppComponent, {
   providers: [importProvidersFrom(BrowserAnimationsModule),
-  importProvidersFrom(NoopAnimationsModule),
-    importProvidersFrom(ToastrModule.forRoot({
-        disableTimeOut: true,
-        enableHtml: true,
-        tapToDismiss: false,
-        positionClass: 'inline',
-        maxOpened: 1,
-    })),
-    importProvidersFrom(HttpClientModule),
-    importProvidersFrom(MatDialogModule),
-
-    ]
+  importProvidersFrom(ToastrModule.forRoot({
+    disableTimeOut: true,
+    enableHtml: true,
+    maxOpened: 1,
+  })),
+  importProvidersFrom(HttpClientModule)
+  ],
 }).catch(err => console.error(err));

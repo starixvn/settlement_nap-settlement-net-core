@@ -13,4 +13,6 @@ public class LeagueInfo
     public Permission Permission { get; set; }
 
     public DateTime MoveBetsDay { get; set; }
+
+    public DateTime Today => DateTime.Today;
 }

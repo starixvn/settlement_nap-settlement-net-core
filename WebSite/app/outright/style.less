@@ -179,6 +179,10 @@
 
 .table-outright {
   width: 760px;
+  margin-left: 3px;
+  .button {
+    margin: 4px;
+  }
 }
 
 .even {
@@ -191,6 +195,12 @@
 
 .table-calculate-outright {
   width: 900px;
+  margin-left: 4px;
+
+  .header {
+    padding-right: 16px;
+    background-color: #295091;
+  }
 
   .hasDatepicker {
     width: 70px;
@@ -217,6 +227,7 @@
 
   .status {
     min-width: 120px;
+    width: 120px;
   }
 
   .won-color {
@@ -237,6 +248,20 @@
       border: none;
       background: none;
     }
+  }
+
+  .table-scroll {
+    max-height: 300px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+  }
+
+  .footer {
+    border: 1px solid #c8c8c8;
+  }
+
+  .button {
+    margin: 4px;
   }
 }
 
@@ -283,6 +308,12 @@
   }
 }
 
+.title {
+  font-size: 15px;
+  font-weight: bold;
+  color: white;
+}
+
 .log-popup__title {
   display: flex;
   justify-content: space-between;
@@ -292,11 +323,7 @@
   right: 0px;
   padding: 2px;
   height: 30px;
-  .title {
-    font-size: 15px;
-    font-weight: bold;
-    color: white;
-  }
+
   .__btnClose {
     outline: none;
     border: none;

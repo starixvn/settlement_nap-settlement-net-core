@@ -1,4 +1,4 @@
-<table class="table-main">
+<table class="table-main" *ngIf="outright">
   <ng-template *ngTemplateOutlet="header"></ng-template>
   <ng-template *ngTemplateOutlet="body"></ng-template>
 </table>
@@ -34,8 +34,8 @@
                 </button>
               </div>
               <div class="league-action">
-                <button class="button">Calculate</button>
-                <button class="button">Uncalculate</button>
+                <button class="button" (click)="calculatePopup(item)">Calculate</button>
+                <button class="button" (click)="uncalculatePopup(item)">Uncalculate</button>
               </div>
             </div>
           </td>

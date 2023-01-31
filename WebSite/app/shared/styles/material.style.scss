@@ -167,11 +167,11 @@
     position: unset !important;
 }
 
-.mat-dialog-container {
+.mat-mdc-dialog-container {
     max-width: none !important;
 }
 
-.custom-dialog-container .mat-dialog-container {
+.custom-dialog-container .mat-mdc-dialog-container {
     padding: 0px !important;
 }
 
@@ -225,6 +225,14 @@
     font-family: Tahoma, sans-serif;
     font-size: 13px;
     font-weight: 700;
+}
+
+.mdc-dialog__title::before {
+    height: fit-content !important;
+}
+
+.mdc-dialog__title{
+    padding: 0 5px 0 10px !important;
 }
 
 .dialog-close {

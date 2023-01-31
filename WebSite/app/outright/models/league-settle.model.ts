@@ -7,4 +7,5 @@ export interface LeagueSettle {
     teams: Team[];
     permission: Permission;
     moveBetsDay: string;
+    today: string;
 }

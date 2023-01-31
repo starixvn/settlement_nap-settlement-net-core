@@ -1,3 +1,4 @@
+import { CalculatePopupComponent } from './../popup/calculate-popup.component';
 import { Component, Input, OnInit } from '@angular/core';
 import { FilterRequest } from '../../models/filter-request.model';
 import { Outright } from '../../models/outright.model';
@@ -8,6 +9,8 @@ import { DialogBoxService } from '../../../shared/services';
 import { DynamicHeightDirective } from '../../../shared/directives';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { LogComponent } from '../popup/log.component';
+import { LeagueMatch } from '../../models/league-match.model';
+import { UncalculatePopupComponent } from '../popup/uncalculate-popup.component';
 
 @Component({
     selector: 'league-team',
@@ -44,4 +47,25 @@ export class LeagueTeamComponent implements OnInit {
         });
     }
 
+    public calculatePopup(league: LeagueMatch){
+        this.dialog.open(CalculatePopupComponent, {
+            data: {
+                leagueId: league.leagueId,
+                sportType: league.teams[0].sportType
+            },
+            width: '910px',
+            height: '550px'
+        });
+    }
+
+    public uncalculatePopup(league: LeagueMatch){
+        this.dialog.open(UncalculatePopupComponent, {
+            data: {
+                leagueId: league.leagueId,
+                sportType: league.teams[0].sportType
+            },
+            width: '770px',
+            height: '500px'
+        });
+    }
 }

@@ -22,7 +22,7 @@ export class CalculateService {
 
     public MessageInconsistentDeadheat(wonTeams: Team[]) {
         let message = "<br/>";
-        wonTeams.forEach(team => message += `- ${team.teamName}<br/>`);
+        wonTeams.forEach(team => message += `${team.teamName} | `);
         return Language.Outright.inconsistentDeadheat.replace('{0}', message);
     }
 
