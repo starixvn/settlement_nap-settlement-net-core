@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { League, LeagueSettle } from "../models";
+import { League, LeagueSettle, TeamSettle } from "../models";
 import { LeagueRequest } from "../models/league-request.model";
 import { HttpRequestService } from "../../shared/services";
 import { firstValueFrom, Observable } from 'rxjs';
@@ -31,10 +31,11 @@ export class OutrightService {
         return this.httpRequestService.postJson<Outright>(request, `${this.outrightApi}/filter`)
     }
 
-    public getMatches(leagueId: number, statusId: number) {
+    public getMatches(leagueId: number, sportType: number, statusId: number) {
         const query = {
             leagueId,
-            statusId
+            statusId,
+            sportType
         }
         const response = this.httpRequestService.postJson<LeagueSettle>(query, `${this.outrightApi}/get-league-info`);
         return firstValueFrom(response);
@@ -46,6 +47,15 @@ export class OutrightService {
             teamIds
         }
         const response = this.httpRequestService.postJson<Result>(query, `${this.outrightApi}/uncalculate`);
+        return firstValueFrom(response);
+    }
+
+    public calculate(teams: TeamSettle[], deadHeat: number) {
+        const query = {
+            teams,
+            deadHeat
+        }
+        const response = this.httpRequestService.postJson<Result>(query, `${this.outrightApi}/calculate`);
         return firstValueFrom(response);
     }
 

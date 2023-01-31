@@ -1,11 +1,11 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { OutrightService } from '../../services/outright.service';
 import { HttpRequestService, MessageBoxService, VerifyDateService } from '../../../shared/services';
 import { LogRequest } from '../../models/log-request.model';
 import { OutrightLog } from '../..//models/outright-log.model';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { DatepickerComponent } from '../../../shared/components/date-picker/date-picker.component';
 
 @Component({

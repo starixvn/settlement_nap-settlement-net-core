@@ -1,3 +1,4 @@
+import { CalculatePopupComponent } from './popup/calculate-popup.component';
 import { Component, OnInit } from '@angular/core';
 import { Outright } from '../models/outright.model';
 import { BlockUIService } from '../../shared/services';

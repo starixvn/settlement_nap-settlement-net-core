@@ -8,5 +8,9 @@ public class LeagueInfo
 
     public string LeagueName { get; set; }
 
+    public string SportName { get; set; }
+
     public Permission Permission { get; set; }
+
+    public DateTime MoveBetsDay { get; set; }
 }

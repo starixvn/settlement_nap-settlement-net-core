@@ -1,4 +1,5 @@
-﻿using Fanex.Data.Repository;
+﻿using AutoMapper;
+using Fanex.Data.Repository;
 using Fanex.Settlement.ScaleOut.Criteria;
 using Fanex.Settlement.ScaleOut.Models;
 using Fanex.Settlement.ScaleOut.Request;
@@ -16,6 +17,8 @@ namespace Settlement.Outright.Services
         Task<Result> OutrightSettleMultiSite(OutrightSettleCriteria criteria);
 
         Task<Result> ValidateDeployment(string spName);
+
+        Task<Result> UpdateResultCalculate(OutrightSettleCriteria criteria, DateTime eventDate);
     }
 
     public class OutrightSettleProcessServiceImp : OutrightSettleProcessService
@@ -26,13 +29,17 @@ namespace Settlement.Outright.Services
 
         private readonly ScaleOutSettleThirdPartyService scaleOutSettleService;
 
+        private readonly IMapper mapper;
+
         public OutrightSettleProcessServiceImp(IDynamicRepository repository,
             IOptions<AppSettingsKey> appSettingsKey,
-            ScaleOutSettleThirdPartyService scaleOutSettleService)
+            ScaleOutSettleThirdPartyService scaleOutSettleService,
+            IMapper mapper)
         {
             this.repository = repository;
             this.appSettingsKey = appSettingsKey.Value;
             this.scaleOutSettleService = scaleOutSettleService;
+            this.mapper = mapper;
         }
 
         public async Task<Result> OutrightSettleMultiSite(OutrightSettleCriteria criteria)
@@ -92,6 +99,19 @@ namespace Settlement.Outright.Services
                 MatchId = criteria.MatchId
             };
 
+            await repository.ExecuteAsync(updateResultCriteria);
+
+            return new Result
+            {
+                ErrCode = updateResultCriteria.ErrCode,
+                ErrMsg = updateResultCriteria.ErrMsg
+            };
+        }
+
+        public async Task<Result> UpdateResultCalculate(OutrightSettleCriteria criteria, DateTime eventDate)
+        {
+            var updateResultCriteria = mapper.Map<OutrightSettleCriteria, UpdateResultOutrightCriteria>(criteria);
+            updateResultCriteria.EventDate = eventDate;
             await repository.ExecuteAsync(updateResultCriteria);
 
             return new Result

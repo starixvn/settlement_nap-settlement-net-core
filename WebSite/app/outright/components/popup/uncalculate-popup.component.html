@@ -5,7 +5,7 @@
         <div class="calculate-league">
             <div class="icon">
             </div>
-            {{leagueSettle.leagueName}}
+           {{leagueSettle.sportName | uppercase}} - {{leagueSettle.leagueName}}
         </div>
 
         <table>
@@ -30,7 +30,7 @@
                     <td class="align-left">
                         {{team.teamName}}
                     </td>
-                    <td class="text-transform">
+                    <td>
                         {{team.status}}
                     </td>
                     <td>

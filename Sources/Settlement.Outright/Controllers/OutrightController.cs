@@ -42,6 +42,10 @@ public class OutrightController : ControllerBase
     public async Task<IActionResult> Uncalculate(OutrightUndoRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
     [HttpPost]
+    [Route("calculate")]
+    public async Task<IActionResult> Calculate(OutrightCalculateRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+
+    [HttpPost]
     [Route("get-log")]
     public async Task<IActionResult> GetLeagues(GetLogRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 }

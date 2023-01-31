@@ -6,15 +6,16 @@ import { CustomHttpRequestInterceptor } from '../shared/custom-httprequest-inter
 import { environment } from '../environments/environment';
 import AppComponent from './components/app.component';
 import { ToastrModule } from 'ngx-toastr';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { BrowserAnimationsModule, NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { MatDialogModule } from '@angular/material/dialog';
 
 if (environment.production) {
-    enableProdMode();
+  enableProdMode();
 }
 
 bootstrapApplication(AppComponent, {
-    providers: [importProvidersFrom(BrowserAnimationsModule),
+  providers: [importProvidersFrom(BrowserAnimationsModule),
+  importProvidersFrom(NoopAnimationsModule),
     importProvidersFrom(ToastrModule.forRoot({
         disableTimeOut: true,
         enableHtml: true,

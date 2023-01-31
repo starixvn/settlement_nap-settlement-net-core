@@ -4,8 +4,8 @@ export interface Match {
     kickOffTime: Date;
     sportType: number;
     status: string;
-    leagueId:number;
+    leagueId: number;
     leagueName: string;
-    teamId:number;
+    teamId: number;
     teamName: string;
 }

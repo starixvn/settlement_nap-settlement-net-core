@@ -13,6 +13,8 @@ import { NgbDateStruct, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 })
 export class DatepickerComponent {
     @Input() public date: NgbDateStruct;
+    @Input() public minDate: NgbDateStruct;
+    @Input() public maxDate: NgbDateStruct;
     @Output() private readonly change = new EventEmitter();
     private dynamicId;
     private readonly elementRef: ElementRef<HTMLElement>;

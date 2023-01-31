@@ -18,8 +18,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
   standalone: true,
   providers:[OutrightService, HttpRequestService, BlockUIService , MessageBoxService  ],
   imports: [CommonModule, ToastContainerModule, HttpClientModule, FormsModule],
-  //animations:[flyInOut]
-
 })
 export class UncalculatePopupComponent implements OnInit{
   @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
@@ -33,13 +31,14 @@ export class UncalculatePopupComponent implements OnInit{
   private readonly messageBoxService: MessageBoxService){}
   ngOnInit(): void {
     this.blockUIService.blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
-    const leagueId = Number(UrlHelper.getUrlParameter('leagueId'));
     this.toastrService.overlayContainer = this.toastContainer;
-    this.getMatches(leagueId);
+    this.getMatches();
   }
 
-  async getMatches(leagueId: number){
-    this.leagueSettle = await this.outrightService.getMatches(leagueId, StatusId.Completed);
+  async getMatches(){
+    const leagueId = Number(UrlHelper.getUrlParameter('leagueId'));
+    const sportType = Number(UrlHelper.getUrlParameter('sportType'));
+    this.leagueSettle = await this.outrightService.getMatches(leagueId, sportType, StatusId.Completed);
     this.teams = this.leagueSettle.teams;
   }
 
@@ -48,7 +47,7 @@ export class UncalculatePopupComponent implements OnInit{
   };
 
   public disableUncalculate(){
-    return _.isEmpty(_.filter(this.teams, team => team.selected)) || !this.leagueSettle.permission.canUncalculateOutright
+    return _.isEmpty(_.filter(this.teams, team => team.selected)) || !this.leagueSettle.permission.canUncalculateOutright;
   }
 
   public async uncalculate() {

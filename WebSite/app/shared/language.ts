@@ -1,4 +1,5 @@
-﻿export const Language = {
+﻿import { Outright } from './../outright/models/outright.model';
+export const Language = {
     confirmationBox: 'Confirmation box',
     CalculationWarning: 'Calculation warning',
     RefundWarning: 'Refund warning',
@@ -255,7 +256,11 @@
         titleDirectTime:"Click to change waiting-time setting of Direct Settlement",
     },
     calculatePageWarning: "Please input Match Code/ID, select at least 1 League, Match Type, or Over Status.",
-    outright: {
-       titleLogPopup: 'Outright Settlement Log' 
+    Outright: {
+        existRunning: "Please input score.",
+        inconsistentDeadheat: "All Won teams must be either with or without Dead Heat.Please recheck or uncalculate first then try again.<br/>Selected and settled Won team:\n{0}",
+       titleLogPopup: 'Outright Settlement Log',
+        atLeastTwoDeadHeat: "Must select at least 2 Won teams to calculate with Dead Heat.",
+        nonDeadHeatConfirm: "Multiple Won teams without Dead Heat detected. Are you sure you want to proceed?",
     }
 };

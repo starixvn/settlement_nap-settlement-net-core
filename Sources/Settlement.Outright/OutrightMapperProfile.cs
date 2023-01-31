@@ -11,6 +11,8 @@ namespace Settlement.Outright
             CreateMap<LeagueRequest, GetOutrightLeaguesCriteria>();
             CreateMap<FilterRequest, GetOutrightDetailCriteria>();
             CreateMap<GetLeagueInfoRequest, GetLeagueInfoCriteria>();
+            CreateMap<TeamSettleModel, OutrightSettleCriteria>();
+            CreateMap<OutrightSettleCriteria, UpdateResultOutrightCriteria>();
         }
     }
 }

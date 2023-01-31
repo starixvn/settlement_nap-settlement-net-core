@@ -1,5 +1,4 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { PopupService } from '../../services/popup.service';
 import { FilterRequest } from '../../models/filter-request.model';
 import { Outright } from '../../models/outright.model';
 import { CommonModule, DatePipe } from '@angular/common';
@@ -13,7 +12,7 @@ import { DynamicHeightDirective } from '../../../shared/directives';
     templateUrl: './league-team.component.html',
     standalone: true,
     imports: [CommonModule,],
-    providers: [DatePipe, PopupService, DialogBoxService, DynamicHeightDirective,
+    providers: [DatePipe, DialogBoxService, DynamicHeightDirective,
         { provide: NgbDateParserFormatter, useFactory: () => new CustomNgbDateParserFormatter('MMM dd, y') }],
 
 })
@@ -25,7 +24,7 @@ export class LeagueTeamComponent implements OnInit {
     public get leagueMatch() {
         return this.outright?.leagueMatch ?? [];
     }
-    constructor(private popupService: PopupService) { }
+    constructor() { }
 
     ngOnInit(): void {
     }

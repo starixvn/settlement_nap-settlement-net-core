@@ -10,7 +10,8 @@ public class OutrightHandler :
         IRequestHandler<FilterRequest, OutrightModel>,
         IRequestHandler<GetLeagueInfoRequest, LeagueInfo>,
         IRequestHandler<OutrightUndoRequest, Result>,
-        IRequestHandler<GetLogRequest, IEnumerable<OutrightLog>>
+        IRequestHandler<GetLogRequest, IEnumerable<OutrightLog>>,
+        IRequestHandler<OutrightCalculateRequest, Result>
 
 {
     private readonly FilterService getDataFilterService;
@@ -33,6 +34,8 @@ public class OutrightHandler :
     public async Task<LeagueInfo> Handle(GetLeagueInfoRequest request, CancellationToken cancellationToken) => await settleService.GetLeagueInfo(request);
 
     public async Task<Result> Handle(OutrightUndoRequest request, CancellationToken cancellationToken) => await settleService.Uncalculate(request);
+
+    public async Task<Result> Handle(OutrightCalculateRequest request, CancellationToken cancellationToken) => await settleService.Calculate(request);
 
     public async Task<IEnumerable<OutrightLog>> Handle(GetLogRequest request, CancellationToken cancellationToken) => await outrightLogService.GetLogForView(request);
 }
