@@ -1,52 +1,70 @@
 <div class="filter-bar">
-    <div class="line">
+  <div class="line"></div>
+  <div class="filter-bar-inner">
+    <div class="row">
+      <div class="field small-field">
+        <label class="inner-label from-date">
+          From
+        </label>
+        <ngbd-date-picker
+          [date]="fromDate"
+          [minDate]="moveBetsDay"
+          [maxDate]="maxDate"
+          (change)="onSelectFromDate($event)"
+        ></ngbd-date-picker>
+      </div>
+      <div class="date">
+        <label class="inner-label to-date">
+          To
+        </label>
+        <ngbd-date-picker
+          [date]="toDate"
+          [minDate]="moveBetsDay"
+          [maxDate]="maxDate"
+          (change)="onSelectToDate($event)"
+        ></ngbd-date-picker>
+      </div>
     </div>
-    <div class="filter-bar-inner">
-        <div class="row">
-            <div class="field small-field">
-                <label class="inner-label from-date">
-                    From
-                </label>
-                <ngbd-date-picker [date]="fromDate" (change)="onSelectFromDate($event)"></ngbd-date-picker>
-            </div>
-            <div class="date">
-                <label class="inner-label to-date">
-                    To
-                </label>
-                <ngbd-date-picker [date]="toDate" (change)="onSelectToDate($event)"></ngbd-date-picker>
-            </div>
-        </div>
-        <div class="row">
-            <div class="field">
-                <label class="inner-label">
-                   Sport
-                </label>
-                <select (ngModelChange)="onSelectSport($event)" [(ngModel)]="sportSelected">
-                    <option *ngFor="let item of sportOptions" [value]="item.sportType"> {{item.sportName}}</option>
-                </select>
-            </div>
+    <div class="row">
+      <div class="field">
+        <label class="inner-label">
+          Sport
+        </label>
+        <select
+          (ngModelChange)="onSelectSport($event)"
+          [(ngModel)]="sportSelected"
+        >
+          <option *ngFor="let item of sportOptions" [value]="item.sportType">
+            {{ item.sportName }}</option
+          >
+        </select>
+      </div>
 
-            <div class="field" style="width:auto">
-                <label class="inner-label">
-                    League
-                </label>
-                <select [(ngModel)]="leagueSelected">
-                    <option *ngFor="let item of leagueOptions" [value]="item.leagueId">{{item.leagueName}}</option>
-                </select>
-            </div>
-            <div class="field" >
-                <label class="inner-label">
-                   Status
-                </label>
-                <select [(ngModel)]="statusSelected">
-                    <option *ngFor="let item of statusOptions" [value]="item.value">{{item.text}}</option>
-                </select>
-            </div>
+      <div class="field" style="width: auto;">
+        <label class="inner-label">
+          League
+        </label>
+        <select [(ngModel)]="leagueSelected" class="league-select">
+          <option *ngFor="let item of leagueOptions" [value]="item.leagueId">{{
+            item.leagueName
+          }}</option>
+        </select>
+      </div>
+      <div class="field">
+        <label class="inner-label">
+          Status
+        </label>
+        <select [(ngModel)]="statusSelected">
+          <option *ngFor="let item of statusOptions" [value]="item.value">{{
+            item.text
+          }}</option>
+        </select>
+      </div>
 
-            <div class="submit field">
-                <button class="button" (click)="search()">Submit</button>
-            </div>
-        </div>
+      <div class="submit field">
+        <button class="button" (click)="search()">Submit</button>
+      </div>
     </div>
-    <div class="line"></div>
+  </div>
+  <div class="line"></div>
 </div>

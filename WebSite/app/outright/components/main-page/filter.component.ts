@@ -1,6 +1,6 @@
 import { DatePipe, CommonModule } from '@angular/common';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { NgbDateParserFormatter, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
+import { NgbCalendar, NgbDateParserFormatter, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { League, Sport } from '../../models';
 import { CustomNgbDateParserFormatter } from '../../../shared/components/date-picker/custom-ngb-date-parser-formatter';
 import { allLeague, Statuses } from '../../constants/Options';
@@ -10,6 +10,7 @@ import { FilterRequest } from '../../models/filter-request.model';
 import { ModalDialogMessage } from '../../../shared/models';
 import { DatepickerComponent } from '../../../shared/components/date-picker/date-picker.component';
 import { FormsModule } from '@angular/forms';
+import { Resources } from '../../constants/Resources';
 
 @Component({
     selector: 'filter',
@@ -38,6 +39,7 @@ export class FilterComponent implements OnInit {
     public statusSelected: number;
 
     public moveBetsDay: NgbDateStruct;
+    public maxDate: NgbDateStruct;
 
     public warningDialogMessage: ModalDialogMessage = new ModalDialogMessage();
 
@@ -45,7 +47,10 @@ export class FilterComponent implements OnInit {
     constructor(
         private verifyDateService: VerifyDateService,
         private outrightService: OutrightService,
-        private messageBoxService: MessageBoxService) { }
+        private readonly calendar: NgbCalendar,
+        private messageBoxService: MessageBoxService) {
+        this.maxDate = this.calendar.getToday();
+    }
 
     ngOnInit(
     ): void {
@@ -90,9 +95,13 @@ export class FilterComponent implements OnInit {
         const fromDateValue = this.verifyDateService.dateFormat(fromDate);
         const toDateValue = this.verifyDateService.dateFormat(toDate);
 
-        this.outrightService.getLeagues({ fromDate: fromDateValue, toDate: toDateValue, sportType }).subscribe(res => {
-            this.leagueOptions = [allLeague, ...res]
-        })
+        if (this.isValidInput(fromDate, toDate)) {
+            this.outrightService.getLeagues({ fromDate: fromDateValue, toDate: toDateValue, sportType }).subscribe(res => {
+                this.leagueOptions = [allLeague, ...res]
+            })
+        } else {
+            this.leagueOptions = [allLeague]
+        }
     }
 
 
@@ -100,6 +109,11 @@ export class FilterComponent implements OnInit {
         return this.verifyDateService.validDate(fromDate, toDate);
     }
 
+    private showWarningMessage(message: string) {
+        this.warningDialogMessage.title = Resources.warningTitle;
+        this.warningDialogMessage.message = message;
+        this.messageBoxService.alert(this.warningDialogMessage);
+    }
 
     search() {
         const fromDate = this.verifyDateService.dateFormat(this.fromDate);
@@ -116,14 +130,7 @@ export class FilterComponent implements OnInit {
         }
 
         if (!this.isValidInput(this.fromDate, this.toDate)) {
-            return;
-        }
-
-        if (this.sportSelected < 0) {
-            return;
-        }
-
-        if (this.leagueSelected < 0) {
+            this.showWarningMessage(Resources.invalidDate);
             return;
         }
 

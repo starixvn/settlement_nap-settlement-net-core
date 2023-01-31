@@ -9,7 +9,7 @@
       <th class="event-id">Event ID</th>
       <td class="ko-time">Kick-off Time</td>
       <td>Event</td>
-      <td>
+      <td class="event-status">
         Event Status
       </td>
     </tr>
@@ -50,8 +50,8 @@
             {{ team.kickOffTime | date: "mediumDate" }}
             {{ team.kickOffTime | date: "hh:mm:ss a" }}
           </td>
-          <td>{{ team.teamName }}</td>
-          <td>{{ team.status }}</td>
+          <td class="team-name">{{ team.teamName }}</td>
+          <td class="event-status">{{ team.status }}</td>
         </tr>
       </ng-container>
     </ng-container>
