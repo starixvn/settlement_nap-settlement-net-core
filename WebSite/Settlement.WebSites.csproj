@@ -162,14 +162,4 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="App_Data\Template\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="App_Data\Template\ViewLogsOutright.xls">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
 </Project>
