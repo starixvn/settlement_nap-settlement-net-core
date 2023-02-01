@@ -111,7 +111,7 @@ public class OutrightSettleServiceImp : OutrightSettleService
         var errorMsg = new StringBuilder();
         var tasks = request.Teams.Select((match) => Task.Run(async () =>
         {
-            var result = await SettleMatch(match);
+            var result = await SettleMatch(match, request.DeadHeat);
             if (!result.IsSuccessful)
             {
                 errorMsg = AppendMessage(errorMsg, match.teamId, result.ErrMsg);
@@ -122,11 +122,12 @@ public class OutrightSettleServiceImp : OutrightSettleService
         return new Result { ErrMsg = errorMsg.ToString() };
     }
 
-    private async Task<Result> SettleMatch(TeamSettleModel team)
+    private async Task<Result> SettleMatch(TeamSettleModel team, int deadHeat)
     {
         var criteria = mapper.Map<TeamSettleModel, OutrightSettleCriteria>(team);
         criteria.Action = ActionType.CalculateAll;
         criteria.AdminId = currentSession.UserId;
+        criteria.Deadheat = deadHeat;
         var updateResult = await outrightSettleProcessService.UpdateResultCalculate(criteria, team.EventDate);
         if (!updateResult.IsSuccessful)
         {

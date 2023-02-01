@@ -179,7 +179,7 @@ namespace Settlement.WebSites.Controllers
         }
 
         [Route("Home/outright")]
-        public IActionResult outright()
+        public ActionResult Outright()
         {
             return SetView("Settlement Outright", string.Empty, ViewPath.Outright);
         }
