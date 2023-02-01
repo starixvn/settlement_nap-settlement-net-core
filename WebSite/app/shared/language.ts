@@ -239,28 +239,30 @@ export const Language = {
         MarkRemainTicket: '- Mark remaining tickets of {0} as "Running".'
     },
     instants: {
-    confirm: "Are you sure you want to update Instant Calculation Setting of this match?",
-    confirmOffLeague:"You have changed Instant Calc Setting of League from ON to OFF. Do you want to update OFF for Un-Calculated matches?",
-    confirmOnLeague:"You have changed Instant Calc Setting of League from OFF to ON. Do you want to update ON for Un-Calculated matches?",
-    titleOffInstant: "Click to turn off Instant Calculation.",
-    titleOnInstant: "Click to turn on Instant Calculation.",
-    titleInstantTime:"Click to change waiting-time setting of Instant Calculation.",
-    titleChangeTime: "Change waiting-time setting",
-    confirmExecuteInstant:"Are you sure you want to execute Instant Calculation on this match with the specific score?",
+        confirm: "Are you sure you want to update Instant Calculation Setting of this match?",
+        confirmOffLeague: "You have changed Instant Calc Setting of League from ON to OFF. Do you want to update OFF for Un-Calculated matches?",
+        confirmOnLeague: "You have changed Instant Calc Setting of League from OFF to ON. Do you want to update ON for Un-Calculated matches?",
+        titleOffInstant: "Click to turn off Instant Calculation.",
+        titleOnInstant: "Click to turn on Instant Calculation.",
+        titleInstantTime: "Click to change waiting-time setting of Instant Calculation.",
+        titleChangeTime: "Change waiting-time setting",
+        confirmExecuteInstant: "Are you sure you want to execute Instant Calculation on this match with the specific score?",
 
     },
     payout: {
         title: "Click to change auto payout setting.",
         titlePopup: "Match Auto Payout Setting",
         titlePopupForLeague: "League Auto Payout Setting",
-        titleDirectTime:"Click to change waiting-time setting of Direct Settlement",
+        titleDirectTime: "Click to change waiting-time setting of Direct Settlement",
     },
     calculatePageWarning: "Please input Match Code/ID, select at least 1 League, Match Type, or Over Status.",
     Outright: {
         existRunning: "Please input score.",
         inconsistentDeadheat: "All Won teams must be either with or without Dead Heat.Please recheck or uncalculate first then try again.<br/>Selected and settled Won team:\n{0}",
-       titleLogPopup: 'Outright Settlement Log',
+        titleLogPopup: 'Outright Settlement Log',
         atLeastTwoDeadHeat: "Must select at least 2 Won teams to calculate with Dead Heat.",
         nonDeadHeatConfirm: "Multiple Won teams without Dead Heat detected. Are you sure you want to proceed?",
+        confirmCalculate: "Are you sure you want to CALCULATE the selected matches?",
+        confirmUncalculate: "Are you sure you want to UNCALCULATE the selected matches?"
     }
 };

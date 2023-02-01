@@ -38,6 +38,8 @@ public class OutrightSettleServiceImp : OutrightSettleService
 
     private const string SpName = "NAP_Admin_Settlement_Outright";
 
+    private List<string> runningStatus = new() { EventStatus.Running, EventStatus.Closed, EventStatus.Internal };
+
     public OutrightSettleServiceImp(IDynamicRepository repository,
         IMapper mapper,
         IRefDataService refDataService,
@@ -159,8 +161,8 @@ public class OutrightSettleServiceImp : OutrightSettleService
         return await outrightSettleProcessService.OutrightSettleMultiSite(criteria);
     }
 
-    private static IEnumerable<Team> SortTeam(IEnumerable<Team> teams)
+    private IEnumerable<Team> SortTeam(IEnumerable<Team> teams)
     {
-        return teams.OrderByDescending(t => t.OddsStatus.ToLowerInvariant() == EventStatus.Running).ThenBy(t => t.TeamName);
+        return teams.OrderByDescending(t => runningStatus.Exists(s => s == t.OddsStatus.ToLowerInvariant())).ThenBy(t => t.TeamName);
     }
 }

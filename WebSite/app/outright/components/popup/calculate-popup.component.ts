@@ -1,4 +1,4 @@
-import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDateStruct, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { OutrightService } from './../../services/outright.service';
 import { Component, Inject, Injector, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -15,12 +15,13 @@ import { Language } from '../../../shared/language';
 import { ModalDialogMessage } from '../../../shared/models';
 import { MatDialog, MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DragDropModule } from '@angular/cdk/drag-drop';
+import { ModalDialogComponent } from '../../../shared/components/modal-dialog/modal-dialog.component';
 
 @Component({
   selector: 'calculate-popup',
   templateUrl: './calculate-popup.component.html',
   standalone: true,
-  imports: [CommonModule, FormsModule, DatepickerComponent, ToastContainerModule, StatusPipe, MatDialogModule, DragDropModule ],
+  imports: [CommonModule, FormsModule, DatepickerComponent, ToastContainerModule, StatusPipe, MatDialogModule, DragDropModule],
   providers: [OutrightService, HttpRequestService, BlockUIService, MessageBoxService, VerifyDateService, CalculateService],
 })
 export class CalculatePopupComponent implements OnInit {
@@ -43,7 +44,6 @@ export class CalculatePopupComponent implements OnInit {
     private readonly dialogRef: MatDialogRef<CalculatePopupComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { leagueId: number, sportType: number }) {
     this.confirmationDialogMessage.title = Language.confirmationBox;
-    this.confirmationDialogMessage.message = Language.Outright.nonDeadHeatConfirm;
     this.injector.get(MatDialog).closeAll();
   }
 
@@ -100,23 +100,28 @@ export class CalculatePopupComponent implements OnInit {
     const teamWonSelected = _.filter(this.teamSelected, team => _.isEqual(team.status.toLowerCase(), Status.Won));
     const teamWonSettled = CalculateService.teamWonSettled(this.teamSelected, this.originalTeam);
     this.teamSettleWon = teamWonSelected.concat(teamWonSettled);
-    this.validateBeforePush(this.teamSettleWon, teamWonSettled)
+    this.validateBeforePush(this.teamSettleWon, teamWonSettled, teamWonSelected)
   };
 
-  private validateBeforePush(teamSettleWon: Team[], teamWonSettled: Team[]) {
+  private validateBeforePush(teamSettleWon: Team[], teamWonSettled: Team[], teamWonSelected: Team[]) {
     if (CalculateService.ExistRunningStatus(this.teamSelected)) {
       this.toastrService.error(Language.Outright.existRunning);
-    } else if (CalculateService.VerifyOnlyOneTeamWon(teamSettleWon, teamWonSettled)) {
+    } else if (CalculateService.VerifyOnlyOneTeamWon(teamWonSelected, teamWonSettled)) {
       this.toastrService.error(Language.Outright.atLeastTwoDeadHeat);
-    } else if (CalculateService.VerifyDeadheat(teamSettleWon, teamWonSettled)) {
+    } else if (CalculateService.VerifyDeadheat(teamWonSelected, teamWonSettled)) {
       this.toastrService.error(CalculateService.MessageInconsistentDeadheat(teamSettleWon));
     } else if (CalculateService.VerifyNonDeadheat(teamSettleWon)) {
-      this.injector.get(MessageBoxService).confirm(this.confirmationDialogMessage, () => {
-        this.doCalculate(this.teamSettleWon.length);
-      });
+      this.confirmCalcNonDeadheat();
     } else {
       this.doCalculate(this.teamSettleWon.length);
     }
+  }
+
+  private confirmCalcNonDeadheat() {
+    this.confirmationDialogMessage.message = Language.Outright.nonDeadHeatConfirm;
+    this.injector.get(MessageBoxService).confirm(this.confirmationDialogMessage, () => {
+      this.doCalculate(this.teamSettleWon.length);
+    });
   }
 
   private async getLatestData() {
@@ -129,12 +134,15 @@ export class CalculatePopupComponent implements OnInit {
   }
 
   private async doCalculate(deadHeat: number) {
-    const teams = this.teamSelected.map(team => new TeamSettle(team.orId, team.teamId.toString(), team.isDeadheat, team.status, team.eventDate));
-    const result = await this.outrightService.calculate(teams, deadHeat);
-    if (result.isSuccessful) {
-      this.dialogRef.close();
-    } else {
-      this.toastrService.error(result.errMsg);
-    }
+    this.confirmationDialogMessage.message = Language.Outright.confirmCalculate;
+    this.injector.get(MessageBoxService).confirm(this.confirmationDialogMessage, async () => {
+      const teams = this.teamSelected.map(team => new TeamSettle(team.orId, team.teamId.toString(), team.isDeadheat, team.status, team.eventDate));
+      const result = await this.outrightService.calculate(teams, deadHeat);
+      if (result.isSuccessful) {
+        this.dialogRef.close();
+      } else {
+        this.toastrService.error(result.errMsg);
+      }
+    });
   }
 }

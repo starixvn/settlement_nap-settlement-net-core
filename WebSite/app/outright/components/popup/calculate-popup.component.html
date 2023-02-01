@@ -8,24 +8,26 @@
 <div class="table-calculate-outright" [ngClass]="{'processing' : blockUI}">
     <span toastContainer></span>
     <div *ngIf="blockUI" class="loading"></div>
-    <div class="league">
-        <div class="icon">
+    <div *ngIf="leagueSettle">
+        <div class="league">
+            <div class="icon">
+            </div>
+            {{leagueSettle.sportName | uppercase}} - {{leagueSettle.leagueName}}
         </div>
-        {{leagueSettle.sportName | uppercase}} - {{leagueSettle.leagueName}}
-    </div>
-    <div class="header">
-        <ng-template *ngTemplateOutlet="header"></ng-template>
-    </div>
-    <div class="table-scroll">
-        <ng-template *ngTemplateOutlet="body"></ng-template>
-    </div>
+        <div class="header">
+            <ng-template *ngTemplateOutlet="header"></ng-template>
+        </div>
+        <div class="table-scroll">
+            <ng-template *ngTemplateOutlet="body"></ng-template>
+        </div>
 
-    <div class="footer" *ngIf="teams.length > 0">
-        <button [ngClass]="{'button': true, 'button-disabled': disableCalculate()}" [disabled]="disableCalculate()"
-            (click)="calculate()">
-            Calculate
-        </button>
+        <div class="footer" *ngIf="teams.length > 0">
+            <button [ngClass]="{'button': true, 'button-disabled': disableCalculate()}" [disabled]="disableCalculate()"
+                (click)="calculate()">
+                Calculate
+            </button>
 
+        </div>
     </div>
 
 

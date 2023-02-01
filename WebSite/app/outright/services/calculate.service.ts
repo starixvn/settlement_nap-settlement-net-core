@@ -15,16 +15,17 @@ export class CalculateService {
         const teamSettledDeadHeat = _.filter(teamWonSettled, team => team.isDeadheat);
         const teamSettledNoneDeadHeat = _.filter(teamWonSettled, team => !team.isDeadheat);
         const teamWonSelectedDeadHeat = _.filter(teamWonSelected, team => team.isDeadheat);
+        const teamWonSelectedNoneDeadHeat = _.filter(teamWonSelected, team => !team.isDeadheat);
 
-        if (!(_.isEmpty(teamSettledDeadHeat) || _.isEmpty(teamWonSelected))) {
+        if (!_.isEmpty(teamSettledDeadHeat) && !_.isEmpty(teamWonSelected)) {
             return true;
         }
 
-        if(!(_.isEmpty(teamWonSelectedDeadHeat) || _.isEmpty(teamSettledNoneDeadHeat))) {
+        if(!_.isEmpty(teamWonSelectedDeadHeat) && !_.isEmpty(teamSettledNoneDeadHeat)) {
             return true;
         }
 
-        if(!(_.isEmpty(teamSettledDeadHeat) || _.isEmpty(teamWonSelectedDeadHeat))) {
+        if(!_.isEmpty(teamWonSelectedDeadHeat) && !_.isEmpty(teamWonSelectedNoneDeadHeat)) {
             return true;
         }
 

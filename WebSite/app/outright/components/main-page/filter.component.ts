@@ -52,8 +52,7 @@ export class FilterComponent implements OnInit {
         this.maxDate = this.calendar.getToday();
     }
 
-    ngOnInit(
-    ): void {
+    ngOnInit(): void {
         this.initFilterData();
     }
 
