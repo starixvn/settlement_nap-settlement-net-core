@@ -34,8 +34,12 @@
                 </button>
               </div>
               <div class="league-action">
-                <button class="button" (click)="calculatePopup(item)">Calculate</button>
-                <button class="button" (click)="uncalculatePopup(item)">Uncalculate</button>
+                <button class="button" (click)="calculatePopup(item)">
+                  Calculate
+                </button>
+                <button class="button" (click)="uncalculatePopup(item)">
+                  Uncalculate
+                </button>
               </div>
             </div>
           </td>
@@ -58,7 +62,6 @@
   </tbody>
   <!-- </div> -->
 </ng-template>
-`
 <ng-template #empty>
   <tr class="empty-data">
     <td colspan="4">There is no information available</td>

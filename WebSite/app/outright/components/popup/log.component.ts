@@ -8,12 +8,13 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DatepickerComponent } from '../../../shared/components/date-picker/date-picker.component';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { DynamicHeightDirective } from '../../../shared/directives';
 
 @Component({
     selector: 'log',
     templateUrl: './log.component.html',
     standalone: true,
-    imports: [CommonModule, FormsModule, DatepickerComponent, MatDialogModule],
+    imports: [CommonModule, FormsModule, DatepickerComponent, MatDialogModule, DynamicHeightDirective],
     providers: [VerifyDateService, OutrightService, HttpRequestService, MessageBoxService, BlockUIService,
     ],
     encapsulation: ViewEncapsulation.None,
