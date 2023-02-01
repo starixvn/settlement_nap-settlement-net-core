@@ -9,7 +9,7 @@ import { FormsModule } from '@angular/forms';
 
 import * as _ from 'lodash';
 import { StatusId } from '../../constants/status-id.model';
-import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 
 @Component({
@@ -34,6 +34,7 @@ export class UncalculatePopupComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: { leagueId: number, sportType: number }) {
     this.leagueId = data.leagueId;
     this.sportType = data.sportType;
+    this.injector.get(MatDialog).closeAll();
   }
   ngOnInit(): void {
     this.injector.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);

@@ -43,13 +43,11 @@ export class LeagueTeamComponent implements OnInit {
                 ...this.request,
                 matchCode: `${matchCode}`
             },
-            width: '1000px',
-            height: '550px'
-
+            width: '1000px'
         });
     }
 
-    public calculatePopup(league: LeagueMatch) {
+    public calculatePopup(league: LeagueMatch){
         this.dialog.open(CalculatePopupComponent, {
             data: {
                 leagueId: league.leagueId,
@@ -60,7 +58,7 @@ export class LeagueTeamComponent implements OnInit {
         });
     }
 
-    public uncalculatePopup(league: LeagueMatch) {
+    public uncalculatePopup(league: LeagueMatch){
         this.dialog.open(UncalculatePopupComponent, {
             data: {
                 leagueId: league.leagueId,

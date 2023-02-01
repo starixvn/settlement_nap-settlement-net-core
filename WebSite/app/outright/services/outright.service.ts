@@ -59,7 +59,7 @@ export class OutrightService {
         return firstValueFrom(response);
     }
 
-    public getLogs(request: LogRequest): Observable<OutrightLog> {
-        return this.httpRequestService.postJson<OutrightLog>(request, `${this.outrightApi}/get-log`)
+    public getLogs(request: LogRequest): Observable<OutrightLog[]> {
+        return this.httpRequestService.postJson<OutrightLog[]>(request, `${this.outrightApi}/get-log`)
     }
 }

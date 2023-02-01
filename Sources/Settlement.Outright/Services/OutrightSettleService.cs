@@ -88,7 +88,7 @@ public class OutrightSettleServiceImp : OutrightSettleService
         var errorMsg = new StringBuilder();
         var tasks = listMatch.Select((match, i) => Task.Run(async () =>
         {
-            var result = await UpdateResultAndUndo(int.Parse(listMatch[i]));
+            var result = await UpdateResultAndUndo(int.Parse(match));
             if (!result.IsSuccessful)
             {
                 errorMsg = AppendMessage(errorMsg, teamIds[i], result.ErrMsg);
@@ -158,8 +158,8 @@ public class OutrightSettleServiceImp : OutrightSettleService
         return await outrightSettleProcessService.OutrightSettleMultiSite(criteria);
     }
 
-    private IEnumerable<Team> SortTeam(IEnumerable<Team> teams)
+    private static IEnumerable<Team> SortTeam(IEnumerable<Team> teams)
     {
-        return teams.OrderByDescending(t => t.OddsStatus.ToLower() == EventStatus.Running).ThenBy(t => t.TeamName);
+        return teams.OrderByDescending(t => t.OddsStatus.ToLowerInvariant() == EventStatus.Running).ThenBy(t => t.TeamName);
     }
 }

@@ -1,20 +1,17 @@
-import { CalculatePopupComponent } from './popup/calculate-popup.component';
 import { Component, OnInit } from '@angular/core';
 import { Outright } from '../models/outright.model';
 import { BlockUIService } from '../../shared/services';
-import { UncalculatePopupComponent } from './popup/uncalculate-popup.component';
 import { FilterRequest } from '../models/filter-request.model';
 import { FilterComponent } from './main-page/filter.component';
 import { LeagueTeamComponent } from './main-page/league-team.component';
 import { CommonModule } from '@angular/common';
 import { LogComponent } from './popup/log.component';
-import { DynamicHeightDirective } from '../../shared/directives';
 
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
     standalone: true,
-    imports: [CommonModule, UncalculatePopupComponent, FilterComponent, LeagueTeamComponent, LogComponent, DynamicHeightDirective],
+    imports: [CommonModule, FilterComponent, LeagueTeamComponent, LogComponent],
     providers: [BlockUIService]
 })
 export default class AppComponent implements OnInit {

@@ -1,7 +1,5 @@
 ﻿using AutoMapper;
 using Fanex.Data.Repository;
-using Fanex.Settlement.ScaleOut.Criteria;
-using Fanex.Settlement.ScaleOut.Models;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
 using Microsoft.Extensions.Options;
@@ -119,13 +117,6 @@ namespace Settlement.Outright.Services
                 ErrCode = updateResultCriteria.ErrCode,
                 ErrMsg = updateResultCriteria.ErrMsg
             };
-        }
-
-        private async Task<int> GetSiteGroupId(string dbServer)
-        {
-            var criteria = new GetSiteGroupCriteria { DbServer = dbServer };
-            var site = await repository.GetAsync<SiteGroup>(criteria);
-            return site.SiteDbGroupId;
         }
     }
 }

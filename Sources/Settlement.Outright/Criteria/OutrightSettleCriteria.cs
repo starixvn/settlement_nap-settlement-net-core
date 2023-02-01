@@ -24,9 +24,6 @@ public class OutrightSettleCriteria : NonQueryCommand
     [SpParam(Ignored = true)]
     public string DbServer { get; set; }
 
-    [SpParam(Ignored = true)]
-    public string SpName = "NAP_Admin_Settlement_Outright";
-
     public override string GetSettingKey()
     {
         return $"NAP_Admin_Settlement_Outright_{DbServer}";

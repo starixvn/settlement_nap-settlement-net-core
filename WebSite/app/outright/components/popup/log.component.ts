@@ -73,7 +73,7 @@ export class LogComponent implements OnInit {
                 leagueId: this.leagueId
             }
             this.outrightService.getLogs(request).subscribe(res => {
-
+                this.outrightLogs = res;
             })
         }
     }
