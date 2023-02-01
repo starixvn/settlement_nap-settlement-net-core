@@ -12,10 +12,8 @@ import { OutrightLog } from "../models/outright-log.model";
 @Injectable()
 export class OutrightService {
     private outrightApi = "api/outright";
-    private settingApi = "";
 
     constructor(private httpRequestService: HttpRequestService) { }
-
 
     public getLeagues(request: LeagueRequest) {
         console.log('request', request);

@@ -24,16 +24,11 @@ export class UncalculatePopupComponent implements OnInit {
   public teams: Team[];
   public leagueSettle: LeagueSettle;
   public blockUI = true;
-  private leagueId: number;
-  private sportType: number;
-
   constructor(private readonly toastrService: ToastrService,
     private readonly outrightService: OutrightService,
     private readonly injector: Injector,
     private readonly dialogRef: MatDialogRef<UncalculatePopupComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { leagueId: number, sportType: number }) {
-    this.leagueId = data.leagueId;
-    this.sportType = data.sportType;
     this.injector.get(MatDialog).closeAll();
   }
   ngOnInit(): void {
@@ -43,7 +38,7 @@ export class UncalculatePopupComponent implements OnInit {
   }
 
   async getMatches() {
-    this.leagueSettle = await this.outrightService.getMatches(this.leagueId, this.sportType, StatusId.Completed);
+    this.leagueSettle = await this.outrightService.getMatches(this.data.leagueId, this.data.sportType, StatusId.Completed);
     this.teams = this.leagueSettle.teams;
   }
 

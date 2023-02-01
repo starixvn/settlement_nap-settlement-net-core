@@ -7,7 +7,7 @@
 </div>
 
 
-<div class="table-outright">
+<div class="table-outright" [ngClass]="{'processing' : blockUI}">
     <span toastContainer></span>
     <div *ngIf="blockUI" class="loading"></div>
     <div class="calculate-league">

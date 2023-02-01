@@ -15,6 +15,7 @@ bootstrapApplication(AppComponent, {
   importProvidersFrom(ToastrModule.forRoot({
     disableTimeOut: true,
     enableHtml: true,
+    tapToDismiss: false,
     maxOpened: 1,
   })),
   importProvidersFrom(HttpClientModule)

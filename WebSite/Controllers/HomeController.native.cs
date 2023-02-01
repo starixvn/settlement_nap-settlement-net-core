@@ -178,6 +178,12 @@ namespace Settlement.WebSites.Controllers
             return SetView("AutoCalculation", "AutoCalculation", ViewPath.Calculation);
         }
 
+        [Route("Home/outright")]
+        public IActionResult outright()
+        {
+            return SetView("Settlement Outright", string.Empty, ViewPath.Outright);
+        }
+
         private ActionResult SetView(string title, string pageType, string viewName)
         {
             ViewBag.Environment = configuration.GetSection("Environment").Value;

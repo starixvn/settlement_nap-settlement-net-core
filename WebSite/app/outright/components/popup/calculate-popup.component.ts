@@ -36,19 +36,14 @@ export class CalculatePopupComponent implements OnInit {
   public statusSelected = FilterStatuses[0].toUpperCase();
   public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
   private teamSettleWon: Team[];
-  private leagueId: number;
-  private sportType: number;
   constructor(protected injector: Injector,
     private readonly toastrService: ToastrService,
     private readonly outrightService: OutrightService,
     private readonly verifyDateService: VerifyDateService,
-    private readonly calculateService: CalculateService,
     private readonly dialogRef: MatDialogRef<CalculatePopupComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { leagueId: number, sportType: number }) {
     this.confirmationDialogMessage.title = Language.confirmationBox;
     this.confirmationDialogMessage.message = Language.Outright.nonDeadHeatConfirm;
-    this.leagueId = data.leagueId;
-    this.sportType = data.sportType;
     this.injector.get(MatDialog).closeAll();
   }
 
@@ -63,7 +58,7 @@ export class CalculatePopupComponent implements OnInit {
   }
 
   async getMatches() {
-    this.leagueSettle = await this.outrightService.getMatches(this.leagueId, this.sportType, StatusId.RunningAndCompleted);
+    this.leagueSettle = await this.outrightService.getMatches(this.data.leagueId, this.data.sportType, StatusId.RunningAndCompleted);
     this.leagueSettle.teams.forEach(team => {
       team.dateTime = this.verifyDateService.convertToDateStruct(team.eventDate);
       team.status = team.status.toUpperCase();
@@ -103,19 +98,19 @@ export class CalculatePopupComponent implements OnInit {
     this.clearError();
     await this.getLatestData();
     const teamWonSelected = _.filter(this.teamSelected, team => _.isEqual(team.status.toLowerCase(), Status.Won));
-    const teamWonSettled = this.calculateService.teamWonSettled(this.teamSelected, this.originalTeam);
+    const teamWonSettled = CalculateService.teamWonSettled(this.teamSelected, this.originalTeam);
     this.teamSettleWon = teamWonSelected.concat(teamWonSettled);
     this.validateBeforePush(this.teamSettleWon, teamWonSettled)
   };
 
   private validateBeforePush(teamSettleWon: Team[], teamWonSettled: Team[]) {
-    if (this.calculateService.ExistRunningStatus(this.teamSelected)) {
+    if (CalculateService.ExistRunningStatus(this.teamSelected)) {
       this.toastrService.error(Language.Outright.existRunning);
-    } else if (this.calculateService.VerifyOnlyOneTeamWon(teamSettleWon, teamWonSettled)) {
+    } else if (CalculateService.VerifyOnlyOneTeamWon(teamSettleWon, teamWonSettled)) {
       this.toastrService.error(Language.Outright.atLeastTwoDeadHeat);
-    } else if (this.calculateService.VerifyDeadheat(teamSettleWon)) {
-      this.toastrService.error(this.calculateService.MessageInconsistentDeadheat(teamSettleWon));
-    } else if (this.calculateService.VerifyNonDeadheat(teamSettleWon)) {
+    } else if (CalculateService.VerifyDeadheat(teamSettleWon, teamWonSettled)) {
+      this.toastrService.error(CalculateService.MessageInconsistentDeadheat(teamSettleWon));
+    } else if (CalculateService.VerifyNonDeadheat(teamSettleWon)) {
       this.injector.get(MessageBoxService).confirm(this.confirmationDialogMessage, () => {
         this.doCalculate(this.teamSettleWon.length);
       });
@@ -125,7 +120,7 @@ export class CalculatePopupComponent implements OnInit {
   }
 
   private async getLatestData() {
-    const latestLeague = await this.outrightService.getMatches(this.leagueId, this.sportType, StatusId.RunningAndCompleted);
+    const latestLeague = await this.outrightService.getMatches(this.data.leagueId, this.data.sportType, StatusId.RunningAndCompleted);
     latestLeague.teams.forEach(team => {
       team.dateTime = this.verifyDateService.convertToDateStruct(team.eventDate);
       team.status = team.status.toUpperCase();

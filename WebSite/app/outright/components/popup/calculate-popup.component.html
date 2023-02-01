@@ -5,7 +5,7 @@
     </label>
     <button type="button" class="close dialog-close" (click)="close()" tabindex="8">X</button>
 </div>
-<div class="table-calculate-outright">
+<div class="table-calculate-outright" [ngClass]="{'processing' : blockUI}">
     <span toastContainer></span>
     <div *ngIf="blockUI" class="loading"></div>
     <div class="league">
