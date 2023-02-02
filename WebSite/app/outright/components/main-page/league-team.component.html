@@ -34,10 +34,18 @@
                 </button>
               </div>
               <div class="league-action">
-                <button class="button" (click)="calculatePopup(item)">
+                <button
+                  *ngIf="permission.canCalculateOutright"
+                  class="button"
+                  (click)="calculatePopup(item)"
+                >
                   Calculate
                 </button>
-                <button class="button" (click)="uncalculatePopup(item)">
+                <button
+                  *ngIf="permission.canUncalculateOutright"
+                  class="button"
+                  (click)="uncalculatePopup(item)"
+                >
                   Uncalculate
                 </button>
               </div>

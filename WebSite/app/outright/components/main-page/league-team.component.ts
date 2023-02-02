@@ -34,6 +34,10 @@ export class LeagueTeamComponent implements OnInit {
         return this.outright?.leagueMatch ?? [];
     }
 
+    public get permission() {
+        return this.outright.permission;
+    }
+
     ngOnInit(): void {
     }
 
