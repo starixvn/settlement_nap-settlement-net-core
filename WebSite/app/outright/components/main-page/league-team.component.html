@@ -29,7 +29,7 @@
                   {{ item.leagueName }}
                 </span>
                 <span class="code"> Code: {{ item.teams[0].matchCode }} </span>
-                <button (click)="viewLog(item.teams[0].matchCode)">
+                <button (click)="viewLog(item)">
                   View Log
                 </button>
               </div>
@@ -46,9 +46,7 @@
         </tr>
         <tr *ngFor="let team of item.teams">
           <td class="event-id">
-            <span role="button" (click)="viewLog(team.orId)">{{
-              team.orId
-            }}</span>
+            <span role="button" (click)="viewLog(item,team.orId)">{{ team.orId }}</span>
           </td>
           <td class="ko-time">
             {{ team.kickOffTime | date: "mediumDate" }}

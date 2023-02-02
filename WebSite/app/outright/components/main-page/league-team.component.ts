@@ -37,11 +37,12 @@ export class LeagueTeamComponent implements OnInit {
     ngOnInit(): void {
     }
 
-    public viewLog(matchCode: string) {
+    public viewLog(league: LeagueMatch, matchId: number | null = null) {
         this.dialog.open(LogComponent, {
             data: {
                 ...this.request,
-                matchCode: `${matchCode}`
+                leagueId: league.leagueId,
+                matchCode: !!matchId ? `${matchId}` : league.teams[0].matchCode,
             },
             width: '1000px',
             height: '550px'

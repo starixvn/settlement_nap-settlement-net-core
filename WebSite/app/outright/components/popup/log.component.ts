@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, Inject, Injector, OnInit, ViewEncapsulation } from '@angular/core';
 import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { OutrightService } from '../../services/outright.service';
 import { BlockUIService, HttpRequestService, MessageBoxService, VerifyDateService } from '../../../shared/services';
@@ -9,6 +9,8 @@ import { FormsModule } from '@angular/forms';
 import { DatepickerComponent } from '../../../shared/components/date-picker/date-picker.component';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DynamicHeightDirective } from '../../../shared/directives';
+import { ModalDialogMessage } from '../../../shared/models';
+import { Resources } from '../../constants/Resources';
 
 @Component({
     selector: 'log',
@@ -26,20 +28,20 @@ export class LogComponent implements OnInit {
     public leagueId: number;
     public outrightLogs: OutrightLog[] = [];
     public blockUI = true;
+    public warningDialogMessage: ModalDialogMessage = new ModalDialogMessage();
 
     constructor(
+        protected injector: Injector,
         private readonly verifyDateService: VerifyDateService,
         private readonly outrightService: OutrightService,
-        private readonly blockUIService: BlockUIService,
         public dialogRef: MatDialogRef<LogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: LogRequest,
+        private messageBoxService: MessageBoxService
 
     ) { }
 
     ngOnInit(): void {
-        console.log(this.data);
-        this.blockUIService.blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
-
+        this.injector.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
         this.initialData();
     }
 
@@ -47,6 +49,7 @@ export class LogComponent implements OnInit {
         this.fromDate = this.verifyDateService.convertToDateStruct(this.data.fromDate);
         this.toDate = this.verifyDateService.convertToDateStruct(this.data.toDate);
         this.matchCode = this.data.matchCode;
+        this.leagueId = this.data.leagueId;
         this.search();
     }
 
@@ -65,6 +68,11 @@ export class LogComponent implements OnInit {
     public search() {
         const fromDate = this.verifyDateService.dateFormat(this.fromDate);
         const toDate = this.verifyDateService.dateFormat(this.toDate);
+
+        if (!this.matchCode) {
+            this.showWarningMessage(Resources.matchCode);
+            return;
+        }
 
         if (fromDate && toDate && this.matchCode) {
             const request: LogRequest = {
@@ -89,6 +97,12 @@ export class LogComponent implements OnInit {
 
     public close() {
         this.dialogRef.close();
+    }
+
+    private showWarningMessage(message: string) {
+        this.warningDialogMessage.title = Resources.warningTitle;
+        this.warningDialogMessage.message = message;
+        this.messageBoxService.alert(this.warningDialogMessage);
     }
 
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Injector, OnInit } from '@angular/core';
 import { Outright } from '../models/outright.model';
 import { BlockUIService } from '../../shared/services';
 import { FilterRequest } from '../models/filter-request.model';
@@ -19,11 +19,12 @@ export default class AppComponent implements OnInit {
     public outright: Outright;
     public filterRequest: FilterRequest;
 
-    constructor(private readonly blockUIService: BlockUIService,
+    constructor(protected injector: Injector,
+
     ) { }
 
     public ngOnInit() {
-        this.blockUIService.blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
+        this.injector.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
     }
 
     public search(outright: Outright) {
