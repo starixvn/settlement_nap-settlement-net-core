@@ -88,7 +88,7 @@
           <ng-container
             *ngFor="let log of item.outrightLogDetails; let i = index"
           >
-            <tr>
+            <tr [ngClass]="i % 2 !== 0 ? 'bg-odd' : ''">
               <td style="width: 30px;">{{ i + 1 }}</td>
               <td>
                 {{ log.logDate | date: "mediumDate" }}

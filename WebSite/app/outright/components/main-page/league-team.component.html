@@ -44,9 +44,14 @@
             </div>
           </td>
         </tr>
-        <tr *ngFor="let team of item.teams">
+        <tr
+          *ngFor="let team of item.teams; let i = index"
+          [ngClass]="i % 2 !== 0 ? 'bg-odd' : ''"
+        >
           <td class="event-id">
-            <span role="button" (click)="viewLog(item,team.orId)">{{ team.orId }}</span>
+            <span role="button" (click)="viewLog(item, team.orId)">{{
+              team.orId
+            }}</span>
           </td>
           <td class="ko-time">
             {{ team.kickOffTime | date: "mediumDate" }}
