@@ -8,8 +8,6 @@
         </label>
         <ngbd-date-picker
           [date]="fromDate"
-          [minDate]="moveBetsDay"
-          [maxDate]="maxDate"
           (change)="onSelectFromDate($event)"
         ></ngbd-date-picker>
       </div>
@@ -19,8 +17,6 @@
         </label>
         <ngbd-date-picker
           [date]="toDate"
-          [minDate]="moveBetsDay"
-          [maxDate]="maxDate"
           (change)="onSelectToDate($event)"
         ></ngbd-date-picker>
       </div>

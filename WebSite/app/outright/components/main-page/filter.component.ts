@@ -18,7 +18,6 @@ import { Resources } from '../../constants/Resources';
     standalone: true,
     imports: [CommonModule, FormsModule, DatepickerComponent],
     providers: [DatePipe, VerifyDateService, OutrightService, HttpRequestService, MessageBoxService,
-        // { provide: NgbDateParserFormatter, useFactory: () => new CustomNgbDateParserFormatter('MMM dd, y') }
     ],
 })
 export class FilterComponent implements OnInit {
