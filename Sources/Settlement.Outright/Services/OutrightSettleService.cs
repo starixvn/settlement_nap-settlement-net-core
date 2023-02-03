@@ -15,9 +15,9 @@ public interface OutrightSettleService
 {
     Task<LeagueInfo> GetLeagueInfo(GetLeagueInfoRequest request);
 
-    Task<Result> Uncalculate(OutrightUndoRequest request);
+    Task<ResultOutright> Uncalculate(OutrightUndoRequest request);
 
-    Task<Result> Calculate(OutrightCalculateRequest request);
+    Task<ResultOutright> Calculate(OutrightCalculateRequest request);
 }
 
 public class OutrightSettleServiceImp : OutrightSettleService
@@ -38,7 +38,7 @@ public class OutrightSettleServiceImp : OutrightSettleService
 
     private const string SpName = "NAP_Admin_Settlement_Outright";
 
-    private List<string> runningStatus = new() { EventStatus.Running, EventStatus.Closed, EventStatus.Internal };
+    private readonly List<string> runningStatus = new() { EventStatus.Running, EventStatus.Closed, EventStatus.Internal };
 
     public OutrightSettleServiceImp(IDynamicRepository repository,
         IMapper mapper,
@@ -76,7 +76,7 @@ public class OutrightSettleServiceImp : OutrightSettleService
         };
     }
 
-    public async Task<Result> Uncalculate(OutrightUndoRequest request)
+    public async Task<ResultOutright> Uncalculate(OutrightUndoRequest request)
     {
         var validateDeployment = await outrightSettleProcessService.ValidateDeployment(SpName);
 
@@ -88,20 +88,22 @@ public class OutrightSettleServiceImp : OutrightSettleService
         var listMatch = request.MatchIds.Split(',');
         var teamIds = request.TeamIds.Split(",");
         var errorMsg = new StringBuilder();
+        var teamSettleFailed = new List<string>();
         var tasks = listMatch.Select((match, i) => Task.Run(async () =>
         {
             var result = await UpdateResultAndUndo(int.Parse(match));
             if (!result.IsSuccessful)
             {
                 errorMsg = AppendMessage(errorMsg, teamIds[i], result.ErrMsg);
+                teamSettleFailed.Add(match);
             }
         }));
         await Task.WhenAll(tasks);
 
-        return new Result { ErrMsg = errorMsg.ToString() };
+        return new ResultOutright { ErrMsg = errorMsg.ToString(), TeamFailedIds = teamSettleFailed.Count > 0 ? string.Join(',', teamSettleFailed) : string.Empty };
     }
 
-    public async Task<Result> Calculate(OutrightCalculateRequest request)
+    public async Task<ResultOutright> Calculate(OutrightCalculateRequest request)
     {
         var validateDeployment = await outrightSettleProcessService.ValidateDeployment(SpName);
 
@@ -111,17 +113,19 @@ public class OutrightSettleServiceImp : OutrightSettleService
         }
 
         var errorMsg = new StringBuilder();
+        var teamSettleFailed = new List<string>();
         var tasks = request.Teams.Select((match) => Task.Run(async () =>
         {
             var result = await SettleMatch(match, request.DeadHeat);
             if (!result.IsSuccessful)
             {
                 errorMsg = AppendMessage(errorMsg, match.teamId, result.ErrMsg);
+                teamSettleFailed.Add(match.MatchId.ToString());
             }
         }));
         await Task.WhenAll(tasks);
 
-        return new Result { ErrMsg = errorMsg.ToString() };
+        return new ResultOutright { ErrMsg = errorMsg.ToString(), TeamFailedIds = teamSettleFailed.Count > 0 ? string.Join(',', teamSettleFailed) : string.Empty };
     }
 
     private async Task<Result> SettleMatch(TeamSettleModel team, int deadHeat)
@@ -130,7 +134,7 @@ public class OutrightSettleServiceImp : OutrightSettleService
         criteria.Action = ActionType.CalculateAll;
         criteria.AdminId = currentSession.UserId;
         criteria.Deadheat = deadHeat;
-        var updateResult = await outrightSettleProcessService.UpdateResultCalculate(criteria, team.EventDate);
+        var updateResult = await outrightSettleProcessService.UpdateResultCalculate(criteria);
         if (!updateResult.IsSuccessful)
         {
             return updateResult;

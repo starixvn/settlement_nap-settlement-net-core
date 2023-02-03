@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Fanex.Caching;
 using Fanex.Data.Repository;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
@@ -21,7 +20,6 @@ public interface FilterService
 
 public class FilterServiceImp : FilterService
 {
-    private readonly ICacheService cacheService;
     private readonly IDynamicRepository repository;
     private readonly IBalanceUpService balanceUpService;
     private readonly IMapper mapper;
@@ -30,14 +28,12 @@ public class FilterServiceImp : FilterService
 
     public FilterServiceImp(
         IDynamicRepository repository,
-        ICacheService cacheService,
         IBalanceUpService balanceUpService,
         IMapper mapper,
         OutrightPermissionService permissionService,
         IRefDataService refDataService)
     {
         this.repository = repository;
-        this.cacheService = cacheService;
         this.balanceUpService = balanceUpService;
         this.mapper = mapper;
         this.permissionService = permissionService;
@@ -55,8 +51,7 @@ public class FilterServiceImp : FilterService
 
         return new FilterViewModel
         {
-            Sports = cacheService.GetOrSet(
-                $"{CacheServiceKey.MemoryCacheSportListCacheKey}", () => Sports),
+            Sports = Sports,
             MoveBetsDay = balanceUpService.GetBalanceUpDay().MoveBetsDay.AddDays(1),
             Leagues = await GetLeague(requestLeague),
             FromDate = requestLeague.FromDate,

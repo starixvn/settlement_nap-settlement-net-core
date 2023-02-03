@@ -15,6 +15,8 @@ public class OutrightSettleCriteria : NonQueryCommand
 
     public bool IsDeadheat { get; set; }
 
+    public DateTime? EventDate { get; set; }
+
     public int AdminId { get; set; }
 
     public int ErrCode { get; set; }

@@ -1,4 +1,6 @@
-import { NgbDateStruct, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ProviderSource } from './../../../score-source-setting/models/provider-source.model';
+import { map } from 'rxjs/operators';
+import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { OutrightService } from './../../services/outright.service';
 import { Component, Inject, Injector, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -15,7 +17,7 @@ import { Language } from '../../../shared/language';
 import { ModalDialogMessage } from '../../../shared/models';
 import { MatDialog, MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DragDropModule } from '@angular/cdk/drag-drop';
-import { ModalDialogComponent } from '../../../shared/components/modal-dialog/modal-dialog.component';
+import { ResultOutright } from '../../models/result-outright.model';
 
 @Component({
   selector: 'calculate-popup',
@@ -37,6 +39,9 @@ export class CalculatePopupComponent implements OnInit {
   public statusSelected = FilterStatuses[0].toUpperCase();
   public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
   private teamSettleWon: Team[];
+  private teamJustSettled: TeamSettle[] = [];
+  private readonly completedStatus = "Completed";
+
   constructor(protected injector: Injector,
     private readonly toastrService: ToastrService,
     private readonly outrightService: OutrightService,
@@ -65,11 +70,16 @@ export class CalculatePopupComponent implements OnInit {
     });
     this.moveBetsDay = this.verifyDateService.convertToDateStruct(this.leagueSettle.moveBetsDay);
     this.today = this.verifyDateService.convertToDateStruct(this.leagueSettle.today);
+    this.leagueSettle.teams.forEach(team => team.disableDeadheat = !_.isEqual(team.status, 'WON'));
     this.teams = this.leagueSettle.teams;
   }
 
   public close() {
-    this.dialogRef.close();
+    if (_.isEmpty(this.teamJustSettled)) {
+      this.dialogRef.close();
+    } else {
+      this.dialogRef.close(this.teamJustSettled);
+    }
   }
 
   public clearError() {
@@ -103,6 +113,10 @@ export class CalculatePopupComponent implements OnInit {
     this.validateBeforePush(this.teamSettleWon, teamWonSettled, teamWonSelected)
   };
 
+  public onSelectDate(value: NgbDateStruct, team: Team){
+    team.eventDate = this.verifyDateService.dateFormat(value);
+  }
+
   private validateBeforePush(teamSettleWon: Team[], teamWonSettled: Team[], teamWonSelected: Team[]) {
     if (CalculateService.ExistRunningStatus(this.teamSelected)) {
       this.toastrService.error(Language.Outright.existRunning);
@@ -110,7 +124,7 @@ export class CalculatePopupComponent implements OnInit {
       this.toastrService.error(Language.Outright.atLeastTwoDeadHeat);
     } else if (CalculateService.VerifyDeadheat(teamWonSelected, teamWonSettled)) {
       this.toastrService.error(CalculateService.MessageInconsistentDeadheat(teamSettleWon));
-    } else if (CalculateService.VerifyNonDeadheat(teamSettleWon)) {
+    } else if (CalculateService.VerifyNonDeadheat(teamWonSelected)) {
       this.confirmCalcNonDeadheat();
     } else {
       this.doCalculate(this.teamSettleWon.length);
@@ -133,16 +147,25 @@ export class CalculatePopupComponent implements OnInit {
     this.originalTeam = latestLeague.teams;
   }
 
+  
   private async doCalculate(deadHeat: number) {
     this.confirmationDialogMessage.message = Language.Outright.confirmCalculate;
     this.injector.get(MessageBoxService).confirm(this.confirmationDialogMessage, async () => {
       const teams = this.teamSelected.map(team => new TeamSettle(team.orId, team.teamId.toString(), team.isDeadheat, team.status, team.eventDate));
       const result = await this.outrightService.calculate(teams, deadHeat);
       if (result.isSuccessful) {
-        this.dialogRef.close();
+        const listMatchIdJustSettled = teams.map(t => t.matchId);
+        this.dialogRef.close([...teams, ...this.teamJustSettled.filter(t => !listMatchIdJustSettled.includes(t.matchId))]);
       } else {
-        this.toastrService.error(result.errMsg);
+        this.processResultFail(result, teams);
       }
     });
+  }
+
+  private processResultFail(result: ResultOutright, teamSettle: TeamSettle[]) {
+    const listMatch = result.teamFailedIds.split(',');
+    this.teamJustSettled = this.teamJustSettled.concat(_.filter(teamSettle, team => !listMatch.includes(team.matchId.toString())));
+    _.forEach(this.teamJustSettled, team => _.find(this.leagueSettle.teams, t => _.isEqual(t.orId, team.matchId)).oddsStatus = this.completedStatus)
+    this.toastrService.error(result.errMsg);
   }
 }

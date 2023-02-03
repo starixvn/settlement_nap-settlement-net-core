@@ -8,6 +8,7 @@ import { FilterRequest } from "../models/filter-request.model";
 import { Outright } from "../models/outright.model";
 import { LogRequest } from "../models/log-request.model";
 import { OutrightLog } from "../models/outright-log.model";
+import { ResultOutright } from "../../outright/models/result-outright.model";
 
 @Injectable()
 export class OutrightService {
@@ -44,7 +45,7 @@ export class OutrightService {
             matchIds,
             teamIds
         }
-        const response = this.httpRequestService.postJson<Result>(query, `${this.outrightApi}/uncalculate`);
+        const response = this.httpRequestService.postJson<ResultOutright>(query, `${this.outrightApi}/uncalculate`);
         return firstValueFrom(response);
     }
 
@@ -53,7 +54,7 @@ export class OutrightService {
             teams,
             deadHeat
         }
-        const response = this.httpRequestService.postJson<Result>(query, `${this.outrightApi}/calculate`);
+        const response = this.httpRequestService.postJson<ResultOutright>(query, `${this.outrightApi}/calculate`);
         return firstValueFrom(response);
     }
 

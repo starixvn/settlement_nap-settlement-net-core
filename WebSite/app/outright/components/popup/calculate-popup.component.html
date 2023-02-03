@@ -55,7 +55,7 @@
                             [disabled]="team.disableDeadheat || !team.selected" (click)="clearError()" />
                     </td>
                     <td class="code">
-                        <ngbd-date-picker [date]="team.dateTime" [minDate]="moveBetsDay" [maxDate]="today">
+                        <ngbd-date-picker [date]="team.dateTime"  (change)="onSelectDate($event, team)" [minDate]="moveBetsDay" [maxDate]="today">
                         </ngbd-date-picker>
                     </td>
                     <td class="code">

@@ -1,3 +1,4 @@
+import { TeamSettle } from './../../models/team.model';
 import { CalculatePopupComponent } from './../popup/calculate-popup.component';
 import { Component, Input, OnInit } from '@angular/core';
 import { FilterRequest } from '../../models/filter-request.model';
@@ -11,6 +12,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { LogComponent } from '../popup/log.component';
 import { LeagueMatch } from '../../models/league-match.model';
 import { UncalculatePopupComponent } from '../popup/uncalculate-popup.component';
+import * as _ from 'lodash';
 
 @Component({
     selector: 'league-team',
@@ -25,6 +27,7 @@ export class LeagueTeamComponent implements OnInit {
     @Input() outright: Outright
     @Input() request: FilterRequest;
 
+    private readonly runningStatus = "Running";
     constructor(
         public dialog: MatDialog,
     ) { }
@@ -60,7 +63,14 @@ export class LeagueTeamComponent implements OnInit {
                 sportType: league.teams[0].sportType
             },
             width: '910px',
-            height: '550px'
+            height: '550px',
+            disableClose: true
+        }).afterClosed().subscribe((teams: TeamSettle[]) => {
+            if (teams) {
+                teams.forEach(team => {
+                    league.teams.find(t => _.isEqual(t.orId, team.matchId)).status = team.status;
+                });
+            }
         });
     }
 
@@ -71,7 +81,15 @@ export class LeagueTeamComponent implements OnInit {
                 sportType: league.teams[0].sportType
             },
             width: '770px',
-            height: '500px'
+            height: '500px',
+            disableClose: true
+        }).afterClosed().subscribe((teamIds: string) => {
+            if (teamIds) {
+                const teams = _.split(teamIds, ',');
+                teams.forEach(team => {
+                    league.teams.find(t => _.isEqual(t.orId.toString(), team)).status = this.runningStatus;
+                });
+            }
         });
     }
 }

@@ -10,13 +10,13 @@ namespace Settlement.Outright.Services
 {
     public interface OutrightSettleProcessService
     {
-        Task<Result> UpdateResultUndo(OutrightSettleCriteria criteria);
+        Task<ResultOutright> UpdateResultUndo(OutrightSettleCriteria criteria);
 
-        Task<Result> OutrightSettleMultiSite(OutrightSettleCriteria criteria);
+        Task<ResultOutright> OutrightSettleMultiSite(OutrightSettleCriteria criteria);
 
-        Task<Result> ValidateDeployment(string spName);
+        Task<ResultOutright> ValidateDeployment(string spName);
 
-        Task<Result> UpdateResultCalculate(OutrightSettleCriteria criteria, DateTime eventDate);
+        Task<ResultOutright> UpdateResultCalculate(OutrightSettleCriteria criteria);
     }
 
     public class OutrightSettleProcessServiceImp : OutrightSettleProcessService
@@ -40,9 +40,9 @@ namespace Settlement.Outright.Services
             this.mapper = mapper;
         }
 
-        public async Task<Result> OutrightSettleMultiSite(OutrightSettleCriteria criteria)
+        public async Task<ResultOutright> OutrightSettleMultiSite(OutrightSettleCriteria criteria)
         {
-            var results = new List<Result>();
+            var results = new List<ResultOutright>();
             foreach (var server in appSettingsKey.SiteDbServer)
             {
                 criteria.DbServer = server;
@@ -50,18 +50,18 @@ namespace Settlement.Outright.Services
                 results = ResultMessage(results, criteria.ErrMsg);
             }
 
-            return new Result
+            return new ResultOutright
             {
                 ErrCode = results.Count,
                 ErrMsg = string.Join("", results.Select(r => r.ErrMsg).ToArray())
             };
         }
 
-        private List<Result> ResultMessage(List<Result> results, string message)
+        private List<ResultOutright> ResultMessage(List<ResultOutright> results, string message)
         {
             if (!string.IsNullOrWhiteSpace(message))
             {
-                var result = new Result
+                var result = new ResultOutright
                 {
                     ErrMsg = $"<br/>- {message}"
                 };
@@ -72,23 +72,23 @@ namespace Settlement.Outright.Services
             return results;
         }
 
-        public async Task<Result> ValidateDeployment(string spName)
+        public async Task<ResultOutright> ValidateDeployment(string spName)
         {
             var validateResult = await scaleOutSettleService.GetDeploymentInfo(new GetDeploymentInfoRequest { SPName = spName });
 
             if (validateResult.ErrorCode > 0)
             {
-                return new Result
+                return new ResultOutright
                 {
                     ErrCode = validateResult.ErrorCode,
                     ErrMsg = validateResult.ErrorMessage
                 };
             }
 
-            return new Result();
+            return new ResultOutright();
         }
 
-        public async Task<Result> UpdateResultUndo(OutrightSettleCriteria criteria)
+        public async Task<ResultOutright> UpdateResultUndo(OutrightSettleCriteria criteria)
         {
             var updateResultCriteria = new UpdateResultOutrightCriteria
             {
@@ -99,20 +99,19 @@ namespace Settlement.Outright.Services
 
             await repository.ExecuteAsync(updateResultCriteria);
 
-            return new Result
+            return new ResultOutright
             {
                 ErrCode = updateResultCriteria.ErrCode,
                 ErrMsg = updateResultCriteria.ErrMsg
             };
         }
 
-        public async Task<Result> UpdateResultCalculate(OutrightSettleCriteria criteria, DateTime eventDate)
+        public async Task<ResultOutright> UpdateResultCalculate(OutrightSettleCriteria criteria)
         {
             var updateResultCriteria = mapper.Map<OutrightSettleCriteria, UpdateResultOutrightCriteria>(criteria);
-            updateResultCriteria.EventDate = eventDate;
             await repository.ExecuteAsync(updateResultCriteria);
 
-            return new Result
+            return new ResultOutright
             {
                 ErrCode = updateResultCriteria.ErrCode,
                 ErrMsg = updateResultCriteria.ErrMsg

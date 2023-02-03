@@ -45,9 +45,9 @@ export class CalculateService {
         return false;
     }
 
-    public static VerifyNonDeadheat(wonTeams: Team[]) {
-        const teamDeadHeat = _.filter(wonTeams, team => team.isDeadheat);
-        const teamWithoutDeadheat = _.filter(wonTeams, team => !team.isDeadheat);
+    public static VerifyNonDeadheat(teamWonSelected: Team[]) {
+        const teamDeadHeat = _.filter(teamWonSelected, team => team.isDeadheat);
+        const teamWithoutDeadheat = _.filter(teamWonSelected, team => !team.isDeadheat);
 
         if (_.isEmpty(teamDeadHeat) && teamWithoutDeadheat.length > 1) {
             return true;

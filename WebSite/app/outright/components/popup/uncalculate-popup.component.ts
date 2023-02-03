@@ -12,6 +12,7 @@ import { StatusId } from '../../constants/status-id.model';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { ModalDialogMessage } from '../../../shared/models';
+import { ResultOutright } from '../../models/result-outright.model';
 
 @Component({
   selector: 'uncalculate-popup',
@@ -25,6 +26,7 @@ export class UncalculatePopupComponent implements OnInit {
   public teams: Team[];
   public leagueSettle: LeagueSettle;
   public blockUI = true;
+  private teamJustSettled = "";
   public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
   constructor(private readonly toastrService: ToastrService,
     private readonly outrightService: OutrightService,
@@ -50,7 +52,11 @@ export class UncalculatePopupComponent implements OnInit {
   };
 
   public close() {
-    this.dialogRef.close();
+    if (_.isEmpty(this.teamJustSettled)) {
+      this.dialogRef.close();
+    } else {
+      this.dialogRef.close(this.teamJustSettled);
+    }
   }
 
   public disableUncalculate() {
@@ -66,10 +72,19 @@ export class UncalculatePopupComponent implements OnInit {
       const teamIds = selectedMatch.map(match => match.teamId).join(',');
       const result = await this.outrightService.uncalculate(matchIds, teamIds);
       if (result.isSuccessful) {
-        this.dialogRef.close();
+        const teamChanged = [matchIds, ...this.teamJustSettled.split(',').filter(t => !matchIds.includes(t))];
+        this.dialogRef.close(teamChanged.join(','));
       } else {
+        this.processResultFail(result, matchIds);
         this.toastrService.error(result.errMsg);
       }
     });
+  }
+
+  private processResultFail(result: ResultOutright, matchIds: string) {
+    const listMatch = result.teamFailedIds.split(',');
+    const teamSettle = matchIds.split(',');
+    this.teamJustSettled = _.filter(teamSettle, team => !listMatch.includes(team.toString())).join(',');
+    this.toastrService.error(result.errMsg);
   }
 }
