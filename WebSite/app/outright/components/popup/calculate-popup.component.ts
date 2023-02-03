@@ -28,6 +28,10 @@ import { ResultOutright } from '../../models/result-outright.model';
 })
 export class CalculatePopupComponent implements OnInit {
   @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
+  private toastrService: ToastrService;
+  private outrightService: OutrightService;
+  private verifyDateService: VerifyDateService;
+  private dialogRef: MatDialogRef<CalculatePopupComponent>;
   public blockUI = true;
   public teams: Team[];
   public originalTeam: Team[];
@@ -43,10 +47,6 @@ export class CalculatePopupComponent implements OnInit {
   private readonly completedStatus = "Completed";
 
   constructor(protected injector: Injector,
-    private readonly toastrService: ToastrService,
-    private readonly outrightService: OutrightService,
-    private readonly verifyDateService: VerifyDateService,
-    private readonly dialogRef: MatDialogRef<CalculatePopupComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { leagueId: number, sportType: number }) {
     this.confirmationDialogMessage.title = Language.confirmationBox;
     this.injector.get(MatDialog).closeAll();
@@ -54,6 +54,10 @@ export class CalculatePopupComponent implements OnInit {
 
   ngOnInit(): void {
     this.injector.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
+    this.toastrService = this.injector.get(ToastrService);
+    this.outrightService = this.injector.get(OutrightService);
+    this.verifyDateService = this.injector.get(VerifyDateService);
+    this.dialogRef = this.injector.get(MatDialogRef<CalculatePopupComponent>);
     this.toastrService.overlayContainer = this.toastContainer;
     this.getMatches();
   }
