@@ -22,6 +22,11 @@ import { Resources } from '../../constants/Resources';
     encapsulation: ViewEncapsulation.None,
 })
 export class LogComponent implements OnInit {
+    private verifyDateService: VerifyDateService;
+    private outrightService: OutrightService;
+    private messageBoxService: MessageBoxService;
+    private dialogRef: MatDialogRef<LogComponent>;
+
     public fromDate: NgbDateStruct;
     public toDate: NgbDateStruct;
     public matchCode: string;
@@ -32,16 +37,17 @@ export class LogComponent implements OnInit {
 
     constructor(
         protected injector: Injector,
-        private readonly verifyDateService: VerifyDateService,
-        private readonly outrightService: OutrightService,
-        public dialogRef: MatDialogRef<LogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: LogRequest,
-        private messageBoxService: MessageBoxService
 
     ) { }
 
     ngOnInit(): void {
         this.injector.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
+        this.verifyDateService = this.injector.get(VerifyDateService);
+        this.outrightService = this.injector.get(OutrightService);
+        this.messageBoxService = this.injector.get(MessageBoxService);
+        this.dialogRef = this.injector.get(MatDialogRef<LogComponent>);
+
         this.initialData();
     }
 

@@ -1,5 +1,5 @@
 import { DatePipe, CommonModule } from '@angular/common';
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Injector, OnInit, Output } from '@angular/core';
 import { NgbCalendar, NgbDateParserFormatter, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { League, Sport } from '../../models';
 import { CustomNgbDateParserFormatter } from '../../../shared/components/date-picker/custom-ngb-date-parser-formatter';
@@ -25,6 +25,11 @@ export class FilterComponent implements OnInit {
     @Output() public readonly requestEmitter = new EventEmitter();
     @Output() public readonly enableRefresh = new EventEmitter();
 
+    private verifyDateService: VerifyDateService;
+    private outrightService: OutrightService;
+    private calendar: NgbCalendar;
+    private messageBoxService: MessageBoxService
+
     public fromDate: NgbDateStruct;
     public toDate: NgbDateStruct;
 
@@ -42,16 +47,14 @@ export class FilterComponent implements OnInit {
 
     public warningDialogMessage: ModalDialogMessage = new ModalDialogMessage();
 
-
-    constructor(
-        private verifyDateService: VerifyDateService,
-        private outrightService: OutrightService,
-        private readonly calendar: NgbCalendar,
-        private messageBoxService: MessageBoxService) {
-        this.maxDate = this.calendar.getToday();
-    }
+    constructor(protected injector: Injector) { }
 
     ngOnInit(): void {
+        this.verifyDateService = this.injector.get(VerifyDateService);
+        this.outrightService = this.injector.get(OutrightService);
+        this.messageBoxService = this.injector.get(MessageBoxService);
+        this.calendar = this.injector.get(NgbCalendar);
+
         this.initFilterData();
     }
 
@@ -60,13 +63,13 @@ export class FilterComponent implements OnInit {
             this.fromDate = this.verifyDateService.convertToDateStruct(res.fromDate);
             this.toDate = this.verifyDateService.convertToDateStruct(res.toDate);
             this.moveBetsDay = this.verifyDateService.convertToDateStruct(res.moveBetsDay);
+            this.maxDate = this.calendar.getToday();
 
             this.sportOptions = res.sports;
             this.leagueOptions = [allLeague, ...res.leagues];
             this.leagueSelected = 0;
             this.sportSelected = 1;
             this.statusSelected = 0;
-
         })
     }
 
@@ -101,7 +104,6 @@ export class FilterComponent implements OnInit {
             this.leagueOptions = [allLeague]
         }
     }
-
 
     private isValidInput(fromDate: NgbDateStruct, toDate: NgbDateStruct) {
         return this.verifyDateService.validDate(fromDate, toDate);
