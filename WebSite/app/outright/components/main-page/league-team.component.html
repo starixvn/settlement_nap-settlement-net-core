@@ -7,11 +7,12 @@
   <thead>
     <tr>
       <th class="event-id">Event ID</th>
-      <td class="ko-time">Kick-off Time</td>
-      <td>Event</td>
-      <td class="event-status">
+      <th class="ko-time">Kick-off Time</th>
+      <th>Event</th>
+      <th>Bet Count</th>
+      <th class="event-status">
         Event Status
-      </td>
+      </th>
     </tr>
   </thead>
 </ng-template>
@@ -66,6 +67,7 @@
             {{ team.kickOffTime | date: "hh:mm:ss a" }}
           </td>
           <td class="team-name">{{ team.teamName }}</td>
+          <td>{{team.betCount}}</td>
           <td class="event-status">{{ team.status }}</td>
         </tr>
       </ng-container>

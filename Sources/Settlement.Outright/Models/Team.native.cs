@@ -29,4 +29,5 @@ public class Team
     public bool IsDeadheat { get; set; }
 
     public string OddsStatus { get; set; }
+    public int BetCount { get; set; }
 }

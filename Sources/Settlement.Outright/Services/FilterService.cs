@@ -70,11 +70,40 @@ public class FilterServiceImp : FilterService
     {
         var criteria = mapper.Map<FilterRequest, GetOutrightDetailCriteria>(request);
         var listTeam = await repository.FetchAsync<Team>(criteria);
+
+        //
+
         return new OutrightModel
         {
             LeagueMatch = GroupLeague(listTeam),
             Permission = permissionService.Permission
         };
+    }
+
+    private void AddTicketCountToTeam(List<Team> teams, List<TeamTicketModel> teamTickets)
+    {
+
+        foreach (var team in teams)
+        {
+            var foundTeam = teamTickets.FirstOrDefault(t => t.OrId == team.OrId);
+            if (foundTeam is not null)
+            {
+                team.BetCount = foundTeam.TotalTicket;
+            }
+        }
+    }
+
+    private IEnumerable<TeamTicketModel> GetTeamsTicketCount(List<Team> teams)
+    {
+        var orids = string.Join(',', teams.Select(t => t.OrId));
+
+        var criteria = new GetTeamTicketCountCriteria
+        {
+            Orids = orids,
+        };
+
+
+        return new List<TeamTicketModel>();
     }
 
     private IEnumerable<LeagueMatch> GroupLeague(IEnumerable<Team> teams)

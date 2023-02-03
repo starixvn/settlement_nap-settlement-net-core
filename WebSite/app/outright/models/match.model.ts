@@ -8,4 +8,5 @@ export interface Match {
     leagueName: string;
     teamId: number;
     teamName: string;
+    betCount: number
 }
