@@ -52,7 +52,7 @@ export class LeagueTeamComponent implements OnInit {
                 matchCode: !!matchId ? `${matchId}` : league.teams[0].matchCode,
             },
             width: '1000px',
-            height: '550px'
+            height: '600px'
         });
     }
 

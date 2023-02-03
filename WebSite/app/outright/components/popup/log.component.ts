@@ -51,6 +51,14 @@ export class LogComponent implements OnInit {
         this.initialData();
     }
 
+    public get fromDateStr() {
+        return this.verifyDateService.dateFormat(this.fromDate)
+    }
+
+    public get toDateStr() {
+        return this.verifyDateService.dateFormat(this.toDate)
+    }
+
     private initialData() {
         this.fromDate = this.verifyDateService.convertToDateStruct(this.data.fromDate);
         this.toDate = this.verifyDateService.convertToDateStruct(this.data.toDate);
@@ -71,12 +79,22 @@ export class LogComponent implements OnInit {
         }
     }
 
+
+    private isValidInput(fromDate: NgbDateStruct, toDate: NgbDateStruct) {
+        return this.verifyDateService.validDate(fromDate, toDate);
+    }
+
     public search() {
         const fromDate = this.verifyDateService.dateFormat(this.fromDate);
         const toDate = this.verifyDateService.dateFormat(this.toDate);
 
         if (!this.matchCode) {
             this.showWarningMessage(Resources.matchCode);
+            return;
+        }
+
+        if (!this.isValidInput(this.fromDate, this.toDate)) {
+            this.showWarningMessage(Resources.invalidDate);
             return;
         }
 

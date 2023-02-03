@@ -163,7 +163,7 @@
 
 .event-id,
 .ko-time {
-  width: 100px;
+  width: 150px;
 }
 
 .empty-data {
@@ -314,10 +314,13 @@
   .bg-odd {
     background: #e5ebf2;
   }
+  .table-body {
+    overflow-y: scroll;
+  }
 }
 
 .log-content {
-  padding: 10px;
+  padding: 5px;
   .league div {
     padding-top: 2px;
     margin-top: 5px;
@@ -349,6 +352,7 @@
     tbody {
       display: block;
       overflow-y: auto;
+      max-height: 440px;
     }
     thead,
     tbody tr {
@@ -361,9 +365,19 @@
       background: #e5ebf2;
     }
   }
+  .table-empty {
+    margin-top: 10px;
+  }
 }
 
 label.title {
   color: white;
   font-weight: bold;
+}
+
+.w-11 {
+  width: 11%;
+}
+.w-10 {
+  width: 10%;
 }

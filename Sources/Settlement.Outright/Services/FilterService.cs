@@ -71,7 +71,7 @@ public class FilterServiceImp : FilterService
         var criteria = mapper.Map<FilterRequest, GetOutrightDetailCriteria>(request);
         var listTeam = await repository.FetchAsync<Team>(criteria);
 
-        //
+        // TO DO
 
         return new OutrightModel
         {
