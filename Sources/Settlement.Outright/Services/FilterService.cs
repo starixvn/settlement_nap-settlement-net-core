@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Fanex.Data.Repository;
+using Microsoft.Extensions.Options;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
@@ -24,19 +25,22 @@ public class FilterServiceImp : FilterService
     private readonly IMapper mapper;
     private readonly OutrightPermissionService permissionService;
     private readonly IRefDataService refDataService;
+    private readonly AppSettingsKey appSettingsKey;
 
     public FilterServiceImp(
         IDynamicRepository repository,
         IBalanceUpService balanceUpService,
         IMapper mapper,
         OutrightPermissionService permissionService,
-        IRefDataService refDataService)
+        IRefDataService refDataService,
+        IOptions<AppSettingsKey> appSettingsKey)
     {
         this.repository = repository;
         this.balanceUpService = balanceUpService;
         this.mapper = mapper;
         this.permissionService = permissionService;
         this.refDataService = refDataService;
+        this.appSettingsKey = appSettingsKey.Value;
     }
 
     public async Task<FilterViewModel> GetFilterView()
@@ -71,6 +75,10 @@ public class FilterServiceImp : FilterService
         var listTeam = await repository.FetchAsync<Team>(criteria);
 
         // TO DO
+        var teamTickets = await GetTeamsTicketCount(listTeam.ToList());
+        var group = GroupTeamTicket(teamTickets.ToList());
+
+        AddTicketCountToTeam(listTeam.ToList(), group.ToList());
 
         return new OutrightModel
         {
@@ -91,16 +99,35 @@ public class FilterServiceImp : FilterService
         }
     }
 
-    private IEnumerable<TeamTicketModel> GetTeamsTicketCount(List<Team> teams)
+    private async Task<IEnumerable<TeamTicketModel>> GetTeamsTicketCount(List<Team> teams)
     {
-        var orIds = string.Join(',', teams.Select(t => t.OrId));
+        var orids = string.Join(',', teams.Select(t => t.OrId));
+        var teamsTicketCount = new List<TeamTicketModel>();
 
-        var criteria = new GetTeamTicketCountCriteria
+        foreach (var server in appSettingsKey.SiteDbServer)
         {
-            OrIds = orIds,
-        };
+            var criteria = new GetTeamTicketCountCriteria
+            {
+                Orids = orids,
+                DbServer = server
+            };
 
-        return new List<TeamTicketModel>();
+            var result = await repository.FetchAsync<TeamTicketModel>(criteria);
+            teamsTicketCount.AddRange(result);
+        }
+
+        return teamsTicketCount;
+    }
+
+    private IEnumerable<TeamTicketModel> GroupTeamTicket(List<TeamTicketModel> teams)
+    {
+        var result = teams.GroupBy(team => team.OrId).Select(groupTeam => new TeamTicketModel
+        {
+            OrId = groupTeam.First().OrId,
+            TotalTicket = groupTeam.Sum(item => item.TotalTicket)
+        });
+
+        return result;
     }
 
     private IEnumerable<LeagueMatch> GroupLeague(IEnumerable<Team> teams)

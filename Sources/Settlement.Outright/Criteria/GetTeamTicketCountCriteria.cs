@@ -1,12 +1,14 @@
-﻿using Fanex.Data.Repository;
+﻿using Fanex.Data;
+using Fanex.Data.Repository;
 
 namespace Settlement.Outright.Criteria;
 
 public class GetTeamTicketCountCriteria : CriteriaBase
 {
-    public string OrIds { get; set; }
+    public string Orids { get; set; }
+    public override string GetSettingKey() => $"NAP_Set_OutrightSelTicketCount_{DbServer}";
+    [SpParam(Ignored = true)]
+    public string DbServer { get; set; }
 
-    public override string GetSettingKey() => "NAP_Set_OutrightSelTicketCount";
-
-    public override bool IsValid() => string.IsNullOrEmpty(OrIds);
+    public override bool IsValid() => !string.IsNullOrEmpty(Orids);
 }
