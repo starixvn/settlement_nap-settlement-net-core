@@ -10,13 +10,13 @@ namespace Settlement.Outright.Services
 {
     public interface OutrightSettleProcessService
     {
-        Task<ResultOutright> UpdateResultUndo(OutrightSettleCriteria criteria);
+        Task<Result> UpdateResultUndo(OutrightSettleCriteria criteria);
 
-        Task<ResultOutright> OutrightSettleMultiSite(OutrightSettleCriteria criteria);
+        Task<Result> OutrightSettleMultiSite(OutrightSettleCriteria criteria);
 
         Task<ResultOutright> ValidateDeployment(string spName);
 
-        Task<ResultOutright> UpdateResultCalculate(OutrightSettleCriteria criteria);
+        Task<Result> UpdateResultCalculate(OutrightSettleCriteria criteria);
     }
 
     public class OutrightSettleProcessServiceImp : OutrightSettleProcessService
@@ -40,9 +40,9 @@ namespace Settlement.Outright.Services
             this.mapper = mapper;
         }
 
-        public async Task<ResultOutright> OutrightSettleMultiSite(OutrightSettleCriteria criteria)
+        public async Task<Result> OutrightSettleMultiSite(OutrightSettleCriteria criteria)
         {
-            var results = new List<ResultOutright>();
+            var results = new List<Result>();
             foreach (var server in appSettingsKey.SiteDbServer)
             {
                 criteria.DbServer = server;
@@ -50,14 +50,14 @@ namespace Settlement.Outright.Services
                 results = ResultMessage(results, criteria.ErrMsg);
             }
 
-            return new ResultOutright
+            return new Result()
             {
                 ErrCode = results.Count,
                 ErrMsg = string.Join("", results.Select(r => r.ErrMsg).ToArray())
             };
         }
 
-        private List<ResultOutright> ResultMessage(List<ResultOutright> results, string message)
+        private List<Result> ResultMessage(List<Result> results, string message)
         {
             if (!string.IsNullOrWhiteSpace(message))
             {
@@ -88,7 +88,7 @@ namespace Settlement.Outright.Services
             return new ResultOutright();
         }
 
-        public async Task<ResultOutright> UpdateResultUndo(OutrightSettleCriteria criteria)
+        public async Task<Result> UpdateResultUndo(OutrightSettleCriteria criteria)
         {
             var updateResultCriteria = new UpdateResultOutrightCriteria
             {
@@ -99,19 +99,19 @@ namespace Settlement.Outright.Services
 
             await repository.ExecuteAsync(updateResultCriteria);
 
-            return new ResultOutright
+            return new Result
             {
                 ErrCode = updateResultCriteria.ErrCode,
                 ErrMsg = updateResultCriteria.ErrMsg
             };
         }
 
-        public async Task<ResultOutright> UpdateResultCalculate(OutrightSettleCriteria criteria)
+        public async Task<Result> UpdateResultCalculate(OutrightSettleCriteria criteria)
         {
             var updateResultCriteria = mapper.Map<OutrightSettleCriteria, UpdateResultOutrightCriteria>(criteria);
             await repository.ExecuteAsync(updateResultCriteria);
 
-            return new ResultOutright
+            return new Result
             {
                 ErrCode = updateResultCriteria.ErrCode,
                 ErrMsg = updateResultCriteria.ErrMsg

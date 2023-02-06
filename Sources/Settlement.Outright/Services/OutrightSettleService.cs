@@ -6,7 +6,6 @@ using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Outright.Criteria;
 using Settlement.Outright.Requests;
-using System.Text;
 
 namespace Settlement.Outright.Services;
 
@@ -86,20 +85,13 @@ public class OutrightSettleServiceImp : OutrightSettleService
 
         var listMatch = request.MatchIds.Split(',');
         var teamIds = request.TeamIds.Split(",");
-        var errorMsg = new StringBuilder();
         var teamSettleFailed = new List<string>();
-        var tasks = listMatch.Select((match, i) => Task.Run(async () =>
-        {
-            var result = await UpdateResultAndUndo(int.Parse(match));
-            if (!result.IsSuccessful)
-            {
-                errorMsg = AppendMessage(errorMsg, teamIds[i], result.ErrMsg);
-                teamSettleFailed.Add(match);
-            }
-        }));
-        await Task.WhenAll(tasks);
 
-        return new ResultOutright { ErrMsg = errorMsg.ToString(), TeamFailedIds = teamSettleFailed.Count > 0 ? string.Join(',', teamSettleFailed) : string.Empty };
+        var tasks = listMatch.Select((matchId, i) => Task.Run(async () => await PushRequestUncalculate(int.Parse(matchId), teamIds[i], teamSettleFailed)));
+
+        var listResult = await Task.WhenAll(tasks.ToArray());
+
+        return HandleResult(listResult, teamSettleFailed);
     }
 
     public async Task<ResultOutright> Calculate(OutrightCalculateRequest request)
@@ -111,20 +103,39 @@ public class OutrightSettleServiceImp : OutrightSettleService
             return validateDeployment;
         }
 
-        var errorMsg = new StringBuilder();
         var teamSettleFailed = new List<string>();
-        var tasks = request.Teams.Select((match) => Task.Run(async () =>
-        {
-            var result = await SettleMatch(match, request.DeadHeat);
-            if (!result.IsSuccessful)
-            {
-                errorMsg = AppendMessage(errorMsg, match.TeamId, result.ErrMsg);
-                teamSettleFailed.Add(match.MatchId.ToString());
-            }
-        }));
-        await Task.WhenAll(tasks);
 
-        return new ResultOutright { ErrMsg = errorMsg.ToString(), TeamFailedIds = teamSettleFailed.Count > 0 ? string.Join(',', teamSettleFailed) : string.Empty };
+        var tasks = request.Teams.Select((match) => Task.Run(async () => await PushRequestCalculate(match, request.DeadHeat, teamSettleFailed)));
+
+        var listResult = await Task.WhenAll(tasks.ToArray());
+
+        return HandleResult(listResult, teamSettleFailed);
+    }
+
+    private async Task<Result> PushRequestUncalculate(int matchId, string teamId, List<string> teamSettleFailed)
+    {
+        var result = await UpdateResultAndUndo(matchId);
+        if (result.IsSuccessful) return result;
+        result.ErrMsg = Message(teamId, result.ErrMsg);
+        teamSettleFailed.Add(matchId.ToString());
+
+        return result;
+    }
+
+    private async Task<Result> PushRequestCalculate(TeamSettleModel team, int deadHeat, List<string> teamSettleFailed)
+    {
+        var result = await SettleMatch(team, deadHeat);
+        if (result.IsSuccessful) return result;
+        result.ErrMsg = Message(team.TeamId, result.ErrMsg);
+        teamSettleFailed.Add(team.MatchId.ToString());
+
+        return result;
+    }
+
+    private ResultOutright HandleResult(Result[] results, List<string> teamSettleFailed)
+    {
+        var messageFailed = results.Where(result => !result.IsSuccessful).Select(result => result.ErrMsg);
+        return new ResultOutright { ErrMsg = string.Join("", messageFailed), TeamFailedIds = teamSettleFailed.Count > 0 ? string.Join(',', teamSettleFailed) : string.Empty };
     }
 
     private async Task<Result> SettleMatch(TeamSettleModel team, int deadHeat)
@@ -142,12 +153,11 @@ public class OutrightSettleServiceImp : OutrightSettleService
         return await outrightSettleProcessService.OutrightSettleMultiSite(criteria);
     }
 
-    private StringBuilder AppendMessage(StringBuilder message, string teamId, string errorMessage)
+    private string Message(string teamId, string errorMessage)
     {
         var teamName = $"{refDataService.GetTeamName(teamId)}";
-        var error = $"{teamName}: {errorMessage}";
-        message.Append($"{error}<br/>");
-        return message;
+        var error = $"{teamName}: {errorMessage}<br/>";
+        return error;
     }
 
     private async Task<Result> UpdateResultAndUndo(int matchId)

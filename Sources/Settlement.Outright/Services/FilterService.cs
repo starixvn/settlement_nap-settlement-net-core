@@ -72,13 +72,13 @@ public class FilterServiceImp : FilterService
     public async Task<OutrightModel> Filter(FilterRequest request)
     {
         var criteria = mapper.Map<FilterRequest, GetOutrightDetailCriteria>(request);
-        var listTeam = await repository.FetchAsync<Team>(criteria);
+        var listTeam = (await repository.FetchAsync<Team>(criteria)).ToList();
 
         // TO DO
-        var teamTickets = await GetTeamsTicketCount(listTeam.ToList());
+        var teamTickets = await GetTeamsTicketCount(listTeam);
         var group = GroupTeamTicket(teamTickets.ToList());
 
-        AddTicketCountToTeam(listTeam.ToList(), group.ToList());
+        AddTicketCountToTeam(listTeam, group.ToList());
 
         return new OutrightModel
         {
@@ -108,7 +108,7 @@ public class FilterServiceImp : FilterService
         {
             var criteria = new GetTeamTicketCountCriteria
             {
-                Orids = orIds,
+                OrIds = orIds,
                 DbServer = server
             };
 
