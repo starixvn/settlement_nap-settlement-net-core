@@ -123,7 +123,7 @@ namespace Settlement.EventManagement.UnitTests.Services
         [InlineData("01", "01", "1", "1", "1", "2", true)]
         [InlineData("01", "02", "1", "2", "1", "2", true)]
         [InlineData("02", "01", "1", "2", "1", "2", false)]
-        public void IsNotConsistentScore_SuspenderNotBlank_ReturnCorrect(string resourceOfSource, string resourceOfRD,
+        public void IsNotConsistentScore_SuspenderNotBlank_ReturnCorrect(string resourceOfSource, string resourceOfResultDetail,
             string homeSource, string awaySource,
             string home, string away, bool expected)
         {
@@ -136,7 +136,7 @@ namespace Settlement.EventManagement.UnitTests.Services
 
             var resultDetail = new ResultDetail
             {
-                ResourceId = resourceOfRD,
+                ResourceId = resourceOfResultDetail,
                 HomeValue = home,
                 AwayValue = away
             };
