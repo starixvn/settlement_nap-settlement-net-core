@@ -101,14 +101,14 @@ public class FilterServiceImp : FilterService
 
     private async Task<IEnumerable<TeamTicketModel>> GetTeamsTicketCount(List<Team> teams)
     {
-        var orids = string.Join(',', teams.Select(t => t.OrId));
+        var orIds = string.Join(',', teams.Select(t => t.OrId));
         var teamsTicketCount = new List<TeamTicketModel>();
 
         foreach (var server in appSettingsKey.SiteDbServer)
         {
             var criteria = new GetTeamTicketCountCriteria
             {
-                Orids = orids,
+                Orids = orIds,
                 DbServer = server
             };
 
