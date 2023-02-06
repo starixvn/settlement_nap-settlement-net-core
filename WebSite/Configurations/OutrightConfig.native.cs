@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using Settlement.Outright.Controllers;
 using Settlement.Outright.Services;
-using Settlement.Services.Outright;
 using System.Reflection;
 
 namespace Settlement.WebSites.Configurations;

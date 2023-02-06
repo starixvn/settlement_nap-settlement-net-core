@@ -4,6 +4,7 @@ namespace Settlement.Outright.Criteria;
 
 public class GetOutrightLogCriteria : CriteriaBase
 {
+#nullable enable
     public string? MatchCode { get; set; }
 
     public int? MatchId { get; set; }

@@ -5,7 +5,6 @@ using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Outright.Criteria;
 using Settlement.Outright.Requests;
-using Settlement.Services.Outright;
 
 namespace Settlement.Outright.Services;
 
@@ -82,7 +81,6 @@ public class FilterServiceImp : FilterService
 
     private void AddTicketCountToTeam(List<Team> teams, List<TeamTicketModel> teamTickets)
     {
-
         foreach (var team in teams)
         {
             var foundTeam = teamTickets.FirstOrDefault(t => t.OrId == team.OrId);
@@ -95,13 +93,12 @@ public class FilterServiceImp : FilterService
 
     private IEnumerable<TeamTicketModel> GetTeamsTicketCount(List<Team> teams)
     {
-        var orids = string.Join(',', teams.Select(t => t.OrId));
+        var orIds = string.Join(',', teams.Select(t => t.OrId));
 
         var criteria = new GetTeamTicketCountCriteria
         {
-            Orids = orids,
+            OrIds = orIds,
         };
-
 
         return new List<TeamTicketModel>();
     }

@@ -5,7 +5,7 @@ using Fanex.NAP.Core.Business;
 using Settlement.Core.Configuration;
 using Settlement.Core.Models;
 
-namespace Settlement.Services.Outright
+namespace Settlement.Outright.Services
 {
     public interface OutrightPermissionService
     {
@@ -27,7 +27,7 @@ namespace Settlement.Services.Outright
             this.siteSettings = siteSettings;
         }
 
-        public Permission Permission => new Permission
+        public Permission Permission => new()
         {
             CanCalculateOutright = HasPermission(SettlementFunctionKeys.OutrightCalculate, Constant.Policy.Host),
             CanUncalculateOutright = HasPermission(SettlementFunctionKeys.OutrightUncalculate, Constant.Policy.Host),

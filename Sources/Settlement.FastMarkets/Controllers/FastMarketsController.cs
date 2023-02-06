@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Settlement.Core.ActionFilters;
 using Settlement.FastMarkets.Models;
 using Settlement.FastMarkets.Requests;
-using System.Threading.Tasks;
 
 namespace Settlement.FastMarkets.Controllers
 {

@@ -14,7 +14,7 @@ public class OutrightLog
 
     public int LeagueId { get; set; }
 
-    public List<OutrightLogDetail> OutrightLogDetails { get; set; } = new List<OutrightLogDetail>();
+    public List<OutrightLogDetail> OutrightLogDetails { get; set; } = new();
 
     public string LeagueName => RefDataService.GetLeagueName(LeagueId);
 }

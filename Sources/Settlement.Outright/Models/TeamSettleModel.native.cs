@@ -4,7 +4,7 @@ public class TeamSettleModel
 {
     public int MatchId { get; set; }
 
-    public string teamId { get; set; }
+    public string TeamId { get; set; }
 
     public string Status { get; set; }
 

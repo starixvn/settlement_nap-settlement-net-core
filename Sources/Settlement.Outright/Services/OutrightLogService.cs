@@ -24,10 +24,9 @@ namespace Settlement.Outright.Services
         {
             IEnumerable<OutrightLog> logs;
             request.BalanceUpDay = balanceUpService.GetBalanceUpDay().BalanceUpDay;
-            if (request.MatchId != null && request.MatchId > 0)
+            if (request.MatchId is not null && request.MatchId > 0)
             {
                 logs = await outrightLogService.GetOutrightLogByOutrightId(request);
-                request.MatchCode = request.MatchId.ToString() ?? "";
             }
             else
             {

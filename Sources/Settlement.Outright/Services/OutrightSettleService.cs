@@ -6,7 +6,6 @@ using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Outright.Criteria;
 using Settlement.Outright.Requests;
-using Settlement.Services.Outright;
 using System.Text;
 
 namespace Settlement.Outright.Services;
@@ -119,7 +118,7 @@ public class OutrightSettleServiceImp : OutrightSettleService
             var result = await SettleMatch(match, request.DeadHeat);
             if (!result.IsSuccessful)
             {
-                errorMsg = AppendMessage(errorMsg, match.teamId, result.ErrMsg);
+                errorMsg = AppendMessage(errorMsg, match.TeamId, result.ErrMsg);
                 teamSettleFailed.Add(match.MatchId.ToString());
             }
         }));
@@ -154,8 +153,11 @@ public class OutrightSettleServiceImp : OutrightSettleService
     private async Task<Result> UpdateResultAndUndo(int matchId)
     {
         var criteria = new OutrightSettleCriteria
-        { Action = ActionType.UnCalculate, AdminId = currentSession.UserId };
-        criteria.MatchId = matchId;
+        {
+            Action = ActionType.UnCalculate,
+            AdminId = currentSession.UserId,
+            MatchId = matchId
+        };
         var updateResult = await outrightSettleProcessService.UpdateResultUndo(criteria);
         if (!updateResult.IsSuccessful)
         {
