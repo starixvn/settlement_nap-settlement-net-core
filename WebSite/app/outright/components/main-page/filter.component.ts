@@ -1,16 +1,15 @@
 import { DatePipe, CommonModule } from '@angular/common';
 import { Component, EventEmitter, Injector, OnInit, Output } from '@angular/core';
-import { NgbCalendar, NgbDateParserFormatter, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
+import { NgbCalendar, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { League, Sport } from '../../models';
-import { CustomNgbDateParserFormatter } from '../../../shared/components/date-picker/custom-ngb-date-parser-formatter';
-import { allLeague, Statuses } from '../../constants/Options';
+import { allLeague, Statuses } from '../../constants/options';
 import { HttpRequestService, MessageBoxService, VerifyDateService } from '../../../shared/services';
 import { OutrightService } from '../../services/outright.service';
 import { FilterRequest } from '../../models/filter-request.model';
 import { ModalDialogMessage } from '../../../shared/models';
 import { DatepickerComponent } from '../../../shared/components/date-picker/date-picker.component';
 import { FormsModule } from '@angular/forms';
-import { Resources } from '../../constants/Resources';
+import { Resources } from '../../constants/resources';
 
 @Component({
     selector: 'filter',

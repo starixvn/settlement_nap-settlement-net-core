@@ -6,8 +6,8 @@
 <ng-template #header>
   <thead>
     <tr>
-      <th class="w-10">Event ID</th>
-      <th class="w-5">Kick-off Time</th>
+      <th class="w-5">Event ID</th>
+      <th class="w-10">Kick-off Time</th>
       <th>Event</th>
       <th class="w-10">Bet Count</th>
       <th class="w-11">
@@ -20,7 +20,6 @@
 <ng-template #body>
   <div dynamicHeight class="table-body">
     <table>
-      <!-- <tbody dynamicHeight class="table-body"> -->
       <ng-container *ngIf="leagueMatch.length; else empty">
         <ng-container *ngFor="let item of leagueMatch">
           <tr>
@@ -60,12 +59,12 @@
             *ngFor="let team of item.teams; let i = index"
             [ngClass]="i % 2 !== 0 ? 'bg-odd' : ''"
           >
-            <td class="w-10 event-id">
+            <td class="w-5 event-id">
               <span role="button" (click)="viewLog(item, team.orId)">{{
                 team.orId
               }}</span>
             </td>
-            <td class="w-5">
+            <td class="w-10">
               {{ team.kickOffTime | date: "mediumDate" }}
               {{ team.kickOffTime | date: "hh:mm:ss a" }}
             </td>
@@ -75,7 +74,6 @@
           </tr>
         </ng-container>
       </ng-container>
-      <!-- </tbody> -->
     </table>
   </div>
 </ng-template>

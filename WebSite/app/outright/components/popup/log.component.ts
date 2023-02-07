@@ -10,7 +10,7 @@ import { DatepickerComponent } from '../../../shared/components/date-picker/date
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DynamicHeightDirective } from '../../../shared/directives';
 import { ModalDialogMessage } from '../../../shared/models';
-import { Resources } from '../../constants/Resources';
+import { Resources } from '../../constants/resources';
 
 @Component({
     selector: 'log',
@@ -37,8 +37,7 @@ export class LogComponent implements OnInit {
 
     constructor(
         protected injector: Injector,
-        @Inject(MAT_DIALOG_DATA) public data: LogRequest,
-
+        @Inject(MAT_DIALOG_DATA) public data: LogRequest
     ) { }
 
     ngOnInit(): void {

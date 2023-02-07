@@ -4,7 +4,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { FilterRequest } from '../../models/filter-request.model';
 import { Outright } from '../../models/outright.model';
 import { CommonModule, DatePipe } from '@angular/common';
-import { NgbDateParserFormatter, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
 import { CustomNgbDateParserFormatter } from '../../../shared/components/date-picker/custom-ngb-date-parser-formatter';
 import { DialogBoxService } from '../../../shared/services';
 import { DynamicHeightDirective } from '../../../shared/directives';
@@ -28,9 +28,7 @@ export class LeagueTeamComponent implements OnInit {
     @Input() request: FilterRequest;
 
     private readonly runningStatus = "Running";
-    constructor(
-        public dialog: MatDialog,
-    ) { }
+    constructor(public dialog: MatDialog) { }
 
 
     public get leagueMatch() {

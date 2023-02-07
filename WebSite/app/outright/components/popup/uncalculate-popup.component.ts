@@ -6,7 +6,6 @@ import { ToastContainerDirective, ToastContainerModule, ToastrService } from 'ng
 import { OutrightService } from '../../services/outright.service';
 import { BlockUIService, HttpRequestService, MessageBoxService } from '../../../shared/services';
 import { FormsModule } from '@angular/forms';
-
 import * as _ from 'lodash';
 import { StatusId } from '../../constants/status-id.model';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';

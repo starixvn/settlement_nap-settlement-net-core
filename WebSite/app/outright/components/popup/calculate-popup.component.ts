@@ -1,5 +1,3 @@
-import { ProviderSource } from './../../../score-source-setting/models/provider-source.model';
-import { map } from 'rxjs/operators';
 import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { OutrightService } from './../../services/outright.service';
 import { Component, Inject, Injector, OnInit, ViewChild } from '@angular/core';

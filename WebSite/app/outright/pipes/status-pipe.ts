@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform } from "@angular/core";
 import * as _ from "lodash";
-import { FilterStatuses } from "../constants/Options";
+import { FilterStatuses } from "../constants/options";
 import { Team } from "../models";
 
 @Pipe({

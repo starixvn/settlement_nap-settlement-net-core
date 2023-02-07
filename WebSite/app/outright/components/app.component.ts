@@ -19,9 +19,7 @@ export default class AppComponent implements OnInit {
     public outright: Outright;
     public filterRequest: FilterRequest;
 
-    constructor(protected injector: Injector,
-
-    ) { }
+    constructor(protected injector: Injector) { }
 
     public ngOnInit() {
         this.injector.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
