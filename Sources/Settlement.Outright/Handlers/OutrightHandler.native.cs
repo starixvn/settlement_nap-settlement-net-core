@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using Settlement.Core.Models;
-using Settlement.Outright.Requests;
 using Settlement.Outright.Services;
 
 namespace Settlement.Outright.Handlers;

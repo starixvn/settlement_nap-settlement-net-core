@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Settlement.Outright.Criteria;
-using Settlement.Outright.Requests;
 
 namespace Settlement.Outright
 {

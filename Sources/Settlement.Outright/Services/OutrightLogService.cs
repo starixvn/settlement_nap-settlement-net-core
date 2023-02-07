@@ -1,5 +1,4 @@
 ﻿using Settlement.Core.Services;
-using Settlement.Outright.Requests;
 
 namespace Settlement.Outright.Services
 {

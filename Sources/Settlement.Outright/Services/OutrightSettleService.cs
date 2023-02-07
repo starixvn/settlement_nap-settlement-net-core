@@ -5,7 +5,6 @@ using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Outright.Criteria;
-using Settlement.Outright.Requests;
 
 namespace Settlement.Outright.Services;
 

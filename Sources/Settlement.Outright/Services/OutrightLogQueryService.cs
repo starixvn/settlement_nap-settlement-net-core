@@ -1,6 +1,5 @@
 ﻿using Fanex.Data.Repository;
 using Settlement.Outright.Criteria;
-using Settlement.Outright.Requests;
 
 namespace Settlement.Outright.Services;
 

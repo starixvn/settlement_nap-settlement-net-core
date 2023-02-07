@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Settlement.Core.ActionFilters;
-using Settlement.Outright.Requests;
 using Settlement.Outright.Services;
 
 namespace Settlement.Outright.Controllers;
