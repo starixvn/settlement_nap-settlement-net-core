@@ -59,6 +59,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebSite", "WebSite", "{BEF6
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Settlement.Outright", "Sources\Settlement.Outright\Settlement.Outright.csproj", "{0424CDD5-B203-429B-B7FC-2274378EEC3D}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Settlement.Sportsbook.Outright.UnitTests", "Tests\Settlement.Sportsbook.Outright.UnitTests\Settlement.Sportsbook.Outright.UnitTests.csproj", "{D03DAB46-E71A-416F-8FB7-8FDA1DE7FDB2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -157,6 +159,10 @@ Global
 		{0424CDD5-B203-429B-B7FC-2274378EEC3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0424CDD5-B203-429B-B7FC-2274378EEC3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0424CDD5-B203-429B-B7FC-2274378EEC3D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D03DAB46-E71A-416F-8FB7-8FDA1DE7FDB2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D03DAB46-E71A-416F-8FB7-8FDA1DE7FDB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D03DAB46-E71A-416F-8FB7-8FDA1DE7FDB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D03DAB46-E71A-416F-8FB7-8FDA1DE7FDB2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -187,6 +193,7 @@ Global
 		{B10F2A8B-C53C-4B02-B90B-3D8FD641A1A4} = {A1FCD18B-3CAA-4629-A10D-F9EDCEF84670}
 		{D6B2DFFC-4FCD-4207-BF2B-89596CF15668} = {A1FCD18B-3CAA-4629-A10D-F9EDCEF84670}
 		{0424CDD5-B203-429B-B7FC-2274378EEC3D} = {D19D8BE5-5331-437B-BE2D-FDF1B5F02781}
+		{D03DAB46-E71A-416F-8FB7-8FDA1DE7FDB2} = {A1FCD18B-3CAA-4629-A10D-F9EDCEF84670}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F134C0FB-5844-4216-814B-BAE66FBB0195}

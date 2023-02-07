@@ -46,7 +46,7 @@ public class OutrightLogProcessServiceImp : OutrightLogProcessService
               .ToList();
     }
 
-    public async Task<List<OutrightLog>> GetOutrightLogByOutrightId(GetLogRequest request)
+    public virtual async Task<List<OutrightLog>> GetOutrightLogByOutrightId(GetLogRequest request)
     {
         var eventLogList = new List<OutrightLog>();
         var outrightLog = await outrightLogQueryService.GetOutrightLog(request);

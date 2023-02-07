@@ -115,7 +115,11 @@ public class OutrightSettleServiceImp : OutrightSettleService
     private async Task<Result> PushRequestUncalculate(int matchId, string teamId, List<string> teamSettleFailed)
     {
         var result = await UpdateResultAndUndo(matchId);
-        if (result.IsSuccessful) return result;
+        if (result.IsSuccessful)
+        {
+            return result;
+        }
+
         result.ErrMsg = Message(teamId, result.ErrMsg);
         teamSettleFailed.Add(matchId.ToString());
 
@@ -125,14 +129,18 @@ public class OutrightSettleServiceImp : OutrightSettleService
     private async Task<Result> PushRequestCalculate(TeamSettleModel team, int deadHeat, List<string> teamSettleFailed)
     {
         var result = await SettleMatch(team, deadHeat);
-        if (result.IsSuccessful) return result;
+        if (result.IsSuccessful)
+        {
+            return result;
+        }
+
         result.ErrMsg = Message(team.TeamId, result.ErrMsg);
         teamSettleFailed.Add(team.MatchId.ToString());
 
         return result;
     }
 
-    private ResultOutright HandleResult(Result[] results, List<string> teamSettleFailed)
+    private static ResultOutright HandleResult(IEnumerable<Result> results, List<string> teamSettleFailed)
     {
         var messageFailed = results.Where(result => !result.IsSuccessful).Select(result => result.ErrMsg);
         return new ResultOutright { ErrMsg = string.Join("", messageFailed), TeamFailedIds = teamSettleFailed.Count > 0 ? string.Join(',', teamSettleFailed) : string.Empty };

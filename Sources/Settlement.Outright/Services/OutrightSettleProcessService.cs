@@ -50,7 +50,7 @@ namespace Settlement.Outright.Services
                 results = ResultMessage(results, criteria.ErrMsg);
             }
 
-            return new Result()
+            return new Result
             {
                 ErrCode = results.Count,
                 ErrMsg = string.Join("", results.Select(r => r.ErrMsg).ToArray())
