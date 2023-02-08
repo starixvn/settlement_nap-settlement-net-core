@@ -1,6 +1,6 @@
 export const StatusId =  {
-    Running: 1,
-    RunningAndCompleted: 2,
-    Completed: 3,
-    CompletedAndWon:4
+    running: 1,
+    runningAndCompleted: 2,
+    completed: 3,
+    completedAndWon:4
 }

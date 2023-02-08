@@ -2,6 +2,7 @@ import { Pipe, PipeTransform } from "@angular/core";
 import * as _ from "lodash";
 import { FilterStatuses } from "../constants/options";
 import { Team } from "../models";
+import { Status } from "../constants";
 
 @Pipe({
     name: 'status',
@@ -9,8 +10,8 @@ import { Team } from "../models";
 })
 
 export class StatusPipe implements PipeTransform {
-    private readonly runningStatus = ['running', 'internal', 'closed'];
-    private readonly completedStatus = ['won', 'lose', 'refund'];
+    private readonly runningStatus = [ Status.running, Status.internal, Status.closed];
+    private readonly completedStatus = [ Status.won, Status.lose, Status.refund];
 
     public transform(teams: Team[], status: string) {
         return _.isEqual(status.toLowerCase(), FilterStatuses[0].toLowerCase()) ?
@@ -18,7 +19,7 @@ export class StatusPipe implements PipeTransform {
     }
 
     private filterStatus(teams: Team[], status: string) {
-        if (_.isEqual(status.toLowerCase(), "running")) {
+        if (_.isEqual(status.toLowerCase(), Status.running)) {
             return _.filter(teams, team => _.includes(this.runningStatus, team.status.toLowerCase()));
         }
 

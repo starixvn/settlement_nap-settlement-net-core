@@ -65,7 +65,7 @@ export class CalculatePopupComponent implements OnInit {
   }
 
   async getMatches() {
-    this.leagueSettle = await this.outrightService.getMatches(this.data.leagueId, this.data.sportType, StatusId.RunningAndCompleted);
+    this.leagueSettle = await this.outrightService.getMatches(this.data.leagueId, this.data.sportType, StatusId.runningAndCompleted);
     this.leagueSettle.teams.forEach(team => {
       team.dateTime = this.verifyDateService.convertToDateStruct(team.eventDate);
       team.status = team.status.toUpperCase();
@@ -109,7 +109,7 @@ export class CalculatePopupComponent implements OnInit {
   public async calculate() {
     this.clearError();
     await this.getLatestData();
-    const teamWonSelected = _.filter(this.teamSelected, team => _.isEqual(team.status.toLowerCase(), Status.Won));
+    const teamWonSelected = _.filter(this.teamSelected, team => _.isEqual(team.status.toLowerCase(), Status.won));
     const teamWonSettled = CalculateService.teamWonSettled(this.teamSelected, this.originalTeam);
     this.teamSettleWon = teamWonSelected.concat(teamWonSettled);
     this.validateBeforePush(this.teamSettleWon, teamWonSettled, teamWonSelected)
@@ -141,7 +141,7 @@ export class CalculatePopupComponent implements OnInit {
   }
 
   private async getLatestData() {
-    const latestLeague = await this.outrightService.getMatches(this.data.leagueId, this.data.sportType, StatusId.RunningAndCompleted);
+    const latestLeague = await this.outrightService.getMatches(this.data.leagueId, this.data.sportType, StatusId.runningAndCompleted);
     latestLeague.teams.forEach(team => {
       team.dateTime = this.verifyDateService.convertToDateStruct(team.eventDate);
       team.status = team.status.toUpperCase();

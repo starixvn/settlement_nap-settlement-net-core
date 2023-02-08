@@ -1,7 +1,9 @@
 export const Status =  {
-    Running: "running",
-    Won: "won",
-    Lose: "lose",
-    Refund: "refund",
-    Completed: "completed"
+    running: "running",
+    won: "won",
+    lose: "lose",
+    refund: "refund",
+    completed: "completed",
+    internal: "internal",
+    closed: "closed"
 }

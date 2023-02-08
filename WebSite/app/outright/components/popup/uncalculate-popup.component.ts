@@ -47,7 +47,7 @@ export class UncalculatePopupComponent implements OnInit {
   }
 
   async getMatches() {
-    this.leagueSettle = await this.outrightService.getMatches(this.data.leagueId, this.data.sportType, StatusId.Completed);
+    this.leagueSettle = await this.outrightService.getMatches(this.data.leagueId, this.data.sportType, StatusId.completed);
     this.teams = this.leagueSettle.teams;
   }
 

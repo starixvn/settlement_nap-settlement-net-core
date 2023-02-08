@@ -8,7 +8,7 @@ import { Status } from "../constants";
 export class CalculateService {
 
     public static ExistRunningStatus(listTeam: Team[]) {
-        return listTeam.some(team => _.isEqual(team.status.toLowerCase(), Status.Running));
+        return listTeam.some(team => _.isEqual(team.status.toLowerCase(), Status.running));
     }
 
     public static VerifyDeadheat(teamWonSelected: Team[], teamWonSettled: Team[]) {
@@ -58,8 +58,8 @@ export class CalculateService {
     public static teamWonSettled(teamSelected: Team[], originalTeam: Team[]) {
         const teamNotSelectButSettled = _.filter(originalTeam, team =>
             _.isUndefined(teamSelected.find(t => _.isEqual(t.teamName, team.teamName)))
-            && _.isEqual(team.oddsStatus.toLowerCase(), Status.Completed)
-            && _.isEqual(team.status.toLowerCase(), Status.Won)
+            && _.isEqual(team.oddsStatus.toLowerCase(), Status.completed)
+            && _.isEqual(team.status.toLowerCase(), Status.won)
         );
         return teamNotSelectButSettled;
     }
