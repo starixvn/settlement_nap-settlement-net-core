@@ -31,8 +31,8 @@ public class FilterServiceTests
         var config = new MapperConfiguration(mapperConfig);
         var mapper = new Mapper(config);
 
-        var appSetting = new AppSettingsKey();
-        var option = Options.Create(appSetting);
+        var appSettingKey = new AppSettingsKey { SiteDbServer = new List<string> { "01", "02" } };
+        var option = Options.Create(appSettingKey);
 
         service = new FilterServiceImp(repository, balanceUpService, mapper, permissionService, refDataService, option);
     }
@@ -71,9 +71,33 @@ public class FilterServiceTests
         var teamTwo = new Team { LeagueId = 1 };
         var teamThree = new Team { LeagueId = 2 };
         repository.FetchAsync<Team>(Arg.Any<GetOutrightDetailCriteria>()).Returns(new List<Team> { teamOne, teamTwo, teamThree });
+        repository.FetchAsync<TeamTicketModel>(Arg.Any<GetTeamTicketCountCriteria>())
+            .Returns(new List<TeamTicketModel>());
 
         var actual = await service.Filter(new FilterRequest());
 
         Assert.Equal(2, actual.LeagueMatch.Count());
+    }
+
+    [Fact]
+    public async Task Filter_Always_ReturnLeagueOfMatchWithTicketCount()
+    {
+        var teamOne = new Team { LeagueId = 1, BetCount = 1, OrId = 1 };
+        var teamTwo = new Team { LeagueId = 1, OrId = 2 };
+        repository.FetchAsync<Team>(Arg.Any<GetOutrightDetailCriteria>()).Returns(new List<Team> { teamOne, teamTwo });
+        repository.FetchAsync<TeamTicketModel>(Arg.Any<GetTeamTicketCountCriteria>())
+            .Returns(new List<TeamTicketModel>
+            {
+                new TeamTicketModel
+                {
+                    OrId = 1,
+                    TotalTicket = 2
+                }
+            });
+
+        var actual = await service.Filter(new FilterRequest());
+
+        Assert.Equal(1, actual.LeagueMatch.Count());
+        Assert.Equal(actual.LeagueMatch.FirstOrDefault()!.Teams.FirstOrDefault()!.BetCount, 4);
     }
 }

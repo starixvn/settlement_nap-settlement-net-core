@@ -17,7 +17,6 @@ export class OutrightService {
     constructor(private httpRequestService: HttpRequestService) { }
 
     public getLeagues(request: LeagueRequest) {
-        console.log('request', request);
         return this.httpRequestService.postJson<League[]>(request, `${this.outrightApi}/get-league`);
     }
 

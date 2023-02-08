@@ -72,8 +72,6 @@ public class FilterServiceImp : FilterService
     {
         var criteria = mapper.Map<FilterRequest, GetOutrightDetailCriteria>(request);
         var listTeam = (await repository.FetchAsync<Team>(criteria)).ToList();
-
-        // TO DO
         var teamTickets = await GetTeamsTicketCount(listTeam);
         var group = GroupTeamTicket(teamTickets.ToList());
 
@@ -86,7 +84,7 @@ public class FilterServiceImp : FilterService
         };
     }
 
-    private void AddTicketCountToTeam(List<Team> teams, List<TeamTicketModel> teamTickets)
+    private static void AddTicketCountToTeam(List<Team> teams, List<TeamTicketModel> teamTickets)
     {
         foreach (var team in teams)
         {
@@ -103,14 +101,12 @@ public class FilterServiceImp : FilterService
         var orIds = string.Join(',', teams.Select(t => t.OrId));
         var teamsTicketCount = new List<TeamTicketModel>();
 
-        foreach (var server in appSettingsKey.SiteDbServer)
+        foreach (var criteria in appSettingsKey.SiteDbServer.Select(server => new GetTeamTicketCountCriteria
         {
-            var criteria = new GetTeamTicketCountCriteria
-            {
-                OrIds = orIds,
-                DbServer = server
-            };
-
+            OrIds = orIds,
+            DbServer = server
+        }))
+        {
             var result = await repository.FetchAsync<TeamTicketModel>(criteria);
             teamsTicketCount.AddRange(result);
         }
@@ -118,7 +114,7 @@ public class FilterServiceImp : FilterService
         return teamsTicketCount;
     }
 
-    private IEnumerable<TeamTicketModel> GroupTeamTicket(List<TeamTicketModel> teams)
+    private static IEnumerable<TeamTicketModel> GroupTeamTicket(List<TeamTicketModel> teams)
     {
         var result = teams.GroupBy(team => team.OrId).Select(groupTeam => new TeamTicketModel
         {

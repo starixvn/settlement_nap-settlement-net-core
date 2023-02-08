@@ -57,7 +57,7 @@ namespace Settlement.Outright.Services
             };
         }
 
-        private List<Result> ResultMessage(List<Result> results, string message)
+        private static List<Result> ResultMessage(List<Result> results, string message)
         {
             if (!string.IsNullOrWhiteSpace(message))
             {

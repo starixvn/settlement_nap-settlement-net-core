@@ -21,18 +21,13 @@ namespace Settlement.Outright.Services
 
         public async Task<IEnumerable<OutrightLog>> GetLogForView(GetLogRequest request)
         {
-            IEnumerable<OutrightLog> logs;
             request.BalanceUpDay = balanceUpService.GetBalanceUpDay().BalanceUpDay;
             if (request.MatchId is not null && request.MatchId > 0)
             {
-                logs = await outrightLogService.GetOutrightLogByOutrightId(request);
-            }
-            else
-            {
-                logs = await outrightLogService.GetOutrightLogByMatchCode(request);
+                return await outrightLogService.GetOutrightLogByOutrightId(request);
             }
 
-            return logs;
+            return await outrightLogService.GetOutrightLogByMatchCode(request);
         }
     }
 }
