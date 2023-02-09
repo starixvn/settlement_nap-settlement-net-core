@@ -44,5 +44,4 @@ public class OutrightLogServiceImp : OutrightLogService
         logs = await outrightLogService.GetOutrightLogByOutrightId(request);
 
         return logs;
-    }
 }
