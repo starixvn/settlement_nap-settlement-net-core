@@ -6,116 +6,115 @@ using Microsoft.Extensions.Options;
 using Settlement.Core.Models;
 using Settlement.Outright.Criteria;
 
-namespace Settlement.Outright.Services
+namespace Settlement.Outright.Services;
+
+public interface OutrightSettleProcessService
 {
-    public interface OutrightSettleProcessService
+    Task<Result> UpdateResultUndo(OutrightSettleCriteria criteria);
+
+    Task<Result> OutrightSettleMultiSite(OutrightSettleCriteria criteria);
+
+    Task<ResultOutright> ValidateDeployment(string spName);
+
+    Task<Result> UpdateResultCalculate(OutrightSettleCriteria criteria);
+}
+
+public class OutrightSettleProcessServiceImp : OutrightSettleProcessService
+{
+    private readonly IDynamicRepository repository;
+
+    private readonly AppSettingsKey appSettingsKey;
+
+    private readonly ScaleOutSettleThirdPartyService scaleOutSettleService;
+
+    private readonly IMapper mapper;
+
+    public OutrightSettleProcessServiceImp(IDynamicRepository repository,
+        IOptions<AppSettingsKey> appSettingsKey,
+        ScaleOutSettleThirdPartyService scaleOutSettleService,
+        IMapper mapper)
     {
-        Task<Result> UpdateResultUndo(OutrightSettleCriteria criteria);
-
-        Task<Result> OutrightSettleMultiSite(OutrightSettleCriteria criteria);
-
-        Task<ResultOutright> ValidateDeployment(string spName);
-
-        Task<Result> UpdateResultCalculate(OutrightSettleCriteria criteria);
+        this.repository = repository;
+        this.appSettingsKey = appSettingsKey.Value;
+        this.scaleOutSettleService = scaleOutSettleService;
+        this.mapper = mapper;
     }
 
-    public class OutrightSettleProcessServiceImp : OutrightSettleProcessService
+    public async Task<Result> OutrightSettleMultiSite(OutrightSettleCriteria criteria)
     {
-        private readonly IDynamicRepository repository;
-
-        private readonly AppSettingsKey appSettingsKey;
-
-        private readonly ScaleOutSettleThirdPartyService scaleOutSettleService;
-
-        private readonly IMapper mapper;
-
-        public OutrightSettleProcessServiceImp(IDynamicRepository repository,
-            IOptions<AppSettingsKey> appSettingsKey,
-            ScaleOutSettleThirdPartyService scaleOutSettleService,
-            IMapper mapper)
+        var results = new List<Result>();
+        foreach (var server in appSettingsKey.SiteDbServer)
         {
-            this.repository = repository;
-            this.appSettingsKey = appSettingsKey.Value;
-            this.scaleOutSettleService = scaleOutSettleService;
-            this.mapper = mapper;
+            criteria.DbServer = server;
+            await repository.ExecuteAsync(criteria);
+            results = ResultMessage(results, criteria.ErrMsg);
         }
 
-        public async Task<Result> OutrightSettleMultiSite(OutrightSettleCriteria criteria)
+        return new Result
         {
-            var results = new List<Result>();
-            foreach (var server in appSettingsKey.SiteDbServer)
-            {
-                criteria.DbServer = server;
-                await repository.ExecuteAsync(criteria);
-                results = ResultMessage(results, criteria.ErrMsg);
-            }
-
-            return new Result
-            {
-                ErrCode = results.Count,
-                ErrMsg = string.Join("", results.Select(r => r.ErrMsg).ToArray())
-            };
-        }
+            ErrCode = results.Count,
+            ErrMsg = string.Join("", results.Select(r => r.ErrMsg).ToArray())
+        };
+    }
 
         private static List<Result> ResultMessage(List<Result> results, string message)
+    {
+        if (!string.IsNullOrWhiteSpace(message))
         {
-            if (!string.IsNullOrWhiteSpace(message))
+            var result = new ResultOutright
             {
-                var result = new ResultOutright
-                {
-                    ErrMsg = $"<br/>- {message}"
-                };
-
-                results.Add(result);
-            }
-
-            return results;
-        }
-
-        public async Task<ResultOutright> ValidateDeployment(string spName)
-        {
-            var validateResult = await scaleOutSettleService.GetDeploymentInfo(new GetDeploymentInfoRequest { SPName = spName });
-
-            if (validateResult.ErrorCode > 0)
-            {
-                return new ResultOutright
-                {
-                    ErrCode = validateResult.ErrorCode,
-                    ErrMsg = validateResult.ErrorMessage
-                };
-            }
-
-            return new ResultOutright();
-        }
-
-        public async Task<Result> UpdateResultUndo(OutrightSettleCriteria criteria)
-        {
-            var updateResultCriteria = new UpdateResultOutrightCriteria
-            {
-                Action = criteria.Action,
-                Status = criteria.Status,
-                MatchId = criteria.MatchId
+                ErrMsg = $"<br/>- {message}"
             };
 
-            await repository.ExecuteAsync(updateResultCriteria);
+            results.Add(result);
+        }
 
-            return new Result
+        return results;
+    }
+
+    public async Task<ResultOutright> ValidateDeployment(string spName)
+    {
+        var validateResult = await scaleOutSettleService.GetDeploymentInfo(new GetDeploymentInfoRequest { SPName = spName });
+
+        if (validateResult.ErrorCode > 0)
+        {
+            return new ResultOutright
             {
-                ErrCode = updateResultCriteria.ErrCode,
-                ErrMsg = updateResultCriteria.ErrMsg
+                ErrCode = validateResult.ErrorCode,
+                ErrMsg = validateResult.ErrorMessage
             };
         }
 
-        public async Task<Result> UpdateResultCalculate(OutrightSettleCriteria criteria)
-        {
-            var updateResultCriteria = mapper.Map<OutrightSettleCriteria, UpdateResultOutrightCriteria>(criteria);
-            await repository.ExecuteAsync(updateResultCriteria);
+        return new ResultOutright();
+    }
 
-            return new Result
-            {
-                ErrCode = updateResultCriteria.ErrCode,
-                ErrMsg = updateResultCriteria.ErrMsg
-            };
-        }
+    public async Task<Result> UpdateResultUndo(OutrightSettleCriteria criteria)
+    {
+        var updateResultCriteria = new UpdateResultOutrightCriteria
+        {
+            Action = criteria.Action,
+            Status = criteria.Status,
+            MatchId = criteria.MatchId
+        };
+
+        await repository.ExecuteAsync(updateResultCriteria);
+
+        return new Result
+        {
+            ErrCode = updateResultCriteria.ErrCode,
+            ErrMsg = updateResultCriteria.ErrMsg
+        };
+    }
+
+    public async Task<Result> UpdateResultCalculate(OutrightSettleCriteria criteria)
+    {
+        var updateResultCriteria = mapper.Map<OutrightSettleCriteria, UpdateResultOutrightCriteria>(criteria);
+        await repository.ExecuteAsync(updateResultCriteria);
+
+        return new Result
+        {
+            ErrCode = updateResultCriteria.ErrCode,
+            ErrMsg = updateResultCriteria.ErrMsg
+        };
     }
 }

@@ -763,13 +763,12 @@
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
             "outputPath": "../wwwroot/multi-sports",
-            "index": "multi-sports/index.html",
+            "index": "multi-sports/index.cshtml",
             "main": "multi-sports/main.ts",
             "tsConfig": "multi-sports/tsconfig.app.json",
             "polyfills": "polyfills.ts",
             "styles": [
               "multi-sports/style.less",
-              "./node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css",
               "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
               "shared/styles/material.style.scss"
              ],
@@ -798,7 +797,6 @@
                 }
               ],
               "outputHashing": "all",
-              "baseHref": "@path",
               "deployUrl": "multi-sports/"
             },
             "development": {
@@ -1708,7 +1706,6 @@
             "polyfills": "polyfills.ts",
             "styles": [
               "outright/style.less",
-              "./node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css",
               "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
               "node_modules/ngx-toastr/toastr.css",
               "shared/styles/material.style.scss",
@@ -1739,7 +1736,6 @@
                 }
               ],
               "outputHashing": "all",
-              "baseHref": "@path/",
               "deployUrl": "outright/"
             },
             "development": {

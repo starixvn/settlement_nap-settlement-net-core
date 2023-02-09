@@ -48,7 +48,7 @@ export class FilterComponent implements OnInit {
     public readonly matchStatusSelect = new MultipleSelect();
     public readonly overStatusSelect = new MultipleSelect();
     public getLeagueParams: LeagueFilterRequest;
-    private readonly widthMultiSelect = "200px";
+    private readonly widthMultiSelect = "210px";
 
     constructor(
         private readonly multiSportService: MultiSportService,

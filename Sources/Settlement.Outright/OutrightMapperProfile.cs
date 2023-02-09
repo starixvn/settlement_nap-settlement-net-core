@@ -1,17 +1,16 @@
 ﻿using AutoMapper;
 using Settlement.Outright.Criteria;
 
-namespace Settlement.Outright
+namespace Settlement.Outright;
+
+public class OutrightMapperProfile : Profile
 {
-    public class OutrightMapperProfile : Profile
+    public OutrightMapperProfile()
     {
-        public OutrightMapperProfile()
-        {
-            CreateMap<LeagueRequest, GetOutrightLeaguesCriteria>();
-            CreateMap<FilterRequest, GetOutrightDetailCriteria>();
-            CreateMap<GetLeagueInfoRequest, GetLeagueInfoCriteria>();
-            CreateMap<TeamSettleModel, OutrightSettleCriteria>();
-            CreateMap<OutrightSettleCriteria, UpdateResultOutrightCriteria>();
-        }
+        CreateMap<LeagueRequest, GetOutrightLeaguesCriteria>();
+        CreateMap<FilterRequest, GetOutrightDetailCriteria>();
+        CreateMap<GetLeagueInfoRequest, GetLeagueInfoCriteria>();
+        CreateMap<TeamSettleModel, OutrightSettleCriteria>();
+        CreateMap<OutrightSettleCriteria, UpdateResultOutrightCriteria>();
     }
 }

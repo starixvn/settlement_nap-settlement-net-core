@@ -1,9 +1,6 @@
-.viewport { 
-    display: contents;
- }
- 
-.mat-select-trigger {
-    display: block !important;
+.mat-mdc-select-arrow-wrapper  {
+   padding-right: 5px ;
+   transform: unset!important;
 }
 
 .mat-mdc-select-value {
@@ -17,15 +14,36 @@
     border-color: #ccc !important;
     border-radius: 4px !important;
     height: 24px !important;
+    min-height: 24px!important;
+}
+
+.mdc-text-field {
+    padding: unset !important;
+    overflow: unset !important;
+}
+
+.mat-mdc-text-field-wrapper:not(.mdc-text-field--outlined) .mat-mdc-form-field-infix {
+    padding: unset !important;
 }
 
 .select-all {
     border-bottom: 1px solid;
 }
 
-.mat-mdc-option {
-    color: black;
+.mat-mdc-floating-label{
+    top: 5px !important;
+    font-size: 12px !important;
 }
+
+.mdc-floating-label {
+    color: black !important;
+    transform: none !important;
+}
+
+.cdk-overlay-backdrop {
+    position: unset !important;
+}
+
 
 .mat-primary .mat-pseudo-checkbox-checked {
     height: 13px;
@@ -86,29 +104,29 @@
 }
 
 .mat-mdc-option {
+    height: 19px !important;
     min-height: 19px !important;
     padding: 0 14px !important;
     background: none !important;
     .mdc-list-item__primary-text {
         font-family: Tahoma, Arial, Helvetica, sans-serif !important;
         font-size: 12px !important;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: inline-block;
+        white-space: nowrap!important;
+        user-select: text;
     }
 }
 
-
-
-.mat-mdb-option-pseudo-checkbox {
+.mat-mdc-option-pseudo-checkbox {
     margin-right: 3px !important;
 }
 
-.mat-mdb-form-field-label {
-    color: black !important;
-    transform: none !important;
-}
-
-.mat-mdb-ripple-element {
+.mdc-line-ripple, .mat-mdc-form-field-bottom-align {
     display: none !important;
 }
+
 
 .cdk-overlay-connected-position-bounding-box {
 
@@ -116,43 +134,60 @@
         transform: none !important;
         overflow-x: hidden;
         box-sizing: content-box;
-        padding: 4px 4px 10px 5px;
+        padding: 2px 4px 10px 5px;
         margin-left: -5px;
         margin-top: -2px;
 
-        .mat-select-panel {
-            margin-top: 14px;
+        .mat-mdc-select-panel {
             background: #fff;
             max-height: 500px;
             min-width: 100% !important;
             overflow: overlay !important;
+            box-shadow: 0 2px 4px -1px #0003, 0 4px 5px 0 #00000024, 0 1px 10px 0 #0000001f;
+        }
+        .mdc-menu-surface.mat-mdc-select-panel{
+            padding: unset !important;
         }
     }
 }
 
-.mat-checkbox {
-    .mat-checkbox-background {
+.mdc-checkbox {
+    .mdc-checkbox__background {
         border: 1px solid black;
-        border-radius: 2px;
         background: none !important;
+        top: unset !important;
+        left: unset !important;
+        height: 13px !important;
+        width: 13px !important;
     }
 
-    .mat-checkbox-checkmark-path {
+    .mdc-checkbox__checkmark-path {
         stroke: black !important;
     }
-
-    .mat-checkbox-inner-container {
-        height: 13px;
-        width: 13px;
-        margin-right: 3px;
-    }
-
-    .mat-checkbox-input {
-        background: none;
+    .mdc-checkbox__ripple, .mat-mdc-checkbox-ripple {
+        display: none !important;
     }
 }
 
-.mat-select-panel .cdk-virtual-scroll-viewport {
+.mdc-form-field {
+    .mdc-checkbox {
+        margin: unset !important;
+        padding: unset !important;
+        top: 2px;
+        left: 2px;
+    }
+
+    label {
+        font-size: 14px;
+        font-style: Tahoma, Arial, Helvetica, sans-serif !important;
+    }
+}
+
+.mdc-list-item--selected:not(.mdc-list-item--disabled) .mdc-list-item__primary-text {
+    color: black !important;
+}
+
+.mat-mdc-select-panel .cdk-virtual-scroll-viewport {
     max-height: 450px;
     contain: unset;
 }
@@ -179,7 +214,7 @@
     transform: rotate(45deg);
     vertical-align: middle;
     float: right;
-    margin: 5px 10px 0px 0px ;
+    margin: 10px 15px 0px 0px ;
 }
 
 .collapse-group {
@@ -215,7 +250,7 @@
 .mat-mdc-dialog-title {
     height: 30px;
     background-color: #6a6a6a;
-    color: #fff;
+    color: #fff !important;
     padding-left: 15px;
     margin: unset !important;
     font-family: Tahoma, sans-serif;
@@ -247,12 +282,12 @@
 }
 
 .mat-search-box {
-    height: 22px;
-    margin: -4px 0 0 5px !important;
+    height: 24px !important;
     position: absolute;
     color: #000 !important;
     cursor: pointer;
-    font-size: 15px;
+    font-size: 12px !important;
+
 }
 
 .above {
@@ -264,6 +299,7 @@
     box-shadow: 0px 1px 4px 0px #7d7d7d;
     transition: box-shadow 0.3s ease-in-out;
     z-index: 1002;
+    position: relative;
 }
 
 .focus:hover {
@@ -271,7 +307,3 @@
     transform: scale(1.04, 1.1);
     transition: transform 0.2s ease-in-out;
   }
-
-.open-search{
-    margin-top: 10px !important;
-}

@@ -6,7 +6,7 @@ using Settlement.Outright.Services;
 namespace Settlement.Outright.Controllers;
 
 [ApiController]
-[Route("api/outright")]
+[Route("outright/api/")]
 [SessionAuthorize]
 public class OutrightController : ControllerBase
 {

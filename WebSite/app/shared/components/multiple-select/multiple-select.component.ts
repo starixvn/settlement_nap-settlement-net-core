@@ -120,7 +120,7 @@ export class NewMultipleSelectComponent implements OnChanges, AfterViewInit {
 
   public selectGroupParent($event, group: Group) {
     const allItemsInGroup = this.items.filter(item => item.type === group.name).map(item => item);
-    if (!group.selected) {
+    if (group.selected) {
       allItemsInGroup.forEach(item => {
         item.checked = true;
         if (this.valueSelected.indexOf(item) < 0) {
@@ -201,6 +201,9 @@ export class NewMultipleSelectComponent implements OnChanges, AfterViewInit {
   }
 
   public search() {
+    if(!this.multipleSelect.enableSearchBox){
+      return;
+    }
     if (this.hasSearchText()) {
       this.status = "";
       this.searchTextEmpty = false;

@@ -31,7 +31,8 @@ import { DynamicHeightDirective } from '../shared/directives';
         MaterialModule,
         PipesModule,
         NgbModule,
-        DatepickerComponent
+        DatepickerComponent,
+        DynamicHeightDirective
     ],
     declarations: [
         AppComponent,
@@ -43,7 +44,6 @@ import { DynamicHeightDirective } from '../shared/directives';
         NewMultipleSelectComponent,
         LeagueComponent,
         MaterialDialogComponent,
-        DynamicHeightDirective,
     ],
     entryComponents: [ModalDialogComponent, ModalContentDialogComponent],
     providers: [ { provide: HTTP_INTERCEPTORS, useClass: CustomHttpRequestInterceptor, multi: true }],
