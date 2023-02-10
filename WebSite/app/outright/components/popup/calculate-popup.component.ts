@@ -67,8 +67,9 @@ export class CalculatePopupComponent implements OnInit {
   async getMatches() {
     this.leagueSettle = await this.outrightService.getMatches(this.data.leagueId, this.data.sportType, StatusId.runningAndCompleted);
     this.leagueSettle.teams.forEach(team => {
-      team.dateTime = this.verifyDateService.convertToDateStruct(team.eventDate);
       team.status = team.status.toUpperCase();
+      team.eventDate = _.isEqual(team.oddsStatus, Status.running) ? this.leagueSettle.today : team.eventDate;
+      team.dateTime = this.verifyDateService.convertToDateStruct(team.eventDate);
     });
     this.moveBetsDay = this.verifyDateService.convertToDateStruct(this.leagueSettle.moveBetsDay);
     this.today = this.verifyDateService.convertToDateStruct(this.leagueSettle.today);
@@ -136,7 +137,7 @@ export class CalculatePopupComponent implements OnInit {
   private confirmCalcNonDeadheat() {
     this.confirmationDialogMessage.message = Language.Outright.nonDeadHeatConfirm;
     this.injector.get(MessageBoxService).confirm(this.confirmationDialogMessage, () => {
-      this.doCalculate(this.teamSettleWon.length);
+      this.doCalculate(this.teamSettleWon.some(team => team.isDeadheat) ? this.teamSettleWon.length : 1);
     });
   }
 
