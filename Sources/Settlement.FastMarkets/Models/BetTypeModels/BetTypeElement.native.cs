@@ -1,14 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Xml.Serialization;
 
-namespace Settlement.FastMarkets.Models.BetTypeModels
-{
-    public class BetTypeElement
-    {
-        [XmlAttribute]
-        public int Id { get; set; }
+namespace Settlement.FastMarkets.Models.BetTypeModels;
 
-        [XmlElement("Item")]
-        public List<ItemElement> Items { get; set; }
-    }
+public class BetTypeElement
+{
+    [XmlAttribute]
+    public int Id { get; set; }
+
+    [XmlElement("Item")]
+    public List<ItemElement> Items { get; set; }
 }

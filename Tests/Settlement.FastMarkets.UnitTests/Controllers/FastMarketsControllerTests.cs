@@ -9,82 +9,81 @@ using Settlement.FastMarkets.Requests;
 using Xunit;
 using MatchDetail = Settlement.FastMarkets.Models.MatchDetail;
 
-namespace Settlement.FastMarkets.UnitTests.Controllers
+namespace Settlement.FastMarkets.UnitTests.Controllers;
+
+public class FastMarketsControllerTests
 {
-    public class FastMarketsControllerTests
+    private readonly FastMarketsController controller;
+
+    private readonly IMediator mediator;
+
+    public FastMarketsControllerTests()
     {
-        private readonly FastMarketsController controller;
+        mediator = Substitute.For<IMediator>();
+        controller = new FastMarketsController(mediator);
+    }
 
-        private readonly IMediator mediator;
+    [Fact]
+    public void InitialFilter_Always_ReturnFastMarketFilter()
+    {
+        var actual = controller.InitialFilter() as OkObjectResult;
 
-        public FastMarketsControllerTests()
-        {
-            mediator = Substitute.For<IMediator>();
-            controller = new FastMarketsController(mediator);
-        }
+        Assert.IsType<FastMarketFilter>(actual.Value);
+        Assert.Equal(200, actual.StatusCode);
+    }
 
-        [Fact]
-        public void InitialFilter_Always_ReturnFastMarketFilter()
-        {
-            var actual = controller.InitialFilter() as OkObjectResult;
+    [Fact]
+    public async Task GetBetTypeInterval_Always_ReturnCorrectType()
+    {
+        mediator.Send(Arg.Any<BetTypeIntervalRequest>()).Returns(new FastMarketModel());
 
-            Assert.IsType<FastMarketFilter>(actual.Value);
-            Assert.Equal(200, actual.StatusCode);
-        }
+        var actual = await controller.GetBetTypeInterval(new BetTypeIntervalRequest()) as OkObjectResult;
 
-        [Fact]
-        public async Task GetBetTypeInterval_Always_ReturnCorrectType()
-        {
-            mediator.Send(Arg.Any<BetTypeIntervalRequest>()).Returns(new FastMarketModel());
+        Assert.IsType<FastMarketModel>(actual.Value);
+        Assert.Equal(200, actual.StatusCode);
+    }
 
-            var actual = await controller.GetBetTypeInterval(new BetTypeIntervalRequest()) as OkObjectResult;
+    [Fact]
+    public async Task GetMatch_Always_ReturnCorrectType()
+    {
+        mediator.Send(Arg.Any<MatchDetailRequest>()).Returns(new MatchDetail());
 
-            Assert.IsType<FastMarketModel>(actual.Value);
-            Assert.Equal(200, actual.StatusCode);
-        }
+        var actual = await controller.GetMatch(new MatchDetailRequest()) as OkObjectResult;
 
-        [Fact]
-        public async Task GetMatch_Always_ReturnCorrectType()
-        {
-            mediator.Send(Arg.Any<MatchDetailRequest>()).Returns(new MatchDetail());
+        Assert.IsType<MatchDetail>(actual.Value);
+        Assert.Equal(200, actual.StatusCode);
+    }
 
-            var actual = await controller.GetMatch(new MatchDetailRequest()) as OkObjectResult;
+    [Fact]
+    public async Task CheckingMarkedTickets_Always_ReturnCorrectType()
+    {
+        mediator.Send(Arg.Any<CheckingMarkedTicketsRequest>()).Returns(new MarkedTickets());
 
-            Assert.IsType<MatchDetail>(actual.Value);
-            Assert.Equal(200, actual.StatusCode);
-        }
+        var actual = await controller.CheckingMarkedTickets(new CheckingMarkedTicketsRequest()) as OkObjectResult;
 
-        [Fact]
-        public async Task CheckingMarkedTickets_Always_ReturnCorrectType()
-        {
-            mediator.Send(Arg.Any<CheckingMarkedTicketsRequest>()).Returns(new MarkedTickets());
+        Assert.IsType<MarkedTickets>(actual.Value);
+        Assert.Equal(200, actual.StatusCode);
+    }
 
-            var actual = await controller.CheckingMarkedTickets(new CheckingMarkedTicketsRequest()) as OkObjectResult;
+    [Fact]
+    public async Task Settle_Always_ReturnCorrectType()
+    {
+        mediator.Send(Arg.Any<SettleRequest>()).Returns(new Result());
 
-            Assert.IsType<MarkedTickets>(actual.Value);
-            Assert.Equal(200, actual.StatusCode);
-        }
+        var actual = await controller.Settle(new SettleRequest()) as OkObjectResult;
 
-        [Fact]
-        public async Task Settle_Always_ReturnCorrectType()
-        {
-            mediator.Send(Arg.Any<SettleRequest>()).Returns(new Result());
+        Assert.IsType<Result>(actual.Value);
+        Assert.Equal(200, actual.StatusCode);
+    }
 
-            var actual = await controller.Settle(new SettleRequest()) as OkObjectResult;
+    [Fact]
+    public async Task UpdateWaterBreakSetting_Always_ReturnCorrectType()
+    {
+        mediator.Send(Arg.Any<UpdateWaterBreakSettingRequest>()).Returns(new Result());
 
-            Assert.IsType<Result>(actual.Value);
-            Assert.Equal(200, actual.StatusCode);
-        }
+        var actual = await controller.UpdateWaterBreakSetting(new UpdateWaterBreakSettingRequest()) as OkObjectResult;
 
-        [Fact]
-        public async Task UpdateWaterBreakSetting_Always_ReturnCorrectType()
-        {
-            mediator.Send(Arg.Any<UpdateWaterBreakSettingRequest>()).Returns(new Result());
-
-            var actual = await controller.UpdateWaterBreakSetting(new UpdateWaterBreakSettingRequest()) as OkObjectResult;
-
-            Assert.IsType<Result>(actual.Value);
-            Assert.Equal(200, actual.StatusCode);
-        }
+        Assert.IsType<Result>(actual.Value);
+        Assert.Equal(200, actual.StatusCode);
     }
 }

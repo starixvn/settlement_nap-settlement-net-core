@@ -5,58 +5,57 @@ using Settlement.Core.Services;
 using Settlement.Gaming.Requests;
 using Settlement.Gaming.Models.NumberGame;
 
-namespace Settlement.Gaming.Services.NumberGame
+namespace Settlement.Gaming.Services.NumberGame;
+
+public interface LeagueService
 {
-    public interface LeagueService
+    Task<List<LeaguesModel>> Search(NumberGameMatchRequest request);
+};
+
+public class LeagueServiceImp : LeagueService
+{
+    private readonly MatchService matchService;
+
+    private readonly IRefDataService refDataService;
+
+    public LeagueServiceImp(
+        MatchService matchService,
+        IRefDataService refDataService)
     {
-        Task<List<LeaguesModel>> Search(NumberGameMatchRequest request);
-    };
+        this.matchService = matchService;
+        this.refDataService = refDataService;
+    }
 
-    public class LeagueServiceImp : LeagueService
+    public async Task<List<LeaguesModel>> Search(NumberGameMatchRequest request)
     {
-        private readonly MatchService matchService;
+        var matches = await matchService.Matches(request);
 
-        private readonly IRefDataService refDataService;
+        return await CreateLeagues(matches);
+    }
 
-        public LeagueServiceImp(
-            MatchService matchService,
-            IRefDataService refDataService)
+    private async Task<List<LeaguesModel>> CreateLeagues(List<MatchDetailModel> matches)
+    {
+        var leagueIds = matches.GroupBy(m => m.LeagueId).Select(m => m.Key).ToList();
+        var leagues = new List<LeaguesModel>();
+        foreach (var leagueId in leagueIds)
         {
-            this.matchService = matchService;
-            this.refDataService = refDataService;
+            var matchesByLeagueId = matches.Where(m => m.LeagueId == leagueId).ToList();
+            var league = await LeagueItem(leagueId, matchesByLeagueId);
+            leagues.Add(league);
         }
 
-        public async Task<List<LeaguesModel>> Search(NumberGameMatchRequest request)
+        return leagues;
+    }
+
+    private async Task<LeaguesModel> LeagueItem(int leagueId, List<MatchDetailModel> matches)
+    {
+        var league = new LeaguesModel
         {
-            var matches = await matchService.Matches(request);
+            LeagueId = leagueId,
+            Matches = matches,
+            RefDataService = refDataService
+        };
 
-            return await CreateLeagues(matches);
-        }
-
-        private async Task<List<LeaguesModel>> CreateLeagues(List<MatchDetailModel> matches)
-        {
-            var leagueIds = matches.GroupBy(m => m.LeagueId).Select(m => m.Key).ToList();
-            var leagues = new List<LeaguesModel>();
-            foreach (var leagueId in leagueIds)
-            {
-                var matchesByLeagueId = matches.Where(m => m.LeagueId == leagueId).ToList();
-                var league = await LeagueItem(leagueId, matchesByLeagueId);
-                leagues.Add(league);
-            }
-
-            return leagues;
-        }
-
-        private async Task<LeaguesModel> LeagueItem(int leagueId, List<MatchDetailModel> matches)
-        {
-            var league = new LeaguesModel
-            {
-                LeagueId = leagueId,
-                Matches = matches,
-                RefDataService = refDataService
-            };
-
-            return await Task.Run(() => league);
-        }
+        return await Task.Run(() => league);
     }
 }

@@ -1,27 +1,26 @@
 using Fanex.Data;
 using Fanex.Data.Repository;
 
-namespace Settlement.ThirdPartyProducts.Criteria
+namespace Settlement.ThirdPartyProducts.Criteria;
+
+public class MatchesWaitingCriteria : CriteriaBase
 {
-    public class MatchesWaitingCriteria : CriteriaBase
+    public string SportTypes { get; set; }
+
+    public string SettleType { get; private set; } = "BBD";
+
+    public string LeagueIds { get; set; }
+
+    [SpParam(Ignored = true)]
+    public string DbServer { get; set; }
+
+    public override string GetSettingKey()
     {
-        public string SportTypes { get; set; }
+        return $"NAP_Set_WaitingSel_Queue_3rd_{DbServer}";
+    }
 
-        public string SettleType { get; private set; } = "BBD";
-
-        public string LeagueIds { get; set; }
-
-        [SpParam(Ignored = true)]
-        public string DbServer { get; set; }
-
-        public override string GetSettingKey()
-        {
-            return $"NAP_Set_WaitingSel_Queue_3rd_{DbServer}";
-        }
-
-        public override bool IsValid()
-        {
-            return true;
-        }
+    public override bool IsValid()
+    {
+        return true;
     }
 }

@@ -4,84 +4,83 @@ using Settlement.FastMarkets.Requests;
 using Settlement.FastMarkets.Services;
 using System.Xml;
 
-namespace Settlement.FastMarkets.UnitTests.Services
+namespace Settlement.FastMarkets.UnitTests.Services;
+
+public class EventCounterServiceTests
 {
-    public class EventCounterServiceTests
+    private readonly IEventCounterElementService eventCounterElementService;
+
+    private readonly XmlConvertService xmlConvertService;
+
+    private readonly IEventCounterService service;
+
+    private readonly XmlDocument xmlDoc = new XmlDocument();
+
+    public EventCounterServiceTests()
     {
-        private readonly IEventCounterElementService eventCounterElementService;
+        xmlConvertService = new XmlConvertServiceImp();
+        eventCounterElementService = Substitute.For<IEventCounterElementService>();
+        service = new EventCounterServiceImp(eventCounterElementService, xmlConvertService);
+    }
 
-        private readonly XmlConvertService xmlConvertService;
-
-        private readonly IEventCounterService service;
-
-        private readonly XmlDocument xmlDoc = new XmlDocument();
-
-        public EventCounterServiceTests()
+    [Fact]
+    public void Result_ActionIsNotCAL_ReturnsEmpty()
+    {
+        // Arrange
+        var queryModel = new SettleRequest
         {
-            xmlConvertService = new XmlConvertServiceImp();
-            eventCounterElementService = Substitute.For<IEventCounterElementService>();
-            service = new EventCounterServiceImp(eventCounterElementService, xmlConvertService);
-        }
+            Action = "REFUND"
+        };
 
-        [Fact]
-        public void Result_ActionIsNotCAL_ReturnsEmpty()
+        // Act
+        var actual = service.Result(queryModel);
+
+        // Assert
+        Assert.Empty(actual);
+    }
+
+    [Fact]
+    public void Result_ActionIsCALAndNotEventCounter_ReturnsNoEventCounterElement()
+    {
+        // Arrange
+        var queryModel = new SettleRequest
         {
-            // Arrange
-            var queryModel = new SettleRequest
-            {
-                Action = "REFUND"
-            };
+            Action = "CAL",
+            EventCounters = new List<EventCounter>()
+        };
 
-            // Act
-            var actual = service.Result(queryModel);
+        eventCounterElementService.GetEventCounters(Arg.Any<List<EventCounter>>()).Returns(new List<EventCounterElement>());
 
-            // Assert
-            Assert.Empty(actual);
-        }
+        // Act
+        var result = service.Result(queryModel);
 
-        [Fact]
-        public void Result_ActionIsCALAndNotEventCounter_ReturnsNoEventCounterElement()
+        // Assert
+        xmlDoc.LoadXml(result);
+        Assert.True(xmlDoc.DocumentElement != null && xmlDoc.DocumentElement.ChildNodes.Count == 0);
+    }
+
+    [Fact]
+    public void Result_ActionIsCALAndHaveEventCounter_ReturnsOneEventCounterElement()
+    {
+        // Arrange
+        var queryModel = new SettleRequest
         {
-            // Arrange
-            var queryModel = new SettleRequest
-            {
-                Action = "CAL",
-                EventCounters = new List<EventCounter>()
-            };
+            Action = "CAL",
+            EventCounters = new List<EventCounter>()
+        };
 
-            eventCounterElementService.GetEventCounters(Arg.Any<List<EventCounter>>()).Returns(new List<EventCounterElement>());
-
-            // Act
-            var result = service.Result(queryModel);
-
-            // Assert
-            xmlDoc.LoadXml(result);
-            Assert.True(xmlDoc.DocumentElement != null && xmlDoc.DocumentElement.ChildNodes.Count == 0);
-        }
-
-        [Fact]
-        public void Result_ActionIsCALAndHaveEventCounter_ReturnsOneEventCounterElement()
+        var eventCounters = new List<EventCounterElement>
         {
-            // Arrange
-            var queryModel = new SettleRequest
-            {
-                Action = "CAL",
-                EventCounters = new List<EventCounter>()
-            };
+            new EventCounterElement { Id = "3", Items= new List<ItemElement>() }
+        };
 
-            var eventCounters = new List<EventCounterElement>
-            {
-                new EventCounterElement { Id = "3", Items= new List<ItemElement>() }
-            };
+        eventCounterElementService.GetEventCounters(Arg.Any<List<EventCounter>>()).Returns(eventCounters);
 
-            eventCounterElementService.GetEventCounters(Arg.Any<List<EventCounter>>()).Returns(eventCounters);
+        // Act
+        var result = service.Result(queryModel);
 
-            // Act
-            var result = service.Result(queryModel);
-
-            // Assert
-            xmlDoc.LoadXml(result);
-            Assert.True(xmlDoc.DocumentElement != null && xmlDoc.DocumentElement.ChildNodes.Count == 1);
-        }
+        // Assert
+        xmlDoc.LoadXml(result);
+        Assert.True(xmlDoc.DocumentElement != null && xmlDoc.DocumentElement.ChildNodes.Count == 1);
     }
 }

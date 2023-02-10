@@ -2,10 +2,9 @@
 using Settlement.Setting.Models;
 using System.Collections.Generic;
 
-namespace Settlement.Setting.Requests.ProviderManager
+namespace Settlement.Setting.Requests.ProviderManager;
+
+public class GetProviderRequest : IRequest<List<ProviderModel>>
 {
-    public class GetProviderRequest : IRequest<List<ProviderModel>>
-    {
-        public int GameType { get; set; }
-    }
+    public int GameType { get; set; }
 }

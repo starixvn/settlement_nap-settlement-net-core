@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
 
-namespace Settlement.ThirdPartyProducts.Models
+namespace Settlement.ThirdPartyProducts.Models;
+
+public class SportModel
 {
-    public class SportModel
-    {
-        public int Id { get; set; }
+    public int Id { get; set; }
 
-        public string Name { get; set; }
+    public string Name { get; set; }
 
-        public List<LeagueModel> Leagues { get; set; }
-    }
+    public List<LeagueModel> Leagues { get; set; }
 }

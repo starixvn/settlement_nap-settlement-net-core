@@ -1,11 +1,10 @@
 ﻿using Settlement.Core.Models;
 
-namespace Settlement.Setting.Models
-{
-    public class MatchAndPermission
-    {
-        public Permission Permission { get; set; }
+namespace Settlement.Setting.Models;
 
-        public RemarkQueryModel Match { get; set; }
-    }
+public class MatchAndPermission
+{
+    public Permission Permission { get; set; }
+
+    public RemarkQueryModel Match { get; set; }
 }

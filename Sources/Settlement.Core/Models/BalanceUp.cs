@@ -1,9 +1,8 @@
-﻿namespace Settlement.Core.Models
-{
-    public class BalanceUp
-    {
-        public DateTime BalanceUpDay { get; set; }
+﻿namespace Settlement.Core.Models;
 
-        public DateTime MoveBetsDay { get; set; }
-    }
+public class BalanceUp
+{
+    public DateTime BalanceUpDay { get; set; }
+
+    public DateTime MoveBetsDay { get; set; }
 }

@@ -1,91 +1,90 @@
 ﻿using Settlement.Core.Constants;
 using Settlement.Core.Models;
 
-namespace Settlement.Sportsbook.MoveTickets.Services
+namespace Settlement.Sportsbook.MoveTickets.Services;
+
+public interface NewInfoMatchService
 {
-    public interface NewInfoMatchService
+    string NewEventStatus(Match match);
+
+    string EventStatusColor(Match match);
+
+    string EarlySettlementStatus(Match match);
+
+    void TicketInfo(Match match);
+}
+
+public class NewInfoMatchServiceImp : NewInfoMatchService
+{
+    private readonly List<int> eventStatusReasons = new List<int> { 1, 2, 3, 4 };
+
+    private readonly List<string> eventStatusReasonTitles = new List<string>
     {
-        string NewEventStatus(Match match);
+        EventStatus.IrregularTime1H,
+        EventStatus.IrregularTime,
+        EventStatus.WrongTeamName,
+        EventStatus.Suspended,
+    };
 
-        string EventStatusColor(Match match);
+    private readonly SiteMatchService siteMatchService;
 
-        string EarlySettlementStatus(Match match);
-
-        void TicketInfo(Match match);
+    public NewInfoMatchServiceImp(SiteMatchService siteMatchService)
+    {
+        this.siteMatchService = siteMatchService;
     }
 
-    public class NewInfoMatchServiceImp : NewInfoMatchService
+    public string EventStatusColor(Match match)
     {
-        private readonly List<int> eventStatusReasons = new List<int> { 1, 2, 3, 4 };
-
-        private readonly List<string> eventStatusReasonTitles = new List<string>
+        if (match.EventStatus.IgnoreCaseEquals(EventStatus.PostPoned))
         {
-            EventStatus.IrregularTime1H,
-            EventStatus.IrregularTime,
-            EventStatus.WrongTeamName,
-            EventStatus.Suspended,
-        };
-
-        private readonly SiteMatchService siteMatchService;
-
-        public NewInfoMatchServiceImp(SiteMatchService siteMatchService)
-        {
-            this.siteMatchService = siteMatchService;
+            return siteMatchService.IsExistMarkedTickets(match)
+                ? Background.YellowBlinking
+                : Background.Yellow;
         }
 
-        public string EventStatusColor(Match match)
+        if (match.EventStatus.IgnoreCaseEquals(EventStatus.Completed))
         {
-            if (match.EventStatus.IgnoreCaseEquals(EventStatus.PostPoned))
-            {
-                return siteMatchService.IsExistMarkedTickets(match)
-                    ? Background.YellowBlinking
-                    : Background.Yellow;
-            }
-
-            if (match.EventStatus.IgnoreCaseEquals(EventStatus.Completed))
-            {
-                return siteMatchService.GetBackgroundCompletedStatus(match);
-            }
-
-            if (match.Remark.IsPending && match.EventStatus.IgnoreCaseEquals(EventStatus.ResultPending))
-            {
-                return siteMatchService.IsExistMarkedTickets(match)
-                    ? Background.BrightYellowBlinking
-                    : Background.BrightYellow;
-            }
-
-            return siteMatchService.IsExistMarkedTickets(match) ? Background.WhiteBlinking : string.Empty;
+            return siteMatchService.GetBackgroundCompletedStatus(match);
         }
 
-        public string NewEventStatus(Match match)
+        if (match.Remark.IsPending && match.EventStatus.IgnoreCaseEquals(EventStatus.ResultPending))
         {
-            var newEventStatus = IsCheckingEventStatusReasons(match) ? eventStatusReasonTitles[match.EventStatusReason - 1] : match.EventStatus;
-            if (match.IsCalculatingSingle != CalculateStatus.IsWaiting && match.IsCalculatingSingle != CalculateStatus.IsCalculating)
-            {
-                return newEventStatus;
-            }
-
-            return match.IsCalculatingSingle == CalculateStatus.IsWaiting ? EventStatus.Waiting : EventStatus.Calculating;
+            return siteMatchService.IsExistMarkedTickets(match)
+                ? Background.BrightYellowBlinking
+                : Background.BrightYellow;
         }
 
-        public string EarlySettlementStatus(Match match)
+        return siteMatchService.IsExistMarkedTickets(match) ? Background.WhiteBlinking : string.Empty;
+    }
+
+    public string NewEventStatus(Match match)
+    {
+        var newEventStatus = IsCheckingEventStatusReasons(match) ? eventStatusReasonTitles[match.EventStatusReason - 1] : match.EventStatus;
+        if (match.IsCalculatingSingle != CalculateStatus.IsWaiting && match.IsCalculatingSingle != CalculateStatus.IsCalculating)
         {
-            return siteMatchService.EarlySettlementStatus(match);
+            return newEventStatus;
         }
 
-        public void TicketInfo(Match match)
-        {
-            match.IsExistMarkedTicket = siteMatchService.IsExistMarkedTicketsSingle(match);
-            match.IsExistRunningTicket = siteMatchService.IsExistRunningTickets(match);
-            match.IsExistMarkedTicketParlay = siteMatchService.IsExistMarkedTicketParlay(match);
-            match.IsExistRunningTicketParlay = siteMatchService.IsExistRunningTicketParlay(match);
-            match.IsCalculatingSingle = siteMatchService.IsCalculatingSingle(match);
-        }
+        return match.IsCalculatingSingle == CalculateStatus.IsWaiting ? EventStatus.Waiting : EventStatus.Calculating;
+    }
 
-        private bool IsCheckingEventStatusReasons(Match match)
-        {
-            return match.EventStatus.IgnoreCaseEquals(EventStatus.Running)
-                   && eventStatusReasons.Contains(match.EventStatusReason);
-        }
+    public string EarlySettlementStatus(Match match)
+    {
+        return siteMatchService.EarlySettlementStatus(match);
+    }
+
+    public void TicketInfo(Match match)
+    {
+        match.IsExistMarkedTicket = siteMatchService.IsExistMarkedTicketsSingle(match);
+        match.IsExistRunningTicket = siteMatchService.IsExistRunningTickets(match);
+        match.IsExistMarkedTicketParlay = siteMatchService.IsExistMarkedTicketParlay(match);
+        match.IsExistRunningTicketParlay = siteMatchService.IsExistRunningTicketParlay(match);
+        match.IsCalculatingSingle = siteMatchService.IsCalculatingSingle(match);
+    }
+
+    private bool IsCheckingEventStatusReasons(Match match)
+    {
+        return match.EventStatus.IgnoreCaseEquals(EventStatus.Running)
+               && eventStatusReasons.Contains(match.EventStatusReason);
     }
 }

@@ -1,19 +1,18 @@
 ﻿using Fanex.Data.Repository;
 
-namespace Settlement.Setting.Criteria.OutsideSourceManager
+namespace Settlement.Setting.Criteria.OutsideSourceManager;
+
+public class GetLeagueOutsideSourceCriteria : NonQueryCommand
 {
-    public class GetLeagueOutsideSourceCriteria : NonQueryCommand
+    public int LeagueID { get; set; }
+
+    public override string GetSettingKey()
     {
-        public int LeagueID { get; set; }
+        return "NAP_Set_OutsideSourceByLeagueSel";
+    }
 
-        public override string GetSettingKey()
-        {
-            return "NAP_Set_OutsideSourceByLeagueSel";
-        }
-
-        public override bool IsValid()
-        {
-            return LeagueID > 0;
-        }
+    public override bool IsValid()
+    {
+        return LeagueID > 0;
     }
 }

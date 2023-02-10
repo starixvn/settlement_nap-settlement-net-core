@@ -12,127 +12,126 @@ using Settlement.Outright.Models;
 using Settlement.Outright.Requests;
 using Settlement.Outright.Services;
 
-namespace Settlement.Sportsbook.Outright.UnitTests.services
+namespace Settlement.Sportsbook.Outright.UnitTests.services;
+
+public class OutrightSettleServiceTests
 {
-    public class OutrightSettleServiceTests
+    private readonly IDynamicRepository repository;
+
+    private readonly IMapper mapper;
+
+    private readonly IRefDataService refDataService;
+
+    private readonly OutrightSettleProcessService outrightSettleProcessService;
+
+    private readonly OutrightPermissionService permission;
+
+    private readonly INapSession currentSession;
+
+    private readonly IBalanceUpService balanceUpService;
+
+    private readonly OutrightSettleService service;
+
+    public OutrightSettleServiceTests()
     {
-        private readonly IDynamicRepository repository;
+        refDataService = Substitute.For<IRefDataService>();
+        repository = Substitute.For<IDynamicRepository>();
+        outrightSettleProcessService = Substitute.For<OutrightSettleProcessService>();
+        permission = Substitute.For<OutrightPermissionService>();
+        currentSession = Substitute.For<INapSession>();
+        balanceUpService = Substitute.For<IBalanceUpService>();
 
-        private readonly IMapper mapper;
+        var mapperConfig = new MapperConfigurationExpression();
+        mapperConfig.AddProfile<OutrightMapperProfile>();
+        var config = new MapperConfiguration(mapperConfig);
+        mapper = new Mapper(config);
 
-        private readonly IRefDataService refDataService;
+        service = new OutrightSettleServiceImp(repository, mapper, refDataService, outrightSettleProcessService,
+            permission, currentSession, balanceUpService);
+    }
 
-        private readonly OutrightSettleProcessService outrightSettleProcessService;
+    [Fact]
+    public async Task GetLeagueInfo_Always_ReturnListTeamSorted()
+    {
+        var teamOne = new Team { OddsStatus = EventStatus.Completed };
+        var teamTwo = new Team { OddsStatus = EventStatus.Running };
+        var teamThree = new Team { OddsStatus = EventStatus.Closed };
 
-        private readonly OutrightPermissionService permission;
+        balanceUpService.GetBalanceUpDay().Returns(new BalanceUp());
+        repository.FetchAsync<Team>(Arg.Any<GetLeagueInfoCriteria>())
+            .Returns(new List<Team> { teamOne, teamTwo, teamThree });
+        refDataService.GetTeamName(Arg.Any<int>()).Returns("c", "b", "a");
 
-        private readonly INapSession currentSession;
+        var actual = await service.GetLeagueInfo(new GetLeagueInfoRequest());
 
-        private readonly IBalanceUpService balanceUpService;
+        var teams = actual.Teams.ToList();
 
-        private readonly OutrightSettleService service;
+        Assert.Equal(3, actual.Teams.Count());
+        Assert.Equal(EventStatus.Closed, teams[0].OddsStatus);
+        Assert.Equal(EventStatus.Running, teams[1].OddsStatus);
+        Assert.Equal(EventStatus.Completed, teams[2].OddsStatus);
+        refDataService.Received(1).GetLeagueName(Arg.Any<int>());
+        refDataService.Received(1).GetSportName(Arg.Any<int>());
+    }
 
-        public OutrightSettleServiceTests()
+    [Fact]
+    public async Task Uncalculate_ExistDeploymentFlag_ReturnResultFailed()
+    {
+        outrightSettleProcessService.ValidateDeployment(Arg.Any<String>())
+            .Returns(new ResultOutright { ErrCode = 1 });
+
+        var actual = await service.Uncalculate(new OutrightUndoRequest());
+
+        Assert.False(actual.IsSuccessful);
+    }
+
+    [Fact]
+    public async Task Uncalculate_ExistExecuteFailed_ReturnResultFailed()
+    {
+        outrightSettleProcessService.ValidateDeployment(Arg.Any<String>())
+            .Returns(new ResultOutright());
+        outrightSettleProcessService.UpdateResultUndo(Arg.Any<OutrightSettleCriteria>())
+            .Returns(new Result { ErrMsg = "test" });
+        refDataService.GetTeamName(Arg.Any<string>()).Returns("TeamName");
+
+        var actual = await service.Uncalculate(new OutrightUndoRequest { MatchIds = "100,200", TeamIds = "101, 202" });
+
+        Assert.False(actual.IsSuccessful);
+        Assert.Equal("TeamName: test<br/>TeamName: test<br/>", actual.ErrMsg);
+    }
+
+    [Fact]
+    public async Task Calculate_ExistDeploymentFlag_ReturnResultFailed()
+    {
+        outrightSettleProcessService.ValidateDeployment(Arg.Any<String>())
+            .Returns(new ResultOutright { ErrCode = 1 });
+
+        var actual = await service.Calculate(new OutrightCalculateRequest());
+
+        Assert.False(actual.IsSuccessful);
+    }
+
+    [Fact]
+    public async Task Calculate_ExistExecuteFailed_ReturnResultFailed()
+    {
+        outrightSettleProcessService.ValidateDeployment(Arg.Any<String>())
+            .Returns(new ResultOutright());
+        outrightSettleProcessService.UpdateResultCalculate(Arg.Any<OutrightSettleCriteria>())
+            .Returns(new Result { ErrMsg = "test" });
+        refDataService.GetTeamName(Arg.Any<string>()).Returns("TeamName");
+
+        var request = new OutrightCalculateRequest
         {
-            refDataService = Substitute.For<IRefDataService>();
-            repository = Substitute.For<IDynamicRepository>();
-            outrightSettleProcessService = Substitute.For<OutrightSettleProcessService>();
-            permission = Substitute.For<OutrightPermissionService>();
-            currentSession = Substitute.For<INapSession>();
-            balanceUpService = Substitute.For<IBalanceUpService>();
-
-            var mapperConfig = new MapperConfigurationExpression();
-            mapperConfig.AddProfile<OutrightMapperProfile>();
-            var config = new MapperConfiguration(mapperConfig);
-            mapper = new Mapper(config);
-
-            service = new OutrightSettleServiceImp(repository, mapper, refDataService, outrightSettleProcessService,
-                permission, currentSession, balanceUpService);
-        }
-
-        [Fact]
-        public async Task GetLeagueInfo_Always_ReturnListTeamSorted()
-        {
-            var teamOne = new Team { OddsStatus = EventStatus.Completed };
-            var teamTwo = new Team { OddsStatus = EventStatus.Running };
-            var teamThree = new Team { OddsStatus = EventStatus.Closed };
-
-            balanceUpService.GetBalanceUpDay().Returns(new BalanceUp());
-            repository.FetchAsync<Team>(Arg.Any<GetLeagueInfoCriteria>())
-                .Returns(new List<Team> { teamOne, teamTwo, teamThree });
-            refDataService.GetTeamName(Arg.Any<int>()).Returns("c", "b", "a");
-
-            var actual = await service.GetLeagueInfo(new GetLeagueInfoRequest());
-
-            var teams = actual.Teams.ToList();
-
-            Assert.Equal(3, actual.Teams.Count());
-            Assert.Equal(EventStatus.Closed, teams[0].OddsStatus);
-            Assert.Equal(EventStatus.Running, teams[1].OddsStatus);
-            Assert.Equal(EventStatus.Completed, teams[2].OddsStatus);
-            refDataService.Received(1).GetLeagueName(Arg.Any<int>());
-            refDataService.Received(1).GetSportName(Arg.Any<int>());
-        }
-
-        [Fact]
-        public async Task Uncalculate_ExistDeploymentFlag_ReturnResultFailed()
-        {
-            outrightSettleProcessService.ValidateDeployment(Arg.Any<String>())
-                .Returns(new ResultOutright { ErrCode = 1 });
-
-            var actual = await service.Uncalculate(new OutrightUndoRequest());
-
-            Assert.False(actual.IsSuccessful);
-        }
-
-        [Fact]
-        public async Task Uncalculate_ExistExecuteFailed_ReturnResultFailed()
-        {
-            outrightSettleProcessService.ValidateDeployment(Arg.Any<String>())
-                .Returns(new ResultOutright());
-            outrightSettleProcessService.UpdateResultUndo(Arg.Any<OutrightSettleCriteria>())
-                .Returns(new Result { ErrMsg = "test" });
-            refDataService.GetTeamName(Arg.Any<string>()).Returns("TeamName");
-
-            var actual = await service.Uncalculate(new OutrightUndoRequest { MatchIds = "100,200", TeamIds = "101, 202" });
-
-            Assert.False(actual.IsSuccessful);
-            Assert.Equal("TeamName: test<br/>TeamName: test<br/>", actual.ErrMsg);
-        }
-
-        [Fact]
-        public async Task Calculate_ExistDeploymentFlag_ReturnResultFailed()
-        {
-            outrightSettleProcessService.ValidateDeployment(Arg.Any<String>())
-                .Returns(new ResultOutright { ErrCode = 1 });
-
-            var actual = await service.Calculate(new OutrightCalculateRequest());
-
-            Assert.False(actual.IsSuccessful);
-        }
-
-        [Fact]
-        public async Task Calculate_ExistExecuteFailed_ReturnResultFailed()
-        {
-            outrightSettleProcessService.ValidateDeployment(Arg.Any<String>())
-                .Returns(new ResultOutright());
-            outrightSettleProcessService.UpdateResultCalculate(Arg.Any<OutrightSettleCriteria>())
-                .Returns(new Result { ErrMsg = "test" });
-            refDataService.GetTeamName(Arg.Any<string>()).Returns("TeamName");
-
-            var request = new OutrightCalculateRequest
+            DeadHeat = 1,
+            Teams = new List<TeamSettleModel>
             {
-                DeadHeat = 1,
-                Teams = new List<TeamSettleModel>
-                {
-                    new() { TeamId = "1" },
-                    new() { TeamId = "2" },
-                }
-            };
-            var actual = await service.Calculate(request);
+                new() { TeamId = "1" },
+                new() { TeamId = "2" },
+            }
+        };
+        var actual = await service.Calculate(request);
 
-            Assert.False(actual.IsSuccessful);
-            Assert.Equal("TeamName: test<br/>TeamName: test<br/>", actual.ErrMsg);
-        }
+        Assert.False(actual.IsSuccessful);
+        Assert.Equal("TeamName: test<br/>TeamName: test<br/>", actual.ErrMsg);
     }
 }

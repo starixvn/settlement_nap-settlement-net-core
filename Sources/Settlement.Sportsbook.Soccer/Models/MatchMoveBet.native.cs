@@ -1,13 +1,12 @@
 ﻿using System;
 
-namespace Settlement.Sportsbook.Soccer.Models
+namespace Settlement.Sportsbook.Soccer.Models;
+
+public class MatchMoveBetTicket
 {
-    public class MatchMoveBetTicket
-    {
-        public int MatchId { get; set; }
+    public int MatchId { get; set; }
 
-        public string MatchCode { get; set; }
+    public string MatchCode { get; set; }
 
-        public DateTime EventDate { get; set; }
-    }
+    public DateTime EventDate { get; set; }
 }

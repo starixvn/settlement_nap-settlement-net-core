@@ -13,180 +13,179 @@ using System.Threading.Tasks;
 using Match = Settlement.Sportsbook.Soccer.Models.Match;
 using MatchDetail = Settlement.Sportsbook.Soccer.Models.MatchDetail;
 
-namespace Settlement.Sportsbook.Soccer.GetMatch.Services
+namespace Settlement.Sportsbook.Soccer.GetMatch.Services;
+
+public interface IFetchDataService
 {
-    public interface IFetchDataService
+    public Task<Match> GetMatchInfo(GetMatchRequest request);
+
+    public Task<BetDaq> GetMultiServersBetDaq(BetDaqCheckingCriteria criteria);
+
+    public Task<BetFair> GetMultiServersBetFair(BetFairCheckingCriteria criteria);
+
+    public Task<(List<ResultDetailModel>, TicketCounts)> GetEarlyTicketDetails(GetResultDetailEarlyCriteria criteria);
+
+    public Task<bool> IsDeterminedHedgeMatch(int matchId);
+}
+
+public class FetchDateServiceImp : IFetchDataService
+{
+    private readonly IDynamicRepository repository;
+
+    private readonly IMapper mapper;
+
+    private readonly AppSettingsKey appSettingsKey;
+
+    private readonly IMergeDataService mergeDataService;
+
+    public FetchDateServiceImp(IDynamicRepository repository,
+        IMapper mapper,
+        IOptions<AppSettingsKey> appSettingsKey,
+        IMergeDataService mergeDataService)
     {
-        public Task<Match> GetMatchInfo(GetMatchRequest request);
-
-        public Task<BetDaq> GetMultiServersBetDaq(BetDaqCheckingCriteria criteria);
-
-        public Task<BetFair> GetMultiServersBetFair(BetFairCheckingCriteria criteria);
-
-        public Task<(List<ResultDetailModel>, TicketCounts)> GetEarlyTicketDetails(GetResultDetailEarlyCriteria criteria);
-
-        public Task<bool> IsDeterminedHedgeMatch(int matchId);
+        this.repository = repository;
+        this.mapper = mapper;
+        this.appSettingsKey = appSettingsKey.Value;
+        this.mergeDataService = mergeDataService;
     }
 
-    public class FetchDateServiceImp : IFetchDataService
+    public async Task<Match> GetMatchInfo(GetMatchRequest request)
     {
-        private readonly IDynamicRepository repository;
+        var criteria = mapper.Map<GetMatchRequest, GetMatchDetailCriteria>(request);
+        var mappingTypes = new[] { typeof(MatchDetail), typeof(ChildMatchModel) };
 
-        private readonly IMapper mapper;
+        var result = await repository.FetchMultipleAsync(criteria, mappingTypes);
+        var baseMatchDetail = result[0].Cast<MatchDetail>().FirstOrDefault();
+        Check.Argument.IsNotNull(baseMatchDetail, $"Match ${criteria.MatchId} does not exist");
 
-        private readonly AppSettingsKey appSettingsKey;
+        var siteMatch = GetSiteMatchInfo(criteria.MatchId);
 
-        private readonly IMergeDataService mergeDataService;
+        baseMatchDetail.SiteMatch = siteMatch;
 
-        public FetchDateServiceImp(IDynamicRepository repository,
-            IMapper mapper,
-            IOptions<AppSettingsKey> appSettingsKey,
-            IMergeDataService mergeDataService)
+        var ticketCounts = mergeDataService.MergeTicketCounts(siteMatch);
+        var matchDetail = mergeDataService.MergeSiteMatch(baseMatchDetail, ticketCounts);
+        var childMatches =
+            mergeDataService.MergeDataChildMatches(result[1].Cast<ChildMatchModel>().ToList(), siteMatch);
+
+        return new Match
         {
-            this.repository = repository;
-            this.mapper = mapper;
-            this.appSettingsKey = appSettingsKey.Value;
-            this.mergeDataService = mergeDataService;
-        }
+            MatchDetail = matchDetail,
+            TicketCounts = ticketCounts,
+            ChildMatches = childMatches
+        };
+    }
 
-        public async Task<Match> GetMatchInfo(GetMatchRequest request)
-        {
-            var criteria = mapper.Map<GetMatchRequest, GetMatchDetailCriteria>(request);
-            var mappingTypes = new[] { typeof(MatchDetail), typeof(ChildMatchModel) };
+    private List<SiteMatch> GetSiteMatchInfo(int matchId)
+    {
+        var mappingTypes = new[] { typeof(SiteMatch), typeof(TicketCounts), typeof(ChildMatchTicketInfos) };
 
-            var result = await repository.FetchMultipleAsync(criteria, mappingTypes);
-            var baseMatchDetail = result[0].Cast<MatchDetail>().FirstOrDefault();
-            Check.Argument.IsNotNull(baseMatchDetail, $"Match ${criteria.MatchId} does not exist");
+        return appSettingsKey.SiteDbServer.Select(server => GetSiteMatchByServer(matchId, mappingTypes, server)).ToList();
+    }
 
-            var siteMatch = GetSiteMatchInfo(criteria.MatchId);
+    private SiteMatch GetSiteMatchByServer(int matchId, Type[] mappingTypes, string server)
+    {
+        const int childMatchResultPosition = 2;
+        var criteria = new GetTicketInfoCriteria { MatchId = matchId, DbServer = server };
+        var result = repository.FetchMultiple(criteria, mappingTypes);
 
-            baseMatchDetail.SiteMatch = siteMatch;
+        var siteMatch = result[0].Cast<SiteMatch>().FirstOrDefault();
+        siteMatch.TicketCounts = result[1].Cast<TicketCounts>().ToList();
+        siteMatch.SiteChildMatches = result[childMatchResultPosition].Cast<ChildMatchTicketInfos>().ToList();
 
-            var ticketCounts = mergeDataService.MergeTicketCounts(siteMatch);
-            var matchDetail = mergeDataService.MergeSiteMatch(baseMatchDetail, ticketCounts);
-            var childMatches =
-                mergeDataService.MergeDataChildMatches(result[1].Cast<ChildMatchModel>().ToList(), siteMatch);
+        return siteMatch;
+    }
 
-            return new Match
-            {
-                MatchDetail = matchDetail,
-                TicketCounts = ticketCounts,
-                ChildMatches = childMatches
-            };
-        }
-
-        private List<SiteMatch> GetSiteMatchInfo(int matchId)
-        {
-            var mappingTypes = new[] { typeof(SiteMatch), typeof(TicketCounts), typeof(ChildMatchTicketInfos) };
-
-            return appSettingsKey.SiteDbServer.Select(server => GetSiteMatchByServer(matchId, mappingTypes, server)).ToList();
-        }
-
-        private SiteMatch GetSiteMatchByServer(int matchId, Type[] mappingTypes, string server)
-        {
-            const int childMatchResultPosition = 2;
-            var criteria = new GetTicketInfoCriteria { MatchId = matchId, DbServer = server };
-            var result = repository.FetchMultiple(criteria, mappingTypes);
-
-            var siteMatch = result[0].Cast<SiteMatch>().FirstOrDefault();
-            siteMatch.TicketCounts = result[1].Cast<TicketCounts>().ToList();
-            siteMatch.SiteChildMatches = result[childMatchResultPosition].Cast<ChildMatchTicketInfos>().ToList();
-
-            return siteMatch;
-        }
-
-        public async Task<BetDaq> GetMultiServersBetDaq(BetDaqCheckingCriteria criteria)
-        {
-            var betDaqs = new List<BetDaq>();
-            foreach (var server in appSettingsKey.SiteDbServer)
-            {
-                criteria.DbServer = server;
-                var betDaq = await repository.GetAsync<BetDaq>(criteria);
-                betDaqs.Add(betDaq);
-            }
-
-            var baseData = betDaqs.First();
-            var nodeData = betDaqs.Skip(1).ToList();
-
-            // merge function
-            var existConflictData = nodeData.Any(betDaq => baseData.IsExcludeBetDaq != betDaq.IsExcludeBetDaq
-                                                           || baseData.IsMoveBetDaq != betDaq.IsMoveBetDaq
-                                                           || baseData.IsRefundRunningBetDaq !=
-                                                           betDaq.IsRefundRunningBetDaq
-                                                           || baseData.IsSettleAbandonedMatchBetDaq !=
-                                                           betDaq.IsSettleAbandonedMatchBetDaq);
-            if (existConflictData)
-            {
-                return mergeDataService.MergeBetDaq(baseData, nodeData);
-            }
-
-            return baseData;
-        }
-
-        public async Task<BetFair> GetMultiServersBetFair(BetFairCheckingCriteria criteria)
-        {
-            var betFairs = new List<BetFair>();
-            foreach (var server in appSettingsKey.SiteDbServer)
-            {
-                criteria.DbServer = server;
-                var betFair = await repository.GetAsync<BetFair>(criteria);
-                betFairs.Add(betFair);
-            }
-
-            var baseData = betFairs.First();
-            var nodeData = betFairs.Skip(1).ToList();
-
-            // merge function
-            var existConflictData = nodeData.Any(betDaq => baseData.IsExcludeBetFair != betDaq.IsExcludeBetFair
-                                                           || baseData.IsMoveBetFair != betDaq.IsMoveBetFair
-                                                           || baseData.IsRefundRunningBetFair !=
-                                                           betDaq.IsRefundRunningBetFair
-                                                           || baseData.IsSettleAbandonedMatchBetFair !=
-                                                           betDaq.IsSettleAbandonedMatchBetFair);
-            if (existConflictData)
-            {
-                return mergeDataService.MergeBetFair(baseData, nodeData);
-            }
-
-            return baseData;
-        }
-
-        public async Task<(List<ResultDetailModel>, TicketCounts)> GetEarlyTicketDetails(GetResultDetailEarlyCriteria criteria)
-        {
-            var multipleTicketDetails = new List<(List<ResultDetailModel>, TicketCounts)>();
-            var getTicketCriteria = new GetEarlyTicketInfoCriteria { MatchId = criteria.MatchId };
-            foreach (var server in appSettingsKey.SiteDbServer)
-            {
-                var ticketDetails = await GetTicketDetailByServer(getTicketCriteria, server);
-                multipleTicketDetails.Add(ticketDetails);
-            }
-
-            return mergeDataService.MergeEarlyTicketDetails(multipleTicketDetails);
-        }
-
-        private async Task<(List<ResultDetailModel> betTypes, TicketCounts ticketCounts)> GetTicketDetailByServer(GetEarlyTicketInfoCriteria criteria, string server)
+    public async Task<BetDaq> GetMultiServersBetDaq(BetDaqCheckingCriteria criteria)
+    {
+        var betDaqs = new List<BetDaq>();
+        foreach (var server in appSettingsKey.SiteDbServer)
         {
             criteria.DbServer = server;
-            var (ticketDetails, ticketCounts) = await repository.FetchMultipleAsync<ResultDetailModel, TicketCounts>(criteria);
-
-            return (ticketDetails.ToList(), ticketCounts.FirstOrDefault());
+            var betDaq = await repository.GetAsync<BetDaq>(criteria);
+            betDaqs.Add(betDaq);
         }
 
-        public async Task<bool> IsDeterminedHedgeMatch(int matchId)
+        var baseData = betDaqs.First();
+        var nodeData = betDaqs.Skip(1).ToList();
+
+        // merge function
+        var existConflictData = nodeData.Any(betDaq => baseData.IsExcludeBetDaq != betDaq.IsExcludeBetDaq
+                                                       || baseData.IsMoveBetDaq != betDaq.IsMoveBetDaq
+                                                       || baseData.IsRefundRunningBetDaq !=
+                                                       betDaq.IsRefundRunningBetDaq
+                                                       || baseData.IsSettleAbandonedMatchBetDaq !=
+                                                       betDaq.IsSettleAbandonedMatchBetDaq);
+        if (existConflictData)
         {
-            var criteria = new GetHedgeMatchDeterminedInfo { HedgeMatchId = matchId };
-            var determinedHedgeMatch = new DeterminedHedgeMatch();
-            foreach (var server in appSettingsKey.SiteDbServer)
-            {
-                criteria.DbServer = server;
-                determinedHedgeMatch = await repository.GetAsync<DeterminedHedgeMatch>(criteria);
-                if (determinedHedgeMatch.IsDeterminedHedgeMatch)
-                {
-                    return determinedHedgeMatch.IsDeterminedHedgeMatch;
-                }
-            }
-
-            return determinedHedgeMatch.IsDeterminedHedgeMatch;
+            return mergeDataService.MergeBetDaq(baseData, nodeData);
         }
+
+        return baseData;
+    }
+
+    public async Task<BetFair> GetMultiServersBetFair(BetFairCheckingCriteria criteria)
+    {
+        var betFairs = new List<BetFair>();
+        foreach (var server in appSettingsKey.SiteDbServer)
+        {
+            criteria.DbServer = server;
+            var betFair = await repository.GetAsync<BetFair>(criteria);
+            betFairs.Add(betFair);
+        }
+
+        var baseData = betFairs.First();
+        var nodeData = betFairs.Skip(1).ToList();
+
+        // merge function
+        var existConflictData = nodeData.Any(betDaq => baseData.IsExcludeBetFair != betDaq.IsExcludeBetFair
+                                                       || baseData.IsMoveBetFair != betDaq.IsMoveBetFair
+                                                       || baseData.IsRefundRunningBetFair !=
+                                                       betDaq.IsRefundRunningBetFair
+                                                       || baseData.IsSettleAbandonedMatchBetFair !=
+                                                       betDaq.IsSettleAbandonedMatchBetFair);
+        if (existConflictData)
+        {
+            return mergeDataService.MergeBetFair(baseData, nodeData);
+        }
+
+        return baseData;
+    }
+
+    public async Task<(List<ResultDetailModel>, TicketCounts)> GetEarlyTicketDetails(GetResultDetailEarlyCriteria criteria)
+    {
+        var multipleTicketDetails = new List<(List<ResultDetailModel>, TicketCounts)>();
+        var getTicketCriteria = new GetEarlyTicketInfoCriteria { MatchId = criteria.MatchId };
+        foreach (var server in appSettingsKey.SiteDbServer)
+        {
+            var ticketDetails = await GetTicketDetailByServer(getTicketCriteria, server);
+            multipleTicketDetails.Add(ticketDetails);
+        }
+
+        return mergeDataService.MergeEarlyTicketDetails(multipleTicketDetails);
+    }
+
+    private async Task<(List<ResultDetailModel> betTypes, TicketCounts ticketCounts)> GetTicketDetailByServer(GetEarlyTicketInfoCriteria criteria, string server)
+    {
+        criteria.DbServer = server;
+        var (ticketDetails, ticketCounts) = await repository.FetchMultipleAsync<ResultDetailModel, TicketCounts>(criteria);
+
+        return (ticketDetails.ToList(), ticketCounts.FirstOrDefault());
+    }
+
+    public async Task<bool> IsDeterminedHedgeMatch(int matchId)
+    {
+        var criteria = new GetHedgeMatchDeterminedInfo { HedgeMatchId = matchId };
+        var determinedHedgeMatch = new DeterminedHedgeMatch();
+        foreach (var server in appSettingsKey.SiteDbServer)
+        {
+            criteria.DbServer = server;
+            determinedHedgeMatch = await repository.GetAsync<DeterminedHedgeMatch>(criteria);
+            if (determinedHedgeMatch.IsDeterminedHedgeMatch)
+            {
+                return determinedHedgeMatch.IsDeterminedHedgeMatch;
+            }
+        }
+
+        return determinedHedgeMatch.IsDeterminedHedgeMatch;
     }
 }

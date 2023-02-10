@@ -11,138 +11,137 @@ using Xunit;
 using Match = Settlement.Sportsbook.Soccer.Models.Match;
 using MatchDetail = Settlement.Sportsbook.Soccer.Models.MatchDetail;
 
-namespace Settlement.Sportsbook.Soccer.UnitTests.Controllers
+namespace Settlement.Sportsbook.Soccer.UnitTests.Controllers;
+
+public class SoccerControllerTests
 {
-    public class SoccerControllerTests
+    private readonly IMediator mediator;
+
+    private readonly SoccerController controller;
+
+    public SoccerControllerTests()
     {
-        private readonly IMediator mediator;
+        mediator = Substitute.For<IMediator>();
+        controller = new SoccerController(mediator);
+    }
 
-        private readonly SoccerController controller;
+    [Fact]
+    public async Task GetMatchEarly_Always_ReturnOkStatus()
+    {
+        var request = new GetMatchEarlyRequest();
+        mediator.Send(Arg.Any<GetMatchEarlyRequest>()).Returns(new MatchEarly());
 
-        public SoccerControllerTests()
-        {
-            mediator = Substitute.For<IMediator>();
-            controller = new SoccerController(mediator);
-        }
+        var actual = await controller.GetMatchEarly(request) as OkObjectResult;
 
-        [Fact]
-        public async Task GetMatchEarly_Always_ReturnOkStatus()
-        {
-            var request = new GetMatchEarlyRequest();
-            mediator.Send(Arg.Any<GetMatchEarlyRequest>()).Returns(new MatchEarly());
+        Assert.IsType<MatchEarly>(actual.Value);
+        Assert.Equal(200, actual.StatusCode);
+    }
 
-            var actual = await controller.GetMatchEarly(request) as OkObjectResult;
+    [Fact]
+    public async Task SettleEarly_Always_ReturnOkStatus()
+    {
+        var request = new SettleEarlyRequest();
+        mediator.Send(Arg.Any<SettleEarlyRequest>()).Returns(new Result());
 
-            Assert.IsType<MatchEarly>(actual.Value);
-            Assert.Equal(200, actual.StatusCode);
-        }
+        var actual = await controller.CalculateEarly(request) as OkObjectResult;
 
-        [Fact]
-        public async Task SettleEarly_Always_ReturnOkStatus()
-        {
-            var request = new SettleEarlyRequest();
-            mediator.Send(Arg.Any<SettleEarlyRequest>()).Returns(new Result());
+        Assert.IsType<Result>(actual.Value);
+        Assert.Equal(200, actual.StatusCode);
+    }
 
-            var actual = await controller.CalculateEarly(request) as OkObjectResult;
+    [Fact]
+    public async Task GetMatch_Always_ReturnOkStatus()
+    {
+        var request = new GetMatchRequest();
+        mediator.Send(Arg.Any<GetMatchRequest>()).Returns(new Match());
 
-            Assert.IsType<Result>(actual.Value);
-            Assert.Equal(200, actual.StatusCode);
-        }
+        var actual = await controller.GetMatch(request) as OkObjectResult;
 
-        [Fact]
-        public async Task GetMatch_Always_ReturnOkStatus()
-        {
-            var request = new GetMatchRequest();
-            mediator.Send(Arg.Any<GetMatchRequest>()).Returns(new Match());
+        Assert.IsType<Match>(actual.Value);
+        Assert.Equal(200, actual.StatusCode);
+    }
 
-            var actual = await controller.GetMatch(request) as OkObjectResult;
+    [Fact]
+    public async Task Settle_Always_ReturnOkStatus()
+    {
+        var request = new SettleRequest();
+        mediator.Send(Arg.Any<SettleRequest>()).Returns(new Result());
 
-            Assert.IsType<Match>(actual.Value);
-            Assert.Equal(200, actual.StatusCode);
-        }
+        var actual = await controller.Calculate(request) as OkObjectResult;
 
-        [Fact]
-        public async Task Settle_Always_ReturnOkStatus()
-        {
-            var request = new SettleRequest();
-            mediator.Send(Arg.Any<SettleRequest>()).Returns(new Result());
+        Assert.IsType<Result>(actual.Value);
+        Assert.Equal(200, actual.StatusCode);
+    }
 
-            var actual = await controller.Calculate(request) as OkObjectResult;
+    [Fact]
+    public async Task checkStatus_Always_ReturnOkStatus()
+    {
+        var request = new CheckStatusRequest();
+        mediator.Send(Arg.Any<CheckStatusRequest>()).Returns(new Result());
 
-            Assert.IsType<Result>(actual.Value);
-            Assert.Equal(200, actual.StatusCode);
-        }
+        var actual = await controller.CheckingStatus(request) as OkObjectResult;
 
-        [Fact]
-        public async Task checkStatus_Always_ReturnOkStatus()
-        {
-            var request = new CheckStatusRequest();
-            mediator.Send(Arg.Any<CheckStatusRequest>()).Returns(new Result());
+        Assert.IsType<Result>(actual.Value);
+        Assert.Equal(200, actual.StatusCode);
+    }
 
-            var actual = await controller.CheckingStatus(request) as OkObjectResult;
+    [Fact]
+    public async Task GetLastestMatchDetail_Always_ReturnOkStatus()
+    {
+        var request = new GetLastestMatchDetailRequest();
+        mediator.Send(Arg.Any<GetLastestMatchDetailRequest>()).Returns(new MatchDetail());
 
-            Assert.IsType<Result>(actual.Value);
-            Assert.Equal(200, actual.StatusCode);
-        }
+        //var actual = await controller.GetLastestMatchDetail(request) as OkObjectResult;
 
-        [Fact]
-        public async Task GetLastestMatchDetail_Always_ReturnOkStatus()
-        {
-            var request = new GetLastestMatchDetailRequest();
-            mediator.Send(Arg.Any<GetLastestMatchDetailRequest>()).Returns(new MatchDetail());
+        // Assert.IsType<MatchDetail>(actual.Value);
+        // Assert.Equal(200, actual.StatusCode);
+    }
 
-            //var actual = await controller.GetLastestMatchDetail(request) as OkObjectResult;
+    [Fact]
+    public async Task Refund_Always_ReturnOkStatus()
+    {
+        var request = new RefundRequest();
+        mediator.Send(Arg.Any<RefundRequest>()).Returns(new Result());
 
-            // Assert.IsType<MatchDetail>(actual.Value);
-            // Assert.Equal(200, actual.StatusCode);
-        }
+        var actual = await controller.Refund(request) as OkObjectResult;
 
-        [Fact]
-        public async Task Refund_Always_ReturnOkStatus()
-        {
-            var request = new RefundRequest();
-            mediator.Send(Arg.Any<RefundRequest>()).Returns(new Result());
+        Assert.IsType<Result>(actual.Value);
+        Assert.Equal(200, actual.StatusCode);
+    }
 
-            var actual = await controller.Refund(request) as OkObjectResult;
+    [Fact]
+    public async Task RefundRunningThirdPartyTickets_Always_ReturnOkStatus()
+    {
+        var request = new RefundRunningThirdPartyTicketRequest();
+        mediator.Send(Arg.Any<RefundRunningThirdPartyTicketRequest>()).Returns(new Result());
 
-            Assert.IsType<Result>(actual.Value);
-            Assert.Equal(200, actual.StatusCode);
-        }
+        var actual = await controller.RefundRunningThirdPartyTickets(request) as OkObjectResult;
 
-        [Fact]
-        public async Task RefundRunningThirdPartyTickets_Always_ReturnOkStatus()
-        {
-            var request = new RefundRunningThirdPartyTicketRequest();
-            mediator.Send(Arg.Any<RefundRunningThirdPartyTicketRequest>()).Returns(new Result());
+        Assert.IsType<Result>(actual.Value);
+        Assert.Equal(200, actual.StatusCode);
+    }
 
-            var actual = await controller.RefundRunningThirdPartyTickets(request) as OkObjectResult;
+    [Fact]
+    public async Task MoveThirdPartyBetTickets_Always_ReturnOkStatus()
+    {
+        var request = new MoveBetRequest();
+        mediator.Send(Arg.Any<MoveBetRequest>()).Returns(new Result());
 
-            Assert.IsType<Result>(actual.Value);
-            Assert.Equal(200, actual.StatusCode);
-        }
+        var actual = await controller.MoveThirdPartyBetTickets(request) as OkObjectResult;
 
-        [Fact]
-        public async Task MoveThirdPartyBetTickets_Always_ReturnOkStatus()
-        {
-            var request = new MoveBetRequest();
-            mediator.Send(Arg.Any<MoveBetRequest>()).Returns(new Result());
+        Assert.IsType<Result>(actual.Value);
+        Assert.Equal(200, actual.StatusCode);
+    }
 
-            var actual = await controller.MoveThirdPartyBetTickets(request) as OkObjectResult;
+    [Fact]
+    public async Task ThirdPartyBetTicketsChecking_Always_ReturnOkStatus()
+    {
+        var request = new GetMatchDetailThirdPartyBetTicketsRequest();
+        mediator.Send(Arg.Any<GetMatchDetailThirdPartyBetTicketsRequest>()).Returns(new List<MatchMoveBetTicket>());
 
-            Assert.IsType<Result>(actual.Value);
-            Assert.Equal(200, actual.StatusCode);
-        }
+        var actual = await controller.ThirdPartyBetTicketsChecking(request) as OkObjectResult;
 
-        [Fact]
-        public async Task ThirdPartyBetTicketsChecking_Always_ReturnOkStatus()
-        {
-            var request = new GetMatchDetailThirdPartyBetTicketsRequest();
-            mediator.Send(Arg.Any<GetMatchDetailThirdPartyBetTicketsRequest>()).Returns(new List<MatchMoveBetTicket>());
-
-            var actual = await controller.ThirdPartyBetTicketsChecking(request) as OkObjectResult;
-
-            Assert.IsType<List<MatchMoveBetTicket>>(actual.Value);
-            Assert.Equal(200, actual.StatusCode);
-        }
+        Assert.IsType<List<MatchMoveBetTicket>>(actual.Value);
+        Assert.Equal(200, actual.StatusCode);
     }
 }

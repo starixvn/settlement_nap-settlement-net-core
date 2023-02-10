@@ -3,18 +3,17 @@ using Settlement.Core.Criteria;
 using Settlement.Sportsbook.MoveTickets.Criteria;
 using Settlement.Sportsbook.MoveTickets.Requests;
 
-namespace Settlement.Sportsbook.MoveTickets
+namespace Settlement.Sportsbook.MoveTickets;
+
+public class SportsbookMoveTicketAutoMapperProfile : Profile
 {
-    public class SportsbookMoveTicketAutoMapperProfile : Profile
+    public SportsbookMoveTicketAutoMapperProfile()
     {
-        public SportsbookMoveTicketAutoMapperProfile()
-        {
-            CreateMap<GetMatchRequest, SportsbookCriteria>();
-            CreateMap<MoveTicketRequest, MoveTicketCriteria>();
-            CreateMap<GetChildMatchRequest, GetChildMatchCriteria>();
-            CreateMap<GetMoveTicketsMatchesRequest, GetMoveTicketsMatchesCriteria>();
-            CreateMap<ValidateMatchesRequest, ValidateMatchesCriteria>().ForMember(dest => dest.DestinationMatchId, map => map.MapFrom(src => src.TargetMatchId));
-            CreateMap<MoveRunningTicketsRequest, MoveRunningTicketsCriteria>();
-        }
+        CreateMap<GetMatchRequest, SportsbookCriteria>();
+        CreateMap<MoveTicketRequest, MoveTicketCriteria>();
+        CreateMap<GetChildMatchRequest, GetChildMatchCriteria>();
+        CreateMap<GetMoveTicketsMatchesRequest, GetMoveTicketsMatchesCriteria>();
+        CreateMap<ValidateMatchesRequest, ValidateMatchesCriteria>().ForMember(dest => dest.DestinationMatchId, map => map.MapFrom(src => src.TargetMatchId));
+        CreateMap<MoveRunningTicketsRequest, MoveRunningTicketsCriteria>();
     }
 }

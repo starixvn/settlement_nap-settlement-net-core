@@ -1,9 +1,8 @@
-﻿namespace Settlement.Core.Models
-{
-    public interface IReturnValue
-    {
-        public int ErrCode { get; set; }
+﻿namespace Settlement.Core.Models;
 
-        public string ErrMsg { get; set; }
-    }
+public interface IReturnValue
+{
+    public int ErrCode { get; set; }
+
+    public string ErrMsg { get; set; }
 }

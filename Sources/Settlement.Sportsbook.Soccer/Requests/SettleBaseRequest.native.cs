@@ -1,59 +1,58 @@
-﻿namespace Settlement.Sportsbook.Soccer.Requests
+﻿namespace Settlement.Sportsbook.Soccer.Requests;
+
+public class SettleBaseRequest
 {
-    public class SettleBaseRequest
+    private string goalRecord;
+
+    private string betStatus;
+
+    public int MatchId { get; set; }
+
+    public int AdminId { get; set; }
+
+    public int LeagueGroupId { get; set; }
+
+    public string ActionName { get; set; }
+
+    public int? HalfTimeHomeScore { get; set; }
+
+    public int? FinalHomeScore { get; set; }
+
+    public int? HalfTimeAwayScore { get; set; }
+
+    public int? FinalAwayScore { get; set; }
+
+    public bool IsEnabledGoalRecordHt { get; set; }
+
+    public bool IsEnabledGoalRecordFt { get; set; }
+
+    public bool IsExistFgLg { get; set; }
+
+    public bool IsExistHtFgLg { get; set; }
+
+    public bool IsExistFgNg { get; set; }
+
+    public string GoalRecord
     {
-        private string goalRecord;
-
-        private string betStatus;
-
-        public int MatchId { get; set; }
-
-        public int AdminId { get; set; }
-
-        public int LeagueGroupId { get; set; }
-
-        public string ActionName { get; set; }
-
-        public int? HalfTimeHomeScore { get; set; }
-
-        public int? FinalHomeScore { get; set; }
-
-        public int? HalfTimeAwayScore { get; set; }
-
-        public int? FinalAwayScore { get; set; }
-
-        public bool IsEnabledGoalRecordHt { get; set; }
-
-        public bool IsEnabledGoalRecordFt { get; set; }
-
-        public bool IsExistFgLg { get; set; }
-
-        public bool IsExistHtFgLg { get; set; }
-
-        public bool IsExistFgNg { get; set; }
-
-        public string GoalRecord
+        get
         {
-            get
-            {
-                return string.IsNullOrWhiteSpace(goalRecord)
-                    ? string.Empty
-                    : goalRecord.ToUpperInvariant();
-            }
-            set
-            {
-                goalRecord = value;
-            }
+            return string.IsNullOrWhiteSpace(goalRecord)
+                ? string.Empty
+                : goalRecord.ToUpperInvariant();
         }
-
-        public string BetStatus
+        set
         {
-            get => betStatus ?? string.Empty;
-            set => betStatus = value;
+            goalRecord = value;
         }
-
-        public int HedgeMatchId { get; set; }
-
-        public bool IsApplyHedging { get; set; }
     }
+
+    public string BetStatus
+    {
+        get => betStatus ?? string.Empty;
+        set => betStatus = value;
+    }
+
+    public int HedgeMatchId { get; set; }
+
+    public bool IsApplyHedging { get; set; }
 }

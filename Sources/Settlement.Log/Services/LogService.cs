@@ -8,53 +8,52 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Settlement.Log.Services
+namespace Settlement.Log.Services;
+
+public interface LogService
 {
-    public interface LogService
+    Task<List<LogModel>> GetLog(LogRequest request);
+}
+
+public class LogServiceImp : LogService
+{
+    private readonly IDynamicRepository repository;
+    private readonly IBalanceUpService balanceUpService;
+    private readonly LogDetailService logDetailService;
+    private readonly IRefDataService refDataService;
+    private readonly IMapper mapper;
+
+    public LogServiceImp(
+        IDynamicRepository repository,
+        IBalanceUpService balanceUpService,
+        LogDetailService logDetailService,
+        IMapper mapper,
+        IRefDataService refDataService)
     {
-        Task<List<LogModel>> GetLog(LogRequest request);
+        this.repository = repository;
+        this.balanceUpService = balanceUpService;
+        this.logDetailService = logDetailService;
+        this.mapper = mapper;
+        this.refDataService = refDataService;
     }
 
-    public class LogServiceImp : LogService
+    public async Task<List<LogModel>> GetLog(LogRequest request)
     {
-        private readonly IDynamicRepository repository;
-        private readonly IBalanceUpService balanceUpService;
-        private readonly LogDetailService logDetailService;
-        private readonly IRefDataService refDataService;
-        private readonly IMapper mapper;
+        var criteria = mapper.Map<LogRequest, GetSettlementLogCriteria>(request);
+        criteria.BalanceUpDay = balanceUpService.GetBalanceUpDay().BalanceUpDay;
 
-        public LogServiceImp(
-            IDynamicRepository repository,
-            IBalanceUpService balanceUpService,
-            LogDetailService logDetailService,
-            IMapper mapper,
-            IRefDataService refDataService)
+        var logs =(await repository.FetchAsync<LogModel>(criteria)).ToList();
+        return await GetLogDetail(logs, request.ProductType);
+    }
+
+    private async Task<List<LogModel>> GetLogDetail(List<LogModel> logs, string productType)
+    {
+        foreach (var log in logs)
         {
-            this.repository = repository;
-            this.balanceUpService = balanceUpService;
-            this.logDetailService = logDetailService;
-            this.mapper = mapper;
-            this.refDataService = refDataService;
+            log.MatchLogDetails = await logDetailService.GetLogDetailByMatchAndProduct(log.MatchId, productType);
+            log.RefDataService = refDataService;
         }
 
-        public async Task<List<LogModel>> GetLog(LogRequest request)
-        {
-            var criteria = mapper.Map<LogRequest, GetSettlementLogCriteria>(request);
-            criteria.BalanceUpDay = balanceUpService.GetBalanceUpDay().BalanceUpDay;
-
-            var logs =(await repository.FetchAsync<LogModel>(criteria)).ToList();
-            return await GetLogDetail(logs, request.ProductType);
-        }
-
-        private async Task<List<LogModel>> GetLogDetail(List<LogModel> logs, string productType)
-        {
-            foreach (var log in logs)
-            {
-                log.MatchLogDetails = await logDetailService.GetLogDetailByMatchAndProduct(log.MatchId, productType);
-                log.RefDataService = refDataService;
-            }
-
-            return logs;
-        }
+        return logs;
     }
 }

@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
 
-namespace Settlement.Setting.Models.OutsideSourceManager
-{
-    public class LeagueOutsideSourceModel
-    {
-        public List<LeagueOutSideSourceResourceItem> OutsideSourceList { get; set; }
+namespace Settlement.Setting.Models.OutsideSourceManager;
 
-        public List<LeagueOutSideSourceResourceItem> OutsideSourceSort { get; set; }
-    }
+public class LeagueOutsideSourceModel
+{
+    public List<LeagueOutSideSourceResourceItem> OutsideSourceList { get; set; }
+
+    public List<LeagueOutSideSourceResourceItem> OutsideSourceSort { get; set; }
 }

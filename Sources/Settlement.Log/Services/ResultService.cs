@@ -1,56 +1,55 @@
 ﻿using Settlement.Log.Contants;
 
-namespace Settlement.Log.Services
-{
-    public interface ResultService
-    {
-        string MinuteSetPieceResultName(string position, string result);
+namespace Settlement.Log.Services;
 
-        string ResultName(string position, string result);
+public interface ResultService
+{
+    string MinuteSetPieceResultName(string position, string result);
+
+    string ResultName(string position, string result);
+}
+
+public class ResultServiceImp : ResultService
+{
+    private static readonly string[] eventCounterLabels = new[] { "N", "G", "C", "FK", "GK", "T", "B", "P" };
+
+    public string MinuteSetPieceResultName(string position, string result)
+    {
+        var value = Convert.ToInt32(result);
+        var resultName = "Yes";
+
+        if (value != SetPiece.CornerFreeKickGoalKickAndPenalty)
+        {
+            resultName = value == 1 ? "No" : string.Empty;
+        }
+
+        return $"{position}:{resultName}";
     }
 
-    public class ResultServiceImp : ResultService
+    public string ResultName(string position, string result)
     {
-        private static readonly string[] eventCounterLabels = new[] { "N", "G", "C", "FK", "GK", "T", "B", "P" };
+        var value = Convert.ToInt32(result);
+        var binaryResult = Convert.ToString(value, 2).PadLeft(8, '0').Reverse();
+        return $"{position}:{MappingName(binaryResult)}";
+    }
 
-        public string MinuteSetPieceResultName(string position, string result)
+    private static string MappingName(string binaryResult)
+    {
+        var results = new List<string>();
+
+        for (var pos = 0; pos < binaryResult.Length; pos++)
         {
-            var value = Convert.ToInt32(result);
-            var resultName = "Yes";
-
-            if (value != SetPiece.CornerFreeKickGoalKickAndPenalty)
+            var value = binaryResult[pos];
+            if (value.Equals('1'))
             {
-                resultName = value == 1 ? "No" : string.Empty;
-            }
-
-            return $"{position}:{resultName}";
-        }
-
-        public string ResultName(string position, string result)
-        {
-            var value = Convert.ToInt32(result);
-            var binaryResult = Convert.ToString(value, 2).PadLeft(8, '0').Reverse();
-            return $"{position}:{MappingName(binaryResult)}";
-        }
-
-        private static string MappingName(string binaryResult)
-        {
-            var results = new List<string>();
-
-            for (var pos = 0; pos < binaryResult.Length; pos++)
-            {
-                var value = binaryResult[pos];
-                if (value.Equals('1'))
+                var result = eventCounterLabels[pos];
+                if (!string.IsNullOrWhiteSpace(result))
                 {
-                    var result = eventCounterLabels[pos];
-                    if (!string.IsNullOrWhiteSpace(result))
-                    {
-                        results.Add(result);
-                    }
+                    results.Add(result);
                 }
             }
-
-            return string.Join(",", results);
         }
+
+        return string.Join(",", results);
     }
 }

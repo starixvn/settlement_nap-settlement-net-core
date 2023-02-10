@@ -3,74 +3,73 @@ using Settlement.Sportsbook.Soccer.Models;
 using System.Collections.Generic;
 using Settlement.Core.Constants;
 
-namespace Settlement.Sportsbook.Soccer.Services
+namespace Settlement.Sportsbook.Soccer.Services;
+
+public interface IActionResourceService
 {
-    public interface IActionResourceService
+    List<XmlResource> HalftimeResources(GoalAction goalAction);
+
+    List<XmlResource> FullTimeResources(GoalAction goalAction);
+
+    XmlResource FullTimeResource(string firstGoal, int settlementStatusId);
+
+    XmlResource FullTimeGoalRecord(string goalRecord, int settlementStatusId);
+
+    XmlResource HalftimeGoalRecord(string goalRecord, int settlementStatusId);
+}
+
+public class ActionResourceServiceImp : IActionResourceService
+{
+    private readonly IGoalRecordService goalRecordService;
+
+    public ActionResourceServiceImp(IGoalRecordService goalRecordService)
     {
-        List<XmlResource> HalftimeResources(GoalAction goalAction);
-
-        List<XmlResource> FullTimeResources(GoalAction goalAction);
-
-        XmlResource FullTimeResource(string firstGoal, int settlementStatusId);
-
-        XmlResource FullTimeGoalRecord(string goalRecord, int settlementStatusId);
-
-        XmlResource HalftimeGoalRecord(string goalRecord, int settlementStatusId);
+        this.goalRecordService = goalRecordService;
     }
 
-    public class ActionResourceServiceImp : IActionResourceService
+    public List<XmlResource> HalftimeResources(GoalAction goalAction)
     {
-        private readonly IGoalRecordService goalRecordService;
+        var firstGoal = goalRecordService.FirstGoalRecord(goalAction.FirstGoal, goalAction.IsRefund);
+        var lastGoal = goalRecordService.LastGoalRecord(goalAction.LastGoal, goalAction.IsRefund);
+        return new List<XmlResource> {
+            SettleResource(ResourceKey.HalftimeFirstGoal, firstGoal, goalAction.FirstGoalSettlementStatusId),
+            SettleResource(ResourceKey.HalftimeLastGoal, lastGoal, goalAction.LastGoalSettlementStatusId)
+        };
+    }
 
-        public ActionResourceServiceImp(IGoalRecordService goalRecordService)
-        {
-            this.goalRecordService = goalRecordService;
-        }
+    public XmlResource HalftimeGoalRecord(string goalRecord, int settlementStatusId)
+    {
+        return SettleResource(ResourceKey.HalftimeGoalRecord, goalRecord, settlementStatusId);
+    }
 
-        public List<XmlResource> HalftimeResources(GoalAction goalAction)
-        {
-            var firstGoal = goalRecordService.FirstGoalRecord(goalAction.FirstGoal, goalAction.IsRefund);
-            var lastGoal = goalRecordService.LastGoalRecord(goalAction.LastGoal, goalAction.IsRefund);
-            return new List<XmlResource> {
-                    SettleResource(ResourceKey.HalftimeFirstGoal, firstGoal, goalAction.FirstGoalSettlementStatusId),
-                    SettleResource(ResourceKey.HalftimeLastGoal, lastGoal, goalAction.LastGoalSettlementStatusId)
-                };
-        }
+    public XmlResource FullTimeResource(string firstGoal, int settlementStatusId)
+    {
+        return SettleResource(ResourceKey.FullTimeFirstGoal, firstGoal, settlementStatusId);
+    }
 
-        public XmlResource HalftimeGoalRecord(string goalRecord, int settlementStatusId)
-        {
-            return SettleResource(ResourceKey.HalftimeGoalRecord, goalRecord, settlementStatusId);
-        }
+    public List<XmlResource> FullTimeResources(GoalAction goalAction)
+    {
+        var firstGoal = goalRecordService.FirstGoalRecord(goalAction.FirstGoal, goalAction.IsRefund);
+        var lastGoal = goalRecordService.LastGoalRecord(goalAction.LastGoal, goalAction.IsRefund);
+        return new List<XmlResource> {
+            SettleResource(ResourceKey.FullTimeFirstGoal, firstGoal, goalAction.FirstGoalSettlementStatusId),
+            SettleResource(ResourceKey.FullTimeLastGoal, lastGoal, goalAction.LastGoalSettlementStatusId)
+        };
+    }
 
-        public XmlResource FullTimeResource(string firstGoal, int settlementStatusId)
-        {
-            return SettleResource(ResourceKey.FullTimeFirstGoal, firstGoal, settlementStatusId);
-        }
+    public XmlResource FullTimeGoalRecord(string goalRecord, int settlementStatusId)
+    {
+        return SettleResource(ResourceKey.FullTimeGoalRecord, goalRecord, settlementStatusId);
+    }
 
-        public List<XmlResource> FullTimeResources(GoalAction goalAction)
+    private static XmlResource SettleResource(string resourceId, string homeValue, int settlementStatusId)
+    {
+        return new XmlResource
         {
-            var firstGoal = goalRecordService.FirstGoalRecord(goalAction.FirstGoal, goalAction.IsRefund);
-            var lastGoal = goalRecordService.LastGoalRecord(goalAction.LastGoal, goalAction.IsRefund);
-            return new List<XmlResource> {
-                    SettleResource(ResourceKey.FullTimeFirstGoal, firstGoal, goalAction.FirstGoalSettlementStatusId),
-                    SettleResource(ResourceKey.FullTimeLastGoal, lastGoal, goalAction.LastGoalSettlementStatusId)
-            };
-        }
-
-        public XmlResource FullTimeGoalRecord(string goalRecord, int settlementStatusId)
-        {
-            return SettleResource(ResourceKey.FullTimeGoalRecord, goalRecord, settlementStatusId);
-        }
-
-        private static XmlResource SettleResource(string resourceId, string homeValue, int settlementStatusId)
-        {
-            return new XmlResource
-            {
-                ResourceId = resourceId,
-                ResultStatusId = ResultStatus.ManuallySettled,
-                SettlementStatusId = settlementStatusId,
-                HomeValue = homeValue
-            };
-        }
+            ResourceId = resourceId,
+            ResultStatusId = ResultStatus.ManuallySettled,
+            SettlementStatusId = settlementStatusId,
+            HomeValue = homeValue
+        };
     }
 }

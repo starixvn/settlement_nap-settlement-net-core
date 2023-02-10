@@ -1,30 +1,29 @@
 ﻿using Settlement.Core.Models;
 
-namespace Settlement.Sportsbook.Aio.UnitTests.Services
+namespace Settlement.Sportsbook.Aio.UnitTests.Services;
+
+public class ProviderMapperServiceTests
 {
-    public class ProviderMapperServiceTests
+    private readonly ProviderMapperService service;
+
+    public ProviderMapperServiceTests()
     {
-        private readonly ProviderMapperService service;
+        service = new ProviderMapperService();
+    }
 
-        public ProviderMapperServiceTests()
+    [Fact]
+    public void Decorate_Always_FetchCorrectResultsAndGroupThem()
+    {
+        var fakeList = new List<ExternalResultDetailModel>()
         {
-            service = new ProviderMapperService();
-        }
+            new ExternalResultDetailModel(),
+            new ExternalResultDetailModel(),
+            new ExternalResultDetailModel()
+        };
+        var input = new Tuple<List<ExternalResultDetailModel>, List<ExternalResultModel>>(fakeList, new List<ExternalResultModel>());
 
-        [Fact]
-        public void Decorate_Always_FetchCorrectResultsAndGroupThem()
-        {
-            var fakeList = new List<ExternalResultDetailModel>()
-            {
-                new ExternalResultDetailModel(),
-                new ExternalResultDetailModel(),
-                new ExternalResultDetailModel()
-            };
-            var input = new Tuple<List<ExternalResultDetailModel>, List<ExternalResultModel>>(fakeList, new List<ExternalResultModel>());
+        service.Decorate(input);
 
-            service.Decorate(input);
-
-            Assert.Single(input.Item2);
-        }
+        Assert.Single(input.Item2);
     }
 }

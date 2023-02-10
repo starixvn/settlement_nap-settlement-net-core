@@ -2,100 +2,99 @@
 using Settlement.Sportsbook.Soccer.Services.InstantCalculate;
 using Xunit;
 
-namespace Settlement.Sportsbook.Soccer.UnitTests.Services.Instant
+namespace Settlement.Sportsbook.Soccer.UnitTests.Services.Instant;
+
+public class InstantGoalCheckingServiceTests
 {
-    public class InstantGoalCheckingServiceTests
+    private readonly IInstantGoalCheckingService service;
+
+    public InstantGoalCheckingServiceTests()
     {
-        private readonly IInstantGoalCheckingService service;
+        service = new InstantGoalCheckingServiceImp();
+    }
 
-        public InstantGoalCheckingServiceTests()
+    [Theory]
+    [InlineData("AH;H", "A")]
+    [InlineData("", "")]
+    public void IsHalftimeGoalChecking_TheSameNewFirstGoalWithOldFirstGoalValue_ReturnsFalse(string newGoal, string oldGoal)
+    {
+        // Arrange
+        var goalCondition = new InstantGoalCondition
         {
-            service = new InstantGoalCheckingServiceImp();
-        }
+            IsHalfTime = true,
+            GoalRecord = "A;AHH",
+            FirstGoalValue = "A"
+        };
 
-        [Theory]
-        [InlineData("AH;H", "A")]
-        [InlineData("", "")]
-        public void IsHalftimeGoalChecking_TheSameNewFirstGoalWithOldFirstGoalValue_ReturnsFalse(string newGoal, string oldGoal)
+        // Act
+        var actual = service.IsHalftimeGoalChecking(goalCondition);
+
+        // Assert
+        Assert.False(actual);
+    }
+
+    [Theory]
+    [InlineData("AH;H", "H")]
+    [InlineData(";H", "H")]
+    [InlineData("", "A")]
+    [InlineData("AH;H", "")]
+    public void IsHalftimeGoalChecking_DifferentGoalBetweenNewAndOldFirstGoal_ReturnsTrue(string newGoal, string oldGoal)
+    {
+        // Arrange
+        var goalCondition = new InstantGoalCondition
         {
-            // Arrange
-            var goalCondition = new InstantGoalCondition
-            {
-                IsHalfTime = true,
-                GoalRecord = "A;AHH",
-                FirstGoalValue = "A"
-            };
+            IsHalfTime = true,
+            GoalRecord = newGoal,
+            FirstGoalValue = oldGoal
+        };
 
-            // Act
-            var actual = service.IsHalftimeGoalChecking(goalCondition);
+        // Act
+        var actual = service.IsHalftimeGoalChecking(goalCondition);
 
-            // Assert
-            Assert.False(actual);
-        }
+        // Assert
+        Assert.True(actual);
+    }
 
-        [Theory]
-        [InlineData("AH;H", "H")]
-        [InlineData(";H", "H")]
-        [InlineData("", "A")]
-        [InlineData("AH;H", "")]
-        public void IsHalftimeGoalChecking_DifferentGoalBetweenNewAndOldFirstGoal_ReturnsTrue(string newGoal, string oldGoal)
+    [Theory]
+    [InlineData("", "")]
+    [InlineData(";", "")]
+    [InlineData(";AHH", "A")]
+    [InlineData("A;AHH", "A")]
+    public void IsFullTimeGoallChecking_TheSameNewFirstGoalWithOldFirstGoalValue_ReturnsFalse(string newGoal, string oldGoal)
+    {
+        // Arrange
+        var goalCondition = new InstantGoalCondition
         {
-            // Arrange
-            var goalCondition = new InstantGoalCondition
-            {
-                IsHalfTime = true,
-                GoalRecord = newGoal,
-                FirstGoalValue = oldGoal
-            };
+            IsHalfTime = false,
+            GoalRecord = newGoal,
+            FirstGoalValue = oldGoal
+        };
 
-            // Act
-            var actual = service.IsHalftimeGoalChecking(goalCondition);
+        // Act
+        var actual = service.IsFullTimeGoallChecking(goalCondition);
 
-            // Assert
-            Assert.True(actual);
-        }
+        // Assert
+        Assert.False(actual);
+    }
 
-        [Theory]
-        [InlineData("", "")]
-        [InlineData(";", "")]
-        [InlineData(";AHH", "A")]
-        [InlineData("A;AHH", "A")]
-        public void IsFullTimeGoallChecking_TheSameNewFirstGoalWithOldFirstGoalValue_ReturnsFalse(string newGoal, string oldGoal)
+    [Theory]
+    [InlineData("AH;H", "H")]
+    [InlineData(";A", "H")]
+    [InlineData(";", "A")]
+    public void IsFullTimeGoallChecking_DifferentGoalBetweenNewAndOldFirstGoal_ReturnsTrue(string newGoal, string oldGoal)
+    {
+        // Arrange
+        var goalCondition = new InstantGoalCondition
         {
-            // Arrange
-            var goalCondition = new InstantGoalCondition
-            {
-                IsHalfTime = false,
-                GoalRecord = newGoal,
-                FirstGoalValue = oldGoal
-            };
+            IsHalfTime = false,
+            GoalRecord = newGoal,
+            FirstGoalValue = oldGoal
+        };
 
-            // Act
-            var actual = service.IsFullTimeGoallChecking(goalCondition);
+        // Act
+        var actual = service.IsFullTimeGoallChecking(goalCondition);
 
-            // Assert
-            Assert.False(actual);
-        }
-
-        [Theory]
-        [InlineData("AH;H", "H")]
-        [InlineData(";A", "H")]
-        [InlineData(";", "A")]
-        public void IsFullTimeGoallChecking_DifferentGoalBetweenNewAndOldFirstGoal_ReturnsTrue(string newGoal, string oldGoal)
-        {
-            // Arrange
-            var goalCondition = new InstantGoalCondition
-            {
-                IsHalfTime = false,
-                GoalRecord = newGoal,
-                FirstGoalValue = oldGoal
-            };
-
-            // Act
-            var actual = service.IsFullTimeGoallChecking(goalCondition);
-
-            // Assert
-            Assert.True(actual);
-        }
+        // Assert
+        Assert.True(actual);
     }
 }

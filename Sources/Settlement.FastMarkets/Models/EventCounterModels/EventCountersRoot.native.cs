@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Xml.Serialization;
 
-namespace Settlement.FastMarkets.Models.EventCounterModels
+namespace Settlement.FastMarkets.Models.EventCounterModels;
+
+[XmlRoot("EventCounters")]
+public class EventCountersRoot
 {
-    [XmlRoot("EventCounters")]
-    public class EventCountersRoot
-    {
-        [XmlElement("EventCounter")]
-        public List<EventCounterElement> EventCounter { get; set; }
-    }
+    [XmlElement("EventCounter")]
+    public List<EventCounterElement> EventCounter { get; set; }
 }

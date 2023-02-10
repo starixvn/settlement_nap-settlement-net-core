@@ -1,23 +1,22 @@
 ﻿using Fanex.Data;
 using Fanex.Data.Repository;
 
-namespace Settlement.Sportsbook.Soccer.Criteria
+namespace Settlement.Sportsbook.Soccer.Criteria;
+
+public class BetFairCheckingCriteria : CriteriaBase
 {
-    public class BetFairCheckingCriteria : CriteriaBase
+    public int MatchId { get; set; }
+
+    [SpParam(Ignored = true)]
+    public string DbServer { get; set; }
+
+    public override string GetSettingKey()
     {
-        public int MatchId { get; set; }
+        return $"NAP_Set_BetFair_Checking_{DbServer}";
+    }
 
-        [SpParam(Ignored = true)]
-        public string DbServer { get; set; }
-
-        public override string GetSettingKey()
-        {
-            return $"NAP_Set_BetFair_Checking_{DbServer}";
-        }
-
-        public override bool IsValid()
-        {
-            return MatchId > 0;
-        }
+    public override bool IsValid()
+    {
+        return MatchId > 0;
     }
 }

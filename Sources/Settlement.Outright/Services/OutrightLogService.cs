@@ -24,9 +24,9 @@ public class OutrightLogServiceImp : OutrightLogService
         request.BalanceUpDay = balanceUpService.GetBalanceUpDay().BalanceUpDay;
         if (request.MatchId is not null && request.MatchId > 0)
         {
-                return await outrightLogService.GetOutrightLogByOutrightId(request);
+            return await outrightLogService.GetOutrightLogByOutrightId(request);
         }
 
-            return await outrightLogService.GetOutrightLogByMatchCode(request);
+        return await outrightLogService.GetOutrightLogByMatchCode(request);
     }
 }

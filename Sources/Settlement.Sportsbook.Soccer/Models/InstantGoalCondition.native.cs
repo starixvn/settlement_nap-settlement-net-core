@@ -1,43 +1,42 @@
-﻿namespace Settlement.Sportsbook.Soccer.Models
+﻿namespace Settlement.Sportsbook.Soccer.Models;
+
+public class InstantGoalCondition
 {
-    public class InstantGoalCondition
+    private string firstGoalValue = string.Empty;
+
+    private string goalRecord = string.Empty;
+
+    public bool IsExistHtFgNg { get; set; }
+
+    public bool IsExistFgNg { get; set; }
+
+    public bool IsExistHtFgLg { get; set; }
+
+    public bool IsExistFgLg { get; set; }
+
+    public bool IsHalfTime { get; set; }
+
+    public string GoalRecord
     {
-        private string firstGoalValue = string.Empty;
-
-        private string goalRecord = string.Empty;
-
-        public bool IsExistHtFgNg { get; set; }
-
-        public bool IsExistFgNg { get; set; }
-
-        public bool IsExistHtFgLg { get; set; }
-
-        public bool IsExistFgLg { get; set; }
-
-        public bool IsHalfTime { get; set; }
-
-        public string GoalRecord
+        get
         {
-            get
-            {
-                return goalRecord ?? string.Empty;
-            }
-            set
-            {
-                goalRecord = value;
-            }
+            return goalRecord ?? string.Empty;
         }
-
-        public string FirstGoalValue
+        set
         {
-            get
-            {
-                return firstGoalValue ?? string.Empty;
-            }
-            set
-            {
-                firstGoalValue = value;
-            }
+            goalRecord = value;
+        }
+    }
+
+    public string FirstGoalValue
+    {
+        get
+        {
+            return firstGoalValue ?? string.Empty;
+        }
+        set
+        {
+            firstGoalValue = value;
         }
     }
 }

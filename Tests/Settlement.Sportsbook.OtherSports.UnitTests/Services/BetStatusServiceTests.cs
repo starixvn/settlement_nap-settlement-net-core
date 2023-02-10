@@ -5,162 +5,161 @@ using Settlement.Sportsbook.OtherSports.Criteria;
 using Settlement.Sportsbook.OtherSports.Requests;
 using ResourceItem = Settlement.Core.Models.ResourceItem;
 
-namespace Settlement.Sportsbook.OtherSports.UnitTests.Services
+namespace Settlement.Sportsbook.OtherSports.UnitTests.Services;
+
+public class BetStatusServiceTests
 {
-    public class BetStatusServiceTests
+    private readonly IDynamicRepository repository;
+
+    private readonly IBetStatusService service;
+
+    public BetStatusServiceTests()
     {
-        private readonly IDynamicRepository repository;
+        repository = Substitute.For<IDynamicRepository>();
+        service = new BetStatusServiceImp(repository);
+    }
 
-        private readonly IBetStatusService service;
-
-        public BetStatusServiceTests()
+    [Theory]
+    [InlineData(SportType.BaseBall, 12)]
+    [InlineData(SportType.Football, 7)]
+    [InlineData(SportType.FieldHockey, 5)]
+    public void GenerateResultDetail_Always_GenerateResultsBySport(int sportType, int setNumber)
+    {
+        var matchDetail = new MatchDetail
         {
-            repository = Substitute.For<IDynamicRepository>();
-            service = new BetStatusServiceImp(repository);
-        }
+            SportType = sportType
+        };
 
-        [Theory]
-        [InlineData(SportType.BaseBall, 12)]
-        [InlineData(SportType.Football, 7)]
-        [InlineData(SportType.FieldHockey, 5)]
-        public void GenerateResultDetail_Always_GenerateResultsBySport(int sportType, int setNumber)
+        var result = service.GenerateResultDetail(matchDetail);
+
+        Assert.Equal(result.Count, setNumber);
+    }
+
+    [Fact]
+    public void GenerateResultDetail_Always_GenerateCorrectResultByBetStatus()
+    {
+        var matchDetail = new MatchDetail
         {
-            var matchDetail = new MatchDetail
-            {
-                SportType = sportType
-            };
+            SportType = SportType.FieldHockey,
+            BetStatus = "1-1"
+        };
 
-            var result = service.GenerateResultDetail(matchDetail);
+        var result = service.GenerateResultDetail(matchDetail);
 
-            Assert.Equal(result.Count, setNumber);
-        }
+        Assert.Equal("1", result[0].HomeValue);
+        Assert.Equal("1", result[0].AwayValue);
+        Assert.Null(result[1].AwayValue);
+        Assert.Null(result[1].HomeValue);
+    }
 
-        [Fact]
-        public void GenerateResultDetail_Always_GenerateCorrectResultByBetStatus()
+    [Fact]
+    public void GenerateResultDetail_Always_GenerateFullTimeResult()
+    {
+        var matchDetail = new MatchDetail
         {
-            var matchDetail = new MatchDetail
-            {
-                SportType = SportType.FieldHockey,
-                BetStatus = "1-1"
-            };
+            SportType = SportType.FieldHockey,
+            FinalAwayScore = 2,
+            FinalHomeScore = 1
+        };
 
-            var result = service.GenerateResultDetail(matchDetail);
+        var result = service.GenerateResultDetail(matchDetail);
+        var final = result.Find(item => item.ResourceId == ResourceType.Final);
 
-            Assert.Equal("1", result[0].HomeValue);
-            Assert.Equal("1", result[0].AwayValue);
-            Assert.Null(result[1].AwayValue);
-            Assert.Null(result[1].HomeValue);
-        }
+        Assert.Equal("1", final.HomeValue);
+        Assert.Equal("2", final.AwayValue);
+    }
 
-        [Fact]
-        public void GenerateResultDetail_Always_GenerateFullTimeResult()
+    [Fact]
+    public void GenerateResultDetail_FootBallAndBaseBall_GenerateHalfTimeResult()
+    {
+        var matchDetail = new MatchDetail
         {
-            var matchDetail = new MatchDetail
-            {
-                SportType = SportType.FieldHockey,
-                FinalAwayScore = 2,
-                FinalHomeScore = 1
-            };
+            SportType = SportType.Football,
+            HalfTimeHomeScore = 2,
+            HalfTimeAwayScore = 1
+        };
 
-            var result = service.GenerateResultDetail(matchDetail);
-            var final = result.Find(item => item.ResourceId == ResourceType.Final);
+        var result = service.GenerateResultDetail(matchDetail);
+        var halftime = result.Find(item => item.ResourceId == ResourceType.Halftime);
+        matchDetail.SportType = SportType.FieldHockey;
+        result = service.GenerateResultDetail(matchDetail);
+        var halftimeSecond = result.Find(item => item.ResourceId == ResourceType.Halftime);
 
-            Assert.Equal("1", final.HomeValue);
-            Assert.Equal("2", final.AwayValue);
-        }
+        Assert.Equal("2", halftime.HomeValue);
+        Assert.Equal("1", halftime.AwayValue);
+        Assert.Null(halftimeSecond);
+    }
 
-        [Fact]
-        public void GenerateResultDetail_FootBallAndBaseBall_GenerateHalfTimeResult()
+    [Fact]
+    public void GenerateBetStatus_SettleDirect_ReturnScoreFinalByRequest()
+    {
+        var fullTimeResult = new ResourceItem
         {
-            var matchDetail = new MatchDetail
-            {
-                SportType = SportType.Football,
-                HalfTimeHomeScore = 2,
-                HalfTimeAwayScore = 1
-            };
-
-            var result = service.GenerateResultDetail(matchDetail);
-            var halftime = result.Find(item => item.ResourceId == ResourceType.Halftime);
-            matchDetail.SportType = SportType.FieldHockey;
-            result = service.GenerateResultDetail(matchDetail);
-            var halftimeSecond = result.Find(item => item.ResourceId == ResourceType.Halftime);
-
-            Assert.Equal("2", halftime.HomeValue);
-            Assert.Equal("1", halftime.AwayValue);
-            Assert.Null(halftimeSecond);
-        }
-
-        [Fact]
-        public void GenerateBetStatus_SettleDirect_ReturnScoreFinalByRequest()
+            ResourceId = ResourceType.Final,
+            HomeValue = "2",
+            AwayValue = "1",
+        };
+        var request = new CalculateRequest
         {
-            var fullTimeResult = new ResourceItem
-            {
-                ResourceId = ResourceType.Final,
-                HomeValue = "2",
-                AwayValue = "1",
-            };
-            var request = new CalculateRequest
-            {
-                IsScoreDirect = true,
-                SelectedResources = new List<ResourceItem> { fullTimeResult },
-            };
+            IsScoreDirect = true,
+            SelectedResources = new List<ResourceItem> { fullTimeResult },
+        };
 
-            var result = service.GenerateBetStatus(request);
+        var result = service.GenerateBetStatus(request);
 
-            Assert.Equal(1, result.FinalAwayScore);
-            Assert.Equal(2, result.FinalHomeScore);
-            Assert.Equal(0, result.HtAwayScore);
-            Assert.Equal(0, result.HtHomeScore);
-        }
+        Assert.Equal(1, result.FinalAwayScore);
+        Assert.Equal(2, result.FinalHomeScore);
+        Assert.Equal(0, result.HtAwayScore);
+        Assert.Equal(0, result.HtHomeScore);
+    }
 
-        [Fact]
-        public void GenerateBetStatus_SettleHalfTime_ReturnScoreHalfTimeByResourceItem()
+    [Fact]
+    public void GenerateBetStatus_SettleHalfTime_ReturnScoreHalfTimeByResourceItem()
+    {
+        var resourceItem = new ResourceItem
         {
-            var resourceItem = new ResourceItem
-            {
-                HomeValue = "2",
-                AwayValue = "1",
-            };
-            var request = new CalculateRequest
-            {
-                SelectedResources = new List<ResourceItem> { resourceItem, resourceItem, resourceItem, resourceItem },
-                Action = ActionType.CalculateHalfTime
-            };
-
-            repository.Get<MatchDetail>(Arg.Any<GetMatchInfoCriteria>())
-                .Returns(new MatchDetail { BetStatus = "Refund FT;0-0,0-0,4-8,4-8" });
-            var result = service.GenerateBetStatus(request);
-
-            Assert.Null(result.FinalAwayScore);
-            Assert.Null(result.FinalHomeScore);
-            Assert.Equal(2, result.HtAwayScore);
-            Assert.Equal(4, result.HtHomeScore);
-            Assert.Equal("Refund FT;2-1,2-1,4-8,4-8", result.BetStatus.ToString());
-        }
-
-        [Fact]
-        public void GenerateBetStatus_SettleFullTime_ReturnFinalScoreByResourceItem()
+            HomeValue = "2",
+            AwayValue = "1",
+        };
+        var request = new CalculateRequest
         {
-            var resourceItem = new ResourceItem
-            {
-                HomeValue = "2",
-                AwayValue = "1",
-            };
-            var request = new CalculateRequest
-            {
-                SelectedResources = new List<ResourceItem> { resourceItem, resourceItem, resourceItem, resourceItem },
-                Action = ActionType.CalculateFullTime
-            };
+            SelectedResources = new List<ResourceItem> { resourceItem, resourceItem, resourceItem, resourceItem },
+            Action = ActionType.CalculateHalfTime
+        };
 
-            repository.Get<MatchDetail>(Arg.Any<GetMatchInfoCriteria>())
-                .Returns(new MatchDetail { BetStatus = "Refund FT;" });
-            var result = service.GenerateBetStatus(request);
+        repository.Get<MatchDetail>(Arg.Any<GetMatchInfoCriteria>())
+            .Returns(new MatchDetail { BetStatus = "Refund FT;0-0,0-0,4-8,4-8" });
+        var result = service.GenerateBetStatus(request);
 
-            Assert.Equal(8, result.FinalHomeScore);
-            Assert.Equal(4, result.FinalAwayScore);
-            Assert.Equal(2, result.HtAwayScore);
-            Assert.Equal(4, result.HtHomeScore);
-            Assert.Equal("2-1,2-1,2-1,2-1", result.BetStatus.ToString());
-        }
+        Assert.Null(result.FinalAwayScore);
+        Assert.Null(result.FinalHomeScore);
+        Assert.Equal(2, result.HtAwayScore);
+        Assert.Equal(4, result.HtHomeScore);
+        Assert.Equal("Refund FT;2-1,2-1,4-8,4-8", result.BetStatus.ToString());
+    }
+
+    [Fact]
+    public void GenerateBetStatus_SettleFullTime_ReturnFinalScoreByResourceItem()
+    {
+        var resourceItem = new ResourceItem
+        {
+            HomeValue = "2",
+            AwayValue = "1",
+        };
+        var request = new CalculateRequest
+        {
+            SelectedResources = new List<ResourceItem> { resourceItem, resourceItem, resourceItem, resourceItem },
+            Action = ActionType.CalculateFullTime
+        };
+
+        repository.Get<MatchDetail>(Arg.Any<GetMatchInfoCriteria>())
+            .Returns(new MatchDetail { BetStatus = "Refund FT;" });
+        var result = service.GenerateBetStatus(request);
+
+        Assert.Equal(8, result.FinalHomeScore);
+        Assert.Equal(4, result.FinalAwayScore);
+        Assert.Equal(2, result.HtAwayScore);
+        Assert.Equal(4, result.HtHomeScore);
+        Assert.Equal("2-1,2-1,2-1,2-1", result.BetStatus.ToString());
     }
 }

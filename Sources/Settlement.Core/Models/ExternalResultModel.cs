@@ -1,17 +1,16 @@
 ﻿using System.Collections.Generic;
 
-namespace Settlement.Core.Models
+namespace Settlement.Core.Models;
+
+public class ExternalResultModel
 {
-    public class ExternalResultModel
-    {
-        public int SourceId { get; set; }
+    public int SourceId { get; set; }
 
-        public string SourceName { get; set; }
+    public string SourceName { get; set; }
 
-        public int OrderNo { get; set; }
+    public int OrderNo { get; set; }
 
-        public string Remark { get; set; }
+    public string Remark { get; set; }
 
-        public List<ExternalResultDetailModel> ResultDetails { get; set; }
-    }
+    public List<ExternalResultDetailModel> ResultDetails { get; set; }
 }

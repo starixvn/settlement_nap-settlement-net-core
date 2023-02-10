@@ -8,61 +8,60 @@ using Settlement.Setting.Models.ProviderManager;
 using Settlement.Setting.Requests;
 using Settlement.Setting.Requests.ProviderManager;
 
-namespace Settlement.Setting.Services
-{
-    public interface ProviderSettingService
-    {
-        Task<List<ProviderModel>> GetProvider(GetProviderRequest query);
+namespace Settlement.Setting.Services;
 
-        Task<Result> UpdateProvider(UpdateProviderRequest query);
+public interface ProviderSettingService
+{
+    Task<List<ProviderModel>> GetProvider(GetProviderRequest query);
+
+    Task<Result> UpdateProvider(UpdateProviderRequest query);
+}
+
+public class ProviderSettingServiceImp : ProviderSettingService
+{
+    private readonly IDynamicRepository repository;
+
+    private readonly XmlConvertService xmlConvertService;
+
+    private readonly IMapper mapper;
+
+    public ProviderSettingServiceImp(IDynamicRepository repository, XmlConvertService xmlConvertService, IMapper mapper)
+    {
+        this.repository = repository;
+        this.xmlConvertService = xmlConvertService;
+        this.mapper = mapper;
     }
 
-    public class ProviderSettingServiceImp : ProviderSettingService
+    public async Task<List<ProviderModel>> GetProvider(GetProviderRequest query)
     {
-        private readonly IDynamicRepository repository;
+        var criteria = mapper.Map<GetProviderRequest, GetProviderCriteria>(query);
 
-        private readonly XmlConvertService xmlConvertService;
+        var providers = await repository.FetchAsync<ProviderModel>(criteria);
 
-        private readonly IMapper mapper;
+        return providers.ToList();
+    }
 
-        public ProviderSettingServiceImp(IDynamicRepository repository, XmlConvertService xmlConvertService, IMapper mapper)
+    public async Task<Result> UpdateProvider(UpdateProviderRequest query)
+    {
+        var resources = CreateResources(query.Providers);
+        var criteria = mapper.Map<UpdateProviderRequest, UpdateProviderCriteria>(query);
+        criteria.ProviderSources = resources;
+
+        await repository.ExecuteAsync(criteria);
+        return new Result
         {
-            this.repository = repository;
-            this.xmlConvertService = xmlConvertService;
-            this.mapper = mapper;
-        }
+            ErrCode = criteria.ErrCode,
+            ErrMsg = criteria.ErrMsg
+        };
+    }
 
-        public async Task<List<ProviderModel>> GetProvider(GetProviderRequest query)
+    private string CreateResources(List<ProviderModel> selectedResources)
+    {
+        var resources = new ProviderResources<ProviderModel>
         {
-            var criteria = mapper.Map<GetProviderRequest, GetProviderCriteria>(query);
+            ProviderItems = selectedResources
+        };
 
-            var providers = await repository.FetchAsync<ProviderModel>(criteria);
-
-            return providers.ToList();
-        }
-
-        public async Task<Result> UpdateProvider(UpdateProviderRequest query)
-        {
-            var resources = CreateResources(query.Providers);
-            var criteria = mapper.Map<UpdateProviderRequest, UpdateProviderCriteria>(query);
-            criteria.ProviderSources = resources;
-
-            await repository.ExecuteAsync(criteria);
-            return new Result
-            {
-                ErrCode = criteria.ErrCode,
-                ErrMsg = criteria.ErrMsg
-            };
-        }
-
-        private string CreateResources(List<ProviderModel> selectedResources)
-        {
-            var resources = new ProviderResources<ProviderModel>
-            {
-                ProviderItems = selectedResources
-            };
-
-            return xmlConvertService.Serialize(resources);
-        }
+        return xmlConvertService.Serialize(resources);
     }
 }

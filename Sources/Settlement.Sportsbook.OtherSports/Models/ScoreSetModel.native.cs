@@ -1,17 +1,16 @@
 ﻿using System.Text;
 
-namespace Settlement.Sportsbook.OtherSports.Models
+namespace Settlement.Sportsbook.OtherSports.Models;
+
+public class ScoreSetModel
 {
-    public class ScoreSetModel
-    {
-        public StringBuilder BetStatus { get; set; } = new StringBuilder();
+    public StringBuilder BetStatus { get; set; } = new StringBuilder();
 
-        public int? HtHomeScore { get; set; }
+    public int? HtHomeScore { get; set; }
 
-        public int? FinalHomeScore { get; set; }
+    public int? FinalHomeScore { get; set; }
 
-        public int? HtAwayScore { get; set; }
+    public int? HtAwayScore { get; set; }
 
-        public int? FinalAwayScore { get; set; }
-    }
+    public int? FinalAwayScore { get; set; }
 }

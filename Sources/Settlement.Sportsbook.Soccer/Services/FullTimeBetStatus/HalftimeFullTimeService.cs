@@ -2,67 +2,66 @@
 using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Requests;
 
-namespace Settlement.Sportsbook.Soccer.Services.FullTimeBetStatus
-{
-    public interface IHalftimeFullTimeService
-    {
-        string HalfTimeBetStatus(SettleRequest request);
+namespace Settlement.Sportsbook.Soccer.Services.FullTimeBetStatus;
 
-        string FullTimeBetStatus(SettleRequest request, string halfTimeBetStatus);
+public interface IHalftimeFullTimeService
+{
+    string HalfTimeBetStatus(SettleRequest request);
+
+    string FullTimeBetStatus(SettleRequest request, string halfTimeBetStatus);
+}
+
+public class HalftimeFullTimeServiceImp : IHalftimeFullTimeService
+{
+    private readonly IGoalRecordService goalRecordService;
+
+    private readonly IFullTimeService fullTimeService;
+
+    public HalftimeFullTimeServiceImp(IGoalRecordService goalRecordService, IFullTimeService fullTimeService)
+    {
+        this.goalRecordService = goalRecordService;
+        this.fullTimeService = fullTimeService;
     }
 
-    public class HalftimeFullTimeServiceImp : IHalftimeFullTimeService
+    public string HalfTimeBetStatus(SettleRequest request)
     {
-        private readonly IGoalRecordService goalRecordService;
+        var isExistRefundHt = request.BetStatus.IgnoreCaseContains(EventStatus.RefundHT);
+        return isExistRefundHt
+            ? BetStatusHalftimeWithIsExistRefundHT(request)
+            : BetStatusHasHalftimeScoreWithSemicolonOnGoalRecord(request);
+    }
 
-        private readonly IFullTimeService fullTimeService;
+    public string FullTimeBetStatus(SettleRequest request, string halfTimeBetStatus)
+    {
+        var isExistRefundHt = request.BetStatus.IgnoreCaseContains(EventStatus.RefundHT);
+        var fullTimeBetStatus = fullTimeService.BetStatusFullTimeWithSemicolon(request);
 
-        public HalftimeFullTimeServiceImp(IGoalRecordService goalRecordService, IFullTimeService fullTimeService)
+        return fullTimeService.IsExistRefundHt(isExistRefundHt, halfTimeBetStatus)
+            ? fullTimeService.RefundHtOnBetStatus(fullTimeBetStatus)
+            : fullTimeBetStatus;
+    }
+
+    private string BetStatusHalftimeWithIsExistRefundHT(SettleRequest request)
+    {
+        var isExistHalfTime = request.BetStatus.IgnoreCaseContains("1FL");
+
+        var goalRecord = new GoalRecordModel
         {
-            this.goalRecordService = goalRecordService;
-            this.fullTimeService = fullTimeService;
-        }
+            IsExistRefundHt = true,
+            IsExistHalfTime = isExistHalfTime,
+            FirstGoal = "0",
+            LastGoal = "0"
+        };
 
-        public string HalfTimeBetStatus(SettleRequest request)
-        {
-            var isExistRefundHt = request.BetStatus.IgnoreCaseContains(EventStatus.RefundHT);
-            return isExistRefundHt
-                   ? BetStatusHalftimeWithIsExistRefundHT(request)
-                   : BetStatusHasHalftimeScoreWithSemicolonOnGoalRecord(request);
-        }
+        return goalRecord.HalftimeBetStatus;
+    }
 
-        public string FullTimeBetStatus(SettleRequest request, string halfTimeBetStatus)
-        {
-            var isExistRefundHt = request.BetStatus.IgnoreCaseContains(EventStatus.RefundHT);
-            var fullTimeBetStatus = fullTimeService.BetStatusFullTimeWithSemicolon(request);
+    private string BetStatusHasHalftimeScoreWithSemicolonOnGoalRecord(SettleRequest request)
+    {
+        var goal = request.GoalRecord.Split(';')[0];
+        var goalRecord = new GoalRecordModel { IsExistHtFgLg = true };
+        goalRecord = goalRecordService.GoalRecordWithSemicolon(goalRecord, goal);
 
-            return fullTimeService.IsExistRefundHt(isExistRefundHt, halfTimeBetStatus)
-                ? fullTimeService.RefundHtOnBetStatus(fullTimeBetStatus)
-                : fullTimeBetStatus;
-        }
-
-        private string BetStatusHalftimeWithIsExistRefundHT(SettleRequest request)
-        {
-            var isExistHalfTime = request.BetStatus.IgnoreCaseContains("1FL");
-
-            var goalRecord = new GoalRecordModel
-            {
-                IsExistRefundHt = true,
-                IsExistHalfTime = isExistHalfTime,
-                FirstGoal = "0",
-                LastGoal = "0"
-            };
-
-            return goalRecord.HalftimeBetStatus;
-        }
-
-        private string BetStatusHasHalftimeScoreWithSemicolonOnGoalRecord(SettleRequest request)
-        {
-            var goal = request.GoalRecord.Split(';')[0];
-            var goalRecord = new GoalRecordModel { IsExistHtFgLg = true };
-            goalRecord = goalRecordService.GoalRecordWithSemicolon(goalRecord, goal);
-
-            return goalRecord.HalftimeBetStatus;
-        }
+        return goalRecord.HalftimeBetStatus;
     }
 }

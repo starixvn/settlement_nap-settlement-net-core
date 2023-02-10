@@ -4,79 +4,78 @@ using Settlement.Sportsbook.Soccer.Requests;
 using Settlement.Sportsbook.Soccer.Services;
 using Xunit;
 
-namespace Settlement.Sportsbook.Soccer.UnitTests.Services
+namespace Settlement.Sportsbook.Soccer.UnitTests.Services;
+
+public class BetStatusAllServiceTests
 {
-    public class BetStatusAllServiceTests
+    private readonly IValidationService validationService;
+    private readonly IGoalRecordService goalRecordService;
+    private readonly IBetStatusAllService service;
+
+    public BetStatusAllServiceTests()
     {
-        private readonly IValidationService validationService;
-        private readonly IGoalRecordService goalRecordService;
-        private readonly IBetStatusAllService service;
+        validationService = Substitute.For<IValidationService>();
+        goalRecordService = Substitute.For<IGoalRecordService>();
+        service = new BetStatusAllServiceImp(validationService, goalRecordService);
+    }
 
-        public BetStatusAllServiceTests()
+    [Fact]
+    public void GetBetStatus_ReturnsEmptyBetStatus()
+    {
+        // Arrange
+        validationService.IsNullScoreAndGoalRecord(Arg.Any<SettleRequest>()).Returns(false);
+        validationService.HasFinalScoreAndGoalRecord(Arg.Any<SettleRequest>()).Returns(false);
+
+        // Act
+        var actual = service.GetBetStatus(Arg.Any<SettleRequest>());
+
+        // Assert
+        Assert.Empty(actual);
+    }
+
+    [Fact]
+    public void GetBetStatus_EmptyScoreAndGoal_ReturnsZeroOnFirstGoalLastGoal()
+    {
+        // Arrange
+        var expected = "1FL:0-0;FL:0-0;";
+        var query = new SettleRequest
         {
-            validationService = Substitute.For<IValidationService>();
-            goalRecordService = Substitute.For<IGoalRecordService>();
-            service = new BetStatusAllServiceImp(validationService, goalRecordService);
-        }
+            IsExistFgLg = true,
+            IsExistHtFgLg = true,
+            GoalRecord = string.Empty
+        };
 
-        [Fact]
-        public void GetBetStatus_ReturnsEmptyBetStatus()
+        validationService.IsNullScoreAndGoalRecord(Arg.Any<SettleRequest>()).Returns(true);
+
+        // Act
+        var actual = service.GetBetStatus(query);
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void GetBetStatus_HasFinalScoreAndGoal_ReturnsRightBetStatus()
+    {
+        // Arrange
+        var goalRecord = new GoalRecordModel
         {
-            // Arrange
-            validationService.IsNullScoreAndGoalRecord(Arg.Any<SettleRequest>()).Returns(false);
-            validationService.HasFinalScoreAndGoalRecord(Arg.Any<SettleRequest>()).Returns(false);
+            IsExistFgLg = true,
+            IsExistHtFgLg = true,
+            FirstGoal = "1",
+            LastGoal = "2"
+        };
 
-            // Act
-            var actual = service.GetBetStatus(Arg.Any<SettleRequest>());
+        var expected = "1FL:1-2;FL:1-2;";
 
-            // Assert
-            Assert.Empty(actual);
-        }
+        validationService.HasFinalScoreAndGoalRecord(Arg.Any<SettleRequest>()).Returns(true);
 
-        [Fact]
-        public void GetBetStatus_EmptyScoreAndGoal_ReturnsZeroOnFirstGoalLastGoal()
-        {
-            // Arrange
-            var expected = "1FL:0-0;FL:0-0;";
-            var query = new SettleRequest
-            {
-                IsExistFgLg = true,
-                IsExistHtFgLg = true,
-                GoalRecord = string.Empty
-            };
+        goalRecordService.GoalRecordWithSemicolon(Arg.Any<GoalRecordModel>(), Arg.Any<string>()).Returns(goalRecord);
 
-            validationService.IsNullScoreAndGoalRecord(Arg.Any<SettleRequest>()).Returns(true);
+        // Act
+        var actual = service.GetBetStatus(new SettleRequest { GoalRecord = ";" });
 
-            // Act
-            var actual = service.GetBetStatus(query);
-
-            // Assert
-            Assert.Equal(expected, actual);
-        }
-
-        [Fact]
-        public void GetBetStatus_HasFinalScoreAndGoal_ReturnsRightBetStatus()
-        {
-            // Arrange
-            var goalRecord = new GoalRecordModel
-            {
-                IsExistFgLg = true,
-                IsExistHtFgLg = true,
-                FirstGoal = "1",
-                LastGoal = "2"
-            };
-
-            var expected = "1FL:1-2;FL:1-2;";
-
-            validationService.HasFinalScoreAndGoalRecord(Arg.Any<SettleRequest>()).Returns(true);
-
-            goalRecordService.GoalRecordWithSemicolon(Arg.Any<GoalRecordModel>(), Arg.Any<string>()).Returns(goalRecord);
-
-            // Act
-            var actual = service.GetBetStatus(new SettleRequest { GoalRecord = ";" });
-
-            // Assert
-            Assert.Equal(expected, actual);
-        }
+        // Assert
+        Assert.Equal(expected, actual);
     }
 }

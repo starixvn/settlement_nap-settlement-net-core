@@ -10,56 +10,55 @@ using System.Threading.Tasks;
 using Match = Settlement.Sportsbook.Soccer.Models.Match;
 using MatchDetail = Settlement.Sportsbook.Soccer.Models.MatchDetail;
 
-namespace Settlement.Sportsbook.Soccer.Handlers
+namespace Settlement.Sportsbook.Soccer.Handlers;
+
+public class CalculateHandler : IRequestHandler<GetMatchRequest, Match>,
+    IRequestHandler<GetLastestMatchDetailRequest, MatchDetail>,
+    IRequestHandler<SettleRequest, Result>,
+    IRequestHandler<CheckStatusRequest, Result>,
+    IRequestHandler<UndoCheckingRequest, UndoCheckingModel>,
+    IRequestHandler<InstantCalculationRequest, Result>,
+    IRequestHandler<MatchCheckingRequest, MatchGoalRecordModel>
+
 {
-    public class CalculateHandler : IRequestHandler<GetMatchRequest, Match>,
-        IRequestHandler<GetLastestMatchDetailRequest, MatchDetail>,
-        IRequestHandler<SettleRequest, Result>,
-        IRequestHandler<CheckStatusRequest, Result>,
-        IRequestHandler<UndoCheckingRequest, UndoCheckingModel>,
-        IRequestHandler<InstantCalculationRequest, Result>,
-        IRequestHandler<MatchCheckingRequest, MatchGoalRecordModel>
+    private readonly IMatchService matchService;
 
+    private readonly ICalculateService calculateService;
+
+    private readonly IInstantCalculateService instantCalculateService;
+
+    public CalculateHandler(IMatchService matchService, ICalculateService calculateService,
+        IInstantCalculateService instantCalculateService)
     {
-        private readonly IMatchService matchService;
-
-        private readonly ICalculateService calculateService;
-
-        private readonly IInstantCalculateService instantCalculateService;
-
-        public CalculateHandler(IMatchService matchService, ICalculateService calculateService,
-            IInstantCalculateService instantCalculateService)
-        {
-            this.matchService = matchService;
-            this.calculateService = calculateService;
-            this.instantCalculateService = instantCalculateService;
-        }
-
-        public async Task<Match> Handle(GetMatchRequest request, CancellationToken cancellationToken)
-        {
-            return request.IsRefundPage ? await matchService.GetMatchRefund(request) : await matchService.GetMatch(request);
-        }
-
-        public async Task<MatchDetail> Handle(GetLastestMatchDetailRequest request, CancellationToken cancellationToken) =>
-            await matchService.GetLastestMatchDetail(request);
-
-        public async Task<Result> Handle(SettleRequest request, CancellationToken cancellationToken)
-        {
-            return request.ActionName.Equals(ActionType.UnCalculate)
-                ? await calculateService.UnCalculate(request)
-                : await calculateService.Calculate(request);
-        }
-
-        public async Task<Result> Handle(CheckStatusRequest request, CancellationToken cancellationToken) =>
-            await calculateService.CheckStatus(request);
-
-        public async Task<UndoCheckingModel> Handle(UndoCheckingRequest request, CancellationToken cancellationToken) =>
-            await instantCalculateService.UndoCheckingScore(request.MatchId);
-
-        public async Task<Result> Handle(InstantCalculationRequest request, CancellationToken cancellationToken) =>
-            await instantCalculateService.PushInstantCalculation(request);
-
-        public async Task<MatchGoalRecordModel> Handle(MatchCheckingRequest request, CancellationToken cancellationToken) =>
-            await instantCalculateService.CalculateCheckingInfo(request);
+        this.matchService = matchService;
+        this.calculateService = calculateService;
+        this.instantCalculateService = instantCalculateService;
     }
+
+    public async Task<Match> Handle(GetMatchRequest request, CancellationToken cancellationToken)
+    {
+        return request.IsRefundPage ? await matchService.GetMatchRefund(request) : await matchService.GetMatch(request);
+    }
+
+    public async Task<MatchDetail> Handle(GetLastestMatchDetailRequest request, CancellationToken cancellationToken) =>
+        await matchService.GetLastestMatchDetail(request);
+
+    public async Task<Result> Handle(SettleRequest request, CancellationToken cancellationToken)
+    {
+        return request.ActionName.Equals(ActionType.UnCalculate)
+            ? await calculateService.UnCalculate(request)
+            : await calculateService.Calculate(request);
+    }
+
+    public async Task<Result> Handle(CheckStatusRequest request, CancellationToken cancellationToken) =>
+        await calculateService.CheckStatus(request);
+
+    public async Task<UndoCheckingModel> Handle(UndoCheckingRequest request, CancellationToken cancellationToken) =>
+        await instantCalculateService.UndoCheckingScore(request.MatchId);
+
+    public async Task<Result> Handle(InstantCalculationRequest request, CancellationToken cancellationToken) =>
+        await instantCalculateService.PushInstantCalculation(request);
+
+    public async Task<MatchGoalRecordModel> Handle(MatchCheckingRequest request, CancellationToken cancellationToken) =>
+        await instantCalculateService.CalculateCheckingInfo(request);
 }

@@ -1,12 +1,11 @@
 ﻿using MediatR;
 using Settlement.Core.Models;
 
-namespace Settlement.Sportsbook.Soccer.Requests
-{
-    public class SettleRequest : SettleBaseRequest, IRequest<Result>
-    {
-        public bool IsReSettledTickets { get; set; }
+namespace Settlement.Sportsbook.Soccer.Requests;
 
-        public string ChildMatchIds { get; set; }
-    }
+public class SettleRequest : SettleBaseRequest, IRequest<Result>
+{
+    public bool IsReSettledTickets { get; set; }
+
+    public string ChildMatchIds { get; set; }
 }

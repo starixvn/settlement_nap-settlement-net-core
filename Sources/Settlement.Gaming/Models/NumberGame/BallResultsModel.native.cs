@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Xml.Serialization;
 
-namespace Settlement.Gaming.Models.NumberGame
+namespace Settlement.Gaming.Models.NumberGame;
+
+[XmlRoot("Balls")]
+public class BallResultsModel
 {
-    [XmlRoot("Balls")]
-    public class BallResultsModel
-    {
-        [XmlElement("Ball")]
-        public List<BallModel> BallResultsItems { get; set; }
-    }
+    [XmlElement("Ball")]
+    public List<BallModel> BallResultsItems { get; set; }
 }

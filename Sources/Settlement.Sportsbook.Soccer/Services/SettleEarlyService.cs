@@ -8,92 +8,91 @@ using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
 using Microsoft.Extensions.Options;
 
-namespace Settlement.Sportsbook.Soccer.Services
+namespace Settlement.Sportsbook.Soccer.Services;
+
+public interface SettleEarlyService
 {
-    public interface SettleEarlyService
+    public Task<Result> CalculateEarly(SettleEarlyRequest request);
+}
+
+public class SettleEarlyServiceImp : SettleEarlyService
+{
+    private readonly ICreateCriteriaService createCriteriaService;
+
+    private readonly AppSettingsKey appSettingsKey;
+
+    private readonly IDynamicRepository repository;
+
+    private readonly ScaleOutSettleService scaleOutSettleService;
+
+    public SettleEarlyServiceImp(
+        ICreateCriteriaService createCriteriaService,
+        IOptions<AppSettingsKey> appSettingsKey,
+        IDynamicRepository repository,
+        ScaleOutSettleService scaleOutSettleService)
     {
-        public Task<Result> CalculateEarly(SettleEarlyRequest request);
+        this.createCriteriaService = createCriteriaService;
+        this.appSettingsKey = appSettingsKey.Value;
+        this.repository = repository;
+        this.scaleOutSettleService = scaleOutSettleService;
     }
 
-    public class SettleEarlyServiceImp : SettleEarlyService
+    public async Task<Result> CalculateEarly(SettleEarlyRequest request)
     {
-        private readonly ICreateCriteriaService createCriteriaService;
-
-        private readonly AppSettingsKey appSettingsKey;
-
-        private readonly IDynamicRepository repository;
-
-        private readonly ScaleOutSettleService scaleOutSettleService;
-
-        public SettleEarlyServiceImp(
-            ICreateCriteriaService createCriteriaService,
-            IOptions<AppSettingsKey> appSettingsKey,
-            IDynamicRepository repository,
-            ScaleOutSettleService scaleOutSettleService)
+        var criteria = createCriteriaService.CreateCalculateEarlyCriteria(request);
+        var requestChecking = await ValidateBeforeExecute(criteria);
+        if (requestChecking.ErrCode > 0)
         {
-            this.createCriteriaService = createCriteriaService;
-            this.appSettingsKey = appSettingsKey.Value;
-            this.repository = repository;
-            this.scaleOutSettleService = scaleOutSettleService;
+            return requestChecking;
+        }
+        await UpdateMatchInfo(criteria);
+        var result = await Execute(criteria);
+        return result;
+    }
+
+    private async Task<Result> Execute(CalculateEarlyCriteria criteria)
+    {
+        foreach (var server in appSettingsKey.SiteDbServer)
+        {
+            criteria.DbServer = server;
+            await repository.ExecuteAsync(criteria);
         }
 
-        public async Task<Result> CalculateEarly(SettleEarlyRequest request)
+        return new Result
         {
-            var criteria = createCriteriaService.CreateCalculateEarlyCriteria(request);
-            var requestChecking = await ValidateBeforeExecute(criteria);
-            if (requestChecking.ErrCode > 0)
-            {
-                return requestChecking;
-            }
-            await UpdateMatchInfo(criteria);
-            var result = await Execute(criteria);
-            return result;
-        }
+            ErrCode = criteria.ErrCode,
+            ErrMsg = criteria.ErrMsg
+        };
+    }
 
-        private async Task<Result> Execute(CalculateEarlyCriteria criteria)
+    private async Task<Result> ValidateBeforeExecute(CalculateEarlyCriteria criteria)
+    {
+        var request = new EventTicketRequest
         {
-            foreach (var server in appSettingsKey.SiteDbServer)
-            {
-                criteria.DbServer = server;
-                await repository.ExecuteAsync(criteria);
-            }
-
-            return new Result
-            {
-                ErrCode = criteria.ErrCode,
-                ErrMsg = criteria.ErrMsg
-            };
-        }
-
-        private async Task<Result> ValidateBeforeExecute(CalculateEarlyCriteria criteria)
+            MatchId = criteria.MatchId,
+            Action = criteria.Action,
+            SpName = criteria.SpName,
+            Mode = Mode.Early,
+            SelectedResources = criteria.SelectedResources
+        };
+        var resultMessage = await scaleOutSettleService.ValidateEventAndTicket(request);
+        return new Result
         {
-            var request = new EventTicketRequest
-            {
-                MatchId = criteria.MatchId,
-                Action = criteria.Action,
-                SpName = criteria.SpName,
-                Mode = Mode.Early,
-                SelectedResources = criteria.SelectedResources
-            };
-            var resultMessage = await scaleOutSettleService.ValidateEventAndTicket(request);
-            return new Result
-            {
-                ErrCode = resultMessage.ErrorCode,
-                ErrMsg = resultMessage.ErrorMessage
-            };
-        }
+            ErrCode = resultMessage.ErrorCode,
+            ErrMsg = resultMessage.ErrorMessage
+        };
+    }
 
-        private async Task UpdateMatchInfo(CalculateEarlyCriteria criteria)
+    private async Task UpdateMatchInfo(CalculateEarlyCriteria criteria)
+    {
+        var requestUpdateInfo = new UpdateMatchInfoRequest
         {
-            var requestUpdateInfo = new UpdateMatchInfoRequest
-            {
-                Action = criteria.Action,
-                AdminId = criteria.AdminId,
-                MatchId = criteria.MatchId,
-                SelectedResources = criteria.SelectedResources
-            };
+            Action = criteria.Action,
+            AdminId = criteria.AdminId,
+            MatchId = criteria.MatchId,
+            SelectedResources = criteria.SelectedResources
+        };
 
-            await scaleOutSettleService.UpdateMatchInfo(requestUpdateInfo);
-        }
+        await scaleOutSettleService.UpdateMatchInfo(requestUpdateInfo);
     }
 }

@@ -1,34 +1,33 @@
 ﻿using System.Xml.Serialization;
 
-namespace Settlement.ThirdPartyProducts.Models
+namespace Settlement.ThirdPartyProducts.Models;
+
+public class ResourceSelectionItemModel
 {
-    public class ResourceSelectionItemModel
+    [XmlAttribute("Id")]
+    public int MarketId { get; set; }
+
+    [XmlIgnore]
+    public bool IsRunning { get; set; }
+
+    [XmlAttribute("s")]
+    public int Status
     {
-        [XmlAttribute("Id")]
-        public int MarketId { get; set; }
-
-        [XmlIgnore]
-        public bool IsRunning { get; set; }
-
-        [XmlAttribute("s")]
-        public int Status
+        get
         {
-            get
-            {
-                return IsRunning ? 1 : 0;
-            }
-
-            set { }
+            return IsRunning ? 1 : 0;
         }
 
-        public override bool Equals(object obj)
-        {
-            return obj is ResourceSelectionItemModel item && item.MarketId == MarketId;
-        }
+        set { }
+    }
 
-        public override int GetHashCode()
-        {
-            return MarketId;
-        }
+    public override bool Equals(object obj)
+    {
+        return obj is ResourceSelectionItemModel item && item.MarketId == MarketId;
+    }
+
+    public override int GetHashCode()
+    {
+        return MarketId;
     }
 }

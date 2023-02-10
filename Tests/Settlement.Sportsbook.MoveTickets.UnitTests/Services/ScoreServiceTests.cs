@@ -1,152 +1,151 @@
 ﻿using Newtonsoft.Json;
 using Settlement.Core.Models;
 
-namespace Settlement.Sportsbook.MoveTickets.UnitTests.Services
+namespace Settlement.Sportsbook.MoveTickets.UnitTests.Services;
+
+public class ScoreServiceTests
 {
-    public class ScoreServiceTests
+    private readonly IScoreSetService scoreSetService;
+
+    private readonly IScoreService service;
+
+    private static List<ResultDetail> EmptyResultDetail => new List<ResultDetail>();
+    private static List<string> Resources => new List<string> { "00", "01" };
+
+    public ScoreServiceTests()
     {
-        private readonly IScoreSetService scoreSetService;
+        scoreSetService = Substitute.For<IScoreSetService>();
+        service = new ScoreServiceImp(scoreSetService);
+    }
 
-        private readonly IScoreService service;
+    [Fact]
+    public void ScoreOfSets_EmptyResultDetail_ReturnsHyphenOnAllQuarter()
+    {
+        // Arrange
+        var expectedQuarter = new Score[2].Select(n => new Score("-")).ToArray();
 
-        private static List<ResultDetail> EmptyResultDetail => new List<ResultDetail>();
-        private static List<string> Resources => new List<string> { "00", "01" };
+        // Act
+        var actualQuarter = service.ScoreOfSets(EmptyResultDetail, Resources);
 
-        public ScoreServiceTests()
+        // Assert
+        Assert.Equal(JsonConvert.SerializeObject(expectedQuarter), JsonConvert.SerializeObject(actualQuarter));
+    }
+
+    [Fact]
+    public void ScoreOfSets_HasResultDetail_ReturnsCorrectScoreGetFromScoreSetService()
+    {
+        // Arrange
+        var resultDetail = new List<ResultDetail>
         {
-            scoreSetService = Substitute.For<IScoreSetService>();
-            service = new ScoreServiceImp(scoreSetService);
-        }
+            new ResultDetail { MatchId = 1 , ResourceId = "00" },
+            new ResultDetail { MatchId = 1 , ResourceId = "01" }
+        };
 
-        [Fact]
-        public void ScoreOfSets_EmptyResultDetail_ReturnsHyphenOnAllQuarter()
+        var fakeQuarterScore = new Score("1", "2");
+        var expectedQuarter = new Score[2].Select(n => new Score("1", "2")).ToArray();
+
+        scoreSetService.GetScore(Arg.Any<ResultDetail>()).Returns(fakeQuarterScore);
+
+        // Act
+        var actualQuarter = service.ScoreOfSets(resultDetail, Resources);
+
+        // Assert
+        Assert.Equal(JsonConvert.SerializeObject(expectedQuarter), JsonConvert.SerializeObject(actualQuarter));
+    }
+
+    [Fact]
+    public void HalftimeScore_NotResourceHalftimeOnResultDetail_ReturnsHyphenOnScore()
+    {
+        // Arrange
+        var expectedScore = new Score("-", "-");
+
+        // Act
+        var actualScore = service.HalftimeScore(EmptyResultDetail);
+
+        // Assert
+        Assert.Equal(JsonConvert.SerializeObject(expectedScore), JsonConvert.SerializeObject(actualScore));
+    }
+
+    [Fact]
+    public void HalftimeScore_HasResourceHalftimeOnResultDetail_ReturnsCorrectScoreGetFromScoreSetService()
+    {
+        // Arrange
+        var fakeHalftimeScore = new Score("1", "2");
+        var expectedScore = new Score("1", "2");
+        var resultDetail = new List<ResultDetail>
         {
-            // Arrange
-            var expectedQuarter = new Score[2].Select(n => new Score("-")).ToArray();
+            new ResultDetail { MatchId = 1 , ResourceId = "01" }
+        };
 
-            // Act
-            var actualQuarter = service.ScoreOfSets(EmptyResultDetail, Resources);
+        scoreSetService.GetScore(Arg.Any<ResultDetail>()).Returns(fakeHalftimeScore);
 
-            // Assert
-            Assert.Equal(JsonConvert.SerializeObject(expectedQuarter), JsonConvert.SerializeObject(actualQuarter));
-        }
+        // Act
+        var actualScore = service.HalftimeScore(resultDetail);
 
-        [Fact]
-        public void ScoreOfSets_HasResultDetail_ReturnsCorrectScoreGetFromScoreSetService()
+        // Assert
+        Assert.Equal(JsonConvert.SerializeObject(expectedScore), JsonConvert.SerializeObject(actualScore));
+    }
+
+    [Fact]
+    public void FinalScore_NotResourceFinalTimeOnResultDetail_ReturnsHyphenOnScore()
+    {
+        // Arrange
+        var expectedScore = new Score("-");
+
+        // Act
+        var actualScore = service.FinalScore(EmptyResultDetail);
+
+        // Assert
+        Assert.Equal(JsonConvert.SerializeObject(expectedScore), JsonConvert.SerializeObject(actualScore));
+    }
+
+    [Fact]
+    public void FinalScore_HasFinalTimeScoreOnResultDetail_ReturnsCorrectScoreGetFromScoreSetService()
+    {
+        // Arrange
+        var fakeFinalTimeScore = new Score("5", "7");
+        var expectedScore = new Score("5", "7");
+
+        var resultDetail = new List<ResultDetail>
         {
-            // Arrange
-            var resultDetail = new List<ResultDetail>
-            {
-                new ResultDetail { MatchId = 1 , ResourceId = "00" },
-                new ResultDetail { MatchId = 1 , ResourceId = "01" }
-            };
+            new ResultDetail { MatchId = 1 , ResourceId = "00" }
+        };
 
-            var fakeQuarterScore = new Score("1", "2");
-            var expectedQuarter = new Score[2].Select(n => new Score("1", "2")).ToArray();
+        scoreSetService.GetScore(Arg.Any<ResultDetail>()).Returns(fakeFinalTimeScore);
 
-            scoreSetService.GetScore(Arg.Any<ResultDetail>()).Returns(fakeQuarterScore);
+        // Act
+        var actualScore = service.FinalScore(resultDetail);
 
-            // Act
-            var actualQuarter = service.ScoreOfSets(resultDetail, Resources);
+        // Assert
+        Assert.Equal(JsonConvert.SerializeObject(expectedScore), JsonConvert.SerializeObject(actualScore));
+    }
 
-            // Assert
-            Assert.Equal(JsonConvert.SerializeObject(expectedQuarter), JsonConvert.SerializeObject(actualQuarter));
-        }
-
-        [Fact]
-        public void HalftimeScore_NotResourceHalftimeOnResultDetail_ReturnsHyphenOnScore()
+    [Fact]
+    public void ScoreLoader_ReturnsScoreCricket()
+    {
+        // Arrange
+        var resources = new List<string> { "H1", "H2", "A1", "A2" };
+        var fakeHalftimeScore = new Score("-", "-");
+        var fakeFinalTimeScore = new Score("1", "2");
+        var fakeQuarterScore = new Score[4].Select(n => new Score("-", "-")).ToArray();
+        var expectedScore = new MoreScores
         {
-            // Arrange
-            var expectedScore = new Score("-", "-");
+            HalfTimeScore = fakeHalftimeScore,
+            FinalScore = fakeFinalTimeScore,
+            Sets = fakeQuarterScore
+        };
 
-            // Act
-            var actualScore = service.HalftimeScore(EmptyResultDetail);
-
-            // Assert
-            Assert.Equal(JsonConvert.SerializeObject(expectedScore), JsonConvert.SerializeObject(actualScore));
-        }
-
-        [Fact]
-        public void HalftimeScore_HasResourceHalftimeOnResultDetail_ReturnsCorrectScoreGetFromScoreSetService()
+        var resultDetails = new List<ResultDetail>
         {
-            // Arrange
-            var fakeHalftimeScore = new Score("1", "2");
-            var expectedScore = new Score("1", "2");
-            var resultDetail = new List<ResultDetail>
-            {
-                new ResultDetail { MatchId = 1 , ResourceId = "01" }
-            };
+            new ResultDetail { ResourceId =  "00", MatchId = 1 }
+        };
 
-            scoreSetService.GetScore(Arg.Any<ResultDetail>()).Returns(fakeHalftimeScore);
+        scoreSetService.GetScore(Arg.Any<ResultDetail>()).Returns(fakeFinalTimeScore);
 
-            // Act
-            var actualScore = service.HalftimeScore(resultDetail);
+        // Act
+        var actualScore = service.ScoreLoader(resultDetails, resources);
 
-            // Assert
-            Assert.Equal(JsonConvert.SerializeObject(expectedScore), JsonConvert.SerializeObject(actualScore));
-        }
-
-        [Fact]
-        public void FinalScore_NotResourceFinalTimeOnResultDetail_ReturnsHyphenOnScore()
-        {
-            // Arrange
-            var expectedScore = new Score("-");
-
-            // Act
-            var actualScore = service.FinalScore(EmptyResultDetail);
-
-            // Assert
-            Assert.Equal(JsonConvert.SerializeObject(expectedScore), JsonConvert.SerializeObject(actualScore));
-        }
-
-        [Fact]
-        public void FinalScore_HasFinalTimeScoreOnResultDetail_ReturnsCorrectScoreGetFromScoreSetService()
-        {
-            // Arrange
-            var fakeFinalTimeScore = new Score("5", "7");
-            var expectedScore = new Score("5", "7");
-
-            var resultDetail = new List<ResultDetail>
-            {
-                new ResultDetail { MatchId = 1 , ResourceId = "00" }
-            };
-
-            scoreSetService.GetScore(Arg.Any<ResultDetail>()).Returns(fakeFinalTimeScore);
-
-            // Act
-            var actualScore = service.FinalScore(resultDetail);
-
-            // Assert
-            Assert.Equal(JsonConvert.SerializeObject(expectedScore), JsonConvert.SerializeObject(actualScore));
-        }
-
-        [Fact]
-        public void ScoreLoader_ReturnsScoreCricket()
-        {
-            // Arrange
-            var resources = new List<string> { "H1", "H2", "A1", "A2" };
-            var fakeHalftimeScore = new Score("-", "-");
-            var fakeFinalTimeScore = new Score("1", "2");
-            var fakeQuarterScore = new Score[4].Select(n => new Score("-", "-")).ToArray();
-            var expectedScore = new MoreScores
-            {
-                HalfTimeScore = fakeHalftimeScore,
-                FinalScore = fakeFinalTimeScore,
-                Sets = fakeQuarterScore
-            };
-
-            var resultDetails = new List<ResultDetail>
-            {
-                new ResultDetail { ResourceId =  "00", MatchId = 1 }
-            };
-
-            scoreSetService.GetScore(Arg.Any<ResultDetail>()).Returns(fakeFinalTimeScore);
-
-            // Act
-            var actualScore = service.ScoreLoader(resultDetails, resources);
-
-            // Assert
-            Assert.Equal(JsonConvert.SerializeObject(expectedScore), JsonConvert.SerializeObject(actualScore));
-        }
+        // Assert
+        Assert.Equal(JsonConvert.SerializeObject(expectedScore), JsonConvert.SerializeObject(actualScore));
     }
 }

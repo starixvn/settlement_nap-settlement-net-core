@@ -8,83 +8,82 @@ using Settlement.Sportsbook.OtherSports.Requests;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Settlement.Sportsbook.OtherSports.UnitTests.Controllers
+namespace Settlement.Sportsbook.OtherSports.UnitTests.Controllers;
+
+public class OtherSportsControllerTests
 {
-    public class OtherSportsControllerTests
+    private OtherSportsController controller;
+
+    private readonly IMediator mediator;
+
+    public OtherSportsControllerTests()
     {
-        private OtherSportsController controller;
+        mediator = Substitute.For<IMediator>();
+        controller = new OtherSportsController(mediator);
+    }
 
-        private readonly IMediator mediator;
+    [Fact]
+    public async Task GetMatch_Always_ReturnOtherSportsMatchModel()
+    {
+        // Arrange
+        mediator.Send(Arg.Any<GetMatchRequest>()).Returns(new OtherSportsMatchModel());
 
-        public OtherSportsControllerTests()
-        {
-            mediator = Substitute.For<IMediator>();
-            controller = new OtherSportsController(mediator);
-        }
+        // Act
+        var result = await controller.GetMatch(new GetMatchRequest()) as OkObjectResult;
 
-        [Fact]
-        public async Task GetMatch_Always_ReturnOtherSportsMatchModel()
-        {
-            // Arrange
-            mediator.Send(Arg.Any<GetMatchRequest>()).Returns(new OtherSportsMatchModel());
+        // Assert
+        Assert.IsType<OtherSportsMatchModel>(result.Value);
+    }
 
-            // Act
-            var result = await controller.GetMatch(new GetMatchRequest()) as OkObjectResult;
+    [Fact]
+    public async Task Calculate_Always_ReturnResult()
+    {
+        // Arrange
+        mediator.Send(Arg.Any<CalculateRequest>()).Returns(new Result());
 
-            // Assert
-            Assert.IsType<OtherSportsMatchModel>(result.Value);
-        }
+        // Act
+        var result = await controller.Calculate(new CalculateRequest()) as OkObjectResult;
 
-        [Fact]
-        public async Task Calculate_Always_ReturnResult()
-        {
-            // Arrange
-            mediator.Send(Arg.Any<CalculateRequest>()).Returns(new Result());
+        // Assert
+        Assert.IsType<Result>(result.Value);
+    }
 
-            // Act
-            var result = await controller.Calculate(new CalculateRequest()) as OkObjectResult;
+    [Fact]
+    public async Task Refund_Always_ReturnResult()
+    {
+        // Arrange
+        mediator.Send(Arg.Any<RefundRequest>()).Returns(new Result());
 
-            // Assert
-            Assert.IsType<Result>(result.Value);
-        }
+        // Act
+        var result = await controller.Refund(new RefundRequest()) as OkObjectResult;
 
-        [Fact]
-        public async Task Refund_Always_ReturnResult()
-        {
-            // Arrange
-            mediator.Send(Arg.Any<RefundRequest>()).Returns(new Result());
+        // Assert
+        Assert.IsType<Result>(result.Value);
+    }
 
-            // Act
-            var result = await controller.Refund(new RefundRequest()) as OkObjectResult;
+    [Fact]
+    public async Task RefundParlay_Always_ReturnResult()
+    {
+        // Arrange
+        mediator.Send(Arg.Any<RefundParlayRequest>()).Returns(new Result());
 
-            // Assert
-            Assert.IsType<Result>(result.Value);
-        }
+        // Act
+        var result = await controller.RefundParlay(new RefundParlayRequest()) as OkObjectResult;
 
-        [Fact]
-        public async Task RefundParlay_Always_ReturnResult()
-        {
-            // Arrange
-            mediator.Send(Arg.Any<RefundParlayRequest>()).Returns(new Result());
+        // Assert
+        Assert.IsType<Result>(result.Value);
+    }
 
-            // Act
-            var result = await controller.RefundParlay(new RefundParlayRequest()) as OkObjectResult;
+    [Fact]
+    public async Task CheckMarkedTickets_Always_ReturnMarkedTicketsModel()
+    {
+        // Arrange
+        mediator.Send(Arg.Any<CheckingMarkedTicketsRequest>()).Returns(new MarkedTickets());
 
-            // Assert
-            Assert.IsType<Result>(result.Value);
-        }
+        // Act
+        var result = await controller.CheckMarkedTickets(new CheckingMarkedTicketsRequest()) as OkObjectResult;
 
-        [Fact]
-        public async Task CheckMarkedTickets_Always_ReturnMarkedTicketsModel()
-        {
-            // Arrange
-            mediator.Send(Arg.Any<CheckingMarkedTicketsRequest>()).Returns(new MarkedTickets());
-
-            // Act
-            var result = await controller.CheckMarkedTickets(new CheckingMarkedTicketsRequest()) as OkObjectResult;
-
-            // Assert
-            Assert.IsType<MarkedTickets>(result.Value);
-        }
+        // Assert
+        Assert.IsType<MarkedTickets>(result.Value);
     }
 }

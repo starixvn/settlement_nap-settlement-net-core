@@ -1,49 +1,48 @@
 ﻿using System.Collections.Generic;
 using System.Text;
 
-namespace Settlement.Log.Services
-{
-    public interface RemarkService
-    {
-        bool IsFastMarketAction(int actionId);
+namespace Settlement.Log.Services;
 
-        string RemarkValue(string value);
+public interface RemarkService
+{
+    bool IsFastMarketAction(int actionId);
+
+    string RemarkValue(string value);
+}
+
+public class RemarkServiceImp : RemarkService
+{
+    private readonly List<int> fastMarketAction = new List<int> { 165, 166, 167 };
+
+    private readonly RemarkNodeService remarkNodeService;
+
+    public RemarkServiceImp(RemarkNodeService remarkNodeService)
+    {
+        this.remarkNodeService = remarkNodeService;
     }
 
-    public class RemarkServiceImp : RemarkService
+    public bool IsFastMarketAction(int actionId)
     {
-        private readonly List<int> fastMarketAction = new List<int> { 165, 166, 167 };
+        return fastMarketAction.Contains(actionId);
+    }
 
-        private readonly RemarkNodeService remarkNodeService;
-
-        public RemarkServiceImp(RemarkNodeService remarkNodeService)
+    public string RemarkValue(string value)
+    {
+        var arrayRemark = value.Split('|');
+        var remark = new StringBuilder();
+        const int remarkPosition = 2;
+        if (arrayRemark.Length > remarkPosition)
         {
-            this.remarkNodeService = remarkNodeService;
+            remark.Append(remarkNodeService.EventCounter(arrayRemark[remarkPosition]));
         }
 
-        public bool IsFastMarketAction(int actionId)
+        if (arrayRemark.Length > 1)
         {
-            return fastMarketAction.Contains(actionId);
+            var goalValue = arrayRemark.Length > 3 ? arrayRemark[3] : string.Empty;
+            remark.Append(remarkNodeService.BetTypes(arrayRemark[1], goalValue));
+            remark.Append(arrayRemark[0]);
         }
 
-        public string RemarkValue(string value)
-        {
-            var arrayRemark = value.Split('|');
-            var remark = new StringBuilder();
-            const int remarkPosition = 2;
-            if (arrayRemark.Length > remarkPosition)
-            {
-                remark.Append(remarkNodeService.EventCounter(arrayRemark[remarkPosition]));
-            }
-
-            if (arrayRemark.Length > 1)
-            {
-                var goalValue = arrayRemark.Length > 3 ? arrayRemark[3] : string.Empty;
-                remark.Append(remarkNodeService.BetTypes(arrayRemark[1], goalValue));
-                remark.Append(arrayRemark[0]);
-            }
-
-            return remark.ToString();
-        }
+        return remark.ToString();
     }
 }

@@ -2,13 +2,12 @@
 using Settlement.Log.Criteria;
 using Settlement.Log.Requests;
 
-namespace Settlement.Log
+namespace Settlement.Log;
+
+public class LogAutoMapper : Profile
 {
-    public class LogAutoMapper : Profile
+    public LogAutoMapper()
     {
-        public LogAutoMapper()
-        {
-            CreateMap<LogRequest, GetSettlementLogCriteria>();
-        }
+        CreateMap<LogRequest, GetSettlementLogCriteria>();
     }
 }

@@ -8,67 +8,66 @@ using System.Threading.Tasks;
 using System.Linq;
 using Settlement.Gaming.Models;
 
-namespace Settlement.Gaming.Services.NumberGame
+namespace Settlement.Gaming.Services.NumberGame;
+
+public interface MatchService
 {
-    public interface MatchService
+    Task<List<BallModel>> Balls(NumberGameBallsRequest request);
+
+    Task<List<MatchDetailModel>> Matches(NumberGameMatchRequest request);
+
+}
+
+public class MatchServiceImp : MatchService
+{
+    private readonly IDynamicRepository repository;
+
+    private readonly IMapper mapper;
+
+    public MatchServiceImp(
+        IDynamicRepository repository,
+        IMapper mapper)
     {
-        Task<List<BallModel>> Balls(NumberGameBallsRequest request);
-
-        Task<List<MatchDetailModel>> Matches(NumberGameMatchRequest request);
-
+        this.repository = repository;
+        this.mapper = mapper;
     }
 
-    public class MatchServiceImp : MatchService
+    public async Task<List<MatchDetailModel>> Matches(NumberGameMatchRequest request)
     {
-        private readonly IDynamicRepository repository;
+        var criteria = mapper.Map<NumberGameMatchRequest, GetNumberGameMatchCriteria>(request);
+        var matches = (await repository.FetchAsync<MatchDetailModel>(criteria)).ToList();
+        return GroupMatchBalls(matches);
+    }
 
-        private readonly IMapper mapper;
-
-        public MatchServiceImp(
-            IDynamicRepository repository,
-            IMapper mapper)
+    private static List<MatchDetailModel> GroupMatchBalls(List<MatchDetailModel> matches)
+    {
+        var matchList = matches.GroupBy(m => new
         {
-            this.repository = repository;
-            this.mapper = mapper;
-        }
+            m.BetStatus,
+            m.LeagueId,
+            m.MatchId,
+            m.MatchCode,
+            m.EventDate,
+            m.KickOffTime,
+            m.EventStatus,
+        });
 
-        public async Task<List<MatchDetailModel>> Matches(NumberGameMatchRequest request)
+        return matchList.Select(g => new MatchDetailModel
         {
-            var criteria = mapper.Map<NumberGameMatchRequest, GetNumberGameMatchCriteria>(request);
-            var matches = (await repository.FetchAsync<MatchDetailModel>(criteria)).ToList();
-            return GroupMatchBalls(matches);
-        }
+            MatchId = g.Key.MatchId,
+            MatchCode = g.Key.MatchCode,
+            LeagueId = g.Key.LeagueId,
+            EventDate = g.Key.EventDate,
+            KickOffTime = g.Key.KickOffTime,
+            BetStatus = g.Key.BetStatus,
+            EventStatus = g.Key.EventStatus,
+            Number = string.Join(",", g.Select(m => m.Number))
+        }).ToList();
+    }
 
-        private static List<MatchDetailModel> GroupMatchBalls(List<MatchDetailModel> matches)
-        {
-            var matchList = matches.GroupBy(m => new
-            {
-                m.BetStatus,
-                m.LeagueId,
-                m.MatchId,
-                m.MatchCode,
-                m.EventDate,
-                m.KickOffTime,
-                m.EventStatus,
-            });
-
-            return matchList.Select(g => new MatchDetailModel
-            {
-                MatchId = g.Key.MatchId,
-                MatchCode = g.Key.MatchCode,
-                LeagueId = g.Key.LeagueId,
-                EventDate = g.Key.EventDate,
-                KickOffTime = g.Key.KickOffTime,
-                BetStatus = g.Key.BetStatus,
-                EventStatus = g.Key.EventStatus,
-                Number = string.Join(",", g.Select(m => m.Number))
-            }).ToList();
-        }
-
-        public async Task<List<BallModel>> Balls(NumberGameBallsRequest request)
-        {
-            var criteria = new GetMatchDetailCriteria { MatchId = request.MatchId };
-            return (await repository.FetchAsync<BallModel>(criteria)).ToList();
-        }
+    public async Task<List<BallModel>> Balls(NumberGameBallsRequest request)
+    {
+        var criteria = new GetMatchDetailCriteria { MatchId = request.MatchId };
+        return (await repository.FetchAsync<BallModel>(criteria)).ToList();
     }
 }

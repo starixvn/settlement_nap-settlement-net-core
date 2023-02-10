@@ -1,11 +1,10 @@
 ﻿using Settlement.Core.Models;
 
-namespace Settlement.Sportsbook.OtherSports.Models
-{
-    public class OtherSportsMatchModel
-    {
-        public MatchResultDetail Match { get; set; }
+namespace Settlement.Sportsbook.OtherSports.Models;
 
-        public Permission Permission { get; set; }
-    }
+public class OtherSportsMatchModel
+{
+    public MatchResultDetail Match { get; set; }
+
+    public Permission Permission { get; set; }
 }

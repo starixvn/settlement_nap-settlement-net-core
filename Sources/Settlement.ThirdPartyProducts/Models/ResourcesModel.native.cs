@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Xml.Serialization;
 
-namespace Settlement.ThirdPartyProducts.Models
+namespace Settlement.ThirdPartyProducts.Models;
+
+[XmlRoot("Resources")]
+public class Resources<T>
 {
-    [XmlRoot("Resources")]
-    public class Resources<T>
-    {
-        [XmlElement("Resource")]
-        public List<T> ResourceItems { get; set; }
-    }
+    [XmlElement("Resource")]
+    public List<T> ResourceItems { get; set; }
 }

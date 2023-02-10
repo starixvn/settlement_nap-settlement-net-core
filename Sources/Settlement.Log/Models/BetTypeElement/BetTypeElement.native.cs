@@ -1,13 +1,12 @@
 ﻿using System.Xml.Serialization;
 
-namespace Settlement.Log.Models.BetTypeElement
-{
-    public class BetTypeElement
-    {
-        [XmlAttribute]
-        public int Id { get; set; }
+namespace Settlement.Log.Models.BetTypeElement;
 
-        [XmlElement]
-        public ItemElement Item { get; set; }
-    }
+public class BetTypeElement
+{
+    [XmlAttribute]
+    public int Id { get; set; }
+
+    [XmlElement]
+    public ItemElement Item { get; set; }
 }

@@ -2,63 +2,62 @@
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 
-namespace Settlement.Sportsbook.MoveTickets.UnitTests.Services
+namespace Settlement.Sportsbook.MoveTickets.UnitTests.Services;
+
+public class MatchResultDetailServiceTest
 {
-    public class MatchResultDetailServiceTest
+    private readonly IRefDataService refDataService;
+
+    private readonly IScoreService scoreService;
+
+    private readonly IMatchResultDetailService service;
+
+    public MatchResultDetailServiceTest()
     {
-        private readonly IRefDataService refDataService;
+        refDataService = Substitute.For<IRefDataService>();
 
-        private readonly IScoreService scoreService;
+        scoreService = Substitute.For<IScoreService>();
 
-        private readonly IMatchResultDetailService service;
+        service = new MatchResultDetailServiceImp(refDataService, scoreService);
+    }
 
-        public MatchResultDetailServiceTest()
+    [Fact]
+    public void BadmintonResultDetail_EmptyMatch_ReturnsEmpty()
+    {
+        // Act
+        var actual = service.CricketResultDetail(new List<Match>(), Arg.Any<List<ResultDetail>>());
+
+        // Assert
+        Assert.Empty(actual);
+    }
+
+    [Fact]
+    public void BadmintonResultDetail_HasMatches_ReturnsExpectedMatch()
+    {
+        // Arrange
+        List<Match> Matches = new List<Match> {
+            new Match { MatchId = 1 }
+        };
+
+        MoreScores FakedScore = new MoreScores
         {
-            refDataService = Substitute.For<IRefDataService>();
+            HalfTimeScore = new Score("1", "2"),
+            FinalScore = new Score("3", "4")
+        };
 
-            scoreService = Substitute.For<IScoreService>();
+        List<ResultDetail> ResultDetail = new List<ResultDetail>();
 
-            service = new MatchResultDetailServiceImp(refDataService, scoreService);
-        }
-
-        [Fact]
-        public void BadmintonResultDetail_EmptyMatch_ReturnsEmpty()
+        List<Match> ExpectedMatches = new List<Match>
         {
-            // Act
-            var actual = service.CricketResultDetail(new List<Match>(), Arg.Any<List<ResultDetail>>());
+            new Match { MatchId = 1, MoreScores = FakedScore, RefDataService = refDataService }
+        };
 
-            // Assert
-            Assert.Empty(actual);
-        }
+        scoreService.ScoreLoader(Arg.Any<List<ResultDetail>>(), Arg.Any<List<string>>()).Returns(FakedScore);
 
-        [Fact]
-        public void BadmintonResultDetail_HasMatches_ReturnsExpectedMatch()
-        {
-            // Arrange
-            List<Match> Matches = new List<Match> {
-                    new Match { MatchId = 1 }
-            };
+        // Act
+        var actualMatches = service.CricketResultDetail(Matches, ResultDetail);
 
-            MoreScores FakedScore = new MoreScores
-            {
-                HalfTimeScore = new Score("1", "2"),
-                FinalScore = new Score("3", "4")
-            };
-
-            List<ResultDetail> ResultDetail = new List<ResultDetail>();
-
-            List<Match> ExpectedMatches = new List<Match>
-            {
-                new Match { MatchId = 1, MoreScores = FakedScore, RefDataService = refDataService }
-            };
-
-            scoreService.ScoreLoader(Arg.Any<List<ResultDetail>>(), Arg.Any<List<string>>()).Returns(FakedScore);
-
-            // Act
-            var actualMatches = service.CricketResultDetail(Matches, ResultDetail);
-
-            // Assert
-            Assert.Equal(JsonConvert.SerializeObject(ExpectedMatches), JsonConvert.SerializeObject(actualMatches));
-        }
+        // Assert
+        Assert.Equal(JsonConvert.SerializeObject(ExpectedMatches), JsonConvert.SerializeObject(actualMatches));
     }
 }

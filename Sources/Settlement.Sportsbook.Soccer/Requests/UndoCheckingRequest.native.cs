@@ -1,10 +1,9 @@
 ﻿using MediatR;
 using Settlement.Sportsbook.Soccer.Models;
 
-namespace Settlement.Sportsbook.Soccer.Requests
+namespace Settlement.Sportsbook.Soccer.Requests;
+
+public class UndoCheckingRequest : IRequest<UndoCheckingModel>
 {
-    public class UndoCheckingRequest : IRequest<UndoCheckingModel>
-    {
-        public int MatchId { get; set; }
-    }
+    public int MatchId { get; set; }
 }

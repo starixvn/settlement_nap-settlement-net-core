@@ -1,9 +1,8 @@
-﻿namespace Settlement.Core.Constants
-{
-    public static class SourceType
-    {
-        public const int Normal = 0;
+﻿namespace Settlement.Core.Constants;
 
-        public const int SBO = 1;
-    }
+public static class SourceType
+{
+    public const int Normal = 0;
+
+    public const int SBO = 1;
 }

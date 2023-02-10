@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
 
-namespace Settlement.Setting.Models.Notification
-{
-    public class ShowNotificationModel
-    {
-        public int NumberError { get; set; }
+namespace Settlement.Setting.Models.Notification;
 
-        public List<NotificationModel> Notifications { get; set; }
-    }
+public class ShowNotificationModel
+{
+    public int NumberError { get; set; }
+
+    public List<NotificationModel> Notifications { get; set; }
 }

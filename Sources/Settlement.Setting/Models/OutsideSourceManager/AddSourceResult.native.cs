@@ -1,9 +1,8 @@
 ﻿using Settlement.Core.Models;
 
-namespace Settlement.Setting.Models.OutsideSourceManager
+namespace Settlement.Setting.Models.OutsideSourceManager;
+
+public class AddSourceResult : Result
 {
-    public class AddSourceResult : Result
-    {
-        public int SourceId { get; set; }
-    }
+    public int SourceId { get; set; }
 }

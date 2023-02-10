@@ -1,31 +1,30 @@
-﻿namespace Settlement.Sportsbook.Soccer.Models
+﻿namespace Settlement.Sportsbook.Soccer.Models;
+
+public class GoalCondition
 {
-    public class GoalCondition
+    private string goalRecord;
+
+    public string GoalRecord
     {
-        private string goalRecord;
-
-        public string GoalRecord
+        get
         {
-            get
-            {
-                return string.IsNullOrWhiteSpace(goalRecord)
-                    ? string.Empty
-                    : goalRecord.ToUpperInvariant();
-            }
-            set
-            {
-                goalRecord = value;
-            }
+            return string.IsNullOrWhiteSpace(goalRecord)
+                ? string.Empty
+                : goalRecord.ToUpperInvariant();
         }
-
-        public bool IsExistHtFgLg { get; set; }
-
-        public bool IsExistFgLg { get; set; }
-
-        public bool IsExistFgNg { get; set; }
-
-        public bool IsEnabledGoalRecordHt { get; set; }
-
-        public bool IsEnabledGoalRecordFt { get; set; }
+        set
+        {
+            goalRecord = value;
+        }
     }
+
+    public bool IsExistHtFgLg { get; set; }
+
+    public bool IsExistFgLg { get; set; }
+
+    public bool IsExistFgNg { get; set; }
+
+    public bool IsEnabledGoalRecordHt { get; set; }
+
+    public bool IsEnabledGoalRecordFt { get; set; }
 }

@@ -1,54 +1,53 @@
-﻿namespace Settlement.Gaming.Models.Happy5
+﻿namespace Settlement.Gaming.Models.Happy5;
+
+public class MatchDetail
 {
-    public class MatchDetail
+    private const string Refund = "Refund";
+    private string eventStatus = string.Empty;
+
+    public int MatchId { get; set; }
+
+    public int LeagueId { get; set; }
+
+    public string MatchCode { get; set; }
+
+    public DateTime KickOffTime { get; set; }
+
+    public DateTime EventDate { get; set; }
+
+    public string EventName => $"No {MatchCode}";
+
+    public string EventStatus
     {
-        private const string Refund = "Refund";
-        private string eventStatus = string.Empty;
-
-        public int MatchId { get; set; }
-
-        public int LeagueId { get; set; }
-
-        public string MatchCode { get; set; }
-
-        public DateTime KickOffTime { get; set; }
-
-        public DateTime EventDate { get; set; }
-
-        public string EventName => $"No {MatchCode}";
-
-        public string EventStatus
+        get
         {
-            get
+            if (BetStatus.IgnoreCaseContains(Refund))
             {
-                if (BetStatus.IgnoreCaseContains(Refund))
-                {
-                    eventStatus = Refund;
-                }
+                eventStatus = Refund;
+            }
 
-                return eventStatus;
-            }
-            set
-            {
-                eventStatus = value;
-            }
+            return eventStatus;
         }
-
-        public string BetStatus { get; set; }
-
-        public List<BallModel> Balls { get; set; }
-
-        public bool IsYesterdayMatch
+        set
         {
-            get
-            {
-                const int twoDays = 2;
-                var start = Convert.ToDateTime(EventDate.ToShortDateString());
-                var end = Convert.ToDateTime(DateTime.Now.ToShortDateString());
-                var totalDays = end.Subtract(start).TotalDays;
+            eventStatus = value;
+        }
+    }
 
-                return totalDays < twoDays;
-            }
+    public string BetStatus { get; set; }
+
+    public List<BallModel> Balls { get; set; }
+
+    public bool IsYesterdayMatch
+    {
+        get
+        {
+            const int twoDays = 2;
+            var start = Convert.ToDateTime(EventDate.ToShortDateString());
+            var end = Convert.ToDateTime(DateTime.Now.ToShortDateString());
+            var totalDays = end.Subtract(start).TotalDays;
+
+            return totalDays < twoDays;
         }
     }
 }

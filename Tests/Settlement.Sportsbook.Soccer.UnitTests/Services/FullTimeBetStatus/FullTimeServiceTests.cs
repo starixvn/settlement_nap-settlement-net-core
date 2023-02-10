@@ -6,62 +6,61 @@ using Settlement.Sportsbook.Soccer.Services.FullTimeBetStatus;
 using Xunit;
 using FirstGoalLastGoalServiceImp = Settlement.Sportsbook.Soccer.Services.FullTimeBetStatus.FirstGoalLastGoalServiceImp;
 
-namespace Settlement.Sportsbook.Soccer.UnitTests.Services.FullTimeBetStatus
+namespace Settlement.Sportsbook.Soccer.UnitTests.Services.FullTimeBetStatus;
+
+public class FullTimeServiceTests
 {
-    public class FullTimeServiceTests
+    private readonly IGoalRecordService goalRecordService;
+
+    private readonly IFullTimeService service;
+
+    public FullTimeServiceTests()
     {
-        private readonly IGoalRecordService goalRecordService;
+        goalRecordService = Substitute.For<IGoalRecordService>();
 
-        private readonly IFullTimeService service;
+        service = new FullTimeServiceImp(goalRecordService);
+    }
 
-        public FullTimeServiceTests()
-        {
-            goalRecordService = Substitute.For<IGoalRecordService>();
+    [Fact]
+    public void BetStatusFullTimeWithSemicolon_IsExistFgLg_ReturnRightBetStatus()
+    {
+        // Arrange
+        var expected = "FL:0-0;";
+        var goalRecord = new GoalRecordModel { IsExistFgLg = true, FirstGoal = "0", LastGoal = "0" };
+        goalRecordService.GoalRecordWithSemicolon(Arg.Any<GoalRecordModel>(), Arg.Any<string>()).Returns(goalRecord);
 
-            service = new FullTimeServiceImp(goalRecordService);
-        }
+        // Act
+        var actual = service.BetStatusFullTimeWithSemicolon(new SettleRequest { GoalRecord = ";" });
 
-        [Fact]
-        public void BetStatusFullTimeWithSemicolon_IsExistFgLg_ReturnRightBetStatus()
-        {
-            // Arrange
-            var expected = "FL:0-0;";
-            var goalRecord = new GoalRecordModel { IsExistFgLg = true, FirstGoal = "0", LastGoal = "0" };
-            goalRecordService.GoalRecordWithSemicolon(Arg.Any<GoalRecordModel>(), Arg.Any<string>()).Returns(goalRecord);
+        // Assert
+        Assert.Equal(expected, actual);
+    }
 
-            // Act
-            var actual = service.BetStatusFullTimeWithSemicolon(new SettleRequest { GoalRecord = ";" });
+    [Theory]
+    [InlineData(true, "refund ht", false)]
+    [InlineData(false, "refund ht", false)]
+    [InlineData(false, "refund", false)]
+    [InlineData(true, "refund", true)]
+    public void IsExistRefundHT_ReturnsRightExpected(bool isExistRefundHt, string halfTimeBetStatus, bool expected)
+    {
+        // Act
+        var actual = service.IsExistRefundHt(isExistRefundHt, halfTimeBetStatus);
 
-            // Assert
-            Assert.Equal(expected, actual);
-        }
+        // Assert
+        Assert.Equal(expected, actual);
+    }
 
-        [Theory]
-        [InlineData(true, "refund ht", false)]
-        [InlineData(false, "refund ht", false)]
-        [InlineData(false, "refund", false)]
-        [InlineData(true, "refund", true)]
-        public void IsExistRefundHT_ReturnsRightExpected(bool isExistRefundHt, string halfTimeBetStatus, bool expected)
-        {
-            // Act
-            var actual = service.IsExistRefundHt(isExistRefundHt, halfTimeBetStatus);
+    [Fact]
+    public void RefundHTOnBetStatus_Always_ReturnsRefundHalftimeOnBetStatus()
+    {
+        // Arrange
+        var fullTimeBetStatus = "FL:0-0;";
+        var expected = "Refund HT;FL:0-0;";
 
-            // Assert
-            Assert.Equal(expected, actual);
-        }
+        // Act
+        var actual = service.RefundHtOnBetStatus(fullTimeBetStatus);
 
-        [Fact]
-        public void RefundHTOnBetStatus_Always_ReturnsRefundHalftimeOnBetStatus()
-        {
-            // Arrange
-            var fullTimeBetStatus = "FL:0-0;";
-            var expected = "Refund HT;FL:0-0;";
-
-            // Act
-            var actual = service.RefundHtOnBetStatus(fullTimeBetStatus);
-
-            // Assert
-            Assert.Equal(expected, actual);
-        }
+        // Assert
+        Assert.Equal(expected, actual);
     }
 }

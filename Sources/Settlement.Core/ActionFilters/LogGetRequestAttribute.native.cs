@@ -5,29 +5,28 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Newtonsoft.Json;
 using System.Text;
 
-namespace Settlement.Core.ActionFilters
+namespace Settlement.Core.ActionFilters;
+
+public class LogGetRequestAttribute : ActionFilterAttribute
 {
-    public class LogGetRequestAttribute : ActionFilterAttribute
+    public override async void OnActionExecuted(ActionExecutedContext context)
     {
-        public override async void OnActionExecuted(ActionExecutedContext context)
+        var logger = new Logger();
+        var httpContext = context.HttpContext;
+        var request = httpContext.Request;
+        var stringBuilder = new StringBuilder();
+        if (context.Result != null)
         {
-            var logger = new Logger();
-            var httpContext = context.HttpContext;
-            var request = httpContext.Request;
-            var stringBuilder = new StringBuilder();
-            if (context.Result != null)
-            {
-                var objectResult = context.Result as OkObjectResult;
-                var result = JsonConvert.SerializeObject(objectResult?.Value);
-                stringBuilder.AppendLine($"Url ({request.GetDisplayUrl()}) get: {result}");
-            }
-
-            stringBuilder.AppendLine($"UserAgent: {request.Headers["User-Agent"]}");
-            stringBuilder.AppendLine($"Username: {httpContext.User.Identity?.Name}");
-
-            await logger.InfoAsync(stringBuilder.ToString());
-
-            base.OnActionExecuted(context);
+            var objectResult = context.Result as OkObjectResult;
+            var result = JsonConvert.SerializeObject(objectResult?.Value);
+            stringBuilder.AppendLine($"Url ({request.GetDisplayUrl()}) get: {result}");
         }
+
+        stringBuilder.AppendLine($"UserAgent: {request.Headers["User-Agent"]}");
+        stringBuilder.AppendLine($"Username: {httpContext.User.Identity?.Name}");
+
+        await logger.InfoAsync(stringBuilder.ToString());
+
+        base.OnActionExecuted(context);
     }
 }

@@ -1,53 +1,52 @@
 ﻿using System.Collections.Generic;
 using Settlement.Core.Models;
 
-namespace Settlement.Core.Services
+namespace Settlement.Core.Services;
+
+public interface IGoalIconService
 {
-    public interface IGoalIconService
+    GoalIcon GetGoalIcon(GoalIconQueryModel query);
+}
+
+public class GoalIconServiceImp : IGoalIconService
+{
+    private readonly IFirstGoalLastGoalService firstGoalLastGoalService;
+
+    public GoalIconServiceImp(IFirstGoalLastGoalService firstGoalLastGoalService)
     {
-        GoalIcon GetGoalIcon(GoalIconQueryModel query);
+        this.firstGoalLastGoalService = firstGoalLastGoalService;
     }
 
-    public class GoalIconServiceImp : IGoalIconService
+    public GoalIcon GetGoalIcon(GoalIconQueryModel query)
     {
-        private readonly IFirstGoalLastGoalService firstGoalLastGoalService;
+        var goalIcon = new GoalIcon();
 
-        public GoalIconServiceImp(IFirstGoalLastGoalService firstGoalLastGoalService)
+        if (string.IsNullOrWhiteSpace(query.BetStatus) && string.IsNullOrWhiteSpace(query.GoalRecord))
         {
-            this.firstGoalLastGoalService = firstGoalLastGoalService;
-        }
-
-        public GoalIcon GetGoalIcon(GoalIconQueryModel query)
-        {
-            var goalIcon = new GoalIcon();
-
-            if (string.IsNullOrWhiteSpace(query.BetStatus) && string.IsNullOrWhiteSpace(query.GoalRecord))
-            {
-                return goalIcon;
-            }
-
-            if (query.IsExistHtFgLg)
-            {
-                var halfTimeGoal = !string.IsNullOrWhiteSpace(query.BetStatus)
-                    ? firstGoalLastGoalService.GetHalftimeGoalByBetStatus(query)
-                    : firstGoalLastGoalService.GetHalftimeGoalByGoalRecord(query.GoalRecord);
-
-                goalIcon.HalfTimeHomeGoal = halfTimeGoal.Home;
-                goalIcon.HalfTimeAwayGoal = halfTimeGoal.Away;
-            }
-
-            if (query.IsExistFgLg)
-            {
-                var isSettled = query.FinalAwayScore != null && query.FinalHomeScore != null;
-                var fullTimeGoal = !string.IsNullOrWhiteSpace(query.BetStatus)
-                    ? firstGoalLastGoalService.GetFullTimeGoalByBetStatus(query)
-                    : firstGoalLastGoalService.GetFullTimeGoalByGoalRecord(query.GoalRecord, isSettled);
-
-                goalIcon.HomeGoal = fullTimeGoal.Home;
-                goalIcon.AwayGoal = fullTimeGoal.Away;
-            }
-
             return goalIcon;
         }
+
+        if (query.IsExistHtFgLg)
+        {
+            var halfTimeGoal = !string.IsNullOrWhiteSpace(query.BetStatus)
+                ? firstGoalLastGoalService.GetHalftimeGoalByBetStatus(query)
+                : firstGoalLastGoalService.GetHalftimeGoalByGoalRecord(query.GoalRecord);
+
+            goalIcon.HalfTimeHomeGoal = halfTimeGoal.Home;
+            goalIcon.HalfTimeAwayGoal = halfTimeGoal.Away;
+        }
+
+        if (query.IsExistFgLg)
+        {
+            var isSettled = query.FinalAwayScore != null && query.FinalHomeScore != null;
+            var fullTimeGoal = !string.IsNullOrWhiteSpace(query.BetStatus)
+                ? firstGoalLastGoalService.GetFullTimeGoalByBetStatus(query)
+                : firstGoalLastGoalService.GetFullTimeGoalByGoalRecord(query.GoalRecord, isSettled);
+
+            goalIcon.HomeGoal = fullTimeGoal.Home;
+            goalIcon.AwayGoal = fullTimeGoal.Away;
+        }
+
+        return goalIcon;
     }
 }

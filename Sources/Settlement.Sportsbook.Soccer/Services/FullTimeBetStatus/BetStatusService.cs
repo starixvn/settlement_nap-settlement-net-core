@@ -1,33 +1,32 @@
 ﻿using Settlement.Sportsbook.Soccer.Requests;
 
-namespace Settlement.Sportsbook.Soccer.Services.FullTimeBetStatus
+namespace Settlement.Sportsbook.Soccer.Services.FullTimeBetStatus;
+
+public interface IBetStatusService
 {
-    public interface IBetStatusService
+    string GetBetStatus(SettleRequest request);
+}
+
+public class BetStatusServiceImp : IBetStatusService
+{
+    private readonly IValidationService validationService;
+    private readonly IScoreAndGoalService scoreAndGoalService;
+
+    public BetStatusServiceImp(IValidationService validationService, IScoreAndGoalService scoreAndGoalService)
     {
-        string GetBetStatus(SettleRequest request);
+        this.validationService = validationService;
+        this.scoreAndGoalService = scoreAndGoalService;
     }
 
-    public class BetStatusServiceImp : IBetStatusService
+    public string GetBetStatus(SettleRequest request)
     {
-        private readonly IValidationService validationService;
-        private readonly IScoreAndGoalService scoreAndGoalService;
-
-        public BetStatusServiceImp(IValidationService validationService, IScoreAndGoalService scoreAndGoalService)
+        if (validationService.IsNullScoreAndGoalRecord(request))
         {
-            this.validationService = validationService;
-            this.scoreAndGoalService = scoreAndGoalService;
+            return scoreAndGoalService.ReplaceBetStatusWhenScoreAndGoalRecordIsNull(request.BetStatus);
         }
 
-        public string GetBetStatus(SettleRequest request)
-        {
-            if (validationService.IsNullScoreAndGoalRecord(request))
-            {
-                return scoreAndGoalService.ReplaceBetStatusWhenScoreAndGoalRecordIsNull(request.BetStatus);
-            }
-
-            return validationService.HasFinalScoreAndSemicolonOnGoalRecord(request)
-                ? scoreAndGoalService.BetStatusHasFinalScoreAndGoalRecord(request)
-                : string.Empty;
-        }
+        return validationService.HasFinalScoreAndSemicolonOnGoalRecord(request)
+            ? scoreAndGoalService.BetStatusHasFinalScoreAndGoalRecord(request)
+            : string.Empty;
     }
 }
