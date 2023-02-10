@@ -5,4 +5,5 @@ export interface LogRequest {
     fromDate: string;
     toDate: string;
     balanceUpDay?: string;
+    isSubmit?: boolean
 }

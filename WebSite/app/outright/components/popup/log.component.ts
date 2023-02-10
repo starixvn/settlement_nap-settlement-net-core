@@ -7,7 +7,7 @@ import { OutrightLog } from '../../models/outright-log.model';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DatepickerComponent } from '../../../shared/components/date-picker/date-picker.component';
-import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialog, MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DynamicHeightDirective } from '../../../shared/directives';
 import { ModalDialogMessage } from '../../../shared/models';
 import { Resources } from '../../constants/resources';
@@ -17,7 +17,7 @@ import { Resources } from '../../constants/resources';
     templateUrl: './log.component.html',
     standalone: true,
     imports: [CommonModule, FormsModule, DatepickerComponent, MatDialogModule, DynamicHeightDirective],
-    providers: [VerifyDateService, OutrightService, HttpRequestService, MessageBoxService, BlockUIService,
+    providers: [VerifyDateService, OutrightService, HttpRequestService, MessageBoxService, BlockUIService
     ],
     encapsulation: ViewEncapsulation.None,
 })
@@ -27,13 +27,13 @@ export class LogComponent implements OnInit {
     private messageBoxService: MessageBoxService;
     private dialogRef: MatDialogRef<LogComponent>;
 
+    public blockUI = true;
     public fromDate: NgbDateStruct;
     public toDate: NgbDateStruct;
     public matchCode: string;
     public leagueId: number;
     public matchId: number;
     public outrightLogs: OutrightLog[] = [];
-    public blockUI = true;
     public warningDialogMessage: ModalDialogMessage = new ModalDialogMessage();
 
     constructor(
@@ -42,11 +42,12 @@ export class LogComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
-        this.injector.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
         this.verifyDateService = this.injector.get(VerifyDateService);
         this.outrightService = this.injector.get(OutrightService);
         this.messageBoxService = this.injector.get(MessageBoxService);
         this.dialogRef = this.injector.get(MatDialogRef<LogComponent>);
+        this.injector.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
+
 
         this.initialData();
     }
@@ -85,7 +86,11 @@ export class LogComponent implements OnInit {
         return this.verifyDateService.validDate(fromDate, toDate);
     }
 
-    public search() {
+    public submit() {
+        this.search(true);
+    }
+
+    public search(isSubmit: boolean = false) {
         const fromDate = this.verifyDateService.dateFormat(this.fromDate);
         const toDate = this.verifyDateService.dateFormat(this.toDate);
 
@@ -105,7 +110,8 @@ export class LogComponent implements OnInit {
                 toDate,
                 matchCode: this.matchCode,
                 leagueId: this.leagueId,
-                matchId: this.matchId
+                matchId: !isSubmit ? this.matchId : null,
+                isSubmit
             }
             this.outrightService.getLogs(request).subscribe(res => {
                 this.outrightLogs = res;

@@ -49,6 +49,12 @@ public class OutrightLogProcessServiceImp : OutrightLogProcessService
     {
         var eventLogList = new List<OutrightLog>();
         var outrightLog = await outrightLogQueryService.GetOutrightLog(request);
+
+        if (outrightLog is null)
+        {
+            return eventLogList;
+        }
+
         outrightLog.RefDataService = refDataService;
         var getOutrightLogDetailCriteria = new GetOutrightLogDetailCriteria
         {

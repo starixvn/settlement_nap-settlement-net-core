@@ -184,6 +184,12 @@ public class HomeController : Controller
         return SetView("Settlement Outright", string.Empty, ViewPath.Outright);
     }
 
+    [Route("Home/outright-log")]
+    public ActionResult OutrightLog()
+    {
+        return SetView("Settlement Outright Log", "OutrightLog", ViewPath.Outright);
+    }
+
     private ActionResult SetView(string title, string pageType, string viewName)
     {
         ViewBag.Environment = configuration.GetSection("Environment").Value;
