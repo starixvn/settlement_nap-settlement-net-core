@@ -31,6 +31,7 @@ export class LogComponent implements OnInit {
     public toDate: NgbDateStruct;
     public matchCode: string;
     public leagueId: number;
+    public matchId: number;
     public outrightLogs: OutrightLog[] = [];
     public blockUI = true;
     public warningDialogMessage: ModalDialogMessage = new ModalDialogMessage();
@@ -63,6 +64,7 @@ export class LogComponent implements OnInit {
         this.toDate = this.verifyDateService.convertToDateStruct(this.data.toDate);
         this.matchCode = this.data.matchCode;
         this.leagueId = this.data.leagueId;
+        this.matchId = this.data.matchId;
         this.search();
     }
 
@@ -102,7 +104,8 @@ export class LogComponent implements OnInit {
                 fromDate,
                 toDate,
                 matchCode: this.matchCode,
-                leagueId: this.leagueId
+                leagueId: this.leagueId,
+                matchId: this.matchId
             }
             this.outrightService.getLogs(request).subscribe(res => {
                 this.outrightLogs = res;

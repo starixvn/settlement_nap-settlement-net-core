@@ -43,11 +43,13 @@ export class LeagueTeamComponent implements OnInit {
     }
 
     public viewLog(league: LeagueMatch, matchId: number | null = null) {
+        console.log(matchId)
         this.dialog.open(LogComponent, {
             data: {
                 ...this.request,
                 leagueId: league.leagueId,
                 matchCode: !!matchId ? `${matchId}` : league.teams[0].matchCode,
+                matchId
             },
             width: '1000px',
             height: '600px'
