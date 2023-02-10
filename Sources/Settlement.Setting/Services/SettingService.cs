@@ -101,7 +101,7 @@ public class SettingServiceImp : SettingService
             ErrCode = criteria.ErrCode,
             ErrMsg = criteria.ErrMsg
         };
-        }
+    }
 
         public async Task<string> GetSetting(GetSettingRequest request)
         {
@@ -115,5 +115,4 @@ public class SettingServiceImp : SettingService
             var setting = await repository.GetAsync<int>(criteria);
 
             return Convert.ToString(setting, convertToBase).Reverse();
-    }
 }
