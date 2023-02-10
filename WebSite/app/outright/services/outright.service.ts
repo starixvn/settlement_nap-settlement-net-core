@@ -3,7 +3,6 @@ import { League, LeagueSettle, TeamSettle } from "../models";
 import { LeagueRequest } from "../models/league-request.model";
 import { HttpRequestService } from "../../shared/services";
 import { firstValueFrom, Observable } from 'rxjs';
-import { Result } from "../../shared/models";
 import { FilterRequest } from "../models/filter-request.model";
 import { Outright } from "../models/outright.model";
 import { LogRequest } from "../models/log-request.model";

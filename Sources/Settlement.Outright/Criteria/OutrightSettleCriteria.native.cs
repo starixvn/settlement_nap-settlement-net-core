@@ -11,7 +11,7 @@ public class OutrightSettleCriteria : NonQueryCommand
 
     public string Action { get; set; }
 
-    public double Deadheat { get; set; }
+    public double? Deadheat { get; set; }
 
     public bool IsDeadheat { get; set; }
 

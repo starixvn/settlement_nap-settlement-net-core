@@ -150,7 +150,7 @@ public class OutrightSettleServiceImp : OutrightSettleService
         var criteria = mapper.Map<TeamSettleModel, OutrightSettleCriteria>(team);
         criteria.Action = ActionType.CalculateAll;
         criteria.AdminId = currentSession.UserId;
-        criteria.Deadheat = deadHeat;
+        criteria.Deadheat = team.IsDeadheat ? deadHeat : null;
         var updateResult = await outrightSettleProcessService.UpdateResultCalculate(criteria);
         if (!updateResult.IsSuccessful)
         {
