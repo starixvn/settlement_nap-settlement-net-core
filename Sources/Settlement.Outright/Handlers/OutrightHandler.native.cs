@@ -36,5 +36,8 @@ public class OutrightHandler :
 
     public async Task<Result> Handle(OutrightCalculateRequest request, CancellationToken cancellationToken) => await settleService.Calculate(request);
 
-    public async Task<IEnumerable<OutrightLog>> Handle(GetLogRequest request, CancellationToken cancellationToken) => await outrightLogService.GetLogForView(request);
+    public async Task<IEnumerable<OutrightLog>> Handle(GetLogRequest request, CancellationToken cancellationToken)
+    {
+        return request.IsSubmit ? await outrightLogService.GetLogBySubmit(request) : await outrightLogService.GetLogForView(request);
+    }
 }

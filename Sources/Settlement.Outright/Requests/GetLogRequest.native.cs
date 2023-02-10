@@ -15,4 +15,6 @@ public class GetLogRequest : IRequest<IEnumerable<OutrightLog>>
     public DateTime ToDate { get; set; } = DateTime.Today;
 
     public DateTime BalanceUpDay { get; set; }
+
+    public bool IsSubmit { get; set; }
 }
