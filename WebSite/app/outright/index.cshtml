@@ -14,9 +14,10 @@
     <header>
         @await Html.PartialAsync("~/Views/Menu.cshtml")
     </header>
-    <section>
+    @* <section>
         <div class="content"><app-root>Loading...</app-root></div>
-    </section>
+    </section> *@
+       <app-root id="app" page-type="@ViewBag.PageType">Loading...</app-root>
      <script type="text/javascript">
         var element = document.getElementById("Outright-menu");
         if (element !== null) {

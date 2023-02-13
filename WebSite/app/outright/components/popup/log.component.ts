@@ -17,7 +17,8 @@ import { Resources } from '../../constants/resources';
     templateUrl: './log.component.html',
     standalone: true,
     imports: [CommonModule, FormsModule, DatepickerComponent, MatDialogModule, DynamicHeightDirective],
-    providers: [VerifyDateService, OutrightService, HttpRequestService, MessageBoxService, BlockUIService
+    providers: [VerifyDateService, OutrightService, HttpRequestService, MessageBoxService, BlockUIService,
+        // { provide: MAT_DIALOG_DATA },
     ],
     encapsulation: ViewEncapsulation.None,
 })
@@ -61,8 +62,8 @@ export class LogComponent implements OnInit {
     }
 
     private initialData() {
-        this.fromDate = this.verifyDateService.convertToDateStruct(this.data.fromDate);
-        this.toDate = this.verifyDateService.convertToDateStruct(this.data.toDate);
+        this.fromDate = this.verifyDateService.convertToDateStruct(this.data?.fromDate);
+        this.toDate = this.verifyDateService.convertToDateStruct(this.data?.toDate);
         this.matchCode = this.data.matchCode;
         this.leagueId = this.data.leagueId;
         this.matchId = this.data.matchId;

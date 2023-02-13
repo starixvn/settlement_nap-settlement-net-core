@@ -8,12 +8,13 @@ import { CommonModule } from '@angular/common';
 import { LogComponent } from './popup/log.component';
 import MainPageComponent from './main-page/main-page.component';
 import { PageType } from '../../shared/constants';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
     standalone: true,
-    imports: [CommonModule, FilterComponent, LeagueTeamComponent, LogComponent, MainPageComponent],
+    imports: [CommonModule, FilterComponent, LeagueTeamComponent, LogComponent, MainPageComponent, MatDialogModule],
     providers: [BlockUIService]
 })
 export default class AppComponent implements OnInit {
