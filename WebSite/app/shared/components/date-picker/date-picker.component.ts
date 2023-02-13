@@ -15,6 +15,7 @@ export class DatepickerComponent {
     @Input() public date: NgbDateStruct;
     @Input() public minDate: NgbDateStruct;
     @Input() public maxDate: NgbDateStruct;
+    @Input() public disabled: boolean;
     @Output() private readonly change = new EventEmitter();
     private dynamicId;
     private readonly elementRef: ElementRef<HTMLElement>;

@@ -29,7 +29,7 @@ export class CalculatePopupComponent implements OnInit {
   private toastrService: ToastrService;
   private outrightService: OutrightService;
   private verifyDateService: VerifyDateService;
-  private dialogRef: MatDialogRef<CalculatePopupComponent>;
+  public dialogRef: MatDialogRef<CalculatePopupComponent>;
   public blockUI = true;
   public teams: Team[];
   public originalTeam: Team[];
@@ -41,7 +41,7 @@ export class CalculatePopupComponent implements OnInit {
   public statusSelected = FilterStatuses[0].toUpperCase();
   public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
   private teamSettleWon: Team[];
-  private teamJustSettled: TeamSettle[] = [];
+  public teamJustSettled: TeamSettle[] = [];
   private readonly completedStatus = "Completed";
 
   constructor(protected injector: Injector,
