@@ -1,8 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { Component, Injector, OnInit } from "@angular/core";
 import { Outright } from "../../models/outright.model";
-import { BlockUIService } from "../../../shared/services";
-import { LogComponent } from "../popup/log.component";
+import { LogPopupComponent } from "../popup/log-popup.component";
 import { FilterComponent } from "./filter.component";
 import { LeagueTeamComponent } from "./league-team.component";
 import { FilterRequest } from "../../models/filter-request.model";
@@ -11,7 +10,7 @@ import { FilterRequest } from "../../models/filter-request.model";
     selector: 'main-page',
     templateUrl: './main-page.component.html',
     standalone: true,
-    imports: [CommonModule, FilterComponent, LeagueTeamComponent, LogComponent],
+    imports: [CommonModule, FilterComponent, LeagueTeamComponent, LogPopupComponent],
 })
 export default class MainPageComponent implements OnInit {
 

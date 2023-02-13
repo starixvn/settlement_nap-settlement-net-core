@@ -14,7 +14,7 @@ import { Resources } from '../../constants/resources';
 
 @Component({
     selector: 'log',
-    templateUrl: './log.component.html',
+    templateUrl: './log-popup.component.html',
     standalone: true,
     imports: [CommonModule, FormsModule, DatepickerComponent, MatDialogModule, DynamicHeightDirective],
     providers: [VerifyDateService, OutrightService, HttpRequestService, MessageBoxService, BlockUIService,
@@ -22,11 +22,11 @@ import { Resources } from '../../constants/resources';
     ],
     encapsulation: ViewEncapsulation.None,
 })
-export class LogComponent implements OnInit {
+export class LogPopupComponent implements OnInit {
     private verifyDateService: VerifyDateService;
     private outrightService: OutrightService;
     private messageBoxService: MessageBoxService;
-    private dialogRef: MatDialogRef<LogComponent>;
+    private dialogRef: MatDialogRef<LogPopupComponent>;
 
     public blockUI = true;
     public fromDate: NgbDateStruct;
@@ -46,7 +46,7 @@ export class LogComponent implements OnInit {
         this.verifyDateService = this.injector.get(VerifyDateService);
         this.outrightService = this.injector.get(OutrightService);
         this.messageBoxService = this.injector.get(MessageBoxService);
-        this.dialogRef = this.injector.get(MatDialogRef<LogComponent>);
+        this.dialogRef = this.injector.get(MatDialogRef<LogPopupComponent>);
         this.injector.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
 
 

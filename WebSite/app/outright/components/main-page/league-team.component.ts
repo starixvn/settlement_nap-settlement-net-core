@@ -9,7 +9,7 @@ import { CustomNgbDateParserFormatter } from '../../../shared/components/date-pi
 import { DialogBoxService } from '../../../shared/services';
 import { DynamicHeightDirective } from '../../../shared/directives';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { LogComponent } from '../popup/log.component';
+import { LogPopupComponent } from '../popup/log-popup.component';
 import { LeagueMatch } from '../../models/league-match.model';
 import { UncalculatePopupComponent } from '../popup/uncalculate-popup.component';
 import * as _ from 'lodash';
@@ -43,7 +43,7 @@ export class LeagueTeamComponent implements OnInit {
     }
 
     public viewLog(league: LeagueMatch, matchId: number | null = null) {
-        this.dialog.open(LogComponent, {
+        this.dialog.open(LogPopupComponent, {
             data: {
                 ...this.request,
                 leagueId: league.leagueId,

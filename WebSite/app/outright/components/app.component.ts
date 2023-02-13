@@ -5,7 +5,7 @@ import { FilterRequest } from '../models/filter-request.model';
 import { FilterComponent } from './main-page/filter.component';
 import { LeagueTeamComponent } from './main-page/league-team.component';
 import { CommonModule } from '@angular/common';
-import { LogComponent } from './popup/log.component';
+import { LogPopupComponent } from './popup/log-popup.component';
 import MainPageComponent from './main-page/main-page.component';
 import { PageType } from '../../shared/constants';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -14,35 +14,19 @@ import { MatDialogModule } from '@angular/material/dialog';
     selector: 'app-root',
     templateUrl: './app.component.html',
     standalone: true,
-    imports: [CommonModule, FilterComponent, LeagueTeamComponent, LogComponent, MainPageComponent, MatDialogModule],
+    imports: [CommonModule, FilterComponent, LeagueTeamComponent, LogPopupComponent, MainPageComponent, MatDialogModule],
     providers: [BlockUIService]
 })
 export default class AppComponent implements OnInit {
     public blockUI = false;
-    // public outright: Outright;
-    // public filterRequest: FilterRequest;
 
     @ViewChild('container', { read: ViewContainerRef, static: true }) container: ViewContainerRef;
     public component: ComponentRef<OnInit>;
-
-
 
     constructor(protected injector: Injector,
         private readonly componentFactoryResolver: ComponentFactoryResolver,
         private readonly elementRef: ElementRef<HTMLElement>,
         private readonly changeDetector: ChangeDetectorRef) { }
-
-    // public ngOnInit() {
-    //     this.injector.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
-    // }
-
-    // public search(outright: Outright) {
-    //     this.outright = outright;
-    // }
-
-    // public getRequest(request: FilterRequest) {
-    //     this.filterRequest = request;
-    // }
 
     ngOnInit() {
         this.injector.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
@@ -63,7 +47,7 @@ export default class AppComponent implements OnInit {
         const pageType = this.elementRef.nativeElement.getAttribute('page-type');
         switch (pageType) {
             case PageType.OutrightLog:
-                return this.componentFactoryResolver.resolveComponentFactory(LogComponent);
+                return this.componentFactoryResolver.resolveComponentFactory(LogPopupComponent);
             default:
                 return this.componentFactoryResolver.resolveComponentFactory(MainPageComponent);
         }
