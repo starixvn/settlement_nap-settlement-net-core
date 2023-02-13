@@ -14,7 +14,7 @@ public interface OutrightSettleProcessService
 
     Task<Result> OutrightSettleMultiSite(OutrightSettleCriteria criteria);
 
-    Task<ResultOutright> ValidateDeployment(string spName);
+    Task<ResultOutright> ValidateRequest(string spName, string matchIds);
 
     Task<Result> UpdateResultCalculate(OutrightSettleCriteria criteria);
 }
@@ -57,7 +57,7 @@ public class OutrightSettleProcessServiceImp : OutrightSettleProcessService
         };
     }
 
-        private static List<Result> ResultMessage(List<Result> results, string message)
+    private static List<Result> ResultMessage(List<Result> results, string message)
     {
         if (!string.IsNullOrWhiteSpace(message))
         {
@@ -72,20 +72,29 @@ public class OutrightSettleProcessServiceImp : OutrightSettleProcessService
         return results;
     }
 
-    public async Task<ResultOutright> ValidateDeployment(string spName)
+    public async Task<ResultOutright> ValidateRequest(string spName, string matchIds)
     {
-        var validateResult = await scaleOutSettleService.GetDeploymentInfo(new GetDeploymentInfoRequest { SPName = spName });
+        var validateDeployFlag = await scaleOutSettleService.GetDeploymentInfo(new GetDeploymentInfoRequest { SPName = spName });
 
-        if (validateResult.ErrorCode > 0)
+        if (validateDeployFlag.ErrorCode > 0)
         {
             return new ResultOutright
             {
-                ErrCode = validateResult.ErrorCode,
-                ErrMsg = validateResult.ErrorMessage
+                ErrCode = validateDeployFlag.ErrorCode,
+                ErrMsg = validateDeployFlag.ErrorMessage
             };
         }
-
-        return new ResultOutright();
+        else
+        {
+            const string eventTable = "outright";
+            var criteriaValidation =
+                await scaleOutSettleService.ValidateMoveBetDay(matchIds, eventTable);
+            return new ResultOutright
+            {
+                ErrCode = criteriaValidation.ErrorCode,
+                ErrMsg = criteriaValidation.ErrorMessage
+            };
+        }
     }
 
     public async Task<Result> UpdateResultUndo(OutrightSettleCriteria criteria)
@@ -94,7 +103,8 @@ public class OutrightSettleProcessServiceImp : OutrightSettleProcessService
         {
             Action = criteria.Action,
             Status = criteria.Status,
-            MatchId = criteria.MatchId
+            MatchId = criteria.MatchId,
+            AdminId = criteria.AdminId
         };
 
         await repository.ExecuteAsync(updateResultCriteria);

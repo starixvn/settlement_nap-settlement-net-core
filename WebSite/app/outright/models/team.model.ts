@@ -1,6 +1,6 @@
 import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { Match } from './match.model';
-export interface Team extends Match {
+export class Team extends Match {
     isDeadheat: boolean;
     disableDeadheat: boolean;
     isSettled: boolean;

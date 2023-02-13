@@ -45,11 +45,16 @@ export class CalculateService {
         return false;
     }
 
-    public static VerifyNonDeadheat(teamWonSelected: Team[]) {
+    public static VerifyNonDeadheat(teamWonSelected: Team[], teamWonSettled: Team[]) {
         const teamDeadHeat = _.filter(teamWonSelected, team => team.isDeadheat);
         const teamWithoutDeadheat = _.filter(teamWonSelected, team => !team.isDeadheat);
+        const teamWithoutDeadheatSettled = _.filter(teamWonSettled, team => !team.isDeadheat);
 
         if (_.isEmpty(teamDeadHeat) && teamWithoutDeadheat.length > 1) {
+            return true;
+        }
+
+        if(_.isEmpty(teamDeadHeat) && teamWithoutDeadheatSettled.length > 0 && teamWithoutDeadheat.length > 0) {
             return true;
         }
         return false;

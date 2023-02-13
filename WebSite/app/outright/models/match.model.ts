@@ -1,4 +1,4 @@
-export interface Match {
+export class Match {
     orId: string;
     matchCode: string;
     kickOffTime: Date;

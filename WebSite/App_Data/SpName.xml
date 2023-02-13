@@ -135,9 +135,9 @@
     </Function>
 
     <Function Name="NAP_Set_OutrightSelTicketCount">
-    <Setting Key="NAP_Set_OutrightSelTicketCount_DBTXN" SpName="NAP_Set_OutrightSelTicketCount_xtest" DbName="DBTXN.bodb02.bodbAdminNet" />
-    <Setting Key="NAP_Set_OutrightSelTicketCount_DBSID01" SpName="NAP_Set_OutrightSelTicketCount_xtest" DbName="DBSID01.bodb02.bodbAdminNet" />
-    <Setting Key="NAP_Set_OutrightSelTicketCount_DBSID02" SpName="NAP_Set_OutrightSelTicketCount_xtest" DbName="DBSID02.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_OutrightSelTicketCount_DBTXN" SpName="NAP_Set_OutrightSelTicketCount" DbName="DBTXN.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_OutrightSelTicketCount_DBSID01" SpName="NAP_Set_OutrightSelTicketCount" DbName="DBSID01.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_OutrightSelTicketCount_DBSID02" SpName="NAP_Set_OutrightSelTicketCount" DbName="DBSID02.bodb02.bodbAdminNet" />
     </Function>
 
     <Function Name="NAP_Set_GetNumberError">
@@ -419,6 +419,11 @@
       <Setting Key="NAP_Set_WaitingSel_Queue_3rd_DBTXN" SpName="NAP_Set_WaitingSel_Queue_3rd" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="NAP_Set_WaitingSel_Queue_3rd_DBSID01" SpName="NAP_Set_WaitingSel_Queue_3rd" DbName="DBSID01.bodb02.bodbAdminNet" />
       <Setting Key="NAP_Set_WaitingSel_Queue_3rd_DBSID02" SpName="NAP_Set_WaitingSel_Queue_3rd" DbName="DBSID02.bodb02.bodbAdminNet" />
+    </Function>
+    <Function Name="NAP_Admin_Settlement_CheckingMoveBetDay">
+      <Setting Key="NAP_Admin_Settlement_CheckingMoveBetDay_DBTXN" SpName="NAP_Admin_Settlement_CheckingMoveBetDay" DbName="DBTXN.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Admin_Settlement_CheckingMoveBetDay_DBSID01" SpName="NAP_Admin_Settlement_CheckingMoveBetDay" DbName="DBSID01.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Admin_Settlement_CheckingMoveBetDay_DBSID02" SpName="NAP_Admin_Settlement_CheckingMoveBetDay" DbName="DBSID02.bodb02.bodbAdminNet" />
     </Function>
   </Function>
 </Functions>

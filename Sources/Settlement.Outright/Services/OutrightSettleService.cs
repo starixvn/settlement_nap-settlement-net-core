@@ -75,7 +75,7 @@ public class OutrightSettleServiceImp : OutrightSettleService
 
     public async Task<ResultOutright> Uncalculate(OutrightUndoRequest request)
     {
-        var validateDeployment = await outrightSettleProcessService.ValidateDeployment(SpName);
+        var validateDeployment = await outrightSettleProcessService.ValidateRequest(SpName, request.MatchIds);
 
         if (!validateDeployment.IsSuccessful)
         {
@@ -95,7 +95,7 @@ public class OutrightSettleServiceImp : OutrightSettleService
 
     public async Task<ResultOutright> Calculate(OutrightCalculateRequest request)
     {
-        var validateDeployment = await outrightSettleProcessService.ValidateDeployment(SpName);
+        var validateDeployment = await outrightSettleProcessService.ValidateRequest(SpName, string.Join(",", request.Teams.Select(team => team.MatchId)));
 
         if (!validateDeployment.IsSuccessful)
         {

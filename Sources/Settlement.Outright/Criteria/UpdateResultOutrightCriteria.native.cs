@@ -14,6 +14,8 @@ public class UpdateResultOutrightCriteria : NonQueryCommand
 
     public bool IsDeadheat { get; set; }
 
+    public int AdminId { get; set; }
+
     public int ErrCode { get; set; }
 
     public string ErrMsg { get; set; }
