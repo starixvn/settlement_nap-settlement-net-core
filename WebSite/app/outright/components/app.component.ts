@@ -9,12 +9,14 @@ import { LogPopupComponent } from './popup/log-popup.component';
 import MainPageComponent from './main-page/main-page.component';
 import { PageType } from '../../shared/constants';
 import { MatDialogModule } from '@angular/material/dialog';
+import LogComponent from './log.component';
+import LogPageComponent from './main-page/log-page.component';
 
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
     standalone: true,
-    imports: [CommonModule, FilterComponent, LeagueTeamComponent, LogPopupComponent, MainPageComponent, MatDialogModule],
+    imports: [CommonModule, FilterComponent, LeagueTeamComponent, LogPopupComponent, MainPageComponent, MatDialogModule, LogPageComponent],
     providers: [BlockUIService]
 })
 export default class AppComponent implements OnInit {
@@ -47,7 +49,7 @@ export default class AppComponent implements OnInit {
         const pageType = this.elementRef.nativeElement.getAttribute('page-type');
         switch (pageType) {
             case PageType.OutrightLog:
-                return this.componentFactoryResolver.resolveComponentFactory(LogPopupComponent);
+                return this.componentFactoryResolver.resolveComponentFactory(LogPageComponent);
             default:
                 return this.componentFactoryResolver.resolveComponentFactory(MainPageComponent);
         }
