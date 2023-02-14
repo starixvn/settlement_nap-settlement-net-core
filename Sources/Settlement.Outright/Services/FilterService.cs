@@ -84,7 +84,7 @@ public class FilterServiceImp : FilterService
         };
     }
 
-    private static void AddTicketCountToTeam(List<Team> teams, List<TeamTicketModel> teamTickets)
+    private static void AddTicketCountToTeam(IEnumerable<Team> teams, ICollection<TeamTicketModel> teamTickets)
     {
         foreach (var team in teams)
         {
@@ -96,7 +96,7 @@ public class FilterServiceImp : FilterService
         }
     }
 
-    private async Task<IEnumerable<TeamTicketModel>> GetTeamsTicketCount(List<Team> teams)
+    private async Task<IEnumerable<TeamTicketModel>> GetTeamsTicketCount(IEnumerable<Team> teams)
     {
         var orIds = string.Join(',', teams.Select(t => t.OrId));
         var teamsTicketCount = new List<TeamTicketModel>();
@@ -114,7 +114,7 @@ public class FilterServiceImp : FilterService
         return teamsTicketCount;
     }
 
-    private static IEnumerable<TeamTicketModel> GroupTeamTicket(List<TeamTicketModel> teams)
+    private static IEnumerable<TeamTicketModel> GroupTeamTicket(IEnumerable<TeamTicketModel> teams)
     {
         var result = teams.GroupBy(team => team.OrId).Select(groupTeam => new TeamTicketModel
         {

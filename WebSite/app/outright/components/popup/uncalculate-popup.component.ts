@@ -80,15 +80,16 @@ export class UncalculatePopupComponent implements OnInit {
         this.dialogRef.close(teamChanged.join(','));
       } else {
         this.processResultFail(result, matchIds);
-        this.toastrService.error(result.errMsg);
       }
     });
   }
 
   private processResultFail(result: ResultOutright, matchIds: string) {
-    const listMatch = result.teamFailedIds.split(',');
-    const teamSettle = matchIds.split(',');
-    this.teamJustSettled = _.filter(teamSettle, team => !listMatch.includes(team.toString())).join(',');
+    if (!_.isEmpty(result.teamFailedIds)) {
+      const listMatch = result.teamFailedIds.split(',');
+      const teamSettle = matchIds.split(',');
+      this.teamJustSettled = _.filter(teamSettle, team => !listMatch.includes(team.toString())).join(',');
+    }
     this.toastrService.error(result.errMsg);
   }
 }

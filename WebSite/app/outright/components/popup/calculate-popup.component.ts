@@ -43,6 +43,7 @@ export class CalculatePopupComponent implements OnInit {
   private teamSettleWon: Team[];
   public teamJustSettled: TeamSettle[] = [];
   private readonly completedStatus = "Completed";
+  private readonly statusRunning = [Status.running, Status.closed, Status.internal];
 
   constructor(protected injector: Injector,
     @Inject(MAT_DIALOG_DATA) public data: { leagueId: number, sportType: number }) {
@@ -68,7 +69,7 @@ export class CalculatePopupComponent implements OnInit {
     this.leagueSettle = await this.outrightService.getMatches(this.data.leagueId, this.data.sportType, StatusId.runningAndCompleted);
     this.leagueSettle.teams.forEach(team => {
       team.status = team.status.toUpperCase();
-      team.eventDate = _.isEqual(team.oddsStatus.toLowerCase(), Status.running) ? this.leagueSettle.today : team.eventDate;
+      team.eventDate = _.includes(this.statusRunning, team.oddsStatus.toLowerCase()) ? this.leagueSettle.today : team.eventDate;
       team.dateTime = this.verifyDateService.convertToDateStruct(team.eventDate);
     });
     this.moveBetsDay = this.verifyDateService.convertToDateStruct(this.leagueSettle.moveBetsDay);

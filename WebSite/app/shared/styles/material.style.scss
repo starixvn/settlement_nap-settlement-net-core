@@ -40,10 +40,6 @@
     transform: none !important;
 }
 
-// .cdk-overlay-backdrop {
-//     position: unset !important;
-// }
-
 
 .mat-primary .mat-pseudo-checkbox-checked {
     height: 13px;
@@ -286,8 +282,7 @@
     position: absolute;
     color: #000 !important;
     cursor: pointer;
-    font-size: 12px !important;
-
+    margin-left: 5px;
 }
 
 .above {
