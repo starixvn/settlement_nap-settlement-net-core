@@ -71,7 +71,7 @@
                 *ngFor="let log of item.outrightLogDetails; let i = index"
               >
                 <tr [ngClass]="i % 2 !== 0 ? 'bg-odd' : ''">
-                  <td style="width: 30px;">{{ i + 1 }}</td>
+                  <td class="td-index">{{ i + 1 }}</td>
                   <td>
                     {{ log.logDate | date: "mediumDate" }}
                     {{ log.logDate | date: "hh:mm:ss a" }}
