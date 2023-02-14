@@ -84,17 +84,15 @@ public class OutrightSettleProcessServiceImp : OutrightSettleProcessService
                 ErrMsg = validateDeployFlag.ErrorMessage
             };
         }
-        else
+
+        const string eventTable = "outright";
+        var criteriaValidation =
+            await scaleOutSettleService.ValidateMoveBetDay(matchIds, eventTable);
+        return new ResultOutright
         {
-            const string eventTable = "outright";
-            var criteriaValidation =
-                await scaleOutSettleService.ValidateMoveBetDay(matchIds, eventTable);
-            return new ResultOutright
-            {
-                ErrCode = criteriaValidation.ErrorCode,
-                ErrMsg = criteriaValidation.ErrorMessage
-            };
-        }
+            ErrCode = criteriaValidation.ErrorCode,
+            ErrMsg = criteriaValidation.ErrorMessage
+        };
     }
 
     public async Task<Result> UpdateResultUndo(OutrightSettleCriteria criteria)

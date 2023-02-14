@@ -21,11 +21,11 @@ export class CalculateService {
             return true;
         }
 
-        if(!_.isEmpty(teamWonSelectedDeadHeat) && !_.isEmpty(teamSettledNoneDeadHeat)) {
+        if (!_.isEmpty(teamWonSelectedDeadHeat) && !_.isEmpty(teamSettledNoneDeadHeat)) {
             return true;
         }
 
-        if(!_.isEmpty(teamWonSelectedDeadHeat) && !_.isEmpty(teamWonSelectedNoneDeadHeat)) {
+        if (!_.isEmpty(teamWonSelectedDeadHeat) && !_.isEmpty(teamWonSelectedNoneDeadHeat)) {
             return true;
         }
 
@@ -54,7 +54,7 @@ export class CalculateService {
             return true;
         }
 
-        if(_.isEmpty(teamDeadHeat) && teamWithoutDeadheatSettled.length > 0 && teamWithoutDeadheat.length > 0) {
+        if (_.isEmpty(teamDeadHeat) && teamWithoutDeadheatSettled.length > 0 && teamWithoutDeadheat.length > 0) {
             return true;
         }
         return false;

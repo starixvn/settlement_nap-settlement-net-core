@@ -63,7 +63,8 @@ export class LeagueTeamComponent implements OnInit {
             },
             width: '910px',
             height: '550px',
-            disableClose: true
+            disableClose: true,
+            hasBackdrop: true
         }).afterClosed().subscribe((teams: TeamSettle[]) => {
             if (teams) {
                 teams.forEach(team => {
@@ -81,7 +82,8 @@ export class LeagueTeamComponent implements OnInit {
             },
             width: '770px',
             height: '500px',
-            disableClose: true
+            disableClose: true,
+            hasBackdrop: true
         }).afterClosed().subscribe((teamIds: string) => {
             if (teamIds) {
                 const teams = _.split(teamIds, ',');

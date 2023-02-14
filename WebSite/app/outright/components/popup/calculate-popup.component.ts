@@ -116,7 +116,7 @@ export class CalculatePopupComponent implements OnInit {
     this.validateBeforePush(this.teamSettleWon, teamWonSettled, teamWonSelected)
   };
 
-  public onSelectDate(value: NgbDateStruct, team: Team){
+  public onSelectDate(value: NgbDateStruct, team: Team) {
     team.eventDate = this.verifyDateService.dateFormat(value);
   }
 
@@ -150,7 +150,7 @@ export class CalculatePopupComponent implements OnInit {
     this.originalTeam = latestLeague.teams;
   }
 
-  
+
   private async doCalculate(deadHeat: number) {
     this.confirmationDialogMessage.message = Language.Outright.confirmCalculate;
     this.injector.get(MessageBoxService).confirm(this.confirmationDialogMessage, async () => {
@@ -166,9 +166,11 @@ export class CalculatePopupComponent implements OnInit {
   }
 
   private processResultFail(result: ResultOutright, teamSettle: TeamSettle[]) {
-    const listMatch = result.teamFailedIds.split(',');
-    this.teamJustSettled = this.teamJustSettled.concat(_.filter(teamSettle, team => !listMatch.includes(team.matchId.toString())));
-    _.forEach(this.teamJustSettled, team => _.find(this.leagueSettle.teams, t => _.isEqual(t.orId, team.matchId)).oddsStatus = this.completedStatus)
+    if (!_.isEmpty(result.teamFailedIds)) {
+      const listMatch = result.teamFailedIds.split(',');
+      this.teamJustSettled = this.teamJustSettled.concat(_.filter(teamSettle, team => !listMatch.includes(team.matchId.toString())));
+      _.forEach(this.teamJustSettled, team => _.find(this.leagueSettle.teams, t => _.isEqual(t.orId, team.matchId)).oddsStatus = this.completedStatus);
+    }
     this.toastrService.error(result.errMsg);
   }
 }

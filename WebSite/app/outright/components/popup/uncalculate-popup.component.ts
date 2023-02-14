@@ -24,13 +24,13 @@ export class UncalculatePopupComponent implements OnInit {
   @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
   private outrightService: OutrightService;
   private toastrService: ToastrService;
-  private dialogRef: MatDialogRef<UncalculatePopupComponent>;
+  public dialogRef: MatDialogRef<UncalculatePopupComponent>;
   public teams: Team[];
   public leagueSettle: LeagueSettle;
   public blockUI = true;
-  private teamJustSettled = "";
+  public teamJustSettled = "";
   public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
-  
+
   constructor(private readonly injector: Injector,
     @Inject(MAT_DIALOG_DATA) public data: { leagueId: number, sportType: number }) {
     this.injector.get(MatDialog).closeAll();
@@ -46,7 +46,7 @@ export class UncalculatePopupComponent implements OnInit {
     this.getMatches();
   }
 
-  async getMatches() {
+  private async getMatches() {
     this.leagueSettle = await this.outrightService.getMatches(this.data.leagueId, this.data.sportType, StatusId.completed);
     this.teams = this.leagueSettle.teams;
   }
