@@ -16,7 +16,7 @@ import { OutrightLog } from 'outright/models/outright-log.model';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { CustomNgbDateParserFormatter } from '../../../shared/components/date-picker/custom-ngb-date-parser-formatter';
 
-describe('LogComponent', () => {
+describe('LogPopupComponent', () => {
     let component: LogPopupComponent;
     let fixture: ComponentFixture<LogPopupComponent>;
     let verifyDateService: VerifyDateService;

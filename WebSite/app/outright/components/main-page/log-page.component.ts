@@ -19,11 +19,6 @@ import LogComponent from "../log.component";
 export default class LogPageComponent implements OnInit {
 
     public request: LogRequest;
-    //  = {
-    //     leagueId: 0,
-    //     matchCode: '',
-    //     fromDa
-    // };
 
     ngOnInit(): void {
         // throw new Error("Method not implemented.");
