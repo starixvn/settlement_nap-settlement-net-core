@@ -108,7 +108,7 @@ public class OutrightSettleProcessServiceImp : OutrightSettleProcessService
 
 			listMatchFailed.Add(refDataService.GetTeamName(team.TeamId));
 			message = string.IsNullOrEmpty(message) ? result.ErrorMessage : message;
-		};
+		}
 
 		return new ResultOutright
 		{

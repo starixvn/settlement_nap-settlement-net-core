@@ -4,13 +4,13 @@ namespace Settlement.Outright.Criteria;
 
 public class GetSportListCriteria : CriteriaBase
 {
-    public override string GetSettingKey()
-    {
-        return "NAP_SelSports";
-    }
+	public override string GetSettingKey()
+	{
+		return "NAP_SelSports";
+	}
 
-    public override bool IsValid()
-    {
-        return true;
-    }
+	public override bool IsValid()
+	{
+		return true;
+	}
 }

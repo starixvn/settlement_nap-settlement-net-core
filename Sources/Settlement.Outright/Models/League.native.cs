@@ -2,9 +2,9 @@
 
 public class League
 {
-    public int LeagueId { get; set; }
+	public int LeagueId { get; set; }
 
-    public string LeagueName { get; set; }
+	public string LeagueName { get; set; }
 
-    public int SportType { get; set; }
+	public int SportType { get; set; }
 }
