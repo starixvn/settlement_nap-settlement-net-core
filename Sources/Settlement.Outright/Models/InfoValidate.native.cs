@@ -4,9 +4,9 @@ public class InfoValidate
 {
 	public InfoValidate(string matchId, string teamId, DateTime? eventDate = null)
 	{
-		this.EventDate = eventDate;
-		this.MatchId = matchId;
-		this.TeamId = teamId;
+		EventDate = eventDate;
+		MatchId = matchId;
+		TeamId = teamId;
 	}
 
 	public string MatchId { get; set; }
