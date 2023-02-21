@@ -287,22 +287,8 @@
 }
 
 .table-main {
-  .table-content {
-    overflow-y: auto;
-    width: 100%;
-    tr {
-      width: 100%;
-    }
-  }
-  tbody {
-    display: block;
-    overflow-y: auto;
-  }
-  thead,
-  tbody tr {
-    display: table;
-    width: 100%;
-    table-layout: fixed;
+  th {
+    text-align: center;
   }
   .team-name {
     text-align: left;
@@ -346,24 +332,6 @@
   }
   .table-log {
     margin-top: 40px;
-    .index {
-      width: 5px;
-      min-width: 5px;
-    }
-    .td-index {
-      width: 30px;
-    }
-    tbody {
-      display: block;
-      overflow-y: auto;
-      max-height: 440px;
-    }
-    thead,
-    tbody tr {
-      display: table;
-      width: 100%;
-      table-layout: fixed;
-    }
 
     .bg-odd {
       background: #e5ebf2;
@@ -374,16 +342,15 @@
   }
 }
 
+.log-popup-content {
+  .body-half-screen {
+    height: 470px;
+  }
+}
+
 .log-page {
   .table-log {
     margin-top: 40px;
-    .index {
-      width: 5px;
-      min-width: 5px;
-    }
-    .td-index {
-      width: 60px !important;
-    }
   }
 }
 
@@ -395,14 +362,64 @@ label.title {
 .w-5 {
   width: 5%;
 }
-
-.w-7 {
-  width: 7%;
-}
-
-.w-11 {
-  width: 11%;
-}
 .w-10 {
   width: 10%;
+}
+
+.w-15 {
+  width: 15%;
+}
+
+.w-20 {
+  width: 20%;
+}
+
+.w-100 {
+  width: 100%;
+}
+
+.table-scroll {
+  display: block;
+}
+
+.table-scroll thead {
+  position: relative;
+  display: block;
+  width: 100%;
+}
+
+.table-scroll tbody {
+  display: block;
+  position: relative;
+  width: 100%;
+  overflow-y: scroll;
+}
+
+.table-scroll tr {
+  width: 100%;
+  display: flex;
+  td:first,
+  th:first {
+    border-left: 1px solid #cbcbcb;
+  }
+}
+.table-scroll td,
+.table-scroll th {
+  display: flex;
+  border-right: 1px solid #cbcbcb;
+  border-top: 1px solid #cbcbcb;
+  border-left: none;
+  border-bottom: none;
+  align-items: center;
+}
+
+.center {
+  justify-content: center;
+}
+
+.left {
+  justify-content: start;
+}
+.between {
+  justify-content: space-between;
 }

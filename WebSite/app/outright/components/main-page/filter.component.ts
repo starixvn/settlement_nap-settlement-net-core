@@ -94,6 +94,7 @@ export class FilterComponent implements OnInit {
     private async renderLeague(fromDate: NgbDateStruct, toDate: NgbDateStruct, sportType: number) {
         const fromDateValue = this.verifyDateService.dateFormat(fromDate);
         const toDateValue = this.verifyDateService.dateFormat(toDate);
+        this.leagueSelected = 0;
 
         if (this.isValidInput(fromDate, toDate)) {
             this.outrightService.getLeagues({ fromDate: fromDateValue, toDate: toDateValue, sportType }).subscribe(res => {
@@ -127,6 +128,7 @@ export class FilterComponent implements OnInit {
             leagueId: this.leagueSelected,
             moveBetsDay
         }
+        console.log(request)
 
         if (!this.isValidInput(this.fromDate, this.toDate)) {
             this.showWarningMessage(Resources.invalidDate);

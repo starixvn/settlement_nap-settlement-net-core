@@ -54,33 +54,33 @@
           </div>
         </div>
         <div [hidden]="item.collapsed">
-          <table class="table-log">
+          <table class="table-log table-scroll">
             <thead>
               <tr>
-                <th class="index" style="width: 5px;">#</th>
-                <th>Log Time</th>
-                <th>Handled By</th>
-                <th>Team Name</th>
-                <th>Action</th>
-                <th>Result String</th>
-                <th>Remark</th>
+                <th class="w-5 center">#</th>
+                <th class="w-10 center">Log Time</th>
+                <th class="w-15 center">Handled By</th>
+                <th class="w-100 center">Team Name</th>
+                <th class="w-20 center">Action</th>
+                <th class="w-15 center">Result String</th>
+                <th class="w-10 center">Remark</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody dynamicHeight class="body-half-screen">
               <ng-container
                 *ngFor="let log of item.outrightLogDetails; let i = index"
               >
                 <tr [ngClass]="i % 2 !== 0 ? 'bg-odd' : ''">
-                  <td class="td-index">{{ i + 1 }}</td>
-                  <td>
+                  <td class="td-index w-5 center">{{ i + 1 }}</td>
+                  <td class="w-10">
                     {{ log.logDate | date: "mediumDate" }}
                     {{ log.logDate | date: "hh:mm:ss a" }}
                   </td>
-                  <td>{{ log.username }}</td>
-                  <td class="team-name text-left">{{ log.teamName }}</td>
-                  <td class="text-left">{{ log.actionNameEn }}</td>
-                  <td>{{ log.result }}</td>
-                  <td>{{ log.remark }}</td>
+                  <td class="w-15">{{ log.username }}</td>
+                  <td class="team-name text-left w-100">{{ log.teamName }}</td>
+                  <td class="text-left w-20">{{ log.actionNameEn }}</td>
+                  <td class="w-15 center">{{ log.result }}</td>
+                  <td class="w-10 center">{{ log.remark }}</td>
                 </tr>
               </ng-container>
             </tbody>
