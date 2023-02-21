@@ -6,6 +6,7 @@ using Settlement.Core.Models;
 using Settlement.Sportsbook.Aio.Constants;
 using Settlement.Sportsbook.Aio.Criteria;
 using Settlement.Sportsbook.Aio.Requests;
+using Settlement.Sportsbook.Aio.Services.Cricket;
 
 namespace Settlement.Sportsbook.Aio.Services;
 
@@ -27,18 +28,21 @@ public class MultipleServerAioServiceImp : MultipleServerAioService
     private readonly ScaleOutSettleService scaleOutSettleService;
     private readonly ICreateQueryService createQueryService;
     private readonly MergeDataService mergeDataService;
+    private readonly NetPositionService netPositionService;
 
     public MultipleServerAioServiceImp(IDynamicRepository repository,
         IOptions<AppSettingsKey> appSettingsKey,
         ScaleOutSettleService scaleOutSettleService,
         ICreateQueryService createQueryService,
-        MergeDataService mergeDataService)
+        MergeDataService mergeDataService,
+        NetPositionService netPositionService)
     {
         this.repository = repository;
         this.appSettingsKey = appSettingsKey.Value;
         this.scaleOutSettleService = scaleOutSettleService;
         this.createQueryService = createQueryService;
         this.mergeDataService = mergeDataService;
+        this.netPositionService = netPositionService;
     }
 
     public async Task<(List<Models.ResultDetail>, TicketCounts)> FetchResultDetails(GetResultDetailCriteria criteria, int sportType)
@@ -173,44 +177,50 @@ public class MultipleServerAioServiceImp : MultipleServerAioService
     public async Task<Result> Settle(SettleRequest request)
     {
         var criteria = createQueryService.QuerySettle(request);
-        var result = await Execute(criteria, request.SelectedResources);
-        var isChildMatch = request.SportType == SportType.Cricket && result.ErrCode == 0;
-        var childMatchIds = isChildMatch ? await GetChildMatchIds(request.MatchId, criteria.Action, criteria.SelectedResources) : string.Empty;
+        var (result, resultCommands) = await Execute(criteria, request.SelectedResources);
 
-        var settleResult = new Result
+        if (request.SportType == SportType.Cricket && result.IsSuccessful)
         {
-            ErrCode = result.ErrCode,
-            ErrMsg = result.ErrMsg,
-            ChildMatchIds = childMatchIds,
-            ResultCommand = result.ResultCommand
+            return await SettleChildMatchAndNetPosition(criteria, resultCommands);
+        }
+
+        return result;
+    }
+
+    private async Task<Result> SettleChildMatchAndNetPosition(SettleCriteria criteria, List<ResultCommand> resultCommands)
+    {
+        var request = new NetPositionRequest
+        {
+            Action = criteria.Action,
+            IsCallNPService = criteria.IsCallNPService,
+            MatchId = criteria.MatchId,
+            ResultCommand = resultCommands
         };
 
-        return settleResult;
+        var childMatchIds = await GetChildMatchIds(criteria.MatchId, criteria.Action, criteria.SelectedResources);
+
+        var result = await netPositionService.NetPosition(request);
+        result.ChildMatchIds = childMatchIds;
+
+        return result;
     }
 
     private async Task SetUnderSettleFlag(SettleCriteria criteria, List<ResourceItem> selectedResources)
     {
         var actionToSetFlag = new List<string> { SettleType.Calculate, SettleType.Undo, SettleType.Refund };
-        const string resourceIdToSetFlag = "00";
-        if (actionToSetFlag.Contains(criteria.Action) && selectedResources.Any(resource => resource.ResourceId == resourceIdToSetFlag))
+        if (actionToSetFlag.Contains(criteria.Action) && selectedResources.Any(resource => resource.ResourceId == ResourceType.Final))
         {
             await scaleOutSettleService.UpdateUnderSettlementFlag(criteria.MatchId, criteria.AdminId, criteria.Action);
         }
     }
 
-    private async Task<Result> Execute(SettleCriteria criteria, List<ResourceItem> selectedResources)
+    private async Task<List<ResultCommand>> UpdateInfoAndSettle(SettleCriteria criteria, List<ResourceItem> selectedResources)
     {
-        var commandList = new List<ResultCommand>();
-        var requestChecking = await ValidateBeforeExecute(criteria);
-        if (requestChecking.ErrCode > 0)
-        {
-            return requestChecking;
-        }
-
         await SetUnderSettleFlag(criteria, selectedResources);
 
         await UpdateMatchInfo(criteria);
 
+        var commandList = new List<ResultCommand>();
         foreach (var server in appSettingsKey.SiteDbServer)
         {
             criteria.DbServer = server;
@@ -219,8 +229,19 @@ public class MultipleServerAioServiceImp : MultipleServerAioService
             commandList = await SetResultCommand(commandList, serviceCommand, server);
         }
 
-        requestChecking.ResultCommand = commandList;
-        return requestChecking;
+        return commandList;
+    }
+
+    private async Task<(Result, List<ResultCommand>)> Execute(SettleCriteria criteria, List<ResourceItem> selectedResources)
+    {
+        var result = await ValidateBeforeExecute(criteria);
+        var commandList = new List<ResultCommand>();
+        if (result.IsSuccessful)
+        {
+            commandList = await UpdateInfoAndSettle(criteria, selectedResources);
+        }
+
+        return (result, commandList);
     }
 
     private async Task<List<ResultCommand>> SetResultCommand(List<ResultCommand> commandList, string serviceCommand, string server)
@@ -299,7 +320,7 @@ public class MultipleServerAioServiceImp : MultipleServerAioService
             {
                 criteria.MatchId = match.MatchId;
                 criteria.SelectedResources = createQueryService.CreateResourceChildMatch(match);
-                var result = await Execute(criteria, request.SelectedResources);
+                var (result, _) = await Execute(criteria, request.SelectedResources);
                 createQueryService.WriteLogChildMatch(criteria, result);
             }
         }

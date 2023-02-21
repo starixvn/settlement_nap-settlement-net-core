@@ -10,6 +10,7 @@ using Settlement.Sportsbook.Aio.Constants;
 using Settlement.Sportsbook.Aio.Criteria;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Requests;
+using Settlement.Sportsbook.Aio.Services.Cricket;
 using ResultDetail = Settlement.Sportsbook.Aio.Models.ResultDetail;
 
 namespace Settlement.Sportsbook.Aio.UnitTests.Services;
@@ -34,7 +35,8 @@ public class MultipleServerAioServiceTests
         scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
         createQueryService = Substitute.For<ICreateQueryService>();
         mergeDataService = Substitute.For<MergeDataService>();
-        service = new MultipleServerAioServiceImp(repository, option, scaleOutSettleService, createQueryService, mergeDataService);
+        var netPositionService = Substitute.For<NetPositionService>();
+        service = new MultipleServerAioServiceImp(repository, option, scaleOutSettleService, createQueryService, mergeDataService, netPositionService);
     }
 
     [Theory]
@@ -45,14 +47,14 @@ public class MultipleServerAioServiceTests
     [InlineData(SettleType.Early, 1, 0, 0, 0, 1, 1, TicketStatus.Calculated)]
     [InlineData(SettleType.Calculate, 1, 0, 0, 0, 0, 1, TicketStatus.Refunded)]
     [InlineData(SettleType.Early, 1, 0, 0, 0, 0, 1, TicketStatus.Calculated)]
-    public async Task FetchResultDetails_Always_GenerateTicketStatus(string settleType, int betCount, int inRunning, int inWaiting, int BetMarkedCount, int betSettledCount, int betRefundedCount, string ticketStatus)
+    public async Task FetchResultDetails_Always_GenerateTicketStatus(string settleType, int betCount, int inRunning, int inWaiting, int betMarkedCount, int betSettledCount, int betRefundedCount, string ticketStatus)
     {
         var resultDetail = new ResultDetail
         {
             BetCount = betCount,
             InWaiting = inWaiting,
             InRunning = inRunning,
-            BetMarkedCount = BetMarkedCount,
+            BetMarkedCount = betMarkedCount,
             BetSettledCount = betSettledCount,
             BetRefundedCount = betRefundedCount,
             ResourceId = "00"
@@ -69,7 +71,7 @@ public class MultipleServerAioServiceTests
         mergeDataService.MergeTicketDetails(Arg.Any<List<(List<ResultDetail>, TicketCounts)>>())
             .Returns((ticketDetails, new TicketCounts()));
 
-        var (actualResultDetail, ticketCount) = await service.FetchResultDetails(new GetResultDetailCriteria { SettleType = settleType }, SportType.ESports);
+        var (actualResultDetail, _) = await service.FetchResultDetails(new GetResultDetailCriteria { SettleType = settleType }, SportType.ESports);
 
         Assert.Equal(ticketStatus, actualResultDetail[0].TicketStatus);
     }
@@ -149,7 +151,6 @@ public class MultipleServerAioServiceTests
             ErrCode = 1,
             ErrMsg = "Message",
             ChildMatchIds = string.Empty,
-            ResultCommand = null
         };
 
         Assert.Equal(JsonConvert.SerializeObject(expectResult), JsonConvert.SerializeObject(actual));
@@ -178,7 +179,6 @@ public class MultipleServerAioServiceTests
             ErrCode = 0,
             ErrMsg = null,
             ChildMatchIds = "123,456",
-            ResultCommand = new List<ResultCommand>()
         };
 
         Assert.Equal(JsonConvert.SerializeObject(expectResult), JsonConvert.SerializeObject(actual));
@@ -199,16 +199,12 @@ public class MultipleServerAioServiceTests
         await repository.ExecuteAsync(Arg.Do<SettleCriteria>(x => x.ServiceCommand = "mock"));
         scaleOutSettleService.GetSiteGroupId(Arg.Any<string>()).Returns(1, 2);
 
-        var actual = await service.Settle(request);
+        await service.Settle(request);
 
         await scaleOutSettleService.Received()
             .UpdateUnderSettlementFlag(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<string>());
         await scaleOutSettleService.Received().UpdateMatchInfo(Arg.Any<UpdateMatchInfoRequest>());
         await repository.Received(2).ExecuteAsync(Arg.Any<SettleCriteria>());
-        Assert.Equal(1, actual.ResultCommand[0].SiteDbGroupId);
-        Assert.Equal(2, actual.ResultCommand[1].SiteDbGroupId);
-        Assert.Equal("mock", actual.ResultCommand[0].ServiceCommand);
-        Assert.Equal("mock", actual.ResultCommand[1].ServiceCommand);
     }
 
     [Fact]
