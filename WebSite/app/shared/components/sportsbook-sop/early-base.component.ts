@@ -12,6 +12,7 @@ import { ToastrService } from 'ngx-toastr';
     template: '',
 })
 export class EarlyBaseComponent {
+    public blockUI = true;
     public matchId: number;
     public resultDetails: ResultDetail[];
     public groupMap: GroupMap[];

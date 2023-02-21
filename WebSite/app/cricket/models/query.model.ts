@@ -1,6 +1,5 @@
 ﻿import { ResultDetail } from '../../shared/models/sportsbook-sop/result-detail.model';
 import { SportType } from '../../shared/constants';
-import { ResultCommand } from '../../shared/models/result.model';
 export class SettleQuery {
     matchId: number;
     selectedResources: ResultDetail[];

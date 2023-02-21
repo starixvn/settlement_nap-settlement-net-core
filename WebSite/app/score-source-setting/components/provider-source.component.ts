@@ -1,3 +1,5 @@
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import { ProviderSource, Game, UpdateProviderQuery, GetProviderQuery } from '../models';
@@ -11,6 +13,8 @@ import { DefaultGames } from '../constants/default-games';
 @Component({
     selector: 'provider-source',
     templateUrl: './provider-source.component.html',
+    standalone: true,
+    imports: [CommonModule, FormsModule]
   })
 export class ProviderSourceComponent implements OnInit {
   public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();

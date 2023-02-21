@@ -4,7 +4,7 @@ import { ResultDetail } from '../models/sportsbook-sop';
 
 @Pipe({ name: 'ticketStatus' })
 export class TicketStatusPipe implements PipeTransform {
-    public transform(resultDetails: ResultDetail[], args: string[]) {
+    public transform(resultDetails: ResultDetail[], args: string) {
         return resultDetails.filter((item) => {
             let hasResultStatus = _.isNil(args)
                 || args.length === 0

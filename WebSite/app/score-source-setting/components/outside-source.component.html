@@ -9,7 +9,7 @@
                         Sport
                     </label>
                     <div>
-                        <select [(ngModel)]="sportSelected" class="select-sport" (ngModelChange)="sportChange(sportSelected)">
+                        <select [(ngModel)]="sportSelected" class="select-sport" (ngModelChange)="sportChange()">
                             <option *ngFor="let item of sports" [ngValue]="item.sportType">{{item.sportName}}
                             </option>
                         </select>

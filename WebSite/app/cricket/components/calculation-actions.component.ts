@@ -1,7 +1,9 @@
-﻿import { Component, ViewChild } from '@angular/core';
+﻿import { inject } from '@angular/core/testing';
+import { CalculationMatchDetailComponent } from './calculation-match-detail.component';
+import { Component, ViewChild, Injector } from '@angular/core';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 import * as _ from 'lodash';
-import { MessageBoxService, AioService } from '../../shared/services';
+import { MessageBoxService, AioService, BlockUIService } from '../../shared/services';
 import { ModalDialogMessage, Result } from '../../shared/models';
 import { Language } from '../../shared/language';
 import { SettlementStatusId, SportType, CalculateAction, ResultStatusId } from '../../shared/constants';
@@ -16,13 +18,19 @@ import { VerificationService } from '../services';
 import { ApiKeys, KickOffTime, Resources, ResourcesIds } from '../constants';
 import { ResultDetail, SaveScoreQuery, SportTemplate } from '../../shared/models/sportsbook-sop';
 import { VerificationBaseService } from '../../core/services/verification-base.service';
-import { ResultNameByIdPipe } from '../pipes';
+import { CalculateCommonModule } from '../../shared/modules/calculate-common.module';
+import { ResultByPlayerNamePipe, ResultNameByIdPipe, ResultValuePipe } from '../pipes';
+import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
 @Component({
     selector: 'calculation-actions',
     templateUrl: 'calculation-actions.component.html',
+    standalone: true,
+    imports: [CalculateCommonModule, ResultByPlayerNamePipe, ResultValuePipe, ResultNameByIdPipe, IntervalBackgroundPipe, CalculationMatchDetailComponent],
+    providers: [ResultNameByIdPipe, VerificationService, VerificationBaseService]
 })
 export class CalculationActionsComponent implements SportTemplate {
     @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
+    public blockUI = true;
     public match: Match;
     public hedgeMatchDetail: HedgeMatchDetail;
     public applyHedgeMatch: boolean;
@@ -38,6 +46,7 @@ export class CalculationActionsComponent implements SportTemplate {
     public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
 
     constructor(
+        private inject: Injector,
         private readonly messageBoxService: MessageBoxService,
         private readonly resultNameByIdPipe: ResultNameByIdPipe,
         private readonly verificationService: VerificationService,
@@ -48,6 +57,7 @@ export class CalculationActionsComponent implements SportTemplate {
     }
 
     async getMatch(matchId: number): Promise<void> {
+        this.initService();
         const matchQuery = {
             matchId,
             apikey: ApiKeys.NormalMatch,
@@ -73,6 +83,11 @@ export class CalculationActionsComponent implements SportTemplate {
         });
         this.match.resultDetails = _.orderBy(this.match.resultDetails, (map) => map.ordNo);
         this.init();
+    }
+
+    private initService(){
+        this.inject.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
+        this.toastrService.overlayContainer = this.toastContainer;
     }
 
     private init() {

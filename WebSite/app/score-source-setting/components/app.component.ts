@@ -6,7 +6,8 @@ import {
   ViewContainerRef,
   ViewChild,
   ElementRef,
-  ComponentRef
+  ComponentRef,
+  Type
 } from '@angular/core';
 import * as _ from 'lodash';
 import { GenerateFilterService, QueryService } from '../services';
@@ -25,13 +26,13 @@ import { OutsideSourceComponent } from './outside-source.component';
     QueryService
   ]
 })
-export class AppComponent implements OnInit {
+export class AppSettingComponent implements OnInit {
   @ViewChild('container', { read: ViewContainerRef, static: true }) container: ViewContainerRef;
     public blockUI = true;
     public component: ComponentRef<OnInit>;
 
     constructor(
-        private readonly componentFactoryResolver: ComponentFactoryResolver,
+        private readonly viewContainerRef: ViewContainerRef,
         private readonly blockUIService: BlockUIService,
         private readonly elementRef: ElementRef<HTMLElement>
         ) {
@@ -43,18 +44,17 @@ export class AppComponent implements OnInit {
     }
 
     private createComponent() {
-        const factory = this.getComponentFactory();
-        this.component = this.container.createComponent(factory);
+        this.component = this.viewContainerRef.createComponent(this.getComponentFactory());
         return this.component;
     }
 
-    private getComponentFactory(): ComponentFactory<OnInit> {
+    private getComponentFactory(): Type<OnInit> {
         const pageType = this.elementRef.nativeElement.getAttribute('page-type');
         switch (pageType) {
             case "ProviderSource":
-                return this.componentFactoryResolver.resolveComponentFactory(ProviderSourceComponent);
+                return ProviderSourceComponent;
             case "OutsideSource":
-                return this.componentFactoryResolver.resolveComponentFactory(OutsideSourceComponent);
+                return OutsideSourceComponent;
             default:
               throw new Error('Not implemented yet');
         }

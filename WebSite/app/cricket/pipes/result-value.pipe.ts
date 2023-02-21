@@ -1,10 +1,13 @@
 import * as _ from 'lodash';
 import { Pipe, PipeTransform } from '@angular/core';
 
-@Pipe({ name: 'resultValuePipe' })
+@Pipe({
+    name: 'resultValuePipe',
+    standalone: true
+})
 export class ResultValuePipe implements PipeTransform {
     public transform(resultValue: string, betType = '') {
-        if(_.isEmpty(resultValue)) {
+        if (_.isEmpty(resultValue)) {
             return "-";
         } else {
             return this.getResult(resultValue, betType);

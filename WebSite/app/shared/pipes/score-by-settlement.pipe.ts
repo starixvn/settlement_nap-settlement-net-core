@@ -2,7 +2,10 @@
 import { SettlementStatusId } from '../constants';
 import { Language } from '../language';
 
-@Pipe({ name: 'scoreBySettlement' })
+@Pipe({
+    name: 'scoreBySettlement',
+    standalone: true
+})
 export class ScoreBySettlementPipe implements PipeTransform {
     public transform(score: string, settlementStatusId: number) {
         switch (settlementStatusId) {

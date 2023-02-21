@@ -10,6 +10,7 @@ import { ToastrService } from "ngx-toastr";
     template: '',
 })
 export class RefundActionBaseComponent {
+    public blockUI = true;
     public resultDetails: ResultDetail[];
     public matchDetail: MatchDetail;
     public permission: Permission;

@@ -1,11 +1,12 @@
-﻿import { Component, ViewChild } from '@angular/core';
+﻿import { Injector } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 import {
   Match, SettleQuery, SettleChildMatchQuery
 } from '../models';
 import * as _ from 'lodash';
 import { Language } from '../../shared/language';
-import { MessageBoxService, AioService } from '../../shared/services';
+import { MessageBoxService, AioService, BlockUIService } from '../../shared/services';
 import { ItemsSelect, Result } from '../../shared/models';
 import { ResultStatusId, CalculateAction, SportType } from '../../shared/constants';
 import { EarlyConstraintService, VerificationService } from '../services';
@@ -13,10 +14,16 @@ import { ApiKeys, KickOffTime, ResourcesIds, ResultControlGroup, ResultStatus, T
 import { ExternalResultDetail, ResultDetail, SportTemplate } from '../../shared/models/sportsbook-sop';
 import { EarlyBaseComponent } from '../../shared/components/sportsbook-sop/early-base.component';
 import { VerificationBaseService } from '../../core/services/verification-base.service';
+import { EarlyCommonModule } from '../../shared/modules/early-common.module';
+import { MatchDetailComponent } from './match-detail.component';
+import { ResultValuePipe, ResultByPlayerNamePipe } from '../pipes';
 
 @Component({
   selector: 'early-settlement',
   templateUrl: './early-settlement.component.html',
+  standalone: true,
+  imports: [EarlyCommonModule, MatchDetailComponent, ResultValuePipe, ResultByPlayerNamePipe],
+  providers: [EarlyConstraintService, ResultValuePipe, ResultByPlayerNamePipe, VerificationService]
 })
 export class EarlySettlementComponent extends EarlyBaseComponent implements SportTemplate {
   @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
@@ -25,6 +32,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
   public isShowRefundButton = false;
   public isReadyMatch: boolean;
   constructor(
+    private inject: Injector,
     private readonly earlyConstraintService: EarlyConstraintService,
     private readonly verificationService: VerificationService,
     protected messageBoxService: MessageBoxService,
@@ -35,7 +43,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
   }
 
   async getMatch(matchId: number): Promise<void> {
-    this.toastrService.overlayContainer = this.toastContainer;
+    this.initService();
     const matchQuery = {
       matchId,
       settleType: "EAR",
@@ -44,6 +52,11 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
 
     this.match = await this.aioService.getMatch(matchQuery).toPromise() as Match;
     this.init();
+  }
+
+  private initService() {
+    this.inject.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
+    this.toastrService.overlayContainer = this.toastContainer;
   }
 
   private init() {
@@ -88,7 +101,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
   private upperCaseResult(map: ResultDetail) {
     map.homeValue = map.homeValue?.toUpperCase();
     map.externalScores.forEach(result => {
-        result.homeValue = result.homeValue?.toUpperCase();
+      result.homeValue = result.homeValue?.toUpperCase();
     });
   }
 

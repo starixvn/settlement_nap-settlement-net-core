@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { Component, Input } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatchDetail } from '../../models/sportsbook-sop';
 import { AioService } from '../../services';
 import { MatDialog } from '@angular/material/dialog';
@@ -14,7 +14,7 @@ export class CalculationMatchDetailBaseComponent {
     public matchDetail: MatchDetail;
 
     constructor(
-        protected  dialog: MatDialog,
+        protected dialog: MatDialog,
         protected aioService: AioService) {
     }
 
@@ -33,5 +33,5 @@ export class CalculationMatchDetailBaseComponent {
                 }
             });
         });
-      }
+    }
 }

@@ -2,7 +2,8 @@
 
 @Component({
     selector: 'not-ready-match',
-    templateUrl: './not-ready-match.component.html'
+    templateUrl: './not-ready-match.component.html',
+    standalone: true
 })
 export class NotReadyMatchComponent  {
 }

@@ -1,4 +1,5 @@
-﻿import { Component, OnInit, Input } from '@angular/core';
+﻿import { CommonModule } from '@angular/common';
+import { Component, OnInit, Input } from '@angular/core';
 import * as _ from 'lodash';
 import { MatchDetail } from '../../shared/models/sportsbook-sop';
 import { MatDialog } from '@angular/material/dialog';
@@ -7,7 +8,9 @@ import { Match } from '../models';
 import { CalculationMatchDetailBaseComponent } from '../../shared/components/sportsbook-sop/calculation-match-detail-base.component';
 @Component({
     selector: 'calculation-match-detail',
-    templateUrl: './calculation-match-detail.component.html'
+    templateUrl: './calculation-match-detail.component.html',
+    standalone: true,
+    imports: [CommonModule]
 })
 export class CalculationMatchDetailComponent extends CalculationMatchDetailBaseComponent  implements OnInit {
     @Input() public match: Match;

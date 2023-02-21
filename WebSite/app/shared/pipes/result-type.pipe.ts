@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 
 @Pipe({ name: 'resultType' })
 export class ResultTypePipe implements PipeTransform {
-    public transform(resultDetails: ResultDetail[], args: string[]) {
+    public transform(resultDetails: ResultDetail[], args: string) {
         return resultDetails.filter((item) => {
             const hasResultStatus = _.isNil(args)
                 || args.length === 0

@@ -1,7 +1,9 @@
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Component, OnInit, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { LeagueOutsideSource, UpdateLeagueSourceQuery, OutsideSource } from '../models';
-import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { CdkDragDrop, moveItemInArray, DragDropModule } from '@angular/cdk/drag-drop';
 import { ModalDialogMessage, Result } from '../../shared/models';
 import { Language } from '../../shared/language';
 import { MessageBoxService, HttpRequestService, BlockUIService } from '../../shared/services';
@@ -11,6 +13,8 @@ import * as _ from 'lodash';
 @Component({
   selector: 'manage-league',
   templateUrl: './manage-league.component.html',
+  standalone: true,
+  imports: [FormsModule, CommonModule, DragDropModule, MatDialogModule],
   providers: [MessageBoxService, QueryService, HttpRequestService, BlockUIService]
 })
 
@@ -44,7 +48,7 @@ export class ManageLeagueComponent implements OnInit {
     return !_.isEmpty(this.outsideSourceList) && this.outsideSourceSort.length < 3;
   }
 
-  private drop(event: CdkDragDrop<string[]>) {
+  public drop(event: CdkDragDrop<string[]>) {
     moveItemInArray(this.outsideSourceSort, event.previousIndex, event.currentIndex);
   }
 

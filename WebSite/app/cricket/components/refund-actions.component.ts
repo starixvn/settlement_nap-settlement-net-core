@@ -1,7 +1,8 @@
-﻿import { Component, ViewChild } from '@angular/core';
+﻿
+import { Component, ViewChild, Injector } from '@angular/core';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 import * as _ from 'lodash';
-import { MessageBoxService, AioService } from '../../shared/services';
+import { MessageBoxService, AioService, BlockUIService } from '../../shared/services';
 import { CalculateAction } from '../../shared/constants';
 import { Result, MarkedTicketsModel, ModalDialogMessage } from '../../shared/models';
 import { Language } from '../../shared/language';
@@ -10,10 +11,17 @@ import { SettleQuery, SettleChildMatchQuery, Match
 import { ApiKeys } from '../constants';
 import { RefundActionBaseComponent } from '../../shared/components/sportsbook-sop/refund-action-base.component';
 import { SportTemplate } from '../../shared/models/sportsbook-sop';
+import { RefundCommonModule } from '../../shared/modules/refund-common.module';
+import { ResultNameByIdPipe } from '../pipes';
+import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
+import { MatchDetailComponent } from './match-detail.component';
 
 @Component({
     selector: 'refund-actions',
     templateUrl: 'refund-actions.component.html',
+    standalone: true,
+    imports: [RefundCommonModule, MatchDetailComponent, ResultNameByIdPipe, IntervalBackgroundPipe],
+    providers: [ResultNameByIdPipe]
 })
 export class RefundActionsComponent extends RefundActionBaseComponent implements SportTemplate {
     @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
@@ -21,6 +29,7 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
     private readonly isReSettledTickets: boolean;
     public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
     constructor(
+        private inject: Injector,
         private readonly messageBoxService: MessageBoxService,
         protected toastrService: ToastrService,
         protected aioService: AioService) {
@@ -29,6 +38,7 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
     }
 
     async getMatch(matchId: number): Promise<void> {
+        this.initService();
         const matchQuery = {
             matchId,
             apikey: ApiKeys.NormalMatch,
@@ -37,6 +47,11 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
         this.toastrService.overlayContainer = this.toastContainer;
         this.match = await this.aioService.getMatch(matchQuery).toPromise() as Match;
         this.setMatchInfo();
+    }
+
+    private initService(){
+        this.inject.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
+        this.toastrService.overlayContainer = this.toastContainer;
     }
 
     private setMatchInfo() {
