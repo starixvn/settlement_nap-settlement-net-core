@@ -44,15 +44,14 @@
   <ng-container *ngIf="outrightLogs">
     <ng-container *ngIf="outrightLogs.length; else empty">
       <div *ngFor="let item of outrightLogs">
-        <div (click)="onCollapsedClick(item)">
-          <div class="league">
-            <div class="btn-left"></div>
-            <div class="btn-middle">
-              <span>{{ item.leagueName }}</span>
-            </div>
-            <div [ngClass]="getBackgroundIcon(item.collapsed)"></div>
+        <div class="league" (click)="onCollapsedClick(item)">
+          <div class="btn-left"></div>
+          <div class="btn-middle">
+            <span>{{ item.leagueName }}</span>
           </div>
+          <div [ngClass]="getBackgroundIcon(item.collapsed)"></div>
         </div>
+
         <div [hidden]="item.collapsed">
           <table class="table-log table-scroll">
             <thead>

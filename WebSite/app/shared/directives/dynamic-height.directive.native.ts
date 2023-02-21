@@ -35,7 +35,7 @@ export class DynamicHeightDirective implements AfterViewInit {
 
         const windowHeight = window?.innerHeight;
         const topOffset = this.topOffset || this.calcTopOffset();
-        let height = windowHeight - topOffset;
+        let height = windowHeight - topOffset - 5;
 
         // set min height instead of the calculated
         if (this.minHeight && height < this.minHeight) {
