@@ -8,7 +8,6 @@ import { MessageBoxService } from './message-box.service.native';
 import { Language } from '../language';
 import { HedgeMatchDetail, ResultDetail, SaveScoreQuery } from '../models/sportsbook-sop';
 import { ResultSettingType, SettlementStatusId, TicketStatusText } from '../../shared/constants';
-import { ClosePopupService } from '.';
 
 @Injectable()
 export class AioService {

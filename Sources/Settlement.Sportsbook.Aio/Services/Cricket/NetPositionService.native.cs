@@ -36,9 +36,9 @@ public class NetPositionServiceImp : NetPositionService
 
     private Uri NetPositionUrlApi(string action)
     {
-        var apiUrl = action.Equals(SettleType.Calculate)
-            ? $"{appSettingsKey.NetPositionApi}calculate"
-            : $"{appSettingsKey.NetPositionApi}un-calculate";
+        var apiUrl = action.Equals(SettleType.Undo)
+            ? $"{appSettingsKey.NetPositionApi}un-calculate"
+            : $"{appSettingsKey.NetPositionApi}calculate";
 
         return new Uri(apiUrl);
     }

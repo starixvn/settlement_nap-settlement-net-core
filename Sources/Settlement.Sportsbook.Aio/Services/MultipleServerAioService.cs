@@ -199,7 +199,13 @@ public class MultipleServerAioServiceImp : MultipleServerAioService
 
         var childMatchIds = await GetChildMatchIds(criteria.MatchId, criteria.Action, criteria.SelectedResources);
 
-        var result = await netPositionService.NetPosition(request);
+        var result = new Result();
+        if (criteria.Action.Equals(SettleType.Undo) || criteria.Action.Equals(SettleType.Calculate) ||
+            criteria.Action.Equals(SettleType.Refund))
+        {
+            result = await netPositionService.NetPosition(request);
+        }
+
         result.ChildMatchIds = childMatchIds;
 
         return result;

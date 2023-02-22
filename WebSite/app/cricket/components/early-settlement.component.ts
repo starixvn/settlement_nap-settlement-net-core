@@ -6,7 +6,7 @@ import {
 import * as _ from 'lodash';
 import { Language } from '../../shared/language';
 import { MessageBoxService, AioService } from '../../shared/services';
-import { ItemsSelect, Result, ResultCommand } from '../../shared/models';
+import { ItemsSelect, Result } from '../../shared/models';
 import { ResultStatusId, CalculateAction, SportType } from '../../shared/constants';
 import { EarlyConstraintService, VerificationService } from '../services';
 import { ApiKeys, KickOffTime, ResourcesIds, ResultControlGroup, ResultStatus, TicketStatus } from '../constants';
@@ -169,7 +169,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         this.selectedResources,
         CalculateAction.earlyCalculate,
         this.isReSettledTickets,
-        this.permission.isLeader);
+        this.permission.isLeader, false);
 
       this.doSaveResult(CalculateAction.calculate,
         this.match.originalResultDetail,
@@ -192,7 +192,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         this.selectedResources,
         CalculateAction.earlyUnCalculate,
         this.isReSettledTickets,
-        this.permission.isLeader);
+        this.permission.isLeader, false);
       this.push(query);
     });
   }
@@ -211,7 +211,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
       this.selectedResources,
       CalculateAction.earlyRefund,
       this.isReSettledTickets,
-      this.permission.isLeader);
+      this.permission.isLeader, false);
     this.push(query);
   }
 
@@ -233,6 +233,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     }
   }
 
+      query.isHedgeMatch = true;
   public saveScore() {
     this.toastrService.clear();
     this.confirmationDialogMessage.message = Language.eSports.saveScore;

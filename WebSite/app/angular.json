@@ -1371,8 +1371,8 @@
           },
           "production": {
             "budgets": [{
-              "type": "anyComponentStyle",
-              "maximumWarning": "6kb"
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
             }],
             "optimization": true,
             "outputHashing": "all",
@@ -1383,8 +1383,17 @@
             "vendorChunk": false,
             "buildOptimizer": false,
             "deployUrl": "cricket/"
+            },
+            "development": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true
           }
         }
+          "defaultConfiguration": "production"
       },
       "serve": {
         "builder": "@angular-devkit/build-angular:dev-server",
@@ -1411,6 +1420,8 @@
         "options": {
           "browserTarget": "cricket:build"
         }
+          },
+          "defaultConfiguration": "development"
       }
     }
   },

@@ -8,19 +8,22 @@ export class SettleQuery {
     isReSettledTickets: boolean;
     sportType: number;
     isLeader: boolean;
+    isHedgeMatch: boolean;
 
     constructor(
         matchId: number,
         selectedResources: ResultDetail[],
         actionName: string,
         isReSettledTickets: boolean,
-        isLeader: boolean) {
+        isLeader: boolean,
+        isHedgeMatch: boolean) {
         this.matchId = matchId;
         this.selectedResources = selectedResources;
         this.actionName = actionName;
         this.isReSettledTickets = isReSettledTickets;
         this.sportType = SportType.cricket;
         this.isLeader = isLeader;
+        this.isHedgeMatch = isHedgeMatch;
     }
 }
 
@@ -32,19 +35,6 @@ export class MatchQuery {
         this.matchId = matchId;
         this.settleType = settleType;
         this.sportType = sportType;
-    }
-}
-
-export class NetPositionQuery {
-    matchId: number;
-    action: string;
-    isCallNPService: boolean;
-    resultCommand: ResultCommand[];
-    constructor(matchId: number, action: string, resultCommand: ResultCommand[], isCallNPService: boolean) {
-        this.matchId = matchId;
-        this.action = action;
-        this.isCallNPService = isCallNPService;
-        this.resultCommand = resultCommand;
     }
 }
 

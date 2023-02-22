@@ -8,7 +8,7 @@ import {
     AioService
 } from '../../shared/services';
 import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
-import { CricketService, EarlyConstraintService, VerificationService } from '../services';
+import { EarlyConstraintService, VerificationService } from '../services';
 import { ResultByPlayerNamePipe, ResultNameByIdPipe, ResultValuePipe } from '../pipes';
 import { CalculationActionsComponent as CalculationCricket } from './calculation-actions.component';
 import { RefundActionsComponent as RefundCricket } from './refund-actions.component';
@@ -33,7 +33,6 @@ import { AppBaseComponent } from '../../shared/components/sportsbook-sop/app-bas
         EarlyConstraintService,
         VerificationService,
         VerificationBaseService,
-        CricketService,
         AioService,
         ResultByTeamNamePipe,
         EarlyBaseService,
