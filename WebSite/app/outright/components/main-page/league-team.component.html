@@ -1,5 +1,5 @@
 <!-- <div class="tableFixHead" dynamicHeight> -->
-<table class="table-scroll table-main" *ngIf="outright">
+<table class="table-scroll-down table-main" *ngIf="outright">
   <ng-template *ngTemplateOutlet="header"></ng-template>
   <ng-template *ngTemplateOutlet="body"></ng-template>
 </table>
@@ -63,7 +63,7 @@
               team.orId
             }}</span>
           </td>
-          <td colspan="4" class="w-8">
+          <td colspan="4" class="w-15 center">
             {{ team.kickOffTime | date: "mediumDate" }}
             {{ team.kickOffTime | date: "hh:mm:ss a" }}
           </td>

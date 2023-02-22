@@ -32,7 +32,7 @@ export default class LogComponent {
     public toDate: NgbDateStruct;
     public matchCode: string;
     public leagueId: number;
-    public matchId: number;
+    public matchId: number | null;
 
     public warningDialogMessage: ModalDialogMessage = new ModalDialogMessage();
 
@@ -60,7 +60,6 @@ export default class LogComponent {
 
     private initialData() {
         const date = new Date();
-        console.log(date, date.getMonth())
         const fromDateValue = this.request?.fromDate ? this.verifyDateService.convertToDateStruct(this.request.fromDate) : ({ day: date.getDate() - 1, month: date.getMonth() + 1, year: date.getFullYear() });
         const toDateValue = this.request?.toDate ? this.verifyDateService.convertToDateStruct(this.request.toDate) : ({ day: date.getDate(), month: date.getMonth() + 1, year: date.getFullYear() });
 
@@ -68,7 +67,7 @@ export default class LogComponent {
         this.toDate = toDateValue;
         this.matchCode = this.request?.matchCode ?? '';
         this.leagueId = this.request?.leagueId ?? 0;
-        this.matchId = this.request?.matchId ?? 0;
+        this.matchId = this.request?.matchId ?? null;
         this.request && this.search();
     }
 
