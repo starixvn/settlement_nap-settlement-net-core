@@ -4,7 +4,7 @@ namespace Settlement.Sportsbook.Aio.Requests;
 
 public class NetPositionRequest
 {
-    public bool IsCallNPService { get; set; }
+    public bool IsHedgeMatch { get; set; }
 
     public int MatchId { get; set; }
 

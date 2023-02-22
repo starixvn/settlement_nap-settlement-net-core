@@ -192,7 +192,7 @@ public class MultipleServerAioServiceImp : MultipleServerAioService
         var request = new NetPositionRequest
         {
             Action = criteria.Action,
-            IsCallNPService = criteria.IsCallNPService,
+            IsHedgeMatch = criteria.IsHedgeMatch,
             MatchId = criteria.MatchId,
             ResultCommand = resultCommands
         };
