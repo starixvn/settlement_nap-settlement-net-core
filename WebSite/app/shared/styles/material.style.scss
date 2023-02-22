@@ -158,6 +158,7 @@
         padding: unset !important;
       }
     }
+
     .mdc-menu-surface.mat-mdc-select-panel {
       padding: unset !important;
     }
@@ -197,8 +198,9 @@
   }
 
   label {
-    font-size: 13px;
-    font-family: Tahoma, Arial, Helvetica, sans-serif !important;
+        font-size: 12px;
+        font-family: Tahoma, Arial, Helvetica, sans-serif !important;
+        color: black;
   }
 }
 
