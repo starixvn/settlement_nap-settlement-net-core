@@ -204,6 +204,10 @@
   }
 }
 
+.mat-mdc-checkbox {
+    --mdc-checkbox-selected-icon-color: black;
+}
+
 .mdc-list-item--selected:not(.mdc-list-item--disabled)
   .mdc-list-item__primary-text {
   color: black !important;
