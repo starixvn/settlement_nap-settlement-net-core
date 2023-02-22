@@ -9,7 +9,7 @@ import { NgbDateStruct, NgbModule } from '@ng-bootstrap/ng-bootstrap';
     host: {
         '(document:click)': 'onClick($event)',
     },
-    imports:[NgbModule, FormsModule]
+    imports: [NgbModule, FormsModule]
 })
 export class DatepickerComponent {
     @Input() public date: NgbDateStruct;
@@ -31,6 +31,7 @@ export class DatepickerComponent {
 
     public openDatepicker(id) {
         this.dynamicId = id;
+
     }
 
     public onClick(event) {
