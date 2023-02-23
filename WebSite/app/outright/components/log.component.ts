@@ -26,6 +26,7 @@ export default class LogComponent {
 
     public outrightLogs: OutrightLog[] | null = null;
     @Input() request: LogRequest;
+    @Input() isPage = false;
 
     public blockUI = true;
     public fromDate: NgbDateStruct;
@@ -33,6 +34,7 @@ export default class LogComponent {
     public matchCode: string;
     public leagueId: number;
     public matchId: number | null;
+
 
     public warningDialogMessage: ModalDialogMessage = new ModalDialogMessage();
 

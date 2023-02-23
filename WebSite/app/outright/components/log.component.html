@@ -65,29 +65,43 @@
                 <th class="w-10 center">Remark</th>
               </tr>
             </thead>
-            <tbody dynamicHeight class="body-half-screen">
+            <tbody *ngIf="isPage" dynamicHeight>
               <ng-container
-                *ngFor="let log of item.outrightLogDetails; let i = index"
-              >
-                <tr [ngClass]="i % 2 !== 0 ? 'bg-odd' : ''">
-                  <td class="td-index w-5 center">{{ i + 1 }}</td>
-                  <td class="w-30 center">
-                    {{ log.logDate | date: "mediumDate" }}
-                    {{ log.logDate | date: "hh:mm:ss a" }}
-                  </td>
-                  <td class="w-15">{{ log.username }}</td>
-                  <td class="team-name text-left w-100">{{ log.teamName }}</td>
-                  <td class="text-left w-30">{{ log.actionNameEn }}</td>
-                  <td class="w-15 center">{{ log.result }}</td>
-                  <td class="w-10 center">{{ log.remark }}</td>
-                </tr>
-              </ng-container>
+                [ngTemplateOutlet]="tbodyLeague"
+                [ngTemplateOutletContext]="{ link: item }"
+              ></ng-container>
+            </tbody>
+
+            <tbody *ngIf="!isPage" class="body-half-screen">
+              <ng-container
+                [ngTemplateOutlet]="tbodyLeague"
+                [ngTemplateOutletContext]="{ link: item }"
+              ></ng-container>
             </tbody>
           </table>
         </div>
       </div>
     </ng-container>
   </ng-container>
+
+  <ng-template #tbodyLeague let-link="link">
+    <ng-container *ngFor="let log of link.outrightLogDetails; let i = index">
+      <tr [ngClass]="i % 2 !== 0 ? 'bg-odd' : ''">
+        <td class="td-index w-5 center">{{ i + 1 }}</td>
+        <td class="w-30 center">
+          {{ log.logDate | date: "mediumDate" }}
+          {{ log.logDate | date: "hh:mm:ss a" }}
+        </td>
+        <td class="w-15">{{ log.username }}</td>
+        <td class="team-name text-left w-100">
+          {{ log.teamName }}
+        </td>
+        <td class="text-left w-30">{{ log.actionNameEn }}</td>
+        <td class="w-15 center">{{ log.result }}</td>
+        <td class="w-10 center">{{ log.remark }}</td>
+      </tr>
+    </ng-container>
+  </ng-template>
 
   <ng-template #empty>
     <table class="table-empty">

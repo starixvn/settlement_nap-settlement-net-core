@@ -10,12 +10,15 @@ import { ModalDialogMessage } from '../../../shared/models';
 import { DatepickerComponent } from '../../../shared/components/date-picker/date-picker.component';
 import { FormsModule } from '@angular/forms';
 import { Resources } from '../../constants/resources';
+import { MatSelectModule } from '@angular/material/select';
+import { MatTooltipModule } from '@angular/material/tooltip';
+
 
 @Component({
     selector: 'filter',
     templateUrl: './filter.component.html',
     standalone: true,
-    imports: [CommonModule, FormsModule, DatepickerComponent],
+    imports: [CommonModule, FormsModule, DatepickerComponent, MatSelectModule, MatTooltipModule],
     providers: [DatePipe, VerifyDateService, OutrightService, HttpRequestService, MessageBoxService,
     ],
 })

@@ -38,15 +38,22 @@
         </select>
       </div>
 
-      <div class="field" style="width: auto;">
+      <div class="field" style="width: auto; display: flex;">
         <label class="inner-label">
           League
         </label>
-        <select [(ngModel)]="leagueSelected" class="league-select">
-          <option *ngFor="let item of leagueOptions" [value]="item.leagueId">{{
-            item.leagueName
-          }}</option>
-        </select>
+        <div style="position: relative;">
+          <mat-select [(ngModel)]="leagueSelected" panelClass="testClass">
+            <mat-option
+              *ngFor="let item of leagueOptions"
+              [value]="item.leagueId"
+              [matTooltip]="item.leagueName.length > 51 ? item.leagueName : ''"
+              matTooltipPosition="right"
+              >{{ item.leagueName }}</mat-option
+            >
+          </mat-select>
+          <span class="chevron bottom"></span>
+        </div>
       </div>
       <div class="field">
         <label class="inner-label">
