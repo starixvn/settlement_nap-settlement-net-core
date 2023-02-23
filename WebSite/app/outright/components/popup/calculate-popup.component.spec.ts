@@ -9,7 +9,6 @@ import { ToastContainerDirective, ToastContainerModule, ToastNoAnimationModule, 
 import { StatusPipe } from '../../pipes/status-pipe';
 import { CalculateService, OutrightService } from '../../services';
 import { DatepickerComponent } from '../../../shared/components/date-picker/date-picker.component';
-
 import { CalculatePopupComponent } from './calculate-popup.component';
 import { BlockUIService, HttpRequestService, MessageBoxService, VerifyDateService } from '../../../shared/services';
 import { LeagueSettle, Permission, Team } from '../../models';

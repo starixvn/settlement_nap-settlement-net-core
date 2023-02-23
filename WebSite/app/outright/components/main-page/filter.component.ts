@@ -128,7 +128,6 @@ export class FilterComponent implements OnInit {
             leagueId: this.leagueSelected,
             moveBetsDay
         }
-        console.log(request)
 
         if (!this.isValidInput(this.fromDate, this.toDate)) {
             this.showWarningMessage(Resources.invalidDate);

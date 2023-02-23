@@ -1,16 +1,12 @@
 import { Component, Inject, Injector, OnInit, ViewEncapsulation } from '@angular/core';
-import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { OutrightService } from '../../services/outright.service';
 import { BlockUIService, HttpRequestService, MessageBoxService, VerifyDateService } from '../../../shared/services';
 import { LogRequest } from '../../models/log-request.model';
-import { OutrightLog } from '../../models/outright-log.model';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DatepickerComponent } from '../../../shared/components/date-picker/date-picker.component';
-import { MatDialog, MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DynamicHeightDirective } from '../../../shared/directives';
-import { ModalDialogMessage } from '../../../shared/models';
-import { Resources } from '../../constants/resources';
 import LogComponent from '../log.component';
 
 @Component({

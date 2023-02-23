@@ -1,7 +1,5 @@
 import { ChangeDetectorRef, Component, ComponentFactory, ComponentFactoryResolver, ComponentRef, ElementRef, Injector, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
-import { Outright } from '../models/outright.model';
 import { BlockUIService } from '../../shared/services';
-import { FilterRequest } from '../models/filter-request.model';
 import { FilterComponent } from './main-page/filter.component';
 import { LeagueTeamComponent } from './main-page/league-team.component';
 import { CommonModule } from '@angular/common';
@@ -9,7 +7,6 @@ import { LogPopupComponent } from './popup/log-popup.component';
 import MainPageComponent from './main-page/main-page.component';
 import { PageType } from '../../shared/constants';
 import { MatDialogModule } from '@angular/material/dialog';
-import LogComponent from './log.component';
 import LogPageComponent from './main-page/log-page.component';
 
 @Component({
