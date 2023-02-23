@@ -1,4 +1,5 @@
 ﻿import { Injector } from '@angular/core';
+import { lastValueFrom } from 'rxjs';
 import { Component, ViewChild } from '@angular/core';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 import {
@@ -7,7 +8,7 @@ import {
 import * as _ from 'lodash';
 import { Language } from '../../shared/language';
 import { MessageBoxService, AioService, BlockUIService } from '../../shared/services';
-import { ItemsSelect, Result } from '../../shared/models';
+import { ItemsSelect } from '../../shared/models';
 import { ResultStatusId, CalculateAction, SportType } from '../../shared/constants';
 import { EarlyConstraintService, VerificationService } from '../services';
 import { ApiKeys, KickOffTime, ResourcesIds, ResultControlGroup, ResultStatus, TicketStatus } from '../constants';
@@ -49,8 +50,8 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
       settleType: "EAR",
       apiKey: ApiKeys.NormalMatch
     };
-
-    this.match = await this.aioService.getMatch(matchQuery).toPromise() as Match;
+    const match$ = this.aioService.getMatch(matchQuery);
+    this.match = await lastValueFrom(match$) as Match;
     this.init();
   }
 
@@ -163,7 +164,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         apikey: ApiKeys.NormalMatch,
         sportType: SportType.cricket,
       };
-      const needConfirm = await this.aioService.verifyChangedSettledTickets(this.selectedResources, getEarlyResultQuery).toPromise();
+      const needConfirm = await this.aioService.verifyChangedSettledTickets(this.selectedResources, getEarlyResultQuery);
       if (needConfirm) {
         this.confirmationDialogMessage.message = Language.recalculateNotification;
         this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
@@ -229,7 +230,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
   }
 
   private async push(query: SettleQuery) {
-    const result = await this.aioService.push(query).toPromise() as Result;
+    const result = await this.aioService.push(query);
     if (result.isSuccessful) {
       this.handleChildMatch(result.childMatchIds, query);
       this.messageBoxService.closePopup();
@@ -242,7 +243,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     if (!_.isEmpty(childMatchIds)) {
       const settleChildMatchQuery = new SettleChildMatchQuery(childMatchIds, settleQuery.selectedResources,
         settleQuery.actionName, settleQuery.isReSettledTickets);
-      await this.aioService.pushChildMatch(settleChildMatchQuery).toPromise();
+      await this.aioService.pushChildMatch(settleChildMatchQuery);
     }
   }
 
@@ -319,7 +320,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
       isTrader: true
     };
 
-    const result = await this.aioService.saveScore(query).toPromise() as Result;
+    const result = await this.aioService.saveScore(query);
     if (result.isSuccessful) {
       this.autoUncheckAfterFilter();
     } else {

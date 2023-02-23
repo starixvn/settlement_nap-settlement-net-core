@@ -89,7 +89,7 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
             CalculateAction.refund,
             this.isReSettledTickets,
             this.match.permission.isLeader, false);
-        const result = await this.aioService.push(query).toPromise() as Result;
+        const result = await this.aioService.push(query);
         if (result.isSuccessful) {
             this.handleChildMatch(query, result.childMatchIds);
             this.settleHedgeMatch(query);
@@ -103,7 +103,7 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
         if (hedgeMatchId > 0) {
             settleQuery.matchId = hedgeMatchId;
             settleQuery.isHedgeMatch = true;
-            const result = await this.aioService.push(settleQuery).toPromise() as Result;
+            const result = await this.aioService.push(settleQuery);
             if (result.isSuccessful) {
                 this.messageBoxService.closePopup();
             } else {
@@ -118,7 +118,7 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
         if (!_.isEmpty(childMatchIds)) {
             const settleChildMatchQuery = new SettleChildMatchQuery(childMatchIds, settleQuery.selectedResources,
                 settleQuery.actionName, settleQuery.isReSettledTickets);
-            await this.aioService.pushChildMatch(settleChildMatchQuery).toPromise();
+            await this.aioService.pushChildMatch(settleChildMatchQuery);
         }
     }
 }

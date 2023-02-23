@@ -103,7 +103,7 @@ export class RefundActionBaseComponent {
         const hedgeMatchId = this.applyHedgeMatch ? this.hedgeMatchDetail.matchId : 0;
         if (hedgeMatchId > 0) {
             query.matchId = hedgeMatchId;
-            await this.aioService.push(query).toPromise();
+            await this.aioService.push(query);
         } 
     }
 

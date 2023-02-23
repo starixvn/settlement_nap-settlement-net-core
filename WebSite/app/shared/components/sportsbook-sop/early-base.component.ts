@@ -170,7 +170,7 @@ export class EarlyBaseComponent {
             checkedScores,
             apiKey: ApiKey
         };
-        const result = await this.aioService.saveScore(query).toPromise() as Result;
+        const result = await this.aioService.saveScore(query);
         if (!result.isSuccessful) {
             this.toastrService.error(result.errMsg);
         } else {
