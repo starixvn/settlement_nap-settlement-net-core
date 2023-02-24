@@ -45,11 +45,16 @@
         <div style="position: relative;">
           <mat-select [(ngModel)]="leagueSelected" panelClass="testClass">
             <mat-option
-              *ngFor="let item of leagueOptions"
+              *ngFor="let item of leagueOptions; trackBy: trackByFn"
               [value]="item.leagueId"
-              [matTooltip]="item.leagueName.length > 51 ? item.leagueName : ''"
+              [matTooltip]="item.leagueName.length > 50 ? item.leagueName : ''"
+              #tooltip="matTooltip"
               matTooltipPosition="right"
-              >{{ item.leagueName }}</mat-option
+              >{{
+                item.leagueName.length > 50
+                  ? item.leagueName.substr(0, 50) + "..."
+                  : item.leagueName
+              }}</mat-option
             >
           </mat-select>
           <span class="chevron bottom"></span>

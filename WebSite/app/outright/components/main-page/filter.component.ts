@@ -51,6 +51,9 @@ export class FilterComponent implements OnInit {
 
     constructor(protected injector: Injector) { }
 
+    trackByFn = (index: number, item: any) => item.leagueId;
+
+
     ngOnInit(): void {
         this.verifyDateService = this.injector.get(VerifyDateService);
         this.outrightService = this.injector.get(OutrightService);
