@@ -56,13 +56,13 @@
           <table class="table-log table-scroll-down">
             <thead>
               <tr>
-                <th class="w-5 center">#</th>
-                <th class="w-30 center">Log Time</th>
-                <th class="w-20 center">Handled By</th>
+                <th class="w-10 center">#</th>
+                <th class="w-40 center">Log Time</th>
+                <th class="w-25 center">Handled By</th>
                 <th class="w-100 center">Team Name</th>
-                <th class="w-45 center">Action</th>
-                <th class="w-30 center">Result String</th>
-                <th class="w-30 center">Remark</th>
+                <th class="w-40 center">Action</th>
+                <th class="w-40 center">Result String</th>
+                <th class="w-40 center">Remark</th>
               </tr>
             </thead>
             <tbody *ngIf="isPage" dynamicHeight>
@@ -87,18 +87,18 @@
   <ng-template #tbodyLeague let-link="link">
     <ng-container *ngFor="let log of link.outrightLogDetails; let i = index">
       <tr [ngClass]="i % 2 !== 0 ? 'bg-odd' : ''">
-        <td class="td-index w-5 center">{{ i + 1 }}</td>
-        <td class="w-30 center">
+        <td class="td-index w-10 center">{{ i + 1 }}</td>
+        <td class="w-40 center">
           {{ log.logDate | date: "mediumDate" }}
           {{ log.logDate | date: "hh:mm:ss a" }}
         </td>
-        <td class="w-20">{{ log.username }}</td>
+        <td class="w-25 center">{{ log.username }}</td>
         <td class="team-name text-left w-100">
           {{ log.teamName }}
         </td>
-        <td class="text-left w-45">{{ log.actionNameEn }}</td>
-        <td class="w-30 center">{{ log.result }}</td>
-        <td class="w-30 center">{{ log.remarkName }}</td>
+        <td class="text-left w-40">{{ log.actionNameEn }}</td>
+        <td class="w-40 center">{{ log.result }}</td>
+        <td class="w-40 center">{{ log.remarkName }}</td>
       </tr>
     </ng-container>
   </ng-template>
