@@ -116,6 +116,7 @@
         display: inline-block;
         white-space: nowrap !important;
         user-select: text;
+    color: black;
     }
 }
 
@@ -131,7 +132,6 @@
 
 .cdk-overlay-connected-position-bounding-box {
 
-    .cdk-overlay-pane {
         transform: none !important;
         overflow-x: hidden;
         box-sizing: content-box;
@@ -153,7 +153,6 @@
         }
     }
 
-}
 
 .cdk-overlay-backdrop {
     display: none !important;
