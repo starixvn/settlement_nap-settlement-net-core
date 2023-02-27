@@ -404,6 +404,8 @@
 }
 
 .log-popup-content {
+  max-height: 617px !important;
+  overflow: auto;
   .body-half-screen {
     max-height: 490px !important;
   }
@@ -560,4 +562,15 @@ label.title {
 .chevron.bottom:before {
   //   top: 0;
   transform: rotate(135deg);
+}
+
+.mat-mdc-dialog-title {
+  position: sticky;
+  width: 100%;
+  top: 0px;
+  z-index: 1;
+}
+
+.mdc-dialog__surface {
+  overflow-y: unset !important;
 }

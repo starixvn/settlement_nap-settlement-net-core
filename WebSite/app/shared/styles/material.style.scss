@@ -115,6 +115,7 @@
     display: inline-block;
     white-space: nowrap !important;
     user-select: text;
+    color: black;
   }
 }
 
@@ -136,13 +137,6 @@
     margin-left: -5px;
     margin-top: -2px;
 
-    .cdk-overlay-pane {
-      transform: none !important;
-      overflow-x: hidden;
-      box-sizing: content-box;
-      padding: 2px 4px 10px 5px;
-      margin-left: -5px;
-      margin-top: -2px;
 
       .mat-mdc-select-panel {
         background: #fff;
@@ -163,7 +157,6 @@
       padding: unset !important;
     }
   }
-}
 
 .cdk-overlay-backdrop {
   display: none !important;
