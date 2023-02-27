@@ -1660,7 +1660,7 @@
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
             "outputPath": "../wwwroot/outright",
-            "index": "outright/index.html",
+            "index": "outright/index.cshtml",
             "main": "outright/main.ts",
             "tsConfig": "outright/tsconfig.app.json",
             "polyfills": "polyfills.ts",
