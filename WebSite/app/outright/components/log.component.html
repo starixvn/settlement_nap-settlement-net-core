@@ -44,7 +44,11 @@
   <ng-container *ngIf="outrightLogs">
     <ng-container *ngIf="outrightLogs.length; else empty">
       <div *ngFor="let item of outrightLogs">
-        <div class="league" (click)="onCollapsedClick(item)">
+        <div
+          class="league"
+          (click)="onCollapsedClick(item)"
+          style="display: flex;"
+        >
           <div class="btn-left"></div>
           <div class="btn-middle">
             <span>{{ item.leagueName }}</span>
@@ -57,7 +61,7 @@
             <thead>
               <tr>
                 <th class="w-10 center">#</th>
-                <th class="w-40 center">Log Time</th>
+                <th class="w-45 center">Log Time</th>
                 <th class="w-25 center">Handled By</th>
                 <th class="w-100 center">Team Name</th>
                 <th class="w-50 center">Action</th>
@@ -88,7 +92,7 @@
     <ng-container *ngFor="let log of link.outrightLogDetails; let i = index">
       <tr [ngClass]="i % 2 !== 0 ? 'bg-odd' : ''">
         <td class="td-index w-10 center">{{ i + 1 }}</td>
-        <td class="w-40 center">
+        <td class="w-45 center">
           {{ log.logDate | date: "mediumDate" }}
           {{ log.logDate | date: "hh:mm:ss a" }}
         </td>
