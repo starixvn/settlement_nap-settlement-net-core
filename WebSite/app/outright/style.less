@@ -10,6 +10,7 @@
   .field {
     height: 21px;
   }
+
   .league-select {
     min-width: 200px;
     width: 400px;
@@ -41,8 +42,22 @@
     //   background-color: grey !important;
     //   color: white;
     // }
-    .mat-mdc-select-arrow-wrapper {
-      display: none;
+    // .mat-mdc-select-arrow-wrapper {
+    //   display: none;
+    // }
+    .mat-select-arrow {
+      /* Remove the top part of the existing arrow triangle to form a chevron shape */
+      &::after {
+        content: "";
+        display: block;
+        width: 0;
+        height: 0;
+        margin-left: -3px;
+        margin-top: -5px;
+        border-left: 3px solid transparent;
+        border-right: 3px solid transparent;
+        border-top: 3px solid white; /* This needs to match your input field background */
+      }
     }
   }
 
@@ -112,6 +127,14 @@
     .over-status {
       margin-left: 85px;
     }
+  }
+}
+
+.filter-bar-outright {
+  padding-bottom: 10px;
+  .league-field {
+    width: auto;
+    display: flex;
   }
 }
 

@@ -58,11 +58,11 @@
               <tr>
                 <th class="w-5 center">#</th>
                 <th class="w-30 center">Log Time</th>
-                <th class="w-15 center">Handled By</th>
+                <th class="w-20 center">Handled By</th>
                 <th class="w-100 center">Team Name</th>
                 <th class="w-45 center">Action</th>
-                <th class="w-15 center">Result String</th>
-                <th class="w-10 center">Remark</th>
+                <th class="w-30 center">Result String</th>
+                <th class="w-30 center">Remark</th>
               </tr>
             </thead>
             <tbody *ngIf="isPage" dynamicHeight>
@@ -92,13 +92,13 @@
           {{ log.logDate | date: "mediumDate" }}
           {{ log.logDate | date: "hh:mm:ss a" }}
         </td>
-        <td class="w-15">{{ log.username }}</td>
+        <td class="w-20">{{ log.username }}</td>
         <td class="team-name text-left w-100">
           {{ log.teamName }}
         </td>
         <td class="text-left w-45">{{ log.actionNameEn }}</td>
-        <td class="w-15 center">{{ log.result }}</td>
-        <td class="w-10 center">{{ log.remark }}</td>
+        <td class="w-30 center">{{ log.result }}</td>
+        <td class="w-30 center">{{ log.remarkName }}</td>
       </tr>
     </ng-container>
   </ng-template>
