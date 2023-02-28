@@ -51,7 +51,8 @@ export class LeagueTeamComponent implements OnInit {
                 matchId
             },
             width: '1000px',
-            height: '650px'
+            height: '650px',
+            panelClass: 'log-modalbox'
         });
     }
 
