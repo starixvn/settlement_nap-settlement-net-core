@@ -89,7 +89,7 @@
     <PackageReference Include="Fanex.Logging.Sentry.RavenClient" Version="1.0.1" />
     <PackageReference Include="Fanex.MailDeliver.MailClient" Version="2.0.8" />
     <PackageReference Include="Fanex.NAP.Client.AspNetCore" Version="2.0.0.1" />
-		<PackageReference Include="Fanex.NAP.Signin.AspNetCore" Version="2.0.0.4" />
+		<PackageReference Include="Fanex.NAP.Signin.AspNetCore" Version="2.0.0.5-beta2" />
 		<PackageReference Include="Fanex.RemotingRef" Version="1.5.0.1-beta2" />
 		<PackageReference Include="Fanex.Settlement.Converter" Version="1.0.0.1" />
 		<PackageReference Include="Fanex.Settlement.ScaleOut" Version="1.2.7" />

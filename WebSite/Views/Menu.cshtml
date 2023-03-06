@@ -4,17 +4,7 @@
 	var session = new NapSession(new HttpContextAccessor());
 	var menuItemList = session.MenuItemList;
 	var env = ViewBag.Environment.Replace("LOCAL", "DEV");
-	var newListPages = new List<string>()
-	{
-		"/home/log/", "/home/number-game/", "/home/happy5/", "/home/bet-builder/",
-		"/home/move-running-tickets/", "/home/move-tickets/",
-		"/home/provider-source/", "/home/outside-source/", "/home/multi-sports/",
-		"/home/calculation/","/home/auto-calculation/", "/home/outright/", "/home/outright-log"
-
-	};
-	var netCoreRootUrl = ViewBag.NetCoreRootUrl;
-	var rootUrl = ViewBag.RootUrl;
-	var signOut = $"{rootUrl}/Auth/LogOut";
+	const string signOut = "Auth/LogOut";
 }
 
 @if (menuItemList != null)
@@ -48,14 +38,8 @@
 
 				if (item.Count == 0)
 				{
-					var menuUrl = $"{rootUrl}{menuItem.Url}";
-					if (newListPages.Any(n => n.Contains(menuItem.Url)))
-					{
-						menuUrl = $"{netCoreRootUrl}{menuItem.Url}";
-					}
-
 					<li class="@className">
-						<a href="@menuUrl" id="@(menuItem.Name.Replace(" ", string.Empty))-menu">
+						<a href="@menuItem.Url" id="@(menuItem.Name.Replace(" ", string.Empty))-menu">
 							@menuItem.Name
 						</a>
 					</li>
@@ -75,16 +59,13 @@
 									<li class="@(subMenuItem.Name.Replace(" ", "-").ToLower())-sub sub-menu">@subMenuItem.Name</li>
 									foreach (var menu in itemChild)
 									{
-										var menuUrl = newListPages.Any(n => n.Contains(menu.Url)) ? $"{netCoreRootUrl}{menu.Url}" : $"{rootUrl}{menu.Url}";
-
-										<li class="@(menu.Name.Replace(" ", "-").ToLower())-sub"><a href="@menuUrl" class="sub-menu-padding">@menu.Name</a></li>
+										<li class="@(menu.Name.Replace(" ", "-").ToLower())-sub"><a href="@menu.Url" class="sub-menu-padding">@menu.Name</a></li>
 									}
 
 								}
 								else
 								{
-									var menuUrl = newListPages.Any(n => n.Contains(subMenuItem.Url)) ? $"{netCoreRootUrl}{subMenuItem.Url}" : $"{rootUrl}{subMenuItem.Url}";
-									<li class="@(subMenuItem.Name.Replace(" ", "-").ToLower())-sub"><a href="@menuUrl">@subMenuItem.Name</a></li>
+									<li class="@(subMenuItem.Name.Replace(" ", "-").ToLower())-sub"><a href="@subMenuItem.Url">@subMenuItem.Name</a></li>
 								}
 							}
 						</ul>
