@@ -10,7 +10,7 @@ import {
 } from '../../shared/constants';
 import { EarlyConstraintService, VerificationService } from '../services';
 import { BadmintonApiKeys, InputType, KickOffTime, ResultStatus, VolleyballApiKeys, VolleyballBetTypes } from '../constants';
-import { ResultDetail, HedgeMatchDetail, SportTemplate } from '../../shared/models/sportsbook-sop';
+import { ResultDetail, SportTemplate } from '../../shared/models/sportsbook-sop';
 import { EarlyBaseComponent } from '../../shared/components/sportsbook-sop/early-base.component';
 import { EarlyBaseService } from '../../core/services/early-base.service';
 import { UrlHelper } from '../../helper';
@@ -26,8 +26,6 @@ import { UrlHelper } from '../../helper';
 export class EarlySettlementComponent extends EarlyBaseComponent implements SportTemplate {
   @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
   public match: Match;
-  public hedgeMatchDetail: HedgeMatchDetail;
-  public applyHedgeMatch: boolean;
   public isShowRefundButton = false;
   public isReadyMatch: boolean;
   public originalMatch: Match;
@@ -63,8 +61,6 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     const maxLength = 5;
     this.matchDetail = this.match.matchDetail;
     this.matchId = this.matchDetail.matchId;
-    this.hedgeMatchDetail = this.match.hedgeMatchDetail;
-    this.applyHedgeMatch = this.hedgeMatchDetail != null;
     this.permission = this.match.permission;
     this.match.resultDetails = this.earlyConstraintService.getEarlyResultDetails(this.match.resultDetails,
       this.matchDetail.sportType, maxLength);
@@ -191,21 +187,9 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     }
     const result = await this.aioService.push(query).toPromise() as Result;
     if (result.errCode === 0) {
-      this.pushHedgeMatch(query);
+      this.messageBoxService.closePopup();
     } else {
       this.toastrService.error(result.errMsg);
-    }
-  }
-
-  private pushHedgeMatch(query: SettleQuery) {
-    const hedgeMatchId = this.applyHedgeMatch ? this.match.hedgeMatchDetail.matchId : 0;
-    if (hedgeMatchId > 0) {
-      query.matchId = hedgeMatchId;
-      this.aioService.push(query).toPromise().then(() => {
-        this.messageBoxService.closePopup();
-      });
-    } else {
-      this.messageBoxService.closePopup();
     }
   }
 

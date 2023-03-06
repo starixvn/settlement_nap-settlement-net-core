@@ -4,3 +4,9 @@ export const SettingType = {
     pending: 1,
     underSettlement: 3,
 };
+
+
+export const AutoSettingPosition = {
+    autoPayout:0,
+    directPayout: 4
+}

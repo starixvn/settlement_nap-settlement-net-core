@@ -1,4 +1,5 @@
 import {
+  AutoCalcSetting,
   LeagueMatch,
   Match,
   MultiSport,
@@ -6,7 +7,7 @@ import {
   SportMatch,
 } from "../models";
 import { BlockUIService, DialogBoxService, HttpRequestService, MessageBoxService } from "../../shared/services";
-import { TestBed, getTestBed } from "@angular/core/testing";
+import { TestBed, getTestBed, fakeAsync, tick } from "@angular/core/testing";
 import { NO_ERRORS_SCHEMA } from "@angular/core";
 import { EventStatus } from "../constants";
 import { PopupService } from "./popup.service";
@@ -20,10 +21,10 @@ import { CalculationStatus, SportType } from "../../shared/constants";
 import { Permission } from "../../shared/models/sportsbook-sop/permission.model";
 
 describe("MultiSport - PopupService", () => {
-  let injector: TestBed;
   let popupService: PopupService;
   let dialogBoxService: DialogBoxService;
   let handleActionsService: HandleActionsService;
+  let multiSportService: MultiSportService;
   const match = new Match();
   match.mixParlay = new MixParlay();
 
@@ -35,7 +36,9 @@ describe("MultiSport - PopupService", () => {
     isCheckedCalcMP: false,
     disableCheckCalcMP: false,
     isMergedParlay: true,
-    isAutoPayoutForLeague: false
+    isAutoPayoutForLeague: false,
+    autoCalcSetting: new AutoSetting(),
+    autoWaitingTime: 0
   };
 
   const sport: SportMatch = {
@@ -51,6 +54,8 @@ describe("MultiSport - PopupService", () => {
     permission: new Permission(),
     isCheckedCalcMP: false,
   };
+
+  let autoSetting = new AutoCalcSetting();
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -68,11 +73,10 @@ describe("MultiSport - PopupService", () => {
       ],
       schemas: [NO_ERRORS_SCHEMA],
     });
-
-    injector = getTestBed();
     dialogBoxService = TestBed.inject(DialogBoxService);
     popupService = TestBed.inject(PopupService);
     handleActionsService = TestBed.inject(HandleActionsService);
+    multiSportService = TestBed.inject(MultiSportService);
   });
 
   it("should be created", () => {
@@ -275,5 +279,173 @@ describe("MultiSport - PopupService", () => {
     expect(match.newEventStatus).toEqual(EventStatus.waiting);
     expect(match.isCheckedCalcMP).toEqual(false);
     expect(handleActionsService.resetCheckboxCalcMixParlay).toHaveBeenCalled();
+  });
+
+  describe('openUpdatePayoutForMatch', () => {
+    beforeEach(() => {
+      match.autoCalcSetting = new AutoSetting();
+    });
+    it('should open popup and change value match after submit', fakeAsync(() => {
+      match.autoCalcSetting = new AutoSetting();
+      match.autoCalcSetting.isAutoPayoutForMatch = true;
+      autoSetting.setting = "1";
+      spyOn(multiSportService, 'getSetting').and.returnValue(of(autoSetting));
+      spyOn(dialogBoxService, 'popupHasResponse').and.returnValue(of('00001'));
+
+      popupService.openUpdatePayoutForMatch(match);
+      tick();
+
+      expect(match.autoCalcSetting.isAutoPayoutForMatch).toBeFalsy();
+      expect(match.autoCalcSetting.isDirectPayoutForMatch).toBeTruthy();
+    }));
+
+    it('should change value equal latest value even not submit', fakeAsync(() => {
+      match.autoCalcSetting = new AutoSetting();
+      match.autoCalcSetting.isAutoPayoutForMatch = true;
+      autoSetting.setting = "00001";
+      spyOn(multiSportService, 'getSetting').and.returnValue(of(autoSetting));
+      spyOn(dialogBoxService, 'popupHasResponse').and.returnValue(of(null));
+
+      popupService.openUpdatePayoutForMatch(match);
+      tick();
+
+      expect(match.autoCalcSetting.isAutoPayoutForMatch).toBeFalsy();
+      expect(match.autoCalcSetting.isDirectPayoutForMatch).toBeTruthy();
+    }));
+
+    it('Match should not change when close popup without submit', fakeAsync(() => {
+      match.autoCalcSetting = new AutoSetting();
+      match.autoCalcSetting.isAutoPayoutForMatch = true;
+      autoSetting.setting = "1";
+      spyOn(multiSportService, 'getSetting').and.returnValue(of(autoSetting));
+      spyOn(dialogBoxService, 'popupHasResponse').and.returnValue(of(null));
+
+      popupService.openUpdatePayoutForMatch(match);
+      tick();
+
+      expect(match.autoCalcSetting.isAutoPayoutForMatch).toBeTruthy();
+      expect(match.autoCalcSetting.isDirectPayoutForMatch).toBeFalsy();
+    }));
+  });
+
+  describe('openUpdatePayoutForLeague', () => {
+    beforeEach(() => {
+      match.autoCalcSetting = new AutoSetting();
+      league.autoCalcSetting = new AutoSetting();
+    });
+    it('should change value League match after submit with eventStatus match is Running', fakeAsync(() => {
+      match.autoCalcSetting = new AutoSetting();
+      match.eventStatus = EventStatus.running;
+      match.autoCalcSetting.isAutoPayoutForMatch = true;
+      match.autoCalcSetting.isDirectPayoutForMatch = false;
+      match.autoCalcSetting.matchSetting = '1';
+      league.autoCalcSetting.isAutoPayoutForLeague = true;
+      league.matches = [match];
+      autoSetting.setting = "1";
+      spyOn(multiSportService, 'getSetting').and.returnValue(of(autoSetting));
+      spyOn(dialogBoxService, 'popupHasResponse').and.returnValue(of('00001,true'));
+
+      popupService.openUpdatePayoutForLeague(league);
+      tick();
+
+      expect(league.autoCalcSetting.isAutoPayoutForLeague).toBeFalsy();
+      expect(league.autoCalcSetting.isDirectPayoutForLeague).toBeTruthy();
+      expect(match.autoCalcSetting.isAutoPayoutForMatch).toBeFalsy();
+      expect(match.autoCalcSetting.isDirectPayoutForMatch).toBeTruthy();
+      expect(match.autoCalcSetting.matchSetting).toEqual("00001");
+    }));
+
+    it('should change value League match after submit with eventStatus match is closed', fakeAsync(() => {
+      match.autoCalcSetting = new AutoSetting();
+      match.eventStatus = EventStatus.running;
+      match.autoCalcSetting.isAutoPayoutForMatch = true;
+      match.autoCalcSetting.isDirectPayoutForMatch = false;
+      match.autoCalcSetting.matchSetting = '1';
+      league.autoCalcSetting.isAutoPayoutForLeague = true;
+      league.matches = [match];
+      autoSetting.setting = "1";
+      spyOn(multiSportService, 'getSetting').and.returnValue(of(autoSetting));
+      spyOn(dialogBoxService, 'popupHasResponse').and.returnValue(of('00001,true'));
+
+      popupService.openUpdatePayoutForLeague(league);
+      tick();
+
+      expect(league.autoCalcSetting.isAutoPayoutForLeague).toBeFalsy();
+      expect(league.autoCalcSetting.isDirectPayoutForLeague).toBeTruthy();
+      expect(match.autoCalcSetting.isAutoPayoutForMatch).toBeFalsy();
+      expect(match.autoCalcSetting.isDirectPayoutForMatch).toBeTruthy();
+      expect(match.autoCalcSetting.matchSetting).toEqual("00001");
+    }));
+
+    it('should change value League match after submit with eventStatus match is calculated', fakeAsync(() => {
+      match.autoCalcSetting = new AutoSetting();
+      match.eventStatus = EventStatus.completed;
+      match.autoCalcSetting.isAutoPayoutForMatch = true;
+      match.autoCalcSetting.isDirectPayoutForMatch = false;
+      match.autoCalcSetting.matchSetting = '1';
+      league.autoCalcSetting.isAutoPayoutForLeague = true;
+      league.matches = [match];
+      autoSetting.setting = "1";
+      spyOn(multiSportService, 'getSetting').and.returnValue(of(autoSetting));
+      spyOn(dialogBoxService, 'popupHasResponse').and.returnValue(of('00001,true'));
+
+      popupService.openUpdatePayoutForLeague(league);
+      tick();
+
+      expect(league.autoCalcSetting.isAutoPayoutForLeague).toBeFalsy();
+      expect(league.autoCalcSetting.isDirectPayoutForLeague).toBeTruthy();
+      expect(match.autoCalcSetting.isAutoPayoutForMatch).toBeTruthy();
+      expect(match.autoCalcSetting.isDirectPayoutForMatch).toBeFalsy();
+      expect(match.autoCalcSetting.matchSetting).toEqual("1");
+    }));
+
+    it('Only change value League match after submit when request not apply all match', fakeAsync(() => {
+      match.autoCalcSetting = new AutoSetting();
+      match.autoCalcSetting.isAutoPayoutForMatch = true;
+      league.autoCalcSetting.isAutoPayoutForLeague = true;
+      league.matches = [match];
+      autoSetting.setting = "1";
+      spyOn(multiSportService, 'getSetting').and.returnValue(of(autoSetting));
+      spyOn(dialogBoxService, 'popupHasResponse').and.returnValue(of('00001, false'));
+
+      popupService.openUpdatePayoutForLeague(league);
+      tick();
+
+      expect(league.autoCalcSetting.isAutoPayoutForLeague).toBeFalsy();
+      expect(league.autoCalcSetting.isDirectPayoutForLeague).toBeTruthy();
+      expect(match.autoCalcSetting.isAutoPayoutForMatch).toBeTruthy();
+      expect(match.autoCalcSetting.isDirectPayoutForMatch).toBeFalsy();
+    }));
+
+    it('should change value equal latest value even not submit', fakeAsync(() => {
+      league.autoCalcSetting.isAutoPayoutForLeague = true;
+      autoSetting.setting = "00001";
+      spyOn(multiSportService, 'getSetting').and.returnValue(of(autoSetting));
+      spyOn(dialogBoxService, 'popupHasResponse').and.returnValue(of(null));
+
+      popupService.openUpdatePayoutForLeague(league);
+      tick();
+
+      expect(league.autoCalcSetting.isAutoPayoutForLeague).toBeFalsy();
+      expect(league.autoCalcSetting.isDirectPayoutForLeague).toBeTruthy();
+    }));
+
+    it('league should not change when close popup without submit', fakeAsync(() => {
+      match.autoCalcSetting = new AutoSetting();
+      match.autoCalcSetting.isAutoPayoutForMatch = true;
+      league.autoCalcSetting.isAutoPayoutForLeague = true;
+      league.matches = [match];
+      autoSetting.setting = "1";
+      spyOn(multiSportService, 'getSetting').and.returnValue(of(autoSetting));
+      spyOn(dialogBoxService, 'popupHasResponse').and.returnValue(of(null));
+
+      popupService.openUpdatePayoutForLeague(league);
+      tick();
+
+      expect(match.autoCalcSetting.isAutoPayoutForMatch).toBeTruthy();
+      expect(match.autoCalcSetting.isDirectPayoutForMatch).toBeFalsy();
+      expect(league.autoCalcSetting.isAutoPayoutForLeague).toBeTruthy();
+      expect(league.autoCalcSetting.isDirectPayoutForLeague).toBeFalsy();
+    }));
   });
 });

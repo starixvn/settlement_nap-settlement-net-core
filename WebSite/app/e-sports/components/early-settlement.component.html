@@ -553,12 +553,6 @@
                 </table>
             </div>
             <div class="footer">
-                <div *ngIf="hedgeMatchDetail" class="hedge-match">
-                    <input type="checkbox" [(ngModel)]="applyHedgeMatch" id="ApplyHedgeMatch" />
-                    <label for="ApplyHedgeMatch">
-                        Apply for hedge match '<strong>{{hedgeMatchDetail.matchCode}}</strong>' also.
-                    </label>
-                </div>
                 <div *ngIf="oldMatchDetail" class="hedge-match">
                     <input type="checkbox" [(ngModel)]="isSettleOldMatch" id="settleOldMatch" />
                     <label for="settleOldMatch">Aplly for moved match '<strong>{{oldMatchDetail.matchCode}}</strong>'

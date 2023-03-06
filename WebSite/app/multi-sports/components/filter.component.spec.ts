@@ -104,7 +104,7 @@ describe('MultiSport - FilterComponent', () => {
                 expect(component.holdStatusSelect.items.length).toEqual(6);
                 expect(component.matchStatusSelect.items.length).toEqual(6);
                 expect(component.overStatusSelect.items.length).toEqual(4);
-                expect(component.autoPayoutSelect.items.length).toEqual(2);
+                expect(component.autoPayoutSelect.items.length).toEqual(3);
             });
     }));
 

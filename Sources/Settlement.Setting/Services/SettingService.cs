@@ -1,13 +1,12 @@
 ﻿using AutoMapper;
 using Fanex.Data.Repository;
+using Fanex.NAP.Client.Helpers.Web;
+using Microsoft.AspNetCore.Http;
+using Settlement.Core.Criteria;
+using Settlement.Core.Models;
 using Settlement.Setting.Criteria;
 using Settlement.Setting.Models;
 using Settlement.Setting.Requests;
-using Settlement.Core.Models;
-using Settlement.Core.Criteria;
-using System.Threading.Tasks;
-using Fanex.NAP.Client.Helpers.Web;
-using Microsoft.AspNetCore.Http;
 
 namespace Settlement.Setting.Services
 {
@@ -22,6 +21,8 @@ namespace Settlement.Setting.Services
         Task UpdateRemarkSetting(UpdateRemarkRequest request);
 
         Task<Result> UpdateTimeSettingLeague(TimeSettingRequest request);
+
+        Task<string> GetSetting(GetSettingRequest request);
     }
 
     public class SettingServiceImp : SettingService
@@ -100,6 +101,20 @@ namespace Settlement.Setting.Services
                 ErrCode = criteria.ErrCode,
                 ErrMsg = criteria.ErrMsg
             };
+        }
+
+        public async Task<string> GetSetting(GetSettingRequest request)
+        {
+            const int convertToBase = 2;
+            var criteria = new GetSettingCriteria
+            {
+                MatchId = request.MatchId,
+                LeagueId = request.LeagueId
+            };
+
+            var setting = await repository.GetAsync<int>(criteria);
+
+            return Convert.ToString(setting, convertToBase).Reverse();
         }
     }
 }

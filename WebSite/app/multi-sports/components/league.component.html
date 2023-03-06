@@ -60,18 +60,15 @@
                     (change)="selectCalcMPOnLeague(leagueMatch, $event.target.checked)">
                 </td>
                 <td class="confirm-score"></td>
-                <td class="confirm-score"></td>
-                <td class="remark-status instant-time">
-                  <ng-container *ngIf="sport.id === sportTypeCricket">
-                    <div>Waiting time: {{leagueMatch.autoWaitingTime}}sec </div>
+                <td colspan="2" class="remark-status instant-time">
+                  <ng-container *ngIf="leagueMatch.matches[0].applyDirect">
                     <div *ngIf="permission.canAutoPayout" class="act-direct-time"
                     [matTooltip]="language.payout.titleDirectTime" matTooltipPosition="above" (click)="openUpdateTime(leagueMatch)"></div>
+                    <div>Waiting time: {{leagueMatch.autoWaitingTime}}sec </div>
                   </ng-container>
                 </td>
-                <td class="auto-setting">
-                  <div class="cursor-pointer" [ngClass]="getAutoSettingLeague(leagueMatch.isAutoPayoutForLeague)"
-                    (click)="changeAutoLeague(leagueMatch)"
-                    [matTooltip]="getTextTooltipMatch(leagueMatch.isAutoPayoutForLeague)"></div>
+                <td [ngClass]="{'code-link enable': permission.canAutoPayout, 'auto-setting auto-setting-text': true}">
+                  <div class="cursor-pointer" (click)="changeAutoLeague(leagueMatch)">{{getAutoSettingLeague(leagueMatch.autoCalcSetting)}}</div>
                 </td>
               </tr>
               <ng-template [ngIf]="!leagueMatch.collapse">
@@ -184,9 +181,8 @@
                         {{match.remark.isKeyHold || match.remark.isMtdHold || match.remark.isPending || match.remark.isUndecided || match.remark.isUnderSettle ? 'YES' : 'NO'}}
                       </div>
                     </td>
-                    <td rowspan="2" class="auto-setting" [ngClass]="getBackgroundAutoSetting(match)">
-                      <div [ngClass]="getAutoSetting(match)" class="cursor-pointer" (click)="changeAutoSetting(match)"
-                        [matTooltip]="getTextTooltipMatch(match.isAutoPayoutForMatch)"></div>
+                    <td rowspan="2" class="auto-setting auto-setting-text" [ngClass]="getBackgroundAutoSetting(match)">
+                      <div class="cursor-pointer" (click)="changeAutoSetting(match)">{{getAutoSetting(match.autoCalcSetting)}}</div>
                     </td>
                   </tr>
                   <tr class="row-3" [ngClass]="undecidedColor(match.remark)">

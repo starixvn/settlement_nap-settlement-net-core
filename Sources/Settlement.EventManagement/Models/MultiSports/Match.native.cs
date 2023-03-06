@@ -8,6 +8,13 @@ public class Match : BaseMatch
 
     private const int DirectPayoutBit = 4;
 
+    private readonly List<int> sportSupportDirect = new List<int>
+    {
+        Core.Constants.SportType.VolleyBall,
+        Core.Constants.SportType.Badminton,
+        Core.Constants.SportType.Cricket
+    };
+
     [Key("isHavingIntervalScore")]
     public bool IsHavingIntervalScore { get; set; }
 
@@ -27,52 +34,8 @@ public class Match : BaseMatch
 
     #endregion Match Status
 
-    [IgnoreMember]
-    public int AutoSettingForLeague { get; set; }
-
     [Key("autoPayoutStatus")]
     public int AutoPayoutStatus { get; set; }
-
-    [Key("isAutoPayoutForLeague")]
-    public bool IsAutoPayoutForLeague
-    {
-        get
-        {
-            var leagueSetting = Convert.ToString(AutoSettingForLeague, ConvertToBase).Reverse();
-
-            if (string.IsNullOrWhiteSpace(leagueSetting))
-            {
-                return false;
-            }
-
-            if (leagueSetting.Length <= DirectPayoutBit)
-            {
-                return leagueSetting[0].Equals('1');
-            }
-
-            return leagueSetting[0].Equals('1') && leagueSetting[DirectPayoutBit].Equals('0');
-        }
-    }
-
-    [Key("isAutoPayoutForMatch")]
-    public bool IsAutoPayoutForMatch
-    {
-        get
-        {
-            var matchSetting = Convert.ToString(AutoSetting, ConvertToBase).Reverse();
-            if (string.IsNullOrWhiteSpace(matchSetting))
-            {
-                return false;
-            }
-
-            if (matchSetting.Length <= DirectPayoutBit)
-            {
-                return matchSetting[0].Equals('1');
-            }
-
-            return matchSetting[0].Equals('1') && matchSetting[DirectPayoutBit].Equals('0');
-        }
-    }
 
     [IgnoreMember]
     public bool IsKeyScore => BetStatus.IsKeyScore(HalfTimeHomeScore, HalfTimeAwayScore, FinalHomeScore, FinalAwayScore);
@@ -89,6 +52,9 @@ public class Match : BaseMatch
     [Key("bestOfMap")]
     public int BestOfMap { get; set; }
 
+    [Key("applyDirect")]
+    public bool ApplyDirect => sportSupportDirect.Contains(SportType);
+
     [IgnoreMember]
     public ResultDetail ExHTResult { get; set; }
 
@@ -97,6 +63,9 @@ public class Match : BaseMatch
 
     [IgnoreMember]
     public int AutoWaitingTime { get; set; }
+
+    [Key("autoCalcSetting")]
+    public AutoCalculationSetting AutoCalcSetting => new AutoCalculationSetting(AutoSetting, AutoSettingForLeague);
 
     public override bool Equals(object obj)
     {

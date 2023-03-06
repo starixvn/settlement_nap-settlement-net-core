@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { Component } from '@angular/core';
-import { ResultDetail, GroupMap, Permission, SaveScoreQuery, MatchDetail, HedgeMatchDetail } from '../../models/sportsbook-sop';
+import { ResultDetail, GroupMap, Permission, SaveScoreQuery, MatchDetail } from '../../models/sportsbook-sop';
 import { ItemsSelect, MarkedTicketsModel, ModalDialogMessage, MultipleSelect, Result, ResultSettingQuery } from '../../models';
 import { BackgroundColor, CalculateAction, ResultSettingType, ResultStatusId, SettlementStatusId, TicketStatusText } from '../../constants';
 import { AioService, MessageBoxService } from '../../services';
@@ -71,18 +71,27 @@ export class EarlyBaseComponent {
     }
 
     public onSelectTicketsStatus(value: ItemsSelect[]) {
-        this.ticketStatusSelected = value.length > 0 ? value.map(item => item.value).join() : '';
-        this.autoUncheckAfterFilter();
+        const valueSelected = value.length > 0 ? value.map(item => item.value).join() : '';
+        if(!_.isEqual(valueSelected, this.ticketStatusSelected)){
+            this.ticketStatusSelected = valueSelected;
+            this.autoUncheckAfterFilter();
+        }
     }
 
     public onSelectResultsStatus(value: ItemsSelect[]) {
-        this.resultStatusSelected = value.length > 0 ? value.map(item => item.value).join() : '';
-        this.autoUncheckAfterFilter();
+        const valueSelected = value.length > 0 ? value.map(item => item.value).join() : '';
+        if(!_.isEqual(valueSelected, this.ticketStatusSelected)){
+            this.resultStatusSelected = valueSelected;
+            this.autoUncheckAfterFilter();
+        }
     }
 
     public onSelectResultType(value: ItemsSelect[]) {
-        this.resultTypeSelected = value.length > 0 ? value.map(item => item.value).join() : '';
-        this.autoUncheckAfterFilter();
+        const valueSelected = value.length > 0 ? value.map(item => item.value).join() : '';
+        if(!_.isEqual(valueSelected, this.ticketStatusSelected)){
+            this.resultTypeSelected = valueSelected;
+            this.autoUncheckAfterFilter();
+        }
     }
 
     public autoUncheckAfterFilter() {
@@ -275,34 +284,31 @@ export class EarlyBaseComponent {
         return this.permission.isLeader && resultDetail.resultSettingData.isConfirmedRefund;
     }
 
-    public confirmRefund(hedgeMatchDetail: HedgeMatchDetail, applyHedgeMatch: boolean) {
+    public confirmRefund() {
         this.toastrService.clear();
-        if (!applyHedgeMatch) {
-            hedgeMatchDetail = new HedgeMatchDetail();
-        }
         const resourceIds = _.join(this.selectedResources.map(item => item.resourceId), ',');
         const existResultConfirmed = _.find(this.selectedResources, item => item.resultSettingData.isConfirmedRefund);
         if (existResultConfirmed) {
-            this.undoConfirmedResult(this.selectedResources, this.matchDetail.matchId, resourceIds, hedgeMatchDetail);
+            this.undoConfirmedResult(this.selectedResources, this.matchDetail.matchId, resourceIds);
         } else {
-            this.confirmResult(this.selectedResources, this.matchDetail.matchId, resourceIds, hedgeMatchDetail);
+            this.confirmResult(this.selectedResources, this.matchDetail.matchId, resourceIds);
         }
     }
 
-    public undoConfirmedResult(resultDetails: ResultDetail[], matchId: number, resourceIds: string, hedgeMatchDetail: HedgeMatchDetail) {
+    public undoConfirmedResult(resultDetails: ResultDetail[], matchId: number, resourceIds: string) {
         const resultNotConfirmed = _.find(resultDetails, item => !item.resultSettingData.isConfirmedRefund);
         if (_.isNil(resultNotConfirmed)) {
-            this.aioService.changeConfirmResultSetting(Language.confirmRefund.undoConfirm, matchId, resourceIds, false, hedgeMatchDetail);
+            this.aioService.changeConfirmResultSetting(Language.confirmRefund.undoConfirm, matchId, resourceIds, false, null);
         } else {
             this.toastrService.error(Language.confirmRefund.differentStates);
         }
     }
 
-    public confirmResult(resultDetails: ResultDetail[], matchId: number, resourceIds: string, hedgeMatchDetail: HedgeMatchDetail) {
+    public confirmResult(resultDetails: ResultDetail[], matchId: number, resourceIds: string) {
         const refundedResultHasNoRunningTicket = _.find(resultDetails, item =>
             item.settlementStatusId === SettlementStatusId.Refund && !_.isEqual(item.ticketStatus, TicketStatusText.running));
         if (_.isNil(refundedResultHasNoRunningTicket)) {
-            this.aioService.changeConfirmResultSetting(Language.confirmRefund.confirmRefund, matchId, resourceIds, true, hedgeMatchDetail);
+            this.aioService.changeConfirmResultSetting(Language.confirmRefund.confirmRefund, matchId, resourceIds, true, null);
         } else {
             this.toastrService.error(Language.confirmRefund.refundedNoRunningTicket);
         }

@@ -152,6 +152,9 @@ public class BaseMatch
     [IgnoreMember]
     public int AutoSetting { get; set; }
 
+    [IgnoreMember]
+    public int AutoSettingForLeague { get; set; }
+
     [Key("earlySettleStatus")]
     public string EarlySettleStatus { get; set; }
 

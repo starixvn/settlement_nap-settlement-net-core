@@ -1,7 +1,7 @@
 ﻿import { Component, ViewChild } from '@angular/core';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 import { Match, SettleQuery } from '../models';
-import { ResultDetail, HedgeMatchDetail, ExternalResultDetail, SportTemplate } from '../../shared/models/sportsbook-sop';
+import { ResultDetail, ExternalResultDetail, SportTemplate, HedgeMatchDetail } from '../../shared/models/sportsbook-sop';
 import * as _ from 'lodash';
 import { Language } from '../../shared/language';
 import { ResultControlGroup, Resources, TicketStatus, ApiKeys, ResultStatus, ResultControl, KickOffTime } from '../constants';
@@ -22,11 +22,9 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
     public match: Match;
     public matchClone: Match;
-    public hedgeMatchDetail: HedgeMatchDetail;
-    public applyHedgeMatch: boolean;
     public isShowRefundButton = false;
-    public isSettleOldMatch: boolean;
     public oldMatchDetail: HedgeMatchDetail;
+    public isSettleOldMatch: boolean;
     public isReadyMatch: boolean;
 
     constructor(
@@ -56,8 +54,6 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         this.matchDetail = this.match.matchDetail;
         this.isReadyMatch = this.match.matchDetail.playTime >= KickOffTime.playTime;
         this.matchId = this.match.matchDetail.matchId;
-        this.hedgeMatchDetail = this.match.hedgeMatchDetail;
-        this.applyHedgeMatch = this.hedgeMatchDetail != null;
         this.oldMatchDetail = this.match.oldMatchDetail;
         this.isSettleOldMatch = this.oldMatchDetail != null;
         this.match.resultDetails = this.match.resultDetails.filter((map) => map.resourceId.length > maxLength);
@@ -193,19 +189,10 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     private async push(query: SettleQuery) {
         const result = await this.aioService.push(query).toPromise() as Result;
         if (result.errCode === 0) {
-            this.pushHedgeMatch(query);
             this.pushOldMatch(query);
             this.messageBoxService.closePopup();
         } else {
             this.toastrService.error(result.errMsg);
-        }
-    }
-
-    private async pushHedgeMatch(query: SettleQuery) {
-        const hedgeMatchId = this.applyHedgeMatch ? this.match.hedgeMatchDetail.matchId : 0;
-        if (hedgeMatchId > 0) {
-            query.matchId = hedgeMatchId;
-            await this.aioService.push(query).toPromise();
         }
     }
 

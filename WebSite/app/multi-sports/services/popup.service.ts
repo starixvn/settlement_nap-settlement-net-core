@@ -1,12 +1,14 @@
+import { AutoSettingPosition } from './../constants/change-setting-type.native';
 import { Injectable } from '@angular/core';
-import { MultiSport, PopupProperties, Match, SportMatch, LeagueMatch } from './../models';
+import { MultiSport, PopupProperties, Match, SportMatch, LeagueMatch, AutoCalcSetting } from './../models';
 import { DialogBoxService } from './../../shared/services';
-import { DialogDataIframe } from './../../shared/models';
+import { AutoSetting, DialogDataIframe } from './../../shared/models';
 import { Language } from './../../shared/language';
 import { HandleActionsService } from './handle-actions.service';
 import { MultiSportService } from './multi-sport.service';
 import * as _ from 'lodash';
 import { CalculationStatus, SportType, EventStatus } from '../../shared/constants';
+import { AutoType } from '../constants';
 
 @Injectable()
 
@@ -69,7 +71,7 @@ export class PopupService {
 
     private isPopupEarlySOP(sportType: number) {
         return _.includes([SportType.eSports, SportType.basketBall, SportType.badminton,
-            SportType.cricket, SportType.volleyBall], sportType);
+        SportType.cricket, SportType.volleyBall], sportType);
     }
 
     public popupChangeRemark(match: Match, sports: SportMatch[], multiSport: MultiSport) {
@@ -131,7 +133,7 @@ export class PopupService {
         if (_.includes(sportsSameSize, sportType)) {
             this.properties.width = this.generalWidthPopup;
             this.properties.height = this.generalHeightPopup;
-        } else if(_.isEqual(sportType, SportType.eSports)){
+        } else if (_.isEqual(sportType, SportType.eSports)) {
             this.properties.width = '920px';
             this.properties.height = '600px';
         } else {
@@ -141,14 +143,71 @@ export class PopupService {
     }
 
     public openUpdateTime(league: LeagueMatch) {
-        const src = `apps/change-waiting-time?leagueId=${league.leagueId}&time=${league.autoWaitingTime}&pageType=DirectTime&autoType=1`;
+        const autoType = _.isEqual(league.matches[0].sportType, SportType.cricket) ? AutoType.autoPayout : AutoType.direct;
+        const src = `apps/change-waiting-time?leagueId=${league.leagueId}&time=${league.autoWaitingTime}&pageType=DirectTime&autoType=${autoType}`;
         const frameSrc = encodeURI(src);
         const dialogData = new DialogDataIframe(Language.payout.titlePopupForLeague, frameSrc);
         this.dialogBoxService.popupHasResponse(dialogData, '600px', '310px').subscribe(result => {
             if (!_.isUndefined(result)) {
-                    league.autoWaitingTime  = Number(result) ?? 0;
-                }
+                league.autoWaitingTime = Number(result) ?? 0;
             }
+        }
         );
     }
+
+    public async openUpdatePayoutForLeague(league: LeagueMatch) {
+        const autoSetting = await this.multiSportService.getSetting(league.leagueId, 0).toPromise() as AutoCalcSetting;
+        this.applyNewSetting(league.autoCalcSetting, autoSetting.setting, false);
+
+        const src = `apps/auto-setting-league?leagueId=${league.leagueId}&currentState=${autoSetting.setting}&pageType=AutoSettingLeague&multiSelect=true`;
+        const frameSrc = encodeURI(src);
+        const dialogData = new DialogDataIframe(Language.payout.titlePopupForLeague, frameSrc);
+        this.dialogBoxService.popupHasResponse(dialogData, '500px', '270px').subscribe(result => {
+            if (!_.isNull(result)) {
+                this.applyNewSetting(league.autoCalcSetting, result.split(',')[0], false);
+                this.affectAutoPayoutForMatch(league, _.isEqual(result.split(',')[1], 'true'));
+            }
+        });
+    }
+
+    private affectAutoPayoutForMatch(leagueMatch: LeagueMatch, isApplyAll: boolean) {
+        if (isApplyAll) {
+            leagueMatch.matches.forEach(item => {
+                if (_.isEqual(item.eventStatus.toLowerCase(), EventStatus.running.toLowerCase()) || _.isEqual(item.eventStatus.toLowerCase(), EventStatus.closed.toLowerCase())) {
+                    item.autoCalcSetting.isAutoPayoutForMatch = leagueMatch.autoCalcSetting.isAutoPayoutForLeague;
+                    item.autoCalcSetting.isDirectPayoutForMatch = leagueMatch.autoCalcSetting.isDirectPayoutForLeague;
+                    item.autoCalcSetting.matchSetting = leagueMatch.autoCalcSetting.leagueSetting;
+                }
+            });
+        }
+    }
+
+    public async openUpdatePayoutForMatch(match: Match) {
+        const autoSetting = await this.multiSportService.getSetting(0, Number(match.matchId)).toPromise() as AutoCalcSetting;
+        this.applyNewSetting(match.autoCalcSetting, autoSetting.setting);
+        
+        const src = `apps/auto-setting-league?matchId=${match.matchId}&currentState=${autoSetting.setting}&pageType=AutoSettingMatch&multiSelect=true`;
+        const frameSrc = encodeURI(src);
+        const dialogData = new DialogDataIframe(Language.payout.titlePopup, frameSrc);
+        this.dialogBoxService.popupHasResponse(dialogData, '500px', '270px').subscribe(result => {
+            if (!_.isNull(result)) {
+                this.applyNewSetting(match.autoCalcSetting, result);
+            }
+        });
+    }
+
+
+    private applyNewSetting(autoSetting: AutoSetting, setting: string, isMatch = true) {
+        const settings = setting.split("");
+        if (isMatch) {
+            autoSetting.isAutoPayoutForMatch = settings[AutoSettingPosition.autoPayout] == "1";
+            autoSetting.isDirectPayoutForMatch = settings[AutoSettingPosition.directPayout] == "1";
+            autoSetting.matchSetting = setting;
+        } else {
+            autoSetting.isAutoPayoutForLeague = settings[AutoSettingPosition.autoPayout] == "1";
+            autoSetting.isDirectPayoutForLeague = settings[AutoSettingPosition.directPayout] == "1";
+            autoSetting.leagueSetting = setting;
+        }
+    }
+
 }

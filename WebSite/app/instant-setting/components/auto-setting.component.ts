@@ -1,3 +1,4 @@
+import { MultipleSelect } from './../../shared/models/multiple-select.model';
 import { Component, OnInit } from '@angular/core';
 import { UrlHelper } from '../../helper';
 import * as _ from 'lodash';
@@ -5,6 +6,8 @@ import { MessageBoxService } from '../../shared/services';
 import { AutoSettingLeagueQuery, AutoSettingMatchQuery, ModalDialogMessage, Result } from '../../shared/models';
 import { Language } from '../../shared/language';
 import { RequestService } from '../services/request.service';
+import { SettingQuery } from '../models';
+import { AutoType } from '../constants';
 
 @Component({
   selector: 'auto-setting',
@@ -18,16 +21,36 @@ export class AutoSettingComponent implements OnInit {
   public errorMessage: string;
   public matchId: number;
   public leagueId: number;
+  public isMultiSelect: boolean;
+  public listSetting: Array<SettingQuery> = [
+    { type: 1, isEnable: false, text: "Auto Payout", sortText: "AUTO" },
+    { type: 5, isEnable: false, text: "Auto Direct Payout", sortText: "DIRECT" },
+  ];
+
+  public originalListSetting: Array<SettingQuery>;
+
 
   constructor(
     private readonly requestService: RequestService,
     private readonly messageBoxService: MessageBoxService) {
+    this.confirmationDialogMessage.title = Language.AutoPayoutSetting.PopupTitle;
   }
 
   ngOnInit(): void {
     this.pageType = UrlHelper.getUrlParameter('pageType');
+    this.isMultiSelect = Boolean(UrlHelper.getUrlParameter('multiSelect'));
     this.currentState = Number(UrlHelper.getUrlParameter('currentState'));
+    this.parseValue();
     this.getId();
+  }
+
+
+  private parseValue() {
+    if (this.isMultiSelect) {
+      const settings = UrlHelper.getUrlParameter('currentState').split('');
+      this.listSetting.forEach(item => item.isEnable = _.isEqual(settings[item.type - 1], "1"));
+      this.originalListSetting = _.cloneDeep(this.listSetting);
+    }
   }
 
   public getId() {
@@ -40,41 +63,66 @@ export class AutoSettingComponent implements OnInit {
 
   public submit() {
     if (_.isEqual(this.pageType, "AutoSettingLeague")) {
-      this.comfirmLeagueSettingSubmition();
+      this.confirmLeagueSettingSubmission();
     } else {
-      this.comfirmMatchSettingSubmition();
+      this.confirmMatchSettingSubmission();
     }
   }
 
-  public comfirmLeagueSettingSubmition() {
-    this.confirmationDialogMessage.title = Language.AutoPayoutSetting.PopupTitle;
+  private confirmLeagueSettingSubmission() {
     this.confirmationDialogMessage.message = this.getConfirmMessage(this.currentState);
     this.confirmationDialogMessage.hasActionOnNoBtn = true;
     this.messageBoxService.confirm(
       this.confirmationDialogMessage,
-      () => this.updateSetting(true),
-      () => this.updateSetting(false),
+      () => this.isMultiSelect ? this.updateMultiSetting(true) : this.updateSetting(true),
+      () => this.isMultiSelect ? this.updateMultiSetting(false) : this.updateSetting(false),
     );
   }
 
-  public comfirmMatchSettingSubmition() {
-    this.confirmationDialogMessage.title = Language.AutoPayoutSetting.PopupTitle;
+  private confirmMatchSettingSubmission() {
     this.confirmationDialogMessage.message = Language.AutoPayoutSetting.ConfirmMessageForMatch;
     this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
+      if (this.isMultiSelect) {
+        this.changeMultiSettingMatch();
+      } else {
+        this.changeSingleSetting();
+      }
+    });
+  }
+
+  private changeSingleSetting() {
+    const params = new AutoSettingMatchQuery(
+      this.matchId,
+      this.getAutoType(),
+      this.currentState !== 0,
+    );
+    this.requestService.updateSettingMatch(params).subscribe((result: Result) => {
+      if (result.isSuccessful) {
+        parent.document.getElementById('dialog-response').setAttribute('value', this.currentState.toString());
+        this.messageBoxService.closePopup();
+      } else {
+        this.errorMessage = result.errMsg;
+      }
+    });
+  }
+
+  private async changeMultiSettingMatch() {
+    const listItem = this.getValueChanged();
+    for (const i in listItem) {
       const params = new AutoSettingMatchQuery(
         this.matchId,
-        this.getAutoType(),
-        this.currentState !== 0,
+        listItem[i].type,
+        listItem[i].isEnable,
       );
-      this.requestService.updateSettingMatch(params).subscribe((result: Result) => {
-        if (result.isSuccessful) {
-          parent.document.getElementById('dialog-response').setAttribute('value', this.currentState.toString());
-          this.messageBoxService.closePopup();
-        } else {
-          this.errorMessage = result.errMsg;
-        }
-      });
-    });
+      const result = await this.requestService.updateSettingMatch(params).toPromise();
+      if (result.errCode > 0) {
+        this.errorMessage = result.errMsg;
+        return;
+      } else if (_.isEqual(Number(i), listItem.length - 1)) {
+        parent.document.getElementById('dialog-response').setAttribute('value', this.parseValueToResponse());
+      }
+    }
+    this.messageBoxService.closePopup();
   }
 
   private getAutoType() {
@@ -83,9 +131,21 @@ export class AutoSettingComponent implements OnInit {
   }
 
   public getConfirmMessage(newState: number) {
-    const newStateName = this.getStateName(newState);
+    const newStateName = this.isMultiSelect ? this.getMultiStateName() : this.getStateName(newState);
     return Language.AutoPayoutSetting.ConfirmMessageForLeague
       .replace(/EXPECTED_STATE/g, newStateName);
+  }
+
+  private getMultiStateName() {
+    if (this.listSetting.every(item => item.isEnable)) {
+      return "BOTH";
+    }
+
+    if (this.listSetting.every(item => !item.isEnable)) {
+      return "OFF";
+    }
+
+    return this.listSetting.filter(item => item.isEnable)[0].sortText;
   }
 
   public getStateName(state: number) {
@@ -113,6 +173,42 @@ export class AutoSettingComponent implements OnInit {
       } else {
         this.errorMessage = result.errMsg;
       }
+    });
+  }
+
+
+  private async updateMultiSetting(isApplyAll: boolean) {
+    const listItem = this.getValueChanged();
+    for (const i in listItem) {
+      const query = new AutoSettingLeagueQuery(
+        this.leagueId,
+        listItem[i].type,
+        listItem[i].isEnable,
+        isApplyAll,
+      );
+      const result = await this.requestService.updateSettingLeague(query).toPromise();
+      if (result.errCode > 0) {
+        this.errorMessage = result.errMsg;
+        return;
+      } else if (_.isEqual(Number(i), listItem.length - 1)) {
+        parent.document.getElementById('dialog-response').setAttribute('value', `${this.parseValueToResponse()},${isApplyAll}`);
+      }
+    }
+    this.messageBoxService.closePopup();
+  }
+
+  private parseValueToResponse() {
+    const listValue = this.listSetting.filter(item => item.isEnable);
+    if (_.isEmpty(listValue)) {
+      return '0';
+    }
+    const typeValue = this.listSetting.filter(item => item.isEnable).map(item => Math.pow(2, item.type - 1)).reduce((a, b) => a + b);
+    return typeValue.toString(2).split("").reverse().join("");
+  }
+
+  private getValueChanged (){
+    return this.listSetting.filter(item => {
+      return this.originalListSetting.find(s => s.type === item.type && s.isEnable !== item.isEnable);
     });
   }
 }

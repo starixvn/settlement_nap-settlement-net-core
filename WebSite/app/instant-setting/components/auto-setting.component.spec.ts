@@ -14,7 +14,6 @@ import { RequestService } from '../services/request.service';
 describe('AutoSettingComponent', () => {
   let component: AutoSettingComponent;
   let fixture: ComponentFixture<AutoSettingComponent>;
-  let modalService: NgbModal;
   let requestService: RequestService;
   let httpRequestService: HttpRequestService;
   let messageBoxService: MessageBoxService;
@@ -64,24 +63,22 @@ describe('AutoSettingComponent', () => {
         NgbModule,
       ],
     })
-    .overrideModule(BrowserDynamicTestingModule, {
-      set: {
+      .overrideModule(BrowserDynamicTestingModule, {
+        set: {
           entryComponents: [ModalDialogComponent, ModalContentDialogComponent],
-      },
-    })
-    .compileComponents();
+        },
+      })
+      .compileComponents();
   }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(AutoSettingComponent);
     component = fixture.componentInstance;
-    modalService = fixture.debugElement.injector.get(NgbModal);
     requestService = fixture.debugElement.injector.get(RequestService);
     httpRequestService = fixture.debugElement.injector.get(HttpRequestService);
     messageBoxService = fixture.debugElement.injector.get(MessageBoxService);
     spyOn(httpRequestService, 'postJson').and.returnValue(mockResult);
     spyOn(messageBoxService, 'closePopup').and.returnValue(1);
-    // spyOn(messageBoxService, 'closePopup').and.returnValue(1);
     spyOn(UrlHelper, 'getUrlParameter').and.returnValue(mockUrlParameter);
 
     fixture.detectChanges();
@@ -92,35 +89,60 @@ describe('AutoSettingComponent', () => {
   });
 
   describe('submit', () => {
-    it('should invoke updateSettingMatch & close popup when pageType is AutoSettingMatch', fakeAsync(() => {
-        // Arrange
-        component.pageType = 'AutoSettingMatch';
+    it('should invoke updateSettingMatch & close popup when pageType is AutoSettingMatch and type is single', fakeAsync(() => {
+      // Arrange
+      component.pageType = 'AutoSettingMatch';
+      component.isMultiSelect = false;
 
-        spyOn(requestService, 'updateSettingMatch').and.returnValue(of(mockResult));
+      spyOn(requestService, 'updateSettingMatch').and.returnValue(of(mockResult));
 
-        const element = document.createElement("dialog-response");
-        spyOn(document, 'getElementById').and.returnValue(element);
-        // Act
+      const element = document.createElement("dialog-response");
+      spyOn(document, 'getElementById').and.returnValue(element);
+      // Act
 
-        component.submit();
-        const buttonYes = document.getElementsByClassName('btn-danger')[0] as HTMLElement;
-        buttonYes.click();
-        tick();
+      component.submit();
+      const buttonYes = document.getElementsByClassName('btn-danger')[0] as HTMLElement;
+      buttonYes.click();
+      tick();
 
-        // Assert
-        expect(requestService.updateSettingMatch).toHaveBeenCalled();
-        expect(messageBoxService.closePopup).toHaveBeenCalled();
-
+      // Assert
+      expect(requestService.updateSettingMatch).toHaveBeenCalled();
+      expect(messageBoxService.closePopup).toHaveBeenCalled();
     }));
 
-    it('should invoke updateSettingLeague & close popup when pageType is AutoSettingLeague', fakeAsync(() => {
+    it('should invoke updateSettingMatch & close popup when pageType is AutoSettingMatch', fakeAsync(() => {
+      // Arrange
+      component.pageType = 'AutoSettingMatch';
+      component.isMultiSelect = true;
+      component.listSetting[0].isEnable = true;
+      component.listSetting[1].isEnable = true;
+
+      spyOn(requestService, 'updateSettingMatch').and.returnValue(of(mockResult));
+
+      const element = document.createElement("dialog-response");
+      spyOn(document, 'getElementById').and.returnValue(element);
+
+      // Act
+      component.submit();
+      const buttonYes = document.getElementsByClassName('btn-danger')[0] as HTMLElement;
+      buttonYes.click();
+      tick();
+
+      // Assert
+      expect(document.getElementById("dialog-response").getAttribute('value')).toEqual("10001");
+      expect(requestService.updateSettingMatch).toHaveBeenCalledTimes(2);
+      expect(messageBoxService.closePopup).toHaveBeenCalledTimes(1);
+    }));
+
+    it('should invoke updateSettingLeague & close popup when pageType is AutoSettingLeague and type is single', fakeAsync(() => {
       // Arrange
       component.pageType = 'AutoSettingLeague';
+      component.isMultiSelect = false;
       const element = document.createElement("dialog-response");
       spyOn(document, 'getElementById').and.returnValue(element);
       spyOn(requestService, 'updateSettingLeague').and.returnValue(of(mockResult));
       // Act
-     
+
       component.submit();
       const buttonYes = document.getElementsByClassName('btn-danger')[0] as HTMLElement;
       buttonYes.click();
@@ -130,6 +152,30 @@ describe('AutoSettingComponent', () => {
       expect(requestService.updateSettingLeague).toHaveBeenCalled();
       expect(messageBoxService.closePopup).toHaveBeenCalled();
     }));
+
+    it('should invoke updateSettingLeague & close popup when pageType is AutoSettingLeague', fakeAsync(() => {
+      // Arrange
+      component.pageType = 'AutoSettingLeague';
+      component.listSetting[0].isEnable = true;
+      component.listSetting[1].isEnable = true;
+
+      const element = document.createElement("dialog-response");
+      spyOn(document, 'getElementById').and.returnValue(element);
+      spyOn(requestService, 'updateSettingLeague').and.returnValue(of(mockResult));
+      // Act
+
+      component.submit();
+      const buttonYes = document.getElementsByClassName('btn-danger')[0] as HTMLElement;
+      buttonYes.click();
+      tick();
+
+      // Assert
+      expect(document.getElementById("dialog-response").getAttribute('value')).toEqual("10001,true");
+      expect(requestService.updateSettingLeague).toHaveBeenCalledTimes(2);
+      expect(messageBoxService.closePopup).toHaveBeenCalledTimes(1);
+    }));
+
+    
   });
 
   describe('getId', () => {

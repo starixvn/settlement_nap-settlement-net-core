@@ -13,3 +13,4 @@ export * from './get-remark-query.model';
 export * from './league-match.model';
 export * from './match.model';
 export * from './sport-match.model';
+export * from './auto-setting.model';
