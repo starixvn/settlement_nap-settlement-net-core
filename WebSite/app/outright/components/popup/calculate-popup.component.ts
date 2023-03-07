@@ -38,7 +38,7 @@ export class CalculatePopupComponent implements OnInit {
   public today: NgbDateStruct;
   public teamStatus = TeamStatuses;
   public filterStatuses = FilterStatuses;
-  public statusSelected = FilterStatuses[0].toUpperCase();
+  public statusSelected = FilterStatuses[1].toUpperCase();
   public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
   private teamSettleWon: Team[];
   public teamJustSettled: TeamSettle[] = [];
