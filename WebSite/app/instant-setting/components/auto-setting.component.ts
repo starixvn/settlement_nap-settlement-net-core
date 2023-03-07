@@ -24,7 +24,7 @@ export class AutoSettingComponent implements OnInit {
   public isMultiSelect: boolean;
   public listSetting: Array<SettingQuery> = [
     { type: 1, isEnable: false, text: "Auto Payout", sortText: "AUTO" },
-    { type: 5, isEnable: false, text: "Auto Direct Payout", sortText: "DIRECT" },
+    { type: 5, isEnable: false, text: "Direct Payout", sortText: "DIRECT" },
   ];
 
   public originalListSetting: Array<SettingQuery>;
