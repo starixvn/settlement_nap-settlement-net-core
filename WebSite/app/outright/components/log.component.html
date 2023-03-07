@@ -1,0 +1,127 @@
+<div class="log-content">
+  <div class="filter-bar">
+    <div class="line"></div>
+    <div class="filter-bar-inner">
+      <div class="row">
+        <div class="field" style="width: auto;">
+          <label for="MatchCode" class="inner-label">
+            MatchCode/ID
+          </label>
+          <input
+            type="text"
+            maxlength="50"
+            type="text"
+            [(ngModel)]="matchCode"
+            class="match-code"
+            required
+          />
+        </div>
+        <div class="field small-field" style="width: auto; margin-left: 40px;">
+          <label class="inner-label from-date">
+            From
+          </label>
+          <ngbd-date-picker
+            [date]="fromDate"
+            (change)="onSelectFromDate($event)"
+          ></ngbd-date-picker>
+        </div>
+        <div class="date" style="width: auto;">
+          <label class="inner-label to-date">
+            To
+          </label>
+          <ngbd-date-picker
+            [date]="toDate"
+            (change)="onSelectToDate($event)"
+          ></ngbd-date-picker>
+        </div>
+        <div class="submit field" style="width: auto;">
+          <button class="button" (click)="submit()">Submit</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ng-container *ngIf="outrightLogs">
+    <ng-container *ngIf="outrightLogs.length; else empty">
+      <div *ngFor="let item of outrightLogs">
+        <div
+          class="league"
+          (click)="onCollapsedClick(item)"
+          style="display: flex;"
+        >
+          <div class="btn-left"></div>
+          <div class="btn-middle">
+            <span>{{ item.leagueName }}</span>
+          </div>
+          <div [ngClass]="getBackgroundIcon(item.collapsed)"></div>
+        </div>
+
+        <div [hidden]="item.collapsed">
+          <table class="table-log table-scroll-down">
+            <thead>
+              <tr>
+                <th class="w-10 center">#</th>
+                <th class="w-45 center">Log Time</th>
+                <th class="w-25 center">Handled By</th>
+                <th class="w-100 center">Team Name</th>
+                <th class="w-50 center">Action</th>
+                <th class="w-40 center">Result String</th>
+                <th class="w-40 center">Remark</th>
+              </tr>
+            </thead>
+            <tbody *ngIf="isPage" dynamicHeight>
+              <ng-container
+                [ngTemplateOutlet]="tbodyLeague"
+                [ngTemplateOutletContext]="{ link: item }"
+              ></ng-container>
+            </tbody>
+
+            <tbody *ngIf="!isPage" class="body-half-screen">
+              <ng-container
+                [ngTemplateOutlet]="tbodyLeague"
+                [ngTemplateOutletContext]="{ link: item }"
+              ></ng-container>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </ng-container>
+  </ng-container>
+
+  <ng-template #tbodyLeague let-link="link">
+    <ng-container *ngFor="let log of link.outrightLogDetails; let i = index">
+      <tr [ngClass]="i % 2 !== 0 ? 'bg-odd' : ''">
+        <td class="td-index w-10 center">{{ i + 1 }}</td>
+        <td class="w-45 center">
+          {{ log.logDate | date: "mediumDate" }}
+          {{ log.logDate | date: "hh:mm:ss a" }}
+        </td>
+        <td class="w-25 center">{{ log.username }}</td>
+        <td class="team-name text-left w-100">
+          {{ log.teamName }}
+        </td>
+        <td class="text-left w-50">{{ log.actionNameEn }}</td>
+        <td class="w-40 center">{{ log.result }}</td>
+        <td class="w-40 center">{{ log.remarkName }}</td>
+      </tr>
+    </ng-container>
+  </ng-template>
+
+  <ng-template #empty>
+    <table class="table-empty">
+      <thead>
+        <tr>
+          <td>
+            EVENT FROM
+            {{ fromDateStr | date: "mediumDate" }}
+            TO
+            {{ toDateStr | date: "mediumDate" }}
+          </td>
+        </tr>
+      </thead>
+      <tr class="empty-data">
+        <td>There is no information available</td>
+      </tr>
+    </table>
+  </ng-template>
+</div>

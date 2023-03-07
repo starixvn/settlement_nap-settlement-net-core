@@ -29,7 +29,7 @@ import { MatButtonModule } from '@angular/material/button';
     MatTooltipModule,
     MatSlideToggleModule,
     MatFormFieldModule,
-    MatButtonModule,
+    MatButtonModule
   ]
 })
 export class MaterialModule {}

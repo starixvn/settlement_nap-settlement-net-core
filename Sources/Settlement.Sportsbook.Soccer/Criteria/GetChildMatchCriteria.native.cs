@@ -1,23 +1,22 @@
 ﻿using Fanex.Data.Repository;
 
-namespace Settlement.Sportsbook.Soccer.Criteria
+namespace Settlement.Sportsbook.Soccer.Criteria;
+
+public class GetChildMatchCriteria : CriteriaBase
 {
-    public class GetChildMatchCriteria : CriteriaBase
+    public string matchIds { get; set; }
+
+    public string mode { get; set; }
+
+    public string SelectedResources { get; set; }
+
+    public override string GetSettingKey()
     {
-        public string matchIds { get; set; }
+        return "NAP_Set_GetChildMatchByParent";
+    }
 
-        public string mode { get; set; }
-
-        public string SelectedResources { get; set; }
-
-        public override string GetSettingKey()
-        {
-            return "NAP_Set_GetChildMatchByParent";
-        }
-
-        public override bool IsValid()
-        {
-            return matchIds.Length > 0;
-        }
+    public override bool IsValid()
+    {
+        return matchIds.Length > 0;
     }
 }

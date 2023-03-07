@@ -1,0 +1,83 @@
+<!-- <div class="tableFixHead" dynamicHeight> -->
+<table class="table-scroll-down table-main" *ngIf="outright">
+  <ng-template *ngTemplateOutlet="header"></ng-template>
+  <ng-template *ngTemplateOutlet="body"></ng-template>
+</table>
+<!-- </div> -->
+<ng-template #header>
+  <thead>
+    <tr>
+      <th class="w-10 center">Event ID</th>
+      <th class="w-15 center">Kick-off Time</th>
+      <th class="w-100 center">Event</th>
+      <th class="w-10 center">Bet Count</th>
+      <th class="w-10 center">
+        Event Status
+      </th>
+    </tr>
+  </thead>
+</ng-template>
+
+<ng-template #body>
+  <!-- <div dynamicHeight class="table-body"> -->
+  <tbody dynamicHeight class="body-half-screen">
+    <ng-container *ngIf="leagueMatch.length; else empty">
+      <ng-container *ngFor="let item of leagueMatch">
+        <tr>
+          <td colspan="5" class="w-100">
+            <div class="league-name w-100">
+              <div class="leangue-name__content">
+                <span class="name">
+                  {{ item.leagueName }}
+                </span>
+                <span class="code"> Code: {{ item.teams[0].matchCode }} </span>
+                <button (click)="viewLog(item)">
+                  View Log
+                </button>
+              </div>
+              <div class="league-action">
+                <button
+                  *ngIf="permission.canCalculateOutright"
+                  class="button"
+                  (click)="calculatePopup(item)"
+                >
+                  Calculate
+                </button>
+                <button
+                  *ngIf="permission.canUncalculateOutright"
+                  class="button"
+                  (click)="uncalculatePopup(item)"
+                >
+                  Uncalculate
+                </button>
+              </div>
+            </div>
+          </td>
+        </tr>
+        <tr
+          *ngFor="let team of item.teams; let i = index"
+          [ngClass]="i % 2 !== 0 ? 'bg-odd' : ''"
+        >
+          <td class="event-id w-10 center">
+            <span role="button" (click)="viewLog(item, team.orId)">{{
+              team.orId
+            }}</span>
+          </td>
+          <td colspan="4" class="w-15 center">
+            {{ team.kickOffTime | date: "mediumDate" }}
+            {{ team.kickOffTime | date: "hh:mm:ss a" }}
+          </td>
+          <td class="team-name w-100">{{ team.teamName }}</td>
+          <td class="w-10 center">{{ team.betCount }}</td>
+          <td class="w-10 center">{{ team.status }}</td>
+        </tr>
+      </ng-container>
+    </ng-container>
+  </tbody>
+  <!-- </div> -->
+</ng-template>
+<ng-template #empty>
+  <div class="empty-data">
+    There is no information available
+  </div>
+</ng-template>

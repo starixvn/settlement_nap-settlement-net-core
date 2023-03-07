@@ -1,9 +1,8 @@
-﻿namespace Settlement.Core.Models
-{
-    public class MatchHedgeDetail
-    {
-        public int MatchId { get; set; }
+﻿namespace Settlement.Core.Models;
 
-        public string MatchCode { get; set; }
-    }
+public class MatchHedgeDetail
+{
+    public int MatchId { get; set; }
+
+    public string MatchCode { get; set; }
 }

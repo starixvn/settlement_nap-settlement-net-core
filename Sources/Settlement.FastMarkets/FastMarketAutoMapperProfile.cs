@@ -3,18 +3,17 @@ using Fanex.Settlement.ScaleOut.Request;
 using Settlement.FastMarkets.Criteria;
 using Settlement.FastMarkets.Requests;
 
-namespace Settlement.FastMarkets
+namespace Settlement.FastMarkets;
+
+public class FastMarketAutoMapperProfile : Profile
 {
-    public class FastMarketAutoMapperProfile : Profile
+    public FastMarketAutoMapperProfile()
     {
-        public FastMarketAutoMapperProfile()
-        {
-            CreateMap<SettleRequest, PushFastMarketResultCriteria>();
-            CreateMap<UpdateWaterBreakSettingRequest, UpdateWaterBreakSettingCriteria>();
-            CreateMap<UpdateWaterBreakSettingRequest, WriteLogUpdateWaterBreakCriteria>()
-                .ForMember(dest => dest.UserId, map => map.MapFrom(src => src.AdminId));
-            CreateMap<GetTimeMachineResultRequest, GetTimeMachineResultCriteria>();
-            CreateMap<PushFastMarketResultCriteria, EventTicketFastMarketRequest>();
-        }
+        CreateMap<SettleRequest, PushFastMarketResultCriteria>();
+        CreateMap<UpdateWaterBreakSettingRequest, UpdateWaterBreakSettingCriteria>();
+        CreateMap<UpdateWaterBreakSettingRequest, WriteLogUpdateWaterBreakCriteria>()
+            .ForMember(dest => dest.UserId, map => map.MapFrom(src => src.AdminId));
+        CreateMap<GetTimeMachineResultRequest, GetTimeMachineResultCriteria>();
+        CreateMap<PushFastMarketResultCriteria, EventTicketFastMarketRequest>();
     }
 }

@@ -3,7 +3,7 @@ import { Component, Input, OnInit, OnChanges, SimpleChanges, OnDestroy, ViewChil
 import { DefaultValue } from '../constants';
 import * as _ from 'lodash';
 import { RefreshMatchService, MultiSportService, PopupService, HandleActionsService } from '../services/';
-import { ISubscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { interval } from 'rxjs';
 import { MessageBoxService } from './../../shared/services';
 import { Language } from './../../shared/language';
@@ -26,7 +26,7 @@ export class LeagueComponent implements OnInit, OnChanges, OnDestroy {
   private readonly autoSettingCompleted = 2;
   private readonly autoSettingFailed = 3;
   private readonly earlyOverOnlyValue = "1";
-  private subscriber: ISubscription;
+  private subscriber: Subscription;
   private matchIdsCalcMp: string[] = [];
   public sports: SportMatch[];
   public permission: Permission;

@@ -7,82 +7,81 @@ using Settlement.EventManagement.Models.MultiSports;
 using Settlement.EventManagement.Requests;
 using Match = Settlement.EventManagement.Models.MultiSports.Match;
 
-namespace Settlement.EventManagement.UnitTests.Controllers
+namespace Settlement.EventManagement.UnitTests.Controllers;
+
+public class MultiSportControllerTests
 {
-    public class MultiSportControllerTests
+    private readonly MultiSportController controller;
+
+    private readonly IMediator mediator;
+
+    public MultiSportControllerTests()
     {
-        private readonly MultiSportController controller;
+        mediator = Substitute.For<IMediator>();
+        controller = new MultiSportController(mediator);
+    }
 
-        private readonly IMediator mediator;
+    [Fact]
+    public void GetDate_ReturnRightValue()
+    {
+        // Act
+        var actual = controller.GetDate() as OkObjectResult;
 
-        public MultiSportControllerTests()
-        {
-            mediator = Substitute.For<IMediator>();
-            controller = new MultiSportController(mediator);
-        }
+        // Assert
+        Assert.IsType<DateSelection>(actual?.Value);
+        Assert.Equal(200, actual.StatusCode);
+    }
 
-        [Fact]
-        public void GetDate_ReturnRightValue()
-        {
-            // Act
-            var actual = controller.GetDate() as OkObjectResult;
+    [Fact]
+    public async Task Filter_Always_ReturnsListMatchesOnSports()
+    {
+        // Arrange
+        mediator.Send(Arg.Any<FilterMultiSportRequest>()).Returns(new MultiSportModel());
 
-            // Assert
-            Assert.IsType<DateSelection>(actual?.Value);
-            Assert.Equal(200, actual.StatusCode);
-        }
+        // Act
+        var actual = await controller.Filter(new FilterMultiSportRequest()) as OkObjectResult;
 
-        [Fact]
-        public async Task Filter_Always_ReturnsListMatchesOnSports()
-        {
-            // Arrange
-            mediator.Send(Arg.Any<FilterMultiSportRequest>()).Returns(new MultiSportModel());
+        // Assert
+        Assert.IsType<MultiSportModel>(actual.Value);
+        Assert.Equal(200, actual.StatusCode);
+    }
 
-            // Act
-            var actual = await controller.Filter(new FilterMultiSportRequest()) as OkObjectResult;
+    [Fact]
+    public async Task RefreshMatches_Always_ReturnsListMatches()
+    {
+        // Arrange
 
-            // Assert
-            Assert.IsType<MultiSportModel>(actual.Value);
-            Assert.Equal(200, actual.StatusCode);
-        }
+        mediator.Send(Arg.Any<RefreshMultiSportRequest>()).Returns(new List<Match>());
 
-        [Fact]
-        public async Task RefreshMatches_Always_ReturnsListMatches()
-        {
-            // Arrange
+        // Act
+        var actual = await controller.RefreshMatches(new RefreshMultiSportRequest()) as OkObjectResult;
 
-            mediator.Send(Arg.Any<RefreshMultiSportRequest>()).Returns(new List<Match>());
+        // Assert
+        Assert.IsType<List<Match>>(actual.Value);
+        Assert.Equal(200, actual.StatusCode);
+    }
 
-            // Act
-            var actual = await controller.RefreshMatches(new RefreshMultiSportRequest()) as OkObjectResult;
+    [Fact]
+    public async Task GetSports_Always_ReturnsListSports()
+    {
+        var request = new SportRequest();
+        mediator.Send(Arg.Any<SportRequest>()).Returns(new List<Sport>());
 
-            // Assert
-            Assert.IsType<List<Match>>(actual.Value);
-            Assert.Equal(200, actual.StatusCode);
-        }
+        var actual = await controller.GetSports(request) as OkObjectResult;
 
-        [Fact]
-        public async Task GetSports_Always_ReturnsListSports()
-        {
-            var request = new SportRequest();
-            mediator.Send(Arg.Any<SportRequest>()).Returns(new List<Sport>());
+        Assert.IsType<List<Sport>>(actual.Value);
+        Assert.Equal(200, actual.StatusCode);
+    }
 
-            var actual = await controller.GetSports(request) as OkObjectResult;
+    [Fact]
+    public async Task GetLeagues_Always_ReturnsListLeagues()
+    {
+        var request = new LeagueRequest();
+        mediator.Send(Arg.Any<LeagueRequest>()).Returns(new List<LeagueTypeModel>());
 
-            Assert.IsType<List<Sport>>(actual.Value);
-            Assert.Equal(200, actual.StatusCode);
-        }
+        var actual = await controller.GetLeagues(request) as OkObjectResult;
 
-        [Fact]
-        public async Task GetLeagues_Always_ReturnsListLeagues()
-        {
-            var request = new LeagueRequest();
-            mediator.Send(Arg.Any<LeagueRequest>()).Returns(new List<LeagueTypeModel>());
-
-            var actual = await controller.GetLeagues(request) as OkObjectResult;
-
-            Assert.IsType<List<LeagueTypeModel>>(actual.Value);
-            Assert.Equal(200, actual.StatusCode);
-        }
+        Assert.IsType<List<LeagueTypeModel>>(actual.Value);
+        Assert.Equal(200, actual.StatusCode);
     }
 }

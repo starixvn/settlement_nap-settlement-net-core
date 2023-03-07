@@ -1,11 +1,10 @@
-﻿namespace Settlement.Core.Models
+﻿namespace Settlement.Core.Models;
+
+public class ChildMatchTicketInfos
 {
-    public class ChildMatchTicketInfos
-    {
-        public int MatchId { get; set; }
+    public int MatchId { get; set; }
 
-        public bool IsExistMarkedTicket { get; set; }
+    public bool IsExistMarkedTicket { get; set; }
 
-        public bool IsExistRunningTicket { get; set; }
-    }
+    public bool IsExistRunningTicket { get; set; }
 }

@@ -1,21 +1,20 @@
 ﻿using Fanex.Data.Repository;
 
-namespace Settlement.Sportsbook.Soccer.Criteria
+namespace Settlement.Sportsbook.Soccer.Criteria;
+
+public class SpecificBetTypesCriteria : CriteriaBase
 {
-    public class SpecificBetTypesCriteria : CriteriaBase
+    public string Action { get; set; }
+
+    public string Type { get; set; }
+
+    public override string GetSettingKey()
     {
-        public string Action { get; set; }
+        return "NAP_Set_SpecificBettypes";
+    }
 
-        public string Type { get; set; }
-
-        public override string GetSettingKey()
-        {
-            return "NAP_Set_SpecificBettypes";
-        }
-
-        public override bool IsValid()
-        {
-            return !string.IsNullOrEmpty(Action) && !string.IsNullOrEmpty(Type);
-        }
+    public override bool IsValid()
+    {
+        return !string.IsNullOrEmpty(Action) && !string.IsNullOrEmpty(Type);
     }
 }

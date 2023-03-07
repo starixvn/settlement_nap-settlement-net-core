@@ -13,6 +13,7 @@ COPY ./Sources/Settlement.Sportsbook.Soccer/. ./Sources/Settlement.Sportsbook.So
 COPY ./Sources/Settlement.Gaming/. ./Sources/Settlement.Gaming
 COPY ./Sources/Settlement.ThirdPartyProducts/. ./Sources/Settlement.ThirdPartyProducts
 COPY ./Sources/Settlement.Setting/. ./Sources/Settlement.Setting
+COPY ./Sources/Settlement.Outright/. ./Sources/Settlement.Outright
 COPY ./WebSite/Settlement.WebSites.csproj ./WebSite/Settlement.WebSites.csproj
 
 RUN ls /src -l

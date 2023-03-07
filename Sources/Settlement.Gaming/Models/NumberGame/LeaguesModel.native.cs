@@ -2,17 +2,16 @@
 using Settlement.Core.Services;
 using System.Collections.Generic;
 
-namespace Settlement.Gaming.Models.NumberGame
+namespace Settlement.Gaming.Models.NumberGame;
+
+public class LeaguesModel
 {
-    public class LeaguesModel
-    {
-        [JsonIgnore]
-        public IRefDataService RefDataService { get; set; }
+    [JsonIgnore]
+    public IRefDataService RefDataService { get; set; }
 
-        public int LeagueId { get; set; }
+    public int LeagueId { get; set; }
 
-        public string LeagueName => RefDataService.GetLeagueName(LeagueId);
+    public string LeagueName => RefDataService.GetLeagueName(LeagueId);
 
-        public List<MatchDetailModel> Matches { get; set; }
-    }
+    public List<MatchDetailModel> Matches { get; set; }
 }

@@ -1,22 +1,26 @@
-﻿import { Component, ElementRef, Input, Output, OnInit, EventEmitter } from '@angular/core';
-import { NgbDateParserFormatter, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
+﻿import { Component, ElementRef, Input, Output, EventEmitter } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { NgbDateStruct, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
     selector: 'ngbd-date-picker',
     templateUrl: './date-picker.component.html',
+    standalone: true,
     host: {
         '(document:click)': 'onClick($event)',
     },
+    imports: [NgbModule, FormsModule]
 })
 export class DatepickerComponent {
-    @Input() private readonly date: NgbDateStruct;
+    @Input() public date: NgbDateStruct;
+    @Input() public minDate: NgbDateStruct;
+    @Input() public maxDate: NgbDateStruct;
+    @Input() public disabled: boolean;
     @Output() private readonly change = new EventEmitter();
     private dynamicId;
     private readonly elementRef: ElementRef<HTMLElement>;
-    private readonly ngbDateParserFormatter: NgbDateParserFormatter;
-    constructor(elementRef: ElementRef<HTMLElement>, ngbDateParserFormatter: NgbDateParserFormatter) {
+    constructor(elementRef: ElementRef<HTMLElement>) {
         this.elementRef = elementRef;
-        this.ngbDateParserFormatter = ngbDateParserFormatter;
     }
 
     public onSelectDate(value: NgbDateStruct) {
@@ -27,6 +31,7 @@ export class DatepickerComponent {
 
     public openDatepicker(id) {
         this.dynamicId = id;
+
     }
 
     public onClick(event) {

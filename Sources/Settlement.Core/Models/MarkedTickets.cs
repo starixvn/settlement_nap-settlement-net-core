@@ -1,7 +1,6 @@
-﻿namespace Settlement.Core.Models
+﻿namespace Settlement.Core.Models;
+
+public class MarkedTickets
 {
-    public class MarkedTickets
-    {
-        public bool IsExistMarkedTicket { get; set; }
-    }
+    public bool IsExistMarkedTicket { get; set; }
 }

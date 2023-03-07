@@ -1,9 +1,8 @@
 ﻿using MediatR;
 
-namespace Settlement.Setting.Requests
+namespace Settlement.Setting.Requests;
+
+public class LeagueRequest : IRequest<string>
 {
-    public class LeagueRequest : IRequest<string>
-    {
-        public int LeagueId { get; set; }
-    }
+    public int LeagueId { get; set; }
 }

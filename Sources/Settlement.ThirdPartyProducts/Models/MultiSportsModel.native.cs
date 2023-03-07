@@ -1,12 +1,11 @@
 ﻿using Settlement.Core.Models;
 using System.Collections.Generic;
 
-namespace Settlement.ThirdPartyProducts.Models
-{
-    public class MultiSportsModel
-    {
-        public Permission Permission { get; set; }
+namespace Settlement.ThirdPartyProducts.Models;
 
-        public List<SportModel> SportLeagues { get; set; }
-    }
+public class MultiSportsModel
+{
+    public Permission Permission { get; set; }
+
+    public List<SportModel> SportLeagues { get; set; }
 }

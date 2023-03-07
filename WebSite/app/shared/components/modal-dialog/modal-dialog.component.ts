@@ -3,14 +3,14 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
     selector: 'ng-modal-content',
-    templateUrl: './modal-dialog.component.html'
+    templateUrl: './modal-dialog.component.html'    
 })
 export class ModalDialogComponent {
-    @Input() private readonly title = 'Title';
-    @Input() private readonly message = 'Message';
-    @Input() private readonly yes = 'Yes';
-    @Input() private readonly no = 'No';
-    @Input() private readonly hideNo = false;
+    @Input() readonly title = 'Title';
+    @Input() readonly message = 'Message';
+    @Input() readonly yes = 'Yes';
+    @Input() readonly no = 'No';
+    @Input() readonly hideNo = false;
 
     constructor(public activeModal: NgbActiveModal) { }
 }

@@ -2,13 +2,12 @@
 
 using Xunit;
 
-namespace Settlement.EventManagement.UnitTests
+namespace Settlement.EventManagement.UnitTests;
+
+public static class AssertExtension
 {
-    public static class AssertExtension
+    public static void AreEqual<T>(T expected, T actual)
     {
-        public static void AreEqual<T>(T expected, T actual)
-        {
-            Assert.Equal(JsonConvert.SerializeObject(expected), JsonConvert.SerializeObject(actual));
-        }
+        Assert.Equal(JsonConvert.SerializeObject(expected), JsonConvert.SerializeObject(actual));
     }
 }

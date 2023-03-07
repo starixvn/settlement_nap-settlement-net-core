@@ -1,13 +1,12 @@
 ﻿using System.Xml.Serialization;
 
-namespace Settlement.FastMarkets.Models.BetTypeModels
-{
-    public class ItemElement
-    {
-        [XmlAttribute]
-        public int Position { get; set; }
+namespace Settlement.FastMarkets.Models.BetTypeModels;
 
-        [XmlAttribute]
-        public string Result { get; set; }
-    }
+public class ItemElement
+{
+    [XmlAttribute]
+    public int Position { get; set; }
+
+    [XmlAttribute]
+    public string Result { get; set; }
 }

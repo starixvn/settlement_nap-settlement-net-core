@@ -11,52 +11,51 @@ using Settlement.EventManagement.Services.Calculation;
 using System.Collections.Generic;
 using Xunit;
 
-namespace Settlement.EventManagement.UnitTests.Services.Calculation
+namespace Settlement.EventManagement.UnitTests.Services.Calculation;
+
+public class LeagueServiceTests
 {
-    public class LeagueServiceTests
+    private readonly IDynamicRepository repository;
+
+    private readonly IMapper mapper;
+
+    private readonly IRefDataService refDataService;
+
+    private readonly LeagueService service;
+
+    public LeagueServiceTests()
     {
-        private readonly IDynamicRepository repository;
+        repository = Substitute.For<IDynamicRepository>();
+        refDataService = Substitute.For<IRefDataService>();
+        var mapperConfig = new MapperConfigurationExpression();
+        mapperConfig.AddProfile<EventManagementAutoMapperProfile>();
+        var config = new MapperConfiguration(mapperConfig);
+        mapper = new Mapper(config);
+        service = new LeagueServiceImp(repository, mapper);
+    }
 
-        private readonly IMapper mapper;
+    [Fact]
+    public void Leagues_Always_ReturnFromRepository()
+    {
+        service.Leagues(new LeagueCalculationRequest());
 
-        private readonly IRefDataService refDataService;
+        repository.Received().FetchAsync<LeagueTypeModel>(Arg.Any<LeagueCalculationCriteria>());
+    }
 
-        private readonly LeagueService service;
-
-        public LeagueServiceTests()
+    [Fact]
+    public void Leagues_Always_ReturnListLeagueFromListMatch()
+    {
+        var matches = new List<Match>
         {
-            repository = Substitute.For<IDynamicRepository>();
-            refDataService = Substitute.For<IRefDataService>();
-            var mapperConfig = new MapperConfigurationExpression();
-            mapperConfig.AddProfile<EventManagementAutoMapperProfile>();
-            var config = new MapperConfiguration(mapperConfig);
-            mapper = new Mapper(config);
-            service = new LeagueServiceImp(repository, mapper);
-        }
+            new () {LeagueId = 1, RefDataService = refDataService},
+            new () {LeagueId = 1, RefDataService = refDataService},
+            new () {LeagueId = 2, RefDataService = refDataService},
+            new () {LeagueId = 1, RefDataService = refDataService},
+        };
 
-        [Fact]
-        public void Leagues_Always_ReturnFromRepository()
-        {
-            service.Leagues(new LeagueCalculationRequest());
+        refDataService.GetLeagueName(Arg.Any<int>()).Returns(string.Empty);
+        var result = service.Leagues(matches);
 
-            repository.Received().FetchAsync<LeagueTypeModel>(Arg.Any<LeagueCalculationCriteria>());
-        }
-
-        [Fact]
-        public void Leagues_Always_ReturnListLeagueFromListMatch()
-        {
-            var matches = new List<Match>
-            {
-                new () {LeagueId = 1, RefDataService = refDataService},
-                new () {LeagueId = 1, RefDataService = refDataService},
-                new () {LeagueId = 2, RefDataService = refDataService},
-                new () {LeagueId = 1, RefDataService = refDataService},
-            };
-
-            refDataService.GetLeagueName(Arg.Any<int>()).Returns(string.Empty);
-            var result = service.Leagues(matches);
-
-            Assert.Equal(3, result.Count);
-        }
+        Assert.Equal(3, result.Count);
     }
 }

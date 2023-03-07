@@ -1,10 +1,9 @@
 ﻿using MediatR;
 using Settlement.Sportsbook.Soccer.Models;
 
-namespace Settlement.Sportsbook.Soccer.Requests
+namespace Settlement.Sportsbook.Soccer.Requests;
+
+public class GetLastestMatchDetailRequest : IRequest<MatchDetail>
 {
-    public class GetLastestMatchDetailRequest : IRequest<MatchDetail>
-    {
-        public int MatchId { get; set; }
-    }
+    public int MatchId { get; set; }
 }

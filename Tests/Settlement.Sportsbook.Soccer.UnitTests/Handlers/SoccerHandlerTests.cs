@@ -10,76 +10,75 @@ using Match = Settlement.Sportsbook.Soccer.Models.Match;
 using MatchDetail = Settlement.Sportsbook.Soccer.Models.MatchDetail;
 using Settlement.Sportsbook.Soccer.GetMatch.Services;
 
-namespace Settlement.Sportsbook.Soccer.UnitTests.Handlers
+namespace Settlement.Sportsbook.Soccer.UnitTests.Handlers;
+
+public class SoccerHandlerTests
 {
-    public class SoccerHandlerTests
+    private readonly CalculateHandler handler;
+
+    private readonly IMatchService matchService;
+    private readonly ICalculateService calculateService;
+
+    public SoccerHandlerTests()
     {
-        private readonly CalculateHandler handler;
+        matchService = Substitute.For<IMatchService>();
+        calculateService = Substitute.For<ICalculateService>();
+        var instantCalculateService = Substitute.For<IInstantCalculateService>();
+        handler = new CalculateHandler(matchService, calculateService, instantCalculateService);
+    }
 
-        private readonly IMatchService matchService;
-        private readonly ICalculateService calculateService;
+    [Fact]
+    public async Task HandleGetMatchRequest_Always_ReturnCorrectResult()
+    {
+        var result = new Match();
+        matchService.GetMatch(Arg.Any<GetMatchRequest>()).Returns(result);
 
-        public SoccerHandlerTests()
-        {
-            matchService = Substitute.For<IMatchService>();
-            calculateService = Substitute.For<ICalculateService>();
-            var instantCalculateService = Substitute.For<IInstantCalculateService>();
-            handler = new CalculateHandler(matchService, calculateService, instantCalculateService);
-        }
+        var actual = await handler.Handle(new GetMatchRequest(), new System.Threading.CancellationToken());
 
-        [Fact]
-        public async Task HandleGetMatchRequest_Always_ReturnCorrectResult()
-        {
-            var result = new Match();
-            matchService.GetMatch(Arg.Any<GetMatchRequest>()).Returns(result);
+        Assert.Equal(result, actual);
+    }
 
-            var actual = await handler.Handle(new GetMatchRequest(), new System.Threading.CancellationToken());
+    [Fact]
+    public async Task HandleSettleRequest_Always_ReturnCorrectResult()
+    {
+        var result = new Result();
+        calculateService.Calculate(Arg.Any<SettleRequest>()).Returns(result);
 
-            Assert.Equal(result, actual);
-        }
+        var actual = await handler.Handle(new SettleRequest { ActionName = ActionType.CalculateAll }, new System.Threading.CancellationToken());
 
-        [Fact]
-        public async Task HandleSettleRequest_Always_ReturnCorrectResult()
-        {
-            var result = new Result();
-            calculateService.Calculate(Arg.Any<SettleRequest>()).Returns(result);
+        Assert.Equal(result, actual);
+    }
 
-            var actual = await handler.Handle(new SettleRequest { ActionName = ActionType.CalculateAll }, new System.Threading.CancellationToken());
+    [Fact]
+    public async Task HandleSettleRequest_Always_ReturnCorrectResultWithUncal()
+    {
+        var result = new Result();
+        calculateService.UnCalculate(Arg.Any<SettleRequest>()).Returns(result);
 
-            Assert.Equal(result, actual);
-        }
+        var actual = await handler.Handle(new SettleRequest { ActionName = ActionType.UnCalculate }, new System.Threading.CancellationToken());
 
-        [Fact]
-        public async Task HandleSettleRequest_Always_ReturnCorrectResultWithUncal()
-        {
-            var result = new Result();
-            calculateService.UnCalculate(Arg.Any<SettleRequest>()).Returns(result);
+        Assert.Equal(result, actual);
+    }
 
-            var actual = await handler.Handle(new SettleRequest { ActionName = ActionType.UnCalculate }, new System.Threading.CancellationToken());
+    [Fact]
+    public async Task HandleGetLastestMatchDetailRequest_Always_ReturnCorrectMatchDetail()
+    {
+        var result = new MatchDetail();
+        matchService.GetLastestMatchDetail(Arg.Any<GetLastestMatchDetailRequest>()).Returns(result);
 
-            Assert.Equal(result, actual);
-        }
+        var actual = await handler.Handle(new GetLastestMatchDetailRequest(), new System.Threading.CancellationToken());
 
-        [Fact]
-        public async Task HandleGetLastestMatchDetailRequest_Always_ReturnCorrectMatchDetail()
-        {
-            var result = new MatchDetail();
-            matchService.GetLastestMatchDetail(Arg.Any<GetLastestMatchDetailRequest>()).Returns(result);
+        Assert.Equal(result, actual);
+    }
 
-            var actual = await handler.Handle(new GetLastestMatchDetailRequest(), new System.Threading.CancellationToken());
+    [Fact]
+    public async Task HandleCheckStatusRequest_Always_ReturnCorrectResult()
+    {
+        var result = new Result();
+        calculateService.CheckStatus(Arg.Any<CheckStatusRequest>()).Returns(result);
 
-            Assert.Equal(result, actual);
-        }
+        var actual = await handler.Handle(new CheckStatusRequest(), new System.Threading.CancellationToken());
 
-        [Fact]
-        public async Task HandleCheckStatusRequest_Always_ReturnCorrectResult()
-        {
-            var result = new Result();
-            calculateService.CheckStatus(Arg.Any<CheckStatusRequest>()).Returns(result);
-
-            var actual = await handler.Handle(new CheckStatusRequest(), new System.Threading.CancellationToken());
-
-            Assert.Equal(result, actual);
-        }
+        Assert.Equal(result, actual);
     }
 }

@@ -1,10 +1,9 @@
 ﻿using Settlement.Core.Models;
 using System.Collections.Generic;
 
-namespace Settlement.ThirdPartyProducts.Models
+namespace Settlement.ThirdPartyProducts.Models;
+
+public class VoidBetApiModel
 {
-    public class VoidBetApiModel
-    {
-        public IEnumerable<VoidBetInfo> VoidBetInfos { get; set; }
-    }
+    public IEnumerable<VoidBetInfo> VoidBetInfos { get; set; }
 }

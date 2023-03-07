@@ -4,9 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Settlement.Sportsbook.NewCalculation.UnitTests.Handlers
+namespace Settlement.Sportsbook.NewCalculation.UnitTests.Handlers;
+
+class SportsbookHandlerTests
 {
-    class SportsbookHandlerTests
-    {
-    }
 }

@@ -5,38 +5,37 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Settlement.Log.Services
+namespace Settlement.Log.Services;
+
+public interface LogDetailService
 {
-    public interface LogDetailService
+    Task<List<LogDetailsModels>> GetLogDetailByMatchAndProduct(int matchId, string productType);
+}
+
+public class LogDetailServiceImp : LogDetailService
+{
+    private readonly IDynamicRepository repository;
+
+    private readonly RemarkService remarkService;
+
+    public LogDetailServiceImp(
+        IDynamicRepository repository,
+        RemarkService remarkService)
     {
-        Task<List<LogDetailsModels>> GetLogDetailByMatchAndProduct(int matchId, string productType);
+        this.repository = repository;
+        this.remarkService = remarkService;
     }
 
-    public class LogDetailServiceImp : LogDetailService
+    public async Task<List<LogDetailsModels>> GetLogDetailByMatchAndProduct(int matchId, string productType)
     {
-        private readonly IDynamicRepository repository;
+        var criteria = new GetLogDetailByMatchAndProductCriteria { MatchId = matchId, ProductType = productType };
+        var logDetails = (await repository.FetchAsync<LogDetailsModels>(criteria)).ToList();
 
-        private readonly RemarkService remarkService;
-
-        public LogDetailServiceImp(
-            IDynamicRepository repository,
-            RemarkService remarkService)
+        foreach (var log in logDetails.Where(log => remarkService.IsFastMarketAction(log.ActionId)))
         {
-            this.repository = repository;
-            this.remarkService = remarkService;
+            log.Remark = remarkService.RemarkValue(log.Remark);
         }
 
-        public async Task<List<LogDetailsModels>> GetLogDetailByMatchAndProduct(int matchId, string productType)
-        {
-            var criteria = new GetLogDetailByMatchAndProductCriteria { MatchId = matchId, ProductType = productType };
-            var logDetails = (await repository.FetchAsync<LogDetailsModels>(criteria)).ToList();
-
-            foreach (var log in logDetails.Where(log => remarkService.IsFastMarketAction(log.ActionId)))
-            {
-                log.Remark = remarkService.RemarkValue(log.Remark);
-            }
-
-            return logDetails;
-        }
+        return logDetails;
     }
 }

@@ -9,233 +9,232 @@ using Settlement.Sportsbook.Soccer.Requests;
 using Match = Settlement.Sportsbook.Soccer.Models.Match;
 using MatchDetail = Settlement.Sportsbook.Soccer.Models.MatchDetail;
 
-namespace Settlement.Sportsbook.Soccer.GetMatch.Services
+namespace Settlement.Sportsbook.Soccer.GetMatch.Services;
+
+public interface IMatchService
 {
-    public interface IMatchService
+    string GetBetStatus(int matchId);
+
+    Task<Match> GetMatch(GetMatchRequest request);
+
+    Task<Match> GetMatchRefund(GetMatchRequest request);
+
+    Task<MatchDetail> GetLastestMatchDetail(GetLastestMatchDetailRequest request);
+
+    Task<List<string>> GetSpecificBetTypes(GetSpecificBetTypeRequest request);
+
+    Task<List<MatchMoveBetTicket>> GetMatchDetailThirdPartyBetTicket(GetMatchDetailThirdPartyBetTicketsRequest request);
+}
+
+public class MatchServiceImp : IMatchService
+{
+    private readonly IDynamicRepository repository;
+
+    private readonly PermissionService permission;
+
+    private readonly IMapper mapper;
+
+    private readonly IRefDataService refDataService;
+
+    private readonly IGoalIconService goalIconService;
+
+    private readonly IFetchDataService fetchDataService;
+
+    public MatchServiceImp(
+        IDynamicRepository repository,
+        PermissionService permission,
+        IMapper mapper,
+        IRefDataService refDataService,
+        IGoalIconService goalIconService,
+        IFetchDataService fetchDataService)
     {
-        string GetBetStatus(int matchId);
-
-        Task<Match> GetMatch(GetMatchRequest request);
-
-        Task<Match> GetMatchRefund(GetMatchRequest request);
-
-        Task<MatchDetail> GetLastestMatchDetail(GetLastestMatchDetailRequest request);
-
-        Task<List<string>> GetSpecificBetTypes(GetSpecificBetTypeRequest request);
-
-        Task<List<MatchMoveBetTicket>> GetMatchDetailThirdPartyBetTicket(GetMatchDetailThirdPartyBetTicketsRequest request);
+        this.repository = repository;
+        this.permission = permission;
+        this.mapper = mapper;
+        this.refDataService = refDataService;
+        this.goalIconService = goalIconService;
+        this.fetchDataService = fetchDataService;
     }
 
-    public class MatchServiceImp : IMatchService
+    public string GetBetStatus(int matchId)
     {
-        private readonly IDynamicRepository repository;
-
-        private readonly PermissionService permission;
-
-        private readonly IMapper mapper;
-
-        private readonly IRefDataService refDataService;
-
-        private readonly IGoalIconService goalIconService;
-
-        private readonly IFetchDataService fetchDataService;
-
-        public MatchServiceImp(
-            IDynamicRepository repository,
-            PermissionService permission,
-            IMapper mapper,
-            IRefDataService refDataService,
-            IGoalIconService goalIconService,
-            IFetchDataService fetchDataService)
+        var criteria = new GetMatchInfoCriteria
         {
-            this.repository = repository;
-            this.permission = permission;
-            this.mapper = mapper;
-            this.refDataService = refDataService;
-            this.goalIconService = goalIconService;
-            this.fetchDataService = fetchDataService;
+            MatchId = matchId
+        };
+
+        var matchInfo = repository.Get<MatchDetail>(criteria);
+
+        return matchInfo != null ? matchInfo.BetStatus : string.Empty;
+    }
+
+    public async Task<Match> GetMatch(GetMatchRequest request)
+    {
+        var match = await fetchDataService.GetMatchInfo(request);
+        var resultDetails = await GetResultDetail(request.MatchId);
+        var matchDetail = match.MatchDetail;
+        matchDetail.RefDataService = refDataService;
+        matchDetail = HandleResultDetailSoccer(matchDetail, resultDetails);
+
+        var goalIconQuery = GoalIconQuery(matchDetail);
+        matchDetail.GoalIcon = goalIconService.GetGoalIcon(goalIconQuery);
+
+        var hedgeMatchDetail = await GetHedgeMatch(request.MatchId);
+
+        var fantasyMatch = new FantasyMatch();
+        if (matchDetail.IsFantasyMatch)
+        {
+            fantasyMatch = await GetRelatedMatches(matchDetail.MatchId);
         }
 
-        public string GetBetStatus(int matchId)
+        var childMatches = match.ChildMatches.OrderBy(child => child.MatchCode)
+            .ThenBy(child => child.MatchId).ToList();
+
+        foreach (var item in childMatches)
         {
-            var criteria = new GetMatchInfoCriteria
-            {
-                MatchId = matchId
-            };
-
-            var matchInfo = repository.Get<MatchDetail>(criteria);
-
-            return matchInfo != null ? matchInfo.BetStatus : string.Empty;
+            item.RefDataService = refDataService;
         }
 
-        public async Task<Match> GetMatch(GetMatchRequest request)
+        return new Match
         {
-            var match = await fetchDataService.GetMatchInfo(request);
-            var resultDetails = await GetResultDetail(request.MatchId);
-            var matchDetail = match.MatchDetail;
-            matchDetail.RefDataService = refDataService;
-            matchDetail = HandleResultDetailSoccer(matchDetail, resultDetails);
+            MatchDetail = matchDetail,
+            ResultDetails = resultDetails,
+            TicketCounts = match.TicketCounts,
+            ChildMatches = childMatches,
+            FantasyMatch = fantasyMatch,
+            HedgeMatchDetail = hedgeMatchDetail,
+            Permission = permission.Permission
+        };
+    }
 
-            var goalIconQuery = GoalIconQuery(matchDetail);
-            matchDetail.GoalIcon = goalIconService.GetGoalIcon(goalIconQuery);
+    public async Task<Match> GetMatchRefund(GetMatchRequest request)
+    {
+        var match = await fetchDataService.GetMatchInfo(request);
+        var matchDetail = match.MatchDetail;
+        var resultDetails = await GetResultDetail(request.MatchId);
 
-            var hedgeMatchDetail = await GetHedgeMatch(request.MatchId);
+        matchDetail.RefDataService = refDataService;
+        matchDetail = HandleResultDetailSoccer(matchDetail, resultDetails);
+        var goalIconQuery = GoalIconQuery(matchDetail);
+        matchDetail.GoalIcon = goalIconService.GetGoalIcon(goalIconQuery);
 
-            var fantasyMatch = new FantasyMatch();
-            if (matchDetail.IsFantasyMatch)
-            {
-                fantasyMatch = await GetRelatedMatches(matchDetail.MatchId);
-            }
-
-            var childMatches = match.ChildMatches.OrderBy(child => child.MatchCode)
-                .ThenBy(child => child.MatchId).ToList();
-
-            foreach (var item in childMatches)
-            {
-                item.RefDataService = refDataService;
-            }
-
-            return new Match
-            {
-                MatchDetail = matchDetail,
-                ResultDetails = resultDetails,
-                TicketCounts = match.TicketCounts,
-                ChildMatches = childMatches,
-                FantasyMatch = fantasyMatch,
-                HedgeMatchDetail = hedgeMatchDetail,
-                Permission = permission.Permission
-            };
+        var hedgeMatchCriteria = new GetHedgeMatchCriteria { MatchId = request.MatchId };
+        var hedgeMatchDetail = await repository.GetAsync<HedgeMatchDetail>(hedgeMatchCriteria);
+        if (hedgeMatchDetail != null)
+        {
+            hedgeMatchDetail.IsDeterminedHedgeMatch = await fetchDataService.IsDeterminedHedgeMatch(hedgeMatchDetail.MatchId);
         }
 
-        public async Task<Match> GetMatchRefund(GetMatchRequest request)
+        var betDaqCriteria = new BetDaqCheckingCriteria { MatchId = request.MatchId };
+        var betDaq = await fetchDataService.GetMultiServersBetDaq(betDaqCriteria);
+
+        var betFairCriteria = new BetFairCheckingCriteria { MatchId = request.MatchId };
+        var betFair = await fetchDataService.GetMultiServersBetFair(betFairCriteria);
+
+        return new Match
         {
-            var match = await fetchDataService.GetMatchInfo(request);
-            var matchDetail = match.MatchDetail;
-            var resultDetails = await GetResultDetail(request.MatchId);
+            MatchDetail = matchDetail,
+            ResultDetails = resultDetails,
+            HedgeMatchDetail = hedgeMatchDetail,
+            BetDaq = betDaq,
+            BetFair = betFair,
+            Permission = permission.Permission
+        };
+    }
 
-            matchDetail.RefDataService = refDataService;
-            matchDetail = HandleResultDetailSoccer(matchDetail, resultDetails);
-            var goalIconQuery = GoalIconQuery(matchDetail);
-            matchDetail.GoalIcon = goalIconService.GetGoalIcon(goalIconQuery);
+    private GoalIconQueryModel GoalIconQuery(MatchDetail match)
+    {
+        return new GoalIconQueryModel
+        {
+            BetStatus = match.BetStatus,
+            GoalRecord = match.GoalRecord,
+            FinalAwayScore = match.FinalAwayScore,
+            FinalHomeScore = match.FinalHomeScore,
+            IsExistFgLg = match.IsExistFgLg,
+            IsExistHtFgLg = match.IsExistHtFgLg
+        };
+    }
 
-            var hedgeMatchCriteria = new GetHedgeMatchCriteria { MatchId = request.MatchId };
-            var hedgeMatchDetail = await repository.GetAsync<HedgeMatchDetail>(hedgeMatchCriteria);
-            if (hedgeMatchDetail != null)
-            {
-                hedgeMatchDetail.IsDeterminedHedgeMatch = await fetchDataService.IsDeterminedHedgeMatch(hedgeMatchDetail.MatchId);
-            }
+    private async Task<List<ResultDetail>> GetResultDetail(int matchId)
+    {
+        var resultDetailCriteria = new GetResultDetailCriteria { MatchidList = matchId.ToString() };
+        return (await repository.FetchAsync<ResultDetail>(resultDetailCriteria)).ToList();
+    }
 
-            var betDaqCriteria = new BetDaqCheckingCriteria { MatchId = request.MatchId };
-            var betDaq = await fetchDataService.GetMultiServersBetDaq(betDaqCriteria);
+    private async Task<HedgeMatchDetail> GetHedgeMatch(int matchId)
+    {
+        var hedgeMatchCriteria = new GetHedgeMatchCriteria { MatchId = matchId };
+        return await repository.GetAsync<HedgeMatchDetail>(hedgeMatchCriteria);
+    }
 
-            var betFairCriteria = new BetFairCheckingCriteria { MatchId = request.MatchId };
-            var betFair = await fetchDataService.GetMultiServersBetFair(betFairCriteria);
+    private async Task<FantasyMatch> GetRelatedMatches(int matchId)
+    {
+        var criteria = new GetFantasyMatchCriteria
+        {
+            MatchId = matchId
+        };
 
-            return new Match
-            {
-                MatchDetail = matchDetail,
-                ResultDetails = resultDetails,
-                HedgeMatchDetail = hedgeMatchDetail,
-                BetDaq = betDaq,
-                BetFair = betFair,
-                Permission = permission.Permission
-            };
+        var result = await repository.FetchMultipleAsync<FantasyMatchDetail, FantasyRelatedMatch>(criteria);
+        var matchDetail = result.firstResultSet.FirstOrDefault();
+        var relatedMatches = result.secondResultSet.OrderBy(match => match.MatchCode).ToList();
+        foreach (var match in relatedMatches)
+        {
+            match.RefDataService = refDataService;
         }
 
-        private GoalIconQueryModel GoalIconQuery(MatchDetail match)
+        return new FantasyMatch
         {
-            return new GoalIconQueryModel
-            {
-                BetStatus = match.BetStatus,
-                GoalRecord = match.GoalRecord,
-                FinalAwayScore = match.FinalAwayScore,
-                FinalHomeScore = match.FinalHomeScore,
-                IsExistFgLg = match.IsExistFgLg,
-                IsExistHtFgLg = match.IsExistHtFgLg
-            };
+            FantasyMatchDetail = matchDetail,
+            RelatedMatches = relatedMatches
+        };
+    }
+
+    private static MatchDetail HandleResultDetailSoccer(MatchDetail match, List<ResultDetail> resultdetails)
+    {
+        var externalResultDetail = resultdetails.Where(result => result.SourceId == SourceType.SBO).ToList();
+        var halfTimeResult = externalResultDetail.Find(result => result.ResourceId == ResourceType.Halftime);
+        var fullTimeResult = externalResultDetail.Find(result => result.ResourceId == ResourceType.Final);
+
+        if (halfTimeResult != null && !string.IsNullOrWhiteSpace(halfTimeResult.AwayValue) && !string.IsNullOrWhiteSpace(halfTimeResult.HomeValue))
+        {
+            match.ExHTAwayScore = int.Parse(halfTimeResult.AwayValue);
+            match.ExHTHomeScore = int.Parse(halfTimeResult.HomeValue);
         }
 
-        private async Task<List<ResultDetail>> GetResultDetail(int matchId)
+        if (fullTimeResult != null && !string.IsNullOrWhiteSpace(fullTimeResult.AwayValue) && !string.IsNullOrWhiteSpace(fullTimeResult.HomeValue))
         {
-            var resultDetailCriteria = new GetResultDetailCriteria { MatchidList = matchId.ToString() };
-            return (await repository.FetchAsync<ResultDetail>(resultDetailCriteria)).ToList();
+            match.ExFTAwayScore = int.Parse(fullTimeResult.AwayValue);
+            match.ExFTHomeScore = int.Parse(fullTimeResult.HomeValue);
         }
 
-        private async Task<HedgeMatchDetail> GetHedgeMatch(int matchId)
+        return match;
+    }
+
+    public async Task<MatchDetail> GetLastestMatchDetail(GetLastestMatchDetailRequest request)
+    {
+        var criteria = mapper.Map<GetLastestMatchDetailRequest, GetLastestMatchDetailCriteria>(request);
+        var matchDetail = await repository.GetAsync<MatchDetail>(criteria);
+        matchDetail.RefDataService = refDataService;
+
+        return matchDetail;
+    }
+
+    public async Task<List<string>> GetSpecificBetTypes(GetSpecificBetTypeRequest request)
+    {
+        var criteria = mapper.Map<GetSpecificBetTypeRequest, SpecificBetTypesCriteria>(request);
+        var listBetType = await repository.FetchAsync<int>(criteria);
+
+        return listBetType.Select(item => refDataService.GetBetTypeName(item.ToString())).ToList();
+    }
+
+    public async Task<List<MatchMoveBetTicket>> GetMatchDetailThirdPartyBetTicket(GetMatchDetailThirdPartyBetTicketsRequest request)
+    {
+        var criteria = new GetMatchDetailThirdPartyBetTicketCriteria
         {
-            var hedgeMatchCriteria = new GetHedgeMatchCriteria { MatchId = matchId };
-            return await repository.GetAsync<HedgeMatchDetail>(hedgeMatchCriteria);
-        }
+            MatchId = request.MatchId
+        };
 
-        private async Task<FantasyMatch> GetRelatedMatches(int matchId)
-        {
-            var criteria = new GetFantasyMatchCriteria
-            {
-                MatchId = matchId
-            };
-
-            var result = await repository.FetchMultipleAsync<FantasyMatchDetail, FantasyRelatedMatch>(criteria);
-            var matchDetail = result.firstResultSet.FirstOrDefault();
-            var relatedMatches = result.secondResultSet.OrderBy(match => match.MatchCode).ToList();
-            foreach (var match in relatedMatches)
-            {
-                match.RefDataService = refDataService;
-            }
-
-            return new FantasyMatch
-            {
-                FantasyMatchDetail = matchDetail,
-                RelatedMatches = relatedMatches
-            };
-        }
-
-        private static MatchDetail HandleResultDetailSoccer(MatchDetail match, List<ResultDetail> resultdetails)
-        {
-            var externalResultDetail = resultdetails.Where(result => result.SourceId == SourceType.SBO).ToList();
-            var halfTimeResult = externalResultDetail.Find(result => result.ResourceId == ResourceType.Halftime);
-            var fullTimeResult = externalResultDetail.Find(result => result.ResourceId == ResourceType.Final);
-
-            if (halfTimeResult != null && !string.IsNullOrWhiteSpace(halfTimeResult.AwayValue) && !string.IsNullOrWhiteSpace(halfTimeResult.HomeValue))
-            {
-                match.ExHTAwayScore = int.Parse(halfTimeResult.AwayValue);
-                match.ExHTHomeScore = int.Parse(halfTimeResult.HomeValue);
-            }
-
-            if (fullTimeResult != null && !string.IsNullOrWhiteSpace(fullTimeResult.AwayValue) && !string.IsNullOrWhiteSpace(fullTimeResult.HomeValue))
-            {
-                match.ExFTAwayScore = int.Parse(fullTimeResult.AwayValue);
-                match.ExFTHomeScore = int.Parse(fullTimeResult.HomeValue);
-            }
-
-            return match;
-        }
-
-        public async Task<MatchDetail> GetLastestMatchDetail(GetLastestMatchDetailRequest request)
-        {
-            var criteria = mapper.Map<GetLastestMatchDetailRequest, GetLastestMatchDetailCriteria>(request);
-            var matchDetail = await repository.GetAsync<MatchDetail>(criteria);
-            matchDetail.RefDataService = refDataService;
-
-            return matchDetail;
-        }
-
-        public async Task<List<string>> GetSpecificBetTypes(GetSpecificBetTypeRequest request)
-        {
-            var criteria = mapper.Map<GetSpecificBetTypeRequest, SpecificBetTypesCriteria>(request);
-            var listBetType = await repository.FetchAsync<int>(criteria);
-
-            return listBetType.Select(item => refDataService.GetBetTypeName(item.ToString())).ToList();
-        }
-
-        public async Task<List<MatchMoveBetTicket>> GetMatchDetailThirdPartyBetTicket(GetMatchDetailThirdPartyBetTicketsRequest request)
-        {
-            var criteria = new GetMatchDetailThirdPartyBetTicketCriteria
-            {
-                MatchId = request.MatchId
-            };
-
-            var listMatch = await repository.FetchAsync<MatchMoveBetTicket>(criteria);
-            return listMatch.ToList();
-        }
+        var listMatch = await repository.FetchAsync<MatchMoveBetTicket>(criteria);
+        return listMatch.ToList();
     }
 }

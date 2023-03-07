@@ -10,112 +10,111 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Settlement.Sportsbook.Aio.UnitTests.Handlers
+namespace Settlement.Sportsbook.Aio.UnitTests.Handlers;
+
+public class AioHandlerTests
 {
-    public class AioHandlerTests
+    private readonly AioHandler handler;
+
+    private readonly PermissionService permission;
+
+    private readonly IAioService service;
+
+    public AioHandlerTests()
     {
-        private readonly AioHandler handler;
+        service = Substitute.For<IAioService>();
+        permission = Substitute.For<PermissionService>(null, null, null, null);
+        var appSettings = new AppSettingsKey { EnableVerifyingRunningOdds = true };
+        var appSettingsOptions = Options.Create(appSettings);
+        handler = new AioHandler(service, permission, appSettingsOptions);
+    }
 
-        private readonly PermissionService permission;
+    [Fact]
+    public async Task HandleGetMatchRequest_Always_ReturnCorrectResult()
+    {
+        var result = new AioMatch();
+        service.GetMatch(Arg.Any<GetMatchRequest>()).Returns(result);
 
-        private readonly IAioService service;
+        var actual = await handler.Handle(new GetMatchRequest(), new System.Threading.CancellationToken());
 
-        public AioHandlerTests()
-        {
-            service = Substitute.For<IAioService>();
-            permission = Substitute.For<PermissionService>(null, null, null, null);
-            var appSettings = new AppSettingsKey { EnableVerifyingRunningOdds = true };
-            var appSettingsOptions = Options.Create(appSettings);
-            handler = new AioHandler(service, permission, appSettingsOptions);
-        }
+        Assert.Equal(result, actual);
+    }
 
-        [Fact]
-        public async Task HandleGetMatchRequest_Always_ReturnCorrectResult()
-        {
-            var result = new AioMatch();
-            service.GetMatch(Arg.Any<GetMatchRequest>()).Returns(result);
+    [Fact]
+    public async Task HandleSettleRequest_Always_ReturnCorrectResult()
+    {
+        var result = new Result();
+        service.Settle(Arg.Any<SettleRequest>()).Returns(result);
 
-            var actual = await handler.Handle(new GetMatchRequest(), new System.Threading.CancellationToken());
+        var actual = await handler.Handle(new SettleRequest(), new System.Threading.CancellationToken());
 
-            Assert.Equal(result, actual);
-        }
+        Assert.Equal(result, actual);
+    }
 
-        [Fact]
-        public async Task HandleSettleRequest_Always_ReturnCorrectResult()
-        {
-            var result = new Result();
-            service.Settle(Arg.Any<SettleRequest>()).Returns(result);
+    [Fact]
+    public async Task HandleGetRecalResultRequest_Always_ReturnCorrectResult()
+    {
+        var result = new List<Models.ResultDetail>();
+        service.GetRecalResult(Arg.Any<GetRecalResultRequest>()).Returns(result);
 
-            var actual = await handler.Handle(new SettleRequest(), new System.Threading.CancellationToken());
+        var actual = await handler.Handle(new GetRecalResultRequest(), new System.Threading.CancellationToken());
 
-            Assert.Equal(result, actual);
-        }
+        Assert.Equal(result, actual);
+    }
 
-        [Fact]
-        public async Task HandleGetRecalResultRequest_Always_ReturnCorrectResult()
-        {
-            var result = new List<Models.ResultDetail>();
-            service.GetRecalResult(Arg.Any<GetRecalResultRequest>()).Returns(result);
+    [Fact]
+    public async Task HandleCheckMarkedTicketsRequest_Always_ReturnCorrectResult()
+    {
+        var result = new MarkedTickets();
+        service.CheckMarkedTickets(Arg.Any<CheckMarkedTicketsRequest>()).Returns(result);
 
-            var actual = await handler.Handle(new GetRecalResultRequest(), new System.Threading.CancellationToken());
+        var actual = await handler.Handle(new CheckMarkedTicketsRequest(), new System.Threading.CancellationToken());
 
-            Assert.Equal(result, actual);
-        }
+        Assert.Equal(result, actual);
+    }
 
-        [Fact]
-        public async Task HandleCheckMarkedTicketsRequest_Always_ReturnCorrectResult()
-        {
-            var result = new MarkedTickets();
-            service.CheckMarkedTickets(Arg.Any<CheckMarkedTicketsRequest>()).Returns(result);
+    [Fact]
+    public async Task HandleCheckRunningOddsRequest_Always_ReturnCorrectResult()
+    {
+        var result = new Result { ErrCode = 1 };
+        service.VerifyNoRunningOdds(Arg.Any<CheckRunningOddsRequest>()).Returns(result);
 
-            var actual = await handler.Handle(new CheckMarkedTicketsRequest(), new System.Threading.CancellationToken());
+        var actual = await handler.Handle(new CheckRunningOddsRequest(), new System.Threading.CancellationToken());
 
-            Assert.Equal(result, actual);
-        }
+        Assert.Equal(result, actual);
+    }
 
-        [Fact]
-        public async Task HandleCheckRunningOddsRequest_Always_ReturnCorrectResult()
-        {
-            var result = new Result { ErrCode = 1 };
-            service.VerifyNoRunningOdds(Arg.Any<CheckRunningOddsRequest>()).Returns(result);
+    [Fact]
+    public async Task HandleCheckRunningOddsRequest_TurnOffConfig_ReturnNewResult()
+    {
+        var appSettings = new AppSettingsKey { EnableVerifyingRunningOdds = false };
+        var appSettingsOptions = Options.Create(appSettings);
+        AioHandler handlerTemp = new AioHandler(service, permission, appSettingsOptions);
+        var actual = await handlerTemp.Handle(new CheckRunningOddsRequest(), new System.Threading.CancellationToken());
 
-            var actual = await handler.Handle(new CheckRunningOddsRequest(), new System.Threading.CancellationToken());
+        Assert.True(actual.IsSuccessful);
+        await service.DidNotReceive().VerifyNoRunningOdds(Arg.Any<CheckRunningOddsRequest>());
+    }
 
-            Assert.Equal(result, actual);
-        }
+    [Fact]
+    public async Task HandleSaveScoreRequest_Always_ReturnCorrectResult()
+    {
+        var result = new Result();
+        service.SaveScore(Arg.Any<SaveScoreRequest>()).Returns(result);
 
-        [Fact]
-        public async Task HandleCheckRunningOddsRequest_TurnOffConfig_ReturnNewResult()
-        {
-            var appSettings = new AppSettingsKey { EnableVerifyingRunningOdds = false };
-            var appSettingsOptions = Options.Create(appSettings);
-            AioHandler handlerTemp = new AioHandler(service, permission, appSettingsOptions);
-            var actual = await handlerTemp.Handle(new CheckRunningOddsRequest(), new System.Threading.CancellationToken());
+        var actual = await handler.Handle(new SaveScoreRequest(), new System.Threading.CancellationToken());
 
-            Assert.True(actual.IsSuccessful);
-            await service.DidNotReceive().VerifyNoRunningOdds(Arg.Any<CheckRunningOddsRequest>());
-        }
+        Assert.Equal(result, actual);
+    }
 
-        [Fact]
-        public async Task HandleSaveScoreRequest_Always_ReturnCorrectResult()
-        {
-            var result = new Result();
-            service.SaveScore(Arg.Any<SaveScoreRequest>()).Returns(result);
+    [Fact]
+    public async Task HandleSettleChildMatchRequest_Always_ReturnCorrectResult()
+    {
+        var result = new Result();
+        service.SettleChildMatch(Arg.Any<SettleChildMatchRequest>()).Returns(result);
 
-            var actual = await handler.Handle(new SaveScoreRequest(), new System.Threading.CancellationToken());
+        var actual = await handler.Handle(new SettleChildMatchRequest(), new System.Threading.CancellationToken());
 
-            Assert.Equal(result, actual);
-        }
-
-        [Fact]
-        public async Task HandleSettleChildMatchRequest_Always_ReturnCorrectResult()
-        {
-            var result = new Result();
-            service.SettleChildMatch(Arg.Any<SettleChildMatchRequest>()).Returns(result);
-
-            var actual = await handler.Handle(new SettleChildMatchRequest(), new System.Threading.CancellationToken());
-
-            Assert.Equal(result, actual);
-        }
+        Assert.Equal(result, actual);
     }
 }

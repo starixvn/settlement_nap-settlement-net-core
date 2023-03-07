@@ -3,105 +3,104 @@ using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Xunit;
 
-namespace Settlement.Core.UnitTests.Services
+namespace Settlement.Core.UnitTests.Services;
+
+public class ScoreSetServiceTests
 {
-    public class ScoreSetServiceTests
+    private readonly IScoreSetService service;
+
+    public ScoreSetServiceTests()
     {
-        private readonly IScoreSetService service;
+        service = new ScoreSetServiceImp();
+    }
 
-        public ScoreSetServiceTests()
-        {
-            service = new ScoreSetServiceImp();
-        }
+    private readonly Permission permission = new Permission();
 
-        private readonly Permission permission = new Permission();
+    [Fact]
+    public void GetScore_HasResultDetailWithSettlementStatusIdIsRefund_ReturnsROnScore()
+    {
+        // Arrange
+        var resultDetail = new ResultDetail { MatchId = 1, SettlementStatusId = SettlementStatus.Refund };
+        var expectedScore = new Score("R", "R");
 
-        [Fact]
-        public void GetScore_HasResultDetailWithSettlementStatusIdIsRefund_ReturnsROnScore()
-        {
-            // Arrange
-            var resultDetail = new ResultDetail { MatchId = 1, SettlementStatusId = SettlementStatus.Refund };
-            var expectedScore = new Score("R", "R");
+        // Act
+        var actualScore = service.GetScore(resultDetail, permission);
 
-            // Act
-            var actualScore = service.GetScore(resultDetail, permission);
+        // Assert
+        AssertExtension.AreEqual(expectedScore, actualScore);
+    }
 
-            // Assert
-            AssertExtension.AreEqual(expectedScore, actualScore);
-        }
+    [Fact]
+    public void GetScore_HasResultDetailWithSettlementStatusIdIsRefundHalftime_ReturnsRHTOnScore()
+    {
+        // Arrange
+        var resultDetail = new ResultDetail { MatchId = 1, SettlementStatusId = SettlementStatus.RefundHT };
+        var expectedScore = new Score("R.HT", "R.HT");
 
-        [Fact]
-        public void GetScore_HasResultDetailWithSettlementStatusIdIsRefundHalftime_ReturnsRHTOnScore()
-        {
-            // Arrange
-            var resultDetail = new ResultDetail { MatchId = 1, SettlementStatusId = SettlementStatus.RefundHT };
-            var expectedScore = new Score("R.HT", "R.HT");
+        // Act
+        var actualScore = service.GetScore(resultDetail, permission);
 
-            // Act
-            var actualScore = service.GetScore(resultDetail, permission);
+        // Assert
+        AssertExtension.AreEqual(expectedScore, actualScore);
+    }
 
-            // Assert
-            AssertExtension.AreEqual(expectedScore, actualScore);
-        }
+    [Fact]
+    public void GetScore_HasResultDetailWithSettlementStatusIdIsRefundFullTime_ReturnsRFTOnScore()
+    {
+        // Arrange
+        var resultDetail = new ResultDetail { MatchId = 1, SettlementStatusId = SettlementStatus.RefundFT };
+        var expectedScore = new Score("R.FT", "R.FT");
 
-        [Fact]
-        public void GetScore_HasResultDetailWithSettlementStatusIdIsRefundFullTime_ReturnsRFTOnScore()
-        {
-            // Arrange
-            var resultDetail = new ResultDetail { MatchId = 1, SettlementStatusId = SettlementStatus.RefundFT };
-            var expectedScore = new Score("R.FT", "R.FT");
+        // Act
+        var actualScore = service.GetScore(resultDetail, permission);
 
-            // Act
-            var actualScore = service.GetScore(resultDetail, permission);
+        // Assert
+        AssertExtension.AreEqual(expectedScore, actualScore);
+    }
 
-            // Assert
-            AssertExtension.AreEqual(expectedScore, actualScore);
-        }
+    [Fact]
+    public void GetScore_HasResultDetailWithSettlementStatusIdIsCompleted_ReturnsCorrectScoreAndHasBackgroundColor()
+    {
+        // Arrange
+        var resultDetail = new ResultDetail { MatchId = 1, HomeValue = "1", AwayValue = "2", SettlementStatusId = SettlementStatus.Completed };
+        var expectedScore = new Score("1", "2", Background.Calculated);
 
-        [Fact]
-        public void GetScore_HasResultDetailWithSettlementStatusIdIsCompleted_ReturnsCorrectScoreAndHasBackgroundColor()
-        {
-            // Arrange
-            var resultDetail = new ResultDetail { MatchId = 1, HomeValue = "1", AwayValue = "2", SettlementStatusId = SettlementStatus.Completed };
-            var expectedScore = new Score("1", "2", Background.Calculated);
+        // Act
+        var actualScore = service.GetScore(resultDetail, permission);
 
-            // Act
-            var actualScore = service.GetScore(resultDetail, permission);
+        // Assert
+        AssertExtension.AreEqual(expectedScore, actualScore);
+    }
 
-            // Assert
-            AssertExtension.AreEqual(expectedScore, actualScore);
-        }
+    [Fact]
+    public void GetScore_HasResultDetailWithSettlementStatusIdIsRunningAndScoreIsNull_ReturnsHyphenOnScore()
+    {
+        // Arrange
+        var resultDetail = new ResultDetail { MatchId = 1, SettlementStatusId = SettlementStatus.Running };
+        var expectedScore = new Score("-", "-");
+        expectedScore.IsNotSettled = true;
+        permission.IsLeader = true;
 
-        [Fact]
-        public void GetScore_HasResultDetailWithSettlementStatusIdIsRunningAndScoreIsNull_ReturnsHyphenOnScore()
-        {
-            // Arrange
-            var resultDetail = new ResultDetail { MatchId = 1, SettlementStatusId = SettlementStatus.Running };
-            var expectedScore = new Score("-", "-");
-            expectedScore.IsNotSettled = true;
-            permission.IsLeader = true;
+        // Act
+        var actualScore = service.GetScore(resultDetail, permission);
 
-            // Act
-            var actualScore = service.GetScore(resultDetail, permission);
+        // Assert
+        AssertExtension.AreEqual(expectedScore, actualScore);
+    }
 
-            // Assert
-            AssertExtension.AreEqual(expectedScore, actualScore);
-        }
+    [Fact]
+    public void GetScore_HasResultDetailWithSettlementStatusIdIsRunningAndScoreIsNotNull_ReturnsCorrectScore()
+    {
+        // Arrange
+        var resultDetail = new ResultDetail { MatchId = 1, HomeValue = "1", AwayValue = "2", SettlementStatusId = SettlementStatus.Running };
+        var expectedScore = new Score("1", "2");
+        expectedScore.IsNotSettled = true;
+        permission.IsLeader = true;
 
-        [Fact]
-        public void GetScore_HasResultDetailWithSettlementStatusIdIsRunningAndScoreIsNotNull_ReturnsCorrectScore()
-        {
-            // Arrange
-            var resultDetail = new ResultDetail { MatchId = 1, HomeValue = "1", AwayValue = "2", SettlementStatusId = SettlementStatus.Running };
-            var expectedScore = new Score("1", "2");
-            expectedScore.IsNotSettled = true;
-            permission.IsLeader = true;
+        // Act
+        var actualScore = service.GetScore(resultDetail, permission);
 
-            // Act
-            var actualScore = service.GetScore(resultDetail, permission);
-
-            // Assert
-            AssertExtension.AreEqual(expectedScore, actualScore);
-        }
+        // Assert
+        AssertExtension.AreEqual(expectedScore, actualScore);
     }
 }

@@ -1,9 +1,8 @@
-﻿namespace Settlement.Core.Constants
-{
-    public static class ResourceType
-    {
-        public const string Halftime = "01";
+﻿namespace Settlement.Core.Constants;
 
-        public const string Final = "00";
-    }
+public static class ResourceType
+{
+    public const string Halftime = "01";
+
+    public const string Final = "00";
 }

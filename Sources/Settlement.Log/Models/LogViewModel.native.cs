@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
 
-namespace Settlement.Log.Models
-{
-    public class LogViewModel
-    {
-        public List<LogModel> Logs { get; set; }
+namespace Settlement.Log.Models;
 
-        public QueryModel Query { get; set; }
-    }
+public class LogViewModel
+{
+    public List<LogModel> Logs { get; set; }
+
+    public QueryModel Query { get; set; }
 }

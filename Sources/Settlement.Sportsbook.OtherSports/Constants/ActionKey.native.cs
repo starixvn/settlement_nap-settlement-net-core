@@ -1,18 +1,17 @@
 ﻿using System.Collections.Generic;
 
-namespace Settlement.Sportsbook.OtherSports.Constants
+namespace Settlement.Sportsbook.OtherSports.Constants;
+
+public class ActionKey
 {
-    public class ActionKey
+    public static Dictionary<string, string> ActionDictionary => new Dictionary<string, string>
     {
-        public static Dictionary<string, string> ActionDictionary => new Dictionary<string, string>
-        {
-            {"CAL", "ALL"},
-            {"CAL-HT", "HT"},
-            {"CAL-FT", "FT"},
-            {"UNDO", "ALL"},
-            {"REFUND", "ALL"},
-            {"REFUND-HT", "HT"},
-            {"REFUND-FT", "FT"}
-        };
-    }
+        {"CAL", "ALL"},
+        {"CAL-HT", "HT"},
+        {"CAL-FT", "FT"},
+        {"UNDO", "ALL"},
+        {"REFUND", "ALL"},
+        {"REFUND-HT", "HT"},
+        {"REFUND-FT", "FT"}
+    };
 }

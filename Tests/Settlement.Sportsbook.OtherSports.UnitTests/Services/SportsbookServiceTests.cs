@@ -8,126 +8,125 @@ using Settlement.Sportsbook.OtherSports.Criteria;
 using Settlement.Sportsbook.OtherSports.Models;
 using Settlement.Sportsbook.OtherSports.Requests;
 
-namespace Settlement.Sportsbook.OtherSports.UnitTests.Services
+namespace Settlement.Sportsbook.OtherSports.UnitTests.Services;
+
+public class SportsbookServiceTests
 {
-    public class SportsbookServiceTests
+    private readonly IDynamicRepository repository;
+
+    private readonly MultipleServerService multipleServerService;
+
+    private readonly IBetStatusService betStatusService;
+
+    private readonly SportsbookService service;
+
+    public SportsbookServiceTests()
     {
-        private readonly IDynamicRepository repository;
+        var mapperConfig = new MapperConfigurationExpression();
+        mapperConfig.AddProfile<OtherSportsAutoMapperProfile>();
+        var config = new MapperConfiguration(mapperConfig);
+        var mapper = new Mapper(config);
+        repository = Substitute.For<IDynamicRepository>();
+        var refDataService = Substitute.For<IRefDataService>();
+        betStatusService = Substitute.For<IBetStatusService>();
+        multipleServerService = Substitute.For<MultipleServerService>();
+        service = new SportsbookServiceImp(repository, refDataService, mapper, betStatusService,
+            multipleServerService);
+    }
 
-        private readonly MultipleServerService multipleServerService;
+    [Fact]
+    public async Task GetMatch_MatchWithResultDetail_FetchMatchAndResultDetail()
+    {
+        var matchDetail = new MatchDetail { SportType = SportType.Badminton };
+        multipleServerService.GetMatchInfo(Arg.Any<GetMatchRequest>())
+            .Returns((matchDetail, new List<TicketCounts>()));
 
-        private readonly IBetStatusService betStatusService;
+        var result = await service.GetMatch(new GetMatchRequest());
 
-        private readonly SportsbookService service;
+        Assert.IsType<MatchResultDetail>(result);
+        await repository.Received().FetchAsync<ResultDetail>(Arg.Any<GetResultDetailCriteria>());
+        repository.Received().Fetch<ResultDetail>(Arg.Any<GetExternalResultCriteria>());
+        await repository.Received().GetAsync<MatchHedgeDetail>(Arg.Any<GetMatchDetailHedgeMatchCriteria>());
+    }
 
-        public SportsbookServiceTests()
+    [Fact]
+    public async Task GetMatch_MatchWithBetStatus_FetchMatchAndResultDetail()
+    {
+        var matchDetail = new MatchDetail { SportType = SportType.Football };
+        multipleServerService.GetMatchInfo(Arg.Any<GetMatchRequest>())
+            .Returns((matchDetail, new List<TicketCounts>()));
+
+        var result = await service.GetMatch(new GetMatchRequest());
+
+        Assert.IsType<MatchResultDetail>(result);
+        betStatusService.Received().GenerateResultDetail(Arg.Any<MatchDetail>());
+        repository.Received().Fetch<ResultDetail>(Arg.Any<GetExternalResultCriteria>());
+        await repository.Received().GetAsync<MatchHedgeDetail>(Arg.Any<GetMatchDetailHedgeMatchCriteria>());
+    }
+
+    [Fact]
+    public async Task GetMatch_ExistProviderScore_SetValue()
+    {
+        var resultDetails = new List<ResultDetail>
         {
-            var mapperConfig = new MapperConfigurationExpression();
-            mapperConfig.AddProfile<OtherSportsAutoMapperProfile>();
-            var config = new MapperConfiguration(mapperConfig);
-            var mapper = new Mapper(config);
-            repository = Substitute.For<IDynamicRepository>();
-            var refDataService = Substitute.For<IRefDataService>();
-            betStatusService = Substitute.For<IBetStatusService>();
-            multipleServerService = Substitute.For<MultipleServerService>();
-            service = new SportsbookServiceImp(repository, refDataService, mapper, betStatusService,
-                multipleServerService);
-        }
-
-        [Fact]
-        public async Task GetMatch_MatchWithResultDetail_FetchMatchAndResultDetail()
-        {
-            var matchDetail = new MatchDetail { SportType = SportType.Badminton };
-            multipleServerService.GetMatchInfo(Arg.Any<GetMatchRequest>())
-                .Returns((matchDetail, new List<TicketCounts>()));
-
-            var result = await service.GetMatch(new GetMatchRequest());
-
-            Assert.IsType<MatchResultDetail>(result);
-            await repository.Received().FetchAsync<ResultDetail>(Arg.Any<GetResultDetailCriteria>());
-            repository.Received().Fetch<ResultDetail>(Arg.Any<GetExternalResultCriteria>());
-            await repository.Received().GetAsync<MatchHedgeDetail>(Arg.Any<GetMatchDetailHedgeMatchCriteria>());
-        }
-
-        [Fact]
-        public async Task GetMatch_MatchWithBetStatus_FetchMatchAndResultDetail()
-        {
-            var matchDetail = new MatchDetail { SportType = SportType.Football };
-            multipleServerService.GetMatchInfo(Arg.Any<GetMatchRequest>())
-                .Returns((matchDetail, new List<TicketCounts>()));
-
-            var result = await service.GetMatch(new GetMatchRequest());
-
-            Assert.IsType<MatchResultDetail>(result);
-            betStatusService.Received().GenerateResultDetail(Arg.Any<MatchDetail>());
-            repository.Received().Fetch<ResultDetail>(Arg.Any<GetExternalResultCriteria>());
-            await repository.Received().GetAsync<MatchHedgeDetail>(Arg.Any<GetMatchDetailHedgeMatchCriteria>());
-        }
-
-        [Fact]
-        public async Task GetMatch_ExistProviderScore_SetValue()
-        {
-            var resultDetails = new List<ResultDetail>
+            new()
             {
-                new()
-                {
-                    HomeValue = "0",
-                    AwayValue = "1",
-                    ResourceId = "00",
-                    SourceName = "test"
-                },
+                HomeValue = "0",
+                AwayValue = "1",
+                ResourceId = "00",
+                SourceName = "test"
+            },
 
-                new()
-                {
-                    HomeValue = "2",
-                    AwayValue = "3",
-                    ResourceId = "01",
-                    SourceName = "test"
-                },
-            };
-
-            var matchDetail = new MatchDetail { SportType = SportType.Football };
-            multipleServerService.GetMatchInfo(Arg.Any<GetMatchRequest>())
-                .Returns((matchDetail, new List<TicketCounts>()));
-            betStatusService.GenerateResultDetail(Arg.Any<MatchDetail>());
-            repository.Fetch<ResultDetail>(Arg.Any<GetExternalResultCriteria>()).Returns(resultDetails);
-
-            var result = await service.GetMatch(new GetMatchRequest());
-            var actual = result.MatchDetail;
-
-            Assert.True(actual.ExFTAwayScore == 1 && actual.ExFTHomeScore == 0
-            && actual.ExHTAwayScore == 3 && actual.ExHTHomeScore == 2 && actual.ExternalSourceName == "test");
-        }
-
-        [Fact]
-        public async Task GetLastestResult_MatchWithResultDetail_ReturnEmptyList()
-        {
-            repository.GetAsync<MatchDetail>(Arg.Any<GetLastestResultCriteria>())
-                .Returns(new MatchDetail { SportType = SportType.Badminton });
-
-            var result = await service.GetLastestResult(new GetLastestResultRequest());
-
-            Assert.Empty(result.ResultDetails);
-        }
-
-        [Fact]
-        public async Task GetLastestResult_MatchWithOutResultDetail_ReturnList()
-        {
-            var resultDetails = new List<ResultDetail>()
+            new()
             {
-                new()
-                {
-                    ResourceId = "00"
-                }
-            };
-            repository.GetAsync<MatchDetail>(Arg.Any<GetLastestResultCriteria>())
-                .Returns(new MatchDetail { SportType = SportType.Football });
-            betStatusService.GenerateResultDetail(Arg.Any<MatchDetail>()).Returns(resultDetails);
+                HomeValue = "2",
+                AwayValue = "3",
+                ResourceId = "01",
+                SourceName = "test"
+            },
+        };
 
-            var result = await service.GetLastestResult(new GetLastestResultRequest());
+        var matchDetail = new MatchDetail { SportType = SportType.Football };
+        multipleServerService.GetMatchInfo(Arg.Any<GetMatchRequest>())
+            .Returns((matchDetail, new List<TicketCounts>()));
+        betStatusService.GenerateResultDetail(Arg.Any<MatchDetail>());
+        repository.Fetch<ResultDetail>(Arg.Any<GetExternalResultCriteria>()).Returns(resultDetails);
 
-            Assert.Single(result.ResultDetails);
-            Assert.Equal("00", result.ResultDetails[0].ResourceId);
-        }
+        var result = await service.GetMatch(new GetMatchRequest());
+        var actual = result.MatchDetail;
+
+        Assert.True(actual.ExFTAwayScore == 1 && actual.ExFTHomeScore == 0
+                                              && actual.ExHTAwayScore == 3 && actual.ExHTHomeScore == 2 && actual.ExternalSourceName == "test");
+    }
+
+    [Fact]
+    public async Task GetLastestResult_MatchWithResultDetail_ReturnEmptyList()
+    {
+        repository.GetAsync<MatchDetail>(Arg.Any<GetLastestResultCriteria>())
+            .Returns(new MatchDetail { SportType = SportType.Badminton });
+
+        var result = await service.GetLastestResult(new GetLastestResultRequest());
+
+        Assert.Empty(result.ResultDetails);
+    }
+
+    [Fact]
+    public async Task GetLastestResult_MatchWithOutResultDetail_ReturnList()
+    {
+        var resultDetails = new List<ResultDetail>()
+        {
+            new()
+            {
+                ResourceId = "00"
+            }
+        };
+        repository.GetAsync<MatchDetail>(Arg.Any<GetLastestResultCriteria>())
+            .Returns(new MatchDetail { SportType = SportType.Football });
+        betStatusService.GenerateResultDetail(Arg.Any<MatchDetail>()).Returns(resultDetails);
+
+        var result = await service.GetLastestResult(new GetLastestResultRequest());
+
+        Assert.Single(result.ResultDetails);
+        Assert.Equal("00", result.ResultDetails[0].ResourceId);
     }
 }

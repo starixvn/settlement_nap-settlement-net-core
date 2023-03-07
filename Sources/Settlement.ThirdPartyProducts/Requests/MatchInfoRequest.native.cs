@@ -1,10 +1,9 @@
 ﻿using MediatR;
 using Settlement.ThirdPartyProducts.Models;
 
-namespace Settlement.ThirdPartyProducts.Requests
+namespace Settlement.ThirdPartyProducts.Requests;
+
+public class MatchInfoRequest : IRequest<MatchDetailModel>
 {
-    public class MatchInfoRequest : IRequest<MatchDetailModel>
-    {
-        public int MatchId { get; set; }
-    }
+    public int MatchId { get; set; }
 }

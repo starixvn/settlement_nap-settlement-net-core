@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ModalDialogComponent } from '../components';
+import { ModalDialogComponent } from '../components/modal-dialog/modal-dialog.component';
 import { ModalDialogMessage } from '../models';
 @Injectable()
 export class MessageBoxService {

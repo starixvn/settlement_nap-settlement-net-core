@@ -1,8 +1,7 @@
 ﻿using MediatR;
 
-namespace Settlement.Setting.Requests.Notification
+namespace Settlement.Setting.Requests.Notification;
+
+public class ShowNotificationRequest : IRequest<int>
 {
-    public class ShowNotificationRequest : IRequest<int>
-    {
-    }
 }

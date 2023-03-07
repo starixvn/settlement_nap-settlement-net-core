@@ -1,116 +1,112 @@
-﻿using System.Collections.Generic;
-using Fanex.Data.Repository;
-using System.Linq;
-using System.Threading.Tasks;
-using Settlement.Setting.Models.Notification;
+﻿using Fanex.Data.Repository;
 using Fanex.NAP.Client.Helpers.Web;
 using Microsoft.Extensions.Options;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Setting.Criteria.Notification;
+using Settlement.Setting.Models.Notification;
 
-namespace Settlement.Setting.Services
+namespace Settlement.Setting.Services;
+
+public interface NotificationService
 {
-    public interface NotificationService
+    Task<bool> IsNotificationsBetBuilder();
+
+    Task<int> NumberNotifications();
+
+    Task<ShowNotificationModel> ShowTopNotifications(int top);
+}
+
+public class NotificationServiceImp : NotificationService
+{
+    private readonly IDynamicRepository repository;
+
+    private readonly IRefDataService refDataService;
+
+    private readonly INapSession currentSession;
+
+    private readonly SendMailService sendMailService;
+
+    private readonly AppSettingsKey appSettingsKey;
+
+    public NotificationServiceImp(
+        IDynamicRepository repository,
+        IOptions<AppSettingsKey> appSettingsKey,
+        IRefDataService refDataService,
+        INapSession currentSession,
+        SendMailService sendMailService)
     {
-        Task<bool> IsNotificationsBetBuilder();
-
-        Task<int> NumberNotifications();
-
-        Task<ShowNotificationModel> ShowTopNotifications(int top);
+        this.repository = repository;
+        this.appSettingsKey = appSettingsKey.Value;
+        this.refDataService = refDataService;
+        this.currentSession = currentSession;
+        this.sendMailService = sendMailService;
     }
 
-    public class NotificationServiceImp : NotificationService
+    public async Task<bool> IsNotificationsBetBuilder()
     {
-        private readonly IDynamicRepository repository;
+        return await repository.GetAsync<bool>(new NotificationBetBuilderCriteria());
+    }
 
-        private readonly IRefDataService refDataService;
-
-        private readonly INapSession currentSession;
-
-        private readonly SendMailService sendMailService;
-
-        private readonly AppSettingsKey appSettingsKey;
-
-        public NotificationServiceImp(
-            IDynamicRepository repository,
-            IOptions<AppSettingsKey> appSettingsKey,
-            IRefDataService refDataService,
-            INapSession currentSession,
-            SendMailService sendMailService)
+    public async Task<int> NumberNotifications()
+    {
+        var numberError = 0;
+        var notifications = new List<NotificationModel>();
+        var criteria = new GetNumberOfNotificationCriteria
         {
-            this.repository = repository;
-            this.appSettingsKey = appSettingsKey.Value;
-            this.refDataService = refDataService;
-            this.currentSession = currentSession;
-            this.sendMailService = sendMailService;
+            AdminId = currentSession.UserId
+        };
+
+        foreach (var server in appSettingsKey.SiteDbServer)
+        {
+            criteria.DbServer = server;
+            var list = (await repository.FetchAsync<NotificationModel>(criteria)).ToList();
+            notifications.AddRange(list);
+            numberError += criteria.NumberError;
         }
 
-        public async Task<bool> IsNotificationsBetBuilder()
+        if (numberError > 0)
         {
-            return await repository.GetAsync<bool>(new NotificationBetBuilderCriteria());
+            SendErrorMessage(notifications);
         }
 
-        public async Task<int> NumberNotifications()
+        return numberError;
+    }
+
+    private void SendErrorMessage(List<NotificationModel> notifications)
+    {
+        foreach (var item in notifications)
         {
-            var numberError = 0;
-            var notifications = new List<NotificationModel>();
-            var criteria = new GetNumberOfNotificationCriteria
-            {
-                AdminId = currentSession.UserId
-            };
+            item.RefDataService = refDataService;
+            sendMailService.SendMail(item);
+        }
+    }
 
-            foreach (var server in appSettingsKey.SiteDbServer)
-            {
-                criteria.DbServer = server;
-                var list = (await repository.FetchAsync<NotificationModel>(criteria)).ToList();
-                notifications.AddRange(list);
-                numberError += criteria.NumberError;
-            }
+    public async Task<ShowNotificationModel> ShowTopNotifications(int top)
+    {
+        var numberError = 0;
+        var notifications = new List<NotificationModel>();
+        var criteria = new ShowTopNotificationCriteria
+        {
+            Top = top,
+            AdminId = currentSession.UserId
+        };
 
-            if (numberError > 0)
-            {
-                SendErrorMessage(notifications);
-            }
+        foreach (var server in appSettingsKey.SiteDbServer)
+        {
+            criteria.DbServer = server;
+            var result = await repository.FetchMultipleAsync<int, NotificationModel>(criteria);
 
-            return numberError;
+            numberError += result.Item1.FirstOrDefault();
+            notifications.AddRange(result.Item2);
         }
 
-        private void SendErrorMessage(List<NotificationModel> notifications)
+        notifications.ForEach(x => x.RefDataService = refDataService);
+
+        return new ShowNotificationModel
         {
-            foreach (var item in notifications)
-            {
-                item.RefDataService = refDataService;
-                sendMailService.SendMail(item);
-            }
-        }
-
-        public async Task<ShowNotificationModel> ShowTopNotifications(int top)
-        {
-            var numberError = 0;
-            var notifications = new List<NotificationModel>();
-            var criteria = new ShowTopNotificationCriteria
-            {
-                Top = top,
-                AdminId = currentSession.UserId
-            };
-
-            foreach (var server in appSettingsKey.SiteDbServer)
-            {
-                criteria.DbServer = server;
-                var result = await repository.FetchMultipleAsync<int, NotificationModel>(criteria);
-
-                numberError += result.Item1.FirstOrDefault();
-                notifications.AddRange(result.Item2);
-            }
-            
-            notifications.ForEach(x => x.RefDataService = refDataService);
-
-            return new ShowNotificationModel
-            {
-                NumberError = numberError,
-                Notifications = notifications
-            };
-        }
+            NumberError = numberError,
+            Notifications = notifications
+        };
     }
 }

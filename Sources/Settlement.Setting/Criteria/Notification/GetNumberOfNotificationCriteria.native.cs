@@ -1,19 +1,18 @@
 ﻿using Fanex.Data;
 using Fanex.Data.Repository;
 
-namespace Settlement.Setting.Criteria.Notification
+namespace Settlement.Setting.Criteria.Notification;
+
+public class GetNumberOfNotificationCriteria : CriteriaBase
 {
-    public class GetNumberOfNotificationCriteria : CriteriaBase
-    {
-        public int AdminId { get; set; }
+    public int AdminId { get; set; }
 
-        public int NumberError { get; set; }
+    public int NumberError { get; set; }
 
-        [SpParam(Ignored = true)]
-        public string DbServer { get; set; }
+    [SpParam(Ignored = true)]
+    public string DbServer { get; set; }
 
-        public override string GetSettingKey() => $"NAP_Set_GetNumberError_{DbServer}";
+    public override string GetSettingKey() => $"NAP_Set_GetNumberError_{DbServer}";
 
-        public override bool IsValid() => AdminId > 0;
-    }
+    public override bool IsValid() => AdminId > 0;
 }

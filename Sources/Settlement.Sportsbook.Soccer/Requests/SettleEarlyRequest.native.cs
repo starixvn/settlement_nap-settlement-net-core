@@ -2,16 +2,15 @@
 using Settlement.Core.Models;
 using System.Collections.Generic;
 
-namespace Settlement.Sportsbook.Soccer.Requests
+namespace Settlement.Sportsbook.Soccer.Requests;
+
+public class SettleEarlyRequest : IRequest<Result>
 {
-    public class SettleEarlyRequest : IRequest<Result>
-    {
-        public int MatchId { get; set; }
+    public int MatchId { get; set; }
 
-        public string ActionName { get; set; }
+    public string ActionName { get; set; }
 
-        public bool IsReSettledTickets { get; set; }
+    public bool IsReSettledTickets { get; set; }
 
-        public List<ResourceItem> SelectedResources { get; set; }
-    }
+    public List<ResourceItem> SelectedResources { get; set; }
 }

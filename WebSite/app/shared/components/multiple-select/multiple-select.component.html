@@ -3,10 +3,10 @@
     <input *ngIf="multipleSelect.enableSearchBox" [ngClass]="{'above': isOpened, 'mat-search-box' : true}" matInput
         (click)="dropdown.open()" [(ngModel)]="searchText" (input)="search()" >
 
-    <mat-select #dropdown [formControl]="formControl" (openedChange)="checkOpenState($event)" [disabled]="disabled" multiple>
+    <mat-select #dropdown [formControl]="formControl" (openedChange)="checkOpenState($event)" [disabled] multiple>
         <mat-select-trigger></mat-select-trigger>
         <mat-option #allSelected *ngIf="items.length > 0" class="px-2 select-all" (click)="selectAllSelection()"
-            [value]="0" [hidden]="multipleSelect.disableCheckAll || searchTextNotEmpty">
+            [value]="0" [hidden]="multipleSelect.disableCheckAll">
             {{multipleSelect.checkAllCheckBoxText}}</mat-option>
 
         <cdk-virtual-scroll-viewport [itemSize]="20" *ngIf="groups.length > 0 && searchTextEmpty" [ngClass]="{'open-search': openSearch()}">

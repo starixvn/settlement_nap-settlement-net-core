@@ -1,32 +1,31 @@
 ﻿using System.Collections.Generic;
 using Settlement.Core.Constants;
 
-namespace Settlement.FastMarkets.Models
+namespace Settlement.FastMarkets.Models;
+
+public class Selection
 {
-    public class Selection
+    private bool isChecked = true;
+
+    public string Id => Value;
+
+    public string Value { get; set; }
+
+    public string Text { get; set; }
+
+    public bool Checked
     {
-        private bool isChecked = true;
-
-        public string Id => Value;
-
-        public string Value { get; set; }
-
-        public string Text { get; set; }
-
-        public bool Checked
+        get
         {
-            get
-            {
-                return !Text.Equals(TicketStatus.NoTicket) && isChecked;
-            }
-            set
-            {
-                isChecked = value;
-            }
+            return !Text.Equals(TicketStatus.NoTicket) && isChecked;
         }
-
-        public bool Enable { get; set; } = true;
-
-        public List<Selection> Items { get; set; }
+        set
+        {
+            isChecked = value;
+        }
     }
+
+    public bool Enable { get; set; } = true;
+
+    public List<Selection> Items { get; set; }
 }

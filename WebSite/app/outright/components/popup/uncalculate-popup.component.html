@@ -1,0 +1,81 @@
+<div mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragBoundary=".cdk-overlay-container"
+    cdkDragHandle>
+    <label class="title">
+        Outright Uncalculation
+    </label>
+    <button type="button" class="close dialog-close" (click)="close()" tabindex="8">X</button>
+</div>
+
+
+<div class="table-outright" [ngClass]="{'processing' : blockUI}">
+    <span toastContainer></span>
+    <div *ngIf="blockUI" class="loading"></div>
+    <div *ngIf="leagueSettle">
+        <div class="league">
+            <div class="icon">
+            </div>
+            {{leagueSettle.sportName | uppercase}} - {{leagueSettle.leagueName}}
+        </div>
+
+        <div class="header">
+            <ng-template *ngTemplateOutlet="header"></ng-template>
+        </div>
+
+        <div class="table-scroll">
+            <ng-template *ngTemplateOutlet="body"></ng-template>
+        </div>
+        <div class="footer" *ngIf="teams.length > 0">
+
+            <button [ngClass]="{'button': true, 'button-disabled': disableUncalculate()}"
+                [disabled]="disableUncalculate()" (click)="uncalculate()">
+                Uncalculate
+            </button>
+        </div>
+    </div>
+</div>
+
+<ng-template #header>
+    <table>
+        <thead>
+            <tr>
+                <th style="width: auto">
+                    Team
+                </th>
+                <th class="code">
+                    Result
+                </th>
+                <th class="code">
+                    Dead Heat
+                </th>
+                <th class="code">
+                    Select Team
+                </th>
+            </tr>
+        </thead>
+    </table>
+</ng-template>
+<ng-template #body>
+    <table>
+        <tbody>
+            <tr *ngFor="let team of teams; let i=index" [ngClass]="{'even': i % 2}">
+                <td class="align-left">
+                    {{team.teamName}}
+                </td>
+                <td class="code">
+                    {{team.status}}
+                </td>
+                <td class="code">
+                    <div class="tick" *ngIf="team.isDeadheat">
+                    </div>
+                </td>
+                <td class="code">
+                    <input id="checkbox-map-{{i + 1}}" type="checkbox" [(ngModel)]="team.selected"
+                        (click)="clearError()" />
+                </td>
+            </tr>
+            <tr *ngIf="teams.length == 0">
+                <td colspan="100%">There is no information available</td>
+            </tr>
+        </tbody>
+    </table>
+</ng-template>

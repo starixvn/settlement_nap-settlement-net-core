@@ -6,10 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Settlement.Setting.Requests
+namespace Settlement.Setting.Requests;
+
+public class GetRemarkInfoRequest : IRequest<MatchAndPermission>
 {
-    public class GetRemarkInfoRequest : IRequest<MatchAndPermission>
-    {
-        public int MatchId { get; set; }
-    }
+    public int MatchId { get; set; }
 }

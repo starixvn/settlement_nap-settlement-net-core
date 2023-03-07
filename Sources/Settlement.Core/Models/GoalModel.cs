@@ -1,9 +1,8 @@
-﻿namespace Settlement.Core.Models
-{
-    public class GoalModel
-    {
-        public string Home { get; set; }
+﻿namespace Settlement.Core.Models;
 
-        public string Away { get; set; }
-    }
+public class GoalModel
+{
+    public string Home { get; set; }
+
+    public string Away { get; set; }
 }

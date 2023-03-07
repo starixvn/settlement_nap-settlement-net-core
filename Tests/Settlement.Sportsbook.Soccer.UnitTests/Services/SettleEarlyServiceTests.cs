@@ -12,64 +12,63 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Settlement.Sportsbook.Soccer.UnitTests.Services
+namespace Settlement.Sportsbook.Soccer.UnitTests.Services;
+
+public class SettleEarlyServiceTests
 {
-    public class SettleEarlyServiceTests
+    private readonly ICreateCriteriaService createCriteriaService;
+
+    private readonly IDynamicRepository repository;
+
+    private readonly ScaleOutSettleService scaleOutSettleService;
+
+    private readonly SettleEarlyService service;
+
+    public SettleEarlyServiceTests()
     {
-        private readonly ICreateCriteriaService createCriteriaService;
+        createCriteriaService = Substitute.For<ICreateCriteriaService>();
+        repository = Substitute.For<IDynamicRepository>();
+        scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
+        var appSettings = new AppSettingsKey { SiteDbServer = new List<string> { "DB01", "DB02" } };
+        var appSettingsOptions = Options.Create(appSettings);
+        service = new SettleEarlyServiceImp(createCriteriaService, appSettingsOptions, repository, scaleOutSettleService);
+    }
 
-        private readonly IDynamicRepository repository;
+    [Fact]
+    public async Task CalculateEarly_ExistError_StopProcess()
+    {
+        //arrange
+        createCriteriaService.CreateCalculateEarlyCriteria(Arg.Any<SettleEarlyRequest>())
+            .Returns(new CalculateEarlyCriteria());
+        scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>())
+            .Returns(new ResultMessage { ErrorCode = 1, ErrorMessage = "1" });
 
-        private readonly ScaleOutSettleService scaleOutSettleService;
+        //act
+        var result = await service.CalculateEarly(new SettleEarlyRequest());
 
-        private readonly SettleEarlyService service;
+        //assert
+        Assert.True(result.ErrCode == 1 && result.ErrMsg == "1");
+        await scaleOutSettleService.DidNotReceive().UpdateMatchInfo(Arg.Any<UpdateMatchInfoRequest>());
+    }
 
-        public SettleEarlyServiceTests()
+    [Fact]
+    public async Task CalculateEarly_NotExistError_UpdateAndSettlematch()
+    {
+        //arrange
+        createCriteriaService.CreateCalculateEarlyCriteria(Arg.Any<SettleEarlyRequest>())
+            .Returns(new CalculateEarlyCriteria());
+        scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>())
+            .Returns(new ResultMessage());
+
+        //act
+        var result = await service.CalculateEarly(new SettleEarlyRequest());
+
+        //assert
+        Received.InOrder(() =>
         {
-            createCriteriaService = Substitute.For<ICreateCriteriaService>();
-            repository = Substitute.For<IDynamicRepository>();
-            scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
-            var appSettings = new AppSettingsKey { SiteDbServer = new List<string> { "DB01", "DB02" } };
-            var appSettingsOptions = Options.Create(appSettings);
-            service = new SettleEarlyServiceImp(createCriteriaService, appSettingsOptions, repository, scaleOutSettleService);
-        }
-
-        [Fact]
-        public async Task CalculateEarly_ExistError_StopProcess()
-        {
-            //arrange
-            createCriteriaService.CreateCalculateEarlyCriteria(Arg.Any<SettleEarlyRequest>())
-                .Returns(new CalculateEarlyCriteria());
-            scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>())
-                .Returns(new ResultMessage { ErrorCode = 1, ErrorMessage = "1" });
-
-            //act
-            var result = await service.CalculateEarly(new SettleEarlyRequest());
-
-            //assert
-            Assert.True(result.ErrCode == 1 && result.ErrMsg == "1");
-            await scaleOutSettleService.DidNotReceive().UpdateMatchInfo(Arg.Any<UpdateMatchInfoRequest>());
-        }
-
-        [Fact]
-        public async Task CalculateEarly_NotExistError_UpdateAndSettlematch()
-        {
-            //arrange
-            createCriteriaService.CreateCalculateEarlyCriteria(Arg.Any<SettleEarlyRequest>())
-                .Returns(new CalculateEarlyCriteria());
-            scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>())
-                .Returns(new ResultMessage());
-
-            //act
-            var result = await service.CalculateEarly(new SettleEarlyRequest());
-
-            //assert
-            Received.InOrder(() =>
-            {
-                scaleOutSettleService.Received().UpdateMatchInfo(Arg.Any<UpdateMatchInfoRequest>());
-                repository.Received().ExecuteAsync(Arg.Any<CalculateEarlyCriteria>());
-                repository.Received().ExecuteAsync(Arg.Any<CalculateEarlyCriteria>());
-            });
-        }
+            scaleOutSettleService.Received().UpdateMatchInfo(Arg.Any<UpdateMatchInfoRequest>());
+            repository.Received().ExecuteAsync(Arg.Any<CalculateEarlyCriteria>());
+            repository.Received().ExecuteAsync(Arg.Any<CalculateEarlyCriteria>());
+        });
     }
 }

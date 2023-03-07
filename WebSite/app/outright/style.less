@@ -1,0 +1,582 @@
+@import "../../Styles/common.less";
+@sprite: "../../wwwroot/css/images/sprite.png";
+
+.filter-bar {
+  .hasDatepicker {
+    width: 85px;
+    float: left;
+  }
+
+  .field {
+    height: 21px;
+  }
+
+  .league-select {
+    min-width: 200px;
+    width: 400px;
+    option {
+      width: 400px;
+    }
+  }
+  select {
+    height: 24px;
+  }
+  .mat-mdc-select {
+    display: inline-block;
+    width: 100%;
+    outline: none;
+    width: 400px;
+    font-size: 12px;
+    background: white;
+    padding: 0 0px;
+    border: 1px solid #d4d4d4;
+    border-radius: 3px;
+    height: 24px;
+    position: relative;
+    .mat-mdc-select-value {
+      height: unset !important;
+      padding-left: 5px;
+      padding-right: 16px;
+    }
+    // .mat-mdc-list-item--selected.mat-mdc-option-active {
+    //   background-color: grey !important;
+    //   color: white;
+    // }
+    // .mat-mdc-select-arrow-wrapper {
+    //   display: none;
+    // }
+    .mat-select-arrow {
+      /* Remove the top part of the existing arrow triangle to form a chevron shape */
+      &::after {
+        content: "";
+        display: block;
+        width: 0;
+        height: 0;
+        margin-left: -3px;
+        margin-top: -5px;
+        border-left: 3px solid transparent;
+        border-right: 3px solid transparent;
+        border-top: 3px solid white; /* This needs to match your input field background */
+      }
+    }
+  }
+
+  .ngb-dp-arrow {
+    button:disabled {
+      background: none;
+      border: none;
+    }
+  }
+
+  .ui-datepicker-trigger {
+    margin-top: -2px !important;
+  }
+
+  @media (min-width: 1530px) {
+    .to-date {
+      padding-left: 22px;
+    }
+
+    .date {
+      padding-right: 20px;
+      padding-left: 28px;
+    }
+  }
+
+  .row-2 {
+    margin-top: 5px;
+  }
+
+  .setFilterWidth(1200px, 100%, 18%, 12%, 22%, 30%, 14%, 6%, 19%, 8%);
+  .setFilterWidth(1530px, 100%, 16%, 15%, 20%, 30%, 11%, 6%, 19%, 7%);
+  .setFilterWidth(1780px, 90%, 16%, 13%, 20%, 31%, 12%, 6%, 18%, 8%);
+  .setFilterWidth(2000px, 100%, 12%, 13%, 17%, 32%, 10%, 6%, 22.2%, 7%);
+
+  .match-code {
+    width: 103px;
+  }
+
+  .form-control {
+    color: #000;
+    height: 23px !important;
+    padding: 1px;
+  }
+
+  @media (max-width: 1024px) {
+    .include-test,
+    .submit {
+      left: 0px;
+    }
+
+    .field {
+      display: inline-table;
+    }
+  }
+
+  @media (max-width: 1360px) {
+    .include-test {
+      margin-top: 15px;
+    }
+
+    .submit {
+      margin-top: 15px;
+    }
+  }
+
+  @media (min-width: 1780px) {
+    .over-status {
+      margin-left: 85px;
+    }
+  }
+}
+
+.filter-bar-outright {
+  padding-bottom: 10px;
+  .league-field {
+    width: auto;
+    display: flex;
+  }
+}
+
+.setFilterWidth(@screenWidth, @rowWidth, @field, @smallField, @mediumField, @largeField, @includeTest, @submit, @sports, @autoPayout) {
+  @media (min-width: @screenWidth) {
+    .row {
+      width: @rowWidth;
+    }
+
+    .field {
+      width: @field;
+    }
+
+    .medium-field {
+      width: @mediumField;
+    }
+
+    .small-field {
+      width: @smallField;
+    }
+
+    .large-field {
+      width: @largeField;
+    }
+
+    .include-test {
+      width: @includeTest;
+    }
+
+    .submit {
+      width: @submit;
+    }
+
+    .sports {
+      width: @sports;
+    }
+
+    .auto-payout {
+      width: @autoPayout;
+    }
+  }
+}
+
+.league-name {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #1d3968;
+  background-color: #ccc;
+  background-image: unset;
+
+  .leangue-name__content, .league {
+    display: flex;
+    align-items: center;
+    column-gap: 10px;
+    padding: 5px;
+    .name {
+      font-weight: bold;
+    }
+
+    .code {
+      color: white;
+      background-color: #5578be;
+      //   padding: 5px 5px;
+      display: inline-block;
+      border-radius: 5px;
+    }
+
+    button {
+      border: none;
+      outline: none;
+      color: #0273ff;
+      background-color: #ccc;
+      text-align: center;
+    }
+  }
+}
+
+.event-id {
+  span {
+    color: #0273ff;
+    cursor: pointer;
+  }
+}
+
+.empty-data {
+  width: 100%;
+}
+
+.tick {
+  background: url(@sprite) no-repeat -325px -61px;
+  width: 16px;
+  height: 15px;
+  display: inline-block;
+  align-items: center;
+}
+
+.table-outright {
+  width: 760px;
+  margin-left: 3px;
+  .button {
+    margin: 4px;
+  }
+}
+
+.even {
+  background-color: #e5ebf2;
+}
+
+.align-left {
+  padding-left: 5px;
+}
+
+.table-calculate-outright {
+  width: 900px;
+  margin-left: 4px;
+
+
+  .hasDatepicker {
+    width: 70px;
+    margin-left: 2px;
+    height: 23px;
+  }
+
+  .ui-datepicker {
+    float: left;
+    background: url(@sprite) no-repeat -5px -58px;
+    width: 21px;
+    height: 21px;
+    cursor: pointer;
+  }
+
+  select {
+    min-width: 100px;
+    text-align: center;
+  }
+
+  option {
+    text-align: center;
+  }
+
+  .status {
+    min-width: 120px;
+    width: 120px;
+  }
+
+  .won-color {
+    background-color: #ffdf00;
+  }
+
+  .settled {
+    background-color: #dac093;
+  }
+
+  .ngb-dp-header {
+    select {
+      min-width: 40px !important;
+    }
+
+    button:disabled {
+      width: 20px;
+      border: none;
+      background: none;
+    }
+  }
+
+  .button {
+    margin: 4px;
+  }
+}
+
+.table-calculate-outright, .table-outright {
+  .table-scroll {
+    max-height: 300px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+  }
+  
+  .footer {
+    border:  1px solid #c8c8c8;
+    margin-right: 17px;
+  }
+  
+  .header {
+    padding-right: 17px;
+    background-color: #295091;
+  }
+}
+
+.modal-backdrop {
+  z-index: 1050 !important;
+}
+
+.processing {
+  opacity: 0.5;
+}
+
+.btn-right {
+  background: url("@{sprite}") no-repeat -274px -85px;
+  width: 19px;
+  height: 25px;
+}
+
+.btn-right-up {
+  background: url("@{sprite}") no-repeat -298px -85px;
+  width: 19px;
+  height: 25px;
+}
+
+.table-main {
+  th {
+    text-align: center;
+  }
+  .team-name {
+    text-align: left;
+    font-weight: bold;
+  }
+  .event-status {
+    width: 300px;
+  }
+  .bg-odd {
+    background: #e5ebf2;
+  }
+  .table-body {
+    overflow-y: scroll;
+  }
+  .empty-data {
+    td {
+      flex-basis: 100%;
+      justify-content: center;
+      border: 1 solid #cbcbcb !important;
+    }
+  }
+}
+
+.log-content {
+  padding: 5px;
+  .league div {
+    padding-top: 2px;
+    margin-top: 5px;
+    cursor: pointer;
+    float: left;
+  }
+
+  .btn-left {
+    background: url("@{sprite}") no-repeat -267px -85px;
+    width: 2px;
+    height: 25px;
+  }
+
+  .btn-middle {
+    border: 1px solid #cdcdcd;
+    font-weight: bold;
+    font-size: 12px;
+    line-height: 21px;
+    padding-left: 15px;
+    padding-right: 32px;
+    text-align: left;
+    vertical-align: middle;
+  }
+  .table-log {
+    margin-top: 5px;
+
+    .bg-odd {
+      background: #e5ebf2;
+    }
+  }
+  .table-empty {
+    margin-top: 10px;
+  }
+}
+
+.log-popup-content {
+  max-height: 617px !important;
+  overflow: auto;
+  .body-half-screen {
+    max-height: 490px !important;
+  }
+}
+
+.log-page {
+  .table-log {
+    margin-top: 5px;
+  }
+}
+
+label.title {
+  color: white;
+  font-weight: bold;
+}
+
+.w-5 {
+  width: 5%;
+}
+.w-10 {
+  width: 10%;
+}
+
+.w-8 {
+  width: 8%;
+}
+
+.w-15 {
+  width: 15%;
+}
+
+.w-20 {
+  width: 20%;
+}
+.w-25 {
+  width: 25%;
+}
+
+.w-30 {
+  width: 30%;
+}
+
+.w-40 {
+  width: 40%;
+}
+
+.w-45 {
+  width: 45%;
+}
+
+.w-50 {
+  width: 50%;
+}
+
+.w-100 {
+  width: 100%;
+}
+
+.table-scroll-down {
+  display: block;
+}
+
+.table-scroll-down thead {
+  position: relative;
+  display: block;
+  width: 100%;
+}
+
+.table-scroll-down tbody {
+  display: block;
+  position: relative;
+  width: 100%;
+  overflow-y: scroll;
+}
+.table-scroll-down tr {
+  width: 100%;
+  display: flex;
+  td:first,
+  th:first {
+    border-left: 1px solid #cbcbcb;
+  }
+}
+.table-scroll-down td,
+.table-scroll-down th {
+  display: flex;
+  border-right: 1px solid #cbcbcb;
+  border-top: 1px solid #cbcbcb;
+  border-left: none;
+  border-bottom: none;
+  align-items: center;
+}
+
+.center {
+  justify-content: center;
+}
+
+.left {
+  justify-content: start;
+}
+.between {
+  justify-content: space-between;
+}
+
+.testClass {
+  .mat-mdc-option:hover {
+    background-color: #767676 !important; //The color you want
+    color: white !important;
+    .mdc-list-item__primary-text {
+      color: white !important;
+    }
+  }
+  .mat-mdc-option.mat-mdc-option-active {
+    background-color: #767676 !important; //The color you want
+    color: white !important;
+    .mdc-list-item__primary-text {
+      color: white !important;
+    }
+  }
+
+  .mdc-list-item--selected:not(.mdc-list-item--disabled)
+    .mdc-list-item__primary-text {
+    color: white !important;
+  }
+}
+
+.chevron {
+  padding: 7px;
+  color: #726a7a;
+  position: absolute;
+  right: 0px;
+  top: -3px;
+  font-size: 11px;
+}
+
+.chevron::before {
+  border-style: solid;
+  border-width: 0.25em 0.25em 0 0;
+  content: "";
+  display: inline-block;
+  height: 0.6em;
+  left: 0.15em;
+  position: relative;
+  top: 3px;
+  transform: rotate(-45deg);
+  vertical-align: top;
+  width: 0.6em;
+}
+
+.chevron.right:before {
+  left: 0;
+  transform: rotate(45deg);
+}
+
+.chevron.bottom:before {
+  //   top: 0;
+  transform: rotate(135deg);
+}
+
+.log-modalbox {
+  .mat-mdc-dialog-title {
+    position: sticky;
+    width: 100%;
+    top: 0px;
+    z-index: 1;
+  }
+
+  .mdc-dialog__surface {
+    overflow-y: unset !important;
+  }
+}

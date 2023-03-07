@@ -1,6 +1,5 @@
-import { PopupProperties } from './../models/popup-properties.model';
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ISubscription } from "rxjs/Subscription";
+import { Subscription } from "rxjs";
 import { interval } from 'rxjs';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import {
@@ -37,7 +36,7 @@ import { MultiSport, MatchWaitingRequest } from '../models';
     ],
 })
 export class AppComponent implements OnInit, OnDestroy {
-    private subscriber: ISubscription;
+    private subscriber: Subscription;
     private readonly period = 60000;
     public blockUI = false;
     public multiSport = new MultiSport();

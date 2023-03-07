@@ -48,7 +48,7 @@ export class FilterComponent implements OnInit {
     public readonly matchStatusSelect = new MultipleSelect();
     public readonly overStatusSelect = new MultipleSelect();
     public getLeagueParams: LeagueFilterRequest;
-    private readonly widthMultiSelect = "200px";
+    private readonly widthMultiSelect = "205px";
 
     constructor(
         private readonly multiSportService: MultiSportService,
@@ -74,7 +74,8 @@ export class FilterComponent implements OnInit {
         this.holdStatusSelect.items = this.generateFilterService.renderRemarks();
         this.matchStatusSelect.items = this.generateFilterService.renderMatchStatusGroupSelect();
         this.autoPayoutSelect.items = this.generateFilterService.renderAutoPayout();
-        this.overStatusSelect.maxWidth = this.sportSelect.maxWidth = this.matchStatusSelect.maxWidth = this.widthMultiSelect;
+        this.overStatusSelect.maxWidth = this.sportSelect.maxWidth = this.widthMultiSelect;
+        this.matchStatusSelect.maxWidth = "180px"
         this.matchStatusSelect.haveGroup = true;
     }
 

@@ -3,189 +3,188 @@ using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Xunit;
 
-namespace Settlement.Sportsbook.Soccer.UnitTests.Services
+namespace Settlement.Sportsbook.Soccer.UnitTests.Services;
+
+public class GoalIconServiceTests
 {
-    public class GoalIconServiceTests
+    private readonly IFirstGoalLastGoalService firstGoalLastGoalService;
+
+    private readonly IGoalIconService service;
+
+    public GoalIconServiceTests()
     {
-        private readonly IFirstGoalLastGoalService firstGoalLastGoalService;
+        firstGoalLastGoalService = Substitute.For<IFirstGoalLastGoalService>();
+        service = new GoalIconServiceImp(firstGoalLastGoalService);
+    }
 
-        private readonly IGoalIconService service;
-
-        public GoalIconServiceTests()
+    [Theory]
+    [CombinatorialData]
+    public void GetGoalIcon_BetStatusAndGoalRecordAreNullOrWhitespace_AllScoreIsNull(
+        [CombinatorialValues(null, "  ")] string betStatus,
+        [CombinatorialValues(null, "", " ")] string goalRecord)
+    {
+        // Arrange
+        var query = new GoalIconQueryModel
         {
-            firstGoalLastGoalService = Substitute.For<IFirstGoalLastGoalService>();
-            service = new GoalIconServiceImp(firstGoalLastGoalService);
-        }
+            BetStatus = betStatus,
+            GoalRecord = goalRecord
+        };
 
-        [Theory]
-        [CombinatorialData]
-        public void GetGoalIcon_BetStatusAndGoalRecordAreNullOrWhitespace_AllScoreIsNull(
-            [CombinatorialValues(null, "  ")] string betStatus,
-            [CombinatorialValues(null, "", " ")] string goalRecord)
+        // Act
+        var goalIcon = service.GetGoalIcon(query);
+
+        // Assert
+        Assert.True(goalIcon.HalfTimeAwayGoal == null && goalIcon.HalfTimeHomeGoal == null
+                                                      && goalIcon.HomeGoal == null && goalIcon.AwayGoal == null);
+    }
+
+    [Theory]
+    [CombinatorialData]
+    public void GetGoalIcon_BetStatusOrGoalRecordNotNullOrWhitespaceAndIsNotExistHtFgLg_ReturnsHalfGoalIconIsNull(
+        [CombinatorialValues(null, "A")] string betStatus,
+        [CombinatorialValues("H", "")] string goalRecord)
+    {
+        // Arrange
+        var query = new GoalIconQueryModel
         {
-            // Arrange
-            var query = new GoalIconQueryModel
-            {
-                BetStatus = betStatus,
-                GoalRecord = goalRecord
-            };
+            BetStatus = betStatus,
+            GoalRecord = goalRecord,
+            IsExistHtFgLg = false
+        };
 
-            // Act
-            var goalIcon = service.GetGoalIcon(query);
+        // Act
+        var goalIcon = service.GetGoalIcon(query);
 
-            // Assert
-            Assert.True(goalIcon.HalfTimeAwayGoal == null && goalIcon.HalfTimeHomeGoal == null
-                && goalIcon.HomeGoal == null && goalIcon.AwayGoal == null);
-        }
+        // Assert
+        Assert.True(goalIcon.HalfTimeAwayGoal == null && goalIcon.HalfTimeHomeGoal == null);
+    }
 
-        [Theory]
-        [CombinatorialData]
-        public void GetGoalIcon_BetStatusOrGoalRecordNotNullOrWhitespaceAndIsNotExistHtFgLg_ReturnsHalfGoalIconIsNull(
-            [CombinatorialValues(null, "A")] string betStatus,
-            [CombinatorialValues("H", "")] string goalRecord)
+    [Theory]
+    [CombinatorialData]
+    public void GetGoalIcon_BetStatusNotNullOrWhitespaceAndIsExistHtFgLg_ReturnsHalfGoalIconByBetStatus(
+        [CombinatorialValues("A", "1-2")] string betStatus)
+    {
+        // Arrange
+        const string homeFirstLastGoal = "Home First Last Goal";
+        const string awayFirstLastGoal = "Away First Last Goal";
+        var query = new GoalIconQueryModel
         {
-            // Arrange
-            var query = new GoalIconQueryModel
-            {
-                BetStatus = betStatus,
-                GoalRecord = goalRecord,
-                IsExistHtFgLg = false
-            };
-
-            // Act
-            var goalIcon = service.GetGoalIcon(query);
-
-            // Assert
-            Assert.True(goalIcon.HalfTimeAwayGoal == null && goalIcon.HalfTimeHomeGoal == null);
-        }
-
-        [Theory]
-        [CombinatorialData]
-        public void GetGoalIcon_BetStatusNotNullOrWhitespaceAndIsExistHtFgLg_ReturnsHalfGoalIconByBetStatus(
-            [CombinatorialValues("A", "1-2")] string betStatus)
+            BetStatus = betStatus,
+            IsExistHtFgLg = true
+        };
+        firstGoalLastGoalService.GetHalftimeGoalByBetStatus(query).Returns(new GoalModel
         {
-            // Arrange
-            const string homeFirstLastGoal = "Home First Last Goal";
-            const string awayFirstLastGoal = "Away First Last Goal";
-            var query = new GoalIconQueryModel
-            {
-                BetStatus = betStatus,
-                IsExistHtFgLg = true
-            };
-            firstGoalLastGoalService.GetHalftimeGoalByBetStatus(query).Returns(new GoalModel
-            {
-                Home = homeFirstLastGoal,
-                Away = awayFirstLastGoal
-            });
+            Home = homeFirstLastGoal,
+            Away = awayFirstLastGoal
+        });
 
-            // Act
-            var goalIcon = service.GetGoalIcon(query);
+        // Act
+        var goalIcon = service.GetGoalIcon(query);
 
-            // Assert
-            Assert.True(goalIcon.HalfTimeAwayGoal.Equals(awayFirstLastGoal) && goalIcon.HalfTimeHomeGoal.Equals(homeFirstLastGoal));
-        }
+        // Assert
+        Assert.True(goalIcon.HalfTimeAwayGoal.Equals(awayFirstLastGoal) && goalIcon.HalfTimeHomeGoal.Equals(homeFirstLastGoal));
+    }
 
-        [Theory]
-        [CombinatorialData]
-        public void GetGoalIcon_BetStatustNullOrWhitespaceAndGoalRecordNotNullOrWhitespaceAndIsExistHtFgLg_ReturnsHalfGoalIconByBetStatus(
-            [CombinatorialValues(null, "  ")] string betStatus,
-            [CombinatorialValues("A;H", "HA;")] string goalRecord)
+    [Theory]
+    [CombinatorialData]
+    public void GetGoalIcon_BetStatustNullOrWhitespaceAndGoalRecordNotNullOrWhitespaceAndIsExistHtFgLg_ReturnsHalfGoalIconByBetStatus(
+        [CombinatorialValues(null, "  ")] string betStatus,
+        [CombinatorialValues("A;H", "HA;")] string goalRecord)
+    {
+        // Arrange
+        const string homeFirstLastGoal = "Home First Last Goal";
+        const string awayFirstLastGoal = "Away First Last Goal";
+        var query = new GoalIconQueryModel
         {
-            // Arrange
-            const string homeFirstLastGoal = "Home First Last Goal";
-            const string awayFirstLastGoal = "Away First Last Goal";
-            var query = new GoalIconQueryModel
-            {
-                BetStatus = betStatus,
-                GoalRecord = goalRecord,
-                IsExistHtFgLg = true
-            };
-            firstGoalLastGoalService.GetHalftimeGoalByGoalRecord(goalRecord).Returns(new GoalModel
-            {
-                Home = homeFirstLastGoal,
-                Away = awayFirstLastGoal
-            });
-
-            // Act
-            var goalIcon = service.GetGoalIcon(query);
-
-            // Assert
-            Assert.True(goalIcon.HalfTimeAwayGoal.Equals(awayFirstLastGoal) && goalIcon.HalfTimeHomeGoal.Equals(homeFirstLastGoal));
-        }
-
-        [Theory]
-        [CombinatorialData]
-        public void GetGoalIcon_BetStatusOrGoalRecordNotNullOrWhitespaceAndIsNotExistFgLg_ReturnsHalfGoalIconIsNull(
-            [CombinatorialValues(null, "A")] string betStatus,
-            [CombinatorialValues("H", "")] string goalRecord)
+            BetStatus = betStatus,
+            GoalRecord = goalRecord,
+            IsExistHtFgLg = true
+        };
+        firstGoalLastGoalService.GetHalftimeGoalByGoalRecord(goalRecord).Returns(new GoalModel
         {
-            // Arrange
-            var query = new GoalIconQueryModel
-            {
-                BetStatus = betStatus,
-                GoalRecord = goalRecord,
-                IsExistHtFgLg = false
-            };
+            Home = homeFirstLastGoal,
+            Away = awayFirstLastGoal
+        });
 
-            // Act
-            var goalIcon = service.GetGoalIcon(query);
+        // Act
+        var goalIcon = service.GetGoalIcon(query);
 
-            // Assert
-            Assert.True(goalIcon.HomeGoal == null && goalIcon.AwayGoal == null);
-        }
+        // Assert
+        Assert.True(goalIcon.HalfTimeAwayGoal.Equals(awayFirstLastGoal) && goalIcon.HalfTimeHomeGoal.Equals(homeFirstLastGoal));
+    }
 
-        [Theory]
-        [CombinatorialData]
-        public void GetGoalIcon_BetStatusNotNullOrWhitespaceAndIsExistFgLg_ReturnsHalfGoalIconByBetStatus(
-            [CombinatorialValues("A", "1-2")] string betStatus)
+    [Theory]
+    [CombinatorialData]
+    public void GetGoalIcon_BetStatusOrGoalRecordNotNullOrWhitespaceAndIsNotExistFgLg_ReturnsHalfGoalIconIsNull(
+        [CombinatorialValues(null, "A")] string betStatus,
+        [CombinatorialValues("H", "")] string goalRecord)
+    {
+        // Arrange
+        var query = new GoalIconQueryModel
         {
-            // Arrange
-            const string homeFirstLastGoal = "Home First Last Goal";
-            const string awayFirstLastGoal = "Away First Last Goal";
-            var query = new GoalIconQueryModel
-            {
-                BetStatus = betStatus,
-                IsExistFgLg = true
-            };
-            firstGoalLastGoalService.GetFullTimeGoalByBetStatus(query).Returns(new GoalModel
-            {
-                Home = homeFirstLastGoal,
-                Away = awayFirstLastGoal
-            });
+            BetStatus = betStatus,
+            GoalRecord = goalRecord,
+            IsExistHtFgLg = false
+        };
 
-            // Act
-            var goalIcon = service.GetGoalIcon(query);
+        // Act
+        var goalIcon = service.GetGoalIcon(query);
 
-            // Assert
-            Assert.True(goalIcon.AwayGoal.Equals(awayFirstLastGoal) && goalIcon.HomeGoal.Equals(homeFirstLastGoal));
-        }
+        // Assert
+        Assert.True(goalIcon.HomeGoal == null && goalIcon.AwayGoal == null);
+    }
 
-        [Theory]
-        [CombinatorialData]
-        public void GetGoalIcon_BetStatustNullOrWhitespaceAndGoalRecordNotNullOrWhitespaceAndIsExistFgLg_ReturnsHalfGoalIconByBetStatus(
-            [CombinatorialValues(null, "  ")] string betStatus,
-            [CombinatorialValues("A;H", "HA;")] string goalRecord)
+    [Theory]
+    [CombinatorialData]
+    public void GetGoalIcon_BetStatusNotNullOrWhitespaceAndIsExistFgLg_ReturnsHalfGoalIconByBetStatus(
+        [CombinatorialValues("A", "1-2")] string betStatus)
+    {
+        // Arrange
+        const string homeFirstLastGoal = "Home First Last Goal";
+        const string awayFirstLastGoal = "Away First Last Goal";
+        var query = new GoalIconQueryModel
         {
-            // Arrange
-            const string homeFirstLastGoal = "Home First Last Goal";
-            const string awayFirstLastGoal = "Away First Last Goal";
-            var query = new GoalIconQueryModel
-            {
-                BetStatus = betStatus,
-                GoalRecord = goalRecord,
-                IsExistFgLg = true
-            };
-            firstGoalLastGoalService.GetFullTimeGoalByGoalRecord(goalRecord, Arg.Any<bool>()).Returns(new GoalModel
-            {
-                Home = homeFirstLastGoal,
-                Away = awayFirstLastGoal
-            });
+            BetStatus = betStatus,
+            IsExistFgLg = true
+        };
+        firstGoalLastGoalService.GetFullTimeGoalByBetStatus(query).Returns(new GoalModel
+        {
+            Home = homeFirstLastGoal,
+            Away = awayFirstLastGoal
+        });
 
-            // Act
-            var goalIcon = service.GetGoalIcon(query);
+        // Act
+        var goalIcon = service.GetGoalIcon(query);
 
-            // Assert
-            Assert.True(goalIcon.AwayGoal.Equals(awayFirstLastGoal) && goalIcon.HomeGoal.Equals(homeFirstLastGoal));
-        }
+        // Assert
+        Assert.True(goalIcon.AwayGoal.Equals(awayFirstLastGoal) && goalIcon.HomeGoal.Equals(homeFirstLastGoal));
+    }
+
+    [Theory]
+    [CombinatorialData]
+    public void GetGoalIcon_BetStatustNullOrWhitespaceAndGoalRecordNotNullOrWhitespaceAndIsExistFgLg_ReturnsHalfGoalIconByBetStatus(
+        [CombinatorialValues(null, "  ")] string betStatus,
+        [CombinatorialValues("A;H", "HA;")] string goalRecord)
+    {
+        // Arrange
+        const string homeFirstLastGoal = "Home First Last Goal";
+        const string awayFirstLastGoal = "Away First Last Goal";
+        var query = new GoalIconQueryModel
+        {
+            BetStatus = betStatus,
+            GoalRecord = goalRecord,
+            IsExistFgLg = true
+        };
+        firstGoalLastGoalService.GetFullTimeGoalByGoalRecord(goalRecord, Arg.Any<bool>()).Returns(new GoalModel
+        {
+            Home = homeFirstLastGoal,
+            Away = awayFirstLastGoal
+        });
+
+        // Act
+        var goalIcon = service.GetGoalIcon(query);
+
+        // Assert
+        Assert.True(goalIcon.AwayGoal.Equals(awayFirstLastGoal) && goalIcon.HomeGoal.Equals(homeFirstLastGoal));
     }
 }

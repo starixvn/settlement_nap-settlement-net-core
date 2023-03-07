@@ -6,8 +6,9 @@ import { HttpClientModule, HttpClientJsonpModule, HTTP_INTERCEPTORS } from '@ang
 import { OnlyIntegerDirective } from '../shared/directives';
 import { ModalContentDialogComponent } from "../shared/components/modal-dialog/modal-content-dialog.component";
 import { ModalDialogComponent } from '../shared/components/modal-dialog/modal-dialog.component';
-import { TimeSettingComponent, AppComponent, AutoSettingComponent, RemarkSettingComponent } from './components';
+import { TimeSettingComponent, AutoSettingComponent, RemarkSettingComponent } from './components';
 import { CustomHttpRequestInterceptor } from "../shared/custom-httprequest-interceptor.native";
+import { AppComponent } from './components/app.component';
 
 @NgModule({
     imports: [

@@ -1,0 +1,27 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+   @{
+        var path = @ViewBag.NetCoreRootUrl;
+    }
+    <base href="@path/" />
+    <title>@ViewBag.Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+    <header>
+        @await Html.PartialAsync("~/Views/Menu.cshtml")
+    </header>
+    <app-root id="app" page-type="@ViewBag.PageType">Loading...</app-root>
+    <script type="text/javascript">
+        var element = document.getElementById("Outright-menu");
+        if (element !== null) {
+            element.className = "active-menu";
+        }
+    </script>
+    <script src="js/notification.js" type="text/javascript"></script>
+    @await Html.PartialAsync("~/Views/Shared/_Matomo.cshtml")
+</body>
+</html>

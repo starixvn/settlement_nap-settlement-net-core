@@ -1,21 +1,20 @@
-﻿namespace Settlement.Core.Constants
+﻿namespace Settlement.Core.Constants;
+
+public static class ActionType
 {
-    public static class ActionType
-    {
-        public const string CalculateAll = "CAL";
+    public const string CalculateAll = "CAL";
 
-        public const string CalculateHalfTime = "CAL-HT";
+    public const string CalculateHalfTime = "CAL-HT";
 
-        public const string CalculateFullTime = "CAL-FT";
+    public const string CalculateFullTime = "CAL-FT";
 
-        public const string UnCalculate = "UNDO";
+    public const string UnCalculate = "UNDO";
 
-        public const string RefundHalfTime = "REFUND-HT";
+    public const string RefundHalfTime = "REFUND-HT";
 
-        public const string RefundFullTime = "REFUND-FT";
+    public const string RefundFullTime = "REFUND-FT";
 
-        public const string RefundAll = "REFUND";
+    public const string RefundAll = "REFUND";
 
-        public const string BetDaq = "BETDAQ";
-    }
+    public const string BetDaq = "BETDAQ";
 }

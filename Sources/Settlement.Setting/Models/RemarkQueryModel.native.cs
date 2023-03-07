@@ -1,57 +1,56 @@
 ﻿using Settlement.Core.Models;
 
-namespace Settlement.Setting.Models
+namespace Settlement.Setting.Models;
+
+public class RemarkQueryModel
 {
-    public class RemarkQueryModel
+    private string eventStatus = string.Empty;
+    private string originalEventStatus = string.Empty;
+    private AutoCalculationSetting autoCalcSetting;
+    private const int ConvertToBase = 2;
+
+    private readonly List<string> eventStatusReasonTitles = new List<string>
     {
-        private string eventStatus = string.Empty;
-        private string originalEventStatus = string.Empty;
-        private AutoCalculationSetting autoCalcSetting;
-        private const int ConvertToBase = 2;
+        Core.Constants.EventStatus.IrregularTime1H,
+        Core.Constants.EventStatus.IrregularTime,
+        Core.Constants.EventStatus.WrongTeamName,
+        Core.Constants.EventStatus.Suspended,
+    };
 
-        private readonly List<string> eventStatusReasonTitles = new List<string>
+    private readonly List<int> eventStatusReasons = new List<int> { 1, 2, 3, 4 };
+
+    public string EventStatus
+    {
+        get
         {
-            Core.Constants.EventStatus.IrregularTime1H,
-            Core.Constants.EventStatus.IrregularTime,
-            Core.Constants.EventStatus.WrongTeamName,
-            Core.Constants.EventStatus.Suspended,
-        };
-
-        private readonly List<int> eventStatusReasons = new List<int> { 1, 2, 3, 4 };
-
-        public string EventStatus
-        {
-            get
-            {
-                return eventStatus.MapToString(BetStatus, Remark.IsPending);
-            }
-
-            set
-            {
-                originalEventStatus = value;
-                eventStatus = value;
-            }
+            return eventStatus.MapToString(BetStatus, Remark.IsPending);
         }
 
-        public string NewEventStatus
+        set
         {
-            get => originalEventStatus.IgnoreCaseEquals(Core.Constants.EventStatus.Running) &&
-                eventStatusReasons.Contains(EventStatusReason ?? 0) ? eventStatusReasonTitles[(int)EventStatusReason - 1] : EventStatus;
+            originalEventStatus = value;
+            eventStatus = value;
         }
-
-        protected byte SettlementStatus { get; set; }
-
-        protected string BetStatus { get; set; }
-
-        public RemarkSettingModel Remark => new RemarkSettingModel(SettlementStatus);
-
-        public int? EventStatusReason { get; set; }
-
-        public int AutoSetting { get; set; }
-
-        public AutoCalculationSetting AutoCalcSetting => autoCalcSetting ?? (autoCalcSetting = new AutoCalculationSetting
-        {
-            MatchSetting = Convert.ToString(AutoSetting, ConvertToBase).Reverse()
-        });
     }
+
+    public string NewEventStatus
+    {
+        get => originalEventStatus.IgnoreCaseEquals(Core.Constants.EventStatus.Running) &&
+               eventStatusReasons.Contains(EventStatusReason ?? 0) ? eventStatusReasonTitles[(int)EventStatusReason - 1] : EventStatus;
+    }
+
+    protected byte SettlementStatus { get; set; }
+
+    protected string BetStatus { get; set; }
+
+    public RemarkSettingModel Remark => new RemarkSettingModel(SettlementStatus);
+
+    public int? EventStatusReason { get; set; }
+
+    public int AutoSetting { get; set; }
+
+    public AutoCalculationSetting AutoCalcSetting => autoCalcSetting ?? (autoCalcSetting = new AutoCalculationSetting
+    {
+        MatchSetting = Convert.ToString(AutoSetting, ConvertToBase).Reverse()
+    });
 }

@@ -23,23 +23,19 @@ public class MultiSportServiceTests
 
     private readonly ICacheService cacheService;
 
-    private readonly PermissionService permissionService;
-
-    private readonly IMapper mapper;
-
     private readonly IRefDataService refDataService;
 
     public MultiSportServiceTests()
     {
         repository = Substitute.For<IDynamicRepository>();
-        permissionService = Substitute.For<PermissionService>(null, null, null, null);
+        var permissionService = Substitute.For<PermissionService>(null, null, null, null);
         matchService = Substitute.For<IMatchService>();
         cacheService = Substitute.For<ICacheService>();
 
         var mapperConfig = new MapperConfigurationExpression();
         mapperConfig.AddProfile<EventManagementAutoMapperProfile>();
         var config = new MapperConfiguration(mapperConfig);
-        mapper = new Mapper(config);
+        var mapper = new Mapper(config);
 
         var accessor = Substitute.For<IHttpContextAccessor>();
         var context = new DefaultHttpContext

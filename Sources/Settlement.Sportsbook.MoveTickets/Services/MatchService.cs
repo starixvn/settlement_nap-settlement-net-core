@@ -1,87 +1,86 @@
 ﻿using Settlement.Core.Models;
 using Settlement.Core.Services;
 
-namespace Settlement.Sportsbook.MoveTickets.Services
+namespace Settlement.Sportsbook.MoveTickets.Services;
+
+public interface IMatchService
 {
-    public interface IMatchService
+    List<Match> GetScoreForMatchBySportType(List<Match> matches, List<ResultDetail> resultDetails, int sportType, int groupSport);
+
+    List<Match> MergeMatches(List<Match> baseMatches, List<Match> siteMatches);
+
+    List<Match> SetNewMatchInfo(List<Match> matches);
+}
+
+public class MatchServiceImp : IMatchService
+{
+    private readonly IMatchResultDetailService matchResultDetailService;
+
+    private readonly IRefDataService refDataService;
+
+    private readonly CompareMatchService compareMatchService;
+
+    private readonly NewInfoMatchService newInfoMatchService;
+
+    public MatchServiceImp(
+        IMatchResultDetailService matchResultDetailService,
+        IRefDataService refDataService,
+        CompareMatchService compareMatchService,
+        NewInfoMatchService newInfoMatchService)
     {
-        List<Match> GetScoreForMatchBySportType(List<Match> matches, List<ResultDetail> resultDetails, int sportType, int groupSport);
-
-        List<Match> MergeMatches(List<Match> baseMatches, List<Match> siteMatches);
-
-        List<Match> SetNewMatchInfo(List<Match> matches);
+        this.matchResultDetailService = matchResultDetailService;
+        this.refDataService = refDataService;
+        this.compareMatchService = compareMatchService;
+        this.newInfoMatchService = newInfoMatchService;
     }
 
-    public class MatchServiceImp : IMatchService
+    public List<Match> GetScoreForMatchBySportType(List<Match> matches, List<ResultDetail> resultDetails, int sportType, int groupSport)
     {
-        private readonly IMatchResultDetailService matchResultDetailService;
-
-        private readonly IRefDataService refDataService;
-
-        private readonly CompareMatchService compareMatchService;
-
-        private readonly NewInfoMatchService newInfoMatchService;
-
-        public MatchServiceImp(
-            IMatchResultDetailService matchResultDetailService,
-            IRefDataService refDataService,
-            CompareMatchService compareMatchService,
-            NewInfoMatchService newInfoMatchService)
+        if (sportType == Core.Constants.SportType.Cricket)
         {
-            this.matchResultDetailService = matchResultDetailService;
-            this.refDataService = refDataService;
-            this.compareMatchService = compareMatchService;
-            this.newInfoMatchService = newInfoMatchService;
+            return matchResultDetailService.CricketResultDetail(matches, resultDetails);
         }
 
-        public List<Match> GetScoreForMatchBySportType(List<Match> matches, List<ResultDetail> resultDetails, int sportType, int groupSport)
+        foreach (var result in matches)
         {
-            if (sportType == Core.Constants.SportType.Cricket)
-            {
-                return matchResultDetailService.CricketResultDetail(matches, resultDetails);
-            }
-
-            foreach (var result in matches)
-            {
-                result.RefDataService = refDataService;
-                result.GroupSport = groupSport;
-            }
-
-            return matches;
+            result.RefDataService = refDataService;
+            result.GroupSport = groupSport;
         }
 
-        public List<Match> SetNewMatchInfo(List<Match> matches)
-        {
-            foreach (var match in matches)
-            {
-                newInfoMatchService.TicketInfo(match);
-                match.NewEventStatus = newInfoMatchService.NewEventStatus(match);
-                match.EventStatusColor = newInfoMatchService.EventStatusColor(match);
-                match.EarlySettleStatus = newInfoMatchService.EarlySettlementStatus(match);
-                match.RefDataService = refDataService;
-            }
+        return matches;
+    }
 
-            return matches;
+    public List<Match> SetNewMatchInfo(List<Match> matches)
+    {
+        foreach (var match in matches)
+        {
+            newInfoMatchService.TicketInfo(match);
+            match.NewEventStatus = newInfoMatchService.NewEventStatus(match);
+            match.EventStatusColor = newInfoMatchService.EventStatusColor(match);
+            match.EarlySettleStatus = newInfoMatchService.EarlySettlementStatus(match);
+            match.RefDataService = refDataService;
         }
 
-        public List<Match> MergeMatches(List<Match> baseMatches, List<Match> siteMatches)
-        {
-            var peekNewMatches = siteMatches.Except(baseMatches).ToList();
-            baseMatches.AddRange(peekNewMatches);
-            AddSiteInfo(baseMatches, siteMatches);
+        return matches;
+    }
 
-            return baseMatches;
-        }
+    public List<Match> MergeMatches(List<Match> baseMatches, List<Match> siteMatches)
+    {
+        var peekNewMatches = siteMatches.Except(baseMatches).ToList();
+        baseMatches.AddRange(peekNewMatches);
+        AddSiteInfo(baseMatches, siteMatches);
 
-        private void AddSiteInfo(List<Match> baseMatches, List<Match> siteMatches)
+        return baseMatches;
+    }
+
+    private void AddSiteInfo(List<Match> baseMatches, List<Match> siteMatches)
+    {
+        foreach (var match in baseMatches)
         {
-            foreach (var match in baseMatches)
+            var matchSiteInfo = compareMatchService.GetDifferentMatchSiteInfo(match, siteMatches);
+            if (matchSiteInfo != null)
             {
-                var matchSiteInfo = compareMatchService.GetDifferentMatchSiteInfo(match, siteMatches);
-                if (matchSiteInfo != null)
-                {
-                    match.SiteMatch.Add(matchSiteInfo);
-                }
+                match.SiteMatch.Add(matchSiteInfo);
             }
         }
     }

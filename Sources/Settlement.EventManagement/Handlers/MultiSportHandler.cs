@@ -19,19 +19,16 @@ public class MultiSportHandler : IRequestHandler<FilterMultiSportRequest, MultiS
     private readonly IMultiSportService multiSportService;
     private readonly PermissionService permissionService;
     private readonly INapSession currentSession;
-    private readonly IMapper mapper;
     private readonly GetDataFilterService getDataFilterService;
 
     public MultiSportHandler(
         IMultiSportService multiSportService,
         PermissionService permissionService,
-        IMapper mapper,
         INapSession currentSession,
         GetDataFilterService getDataFilterService)
     {
         this.multiSportService = multiSportService;
         this.permissionService = permissionService;
-        this.mapper = mapper;
         this.currentSession = currentSession;
         this.getDataFilterService = getDataFilterService;
     }

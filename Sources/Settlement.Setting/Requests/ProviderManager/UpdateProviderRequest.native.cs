@@ -1,14 +1,12 @@
 ﻿using MediatR;
-using Settlement.Setting.Models;
 using Settlement.Core.Models;
-using System.Collections.Generic;
+using Settlement.Setting.Models;
 
-namespace Settlement.Setting.Requests
+namespace Settlement.Setting.Requests;
+
+public class UpdateProviderRequest : IRequest<Result>
 {
-    public class UpdateProviderRequest : IRequest<Result>
-    {
-        public int GameType { get; set; }
+    public int GameType { get; set; }
 
-        public List<ProviderModel> Providers { get; set; }
-    }
+    public List<ProviderModel> Providers { get; set; }
 }

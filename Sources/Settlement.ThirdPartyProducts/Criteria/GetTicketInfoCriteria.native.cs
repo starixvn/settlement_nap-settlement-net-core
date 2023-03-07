@@ -1,19 +1,18 @@
 ﻿using Fanex.Data;
 using Fanex.Data.Repository;
 
-namespace Settlement.ThirdPartyProducts.Criteria
+namespace Settlement.ThirdPartyProducts.Criteria;
+
+public class GetTicketInfoCriteria : NonQueryCommand
 {
-    public class GetTicketInfoCriteria : NonQueryCommand
-    {
-        public int MatchId { get; set; }
+    public int MatchId { get; set; }
 
-        public string SelectedResources { get; set; }
+    public string SelectedResources { get; set; }
 
-        [SpParam(Ignored = true)]
-        public string DbServer { get; set; }
+    [SpParam(Ignored = true)]
+    public string DbServer { get; set; }
 
-        public override string GetSettingKey() => $"NAP_Set_CashoutSel_{DbServer}";
+    public override string GetSettingKey() => $"NAP_Set_CashoutSel_{DbServer}";
 
-        public override bool IsValid() => MatchId > 0;
-    }
+    public override bool IsValid() => MatchId > 0;
 }

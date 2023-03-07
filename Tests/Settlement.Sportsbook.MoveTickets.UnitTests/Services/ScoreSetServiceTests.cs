@@ -2,99 +2,98 @@
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
 
-namespace Settlement.Sportsbook.MoveTickets.UnitTests.Services
+namespace Settlement.Sportsbook.MoveTickets.UnitTests.Services;
+
+public class ScoreSetServiceTests
 {
-    public class ScoreSetServiceTests
+    private readonly IScoreSetService service;
+
+    public ScoreSetServiceTests()
     {
-        private readonly IScoreSetService service;
+        service = new ScoreSetServiceImp();
+    }
 
-        public ScoreSetServiceTests()
-        {
-            service = new ScoreSetServiceImp();
-        }
+    [Fact]
+    public void GetScore_HasResultDetailWithSettlementStatusIdIsRefund_ReturnsROnScore()
+    {
+        // Arrange
+        var resultDetail = new ResultDetail { MatchId = 1, SettlementStatusId = SettlementStatus.Refund };
+        var expectedScore = new Score("R", "R");
 
-        [Fact]
-        public void GetScore_HasResultDetailWithSettlementStatusIdIsRefund_ReturnsROnScore()
-        {
-            // Arrange
-            var resultDetail = new ResultDetail { MatchId = 1, SettlementStatusId = SettlementStatus.Refund };
-            var expectedScore = new Score("R", "R");
+        // Act
+        var actualScore = service.GetScore(resultDetail);
 
-            // Act
-            var actualScore = service.GetScore(resultDetail);
+        // Assert
+        Assert.Equal(JsonConvert.SerializeObject(expectedScore), JsonConvert.SerializeObject(actualScore));
+    }
 
-            // Assert
-            Assert.Equal(JsonConvert.SerializeObject(expectedScore), JsonConvert.SerializeObject(actualScore));
-        }
+    [Fact]
+    public void GetScore_HasResultDetailWithSettlementStatusIdIsRefundHalftime_ReturnsRHTOnScore()
+    {
+        // Arrange
+        var resultDetail = new ResultDetail { MatchId = 1, SettlementStatusId = SettlementStatus.RefundHT };
+        var expectedScore = new Score("R.HT", "R.HT");
 
-        [Fact]
-        public void GetScore_HasResultDetailWithSettlementStatusIdIsRefundHalftime_ReturnsRHTOnScore()
-        {
-            // Arrange
-            var resultDetail = new ResultDetail { MatchId = 1, SettlementStatusId = SettlementStatus.RefundHT };
-            var expectedScore = new Score("R.HT", "R.HT");
+        // Act
+        var actualScore = service.GetScore(resultDetail);
 
-            // Act
-            var actualScore = service.GetScore(resultDetail);
+        // Assert
+        Assert.Equal(JsonConvert.SerializeObject(expectedScore), JsonConvert.SerializeObject(actualScore));
+    }
 
-            // Assert
-            Assert.Equal(JsonConvert.SerializeObject(expectedScore), JsonConvert.SerializeObject(actualScore));
-        }
+    [Fact]
+    public void GetScore_HasResultDetailWithSettlementStatusIdIsRefundFullTime_ReturnsRFTOnScore()
+    {
+        // Arrange
+        var resultDetail = new ResultDetail { MatchId = 1, SettlementStatusId = SettlementStatus.RefundFT };
+        var expectedScore = new Score("R.FT", "R.FT");
 
-        [Fact]
-        public void GetScore_HasResultDetailWithSettlementStatusIdIsRefundFullTime_ReturnsRFTOnScore()
-        {
-            // Arrange
-            var resultDetail = new ResultDetail { MatchId = 1, SettlementStatusId = SettlementStatus.RefundFT };
-            var expectedScore = new Score("R.FT", "R.FT");
+        // Act
+        var actualScore = service.GetScore(resultDetail);
 
-            // Act
-            var actualScore = service.GetScore(resultDetail);
+        // Assert
+        Assert.Equal(JsonConvert.SerializeObject(expectedScore), JsonConvert.SerializeObject(actualScore));
+    }
 
-            // Assert
-            Assert.Equal(JsonConvert.SerializeObject(expectedScore), JsonConvert.SerializeObject(actualScore));
-        }
+    [Fact]
+    public void GetScore_HasResultDetailWithSettlementStatusIdIsCompleted_ReturnsCorrectScoreAndHasBackgroundColor()
+    {
+        // Arrange
+        var resultDetail = new ResultDetail { MatchId = 1, HomeValue = "1", AwayValue = "2", SettlementStatusId = SettlementStatus.Completed };
+        var expectedScore = new Score("1", "2", Background.Calculated);
 
-        [Fact]
-        public void GetScore_HasResultDetailWithSettlementStatusIdIsCompleted_ReturnsCorrectScoreAndHasBackgroundColor()
-        {
-            // Arrange
-            var resultDetail = new ResultDetail { MatchId = 1, HomeValue = "1", AwayValue = "2", SettlementStatusId = SettlementStatus.Completed };
-            var expectedScore = new Score("1", "2", Background.Calculated);
+        // Act
+        var actualScore = service.GetScore(resultDetail);
 
-            // Act
-            var actualScore = service.GetScore(resultDetail);
+        // Assert
+        Assert.Equal(JsonConvert.SerializeObject(expectedScore), JsonConvert.SerializeObject(actualScore));
+    }
 
-            // Assert
-            Assert.Equal(JsonConvert.SerializeObject(expectedScore), JsonConvert.SerializeObject(actualScore));
-        }
+    [Fact]
+    public void GetScore_HasResultDetailWithSettlementStatusIdIsRunningAndScoreIsNull_ReturnsHyphenOnScore()
+    {
+        // Arrange
+        var resultDetail = new ResultDetail { MatchId = 1, SettlementStatusId = SettlementStatus.Running };
+        var expectedScore = new Score("-", "-");
 
-        [Fact]
-        public void GetScore_HasResultDetailWithSettlementStatusIdIsRunningAndScoreIsNull_ReturnsHyphenOnScore()
-        {
-            // Arrange
-            var resultDetail = new ResultDetail { MatchId = 1, SettlementStatusId = SettlementStatus.Running };
-            var expectedScore = new Score("-", "-");
+        // Act
+        var actualScore = service.GetScore(resultDetail);
 
-            // Act
-            var actualScore = service.GetScore(resultDetail);
+        // Assert
+        Assert.Equal(JsonConvert.SerializeObject(expectedScore), JsonConvert.SerializeObject(actualScore));
+    }
 
-            // Assert
-            Assert.Equal(JsonConvert.SerializeObject(expectedScore), JsonConvert.SerializeObject(actualScore));
-        }
+    [Fact]
+    public void GetScore_HasResultDetailWithSettlementStatusIdIsRunningAndScoreIsNotNull_ReturnsCorrectScore()
+    {
+        // Arrange
+        var resultDetail = new ResultDetail { MatchId = 1, HomeValue = "1", AwayValue = "2", SettlementStatusId = SettlementStatus.Running };
+        var expectedScore = new Score("1", "2");
 
-        [Fact]
-        public void GetScore_HasResultDetailWithSettlementStatusIdIsRunningAndScoreIsNotNull_ReturnsCorrectScore()
-        {
-            // Arrange
-            var resultDetail = new ResultDetail { MatchId = 1, HomeValue = "1", AwayValue = "2", SettlementStatusId = SettlementStatus.Running };
-            var expectedScore = new Score("1", "2");
+        // Act
+        var actualScore = service.GetScore(resultDetail);
 
-            // Act
-            var actualScore = service.GetScore(resultDetail);
-
-            // Assert
-            Assert.Equal(JsonConvert.SerializeObject(expectedScore), JsonConvert.SerializeObject(actualScore));
-        }
+        // Assert
+        Assert.Equal(JsonConvert.SerializeObject(expectedScore), JsonConvert.SerializeObject(actualScore));
     }
 }

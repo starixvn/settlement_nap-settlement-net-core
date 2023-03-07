@@ -3,16 +3,15 @@ using Settlement.Core.Models;
 using Settlement.Gaming.Models;
 using System.Collections.Generic;
 
-namespace Settlement.Gaming.Requests
+namespace Settlement.Gaming.Requests;
+
+public class NumberGameSettlementRequest : IRequest<Result>
 {
-    public class NumberGameSettlementRequest : IRequest<Result>
-    {
-        public int MatchId { get; set; }
+    public int MatchId { get; set; }
 
-        public List<BallModel> Balls { get; set; }
+    public List<BallModel> Balls { get; set; }
 
-        public string Action { get; set; }
+    public string Action { get; set; }
 
-        public Permission Permission { get; set; }
-    }
+    public Permission Permission { get; set; }
 }

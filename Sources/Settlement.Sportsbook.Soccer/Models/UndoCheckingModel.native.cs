@@ -1,27 +1,26 @@
-﻿namespace Settlement.Sportsbook.Soccer.Models
+﻿namespace Settlement.Sportsbook.Soccer.Models;
+
+public class UndoCheckingModel
 {
-    public class UndoCheckingModel
-    {
-        public string HomeScore { get; set; }
+    public string HomeScore { get; set; }
 
-        public string AwayScore { get; set; }
+    public string AwayScore { get; set; }
 
-        public string GoalRecord { get; set; }
+    public string GoalRecord { get; set; }
 
-        public bool IsHt { get; set; }
+    public bool IsHt { get; set; }
 
-        public int InstantKey { get; set; }
+    public int InstantKey { get; set; }
 
-        public string FirstGoalValue { get; set; }
+    public string FirstGoalValue { get; set; }
 
-        public bool IsExistFG { get; set; }
+    public bool IsExistFG { get; set; }
 
-        public bool IsExistHTFG { get; set; }
+    public bool IsExistHTFG { get; set; }
 
-        public string BetStatus { get; set; }
+    public string BetStatus { get; set; }
 
-        public int ErrCode { get; set; }
+    public int ErrCode { get; set; }
 
-        public string ErrMsg { get; set; }
-    }
+    public string ErrMsg { get; set; }
 }

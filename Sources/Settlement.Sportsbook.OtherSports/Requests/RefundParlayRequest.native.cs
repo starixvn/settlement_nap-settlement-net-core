@@ -1,16 +1,15 @@
 ﻿using MediatR;
 using Settlement.Core.Models;
 
-namespace Settlement.Sportsbook.OtherSports.Requests
+namespace Settlement.Sportsbook.OtherSports.Requests;
+
+public class RefundParlayRequest : IRequest<Result>
 {
-    public class RefundParlayRequest : IRequest<Result>
-    {
-        public int MatchId { get; set; }
+    public int MatchId { get; set; }
 
-        public string Action { get; set; }
+    public string Action { get; set; }
 
-        public int SettleAbandonedMatchIbcParlay { get; set; }
+    public int SettleAbandonedMatchIbcParlay { get; set; }
 
-        public int HedgeMatchId { get; set; }
-    }
+    public int HedgeMatchId { get; set; }
 }

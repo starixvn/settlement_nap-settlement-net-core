@@ -4,8 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientJsonpModule, HttpClientModule } from '@angular/common/http';
 import { BlockUIService, MessageBoxService } from '../../shared/services';
-import {
-  AppComponent,
+import AppComponent, {
   AutoSettingComponent,
   TimeSettingComponent,
 } from '.';

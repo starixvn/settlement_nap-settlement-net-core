@@ -2,119 +2,118 @@
 using Settlement.Sportsbook.Aio.Criteria;
 using Settlement.Sportsbook.Aio.MapperFactory;
 
-namespace Settlement.Sportsbook.Aio.UnitTests.Services
+namespace Settlement.Sportsbook.Aio.UnitTests.Services;
+
+public class ValidateApiKeyServiceTests
 {
-    public class ValidateApiKeyServiceTests
+    private readonly ICriteriaFactory criteriaFactory;
+
+    private readonly IValidateApiKeyService service;
+
+    private const string Key = "api";
+
+    private readonly object MockData = null;
+
+    public ValidateApiKeyServiceTests()
     {
-        private readonly ICriteriaFactory criteriaFactory;
+        criteriaFactory = Substitute.For<ICriteriaFactory>();
+        service = new ValidateApiKeyServiceImp(criteriaFactory);
+        MockData = new { matchId = 1 };
+    }
 
-        private readonly IValidateApiKeyService service;
-
-        private const string Key = "api";
-
-        private readonly object MockData = null;
-
-        public ValidateApiKeyServiceTests()
+    [Fact]
+    public void GetApiKey_ApiKeyIsEmpty_ThrowException()
+    {
+        // Assert
+        Assert.Throws<EmptyKeyException>(() =>
         {
-            criteriaFactory = Substitute.For<ICriteriaFactory>();
-            service = new ValidateApiKeyServiceImp(criteriaFactory);
-            MockData = new { matchId = 1 };
-        }
+            service.GetApiKey(string.Empty);
+        });
+    }
 
-        [Fact]
-        public void GetApiKey_ApiKeyIsEmpty_ThrowException()
+    [Fact]
+    public void GetApiKey_HasApiKey_ReturnsRightKey()
+    {
+        //Act
+        var result = service.GetApiKey(Key);
+
+        Assert.Equal(Key, result);
+    }
+
+    [Fact]
+    public void CriteriaName_CriteriaTypeIsNull_ThrowException()
+    {
+        //Arrange
+        Type value = null;
+        criteriaFactory.GetCriteriaType(Key).Returns(value);
+
+        //Assert
+        Assert.Throws<EmptyKeyException>(() =>
         {
-            // Assert
-            Assert.Throws<EmptyKeyException>(() =>
-            {
-                service.GetApiKey(string.Empty);
-            });
-        }
+            service.CriteriaName(MockData, Key);
+        });
+    }
 
-        [Fact]
-        public void GetApiKey_HasApiKey_ReturnsRightKey()
-        {
-            //Act
-            var result = service.GetApiKey(Key);
+    [Fact]
+    public void CriteriaName_ExistedCriteriaTypeButCriteriaIsNull_ThrowException()
+    {
+        //Arrange
+        ICriteria criteria = null;
+        criteriaFactory.GetCriteriaType(Key).Returns(typeof(GetMatchDetailCriteria));
+        criteriaFactory.CreateCriteria(Arg.Any<Type>(), MockData).Returns(criteria);
 
-            Assert.Equal(Key, result);
-        }
+        // Assert
+        Assert.Throws<EmptyKeyException>(() => service.CriteriaName(MockData, Key));
+    }
 
-        [Fact]
-        public void CriteriaName_CriteriaTypeIsNull_ThrowException()
-        {
-            //Arrange
-            Type value = null;
-            criteriaFactory.GetCriteriaType(Key).Returns(value);
+    [Fact]
+    public void CriteriaName_ExistedCriteriaTypeAndCriteria_ReturnsNotNull()
+    {
+        //Arrange
+        criteriaFactory.GetCriteriaType(Key).Returns(typeof(GetMatchDetailCriteria));
+        criteriaFactory.CreateCriteria(Arg.Any<Type>(), MockData).Returns(new GetMatchDetailCriteria());
 
-            //Assert
-            Assert.Throws<EmptyKeyException>(() =>
-                {
-                    service.CriteriaName(MockData, Key);
-                });
-        }
+        //Act
+        var result = service.CriteriaName(MockData, Key);
 
-        [Fact]
-        public void CriteriaName_ExistedCriteriaTypeButCriteriaIsNull_ThrowException()
-        {
-            //Arrange
-            ICriteria criteria = null;
-            criteriaFactory.GetCriteriaType(Key).Returns(typeof(GetMatchDetailCriteria));
-            criteriaFactory.CreateCriteria(Arg.Any<Type>(), MockData).Returns(criteria);
+        //Assert
+        Assert.NotNull(result);
+    }
 
-            // Assert
-            Assert.Throws<EmptyKeyException>(() => service.CriteriaName(MockData, Key));
-        }
+    [Fact]
+    public void CreateNonQueryCommand_CriteriaTypeIsNull_ThrowException()
+    {
+        //Arrange
+        Type value = null;
+        criteriaFactory.GetCriteriaType(Key).Returns(value);
 
-        [Fact]
-        public void CriteriaName_ExistedCriteriaTypeAndCriteria_ReturnsNotNull()
-        {
-            //Arrange
-            criteriaFactory.GetCriteriaType(Key).Returns(typeof(GetMatchDetailCriteria));
-            criteriaFactory.CreateCriteria(Arg.Any<Type>(), MockData).Returns(new GetMatchDetailCriteria());
+        //Assert
+        Assert.Throws<EmptyKeyException>(() => service.CreateNonQueryCommand(MockData, Key));
+    }
 
-            //Act
-            var result = service.CriteriaName(MockData, Key);
+    [Fact]
+    public void CreateNonQueryCommand_ExistedCriteriaTypeButCreateNonQueryCommandIsNull_ThrowException()
+    {
+        //Arrange
+        ICriteria criteria = null;
+        criteriaFactory.GetCriteriaType(Key).Returns(typeof(SettleCriteria));
+        criteriaFactory.CreateNonQueryCommand(Arg.Any<Type>(), MockData).Returns(criteria);
 
-            //Assert
-            Assert.NotNull(result);
-        }
+        //Assert
+        Assert.Throws<EmptyKeyException>(() => service.CreateNonQueryCommand(MockData, Key));
+    }
 
-        [Fact]
-        public void CreateNonQueryCommand_CriteriaTypeIsNull_ThrowException()
-        {
-            //Arrange
-            Type value = null;
-            criteriaFactory.GetCriteriaType(Key).Returns(value);
+    [Fact]
+    public void CreateNonQueryCommand_ExistedCriteriaTypeAndCreateNonQueryCommand_ReturnsNotNull()
+    {
+        //Arrange
+        criteriaFactory.GetCriteriaType(Key).Returns(typeof(SettleCriteria));
+        criteriaFactory.CreateNonQueryCommand(Arg.Any<Type>(), MockData).Returns(new SettleCriteria());
 
-            //Assert
-            Assert.Throws<EmptyKeyException>(() => service.CreateNonQueryCommand(MockData, Key));
-        }
+        //Act
+        var result = service.CreateNonQueryCommand(MockData, Key);
 
-        [Fact]
-        public void CreateNonQueryCommand_ExistedCriteriaTypeButCreateNonQueryCommandIsNull_ThrowException()
-        {
-            //Arrange
-            ICriteria criteria = null;
-            criteriaFactory.GetCriteriaType(Key).Returns(typeof(SettleCriteria));
-            criteriaFactory.CreateNonQueryCommand(Arg.Any<Type>(), MockData).Returns(criteria);
-
-            //Assert
-            Assert.Throws<EmptyKeyException>(() => service.CreateNonQueryCommand(MockData, Key));
-        }
-
-        [Fact]
-        public void CreateNonQueryCommand_ExistedCriteriaTypeAndCreateNonQueryCommand_ReturnsNotNull()
-        {
-            //Arrange
-            criteriaFactory.GetCriteriaType(Key).Returns(typeof(SettleCriteria));
-            criteriaFactory.CreateNonQueryCommand(Arg.Any<Type>(), MockData).Returns(new SettleCriteria());
-
-            //Act
-            var result = service.CreateNonQueryCommand(MockData, Key);
-
-            //Assert
-            Assert.NotNull(result);
-        }
+        //Assert
+        Assert.NotNull(result);
     }
 }

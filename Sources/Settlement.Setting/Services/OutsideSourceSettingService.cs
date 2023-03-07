@@ -7,146 +7,145 @@ using Settlement.Setting.Models.OutsideSourceManager;
 using Settlement.Setting.Requests;
 using Settlement.Setting.Requests.OutsideSourceManager;
 
-namespace Settlement.Setting.Services
+namespace Settlement.Setting.Services;
+
+public interface OutsideSourceSettingService
 {
-    public interface OutsideSourceSettingService
+    Task<List<OutsideSourceModel>> GetOutsideSource(GetOutsideSourceRequest query);
+
+    Task<LeagueOutsideSourceModel> GetLeagueOutsideSource(GetLeagueOutsideSourceRequest query);
+
+    Task<AddSourceResult> AddOutsideSource(AddOutsideSourceRequest query);
+
+    Task<Result> UpdateOutsideSource(UpdateOutsideSourceRequest query);
+
+    Task<Result> UpdateLeagueOutsideSource(UpdateLeagueOutsideSourceRequest query);
+}
+
+public class OutsideSourceSettingServiceImp : OutsideSourceSettingService
+{
+    private readonly IDynamicRepository repository;
+
+    private readonly XmlConvertService xmlConvertService;
+
+    private readonly IRefDataService refDataService;
+
+    private readonly IMapper mapper;
+
+    public OutsideSourceSettingServiceImp(
+        IDynamicRepository repository,
+        XmlConvertService xmlConvertService,
+        IRefDataService refDataService,
+        IMapper mapper)
     {
-        Task<List<OutsideSourceModel>> GetOutsideSource(GetOutsideSourceRequest query);
-
-        Task<LeagueOutsideSourceModel> GetLeagueOutsideSource(GetLeagueOutsideSourceRequest query);
-
-        Task<AddSourceResult> AddOutsideSource(AddOutsideSourceRequest query);
-
-        Task<Result> UpdateOutsideSource(UpdateOutsideSourceRequest query);
-
-        Task<Result> UpdateLeagueOutsideSource(UpdateLeagueOutsideSourceRequest query);
+        this.repository = repository;
+        this.xmlConvertService = xmlConvertService;
+        this.refDataService = refDataService;
+        this.mapper = mapper;
     }
 
-    public class OutsideSourceSettingServiceImp : OutsideSourceSettingService
+    public async Task<List<OutsideSourceModel>> GetOutsideSource(GetOutsideSourceRequest query)
     {
-        private readonly IDynamicRepository repository;
+        var criteria = mapper.Map<GetOutsideSourceRequest, GetOutsideSourceCriteria>(query);
 
-        private readonly XmlConvertService xmlConvertService;
+        var sources = await repository.FetchAsync<QueryResultModel>(criteria);
 
-        private readonly IRefDataService refDataService;
+        return sources.GroupBy(source => new { source.SourceId, source.SourceName, source.Remark, source.SourceStatus, source.SportType })
+                      .Select(games => new OutsideSourceModel
+                      {
+                          SourceId = games.Key.SourceId,
+                          SourceName = games.Key.SourceName,
+                          Remark = games.Key.Remark,
+                          SourceStatus = games.Key.SourceStatus,
+                          Games = GroupGames(games),
+                          SportType = query.SportType,
+                          SportName = refDataService.GetSportName(query.SportType)
+                      }).ToList();
+    }
 
-        private readonly IMapper mapper;
-
-        public OutsideSourceSettingServiceImp(
-            IDynamicRepository repository,
-            XmlConvertService xmlConvertService,
-            IRefDataService refDataService,
-            IMapper mapper)
+    private List<GameModel> GroupGames(IEnumerable<QueryResultModel> games)
+    {
+        var result = new List<GameModel>();
+        foreach (var game in games)
         {
-            this.repository = repository;
-            this.xmlConvertService = xmlConvertService;
-            this.refDataService = refDataService;
-            this.mapper = mapper;
+            result.Add(new GameModel { GameType = game.GameType, IsActive = game.IsActive });
         }
 
-        public async Task<List<OutsideSourceModel>> GetOutsideSource(GetOutsideSourceRequest query)
+        return result;
+    }
+
+    public async Task<LeagueOutsideSourceModel> GetLeagueOutsideSource(GetLeagueOutsideSourceRequest query)
+    {
+        var criteria = mapper.Map<GetLeagueOutsideSourceRequest, GetLeagueOutsideSourceCriteria>(query);
+        var data = await repository.FetchMultipleAsync<LeagueOutSideSourceResourceItem, LeagueOutSideSourceResourceItem>(criteria);
+
+        return new LeagueOutsideSourceModel
         {
-            var criteria = mapper.Map<GetOutsideSourceRequest, GetOutsideSourceCriteria>(query);
+            OutsideSourceList = data.Item1.OrderBy(item => item.PGid).ToList(),
+            OutsideSourceSort = data.Item2.ToList()
+        };
+    }
 
-            var sources = await repository.FetchAsync<QueryResultModel>(criteria);
+    public async Task<AddSourceResult> AddOutsideSource(AddOutsideSourceRequest query)
+    {
+        var resources = CreateGameResources(query.Games);
+        var criteria = mapper.Map<AddOutsideSourceRequest, AddOutsideSourceCriteria>(query);
+        criteria.GameTypes = resources;
 
-            return sources.GroupBy(source => new { source.SourceId, source.SourceName, source.Remark, source.SourceStatus, source.SportType })
-                          .Select(games => new OutsideSourceModel
-                          {
-                              SourceId = games.Key.SourceId,
-                              SourceName = games.Key.SourceName,
-                              Remark = games.Key.Remark,
-                              SourceStatus = games.Key.SourceStatus,
-                              Games = GroupGames(games),
-                              SportType = query.SportType,
-                              SportName = refDataService.GetSportName(query.SportType)
-                          }).ToList();
-        }
-
-        private List<GameModel> GroupGames(IEnumerable<QueryResultModel> games)
+        await repository.ExecuteAsync(criteria);
+        return new AddSourceResult
         {
-            var result = new List<GameModel>();
-            foreach (var game in games)
-            {
-                result.Add(new GameModel { GameType = game.GameType, IsActive = game.IsActive });
-            }
+            ErrCode = criteria.ErrCode,
+            ErrMsg = criteria.ErrMsg,
+            SourceId = criteria.NewSourceId
+        };
+    }
 
-            return result;
-        }
+    public async Task<Result> UpdateOutsideSource(UpdateOutsideSourceRequest query)
+    {
+        var resources = CreateGameResources(query.Games);
+        var criteria = mapper.Map<UpdateOutsideSourceRequest, UpdateOutsideSourceCriteria>(query);
+        criteria.GameTypes = resources;
 
-        public async Task<LeagueOutsideSourceModel> GetLeagueOutsideSource(GetLeagueOutsideSourceRequest query)
+        await repository.ExecuteAsync(criteria);
+        return new Result
         {
-            var criteria = mapper.Map<GetLeagueOutsideSourceRequest, GetLeagueOutsideSourceCriteria>(query);
-            var data = await repository.FetchMultipleAsync<LeagueOutSideSourceResourceItem, LeagueOutSideSourceResourceItem>(criteria);
+            ErrCode = criteria.ErrCode,
+            ErrMsg = criteria.ErrMsg
+        };
+    }
 
-            return new LeagueOutsideSourceModel
-            {
-                OutsideSourceList = data.Item1.OrderBy(item => item.PGid).ToList(),
-                OutsideSourceSort = data.Item2.ToList()
-            };
-        }
-
-        public async Task<AddSourceResult> AddOutsideSource(AddOutsideSourceRequest query)
+    private string CreateGameResources(List<GameModel> selectedResources)
+    {
+        var resources = new GameResources<GameModel>
         {
-            var resources = CreateGameResources(query.Games);
-            var criteria = mapper.Map<AddOutsideSourceRequest, AddOutsideSourceCriteria>(query);
-            criteria.GameTypes = resources;
+            GameItems = selectedResources
+        };
 
-            await repository.ExecuteAsync(criteria);
-            return new AddSourceResult
-            {
-                ErrCode = criteria.ErrCode,
-                ErrMsg = criteria.ErrMsg,
-                SourceId = criteria.NewSourceId
-            };
-        }
+        return xmlConvertService.Serialize(resources);
+    }
 
-        public async Task<Result> UpdateOutsideSource(UpdateOutsideSourceRequest query)
+    public async Task<Result> UpdateLeagueOutsideSource(UpdateLeagueOutsideSourceRequest query)
+    {
+        var resources = CreateResources(query.Sources);
+        var criteria = mapper.Map<UpdateLeagueOutsideSourceRequest, UpdateLeagueOutsideSourceCriteria>(query);
+        criteria.PGIdSources = resources;
+
+        await repository.ExecuteAsync(criteria);
+        return new Result
         {
-            var resources = CreateGameResources(query.Games);
-            var criteria = mapper.Map<UpdateOutsideSourceRequest, UpdateOutsideSourceCriteria>(query);
-            criteria.GameTypes = resources;
+            ErrCode = criteria.ErrCode,
+            ErrMsg = criteria.ErrMsg
+        };
+    }
 
-            await repository.ExecuteAsync(criteria);
-            return new Result
-            {
-                ErrCode = criteria.ErrCode,
-                ErrMsg = criteria.ErrMsg
-            };
-        }
-
-        private string CreateGameResources(List<GameModel> selectedResources)
+    private string CreateResources(List<OutsideSourceResourceItem> selectedResources)
+    {
+        var resources = new OutsideSourceResources<OutsideSourceResourceItem>
         {
-            var resources = new GameResources<GameModel>
-            {
-                GameItems = selectedResources
-            };
+            Items = selectedResources
+        };
 
-            return xmlConvertService.Serialize(resources);
-        }
-
-        public async Task<Result> UpdateLeagueOutsideSource(UpdateLeagueOutsideSourceRequest query)
-        {
-            var resources = CreatePgidResources(query.Sources);
-            var criteria = mapper.Map<UpdateLeagueOutsideSourceRequest, UpdateLeagueOutsideSourceCriteria>(query);
-            criteria.PGIdSources = resources;
-
-            await repository.ExecuteAsync(criteria);
-            return new Result
-            {
-                ErrCode = criteria.ErrCode,
-                ErrMsg = criteria.ErrMsg
-            };
-        }
-
-        private string CreatePgidResources(List<OutsideSourceResourceItem> selectedResources)
-        {
-            var resources = new OutsideSourceResources<OutsideSourceResourceItem>
-            {
-                Items = selectedResources
-            };
-
-            return xmlConvertService.Serialize(resources);
-        }
+        return xmlConvertService.Serialize(resources);
     }
 }
