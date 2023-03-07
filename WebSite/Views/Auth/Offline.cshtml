@@ -5,8 +5,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-    <meta name="viewport" content="width=device-width" />
+    <base href="@Fanex.NAP.Core.SignIn.SignInHelper.PathBase">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width"/>
     <title>Under Maintenance</title>
     <style type="text/css">
         html, body {
@@ -40,9 +41,9 @@
             text-decoration: none;
         }
 
-            a:hover {
-                text-decoration: underline;
-            }
+        a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -56,7 +57,7 @@
         </p>
     </div>
     <script type="text/javascript">
-        window.rootUrl = '@Url.Content("~/")';
+        window.rootUrl = '@Fanex.NAP.Core.SignIn.SignInHelper.PathBase';
 
         function ReCheckUM() {
             var urlRecheckIn = window.rootUrl + "Auth/WhoAmI";
