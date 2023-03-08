@@ -63,7 +63,7 @@ export class HalfTimeFullTimeRefundComponent implements SportTemplate {
     this.toastrService.clear();
     const params = {
       matchId: this.matchDetail.matchId,
-      resourceIds: _.isEqual(action, this.actionName.refundFullTime) ? ResourcesIds.fullTime : `${ResourcesIds.halfTime}, ${ResourcesIds.fullTime}`
+      resourceIds: _.isEqual(action, this.actionName.refundFullTime) ? ResourcesIds.fullTime : `${ResourcesIds.halfTime},${ResourcesIds.fullTime}`
     };
 
     const result = await this.requestService.checkMarkedTickets(params);

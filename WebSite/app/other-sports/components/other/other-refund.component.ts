@@ -43,7 +43,7 @@ export class OtherRefundComponent implements SportTemplate {
         this.toastrService.clear();
         const params = {
             matchId: this.matchDetail.matchId,
-            ResourceIds: `${ResourcesIds.halfTime}, ${ResourcesIds.fullTime}`,
+            ResourceIds: `${ResourcesIds.halfTime},${ResourcesIds.fullTime}`,
         };
 
         const result = await this.requestService.checkMarkedTickets(params);

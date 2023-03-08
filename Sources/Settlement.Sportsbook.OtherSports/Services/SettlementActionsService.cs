@@ -1,4 +1,7 @@
-﻿namespace Settlement.Sportsbook.OtherSports.Services;
+﻿using Settlement.Sportsbook.OtherSports.Models;
+using System.Text;
+
+namespace Settlement.Sportsbook.OtherSports.Services;
 
 using AutoMapper;
 using Criteria;
@@ -45,7 +48,14 @@ public class SettlementActionsServiceImp : SettlementActionsService
     public async Task<Result> Calculate(CalculateRequest request)
     {
         request.SelectedResources = generateService.GenerateFinalScore(request);
-        var score = generateService.GenerateBetStatus(request);
+        var score = new ScoreSetModel
+        {
+            BetStatus = new StringBuilder(request.BetStatus),
+            HtAwayScore = request.HalfTimeAwayScore,
+            HtHomeScore = request.HalfTimeHomeScore,
+            FinalAwayScore = request.FinalAwayScore,
+            FinalHomeScore = request.FinalHomeScore
+        };
         var criteria = CreateCriteria(request, request.BetStatus);
         return await multipleServerService.Calculate(criteria, score);
     }
@@ -83,7 +93,7 @@ public class SettlementActionsServiceImp : SettlementActionsService
             Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString(),
             IsReSettledTickets = request.IsReSettledTickets,
             RefResultStatus = request.RefResultStatus,
-            SelectedResources = generateService.CreateResources(request.SelectedResources, request.Action),
+            SelectedResources = generateService.CreateResources(request.SelectedResources),
             BetStatus = betStatus
         };
 

@@ -18,7 +18,7 @@ public interface GenerateService
 
     public List<ResultDetail> GenerateResultDetail(MatchDetail matchDetail);
 
-    public string CreateResources(List<ResourceItem> selectedResources, string action);
+    public string CreateResources(List<ResourceItem> selectedResources);
 
     public List<ResourceItem> GenerateFinalScore(CalculateRequest request);
 }
@@ -33,7 +33,7 @@ public class GenerateServiceImp : GenerateService
 
     private readonly XmlConvertService xmlConvertService;
 
-    private static readonly List<string> ResourceHalfTimeAction = new() { ActionType.UnCalculate, ActionType.RefundHalfTime, ActionType.CalculateHalfTime, ActionType.CalculateAll, ActionType.RefundAll };
+    private static readonly List<string> ResourceHalfTimeAction = new() { ActionType.UnCalculate, ActionType.RefundHalfTime, ActionType.CalculateHalfTime, ActionType.RefundAll };
 
     private static readonly List<string> ResourceFullTimeAction = new() { ActionType.UnCalculate, ActionType.RefundFullTime, ActionType.CalculateFullTime, ActionType.CalculateAll, ActionType.RefundAll };
 
@@ -43,18 +43,12 @@ public class GenerateServiceImp : GenerateService
         this.xmlConvertService = xmlConvertService;
     }
 
-    public string CreateResources(List<ResourceItem> selectedResources, string action)
+    public string CreateResources(List<ResourceItem> selectedResources)
     {
-        var resources = new Resources<ResourceItem> { ResourceItems = new List<ResourceItem>() };
-        if (ResourceHalfTimeAction.Exists(item => item == action))
+        var resources = new Resources<ResourceItem>
         {
-            resources.ResourceItems.Add(selectedResources.FirstOrDefault(resource => resource.ResourceId is ResourceType.Halftime));
-        }
-
-        if (ResourceFullTimeAction.Exists(item => item == action))
-        {
-            resources.ResourceItems.Add(selectedResources.FirstOrDefault(resource => resource.ResourceId is ResourceType.Final));
-        }
+            ResourceItems = selectedResources.Where(resource => resource.ResourceId is ResourceType.Final or ResourceType.Halftime).ToList()
+        };
 
         return xmlConvertService.Serialize(resources);
     }
@@ -96,7 +90,7 @@ public class GenerateServiceImp : GenerateService
     {
         var listResource = new List<ResourceItem>();
         if (ResourceHalfTimeAction.Exists(item => item == request.Action)
-            || (request.HalfTimeAwayScore is not null && request.HalfTimeHomeScore is not null))
+            || (request.Action == ActionType.CalculateAll && request.HalfTimeAwayScore is not null && request.HalfTimeHomeScore is not null))
         {
             var resourceHalfTime = new ResourceItem(ResourceType.Halftime)
             {
