@@ -1,6 +1,6 @@
-﻿using Settlement.EventManagement.Models.Calculation;
+﻿namespace Settlement.EventManagement.Requests;
 
-namespace Settlement.EventManagement;
+using Models.Calculation;
 
 public class FilterAutoCalculationRequest : IRequest<CalculationLeagues>
 {
@@ -27,15 +27,9 @@ public class FilterAutoCalculationRequest : IRequest<CalculationLeagues>
 
     public string AutoSetting
     {
-        get
-        {
-            return autoSetting ?? string.Empty;
-        }
+        get => autoSetting ?? string.Empty;
 
-        set
-        {
-            this.autoSetting = value;
-        }
+        set => autoSetting = value;
     }
 
     public byte FilterBy

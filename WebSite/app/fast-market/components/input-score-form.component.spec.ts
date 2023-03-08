@@ -11,7 +11,7 @@ import { BlockUIService, HttpRequestService, MessageBoxService } from '../../sha
 import { RequestService } from '../services';
 
 import { InputScoreFormComponent } from './input-score-form.component';
-import { Language } from '../../shared/language';
+import { Language } from '../../shared/language.native';
 import { of } from 'rxjs';
 import 'rxjs/add/operator/toPromise';
 import { observeOn } from 'rxjs/operators';

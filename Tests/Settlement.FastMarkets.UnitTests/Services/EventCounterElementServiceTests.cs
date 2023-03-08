@@ -1,20 +1,15 @@
-﻿using NSubstitute;
-using Settlement.FastMarkets.Models;
+﻿using Settlement.FastMarkets.Models;
 using Settlement.FastMarkets.Services;
-using System.Collections.Generic;
-using Xunit;
 
 namespace Settlement.FastMarkets.UnitTests.Services;
 
 public class EventCounterElementServiceTests
 {
-    private readonly IEventCounterResultService eventCounterResultService;
-
     private readonly IEventCounterElementService service;
 
     public EventCounterElementServiceTests()
     {
-        eventCounterResultService = Substitute.For<IEventCounterResultService>();
+        var eventCounterResultService = Substitute.For<IEventCounterResultService>();
         service = new EventCounterElementServiceImp(eventCounterResultService);
     }
 
@@ -32,9 +27,10 @@ public class EventCounterElementServiceTests
     public void GetEventCounters_HasEventCounters_ReturnsSixItemsCounterElement()
     {
         // Arrange
-        var number = 6;
+        const int number = 6;
         var eventCounters = new List<EventCounter> {
-            new EventCounter {
+            new()
+            {
                 Position =0,
                 Checked = true,
                 Result = "12345600"

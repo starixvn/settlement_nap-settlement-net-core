@@ -1,8 +1,9 @@
-﻿using Settlement.Sportsbook.Aio.Constants;
-using Settlement.Sportsbook.Aio.Criteria.Cricket;
+﻿using Settlement.Sportsbook.Aio.Criteria.Cricket;
 using Settlement.Sportsbook.Aio.Models;
 
 namespace Settlement.Sportsbook.Aio.Services.Cricket;
+
+using Constants.Cricket;
 
 public interface ICricketBetTypeService
 {
@@ -38,7 +39,7 @@ public class CricketBetTypeService : ICricketBetTypeService
             inputOptions = GetInputOptions(resultDetails);
         }
 
-        resultDetails.ForEach((resultDetail) =>
+        resultDetails.ForEach(resultDetail =>
         {
             GenerateBetTypeNameAndGroup(resultDetail, inputOptions);
         });
@@ -56,9 +57,9 @@ public class CricketBetTypeService : ICricketBetTypeService
 
         var getPlayerCriteria = new GetPlayerInfoCriteria { MatchId = matchInfo.MatchId };
         var inputOptions = repository.Fetch<InputOption>(getPlayerCriteria)
-            .Where((option) => option.OddsInfo.Contains(semicolon)).ToList();
+            .Where(option => option.OddsInfo.Contains(semicolon)).ToList();
 
-        inputOptions.ForEach((option) =>
+        inputOptions.ForEach(option =>
         {
             var oddsInfos = option.OddsInfo.Split(semicolon);
             option.PlayerId = Convert.ToInt32(oddsInfos[0]);
@@ -70,7 +71,7 @@ public class CricketBetTypeService : ICricketBetTypeService
 
     private static bool IsExistedPlayerName(List<ResultDetail> resultDetails)
     {
-        return resultDetails.Exists((result) =>
+        return resultDetails.Exists(result =>
         {
             var betTypeId = SplitBetType(result.ResourceId, 0, 4);
             return GroupBetType.IncludedPlayerName.Contains(betTypeId) || InputType.PlayerSelectGroup.Contains(betTypeId) || InputType.PlayerMultipleSelectGroup.Contains(betTypeId);

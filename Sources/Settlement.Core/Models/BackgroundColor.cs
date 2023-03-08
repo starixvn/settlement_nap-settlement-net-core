@@ -21,6 +21,4 @@ public class BackgroundColor
     public int AutoSetting { get; set; }
 
     public string EventStatus { get; set; }
-
-    public bool IsExistMarkedTicketParlay { get; set; }
 }

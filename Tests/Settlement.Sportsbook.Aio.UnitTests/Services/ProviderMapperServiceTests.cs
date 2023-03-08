@@ -16,9 +16,9 @@ public class ProviderMapperServiceTests
     {
         var fakeList = new List<ExternalResultDetailModel>()
         {
-            new ExternalResultDetailModel(),
-            new ExternalResultDetailModel(),
-            new ExternalResultDetailModel()
+            new(),
+            new(),
+            new()
         };
         var input = new Tuple<List<ExternalResultDetailModel>, List<ExternalResultModel>>(fakeList, new List<ExternalResultModel>());
 

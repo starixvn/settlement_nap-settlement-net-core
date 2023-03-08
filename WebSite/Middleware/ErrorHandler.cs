@@ -39,7 +39,7 @@ public class ErrorHandler
         {
             { "Url", context.Request.GetDisplayUrl() },
             { "Username", context.User.Identity?.Name },
-            { "User IP", context.Request.Headers["X-Forwarded-For"] },
+            { "User IP", context.Request.Headers["X-Forwarded-For"] }
         };
     }
 
@@ -59,7 +59,7 @@ public class ErrorHandler
         var method = context.Request.Method.ToLowerInvariant();
         var requestedWith = context.Request.Headers["X-Requested-With"];
 
-        if ((method == "post" || method == "put" || method == "delete") && requestedWith == "XMLHttpRequest")
+        if (method is "post" or "put" or "delete" && requestedWith == "XMLHttpRequest")
         {
             context.Response.StatusCode = StatusCodes.Status500InternalServerError;
         }
@@ -68,7 +68,7 @@ public class ErrorHandler
 
         var env = Configuration.GetSection("Fanex.NAP.Client:Environment").Value;
 
-        if (!env.Equals("LIVE", StringComparison.CurrentCultureIgnoreCase))
+        if (exception.StackTrace != null && !env.Equals("LIVE", StringComparison.CurrentCultureIgnoreCase))
         {
             await context.Response.WriteAsync(Environment.NewLine);
             await context.Response.WriteAsync(exception.StackTrace);

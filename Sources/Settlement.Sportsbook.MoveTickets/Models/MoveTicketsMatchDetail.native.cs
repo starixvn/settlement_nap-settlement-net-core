@@ -31,5 +31,5 @@ public class MoveTicketsMatchDetail
 
     public bool HasChildMatch { get; set; }
 
-    public RemarkSettingModel Remark => new RemarkSettingModel(SettlementStatus);
+    public RemarkSettingModel Remark => new(SettlementStatus);
 }

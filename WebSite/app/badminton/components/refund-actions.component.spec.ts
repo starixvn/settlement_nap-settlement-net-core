@@ -4,11 +4,9 @@ import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { ResourceNameByIdPipe, ExcludeTotalPointPipe, ResourceHeaderPipe } from '../pipes';
-import { MatchDetailComponent, RefundActionsComponent } from './';
 import {
-  ModalDialogComponent,
-  ModalContentDialogComponent,
-} from '../../shared/components';
+  ModalContentDialogComponent
+} from '../../shared/components/modal-dialog/modal-content-dialog.component';
 import {
   HttpRequestService,
   BlockUIService,
@@ -21,10 +19,13 @@ import { BadmintonApiKeys } from '../constants';
 import { of } from 'rxjs';
 import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
 import { ScoreBySettlementPipe } from '../../shared/pipes/score-by-settlement.pipe';
-import { MatchDetail, Permission, ResultDetail, SettleQuery } from '../../shared/models/sportsbook-sop';
+import { MatchDetail, Permission, ResultDetail } from '../../shared/models/sportsbook-sop';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { ResultSettingModel } from '../../shared/models';
+import { Result, ResultSettingModel } from '../../shared/models';
 import { ToastContainerDirective, ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
+import { ModalDialogComponent } from '../../shared/components/modal-dialog/modal-dialog.component';
+import { RefundActionsComponent } from './refund-actions.component';
+import { MatchDetailComponent } from './match-detail.component';
 
 describe('Badminton - Refund actions component', () => {
   let component: RefundActionsComponent;
@@ -42,15 +43,19 @@ describe('Badminton - Refund actions component', () => {
   let toastrService: ToastrService;
 
   const errorMessage = "Error message";
-  const successfulResult = {
+  const successfulResult: Result = {
     errCode: 0,
     errMsg: "",
     isSuccessful: true,
+    resultCommand: [],
+    childMatchIds: ''
   };
-  const unSuccessfulResult = {
+  const unSuccessfulResult: Result = {
     errCode: 1,
     errMsg: errorMessage,
     isSuccessful: false,
+    resultCommand: [],
+    childMatchIds: ''
   };
   const existMarkedTicket = {
     isExistMarkedTicket: true,
@@ -61,15 +66,8 @@ describe('Badminton - Refund actions component', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [
-        RefundActionsComponent,
-        MatchDetailComponent,
-        ResourceNameByIdPipe,
         ModalDialogComponent,
-        ModalContentDialogComponent,
-        ExcludeTotalPointPipe,
-        IntervalBackgroundPipe,
-        ResourceHeaderPipe,
-        ScoreBySettlementPipe,
+        ModalContentDialogComponent
       ],
       providers: [
         MessageBoxService,
@@ -84,12 +82,19 @@ describe('Badminton - Refund actions component', () => {
       ],
       schemas: [NO_ERRORS_SCHEMA],
       imports: [
+        RefundActionsComponent,
+        MatchDetailComponent,
         FormsModule,
         HttpClientModule,
         NgbModule,
         ToastNoAnimationModule.forRoot(),
         ToastContainerModule,
-        ToastrModule.forRoot()
+        ToastrModule.forRoot(),
+        ExcludeTotalPointPipe,
+        IntervalBackgroundPipe,
+        ResourceHeaderPipe,
+        ScoreBySettlementPipe,
+        ResourceNameByIdPipe
       ],
     })
       .overrideModule(BrowserDynamicTestingModule, {
@@ -103,9 +108,9 @@ describe('Badminton - Refund actions component', () => {
         component = fixture.componentInstance;
         aioService = fixture.debugElement.injector.get(AioService);
         messageBoxService = fixture.debugElement.injector.get(MessageBoxService);
-        spyOn(messageBoxService, 'closePopup').and.callFake(() => { });
         toastrService = fixture.debugElement.injector.get(ToastrService);
-        spyOn(toastrService, 'clear');
+        toastrService.clear = jest.fn();
+        messageBoxService.closePopup = jest.fn();
         component.apiKeys = BadmintonApiKeys;
       });
   }));
@@ -115,7 +120,7 @@ describe('Badminton - Refund actions component', () => {
   });
 
   it('getMatch - should call get-match service and set components properties', async () => {
-    spyOn(aioService, 'getMatch').and.returnValue(of(match));
+    aioService.getMatch = jest.fn().mockReturnValue(Promise.resolve(match));
 
     await component.getMatch(1234);
 
@@ -130,13 +135,13 @@ describe('Badminton - Refund actions component', () => {
       component.matchDetail = matchDetail;
       component.permission = new Permission();
       component.hedgeMatchDetail = new HedgeMatchDetail();
-      spyOn(toastrService, 'error');
+      toastrService.error = jest.fn();
     });
 
     it('should refund successfully when all verifications passed', fakeAsync(async () => {
       component.applyHedgeMatch = false;
-      spyOn(aioService, 'checkMarkedTickets').and.returnValue(of(notExistMarkedTicket));
-      spyOn(aioService, 'push').and.returnValue(of(successfulResult));
+      aioService.checkMarkedTickets = jest.fn().mockReturnValue(Promise.resolve(notExistMarkedTicket));
+      aioService.push = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
 
       await component.refund();
       const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
@@ -149,8 +154,8 @@ describe('Badminton - Refund actions component', () => {
     it('should push twice when match is applied hedge match', fakeAsync(async () => {
       component.applyHedgeMatch = true;
       component.hedgeMatchDetail.matchId = 12345;
-      spyOn(aioService, 'checkMarkedTickets').and.returnValue(of(notExistMarkedTicket));
-      spyOn(aioService, 'push').and.returnValue(of(successfulResult));
+      aioService.checkMarkedTickets = jest.fn().mockReturnValue(Promise.resolve(notExistMarkedTicket));
+      aioService.push = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
 
       await component.refund();
       const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
@@ -162,8 +167,8 @@ describe('Badminton - Refund actions component', () => {
 
     it('should raise error when all verifications passed but fail to refund', fakeAsync(async () => {
       component.applyHedgeMatch = false;
-      spyOn(aioService, 'checkMarkedTickets').and.returnValue(of(notExistMarkedTicket));
-      spyOn(aioService, 'push').and.returnValue(of(unSuccessfulResult));
+      aioService.checkMarkedTickets = jest.fn().mockReturnValue(Promise.resolve(notExistMarkedTicket));
+      aioService.push = jest.fn().mockReturnValue(Promise.resolve(unSuccessfulResult));
 
       await component.refund();
       const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
@@ -175,7 +180,7 @@ describe('Badminton - Refund actions component', () => {
 
     it('should raise error when there is result not confirmed', async () => {
       resultDetail.resultSettingData.isConfirmedRefund = false;
-      spyOn(aioService, 'checkMarkedTickets').and.returnValue(of(notExistMarkedTicket));
+      aioService.checkMarkedTickets = jest.fn().mockReturnValue(Promise.resolve(notExistMarkedTicket));
 
       await component.refund();
 
@@ -183,7 +188,7 @@ describe('Badminton - Refund actions component', () => {
     });
 
     it('should raise error when there is marked ticket', async () => {
-      spyOn(aioService, 'checkMarkedTickets').and.returnValue(of(existMarkedTicket));
+      aioService.checkMarkedTickets = jest.fn().mockReturnValue(Promise.resolve(existMarkedTicket));
 
       await component.refund();
 

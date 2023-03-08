@@ -1,10 +1,10 @@
 import { Component, ViewChild } from "@angular/core";
 import * as _ from "lodash";
 import { ToastContainerDirective, ToastrService } from "ngx-toastr";
-import { Match, MatchDetail, OtherSportsMatch, Permission, QueryMatch } from "../../models";
+import { Match, MatchDetail, Permission, QueryMatch } from "../../models";
 import { RequestService } from "../../services/request.service";
 import { BackgroundColor, CalculateAction, TicketStatusText } from "../../../shared/constants";
-import { Language } from "../../../shared/language";
+import { Language } from "../../../shared/language.native";
 import { ModalDialogMessage } from "../../../shared/models";
 import { HedgeMatchDetail, SportTemplate } from "../../../shared/models/sportsbook-sop";
 import { MessageBoxService } from "../../../shared/services";
@@ -12,11 +12,11 @@ import { OtherService } from "./other.service";
 import { VerificationService } from "./verification.service";
 
 @Component({
-    selector: 'calculation-actions',
-    templateUrl: './other-calculation.component.html',
-    providers: [
-      VerificationService,
-    ]
+  selector: 'calculation-actions',
+  templateUrl: './other-calculation.component.html',
+  providers: [
+    VerificationService,
+  ]
 })
 export class OtherCalculationComponent implements SportTemplate {
   @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
@@ -43,12 +43,12 @@ export class OtherCalculationComponent implements SportTemplate {
     private readonly verificationService: VerificationService,
     private readonly toastrService: ToastrService,
     private readonly messageBoxService: MessageBoxService) {
-      this.confirmationDialogMessage.title = Language.confirmationBox;
+    this.confirmationDialogMessage.title = Language.confirmationBox;
   }
   async getMatch(matchId: number) {
     this.toastrService.overlayContainer = this.toastContainer;
     const query = new QueryMatch(matchId, false);
-    const otherSportsMatch = await this.requestService.getMatch(query).toPromise() as OtherSportsMatch;
+    const otherSportsMatch = await this.requestService.getMatch(query);
     this.match = otherSportsMatch.match;
     this.permission = otherSportsMatch.permission;
     this.matchDetail = this.match.matchDetail;
@@ -82,9 +82,11 @@ export class OtherCalculationComponent implements SportTemplate {
   }
 
   private getTicketStatusBackground(status: string) {
-    return _.isEqual(status, TicketStatusText.calculated)
-      ? BackgroundColor.calculated
-      : _.isEqual(status, TicketStatusText.marked) ? BackgroundColor.backgroundMarked : "";
+    if (_.isEqual(status, TicketStatusText.calculated)) {
+      return BackgroundColor.calculated;
+    }
+
+    return _.isEqual(status, TicketStatusText.marked) ? BackgroundColor.backgroundMarked : "";
   }
 
   public onResettleCheckboxChange(isChecked: boolean) {
@@ -250,7 +252,7 @@ export class OtherCalculationComponent implements SportTemplate {
     if (this.isReSettledTickets) {
       this.confirmCalculation(actionType);
     } else {
-      const needConfirm = await this.verificationService.verifyChangedSettledTickets(this.matchDetail, actionType).toPromise();
+      const needConfirm = await this.verificationService.verifyChangedSettledTickets(this.matchDetail, actionType);
       this.processAfterCheckChangedScore(needConfirm, actionType);
     }
   }

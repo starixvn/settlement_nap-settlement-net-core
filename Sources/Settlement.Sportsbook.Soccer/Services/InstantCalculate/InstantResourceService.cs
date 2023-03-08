@@ -30,19 +30,19 @@ public class InstantResourceServiceImp : IInstantResourceService
 
     private readonly XmlConvertService xmlConvertService;
 
-    private readonly char homeValue = 'H';
+    private const char HomeValue = 'H';
 
-    private readonly string fgHomeBetStatus = "FL:1-0;";
+    private const string FgHomeBetStatus = "FL:1-0;";
 
-    private readonly string fgAwayBetStatus = "FL:2-0;";
+    private const string FgAwayBetStatus = "FL:2-0;";
 
-    private readonly string htfgHomeBetStatus = "1FL:1-0;";
+    private const string HtfgHomeBetStatus = "1FL:1-0;";
 
-    private readonly string htfgAwayBetStatus = "1FL:2-0;";
+    private const string HtfgAwayBetStatus = "1FL:2-0;";
 
-    private readonly string fl = "FL";
+    private const string Fl = "FL";
 
-    private readonly string halfTimeFl = "1FL";
+    private const string HalfTimeFl = "1FL";
 
     public InstantResourceServiceImp(
         IInstantGoalCheckingService instantGoalCheckingService,
@@ -95,7 +95,7 @@ public class InstantResourceServiceImp : IInstantResourceService
             resources.Add(InitialResource(ResourceKey.HalftimeFirstGoal));
         }
 
-        var fullTimeGoalChecking = instantGoalCheckingService.IsFullTimeGoallChecking(goalCondition);
+        var fullTimeGoalChecking = instantGoalCheckingService.IsFullTimeGoalChecking(goalCondition);
         if (goalCondition.IsExistFgLg && !goalCondition.IsExistFgNg || fullTimeGoalChecking)
         {
             resources.Add(InitialResource(ResourceKey.FullTimeFirstGoal));
@@ -107,12 +107,12 @@ public class InstantResourceServiceImp : IInstantResourceService
     public string BetStatusFl(InstantCalculationRequest request, string betStatus)
     {
         var goalOnly = request.GoalRecord.Replace(";", string.Empty);
-        var indexOfHtFl = betStatus.IndexOf(halfTimeFl, StringComparison.CurrentCulture);
+        var indexOfHtFl = betStatus.IndexOf(HalfTimeFl, StringComparison.CurrentCulture);
         var betStatusExcludeHtFl = indexOfHtFl > -1 ? betStatus.Remove(indexOfHtFl, 8) : betStatus;
-        var isNotExistBetStatusFl = !betStatusExcludeHtFl.Contains(fl);
+        var isNotExistBetStatusFl = !betStatusExcludeHtFl.Contains(Fl);
         if (goalOnly.Length > 0 && request.IsExistFG && isNotExistBetStatusFl)
         {
-            return request.GoalRecord[0] == homeValue ? fgHomeBetStatus : fgAwayBetStatus;
+            return request.GoalRecord[0] == HomeValue ? FgHomeBetStatus : FgAwayBetStatus;
         }
 
         return string.Empty;
@@ -122,10 +122,10 @@ public class InstantResourceServiceImp : IInstantResourceService
     {
         var goalRecord = request.GoalRecord ?? string.Empty;
         var goalOnly = goalRecord.Split(";").First();
-        var isNotExistBetStatusHtFl = !betStatus.Contains(halfTimeFl);
+        var isNotExistBetStatusHtFl = !betStatus.Contains(HalfTimeFl);
         if (goalOnly.Length > 0 && request.IsExistHTFG && isNotExistBetStatusHtFl)
         {
-            return request.GoalRecord[0] == homeValue ? htfgHomeBetStatus : htfgAwayBetStatus;
+            return request.GoalRecord[0] == HomeValue ? HtfgHomeBetStatus : HtfgAwayBetStatus;
         }
 
         return string.Empty;
@@ -142,14 +142,14 @@ public class InstantResourceServiceImp : IInstantResourceService
 
         if (request.IsExistHTFG)
         {
-            var indexOfKey = betStatus.IndexOf(halfTimeFl, StringComparison.CurrentCulture);
-            betStatus = indexOfKey > -1 ? betStatus.Remove(indexOfKey, htfgHomeBetStatus.Length) : betStatus;
+            var indexOfKey = betStatus.IndexOf(HalfTimeFl, StringComparison.CurrentCulture);
+            betStatus = indexOfKey > -1 ? betStatus.Remove(indexOfKey, HtfgHomeBetStatus.Length) : betStatus;
         }
 
         if (request.IsExistFG)
         {
-            var indexOfKey = betStatus.IndexOf(fl, StringComparison.CurrentCulture);
-            betStatus = indexOfKey > -1 ? betStatus.Remove(indexOfKey, fgHomeBetStatus.Length) : betStatus;
+            var indexOfKey = betStatus.IndexOf(Fl, StringComparison.CurrentCulture);
+            betStatus = indexOfKey > -1 ? betStatus.Remove(indexOfKey, FgHomeBetStatus.Length) : betStatus;
         }
 
         return betStatus;
@@ -170,14 +170,14 @@ public class InstantResourceServiceImp : IInstantResourceService
     {
         var halftimeGoal = goalRecordService.HalftimeGoal(goalCondition.GoalRecord);
         var goalAction = CreateGoalAction(halftimeGoal, string.Empty);
-        var fristGoal = goalRecordService.FirstGoalRecord(goalAction.FirstGoal, goalAction.IsRefund);
+        var firstGoalRecord = goalRecordService.FirstGoalRecord(goalAction.FirstGoal, goalAction.IsRefund);
 
         return new XmlResource
         {
             ResourceId = ResourceKey.HalftimeFirstGoal,
             ResultStatusId = ResultStatus.ManuallySettled,
             SettlementStatusId = goalAction.FirstGoalSettlementStatusId,
-            HomeValue = fristGoal
+            HomeValue = firstGoalRecord
         };
     }
 
@@ -187,14 +187,14 @@ public class InstantResourceServiceImp : IInstantResourceService
         var fullTime = goalRecordService.FullTimeGoal(goalCondition.GoalRecord);
         var goalAction = CreateGoalAction(halftime, fullTime);
         var fullTimeGoal = $"{goalAction.FirstGoal}{goalAction.LastGoal}";
-        var fristGoal = goalRecordService.FirstGoalRecord(fullTimeGoal, goalAction.IsRefund);
+        var firstGoalRecord = goalRecordService.FirstGoalRecord(fullTimeGoal, goalAction.IsRefund);
 
         return new XmlResource
         {
             ResourceId = ResourceKey.FullTimeFirstGoal,
             ResultStatusId = ResultStatus.ManuallySettled,
             SettlementStatusId = goalAction.FirstGoalSettlementStatusId,
-            HomeValue = fristGoal
+            HomeValue = firstGoalRecord
         };
     }
 

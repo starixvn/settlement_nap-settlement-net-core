@@ -33,8 +33,8 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
         PipesModule,
         NgbModule,
         DatepickerComponent,
-        NewMultipleSelectComponent,
         DynamicHeightDirective,
+        NewMultipleSelectComponent,
         NoopAnimationsModule
     ],
     declarations: [

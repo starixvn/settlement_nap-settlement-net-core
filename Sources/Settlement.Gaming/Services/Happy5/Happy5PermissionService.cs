@@ -2,10 +2,11 @@
 using Fanex.NAP.Client.Helpers.Web;
 using Fanex.NAP.Client.Services;
 using Fanex.NAP.Core.Business;
-using Settlement.Core.Configuration;
 using Settlement.Core.Models;
 
 namespace Settlement.Gaming.Services.Happy5;
+
+using Core.Configurations;
 
 public interface PermissionService
 {
@@ -27,7 +28,7 @@ public class Happy5PermissionServiceImp : PermissionService
         this.siteSettings = siteSettings;
     }
 
-    public Permission Permission => new Permission
+    public Permission Permission => new()
     {
         CanItAdmin = HasPermission(SettlementFunctionKeys.Happy5ResettleMatchBeforeYesterday, Constant.Policy.Host),
         CanCalculate = HasPermission(SettlementFunctionKeys.Happy5Recalculate, Constant.Policy.Host),

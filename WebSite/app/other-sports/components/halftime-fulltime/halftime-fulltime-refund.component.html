@@ -20,12 +20,8 @@
                 <label for="ApplyHedgeMatch">Apply for hedge match '<strong>{{hedgeMatchDetail.matchCode}}</strong>' also.</label>
             </div>
             <div>
-                <button *ngIf="hasHalfTime" class="refund-button" (click)="refund(actionName.refundFullTime, false)">Refund FT</button>
-                <button class="refund-button" (click)="refund(actionName.refund, false)">Refund All</button>
-            </div>
-            <div class="clear-both">
-                <button *ngIf="hasHalfTime" class="refund-button" (click)="refund(actionName.refundFullTime, true)">Refund Parlay FT</button>
-                <button class="refund-button" (click)="refund(actionName.refund, true)">Refund Parlay All</button>
+                <button *ngIf="hasHalfTime" class="refund-button" (click)="refund(actionName.refundFullTime)">Refund FT</button>
+                <button class="refund-button" (click)="refund(actionName.refund)">Refund All</button>
             </div>
         </div>
     </div>

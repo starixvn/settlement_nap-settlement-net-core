@@ -1,6 +1,4 @@
-﻿using System;
-using Settlement.Log.Models.BetTypeElement;
-using System.Collections.Generic;
+﻿using Settlement.Log.Models.BetTypeElement;
 using static Settlement.Core.Constants.BetType;
 
 namespace Settlement.Log.Services;
@@ -29,7 +27,7 @@ public class PositionServiceImp : PositionService
     {
         if (string.IsNullOrWhiteSpace(item.Result))
         {
-            if (betTypeId == FastMarketBetType.TimeMachineHandicap || betTypeId == FastMarketBetType.TimeMachineOverUnder)
+            if (betTypeId is FastMarketBetType.TimeMachineHandicap or FastMarketBetType.TimeMachineOverUnder)
             {
                 item.MinPosition = GetTimeMachinePosition(item.MinPosition);
                 item.MaxPosition = GetTimeMachinePosition(item.MaxPosition);
@@ -48,7 +46,7 @@ public class PositionServiceImp : PositionService
             positionName.Add(value);
         }
 
-        if (betTypeId == FastMarketBetType.TimeMachineHandicap || betTypeId == FastMarketBetType.TimeMachineOverUnder)
+        if (betTypeId is FastMarketBetType.TimeMachineHandicap or FastMarketBetType.TimeMachineOverUnder)
         {
             item.MinPosition = GetTimeMachinePosition(item.MinPosition);
             item.MaxPosition = GetTimeMachinePosition(item.MaxPosition);

@@ -39,7 +39,7 @@ import { ResultSettingModel } from "../../shared/models";
 import { ToastContainerDirective, ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 import { VerificationBaseService } from '../../core/services/verification-base.service';
 import { Resources } from '../constants';
-import { Language } from '../../shared/language';
+import { Language } from '../../shared/language.native';
 export class CreateDataTest {
   public static CreateResultDetail(
     resourceId: string,

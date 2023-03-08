@@ -14,7 +14,6 @@ using Settlement.Core.Services;
 using Settlement.Sportsbook.Soccer.Criteria;
 using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Requests;
-using Settlement.Sportsbook.Soccer.Services;
 using Settlement.Sportsbook.Soccer.Services.InstantCalculate;
 
 namespace Settlement.Sportsbook.Soccer.UnitTests.Services.Instant;
@@ -22,10 +21,6 @@ namespace Settlement.Sportsbook.Soccer.UnitTests.Services.Instant;
 public class InstantCalculateServiceFacts
 {
     private readonly IDynamicRepository repository;
-
-    private readonly INapSession currentSession;
-
-    private readonly IHttpContextAccessor accessor;
 
     private readonly IInstantResourceService instantResourceService;
 
@@ -38,14 +33,17 @@ public class InstantCalculateServiceFacts
     public InstantCalculateServiceFacts()
     {
         repository = Substitute.For<IDynamicRepository>();
-        currentSession = Substitute.For<INapSession>();
-        accessor = Substitute.For<IHttpContextAccessor>();
+        var currentSession = Substitute.For<INapSession>();
+        var accessor = Substitute.For<IHttpContextAccessor>();
         instantResourceService = Substitute.For<IInstantResourceService>();
         scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
         logDirectlyService = Substitute.For<LogDirectlyService>();
 
-        var context = new DefaultHttpContext();
-        context.Connection.RemoteIpAddress = new System.Net.IPAddress(1);
+            Connection =
+            {
+                RemoteIpAddress = new System.Net.IPAddress(1)
+            }
+        };
         accessor.HttpContext = context;
         var mapperConfig = new MapperConfigurationExpression();
         mapperConfig.AddProfile<SoccerAutoMapperProfile>();
@@ -173,7 +171,7 @@ public class InstantCalculateServiceFacts
             IsHalfTime = false
         };
         instantResourceService.FullTime(Arg.Any<InstantGoalCondition>()).Returns(new List<XmlResource>());
-        scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage { ErrorCode = errorCode, ErrorMessage = errorMsg }); ;
+        scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage { ErrorCode = errorCode, ErrorMessage = errorMsg });
 
         // Act
         var result = await service.PushInstantCalculation(request);
@@ -192,7 +190,7 @@ public class InstantCalculateServiceFacts
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
 
         // Act
-        var result = await service.PushInstantCalculation(request);
+        await service.PushInstantCalculation(request);
 
         // Assert
         Received.InOrder(() =>

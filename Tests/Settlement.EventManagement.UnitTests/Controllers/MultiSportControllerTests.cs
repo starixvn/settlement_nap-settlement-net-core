@@ -42,7 +42,7 @@ public class MultiSportControllerTests
         var actual = await controller.Filter(new FilterMultiSportRequest()) as OkObjectResult;
 
         // Assert
-        Assert.IsType<MultiSportModel>(actual.Value);
+        Assert.IsType<MultiSportModel>(actual?.Value);
         Assert.Equal(200, actual.StatusCode);
     }
 
@@ -57,7 +57,7 @@ public class MultiSportControllerTests
         var actual = await controller.RefreshMatches(new RefreshMultiSportRequest()) as OkObjectResult;
 
         // Assert
-        Assert.IsType<List<Match>>(actual.Value);
+        Assert.IsType<List<Match>>(actual?.Value);
         Assert.Equal(200, actual.StatusCode);
     }
 
@@ -69,7 +69,7 @@ public class MultiSportControllerTests
 
         var actual = await controller.GetSports(request) as OkObjectResult;
 
-        Assert.IsType<List<Sport>>(actual.Value);
+        Assert.IsType<List<Sport>>(actual?.Value);
         Assert.Equal(200, actual.StatusCode);
     }
 
@@ -81,7 +81,7 @@ public class MultiSportControllerTests
 
         var actual = await controller.GetLeagues(request) as OkObjectResult;
 
-        Assert.IsType<List<LeagueTypeModel>>(actual.Value);
+        Assert.IsType<List<LeagueTypeModel>>(actual?.Value);
         Assert.Equal(200, actual.StatusCode);
     }
 }

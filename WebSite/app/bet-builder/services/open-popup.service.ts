@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { DialogBoxService } from "../../shared/services";
 import { DialogDataIframe } from "../../shared/models";
-import { Language } from "../../shared/language";
+import { Language } from "../../shared/language.native";
 import { MatchDetail } from "../models";
 import { EventStatus } from "../constants";
 

@@ -1,27 +1,36 @@
-﻿import * as _ from 'lodash';
+﻿import { EarlyCommonModule } from './../../shared/modules/early-common.module';
+import { ExternalSourceNamePipe } from './../../shared/pipes/external-source-name.pipe';
+import * as _ from 'lodash';
 import { CalculateAction, ResultStatusId, SportType, TicketStatusText } from '../../shared/constants';
-import { Component, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild } from '@angular/core';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 import { BasketballApiKeys, EarlyResourcesIds, KickOffTime, ResultStatus } from '../constants';
-import { EarlyService, VerificationService } from '../services';
-import { Language } from '../../shared/language';
+import { BasketballService, BetStatusService, EarlyService, VerificationService } from '../services';
+import { Language } from '../../shared/language.native';
 import { Match, SettleQuery } from '../models';
-import { MessageBoxService, ClosePopupService, AioService } from '../../shared/services';
-import { Result } from '../../shared/models';
+import { MessageBoxService, AioService, BlockUIService } from '../../shared/services';
 import { ResultDetail, SportTemplate } from '../../shared/models/sportsbook-sop';
 import { EarlyBaseComponent } from '../../shared/components/sportsbook-sop/early-base.component';
+import { MatchDetailComponent } from './match-detail.component';
+import { NewMultipleSelectComponent } from '../../shared/components/multiple-select/multiple-select.component';
+import { ResourceNameByIdPipe } from '../pipes/resource-name-by-id.pipe';
 
 @Component({
     selector: 'early-settlement',
     templateUrl: './early-settlement.component.html',
+    standalone: true,
+    imports: [EarlyCommonModule, MatchDetailComponent, NewMultipleSelectComponent, ExternalSourceNamePipe],
+    providers: [EarlyService, VerificationService, BasketballService, ResourceNameByIdPipe, BetStatusService  ]
 })
 export class EarlySettlementComponent extends EarlyBaseComponent implements SportTemplate {
     @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
+    public blockUI = true;
     public match: Match;
     public isShowRefundButton = false;
     public isReadyMatch: boolean;
 
     constructor(
+        protected inject: Injector,
         private readonly earlyService: EarlyService,
         private readonly verificationService: VerificationService,
         protected messageBoxService: MessageBoxService,
@@ -31,6 +40,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     }
 
     async getMatch(matchId: number): Promise<void> {
+        this.inject.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI  = event);
         this.toastrService.overlayContainer = this.toastContainer;
         const matchQuery = {
             matchId,
@@ -39,7 +49,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
             apiKey: BasketballApiKeys.normalMatch
         };
 
-        this.match = await this.aioService.getMatch(matchQuery).toPromise() as Match;
+        this.match = await this.aioService.getMatch(matchQuery) as Match;
         this.isReadyMatch = this.match.matchDetail.playTime >= KickOffTime.playTime;
         this.permission = this.match.permission;
         this.init();
@@ -110,7 +120,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
                 apikey: BasketballApiKeys.normalMatch,
                 sportType: SportType.basketBall,
             };
-            const needConfirm = await this.aioService.verifyChangedSettledTickets(this.selectedResources, getEarlyResultQuery).toPromise();
+            const needConfirm = await this.aioService.verifyChangedSettledTickets(this.selectedResources, getEarlyResultQuery);
             if (needConfirm) {
                 this.confirmationDialogMessage.message = Language.recalculateNotification;
                 this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
@@ -177,7 +187,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     }
 
     private async push(query: SettleQuery) {
-        const result = await this.aioService.push(query).toPromise() as Result;
+        const result = await this.aioService.push(query);
         if (result.errCode === 0) {
             this.messageBoxService.closePopup();
         } else {

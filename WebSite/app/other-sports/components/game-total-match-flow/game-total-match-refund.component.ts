@@ -1,11 +1,11 @@
 import { Component, ViewChild } from '@angular/core';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 import { ResourcesIds } from '../../constants';
-import { MatchDetail, OtherSportsMatch, Permission, QueryMatch } from '../../models';
+import { MatchDetail, Permission, QueryMatch } from '../../models';
 import { RequestService } from '../../services/request.service';
 import { CalculateAction } from '../../../shared/constants';
-import { Language } from '../../../shared/language';
-import { MarkedTicketsModel, ModalDialogMessage } from '../../../shared/models';
+import { Language } from '../../../shared/language.native';
+import { ModalDialogMessage } from '../../../shared/models';
 import { HedgeMatchDetail, ResultDetail, SportTemplate } from '../../../shared/models/sportsbook-sop';
 import { MessageBoxService } from '../../../shared/services';
 import { GameTotalMatchService } from './game-total-match.service';
@@ -33,7 +33,7 @@ export class GameTotalMatchRefundComponent implements SportTemplate {
   async getMatch(matchId: number) {
     this.toastrService.overlayContainer = this.toastContainer;
     const query = new QueryMatch(matchId, true);
-    const result = await this.requestService.getMatch(query).toPromise() as OtherSportsMatch;
+    const result = await this.requestService.getMatch(query);
     this.permission = result.permission;
     this.matchDetail = result.match.matchDetail;
     this.resultDetails = this.gameTotalMatchService.getResultDetail(this.matchDetail, result.match.resultDetails);
@@ -47,7 +47,7 @@ export class GameTotalMatchRefundComponent implements SportTemplate {
 
   public async refund() {
     this.toastrService.clear();
-    const isExistedMarkedTicket = await this.isExistedMarkedTicket(CalculateAction.refund);
+    const isExistedMarkedTicket = await this.isExistedMarkedTicket();
     if (isExistedMarkedTicket) {
       this.toastrService.error(Language.MarkedTicket);
     } else {
@@ -63,30 +63,12 @@ export class GameTotalMatchRefundComponent implements SportTemplate {
     }
   }
 
-  public async refundParlay() {
-    this.toastrService.clear();
-    const isExistedMarkedTicket = await this.isExistedMarkedTicket(CalculateAction.refundMarkedParlayAll);
-    if (isExistedMarkedTicket) {
-      this.toastrService.error(Language.MarkedTicket);
-    } else {
-      this.confirmDialogMessage.title = Language.RefundConfirmationBox;
-      this.confirmDialogMessage.message = Language.RefundParlayConfirmMessage;
-      this.messageBoxService.confirm(this.confirmDialogMessage, async() => {
-        const hedgeMatchId = this.applyHedgeMatch ? this.hedgeMatchDetail.matchId : 0;
-        const errorMessage = await this.gameTotalMatchService.refundParlay(this.matchDetail.matchId, hedgeMatchId);
-        if(!_.isEmpty(errorMessage)) {
-          this.toastrService.error(errorMessage);
-        }
-      });
-    }
-  }
-
-  private async isExistedMarkedTicket(action: string) {
+  private async isExistedMarkedTicket() {
     const params = {
       matchId: this.matchDetail.matchId,
-      action,
+      resourceIds: ResourcesIds.fullTime
     };
-    const result = await this.requestService.checkMarkedTickets(params).toPromise() as MarkedTicketsModel;
+    const result = await this.requestService.checkMarkedTickets(params);
     return result.isExistMarkedTicket;
   }
 }

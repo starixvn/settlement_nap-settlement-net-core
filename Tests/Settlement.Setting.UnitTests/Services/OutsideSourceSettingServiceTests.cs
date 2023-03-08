@@ -4,7 +4,6 @@ using Fanex.Data.Repository;
 using Settlement.Core.Services;
 using Settlement.Setting.Criteria.OutsideSourceManager;
 using Settlement.Setting.Models.OutsideSourceManager;
-using Settlement.Setting.Requests;
 using Settlement.Setting.Requests.OutsideSourceManager;
 
 namespace Settlement.Setting.UnitTests.Services;
@@ -36,12 +35,12 @@ public class OutsideSourceSettingServiceTests
     {
         var fakeSources = new List<QueryResultModel>
         {
-            new QueryResultModel { SourceId = 1, GameType = 1, SportType = 5 },
-            new QueryResultModel { SourceId = 1, GameType = 2, SportType = 5 },
-            new QueryResultModel { SourceId = 1, GameType = 3, SportType = 5 },
-            new QueryResultModel { SourceId = 2, GameType = 1, SportType = 5 },
-            new QueryResultModel { SourceId = 2, GameType = 2, SportType = 5 },
-            new QueryResultModel { SourceId = 2, GameType = 3, SportType = 5 },
+            new() { SourceId = 1, GameType = 1, SportType = 5 },
+            new() { SourceId = 1, GameType = 2, SportType = 5 },
+            new() { SourceId = 1, GameType = 3, SportType = 5 },
+            new() { SourceId = 2, GameType = 1, SportType = 5 },
+            new() { SourceId = 2, GameType = 2, SportType = 5 },
+            new() { SourceId = 2, GameType = 3, SportType = 5 }
         };
 
         const string sportName = "e-sports";
@@ -61,16 +60,16 @@ public class OutsideSourceSettingServiceTests
         var fakeData = new ValueTuple<IEnumerable<LeagueOutSideSourceResourceItem>, IEnumerable<LeagueOutSideSourceResourceItem>>();
         var outsideSources = new List<LeagueOutSideSourceResourceItem>
         {
-            new LeagueOutSideSourceResourceItem { PGid = 1, SourceName = "fake1" },
-            new LeagueOutSideSourceResourceItem { PGid = 2, SourceName = "fake2" },
-            new LeagueOutSideSourceResourceItem { PGid = 3, SourceName = "fake3" },
-            new LeagueOutSideSourceResourceItem { PGid = 4, SourceName = "fake4" },
+            new() { PGid = 1, SourceName = "fake1" },
+            new() { PGid = 2, SourceName = "fake2" },
+            new() { PGid = 3, SourceName = "fake3" },
+            new() { PGid = 4, SourceName = "fake4" }
         };
         var sortedOutsideSources = new List<LeagueOutSideSourceResourceItem>
         {
-            new LeagueOutSideSourceResourceItem {PGid = 1, SourceName = "fake1", OrderNo = 1},
-            new LeagueOutSideSourceResourceItem {PGid = 2, SourceName = "fake2", OrderNo = 2},
-            new LeagueOutSideSourceResourceItem {PGid = 4, SourceName = "fake4", OrderNo = 3},
+            new() {PGid = 1, SourceName = "fake1", OrderNo = 1},
+            new() {PGid = 2, SourceName = "fake2", OrderNo = 2},
+            new() {PGid = 4, SourceName = "fake4", OrderNo = 3}
         };
         fakeData.Item1 = outsideSources;
         fakeData.Item2 = sortedOutsideSources;

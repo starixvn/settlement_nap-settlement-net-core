@@ -3,11 +3,11 @@ using Settlement.Core.Services;
 
 namespace Settlement.Sportsbook.MoveTickets.UnitTests.Services;
 
+using MoveTickets.Services.MultipleServer;
+
 public class MatchServiceTests
 {
     private readonly IMatchResultDetailService matchResultDetailService;
-
-    private readonly IRefDataService refDataService;
 
     private readonly CompareMatchService compareMatchService;
 
@@ -17,7 +17,7 @@ public class MatchServiceTests
 
     public MatchServiceTests()
     {
-        refDataService = Substitute.For<IRefDataService>();
+        var refDataService = Substitute.For<IRefDataService>();
         compareMatchService = Substitute.For<CompareMatchService>();
         newInfoMatchService = Substitute.For<NewInfoMatchService>();
         matchResultDetailService = Substitute.For<IMatchResultDetailService>();
@@ -40,8 +40,8 @@ public class MatchServiceTests
         // Arrange
         var matches = new List<Match>
         {
-            new Match { MatchId = 1 },
-            new Match { MatchId = 2 }
+            new() { MatchId = 1 },
+            new() { MatchId = 2 }
         };
 
         // Act

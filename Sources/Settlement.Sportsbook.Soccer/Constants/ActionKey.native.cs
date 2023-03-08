@@ -1,10 +1,8 @@
-﻿using System.Collections.Generic;
-
-namespace Settlement.Sportsbook.Soccer.Constants;
+﻿namespace Settlement.Sportsbook.Soccer.Constants;
 
 public class ActionKey
 {
-    public static Dictionary<string, string> ActionDictionary => new Dictionary<string, string>
+    public static Dictionary<string, string> ActionDictionary => new()
     {
         {"CAL", "ALL"},
         {"CAL-HT", "HT"},

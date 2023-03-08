@@ -1,10 +1,11 @@
-﻿using Settlement.EventManagement.Criteria;
-using Settlement.EventManagement.Models;
-using Settlement.EventManagement.Models.Calculation;
-using Settlement.EventManagement.Requests;
-using Match = Settlement.EventManagement.Models.Calculation.Match;
+﻿namespace Settlement.EventManagement.Services.Calculation;
 
-namespace Settlement.EventManagement.Services.Calculation;
+using Criteria;
+using Models;
+using Requests;
+using Settlement.EventManagement.Models.Calculation;
+using Match = Models.Calculation.Match;
+
 
 public interface LeagueService
 {

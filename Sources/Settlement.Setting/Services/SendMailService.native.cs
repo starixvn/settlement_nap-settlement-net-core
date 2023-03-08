@@ -53,7 +53,7 @@ public class SendMailServiceImp : SendMailService
         {
             SportType.Soccer => configuration.GetSection("EmailGroups:Soccer").Value,
             SportType.BasketBall => configuration.GetSection("EmailGroups:VoidBet").Value,
-            _ => configuration.GetSection("EmailGroups:OtherSport").Value,
+            _ => configuration.GetSection("EmailGroups:OtherSport").Value
         };
     }
 

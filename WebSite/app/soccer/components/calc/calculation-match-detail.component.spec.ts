@@ -9,7 +9,7 @@ import { FormsModule } from "@angular/forms";
 import { ScorePipe } from "../../pipes/score.pipe";
 import { CreateDataTest } from "./services/create-data-test.native";
 import { GoalIcon } from "../../models";
-import { Language } from "../../../shared/language";
+import { Language } from "../../../shared/language.native";
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
 import { VerificationBaseService } from "../../services/verification-base.service";
 

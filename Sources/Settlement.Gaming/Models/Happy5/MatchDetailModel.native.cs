@@ -28,10 +28,7 @@ public class MatchDetail
 
             return eventStatus;
         }
-        set
-        {
-            eventStatus = value;
-        }
+        set => eventStatus = value;
     }
 
     public string BetStatus { get; set; }

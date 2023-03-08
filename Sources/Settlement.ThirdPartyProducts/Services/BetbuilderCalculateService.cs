@@ -71,13 +71,13 @@ public class BetBuilderCalculateServiceImp : BetBuilderCalculateService
         return xmlConvertService.Serialize(resources);
     }
 
-    public CalculationCriteria CreateCriteria(int matchId, string actionName, string resources) => new CalculationCriteria
+    public CalculationCriteria CreateCriteria(int matchId, string actionName, string resources) => new()
     {
         MatchId = matchId,
         AdminId = currentSession.UserId,
         Action = actionName,
         Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString(),
-        SelectedSelection = resources,
+        SelectedSelection = resources
     };
 
     public async Task<string> GetInfoMarket(CalculationCriteria criteria)

@@ -19,11 +19,13 @@ public class ResultDetailMapperServiceImp : IMapperService
 
     public void Decorate(dynamic obj)
     {
-        const int maxLengthResourceId = 2;
-        var list = obj as List<ResultDetail>;
-        var listEarly = list.Where(x => x.ResourceId.Length > maxLengthResourceId).ToList();
-        var listQuarter = list.Where(x => x.ResourceId.Length == maxLengthResourceId).ToList();
-        listQuarter.ForEach(x => basketballBetTypeService.CheckValue(x));
-        listEarly.ForEach(x => basketballBetTypeService.GetBetTypeNameAndGroup(x));
+        if (obj is List<ResultDetail> list)
+        {
+            const int maxLengthResourceId = 2;
+            var listEarly = list.Where(x => x.ResourceId.Length > maxLengthResourceId).ToList();
+            var listQuarter = list.Where(x => x.ResourceId.Length == maxLengthResourceId).ToList();
+            listQuarter.ForEach(x => basketballBetTypeService.CheckValue(x));
+            listEarly.ForEach(x => basketballBetTypeService.GetBetTypeNameAndGroup(x));
+        }
     }
 }

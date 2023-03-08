@@ -6,7 +6,7 @@ import { Permission } from '../../../shared/models/sportsbook-sop';
 import { BackgroundColor, CalculationStatus } from '../../../shared/constants';
 import * as _ from 'lodash';
 import { LeagueBaseComponent } from '../../../shared/components/sport-listing/league-base.component';
-import { Language } from '../../../shared/language';
+import { Language } from '../../../shared/language.native';
 @Component({
   selector: 'matches-base',
   template: ''

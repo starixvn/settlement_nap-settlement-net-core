@@ -20,7 +20,7 @@ public class Match : BaseMatch
     public bool IsHavingIntervalScore { get; set; }
 
     [Key("moreScores")]
-    public Core.Models.MoreScores MoreScores { get; set; }
+    public MoreScores MoreScores { get; set; }
 
     [Key("sportName")]
     public string SportName => RefDataService.GetSportName(SportType);
@@ -41,12 +41,6 @@ public class Match : BaseMatch
     [IgnoreMember]
     public bool IsKeyScore => BetStatus.IsKeyScore(HalfTimeHomeScore, HalfTimeAwayScore, FinalHomeScore, FinalAwayScore);
 
-    [Key("mixParlay")]
-    public MixParlay MixParlay => new MixParlay(
-        IsCalculated, IsKeyScore,
-        IsCalculatingSingle,
-        IsCalculatingMP, BetStatus ?? string.Empty, Remark);
-
     [Key("isExistsConfirmedEarly")]
     public bool IsExistsConfirmedEarly { get; set; }
 
@@ -57,10 +51,10 @@ public class Match : BaseMatch
     public bool ApplyDirect => sportSupportDirect.Contains(SportType);
 
     [IgnoreMember]
-    public ResultDetail ExHTResult { get; set; }
+    public ResultDetail ExHtResult { get; set; }
 
     [IgnoreMember]
-    public ResultDetail ExFTResult { get; set; }
+    public ResultDetail ExFtResult { get; set; }
 
     [IgnoreMember]
     public int AutoWaitingTime { get; set; }

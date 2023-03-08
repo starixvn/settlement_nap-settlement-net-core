@@ -97,16 +97,16 @@ public class HomeController : Controller
             UserId = 8,
             SiteId = 67,
             LoginDate = DateTime.Now,
-            NetSessionId = HttpContext?.Session.Id,
+            NetSessionId = HttpContext.Session.Id,
             Ip = "127.0.0.1",
-            BrowserName = Request?.Headers["User-Agent"].ToString(),
+            BrowserName = Request.Headers["User-Agent"].ToString(),
             CountryCode = "VN",
             Domain = "",
             Platform = Environment.OSVersion.Platform.ToString()
         };
 
         var securityService = new SecurityService();
-        var onUserId = securityService.Login(criteria);
+        var onUserId = await securityService.LoginAsync(criteria);
 
         await SaveUserSession(onUserId);
 
@@ -122,8 +122,8 @@ public class HomeController : Controller
 
         var claims = new List<Claim>
         {
-            new Claim(ClaimTypes.Name, "sa"),
-            new Claim(ClaimTypes.NameIdentifier, "8")
+            new(ClaimTypes.Name, "sa"),
+            new(ClaimTypes.NameIdentifier, "8")
         };
 
         var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);

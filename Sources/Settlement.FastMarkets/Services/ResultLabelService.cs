@@ -9,7 +9,7 @@ public interface IResultLabelService
 
     ResultItemLabel NextFiveMinutes(string odd);
 
-    ResultItemLabel TimeMachineHDP();
+    ResultItemLabel TimeMachineHdp();
 }
 
 public class ResultLabelServiceImp : IResultLabelService
@@ -54,7 +54,7 @@ public class ResultLabelServiceImp : IResultLabelService
         return name.Length > 0 ? name[index].Split(':')[1] : string.Empty;
     }
 
-    public ResultItemLabel TimeMachineHDP()
+    public ResultItemLabel TimeMachineHdp()
     {
         return new ResultItemLabel { None = "Home", Goal = "Away" };
     }

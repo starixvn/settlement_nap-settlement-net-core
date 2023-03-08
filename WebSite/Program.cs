@@ -11,7 +11,7 @@ using Settlement.WebSites.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.ConfigureCORS();
+builder.Services.ConfigureCors();
 
 builder.Services.ConfigureAuthorization();
 

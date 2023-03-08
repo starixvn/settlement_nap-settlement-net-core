@@ -1,11 +1,10 @@
 import * as _ from 'lodash';
 import { Injectable } from '@angular/core';
 import { ResourcesIds } from '../constants';
-import { ResultStatusId, SettlementStatusId } from '../../shared/constants';
+import { ResultStatusId, SettlementStatusId, SportType } from '../../shared/constants';
 import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
 import { ResultDetail } from '../../shared/models/sportsbook-sop';
 import { Match } from "../models";
-import { SportType } from "../../shared/constants";
 
 @Injectable()
 export class BadmintonService {

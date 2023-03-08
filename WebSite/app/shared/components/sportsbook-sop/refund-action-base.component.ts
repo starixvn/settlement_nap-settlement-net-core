@@ -1,5 +1,5 @@
 import { CalculateAction, SettlementStatusId, TicketStatusText } from "../../constants";
-import { Language } from "../../language";
+import { Language } from "../../language.native";
 import { AioService } from "../../services";
 import { HedgeMatchDetail, MatchDetail, Permission, ResultDetail, SettleQuery } from "../../models/sportsbook-sop";
 import * as _ from "lodash";
@@ -31,8 +31,7 @@ export class RefundActionBaseComponent {
     protected generateCheckMarkedTicketsQuery() {
         return {
             matchId: this.matchDetail.matchId,
-            selectedResources: this.selectedResources,
-            isMergedParlay: true,
+            selectedResources: this.selectedResources
         };
     }
 

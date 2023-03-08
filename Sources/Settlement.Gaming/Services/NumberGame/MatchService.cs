@@ -3,9 +3,6 @@ using Fanex.Data.Repository;
 using Settlement.Gaming.Criteria.NumberGame;
 using Settlement.Gaming.Models.NumberGame;
 using Settlement.Gaming.Requests;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Linq;
 using Settlement.Gaming.Models;
 
 namespace Settlement.Gaming.Services.NumberGame;
@@ -49,7 +46,7 @@ public class MatchServiceImp : MatchService
             m.MatchCode,
             m.EventDate,
             m.KickOffTime,
-            m.EventStatus,
+            m.EventStatus
         });
 
         return matchList.Select(g => new MatchDetailModel

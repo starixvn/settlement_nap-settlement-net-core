@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Settlement.ThirdPartyProducts.Models;
+﻿namespace Settlement.ThirdPartyProducts.Models;
 
 public class DateSelection
 {

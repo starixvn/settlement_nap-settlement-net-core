@@ -1,4 +1,4 @@
-import { Language } from './../../../shared/language';
+import { Language } from '../../../shared/language.native';
 import { LeagueSettle, Team } from '../../models';
 import { CommonModule } from '@angular/common';
 import { Component, ViewChild, OnInit, Inject, Injector } from '@angular/core';
@@ -30,7 +30,6 @@ export class UncalculatePopupComponent implements OnInit {
   public blockUI = true;
   public teamJustSettled = "";
   public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
-
   constructor(private readonly injector: Injector,
     @Inject(MAT_DIALOG_DATA) public data: { leagueId: number, sportType: number }) {
     this.injector.get(MatDialog).closeAll();

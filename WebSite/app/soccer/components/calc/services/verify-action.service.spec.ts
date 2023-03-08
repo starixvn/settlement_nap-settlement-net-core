@@ -6,7 +6,7 @@ import { VerifyActionService } from './verify-action.service';
 import { BlockUIService, HttpRequestService, MessageBoxService } from '../../../../shared/services';
 import { HttpClientModule } from '@angular/common/http';
 import { CreateDataTest } from './create-data-test.native';
-import { Language } from '../../../../shared/language';
+import { Language } from '../../../../shared/language.native';
 import { Result, ResultCommand } from '../../../../shared/models';
 import { of } from 'rxjs';
 import { TicketStatusText } from '../../../../shared/constants';

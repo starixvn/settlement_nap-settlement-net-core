@@ -1,13 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Security.Policy;
-using Settlement.Sportsbook.Soccer.Models;
+﻿using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Core.Models;
-using Settlement.Sportsbook.Soccer.GetMatch.Services;
-using Xunit;
 using MatchDetail = Settlement.Sportsbook.Soccer.Models.MatchDetail;
 
 namespace Settlement.Sportsbook.Soccer.UnitTests.Services.GetMatch;
+
+using Soccer.Services.GetMatch;
 
 public class MergeDataServiceTests
 {
@@ -43,13 +40,13 @@ public class MergeDataServiceTests
             IsExistFgLg = central,
             IsEnabledGoalRecordFt = central,
             IsEnabledGoalRecordHt = central,
-            IsLive = central,
+            IsLive = central
         };
         var mainMatch = new MatchDetail { SiteMatch = new List<SiteMatch> { siteMatch, centralMatch } };
         var ticketCounts = new List<TicketCounts>
         {
-            new TicketCounts { GroupId = 1 },
-            new TicketCounts { GroupId = 2 }
+            new() { GroupId = 1 },
+            new() { GroupId = 2 }
         };
 
         // act
@@ -108,31 +105,31 @@ public class MergeDataServiceTests
     {
         var listChildMatch = new List<ChildMatchModel>
         {
-            new ChildMatchModel { MatchId = 123 },
-            new ChildMatchModel
+            new() { MatchId = 123 },
+            new()
             {
                 MatchId = 345,
                 IsExistRunningTicket = false,
-                IsExistMarkedTicket = true,
+                IsExistMarkedTicket = true
             }
         };
 
         var siteMatches = new List<SiteMatch>
         {
-            new SiteMatch
+            new()
             {
                 SiteChildMatches =  new List<ChildMatchTicketInfos> {
-                    new ChildMatchTicketInfos
+                    new()
                     {
                         MatchId = 123, IsExistMarkedTicket = true, IsExistRunningTicket = false
                     }
                 }
             },
 
-            new SiteMatch
+            new()
             {
                 SiteChildMatches = new List<ChildMatchTicketInfos> {
-                    new ChildMatchTicketInfos
+                    new()
                     {
                         MatchId = 123, IsExistMarkedTicket = false, IsExistRunningTicket = true
                     }
@@ -141,7 +138,7 @@ public class MergeDataServiceTests
         };
 
         //act
-        var actualList = service.MergeDataChildMatches(listChildMatch, siteMatches);
+        service.MergeDataChildMatches(listChildMatch, siteMatches);
 
         //assert
         Assert.True(listChildMatch[0].IsExistRunningTicket);
@@ -158,9 +155,9 @@ public class MergeDataServiceTests
         //arrange
         var listSiteBetDaq = new List<BetDaq>
         {
-            new BetDaq { IsMoveBetDaq = value},
-            new BetDaq { IsRefundRunningBetDaq = value},
-            new BetDaq { IsSettleAbandonedMatchBetDaq = value}
+            new() { IsMoveBetDaq = value},
+            new() { IsRefundRunningBetDaq = value},
+            new() { IsSettleAbandonedMatchBetDaq = value}
         };
 
         var betDaq = new BetDaq { IsExcludeBetDaq = value };
@@ -183,9 +180,9 @@ public class MergeDataServiceTests
         //arrange
         var listSiteBetFair = new List<BetFair>
         {
-            new BetFair { IsMoveBetFair = value},
-            new BetFair { IsRefundRunningBetFair = value},
-            new BetFair { IsSettleAbandonedMatchBetFair = value}
+            new() { IsMoveBetFair = value},
+            new() { IsRefundRunningBetFair = value},
+            new() { IsSettleAbandonedMatchBetFair = value}
         };
 
         var betFair = new BetFair { IsExcludeBetFair = value };
@@ -206,40 +203,40 @@ public class MergeDataServiceTests
         //arrange
         var listOne = new List<TicketCounts>
         {
-            new TicketCounts
+            new()
             {
                 GroupId = 1, BetCount = 1, BetMarkedCount = 2, BetSettledCount = 3, BetWaitingCount = 4,
                 BetRunningCount = 5
-            },
+            }
         };
 
         var listTwo = new List<TicketCounts>
         {
-            new TicketCounts
+            new()
             {
                 GroupId = 1, BetCount = 1, BetMarkedCount = 2, BetSettledCount = 3, BetWaitingCount = 4,
                 BetRunningCount = 5
-            },
+            }
         };
         var listThree = new List<TicketCounts>
         {
-            new TicketCounts
+            new()
             {
                 GroupId = 2, BetCount = 1, BetMarkedCount = 2, BetSettledCount = 3, BetWaitingCount = 4,
                 BetRunningCount = 5
-            },
+            }
         };
         var listSiteMatch = new List<SiteMatch>
         {
-            new SiteMatch
+            new()
             {
                 TicketCounts = listOne
             },
-            new SiteMatch
+            new()
             {
                 TicketCounts = listTwo
             },
-            new SiteMatch
+            new()
             {
                 TicketCounts = listThree
             }
@@ -309,7 +306,7 @@ public class MergeDataServiceTests
             BetCount = 1,
             BetMarkedCount = 2,
             InRunning = 3,
-            InWaiting = 4,
+            InWaiting = 4
         };
 
         var ticketDetailTwo = new ResultDetailModel
@@ -318,7 +315,7 @@ public class MergeDataServiceTests
             BetCount = 1,
             BetMarkedCount = 2,
             InRunning = 3,
-            InWaiting = 4,
+            InWaiting = 4
         };
 
         var ticketDetailThree = new ResultDetailModel
@@ -327,7 +324,7 @@ public class MergeDataServiceTests
             BetCount = 1,
             BetMarkedCount = 2,
             InRunning = 3,
-            InWaiting = 4,
+            InWaiting = 4
         };
         var listSiteMatch = new List<(List<ResultDetailModel>, TicketCounts)>
         {

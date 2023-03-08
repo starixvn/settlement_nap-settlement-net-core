@@ -6,9 +6,6 @@ export class LeagueMatch {
     public name: string;
     public matches: Match[];
     public collapse = false;
-    public isCheckedCalcMP: boolean;
-    public disableCheckCalcMP: boolean;
-    public isMergedParlay: boolean;
     public autoWaitingTime: number;
     public autoCalcSetting: AutoSetting;
 }

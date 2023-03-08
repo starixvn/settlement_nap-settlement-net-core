@@ -1,22 +1,21 @@
 ﻿using MediatR;
-using Settlement.Core.Services;
 using Settlement.Sportsbook.Soccer.Controllers;
-using Settlement.Sportsbook.Soccer.GetMatch.Services;
 using Settlement.Sportsbook.Soccer.Services;
 using Settlement.Sportsbook.Soccer.Services.FullTimeBetStatus;
 using Settlement.Sportsbook.Soccer.Services.HalfTimeBetStatus;
 using Settlement.Sportsbook.Soccer.Services.InstantCalculate;
 using System.Reflection;
-using MatchServiceImp = Settlement.Sportsbook.Soccer.GetMatch.Services.MatchServiceImp;
-using MergeDataServiceImp = Settlement.Sportsbook.Soccer.GetMatch.Services.MergeDataServiceImp;
 
 namespace Settlement.WebSites.Configurations;
+
+using Core.Services.SpecificService;
+using Sportsbook.Soccer.Services.GetMatch;
 
 public static class SoccerConfig
 {
     public static void ConfigSoccerServices(this IServiceCollection services)
     {
-        services.AddTransient<Core.Services.IFirstGoalLastGoalService, Core.Services.FirstGoalLastGoalServiceImp>();
+        services.AddTransient<IFirstGoalLastGoalService, FirstGoalLastGoalServiceImp>();
         services.AddTransient<IMatchService, MatchServiceImp>();
         services.AddTransient<IGoalIconService, GoalIconServiceImp>();
         services.AddTransient<IBetStatusAllService, BetStatusAllServiceImp>();

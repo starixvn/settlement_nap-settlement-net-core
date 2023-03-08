@@ -25,7 +25,7 @@ import { RequestService } from './services/request.service';
 import { VerifyActionService } from './services/verify-action.service';
 import { ToastContainerDirective, ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 import { ModalDialogMessage } from '../../../shared/models';
-import { Language } from '../../../shared/language';
+import { Language } from '../../../shared/language.native';
 import { SettleQuery } from './models/query.model';
 import { VerificationBaseService } from '../../services/verification-base.service';
 

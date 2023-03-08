@@ -9,7 +9,7 @@ import * as _ from 'lodash';
 import { TicketStatusText, BackgroundColor, CalculateAction } from '../../../shared/constants';
 import { ClosePopupService, MessageBoxService } from '../../../shared/services';
 import { ModalDialogMessage, Result } from '../../../shared/models';
-import { Language } from '../../../shared/language';
+import { Language } from '../../../shared/language.native';
 import { InstantCalculationQuery, SettleQuery } from './models/query.model';
 import { VerifyActionService } from './services/verify-action.service';
 import { VerifyScoreGoalService } from './services/verify-score-goal.service';

@@ -1,10 +1,8 @@
-﻿using NSubstitute;
-using Settlement.Core.Constants;
+﻿using Settlement.Core.Constants;
 using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Requests;
 using Settlement.Sportsbook.Soccer.Services;
 using Settlement.Sportsbook.Soccer.Services.FullTimeBetStatus;
-using Xunit;
 
 namespace Settlement.Sportsbook.Soccer.UnitTests.Services.FullTimeBetStatus;
 
@@ -44,7 +42,7 @@ public class HalftimeFullTimeServiceTests
     public void FullTimeBetStatus_IsExistRefundHT_InvokeBetStatusMethodOfFullTimeService()
     {
         // Arrange
-        var query = new SettleRequest { BetStatus = EventStatus.RefundHT };
+        var query = new SettleRequest { BetStatus = EventStatus.RefundHt };
         fullTimeService.IsExistRefundHt(Arg.Any<bool>(), Arg.Any<string>()).Returns(true);
 
         // Act
@@ -58,7 +56,7 @@ public class HalftimeFullTimeServiceTests
     public void FullTimeBetStatus_NotExistRefundHT_ReturnRightBetStatus()
     {
         // Arrange
-        var expected = "Refund HT;FL:0-0;";
+        const string expected = "Refund HT;FL:0-0;";
         var query = new SettleRequest();
         fullTimeService.IsExistRefundHt(Arg.Any<bool>(), Arg.Any<string>()).Returns(false);
         fullTimeService.BetStatusFullTimeWithSemicolon(Arg.Any<SettleRequest>()).Returns("Refund HT;FL:0-0;");

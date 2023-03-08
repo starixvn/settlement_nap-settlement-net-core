@@ -2,7 +2,7 @@
 import * as _ from 'lodash';
 import { ResultControl, ResultControlGroup } from '../constants';
 import { ResultDetail, GroupMap, MatchDetail } from '../../shared/models/sportsbook-sop';
-import { Language } from '../../shared/language';
+import { Language } from '../../shared/language.native';
 import { ResultByTeamNamePipe } from '../../shared/pipes/result-by-team-name.pipe';
 import { EarlyBaseService } from '../../core/services/early-base.service';
 @Injectable()

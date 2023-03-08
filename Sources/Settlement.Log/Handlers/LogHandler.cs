@@ -2,9 +2,6 @@
 using Settlement.Log.Models;
 using Settlement.Log.Requests;
 using Settlement.Log.Services;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Settlement.Log.Handlers;
 

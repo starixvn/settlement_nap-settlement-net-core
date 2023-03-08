@@ -3,7 +3,7 @@ import { BackGroundService, RequestService, PopupService } from '../../services'
 import { Match } from '../../../shared/models';
 import { BackgroundColor, CalculationStatus, EventStatus } from '../../../shared/constants';
 import * as _ from 'lodash';
-import { Language } from '../../../shared/language';
+import { Language } from '../../../shared/language.native';
 import { MatchesBaseComponent } from '../base-component/matches-base.component';
 import { CalculationMatch, FilterQuery } from '../../models';
 import { ISubscription } from 'rxjs-compat/Subscription';

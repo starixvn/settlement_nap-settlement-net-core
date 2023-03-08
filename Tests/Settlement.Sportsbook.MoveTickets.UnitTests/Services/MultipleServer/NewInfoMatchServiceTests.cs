@@ -3,6 +3,8 @@ using Settlement.Core.Models;
 
 namespace Settlement.Sportsbook.MoveTickets.UnitTests.Services.MultipleServer;
 
+using MoveTickets.Services.MultipleServer;
+
 public class NewInfoMatchServiceTests
 {
     private readonly NewInfoMatchService service;
@@ -16,8 +18,8 @@ public class NewInfoMatchServiceTests
     }
 
     [Theory]
-    [InlineData(EventStatus.PostPoned, true, 0, Background.YellowBlinking)]
-    [InlineData(EventStatus.PostPoned, false, 0, Background.Yellow)]
+    [InlineData(EventStatus.Postponed, true, 0, Background.YellowBlinking)]
+    [InlineData(EventStatus.Postponed, false, 0, Background.Yellow)]
     [InlineData(EventStatus.ResultPending, true, 1, Background.BrightYellowBlinking)]
     [InlineData(EventStatus.ResultPending, false, 1, Background.BrightYellow)]
     [InlineData(EventStatus.Running, true, 0, Background.WhiteBlinking)]
@@ -42,7 +44,7 @@ public class NewInfoMatchServiceTests
     {
         var match = new Match
         {
-            EventStatus = EventStatus.Completed,
+            EventStatus = EventStatus.Completed
         };
 
         siteMatchService.IsExistMarkedTickets(Arg.Any<Match>()).Returns(false);

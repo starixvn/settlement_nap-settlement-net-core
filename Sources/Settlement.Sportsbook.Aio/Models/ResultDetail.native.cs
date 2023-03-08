@@ -35,27 +35,15 @@ public class ResultDetail
 
     public int OrdNo { get; set; }
 
-    public virtual string ResultStatus
-    {
-        get
-        {
-            return ResultStatusId.ResultName(SettlementStatusId);
-        }
-    }
+    public virtual string ResultStatus => ResultStatusId.ResultName(SettlementStatusId);
 
-    public virtual bool IsNotExistedValue
-    {
-        get
-        {
-            return SettlementStatusId == SettlementStatus.Running && string.IsNullOrWhiteSpace(HomeValue) && string.IsNullOrWhiteSpace(AwayValue);
-        }
-    }
+    public virtual bool IsNotExistedValue => SettlementStatusId == SettlementStatus.Running && string.IsNullOrWhiteSpace(HomeValue) && string.IsNullOrWhiteSpace(AwayValue);
 
     protected byte ResultSetting { get; set; }
 
-    public ResultDetailSetting ResultSettingData => new ResultDetailSetting
+    public ResultDetailSetting ResultSettingData => new()
     {
-        ResultSetting = Convert.ToString(ResultSetting, ToBase).Reverse(),
+        ResultSetting = Convert.ToString(ResultSetting, ToBase).Reverse()
     };
 
     public List<InputOption> InputOptions { get; set; }

@@ -75,10 +75,7 @@ public class MatchDetail
             return goal.GetGoalRecord();
         }
 
-        set
-        {
-            goalRecord = string.IsNullOrWhiteSpace(value) ? string.Empty : value.ToUpperInvariant();
-        }
+        set => goalRecord = string.IsNullOrWhiteSpace(value) ? string.Empty : value.ToUpperInvariant();
     }
 
     public string BetStatus { get; set; }
@@ -149,7 +146,7 @@ public class MatchDetail
 
     public bool HasInstantCompleted { get; set; }
 
-    public List<SiteMatch> SiteMatch { get; set; } = new List<SiteMatch>();
+    public List<SiteMatch> SiteMatch { get; set; } = new();
 
     public int ChildMatchType { get; set; }
 }

@@ -15,8 +15,6 @@ public class BetBuilderServiceTests
 {
     private readonly IDynamicRepository repository;
 
-    private readonly ScoreService scoreService;
-
     private readonly MergeMatchInfo mergeMatchInfo;
 
     private readonly XmlConvertService xmlConvertService;
@@ -27,7 +25,7 @@ public class BetBuilderServiceTests
     {
         var refDataService = Substitute.For<IRefDataService>();
         repository = Substitute.For<IDynamicRepository>();
-        scoreService = Substitute.For<ScoreService>();
+        var scoreService = Substitute.For<ScoreService>();
         mergeMatchInfo = Substitute.For<MergeMatchInfo>();
         xmlConvertService = Substitute.For<XmlConvertService>();
         var mapperConfig = new MapperConfigurationExpression();
@@ -80,17 +78,17 @@ public class BetBuilderServiceTests
                 new()
                 {
                     SportType = 3,
-                    LeagueId = 1,
+                    LeagueId = 1
                 },
                 new()
                 {
                 SportType = 2,
-                LeagueId = 2,
-            },
+                LeagueId = 2
+                },
                 new()
                 {
                     SportType = 3,
-                    LeagueId = 4,
+                    LeagueId = 4
                 }
             };
 

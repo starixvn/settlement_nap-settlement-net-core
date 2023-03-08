@@ -29,9 +29,6 @@ public class Permission
     [Key("canRefund")]
     public bool CanRefund { get; set; }
 
-    [Key("canCalculateMp")]
-    public bool CanCalculateMp { get; set; }
-
     [Key("canAutoPayout")]
     public bool CanAutoPayout { get; set; }
 

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Settlement.Sportsbook.Soccer.Models;
+﻿namespace Settlement.Sportsbook.Soccer.Models;
 
 public class FantasyMatch
 {

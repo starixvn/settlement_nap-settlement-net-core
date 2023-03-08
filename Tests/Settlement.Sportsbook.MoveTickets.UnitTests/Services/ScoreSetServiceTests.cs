@@ -31,7 +31,7 @@ public class ScoreSetServiceTests
     public void GetScore_HasResultDetailWithSettlementStatusIdIsRefundHalftime_ReturnsRHTOnScore()
     {
         // Arrange
-        var resultDetail = new ResultDetail { MatchId = 1, SettlementStatusId = SettlementStatus.RefundHT };
+        var resultDetail = new ResultDetail { MatchId = 1, SettlementStatusId = SettlementStatus.RefundHt };
         var expectedScore = new Score("R.HT", "R.HT");
 
         // Act
@@ -45,7 +45,7 @@ public class ScoreSetServiceTests
     public void GetScore_HasResultDetailWithSettlementStatusIdIsRefundFullTime_ReturnsRFTOnScore()
     {
         // Arrange
-        var resultDetail = new ResultDetail { MatchId = 1, SettlementStatusId = SettlementStatus.RefundFT };
+        var resultDetail = new ResultDetail { MatchId = 1, SettlementStatusId = SettlementStatus.RefundFt };
         var expectedScore = new Score("R.FT", "R.FT");
 
         // Act

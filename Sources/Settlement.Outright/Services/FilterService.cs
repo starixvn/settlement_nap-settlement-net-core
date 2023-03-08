@@ -143,7 +143,7 @@ public class FilterServiceImp : FilterService
                 {
                     LeagueName = team.LeagueName,
                     LeagueId = team.LeagueId,
-                    Teams = new List<Team>(),
+                    Teams = new List<Team>()
                 };
 
                 currentLeague = team.LeagueId;

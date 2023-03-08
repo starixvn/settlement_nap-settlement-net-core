@@ -4,7 +4,7 @@ import { RequestService, TimeMachineService, VerificationService } from '../serv
 import { MessageBoxService, ClosePopupService } from '../../shared/services';
 import { ModalDialogMessage } from '../../shared/models';
 import { UrlHelper } from '../../helper';
-import { Language as SharedLanguage } from '../../shared/language';
+import { Language as SharedLanguage } from '../../shared/language.native';
 import {
     FastMarkets, BetType,
     FastMarketResult, ResultItem,

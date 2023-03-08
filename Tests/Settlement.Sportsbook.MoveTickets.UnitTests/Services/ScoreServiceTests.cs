@@ -9,8 +9,8 @@ public class ScoreServiceTests
 
     private readonly IScoreService service;
 
-    private static List<ResultDetail> EmptyResultDetail => new List<ResultDetail>();
-    private static List<string> Resources => new List<string> { "00", "01" };
+    private static List<ResultDetail> EmptyResultDetail => new();
+    private static List<string> Resources => new() { "00", "01" };
 
     public ScoreServiceTests()
     {
@@ -22,7 +22,7 @@ public class ScoreServiceTests
     public void ScoreOfSets_EmptyResultDetail_ReturnsHyphenOnAllQuarter()
     {
         // Arrange
-        var expectedQuarter = new Score[2].Select(n => new Score("-")).ToArray();
+        var expectedQuarter = new Score[2].Select(_ => new Score("-")).ToArray();
 
         // Act
         var actualQuarter = service.ScoreOfSets(EmptyResultDetail, Resources);
@@ -37,12 +37,12 @@ public class ScoreServiceTests
         // Arrange
         var resultDetail = new List<ResultDetail>
         {
-            new ResultDetail { MatchId = 1 , ResourceId = "00" },
-            new ResultDetail { MatchId = 1 , ResourceId = "01" }
+            new() { MatchId = 1 , ResourceId = "00" },
+            new() { MatchId = 1 , ResourceId = "01" }
         };
 
         var fakeQuarterScore = new Score("1", "2");
-        var expectedQuarter = new Score[2].Select(n => new Score("1", "2")).ToArray();
+        var expectedQuarter = new Score[2].Select(_ => new Score("1", "2")).ToArray();
 
         scoreSetService.GetScore(Arg.Any<ResultDetail>()).Returns(fakeQuarterScore);
 
@@ -74,7 +74,7 @@ public class ScoreServiceTests
         var expectedScore = new Score("1", "2");
         var resultDetail = new List<ResultDetail>
         {
-            new ResultDetail { MatchId = 1 , ResourceId = "01" }
+            new() { MatchId = 1 , ResourceId = "01" }
         };
 
         scoreSetService.GetScore(Arg.Any<ResultDetail>()).Returns(fakeHalftimeScore);
@@ -108,7 +108,7 @@ public class ScoreServiceTests
 
         var resultDetail = new List<ResultDetail>
         {
-            new ResultDetail { MatchId = 1 , ResourceId = "00" }
+            new() { MatchId = 1 , ResourceId = "00" }
         };
 
         scoreSetService.GetScore(Arg.Any<ResultDetail>()).Returns(fakeFinalTimeScore);
@@ -127,7 +127,7 @@ public class ScoreServiceTests
         var resources = new List<string> { "H1", "H2", "A1", "A2" };
         var fakeHalftimeScore = new Score("-", "-");
         var fakeFinalTimeScore = new Score("1", "2");
-        var fakeQuarterScore = new Score[4].Select(n => new Score("-", "-")).ToArray();
+        var fakeQuarterScore = new Score[4].Select(_ => new Score("-", "-")).ToArray();
         var expectedScore = new MoreScores
         {
             HalfTimeScore = fakeHalftimeScore,
@@ -137,7 +137,7 @@ public class ScoreServiceTests
 
         var resultDetails = new List<ResultDetail>
         {
-            new ResultDetail { ResourceId =  "00", MatchId = 1 }
+            new() { ResourceId =  "00", MatchId = 1 }
         };
 
         scoreSetService.GetScore(Arg.Any<ResultDetail>()).Returns(fakeFinalTimeScore);

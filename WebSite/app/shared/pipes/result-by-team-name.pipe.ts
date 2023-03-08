@@ -2,7 +2,10 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { MatchDetail } from '../models/sportsbook-sop';
 import * as _ from 'lodash';
 
-@Pipe({ name: 'resultByTeamName' })
+@Pipe({
+    name: 'resultByTeamName',
+    standalone: true
+})
 export class ResultByTeamNamePipe implements PipeTransform {
     public transform(result: string, matchDetail: MatchDetail = null, betTypeGroup = 0) {
         if (!_.isEmpty(result)) {

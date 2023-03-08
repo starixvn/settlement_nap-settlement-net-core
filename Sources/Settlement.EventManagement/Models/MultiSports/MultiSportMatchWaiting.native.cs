@@ -90,17 +90,11 @@ public class MultiSportMatchWaiting
     [Key("remark")]
     public Core.Models.RemarkSettingModel Remark { get; set; }
 
-    [Key("mixParlay")]
-    public MixParlay MixParlay { get; set; }
-
     [Key("exHalfTimeScore")]
     public string ExHalfTimeScore { get; set; }
 
     [Key("exFullTimeScore")]
     public string ExFullTimeScore { get; set; }
-
-    [Key("isMergedParlay")]
-    public bool IsMergedParlay { get; set; }
 
     [Key("isExistsConfirmedEarly")]
     public bool IsExistsConfirmedEarly { get; set; }

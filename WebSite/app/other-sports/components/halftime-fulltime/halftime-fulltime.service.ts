@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Match, MatchDetail } from '../../models';
 import * as _ from 'lodash';
-import { Language } from '../../../shared/language';
+import { Language } from '../../../shared/language.native';
 import { MessageBoxService } from '../../../shared/services';
 import { ModalDialogMessage } from '../../../shared/models';
 import { KickOffTime, ResourcesIds } from '../../constants';
@@ -56,8 +56,8 @@ export class HalfTimeFullTimeService {
                     return;
                 }
                 this.resetScore(item);
-            } else if(hideFtScore){
-                     this.resetScore(item);
+            } else if (hideFtScore) {
+                this.resetScore(item);
             }
         });
     }
@@ -149,7 +149,7 @@ export class HalfTimeFullTimeService {
             return this.compareScore(resultDetails, lastestResults);
         }
     }
-    
+
     private compareScore(resultDetails: ResultDetail[], lastestResults: ResultDetail[]) {
         let needConfirm = false;
         resultDetails = _.filter(resultDetails, item => !_.isEqual(item.resourceId, ResourcesIds.fullTime)
@@ -249,14 +249,9 @@ export class HalfTimeFullTimeService {
         fullTime.isScoreMismatched = isInconsistent;
     }
 
-    public getMessageConfirmRefund(isParlay: boolean, action: string) {
-        if (isParlay) {
-            return _.isEqual(action, CalculateAction.refund) ?
-                Language.RefundParlayConfirmMessage : Language.RefundParlayFullTime;
-        } else {
-            return _.isEqual(action, CalculateAction.refund) ?
-                Language.RefundConfirmMessage : Language.RefundFullMessage;
-        }
+    public getMessageConfirmRefund(action: string) {
+        return _.isEqual(action, CalculateAction.refund) ?
+            Language.RefundConfirmMessage : Language.RefundFullMessage;
     }
 
     public getFirstConfirmMessage(actionType: string) {

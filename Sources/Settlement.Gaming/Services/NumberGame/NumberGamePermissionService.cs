@@ -2,10 +2,11 @@
 using Fanex.NAP.Client.Helpers.Web;
 using Fanex.NAP.Client.Services;
 using Fanex.NAP.Core.Business;
-using Settlement.Core.Configuration;
 using Settlement.Core.Models;
 
 namespace Settlement.Gaming.Services.NumberGame;
+
+using Core.Configurations;
 
 public interface PermissionService
 {
@@ -27,9 +28,9 @@ public class NumberGamePermissionServiceImp : PermissionService
         this.siteSettings = siteSettings;
     }
 
-    public Permission Permission => new Permission
+    public Permission Permission => new()
     {
-        CanItAdmin = HasPermission(SettlementFunctionKeys.NGResettleMatchBeforeYesterday, Constant.Policy.Host),
+        CanItAdmin = HasPermission(SettlementFunctionKeys.NgResettleMatchBeforeYesterday, Constant.Policy.Host),
         CanCalculate = HasPermission(SettlementFunctionKeys.NumberGameRecalculate, Constant.Policy.Host),
         CanViewSettlementLog = HasPermission(SettlementFunctionKeys.ViewLogSettlement, Constant.Policy.Read)
     };

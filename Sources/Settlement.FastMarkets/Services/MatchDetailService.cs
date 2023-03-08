@@ -9,6 +9,8 @@ using MatchDetail = Settlement.FastMarkets.Models.MatchDetail;
 
 namespace Settlement.FastMarkets.Services;
 
+using Core.Services.SpecificService;
+
 public interface IMatchDetailService
 {
     Task<MatchDetail> MatchInfo(int matchId);

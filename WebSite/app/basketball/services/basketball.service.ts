@@ -4,7 +4,7 @@ import { ResourcesIds } from '../constants';
 import { ResultDetail } from '../../shared/models/sportsbook-sop';
 import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
 import { ResourceNameByIdPipe } from '../pipes/resource-name-by-id.pipe';
-import { Language } from '../../shared/language';
+import { Language } from '../../shared/language.native';
 import { BetStatusService } from './bet-status.service';
 import { Match } from '../models';
 

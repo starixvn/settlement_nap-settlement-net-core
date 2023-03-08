@@ -14,7 +14,7 @@ import { FormsModule } from "@angular/forms";
 import { HttpClientModule } from "@angular/common/http";
 import { ResourceNameByIdPipe } from "../pipes";
 import { EarlySettlementComponent } from ".";
-import { Language } from '../../shared/language';
+import { Language } from '../../shared/language.native';
 import {
   ModalDialogComponent,
   ModalContentDialogComponent,

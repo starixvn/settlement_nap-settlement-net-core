@@ -9,7 +9,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { of } from 'rxjs';
 import { MultiSportService } from './multi-sport.service';
 import { HandleActionsService } from './handle-actions.service';
-import { MixParlay, MoreScore, Remark, Score } from '../../shared/models';
+import { MoreScore, Remark, Score } from '../../shared/models';
 import { SportType } from '../../shared/constants';
 import { Permission } from '../../shared/models/sportsbook-sop/permission.model';
 import { SportMatchService } from './sport-match.service';
@@ -38,16 +38,13 @@ describe('MultiSport - RefreshMatchService', () => {
   newMatch.halfTimeHomeScore = 0;
   newMatch.isCalRefund = false;
   newMatch.isCalculated = false;
-  newMatch.isCalculatingMP = 0;
   newMatch.isCalculatingSingle = 0;
   newMatch.isExistMarkedTicket = false;
-  newMatch.isExistMarkedTicketParlay = false;
   newMatch.isExistRunningTicket = false;
   newMatch.isHalfTimeCal = false;
   newMatch.isHavingIntervalScore = true;
   newMatch.isMultiCaled = false;
   newMatch.isRefund = false;
-  newMatch.mixParlay = new MixParlay();
   newMatch.newEventStatus = '';
   newMatch.remark = new Remark();
   newMatch.suspenderFullTime = '';
@@ -57,7 +54,6 @@ describe('MultiSport - RefreshMatchService', () => {
   newMatch.confirmHalfTimeScore = "2";
   newMatch.exFullTimeScore = "1";
   newMatch.exHalfTimeScore = "2";
-  newMatch.isExistRunningTicketParlay = true;
   newMatch.isNotConsistentExFtScore = true;
   newMatch.isNotConsistentExHtScore = true;
   const league: LeagueMatch = {
@@ -65,10 +61,8 @@ describe('MultiSport - RefreshMatchService', () => {
     matches: [match],
     name: 'mock league',
     collapse: false,
-    isCheckedCalcMP: false,
-    disableCheckCalcMP: false,
-    isMergedParlay: true,
-    isAutoPayoutForLeague: false
+    isAutoPayoutForLeague: false,
+    autoWaitingTime: 0
   };
 
   const sport: SportMatch = {
@@ -81,8 +75,7 @@ describe('MultiSport - RefreshMatchService', () => {
   const multiSport: MultiSport = {
     sports: [sport],
     permission: new Permission(),
-    isCheckedCalcMP: false,
-  };
+   };
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -123,12 +116,10 @@ describe('MultiSport - RefreshMatchService', () => {
     it('should change match when match has been updated', () => {
         spyOn(httpRequestService, 'postMessagePack').and.returnValue(of([newMatch]));
         spyOn(detectChangesService, 'detect').and.returnValue(true);
-        spyOn(handleActionsService, 'resetCheckboxCalcMixParlay');
 
         refreshMatchService.refreshMatches([sport], new MatchWaitingRequest('', '', '', '','',''), multiSport);
 
         expect(match).toEqual(newMatch);
-        expect(handleActionsService.resetCheckboxCalcMixParlay).toHaveBeenCalled();
     });
   });
 });

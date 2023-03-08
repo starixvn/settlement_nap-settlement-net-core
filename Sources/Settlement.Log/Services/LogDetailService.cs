@@ -1,9 +1,6 @@
 ﻿using Fanex.Data.Repository;
 using Settlement.Log.Criteria;
 using Settlement.Log.Models;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Settlement.Log.Services;
 

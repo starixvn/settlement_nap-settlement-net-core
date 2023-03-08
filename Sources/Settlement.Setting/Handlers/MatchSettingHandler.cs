@@ -55,7 +55,7 @@ public class MatchSettingHandler :
 
     public async Task<Result> Handle(TimeSettingRequest request, CancellationToken cancellationToken) => await settingService.UpdateTimeSettingLeague(request);
 
-    public async Task<string> Handle(LeagueRequest request, CancellationToken cancellationToken) => await Task.Run(() => refDataService.GetLeagueName(request.LeagueId));
+    public async Task<string> Handle(LeagueRequest request, CancellationToken cancellationToken) => await Task.Run(() => refDataService.GetLeagueName(request.LeagueId), cancellationToken);
 
     public async Task<string> Handle(GetSettingRequest request, CancellationToken cancellationToken) => await settingService.GetSetting(request);
 }

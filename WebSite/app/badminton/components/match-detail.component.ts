@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit, Input } from '@angular/core';
 import { Match } from '../models';
 import { BadmintonService } from '../services';
@@ -6,10 +7,14 @@ import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.p
 import { MatchDetail, ResultDetail } from '../../shared/models/sportsbook-sop';
 import * as _ from 'lodash';
 import { SettlementStatusId } from '../../shared/constants';
+import { ResourceHeaderPipe } from '../pipes';
+import { ScoreBySettlementPipe } from '../../shared/pipes/score-by-settlement.pipe';
 
 @Component({
   selector: 'match-detail',
   templateUrl: './match-detail.component.html',
+  standalone: true,
+  imports: [CommonModule, ResourceHeaderPipe, ScoreBySettlementPipe]
 })
 export class MatchDetailComponent implements OnInit {
   @Input() public match: Match;

@@ -107,7 +107,7 @@
               <td rowspan="2" class='instant-status' [ngClass]="getClassInstantStatus(match)">
                 <span [ngClass]="getColorInstant(match)">
                   <div *ngIf="match.instantStatusId == instantStatus.confirm; else noNeed">
-                    <div *ngIf="match.instantCalculationType != instantCalcFt || !match.isFTCalculated">
+                    <div *ngIf="match.instantCalculationType != instantCalcFt || !match.isFtCalculated">
                       <div class="confirm-instant">Confirm</div>
                       <button class="button-instant btn btn-outline-primary" (click)="updateInstantStatus(match)">{{match.instantStatus}}</button>
                     </div>

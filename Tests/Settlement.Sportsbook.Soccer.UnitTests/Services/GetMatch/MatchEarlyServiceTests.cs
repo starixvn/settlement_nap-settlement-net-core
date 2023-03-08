@@ -1,33 +1,22 @@
 ﻿using AutoMapper;
-using Fanex.Data.Repository;
-using Settlement.Core.Services;
-using Settlement.Sportsbook.Soccer.GetMatch.Services;
-using NSubstitute;
 using AutoMapper.Configuration;
-using Settlement.Sportsbook.Soccer.Criteria;
-using Xunit;
+using Fanex.Data.Repository;
 using NSubstitute.ReturnsExtensions;
-using Fanex.NAP.Client;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
+using Settlement.Core.Services;
+using Settlement.Sportsbook.Soccer.Criteria;
 using Settlement.Sportsbook.Soccer.Models;
 using MatchDetail = Settlement.Sportsbook.Soccer.Models.MatchDetail;
 
 namespace Settlement.Sportsbook.Soccer.UnitTests.Services.GetMatch;
 
+using Core.Services.SpecificService;
+using Soccer.Services.GetMatch;
+
 public class MatchEarlyServiceTests
 {
     private readonly IDynamicRepository repository;
-
-    private readonly PermissionService permission;
-
-    private readonly IRefDataService refDataService;
-
-    private readonly IGoalIconService goalIconService;
 
     private readonly EarlyBetTypeNameService earlyBetTypeNameService;
 
@@ -38,9 +27,9 @@ public class MatchEarlyServiceTests
     public MatchEarlyServiceTests()
     {
         repository = Substitute.For<IDynamicRepository>();
-        permission = Substitute.For<PermissionService>(null, null, null, null);
-        refDataService = Substitute.For<IRefDataService>();
-        goalIconService = Substitute.For<IGoalIconService>();
+        var permission = Substitute.For<PermissionService>(null, null, null, null);
+        var refDataService = Substitute.For<IRefDataService>();
+        var goalIconService = Substitute.For<IGoalIconService>();
         earlyBetTypeNameService = Substitute.For<EarlyBetTypeNameService>();
         fetchDataService = Substitute.For<IFetchDataService>();
         var mapperConfig = new MapperConfigurationExpression();
@@ -69,7 +58,7 @@ public class MatchEarlyServiceTests
     {
         var listResult = new List<ResultDetailModel>
         {
-            new ResultDetailModel
+            new()
             {
                 InRunning = inRunning,
                 InWaiting = inWaiting,
@@ -93,7 +82,7 @@ public class MatchEarlyServiceTests
     {
         var listResult = new List<ResultDetailModel>
         {
-            new ResultDetailModel
+            new()
             {
                 InRunning = 0,
                 InWaiting = 0,
@@ -101,7 +90,7 @@ public class MatchEarlyServiceTests
                 BetCount = 0,
                 ResourceId = "318000"
             },
-            new ResultDetailModel
+            new()
             {
                 InRunning = 0,
                 InWaiting = 0,
@@ -125,11 +114,11 @@ public class MatchEarlyServiceTests
     [Fact]
     public async Task GetMatch_Always_GenerateBetTypeName()
     {
-        var betType = 381;
-        var resourceId = "381000";
+        const int betType = 381;
+        const string resourceId = "381000";
         var listResult = new List<ResultDetailModel>
         {
-            new ResultDetailModel
+            new()
             {
                 InRunning = 0,
                 InWaiting = 0,
@@ -137,7 +126,7 @@ public class MatchEarlyServiceTests
                 BetCount = 0,
                 ResourceId = "318000"
             },
-            new ResultDetailModel
+            new()
             {
                 InRunning = 0,
                 InWaiting = 0,

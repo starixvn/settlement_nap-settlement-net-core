@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using ONEbook.UM.AspNetCore;
+﻿using ONEbook.UM.AspNetCore;
 using ONEbook.UM.AspNetCore.Filters;
 using ONEbook.UM.Configurations;
 using ONEbook.UM.Helpers;
@@ -10,7 +7,7 @@ using ONEbook.UM.Transport;
 
 namespace Settlement.WebSites.App_Start;
 
-public static class OnebookUMInitializer
+public static class OnebookUmInitializer
 {
     public static void RegisterServiceCollection(this IServiceCollection services, IConfiguration configuration)
     {
@@ -36,7 +33,7 @@ public class HttpContextHelper : IHttpContextHelper
 
     public string GetSession(string key)
     {
-        var value = httpContextAccessor?.HttpContext?.Session?.GetString(key);
+        var value = httpContextAccessor?.HttpContext?.Session.GetString(key);
         return value ?? string.Empty;
     }
 

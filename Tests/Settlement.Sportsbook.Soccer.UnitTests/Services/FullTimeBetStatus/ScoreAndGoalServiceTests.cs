@@ -1,7 +1,5 @@
-﻿using NSubstitute;
-using Settlement.Sportsbook.Soccer.Requests;
+﻿using Settlement.Sportsbook.Soccer.Requests;
 using Settlement.Sportsbook.Soccer.Services.FullTimeBetStatus;
-using Xunit;
 
 namespace Settlement.Sportsbook.Soccer.UnitTests.Services.FullTimeBetStatus;
 
@@ -22,7 +20,7 @@ public class ScoreAndGoalServiceTests
     public void ReplaceBetStatusWhenScoreAndGoalRecordIsNull_Has1FLOnBetStatus_InvokeFirstGoalOnBetStatusMethodOfFirstGoalLastGoalService()
     {
         // Arrange
-        var betStatus = "1FL:1-1";
+        const string betStatus = "1FL:1-1";
 
         // Act
         service.ReplaceBetStatusWhenScoreAndGoalRecordIsNull(betStatus);
@@ -35,7 +33,7 @@ public class ScoreAndGoalServiceTests
     public void ReplaceBetStatusWhenScoreAndGoalRecordIsNull_Not1FLOnBetStatus_InvokeLastGoalOnBetStatusMethodOfFirstGoalLastGoalService()
     {
         // Arrange
-        var betStatus = "FL:1-1";
+        const string betStatus = "FL:1-1";
 
         // Act
         service.ReplaceBetStatusWhenScoreAndGoalRecordIsNull(betStatus);

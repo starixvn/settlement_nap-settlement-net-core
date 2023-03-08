@@ -8,7 +8,7 @@ public class CheckStatusCriteria : NonQueryCommand
 
     public string Action { get; set; }
 
-    public bool IsSettleAbandonedMatchIBC { get; set; }
+    public bool IsSettleAbandonedMatchIbc { get; set; }
 
     public bool IsSettleDetermined { get; set; }
 

@@ -1,9 +1,8 @@
-﻿using MediatR;
-using Settlement.Setting.Models.OutsideSourceManager;
-using Settlement.Core.Models;
-using System.Collections.Generic;
+﻿namespace Settlement.Setting.Requests.OutsideSourceManager;
 
-namespace Settlement.Setting.Requests;
+using MediatR;
+using Settlement.Core.Models;
+using Settlement.Setting.Models.OutsideSourceManager;
 
 public class UpdateOutsideSourceRequest : IRequest<Result>
 {

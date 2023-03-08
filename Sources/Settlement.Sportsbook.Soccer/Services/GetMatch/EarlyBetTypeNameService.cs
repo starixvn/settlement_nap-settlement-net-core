@@ -1,9 +1,8 @@
-﻿using Settlement.Core.Services;
-using System;
-using System.Collections.Generic;
-using static Settlement.Core.Constants.BetType;
+﻿using static Settlement.Core.Constants.BetType;
 
-namespace Settlement.Sportsbook.Soccer.GetMatch.Services;
+namespace Settlement.Sportsbook.Soccer.Services.GetMatch;
+
+using Settlement.Core.Services;
 
 public interface EarlyBetTypeNameService
 {
@@ -23,7 +22,7 @@ public class EarlyBetTypeNameServiceImp : EarlyBetTypeNameService
 
     private const int PenaltyShootoutSuddenDeadGroup = 8;
 
-    private static Dictionary<int, List<string>> PenaltyShootoutRound => new Dictionary<int, List<string>>
+    private static Dictionary<int, List<string>> PenaltyShootoutRound => new()
     {
         { PenaltyShootoutRound1Group, new List<string> { "38201", "38101", "38301", "38401", "38501" }},
         { PenaltyShootoutRound2Group, new List<string> { "38202", "38102", "38302", "38402", "38502" }},
@@ -39,8 +38,8 @@ public class EarlyBetTypeNameServiceImp : EarlyBetTypeNameService
 
     public int GetGroupMap(int betTypeId, string resourceId)
     {
-        var isCorner = (betTypeId == SoccerBetType.TimeOfFirstCorner) || (betTypeId == SoccerBetType.TimeOfSecondCorner);
-        var isGoal = (betTypeId == SoccerBetType.ExtraTimeNextGoal) || (betTypeId == SoccerBetType.FirstGoalMethod) || (betTypeId == SoccerBetType.TimeOfFirstGoal);
+        var isCorner = betTypeId is SoccerBetType.TimeOfFirstCorner or SoccerBetType.TimeOfSecondCorner;
+        var isGoal = betTypeId is SoccerBetType.ExtraTimeNextGoal or SoccerBetType.FirstGoalMethod or SoccerBetType.TimeOfFirstGoal;
         return isGoal || isCorner ? OtherGroup(betTypeId) : PenaltyShootoutGroup(betTypeId, resourceId);
     }
 
@@ -52,7 +51,7 @@ public class EarlyBetTypeNameServiceImp : EarlyBetTypeNameService
         }
         else
         {
-            foreach (KeyValuePair<int, List<string>> item in PenaltyShootoutRound)
+            foreach (var item in PenaltyShootoutRound)
             {
                 if (item.Value.Contains(resourceId))
                 {

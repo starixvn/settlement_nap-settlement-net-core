@@ -18,25 +18,13 @@ public class InstantGoalCondition
 
     public string GoalRecord
     {
-        get
-        {
-            return goalRecord ?? string.Empty;
-        }
-        set
-        {
-            goalRecord = value;
-        }
+        get => goalRecord ?? string.Empty;
+        set => goalRecord = value;
     }
 
     public string FirstGoalValue
     {
-        get
-        {
-            return firstGoalValue ?? string.Empty;
-        }
-        set
-        {
-            firstGoalValue = value;
-        }
+        get => firstGoalValue ?? string.Empty;
+        set => firstGoalValue = value;
     }
 }

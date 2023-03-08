@@ -1,24 +1,34 @@
-import { Component, Input, ViewChild } from '@angular/core';
+import { RefundCommonModule } from './../../shared/modules/refund-common.module';
+import { ExcludeTotalPointPipe, ResourceNameByIdPipe } from '../pipes';
+import { Component, Injector, Input, ViewChild } from '@angular/core';
 import * as _ from 'lodash';
-import { MessageBoxService, AioService } from '../../shared/services';
-import { MarkedTicketsModel, Result, ModalDialogMessage } from '../../shared/models';
+import { MessageBoxService, AioService, BlockUIService, HttpRequestService } from '../../shared/services';
+import { ModalDialogMessage } from '../../shared/models';
 import { CalculateAction, EventStatus } from '../../shared/constants';
-import { Language } from '../../shared/language';
+import { Language } from '../../shared/language.native';
 import { Match } from '../models';
 import { ResourcesIds, TennisApiKeys } from '../constants';
 import { ResultDetail, SettleQuery, SportTemplate } from '../../shared/models/sportsbook-sop';
 import { RefundActionBaseComponent } from '../../shared/components/sportsbook-sop/refund-action-base.component';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
+import { MatchDetailComponent } from './match-detail.component';
+import { TennisService } from '../services';
 
 @Component({
   selector: 'refund-actions',
   templateUrl: './refund-actions.component.html',
+  standalone: true,
+  imports: [ExcludeTotalPointPipe, MatchDetailComponent, RefundCommonModule, ResourceNameByIdPipe],
+  providers: [TennisService ]
+
 })
 export class RefundActionsComponent extends RefundActionBaseComponent implements SportTemplate {
   @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
   @Input() public match: Match;
+  public blockUI = true;
   public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
   constructor(
+    protected injector: Injector,
     private readonly messageBoxService: MessageBoxService,
     protected aioService: AioService,
     protected toastrService: ToastrService) {
@@ -27,12 +37,13 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
   }
 
   async getMatch(matchId: number): Promise<void> {
+    this.injector.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
     const matchQuery = {
       matchId,
       apikey: TennisApiKeys.NormalMatch,
     };
     this.toastrService.overlayContainer = this.toastContainer;
-    this.match = await this.aioService.getMatch(matchQuery).toPromise() as Match;
+    this.match = await this.aioService.getMatch(matchQuery) as Match;
     this.init();
   }
 
@@ -52,7 +63,7 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
 
   public async refund() {
     const paramsCheckingMarkedTickets = this.generateCheckMarkedTicketsQuery();
-    const response = await this.aioService.checkMarkedTickets(paramsCheckingMarkedTickets).toPromise() as MarkedTicketsModel;
+    const response = await this.aioService.checkMarkedTickets(paramsCheckingMarkedTickets);
     this.toastrService.clear();
     if(this.existResultNotConfirmed()) {
       this.toastrService.error(Language.confirmRefund.refundResultNotConfirmed);
@@ -80,7 +91,7 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
 
   public async doRefund() {
     const query = this.generateRefundQuery(TennisApiKeys.Settle);
-    const result = await this.aioService.push(query).toPromise() as Result;
+    const result = await this.aioService.push(query);
     if (result.errCode === 0) {
       this.refundHedgeMatch(query);
       this.messageBoxService.closePopup();

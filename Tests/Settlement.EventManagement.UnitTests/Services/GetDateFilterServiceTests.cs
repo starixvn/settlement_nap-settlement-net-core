@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using AutoMapper.Configuration;
 using Fanex.Data.Repository;
-using NSubstitute;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
@@ -9,17 +8,11 @@ using Settlement.EventManagement.Criteria;
 using Settlement.EventManagement.Models;
 using Settlement.EventManagement.Requests;
 using Settlement.EventManagement.Services;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace Settlement.EventManagement.UnitTests.Services;
 
 public class GetDateFilterServiceTests
 {
-    private readonly IMapper mapper;
-
     private readonly IDynamicRepository repository;
 
     private readonly IRefDataService refDataService;
@@ -37,7 +30,7 @@ public class GetDateFilterServiceTests
         service = new GetDataFilterServiceImp(mapper, repository, refDataService);
     }
 
-    private List<LeagueTypeModel> fakeLeagues => new List<LeagueTypeModel>
+    private static List<LeagueTypeModel> FakeLeagues => new()
     {
         new LeagueTypeModel { SportType = SportType.Diving},
         new LeagueTypeModel { SportType = SportType.Badminton},
@@ -68,7 +61,7 @@ public class GetDateFilterServiceTests
     {
         // Arrange
         var request = new LeagueRequest();
-        repository.FetchAsync<LeagueTypeModel>(Arg.Any<LeagueCriteria>()).Returns(fakeLeagues);
+        repository.FetchAsync<LeagueTypeModel>(Arg.Any<LeagueCriteria>()).Returns(FakeLeagues);
         refDataService.GetLeagueName(Arg.Any<int>()).Returns("D", "C", "A", "B");
         refDataService.GetSportName(Arg.Any<int>()).Returns(string.Empty);
 

@@ -3,6 +3,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { ResourcesIds } from '../constants';
 @Pipe({
   name: 'resourceHeader',
+  standalone: true
 })
 export class ResourceHeaderPipe implements PipeTransform {
   public transform(resourceId: string): string {

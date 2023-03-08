@@ -22,7 +22,7 @@ public class TicketCounts
                 FullTimeTitle => "FT Tickets",
                 EarlySettleTitle => "Early Settle Tickets",
                 FastMarketTitle => "Fast Market Tickets",
-                _ => "Total Tickets",
+                _ => "Total Tickets"
             };
         }
     }
@@ -36,10 +36,4 @@ public class TicketCounts
     public int BetMarkedCount { get; set; }
 
     public int BetWaitingCount { get; set; }
-
-    public int BetParlayCount { get; set; }
-
-    public int BetParlayRunningCount { get; set; }
-
-    public int BetParlayWaitingCount { get; set; }
 }

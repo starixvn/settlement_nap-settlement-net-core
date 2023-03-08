@@ -19,7 +19,7 @@ import { ResultByTeamNamePipe } from '../../shared/pipes/result-by-team-name.pip
 import { ExternalSourceNamePipe } from '../../shared/pipes/external-source-name.pipe';
 import { ResourcesIds } from '../constants';
 import { ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
-import { Language } from '../../shared/language';
+import { Language } from '../../shared/language.native';
 
 describe('Basketball - Calculation Actions Component', () => {
     let component: CalculationActionsComponent;

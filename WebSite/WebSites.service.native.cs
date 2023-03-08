@@ -87,7 +87,7 @@ public static class WebSites
         });
     }
 
-    public static void ConfigureCORS(this IServiceCollection services)
+    public static void ConfigureCors(this IServiceCollection services)
     {
         services.AddCors(options =>
         {

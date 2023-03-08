@@ -1,15 +1,16 @@
-﻿using AutoMapper;
+﻿namespace Settlement.Sportsbook.Soccer.Services.GetMatch;
+
+using AutoMapper;
+using Core.Services.SpecificService;
+using Criteria;
 using Fanex.Data.Repository;
+using Models;
+using Requests;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
-using Settlement.Sportsbook.Soccer.Criteria;
-using Settlement.Sportsbook.Soccer.Models;
-using Settlement.Sportsbook.Soccer.Requests;
-using Match = Settlement.Sportsbook.Soccer.Models.Match;
-using MatchDetail = Settlement.Sportsbook.Soccer.Models.MatchDetail;
-
-namespace Settlement.Sportsbook.Soccer.GetMatch.Services;
+using Match = Models.Match;
+using MatchDetail = Models.MatchDetail;
 
 public interface IMatchService
 {
@@ -19,7 +20,7 @@ public interface IMatchService
 
     Task<Match> GetMatchRefund(GetMatchRequest request);
 
-    Task<MatchDetail> GetLastestMatchDetail(GetLastestMatchDetailRequest request);
+    Task<MatchDetail> GetLatestMatchDetail(GetLatestMatchDetailRequest request);
 
     Task<List<string>> GetSpecificBetTypes(GetSpecificBetTypeRequest request);
 
@@ -189,9 +190,9 @@ public class MatchServiceImp : IMatchService
         };
     }
 
-    private static MatchDetail HandleResultDetailSoccer(MatchDetail match, List<ResultDetail> resultdetails)
+    private static MatchDetail HandleResultDetailSoccer(MatchDetail match, List<ResultDetail> resultDetails)
     {
-        var externalResultDetail = resultdetails.Where(result => result.SourceId == SourceType.SBO).ToList();
+        var externalResultDetail = resultDetails.Where(result => result.SourceId == SourceType.Sbo).ToList();
         var halfTimeResult = externalResultDetail.Find(result => result.ResourceId == ResourceType.Halftime);
         var fullTimeResult = externalResultDetail.Find(result => result.ResourceId == ResourceType.Final);
 
@@ -210,9 +211,9 @@ public class MatchServiceImp : IMatchService
         return match;
     }
 
-    public async Task<MatchDetail> GetLastestMatchDetail(GetLastestMatchDetailRequest request)
+    public async Task<MatchDetail> GetLatestMatchDetail(GetLatestMatchDetailRequest request)
     {
-        var criteria = mapper.Map<GetLastestMatchDetailRequest, GetLastestMatchDetailCriteria>(request);
+        var criteria = mapper.Map<GetLatestMatchDetailRequest, GetLatestMatchDetailCriteria>(request);
         var matchDetail = await repository.GetAsync<MatchDetail>(criteria);
         matchDetail.RefDataService = refDataService;
 

@@ -5,11 +5,6 @@ using Microsoft.AspNetCore.Http;
 using Settlement.FastMarkets.Models;
 using Settlement.FastMarkets.Requests;
 using Settlement.FastMarkets.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Settlement.FastMarkets.UnitTests.Services;
 
@@ -17,9 +12,6 @@ public class CreateQueryServiceTests
 {
     private readonly IFastMarketResultService fastMarketResultService;
     private readonly IEventCounterService eventCounterService;
-    private readonly IMapper mapper;
-    private readonly INapSession currentSession;
-    private readonly IHttpContextAccessor accessor;
 
     private readonly CreateQueryService service;
 
@@ -31,10 +23,15 @@ public class CreateQueryServiceTests
         mapperConfig.AddProfile<FastMarketAutoMapperProfile>();
         var config = new MapperConfiguration(mapperConfig);
         var mapper = new Mapper(config);
-        currentSession = Substitute.For<INapSession>();
-        accessor = Substitute.For<IHttpContextAccessor>();
-        var context = new DefaultHttpContext();
-        context.Connection.RemoteIpAddress = new System.Net.IPAddress(1);
+        var currentSession = Substitute.For<INapSession>();
+        var accessor = Substitute.For<IHttpContextAccessor>();
+        var context = new DefaultHttpContext
+        {
+            Connection =
+            {
+                RemoteIpAddress = new System.Net.IPAddress(1)
+            }
+        };
         accessor.HttpContext = context;
         service = new CreateQueryServiceImp(fastMarketResultService, eventCounterService, mapper, currentSession,
             accessor);

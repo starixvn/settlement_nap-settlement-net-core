@@ -1,11 +1,11 @@
 ﻿using MediatR;
 using Settlement.Core.Models;
-using Settlement.Setting.Models;
-using Settlement.Setting.Requests;
 using Settlement.Setting.Requests.ProviderManager;
 using Settlement.Setting.Services;
 
 namespace Settlement.Setting.Handlers;
+
+using Models.ProviderManager;
 
 public class ProviderManagerHandler :
         IRequestHandler<GetProviderRequest, List<ProviderModel>>,

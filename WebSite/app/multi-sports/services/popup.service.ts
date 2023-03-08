@@ -1,9 +1,9 @@
 import { AutoSettingPosition } from './../constants/change-setting-type.native';
 import { Injectable } from '@angular/core';
-import { MultiSport, PopupProperties, Match, SportMatch, LeagueMatch, AutoCalcSetting } from './../models';
+import { PopupProperties, Match, SportMatch, LeagueMatch } from './../models';
 import { DialogBoxService } from './../../shared/services';
 import { AutoSetting, DialogDataIframe } from './../../shared/models';
-import { Language } from './../../shared/language';
+import { Language } from '../../shared/language.native';
 import { HandleActionsService } from './handle-actions.service';
 import { MultiSportService } from './multi-sport.service';
 import * as _ from 'lodash';
@@ -27,7 +27,7 @@ export class PopupService {
         this.dialogBoxService.popup(dialogData, '1011px', '800px');
     }
 
-    public popupCalc(match: Match, sports: SportMatch[], multiSport: MultiSport) {
+    public popupCalc(match: Match, sports: SportMatch[]) {
         this.properties.title = Language.CalcPopupTitle;
         this.setPopupSize(match.sportType);
 
@@ -39,11 +39,11 @@ export class PopupService {
             this.properties.src = `apps/other-sports-recalculate?matchId=${match.matchId}&sportType=${match.sportType}`;
         }
 
-        this.openAndHandlePopup(this.properties, match, sports, multiSport);
+        this.openAndHandlePopup(this.properties, match);
     }
 
 
-    public popupRefund(match: Match, sports: SportMatch[], multiSport: MultiSport) {
+    public popupRefund(match: Match, sports: SportMatch[]) {
         this.properties.title = Language.RefundPopupTitle;
         this.setPopupRefundSize(match.sportType);
 
@@ -55,10 +55,10 @@ export class PopupService {
             this.properties.src = `apps/other-sports-refund?matchId=${match.matchId}&sportType=${match.sportType}`;
         }
 
-        this.openAndHandlePopup(this.properties, match, sports, multiSport);
+        this.openAndHandlePopup(this.properties, match);
     }
 
-    public popupEarly(match: Match, sports: SportMatch[], multiSport: MultiSport) {
+    public popupEarly(match: Match, sports: SportMatch[]) {
         this.properties.title = Language.EarlyPopupTitle;
         let sportName = sports.find(item => item.id === match.sportType).name.toLowerCase();
         sportName = _.isEqual(sportName, 'volleyball') ? 'badminton' : sportName;
@@ -66,7 +66,7 @@ export class PopupService {
         this.properties.width = match.sportType === SportType.cricket ? '1400px' :
             this.isPopupEarlySOP(match.sportType) ? '1480px' : '845px';
         this.properties.height = this.isPopupEarlySOP(match.sportType) ? '958px' : '910px';
-        this.openAndHandlePopup(this.properties, match, sports, multiSport);
+        this.openAndHandlePopup(this.properties, match);
     }
 
     private isPopupEarlySOP(sportType: number) {
@@ -74,37 +74,33 @@ export class PopupService {
         SportType.cricket, SportType.volleyBall], sportType);
     }
 
-    public popupChangeRemark(match: Match, sports: SportMatch[], multiSport: MultiSport) {
+    public popupChangeRemark(match: Match) {
         this.properties.title = Language.remarkSettingTitle;
         this.properties.src = `apps/remark-setting?matchId=${match.matchId}&matchCode=${match.matchCode}`;
         this.properties.width = '500px';
         this.properties.height = '270px';
         const frameSrc = encodeURI(this.properties.src);
         const dialogData = new DialogDataIframe(this.properties.title, frameSrc);
-        this.dialogBoxService.popup(dialogData, this.properties.width, this.properties.height).subscribe(() => {
-            this.multiSportService.getRemarkInfo(match.matchId).subscribe((settingResult) => {
-                this.handleActionsService.handleChangeRemarkSetting(settingResult, match, sports, multiSport);
-            });
+        this.dialogBoxService.popup(dialogData, this.properties.width, this.properties.height).subscribe(async() => {
+           const settingResult = await this.multiSportService.getRemarkInfo(match.matchId);
+           this.handleActionsService.handleChangeRemarkSetting(settingResult, match);
         });
     }
 
-    public openAndHandlePopup(properties: PopupProperties, match: Match, sports: SportMatch[], multiSport: MultiSport) {
+    public openAndHandlePopup(properties: PopupProperties, match: Match) {
         const frameSrc = encodeURI(properties.src);
         const dialogData = new DialogDataIframe(properties.title, frameSrc);
         this.dialogBoxService.popup(dialogData, properties.width, properties.height).subscribe(result => {
             if (result) {
-                this.handleChangedMatch(match, sports, multiSport);
+                this.handleChangedMatch(match);
             }
         });
     }
 
-    public handleChangedMatch(match: Match, sports: SportMatch[], multiSport: MultiSport) {
+    public handleChangedMatch(match: Match) {
         match.isCalculatingSingle = CalculationStatus.waiting;
         match.showLink = false;
         match.newEventStatus = EventStatus.waiting;
-        match.isCheckedCalcMP = false;
-        match.mixParlay.hasMixParlay = this.handleActionsService.getMixParlayStatus(match);
-        this.handleActionsService.resetCheckboxCalcMixParlay(match, sports, multiSport);
     }
 
     private setPopupSize(sportType: number) {

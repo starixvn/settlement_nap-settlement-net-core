@@ -3,10 +3,11 @@ using Fanex.NAP.Client.Helpers.Web;
 using Fanex.NAP.Client.Services;
 using Fanex.NAP.Core.Business;
 using NSubstitute;
-using Settlement.Core.Configuration;
 using Settlement.Outright.Services;
 
 namespace Settlement.Sportsbook.Outright.UnitTests.services;
+
+using Core.Configurations;
 
 public class OutrightPermissionServiceTests
 {

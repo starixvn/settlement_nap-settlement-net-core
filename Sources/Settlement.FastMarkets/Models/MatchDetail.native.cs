@@ -35,54 +35,30 @@ public class MatchDetail
 
     public string HalfTimeHomeScore
     {
-        get
-        {
-            return EmptyScore(halfTimeHomeScore);
-        }
+        get => EmptyScore(halfTimeHomeScore);
 
-        set
-        {
-            halfTimeHomeScore = value;
-        }
+        set => halfTimeHomeScore = value;
     }
 
     public string HalfTimeAwayScore
     {
-        get
-        {
-            return EmptyScore(halfTimeAwayScore);
-        }
+        get => EmptyScore(halfTimeAwayScore);
 
-        set
-        {
-            halfTimeAwayScore = value;
-        }
+        set => halfTimeAwayScore = value;
     }
 
     public string FinalHomeScore
     {
-        get
-        {
-            return EmptyScore(finalHomeScore);
-        }
+        get => EmptyScore(finalHomeScore);
 
-        set
-        {
-            finalHomeScore = value;
-        }
+        set => finalHomeScore = value;
     }
 
     public string FinalAwayScore
     {
-        get
-        {
-            return EmptyScore(finalAwayScore);
-        }
+        get => EmptyScore(finalAwayScore);
 
-        set
-        {
-            finalAwayScore = value;
-        }
+        set => finalAwayScore = value;
     }
 
     public string BetStatus { get; set; }
@@ -99,10 +75,7 @@ public class MatchDetail
             return goal.GetGoalRecord();
         }
 
-        set
-        {
-            goalRecord = string.IsNullOrEmpty(value) ? value : value.ToUpperInvariant();
-        }
+        set => goalRecord = string.IsNullOrEmpty(value) ? value : value.ToUpperInvariant();
     }
 
     public bool IsExistFgLg { get; set; }

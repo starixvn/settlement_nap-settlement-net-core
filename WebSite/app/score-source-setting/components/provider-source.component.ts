@@ -6,7 +6,7 @@ import { ProviderSource, Game, UpdateProviderQuery, GetProviderQuery } from '../
 import { MessageBoxService } from '../../shared/services';
 import { ModalDialogMessage, Result } from '../../shared/models';
 import { QueryService } from '../services';
-import { Language } from '../../shared/language';
+import { Language } from '../../shared/language.native';
 import * as _ from 'lodash';
 import { DefaultGames } from '../constants/default-games';
 

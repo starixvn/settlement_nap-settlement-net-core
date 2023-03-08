@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit, Input } from '@angular/core';
 import * as _ from 'lodash';
 import { Match } from '../models';
@@ -7,6 +8,9 @@ import { CalculationMatchDetailBaseComponent } from '../../shared/components/spo
 @Component({
   selector: 'calculate-match-detail',
   templateUrl: './calculate-match-detail.component.html',
+  standalone: true,
+  imports: [CommonModule]
+
 })
 export class CalculateMatchDetailComponent extends CalculationMatchDetailBaseComponent implements OnInit {
   @Input() public match: Match;

@@ -10,7 +10,7 @@ import { RefundActionsComponent } from './refund-actions.component';
 import { BasketballService, BetStatusService, VerificationService } from '../services';
 import { Match, HedgeMatchDetail, VoidBetInfo } from '../models';
 import { MessageBoxService, HttpRequestService, BlockUIService, AioService } from '../../shared/services';
-import { Language } from '../../shared/language';
+import { Language } from '../../shared/language.native';
 import { SettlementStatusId } from '../../shared/constants';
 import { ResourceNameByIdPipe } from '../pipes/resource-name-by-id.pipe';
 import { ResultByTeamNamePipe } from '../../shared/pipes/result-by-team-name.pipe';

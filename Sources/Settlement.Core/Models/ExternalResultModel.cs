@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Settlement.Core.Models;
+﻿namespace Settlement.Core.Models;
 
 public class ExternalResultModel
 {

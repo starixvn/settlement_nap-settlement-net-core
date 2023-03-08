@@ -11,7 +11,7 @@ public interface ResultService
 
 public class ResultServiceImp : ResultService
 {
-    private static readonly string[] eventCounterLabels = new[] { "N", "G", "C", "FK", "GK", "T", "B", "P" };
+    private static readonly string[] EventCounterLabels = new[] { "N", "G", "C", "FK", "GK", "T", "B", "P" };
 
     public string MinuteSetPieceResultName(string position, string result)
     {
@@ -42,7 +42,7 @@ public class ResultServiceImp : ResultService
             var value = binaryResult[pos];
             if (value.Equals('1'))
             {
-                var result = eventCounterLabels[pos];
+                var result = EventCounterLabels[pos];
                 if (!string.IsNullOrWhiteSpace(result))
                 {
                     results.Add(result);

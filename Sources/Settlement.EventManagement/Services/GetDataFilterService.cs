@@ -1,10 +1,10 @@
-﻿using Settlement.Core.Models;
-using Settlement.Core.Services;
-using Settlement.EventManagement.Criteria;
-using Settlement.EventManagement.Models;
-using Settlement.EventManagement.Requests;
+﻿namespace Settlement.EventManagement.Services;
 
-namespace Settlement.EventManagement.Services;
+using Criteria;
+using Models;
+using Requests;
+using Settlement.Core.Models;
+using Settlement.Core.Services;
 
 public interface GetDataFilterService
 {
@@ -15,7 +15,7 @@ public interface GetDataFilterService
 
 public class GetDataFilterServiceImp : GetDataFilterService
 {
-    private static readonly List<int> PopularSport = new List<int> { SportType.Badminton, SportType.BasketBall, SportType.ESports, SportType.Tennis };
+    private static readonly List<int> PopularSport = new() { SportType.Badminton, SportType.BasketBall, SportType.ESports, SportType.Tennis };
     private const string PopularGroup = "All Popular Sports";
     private const string OtherGroup = "All Other Sports";
 

@@ -4,7 +4,7 @@ import { Observable, of, throwError } from 'rxjs';
 import { mergeMap } from 'rxjs/operators'
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Language } from '../language';
+import { Language } from '../language.native';
 import { MessageBoxService } from './message-box.service.native';
 import { ModalDialogMessage } from '../models/modal-dialog-message.model';
 import { decodeAsync } from '@msgpack/msgpack';

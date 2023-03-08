@@ -23,12 +23,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Fanex.Caching" Version="2.2.3-beta2" />
+    <PackageReference Include="Fanex.Caching" Version="2.2.3" />
     <PackageReference Include="Fanex.Data" Version="4.2.2" />
     <PackageReference Include="Fanex.Data.Repository" Version="4.2.2" />
     <PackageReference Include="Fanex.Logging" Version="2.0.1" />
     <PackageReference Include="Fanex.NAP.Client.AspNetCore" Version="2.0.0.1" />
-    <PackageReference Include="Fanex.RemotingRef" Version="1.5.0.1-beta2" />
+    <PackageReference Include="Fanex.RemotingRef" Version="1.5.0.1" />
     <PackageReference Include="Fanex.Settlement.Converter" Version="1.0.0.1" />
     <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.7" />
     <PackageReference Include="Microsoft.AspNetCore" Version="2.2.0" />

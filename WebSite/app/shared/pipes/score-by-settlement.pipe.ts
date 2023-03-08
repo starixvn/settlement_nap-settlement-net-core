@@ -1,6 +1,6 @@
 ﻿import { Pipe, PipeTransform } from '@angular/core';
 import { SettlementStatusId } from '../constants';
-import { Language } from '../language';
+import { Language } from '../language.native';
 
 @Pipe({
     name: 'scoreBySettlement',

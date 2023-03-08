@@ -10,7 +10,7 @@ import { EarlyService, BasketballService, VerificationService } from '../service
 import { Match } from '../models';
 import { MessageBoxService, HttpRequestService, BlockUIService, AioService } from '../../shared/services';
 import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
-import { Language } from '../../shared/language';
+import { Language } from '../../shared/language.native';
 import * as _ from 'lodash';
 import { ResultSettingModel } from '../../shared/models';
 import { MatchDetail, Permission, ResultDetail, ExternalResultDetail } from '../../shared/models/sportsbook-sop';

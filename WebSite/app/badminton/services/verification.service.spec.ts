@@ -6,7 +6,7 @@ import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.p
 import { ResultDetail } from '../../shared/models/sportsbook-sop/result-detail.model';
 import { ExternalResultDetail } from '../../shared/models/sportsbook-sop';
 import { ResultByTeamNamePipe } from '../../shared/pipes/result-by-team-name.pipe';
-import { ModalContentDialogComponent } from '../../shared/components';
+import { ModalContentDialogComponent } from '../../shared/components/modal-dialog/modal-content-dialog.component';
 import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { ModalDialogComponent } from '../../shared/components/modal-dialog/modal-dialog.component';
 
@@ -48,11 +48,11 @@ describe('VerificationService', () => {
         NgbModule
       ],
     })
-    .overrideModule(BrowserDynamicTestingModule, {
-      set: {
-        entryComponents: [ModalDialogComponent, ModalContentDialogComponent],
-      },
-    });
+      .overrideModule(BrowserDynamicTestingModule, {
+        set: {
+          entryComponents: [ModalDialogComponent, ModalContentDialogComponent],
+        },
+      });
     service = TestBed.inject(VerificationService);
   });
 
@@ -75,25 +75,25 @@ describe('VerificationService', () => {
 
   describe('hasTicketBetOnMap', () => {
     it('should return true if exist tickets on map', () => {
-        resultDetail.ticketStatus = 'Running';
+      resultDetail.ticketStatus = 'Running';
 
-        const result = service.hasTicketBetOnMap([resultDetail]);
+      const result = service.hasTicketBetOnMap([resultDetail]);
 
-        expect(result).toBe(true);
+      expect(result).toBe(true);
     });
 
     it('should return false if there is no ticket on final', () => {
-        resultDetail.ticketStatus = 'No Ticket';
+      resultDetail.ticketStatus = 'No Ticket';
 
-        const result = service.hasTicketBetOnMap([resultDetail]);
+      const result = service.hasTicketBetOnMap([resultDetail]);
 
-        expect(result).toBe(false);
+      expect(result).toBe(false);
     });
   });
 
   it("verifyMatchScoreOnCalculation - should call service", () => {
     const intervalCalculationService = TestBed.inject(IntervalCalculationService);
-    spyOn(intervalCalculationService, 'isMatchNotCheckedWhenChangingIntervals');
+    intervalCalculationService.isMatchNotCheckedWhenChangingIntervals = jest.fn();
     service.verifyMatchScoreOnCalculation(resultDetails);
 
     expect(intervalCalculationService.isMatchNotCheckedWhenChangingIntervals).toHaveBeenCalled();
@@ -102,7 +102,7 @@ describe('VerificationService', () => {
   describe('verifyIntervalsOnCalculation', () => {
     it('should alert when first validation return true', () => {
       const intervalCalculationService = TestBed.inject(IntervalCalculationService);
-      spyOn(intervalCalculationService, 'isIntervalNotCheckedWhenCalculateMatch').and.returnValue(true);
+      intervalCalculationService.isIntervalNotCheckedWhenCalculateMatch = jest.fn().mockReturnValue(true);
       const result = service.verifyIntervalsOnCalculation(resultDetails, false);
 
       expect(result).toEqual("WARNING! Cannot continue due to related intervals are not selected or calculated.");
@@ -110,8 +110,8 @@ describe('VerificationService', () => {
 
     it('should alert when second validation return true', () => {
       const intervalCalculationService = TestBed.inject(IntervalCalculationService);
-      spyOn(intervalCalculationService, 'isIntervalNotCheckedWhenCalculateMatch').and.returnValue(false);
-      spyOn(intervalCalculationService, 'isNonCheckedIntervalsConsistent').and.returnValue(true);
+      intervalCalculationService.isIntervalNotCheckedWhenCalculateMatch = jest.fn().mockReturnValue(false);
+      intervalCalculationService.isNonCheckedIntervalsConsistent = jest.fn().mockReturnValue(true);
       const result = service.verifyIntervalsOnCalculation(resultDetails, false);
 
       expect(result).toEqual("WARNING! Cannot continue due to selected intervals are inconsistent with Match/Full Time score.");
@@ -119,8 +119,8 @@ describe('VerificationService', () => {
 
     it('should return true when both validations are passed', () => {
       const intervalCalculationService = TestBed.inject(IntervalCalculationService);
-      spyOn(intervalCalculationService, 'isIntervalNotCheckedWhenCalculateMatch').and.returnValue(false);
-      spyOn(intervalCalculationService, 'isNonCheckedIntervalsConsistent').and.returnValue(false);
+      intervalCalculationService.isIntervalNotCheckedWhenCalculateMatch = jest.fn().mockReturnValue(false);
+      intervalCalculationService.isNonCheckedIntervalsConsistent = jest.fn().mockReturnValue(false);
       const result = service.verifyIntervalsOnCalculation(resultDetails, false);
 
       expect(result).toEqual("");

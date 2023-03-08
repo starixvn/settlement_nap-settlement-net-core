@@ -1,14 +1,9 @@
 ﻿using Microsoft.Extensions.Options;
-using NSubstitute;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.Aio.Handlers;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Requests;
-using Settlement.Sportsbook.Aio.Services;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace Settlement.Sportsbook.Aio.UnitTests.Handlers;
 
@@ -35,7 +30,7 @@ public class AioHandlerTests
         var result = new AioMatch();
         service.GetMatch(Arg.Any<GetMatchRequest>()).Returns(result);
 
-        var actual = await handler.Handle(new GetMatchRequest(), new System.Threading.CancellationToken());
+        var actual = await handler.Handle(new GetMatchRequest(), new CancellationToken());
 
         Assert.Equal(result, actual);
     }
@@ -46,7 +41,7 @@ public class AioHandlerTests
         var result = new Result();
         service.Settle(Arg.Any<SettleRequest>()).Returns(result);
 
-        var actual = await handler.Handle(new SettleRequest(), new System.Threading.CancellationToken());
+        var actual = await handler.Handle(new SettleRequest(), new CancellationToken());
 
         Assert.Equal(result, actual);
     }
@@ -57,7 +52,7 @@ public class AioHandlerTests
         var result = new List<Models.ResultDetail>();
         service.GetRecalResult(Arg.Any<GetRecalResultRequest>()).Returns(result);
 
-        var actual = await handler.Handle(new GetRecalResultRequest(), new System.Threading.CancellationToken());
+        var actual = await handler.Handle(new GetRecalResultRequest(), new CancellationToken());
 
         Assert.Equal(result, actual);
     }
@@ -68,7 +63,7 @@ public class AioHandlerTests
         var result = new MarkedTickets();
         service.CheckMarkedTickets(Arg.Any<CheckMarkedTicketsRequest>()).Returns(result);
 
-        var actual = await handler.Handle(new CheckMarkedTicketsRequest(), new System.Threading.CancellationToken());
+        var actual = await handler.Handle(new CheckMarkedTicketsRequest(), new CancellationToken());
 
         Assert.Equal(result, actual);
     }
@@ -79,7 +74,7 @@ public class AioHandlerTests
         var result = new Result { ErrCode = 1 };
         service.VerifyNoRunningOdds(Arg.Any<CheckRunningOddsRequest>()).Returns(result);
 
-        var actual = await handler.Handle(new CheckRunningOddsRequest(), new System.Threading.CancellationToken());
+        var actual = await handler.Handle(new CheckRunningOddsRequest(), new CancellationToken());
 
         Assert.Equal(result, actual);
     }
@@ -89,8 +84,8 @@ public class AioHandlerTests
     {
         var appSettings = new AppSettingsKey { EnableVerifyingRunningOdds = false };
         var appSettingsOptions = Options.Create(appSettings);
-        AioHandler handlerTemp = new AioHandler(service, permission, appSettingsOptions);
-        var actual = await handlerTemp.Handle(new CheckRunningOddsRequest(), new System.Threading.CancellationToken());
+        var handlerTemp = new AioHandler(service, permission, appSettingsOptions);
+        var actual = await handlerTemp.Handle(new CheckRunningOddsRequest(), new CancellationToken());
 
         Assert.True(actual.IsSuccessful);
         await service.DidNotReceive().VerifyNoRunningOdds(Arg.Any<CheckRunningOddsRequest>());
@@ -102,7 +97,7 @@ public class AioHandlerTests
         var result = new Result();
         service.SaveScore(Arg.Any<SaveScoreRequest>()).Returns(result);
 
-        var actual = await handler.Handle(new SaveScoreRequest(), new System.Threading.CancellationToken());
+        var actual = await handler.Handle(new SaveScoreRequest(), new CancellationToken());
 
         Assert.Equal(result, actual);
     }
@@ -113,7 +108,7 @@ public class AioHandlerTests
         var result = new Result();
         service.SettleChildMatch(Arg.Any<SettleChildMatchRequest>()).Returns(result);
 
-        var actual = await handler.Handle(new SettleChildMatchRequest(), new System.Threading.CancellationToken());
+        var actual = await handler.Handle(new SettleChildMatchRequest(), new CancellationToken());
 
         Assert.Equal(result, actual);
     }

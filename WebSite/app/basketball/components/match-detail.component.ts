@@ -1,15 +1,19 @@
-﻿import * as _ from 'lodash';
+﻿import { CommonModule } from '@angular/common';
+import * as _ from 'lodash';
 import { Component, Input, OnInit } from '@angular/core';
 import { Match } from '../models';
 import { BasketballService } from '../services';
 import { ResourcesIds } from '../constants';
 import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
 import { MatchDetail, ResultDetail } from '../../shared/models/sportsbook-sop';
-import { ResultStatus, SettlementStatusId } from '../../shared/constants';
+import { SettlementStatusId } from '../../shared/constants';
+import { ScoreBySettlementPipe } from '../../shared/pipes/score-by-settlement.pipe';
 
 @Component({
     selector: 'match-detail',
-    templateUrl: './match-detail.component.html'
+    templateUrl: './match-detail.component.html',
+    standalone: true,
+    imports: [CommonModule, ScoreBySettlementPipe]
 })
 export class MatchDetailComponent implements OnInit {
     @Input() public match: Match;
@@ -17,7 +21,7 @@ export class MatchDetailComponent implements OnInit {
     public matchDetail: MatchDetail;
     public resultDetail: ResultDetail[];
     constructor(private readonly basketballService: BasketballService,
-                private readonly intervalBackgroundPipe: IntervalBackgroundPipe) { }
+        private readonly intervalBackgroundPipe: IntervalBackgroundPipe) { }
 
     public ngOnInit() {
         this.matchDetail = this.match.matchDetail;
@@ -32,12 +36,12 @@ export class MatchDetailComponent implements OnInit {
         let className = '';
 
         if (_.isEqual(resultDetail.resourceId, ResourcesIds.finalScore)) {
-                className +=  'final-score ';
+            className += 'final-score ';
         } else if (_.isEqual(resultDetail.resourceId, ResourcesIds.htScore)) {
             className += 'ht-score ';
         }
 
-        return className +  this.intervalBackgroundPipe.transform(resultDetail.settlementStatusId);
+        return className + this.intervalBackgroundPipe.transform(resultDetail.settlementStatusId);
     }
 
     public refresh() {

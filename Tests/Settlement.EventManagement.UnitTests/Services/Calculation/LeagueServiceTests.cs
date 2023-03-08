@@ -1,23 +1,18 @@
 ﻿using AutoMapper;
 using AutoMapper.Configuration;
 using Fanex.Data.Repository;
-using NSubstitute;
 using Settlement.Core.Services;
 using Settlement.EventManagement.Criteria;
 using Settlement.EventManagement.Models;
 using Settlement.EventManagement.Models.Calculation;
 using Settlement.EventManagement.Requests;
 using Settlement.EventManagement.Services.Calculation;
-using System.Collections.Generic;
-using Xunit;
 
 namespace Settlement.EventManagement.UnitTests.Services.Calculation;
 
 public class LeagueServiceTests
 {
     private readonly IDynamicRepository repository;
-
-    private readonly IMapper mapper;
 
     private readonly IRefDataService refDataService;
 
@@ -30,7 +25,7 @@ public class LeagueServiceTests
         var mapperConfig = new MapperConfigurationExpression();
         mapperConfig.AddProfile<EventManagementAutoMapperProfile>();
         var config = new MapperConfiguration(mapperConfig);
-        mapper = new Mapper(config);
+        var mapper = new Mapper(config);
         service = new LeagueServiceImp(repository, mapper);
     }
 
@@ -50,7 +45,7 @@ public class LeagueServiceTests
             new () {LeagueId = 1, RefDataService = refDataService},
             new () {LeagueId = 1, RefDataService = refDataService},
             new () {LeagueId = 2, RefDataService = refDataService},
-            new () {LeagueId = 1, RefDataService = refDataService},
+            new () {LeagueId = 1, RefDataService = refDataService}
         };
 
         refDataService.GetLeagueName(Arg.Any<int>()).Returns(string.Empty);

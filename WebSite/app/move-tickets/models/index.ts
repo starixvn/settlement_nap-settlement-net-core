@@ -8,7 +8,6 @@ export * from './date-filter.model';
 export * from './move-tickets-request.model';
 export * from './child-match.model';
 export * from './get-child-matches-request.model';
-export * from './calculate-mp-request.model';
 export * from './validate-matches-request.model';
 export * from './get-move-tickets-request.model';
 export * from './match.model';

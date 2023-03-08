@@ -1,13 +1,12 @@
 ﻿using AutoMapper;
 using AutoMapper.Configuration;
 using Fanex.Data.Repository;
-using Settlement.Setting.Criteria;
 using Settlement.Setting.Criteria.ProviderManager;
-using Settlement.Setting.Models;
-using Settlement.Setting.Requests;
 using Settlement.Setting.Requests.ProviderManager;
 
 namespace Settlement.Setting.UnitTests.Services;
+
+using Models.ProviderManager;
 
 public class ProviderSettingServiceTests
 {
@@ -33,9 +32,9 @@ public class ProviderSettingServiceTests
     {
         var fakeSources = new List<ProviderModel>
         {
-            new ProviderModel { SourceId = 1 },
-            new ProviderModel { SourceId = 2 },
-            new ProviderModel { SourceId = 3 },
+            new() { SourceId = 1 },
+            new() { SourceId = 2 },
+            new() { SourceId = 3 }
         };
 
         repository.FetchAsync<ProviderModel>(Arg.Any<GetProviderCriteria>()).Returns(fakeSources);

@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 import { RequestService } from "../services/request.service";
 import { MessageBoxService } from '../../shared/services';
 import { ModalDialogMessage, Result } from '../../shared/models';
-import { Language } from '../../shared/language';
+import { Language } from '../../shared/language.native';
 import { League, TimeSettingQuery } from '../models';
 import { AutoType } from '../constants/auto-type';
 @Component({

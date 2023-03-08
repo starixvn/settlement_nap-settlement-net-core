@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
+using System.Globalization;
 
 namespace Settlement.EventManagement.Models;
 
@@ -14,17 +15,6 @@ public class BaseMatch
     private string suspenderHalfTime = string.Empty;
 
     private string suspenderFullTime = string.Empty;
-
-    private readonly List<int> mergedParlaySports = new List<int>
-        {
-            Core.Constants.SportType.Badminton,
-            Core.Constants.SportType.BasketBall,
-            Core.Constants.SportType.Cricket,
-            Core.Constants.SportType.ESports,
-            Core.Constants.SportType.Tennis,
-            Core.Constants.SportType.BeachVolleyball,
-            Core.Constants.SportType.VolleyBall
-        };
 
     [JsonIgnore, IgnoreMember]
     public IRefDataService RefDataService { get; set; }
@@ -57,7 +47,7 @@ public class BaseMatch
     public DateTime KickOffTime { get; set; }
 
     [Key("kickOffTime")]
-    public string KickOff => KickOffTime.ToString();
+    public string KickOff => KickOffTime.ToString(CultureInfo.InvariantCulture);
 
     [JsonIgnore, IgnoreMember]
     public DateTime EventDate { get; set; }
@@ -76,12 +66,6 @@ public class BaseMatch
 
     [Key("finalAwayScore")]
     public int? FinalAwayScore { get; set; }
-
-    [Key("isExistRunningTicketParlay")]
-    public bool IsExistRunningTicketParlay { get; set; }
-
-    [Key("isExistMarkedTicketParlay")]
-    public bool IsExistMarkedTicketParlay { get; set; }
 
     [IgnoreMember]
     public bool IsExistEarlyBetTypes { get; set; }
@@ -123,10 +107,7 @@ public class BaseMatch
 
         set
         {
-            if (OriginalEventStatus == null)
-            {
-                OriginalEventStatus = value;
-            }
+            OriginalEventStatus ??= value;
             eventStatus = value;
         }
     }
@@ -138,7 +119,7 @@ public class BaseMatch
     public string BetStatus { get; set; }
 
     [Key("remark")]
-    public RemarkSettingModel Remark => new RemarkSettingModel(SettlementStatus);
+    public RemarkSettingModel Remark => new(SettlementStatus);
 
     [IgnoreMember]
     public byte SettlementStatus { get; set; }
@@ -193,22 +174,10 @@ public class BaseMatch
     public bool IsExistMarkedTicket { get; set; }
 
     [IgnoreMember]
-    public bool IsExistEarlyBettypesParlay { get; set; }
-
-    [IgnoreMember]
-    public bool IsRunningEarlyBettypesParlay { get; set; }
-
-    [IgnoreMember]
-    public bool IsWaitingEarlyBettypesParlay { get; set; }
-
-    [Key("isMergedParlay")]
-    public bool IsMergedParlay => mergedParlaySports.Contains(SportType);
-
-    [IgnoreMember]
     public int ChildMatchType { get; set; }
 
     [IgnoreMember]
-    public List<SiteMatch> SiteMatch { get; set; } = new List<SiteMatch>();
+    public List<SiteMatch> SiteMatch { get; set; } = new();
 
     [Key("offerLive")]
     public bool OfferLive { get; set; }

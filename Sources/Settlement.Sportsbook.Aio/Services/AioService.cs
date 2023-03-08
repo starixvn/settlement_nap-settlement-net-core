@@ -161,6 +161,12 @@ public class AioServiceImp : IAioService
         var requestQuery = createQueryService.QuerySaveScore(request);
         var criteria = validateApiKeyService.CreateNonQueryCommand(requestQuery, $"{requestQuery.ApiKey}-{ApiKeyConstant.SaveScore}") as IReturnValue;
         await repository.ExecuteAsync((INonQueryCommand)criteria);
+
+        if (criteria == null)
+        {
+            return new Result();
+        }
+
         return new Result
         {
             ErrCode = criteria.ErrCode,

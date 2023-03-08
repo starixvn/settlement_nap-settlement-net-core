@@ -1,7 +1,5 @@
 ﻿using MediatR;
 using Settlement.Core.Models;
-using System;
-using System.Collections.Generic;
 
 namespace Settlement.ThirdPartyProducts.Requests;
 

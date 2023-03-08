@@ -1,6 +1,5 @@
 ﻿using Fanex.Data;
 using Fanex.Data.Repository;
-using System;
 
 namespace Settlement.Sportsbook.MoveTickets.Criteria;
 

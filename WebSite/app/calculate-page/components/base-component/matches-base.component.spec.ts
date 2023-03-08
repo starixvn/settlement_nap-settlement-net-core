@@ -1,5 +1,5 @@
 import { Remark } from './../../../shared/models/match-details/remark.model';
-import { Language } from './../../../shared/language';
+import { Language } from '../../../shared/language.native';
 import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { MaterialModule } from "../../../shared/material-module";

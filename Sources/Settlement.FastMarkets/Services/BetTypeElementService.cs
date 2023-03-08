@@ -33,7 +33,7 @@ public class BetTypeElementServiceImp : IBetTypeElementService
             return string.Empty;
         }
 
-        if (fastMarket.BetType == FastMarketBetType.TimeMachineMinutes || fastMarket.BetType == FastMarketBetType.TimeMachineHDP)
+        if (fastMarket.BetType is FastMarketBetType.TimeMachineMinutes or FastMarketBetType.TimeMachineHdp)
         {
             return fastMarket.Result.ToString();
         }

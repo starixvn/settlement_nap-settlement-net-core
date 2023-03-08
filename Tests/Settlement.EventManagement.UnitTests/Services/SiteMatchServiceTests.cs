@@ -212,7 +212,7 @@ public class SiteMatchServiceTests
                 {
                     IsExistFastMarket = siteIsExistFastMarket,
                     IsRunningFastMarket = siteIsRunningFastMarket,
-                    IsExistFastMarketResult = siteIsExistFastMarketResult,
+                    IsExistFastMarketResult = siteIsExistFastMarketResult
                 }
             }
         };

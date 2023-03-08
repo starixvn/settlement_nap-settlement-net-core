@@ -45,8 +45,7 @@ export class HelperService {
     public checkMarkedTickets(matchId: number, selectedResources: ResultDetail[])  {
         const query = {
             matchId,
-            selectedResources,
-            isMergedParlay: true,
+            selectedResources
         };
         return this.httpRequestService.postJson(query, `api/aio/check-marked-tickets`, false);
     }

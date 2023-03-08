@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Settlement.Log.Models;
+﻿namespace Settlement.Log.Models;
 
 public class LogViewModel
 {

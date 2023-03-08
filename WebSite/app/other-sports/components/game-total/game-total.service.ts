@@ -3,7 +3,7 @@ import { ResultStatusId, SettlementStatusId } from '../../../shared/constants';
 import { ResultDetail } from '../../../shared/models/sportsbook-sop';
 import * as _ from 'lodash';
 import {ResourcesIds } from '../../constants';
-import { Language } from '../../../shared/language';
+import { Language } from '../../../shared/language.native';
 import { ResourceNameByIdPipe } from '../../pipes/resource-name-by-id.pipe';
 import { IntervalBackgroundPipe } from '../../../shared/pipes/interval-background.pipe';
 @Injectable()

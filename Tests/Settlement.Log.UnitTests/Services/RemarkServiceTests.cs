@@ -59,7 +59,7 @@ public class RemarkServiceTests
         const string first = "First";
         const string second = "Second";
         const string remarkByNode = "Remark By Node";
-        var value = $"{first}|{second}|";
+        const string value = $"{first}|{second}|";
         remarkNodeService.BetTypes(second, string.Empty).Returns(remarkByNode);
 
         // Act

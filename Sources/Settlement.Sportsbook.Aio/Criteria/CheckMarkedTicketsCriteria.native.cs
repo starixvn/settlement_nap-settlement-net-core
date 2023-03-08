@@ -8,8 +8,6 @@ public class CheckMarkedTicketsCriteria : NonQueryCommand
 
     public bool IsExistMarkedTicket { get; set; }
 
-    public bool IsMergedParlay { get; set; }
-
     [SpParam(Ignored = true)]
     public string DbServer { get; set; }
 

@@ -1,6 +1,4 @@
 ﻿using Settlement.Core.Services;
-using System;
-using System.Collections.Generic;
 using Constants = Settlement.Core.Constants;
 
 namespace Settlement.Log.Models;

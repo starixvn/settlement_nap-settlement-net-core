@@ -1,7 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
-import { Language } from '../../../shared/language';
+import { Language } from '../../../shared/language.native';
 import { CalculateAction } from '../../../shared/constants';
 import { ModalDialogMessage, Result } from '../../../shared/models';
 import { Soccer } from '../soccer.model';

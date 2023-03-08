@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { DialogBoxService } from './../../shared/services';
 import { DialogDataIframe, Match } from './../../shared/models';
-import { Language } from './../../shared/language';
+import { Language } from '../../shared/language.native';
 import * as _ from 'lodash';
 import { CalculationStatus, EventStatus } from '../../shared/constants';
 import { HandleActionsService } from './handle-actions.service';
@@ -36,15 +36,14 @@ export class PopupService {
         const src = `apps/fast-market?matchId=${match.matchId}`;
         const frameSrc = encodeURI(src);
         const dialogData = new DialogDataIframe(Language.FastMarketTile, frameSrc);
-        this.dialogBoxService.popup(dialogData, '985px', '921px').subscribe(result => {
+        this.dialogBoxService.popup(dialogData, '985px', '921px').subscribe(async result => {
             if (result) {
                 this.handleChangedMatch(match);
             }
 
-            this.requestService.getMatchDetail(Number(match.matchId)).subscribe((result: MatchDetail) => {
-                match.enableFastMarket = _.includes(result.autoSettingIcon.match, Icon.yes)
+            const matchDetail = await this.requestService.getMatchDetail(Number(match.matchId)) as MatchDetail;
+                match.enableFastMarket = _.includes(matchDetail.autoSettingIcon.match, Icon.yes)
             });
-        });
     }
 
     public openAndHandlePopup(source: string, title: string, width: string, height: string, match: Match) {

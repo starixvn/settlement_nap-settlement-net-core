@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { MatchResource, ModalDialogMessage, Result } from '../../../shared/models';
+import { MatchResource, ModalDialogMessage } from '../../../shared/models';
 import { MatchAio, SettleQuery } from '../../models';
 import { ResultPipe, ScorePipe } from '../../pipes';
 import { AioService, MessageBoxService } from '../../../shared/services';
@@ -9,7 +9,7 @@ import { CalculateAction, MatchStatus, ResultStatusId, SettlementStatusId, Sport
 import { ApiKeys, KickOffTime, ResourcesIds } from '../../constants';
 import { GameTotalService } from './game-total.service';
 import { GameTotalVerificationService } from './game-total-verification.service';
-import { Language } from '../../../shared/language';
+import { Language } from '../../../shared/language.native';
 import { ChildMatch } from '../../models/child-match.model';
 import { SettleChildMatchQuery } from '../../models/settle-child-match-query.model';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
@@ -55,7 +55,7 @@ export class GameTotalCalculationComponent implements SportTemplate {
       apikey: ApiKeys.NormalMatch,
       settleType: "MNL"
     };
-    this.match = await this.aioService.getMatch(matchQuery).toPromise() as MatchAio;
+    this.match = await this.aioService.getMatch(matchQuery) as MatchAio;
     this.resultDetails = this.match.resultDetails;
     this.totalSetOriginal = _.cloneDeep(this.totalSet);
     this.gameTotalService.resetHomeAway(this.match.resultDetails, this.match.permission.isLeader);
@@ -216,7 +216,7 @@ export class GameTotalCalculationComponent implements SportTemplate {
         sportType: this.match.matchDetail.sportType,
       };
 
-      const result = await this.aioService.verifyChangedSettledTickets(this.match.resultDetails, getResultQuery).toPromise();
+      const result = await this.aioService.verifyChangedSettledTickets(this.match.resultDetails, getResultQuery);
       if (result) {
         this.confirmDialogMessage.message = Language.recalculateNotification;
         this.messageBoxService.confirm(this.confirmDialogMessage, () => {
@@ -251,7 +251,7 @@ export class GameTotalCalculationComponent implements SportTemplate {
       isReSettledTickets, isScoreDirect, betStatus, childMatchIds);
     settleQuery.refResultStatus = this.refResultStatus;
 
-    const result = await this.aioService.push(settleQuery).toPromise() as Result;
+    const result = await this.aioService.push(settleQuery);
     if (result.isSuccessful) {
       await this.handleChildMatch(settleQuery, type);
       this.settleHedgeMatch(settleQuery);
@@ -264,7 +264,7 @@ export class GameTotalCalculationComponent implements SportTemplate {
     if (this.ChildMatchSelected.length > 0 && type === CalculateAction.calculate) {
       const settleChildMatchQuery = new SettleChildMatchQuery(this.ChildMatchSelected,
         settleQuery.actionName, settleQuery.isReSettledTickets);
-      await this.aioService.pushChildMatch(settleChildMatchQuery).toPromise();
+      await this.aioService.pushChildMatch(settleChildMatchQuery);
     }
   }
 
@@ -274,7 +274,7 @@ export class GameTotalCalculationComponent implements SportTemplate {
     if (hedgeMatchId > 0) {
       query.matchId = hedgeMatchId;
       query.childMatchIds = "";
-      this.aioService.push(query).toPromise().then(() => {
+      this.aioService.push(query).then(() => {
         this.messageBoxService.closePopup();
       });
     } else {

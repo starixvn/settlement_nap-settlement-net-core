@@ -1,12 +1,9 @@
-﻿using Settlement.FastMarkets.Controllers;
-using System.Threading.Tasks;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using NSubstitute;
 using Settlement.Core.Models;
+using Settlement.FastMarkets.Controllers;
 using Settlement.FastMarkets.Models;
 using Settlement.FastMarkets.Requests;
-using Xunit;
 using MatchDetail = Settlement.FastMarkets.Models.MatchDetail;
 
 namespace Settlement.FastMarkets.UnitTests.Controllers;
@@ -28,7 +25,7 @@ public class FastMarketsControllerTests
     {
         var actual = controller.InitialFilter() as OkObjectResult;
 
-        Assert.IsType<FastMarketFilter>(actual.Value);
+        Assert.IsType<FastMarketFilter>(actual?.Value);
         Assert.Equal(200, actual.StatusCode);
     }
 
@@ -39,7 +36,7 @@ public class FastMarketsControllerTests
 
         var actual = await controller.GetBetTypeInterval(new BetTypeIntervalRequest()) as OkObjectResult;
 
-        Assert.IsType<FastMarketModel>(actual.Value);
+        Assert.IsType<FastMarketModel>(actual?.Value);
         Assert.Equal(200, actual.StatusCode);
     }
 
@@ -50,7 +47,7 @@ public class FastMarketsControllerTests
 
         var actual = await controller.GetMatch(new MatchDetailRequest()) as OkObjectResult;
 
-        Assert.IsType<MatchDetail>(actual.Value);
+        Assert.IsType<MatchDetail>(actual?.Value);
         Assert.Equal(200, actual.StatusCode);
     }
 
@@ -61,7 +58,7 @@ public class FastMarketsControllerTests
 
         var actual = await controller.CheckingMarkedTickets(new CheckingMarkedTicketsRequest()) as OkObjectResult;
 
-        Assert.IsType<MarkedTickets>(actual.Value);
+        Assert.IsType<MarkedTickets>(actual?.Value);
         Assert.Equal(200, actual.StatusCode);
     }
 
@@ -72,7 +69,7 @@ public class FastMarketsControllerTests
 
         var actual = await controller.Settle(new SettleRequest()) as OkObjectResult;
 
-        Assert.IsType<Result>(actual.Value);
+        Assert.IsType<Result>(actual?.Value);
         Assert.Equal(200, actual.StatusCode);
     }
 
@@ -83,7 +80,7 @@ public class FastMarketsControllerTests
 
         var actual = await controller.UpdateWaterBreakSetting(new UpdateWaterBreakSettingRequest()) as OkObjectResult;
 
-        Assert.IsType<Result>(actual.Value);
+        Assert.IsType<Result>(actual?.Value);
         Assert.Equal(200, actual.StatusCode);
     }
 }

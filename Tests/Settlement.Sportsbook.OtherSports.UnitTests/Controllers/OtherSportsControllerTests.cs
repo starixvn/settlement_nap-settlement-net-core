@@ -1,18 +1,15 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using NSubstitute;
 using Settlement.Core.Models;
 using Settlement.Sportsbook.OtherSports.Controllers;
 using Settlement.Sportsbook.OtherSports.Models;
 using Settlement.Sportsbook.OtherSports.Requests;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace Settlement.Sportsbook.OtherSports.UnitTests.Controllers;
 
 public class OtherSportsControllerTests
 {
-    private OtherSportsController controller;
+    private readonly OtherSportsController controller;
 
     private readonly IMediator mediator;
 
@@ -32,7 +29,7 @@ public class OtherSportsControllerTests
         var result = await controller.GetMatch(new GetMatchRequest()) as OkObjectResult;
 
         // Assert
-        Assert.IsType<OtherSportsMatchModel>(result.Value);
+        Assert.IsType<OtherSportsMatchModel>(result?.Value);
     }
 
     [Fact]
@@ -45,33 +42,7 @@ public class OtherSportsControllerTests
         var result = await controller.Calculate(new CalculateRequest()) as OkObjectResult;
 
         // Assert
-        Assert.IsType<Result>(result.Value);
-    }
-
-    [Fact]
-    public async Task Refund_Always_ReturnResult()
-    {
-        // Arrange
-        mediator.Send(Arg.Any<RefundRequest>()).Returns(new Result());
-
-        // Act
-        var result = await controller.Refund(new RefundRequest()) as OkObjectResult;
-
-        // Assert
-        Assert.IsType<Result>(result.Value);
-    }
-
-    [Fact]
-    public async Task RefundParlay_Always_ReturnResult()
-    {
-        // Arrange
-        mediator.Send(Arg.Any<RefundParlayRequest>()).Returns(new Result());
-
-        // Act
-        var result = await controller.RefundParlay(new RefundParlayRequest()) as OkObjectResult;
-
-        // Assert
-        Assert.IsType<Result>(result.Value);
+        Assert.IsType<Result>(result?.Value);
     }
 
     [Fact]
@@ -84,6 +55,6 @@ public class OtherSportsControllerTests
         var result = await controller.CheckMarkedTickets(new CheckingMarkedTicketsRequest()) as OkObjectResult;
 
         // Assert
-        Assert.IsType<MarkedTickets>(result.Value);
+        Assert.IsType<MarkedTickets>(result?.Value);
     }
 }

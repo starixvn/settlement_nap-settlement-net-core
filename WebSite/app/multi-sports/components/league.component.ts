@@ -1,13 +1,13 @@
-import { MultiSport, MatchWaitingRequest, ParlayQuery, LeagueMatch, Match, SportMatch } from './../models';
-import { Component, Input, OnInit, OnChanges, SimpleChanges, OnDestroy, ViewChildren, QueryList, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { MultiSport, MatchWaitingRequest, LeagueMatch, Match, SportMatch } from './../models';
+import { Component, Input, OnInit, OnChanges, SimpleChanges, OnDestroy, ChangeDetectorRef, Injector } from '@angular/core';
 import { DefaultValue } from '../constants';
 import * as _ from 'lodash';
-import { RefreshMatchService, MultiSportService, PopupService, HandleActionsService } from '../services/';
+import { RefreshMatchService, MultiSportService, PopupService } from '../services/';
 import { Subscription } from 'rxjs';
 import { interval } from 'rxjs';
 import { MessageBoxService } from './../../shared/services';
-import { Language } from './../../shared/language';
-import { ModalDialogMessage, Result, Score, Remark, AutoSetting } from '../../shared/models';
+import { Language } from '../../shared/language.native';
+import { ModalDialogMessage, AutoSettingLeagueQuery, AutoSettingMatchQuery, Score, Remark } from '../../shared/models';
 import { SportType, ResultType, BackgroundColor, CalculationStatus, EventStatus } from '../../shared/constants';
 import { Permission } from '../../shared/models/sportsbook-sop';
 import { BackGroundService, SportMatchService } from '../services';
@@ -20,6 +20,12 @@ export class LeagueComponent implements OnInit, OnChanges, OnDestroy {
   @Input() public multiSport: MultiSport;
   @Input() public request: MatchWaitingRequest;
   @Input() public enableRefresh: boolean;
+  private sportMatchService: SportMatchService;
+  private refreshMatchesService: RefreshMatchService;
+  private multiSportService: MultiSportService;
+  private messageBoxService: MessageBoxService;
+  private popupService: PopupService;
+  private backGroundService: BackGroundService;
   public language = Language;
   private readonly period = 5000;
   private readonly autoSettingType = 1;
@@ -27,25 +33,14 @@ export class LeagueComponent implements OnInit, OnChanges, OnDestroy {
   private readonly autoSettingFailed = 3;
   private readonly earlyOverOnlyValue = "1";
   private subscriber: Subscription;
-  private matchIdsCalcMp: string[] = [];
   public sports: SportMatch[];
   public permission: Permission;
   public match: Match;
+  public sportTypeCricket = SportType.cricket;
   public intervalTimer = interval(this.period);
-  public readonly sportTypeCricket = SportType.cricket;
   public readonly dialogMessage: ModalDialogMessage = new ModalDialogMessage();
-  @ViewChildren('calcMPOnLeague') calcMPOnLeague: QueryList<ElementRef>;
-  @ViewChildren('calcMPOnMatch') calcMPOnMatch: QueryList<ElementRef>;
 
-  constructor(
-    private readonly refreshMatchesService: RefreshMatchService,
-    private readonly multiSportService: MultiSportService,
-    private readonly messageBoxService: MessageBoxService,
-    private readonly popupService: PopupService,
-    private readonly handleActionsService: HandleActionsService,
-    private readonly sportMatchService: SportMatchService,
-    private readonly cd: ChangeDetectorRef,
-    private readonly backGroundService: BackGroundService) {
+  constructor(protected injector: Injector, private readonly cd: ChangeDetectorRef) {
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -57,7 +52,13 @@ export class LeagueComponent implements OnInit, OnChanges, OnDestroy {
     this.cd.detectChanges();
   }
 
-  public ngOnInit() {
+  ngOnInit() {
+    this.sportMatchService = this.injector.get(SportMatchService);
+    this.refreshMatchesService = this.injector.get(RefreshMatchService);
+    this.multiSportService = this.injector.get(MultiSportService);
+    this.messageBoxService = this.injector.get(MessageBoxService);
+    this.popupService = this.injector.get(PopupService);
+    this.backGroundService = this.injector.get(BackGroundService);
     this.permission = this.multiSport.permission;
     this.refreshMatches();
   }
@@ -80,50 +81,12 @@ export class LeagueComponent implements OnInit, OnChanges, OnDestroy {
     league.collapse = !league.collapse;
   }
 
-  public selectCalcMPOnSport(checked: boolean) {
-    _.forEach(this.sports, (sport: SportMatch) => {
-      const leagues = sport.leagues.filter((x) => !x.disableCheckCalcMP && !x.isMergedParlay);
-      _.forEach(leagues, (league: LeagueMatch) => {
-        league.isCheckedCalcMP = checked;
-        const matches = league.matches.filter((x) => this.enableCalcMPOnMatch(x) && !x.isMergedParlay);
-        _.forEach(matches, (match: Match) => {
-          match.isCheckedCalcMP = checked;
-        });
-      });
-    });
-  }
-
-  public selectCalcMPOnMatch(league: LeagueMatch) {
-    league.isCheckedCalcMP = this.handleActionsService.isCheckedCalcMpOnLeague(league, this.multiSport.permission.canCalculateMp);
-    this.multiSport.isCheckedCalcMP = this.handleActionsService.isAllCalcMPAllLeaguesChecked(this.sports);
-  }
-
   private refreshMatches() {
     this.subscriber = this.intervalTimer.subscribe(() => {
       if (this.enableRefresh && this.isExistedSport) {
         this.refreshMatchesService.refreshMatches(this.sports, this.request, this.multiSport);
       }
     });
-  }
-
-  public selectCalcMPOnLeague(league: LeagueMatch, checked: boolean) {
-    league.matches.forEach((match) => match.isCheckedCalcMP = this.enableCalcMPOnMatch(match) ? checked : false);
-    this.multiSport.isCheckedCalcMP = this.handleActionsService.isAllCalcMPAllLeaguesChecked(this.sports);
-  }
-
-  public disableSelectCalcMPOnLeague(league: LeagueMatch) {
-    const findMatch = _.find(league.matches, (match: Match) => this.enableCalcMPOnMatch(match));
-    league.disableCheckCalcMP = _.isNil(findMatch);
-    return league.disableCheckCalcMP;
-  }
-
-  public disableSelectAllCalcMP() {
-    const findItem = this.calcMPOnLeague.find(item => !item.nativeElement.disabled);
-    return _.isNil(findItem);
-  }
-
-  public enableCalcMPOnMatch(match: Match) {
-    return this.handleActionsService.enableCalcMPOnMatch(match, this.permission.canCalculateMp);
   }
 
   public isShowCalculationLink(match: Match) {
@@ -140,17 +103,6 @@ export class LeagueComponent implements OnInit, OnChanges, OnDestroy {
     return this.backGroundService.isShowLink(match) && (this.permission.canCalculate || this.permission.canUncalculate || this.permission.canRefund
       || (this.permission.isTrader && match.sportType === SportType.cricket))
       ? BackgroundColor.codeLink : '';
-  }
-
-  public getCalcMPColor(match: Match) {
-    if (match.isExistMarkedTicketParlay) {
-      return BackgroundColor.whiteBlinking;
-    }
-    if (match.isMultiCaled !== match.isRefund) {
-      return match.isMultiCaled ? (match.isExistRunningTicketParlay ? BackgroundColor.pink : BackgroundColor.calculated)
-        : BackgroundColor.calRefund;
-    }
-    return "";
   }
 
   public canAutoSettlement(sportType: number) {
@@ -170,150 +122,133 @@ export class LeagueComponent implements OnInit, OnChanges, OnDestroy {
     return _.includes(overStatus, this.earlyOverOnlyValue) && overStatus.length > 1;
   }
 
-  public getAutoSetting(autoSetting: AutoSetting) {
-    if (autoSetting.isAutoPayoutForMatch && autoSetting.isDirectPayoutForMatch) {
-      return "BOTH";
+  public getAutoSetting(match: Match) {
+    if (this.permission.canAutoPayout) {
+      return match.isAutoPayoutForMatch ? BackgroundColor.iconAuto : BackgroundColor.iconNo;
+    } else {
+      return match.isAutoPayoutForMatch ? BackgroundColor.iconAutoDisabled : BackgroundColor.iconNoDisabled;
     }
-    if (autoSetting.isAutoPayoutForMatch) {
-      return "AUTO";
-    }
-    if (autoSetting.isDirectPayoutForMatch) {
-      return "DIRECT";
-    }
-
-    return "OFF";
-
   }
 
   public changeAutoSetting(match: Match) {
-    if (this.permission.canAutoPayout) {
-      this.popupService.openUpdatePayoutForMatch(match);
+    if (!this.permission.canAutoPayout) {
+      return;
     }
+    this.dialogMessage.title = Language.AutoPayoutSetting.PopupTitle;
+    this.dialogMessage.message = Language.AutoPayoutSetting.ConfirmMessageForMatch;
+    this.messageBoxService.confirm(this.dialogMessage, () => {
+      this.doUpdateSettingMatch(match);
+    });
   }
 
+  private async doUpdateSettingMatch(match: Match) {
+    const query = new AutoSettingMatchQuery(
+      Number(match.matchId),
+      this.autoSettingType,
+      !match.isAutoPayoutForMatch
+    );
+    const result = await this.multiSportService.updateSettingMatch(query);
+    if (result.errCode === 0) {
+      match.isAutoPayoutForMatch = !match.isAutoPayoutForMatch;
+    } else {
+      this.dialogMessage.title = Language.InstantSetting.WarningTitle;
+      this.dialogMessage.message = result.errMsg;
+      this.messageBoxService.alert(this.dialogMessage);
+    }
+  }
 
   public changeAutoLeague(leagueMatch: LeagueMatch) {
-    if (this.permission.canAutoPayout) {
-      this.popupService.openUpdatePayoutForLeague(leagueMatch);
+    if (!this.permission.canAutoPayout) {
+      return;
+    }
+    this.dialogMessage.title = Language.AutoPayoutSetting.PopupTitle;
+    this.dialogMessage.message = this.autoSettingLeagueMessage(leagueMatch.isAutoPayoutForLeague);
+    this.dialogMessage.hasActionOnNoBtn = true;
+    this.messageBoxService.confirm(this.dialogMessage, () => {
+      this.doUpdateSettingLeague(leagueMatch, true);
+    }, () => {
+      this.doUpdateSettingLeague(leagueMatch, false);
+    });
+  }
+
+  private autoSettingLeagueMessage(isAutoPayoutForLeague: boolean) {
+    return Language.AutoPayoutSetting.ConfirmMessageForLeagueAutoSetting
+      .replace(/OLD_SETTING/g, isAutoPayoutForLeague ? 'AUTO' : 'OFF')
+      .replace(/NEW_SETTING/g, !isAutoPayoutForLeague ? 'AUTO' : 'OFF');
+  }
+
+  private async doUpdateSettingLeague(leagueMatch: LeagueMatch, isApplyAll: boolean) {
+    this.dialogMessage.hasActionOnNoBtn = false;
+    const query = new AutoSettingLeagueQuery(
+      Number(leagueMatch.leagueId),
+      this.autoSettingType,
+      !leagueMatch.isAutoPayoutForLeague,
+      isApplyAll
+    );
+    const result = await this.multiSportService.updateSettingLeague(query);
+    if (result.errCode === 0) {
+      leagueMatch.isAutoPayoutForLeague = !leagueMatch.isAutoPayoutForLeague;
+      if (isApplyAll) {
+        this.affectAutoPayoutForMatch(leagueMatch, leagueMatch.isAutoPayoutForLeague);
+      }
+    } else {
+      this.dialogMessage.title = Language.InstantSetting.WarningTitle;
+      this.dialogMessage.message = result.errMsg;
+      this.messageBoxService.alert(this.dialogMessage);
     }
   }
 
+  private affectAutoPayoutForMatch(leagueMatch: LeagueMatch, isAutoPayoutForLeague: boolean) {
+    leagueMatch.matches.forEach(item => {
+      if (_.isEqual(item.eventStatus.toLowerCase(), EventStatus.running.toLowerCase()) || _.isEqual(item.eventStatus.toLowerCase(), EventStatus.closed.toLowerCase())) {
+        item.isAutoPayoutForMatch = isAutoPayoutForLeague;
+      }
+    });
+  }
 
-  public getAutoSettingLeague(autoSetting: AutoSetting) {
-    if (autoSetting.isAutoPayoutForLeague && autoSetting.isDirectPayoutForLeague) {
-      return "BOTH";
+  public getAutoSettingLeague(isAutoPayoutForLeague: boolean) {
+    if (this.permission.canAutoPayout) {
+      return isAutoPayoutForLeague ? BackgroundColor.iconAuto : BackgroundColor.iconNo;
+    } else {
+      return isAutoPayoutForLeague ? BackgroundColor.iconAutoDisabled : BackgroundColor.iconNoDisabled;
     }
-    if (autoSetting.isAutoPayoutForLeague) {
-      return "AUTO";
-    }
-    if (autoSetting.isDirectPayoutForLeague) {
-      return "DIRECT";
-    }
-
-    return "OFF";
   }
 
   public getLog(matchId: string) {
     this.popupService.popupLog(matchId, this.request.fromDate, this.request.toDate);
   }
 
-  public getCalcMPStatus(match: Match) {
-    return match.isCalculatingMP === CalculationStatus.waiting ? EventStatus.waiting : EventStatus.calculating;
-  }
-
   public popupCalc(match: Match) {
-    this.popupService.popupCalc(match, this.sports, this.multiSport);
+    this.popupService.popupCalc(match, this.sports);
   }
 
   public popupRefund(match: Match) {
-    this.popupService.popupRefund(match, this.sports, this.multiSport);
+    this.popupService.popupRefund(match, this.sports);
   }
 
   public popupEarly(match: Match) {
-    this.popupService.popupEarly(match, this.sports, this.multiSport);
+    this.popupService.popupEarly(match, this.sports);
   }
 
   public popupChangeRemarkSetting(match: Match) {
     if (this.isChangeSetting(match)) {
-      this.popupService.popupChangeRemark(match, this.sports, this.multiSport);
-    }
-  }
-
-  public calculateMixParlay() {
-    const findItems = this.sports.find((sport) =>
-      sport.leagues.find((league) =>
-        league.matches.find((match) => match.isCheckedCalcMP)));
-
-    if (_.isNil(findItems)) {
-      return false;
-    } else {
-      this.confirmCalculateMixParlay();
-      return true;
-    }
-  }
-
-  private confirmCalculateMixParlay() {
-    this.matchIdsCalcMp = [];
-    const matchCodes: string[] = [];
-    _.forEach(this.sports, (sport: SportMatch) => {
-      _.forEach(sport.leagues, (league: LeagueMatch) => {
-        const matches = league.matches.filter((x) => x.isCheckedCalcMP);
-        _.forEach(matches, (match: Match) => {
-          this.matchIdsCalcMp.push(match.matchId);
-          matchCodes.push(match.matchCode);
-        });
-      });
-    });
-
-    const message = Language.ConfirmCalculateMixParlay.replace('MATCH_CODES', matchCodes.join(', '));
-    this.dialogMessage.title = Language.CalculateMixParlay;
-    this.dialogMessage.message = message;
-    this.messageBoxService.confirm(this.dialogMessage, () => {
-      this.doCalculateMixParlay(this.matchIdsCalcMp);
-    });
-  }
-
-  private async doCalculateMixParlay(matchIds: string[]) {
-    const param: ParlayQuery = {
-      matchIds: matchIds.join(',')
-    };
-
-    const result = await this.multiSportService.calculateMixParlay(param).toPromise() as Result;
-    if (result.isSuccessful) {
-      this.multiSport.isCheckedCalcMP = false;
-      _.forEach(this.sports, (sport: SportMatch) => {
-        const leagues = sport.leagues.filter((x) => !x.disableCheckCalcMP);
-        _.forEach(leagues, (league: LeagueMatch) => {
-          const matches = league.matches.filter((x) => x.isCheckedCalcMP);
-          _.forEach(matches, (match: Match) => {
-            match.isCalculatingMP = CalculationStatus.waiting;
-          });
-        });
-      });
-
-      this.selectCalcMPOnSport(false);
-    } else {
-      this.dialogMessage.title = Language.CalculationWarning;
-      this.dialogMessage.message = result.errMsg;
-      this.messageBoxService.alert(this.dialogMessage);
+      this.popupService.popupChangeRemark(match);
     }
   }
 
   public isChangeSetting(match: Match) {
-    if (match.isMergedParlay) {
-      return match.isCalculatingSingle !== CalculationStatus.waiting && match.isCalculatingSingle !== CalculationStatus.calculating;
-    }
-
     return match.isCalculatingSingle !== CalculationStatus.waiting && match.isCalculatingSingle !== CalculationStatus.calculating
       && match.isCalculatingMP !== CalculationStatus.waiting && match.isCalculatingMP !== CalculationStatus.calculating;
   }
 
-  public getBackgroundAutoSetting(match: Match) {
-    const enableLink = this.permission.canAutoPayout ?  BackgroundColor.codeLink : "";
-    const colorStatus =  _.isEqual(match.autoPayoutStatus, this.autoSettingCompleted) ? 'auto-setting-completed' :
-      _.isEqual(match.autoPayoutStatus, this.autoSettingFailed) ? 'auto-setting-failed' : '';
 
-    return `${enableLink} ${colorStatus}`;
+  public getBackgroundAutoSetting(match: Match) {
+    return _.isEqual(match.autoPayoutStatus, this.autoSettingCompleted) ? 'auto-setting-completed' :
+      _.isEqual(match.autoPayoutStatus, this.autoSettingFailed) ? 'auto-setting-failed' : '';
+  }
+
+  public getTextTooltipMatch(isAuto: boolean) {
+    return isAuto ? Language.AutoPayoutSetting.TurnOffAutoSetting : Language.AutoPayoutSetting.TurnOnAutoSetting;
   }
 
   public isExistIntervalConfirmed(intervalScores: Score[]) {

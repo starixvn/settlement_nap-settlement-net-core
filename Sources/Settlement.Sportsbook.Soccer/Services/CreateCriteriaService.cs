@@ -109,7 +109,7 @@ public class CreateCriteriaServiceImp : ICreateCriteriaService
             Action = request.ActionName,
             Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString(),
             IsReSettledTickets = request.IsReSettledTickets,
-            SelectedResources = CreateResources(request.SelectedResources),
+            SelectedResources = CreateResources(request.SelectedResources)
         };
 
         return criteria;
@@ -164,9 +164,9 @@ public class CreateCriteriaServiceImp : ICreateCriteriaService
         {
             resources = actionName switch
             {
-                ActionType.RefundHalfTime => resourceService.HalftimeResources(goalCondition, SettlementStatus.RefundHT),
-                ActionType.RefundFullTime => resourceService.FullTimeResources(goalCondition, SettlementStatus.RefundFT),
-                _ => resourceService.AllResources(goalCondition, SettlementStatus.Refund),
+                ActionType.RefundHalfTime => resourceService.HalftimeResources(goalCondition, SettlementStatus.RefundHt),
+                ActionType.RefundFullTime => resourceService.FullTimeResources(goalCondition, SettlementStatus.RefundFt),
+                _ => resourceService.AllResources(goalCondition, SettlementStatus.Refund)
             };
         }
 
@@ -203,7 +203,7 @@ public class CreateCriteriaServiceImp : ICreateCriteriaService
         {
             ActionType.CalculateHalfTime => resourceService.HalftimeResources(goalCondition, SettlementStatus.Completed),
             ActionType.CalculateFullTime => resourceService.FullTimeResources(goalCondition, SettlementStatus.Completed),
-            _ => resourceService.AllResources(goalCondition, SettlementStatus.Completed),
+            _ => resourceService.AllResources(goalCondition, SettlementStatus.Completed)
         };
 
         return resources.Count > 0

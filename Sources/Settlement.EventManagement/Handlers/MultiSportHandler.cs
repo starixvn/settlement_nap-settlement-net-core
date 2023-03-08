@@ -1,5 +1,4 @@
-﻿using Fanex.NAP.Client.Helpers.Web;
-using Settlement.Core.Models;
+﻿using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.EventManagement.Models;
 using Settlement.EventManagement.Models.MultiSports;
@@ -13,23 +12,19 @@ namespace Settlement.EventManagement.Handlers;
 public class MultiSportHandler : IRequestHandler<FilterMultiSportRequest, MultiSportModel>,
         IRequestHandler<LeagueRequest, List<LeagueTypeModel>>,
         IRequestHandler<SportRequest, List<Sport>>,
-        IRequestHandler<RefreshMultiSportRequest, IList<Match>>,
-        IRequestHandler<CalculateParlayRequest, Result>
+        IRequestHandler<RefreshMultiSportRequest, IList<Match>>
 {
     private readonly IMultiSportService multiSportService;
     private readonly PermissionService permissionService;
-    private readonly INapSession currentSession;
     private readonly GetDataFilterService getDataFilterService;
 
     public MultiSportHandler(
         IMultiSportService multiSportService,
         PermissionService permissionService,
-        INapSession currentSession,
         GetDataFilterService getDataFilterService)
     {
         this.multiSportService = multiSportService;
         this.permissionService = permissionService;
-        this.currentSession = currentSession;
         this.getDataFilterService = getDataFilterService;
     }
 
@@ -49,11 +44,5 @@ public class MultiSportHandler : IRequestHandler<FilterMultiSportRequest, MultiS
     public async Task<IList<Match>> Handle(RefreshMultiSportRequest request, CancellationToken cancellationToken)
     {
         return await multiSportService.GetWaitingMatches(request);
-    }
-
-    public async Task<Result> Handle(CalculateParlayRequest request, CancellationToken cancellationToken)
-    {
-        request.AdminId = currentSession.UserId;
-        return await multiSportService.Calculate(request);
     }
 }

@@ -12,24 +12,21 @@ namespace Settlement.Log.UnitTests.Services;
 
 public class LogServiceTests
 {
-    private readonly IBalanceUpService balanceUpService;
     private readonly LogDetailService logDetailService;
     private readonly IDynamicRepository repository;
-    private readonly IRefDataService refDataService;
-    private readonly IMapper mapper;
-    private LogService service;
+    private readonly LogService service;
 
     public LogServiceTests()
     {
         var mapperConfig = new MapperConfigurationExpression();
         mapperConfig.AddProfile<LogAutoMapper>();
         var config = new MapperConfiguration(mapperConfig);
-        mapper = new Mapper(config);
+        var mapper = new Mapper(config);
 
-        balanceUpService = Substitute.For<IBalanceUpService>();
+        var balanceUpService = Substitute.For<IBalanceUpService>();
         logDetailService = Substitute.For<LogDetailService>();
         repository = Substitute.For<IDynamicRepository>();
-        refDataService = Substitute.For<IRefDataService>();
+        var refDataService = Substitute.For<IRefDataService>();
 
         var balanceUpDay = new DateTime();
         var balanceUp = new BalanceUp
@@ -38,6 +35,8 @@ public class LogServiceTests
         };
 
         balanceUpService.GetBalanceUpDay().Returns(balanceUp);
+
+        service = new Log.Services.LogServiceImp(repository, balanceUpService, logDetailService, mapper, refDataService);
     }
 
     [Fact]
@@ -52,17 +51,16 @@ public class LogServiceTests
 
         var fakeListLogDetails = new List<LogDetailsModels>
             {
-                new LogDetailsModels {  Action = "Cal"}
+                new() {  Action = "Cal"}
             };
 
         var fakeList = new List<LogModel>
             {
-                new LogModel { MatchId = 1}
+                new() { MatchId = 1}
             };
 
         repository.FetchAsync<LogModel>(Arg.Any<GetSettlementLogCriteria>()).Returns(fakeList);
         logDetailService.GetLogDetailByMatchAndProduct(Arg.Any<int>(), Arg.Any<string>()).Returns(fakeListLogDetails);
-        service = new Log.Services.LogServiceImp(repository, balanceUpService, logDetailService, mapper, refDataService);
 
         // Act
         var logs = await service.GetLog(request);

@@ -1,9 +1,7 @@
-﻿using Settlement.Core.Models;
-using Settlement.Sportsbook.Soccer.Models;
-using System.Collections.Generic;
-using System.Linq;
+﻿namespace Settlement.Sportsbook.Soccer.Services.GetMatch;
 
-namespace Settlement.Sportsbook.Soccer.GetMatch.Services;
+using Models;
+using Settlement.Core.Models;
 
 public interface IMergeDataService
 {
@@ -173,10 +171,7 @@ public class MergeDataServiceImp : IMergeDataService
         foreach (var details in siteData)
         {
             var newResult = details.Except(baseData);
-            if (newResult.Any())
-            {
-                baseData.AddRange(newResult);
-            }
+            baseData.AddRange(newResult);
 
             SumTicketDetails(baseData, details);
         }

@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import { Injectable, PipeTransform } from "@angular/core";
 import { ExternalResultDetail, ResultDetail, GeneralMatch, ExternalResult } from "../../shared/models/sportsbook-sop";
 import { ResultStatusId, TicketStatusText, ScoreSourceType, SettlementStatusId, SportType } from "../../shared/constants";
-import { Language } from "../../shared/language";
+import { Language } from "../../shared/language.native";
 import { ResultByTeamNamePipe } from '../../shared/pipes/result-by-team-name.pipe';
 import { GeneralResultDetail } from '../../shared/models';
 

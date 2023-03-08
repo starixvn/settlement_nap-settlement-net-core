@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.Sportsbook.Soccer.Criteria;
 using Settlement.Sportsbook.Soccer.Models;
@@ -13,7 +12,7 @@ public class SoccerAutoMapperProfile : Profile
     {
         CreateMap<MatchCheckingRequest, InstantCheckingCriteria>();
         CreateMap<GetMatchRequest, GetMatchDetailCriteria>();
-        CreateMap<GetLastestMatchDetailRequest, GetLastestMatchDetailCriteria>();
+        CreateMap<GetLatestMatchDetailRequest, GetLatestMatchDetailCriteria>();
         CreateMap<CheckStatusRequest, CheckStatusCriteria>()
             .ForMember(dest => dest.Action, opt => opt.MapFrom(src => src.ActionName));
         CreateMap<SettleRequest, GoalCondition>();

@@ -6,7 +6,7 @@ import { ScoreSourceType, TicketStatusText } from "../../shared/constants";
 import { VerificationBaseService } from '../../core/services/verification-base.service';
 import { IntervalCalculationService } from "../../shared/services";
 import { ResultByTeamNamePipe } from '../../shared/pipes/result-by-team-name.pipe';
-import { Language } from "../../shared/language";
+import { Language } from "../../shared/language.native";
 import { ChildMatch } from "../models";
 
 @Injectable()

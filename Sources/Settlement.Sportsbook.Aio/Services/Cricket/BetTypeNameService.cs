@@ -1,7 +1,8 @@
 ﻿using Settlement.Core.Constants;
-using Settlement.Sportsbook.Aio.Constants;
 
 namespace Settlement.Sportsbook.Aio.Services.Cricket;
+
+using Constants.Cricket;
 
 public interface IBetTypeNameService
 {

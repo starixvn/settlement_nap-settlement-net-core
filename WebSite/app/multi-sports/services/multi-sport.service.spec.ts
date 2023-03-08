@@ -1,4 +1,4 @@
-import { FilterRequest, ParlayQuery, GetRemarkQuery } from '../models';
+import { FilterRequest, GetRemarkQuery } from '../models';
 import { BlockUIService, HttpRequestService, MessageBoxService } from '../../shared/services';
 import { TestBed, getTestBed, fakeAsync } from '@angular/core/testing';
 import { MultiSportService } from './multi-sport.service';
@@ -103,18 +103,6 @@ describe('MultiSport - MultiSportService', () => {
             .toHaveBeenCalledWith(param, "api/multi-sports/filter");
     }
     );
-
-    it('calculateMixParlay - should call exact param and url', fakeAsync(() => {
-        const param: ParlayQuery = {
-            matchIds: '12345,1234',
-        };
-        const url = 'api/multi-sports/calculate-mix-parlay';
-        spyOn(httpRequestService, 'postJson');
-
-        service.calculateMixParlay(param);
-
-        expect(httpRequestService.postJson).toHaveBeenCalledWith(param, url);
-    }));
 
     it('getRemarkInfo - Call exact Url and param', () => {
         const url = 'api/setting/get-remark-info';

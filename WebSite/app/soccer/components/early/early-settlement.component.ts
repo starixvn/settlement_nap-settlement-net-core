@@ -14,7 +14,7 @@ import {
     CalculateAction,
     ResultSettingType,
 } from '../../../shared/constants';
-import { Language } from '../../../shared/language';
+import { Language } from '../../../shared/language.native';
 import { ModalDialogMessage, Result, MarkedTicketsModel, ResultSettingQuery } from '../../../shared/models';
 import { MessageBoxService } from '../../../shared/services';
 import {

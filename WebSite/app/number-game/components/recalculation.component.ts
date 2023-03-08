@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 import { ReCalculationModel, MatchDetail, Ball, SettleQuery } from '../models';
 import { RedBall } from '../constants';
-import { Language } from '../../shared/language';
+import { Language } from '../../shared/language.native';
 import { ModalDialogMessage, Result } from '../../shared/models';
 import { MessageBoxService, HttpRequestService, BlockUIService } from '../../shared/services';
 import { QueryService, VerifyBallService } from '../services';

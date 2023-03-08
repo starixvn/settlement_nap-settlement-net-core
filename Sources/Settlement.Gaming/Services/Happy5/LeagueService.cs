@@ -1,9 +1,6 @@
 ﻿using Settlement.Core.Services;
 using Settlement.Gaming.Models.Happy5;
 using Settlement.Gaming.Requests;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Settlement.Gaming.Services.Happy5;
 

@@ -78,9 +78,9 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="10.1.1" />
-    <PackageReference Include="Fanex.Caching.AspNetCore" Version="2.2.3-beta2" />
-		<PackageReference Include="Fanex.Caching.Redis" Version="2.2.3-beta4" />
-    <PackageReference Include="Fanex.Caching.Redis.AspNetCore" Version="2.2.3-beta2" />
+    <PackageReference Include="Fanex.Caching.AspNetCore" Version="2.2.3" />
+		<PackageReference Include="Fanex.Caching.Redis" Version="2.2.3" />
+    <PackageReference Include="Fanex.Caching.Redis.AspNetCore" Version="2.2.3" />
     <PackageReference Include="Fanex.Data" Version="4.2.2" />
     <PackageReference Include="Fanex.Data.Repository" Version="4.2.2" />
     <PackageReference Include="Fanex.Data.SqlServer" Version="4.2.2" />
@@ -90,7 +90,7 @@
     <PackageReference Include="Fanex.MailDeliver.MailClient" Version="2.0.8" />
     <PackageReference Include="Fanex.NAP.Client.AspNetCore" Version="2.0.0.1" />
 		<PackageReference Include="Fanex.NAP.Signin.AspNetCore" Version="2.0.0.5-beta3" />
-		<PackageReference Include="Fanex.RemotingRef" Version="1.5.0.1-beta2" />
+		<PackageReference Include="Fanex.RemotingRef" Version="1.5.0.1" />
 		<PackageReference Include="Fanex.Settlement.Converter" Version="1.0.0.1" />
 		<PackageReference Include="Fanex.Settlement.ScaleOut" Version="1.2.7" />
     <PackageReference Include="MediatR" Version="9.0.0" />
@@ -102,7 +102,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="ONEbook.UM" Version="3.1.4-beta0" />
     <PackageReference Include="ONEbook.UM.AspNetCore" Version="3.1.0" />
-    <PackageReference Include="ONEbook.UM.AspNetCore.Filters" Version="3.1.0-beta12" />
+    <PackageReference Include="ONEbook.UM.AspNetCore.Filters" Version="3.1.0" />
     <PackageReference Include="ONEbook.UM.Transport" Version="3.1.2-beta0" />
     <PackageReference Include="StackExchange.Redis" Version="2.6.48" />
   </ItemGroup>

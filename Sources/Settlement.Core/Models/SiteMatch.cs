@@ -22,11 +22,7 @@ public class SiteMatch
 
     public bool IsExistMarkedTicket { get; set; }
 
-    public bool IsExistMarkedTicketParlay { get; set; }
-
     public bool IsExistRunningTicket { get; set; }
-
-    public bool IsExistRunningTicketParlay { get; set; }
 
     public bool IsExistEarlyBetTypes { get; set; }
 
@@ -41,12 +37,6 @@ public class SiteMatch
     public bool IsRunningFastMarket { get; set; }
 
     public bool IsExistsConfirmedEarly { get; set; }
-
-    public bool IsExistEarlyBettypesParlay { get; set; }
-
-    public bool IsRunningEarlyBettypesParlay { get; set; }
-
-    public bool IsWaitingEarlyBettypesParlay { get; set; }
 
     public List<ChildMatchTicketInfos> SiteChildMatches { get; set; }
 

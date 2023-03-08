@@ -7,11 +7,10 @@ public class ProviderMapperService : IMapperService
 {
     public void Decorate(dynamic obj)
     {
-        var tuple = obj as Tuple<List<ExternalResultDetailModel>, List<ExternalResultModel>>;
-        var externalResultDetails = tuple.Item1;
+        var (externalResultDetails, externalResultModel) = (Tuple<List<ExternalResultDetailModel>, List<ExternalResultModel>>)obj;
         var externalResults = new List<ExternalResultModel>();
         externalResults.AddRange(GroupExternalResults(externalResultDetails));
-        tuple.Item2.AddRange(externalResults);
+        externalResultModel.AddRange(externalResults);
     }
 
     private List<ExternalResultModel> GroupExternalResults(IEnumerable<ExternalResultDetailModel> resultDetails)

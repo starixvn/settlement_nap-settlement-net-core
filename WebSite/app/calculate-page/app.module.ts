@@ -13,11 +13,14 @@ import {
 import { CustomHttpRequestInterceptor } from "../shared/custom-httprequest-interceptor.native";
 import { MaterialModule } from '../shared/material-module';
 import { DynamicHeightDirective } from '../shared/directives';
-import { MaterialDialogComponent, MaterialDialogWithResponseComponent, NewMultipleSelectComponent } from '../shared/components';
 import { AutoCalculatePageComponent, AutoCalculateMatchesComponent, AutoCalculateFilterComponent } from './components/auto-calculation';
 import { PageBaseComponent, MatchesBaseComponent } from './components/base-component';
 import { FilterBaseComponent } from '../shared/components/gaming/filter-base.component';
 import { AppComponent } from './components/app.component';
+import { NewMultipleSelectComponent } from '../shared/components/multiple-select/multiple-select.component';
+import { MaterialDialogComponent } from '../shared/components/material-dialog-iframe/material-dialog.component';
+import { MaterialDialogWithResponseComponent } from '../shared/components/material-dialog-iframe/material-dialog-with-response.component';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
     imports: [
@@ -28,6 +31,10 @@ import { AppComponent } from './components/app.component';
         HttpClientJsonpModule,
         NgbModule,
         MaterialModule,
+        DatepickerComponent,
+        DynamicHeightDirective,
+        NewMultipleSelectComponent,
+        NoopAnimationsModule
     ],
     declarations: [
         AppComponent,
@@ -35,15 +42,12 @@ import { AppComponent } from './components/app.component';
         FilterBaseComponent,
         MatchesBaseComponent,
         FilterComponent,
-        DatepickerComponent,
         MatchesComponent,
-        DynamicHeightDirective,
         MaterialDialogComponent,
         PageComponent,
         AutoCalculateMatchesComponent,
         AutoCalculatePageComponent,
         AutoCalculateFilterComponent,
-        NewMultipleSelectComponent,
         MaterialDialogWithResponseComponent
     ],
     providers: [{ provide: HTTP_INTERCEPTORS, useClass: CustomHttpRequestInterceptor, multi: true }],

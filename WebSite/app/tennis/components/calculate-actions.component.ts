@@ -1,8 +1,10 @@
-import { Component, Input, ViewChild } from '@angular/core';
+import { CalculateCommonModule } from './../../shared/modules/calculate-common.module';
+import { CalculateMatchDetailComponent } from './calculate-match-detail.component';
+import { Component, Injector, Input, ViewChild } from '@angular/core';
 import * as _ from 'lodash';
-import { MessageBoxService, AioService } from '../../shared/services';
-import { ModalDialogMessage, Result } from '../../shared/models';
-import { Language } from '../../shared/language';
+import { MessageBoxService, AioService, IntervalCalculationService, BlockUIService } from '../../shared/services';
+import { ModalDialogMessage} from '../../shared/models';
+import { Language } from '../../shared/language.native';
 import { SettlementStatusId, CalculateAction, SportType, ResultStatusId } from '../../shared/constants';
 import { KickOffTime, Resources, ResourcesIds, TennisApiKeys } from '../constants';
 import { Match, SettleQuery } from '../models';
@@ -14,10 +16,14 @@ import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 @Component({
   selector: 'calculate-actions',
   templateUrl: './calculate-actions.component.html',
+  standalone: true,
+  imports: [ CalculateMatchDetailComponent, CalculateCommonModule, ResourceNameByIdPipe],
+    providers: [VerificationService, IntervalCalculationService, TennisService]
 })
 export class CalculateActionsComponent implements SportTemplate {
   @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
   @Input() public match: Match;
+  public blockUI = true;
   public isReSettledTickets: boolean;
   public enableUncalculate: boolean;
   public isLeader: boolean;
@@ -28,6 +34,7 @@ export class CalculateActionsComponent implements SportTemplate {
   public readonly totalGamesId = ResourcesIds.totalGames;
   public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
   constructor(
+    protected injector: Injector,
     private readonly messageBoxService: MessageBoxService,
     private readonly tennisService: TennisService,
     private readonly verificationService: VerificationService,
@@ -37,12 +44,13 @@ export class CalculateActionsComponent implements SportTemplate {
   }
 
   async getMatch(matchId: number) {
+    this.injector.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
     const query = {
       matchId,
       apikey: TennisApiKeys.NormalMatch,
     };
     this.toastrService.overlayContainer = this.toastContainer;
-    this.match = await this.aioService.getMatch(query).toPromise() as Match;
+    this.match = await this.aioService.getMatch(query) as Match;
     this.isReadyMatch = this.match.matchDetail.playTime >= KickOffTime.playTime;
     this.cloneResultDetail();
     this.init();
@@ -203,7 +211,7 @@ export class CalculateActionsComponent implements SportTemplate {
         apikey: TennisApiKeys.NormalMatch,
         sportType: SportType.tennis,
       };
-      const needConfirm = await this.aioService.verifyChangedSettledTickets(tennisResultDetails, getTennisResultQuery).toPromise();
+      const needConfirm = await this.aioService.verifyChangedSettledTickets(tennisResultDetails, getTennisResultQuery);
       if (needConfirm) {
         this.confirmationDialogMessage.message = Language.recalculateNotification;
         this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
@@ -263,7 +271,7 @@ export class CalculateActionsComponent implements SportTemplate {
       apiKey: TennisApiKeys.NormalMatch
     };
 
-    const saveScoreResult = await this.aioService.saveScore(saveScoreQuery).toPromise() as Result;
+    const saveScoreResult = await this.aioService.saveScore(saveScoreQuery);
     if (!saveScoreResult.isSuccessful) {
       this.toastrService.error(saveScoreResult.errMsg);
     } else {
@@ -276,7 +284,7 @@ export class CalculateActionsComponent implements SportTemplate {
   }
 
   private async push(query: SettleQuery): Promise<void> {
-    const result = await this.aioService.push(query).toPromise() as Result;
+    const result = await this.aioService.push(query);
     if (result.errCode === 0) {
       this.hedgeMatch(query);
     } else {
@@ -289,7 +297,7 @@ export class CalculateActionsComponent implements SportTemplate {
     const hedgeMatchId = this.applyHedgeMatch ? this.match.hedgeMatchDetail.matchId : 0;
     if (hedgeMatchId > 0) {
       query.matchId = hedgeMatchId;
-      await this.aioService.push(query).toPromise().then(() => {
+      await this.aioService.push(query).then(() => {
         this.messageBoxService.closePopup();
       });
     } else {
@@ -463,7 +471,7 @@ export class CalculateActionsComponent implements SportTemplate {
       apiKey: TennisApiKeys.NormalMatch
     };
 
-    const result = await this.aioService.saveScore(query).toPromise() as Result;
+    const result = await this.aioService.saveScore(query);
     if (!result.isSuccessful) {
       this.toastrService.error(result.errMsg);
     } else {

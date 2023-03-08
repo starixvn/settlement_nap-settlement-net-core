@@ -3,6 +3,8 @@ using Settlement.Core.Models;
 
 namespace Settlement.Sportsbook.MoveTickets.UnitTests.Services.MultipleServer;
 
+using MoveTickets.Services.MultipleServer;
+
 public class SiteMatchServiceTests
 {
     private readonly SiteMatchService service = new SiteMatchServiceImp();
@@ -184,16 +186,15 @@ public class SiteMatchServiceTests
     }
 
     [Theory]
-    [InlineData(true, false, false, false, SportType.Soccer, TicketStatus.Running)]
-    [InlineData(false, true, false, false, SportType.Soccer, TicketStatus.Running)]
-    [InlineData(false, false, true, false, SportType.Badminton, TicketStatus.Running)]
-    [InlineData(false, false, false, true, SportType.Badminton, TicketStatus.Running)]
+    [InlineData(true, false, false, false, TicketStatus.Running)]
+    [InlineData(false, true, false, false, TicketStatus.Running)]
+    [InlineData(false, false, true, false, TicketStatus.Running)]
+    [InlineData(false, false, false, true, TicketStatus.Running)]
     public void EarlySettlementStatus_MatchExistRunningEarly_ReturnCorrectly(bool isRunningEarlyBetTypesMain, bool isRunningEarlyBetTypesSite
-        , bool isRunningEarlyBetTypesParlayMain, bool isRunningEarlyBetTypesParlaySite, int sportMergedParlay, string expected)
+        , bool isRunningEarlyBetTypesParlayMain, bool isRunningEarlyBetTypesParlaySite, string expected)
     {
         var match = new Match
         {
-            SportType = sportMergedParlay,
             IsExistEarlyBetTypes = true,
             IsRunningEarlyBetTypes = isRunningEarlyBetTypesMain,
             IsRunningEarlyBettypesParlay = isRunningEarlyBetTypesParlayMain,
@@ -202,9 +203,9 @@ public class SiteMatchServiceTests
                 new ()
                 {
                     IsRunningEarlyBetTypes = isRunningEarlyBetTypesSite,
-                    IsRunningEarlyBettypesParlay = isRunningEarlyBetTypesParlaySite,
+                    IsRunningEarlyBettypesParlay = isRunningEarlyBetTypesParlaySite
                 }
-            },
+            }
         };
 
         var result = service.EarlySettlementStatus(match);
@@ -213,16 +214,15 @@ public class SiteMatchServiceTests
     }
 
     [Theory]
-    [InlineData(true, false, false, false, SportType.Soccer, TicketStatus.Waiting)]
-    [InlineData(false, true, false, false, SportType.Soccer, TicketStatus.Waiting)]
-    [InlineData(false, false, true, false, SportType.Badminton, TicketStatus.Waiting)]
-    [InlineData(false, false, false, true, SportType.Badminton, TicketStatus.Waiting)]
+    [InlineData(true, false, false, false, TicketStatus.Waiting)]
+    [InlineData(false, true, false, false, TicketStatus.Waiting)]
+    [InlineData(false, false, true, false, TicketStatus.Waiting)]
+    [InlineData(false, false, false, true, TicketStatus.Waiting)]
     public void EarlySettlementStatus_MatchExistWaitingEarlyAndNotExistRunningTicket_ReturnCorrectly(bool isWaitingEarlyBetTypesMain, bool isWaitingEarlyBetTypesSite
-        , bool isWaitingEarlyBetTypesParlayMain, bool isWaitingEarlyBetTypesParlaySite, int sportMergedParlay, string expected)
+        , bool isWaitingEarlyBetTypesParlayMain, bool isWaitingEarlyBetTypesParlaySite, string expected)
     {
         var match = new Match
         {
-            SportType = sportMergedParlay,
             IsExistEarlyBetTypes = true,
             IsWaitingEarlyBetTypes = isWaitingEarlyBetTypesMain,
             IsWaitingEarlyBettypesParlay = isWaitingEarlyBetTypesParlayMain,
@@ -231,9 +231,9 @@ public class SiteMatchServiceTests
                 new ()
                 {
                     IsWaitingEarlyBetTypes = isWaitingEarlyBetTypesSite,
-                    IsWaitingEarlyBettypesParlay = isWaitingEarlyBetTypesParlaySite,
+                    IsWaitingEarlyBettypesParlay = isWaitingEarlyBetTypesParlaySite
                 }
-            },
+            }
         };
 
         var result = service.EarlySettlementStatus(match);
@@ -242,11 +242,11 @@ public class SiteMatchServiceTests
     }
 
     [Theory]
-    [InlineData(true, false, false, false, TicketStatus.ParlayWaiting)]
-    [InlineData(false, true, false, false, TicketStatus.ParlayWaiting)]
-    [InlineData(false, false, true, false, TicketStatus.ParlayRunning)]
-    [InlineData(false, false, false, true, TicketStatus.ParlayRunning)]
-    [InlineData(true, true, false, true, TicketStatus.ParlayRunning)]
+    [InlineData(true, false, false, false, TicketStatus.Waiting)]
+    [InlineData(false, true, false, false, TicketStatus.Waiting)]
+    [InlineData(false, false, true, false, TicketStatus.Running)]
+    [InlineData(false, false, false, true, TicketStatus.Running)]
+    [InlineData(true, true, false, true, TicketStatus.Running)]
     [InlineData(false, false, false, false, TicketStatus.Completed)]
     public void EarlySettlementStatus_MatchOnlyExistParlayBetTypes_ReturnCorrectly(bool isWaitingEarlyBetTypesParlayMain, bool isWaitingEarlyBetTypesParlaySite
         , bool isRunningEarlyBetTypesParlayMain, bool isRunningEarlyBetTypesParlaySite, string expected)
@@ -261,9 +261,9 @@ public class SiteMatchServiceTests
                 new ()
                 {
                     IsRunningEarlyBettypesParlay = isRunningEarlyBetTypesParlaySite,
-                    IsWaitingEarlyBettypesParlay = isWaitingEarlyBetTypesParlaySite,
+                    IsWaitingEarlyBettypesParlay = isWaitingEarlyBetTypesParlaySite
                 }
-            },
+            }
         };
 
         var result = service.EarlySettlementStatus(match);

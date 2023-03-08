@@ -12,7 +12,7 @@ import { DatepickerComponent } from '../../../shared/components/date-picker/date
 import { CalculatePopupComponent } from './calculate-popup.component';
 import { BlockUIService, HttpRequestService, MessageBoxService, VerifyDateService } from '../../../shared/services';
 import { LeagueSettle, Permission, Team } from '../../models';
-import { Language } from '../../../shared/language';
+import { Language } from '../../../shared/language.native';
 import { ResultOutright } from '../../models/result-outright.model';
 import * as _ from "lodash";
 

@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Language } from "../../../shared/language";
+import { Language } from "../../../shared/language.native";
 import { CalculateAction, MatchStatus, SportType } from "../../../shared/constants";
 import * as _ from 'lodash';
 import { Result } from "../../../shared/models";
@@ -13,18 +13,14 @@ export class OtherService {
 
     constructor(private readonly requestService: RequestService) { }
 
-    public getMessageConfirmRefund(isParlay: boolean, action: string) {
-        if (isParlay) {
-            return _.isEqual(action, CalculateAction.refund) ?
-                Language.RefundParlayConfirmMessage : Language.RefundParlayFullTime;
-        } else {
-            return _.isEqual(action, CalculateAction.refund) ?
-                Language.RefundConfirmMessage : Language.RefundFullMessage;
-        }
+    public getMessageConfirmRefund(action: string) {
+        return _.isEqual(action, CalculateAction.refund) ?
+            Language.RefundConfirmMessage : Language.RefundFullMessage;
+
     }
 
     public async sendRequest(matchDetail: MatchDetail, hedgeMatchDetail: HedgeMatchDetail,
-        action: string, isParlay: boolean) {
+        action: string) {
         const param = {
             matchId: matchDetail.matchId,
             action,
@@ -32,9 +28,7 @@ export class OtherService {
             betStatus: matchDetail.betStatus
         };
 
-        return isParlay
-            ? await this.requestService.refundParlay(param).toPromise() as Result
-            : await this.requestService.refund(param).toPromise() as Result;
+        return await this.requestService.sendRequest(param);
     }
 
     public isReadyMatch(matchDetail: MatchDetail) {
@@ -93,7 +87,7 @@ export class OtherService {
         query.hedgeMatchId = hedgeMatchId;
         query.isApplyHedging = hedgeMatchId > 0;
 
-        return await this.requestService.calculate(query).toPromise() as Result;
+        return await this.requestService.sendRequest(query);
     }
 
     public copyHalfTimeScore(matchDetail: MatchDetail) {

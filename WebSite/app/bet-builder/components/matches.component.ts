@@ -1,6 +1,5 @@
 ﻿import * as _ from 'lodash';
 import { interval } from 'rxjs';
-import { ISubscription } from "rxjs/Subscription";
 import { Component, OnInit, OnDestroy} from "@angular/core";
 import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { MultiSports, MatchDetail, SportLeagues, LeagueMatches } from '../models';
@@ -9,6 +8,7 @@ import { Resources, BackgroundColor, EventStatus } from '../constants';
 import { MatchStatus } from '../../shared/constants';
 import { ModalDialogMessage } from '../../shared/models';
 import { MessageBoxService } from '../../shared/services';
+import { ISubscription } from 'rxjs-compat/Subscription';
 
 @Component({
     selector: 'matches',

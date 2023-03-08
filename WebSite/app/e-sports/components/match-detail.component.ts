@@ -1,9 +1,11 @@
-﻿import { Component, OnInit, Input } from '@angular/core';
+﻿import { ScoreBySettlementPipe } from './../../shared/pipes/score-by-settlement.pipe';
+import { CommonModule } from '@angular/common';
+import { Component, OnInit, Input } from '@angular/core';
 import { ModalDialogMessage } from '../../shared/models';
 import { MessageBoxService } from '../../shared/services';
 import { Match } from '../models';
 import { MatchDetail, ResultDetail } from '../../shared/models/sportsbook-sop';
-import { Language } from '../../shared/language';
+import { Language } from '../../shared/language.native';
 import { ResourcesIds } from '../constants';
 import { VerificationBaseService } from '../../core/services/verification-base.service';
 import * as _ from 'lodash';
@@ -12,6 +14,8 @@ import { SettlementStatusId } from '../../shared/constants';
 @Component({
     selector: 'match-detail',
     templateUrl: './match-detail.component.html',
+    standalone: true,
+    imports: [CommonModule, ScoreBySettlementPipe ],
 })
 export class MatchDetailComponent implements OnInit {
     @Input() public match: Match;

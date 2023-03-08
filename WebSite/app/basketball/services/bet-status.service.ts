@@ -4,7 +4,6 @@ import * as _ from 'lodash';
 import { ResourcesIds } from "../constants";
 import { ResultDetail } from "../../shared/models/sportsbook-sop";
 
-
 @Injectable()
 export class BetStatusService {
 

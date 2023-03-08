@@ -17,7 +17,7 @@ import { BetDaq, BetFair, MatchDetail, Match, HedgeMatchDetail } from './model/m
 import { of } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { MarkedTicketsModel } from '../../../shared/models';
-import { Language } from '../../../shared/language';
+import { Language } from '../../../shared/language.native';
 import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { ModalContentDialogComponent, ModalDialogComponent } from '../../../shared/components';
 import { RefundType } from './model/constant.native';

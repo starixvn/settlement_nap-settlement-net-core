@@ -40,8 +40,8 @@ public class FastMarketBetTypeServiceImp : IFastMarketBetTypeService
             case FastMarketBetType.NextOneMinuteSetPiece:
                 return resultLabelService.NextOneMinuteSetPiece();
 
-            case FastMarketBetType.TimeMachineHDP:
-                return resultLabelService.TimeMachineHDP();
+            case FastMarketBetType.TimeMachineHdp:
+                return resultLabelService.TimeMachineHdp();
 
             default:
                 return new ResultItemLabel();

@@ -15,7 +15,7 @@ public class AioHandler :
         IRequestHandler<CheckRunningOddsRequest, Result>,
         IRequestHandler<SaveScoreRequest, Result>,
         IRequestHandler<SettleChildMatchRequest, Result>,
-        IRequestHandler<ResultSettingRequest, Boolean>
+        IRequestHandler<ResultSettingRequest, bool>
 
 {
     private readonly IAioService aioService;

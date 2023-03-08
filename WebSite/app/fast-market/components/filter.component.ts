@@ -1,10 +1,9 @@
 import { Component, EventEmitter, Output, Input, OnInit, OnChanges, SimpleChanges, ViewChild, SimpleChange } from '@angular/core';
-import { MultipleSelectComponent } from '../../shared/components';
 import { ItemsSelect, MultipleSelect } from '../../shared/models';
 import * as _ from 'lodash';
 import { Filter, IntervalEvent, ItemSelect } from '../models';
 import { RequestService } from '../services/request.service';
-import { ResultStatus, SessionId } from '../constants';
+import { MultipleSelectComponent } from '../../shared/components/multiple-selection/multiple-select.component.native';
 
 @Component({
     selector: 'filter',

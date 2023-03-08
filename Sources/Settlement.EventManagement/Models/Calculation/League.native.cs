@@ -16,8 +16,8 @@ public class League
     public int InstantWaitingTime { get; set; }
 
     [Key("autoCalcSetting")]
-    public AutoCalculationSetting AutoCalcSetting { get; set; } = new AutoCalculationSetting();
+    public AutoCalculationSetting AutoCalcSetting { get; set; } = new();
 
     [Key("matches")]
-    public List<Match> Matches { get; set; } = new List<Match>();
+    public List<Match> Matches { get; set; } = new();
 }

@@ -1,27 +1,25 @@
-﻿using Fanex.Data.Repository;
+﻿using Settlement.Sportsbook.OtherSports.Models;
+
+namespace Settlement.Sportsbook.OtherSports.Services;
+
+using Constants;
+using Criteria;
+using Fanex.Data.Repository;
 using Fanex.NAP.Client;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
 using Microsoft.Extensions.Options;
+using Requests;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
-using Settlement.Sportsbook.OtherSports.Constants;
-using Settlement.Sportsbook.OtherSports.Criteria;
-using Settlement.Sportsbook.OtherSports.Requests;
-
-namespace Settlement.Sportsbook.OtherSports.Services;
 
 public interface MultipleServerService
 {
     Task<(MatchDetail, List<TicketCounts>)> GetMatchInfo(GetMatchRequest request);
 
-    Task<Result> Refund(RefundCriteria refundCriteria);
-
-    Task<Result> RefundParlay(ParlayCriteria criteria);
-
     Task<MarkedTickets> CheckMarkedTickets(CheckingMarkedTicketsCriteria criteria);
 
-    Task<Result> Calculate(CalculateCriteria calculateCriteria);
+    Task<Result> Calculate(CalculateCriteria calculateCriteria, ScoreSetModel score);
 }
 
 public class MultipleServerServiceImp : MultipleServerService
@@ -79,7 +77,7 @@ public class MultipleServerServiceImp : MultipleServerService
         return multipleTickets;
     }
 
-    public async Task<Result> Calculate(CalculateCriteria calculateCriteria)
+    public async Task<Result> Calculate(CalculateCriteria calculateCriteria, ScoreSetModel score)
     {
         var validateRequest = new EventTicketRequest
         {
@@ -97,17 +95,7 @@ public class MultipleServerServiceImp : MultipleServerService
 
         await SetUnderSettleFlag(calculateCriteria.MatchId, calculateCriteria.AdminId, calculateCriteria.Action);
 
-        var requestUpdateInfo = new UpdateMatchInfoRequest
-        {
-            MatchId = calculateCriteria.MatchId,
-            Action = calculateCriteria.Action,
-            AdminId = calculateCriteria.AdminId,
-            BetStatus = calculateCriteria.BetStatus,
-            FullTimeAway = calculateCriteria.FullTimeAway,
-            FullTimeHome = calculateCriteria.FullTimeHome,
-            HalfTimeAway = calculateCriteria.HalfTimeAway,
-            HalfTimeHome = calculateCriteria.HalfTimeHome
-        };
+        var requestUpdateInfo = CreateUpdateRequest(calculateCriteria, score);
 
         await IsHtTicketSettled(requestUpdateInfo);
 
@@ -116,54 +104,37 @@ public class MultipleServerServiceImp : MultipleServerService
         foreach (var server in appSettingsKey.SiteDbServer)
         {
             calculateCriteria.DbServer = server;
-            repository.Execute(calculateCriteria);
+            await repository.ExecuteAsync(calculateCriteria);
         }
 
         return requestChecking;
     }
 
-    public async Task<Result> Refund(RefundCriteria refundCriteria)
+    private UpdateMatchInfoRequest CreateUpdateRequest(CalculateCriteria criteria, ScoreSetModel score)
     {
-        var validateRequest = new EventTicketRequest
-        {
-            MatchId = refundCriteria.MatchId,
-            Action = refundCriteria.Action,
-            SpName = refundCriteria.SpName,
-            Mode = ActionKey.ActionDictionary[refundCriteria.Action]
-        };
-
-        var requestChecking = await ValidateBeforeExecute(validateRequest);
-        if (requestChecking.ErrCode > 0)
-        {
-            return requestChecking;
-        }
-
-        await SetUnderSettleFlag(refundCriteria.MatchId, refundCriteria.AdminId, refundCriteria.Action);
-
         var requestUpdateInfo = new UpdateMatchInfoRequest
         {
-            MatchId = refundCriteria.MatchId,
-            Action = refundCriteria.Action,
-            AdminId = refundCriteria.AdminId,
-            BetStatus = refundCriteria.BetStatus
+            MatchId = criteria.MatchId,
+            Action = criteria.Action,
+            AdminId = criteria.AdminId,
+            BetStatus = criteria.BetStatus,
+            HalfTimeHome = score.HtHomeScore ?? 0,
+            HalfTimeAway = score.HtAwayScore ?? 0,
         };
 
-        await IsHtTicketSettled(requestUpdateInfo);
-
-        await scaleOutSettleService.UpdateMatchInfo(requestUpdateInfo);
-
-        foreach (var server in appSettingsKey.SiteDbServer)
+        if (!criteria.Action.Equals(ActionType.CalculateFullTime) && !criteria.Action.Equals(ActionType.CalculateAll))
         {
-            refundCriteria.DbServer = server;
-            repository.Execute(refundCriteria);
+            return requestUpdateInfo;
         }
+        requestUpdateInfo.FullTimeHome = score.FinalHomeScore ?? 0;
+        requestUpdateInfo.FullTimeAway = score.FinalAwayScore ?? 0;
 
-        return requestChecking;
+        return requestUpdateInfo;
     }
 
     private async Task IsHtTicketSettled(UpdateMatchInfoRequest request)
     {
-        if (request.Action == ActionType.CalculateFullTime || request.Action == ActionType.RefundFullTime)
+        if (request.Action is ActionType.CalculateFullTime or ActionType.RefundFullTime)
         {
             const int halfTimeGroupId = 1;
             var criteria = new GetTicketInfoCriteria
@@ -174,7 +145,7 @@ public class MultipleServerServiceImp : MultipleServerService
             var multipleTicketCounts = await GetTicketInfo(criteria);
             var ticketCounts = mergeDataService.MergeTicketCounts(multipleTicketCounts);
             var ticketHt = ticketCounts.FirstOrDefault(item => item.GroupId == halfTimeGroupId);
-            request.IsHtTicketSettled = ticketHt != null && ticketHt.BetRunningCount == 0;
+            request.IsHtTicketSettled = ticketHt is { BetRunningCount: 0 };
         }
     }
 
@@ -195,41 +166,6 @@ public class MultipleServerServiceImp : MultipleServerService
         {
             await scaleOutSettleService.UpdateUnderSettlementFlag(matchId, adminId, action);
         }
-    }
-
-    public async Task<Result> RefundParlay(ParlayCriteria criteria)
-    {
-        var validateRequest = new EventTicketRequest
-        {
-            MatchId = criteria.MatchId,
-            Action = criteria.Action,
-            SpName = criteria.SpName,
-            Mode = "MP"
-        };
-
-        var requestChecking = await ValidateBeforeExecute(validateRequest);
-        if (requestChecking.ErrCode > 0)
-        {
-            return requestChecking;
-        }
-
-        var requestUpdateInfo = new UpdateMatchInfoRequest
-        {
-            MatchId = criteria.MatchId,
-            Action = criteria.Action,
-            AdminId = criteria.AdminId,
-            Mode = "MP",
-        };
-
-        await scaleOutSettleService.UpdateMatchInfo(requestUpdateInfo);
-
-        foreach (var server in appSettingsKey.SiteDbServer)
-        {
-            criteria.DbServer = server;
-            repository.Execute(criteria);
-        }
-
-        return requestChecking;
     }
 
     public async Task<MarkedTickets> CheckMarkedTickets(CheckingMarkedTicketsCriteria criteria)

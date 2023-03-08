@@ -6,7 +6,6 @@ import { BackgroundColor, SportType } from '../../constants';
 import {
   MoreScore,
   Score,
-  MixParlay,
   Match,
   Remark } from '../../models';
 import { LeagueBaseComponent } from './league-base.component';
@@ -17,11 +16,7 @@ describe('LeagueBaseComponent', () => {
     const match = new Match();
     match.sportType = SportType.eSports;
     match.isCheckedCalcMP = true;
-    match.isExistMarkedTicketParlay = false;
-    const parlay = new MixParlay();
-    parlay.hasMixParlay = true;
-    match.mixParlay = parlay;
-
+    
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             declarations: [

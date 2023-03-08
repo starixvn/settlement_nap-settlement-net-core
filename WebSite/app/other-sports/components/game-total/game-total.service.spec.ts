@@ -9,7 +9,7 @@ import * as _ from 'lodash';
 import { ResourcesIds } from '../../constants';
 import { CalculateAction, SettlementStatusId } from '../../../shared/constants';
 import { of } from 'rxjs';
-import { Language } from '../../../shared/language';
+import { Language } from '../../../shared/language.native';
 
 describe('GameTotalService', () => {
     let service: GameTotalService = null;

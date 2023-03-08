@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { ResourcesIds } from "../../constants";
 import { ExternalResultDetail, ResultDetail, MatchDetail } from "../../../shared/models/sportsbook-sop";
 import { GameTotalService } from "./game-total.service";
-import { Language } from "../../../shared/language";
+import { Language } from "../../../shared/language.native";
 import { GeneralResultDetail } from "../../../shared/models";
 import * as _ from 'lodash';
 import { IntervalBackgroundPipe } from "../../../shared/pipes/interval-background.pipe";

@@ -1,19 +1,15 @@
-﻿using AutoMapper;
+﻿namespace Settlement.Sportsbook.Soccer.Services.GetMatch;
+
+using AutoMapper;
 using Fanex.Data.Repository;
 using Fanex.NAP.Client;
 using Microsoft.Extensions.Options;
 using Settlement.Core.Models;
-using Settlement.Sportsbook.Soccer.Criteria;
-using Settlement.Sportsbook.Soccer.Models;
-using Settlement.Sportsbook.Soccer.Requests;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Match = Settlement.Sportsbook.Soccer.Models.Match;
-using MatchDetail = Settlement.Sportsbook.Soccer.Models.MatchDetail;
-
-namespace Settlement.Sportsbook.Soccer.GetMatch.Services;
+using Criteria;
+using Models;
+using Requests;
+using Match = Models.Match;
+using MatchDetail = Models.MatchDetail;
 
 public interface IFetchDataService
 {

@@ -1,9 +1,7 @@
-﻿using Settlement.Core.Constants;
-using Settlement.Core.Models;
-using System.Collections.Generic;
-using System.Linq;
+﻿namespace Settlement.Sportsbook.OtherSports.Services;
 
-namespace Settlement.Sportsbook.OtherSports.Services;
+using Settlement.Core.Constants;
+using Settlement.Core.Models;
 
 public interface MergeDataService
 {

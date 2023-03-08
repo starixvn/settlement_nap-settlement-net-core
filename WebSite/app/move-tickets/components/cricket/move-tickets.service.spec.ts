@@ -1,4 +1,4 @@
-import { FilterRequest, MoveTicketsRequest, GetChildMatchesRequest, CalculateMPRequest } from '../../models';
+import { FilterRequest, MoveTicketsRequest, GetChildMatchesRequest } from '../../models';
 import { BlockUIService, DialogBoxService, HttpRequestService, MessageBoxService } from '../../../shared/services';
 import { TestBed} from '@angular/core/testing';
 
@@ -115,18 +115,6 @@ describe('MoveTicketsService', () => {
       .toHaveBeenCalledWith(param, "api/moveticket/get-child-match");
   });
 
-  it('calculateMP - Call right Url and param', () => {
-    // Arrange
-    const param = new CalculateMPRequest('12345');
-
-    // Act
-    spyOn(httpRequestService, 'postJson');
-    moveTicketsService.calculateMP(param);
-
-    // Assert
-    expect(httpRequestService.postJson)
-      .toHaveBeenCalledWith(param, "api/multi-sports/calculate-mix-parlay");
-  });
 
   it('popupLog - should open dialog box', () => {
     spyOn(dialogBoxService, 'popup');

@@ -1,6 +1,4 @@
 ﻿using Settlement.Core.Models;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Settlement.Sportsbook.MoveTickets.Services;
 
@@ -56,7 +54,7 @@ public class ScoreServiceImp : IScoreService
         {
             HalfTimeScore = HalftimeScore(resultDetails),
             FinalScore = FinalScore(resultDetails),
-            Sets = ScoreOfSets(resultDetails, resources),
+            Sets = ScoreOfSets(resultDetails, resources)
         };
     }
 

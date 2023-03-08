@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using Settlement.Core.Models;
 using Settlement.FastMarkets.Models;
-using System.Collections.Generic;
 
 namespace Settlement.FastMarkets.Requests;
 

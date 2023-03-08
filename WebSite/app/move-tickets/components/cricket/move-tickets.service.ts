@@ -8,11 +8,10 @@ import {
   MoveTicketsRequest,
   GetChildMatchesRequest,
   ChildMatch,
-  CalculateMPRequest,
 } from '../../models';
 import * as _ from 'lodash';
 import { Result, DialogDataIframe } from '../../../shared/models';
-import { Language } from '../../../shared/language';
+import { Language } from '../../../shared/language.native';
 
 @Injectable()
 
@@ -40,10 +39,6 @@ export class MoveTicketsService {
 
   public getChildMatches(request: GetChildMatchesRequest): Observable<ChildMatch[]> {
     return this.httpRequestService.postJson(request, `api/moveticket/get-child-match`);
-  }
-
-  public calculateMP(request: CalculateMPRequest) {
-    return this.httpRequestService.postJson(request, 'api/multi-sports/calculate-mix-parlay');
   }
 
   public popupLog(matchId: number, fromDate: string, toData: string ) {

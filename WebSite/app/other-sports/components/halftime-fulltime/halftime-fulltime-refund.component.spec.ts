@@ -15,7 +15,7 @@ import { ResultDetail } from '../../../shared/models/sportsbook-sop/result-detai
 import { ResourcesIds } from '../../constants';
 import { HedgeMatchDetail } from '../../../shared/models/sportsbook-sop/hedge-match-detail.model';
 import { of } from 'rxjs';
-import { Language } from '../../../shared/language';
+import { Language } from '../../../shared/language.native';
 import { HalfTimeFullTimeRefundComponent } from './halftime-fulltime-refund.component';
 
 describe('HalfTimeFullTimeRefundComponent', () => {

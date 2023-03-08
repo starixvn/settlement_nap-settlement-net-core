@@ -2,11 +2,11 @@ import { Component, ViewChild } from '@angular/core';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 import { FullTimeService } from './fulltime.service';
 import { FullTimeVerificationService } from './fulltime-verification.service';
-import { Match, MatchDetail, OtherSportsMatch, Permission, QueryMatch } from '../../models';
+import { Match, MatchDetail, Permission, QueryMatch } from '../../models';
 import { ModalDialogMessage } from '../../../shared/models';
 import { MessageBoxService } from '../../../shared/services';
 import { CalculateAction, MatchStatus, SportType } from '../../../shared/constants';
-import { Language } from '../../../shared/language';
+import { Language } from '../../../shared/language.native';
 import * as _ from 'lodash';
 import { KickOffTime, UpcommingSports } from '../../constants';
 import { ScorePipe } from '../../pipes';
@@ -44,7 +44,7 @@ export class FullTimeCalculationComponent implements SportTemplate {
   async getMatch(matchId: number) {
     this.toastrService.overlayContainer = this.toastContainer;
     const query = new QueryMatch(matchId, false);
-    const otherSportsMatch = await this.requestService.getMatch(query).toPromise() as OtherSportsMatch;
+    const otherSportsMatch = await this.requestService.getMatch(query);
     this.match = otherSportsMatch.match;
     this.permission = otherSportsMatch.permission;
     this.matchDetail = this.match.matchDetail;
@@ -124,7 +124,7 @@ export class FullTimeCalculationComponent implements SportTemplate {
         matchId: this.matchDetail.matchId
       };
 
-      const result = await this.verificationService.verifyChangedSettledTickets(this.matchDetail, query).toPromise();
+      const result = await this.verificationService.verifyChangedSettledTickets(this.matchDetail, query);
       if (result) {
        this.confirmationDialogMessage.message = Language.recalculateNotification;
         this.messageBoxService.confirm(this.confirmationDialogMessage, () => {

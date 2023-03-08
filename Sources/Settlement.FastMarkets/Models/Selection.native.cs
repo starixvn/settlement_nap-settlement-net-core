@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Settlement.Core.Constants;
+﻿using Settlement.Core.Constants;
 
 namespace Settlement.FastMarkets.Models;
 
@@ -15,14 +14,8 @@ public class Selection
 
     public bool Checked
     {
-        get
-        {
-            return !Text.Equals(TicketStatus.NoTicket) && isChecked;
-        }
-        set
-        {
-            isChecked = value;
-        }
+        get => !Text.Equals(TicketStatus.NoTicket) && isChecked;
+        set => isChecked = value;
     }
 
     public bool Enable { get; set; } = true;

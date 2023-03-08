@@ -88,22 +88,11 @@ export class GameTotalMatchService {
             finalAwayScore: Number(totalSets.awayValue),
         };
 
-        const result = await this.requestService.refund(params).toPromise() as Result;
-        return this.getMessage(matchId, result);
+        const result = await this.requestService.sendRequest(params);
+        return this.getMessage(result);
     }
 
-    public async refundParlay(matchId: number, hedgeMatchId: number) {
-        const params = {
-            matchId,
-            action: CalculateAction.refund,
-            hedgeMatchId,
-        };
-
-        const result = await this.requestService.refundParlay(params) .toPromise() as Result;
-        return this.getMessage(matchId, result);
-    }
-
-    private getMessage(matchId: number, result: Result){
+    private getMessage(result: Result){
         if (result.isSuccessful) {
             this.messageBoxService.closePopup();
             return "";

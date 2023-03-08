@@ -2,7 +2,7 @@
 import { Injectable } from '@angular/core';
 import { DialogBoxService } from '../../shared/services';
 import { DialogDataIframe } from '../../shared/models/dialog-data.model';
-import { Language } from '../../shared/language';
+import { Language } from '../../shared/language.native';
 import { EventStatus } from '../../shared/constants';
 import { MatDialog } from '@angular/material/dialog';
 import { ReCalculationComponent } from '../components/recalculation.component';

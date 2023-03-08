@@ -1,9 +1,10 @@
-﻿using Settlement.Core.Models;
-using Settlement.Core.Services;
-using Settlement.EventManagement.Services.SpecificService.Tennis;
-using Match = Settlement.EventManagement.Models.MultiSports.Match;
+﻿using Settlement.EventManagement.Services.SpecificService.Tennis;
 
 namespace Settlement.EventManagement.Services.MultiSports;
+
+using Settlement.Core.Models;
+using Settlement.Core.Services;
+using Match = Models.MultiSports.Match;
 
 public interface IMatchResultDetailService
 {
@@ -97,7 +98,7 @@ public class MatchResultDetailServiceImp : IMatchResultDetailService
             var resultDetailByMatchId = resultDetails.Where(m => m.MatchId == match.MatchId && m.SourceId == SourceType.Normal).ToList();
             match.MoreScores = scoreService.ScoreLoader(match.SportType, resultDetailByMatchId, resources, permission);
             match.IsHavingIntervalScore = IsDisplayIntervalScore(match, resultDetailByMatchId);
-            this.externalScoreService.LoadExternalResultForVolleyball(match, resultDetails);
+            externalScoreService.LoadExternalResultForVolleyball(match, resultDetails);
         }
 
         return matches;

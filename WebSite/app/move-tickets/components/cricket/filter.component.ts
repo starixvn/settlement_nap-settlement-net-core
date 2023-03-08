@@ -12,7 +12,7 @@ import {
     MultiSport,
 } from '../../models';
 import { SportType } from '../../../shared/constants';
-import { Language } from "../../../shared/language";
+import { Language } from "../../../shared/language.native";
 import { DefaultValue } from "../../constants";
 import { MoveTicketsService } from "./move-tickets.service";
 import * as _ from "lodash";

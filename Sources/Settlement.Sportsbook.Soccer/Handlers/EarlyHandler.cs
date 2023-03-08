@@ -1,13 +1,12 @@
 ﻿using MediatR;
 using Settlement.Core.Models;
-using Settlement.Sportsbook.Soccer.GetMatch.Services;
 using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Requests;
 using Settlement.Sportsbook.Soccer.Services;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Settlement.Sportsbook.Soccer.Handlers;
+
+using Services.GetMatch;
 
 public class EarlyHandler : IRequestHandler<GetMatchEarlyRequest, MatchEarly>, IRequestHandler<SettleEarlyRequest, Result>
 {

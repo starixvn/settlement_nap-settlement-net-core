@@ -9,22 +9,21 @@ using MatchDetail = Settlement.FastMarkets.Models.MatchDetail;
 
 namespace Settlement.FastMarkets.UnitTests.Services;
 
+using Core.Services.SpecificService;
+
 public class MatchDetailServiceTests
 {
     private readonly IDynamicRepository dynamicRepository;
-    private readonly IGoalIconService goalIconService;
-    private readonly IRefDataService refDataService;
     private readonly IMatchDetailService service;
-    private readonly IFastMarketResultService fastMarketResultService;
 
     public MatchDetailServiceTests()
     {
         dynamicRepository = Substitute.For<IDynamicRepository>();
-        goalIconService = Substitute.For<IGoalIconService>();
-        refDataService = Substitute.For<IRefDataService>();
-        fastMarketResultService = Substitute.For<IFastMarketResultService>();
+        var goalIconService = Substitute.For<IGoalIconService>();
+        var refDataService = Substitute.For<IRefDataService>();
+        var fastMarketResultService = Substitute.For<IFastMarketResultService>();
         fastMarketResultService.Result(Arg.Any<List<BetType>>(), Arg.Any<string>()).Returns("XML");
-        dynamicRepository.Get<Core.Models.MarkedTickets>(Arg.Any<CriteriaBase>()).Returns(new Core.Models.MarkedTickets());
+        dynamicRepository.Get<MarkedTickets>(Arg.Any<CriteriaBase>()).Returns(new MarkedTickets());
         var appSetting = new AppSettingsKey();
         var option = Options.Create(appSetting);
         service = new MatchDetailServiceImp(dynamicRepository, refDataService, goalIconService, fastMarketResultService, option);

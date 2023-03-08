@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 import { MatchDetail, ResultDetail, GroupMap, InputOption, ExternalResultDetail } from '../../shared/models/sportsbook-sop';
 import { EarlyBaseService } from '../../core/services/early-base.service';
 import { ResultByPlayerNamePipe, ResultValuePipe } from '../pipes';
-import { Language } from '../../shared/language';
+import { Language } from '../../shared/language.native';
 import { MultipleSelect } from '../../shared/models';
 @Injectable()
 export class EarlyConstraintService extends EarlyBaseService {

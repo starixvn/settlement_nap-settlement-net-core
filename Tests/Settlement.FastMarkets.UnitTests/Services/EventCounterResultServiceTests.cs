@@ -2,8 +2,6 @@
 using Settlement.FastMarkets.Models;
 using Settlement.FastMarkets.Models.EventCounterModels;
 using Settlement.FastMarkets.Services;
-using System.Collections.Generic;
-using Xunit;
 
 namespace Settlement.FastMarkets.UnitTests.Services;
 

@@ -21,19 +21,19 @@ public class TimeMachineResult
 
     private static string TimeMachineInterval(int position)
     {
-        const int NineMinute = 9;
+        const int nineMinute = 9;
 
         if (position == 0)
         {
             return $"0{position}:00-01:00";
         }
 
-        if (position < NineMinute)
+        if (position < nineMinute)
         {
             return $"0{position}:01-0{position + 1}:00";
         }
 
-        if (position == NineMinute)
+        if (position == nineMinute)
         {
             return $"0{position}:01-{position + 1}:00";
         }

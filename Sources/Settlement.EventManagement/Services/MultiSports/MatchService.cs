@@ -1,8 +1,8 @@
-﻿using Settlement.Core.Models;
-using Settlement.Core.Services;
-using Match = Settlement.EventManagement.Models.MultiSports.Match;
+﻿namespace Settlement.EventManagement.Services.MultiSports;
 
-namespace Settlement.EventManagement.Services.MultiSports;
+using Settlement.Core.Models;
+using Settlement.Core.Services;
+using Match = Models.MultiSports.Match;
 
 public interface IMatchService
 {
@@ -106,8 +106,8 @@ public class MatchServiceImp : IMatchService
         return LoadExternalResults(matches, resultDetails, sportType);
     }
 
-    private readonly List<int> fullTimeSports = new List<int>
-        {
+    private readonly List<int> fullTimeSports = new()
+    {
             SportType.IceHockey,
             SportType.VolleyBall,
             SportType.TableTennis,
@@ -151,11 +151,11 @@ public class MatchServiceImp : IMatchService
             SportType.Finance,
             SportType.FieldHockey,
             SportType.Squash,
-            SportType.SepakTakraw,
+            SportType.SepakTakraw
         };
 
-    private readonly List<int> halfTimeFullTimeSports = new List<int>
-        {
+    private readonly List<int> halfTimeFullTimeSports = new()
+    {
             SportType.Football,
             SportType.BaseBall,
             SportType.Rugby,

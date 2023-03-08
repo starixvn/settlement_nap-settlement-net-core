@@ -7,6 +7,4 @@ public class CheckMarkedTicketsRequest : IRequest<MarkedTickets>
     public int MatchId { get; set; }
 
     public List<ResourceItem> SelectedResources { get; set; }
-
-    public bool IsMergedParlay { get; set; }
 }

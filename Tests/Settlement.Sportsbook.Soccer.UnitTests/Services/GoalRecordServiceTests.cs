@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Services;
-using Xunit;
 
 namespace Settlement.Sportsbook.Soccer.UnitTests.Services;
 
@@ -23,7 +17,7 @@ public class GoalRecordServiceTests
     public void NoGoalFullTime_Always_ReturnsZeroFirstGoalLastGoal()
     {
         // Arrange
-        var expectedGoal = "FL:0-0;";
+        const string expectedGoal = "FL:0-0;";
 
         // Act
         var actualGoal = service.NoGoalFullTime;
@@ -78,7 +72,7 @@ public class GoalRecordServiceTests
         var actualGoal = service.GoalRecordWithSemicolon(new GoalRecordModel(), goal);
 
         // Assert
-        Assert.Equal(JsonConvert.SerializeObject(expectedGoal), JsonConvert.SerializeObject(actualGoal)); ;
+        Assert.Equal(JsonConvert.SerializeObject(expectedGoal), JsonConvert.SerializeObject(actualGoal));
     }
 
     [Theory]

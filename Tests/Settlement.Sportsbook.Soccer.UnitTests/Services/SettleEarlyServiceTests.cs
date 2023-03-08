@@ -66,7 +66,7 @@ public class SettleEarlyServiceTests
             .Returns(new ResultMessage());
 
         //act
-        var result = await service.CalculateEarly(new SettleEarlyRequest());
+        await service.CalculateEarly(new SettleEarlyRequest());
 
         //assert
         Received.InOrder(() =>

@@ -20,7 +20,7 @@
 			}
 			<li class="line1"></li>
 			<li class="line2"></li>
-			@for (int i = 0; i < menuItems.Count; i++)
+			@for (var i = 0; i < menuItems.Count; i++)
 			{
 				var menuItem = menuItems[i];
 				var item = menuItemList.Where(m => m.ParentId > 0 && m.ParentId == menuItem.Id).OrderBy(m => m.DisplayOrder).ToList();

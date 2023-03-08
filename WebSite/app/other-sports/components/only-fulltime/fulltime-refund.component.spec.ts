@@ -8,7 +8,7 @@ import { ModalContentDialogComponent, ModalDialogComponent } from '../../../shar
 import { Match, MatchDetail, OtherSportsMatch, Permission, QueryMatch } from '../../models';
 import { TicketCount } from '../../../shared/models';
 import { of } from 'rxjs';
-import { Language } from '../../../shared/language';
+import { Language } from '../../../shared/language.native';
 import { CalculateAction } from '../../../shared/constants';
 import { RequestService } from '../../services/request.service';
 import { FullTimeService } from './fulltime.service';

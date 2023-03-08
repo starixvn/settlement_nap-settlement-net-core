@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using Settlement.Gaming.Models.NumberGame;
-using System;
 
 namespace Settlement.Gaming.Requests;
 

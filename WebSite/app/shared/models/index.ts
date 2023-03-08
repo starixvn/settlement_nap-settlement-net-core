@@ -19,7 +19,6 @@ export * from './match-details/match.model';
 export * from './match-details/score.model';
 export * from './match-details/remark.model';
 export * from './match-details/more-score.model';
-export * from './match-details/mix-parlay.model';
 export * from './match-details/auto-setting.model';
 export * from './match-details/league-match.model';
 export * from './match-details/sport-match.model';

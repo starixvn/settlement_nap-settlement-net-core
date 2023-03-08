@@ -11,7 +11,7 @@ import { FilterStatuses, TeamStatuses, StatusId, Status } from '../../constants'
 import * as _ from "lodash";
 import { StatusPipe } from '../../pipes/status-pipe';
 import { CalculateService } from '../../services';
-import { Language } from '../../../shared/language';
+import { Language } from '../../../shared/language.native';
 import { ModalDialogMessage } from '../../../shared/models';
 import { MatDialog, MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DragDropModule } from '@angular/cdk/drag-drop';

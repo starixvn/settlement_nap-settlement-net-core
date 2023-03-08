@@ -45,9 +45,6 @@ describe('MoveTickets - LeagueComponent', () => {
     matches: [match],
     name: 'mock league',
     collapse: false,
-    isCheckedCalcMP: true,
-    disableCheckCalcMP: false,
-    isMergedParlay: true,
     autoCalcSetting: null
   };
 
@@ -59,7 +56,6 @@ describe('MoveTickets - LeagueComponent', () => {
   };
 
   const permission = new Permission();
-  permission.canCalculateMp = true;
   const multiSport: MultiSport = {
     permission,
     sports: [sport],
@@ -295,64 +291,5 @@ describe('MoveTickets - LeagueComponent', () => {
         expect(component.refreshAction.emit).toHaveBeenCalled();
         expect(messageBoxService.alert).toHaveBeenCalled();
     }));
-  });
-
-  describe('calculateMPMovedTickets', () => {
-      it('should alert when there is no child match', fakeAsync(() => {
-        spyOn(moveTicketsService, 'getChildMatches').and.returnValue(of([]));
-        spyOn(messageBoxService, 'alert');
-
-        component.calculateMPMovedTickets(match);
-        const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
-        buttonYes.click();
-        tick();
-
-        expect(messageBoxService.alert).toHaveBeenCalled();
-      }));
-
-      it('should alert when match is on hold', fakeAsync(() => {
-        match.remark = new Remark();
-        match.remark.isKeyHold = true;
-        spyOn(moveTicketsService, 'getChildMatches').and.returnValue(of([new ChildMatch()]));
-        spyOn(messageBoxService, 'alert');
-
-        component.calculateMPMovedTickets(match);
-        const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
-        buttonYes.click();
-        tick();
-
-        expect(messageBoxService.alert).toHaveBeenCalled();
-      }));
-
-      it('should refresh page when successfully calculate mp', fakeAsync(() => {
-        match.remark = new Remark();
-        spyOn(moveTicketsService, 'getChildMatches').and.returnValue(of([new ChildMatch()]));
-        spyOn(moveTicketsService, 'calculateMP').and.returnValue(of(successfulResult));
-        spyOn(component.refreshAction, 'emit');
-        spyOn(messageBoxService, 'alert');
-
-        component.calculateMPMovedTickets(match);
-        const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
-        buttonYes.click();
-        tick();
-
-        expect(component.refreshAction.emit).toHaveBeenCalled();
-        expect(messageBoxService.alert).toHaveBeenCalledTimes(0);
-      }));
-
-      it('should refresh page and alert when calculate mp not successfully', fakeAsync(() => {
-        spyOn(moveTicketsService, 'getChildMatches').and.returnValue(of([new ChildMatch()]));
-        spyOn(moveTicketsService, 'calculateMP').and.returnValue(of(unsuccessfulResult));
-        spyOn(component.refreshAction, 'emit');
-        spyOn(messageBoxService, 'alert');
-
-        component.calculateMPMovedTickets(match);
-        const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
-        buttonYes.click();
-        tick();
-
-        expect(component.refreshAction.emit).toHaveBeenCalled();
-        expect(messageBoxService.alert).toHaveBeenCalled();
-      }));
   });
 });

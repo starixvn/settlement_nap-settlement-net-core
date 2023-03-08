@@ -1,18 +1,15 @@
-﻿using AutoMapper;
+﻿namespace Settlement.Sportsbook.Soccer.Services.GetMatch;
+
+using AutoMapper;
+using Core.Services.SpecificService;
+using Criteria;
 using Fanex.Data.Repository;
 using Fanex.NAP.Client;
+using Models;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
-using Settlement.Sportsbook.Soccer.Criteria;
-using Settlement.Sportsbook.Soccer.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using MatchDetail = Settlement.Sportsbook.Soccer.Models.MatchDetail;
-
-namespace Settlement.Sportsbook.Soccer.GetMatch.Services;
+using MatchDetail = Models.MatchDetail;
 
 public interface MatchEarlyService
 {
@@ -90,10 +87,7 @@ public class MatchEarlyServiceImp : MatchEarlyService
     private static void MergeEarlyTicketsToResults(List<ResultDetailModel> resultDetails, List<ResultDetailModel> ticketDetails)
     {
         var newTicketDetails = ticketDetails.Where(ticketDetail => !resultDetails.Any(result => result.Equals(ticketDetail)));
-        if (newTicketDetails.Any())
-        {
-            resultDetails.AddRange(newTicketDetails);
-        }
+        resultDetails.AddRange(newTicketDetails);
 
         GenerateTicketsStatus(resultDetails, ticketDetails);
     }

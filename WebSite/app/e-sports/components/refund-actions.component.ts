@@ -1,26 +1,35 @@
-﻿import { Component, ViewChild } from '@angular/core';
+﻿import { RefundCommonModule } from './../../shared/modules/refund-common.module';
+import { Component, ViewChild, Injector } from '@angular/core';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 import * as _ from 'lodash';
-import { MessageBoxService, ClosePopupService, AioService } from '../../shared/services';
-import { Result, MarkedTicketsModel, ModalDialogMessage } from '../../shared/models';
-import { Language } from '../../shared/language';
+import { MessageBoxService, AioService, BlockUIService } from '../../shared/services';
+import { ModalDialogMessage } from '../../shared/models';
+import { Language } from '../../shared/language.native';
 import { Match, SettleQuery } from '../models';
 import { HedgeMatchDetail, SportTemplate } from '../../shared/models/sportsbook-sop';
 import { ApiKeys } from '../constants';
 import { RefundActionBaseComponent } from '../../shared/components/sportsbook-sop/refund-action-base.component';
+import { MatchDetailComponent } from './match-detail.component';
+import { ResourceNameByIdPipe } from '../pipes/resource-name-by-id.pipe';
+import { VerificationBaseService } from '../../core/services/verification-base.service';
 
 @Component({
     selector: 'refund-actions',
     templateUrl: 'refund-actions.component.html',
+    standalone: true,
+    imports: [RefundCommonModule, MatchDetailComponent, ResourceNameByIdPipe],
+    providers: [VerificationBaseService]
 })
 export class RefundActionsComponent extends RefundActionBaseComponent implements SportTemplate {
     @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
+    public blockUI = true;
     public match: Match;
     public isRefundOldMatch: boolean;
     public oldMatchDetail: HedgeMatchDetail;
     public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
     private readonly leaguePinGoal = 151;
     constructor(
+        protected inject: Injector,
         private readonly messageBoxService: MessageBoxService,
         protected toastrService: ToastrService,
         protected aioService: AioService) {
@@ -29,6 +38,7 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
     }
 
     async getMatch(matchId: number): Promise<void> {
+        this.initService();
         const matchQuery = {
             matchId,
             apikey: ApiKeys.NormalMatch,
@@ -36,7 +46,7 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
         };
         this.toastrService.overlayContainer = this.toastContainer;
 
-        this.match = await this.aioService.getMatch(matchQuery).toPromise() as Match;
+        this.match = await this.aioService.getMatch(matchQuery) as Match;
         this.hedgeMatchDetail = this.match.hedgeMatchDetail;
         this.oldMatchDetail = this.match.oldMatchDetail;
         this.applyHedgeMatch = this.hedgeMatchDetail != null;
@@ -46,11 +56,16 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
         this.permission = this.match.permission;
     }
 
+    private initService(){
+        this.inject.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
+        this.toastrService.overlayContainer = this.toastContainer;
+    }
+
     public async refund() {
         const paramsCheckingMarkedTickets = this.generateCheckMarkedTicketsQuery();
-        const response = await this.aioService.checkMarkedTickets(paramsCheckingMarkedTickets).toPromise() as MarkedTicketsModel;
+        const response = await this.aioService.checkMarkedTickets(paramsCheckingMarkedTickets);
         this.toastrService.clear();
-        if(this.matchDetail.leagueGroupId != this.leaguePinGoal && this.existResultNotConfirmed()) {
+        if (this.matchDetail.leagueGroupId != this.leaguePinGoal && this.existResultNotConfirmed()) {
             this.toastrService.error(Language.confirmRefund.refundResultNotConfirmed);
         } else if (response.isExistMarkedTicket) {
             this.toastrService.error(Language.MarkedTicket);
@@ -64,7 +79,7 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
 
     private async doRefund() {
         const query = this.generateRefundQuery(ApiKeys.Settle);
-        const result = await this.aioService.push(query).toPromise() as Result;
+        const result = await this.aioService.push(query);
         if (result.errCode === 0) {
             await this.refundHedgeMatch(query);
             await this.refundOldMatch(query);
@@ -78,7 +93,7 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
         const hedgeMatchId = this.applyHedgeMatch ? this.hedgeMatchDetail.matchId : 0;
         if (hedgeMatchId > 0) {
             query.matchId = hedgeMatchId;
-            this.aioService.push(query).toPromise();
+            this.aioService.push(query);
         }
     }
 
@@ -86,12 +101,12 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
         const oldMatchId = this.isRefundOldMatch ? this.oldMatchDetail.matchId : 0;
         if (oldMatchId > 0) {
             query.matchId = oldMatchId;
-            await this.aioService.push(query).toPromise();
+            await this.aioService.push(query);
         }
     }
 
     public confirmRefund(hedgeMatchDetail: HedgeMatchDetail, applyHedgeMatch: boolean,
-            oldMatchDetail: HedgeMatchDetail = null, applyOldMatch: boolean = null) {
+        oldMatchDetail: HedgeMatchDetail = null, applyOldMatch: boolean = null) {
         this.toastrService.clear();
         if (!applyHedgeMatch) {
             hedgeMatchDetail = new HedgeMatchDetail();
@@ -106,7 +121,7 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
             this.confirmResult(this.selectedResources, this.matchDetail.matchId, resourceIds, hedgeMatchDetail, oldMatchDetail);
         } else {
             this.undoConfirmedResult(this.selectedResources, this.matchDetail.matchId, resourceIds,
-                                                hedgeMatchDetail, oldMatchDetail);
+                hedgeMatchDetail, oldMatchDetail);
         }
     }
 }

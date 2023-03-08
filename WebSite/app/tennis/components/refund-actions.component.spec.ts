@@ -20,7 +20,7 @@ import {
 import { Match } from '../models';
 import { TennisApiKeys, ResourcesIds } from '../constants';
 import { of } from 'rxjs';
-import { Language } from '../../shared/language';
+import { Language } from '../../shared/language.native';
 import { CalculateAction } from '../../shared/constants';
 import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
 import { MatchDetail, Permission, SettleQuery } from '../../shared/models/sportsbook-sop';

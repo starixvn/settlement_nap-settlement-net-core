@@ -14,21 +14,21 @@ import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { HttpRequestService, BlockUIService, MessageBoxService, DialogBoxService } from '../../shared/services';
-import { SimpleChange, QueryList, ElementRef } from '@angular/core';
+import { SimpleChange } from '@angular/core';
 import { MaterialModule } from '../../shared/material-module';
 import { of } from 'rxjs';
-import { ModalDialogComponent, ModalContentDialogComponent } from '../../shared/components';
 import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { IntervalScorePipe } from '../../shared/pipes/interval-score.pipe';
 import {
   MoreScore,
   Score,
-  MixParlay,
   Remark,
   AutoSetting
 } from '../../shared/models';
 import { BackgroundColor, SportType } from '../../shared/constants';
 import { Permission } from '../../shared/models/sportsbook-sop/permission.model';
+import { ModalDialogComponent } from '../../shared/components/modal-dialog/modal-dialog.component';
+import { ModalContentDialogComponent } from '../../shared/components/modal-dialog/modal-content-dialog.component';
 
 describe('LeagueComponent', () => {
   let component: LeagueComponent;
@@ -42,12 +42,8 @@ describe('LeagueComponent', () => {
   let popupService: PopupService;
   let match = new Match();
   match.sportType = SportType.eSports;
-  match.isCheckedCalcMP = true;
   match.isExistMarkedTicketParlay = false;
   match.autoCalcSetting = new AutoSetting();
-  const parlay = new MixParlay();
-  parlay.hasMixParlay = true;
-  match.mixParlay = parlay;
   const buttonName = "btn-danger";
   const errorMessage = "Error message";
   const league: LeagueMatch = {
@@ -55,9 +51,6 @@ describe('LeagueComponent', () => {
     matches: [match],
     name: 'mock league',
     collapse: false,
-    isCheckedCalcMP: true,
-    disableCheckCalcMP: false,
-    isMergedParlay: false,
     autoWaitingTime: 0,
     autoCalcSetting: new AutoSetting()
   };
@@ -70,11 +63,9 @@ describe('LeagueComponent', () => {
   };
 
   const permission = new Permission();
-  permission.canCalculateMp = true;
   const multiSport: MultiSport = {
     permission,
     sports: [sport],
-    isCheckedCalcMP: false,
   };
   const successfulResult = {
     errCode: 0,
@@ -205,53 +196,6 @@ describe('LeagueComponent', () => {
     component.collapseLeague(mockLeague);
 
     expect(mockLeague.collapse).toBe(true);
-  });
-
-  it('selectCalcMPOnSport - should check all leagues and matches', () => {
-    component.sports = [sport];
-    component.permission = permission;
-    component.selectCalcMPOnSport(true);
-
-    expect(league.isCheckedCalcMP).toBe(true);
-    expect(match.isCheckedCalcMP).toBe(true);
-  });
-
-  it('selectCalcMPOnLeague - should check all matches', () => {
-    component.sports = [sport];
-    component.multiSport = multiSport;
-    permission.canCalculateMp = true;
-    component.permission = permission;
-
-    component.selectCalcMPOnLeague(league, true);
-
-    expect(component.multiSport.isCheckedCalcMP).toBe(true);
-    expect(match.isCheckedCalcMP).toBe(true);
-  });
-
-  it('selectCalcMPOnMatch - should check league and sport when all matches are checked', () => {
-    match.isCheckedCalcMP = true;
-    component.sports = [sport];
-    component.multiSport = multiSport;
-
-    component.selectCalcMPOnMatch(league);
-
-    expect(component.multiSport.isCheckedCalcMP).toBe(true);
-    expect(league.isCheckedCalcMP).toBe(true);
-  });
-
-  it('selectCalcMPOnLeague - should check all matches except match has mix parlay', () => {
-    component.sports = [sport];
-    component.multiSport = multiSport;
-    match.mixParlay.hasMixParlay = true
-    match.isCheckedCalcMP = false;
-    permission.canCalculateMp = true;
-    component.permission = permission;
-
-    component.selectCalcMPOnLeague(league, true);
-
-    expect(component.multiSport.isCheckedCalcMP).toBe(true);
-    expect(match.isCheckedCalcMP).toBe(true);
-    match = new Match();
   });
 
   describe('getCalcColumnColor', () => {
@@ -435,50 +379,6 @@ describe('LeagueComponent', () => {
     });
   });
 
-  describe('getCalcMPColor', () => {
-    it('should return background calculated when match is multi calculated', () => {
-      match.isMultiCaled = true;
-      match.isRefund = false;
-      match.isExistMarkedTicketParlay = false;
-      match.isExistRunningTicketParlay = false;
-
-      const result = component.getCalcMPColor(match);
-
-      expect(result).toEqual(BackgroundColor.calculated);
-    });
-
-    it('should return background refund when match is reafunded', () => {
-      match.isMultiCaled = false;
-      match.isRefund = true;
-      match.isExistMarkedTicketParlay = false;
-      match.isExistRunningTicketParlay = false;
-
-      const result = component.getCalcMPColor(match);
-
-      expect(result).toEqual(BackgroundColor.calRefund);
-    });
-
-    it('should return background pink when match has running ticket parlay', () => {
-      match.isMultiCaled = true;
-      match.isRefund = false;
-      match.isExistRunningTicketParlay = true;
-      match.isExistMarkedTicketParlay = false;
-
-      const result = component.getCalcMPColor(match);
-
-      expect(result).toEqual(BackgroundColor.pink);
-    });
-
-    it('should return empty when match is not multi calculated and refunded', () => {
-      match.isMultiCaled = false;
-      match.isRefund = false;
-      match.isExistMarkedTicketParlay = false;
-      const result = component.getCalcMPColor(match);
-
-      expect(result).toEqual('');
-    });
-  });
-
   describe('canAutoSettlement', () => {
     it('should return true when sport support early settlement', () => {
       const sportType = SportType.badminton;
@@ -641,59 +541,6 @@ describe('LeagueComponent', () => {
     });
   });
 
-  describe('calculateMixParlay', () => {
-    it('should calculate successfully', fakeAsync(() => {
-      match.mixParlay = new MixParlay();
-      match.mixParlay.hasMixParlay = true;
-      match.matchCode = 'ABC';
-      permission.canCalculateMp = true;
-      component.multiSport = multiSport;
-      component.sports = [sport];
-      component.sports[0].leagues[0].disableCheckCalcMP = false;
-      component.sports[0].leagues[0].isCheckedCalcMP = true;
-      component.sports[0].leagues[0].matches[0].isCheckedCalcMP = true;
-      component.sports[0].leagues[0].matches[0].isExistMarkedTicketParlay = false;
-      component.permission = permission;
-      spyOn(multiSportService, 'calculateMixParlay').and.returnValue(of(successfulResult));
-
-      component.calculateMixParlay();
-      const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
-      buttonYes.click();
-      tick();
-
-      expect(component.sports[0].leagues[0].matches[0].isCalculatingMP).toEqual(0);
-      expect(component.multiSport.isCheckedCalcMP).toBe(false);
-      expect(component.sports[0].leagues[0].matches[0].isCheckedCalcMP).toBe(false);
-
-    }));
-
-    it('should return false when no match is checked for calculating', () => {
-      component.sports = [sport];
-      component.permission = permission;
-
-      const result = component.calculateMixParlay();
-
-      expect(result).toBe(false);
-    });
-
-    it('should alert when calculation is not successful', fakeAsync(() => {
-      component.multiSport = multiSport;
-      component.sports = [sport];
-      component.sports[0].leagues[0].disableCheckCalcMP = false;
-      component.sports[0].leagues[0].isCheckedCalcMP = true;
-      component.sports[0].leagues[0].matches[0].isCheckedCalcMP = true;
-      component.permission = permission;
-      spyOn(multiSportService, 'calculateMixParlay').and.returnValue(of(unsuccessfulResult));
-      spyOn(messageBoxService, 'alert');
-
-      component.calculateMixParlay();
-      const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
-      buttonYes.click();
-      tick();
-
-      expect(messageBoxService.alert).toHaveBeenCalled();
-    }));
-  });
 
   it('popupCalc - should call popupService when called', () => {
     spyOn(popupService, 'popupCalc');
@@ -705,7 +552,6 @@ describe('LeagueComponent', () => {
 
   it('popupRefund - should call popupService', () => {
     spyOn(popupService, 'popupRefund');
-    spyOn(component, 'enableCalcMPOnMatch').and.returnValue(false);
 
     component.popupRefund(match);
 
@@ -720,28 +566,9 @@ describe('LeagueComponent', () => {
     expect(popupService.popupEarly).toHaveBeenCalled();
   });
 
-  it('disableSelectCalcMPOnLeague - should disable select calc mp on league', () => {
-    match.mixParlay.hasMixParlay = false;
-    league.matches = [match];
-    component.permission = permission;
-
-    const result = component.disableSelectCalcMPOnLeague(league);
-
-    expect(result).toBe(true);
-  });
-
-  it('disableSelectAllCalcMP - should disable select all calc mp', () => {
-    component.calcMPOnLeague = new QueryList<ElementRef>();
-
-    const result = component.disableSelectAllCalcMP();
-
-    expect(result).toBe(true);
-  });
-
   describe('isChangeSetting', () => {
     it('should return true when having permission and match is not calculating', () => {
       match.isCalculatingSingle = null;
-      match.isCalculatingMP = null;
 
       const result = component.isChangeSetting(match);
 
@@ -751,7 +578,6 @@ describe('LeagueComponent', () => {
     describe('should return false', () => {
       beforeEach(() => {
         match.isCalculatingSingle = null;
-        match.isCheckedCalcMP = null;
       });
 
       it('when match is calculating single', () => {
@@ -764,22 +590,6 @@ describe('LeagueComponent', () => {
 
       it('when match is waiting for single calculation', () => {
         match.isCalculatingSingle = 0;
-
-        const result = component.isChangeSetting(match);
-
-        expect(result).toBe(false);
-      });
-
-      it('when match is calculating MP', () => {
-        match.isCalculatingMP = 1;
-
-        const result = component.isChangeSetting(match);
-
-        expect(result).toBe(false);
-      });
-
-      it('when match is waiting for MP calculation', () => {
-        match.isCalculatingMP = 0;
 
         const result = component.isChangeSetting(match);
 
@@ -816,7 +626,6 @@ describe('LeagueComponent', () => {
   describe('popupChangeRemarkSetting', () => {
     it('should call popupService when match is not locked', () => {
       match.isCalculatingSingle = 3;
-      match.isCalculatingMP = 3;
       spyOn(popupService, 'popupChangeRemark');
 
       component.popupChangeRemarkSetting(match);

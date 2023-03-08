@@ -1,10 +1,8 @@
-﻿using System;
-
-namespace Settlement.Core.Models;
+﻿namespace Settlement.Core.Models;
 
 public class ChildMatch
 {
-    public int matchId { get; set; }
+    public int MatchId { get; set; }
 
     public DateTime EventDate { get; set; }
 

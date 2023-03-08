@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Injector } from '@angular/core';
 import { Subscription } from "rxjs";
 import { interval } from 'rxjs';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -38,18 +38,20 @@ import { MultiSport, MatchWaitingRequest } from '../models';
 export class AppComponent implements OnInit, OnDestroy {
     private subscriber: Subscription;
     private readonly period = 60000;
+    private blockUIService: BlockUIService;
+    private reCheckInService: ReCheckInService;
     public blockUI = false;
     public multiSport = new MultiSport();
     public intervalTimer = interval(this.period);
     public enableRefreshMatch = false;
     public request: MatchWaitingRequest;
-
-    constructor(
-        private readonly blockUIService: BlockUIService,
-        private readonly reCheckInService: ReCheckInService) {
+   
+    constructor(protected injector: Injector) {
     }
 
     public ngOnInit() {
+        this.blockUIService = this.injector.get(BlockUIService);
+        this.reCheckInService = this.injector.get(ReCheckInService);
         this.blockUIService.blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
         this.reCheckIn();
     }

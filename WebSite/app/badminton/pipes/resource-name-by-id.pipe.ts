@@ -3,7 +3,10 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { ResourcesIds } from '../constants';
 import { SportType } from '../../shared/constants';
 
-@Pipe({ name: 'resourceName' })
+@Pipe({
+    name: 'resourceName',
+    standalone: true
+})
 export class ResourceNameByIdPipe implements PipeTransform {
     public transform(resourceId: string, sportType = SportType.badminton) {
         if (_.isEqual(resourceId, ResourcesIds.totalGames)) {

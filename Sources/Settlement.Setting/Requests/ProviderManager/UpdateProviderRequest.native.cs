@@ -1,8 +1,8 @@
-﻿using MediatR;
-using Settlement.Core.Models;
-using Settlement.Setting.Models;
+﻿namespace Settlement.Setting.Requests.ProviderManager;
 
-namespace Settlement.Setting.Requests;
+using MediatR;
+using Models.ProviderManager;
+using Settlement.Core.Models;
 
 public class UpdateProviderRequest : IRequest<Result>
 {

@@ -11,15 +11,13 @@ public class FastMarketResultServiceTests
 
     private readonly XmlConvertService xmlConvertService;
 
-    private readonly IDynamicRepository repository;
-
     private readonly IFastMarketResultService service;
 
     public FastMarketResultServiceTests()
     {
         betTypeElementService = Substitute.For<IBetTypeElementService>();
         xmlConvertService = Substitute.For<XmlConvertService>();
-        repository = Substitute.For<IDynamicRepository>();
+        var repository = Substitute.For<IDynamicRepository>();
         service = new FastMarketResultServiceImp(betTypeElementService, xmlConvertService, repository);
     }
 

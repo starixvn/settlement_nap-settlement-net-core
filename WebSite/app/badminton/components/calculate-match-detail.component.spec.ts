@@ -1,4 +1,4 @@
-import { waitForAsync, ComponentFixture, TestBed} from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 import { of } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
@@ -21,9 +21,8 @@ describe('Badminton - Calculation Match Detail Component', () => {
   const matchDetail = new MatchDetail();
   const match = new Match(matchDetail);
   const source = new LeagueOutsideSource();
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
-      declarations: [CalculateMatchDetailComponent, ManageLeagueComponent],
+  beforeEach(async() => {
+    await TestBed.configureTestingModule({
       providers: [
         MessageBoxService,
         HttpRequestService,
@@ -33,7 +32,7 @@ describe('Badminton - Calculation Match Detail Component', () => {
         NgbModal,
         { provide: MessageBoxService, useClass: MessageBoxService },
       ],
-      imports: [FormsModule, HttpClientModule, MaterialModule],
+      imports: [FormsModule, HttpClientModule, MaterialModule, CalculateMatchDetailComponent, ManageLeagueComponent],
     }) .overrideModule(BrowserDynamicTestingModule, {
       set: {
         entryComponents: [ManageLeagueComponent],
@@ -47,7 +46,7 @@ describe('Badminton - Calculation Match Detail Component', () => {
         aioService = fixture.debugElement.injector.get(AioService);
         dialog = fixture.debugElement.injector.get(MatDialog);
       });
-  }));
+  });
 
 
   it('should create', () => {
@@ -57,8 +56,8 @@ describe('Badminton - Calculation Match Detail Component', () => {
   it("manageOutSideSourcePopup - should call getLeagueSources from aioService.", () => {
     matchDetail.leagueId = 123;
     component.matchDetail = matchDetail;
-    spyOn(aioService, "getLeagueSources").and.returnValue(of(source));
-    spyOn(dialog, "open");
+    jest.spyOn(aioService, "getLeagueSources").mockReturnValue(of(source));
+    dialog.open = jest.fn();
 
     component.manageOutSideSourcePopup();
 

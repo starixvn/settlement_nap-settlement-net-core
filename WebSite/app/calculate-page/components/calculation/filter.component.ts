@@ -11,7 +11,7 @@ import { ItemsSelect, League, MultipleSelect } from '../../../shared/models';
 import { FilterBaseComponent } from '../../../shared/components/gaming/filter-base.component';
 import { MatchType, OverStatus } from '../../constants';
 import { _isNumberValue } from '@angular/cdk/coercion';
-import { Language } from '../../../shared/language';
+import { Language } from '../../../shared/language.native';
 
 @Component({
   selector: 'filter',
@@ -74,7 +74,7 @@ export class FilterComponent extends FilterBaseComponent implements OnInit {
   }
 
   public async initFilterData() {
-    const date = await this.requestService.getDate().toPromise();
+    const date = await this.requestService.getDate();
     this.fromDate = this.verifyDateService.convertToDateStruct(date.fromDate);
     this.toDate = this.verifyDateService.convertToDateStruct(date.toDate);
     this.renderLeague(this.fromDate, this.toDate);
@@ -105,7 +105,7 @@ export class FilterComponent extends FilterBaseComponent implements OnInit {
     const toDateValue = this.verifyDateService.dateFormat(toDate);
     if (this.verifyDateService.validDate(this.fromDate, this.toDate)) {
       var query = new LeagueQuery(fromDateValue, toDateValue);
-      const league = await this.requestService.getLeague(query).toPromise() as League[];
+      const league = await this.requestService.getLeague(query);
       this.initLeague(league);
     } else {
       this.initLeague([]);

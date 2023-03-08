@@ -12,6 +12,7 @@ import { ExternalSourceNamePipe } from "../pipes/external-source-name.pipe";
 import { MatDialogModule } from '@angular/material/dialog';
 import { ExternalLinkPipe } from '../../score-source-setting/pipes';
 import { ResultByTeamNamePipe } from '../pipes/result-by-team-name.pipe';
+import { IntervalBackgroundPipe } from '../pipes/interval-background.pipe';
 import { OnlyIntegerDirective } from '../../shared/directives';
 
 @NgModule({
@@ -24,7 +25,8 @@ import { OnlyIntegerDirective } from '../../shared/directives';
                 BlockUIService,
                 HttpRequestService,
                 AioService,
-                ResultByTeamNamePipe]
+                ResultByTeamNamePipe,
+                IntervalBackgroundPipe]
 })
 export class CalculateCommonModule {
 }

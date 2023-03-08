@@ -14,15 +14,13 @@ public class InstantResourceServiceFacts
 
     private readonly IGoalRecordService goalRecordService;
 
-    private readonly XmlConvertService xmlConvertService;
-
     private readonly IInstantResourceService service;
 
     public InstantResourceServiceFacts()
     {
         instantGoalCheckingService = Substitute.For<IInstantGoalCheckingService>();
         goalRecordService = Substitute.For<IGoalRecordService>();
-        xmlConvertService = Substitute.For<XmlConvertService>();
+        var xmlConvertService = Substitute.For<XmlConvertService>();
         service = new InstantResourceServiceImp(instantGoalCheckingService, goalRecordService, xmlConvertService);
     }
 
@@ -37,7 +35,7 @@ public class InstantResourceServiceFacts
 
         var expect = new List<XmlResource>
         {
-            new XmlResource
+            new()
             {
                 ResourceId = ResourceKey.HalftimeFirstGoal,
                 ResultStatusId = ResultStatus.ManuallySettled,
@@ -60,12 +58,12 @@ public class InstantResourceServiceFacts
         // Arrange
         var goalCondition = new InstantGoalCondition
         {
-            IsExistFgNg = true,
+            IsExistFgNg = true
         };
 
         var expect = new List<XmlResource>
         {
-            new XmlResource
+            new()
             {
                 ResourceId = ResourceKey.FullTimeFirstGoal,
                 ResultStatusId = ResultStatus.ManuallySettled,
@@ -132,7 +130,7 @@ public class InstantResourceServiceFacts
 
         var expect = new List<XmlResource>
         {
-            new XmlResource
+            new()
             {
                 ResourceId = ResourceKey.FullTimeFirstGoal,
                 ResultStatusId = ResultStatus.ManuallySettled,
@@ -156,7 +154,7 @@ public class InstantResourceServiceFacts
         // Arrange
         var goalCondition = new InstantGoalCondition
         {
-            IsExistFgNg = false,
+            IsExistFgNg = false
         };
 
         // Act
@@ -173,12 +171,12 @@ public class InstantResourceServiceFacts
         var goalCondition = new InstantGoalCondition
         {
             IsExistHtFgLg = true,
-            IsExistHtFgNg = false,
+            IsExistHtFgNg = false
         };
 
         var expect = new List<XmlResource>
         {
-            new XmlResource
+            new()
             {
                 ResourceId = ResourceKey.HalftimeFirstGoal,
                 ResultStatusId = ResultStatus.Initial,
@@ -203,7 +201,7 @@ public class InstantResourceServiceFacts
 
         var expect = new List<XmlResource>
         {
-            new XmlResource
+            new()
             {
                 ResourceId = ResourceKey.HalftimeFirstGoal,
                 ResultStatusId = ResultStatus.Initial,
@@ -226,12 +224,12 @@ public class InstantResourceServiceFacts
         var goalCondition = new InstantGoalCondition
         {
             IsExistFgLg = true,
-            IsExistFgNg = false,
+            IsExistFgNg = false
         };
 
         var expect = new List<XmlResource>
         {
-            new XmlResource
+            new()
             {
                 ResourceId = ResourceKey.FullTimeFirstGoal,
                 ResultStatusId = ResultStatus.Initial,
@@ -249,14 +247,14 @@ public class InstantResourceServiceFacts
     }
 
     [Fact]
-    public void UnCalculate_IsFullTimeGoallCheckingIsTrue_ReturnExpect()
+    public void UnCalculate_IsFullTimeGoalCheckingIsTrue_ReturnExpect()
     {
         // Arrange
         var goalCondition = new InstantGoalCondition();
 
         var expect = new List<XmlResource>
         {
-            new XmlResource
+            new()
             {
                 ResourceId = ResourceKey.FullTimeFirstGoal,
                 ResultStatusId = ResultStatus.Initial,
@@ -266,7 +264,7 @@ public class InstantResourceServiceFacts
         };
 
         // Act
-        instantGoalCheckingService.IsFullTimeGoallChecking(Arg.Any<InstantGoalCondition>()).Returns(true);
+        instantGoalCheckingService.IsFullTimeGoalChecking(Arg.Any<InstantGoalCondition>()).Returns(true);
         var actual = service.UnCalculate(goalCondition);
 
         // Assert
@@ -274,14 +272,14 @@ public class InstantResourceServiceFacts
     }
 
     [Fact]
-    public void UnCalculate_IsFullTimeGoallCheckingIsTrueAndIsHalftimeGoalCheckingIsTrue_ReturnExpectLength2()
+    public void UnCalculate_IsFullTimeGoalCheckingIsTrueAndIsHalftimeGoalCheckingIsTrue_ReturnExpectLength2()
     {
         // Arrange
         var goalCondition = new InstantGoalCondition();
 
         // Act
         instantGoalCheckingService.IsHalftimeGoalChecking(Arg.Any<InstantGoalCondition>()).Returns(true);
-        instantGoalCheckingService.IsFullTimeGoallChecking(Arg.Any<InstantGoalCondition>()).Returns(true);
+        instantGoalCheckingService.IsFullTimeGoalChecking(Arg.Any<InstantGoalCondition>()).Returns(true);
         var actual = service.UnCalculate(goalCondition);
 
         // Assert
@@ -289,14 +287,14 @@ public class InstantResourceServiceFacts
     }
 
     [Fact]
-    public void UnCalculate_IsFullTimeGoallCheckingIsFalseAndIsHalftimeGoalCheckingIsFalse_ReturnEmptyOfList()
+    public void UnCalculate_IsFullTimeGoalCheckingIsFalseAndIsHalftimeGoalCheckingIsFalse_ReturnEmptyOfList()
     {
         // Arrange
         var goalCondition = new InstantGoalCondition();
 
         // Act
         instantGoalCheckingService.IsHalftimeGoalChecking(Arg.Any<InstantGoalCondition>()).Returns(false);
-        instantGoalCheckingService.IsFullTimeGoallChecking(Arg.Any<InstantGoalCondition>()).Returns(false);
+        instantGoalCheckingService.IsFullTimeGoalChecking(Arg.Any<InstantGoalCondition>()).Returns(false);
         var actual = service.UnCalculate(goalCondition);
 
         // Assert
@@ -332,12 +330,12 @@ public class InstantResourceServiceFacts
     [InlineData(true, "A;", "1FL:1-0;", "")]
     [InlineData(true, "A;", "FL:1-0;", "1FL:2-0;")]
     [InlineData(true, "H;", "FL:1-0;", "1FL:1-0;")]
-    public void BetStatusHtFl_Always_ReturnBetStatus(bool isExistHTFG, string goalRecord, string betStatus, string expected)
+    public void BetStatusHtFl_Always_ReturnBetStatus(bool isExistHtfg, string goalRecord, string betStatus, string expected)
     {
         //arrange
         var request = new InstantCalculationRequest
         {
-            IsExistHTFG = isExistHTFG,
+            IsExistHTFG = isExistHtfg,
             GoalRecord = goalRecord
         };
 
@@ -354,14 +352,14 @@ public class InstantResourceServiceFacts
     [InlineData("FL:2-0;", true, true, "")]
     [InlineData("1FL:2-0;FL:2-0;", true, true, "")]
     [InlineData("1FL:2-0;FL:2-0;", false, false, "1FL:2-0;FL:2-0;")]
-    public void RemoveBetStatus_Always_RemoveBetStatus(string betStatus, bool isExistHTFG, bool isExistFG, string expected)
+    public void RemoveBetStatus_Always_RemoveBetStatus(string betStatus, bool isExistHtfg, bool isExistFg, string expected)
     {
         //arrange
         var request = new InstantCalculationRequest
         {
             BetStatus = betStatus,
-            IsExistHTFG = isExistHTFG,
-            IsExistFG = isExistFG
+            IsExistHTFG = isExistHtfg,
+            IsExistFG = isExistFg
         };
 
         //act

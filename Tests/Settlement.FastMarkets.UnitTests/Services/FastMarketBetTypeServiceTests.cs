@@ -6,12 +6,11 @@ namespace Settlement.FastMarkets.UnitTests.Services;
 public class FastMarketBetTypeServiceTests
 {
     private readonly IFastMarketBetTypeService service;
-    private readonly IResultLabelService resultLabelService;
     private readonly List<FastMarketResult> fastMarkets;
 
     public FastMarketBetTypeServiceTests()
     {
-        resultLabelService = new ResultLabelServiceImp();
+        var resultLabelService = new ResultLabelServiceImp();
         service = new FastMarketBetTypeServiceImp(null, resultLabelService);
         fastMarkets = new List<FastMarketResult>();
     }

@@ -1,7 +1,5 @@
 ﻿using Newtonsoft.Json;
 
-using Xunit;
-
 namespace Settlement.FastMarkets.UnitTests;
 
 public static class AssertExtension

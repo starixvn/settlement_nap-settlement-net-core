@@ -24,7 +24,7 @@ public class ResultServiceTests
         var resultName = service.MinuteSetPieceResultName(position, result);
 
         // Assert
-        var expectedResultName = $"{position}:";
+        const string expectedResultName = $"{position}:";
         Assert.Equal(expectedResultName, resultName);
     }
 
@@ -38,7 +38,7 @@ public class ResultServiceTests
         var resultName = service.MinuteSetPieceResultName(position, "1");
 
         // Assert
-        var expectedResultName = $"{position}:No";
+        const string expectedResultName = $"{position}:No";
         Assert.Equal(expectedResultName, resultName);
     }
 
@@ -53,7 +53,7 @@ public class ResultServiceTests
         var resultName = service.MinuteSetPieceResultName(position, cornerFreeKickGoalKickAndPenalty);
 
         // Assert
-        var expectedResultName = $"{position}:Yes";
+        const string expectedResultName = $"{position}:Yes";
         Assert.Equal(expectedResultName, resultName);
     }
 
@@ -67,7 +67,7 @@ public class ResultServiceTests
         var resultName = service.ResultName(position, "0");
 
         // Assert
-        var expectedResultName = $"{position}:";
+        const string expectedResultName = $"{position}:";
         Assert.Equal(expectedResultName, resultName);
     }
 

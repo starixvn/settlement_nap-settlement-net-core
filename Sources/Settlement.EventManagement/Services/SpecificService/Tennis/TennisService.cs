@@ -1,8 +1,8 @@
-﻿using Settlement.Core.Models;
-using Settlement.Core.Services;
-using Match = Settlement.EventManagement.Models.MultiSports.Match;
+﻿namespace Settlement.EventManagement.Services.SpecificService.Tennis;
 
-namespace Settlement.EventManagement.Services.SpecificService.Tennis;
+using Settlement.Core.Models;
+using Settlement.Core.Services;
+using Match = Models.MultiSports.Match;
 
 public interface ITennisService
 {
@@ -15,7 +15,7 @@ public class TennisServiceImp : ITennisService
 
     private readonly IScoreSetService scoreSetService;
 
-    private readonly List<string> setResource = new List<string> { "01", "02", "03", "04", "05" };
+    private readonly List<string> setResource = new() { "01", "02", "03", "04", "05" };
 
     public TennisServiceImp(
         IScoreSetService scoreSetService,
@@ -29,7 +29,7 @@ public class TennisServiceImp : ITennisService
     {
         var moreScore = new MoreScores
         {
-            Sets = setResource.Select(x => new Score("-")).ToArray(),
+            Sets = setResource.Select(_ => new Score("-")).ToArray(),
             HalfTimeScore = new Score("-"),
             FinalScore = new Score("-")
         };
@@ -45,7 +45,7 @@ public class TennisServiceImp : ITennisService
 
         match.EventStatus = GetEventStatus(totalSet, match.EventStatus);
 
-        if (totalSet != null && totalSet.MatchId > 0)
+        if (totalSet is { MatchId: > 0 })
         {
             moreScore.FinalScore = scoreSetService.GetScore(totalSet, permission);
             moreScore.HalfTimeScore = scoreService.TotalGame(moreScore.FinalScore.Home, totalGame);

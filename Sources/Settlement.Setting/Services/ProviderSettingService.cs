@@ -1,11 +1,8 @@
 ﻿using AutoMapper;
 using Fanex.Data.Repository;
 using Settlement.Core.Models;
-using Settlement.Setting.Criteria;
 using Settlement.Setting.Criteria.ProviderManager;
-using Settlement.Setting.Models;
 using Settlement.Setting.Models.ProviderManager;
-using Settlement.Setting.Requests;
 using Settlement.Setting.Requests.ProviderManager;
 
 namespace Settlement.Setting.Services;

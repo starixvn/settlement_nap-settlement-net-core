@@ -1,7 +1,5 @@
 ﻿using Settlement.EventManagement.Models.Calculation;
 using Settlement.EventManagement.Services.Calculation;
-using System.Collections.Generic;
-using Xunit;
 
 namespace Settlement.EventManagement.UnitTests.Services.Calculation;
 
@@ -77,7 +75,7 @@ public class CompareMatchServiceTests
     [Fact]
     public void GetDifferentMatchSiteInfo_NotExistSiteMatchWithDiffInfo_ReturnNull()
     {
-        var siteMatch = new Match { MatchId = 1, };
+        var siteMatch = new Match { MatchId = 1 };
         var match = new Match { MatchId = 1 };
 
         var actual = service.GetDifferentMatchSiteInfo(match, new List<Match> { siteMatch });
@@ -88,7 +86,7 @@ public class CompareMatchServiceTests
     [Fact]
     public void GetDifferentMatchSiteInfo_NotExistSiteMatchSameID_ReturnNull()
     {
-        var siteMatch = new Match { MatchId = 2, };
+        var siteMatch = new Match { MatchId = 2 };
         var match = new Match { MatchId = 1 };
 
         var actual = service.GetDifferentMatchSiteInfo(match, new List<Match> { siteMatch });

@@ -4,11 +4,11 @@ import { Match, MatchDetail, OtherSportsMatch, Permission, QueryMatch, RequestSe
 import * as _ from 'lodash';
 import { VerificationService } from './verification.service';
 import { MessageBoxService } from '../../../shared/services';
-import { Language } from '../../../shared/language';
-import { ModalDialogMessage, Result } from '../../../shared/models';
+import { Language } from '../../../shared/language.native';
+import { ModalDialogMessage } from '../../../shared/models';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 import { HalfTimeFullTimeService } from './halftime-fulltime.service';
-import { BackgroundColor, CalculateAction, EventStatus, SportType, TicketStatusText } from '../../../shared/constants';
+import { BackgroundColor, CalculateAction, TicketStatusText } from '../../../shared/constants';
 import { HedgeMatchDetail, ResultDetail, SportTemplate } from '../../../shared/models/sportsbook-sop';
 import { ResourcesIds } from '../../constants/resource-ids.native';
 @Component({
@@ -54,7 +54,7 @@ export class HalfTimeFullTimeCalculationComponent implements SportTemplate {
   async getMatch(matchId: number): Promise<void> {
     this.toastrService.overlayContainer = this.toastContainer;
     const query = new QueryMatch(matchId, false);
-    const otherSportsMatch = await this.requestService.getMatch(query).toPromise() as OtherSportsMatch;
+    const otherSportsMatch = await this.requestService.getMatch(query);
     this.setValue(otherSportsMatch);
     this.halfTimeFullTimeService.processScore(this.matchDetail, this.halfTime, this.fullTime, this.results,
       this.halfTimeNode, this.permission.isLeader);
@@ -82,6 +82,10 @@ export class HalfTimeFullTimeCalculationComponent implements SportTemplate {
 
   private get halfTime() {
     return _.find(this.resultDetails, (map: ResultDetail) => _.isEqual(map.resourceId, ResourcesIds.halfTime));
+  }
+
+  private get originalHalfTime() {
+    return _.find(this.originalResultDetail, (map: ResultDetail) => _.isEqual(map.resourceId, ResourcesIds.halfTime));
   }
 
   private get fullTime() {
@@ -245,9 +249,11 @@ export class HalfTimeFullTimeCalculationComponent implements SportTemplate {
   }
 
   private getTicketStatusBackground(status: string) {
-    return _.isEqual(status, TicketStatusText.calculated)
-      ? BackgroundColor.calculated
-      : _.isEqual(status, TicketStatusText.marked) ? BackgroundColor.backgroundMarked : "";
+    if (_.isEqual(status, TicketStatusText.calculated)) {
+      return BackgroundColor.calculated;
+    }
+
+    return _.isEqual(status, TicketStatusText.marked) ? BackgroundColor.backgroundMarked : "";
   }
 
   public calculateHalfTime() {
@@ -290,7 +296,7 @@ export class HalfTimeFullTimeCalculationComponent implements SportTemplate {
       this.confirmCalculation(actionType);
     } else {
       const needConfirm = await this.verificationService.VerifyChangedSettledTickets(this.matchDetail.matchId,
-        this.resultDetails, this.isScoreDirect, actionType, this.halfTimeNode).toPromise();
+        this.resultDetails, this.isScoreDirect, actionType, this.halfTimeNode);
       this.processAfterCheckChangedScore(needConfirm, actionType);
     }
   }
@@ -323,7 +329,7 @@ export class HalfTimeFullTimeCalculationComponent implements SportTemplate {
     const settleQuery = new RequestSettleWithInterval(this.matchDetail, this.resultDetails, type,
       this.isReSettledTickets, this.isScoreDirect, hedgeMatchId, this.refResultStatus);
 
-    const result = await this.requestService.calculate(settleQuery).toPromise() as Result;
+    const result = await this.requestService.sendRequest(settleQuery);
     if (result.isSuccessful) {
       this.messageBoxService.closePopup();
     } else {

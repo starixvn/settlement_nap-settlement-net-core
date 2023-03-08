@@ -1,7 +1,6 @@
-﻿using System;
-using Settlement.Core.Models;
+﻿namespace Settlement.Core.Services.SpecificService;
 
-namespace Settlement.Core.Services;
+using Models;
 
 public interface IFirstGoalLastGoalService
 {

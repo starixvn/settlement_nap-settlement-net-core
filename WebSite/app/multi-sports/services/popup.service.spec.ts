@@ -1,5 +1,4 @@
 import {
-  AutoCalcSetting,
   LeagueMatch,
   Match,
   MultiSport,
@@ -16,7 +15,6 @@ import { of } from "rxjs";
 import { HandleActionsService } from "./handle-actions.service";
 import { MultiSportService } from "./multi-sport.service";
 import { HttpClient, HttpHandler } from "@angular/common/http";
-import { AutoSetting, MixParlay } from "../../shared/models";
 import { CalculationStatus, SportType } from "../../shared/constants";
 import { Permission } from "../../shared/models/sportsbook-sop/permission.model";
 
@@ -26,16 +24,13 @@ describe("MultiSport - PopupService", () => {
   let handleActionsService: HandleActionsService;
   let multiSportService: MultiSportService;
   const match = new Match();
-  match.mixParlay = new MixParlay();
 
   const league: LeagueMatch = {
     leagueId: 7000000,
     matches: [match],
     name: "mock league",
     collapse: false,
-    isCheckedCalcMP: false,
-    disableCheckCalcMP: false,
-    isMergedParlay: true,
+    autoWaitingTime:0,
     isAutoPayoutForLeague: false,
     autoCalcSetting: new AutoSetting(),
     autoWaitingTime: 0
@@ -51,8 +46,7 @@ describe("MultiSport - PopupService", () => {
   let listSport = [sport];
   const multiSport: MultiSport = {
     sports: listSport,
-    permission: new Permission(),
-    isCheckedCalcMP: false,
+    permission: new Permission()
   };
 
   let autoSetting = new AutoCalcSetting();
@@ -270,15 +264,11 @@ describe("MultiSport - PopupService", () => {
   });
 
   it("handleChangedMatch", () => {
-    spyOn(handleActionsService, "resetCheckboxCalcMixParlay");
-
-    popupService.handleChangedMatch(match, listSport, multiSport);
+    popupService.handleChangedMatch(match);
 
     expect(match.isCalculatingSingle).toEqual(CalculationStatus.waiting);
     expect(match.showLink).toEqual(false);
     expect(match.newEventStatus).toEqual(EventStatus.waiting);
-    expect(match.isCheckedCalcMP).toEqual(false);
-    expect(handleActionsService.resetCheckboxCalcMixParlay).toHaveBeenCalled();
   });
 
   describe('openUpdatePayoutForMatch', () => {

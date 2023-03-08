@@ -1,4 +1,6 @@
-﻿using AutoMapper;
+﻿namespace Settlement.Sportsbook.MoveTickets.Services.MultipleServer;
+
+using AutoMapper;
 using Fanex.Data.Repository;
 using Fanex.NAP.Client.Helpers.Web;
 using Fanex.Settlement.ScaleOut.Request;
@@ -7,11 +9,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
-using Settlement.Sportsbook.MoveTickets.Criteria;
-using Settlement.Sportsbook.MoveTickets.Models;
-using Settlement.Sportsbook.MoveTickets.Requests;
-
-namespace Settlement.Sportsbook.MoveTickets.Services;
+using Criteria;
+using Models;
+using Requests;
 
 public interface MoveTicketMultipleServerService
 {
@@ -24,10 +24,10 @@ public interface MoveTicketMultipleServerService
 
 public class MoveTicketMultipleServerServiceImp : MoveTicketMultipleServerService
 {
-    private readonly int actionIdMoveTicket = 81026;
-    private readonly int actionIDMoveRunningTickets = 81035;
-    private readonly string actionMoveTicket = "MoveTicket";
-    private readonly string modeRunnigTicket = "43";
+    private const int ActionIdMoveTicket = 81026;
+    private const int ActionIdMoveRunningTickets = 81035;
+    private const string ActionMoveTicket = "MoveTicket";
+    private const string ModeRunningTicket = "43";
     private readonly IDynamicRepository repository;
     private readonly IMapper mapper;
     private readonly INapSession currentSession;
@@ -62,7 +62,7 @@ public class MoveTicketMultipleServerServiceImp : MoveTicketMultipleServerServic
         var validateRequest = new EventTicketRequest
         {
             MatchId = criteria.MatchId,
-            Action = actionMoveTicket,
+            Action = ActionMoveTicket,
             SpName = criteria.SpName,
             Mode = "50"
         };
@@ -70,7 +70,7 @@ public class MoveTicketMultipleServerServiceImp : MoveTicketMultipleServerServic
         var resultMessage = await scaleOutSettleService.ValidateEventAndTicket(validateRequest);
         if (resultMessage.ErrorCode > 0)
         {
-            logService.ActionLog(request.MatchId, resultMessage.ErrorMessage, actionIdMoveTicket);
+            logService.ActionLog(request.MatchId, resultMessage.ErrorMessage, ActionIdMoveTicket);
             return new Result
             {
                 ErrCode = resultMessage.ErrorCode,
@@ -109,7 +109,7 @@ public class MoveTicketMultipleServerServiceImp : MoveTicketMultipleServerServic
         var validateResult = await VerifyBeforeMovingRunningTickets(criteria);
         if (validateResult.ErrCode != 0)
         {
-            logService.ActionLog(request.MatchId, validateResult.ErrMsg, actionIDMoveRunningTickets);
+            logService.ActionLog(request.MatchId, validateResult.ErrMsg, ActionIdMoveRunningTickets);
             return validateResult;
         }
 
@@ -142,9 +142,9 @@ public class MoveTicketMultipleServerServiceImp : MoveTicketMultipleServerServic
         var request = new EventTicketRequest
         {
             MatchId = criteria.MatchId,
-            Action = actionMoveTicket,
+            Action = ActionMoveTicket,
             SpName = criteria.SpName,
-            Mode = modeRunnigTicket,
+            Mode = ModeRunningTicket,
             DestinationMatchId = criteria.DestinationMatchId
         };
         var resultMessage = await scaleOutSettleService.ValidateEventAndTicket(request);

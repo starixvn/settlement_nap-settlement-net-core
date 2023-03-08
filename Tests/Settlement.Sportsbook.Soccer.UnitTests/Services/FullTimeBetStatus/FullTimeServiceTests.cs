@@ -1,10 +1,7 @@
-﻿using NSubstitute;
-using Settlement.Sportsbook.Soccer.Models;
+﻿using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Requests;
 using Settlement.Sportsbook.Soccer.Services;
 using Settlement.Sportsbook.Soccer.Services.FullTimeBetStatus;
-using Xunit;
-using FirstGoalLastGoalServiceImp = Settlement.Sportsbook.Soccer.Services.FullTimeBetStatus.FirstGoalLastGoalServiceImp;
 
 namespace Settlement.Sportsbook.Soccer.UnitTests.Services.FullTimeBetStatus;
 
@@ -25,7 +22,7 @@ public class FullTimeServiceTests
     public void BetStatusFullTimeWithSemicolon_IsExistFgLg_ReturnRightBetStatus()
     {
         // Arrange
-        var expected = "FL:0-0;";
+        const string expected = "FL:0-0;";
         var goalRecord = new GoalRecordModel { IsExistFgLg = true, FirstGoal = "0", LastGoal = "0" };
         goalRecordService.GoalRecordWithSemicolon(Arg.Any<GoalRecordModel>(), Arg.Any<string>()).Returns(goalRecord);
 
@@ -54,8 +51,8 @@ public class FullTimeServiceTests
     public void RefundHTOnBetStatus_Always_ReturnsRefundHalftimeOnBetStatus()
     {
         // Arrange
-        var fullTimeBetStatus = "FL:0-0;";
-        var expected = "Refund HT;FL:0-0;";
+        const string fullTimeBetStatus = "FL:0-0;";
+        const string expected = "Refund HT;FL:0-0;";
 
         // Act
         var actual = service.RefundHtOnBetStatus(fullTimeBetStatus);

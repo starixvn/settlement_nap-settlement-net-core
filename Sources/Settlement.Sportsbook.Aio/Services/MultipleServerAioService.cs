@@ -59,10 +59,8 @@ public class MultipleServerAioServiceImp : MultipleServerAioService
     private static void MergeTicketsToResults(List<Models.ResultDetail> resultDetails, List<Models.ResultDetail> ticketDetails, int sportType, string settleType)
     {
         var newTicketDetails = ticketDetails.Where(ticketDetail => !resultDetails.Any(result => result.Equals(ticketDetail)));
-        if (newTicketDetails.Any())
-        {
-            resultDetails.AddRange(newTicketDetails);
-        }
+
+        resultDetails.AddRange(newTicketDetails);
 
         GenerateTicketsStatus(resultDetails, ticketDetails, sportType, settleType);
     }
@@ -143,8 +141,7 @@ public class MultipleServerAioServiceImp : MultipleServerAioService
         var criteria = new CheckMarkedTicketsCriteria
         {
             MatchId = request.MatchId,
-            ResourceIds = GetResourceIds(request.SelectedResources),
-            IsMergedParlay = request.IsMergedParlay
+            ResourceIds = GetResourceIds(request.SelectedResources)
         };
 
         foreach (var server in appSettingsKey.SiteDbServer)
@@ -312,7 +309,7 @@ public class MultipleServerAioServiceImp : MultipleServerAioService
         }
 
         var listMatch = await repository.FetchAsync<ChildMatch>(criteria);
-        var matchIds = listMatch.Select(item => item.matchId).ToList();
+        var matchIds = listMatch.Select(item => item.MatchId).ToList();
 
         return matchIds.Count > 0 ? string.Join(',', matchIds.ToList()) : string.Empty;
     }

@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 import { Match, MatchDetail } from '../../models';
 import * as _ from 'lodash';
 import { SportType, TicketStatusText } from '../../../shared/constants';
-import { Language } from '../../../shared/language';
+import { Language } from '../../../shared/language.native';
 import { map } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 import { RequestService } from '../..//services/request.service';
 @Injectable()
 export class FullTimeVerificationService {
@@ -44,8 +44,8 @@ export class FullTimeVerificationService {
         return "";
     }
 
-    public verifyChangedSettledTickets(match: MatchDetail, query: object) : Observable<boolean> {
-        return this.requestService.getLastestResult(query).pipe(map((lastestMatch: Match) => {
+    public verifyChangedSettledTickets(match: MatchDetail, query: object){
+        const request =  this.requestService.getLastestResult(query).pipe(map((lastestMatch: Match) => {
             let needConfirm = false;
             if (_.isEqual(lastestMatch.matchDetail.ftStatus, TicketStatusText.calculated)
                 && (!_.isEqual(match.finalHomeScore.toString(), lastestMatch.matchDetail.finalHomeScore?.toString())
@@ -56,6 +56,8 @@ export class FullTimeVerificationService {
 
             return needConfirm;
         }));
+
+        return firstValueFrom(request);
     }
 
     public isFinalScoreConfirmed(matchDetail: MatchDetail) {

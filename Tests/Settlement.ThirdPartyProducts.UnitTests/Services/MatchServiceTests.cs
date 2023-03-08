@@ -17,8 +17,6 @@ public class MatchServiceTests
 
     private readonly IDynamicRepository repository;
 
-    private readonly IRefDataService refDataService;
-
     private readonly BetBuilderCalculateService betBuilderCalculateService;
 
     private readonly BetBuilderMatchesService betBuilderMatchesService;
@@ -28,7 +26,7 @@ public class MatchServiceTests
     public MatchServiceTests()
     {
         repository = Substitute.For<IDynamicRepository>();
-        refDataService = Substitute.For<IRefDataService>();
+        var refDataService = Substitute.For<IRefDataService>();
         betBuilderCalculateService = Substitute.For<BetBuilderCalculateService>();
         betBuilderMatchesService = Substitute.For<BetBuilderMatchesService>();
         betBuilderService = Substitute.For<BetBuilderService>();
@@ -46,11 +44,6 @@ public class MatchServiceTests
     public async Task GetMatch_Always_ReturnsIsExistedMatch()
     {
         // Arrange
-        var resultDetail = new ResultDetail
-        {
-            MatchId = 1,
-            ResourceId = "01"
-        };
         var fakeMatches = new MatchDetailModel
         {
             MatchId = 1

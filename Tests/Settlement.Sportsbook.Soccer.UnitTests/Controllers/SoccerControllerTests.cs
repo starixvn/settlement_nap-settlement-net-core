@@ -1,15 +1,10 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using NSubstitute;
 using Settlement.Core.Models;
 using Settlement.Sportsbook.Soccer.Controllers;
 using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Requests;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Xunit;
 using Match = Settlement.Sportsbook.Soccer.Models.Match;
-using MatchDetail = Settlement.Sportsbook.Soccer.Models.MatchDetail;
 
 namespace Settlement.Sportsbook.Soccer.UnitTests.Controllers;
 
@@ -33,7 +28,7 @@ public class SoccerControllerTests
 
         var actual = await controller.GetMatchEarly(request) as OkObjectResult;
 
-        Assert.IsType<MatchEarly>(actual.Value);
+        Assert.IsType<MatchEarly>(actual?.Value);
         Assert.Equal(200, actual.StatusCode);
     }
 
@@ -45,7 +40,7 @@ public class SoccerControllerTests
 
         var actual = await controller.CalculateEarly(request) as OkObjectResult;
 
-        Assert.IsType<Result>(actual.Value);
+        Assert.IsType<Result>(actual?.Value);
         Assert.Equal(200, actual.StatusCode);
     }
 
@@ -57,7 +52,7 @@ public class SoccerControllerTests
 
         var actual = await controller.GetMatch(request) as OkObjectResult;
 
-        Assert.IsType<Match>(actual.Value);
+        Assert.IsType<Match>(actual?.Value);
         Assert.Equal(200, actual.StatusCode);
     }
 
@@ -69,7 +64,7 @@ public class SoccerControllerTests
 
         var actual = await controller.Calculate(request) as OkObjectResult;
 
-        Assert.IsType<Result>(actual.Value);
+        Assert.IsType<Result>(actual?.Value);
         Assert.Equal(200, actual.StatusCode);
     }
 
@@ -81,20 +76,8 @@ public class SoccerControllerTests
 
         var actual = await controller.CheckingStatus(request) as OkObjectResult;
 
-        Assert.IsType<Result>(actual.Value);
+        Assert.IsType<Result>(actual?.Value);
         Assert.Equal(200, actual.StatusCode);
-    }
-
-    [Fact]
-    public async Task GetLastestMatchDetail_Always_ReturnOkStatus()
-    {
-        var request = new GetLastestMatchDetailRequest();
-        mediator.Send(Arg.Any<GetLastestMatchDetailRequest>()).Returns(new MatchDetail());
-
-        //var actual = await controller.GetLastestMatchDetail(request) as OkObjectResult;
-
-        // Assert.IsType<MatchDetail>(actual.Value);
-        // Assert.Equal(200, actual.StatusCode);
     }
 
     [Fact]
@@ -105,7 +88,7 @@ public class SoccerControllerTests
 
         var actual = await controller.Refund(request) as OkObjectResult;
 
-        Assert.IsType<Result>(actual.Value);
+        Assert.IsType<Result>(actual?.Value);
         Assert.Equal(200, actual.StatusCode);
     }
 
@@ -117,7 +100,7 @@ public class SoccerControllerTests
 
         var actual = await controller.RefundRunningThirdPartyTickets(request) as OkObjectResult;
 
-        Assert.IsType<Result>(actual.Value);
+        Assert.IsType<Result>(actual?.Value);
         Assert.Equal(200, actual.StatusCode);
     }
 
@@ -129,7 +112,7 @@ public class SoccerControllerTests
 
         var actual = await controller.MoveThirdPartyBetTickets(request) as OkObjectResult;
 
-        Assert.IsType<Result>(actual.Value);
+        Assert.IsType<Result>(actual?.Value);
         Assert.Equal(200, actual.StatusCode);
     }
 
@@ -141,7 +124,7 @@ public class SoccerControllerTests
 
         var actual = await controller.ThirdPartyBetTicketsChecking(request) as OkObjectResult;
 
-        Assert.IsType<List<MatchMoveBetTicket>>(actual.Value);
+        Assert.IsType<List<MatchMoveBetTicket>>(actual?.Value);
         Assert.Equal(200, actual.StatusCode);
     }
 }

@@ -80,7 +80,7 @@ public class RefundServiceImp : IRefundService
     public async Task<Result> Refund(RefundRequest request)
     {
         var criteria = createCriteriaService.CreateRefundCriteria(request);
-        criteria.SDTRecord = SettleDetermineTicket(request);
+        criteria.SdtRecord = SettleDetermineTicket(request);
         var validationResult = await ValidateBeforeExecute(criteria);
         if (validationResult.ErrCode > 0)
         {
@@ -100,7 +100,7 @@ public class RefundServiceImp : IRefundService
             if (!request.ActionName.Equals(ActionType.RefundHalfTime) && !request.IsDeterminedHedgeMatch)
             {
                 request.IsSettleAbandonedMatchIbc = false;
-                criteria.SDTRecord = SettleDetermineTicket(request);
+                criteria.SdtRecord = SettleDetermineTicket(request);
                 criteria.ResourceResult = string.Empty;
             }
 
@@ -133,7 +133,7 @@ public class RefundServiceImp : IRefundService
             Action = criteria.Action,
             SpName = criteria.SpName,
             Mode = ActionKey.ActionDictionary[criteria.Action],
-            SDTRecord = criteria.SDTRecord,
+            SDTRecord = criteria.SdtRecord,
             ResourceResult = criteria.ResourceResult
         };
         var resultMessage = await scaleOutSettleService.ValidateEventAndTicket(request);
@@ -158,7 +158,7 @@ public class RefundServiceImp : IRefundService
             HalfTimeAway = criteria.HalfTimeAway ?? 0,
             HalfTimeHome = criteria.HalfTimeHome ?? 0,
             ResourceResult = criteria.ResourceResult,
-            SDTRecord = criteria.SDTRecord,
+            SDTRecord = criteria.SdtRecord,
             GoalRecord = criteria.GoalSequence
         };
 
@@ -183,7 +183,7 @@ public class RefundServiceImp : IRefundService
             ActionName = request.ActionName,
             MatchId = request.MatchId,
             Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString(),
-            AdminId = currentSession.UserId,
+            AdminId = currentSession.UserId
         };
 
         var validationRequest = new EventTicketRequest

@@ -1,21 +1,21 @@
 import * as _ from 'lodash';
 import { Component, Injector } from '@angular/core';
 import { ResultDetail, GroupMap, Permission, SaveScoreQuery, MatchDetail } from '../../models/sportsbook-sop';
-import { ItemsSelect, MarkedTicketsModel, ModalDialogMessage, MultipleSelect, Result, ResultSettingQuery } from '../../models';
+import { ItemsSelect, ModalDialogMessage, MultipleSelect, ResultSettingQuery } from '../../models';
 import { BackgroundColor, CalculateAction, ResultSettingType, ResultStatusId, SettlementStatusId, TicketStatusText } from '../../constants';
 import { AioService, MessageBoxService } from '../../services';
 import { VerificationBaseService } from '../../../core/services/verification-base.service';
-import { Language } from '../../language';
+import { Language } from '../../language.native';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
     template: '',
 })
 export class EarlyBaseComponent {
+    public messageBoxService: MessageBoxService;
+    public aioService: AioService;
+    public toastrService: ToastrService;
     public blockUI = true;
-    protected aioService: AioService;
-    protected toastrService: ToastrService;
-    protected messageBoxService: MessageBoxService;
     public matchId: number;
     public resultDetails: ResultDetail[];
     public groupMap: GroupMap[];
@@ -36,9 +36,6 @@ export class EarlyBaseComponent {
     constructor(protected injector: Injector,
         protected verificationBaseService: VerificationBaseService) {
         this.confirmationDialogMessage.title = Language.confirmationBox;
-        this.aioService = this.injector.get(AioService);
-        this.toastrService = this.injector.get(ToastrService);
-        this.messageBoxService = this.injector.get(MessageBoxService);
     }
 
     public get selectedResources(): ResultDetail[] {
@@ -76,27 +73,18 @@ export class EarlyBaseComponent {
     }
 
     public onSelectTicketsStatus(value: ItemsSelect[]) {
-        const valueSelected = value.length > 0 ? value.map(item => item.value).join() : '';
-        if(!_.isEqual(valueSelected, this.ticketStatusSelected)){
-            this.ticketStatusSelected = valueSelected;
-            this.autoUncheckAfterFilter();
-        }
+        this.ticketStatusSelected = value.length > 0 ? value.map(item => item.value).join() : "";
+        this.autoUncheckAfterFilter();
     }
 
     public onSelectResultsStatus(value: ItemsSelect[]) {
-        const valueSelected = value.length > 0 ? value.map(item => item.value).join() : '';
-        if(!_.isEqual(valueSelected, this.ticketStatusSelected)){
-            this.resultStatusSelected = valueSelected;
-            this.autoUncheckAfterFilter();
-        }
+        this.resultStatusSelected = value.length > 0 ? value.map(item => item.value).join() : "";
+        this.autoUncheckAfterFilter();
     }
 
     public onSelectResultType(value: ItemsSelect[]) {
-        const valueSelected = value.length > 0 ? value.map(item => item.value).join() : '';
-        if(!_.isEqual(valueSelected, this.ticketStatusSelected)){
-            this.resultTypeSelected = valueSelected;
-            this.autoUncheckAfterFilter();
-        }
+        this.resultTypeSelected = value.length > 0 ? value.map(item => item.value).join() : "";
+        this.autoUncheckAfterFilter();
     }
 
     public autoUncheckAfterFilter() {
@@ -166,8 +154,8 @@ export class EarlyBaseComponent {
 
     public async doSaveResult(type: string, originalResultDetail: ResultDetail[], resultDetails: ResultDetail[],
         ApiKey: string, func: () => void) {
-        const scoresToSave = this.verificationBaseService.getChangedScores(resultDetails, originalResultDetail);
-        const checkedScores = this.verificationBaseService.getOutsideScores(resultDetails);
+        const scoresToSave = this.verificationService.getChangedScores(resultDetails, originalResultDetail);
+        const checkedScores = this.verificationService.getOutsideScores(resultDetails);
         const query: SaveScoreQuery = {
             matchId: this.matchId,
             scoresToSave,
@@ -187,7 +175,7 @@ export class EarlyBaseComponent {
     }
 
     public verifyScoreSourcesAndCalculate(confirmChangedResults: () => void) {
-        if (this.verificationBaseService.allResultsHaveScoreSources(this.resultDetails)) {
+        if (this.verificationService.allResultsHaveScoreSources(this.resultDetails)) {
             this.confirmCalculateMismatchScores(confirmChangedResults);
         } else {
             if (!this.permission.isLeader) {
@@ -202,7 +190,7 @@ export class EarlyBaseComponent {
     }
 
     public confirmCalculateMismatchScores(confirmChangedResults: () => void) {
-        if (this.verificationBaseService.isExistMismatchScore(this.resultDetails)) {
+        if (this.verificationService.isExistMismatchScore(this.resultDetails)) {
             if (!this.permission.isLeader) {
                 this.toastrService.error(Language.eSports.nonLeader.mismatchedResult);
             } else {
@@ -260,10 +248,9 @@ export class EarlyBaseComponent {
     public async checkMarkedTickets(resultDetails: ResultDetail[], pushFunc: () => void) {
         const paramsCheckingMarkedTickets = {
             matchId: this.matchId,
-            selectedResources: resultDetails,
-            isMergedParlay: true,
+            selectedResources: resultDetails
         };
-        const res = await this.aioService.checkMarkedTickets(paramsCheckingMarkedTickets).toPromise() as MarkedTicketsModel;
+        const res = await this.aioService.checkMarkedTickets(paramsCheckingMarkedTickets);
         if (res.isExistMarkedTicket) {
             this.toastrService.error(Language.MarkedTicket);
         } else {
@@ -328,7 +315,7 @@ export class EarlyBaseComponent {
     }
 
     public checkResultIsMatched(resultDetail: ResultDetail) {
-        resultDetail.isScoreMismatched = this.verificationBaseService.isEarlyMismatchedWarning(resultDetail);
+        resultDetail.isScoreMismatched = this.verificationService.isEarlyMismatchedWarning(resultDetail);
     }
 
     public autoFillResultOnLoad(resultDetails: ResultDetail[]) {
@@ -344,8 +331,8 @@ export class EarlyBaseComponent {
             resultDetail.awayValue = '';
         }
 
-        this.verificationBaseService.autoFillEarlyResult(resultDetail);
-        resultDetail.isScoreMismatched = this.verificationBaseService.isEarlyMismatchedWarning(resultDetail);
+        this.verificationService.autoFillEarlyResult(resultDetail);
+        resultDetail.isScoreMismatched = this.verificationService.isEarlyMismatchedWarning(resultDetail);
     }
 
     public async verifyRunningOdds(ResourceIds: string[], func: () => void) {

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Xml.Serialization;
+﻿using System.Xml.Serialization;
 
 namespace Settlement.FastMarkets.Models.TimeMachineOldResult;
 
@@ -7,5 +6,5 @@ namespace Settlement.FastMarkets.Models.TimeMachineOldResult;
 public class OldResultRoot
 {
     [XmlElement("b")]
-    public List<OldResultElement> oldResultElements { get; set; }
+    public List<OldResultElement> OldResultElements { get; set; }
 }

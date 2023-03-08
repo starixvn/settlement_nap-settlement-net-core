@@ -4,7 +4,7 @@ import { UrlHelper } from '../../helper';
 import { RequestService } from '../services/request.service';
 import { ModalDialogMessage } from '../../shared/models';
 import { MessageBoxService } from '../../shared/services';
-import { Language } from '../../shared/language';
+import { Language } from '../../shared/language.native';
 import { SettingType, TooltipMessage } from '../constants';
 import { HttpUrlEncodingCodec } from '@angular/common/http';
 

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Text;
+﻿using System.Text;
 
 namespace Settlement.Log.Services;
 
@@ -12,7 +11,7 @@ public interface RemarkService
 
 public class RemarkServiceImp : RemarkService
 {
-    private readonly List<int> fastMarketAction = new List<int> { 165, 166, 167 };
+    private readonly List<int> fastMarketAction = new() { 165, 166, 167 };
 
     private readonly RemarkNodeService remarkNodeService;
 

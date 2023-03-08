@@ -1,6 +1,6 @@
-﻿using Settlement.EventManagement.Models.MultiSports;
+﻿namespace Settlement.EventManagement.Requests;
 
-namespace Settlement.EventManagement;
+using Models.MultiSports;
 
 public class FilterMultiSportRequest : IRequest<MultiSportModel>
 {

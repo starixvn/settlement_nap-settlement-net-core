@@ -18,7 +18,7 @@ public interface IFastMarketService
 
     Task<Result> Calculate(SettleRequest request);
 
-    Task<List<FastMarketResult>> GetLastestResult(GetLastestResultRequest request);
+    Task<List<FastMarketResult>> GetLatestResult(GetLatestResultRequest request);
 
     Task<List<TimeMachineResult>> GetTimeMachineResult(GetTimeMachineResultRequest request);
 }
@@ -156,7 +156,7 @@ public class FastMarketServiceImp : IFastMarketService
         }
     }
 
-    public async Task<List<FastMarketResult>> GetLastestResult(GetLastestResultRequest request)
+    public async Task<List<FastMarketResult>> GetLatestResult(GetLatestResultRequest request)
     {
         var criteria = new GetFastMarketMatchDetailCriteria { MatchId = request.MatchId };
 

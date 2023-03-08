@@ -31,11 +31,11 @@ public class FastMarketResult
                     return OneMinuteInterval(Position);
 
                 case FastMarketBetType.TimeMachineMinutes:
-                case FastMarketBetType.TimeMachineHDP:
-                {
-                    var interval = Position > FirstHalfInjuryTime ? Position - 1 : Position;
-                    return Position == FirstHalfInjuryTime ? "First Half Injury Time" : TimeMachineInterval(interval);
-                }
+                case FastMarketBetType.TimeMachineHdp:
+                    {
+                        var interval = Position > FirstHalfInjuryTime ? Position - 1 : Position;
+                        return Position == FirstHalfInjuryTime ? "First Half Injury Time" : TimeMachineInterval(interval);
+                    }
                 default:
                     return FiveMinutesInterval(Position);
             }
@@ -44,18 +44,13 @@ public class FastMarketResult
 
     public int? Result
     {
-        get
-        {
-            return BetType == FastMarketBetType.NextOneMinuteSetPiece &&
-                   result == SetPiece.CornerFreeKickGoalKickAndPenalty
+        get =>
+            BetType == FastMarketBetType.NextOneMinuteSetPiece &&
+            result == SetPiece.CornerFreeKickGoalKickAndPenalty
                 ? PositionResult.Corner
                 : result;
-        }
 
-        set
-        {
-            result = value ?? 0;
-        }
+        set => result = value ?? 0;
     }
 
     public int ResultStatus { get; set; }
@@ -83,10 +78,7 @@ public class FastMarketResult
             return resultItem;
         }
 
-        set
-        {
-            resultItem = value;
-        }
+        set => resultItem = value;
     }
 
     private static string OneMinuteInterval(int position)
@@ -170,7 +162,7 @@ public class FastMarketResult
     {
         get
         {
-            if (BetType == FastMarketBetType.TimeMachineHDP)
+            if (BetType == FastMarketBetType.TimeMachineHdp && Result != null)
             {
                 return (int)Result % TimeMachineHomeAwayRange;
             }
@@ -183,7 +175,7 @@ public class FastMarketResult
     {
         get
         {
-            if (BetType == FastMarketBetType.TimeMachineHDP)
+            if (BetType == FastMarketBetType.TimeMachineHdp && Result != null)
             {
                 return (int)Result / TimeMachineHomeAwayRange;
             }
@@ -200,7 +192,7 @@ public class FastMarketResult
 
     public override bool Equals(object obj)
     {
-        return obj is FastMarketResult result && result.BetType == BetType && result.Position == Position;
+        return obj is FastMarketResult fastMarketResult && fastMarketResult.BetType == BetType && fastMarketResult.Position == Position;
     }
 
     public override int GetHashCode()

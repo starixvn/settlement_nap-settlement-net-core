@@ -101,7 +101,7 @@ public class BetBuilderServiceImp : BetBuilderService
         {
             HalfTimeScore = scoreService.HalftimeScore(resultDetailByMatchId, sportType),
             FinalScore = scoreService.FinalScore(resultDetailByMatchId, sportType),
-            Sets = scoreService.ScoreOfSets(resultDetailByMatchId, sportType, isPopup),
+            Sets = scoreService.ScoreOfSets(resultDetailByMatchId, sportType, isPopup)
         };
     }
 

@@ -2,6 +2,8 @@
 
 namespace Settlement.Sportsbook.MoveTickets.UnitTests.Services.MultipleServer;
 
+using MoveTickets.Services.MultipleServer;
+
 public class CompareMatchServiceTests
 {
     private readonly CompareMatchService service;

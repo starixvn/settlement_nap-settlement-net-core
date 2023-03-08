@@ -9,11 +9,11 @@ import { MaterialModule } from '../../../shared/material-module';
 import { CalculationMatch, FilterAutoQuery, League } from '../../models';
 import { BackgroundColor, CalculationStatus } from '../../../shared/constants';
 import { Permission } from '../../../shared/models/sportsbook-sop/permission.model';
-import { Language } from '../../../shared/language';
+import { Language } from '../../../shared/language.native';
 import { AutoSetting } from '../../../shared/models';
 import { of } from 'rxjs';
 import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
-import { ModalDialogComponent } from '../../../shared/components';
+import { ModalDialogComponent } from '../../../shared/components/modal-dialog/modal-dialog.component';
 
 describe('MatchesComponent', () => {
   let component: AutoCalculateMatchesComponent;

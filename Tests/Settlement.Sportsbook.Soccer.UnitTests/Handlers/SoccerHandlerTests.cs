@@ -1,16 +1,15 @@
-﻿using NSubstitute;
-using Settlement.Core.Models;
-using System.Threading.Tasks;
+﻿using Settlement.Core.Models;
 using Settlement.Core.Constants;
 using Settlement.Sportsbook.Soccer.Handlers;
 using Settlement.Sportsbook.Soccer.Requests;
 using Settlement.Sportsbook.Soccer.Services;
-using Xunit;
 using Match = Settlement.Sportsbook.Soccer.Models.Match;
 using MatchDetail = Settlement.Sportsbook.Soccer.Models.MatchDetail;
-using Settlement.Sportsbook.Soccer.GetMatch.Services;
 
 namespace Settlement.Sportsbook.Soccer.UnitTests.Handlers;
+
+using Soccer.Services.GetMatch;
+using Soccer.Services.InstantCalculate;
 
 public class SoccerHandlerTests
 {
@@ -33,7 +32,7 @@ public class SoccerHandlerTests
         var result = new Match();
         matchService.GetMatch(Arg.Any<GetMatchRequest>()).Returns(result);
 
-        var actual = await handler.Handle(new GetMatchRequest(), new System.Threading.CancellationToken());
+        var actual = await handler.Handle(new GetMatchRequest(), new CancellationToken());
 
         Assert.Equal(result, actual);
     }
@@ -44,7 +43,7 @@ public class SoccerHandlerTests
         var result = new Result();
         calculateService.Calculate(Arg.Any<SettleRequest>()).Returns(result);
 
-        var actual = await handler.Handle(new SettleRequest { ActionName = ActionType.CalculateAll }, new System.Threading.CancellationToken());
+        var actual = await handler.Handle(new SettleRequest { ActionName = ActionType.CalculateAll }, new CancellationToken());
 
         Assert.Equal(result, actual);
     }
@@ -55,18 +54,18 @@ public class SoccerHandlerTests
         var result = new Result();
         calculateService.UnCalculate(Arg.Any<SettleRequest>()).Returns(result);
 
-        var actual = await handler.Handle(new SettleRequest { ActionName = ActionType.UnCalculate }, new System.Threading.CancellationToken());
+        var actual = await handler.Handle(new SettleRequest { ActionName = ActionType.UnCalculate }, new CancellationToken());
 
         Assert.Equal(result, actual);
     }
 
     [Fact]
-    public async Task HandleGetLastestMatchDetailRequest_Always_ReturnCorrectMatchDetail()
+    public async Task HandleGetLatestMatchDetailRequest_Always_ReturnCorrectMatchDetail()
     {
         var result = new MatchDetail();
-        matchService.GetLastestMatchDetail(Arg.Any<GetLastestMatchDetailRequest>()).Returns(result);
+        matchService.GetLatestMatchDetail(Arg.Any<GetLatestMatchDetailRequest>()).Returns(result);
 
-        var actual = await handler.Handle(new GetLastestMatchDetailRequest(), new System.Threading.CancellationToken());
+        var actual = await handler.Handle(new GetLatestMatchDetailRequest(), new CancellationToken());
 
         Assert.Equal(result, actual);
     }
@@ -77,7 +76,7 @@ public class SoccerHandlerTests
         var result = new Result();
         calculateService.CheckStatus(Arg.Any<CheckStatusRequest>()).Returns(result);
 
-        var actual = await handler.Handle(new CheckStatusRequest(), new System.Threading.CancellationToken());
+        var actual = await handler.Handle(new CheckStatusRequest(), new CancellationToken());
 
         Assert.Equal(result, actual);
     }

@@ -1,6 +1,5 @@
 ﻿using Settlement.Sportsbook.Soccer.Requests;
 using Settlement.Sportsbook.Soccer.Services;
-using Xunit;
 
 namespace Settlement.Sportsbook.Soccer.UnitTests.Services;
 

@@ -1,7 +1,7 @@
 import { TestBed, getTestBed } from "@angular/core/testing";
 import { of } from 'rxjs';
 import { PopupService } from "./popup.service";
-import { Language } from '../../shared/language';
+import { Language } from '../../shared/language.native';
 import { MatDialog } from '@angular/material/dialog';
 import { ReCalculationModel, Ball, MatchDetail} from '../models';
 import { BlockUIService, DialogBoxService } from "../../shared/services";

@@ -4,6 +4,7 @@ import { ResourcesIds } from '../constants';
 import { ResultDetail } from '../../shared/models/sportsbook-sop';
 @Pipe({
   name: 'excludeTotalPoint',
+  standalone: true
 })
 export class ExcludeTotalPointPipe implements PipeTransform {
   public transform(resultDetail: ResultDetail[]): ResultDetail[] {

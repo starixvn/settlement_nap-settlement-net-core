@@ -1,7 +1,8 @@
-﻿using Settlement.EventManagement.Criteria;
+﻿namespace Settlement.EventManagement.Services.Calculation;
+
+using Criteria;
 using Settlement.EventManagement.Models.Calculation;
 
-namespace Settlement.EventManagement.Services.Calculation;
 
 public interface CachingMatchesService
 {

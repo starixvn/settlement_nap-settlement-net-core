@@ -25,7 +25,7 @@ import {
   ModalContentDialogComponent,
 } from "../../shared/components";
 import { BrowserDynamicTestingModule } from "@angular/platform-browser-dynamic/testing";
-import { Language } from "../../shared/language";
+import { Language } from "../../shared/language.native";
 import { IntervalBackgroundPipe } from "../../shared/pipes/interval-background.pipe";
 import { ResultSettingModel } from "../../shared/models";
 import { HedgeMatchDetail, MatchDetail, Permission, ResultDetail } from "../../shared/models/sportsbook-sop";

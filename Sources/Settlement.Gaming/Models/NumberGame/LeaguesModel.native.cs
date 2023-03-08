@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 using Settlement.Core.Services;
-using System.Collections.Generic;
 
 namespace Settlement.Gaming.Models.NumberGame;
 

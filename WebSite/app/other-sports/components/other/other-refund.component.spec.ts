@@ -11,7 +11,7 @@ import { ToastContainerDirective, ToastContainerModule, ToastNoAnimationModule, 
 import { Match, MatchDetail, OtherSportsMatch, Permission, QueryMatch } from '../../models';
 import { HedgeMatchDetail } from '../../../shared/models/sportsbook-sop/hedge-match-detail.model';
 import { of } from 'rxjs';
-import { Language } from '../../../shared/language';
+import { Language } from '../../../shared/language.native';
 import { OtherRefundComponent } from './other-refund.component';
 import { OtherService } from './other.service';
 import { Result } from '../../../shared/models';

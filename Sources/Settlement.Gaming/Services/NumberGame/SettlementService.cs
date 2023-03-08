@@ -51,7 +51,7 @@ public class SettlementServiceImp : SettlementService
         this.accessor = accessor;
         this.scaleOutSettleThirdPartyService = scaleOutSettleThirdPartyService;
         this.scaleOutSettleService = scaleOutSettleService;
-        this.appSettingsKey = options.Value;
+        appSettingsKey = options.Value;
     }
 
     public async Task<Result> Settle(NumberGameSettlementRequest request)
@@ -90,7 +90,7 @@ public class SettlementServiceImp : SettlementService
         var updateMatchCriteria = new UpdateResultCriteria
         {
             MatchId = criteria.MatchId,
-            BallResults = criteria.BallResults,
+            BallResults = criteria.BallResults
         };
 
         await repository.ExecuteAsync(updateMatchCriteria);
@@ -153,7 +153,7 @@ public class SettlementServiceImp : SettlementService
         };
     }
 
-    private Result NoPermission => new Result
+    private Result NoPermission => new()
     {
         ErrCode = NotAuthorized,
         ErrMsg = "You are not authorized to use this function. Please contact the admin for help."

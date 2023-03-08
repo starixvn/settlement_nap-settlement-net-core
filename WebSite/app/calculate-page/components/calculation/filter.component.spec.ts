@@ -11,7 +11,7 @@ import { GenerateFilterService, BackGroundService, DetectChangesService } from '
 import { MaterialModule } from '../../../shared/material-module';
 import { DateFilter, ItemsSelect, ModalDialogMessage,League } from '../../../shared/models';
 import { of } from 'rxjs';
-import { Language } from '../../../shared/language';
+import { Language } from '../../../shared/language.native';
 describe('FilterComponent', () => {
     let component: FilterComponent;
     let fixture: ComponentFixture<FilterComponent>;

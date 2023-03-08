@@ -1,10 +1,11 @@
 ﻿using Settlement.Core.Constants;
 using Settlement.Core.Models;
-using Settlement.Core.Services;
 using Settlement.EventManagement.Services;
 using Match = Settlement.EventManagement.Models.MultiSports.Match;
 
 namespace Settlement.EventManagement.UnitTests.Services;
+
+using Core.Services.SpecificService;
 
 public class NewInfoMatchServiceTests
 {
@@ -22,13 +23,13 @@ public class NewInfoMatchServiceTests
     }
 
     [Theory]
-    [InlineData(true, EventStatus.PostPoned, 0, Background.YellowBlinking)]
-    [InlineData(false, EventStatus.PostPoned, 0, Background.Yellow)]
+    [InlineData(true, EventStatus.Postponed, 0, Background.YellowBlinking)]
+    [InlineData(false, EventStatus.Postponed, 0, Background.Yellow)]
     [InlineData(true, EventStatus.Running, 0, Background.WhiteBlinking)]
     [InlineData(false, EventStatus.Running, 0, "")]
     [InlineData(true, EventStatus.ResultPending, 1, Background.BrightYellowBlinking)]
     [InlineData(false, EventStatus.ResultPending, 1, Background.BrightYellow)]
-    public void EventStatusColor_PostPonedStatus_ReturnCorrectColor(bool existMarkedTickets, string eventStatus,
+    public void EventStatusColor_PostponedStatus_ReturnCorrectColor(bool existMarkedTickets, string eventStatus,
         int settlementStatus, string color)
     {
         var match = new Match { EventStatus = eventStatus, SettlementStatus = (byte)settlementStatus };

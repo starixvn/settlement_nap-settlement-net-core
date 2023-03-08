@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import * as _ from 'lodash';
 import { GeneralResultDetail, ModalDialogMessage } from '../../shared/models';
-import { Language } from '../../shared/language';
+import { Language } from '../../shared/language.native';
 import { MessageBoxService } from '../../shared/services';
 import { ResultStatusId, ScoreSourceType, SettlementStatusId } from '../../shared/constants';
 import { ResourcesIds, BetTypes } from '../constants';

@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { NgbDateStruct } from "@ng-bootstrap/ng-bootstrap";
 import { MessageBoxService, VerifyDateService } from '../../services';
 import { ModalDialogMessage } from '../../models';
-import { Language } from '../../language';
+import { Language } from '../../language.native';
 @Component({
     selector: "filter-base",
     template: "",

@@ -1,7 +1,10 @@
 import * as _ from 'lodash';
 import { Pipe, PipeTransform } from '@angular/core';
 
-@Pipe({ name: 'resourceName' })
+@Pipe({
+    name: 'resourceName',
+    standalone: true
+})
 export class ResourceNameByIdPipe implements PipeTransform {
     public transform(resourceId: string) {
         if (_.indexOf(resourceId, "Q") > - 1) {

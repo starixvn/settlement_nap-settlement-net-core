@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Settlement.Log.Models;
+﻿namespace Settlement.Log.Models;
 
 public class QueryModel
 {

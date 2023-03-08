@@ -20,13 +20,4 @@ public class LeagueModel
 
     [Key("sportType")]
     public int SportType { get; set; }
-
-    [Key("isMergedParlay")]
-    public bool IsMergedParlay
-    {
-        get
-        {
-            return Matches.Any(match => match.IsMergedParlay);
-        }
-    }
 }

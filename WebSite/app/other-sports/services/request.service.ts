@@ -1,4 +1,7 @@
 import { Injectable } from '@angular/core';
+import { OtherSportsMatch } from '../models';
+import { firstValueFrom } from 'rxjs';
+import { MarkedTicketsModel, Result } from '../../shared/models';
 import { HttpRequestService } from '../../shared/services';
 @Injectable()
 export class RequestService {
@@ -8,26 +11,21 @@ export class RequestService {
     }
 
     public getMatch(query: object) {
-        return this.httpRequestService.postJson(query, `${this.apiUrl}/get-match`);
+        const request = this.httpRequestService.postJson<OtherSportsMatch>(query, `${this.apiUrl}/get-match`);
+        return firstValueFrom(request);
     }
 
-    public calculate(query: object) {
-        return this.httpRequestService.postJson(query, `${this.apiUrl}/calculate`);
-    }
-
-    public refund(query: object) {
-        return this.httpRequestService.postJson(query, `${this.apiUrl}/refund`);
-    }
-
-    public refundParlay(query: object) {
-        return this.httpRequestService.postJson(query, `${this.apiUrl}/refund-parlay`);
+    public sendRequest(query: object) {
+        const request =  this.httpRequestService.postJson<Result>(query, `${this.apiUrl}/calculate`);
+        return firstValueFrom(request);
     }
 
     public checkMarkedTickets(query: object) {
-        return this.httpRequestService.postJson(query, `${this.apiUrl}/check-marked-tickets`, false);
+        const request = this.httpRequestService.postJson<MarkedTicketsModel>(query, `${this.apiUrl}/check-marked-tickets`, false);
+        return firstValueFrom(request);
     }
 
     public getLastestResult(query: object) {
-        return this.httpRequestService.postJson(query, `${this.apiUrl}/get-lastest-result`, false);
+        return this.httpRequestService.postJson(query, `${this.apiUrl}/get-latest-result`, false);
     }
 }

@@ -1,6 +1,6 @@
-﻿using Match = Settlement.EventManagement.Models.Calculation.Match;
+﻿namespace Settlement.EventManagement.Services.Calculation;
 
-namespace Settlement.EventManagement.Services.Calculation;
+using Match = Models.Calculation.Match;
 
 public interface MergeDataService
 {

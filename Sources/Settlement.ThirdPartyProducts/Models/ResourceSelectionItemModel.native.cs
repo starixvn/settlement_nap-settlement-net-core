@@ -13,10 +13,7 @@ public class ResourceSelectionItemModel
     [XmlAttribute("s")]
     public int Status
     {
-        get
-        {
-            return IsRunning ? 1 : 0;
-        }
+        get => IsRunning ? 1 : 0;
 
         set { }
     }

@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
-using Settlement.Sportsbook.Soccer.GetMatch.Services;
 using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Requests;
 using Settlement.Sportsbook.Soccer.Services;
@@ -10,8 +9,11 @@ using MatchDetail = Settlement.Sportsbook.Soccer.Models.MatchDetail;
 
 namespace Settlement.Sportsbook.Soccer.Handlers;
 
+using Services.GetMatch;
+using Services.InstantCalculate;
+
 public class CalculateHandler : IRequestHandler<GetMatchRequest, Match>,
-    IRequestHandler<GetLastestMatchDetailRequest, MatchDetail>,
+    IRequestHandler<GetLatestMatchDetailRequest, MatchDetail>,
     IRequestHandler<SettleRequest, Result>,
     IRequestHandler<CheckStatusRequest, Result>,
     IRequestHandler<UndoCheckingRequest, UndoCheckingModel>,
@@ -38,8 +40,8 @@ public class CalculateHandler : IRequestHandler<GetMatchRequest, Match>,
         return request.IsRefundPage ? await matchService.GetMatchRefund(request) : await matchService.GetMatch(request);
     }
 
-    public async Task<MatchDetail> Handle(GetLastestMatchDetailRequest request, CancellationToken cancellationToken) =>
-        await matchService.GetLastestMatchDetail(request);
+    public async Task<MatchDetail> Handle(GetLatestMatchDetailRequest request, CancellationToken cancellationToken) =>
+        await matchService.GetLatestMatchDetail(request);
 
     public async Task<Result> Handle(SettleRequest request, CancellationToken cancellationToken)
     {

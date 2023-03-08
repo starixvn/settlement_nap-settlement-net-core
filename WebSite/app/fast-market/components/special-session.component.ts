@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 import { RequestService } from '../services';
 import { ModalDialogMessage, Result } from '../../shared/models';
 import { MessageBoxService } from '../../shared/services';
-import { Language } from '../../shared/language';
+import { Language } from '../../shared/language.native';
 import { SessionId } from '../constants';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 

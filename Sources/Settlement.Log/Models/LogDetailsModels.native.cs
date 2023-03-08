@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 
 namespace Settlement.Log.Models;
 
@@ -35,25 +34,16 @@ public class LogDetailsModels
             return string.IsNullOrEmpty(goalRecord) ? "-" : Regex.Replace(goalRecord, new string('.', count), m => m.Value + "\n");
         }
 
-        set
-        {
-            goalRecord = value;
-        }
+        set => goalRecord = value;
     }
 
     public string BetStatus { get; set; }
 
     public string Remark
     {
-        get
-        {
-            return string.IsNullOrEmpty(remark) ? "-" : remark;
-        }
+        get => string.IsNullOrEmpty(remark) ? "-" : remark;
 
-        set
-        {
-            remark = value;
-        }
+        set => remark = value;
     }
 
     public int? BetType { get; set; }

@@ -19,18 +19,6 @@ public class Match
     private string instantAwayScore = string.Empty;
     private BackgroundColor backgroundColor;
     private AutoCalculationSetting autoCalcSetting;
-    private MixParlay mixParlay;
-
-    private readonly List<int> mergedParlaySports = new List<int>
-        {
-            Core.Constants.SportType.Badminton,
-            Core.Constants.SportType.BasketBall,
-            Core.Constants.SportType.Cricket,
-            Core.Constants.SportType.ESports,
-            Core.Constants.SportType.Tennis,
-            Core.Constants.SportType.BeachVolleyball,
-            Core.Constants.SportType.VolleyBall
-        };
 
     [JsonIgnore]
     public IRefDataService RefDataService { get; set; }
@@ -111,7 +99,7 @@ public class Match
 
     public bool IsCalculated { get; set; }
 
-    public bool IsFTCalculated { get; set; }
+    public bool IsFtCalculated { get; set; }
 
     public bool IsRefund { get; set; }
 
@@ -145,9 +133,9 @@ public class Match
 
     public int? IsCalculatingMP { get; set; }
 
-    public ResultDetail ExHTResult { get; set; }
+    public ResultDetail ExHtResult { get; set; }
 
-    public ResultDetail ExFTResult { get; set; }
+    public ResultDetail ExFtResult { get; set; }
 
     public string NewEventStatus { get; set; }
 
@@ -159,10 +147,7 @@ public class Match
             return goal.GetGoalRecord();
         }
 
-        set
-        {
-            goalRecord = string.IsNullOrWhiteSpace(value) ? string.Empty : value.ToUpperInvariant();
-        }
+        set => goalRecord = string.IsNullOrWhiteSpace(value) ? string.Empty : value.ToUpperInvariant();
     }
 
     public string EventStatus
@@ -176,7 +161,7 @@ public class Match
 
     public string BetStatus { get; set; }
 
-    public GoalIcon GoalIcon { get; set; } = new GoalIcon();
+    public GoalIcon GoalIcon { get; set; } = new();
 
     public string AutoSettleFastMarket { get; set; }
 
@@ -186,45 +171,33 @@ public class Match
 
     public string SuspenderHalfTime
     {
-        get
-        {
-            return string.IsNullOrEmpty(suspenderHalfTime) ? Dash : suspenderHalfTime;
-        }
+        get => string.IsNullOrEmpty(suspenderHalfTime) ? Dash : suspenderHalfTime;
 
-        set
-        {
-            suspenderHalfTime = value;
-        }
+        set => suspenderHalfTime = value;
     }
 
     public string SuspenderFullTime
     {
-        get
-        {
-            return string.IsNullOrEmpty(suspenderFullTime) ? Dash : suspenderFullTime;
-        }
+        get => string.IsNullOrEmpty(suspenderFullTime) ? Dash : suspenderFullTime;
 
-        set
-        {
-            suspenderFullTime = value;
-        }
+        set => suspenderFullTime = value;
     }
 
-    public string ExHalfTimeScore => ExHTResult != null ? $"({ExHTResult.SourceName}: {ExHTResult.HomeValue}-{ExHTResult.AwayValue})" : string.Empty;
+    public string ExHalfTimeScore => ExHtResult != null ? $"({ExHtResult.SourceName}: {ExHtResult.HomeValue}-{ExHtResult.AwayValue})" : string.Empty;
 
-    public string ExFullTimeScore => ExFTResult != null ? $"({ExFTResult.SourceName}: {ExFTResult.HomeValue}-{ExFTResult.AwayValue})" : string.Empty;
+    public string ExFullTimeScore => ExFtResult != null ? $"({ExFtResult.SourceName}: {ExFtResult.HomeValue}-{ExFtResult.AwayValue})" : string.Empty;
 
     public int AutoSetting { get; set; }
 
     public int AutoSettingForLeague { get; set; }
 
-    public AutoCalculationSetting AutoCalcSetting => autoCalcSetting ?? (autoCalcSetting = new AutoCalculationSetting
+    public AutoCalculationSetting AutoCalcSetting => autoCalcSetting ??= new AutoCalculationSetting
     {
         MatchSetting = Convert.ToString(AutoSetting, ConvertToBase).Reverse(),
         LeagueSetting = Convert.ToString(AutoSettingForLeague, ConvertToBase).Reverse()
-    });
+    };
 
-    public RemarkSettingModel Remark => new RemarkSettingModel(SettlementStatus);
+    public RemarkSettingModel Remark => new(SettlementStatus);
 
     public bool IsNeedToCalculateFGLG { get; set; }
 
@@ -234,34 +207,22 @@ public class Match
 
     public int? LiveAwayScore { get; set; }
 
-    public bool IsHT { get; set; }
+    public bool IsHt { get; set; }
 
     public int LivePeriod { get; set; }
 
     public string InstantHomeScore
     {
-        get
-        {
-            return string.IsNullOrWhiteSpace(instantHomeScore) ? Dash : instantHomeScore;
-        }
+        get => string.IsNullOrWhiteSpace(instantHomeScore) ? Dash : instantHomeScore;
 
-        set
-        {
-            instantHomeScore = value;
-        }
+        set => instantHomeScore = value;
     }
 
     public string InstantAwayScore
     {
-        get
-        {
-            return string.IsNullOrWhiteSpace(instantAwayScore) ? Dash : instantAwayScore;
-        }
+        get => string.IsNullOrWhiteSpace(instantAwayScore) ? Dash : instantAwayScore;
 
-        set
-        {
-            instantAwayScore = value;
-        }
+        set => instantAwayScore = value;
     }
 
     public int InstantStatusId { get; set; }
@@ -270,11 +231,11 @@ public class Match
 
     public int InstantCalculationType { get; set; }
 
-    private bool IsHalftime => !IsHT && LivePeriod == HalftimeLive;
+    private bool IsHalftime => !IsHt && LivePeriod == HalftimeLive;
 
-    private bool IsFullTime => !IsHT && LivePeriod == FullTimeLive;
+    private bool IsFullTime => !IsHt && LivePeriod == FullTimeLive;
 
-    private bool IsBreakTime => IsHT && LivePeriod == BreakTimeLive;
+    private bool IsBreakTime => IsHt && LivePeriod == BreakTimeLive;
 
     private string Live
     {
@@ -308,12 +269,12 @@ public class Match
 
     public bool NeedConfirmScore => InstantStatusId == Constants.InstantStatus.Confirm;
 
-    public bool IsManualCalculated => InstantCalculationType == Constants.InstantCalculationType.CalcFt && IsFTCalculated;
+    public bool IsManualCalculated => InstantCalculationType == Constants.InstantCalculationType.CalcFt && IsFtCalculated;
 
     private bool CheckEventStatus => NewEventStatus.Equals(Constants.EventStatus.Waiting)
         || NewEventStatus.Equals(Constants.EventStatus.Calculating)
         || NewEventStatus.Equals(Constants.EventStatus.Running)
-        || NewEventStatus.IgnoreCaseEquals(Constants.EventStatus.RefundHT);
+        || NewEventStatus.IgnoreCaseEquals(Constants.EventStatus.RefundHt);
 
     private bool ConfirmCompleted => InstantStatusId == Constants.InstantStatus.Complete
         || (InstantStatusId == Constants.InstantStatus.Confirm && CheckEventStatus);
@@ -341,7 +302,7 @@ public class Match
 
     #endregion Instant Calculation
 
-    public BackgroundColor BackgroundColor => backgroundColor ?? (backgroundColor = new BackgroundColor
+    public BackgroundColor BackgroundColor => backgroundColor ??= new BackgroundColor
     {
         IsCalRefund = IsCalRefund,
         SportType = SportType,
@@ -352,20 +313,8 @@ public class Match
         EarlySettleStatus = EarlySettleStatus,
         AutoSettleFastMarket = AutoSettleFastMarket,
         EventStatus = EventStatus,
-        AutoSetting = AutoSetting,
-        IsExistMarkedTicketParlay = IsExistMarkedTicketParlay,
-    });
-
-    public MixParlay MixParlay => mixParlay ?? (mixParlay = new MixParlay
-    {
-        Remark = Remark,
-        IsCalculatingSingle = IsCalculatingSingle,
-        IsCalculatingMp = IsCalculatingMP,
-        IsKeyScore = IsKeyScore,
-        IsCalculated = IsCalculated,
-        BetStatusValue = BetStatus ?? string.Empty,
-        IsExistMarkedTicketParlay = IsExistMarkedTicketParlay
-    });
+        AutoSetting = AutoSetting
+    };
 
     public bool ShowLink => RemarkSetting && !Remark.IsUnderSettle && IsCalculatingSingle == null && IsCalculatingMP == null;
 
@@ -379,10 +328,6 @@ public class Match
 
     public bool IsExistMarkedTicket { get; set; }
 
-    public bool IsExistMarkedTicketParlay { get; set; }
-
-    public bool IsExistRunningTicketParlay { get; set; }
-
     public string ConfirmHalfTimeColor => IsNotConsistentExHtScore ? Background.WhiteBlinking : string.Empty;
 
     public string ConfirmFullTimeColor => IsNotConsistentExFtScore ? Background.WhiteBlinking : string.Empty;
@@ -395,7 +340,7 @@ public class Match
 
     #endregion ExternalScore
 
-    public List<SiteMatch> SiteMatch { get; set; } = new List<SiteMatch>();
+    public List<SiteMatch> SiteMatch { get; set; } = new();
 
     public int EventStatusReason { get; set; }
 
@@ -403,19 +348,11 @@ public class Match
 
     public bool IsOpenOdds { get; set; }
 
-    public bool IsMergedParlay => mergedParlaySports.Contains(SportType);
-
-    public bool IsRunningEarlyBettypesParlay { get; set; }
-
-    public bool IsWaitingEarlyBettypesParlay { get; set; }
-
     public bool IsRunningEarlyBetTypes { get; set; }
 
     public bool IsWaitingEarlyBetTypes { get; set; }
 
     public bool IsExistEarlyBetTypes { get; set; }
-
-    public bool IsExistEarlyBettypesParlay { get; set; }
 
     public override bool Equals(object obj)
     {

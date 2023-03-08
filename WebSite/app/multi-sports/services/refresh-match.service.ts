@@ -56,21 +56,17 @@ export class RefreshMatchService {
             match.newEventStatus = newMatch.newEventStatus;
             match.isHavingIntervalScore = newMatch.isHavingIntervalScore;
             match.remark = newMatch.remark;
-            match.isExistMarkedTicketParlay = newMatch.isExistMarkedTicketParlay;
             match.autoCalcSetting = newMatch.autoCalcSetting;
             match.suspenderHalfTime = newMatch.suspenderHalfTime;
             match.suspenderFullTime = newMatch.suspenderFullTime;
-            match.mixParlay = newMatch.mixParlay;
             match.isNotConsistentExFtScore = newMatch.isNotConsistentExFtScore;
             match.isNotConsistentExHtScore = newMatch.isNotConsistentExHtScore;
             match.exHalfTimeScore = newMatch.exHalfTimeScore;
             match.exFullTimeScore = newMatch.exFullTimeScore;
             match.autoPayoutStatus = newMatch.autoPayoutStatus;
-            match.isExistRunningTicketParlay = newMatch.isExistRunningTicketParlay;
             match.confirmFullTimeScore = newMatch.confirmFullTimeScore;
             match.confirmHalfTimeScore = newMatch.confirmHalfTimeScore;
             this.sportMatchService.getMatchIntervalScore(match, this.permission);
-            this.handleActionsService.resetCheckboxCalcMixParlay(match, currentSportMatches, multiSport);
           }
         });
       })

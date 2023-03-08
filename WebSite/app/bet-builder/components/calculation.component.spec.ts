@@ -29,7 +29,7 @@ import {
     Permission,
 } from '../models';
 import { ResultStatusPipe, SelectionPipe, TicketStatusPipe } from '../pipes';
-import { Language } from '../../shared/language';
+import { Language } from '../../shared/language.native';
 
 describe('Bet Builder - Calculation Component', () => {
     let component: CalculationComponent;

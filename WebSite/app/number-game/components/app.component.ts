@@ -1,5 +1,4 @@
 ﻿import { interval } from 'rxjs';
-import { ISubscription } from "rxjs/Subscription";
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { NumberGame } from '../models';
 import {
@@ -11,6 +10,7 @@ import {
     DialogBoxService
 } from '../../shared/services';
 import { QueryService, PopupService } from '../services';
+import { ISubscription } from 'rxjs-compat/Subscription';
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',

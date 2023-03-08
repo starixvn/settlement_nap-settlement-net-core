@@ -88,7 +88,7 @@ public class OutrightSettleServiceImp : OutrightSettleService
         var teamIds = request.TeamIds.Split(",");
         var teamSettleFailed = new List<string>();
 
-        var tasks = listMatch.Select((matchId, i) => Task.Run(async () => await PushRequestUncalculate(int.Parse(matchId), teamIds[i], teamSettleFailed)));
+        var tasks = listMatch.Select((matchId, i) => PushRequestUncalculate(int.Parse(matchId), teamIds[i], teamSettleFailed));
 
         var listResult = await Task.WhenAll(tasks.ToArray());
 
@@ -107,8 +107,7 @@ public class OutrightSettleServiceImp : OutrightSettleService
 
         var teamSettleFailed = new List<string>();
 
-        var tasks = request.Teams.Select((match) => Task.Run(async () => await PushRequestCalculate(match, request.DeadHeat, teamSettleFailed)));
-
+        var tasks = request.Teams.Select(match => PushRequestCalculate(match, request.DeadHeat, teamSettleFailed));
         var listResult = await Task.WhenAll(tasks.ToArray());
 
         return HandleResult(listResult, teamSettleFailed);
@@ -174,8 +173,7 @@ public class OutrightSettleServiceImp : OutrightSettleService
     private string Message(string teamId, string errorMessage)
     {
         var teamName = $"{refDataService.GetTeamName(teamId)}";
-        var error = $"{teamName}: {errorMessage}<br/>";
-        return error;
+        return $"{teamName}: {errorMessage}<br/>";
     }
 
     private async Task<Result> UpdateResultAndUndo(int matchId)
