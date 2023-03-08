@@ -1,6 +1,6 @@
 import { AutoSettingPosition } from './../constants/change-setting-type.native';
 import { Injectable } from '@angular/core';
-import { PopupProperties, Match, SportMatch, LeagueMatch } from './../models';
+import { PopupProperties, Match, SportMatch, LeagueMatch, AutoCalcSetting } from './../models';
 import { DialogBoxService } from './../../shared/services';
 import { AutoSetting, DialogDataIframe } from './../../shared/models';
 import { Language } from '../../shared/language.native';

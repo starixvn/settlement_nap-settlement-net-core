@@ -27,10 +27,12 @@ import { ResourceNameByIdPipe } from '../pipes/resource-name-by-id.pipe';
         VerificationBaseService,
         VerificationService,
         ESportsService,
-        ResourceNameByIdPipe  ],
+        ResourceNameByIdPipe],
 })
 export class EarlySettlementComponent extends EarlyBaseComponent implements SportTemplate {
     @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
+    private earlyConstraintService: EarlyConstraintService;
+    private eSportsService: ESportsService;
     public blockUI = true;
     public match: Match;
     public matchClone: Match;
@@ -40,14 +42,10 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     public isReadyMatch: boolean;
 
     constructor(
-        private readonly earlyConstraintService: EarlyConstraintService,
-        private readonly verificationService: VerificationService,
-        private readonly eSportsService: ESportsService,
+        protected verificationService: VerificationService,
         protected inject: Injector,
-        protected messageBoxService: MessageBoxService,
-        protected aioService: AioService,
-        protected toastrService: ToastrService) {
-        super(messageBoxService, verificationService, aioService, toastrService);
+    ) {
+        super(inject, verificationService);
     }
 
     async getMatch(matchId: number): Promise<void> {
@@ -62,6 +60,12 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     }
 
     private initService(){
+        this.verificationService = this.inject.get(VerificationService);
+        this.aioService = this.inject.get(AioService);
+        this.messageBoxService = this.inject.get(MessageBoxService);
+        this.eSportsService = this.inject.get(ESportsService);
+        this.earlyConstraintService = this.inject.get(EarlyConstraintService);
+        this.toastrService = this.inject.get(ToastrService);
         this.inject.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
         this.toastrService.overlayContainer = this.toastContainer;
     }

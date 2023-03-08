@@ -24,6 +24,7 @@ import { ResourceNameByIdPipe } from '../pipes/resource-name-by-id.pipe';
 })
 export class EarlySettlementComponent extends EarlyBaseComponent implements SportTemplate {
     @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
+    private earlyService: EarlyService;
     public blockUI = true;
     public match: Match;
     public isShowRefundButton = false;
@@ -31,17 +32,12 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
 
     constructor(
         protected inject: Injector,
-        private readonly earlyService: EarlyService,
-        private readonly verificationService: VerificationService,
-        protected messageBoxService: MessageBoxService,
-        protected aioService: AioService,
-        protected toastrService: ToastrService) {
-        super(messageBoxService, verificationService, aioService, toastrService);
+        protected verificationService: VerificationService) {
+        super(inject, verificationService);
     }
 
     async getMatch(matchId: number): Promise<void> {
-        this.inject.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI  = event);
-        this.toastrService.overlayContainer = this.toastContainer;
+        this.initService();
         const matchQuery = {
             matchId,
             sportType: SportType.basketBall,
@@ -53,6 +49,16 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         this.isReadyMatch = this.match.matchDetail.playTime >= KickOffTime.playTime;
         this.permission = this.match.permission;
         this.init();
+    }
+
+    private initService(){
+        this.earlyService = this.inject.get(EarlyService);
+        this.aioService = this.inject.get(AioService);
+        this.messageBoxService = this.inject.get(MessageBoxService);
+        this.verificationService = this.inject.get(VerificationService);
+        this.toastrService = this.inject.get(ToastrService);
+        this.inject.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI  = event);
+        this.toastrService.overlayContainer = this.toastContainer;
     }
 
     public init() {
