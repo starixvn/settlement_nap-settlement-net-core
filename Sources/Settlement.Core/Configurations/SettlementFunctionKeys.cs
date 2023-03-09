@@ -11,47 +11,52 @@ namespace Settlement.Core.Configurations;
 
 public static class SettlementFunctionKeys
 {
-	      
-    public  const  string AutoPayoutSetting="AutoPayoutSetting" ;       
-	      
-    public  const  string AutoSettlement="AutoSettlement" ;       
-	      
-    public  const  string BetBuilder="BetBuilder" ;       
-	      
-    public  const  string CricketMoveTickets="CricketMoveTickets" ;       
-	      
-    public  const  string Happy5Recalculate="Happy5Recalculate" ;       
-	      
-    public  const  string Happy5Refund="Happy5Refund" ;       
-	      
-    public  const  string Happy5ResettleMatchBeforeYesterday="Happy5ResettleMatchBeforeYesterday" ;       
-	      
-    public  const  string LeaderCalculate="LeaderCalculate" ;       
-	      
-    public  const  string NgResettleMatchBeforeYesterday="NGResettleMatchBeforeYesterday" ;       
-	      
-    public  const  string NumberGameRecalculate="NumberGameRecalculate" ;       
-	      
-    public  const  string OutrightCalculate="OutrightCalculate" ;       
-	      
-    public  const  string OutrightUncalculate="OutrightUncalculate" ;       
-	      
-    public  const  string ScoreSource="ScoreSource" ;       
-	      
-    public  const  string SportsbookCalculate="SportsbookCalculate" ;       
-	      
-    public  const  string SportsbookMarkPendingMatch="SportsbookMarkPendingMatch" ;       
-	      
-    public  const  string SportsbookMarkUndecidedMatch="SportsbookMarkUndecidedMatch" ;       
-	      
-    public  const  string SportsbookRefund="SportsbookRefund" ;       
-	      
-    public  const  string SportsbookUncalculate="SportsbookUncalculate" ;       
-	      
-    public  const  string SportsbookUncalculateInstant="SportsbookUncalculateInstant" ;       
-	      
-    public  const  string TraderSaveScore="TraderSaveScore" ;       
-	      
-    public  const  string ViewLogSettlement="ViewLogSettlement" ;       
-	      
+
+    public const string AutoPayoutSetting = "AutoPayoutSetting";
+
+    public const string AutoSettlement = "AutoSettlement";
+
+    public const string BetBuilder = "BetBuilder";
+
+    public const string CricketMoveTickets = "CricketMoveTickets";
+
+    public const string Happy5Recalculate = "Happy5Recalculate";
+
+    public const string Happy5Refund = "Happy5Refund";
+
+    public const string Happy5ResettleMatchBeforeYesterday = "Happy5ResettleMatchBeforeYesterday";
+
+    public const string LeaderCalculate = "LeaderCalculate";
+
+    public const string MoveTickets = "MoveTickets";
+
+    public const string NgResettleMatchBeforeYesterday = "NGResettleMatchBeforeYesterday";
+
+    public const string NumberGameRecalculate = "NumberGameRecalculate";
+
+    public const string OutrightCalculate = "OutrightCalculate";
+
+    public const string OutrightUncalculate = "OutrightUncalculate";
+
+    public const string ScoreSource = "ScoreSource";
+
+    public const string Setting = "Setting";
+
+    public const string SportsbookCalculate = "SportsbookCalculate";
+
+    public const string SportsbookMarkPendingMatch = "SportsbookMarkPendingMatch";
+
+    public const string SportsbookMarkUndecidedMatch = "SportsbookMarkUndecideMatch";
+
+    public const string SportsbookRefund = "SportsbookRefund";
+
+    public const string SportsbookUncalculate = "SportsbookUncalculate";
+
+    public const string SportsbookUncalculateInstant = "SportsbookUncalculateInstant";
+
+    public const string ThirdPartyProducts = "ThirdPartyProducts";
+
+    public const string TraderSaveScore = "TraderSaveScore";
+
+    public const string ViewLogSettlement = "ViewLogSettlement";
 }
