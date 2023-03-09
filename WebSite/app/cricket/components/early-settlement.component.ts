@@ -28,14 +28,14 @@ import { ResultValuePipe, ResultByPlayerNamePipe } from '../pipes';
 })
 export class EarlySettlementComponent extends EarlyBaseComponent implements SportTemplate {
   @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
+  private earlyConstraintService: EarlyConstraintService;
+  private verificationService: VerificationService;
   public match: Match;
   public matchClone: Match;
   public isShowRefundButton = false;
   public isReadyMatch: boolean;
   constructor(
-    private inject: Injector,
-    private readonly earlyConstraintService: EarlyConstraintService,
-    private readonly verificationService: VerificationService,
+    private injector: Injector,
     protected messageBoxService: MessageBoxService,
     protected aioService: AioService,
     protected verificationBaseService: VerificationBaseService,
@@ -56,7 +56,9 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
   }
 
   private initService() {
-    this.inject.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
+    this.earlyConstraintService = this.injector.get(EarlyConstraintService);
+    this.verificationService = this.injector.get(VerificationService);
+    this.injector.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
     this.toastrService.overlayContainer = this.toastContainer;
   }
 
@@ -247,7 +249,6 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     }
   }
 
-      query.isHedgeMatch = true;
   public saveScore() {
     this.toastrService.clear();
     this.confirmationDialogMessage.message = Language.eSports.saveScore;

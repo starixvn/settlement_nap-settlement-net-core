@@ -16,7 +16,7 @@ public interface IAioService
 
     Task<Result> Settle(SettleRequest request);
 
-    Task<List<Models.ResultDetail>> GetRecalResult(GetRecalResultRequest request);
+    Task<List<ResultDetail>> GetRecalResult(GetRecalResultRequest request);
 
     Task<MarkedTickets> CheckMarkedTickets(CheckMarkedTicketsRequest request);
 
@@ -119,7 +119,7 @@ public class AioServiceImp : IAioService
         return null;
     }
 
-    public async Task<List<Models.ResultDetail>> GetRecalResult(GetRecalResultRequest request)
+    public async Task<List<ResultDetail>> GetRecalResult(GetRecalResultRequest request)
     {
         var criteria = createQueryService.QueryRecalResult(request);
         var resultDetails = await repository.FetchAsync<ResultDetail>(criteria);

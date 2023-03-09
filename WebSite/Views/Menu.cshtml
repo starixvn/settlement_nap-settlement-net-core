@@ -4,7 +4,7 @@
 	var session = new NapSession(new HttpContextAccessor());
 	var menuItemList = session.MenuItemList;
 	var env = ViewBag.Environment.Replace("LOCAL", "DEV");
-	const string signOut = "Auth/LogOut";
+	const string signOut = "/Auth/LogOut";
 }
 
 @if (menuItemList != null)

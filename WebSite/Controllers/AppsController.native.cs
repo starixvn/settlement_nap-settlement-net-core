@@ -169,8 +169,8 @@ public class AppsController : Controller
     {
         ViewBag.Environment = configuration.GetSection("Environment").Value;
         ViewBag.Title = title;
-        ViewBag.NetCoreRootUrl = configuration.GetSection("Settle.Domain:NetCoreRootUrl").Value;
-        ViewBag.RootUrl = configuration.GetSection("Settle.Domain:RootUrl").Value;
+        ViewBag.NetCoreRootUrl = string.Empty;
+        ViewBag.RootUrl = string.Empty;
         ViewBag.PageType = pageType;
 
         return View(viewName);

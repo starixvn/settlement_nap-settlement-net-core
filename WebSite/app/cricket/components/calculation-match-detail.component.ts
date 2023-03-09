@@ -24,5 +24,4 @@ export class CalculationMatchDetailComponent extends CalculationMatchDetailBaseC
     public ngOnInit() {
         this.matchDetail = this.match.matchDetail;
     }
-
 }

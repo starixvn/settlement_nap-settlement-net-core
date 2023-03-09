@@ -30,7 +30,6 @@ public class HomeController : Controller
     [Authorize]
     public IActionResult Index()
     {
-        ViewBag.NetCoreRootUrl = configuration.GetSection("Settle.Domain:NetCoreRootUrl").Value;
         var returnUrl = configuration.GetSection("AuthSettings:LoginPath").Value;
         var firstMenu = session.MenuItemList != null ? session.MenuItemList.MinBy(i => i.DisplayOrder) : new MenuItem();
 
@@ -54,7 +53,6 @@ public class HomeController : Controller
     [AllowAnonymous]
     public IActionResult Test()
     {
-        ViewBag.NetCoreRootUrl = configuration.GetSection("Settle.Domain:NetCoreRootUrl").Value;
         ViewBag.IsSessionAvailable = HttpContext.Session.IsAvailable;
         ViewBag.UserId = session.UserId;
         ViewBag.Username = session.UserName;
@@ -219,8 +217,8 @@ public class HomeController : Controller
     {
         ViewBag.Environment = configuration.GetSection("Environment").Value;
         ViewBag.Title = title;
-        ViewBag.NetCoreRootUrl = configuration.GetSection("Settle.Domain:NetCoreRootUrl").Value;
-        ViewBag.RootUrl = configuration.GetSection("Settle.Domain:RootUrl").Value;
+        ViewBag.NetCoreRootUrl = string.Empty;
+        ViewBag.RootUrl = string.Empty;
         ViewBag.PageType = pageType;
 
         return View(viewName);

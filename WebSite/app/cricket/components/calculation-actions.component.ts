@@ -30,6 +30,12 @@ import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.p
 })
 export class CalculationActionsComponent implements SportTemplate {
     @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
+    private messageBoxService: MessageBoxService;
+    private verificationService: VerificationService;
+    private aioService: AioService;
+    private verificationBaseService: VerificationBaseService;
+    private toastrService: ToastrService;
+    private resultNameByIdPipe: ResultNameByIdPipe;
     public blockUI = true;
     public match: Match;
     public hedgeMatchDetail: HedgeMatchDetail;
@@ -45,14 +51,7 @@ export class CalculationActionsComponent implements SportTemplate {
     public isDisabledUnCalculate: boolean;
     public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
 
-    constructor(
-        private inject: Injector,
-        private readonly messageBoxService: MessageBoxService,
-        private readonly resultNameByIdPipe: ResultNameByIdPipe,
-        private readonly verificationService: VerificationService,
-        private readonly aioService: AioService,
-        private readonly verificationBaseService: VerificationBaseService,
-        private readonly toastrService: ToastrService) {
+    constructor(private injector: Injector) {
         this.confirmationDialogMessage.title = Language.confirmationBox;
     }
 
@@ -88,7 +87,13 @@ export class CalculationActionsComponent implements SportTemplate {
     }
 
     private initService(){
-        this.inject.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
+        this.messageBoxService = this.injector.get(MessageBoxService);
+        this.verificationService = this.injector.get(VerificationService);
+        this.aioService = this.injector.get(AioService);
+        this.verificationBaseService = this.injector.get(VerificationBaseService);
+        this.toastrService = this.injector.get(ToastrService);
+        this.resultNameByIdPipe = this.injector.get(ResultNameByIdPipe)
+        this.injector.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
         this.toastrService.overlayContainer = this.toastContainer;
     }
 

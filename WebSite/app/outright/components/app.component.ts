@@ -48,7 +48,6 @@ export default class AppComponent implements OnInit {
             case PageType.OutrightLog:
                 return this.componentFactoryResolver.resolveComponentFactory(LogPageComponent);
             default:
-                // return this.componentFactoryResolver.resolveComponentFactory(LogPageComponent);
                 return this.componentFactoryResolver.resolveComponentFactory(MainPageComponent);
         }
     }

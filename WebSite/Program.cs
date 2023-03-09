@@ -1,7 +1,6 @@
 using Fanex.NAP.Client;
 using Fanex.NAP.Client.Configuration;
 using Fanex.NAP.Client.Helpers.Web;
-using Fanex.NAP.Core.SignIn;
 using Fanex.NAP.Signin.AspNetCore.Attribute;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
@@ -77,7 +76,6 @@ app.UseEndpoints(endpoints =>
 NapClientManager
     .UseConfig(app.Services.GetRequiredService<INapSettings>())
     .UseSession(app.Services.GetRequiredService<INapSession>());
-SignInHelper.PathBase = app.Configuration.GetSection("Settle.Domain:RootUrl").Value;
 
 #if DEBUG
 app.Run();

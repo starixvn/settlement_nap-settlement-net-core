@@ -32,6 +32,7 @@ import { DynamicHeightDirective } from '../shared/directives';
         PipesModule,
         NgbModule,
         DatepickerComponent,
+        NewMultipleSelectComponent,
         DynamicHeightDirective
     ],
     declarations: [
@@ -41,7 +42,6 @@ import { DynamicHeightDirective } from '../shared/directives';
         ModalDialogComponent,
         ModalContentDialogComponent,
         MaterialDialogWithResponseComponent,
-        NewMultipleSelectComponent,
         LeagueComponent,
         MaterialDialogComponent,
     ],
