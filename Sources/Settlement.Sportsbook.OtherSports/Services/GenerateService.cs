@@ -18,9 +18,9 @@ public interface GenerateService
 
     public List<ResultDetail> GenerateResultDetail(MatchDetail matchDetail);
 
-    public string CreateResources(List<ResourceItem> selectedResources);
+    public string CreateResources(List<ResourceItem> selectedResources, string action);
 
-    public List<ResourceItem> GenerateFinalScore(CalculateRequest request);
+    public List<ResourceItem> GenerateResources(CalculateRequest request);
 }
 
 public class GenerateServiceImp : GenerateService
@@ -43,12 +43,23 @@ public class GenerateServiceImp : GenerateService
         this.xmlConvertService = xmlConvertService;
     }
 
-    public string CreateResources(List<ResourceItem> selectedResources)
+    public string CreateResources(List<ResourceItem> selectedResources, string action)
     {
         var resources = new Resources<ResourceItem>
         {
-            ResourceItems = selectedResources.Where(resource => resource.ResourceId is ResourceType.Final or ResourceType.Halftime).ToList()
+            ResourceItems = new List<ResourceItem>()
         };
+        var halfTime = selectedResources.FirstOrDefault(item => item.ResourceId is ResourceType.Halftime);
+        if (halfTime != null && (ResourceHalfTimeAction.Exists(item => item == action)
+                                 || (action == ActionType.CalculateAll && !string.IsNullOrEmpty(halfTime.AwayValue) && !string.IsNullOrEmpty(halfTime.HomeValue))))
+        {
+            resources.ResourceItems.Add(halfTime);
+        }
+
+        if (ResourceFullTimeAction.Exists(item => item == action))
+        {
+            resources.ResourceItems.Add(selectedResources.FirstOrDefault(item => item.ResourceId is ResourceType.Final));
+        }
 
         return xmlConvertService.Serialize(resources);
     }
@@ -86,24 +97,16 @@ public class GenerateServiceImp : GenerateService
         return CreateResultFinal(matchDetail, resultDetails);
     }
 
-    public List<ResourceItem> GenerateFinalScore(CalculateRequest request)
+    public List<ResourceItem> GenerateResources(CalculateRequest request)
     {
         var listResource = new List<ResourceItem>();
-        if (ResourceHalfTimeAction.Exists(item => item == request.Action)
-            || (request.Action == ActionType.CalculateAll && request.HalfTimeAwayScore is not null && request.HalfTimeHomeScore is not null))
+        var resourceHalfTime = new ResourceItem(ResourceType.Halftime)
         {
-            var resourceHalfTime = new ResourceItem(ResourceType.Halftime)
-            {
-                AwayValue = request.HalfTimeAwayScore.ToString(),
-                HomeValue = request.HalfTimeHomeScore.ToString()
-            };
-            listResource.Add(resourceHalfTime);
-        }
+            AwayValue = request.HalfTimeAwayScore.ToString(),
+            HomeValue = request.HalfTimeHomeScore.ToString()
+        };
+        listResource.Add(resourceHalfTime);
 
-        if (!ResourceFullTimeAction.Exists(item => item == request.Action))
-        {
-            return listResource;
-        }
         var resourceFullTime = new ResourceItem(ResourceType.Final)
         {
             AwayValue = request.FinalAwayScore.ToString(),

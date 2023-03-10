@@ -84,10 +84,6 @@ export class HalfTimeFullTimeCalculationComponent implements SportTemplate {
     return _.find(this.resultDetails, (map: ResultDetail) => _.isEqual(map.resourceId, ResourcesIds.halfTime));
   }
 
-  private get originalHalfTime() {
-    return _.find(this.originalResultDetail, (map: ResultDetail) => _.isEqual(map.resourceId, ResourcesIds.halfTime));
-  }
-
   private get fullTime() {
     return _.find(this.resultDetails, (map: ResultDetail) => _.isEqual(map.resourceId, ResourcesIds.fullTime));
   }
@@ -326,6 +322,7 @@ export class HalfTimeFullTimeCalculationComponent implements SportTemplate {
 
   private async sendRequest(type: string) {
     const hedgeMatchId = this.applyHedgeMatch ? this.match.hedgeMatchDetail.matchId : 0;
+    
     const settleQuery = new RequestSettleWithInterval(this.matchDetail, this.resultDetails, type,
       this.isReSettledTickets, this.isScoreDirect, hedgeMatchId, this.refResultStatus);
 

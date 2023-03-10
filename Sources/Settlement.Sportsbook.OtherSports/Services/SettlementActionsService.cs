@@ -47,7 +47,7 @@ public class SettlementActionsServiceImp : SettlementActionsService
 
     public async Task<Result> Calculate(CalculateRequest request)
     {
-        request.SelectedResources = generateService.GenerateFinalScore(request);
+        request.SelectedResources = generateService.GenerateResources(request);
         var score = new ScoreSetModel
         {
             BetStatus = new StringBuilder(request.BetStatus),
@@ -98,7 +98,7 @@ public class SettlementActionsServiceImp : SettlementActionsService
             Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString(),
             IsReSettledTickets = request.IsReSettledTickets,
             RefResultStatus = request.RefResultStatus,
-            SelectedResources = generateService.CreateResources(request.SelectedResources),
+            SelectedResources = generateService.CreateResources(request.SelectedResources, request.Action),
             BetStatus = betStatus
         };
 
