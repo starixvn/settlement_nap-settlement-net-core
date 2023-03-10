@@ -118,9 +118,11 @@ describe('CalculatePopupComponent', () => {
     expect(component).toBeTruthy();
   });
 
+
+
   describe('NgOnInit', () => {
     it('should GetMatches', () => {
-      jest.spyOn(outrightService, 'getMatches').mockReturnValue(Promise.resolve(leagueSettle));
+      outrightService.getMatches = jest.fn().mockReturnValue(Promise.resolve(leagueSettle));
 
       component.ngOnInit();
 
@@ -135,7 +137,7 @@ describe('CalculatePopupComponent', () => {
         team.oddsStatus = oddStatus;
         team.eventDate = "2023-10-2";
         leagueSettle.today = "2023-10-3";
-        jest.spyOn(outrightService, 'getMatches').mockReturnValue(Promise.resolve(leagueSettle));
+        outrightService.getMatches = jest.fn().mockReturnValue(Promise.resolve(leagueSettle));
 
         component.ngOnInit();
         tick();
@@ -151,7 +153,7 @@ describe('CalculatePopupComponent', () => {
     it('return value settled When have match settled', () => {
       const teamSettled = new TeamSettle('1', '1', false, '', '');
       component.teamJustSettled = [teamSettled];
-      jest.spyOn(component.dialogRef, 'close');
+      component.dialogRef.close = jest.fn();
 
       component.close();
 
@@ -160,7 +162,7 @@ describe('CalculatePopupComponent', () => {
 
     it('should call without param when not settle any match', () => {
       component.teamJustSettled = [];
-      jest.spyOn(component.dialogRef, 'close');
+      component.dialogRef.close = jest.fn();
 
       component.close();
 
@@ -219,7 +221,7 @@ describe('CalculatePopupComponent', () => {
     });
 
     it("should enable Dead Heat when change status to Won", () => {
-      team.status = "lose";
+      team.status = "WON";
       team.disableDeadheat = true;
 
       component.changeStatus(team);
@@ -231,8 +233,8 @@ describe('CalculatePopupComponent', () => {
 
   describe("Calculate", () => {
     it('should get Lastest data to check', fakeAsync(() => {
-      jest.spyOn(outrightService, 'getMatches').mockReturnValue(Promise.resolve(leagueSettle));
-      jest.spyOn(CalculateService, 'teamWonSettled');
+      outrightService.getMatches = jest.fn().mockReturnValue(Promise.resolve(leagueSettle));
+      CalculateService.teamWonSettled = jest.fn();
 
       component.calculate();
       tick();
@@ -242,10 +244,10 @@ describe('CalculatePopupComponent', () => {
     }));
 
     it('should error when exist match running', fakeAsync(() => {
-      jest.spyOn(outrightService, 'getMatches').mockReturnValue(Promise.resolve(leagueSettle));
-      jest.spyOn(CalculateService, 'ExistRunningStatus').mockReturnValue(true);
-      jest.spyOn(toastrService, 'error');
-      jest.spyOn(toastrService, 'clear');
+      outrightService.getMatches = jest.fn().mockReturnValue(Promise.resolve(leagueSettle));
+      CalculateService.ExistRunningStatus = jest.fn().mockReturnValue(true);
+      toastrService.error = jest.fn();
+      toastrService.clear = jest.fn();
 
       component.calculate();
       flush();
@@ -255,11 +257,11 @@ describe('CalculatePopupComponent', () => {
     }));
 
     it('should error when exist only one match death heat', fakeAsync(() => {
-      jest.spyOn(outrightService, 'getMatches').mockReturnValue(Promise.resolve(leagueSettle));
-      jest.spyOn(CalculateService, 'ExistRunningStatus').mockReturnValue(false);
-      jest.spyOn(CalculateService, 'VerifyOnlyOneTeamWon').mockReturnValue(true);
-      jest.spyOn(toastrService, 'error');
-      jest.spyOn(toastrService, 'clear');
+      outrightService.getMatches = jest.fn().mockReturnValue(Promise.resolve(leagueSettle));
+      CalculateService.ExistRunningStatus = jest.fn().mockReturnValue(false);
+      CalculateService.VerifyOnlyOneTeamWon = jest.fn().mockReturnValue(true);
+      toastrService.error = jest.fn();
+      toastrService.clear = jest.fn();
 
       component.calculate();
       flush();
@@ -269,13 +271,13 @@ describe('CalculatePopupComponent', () => {
     }));
 
     it('should error when matches selected inconsistent Dead heat value', fakeAsync(() => {
-      jest.spyOn(outrightService, 'getMatches').mockReturnValue(Promise.resolve(leagueSettle));
-      jest.spyOn(CalculateService, 'ExistRunningStatus').mockReturnValue(false);
-      jest.spyOn(CalculateService, 'VerifyOnlyOneTeamWon').mockReturnValue(false);
-      jest.spyOn(CalculateService, 'VerifyDeadheat').mockReturnValue(true);
-      jest.spyOn(CalculateService, 'MessageInconsistentDeadheat').mockReturnValue("Mock Test");
-      jest.spyOn(toastrService, 'error');
-      jest.spyOn(toastrService, 'clear');
+      outrightService.getMatches = jest.fn().mockReturnValue(Promise.resolve(leagueSettle));
+      CalculateService.ExistRunningStatus = jest.fn().mockReturnValue(false);
+      CalculateService.VerifyOnlyOneTeamWon = jest.fn().mockReturnValue(false);
+      CalculateService.VerifyDeadheat = jest.fn().mockReturnValue(true);
+      CalculateService.MessageInconsistentDeadheat = jest.fn().mockReturnValue("Mock Test");
+      toastrService.error = jest.fn();
+      toastrService.clear = jest.fn();
 
       component.calculate();
       flush();
@@ -285,15 +287,37 @@ describe('CalculatePopupComponent', () => {
       expect(CalculateService.MessageInconsistentDeadheat).toBeCalled();
     }));
 
+    it('should confirm one time when pass all validate', fakeAsync(() => {
+      outrightService.getMatches = jest.fn().mockReturnValue(Promise.resolve(leagueSettle));
+      CalculateService.ExistRunningStatus = jest.fn().mockReturnValue(false);
+      CalculateService.VerifyOnlyOneTeamWon = jest.fn().mockReturnValue(false);
+      CalculateService.VerifyDeadheat = jest.fn().mockReturnValue(false);
+      CalculateService.VerifyNonDeadheat = jest.fn().mockReturnValue(false);
+      toastrService.clear = jest.fn();
+      outrightService.calculate = jest.fn().mockReturnValue(Promise.resolve(ResultSuccessful));
+      component.dialogRef.close = jest.fn();
+
+      component.calculate();
+      tick();
+      let buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
+      buttonYes.click();
+      tick();
+      flush();
+
+      expect(toastrService.clear).toBeCalled();
+      expect(outrightService.calculate).toBeCalled();
+      expect(component.dialogRef.close).toBeCalled();
+    }));
+
     it('should confirm twice when exist more than one team dead heat', fakeAsync(() => {
-      jest.spyOn(outrightService, 'getMatches').mockReturnValue(Promise.resolve(leagueSettle));
-      jest.spyOn(CalculateService, 'ExistRunningStatus').mockReturnValue(false);
-      jest.spyOn(CalculateService, 'VerifyOnlyOneTeamWon').mockReturnValue(false);
-      jest.spyOn(CalculateService, 'VerifyDeadheat').mockReturnValue(false);
-      jest.spyOn(CalculateService, 'VerifyNonDeadheat').mockReturnValue(true);
-      jest.spyOn(toastrService, 'clear');
-      jest.spyOn(outrightService, 'calculate').mockReturnValue(Promise.resolve(ResultSuccessful));
-      jest.spyOn(component.dialogRef, 'close');
+      outrightService.getMatches = jest.fn().mockReturnValue(Promise.resolve(leagueSettle));
+      CalculateService.ExistRunningStatus = jest.fn().mockReturnValue(false);
+      CalculateService.VerifyOnlyOneTeamWon = jest.fn().mockReturnValue(false);
+      CalculateService.VerifyDeadheat = jest.fn().mockReturnValue(false);
+      CalculateService.VerifyNonDeadheat = jest.fn().mockReturnValue(true);
+      toastrService.clear = jest.fn();
+      outrightService.calculate = jest.fn().mockReturnValue(Promise.resolve(ResultSuccessful));
+      component.dialogRef.close = jest.fn();
 
       component.calculate();
       tick();
@@ -302,31 +326,10 @@ describe('CalculatePopupComponent', () => {
       tick();
       buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
       buttonYes.click();
-      flush();
-
-      expect(toastrService.clear).toBeCalled();      
-      expect(outrightService.calculate).toBeCalled();
-      expect(component.dialogRef.close).toBeCalled();
-    }));
-
-    it('should confirm one time when pass all validate', fakeAsync(() => {
-      jest.spyOn(outrightService, 'getMatches').mockReturnValue(Promise.resolve(leagueSettle));
-      jest.spyOn(CalculateService, 'ExistRunningStatus').mockReturnValue(false);
-      jest.spyOn(CalculateService, 'VerifyOnlyOneTeamWon').mockReturnValue(false);
-      jest.spyOn(CalculateService, 'VerifyDeadheat').mockReturnValue(false);
-      jest.spyOn(CalculateService, 'VerifyNonDeadheat').mockReturnValue(false);
-      jest.spyOn(toastrService, 'clear');
-      jest.spyOn(outrightService, 'calculate').mockReturnValue(Promise.resolve(ResultSuccessful));
-      jest.spyOn(component.dialogRef, 'close');
-
-      component.calculate();
-      tick();
-      let buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
-      buttonYes.click();
       tick();
       flush();
 
-      expect(toastrService.clear).toBeCalled();      
+      expect(toastrService.clear).toBeCalled();
       expect(outrightService.calculate).toBeCalled();
       expect(component.dialogRef.close).toBeCalled();
     }));
@@ -339,16 +342,16 @@ describe('CalculatePopupComponent', () => {
       leagueSettle.teams = [team, teamSecond];
       component.teams = [team, teamSecond];
       ResultFailed.teamFailedIds = '1';
-      jest.spyOn(outrightService, 'getMatches').mockReturnValue(Promise.resolve(leagueSettle));
-      jest.spyOn(CalculateService, 'ExistRunningStatus').mockReturnValue(false);
-      jest.spyOn(CalculateService, 'VerifyOnlyOneTeamWon').mockReturnValue(false);
-      jest.spyOn(CalculateService, 'VerifyDeadheat').mockReturnValue(false);
-      jest.spyOn(CalculateService, 'VerifyNonDeadheat').mockReturnValue(false);
-      jest.spyOn(toastrService, 'clear');
-      jest.spyOn(toastrService, 'error');
-      jest.spyOn(outrightService, 'calculate').mockReturnValue(Promise.resolve(ResultFailed));
-      jest.spyOn(component.dialogRef, 'close');
-      
+      outrightService.getMatches = jest.fn().mockReturnValue(Promise.resolve(leagueSettle));
+      CalculateService.ExistRunningStatus = jest.fn().mockReturnValue(false);
+      CalculateService.VerifyOnlyOneTeamWon = jest.fn().mockReturnValue(false);
+      CalculateService.VerifyDeadheat = jest.fn().mockReturnValue(false);
+      CalculateService.VerifyNonDeadheat = jest.fn().mockReturnValue(false);
+      toastrService.clear = jest.fn();
+      toastrService.error = jest.fn();
+      outrightService.calculate = jest.fn().mockReturnValue(Promise.resolve(ResultFailed));
+      component.dialogRef.close = jest.fn();
+
 
       component.calculate();
       tick();
@@ -357,7 +360,7 @@ describe('CalculatePopupComponent', () => {
       tick();
       flush();
 
-      expect(toastrService.clear).toBeCalled();      
+      expect(toastrService.clear).toBeCalled();
       expect(outrightService.calculate).toBeCalled();
       expect(toastrService.error).toBeCalledWith(ResultFailed.errMsg);
       expect(component.teamJustSettled.length).toEqual(1);

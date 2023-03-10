@@ -32,11 +32,8 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
   public apiKeys = null;
   public blockUI = true;
   constructor(
-    protected inject: Injector,
-    private readonly messageBoxService: MessageBoxService,
-    protected toastrService: ToastrService,
-    protected aioService: AioService) {
-    super(aioService, toastrService);
+    protected inject: Injector) {
+    super(inject);
     this.confirmationDialogMessage.title = Language.confirmationBox;
   }
 
@@ -56,6 +53,9 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
   }
 
   private initService() {
+    this.toastrService = this.inject.get(ToastrService);
+    this.aioService = this.inject.get(AioService);
+    this.messageBoxService = this.inject.get(MessageBoxService);
     this.inject.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
     this.toastrService.overlayContainer = this.toastContainer;
   }

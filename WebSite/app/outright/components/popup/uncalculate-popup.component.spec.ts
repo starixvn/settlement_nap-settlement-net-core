@@ -110,11 +110,11 @@ describe('UncalculatePopupComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('ngOnInit - should GetMatches', () => {
+  it('ngOnInit - should GetMatches', async() => {
     leagueSettle.teams = [team];
-    jest.spyOn(outrightService, 'getMatches').mockReturnValue(Promise.resolve(leagueSettle));
+    outrightService.getMatches= jest.fn().mockReturnValue(Promise.resolve(leagueSettle));
 
-    component.ngOnInit();
+    await component.ngOnInit();
 
     expect(outrightService.getMatches).toHaveBeenCalled();
     expect(component.teams).toEqual([team]);

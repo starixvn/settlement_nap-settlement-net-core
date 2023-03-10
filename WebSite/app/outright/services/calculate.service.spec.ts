@@ -136,6 +136,6 @@ describe('CalculateService', () => {
         
         const actual = CalculateService.teamWonSettled([nonDeadHeatMatch], [team]);
 
-        expect(actual).toEqual(team);
+        expect(actual).toEqual([team]);
     });
 });

@@ -1,3 +1,4 @@
+import { MessageBoxService } from './../../services/message-box.service.native';
 import { CalculateAction, SettlementStatusId, TicketStatusText } from "../../constants";
 import { Language } from "../../language.native";
 import { AioService } from "../../services";
@@ -10,6 +11,9 @@ import { ToastrService } from "ngx-toastr";
     template: '',
 })
 export class RefundActionBaseComponent {
+    public aioService: AioService;
+    public toastrService: ToastrService;
+    public messageBoxService: MessageBoxService;
     public blockUI = true;
     protected aioService: AioService;
     protected toastrService: ToastrService;
@@ -19,9 +23,7 @@ export class RefundActionBaseComponent {
     public hedgeMatchDetail: HedgeMatchDetail;
     public applyHedgeMatch: boolean;
 
-    constructor(protected injector: Injector) {
-        this.aioService = this.injector.get(AioService);
-        this.toastrService = this.injector.get(ToastrService);
+    constructor(protected inject: Injector) {
     }
 
     public get selectedResources(): ResultDetail[] {

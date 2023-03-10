@@ -24,8 +24,13 @@ import { CalculateCommonModule } from '../../shared/modules/calculate-common.mod
 })
 export class CalculationActionsComponent implements SportTemplate {
     @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
+    private basketballService: BasketballService;
+    private messageBoxService: MessageBoxService;
+    private aioService: AioService;
+    private verificationService: VerificationService;
+    private toastrService: ToastrService;
     public readonly overTimeId = ResourcesIds.ot;
-    public blockUI = true;
+    public blockUI = false;
     public match: Match;
     public matchDetail: MatchDetail;
     public hedgeMatchDetail: HedgeMatchDetail;
@@ -38,18 +43,12 @@ export class CalculationActionsComponent implements SportTemplate {
     public isReadyMatch: boolean;
     public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
 
-    constructor(
-        protected inject: Injector,
-        private readonly basketballService: BasketballService,
-        private readonly messageBoxService: MessageBoxService,
-        private readonly aioService: AioService,
-        private readonly verificationService: VerificationService,
-        private readonly toastrService: ToastrService) {
+    constructor(private inject: Injector) {
         this.confirmationDialogMessage.title = Language.confirmationBox;
     }
 
     async getMatch(matchId: number) {
-        this.inject.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
+        this.initService();
         const matchQuery = {
             matchId,
             apikey: BasketballApiKeys.normalMatch,
@@ -61,6 +60,15 @@ export class CalculationActionsComponent implements SportTemplate {
         this.isReadyMatch = this.match.matchDetail.playTime >= KickOffTime.playTime;
         this.cloneResultDetail();
         this.init();
+    }
+
+    private initService() {
+        this.basketballService = this.inject.get(BasketballService);
+        this.messageBoxService = this.inject.get(MessageBoxService);
+        this.aioService = this.inject.get(AioService);
+        this.verificationService = this.inject.get(VerificationService);
+        this.toastrService = this.inject.get(ToastrService);
+        this.inject.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
     }
 
     private cloneResultDetail() {

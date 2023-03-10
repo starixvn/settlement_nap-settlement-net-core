@@ -23,6 +23,8 @@ import { ResourceNameByIdPipe } from '../pipes/resource-name-by-id.pipe';
 })
 export class RefundActionsComponent extends RefundActionBaseComponent implements SportTemplate {
     @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
+    private verificationService: VerificationService;
+    private basketballService: BasketballService;
     public blockUI = true;
     public match: Match;
     public originalMatch: Match;
@@ -30,19 +32,13 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
     public resultDetail: ResultDetail[];
     public readonly isReSettledTickets: boolean;
     public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
-    constructor(
-        protected inject: Injector,
-        private readonly verificationService: VerificationService,
-        private readonly messageBoxService: MessageBoxService,
-        protected aioService: AioService,
-        protected toastrService: ToastrService,
-        private readonly basketballService: BasketballService) {
-        super(aioService, toastrService);
+    constructor(protected inject: Injector) {
+        super(inject);
         this.confirmationDialogMessage.title = Language.confirmationBox;
     }
 
     async getMatch(matchId: number): Promise<void> {
-        this.inject.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI  = event);
+        this.initService();
         const matchQuery = {
             matchId,
             sportType: SportType.basketBall,
@@ -53,6 +49,16 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
         this.match = await this.aioService.getMatch(matchQuery) as Match;
         this.originalMatch = _.cloneDeep(this.match);
         this.init();
+    }
+
+    private initService (){
+        this.messageBoxService = this.inject.get(MessageBoxService);
+        this.aioService = this.inject.get(AioService);
+        this.toastrService = this.inject.get(ToastrService);
+        this.verificationService = this.inject.get(VerificationService);
+        this.basketballService = this.inject.get(BasketballService);
+
+        this.inject.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI  = event);
     }
 
     public init() {

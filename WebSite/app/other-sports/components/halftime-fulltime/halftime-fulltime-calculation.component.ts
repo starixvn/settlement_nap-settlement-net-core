@@ -334,6 +334,8 @@ export class HalfTimeFullTimeCalculationComponent implements SportTemplate {
     }
   }
 
+  private 
+
   public calculateFullTime() {
     this.clearStatus();
     this.clickCalcFullTime = true;

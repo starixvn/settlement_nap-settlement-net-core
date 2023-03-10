@@ -12,7 +12,6 @@ import { AppBaseComponent } from '../../shared/components/sportsbook-sop/app-bas
 })
 export class AppComponent extends AppBaseComponent implements OnInit {
   constructor(
-    protected injector: Injector,
     protected elementRef: ElementRef<HTMLElement>,
     protected viewContainerRef: ViewContainerRef) {
     super (elementRef, viewContainerRef);

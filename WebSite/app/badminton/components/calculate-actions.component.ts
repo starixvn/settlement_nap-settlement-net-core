@@ -44,7 +44,7 @@ export class CalculateActionsComponent implements SportTemplate {
   public collapse = false;
   public blockUI = true;
 
-  constructor(protected inject: Injector) {
+  constructor(private inject: Injector) {
     this.confirmationDialogMessage.title = Language.confirmationBox;
   }
 
