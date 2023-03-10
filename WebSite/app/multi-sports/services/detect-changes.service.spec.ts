@@ -65,7 +65,6 @@ describe('MultiSport - DetectChangesService', () => {
             newMatch.isCalculatingMP = 1;
             newMatch.isCalculatingSingle = 1;
             newMatch.isExistMarkedTicket = true;
-            newMatch.isExistMarkedTicketParlay = true;
             newMatch.isExistRunningTicket = true;
             newMatch.isHalfTimeCal = true;
             newMatch.isMultiCaled = true;

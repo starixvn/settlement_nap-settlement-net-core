@@ -1,11 +1,9 @@
-import { BadmintonApiKeys } from './../../badminton/constants/api-keys.native';
 import { TestBed, waitForAsync, ComponentFixture, fakeAsync, tick } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { HttpClientModule } from '@angular/common/http';
 import { of } from 'rxjs';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { ModalDialogComponent, ModalContentDialogComponent } from '../../shared/components';
 import { RefundActionsComponent } from './refund-actions.component';
 import { BasketballService, BetStatusService, VerificationService } from '../services';
 import { Match, HedgeMatchDetail, VoidBetInfo } from '../models';
@@ -16,11 +14,12 @@ import { ResourceNameByIdPipe } from '../pipes/resource-name-by-id.pipe';
 import { ResultByTeamNamePipe } from '../../shared/pipes/result-by-team-name.pipe';
 import * as _ from 'lodash';
 import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
-import { ScoreBySettlementPipe } from '../../shared/pipes/score-by-settlement.pipe';
 import { ResultSettingModel } from '../../shared/models';
 import { MatchDetail, Permission, ResultDetail } from '../../shared/models/sportsbook-sop';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
+import { ModalContentDialogComponent } from '../../shared/components/modal-dialog/modal-content-dialog.component';
+import { ModalDialogComponent } from '../../shared/components/modal-dialog/modal-dialog.component';
 
 describe('Component: RefundActionsComponent', () => {
     let component: RefundActionsComponent;
@@ -69,12 +68,8 @@ describe('Component: RefundActionsComponent', () => {
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             declarations: [
-                RefundActionsComponent,
                 ModalDialogComponent,
                 ModalContentDialogComponent,
-                ResourceNameByIdPipe,
-                IntervalBackgroundPipe,
-                ScoreBySettlementPipe,
             ],
             providers: [
                 HttpRequestService,
@@ -97,7 +92,8 @@ describe('Component: RefundActionsComponent', () => {
                 NgbModule,
                 ToastNoAnimationModule.forRoot(),
                 ToastContainerModule,
-                ToastrModule.forRoot()
+                ToastrModule.forRoot(),
+                RefundActionsComponent
             ],
         })
             .overrideModule(BrowserDynamicTestingModule, {
@@ -147,11 +143,11 @@ describe('Component: RefundActionsComponent', () => {
             component.match = match;
             component.applyHedgeMatch = false;
             component.matchDetail = matchDetail;
-            spyOn(aioService, 'checkMarkedTickets').and.returnValue(of(noMarkedTicket));
-            spyOn(aioService, 'push').and.returnValue(of(successfulResult));
-            spyOn(messageBoxService, 'closePopup');
-            spyOn(aioService, 'getTicketInfo').and.returnValue(of([]));
-            spyOn(toastrService, 'error');
+            aioService.checkMarkedTickets = jest.fn().mockReturnValue(Promise.resolve(noMarkedTicket));
+            aioService.push = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
+            messageBoxService.closePopup = jest.fn();
+            aioService.getTicketInfo = jest.fn().mockReturnValue(Promise.resolve([]));
+            toastrService.error = jest.fn();
 
             component.refund();
             tick();
@@ -174,11 +170,11 @@ describe('Component: RefundActionsComponent', () => {
                 component.hedgeMatchDetail.matchId = 700000;
                 component.permission = new Permission();
 
-                spyOn(aioService, 'checkMarkedTickets').and.returnValue(of(noMarkedTicket));
-                spyOn(aioService, 'push').and.returnValue(of(successfulResult));
-                spyOn(aioService, 'getTicketInfo').and.returnValue(of([]));
-                spyOn(messageBoxService, 'closePopup');
-                spyOn(toastrService, 'error');
+                aioService.checkMarkedTickets = jest.fn().mockReturnValue(Promise.resolve(noMarkedTicket));
+                aioService.push = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
+                aioService.getTicketInfo = jest.fn().mockReturnValue(Promise.resolve([]));
+                messageBoxService.closePopup = jest.fn();
+                toastrService.error = jest.fn();
 
 
                 component.refund();
@@ -195,8 +191,8 @@ describe('Component: RefundActionsComponent', () => {
         it('should alert when exist marked tickets', fakeAsync(async () => {
             component.match = match;
             component.matchDetail = match.matchDetail;
-            spyOn(aioService, 'checkMarkedTickets').and.returnValue(of(existMarkedTicket));
-            spyOn(toastrService, 'error');
+            aioService.checkMarkedTickets = jest.fn().mockReturnValue(Promise.resolve(existMarkedTicket));
+            toastrService.error = jest.fn();
 
             component.refund();
             tick();
@@ -207,11 +203,11 @@ describe('Component: RefundActionsComponent', () => {
         it('should return error message when result is unsuccessful', fakeAsync(async () => {
             component.match = match;
             component.matchDetail = match.matchDetail;
-            spyOn(aioService, 'checkMarkedTickets').and.returnValue(of(noMarkedTicket));
-            spyOn(aioService, 'push').and.returnValue(of(unSuccessfulResult));
-            spyOn(aioService, 'getTicketInfo').and.returnValue(of([]));
-            spyOn(messageBoxService, 'closePopup');
-            spyOn(toastrService, 'error');
+            aioService.checkMarkedTickets = jest.fn().mockReturnValue(Promise.resolve(noMarkedTicket));
+            aioService.push = jest.fn().mockReturnValue(Promise.resolve(unSuccessfulResult));
+            aioService.getTicketInfo = jest.fn().mockReturnValue(Promise.resolve([]));
+            messageBoxService.closePopup = jest.fn();
+            toastrService.error = jest.fn();
 
             component.refund();
             tick();
@@ -230,12 +226,12 @@ describe('Component: RefundActionsComponent', () => {
                 transId: '123',
                 custId: '123'
             };
-            spyOn(aioService, 'checkMarkedTickets').and.returnValue(of(noMarkedTicket));
-            spyOn(aioService, 'push').and.returnValue(of(successfulResult));
-            spyOn(aioService, 'getTicketInfo').and.returnValue(of([voidBetInfo]));
-            spyOn(aioService, 'voidBet').and.returnValue(of(""));
-            spyOn(messageBoxService, 'closePopup');
-            spyOn(toastrService, 'error');
+            aioService.checkMarkedTickets = jest.fn().mockReturnValue(Promise.resolve(noMarkedTicket));
+            aioService.push = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
+            aioService.getTicketInfo = jest.fn().mockReturnValue(Promise.resolve([voidBetInfo]));
+            aioService.voidBet = jest.fn().mockReturnValue(Promise.resolve(""));
+            messageBoxService.closePopup = jest.fn();
+            toastrService.error = jest.fn();
 
             component.refund();
             tick();
@@ -254,7 +250,7 @@ describe('Component: RefundActionsComponent', () => {
             component.match = match;
             component.matchDetail = match.matchDetail;
             component.resultDetails = [result];
-            spyOn(toastrService, 'error');
+            toastrService.error = jest.fn();
 
             component.refund();
             tick();
@@ -264,7 +260,7 @@ describe('Component: RefundActionsComponent', () => {
     });
     it('init - should set components properties, apply hedge match', () => {
         component.match = match;
-        spyOn(basketballService, 'getResultDetail').and.returnValue([]);
+        basketballService.getResultDetail = jest.fn().mockReturnValue([]);
 
         component.init();
 

@@ -2,7 +2,7 @@ import { TestBed, inject, fakeAsync, tick } from '@angular/core/testing';
 import { MessageBoxService } from '../../shared/services';
 import { VerificationService } from '.';
 import { Match, TicketCount, HedgeMatchDetail } from '../models';
-import { ModalDialogComponent } from '../../shared/components';
+import { ModalDialogComponent } from '../../shared/components/modal-dialog/modal-dialog.component';
 import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
 import * as _ from 'lodash';
@@ -90,7 +90,7 @@ describe('Basketball - Verify Service', () => {
         it('should show right message confirm when halftime score is not consistent.', () => {
             const halfTime = CreateDataTest.CreateResultDetail('01', '0', '0', true);
             const expected = "The 'First Half' values do not consist with the results computed from individual sets: 0-0 vs 1-1. Do you want to update them to 1-1?";
-            spyOn(messageBoxService, 'confirm');
+            messageBoxService.confirm = jest.fn();
 
             service.verifyScore(halfTime, true, match.isScoreDirect, match.resultDetails);
 
@@ -101,7 +101,7 @@ describe('Basketball - Verify Service', () => {
         it('should show right message confirm when Full Time score is not consistent.', () => {
             const fullTime = CreateDataTest.CreateResultDetail('00', '0', '0', true);
             const expected = "The 'Full Time' values do not consist with the results computed from individual sets: 0-0 vs 2-1. Do you want to update them to 2-1?";
-            spyOn(messageBoxService, 'confirm');
+            messageBoxService.confirm = jest.fn();
 
             service.verifyScore(fullTime, false, match.isScoreDirect, match.resultDetails);
 
@@ -125,7 +125,7 @@ describe('Basketball - Verify Service', () => {
         it('should pass when input directly is checked.', () => {
             const fullTime = CreateDataTest.CreateResultDetail('00', '0', '0', true);
             match.isScoreDirect = true;
-            spyOn(messageBoxService, 'confirm');
+            messageBoxService.confirm = jest.fn();
 
             service.verifyScore(fullTime, false, match.isScoreDirect, match.resultDetails);
 
@@ -135,7 +135,7 @@ describe('Basketball - Verify Service', () => {
         it('should do nothing when full time has no score', () => {
             const fullTime = CreateDataTest.CreateResultDetail('00', '', '', true);
             match.isScoreDirect = false;
-            spyOn(messageBoxService, 'confirm');
+            messageBoxService.confirm = jest.fn();
 
             service.verifyScore(fullTime, false, match.isScoreDirect, match.resultDetails);
 

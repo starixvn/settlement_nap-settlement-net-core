@@ -51,7 +51,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         this.init();
     }
 
-    private initService(){
+    public initService(){
         this.earlyService = this.inject.get(EarlyService);
         this.aioService = this.inject.get(AioService);
         this.messageBoxService = this.inject.get(MessageBoxService);

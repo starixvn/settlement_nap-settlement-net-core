@@ -155,10 +155,6 @@ describe('Badminton - Calculate actions component', () => {
       });
   });
 
-  afterEach(() => {
-    jest.restoreAllMocks();
-  });
-
   it('should create', () => {
     expect(component).toBeTruthy();
   });

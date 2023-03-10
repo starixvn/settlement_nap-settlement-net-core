@@ -30,7 +30,8 @@ export class AioService {
     }
 
     public verifyNoRunningOdds(query: object) {
-        return this.httpRequestService.postJson(query, `${this.aioApi}/no-running-odds`, false);
+        const request = this.httpRequestService.postJson<Result>(query, `${this.aioApi}/no-running-odds`, false);
+        return firstValueFrom(request);
     }
 
     public changeResultSetting(query: object): Observable<boolean> {
@@ -106,7 +107,7 @@ export class AioService {
             action: actionType,
             selectedResources: [mainMatch].concat(relatedMatchResources)
         };
-        const result = await this.verifyNoRunningOdds(params).toPromise() as Result;
+        const result = await this.verifyNoRunningOdds(params);
         return result.errMsg;
     }
 
