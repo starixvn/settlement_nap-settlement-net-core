@@ -57,7 +57,7 @@ public class SettlementActionsServiceImp : SettlementActionsService
             FinalHomeScore = request.FinalHomeScore
         };
         var criteria = CreateCriteria(request, request.BetStatus);
-        return await multipleServerService.Calculate(criteria, score);
+        return await Settle(request, criteria, score);
     }
 
     public async Task<Result> CalculateWithResultDetail(CalculateRequest request)
@@ -65,6 +65,17 @@ public class SettlementActionsServiceImp : SettlementActionsService
         var score = generateService.GenerateBetStatus(request);
         var criteria = CreateCriteria(request, score.BetStatus.ToString());
 
+        return await Settle(request, criteria, score);
+    }
+
+    public async Task<MarkedTickets> CheckMarkedTickets(CheckingMarkedTicketsRequest request)
+    {
+        var criteria = mapper.Map<CheckingMarkedTicketsRequest, CheckingMarkedTicketsCriteria>(request);
+        return await multipleServerService.CheckMarkedTickets(criteria);
+    }
+
+    private async Task<Result> Settle(CalculateRequest request, CalculateCriteria criteria, ScoreSetModel score)
+    {
         var result = await multipleServerService.Calculate(criteria, score);
 
         if (!result.IsSuccessful || request.HedgeMatchId <= 0)
@@ -75,12 +86,6 @@ public class SettlementActionsServiceImp : SettlementActionsService
         await multipleServerService.Calculate(criteria, score);
 
         return result;
-    }
-
-    public async Task<MarkedTickets> CheckMarkedTickets(CheckingMarkedTicketsRequest request)
-    {
-        var criteria = mapper.Map<CheckingMarkedTicketsRequest, CheckingMarkedTicketsCriteria>(request);
-        return await multipleServerService.CheckMarkedTickets(criteria);
     }
 
     private CalculateCriteria CreateCriteria(CalculateRequest request, string betStatus)

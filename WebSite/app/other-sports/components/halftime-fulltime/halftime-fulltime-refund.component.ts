@@ -82,7 +82,8 @@ export class HalfTimeFullTimeRefundComponent implements SportTemplate {
       matchId: this.matchDetail.matchId,
       action,
       hedgeMatchId: this.applyHedgeMatch ? this.hedgeMatchDetail.matchId : 0,
-      betStatus: _.isEqual(action, this.actionName.refundFullTime) ? this.matchDetail.betStatus : null
+      betStatus: _.isEqual(action, this.actionName.refundFullTime) ? this.matchDetail.betStatus : null,
+      sportType: this.matchDetail.sportType
     };
 
     const response = await this.requestService.sendRequest(param);

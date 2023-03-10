@@ -25,7 +25,8 @@ export class OtherService {
             matchId: matchDetail.matchId,
             action,
             hedgeMatchId: _.isNull(hedgeMatchDetail) ? 0 : hedgeMatchDetail.matchId,
-            betStatus: matchDetail.betStatus
+            betStatus: matchDetail.betStatus,
+            sportType: matchDetail.sportType
         };
 
         return await this.requestService.sendRequest(param);

@@ -55,7 +55,7 @@ export class GameTotalMatchRefundComponent implements SportTemplate {
       this.confirmDialogMessage.message = Language.RefundConfirmMessage;
       this.messageBoxService.confirm(this.confirmDialogMessage, async() => {
         const hedgeMatchId = this.applyHedgeMatch ? this.hedgeMatchDetail.matchId : 0;
-        const errorMessage = await this.gameTotalMatchService.refund(this.matchDetail.matchId, hedgeMatchId, this.totalSets);
+        const errorMessage = await this.gameTotalMatchService.refund(this.matchDetail, hedgeMatchId, this.totalSets);
         if(!_.isEmpty(errorMessage)) {
           this.toastrService.error(errorMessage);
         }

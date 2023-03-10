@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.OtherSports.Models;
@@ -19,6 +20,8 @@ public class SportsbookHandler :
     private readonly SettlementActionsService settlementActionsService;
 
     private readonly PermissionService permissionService;
+
+    private static readonly List<string> ActionRefund = new() { ActionType.RefundAll, ActionType.RefundHalfTime, ActionType.RefundFullTime };
 
     public SportsbookHandler(SportsbookService sportsbookService, SettlementActionsService settlementActionsService, PermissionService permissionService)
     {
@@ -41,7 +44,7 @@ public class SportsbookHandler :
 
     public async Task<Result> Handle(CalculateRequest request, CancellationToken cancellationToken)
     {
-        if (sportsbookService.IsModifyResultDetailGroup(request.SportType))
+        if (!ActionRefund.Exists(action => action == request.Action) && sportsbookService.IsModifyResultDetailGroup(request.SportType))
         {
             return await settlementActionsService.CalculateWithResultDetail(request);
         }

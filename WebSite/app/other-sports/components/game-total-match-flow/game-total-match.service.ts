@@ -79,13 +79,14 @@ export class GameTotalMatchService {
             && !_.isEqual(result.resourceId, ResourcesIds.totalSets));
     }
 
-    public async refund(matchId: number, hedgeMatchId: number, totalSets: ResultDetail) {
+    public async refund(matchDetail: MatchDetail, hedgeMatchId: number, totalSets: ResultDetail) {
         const params = {
-            matchId,
+            matchId: matchDetail.matchId,
             action: CalculateAction.refund,
             hedgeMatchId,
             finalHomeScore: Number(totalSets.homeValue),
             finalAwayScore: Number(totalSets.awayValue),
+            sportType: matchDetail.sportType
         };
 
         const result = await this.requestService.sendRequest(params);
