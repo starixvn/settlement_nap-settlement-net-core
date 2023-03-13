@@ -6,16 +6,15 @@ import { EarlySettlementComponent as EarlyCricket } from './early-settlement.com
 import { PageType } from '../../shared/constants';
 import { SportTemplate } from '../../shared/models/sportsbook-sop';
 import { AppBaseComponent } from '../../shared/components/sportsbook-sop/app-base.component';
-
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
     standalone: true
 })
 
-export class AppComponent extends AppBaseComponent implements OnInit {
-    constructor(
-        protected viewContainerRef: ViewContainerRef,
+export default class AppComponent extends AppBaseComponent implements OnInit {
+   
+    constructor(protected viewContainerRef: ViewContainerRef,
         protected elementRef: ElementRef<HTMLElement>) {
         super(elementRef, viewContainerRef);
     }

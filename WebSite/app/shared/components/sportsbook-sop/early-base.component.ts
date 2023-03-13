@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { Component } from '@angular/core';
+import { Component, Injector } from '@angular/core';
 import { ResultDetail, GroupMap, Permission, SaveScoreQuery, MatchDetail } from '../../models/sportsbook-sop';
 import { ItemsSelect, MarkedTicketsModel, ModalDialogMessage, MultipleSelect, Result, ResultSettingQuery } from '../../models';
 import { BackgroundColor, CalculateAction, ResultSettingType, ResultStatusId, SettlementStatusId, TicketStatusText } from '../../constants';
@@ -13,6 +13,9 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class EarlyBaseComponent {
     public blockUI = true;
+    protected aioService: AioService;
+    protected toastrService: ToastrService;
+    protected messageBoxService: MessageBoxService;
     public matchId: number;
     public resultDetails: ResultDetail[];
     public groupMap: GroupMap[];
@@ -30,11 +33,12 @@ export class EarlyBaseComponent {
     public matchDetail: MatchDetail;
     public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
 
-    constructor(protected messageBoxService: MessageBoxService,
-        protected verificationBaseService: VerificationBaseService,
-        protected aioService: AioService,
-        protected toastrService: ToastrService) {
+    constructor(protected injector: Injector,
+        protected verificationBaseService: VerificationBaseService) {
         this.confirmationDialogMessage.title = Language.confirmationBox;
+        this.aioService = this.injector.get(AioService);
+        this.toastrService = this.injector.get(ToastrService);
+        this.messageBoxService = this.injector.get(MessageBoxService);
     }
 
     public get selectedResources(): ResultDetail[] {

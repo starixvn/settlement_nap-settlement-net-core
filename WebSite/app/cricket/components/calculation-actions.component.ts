@@ -1,9 +1,10 @@
 ﻿import { lastValueFrom } from 'rxjs';
+import { CommonModule } from '@angular/common';
 import { CalculationMatchDetailComponent } from './calculation-match-detail.component';
 import { Component, ViewChild, Injector } from '@angular/core';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 import * as _ from 'lodash';
-import { MessageBoxService, AioService, BlockUIService } from '../../shared/services';
+import { MessageBoxService, AioService, BlockUIService, HttpRequestService } from '../../shared/services';
 import { ModalDialogMessage } from '../../shared/models';
 import { Language } from '../../shared/language';
 import { SettlementStatusId, SportType, CalculateAction, ResultStatusId } from '../../shared/constants';
@@ -25,7 +26,7 @@ import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.p
     selector: 'calculation-actions',
     templateUrl: 'calculation-actions.component.html',
     standalone: true,
-    imports: [CalculateCommonModule, ResultByPlayerNamePipe, ResultValuePipe, ResultNameByIdPipe, IntervalBackgroundPipe, CalculationMatchDetailComponent],
+    imports: [CommonModule, CalculateCommonModule, ResultByPlayerNamePipe, ResultValuePipe, ResultNameByIdPipe, IntervalBackgroundPipe, CalculationMatchDetailComponent],
     providers: [ResultNameByIdPipe, VerificationService, VerificationBaseService]
 })
 export class CalculationActionsComponent implements SportTemplate {
@@ -86,7 +87,7 @@ export class CalculationActionsComponent implements SportTemplate {
         this.init();
     }
 
-    private initService(){
+    private initService() {
         this.messageBoxService = this.injector.get(MessageBoxService);
         this.verificationService = this.injector.get(VerificationService);
         this.aioService = this.injector.get(AioService);

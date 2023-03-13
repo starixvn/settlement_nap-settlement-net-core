@@ -1,13 +1,10 @@
 ﻿import { Injector } from '@angular/core';
 import { lastValueFrom } from 'rxjs';
 import { Component, ViewChild } from '@angular/core';
-import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
-import {
-  Match, SettleQuery, SettleChildMatchQuery
-} from '../models';
+import { ToastContainerDirective } from 'ngx-toastr';
+import { Match, SettleQuery, SettleChildMatchQuery } from '../models';
 import * as _ from 'lodash';
 import { Language } from '../../shared/language';
-import { MessageBoxService, AioService, BlockUIService } from '../../shared/services';
 import { ItemsSelect } from '../../shared/models';
 import { ResultStatusId, CalculateAction, SportType } from '../../shared/constants';
 import { EarlyConstraintService, VerificationService } from '../services';
@@ -18,6 +15,7 @@ import { VerificationBaseService } from '../../core/services/verification-base.s
 import { EarlyCommonModule } from '../../shared/modules/early-common.module';
 import { MatchDetailComponent } from './match-detail.component';
 import { ResultValuePipe, ResultByPlayerNamePipe } from '../pipes';
+import { BlockUIService } from '../../shared/services/block-ui.service';
 
 @Component({
   selector: 'early-settlement',
@@ -35,12 +33,9 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
   public isShowRefundButton = false;
   public isReadyMatch: boolean;
   constructor(
-    private injector: Injector,
-    protected messageBoxService: MessageBoxService,
-    protected aioService: AioService,
-    protected verificationBaseService: VerificationBaseService,
-    protected toastrService: ToastrService) {
-    super(messageBoxService, verificationBaseService, aioService, toastrService);
+    protected injector: Injector,
+    protected verificationBaseService: VerificationBaseService) {
+    super(injector, verificationBaseService);
   }
 
   async getMatch(matchId: number): Promise<void> {

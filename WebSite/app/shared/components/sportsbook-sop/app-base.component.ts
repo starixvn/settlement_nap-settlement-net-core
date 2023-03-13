@@ -19,8 +19,7 @@ export class AppBaseComponent {
     public createTemplateComponent(template: Type<SportTemplate>): ComponentRef<SportTemplate> {
         this.component = this.viewContainerRef.createComponent<SportTemplate>(template);
         const matchId = Number(UrlHelper.getUrlParameter('matchId'));
-        const rootUrl = this.elementRef.nativeElement.getAttribute('root-url') ?? '';
-        this.component.instance.getMatch(matchId, rootUrl);
+        this.component.instance.getMatch(matchId);
         return this.component;
     }
 }

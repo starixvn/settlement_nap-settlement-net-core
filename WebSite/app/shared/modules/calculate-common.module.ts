@@ -12,11 +12,12 @@ import { ExternalSourceNamePipe } from "../pipes/external-source-name.pipe";
 import { MatDialogModule } from '@angular/material/dialog';
 import { ExternalLinkPipe } from '../../score-source-setting/pipes';
 import { ResultByTeamNamePipe } from '../pipes/result-by-team-name.pipe';
+import { OnlyIntegerDirective } from '../../shared/directives';
 
 @NgModule({
         exports: [FormsModule, CommonModule, ToastContainerModule, ResettleCheckerComponent, TicketCountComponent,
-                NotReadyMatchComponent, ExternalSourceNamePipe, MatTooltipModule, MatDialogModule, ExternalLinkPipe],
-        imports: [ResettleCheckerComponent, TicketCountComponent, NotReadyMatchComponent, ExternalSourceNamePipe, ExternalLinkPipe],
+                NotReadyMatchComponent, ExternalSourceNamePipe, MatTooltipModule, MatDialogModule, ExternalLinkPipe, OnlyIntegerDirective],
+        imports: [ResettleCheckerComponent, TicketCountComponent, NotReadyMatchComponent, ExternalSourceNamePipe, ExternalLinkPipe, OnlyIntegerDirective],
         providers: [
                 MessageBoxService,
                 ToastrService,

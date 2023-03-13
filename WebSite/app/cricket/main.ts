@@ -4,7 +4,7 @@ import { bootstrapApplication } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
 import { environment } from '../environments/environment';
-import { AppComponent } from './components/app.component';
+import  AppComponent from "./components/app.component";
 
 if (environment.production) {
     enableProdMode();

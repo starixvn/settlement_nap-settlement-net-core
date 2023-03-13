@@ -1,10 +1,10 @@
 ﻿
 import { Component, ViewChild, Injector } from '@angular/core';
-import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
+import { ToastContainerDirective } from 'ngx-toastr';
 import * as _ from 'lodash';
-import { MessageBoxService, AioService, BlockUIService } from '../../shared/services';
+import { MessageBoxService, BlockUIService } from '../../shared/services';
 import { CalculateAction } from '../../shared/constants';
-import { Result, MarkedTicketsModel, ModalDialogMessage } from '../../shared/models';
+import { MarkedTicketsModel, ModalDialogMessage } from '../../shared/models';
 import { Language } from '../../shared/language';
 import { SettleQuery, SettleChildMatchQuery, Match
 } from '../models';
@@ -25,15 +25,12 @@ import { MatchDetailComponent } from './match-detail.component';
 })
 export class RefundActionsComponent extends RefundActionBaseComponent implements SportTemplate {
     @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
+    private messageBoxService: MessageBoxService;
     public match: Match;
     private readonly isReSettledTickets: boolean;
     public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
-    constructor(
-        private inject: Injector,
-        private readonly messageBoxService: MessageBoxService,
-        protected toastrService: ToastrService,
-        protected aioService: AioService) {
-        super(aioService, toastrService);
+    constructor(protected injector: Injector) {
+        super(injector);
         this.confirmationDialogMessage.title = Language.confirmationBox;
     }
 
@@ -50,7 +47,8 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
     }
 
     private initService(){
-        this.inject.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
+        this.messageBoxService = this.injector.get(MessageBoxService);
+        this.injector.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
         this.toastrService.overlayContainer = this.toastContainer;
     }
 

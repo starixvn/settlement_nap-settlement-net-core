@@ -38,7 +38,6 @@ import { AppBaseComponent } from '../../shared/components/sportsbook-sop/app-bas
   ],
 })
 export class AppComponent extends AppBaseComponent implements OnInit {
-  public pageType: string;
   public blockUI = true;
 
   constructor(

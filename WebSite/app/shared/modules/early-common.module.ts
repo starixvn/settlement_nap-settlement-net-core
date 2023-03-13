@@ -15,11 +15,12 @@ import { VerificationBaseService } from '../../core/services/verification-base.s
 import { ResultByTeamNamePipe } from '../pipes/result-by-team-name.pipe';
 import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
 import { ExternalSourceNamePipe } from '../pipes/external-source-name.pipe';
+import { OnlyIntegerDirective } from '../../shared/directives';
 
 @NgModule({
     exports: [FormsModule, CommonModule, ToastContainerModule, ResettleCheckerComponent, TicketCountComponent,
-        NotReadyMatchComponent, MatTooltipModule, NewMultipleSelectComponent, PipesModule, ExternalLinkPipe, ExternalSourceNamePipe],
-    imports: [ResettleCheckerComponent, TicketCountComponent, NotReadyMatchComponent, NewMultipleSelectComponent, ExternalLinkPipe, ExternalSourceNamePipe],
+        NotReadyMatchComponent, MatTooltipModule, NewMultipleSelectComponent, PipesModule, ExternalLinkPipe, ExternalSourceNamePipe, OnlyIntegerDirective],
+    imports: [ResettleCheckerComponent, TicketCountComponent, NotReadyMatchComponent, NewMultipleSelectComponent, ExternalLinkPipe, ExternalSourceNamePipe, OnlyIntegerDirective],
     providers: [
         MessageBoxService,
         ToastrService,
