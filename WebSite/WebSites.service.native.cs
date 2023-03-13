@@ -211,6 +211,8 @@ public static class WebSites
         services.AddSingleton<PermissionService, PermissionServiceImp>();
         services.AddSingleton<XmlConvertService, XmlConvertServiceImp>();
         services.AddTransient<ILogService, LogServiceImp>();
+        services.AddScoped<LogDirectlyService, LogDirectlyServiceImp>();
+
         services.AddTransient<IScoreSetService, ScoreSetServiceImp>();
         services.AddTransient<ScaleOutSettleService, ScaleOutSettleServiceImp>();
         services.AddTransient<ScaleOutSettleThirdPartyService, ScaleOutSettleThirdPartyServiceImp>();

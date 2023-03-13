@@ -1,13 +1,14 @@
 ﻿using AutoMapper;
 using Fanex.Data.Repository;
+using Fanex.NAP.Client.Helpers.Web;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
 using Microsoft.Extensions.Options;
 using Settlement.Core.Models;
+using Settlement.Core.Services;
 using Settlement.Sportsbook.Soccer.Constants;
 using Settlement.Sportsbook.Soccer.Criteria;
 using Settlement.Sportsbook.Soccer.Requests;
-using System.Threading.Tasks;
 
 namespace Settlement.Sportsbook.Soccer.Services;
 
@@ -32,18 +33,25 @@ public class CalculateServiceImp : ICalculateService
 
     private readonly ScaleOutSettleService scaleOutSettleService;
 
+    private readonly LogDirectlyService logDirectlyService;
+
+    private readonly INapSession currentSession;
+
+
     public CalculateServiceImp
     (IMapper mapper,
         IDynamicRepository repository,
         IOptions<AppSettingsKey> appSettingsKey,
         ICreateCriteriaService createQueryCriteria,
-        ScaleOutSettleService scaleOutSettleService)
+        ScaleOutSettleService scaleOutSettleService,
+        LogDirectlyService logDirectlyService)
     {
         this.repository = repository;
         this.appSettingsKey = appSettingsKey.Value;
         this.mapper = mapper;
         this.createQueryCriteria = createQueryCriteria;
         this.scaleOutSettleService = scaleOutSettleService;
+        this.logDirectlyService = logDirectlyService;
     }
 
     public async Task<Result> Calculate(SettleRequest request)
@@ -54,6 +62,9 @@ public class CalculateServiceImp : ICalculateService
         {
             return matchChecking;
         }
+
+        WriteDirectlyLog(request);
+
         await ExecuteAsync(criteria);
         await RefundChildMatch(criteria);
 
@@ -74,6 +85,8 @@ public class CalculateServiceImp : ICalculateService
         {
             return requestChecking;
         }
+
+        WriteDirectlyLog(request);
 
         await ExecuteAsync(criteria);
 
@@ -102,12 +115,29 @@ public class CalculateServiceImp : ICalculateService
     private async Task ExecuteAsync(CalculateCriteria criteria)
     {
         await UpdateMatchInfo(criteria);
-
         foreach (var server in appSettingsKey.SiteDbServer)
         {
             criteria.DbServer = server;
             await repository.ExecuteAsync(criteria);
         }
+    }
+
+    private void WriteDirectlyLog(SettleRequest request)
+    {
+        var match = new Core.Models.Match
+        {
+            MatchId = request.MatchId,
+            HalfTimeAwayScore = request.HalfTimeAwayScore,
+            HalfTimeHomeScore = request.HalfTimeHomeScore,
+            FinalAwayScore = request.FinalAwayScore,
+            FinalHomeScore = request.FinalHomeScore,
+            GoalRecord = request.GoalRecord,
+            BetStatus = request.BetStatus,
+        };
+
+        var message = LogDirectlyServiceImp.GenerateLogData(match, request.ActionName);
+
+        logDirectlyService.WriteLog(request.MatchId, message);
     }
 
     private async Task<Result> ValidateBeforeExecute(CalculateCriteria criteria)

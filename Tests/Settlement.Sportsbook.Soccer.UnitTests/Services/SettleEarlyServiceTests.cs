@@ -3,14 +3,11 @@ using Fanex.Settlement.ScaleOut.Models;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
 using Microsoft.Extensions.Options;
-using NSubstitute;
 using Settlement.Core.Models;
+using Settlement.Core.Services;
 using Settlement.Sportsbook.Soccer.Criteria;
 using Settlement.Sportsbook.Soccer.Requests;
 using Settlement.Sportsbook.Soccer.Services;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace Settlement.Sportsbook.Soccer.UnitTests.Services;
 
@@ -24,6 +21,10 @@ public class SettleEarlyServiceTests
 
     private readonly SettleEarlyService service;
 
+    private readonly LogDirectlyService logDirectlyService;
+
+    private readonly XmlConvertService xmlConvertService;
+
     public SettleEarlyServiceTests()
     {
         createCriteriaService = Substitute.For<ICreateCriteriaService>();
@@ -31,7 +32,7 @@ public class SettleEarlyServiceTests
         scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
         var appSettings = new AppSettingsKey { SiteDbServer = new List<string> { "DB01", "DB02" } };
         var appSettingsOptions = Options.Create(appSettings);
-        service = new SettleEarlyServiceImp(createCriteriaService, appSettingsOptions, repository, scaleOutSettleService);
+        service = new SettleEarlyServiceImp(createCriteriaService, appSettingsOptions, repository, scaleOutSettleService, logDirectlyService, xmlConvertService);
     }
 
     [Fact]
