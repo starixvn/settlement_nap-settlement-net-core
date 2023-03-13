@@ -11,14 +11,6 @@ import { BrowserDynamicTestingModule } from "@angular/platform-browser-dynamic/t
 import { FormsModule } from "@angular/forms";
 import { HttpClientModule } from "@angular/common/http";
 import { ResourceNameByIdPipe } from "../pipes";
-import { CalculationActionsComponent, CalculationMatchDetailComponent } from ".";
-import {
-  ModalDialogComponent,
-  ModalContentDialogComponent,
-  ResettleCheckerComponent,
-  TicketCountComponent,
-  NotReadyMatchComponent,
-} from "../../shared/components";
 import {
   HttpRequestService,
   BlockUIService,
@@ -40,6 +32,13 @@ import { ToastContainerDirective, ToastContainerModule, ToastNoAnimationModule, 
 import { VerificationBaseService } from '../../core/services/verification-base.service';
 import { Resources } from '../constants';
 import { Language } from '../../shared/language.native';
+import { CalculationActionsComponent } from "./calculation-actions.component";
+import { ModalDialogComponent } from "../../shared/components/modal-dialog/modal-dialog.component";
+import { ModalContentDialogComponent } from "../../shared/components/modal-dialog/modal-content-dialog.component";
+import { ResettleCheckerComponent } from "../../shared/components/resettle-checker/resettle-checker.component";
+import { NotReadyMatchComponent } from "../../shared/components/not-ready-match/not-ready-match.component";
+import { CalculationMatchDetailComponent } from "./calculation-match-detail.component";
+import { TicketCountComponent } from "../../shared/components/ticket-count/ticket-count.component";
 export class CreateDataTest {
   public static CreateResultDetail(
     resourceId: string,
@@ -94,41 +93,24 @@ describe("Esport - Calculation Actions Component", () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [
-        CalculationActionsComponent,
-        TicketCountComponent,
-        ResourceNameByIdPipe,
         ModalDialogComponent,
         ModalContentDialogComponent,
+    
+      ],
+      imports: [
+        HttpClientModule,
+        ToastNoAnimationModule.forRoot(),
+        ToastContainerModule,
+        ToastrModule.forRoot(),
         ResettleCheckerComponent,
         ExternalSourceNamePipe,
         ExternalLinkPipe,
         IntervalBackgroundPipe,
         NotReadyMatchComponent,
-        CalculationMatchDetailComponent
-      ],
-      providers: [
-        MessageBoxService,
-        AioService,
-        HttpRequestService,
-        BlockUIService,
-        NgbModal,
-        ResourceNameByIdPipe,
-        IntervalBackgroundPipe,
-        VerificationService,
-        VerificationBaseService,
-        ResultByTeamNamePipe,
-        ESportsService,
-        ToastContainerDirective,
-        ToastrService
-      ],
-      imports: [
-        FormsModule,
-        HttpClientModule,
-        NgbModule,
-        MaterialModule,
-        ToastNoAnimationModule.forRoot(),
-        ToastContainerModule,
-        ToastrModule.forRoot()],
+        CalculationMatchDetailComponent,
+        CalculationActionsComponent,
+        TicketCountComponent,
+        ResourceNameByIdPipe,],
     })
       .overrideModule(BrowserDynamicTestingModule, {
         set: {
@@ -144,6 +126,7 @@ describe("Esport - Calculation Actions Component", () => {
         toastrService = fixture.debugElement.injector.get(ToastrService);
         verificationService = fixture.debugElement.injector.get(VerificationService);
         messageBoxService = fixture.debugElement.injector.get(MessageBoxService);
+        component.init();
       });
   }));
 
@@ -170,7 +153,7 @@ describe("Esport - Calculation Actions Component", () => {
       const resultDetails = CreateDataTest.CreateResultDetail("00", "1", "2", false);
       match.resultDetails = resultDetails;
       component.match = match;
-      spyOn(toastrService, 'error');
+      toastrService.error= jest.fn();
 
       component.calculate();
 
@@ -184,7 +167,7 @@ describe("Esport - Calculation Actions Component", () => {
       resultDetails[0].resultSettingData = resultSettingData;
       match.resultDetails = resultDetails;
       component.match = match;
-      spyOn(toastrService, 'error');
+      toastrService.error = jest.fn();
 
       component.calculate();
 
@@ -193,8 +176,8 @@ describe("Esport - Calculation Actions Component", () => {
 
     it('should show error message when invalid score and permission is not Leader', () => {
 
-      spyOn(verificationService, 'invalidInputScore').and.returnValue(true);
-      spyOn(toastrService, 'error');
+      verificationService.invalidInputScore= jest.fn().mockReturnValue(true);
+      toastrService.error= jest.fn();
 
       component.calculate();
 
@@ -203,8 +186,8 @@ describe("Esport - Calculation Actions Component", () => {
 
     it('should show error message when invalid score and permission is Leader', () => {
 
-      spyOn(verificationService, 'invalidInputScore').and.returnValue(true);
-      spyOn(toastrService, 'error');
+      verificationService.invalidInputScore= jest.fn().mockReturnValue(true);
+      toastrService.error= jest.fn();
       component.isLeader = true;
       component.calculate();
 
@@ -212,9 +195,9 @@ describe("Esport - Calculation Actions Component", () => {
     });
 
     it('should show error message when there are running odds', fakeAsync(() => {
-      spyOn(verificationService, 'invalidInputScore').and.returnValue(false);
-      spyOn(aioService, 'verifyNoRunningOdds').and.returnValue(of(unSuccessfulResult));
-      spyOn(toastrService, 'error');
+      verificationService.invalidInputScore= jest.fn().mockReturnValue(false);
+      aioService.verifyNoRunningOdds= jest.fn().mockReturnValue(Promise.resolve(unSuccessfulResult));
+      toastrService.error= jest.fn();
 
       component.calculate();
       tick();
@@ -239,9 +222,9 @@ describe("Esport - Calculation Actions Component", () => {
     it("Pass all validation and uncalculation is successful." +
       "Should error message is empty and close popup.",
       fakeAsync(() => {
-        spyOn(aioService, "push").and.returnValue(of(successfulResult));
-        spyOn(messageBoxService, "closePopup");
-        spyOn(toastrService, 'error');
+        aioService.push = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
+        messageBoxService.closePopup= jest.fn();
+        toastrService.error= jest.fn();
         component.uncalculate();
         tick();
         const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
@@ -253,8 +236,8 @@ describe("Esport - Calculation Actions Component", () => {
 
     it("Pass all validation and uncalculation is unsuccessful." +
       "Should return an error.", fakeAsync(() => {
-        spyOn(aioService, "push").and.returnValue(of(unSuccessfulResult));
-        spyOn(toastrService, 'error');
+        aioService.push = jest.fn().mockReturnValue(Promise.resolve(unSuccessfulResult));
+        toastrService.error= jest.fn();
 
         component.uncalculate();
 
@@ -275,7 +258,7 @@ describe("Esport - Calculation Actions Component", () => {
         true
       );
       match.hedgeMatchDetail = new HedgeMatchDetail();
-      spyOn(aioService, 'getMatch').and.returnValue(of(match));
+      aioService.getMatch= jest.fn().mockReturnValue(Promise.resolve(match));
       component.match = match;
       await component.getMatch(match.matchDetail.matchId);
 
@@ -285,11 +268,11 @@ describe("Esport - Calculation Actions Component", () => {
 
     it("should call initial functions", async () => {
 
-      spyOn(verificationService, 'enableUncalculateButton');
-      spyOn(verificationService, 'hasTicketBetOnMap');
-      spyOn(verificationService, 'generateExternalScores');
-      spyOn(verificationService, 'autoFillScore');
-      spyOn(aioService, 'getMatch').and.returnValue(of(match));
+      verificationService.enableUncalculateButton = jest.fn();
+      verificationService.hasTicketBetOnMap = jest.fn();
+      verificationService.generateExternalScores = jest.fn();
+      verificationService.autoFillScore = jest.fn();
+      aioService.getMatch= jest.fn().mockReturnValue(Promise.resolve(match));
       component.match = match;
       await component.getMatch(match.matchDetail.matchId);
 
@@ -338,7 +321,7 @@ describe("Esport - Calculation Actions Component", () => {
   it("checkMapIsMatched - should set map mismatch score", () => {
     component.match = match;
     const map = new ResultDetail();
-    spyOn(verificationService, "isMismatchedWarning").and.returnValue(false);
+    verificationService.isMismatchedWarning = jest.fn().mockReturnValue(false);
 
     component.checkMapIsMatched(map);
 
@@ -361,9 +344,9 @@ describe("Esport - Calculation Actions Component", () => {
 
   it('selectedOnFullTime - should verify full time score', fakeAsync(() => {
 
-    spyOn(verificationService, 'getNewFinalResource').and.returnValue('');
-    spyOn(verificationService, 'verifyFinalResource').and.returnValue('confirm message');
-    spyOn(verificationService, 'changeToNewFinalResource');
+    verificationService.getNewFinalResource= jest.fn().mockReturnValue('');
+    verificationService.verifyFinalResource= jest.fn().mockReturnValue('confirm message');
+    verificationService.changeToNewFinalResource= jest.fn();
     component.match = match;
     component.selectedOnFullTime();
     const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
@@ -386,7 +369,7 @@ describe("Esport - Calculation Actions Component", () => {
 
   it('isFullTimeMismatched - should call esports service method', () => {
     component.match = match;
-    spyOn(verificationService, 'isFullTimeMismatched').and.returnValue(true);
+    verificationService.isFullTimeMismatched= jest.fn().mockReturnValue(true);
 
     const result = component.isFullTimeMismatched();
 
@@ -396,9 +379,9 @@ describe("Esport - Calculation Actions Component", () => {
   it('saveScore - should push successfully when user confirm save score', fakeAsync(() => {
     const resultDetail = new ResultDetail();
     match.resultDetails = [resultDetail];
-    spyOn(aioService, 'saveScore').and.returnValue(of(successfulResult));
-    spyOn(verificationService, 'getChangedScores').and.returnValue([]);
-    spyOn(verificationService, 'getOutsideScores').and.returnValue([]);
+    aioService.saveScore= jest.fn().mockReturnValue(Promise.resolve(successfulResult));
+    verificationService.getChangedScores= jest.fn().mockReturnValue([]);
+    verificationService.getOutsideScores= jest.fn().mockReturnValue([]);
     component.match = match;
     component.saveScore();
     const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
@@ -415,8 +398,8 @@ describe("Esport - Calculation Actions Component", () => {
     match.resultDetails = [resultDetail];
     component.match = match;
     component.matchDetail = matchDetail;
-    spyOn(verificationService, 'isMismatchedWarning').and.returnValue(false);
-    spyOn(verificationService, 'autoFillScore');
+    verificationService.isMismatchedWarning= jest.fn().mockReturnValue(false);
+    verificationService.autoFillScore= jest.fn();
 
     component.verifyAndAutoFillScore(resultDetail);
 
@@ -434,8 +417,8 @@ describe("Esport - Calculation Actions Component", () => {
     match.resultDetails = [resultDetail, final];
     component.match = match;
     component.matchDetail = matchDetail;
-    spyOn(verificationService, 'isMismatchedWarning').and.returnValue(false);
-    spyOn(verificationService, 'autoFillScore').and.returnValue(true);
+    verificationService.isMismatchedWarning= jest.fn().mockReturnValue(false);
+    verificationService.autoFillScore= jest.fn().mockReturnValue(true);
 
     component.autoFillScoreOnLoad([resultDetail, final]);
 

@@ -28,23 +28,27 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
   public blockUI = true;
   public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
   constructor(
-    protected injector: Injector,
-    private readonly messageBoxService: MessageBoxService,
-    protected aioService: AioService,
-    protected toastrService: ToastrService) {
-    super(aioService, toastrService);
+    private readonly injector: Injector) {
+    super();
     this.confirmationDialogMessage.title = Language.confirmationBox;
   }
 
   async getMatch(matchId: number): Promise<void> {
-    this.injector.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
+    this.initService();
     const matchQuery = {
       matchId,
       apikey: TennisApiKeys.NormalMatch,
     };
-    this.toastrService.overlayContainer = this.toastContainer;
     this.match = await this.aioService.getMatch(matchQuery) as Match;
     this.init();
+  }
+
+  public initService () {
+    this.messageBoxService = this.injector.get(MessageBoxService);
+    this.aioService = this.injector.get(AioService);
+    this.toastrService = this.injector.get(ToastrService);
+    this.injector.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
+    this.toastrService.overlayContainer = this.toastContainer;
   }
 
   public init() {

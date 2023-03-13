@@ -4,7 +4,7 @@ import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 import * as _ from 'lodash';
 import { MessageBoxService, AioService } from '../../shared/services';
 import { CalculateAction, EventStatus, SportType } from '../../shared/constants';
-import { Result, MarkedTicketsModel, ModalDialogMessage } from '../../shared/models';
+import { ModalDialogMessage } from '../../shared/models';
 import { Language } from '../../shared/language.native';
 import { Match } from '../models';
 import { BadmintonApiKeys, ResourcesIds, VolleyballApiKeys } from '../constants';
@@ -31,9 +31,8 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
   public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
   public apiKeys = null;
   public blockUI = true;
-  constructor(
-    protected inject: Injector) {
-    super(inject);
+  constructor(private readonly injector: Injector) {
+    super()
     this.confirmationDialogMessage.title = Language.confirmationBox;
   }
 
@@ -52,11 +51,11 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
     this.init();
   }
 
-  private initService() {
-    this.toastrService = this.inject.get(ToastrService);
-    this.aioService = this.inject.get(AioService);
-    this.messageBoxService = this.inject.get(MessageBoxService);
-    this.inject.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
+  public initService() {
+    this.toastrService = this.injector.get(ToastrService);
+    this.aioService = this.injector.get(AioService);
+    this.messageBoxService = this.injector.get(MessageBoxService);
+    this.injector.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
     this.toastrService.overlayContainer = this.toastContainer;
   }
 

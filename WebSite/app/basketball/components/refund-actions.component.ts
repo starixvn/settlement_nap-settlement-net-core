@@ -32,8 +32,8 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
     public resultDetail: ResultDetail[];
     public readonly isReSettledTickets: boolean;
     public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
-    constructor(protected inject: Injector) {
-        super(inject);
+    constructor(private injector: Injector) {
+        super();
         this.confirmationDialogMessage.title = Language.confirmationBox;
     }
 
@@ -51,14 +51,14 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
         this.init();
     }
 
-    private initService (){
-        this.messageBoxService = this.inject.get(MessageBoxService);
-        this.aioService = this.inject.get(AioService);
-        this.toastrService = this.inject.get(ToastrService);
-        this.verificationService = this.inject.get(VerificationService);
-        this.basketballService = this.inject.get(BasketballService);
+    public initService (){
+        this.messageBoxService = this.injector.get(MessageBoxService);
+        this.aioService = this.injector.get(AioService);
+        this.toastrService = this.injector.get(ToastrService);
+        this.verificationService = this.injector.get(VerificationService);
+        this.basketballService = this.injector.get(BasketballService);
 
-        this.inject.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI  = event);
+        this.injector.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI  = event);
     }
 
     public init() {

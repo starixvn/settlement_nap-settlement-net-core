@@ -3,7 +3,6 @@ import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { FormsModule } from "@angular/forms";
 import { HttpClientModule } from "@angular/common/http";
 import { ResourceNameByIdPipe } from "../pipes";
-import { CalculationMatchDetailComponent } from ".";
 import {
   HttpRequestService,
   BlockUIService,
@@ -20,6 +19,7 @@ import { MatchDetail, ResultDetail } from "../../shared/models/sportsbook-sop";
 import { LeagueOutsideSource } from "../../score-source-setting/models";
 import { ManageLeagueComponent } from "../../score-source-setting/components";
 import { ResultByTeamNamePipe } from "../../shared/pipes/result-by-team-name.pipe";
+import { CalculationMatchDetailComponent } from "./calculation-match-detail.component";
 
 export class CreateDataTest {
   public static CreateResultDetail(
@@ -49,7 +49,6 @@ describe("E-sport - Calculation Match Detail Component", () => {
   const source = new LeagueOutsideSource();
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [CalculationMatchDetailComponent, ResourceNameByIdPipe, ManageLeagueComponent],
       providers: [
         MessageBoxService,
         HttpRequestService,
@@ -60,7 +59,7 @@ describe("E-sport - Calculation Match Detail Component", () => {
         ClosePopupService,
         { provide: MessageBoxService, useClass: MessageBoxService },
       ],
-      imports: [FormsModule, HttpClientModule, MaterialModule],
+      imports: [FormsModule, HttpClientModule, MaterialModule, CalculationMatchDetailComponent,  ResourceNameByIdPipe, ManageLeagueComponent],
     }).overrideModule(BrowserDynamicTestingModule, {
       set: {
         entryComponents: [ManageLeagueComponent],
@@ -89,8 +88,8 @@ describe("E-sport - Calculation Match Detail Component", () => {
   it("manageOutSideSourcePopup -should call getLeagueSources from aioService.", () => {
     matchDetail.leagueId = 123;
     component.matchDetail = matchDetail;
-    spyOn(aioService, "getLeagueSources").and.returnValue(of(source));
-    spyOn(dialog, "open");
+    aioService.getLeagueSources = jest.fn().mockReturnValue(of(source));
+    dialog.open = jest.fn();
 
     component.manageOutSideSourcePopup();
 

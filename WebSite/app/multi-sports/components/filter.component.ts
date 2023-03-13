@@ -1,7 +1,8 @@
+import { PopupProperties } from './../models/popup-properties.model';
+import { NgbDateStruct, NgbDateParserFormatter } from "@ng-bootstrap/ng-bootstrap";
 import { DefaultValue, MatchType, Resources } from '../constants';
 import { Component, OnInit, Output, EventEmitter, Injector } from "@angular/core";
 import { DatePipe } from "@angular/common";
-import { NgbDateStruct, NgbDateParserFormatter } from "@ng-bootstrap/ng-bootstrap";
 import { CustomNgbDateParserFormatter } from '../../shared/components/date-picker/custom-ngb-date-parser-formatter';
 import { MultiSportService } from '../services';
 import { ModalDialogMessage, MultipleSelect, ItemsSelect } from '../../shared/models';
@@ -51,17 +52,21 @@ export class FilterComponent implements OnInit {
     public readonly overStatusSelect = new MultipleSelect();
     public getLeagueParams: LeagueFilterRequest;
     private readonly widthMultiSelect = "205px";
-    
+
     constructor(protected injector: Injector) {
     }
 
     ngOnInit() {
+        this.initServices();
+        this.initialData();
+        this.generateFilter();
+    }
+
+    public initServices() {
         this.multiSportService = this.injector.get(MultiSportService);
         this.generateFilterService = this.injector.get(GenerateFilterService);
         this.verifyDateService = this.injector.get(VerifyDateService);
         this.messageBoxService = this.injector.get(MessageBoxService);
-        this.initialData();
-        this.generateFilter();
     }
 
     private async initialData() {
@@ -71,7 +76,7 @@ export class FilterComponent implements OnInit {
         this.getSport(this.fromDate, this.toDate);
     }
 
-    private generateFilter(){
+    private generateFilter() {
         this.overStatusSelect.items = this.generateFilterService.renderOverStatus();
         this.holdStatusSelect.items = this.generateFilterService.renderRemarks();
         this.matchStatusSelect.items = this.generateFilterService.renderMatchStatusGroupSelect();
@@ -108,7 +113,7 @@ export class FilterComponent implements OnInit {
             return;
         }
 
-        if(this.validateQuery(query)){
+        if (this.validateQuery(query)) {
             this.showWarningMessage(Language.calculatePageWarning);
             return;
         }
@@ -123,12 +128,12 @@ export class FilterComponent implements OnInit {
         this.updateLeagues();
     }
 
-    private getAllMatchId (sports: SportMatch[]) {
+    private getAllMatchId(sports: SportMatch[]) {
         let matchIds = "";
         _.forEach(sports, (sport) => {
             _.forEach(sport.leagues, (league) => {
                 const ids = league.matches.map(match => match.matchId).join();
-                matchIds = _.isEmpty(matchIds) ? ids:  `${matchIds},${ids}`;
+                matchIds = _.isEmpty(matchIds) ? ids : `${matchIds},${ids}`;
             });
         });
 
@@ -223,8 +228,8 @@ export class FilterComponent implements OnInit {
 
     private async updateLeagues() {
         const league = await this.multiSportService.getLeague(this.getLeagueParams);
-        const newLeague = this.generateFilterService.renderNewestLeagues(league , _.cloneDeep(this.leagueSelect.items));
-        if(newLeague.length > this.leagueSelect.items.length){
+        const newLeague = this.generateFilterService.renderNewestLeagues(league, _.cloneDeep(this.leagueSelect.items));
+        if (newLeague.length > this.leagueSelect.items.length) {
             this.initLeague();
             this.leagueSelect.items = newLeague;
         }
@@ -232,8 +237,8 @@ export class FilterComponent implements OnInit {
 
     private validateQuery(query: FilterRequest) {
         return _.isEmpty(query.matchCode)
-          && _.isEqual(query.leagueIds, DefaultValue.unCheckAll)
-          && _.isEqual(query.overStatus.toString(), DefaultValue.unCheckAll)
-          && _.isEqual(query.matchType.toString(), this.matchTypes[0].value);
-      }
+            && _.isEqual(query.leagueIds, DefaultValue.unCheckAll)
+            && _.isEqual(query.overStatus.toString(), DefaultValue.unCheckAll)
+            && _.isEqual(query.matchType.toString(), this.matchTypes[0].value);
+    }
 }

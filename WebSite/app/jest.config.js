@@ -1,4 +1,4 @@
-module.exports = {
+﻿module.exports = {
     preset: "jest-preset-angular",
     testResultsProcessor: 'jest-sonar-reporter',
     setupFilesAfterEnv: [
@@ -9,7 +9,7 @@ module.exports = {
       ],
       globals: {
         "ts-jest": {
-          "tsconfig": "<rootDir>/tsconfig.spec.json"
+          "tsconfig": "<rootDir>/tsconfig.json"
         }
       },
       collectCoverage: true,

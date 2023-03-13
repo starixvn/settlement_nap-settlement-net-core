@@ -1,6 +1,6 @@
 import { FilterRequest, GetRemarkQuery } from '../models';
 import { BlockUIService, HttpRequestService, MessageBoxService } from '../../shared/services';
-import { TestBed, getTestBed, fakeAsync } from '@angular/core/testing';
+import { TestBed} from '@angular/core/testing';
 import { MultiSportService } from './multi-sport.service';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
@@ -9,7 +9,6 @@ import { Match, MoreScore, Score } from '../../shared/models';
 import { AutoSettingLeagueQuery, AutoSettingMatchQuery } from '../../shared/models';
 
 describe('MultiSport - MultiSportService', () => {
-    let injector: TestBed;
     let httpRequestService: HttpRequestService;
     let service: MultiSportService;
     const matchBadminton = new Match();
@@ -40,7 +39,6 @@ describe('MultiSport - MultiSportService', () => {
             schemas: [NO_ERRORS_SCHEMA],
         });
 
-        injector = getTestBed();
         httpRequestService = TestBed.inject(HttpRequestService);
         service = TestBed.inject(MultiSportService);
     });
@@ -55,7 +53,7 @@ describe('MultiSport - MultiSportService', () => {
             apikey: ApiKeys.MultiSportGetCombobox,
         };
 
-        spyOn(httpRequestService, 'postJson');
+        httpRequestService.postJson = jest.fn();
         service.getSport(param);
 
         expect(httpRequestService.postJson).toHaveBeenCalledWith(param, url, false);
@@ -67,7 +65,7 @@ describe('MultiSport - MultiSportService', () => {
             apikey: ApiKeys.MultiSportGetCombobox,
         };
 
-        spyOn(httpRequestService, 'postJson');
+        httpRequestService.postJson = jest.fn();
         service.getLeague(param);
 
         expect(httpRequestService.postJson).toHaveBeenCalledWith(param, url, false);
@@ -75,7 +73,7 @@ describe('MultiSport - MultiSportService', () => {
 
     it('getDate - Call right Url', () => {
         const url = "api/multi-sports/get-date";
-        spyOn(httpRequestService, 'getJson');
+        httpRequestService.getJson = jest.fn();
         service.getDate();
 
         expect(httpRequestService.getJson).toHaveBeenCalledWith(url);
@@ -96,7 +94,7 @@ describe('MultiSport - MultiSportService', () => {
             autoPayout: ''
         };
 
-        spyOn(httpRequestService, 'postMessagePack');
+        httpRequestService.postMessagePack = jest.fn();
         service.filter(param);
 
         expect(httpRequestService.postMessagePack)
@@ -104,33 +102,33 @@ describe('MultiSport - MultiSportService', () => {
     }
     );
 
-    it('getRemarkInfo - Call exact Url and param', () => {
+    it('getRemarkInfo - Call exact Url and param',  () => {
         const url = 'api/setting/get-remark-info';
         const param: GetRemarkQuery = {
             matchId: '12345'
         };
 
-        spyOn(httpRequestService, 'postJson');
+        httpRequestService.postJson = jest.fn();
         service.getRemarkInfo('12345');
 
         expect(httpRequestService.postJson).toHaveBeenCalledWith(param, url);
     });
 
-    it('updateSettingMatch - should post with correct param', () => {
+    it('updateSettingMatch - should post with correct param',  () => {
         const query = {} as AutoSettingMatchQuery;
 
         const url = 'api/setting/update-setting-match';
-        spyOn(httpRequestService, 'postJson');
+        httpRequestService.postJson = jest.fn();
         service.updateSettingMatch(query);
 
         expect(httpRequestService.postJson).toHaveBeenCalledWith(query, url);
     });
 
-    it('updateSettingLeague - should post with correct param', () => {
+    it('updateSettingLeague - should post with correct param',  () => {
         const query = {} as AutoSettingLeagueQuery;
 
         const url = 'api/setting/update-setting-league';
-        spyOn(httpRequestService, 'postJson');
+        httpRequestService.postJson = jest.fn();
         service.updateSettingLeague(query);
 
         expect(httpRequestService.postJson).toHaveBeenCalledWith(query, url);

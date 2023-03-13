@@ -31,9 +31,9 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     public isReadyMatch: boolean;
 
     constructor(
-        protected inject: Injector,
+        protected injector: Injector,
         protected verificationService: VerificationService) {
-        super(inject, verificationService);
+        super(injector, verificationService);
     }
 
     async getMatch(matchId: number): Promise<void> {
@@ -52,12 +52,12 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     }
 
     public initService(){
-        this.earlyService = this.inject.get(EarlyService);
-        this.aioService = this.inject.get(AioService);
-        this.messageBoxService = this.inject.get(MessageBoxService);
-        this.verificationService = this.inject.get(VerificationService);
-        this.toastrService = this.inject.get(ToastrService);
-        this.inject.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI  = event);
+        this.earlyService = this.injector.get(EarlyService);
+        this.aioService = this.injector.get(AioService);
+        this.messageBoxService = this.injector.get(MessageBoxService);
+        this.verificationService = this.injector.get(VerificationService);
+        this.toastrService = this.injector.get(ToastrService);
+        this.injector.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI  = event);
         this.toastrService.overlayContainer = this.toastContainer;
     }
 

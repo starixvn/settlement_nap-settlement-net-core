@@ -1,7 +1,9 @@
 import { waitForAsync, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { NgbModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { VerifyDateService, BlockUIService, MessageBoxService, HttpRequestService,
-    ReCheckInService, DialogBoxService, SportMatchService } from './../../shared/services';
+import {
+    VerifyDateService, BlockUIService, MessageBoxService, HttpRequestService,
+    ReCheckInService, DialogBoxService, SportMatchService
+} from './../../shared/services';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserModule } from '@angular/platform-browser';
@@ -10,17 +12,15 @@ import {
     FilterComponent,
     LeagueComponent,
 } from '.';
-import {
-    DatepickerComponent,
-    NewMultipleSelectComponent,
-    ModalContentDialogComponent,
-} from '../../shared/components';
 import { MultiSportService, RefreshMatchService } from '../services';
 import { GenerateFilterService } from '../../shared/services';
 import { MaterialModule } from '../../shared/material-module';
-import { of } from 'rxjs';
 import { MultiSport, MatchWaitingRequest } from '../models';
 import { PipesModule } from '../../shared/pipes/pipes.module.native';
+import { NewMultipleSelectComponent } from '../../shared/components/multiple-select/multiple-select.component';
+import { ModalContentDialogComponent } from '../../shared/components/modal-dialog/modal-content-dialog.component';
+import { DatepickerComponent } from '../../shared/components/date-picker/date-picker.component';
+
 
 describe('MultiSport - AppComponent', () => {
     let component: AppComponent;
@@ -34,8 +34,6 @@ describe('MultiSport - AppComponent', () => {
                 AppComponent,
                 FilterComponent,
                 LeagueComponent,
-                DatepickerComponent,
-                NewMultipleSelectComponent,
                 ModalContentDialogComponent,
             ],
             imports: [
@@ -46,6 +44,8 @@ describe('MultiSport - AppComponent', () => {
                 NgbModule,
                 MaterialModule,
                 PipesModule,
+                DatepickerComponent,
+                NewMultipleSelectComponent
             ],
             providers: [
                 VerifyDateService,
@@ -74,9 +74,8 @@ describe('MultiSport - AppComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it('ngOnInit - should start recheckin interval', fakeAsync(() => {
-        spyOn(blockUIService, 'blockUIEvent').and.returnValue(of(true));
-        spyOn(reCheckInService, 'reCheckin');
+    it('ngOnInit - should start recheck in interval', fakeAsync(() => {
+        reCheckInService.reCheckin = jest.fn();
 
         component.ngOnInit();
         tick(60000);
@@ -94,7 +93,7 @@ describe('MultiSport - AppComponent', () => {
     });
 
     it('getRequest - should set request', () => {
-        const request = new MatchWaitingRequest('', '', '' , '', "", "");
+        const request = new MatchWaitingRequest('', '', '', '', "", "");
 
         component.getRequest(request);
 

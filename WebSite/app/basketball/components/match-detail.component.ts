@@ -1,6 +1,6 @@
 ﻿import { CommonModule } from '@angular/common';
 import * as _ from 'lodash';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, Injector } from '@angular/core';
 import { Match } from '../models';
 import { BasketballService } from '../services';
 import { ResourcesIds } from '../constants';
@@ -20,12 +20,11 @@ export class MatchDetailComponent implements OnInit {
     @Input() public isEarlySettlement: boolean;
     public matchDetail: MatchDetail;
     public resultDetail: ResultDetail[];
-    constructor(private readonly basketballService: BasketballService,
-        private readonly intervalBackgroundPipe: IntervalBackgroundPipe) { }
+    constructor(private readonly injector: Injector) { }
 
     public ngOnInit() {
         this.matchDetail = this.match.matchDetail;
-        this.resultDetail = this.basketballService.getResultDetail(this.match.resultDetails, false);
+        this.resultDetail = this.injector.get(BasketballService).getResultDetail(this.match.resultDetails, false);
         this.resultDetail.forEach(item => {
             item.className = this.getClass(item);
             item.isDisplayedForMember = this.match.permission.isLeader || Number(item.settlementStatusId) !== SettlementStatusId.Running;
@@ -41,7 +40,7 @@ export class MatchDetailComponent implements OnInit {
             className += 'ht-score ';
         }
 
-        return className + this.intervalBackgroundPipe.transform(resultDetail.settlementStatusId);
+        return className + this.injector.get(IntervalBackgroundPipe).transform(resultDetail.settlementStatusId);
     }
 
     public refresh() {

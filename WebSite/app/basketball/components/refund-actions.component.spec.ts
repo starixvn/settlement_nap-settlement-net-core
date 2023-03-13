@@ -1,25 +1,18 @@
 import { TestBed, waitForAsync, ComponentFixture, fakeAsync, tick } from '@angular/core/testing';
-import { FormsModule } from '@angular/forms';
 import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { HttpClientModule } from '@angular/common/http';
-import { of } from 'rxjs';
-import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { RefundActionsComponent } from './refund-actions.component';
-import { BasketballService, BetStatusService, VerificationService } from '../services';
+import { BasketballService} from '../services';
 import { Match, HedgeMatchDetail, VoidBetInfo } from '../models';
-import { MessageBoxService, HttpRequestService, BlockUIService, AioService } from '../../shared/services';
+import { MessageBoxService,AioService } from '../../shared/services';
 import { Language } from '../../shared/language.native';
 import { SettlementStatusId } from '../../shared/constants';
-import { ResourceNameByIdPipe } from '../pipes/resource-name-by-id.pipe';
-import { ResultByTeamNamePipe } from '../../shared/pipes/result-by-team-name.pipe';
-import * as _ from 'lodash';
-import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
 import { ResultSettingModel } from '../../shared/models';
 import { MatchDetail, Permission, ResultDetail } from '../../shared/models/sportsbook-sop';
-import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 import { ModalContentDialogComponent } from '../../shared/components/modal-dialog/modal-content-dialog.component';
 import { ModalDialogComponent } from '../../shared/components/modal-dialog/modal-dialog.component';
+import * as _ from 'lodash';
 
 describe('Component: RefundActionsComponent', () => {
     let component: RefundActionsComponent;
@@ -71,32 +64,14 @@ describe('Component: RefundActionsComponent', () => {
                 ModalDialogComponent,
                 ModalContentDialogComponent,
             ],
-            providers: [
-                HttpRequestService,
-                BlockUIService,
-                NgbModal,
-                BasketballService,
-                MessageBoxService,
-                AioService,
-                IntervalBackgroundPipe,
-                BetStatusService,
-                ResourceNameByIdPipe,
-                VerificationService,
-                ResultByTeamNamePipe,
-                ToastrService,
-            ],
-            schemas: [NO_ERRORS_SCHEMA],
             imports: [
-                FormsModule,
                 HttpClientModule,
-                NgbModule,
                 ToastNoAnimationModule.forRoot(),
                 ToastContainerModule,
                 ToastrModule.forRoot(),
                 RefundActionsComponent
             ],
-        })
-            .overrideModule(BrowserDynamicTestingModule, {
+        }).overrideModule(BrowserDynamicTestingModule, {
                 set: {
                     entryComponents: [ModalDialogComponent, ModalContentDialogComponent],
                 },
@@ -109,6 +84,7 @@ describe('Component: RefundActionsComponent', () => {
                 aioService = fixture.debugElement.injector.get(AioService);
                 toastrService = fixture.debugElement.injector.get(ToastrService);
                 basketballService = fixture.debugElement.injector.get(BasketballService);
+                component.initService();
             });
     }));
 

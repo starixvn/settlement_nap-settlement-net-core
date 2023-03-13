@@ -1,4 +1,4 @@
-import { LeagueMatch, Match, MatchWaitingRequest, MultiSport, SportMatch} from '../models';
+import { LeagueMatch, Match, MatchWaitingRequest, MultiSport, SportMatch } from '../models';
 import { BlockUIService, HttpRequestService, MessageBoxService } from '../../shared/services';
 import { TestBed } from '@angular/core/testing';
 
@@ -6,13 +6,13 @@ import { RefreshMatchService } from './refresh-match.service';
 import { DetectChangesService } from './detect-changes.service';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
-import { of } from 'rxjs';
 import { MultiSportService } from './multi-sport.service';
 import { HandleActionsService } from './handle-actions.service';
-import { MoreScore, Remark, Score } from '../../shared/models';
+import { AutoSetting, MoreScore, Remark, Score } from '../../shared/models';
 import { SportType } from '../../shared/constants';
 import { Permission } from '../../shared/models/sportsbook-sop/permission.model';
 import { SportMatchService } from './sport-match.service';
+import { of } from 'rxjs';
 
 describe('MultiSport - RefreshMatchService', () => {
   let httpRequestService: HttpRequestService;
@@ -26,7 +26,7 @@ describe('MultiSport - RefreshMatchService', () => {
   newMatch.matchId = '12345';
   newMatch.sportType = SportType.badminton;
   newMatch.moreScores = new MoreScore(),
-  newMatch.moreScores.sets = [new Score('1', '0', '')];
+    newMatch.moreScores.sets = [new Score('1', '0', '')];
   newMatch.intervalScore = [new Score('1', '0', '')];
   newMatch.betStatus = '';
   newMatch.earlySettleStatus = '';
@@ -61,8 +61,8 @@ describe('MultiSport - RefreshMatchService', () => {
     matches: [match],
     name: 'mock league',
     collapse: false,
-    isAutoPayoutForLeague: false,
-    autoWaitingTime: 0
+    autoWaitingTime: 0,
+    autoCalcSetting: new AutoSetting
   };
 
   const sport: SportMatch = {
@@ -75,7 +75,7 @@ describe('MultiSport - RefreshMatchService', () => {
   const multiSport: MultiSport = {
     sports: [sport],
     permission: new Permission(),
-   };
+  };
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -105,21 +105,21 @@ describe('MultiSport - RefreshMatchService', () => {
 
   describe('refreshMatchces', () => {
     it('should do nothing when new match has no change', () => {
-      spyOn(httpRequestService, 'postMessagePack').and.returnValue(of([newMatch]));
-      spyOn(detectChangesService, 'detect').and.returnValue(false);
+      httpRequestService.postMessagePack = jest.fn().mockReturnValue(of([newMatch]));
+      detectChangesService.detect = jest.fn().mockReturnValue(false);
 
-      refreshMatchService.refreshMatches([sport], new MatchWaitingRequest('', '', '', '' ,'',''), multiSport);
+      refreshMatchService.refreshMatches([sport], new MatchWaitingRequest('', '', '', '', '', ''), multiSport);
 
       expect(match).not.toEqual(newMatch);
     });
 
     it('should change match when match has been updated', () => {
-        spyOn(httpRequestService, 'postMessagePack').and.returnValue(of([newMatch]));
-        spyOn(detectChangesService, 'detect').and.returnValue(true);
+      httpRequestService.postMessagePack = jest.fn().mockReturnValue(of([newMatch]));
+      detectChangesService.detect = jest.fn().mockReturnValue(true);
 
-        refreshMatchService.refreshMatches([sport], new MatchWaitingRequest('', '', '', '','',''), multiSport);
+      refreshMatchService.refreshMatches([sport], new MatchWaitingRequest('', '', '', '', '', ''), multiSport);
 
-        expect(match).toEqual(newMatch);
+      expect(match).toEqual(newMatch);
     });
   });
 });

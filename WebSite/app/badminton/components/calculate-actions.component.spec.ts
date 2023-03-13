@@ -1,26 +1,18 @@
-import { TestBed, ComponentFixture, fakeAsync, tick, waitForAsync, flush, discardPeriodicTasks } from '@angular/core/testing';
+import { TestBed, ComponentFixture, fakeAsync, tick, flush } from '@angular/core/testing';
 import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
-import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { ResourceNameByIdPipe } from '../pipes';
 import {
-  HttpRequestService,
-  BlockUIService,
   MessageBoxService,
   AioService,
-  IntervalCalculationService,
 } from '../../shared/services';
 import { Match, HedgeMatchDetail, } from '../models';
 import { BadmintonService, VerificationService } from '../services';
 import { Result, ResultSettingModel } from '../../shared/models';
 import { MatchDetail, Permission, ResultDetail, ExternalResultDetail } from '../../shared/models/sportsbook-sop';
-import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
 import { CalculateMatchDetailComponent } from './calculate-match-detail.component';
-import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ExternalSourceNamePipe } from '../../shared/pipes/external-source-name.pipe';
-import { ResultByTeamNamePipe } from '../../shared/pipes/result-by-team-name.pipe';
-import { ToastContainerDirective, ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
+import {ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 import { UrlHelper } from '../../helper';
 import { ResultPipe } from '../../shared/pipes/result.pipe';
 import { BadmintonApiKeys } from '../constants';
@@ -102,28 +94,9 @@ describe('Badminton - Calculate actions component', () => {
         ModalDialogComponent,
         ModalContentDialogComponent,
       ],
-      providers: [
-        IntervalBackgroundPipe,
-        MessageBoxService,
-        BadmintonService,
-        HttpRequestService,
-        BlockUIService,
-        AioService,
-        VerificationService,
-        NgbModal,
-        ResourceNameByIdPipe,
-        ResultByTeamNamePipe,
-        IntervalCalculationService,
-        ToastContainerDirective,
-        { provide: MessageBoxService, useClass: MessageBoxService },
-        { provide: ToastrService, useClass: ToastrService },
-      ],
-      schemas: [NO_ERRORS_SCHEMA],
       imports: [
         CalculateActionsComponent,
-        FormsModule,
         HttpClientModule,
-        NgbModule,
         ToastNoAnimationModule.forRoot(),
         ToastContainerModule,
         ToastrModule.forRoot(),

@@ -7,7 +7,8 @@ import {
   GetRemarkQuery,
   DateFilter,
   League, 
-  Sport
+  Sport,
+  AutoCalcSetting
 } from '../models';
 import * as _ from 'lodash';
 import { AutoSettingLeagueQuery, AutoSettingMatchQuery, ChangeSettingResult, Result } from '../../shared/models';
@@ -64,6 +65,7 @@ export class MultiSportService {
       leagueId,
       matchId
     }
-    return this.httpRequestService.postJson(params, `${this.settingApi}/get-setting`, false);
+    const response = this.httpRequestService.postJson<AutoCalcSetting>(params, `${this.settingApi}/get-setting`, false);
+    return firstValueFrom(response);
   }
 }

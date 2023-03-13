@@ -1,6 +1,6 @@
+import { NgbModule, NgbDateStruct, NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
 import { DateFilter } from '../models';
 import { waitForAsync, ComponentFixture, TestBed, tick, fakeAsync } from '@angular/core/testing';
-import { NgbModule, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -9,7 +9,7 @@ import { FilterComponent } from './filter.component';
 import { Sport, League } from '../models';
 import { Resources } from '../constants';
 import { MultiSportService } from '../services';
-import {  ModalDialogMessage, ItemsSelect } from '../../shared/models';
+import { ModalDialogMessage, ItemsSelect } from '../../shared/models';
 import {
     MessageBoxService,
     HttpRequestService,
@@ -17,15 +17,13 @@ import {
     VerifyDateService,
     GenerateFilterService
 } from './../../shared/services';
-import {
-    DatepickerComponent,
-    NewMultipleSelectComponent,
-    TreeViewComponent,
-    ModalContentDialogComponent,
-    ModalDialogComponent,
-} from '../../shared/components';
-import { of } from 'rxjs';
 import { MaterialModule } from '../../shared/material-module';
+import { ModalDialogComponent } from '../../shared/components/modal-dialog/modal-dialog.component';
+import { ModalContentDialogComponent } from '../../shared/components/modal-dialog/modal-content-dialog.component';
+import { DatepickerComponent } from '../../shared/components/date-picker/date-picker.component';
+import { NewMultipleSelectComponent } from '../../shared/components/multiple-select/multiple-select.component';
+import { TreeViewComponent } from '../../shared/components/multiple-selection/tree-view.component';
+import { DatePipe } from '@angular/common';
 
 describe('MultiSport - FilterComponent', () => {
     let component: FilterComponent;
@@ -33,7 +31,9 @@ describe('MultiSport - FilterComponent', () => {
     let verifyDateService: VerifyDateService;
     let messageBoxService: MessageBoxService;
     let multiSportService: MultiSportService;
-    let generateListService: GenerateFilterService;
+    let generateFilterService: GenerateFilterService;
+
+    const item = new ItemsSelect(1, "1", "1", true, true, true, []);
 
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
@@ -41,8 +41,6 @@ describe('MultiSport - FilterComponent', () => {
                 FilterComponent,
                 ModalDialogComponent,
                 ModalContentDialogComponent,
-                DatepickerComponent,
-                NewMultipleSelectComponent,
                 TreeViewComponent,
             ],
             providers: [
@@ -53,6 +51,7 @@ describe('MultiSport - FilterComponent', () => {
                 MultiSportService,
                 BlockUIService,
                 GenerateFilterService,
+                DatePipe
             ],
             imports: [
                 BrowserModule,
@@ -61,6 +60,8 @@ describe('MultiSport - FilterComponent', () => {
                 HttpClientModule,
                 NgbModule,
                 MaterialModule,
+                DatepickerComponent,
+                NewMultipleSelectComponent,
             ],
         })
             .overrideModule(BrowserDynamicTestingModule, {
@@ -75,8 +76,9 @@ describe('MultiSport - FilterComponent', () => {
                 verifyDateService = fixture.debugElement.injector.get(VerifyDateService);
                 messageBoxService = fixture.debugElement.injector.get(MessageBoxService);
                 multiSportService = fixture.debugElement.injector.get(MultiSportService);
-                generateListService = fixture.debugElement.injector.get(GenerateFilterService);
-                spyOn(messageBoxService, 'alert').and.returnValue(new ModalDialogMessage());
+                generateFilterService = fixture.debugElement.injector.get(GenerateFilterService);
+                messageBoxService.alert = jest.fn().mockReturnValue(new ModalDialogMessage());
+                component.initServices();
             });
     }));
 
@@ -91,8 +93,8 @@ describe('MultiSport - FilterComponent', () => {
         };
 
         const sportServer: Sport[] = [{ sportType: 2, sportName: "Basketball", group: "All popular sport" }];
-        spyOn(multiSportService, 'getDate').and.returnValue(of(dateServer));
-        spyOn(multiSportService, 'getSport').and.returnValue(of(sportServer));
+        multiSportService.getDate = jest.fn().mockReturnValue(Promise.resolve(dateServer));
+        multiSportService.getSport = jest.fn().mockReturnValue(Promise.resolve(sportServer));
         component.ngOnInit();
         tick();
 
@@ -110,7 +112,7 @@ describe('MultiSport - FilterComponent', () => {
 
     describe('search method', () => {
         it('should show error message date when select wrong from date and to date.', () => {
-            spyOn(verifyDateService, 'validDate').and.returnValue(false);
+            verifyDateService.validDate = jest.fn().mockReturnValue(false);
             component.search();
 
             expect(messageBoxService.alert).toHaveBeenCalled();
@@ -118,7 +120,7 @@ describe('MultiSport - FilterComponent', () => {
         });
 
         it('should show error message select sport when have not selected any sport.', () => {
-            spyOn(verifyDateService, 'validDate').and.returnValue(true);
+            verifyDateService.validDate = jest.fn().mockReturnValue(true);
             component.sportTypesSelected = "";
             component.search();
 
@@ -127,10 +129,10 @@ describe('MultiSport - FilterComponent', () => {
         });
 
         it('should call filter method and event emit when pass all validation.', async () => {
-            spyOn(multiSportService, 'filter').and.returnValue(of(""));
-            spyOn(verifyDateService, 'validDate').and.returnValue(true);
-            spyOn(component.searchAction, 'emit');
-            spyOn(component.requestEmitter, 'emit');
+            multiSportService.filter = jest.fn().mockReturnValue(Promise.resolve(""));
+            verifyDateService.validDate = jest.fn().mockReturnValue(true);
+            component.searchAction.emit = jest.fn()
+            component.requestEmitter.emit = jest.fn()
             component.sportTypesSelected = "2";
             component.leaguesSelected = "1";
             await component.search();
@@ -143,7 +145,7 @@ describe('MultiSport - FilterComponent', () => {
 
     it('should return value when is existed an item.', () => {
         const items: ItemsSelect[] = [];
-        items.push(new ItemsSelect(1, "1", "1", true, true, true, []));
+        items.push(item);
         component.onSelectLeague(items);
 
         expect(component.leaguesSelected).not.toEqual("");
@@ -151,14 +153,14 @@ describe('MultiSport - FilterComponent', () => {
 
     describe('onSelectSport() method', () => {
         const items: ItemsSelect[] = [];
-        items.push(new ItemsSelect(1, "1", "1", true, true, true, []));
+        items.push(item);
         it('should return leagues when correct date.', fakeAsync(() => {
             const league = new League();
             league.leagueId = 1;
             league.leagueName = "ABC";
             const leagues: League[] = [league, league];
-            spyOn(multiSportService, 'getLeague').and.returnValue(of(leagues));
-            spyOn(verifyDateService, 'validDate').and.returnValue(true);
+            multiSportService.getLeague = jest.fn().mockReturnValue(Promise.resolve(leagues));
+            verifyDateService.validDate = jest.fn().mockReturnValue(true);
 
             component.onSelectSport(items);
             tick();
@@ -167,7 +169,7 @@ describe('MultiSport - FilterComponent', () => {
         }));
 
         it('should return empty leagues when incorrect date.', () => {
-            spyOn(verifyDateService, 'validDate').and.returnValue(false);
+            verifyDateService.validDate = jest.fn().mockReturnValue(false);
             component.onSelectSport(items);
 
             expect(component.leagueSelect.items.length).toEqual(0);
@@ -178,7 +180,7 @@ describe('MultiSport - FilterComponent', () => {
 
         it('should return right value when selected.', () => {
             const items: ItemsSelect[] = [];
-            items.push(new ItemsSelect(1, "1", "1", true, true, true, []));
+            items.push(item);
             items.push(new ItemsSelect(2, "2", "2", true, true, true, []));
             component.onSelectHoldStatus(items);
 
@@ -200,7 +202,8 @@ describe('MultiSport - FilterComponent', () => {
         sport.sportType = 1;
         sport.sportName = "mockName";
         const sports: Sport[] = [sport, sport];
-        spyOn(multiSportService, 'getSport').and.returnValue(of(sports));
+        multiSportService.getSport = jest.fn().mockReturnValue(Promise.resolve(sports));
+
         component.onSelectFromDate(fromDate);
         tick();
 
@@ -214,12 +217,10 @@ describe('MultiSport - FilterComponent', () => {
         sport.sportType = 1;
         sport.sportName = "mockName";
         const sports: Sport[] = [sport, sport];
-        spyOn(multiSportService, 'getSport').and.returnValue(of(sports));
+        multiSportService.getSport = jest.fn().mockReturnValue(Promise.resolve(sports));
         component.onSelectFromDate(toDate);
         tick();
 
         expect(component.sportSelect.items.length).toEqual(2);
     }));
-
-
 });

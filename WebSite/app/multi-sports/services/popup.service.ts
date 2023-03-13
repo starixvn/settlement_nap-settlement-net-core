@@ -152,7 +152,7 @@ export class PopupService {
     }
 
     public async openUpdatePayoutForLeague(league: LeagueMatch) {
-        const autoSetting = await this.multiSportService.getSetting(league.leagueId, 0).toPromise() as AutoCalcSetting;
+        const autoSetting = await this.multiSportService.getSetting(league.leagueId, 0);
         this.applyNewSetting(league.autoCalcSetting, autoSetting.setting, false);
 
         const src = `apps/auto-setting-league?leagueId=${league.leagueId}&currentState=${autoSetting.setting}&pageType=AutoSettingLeague&multiSelect=true`;
@@ -179,7 +179,7 @@ export class PopupService {
     }
 
     public async openUpdatePayoutForMatch(match: Match) {
-        const autoSetting = await this.multiSportService.getSetting(0, Number(match.matchId)).toPromise() as AutoCalcSetting;
+        const autoSetting = await this.multiSportService.getSetting(0, Number(match.matchId));
         this.applyNewSetting(match.autoCalcSetting, autoSetting.setting);
         
         const src = `apps/auto-setting-league?matchId=${match.matchId}&currentState=${autoSetting.setting}&pageType=AutoSettingMatch&multiSelect=true`;

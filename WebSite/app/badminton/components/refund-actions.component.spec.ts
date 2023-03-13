@@ -1,28 +1,21 @@
 import { TestBed, waitForAsync, ComponentFixture, fakeAsync, tick } from '@angular/core/testing';
 import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
-import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { ResourceNameByIdPipe, ExcludeTotalPointPipe, ResourceHeaderPipe } from '../pipes';
 import {
   ModalContentDialogComponent
 } from '../../shared/components/modal-dialog/modal-content-dialog.component';
 import {
-  HttpRequestService,
-  BlockUIService,
   MessageBoxService,
-  ClosePopupService,
   AioService
 } from '../../shared/services';
 import { HedgeMatchDetail, Match } from '../models';
 import { BadmintonApiKeys } from '../constants';
-import { of } from 'rxjs';
 import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
 import { ScoreBySettlementPipe } from '../../shared/pipes/score-by-settlement.pipe';
 import { MatchDetail, Permission, ResultDetail } from '../../shared/models/sportsbook-sop';
-import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { Result, ResultSettingModel } from '../../shared/models';
-import { ToastContainerDirective, ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
+import { ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 import { ModalDialogComponent } from '../../shared/components/modal-dialog/modal-dialog.component';
 import { RefundActionsComponent } from './refund-actions.component';
 import { MatchDetailComponent } from './match-detail.component';
@@ -69,24 +62,10 @@ describe('Badminton - Refund actions component', () => {
         ModalDialogComponent,
         ModalContentDialogComponent
       ],
-      providers: [
-        MessageBoxService,
-        HttpRequestService,
-        BlockUIService,
-        ClosePopupService,
-        AioService,
-        NgbModal,
-        ToastContainerDirective,
-        ToastrService,
-        { provide: MessageBoxService, useClass: MessageBoxService },
-      ],
-      schemas: [NO_ERRORS_SCHEMA],
       imports: [
         RefundActionsComponent,
         MatchDetailComponent,
-        FormsModule,
         HttpClientModule,
-        NgbModule,
         ToastNoAnimationModule.forRoot(),
         ToastContainerModule,
         ToastrModule.forRoot(),
@@ -112,6 +91,7 @@ describe('Badminton - Refund actions component', () => {
         toastrService.clear = jest.fn();
         messageBoxService.closePopup = jest.fn();
         component.apiKeys = BadmintonApiKeys;
+        component.initService();
       });
   }));
 

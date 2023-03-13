@@ -22,6 +22,11 @@ import { ResourceNameByIdPipe } from '../pipes';
 })
 export class CalculationActionsComponent implements SportTemplate {
     @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
+    private messageBoxService: MessageBoxService;
+    private verificationService: VerificationService;
+    private eSportsService: ESportsService;
+    private aioService: AioService;
+    private toastrService: ToastrService;
     public blockUI = true;
     public match: Match;
     public isLeader: boolean;
@@ -39,13 +44,7 @@ export class CalculationActionsComponent implements SportTemplate {
     public isReadyMatch: boolean;
     public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
 
-    constructor(
-        protected inject: Injector,
-        private readonly messageBoxService: MessageBoxService,
-        private readonly verificationService: VerificationService,
-        private readonly eSportsService: ESportsService,
-        private readonly aioService: AioService,
-        private readonly toastrService: ToastrService) {
+    constructor(private injector: Injector) {
         this.confirmationDialogMessage.title = Language.confirmationBox;
     }
 
@@ -73,8 +72,13 @@ export class CalculationActionsComponent implements SportTemplate {
         this.autoFillScoreOnLoad(this.match.resultDetails);
     }
 
-    private init() {
-        this.inject.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
+    public init() {
+        this.messageBoxService = this.injector.get(MessageBoxService);
+        this.verificationService = this.injector.get(VerificationService);
+        this.eSportsService = this.injector.get(ESportsService);
+        this.aioService = this.injector.get(AioService);
+        this.toastrService = this.injector.get(ToastrService);
+        this.injector.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
         this.toastrService.overlayContainer = this.toastContainer;
     }
 

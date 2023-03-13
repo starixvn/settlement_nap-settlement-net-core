@@ -1,20 +1,10 @@
 import { TestBed } from "@angular/core/testing";
-import { LeagueMatch, Match, SportMatch } from "../models";
+import { Match } from "../models";
 import { HandleActionsService } from "./handle-actions.service";
-import { ChangedMatchSetting, ChangeSettingResult, Remark, } from "../../shared/models";
 import { BackgroundColor, EventStatus } from "../../shared/constants";
 describe('MultiSport - HandleActionsService', () => {
     let service: HandleActionsService;
     let match: Match;
-    const league: LeagueMatch = {
-        leagueId: 7000000,
-        matches: [match],
-        name: 'mock league',
-        collapse: false,
-        isAutoPayoutForLeague: false,
-        autoWaitingTime: 0
-        autoWaitingTime: 0
-    };
 
     beforeEach(() => {
         TestBed.configureTestingModule({

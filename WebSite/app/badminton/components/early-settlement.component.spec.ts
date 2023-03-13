@@ -1,29 +1,22 @@
 import { TestBed, fakeAsync, ComponentFixture, tick, flush } from '@angular/core/testing';
-import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { FormsModule } from '@angular/forms';
 import { EarlyConstraintService, VerificationService } from '../services';
 import { EarlySettlementComponent } from './early-settlement.component';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import {
-  HttpRequestService,
-  BlockUIService,
   MessageBoxService,
-  ClosePopupService,
   AioService,
-  IntervalCalculationService
 } from '../../shared/services';
 import { Match } from '../models';
 import { Language } from '../../shared/language.native';
 import * as _ from 'lodash';
 import { MarkedTicketsModel, Result, ResultSettingModel } from '../../shared/models';
 import { ExternalResultDetail, MatchDetail, Permission, ResultDetail } from '../../shared/models/sportsbook-sop';
-import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ExternalLinkPipe } from '../../score-source-setting/pipes';
 import { ExternalSourceNamePipe } from '../../shared/pipes/external-source-name.pipe';
 import { ResultByTeamNamePipe } from '../../shared/pipes/result-by-team-name.pipe';
 import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
-import { ToastContainerDirective, ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
+import { ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 import { BadmintonApiKeys } from '../constants';
 import { ModalDialogComponent } from '../../shared/components/modal-dialog/modal-dialog.component';
 import { ModalContentDialogComponent } from '../../shared/components/modal-dialog/modal-content-dialog.component';
@@ -36,7 +29,6 @@ describe('EarlySettlementComponent', () => {
   let fixture: ComponentFixture<EarlySettlementComponent>;
   let earlyConstraintService: EarlyConstraintService;
   let aioService: AioService;
-  let closePopupService: ClosePopupService;
   let messageBoxService: MessageBoxService;
   let verificationService: VerificationService;
   let toastrService: ToastrService;
@@ -89,26 +81,9 @@ describe('EarlySettlementComponent', () => {
         ModalDialogComponent,
         ModalContentDialogComponent
       ],
-      providers: [
-        HttpClientModule,
-        AioService,
-        MessageBoxService,
-        HttpRequestService,
-        BlockUIService,
-        ClosePopupService,
-        VerificationService,
-        ResultByTeamNamePipe,
-        NgbModal,
-        ToastContainerDirective,
-        ToastrService,
-        IntervalCalculationService,
-      ],
-      schemas: [NO_ERRORS_SCHEMA],
       imports: [
         EarlySettlementComponent,
-        FormsModule,
         HttpClientModule,
-        NgbModule,
         ToastNoAnimationModule.forRoot(),
         ToastContainerModule,
         ToastrModule.forRoot(),
@@ -132,7 +107,6 @@ describe('EarlySettlementComponent', () => {
         component = fixture.componentInstance;
         aioService = fixture.debugElement.injector.get(AioService);
         earlyConstraintService = fixture.debugElement.injector.get(EarlyConstraintService);
-        closePopupService = fixture.debugElement.injector.get(ClosePopupService);
         messageBoxService = fixture.debugElement.injector.get(MessageBoxService);
         verificationService = fixture.debugElement.injector.get(VerificationService);
         toastrService = fixture.debugElement.injector.get(ToastrService);
@@ -223,7 +197,7 @@ describe('EarlySettlementComponent', () => {
         Promise.resolve(notExistMarkedTicket)
       );
       jest.spyOn(aioService, "push").mockReturnValue(Promise.resolve(successfulResult));
-      jest.spyOn(closePopupService, "closePopup");
+      jest.spyOn(messageBoxService, "closePopup");
 
       await component.refund();
       const buttonYes = document.getElementsByClassName(
@@ -283,7 +257,7 @@ describe('EarlySettlementComponent', () => {
 
     it('should pass all validation and success', fakeAsync(() => {
       jest.spyOn(aioService, 'push').mockReturnValue(Promise.resolve(successfulResult));
-      jest.spyOn(closePopupService, 'closePopup');
+      jest.spyOn(messageBoxService, 'closePopup');
 
       component.unCalculate();
       const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;

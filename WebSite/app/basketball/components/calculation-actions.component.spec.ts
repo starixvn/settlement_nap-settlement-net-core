@@ -1,19 +1,15 @@
 ﻿import { TestBed, waitForAsync, ComponentFixture, fakeAsync, tick } from '@angular/core/testing';
 import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { HttpClientModule } from '@angular/common/http';
-import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { ElementRef, NO_ERRORS_SCHEMA } from "@angular/core";
-import { FormsModule } from '@angular/forms';
+import { ElementRef } from "@angular/core";
 import { CalculationActionsComponent } from './calculation-actions.component';
 import { BasketballService, BetStatusService, VerificationService } from '../services';
-import { MessageBoxService, HttpRequestService, BlockUIService, AioService } from '../../shared/services';
+import { MessageBoxService, AioService } from '../../shared/services';
 import { ModalDialogComponent } from "../../shared/components/modal-dialog/modal-dialog.component";
 import { Match, HedgeMatchDetail, VoidBetInfo } from '../models';
-import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
 import { ResourceNameByIdPipe } from '../pipes/resource-name-by-id.pipe';
 import { ResultSettingModel } from '../../shared/models';
 import { MatchDetail, Permission, ResultDetail, ExternalResultDetail } from '../../shared/models/sportsbook-sop';
-import { ResultByTeamNamePipe } from '../../shared/pipes/result-by-team-name.pipe';
 import { ExternalSourceNamePipe } from '../../shared/pipes/external-source-name.pipe';
 import { ResourcesIds } from '../constants';
 import { ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
@@ -87,27 +83,8 @@ describe('Basketball - Calculation Actions Component', () => {
                 ModalDialogComponent,
                 ModalContentDialogComponent,
             ],
-            providers: [
-                IntervalBackgroundPipe,
-                BasketballService,
-                MessageBoxService,
-                HttpRequestService,
-                BetStatusService,
-                BlockUIService,
-                AioService,
-                VerificationService,
-                ResultByTeamNamePipe,
-                NgbModal,
-                ResourceNameByIdPipe,
-                ToastrService,
-                { provide: MessageBoxService, useClass: MessageBoxService },
-                { provide: ElementRef, useValue: new MockElementRef() },
-            ],
-            schemas: [NO_ERRORS_SCHEMA],
             imports: [
-                FormsModule,
                 HttpClientModule,
-                NgbModule,
                 ToastNoAnimationModule.forRoot(),
                 ToastContainerModule,
                 ToastrModule.forRoot(),
@@ -133,6 +110,7 @@ describe('Basketball - Calculation Actions Component', () => {
                 verificationService = fixture.debugElement.injector.get(VerificationService);
                 betStatusService = fixture.debugElement.injector.get(BetStatusService);
                 toastrService = fixture.debugElement.injector.get(ToastrService);
+                component.initService();
             });
     }));
 

@@ -16,7 +16,6 @@ import { HttpClientModule } from '@angular/common/http';
 import { HttpRequestService, BlockUIService, MessageBoxService, DialogBoxService } from '../../shared/services';
 import { SimpleChange } from '@angular/core';
 import { MaterialModule } from '../../shared/material-module';
-import { of } from 'rxjs';
 import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { IntervalScorePipe } from '../../shared/pipes/interval-score.pipe';
 import {
@@ -34,18 +33,12 @@ describe('LeagueComponent', () => {
   let component: LeagueComponent;
   let fixture: ComponentFixture<LeagueComponent>;
   let refreshMatchService: RefreshMatchService;
-  let multiSportService: MultiSportService;
-  let messageBoxService: MessageBoxService;
   let sportMatchService: SportMatchService;
-  let handleActionsService: HandleActionsService;
   let backGroundService: BackGroundService;
   let popupService: PopupService;
   let match = new Match();
   match.sportType = SportType.eSports;
-  match.isExistMarkedTicketParlay = false;
   match.autoCalcSetting = new AutoSetting();
-  const buttonName = "btn-danger";
-  const errorMessage = "Error message";
   const league: LeagueMatch = {
     leagueId: 7000000,
     matches: [match],
@@ -67,16 +60,6 @@ describe('LeagueComponent', () => {
     permission,
     sports: [sport],
   };
-  const successfulResult = {
-    errCode: 0,
-    errMsg: "",
-    isSuccessful: true,
-  };
-  const unsuccessfulResult = {
-    errCode: 1,
-    errMsg: errorMessage,
-    isSuccessful: false,
-  };
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
@@ -91,15 +74,15 @@ describe('LeagueComponent', () => {
         NgbModal,
         HttpRequestService,
         BlockUIService,
-        MessageBoxService,
-        MultiSportService,
         DialogBoxService,
         PopupService,
-        HandleActionsService,
         DetectChangesService,
         SportMatchService,
         BackGroundService,
-        SportMatchService
+        SportMatchService,
+        MessageBoxService,
+        HandleActionsService,
+        MultiSportService
       ],
       imports: [
         FormsModule,
@@ -120,12 +103,11 @@ describe('LeagueComponent', () => {
     fixture = TestBed.createComponent(LeagueComponent);
     component = fixture.componentInstance;
     refreshMatchService = fixture.debugElement.injector.get(RefreshMatchService);
-    multiSportService = fixture.debugElement.injector.get(MultiSportService);
-    messageBoxService = fixture.debugElement.injector.get(MessageBoxService);
     popupService = fixture.debugElement.injector.get(PopupService);
-    handleActionsService = fixture.debugElement.injector.get(HandleActionsService);
     sportMatchService = fixture.debugElement.injector.get(SportMatchService);
     backGroundService = fixture.debugElement.injector.get(BackGroundService);
+    component.multiSport = multiSport;
+    component.ngOnInit();
   });
 
   it('should create', () => {
@@ -136,7 +118,7 @@ describe('LeagueComponent', () => {
     component.multiSport = multiSport;
     component.sports = multiSport.sports;
     component.enableRefresh = true;
-    spyOn(refreshMatchService, 'refreshMatches');
+    refreshMatchService.refreshMatches = jest.fn();
 
     component.ngOnInit();
     tick(6000);
@@ -148,7 +130,7 @@ describe('LeagueComponent', () => {
 
   it('should set sports and permission when component has changes', () => {
     component.multiSport = multiSport;
-    spyOn(sportMatchService, 'getSportsWithIntervalScore');
+    sportMatchService.getSportsWithIntervalScore = jest.fn();
 
     component.ngOnChanges({ multiSport: new SimpleChange(null, multiSport, false) });
     fixture.detectChanges();
@@ -232,7 +214,7 @@ describe('LeagueComponent', () => {
       const permission = new Permission();
       permission.canCalculate = true;
       component.permission = permission;
-      spyOn(backGroundService, 'isShowLink').and.returnValue(true);
+      backGroundService.isShowLink = jest.fn().mockReturnValue(true);
 
       const result = component.isShowCalculationLink(match);
 
@@ -245,7 +227,7 @@ describe('LeagueComponent', () => {
       permission.canCalculate = false;
       permission.isTrader = true;
       component.permission = permission;
-      spyOn(backGroundService, 'isShowLink').and.returnValue(true);
+      backGroundService.isShowLink = jest.fn().mockReturnValue(true);
 
       const result = component.isShowCalculationLink(match);
 
@@ -256,7 +238,7 @@ describe('LeagueComponent', () => {
       const permission = new Permission();
       permission.canCalculate = false;
       component.permission = permission;
-      spyOn(backGroundService, 'isShowLink').and.returnValue(true);
+      backGroundService.isShowLink = jest.fn().mockReturnValue(true);
 
       const result = component.isShowCalculationLink(match);
 
@@ -267,7 +249,7 @@ describe('LeagueComponent', () => {
       const permission = new Permission();
       permission.canCalculate = true;
       component.permission = permission;
-      spyOn(backGroundService, 'isShowLink').and.returnValue(false);
+      backGroundService.isShowLink = jest.fn().mockReturnValue(false);
 
       const result = component.isShowCalculationLink(match);
 
@@ -284,7 +266,7 @@ describe('LeagueComponent', () => {
       const permission = new Permission();
       permission.canRefund = true;
       component.permission = permission;
-      spyOn(backGroundService, 'isShowLink').and.returnValue(true);
+      backGroundService.isShowLink = jest.fn().mockReturnValue(true);
 
       const result = component.isShowRefundLink(match);
 
@@ -294,7 +276,7 @@ describe('LeagueComponent', () => {
     it('should hide refund link when missing permission', () => {
       const permission = new Permission();
       component.permission = permission;
-      spyOn(backGroundService, 'isShowLink').and.returnValue(true);
+      backGroundService.isShowLink = jest.fn().mockReturnValue(true);
 
       const result = component.isShowRefundLink(match);
 
@@ -305,7 +287,7 @@ describe('LeagueComponent', () => {
       const permission = new Permission();
       permission.canCalculate = true;
       component.permission = permission;
-      spyOn(backGroundService, 'isShowLink').and.returnValue(false);
+      backGroundService.isShowLink = jest.fn().mockReturnValue(false);
 
       const result = component.isShowRefundLink(match);
 
@@ -317,7 +299,7 @@ describe('LeagueComponent', () => {
       permission.canCalculate = true;
       component.permission = permission;
       component.request = new MatchWaitingRequest("", "", "", "", "", "");
-      spyOn(backGroundService, 'isShowLink').and.returnValue(false);
+      backGroundService.isShowLink = jest.fn().mockReturnValue(false);
 
       const result = component.isShowRefundLink(match);
 
@@ -338,7 +320,7 @@ describe('LeagueComponent', () => {
       permission.canUncalculate = canCalculate;
       permission.canRefund = canRefund;
       component.permission = permission;
-      spyOn(backGroundService, 'isShowLink').and.returnValue(true);
+      backGroundService.isShowLink = jest.fn().mockReturnValue(true);
 
 
       const result = component.isShowEarlySettleLink(match);
@@ -351,7 +333,7 @@ describe('LeagueComponent', () => {
       permission.isTrader = true;
       match.sportType = SportType.cricket;
       component.permission = permission;
-      spyOn(backGroundService, 'isShowLink').and.returnValue(true);
+      backGroundService.isShowLink = jest.fn().mockReturnValue(true);
 
       const result = component.isShowEarlySettleLink(match);
 
@@ -362,7 +344,7 @@ describe('LeagueComponent', () => {
       const permission = new Permission();
       permission.canCalculate = true;
       component.permission = permission;
-      spyOn(backGroundService, 'isShowLink').and.returnValue(false);
+      backGroundService.isShowLink = jest.fn().mockReturnValue(false);
 
       const result = component.isShowEarlySettleLink(match);
 
@@ -371,7 +353,7 @@ describe('LeagueComponent', () => {
 
     it('should hide early settle link when missing permission', () => {
       component.permission = new Permission();
-      spyOn(backGroundService, 'isShowLink').and.returnValue(true);
+      backGroundService.isShowLink = jest.fn().mockReturnValue(true);
 
       const result = component.isShowEarlySettleLink(match);
 
@@ -450,9 +432,9 @@ describe('LeagueComponent', () => {
   });
 
   it('getLog - should call popupService', () => {
-    const request = new MatchWaitingRequest('12345', '', '01/01/2020', '01/02/2020',"", "");
+    const request = new MatchWaitingRequest('12345', '', '01/01/2020', '01/02/2020', "", "");
     component.request = request;
-    spyOn(popupService, 'popupLog');
+    popupService.popupLog = jest.fn();
 
     component.getLog('12345');
 
@@ -541,9 +523,8 @@ describe('LeagueComponent', () => {
     });
   });
 
-
   it('popupCalc - should call popupService when called', () => {
-    spyOn(popupService, 'popupCalc');
+    popupService.popupCalc = jest.fn();
 
     component.popupCalc(match);
 
@@ -551,7 +532,7 @@ describe('LeagueComponent', () => {
   });
 
   it('popupRefund - should call popupService', () => {
-    spyOn(popupService, 'popupRefund');
+    popupService.popupRefund = jest.fn();
 
     component.popupRefund(match);
 
@@ -559,16 +540,16 @@ describe('LeagueComponent', () => {
   });
 
   it('popupEarly - should call popupService', () => {
-    spyOn(popupService, 'popupEarly');
+    popupService.popupEarly = jest.fn();
 
     component.popupEarly(match);
 
     expect(popupService.popupEarly).toHaveBeenCalled();
   });
-
   describe('isChangeSetting', () => {
     it('should return true when having permission and match is not calculating', () => {
       match.isCalculatingSingle = null;
+      match.isCalculatingMP = null;
 
       const result = component.isChangeSetting(match);
 
@@ -590,6 +571,22 @@ describe('LeagueComponent', () => {
 
       it('when match is waiting for single calculation', () => {
         match.isCalculatingSingle = 0;
+
+        const result = component.isChangeSetting(match);
+
+        expect(result).toBe(false);
+      });
+
+      it('when match is calculating MP', () => {
+        match.isCalculatingMP = 1;
+
+        const result = component.isChangeSetting(match);
+
+        expect(result).toBe(false);
+      });
+
+      it('when match is waiting for MP calculation', () => {
+        match.isCalculatingMP = 0;
 
         const result = component.isChangeSetting(match);
 
@@ -626,7 +623,8 @@ describe('LeagueComponent', () => {
   describe('popupChangeRemarkSetting', () => {
     it('should call popupService when match is not locked', () => {
       match.isCalculatingSingle = 3;
-      spyOn(popupService, 'popupChangeRemark');
+      match.isCalculatingMP = 3;
+      popupService.popupChangeRemark = jest.fn();
 
       component.popupChangeRemarkSetting(match);
 
@@ -635,7 +633,7 @@ describe('LeagueComponent', () => {
 
     it('should not call popup service when match is locked', () => {
       match.isCalculatingSingle = 0;
-      spyOn(popupService, 'popupChangeRemark');
+      popupService.popupChangeRemark = jest.fn();
 
       component.popupChangeRemarkSetting(match);
 
@@ -896,7 +894,7 @@ describe('LeagueComponent', () => {
     it('should do nothing when not having permission', () => {
       permission.canAutoPayout = false;
       component.permission = permission;
-      spyOn(popupService, 'openUpdatePayoutForMatch');
+      popupService.openUpdatePayoutForMatch = jest.fn();
 
       component.changeAutoSetting(match);
 
@@ -906,7 +904,7 @@ describe('LeagueComponent', () => {
     it('should update popup change setting when has permission', () => {
       permission.canAutoPayout = true;
       component.permission = permission;
-      spyOn(popupService, 'openUpdatePayoutForMatch');
+      popupService.openUpdatePayoutForMatch = jest.fn();
 
       component.changeAutoSetting(match);
 
@@ -918,7 +916,7 @@ describe('LeagueComponent', () => {
     it('should do nothing when not having permission', () => {
       permission.canAutoPayout = false;
       component.permission = permission;
-      spyOn(popupService, 'openUpdatePayoutForLeague');
+      popupService.openUpdatePayoutForLeague = jest.fn();
 
       component.changeAutoLeague(league);
 
@@ -928,7 +926,7 @@ describe('LeagueComponent', () => {
     it('should update popup change setting when has permission', fakeAsync(() => {
       permission.canAutoPayout = true;
       component.permission = permission;
-      spyOn(popupService, 'openUpdatePayoutForLeague');
+      popupService.openUpdatePayoutForLeague = jest.fn();
 
       component.changeAutoLeague(league);
 

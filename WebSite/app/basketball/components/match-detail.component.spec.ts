@@ -19,7 +19,6 @@ describe('Component: MatchDetailComponent', () => {
     let basketballService: BasketballService;
 
     const resultDetail = new ResultDetail();
-
     resultDetail.resourceId = "Q1";
     resultDetail.map = 0;
     resultDetail.awayValue = "1";
@@ -46,12 +45,9 @@ describe('Component: MatchDetailComponent', () => {
                 ResourceNameByIdPipe,
                 NgbModal,
                 { provide: MessageBoxService, useClass: MessageBoxService },
-
               ],
               imports: [
-                FormsModule,
                 HttpClientModule,
-                NgbModule,
                 MatchDetailComponent,
                 ScoreBySettlementPipe
               ],

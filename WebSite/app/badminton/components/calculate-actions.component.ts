@@ -44,7 +44,7 @@ export class CalculateActionsComponent implements SportTemplate {
   public collapse = false;
   public blockUI = true;
 
-  constructor(private inject: Injector) {
+  constructor(private readonly injector: Injector) {
     this.confirmationDialogMessage.title = Language.confirmationBox;
   }
 
@@ -65,12 +65,12 @@ export class CalculateActionsComponent implements SportTemplate {
   }
 
   public initService() {
-    this.aioService = this.inject.get(AioService);
-    this.messageBoxService= this.inject.get(MessageBoxService);
-    this.badmintonService= this.inject.get(BadmintonService);
-    this.verificationService= this.inject.get(VerificationService);
-    this.toastrService= this.inject.get(ToastrService);
-    this.inject.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
+    this.aioService = this.injector.get(AioService);
+    this.messageBoxService= this.injector.get(MessageBoxService);
+    this.badmintonService= this.injector.get(BadmintonService);
+    this.verificationService= this.injector.get(VerificationService);
+    this.toastrService= this.injector.get(ToastrService);
+    this.injector.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
     this.toastrService.overlayContainer = this.toastContainer;
   }
 

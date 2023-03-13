@@ -3,7 +3,6 @@ import * as _ from 'lodash';
 import { HttpRequestService } from '../../shared/services';
 import { MatchWaitingRequest, MultiSport, SportMatch, Match } from '../models';
 import { DetectChangesService } from './detect-changes.service';
-import { HandleActionsService } from './handle-actions.service';
 import { SportMatchService } from './sport-match.service';
 import { Permission } from '../../shared/models/sportsbook-sop/permission.model';
 @Injectable()
@@ -12,7 +11,6 @@ export class RefreshMatchService {
   constructor(
     private readonly httpRequestService: HttpRequestService,
     private readonly detectChangesService: DetectChangesService,
-    private readonly handleActionsService: HandleActionsService,
     private readonly sportMatchService: SportMatchService
   ) { }
 

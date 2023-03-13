@@ -5,11 +5,9 @@ import {
   fakeAsync,
   tick,
 } from "@angular/core/testing";
-import { NgbModal, NgbModule } from "@ng-bootstrap/ng-bootstrap";
-import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { HttpClientModule } from "@angular/common/http";
 import { ResourceNameByIdPipe } from "../pipes";
-import { RefundActionsComponent, CalculationMatchDetailComponent } from ".";
 import {
   HttpRequestService,
   BlockUIService,
@@ -19,11 +17,6 @@ import {
 import {
   Match,
 } from "../models";
-import { of } from "rxjs";
-import {
-  ModalDialogComponent,
-  ModalContentDialogComponent,
-} from "../../shared/components";
 import { BrowserDynamicTestingModule } from "@angular/platform-browser-dynamic/testing";
 import { Language } from "../../shared/language.native";
 import { IntervalBackgroundPipe } from "../../shared/pipes/interval-background.pipe";
@@ -35,6 +28,10 @@ import { ToastContainerDirective, ToastContainerModule, ToastNoAnimationModule, 
 import { MaterialModule } from "../../shared/material-module";
 import { ApiKeys } from "../constants";
 import { NO_ERRORS_SCHEMA } from "@angular/core";
+import { RefundActionsComponent } from "./refund-actions.component";
+import { ModalDialogComponent } from "../../shared/components/modal-dialog/modal-dialog.component";
+import { CalculationMatchDetailComponent } from "./calculation-match-detail.component";
+import { ModalContentDialogComponent } from "../../shared/components/modal-dialog/modal-content-dialog.component";
 describe("E-sport - Refund Component", () => {
   let component: RefundActionsComponent;
   let fixture: ComponentFixture<RefundActionsComponent>;
@@ -83,12 +80,8 @@ describe("E-sport - Refund Component", () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [
-        RefundActionsComponent,
-        ResourceNameByIdPipe,
-        ModalDialogComponent,
-        IntervalBackgroundPipe,
         ModalContentDialogComponent,
-        CalculationMatchDetailComponent,
+        ModalDialogComponent,
       ],
       providers: [
         AioService,
@@ -103,14 +96,15 @@ describe("E-sport - Refund Component", () => {
       ],
       schemas: [NO_ERRORS_SCHEMA],
       imports: [
-        FormsModule, 
-        ReactiveFormsModule,
         HttpClientModule,
-        NgbModule,
         MaterialModule,
         ToastNoAnimationModule.forRoot(),
         ToastContainerModule,
-        ToastrModule.forRoot()],
+        ToastrModule.forRoot(),
+        RefundActionsComponent,
+        IntervalBackgroundPipe,
+        CalculationMatchDetailComponent,
+        ResourceNameByIdPipe],
     })
       .overrideModule(BrowserDynamicTestingModule, {
         set: {
@@ -128,6 +122,7 @@ describe("E-sport - Refund Component", () => {
         component.match = match;
         component.resultDetails = [resultDetail];
         component.permission = new Permission();
+        component.initService();
       });
   }));
 
@@ -142,7 +137,7 @@ describe("E-sport - Refund Component", () => {
       apikey: ApiKeys.NormalMatch,
       settleType: "MNL"
     };
-    spyOn(aioService, 'getMatch').and.returnValue(of(match));
+    aioService.getMatch= jest.fn().mockReturnValue(Promise.resolve(match));
     component.getMatch(matchId);
 
     expect(aioService.getMatch).toHaveBeenCalledWith(matchQuery);
@@ -151,8 +146,8 @@ describe("E-sport - Refund Component", () => {
 
   describe("refund", () => {
     beforeEach(() => {
-      spyOn(toastrService, 'clear');
-      spyOn(toastrService, 'error');
+      toastrService.clear= jest.fn();
+      toastrService.error= jest.fn();
       resultDetail.resultSettingData.isConfirmedRefund = true;
       component.resultDetails = [resultDetail];
       component.matchDetail = matchDetail;
@@ -161,9 +156,9 @@ describe("E-sport - Refund Component", () => {
     it("should pass all validation and successfully refund and there are no hedge match", fakeAsync(async () => {
       component.match = match;
       component.applyHedgeMatch = false;
-      spyOn(aioService, "checkMarkedTickets").and.returnValue(of(notExistMarkedTicket));
-      spyOn(aioService, "push").and.returnValue(of(successfulResult));
-      spyOn(messageBoxService, "closePopup");
+      aioService.checkMarkedTickets= jest.fn().mockReturnValue(Promise.resolve(notExistMarkedTicket));
+      aioService.push= jest.fn().mockReturnValue(Promise.resolve(successfulResult));
+      messageBoxService.closePopup= jest.fn();
 
       component.refund();
       tick();
@@ -184,9 +179,9 @@ describe("E-sport - Refund Component", () => {
       component.match = match;
       component.applyHedgeMatch = true;
       component.hedgeMatchDetail = match.hedgeMatchDetail;
-      spyOn(aioService, "checkMarkedTickets").and.returnValue(of(notExistMarkedTicket));
-      spyOn(aioService, "push").and.returnValue(of(successfulResult));
-      spyOn(messageBoxService, "closePopup");
+      aioService.checkMarkedTickets= jest.fn().mockReturnValue(Promise.resolve(notExistMarkedTicket));
+      aioService.push= jest.fn().mockReturnValue(Promise.resolve(successfulResult));
+      messageBoxService.closePopup= jest.fn();
 
       component.refund();
       tick();
@@ -203,8 +198,8 @@ describe("E-sport - Refund Component", () => {
 
     it("should show error message when unsuccessfully refund", fakeAsync(async () => {
       component.match = match;
-      spyOn(aioService, "checkMarkedTickets").and.returnValue(of(notExistMarkedTicket));
-      spyOn(aioService, "push").and.returnValue(of(unSuccessfulResult));
+      aioService.checkMarkedTickets= jest.fn().mockReturnValue(Promise.resolve(notExistMarkedTicket));
+      aioService.push= jest.fn().mockReturnValue(Promise.resolve(unSuccessfulResult));
 
       component.refund();
       tick();
@@ -219,7 +214,7 @@ describe("E-sport - Refund Component", () => {
 
     it("should show error message when exist marked ticket", fakeAsync(async () => {
       component.match = match;
-      spyOn(aioService, "checkMarkedTickets").and.returnValue(of(existMarkedTicket));
+      aioService.checkMarkedTickets= jest.fn().mockReturnValue(Promise.resolve(existMarkedTicket));
 
       component.refund();
       tick();
@@ -234,7 +229,7 @@ describe("E-sport - Refund Component", () => {
       result.checked = true;
       component.match = match;
       component.resultDetails = [result];
-      spyOn(aioService, "checkMarkedTickets").and.returnValue(of(notExistMarkedTicket));
+      aioService.checkMarkedTickets= jest.fn().mockReturnValue(Promise.resolve(notExistMarkedTicket));
 
       debugger;
       await component.refund();
@@ -254,9 +249,9 @@ describe("E-sport - Refund Component", () => {
       result.checked = true;
       component.match = match;
       component.resultDetails = [result];
-      spyOn(aioService, "checkMarkedTickets").and.returnValue(of(notExistMarkedTicket));
-      spyOn(aioService, "push").and.returnValue(of(successfulResult));
-      spyOn(messageBoxService, "closePopup");
+      aioService.checkMarkedTickets= jest.fn().mockReturnValue(Promise.resolve(notExistMarkedTicket));
+      aioService.push= jest.fn().mockReturnValue(Promise.resolve(successfulResult));
+      messageBoxService.closePopup= jest.fn();
 
       component.refund();
       tick();

@@ -31,7 +31,6 @@ describe('SportMatchService', () => {
         collapse: false,
         autoWaitingTime: 0,
         autoCalcSetting: new AutoSetting,
-        autoWaitingTime: 0
     };
 
     const sport: SportMatch = {

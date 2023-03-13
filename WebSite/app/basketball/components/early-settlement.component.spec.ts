@@ -1,22 +1,19 @@
 import { TestBed, waitForAsync, ComponentFixture, fakeAsync, tick, flush } from '@angular/core/testing';
-import { FormsModule } from '@angular/forms';
 import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { HttpClientModule } from '@angular/common/http';
-import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { EarlySettlementComponent } from './early-settlement.component';
-import { EarlyService, BasketballService, VerificationService } from '../services';
+import { EarlyService, VerificationService } from '../services';
 import { Match } from '../models';
-import { MessageBoxService, HttpRequestService, BlockUIService, AioService } from '../../shared/services';
+import { MessageBoxService, AioService } from '../../shared/services';
 import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
 import { Language } from '../../shared/language.native';
 import * as _ from 'lodash';
 import { ResultSettingModel } from '../../shared/models';
-import { MatchDetail, Permission, ResultDetail, ExternalResultDetail } from '../../shared/models/sportsbook-sop';
+import { MatchDetail, Permission, ResultDetail } from '../../shared/models/sportsbook-sop';
 import { ExternalSourceNamePipe } from '../../shared/pipes/external-source-name.pipe';
 import { ResultByTeamNamePipe } from '../../shared/pipes/result-by-team-name.pipe';
 import { ExternalLinkPipe } from '../../score-source-setting/pipes';
-import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { ToastContainerDirective, ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
+import {ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 import { ModalDialogComponent } from '../../shared/components/modal-dialog/modal-dialog.component';
 import { ModalContentDialogComponent } from '../../shared/components/modal-dialog/modal-content-dialog.component';
 import { ResettleCheckerComponent } from '../../shared/components/resettle-checker/resettle-checker.component';
@@ -80,25 +77,8 @@ describe('Component: EarlySettlementComponent', () => {
                 ModalDialogComponent,
                 ModalContentDialogComponent
             ],
-            providers: [
-                HttpRequestService,
-                MessageBoxService,
-                BlockUIService,
-                AioService,
-                NgbModal,
-                EarlyService,
-                BasketballService,
-                VerificationService,
-                IntervalBackgroundPipe,
-                ResultByTeamNamePipe,
-                ToastContainerDirective,
-                ToastrService
-            ],
-            schemas: [NO_ERRORS_SCHEMA],
             imports: [
-                FormsModule,
                 HttpClientModule,
-                NgbModule,
                 PipesModule,
                 ToastNoAnimationModule.forRoot(),
                 ToastContainerModule,

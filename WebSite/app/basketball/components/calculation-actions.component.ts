@@ -43,7 +43,7 @@ export class CalculationActionsComponent implements SportTemplate {
     public isReadyMatch: boolean;
     public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
 
-    constructor(private inject: Injector) {
+    constructor(private readonly injector: Injector) {
         this.confirmationDialogMessage.title = Language.confirmationBox;
     }
 
@@ -62,13 +62,13 @@ export class CalculationActionsComponent implements SportTemplate {
         this.init();
     }
 
-    private initService() {
-        this.basketballService = this.inject.get(BasketballService);
-        this.messageBoxService = this.inject.get(MessageBoxService);
-        this.aioService = this.inject.get(AioService);
-        this.verificationService = this.inject.get(VerificationService);
-        this.toastrService = this.inject.get(ToastrService);
-        this.inject.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
+    public initService() {
+        this.basketballService = this.injector.get(BasketballService);
+        this.messageBoxService = this.injector.get(MessageBoxService);
+        this.aioService = this.injector.get(AioService);
+        this.verificationService = this.injector.get(VerificationService);
+        this.toastrService = this.injector.get(ToastrService);
+        this.injector.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
     }
 
     private cloneResultDetail() {

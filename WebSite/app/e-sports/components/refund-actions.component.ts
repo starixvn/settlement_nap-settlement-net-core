@@ -29,11 +29,8 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
     public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
     private readonly leaguePinGoal = 151;
     constructor(
-        protected inject: Injector,
-        private readonly messageBoxService: MessageBoxService,
-        protected toastrService: ToastrService,
-        protected aioService: AioService) {
-        super(aioService, toastrService);
+        private readonly inject: Injector) {
+        super();
         this.confirmationDialogMessage.title = Language.confirmationBox;
     }
 
@@ -56,7 +53,10 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
         this.permission = this.match.permission;
     }
 
-    private initService(){
+    public initService(){
+        this.messageBoxService = this.inject.get(MessageBoxService);
+        this.aioService = this.inject.get(AioService);
+        this.toastrService = this.inject.get(ToastrService);
         this.inject.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
         this.toastrService.overlayContainer = this.toastContainer;
     }
