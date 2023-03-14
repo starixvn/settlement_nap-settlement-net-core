@@ -31,6 +31,7 @@ public class CalculateServiceTests
         repository = Substitute.For<IDynamicRepository>();
         createCriteriaService = Substitute.For<ICreateCriteriaService>();
         scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
+        logDirectlyService = Substitute.For<LogDirectlyService>();
         var mapperConfig = new MapperConfigurationExpression();
         mapperConfig.AddProfile<SoccerAutoMapperProfile>();
         var config = new MapperConfiguration(mapperConfig);
@@ -55,6 +56,7 @@ public class CalculateServiceTests
             Action = ActionType.CalculateAll
         };
         createCriteriaService.CreateCalculateCriteria(Arg.Any<SettleRequest>()).Returns(criteria);
+        logDirectlyService.WriteLog(Arg.Any<int>(), Arg.Any<string>());
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage { ErrorCode = errorCode, ErrorMessage = errorMsg });
 
         var actual = await service.Calculate(query);
@@ -75,6 +77,8 @@ public class CalculateServiceTests
             Action = ActionType.CalculateAll
         };
         createCriteriaService.CreateCalculateCriteria(Arg.Any<SettleRequest>()).Returns(criteria);
+        logDirectlyService.WriteLog(Arg.Any<int>(), Arg.Any<string>());
+
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
 
         await service.Calculate(query);
@@ -100,6 +104,7 @@ public class CalculateServiceTests
             Action = ActionType.CalculateAll
         };
         createCriteriaService.CreateCalculateCriteria(Arg.Any<SettleRequest>()).Returns(criteria);
+        logDirectlyService.WriteLog(Arg.Any<int>(), Arg.Any<string>());
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
         await repository.ExecuteAsync(Arg.Any<CalculateCriteria>());
 
