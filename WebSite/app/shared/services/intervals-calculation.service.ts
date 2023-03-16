@@ -1,3 +1,4 @@
+import { SettlementStatusId } from './../constants/settlement-status-id.native';
 import { Injectable } from "@angular/core";
 import { ResultDetail } from "../../shared/models/sportsbook-sop";
 import { TicketStatusText } from "../../shared/constants";
@@ -6,7 +7,6 @@ import * as _ from 'lodash';
 @Injectable()
 export class IntervalCalculationService {
     public readonly calculatedStatus = "Complete";
-    public readonly refundedStatus = "Refund";
     public readonly maximumInterval = 5;
 
     public isMatchNotCheckedWhenChangingIntervals(resultDetails: ResultDetail[], fullTimeId: string, totalRoundId: string) {
@@ -46,7 +46,7 @@ export class IntervalCalculationService {
     }
 
     private isIntervalCheckedOrCalculated(interval: ResultDetail) {
-        return interval.checked || _.includes(interval.resultStatus, this.calculatedStatus);
+        return interval.checked || _.isEqual(interval.settlementStatusId, SettlementStatusId.Calculated);
     }
 
     public isNonCheckedIntervalsConsistent(resultDetails: ResultDetail[], isScoreDirect: boolean,
@@ -64,9 +64,9 @@ export class IntervalCalculationService {
     }
 
     private isOtherIntervalNotConsistent(interval: ResultDetail) {
-        const isIntervalCalculated = _.includes(interval.resultStatus, this.calculatedStatus);
+        const isIntervalCalculated = _.isEqual(interval.settlementStatusId, SettlementStatusId.Calculated);
         const intervalHasTickets = !_.isEqual(interval.ticketStatus, TicketStatusText.noTicket);
-        const isIntervalNotRefunded = !_.includes(interval.resultStatus, this.refundedStatus);
-        return isIntervalCalculated || intervalHasTickets && isIntervalNotRefunded;
+        const isIntervalNotRefunded = !_.isEqual(interval.settlementStatusId, SettlementStatusId.Refund);
+        return isIntervalCalculated || (intervalHasTickets && isIntervalNotRefunded);
     }
 }
