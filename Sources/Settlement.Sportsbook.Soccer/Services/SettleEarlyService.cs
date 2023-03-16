@@ -69,10 +69,12 @@ public class SettleEarlyServiceImp : SettleEarlyService
         var message = LogDirectlyServiceImp.CreateEarlyLog(
             request.ActionName,
             request.MatchId,
-            xmlConvertService.Serialize(request.SelectedResources));
+            xmlConvertService.Serialize(request.SelectedResources))
+            .Replace("ArrayOfResourceItem", "Resources").Replace("ResourceItem", "Resource");
 
         logDirectlyService.WriteLog(request.MatchId, message);
     }
+
 
     private async Task<Result> Execute(CalculateEarlyCriteria criteria)
     {
