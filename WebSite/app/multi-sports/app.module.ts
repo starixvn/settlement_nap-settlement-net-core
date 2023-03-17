@@ -20,6 +20,7 @@ import { MaterialDialogComponent } from '../shared/components/material-dialog-if
 import { PipesModule } from '../shared/pipes/pipes.module.native';
 import { CustomHttpRequestInterceptor } from '../shared/custom-httprequest-interceptor.native';
 import { DynamicHeightDirective } from '../shared/directives';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
     imports: [
@@ -32,7 +33,9 @@ import { DynamicHeightDirective } from '../shared/directives';
         PipesModule,
         NgbModule,
         DatepickerComponent,
-        DynamicHeightDirective
+        NewMultipleSelectComponent,
+        DynamicHeightDirective,
+        NoopAnimationsModule
     ],
     declarations: [
         AppComponent,
@@ -41,7 +44,6 @@ import { DynamicHeightDirective } from '../shared/directives';
         ModalDialogComponent,
         ModalContentDialogComponent,
         MaterialDialogWithResponseComponent,
-        NewMultipleSelectComponent,
         LeagueComponent,
         MaterialDialogComponent,
     ],

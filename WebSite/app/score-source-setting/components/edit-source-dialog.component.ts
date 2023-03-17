@@ -1,3 +1,4 @@
+import { FormsModule } from '@angular/forms';
 import { Component, Inject } from "@angular/core";
 import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { DefaultGames, sportSupport } from "../constants";
@@ -11,6 +12,8 @@ import { Language } from "../../shared/language";
 @Component({
     selector: 'edit-source-dialog',
     templateUrl: 'edit-source-dialog.component.html',
+    standalone: true,
+    imports: [FormsModule],
     providers: [
         MessageBoxService,
         QueryService,

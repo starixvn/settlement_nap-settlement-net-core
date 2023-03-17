@@ -1,3 +1,5 @@
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import { Component, Inject, OnInit } from "@angular/core";
 import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { DefaultGames, sportSupport } from "../constants";
@@ -17,7 +19,9 @@ import { AddSourceResult, RequestNewOutsideSource } from "../models";
         QueryService,
         HttpRequestService,
         BlockUIService,
-    ]
+    ],
+    standalone: true,
+    imports:[CommonModule, FormsModule]
 })
 export class AddSourceDialogComponent implements OnInit{
     public isButtonClicked: boolean;

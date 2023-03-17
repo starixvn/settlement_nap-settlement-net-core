@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Settlement.Core.Models;
+﻿namespace Settlement.Core.Models;
 
 public class AppSettingsKey
 {
@@ -9,4 +7,6 @@ public class AppSettingsKey
     public string ThirdPartyJackTimeUrl { get; set; }
 
     public bool EnableVerifyingRunningOdds { get; set; }
+
+    public string NetPositionApi { get; set; }
 }

@@ -1,29 +1,43 @@
-﻿import { Component, ViewChild } from '@angular/core';
+﻿import { lastValueFrom } from 'rxjs';
+import { CommonModule } from '@angular/common';
+import { CalculationMatchDetailComponent } from './calculation-match-detail.component';
+import { Component, ViewChild, Injector } from '@angular/core';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 import * as _ from 'lodash';
-import { MessageBoxService, AioService } from '../../shared/services';
-import { ModalDialogMessage, Result, ResultCommand } from '../../shared/models';
+import { MessageBoxService, AioService, BlockUIService, HttpRequestService } from '../../shared/services';
+import { ModalDialogMessage } from '../../shared/models';
 import { Language } from '../../shared/language';
 import { SettlementStatusId, SportType, CalculateAction, ResultStatusId } from '../../shared/constants';
 import {
     SettleQuery,
     MatchDetail,
     HedgeMatchDetail,
-    NetPositionQuery,
     SettleChildMatchQuery,
     Match
 } from '../models';
-import { VerificationService, CricketService } from '../services';
+import { VerificationService } from '../services';
 import { ApiKeys, KickOffTime, Resources, ResourcesIds } from '../constants';
 import { ResultDetail, SaveScoreQuery, SportTemplate } from '../../shared/models/sportsbook-sop';
 import { VerificationBaseService } from '../../core/services/verification-base.service';
-
+import { CalculateCommonModule } from '../../shared/modules/calculate-common.module';
+import { ResultByPlayerNamePipe, ResultNameByIdPipe, ResultValuePipe } from '../pipes';
+import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
 @Component({
     selector: 'calculation-actions',
     templateUrl: 'calculation-actions.component.html',
+    standalone: true,
+    imports: [CommonModule, CalculateCommonModule, ResultByPlayerNamePipe, ResultValuePipe, ResultNameByIdPipe, IntervalBackgroundPipe, CalculationMatchDetailComponent],
+    providers: [ResultNameByIdPipe, VerificationService, VerificationBaseService]
 })
 export class CalculationActionsComponent implements SportTemplate {
     @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
+    private messageBoxService: MessageBoxService;
+    private verificationService: VerificationService;
+    private aioService: AioService;
+    private verificationBaseService: VerificationBaseService;
+    private toastrService: ToastrService;
+    private resultNameByIdPipe: ResultNameByIdPipe;
+    public blockUI = true;
     public match: Match;
     public hedgeMatchDetail: HedgeMatchDetail;
     public applyHedgeMatch: boolean;
@@ -38,26 +52,22 @@ export class CalculationActionsComponent implements SportTemplate {
     public isDisabledUnCalculate: boolean;
     public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
 
-    constructor(
-        private readonly messageBoxService: MessageBoxService,
-        private readonly cricketService: CricketService,
-        private readonly verificationService: VerificationService,
-        private readonly aioService: AioService,
-        private readonly verificationBaseService: VerificationBaseService,
-        private readonly toastrService: ToastrService) {
+    constructor(private injector: Injector) {
         this.confirmationDialogMessage.title = Language.confirmationBox;
     }
 
-    async getMatch(matchId: number, rootUrl: string): Promise<void> {
+    async getMatch(matchId: number): Promise<void> {
+        this.initService();
         const matchQuery = {
             matchId,
             apikey: ApiKeys.NormalMatch,
             settleType: "MNL"
         };
 
-        this.cricketService.rootUrl = rootUrl;
         this.toastrService.overlayContainer = this.toastContainer;
-        this.match = await this.aioService.getMatch(matchQuery).toPromise() as Match;
+        
+        const match$ = this.aioService.getMatch(matchQuery);
+        this.match = await lastValueFrom(match$) as Match;
         this.isLeader = this.match.permission.isLeader;
         this.isTrader = this.match.permission.isTrader;
         this.canCalculate = this.match.permission.canCalculate;
@@ -75,6 +85,17 @@ export class CalculationActionsComponent implements SportTemplate {
         });
         this.match.resultDetails = _.orderBy(this.match.resultDetails, (map) => map.ordNo);
         this.init();
+    }
+
+    private initService() {
+        this.messageBoxService = this.injector.get(MessageBoxService);
+        this.verificationService = this.injector.get(VerificationService);
+        this.aioService = this.injector.get(AioService);
+        this.verificationBaseService = this.injector.get(VerificationBaseService);
+        this.toastrService = this.injector.get(ToastrService);
+        this.resultNameByIdPipe = this.injector.get(ResultNameByIdPipe)
+        this.injector.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
+        this.toastrService.overlayContainer = this.toastContainer;
     }
 
     private init() {
@@ -184,7 +205,7 @@ export class CalculationActionsComponent implements SportTemplate {
                 apikey: ApiKeys.NormalMatch,
                 sportType: SportType.cricket,
             };
-            const needConfirm = await this.aioService.verifyChangedSettledTickets(this.selectedResources, getResultQuery).toPromise();
+            const needConfirm = await this.aioService.verifyChangedSettledTickets(this.selectedResources, getResultQuery);
             if (needConfirm) {
                 this.confirmationDialogMessage.message = Language.recalculateNotification;
                 this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
@@ -205,7 +226,7 @@ export class CalculationActionsComponent implements SportTemplate {
     private getConfirmMessage(resultDetails: ResultDetail[]) {
         let confirmMessage = `${Language.CalculationConfirmMessage}<br/>${Language.CalculationAdditionalConfirmation}<br/>`;
         resultDetails.forEach((x: ResultDetail) => {
-            const resourceName = this.cricketService.resultNameById(x.resourceId, this.match.matchDetail);
+            const resourceName = this.resultNameByIdPipe.transform(x.resourceId, this.match.matchDetail);
             const value = `${x.homeValue ? x.homeValue : ''}${x.resourceId === ResourcesIds.final ? '-' + x.awayValue : ''}`;
             confirmMessage += `${resourceName}: ${value}<br/>`;
         });
@@ -217,6 +238,7 @@ export class CalculationActionsComponent implements SportTemplate {
             item.homeValue = (Number(item.homeValue)).toString();
             item.awayValue = _.isEmpty(item.awayValue) ? '' : (Number(item.awayValue)).toString();
         });
+
         this.doSaveScore(CalculateAction.calculate, () => {
             this.sendRequest(selectedResources);
         });
@@ -224,27 +246,14 @@ export class CalculationActionsComponent implements SportTemplate {
 
     private async sendRequest(resource: ResultDetail[]): Promise<void> {
         const settleQuery = new SettleQuery(this.match.matchDetail.matchId, resource, CalculateAction.calculate,
-            this.isReSettledTickets, this.isLeader);
-        const result = await this.aioService.push(settleQuery).toPromise() as Result;
+            this.isReSettledTickets, this.isLeader, false);
+        
+        const result = await this.aioService.push(settleQuery);
         if (result.isSuccessful) {
             this.handleChildMatch(settleQuery, result.childMatchIds);
-            this.handelNetPosition(settleQuery, result.resultCommand);
+            this.settleHedgeMatch(settleQuery);
         } else {
             this.toastrService.error(result.errMsg);
-        }
-    }
-
-    private async handelNetPosition(settleQuery: SettleQuery, resultCommand: ResultCommand[]) {
-        if (!_.isNil(resultCommand) && resultCommand.length > 0) {
-            const netPositionQuery = new NetPositionQuery(this.matchDetail.matchId, settleQuery.actionName, resultCommand, true);
-            const result = await this.cricketService.netPosition(netPositionQuery).toPromise() as Result;
-            if (result.isSuccessful) {
-                this.settleHedgeMatch(settleQuery);
-            } else {
-                this.toastrService.error(result.errMsg);
-            }
-        } else {
-            this.settleHedgeMatch(settleQuery);
         }
     }
 
@@ -252,17 +261,12 @@ export class CalculationActionsComponent implements SportTemplate {
         const hedgeMatchId = this.applyHedgeMatch ? this.match.hedgeMatchDetail.matchId : 0;
         if (hedgeMatchId > 0) {
             settleQuery.matchId = hedgeMatchId;
-            const result = await this.aioService.push(settleQuery).toPromise() as Result;
-            if (result.resultCommand.length > 0) {
-                const netPositionQuery = new NetPositionQuery(hedgeMatchId, settleQuery.actionName, result.resultCommand, false);
-                const resultHedgeMatch = await this.cricketService.netPosition(netPositionQuery).toPromise() as Result;
-                if (resultHedgeMatch.isSuccessful) {
-                    this.messageBoxService.closePopup();
-                } else {
-                    this.toastrService.error(result.errMsg);
-                }
-            } else {
+            settleQuery.isHedgeMatch = true;
+            const result = await this.aioService.push(settleQuery);
+            if (result.isSuccessful) {
                 this.messageBoxService.closePopup();
+            } else {
+                this.toastrService.error(result.errMsg);
             }
         } else {
             this.messageBoxService.closePopup();
@@ -294,11 +298,13 @@ export class CalculationActionsComponent implements SportTemplate {
         });
 
         const query = new SettleQuery(this.match.matchDetail.matchId, selectedResources, CalculateAction.unCalculate,
-            this.isReSettledTickets, this.isLeader);
-        const result = await this.aioService.push(query).toPromise() as Result;
+            this.isReSettledTickets, this.isLeader, false);
+        
+
+        const result = await this.aioService.push(query);
         if (result.isSuccessful) {
             this.handleChildMatch(query, result.childMatchIds);
-            this.handelNetPosition(query, result.resultCommand);
+            this.settleHedgeMatch(query);
         } else {
             this.toastrService.error(result.errMsg);
         }
@@ -308,7 +314,7 @@ export class CalculationActionsComponent implements SportTemplate {
         if (!_.isEmpty(childMatchIds)) {
             const settleChildMatchQuery = new SettleChildMatchQuery(childMatchIds, settleQuery.selectedResources,
                 settleQuery.actionName, settleQuery.isReSettledTickets);
-            await this.aioService.pushChildMatch(settleChildMatchQuery).toPromise();
+            await this.aioService.pushChildMatch(settleChildMatchQuery);
         }
     }
 
@@ -338,7 +344,7 @@ export class CalculationActionsComponent implements SportTemplate {
             apiKey: ApiKeys.NormalMatch
         };
 
-        const result = await this.aioService.saveScore(query).toPromise() as Result;
+        const result = await this.aioService.saveScore(query);
         if (result.isSuccessful) {
             if (_.isEqual(type, CalculateAction.calculate)) {
                 func();
@@ -398,7 +404,7 @@ export class CalculationActionsComponent implements SportTemplate {
             isTrader: true
         };
 
-        const result = await this.aioService.saveScore(query).toPromise() as Result;
+        const result = await this.aioService.saveScore(query);
         if (result.isSuccessful) {
             this.match.resultDetails.forEach((map) => {
                 map.checked = false;

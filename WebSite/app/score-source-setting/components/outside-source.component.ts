@@ -1,3 +1,8 @@
+import { NewMultipleSelectComponent } from './../../shared/components/multiple-select/multiple-select.component';
+import { MaterialModule } from './../../shared/material-module';
+import { FormsModule } from '@angular/forms';
+import { SourceStatusPipe } from './../pipes/source-status.pipe';
+import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { MultipleSelect, ItemsSelect} from '../../shared/models';
 import { OutsideSource, GetOutsideSourceQuery, Game, RequestNewOutsideSource } from '../models';
@@ -8,10 +13,13 @@ import { DefaultGames, DefaultFilterValue, sportSupport, Sport } from '../consta
 import { EditSourceDialogComponent } from './edit-source-dialog.component';
 import * as _ from 'lodash';
 import { SportType } from '../../shared/constants';
+import { ExternalLinkPipe, GameStatusPipe } from '../pipes';
 
 @Component({
   selector: 'outside-source',
   templateUrl: './outside-source.component.html',
+  standalone: true,
+  imports: [CommonModule, SourceStatusPipe, FormsModule, GameStatusPipe, ExternalLinkPipe, MaterialModule, NewMultipleSelectComponent],
 })
 export class OutsideSourceComponent implements OnInit {
   private readonly popupSize = '500px';

@@ -363,7 +363,7 @@ table {
         }
 
         .bettype-name {
-            width: 182px;
+            width: 160px;
             padding: 4px 0;
         }
 
@@ -458,7 +458,7 @@ table {
     }
 
     .table-scroll {
-        max-height: 450px;
+        max-height: 440px;
         overflow-y: scroll;
         overflow-x: hidden;
         border-right: solid 1px #C8C8C8;
@@ -555,11 +555,8 @@ tr.mismatched td:not(:first-child):not(:nth-child(2)):not(.calculated):not(.refu
 }
 
 .manage-outside-source {
-    border: solid 1px;
-
     .title {
         font-weight: bold;
-        padding-top: 6px;
     }
 }
 
@@ -623,11 +620,6 @@ tr.mismatched td:not(:first-child):not(:nth-child(2)):not(.calculated):not(.refu
     &:hover {
         background-position: -105px -341px;
     }
-}
-
-.early-filter {
-    margin-bottom: -10px;
-    height: 40px;
 }
 
 .select-checkbox {
@@ -785,4 +777,8 @@ tr.mismatched td:not(:first-child):not(:nth-child(2)):not(.calculated):not(.refu
 
 .cdk-drag-placeholder {
     opacity: 0;
+}
+
+.modal-backdrop {
+    z-index: 1050 !important;
 }

@@ -1,0 +1,58 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<!--[if IEMobile 7]><html class="no-js iem7 oldie"><![endif]-->
+<!--[if (IE 7)&!(IEMobile)]><html class="no-js ie7 oldie" lang="en"><![endif]-->
+<!--[if (IE 8)&!(IEMobile)]><html class="no-js ie8 oldie" lang="en"><![endif]-->
+<!--[if (IE 9)&!(IEMobile)]><html class="no-js ie9" lang="en"><![endif]-->
+<!--[if (gt IE 9)|(gt IEMobile 7)]><!-->
+<html lang="en">
+<!--<![endif]-->
+<head>
+    <meta charset="utf-8" />
+    <title>OTP</title>
+    <meta name="viewport" content="width=device-width" />
+    <link href="@Url.Content("~/nap-auth/auth.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/nap-auth/otp.css")" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <div id='not-supported-browser-panel' style="display: none">
+        Your browser is no longer supported. Some parts will not work and you may experience
+        problems.<br />
+        If you are having problems, try <a href='http://browsehappy.com/'>this</a> for full
+        browsing experience. Thank you!
+    </div>
+
+    @{
+        var message = ViewBag.Message == null ? string.Empty : ViewBag.Message.ToString();
+        var messageDisplayStyle = string.IsNullOrEmpty(message) ? "display:none" : "display:block";
+    }
+    <div class="center">
+        @using (Html.BeginForm())
+        {
+            <div id="login-box">
+                <div id="msg" style="@messageDisplayStyle">
+                    <span id="inner-msg">@message</span>
+                </div>
+                <div class="header">
+                    <div class="welcome">
+                    </div>
+                    <div class="secure">
+                    </div>
+                </div>
+                <div class="auth">
+                    <input type="text" id="otp" name="otp" class="otp" autocomplete="off" />
+                    <input type="button" id="btnCancel" value="CANCEL" class="submit" onclick="location.href = '@Url.Content("~/Auth")'" />
+                    <input type="submit" id="btnSubmit" value="ENTER OTP" class="submit" />
+                    <div class="bestview">
+                        <span>Best view in </span><span class="ff4">Firefox 60+</span><span class="chrome">Chrome 67+</span>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+
+</body>
+</html>

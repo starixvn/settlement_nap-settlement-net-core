@@ -16,7 +16,6 @@ import { MatButtonModule } from '@angular/material/button';
 
 @NgModule({
   exports: [
-    NoopAnimationsModule,
     MatCheckboxModule,
     MatExpansionModule,
     MatInputModule,

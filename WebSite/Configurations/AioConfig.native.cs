@@ -2,6 +2,7 @@
 using Settlement.Sportsbook.Aio.Controllers;
 using Settlement.Sportsbook.Aio.MapperFactory;
 using Settlement.Sportsbook.Aio.Services;
+using Settlement.Sportsbook.Aio.Services.Cricket;
 using System.Reflection;
 
 namespace Settlement.WebSites.Configurations;
@@ -18,6 +19,7 @@ public static class AioConfig
         services.AddTransient<ICreateQueryService, CreateQueryServiceImp>();
         services.AddTransient<MergeDataService, MergeDataServiceImp>();
         services.AddTransient<MultipleServerAioService, MultipleServerAioServiceImp>();
+        services.AddTransient<NetPositionService, NetPositionServiceImp>();
     }
 
     public static void ConfigAioMediator(this IServiceCollection services)

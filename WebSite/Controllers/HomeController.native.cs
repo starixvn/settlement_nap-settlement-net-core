@@ -1,4 +1,5 @@
 ﻿using Fanex.NAP.Client.Helpers.Web;
+using Fanex.NAP.Client.Models;
 using Fanex.NAP.Client.Models.ParameterObject;
 using Fanex.NAP.Client.Services;
 using Microsoft.AspNetCore.Authentication;
@@ -26,10 +27,32 @@ public class HomeController : Controller
         this.configuration = configuration;
     }
 
-    [AllowAnonymous]
+    [Authorize]
     public IActionResult Index()
     {
-        ViewBag.NetCoreRootUrl = configuration.GetSection("Settle.Domain:NetCoreRootUrl").Value;
+        var returnUrl = configuration.GetSection("AuthSettings:LoginPath").Value;
+        var firstMenu = session.MenuItemList != null ? session.MenuItemList.MinBy(i => i.DisplayOrder) : new MenuItem();
+
+        if (session.UserId > 0 && session.MenuItemList is { Count: > 0 } && firstMenu != null)
+        {
+            var childMenu = session.MenuItemList.FirstOrDefault(i => i.ParentId > 0 && i.ParentId == firstMenu.Id);
+
+            returnUrl = childMenu != null ? childMenu.Url : firstMenu.Url;
+
+            if (returnUrl[..1].Equals("/"))
+            {
+                returnUrl = returnUrl[1..];
+            }
+
+            returnUrl = Url.Content(returnUrl);
+        }
+
+        return Redirect(returnUrl);
+    }
+
+    [AllowAnonymous]
+    public IActionResult Test()
+    {
         ViewBag.IsSessionAvailable = HttpContext.Session.IsAvailable;
         ViewBag.UserId = session.UserId;
         ViewBag.Username = session.UserName;
@@ -194,8 +217,8 @@ public class HomeController : Controller
     {
         ViewBag.Environment = configuration.GetSection("Environment").Value;
         ViewBag.Title = title;
-        ViewBag.NetCoreRootUrl = configuration.GetSection("Settle.Domain:NetCoreRootUrl").Value;
-        ViewBag.RootUrl = configuration.GetSection("Settle.Domain:RootUrl").Value;
+        ViewBag.NetCoreRootUrl = string.Empty;
+        ViewBag.RootUrl = string.Empty;
         ViewBag.PageType = pageType;
 
         return View(viewName);

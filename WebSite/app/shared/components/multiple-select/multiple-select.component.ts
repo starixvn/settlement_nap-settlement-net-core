@@ -1,8 +1,10 @@
+import { CommonModule } from '@angular/common';
+import { FormControl, FormsModule } from '@angular/forms';
+import { MaterialModule } from './../../material-module';
 import {
   Component, Input, ViewChild, ViewChildren, Output, ViewEncapsulation,
   OnChanges, SimpleChanges, ChangeDetectorRef, QueryList, EventEmitter, ViewContainerRef, AfterViewInit
 } from '@angular/core';
-import { FormControl } from '@angular/forms';
 import { ItemsSelect, Group, MultipleSelect } from './../../models';
 import { MatOption } from '@angular/material/core';
 import { MatExpansionPanel } from '@angular/material/expansion';
@@ -12,7 +14,9 @@ import * as _ from 'lodash';
 @Component({
   selector: 'new-multiple-select',
   templateUrl: './multiple-select.component.html',
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  standalone: true,
+  imports:[MaterialModule, FormsModule, CommonModule]
 })
 export class NewMultipleSelectComponent implements OnChanges, AfterViewInit {
   @Input() public multipleSelect: MultipleSelect;

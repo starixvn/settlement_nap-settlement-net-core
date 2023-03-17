@@ -1,46 +1,55 @@
-﻿import { Component, ViewChild } from '@angular/core';
-import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
+﻿
+import { Component, ViewChild, Injector } from '@angular/core';
+import { ToastContainerDirective } from 'ngx-toastr';
 import * as _ from 'lodash';
-import { MessageBoxService, ClosePopupService, AioService } from '../../shared/services';
+import { MessageBoxService, BlockUIService } from '../../shared/services';
 import { CalculateAction } from '../../shared/constants';
-import { Result, MarkedTicketsModel, ModalDialogMessage, ResultCommand } from '../../shared/models';
+import { MarkedTicketsModel, ModalDialogMessage } from '../../shared/models';
 import { Language } from '../../shared/language';
-import {
-    SettleQuery, NetPositionQuery, SettleChildMatchQuery, Match
+import { SettleQuery, SettleChildMatchQuery, Match
 } from '../models';
 import { ApiKeys } from '../constants';
-import { CricketService } from '../services';
 import { RefundActionBaseComponent } from '../../shared/components/sportsbook-sop/refund-action-base.component';
 import { SportTemplate } from '../../shared/models/sportsbook-sop';
+import { RefundCommonModule } from '../../shared/modules/refund-common.module';
+import { ResultNameByIdPipe } from '../pipes';
+import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
+import { MatchDetailComponent } from './match-detail.component';
 
 @Component({
     selector: 'refund-actions',
     templateUrl: 'refund-actions.component.html',
+    standalone: true,
+    imports: [RefundCommonModule, MatchDetailComponent, ResultNameByIdPipe, IntervalBackgroundPipe],
+    providers: [ResultNameByIdPipe]
 })
 export class RefundActionsComponent extends RefundActionBaseComponent implements SportTemplate {
     @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
+    private messageBoxService: MessageBoxService;
     public match: Match;
     private readonly isReSettledTickets: boolean;
     public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
-    constructor(
-        private readonly messageBoxService: MessageBoxService,
-        private readonly cricketService: CricketService,
-        protected toastrService: ToastrService,
-        protected aioService: AioService) {
-        super(aioService, toastrService);
+    constructor(protected injector: Injector) {
+        super(injector);
         this.confirmationDialogMessage.title = Language.confirmationBox;
     }
 
-    async getMatch(matchId: number, rootUrl: string): Promise<void> {
+    async getMatch(matchId: number): Promise<void> {
+        this.initService();
         const matchQuery = {
             matchId,
             apikey: ApiKeys.NormalMatch,
             settleType: "MNL"
         };
         this.toastrService.overlayContainer = this.toastContainer;
-        this.cricketService.rootUrl = rootUrl;
         this.match = await this.aioService.getMatch(matchQuery).toPromise() as Match;
         this.setMatchInfo();
+    }
+
+    private initService(){
+        this.messageBoxService = this.injector.get(MessageBoxService);
+        this.injector.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
+        this.toastrService.overlayContainer = this.toastContainer;
     }
 
     private setMatchInfo() {
@@ -77,27 +86,13 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
             selectedResources,
             CalculateAction.refund,
             this.isReSettledTickets,
-            this.match.permission.isLeader);
-        const result = await this.aioService.push(query).toPromise() as Result;
+            this.match.permission.isLeader, false);
+        const result = await this.aioService.push(query);
         if (result.isSuccessful) {
             this.handleChildMatch(query, result.childMatchIds);
-            this.handelNetPosition(query, result.resultCommand);
+            this.settleHedgeMatch(query);
         } else {
             this.toastrService.error(result.errMsg);
-        }
-    }
-
-    private async handelNetPosition(query: SettleQuery, resultCommand: ResultCommand[]) {
-        if (!_.isNil(resultCommand) && resultCommand.length > 0) {
-            const netPositionQuery = new NetPositionQuery(this.matchDetail.matchId, query.actionName, resultCommand, true);
-            const result = await this.cricketService.netPosition(netPositionQuery).toPromise() as Result;
-            if (result.isSuccessful) {
-                this.settleHedgeMatch(query);
-            } else {
-                this.toastrService.error(result.errMsg);
-            }
-        } else {
-            this.settleHedgeMatch(query);
         }
     }
 
@@ -105,17 +100,12 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
         const hedgeMatchId = this.applyHedgeMatch ? this.match.hedgeMatchDetail.matchId : 0;
         if (hedgeMatchId > 0) {
             settleQuery.matchId = hedgeMatchId;
-            const result = await this.aioService.push(settleQuery).toPromise() as Result;
-            if (result.resultCommand.length > 0) {
-                const netPositionQuery = new NetPositionQuery(hedgeMatchId, CalculateAction.unCalculate, result.resultCommand, false);
-                const resultHedgeMatch =await this.cricketService.netPosition(netPositionQuery).toPromise() as Result;
-                if (resultHedgeMatch.isSuccessful) {
-                    this.messageBoxService.closePopup();
-                } else {
-                    this.toastrService.error(result.errMsg);
-                }
-            } else {
+            settleQuery.isHedgeMatch = true;
+            const result = await this.aioService.push(settleQuery);
+            if (result.isSuccessful) {
                 this.messageBoxService.closePopup();
+            } else {
+                this.toastrService.error(result.errMsg);
             }
         } else {
             this.messageBoxService.closePopup();
@@ -126,7 +116,7 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
         if (!_.isEmpty(childMatchIds)) {
             const settleChildMatchQuery = new SettleChildMatchQuery(childMatchIds, settleQuery.selectedResources,
                 settleQuery.actionName, settleQuery.isReSettledTickets);
-            await this.aioService.pushChildMatch(settleChildMatchQuery).toPromise();
+            await this.aioService.pushChildMatch(settleChildMatchQuery);
         }
     }
 }

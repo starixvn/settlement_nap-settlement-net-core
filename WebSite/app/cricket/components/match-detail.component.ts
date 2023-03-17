@@ -1,4 +1,5 @@
-﻿import { Component, OnInit, Input } from '@angular/core';
+﻿import { FormsModule } from '@angular/forms';
+import { Component, OnInit, Input } from '@angular/core';
 import { ModalDialogMessage } from '../../shared/models';
 import { Match, MatchDetail } from '../models';
 import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
@@ -6,10 +7,14 @@ import { ResourcesIds } from '../constants';
 import * as _ from 'lodash';
 import { ResultDetail } from '../../shared/models/sportsbook-sop';
 import { SettlementStatusId } from '../../shared/constants';
+import { CommonModule } from '@angular/common';
+import { ScoreBySettlementPipe } from '../../shared/pipes/score-by-settlement.pipe';
 
 @Component({
     selector: 'match-detail',
     templateUrl: './match-detail.component.html',
+    standalone: true,
+    imports: [CommonModule, FormsModule, ScoreBySettlementPipe]
 })
 export class MatchDetailComponent implements OnInit {
     @Input() public match: Match;
@@ -53,7 +58,7 @@ export class MatchDetailComponent implements OnInit {
         return className + this.intervalBackgroundPipe.transform(resultDetail.settlementStatusId);
     }
 
-    private refresh() {
+    public refresh() {
         window.location.reload();
     }
 }

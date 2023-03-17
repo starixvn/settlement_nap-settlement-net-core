@@ -1,14 +1,12 @@
 import { Injectable } from '@angular/core';
-import { map } from 'rxjs/operators';
 import { HttpRequestService } from './http-request.service.native';
 import * as _ from 'lodash';
-import { Observable } from 'rxjs';
+import { Observable, firstValueFrom } from 'rxjs';
 import { GeneralResultDetail, MatchResource, ModalDialogMessage, Result, ResultSettingQuery } from '../models';
 import { MessageBoxService } from './message-box.service.native';
 import { Language } from '../language';
 import { HedgeMatchDetail, ResultDetail, SaveScoreQuery } from '../models/sportsbook-sop';
-import { ResultSettingType, SettlementStatusId, TicketStatusText } from '../../shared/constants';
-import { ClosePopupService } from '.';
+import { ResultSettingType, SettlementStatusId, TicketStatusText, ResultStatus } from '../../shared/constants';
 
 @Injectable()
 export class AioService {
@@ -26,7 +24,8 @@ export class AioService {
     }
 
     public push(query: object) {
-        return this.httpRequestService.postJson(query, `${this.aioApi}/settle`);
+        const response = this.httpRequestService.postJson<Result>(query, `${this.aioApi}/settle`);
+        return firstValueFrom(response);
     }
 
     public verifyNoRunningOdds(query: object) {
@@ -38,11 +37,13 @@ export class AioService {
     }
 
     private getLastestMatchResult(query: object) {
-        return this.httpRequestService.postJson(query, `${this.aioApi}/get-recal-result`);
+        const response = this.httpRequestService.postJson<GeneralResultDetail[]>(query, `${this.aioApi}/get-recal-result`);
+        return firstValueFrom(response);
     }
 
     public saveScore(query: SaveScoreQuery) {
-        return this.httpRequestService.postJson(query, `${this.aioApi}/save-score`);
+        const response = this.httpRequestService.postJson<Result>(query, `${this.aioApi}/save-score`);
+        return firstValueFrom(response);
     }
 
     public getLeagueSources(leagueId: number) {
@@ -58,7 +59,8 @@ export class AioService {
     }
 
     public pushChildMatch(query: object) {
-        return this.httpRequestService.postJson(query, `${this.aioApi}/settle-child-match`);
+        const response = this.httpRequestService.postJson(query, `${this.aioApi}/settle-child-match`);
+        return firstValueFrom(response);
     }
 
     public voidBet(query: object) {
@@ -70,25 +72,21 @@ export class AioService {
         return this.httpRequestService.postJson(query, newApiUrl);
     }
 
-    public verifyChangedSettledTickets(resultDetails: GeneralResultDetail[], query: object): Observable<boolean> {
-        const calculated = "Complete";
-        const refunded = "Refund";
+    public async verifyChangedSettledTickets(resultDetails: GeneralResultDetail[], query: object) {
+        const latestResults = await this.getLastestMatchResult(query);
+        let needConfirm = false;
+        _.forEach(resultDetails, (result) => {
+            const correspondingResult = _.find(latestResults, (item) => _.isEqual(item.resourceId, result.resourceId));
+            if (correspondingResult
+                && (_.includes(correspondingResult.resultStatus, ResultStatus.refund)
+                    || _.includes(correspondingResult.resultStatus, ResultStatus.completed)
+                    && (!_.isEqual(result.homeValue, correspondingResult.homeValue)
+                        || !_.isEqual(result.awayValue, correspondingResult.awayValue)))) {
+                needConfirm = true;
+            }
+        });
 
-        return this.getLastestMatchResult(query).pipe(map((lastestResults: GeneralResultDetail[]) => {
-            let needConfirm = false;
-            _.forEach(resultDetails, (result) => {
-                const correspondingResult = _.find(lastestResults, (item) => _.isEqual(item.resourceId, result.resourceId));
-                if (correspondingResult
-                    && (_.includes(correspondingResult.resultStatus, refunded)
-                        || _.includes(correspondingResult.resultStatus, calculated)
-                        && (!_.isEqual(result.homeValue, correspondingResult.homeValue)
-                            || !_.isEqual(result.awayValue, correspondingResult.awayValue)))) {
-                    needConfirm = true;
-                }
-            });
-
-            return needConfirm;
-        }));
+        return needConfirm;
     }
 
     public async checkingNoRunningOdds(matchId: number, selectedResources: string[],

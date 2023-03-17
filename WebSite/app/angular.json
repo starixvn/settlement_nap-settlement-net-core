@@ -1341,76 +1341,57 @@
             "node_modules/ngx-toastr/toastr.css",
             "shared/styles/material.style.less",
             "shared/styles/styles.less",
-            "cricket/style.less"
+            "cricket/style.less",
+            "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css"
           ],
           "allowedCommonJsDependencies": ["lodash"]
         },
         "configurations": {
-          "dev": {
+          "production": {
             "budgets": [{
-              "type": "anyComponentStyle",
-              "maximumWarning": "6kb"
-            }],
-            "optimization": false,
-            "sourceMap": true,
-            "namedChunks": true,
-            "aot": false,
-            "extractLicenses": false,
-            "vendorChunk": true,
-            "buildOptimizer": false
-          },
-          "prod": {
-            "budgets": [{
-              "type": "anyComponentStyle",
-              "maximumWarning": "6kb"
-            }],
+                "type": "initial",
+                "maximumWarning": "4mb",
+                "maximumError": "5mb"
+              },
+              {
+                "type": "anyComponentStyle",
+                "maximumWarning": "4mb",
+                "maximumError": "5mb"
+              }
+            ],
             "fileReplacements": [{
               "replace": "environments/environment.ts",
               "with": "environments/environment.prod.ts"
-            }]
-          },
-          "production": {
-            "budgets": [{
-              "type": "anyComponentStyle",
-              "maximumWarning": "6kb"
             }],
-            "optimization": true,
             "outputHashing": "all",
-            "sourceMap": false,
-            "namedChunks": false,
-            "aot": false,
-            "extractLicenses": true,
-            "vendorChunk": false,
-            "buildOptimizer": false,
             "deployUrl": "cricket/"
+          },
+          "development": {
+            "buildOptimizer": false,
+            "optimization": false,
+            "vendorChunk": true,
+            "extractLicenses": false,
+            "sourceMap": true,
+            "namedChunks": true
           }
-        }
+        },
+        "defaultConfiguration": "production"
       },
       "serve": {
         "builder": "@angular-devkit/build-angular:dev-server",
         "options": {
           "proxyConfig": "proxy.conf.json",
-          "port": 5001,
-          "aot": false
+          "port": 5001
         },
         "configurations": {
-          "dev": {
-            "browserTarget": "cricket:build:dev"
-          },
-          "prod": {
-            "browserTarget": "cricket:build:prod"
-          },
           "production": {
-            "browserTarget": "cricket:build:production"
+            "browserTarget": "app:build:production"
+          },
+          "development": {
+            "browserTarget": "app:build:development"
           }
         },
-        "defaultConfiguration": "dev"
-      },
-      "extract-i18n": {
-        "builder": "@angular-devkit/build-angular:extract-i18n",
-        "options": {
-          "browserTarget": "cricket:build"
-        }
+        "defaultConfiguration": "development"
       }
     }
   },

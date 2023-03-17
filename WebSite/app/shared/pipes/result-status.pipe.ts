@@ -6,7 +6,7 @@ import * as _ from 'lodash';
 })
 
 export class ResultStatusPipe implements PipeTransform {
-    public transform(resultDetails: ResultDetail[], args: string[]) {
+    public transform(resultDetails: ResultDetail[], args: string) {
         return resultDetails.filter((item) => {
             const hasResultStatus = _.isNil(args)
                 || args.length === 0
@@ -17,7 +17,7 @@ export class ResultStatusPipe implements PipeTransform {
         });
     }
 
-    private filterConfirmRefundMatch(args: string[], resultDetail: ResultDetail) {
+    private filterConfirmRefundMatch(args: string, resultDetail: ResultDetail) {
         if(_.includes(args, 'Confirmed')){
             return resultDetail.resultSettingData.isConfirmedRefund;
         }

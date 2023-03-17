@@ -1,49 +1,60 @@
-﻿import { Component, ViewChild } from '@angular/core';
-import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
-import {
-  Match, SettleQuery, SettleChildMatchQuery
-} from '../models';
+﻿import { Injector } from '@angular/core';
+import { lastValueFrom } from 'rxjs';
+import { Component, ViewChild } from '@angular/core';
+import { ToastContainerDirective } from 'ngx-toastr';
+import { Match, SettleQuery, SettleChildMatchQuery } from '../models';
 import * as _ from 'lodash';
 import { Language } from '../../shared/language';
-import { MessageBoxService, AioService } from '../../shared/services';
-import { ItemsSelect, Result, ResultCommand } from '../../shared/models';
+import { ItemsSelect } from '../../shared/models';
 import { ResultStatusId, CalculateAction, SportType } from '../../shared/constants';
 import { EarlyConstraintService, VerificationService } from '../services';
 import { ApiKeys, KickOffTime, ResourcesIds, ResultControlGroup, ResultStatus, TicketStatus } from '../constants';
 import { ExternalResultDetail, ResultDetail, SportTemplate } from '../../shared/models/sportsbook-sop';
 import { EarlyBaseComponent } from '../../shared/components/sportsbook-sop/early-base.component';
 import { VerificationBaseService } from '../../core/services/verification-base.service';
+import { EarlyCommonModule } from '../../shared/modules/early-common.module';
+import { MatchDetailComponent } from './match-detail.component';
+import { ResultValuePipe, ResultByPlayerNamePipe } from '../pipes';
+import { BlockUIService } from '../../shared/services/block-ui.service';
 
 @Component({
   selector: 'early-settlement',
   templateUrl: './early-settlement.component.html',
+  standalone: true,
+  imports: [EarlyCommonModule, MatchDetailComponent, ResultValuePipe, ResultByPlayerNamePipe],
+  providers: [EarlyConstraintService, ResultValuePipe, ResultByPlayerNamePipe, VerificationService]
 })
 export class EarlySettlementComponent extends EarlyBaseComponent implements SportTemplate {
   @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
+  private earlyConstraintService: EarlyConstraintService;
+  private verificationService: VerificationService;
   public match: Match;
   public matchClone: Match;
   public isShowRefundButton = false;
   public isReadyMatch: boolean;
   constructor(
-    private readonly earlyConstraintService: EarlyConstraintService,
-    private readonly verificationService: VerificationService,
-    protected messageBoxService: MessageBoxService,
-    protected aioService: AioService,
-    protected verificationBaseService: VerificationBaseService,
-    protected toastrService: ToastrService) {
-    super(messageBoxService, verificationBaseService, aioService, toastrService);
+    protected injector: Injector,
+    protected verificationBaseService: VerificationBaseService) {
+    super(injector, verificationBaseService);
   }
 
   async getMatch(matchId: number): Promise<void> {
-    this.toastrService.overlayContainer = this.toastContainer;
+    this.initService();
     const matchQuery = {
       matchId,
       settleType: "EAR",
       apiKey: ApiKeys.NormalMatch
     };
-
-    this.match = await this.aioService.getMatch(matchQuery).toPromise() as Match;
+    const match$ = this.aioService.getMatch(matchQuery);
+    this.match = await lastValueFrom(match$) as Match;
     this.init();
+  }
+
+  private initService() {
+    this.earlyConstraintService = this.injector.get(EarlyConstraintService);
+    this.verificationService = this.injector.get(VerificationService);
+    this.injector.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
+    this.toastrService.overlayContainer = this.toastContainer;
   }
 
   private init() {
@@ -88,7 +99,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
   private upperCaseResult(map: ResultDetail) {
     map.homeValue = map.homeValue?.toUpperCase();
     map.externalScores.forEach(result => {
-        result.homeValue = result.homeValue?.toUpperCase();
+      result.homeValue = result.homeValue?.toUpperCase();
     });
   }
 
@@ -150,7 +161,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         apikey: ApiKeys.NormalMatch,
         sportType: SportType.cricket,
       };
-      const needConfirm = await this.aioService.verifyChangedSettledTickets(this.selectedResources, getEarlyResultQuery).toPromise();
+      const needConfirm = await this.aioService.verifyChangedSettledTickets(this.selectedResources, getEarlyResultQuery);
       if (needConfirm) {
         this.confirmationDialogMessage.message = Language.recalculateNotification;
         this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
@@ -169,7 +180,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         this.selectedResources,
         CalculateAction.earlyCalculate,
         this.isReSettledTickets,
-        this.permission.isLeader);
+        this.permission.isLeader, false);
 
       this.doSaveResult(CalculateAction.calculate,
         this.match.originalResultDetail,
@@ -192,7 +203,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         this.selectedResources,
         CalculateAction.earlyUnCalculate,
         this.isReSettledTickets,
-        this.permission.isLeader);
+        this.permission.isLeader, false);
       this.push(query);
     });
   }
@@ -211,12 +222,12 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
       this.selectedResources,
       CalculateAction.earlyRefund,
       this.isReSettledTickets,
-      this.permission.isLeader);
+      this.permission.isLeader, false);
     this.push(query);
   }
 
   private async push(query: SettleQuery) {
-    const result = await this.aioService.push(query).toPromise() as Result;
+    const result = await this.aioService.push(query);
     if (result.isSuccessful) {
       this.handleChildMatch(result.childMatchIds, query);
       this.messageBoxService.closePopup();
@@ -229,7 +240,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     if (!_.isEmpty(childMatchIds)) {
       const settleChildMatchQuery = new SettleChildMatchQuery(childMatchIds, settleQuery.selectedResources,
         settleQuery.actionName, settleQuery.isReSettledTickets);
-      await this.aioService.pushChildMatch(settleChildMatchQuery).toPromise();
+      await this.aioService.pushChildMatch(settleChildMatchQuery);
     }
   }
 
@@ -305,7 +316,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
       isTrader: true
     };
 
-    const result = await this.aioService.saveScore(query).toPromise() as Result;
+    const result = await this.aioService.saveScore(query);
     if (result.isSuccessful) {
       this.autoUncheckAfterFilter();
     } else {

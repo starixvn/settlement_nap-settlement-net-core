@@ -22,7 +22,7 @@ public interface SettingService
 
     Task<Result> UpdateTimeSettingLeague(TimeSettingRequest request);
 
-        Task<string> GetSetting(GetSettingRequest request);
+    Task<string> GetSetting(GetSettingRequest request);
 }
 
 public class SettingServiceImp : SettingService
@@ -101,19 +101,19 @@ public class SettingServiceImp : SettingService
             ErrCode = criteria.ErrCode,
             ErrMsg = criteria.ErrMsg
         };
-        }
+    }
 
-        public async Task<string> GetSetting(GetSettingRequest request)
+    public async Task<string> GetSetting(GetSettingRequest request)
+    {
+        const int convertToBase = 2;
+        var criteria = new GetSettingCriteria
         {
-            const int convertToBase = 2;
-            var criteria = new GetSettingCriteria
-            {
-                MatchId = request.MatchId,
-                LeagueId = request.LeagueId
-            };
+            MatchId = request.MatchId,
+            LeagueId = request.LeagueId
+        };
 
-            var setting = await repository.GetAsync<int>(criteria);
+        var setting = await repository.GetAsync<int>(criteria);
 
-            return Convert.ToString(setting, convertToBase).Reverse();
+        return Convert.ToString(setting, convertToBase).Reverse();
     }
 }

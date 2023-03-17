@@ -11,10 +11,7 @@ import { ResultPipe } from './result.pipe';
 
 @NgModule({
     exports: [
-        ScoreBySettlementPipe,
-        IntervalBackgroundPipe,
         ResultByTeamNamePipe,
-        ExternalSourceNamePipe,
         ResultStatusPipe,
         TicketStatusPipe,
         ResultTypePipe,
@@ -22,10 +19,7 @@ import { ResultPipe } from './result.pipe';
         ResultPipe,
     ],
     declarations: [
-        ScoreBySettlementPipe,
-        IntervalBackgroundPipe,
         ResultByTeamNamePipe,
-        ExternalSourceNamePipe,
         ResultStatusPipe,
         TicketStatusPipe,
         ResultTypePipe,
