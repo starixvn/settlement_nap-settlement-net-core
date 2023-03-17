@@ -1,9 +1,9 @@
 import { Component, ViewChild, Injector } from '@angular/core';
-import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
+import { ToastContainerDirective } from 'ngx-toastr';
 import { Match, SettleQuery } from '../models';
 import * as _ from 'lodash';
 import { Language } from '../../shared/language.native';
-import { MessageBoxService, AioService, BlockUIService, IntervalCalculationService } from '../../shared/services';
+import { BlockUIService, IntervalCalculationService } from '../../shared/services';
 import {
   ResultStatusId, CalculateAction, SportType, TicketStatusText
 } from '../../shared/constants';
@@ -62,9 +62,6 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
 
   public initService() {
     this.earlyConstraintService = this.injector.get(EarlyConstraintService);
-    this.messageBoxService = this.injector.get(MessageBoxService);
-    this.aioService = this.injector.get(AioService);
-    this.toastrService = this.injector.get(ToastrService);
     this.injector.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
     this.toastrService.overlayContainer = this.toastContainer;
   }

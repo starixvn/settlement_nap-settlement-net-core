@@ -4,7 +4,7 @@ import { Language } from "../../language.native";
 import { AioService } from "../../services";
 import { HedgeMatchDetail, MatchDetail, Permission, ResultDetail, SettleQuery } from "../../models/sportsbook-sop";
 import * as _ from "lodash";
-import { Component } from "@angular/core";
+import { Component, Injector } from "@angular/core";
 import { ToastrService } from "ngx-toastr";
 
 @Component({
@@ -15,13 +15,17 @@ export class RefundActionBaseComponent {
     public toastrService: ToastrService;
     public messageBoxService: MessageBoxService;
     public blockUI = true;
-    protected aioService: AioService;
-    protected toastrService: ToastrService;
     public resultDetails: ResultDetail[];
     public matchDetail: MatchDetail;
     public permission: Permission;
     public hedgeMatchDetail: HedgeMatchDetail;
     public applyHedgeMatch: boolean;
+    constructor(protected injector: Injector) {
+        this.aioService = this.injector.get(AioService);
+        this.toastrService = this.injector.get(ToastrService);
+        this.messageBoxService = this.injector.get(MessageBoxService);
+    }
+
 
     public get selectedResources(): ResultDetail[] {
         return this.resultDetails.filter((item) => item.checked);

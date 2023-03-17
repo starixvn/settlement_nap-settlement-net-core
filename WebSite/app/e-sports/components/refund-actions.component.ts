@@ -1,8 +1,8 @@
 ﻿import { RefundCommonModule } from './../../shared/modules/refund-common.module';
 import { Component, ViewChild, Injector } from '@angular/core';
-import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
+import { ToastContainerDirective } from 'ngx-toastr';
 import * as _ from 'lodash';
-import { MessageBoxService, AioService, BlockUIService } from '../../shared/services';
+import { BlockUIService } from '../../shared/services';
 import { ModalDialogMessage } from '../../shared/models';
 import { Language } from '../../shared/language.native';
 import { Match, SettleQuery } from '../models';
@@ -29,8 +29,8 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
     public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
     private readonly leaguePinGoal = 151;
     constructor(
-        private readonly inject: Injector) {
-        super();
+        protected inject: Injector) {
+        super(inject);
         this.confirmationDialogMessage.title = Language.confirmationBox;
     }
 
@@ -54,9 +54,6 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
     }
 
     public initService(){
-        this.messageBoxService = this.inject.get(MessageBoxService);
-        this.aioService = this.inject.get(AioService);
-        this.toastrService = this.inject.get(ToastrService);
         this.inject.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
         this.toastrService.overlayContainer = this.toastContainer;
     }

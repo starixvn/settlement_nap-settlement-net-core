@@ -77,9 +77,8 @@ export class AioService {
         return firstValueFrom(request);
     }
 
-    public verifyChangedSettledTickets(resultDetails: GeneralResultDetail[], query: object) {
+    public async verifyChangedSettledTickets(resultDetails: GeneralResultDetail[], query: object) {
         const latestResults = await this.getLastestMatchResult(query);
-        const confirm = this.getLastestMatchResult(query).pipe(map((lastestResults: GeneralResultDetail[]) => {
         let needConfirm = false;
         _.forEach(resultDetails, (result) => {
             const correspondingResult = _.find(latestResults, (item) => _.isEqual(item.resourceId, result.resourceId));
@@ -93,8 +92,6 @@ export class AioService {
         });
 
         return needConfirm;
-
-        return firstValueFrom(confirm);
     }
 
     public async checkingNoRunningOdds(matchId: number, selectedResources: string[],

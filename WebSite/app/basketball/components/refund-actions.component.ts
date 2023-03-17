@@ -1,7 +1,7 @@
 ﻿import { GetTicketInfoQuery, Match, ResultDetail, SettleQuery, VoidBetInfo, VoidBetQuery } from '../models';
 import { Component, Injector, ViewChild } from '@angular/core';
 import { Language } from '../../shared/language.native';
-import { MessageBoxService, AioService, BlockUIService } from '../../shared/services';
+import { BlockUIService } from '../../shared/services';
 import { ModalDialogMessage } from '../../shared/models';
 import { SportType } from '../../shared/constants';
 import { BasketballApiKeys, ResourcesIds } from '../constants';
@@ -9,7 +9,7 @@ import * as _ from 'lodash';
 import { RefundActionBaseComponent } from '../../shared/components/sportsbook-sop/refund-action-base.component';
 import { BasketballService, BetStatusService, VerificationService } from '../services';
 import { SportTemplate } from '../../shared/models/sportsbook-sop';
-import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
+import { ToastContainerDirective } from 'ngx-toastr';
 import { MatchDetailComponent } from './match-detail.component';
 import { RefundCommonModule } from '../../shared/modules/refund-common.module';
 import { ResourceNameByIdPipe } from '../pipes/resource-name-by-id.pipe';
@@ -32,8 +32,8 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
     public resultDetail: ResultDetail[];
     public readonly isReSettledTickets: boolean;
     public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
-    constructor(private injector: Injector) {
-        super();
+    constructor(protected injector: Injector) {
+        super(injector);
         this.confirmationDialogMessage.title = Language.confirmationBox;
     }
 
@@ -52,12 +52,8 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
     }
 
     public initService (){
-        this.messageBoxService = this.injector.get(MessageBoxService);
-        this.aioService = this.injector.get(AioService);
-        this.toastrService = this.injector.get(ToastrService);
         this.verificationService = this.injector.get(VerificationService);
         this.basketballService = this.injector.get(BasketballService);
-
         this.injector.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI  = event);
     }
 

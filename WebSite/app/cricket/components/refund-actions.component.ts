@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 import { MessageBoxService, BlockUIService } from '../../shared/services';
 import { CalculateAction } from '../../shared/constants';
 import { MarkedTicketsModel, ModalDialogMessage } from '../../shared/models';
-import { Language } from '../../shared/language';
+import { Language } from '../../shared/language.native';
 import { SettleQuery, SettleChildMatchQuery, Match
 } from '../models';
 import { ApiKeys } from '../constants';
@@ -25,7 +25,6 @@ import { MatchDetailComponent } from './match-detail.component';
 })
 export class RefundActionsComponent extends RefundActionBaseComponent implements SportTemplate {
     @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
-    private messageBoxService: MessageBoxService;
     public match: Match;
     private readonly isReSettledTickets: boolean;
     public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
@@ -42,12 +41,11 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
             settleType: "MNL"
         };
         this.toastrService.overlayContainer = this.toastContainer;
-        this.match = await this.aioService.getMatch(matchQuery).toPromise() as Match;
+        this.match = await this.aioService.getMatch(matchQuery) as Match;
         this.setMatchInfo();
     }
 
     private initService(){
-        this.messageBoxService = this.injector.get(MessageBoxService);
         this.injector.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
         this.toastrService.overlayContainer = this.toastContainer;
     }
@@ -63,7 +61,7 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
     public async refund() {
         this.toastrService.clear();
         const paramsCheckingMarkedTickets = this.generateCheckMarkedTicketsQuery();
-        const res = await this.aioService.checkMarkedTickets(paramsCheckingMarkedTickets).toPromise() as MarkedTicketsModel;
+        const res = await this.aioService.checkMarkedTickets(paramsCheckingMarkedTickets);
         if (this.existResultNotConfirmed()) {
             this.toastrService.error(Language.confirmRefund.refundResultNotConfirmed);
         } else if (res.isExistMarkedTicket) {

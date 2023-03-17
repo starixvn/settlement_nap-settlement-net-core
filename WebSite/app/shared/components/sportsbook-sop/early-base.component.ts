@@ -36,6 +36,10 @@ export class EarlyBaseComponent {
     constructor(protected injector: Injector,
         protected verificationBaseService: VerificationBaseService) {
         this.confirmationDialogMessage.title = Language.confirmationBox;
+        this.aioService = this.injector.get(AioService);
+        this.toastrService = this.injector.get(ToastrService);
+        this.messageBoxService = this.injector.get(MessageBoxService);
+
     }
 
     public get selectedResources(): ResultDetail[] {
@@ -154,8 +158,8 @@ export class EarlyBaseComponent {
 
     public async doSaveResult(type: string, originalResultDetail: ResultDetail[], resultDetails: ResultDetail[],
         ApiKey: string, func: () => void) {
-        const scoresToSave = this.verificationService.getChangedScores(resultDetails, originalResultDetail);
-        const checkedScores = this.verificationService.getOutsideScores(resultDetails);
+        const scoresToSave = this.verificationBaseService.getChangedScores(resultDetails, originalResultDetail);
+        const checkedScores = this.verificationBaseService.getOutsideScores(resultDetails);
         const query: SaveScoreQuery = {
             matchId: this.matchId,
             scoresToSave,
@@ -175,7 +179,7 @@ export class EarlyBaseComponent {
     }
 
     public verifyScoreSourcesAndCalculate(confirmChangedResults: () => void) {
-        if (this.verificationService.allResultsHaveScoreSources(this.resultDetails)) {
+        if (this.verificationBaseService.allResultsHaveScoreSources(this.resultDetails)) {
             this.confirmCalculateMismatchScores(confirmChangedResults);
         } else {
             if (!this.permission.isLeader) {
@@ -190,7 +194,7 @@ export class EarlyBaseComponent {
     }
 
     public confirmCalculateMismatchScores(confirmChangedResults: () => void) {
-        if (this.verificationService.isExistMismatchScore(this.resultDetails)) {
+        if (this.verificationBaseService.isExistMismatchScore(this.resultDetails)) {
             if (!this.permission.isLeader) {
                 this.toastrService.error(Language.eSports.nonLeader.mismatchedResult);
             } else {
@@ -315,7 +319,7 @@ export class EarlyBaseComponent {
     }
 
     public checkResultIsMatched(resultDetail: ResultDetail) {
-        resultDetail.isScoreMismatched = this.verificationService.isEarlyMismatchedWarning(resultDetail);
+        resultDetail.isScoreMismatched = this.verificationBaseService.isEarlyMismatchedWarning(resultDetail);
     }
 
     public autoFillResultOnLoad(resultDetails: ResultDetail[]) {
@@ -331,8 +335,8 @@ export class EarlyBaseComponent {
             resultDetail.awayValue = '';
         }
 
-        this.verificationService.autoFillEarlyResult(resultDetail);
-        resultDetail.isScoreMismatched = this.verificationService.isEarlyMismatchedWarning(resultDetail);
+        this.verificationBaseService.autoFillEarlyResult(resultDetail);
+        resultDetail.isScoreMismatched = this.verificationBaseService.isEarlyMismatchedWarning(resultDetail);
     }
 
     public async verifyRunningOdds(ResourceIds: string[], func: () => void) {

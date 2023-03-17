@@ -3,12 +3,12 @@ import { ExternalSourceNamePipe } from './../../shared/pipes/external-source-nam
 import * as _ from 'lodash';
 import { CalculateAction, ResultStatusId, SportType, TicketStatusText } from '../../shared/constants';
 import { Component, Injector, ViewChild } from '@angular/core';
-import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
+import { ToastContainerDirective } from 'ngx-toastr';
 import { BasketballApiKeys, EarlyResourcesIds, KickOffTime, ResultStatus } from '../constants';
 import { BasketballService, BetStatusService, EarlyService, VerificationService } from '../services';
 import { Language } from '../../shared/language.native';
 import { Match, SettleQuery } from '../models';
-import { MessageBoxService, AioService, BlockUIService } from '../../shared/services';
+import { BlockUIService } from '../../shared/services';
 import { ResultDetail, SportTemplate } from '../../shared/models/sportsbook-sop';
 import { EarlyBaseComponent } from '../../shared/components/sportsbook-sop/early-base.component';
 import { MatchDetailComponent } from './match-detail.component';
@@ -53,10 +53,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
 
     public initService(){
         this.earlyService = this.injector.get(EarlyService);
-        this.aioService = this.injector.get(AioService);
-        this.messageBoxService = this.injector.get(MessageBoxService);
         this.verificationService = this.injector.get(VerificationService);
-        this.toastrService = this.injector.get(ToastrService);
         this.injector.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI  = event);
         this.toastrService.overlayContainer = this.toastContainer;
     }

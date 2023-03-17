@@ -2,7 +2,7 @@ import { RefundCommonModule } from './../../shared/modules/refund-common.module'
 import { ExcludeTotalPointPipe, ResourceNameByIdPipe } from '../pipes';
 import { Component, Injector, Input, ViewChild } from '@angular/core';
 import * as _ from 'lodash';
-import { MessageBoxService, AioService, BlockUIService, HttpRequestService } from '../../shared/services';
+import { BlockUIService } from '../../shared/services';
 import { ModalDialogMessage } from '../../shared/models';
 import { CalculateAction, EventStatus } from '../../shared/constants';
 import { Language } from '../../shared/language.native';
@@ -10,7 +10,7 @@ import { Match } from '../models';
 import { ResourcesIds, TennisApiKeys } from '../constants';
 import { ResultDetail, SettleQuery, SportTemplate } from '../../shared/models/sportsbook-sop';
 import { RefundActionBaseComponent } from '../../shared/components/sportsbook-sop/refund-action-base.component';
-import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
+import { ToastContainerDirective } from 'ngx-toastr';
 import { MatchDetailComponent } from './match-detail.component';
 import { TennisService } from '../services';
 
@@ -27,9 +27,8 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
   @Input() public match: Match;
   public blockUI = true;
   public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
-  constructor(
-    private readonly injector: Injector) {
-    super();
+  constructor(protected injector: Injector) {
+    super(injector);
     this.confirmationDialogMessage.title = Language.confirmationBox;
   }
 
@@ -44,9 +43,6 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
   }
 
   public initService () {
-    this.messageBoxService = this.injector.get(MessageBoxService);
-    this.aioService = this.injector.get(AioService);
-    this.toastrService = this.injector.get(ToastrService);
     this.injector.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
     this.toastrService.overlayContainer = this.toastContainer;
   }

@@ -1,10 +1,9 @@
 ﻿import { Injector } from '@angular/core';
-import { lastValueFrom } from 'rxjs';
 import { Component, ViewChild } from '@angular/core';
 import { ToastContainerDirective } from 'ngx-toastr';
 import { Match, SettleQuery, SettleChildMatchQuery } from '../models';
 import * as _ from 'lodash';
-import { Language } from '../../shared/language';
+import { Language } from '../../shared/language.native';
 import { ItemsSelect } from '../../shared/models';
 import { ResultStatusId, CalculateAction, SportType } from '../../shared/constants';
 import { EarlyConstraintService, VerificationService } from '../services';
@@ -45,8 +44,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
       settleType: "EAR",
       apiKey: ApiKeys.NormalMatch
     };
-    const match$ = this.aioService.getMatch(matchQuery);
-    this.match = await lastValueFrom(match$) as Match;
+    this.match = await this.aioService.getMatch(matchQuery) as Match;
     this.init();
   }
 

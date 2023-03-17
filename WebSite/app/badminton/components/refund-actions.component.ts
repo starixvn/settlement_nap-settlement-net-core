@@ -1,8 +1,7 @@
 import { BlockUIService } from './../../shared/services/block-ui.service';
 import { Component, ViewChild, Injector } from '@angular/core';
-import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
+import { ToastContainerDirective } from 'ngx-toastr';
 import * as _ from 'lodash';
-import { MessageBoxService, AioService } from '../../shared/services';
 import { CalculateAction, EventStatus, SportType } from '../../shared/constants';
 import { ModalDialogMessage } from '../../shared/models';
 import { Language } from '../../shared/language.native';
@@ -31,8 +30,8 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
   public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
   public apiKeys = null;
   public blockUI = true;
-  constructor(private readonly injector: Injector) {
-    super()
+  constructor(protected injector: Injector) {
+    super(injector)
     this.confirmationDialogMessage.title = Language.confirmationBox;
   }
 
@@ -52,9 +51,6 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
   }
 
   public initService() {
-    this.toastrService = this.injector.get(ToastrService);
-    this.aioService = this.injector.get(AioService);
-    this.messageBoxService = this.injector.get(MessageBoxService);
     this.injector.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
     this.toastrService.overlayContainer = this.toastContainer;
   }
