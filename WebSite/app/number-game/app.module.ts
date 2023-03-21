@@ -15,7 +15,7 @@ import {
     BallsComponent,
 } from './components';
 import { MaterialModule } from '../shared/material-module';
-import { MaterialDialogComponent } from '../shared/components';
+import { MaterialDialogComponent } from '../shared/components/material-dialog-iframe/material-dialog.component';
 import { CustomHttpRequestInterceptor } from "../shared/custom-httprequest-interceptor.native";
 import { ToastContainerModule, ToastNoAnimationModule } from 'ngx-toastr';
 
@@ -36,18 +36,19 @@ import { ToastContainerModule, ToastNoAnimationModule } from 'ngx-toastr';
             maxOpened: 1,
         }),
         ToastContainerModule,
+        OnlyIntegerDirective,
+        DatepickerComponent,
     ],
     declarations: [
         AppComponent,
         FilterComponent,
         MatchesComponent,
         BallsComponent,
-        DatepickerComponent,
         ReCalculationComponent,
         ModalDialogComponent,
         ModalContentDialogComponent,
         MaterialDialogComponent,
-        OnlyIntegerDirective,
+        
     ],
     entryComponents: [ModalDialogComponent, ModalContentDialogComponent],
     providers: [ { provide: HTTP_INTERCEPTORS, useClass: CustomHttpRequestInterceptor, multi: true }],
