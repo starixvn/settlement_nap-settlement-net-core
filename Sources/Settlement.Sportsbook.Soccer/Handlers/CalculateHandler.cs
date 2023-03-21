@@ -1,5 +1,4 @@
-﻿using Fanex.Logging;
-using MediatR;
+﻿using MediatR;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Sportsbook.Soccer.GetMatch.Services;
@@ -44,7 +43,8 @@ public class CalculateHandler : IRequestHandler<GetMatchRequest, Match>,
 
     public async Task<Result> Handle(SettleRequest request, CancellationToken cancellationToken)
     {
-        LogService.Warn("Fanex.Settletment.WebSites(Handle Calculate): ");
+        Console.WriteLine("Fanex.Settletment.WebSites(Handle): ");
+
 
         return request.ActionName.Equals(ActionType.UnCalculate)
             ? await calculateService.UnCalculate(request)

@@ -1,5 +1,4 @@
 ﻿using Fanex.Data.Repository;
-using Fanex.Logging;
 using Fanex.NAP.Client.Helpers.Web;
 using Settlement.Core.Criteria;
 using Settlement.Core.Models;
@@ -24,7 +23,8 @@ public class LogDirectlyServiceImp : LogDirectlyService
 
     public void WriteLog(int matchId, string message)
     {
-        LogService.Warn("Fanex.Settletment.WebSites(Write Log Directly): ", message);
+        //LogService.Warn("Fanex.Settletment.WebSites(Write Log Directly): ", message);
+        Console.WriteLine("Fanex.Settletment.WebSites(Write Log Directly): ", message);
 
         try
         {
@@ -39,7 +39,9 @@ public class LogDirectlyServiceImp : LogDirectlyService
         }
         catch (Exception e)
         {
-            LogService.Error("Fanex.Settletment.WebSites(Write Log Directly): ", e);
+            //LogService.Error("Fanex.Settletment.WebSites(Write Log Directly): ", e);
+            Console.WriteLine(e);
+            throw;
         }
 
     }
