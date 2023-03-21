@@ -813,7 +813,8 @@
               "node_modules/ngx-toastr/toastr.css",
               "shared/styles/material.style.less",
               "shared/styles/styles.less",
-              "soccer/style.less"
+              "soccer/style.less",
+              "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css"
             ],
             "allowedCommonJsDependencies": ["lodash"]
           },
@@ -1240,7 +1241,8 @@
               "node_modules/ngx-toastr/toastr.css",
               "shared/styles/material.style.less",
               "shared/styles/styles.less",
-              "other-sports/style.less"
+              "other-sports/style.less",
+              "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css"
             ],
             "allowedCommonJsDependencies": ["lodash"]
           },

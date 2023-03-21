@@ -56,10 +56,10 @@ import { NotReadyMatchComponent } from '../../shared/components/not-ready-match/
         ToastContainerModule,
         ResettleCheckerComponent,
         NotReadyMatchComponent,
-        TicketCountComponent
+        TicketCountComponent,
+        OnlyIntegerDirective,
     ],
     declarations: [
-        OnlyIntegerDirective,
         FullTimeCalculationComponent,
         FullTimeRefundComponent,
         GameTotalCalculationComponent,

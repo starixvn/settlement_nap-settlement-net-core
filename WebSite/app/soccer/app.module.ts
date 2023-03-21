@@ -52,13 +52,13 @@ import { ModalDialogComponent } from '../shared/components/modal-dialog/modal-di
         ToastContainerModule,
         TicketCountComponent,
         ResettleCheckerComponent,
-        NotReadyMatchComponent
+        NotReadyMatchComponent,
+        OnlyIntegerDirective,
     ],
     declarations: [
         AppComponent,
         MatchDetailComponent,
         ModalDialogComponent,
-        OnlyIntegerDirective,
         OnlyFirstTenScoreDirective,
         EarlySettlementComponent,
         GroupNameByIdPipe,
