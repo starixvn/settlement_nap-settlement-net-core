@@ -13,21 +13,12 @@ public interface SiteMatchService
 
     string EarlySettlementStatus(Match match);
 
-    bool IsExistMarkedTicketsSingle(Match match);
-
     int? IsCalculatingSingle(Match match);
 }
 
 public class SiteMatchServiceImp : SiteMatchService
 {
     private const int MatchPen = 202;
-
-    public bool IsExistMarkedTicketsSingle(Match match)
-    {
-        var isExistMarkedTicketOnSite = match.SiteMatch.Exists(m => m.IsExistMarkedTicket);
-        return match.IsExistMarkedTicket || isExistMarkedTicketOnSite;
-    }
-
     public bool IsExistMarkedTickets(Match match)
     {
         var isExistMarkedTicketOnSite = match.SiteMatch.Exists(m => m.IsExistMarkedTicket);

@@ -59,6 +59,7 @@ export class FilterComponent implements OnInit {
 
         this.matchStatusSelect.items = this.generateFilterService.renderMatchStatusGroupSelect();
         this.matchStatusSelect.haveGroup = true;
+        this.matchStatusSelect.maxWidth = '200px';
     }
 
     public search() {

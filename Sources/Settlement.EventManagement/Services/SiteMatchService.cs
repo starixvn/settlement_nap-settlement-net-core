@@ -20,8 +20,6 @@ public interface SiteMatchService
 
     bool IsExistHtFgLg(Match match);
 
-    bool IsExistMarkedTicketsSingle(BaseMatch match);
-
     bool IsExistsConfirmedEarly(MultiSportMatch match);
 
     int? IsCalculating(int? baseValue, List<int?> siteValues);
@@ -30,12 +28,6 @@ public interface SiteMatchService
 public class SiteMatchServiceImp : SiteMatchService
 {
     private const int MatchPen = 202;
-
-    public bool IsExistMarkedTicketsSingle(BaseMatch match)
-    {
-        var isExistMarkedTicketOnSite = match.SiteMatch.Exists(m => m.IsExistMarkedTicket);
-        return match.IsExistMarkedTicket || isExistMarkedTicketOnSite;
-    }
 
     public bool IsExistMarkedTickets(BaseMatch match)
     {

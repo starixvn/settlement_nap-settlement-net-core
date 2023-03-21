@@ -75,7 +75,7 @@ public class NewInfoMatchServiceImp : NewInfoMatchService
 
     public void TicketInfo(Match match)
     {
-        match.IsExistMarkedTicket = siteMatchService.IsExistMarkedTicketsSingle(match);
+        match.IsExistMarkedTicket = siteMatchService.IsExistMarkedTickets(match);
         match.IsExistRunningTicket = siteMatchService.IsExistRunningTickets(match);
         match.IsCalculatingSingle = siteMatchService.IsCalculatingSingle(match);
     }

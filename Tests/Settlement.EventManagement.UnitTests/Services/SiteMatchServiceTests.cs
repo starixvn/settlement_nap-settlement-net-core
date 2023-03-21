@@ -19,26 +19,6 @@ public class SiteMatchServiceTests
     [InlineData(true, false, true)]
     [InlineData(false, true, true)]
     [InlineData(false, false, false)]
-    public void IsExistMarkedTicketsSingle_Always_ReturnCorrect(bool main, bool site, bool expected)
-    {
-        var match = new BaseMatch
-        {
-            IsExistMarkedTicket = main,
-            SiteMatch = new List<SiteMatch>
-            {
-                new () { IsExistMarkedTicket = site }
-            }
-        };
-
-        var result = service.IsExistMarkedTicketsSingle(match);
-
-        Assert.Equal(expected, result);
-    }
-
-    [Theory]
-    [InlineData(true, false, true)]
-    [InlineData(false, true, true)]
-    [InlineData(false, false, false)]
     public void IsExistRunningTickets_Always_ReturnCorrect(bool main, bool site, bool expected)
     {
         var match = new BaseMatch

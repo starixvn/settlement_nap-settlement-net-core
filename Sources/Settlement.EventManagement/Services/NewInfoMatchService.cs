@@ -134,7 +134,7 @@ public class NewInfoMatchServiceImp : NewInfoMatchService
 
     public void TicketInfo(BaseMatch match)
     {
-        match.IsExistMarkedTicket = siteMatchService.IsExistMarkedTicketsSingle(match);
+        match.IsExistMarkedTicket = siteMatchService.IsExistMarkedTickets(match);
         match.IsExistRunningTicket = siteMatchService.IsExistRunningTickets(match);
         match.IsCalculatingSingle = siteMatchService.IsCalculating(match.IsCalculatingSingle, match.SiteMatch.Select(i => i.IsCalculatingSingle).ToList());
         match.IsCalculatingMP = siteMatchService.IsCalculating(match.IsCalculatingMP, match.SiteMatch.Select(i => i.IsCalculatingMP).ToList());

@@ -161,7 +161,7 @@ public class NewInfoMatchServiceTests
     {
         var match = new Match();
 
-        siteMatchService.IsExistMarkedTicketsSingle(Arg.Any<Match>()).Returns(true);
+        siteMatchService.IsExistMarkedTickets(Arg.Any<Match>()).Returns(true);
         siteMatchService.IsExistRunningTickets(Arg.Any<Match>()).Returns(true);
         siteMatchService.IsCalculating(Arg.Any<int?>(), Arg.Any<List<int?>>()).Returns(1);
 

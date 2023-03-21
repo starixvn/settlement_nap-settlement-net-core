@@ -35,7 +35,8 @@ public class GenerateServiceImp : GenerateService
 
     private static readonly List<string> ResourceHalfTimeAction = new() { ActionType.UnCalculate, ActionType.RefundHalfTime, ActionType.CalculateHalfTime, ActionType.RefundAll };
 
-    private static readonly List<string> ResourceFullTimeAction = new() { ActionType.UnCalculate, ActionType.RefundFullTime, ActionType.CalculateFullTime, ActionType.CalculateAll, ActionType.RefundAll };
+    private static readonly List<string> ResourceFullTimeAction = new() { ActionType.UnCalculate, ActionType.RefundFullTime, ActionType.CalculateFullTime,
+                                                                     ActionType.CalculateAll, ActionType.RefundAll };
 
     public GenerateServiceImp(IDynamicRepository repository, XmlConvertService xmlConvertService)
     {
@@ -49,9 +50,9 @@ public class GenerateServiceImp : GenerateService
         {
             ResourceItems = new List<ResourceItem>()
         };
-        var halfTime = selectedResources.FirstOrDefault(item => item.ResourceId is ResourceType.Halftime);
-        if (halfTime != null && (ResourceHalfTimeAction.Exists(item => item == action)
-                                 || (action == ActionType.CalculateAll && !string.IsNullOrEmpty(halfTime.AwayValue) && !string.IsNullOrEmpty(halfTime.HomeValue))))
+        var halfTime = selectedResources.FirstOrDefault(item => item.ResourceId == ResourceType.Halftime);
+        if (halfTime is not null && (ResourceHalfTimeAction.Exists(item => item == action)
+                                     || ExistHalfTimeResult(action, halfTime)))
         {
             resources.ResourceItems.Add(halfTime);
         }
@@ -115,6 +116,11 @@ public class GenerateServiceImp : GenerateService
         listResource.Add(resourceFullTime);
 
         return listResource;
+    }
+
+    private bool ExistHalfTimeResult(string action, ResourceItem halfTime)
+    {
+        return action == ActionType.CalculateAll && !string.IsNullOrEmpty(halfTime.AwayValue) && !string.IsNullOrEmpty(halfTime.HomeValue);
     }
 
     private static string GetResourceId(int currentIndex, int maxSetNumber, int sportType)

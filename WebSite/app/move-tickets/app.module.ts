@@ -1,16 +1,10 @@
-
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { TreeViewComponent } from './../shared/components/multiple-selection/tree-view.component';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HttpClientJsonpModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import {
-    ModalDialogComponent,
-    DatepickerComponent,
-    MultipleSelectComponent,
-    ModalContentDialogComponent,
-} from '../shared/components';
 import {
     AppComponent
 } from './components/app.component';
@@ -29,6 +23,10 @@ import { CustomHttpRequestInterceptor } from '../shared/custom-httprequest-inter
 import { PipesModule } from '../shared/pipes/pipes.module.native';
 import { MoveTicketsTemplateModule } from './components/move-tickets-template.module';
 import { OnlyIntegerDirective } from '../shared/directives';
+import { DatepickerComponent } from '../shared/components/date-picker/date-picker.component';
+import { ModalContentDialogComponent } from '../shared/components/modal-dialog/modal-content-dialog.component';
+import { ModalDialogComponent } from '../shared/components/modal-dialog/modal-dialog.component';
+import { MultipleSelectComponent } from '../shared/components/multiple-selection/multiple-select.component.native';
 @NgModule({
     imports: [
         BrowserModule,
@@ -40,21 +38,22 @@ import { OnlyIntegerDirective } from '../shared/directives';
         NgbModule,
         PipesModule,
         MoveTicketsTemplateModule,
+        NewMultipleSelectComponent,
+        DatepickerComponent,
+        NoopAnimationsModule,
+        OnlyIntegerDirective,
     ],
     declarations: [
-        DatepickerComponent,
         MultipleSelectComponent,
         TreeViewComponent,
         ModalDialogComponent,
         ModalContentDialogComponent,
-        NewMultipleSelectComponent,
         MaterialDialogComponent,
         FilterComponent,
         LeagueComponent,
         CricketComponent,
         AppComponent,
-        RunningTicketsComponent,
-        OnlyIntegerDirective,
+        RunningTicketsComponent
     ],
     entryComponents: [ModalDialogComponent, ModalContentDialogComponent],
     providers: [ { provide: HTTP_INTERCEPTORS, useClass: CustomHttpRequestInterceptor, multi: true }],
