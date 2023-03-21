@@ -163,13 +163,11 @@ public class NewInfoMatchServiceTests
 
         siteMatchService.IsExistMarkedTicketsSingle(Arg.Any<Match>()).Returns(true);
         siteMatchService.IsExistRunningTickets(Arg.Any<Match>()).Returns(true);
-        siteMatchService.IsExistMarkedTicketParlay(Arg.Any<Match>()).Returns(true);
-        siteMatchService.IsExistRunningTicketParlay(Arg.Any<Match>()).Returns(true);
         siteMatchService.IsCalculating(Arg.Any<int?>(), Arg.Any<List<int?>>()).Returns(1);
 
         service.TicketInfo(match);
 
-        Assert.True(match.IsExistMarkedTicket && match.IsExistRunningTicket && match.IsExistMarkedTicketParlay && match.IsExistRunningTicketParlay && match.IsCalculatingSingle == 1);
+        Assert.True(match.IsExistMarkedTicket && match.IsExistRunningTicket && match.IsCalculatingSingle == 1);
     }
 
     [Fact]

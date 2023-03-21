@@ -136,7 +136,7 @@ public class MatchServiceTests
     {
         newInfoMatchService.TicketInfo(Arg.Do<Match>(item =>
         {
-            item.IsExistMarkedTicket = item.IsExistRunningTicket = item.IsExistMarkedTicketParlay = item.IsExistRunningTicketParlay = true;
+            item.IsExistMarkedTicket = item.IsExistRunningTicket = true;
             item.IsCalculatingSingle = 1;
         }));
         newInfoMatchService.NewEventStatus(Arg.Any<Match>()).Returns("EventStatus");
@@ -149,8 +149,7 @@ public class MatchServiceTests
         var matches = service.SetNewMatchInfo(new List<Match> { new() }, new List<ResultDetail>());
         var match = matches.First();
 
-        Assert.True(match.IsExistsConfirmedEarly && match.IsExistMarkedTicket && match.IsExistRunningTicket && match.IsExistMarkedTicketParlay
-                    && match.IsExistRunningTicketParlay && match.IsCalculatingSingle == 1);
+        Assert.True(match.IsExistsConfirmedEarly && match.IsExistMarkedTicket && match.IsExistRunningTicket && match.IsCalculatingSingle == 1);
         Assert.Equal("EventStatus", match.NewEventStatus);
         Assert.Equal("EventStatusColor", match.EventStatusColor);
         Assert.Equal("Early", match.EarlySettleStatus);

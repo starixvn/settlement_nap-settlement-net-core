@@ -30,29 +30,6 @@ public class SiteMatchServiceTests
     }
 
     [Theory]
-    [InlineData(true, false, false, false, true)]
-    [InlineData(false, true, false, false, true)]
-    [InlineData(false, false, true, false, true)]
-    [InlineData(false, false, false, true, true)]
-    [InlineData(false, false, false, false, false)]
-    public void IsExistMarkedTickets_Always_ReturnCorrect(bool main, bool site, bool mainParlay, bool siteParlay, bool expected)
-    {
-        var match = new Match
-        {
-            IsExistMarkedTicket = main,
-            IsExistMarkedTicketParlay = mainParlay,
-            SiteMatch = new List<SiteMatch>
-            {
-                new () { IsExistMarkedTicket = site, IsExistMarkedTicketParlay = siteParlay}
-            }
-        };
-
-        var result = service.IsExistMarkedTickets(match);
-
-        Assert.Equal(expected, result);
-    }
-
-    [Theory]
     [InlineData(true, false, true)]
     [InlineData(false, true, true)]
     [InlineData(false, false, false)]
@@ -68,46 +45,6 @@ public class SiteMatchServiceTests
         };
 
         var result = service.IsExistRunningTickets(match);
-
-        Assert.Equal(expected, result);
-    }
-
-    [Theory]
-    [InlineData(true, false, true)]
-    [InlineData(false, true, true)]
-    [InlineData(false, false, false)]
-    public void IsExistMarkedTicketParlay_Always_ReturnCorrect(bool main, bool site, bool expected)
-    {
-        var match = new Match
-        {
-            IsExistMarkedTicketParlay = main,
-            SiteMatch = new List<SiteMatch>
-            {
-                new () { IsExistMarkedTicketParlay = site }
-            }
-        };
-
-        var result = service.IsExistMarkedTicketParlay(match);
-
-        Assert.Equal(expected, result);
-    }
-
-    [Theory]
-    [InlineData(true, false, true)]
-    [InlineData(false, true, true)]
-    [InlineData(false, false, false)]
-    public void IsExistRunningTicketParlay_Always_ReturnCorrect(bool main, bool site, bool expected)
-    {
-        var match = new Match
-        {
-            IsExistRunningTicketParlay = main,
-            SiteMatch = new List<SiteMatch>
-            {
-                new () { IsExistRunningTicketParlay = site }
-            }
-        };
-
-        var result = service.IsExistRunningTicketParlay(match);
 
         Assert.Equal(expected, result);
     }
@@ -186,24 +123,19 @@ public class SiteMatchServiceTests
     }
 
     [Theory]
-    [InlineData(true, false, false, false, TicketStatus.Running)]
-    [InlineData(false, true, false, false, TicketStatus.Running)]
-    [InlineData(false, false, true, false, TicketStatus.Running)]
-    [InlineData(false, false, false, true, TicketStatus.Running)]
-    public void EarlySettlementStatus_MatchExistRunningEarly_ReturnCorrectly(bool isRunningEarlyBetTypesMain, bool isRunningEarlyBetTypesSite
-        , bool isRunningEarlyBetTypesParlayMain, bool isRunningEarlyBetTypesParlaySite, string expected)
+    [InlineData(true, false, TicketStatus.Running)]
+    [InlineData(false, true, TicketStatus.Running)]
+    public void EarlySettlementStatus_MatchExistRunningEarly_ReturnCorrectly(bool isRunningEarlyBetTypesMain, bool isRunningEarlyBetTypesSite, string expected)
     {
         var match = new Match
         {
             IsExistEarlyBetTypes = true,
             IsRunningEarlyBetTypes = isRunningEarlyBetTypesMain,
-            IsRunningEarlyBettypesParlay = isRunningEarlyBetTypesParlayMain,
             SiteMatch = new List<SiteMatch>
             {
                 new ()
                 {
                     IsRunningEarlyBetTypes = isRunningEarlyBetTypesSite,
-                    IsRunningEarlyBettypesParlay = isRunningEarlyBetTypesParlaySite
                 }
             }
         };
@@ -214,54 +146,19 @@ public class SiteMatchServiceTests
     }
 
     [Theory]
-    [InlineData(true, false, false, false, TicketStatus.Waiting)]
-    [InlineData(false, true, false, false, TicketStatus.Waiting)]
-    [InlineData(false, false, true, false, TicketStatus.Waiting)]
-    [InlineData(false, false, false, true, TicketStatus.Waiting)]
-    public void EarlySettlementStatus_MatchExistWaitingEarlyAndNotExistRunningTicket_ReturnCorrectly(bool isWaitingEarlyBetTypesMain, bool isWaitingEarlyBetTypesSite
-        , bool isWaitingEarlyBetTypesParlayMain, bool isWaitingEarlyBetTypesParlaySite, string expected)
+    [InlineData(true, false, TicketStatus.Waiting)]
+    [InlineData(false, true, TicketStatus.Waiting)]
+    public void EarlySettlementStatus_MatchExistWaitingEarlyAndNotExistRunningTicket_ReturnCorrectly(bool isWaitingEarlyBetTypesMain, bool isWaitingEarlyBetTypesSite, string expected)
     {
         var match = new Match
         {
             IsExistEarlyBetTypes = true,
             IsWaitingEarlyBetTypes = isWaitingEarlyBetTypesMain,
-            IsWaitingEarlyBettypesParlay = isWaitingEarlyBetTypesParlayMain,
             SiteMatch = new List<SiteMatch>
             {
                 new ()
                 {
-                    IsWaitingEarlyBetTypes = isWaitingEarlyBetTypesSite,
-                    IsWaitingEarlyBettypesParlay = isWaitingEarlyBetTypesParlaySite
-                }
-            }
-        };
-
-        var result = service.EarlySettlementStatus(match);
-
-        Assert.Equal(expected, result);
-    }
-
-    [Theory]
-    [InlineData(true, false, false, false, TicketStatus.Waiting)]
-    [InlineData(false, true, false, false, TicketStatus.Waiting)]
-    [InlineData(false, false, true, false, TicketStatus.Running)]
-    [InlineData(false, false, false, true, TicketStatus.Running)]
-    [InlineData(true, true, false, true, TicketStatus.Running)]
-    [InlineData(false, false, false, false, TicketStatus.Completed)]
-    public void EarlySettlementStatus_MatchOnlyExistParlayBetTypes_ReturnCorrectly(bool isWaitingEarlyBetTypesParlayMain, bool isWaitingEarlyBetTypesParlaySite
-        , bool isRunningEarlyBetTypesParlayMain, bool isRunningEarlyBetTypesParlaySite, string expected)
-    {
-        var match = new Match
-        {
-            IsExistEarlyBetTypes = true,
-            IsRunningEarlyBettypesParlay = isRunningEarlyBetTypesParlayMain,
-            IsWaitingEarlyBettypesParlay = isWaitingEarlyBetTypesParlayMain,
-            SiteMatch = new List<SiteMatch>
-            {
-                new ()
-                {
-                    IsRunningEarlyBettypesParlay = isRunningEarlyBetTypesParlaySite,
-                    IsWaitingEarlyBettypesParlay = isWaitingEarlyBetTypesParlaySite
+                    IsWaitingEarlyBetTypes = isWaitingEarlyBetTypesSite
                 }
             }
         };

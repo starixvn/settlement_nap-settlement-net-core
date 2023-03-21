@@ -3,7 +3,7 @@ import { FormControl, FormsModule } from '@angular/forms';
 import { MaterialModule } from './../../material-module';
 import {
   Component, Input, ViewChild, ViewChildren, Output, ViewEncapsulation,
-  OnChanges, SimpleChanges, ChangeDetectorRef, QueryList, EventEmitter, ViewContainerRef, AfterViewInit
+  OnChanges, SimpleChanges, ChangeDetectorRef, QueryList, EventEmitter, ViewContainerRef, AfterViewInit, OnDestroy
 } from '@angular/core';
 import { ItemsSelect, Group, MultipleSelect } from './../../models';
 import { MatOption } from '@angular/material/core';
@@ -75,7 +75,7 @@ export class NewMultipleSelectComponent implements OnChanges, AfterViewInit {
       if (isClickOutSideElement) {
         this.searchText = "";
         this.search();
-        this.changeStatus();
+        this.changeStatus(false);
         this.dropdown.close();
       }
     }, false);
@@ -145,9 +145,11 @@ export class NewMultipleSelectComponent implements OnChanges, AfterViewInit {
     this.checkAllOption();
   }
 
-  public changeStatus() {
+  public changeStatus(emitValue = true) {
     this.formControl.setValue(this.valueSelected);
-    this.formValue.emit(this.formControl.value);
+    if(emitValue) { 
+      this.formValue.emit(this.formControl.value);
+    }
 
     if (!_.isEmpty(this.searchText)) {
       this.status = "";
@@ -173,7 +175,7 @@ export class NewMultipleSelectComponent implements OnChanges, AfterViewInit {
   }
 
   public checkAllOption() {
-    if (this.formControl.value.length === this.items.length && !this.multipleSelect.disableCheckAll) {
+    if (this.isOpened && this.formControl.value.length === this.items.length && !this.multipleSelect.disableCheckAll) {
       this.allSelected.select();
       this.cd.detectChanges();
     }

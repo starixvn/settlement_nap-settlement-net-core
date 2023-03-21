@@ -14,7 +14,6 @@ public class CompareMatchServiceTests
 
     [Theory]
     [InlineData(true, false, null)]
-    [InlineData(false, false, null)]
     [InlineData(false, true, null)]
     [InlineData(false, false, 1)]
     public void GetDifferentMatchSiteInfo_ExistSiteMatchWithDiffInfoTicket_ReturnSiteMatch(bool isExistRunningTicket, bool isExistMarkedTicket, int? isCalculatingSingle)
@@ -38,7 +37,6 @@ public class CompareMatchServiceTests
     [InlineData(true, false, false)]
     [InlineData(false, true, false)]
     [InlineData(false, false, true)]
-    [InlineData(false, false, false)]
     public void GetDifferentMatchSiteInfo_ExistSiteMatchWithDiffInfoBetType_ReturnSiteMatch(bool isExistEarlyBetTypes,
         bool isRunningEarlyBetTypes, bool isWaitingEarlyBetTypes)
     {

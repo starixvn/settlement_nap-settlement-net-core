@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Sportsbook.OtherSports.Criteria;
+using Settlement.Sportsbook.OtherSports.Models;
 using Settlement.Sportsbook.OtherSports.Requests;
 
 namespace Settlement.Sportsbook.OtherSports.UnitTests.Services;
@@ -56,7 +57,7 @@ public class MultipleServerServiceTests
         };
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(failedResult);
 
-        var result = await service.Calculate(new CalculateCriteria { Action = ActionType.CalculateAll, MatchId = 100, AdminId = 10 });
+        var result = await service.Calculate(new CalculateCriteria { Action = ActionType.CalculateAll, MatchId = 100, AdminId = 10 }, new ScoreSetModel());
 
         Assert.Equal(failedResult.ErrorCode, result.ErrCode);
         await scaleOutSettleService.DidNotReceive().UpdateUnderSettlementFlag(100, 10, ActionType.CalculateAll);
@@ -82,7 +83,7 @@ public class MultipleServerServiceTests
         mergeDataService.MergeTicketCounts(Arg.Any<List<List<TicketCounts>>>())
             .Returns(new List<TicketCounts> { ticketHt });
 
-        var result = await service.Calculate(new CalculateCriteria { Action = action, MatchId = 100, AdminId = 10 });
+        var result = await service.Calculate(new CalculateCriteria { Action = action, MatchId = 100, AdminId = 10 }, new ScoreSetModel());
 
         await scaleOutSettleService.Received().UpdateUnderSettlementFlag(100, 10, action);
         await scaleOutSettleService.Received().UpdateMatchInfo(Arg.Is<UpdateMatchInfoRequest>(item => item.IsHtTicketSettled == expected));

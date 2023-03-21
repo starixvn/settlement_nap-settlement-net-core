@@ -24,8 +24,7 @@
   border-radius: 4px !important;
 }
 
-.mat-mdc-text-field-wrapper:not(.mdc-text-field--outlined)
-  .mat-mdc-form-field-infix {
+.mat-mdc-text-field-wrapper:not(.mdc-text-field--outlined) .mat-mdc-form-field-infix {
   padding: unset !important;
 }
 
@@ -51,7 +50,8 @@
   border-radius: 2px;
 }
 
-.mat-pseudo-checkbox, .mat-pseudo-checkbox::after {
+.mat-pseudo-checkbox,
+.mat-pseudo-checkbox::after {
   color: black !important;
 }
 
@@ -139,25 +139,25 @@
     margin-top: -2px;
 
 
-      .mat-mdc-select-panel {
-        background: #fff;
-        max-height: 500px;
-        min-width: 100% !important;
-        overflow: overlay !important;
-        box-shadow: 0 2px 4px -1px #0003, 0 4px 5px 0 #00000024,
-          0 1px 10px 0 #0000001f;
-        border-radius: 4px !important;
-      }
-
-      .mdc-menu-surface.mat-mdc-select-panel {
-        padding: unset !important;
-      }
+    .mat-mdc-select-panel {
+      background: #fff;
+      max-height: 500px;
+      min-width: 100% !important;
+      overflow: overlay !important;
+      box-shadow: 0 2px 4px -1px #0003, 0 4px 5px 0 #00000024,
+        0 1px 10px 0 #0000001f;
+      border-radius: 4px !important;
     }
 
     .mdc-menu-surface.mat-mdc-select-panel {
       padding: unset !important;
     }
   }
+
+  .mdc-menu-surface.mat-mdc-select-panel {
+    padding: unset !important;
+  }
+}
 
 .cdk-overlay-backdrop {
   display: none !important;
@@ -177,9 +177,34 @@
     stroke: black !important;
   }
 
-  .mdc-checkbox__ripple,
+  .mdc-mdc-checkbox__ripple,
   .mat-mdc-checkbox-ripple {
     display: none !important;
+  }
+}
+
+.mdc-switch {
+
+  .mdc-switch__ripple,
+  .mdc-switch__icons {
+    display: none !important;
+  }
+
+  .mdc-switch--unselected{
+    .mdc-switch__shadow {
+      background-color: #fff;
+  }
+
+}
+
+  .mdc-switch__track {
+    background-color: #00000061;
+  }
+
+  .mat-mdc-slide-toggle-checked {
+    .mdc-switch__track {
+      background-color: #f443368a;
+    }
   }
 }
 
@@ -192,18 +217,17 @@
   }
 
   label {
-        font-size: 12px;
-        font-family: Tahoma, Arial, Helvetica, sans-serif !important;
-        color: black;
+    font-size: 12px;
+    font-family: Tahoma, Arial, Helvetica, sans-serif !important;
+    color: black;
   }
 }
 
 .mat-mdc-checkbox {
-    --mdc-checkbox-selected-icon-color: black !important;
+  --mdc-checkbox-selected-icon-color: black !important;
 }
 
-.mdc-list-item--selected:not(.mdc-list-item--disabled)
-  .mdc-list-item__primary-text {
+.mdc-list-item--selected:not(.mdc-list-item--disabled) .mdc-list-item__primary-text {
   color: black !important;
 }
 

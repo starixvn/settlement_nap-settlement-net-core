@@ -48,7 +48,7 @@ public class SettlementActionsServiceTests
             ErrMsg = "Error Message",
             ErrCode = 100
         };
-        multipleServerService.Calculate(Arg.Any<CalculateCriteria>()).Returns(resultFailed);
+        multipleServerService.Calculate(Arg.Any<CalculateCriteria>(), Arg.Any<ScoreSetModel>()).Returns(resultFailed);
 
         var result = await service.Calculate(new CalculateRequest());
 
@@ -74,7 +74,7 @@ public class SettlementActionsServiceTests
             ErrMsg = "Error Message",
             ErrCode = 100
         };
-        multipleServerService.Calculate(Arg.Any<CalculateCriteria>()).Returns(resultFailed);
+        multipleServerService.Calculate(Arg.Any<CalculateCriteria>(), Arg.Any<ScoreSetModel>()).Returns(resultFailed);
         generateService.GenerateBetStatus(Arg.Any<CalculateRequest>()).Returns(new ScoreSetModel());
 
         var result = await service.CalculateWithResultDetail(new CalculateRequest { Action = ActionType.RefundHalfTime });
@@ -86,10 +86,10 @@ public class SettlementActionsServiceTests
     public async Task CalculateWithResultDetail_ExistHedgeMatch_ExecuteTwoTime()
     {
         generateService.GenerateBetStatus(Arg.Any<CalculateRequest>()).Returns(new ScoreSetModel());
-        multipleServerService.Calculate(Arg.Any<CalculateCriteria>()).Returns(new Result());
+        multipleServerService.Calculate(Arg.Any<CalculateCriteria>(), Arg.Any<ScoreSetModel>()).Returns(new Result());
 
         await service.CalculateWithResultDetail(new CalculateRequest { Action = ActionType.RefundHalfTime, HedgeMatchId = 1 });
 
-        await multipleServerService.Received(2).Calculate(Arg.Any<CalculateCriteria>());
+        await multipleServerService.Received(2).Calculate(Arg.Any<CalculateCriteria>(), Arg.Any<ScoreSetModel>());
     }
 }

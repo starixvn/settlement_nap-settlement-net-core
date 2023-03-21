@@ -7,7 +7,7 @@ import * as _ from 'lodash';
 })
 
 export class IntervalPipe implements PipeTransform {
-    public transform(fastMarketItem: FastMarketResult[], args: number[]) {
+    public transform(fastMarketItem: any, args: number[]) {
         return fastMarketItem.filter((item) => {
             const hasPosition = _.isNil(args)
                 || args.length === 0
@@ -17,7 +17,7 @@ export class IntervalPipe implements PipeTransform {
         });
     }
 
-    private isExistedItem(hasPosition: boolean, item: FastMarketResult) {
+    private isExistedItem(hasPosition: boolean, item: any) {
         if (hasPosition || item.betType === FastMarketBetType.timeMachineOverUnder
             || item.betType === FastMarketBetType.timeMachineHDP) {
             item.isShow = true;

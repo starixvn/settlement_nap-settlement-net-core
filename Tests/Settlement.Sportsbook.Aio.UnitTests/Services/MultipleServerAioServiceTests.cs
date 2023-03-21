@@ -27,6 +27,8 @@ public class MultipleServerAioServiceTests
 
     private readonly MultipleServerAioService service;
 
+    private readonly NetPositionService netPositionService;
+
     public MultipleServerAioServiceTests()
     {
         var appSetting = new AppSettingsKey { SiteDbServer = new List<string> { "01", "02" } };
@@ -35,7 +37,7 @@ public class MultipleServerAioServiceTests
         scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
         createQueryService = Substitute.For<ICreateQueryService>();
         mergeDataService = Substitute.For<MergeDataService>();
-        var netPositionService = Substitute.For<NetPositionService>();
+        netPositionService = Substitute.For<NetPositionService>();
         service = new MultipleServerAioServiceImp(repository, option, scaleOutSettleService, createQueryService, mergeDataService, netPositionService);
     }
 
@@ -149,8 +151,7 @@ public class MultipleServerAioServiceTests
         var expectResult = new Result
         {
             ErrCode = 1,
-            ErrMsg = "Message",
-            ChildMatchIds = string.Empty,
+            ErrMsg = "Message"
         };
 
         Assert.Equal(JsonConvert.SerializeObject(expectResult), JsonConvert.SerializeObject(actual));
@@ -171,6 +172,7 @@ public class MultipleServerAioServiceTests
         };
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
         createQueryService.QuerySettle(Arg.Any<SettleRequest>()).Returns(new SettleCriteria { Action = "CAL" });
+        netPositionService.NetPosition(Arg.Any<NetPositionRequest>()).Returns(new Result());
         repository.FetchAsync<ChildMatch>(Arg.Any<GetChildMatchCriteria>()).Returns(new List<ChildMatch> { childMatch, childMatchSecond });
         var actual = await service.Settle(request);
 
