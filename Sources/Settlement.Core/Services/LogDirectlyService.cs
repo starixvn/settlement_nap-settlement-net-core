@@ -24,6 +24,8 @@ public class LogDirectlyServiceImp : LogDirectlyService
 
     public void WriteLog(int matchId, string message)
     {
+        LogService.Warn("Fanex.Settletment.WebSites(Write Log Directly): ", message);
+
         try
         {
             var criteria = new LogDirectlyCriteria
