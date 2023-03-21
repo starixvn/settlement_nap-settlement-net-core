@@ -18,13 +18,13 @@ import { AppComponent } from './components/app.component';
         HttpClientModule,
         HttpClientJsonpModule,
         NgbModule,
+        OnlyIntegerDirective
     ],
     declarations: [
         TimeSettingComponent,
         AppComponent,
         ModalDialogComponent,
         ModalContentDialogComponent,
-        OnlyIntegerDirective,
         AutoSettingComponent,
         RemarkSettingComponent,
     ],

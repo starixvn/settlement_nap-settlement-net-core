@@ -161,7 +161,7 @@
       }
     },
     "instant-setting": {
-      "root": "",
+      "root": "app",
       "sourceRoot": "instant-setting",
       "projectType": "application",
       "architect": {
@@ -205,10 +205,8 @@
               "sourceMap": true,
               "namedChunks": true
             }
-          },
-          "defaultConfiguration": "production"
+          }
         },
-
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
@@ -216,11 +214,11 @@
             "port": 5001
           },
           "configurations": {
-            "development": {
-              "browserTarget": "app:build:development"
-            },
             "production": {
               "browserTarget": "app:build:production"
+            },
+            "development": {
+              "browserTarget": "app:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -245,43 +243,32 @@
             "allowedCommonJsDependencies": ["lodash"]
           },
           "configurations": {
-            "dev": {
+            "production": {
               "budgets": [{
-                "type": "anyComponentStyle",
-                "maximumWarning": "6kb"
-              }],
-              "optimization": false,
-              "sourceMap": true,
-              "namedChunks": true,
-              "aot": false,
-              "extractLicenses": false,
-              "vendorChunk": true,
-              "buildOptimizer": false
-            },
-            "prod": {
-              "budgets": [{
-                "type": "anyComponentStyle",
-                "maximumWarning": "6kb"
-              }],
+                  "type": "initial",
+                  "maximumWarning": "4mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "4mb",
+                  "maximumError": "5mb"
+                }
+              ],
               "fileReplacements": [{
                 "replace": "environments/environment.ts",
                 "with": "environments/environment.prod.ts"
-              }]
-            },
-            "production": {
-              "budgets": [{
-                "type": "anyComponentStyle",
-                "maximumWarning": "6kb"
               }],
-              "optimization": true,
               "outputHashing": "all",
-              "sourceMap": false,
-              "namedChunks": false,
-              "aot": false,
-              "extractLicenses": true,
-              "vendorChunk": false,
+              "deployUrl": "log/"
+            },
+            "development": {
               "buildOptimizer": false,
-              "deployUrl": "@path/log/"
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true
             }
           }
         },
@@ -289,21 +276,17 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
             "proxyConfig": "proxy.conf.json",
-            "port": 5001,
-            "aot": false
+            "port": 5001
           },
           "configurations": {
-            "dev": {
-              "browserTarget": "log:build:dev"
-            },
-            "prod": {
-              "browserTarget": "log:build:prod"
-            },
             "production": {
-              "browserTarget": "log:build:production"
+              "browserTarget": "app:build:production"
+            },
+            "development": {
+              "browserTarget": "app:build:development"
             }
           },
-          "defaultConfiguration": "dev"
+          "defaultConfiguration": "development"
         }
       }
     },

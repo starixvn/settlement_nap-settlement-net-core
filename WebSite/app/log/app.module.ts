@@ -5,15 +5,13 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HttpClientJsonpModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { CustomHttpRequestInterceptor } from "../shared/custom-httprequest-interceptor.native";
 import {
-    ModalDialogComponent,
-    DatepickerComponent,
-    ModalContentDialogComponent,
-} from '../shared/components';
-import {
     AppComponent,
     MatchesComponent,
     FilterComponent,
 } from './components';
+import { ModalDialogComponent } from '../shared/components/modal-dialog/modal-dialog.component';
+import { ModalContentDialogComponent } from '../shared/components/modal-dialog/modal-content-dialog.component';
+import { DatepickerComponent } from '../shared/components/date-picker/date-picker.component';
 
 @NgModule({
     imports: [
@@ -23,12 +21,12 @@ import {
         HttpClientModule,
         HttpClientJsonpModule,
         NgbModule,
+        DatepickerComponent,
     ],
     declarations: [
         AppComponent,
         MatchesComponent,
         FilterComponent,
-        DatepickerComponent,
         ModalDialogComponent,
         ModalContentDialogComponent,
 

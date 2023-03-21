@@ -95,7 +95,7 @@
         </div>
     </ng-template>
 </div>
-<div *ngIf="matches == 0" class="no-data">
+<div *ngIf="matches.length == 0" class="no-data">
     <div class="header">Event From {{fromDate | date : 'mediumDate'}} To {{toDate | date : 'mediumDate'}}</div>
     <div class="empty-data">
         There is no information available
