@@ -12,7 +12,8 @@ public class Match : BaseMatch
     {
         Core.Constants.SportType.VolleyBall,
         Core.Constants.SportType.Badminton,
-        Core.Constants.SportType.Cricket
+        Core.Constants.SportType.Cricket,
+        Core.Constants.SportType.Tennis
     };
 
     [Key("isHavingIntervalScore")]

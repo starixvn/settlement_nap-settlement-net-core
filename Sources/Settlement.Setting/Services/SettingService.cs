@@ -112,8 +112,8 @@ public class SettingServiceImp : SettingService
             LeagueId = request.LeagueId
         };
 
-        var setting = await repository.GetAsync<int>(criteria);
+        var setting = await repository.GetAsync<int?>(criteria);
 
-        return Convert.ToString(setting, convertToBase).Reverse();
+        return Convert.ToString(setting ?? 0, convertToBase).Reverse();
     }
 }
