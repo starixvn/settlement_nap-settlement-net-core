@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using Settlement.Core.Models;
-using System.Collections.Generic;
+using System.Xml.Serialization;
 
 namespace Settlement.Sportsbook.Soccer.Requests;
 
@@ -12,5 +12,7 @@ public class SettleEarlyRequest : IRequest<Result>
 
     public bool IsReSettledTickets { get; set; }
 
+    [XmlArray("Resources")]
+    [XmlArrayItem("Resource")]
     public List<ResourceItem> SelectedResources { get; set; }
 }

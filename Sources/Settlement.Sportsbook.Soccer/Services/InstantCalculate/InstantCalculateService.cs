@@ -7,12 +7,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
+using Settlement.Core.Services;
 using Settlement.Sportsbook.Soccer.Criteria;
 using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Requests;
 using Settlement.Sportsbook.Soccer.Services.InstantCalculate;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Settlement.Sportsbook.Soccer.Services;
 
@@ -39,6 +38,8 @@ public class InstantCalculateServiceImp : IInstantCalculateService
 
     private readonly ScaleOutSettleService scaleOutSettleService;
 
+    private readonly LogDirectlyService logDirectlyService;
+
     private readonly AppSettingsKey appSettingsKey;
 
     public InstantCalculateServiceImp(
@@ -48,7 +49,8 @@ public class InstantCalculateServiceImp : IInstantCalculateService
         IHttpContextAccessor accessor,
         IInstantResourceService instantResourceService,
         IOptions<AppSettingsKey> appSettingsKey,
-        ScaleOutSettleService scaleOutSettleService)
+        ScaleOutSettleService scaleOutSettleService,
+        LogDirectlyService logDirectlyService)
     {
         this.repository = repository;
         this.currentSession = currentSession;
@@ -57,6 +59,7 @@ public class InstantCalculateServiceImp : IInstantCalculateService
         this.instantResourceService = instantResourceService;
         this.appSettingsKey = appSettingsKey.Value;
         this.scaleOutSettleService = scaleOutSettleService;
+        this.logDirectlyService = logDirectlyService;
     }
 
     public async Task<MatchGoalRecordModel> CalculateCheckingInfo(MatchCheckingRequest request)
@@ -159,11 +162,22 @@ public class InstantCalculateServiceImp : IInstantCalculateService
 
     private async Task Execute(PushInstantCalculationCriteria criteria)
     {
+        WriteLogDirectly(criteria);
+
         foreach (var server in appSettingsKey.SiteDbServer)
         {
             criteria.DbServer = server;
             await repository.ExecuteAsync(criteria);
         }
+    }
+
+    private void WriteLogDirectly(PushInstantCalculationCriteria criteria)
+    {
+        var score = $"{criteria.HomeScore}-{criteria.AwayScore}";
+
+        var message = LogDirectlyServiceImp.CreateInstantLog(criteria.MatchId, criteria.Mode, score);
+
+        logDirectlyService.WriteLog(criteria.MatchId, message);
     }
 
     private string GetResourceResultInstantCalculate(InstantCalculationRequest request)

@@ -1,19 +1,16 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Fanex.Data.Repository;
-using AutoMapper;
-using NSubstitute;
-using Settlement.Sportsbook.Soccer.Services;
+﻿using AutoMapper;
 using AutoMapper.Configuration;
+using Fanex.Data.Repository;
 using Fanex.Settlement.ScaleOut.Models;
-using Microsoft.Extensions.Options;
-using Settlement.Core.Models;
+using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
+using Microsoft.Extensions.Options;
 using Settlement.Core.Constants;
+using Settlement.Core.Models;
+using Settlement.Core.Services;
 using Settlement.Sportsbook.Soccer.Criteria;
 using Settlement.Sportsbook.Soccer.Requests;
-using Xunit;
-using Fanex.Settlement.ScaleOut.Request;
+using Settlement.Sportsbook.Soccer.Services;
 
 namespace Settlement.Sportsbook.Soccer.UnitTests.Services;
 
@@ -27,18 +24,21 @@ public class CalculateServiceTests
 
     private readonly ICalculateService service;
 
+    private readonly LogDirectlyService logDirectlyService;
+
     public CalculateServiceTests()
     {
         repository = Substitute.For<IDynamicRepository>();
         createCriteriaService = Substitute.For<ICreateCriteriaService>();
         scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
+        logDirectlyService = Substitute.For<LogDirectlyService>();
         var mapperConfig = new MapperConfigurationExpression();
         mapperConfig.AddProfile<SoccerAutoMapperProfile>();
         var config = new MapperConfiguration(mapperConfig);
         var mapper = new Mapper(config);
         var appSettings = new AppSettingsKey { SiteDbServer = new List<string> { "DB01", "DB02", "DB03" } };
         var appSettingsOptions = Options.Create(appSettings);
-        service = new CalculateServiceImp(mapper, repository, appSettingsOptions, createCriteriaService, scaleOutSettleService);
+        service = new CalculateServiceImp(mapper, repository, appSettingsOptions, createCriteriaService, scaleOutSettleService, logDirectlyService);
     }
 
     [Theory]
@@ -56,6 +56,7 @@ public class CalculateServiceTests
             Action = ActionType.CalculateAll
         };
         createCriteriaService.CreateCalculateCriteria(Arg.Any<SettleRequest>()).Returns(criteria);
+        logDirectlyService.WriteLog(Arg.Any<int>(), Arg.Any<string>());
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage { ErrorCode = errorCode, ErrorMessage = errorMsg });
 
         var actual = await service.Calculate(query);
@@ -76,6 +77,8 @@ public class CalculateServiceTests
             Action = ActionType.CalculateAll
         };
         createCriteriaService.CreateCalculateCriteria(Arg.Any<SettleRequest>()).Returns(criteria);
+        logDirectlyService.WriteLog(Arg.Any<int>(), Arg.Any<string>());
+
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
 
         await service.Calculate(query);
@@ -101,6 +104,7 @@ public class CalculateServiceTests
             Action = ActionType.CalculateAll
         };
         createCriteriaService.CreateCalculateCriteria(Arg.Any<SettleRequest>()).Returns(criteria);
+        logDirectlyService.WriteLog(Arg.Any<int>(), Arg.Any<string>());
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
         await repository.ExecuteAsync(Arg.Any<CalculateCriteria>());
 

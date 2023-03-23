@@ -1,12 +1,12 @@
 ﻿using Fanex.Data.Repository;
-using Settlement.Core.Models;
-using Settlement.Sportsbook.Soccer.Criteria;
-using Settlement.Sportsbook.Soccer.Requests;
-using System.Threading.Tasks;
 using Fanex.Settlement.ScaleOut.Constants;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
 using Microsoft.Extensions.Options;
+using Settlement.Core.Models;
+using Settlement.Core.Services;
+using Settlement.Sportsbook.Soccer.Criteria;
+using Settlement.Sportsbook.Soccer.Requests;
 
 namespace Settlement.Sportsbook.Soccer.Services;
 
@@ -25,16 +25,25 @@ public class SettleEarlyServiceImp : SettleEarlyService
 
     private readonly ScaleOutSettleService scaleOutSettleService;
 
+    private readonly LogDirectlyService logDirectlyService;
+
+    private readonly XmlConvertService xmlConvertService;
+
+
     public SettleEarlyServiceImp(
         ICreateCriteriaService createCriteriaService,
         IOptions<AppSettingsKey> appSettingsKey,
         IDynamicRepository repository,
-        ScaleOutSettleService scaleOutSettleService)
+        ScaleOutSettleService scaleOutSettleService,
+        LogDirectlyService logDirectlyService,
+        XmlConvertService xmlConvertService)
     {
         this.createCriteriaService = createCriteriaService;
         this.appSettingsKey = appSettingsKey.Value;
         this.repository = repository;
         this.scaleOutSettleService = scaleOutSettleService;
+        this.logDirectlyService = logDirectlyService;
+        this.xmlConvertService = xmlConvertService;
     }
 
     public async Task<Result> CalculateEarly(SettleEarlyRequest request)
@@ -45,10 +54,27 @@ public class SettleEarlyServiceImp : SettleEarlyService
         {
             return requestChecking;
         }
+
+        WriteDirectlyLog(request);
+
         await UpdateMatchInfo(criteria);
+
         var result = await Execute(criteria);
+
         return result;
     }
+
+    private void WriteDirectlyLog(SettleEarlyRequest request)
+    {
+        var message = LogDirectlyServiceImp.CreateEarlyLog(
+            request.ActionName,
+            request.MatchId,
+            xmlConvertService.Serialize(request.SelectedResources))
+            .Replace("ArrayOfResourceItem", "Resources").Replace("ResourceItem", "Resource");
+
+        logDirectlyService.WriteLog(request.MatchId, message);
+    }
+
 
     private async Task<Result> Execute(CalculateEarlyCriteria criteria)
     {

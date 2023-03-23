@@ -8,17 +8,14 @@ using Fanex.Settlement.ScaleOut.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using NSubstitute;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
+using Settlement.Core.Services;
 using Settlement.Sportsbook.Soccer.Criteria;
 using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Requests;
 using Settlement.Sportsbook.Soccer.Services;
 using Settlement.Sportsbook.Soccer.Services.InstantCalculate;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace Settlement.Sportsbook.Soccer.UnitTests.Services.Instant;
 
@@ -36,6 +33,8 @@ public class InstantCalculateServiceFacts
 
     private readonly IInstantCalculateService service;
 
+    private readonly LogDirectlyService logDirectlyService;
+
     public InstantCalculateServiceFacts()
     {
         repository = Substitute.For<IDynamicRepository>();
@@ -43,6 +42,8 @@ public class InstantCalculateServiceFacts
         accessor = Substitute.For<IHttpContextAccessor>();
         instantResourceService = Substitute.For<IInstantResourceService>();
         scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
+        logDirectlyService = Substitute.For<LogDirectlyService>();
+
         var context = new DefaultHttpContext();
         context.Connection.RemoteIpAddress = new System.Net.IPAddress(1);
         accessor.HttpContext = context;
@@ -52,7 +53,7 @@ public class InstantCalculateServiceFacts
         var mapper = new Mapper(config);
         var appSettings = new AppSettingsKey { SiteDbServer = new List<string> { "DB01", "DB02", "DB03" } };
         var option = Options.Create(appSettings);
-        service = new InstantCalculateServiceImp(repository, currentSession, mapper, accessor, instantResourceService, option, scaleOutSettleService);
+        service = new InstantCalculateServiceImp(repository, currentSession, mapper, accessor, instantResourceService, option, scaleOutSettleService, logDirectlyService);
     }
 
     [Fact]
