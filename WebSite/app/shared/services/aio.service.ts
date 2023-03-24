@@ -10,7 +10,7 @@ import { ResultSettingType, SettlementStatusId, TicketStatusText, ResultStatus }
 
 @Injectable()
 export class AioService {
-    private aioApi = `api/aio`;
+    private aioApi = `/api/aio`;
 
     private readonly httpRequestService: HttpRequestService;
     public readonly warningDialogMessage: ModalDialogMessage = new ModalDialogMessage();
@@ -53,7 +53,7 @@ export class AioService {
             leagueId
         };
 
-        return this.httpRequestService.postJson(query, `api/setting/get-league-outside-source`, false);
+        return this.httpRequestService.postJson(query, `/api/setting/get-league-outside-source`, false);
     }
 
     public checkMarkedTickets(query: object) {
@@ -67,12 +67,12 @@ export class AioService {
     }
 
     public voidBet(query: object) {
-        const request = this.httpRequestService.postJson(query, `api/void-bet/update`);
+        const request = this.httpRequestService.postJson(query, `/api/void-bet/update`);
         return firstValueFrom(request);
     }
 
     public getTicketInfo(query: object) {
-        const newApiUrl = `api/void-bet/get-ticket`;
+        const newApiUrl = `/api/void-bet/get-ticket`;
         const request = this.httpRequestService.postJson(query, newApiUrl);
         return firstValueFrom(request);
     }

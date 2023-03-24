@@ -36,7 +36,7 @@ describe('TicketService', () => {
       () => {
         // Arrange
         const matchId = 7000000;
-        const url = 'api/sportsbook-aio/checking-marked-tickets';
+        const url = '/api/sportsbook-aio/checking-marked-tickets';
         const param = {
           matchId,
         };

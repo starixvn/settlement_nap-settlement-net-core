@@ -872,7 +872,7 @@
                 "with": "environments/environment.prod.ts"
               }],
               "outputHashing": "all",
-              "deployUrl": "e-sports/"
+              "baseHref": "/e-sports/"
             },
             "development": {
               "buildOptimizer": false,
@@ -944,7 +944,7 @@
                 "with": "environments/environment.prod.ts"
               }],
               "outputHashing": "all",
-              "deployUrl": "basketball/"
+              "baseHref": "/basketball/"
             },
             "development": {
               "buildOptimizer": false,
@@ -1015,7 +1015,7 @@
                 "with": "environments/environment.prod.ts"
               }],
               "outputHashing": "all",
-              "deployUrl": "badminton/"
+              "baseHref": "/badminton/"
             },
             "development": {
               "buildOptimizer": false,
@@ -1086,7 +1086,7 @@
                 "with": "environments/environment.prod.ts"
               }],
               "outputHashing": "all",
-              "deployUrl": "tennis/"
+              "baseHref": "/tennis/"
             },
             "development": {
               "buildOptimizer": false,
@@ -1157,7 +1157,7 @@
                 "with": "environments/environment.prod.ts"
               }],
               "outputHashing": "all",
-              "deployUrl": "cricket/"
+              "baseHref": "/cricket/"
             },
             "development": {
               "buildOptimizer": false,
@@ -1341,8 +1341,5 @@
   },
   "cli": {
     "analytics": "09292d6d-1293-4179-9639-00a7cd991d80",
-    "cache": {
-      "enabled": false
-    }
   }
 }
