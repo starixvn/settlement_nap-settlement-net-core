@@ -14,9 +14,3 @@ export const TeamStatuses = [
     { text: "Closed", isShow: false }]
 
 export const FilterStatuses = ["All", "Running", "Completed"]
-
-export const allLeague = {
-    leagueId: 0,
-    leagueName: '--- Show ALL Leagues ---',
-    sportType: 0
-}
