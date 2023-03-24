@@ -69,7 +69,7 @@
       }
     },
     "bet-builder": {
-      "root": "app",
+      "root": "",
       "sourceRoot": "bet-builder",
       "projectType": "application",
       "architect": {

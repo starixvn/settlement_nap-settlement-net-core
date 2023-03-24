@@ -4,13 +4,11 @@ using Settlement.Core.Models;
 using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Requests;
 using Settlement.Sportsbook.Soccer.Services;
+using Settlement.Sportsbook.Soccer.Services.GetMatch;
 using Match = Settlement.Sportsbook.Soccer.Models.Match;
 using MatchDetail = Settlement.Sportsbook.Soccer.Models.MatchDetail;
 
 namespace Settlement.Sportsbook.Soccer.Handlers;
-
-using Services.GetMatch;
-using Services.InstantCalculate;
 
 public class CalculateHandler : IRequestHandler<GetMatchRequest, Match>,
     IRequestHandler<GetLatestMatchDetailRequest, MatchDetail>,
@@ -46,7 +44,6 @@ public class CalculateHandler : IRequestHandler<GetMatchRequest, Match>,
     public async Task<Result> Handle(SettleRequest request, CancellationToken cancellationToken)
     {
         Console.WriteLine("Fanex.Settletment.WebSites(Handle): ");
-
 
         return request.ActionName.Equals(ActionType.UnCalculate)
             ? await calculateService.UnCalculate(request)
