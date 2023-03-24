@@ -8,11 +8,12 @@ public class GetOutrightDetailCriteria : CriteriaBase
 
 	public DateTime ToDate { get; set; }
 
-	public int SportType { get; set; }
-
-	public int LeagueId { get; set; }
+	public string LeagueIds { get; set; }
 
 	public byte StatusId { get; set; }
+
+	public bool IsIncludeTest { get; set; }
+
 
 	public override string GetSettingKey()
 	{

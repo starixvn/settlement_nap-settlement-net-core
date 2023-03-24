@@ -1,9 +1,9 @@
+
 import { Injectable } from "@angular/core";
-import { League, LeagueSettle, TeamSettle } from "../models";
-import { LeagueRequest } from "../models/league-request.model";
+import { LeagueSettle, SportLeague, TeamSettle } from "../models";
 import { HttpRequestService } from "../../shared/services";
 import { firstValueFrom, Observable } from 'rxjs';
-import { FilterRequest } from "../models/filter-request.model";
+import { FilterRequest, InitFilter, SportLeagueRequest } from "../models/filter-request.model";
 import { Outright } from "../models/outright.model";
 import { LogRequest } from "../models/log-request.model";
 import { OutrightLog } from "../models/outright-log.model";
@@ -15,12 +15,14 @@ export class OutrightService {
 
     constructor(private httpRequestService: HttpRequestService) { }
 
-    public getLeagues(request: LeagueRequest) {
-        return this.httpRequestService.postJson<League[]>(request, `${this.outrightApi}/get-league`);
+    public getSportLeague(sportLeagueRequest: SportLeagueRequest) {
+        const request = this.httpRequestService.postJson<SportLeague>(sportLeagueRequest, `${this.outrightApi}/get-sport-league`, false);
+        return firstValueFrom(request);
     }
 
     public getFilterView() {
-        return this.httpRequestService.getJson(`${this.outrightApi}/get-filter-view`);
+        const request = this.httpRequestService.getJson<InitFilter>(`${this.outrightApi}/get-filter-view`);
+        return firstValueFrom(request);
     }
 
 

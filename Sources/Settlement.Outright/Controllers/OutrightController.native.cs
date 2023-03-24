@@ -22,11 +22,11 @@ public class OutrightController : ControllerBase
 
     [HttpGet]
     [Route("get-filter-view")]
-    public async Task<IActionResult> GetFilerView() => Ok(await getDataFilterService.GetFilterView());
+    public IActionResult GetFilerView() => Ok(getDataFilterService.GetFilterView());
 
     [HttpPost]
-    [Route("get-league")]
-    public async Task<IActionResult> GetLeagues(LeagueRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+    [Route("get-sport-league")]
+    public async Task<IActionResult> GetLeagues(SportLeagueRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
     [HttpPost]
     [Route("filter")]

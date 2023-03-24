@@ -1,4 +1,3 @@
-@import "../../Styles/common.less";
 @sprite: "../../wwwroot/css/images/sprite.png";
 
 .filter-bar {
@@ -21,45 +20,6 @@
   select {
     height: 24px;
   }
-  .mat-mdc-select {
-    display: inline-block;
-    width: 100%;
-    outline: none;
-    width: 400px;
-    font-size: 12px;
-    background: white;
-    padding: 0 0px;
-    border: 1px solid #d4d4d4;
-    border-radius: 3px;
-    height: 24px;
-    position: relative;
-    .mat-mdc-select-value {
-      height: unset !important;
-      padding-left: 5px;
-      padding-right: 16px;
-    }
-    // .mat-mdc-list-item--selected.mat-mdc-option-active {
-    //   background-color: grey !important;
-    //   color: white;
-    // }
-    // .mat-mdc-select-arrow-wrapper {
-    //   display: none;
-    // }
-    .mat-select-arrow {
-      /* Remove the top part of the existing arrow triangle to form a chevron shape */
-      &::after {
-        content: "";
-        display: block;
-        width: 0;
-        height: 0;
-        margin-left: -3px;
-        margin-top: -5px;
-        border-left: 3px solid transparent;
-        border-right: 3px solid transparent;
-        border-top: 3px solid white; /* This needs to match your input field background */
-      }
-    }
-  }
 
   .ngb-dp-arrow {
     button:disabled {
@@ -74,7 +34,7 @@
 
   @media (min-width: 1530px) {
     .to-date {
-      padding-left: 22px;
+      padding-left: 8px;
     }
 
     .date {
@@ -133,8 +93,7 @@
 .filter-bar-outright {
   padding-bottom: 10px;
   .league-field {
-    width: auto;
-    display: flex;
+    margin-left: 7px;
   }
 }
 
@@ -426,48 +385,6 @@ label.title {
   font-weight: bold;
 }
 
-.w-5 {
-  width: 5%;
-}
-.w-10 {
-  width: 10%;
-}
-
-.w-8 {
-  width: 8%;
-}
-
-.w-15 {
-  width: 15%;
-}
-
-.w-20 {
-  width: 20%;
-}
-.w-25 {
-  width: 25%;
-}
-
-.w-30 {
-  width: 30%;
-}
-
-.w-40 {
-  width: 40%;
-}
-
-.w-45 {
-  width: 45%;
-}
-
-.w-50 {
-  width: 50%;
-}
-
-.w-100 {
-  width: 100%;
-}
-
 .table-scroll-down {
   display: block;
 }
@@ -484,6 +401,7 @@ label.title {
   width: 100%;
   overflow-y: scroll;
 }
+
 .table-scroll-down tr {
   width: 100%;
   display: flex;
@@ -511,61 +429,6 @@ label.title {
 }
 .between {
   justify-content: space-between;
-}
-
-.testClass {
-  .mat-mdc-option:hover {
-    background-color: #767676 !important; //The color you want
-    color: white !important;
-    .mdc-list-item__primary-text {
-      color: white !important;
-    }
-  }
-  .mat-mdc-option.mat-mdc-option-active {
-    background-color: #767676 !important; //The color you want
-    color: white !important;
-    .mdc-list-item__primary-text {
-      color: white !important;
-    }
-  }
-
-  .mdc-list-item--selected:not(.mdc-list-item--disabled)
-    .mdc-list-item__primary-text {
-    color: white !important;
-  }
-}
-
-.chevron {
-  padding: 7px;
-  color: #726a7a;
-  position: absolute;
-  right: 0px;
-  top: -3px;
-  font-size: 11px;
-}
-
-.chevron::before {
-  border-style: solid;
-  border-width: 0.25em 0.25em 0 0;
-  content: "";
-  display: inline-block;
-  height: 0.6em;
-  left: 0.15em;
-  position: relative;
-  top: 3px;
-  transform: rotate(-45deg);
-  vertical-align: top;
-  width: 0.6em;
-}
-
-.chevron.right:before {
-  left: 0;
-  transform: rotate(45deg);
-}
-
-.chevron.bottom:before {
-  //   top: 0;
-  transform: rotate(135deg);
 }
 
 .log-modalbox {

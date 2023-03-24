@@ -10,15 +10,16 @@ namespace Settlement.Outright.Services;
 
 public interface FilterService
 {
-    Task<FilterViewModel> GetFilterView();
+    FilterViewModel GetFilterView();
 
-    Task<IEnumerable<League>> GetLeague(LeagueRequest request);
+    Task<SportLeague> GetSportLeague(SportLeagueRequest request);
 
     Task<OutrightModel> Filter(FilterRequest request);
 }
 
 public class FilterServiceImp : FilterService
 {
+    private static readonly List<int> PopularSport = new() { SportType.Soccer, SportType.Badminton, SportType.BasketBall, SportType.ESports, SportType.Tennis };
     private readonly IDynamicRepository repository;
     private readonly IBalanceUpService balanceUpService;
     private readonly IMapper mapper;
@@ -42,46 +43,72 @@ public class FilterServiceImp : FilterService
         this.appSettingsKey = appSettingsKey.Value;
     }
 
-    public async Task<FilterViewModel> GetFilterView()
+    public FilterViewModel GetFilterView()
     {
-        var requestLeague = new LeagueRequest
-        {
-            FromDate = Convert.ToDateTime(DateTime.Now.AddDays(-1).ToShortDateString()),
-            ToDate = DateTime.Today,
-            SportType = SportType.Soccer
-        };
-
         return new FilterViewModel
         {
-            Sports = Sports,
             MoveBetsDay = balanceUpService.GetBalanceUpDay().MoveBetsDay.AddDays(1),
-            Leagues = await GetLeague(requestLeague),
-            FromDate = requestLeague.FromDate,
-            ToDate = requestLeague.ToDate
+            FromDate = Convert.ToDateTime(DateTime.Now.AddDays(-1).ToShortDateString()),
+            ToDate = DateTime.Today
         };
     }
 
-    public async Task<IEnumerable<League>> GetLeague(LeagueRequest request)
+    public async Task<SportLeague> GetSportLeague(SportLeagueRequest request)
     {
-        var criteria = mapper.Map<LeagueRequest, GetOutrightLeaguesCriteria>(request);
+        var criteria = mapper.Map<SportLeagueRequest, GetOutrightSportLeaguesCriteria>(request);
 
-        return await repository.FetchAsync<League>(criteria);
+        var leagues = (await repository.FetchAsync<League>(criteria)).ToList();
+
+        foreach (var item in leagues)
+        {
+            item.SportName = refDataService.GetSportName(item.SportType);
+            item.LeagueName = refDataService.GetLeagueName(item.LeagueId);
+            item.Group = $"All {item.SportName} Leagues";
+        }
+
+        var sortedLeague = OrderLeague(leagues).ToList();
+
+        return new SportLeague
+        {
+            Leagues = sortedLeague,
+            Sports = GenerateSport(sortedLeague)
+        };
     }
 
     public async Task<OutrightModel> Filter(FilterRequest request)
     {
         var criteria = mapper.Map<FilterRequest, GetOutrightDetailCriteria>(request);
-        var listTeam = (await repository.FetchAsync<Team>(criteria)).ToList();
-        var teamTickets = await GetTeamsTicketCount(listTeam);
+        var (deadHeatSettings, teams) = await repository.FetchMultipleAsync<DeadHeatSetting, Team>(criteria);
+        var teamTickets = await GetTeamsTicketCount(teams);
         var group = GroupTeamTicket(teamTickets.ToList());
 
-        AddTicketCountToTeam(listTeam, group.ToList());
+        AddTicketCountToTeam(teams, group.ToList());
 
         return new OutrightModel
         {
-            LeagueMatch = GroupLeague(listTeam),
+            LeagueMatch = GroupLeague(teams, deadHeatSettings),
             Permission = permissionService.Permission
         };
+    }
+
+    private static IEnumerable<League> OrderLeague(IEnumerable<League> leagues)
+    {
+        var sortBySportName = leagues.OrderBy(item => item.SportName).ThenBy(item => item.LeagueName);
+        return sortBySportName.OrderByDescending(item => item.SportType == SportType.Soccer)
+            .ThenBy(item => item.SportType == SportType.OtherSports)
+            .ThenByDescending(item => PopularSport.IndexOf(item.SportType) > -1);
+    }
+
+    private static IEnumerable<Sport> GenerateSport(IEnumerable<League> leagues)
+    {
+        var listLeagueDistinct = leagues.GroupBy(league => league.SportType).Select(league => league.First());
+        return listLeagueDistinct.Select(item =>
+            new Sport
+            {
+                SportType = item.SportType,
+                SportName = item.SportName,
+                Group = PopularSport.Exists(sport => sport == item.SportType) ? SportGroup.PopularGroup : SportGroup.OtherGroup
+            });
     }
 
     private static void AddTicketCountToTeam(IEnumerable<Team> teams, ICollection<TeamTicketModel> teamTickets)
@@ -121,14 +148,13 @@ public class FilterServiceImp : FilterService
             OrId = groupTeam.First().OrId,
             TotalTicket = groupTeam.Sum(item => item.TotalTicket)
         });
-
         return result;
     }
 
-    private IEnumerable<LeagueMatch> GroupLeague(IEnumerable<Team> teams)
+    private IEnumerable<LeagueMatch> GroupLeague(IEnumerable<Team> teams, IEnumerable<DeadHeatSetting> deadHeatSettings)
     {
         var currentLeague = 0;
-        var leagues = new List<LeagueMatch>();
+        var listLeague = new List<LeagueMatch>();
         var league = new LeagueMatch();
         foreach (var team in teams)
         {
@@ -148,12 +174,20 @@ public class FilterServiceImp : FilterService
 
                 currentLeague = team.LeagueId;
                 league.Teams.Add(team);
-                leagues.Add(league);
+                listLeague.Add(league);
             }
         }
 
-        return leagues;
-    }
+        listLeague.ForEach(l =>
+        {
+            var value = deadHeatSettings.FirstOrDefault(item => item.LeagueId == l.LeagueId);
+            if (value != null)
+            {
+                l.DeadHeat = value.DeadHeat;
+                l.EventDate = value.EventDate;
+            }
+        });
 
-    private IEnumerable<Sport> Sports => repository.Fetch<Sport>(new GetSportListCriteria());
+        return listLeague;
+    }
 }

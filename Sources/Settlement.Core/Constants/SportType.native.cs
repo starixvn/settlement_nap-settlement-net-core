@@ -116,3 +116,10 @@ public static class SportType
 
     public const int Happy5 = 164;
 }
+
+public static class SportGroup
+{
+    public const string PopularGroup = "All Popular Sports";
+
+    public const string OtherGroup = "All Other Sports";
+}

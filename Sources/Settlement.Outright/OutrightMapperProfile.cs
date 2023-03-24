@@ -7,7 +7,7 @@ public class OutrightMapperProfile : Profile
 {
     public OutrightMapperProfile()
     {
-        CreateMap<LeagueRequest, GetOutrightLeaguesCriteria>();
+        CreateMap<SportLeagueRequest, GetOutrightSportLeaguesCriteria>();
         CreateMap<FilterRequest, GetOutrightDetailCriteria>();
         CreateMap<GetLeagueInfoRequest, GetLeagueInfoCriteria>();
         CreateMap<TeamSettleModel, OutrightSettleCriteria>();
