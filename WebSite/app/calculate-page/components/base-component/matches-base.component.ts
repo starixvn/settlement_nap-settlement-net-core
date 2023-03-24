@@ -28,12 +28,12 @@ export class MatchesBaseComponent extends LeagueBaseComponent implements OnChang
   }
 
   public popupCalc(match: CalculationMatch) {
-    const src = `apps/soccer-recalculate?matchId=${match.matchId}`;
+    const src = `/apps/soccer-recalculate?matchId=${match.matchId}`;
     this.popupService.openAndHandlePopup(src, Language.CalcPopupTitle, '800px', '800px', match);
   }
 
   public popupRefund(match: CalculationMatch) {
-    const src = `apps/soccer-refund?matchId=${match.matchId}`;
+    const src = `/apps/soccer-refund?matchId=${match.matchId}`;
     this.popupService.openAndHandlePopup(src, Language.RefundPopupTitle, '790px', '600px', match);
   }
 

@@ -658,7 +658,7 @@
                 "with": "environments/environment.prod.ts"
               }],
               "outputHashing": "all",
-              "deployUrl": "calculate-page/"
+              "baseHref": "/calculate-page/"
             },
             "development": {
               "buildOptimizer": false,
@@ -730,7 +730,7 @@
                 "with": "environments/environment.prod.ts"
               }],
               "outputHashing": "all",
-              "deployUrl": "fast-market/"
+              "baseHref": "/fast-market/"
             },
             "development": {
               "buildOptimizer": false,
@@ -809,7 +809,7 @@
                 "with": "environments/environment.prod.ts"
               }],
               "outputHashing": "all",
-              "deployUrl": "soccer/"
+              "baseHref": "/soccer/"
             }
           }
         },

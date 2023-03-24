@@ -6,7 +6,8 @@ import { GroupBetTypeService } from "./group-bettpe.service";
 import { SportType } from '../../../../shared/constants';
 @Injectable()
 export class HelperService {
-    private soccerApi = 'api/soccer';
+    private soccerApi = '/api/soccer';
+    private aioApi = '/api/aio';
     constructor(
         private readonly httpRequestService: HttpRequestService,
         private readonly closePopupService: ClosePopupService,
@@ -35,11 +36,11 @@ export class HelperService {
             sportType: SportType.soccer,
         };
 
-        return this.httpRequestService.postJson(query, `api/aio/get-recal-result`);
+        return this.httpRequestService.postJson(query, `${this.aioApi}/get-recal-result`);
     }
 
     public changeResultSetting(query: ResultSettingQuery) {
-        return this.httpRequestService.postJson(query, `api/aio/result-setting`);
+        return this.httpRequestService.postJson(query, `${this.aioApi}/result-setting`);
     }
 
     public checkMarkedTickets(matchId: number, selectedResources: ResultDetail[])  {
@@ -47,7 +48,7 @@ export class HelperService {
             matchId,
             selectedResources
         };
-        return this.httpRequestService.postJson(query, `api/aio/check-marked-tickets`, false);
+        return this.httpRequestService.postJson(query, `${this.aioApi}/check-marked-tickets`, false);
     }
 
     public checkingStatus(matchId: number, actionName: string) {

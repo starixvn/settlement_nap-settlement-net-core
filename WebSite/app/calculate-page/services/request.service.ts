@@ -9,9 +9,9 @@ import { DetectChangesService } from "./detect-changes.service";
 import { League as BaseLeague } from "../../shared/models";
 @Injectable()
 export class RequestService {
-  private calculationApi = 'api/calculation';
-  private settingApi = 'api/setting';
-  private soccerApi = 'api/soccer';
+  private calculationApi = '/api/calculation';
+  private settingApi = '/api/setting';
+  private soccerApi = '/api/soccer';
 
   constructor(private readonly httpRequestService: HttpRequestService,
     private readonly backGroundService: BackGroundService,
@@ -23,7 +23,7 @@ export class RequestService {
   }
 
   public getDate() {
-    const url = `api/multi-sports/get-date`;
+    const url = `/api/multi-sports/get-date`;
     const request = this.httpRequestService.getJson<DateFilter>(url);
     return firstValueFrom(request);
   }
@@ -71,7 +71,7 @@ export class RequestService {
   }
 
   public getMatchDetail(matchId: number) {
-    const url = `api/fast-market/get-match`;
+    const url = `/api/fast-market/get-match`;
     const query = { matchId };
     const request = this.httpRequestService.postJson(query, url);
     return firstValueFrom(request);

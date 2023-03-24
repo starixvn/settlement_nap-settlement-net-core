@@ -9,9 +9,9 @@ export class ReCheckInService {
         this.httpClient = httpClient;
     }
     public reCheckin() {
-        const urlRecheckIn = "Auth/ReCheckIn";
-        const urlLogout =  "Auth/LogOut";
-        const urlOffline = "Auth/Offline";
+        const urlRecheckIn = "/Auth/ReCheckIn";
+        const urlLogout =  "/Auth/LogOut";
+        const urlOffline = "/Auth/Offline";
         const headers = new HttpHeaders(
             {
                 'Content-Type': 'application/json',
