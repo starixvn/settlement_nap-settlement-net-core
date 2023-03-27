@@ -40,7 +40,7 @@ describe('MoveTicketsService', () => {
 
   it(`getLeague - Call right Url and param`, () => {
     // Arrange
-    const url = `api/multi-sports/getLeague`;
+    const url = `/api/multi-sports/getLeague`;
     const param = {
       apikey: ApiKeys.MultiSportGetCombobox,
     };

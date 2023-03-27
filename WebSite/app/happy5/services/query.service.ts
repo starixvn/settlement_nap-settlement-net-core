@@ -4,7 +4,7 @@ import { HttpRequestService } from '../../shared/services';
 import { Filter, Ball, GetMatchesQuery, SettleQuery } from '../models';
 @Injectable()
 export class QueryService {
-    private happyFiveApi = 'api/happy5';
+    private happyFiveApi = '/api/happy5';
     constructor(private readonly httpRequestService: HttpRequestService) {
     }
 

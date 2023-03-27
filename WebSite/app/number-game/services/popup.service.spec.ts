@@ -39,7 +39,7 @@ describe("Popup Service", () => {
         const toDate = "08-09-2020";
         popupService.popupLog(matchId, fromDate, toDate);
 
-        const srcExpected = `home/log/?matchCode=${matchId}&fromDate=${fromDate}&toDate=${toDate}&isShowMenu=false&productType=NBG`;
+        const srcExpected = `/home/log/?matchCode=${matchId}&fromDate=${fromDate}&toDate=${toDate}&isShowMenu=false&productType=NBG`;
         expect(popupService.dialogData.title).toEqual(Language.SettlementLog);
         expect(popupService.dialogData.src).toEqual(srcExpected)
         expect(dialogBoxService.popup).toHaveBeenCalled();

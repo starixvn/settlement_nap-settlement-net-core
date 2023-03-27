@@ -34,7 +34,7 @@ describe('QueryService', () => {
   });
 
   it('search - Call exact Url and param', fakeAsync(() => {
-      const url = 'api/happy5/search';
+      const url = '/api/happy5/search';
       const param = new GetMatchesQuery('700000', '', '2020-01-01', '2020-01-02');
 
       spyOn(httpRequestService, 'postJson');
@@ -44,7 +44,7 @@ describe('QueryService', () => {
   }));
 
   it('filter - Call exact Url', fakeAsync(() => {
-      const url = 'api/happy5/filter-default';
+      const url = '/api/happy5/filter-default';
 
       spyOn(httpRequestService, 'getJson');
       service.filter();
@@ -54,7 +54,7 @@ describe('QueryService', () => {
 
   it('getBallsByMatchId - Call exact Url', fakeAsync(() => {
       const matchId = 123456;
-      const url = `api/happy5/get-ball?matchId=${matchId}`;
+      const url = `/api/happy5/get-ball?matchId=${matchId}`;
 
       spyOn(httpRequestService, 'getJson');
       service.getBallsByMatchId(matchId);
@@ -63,7 +63,7 @@ describe('QueryService', () => {
   }));
 
   it('settle - Call exact Url and param', fakeAsync(() => {
-      const url = 'api/happy5/settle';
+      const url = '/api/happy5/settle';
       const balls: Ball[] = [new Ball(700000, 1, 1)];
       const param = new SettleQuery(700000, balls, "");
 

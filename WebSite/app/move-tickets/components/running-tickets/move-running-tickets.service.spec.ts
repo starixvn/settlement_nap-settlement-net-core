@@ -35,7 +35,7 @@ describe('MoveTicketsService', () => {
     it('validateMatches - should post with correct url', fakeAsync(() => {
       spyOn(httpRequestService, 'postJson');
       const request = new ValidateMatchesRequest();
-      const expectedUrl = 'api/moveticket/validate-matches';
+      const expectedUrl = '/api/moveticket/validate-matches';
 
       moveRunningTicketsService.validateMatches(request);
 
@@ -45,7 +45,7 @@ describe('MoveTicketsService', () => {
     it('getMoveTicketsMatches - should post with correct url', fakeAsync(() => {
       spyOn(httpRequestService, 'postJson');
       const request = new GetMoveTicketsRequest();
-      const expectedUrl = 'api/moveticket/get-move-tickets-matches';
+      const expectedUrl = '/api/moveticket/get-move-tickets-matches';
 
       moveRunningTicketsService.getMoveTicketsMatches(request);
 
@@ -55,7 +55,7 @@ describe('MoveTicketsService', () => {
     it('moveRunningTickets - should post with correct url', fakeAsync(() => {
       spyOn(httpRequestService, 'postJson');
       const request = new MoveRunningTicketsRequest();
-      const expectedUrl = 'api/moveticket/move-running-tickets';
+      const expectedUrl = '/api/moveticket/move-running-tickets';
 
       moveRunningTicketsService.moveRunningTickets(request);
 
