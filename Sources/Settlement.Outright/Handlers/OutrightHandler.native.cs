@@ -10,7 +10,8 @@ public class OutrightHandler :
         IRequestHandler<GetLeagueInfoRequest, LeagueInfo>,
         IRequestHandler<OutrightUndoRequest, Result>,
         IRequestHandler<GetLogRequest, IEnumerable<OutrightLog>>,
-        IRequestHandler<OutrightCalculateRequest, Result>
+        IRequestHandler<OutrightCalculateRequest, Result>,
+        IRequestHandler<CheckOutrightVoidTicketRequest, bool>
 
 {
     private readonly FilterService getDataFilterService;
@@ -19,11 +20,18 @@ public class OutrightHandler :
 
     private readonly OutrightLogService outrightLogService;
 
-    public OutrightHandler(FilterService getDataFilterService, OutrightSettleService settleService, OutrightLogService outrightLogService)
+    private readonly OutrightLogQueryService outrightLogQueryService;
+
+    public OutrightHandler(
+        FilterService getDataFilterService,
+        OutrightSettleService settleService,
+        OutrightLogService outrightLogService,
+        OutrightLogQueryService outrightLogQueryService)
     {
         this.getDataFilterService = getDataFilterService;
         this.settleService = settleService;
         this.outrightLogService = outrightLogService;
+        this.outrightLogQueryService = outrightLogQueryService;
     }
 
     public async Task<SportLeague> Handle(SportLeagueRequest request, CancellationToken cancellationToken) => await getDataFilterService.GetSportLeague(request);
@@ -40,4 +48,7 @@ public class OutrightHandler :
     {
         return request.IsSubmit ? await outrightLogService.GetLogBySubmit(request) : await outrightLogService.GetLogForView(request);
     }
+
+    public async Task<bool> Handle(CheckOutrightVoidTicketRequest request, CancellationToken cancellationToken)
+        => await outrightLogQueryService.CheckOutrightvoidTicket(request);
 }

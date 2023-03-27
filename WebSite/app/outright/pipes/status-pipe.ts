@@ -10,8 +10,8 @@ import { Status } from "../constants";
 })
 
 export class StatusPipe implements PipeTransform {
-    private readonly runningStatus = [ Status.running, Status.internal, Status.closed];
-    private readonly completedStatus = [ Status.won, Status.lose, Status.refund];
+    private readonly runningStatus = [Status.running, Status.internal, Status.closed];
+    private readonly completedStatus = [Status.won, Status.lose, Status.refund, Status.hide];
 
     public transform(teams: Team[], status: string) {
         return _.isEqual(status.toLowerCase(), FilterStatuses[0].toLowerCase()) ?

@@ -263,6 +263,7 @@ export const Language = {
         atLeastTwoDeadHeat: "Must select at least 2 Won teams to calculate with Dead Heat.",
         nonDeadHeatConfirm: "Multiple Won teams without Dead Heat detected. Are you sure you want to proceed?",
         confirmCalculate: "Are you sure you want to CALCULATE the selected matches?",
-        confirmUncalculate: "Are you sure you want to UNCALCULATE the selected matches?"
+        confirmUncalculate: "Are you sure you want to UNCALCULATE the selected matches?",
+        existHideTicketNotVoided: "Cannot calculate as Hide due to no accepted tickets or all tickets are not Voided."
     }
 };

@@ -3,6 +3,7 @@ import { Injectable } from "@angular/core";
 import { Team } from "../models";
 import * as _ from "lodash";
 import { Status } from "../constants";
+import { OutrightService } from './outright.service';
 
 @Injectable()
 export class CalculateService {
@@ -63,6 +64,8 @@ export class CalculateService {
         }
         return false;
     }
+
+
 
     public static teamWonSettled(teamSelected: Team[], originalTeam: Team[]) {
         const teamNotSelectButSettled = _.filter(originalTeam, team =>

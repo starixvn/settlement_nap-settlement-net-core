@@ -61,4 +61,12 @@ export class OutrightService {
     public getLogs(request: LogRequest): Observable<OutrightLog[]> {
         return this.httpRequestService.postJson<OutrightLog[]>(request, `${this.outrightApi}/get-log`)
     }
+
+    public checkVoidTickets(orId: number) {
+        const response = this.httpRequestService.postJson<boolean>({
+            orId
+        }, `${this.outrightApi}/check-void-tickets`);
+
+        return firstValueFrom(response);
+    }
 }

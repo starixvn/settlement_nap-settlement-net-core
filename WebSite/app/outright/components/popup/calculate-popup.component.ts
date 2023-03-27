@@ -16,6 +16,7 @@ import { ModalDialogMessage } from '../../../shared/models';
 import { MatDialog, MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { ResultOutright } from '../../models/result-outright.model';
+import { async } from '@angular/core/testing';
 
 @Component({
     selector: 'calculate-popup',
@@ -95,6 +96,10 @@ export class CalculatePopupComponent implements OnInit {
         return _.isEmpty(this.teamSelected) || !this.leagueSettle.permission.canCalculateOutright;
     }
 
+    public disableRecalculate() {
+        return !this.leagueSettle.permission.isLeader;
+    }
+
     public selectStatus() {
         this.teams.forEach(team => team.selected = false);
     }
@@ -114,15 +119,22 @@ export class CalculatePopupComponent implements OnInit {
         await this.getLatestData();
         const teamWonSelected = _.filter(this.teamSelected, team => _.isEqual(team.status.toLowerCase(), Status.won));
         const teamWonSettled = CalculateService.teamWonSettled(this.teamSelected, this.originalTeam);
+        const teamHideSelected = _.filter(this.teamSelected, team => _.isEqual(team.status.toLowerCase(), Status.hide));
         this.teamSettleWon = teamWonSelected.concat(teamWonSettled);
-        this.validateBeforePush(this.teamSettleWon, teamWonSettled, teamWonSelected)
+        await this.validateBeforePush(this.teamSettleWon, teamWonSettled, teamWonSelected, teamHideSelected)
     };
+
+    public async reCalculate() {
+        this.clearError();
+
+
+    }
 
     public onSelectDate(value: NgbDateStruct, team: Team) {
         team.eventDate = this.verifyDateService.dateFormat(value);
     }
 
-    private validateBeforePush(teamSettleWon: Team[], teamWonSettled: Team[], teamWonSelected: Team[]) {
+    private async validateBeforePush(teamSettleWon: Team[], teamWonSettled: Team[], teamWonSelected: Team[], teamHideSelected: Team[]) {
         if (CalculateService.ExistRunningStatus(this.teamSelected)) {
             this.toastrService.error(Language.Outright.existRunning);
         } else if (CalculateService.VerifyOnlyOneTeamWon(teamWonSelected, teamWonSettled)) {
@@ -131,6 +143,8 @@ export class CalculatePopupComponent implements OnInit {
             this.toastrService.error(CalculateService.MessageInconsistentDeadheat(teamSettleWon));
         } else if (CalculateService.VerifyNonDeadheat(teamWonSelected, teamWonSettled)) {
             this.confirmCalcNonDeadheat();
+        } else if (await this.VerifyHideStatus(teamHideSelected)) {
+            this.toastrService.error(Language.Outright.existHideTicketNotVoided)
         } else {
             this.doCalculate(this.teamSettleWon.length);
         }
@@ -150,6 +164,11 @@ export class CalculatePopupComponent implements OnInit {
             team.status = team.status.toUpperCase();
         });
         this.originalTeam = latestLeague.teams;
+    }
+
+
+    private async doReCalculate() {
+
     }
 
 
@@ -187,5 +206,20 @@ export class CalculatePopupComponent implements OnInit {
             default:
                 return '';
         }
+    }
+
+    public async VerifyHideStatus(teamHideSelected: Team[]) {
+        for (const team of teamHideSelected) {
+            const result = await this.checkVoidTicket(team);
+            if (!result) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private async checkVoidTicket(teamHide: Team) {
+
+        return await this.outrightService.checkVoidTickets(+teamHide.orId)
     }
 }

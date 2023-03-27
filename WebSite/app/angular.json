@@ -1264,11 +1264,7 @@
         }
       }
     },
-<<<<<<< HEAD
-    "outright": {
-=======
     "app": {
->>>>>>> 736984b1 (refactor: fix code smell &  change background status)
       "root": "",
       "sourceRoot": "outright",
       "projectType": "application",
@@ -1277,11 +1273,7 @@
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
             "outputPath": "../wwwroot/outright",
-<<<<<<< HEAD
-            "index": "outright/index.cshtml",
-=======
             "index": "outright/index.html",
->>>>>>> 736984b1 (refactor: fix code smell &  change background status)
             "main": "outright/main.ts",
             "tsConfig": "outright/tsconfig.app.json",
             "polyfills": "polyfills.ts",

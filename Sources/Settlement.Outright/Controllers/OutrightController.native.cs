@@ -47,4 +47,8 @@ public class OutrightController : ControllerBase
     [HttpPost]
     [Route("get-log")]
     public async Task<IActionResult> GetLeagues(GetLogRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+
+    [HttpPost]
+    [Route("check-void-tickets")]
+    public async Task<IActionResult> CheckVoidTickets(CheckOutrightVoidTicketRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 }

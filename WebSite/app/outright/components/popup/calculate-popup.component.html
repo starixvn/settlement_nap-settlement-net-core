@@ -23,6 +23,8 @@
   <div *ngIf="leagueSettle">
     <div class="league">
       <div class="icon"></div>
+      {{ leagueSettle.today | date: "mediumDate" }}
+      {{ leagueSettle.today | date: "hh:mm:ss a" }} -
       {{ leagueSettle.sportName | uppercase }} - {{ leagueSettle.leagueName }}
     </div>
     <div class="header">
@@ -39,6 +41,14 @@
         (click)="calculate()"
       >
         Calculate
+      </button>
+
+      <button
+        [ngClass]="{ button: true, 'button-disabled': disableRecalculate() }"
+        [disabled]="disableRecalculate()"
+        (click)="reCalculate()"
+      >
+        Re-Calculate
       </button>
     </div>
   </div>

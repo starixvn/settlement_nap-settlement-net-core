@@ -10,6 +10,8 @@ public interface OutrightLogQueryService
     Task<IEnumerable<OutrightLog>> GetOutrightLogs(GetLogRequest request);
 
     Task<IEnumerable<OutrightLogDetail>> GetOutrightLogDetails(GetOutrightLogDetailCriteria criteria);
+
+    Task<bool> CheckOutrightvoidTicket(CheckOutrightVoidTicketRequest resquest);
 }
 
 public class OutrightLogQueryServiceImp : OutrightLogQueryService
@@ -52,5 +54,13 @@ public class OutrightLogQueryServiceImp : OutrightLogQueryService
     public async Task<IEnumerable<OutrightLogDetail>> GetOutrightLogDetails(GetOutrightLogDetailCriteria criteria)
     {
         return await repository.FetchAsync<OutrightLogDetail>(criteria);
+    }
+
+    public async Task<bool> CheckOutrightvoidTicket(CheckOutrightVoidTicketRequest request)
+    {
+        return await repository.GetAsync<bool>(new OutrightVoidTicketCriteria
+        {
+            Orid = request.Orid,
+        });
     }
 }
