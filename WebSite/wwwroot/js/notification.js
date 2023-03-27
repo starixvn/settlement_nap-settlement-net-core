@@ -59,7 +59,7 @@ function toggleNotificationPanel() {
 }
 
 function getTopMessages(top) {
-var urlNotification = "api/notifications/top-notification?top=" + top;
+var urlNotification = "/api/notifications/top-notification?top=" + top;
     fetch(urlNotification)
         .then((response) => {
             return response.json();
@@ -106,7 +106,7 @@ var urlNotification = "api/notifications/top-notification?top=" + top;
 
 function showIconNumberOfNotifications() {
     var unreadNotification = document.getElementById('unreadNotification');
-    var urlNotification = 'api/notifications/get-notification';
+    var urlNotification = '/api/notifications/get-notification';
     var xmlHttp = new XMLHttpRequest();
 
     xmlHttp.onreadystatechange = function () {
@@ -130,7 +130,7 @@ function showIconNumberOfNotifications() {
 
 function showIconBetBuilder() {
     var parentMenu = document.getElementById('3rdProducts-menu');
-    var urlNotificationBetBuilder = 'api/notifications/get-notification-bet-builder';
+    var urlNotificationBetBuilder = '/api/notifications/get-notification-bet-builder';
     var xmlHttp = new XMLHttpRequest();
 
     xmlHttp.onreadystatechange = function () {
