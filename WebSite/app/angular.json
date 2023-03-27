@@ -1160,13 +1160,17 @@
               "baseHref": "/cricket/"
             },
             "development": {
-              "buildOptimizer": false,
               "optimization": false,
               "vendorChunk": true,
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true
             }
+          "defaultConfiguration": "production"
           },
           "defaultConfiguration": "production"
         },
