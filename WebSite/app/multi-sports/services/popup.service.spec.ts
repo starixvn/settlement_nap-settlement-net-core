@@ -97,7 +97,7 @@ describe("MultiSport - PopupService", () => {
       popupService.openAndHandlePopup = jest.fn();
       popupService.popupCalc(match, listSport);
 
-      const srcExpected = `apps/tennis-recalculate?matchId=${match.matchId}&sportType=${match.sportType}`;
+      const srcExpected = `/apps/tennis-recalculate?matchId=${match.matchId}&sportType=${match.sportType}`;
       expect(popupService.properties.src).toEqual(srcExpected);
       expect(popupService.openAndHandlePopup).toHaveBeenCalled();
     });
@@ -112,7 +112,7 @@ describe("MultiSport - PopupService", () => {
       popupService.openAndHandlePopup = jest.fn();
       popupService.popupCalc(match, listSport);
 
-      const srcExpected = `apps/badminton-recalculate?matchId=${match.matchId}&sportType=${match.sportType}`;
+      const srcExpected = `/apps/badminton-recalculate?matchId=${match.matchId}&sportType=${match.sportType}`;
       expect(popupService.properties.src).toEqual(srcExpected);
       expect(popupService.openAndHandlePopup).toHaveBeenCalled();
     });
@@ -123,7 +123,7 @@ describe("MultiSport - PopupService", () => {
       popupService.openAndHandlePopup = jest.fn();
       popupService.popupCalc(match, listSport);
 
-      const srcExpected = `apps/other-sports-recalculate?matchId=${match.matchId}&sportType=${match.sportType}`;
+      const srcExpected = `/apps/other-sports-recalculate?matchId=${match.matchId}&sportType=${match.sportType}`;
       expect(popupService.properties.src).toEqual(srcExpected);
       expect(popupService.openAndHandlePopup).toHaveBeenCalled();
     });
@@ -147,7 +147,7 @@ describe("MultiSport - PopupService", () => {
 
       popupService.popupRefund(match, listSport);
 
-      const srcExpected = `apps/tennis-refund?matchId=${match.matchId}&sportType=${match.sportType}`;
+      const srcExpected = `/apps/tennis-refund?matchId=${match.matchId}&sportType=${match.sportType}`;
       expect(popupService.properties.src).toEqual(srcExpected);
       expect(popupService.openAndHandlePopup).toHaveBeenCalled();
     });
@@ -162,7 +162,7 @@ describe("MultiSport - PopupService", () => {
       popupService.openAndHandlePopup = jest.fn();
       popupService.popupRefund(match, listSport);
 
-      const srcExpected = `apps/badminton-refund?matchId=${match.matchId}&sportType=${match.sportType}`;
+      const srcExpected = `/apps/badminton-refund?matchId=${match.matchId}&sportType=${match.sportType}`;
       expect(popupService.properties.src).toEqual(srcExpected);
       expect(popupService.openAndHandlePopup).toHaveBeenCalled();
     });
@@ -173,7 +173,7 @@ describe("MultiSport - PopupService", () => {
       popupService.openAndHandlePopup = jest.fn();
 
       popupService.popupRefund(match, listSport);
-      const srcExpected = `apps/other-sports-refund?matchId=${match.matchId}&sportType=${match.sportType}`;
+      const srcExpected = `/apps/other-sports-refund?matchId=${match.matchId}&sportType=${match.sportType}`;
       expect(popupService.properties.src).toEqual(srcExpected);
       expect(popupService.openAndHandlePopup).toHaveBeenCalled();
     });
@@ -215,7 +215,7 @@ describe("MultiSport - PopupService", () => {
       popupService.openAndHandlePopup = jest.fn();
       popupService.popupEarly(match, listSport);
 
-      const srcExpected = `apps/tennis-early?matchId=${match.matchId}&sportType=${match.sportType}`;
+      const srcExpected = `/apps/tennis-early?matchId=${match.matchId}&sportType=${match.sportType}`;
       expect(popupService.properties.src).toEqual(srcExpected);
       expect(popupService.openAndHandlePopup).toHaveBeenCalled();
     });
@@ -229,7 +229,7 @@ describe("MultiSport - PopupService", () => {
       popupService.openAndHandlePopup = jest.fn();
       popupService.popupEarly(match, listSport);
 
-      const srcExpected = `apps/badminton-early?matchId=${match.matchId}&sportType=${match.sportType}`;
+      const srcExpected = `/apps/badminton-early?matchId=${match.matchId}&sportType=${match.sportType}`;
       expect(popupService.properties.src).toEqual(srcExpected);
       expect(popupService.openAndHandlePopup).toHaveBeenCalled();
     });

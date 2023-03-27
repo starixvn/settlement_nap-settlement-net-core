@@ -22,7 +22,7 @@ export class PopupService {
         private readonly multiSportService: MultiSportService) {
     }
     public popupLog(matchCode: string, fromDate: string, toDate: string) {
-        const src = `home/log?matchCode=${encodeURIComponent(matchCode)}&fromDate=${fromDate}&toDate=${toDate}&isShowMenu=false&productType=ALL`;
+        const src = `/home/log?matchCode=${encodeURIComponent(matchCode)}&fromDate=${fromDate}&toDate=${toDate}&isShowMenu=false&productType=ALL`;
         const dialogData = new DialogDataIframe(Language.SettlementLog, src);
         this.dialogBoxService.popup(dialogData, '1011px', '800px');
     }
@@ -34,9 +34,9 @@ export class PopupService {
         if (this.listNewSport.includes(match.sportType)) {
             let sportName = sports.find(item => item.id === match.sportType).name.toLowerCase();
             sportName = _.isEqual(sportName, 'volleyball') ? 'badminton' : sportName;
-            this.properties.src = `apps/${sportName}-recalculate?matchId=${match.matchId}&sportType=${match.sportType}`;
+            this.properties.src = `/apps/${sportName}-recalculate?matchId=${match.matchId}&sportType=${match.sportType}`;
         } else {
-            this.properties.src = `apps/other-sports-recalculate?matchId=${match.matchId}&sportType=${match.sportType}`;
+            this.properties.src = `/apps/other-sports-recalculate?matchId=${match.matchId}&sportType=${match.sportType}`;
         }
 
         this.openAndHandlePopup(this.properties, match);
@@ -50,9 +50,9 @@ export class PopupService {
         if (_.includes(this.listNewSport, match.sportType)) {
             let sportName = sports.find(item => item.id === match.sportType).name.toLowerCase();
             sportName = _.isEqual(sportName, 'volleyball') ? 'badminton' : sportName;
-            this.properties.src = `apps/${sportName}-refund?matchId=${match.matchId}&sportType=${match.sportType}`;
+            this.properties.src = `/apps/${sportName}-refund?matchId=${match.matchId}&sportType=${match.sportType}`;
         } else {
-            this.properties.src = `apps/other-sports-refund?matchId=${match.matchId}&sportType=${match.sportType}`;
+            this.properties.src = `/apps/other-sports-refund?matchId=${match.matchId}&sportType=${match.sportType}`;
         }
 
         this.openAndHandlePopup(this.properties, match);
@@ -62,7 +62,7 @@ export class PopupService {
         this.properties.title = Language.EarlyPopupTitle;
         let sportName = sports.find(item => item.id === match.sportType).name.toLowerCase();
         sportName = _.isEqual(sportName, 'volleyball') ? 'badminton' : sportName;
-        this.properties.src = `apps/${sportName}-early?matchId=${match.matchId}&sportType=${match.sportType}`;
+        this.properties.src = `/apps/${sportName}-early?matchId=${match.matchId}&sportType=${match.sportType}`;
         this.properties.width = match.sportType === SportType.cricket ? '1400px' :
             this.isPopupEarlySOP(match.sportType) ? '1480px' : '845px';
         this.properties.height = this.isPopupEarlySOP(match.sportType) ? '958px' : '910px';
@@ -76,7 +76,7 @@ export class PopupService {
 
     public popupChangeRemark(match: Match) {
         this.properties.title = Language.remarkSettingTitle;
-        this.properties.src = `apps/remark-setting?matchId=${match.matchId}&matchCode=${match.matchCode}`;
+        this.properties.src = `/apps/remark-setting?matchId=${match.matchId}&matchCode=${match.matchCode}`;
         this.properties.width = '500px';
         this.properties.height = '270px';
         const frameSrc = encodeURI(this.properties.src);
@@ -140,7 +140,7 @@ export class PopupService {
 
     public openUpdateTime(league: LeagueMatch) {
         const autoType = _.isEqual(league.matches[0].sportType, SportType.cricket) ? AutoType.autoPayout : AutoType.direct;
-        const src = `apps/change-waiting-time?leagueId=${league.leagueId}&time=${league.autoWaitingTime}&pageType=DirectTime&autoType=${autoType}`;
+        const src = `/apps/change-waiting-time?leagueId=${league.leagueId}&time=${league.autoWaitingTime}&pageType=DirectTime&autoType=${autoType}`;
         const frameSrc = encodeURI(src);
         const dialogData = new DialogDataIframe(Language.payout.titlePopupForLeague, frameSrc);
         this.dialogBoxService.popupHasResponse(dialogData, '600px', '310px').subscribe(result => {
@@ -155,7 +155,7 @@ export class PopupService {
         const autoSetting = await this.multiSportService.getSetting(league.leagueId, 0);
         this.applyNewSetting(league.autoCalcSetting, autoSetting.setting, false);
 
-        const src = `apps/auto-setting-league?leagueId=${league.leagueId}&currentState=${autoSetting.setting}&pageType=AutoSettingLeague&multiSelect=true`;
+        const src = `/apps/auto-setting-league?leagueId=${league.leagueId}&currentState=${autoSetting.setting}&pageType=AutoSettingLeague&multiSelect=true`;
         const frameSrc = encodeURI(src);
         const dialogData = new DialogDataIframe(Language.payout.titlePopupForLeague, frameSrc);
         this.dialogBoxService.popupHasResponse(dialogData, '500px', '270px').subscribe(result => {
@@ -182,7 +182,7 @@ export class PopupService {
         const autoSetting = await this.multiSportService.getSetting(0, Number(match.matchId));
         this.applyNewSetting(match.autoCalcSetting, autoSetting.setting);
         
-        const src = `apps/auto-setting-league?matchId=${match.matchId}&currentState=${autoSetting.setting}&pageType=AutoSettingMatch&multiSelect=true`;
+        const src = `/apps/auto-setting-league?matchId=${match.matchId}&currentState=${autoSetting.setting}&pageType=AutoSettingMatch&multiSelect=true`;
         const frameSrc = encodeURI(src);
         const dialogData = new DialogDataIframe(Language.payout.titlePopup, frameSrc);
         this.dialogBoxService.popupHasResponse(dialogData, '500px', '270px').subscribe(result => {

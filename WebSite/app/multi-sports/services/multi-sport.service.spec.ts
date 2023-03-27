@@ -48,7 +48,7 @@ describe('MultiSport - MultiSportService', () => {
     });
 
     it(`getSport - Call right Url and param`, () => {
-        const url = `api/multi-sports/getSport`;
+        const url = `/api/multi-sports/getSport`;
         const param = {
             apikey: ApiKeys.MultiSportGetCombobox,
         };
@@ -60,7 +60,7 @@ describe('MultiSport - MultiSportService', () => {
     });
 
     it(`getLeague - Call right Url and param`, () => {
-        const url = `api/multi-sports/getLeague`;
+        const url = `/api/multi-sports/getLeague`;
         const param = {
             apikey: ApiKeys.MultiSportGetCombobox,
         };
@@ -103,7 +103,7 @@ describe('MultiSport - MultiSportService', () => {
     );
 
     it('getRemarkInfo - Call exact Url and param',  () => {
-        const url = 'api/setting/get-remark-info';
+        const url = '/api/setting/get-remark-info';
         const param: GetRemarkQuery = {
             matchId: '12345'
         };
@@ -117,7 +117,7 @@ describe('MultiSport - MultiSportService', () => {
     it('updateSettingMatch - should post with correct param',  () => {
         const query = {} as AutoSettingMatchQuery;
 
-        const url = 'api/setting/update-setting-match';
+        const url = '/api/setting/update-setting-match';
         httpRequestService.postJson = jest.fn();
         service.updateSettingMatch(query);
 
@@ -127,7 +127,7 @@ describe('MultiSport - MultiSportService', () => {
     it('updateSettingLeague - should post with correct param',  () => {
         const query = {} as AutoSettingLeagueQuery;
 
-        const url = 'api/setting/update-setting-league';
+        const url = '/api/setting/update-setting-league';
         httpRequestService.postJson = jest.fn();
         service.updateSettingLeague(query);
 

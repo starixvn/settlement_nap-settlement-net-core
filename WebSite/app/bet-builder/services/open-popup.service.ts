@@ -10,14 +10,14 @@ export class PopupService {
     constructor(private readonly dialogBoxService: DialogBoxService) { }
 
     public popupLog(matchId: number, fromDate: string, toDate: string) {
-        const src = `home/log/?matchCode=${matchId}&fromDate=${fromDate}&toDate=${toDate}&isShowMenu=false&productType=BBD`;
+        const src = `/home/log/?matchCode=${matchId}&fromDate=${fromDate}&toDate=${toDate}&isShowMenu=false&productType=BBD`;
         const frameSrc = encodeURI(src);
         const dialogData = new DialogDataIframe(Language.SettlementLog, frameSrc);
         this.dialogBoxService.popup(dialogData, '1011px', '800px');
     }
 
     public popupCalc(match: MatchDetail) {
-        const src = `home/bet-builder?matchId=${match.matchId}`;
+        const src = `/home/bet-builder?matchId=${match.matchId}`;
         const frameSrc = encodeURI(src);
         const dialogData = new DialogDataIframe(Language.BetBuilderPopupTitle, frameSrc);
         this.dialogBoxService.popup(dialogData, '1011px', '800px').subscribe(result => {

@@ -11,7 +11,7 @@ import { ResultOutright } from "../../outright/models/result-outright.model";
 
 @Injectable()
 export class OutrightService {
-    private outrightApi = "outright/api";
+    private outrightApi = "/outright/api";
 
     constructor(private httpRequestService: HttpRequestService) { }
 

@@ -34,7 +34,7 @@ describe('FastMarketService', () => {
         // Arrange
         const matchId = 7000000;
         const betType: BetType[] = [];
-        const url = 'api/fast-market/checking-marked-tickets';
+        const url = '/api/fast-market/checking-marked-tickets';
         const param = new CheckingMarkedTicketsQuery(matchId, betType);
 
         // Act
@@ -47,7 +47,7 @@ describe('FastMarketService', () => {
   it('getMatchDetail - Call exact Url and param', () => {
         // Arrange
         const matchId = 7000000;
-        const url = `api/fast-market/get-match`;
+        const url = `/api/fast-market/get-match`;
         const query = {matchId};
 
         // Act
@@ -60,7 +60,7 @@ describe('FastMarketService', () => {
   it('getFastMarketResult - Call exact Url and param', () => {
         // Arrange
         const matchId = 7000000;
-        const url = `api/fast-market/get-bettype-interval`;
+        const url = `/api/fast-market/get-bettype-interval`;
         const query = {matchId};
 
         // Act
@@ -77,7 +77,7 @@ describe('FastMarketService', () => {
         const eventCounters: EventCounter[] = [];
         const action = 'CALC';
         const isReSettledTickets = false;
-        const url = 'api/fast-market/settle';
+        const url = '/api/fast-market/settle';
         const param = new SettleQuery(eventCounters, betType, matchId, action, isReSettledTickets);
 
         // Act
@@ -89,7 +89,7 @@ describe('FastMarketService', () => {
 
   it('getFilterData - Call exact Url and param', () => {
         // Arrange
-        const url = 'api/fast-market/initial-filter';
+        const url = '/api/fast-market/initial-filter';
 
         // Act
         service.getFilterData();
@@ -102,7 +102,7 @@ describe('FastMarketService', () => {
         // Arrange
         const matchId = 7000000;
         const isEnabled = true;
-        const url = 'api/setting/update-setting-match';
+        const url = '/api/setting/update-setting-match';
         const param = new AutoSettingMatchQuery(matchId, 1, isEnabled);
 
         // Act
@@ -117,7 +117,7 @@ describe('FastMarketService', () => {
         const matchId = 7000000;
         const isEnabled = true;
         const isApplyAll = true;
-        const url = 'api/setting/update-setting-league';
+        const url = '/api/setting/update-setting-league';
         const param = new AutoSettingLeagueQuery(matchId, 1, isEnabled, isApplyAll);
 
         // Act

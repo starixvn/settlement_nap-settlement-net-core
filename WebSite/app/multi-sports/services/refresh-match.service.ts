@@ -21,7 +21,7 @@ export class RefreshMatchService {
   }
 
   private getMatches(param: MatchWaitingRequest) {
-    const url = `api/multi-sports/auto-refresh`;
+    const url = `/api/multi-sports/auto-refresh`;
     return this.httpRequestService.postMessagePack(param, url, false);
   }
 

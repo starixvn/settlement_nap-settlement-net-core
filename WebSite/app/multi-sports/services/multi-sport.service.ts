@@ -16,8 +16,8 @@ import { AutoSettingLeagueQuery, AutoSettingMatchQuery, ChangeSettingResult, Res
 @Injectable()
 
 export class MultiSportService {
-  private multiSportApi = 'api/multi-sports';
-  private settingApi = 'api/setting';
+  private multiSportApi = '/api/multi-sports';
+  private settingApi = '/api/setting';
     
   constructor(private readonly httpRequestService: HttpRequestService) { }
 
