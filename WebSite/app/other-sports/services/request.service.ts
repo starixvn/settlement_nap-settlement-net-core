@@ -5,7 +5,7 @@ import { MarkedTicketsModel, Result } from '../../shared/models';
 import { HttpRequestService } from '../../shared/services';
 @Injectable()
 export class RequestService {
-    apiUrl = 'api/othersports';
+    apiUrl = '/api/othersports';
 
     constructor(private readonly httpRequestService: HttpRequestService) {
     }

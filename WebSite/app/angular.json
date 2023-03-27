@@ -38,7 +38,7 @@
                 "with": "environments/environment.prod.ts"
               }],
               "outputHashing": "all",
-              "deployUrl": "notification/"
+              "baseHref": "/notification/"
             },
             "development": {
               "buildOptimizer": false,
@@ -109,7 +109,7 @@
                 "with": "environments/environment.prod.ts"
               }],
               "outputHashing": "all",
-              "deployUrl": "bet-builder/"
+              "baseHref": "/bet-builder/"
             },
             "development": {
               "buildOptimizer": false,
@@ -174,7 +174,7 @@
                 "with": "environments/environment.prod.ts"
               }],
               "outputHashing": "all",
-              "deployUrl": "instant-setting/"
+              "baseHref": "/instant-setting/"
             },
             "development": {
               "buildOptimizer": false,
@@ -239,7 +239,7 @@
                 "with": "environments/environment.prod.ts"
               }],
               "outputHashing": "all",
-              "deployUrl": "log/"
+              "baseHref": "/log/"
             },
             "development": {
               "buildOptimizer": false,
@@ -310,7 +310,7 @@
                 "with": "environments/environment.prod.ts"
               }],
               "outputHashing": "all",
-              "deployUrl": "happy5/"
+              "baseHref": "/happy5/"
             },
             "development": {
               "buildOptimizer": false,
@@ -380,7 +380,7 @@
                 "with": "environments/environment.prod.ts"
               }],
               "outputHashing": "all",
-              "deployUrl": "number-game/"
+              "baseHref": "/number-game/"
             },
             "development": {
               "buildOptimizer": false,
@@ -450,7 +450,7 @@
                 "with": "environments/environment.prod.ts"
               }],
               "outputHashing": "all",
-              "deployUrl": "move-tickets/"
+              "baseHref": "/move-tickets/"
             },
             "development": {
               "buildOptimizer": false,
@@ -519,7 +519,7 @@
                 "with": "environments/environment.prod.ts"
               }],
               "outputHashing": "all",
-              "deployUrl": "score-source-setting/"
+              "baseHref": "/score-source-setting/"
             },
             "development": {
               "buildOptimizer": false,
@@ -587,7 +587,7 @@
                 "with": "environments/environment.prod.ts"
               }],
               "outputHashing": "all",
-              "deployUrl": "multi-sports/"
+              "baseHref": "/multi-sports/"
             },
             "development": {
               "buildOptimizer": false,
@@ -1229,7 +1229,7 @@
                 "with": "environments/environment.prod.ts"
               }],
               "outputHashing": "all",
-              "deployUrl": "other-sports/"
+              "baseHref": "/other-sports/"
             },
             "development": {
               "buildOptimizer": false,
@@ -1300,7 +1300,7 @@
                 "with": "environments/environment.prod.ts"
               }],
               "outputHashing": "all",
-              "deployUrl": "outright/"
+              "baseHref": "/outright/"
             },
             "development": {
               "buildOptimizer": false,
@@ -1340,6 +1340,6 @@
     }
   },
   "cli": {
-    "analytics": "09292d6d-1293-4179-9639-00a7cd991d80",
+    "analytics": "09292d6d-1293-4179-9639-00a7cd991d80"
   }
 }

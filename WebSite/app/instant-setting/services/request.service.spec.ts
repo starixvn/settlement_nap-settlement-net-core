@@ -33,7 +33,7 @@ describe('Auto Setting Service', () => {
 
   it('getLeagueName - Call exact Url and param', fakeAsync(() => {
         const leagueId = 700000;
-        const url = `api/setting/get-league-name?leagueId=${leagueId}`;
+        const url = `/api/setting/get-league-name?leagueId=${leagueId}`;
 
         spyOn(httpRequestService, 'getJson');
         service.getLeagueName(leagueId);
@@ -42,7 +42,7 @@ describe('Auto Setting Service', () => {
   }));
 
   it('proceed - Call exact Url and param', fakeAsync(() => {
-        const url = 'api/setting/proceed';
+        const url = '/api/setting/proceed';
         const param = new TimeSettingQuery(7000000, 1, 1);
 
         spyOn(httpRequestService, 'postJson');
@@ -50,7 +50,7 @@ describe('Auto Setting Service', () => {
         expect(httpRequestService.postJson).toHaveBeenCalledWith(param, url);
   }));
   it('updateSettingMatch - Call exact Url and param', fakeAsync(() => {
-        const url = 'api/setting/update-setting-match';
+        const url = '/api/setting/update-setting-match';
         const param = new AutoSettingMatchQuery(7000000, 0, false);
 
         spyOn(httpRequestService, 'postJson');
@@ -60,7 +60,7 @@ describe('Auto Setting Service', () => {
   }));
 
   it('updateSettingLeague - Call exact Url and param', fakeAsync(() => {
-        const url = 'api/setting/update-setting-league';
+        const url = '/api/setting/update-setting-league';
         const param = new AutoSettingLeagueQuery(7000000, 0, false, false);
 
         spyOn(httpRequestService, 'postJson');
@@ -70,7 +70,7 @@ describe('Auto Setting Service', () => {
   }));
 
   it('getRemarkInfo - Call exact Url and param', () => {
-    const url = 'api/setting/get-remark-info';
+    const url = '/api/setting/get-remark-info';
     const param: GetRemarkQuery = {
         matchId: '12345'
     };
@@ -88,7 +88,7 @@ describe('Auto Setting Service', () => {
         type: 1,
         isEnabled: true
       };
-      const url = 'api/setting/mark-pending';
+      const url = '/api/setting/mark-pending';
       spyOn(httpRequestService, 'postJson');
 
       service.changeSetting(param);
@@ -102,7 +102,7 @@ describe('Auto Setting Service', () => {
         type: 2,
         isEnabled: true
       };
-      const url = 'api/setting/mark-undecided';
+      const url = '/api/setting/mark-undecided';
       spyOn(httpRequestService, 'postJson');
 
       service.changeSetting(param);
