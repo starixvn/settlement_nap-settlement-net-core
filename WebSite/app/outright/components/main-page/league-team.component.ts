@@ -62,8 +62,8 @@ export class LeagueTeamComponent implements OnInit {
                 leagueId: league.leagueId,
                 sportType: league.teams[0].sportType
             },
-            width: '910px',
-            height: '550px',
+            width: '930px',
+            height: '100%',
             disableClose: true,
             hasBackdrop: true
         }).afterClosed().subscribe((teams: TeamSettle[]) => {

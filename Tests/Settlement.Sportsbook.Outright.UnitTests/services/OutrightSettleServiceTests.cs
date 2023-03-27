@@ -18,10 +18,13 @@ public class OutrightSettleServiceTests
 {
     private readonly IDynamicRepository repository;
 
+    private readonly IMapper mapper;
     private readonly IRefDataService refDataService;
 
     private readonly OutrightSettleProcessService outrightSettleProcessService;
 
+    private readonly OutrightPermissionService permission;
+    private readonly INapSession currentSession;
     private readonly IBalanceUpService balanceUpService;
 
     private readonly OutrightSettleService service;
@@ -38,7 +41,7 @@ public class OutrightSettleServiceTests
         var mapperConfig = new MapperConfigurationExpression();
         mapperConfig.AddProfile<OutrightMapperProfile>();
         var config = new MapperConfiguration(mapperConfig);
-        var mapper = new Mapper(config);
+        mapper = new Mapper(config);
 
         service = new OutrightSettleServiceImp(repository, mapper, refDataService, outrightSettleProcessService,
             permission, currentSession, balanceUpService);
@@ -82,16 +85,16 @@ public class OutrightSettleServiceTests
     [Fact]
     public async Task Uncalculate_ExistExecuteFailed_ReturnResultFailed()
     {
-        outrightSettleProcessService.ValidateRequest(Arg.Any<string>(), Arg.Any<IEnumerable<InfoValidate>>())
-             .Returns(_ => new ResultOutright());
+        outrightSettleProcessService.ValidateRequest(Arg.Any<String>(), Arg.Any<IEnumerable<InfoValidate>>())
+             .Returns(new ResultOutright());
         outrightSettleProcessService.UpdateResultUndo(Arg.Any<OutrightSettleCriteria>())
-            .Returns(_ => new Result { ErrMsg = "test" });
+            .Returns(new Result { ErrMsg = "test" });
         refDataService.GetTeamName(Arg.Any<string>()).Returns("TeamName");
 
         var actual = await service.Uncalculate(new OutrightUndoRequest { MatchIds = "100,200", TeamIds = "101, 202" });
 
         Assert.False(actual.IsSuccessful);
-        Assert.Equal("TeamName: test<br/>TeamName: test<br/>", actual.ErrMsg);
+        Assert.Equal("TeamName: TeamName: test<br/><br/>TeamName: TeamName: test<br/><br/>", actual.ErrMsg);
     }
 
     [Fact]
@@ -113,10 +116,10 @@ public class OutrightSettleServiceTests
     public async Task Calculate_ExistExecuteFailed_ReturnResultFailed()
     {
         outrightSettleProcessService.ValidateRequest(Arg.Any<string>(), Arg.Any<IEnumerable<InfoValidate>>())
-            .Returns(_ => new ResultOutright());
+            .Returns(new ResultOutright());
         outrightSettleProcessService.UpdateResultCalculate(Arg.Any<OutrightSettleCriteria>())
-            .Returns(_ => new Result { ErrMsg = "test" });
-        refDataService.GetTeamName(Arg.Any<string>()).Returns("Manchester United");
+            .Returns(new Result { ErrMsg = "test" });
+        refDataService.GetTeamName(Arg.Any<string>()).Returns("TeamName");
 
         var request = new OutrightCalculateRequest
         {
@@ -124,12 +127,12 @@ public class OutrightSettleServiceTests
             Teams = new List<TeamSettleModel>
             {
                 new() { TeamId = "1" },
-                new() { TeamId = "2" }
+                new() { TeamId = "2" },
             }
         };
         var actual = await service.Calculate(request);
 
         Assert.False(actual.IsSuccessful);
-        Assert.Equal("Manchester United: test<br/>Manchester United: test<br/>", actual.ErrMsg);
+        Assert.Equal("TeamName: test<br/>TeamName: test<br/>", actual.ErrMsg);
     }
 }
