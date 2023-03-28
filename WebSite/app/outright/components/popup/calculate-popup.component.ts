@@ -16,7 +16,6 @@ import { ModalDialogMessage } from '../../../shared/models';
 import { MatDialog, MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { ResultOutright } from '../../models/result-outright.model';
-import { async } from '@angular/core/testing';
 
 @Component({
     selector: 'calculate-popup',
@@ -124,12 +123,6 @@ export class CalculatePopupComponent implements OnInit {
         await this.validateBeforePush(this.teamSettleWon, teamWonSettled, teamWonSelected, teamHideSelected)
     };
 
-    public async reCalculate() {
-        this.clearError();
-
-
-    }
-
     public onSelectDate(value: NgbDateStruct, team: Team) {
         team.eventDate = this.verifyDateService.dateFormat(value);
     }
@@ -165,12 +158,6 @@ export class CalculatePopupComponent implements OnInit {
         });
         this.originalTeam = latestLeague.teams;
     }
-
-
-    private async doReCalculate() {
-
-    }
-
 
     private async doCalculate(deadHeat: number) {
         this.confirmationDialogMessage.message = Language.Outright.confirmCalculate;
