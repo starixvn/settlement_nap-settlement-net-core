@@ -50,5 +50,6 @@ public class OutrightController : ControllerBase
 
     [HttpPost]
     [Route("check-void-tickets")]
-    public async Task<IActionResult> CheckVoidTickets(CheckOutrightVoidTicketRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+    public async Task<IActionResult> CheckVoidTickets(CheckOutrightVoidTicketRequest request)
+        => Ok(await mediator.Send(request).ConfigureAwait(false));
 }

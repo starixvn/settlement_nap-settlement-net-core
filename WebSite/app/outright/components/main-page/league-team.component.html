@@ -28,6 +28,8 @@
             <div class="league-name w-100">
               <div class="leangue-name__content">
                 <span class="name">
+                  {{ item.eventDate | date: "mediumDate" }}
+                  {{ item.eventDate | date: "hh:mm:ss a" }} -
                   {{ item.leagueName }}
                 </span>
                 <span class="code"> Code: {{ item.teams[0].matchCode }} </span>

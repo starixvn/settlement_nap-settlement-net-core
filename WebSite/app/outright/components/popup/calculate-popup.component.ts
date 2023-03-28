@@ -47,7 +47,7 @@ export class CalculatePopupComponent implements OnInit {
     private readonly statusRunning = [Status.running, Status.closed, Status.internal];
 
     constructor(protected injector: Injector,
-        @Inject(MAT_DIALOG_DATA) public data: { leagueId: number, sportType: number }) {
+        @Inject(MAT_DIALOG_DATA) public data: { leagueId: number, sportType: number, eventDate: string }) {
         this.confirmationDialogMessage.title = Language.confirmationBox;
         this.injector.get(MatDialog).closeAll();
     }

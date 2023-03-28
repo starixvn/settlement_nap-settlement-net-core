@@ -60,7 +60,8 @@ export class LeagueTeamComponent implements OnInit {
         this.dialog.open(CalculatePopupComponent, {
             data: {
                 leagueId: league.leagueId,
-                sportType: league.teams[0].sportType
+                sportType: league.teams[0].sportType,
+                eventDate: league.eventDate
             },
             width: '930px',
             height: '100%',
