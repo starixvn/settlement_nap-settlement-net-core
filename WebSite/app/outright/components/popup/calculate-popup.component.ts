@@ -76,7 +76,6 @@ export class CalculatePopupComponent implements OnInit {
         this.today = this.verifyDateService.convertToDateStruct(this.leagueSettle.today);
         this.leagueSettle.teams.forEach(team => team.disableDeadheat = !_.isEqual(team.status, 'WON'));
         this.teams = this.leagueSettle.teams;
-        console.log(this.teams);
     }
 
     public close() {
@@ -136,7 +135,7 @@ export class CalculatePopupComponent implements OnInit {
             this.toastrService.error(CalculateService.MessageInconsistentDeadheat(teamSettleWon));
         } else if (CalculateService.VerifyNonDeadheat(teamWonSelected, teamWonSettled)) {
             this.confirmCalcNonDeadheat();
-        } else if (await this.VerifyHideStatus(teamHideSelected)) {
+        } else if (!(await this.VerifyHideStatus(teamHideSelected))) {
             this.toastrService.error(Language.Outright.existHideTicketNotVoided)
         } else {
             this.doCalculate(this.teamSettleWon.length);
