@@ -35,7 +35,7 @@ public static class SoccerConfig
         services.AddTransient<IActionResourceService, ActionResourceServiceImp>();
         services.AddTransient<IInstantGoalCheckingService, InstantGoalCheckingServiceImp>();
         services.AddTransient<IInstantResourceService, InstantResourceServiceImp>();
-        services.AddTransient<IInstantCalculateService, InstantCalculateServiceImp>();
+        services.AddTransient<InstantCalculateService, InstantCalculateServiceImp>();
         services.AddTransient<IRefundService, RefundServiceImp>();
         services.AddTransient<IFetchDataService, FetchDateServiceImp>();
         services.AddTransient<ICreateCriteriaService, CreateCriteriaServiceImp>();

@@ -14,6 +14,7 @@ using Settlement.Core.Services;
 using Settlement.Sportsbook.Soccer.Criteria;
 using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Requests;
+using Settlement.Sportsbook.Soccer.Services;
 using Settlement.Sportsbook.Soccer.Services.InstantCalculate;
 
 namespace Settlement.Sportsbook.Soccer.UnitTests.Services.Instant;
@@ -26,7 +27,7 @@ public class InstantCalculateServiceFacts
 
     private readonly ScaleOutSettleService scaleOutSettleService;
 
-    private readonly IInstantCalculateService service;
+    private readonly InstantCalculateService service;
 
     private readonly LogDirectlyService logDirectlyService;
 
@@ -39,11 +40,14 @@ public class InstantCalculateServiceFacts
         scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
         logDirectlyService = Substitute.For<LogDirectlyService>();
 
+        var context = new DefaultHttpContext
+        {
             Connection =
             {
                 RemoteIpAddress = new System.Net.IPAddress(1)
             }
         };
+
         accessor.HttpContext = context;
         var mapperConfig = new MapperConfigurationExpression();
         mapperConfig.AddProfile<SoccerAutoMapperProfile>();
@@ -51,6 +55,7 @@ public class InstantCalculateServiceFacts
         var mapper = new Mapper(config);
         var appSettings = new AppSettingsKey { SiteDbServer = new List<string> { "DB01", "DB02", "DB03" } };
         var option = Options.Create(appSettings);
+
         service = new InstantCalculateServiceImp(repository, currentSession, mapper, accessor, instantResourceService, option, scaleOutSettleService, logDirectlyService);
     }
 

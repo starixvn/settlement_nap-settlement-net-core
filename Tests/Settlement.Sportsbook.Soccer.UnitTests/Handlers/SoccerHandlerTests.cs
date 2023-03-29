@@ -22,7 +22,7 @@ public class SoccerHandlerTests
     {
         matchService = Substitute.For<IMatchService>();
         calculateService = Substitute.For<ICalculateService>();
-        var instantCalculateService = Substitute.For<IInstantCalculateService>();
+        var instantCalculateService = Substitute.For<InstantCalculateService>();
         handler = new CalculateHandler(matchService, calculateService, instantCalculateService);
     }
 

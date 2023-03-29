@@ -23,10 +23,10 @@ public class CalculateHandler : IRequestHandler<GetMatchRequest, Match>,
 
     private readonly ICalculateService calculateService;
 
-    private readonly IInstantCalculateService instantCalculateService;
+    private readonly InstantCalculateService instantCalculateService;
 
     public CalculateHandler(IMatchService matchService, ICalculateService calculateService,
-        IInstantCalculateService instantCalculateService)
+        InstantCalculateService instantCalculateService)
     {
         this.matchService = matchService;
         this.calculateService = calculateService;
