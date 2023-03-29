@@ -69,4 +69,9 @@ export class OutrightService {
 
         return firstValueFrom(response);
     }
+
+    public getDeadHeatSetting(leagueId: number) {
+        const response = this.httpRequestService.postJson<number | null>({ leagueId }, `${this.outrightApi}/get-deadheat-setting`);
+        return firstValueFrom(response);
+    }
 }

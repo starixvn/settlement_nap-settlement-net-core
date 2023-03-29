@@ -11,7 +11,8 @@ public class OutrightHandler :
         IRequestHandler<OutrightUndoRequest, Result>,
         IRequestHandler<GetLogRequest, IEnumerable<OutrightLog>>,
         IRequestHandler<OutrightCalculateRequest, Result>,
-        IRequestHandler<CheckOutrightVoidTicketRequest, bool>
+        IRequestHandler<CheckOutrightVoidTicketRequest, bool>,
+        IRequestHandler<GetDeatHeadLeagueSettingRequest, byte?>
 
 {
     private readonly FilterService getDataFilterService;
@@ -51,4 +52,8 @@ public class OutrightHandler :
 
     public async Task<bool> Handle(CheckOutrightVoidTicketRequest request, CancellationToken cancellationToken)
         => await outrightLogQueryService.CheckOutrightvoidTicket(request);
+
+    public async Task<byte?> Handle(GetDeatHeadLeagueSettingRequest request, CancellationToken cancellationToken)
+        => await outrightLogQueryService.GetDeatHeadLeagueSetting(request);
+
 }

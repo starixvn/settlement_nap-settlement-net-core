@@ -44,9 +44,10 @@
       </button>
 
       <button
-        [ngClass]="{ button: true, 'button-disabled': disableRecalculate() }"
-        [disabled]="disableRecalculate()"
-        (click)="calculate()"
+        *ngIf="viewRecalculate"
+        [ngClass]="{ button: true, 'button-disabled': disableRecalculate }"
+        [disabled]="disableRecalculate"
+        (click)="calculate(false)"
       >
         Re-Calculate
       </button>

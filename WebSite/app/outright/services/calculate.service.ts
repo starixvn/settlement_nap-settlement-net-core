@@ -37,6 +37,73 @@ export class CalculateService {
         return false;
     }
 
+    public static VerifySettledSelected(teams: Team[]) {
+        if (teams.some(team => !_.isEqual(team.status.toLowerCase(), Status.running))) {
+            return true;
+        }
+        return false;
+    }
+
+    public static VerifyDeadHeatNoSet(teamWonSelected: Team[], teamWonSettled: Team[]) {
+        const teamSettledDeadHeat = _.filter(teamWonSettled, team => team.isDeadheat);
+        const teamSettledNoneDeadHeat = _.filter(teamWonSettled, team => !team.isDeadheat);
+        const teamWonSelectedDeadHeat = _.filter(teamWonSelected, team => team.isDeadheat);
+        const teamWonSelectedNoneDeadHeat = _.filter(teamWonSelected, team => !team.isDeadheat);
+
+        if (teamWonSelected.length === 1 && teamWonSettled.length >= 1 && _.isEmpty(teamSettledDeadHeat)) {
+            return true;
+        }
+
+        if (teamWonSelected.length > 1 && _.isEmpty(teamSettledDeadHeat)) {
+            return true;
+        }
+
+        if (teamWonSelectedDeadHeat.length > 1 && _.isEmpty(teamWonSettled) && _.isEmpty(teamSettledDeadHeat)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static VerifyDeadHeatYesSetting(teamWonSelected: Team[], teamWonSettled: Team[]) {
+        const teamSettledDeadHeat = _.filter(teamWonSettled, team => team.isDeadheat);
+
+        if (teamWonSelected.length === 1 && teamWonSettled.length >= 1 && _.isEmpty(teamSettledDeadHeat)) {
+            return true;
+        }
+
+        if (teamWonSelected.length > 1 && _.isEmpty(teamSettledDeadHeat)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static VerifyDeadHeatNoSetting(teamWonSelected: Team[], teamWonSettled: Team[]) {
+        const teamWonSelectedDeadHeat = _.filter(teamWonSelected, team => team.isDeadheat);
+
+        if (teamWonSelectedDeadHeat.length > 1) {
+            return true;
+        }
+        return false;
+    }
+
+    public static ConfirmDeadHeatNoSetting(teamWonSelected: Team[], teamWonSettled: Team[]) {
+        const teamSettledDeadHeat = _.filter(teamWonSettled, team => team.isDeadheat);
+        const teamSettledNoneDeadHeat = _.filter(teamWonSettled, team => !team.isDeadheat);
+        const teamWonSelectedDeadHeat = _.filter(teamWonSelected, team => team.isDeadheat);
+        const teamWonSelectedNoneDeadHeat = _.filter(teamWonSelected, team => !team.isDeadheat);
+        if (teamWonSelected.length === 1 && teamWonSettled.length >= 1 && _.isEmpty(teamSettledDeadHeat)) {
+            return true;
+        }
+
+        if (teamWonSelected.length > 1 && _.isEmpty(teamSettledDeadHeat)) {
+            return true;
+        }
+
+        return false;
+    }
+
     public static MessageInconsistentDeadheat(wonTeams: Team[]) {
         let message = "<br/>";
         wonTeams.forEach(team => message += `${team.teamName} | `);
@@ -69,7 +136,7 @@ export class CalculateService {
 
     public static teamWonSettled(teamSelected: Team[], originalTeam: Team[]) {
         const teamNotSelectButSettled = _.filter(originalTeam, team =>
-            _.isUndefined(teamSelected.find(t => _.isEqual(t.teamName, team.teamName)))
+            _.isUndefined(teamSelected.find(t => _.isEqual(t.oddsStatus, team.orId)))
             && _.isEqual(team.oddsStatus.toLowerCase(), Status.completed)
             && _.isEqual(team.status.toLowerCase(), Status.won)
         );

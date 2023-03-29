@@ -14,6 +14,7 @@ public interface OutrightLogQueryService
     Task<IEnumerable<OutrightLogDetail>> GetOutrightLogDetails(GetOutrightLogDetailCriteria criteria);
 
     Task<bool> CheckOutrightvoidTicket(CheckOutrightVoidTicketRequest resquest);
+    Task<byte?> GetDeatHeadLeagueSetting(GetDeatHeadLeagueSettingRequest request);
 }
 
 public class OutrightLogQueryServiceImp : OutrightLogQueryService
@@ -71,8 +72,20 @@ public class OutrightLogQueryServiceImp : OutrightLogQueryService
         var results = appSettingsKey.SiteDbServer
             .Select(async server => await repository.GetAsync<int>(criteria))
             .Select(t => t.Result).ToList();
+        await Task.CompletedTask;
 
         return results.Any(r => r == 1) && results.All(r => r != 0);
+    }
 
+    public async Task<byte?> GetDeatHeadLeagueSetting(GetDeatHeadLeagueSettingRequest request)
+    {
+        var criteria = new GetDeadHeatLeagueSettingCriteria
+        {
+            LeagueId = request.LeagueId
+        };
+
+        var result = await repository.GetAsync<byte?>(criteria);
+
+        return result;
     }
 }

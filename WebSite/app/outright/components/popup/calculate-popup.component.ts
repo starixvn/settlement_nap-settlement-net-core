@@ -94,8 +94,12 @@ export class CalculatePopupComponent implements OnInit {
         return _.isEmpty(this.teamSelected) || !this.leagueSettle.permission.canCalculateOutright;
     }
 
-    public disableRecalculate() {
+    public get viewRecalculate() {
         return !this.leagueSettle.permission.isLeader;
+    }
+
+    public get disableRecalculate() {
+        return _.isEmpty(this.teamSelected)
     }
 
     public selectStatus() {
@@ -112,31 +116,41 @@ export class CalculatePopupComponent implements OnInit {
         team.disableDeadheat = false;
     }
 
-    public async calculate() {
+    public async calculate(isCalc: boolean = true) {
         this.clearError();
         await this.getLatestData();
         const teamWonSelected = _.filter(this.teamSelected, team => _.isEqual(team.status.toLowerCase(), Status.won));
         const teamWonSettled = CalculateService.teamWonSettled(this.teamSelected, this.originalTeam);
         const teamHideSelected = _.filter(this.teamSelected, team => _.isEqual(team.status.toLowerCase(), Status.hide));
         this.teamSettleWon = teamWonSelected.concat(teamWonSettled);
-        await this.validateBeforePush(this.teamSettleWon, teamWonSettled, teamWonSelected, teamHideSelected)
+        await this.validateBeforePush(this.teamSettleWon, teamWonSettled, teamWonSelected, teamHideSelected, isCalc)
     };
 
     public onSelectDate(value: NgbDateStruct, team: Team) {
         team.eventDate = this.verifyDateService.dateFormat(value);
     }
 
-    private async validateBeforePush(teamSettleWon: Team[], teamWonSettled: Team[], teamWonSelected: Team[], teamHideSelected: Team[]) {
-        if (CalculateService.ExistRunningStatus(this.teamSelected)) {
+    private async validateBeforePush(teamSettleWon: Team[], teamWonSettled: Team[], teamWonSelected: Team[], teamHideSelected: Team[], isCalc: boolean = true) {
+        const setting = await this.outrightService.getDeadHeatSetting(this.data.leagueId);
+
+        if (isCalc && CalculateService.VerifySettledSelected(this.teamSelected)) {
+            this.toastrService.error(Language.Outright.existTeamSettled);
+        } else if (CalculateService.ExistRunningStatus(this.teamSelected)) {
             this.toastrService.error(Language.Outright.existRunning);
         } else if (CalculateService.VerifyOnlyOneTeamWon(teamWonSelected, teamWonSettled)) {
             this.toastrService.error(Language.Outright.atLeastTwoDeadHeat);
         } else if (CalculateService.VerifyDeadheat(teamWonSelected, teamWonSettled)) {
             this.toastrService.error(CalculateService.MessageInconsistentDeadheat(teamSettleWon));
-        } else if (CalculateService.VerifyNonDeadheat(teamWonSelected, teamWonSettled)) {
-            this.confirmCalcNonDeadheat();
         } else if (!(await this.VerifyHideStatus(teamHideSelected))) {
             this.toastrService.error(Language.Outright.existHideTicketNotVoided)
+        } else if (setting === null && CalculateService.VerifyDeadHeatNoSet(teamWonSelected, teamWonSettled)) {
+            this.toastrService.error(Language.Outright.incorrectDeadHeatSetting);
+        } else if (setting === 1 && CalculateService.VerifyDeadHeatYesSetting(teamWonSelected, teamWonSettled)) {
+            this.toastrService.error(Language.Outright.incorrectDeadHeatSetting);
+        } else if (setting === 0 && CalculateService.VerifyDeadHeatNoSetting(teamWonSelected, teamWonSettled)) {
+            this.toastrService.error(Language.Outright.incorrectDeadHeatSetting);
+        } else if (setting === 1 && CalculateService.ConfirmDeadHeatNoSetting(teamWonSelected, teamSettleWon)) {
+            this.confirmCalcNonDeadheat();
         } else {
             this.doCalculate(this.teamSettleWon.length);
         }

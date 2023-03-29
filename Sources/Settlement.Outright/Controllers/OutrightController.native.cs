@@ -52,4 +52,9 @@ public class OutrightController : ControllerBase
     [Route("check-void-tickets")]
     public async Task<IActionResult> CheckVoidTickets(CheckOutrightVoidTicketRequest request)
         => Ok(await mediator.Send(request).ConfigureAwait(false));
+
+    [HttpPost]
+    [Route("get-deadheat-setting")]
+    public async Task<IActionResult> GetDeadHeatSetting(GetDeatHeadLeagueSettingRequest request)
+       => Ok(await mediator.Send(request).ConfigureAwait(false));
 }
