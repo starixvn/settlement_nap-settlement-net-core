@@ -30,27 +30,27 @@
     <div class="header">
       <ng-template *ngTemplateOutlet="header"></ng-template>
     </div>
-    <div class="table-scroll">
+    <div class="table-scroll" dynamicHeight>
       <ng-template *ngTemplateOutlet="body"></ng-template>
-    </div>
 
-    <div class="footer" *ngIf="teams.length > 0">
-      <button
-        [ngClass]="{ button: true, 'button-disabled': disableCalculate() }"
-        [disabled]="disableCalculate()"
-        (click)="calculate()"
-      >
-        Calculate
-      </button>
+      <div class="footer" *ngIf="teams.length > 0">
+        <button
+          [ngClass]="{ button: true, 'button-disabled': disableCalculate() }"
+          [disabled]="disableCalculate()"
+          (click)="calculate()"
+        >
+          Calculate
+        </button>
 
-      <button
-        *ngIf="viewRecalculate"
-        [ngClass]="{ button: true, 'button-disabled': disableRecalculate }"
-        [disabled]="disableRecalculate"
-        (click)="calculate(false)"
-      >
-        Re-Calculate
-      </button>
+        <button
+          *ngIf="viewRecalculate"
+          [ngClass]="{ button: true, 'button-disabled': disableRecalculate }"
+          [disabled]="disableRecalculate"
+          (click)="calculate(false)"
+        >
+          Re-Calculate
+        </button>
+      </div>
     </div>
   </div>
 

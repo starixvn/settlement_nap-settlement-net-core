@@ -16,12 +16,13 @@ import { ModalDialogMessage } from '../../../shared/models';
 import { MatDialog, MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { ResultOutright } from '../../models/result-outright.model';
+import { DynamicHeightDirective } from '../../../shared/directives';
 
 @Component({
     selector: 'calculate-popup',
     templateUrl: './calculate-popup.component.html',
     standalone: true,
-    imports: [CommonModule, FormsModule, DatepickerComponent, ToastContainerModule, StatusPipe, MatDialogModule, DragDropModule],
+    imports: [CommonModule, DynamicHeightDirective, FormsModule, DatepickerComponent, ToastContainerModule, StatusPipe, MatDialogModule, DragDropModule],
     providers: [OutrightService, HttpRequestService, BlockUIService, MessageBoxService, VerifyDateService, CalculateService],
 })
 export class CalculatePopupComponent implements OnInit {

@@ -109,7 +109,7 @@ export class LeagueTeamComponent implements OnChanges {
                 eventDate: league.eventDate
             },
             width: '930px',
-            height: '100%',
+            height: '100vw',
             disableClose: true,
             hasBackdrop: true
         }).afterClosed().subscribe((teams: TeamSettle[]) => {
