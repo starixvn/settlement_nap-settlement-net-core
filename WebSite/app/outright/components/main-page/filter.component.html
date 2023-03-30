@@ -40,7 +40,12 @@
         <new-multiple-select #league [multipleSelect]="leagueOptions$ | async" (formValue)="onSelectLeague($event)"></new-multiple-select>
       </div>
 
-      <div class="field" style="margin-left: 100px;">
+      <div class="field include-test">
+        <input type="checkbox" id="test-league"[(ngModel)]="isIncludeTestLeague">
+        <label for="test-league" style="font-weight: bold;">&nbsp;Include Test Leagues</label>
+      </div>
+
+      <div class="field">
         <label class="inner-label">
           Status
         </label>

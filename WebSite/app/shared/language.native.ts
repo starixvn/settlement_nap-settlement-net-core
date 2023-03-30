@@ -1,5 +1,4 @@
-﻿import { Outright } from '../outright/models/outright.model';
-export const Language = {
+﻿export const Language = {
     confirmationBox: 'Confirmation box',
     CalculationWarning: 'Calculation warning',
     RefundWarning: 'Refund warning',

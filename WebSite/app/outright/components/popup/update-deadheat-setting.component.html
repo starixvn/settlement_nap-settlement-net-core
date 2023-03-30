@@ -1,0 +1,30 @@
+<div mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragBoundary=".cdk-overlay-container"
+    cdkDragHandle>
+    <label class="title">
+        Change Dead Heat Setting
+    </label>
+    <button type="button" class="close dialog-close" (click)="close()" tabindex="8">X</button>
+</div>
+
+<ng-container>
+    <div class="message-deadheat">
+        <span *ngIf="confirmChange; else defaultMessage"> Are you sure you want to change Dead Heat
+        Setting<br>from {{currentStatus}} to {{expectedStatus}}?</span>
+    </div>
+    <div class="button-deadheat">
+        <div *ngIf="confirmChange; else defaultButton">
+            <button class="button button-ok" (click)="setSetting()">OK</button>
+            <button class="button" (click)="close()">Cancel</button>
+        </div>
+    </div>
+</ng-container>
+
+<ng-template #defaultMessage>
+    <span>You choose to change Dead Heat Setting for the first time.<br>Please select corresponding Setting.</span>
+</ng-template>
+
+<ng-template #defaultButton>
+    <button class="button not-allow-deatheat" (click)="openConfirm(false)">Not Allow Dead Heat</button>
+    <button class="button allow-deatheat" (click)="openConfirm(true)">Allow Dead Heat</button>
+    <button class="button" (click)="close()">Cancel</button>
+</ng-template>

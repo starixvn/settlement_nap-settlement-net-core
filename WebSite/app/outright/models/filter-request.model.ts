@@ -3,6 +3,7 @@ export interface FilterRequest {
     toDate: string;
     leagueIds: string;
     statusId: number;
+    isIncludeTest: boolean;
 }
 
 

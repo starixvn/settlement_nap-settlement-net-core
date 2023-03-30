@@ -1,4 +1,4 @@
-import { SportLeague } from './../../models/sport-league.model';
+import { SportLeague, SportLeagueFilter } from './../../models/sport-league.model';
 import { GenerateFilterService } from './../../../shared/services/generate-filter.service';
 import { NewMultipleSelectComponent } from './../../../shared/components/multiple-select/multiple-select.component';
 import { DatePipe, CommonModule } from '@angular/common';
@@ -50,6 +50,8 @@ export class FilterComponent implements OnInit {
     statusOptions: any[] = Statuses;
     statusSelected: number;
 
+    isIncludeTestLeague = false
+
     moveBetsDay: NgbDateStruct;
 
     warningDialogMessage: ModalDialogMessage = new ModalDialogMessage();
@@ -83,7 +85,7 @@ export class FilterComponent implements OnInit {
         this.fromDate = this.verifyDateService.convertToDateStruct(initDate.fromDate);
         this.toDate = this.verifyDateService.convertToDateStruct(initDate.toDate);
         this.moveBetsDay = this.verifyDateService.convertToDateStruct(initDate.moveBetsDay);
-        this.statusSelected = 0;
+        this.statusSelected = 1;
         this.today = this.toDate;
         this.getSportLeague(this.fromDate, this.toDate);
     }
@@ -91,7 +93,7 @@ export class FilterComponent implements OnInit {
     private async getSportLeague(fromDate: NgbDateStruct, toDate: NgbDateStruct) {
         const fromDateValue = this.verifyDateService.dateFormat(fromDate);
         const toDateValue = this.verifyDateService.dateFormat(toDate);
-        let sportLeague: SportLeague;
+        let sportLeague: SportLeagueFilter;
         if (this.disableToDate || this.isValidInput(fromDate, toDate)) {
             sportLeague = await this.outrightService.getSportLeague({ fromDate: fromDateValue, toDate: toDateValue });
             this.originalLeagues = sportLeague.leagues;
@@ -153,7 +155,7 @@ export class FilterComponent implements OnInit {
         }
     }
 
-    search() {
+    async search() {
         const fromDate = this.verifyDateService.dateFormat(this.fromDate);
         const toDate = this.verifyDateService.dateFormat(this.toDate);
 
@@ -161,7 +163,8 @@ export class FilterComponent implements OnInit {
             fromDate: fromDate,
             toDate,
             statusId: this.statusSelected,
-            leagueIds: this.GetLeagueId()
+            leagueIds: this.GetLeagueId(),
+            isIncludeTest: this.isIncludeTestLeague
         }
 
         if (!(this.disableToDate || this.verifyDateService.validDate(this.fromDate, this.toDate))) {
@@ -174,7 +177,7 @@ export class FilterComponent implements OnInit {
             return;
         }
 
-        this.outrightService.filter(request).subscribe(res => {
+        await this.outrightService.filter(request).then((res) => {
             this.searchAction.emit(res);
             this.requestEmitter.emit(request);
         })

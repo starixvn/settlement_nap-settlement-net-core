@@ -14,7 +14,7 @@ public interface FilterService
 
     Task<SportLeague> GetSportLeague(SportLeagueRequest request);
 
-    Task<OutrightModel> Filter(FilterRequest request);
+    Task<SportOutright> Filter(FilterRequest request);
 }
 
 public class FilterServiceImp : FilterService
@@ -75,7 +75,7 @@ public class FilterServiceImp : FilterService
         };
     }
 
-    public async Task<OutrightModel> Filter(FilterRequest request)
+    public async Task<SportOutright> Filter(FilterRequest request)
     {
         var criteria = mapper.Map<FilterRequest, GetOutrightDetailCriteria>(request);
         var (deadHeatSettings, teams) = await repository.FetchMultipleAsync<DeadHeatSetting, Team>(criteria);
@@ -84,11 +84,21 @@ public class FilterServiceImp : FilterService
 
         AddTicketCountToTeam(teams, group.ToList());
 
-        return new OutrightModel
+        var leagues = GroupLeague(teams, deadHeatSettings);
+
+        var a = new SportOutright
         {
-            LeagueMatch = GroupLeague(teams, deadHeatSettings),
+            SportLeague = CreateSportOutright(leagues),
             Permission = permissionService.Permission
         };
+
+        return a;
+    }
+
+    private static IEnumerable<OutrightModel> CreateSportOutright(IEnumerable<LeagueMatch> leagues)
+    {
+        var leagueGrouped = leagues.GroupBy(item => item.SportName);
+        return leagueGrouped.Select(league => new OutrightModel { SportName = league.Key, LeagueMatch = league }).ToList();
     }
 
     private static IEnumerable<League> OrderLeague(IEnumerable<League> leagues)
@@ -170,6 +180,7 @@ public class FilterServiceImp : FilterService
                     LeagueName = team.LeagueName,
                     LeagueId = team.LeagueId,
                     Teams = new List<Team>()
+                    SportName = refDataService.GetSportName(team.SportType)
                 };
 
                 currentLeague = team.LeagueId;

@@ -6,12 +6,13 @@ namespace Settlement.Outright.Handlers;
 
 public class OutrightHandler :
         IRequestHandler<SportLeagueRequest, SportLeague>,
-        IRequestHandler<FilterRequest, OutrightModel>,
+        IRequestHandler<FilterRequest, SportOutright>,
         IRequestHandler<GetLeagueInfoRequest, LeagueInfo>,
         IRequestHandler<OutrightUndoRequest, Result>,
         IRequestHandler<GetLogRequest, IEnumerable<OutrightLog>>,
         IRequestHandler<OutrightCalculateRequest, Result>,
         IRequestHandler<CheckOutrightVoidTicketRequest, bool>,
+        IRequestHandler<UpdateDeadHeatSettingRequest, Unit>,
         IRequestHandler<GetDeatHeadLeagueSettingRequest, byte?>
 
 {
@@ -37,7 +38,7 @@ public class OutrightHandler :
 
     public async Task<SportLeague> Handle(SportLeagueRequest request, CancellationToken cancellationToken) => await getDataFilterService.GetSportLeague(request);
 
-    public async Task<OutrightModel> Handle(FilterRequest request, CancellationToken cancellationToken) => await getDataFilterService.Filter(request);
+    public async Task<SportOutright> Handle(FilterRequest request, CancellationToken cancellationToken) => await getDataFilterService.Filter(request);
 
     public async Task<LeagueInfo> Handle(GetLeagueInfoRequest request, CancellationToken cancellationToken) => await settleService.GetLeagueInfo(request);
 
@@ -50,10 +51,15 @@ public class OutrightHandler :
         return request.IsSubmit ? await outrightLogService.GetLogBySubmit(request) : await outrightLogService.GetLogForView(request);
     }
 
+    public async Task<Unit> Handle(UpdateDeadHeatSettingRequest request, CancellationToken cancellationToken)
+    {
+        await settleService.UpdateDeadHeatSetting(request);
+        return Unit.Value;
+    }
+
     public async Task<bool> Handle(CheckOutrightVoidTicketRequest request, CancellationToken cancellationToken)
         => await outrightLogQueryService.CheckOutrightvoidTicket(request);
 
     public async Task<byte?> Handle(GetDeatHeadLeagueSettingRequest request, CancellationToken cancellationToken)
         => await outrightLogQueryService.GetDeatHeadLeagueSetting(request);
-
 }

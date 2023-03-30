@@ -25,6 +25,10 @@ public class OutrightController : ControllerBase
     public IActionResult GetFilerView() => Ok(getDataFilterService.GetFilterView());
 
     [HttpPost]
+    [Route("update-deadheat-setting")]
+    public async Task<IActionResult> UpdateDeadHeatSettingAsync(UpdateDeadHeatSettingRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+
+    [HttpPost]
     [Route("get-sport-league")]
     public async Task<IActionResult> GetLeagues(SportLeagueRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 

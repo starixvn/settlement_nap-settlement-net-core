@@ -11,4 +11,6 @@ public class LeagueMatch
     public byte? DeadHeat { get; set; }
 
     public DateTime EventDate { get; set; }
+
+    public string SportName { get; set; }
 }

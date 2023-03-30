@@ -12,5 +12,6 @@ public class OutrightMapperProfile : Profile
         CreateMap<GetLeagueInfoRequest, GetLeagueInfoCriteria>();
         CreateMap<TeamSettleModel, OutrightSettleCriteria>();
         CreateMap<OutrightSettleCriteria, UpdateResultOutrightCriteria>();
+        CreateMap<UpdateDeadHeatSettingRequest, UpdateDeadHeatSettingCriteria>();
     }
 }

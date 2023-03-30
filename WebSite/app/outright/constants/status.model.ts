@@ -6,5 +6,5 @@ export const Status = {
     completed: "completed",
     internal: "internal",
     closed: "closed",
-    hide: 'hide',
+    hide: "hide"
 }

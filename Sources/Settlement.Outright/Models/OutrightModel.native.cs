@@ -1,10 +1,8 @@
-﻿using Settlement.Core.Models;
-
-namespace Settlement.Outright.Models;
+﻿namespace Settlement.Outright.Models;
 
 public class OutrightModel
 {
-	public IEnumerable<LeagueMatch> LeagueMatch { get; set; }
+    public string SportName { get; set; }
 
-	public Permission Permission { get; set; }
+    public IEnumerable<LeagueMatch> LeagueMatch { get; set; }
 }
