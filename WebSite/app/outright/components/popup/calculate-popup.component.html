@@ -23,8 +23,7 @@
   <div *ngIf="leagueSettle">
     <div class="league">
       <div class="icon"></div>
-      {{ data.eventDate | date: "mediumDate" }}
-      {{ data.eventDate | date: "hh:mm:ss a" }} -
+      {{ data.eventDate | date: "mediumDate" }} -
       {{ leagueSettle.sportName | uppercase }} - {{ leagueSettle.leagueName }}
     </div>
     <div class="header">

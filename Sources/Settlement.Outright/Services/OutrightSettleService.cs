@@ -17,6 +17,8 @@ public interface OutrightSettleService
     Task<ResultOutright> Calculate(OutrightCalculateRequest request);
 
     Task UpdateDeadHeatSetting(UpdateDeadHeatSettingRequest request);
+
+    Task<byte?> GetDeadHeadLeagueSetting(GetDeatHeadLeagueSettingRequest request);
 }
 
 public class OutrightSettleServiceImp : OutrightSettleService
@@ -120,6 +122,18 @@ public class OutrightSettleServiceImp : OutrightSettleService
         var criteria = mapper.Map<UpdateDeadHeatSettingRequest, UpdateDeadHeatSettingCriteria>(request);
         criteria.AdminId = currentSession.UserId;
         await repository.ExecuteAsync(criteria);
+    }
+
+    public async Task<byte?> GetDeadHeadLeagueSetting(GetDeatHeadLeagueSettingRequest request)
+    {
+        var criteria = new GetDeadHeatLeagueSettingCriteria
+        {
+            LeagueId = request.LeagueId
+        };
+
+        var result = await repository.GetAsync<byte?>(criteria);
+
+        return result;
     }
 
     private static IEnumerable<InfoValidate> GetListInfoValidates(OutrightUndoRequest request)

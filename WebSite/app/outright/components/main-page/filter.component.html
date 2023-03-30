@@ -13,7 +13,7 @@
         ></ngbd-date-picker>
       </div>
       <div class="date">
-        <input type="checkbox" style="float: left;" [(ngModel)]="disableToDate" (click)="changeStatus()">
+        <input type="checkbox" style="float: left;" [(ngModel)]="disableToDate" (ngModelChange)="changeStatus()">
         <label class="inner-label to-date">
           To
         </label>

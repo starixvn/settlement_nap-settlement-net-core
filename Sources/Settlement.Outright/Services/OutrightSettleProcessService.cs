@@ -18,6 +18,8 @@ public interface OutrightSettleProcessService
     Task<ResultOutright> ValidateRequest(string spName, IEnumerable<InfoValidate> teams);
 
     Task<Result> UpdateResultCalculate(OutrightSettleCriteria criteria);
+
+    Task<bool> CheckOutrightVoidTicket(CheckOutrightVoidTicketRequest request);
 }
 
 public class OutrightSettleProcessServiceImp : OutrightSettleProcessService
@@ -146,5 +148,20 @@ public class OutrightSettleProcessServiceImp : OutrightSettleProcessService
             ErrCode = updateResultCriteria.ErrCode,
             ErrMsg = updateResultCriteria.ErrMsg
         };
+    }
+
+    public async Task<bool> CheckOutrightVoidTicket(CheckOutrightVoidTicketRequest request)
+    {
+        var criteria = new OutrightVoidTicketCriteria
+        {
+            Orid = request.Orid,
+        };
+
+        var results = appSettingsKey.SiteDbServer
+            .Select(async server => await repository.GetAsync<int>(criteria))
+            .Select(t => t.Result).ToList();
+        await Task.CompletedTask;
+
+        return results.Any(r => r == 1) && results.All(r => r != 0);
     }
 }

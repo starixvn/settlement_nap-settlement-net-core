@@ -12,16 +12,12 @@ public interface OutrightLogQueryService
     Task<IEnumerable<OutrightLog>> GetOutrightLogs(GetLogRequest request);
 
     Task<IEnumerable<OutrightLogDetail>> GetOutrightLogDetails(GetOutrightLogDetailCriteria criteria);
-
-    Task<bool> CheckOutrightvoidTicket(CheckOutrightVoidTicketRequest resquest);
-    Task<byte?> GetDeatHeadLeagueSetting(GetDeatHeadLeagueSettingRequest request);
 }
 
 public class OutrightLogQueryServiceImp : OutrightLogQueryService
 {
     private readonly IDynamicRepository repository;
     private readonly AppSettingsKey appSettingsKey;
-
 
     public OutrightLogQueryServiceImp(IDynamicRepository repository, IOptions<AppSettingsKey> appOptions)
     {
@@ -60,32 +56,5 @@ public class OutrightLogQueryServiceImp : OutrightLogQueryService
     public async Task<IEnumerable<OutrightLogDetail>> GetOutrightLogDetails(GetOutrightLogDetailCriteria criteria)
     {
         return await repository.FetchAsync<OutrightLogDetail>(criteria);
-    }
-
-    public async Task<bool> CheckOutrightvoidTicket(CheckOutrightVoidTicketRequest request)
-    {
-        var criteria = new OutrightVoidTicketCriteria
-        {
-            Orid = request.Orid,
-        };
-
-        var results = appSettingsKey.SiteDbServer
-            .Select(async server => await repository.GetAsync<int>(criteria))
-            .Select(t => t.Result).ToList();
-        await Task.CompletedTask;
-
-        return results.Any(r => r == 1) && results.All(r => r != 0);
-    }
-
-    public async Task<byte?> GetDeatHeadLeagueSetting(GetDeatHeadLeagueSettingRequest request)
-    {
-        var criteria = new GetDeadHeatLeagueSettingCriteria
-        {
-            LeagueId = request.LeagueId
-        };
-
-        var result = await repository.GetAsync<byte?>(criteria);
-
-        return result;
     }
 }

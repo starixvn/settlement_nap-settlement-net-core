@@ -4,9 +4,9 @@ namespace Settlement.Outright.Criteria;
 
 public class GetOutrightSportLeaguesCriteria : CriteriaBase
 {
-    public DateTime FromDate { get; set; }
+    public string FromDate { get; set; }
 
-    public DateTime ToDate { get; set; }
+    public string ToDate { get; set; }
 
     public override string GetSettingKey()
     {
@@ -15,6 +15,6 @@ public class GetOutrightSportLeaguesCriteria : CriteriaBase
 
     public override bool IsValid()
     {
-        return FromDate <= ToDate;
+        return FromDate is not null;
     }
 }

@@ -92,7 +92,7 @@ export class FilterComponent implements OnInit {
 
     private async getSportLeague(fromDate: NgbDateStruct, toDate: NgbDateStruct) {
         const fromDateValue = this.verifyDateService.dateFormat(fromDate);
-        const toDateValue = this.verifyDateService.dateFormat(toDate);
+        const toDateValue = this.disableToDate ? null : this.verifyDateService.dateFormat(toDate);
         let sportLeague: SportLeagueFilter;
         if (this.disableToDate || this.isValidInput(fromDate, toDate)) {
             sportLeague = await this.outrightService.getSportLeague({ fromDate: fromDateValue, toDate: toDateValue });
@@ -109,7 +109,7 @@ export class FilterComponent implements OnInit {
     }
 
     onSelectLeague(value: ItemsSelect[]) {
-        this.leagueSelected = value.length> 0 ? value.map(item => Number(item.value)).join(',') : '';
+        this.leagueSelected = value.length > 0 ? value.map(item => Number(item.value)).join(',') : '';
     }
 
     private updateSport(sports: Sport[]) {
@@ -149,15 +149,16 @@ export class FilterComponent implements OnInit {
 
     changeStatus() {
         if (this.disableToDate) {
-            this.toDate = this.today;
-        } else {
             this.toDate = null;
+        } else {
+            this.toDate = this.today;
         }
+        this.getSportLeague(this.fromDate, this.toDate);
     }
 
     async search() {
         const fromDate = this.verifyDateService.dateFormat(this.fromDate);
-        const toDate = this.verifyDateService.dateFormat(this.toDate);
+        const toDate = this.disableToDate ? null : this.verifyDateService.dateFormat(this.toDate);
 
         const request: FilterRequest = {
             fromDate: fromDate,
@@ -171,8 +172,8 @@ export class FilterComponent implements OnInit {
             this.showWarningMessage(Resources.invalidDate);
             return;
         }
-        
-        if(_.isEmpty(this.sportTypesSelected)) {
+
+        if (_.isEmpty(this.sportTypesSelected)) {
             this.showWarningMessage(Resources.atLeastSport);
             return;
         }
@@ -183,8 +184,8 @@ export class FilterComponent implements OnInit {
         })
     }
 
-    private GetLeagueId(){
-        if(_.isEmpty(this.leagueSelected)) {
+    private GetLeagueId() {
+        if (_.isEmpty(this.leagueSelected)) {
             return _.filter(this.originalLeagues, item => _.includes(this.sportTypesSelected, item.sportType.toString())).map(item => item.leagueId).join(',');
         }
         return this.leagueSelected;

@@ -41,16 +41,19 @@ export class LeagueTeamComponent implements OnChanges {
         return this.outright.permission;
     }
 
-    ngOnChanges(): void {
-        this.outright.sportLeague.forEach(sport => {
-            sport.leagueMatch.forEach(league => {
-                if (_.isNull(league.deadHeat)) {
-                    league.deadHeatClass = "button-not-set";
-                    return;
-                }
-                league.deadHeatClass = league.deadHeat ? 'button-yes' : 'button-no';
+    ngOnChanges(changes: SimpleChanges): void {
+        if (!changes.outright.firstChange) {
+            this.outright.sportLeague.forEach(sport => {
+                sport.leagueMatch.forEach(league => {
+                    if (_.isNull(league.deadHeat)) {
+                        league.deadHeatClass = "button-not-set";
+                        return;
+                    }
+                    league.deadHeatClass = league.deadHeat ? 'button-yes' : 'button-no';
+                });
             });
-        });
+        }
+
         this.cdRef.detectChanges();
     }
 
@@ -109,7 +112,7 @@ export class LeagueTeamComponent implements OnChanges {
                 eventDate: league.eventDate
             },
             width: '930px',
-            height: '100vw',
+            height: '100%',
             disableClose: true,
             hasBackdrop: true
         }).afterClosed().subscribe((teams: TeamSettle[]) => {

@@ -66,7 +66,7 @@ public class FilterServiceImp : FilterService
             item.Group = $"All {item.SportName} Leagues";
         }
 
-        var sortedLeague = OrderLeague(leagues).ToList();
+        var sortedLeague = SortList(leagues.ToList(), item => item.SportName, item => item.LeagueName, item => item.SportType == SportType.Soccer, item => item.SportType == SportType.OtherSports, item => PopularSport.IndexOf(item.SportType) > -1);
 
         return new SportLeague
         {
@@ -84,7 +84,9 @@ public class FilterServiceImp : FilterService
 
         AddTicketCountToTeam(teams, group.ToList());
 
-        var leagues = GroupLeague(teams, deadHeatSettings);
+        var sortedTeams = SortList(teams.ToList(), item => item.SportName, item => item.LeagueName, item => item.SportType == SportType.Soccer, item => item.SportType == SportType.OtherSports, item => PopularSport.IndexOf(item.SportType) > -1);
+
+        var leagues = GroupLeague(sortedTeams, deadHeatSettings);
 
         var a = new SportOutright
         {
@@ -101,12 +103,12 @@ public class FilterServiceImp : FilterService
         return leagueGrouped.Select(league => new OutrightModel { SportName = league.Key, LeagueMatch = league }).ToList();
     }
 
-    private static IEnumerable<League> OrderLeague(IEnumerable<League> leagues)
+    public List<T> SortList<T>(List<T> items, Func<T, string> sportName, Func<T, string> leagueName, Func<T, bool> soccerOnTop, Func<T, bool> otherSportBottom, Func<T, bool> popularSport)
     {
-        var sortBySportName = leagues.OrderBy(item => item.SportName).ThenBy(item => item.LeagueName);
-        return sortBySportName.OrderByDescending(item => item.SportType == SportType.Soccer)
-            .ThenBy(item => item.SportType == SportType.OtherSports)
-            .ThenByDescending(item => PopularSport.IndexOf(item.SportType) > -1);
+        var sortBySportName = items.OrderBy(sportName).ThenBy(leagueName);
+        return sortBySportName.OrderByDescending(soccerOnTop)
+            .ThenBy(otherSportBottom)
+            .ThenByDescending(popularSport).ToList();
     }
 
     private static IEnumerable<Sport> GenerateSport(IEnumerable<League> leagues)
@@ -121,10 +123,11 @@ public class FilterServiceImp : FilterService
             });
     }
 
-    private static void AddTicketCountToTeam(IEnumerable<Team> teams, ICollection<TeamTicketModel> teamTickets)
+    private void AddTicketCountToTeam(IEnumerable<Team> teams, ICollection<TeamTicketModel> teamTickets)
     {
         foreach (var team in teams)
         {
+            team.RefDataService = refDataService;
             var foundTeam = teamTickets.FirstOrDefault(t => t.OrId == team.OrId);
             if (foundTeam is not null)
             {
@@ -168,7 +171,6 @@ public class FilterServiceImp : FilterService
         var league = new LeagueMatch();
         foreach (var team in teams)
         {
-            team.RefDataService = refDataService;
             if (currentLeague.Equals(team.LeagueId))
             {
                 league.Teams.Add(team);

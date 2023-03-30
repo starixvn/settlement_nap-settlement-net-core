@@ -24,6 +24,8 @@ public class Team
 
 	public string TeamName => RefDataService.GetTeamName(TeamId);
 
+	public string SportName => RefDataService.GetSportName(SportType);
+
 	public string LeagueName => RefDataService.GetLeagueName(LeagueId);
 
 	public bool IsDeadheat { get; set; }
