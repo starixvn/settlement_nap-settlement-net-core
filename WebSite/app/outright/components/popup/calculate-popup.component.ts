@@ -96,7 +96,7 @@ export class CalculatePopupComponent implements OnInit {
     }
 
     public get viewRecalculate() {
-        return !this.leagueSettle.permission.isLeader;
+        return this.leagueSettle.permission.isLeader;
     }
 
     public get disableRecalculate() {
