@@ -3,7 +3,6 @@ import { Injectable } from "@angular/core";
 import { Team } from "../models";
 import * as _ from "lodash";
 import { Status } from "../constants";
-import { OutrightService } from './outright.service';
 
 @Injectable()
 export class CalculateService {
@@ -37,18 +36,21 @@ export class CalculateService {
         return false;
     }
 
-    public static VerifySettledSelected(teams: Team[]) {
-        if (teams.some(team => !_.isEqual(team.status.toLowerCase(), Status.running))) {
+    public static VerifySettledSelected(selectedTeams: Team[], originalTeams: Team[]) {
+        const settledTeams = originalTeams.filter(team => !_.isEqual(team.status.toLowerCase(), Status.running));
+        console.log('settled', settledTeams);
+        const settledTeamOrids = settledTeams.map(t => t.orId);
+
+        if (selectedTeams.some(t => settledTeamOrids.includes(t.orId))) {
             return true;
         }
+
         return false;
     }
 
     public static VerifyDeadHeatNoSet(teamWonSelected: Team[], teamWonSettled: Team[]) {
         const teamSettledDeadHeat = _.filter(teamWonSettled, team => team.isDeadheat);
-        const teamSettledNoneDeadHeat = _.filter(teamWonSettled, team => !team.isDeadheat);
         const teamWonSelectedDeadHeat = _.filter(teamWonSelected, team => team.isDeadheat);
-        const teamWonSelectedNoneDeadHeat = _.filter(teamWonSelected, team => !team.isDeadheat);
 
         if (teamWonSelected.length === 1 && teamWonSettled.length >= 1 && _.isEmpty(teamSettledDeadHeat)) {
             return true;

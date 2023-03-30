@@ -134,7 +134,7 @@ export class CalculatePopupComponent implements OnInit {
     private async validateBeforePush(teamSettleWon: Team[], teamWonSettled: Team[], teamWonSelected: Team[], teamHideSelected: Team[], isCalc: boolean = true) {
         const setting = await this.outrightService.getDeadHeatSetting(this.data.leagueId);
 
-        if (isCalc && CalculateService.VerifySettledSelected(this.teamSelected)) {
+        if (isCalc && CalculateService.VerifySettledSelected(this.teamSelected, this.originalTeam)) {
             this.toastrService.error(Language.Outright.existTeamSettled);
         } else if (CalculateService.ExistRunningStatus(this.teamSelected)) {
             this.toastrService.error(Language.Outright.existRunning);
