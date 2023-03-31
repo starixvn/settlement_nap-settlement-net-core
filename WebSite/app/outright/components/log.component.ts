@@ -1,3 +1,4 @@
+import { _isNumberValue } from '@angular/cdk/coercion';
 import { CommonModule } from "@angular/common";
 import { Component, Injector, Input } from "@angular/core";
 import { FormsModule } from "@angular/forms";
@@ -11,6 +12,8 @@ import { OutrightLog } from "../models/outright-log.model";
 import { ModalDialogMessage } from "../../shared/models";
 import { Resources } from "../constants/resources";
 import { LogRequest } from "../models/log-request.model";
+import { Status } from "../constants";
+import * as _ from 'lodash';
 
 @Component({
     selector: 'log',
@@ -119,9 +122,25 @@ export default class LogComponent {
                 isSubmit
             }
             this.outrightService.getLogs(request).subscribe(res => {
+                this.adjustRemark(res);
                 this.outrightLogs = res;
             })
         }
+    }
+
+    private adjustRemark(OutrightLogs: OutrightLog[]){
+        OutrightLogs.forEach( OutrightLog => {
+            OutrightLog.outrightLogDetails.forEach(log => {
+                if(_.isEqual(log.result.toLowerCase(), Status.won) && _isNumberValue(log.remark)){
+                    log.remarkName = `isDeadHeat(${Number(log.remark)> 0 ? 'yes' : 'no'}:${Number(log.remark)})`
+                    return;
+                }
+
+                if(!_.isEmpty(log.result) || _.includes(log.actionNameEn.toLowerCase(), Status.undo)) {
+                    log.remarkName = '';
+                }
+            })
+        })
     }
 
     public onCollapsedClick(outrightLog: OutrightLog) {

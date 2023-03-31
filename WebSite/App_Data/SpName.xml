@@ -72,16 +72,15 @@
   </Function>
 
   <Funtion Name="Outright">
-    <Setting Key="NAP_Set_LeagueSelOutright" SpName="NAP_Set_LeagueSelOutright_UAT4" DbName="DBPRO.bodb02.bodbAdminNet" />
-    <Setting Key="NAP_Set_OutrightSelInfo" SpName="NAP_Set_OutrightSelInfo_UAT4" DbName="DBPRO.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_LeagueSelOutright" SpName="NAP_Set_LeagueSelOutright" DbName="DBPRO.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_OutrightSelInfo" SpName="NAP_Set_OutrightSelInfo" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_UserLog_Settle_OutrightSelByCode" SpName="NAP_UserLog_Settle_OutrightSelByCode" DbName="DBLOG.bodb_CustomerLog.bodbAdminNet" />
     <Setting Key="NAP_UserLog_Settle_OutrightSelByLeagueID" SpName="NAP_UserLog_Settle_OutrightSelByLeagueID" DbName="DBLOG.bodb_CustomerLog.bodbAdminNet" />
     <Setting Key="NAP_Set_OutrightSelInfoByLeagueID" SpName="NAP_Set_OutrightSelInfoByLeagueID" DbName="DBPRO.bodb02.bodbAdminNet" />
-    <Setting Key="NAP_Admin_Outright_Update" SpName="NAP_Admin_Outright_Update_UAT4" DbName="DBPRO.bodb02.bodbAdminNet" />
-	<Setting Key="NAP_Set_OutrightCheckTicketVoid" SpName="NAP_Set_OutrightCheckTicketVoid_UAT4" DbName="DBTXN.bodb02.bodbAdminNet" />
-    <Setting Key="NAP_Set_DeadHeatLeagueUpd" SpName="NAP_Set_DeadHeatLeagueUpd_UAT4" DbName="DBPRO.bodb02.bodbAdminNet"/>
-	  <Setting Key="NAP_Set_DeadHeatLeagueSel" SpName="NAP_Set_DeadHeatLeagueSel_UAT4" DbName="DBPRO.bodb02.bodbAdminNet" />
-
+    <Setting Key="NAP_Admin_Outright_Update" SpName="NAP_Admin_Outright_Update" DbName="DBPRO.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_OutrightCheckTicketVoid" SpName="NAP_Set_OutrightCheckTicketVoid" DbName="DBTXN.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_DeadHeatLeagueUpd" SpName="NAP_Set_DeadHeatLeagueUpd" DbName="DBPRO.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_DeadHeatLeagueSel" SpName="NAP_Set_DeadHeatLeagueSel" DbName="DBPRO.bodb02.bodbAdminNet" />
   </Funtion>
 
   <Function Name="MultiSport">

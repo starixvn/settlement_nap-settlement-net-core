@@ -25,8 +25,10 @@ public class OutrightLogProcessServiceImp : OutrightLogProcessService
 
     public async Task<List<OutrightLog>> GetOutrightLogByMatchCode(GetLogRequest request)
     {
-        var calculationLogs = await outrightLogQueryService.GetOutrightLogs(request);
+        var calculationLogs = (await outrightLogQueryService.GetOutrightLogs(request)).ToList();
         var eventLogList = new List<OutrightLog>();
+        var listLeague = calculationLogs.Select(log => log.LeagueId).Distinct();
+        eventLogList.AddRange(await GetLogDeadHeatSetting(listLeague, request));
 
         foreach (var item in calculationLogs)
         {
@@ -45,7 +47,7 @@ public class OutrightLogProcessServiceImp : OutrightLogProcessService
               .ToList();
     }
 
-    public virtual async Task<List<OutrightLog>> GetOutrightLogByOutrightId(GetLogRequest request)
+    public async Task<List<OutrightLog>> GetOutrightLogByOutrightId(GetLogRequest request)
     {
         var eventLogList = new List<OutrightLog>();
         var outrightLog = await outrightLogQueryService.GetOutrightLog(request);
@@ -70,11 +72,47 @@ public class OutrightLogProcessServiceImp : OutrightLogProcessService
             logDetails.ForEach(x =>
             {
                 x.TeamId = outrightLog.TeamId;
+                x.TeamName = refDataService.GetTeamName(outrightLog.TeamId);
                 x.RefDataService = refDataService;
             });
 
             outrightLog.OutrightLogDetails = logDetails;
             eventLogList.Add(outrightLog);
+        }
+
+        return eventLogList;
+    }
+
+    private async Task<IEnumerable<OutrightLog>> GetLogDeadHeatSetting(IEnumerable<int> listLeagueId, GetLogRequest request)
+    {
+        var eventLogList = new List<OutrightLog>();
+        foreach (var league in listLeagueId)
+        {
+            var getOutrightLogDetailCriteria = new GetOutrightLogDetailCriteria
+            {
+                MatchId = 0,
+                LeagueId = league,
+                ToDate = request.ToDate,
+                FromDate = request.FromDate
+            };
+
+            var logDetails = (await outrightLogQueryService.GetOutrightLogDetails(getOutrightLogDetailCriteria)).ToList();
+
+            if (logDetails.Any())
+            {
+                var outrightLog = new OutrightLog
+                {
+                    LeagueId = logDetails[0].LeagueId
+                };
+                ; logDetails.ForEach(x =>
+                                {
+                                    x.TeamName = refDataService.GetLeagueName(x.LeagueId);
+                                    x.RefDataService = refDataService;
+                                });
+
+                outrightLog.OutrightLogDetails = logDetails;
+                eventLogList.Add(outrightLog);
+            }
         }
 
         return eventLogList;

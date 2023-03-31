@@ -18,7 +18,7 @@
 
 <ng-template #body>
   <tbody dynamicHeight>
-    <ng-container *ngIf="outright != null; else empty">
+    <ng-container *ngIf="outright.sportLeague.length >0; else empty">
       <div *ngFor="let sport of outright.sportLeague">
         <ng-template [ngTemplateOutlet]="sportTemplate" [ngTemplateOutletContext]="{sport: sport}"></ng-template>
         <ng-container *ngIf="!sport.collapsed">
