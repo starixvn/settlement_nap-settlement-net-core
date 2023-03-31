@@ -67,12 +67,12 @@ export class AioService {
     }
 
     public voidBet(query: object) {
-        const request = this.httpRequestService.postJson(query, `/api/void-bet/update`);
+        const request = this.httpRequestService.postJson(query, `/api/cash-out/update`);
         return firstValueFrom(request);
     }
 
     public getTicketInfo(query: object) {
-        const newApiUrl = `/api/void-bet/get-ticket`;
+        const newApiUrl = `/api/cash-out/get-ticket`;
         const request = this.httpRequestService.postJson(query, newApiUrl);
         return firstValueFrom(request);
     }
