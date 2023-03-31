@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using Settlement.ThirdPartyProducts.Controllers;
 using Settlement.ThirdPartyProducts.Services;
-using System.Reflection;
 
 namespace Settlement.WebSites.Configurations;
 
@@ -22,7 +21,7 @@ public static class ThirdPartyProductsConfig
 
     public static void ThirdPartyProductsConfigMediator(this IServiceCollection services)
     {
-        services.AddMediatR(typeof(BetBuilderController).GetTypeInfo().Assembly);
-        services.AddMediatR(typeof(VoidBetController).GetTypeInfo().Assembly);
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(BetBuilderController).Assembly));
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CashOutController).Assembly));
     }
 }

@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using AutoMapper.Configuration;
 using Fanex.Data.Repository;
 using Microsoft.Extensions.Options;
 using Moq;
@@ -14,7 +13,7 @@ using System.Net;
 
 namespace Settlement.ThirdPartyProducts.UnitTests.Services;
 
-public class VoidBetApiServiceTests
+public class CashOutServiceTests
 {
     private readonly IDynamicRepository repository;
 
@@ -28,7 +27,7 @@ public class VoidBetApiServiceTests
 
     private readonly VoidBetRequest request = new() { MatchId = 123, VoidBetInfos = new List<VoidBetInfo> { new() { TransId = "123" } }, Action = "UNDO" };
 
-    public VoidBetApiServiceTests()
+    public CashOutServiceTests()
     {
         repository = Substitute.For<IDynamicRepository>();
         var xmlConvertService = Substitute.For<XmlConvertService>();
@@ -40,7 +39,12 @@ public class VoidBetApiServiceTests
         var mapper = new Mapper(config);
 
         httpClientFactory = Substitute.For<IHttpClientFactory>();
-        var appSetting = new AppSettingsKey { ThirdPartyJackTimeUrl = "https://www.google.com/", SiteDbServer = new List<string> { "01", "02" } };
+        var thirdPartySettingKeys = new ThirdPartySettingKeys
+        {
+            JackTimeResult = "https://www.google.com/"
+        };
+
+        var appSetting = new AppSettingsKey { ThirdPartyUri = thirdPartySettingKeys, SiteDbServer = new List<string> { "01", "02" } };
         var option = Options.Create(appSetting);
         service = new VoidBetApiServiceImp(repository, xmlConvertService, mapper, sendMailService,
             refDataService, httpClientFactory, option);

@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using Settlement.Sportsbook.OtherSports.Controllers;
 using Settlement.Sportsbook.OtherSports.Services;
-using System.Reflection;
 
 namespace Settlement.WebSites.Configurations;
 
@@ -18,6 +17,6 @@ public static class OtherSportsConfig
 
     public static void ConfigOtherSportsMediator(this IServiceCollection services)
     {
-        services.AddMediatR(typeof(OtherSportsController).GetTypeInfo().Assembly);
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(OtherSportsController).Assembly));
     }
 }

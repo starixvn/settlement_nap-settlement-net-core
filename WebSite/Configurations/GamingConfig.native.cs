@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using Settlement.Gaming.Controllers;
-using System.Reflection;
 using Happy5 = Settlement.Gaming.Services.Happy5;
 using NumberGame = Settlement.Gaming.Services.NumberGame;
 
@@ -24,7 +23,7 @@ public static class GamingConfig
 
     public static void GamingConfigMediator(this IServiceCollection services)
     {
-        services.AddMediatR(typeof(Happy5Controller).GetTypeInfo().Assembly);
-        services.AddMediatR(typeof(NumberGameController).GetTypeInfo().Assembly);
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(NumberGameController).Assembly));
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Happy5Controller).Assembly));
     }
 }

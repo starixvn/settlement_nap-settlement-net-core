@@ -19,6 +19,8 @@ public interface IVoidBetApiService
 {
     Task VoidBetApi(VoidBetRequest request);
 
+    Task PostResult(string action, object request);
+
     Task<List<VoidBetInfo>> GetTicketInfo(GetTicketInfo request);
 }
 
@@ -63,19 +65,32 @@ public class VoidBetApiServiceImp : IVoidBetApiService
         {
             VoidBetInfos = request.VoidBetInfos
         };
-        if (!string.IsNullOrEmpty(appSettingsKey.ThirdPartyJackTimeUrl) && voidBetApiModel.VoidBetInfos.Any())
+        var jackTimeApi = appSettingsKey.ThirdPartyUri.JackTimeTicket;
+
+        if (!string.IsNullOrEmpty(jackTimeApi) && voidBetApiModel.VoidBetInfos.Any())
         {
-            await SendRequest(appSettingsKey.ThirdPartyJackTimeUrl, request, voidBetApiModel);
+            var apiUri = JackTimeApi(jackTimeApi, request.Action);
+            var response = await PostAsync(apiUri, request);
+            await HandleResponse(response, request, voidBetApiModel);
         }
     }
 
-    private async Task SendRequest(string thirdPartyUrl, VoidBetRequest request, VoidBetApiModel model)
+    public async Task PostResult(string action, object request)
     {
-        var apiUrl = JackTimeApi(thirdPartyUrl, request.Action);
-        var requestContent = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json");
+        var jackTimeApi = appSettingsKey.ThirdPartyUri.JackTimeResult;
+
+        if (!string.IsNullOrEmpty(jackTimeApi))
+        {
+            var apiUri = $"{jackTimeApi}{action}";
+            await PostAsync(apiUri, request);
+        }
+    }
+
+    private async Task<HttpResponseMessage> PostAsync(string apiUri, object request)
+    {
+        var requestContent = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
         var httpClient = httpClientFactory.CreateClient();
-        var response = await httpClient.PostAsync(new Uri(apiUrl), requestContent);
-        await HandleResponse(response, request, model);
+        return await httpClient.PostAsync(new Uri(apiUri), requestContent);
     }
 
     private static string JackTimeApi(string thirdPartyUrl, string actionName)

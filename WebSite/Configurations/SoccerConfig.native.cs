@@ -4,7 +4,6 @@ using Settlement.Sportsbook.Soccer.Services;
 using Settlement.Sportsbook.Soccer.Services.FullTimeBetStatus;
 using Settlement.Sportsbook.Soccer.Services.HalfTimeBetStatus;
 using Settlement.Sportsbook.Soccer.Services.InstantCalculate;
-using System.Reflection;
 
 namespace Settlement.WebSites.Configurations;
 
@@ -47,6 +46,6 @@ public static class SoccerConfig
 
     public static void ConfigSoccerMediator(this IServiceCollection services)
     {
-        services.AddMediatR(typeof(SoccerController).GetTypeInfo().Assembly);
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(SoccerController).Assembly));
     }
 }

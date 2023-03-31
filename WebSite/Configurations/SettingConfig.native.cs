@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using Settlement.Setting.Controllers;
 using Settlement.Setting.Services;
-using System.Reflection;
 
 namespace Settlement.WebSites.Configurations;
 
@@ -18,7 +17,7 @@ public static class SettingConfig
 
     public static void SettingConfigMediator(this IServiceCollection services)
     {
-        services.AddMediatR(typeof(MatchSettingController).GetTypeInfo().Assembly);
-        services.AddMediatR(typeof(SourceManagerController).GetTypeInfo().Assembly);
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(SourceManagerController).Assembly));
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(MatchSettingController).Assembly));
     }
 }

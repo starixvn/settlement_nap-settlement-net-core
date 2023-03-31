@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using Settlement.Sportsbook.MoveTickets.Controllers;
 using Settlement.Sportsbook.MoveTickets.Services;
-using System.Reflection;
 
 namespace Settlement.WebSites.Configurations;
 
@@ -24,6 +23,6 @@ public static class MoveTicketConfig
 
     public static void ConfigMoveTicketMediator(this IServiceCollection services)
     {
-        services.AddMediatR(typeof(MoveTicketController).GetTypeInfo().Assembly);
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(MoveTicketController).Assembly));
     }
 }
