@@ -62,7 +62,7 @@ export class UpdateDeadheatSettingComponent implements OnInit {
 
   setSetting(){
     this.injector.get(OutrightService).updateDeatHeat(this.data.leagueId, this.expectedSetting).then(() => {
-      this.dialogRef.close();
+      this.dialogRef.close(this.expectedSetting);
     });
   }
 }

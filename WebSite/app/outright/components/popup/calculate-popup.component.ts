@@ -136,6 +136,12 @@ export class CalculatePopupComponent implements OnInit {
 
         if (isCalc && CalculateService.VerifySettledSelected(this.teamSelected, this.originalTeam)) {
             this.toastrService.error(Language.Outright.existTeamSettled);
+        } else if (setting === null && CalculateService.VerifyDeadHeatNoSet(teamWonSelected, teamWonSettled)) {
+            this.toastrService.error(Language.Outright.incorrectDeadHeatSetting);
+        } else if (setting === 1 && CalculateService.VerifyDeadHeatYesSetting(teamWonSelected, teamWonSettled)) {
+            this.toastrService.error(Language.Outright.incorrectDeadHeatSetting);
+        } else if (setting === 0 && CalculateService.VerifyDeadHeatNoSetting(teamWonSelected, teamWonSettled)) {
+            this.toastrService.error(Language.Outright.incorrectDeadHeatSetting);
         } else if (CalculateService.ExistRunningStatus(this.teamSelected)) {
             this.toastrService.error(Language.Outright.existRunning);
         } else if (CalculateService.VerifyOnlyOneTeamWon(teamWonSelected, teamWonSettled)) {
@@ -144,13 +150,7 @@ export class CalculatePopupComponent implements OnInit {
             this.toastrService.error(CalculateService.MessageInconsistentDeadheat(teamSettleWon));
         } else if (!(await this.VerifyHideStatus(teamHideSelected))) {
             this.toastrService.error(Language.Outright.existHideTicketNotVoided)
-        } else if (setting === null && CalculateService.VerifyDeadHeatNoSet(teamWonSelected, teamWonSettled)) {
-            this.toastrService.error(Language.Outright.incorrectDeadHeatSetting);
-        } else if (setting === 1 && CalculateService.VerifyDeadHeatYesSetting(teamWonSelected, teamWonSettled)) {
-            this.toastrService.error(Language.Outright.incorrectDeadHeatSetting);
-        } else if (setting === 0 && CalculateService.VerifyDeadHeatNoSetting(teamWonSelected, teamWonSettled)) {
-            this.toastrService.error(Language.Outright.incorrectDeadHeatSetting);
-        } else if (setting === 1 && CalculateService.ConfirmDeadHeatNoSetting(teamWonSelected, teamSettleWon)) {
+        } else if (setting === 0 && CalculateService.ConfirmDeadHeatNoSetting(teamWonSelected, teamWonSettled)) {
             this.confirmCalcNonDeadheat();
         } else {
             this.doCalculate(this.teamSettleWon.length);

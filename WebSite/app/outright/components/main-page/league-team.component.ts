@@ -76,6 +76,12 @@ export class LeagueTeamComponent implements OnChanges {
             width: '400px',
             height: '150px',
             hasBackdrop: true
+        }).afterClosed().subscribe(newSetting => {
+            if(!_.isNull(newSetting)){
+                leagueMatch.deadHeat = newSetting;
+                leagueMatch.deadHeatClass = leagueMatch.deadHeat ? 'button-yes' : 'button-no';
+                this.cdRef.detectChanges();
+            }
         });
     }
 
@@ -131,7 +137,7 @@ export class LeagueTeamComponent implements OnChanges {
                 leagueId: league.leagueId,
                 sportType: league.teams[0].sportType
             },
-            width: '770px',
+            width: '800px',
             height: '500px',
             disableClose: true,
             hasBackdrop: true

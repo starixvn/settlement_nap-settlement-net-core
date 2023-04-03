@@ -17,7 +17,10 @@
     X
   </button>
 </div>
-<div class="table-calculate-outright" [ngClass]="{ processing: blockUI }">
+<div
+  class="table-calculate-outright popup-cal"
+  [ngClass]="{ processing: blockUI }"
+>
   <span toastContainer></span>
   <div *ngIf="blockUI" class="loading"></div>
   <div *ngIf="leagueSettle">
@@ -29,27 +32,28 @@
     <div class="header">
       <ng-template *ngTemplateOutlet="header"></ng-template>
     </div>
-    <div class="table-scroll" dynamicHeight>
+
+    <div class="table-scroll" [dynamicHeight]="190">
       <ng-template *ngTemplateOutlet="body"></ng-template>
+    </div>
 
-      <div class="footer" *ngIf="teams.length > 0">
-        <button
-          [ngClass]="{ button: true, 'button-disabled': disableCalculate() }"
-          [disabled]="disableCalculate()"
-          (click)="calculate()"
-        >
-          Calculate
-        </button>
+    <div class="footer" *ngIf="teams.length > 0">
+      <button
+        [ngClass]="{ button: true, 'button-disabled': disableCalculate() }"
+        [disabled]="disableCalculate()"
+        (click)="calculate()"
+      >
+        Calculate
+      </button>
 
-        <button
-          *ngIf="viewRecalculate"
-          [ngClass]="{ button: true, 'button-disabled': disableRecalculate }"
-          [disabled]="disableRecalculate"
-          (click)="calculate(false)"
-        >
-          Re-Calculate
-        </button>
-      </div>
+      <button
+        *ngIf="viewRecalculate"
+        [ngClass]="{ button: true, 'button-disabled': disableRecalculate }"
+        [disabled]="disableRecalculate"
+        (click)="calculate(false)"
+      >
+        Re-Calculate
+      </button>
     </div>
   </div>
 
