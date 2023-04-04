@@ -17,6 +17,7 @@ import { MatDialog, MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angu
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { ResultOutright } from '../../models/result-outright.model';
 import { DynamicHeightDirective } from '../../../shared/directives';
+import { DeadHeatSetting } from 'outright/constants/deadheat-setting';
 
 @Component({
     selector: 'calculate-popup',
@@ -150,7 +151,13 @@ export class CalculatePopupComponent implements OnInit {
             this.toastrService.error(CalculateService.MessageInconsistentDeadheat(teamSettleWon));
         } else if (!(await this.VerifyHideStatus(teamHideSelected))) {
             this.toastrService.error(Language.Outright.existHideTicketNotVoided)
-        } else if (setting === 0 && CalculateService.ConfirmDeadHeatNoSetting(teamWonSelected, teamWonSettled)) {
+        } else if (setting === DeadHeatSetting.UnSet && CalculateService.VerifyDeadHeatNoSet(teamWonSelected, teamWonSettled)) {
+            this.toastrService.error(Language.Outright.incorrectDeadHeatSetting);
+        } else if (setting === DeadHeatSetting.Yes && CalculateService.VerifyDeadHeatYesSetting(teamWonSelected, teamWonSettled)) {
+            this.toastrService.error(Language.Outright.incorrectDeadHeatSetting);
+        } else if (setting === DeadHeatSetting.No && CalculateService.VerifyDeadHeatNoSetting(teamWonSelected, teamWonSettled)) {
+            this.toastrService.error(Language.Outright.incorrectDeadHeatSetting);
+        } else if (setting === DeadHeatSetting.No && CalculateService.ConfirmDeadHeatNoSetting(teamWonSelected, teamSettleWon)) {
             this.confirmCalcNonDeadheat();
         } else {
             this.doCalculate(this.teamSettleWon.length);
