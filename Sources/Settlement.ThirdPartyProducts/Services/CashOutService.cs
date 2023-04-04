@@ -7,6 +7,7 @@ using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Setting.Models.Notification;
 using Settlement.Setting.Services;
+using Settlement.ThirdPartyProducts.Constants;
 using Settlement.ThirdPartyProducts.Criteria;
 using Settlement.ThirdPartyProducts.Models;
 using Settlement.ThirdPartyProducts.Requests;
@@ -70,7 +71,7 @@ public class VoidBetApiServiceImp : IVoidBetApiService
         if (!string.IsNullOrEmpty(jackTimeApi) && voidBetApiModel.VoidBetInfos.Any())
         {
             var apiUri = JackTimeApi(jackTimeApi, request.Action);
-            var response = await PostAsync(apiUri, request);
+            var response = await PostAsync(apiUri, voidBetApiModel);
             await HandleResponse(response, request, voidBetApiModel);
         }
     }
@@ -95,9 +96,7 @@ public class VoidBetApiServiceImp : IVoidBetApiService
 
     private static string JackTimeApi(string thirdPartyUrl, string actionName)
     {
-        const string voidBet = "VoidBet";
-        const string undoVoidBet = "UndoVoidBet";
-        var actionRequest = actionName.Equals(ActionType.UnCalculate) ? undoVoidBet : voidBet;
+        var actionRequest = actionName.Equals(ActionType.UnCalculate) ? CashOutAction.UndoVoidBet : CashOutAction.VoidBet;
         return $"{thirdPartyUrl}{actionRequest}";
     }
 
@@ -144,7 +143,14 @@ public class VoidBetApiServiceImp : IVoidBetApiService
             voidBetInfos = voidBetInfos.Where(item => item.StatusId == statusIdRefund).ToList();
         }
 
-        return voidBetInfos;
+        return new List<VoidBetInfo>
+        {
+            new VoidBetInfo
+            {
+                CustId = "1"
+            }
+        };
+        //return voidBetInfos;
     }
 
     private string CreateResources(List<ResourceItem> selectedResources)

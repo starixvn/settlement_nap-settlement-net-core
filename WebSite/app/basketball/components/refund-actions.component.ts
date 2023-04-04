@@ -1,4 +1,4 @@
-﻿import { GetTicketInfoQuery, Match, ResultDetail, SettleQuery, VoidBetInfo, VoidBetQuery } from '../models';
+﻿import { GetTicketInfoQuery, Match, ResultDetail, SettleQuery, VoidBetInfo, VoidBetQuery, CashOutResultRefundQuery } from '../models';
 import { Component, Injector, ViewChild } from '@angular/core';
 import { Language } from '../../shared/language.native';
 import { BlockUIService } from '../../shared/services';
@@ -7,7 +7,7 @@ import { SportType } from '../../shared/constants';
 import { BasketballApiKeys, ResourcesIds } from '../constants';
 import * as _ from 'lodash';
 import { RefundActionBaseComponent } from '../../shared/components/sportsbook-sop/refund-action-base.component';
-import { BasketballService, BetStatusService, VerificationService } from '../services';
+import { BasketballService, BetStatusService, VerificationService, CashOutService } from '../services';
 import { SportTemplate } from '../../shared/models/sportsbook-sop';
 import { ToastContainerDirective } from 'ngx-toastr';
 import { MatchDetailComponent } from './match-detail.component';
@@ -19,12 +19,13 @@ import { ResourceNameByIdPipe } from '../pipes/resource-name-by-id.pipe';
     templateUrl: './refund-actions.component.html',
     standalone: true,
     imports: [RefundCommonModule, MatchDetailComponent, ResourceNameByIdPipe],
-    providers: [VerificationService, BasketballService, ResourceNameByIdPipe, BetStatusService  ]
+    providers: [VerificationService, BasketballService, ResourceNameByIdPipe, BetStatusService, CashOutService]
 })
 export class RefundActionsComponent extends RefundActionBaseComponent implements SportTemplate {
     @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
     private verificationService: VerificationService;
     private basketballService: BasketballService;
+    private cashOutService: CashOutService;
     public blockUI = true;
     public match: Match;
     public originalMatch: Match;
@@ -54,6 +55,7 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
     public initService (){
         this.verificationService = this.injector.get(VerificationService);
         this.basketballService = this.injector.get(BasketballService);
+        this.cashOutService = this.injector.get(CashOutService);
         this.injector.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI  = event);
     }
 
@@ -93,7 +95,8 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
         const getTicketInfos = await this.getTicketInfo(query);
         const result = await this.aioService.push(query);
         if (result.errCode === 0) {
-            this.undoVoidBet(getTicketInfos);
+            await this.undoVoidBet(getTicketInfos);
+            await this.cashOutResultRefund(this.resultDetails);
             this.refundHedgeMatch(query);
             this.messageBoxService.closePopup();
         } else {
@@ -103,13 +106,23 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
 
     private async getTicketInfo(query: SettleQuery) {
         const getTicketQuery = new GetTicketInfoQuery(query, false);
-        return await this.aioService.getTicketInfo(getTicketQuery) as VoidBetInfo[];
+        return await this.cashOutService.getTicketInfo(getTicketQuery) as VoidBetInfo[];
     }
 
     private async undoVoidBet(voidBetInfos: VoidBetInfo[]) {
         if (voidBetInfos.length > 0) {
             const voidBetQuery = new VoidBetQuery(this.matchDetail, false, voidBetInfos);
-            await this.aioService.voidBet(voidBetQuery);
+            await this.cashOutService.voidBet(voidBetQuery);
+        }
+    }
+
+    private async cashOutResultRefund(resource: ResultDetail[]) {
+        const final = resource.filter((map) => _.isEqual(map.resourceId, ResourcesIds.finalScore) && map.checked);
+        if (final.length > 0) {
+            const half = this.cashOutService.getHalf(resource);
+            const betStatus ="";
+            const query = new CashOutResultRefundQuery(this.matchDetail.matchId, betStatus, half);
+            await this.cashOutService.refund(query);
         }
     }
 }

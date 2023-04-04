@@ -4,9 +4,9 @@ import { MessageBoxService, AioService, BlockUIService } from '../../shared/serv
 import { ModalDialogMessage } from '../../shared/models';
 import { Language } from '../../shared/language.native';
 import { CalculateAction, SettlementStatusId, SportType } from '../../shared/constants';
-import { BasketballService, BetStatusService, VerificationService } from '../services';
+import { BasketballService, BetStatusService, VerificationService, CashOutService } from '../services';
 import { BasketballApiKeys, KickOffTime, ResourcesIds } from '../constants';
-import { GetTicketInfoQuery, Match, SettleQuery, VoidBetInfo, VoidBetQuery } from '../models';
+import { GetTicketInfoQuery, Match, SettleQuery, VoidBetInfo, VoidBetQuery, CashOutResultUpdateQuery } from '../models';
 import { MatchDetail, HedgeMatchDetail, ResultDetail, SaveScoreQuery, SportTemplate, ExternalResultDetail } from '../../shared/models/sportsbook-sop';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 import { ExternalSourceNamePipe } from '../../shared/pipes/external-source-name.pipe';
@@ -20,13 +20,14 @@ import { CalculateCommonModule } from '../../shared/modules/calculate-common.mod
     standalone: true,
     imports: [CalculateCommonModule, CalculationMatchDetailComponent,
         ExternalSourceNamePipe, ResourceNameByIdPipe],
-    providers: [BasketballService, ResourceNameByIdPipe, BetStatusService, VerificationService]
+    providers: [BasketballService, ResourceNameByIdPipe, BetStatusService, VerificationService, CashOutService]
 })
 export class CalculationActionsComponent implements SportTemplate {
     @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
     private basketballService: BasketballService;
     private messageBoxService: MessageBoxService;
     private aioService: AioService;
+    private cashOutService: CashOutService;
     private verificationService: VerificationService;
     private toastrService: ToastrService;
     public readonly overTimeId = ResourcesIds.ot;
@@ -68,6 +69,7 @@ export class CalculationActionsComponent implements SportTemplate {
         this.aioService = this.injector.get(AioService);
         this.verificationService = this.injector.get(VerificationService);
         this.toastrService = this.injector.get(ToastrService);
+        this.cashOutService = this.injector.get(CashOutService);
         this.injector.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
     }
 
@@ -265,7 +267,7 @@ export class CalculationActionsComponent implements SportTemplate {
         const scoresToSave = this.verificationService.getChangedScores(this.resultDetails, this.match.originalResultDetail);
         const checkedScores = this.verificationService.getOutsideScores(this.resultDetails);
         const query: SaveScoreQuery = {
-            matchId: this.match.matchDetail.matchId,
+            matchId: this.matchDetail.matchId,
             scoresToSave,
             checkedScores,
             apiKey: BasketballApiKeys.normalMatch
@@ -308,7 +310,7 @@ export class CalculationActionsComponent implements SportTemplate {
 
     private async verifyRunningOdds() {
         const selectedResourceIds = this.getOddResources();
-        const errorMessage = await this.aioService.checkingNoRunningOdds(this.match.matchDetail.matchId,
+        const errorMessage = await this.aioService.checkingNoRunningOdds(this.matchDetail.matchId,
             selectedResourceIds, CalculateAction.calculate);
         if (_.isNil(errorMessage)) {
             this.verifyScoreSourcesAndCalculate();
@@ -356,7 +358,7 @@ export class CalculationActionsComponent implements SportTemplate {
             this.confirmCalculation(this.selectedResources);
         } else {
             const getBasketballResultQuery = {
-                matchId: this.match.matchDetail.matchId,
+                matchId: this.matchDetail.matchId,
                 apikey: BasketballApiKeys.normalMatch,
                 sportType: SportType.basketBall,
             };
@@ -394,7 +396,7 @@ export class CalculationActionsComponent implements SportTemplate {
         const scoresToSave = this.verificationService.getChangedScores(this.resultDetails, this.match.originalResultDetail);
         const checkedScores = this.verificationService.getOutsideScores(this.resultDetails);
         const saveScoreQuery: SaveScoreQuery = {
-            matchId: this.match.matchDetail.matchId,
+            matchId: this.matchDetail.matchId,
             scoresToSave,
             checkedScores,
             apiKey: BasketballApiKeys.normalMatch
@@ -404,13 +406,14 @@ export class CalculationActionsComponent implements SportTemplate {
         if (!saveScoreResult.isSuccessful) {
             this.toastrService.error(saveScoreResult.errMsg);
         } else {
-            const query = new SettleQuery(this.match.matchDetail.matchId, resources, type, this.isReSettledTickets,
+            const query = new SettleQuery(this.matchDetail.matchId, resources, type, this.isReSettledTickets,
                 betStatus, this.match.isScoreDirect);
             query.isLeader = this.isLeader;
             const getTicketInfos = await this.getTicketInfo(query);
             const result = await this.aioService.push(query);
             if (result.isSuccessful) {
-                this.undoVoidBet(getTicketInfos);
+                await this.undoVoidBet(getTicketInfos);
+                await this.cashOutResultUpdate(resources, betStatus);
                 this.calculateHedgeMatch(query);
             } else {
                 this.toastrService.error(result.errMsg);
@@ -430,12 +433,12 @@ export class CalculationActionsComponent implements SportTemplate {
     }
 
     private async sendRequest(type: string, resource: ResultDetail[], betStatus: string): Promise<void> {
-        const query = new SettleQuery(this.match.matchDetail.matchId, resource, type, this.isReSettledTickets,
+        const query = new SettleQuery(this.matchDetail.matchId, resource, type, this.isReSettledTickets,
             betStatus, this.match.isScoreDirect);
         const getTicketInfos = await this.getTicketInfo(query);
         const result = await this.aioService.push(query);
         if (result.isSuccessful) {
-            this.undoVoidBet(getTicketInfos);
+            await this.undoVoidBet(getTicketInfos);
             this.calculateHedgeMatch(query);
         } else {
             this.toastrService.error(result.errMsg);
@@ -444,18 +447,25 @@ export class CalculationActionsComponent implements SportTemplate {
 
     private async getTicketInfo(query: SettleQuery) {
         const getTicketQuery = new GetTicketInfoQuery(query, true);
-        return await this.aioService.getTicketInfo(getTicketQuery) as VoidBetInfo[];
+        return await this.cashOutService.getTicketInfo(getTicketQuery) as VoidBetInfo[];
     }
 
     private async undoVoidBet(voidBetInfos: VoidBetInfo[]) {
         if (voidBetInfos.length > 0) {
             const voidBetQuery = new VoidBetQuery(this.matchDetail, true, voidBetInfos);
-            await this.aioService.voidBet(voidBetQuery);
+            await this.cashOutService.voidBet(voidBetQuery);
+        }
+    }
+
+    private async cashOutResultUpdate(resource: ResultDetail[], betStatus: string) {
+        const final = resource.filter((map) => _.isEqual(map.resourceId, ResourcesIds.finalScore) && map.checked);
+        if (final.length > 0 && this.matchDetail.parentId === 0 && !this.match.isScoreDirect) {
+            const query = new CashOutResultUpdateQuery(this.matchDetail.matchId, betStatus);
+            await this.cashOutService.calc(query);
         }
     }
 
     private calculateHedgeMatch(query: SettleQuery) {
-        const matchId = query.matchId;
         const hedgeMatchId = this.applyHedgeMatch
             ? this.match.hedgeMatchDetail.matchId : 0;
         if (hedgeMatchId > 0) {

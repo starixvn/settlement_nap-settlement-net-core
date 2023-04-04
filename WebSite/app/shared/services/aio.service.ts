@@ -66,17 +66,6 @@ export class AioService {
         return firstValueFrom(request);
     }
 
-    public voidBet(query: object) {
-        const request = this.httpRequestService.postJson(query, `/api/cash-out/update`);
-        return firstValueFrom(request);
-    }
-
-    public getTicketInfo(query: object) {
-        const newApiUrl = `/api/cash-out/get-ticket`;
-        const request = this.httpRequestService.postJson(query, newApiUrl);
-        return firstValueFrom(request);
-    }
-
     public async verifyChangedSettledTickets(resultDetails: GeneralResultDetail[], query: object) {
         const latestResults = await this.getLastestMatchResult(query);
         let needConfirm = false;
