@@ -112,42 +112,7 @@ export class FilterComponent implements OnInit {
         this.leagueSelected = value.length > 0 ? value.map(item => Number(item.value)).join(',') : '';
     }
 
-    private updateSport(sports: Sport[]) {
-        const updateList = { ... this.sportOptions$.getValue(), items: this.generateFilterService.renderSportTypes(sports, false) };
-        this.sportOptions$.next(updateList);
-    }
-
-    private updateLeague(leagues: League[]) {
-        const updateList = { ... this.leagueOptions$.getValue(), items: this.generateFilterService.renderLeagues(leagues) };
-        this.leagueOptions$.next(updateList);
-    }
-
-    private initSportLeague() {
-        const showAllLeagues = "--- Show All Leagues ---";
-        const initLeagueSelect = new MultipleSelect();
-        initLeagueSelect.allItemsCheckedText = showAllLeagues;
-        initLeagueSelect.maxWidth = '85%';
-        initLeagueSelect.enableSearchBox = true;
-        initLeagueSelect.haveGroup = true;
-        this.leagueOptions$.next(initLeagueSelect);
-        const initSportSelect = new MultipleSelect();
-        initSportSelect.haveGroup = true;
-        initSportSelect.isCheckAll = true;
-        initSportSelect.maxWidth = "180px";
-        this.sportOptions$.next(initSportSelect);
-    }
-
-    private isValidInput(fromDate: NgbDateStruct, toDate: NgbDateStruct) {
-        return this.verifyDateService.validDate(fromDate, toDate);
-    }
-
-    private showWarningMessage(message: string) {
-        this.warningDialogMessage.title = Resources.warningTitle;
-        this.warningDialogMessage.message = message;
-        this.messageBoxService.alert(this.warningDialogMessage);
-    }
-
-    changeStatus() {
+    disableToDateHandler() {
         if (this.disableToDate) {
             this.toDate = null;
         } else {
@@ -189,5 +154,40 @@ export class FilterComponent implements OnInit {
             return _.filter(this.originalLeagues, item => _.includes(this.sportTypesSelected, item.sportType.toString())).map(item => item.leagueId).join(',');
         }
         return this.leagueSelected;
+    }
+
+    private updateSport(sports: Sport[]) {
+        const updateList = { ... this.sportOptions$.getValue(), items: this.generateFilterService.renderSportTypes(sports, false) };
+        this.sportOptions$.next(updateList);
+    }
+
+    private updateLeague(leagues: League[]) {
+        const updateList = { ... this.leagueOptions$.getValue(), items: this.generateFilterService.renderLeagues(leagues) };
+        this.leagueOptions$.next(updateList);
+    }
+
+    private initSportLeague() {
+        const showAllLeagues = "--- Show All Leagues ---";
+        const initLeagueSelect = new MultipleSelect();
+        initLeagueSelect.allItemsCheckedText = showAllLeagues;
+        initLeagueSelect.maxWidth = '85%';
+        initLeagueSelect.enableSearchBox = true;
+        initLeagueSelect.haveGroup = true;
+        this.leagueOptions$.next(initLeagueSelect);
+        const initSportSelect = new MultipleSelect();
+        initSportSelect.haveGroup = true;
+        initSportSelect.isCheckAll = true;
+        initSportSelect.maxWidth = "180px";
+        this.sportOptions$.next(initSportSelect);
+    }
+
+    private isValidInput(fromDate: NgbDateStruct, toDate: NgbDateStruct) {
+        return this.verifyDateService.validDate(fromDate, toDate);
+    }
+
+    private showWarningMessage(message: string) {
+        this.warningDialogMessage.title = Resources.warningTitle;
+        this.warningDialogMessage.message = message;
+        this.messageBoxService.alert(this.warningDialogMessage);
     }
 }

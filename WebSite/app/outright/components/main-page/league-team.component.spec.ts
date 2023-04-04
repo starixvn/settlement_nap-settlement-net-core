@@ -1,3 +1,5 @@
+import { TeamSettle } from './../../models/team.model';
+import { LogPopupComponent } from './../popup/log-popup.component';
 import { CommonModule, DatePipe } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
@@ -11,15 +13,45 @@ import { LeagueTeamComponent } from './league-team.component';
 import { DynamicHeightDirective } from '../../../shared/directives';
 import { LeagueMatch } from '../../models/league-match.model';
 import { MatDialog } from '@angular/material/dialog';
+import { UncalculatePopupComponent } from '../popup/uncalculate-popup.component';
+import { CalculatePopupComponent } from '../popup/calculate-popup.component';
+import { of } from 'rxjs';
 
 describe('LeagueTeamComponent', () => {
     let component: LeagueTeamComponent;
     let fixture: ComponentFixture<LeagueTeamComponent>;
-    let verifyDateService: VerifyDateService;
-    let outrightService: OutrightService;
-    let calendar: NgbCalendar;
-    let messageBoxService: MessageBoxService;
     let dialog: MatDialog;
+
+    const date = new Date();
+    const dateTime: NgbDateStruct = { day: date.getUTCDay(), month: date.getUTCMonth(), year: date.getUTCFullYear() };
+
+    const leagueMatch: LeagueMatch = {
+        leagueId: 1,
+        leagueName: 'ABC',
+        teams: [{
+            matchCode: '1',
+            orId: '1',
+            kickOffTime: new Date(),
+            sportType: 1,
+            status: 'running',
+            leagueId: 4545,
+            leagueName: 'AB',
+            teamId: 1,
+            teamName: 'MU',
+            betCount: 1,
+            isDeadheat: true,
+            disableDeadheat: false,
+            isSettled: true,
+            selected: false,
+            eventDate: '',
+            dateTime: dateTime,
+            oddsStatus: 'lost'
+        }],
+        collapsed: false,
+        eventDate: '',
+        deadHeat: false,
+        deadHeatClass: ''
+    }
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
@@ -45,14 +77,17 @@ describe('LeagueTeamComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(LeagueTeamComponent);
         component = fixture.componentInstance;
-
-        outrightService = fixture.debugElement.injector.get(OutrightService);
-        verifyDateService = fixture.debugElement.injector.get(VerifyDateService);
-        calendar = fixture.debugElement.injector.get(NgbCalendar);
-        messageBoxService = fixture.debugElement.injector.get(MessageBoxService);
-        dialog = fixture.debugElement.injector.get(MatDialog);;
-        jest.spyOn(dialog, 'open')
+        dialog = fixture.debugElement.injector.get(MatDialog);
+        jest.spyOn(dialog, 'open');
         fixture.detectChanges();
+        component.outright = {
+            permission: {
+                canCalculateOutright: true,
+                canUncalculateOutright: true,
+                isLeader: true
+            },
+            sportLeague: []
+        }
     });
 
     it('should create', () => {
@@ -60,126 +95,46 @@ describe('LeagueTeamComponent', () => {
     });
 
     it('should open popup called when call function viewLog', () => {
-        const date = new Date();
-        const dateTime: NgbDateStruct = { day: date.getUTCDay(), month: date.getUTCMonth(), year: date.getUTCFullYear() };
-        const leagueMatch: LeagueMatch = {
-            leagueId: 1,
-            leagueName: 'ABC',
-            teams: [{
-                matchCode: '1',
-                orId: 'ab',
-                kickOffTime: new Date(),
-                sportType: 1,
-                status: 'running',
-                leagueId: 4545,
-                leagueName: 'AB',
-                teamId: 1,
-                teamName: 'MU',
-                betCount: 1,
-                isDeadheat: true,
-                disableDeadheat: false,
-                isSettled: true,
-                selected: false,
-                eventDate: '',
-                dateTime: dateTime,
-                oddsStatus: 'running'
-            }]
-
-        }
-        component.outright = {
-            permission: {
-                canCalculateOutright: true,
-                canUncalculateOutright: true
-            },
-            leagueMatch: []
-        }
-
+        const data = { "data": { "leagueId": 1, "matchCode": "1", "matchId": null }, "hasBackdrop": true, "height": "650px", "panelClass": "log-modalbox", "width": "1000px" }
         component.viewLog(leagueMatch);
 
-        expect(dialog.open).toHaveBeenCalled();
+        expect(dialog.open).toHaveBeenCalledWith(LogPopupComponent, data);
 
     })
 
-    it('should open popup called when call function unCalculatePopup', () => {
-        const date = new Date();
-        const dateTime: NgbDateStruct = { day: date.getUTCDay(), month: date.getUTCMonth(), year: date.getUTCFullYear() };
-        const leagueMatch: LeagueMatch = {
-            leagueId: 1,
-            leagueName: 'ABC',
-            teams: [{
-                matchCode: '1',
-                orId: 'ab',
-                kickOffTime: new Date(),
-                sportType: 1,
-                status: 'running',
-                leagueId: 4545,
-                leagueName: 'AB',
-                teamId: 1,
-                teamName: 'MU',
-                betCount: 1,
-                isDeadheat: true,
-                disableDeadheat: false,
-                isSettled: true,
-                selected: false,
-                eventDate: '',
-                dateTime: dateTime,
-                oddsStatus: 'running'
-            }]
+    describe('calculatePopup', () => {
+        it('should open popup called when call function unCalculatePopup', () => {
+            const data = { "data": { "leagueId": 1, "sportType": 1 }, "disableClose": true, "hasBackdrop": true, "height": "500px", "width": "800px" }
+            component.uncalculatePopup(leagueMatch);
 
-        }
-        component.outright = {
-            permission: {
-                canCalculateOutright: true,
-                canUncalculateOutright: true
-            },
-            leagueMatch: []
-        }
+            expect(dialog.open).toHaveBeenCalledWith(UncalculatePopupComponent, data);
 
-        component.viewLog(leagueMatch);
+        });
 
-        expect(dialog.open).toHaveBeenCalled();
+        it('should set new status when calculated', () => {
+            dialog.open = jest.fn().mockReturnValue({ afterClosed: () => of('1') });
 
-    });
+            component.uncalculatePopup(leagueMatch);
 
-    it('should open popup called when call function calculatePopup', () => {
-        const date = new Date();
-        const dateTime: NgbDateStruct = { day: date.getUTCDay(), month: date.getUTCMonth(), year: date.getUTCFullYear() };
-        const leagueMatch: LeagueMatch = {
-            leagueId: 1,
-            leagueName: 'ABC',
-            teams: [{
-                matchCode: '1',
-                orId: 'ab',
-                kickOffTime: new Date(),
-                sportType: 1,
-                status: 'running',
-                leagueId: 4545,
-                leagueName: 'AB',
-                teamId: 1,
-                teamName: 'MU',
-                betCount: 1,
-                isDeadheat: true,
-                disableDeadheat: false,
-                isSettled: true,
-                selected: false,
-                eventDate: '',
-                dateTime: dateTime,
-                oddsStatus: 'running'
-            }]
+            expect(leagueMatch.teams[0].status).toEqual('Running');
+        })
+    })
 
-        }
-        component.outright = {
-            permission: {
-                canCalculateOutright: true,
-                canUncalculateOutright: true
-            },
-            leagueMatch: []
-        }
+    describe('calculatePopup', () => {
+        it('should open popup called when call function calculatePopup', () => {
+            const data = { "data": { "eventDate": "", "leagueId": 1, "sportType": 1 }, "disableClose": true, "hasBackdrop": true, "height": "100%", "width": "930px" };
+            component.calculatePopup(leagueMatch);
 
-        component.viewLog(leagueMatch);
+            expect(dialog.open).toHaveBeenCalledWith(CalculatePopupComponent, data);
+        });
 
-        expect(dialog.open).toHaveBeenCalled();
+        it('should set new status when calculated', () => {
+            dialog.open = jest.fn().mockReturnValue({ afterClosed: () => of([new TeamSettle('1', '1', false, 'won', '')]) });
 
+            component.calculatePopup(leagueMatch);
+
+            expect(leagueMatch.teams[0].status).toEqual('won');
+        })
     });
 
 

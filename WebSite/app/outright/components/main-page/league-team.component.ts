@@ -77,7 +77,7 @@ export class LeagueTeamComponent implements OnChanges {
             height: '150px',
             hasBackdrop: true
         }).afterClosed().subscribe(newSetting => {
-            if(!_.isNull(newSetting)){
+            if(!_.isUndefined(newSetting)){
                 leagueMatch.deadHeat = newSetting;
                 leagueMatch.deadHeatClass = leagueMatch.deadHeat ? 'button-yes' : 'button-no';
                 this.cdRef.detectChanges();
