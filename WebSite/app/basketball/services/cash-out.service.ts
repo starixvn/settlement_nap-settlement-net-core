@@ -9,14 +9,13 @@ export class CashOutService {
     private cashOutApi = '/api/cash-out';
     constructor(private readonly httpRequestService: HttpRequestService) { }
 
-    
-    public voidBet(query: object) {
-        const request = this.httpRequestService.postJson(query, `${this.cashOutApi}/update`);
+    public getTicketInfo(query: object) {
+        const request = this.httpRequestService.postJson(query, `${this.cashOutApi}/get-ticket`);
         return firstValueFrom(request);
     }
 
-    public getTicketInfo(query: object) {
-        const request = this.httpRequestService.postJson(query, `${this.cashOutApi}/get-ticket`);
+    public voidBet(query: object) {
+        const request = this.httpRequestService.postJson(query, `${this.cashOutApi}/void-bet`);
         return firstValueFrom(request);
     }
 
@@ -30,25 +29,18 @@ export class CashOutService {
         return firstValueFrom(request);
     }
 
-    public getBetStatus(match: Match, resultDetail: ResultDetail[]) {
-        // let betStatus: string[] = [];
-        // const finalChecked = match.resultDetails.find((map) => map.resourceId === ResourcesIds.finalScore).checked;
-        // const refund = !finalChecked
-        //     && match.matchDetail.betStatus
-        //     && _.includes(match.matchDetail.betStatus, 'Refund')
-        //     ? 'Refund;' : '';
-        // const submittedQuarters = resultDetail.filter((map) =>
-        //     map.resourceId !== ResourcesIds.htScore && map.resourceId !== ResourcesIds.finalScore);
-        // if (!match.isScoreDirect) {
-        //     if (isUncalc) {
-        //         betStatus = this.uncalculateBetStatus(submittedQuarters, finalChecked);
-        //     } else {
-        //         betStatus = this.calculateBetStatus(submittedQuarters, finalChecked);
-        //     }
-        // }
-        // return refund + betStatus.join(',');
+    public getBetStatus(resultDetails: ResultDetail[]) {
+        const resultDetailsQuarters = resultDetails.filter((map) =>
+        map.resourceId !== ResourcesIds.htScore && map.resourceId !== ResourcesIds.finalScore);
+        const overTimeScore = "0-0";
+        const betStatus: string[] = [];
+        resultDetailsQuarters.forEach((map) => {
+            const score = map.checked  ? `0-0` : `${Number(map.homeValue)}-${Number(map.awayValue)}`
+            betStatus.push(score);
+        });
+        betStatus.push(overTimeScore);
 
-        return "";
+        return  betStatus.join(',');
     }
 
     public getHalf(resultDetails: ResultDetail[]) {

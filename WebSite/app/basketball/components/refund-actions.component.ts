@@ -95,7 +95,7 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
         const getTicketInfos = await this.getTicketInfo(query);
         const result = await this.aioService.push(query);
         if (result.errCode === 0) {
-            await this.undoVoidBet(getTicketInfos);
+            await this.voidBet(getTicketInfos);
             await this.cashOutResultRefund(this.resultDetails);
             this.refundHedgeMatch(query);
             this.messageBoxService.closePopup();
@@ -109,7 +109,7 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
         return await this.cashOutService.getTicketInfo(getTicketQuery) as VoidBetInfo[];
     }
 
-    private async undoVoidBet(voidBetInfos: VoidBetInfo[]) {
+    private async voidBet(voidBetInfos: VoidBetInfo[]) {
         if (voidBetInfos.length > 0) {
             const voidBetQuery = new VoidBetQuery(this.matchDetail, false, voidBetInfos);
             await this.cashOutService.voidBet(voidBetQuery);
@@ -118,9 +118,9 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
 
     private async cashOutResultRefund(resource: ResultDetail[]) {
         const final = resource.filter((map) => _.isEqual(map.resourceId, ResourcesIds.finalScore) && map.checked);
-        if (final.length > 0) {
+        if (final.length > 0 && this.matchDetail.parentId === 0) {
             const half = this.cashOutService.getHalf(resource);
-            const betStatus ="";
+            const betStatus = this.cashOutService.getBetStatus(resource);
             const query = new CashOutResultRefundQuery(this.matchDetail.matchId, betStatus, half);
             await this.cashOutService.refund(query);
         }

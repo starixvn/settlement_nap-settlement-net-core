@@ -392,7 +392,7 @@ export class CalculationActionsComponent implements SportTemplate {
         this.doSaveScoreAndCalculate(CalculateAction.calculate, selectedResources, betStatus);
     }
 
-    private async doSaveScoreAndCalculate(type: string, resources: ResultDetail[], betStatus: string) {
+    private async doSaveScoreAndCalculate(actionName: string, resources: ResultDetail[], betStatus: string) {
         const scoresToSave = this.verificationService.getChangedScores(this.resultDetails, this.match.originalResultDetail);
         const checkedScores = this.verificationService.getOutsideScores(this.resultDetails);
         const saveScoreQuery: SaveScoreQuery = {
@@ -406,13 +406,13 @@ export class CalculationActionsComponent implements SportTemplate {
         if (!saveScoreResult.isSuccessful) {
             this.toastrService.error(saveScoreResult.errMsg);
         } else {
-            const query = new SettleQuery(this.matchDetail.matchId, resources, type, this.isReSettledTickets,
+            const query = new SettleQuery(this.matchDetail.matchId, resources, actionName, this.isReSettledTickets,
                 betStatus, this.match.isScoreDirect);
             query.isLeader = this.isLeader;
             const getTicketInfos = await this.getTicketInfo(query);
             const result = await this.aioService.push(query);
             if (result.isSuccessful) {
-                await this.undoVoidBet(getTicketInfos);
+                await this.voidBet(getTicketInfos);
                 await this.cashOutResultUpdate(resources, betStatus);
                 this.calculateHedgeMatch(query);
             } else {
@@ -432,13 +432,13 @@ export class CalculationActionsComponent implements SportTemplate {
         }
     }
 
-    private async sendRequest(type: string, resource: ResultDetail[], betStatus: string): Promise<void> {
-        const query = new SettleQuery(this.matchDetail.matchId, resource, type, this.isReSettledTickets,
+    private async sendRequest(actionName: string, resource: ResultDetail[], betStatus: string): Promise<void> {
+        const query = new SettleQuery(this.matchDetail.matchId, resource, actionName, this.isReSettledTickets,
             betStatus, this.match.isScoreDirect);
         const getTicketInfos = await this.getTicketInfo(query);
         const result = await this.aioService.push(query);
         if (result.isSuccessful) {
-            await this.undoVoidBet(getTicketInfos);
+            await this.voidBet(getTicketInfos);
             this.calculateHedgeMatch(query);
         } else {
             this.toastrService.error(result.errMsg);
@@ -450,7 +450,7 @@ export class CalculationActionsComponent implements SportTemplate {
         return await this.cashOutService.getTicketInfo(getTicketQuery) as VoidBetInfo[];
     }
 
-    private async undoVoidBet(voidBetInfos: VoidBetInfo[]) {
+    private async voidBet(voidBetInfos: VoidBetInfo[]) {
         if (voidBetInfos.length > 0) {
             const voidBetQuery = new VoidBetQuery(this.matchDetail, true, voidBetInfos);
             await this.cashOutService.voidBet(voidBetQuery);

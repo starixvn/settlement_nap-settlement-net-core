@@ -18,7 +18,7 @@ public class CashOutController : ControllerBase
         this.mediator = mediator;
     }
 
-    [Route("update")]
+    [Route("void-bet")]
     [HttpPost]
     [LogPushRequest]
     public async Task VoidBet(VoidBetRequest request) => await mediator.Send(request).ConfigureAwait(false);

@@ -7,10 +7,10 @@ using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Setting.Models.Notification;
 using Settlement.Setting.Services;
-using Settlement.ThirdPartyProducts.Constants;
 using Settlement.ThirdPartyProducts.Criteria;
 using Settlement.ThirdPartyProducts.Models;
 using Settlement.ThirdPartyProducts.Requests;
+using Settlement.ThirdPartyProducts.Requests.CashOut;
 using System.Text;
 using ResourceItem = Settlement.ThirdPartyProducts.Models.ResourceItem;
 
@@ -18,7 +18,7 @@ namespace Settlement.ThirdPartyProducts.Services;
 
 public interface IVoidBetApiService
 {
-    Task VoidBetApi(VoidBetRequest request);
+    Task VoidBet(string action, VoidBetRequest request);
 
     Task PostResult(string action, object request);
 
@@ -60,7 +60,7 @@ public class VoidBetApiServiceImp : IVoidBetApiService
         this.appSettingsKey = appSettingsKey.Value;
     }
 
-    public async Task VoidBetApi(VoidBetRequest request)
+    public async Task VoidBet(string action, VoidBetRequest request)
     {
         var voidBetApiModel = new VoidBetApiModel
         {
@@ -70,7 +70,7 @@ public class VoidBetApiServiceImp : IVoidBetApiService
 
         if (!string.IsNullOrEmpty(jackTimeApi) && voidBetApiModel.VoidBetInfos.Any())
         {
-            var apiUri = JackTimeApi(jackTimeApi, request.Action);
+            var apiUri = $"{jackTimeApi}{action}";
             var response = await PostAsync(apiUri, voidBetApiModel);
             await HandleResponse(response, request, voidBetApiModel);
         }
@@ -92,12 +92,6 @@ public class VoidBetApiServiceImp : IVoidBetApiService
         var requestContent = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
         var httpClient = httpClientFactory.CreateClient();
         return await httpClient.PostAsync(new Uri(apiUri), requestContent);
-    }
-
-    private static string JackTimeApi(string thirdPartyUrl, string actionName)
-    {
-        var actionRequest = actionName.Equals(ActionType.UnCalculate) ? CashOutAction.UndoVoidBet : CashOutAction.VoidBet;
-        return $"{thirdPartyUrl}{actionRequest}";
     }
 
     private async Task HandleResponse(HttpResponseMessage response, VoidBetRequest request, VoidBetApiModel model)

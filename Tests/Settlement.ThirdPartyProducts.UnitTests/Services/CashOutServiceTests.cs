@@ -7,8 +7,10 @@ using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Setting.Models.Notification;
 using Settlement.Setting.Services;
+using Settlement.ThirdPartyProducts.Constants;
 using Settlement.ThirdPartyProducts.Criteria;
 using Settlement.ThirdPartyProducts.Requests;
+using Settlement.ThirdPartyProducts.Requests.CashOut;
 using System.Net;
 
 namespace Settlement.ThirdPartyProducts.UnitTests.Services;
@@ -87,7 +89,7 @@ public class CashOutServiceTests
         var httpClient = new HttpClient(mockHttpMessageHandler.Object);
         httpClientFactory.CreateClient().Returns(httpClient);
 
-        await service.VoidBetApi(request);
+        await service.VoidBet(CashOutAction.VoidBet, request);
 
         sendMailService.Received().SendMail(Arg.Any<NotificationModel>());
     }
@@ -103,7 +105,7 @@ public class CashOutServiceTests
         httpClientFactory.CreateClient().Returns(httpClient);
         repository.FetchAsync<VoidBetInfo>(Arg.Any<GetTicketInfoCriteria>()).Returns(listVoidBetInfos);
 
-        await service.VoidBetApi(request);
+        await service.VoidBet(CashOutAction.VoidBet, request);
 
         sendMailService.DidNotReceive().SendMail(Arg.Any<NotificationModel>());
     }
