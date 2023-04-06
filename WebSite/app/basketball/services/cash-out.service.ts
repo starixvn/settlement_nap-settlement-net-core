@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import * as _ from 'lodash';
 import { firstValueFrom } from 'rxjs';
 import { HttpRequestService } from "../../shared/services";
-import { Match, ResultDetail} from '../models';
+import { ResultDetail} from '../models';
 import { ResourcesIds } from '../constants';
 @Injectable()
 export class CashOutService {
