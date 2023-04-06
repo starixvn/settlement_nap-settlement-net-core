@@ -137,14 +137,7 @@ public class VoidBetApiServiceImp : IVoidBetApiService
             voidBetInfos = voidBetInfos.Where(item => item.StatusId == statusIdRefund).ToList();
         }
 
-        return new List<VoidBetInfo>
-        {
-            new VoidBetInfo
-            {
-                CustId = "1"
-            }
-        };
-        //return voidBetInfos;
+        return voidBetInfos;
     }
 
     private string CreateResources(List<ResourceItem> selectedResources)
