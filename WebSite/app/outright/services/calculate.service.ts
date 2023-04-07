@@ -70,6 +70,7 @@ export class CalculateService {
     }
 
     public static VerifyDeadHeatYesSetting(teamWonSelected: Team[], teamWonSettled: Team[]) {
+        console.log(teamWonSelected, teamWonSettled);
         const teamWonSelectedNoneDeadHeat = _.filter(teamWonSelected, team => !team.isDeadheat);
         const teamSettledDeadHeat = _.filter(teamWonSettled, team => team.isDeadheat);
         const teamSettledNoneDeadHeat = _.filter(teamWonSettled, team => !team.isDeadheat);
@@ -143,7 +144,7 @@ export class CalculateService {
 
     public static teamWonSettled(teamSelected: Team[], originalTeam: Team[]) {
         const teamNotSelectButSettled = _.filter(originalTeam, team =>
-            _.isUndefined(teamSelected.find(t => _.isEqual(t.oddsStatus, team.orId)))
+            _.isUndefined(teamSelected.find(t => _.isEqual(t.orId, team.orId)))
             && _.isEqual(team.oddsStatus.toLowerCase(), Status.completed)
             && _.isEqual(team.status.toLowerCase(), Status.won)
         );
