@@ -71,7 +71,10 @@
           <td class="align-left" style="width: auto;">
             {{ team.teamName }}
           </td>
-          <td class="status" [ngClass]="makeBackgroundByStatus(team.status)">
+          <td
+            class="status"
+            [ngClass]="team.isSettled && makeBackgroundByStatus(team.status)"
+          >
             <select
               [(ngModel)]="team.status"
               [disabled]="!team.selected"
