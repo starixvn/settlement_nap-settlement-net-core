@@ -16,7 +16,7 @@ namespace Settlement.Sportsbook.Soccer.Services;
 
 public interface InstantCalculateService
 {
-    Task<MatchGoalRecordModel> CalculateCheckingInfo(MatchCheckingRequest request);
+    Task<MatchCheckingResult> CalculateCheckingInfo(MatchCheckingRequest request);
 
     Task<UndoCheckingModel> UndoCheckingScore(int matchId);
 
@@ -57,15 +57,15 @@ public class InstantCalculateServiceImp : InstantCalculateService
         this.logService = logService;
     }
 
-    public async Task<MatchGoalRecordModel> CalculateCheckingInfo(MatchCheckingRequest request)
+    public async Task<MatchCheckingResult> CalculateCheckingInfo(MatchCheckingRequest request)
     {
-        var criteria = mapper.Map<MatchCheckingRequest, InstantCheckingCriteria>(request);
-        var matchGoalRecord = new MatchGoalRecordModel();
-        var firstMatch = true;
+        var criteria = mapper.Map<MatchCheckingRequest, MatchCheckingCriteria>(request);
+        var matchCheckingResult = new MatchCheckingResult();
+        //var firstMatch = true;
         foreach (var server in appSettingsKey.SiteDbServer)
         {
             criteria.DbServer = server;
-            var matchChecking = await repository.GetAsync<MatchGoalRecordModel>(criteria);
+            var matchChecking = await repository.GetAsync<MatchCheckingResult>(criteria);
             if (criteria.ErrCode > 0)
             {
                 matchChecking.ErrCode = criteria.ErrCode;
@@ -74,11 +74,11 @@ public class InstantCalculateServiceImp : InstantCalculateService
                 return matchChecking;
             }
 
-            MergeData(matchGoalRecord, matchChecking, firstMatch);
-            firstMatch = false;
+            //MergeData(matchCheckingResult, matchChecking, firstMatch);
+            //firstMatch = false;
         }
 
-        return matchGoalRecord;
+        return matchCheckingResult;
     }
 
     public async Task<UndoCheckingModel> UndoCheckingScore(int matchId)
@@ -94,6 +94,9 @@ public class InstantCalculateServiceImp : InstantCalculateService
     public async Task<Result> PushInstantCalculation(InstantCalculationRequest request)
     {
         var criteria = mapper.Map<InstantCalculationRequest, PushInstantCalculationCriteria>(request);
+        // get match info
+        // get ticket info
+
         criteria.ResourceResult = GetResourceResultInstantCalculate(request);
         criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
 
@@ -114,11 +117,21 @@ public class InstantCalculateServiceImp : InstantCalculateService
         foreach (var server in appSettingsKey.SiteDbServer)
         {
             criteria.DbServer = server;
-            var matchChecking = await repository.GetAsync<MatchGoalRecordModel>(criteria);
+            var matchChecking = await repository.GetAsync<MatchCheckingResult>(criteria);
 
-            model.IsExistFG = model.IsExistFG || matchChecking.IsExistFG;
-            model.IsExistHTFG = model.IsExistHTFG || matchChecking.IsExistHTFG;
+            //model.IsExistFG = model.IsExistFG || matchChecking.IsExistFG;
+            //model.IsExistHTFG = model.IsExistHTFG || matchChecking.IsExistHTFG;
         }
+    }
+
+    private async Task GetMatchDetailInfo(int matchId)
+    {
+
+    }
+
+    private async Task GetMatchTicketInfo(int matchId)
+    {
+
     }
 
     private string BetStatus(InstantCalculationRequest request)
@@ -140,18 +153,18 @@ public class InstantCalculateServiceImp : InstantCalculateService
         return betStatus;
     }
 
-    private static void MergeData(MatchGoalRecordModel baseMatch, MatchGoalRecordModel siteMatch, bool isBaseMatch)
+    private static void MergeData(MatchCheckingResult baseMatch, MatchCheckingResult siteMatch, bool isBaseMatch)
     {
-        if (isBaseMatch)
-        {
-            baseMatch.GoalRecord = siteMatch.GoalRecord;
-            baseMatch.BetStatus = siteMatch.BetStatus;
-        }
+        //if (isBaseMatch)
+        //{
+        //    baseMatch.GoalRecord = siteMatch.GoalRecord;
+        //    baseMatch.BetStatus = siteMatch.BetStatus;
+        //}
 
-        baseMatch.IsExistFgNg = baseMatch.IsExistFgNg || siteMatch.IsExistFgNg;
-        baseMatch.IsExistHtFgNg = baseMatch.IsExistHtFgNg || siteMatch.IsExistHtFgNg;
-        baseMatch.IsExistFG = baseMatch.IsExistFG || siteMatch.IsExistFG;
-        baseMatch.IsExistHTFG = baseMatch.IsExistHTFG || siteMatch.IsExistHTFG;
+        //baseMatch.IsExistFgNg = baseMatch.IsExistFgNg || siteMatch.IsExistFgNg;
+        //baseMatch.IsExistHtFgNg = baseMatch.IsExistHtFgNg || siteMatch.IsExistHtFgNg;
+        //baseMatch.IsExistFG = baseMatch.IsExistFG || siteMatch.IsExistFG;
+        //baseMatch.IsExistHTFG = baseMatch.IsExistHTFG || siteMatch.IsExistHTFG;
     }
 
     private async Task Execute(PushInstantCalculationCriteria criteria)

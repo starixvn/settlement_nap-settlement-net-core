@@ -60,15 +60,17 @@ public class InstantResourceServiceImp : IInstantResourceService
 
         if (goalCondition.IsExistHtFgNg)
         {
-            var resource = GetResource127L(goalCondition);
+            var resource = GetHalftimeFirstGoalResource(goalCondition);
             resources.Add(resource);
         }
 
         if (goalCondition.IsExistFgNg)
         {
-            var resource = GetResource14F(goalCondition);
+            var resource = GetFirstGoalResource(goalCondition);
             resources.Add(resource);
         }
+
+        //
 
         return resources;
     }
@@ -78,7 +80,7 @@ public class InstantResourceServiceImp : IInstantResourceService
         var resources = new List<XmlResource>();
         if (goalCondition.IsExistFgNg)
         {
-            var resource = GetResource14F(goalCondition);
+            var resource = GetFirstGoalResource(goalCondition);
             resources.Add(resource);
         }
 
@@ -166,7 +168,7 @@ public class InstantResourceServiceImp : IInstantResourceService
         };
     }
 
-    private XmlResource GetResource127L(InstantGoalCondition goalCondition)
+    private XmlResource GetHalftimeFirstGoalResource(InstantGoalCondition goalCondition)
     {
         var halftimeGoal = goalRecordService.HalftimeGoal(goalCondition.GoalRecord);
         var goalAction = CreateGoalAction(halftimeGoal, string.Empty);
@@ -181,7 +183,7 @@ public class InstantResourceServiceImp : IInstantResourceService
         };
     }
 
-    private XmlResource GetResource14F(InstantGoalCondition goalCondition)
+    private XmlResource GetFirstGoalResource(InstantGoalCondition goalCondition)
     {
         var halftime = goalRecordService.HalftimeGoal(goalCondition.GoalRecord);
         var fullTime = goalRecordService.FullTimeGoal(goalCondition.GoalRecord);

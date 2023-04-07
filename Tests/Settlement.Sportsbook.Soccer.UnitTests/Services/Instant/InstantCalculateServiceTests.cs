@@ -61,17 +61,17 @@ public class InstantCalculateServiceFacts
         const int errorCode = 100;
         const string errorMsg = "Error Message";
         repository
-            .GetAsync<MatchGoalRecordModel>(Arg.Do<InstantCheckingCriteria>(x =>
+            .GetAsync<MatchCheckingResult>(Arg.Do<MatchCheckingCriteria>(x =>
             {
                 x.ErrCode = errorCode;
                 x.ErrMsg = errorMsg;
-            })).Returns(new MatchGoalRecordModel { IsExistHtFgNg = true });
+            })).Returns(new MatchCheckingResult { IsExistHtFgNg = true });
 
         // Act
         var actualMatch = await service.CalculateCheckingInfo(new MatchCheckingRequest());
 
         // Assert
-        var expectedMatch = new MatchGoalRecordModel
+        var expectedMatch = new MatchCheckingResult
         {
             ErrCode = errorCode,
             ErrMsg = errorMsg,
@@ -84,24 +84,24 @@ public class InstantCalculateServiceFacts
     public async Task CalculateCheckingInfo_NotExistError_ReturnsMatchInfoFromRepositoryGet()
     {
         // Arrange
-        var matchCheckingCentral = new MatchGoalRecordModel
+        var matchCheckingCentral = new MatchCheckingResult
         {
             GoalRecord = "123",
             BetStatus = "1234",
             IsExistFgNg = true
         };
-        var matchCheckingSite = new MatchGoalRecordModel { IsExistHtFgNg = true };
+        var matchCheckingSite = new MatchCheckingResult { IsExistHtFgNg = true };
 
-        var matchCheckingSiteSecond = new MatchGoalRecordModel { IsExistFG = true, IsExistHTFG = true };
+        var matchCheckingSiteSecond = new MatchCheckingResult { IsExistFG = true, IsExistHTFG = true };
 
         repository
-            .GetAsync<MatchGoalRecordModel>(Arg.Any<InstantCheckingCriteria>()).Returns(matchCheckingCentral, matchCheckingSite, matchCheckingSiteSecond);
+            .GetAsync<MatchCheckingResult>(Arg.Any<MatchCheckingCriteria>()).Returns(matchCheckingCentral, matchCheckingSite, matchCheckingSiteSecond);
 
         // Act
         var actualMatch = await service.CalculateCheckingInfo(new MatchCheckingRequest());
 
         // Assert
-        var expectedMatch = new MatchGoalRecordModel
+        var expectedMatch = new MatchCheckingResult
         {
             IsExistHtFgNg = true,
             IsExistFgNg = true,

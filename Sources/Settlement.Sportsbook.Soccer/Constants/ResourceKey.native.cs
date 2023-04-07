@@ -12,4 +12,8 @@ public static class ResourceKey
     public const string FullTimeGoalRecord = "08";
 
     public const string FullTime = "00";
+    public const string CornerRace = "486";
+    public const string HalftimeCorner = "487";
+    public const string FirstCorner = "489";
+    public const string TowHFirstCorner = "490";
 }

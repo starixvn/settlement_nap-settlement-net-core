@@ -3,7 +3,7 @@ using Settlement.Sportsbook.Soccer.Models;
 
 namespace Settlement.Sportsbook.Soccer.Requests;
 
-public class MatchCheckingRequest : IRequest<MatchGoalRecordModel>
+public class MatchCheckingRequest : IRequest<MatchCheckingResult>
 {
     public int MatchId { get; set; }
 
