@@ -4,6 +4,9 @@ import { TestBed, getTestBed } from '@angular/core/testing';
 import { ResultDetail } from "../models";
 import { BlockUIService, HttpRequestService, MessageBoxService } from '../../shared/services';
 import { HttpClientModule } from '@angular/common/http';
+import { NO_ERRORS_SCHEMA } from "@angular/core";
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+
 describe('CashOutService', () => {
     let service: CashOutService;
     let httpRequestService: HttpRequestService;
@@ -12,7 +15,7 @@ describe('CashOutService', () => {
   
 
     beforeEach(() => {
-        TestBed.configureTestingModule({
+       TestBed.configureTestingModule({
             providers: [
                 CashOutService,
                 HttpRequestService,
@@ -21,8 +24,10 @@ describe('CashOutService', () => {
             ],
             imports: [
                 HttpClientModule,
+                NgbModule
             ],
-        });
+            teardown: {destroyAfterEach: false}
+        }).compileComponents();
         
         injector = getTestBed();
         service = injector.inject(CashOutService);
@@ -34,10 +39,10 @@ describe('CashOutService', () => {
     });
 
     
-    it('getTicketInfo - Should call right api url', () => {
+    it('getTicketInfo - Should call right api url', async () => {
         // Arrange
         const expectedUrl = `${cashOutApi}/get-ticket`;
-        const query = new Object();
+        const query = {} as object;
 
         // Act
         jest.spyOn(httpRequestService, 'postJson');
