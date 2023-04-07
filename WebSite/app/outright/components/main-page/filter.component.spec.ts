@@ -114,21 +114,21 @@ describe('FilterComponent', () => {
             expect(component.leagueOptions$.getValue().items.length).toEqual(1);
         }));
 
-        describe('disableToDateHandler', () => {
-            it('should set null to toDate when button selected.', fakeAsync(() => {
-                component.disableToDate = true;
+        describe('enableToDateHandler', () => {
+            it('should set null to toDate when button not selected.', fakeAsync(() => {
+                component.enableToDate = false;
 
                 const sportLeague: SportLeagueFilter = { leagues: [league], sports: [sport] };
                 outrightService.getSportLeague = jest.fn().mockReturnValue(Promise.resolve(sportLeague));
                 const toDate: NgbDateStruct = { day: date.getUTCDay() + 1, month: date.getUTCMonth(), year: date.getUTCFullYear() };
                 component.toDate = toDate;
-                component.disableToDateHandler();
+                component.enableToDateHandler();
 
                 expect(component.toDate).toBeNull();
             }))
 
-            it('should set null to toDate when button selected.', fakeAsync(() => {
-                component.disableToDate = false;
+            it('should set today to toDate when button selected.', fakeAsync(() => {
+                component.enableToDate = true;
 
                 const sportLeague: SportLeagueFilter = { leagues: [league], sports: [sport] };
                 outrightService.getSportLeague = jest.fn().mockReturnValue(Promise.resolve(sportLeague));
@@ -136,7 +136,7 @@ describe('FilterComponent', () => {
                 const today: NgbDateStruct = { day: date.getUTCDay(), month: date.getUTCMonth(), year: date.getUTCFullYear() };
                 component.today = today;
                 component.toDate = toDate;
-                component.disableToDateHandler();
+                component.enableToDateHandler();
 
                 expect(component.toDate.day).toEqual(today.day);
             }))
@@ -164,7 +164,7 @@ describe('FilterComponent', () => {
 
     describe('search method', () => {
         it('should show error message date when select wrong from date and to date.', () => {
-            component.disableToDate = false
+            component.enableToDate = true;
             verifyDateService.validDate = jest.fn().mockReturnValue(false);
             component.search();
 
@@ -173,7 +173,7 @@ describe('FilterComponent', () => {
         });
 
         it('should not validate date when toDate is disable', () => {
-            component.disableToDate = true;
+            component.enableToDate = false;
             verifyDateService.validDate = jest.fn();
             component.sportTypesSelected = '1';
             outrightService.filter = jest.fn();
@@ -185,7 +185,7 @@ describe('FilterComponent', () => {
         });
 
         it('should show error message when not select any sport.', () => {
-            component.disableToDate = true;
+            component.enableToDate = false;
             component.sportTypesSelected = '';
 
             component.search();
@@ -195,7 +195,7 @@ describe('FilterComponent', () => {
         });
 
         it('should call filter method and event emit when pass all validation.', async () => {
-            component.disableToDate = true;
+            component.enableToDate = false;
             verifyDateService.validDate = jest.fn();
             component.sportTypesSelected = '1';
             outrightService.filter = jest.fn().mockReturnValue(Promise.resolve(sportLeague));

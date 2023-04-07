@@ -37,7 +37,7 @@ export class FilterComponent implements OnInit {
 
     fromDate: NgbDateStruct;
     toDate: NgbDateStruct;
-    disableToDate = false;
+    enableToDate = true;
     today: NgbDateStruct;
 
     sportTypesSelected: string;
@@ -92,9 +92,9 @@ export class FilterComponent implements OnInit {
 
     private async getSportLeague(fromDate: NgbDateStruct, toDate: NgbDateStruct) {
         const fromDateValue = this.verifyDateService.dateFormat(fromDate);
-        const toDateValue = this.disableToDate ? null : this.verifyDateService.dateFormat(toDate);
+        const toDateValue = this.enableToDate ? this.verifyDateService.dateFormat(toDate) : null;
         let sportLeague: SportLeagueFilter;
-        if (this.disableToDate || this.isValidInput(fromDate, toDate)) {
+        if (!this.enableToDate || this.isValidInput(fromDate, toDate)) {
             sportLeague = await this.outrightService.getSportLeague({ fromDate: fromDateValue, toDate: toDateValue });
             this.originalLeagues = sportLeague.leagues;
         }
@@ -112,18 +112,18 @@ export class FilterComponent implements OnInit {
         this.leagueSelected = value.length > 0 ? value.map(item => Number(item.value)).join(',') : '';
     }
 
-    disableToDateHandler() {
-        if (this.disableToDate) {
-            this.toDate = null;
-        } else {
+    enableToDateHandler() {
+        if (this.enableToDate) {
             this.toDate = this.today;
+        } else {
+            this.toDate = null;
         }
         this.getSportLeague(this.fromDate, this.toDate);
     }
 
     async search() {
         const fromDate = this.verifyDateService.dateFormat(this.fromDate);
-        const toDate = this.disableToDate ? null : this.verifyDateService.dateFormat(this.toDate);
+        const toDate = this.enableToDate ? this.verifyDateService.dateFormat(this.toDate) : null;
 
         const request: FilterRequest = {
             fromDate: fromDate,
@@ -133,7 +133,7 @@ export class FilterComponent implements OnInit {
             isIncludeTest: this.isIncludeTestLeague
         }
 
-        if (!(this.disableToDate || this.verifyDateService.validDate(this.fromDate, this.toDate))) {
+        if (this.enableToDate && !this.verifyDateService.validDate(this.fromDate, this.toDate)) {
             this.showWarningMessage(Resources.invalidDate);
             return;
         }
