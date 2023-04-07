@@ -11,6 +11,7 @@ using Settlement.Sportsbook.Soccer.Criteria;
 using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Requests;
 using Settlement.Sportsbook.Soccer.Services.InstantCalculate;
+using MatchDetail = Settlement.Sportsbook.Soccer.Models.MatchDetail;
 
 namespace Settlement.Sportsbook.Soccer.Services;
 
@@ -95,7 +96,9 @@ public class InstantCalculateServiceImp : InstantCalculateService
     {
         var criteria = mapper.Map<InstantCalculationRequest, PushInstantCalculationCriteria>(request);
         // get match info
+        var matchDetail = await GetMatchDetailInfo(request.MatchId);
         // get ticket info
+        var ticketInfo = await GetMatchTicketInfo(request.MatchId);
 
         criteria.ResourceResult = GetResourceResultInstantCalculate(request);
         criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
@@ -111,9 +114,10 @@ public class InstantCalculateServiceImp : InstantCalculateService
         return result;
     }
 
+    // need fix 
     private async Task GetTicketInfo(int matchId, UndoCheckingModel model)
     {
-        var criteria = new InstantTicketCheckingCriteria { MatchId = matchId };
+        var criteria = new MatchTicketInfoCriteria { MatchId = matchId };
         foreach (var server in appSettingsKey.SiteDbServer)
         {
             criteria.DbServer = server;
@@ -124,14 +128,29 @@ public class InstantCalculateServiceImp : InstantCalculateService
         }
     }
 
-    private async Task GetMatchDetailInfo(int matchId)
+    private async Task<MatchDetail> GetMatchDetailInfo(int matchId)
     {
+        var criteria = new GetMatchInfoCriteria
+        {
+            MatchId = matchId
+        };
 
+        var match = await repository.GetAsync<MatchDetail>(criteria);
+
+        return match;
     }
 
-    private async Task GetMatchTicketInfo(int matchId)
+    private async Task<MatchTicketInfo> GetMatchTicketInfo(int matchId)
     {
+        var ticketInfo = new MatchTicketInfo();
+        var criteria = new MatchTicketInfoCriteria { MatchId = matchId };
+        foreach (var server in appSettingsKey.SiteDbServer)
+        {
+            criteria.DbServer = server;
+            ticketInfo = await repository.GetAsync<MatchTicketInfo>(criteria);
+        }
 
+        return ticketInfo;
     }
 
     private string BetStatus(InstantCalculationRequest request)
@@ -151,20 +170,6 @@ public class InstantCalculateServiceImp : InstantCalculateService
         }
 
         return betStatus;
-    }
-
-    private static void MergeData(MatchCheckingResult baseMatch, MatchCheckingResult siteMatch, bool isBaseMatch)
-    {
-        //if (isBaseMatch)
-        //{
-        //    baseMatch.GoalRecord = siteMatch.GoalRecord;
-        //    baseMatch.BetStatus = siteMatch.BetStatus;
-        //}
-
-        //baseMatch.IsExistFgNg = baseMatch.IsExistFgNg || siteMatch.IsExistFgNg;
-        //baseMatch.IsExistHtFgNg = baseMatch.IsExistHtFgNg || siteMatch.IsExistHtFgNg;
-        //baseMatch.IsExistFG = baseMatch.IsExistFG || siteMatch.IsExistFG;
-        //baseMatch.IsExistHTFG = baseMatch.IsExistHTFG || siteMatch.IsExistHTFG;
     }
 
     private async Task Execute(PushInstantCalculationCriteria criteria)
