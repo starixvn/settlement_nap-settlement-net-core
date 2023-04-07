@@ -176,23 +176,11 @@ export class AutoCalculateMatchesComponent extends MatchesBaseComponent implemen
         return match.instantStatus.includes('LIVE') ? "live-red" : "";
     }
 
-    public async updateInstantStatus(match: CalculationMatch) {
-        if (!this.isNullOrEmpty(match.instantHomeScore) && !this.isNullOrEmpty(match.instantAwayScore)) {
-            const query = new UpdateInstantQuery(match);
-            const result = await this.requestService.checkingMatch(query).toPromise(); // checking
-            if (result.errCode === 0) {
-                this.doUpdateInstantStatus(match, query, result);
-            } else {
-                this.dialogAlertMessage.message = result.errMsg;
-                this.messageBoxService.alert(this.dialogAlertMessage);
-            }
-        }
-    }
-
-    private doUpdateInstantStatus(match: CalculationMatch, query: UpdateInstantQuery, result: MatchCheckingResult) {
+    private doUpdateInstantStatus(match: CalculationMatch) {
+        const query = new UpdateInstantQuery(match)
         this.dialogConfirmMessage.message = Language.instants.confirmExecuteInstant;
         this.messageBoxService.confirm(this.dialogConfirmMessage, async () => {
-            const resultPushScore = await this.requestService.pushInstantStatus(query, result).toPromise();
+            const resultPushScore = await this.requestService.pushInstantStatus(query).toPromise();
             if (resultPushScore.errCode === 0) {
                 this.handleActionService.handleChangeInstantStatus(match);
             } else {

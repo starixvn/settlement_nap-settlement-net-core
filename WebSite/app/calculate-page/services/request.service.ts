@@ -95,12 +95,6 @@ export class RequestService {
     }
 
   public pushInstantStatus(query: UpdateInstantQuery, result: MatchGoalRecord) {
-        // query.isExistFgNg = result.isExistFgNg;
-        // query.isExistHtFgNg = result.isExistHtFgNg;
-        // query.goalRecord = result.goalRecord;
-        // query.isExistFg = result.isExistFg;
-        // query.isExistHtFg = result.isExistHtFg;
-        // query.betStatus = result.betStatus;
     const request = this.httpRequestService.postJson<Result>(query, `${this.soccerApi}/push-instant-score`);
     return firstValueFrom(request);
     }

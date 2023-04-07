@@ -142,15 +142,31 @@ public class InstantCalculateServiceImp : InstantCalculateService
 
     private async Task<MatchTicketInfo> GetMatchTicketInfo(int matchId)
     {
-        var ticketInfo = new MatchTicketInfo();
-        var criteria = new MatchTicketInfoCriteria { MatchId = matchId };
+        var listTicketInfo = new List<MatchTicketInfo>();
+        var criteria = new MatchTicketInfoCriteria
+        {
+            MatchId = matchId,
+        };
+
         foreach (var server in appSettingsKey.SiteDbServer)
         {
             criteria.DbServer = server;
-            ticketInfo = await repository.GetAsync<MatchTicketInfo>(criteria);
+            var item = await repository.GetAsync<MatchTicketInfo>(criteria) ?? new MatchTicketInfo();
+            listTicketInfo.Add(item);
         }
 
-        return ticketInfo;
+        return new MatchTicketInfo
+        {
+            IsExistFgNg = listTicketInfo.Exists(item => item.IsExistFgNg),
+            IsExistHtFgNg = listTicketInfo.Exists(item => item.IsExistHtFgNg),
+            IsExistFG = listTicketInfo.Exists(item => item.IsExistFG),
+            IsExistHTFG = listTicketInfo.Exists(item => item.IsExistHTFG),
+            IsExistCorner = listTicketInfo.Exists(item => item.IsExistCorner),
+            IsExist2HFirstCorner = listTicketInfo.Exists(item => item.IsExist2HFirstCorner),
+            IsExistFirstCorner = listTicketInfo.Exists(item => item.IsExistFirstCorner),
+            IsExistHTCorner = listTicketInfo.Exists(item => item.IsExistHTCorner),
+            IsExistHTFirstCorner = listTicketInfo.Exists(item => item.IsExistHTFirstCorner),
+        };
     }
 
     private string BetStatus(InstantCalculationRequest request)
@@ -190,14 +206,21 @@ public class InstantCalculateServiceImp : InstantCalculateService
         logService.WriteLog(criteria.MatchId, message);
     }
 
-    private string GetResourceResultInstantCalculate(InstantCalculationRequest request)
+    private string GetResourceResultInstantCalculate(InstantCalculationRequest request, MatchDetail matchDetail, MatchTicketInfo ticketInfo)
     {
         var goalCondition = new InstantGoalCondition
         {
-            GoalRecord = request.GoalRecord,
+            GoalRecord = matchDetail.GoalRecord,
             FirstGoalValue = request.FirstGoalValue,
-            IsExistFgNg = request.IsExistFgNg,
-            IsExistHtFgNg = request.IsExistHtFgNg,
+            IsExistFgNg = ticketInfo.IsExistFgNg,
+            IsExistHtFgNg = ticketInfo.IsExistHtFgNg,
+
+            IsExistCorner = ticketInfo.IsExistCorner,
+            IsExistHTFirstCorner = ticketInfo.IsExistHTFirstCorner,
+            IsExistFirstCorner = ticketInfo.IsExistFirstCorner,
+            IsExist2HFirstCorner = ticketInfo.IsExist2HFirstCorner,
+            IsExistHTCorner = ticketInfo.IsExistHTCorner,
+
             IsHalfTime = request.IsHalfTime
         };
 

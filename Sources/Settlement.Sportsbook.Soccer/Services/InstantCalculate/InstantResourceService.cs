@@ -70,7 +70,10 @@ public class InstantResourceServiceImp : IInstantResourceService
             resources.Add(resource);
         }
 
-        //
+        if (goalCondition.IsExistFirstCorner)
+        {
+
+        }
 
         return resources;
     }
@@ -216,5 +219,13 @@ public class InstantResourceServiceImp : IInstantResourceService
         return resources.Count > 0
             ? xmlConvertService.Serialize(new XmlResults { Resources = resources })
             : string.Empty;
+    }
+
+    private XmlResource GetCornerResouce(InstantGoalCondition goalCondition)
+    {
+        return new XmlResource
+        {
+
+        };
     }
 }
