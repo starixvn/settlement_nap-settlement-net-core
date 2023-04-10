@@ -4,7 +4,7 @@ namespace Settlement.Setting.Criteria.OutsideSourceManager;
 
 public class GetLeagueOutsideSourceCriteria : NonQueryCommand
 {
-    public int LeagueID { get; set; }
+    public int LeagueId { get; set; }
 
     public override string GetSettingKey()
     {
@@ -13,6 +13,6 @@ public class GetLeagueOutsideSourceCriteria : NonQueryCommand
 
     public override bool IsValid()
     {
-        return LeagueID > 0;
+        return LeagueId > 0;
     }
 }

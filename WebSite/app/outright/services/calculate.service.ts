@@ -1,4 +1,4 @@
-import { Language } from './../../shared/language';
+import { Language } from '../../shared/language.native';
 import { Injectable } from "@angular/core";
 import { Team } from "../models";
 import * as _ from "lodash";
@@ -26,6 +26,10 @@ export class CalculateService {
         }
 
         if (!_.isEmpty(teamWonSelectedDeadHeat) && !_.isEmpty(teamWonSelectedNoneDeadHeat)) {
+            return true;
+        }
+
+        if(!(_.isEmpty(teamSettledDeadHeat) || _.isEmpty(teamWonSelectedDeadHeat))) {
             return true;
         }
 

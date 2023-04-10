@@ -1,25 +1,22 @@
-﻿using System.Collections.Generic;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Settlement.Core.Constants;
 using Settlement.Sportsbook.Soccer.Constants;
 using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Services;
-using Xunit;
 
 namespace Settlement.Sportsbook.Soccer.UnitTests.Services;
 
 public class ActionResourceServiceTests
 {
-    private readonly IGoalRecordService goalRecordService;
     private readonly IActionResourceService service;
 
     public ActionResourceServiceTests()
     {
-        goalRecordService = new GoalRecordServiceImp();
+        var goalRecordService = new GoalRecordServiceImp();
         service = new ActionResourceServiceImp(goalRecordService);
     }
 
-    private XmlResource CreateResource(string resourceId, int resultStatusId, int settlementStatusId, string homeValue)
+    private static XmlResource CreateResource(string resourceId, int resultStatusId, int settlementStatusId, string homeValue)
     {
         return new XmlResource
         {
@@ -79,8 +76,8 @@ public class ActionResourceServiceTests
         {
             FirstGoal = "",
             LastGoal = "",
-            FirstGoalSettlementStatusId = SettlementStatus.RefundHT,
-            LastGoalSettlementStatusId = SettlementStatus.RefundHT
+            FirstGoalSettlementStatusId = SettlementStatus.RefundHt,
+            LastGoalSettlementStatusId = SettlementStatus.RefundHt
         };
 
         // Act
@@ -88,8 +85,8 @@ public class ActionResourceServiceTests
 
         // Assert
         var expectedXmlResource = new List<XmlResource> {
-            CreateResource(ResourceKey.HalftimeFirstGoal, ResultStatus.ManuallySettled, SettlementStatus.RefundHT, ""),
-            CreateResource(ResourceKey.HalftimeLastGoal,ResultStatus.ManuallySettled, SettlementStatus.RefundHT, "")
+            CreateResource(ResourceKey.HalftimeFirstGoal, ResultStatus.ManuallySettled, SettlementStatus.RefundHt, ""),
+            CreateResource(ResourceKey.HalftimeLastGoal,ResultStatus.ManuallySettled, SettlementStatus.RefundHt, "")
         };
 
         Assert.Equal(JsonConvert.SerializeObject(expectedXmlResource), JsonConvert.SerializeObject(actual));
@@ -125,7 +122,7 @@ public class ActionResourceServiceTests
         var goalAction = new GoalAction
         {
             FirstGoal = "",
-            LastGoal = "",
+            LastGoal = ""
         };
 
         // Act
@@ -211,8 +208,8 @@ public class ActionResourceServiceTests
     public void FullTimeGoalRecord_Always_ReturnsExpectedResource()
     {
         // Arrange
-        var goalRecord = ";HAA";
-        var settlementStatusId = 1;
+        const string goalRecord = ";HAA";
+        const int settlementStatusId = 1;
 
         // Act
         var actual = service.FullTimeGoalRecord(goalRecord, settlementStatusId);
@@ -226,8 +223,8 @@ public class ActionResourceServiceTests
     public void HalftimeGoalRecord_Always_ReturnsExpectedResource()
     {
         // Arrange
-        var goalRecord = "AH;";
-        var settlementStatusId = 1;
+        const string goalRecord = "AH;";
+        const int settlementStatusId = 1;
 
         // Act
         var actual = service.HalftimeGoalRecord(goalRecord, settlementStatusId);

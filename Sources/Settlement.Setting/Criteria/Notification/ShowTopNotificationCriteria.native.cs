@@ -19,10 +19,7 @@ public class ShowTopNotificationCriteria : CriteriaBase
             return top.Value;
         }
 
-        set
-        {
-            top = value;
-        }
+        set => top = value;
     }
 
     public int AdminId { get; set; }

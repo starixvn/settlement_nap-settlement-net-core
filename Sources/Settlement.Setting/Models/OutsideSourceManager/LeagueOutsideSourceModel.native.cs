@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Settlement.Setting.Models.OutsideSourceManager;
+﻿namespace Settlement.Setting.Models.OutsideSourceManager;
 
 public class LeagueOutsideSourceModel
 {

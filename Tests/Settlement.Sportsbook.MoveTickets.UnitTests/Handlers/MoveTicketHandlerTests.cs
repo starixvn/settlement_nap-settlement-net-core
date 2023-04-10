@@ -1,27 +1,23 @@
-﻿using NSubstitute;
-using Settlement.Core.Models;
+﻿using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.MoveTickets.Handlers;
 using Settlement.Sportsbook.MoveTickets.Models;
 using Settlement.Sportsbook.MoveTickets.Requests;
-using Settlement.Sportsbook.MoveTickets.Services;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace Settlement.Sportsbook.MoveTickets.UnitTests.Handlers;
+
+using MoveTickets.Services.MultipleServer;
 
 public class MoveTicketHandlerTests
 {
     private readonly IMoveTicketService moveTicketService;
     private readonly PermissionService permissionService;
-    private readonly MoveTicketMultipleServerService moveTicketMultipleServerService;
     private readonly MoveTicketHandler handler;
 
     public MoveTicketHandlerTests()
     {
         moveTicketService = Substitute.For<IMoveTicketService>();
-        moveTicketMultipleServerService = Substitute.For<MoveTicketMultipleServerService>();
+        var moveTicketMultipleServerService = Substitute.For<MoveTicketMultipleServerService>();
         permissionService = Substitute.For<PermissionService>(null, null, null, null);
         handler = new MoveTicketHandler(moveTicketService, permissionService, moveTicketMultipleServerService);
     }
@@ -34,7 +30,7 @@ public class MoveTicketHandlerTests
         moveTicketService.GetSportBook(Arg.Any<GetMatchRequest>()).Returns(listSport);
         permissionService.Permission.Returns(permission);
 
-        var actual = await handler.Handle(new GetMatchRequest(), new System.Threading.CancellationToken());
+        var actual = await handler.Handle(new GetMatchRequest(), new CancellationToken());
 
         Assert.Equal(permission, actual.Permission);
         Assert.Equal(listSport, actual.Sports);
@@ -59,7 +55,7 @@ public class MoveTicketHandlerTests
 
         moveTicketService.GetChildMatch(Arg.Any<GetChildMatchRequest>()).Returns(result);
 
-        var actual = await handler.Handle(new GetChildMatchRequest(), new System.Threading.CancellationToken());
+        var actual = await handler.Handle(new GetChildMatchRequest(), new CancellationToken());
 
         Assert.Equal(result, actual);
     }

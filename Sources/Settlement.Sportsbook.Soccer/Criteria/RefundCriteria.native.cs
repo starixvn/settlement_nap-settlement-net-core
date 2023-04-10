@@ -1,6 +1,5 @@
 ﻿using Fanex.Data;
 using Fanex.Data.Repository;
-using System;
 
 namespace Settlement.Sportsbook.Soccer.Criteria;
 
@@ -28,7 +27,7 @@ public class RefundCriteria : NonQueryCommand
 
     public string GoalSequence { get; set; }
 
-    public byte SDTRecord { get; set; }
+    public byte SdtRecord { get; set; }
 
     public int ErrCode { get; set; }
 
@@ -44,5 +43,5 @@ public class RefundCriteria : NonQueryCommand
 
     public override string GetSettingKey() => $"Refund_{DbServer}";
 
-    public override bool IsValid()  => MatchId > 0;
+    public override bool IsValid() => MatchId > 0;
 }

@@ -7,7 +7,7 @@ import { ModalDialogMessage, Result } from '../../shared/models';
 import { MessageBoxService, HttpRequestService, BlockUIService } from '../../shared/services';
 import { QueryService, VerifyBallService } from '../services';
 import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
-import { Language } from '../../shared/language';
+import { Language } from '../../shared/language.native';
 @Component({
     selector: 're-calculation',
     templateUrl: './recalculation.component.html',

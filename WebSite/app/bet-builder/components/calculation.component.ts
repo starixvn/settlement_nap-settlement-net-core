@@ -18,7 +18,7 @@ import {
   CalculationFilterService,
   CalculationConstraintService,
 } from "../services";
-import { Language } from "../../shared/language";
+import { Language } from "../../shared/language.native";
 import { UrlHelper } from "../../helper";
 
 @Component({

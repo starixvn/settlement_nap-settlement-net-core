@@ -1,6 +1,5 @@
 ﻿using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Services.InstantCalculate;
-using Xunit;
 
 namespace Settlement.Sportsbook.Soccer.UnitTests.Services.Instant;
 
@@ -60,7 +59,7 @@ public class InstantGoalCheckingServiceTests
     [InlineData(";", "")]
     [InlineData(";AHH", "A")]
     [InlineData("A;AHH", "A")]
-    public void IsFullTimeGoallChecking_TheSameNewFirstGoalWithOldFirstGoalValue_ReturnsFalse(string newGoal, string oldGoal)
+    public void IsFullTimeGoalChecking_TheSameNewFirstGoalWithOldFirstGoalValue_ReturnsFalse(string newGoal, string oldGoal)
     {
         // Arrange
         var goalCondition = new InstantGoalCondition
@@ -71,7 +70,7 @@ public class InstantGoalCheckingServiceTests
         };
 
         // Act
-        var actual = service.IsFullTimeGoallChecking(goalCondition);
+        var actual = service.IsFullTimeGoalChecking(goalCondition);
 
         // Assert
         Assert.False(actual);
@@ -81,7 +80,7 @@ public class InstantGoalCheckingServiceTests
     [InlineData("AH;H", "H")]
     [InlineData(";A", "H")]
     [InlineData(";", "A")]
-    public void IsFullTimeGoallChecking_DifferentGoalBetweenNewAndOldFirstGoal_ReturnsTrue(string newGoal, string oldGoal)
+    public void IsFullTimeGoalChecking_DifferentGoalBetweenNewAndOldFirstGoal_ReturnsTrue(string newGoal, string oldGoal)
     {
         // Arrange
         var goalCondition = new InstantGoalCondition
@@ -92,7 +91,7 @@ public class InstantGoalCheckingServiceTests
         };
 
         // Act
-        var actual = service.IsFullTimeGoallChecking(goalCondition);
+        var actual = service.IsFullTimeGoalChecking(goalCondition);
 
         // Assert
         Assert.True(actual);

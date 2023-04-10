@@ -39,18 +39,12 @@ public class FantasyRelatedMatch
 
     public string EventStatus
     {
-        get
-        {
-            return eventStatus.MapToString(BetStatus, Remark.IsPending);
-        }
+        get => eventStatus.MapToString(BetStatus, Remark.IsPending);
 
-        set
-        {
-            eventStatus = value;
-        }
+        set => eventStatus = value;
     }
 
-    public RemarkSettingModel Remark => new RemarkSettingModel(SettlementStatus);
+    public RemarkSettingModel Remark => new(SettlementStatus);
 
     public bool IsDeleted { get; set; }
 }

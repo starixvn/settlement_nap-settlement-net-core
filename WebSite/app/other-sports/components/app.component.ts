@@ -1,4 +1,4 @@
-﻿import { Component, OnInit, ViewContainerRef, ViewChild, ComponentFactoryResolver, ComponentFactory, ComponentRef, ElementRef } from '@angular/core';
+﻿import { Component, OnInit, ViewContainerRef, ViewChild, Type, ComponentRef, ElementRef } from '@angular/core';
 import { BlockUIService } from '../../shared/services';
 import { UrlHelper } from "../../helper";
 import { FullTimeCalculationComponent } from './only-fulltime/fulltime-calculation.component';
@@ -32,16 +32,16 @@ export class AppComponent extends AppBaseComponent implements OnInit {
     constructor(
         protected blockUIService: BlockUIService,
         protected elementRef: ElementRef<HTMLElement>,
-        protected componentFactoryResolver: ComponentFactoryResolver) {
-        super(blockUIService, elementRef, componentFactoryResolver);
+        protected ViewContainerRef: ViewContainerRef) {
+        super(elementRef, ViewContainerRef);
     }
 
     public ngOnInit() {
         this.blockUIService.blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
-        this.createTemplateComponent(() => this.getComponentFactory());
+        this.createTemplateComponent(this.getType());
     }
 
-    private getComponentFactory(): ComponentFactory<SportTemplate> {
+    private getType(): Type<SportTemplate> {
         this.sportType = Number(UrlHelper.getUrlParameter('sportType'));
         const pageType = this.elementRef.nativeElement.getAttribute('page-type');
         return _.includes(TemplateType.gameTotalTemplate, this.sportType)
@@ -49,52 +49,52 @@ export class AppComponent extends AppBaseComponent implements OnInit {
             : this.getComponentSecondGroup(pageType);
     }
 
-    private getComponentSecondGroup(pageType: string): ComponentFactory<SportTemplate> {
+    private getComponentSecondGroup(pageType: string): Type<SportTemplate> {
         return _.includes(TemplateType.halfTimeFullTimeTemplate, this.sportType)
             ? this.getComponentHalfTimeFullTime(pageType)
             : this.getComponentThirdGroup(pageType);
     }
 
-    private getComponentThirdGroup(pageType: string): ComponentFactory<SportTemplate> {
+    private getComponentThirdGroup(pageType: string): Type<SportTemplate> {
         return _.includes(TemplateType.gameTotalMatchTemplate, this.sportType)
             ? this.getComponentGameTotalMatch(pageType)
             : this.getComponentFourthGroup(pageType);
     }
 
-    private getComponentFourthGroup(pageType: string): ComponentFactory<SportTemplate> {
+    private getComponentFourthGroup(pageType: string): Type<SportTemplate> {
         return _.includes(TemplateType.onlyFullTimeTemplate, this.sportType)
             ? this.getComponentOnlyFullTime(pageType)
             : this.getComponentOther(pageType);
     }
 
-    private getComponentOther(pageType: string): ComponentFactory<SportTemplate> {
+    private getComponentOther(pageType: string): Type<SportTemplate> {
         return pageType === PageType.ReCalculate
-            ? this.componentFactoryResolver.resolveComponentFactory(OtherCalculationComponent)
-            : this.componentFactoryResolver.resolveComponentFactory(OtherRefundComponent);
+            ? OtherCalculationComponent
+            : OtherRefundComponent;
     }
 
-    private getComponentOnlyFullTime(pageType: string): ComponentFactory<SportTemplate> {
+    private getComponentOnlyFullTime(pageType: string): Type<SportTemplate> {
         return pageType === PageType.ReCalculate
-            ? this.componentFactoryResolver.resolveComponentFactory(FullTimeCalculationComponent)
-            : this.componentFactoryResolver.resolveComponentFactory(FullTimeRefundComponent);
+            ? FullTimeCalculationComponent
+            : FullTimeRefundComponent;
     }
 
-    private getComponentHalfTimeFullTime(pageType: string): ComponentFactory<SportTemplate> {
+    private getComponentHalfTimeFullTime(pageType: string): Type<SportTemplate> {
         return pageType === PageType.ReCalculate
-            ? this.componentFactoryResolver.resolveComponentFactory(HalfTimeFullTimeCalculationComponent)
-            : this.componentFactoryResolver.resolveComponentFactory(HalfTimeFullTimeRefundComponent);
+            ? HalfTimeFullTimeCalculationComponent
+            : HalfTimeFullTimeRefundComponent;
     }
 
-    private getComponentGameTotal(pageType: string): ComponentFactory<SportTemplate> {
+    private getComponentGameTotal(pageType: string): Type<SportTemplate> {
         return pageType === PageType.ReCalculate
-            ? this.componentFactoryResolver.resolveComponentFactory(GameTotalCalculationComponent)
-            : this.componentFactoryResolver.resolveComponentFactory(GameTotalRefundComponent);
+            ? GameTotalCalculationComponent
+            : GameTotalRefundComponent;
     }
 
-    private getComponentGameTotalMatch(pageType: string): ComponentFactory<SportTemplate> {
+    private getComponentGameTotalMatch(pageType: string): Type<SportTemplate> {
         return pageType === PageType.ReCalculate
-            ? this.componentFactoryResolver.resolveComponentFactory(GameTotalMatchCalculationComponent)
-            : this.componentFactoryResolver.resolveComponentFactory(GameTotalMatchRefundComponent);
+            ? GameTotalMatchCalculationComponent
+            : GameTotalMatchRefundComponent;
     }
 }
 

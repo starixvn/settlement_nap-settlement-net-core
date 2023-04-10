@@ -10,7 +10,7 @@ import { ModalDialogComponent, ModalContentDialogComponent } from '../../shared/
 import { League } from '../models';
 import { of } from 'rxjs';
 import { UrlHelper } from '../../helper';
-import { Language } from '../../shared/language';
+import { Language } from '../../shared/language.native';
 import { AutoType } from '../constants/auto-type';
 
 describe('TimeSettingComponent', () => {

@@ -8,7 +8,7 @@ import { SettingType } from '../constants';
 
 @Injectable()
 export class RequestService {
-    private settingApi = 'api/setting';
+    private settingApi = '/api/setting';
     constructor(private readonly httpRequestService: HttpRequestService) {
     }
 

@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using Settlement.Gaming.Models.Happy5;
-using System;
 
 namespace Settlement.Gaming.Requests;
 

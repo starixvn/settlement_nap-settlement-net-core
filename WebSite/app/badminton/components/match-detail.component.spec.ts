@@ -36,10 +36,6 @@ describe('MatchDetailComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [
-        MatchDetailComponent,
-        ResourceHeaderPipe,
-        ScoreBySettlementPipe],
       providers: [
         BadmintonService,
         MessageBoxService,
@@ -54,6 +50,9 @@ describe('MatchDetailComponent', () => {
         FormsModule,
         HttpClientModule,
         NgbModule,
+        MatchDetailComponent,
+        ResourceHeaderPipe,
+        ScoreBySettlementPipe
       ],
     })
     .compileComponents()
@@ -61,7 +60,7 @@ describe('MatchDetailComponent', () => {
       fixture = TestBed.createComponent(MatchDetailComponent);
       component = fixture.componentInstance;
       badmintonService = fixture.debugElement.injector.get(BadmintonService);
-      spyOn(badmintonService, 'getResultDetail').and.returnValue(resultDetails);
+      jest.spyOn(badmintonService, 'getResultDetail').mockReturnValue(resultDetails);
     });
   }));
 

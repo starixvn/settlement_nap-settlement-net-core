@@ -1,6 +1,6 @@
-﻿using System.Xml.Serialization;
+﻿namespace Settlement.Setting.Models.ProviderManager;
 
-namespace Settlement.Setting.Models;
+using System.Xml.Serialization;
 
 public class ProviderModel
 {

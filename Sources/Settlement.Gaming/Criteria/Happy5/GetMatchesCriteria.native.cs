@@ -1,5 +1,4 @@
 ﻿using Fanex.Data.Repository;
-using System;
 
 namespace Settlement.Gaming.Criteria.Happy5;
 

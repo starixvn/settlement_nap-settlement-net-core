@@ -4,9 +4,6 @@ using Settlement.Core.Services;
 using Settlement.Log.Criteria;
 using Settlement.Log.Models;
 using Settlement.Log.Requests;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Settlement.Log.Services;
 

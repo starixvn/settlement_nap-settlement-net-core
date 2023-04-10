@@ -1,6 +1,6 @@
-﻿using Settlement.EventManagement.Models.Calculation;
+﻿namespace Settlement.EventManagement.Requests;
 
-namespace Settlement.EventManagement;
+using Models.Calculation;
 
 public class FilterCalculationRequest : IRequest<CalculationLeagues>
 {

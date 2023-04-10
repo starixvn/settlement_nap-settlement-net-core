@@ -88,7 +88,7 @@ public class FilterServiceTests
         repository.FetchAsync<TeamTicketModel>(Arg.Any<GetTeamTicketCountCriteria>())
             .Returns(new List<TeamTicketModel>
             {
-                new TeamTicketModel
+                new()
                 {
                     OrId = 1,
                     TotalTicket = 2

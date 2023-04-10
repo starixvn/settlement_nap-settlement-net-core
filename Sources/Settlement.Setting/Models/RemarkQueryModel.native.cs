@@ -9,22 +9,19 @@ public class RemarkQueryModel
     private AutoCalculationSetting autoCalcSetting;
     private const int ConvertToBase = 2;
 
-    private readonly List<string> eventStatusReasonTitles = new List<string>
+    private readonly List<string> eventStatusReasonTitles = new()
     {
         Core.Constants.EventStatus.IrregularTime1H,
         Core.Constants.EventStatus.IrregularTime,
         Core.Constants.EventStatus.WrongTeamName,
-        Core.Constants.EventStatus.Suspended,
+        Core.Constants.EventStatus.Suspended
     };
 
-    private readonly List<int> eventStatusReasons = new List<int> { 1, 2, 3, 4 };
+    private readonly List<int> eventStatusReasons = new() { 1, 2, 3, 4 };
 
     public string EventStatus
     {
-        get
-        {
-            return eventStatus.MapToString(BetStatus, Remark.IsPending);
-        }
+        get => eventStatus.MapToString(BetStatus, Remark.IsPending);
 
         set
         {
@@ -33,17 +30,15 @@ public class RemarkQueryModel
         }
     }
 
-    public string NewEventStatus
-    {
-        get => originalEventStatus.IgnoreCaseEquals(Core.Constants.EventStatus.Running) &&
-               eventStatusReasons.Contains(EventStatusReason ?? 0) ? eventStatusReasonTitles[(int)EventStatusReason - 1] : EventStatus;
-    }
+    public string NewEventStatus =>
+        originalEventStatus.IgnoreCaseEquals(Core.Constants.EventStatus.Running) &&
+        eventStatusReasons.Contains(EventStatusReason ?? 0) ? eventStatusReasonTitles[(int)EventStatusReason - 1] : EventStatus;
 
     protected byte SettlementStatus { get; set; }
 
     protected string BetStatus { get; set; }
 
-    public RemarkSettingModel Remark => new RemarkSettingModel(SettlementStatus);
+    public RemarkSettingModel Remark => new(SettlementStatus);
 
     public int? EventStatusReason { get; set; }
 

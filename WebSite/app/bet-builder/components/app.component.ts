@@ -1,6 +1,5 @@
 ﻿import * as _ from "lodash";
 import { interval } from "rxjs";
-import { ISubscription } from "rxjs/Subscription";
 import { Component, OnInit, OnDestroy,
   ComponentFactory, ElementRef, ComponentFactoryResolver,
   ViewContainerRef, ViewChild, ComponentRef } from "@angular/core";
@@ -26,6 +25,7 @@ import {
 } from "../services";
 import{ MatchesComponent } from './matches.component';
 import{ CalculationComponent } from './calculation.component';
+import { ISubscription } from "rxjs-compat/Subscription";
 
 @Component({
   selector: "app-root",

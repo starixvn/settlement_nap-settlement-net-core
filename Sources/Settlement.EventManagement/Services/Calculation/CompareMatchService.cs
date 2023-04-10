@@ -1,7 +1,7 @@
-﻿using Settlement.Core.Models;
-using CalculationMatch = Settlement.EventManagement.Models.Calculation.Match;
+﻿namespace Settlement.EventManagement.Services.Calculation;
 
-namespace Settlement.EventManagement.Services.Calculation;
+using Settlement.Core.Models;
+using CalculationMatch = Models.Calculation.Match;
 
 public interface CompareMatchService
 {
@@ -28,8 +28,6 @@ public class CompareMatchServiceImp : CompareMatchService
                 IsRunningFastMarket = siteMatch.IsRunningFastMarket,
                 IsExistFgLg = siteMatch.IsExistFgLg,
                 IsExistHtFgLg = siteMatch.IsExistHtFgLg,
-                IsExistMarkedTicketParlay = siteMatch.IsExistMarkedTicketParlay,
-                IsExistRunningTicketParlay = siteMatch.IsExistRunningTicketParlay,
             };
         }
 
@@ -38,11 +36,9 @@ public class CompareMatchServiceImp : CompareMatchService
 
     private static bool IsChangedOnTicket(CalculationMatch match, CalculationMatch siteMatch)
     {
-        var isExistRunning = match.IsExistRunningTicket != siteMatch.IsExistRunningTicket
-                        || match.IsExistRunningTicketParlay != siteMatch.IsExistRunningTicketParlay;
+        var isExistRunning = match.IsExistRunningTicket != siteMatch.IsExistRunningTicket;
 
-        var isExistMarked = match.IsExistMarkedTicket != siteMatch.IsExistMarkedTicket
-                    || match.IsExistMarkedTicketParlay != siteMatch.IsExistMarkedTicketParlay;
+        var isExistMarked = match.IsExistMarkedTicket != siteMatch.IsExistMarkedTicket;
 
         var isChangedTicket = match.IsExistFgLg != siteMatch.IsExistFgLg ||
                               match.IsExistHtFgLg != siteMatch.IsExistHtFgLg;
@@ -57,8 +53,7 @@ public class CompareMatchServiceImp : CompareMatchService
     {
         var isExistParlay = match.IsExistEarlyBetTypes != siteMatch.IsExistEarlyBetTypes
                             || match.IsRunningEarlyBetTypes != siteMatch.IsRunningEarlyBetTypes
-                            || match.IsWaitingEarlyBetTypes != siteMatch.IsWaitingEarlyBetTypes
-                            || match.IsExistRunningTicketParlay != siteMatch.IsExistRunningTicketParlay;
+                            || match.IsWaitingEarlyBetTypes != siteMatch.IsWaitingEarlyBetTypes;
 
         var isExistFastMarket = match.IsExistFastMarket != siteMatch.IsExistFastMarket
                                 || match.IsExistFastMarketResult != siteMatch.IsExistFastMarketResult

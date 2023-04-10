@@ -49,7 +49,7 @@ export class HandleActionsService {
 
   private handleEventStatusColor(match: Match, isPending: boolean) {
     if (_.isEqual(match.eventStatus, EventStatus.postponed)) {
-      return this.isExistMarkedTickets(match) ? BackgroundColor.postponedBlinking : BackgroundColor.postponed;
+      return match.isExistMarkedTicket ? BackgroundColor.postponedBlinking : BackgroundColor.postponed;
     }
 
     if (_.isEqual(match.eventStatus, EventStatus.completed)) {
@@ -57,25 +57,22 @@ export class HandleActionsService {
     }
 
     if (isPending) {
-      return this.isExistMarkedTickets(match) ? BackgroundColor.pendingBlinking : BackgroundColor.pending;
+      return match.isExistMarkedTicket ? BackgroundColor.pendingBlinking : BackgroundColor.pending;
     }
 
-    return this.isExistMarkedTickets(match) ? BackgroundColor.whiteBlinking : '';
+    return match.isExistMarkedTicket ? BackgroundColor.whiteBlinking : '';
   }
 
   private getBackgroundForCompletedMatch(match: Match) {
-    if (this.isExistMarkedTickets(match) && !match.isExistRunningTicket) {
+    if (match.isExistMarkedTicket && !match.isExistRunningTicket) {
       return BackgroundColor.whiteBlinking;
     }
 
     if (match.isExistRunningTicket) {
-      return this.isExistMarkedTickets(match) ? BackgroundColor.runningTicketBlinking : BackgroundColor.halfTimeCalculated;
+      return match.isExistMarkedTicket ? BackgroundColor.runningTicketBlinking : BackgroundColor.halfTimeCalculated;
     }
 
     return '';
   }
 
-  private isExistMarkedTickets(match: Match) {
-    return match.isExistMarkedTicket || match.isExistMarkedTicketParlay;
-  }
 }

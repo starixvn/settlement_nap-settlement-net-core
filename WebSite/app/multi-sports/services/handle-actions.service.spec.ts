@@ -1,36 +1,10 @@
 import { TestBed } from "@angular/core/testing";
-import { LeagueMatch, Match, MultiSport, SportMatch } from "../models";
+import { Match } from "../models";
 import { HandleActionsService } from "./handle-actions.service";
-import { AutoSetting, ChangedMatchSetting, ChangeSettingResult, MixParlay, Remark, } from "../../shared/models";
-import { BackgroundColor, EventStatus, SportType } from "../../shared/constants";
-import { Permission } from "../../shared/models/sportsbook-sop/permission.model";
+import { BackgroundColor, EventStatus } from "../../shared/constants";
 describe('MultiSport - HandleActionsService', () => {
     let service: HandleActionsService;
     let match: Match;
-    const league: LeagueMatch = {
-        leagueId: 7000000,
-        matches: [match],
-        name: 'mock league',
-        collapse: false,
-        isCheckedCalcMP: true,
-        disableCheckCalcMP: false,
-        isMergedParlay: false,
-        autoCalcSetting: new AutoSetting,
-        autoWaitingTime: 0
-        };
-
-    const sport: SportMatch = {
-    id: 100000,
-    name: 'mock sport',
-    leagues: [league],
-    collapse: false,
-    };
-
-    const multiSport: MultiSport = {
-        sports: [sport],
-         permission: new Permission(),
-        isCheckedCalcMP: false,
-    };
 
     beforeEach(() => {
         TestBed.configureTestingModule({
@@ -136,62 +110,4 @@ describe('MultiSport - HandleActionsService', () => {
             expect(result).toEqual('');
         });
     });
-
-    describe('resetCheckboxCalcMixParlay', () => {
-        beforeEach(() => {
-            match = new Match();
-        });
-
-        it('should check all calc mp check box', () => {
-            match.leagueId = 7000000;
-            match.sportType = SportType.eSports;
-            match.mixParlay = new MixParlay();
-            match.mixParlay.hasMixParlay = true;
-            multiSport.permission.canCalculateMp = true;
-            match.isCheckedCalcMP = true;
-            league.matches = [match];
-
-            service.resetCheckboxCalcMixParlay(match, [sport], multiSport);
-
-            expect(multiSport.isCheckedCalcMP).toBe(true);
-            expect(league.isCheckedCalcMP).toBe(true);
-        });
-
-        it('should uncheck all calc mp check box', () => {
-            match.leagueId = 7000000;
-            match.sportType = SportType.eSports;
-            match.mixParlay = new MixParlay();
-            multiSport.permission.canCalculateMp = true;
-            league.matches = [match];
-
-            service.resetCheckboxCalcMixParlay(match, [sport], multiSport);
-
-            expect(multiSport.isCheckedCalcMP).toBe(false);
-            expect(league.isCheckedCalcMP).toBe(false);
-        });
-    });
-
-    describe('handleChangeRemarkSetting', () => {
-        const changeSetting = new ChangeSettingResult();
-        changeSetting.match = new ChangedMatchSetting();
-        changeSetting.match.remark = new Remark();
-
-        it('should show link when no marked status', () => {
-            match.isCheckedCalcMP = true;
-            service.handleChangeRemarkSetting(changeSetting, match, [sport], multiSport);
-
-            expect(match.isCheckedCalcMP).toBe(true);
-        });
-
-        it('should disable misparlay when exist marked status', () => {
-            changeSetting.match.remark.isKeyHold = true;
-            match.mixParlay = new MixParlay();
-            match.isCheckedCalcMP = true;
-
-            service.handleChangeRemarkSetting(changeSetting, match, [sport], multiSport);
-
-            expect(match.isCheckedCalcMP).toBe(false);
-            expect(match.mixParlay.hasMixParlay).toBe(false);
-        });
-    })
 });

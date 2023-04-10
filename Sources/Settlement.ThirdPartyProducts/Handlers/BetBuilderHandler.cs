@@ -3,9 +3,6 @@ using Settlement.Core.Models;
 using Settlement.ThirdPartyProducts.Models;
 using Settlement.ThirdPartyProducts.Requests;
 using Settlement.ThirdPartyProducts.Services;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Settlement.ThirdPartyProducts.Handlers;
 
@@ -37,13 +34,13 @@ public class BetBuilderHandler : IRequestHandler<FilterRequest, MultiSportsModel
         this.betBuilderMatchesService = betBuilderMatchesService;
     }
 
-    public async Task<MultiSportsModel> Handle(FilterRequest request, CancellationToken cancellationToken) => new MultiSportsModel
+    public async Task<MultiSportsModel> Handle(FilterRequest request, CancellationToken cancellationToken) => new()
     {
         SportLeagues = await betBuilderMatchesService.Search(request),
         Permission = permissionService.Permission
     };
 
-    public async Task<SelectionPermissionModel> Handle(GetSelectionRequest request, CancellationToken cancellationToken) => new SelectionPermissionModel
+    public async Task<SelectionPermissionModel> Handle(GetSelectionRequest request, CancellationToken cancellationToken) => new()
     {
         Permission = permissionService.Permission,
         SelectionDetail = await matchService.GetSelection(request.MatchId)

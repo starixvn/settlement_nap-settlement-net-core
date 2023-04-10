@@ -12,7 +12,7 @@ import { BrowserDynamicTestingModule } from "@angular/platform-browser-dynamic/t
 import { ResultByTeamNamePipe } from "../../pipes/result-by-team-name.pipe";
 import { CalculateAction, ResultSettingType, ResultStatusId, SettlementStatusId, TicketStatusText } from "../../constants";
 import { of } from "rxjs";
-import { Language } from "../../language";
+import { Language } from "../../language.native";
 import * as _ from "lodash";
 import { ToastContainerDirective, ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 import { MaterialModule } from '../../../shared/material-module';

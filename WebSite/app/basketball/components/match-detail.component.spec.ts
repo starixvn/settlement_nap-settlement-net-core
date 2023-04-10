@@ -1,16 +1,13 @@
 import * as _ from 'lodash';
 import { TestBed, waitForAsync, ComponentFixture } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
-import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { HttpClientModule } from '@angular/common/http';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { ModalDialogComponent, ModalContentDialogComponent } from '../../shared/components';
 import { MatchDetailComponent } from './match-detail.component';
 import { Match } from '../models';
 import { HttpRequestService, BlockUIService, MessageBoxService } from '../../shared/services';
 import { ScoreBySettlementPipe } from '../../shared/pipes/score-by-settlement.pipe';
 import { BasketballService, BetStatusService } from '../services';
-import { of } from 'rxjs';
 import { ResultSettingModel } from '../../shared/models';
 import { MatchDetail, Permission, ResultDetail } from '../../shared/models/sportsbook-sop';
 import { ResourceNameByIdPipe } from '../pipes/resource-name-by-id.pipe';
@@ -22,7 +19,6 @@ describe('Component: MatchDetailComponent', () => {
     let basketballService: BasketballService;
 
     const resultDetail = new ResultDetail();
-
     resultDetail.resourceId = "Q1";
     resultDetail.map = 0;
     resultDetail.awayValue = "1";
@@ -39,9 +35,6 @@ describe('Component: MatchDetailComponent', () => {
 
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
-            declarations: [
-                MatchDetailComponent,
-                ScoreBySettlementPipe],
               providers: [
                 MessageBoxService,
                 BasketballService,
@@ -52,12 +45,11 @@ describe('Component: MatchDetailComponent', () => {
                 ResourceNameByIdPipe,
                 NgbModal,
                 { provide: MessageBoxService, useClass: MessageBoxService },
-
               ],
               imports: [
-                FormsModule,
                 HttpClientModule,
-                NgbModule,
+                MatchDetailComponent,
+                ScoreBySettlementPipe
               ],
             })
             .compileComponents()
@@ -65,7 +57,7 @@ describe('Component: MatchDetailComponent', () => {
               fixture = TestBed.createComponent(MatchDetailComponent);
               component = fixture.componentInstance;
               basketballService = fixture.debugElement.injector.get(BasketballService);
-              spyOn(basketballService, 'getResultDetail').and.returnValue(resultDetails);
+              basketballService.getResultDetail = jest.fn().mockReturnValue(resultDetails);
             });
           }));
 

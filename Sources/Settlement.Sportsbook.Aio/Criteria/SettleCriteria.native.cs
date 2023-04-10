@@ -43,14 +43,8 @@ public class SettleCriteria : NonQueryCommand
 
     public string ChildMatchIds
     {
-        get
-        {
-            return string.IsNullOrEmpty(childMatchIds) ? "0" : childMatchIds;
-        }
-        set
-        {
-            childMatchIds = value;
-        }
+        get => string.IsNullOrEmpty(childMatchIds) ? "0" : childMatchIds;
+        set => childMatchIds = value;
     }
 
     public override string GetSettingKey() => $"NAP_Admin_Settlement_Profile_Push_{DbServer}";

@@ -1,11 +1,8 @@
 ﻿using Newtonsoft.Json;
-using NSubstitute;
 using Settlement.Core.Constants;
 using Settlement.Sportsbook.Soccer.Constants;
 using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Services;
-using System.Collections.Generic;
-using Xunit;
 
 namespace Settlement.Sportsbook.Soccer.UnitTests.Services;
 
@@ -30,7 +27,7 @@ public class ResourceServiceTests
         // Arrange
         var goalCondition = new GoalCondition
         {
-            IsExistHtFgLg = true,
+            IsExistHtFgLg = true
         };
 
         // Act
@@ -47,7 +44,7 @@ public class ResourceServiceTests
         // Arrange
         var goalCondition = new GoalCondition
         {
-            IsExistHtFgLg = false,
+            IsExistHtFgLg = false
         };
 
         // Act
@@ -71,21 +68,21 @@ public class ResourceServiceTests
 
         var expect = new List<XmlResource>
         {
-            new XmlResource
+            new()
             {
                 HomeValue="H",
                 ResourceId=ResourceKey.HalftimeFirstGoal,
                 ResultStatusId=ResultStatus.ManuallySettled,
                 SettlementStatusId=SettlementStatus.Completed
             },
-            new XmlResource
+            new()
             {
                 HomeValue="A",
                 ResourceId=ResourceKey.HalftimeLastGoal,
                 ResultStatusId=ResultStatus.ManuallySettled,
                 SettlementStatusId=SettlementStatus.Completed
             },
-            new XmlResource
+            new()
             {
                 HomeValue = "H",
                 ResourceId = ResourceKey.HalftimeLastGoal,
@@ -96,14 +93,14 @@ public class ResourceServiceTests
 
         actionResourceService.HalftimeResources(Arg.Any<GoalAction>()).Returns(new List<XmlResource>
         {
-            new XmlResource
+            new()
             {
                 HomeValue="H",
                 ResourceId=ResourceKey.HalftimeFirstGoal,
                 ResultStatusId=ResultStatus.ManuallySettled,
                 SettlementStatusId=SettlementStatus.Completed
             },
-            new XmlResource
+            new()
             {
                 HomeValue="A",
                 ResourceId=ResourceKey.HalftimeLastGoal,
@@ -140,7 +137,7 @@ public class ResourceServiceTests
 
         var expect = new List<XmlResource>
         {
-            new XmlResource
+            new()
             {
                 HomeValue = "H",
                 ResourceId = ResourceKey.HalftimeLastGoal,
@@ -204,7 +201,7 @@ public class ResourceServiceTests
         // Arrange
         var goalCondition = new GoalCondition
         {
-            IsExistHtFgLg = false,
+            IsExistHtFgLg = false
         };
 
         // Act
@@ -229,21 +226,21 @@ public class ResourceServiceTests
 
         var expect = new List<XmlResource>
         {
-            new XmlResource
+            new()
             {
                 HomeValue="H",
                 ResourceId=ResourceKey.FullTimeFirstGoal,
                 ResultStatusId=ResultStatus.ManuallySettled,
                 SettlementStatusId=SettlementStatus.Completed
             },
-            new XmlResource
+            new()
             {
                 HomeValue="A",
                 ResourceId=ResourceKey.FullTimeLastGoal,
                 ResultStatusId=ResultStatus.ManuallySettled,
                 SettlementStatusId=SettlementStatus.Completed
             },
-            new XmlResource
+            new()
             {
                 HomeValue = "H",
                 ResourceId = ResourceKey.FullTimeFirstGoal,
@@ -254,14 +251,14 @@ public class ResourceServiceTests
 
         actionResourceService.FullTimeResources(Arg.Any<GoalAction>()).Returns(new List<XmlResource>
         {
-            new XmlResource
+            new()
             {
                 HomeValue="H",
                 ResourceId=ResourceKey.FullTimeFirstGoal,
                 ResultStatusId=ResultStatus.ManuallySettled,
                 SettlementStatusId=SettlementStatus.Completed
             },
-            new XmlResource
+            new()
             {
                 HomeValue="A",
                 ResourceId=ResourceKey.FullTimeLastGoal,
@@ -298,7 +295,7 @@ public class ResourceServiceTests
 
         var expect = new List<XmlResource>
         {
-            new XmlResource
+            new()
             {
                 HomeValue = "H",
                 ResourceId = ResourceKey.FullTimeFirstGoal,
@@ -390,7 +387,7 @@ public class ResourceServiceTests
 
         var expect = new List<XmlResource>
         {
-            new XmlResource
+            new()
             {
                 HomeValue = "AHAH",
                 ResourceId = ResourceKey.FullTimeGoalRecord,
@@ -430,20 +427,20 @@ public class ResourceServiceTests
         actionResourceService.FullTimeResources(Arg.Any<GoalAction>()).Returns(
             new List<XmlResource>
             {
-                new XmlResource
+                new()
                 {
                     ResourceId = ResourceKey.FullTimeFirstGoal,
                     ResultStatusId = ResultStatus.ManuallySettled,
                     SettlementStatusId = SettlementStatus.Completed,
                     HomeValue = "A"
                 },
-                new XmlResource
+                new()
                 {
                     ResourceId = ResourceKey.FullTimeLastGoal,
                     ResultStatusId = ResultStatus.ManuallySettled,
                     SettlementStatusId = SettlementStatus.Abandoned2H,
                     HomeValue = "H"
-                },
+                }
             });
 
         actionResourceService.FullTimeGoalRecord(Arg.Any<string>(), Arg.Any<int>()).Returns(
@@ -513,7 +510,7 @@ public class ResourceServiceTests
         // Arrange
         var goalCondition = new GoalCondition
         {
-            IsEnabledGoalRecordFt = true,
+            IsEnabledGoalRecordFt = true
         };
 
         actionResourceService.FullTimeGoalRecord(Arg.Any<string>(), Arg.Any<int>()).Returns(new XmlResource());
@@ -541,21 +538,21 @@ public class ResourceServiceTests
 
         var expect = new List<XmlResource>
         {
-            new XmlResource
+            new()
             {
                 HomeValue="AHHAHA",
                 ResourceId = ResourceKey.FullTimeGoalRecord,
                 ResultStatusId = ResultStatus.ManuallySettled,
                 SettlementStatusId = SettlementStatus.Abandoned2H
             },
-            new XmlResource
+            new()
             {
                 HomeValue = "H",
                 ResourceId = ResourceKey.HalftimeLastGoal,
                 ResultStatusId = ResultStatus.ManuallySettled,
                 SettlementStatusId = SettlementStatus.Completed
             },
-            new XmlResource
+            new()
             {
                 HomeValue = "H",
                 ResourceId = ResourceKey.FullTimeFirstGoal,
@@ -567,7 +564,7 @@ public class ResourceServiceTests
         actionResourceService.FullTimeResources(Arg.Any<GoalAction>()).Returns(
             new List<XmlResource>
             {
-                new XmlResource
+                new()
                 {
                     HomeValue="AHHAHA",
                     ResourceId = ResourceKey.FullTimeGoalRecord,
@@ -816,14 +813,14 @@ public class ResourceServiceTests
         actionResourceService.HalftimeResources(Arg.Any<GoalAction>()).Returns(
             new List<XmlResource>
             {
-                new XmlResource
+                new()
                 {
                     HomeValue = "A",
                     ResourceId=ResourceKey.HalftimeFirstGoal,
                     ResultStatusId=ResultStatus.ManuallySettled,
                     SettlementStatusId=SettlementStatus.Completed
                 },
-                new XmlResource
+                new()
                 {
                     HomeValue = "A",
                     ResourceId=ResourceKey.HalftimeLastGoal,
@@ -834,14 +831,14 @@ public class ResourceServiceTests
 
         actionResourceService.FullTimeResources(Arg.Any<GoalAction>()).Returns(new List<XmlResource>
         {
-            new XmlResource
+            new()
             {
                 HomeValue = "H",
                 ResourceId=ResourceKey.FullTimeFirstGoal,
                 ResultStatusId=ResultStatus.ManuallySettled,
                 SettlementStatusId=SettlementStatus.Completed
             },
-            new XmlResource
+            new()
             {
                 HomeValue = "H",
                 ResourceId=ResourceKey.FullTimeLastGoal,
@@ -885,7 +882,7 @@ public class ResourceServiceTests
             IsExistHtFgLg = false,
             IsExistFgLg = false,
             IsEnabledGoalRecordHt = false,
-            IsEnabledGoalRecordFt = false,
+            IsEnabledGoalRecordFt = false
         };
 
         // Actual
@@ -906,13 +903,15 @@ public class ResourceServiceTests
 
         var expect = new List<XmlResource>
         {
-            new XmlResource{
+            new()
+            {
                 ResourceId=ResourceKey.HalftimeFirstGoal,
                 ResultStatusId = ResultStatus.Initial,
                 SettlementStatusId = SettlementStatus.Running,
                 HomeValue = string.Empty
             },
-            new XmlResource{
+            new()
+            {
                 ResourceId=ResourceKey.HalftimeLastGoal,
                 ResultStatusId = ResultStatus.Initial,
                 SettlementStatusId = SettlementStatus.Running,
@@ -938,13 +937,15 @@ public class ResourceServiceTests
 
         var expect = new List<XmlResource>
         {
-            new XmlResource{
+            new()
+            {
                 ResourceId=ResourceKey.FullTimeFirstGoal,
                 ResultStatusId = ResultStatus.Initial,
                 SettlementStatusId = SettlementStatus.Running,
                 HomeValue = string.Empty
             },
-            new XmlResource{
+            new()
+            {
                 ResourceId=ResourceKey.FullTimeLastGoal,
                 ResultStatusId = ResultStatus.Initial,
                 SettlementStatusId = SettlementStatus.Running,
@@ -970,7 +971,8 @@ public class ResourceServiceTests
 
         var expect = new List<XmlResource>
         {
-            new XmlResource{
+            new()
+            {
                 ResourceId=ResourceKey.HalftimeGoalRecord,
                 ResultStatusId = ResultStatus.Initial,
                 SettlementStatusId = SettlementStatus.Running,
@@ -996,7 +998,8 @@ public class ResourceServiceTests
 
         var expect = new List<XmlResource>
         {
-            new XmlResource{
+            new()
+            {
                 ResourceId=ResourceKey.FullTimeGoalRecord,
                 ResultStatusId = ResultStatus.Initial,
                 SettlementStatusId = SettlementStatus.Running,

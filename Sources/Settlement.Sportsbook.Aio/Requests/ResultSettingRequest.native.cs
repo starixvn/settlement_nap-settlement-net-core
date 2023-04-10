@@ -1,6 +1,6 @@
 ﻿namespace Settlement.Sportsbook.Aio.Requests;
 
-public class ResultSettingRequest : IRequest<Boolean>
+public class ResultSettingRequest : IRequest<bool>
 {
     public int MatchId { get; set; }
 

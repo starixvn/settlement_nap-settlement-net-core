@@ -6,7 +6,7 @@ public class UpdateLeagueOutsideSourceCriteria : NonQueryCommand
 {
     public int LeagueId { get; set; }
 
-    public string PGIdSources { get; set; }
+    public string PgIdSources { get; set; }
 
     public int ErrCode { get; set; }
 

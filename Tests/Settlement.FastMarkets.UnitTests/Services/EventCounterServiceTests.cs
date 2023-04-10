@@ -10,15 +10,13 @@ public class EventCounterServiceTests
 {
     private readonly IEventCounterElementService eventCounterElementService;
 
-    private readonly XmlConvertService xmlConvertService;
-
     private readonly IEventCounterService service;
 
-    private readonly XmlDocument xmlDoc = new XmlDocument();
+    private readonly XmlDocument xmlDoc = new();
 
     public EventCounterServiceTests()
     {
-        xmlConvertService = new XmlConvertServiceImp();
+        var xmlConvertService = new XmlConvertServiceImp();
         eventCounterElementService = Substitute.For<IEventCounterElementService>();
         service = new EventCounterServiceImp(eventCounterElementService, xmlConvertService);
     }
@@ -71,7 +69,7 @@ public class EventCounterServiceTests
 
         var eventCounters = new List<EventCounterElement>
         {
-            new EventCounterElement { Id = "3", Items= new List<ItemElement>() }
+            new() { Id = "3", Items= new List<ItemElement>() }
         };
 
         eventCounterElementService.GetEventCounters(Arg.Any<List<EventCounter>>()).Returns(eventCounters);

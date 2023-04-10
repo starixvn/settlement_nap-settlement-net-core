@@ -44,8 +44,4 @@ public class MultiSportController : ControllerBase
     [HttpPost]
     [Route("getLeague")]
     public async Task<IActionResult> GetLeagues(LeagueRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
-
-    [HttpPost]
-    [Route("calculate-mix-parlay")]
-    public async Task<IActionResult> Calculate(CalculateParlayRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 }

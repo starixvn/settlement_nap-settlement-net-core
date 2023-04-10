@@ -4,7 +4,7 @@ import { UrlHelper } from '../../helper';
 import * as _ from 'lodash';
 import { MessageBoxService } from '../../shared/services';
 import { AutoSettingLeagueQuery, AutoSettingMatchQuery, ModalDialogMessage, Result } from '../../shared/models';
-import { Language } from '../../shared/language';
+import { Language } from '../../shared/language.native';
 import { RequestService } from '../services/request.service';
 import { SettingQuery } from '../models';
 import { AutoType } from '../constants';

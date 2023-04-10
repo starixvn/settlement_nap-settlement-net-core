@@ -17,7 +17,7 @@ public class ScoreServiceImp : ScoreService
 {
     private const string Halftime = "01";
     private const string Final = "00";
-    private readonly List<string> basketBallResources = new List<string> { "Q1", "Q2", "Q3", "Q4", "OT" };
+    private readonly List<string> basketBallResources = new() { "Q1", "Q2", "Q3", "Q4", "OT" };
     private readonly IScoreSetService scoreSetService;
 
     public ScoreServiceImp(IScoreSetService scoreSetService)

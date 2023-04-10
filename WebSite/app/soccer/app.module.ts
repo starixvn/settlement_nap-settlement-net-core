@@ -5,12 +5,6 @@ import { FormsModule } from '@angular/forms';
 import { HttpClientModule, HttpClientJsonpModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { OnlyIntegerDirective, OnlyFirstTenScoreDirective } from '../shared/directives';
 import { CustomHttpRequestInterceptor } from "../shared/custom-httprequest-interceptor.native";
-import {
-    ModalDialogComponent,
-    TicketCountComponent,
-    ResettleCheckerComponent,
-    NotReadyMatchComponent
-} from '../shared/components';
 import { AppComponent } from './components/app.component';
 import { EarlySettlementComponent } from './components/early/early-settlement.component';
 import { MatchDetailComponent } from './components/early/match-detail.component';
@@ -34,6 +28,10 @@ import { SpecificBettypeComponent } from './components/refund/specific-bettype.c
 import { ConfirmRefundComponent } from './components/refund/confirm-refund.component';
 import { ConfirmScoreComponent } from './components/refund/confirm-score.component';
 import { MoveBetComponent } from './components/refund/move-bet.component';
+import { TicketCountComponent } from '../shared/components/ticket-count/ticket-count.component';
+import { ResettleCheckerComponent } from '../shared/components/resettle-checker/resettle-checker.component';
+import { NotReadyMatchComponent } from '../shared/components/not-ready-match/not-ready-match.component';
+import { ModalDialogComponent } from '../shared/components/modal-dialog/modal-dialog.component';
 
 @NgModule({
     imports: [
@@ -52,24 +50,24 @@ import { MoveBetComponent } from './components/refund/move-bet.component';
             maxOpened: 1,
         }),
         ToastContainerModule,
+        TicketCountComponent,
+        ResettleCheckerComponent,
+        NotReadyMatchComponent,
+        OnlyIntegerDirective,
     ],
     declarations: [
         AppComponent,
         MatchDetailComponent,
         ModalDialogComponent,
-        OnlyIntegerDirective,
         OnlyFirstTenScoreDirective,
-        TicketCountComponent,
         EarlySettlementComponent,
         GroupNameByIdPipe,
-        ResettleCheckerComponent,
         CalculationComponent,
         FantasyComponent,
         GoalHistoryComponent,
         CalculationMatchDetailComponent,
         RefundChildMatchComponent,
         ScorePipe,
-        NotReadyMatchComponent,
         OnlyGoalRecordDirective,
         SoccerTicketCountComponent,
         RefundComponent,

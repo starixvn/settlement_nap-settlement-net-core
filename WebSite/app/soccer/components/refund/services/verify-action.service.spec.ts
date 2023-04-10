@@ -1,6 +1,6 @@
 import { TestBed } from "@angular/core/testing";
 import { CalculateAction } from "../../../../shared/constants";
-import { Language } from "../../../../shared/language";
+import { Language } from "../../../../shared/language.native";
 import { BetDaq, BetFair, Match, MatchDetail } from "../model/match.model";
 import { VerifyActionService } from "./verify-action.service";
 import { VerifyMatchService } from "./verify-match.service";

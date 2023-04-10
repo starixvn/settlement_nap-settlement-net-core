@@ -6,30 +6,16 @@ import {
   tick,
   flush,
 } from "@angular/core/testing";
-import { NO_ERRORS_SCHEMA } from "@angular/core";
-import { of } from "rxjs";
-import { NgbModal, NgbModule } from "@ng-bootstrap/ng-bootstrap";
 import { BrowserDynamicTestingModule } from "@angular/platform-browser-dynamic/testing";
-import { FormsModule } from "@angular/forms";
 import { HttpClientModule } from "@angular/common/http";
 import { ResourceNameByIdPipe } from "../pipes";
-import { EarlySettlementComponent } from ".";
-import { Language } from '../../shared/language';
+import { EarlySettlementComponent } from "./early-settlement.component";
+import { Language } from '../../shared/language.native';
 import {
-  ModalDialogComponent,
-  ModalContentDialogComponent,
-  ResettleCheckerComponent,
-  TicketCountComponent,
-  NewMultipleSelectComponent,
-} from "../../shared/components";
-import {
-  HttpRequestService,
-  BlockUIService,
   MessageBoxService,
-  ClosePopupService,
   AioService,
 } from "../../shared/services";
-import { EarlyConstraintService, VerificationService, ESportsService } from "../services";
+import { EarlyConstraintService, VerificationService } from "../services";
 import {
   Match,
 } from "../models";
@@ -39,17 +25,20 @@ import { MaterialModule } from "../../shared/material-module";
 import { ResultSettingModel } from "../../shared/models";
 import { ExternalSourceNamePipe } from '../../shared/pipes/external-source-name.pipe';
 import { ResultByTeamNamePipe } from '../../shared/pipes/result-by-team-name.pipe';
-import { ResultStatusPipe } from '../../shared/pipes/result-status.pipe';
-import { TicketStatusPipe } from '../../shared/pipes/ticket-status.pipe';
 import { MatchDetail, Permission, ResultDetail } from "../../shared/models/sportsbook-sop";
 import { ExternalLinkPipe } from "../../score-source-setting/pipes";
-import { ToastContainerDirective, ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
+import { ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
+import { PipesModule } from "../../shared/pipes/pipes.module.native";
+import { ModalDialogComponent } from "../../shared/components/modal-dialog/modal-dialog.component";
+import { ModalContentDialogComponent } from "../../shared/components/modal-dialog/modal-content-dialog.component";
+import { ResettleCheckerComponent } from "../../shared/components/resettle-checker/resettle-checker.component";
+import { TicketCountComponent } from "../../shared/components/ticket-count/ticket-count.component";
+import { NewMultipleSelectComponent } from "../../shared/components/multiple-select/multiple-select.component";
 describe("E-sport - Early Settlement Component", () => {
   let component: EarlySettlementComponent;
   let fixture: ComponentFixture<EarlySettlementComponent>;
   let earlyConstraintService: EarlyConstraintService;
   let aioService: AioService;
-  let closePopupService: ClosePopupService;
   let messageBoxService: MessageBoxService;
   let verificationService: VerificationService;
   let resultByTeamNamePipe: ResultByTeamNamePipe;
@@ -99,10 +88,16 @@ describe("E-sport - Early Settlement Component", () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [
-        EarlySettlementComponent,
-        ResourceNameByIdPipe,
         ModalDialogComponent,
         ModalContentDialogComponent,
+      ],
+      imports: [
+        HttpClientModule,
+        MaterialModule,
+        ToastNoAnimationModule.forRoot(),
+        ToastContainerModule,
+        ToastrModule.forRoot(),
+        PipesModule,
         ResettleCheckerComponent,
         TicketCountComponent,
         NewMultipleSelectComponent,
@@ -110,35 +105,8 @@ describe("E-sport - Early Settlement Component", () => {
         ResultByTeamNamePipe,
         ExternalSourceNamePipe,
         ExternalLinkPipe,
-        TicketStatusPipe,
-        ResultStatusPipe,
-      ],
-      schemas: [NO_ERRORS_SCHEMA],
-      providers: [
-        MessageBoxService,
-        EarlyConstraintService,
-        AioService,
-        HttpRequestService,
-        BlockUIService,
-        ClosePopupService,
-        NgbModal,
-        VerificationService,
-        AioService,
-        ResultByTeamNamePipe,
-        ESportsService,
+        EarlySettlementComponent,
         ResourceNameByIdPipe,
-        IntervalBackgroundPipe,
-        ToastContainerDirective,
-        ToastrService,
-      ],
-      imports: [
-        FormsModule,
-        HttpClientModule,
-        NgbModule,
-        MaterialModule,
-        ToastNoAnimationModule.forRoot(),
-        ToastContainerModule,
-        ToastrModule.forRoot()
       ]
     })
       .overrideModule(BrowserDynamicTestingModule, {
@@ -153,13 +121,13 @@ describe("E-sport - Early Settlement Component", () => {
         component.permission = permission;
         aioService = fixture.debugElement.injector.get(AioService);
         earlyConstraintService = fixture.debugElement.injector.get(EarlyConstraintService);
-        closePopupService = fixture.debugElement.injector.get(ClosePopupService);
         messageBoxService = fixture.debugElement.injector.get(MessageBoxService);
         aioService = fixture.debugElement.injector.get(AioService);
         verificationService = fixture.debugElement.injector.get(VerificationService);
         resultByTeamNamePipe = fixture.debugElement.injector.get(ResultByTeamNamePipe);
         toastrService = fixture.debugElement.injector.get(ToastrService);
         fixture.detectChanges();
+        component.initService();
       });
   }));
 
@@ -179,8 +147,8 @@ describe("E-sport - Early Settlement Component", () => {
       resultDetail.checked = true;
       resultDetail.homeValue = '';
       component.resultDetails = [resultDetail];
-      spyOn(earlyConstraintService, 'isInValidResultValue').and.returnValue(true);
-      spyOn(toastrService, 'error');
+      earlyConstraintService.isInValidResultValue= jest.fn().mockReturnValue(true);
+      toastrService.error = jest.fn();
 
       await component.calculate();
 
@@ -192,8 +160,8 @@ describe("E-sport - Early Settlement Component", () => {
       resultDetail.homeValue = '';
       component.resultDetails = [resultDetail];
       component.permission = new Permission();
-      spyOn(earlyConstraintService, 'isInValidResultValue').and.returnValue(true);
-      spyOn(toastrService, 'error');
+      earlyConstraintService.isInValidResultValue= jest.fn().mockReturnValue(true);
+      toastrService.error = jest.fn();
 
       await component.calculate();
 
@@ -208,7 +176,7 @@ describe("E-sport - Early Settlement Component", () => {
       component.match = match;
       component.resultDetails = [result];
       component.permission = match.permission;
-      spyOn(toastrService, 'error');
+      toastrService.error = jest.fn();
 
       await component.calculate();
 
@@ -219,10 +187,10 @@ describe("E-sport - Early Settlement Component", () => {
       const resultDetails: ResultDetail[] = [resultDetail, resultDetail];
       match.resultDetails = resultDetails;
       component.match = match;
-      spyOn(earlyConstraintService, "isInValidResultValue").and.returnValue(false);
-      spyOn(earlyConstraintService, "isInValidDuration").and.returnValue(false);
-      spyOn(aioService, 'verifyNoRunningOdds').and.returnValue(of(unSuccessfulResult));
-      spyOn(toastrService, 'error');
+      earlyConstraintService.isInValidResultValue = jest.fn().mockReturnValue(false);
+      earlyConstraintService.isInValidDuration = jest.fn().mockReturnValue(false);
+      aioService.verifyNoRunningOdds= jest.fn().mockReturnValue(Promise.resolve(unSuccessfulResult));
+      toastrService.error = jest.fn();
 
       component.calculate();
       tick();
@@ -242,13 +210,13 @@ describe("E-sport - Early Settlement Component", () => {
       resultDetail.resultSettingData.isConfirmedRefund = true;
       match.resultDetails = [resultDetail];
       component.match = match;
-      spyOn(aioService, "checkMarkedTickets").and.returnValue(
-        of(notExistMarkedTicket)
+      aioService.checkMarkedTickets = jest.fn().mockReturnValue(
+        Promise.resolve(notExistMarkedTicket)
       );
-      spyOn(aioService, "push").and.returnValue(of(successfulResult));
-      spyOn(closePopupService, "closePopup");
-      spyOn(toastrService, 'clear');
-      spyOn(toastrService, 'error');
+      aioService.push = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
+      messageBoxService.closePopup = jest.fn();
+      toastrService.clear = jest.fn();
+      toastrService.error = jest.fn();
 
       await component.refund();
       const buttonYes = document.getElementsByClassName(
@@ -261,11 +229,11 @@ describe("E-sport - Early Settlement Component", () => {
     }));
 
     it("should return error message when fail to refund", fakeAsync(async () => {
-      spyOn(aioService, "checkMarkedTickets").and.returnValue(
-        of(notExistMarkedTicket)
+      aioService.checkMarkedTickets = jest.fn().mockReturnValue(
+        Promise.resolve(notExistMarkedTicket)
       );
-      spyOn(aioService, "push").and.returnValue(of(unSuccessfulResult));
-      spyOn(toastrService, 'error');
+      aioService.push = jest.fn().mockReturnValue(Promise.resolve(unSuccessfulResult));
+      toastrService.error = jest.fn();
 
       await component.refund();
       tick();
@@ -279,12 +247,12 @@ describe("E-sport - Early Settlement Component", () => {
     }));
 
     it("should alert when exist marked ticket", fakeAsync(async () => {
-      spyOn(aioService, "checkMarkedTickets").and.returnValue(
-        of(existMarkedTicket)
+      aioService.checkMarkedTickets = jest.fn().mockReturnValue(
+        Promise.resolve(existMarkedTicket)
       );
-      spyOn(messageBoxService, "alert");
-      spyOn(toastrService, 'clear');
-      spyOn(toastrService, 'error');
+      messageBoxService.alert = jest.fn();
+      toastrService.clear = jest.fn();
+      toastrService.error = jest.fn();
 
       await component.refund();
 
@@ -294,8 +262,8 @@ describe("E-sport - Early Settlement Component", () => {
     it("should show error message when exist result not confirm refund", fakeAsync(async () => {
       resultDetail.resultSettingData.isConfirmedRefund = false;
       component.resultDetails = [resultDetail];
-      spyOn(messageBoxService, "alert");
-      spyOn(toastrService, 'error');
+      messageBoxService.alert = jest.fn();
+      toastrService.error = jest.fn();
 
       component.refund();
       tick();
@@ -313,11 +281,11 @@ describe("E-sport - Early Settlement Component", () => {
     });
 
     it("should pass all validation and success", fakeAsync(() => {
-      spyOn(aioService, "push").and.returnValue(of(successfulResult));
-      spyOn(closePopupService, "closePopup");
-      spyOn(earlyConstraintService, 'getBetTypeGroup').and.returnValue(0);
-      spyOn(resultByTeamNamePipe, 'transform').and.returnValue('');
-      spyOn(toastrService, 'error');
+      aioService.push = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
+      messageBoxService.closePopup = jest.fn();
+      earlyConstraintService.getBetTypeGroup= jest.fn().mockReturnValue(0);
+      resultByTeamNamePipe.transform= jest.fn().mockReturnValue('');
+      toastrService.error = jest.fn();
 
       component.unCalculate();
       const buttonYes = document.getElementsByClassName(
@@ -330,8 +298,8 @@ describe("E-sport - Early Settlement Component", () => {
     }));
 
     it("should return error message when result is unsuccessful", fakeAsync(() => {
-      spyOn(aioService, "push").and.returnValue(of(unSuccessfulResult));
-      spyOn(toastrService, 'error');
+      aioService.push = jest.fn().mockReturnValue(Promise.resolve(unSuccessfulResult));
+      toastrService.error = jest.fn();
 
       component.unCalculate();
       const buttonYes = document.getElementsByClassName(
@@ -353,10 +321,10 @@ describe("E-sport - Early Settlement Component", () => {
     duration.groupBetType = 0;
     const resultDetails = [homeAway, duration];
     component.match = new Match(new MatchDetail());
-    spyOn(verificationService, 'autoFillScore');
-    spyOn(verificationService, 'autoFillEarlyResult');
-    spyOn(verificationService, 'isMismatchedWarning');
-    spyOn(verificationService, 'isEarlyMismatchedWarning');
+    verificationService.autoFillScore = jest.fn();
+    verificationService.autoFillEarlyResult = jest.fn();
+    verificationService.isMismatchedWarning = jest.fn();
+    verificationService.isEarlyMismatchedWarning = jest.fn();
 
     component.autoFillResultOnLoad(resultDetails);
 
@@ -371,8 +339,8 @@ describe("E-sport - Early Settlement Component", () => {
   describe('canSettleResult', () => {
     it('should return true when result is running and score is match and exist inhouse result', () => {
       resultDetail.resultStatus = 'Running';
-      spyOn(earlyConstraintService, 'getBetTypeGroup').and.returnValue(0);
-      spyOn(verificationService, 'isExistInhouseResult').and.returnValue(true);
+      earlyConstraintService.getBetTypeGroup= jest.fn().mockReturnValue(0);
+      verificationService.isExistInhouseResult= jest.fn().mockReturnValue(true);
 
       const result = component.canSettleResult(resultDetail);
 
@@ -381,8 +349,8 @@ describe("E-sport - Early Settlement Component", () => {
 
     it('should return false when result is completed', () => {
       resultDetail.resultStatus = 'Completed';
-      spyOn(earlyConstraintService, 'getBetTypeGroup').and.returnValue(0);
-      spyOn(verificationService, 'isExistInhouseResult').and.returnValue(true);
+      earlyConstraintService.getBetTypeGroup= jest.fn().mockReturnValue(0);
+      verificationService.isExistInhouseResult= jest.fn().mockReturnValue(true);
 
       const result = component.canSettleResult(resultDetail);
 
@@ -394,7 +362,7 @@ describe("E-sport - Early Settlement Component", () => {
     it('should call is mismatch warning when this is couple result', () => {
       const result = new ResultDetail();
       result.groupBetType = 4;
-      spyOn(verificationService, 'isMismatchedWarning');
+      verificationService.isMismatchedWarning = jest.fn();
 
       component.checkResultIsMatched(result);
 
@@ -404,7 +372,7 @@ describe("E-sport - Early Settlement Component", () => {
     it('should call is early mismatch warning when this is couple result', () => {
       const result = new ResultDetail();
       result.groupBetType = 0;
-      spyOn(verificationService, 'isEarlyMismatchedWarning');
+      verificationService.isEarlyMismatchedWarning = jest.fn();
 
       component.checkResultIsMatched(result);
 
@@ -413,12 +381,12 @@ describe("E-sport - Early Settlement Component", () => {
   });
 
   it('getMatch - should get match and init component info', async () => {
-    spyOn(aioService, 'getMatch').and.returnValue(of(match));
-    spyOn(earlyConstraintService, 'getGroupMap').and.returnValue([]);
-    spyOn(earlyConstraintService, 'renderResultStatus');
-    spyOn(earlyConstraintService, 'renderTicketStatus');
-    spyOn(verificationService, 'isMismatchedWarning');
-    spyOn(verificationService, 'autoFillScore');
+    aioService.getMatch= jest.fn().mockReturnValue(Promise.resolve(match));
+    earlyConstraintService.getGroupMap= jest.fn().mockReturnValue([]);
+    earlyConstraintService.renderResultStatus = jest.fn();
+    earlyConstraintService.renderTicketStatus = jest.fn();
+    verificationService.isMismatchedWarning = jest.fn();
+    verificationService.autoFillScore = jest.fn();
 
     await component.getMatch(12345);
 
@@ -427,9 +395,9 @@ describe("E-sport - Early Settlement Component", () => {
 
   it('saveResult - should call save score', fakeAsync(() => {
     component.match = match;
-    spyOn(verificationService, 'getChangedScores');
-    spyOn(verificationService, 'getOutsideScores');
-    spyOn(aioService, 'saveScore').and.returnValue(of(unSuccessfulResult));
+    verificationService.getChangedScores = jest.fn();
+    verificationService.getOutsideScores = jest.fn();
+    aioService.saveScore= jest.fn().mockReturnValue(Promise.resolve(unSuccessfulResult));
 
     component.saveResult();
     tick();

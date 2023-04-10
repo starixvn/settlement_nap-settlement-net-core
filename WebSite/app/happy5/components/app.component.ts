@@ -1,5 +1,5 @@
 ﻿import { interval } from 'rxjs';
-import { ISubscription } from "rxjs/Subscription";
+import { ISubscription } from "rxjs-compat/Subscription";
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import {
     BlockUIService,

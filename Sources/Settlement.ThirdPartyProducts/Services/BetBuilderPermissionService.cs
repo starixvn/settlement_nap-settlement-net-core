@@ -2,10 +2,11 @@
 using Fanex.NAP.Client.Helpers.Web;
 using Fanex.NAP.Client.Services;
 using Fanex.NAP.Core.Business;
-using Settlement.Core.Configuration;
 using Settlement.Core.Models;
 
 namespace Settlement.ThirdPartyProducts.Services;
+
+using Core.Configurations;
 
 public interface PermissionService
 {
@@ -27,7 +28,7 @@ public class BetBuilderPermissionServiceImp : PermissionService
         this.siteSettings = siteSettings;
     }
 
-    public Permission Permission => new Permission
+    public Permission Permission => new()
     {
         CanCalculate = HasPermission(SettlementFunctionKeys.BetBuilder, Constant.Policy.Host),
         CanViewSettlementLog = HasPermission(SettlementFunctionKeys.ViewLogSettlement, Constant.Policy.Read)

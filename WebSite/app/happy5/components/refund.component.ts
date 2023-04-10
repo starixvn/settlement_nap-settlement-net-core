@@ -6,7 +6,7 @@ import { ModalDialogMessage, Result } from '../../shared/models';
 import { CalculateAction } from '../../shared/constants';
 import { RedBall } from '../constants';
 import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
-import { Language } from '../../shared/language';
+import { Language } from '../../shared/language.native';
 import { QueryService, VerifyBallService } from '../services';
 import { MessageBoxService, HttpRequestService, BlockUIService } from '../../shared/services';
 

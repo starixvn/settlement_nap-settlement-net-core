@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 import { MoveRunningTicketsService } from "./move-running-tickets.service";
 import { MessageBoxService } from "../../../shared/services";
 import { ModalDialogMessage, Result } from "../../../shared/models";
-import { Language } from "../../../shared/language";
+import { Language } from "../../../shared/language.native";
 import { GetMoveTicketsRequest, MoveRunningTicketsRequest, ValidateMatchesRequest } from "../../models";
 import { Match } from "../../models/match.model";
 import { MoveTicketsService } from "../cricket/move-tickets.service";

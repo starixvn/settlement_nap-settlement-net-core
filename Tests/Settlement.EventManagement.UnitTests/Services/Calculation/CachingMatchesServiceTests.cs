@@ -68,7 +68,7 @@ public class CachingMatchesServiceTests
         {
             new() { MatchId = 1, ActionId = 1 },
             new() { MatchId = 2 },
-            new() { MatchId = 1, ActionId = 2 },
+            new() { MatchId = 1, ActionId = 2 }
         };
 
         repository.FetchAsync<ReferenceAction>(Arg.Any<GetReferenceActionCriteria>()).Returns(list);

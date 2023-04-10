@@ -47,7 +47,7 @@ public class GoalRecord
 
         if (lastGoalScoredTeam.Equals("0") && !firstGoalScoredTeam.Equals("0"))
         {
-            return Goal.Substring(0, (int)HalfTimeAwayScore + (int)HalfTimeHomeScore);
+            return Goal[..((int)HalfTimeAwayScore + (int)HalfTimeHomeScore)];
         }
 
         return Goal;

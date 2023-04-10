@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Settlement.Setting.Models.Notification;
+﻿namespace Settlement.Setting.Models.Notification;
 
 public class ShowNotificationModel
 {

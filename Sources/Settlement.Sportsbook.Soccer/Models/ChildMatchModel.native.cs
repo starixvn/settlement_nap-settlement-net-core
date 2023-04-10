@@ -45,14 +45,8 @@ public class ChildMatchModel
 
     public string EventStatus
     {
-        get
-        {
-            return eventStatus.MapToString(BetStatus, IsPending);
-        }
+        get => eventStatus.MapToString(BetStatus, IsPending);
 
-        set
-        {
-            eventStatus = value;
-        }
+        set => eventStatus = value;
     }
 }

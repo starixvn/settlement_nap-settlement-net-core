@@ -1,8 +1,6 @@
 ﻿using Settlement.FastMarkets.Models;
 using Settlement.FastMarkets.Models.BetTypeModels;
 using Settlement.FastMarkets.Services;
-using System.Collections.Generic;
-using Xunit;
 
 namespace Settlement.FastMarkets.UnitTests.Services;
 
@@ -36,7 +34,7 @@ public class BetTypeElementServiceTests
             BetTypeId = betTypeId,
             FastMarketResults = new List<FastMarketResult> {
                 new () { BetType= betTypeId, Position =0, Checked = true, IsShow = true, ResultItem = resultItem0},
-                new ()  { BetType= betTypeId, Position =1, Checked = true, IsShow = true, ResultItem = resultItem1},
+                new ()  { BetType= betTypeId, Position =1, Checked = true, IsShow = true, ResultItem = resultItem1}
             }
         };
 
@@ -51,7 +49,7 @@ public class BetTypeElementServiceTests
     {
         // Arrange
         var betTypes = ListBetTypesSelected(221);
-        var actionName = "CAL";
+        const string actionName = "CAL";
 
         // Act
         var actual = service.GetBetTypes(betTypes, actionName);
@@ -64,9 +62,9 @@ public class BetTypeElementServiceTests
     public void GetBetTypes_ActionNameIsUndo_ReturnsEmptyResultOnItemElement()
     {
         // Arrange
-        var betTypeId = 221;
+        const int betTypeId = 221;
         var betTypes = ListBetTypesSelected(betTypeId);
-        var actionName = "UNDO";
+        const string actionName = "UNDO";
 
         // Act
         var actual = service.GetBetTypes(betTypes, actionName);
@@ -74,7 +72,7 @@ public class BetTypeElementServiceTests
         // Assert
         var items = new List<ItemElement> {
             new ()  {Position =0, Result = string.Empty },
-            new ()  {Position =1, Result = string.Empty },
+            new ()  {Position =1, Result = string.Empty }
         };
 
         var expectedBetTypes = new List<BetTypeElement>
@@ -93,9 +91,9 @@ public class BetTypeElementServiceTests
     public void GetBetTypes_ActionNameIsNotUndoAndBetTypeIsNextOneMinuteSetPiece_ReturnsExpectedResultOnItemElement()
     {
         // Arrange
-        var betTypeId = 225;
+        const int betTypeId = 225;
         var betTypes = ListBetTypesSelected(betTypeId);
-        var actionName = "CAL";
+        const string actionName = "CAL";
 
         // Act
         var actual = service.GetBetTypes(betTypes, actionName);
@@ -103,7 +101,7 @@ public class BetTypeElementServiceTests
         // Assert
         var items = new List<ItemElement> {
             new ()  {Position =0, Result = "44" },
-            new ()  {Position =1, Result = "68" },
+            new ()  {Position =1, Result = "68" }
         };
 
         var expectedBetTypes = new List<BetTypeElement>
@@ -122,9 +120,9 @@ public class BetTypeElementServiceTests
     public void GetBetTypes_ActionNameIsNotUndoAndBetTypeIsNotNextOneMinuteSetPiece_ReturnsExpectedResultOnItemElement()
     {
         // Arrange
-        var betTypeId = 222;
+        const int betTypeId = 222;
         var betTypes = ListBetTypesSelected(betTypeId);
-        var actionName = "CAL";
+        const string actionName = "CAL";
 
         // Act
         var actual = service.GetBetTypes(betTypes, actionName);
@@ -132,7 +130,7 @@ public class BetTypeElementServiceTests
         // Assert
         var items = new List<ItemElement> {
             new ()  {Position =0, Result = "70" },
-            new ()  {Position =1, Result = "68" },
+            new ()  {Position =1, Result = "68" }
         };
 
         var expectedBetTypes = new List<BetTypeElement>
@@ -160,7 +158,7 @@ public class BetTypeElementServiceTests
         };
         var betTypes = new List<BetType>();
         betTypes.Add(betType);
-        var actionName = "CAL";
+        const string actionName = "CAL";
 
         var actual = service.GetBetTypes(betTypes, actionName);
 

@@ -1,8 +1,7 @@
-import { ResourceIds } from './../../../soccer/constants/resourceIds.native';
 import { Injectable } from '@angular/core';
 import { Match, MatchDetail } from '../../models';
 import * as _ from 'lodash';
-import { Observable } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 import { RequestService } from '../../services/request.service';
 import { HalfTimeFullTimeService } from './halftime-fulltime.service';
 import { ResultDetail } from '../../../shared/models/sportsbook-sop';
@@ -71,20 +70,20 @@ export class VerificationService {
             return isCalcAll ? isFinalEmpty || isHalfTimeEmpty : isFinalEmpty;
         }
         return _.find(resultDetails, item => {
-            if(_.isEqual(item.resourceId, ResourcesIds.ot)) {
+            if (_.isEqual(item.resourceId, ResourcesIds.ot)) {
                 return (_.isEmpty(item.homeValue) && !_.isEmpty(item.awayValue))
-                 || (_.isEmpty(item.awayValue) && !_.isEmpty(item.homeValue))
+                    || (_.isEmpty(item.awayValue) && !_.isEmpty(item.homeValue))
             }
             return _.isEmpty(item.homeValue) || _.isEmpty(item.awayValue);
         });
     }
 
     public VerifyChangedSettledTickets(matchId: number, resultDetails: ResultDetail[],
-        isScoreDirect: boolean, action: string, halfTimeNode: number): Observable<boolean> {
+        isScoreDirect: boolean, action: string, halfTimeNode: number) {
         const query = {
             matchId
         };
-        return this.requestService.getLastestResult(query).pipe(map((lastestMatch: Match) => {
+        const needConfirm = this.requestService.getLastestResult(query).pipe(map((lastestMatch: Match) => {
             switch (action) {
                 case CalculateAction.calculateHalfTime:
                     return this.halfTimeFullTimeService.compareHalfTimeScore(resultDetails, lastestMatch, isScoreDirect, halfTimeNode);
@@ -94,6 +93,8 @@ export class VerificationService {
                     return this.halfTimeFullTimeService.compareAllScore(resultDetails, lastestMatch, isScoreDirect);
             }
         }));
+
+        return firstValueFrom(needConfirm);
     }
 
     public isScoreMismatched(halfTime: ResultDetail, fulltime: ResultDetail, matchDetail: MatchDetail,

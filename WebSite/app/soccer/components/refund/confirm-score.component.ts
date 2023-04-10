@@ -5,7 +5,7 @@ import { Match, MatchDetail } from './model/match.model';
 import { SpecificBettypeComponent } from './specific-bettype.component';
 import * as _ from 'lodash';
 import { CalculateAction } from '../../../shared/constants';
-import { Language } from '../../../shared/language';
+import { Language } from '../../../shared/language.native';
 import { VerifyActionService } from './services/verify-action.service';
 import { BetStatus } from '../../constants';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';

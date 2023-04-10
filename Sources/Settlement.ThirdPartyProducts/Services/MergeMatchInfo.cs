@@ -9,7 +9,7 @@ public interface MergeMatchInfo
 
     int QueueStatus(MatchDetailModel match, int queueStatusCentral = 2);
 
-    void AddSiteMatch(List<MatchDetailModel> matches, List<Models.SiteMatch> siteMatches);
+    void AddSiteMatch(List<MatchDetailModel> matches, List<SiteMatch> siteMatches);
 
     void MergeStatusTicket(List<ResourceSelectionItemModel> baseList, List<ResourceSelectionItemModel> siteList);
 
@@ -98,7 +98,7 @@ public class MergeMatchInfoImp : MergeMatchInfo
             {
                 TotalTickets = siteMatch.TotalTickets,
                 TotalTicketsRunning = siteMatch.TotalTicketsRunning,
-                QueueStatus = siteMatch.QueueStatus,
+                QueueStatus = siteMatch.QueueStatus
             };
         }
 

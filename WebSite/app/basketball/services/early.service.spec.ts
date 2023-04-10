@@ -5,7 +5,7 @@ import { EarlyService } from './early.service';
 import { MessageBoxService } from '../../shared/services';
 import { ResultDetail } from '../../shared/models/sportsbook-sop';
 import { ResultSettingModel } from '../../shared/models';
-import { Language } from '../../shared/language';
+import { Language } from '../../shared/language.native';
 
 describe('Basketball - Early Service', () => {
     let service: EarlyService = null;

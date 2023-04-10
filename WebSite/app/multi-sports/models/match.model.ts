@@ -1,7 +1,6 @@
 ﻿import { Remark } from "../../shared/models/match-details/remark.model";
 import { Score } from "../../shared/models/match-details/score.model";
 import { MoreScore } from "../../shared/models/match-details/more-score.model";
-import { MixParlay } from "../../shared/models/match-details/mix-parlay.model";
 import { AutoSetting } from "../../shared/models";
 
 export class Match {
@@ -20,14 +19,12 @@ export class Match {
      public suspenderHalfTime: string;
      public suspenderFullTime: string;
      public remark: Remark;
-     public isCheckedCalcMP: boolean;
      public sportType: number;
      public intervalScore: Score[];
      public isCalculatingSingle: number;
      public isCalculatingMP: number;
      public isExistRunningTicket: boolean;
      public isExistMarkedTicket: boolean;
-     public isExistMarkedTicketParlay: boolean;
      public eventStatusColor: string;
      public isCalculated: boolean;
      public isCalRefund: boolean;
@@ -40,14 +37,11 @@ export class Match {
      public isHavingIntervalScore: boolean;
      public homeTotalGames: number;
      public awayTotalGames: number;
-     public mixParlay: MixParlay;
      public leagueId: number;
      public exHalfTimeScore: string;
      public exFullTimeScore: string;
      public autoPayoutStatus: number;
-     public isMergedParlay: boolean;
      public isExistsConfirmedEarly: boolean;
-     public isExistRunningTicketParlay: boolean;
      public bestOfMap: number;
      public isMatchBOMThirty: boolean;
      public earlySettleBackground: string;

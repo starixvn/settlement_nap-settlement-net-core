@@ -35,29 +35,29 @@ public class MatchResultDetailServiceTest
     public void BadmintonResultDetail_HasMatches_ReturnsExpectedMatch()
     {
         // Arrange
-        List<Match> Matches = new List<Match> {
-            new Match { MatchId = 1 }
+        var matches = new List<Match> {
+            new() { MatchId = 1 }
         };
 
-        MoreScores FakedScore = new MoreScores
+        var fakedScore = new MoreScores
         {
             HalfTimeScore = new Score("1", "2"),
             FinalScore = new Score("3", "4")
         };
 
-        List<ResultDetail> ResultDetail = new List<ResultDetail>();
+        var resultDetail = new List<ResultDetail>();
 
-        List<Match> ExpectedMatches = new List<Match>
+        var expectedMatches = new List<Match>
         {
-            new Match { MatchId = 1, MoreScores = FakedScore, RefDataService = refDataService }
+            new() { MatchId = 1, MoreScores = fakedScore, RefDataService = refDataService }
         };
 
-        scoreService.ScoreLoader(Arg.Any<List<ResultDetail>>(), Arg.Any<List<string>>()).Returns(FakedScore);
+        scoreService.ScoreLoader(Arg.Any<List<ResultDetail>>(), Arg.Any<List<string>>()).Returns(fakedScore);
 
         // Act
-        var actualMatches = service.CricketResultDetail(Matches, ResultDetail);
+        var actualMatches = service.CricketResultDetail(matches, resultDetail);
 
         // Assert
-        Assert.Equal(JsonConvert.SerializeObject(ExpectedMatches), JsonConvert.SerializeObject(actualMatches));
+        Assert.Equal(JsonConvert.SerializeObject(expectedMatches), JsonConvert.SerializeObject(actualMatches));
     }
 }

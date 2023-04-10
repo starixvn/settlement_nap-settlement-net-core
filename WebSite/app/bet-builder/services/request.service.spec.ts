@@ -9,8 +9,8 @@ import { AutoSettingLeagueQuery, AutoSettingMatchQuery, Result } from '../../sha
 describe('Bet Builder - RequestService', () => {
     let service: RequestService;
     let httpRequestService: HttpRequestService;
-    const Url = 'api/bet-builder';
-    const urlApiSetting = 'api/setting';
+    const Url = '/api/bet-builder';
+    const urlApiSetting = '/api/setting';
     beforeEach(() => TestBed.configureTestingModule({
         providers: [
             RequestService,

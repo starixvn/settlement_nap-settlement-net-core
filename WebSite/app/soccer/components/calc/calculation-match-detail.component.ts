@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import * as _ from "lodash";
 import { MessageBoxService } from "../../../shared/services";
-import { Language } from "../../../shared/language";
+import { Language } from "../../../shared/language.native";
 import { MatchDetail } from "./models/match.model";
 import { GoalIconService } from "./services/goal-icon.service";
 import { GoalRecordWithOutSemicolonService } from "./services/goal-record-with-out-semicolon.service";

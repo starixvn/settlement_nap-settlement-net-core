@@ -1,9 +1,8 @@
-﻿using NSubstitute;
-using Settlement.Core.Models;
-using Settlement.Core.Services;
-using Xunit;
+﻿using Settlement.Core.Models;
 
 namespace Settlement.Sportsbook.Soccer.UnitTests.Services;
+
+using Core.Services.SpecificService;
 
 public class FirstGoalLastGoalServiceTests
 {
@@ -174,7 +173,7 @@ public class FirstGoalLastGoalServiceTests
     public void CreateGoalIconModelOnBetStatus_BetStatusWithHomeHasBothFirstAndLastGoal_ReturnsHomeIsFirstLastGoal()
     {
         // Arrange
-        var betStatus = "1-1";
+        const string betStatus = "1-1";
 
         // Act
         var goalModel = service.CreateGoalIconModelOnBetStatus(betStatus);
@@ -187,7 +186,7 @@ public class FirstGoalLastGoalServiceTests
     public void CreateGoalIconModelOnBetStatus_BetStatusWithHomeHasFirstGoalOnly_ReturnsHomeIsFirstGoal()
     {
         // Arrange
-        var betStatus = "1-2";
+        const string betStatus = "1-2";
 
         // Act
         var goalModel = service.CreateGoalIconModelOnBetStatus(betStatus);
@@ -200,7 +199,7 @@ public class FirstGoalLastGoalServiceTests
     public void CreateGoalIconModelOnBetStatus_BetStatusWithHomeHasLastGoalOnly_ReturnsHomeIsLastGoal()
     {
         // Arrange
-        var betStatus = "2-1";
+        const string betStatus = "2-1";
 
         // Act
         var goalModel = service.CreateGoalIconModelOnBetStatus(betStatus);
@@ -213,7 +212,7 @@ public class FirstGoalLastGoalServiceTests
     public void CreateGoalIconModelOnBetStatus_BetStatusWithAwayHasBothFirstAndLastGoal_ReturnsAwayIsFirstLastGoal()
     {
         // Arrange
-        var betStatus = "2-2";
+        const string betStatus = "2-2";
 
         // Act
         var goalModel = service.CreateGoalIconModelOnBetStatus(betStatus);
@@ -226,7 +225,7 @@ public class FirstGoalLastGoalServiceTests
     public void CreateGoalIconModelOnBetStatus_BetStatusWithAwayHasFirstGoalOnly_ReturnsAwayIsFirstGoal()
     {
         // Arrange
-        var betStatus = "2-1";
+        const string betStatus = "2-1";
 
         // Act
         var goalModel = service.CreateGoalIconModelOnBetStatus(betStatus);
@@ -239,7 +238,7 @@ public class FirstGoalLastGoalServiceTests
     public void CreateGoalIconModelOnBetStatus_BetStatusWithAwayHasLastGoalOnly_ReturnsAwayIsLastGoal()
     {
         // Arrange
-        var betStatus = "1-2";
+        const string betStatus = "1-2";
 
         // Act
         var goalModel = service.CreateGoalIconModelOnBetStatus(betStatus);
@@ -252,7 +251,7 @@ public class FirstGoalLastGoalServiceTests
     public void CreateGoalIconModelOnBetStatus_BetStatusHasNoFirstAndLastGoal_ReturnsHomeIsNull()
     {
         // Arrange
-        var betStatus = "0-0";
+        const string betStatus = "0-0";
 
         // Act
         var goalModel = service.CreateGoalIconModelOnBetStatus(betStatus);
@@ -265,7 +264,7 @@ public class FirstGoalLastGoalServiceTests
     public void CreateGoalIconModelOnBetStatus_BetStatusHasNoFirstAndLastGoal_ReturnsAwayIsNull()
     {
         // Arrange
-        var betStatus = "0-0";
+        const string betStatus = "0-0";
 
         // Act
         var goalModel = service.CreateGoalIconModelOnBetStatus(betStatus);
@@ -278,7 +277,7 @@ public class FirstGoalLastGoalServiceTests
     public void CreateGoalIconModelOnBetStatus_BetStatusHasLastGoalWithNoValueAndFirstGoalIsHome_ReturnsHomeIsHalfTimeFirstGoal()
     {
         // Arrange
-        var betStatus = "1-0";
+        const string betStatus = "1-0";
 
         // Act
         var goalModel = service.CreateGoalIconModelOnBetStatus(betStatus);
@@ -291,7 +290,7 @@ public class FirstGoalLastGoalServiceTests
     public void CreateGoalIconModelOnBetStatus_BetStatusHasLastGoalWithNoValueAndFirstGoalIsHome_ReturnsAwayIsNull()
     {
         // Arrange
-        var betStatus = "1-0";
+        const string betStatus = "1-0";
 
         // Act
         var goalModel = service.CreateGoalIconModelOnBetStatus(betStatus);
@@ -304,7 +303,7 @@ public class FirstGoalLastGoalServiceTests
     public void CreateGoalIconModelOnBetStatus_BetStatusHasFirstGoalWithNoValueAndLastGoalIsAway_ReturnsHomeIsNull()
     {
         // Arrange
-        var betStatus = "2-0";
+        const string betStatus = "2-0";
 
         // Act
         var goalModel = service.CreateGoalIconModelOnBetStatus(betStatus);
@@ -317,7 +316,7 @@ public class FirstGoalLastGoalServiceTests
     public void CreateGoalIconModelOnBetStatus_BetStatusHasLastGoalWithNoValueAndFirstGoalIsAway_ReturnsAwayIsHalfTimeFirstGoal()
     {
         // Arrange
-        var betStatus = "2-0";
+        const string betStatus = "2-0";
 
         // Act
         var goalModel = service.CreateGoalIconModelOnBetStatus(betStatus);

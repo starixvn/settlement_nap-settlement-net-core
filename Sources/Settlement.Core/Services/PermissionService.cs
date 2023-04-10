@@ -3,10 +3,11 @@ using Fanex.NAP.Client.Configuration;
 using Fanex.NAP.Client.Helpers.Web;
 using Fanex.NAP.Client.Services;
 using Fanex.NAP.Core.Business;
-using Settlement.Core.Configuration;
 using Settlement.Core.Models;
 
 namespace Settlement.Core.Services;
+
+using Configurations;
 
 public abstract class PermissionService
 {
@@ -28,9 +29,7 @@ public abstract class PermissionService
 
     public abstract Permission Permission { get; }
 
-    public virtual bool ReadPermission { get; }
-
-    public virtual bool HasPermission(string functionKey, Constant.Policy policy)
+    protected virtual bool HasPermission(string functionKey, Constant.Policy policy)
     {
         return session.UserId > 0 && userService.IsHavingPermission(
             session.UserId,
@@ -56,21 +55,20 @@ public class PermissionServiceImp : PermissionService
     {
     }
 
-    public override Permission Permission => new Permission
+    public override Permission Permission => new()
     {
         CanCalculate = HasPermission(SettlementFunctionKeys.SportsbookCalculate, Constant.Policy.Host),
         CanMarkPending = HasPermission(SettlementFunctionKeys.SportsbookMarkPendingMatch, Constant.Policy.Host),
-        CanMarkUnDecided = HasPermission(SettlementFunctionKeys.SportsbookMarkUndecideMatch, Constant.Policy.Host),
+        CanMarkUnDecided = HasPermission(SettlementFunctionKeys.SportsbookMarkUndecidedMatch, Constant.Policy.Host),
         CanUncalculate = HasPermission(SettlementFunctionKeys.SportsbookUncalculate, Constant.Policy.Host),
         CanUncalculateInstant = HasPermission(SettlementFunctionKeys.SportsbookUncalculateInstant, Constant.Policy.Host),
         CanRefund = HasPermission(SettlementFunctionKeys.SportsbookRefund, Constant.Policy.Host),
-        CanCalculateMp = HasPermission(SettlementFunctionKeys.SportsbookCalculateMixParlay, Constant.Policy.Host),
         CanViewSettlementLog = HasPermission(SettlementFunctionKeys.ViewLogSettlement, Constant.Policy.Read),
         CanAutoPayout = HasPermission(SettlementFunctionKeys.AutoPayoutSetting, Constant.Policy.Host),
         IsLeader = HasPermission(SettlementFunctionKeys.LeaderCalculate, Constant.Policy.Host),
         CanChangeScoreSource = HasPermission(SettlementFunctionKeys.ScoreSource, Constant.Policy.Host),
         CanMoveTickets = HasPermission(SettlementFunctionKeys.CricketMoveTickets, Constant.Policy.Host),
         IsTrader = HasPermission(SettlementFunctionKeys.TraderSaveScore, Constant.Policy.Host),
-        AutoSettlement = HasPermission(SettlementFunctionKeys.AutoSettlement, Constant.Policy.Host),
+        AutoSettlement = HasPermission(SettlementFunctionKeys.AutoSettlement, Constant.Policy.Host)
     };
 }

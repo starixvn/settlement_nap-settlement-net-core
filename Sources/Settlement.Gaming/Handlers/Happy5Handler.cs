@@ -1,8 +1,5 @@
 ﻿using MediatR;
 using Settlement.Gaming.Services.Happy5;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Threading;
 using Settlement.Gaming.Models;
 using Settlement.Gaming.Requests;
 using Settlement.Gaming.Models.Happy5;

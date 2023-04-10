@@ -1,14 +1,12 @@
-﻿using NSubstitute;
-using Settlement.Sportsbook.Soccer.GetMatch.Services;
-using Settlement.Sportsbook.Soccer.Requests;
+﻿using Settlement.Sportsbook.Soccer.Requests;
 using Settlement.Sportsbook.Soccer.Services;
-using Xunit;
 
 namespace Settlement.Sportsbook.Soccer.UnitTests.Services;
 
+using Soccer.Services.GetMatch;
+
 public class SoccerBetStatusServiceTests
 {
-    private readonly IMatchService matchService;
     private readonly IValidationService validationService;
     private readonly IBetStatusAllService betStatusAllService;
     private readonly Soccer.Services.FullTimeBetStatus.IBetStatusService fullTimeBetStatusService;
@@ -18,7 +16,7 @@ public class SoccerBetStatusServiceTests
 
     public SoccerBetStatusServiceTests()
     {
-        matchService = Substitute.For<IMatchService>();
+        var matchService = Substitute.For<IMatchService>();
         validationService = Substitute.For<IValidationService>();
         betStatusAllService = Substitute.For<IBetStatusAllService>();
         fullTimeBetStatusService = Substitute.For<Soccer.Services.FullTimeBetStatus.IBetStatusService>();

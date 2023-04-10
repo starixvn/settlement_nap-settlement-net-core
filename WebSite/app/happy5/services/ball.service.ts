@@ -2,7 +2,7 @@
 import * as _ from 'lodash';
 import { Ball, MatchDetail } from '../models';
 import { MatchStatus } from '../../shared/constants';
-import { Language } from '../../shared/language';
+import { Language } from '../../shared/language.native';
 
 @Injectable()
 export class BallService {

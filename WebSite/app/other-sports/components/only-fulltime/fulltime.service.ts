@@ -18,7 +18,7 @@ export class FullTimeService {
         type, isReSettledTickets, matchDetail.betStatus,
         matchDetail.finalHomeScore, matchDetail.finalAwayScore, refResultStatus);
 
-        const result = await this.requestService.calculate(query).toPromise() as Result;
+        const result = await this.requestService.sendRequest(query);
         return this.getMessage(matchDetail.matchId, result);
     }
 
@@ -26,18 +26,8 @@ export class FullTimeService {
         const query = new RequestSettle(matchDetail.matchId,
         CalculateAction.refund, false, "",
         matchDetail.finalHomeScore, matchDetail.finalAwayScore);
-        const result = await this.requestService.refund(query).toPromise() as Result;
+        const result = await this.requestService.sendRequest(query);
         return this.getMessage(matchDetail.matchId, result);
-    }
-
-    public async refundParlay(matchId: number) {
-        const paramsRefundParlay = {
-            matchId,
-            action: CalculateAction.refund,
-            settleAbandonedMatchIbcParlay: 0,
-        };
-        const result = await this.requestService.refundParlay(paramsRefundParlay) .toPromise() as Result;
-        return this.getMessage(matchId, result);
     }
 
     private getMessage(matchId: number, result: Result){

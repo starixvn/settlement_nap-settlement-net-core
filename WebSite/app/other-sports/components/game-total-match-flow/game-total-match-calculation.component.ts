@@ -4,7 +4,7 @@ import { KickOffTime, ResourcesIds } from '../../constants';
 import { Match, MatchDetail, OtherSportsMatch, Permission, QueryMatch, RequestSettleWithInterval } from '../../models';
 import { RequestService } from '../../services/request.service';
 import { CalculateAction, MatchStatus } from '../../../shared/constants';
-import { Language } from '../../../shared/language';
+import { Language } from '../../../shared/language.native';
 import { ModalDialogMessage, Result } from '../../../shared/models';
 import { HedgeMatchDetail, ResultDetail, SportTemplate } from '../../../shared/models/sportsbook-sop';
 import { MessageBoxService } from '../../../shared/services';
@@ -44,7 +44,7 @@ export class GameTotalMatchCalculationComponent implements SportTemplate {
 
   async getMatch(matchId: number) {
     const query = new QueryMatch(matchId, false);
-    const otherSportsMatch = await this.requestService.getMatch(query).toPromise() as OtherSportsMatch;
+    const otherSportsMatch = await this.requestService.getMatch(query);
     this.match = otherSportsMatch.match;
     this.permission = otherSportsMatch.permission;
     this.matchDetail = this.match.matchDetail;
@@ -203,7 +203,7 @@ export class GameTotalMatchCalculationComponent implements SportTemplate {
       this.confirmCalculation();
     } else {
       const result = await this.verificationService.verifyChangedSettledTickets(this.matchDetail.matchId,
-        this.resultDetailsInAction, this.isScoreDirect).toPromise();
+        this.resultDetailsInAction, this.isScoreDirect);
       if (result) {
         this.confirmDialogMessage.message = Language.recalculateNotification;
         this.messageBoxService.confirm(this.confirmDialogMessage, () => {
@@ -230,7 +230,7 @@ export class GameTotalMatchCalculationComponent implements SportTemplate {
     const settleQuery = new RequestSettleWithInterval(this.matchDetail, this.resultDetailsInAction, type,
       this.isReSettledTickets, this.isScoreDirect, hedgeMatchId, this.refResultStatus);
 
-    const result = await this.requestService.calculate(settleQuery).toPromise() as Result;
+    const result = await this.requestService.sendRequest(settleQuery);
     if (result.isSuccessful) {
       this.messageBoxService.closePopup();
     } else {

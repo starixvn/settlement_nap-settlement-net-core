@@ -1,7 +1,7 @@
-﻿using Settlement.Core.Models;
-using Match = Settlement.EventManagement.Models.MultiSports.Match;
+﻿namespace Settlement.EventManagement.Services.MultiSports;
 
-namespace Settlement.EventManagement.Services.MultiSports;
+using Settlement.Core.Models;
+using Match = Settlement.EventManagement.Models.MultiSports.Match;
 
 public interface IExternalScoreService
 {
@@ -15,12 +15,12 @@ public class ExternalScoreServiceImp : IExternalScoreService
     public void LoadExternalResultForVolleyball(Match match, List<ResultDetail> resultDetails)
     {
         var internalResultDetails = resultDetails.Where(m => m.MatchId == match.MatchId && m.SourceId == SourceType.Normal).ToList();
-        var externalResultDetails = GetSBOResults(match.MatchId, resultDetails);
+        var externalResultDetails = GetSboResults(match.MatchId, resultDetails);
         SetExternalFullTime(match, externalResultDetails);
-        if (match.ExFTResult != null)
+        if (match.ExFtResult != null)
         {
-            var result = internalResultDetails.Find(r => r.ResourceId == match.ExFTResult.ResourceId);
-            if (ConsistentResultDetail(result, match.ExFTResult))
+            var result = internalResultDetails.Find(r => r.ResourceId == match.ExFtResult.ResourceId);
+            if (ConsistentResultDetail(result, match.ExFtResult))
             {
                 match.IsNotConsistentExFtScore = !string.Equals(match.SuspenderFullTime, "-") || ExistResult(result);
             }
@@ -29,11 +29,11 @@ public class ExternalScoreServiceImp : IExternalScoreService
 
     public void LoadExternalResultForOtherSports(Match match, List<ResultDetail> resultDetails, bool includeHalfTime)
     {
-        var externalResultDetails = GetSBOResults(match.MatchId, resultDetails);
+        var externalResultDetails = GetSboResults(match.MatchId, resultDetails);
         if (includeHalfTime)
         {
             SetExternalResult(match, externalResultDetails);
-            if (match.ExHTResult != null && ConsistentMatchScore(match.HalfTimeHomeScore, match.HalfTimeAwayScore, match.ExHTResult))
+            if (match.ExHtResult != null && ConsistentMatchScore(match.HalfTimeHomeScore, match.HalfTimeAwayScore, match.ExHtResult))
             {
                 match.IsNotConsistentExHtScore = !string.Equals(match.SuspenderHalfTime, "-") || ExistMatchScore(match.HalfTimeHomeScore, match.HalfTimeAwayScore);
             }
@@ -43,7 +43,7 @@ public class ExternalScoreServiceImp : IExternalScoreService
             SetExternalFullTime(match, externalResultDetails);
         }
 
-        if (match.ExFTResult != null && ConsistentMatchScore(match.FinalHomeScore, match.FinalAwayScore, match.ExFTResult))
+        if (match.ExFtResult != null && ConsistentMatchScore(match.FinalHomeScore, match.FinalAwayScore, match.ExFtResult))
         {
             match.IsNotConsistentExFtScore = !string.Equals(match.SuspenderFullTime, "-") || ExistMatchScore(match.FinalHomeScore, match.FinalAwayScore);
         }
@@ -60,7 +60,7 @@ public class ExternalScoreServiceImp : IExternalScoreService
         var halfTimeResult = externalResultDetails.Find(result => result.ResourceId == ResourceType.Halftime);
         if (halfTimeResult != null && !string.IsNullOrEmpty(halfTimeResult.AwayValue) && !string.IsNullOrEmpty(halfTimeResult.HomeValue))
         {
-            match.ExHTResult = halfTimeResult;
+            match.ExHtResult = halfTimeResult;
         }
     }
 
@@ -69,7 +69,7 @@ public class ExternalScoreServiceImp : IExternalScoreService
         var fullTimeResult = externalResultDetails.Find(result => result.ResourceId == ResourceType.Final);
         if (fullTimeResult != null && !string.IsNullOrEmpty(fullTimeResult.AwayValue) && !string.IsNullOrEmpty(fullTimeResult.HomeValue))
         {
-            match.ExFTResult = fullTimeResult;
+            match.ExFtResult = fullTimeResult;
         }
     }
 
@@ -86,7 +86,7 @@ public class ExternalScoreServiceImp : IExternalScoreService
     private static bool ExistMatchScore(int? homeValue, int? awayValue) =>
         homeValue != null && awayValue != null;
 
-    private static List<ResultDetail> GetSBOResults(int matchId, List<ResultDetail> resultDetails)
+    private static List<ResultDetail> GetSboResults(int matchId, List<ResultDetail> resultDetails)
     {
         return resultDetails.Where(m => m.MatchId == matchId && m.SourceId != SourceType.Normal
                                         && !string.IsNullOrWhiteSpace(m.AwayValue)

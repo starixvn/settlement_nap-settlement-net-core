@@ -1,12 +1,12 @@
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
+import { CdkDragDrop, moveItemInArray, DragDropModule } from '@angular/cdk/drag-drop';
 import { ProviderSource, Game, UpdateProviderQuery, GetProviderQuery } from '../models';
-import { MessageBoxService } from '../../shared/services';
+import { BlockUIService, HttpRequestService, MessageBoxService } from '../../shared/services';
 import { ModalDialogMessage, Result } from '../../shared/models';
 import { QueryService } from '../services';
-import { Language } from '../../shared/language';
+import { Language } from '../../shared/language.native';
 import * as _ from 'lodash';
 import { DefaultGames } from '../constants/default-games';
 
@@ -14,7 +14,8 @@ import { DefaultGames } from '../constants/default-games';
     selector: 'provider-source',
     templateUrl: './provider-source.component.html',
     standalone: true,
-    imports: [CommonModule, FormsModule]
+    imports: [CommonModule, FormsModule, DragDropModule],
+    providers: [MessageBoxService, QueryService, HttpRequestService,BlockUIService  ]
   })
 export class ProviderSourceComponent implements OnInit {
   public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();

@@ -79,31 +79,21 @@ export class GameTotalMatchService {
             && !_.isEqual(result.resourceId, ResourcesIds.totalSets));
     }
 
-    public async refund(matchId: number, hedgeMatchId: number, totalSets: ResultDetail) {
+    public async refund(matchDetail: MatchDetail, hedgeMatchId: number, totalSets: ResultDetail) {
         const params = {
-            matchId,
+            matchId: matchDetail.matchId,
             action: CalculateAction.refund,
             hedgeMatchId,
             finalHomeScore: Number(totalSets.homeValue),
             finalAwayScore: Number(totalSets.awayValue),
+            sportType: matchDetail.sportType
         };
 
-        const result = await this.requestService.refund(params).toPromise() as Result;
-        return this.getMessage(matchId, result);
+        const result = await this.requestService.sendRequest(params);
+        return this.getMessage(result);
     }
 
-    public async refundParlay(matchId: number, hedgeMatchId: number) {
-        const params = {
-            matchId,
-            action: CalculateAction.refund,
-            hedgeMatchId,
-        };
-
-        const result = await this.requestService.refundParlay(params) .toPromise() as Result;
-        return this.getMessage(matchId, result);
-    }
-
-    private getMessage(matchId: number, result: Result){
+    private getMessage(result: Result){
         if (result.isSuccessful) {
             this.messageBoxService.closePopup();
             return "";

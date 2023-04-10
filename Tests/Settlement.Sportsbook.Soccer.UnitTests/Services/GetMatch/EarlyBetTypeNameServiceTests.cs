@@ -1,10 +1,9 @@
-﻿using NSubstitute;
-using Settlement.Core.Services;
-using Settlement.Sportsbook.Soccer.GetMatch.Services;
-using Xunit;
+﻿using Settlement.Core.Services;
 using static Settlement.Core.Constants.BetType;
 
 namespace Settlement.Sportsbook.Soccer.UnitTests.Services.GetMatch;
+
+using Soccer.Services.GetMatch;
 
 public class EarlyBetTypeNameServiceTests
 {
@@ -73,7 +72,7 @@ public class EarlyBetTypeNameServiceTests
     [Fact]
     public void GetBetTypeName_CallRefDataService_BetTypeNotInCases()
     {
-        var betType = 999;
+        const int betType = 999;
         service.GetBetTypeName(betType, "");
 
         refDataService.Received().GetBetTypeName(betType);

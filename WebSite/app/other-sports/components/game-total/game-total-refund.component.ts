@@ -2,8 +2,8 @@ import { Component, ViewChild } from '@angular/core';
 import { AioService, MessageBoxService } from '../../../shared/services';
 import { CalculateAction } from '../../../shared/constants';
 import { ScorePipe } from '../../pipes';
-import { Language } from '../../../shared/language';
-import { MarkedTicketsModel, ModalDialogMessage, Result } from '../../../shared/models';
+import { Language } from '../../../shared/language.native';
+import { ModalDialogMessage} from '../../../shared/models';
 import { GameTotalService } from './game-total.service';
 import { HedgeMatchDetail, MatchDetail, Permission, ResultDetail, SportTemplate } from '../../../shared/models/sportsbook-sop';
 import { MatchAio, SettleQuery } from '../../models';
@@ -40,7 +40,7 @@ export class GameTotalRefundComponent implements SportTemplate {
       apikey: ApiKeys.NormalMatch,
       settleType: "MNL"
     };
-    this.match = await this.aioService.getMatch(matchQuery).toPromise() as MatchAio;
+    this.match = await this.aioService.getMatch(matchQuery) as MatchAio;
     this.mapValue();
   }
 
@@ -62,10 +62,9 @@ export class GameTotalRefundComponent implements SportTemplate {
     this.toastrService.clear();
     const paramsCheckingMarkedTickets = {
       matchId: this.match.matchDetail.matchId,
-      selectedResources: this.match.resultDetails,
-      isMergedParlay: true,
+      selectedResources: this.match.resultDetails
     };
-    const response = await this.aioService.checkMarkedTickets(paramsCheckingMarkedTickets).toPromise() as MarkedTicketsModel;
+    const response = await this.aioService.checkMarkedTickets(paramsCheckingMarkedTickets);
     if (response.isExistMarkedTicket) {
       this.toastrService.error(Language.MarkedTicket);
     } else {
@@ -86,7 +85,7 @@ export class GameTotalRefundComponent implements SportTemplate {
     const settleQuery = new SettleQuery(matchId, resultDetailList, CalculateAction.refund,
       isReSettledTickets, isScoreDirect, this.matchDetail.betStatus);
 
-    const result = await this.aioService.push(settleQuery).toPromise() as Result;
+    const result = await this.aioService.push(settleQuery);
     if (result.errCode === 0) {
       this.hedgeMatch(settleQuery);
     } else {
@@ -99,7 +98,7 @@ export class GameTotalRefundComponent implements SportTemplate {
     const hedgeMatchId = this.applyHedgeMatch ? this.hedgeMatchDetail.matchId : 0;
     if (hedgeMatchId > 0) {
       query.matchId = hedgeMatchId;
-      this.aioService.push(query).toPromise().then(() => {
+      this.aioService.push(query).then(() => {
         this.messageBoxService.closePopup();
       });
     } else {

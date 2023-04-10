@@ -5,7 +5,7 @@ import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/materia
 import { LeagueOutsideSource, UpdateLeagueSourceQuery, OutsideSource } from '../models';
 import { CdkDragDrop, moveItemInArray, DragDropModule } from '@angular/cdk/drag-drop';
 import { ModalDialogMessage, Result } from '../../shared/models';
-import { Language } from '../../shared/language';
+import { Language } from '../../shared/language.native';
 import { MessageBoxService, HttpRequestService, BlockUIService } from '../../shared/services';
 import { QueryService } from '../services';
 import * as _ from 'lodash';

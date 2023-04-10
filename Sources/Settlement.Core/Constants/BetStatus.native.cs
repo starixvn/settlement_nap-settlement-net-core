@@ -2,10 +2,9 @@
 
 public static class BetStatus
 {
-    public const string RefundHT = "Refund HT";
+    public const string RefundHt = "Refund HT";
 
-    public const string RefundFT = "Refund FT";
+    public const string RefundFt = "Refund FT";
 
     public const string Refund = "Refund";
-        
 }

@@ -1,11 +1,6 @@
 ﻿using Settlement.Core.Models;
 using Settlement.FastMarkets.Models;
 using Settlement.FastMarkets.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Settlement.FastMarkets.UnitTests.Services;
 
@@ -47,7 +42,7 @@ public class MergeDataServiceTests
         var data = new List<(List<FastMarketResult>, TicketCounts)>
         {
             (fmResult, new TicketCounts()),
-            (fmResultSecond, new TicketCounts()),
+            (fmResultSecond, new TicketCounts())
         };
 
         var result = service.MergeFastMarketTicketDetail(data);
@@ -78,7 +73,7 @@ public class MergeDataServiceTests
         var data = new List<(List<FastMarketResult>, TicketCounts)>
         {
             (new List<FastMarketResult>(), ticketCount),
-            (new List<FastMarketResult>(), ticketCountSecond),
+            (new List<FastMarketResult>(), ticketCountSecond)
         };
 
         var result = service.MergeFastMarketTicketDetail(data);

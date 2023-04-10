@@ -4,7 +4,7 @@ import { MatchDetail, Permission, RequestSettle } from "../../models";
 import { RequestService } from "../../services/request.service";
 import { BlockUIService, HttpRequestService, MessageBoxService } from "../../../shared/services";
 import { OtherService } from "./other.service";
-import { Language } from "../../../shared/language";
+import { Language } from "../../../shared/language.native";
 import { HedgeMatchDetail } from "../../../shared/models/sportsbook-sop";
 import { Result } from "../../../shared/models";
 import { of } from "rxjs";

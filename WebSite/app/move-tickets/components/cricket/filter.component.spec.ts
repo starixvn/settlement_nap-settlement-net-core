@@ -27,7 +27,7 @@ import {
 import { of } from 'rxjs';
 import { MaterialModule } from '../../../shared/material-module';
 import { SportType } from '../../../shared/constants';
-import { Language } from '../../../shared/language';
+import { Language } from '../../../shared/language.native';
 
 describe('FilterComponent', () => {
     let component: FilterComponent;

@@ -1,11 +1,8 @@
-﻿using System.Collections.Generic;
-
-namespace Settlement.Core.Constants;
+﻿namespace Settlement.Core.Constants;
 
 public static class BetType
 {
-
-    public static Dictionary<int, string> CricketBetTypeNames => new Dictionary<int, string>
+    public static Dictionary<int, string> CricketBetTypeNames => new()
     {
         {9400, "Super Over Winner" },
         {9401, "Toss Winner" },
@@ -65,9 +62,8 @@ public static class BetType
         {9730, "{0} Inns Player Sixes" },
         {9731, "{0} Inns Player Sixes" },
         {9736, "{0} Inns Player Fours" },
-        {9737, "{0} Inns Player Fours" },
+        {9737, "{0} Inns Player Fours" }
     };
-
 
     public static class ESportBetType
     {
@@ -163,9 +159,8 @@ public static class BetType
 
         public const int MapLaneWithMostTurretsDestroyed = 9141;
 
-        public const int MapFirstTurretLocationKOG = 9142;
+        public const int MapFirstTurretLocationKog = 9142;
     }
-
 
     public static class BadmintonBetType
     {
@@ -174,25 +169,25 @@ public static class BetType
 
     public static class FastMarketBetType
     {
-
         public const int NextOneMinuteSetPiece = 225;
 
         public const int TimeMachineOverUnder = 228;
 
         public const int TimeMachineHandicap = 229;
-
     }
-        
+
     #region Volleyball bet types
-    public static Dictionary<int, string> VolleyballBetTypeNames => new Dictionary<int, string>
+
+    public static Dictionary<int, string> VolleyballBetTypeNames => new()
     {
         {3901, "First Serve" },
         {3914, "Will there be a 5th Set?" },
         {3903, "Set {0} Race to {1} Points" },
         {3909, "Set {0} Point {1} Winner" },
-        {3915, "Set {0} {1} Points Played" },
+        {3915, "Set {0} {1} Points Played" }
     };
-    #endregion
+
+    #endregion Volleyball bet types
 
     public static class SoccerBetType
     {
@@ -227,7 +222,5 @@ public static class BetType
         public const int AwayPenaltyShootoutOverUnder = 386;
 
         public const int PenaltyShootoutCombo = 376;
-
     }
-
 }

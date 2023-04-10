@@ -5,7 +5,7 @@ import { PenaltyShootoutService } from './penalty-shootout.service';
 import { VerifyRefundService } from './verify-refund.service';
 import { VerifyService } from './verify.service';
 import * as _ from 'lodash';
-import { Language } from '../../../../shared/language';
+import { Language } from '../../../../shared/language.native';
 @Injectable()
 export class VerifyCalculateService {
     constructor(

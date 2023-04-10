@@ -66,14 +66,14 @@ public class BetBuilderMatchesServiceImp : BetBuilderMatchesService
         });
 
         var leagues = betBuilderService.CreateLeagues(matches);
-        var sportbook = leagues.GroupBy(item => new { item.SportType, item.SportName }).Select(item => new SportModel
+        var sportsbook = leagues.GroupBy(item => new { item.SportType, item.SportName }).Select(item => new SportModel
         {
             Id = item.Key.SportType,
             Name = item.Key.SportName,
             Leagues = item.OrderBy(league => league.LeagueName).ToList()
         }).ToList();
 
-        return sportbook;
+        return sportsbook;
     }
 
     public async Task<List<MatchDetailModel>> RefreshMatches(MatchesWaitingRequest request)
@@ -124,7 +124,7 @@ public class BetBuilderMatchesServiceImp : BetBuilderMatchesService
     {
         const int allStatus = 3;
         var listStatus = request.Status.Split(',').ToList();
-        if (listStatus.Count == 0 || listStatus.Count == allStatus || !string.IsNullOrEmpty(request.MatchCode))
+        if (listStatus.Count is 0 or allStatus || !string.IsNullOrEmpty(request.MatchCode))
         {
             return matches;
         }

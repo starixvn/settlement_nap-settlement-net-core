@@ -2,6 +2,8 @@
 
 namespace Settlement.Sportsbook.MoveTickets.UnitTests.Services.MultipleServer;
 
+using MoveTickets.Services.MultipleServer;
+
 public class CompareMatchServiceTests
 {
     private readonly CompareMatchService service;
@@ -12,14 +14,11 @@ public class CompareMatchServiceTests
     }
 
     [Theory]
-    [InlineData(true, false, false, false, 1)]
-    [InlineData(false, true, false, false, 1)]
-    [InlineData(false, false, true, false, 1)]
-    [InlineData(false, false, false, true, 1)]
-    [InlineData(false, false, false, false, 2)]
+    [InlineData(true, false, 1)]
+    [InlineData(false, true, 1)]
+    [InlineData(false, false, 2)]
     public void GetDifferentMatchSiteInfo_ExistMatchDifferentTicketInfo_ReturnSiteMatch(bool isExistRunningTicket,
-        bool isExistRunningTicketParlay,
-        bool isExistMarkedTicket, bool isExistMarkedTicketParlay, int isCalculatingSingle)
+        bool isExistMarkedTicket, int isCalculatingSingle)
     {
         var match = new Match
         {
@@ -29,9 +28,7 @@ public class CompareMatchServiceTests
         var siteMatch = new Match
         {
             IsExistRunningTicket = isExistRunningTicket,
-            IsExistRunningTicketParlay = isExistRunningTicketParlay,
             IsExistMarkedTicket = isExistMarkedTicket,
-            IsExistMarkedTicketParlay = isExistMarkedTicketParlay,
             IsCalculatingSingle = isCalculatingSingle
         };
 
@@ -60,10 +57,7 @@ public class CompareMatchServiceTests
         {
             IsExistEarlyBetTypes = isExistEarlyBetTypes,
             IsRunningEarlyBetTypes = isRunningEarlyBetTypes,
-            IsWaitingEarlyBetTypes = isWaitingEarlyBetTypes,
-            IsExistEarlyBettypesParlay = isExistEarlyBettypesParlay,
-            IsRunningEarlyBettypesParlay = isRunningEarlyBettypesParlay,
-            IsWaitingEarlyBettypesParlay = isWaitingEarlyBettypesParlay
+            IsWaitingEarlyBetTypes = isWaitingEarlyBetTypes
         };
 
         var result = service.GetDifferentMatchSiteInfo(match, new List<Match> { siteMatch });

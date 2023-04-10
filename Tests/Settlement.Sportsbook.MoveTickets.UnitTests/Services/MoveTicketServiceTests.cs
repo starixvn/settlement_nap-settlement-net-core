@@ -16,24 +16,27 @@ public class MoveTicketServiceTests
 {
     private readonly IDynamicRepository repository;
     private readonly IRefDataService refDataService;
-    private readonly IMapper mapper;
     private readonly IMatchService matchService;
-    private readonly IHttpContextAccessor accessor;
     private readonly IMoveTicketService service;
 
     public MoveTicketServiceTests()
     {
         repository = Substitute.For<IDynamicRepository>();
         refDataService = Substitute.For<IRefDataService>();
-        accessor = Substitute.For<IHttpContextAccessor>();
+        var accessor = Substitute.For<IHttpContextAccessor>();
         matchService = Substitute.For<IMatchService>();
-        var context = new DefaultHttpContext();
-        context.Connection.RemoteIpAddress = new System.Net.IPAddress(1);
+        var context = new DefaultHttpContext
+        {
+            Connection =
+            {
+                RemoteIpAddress = new System.Net.IPAddress(1)
+            }
+        };
         accessor.HttpContext = context;
         var mapperConfig = new MapperConfigurationExpression();
         mapperConfig.AddProfile<SportsbookMoveTicketAutoMapperProfile>();
         var config = new MapperConfiguration(mapperConfig);
-        mapper = new Mapper(config);
+        var mapper = new Mapper(config);
         var appSetting = new AppSettingsKey { SiteDbServer = new List<string> { "01", "02" } };
         var option = Options.Create(appSetting);
         service = new MoveTicketServiceImp(repository, refDataService, mapper, matchService, option);
@@ -48,7 +51,7 @@ public class MoveTicketServiceTests
             NewEventStatus = eventStatus,
             IsExistMarkedTicket = isMarkedTicket,
             RefDataService = refDataService,
-            ReferenceActions = new List<ReferenceAction>(),
+            ReferenceActions = new List<ReferenceAction>()
         };
     }
 
@@ -77,7 +80,7 @@ public class MoveTicketServiceTests
             CreateMatch(7, "Refund", false),
             CreateMatch(8, "Running", false),
             CreateMatch(9, "Postponed", false),
-            CreateMatch(10, "Internal", false),
+            CreateMatch(10, "Internal", false)
         };
 
         repository.FetchAsync<Match>(Arg.Any<ICriteria>()).Returns(fakeMatches);
@@ -100,7 +103,7 @@ public class MoveTicketServiceTests
             CreateMatch(2, "Completed", false),
             CreateMatch(6, "Refund HT", false),
             CreateMatch(5, "Refund FT", false),
-            CreateMatch(7, "Refund", false),
+            CreateMatch(7, "Refund", false)
         };
 
         expectedMatches[0].ReferenceActions.Add(referenceAction);
@@ -142,7 +145,7 @@ public class MoveTicketServiceTests
     {
         var listMatch = new List<ChildMatch>
         {
-            new ChildMatch {matchId = 1}
+            new() {MatchId = 1}
         };
 
         repository.FetchAsync<ChildMatch>(Arg.Any<ICriteria>()).Returns(listMatch);
@@ -157,7 +160,7 @@ public class MoveTicketServiceTests
     {
         var listMatch = new List<MoveTicketsMatchDetail>
         {
-            new MoveTicketsMatchDetail {MatchId = 1}
+            new() {MatchId = 1}
         };
 
         repository.FetchAsync<MoveTicketsMatchDetail>(Arg.Any<ICriteria>()).Returns(listMatch);

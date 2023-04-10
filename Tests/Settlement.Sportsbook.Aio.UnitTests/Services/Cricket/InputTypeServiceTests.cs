@@ -66,9 +66,9 @@ public class InputTypeServiceTests
     {
         var data = new List<InputOption>
         {
-            new InputOption { ResourceId = "96801001", OddsInfo = "10001,Test1", OptionName = "Test1"},
-            new InputOption { ResourceId = "96622001", OddsInfo = "10002,Test2", OptionName = "Test2"},
-            new InputOption { ResourceId = "96622001", OddsInfo = "10003,Test3", OptionName = "Test3"},
+            new() { ResourceId = "96801001", OddsInfo = "10001,Test1", OptionName = "Test1"},
+            new() { ResourceId = "96622001", OddsInfo = "10002,Test2", OptionName = "Test2"},
+            new() { ResourceId = "96622001", OddsInfo = "10003,Test3", OptionName = "Test3"}
         };
 
         return data;

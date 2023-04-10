@@ -1,7 +1,7 @@
-﻿using Settlement.Core.Models;
-using MultiSportMatch = Settlement.EventManagement.Models.MultiSports.Match;
+﻿namespace Settlement.EventManagement.Services.MultiSports;
 
-namespace Settlement.EventManagement.Services.MultiSports;
+using Settlement.Core.Models;
+using MultiSportMatch = Settlement.EventManagement.Models.MultiSports.Match;
 
 public interface CompareMatchService
 {
@@ -24,12 +24,7 @@ public class CompareMatchServiceImp : CompareMatchService
                 IsExistEarlyBetTypes = siteMatch.IsExistEarlyBetTypes,
                 IsRunningEarlyBetTypes = siteMatch.IsRunningEarlyBetTypes,
                 IsWaitingEarlyBetTypes = siteMatch.IsWaitingEarlyBetTypes,
-                IsExistMarkedTicketParlay = siteMatch.IsExistMarkedTicketParlay,
-                IsExistRunningTicketParlay = siteMatch.IsExistRunningTicketParlay,
                 IsExistsConfirmedEarly = siteMatch.IsExistsConfirmedEarly,
-                IsExistEarlyBettypesParlay = siteMatch.IsExistEarlyBettypesParlay,
-                IsRunningEarlyBettypesParlay = siteMatch.IsRunningEarlyBettypesParlay,
-                IsWaitingEarlyBettypesParlay = siteMatch.IsWaitingEarlyBettypesParlay,
             };
         }
 
@@ -38,27 +33,20 @@ public class CompareMatchServiceImp : CompareMatchService
 
     private static bool IsChangedOnTicket(MultiSportMatch match, MultiSportMatch siteMatch)
     {
-        var isExistRunning = match.IsExistRunningTicket != siteMatch.IsExistRunningTicket
-                        || match.IsExistRunningTicketParlay != siteMatch.IsExistRunningTicketParlay;
+        var isExistRunning = match.IsExistRunningTicket != siteMatch.IsExistRunningTicket;
 
-        var isExistMarked = match.IsExistMarkedTicket != siteMatch.IsExistMarkedTicket
-                    || match.IsExistMarkedTicketParlay != siteMatch.IsExistMarkedTicketParlay;
+        var isExistMarked = match.IsExistMarkedTicket != siteMatch.IsExistMarkedTicket;
 
         return match.IsCalculatingSingle != siteMatch.IsCalculatingSingle ||
                match.IsCalculatingMP != siteMatch.IsCalculatingMP
-                || isExistMarked
-                || isExistRunning;
+               || isExistMarked
+               || isExistRunning;
     }
 
     private static bool IsChangeOnSpecialBetType(MultiSportMatch match, MultiSportMatch siteMatch)
     {
-        var isExistEarly = match.IsExistEarlyBetTypes != siteMatch.IsExistEarlyBetTypes
-                            || match.IsRunningEarlyBetTypes != siteMatch.IsRunningEarlyBetTypes
-                            || match.IsWaitingEarlyBetTypes != siteMatch.IsWaitingEarlyBetTypes;
-        var isExistParlay = match.IsExistEarlyBettypesParlay != siteMatch.IsExistEarlyBettypesParlay
-                           || match.IsRunningEarlyBettypesParlay != siteMatch.IsRunningEarlyBettypesParlay
-                           || match.IsWaitingEarlyBettypesParlay != siteMatch.IsWaitingEarlyBettypesParlay;
-
-        return isExistEarly || isExistParlay;
+        return match.IsExistEarlyBetTypes != siteMatch.IsExistEarlyBetTypes
+               || match.IsRunningEarlyBetTypes != siteMatch.IsRunningEarlyBetTypes
+               || match.IsWaitingEarlyBetTypes != siteMatch.IsWaitingEarlyBetTypes;
     }
 }

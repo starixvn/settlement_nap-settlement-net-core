@@ -4,7 +4,7 @@ import { FullTimeVerificationService } from './fulltime-verification.service';
 import { HttpRequestService, BlockUIService, MessageBoxService } from '../../../shared/services';
 import { Match, MatchDetail} from '../../models';
 import { ModalDialogMessage } from '../../../shared/models';
-import { Language } from '../../../shared/language';
+import { Language } from '../../../shared/language.native';
 import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { ModalContentDialogComponent, ModalDialogComponent } from '../../../shared/components';
 import { of } from 'rxjs';

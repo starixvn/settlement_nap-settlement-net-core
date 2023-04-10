@@ -17,15 +17,15 @@ public class ScoreServiceTests
         service = new ScoreServiceImp(scoreSetService);
     }
 
-    private static List<ResultDetail> EmptyResultDetail => new List<ResultDetail>();
-    private static List<string> Resources => new List<string> { "00", "01" };
-    private readonly Permission permission = new Permission();
+    private static List<ResultDetail> EmptyResultDetail => new();
+    private static List<string> Resources => new() { "00", "01" };
+    private readonly Permission permission = new();
 
     [Fact]
     public void ScoreOfSets_EmptyResultDetail_ReturnsHyphenOnAllQuarter()
     {
         // Arrange
-        var expectedQuarter = new Score[2].Select(n => new Score("-")).ToArray();
+        var expectedQuarter = new Score[2].Select(_ => new Score("-")).ToArray();
 
         // Act
         var actualQuarter = service.ScoreOfSets(EmptyResultDetail, Resources, permission);
@@ -40,12 +40,12 @@ public class ScoreServiceTests
         // Arrange
         var resultDetail = new List<ResultDetail>
         {
-            new ResultDetail { MatchId = 1 , ResourceId = "00" },
-            new ResultDetail { MatchId = 1 , ResourceId = "01" }
+            new() { MatchId = 1 , ResourceId = "00" },
+            new() { MatchId = 1 , ResourceId = "01" }
         };
 
         var fakeQuarterScore = new Score("1", "2");
-        var expectedQuarter = new Score[2].Select(n => new Score("1", "2")).ToArray();
+        var expectedQuarter = new Score[2].Select(_ => new Score("1", "2")).ToArray();
 
         scoreSetService.GetScore(Arg.Any<ResultDetail>(), Arg.Any<Permission>()).Returns(fakeQuarterScore);
 
@@ -62,7 +62,7 @@ public class ScoreServiceTests
         // Arrange
         var resultDetail = new List<ResultDetail>
         {
-            new ResultDetail
+            new()
             {
                 ResourceId = "00",
                 SettlementStatusId = 1
@@ -83,14 +83,14 @@ public class ScoreServiceTests
         // Arrange
         var resultDetail = new List<ResultDetail>
         {
-            new ResultDetail
+            new()
             {
                 ResourceId = "0001",
                 HomeValue = "1",
                 AwayValue = "2",
                 SettlementStatusId = 0
             },
-            new ResultDetail
+            new()
             {
                 ResourceId = "0002",
                 HomeValue = "3",
@@ -113,14 +113,14 @@ public class ScoreServiceTests
         // Arrange
         var resultDetail = new List<ResultDetail>
         {
-            new ResultDetail
+            new()
             {
                 ResourceId = "0001",
                 HomeValue = "",
                 AwayValue = "",
                 SettlementStatusId = 0
             },
-            new ResultDetail
+            new()
             {
                 ResourceId = "0002",
                 HomeValue = "",
@@ -143,7 +143,7 @@ public class ScoreServiceTests
         // Arrange
         var resultDetail = new List<ResultDetail>
         {
-            new ResultDetail
+            new()
             {
                 ResourceId = "0001",
                 HomeValue = "1",
@@ -151,7 +151,7 @@ public class ScoreServiceTests
                 SettlementStatusId = 0,
                 ResultStatusId = 5
             },
-            new ResultDetail
+            new()
             {
                 ResourceId = "0002",
                 HomeValue = "2",
@@ -189,7 +189,7 @@ public class ScoreServiceTests
         var expectedScore = new Score("1", "2");
         var resultDetail = new List<ResultDetail>
         {
-            new ResultDetail { MatchId = 1 , ResourceId = "01" }
+            new() { MatchId = 1 , ResourceId = "01" }
         };
 
         scoreSetService.GetScore(Arg.Any<ResultDetail>(), Arg.Any<Permission>()).Returns(fakeHalftimeScore);
@@ -223,7 +223,7 @@ public class ScoreServiceTests
 
         var resultDetail = new List<ResultDetail>
         {
-            new ResultDetail { MatchId = 1 , ResourceId = "00" }
+            new() { MatchId = 1 , ResourceId = "00" }
         };
 
         scoreSetService.GetScore(Arg.Any<ResultDetail>(), Arg.Any<Permission>()).Returns(fakeFinalTimeScore);
@@ -245,10 +245,10 @@ public class ScoreServiceTests
         permission.IsLeader = true;
         var resultDetail = new List<ResultDetail>
         {
-            new ResultDetail { MatchId = 1 , ResourceId = "00", HomeValue = "5", AwayValue = "7", SettlementStatusId = SettlementStatus.Running },
-            new ResultDetail { MatchId = 1 , ResourceId = "01", HomeValue = "0", AwayValue = "2"  , SettlementStatusId = SettlementStatus.Running },
-            new ResultDetail { MatchId = 1 , ResourceId = "Q1", HomeValue = "3", AwayValue = "4" , SettlementStatusId = SettlementStatus.Running },
-            new ResultDetail { MatchId = 1 , ResourceId = "Q2", HomeValue = "3", AwayValue = "4" , SettlementStatusId = SettlementStatus.Running },
+            new() { MatchId = 1 , ResourceId = "00", HomeValue = "5", AwayValue = "7", SettlementStatusId = SettlementStatus.Running },
+            new() { MatchId = 1 , ResourceId = "01", HomeValue = "0", AwayValue = "2"  , SettlementStatusId = SettlementStatus.Running },
+            new() { MatchId = 1 , ResourceId = "Q1", HomeValue = "3", AwayValue = "4" , SettlementStatusId = SettlementStatus.Running },
+            new() { MatchId = 1 , ResourceId = "Q2", HomeValue = "3", AwayValue = "4" , SettlementStatusId = SettlementStatus.Running }
         };
         var expectedScore = ScoreList();
         expectedScore.FinalScore.IsNotSettled = true;
@@ -269,7 +269,7 @@ public class ScoreServiceTests
         halfTimeScore.IsNotSettled = true;
         var finalScore = new Score("5", "7");
         finalScore.IsNotSettled = true;
-        var sets = new Score[2].Select(n => new Score("3", "4")).ToArray();
+        var sets = new Score[2].Select(_ => new Score("3", "4")).ToArray();
         foreach (var set in sets)
         {
             set.IsNotSettled = true;

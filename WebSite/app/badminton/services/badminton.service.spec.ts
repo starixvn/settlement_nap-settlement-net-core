@@ -4,18 +4,18 @@ import { HttpClientModule } from '@angular/common/http';
 import { BadmintonService } from './badminton.service';
 import { HttpRequestService, BlockUIService, MessageBoxService } from '../../shared/services';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { ModalContentDialogComponent, ModalDialogComponent } from '../../shared/components';
 import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
 import { ResultDetail } from '../../shared/models/sportsbook-sop/result-detail.model';
 import { ResourcesIds } from '../constants';
 import { ResultStatusId, SettlementStatusId, SportType } from '../../shared/constants';
 import { MatchDetail } from '../../shared/models/sportsbook-sop';
+import { ModalDialogComponent } from '../../shared/components/modal-dialog/modal-dialog.component';
+import { ModalContentDialogComponent } from '../../shared/components/modal-dialog/modal-content-dialog.component';
 
 
 describe('BadmintonService', () => {
   let service: BadmintonService = null;
-  let httpRequestService: HttpRequestService;
   let intervalBackgroundPipe: IntervalBackgroundPipe;
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -43,7 +43,6 @@ describe('BadmintonService', () => {
       });
 
     service = TestBed.inject(BadmintonService);
-    httpRequestService = TestBed.inject(HttpRequestService);
     intervalBackgroundPipe = TestBed.inject(IntervalBackgroundPipe);
   });
 
@@ -98,8 +97,7 @@ describe('BadmintonService', () => {
   });
 
   it('getIntervalBackground - return value from pipe', () => {
-
-    spyOn(intervalBackgroundPipe, 'transform').and.returnValue('123abc');
+    intervalBackgroundPipe.transform = jest.fn().mockReturnValue('123abc');
 
     const actual = service.getIntervalBackground(1);
 

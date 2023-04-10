@@ -4,9 +4,9 @@ import { CalculationMatchDetailComponent } from './calculation-match-detail.comp
 import { Component, ViewChild, Injector } from '@angular/core';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 import * as _ from 'lodash';
-import { MessageBoxService, AioService, BlockUIService, HttpRequestService } from '../../shared/services';
+import { MessageBoxService, AioService, BlockUIService } from '../../shared/services';
 import { ModalDialogMessage } from '../../shared/models';
-import { Language } from '../../shared/language';
+import { Language } from '../../shared/language.native';
 import { SettlementStatusId, SportType, CalculateAction, ResultStatusId } from '../../shared/constants';
 import {
     SettleQuery,
@@ -66,8 +66,7 @@ export class CalculationActionsComponent implements SportTemplate {
 
         this.toastrService.overlayContainer = this.toastContainer;
         
-        const match$ = this.aioService.getMatch(matchQuery);
-        this.match = await lastValueFrom(match$) as Match;
+        this.match = await this.aioService.getMatch(matchQuery) as Match;
         this.isLeader = this.match.permission.isLeader;
         this.isTrader = this.match.permission.isTrader;
         this.canCalculate = this.match.permission.canCalculate;

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 
@@ -48,9 +45,6 @@ public class NotificationModel
     {
         get => voidBetInfos ?? new List<VoidBetInfo>();
 
-        set
-        {
-            voidBetInfos = value;
-        }
+        set => voidBetInfos = value;
     }
 }

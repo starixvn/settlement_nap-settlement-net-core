@@ -11,12 +11,7 @@ export class BackGroundService {
         const isSingleNotCalculating = _.isNull(match.isCalculatingSingle) ||
             (!_.isEqual(match.isCalculatingSingle, CalculationStatus.waiting)
                 && !_.isEqual(match.isCalculatingSingle, CalculationStatus.calculating));
-        if (match.isMergedParlay) {
-            return !_.isNull(match.remark) && !remarkSetting && isSingleNotCalculating;
-        } else {
-            const isMPNotCalculating = _.isNull(match.isCalculatingMP) || (!_.isEqual(match.isCalculatingMP, CalculationStatus.waiting) &&
-                !_.isEqual(match.isCalculatingMP, CalculationStatus.calculating))
-            return !_.isNull(match.remark) && !remarkSetting && isSingleNotCalculating && isMPNotCalculating;
-        }
+
+        return !_.isNull(match.remark) && !remarkSetting && isSingleNotCalculating;
     }
 }

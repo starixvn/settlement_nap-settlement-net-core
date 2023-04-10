@@ -13,7 +13,7 @@ public interface ICriteriaFactory
 
 public class CriteriaFactoryBase : ICriteriaFactory
 {
-    protected static readonly Dictionary<string, Type> CriteriaTypes = new Dictionary<string, Type>();
+    protected static readonly Dictionary<string, Type> CriteriaTypes = new();
 
     public virtual ICriteria CreateCriteria(Type criteriaType, object queryModel)
     {

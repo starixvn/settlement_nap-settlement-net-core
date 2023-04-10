@@ -1,8 +1,6 @@
-﻿using NSubstitute;
-using Settlement.Sportsbook.Soccer.Requests;
+﻿using Settlement.Sportsbook.Soccer.Requests;
 using Settlement.Sportsbook.Soccer.Services;
 using Settlement.Sportsbook.Soccer.Services.FullTimeBetStatus;
-using Xunit;
 
 namespace Settlement.Sportsbook.Soccer.UnitTests.Services.FullTimeBetStatus;
 

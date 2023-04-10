@@ -1,49 +1,52 @@
-import { Component, ViewChild } from '@angular/core';
-import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
+import { Component, ViewChild, Injector } from '@angular/core';
+import { ToastContainerDirective } from 'ngx-toastr';
 import { Match, SettleQuery } from '../models';
 import * as _ from 'lodash';
-import { Language } from '../../shared/language';
-import { MessageBoxService, AioService } from '../../shared/services';
-import { Result } from '../../shared/models';
+import { Language } from '../../shared/language.native';
+import { BlockUIService, IntervalCalculationService } from '../../shared/services';
 import {
   ResultStatusId, CalculateAction, SportType, TicketStatusText
 } from '../../shared/constants';
-import { EarlyConstraintService, VerificationService } from '../services';
-import { BadmintonApiKeys, InputType, KickOffTime, ResultStatus, VolleyballApiKeys, VolleyballBetTypes } from '../constants';
+import { BadmintonService, EarlyConstraintService, VerificationService } from '../services';
+import { BadmintonApiKeys, InputType, KickOffTime, ResultStatus, VolleyballApiKeys } from '../constants';
 import { ResultDetail, SportTemplate } from '../../shared/models/sportsbook-sop';
 import { EarlyBaseComponent } from '../../shared/components/sportsbook-sop/early-base.component';
 import { EarlyBaseService } from '../../core/services/early-base.service';
 import { UrlHelper } from '../../helper';
+import { MatchDetailComponent } from './match-detail.component';
+import { EarlyCommonModule } from '../../shared/modules/early-common.module';
 
 @Component({
   selector: 'early-settlement',
   templateUrl: './early-settlement.component.html',
+  standalone: true,
+  imports: [EarlyCommonModule, MatchDetailComponent],
   providers: [
     EarlyConstraintService,
     EarlyBaseService,
+    VerificationService,
+    IntervalCalculationService,
+    BadmintonService
   ],
 })
 export class EarlySettlementComponent extends EarlyBaseComponent implements SportTemplate {
   @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
+  private earlyConstraintService: EarlyConstraintService
   public match: Match;
   public isShowRefundButton = false;
   public isReadyMatch: boolean;
   public originalMatch: Match;
   public apiKeys = null;
 
-  constructor(
-    private readonly earlyConstraintService: EarlyConstraintService,
-    protected verificationService: VerificationService,
-    protected messageBoxService: MessageBoxService,
-    protected aioService: AioService,
-    protected toastrService: ToastrService) {
-    super(messageBoxService, verificationService, aioService, toastrService);
+  constructor(protected injector: Injector,
+        protected verificationService: VerificationService) {
+    super(injector, verificationService);
   }
 
   async getMatch(matchId: number): Promise<void> {
+    this.initService();
     const sportType = Number(UrlHelper.getUrlParameter('sportType'));
     this.apiKeys = sportType === SportType.volleyBall ? VolleyballApiKeys : BadmintonApiKeys;
-    this.toastrService.overlayContainer = this.toastContainer;
     const matchQuery = {
       matchId,
       sportType,
@@ -51,10 +54,16 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
       apiKey: this.apiKeys.NormalMatch
     };
 
-    this.match = await this.aioService.getMatch(matchQuery).toPromise() as Match;
+    this.match = await this.aioService.getMatch(matchQuery) as Match;
     this.originalMatch = _.cloneDeep(this.match);
     this.isReadyMatch = this.match.matchDetail.playTime >= KickOffTime.playTime;
     this.init();
+  }
+
+  public initService() {
+    this.earlyConstraintService = this.injector.get(EarlyConstraintService);
+    this.injector.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
+    this.toastrService.overlayContainer = this.toastContainer;
   }
 
   public init() {
@@ -64,7 +73,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     this.permission = this.match.permission;
     this.match.resultDetails = this.earlyConstraintService.getEarlyResultDetails(this.match.resultDetails,
       this.matchDetail.sportType, maxLength);
-    this.verificationBaseService.generateExternalScores(this.match, this.match.resultDetails, this.matchDetail.sportType);
+    this.verificationService.generateExternalScores(this.match, this.match.resultDetails, this.matchDetail.sportType);
     this.resetResult(this.match.resultDetails);
     this.autoFillResultOnLoad(this.match.resultDetails);
     this.groupMap = this.getGroupMap();
@@ -85,16 +94,16 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     this.resultStatusSelect.items = this.earlyConstraintService.renderResultStatus(this.match.permission);
     this.ticketsStatusSelect.items = this.earlyConstraintService.renderTicketStatus();
     this.resultTypeSelect.maxWidth = '150px';
-    this.ticketsStatusSelect.maxWidth = '92px';
-    this.resultStatusSelect.maxWidth = '120px';
+    this.ticketsStatusSelect.maxWidth = '100px';
+    this.resultStatusSelect.maxWidth = '160px';
   }
 
   private resetResult(resultDetails: ResultDetail[]) {
     resultDetails.forEach((map) => {
       map.awayValue = map.resultStatusId !== ResultStatusId.ManualCompleted
-      && map.resultStatusId !== ResultStatusId.AutoCompleted ? "" : map.awayValue;
+        && map.resultStatusId !== ResultStatusId.AutoCompleted ? "" : map.awayValue;
       map.homeValue = map.resultStatusId !== ResultStatusId.ManualCompleted
-      && map.resultStatusId !== ResultStatusId.AutoCompleted ? "" : map.homeValue;
+        && map.resultStatusId !== ResultStatusId.AutoCompleted ? "" : map.homeValue;
     });
   }
 
@@ -119,7 +128,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         apikey: this.apiKeys.NormalMatch,
         sportType: this.matchDetail.sportType,
       };
-      const needConfirm = await this.aioService.verifyChangedSettledTickets(this.selectedResources, getEarlyResultQuery).toPromise();
+      const needConfirm = await this.aioService.verifyChangedSettledTickets(this.selectedResources, getEarlyResultQuery);
       if (needConfirm) {
         this.confirmationDialogMessage.message = Language.recalculateNotification;
         this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
@@ -182,10 +191,10 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
   }
 
   private async push(query: SettleQuery) {
-    if(_.isEqual(this.matchDetail.sportType, SportType.volleyBall)){
+    if (_.isEqual(this.matchDetail.sportType, SportType.volleyBall)) {
       query.betStatus = this.matchDetail.betStatus;
     }
-    const result = await this.aioService.push(query).toPromise() as Result;
+    const result = await this.aioService.push(query);
     if (result.errCode === 0) {
       this.messageBoxService.closePopup();
     } else {
@@ -209,7 +218,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
 
   public autoFillResultOnLoad(resultDetails: ResultDetail[]) {
     _.forEach(resultDetails, (resultDetail) => {
-        this.verifyAndAutoFillResult(resultDetail);
+      this.verifyAndAutoFillResult(resultDetail);
     });
   }
 
@@ -228,8 +237,8 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
   public checkResultIsMatched(resultDetail: ResultDetail) {
     const isExistedCoupleResult = resultDetail.inputType === InputType.coupleScore;
     resultDetail.isScoreMismatched = isExistedCoupleResult
-        ? this.verificationService.isMismatchedWarning(resultDetail)
-        : this.verificationService.isEarlyMismatchedWarning(resultDetail);
+      ? this.verificationService.isMismatchedWarning(resultDetail)
+      : this.verificationService.isEarlyMismatchedWarning(resultDetail);
   }
 
   public verifyResultByBetType(resultDetail: ResultDetail) {

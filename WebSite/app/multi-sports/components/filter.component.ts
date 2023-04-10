@@ -1,22 +1,21 @@
-import { DefaultValue, MatchType, Resources } from '../constants';
-import { Component, OnInit, Output, EventEmitter } from "@angular/core";
-import { DatePipe } from "@angular/common";
+import { PopupProperties } from './../models/popup-properties.model';
 import { NgbDateStruct, NgbDateParserFormatter } from "@ng-bootstrap/ng-bootstrap";
+import { DefaultValue, MatchType, Resources } from '../constants';
+import { Component, OnInit, Output, EventEmitter, Injector } from "@angular/core";
+import { DatePipe } from "@angular/common";
 import { CustomNgbDateParserFormatter } from '../../shared/components/date-picker/custom-ngb-date-parser-formatter';
 import { MultiSportService } from '../services';
 import { ModalDialogMessage, MultipleSelect, ItemsSelect } from '../../shared/models';
 import { GenerateFilterService, MessageBoxService, VerifyDateService } from '../../shared/services';
 import {
-    Sport,
     FilterRequest,
     LeagueFilterRequest,
     MatchWaitingRequest,
     SportFilterRequest,
-    League,
     SportMatch
 } from '../models';
 import * as _ from 'lodash';
-import { Language } from '../../shared/language';
+import { Language } from '../../shared/language.native';
 
 @Component({
     selector: 'filter',
@@ -28,6 +27,10 @@ export class FilterComponent implements OnInit {
     @Output() public readonly searchAction = new EventEmitter();
     @Output() public readonly requestEmitter = new EventEmitter();
     @Output() public readonly enableRefresh = new EventEmitter();
+    private multiSportService: MultiSportService;
+    private generateFilterService: GenerateFilterService;
+    private verifyDateService: VerifyDateService;
+    private messageBoxService: MessageBoxService;
     public readonly warningDialogMessage = new ModalDialogMessage();
     public matchCode = "";
     public fromDate: NgbDateStruct;
@@ -50,32 +53,36 @@ export class FilterComponent implements OnInit {
     public getLeagueParams: LeagueFilterRequest;
     private readonly widthMultiSelect = "205px";
 
-    constructor(
-        private readonly multiSportService: MultiSportService,
-        private readonly generateFilterService: GenerateFilterService,
-        private readonly verifyDateService: VerifyDateService,
-        private readonly messageBoxService: MessageBoxService) {
+    constructor(protected injector: Injector) {
     }
 
-    public ngOnInit() {
+    ngOnInit() {
+        this.initServices();
         this.initialData();
         this.generateFilter();
     }
 
+    public initServices() {
+        this.multiSportService = this.injector.get(MultiSportService);
+        this.generateFilterService = this.injector.get(GenerateFilterService);
+        this.verifyDateService = this.injector.get(VerifyDateService);
+        this.messageBoxService = this.injector.get(MessageBoxService);
+    }
+
     private async initialData() {
-        const date = await this.multiSportService.getDate().toPromise();
+        const date = await this.multiSportService.getDate();
         this.fromDate = this.verifyDateService.convertToDateStruct(date.fromDate);
         this.toDate = this.verifyDateService.convertToDateStruct(date.toDate);
         this.getSport(this.fromDate, this.toDate);
     }
 
-    private generateFilter(){
+    private generateFilter() {
         this.overStatusSelect.items = this.generateFilterService.renderOverStatus();
         this.holdStatusSelect.items = this.generateFilterService.renderRemarks();
         this.matchStatusSelect.items = this.generateFilterService.renderMatchStatusGroupSelect();
         this.autoPayoutSelect.items = this.generateFilterService.renderAutoPayout();
         this.overStatusSelect.maxWidth = this.sportSelect.maxWidth = this.widthMultiSelect;
-        this.matchStatusSelect.maxWidth = "180px"
+        this.matchStatusSelect.maxWidth = "190px";
         this.matchStatusSelect.haveGroup = true;
     }
 
@@ -106,13 +113,13 @@ export class FilterComponent implements OnInit {
             return;
         }
 
-        if(this.validateQuery(query)){
+        if (this.validateQuery(query)) {
             this.showWarningMessage(Language.calculatePageWarning);
             return;
         }
 
         this.enableRefresh.emit(false);
-        const multiSport = await this.multiSportService.filter(query).toPromise();
+        const multiSport = await this.multiSportService.filter(query);
         const matchIds = this.getAllMatchId(multiSport.sports);
         this.searchAction.emit(multiSport);
         const request = new MatchWaitingRequest(this.leaguesSelected, matchIds, fromDate, toDate, this.overStatusSelected, this.matchCode);
@@ -121,12 +128,12 @@ export class FilterComponent implements OnInit {
         this.updateLeagues();
     }
 
-    private getAllMatchId (sports: SportMatch[]) {
+    private getAllMatchId(sports: SportMatch[]) {
         let matchIds = "";
         _.forEach(sports, (sport) => {
             _.forEach(sport.leagues, (league) => {
                 const ids = league.matches.map(match => match.matchId).join();
-                matchIds = _.isEmpty(matchIds) ? ids:  `${matchIds},${ids}`;
+                matchIds = _.isEmpty(matchIds) ? ids : `${matchIds},${ids}`;
             });
         });
 
@@ -186,7 +193,7 @@ export class FilterComponent implements OnInit {
         const fromDateValue = this.verifyDateService.dateFormat(fromDate);
         const toDateValue = this.verifyDateService.dateFormat(toDate);
         const params = new SportFilterRequest(fromDateValue, toDateValue);
-        const listSport = await this.multiSportService.getSport(params).toPromise() as  Sport[];
+        const listSport = await this.multiSportService.getSport(params);
         this.sportSelect = new MultipleSelect();
         this.sportSelect.haveGroup = true;
         this.sportSelect.isCheckAll = true;
@@ -200,7 +207,7 @@ export class FilterComponent implements OnInit {
         const toDateValue = this.verifyDateService.dateFormat(toDate);
         this.getLeagueParams = new LeagueFilterRequest(fromDateValue, toDateValue, sportTypes);
         if (this.isValidInput(fromDate, toDate)) {
-            const league = await this.multiSportService.getLeague(this.getLeagueParams).toPromise() as League[];
+            const league = await this.multiSportService.getLeague(this.getLeagueParams);
             this.initLeague();
             this.leagueSelect.items = this.generateFilterService.renderLeagues(league);
         } else {
@@ -220,9 +227,9 @@ export class FilterComponent implements OnInit {
     }
 
     private async updateLeagues() {
-        const league = await this.multiSportService.getLeague(this.getLeagueParams).toPromise() as League[];
-        const newLeague = this.generateFilterService.renderNewestLeagues(league , _.cloneDeep(this.leagueSelect.items));
-        if(newLeague.length > this.leagueSelect.items.length){
+        const league = await this.multiSportService.getLeague(this.getLeagueParams);
+        const newLeague = this.generateFilterService.renderNewestLeagues(league, _.cloneDeep(this.leagueSelect.items));
+        if (newLeague.length > this.leagueSelect.items.length) {
             this.initLeague();
             this.leagueSelect.items = newLeague;
         }
@@ -230,8 +237,8 @@ export class FilterComponent implements OnInit {
 
     private validateQuery(query: FilterRequest) {
         return _.isEmpty(query.matchCode)
-          && _.isEqual(query.leagueIds, DefaultValue.unCheckAll)
-          && _.isEqual(query.overStatus.toString(), DefaultValue.unCheckAll)
-          && _.isEqual(query.matchType.toString(), this.matchTypes[0].value);
-      }
+            && _.isEqual(query.leagueIds, DefaultValue.unCheckAll)
+            && _.isEqual(query.overStatus.toString(), DefaultValue.unCheckAll)
+            && _.isEqual(query.matchType.toString(), this.matchTypes[0].value);
+    }
 }

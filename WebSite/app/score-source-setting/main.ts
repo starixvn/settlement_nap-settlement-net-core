@@ -2,7 +2,8 @@
 import { enableProdMode, importProvidersFrom } from '@angular/core';
 import { bootstrapApplication } from '@angular/platform-browser';
 import { environment } from '../environments/environment';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient } from '@angular/common/http';
+import {  NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 if (environment.production) {
     enableProdMode();
@@ -10,6 +11,7 @@ if (environment.production) {
 
 bootstrapApplication(AppSettingComponent, {
     providers: [
-    importProvidersFrom(HttpClientModule)
+        importProvidersFrom(NoopAnimationsModule),
+        provideHttpClient()
     ],
   }).catch(err => console.error(err));

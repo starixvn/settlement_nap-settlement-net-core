@@ -10,8 +10,8 @@ import { UrlHelper } from '../../helper';
 
 export class MatchesComponent implements OnInit {
     @Input() public readonly matches: Match[];
-    @Input() private readonly fromDate: string;
-    @Input() private readonly toDate: string;
+    @Input() public readonly fromDate: string;
+    @Input() public readonly toDate: string;
     public scrollName: string;
 
     public ngOnInit() {

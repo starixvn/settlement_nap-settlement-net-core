@@ -13,23 +13,19 @@ public class MatchServiceTests
 {
     private readonly IMatchResultDetailService matchResultDetailService;
 
-    private readonly IRefDataService refDataService;
-
     private readonly IMatchService service;
 
     private readonly ScaleOutSettleService scaleOutSettleService;
 
     private readonly NewInfoMatchService newInfoMatchService;
 
-    private readonly CompareMatchService compareMatchService;
-
     public MatchServiceTests()
     {
         matchResultDetailService = Substitute.For<IMatchResultDetailService>();
-        refDataService = Substitute.For<IRefDataService>();
+        var refDataService = Substitute.For<IRefDataService>();
         scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
         newInfoMatchService = Substitute.For<NewInfoMatchService>();
-        compareMatchService = Substitute.For<CompareMatchService>();
+        var compareMatchService = Substitute.For<CompareMatchService>();
 
         service = new MatchServiceImp(refDataService, matchResultDetailService, compareMatchService, newInfoMatchService, scaleOutSettleService);
     }
@@ -80,8 +76,8 @@ public class MatchServiceTests
         // Arrange
         var matches = new List<Match>
             {
-                new Match { MatchId = 1 },
-                new Match { MatchId = 2 }
+                new() { MatchId = 1 },
+                new() { MatchId = 2 }
             };
 
         // Act
@@ -97,8 +93,8 @@ public class MatchServiceTests
         // Arrange
         var matches = new List<Match>
             {
-                new Match { MatchId = 1 },
-                new Match { MatchId = 2 }
+                new() { MatchId = 1 },
+                new() { MatchId = 2 }
             };
         matchResultDetailService.OtherSportsResultDetail(Arg.Any<List<Match>>(), Arg.Any<List<ResultDetail>>(), false).Returns(matches);
 
@@ -115,8 +111,8 @@ public class MatchServiceTests
         // Arrange
         var matches = new List<Match>
             {
-                new Match { MatchId = 1 },
-                new Match { MatchId = 2 }
+                new() { MatchId = 1 },
+                new() { MatchId = 2 }
             };
         matchResultDetailService.OtherSportsResultDetail(Arg.Any<List<Match>>(), Arg.Any<List<ResultDetail>>(), true).Returns(matches);
 
@@ -140,7 +136,7 @@ public class MatchServiceTests
     {
         newInfoMatchService.TicketInfo(Arg.Do<Match>(item =>
         {
-            item.IsExistMarkedTicket = item.IsExistRunningTicket = item.IsExistMarkedTicketParlay = item.IsExistRunningTicketParlay = true;
+            item.IsExistMarkedTicket = item.IsExistRunningTicket = true;
             item.IsCalculatingSingle = 1;
         }));
         newInfoMatchService.NewEventStatus(Arg.Any<Match>()).Returns("EventStatus");
@@ -150,11 +146,10 @@ public class MatchServiceTests
         newInfoMatchService.ConfirmScore(Arg.Any<List<ResultDetail>>(), ResourceType.Final).Returns("2");
         newInfoMatchService.IsExistsConfirmedEarly(Arg.Any<Match>()).Returns(true);
 
-        var matches = service.SetNewMatchInfo(new List<Match> { new Match() }, new List<ResultDetail>());
+        var matches = service.SetNewMatchInfo(new List<Match> { new() }, new List<ResultDetail>());
         var match = matches.First();
 
-        Assert.True(match.IsExistsConfirmedEarly && match.IsExistMarkedTicket && match.IsExistRunningTicket && match.IsExistMarkedTicketParlay
-                    && match.IsExistRunningTicketParlay && (match.IsCalculatingSingle == 1));
+        Assert.True(match.IsExistsConfirmedEarly && match.IsExistMarkedTicket && match.IsExistRunningTicket && match.IsCalculatingSingle == 1);
         Assert.Equal("EventStatus", match.NewEventStatus);
         Assert.Equal("EventStatusColor", match.EventStatusColor);
         Assert.Equal("Early", match.EarlySettleStatus);

@@ -2,7 +2,7 @@ import { Directive, ElementRef, HostListener, Input } from '@angular/core';
 
 @Directive({
     selector: '[myOnlyInteger]',
-    standalone: true,
+    standalone: true
 })
 export class OnlyIntegerDirective {
     private decimalCounter = 0;

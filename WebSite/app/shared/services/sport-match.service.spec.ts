@@ -27,9 +27,6 @@ describe('SportMatchService', () => {
         matches: [matchFootball, matchIceHockey, matchBaseball, matchBadminton],
         name: 'mock league',
         collapse: false,
-        isCheckedCalcMP: false,
-        disableCheckCalcMP: false,
-        isMergedParlay: false,
         autoCalcSetting: new AutoSetting
     };
 

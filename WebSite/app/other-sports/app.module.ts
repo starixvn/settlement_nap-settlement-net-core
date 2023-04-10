@@ -4,16 +4,14 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HttpClientJsonpModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import {
-    ModalDialogComponent,
-    ModalContentDialogComponent
-} from '../shared/components';
-import {
     AppComponent,
 } from './components/app.component';
-import { SportTemplateModule } from './components/sport-template.module';
 import { CustomHttpRequestInterceptor } from '../shared/custom-httprequest-interceptor.native';
-import { ToastContainerModule, ToastNoAnimationModule } from 'ngx-toastr';
+import { ToastContainerModule, ToastrModule } from 'ngx-toastr';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ModalDialogComponent } from '../shared/components/modal-dialog/modal-dialog.component';
+import { ModalContentDialogComponent } from '../shared/components/modal-dialog/modal-content-dialog.component';
+import { SportTemplateModule } from './components/sport-template.module';
 @NgModule({
     imports: [
         BrowserModule,
@@ -24,7 +22,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
         NgbModule,
         SportTemplateModule,
         BrowserAnimationsModule,
-        ToastNoAnimationModule.forRoot({
+        ToastrModule.forRoot({
             disableTimeOut: true,
             enableHtml: true,
             tapToDismiss: false,

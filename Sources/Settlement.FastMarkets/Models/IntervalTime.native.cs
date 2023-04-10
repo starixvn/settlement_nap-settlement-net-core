@@ -1,13 +1,11 @@
-﻿using System.Collections.Generic;
-
-namespace Settlement.FastMarkets.Models;
+﻿namespace Settlement.FastMarkets.Models;
 
 public class IntervalTime
 {
     private const int Halftime = 45;
     private const int FullTime = 90;
 
-    public List<Selection> Value => new List<Selection>
+    public List<Selection> Value => new()
     {
         HalfTimeSelection(),
         FullTimeSelection()

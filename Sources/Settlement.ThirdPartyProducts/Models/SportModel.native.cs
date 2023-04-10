@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Settlement.ThirdPartyProducts.Models;
+﻿namespace Settlement.ThirdPartyProducts.Models;
 
 public class SportModel
 {

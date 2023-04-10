@@ -1,5 +1,5 @@
-﻿using Settlement.Core.Models;
-using Settlement.Core.Constants;
+﻿using Settlement.Core.Constants;
+using Settlement.Core.Models;
 
 namespace Settlement.Core.Services;
 
@@ -17,12 +17,12 @@ public class ScoreSetServiceImp : IScoreSetService
             return new Score(SetStatus.Refund);
         }
 
-        if (item.SettlementStatusId == SettlementStatus.RefundHT)
+        if (item.SettlementStatusId == SettlementStatus.RefundHt)
         {
             return new Score(SetStatus.RefundHt);
         }
 
-        if (item.SettlementStatusId == SettlementStatus.RefundFT)
+        if (item.SettlementStatusId == SettlementStatus.RefundFt)
         {
             return new Score(SetStatus.RefundFt);
         }

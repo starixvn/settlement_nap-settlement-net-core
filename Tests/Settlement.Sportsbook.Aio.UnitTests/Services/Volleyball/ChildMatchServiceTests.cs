@@ -24,9 +24,9 @@ public class ChildMatchServiceTests
     {
         var list = new List<ChildMatchModel>
         {
-            new ChildMatchModel {EventStatus = EventStatus.Completed},
-            new ChildMatchModel {EventStatus = EventStatus.Running ,ResultSetting = 2},
-            new ChildMatchModel {EventStatus = EventStatus.Running}
+            new() {EventStatus = EventStatus.Completed},
+            new() {EventStatus = EventStatus.Running ,ResultSetting = 2},
+            new() {EventStatus = EventStatus.Running}
         };
 
         var listResult = new List<ResultDetail> { resultDetail };
@@ -42,9 +42,9 @@ public class ChildMatchServiceTests
     {
         var list = new List<ChildMatchModel>
         {
-            new ChildMatchModel {EventStatus = EventStatus.Running, ChildMatchType = 12},
-            new ChildMatchModel {EventStatus = EventStatus.Running, ChildMatchType = 11},
-            new ChildMatchModel {EventStatus = EventStatus.Running, ChildMatchType = 16}
+            new() {EventStatus = EventStatus.Running, ChildMatchType = 12},
+            new() {EventStatus = EventStatus.Running, ChildMatchType = 11},
+            new() {EventStatus = EventStatus.Running, ChildMatchType = 16}
         };
         resultDetail.HomeValue = "0";
         resultDetail.AwayValue = "2";

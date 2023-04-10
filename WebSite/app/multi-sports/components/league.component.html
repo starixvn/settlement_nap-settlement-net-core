@@ -18,13 +18,6 @@
           <th rowspan="2" class="event-status">Early Settle Status</th>
           <th rowspan="2" class="event-status">Event Status</th>
           <th rowspan="2" class="header-action">Action</th>
-          <th rowspan="2" class="calc-mp">
-            <div class="calc-mp-button" (click)="calculateMixParlay()"></div>
-            <div>
-              <input type="checkbox" [disabled]="disableSelectAllCalcMP()" [checked]="multiSport.isCheckedCalcMP"
-                [(ngModel)]="multiSport.isCheckedCalcMP" (change)="selectCalcMPOnSport($event.target.checked);" />
-            </div>
-          </th>
           <th colspan="2" class="confirm">Confirm</th>
           <th rowspan="2" class="remark">Hold Status</th>
           <th rowspan="2" class="auto-setting">Auto Payout Setting</th>
@@ -53,11 +46,6 @@
                 <td colspan="11" class="name" (click)="collapseLeague(leagueMatch)">
                   <span class="collapse-icon" [ngClass]="leagueMatch.collapse ? 'collapsed' : ''"></span>
                   &nbsp;{{leagueMatch.name}}
-                </td>
-                <td class="text-center calc-mp">
-                  <input *ngIf="!leagueMatch.isMergedParlay" type="checkbox" #calcMPOnLeague
-                    [disabled]="disableSelectCalcMPOnLeague(leagueMatch)" [(ngModel)]="leagueMatch.isCheckedCalcMP"
-                    (change)="selectCalcMPOnLeague(leagueMatch, $event.target.checked)">
                 </td>
                 <td class="confirm-score"></td>
                 <td colspan="2" class="remark-status instant-time">
@@ -148,22 +136,6 @@
                         (click)="isShowRefundLink(match) ? popupRefund(match) : ''">
                         Refund
                       </div>
-                    </td>
-                    <td rowspan="2" class="calc-mp" [ngClass]="getCalcMPColor(match)">
-                      <ng-container *ngIf="!match.isMergedParlay; else notSupportMP">
-                        <input type="checkbox"
-                          *ngIf="match.isCalculatingMP !== 0 && match.isCalculatingMP !== 1; else calcMPStatus"
-                          [(ngModel)]="match.isCheckedCalcMP" (ngModelChange)="selectCalcMPOnMatch(leagueMatch)"
-                          [disabled]="!enableCalcMPOnMatch(match)">
-                        <ng-template #calcMPStatus>
-                          <span [ngClass]="getCalcMPStatus(match).toLowerCase()">{{getCalcMPStatus(match)}}</span>
-                        </ng-template>
-                      </ng-container>
-                      <ng-template #notSupportMP>
-                        <span
-                          *ngIf="match.isCalculatingSingle === 100 || match.isCalculatingMP === 0 || match.isCalculatingMP === 1"
-                          [ngClass]="getCalcMPStatus(match).toLowerCase()">{{getCalcMPStatus(match)}}</span>
-                      </ng-template>
                     </td>
                     <td rowspan="2" class="confirm-score"
                       [ngClass]="{'bg-white-blinking' : match.isNotConsistentExHtScore}">

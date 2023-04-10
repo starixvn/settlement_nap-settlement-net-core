@@ -27,6 +27,8 @@ public class MultipleServerAioServiceTests
 
     private readonly MultipleServerAioService service;
 
+    private readonly NetPositionService netPositionService;
+
     public MultipleServerAioServiceTests()
     {
         var appSetting = new AppSettingsKey { SiteDbServer = new List<string> { "01", "02" } };
@@ -35,7 +37,7 @@ public class MultipleServerAioServiceTests
         scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
         createQueryService = Substitute.For<ICreateQueryService>();
         mergeDataService = Substitute.For<MergeDataService>();
-        var netPositionService = Substitute.For<NetPositionService>();
+        netPositionService = Substitute.For<NetPositionService>();
         service = new MultipleServerAioServiceImp(repository, option, scaleOutSettleService, createQueryService, mergeDataService, netPositionService);
     }
 
@@ -61,7 +63,7 @@ public class MultipleServerAioServiceTests
         };
 
         var ticketDetails = new List<ResultDetail> { resultDetail };
-        var resultDetails = new List<ResultDetail> { new ResultDetail { ResourceId = "00" } };
+        var resultDetails = new List<ResultDetail> { new() { ResourceId = "00" } };
         repository.FetchAsync<ResultDetail>(Arg.Any<GetResultDetailCriteria>())
             .Returns(resultDetails);
 
@@ -79,7 +81,7 @@ public class MultipleServerAioServiceTests
     [Fact]
     public async Task FetchResultDetails_ESportsNotExistTicketDetail_GenerateNoTicket()
     {
-        var resultDetails = new List<ResultDetail> { new ResultDetail { ResourceId = "00" } };
+        var resultDetails = new List<ResultDetail> { new() { ResourceId = "00" } };
         repository.FetchAsync<ResultDetail>(Arg.Any<GetResultDetailCriteria>())
             .Returns(resultDetails);
 
@@ -89,7 +91,7 @@ public class MultipleServerAioServiceTests
         mergeDataService.MergeTicketDetails(Arg.Any<List<(List<ResultDetail>, TicketCounts)>>())
             .Returns((new List<ResultDetail>(), new TicketCounts()));
 
-        var (actualResultDetail, ticketCount) = await service.FetchResultDetails(new GetResultDetailCriteria(), SportType.ESports);
+        var (actualResultDetail, _) = await service.FetchResultDetails(new GetResultDetailCriteria(), SportType.ESports);
 
         Assert.Equal(TicketStatus.NoTicket, actualResultDetail[0].TicketStatus);
     }
@@ -97,7 +99,7 @@ public class MultipleServerAioServiceTests
     [Fact]
     public async Task FetchResultDetails_NotESportsAndNotExistTicketDetail_DoNotReturnTicket()
     {
-        var resultDetails = new List<ResultDetail> { new ResultDetail { ResourceId = "00" } };
+        var resultDetails = new List<ResultDetail> { new() { ResourceId = "00" } };
         repository.FetchAsync<ResultDetail>(Arg.Any<GetResultDetailCriteria>())
             .Returns(resultDetails);
 
@@ -107,7 +109,7 @@ public class MultipleServerAioServiceTests
         mergeDataService.MergeTicketDetails(Arg.Any<List<(List<ResultDetail>, TicketCounts)>>())
             .Returns((new List<ResultDetail>(), new TicketCounts()));
 
-        var (actualResultDetail, ticketCount) = await service.FetchResultDetails(new GetResultDetailCriteria(), SportType.Badminton);
+        var (actualResultDetail, _) = await service.FetchResultDetails(new GetResultDetailCriteria(), SportType.Badminton);
 
         Assert.Empty(actualResultDetail);
     }
@@ -149,8 +151,7 @@ public class MultipleServerAioServiceTests
         var expectResult = new Result
         {
             ErrCode = 1,
-            ErrMsg = "Message",
-            ChildMatchIds = string.Empty,
+            ErrMsg = "Message"
         };
 
         Assert.Equal(JsonConvert.SerializeObject(expectResult), JsonConvert.SerializeObject(actual));
@@ -159,18 +160,19 @@ public class MultipleServerAioServiceTests
     [Fact]
     public async Task Settle_ValidatePassedAndExistChildMatch_ReturnListChildMatchIds()
     {
-        var childMatch = new ChildMatch { matchId = 123 };
-        var childMatchSecond = new ChildMatch { matchId = 456 };
+        var childMatch = new ChildMatch { MatchId = 123 };
+        var childMatchSecond = new ChildMatch { MatchId = 456 };
         var request = new SettleRequest
         {
             SelectedResources = new List<ResourceItem>
             {
-                new ResourceItem { ResourceId = "00" }
+                new() { ResourceId = "00" }
             },
             SportType = SportType.Cricket
         };
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
         createQueryService.QuerySettle(Arg.Any<SettleRequest>()).Returns(new SettleCriteria { Action = "CAL" });
+        netPositionService.NetPosition(Arg.Any<NetPositionRequest>()).Returns(new Result());
         repository.FetchAsync<ChildMatch>(Arg.Any<GetChildMatchCriteria>()).Returns(new List<ChildMatch> { childMatch, childMatchSecond });
         var actual = await service.Settle(request);
 
@@ -191,7 +193,7 @@ public class MultipleServerAioServiceTests
         {
             SelectedResources = new List<ResourceItem>
             {
-                new ResourceItem { ResourceId = "00" }
+                new() { ResourceId = "00" }
             }
         };
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
@@ -214,12 +216,12 @@ public class MultipleServerAioServiceTests
         {
             ChildMatches = new List<ChildMatchModel>
             {
-                new ChildMatchModel { MatchId = 1 },
-                new ChildMatchModel { MatchId = 2 }
+                new() { MatchId = 1 },
+                new() { MatchId = 2 }
             },
             SelectedResources = new List<ResourceItem>
             {
-                new ResourceItem { ResourceId = "00" }
+                new() { ResourceId = "00" }
             }
         };
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
@@ -240,7 +242,7 @@ public class MultipleServerAioServiceTests
             ChildMatchIds = "123,456",
             SelectedResources = new List<ResourceItem>
             {
-                new ResourceItem { ResourceId = "00" }
+                new() { ResourceId = "00" }
             }
         };
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());

@@ -24,7 +24,7 @@ public class ValidateApiKeyServiceImp : IValidateApiKeyService
     {
         if (string.IsNullOrEmpty(apiKey))
         {
-            throw new EmptyKeyException($"apikey({apiKey}) is empty");
+            throw new EmptyKeyException($"apiKey({apiKey}) is empty");
         }
 
         return apiKey;

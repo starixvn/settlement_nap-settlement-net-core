@@ -3,6 +3,8 @@ using Settlement.Core.Services;
 
 namespace Settlement.Sportsbook.MoveTickets.Services;
 
+using MultipleServer;
+
 public interface IMatchService
 {
     List<Match> GetScoreForMatchBySportType(List<Match> matches, List<ResultDetail> resultDetails, int sportType, int groupSport);

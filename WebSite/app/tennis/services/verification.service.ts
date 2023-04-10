@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { IntervalCalculationService } from "../../shared/services";
-import { Language } from "../../shared/language";
+import { Language } from "../../shared/language.native";
 import { ResultDetail } from "../../shared/models/sportsbook-sop";
 import * as _ from 'lodash';
 import { VerificationBaseService } from "../../core/services/verification-base.service";

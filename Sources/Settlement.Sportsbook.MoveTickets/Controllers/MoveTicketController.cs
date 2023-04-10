@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Settlement.Core.ActionFilters;
 using Settlement.Sportsbook.MoveTickets.Requests;
-using System.Threading.Tasks;
 
 namespace Settlement.Sportsbook.MoveTickets.Controllers;
 

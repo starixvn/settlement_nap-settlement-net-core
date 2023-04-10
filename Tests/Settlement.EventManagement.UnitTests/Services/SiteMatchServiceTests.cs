@@ -19,46 +19,6 @@ public class SiteMatchServiceTests
     [InlineData(true, false, true)]
     [InlineData(false, true, true)]
     [InlineData(false, false, false)]
-    public void IsExistMarkedTicketsSingle_Always_ReturnCorrect(bool main, bool site, bool expected)
-    {
-        var match = new BaseMatch
-        {
-            IsExistMarkedTicket = main,
-            SiteMatch = new List<SiteMatch>
-            {
-                new () { IsExistMarkedTicket = site }
-            }
-        };
-
-        var result = service.IsExistMarkedTicketsSingle(match);
-
-        Assert.Equal(expected, result);
-    }
-
-    [Theory]
-    [InlineData(true, false, true)]
-    [InlineData(false, true, true)]
-    [InlineData(false, false, false)]
-    public void IsExistMarkedTicketParlay_Always_ReturnCorrect(bool main, bool site, bool expected)
-    {
-        var match = new BaseMatch
-        {
-            IsExistMarkedTicketParlay = main,
-            SiteMatch = new List<SiteMatch>
-            {
-                new () { IsExistMarkedTicketParlay = site }
-            }
-        };
-
-        var result = service.IsExistMarkedTicketParlay(match);
-
-        Assert.Equal(expected, result);
-    }
-
-    [Theory]
-    [InlineData(true, false, true)]
-    [InlineData(false, true, true)]
-    [InlineData(false, false, false)]
     public void IsExistRunningTickets_Always_ReturnCorrect(bool main, bool site, bool expected)
     {
         var match = new BaseMatch
@@ -79,26 +39,6 @@ public class SiteMatchServiceTests
     [InlineData(true, false, true)]
     [InlineData(false, true, true)]
     [InlineData(false, false, false)]
-    public void IsExistRunningTicketParlay_Always_ReturnCorrect(bool main, bool site, bool expected)
-    {
-        var match = new BaseMatch
-        {
-            IsExistRunningTicketParlay = main,
-            SiteMatch = new List<SiteMatch>
-            {
-                new () { IsExistRunningTicketParlay = site }
-            }
-        };
-
-        var result = service.IsExistRunningTicketParlay(match);
-
-        Assert.Equal(expected, result);
-    }
-
-    [Theory]
-    [InlineData(true, false, true)]
-    [InlineData(false, true, true)]
-    [InlineData(false, false, false)]
     public void IsExistsConfirmedEarly_Always_ReturnCorrect(bool main, bool site, bool expected)
     {
         var match = new Match
@@ -111,29 +51,6 @@ public class SiteMatchServiceTests
         };
 
         var result = service.IsExistsConfirmedEarly(match);
-
-        Assert.Equal(expected, result);
-    }
-
-    [Theory]
-    [InlineData(true, false, false, false, true)]
-    [InlineData(false, true, false, false, true)]
-    [InlineData(false, false, true, false, true)]
-    [InlineData(false, false, false, true, true)]
-    [InlineData(false, false, false, false, false)]
-    public void IsExistMarkedTickets_Always_ReturnCorrect(bool main, bool site, bool mainParlay, bool siteParlay, bool expected)
-    {
-        var match = new Match
-        {
-            IsExistMarkedTicket = main,
-            IsExistMarkedTicketParlay = mainParlay,
-            SiteMatch = new List<SiteMatch>
-            {
-                new () { IsExistMarkedTicket = site, IsExistMarkedTicketParlay = siteParlay}
-            }
-        };
-
-        var result = service.IsExistMarkedTickets(match);
 
         Assert.Equal(expected, result);
     }
@@ -212,7 +129,7 @@ public class SiteMatchServiceTests
                 {
                     IsExistFastMarket = siteIsExistFastMarket,
                     IsRunningFastMarket = siteIsRunningFastMarket,
-                    IsExistFastMarketResult = siteIsExistFastMarketResult,
+                    IsExistFastMarketResult = siteIsExistFastMarketResult
                 }
             }
         };

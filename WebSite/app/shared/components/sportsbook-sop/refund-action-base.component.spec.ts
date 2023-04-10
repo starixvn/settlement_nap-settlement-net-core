@@ -7,7 +7,7 @@ import { ResultDetail } from "../../models/sportsbook-sop/result-detail.model";
 import { ResultSettingType, SettlementStatusId, TicketStatusText } from "../../constants";
 import { AioService, BlockUIService, ClosePopupService, HttpRequestService, MessageBoxService } from "../../services";
 import { RefundActionBaseComponent } from "./refund-action-base.component";
-import { Language } from "../../language";
+import { Language } from "../../language.native";
 import { of } from "rxjs";
 import { ModalDialogComponent, } from "../modal-dialog/modal-dialog.component";
 import { BrowserDynamicTestingModule } from "@angular/platform-browser-dynamic/testing";

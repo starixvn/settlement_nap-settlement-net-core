@@ -1,14 +1,11 @@
-<!DOCTYPE html><html lang="en"><head>
-   </head><body>@{
-        var path = @ViewBag.NetCoreRootUrl;
-    }
-    <base href="@path/">
+<!DOCTYPE html><html lang="en"><head><base href="/score-source-setting/">
+    
     <title>@ViewBag.Title</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/styles.css">
-<link rel="stylesheet" href="score-source-setting/styles.3e09b651701548d0072e.css" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="score-source-setting/styles.3e09b651701548d0072e.css"></noscript>
-
+    <link rel="stylesheet" href="/lib/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/styles.css">
+<link rel="stylesheet" href="styles.7d3e6e7c6452cfb0.css" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="styles.7d3e6e7c6452cfb0.css"></noscript></head>
+<body>
     <header>
         @await Html.PartialAsync("~/Views/Menu.cshtml")
     </header>
@@ -23,8 +20,8 @@
             element.className = "active-menu";
         }
     </script>
-    <script src="js/notification.js" type="text/javascript"></script>
+    <script src="/js/notification.js" type="text/javascript"></script>
     @await Html.PartialAsync("~/Views/Shared/_Matomo.cshtml")
-<script src="score-source-setting/runtime.12e53bd77baface2cb75.js" defer></script><script src="score-source-setting/polyfills.66f7d172d5d6c55a8226.js" defer></script><script src="score-source-setting/main.482dd87f1f9462e9d4fc.js" defer></script>
+<script src="runtime.ebfb19fdb8563849.js" type="module"></script><script src="polyfills.99e48922b179f731.js" type="module"></script><script src="main.c08acfd532b33256.js" type="module"></script>
 
 </body></html>

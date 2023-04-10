@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import * as _ from "lodash";
 import { Match, MatchDetail } from "../../models";
 import { RequestService } from "../../services/request.service";
-import { Observable } from "rxjs";
+import { firstValueFrom } from "rxjs";
 import { map } from "rxjs/operators";
 import { CalculateAction, TicketStatusText } from "../../../shared/constants";
 
@@ -132,12 +132,12 @@ export class VerificationService {
         return !_.isNil(matchDetail.exHTHomeScore) && !_.isNil(matchDetail.exHTAwayScore);
     }
 
-    public verifyChangedSettledTickets(matchDetail: MatchDetail, action: string) : Observable<boolean> {
+    public verifyChangedSettledTickets(matchDetail: MatchDetail, action: string){
         const query = {
             matchId: matchDetail.matchId
         };
 
-        return this.requestService.getLastestResult(query).pipe(map((lastestMatch: Match) => {
+        const request =  this.requestService.getLastestResult(query).pipe(map((lastestMatch: Match) => {
             if (_.isEqual(action, CalculateAction.calculateHalfTime)) {
                 return this.isHalfTimeChanged(matchDetail, lastestMatch.matchDetail);
             } else if (_.isEqual(action, CalculateAction.calculateFullTime)) {
@@ -147,6 +147,8 @@ export class VerificationService {
                     || this.isFinalChanged(matchDetail, lastestMatch.matchDetail);
             }
         }));
+
+        return firstValueFrom(request);
     }
 
     private isHalfTimeChanged(matchDetail: MatchDetail, lastestMatchDetail: MatchDetail) {

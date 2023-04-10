@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Settlement.Gaming.Models.NumberGame;
+﻿namespace Settlement.Gaming.Models.NumberGame;
 
 public class MatchDetailModel
 {

@@ -3,9 +3,6 @@ using Settlement.Core.Services;
 using Settlement.FastMarkets.Models;
 using Settlement.FastMarkets.Requests;
 using Settlement.FastMarkets.Services;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using Settlement.Core.Models;
 using MatchDetail = Settlement.FastMarkets.Models.MatchDetail;
 
@@ -13,7 +10,7 @@ namespace Settlement.FastMarkets.Handlers;
 
 public class FastMarketHandler : IRequestHandler<MatchDetailRequest, MatchDetail>,
     IRequestHandler<BetTypeIntervalRequest, FastMarketModel>,
-    IRequestHandler<GetLastestResultRequest, List<FastMarketResult>>,
+    IRequestHandler<GetLatestResultRequest, List<FastMarketResult>>,
     IRequestHandler<GetTimeMachineResultRequest, List<TimeMachineResult>>,
     IRequestHandler<UpdateWaterBreakSettingRequest, Result>,
     IRequestHandler<SettleRequest, Result>,
@@ -53,8 +50,8 @@ public class FastMarketHandler : IRequestHandler<MatchDetailRequest, MatchDetail
         return fastMarketModel;
     }
 
-    public async Task<List<FastMarketResult>> Handle(GetLastestResultRequest request, CancellationToken cancellationToken) 
-        => await fastMarketService.GetLastestResult(request);
+    public async Task<List<FastMarketResult>> Handle(GetLatestResultRequest request, CancellationToken cancellationToken) 
+        => await fastMarketService.GetLatestResult(request);
 
     public async Task<List<TimeMachineResult>> Handle(GetTimeMachineResultRequest request, CancellationToken cancellationToken) 
         => await fastMarketService.GetTimeMachineResult(request);

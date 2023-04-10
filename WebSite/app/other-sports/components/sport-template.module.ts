@@ -10,11 +10,6 @@ import {
     ReCheckInService,
 } from '../../shared/services';
 import { OnlyIntegerDirective } from '../../shared/directives';
-import {
-    TicketCountComponent,
-    ResettleCheckerComponent,
-    NotReadyMatchComponent
-} from '../../shared/components';
 import { FullTimeService } from './only-fulltime/fulltime.service';
 import { FullTimeVerificationService } from './only-fulltime/fulltime-verification.service';
 import { FullTimeCalculationComponent } from './only-fulltime/fulltime-calculation.component';
@@ -41,6 +36,9 @@ import { GameTotalMatchRefundComponent } from './game-total-match-flow/game-tota
 import { OtherRefundComponent } from './other/other-refund.component';
 import { OtherService } from './other/other.service';
 import { OtherCalculationComponent } from './other/other-calculation.component';
+import { TicketCountComponent } from '../../shared/components/ticket-count/ticket-count.component';
+import { ResettleCheckerComponent } from '../../shared/components/resettle-checker/resettle-checker.component';
+import { NotReadyMatchComponent } from '../../shared/components/not-ready-match/not-ready-match.component';
 @NgModule({
     imports: [
         BrowserModule,
@@ -56,16 +54,16 @@ import { OtherCalculationComponent } from './other/other-calculation.component';
             maxOpened: 1,
         }),
         ToastContainerModule,
+        ResettleCheckerComponent,
+        NotReadyMatchComponent,
+        TicketCountComponent,
+        OnlyIntegerDirective,
     ],
     declarations: [
-        OnlyIntegerDirective,
-        TicketCountComponent,
         FullTimeCalculationComponent,
-        ResettleCheckerComponent,
         FullTimeRefundComponent,
         GameTotalCalculationComponent,
         GameTotalRefundComponent,
-        NotReadyMatchComponent,
         ScorePipe,
         ResourceHeaderPipe,
         ResourceNameByIdPipe,

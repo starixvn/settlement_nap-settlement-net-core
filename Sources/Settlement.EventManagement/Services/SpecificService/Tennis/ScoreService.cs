@@ -1,6 +1,5 @@
-﻿using Settlement.Core.Models;
-
-namespace Settlement.EventManagement.Services.SpecificService.Tennis;
+﻿namespace Settlement.EventManagement.Services.SpecificService.Tennis;
+using Settlement.Core.Models;
 
 public interface IScoreService
 {

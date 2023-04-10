@@ -6,7 +6,6 @@
     public canChangeScoreSource: boolean;
     public isTrader: boolean;
     public canViewSettlementLog: boolean;
-    public canCalculateMp: boolean;
     public canAutoPayout: boolean;
     public canMarkPending: boolean;
     public canMarkUnDecided: boolean;

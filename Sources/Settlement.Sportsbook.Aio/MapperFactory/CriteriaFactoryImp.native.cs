@@ -20,7 +20,7 @@ public class CriteriaFactoryImp : CriteriaFactoryBase
         CriteriaTypes.Add($"tennis-{ApiKeyConstant.HedgeMatchInfoKey}", typeof(Criteria.GetHedgeMatchCriteria));
         CriteriaTypes.Add($"tennis-{ApiKeyConstant.ResultDetailKey}", typeof(Criteria.GetResultDetailCriteria));
         CriteriaTypes.Add($"tennis-{ApiKeyConstant.ProviderKey}", typeof(Criteria.Tennis.GetProviderCriteria));
-        CriteriaTypes.Add($"tennis-{ApiKeyConstant.LastestResultKey}", typeof(Criteria.GetRecalResultCriteria));
+        CriteriaTypes.Add($"tennis-{ApiKeyConstant.LatestResultKey}", typeof(Criteria.GetRecalResultCriteria));
         CriteriaTypes.Add($"tennis-{ApiKeyConstant.SaveScore}", typeof(Criteria.SaveScoreCriteria));
 
         CriteriaTypes.Add("tennis-settle", typeof(Criteria.SettleCriteria));
@@ -32,7 +32,7 @@ public class CriteriaFactoryImp : CriteriaFactoryBase
         CriteriaTypes.Add($"cricket-{ApiKeyConstant.HedgeMatchInfoKey}", typeof(Criteria.GetHedgeMatchCriteria));
         CriteriaTypes.Add($"cricket-{ApiKeyConstant.ResultDetailKey}", typeof(Criteria.GetResultDetailCriteria));
         CriteriaTypes.Add($"cricket-{ApiKeyConstant.ProviderKey}", typeof(Criteria.Cricket.GetProviderCriteria));
-        CriteriaTypes.Add($"cricket-{ApiKeyConstant.LastestResultKey}", typeof(Criteria.GetRecalResultCriteria));
+        CriteriaTypes.Add($"cricket-{ApiKeyConstant.LatestResultKey}", typeof(Criteria.GetRecalResultCriteria));
         CriteriaTypes.Add($"cricket-{ApiKeyConstant.SaveScore}", typeof(Criteria.Cricket.SaveScoreCriteria));
 
         CriteriaTypes.Add("cricket-settle", typeof(Criteria.SettleCriteria));
@@ -44,7 +44,7 @@ public class CriteriaFactoryImp : CriteriaFactoryBase
         CriteriaTypes.Add($"esport-{ApiKeyConstant.HedgeMatchInfoKey}", typeof(Criteria.GetHedgeMatchCriteria));
         CriteriaTypes.Add($"esport-{ApiKeyConstant.ResultDetailKey}", typeof(Criteria.GetResultDetailCriteria));
         CriteriaTypes.Add($"esport-{ApiKeyConstant.ProviderKey}", typeof(Criteria.ESport.GetProviderCriteria));
-        CriteriaTypes.Add($"esport-{ApiKeyConstant.LastestResultKey}", typeof(Criteria.GetRecalResultCriteria));
+        CriteriaTypes.Add($"esport-{ApiKeyConstant.LatestResultKey}", typeof(Criteria.GetRecalResultCriteria));
         CriteriaTypes.Add($"esport-{ApiKeyConstant.SaveScore}", typeof(Criteria.ESport.SaveScoreCriteria));
         CriteriaTypes.Add($"esport-{ApiKeyConstant.OldMatch}", typeof(Criteria.ESport.GetOldMatchCriteria));
 
@@ -56,7 +56,7 @@ public class CriteriaFactoryImp : CriteriaFactoryBase
         CriteriaTypes.Add($"badminton-{ApiKeyConstant.MatchInfoKey}", typeof(Criteria.GetMatchDetailCriteria));
         CriteriaTypes.Add($"badminton-{ApiKeyConstant.HedgeMatchInfoKey}", typeof(Criteria.GetHedgeMatchCriteria));
         CriteriaTypes.Add($"badminton-{ApiKeyConstant.ResultDetailKey}", typeof(Criteria.GetResultDetailCriteria));
-        CriteriaTypes.Add($"badminton-{ApiKeyConstant.LastestResultKey}", typeof(Criteria.GetRecalResultCriteria));
+        CriteriaTypes.Add($"badminton-{ApiKeyConstant.LatestResultKey}", typeof(Criteria.GetRecalResultCriteria));
         CriteriaTypes.Add($"badminton-{ApiKeyConstant.ProviderKey}", typeof(Criteria.GetProviderCriteria));
         CriteriaTypes.Add($"badminton-{ApiKeyConstant.SaveScore}", typeof(Criteria.SaveScoreCriteria));
 
@@ -68,7 +68,7 @@ public class CriteriaFactoryImp : CriteriaFactoryBase
         CriteriaTypes.Add($"basketball-{ApiKeyConstant.MatchInfoKey}", typeof(Criteria.GetMatchDetailCriteria));
         CriteriaTypes.Add($"basketball-{ApiKeyConstant.HedgeMatchInfoKey}", typeof(Criteria.GetHedgeMatchCriteria));
         CriteriaTypes.Add($"basketball-{ApiKeyConstant.ResultDetailKey}", typeof(Criteria.GetResultDetailCriteria));
-        CriteriaTypes.Add($"basketball-{ApiKeyConstant.LastestResultKey}", typeof(Criteria.GetRecalResultCriteria));
+        CriteriaTypes.Add($"basketball-{ApiKeyConstant.LatestResultKey}", typeof(Criteria.GetRecalResultCriteria));
         CriteriaTypes.Add($"basketball-{ApiKeyConstant.ProviderKey}", typeof(Criteria.GetProviderCriteria));
         CriteriaTypes.Add($"basketball-{ApiKeyConstant.SaveScore}", typeof(Criteria.SaveScoreCriteria));
 
@@ -80,7 +80,7 @@ public class CriteriaFactoryImp : CriteriaFactoryBase
         CriteriaTypes.Add($"game-total-{ApiKeyConstant.MatchInfoKey}", typeof(Criteria.GetMatchDetailCriteria));
         CriteriaTypes.Add($"game-total-{ApiKeyConstant.HedgeMatchInfoKey}", typeof(Criteria.GetHedgeMatchCriteria));
         CriteriaTypes.Add($"game-total-{ApiKeyConstant.ResultDetailKey}", typeof(Criteria.GetResultDetailCriteria));
-        CriteriaTypes.Add($"game-total-{ApiKeyConstant.LastestResultKey}", typeof(Criteria.GetRecalResultCriteria));
+        CriteriaTypes.Add($"game-total-{ApiKeyConstant.LatestResultKey}", typeof(Criteria.GetRecalResultCriteria));
         CriteriaTypes.Add($"game-total-{ApiKeyConstant.ProviderKey}", typeof(Criteria.GetProviderCriteria));
         CriteriaTypes.Add($"game-total-{ApiKeyConstant.ChildMatchKey}", typeof(Criteria.Volleyball.GetChildMatchCriteria));
         CriteriaTypes.Add($"game-total-{ApiKeyConstant.SaveScore}", typeof(Criteria.SaveScoreCriteria));

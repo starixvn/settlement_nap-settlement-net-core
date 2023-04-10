@@ -29,11 +29,11 @@ public class ResultDetailModel
 
     protected byte ResultSetting { get; set; }
 
-    public List<string> MultipleTicketStatus { get; } = new List<string>();
+    public List<string> MultipleTicketStatus { get; } = new();
 
-    public ResultDetailSetting ResultSettingData => new ResultDetailSetting
+    public ResultDetailSetting ResultSettingData => new()
     {
-        ResultSetting = Convert.ToString(ResultSetting, ToBase).Reverse(),
+        ResultSetting = Convert.ToString(ResultSetting, ToBase).Reverse()
     };
 
     public int InRunning { get; set; }
@@ -44,13 +44,7 @@ public class ResultDetailModel
 
     public int BetCount { get; set; }
 
-    public virtual bool IsNotExistedValue
-    {
-        get
-        {
-            return SettlementStatusId == SettlementStatus.Running && string.IsNullOrWhiteSpace(HomeValue) && string.IsNullOrWhiteSpace(AwayValue);
-        }
-    }
+    public virtual bool IsNotExistedValue => SettlementStatusId == SettlementStatus.Running && string.IsNullOrWhiteSpace(HomeValue) && string.IsNullOrWhiteSpace(AwayValue);
 
     public bool IsSpecialBettype { get; set; }
 

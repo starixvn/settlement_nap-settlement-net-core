@@ -23,12 +23,12 @@ public class CricketBetTypeServiceTests
     {
         var data = new List<InputOption>
         {
-            new InputOption { ResourceId = "96801001", OddsInfo = "10001,Test1"},
-            new InputOption { ResourceId = "96622001", OddsInfo = "10002,Test2"},
-            new InputOption { ResourceId = "96622001", OddsInfo = "10003,Test3"},
-            new InputOption { ResourceId = "96711001", OddsInfo = "10004,Test4"},
-            new InputOption { ResourceId = "96711001", OddsInfo = "10005,Test5"},
-            new InputOption { ResourceId = "96711001", OddsInfo = "10006,Test6"},
+            new() { ResourceId = "96801001", OddsInfo = "10001,Test1"},
+            new() { ResourceId = "96622001", OddsInfo = "10002,Test2"},
+            new() { ResourceId = "96622001", OddsInfo = "10003,Test3"},
+            new() { ResourceId = "96711001", OddsInfo = "10004,Test4"},
+            new() { ResourceId = "96711001", OddsInfo = "10005,Test5"},
+            new() { ResourceId = "96711001", OddsInfo = "10006,Test6"}
         };
 
         return data;

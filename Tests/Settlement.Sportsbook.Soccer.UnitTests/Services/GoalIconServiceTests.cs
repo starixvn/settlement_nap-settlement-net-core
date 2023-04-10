@@ -1,9 +1,8 @@
-﻿using NSubstitute;
-using Settlement.Core.Models;
-using Settlement.Core.Services;
-using Xunit;
+﻿using Settlement.Core.Models;
 
 namespace Settlement.Sportsbook.Soccer.UnitTests.Services;
+
+using Core.Services.SpecificService;
 
 public class GoalIconServiceTests
 {
@@ -87,7 +86,7 @@ public class GoalIconServiceTests
 
     [Theory]
     [CombinatorialData]
-    public void GetGoalIcon_BetStatustNullOrWhitespaceAndGoalRecordNotNullOrWhitespaceAndIsExistHtFgLg_ReturnsHalfGoalIconByBetStatus(
+    public void GetGoalIconBetStatusGetGoalIconBetStatusNullOrWhitespaceAndGoalRecordNotNullOrWhitespaceAndIsExistHtFgLgReturnsHalfGoalIconByBetStatus(
         [CombinatorialValues(null, "  ")] string betStatus,
         [CombinatorialValues("A;H", "HA;")] string goalRecord)
     {
@@ -162,7 +161,7 @@ public class GoalIconServiceTests
 
     [Theory]
     [CombinatorialData]
-    public void GetGoalIcon_BetStatustNullOrWhitespaceAndGoalRecordNotNullOrWhitespaceAndIsExistFgLg_ReturnsHalfGoalIconByBetStatus(
+    public void GetGoalIconBetStatusGetBetStatusNullOrWhitespaceAndGoalRecordNotNullOrWhitespaceAndIsExistFgLgReturnsHalfGoalIconByBetStatus(
         [CombinatorialValues(null, "  ")] string betStatus,
         [CombinatorialValues("A;H", "HA;")] string goalRecord)
     {

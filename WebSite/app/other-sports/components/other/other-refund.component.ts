@@ -1,14 +1,15 @@
 import { Component, ViewChild } from '@angular/core';
 import * as _ from 'lodash';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
-import { MarkedTicketsModel, ModalDialogMessage } from '../../../shared/models';
+import { ModalDialogMessage } from '../../../shared/models';
 import { CalculateAction } from '../../../shared/constants';
 import { HedgeMatchDetail, SportTemplate } from '../../../shared/models/sportsbook-sop';
 import { RequestService } from '../../services/request.service';
 import { MessageBoxService } from '../../../shared/services';
-import { Language } from '../../../shared/language';
-import { MatchDetail, OtherSportsMatch, QueryMatch } from '../../models';
+import { Language } from '../../../shared/language.native';
+import { MatchDetail, QueryMatch } from '../../models';
 import { OtherService } from './other.service';
+import { ResourcesIds } from '../../constants';
 @Component({
     selector: 'other-refund',
     templateUrl: './other-refund.component.html',
@@ -31,33 +32,33 @@ export class OtherRefundComponent implements SportTemplate {
     async getMatch(matchId: number) {
         this.toastrService.overlayContainer = this.toastContainer;
         const query = new QueryMatch(matchId, true);
-        const result = await this.requestService.getMatch(query).toPromise() as OtherSportsMatch;
+        const result = await this.requestService.getMatch(query);
         this.matchDetail = result.match.matchDetail;
         this.hedgeMatchDetail = result.match.hedgeMatchDetail;
         this.applyHedgeMatch = this.hedgeMatchDetail != null;
         this.hasRefundFt = this.otherService.showButtonBySportType(this.matchDetail.sportType);
     }
 
-    public async refund(action: string, isParlay: boolean) {
+    public async refund(action: string) {
         this.toastrService.clear();
         const params = {
             matchId: this.matchDetail.matchId,
-            action: isParlay ? `MP-${action}` : action,
+            ResourceIds: `${ResourcesIds.halfTime},${ResourcesIds.fullTime}`,
         };
 
-        const result = await this.requestService.checkMarkedTickets(params).toPromise() as MarkedTicketsModel;
+        const result = await this.requestService.checkMarkedTickets(params);
         if (result.isExistMarkedTicket) {
             this.toastrService.error(Language.MarkedTicket);
         } else {
-            this.confirmDialogMessage.message = this.otherService.getMessageConfirmRefund(isParlay, action);
+            this.confirmDialogMessage.message = this.otherService.getMessageConfirmRefund(action);
             this.messageBoxService.confirm(this.confirmDialogMessage, async () => {
-                this.doRefund(action, isParlay);
+                this.doRefund(action);
             });
         }
     }
 
-    private async doRefund(action: string, isParlay: boolean) {
-        const response = await this.otherService.sendRequest(this.matchDetail, this.hedgeMatchDetail, action, isParlay);
+    private async doRefund(action: string) {
+        const response = await this.otherService.sendRequest(this.matchDetail, this.hedgeMatchDetail, action);
         if (!response.isSuccessful) {
             this.toastrService.error(response.errMsg);
         } else {

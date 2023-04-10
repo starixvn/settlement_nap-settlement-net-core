@@ -30,7 +30,7 @@ public class SoccerController : ControllerBase
     public async Task<IActionResult> GetMatch(GetMatchRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
     [Route("get-lastest-match-detail"), HttpPost]
-    public async Task<IActionResult> GetLatestMatchDetail(GetLastestMatchDetailRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+    public async Task<IActionResult> GetLatestMatchDetail(GetLatestMatchDetailRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
     [Route("calculate"), HttpPost]
     [LogPushRequest]

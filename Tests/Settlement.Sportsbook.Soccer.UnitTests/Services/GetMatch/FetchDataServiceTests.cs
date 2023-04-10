@@ -2,18 +2,14 @@
 using AutoMapper.Configuration;
 using Fanex.Data.Repository;
 using Microsoft.Extensions.Options;
-using NSubstitute;
 using Settlement.Core.Models;
 using Settlement.Sportsbook.Soccer.Criteria;
-using Settlement.Sportsbook.Soccer.GetMatch.Services;
 using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Requests;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using Xunit;
 
 namespace Settlement.Sportsbook.Soccer.UnitTests.Services.GetMatch;
+
+using Soccer.Services.GetMatch;
 
 public class FetchDataServiceTests
 {
@@ -41,7 +37,7 @@ public class FetchDataServiceTests
     {
         // Arrange
         IEnumerable<Models.MatchDetail> matches = new List<Models.MatchDetail> {
-            new Models.MatchDetail { MatchId = 123 }
+            new() { MatchId = 123 }
         };
         var results = new IEnumerable<object>[4];
 

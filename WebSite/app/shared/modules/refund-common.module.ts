@@ -6,6 +6,7 @@ import { ToastContainerModule, ToastrService } from "ngx-toastr";
 import { BlockUIService, HttpRequestService } from "../services";
 import { MessageBoxService } from "../services/message-box.service.native";
 import { IntervalBackgroundPipe } from '../pipes/interval-background.pipe';
+import { ResultByTeamNamePipe } from '../pipes/result-by-team-name.pipe';
 
 @NgModule({
     exports: [FormsModule, CommonModule, ToastContainerModule],
@@ -15,7 +16,8 @@ import { IntervalBackgroundPipe } from '../pipes/interval-background.pipe';
         BlockUIService,
         HttpRequestService,
         AioService,
-        IntervalBackgroundPipe ]
+        IntervalBackgroundPipe,
+        ResultByTeamNamePipe]
 })
 export class RefundCommonModule {
 }

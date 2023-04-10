@@ -2,15 +2,12 @@
 using Settlement.Core.Models;
 using Settlement.Gaming.Criteria.Happy5;
 using Settlement.Gaming.Requests;
-using System.Threading.Tasks;
 using Fanex.NAP.Client.Helpers.Web;
 using Microsoft.AspNetCore.Http;
 using Settlement.Core.Constants;
 using Fanex.Settlement.ScaleOut.Services;
 using Fanex.Settlement.ScaleOut.Request;
 using Microsoft.Extensions.Options;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Settlement.Gaming.Services.Happy5;
 
@@ -51,7 +48,7 @@ public class SettlementServiceImp : SettlementService
         this.accessor = accessor;
         this.ballService = ballService;
         this.scaleOutSettleThirdPartyService = scaleOutSettleThirdPartyService;
-        this.appSettingsKey = options.Value;
+        appSettingsKey = options.Value;
         this.scaleOutSettleService = scaleOutSettleService;
     }
 
@@ -161,11 +158,11 @@ public class SettlementServiceImp : SettlementService
             MatchId = request.MatchId,
             Action = request.Action,
             AdminId = currentSession.UserId,
-            Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString(),
+            Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString()
         };
     }
 
-    private static Result NoPermission => new Result
+    private static Result NoPermission => new()
     {
         ErrCode = NotAuthorized,
         ErrMsg = "You are not authorized to use this function. Please contact the admin for help."

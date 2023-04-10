@@ -10,7 +10,7 @@ public static class ApiKeyConstant
 
     public const string ProviderKey = "external-result";
 
-    public const string LastestResultKey = "lastest-result";
+    public const string LatestResultKey = "lastest-result";
 
     public const string SaveScore = "save-score";
 

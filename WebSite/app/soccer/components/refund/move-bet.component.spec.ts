@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 import { of } from 'rxjs';
-import { Language } from '../../../shared/language';
+import { Language } from '../../../shared/language.native';
 import { MaterialModule } from '../../../shared/material-module';
 import { BlockUIService, HttpRequestService, MessageBoxService } from '../../../shared/services';
 import { RefundType } from './model/constant.native';

@@ -1,9 +1,11 @@
-﻿import { Component, OnInit, Input } from '@angular/core';
+﻿import { ScoreBySettlementPipe } from './../../shared/pipes/score-by-settlement.pipe';
+import { CommonModule } from '@angular/common';
+import { Component, OnInit, Input, Injector } from '@angular/core';
 import { ModalDialogMessage } from '../../shared/models';
 import { MessageBoxService } from '../../shared/services';
 import { Match } from '../models';
 import { MatchDetail, ResultDetail } from '../../shared/models/sportsbook-sop';
-import { Language } from '../../shared/language';
+import { Language } from '../../shared/language.native';
 import { ResourcesIds } from '../constants';
 import { VerificationBaseService } from '../../core/services/verification-base.service';
 import * as _ from 'lodash';
@@ -12,6 +14,8 @@ import { SettlementStatusId } from '../../shared/constants';
 @Component({
     selector: 'match-detail',
     templateUrl: './match-detail.component.html',
+    standalone: true,
+    imports: [CommonModule, ScoreBySettlementPipe ],
 })
 export class MatchDetailComponent implements OnInit {
     @Input() public match: Match;
@@ -24,9 +28,7 @@ export class MatchDetailComponent implements OnInit {
     public settlementStatus = SettlementStatusId;
     public lodash = _;
 
-    constructor(
-        private readonly verificationBaseService: VerificationBaseService,
-        private readonly messageBoxService: MessageBoxService) {}
+    constructor(private readonly injector: Injector) {}
 
     public ngOnInit() {
         this.matchDetail = this.match.matchDetail;
@@ -37,11 +39,11 @@ export class MatchDetailComponent implements OnInit {
     }
 
     public refresh() {
-        const scoreChanged = this.verificationBaseService.getChangedScores(this.match.resultDetails, this.match.originalResultDetail);
+        const scoreChanged = this.injector.get(VerificationBaseService).getChangedScores(this.match.resultDetails, this.match.originalResultDetail);
         if (scoreChanged.length > 0 && !this.match.matchDetail.isSavedScore) {
             this.confirmationDialogMessage.message = Language.reloadConfirmMessage;
             this.confirmationDialogMessage.title = Language.confirmationBox;
-            this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
+            this.injector.get(MessageBoxService).confirm(this.confirmationDialogMessage, () => {
                 this.reloadPage();
             });
         } else {

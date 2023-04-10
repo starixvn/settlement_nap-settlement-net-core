@@ -26,7 +26,7 @@ public class MergeDataServiceTests
 
         var siteMatches = new List<Match>
         {
-            new () { MatchId = 123 },
+            new () { MatchId = 123 }
         };
 
         compareMatchService.GetDifferentMatchSiteInfo(Arg.Any<Match>(), Arg.Any<List<Match>>())

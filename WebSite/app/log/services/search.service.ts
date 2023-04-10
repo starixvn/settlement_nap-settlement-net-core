@@ -12,11 +12,11 @@ export class SearchService {
     }
 
     public filter(): Observable<LogQuery> {
-        const url = `api/log/filter`;
+        const url = `/api/log/filter`;
         return this.httpRequestService.getJson(url);
     }
 
     public search(query: LogQuery) {
-        return this.httpRequestService.postJson(query, `api/log/getLog`);
+        return this.httpRequestService.postJson(query, `/api/log/getLog`);
     }
 }

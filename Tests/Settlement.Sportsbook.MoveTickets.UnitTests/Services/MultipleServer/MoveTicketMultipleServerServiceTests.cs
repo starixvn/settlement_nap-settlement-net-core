@@ -15,12 +15,11 @@ using Settlement.Sportsbook.MoveTickets.Requests;
 
 namespace Settlement.Sportsbook.MoveTickets.UnitTests.Services.MultipleServer;
 
+using MoveTickets.Services.MultipleServer;
+
 public class MoveTicketMultipleServerServiceTests
 {
     private readonly IDynamicRepository repository;
-    private readonly IMapper mapper;
-    private readonly INapSession currentSession;
-    private readonly IHttpContextAccessor accessor;
     private readonly ILogService logService;
     private readonly ScaleOutSettleService scaleOutSettleService;
     private readonly MoveTicketMultipleServerService service;
@@ -28,16 +27,21 @@ public class MoveTicketMultipleServerServiceTests
     public MoveTicketMultipleServerServiceTests()
     {
         repository = Substitute.For<IDynamicRepository>();
-        currentSession = Substitute.For<INapSession>();
+        var currentSession = Substitute.For<INapSession>();
         var mapperConfig = new MapperConfigurationExpression();
         mapperConfig.AddProfile<SportsbookMoveTicketAutoMapperProfile>();
         var config = new MapperConfiguration(mapperConfig);
-        mapper = new Mapper(config);
+        var mapper = new Mapper(config);
         logService = Substitute.For<ILogService>();
         scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
-        accessor = Substitute.For<IHttpContextAccessor>();
-        var context = new DefaultHttpContext();
-        context.Connection.RemoteIpAddress = new System.Net.IPAddress(1);
+        var accessor = Substitute.For<IHttpContextAccessor>();
+        var context = new DefaultHttpContext
+        {
+            Connection =
+            {
+                RemoteIpAddress = new System.Net.IPAddress(1)
+            }
+        };
         accessor.HttpContext = context;
         var appSettings = new AppSettingsKey { SiteDbServer = new List<string> { "01", "02" } };
         var options = Options.Create(appSettings);
@@ -100,7 +104,7 @@ public class MoveTicketMultipleServerServiceTests
     {
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
 
-        var result = await service.MoveRunningTickets(new MoveRunningTicketsRequest());
+        await service.MoveRunningTickets(new MoveRunningTicketsRequest());
 
         repository.Received(2).Execute(Arg.Any<MoveRunningTicketsCriteria>());
         repository.Received().Execute(Arg.Any<CopyResultCriteria>());

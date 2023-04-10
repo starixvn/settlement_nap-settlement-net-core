@@ -7,7 +7,7 @@ public class CheckingMarkedTicketsCriteria : NonQueryCommand
 {
     public int MatchId { get; set; }
 
-    public string Action { get; set; }
+    public string ResourceIds { get; set; }
 
     public bool IsExistMarkedTicket { get; set; }
 
@@ -16,7 +16,7 @@ public class CheckingMarkedTicketsCriteria : NonQueryCommand
 
     public override string GetSettingKey()
     {
-        return $"NAP_Set_CheckingMarkedTransaction_{DbServer}";
+        return $"NAP_Set_EarlySettlement_CheckingMarkedTransaction_{DbServer}";
     }
 
     public override bool IsValid()

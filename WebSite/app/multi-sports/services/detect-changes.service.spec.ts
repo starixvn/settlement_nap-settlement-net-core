@@ -1,6 +1,6 @@
 import { TestBed } from "@angular/core/testing";
 import { Match } from "../models";
-import { AutoSetting, MoreScore, Remark } from "../../shared/models";
+import { MoreScore, Remark } from "../../shared/models";
 import { DetectChangesService } from "./detect-changes.service";
 
 describe('MultiSport - DetectChangesService', () => {
@@ -65,7 +65,6 @@ describe('MultiSport - DetectChangesService', () => {
             newMatch.isCalculatingMP = 1;
             newMatch.isCalculatingSingle = 1;
             newMatch.isExistMarkedTicket = true;
-            newMatch.isExistMarkedTicketParlay = true;
             newMatch.isExistRunningTicket = true;
             newMatch.isHalfTimeCal = true;
             newMatch.isMultiCaled = true;

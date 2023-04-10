@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Settlement.Sportsbook.Soccer.Models;
+﻿namespace Settlement.Sportsbook.Soccer.Models;
 
 public class MatchMoveBetTicket
 {

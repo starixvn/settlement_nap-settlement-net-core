@@ -2,8 +2,8 @@
 
 public static class ActionKey
 {
-    public static Dictionary<string, string> ActionDictionary => new Dictionary<string, string>
-        {
+    public static Dictionary<string, string> ActionDictionary => new()
+    {
             {"CAL", "ALL"},
             {"REFUND", "ALL"},
             {"UNDO", "ALL"},

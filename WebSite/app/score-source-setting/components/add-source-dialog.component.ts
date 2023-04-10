@@ -5,7 +5,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { DefaultGames, sportSupport } from "../constants";
 import { MessageBoxService, HttpRequestService, BlockUIService } from "../../shared/services";
 import { ModalDialogMessage } from "../../shared/models";
-import { Language } from "../../shared/language";
+import { Language } from "../../shared/language.native";
 import * as _ from 'lodash';
 import { QueryService } from "../services";
 import { OutsideSource } from "../models/outside-source.model";

@@ -1,12 +1,8 @@
-﻿using NSubstitute;
-using Settlement.Core.Constants;
+﻿using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.EventManagement.Services.MultiSports;
 using Settlement.EventManagement.Services.SpecificService.Tennis;
-using System.Collections.Generic;
-using System.Linq;
-using Xunit;
 using Match = Settlement.EventManagement.Models.MultiSports.Match;
 
 namespace Settlement.EventManagement.UnitTests.Services.MultiSports;
@@ -17,8 +13,6 @@ public class MatchResultDetailServiceTests
 
     private readonly IRefDataService refDataService;
 
-    private readonly IExternalScoreService externalScoreService;
-
     private readonly EventManagement.Services.IScoreService scoreService;
 
     private readonly IMatchResultDetailService service;
@@ -27,30 +21,31 @@ public class MatchResultDetailServiceTests
     {
         tennisService = Substitute.For<ITennisService>();
         refDataService = Substitute.For<IRefDataService>();
-        externalScoreService = Substitute.For<IExternalScoreService>();
+        var externalScoreService = Substitute.For<IExternalScoreService>();
         scoreService = Substitute.For<EventManagement.Services.IScoreService>();
         service = new MatchResultDetailServiceImp(tennisService, refDataService, externalScoreService,
             scoreService);
     }
 
-    private static MoreScores FakedScore => new MoreScores
+    private static MoreScores FakedScore => new()
     {
         HalfTimeScore = new Score("1", "2"),
         FinalScore = new Score("3", "4")
     };
 
-    private static List<Match> Matches => new List<Match> {
+    private static List<Match> Matches => new()
+    {
         new Match { MatchId = 1 }
     };
 
-    private List<Match> ExpectedMatches => new List<Match>
+    private List<Match> ExpectedMatches => new()
     {
         new Match { MatchId = 1, MoreScores = FakedScore, RefDataService = refDataService }
     };
 
-    private static List<ResultDetail> ResultDetail => new List<ResultDetail>();
+    private static List<ResultDetail> ResultDetail => new();
 
-    private readonly Permission permission = new Permission();
+    private readonly Permission permission = new();
 
     [Fact]
     public void TennisResultDetail_EmptyMatch_ReturnsEmpty()
@@ -103,11 +98,11 @@ public class MatchResultDetailServiceTests
         // Arrange
         var matches = new List<Match>
         {
-            new Match()
+            new()
             {
                 MatchId = 1
             },
-            new Match()
+            new()
             {
                 MatchId = 2
             }
@@ -115,7 +110,7 @@ public class MatchResultDetailServiceTests
 
         var resultDetail = new List<ResultDetail>
         {
-            new ResultDetail()
+            new()
             {
                 MatchId = 1,
                 SourceId = 0,
@@ -136,11 +131,11 @@ public class MatchResultDetailServiceTests
         // Arrange
         var matches = new List<Match>
         {
-            new Match()
+            new()
             {
                 MatchId = 1
             },
-            new Match()
+            new()
             {
                 MatchId = 2
             }
@@ -148,7 +143,7 @@ public class MatchResultDetailServiceTests
 
         var resultDetail = new List<ResultDetail>
         {
-            new ResultDetail()
+            new()
             {
                 MatchId = 1,
                 SourceId = 0,
@@ -257,7 +252,7 @@ public class MatchResultDetailServiceTests
         Matches[0].SportType = SportType.BasketBall;
         var resultDetail = new List<ResultDetail>
         {
-            new ResultDetail()
+            new()
             {
                 MatchId = 1,
                 SourceId = 0,

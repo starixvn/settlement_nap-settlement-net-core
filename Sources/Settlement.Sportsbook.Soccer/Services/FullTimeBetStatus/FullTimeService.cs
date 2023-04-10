@@ -33,7 +33,7 @@ public class FullTimeServiceImp : IFullTimeService
 
     public bool IsExistRefundHt(bool isRefundHt, string halfTimeBetStatus)
     {
-        return isRefundHt && !halfTimeBetStatus.IgnoreCaseContains(EventStatus.RefundHT);
+        return isRefundHt && !halfTimeBetStatus.IgnoreCaseContains(EventStatus.RefundHt);
     }
 
     public string RefundHtOnBetStatus(string fullTimeBetStatus)

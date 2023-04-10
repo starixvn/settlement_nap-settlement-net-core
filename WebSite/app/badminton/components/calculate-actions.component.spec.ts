@@ -1,38 +1,26 @@
-import { TestBed, ComponentFixture, fakeAsync, tick, waitForAsync } from '@angular/core/testing';
+import { TestBed, ComponentFixture, fakeAsync, tick, flush } from '@angular/core/testing';
 import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
-import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-import { of } from 'rxjs';
 import { ResourceNameByIdPipe } from '../pipes';
-import { CalculateActionsComponent } from './';
 import {
-  ModalDialogComponent,
-  ModalContentDialogComponent,
-  ResettleCheckerComponent,
-  TicketCountComponent
-} from '../../shared/components';
-import {
-  HttpRequestService,
-  BlockUIService,
   MessageBoxService,
-  ClosePopupService,
   AioService,
-  IntervalCalculationService,
 } from '../../shared/services';
 import { Match, HedgeMatchDetail, } from '../models';
 import { BadmintonService, VerificationService } from '../services';
-import { ResultSettingModel } from '../../shared/models';
+import { Result, ResultSettingModel } from '../../shared/models';
 import { MatchDetail, Permission, ResultDetail, ExternalResultDetail } from '../../shared/models/sportsbook-sop';
-import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
 import { CalculateMatchDetailComponent } from './calculate-match-detail.component';
-import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ExternalSourceNamePipe } from '../../shared/pipes/external-source-name.pipe';
-import { ResultByTeamNamePipe } from '../../shared/pipes/result-by-team-name.pipe';
-import { ToastContainerDirective, ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
+import {ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 import { UrlHelper } from '../../helper';
 import { ResultPipe } from '../../shared/pipes/result.pipe';
 import { BadmintonApiKeys } from '../constants';
+import { CalculateActionsComponent } from './calculate-actions.component';
+import { ModalDialogComponent } from '../../shared/components/modal-dialog/modal-dialog.component';
+import { ModalContentDialogComponent } from '../../shared/components/modal-dialog/modal-content-dialog.component';
+import { ResettleCheckerComponent } from '../../shared/components/resettle-checker/resettle-checker.component';
+import { TicketCountComponent } from '../../shared/components/ticket-count/ticket-count.component';
 
 
 export class CreateDataTest {
@@ -57,22 +45,25 @@ describe('Badminton - Calculate actions component', () => {
   let component: CalculateActionsComponent;
   let fixture: ComponentFixture<CalculateActionsComponent>;
   let aioService: AioService;
-  let closePopupService: ClosePopupService;
   let messageBoxService: MessageBoxService;
   let badmintonService: BadmintonService;
   let verificationService: VerificationService;
   let toastrService: ToastrService;
   const buttonName = "btn-danger";
   const errorMessage = "Error message";
-  const successfulResult = {
+  const successfulResult: Result = {
     errCode: 0,
     errMsg: "",
     isSuccessful: true,
+    resultCommand: [],
+    childMatchIds: ''
   };
-  const unSuccessfulResult = {
+  const unSuccessfulResult: Result = {
     errCode: 1,
     errMsg: errorMessage,
     isSuccessful: false,
+    resultCommand: [],
+    childMatchIds: ''
   };
 
   const resultSettingData = new ResultSettingModel();
@@ -97,44 +88,24 @@ describe('Badminton - Calculate actions component', () => {
   const match = new Match(matchDetail);
   match.permission = new Permission();
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
       declarations: [
+        ModalDialogComponent,
+        ModalContentDialogComponent,
+      ],
+      imports: [
         CalculateActionsComponent,
+        HttpClientModule,
+        ToastNoAnimationModule.forRoot(),
+        ToastContainerModule,
+        ToastrModule.forRoot(),
+        ResettleCheckerComponent,
+        TicketCountComponent,
         CalculateMatchDetailComponent,
         ResourceNameByIdPipe,
         ExternalSourceNamePipe,
-        ModalDialogComponent,
-        ModalContentDialogComponent,
-        ResettleCheckerComponent,
-        TicketCountComponent,
-        ResultPipe
-      ],
-      providers: [
-        IntervalBackgroundPipe,
-        MessageBoxService,
-        BadmintonService,
-        HttpRequestService,
-        BlockUIService,
-        ClosePopupService,
-        AioService,
-        VerificationService,
-        NgbModal,
-        ResourceNameByIdPipe,
-        ResultByTeamNamePipe,
-        IntervalCalculationService,
-        ToastContainerDirective,
-        ToastrService,
-        { provide: MessageBoxService, useClass: MessageBoxService },
-      ],
-      schemas: [NO_ERRORS_SCHEMA],
-      imports: [
-        FormsModule,
-        HttpClientModule,
-        NgbModule,
-        ToastNoAnimationModule.forRoot(),
-        ToastContainerModule,
-        ToastrModule.forRoot()
+        ResultPipe,
       ],
     })
       .overrideModule(BrowserDynamicTestingModule, {
@@ -147,14 +118,15 @@ describe('Badminton - Calculate actions component', () => {
         fixture = TestBed.createComponent(CalculateActionsComponent);
         component = fixture.componentInstance;
         aioService = fixture.debugElement.injector.get(AioService);
-        closePopupService = fixture.debugElement.injector.get(ClosePopupService);
         messageBoxService = fixture.debugElement.injector.get(MessageBoxService);
         badmintonService = fixture.debugElement.injector.get(BadmintonService);
         verificationService = fixture.debugElement.injector.get(VerificationService);
         toastrService = fixture.debugElement.injector.get(ToastrService);
-        spyOn(toastrService, 'clear');
+        component.initService();
+        jest.spyOn(toastrService, 'clear');
+        fixture.detectChanges();
       });
-  }));
+  });
 
   it('should create', () => {
     expect(component).toBeTruthy();
@@ -167,8 +139,8 @@ describe('Badminton - Calculate actions component', () => {
     it('should alert fail to verify selected maps and score', async () => {
       match.resultDetails = [];
       component.match = match;
-      spyOn(aioService, 'checkingNoRunningOdds').and.returnValue(null);
-      spyOn(toastrService, 'error');
+      jest.spyOn(aioService, 'checkingNoRunningOdds').mockReturnValue(null);
+      toastrService.error = jest.fn();
 
       await component.calculate();
 
@@ -185,18 +157,18 @@ describe('Badminton - Calculate actions component', () => {
       component.match.hedgeMatchDetail.matchId = 12345;
       component.isLeader = true;
       component.applyHedgeMatch = true;
-      spyOn(aioService, 'checkingNoRunningOdds').and.returnValue(null);
-      spyOn(verificationService, 'allMapHaveScoreSources').and.returnValue(true);
-      spyOn(verificationService, 'isExistMismatchScore').and.returnValue(false);
-      spyOn(verificationService, 'invalidInputScore').and.returnValue(false);
-      spyOn(aioService, 'push').and.returnValue(of(successfulResult));
-      spyOn(closePopupService, 'closePopup');
-      spyOn(verificationService, 'getOutsideScores').and.returnValue([]);
-      spyOn(verificationService, 'getChangedScores').and.returnValue([]);
-      spyOn(aioService, 'saveScore').and.returnValue(of(successfulResult));
-      spyOn(aioService, 'verifyChangedSettledTickets').and.returnValue(of(true));
-      spyOn(verificationService, 'verifyMatchScoreOnCalculation').and.returnValue(false);
-      spyOn(verificationService, 'verifyIntervalsOnCalculation').and.returnValue('');
+      jest.spyOn(aioService, 'checkingNoRunningOdds').mockReturnValue(null);
+      jest.spyOn(verificationService, 'allMapHaveScoreSources').mockReturnValue(true);
+      jest.spyOn(verificationService, 'isExistMismatchScore').mockReturnValue(false);
+      jest.spyOn(verificationService, 'invalidInputScore').mockReturnValue(false);
+      jest.spyOn(aioService, 'push').mockReturnValue(Promise.resolve(successfulResult));
+      messageBoxService.closePopup = jest.fn();
+      jest.spyOn(verificationService, 'getOutsideScores').mockReturnValue([]);
+      jest.spyOn(verificationService, 'getChangedScores').mockReturnValue([]);
+      jest.spyOn(aioService, 'saveScore').mockReturnValue(Promise.resolve(successfulResult));
+      jest.spyOn(aioService, 'verifyChangedSettledTickets').mockReturnValue(Promise.resolve(true));
+      jest.spyOn(verificationService, 'verifyMatchScoreOnCalculation').mockReturnValue(false);
+      jest.spyOn(verificationService, 'verifyIntervalsOnCalculation').mockReturnValue('');
 
       await component.calculate();
       let buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
@@ -216,18 +188,18 @@ describe('Badminton - Calculate actions component', () => {
       component.match.resultDetails = [resultDetail];
       component.isLeader = true;
       component.applyHedgeMatch = false;
-      spyOn(aioService, 'checkingNoRunningOdds').and.returnValue(null);
-      spyOn(verificationService, 'allMapHaveScoreSources').and.returnValue(true);
-      spyOn(verificationService, 'isExistMismatchScore').and.returnValue(false);
-      spyOn(verificationService, 'invalidInputScore').and.returnValue(false);
-      spyOn(aioService, 'push').and.returnValue(of(successfulResult));
-      spyOn(closePopupService, 'closePopup');
-      spyOn(verificationService, 'getOutsideScores').and.returnValue([]);
-      spyOn(verificationService, 'getChangedScores').and.returnValue([]);
-      spyOn(aioService, 'saveScore').and.returnValue(of(successfulResult));
-      spyOn(aioService, 'verifyChangedSettledTickets').and.returnValue(of(false));
-      spyOn(verificationService, 'verifyMatchScoreOnCalculation').and.returnValue(false);
-      spyOn(verificationService, 'verifyIntervalsOnCalculation').and.returnValue('');
+      jest.spyOn(aioService, 'checkingNoRunningOdds').mockReturnValue(null);
+      jest.spyOn(verificationService, 'allMapHaveScoreSources').mockReturnValue(true);
+      jest.spyOn(verificationService, 'isExistMismatchScore').mockReturnValue(false);
+      jest.spyOn(verificationService, 'invalidInputScore').mockReturnValue(false);
+      jest.spyOn(aioService, 'push').mockReturnValue(Promise.resolve(successfulResult));
+      messageBoxService.closePopup = jest.fn();
+      jest.spyOn(verificationService, 'getOutsideScores').mockReturnValue([]);
+      jest.spyOn(verificationService, 'getChangedScores').mockReturnValue([]);
+      jest.spyOn(aioService, 'saveScore').mockReturnValue(Promise.resolve(successfulResult));
+      jest.spyOn(aioService, 'verifyChangedSettledTickets').mockReturnValue(Promise.resolve(false));
+      jest.spyOn(verificationService, 'verifyMatchScoreOnCalculation').mockReturnValue(false);
+      jest.spyOn(verificationService, 'verifyIntervalsOnCalculation').mockReturnValue('');
 
       await component.calculate();
       const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
@@ -243,18 +215,18 @@ describe('Badminton - Calculate actions component', () => {
       component.isLeader = true;
       component.applyHedgeMatch = false;
       component.isReSettledTickets = true;
-      spyOn(aioService, 'checkingNoRunningOdds').and.returnValue(null);
-      spyOn(verificationService, 'allMapHaveScoreSources').and.returnValue(true);
-      spyOn(verificationService, 'isExistMismatchScore').and.returnValue(false);
-      spyOn(verificationService, 'invalidInputScore').and.returnValue(false);
-      spyOn(aioService, 'push').and.returnValue(of(unSuccessfulResult));
-      spyOn(closePopupService, 'closePopup');
-      spyOn(verificationService, 'getOutsideScores').and.returnValue([]);
-      spyOn(verificationService, 'getChangedScores').and.returnValue([]);
-      spyOn(aioService, 'saveScore').and.returnValue(of(successfulResult));
-      spyOn(verificationService, 'verifyMatchScoreOnCalculation').and.returnValue(false);
-      spyOn(verificationService, 'verifyIntervalsOnCalculation').and.returnValue('');
-      spyOn(toastrService, 'error');
+      jest.spyOn(aioService, 'checkingNoRunningOdds').mockReturnValue(null);
+      jest.spyOn(verificationService, 'allMapHaveScoreSources').mockReturnValue(true);
+      jest.spyOn(verificationService, 'isExistMismatchScore').mockReturnValue(false);
+      jest.spyOn(verificationService, 'invalidInputScore').mockReturnValue(false);
+      jest.spyOn(aioService, 'push').mockReturnValue(Promise.resolve(unSuccessfulResult));
+      jest.spyOn(verificationService, 'getOutsideScores').mockReturnValue([]);
+      jest.spyOn(verificationService, 'getChangedScores').mockReturnValue([]);
+      jest.spyOn(aioService, 'saveScore').mockReturnValue(Promise.resolve(successfulResult));
+      jest.spyOn(verificationService, 'verifyMatchScoreOnCalculation').mockReturnValue(false);
+      jest.spyOn(verificationService, 'verifyIntervalsOnCalculation').mockReturnValue('');
+      toastrService.error = jest.fn();
+      messageBoxService.closePopup = jest.fn();
 
       await component.calculate();
       const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
@@ -270,18 +242,18 @@ describe('Badminton - Calculate actions component', () => {
       component.isLeader = true;
       component.applyHedgeMatch = false;
       component.isReSettledTickets = true;
-      spyOn(aioService, 'checkingNoRunningOdds').and.returnValue(null);
-      spyOn(verificationService, 'allMapHaveScoreSources').and.returnValue(true);
-      spyOn(verificationService, 'isExistMismatchScore').and.returnValue(false);
-      spyOn(verificationService, 'invalidInputScore').and.returnValue(false);
-      spyOn(aioService, 'push').and.returnValue(of(successfulResult));
-      spyOn(closePopupService, 'closePopup');
-      spyOn(verificationService, 'getOutsideScores').and.returnValue([]);
-      spyOn(verificationService, 'getChangedScores').and.returnValue([]);
-      spyOn(aioService, 'saveScore').and.returnValue(of(unSuccessfulResult));
-      spyOn(verificationService, 'verifyMatchScoreOnCalculation').and.returnValue(false);
-      spyOn(verificationService, 'verifyIntervalsOnCalculation').and.returnValue('');
-      spyOn(toastrService, 'error');
+      jest.spyOn(aioService, 'checkingNoRunningOdds').mockReturnValue(null);
+      jest.spyOn(verificationService, 'allMapHaveScoreSources').mockReturnValue(true);
+      jest.spyOn(verificationService, 'isExistMismatchScore').mockReturnValue(false);
+      jest.spyOn(verificationService, 'invalidInputScore').mockReturnValue(false);
+      jest.spyOn(aioService, 'push').mockReturnValue(Promise.resolve(successfulResult));
+      jest.spyOn(verificationService, 'getOutsideScores').mockReturnValue([]);
+      jest.spyOn(verificationService, 'getChangedScores').mockReturnValue([]);
+      jest.spyOn(aioService, 'saveScore').mockReturnValue(Promise.resolve(unSuccessfulResult));
+      jest.spyOn(verificationService, 'verifyMatchScoreOnCalculation').mockReturnValue(false);
+      jest.spyOn(verificationService, 'verifyIntervalsOnCalculation').mockReturnValue('');
+      toastrService.error = jest.fn();
+      messageBoxService.closePopup = jest.fn();
 
       await component.calculate();
       const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
@@ -296,12 +268,13 @@ describe('Badminton - Calculate actions component', () => {
       component.match.resultDetails = [resultDetail];
       component.isLeader = false;
       component.isReSettledTickets = true;
-      spyOn(aioService, 'checkingNoRunningOdds').and.returnValue(null);
-      spyOn(verificationService, 'invalidInputScore').and.returnValue(false);
-      spyOn(verificationService, 'allMapHaveScoreSources').and.returnValue(false);
-      spyOn(toastrService, 'error');
+      jest.spyOn(aioService, 'checkingNoRunningOdds').mockReturnValue(null);
+      jest.spyOn(verificationService, 'invalidInputScore').mockReturnValue(false);
+      jest.spyOn(verificationService, 'allMapHaveScoreSources').mockReturnValue(false);
+      toastrService.error = jest.fn();
 
       await component.calculate();
+      flush();
 
       expect(toastrService.error).toHaveBeenCalled();
     }));
@@ -311,13 +284,14 @@ describe('Badminton - Calculate actions component', () => {
       component.match.resultDetails = [resultDetail];
       component.isLeader = false;
       component.isReSettledTickets = true;
-      spyOn(aioService, 'checkingNoRunningOdds').and.returnValue(null);
-      spyOn(verificationService, 'invalidInputScore').and.returnValue(false);
-      spyOn(verificationService, 'allMapHaveScoreSources').and.returnValue(true);
-      spyOn(verificationService, 'isExistMismatchScore').and.returnValue(true);
-      spyOn(toastrService, 'error');
+      jest.spyOn(aioService, 'checkingNoRunningOdds').mockReturnValue(null);
+      jest.spyOn(verificationService, 'invalidInputScore').mockReturnValue(false);
+      jest.spyOn(verificationService, 'allMapHaveScoreSources').mockReturnValue(true);
+      jest.spyOn(verificationService, 'isExistMismatchScore').mockReturnValue(true);
+      toastrService.error = jest.fn();
 
       await component.calculate();
+      flush();
 
       expect(toastrService.error).toHaveBeenCalled();
     }));
@@ -326,13 +300,14 @@ describe('Badminton - Calculate actions component', () => {
       component.match = match;
       component.match.resultDetails = [resultDetail];
       component.isLeader = false;
-      spyOn(verificationService, 'invalidInputScore').and.returnValue(false);
-      spyOn(aioService, 'checkingNoRunningOdds').and.returnValue(errorMessage);
-      spyOn(toastrService, 'error');
-      spyOn(verificationService, 'verifyMatchScoreOnCalculation').and.returnValue(false);
-      spyOn(verificationService, 'verifyIntervalsOnCalculation').and.returnValue('');
+      jest.spyOn(verificationService, 'invalidInputScore').mockReturnValue(false);
+      jest.spyOn(aioService, 'checkingNoRunningOdds').mockReturnValue(Promise.resolve(errorMessage));
+      jest.spyOn(verificationService, 'verifyMatchScoreOnCalculation').mockReturnValue(false);
+      jest.spyOn(verificationService, 'verifyIntervalsOnCalculation').mockReturnValue('');
+      toastrService.error = jest.fn();
 
       await component.calculate();
+      flush();
 
       expect(toastrService.error).toHaveBeenCalledWith(errorMessage);
     }));
@@ -344,9 +319,10 @@ describe('Badminton - Calculate actions component', () => {
       result.checked = true;
       component.match = match;
       component.match.resultDetails = [result];
-      spyOn(toastrService, 'error');
+      toastrService.error = jest.fn();
 
       await component.calculate();
+      flush();
 
       expect(toastrService.error).toHaveBeenCalled();
     }));
@@ -363,17 +339,17 @@ describe('Badminton - Calculate actions component', () => {
       total.resultSettingData = resultSettingData;
       component.match.resultDetails = [total];
       component.isLeader = true;
-      spyOn(aioService, 'checkingNoRunningOdds').and.returnValue(null);
-      spyOn(verificationService, 'allMapHaveScoreSources').and.returnValue(true);
-      spyOn(verificationService, 'isExistMismatchScore').and.returnValue(false);
-      spyOn(aioService, 'push').and.returnValue(of(successfulResult));
-      spyOn(closePopupService, 'closePopup');
-      spyOn(verificationService, 'getOutsideScores').and.returnValue([]);
-      spyOn(verificationService, 'getChangedScores').and.returnValue([]);
-      spyOn(aioService, 'saveScore').and.returnValue(of(successfulResult));
-      spyOn(aioService, 'verifyChangedSettledTickets').and.returnValue(of(true));
-      spyOn(verificationService, 'verifyMatchScoreOnCalculation').and.returnValue(true);
-      spyOn(verificationService, 'verifyIntervalsOnCalculation').and.returnValue('');
+      jest.spyOn(aioService, 'checkingNoRunningOdds').mockReturnValue(null);
+      jest.spyOn(verificationService, 'allMapHaveScoreSources').mockReturnValue(true);
+      jest.spyOn(verificationService, 'isExistMismatchScore').mockReturnValue(false);
+      jest.spyOn(aioService, 'push').mockReturnValue(Promise.resolve(successfulResult));
+      messageBoxService.closePopup = jest.fn();
+      jest.spyOn(verificationService, 'getOutsideScores').mockReturnValue([]);
+      jest.spyOn(verificationService, 'getChangedScores').mockReturnValue([]);
+      jest.spyOn(aioService, 'saveScore').mockReturnValue(Promise.resolve(successfulResult));
+      jest.spyOn(aioService, 'verifyChangedSettledTickets').mockReturnValue(Promise.resolve(true));
+      jest.spyOn(verificationService, 'verifyMatchScoreOnCalculation').mockReturnValue(true);
+      jest.spyOn(verificationService, 'verifyIntervalsOnCalculation').mockReturnValue('');
 
       await component.calculate();
       const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
@@ -397,8 +373,8 @@ describe('Badminton - Calculate actions component', () => {
           true
         );
         component.match = match;
-        spyOn(aioService, "push").and.returnValue(of(successfulResult));
-        spyOn(messageBoxService, "closePopup");
+        jest.spyOn(aioService, "push").mockReturnValue(Promise.resolve(successfulResult));
+        jest.spyOn(messageBoxService, "closePopup");
         component.uncalculate();
 
         const buttonYes = document.getElementsByClassName(
@@ -423,8 +399,8 @@ describe('Badminton - Calculate actions component', () => {
         );
         component.match = match;
 
-        spyOn(aioService, "push").and.returnValue(of(unSuccessfulResult));
-        spyOn(toastrService, 'error');
+        jest.spyOn(aioService, "push").mockReturnValue(Promise.resolve(unSuccessfulResult));
+        toastrService.error = jest.fn();
         component.uncalculate();
 
         const buttonYes = document.getElementsByClassName(
@@ -447,8 +423,8 @@ describe('Badminton - Calculate actions component', () => {
         true
       );
       match.hedgeMatchDetail = new HedgeMatchDetail();
-      spyOn(aioService, 'getMatch').and.returnValue(of(match));
-      spyOn(UrlHelper, 'getUrlParameter').and.returnValue(6);
+      jest.spyOn(aioService, 'getMatch').mockReturnValue(Promise.resolve(match));
+      jest.spyOn(UrlHelper, 'getUrlParameter').mockReturnValue('6');
 
       await component.getMatch(12345);
 
@@ -457,10 +433,10 @@ describe('Badminton - Calculate actions component', () => {
     });
 
     it("should call initial functions", async () => {
-      spyOn(verificationService, 'isTicketOnGame');
-      spyOn(verificationService, 'generateExternalScores');
-      spyOn(aioService, 'getMatch').and.returnValue(of(match));
-      spyOn(UrlHelper, 'getUrlParameter').and.returnValue(9);
+      verificationService.isTicketOnGame = jest.fn();
+      verificationService.generateExternalScores = jest.fn();
+      jest.spyOn(aioService, 'getMatch').mockReturnValue(Promise.resolve(match));
+      jest.spyOn(UrlHelper, 'getUrlParameter').mockReturnValue('9');
 
       await component.getMatch(12345);
 
@@ -501,7 +477,6 @@ describe('Badminton - Calculate actions component', () => {
 
     it("isErrorOnVerification - should return true when have not input value", () => {
       match.isClickOnCalculate = true;
-      matchDetail.bestOfMap = 3;
       component.match = match;
       component.match.isScoreDirect = false;
       resultDetail.checked = true;
@@ -513,7 +488,7 @@ describe('Badminton - Calculate actions component', () => {
     it("checkMapIsMatched - should set map mismatch score", () => {
       const map = new ResultDetail();
       component.match = match;
-      spyOn(verificationService, "isMismatchedWarning").and.returnValue(false);
+      jest.spyOn(verificationService, "isMismatchedWarning").mockReturnValue(false);
 
       component.checkMapIsMatched(map);
 
@@ -535,7 +510,8 @@ describe('Badminton - Calculate actions component', () => {
     });
 
     it('selectedOnLastMap - should verify full time score', () => {
-      spyOn(verificationService, 'verifyFinalResource');
+      jest.spyOn(verificationService, 'verifyFinalResource');
+      verificationService.verifyFinalResource = jest.fn();
 
       component.selectedOnLastMap();
 
@@ -544,9 +520,9 @@ describe('Badminton - Calculate actions component', () => {
 
     it('saveScore - should push successfully when user confirm save score', fakeAsync(() => {
       component.apiKeys = BadmintonApiKeys;
-      spyOn(aioService, 'saveScore').and.returnValue(of(successfulResult));
-      spyOn(verificationService, 'getChangedScores').and.returnValue([]);
-      spyOn(verificationService, 'getOutsideScores').and.returnValue([]);
+      jest.spyOn(aioService, 'saveScore').mockReturnValue(Promise.resolve(successfulResult));
+      jest.spyOn(verificationService, 'getChangedScores').mockReturnValue([]);
+      jest.spyOn(verificationService, 'getOutsideScores').mockReturnValue([]);
       component.match = match;
 
       component.saveScore();
@@ -558,13 +534,13 @@ describe('Badminton - Calculate actions component', () => {
     }));
 
     it('getClass - return correct value', () => {
-      spyOn(verificationService, 'isFullTimeMismatched').and.returnValue(true);
-      spyOn(badmintonService, 'getIntervalBackground').and.returnValue("class");
+      jest.spyOn(verificationService, 'isFullTimeMismatched').mockReturnValue(true);
+      jest.spyOn(badmintonService, 'getIntervalBackground').mockReturnValue("refunded");
       const result = new ResultDetail();
 
       const actual = component.getClass(result);
 
-      expect(actual).toEqual("col-mismatched class");
+      expect(actual).toEqual("col-mismatched refunded");
 
     });
   });
@@ -582,15 +558,16 @@ describe('Badminton - Calculate actions component', () => {
   it('verifyAndAutoFillScore - should verify and auto fill score', () => {
     final.homeValue = '1';
     final.awayValue = '1';
-    match.resultDetails = [final];
+    match.resultDetails = [final, totalPoint];
     component.match = match;
     component.match.matchDetail = matchDetail;
-    spyOn(verificationService, 'isMismatchedWarning').and.returnValue(false);
-    spyOn(verificationService, 'autoFillScore');
+    jest.spyOn(verificationService, 'isMismatchedWarning').mockReturnValue(false);
+    verificationService.autoFillScore = jest.fn();
 
     component.verifyAndAutoFillScore(final);
 
     expect(final.isScoreMismatched).toBe(false);
+    expect(totalPoint.isScoreMismatched).toBe(false);
   });
 
   it('autoFillScoreOnLoad - should auto fill games and final', () => {
@@ -600,8 +577,8 @@ describe('Badminton - Calculate actions component', () => {
     final.awayValue = '1';
     match.resultDetails = [resultDetail, final, totalPoint];
     component.match = match;
-    spyOn(verificationService, 'isMismatchedWarning').and.returnValue(false);
-    spyOn(verificationService, 'autoFillScore').and.returnValue(true);
+    jest.spyOn(verificationService, 'isMismatchedWarning').mockReturnValue(false);
+    verificationService.autoFillScore = jest.fn();
 
     component.autoFillScoreOnLoad([resultDetail, final]);
 
@@ -670,7 +647,7 @@ describe('Badminton - Calculate actions component', () => {
       match.isScoreDirect = false;
       component.match = match;
 
-      spyOn(verificationService, 'isOutsideScoreConsecutive').and.returnValue(true);
+      jest.spyOn(verificationService, 'isOutsideScoreConsecutive').mockReturnValue(true);
 
       component.updateOutsideScore(1);
 
@@ -709,7 +686,7 @@ describe('Badminton - Calculate actions component', () => {
       gameOne.externalScores = [external];
       match.resultDetails = [gameOne, totalPoint, totalGame];
       component.match = match;
-      spyOn(verificationService, 'isScoreConsecutive').and.returnValue(false);
+      jest.spyOn(verificationService, 'isScoreConsecutive').mockReturnValue(false);
 
       component.updateOutsideScore(1);
 

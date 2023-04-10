@@ -4,6 +4,7 @@ import { ResourcesIds } from '../constants';
 import { SportType } from '../../shared/constants';
 @Pipe({
   name: 'resourceHeader',
+  standalone: true
 })
 export class ResourceHeaderPipe implements PipeTransform {
   public transform(resourceId: string, sportType = SportType.badminton): string {

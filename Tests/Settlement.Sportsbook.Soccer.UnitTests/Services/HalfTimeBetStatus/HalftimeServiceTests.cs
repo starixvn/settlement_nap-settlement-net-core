@@ -1,11 +1,9 @@
-﻿using NSubstitute;
-using Settlement.Sportsbook.Soccer.Models;
-using Settlement.Sportsbook.Soccer.Requests;
+﻿namespace Settlement.Sportsbook.Soccer.UnitTests.Services.HalfTimeBetStatus;
+
+using Models;
+using Requests;
 using Settlement.Sportsbook.Soccer.Services;
 using Settlement.Sportsbook.Soccer.Services.HalfTimeBetStatus;
-using Xunit;
-
-namespace Settlement.Sportsbook.Soccer.UnitTests.Services.HalftimeBetStatus;
 
 public class HalftimeServiceTests
 {

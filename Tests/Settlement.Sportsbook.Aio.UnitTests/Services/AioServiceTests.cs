@@ -13,9 +13,7 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services;
 public class AioServiceTests
 {
     private readonly IDynamicRepository repository;
-    private readonly IRefDataService refDataService;
     private readonly ICreateQueryService createQueryService;
-    private readonly IMapperFactory mapperFactory;
     private readonly IValidateApiKeyService validateApiKeyService;
     private readonly MultipleServerAioService multipleServerAioService;
     private readonly IAioService service;
@@ -23,9 +21,9 @@ public class AioServiceTests
     public AioServiceTests()
     {
         repository = Substitute.For<IDynamicRepository>();
-        refDataService = Substitute.For<IRefDataService>();
+        var refDataService = Substitute.For<IRefDataService>();
         createQueryService = Substitute.For<ICreateQueryService>();
-        mapperFactory = Substitute.For<IMapperFactory>();
+        var mapperFactory = Substitute.For<IMapperFactory>();
         multipleServerAioService = Substitute.For<MultipleServerAioService>();
         validateApiKeyService = Substitute.For<IValidateApiKeyService>();
         var mapperConfig = new MapperConfigurationExpression();
@@ -38,7 +36,7 @@ public class AioServiceTests
     public async Task GetRecalResult_Always_ReturnResultDetailList()
     {
         var request = new GetRecalResultRequest();
-        repository.FetchAsync<Models.ResultDetail>(Arg.Any<GetRecalResultCriteria>()).Returns(new List<Models.ResultDetail> { new Models.ResultDetail() });
+        repository.FetchAsync<Models.ResultDetail>(Arg.Any<GetRecalResultCriteria>()).Returns(new List<Models.ResultDetail> { new() });
 
         var actual = await service.GetRecalResult(request);
 
@@ -57,7 +55,7 @@ public class AioServiceTests
         repository.GetAsync<Models.MatchDetail>(Arg.Any<ICriteria>()).Returns(fakeMatch);
 
         var listResultDetail = new List<Models.ResultDetail> {
-            new Models.ResultDetail { ResourceId="00" }
+            new() { ResourceId="00" }
         };
         var resultAndTicket = (listResultDetail, new TicketCounts());
         multipleServerAioService.FetchResultDetails(Arg.Any<GetResultDetailCriteria>(), Arg.Any<int>()).Returns(resultAndTicket);

@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-namespace Settlement.FastMarkets.Models;
+﻿namespace Settlement.FastMarkets.Models;
 
 public class FastMarketFilter
 {

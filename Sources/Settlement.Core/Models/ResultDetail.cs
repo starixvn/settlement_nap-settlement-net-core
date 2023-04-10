@@ -14,15 +14,9 @@ public class ResultDetail
 
     public string HomeValue
     {
-        get
-        {
-            return UppercaseFirst(value);
-        }
+        get => UppercaseFirst(value);
 
-        set
-        {
-            this.value = value;
-        }
+        set => this.value = value;
     }
 
     public bool InvalidValue { get; set; }
@@ -39,6 +33,6 @@ public class ResultDetail
 
     private static string UppercaseFirst(string value)
     {
-        return string.IsNullOrEmpty(value) ? null : char.ToUpper(value[0]) + value.Substring(1);
+        return string.IsNullOrEmpty(value) ? null : char.ToUpper(value[0]) + value[1..];
     }
 }

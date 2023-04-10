@@ -29,11 +29,8 @@ describe('SportMatchService', () => {
         matches: [matchFootball, matchIceHockey, matchBaseball, matchBadminton],
         name: 'mock league',
         collapse: false,
-        isCheckedCalcMP: false,
-        disableCheckCalcMP: false,
-        isMergedParlay: false,
+        autoWaitingTime: 0,
         autoCalcSetting: new AutoSetting,
-        autoWaitingTime: 0
     };
 
     const sport: SportMatch = {

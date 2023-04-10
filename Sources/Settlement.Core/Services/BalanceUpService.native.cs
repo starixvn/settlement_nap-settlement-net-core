@@ -1,5 +1,4 @@
-﻿using System;
-using Fanex.Caching;
+﻿using Fanex.Caching;
 using Fanex.Data.Repository;
 using Settlement.Core.Constants;
 using Settlement.Core.Criteria;

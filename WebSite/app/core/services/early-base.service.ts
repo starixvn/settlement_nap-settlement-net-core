@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import * as _ from 'lodash';
-import { Language } from '../../shared/language';
+import { Language } from '../../shared/language.native';
 import { ItemsSelect } from '../../shared/models';
 import { ResultDetail, GroupMap, MatchDetail, Permission } from '../../shared/models/sportsbook-sop';
 

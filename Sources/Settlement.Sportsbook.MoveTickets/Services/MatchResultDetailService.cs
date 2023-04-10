@@ -1,8 +1,6 @@
 ﻿using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Settlement.Sportsbook.MoveTickets.Services;
 

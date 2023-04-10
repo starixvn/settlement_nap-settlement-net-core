@@ -27,7 +27,7 @@ import { FilterComponent } from './filter.component';
 import { TicketStatusPipe, ResultStatusPipe, IntervalPipe, SpecialTimeEventCounterPipe, SpecialTimePipe } from '../pipes';
 import { UrlHelper } from '../../helper';
 import * as _ from 'lodash';
-import { Language } from '../../shared/language';
+import { Language } from '../../shared/language.native';
 import { ResultItemLabel } from '../models/result-item-label.model';
 import { TimeMachineService, VerificationService } from '../services';
 import { SpecialSessionComponent } from './special-session.component';

@@ -8,7 +8,7 @@ import { SettleQuery, InstantCalculationQuery } from "../models/query.model";
 describe('Soccer - request service', () => {
     let service: RequestService;
     let httpRequestService: HttpRequestService;
-    const ApiUrl = 'api/soccer';
+    const ApiUrl = '/api/soccer';
     beforeEach(() => TestBed.configureTestingModule({
         providers: [
             RequestService,

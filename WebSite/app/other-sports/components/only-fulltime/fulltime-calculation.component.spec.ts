@@ -9,7 +9,7 @@ import { FormsModule } from '@angular/forms';
 import { Match, MatchDetail, OtherSportsMatch, Permission, QueryMatch } from '../../models';
 import { TicketCount } from '../../../shared/models';
 import { of } from 'rxjs';
-import { Language } from '../../../shared/language';
+import { Language } from '../../../shared/language.native';
 import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { ScorePipe } from '../../pipes';
 import { RequestService } from '../..//services/request.service';

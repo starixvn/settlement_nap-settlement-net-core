@@ -1,7 +1,7 @@
-﻿using Settlement.Core.Constants;
-using Settlement.Core.Models;
+﻿namespace Settlement.Sportsbook.MoveTickets.Services.MultipleServer;
 
-namespace Settlement.Sportsbook.MoveTickets.Services;
+using Core.Constants;
+using Settlement.Core.Models;
 
 public interface NewInfoMatchService
 {
@@ -16,14 +16,14 @@ public interface NewInfoMatchService
 
 public class NewInfoMatchServiceImp : NewInfoMatchService
 {
-    private readonly List<int> eventStatusReasons = new List<int> { 1, 2, 3, 4 };
+    private readonly List<int> eventStatusReasons = new() { 1, 2, 3, 4 };
 
-    private readonly List<string> eventStatusReasonTitles = new List<string>
+    private readonly List<string> eventStatusReasonTitles = new()
     {
         EventStatus.IrregularTime1H,
         EventStatus.IrregularTime,
         EventStatus.WrongTeamName,
-        EventStatus.Suspended,
+        EventStatus.Suspended
     };
 
     private readonly SiteMatchService siteMatchService;
@@ -35,7 +35,7 @@ public class NewInfoMatchServiceImp : NewInfoMatchService
 
     public string EventStatusColor(Match match)
     {
-        if (match.EventStatus.IgnoreCaseEquals(EventStatus.PostPoned))
+        if (match.EventStatus.IgnoreCaseEquals(EventStatus.Postponed))
         {
             return siteMatchService.IsExistMarkedTickets(match)
                 ? Background.YellowBlinking
@@ -75,10 +75,8 @@ public class NewInfoMatchServiceImp : NewInfoMatchService
 
     public void TicketInfo(Match match)
     {
-        match.IsExistMarkedTicket = siteMatchService.IsExistMarkedTicketsSingle(match);
+        match.IsExistMarkedTicket = siteMatchService.IsExistMarkedTickets(match);
         match.IsExistRunningTicket = siteMatchService.IsExistRunningTickets(match);
-        match.IsExistMarkedTicketParlay = siteMatchService.IsExistMarkedTicketParlay(match);
-        match.IsExistRunningTicketParlay = siteMatchService.IsExistRunningTicketParlay(match);
         match.IsCalculatingSingle = siteMatchService.IsCalculatingSingle(match);
     }
 

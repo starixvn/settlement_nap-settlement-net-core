@@ -24,7 +24,7 @@ public class BetBuilderCalculateServiceTests
 
     public BetBuilderCalculateServiceTests()
     {
-        var accessor = Substitute.For<IHttpContextAccessor>();
+        accessor = Substitute.For<IHttpContextAccessor>();
         var context = new DefaultHttpContext
         {
             Connection =

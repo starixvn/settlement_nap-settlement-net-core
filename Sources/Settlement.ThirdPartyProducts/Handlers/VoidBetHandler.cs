@@ -1,9 +1,6 @@
-﻿using System.Collections.Generic;
-using MediatR;
+﻿using MediatR;
 using Settlement.ThirdPartyProducts.Requests;
 using Settlement.ThirdPartyProducts.Services;
-using System.Threading;
-using System.Threading.Tasks;
 using Settlement.Core.Models;
 
 namespace Settlement.ThirdPartyProducts.Handlers;

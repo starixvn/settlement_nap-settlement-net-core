@@ -1,7 +1,8 @@
-﻿using Settlement.Core.Models;
+﻿namespace Settlement.EventManagement.Services;
+
+using Settlement.Core.Models;
 using Settlement.Core.Services;
 
-namespace Settlement.EventManagement.Services;
 
 public interface IScoreService
 {
@@ -18,7 +19,7 @@ public class ScoreServiceImp : IScoreService
 {
     private const string Halftime = "01";
     private const string Final = "00";
-    private readonly List<int> totalPointSports = new List<int> { SportType.BeachVolleyball, SportType.Badminton, SportType.VolleyBall };
+    private readonly List<int> totalPointSports = new() { SportType.BeachVolleyball, SportType.Badminton, SportType.VolleyBall };
 
     private readonly IScoreSetService scoreSetService;
 
@@ -58,7 +59,7 @@ public class ScoreServiceImp : IScoreService
         {
             HalfTimeScore = HalftimeScore(sportType, resultDetails, permission),
             FinalScore = FinalScore(resultDetails, permission),
-            Sets = ScoreOfSets(resultDetails, resources, permission),
+            Sets = ScoreOfSets(resultDetails, resources, permission)
         };
     }
 
@@ -66,7 +67,7 @@ public class ScoreServiceImp : IScoreService
     {
         var resultDetail = resultDetails.FirstOrDefault(n => n.ResourceId == resource);
 
-        var hasResult = resultDetail != null && resultDetail.MatchId > 0;
+        var hasResult = resultDetail is { MatchId: > 0 };
 
         return hasResult ? scoreSetService.GetScore(resultDetail, permission) : new Score("-");
     }

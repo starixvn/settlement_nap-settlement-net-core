@@ -6,27 +6,27 @@ public interface IInstantGoalCheckingService
 {
     bool IsHalftimeGoalChecking(InstantGoalCondition goalCondition);
 
-    bool IsFullTimeGoallChecking(InstantGoalCondition goalCondition);
+    bool IsFullTimeGoalChecking(InstantGoalCondition goalCondition);
 }
 
 public class InstantGoalCheckingServiceImp : IInstantGoalCheckingService
 {
     public bool IsHalftimeGoalChecking(InstantGoalCondition goalCondition)
     {
-        var firtGoalRecordHalftime = HalftimeFirstGoal(goalCondition.GoalRecord);
-        return goalCondition.IsHalfTime && !firtGoalRecordHalftime.Equals(goalCondition.FirstGoalValue);
+        var firstGoalRecordHalftime = HalftimeFirstGoal(goalCondition.GoalRecord);
+        return goalCondition.IsHalfTime && !firstGoalRecordHalftime.Equals(goalCondition.FirstGoalValue);
     }
 
-    public bool IsFullTimeGoallChecking(InstantGoalCondition goalCondition)
+    public bool IsFullTimeGoalChecking(InstantGoalCondition goalCondition)
     {
-        var firtGoalRecordFullTime = goalCondition.GoalRecord.Replace(";", string.Empty);
+        var firstGoalRecordFullTime = goalCondition.GoalRecord.Replace(";", string.Empty);
 
         if (goalCondition.GoalRecord.Length > 1)
         {
-            firtGoalRecordFullTime = firtGoalRecordFullTime.Substring(0, 1);
+            firstGoalRecordFullTime = firstGoalRecordFullTime.Substring(0, 1);
         }
 
-        return !firtGoalRecordFullTime.Equals(goalCondition.FirstGoalValue);
+        return !firstGoalRecordFullTime.Equals(goalCondition.FirstGoalValue);
     }
 
     private static string HalftimeFirstGoal(string goalRecord)

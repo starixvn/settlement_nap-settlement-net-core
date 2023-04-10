@@ -47,7 +47,7 @@ public class FastMarketsController : ControllerBase
 
     [Route("get-lastest-result")]
     [HttpPost]
-    public async Task<IActionResult> GetLastestResult(GetLastestResultRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+    public async Task<IActionResult> GetLatestResult(GetLatestResultRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
     [Route("get-time-machine-result")]
     [HttpPost]

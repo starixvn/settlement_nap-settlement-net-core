@@ -7,7 +7,7 @@ import { MatchDetail, ResultDetail } from '../../shared/models/sportsbook-sop';
 import { ResultSettingModel } from '../../shared/models';
 import { ResultByTeamNamePipe } from '../../shared/pipes/result-by-team-name.pipe';
 import { InputType, VolleyballBetTypes } from '../constants';
-import { Language } from '../../shared/language';
+import { Language } from '../../shared/language.native';
 import * as _ from 'lodash';
 describe('EarlyConstraintService', () => {
   let service: EarlyConstraintService = null;
@@ -112,7 +112,7 @@ describe('EarlyConstraintService', () => {
     matchDetail.homeName = "HomeName";
     matchDetail.awayName = "AwayName";
 
-    spyOn(resultByTeamNamePipe, "transform").and.returnValue('ResultByPipe');
+    jest.spyOn(resultByTeamNamePipe, "transform").mockReturnValue('ResultByPipe');
     const expected = `${Language.CalculationConfirmMessageEarly}<br/>` +
       'BetTypeOne: &nbspHomeName(1) - AwayName(2)<br/>' +
       'BetTypeTwo: ResultByPipe<br/>';

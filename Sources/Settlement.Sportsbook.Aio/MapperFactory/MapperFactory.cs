@@ -7,7 +7,7 @@ public interface IMapperFactory
 
 public class MapperFactoryBase : IMapperFactory
 {
-    private static readonly Dictionary<string, Type> MapperServices = new Dictionary<string, Type>();
+    private static readonly Dictionary<string, Type> MapperServices = new();
 
     protected static void AddMapperService(string apiKey, Type type)
     {

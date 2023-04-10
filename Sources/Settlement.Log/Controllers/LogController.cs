@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using Settlement.Log.Requests;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Settlement.Core.ActionFilters;

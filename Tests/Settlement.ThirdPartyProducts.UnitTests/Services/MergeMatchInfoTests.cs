@@ -26,7 +26,7 @@ public class MergeMatchInfoTests
                             TotalTicketsRunning = 0,
                             QueueStatus = 1,
                             MatchId = 1
-                        },
+                        }
                     }
                 }
             };
@@ -122,7 +122,7 @@ public class MergeMatchInfoTests
 
         service.MergeStatusTicket(listResources, listResourcesSite);
 
-        Assert.True(listResources[0].IsRunning == true && listResources[1].IsRunning == true);
+        Assert.True(listResources[0].IsRunning && listResources[1].IsRunning);
     }
 
     [Fact]

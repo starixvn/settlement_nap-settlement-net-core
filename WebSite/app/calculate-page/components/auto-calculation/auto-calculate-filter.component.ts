@@ -47,7 +47,7 @@ export class AutoCalculateFilterComponent extends FilterBaseComponent implements
   }
 
   public async initFilterData() {
-    const date = await this.requestService.getDate().toPromise();
+    const date = await this.requestService.getDate();
     this.fromDate = this.verifyDateService.convertToDateStruct(date.fromDate);
     this.toDate = this.verifyDateService.convertToDateStruct(date.toDate);
     this.renderLeague(this.fromDate, this.toDate);
@@ -74,7 +74,7 @@ export class AutoCalculateFilterComponent extends FilterBaseComponent implements
       const fromDateValue = this.verifyDateService.dateFormat(fromDate);
       const toDateValue = this.verifyDateService.dateFormat(toDate);
       var query = new LeagueQuery(fromDateValue, toDateValue);
-      const league = await this.requestService.getLeague(query).toPromise() as League[];
+      const league = await this.requestService.getLeague(query);
       this.leagues = [allLeague, ...league];
     } else {
       this.leagues = [allLeague];

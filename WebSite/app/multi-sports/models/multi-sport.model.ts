@@ -4,5 +4,4 @@ import { SportMatch } from "./";
 export class MultiSport {
     public permission: Permission;
     public sports: SportMatch[];
-    public isCheckedCalcMP = false;
 }

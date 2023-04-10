@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using Settlement.Sportsbook.MoveTickets.Models;
-using System.Collections.Generic;
 
 namespace Settlement.Sportsbook.MoveTickets.Requests;
 

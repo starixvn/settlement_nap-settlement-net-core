@@ -57,7 +57,7 @@ public class OutrightLogProcessServiceTests
         // Arrange
         const int teamId = 1000;
         var outrightLog = new OutrightLog { OrId = 1, TeamId = teamId };
-        var logDetails = new List<OutrightLogDetail> { new OutrightLogDetail() };
+        var logDetails = new List<OutrightLogDetail> { new() };
         outrightLogQueryService.GetOutrightLog(Arg.Any<GetLogRequest>()).Returns(outrightLog);
         outrightLogQueryService.GetOutrightLogDetails(Arg.Any<GetOutrightLogDetailCriteria>())
             .Returns(logDetails);
@@ -88,7 +88,7 @@ public class OutrightLogProcessServiceTests
     public async Task GetOutrightLogByMatchCode_ExistLogButNotExistLogDetail_ReturnsEmptyList()
     {
         // Arrange
-        var outrightLogs = new List<OutrightLog> { new OutrightLog() };
+        var outrightLogs = new List<OutrightLog> { new() };
         outrightLogQueryService.GetOutrightLogs(Arg.Any<GetLogRequest>()).Returns(outrightLogs);
 
         var secondService = Substitute.ForPartsOf<OutrightLogProcessServiceImp>(outrightLogQueryService, refDataService);
@@ -106,9 +106,9 @@ public class OutrightLogProcessServiceTests
     public async Task GetOutrightLogByMatchCode_ExistLogAndLogDetail_ReturnsNotEmptyList()
     {
         // Arrange
-        var outrightLogs = new List<OutrightLog> { new OutrightLog() };
-        var outrightLogDetails = new List<OutrightLogDetail> { new OutrightLogDetail() };
-        var outrightLogsByMatchCode = new List<OutrightLog> { new OutrightLog { OutrightLogDetails = outrightLogDetails } };
+        var outrightLogs = new List<OutrightLog> { new() };
+        var outrightLogDetails = new List<OutrightLogDetail> { new() };
+        var outrightLogsByMatchCode = new List<OutrightLog> { new() { OutrightLogDetails = outrightLogDetails } };
         outrightLogQueryService.GetOutrightLogs(Arg.Any<GetLogRequest>()).Returns(outrightLogs);
 
         var secondService = Substitute.ForPartsOf<OutrightLogProcessServiceImp>(outrightLogQueryService, refDataService);

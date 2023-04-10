@@ -24,7 +24,6 @@ describe('Component: CalculationMatchDetail', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [CalculationMatchDetailComponent, ManageLeagueComponent],
       providers: [
         MessageBoxService,
         HttpRequestService,
@@ -33,7 +32,7 @@ describe('Component: CalculationMatchDetail', () => {
         ClosePopupService,
         NgbModal
       ],
-      imports: [FormsModule, HttpClientModule, MaterialModule],
+      imports: [FormsModule, HttpClientModule, MaterialModule, CalculationMatchDetailComponent, ManageLeagueComponent],
     }).overrideModule(BrowserDynamicTestingModule, {
       set: {
         entryComponents: [ManageLeagueComponent],
@@ -56,8 +55,8 @@ describe('Component: CalculationMatchDetail', () => {
   it("manageOutSideSourcePopup - should call getLeagueSources from aioService.", () => {
     matchDetail.leagueId = 123;
     component.matchDetail = matchDetail;
-    spyOn(aioService, "getLeagueSources").and.returnValue(of(source));
-    spyOn(dialog, "open");
+    aioService.getLeagueSources = jest.fn().mockReturnValue(of(source));
+    dialog.open = jest.fn();
 
     component.manageOutSideSourcePopup();
 

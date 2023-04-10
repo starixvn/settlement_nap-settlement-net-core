@@ -7,5 +7,5 @@ public class CheckingMarkedTicketsRequest : IRequest<MarkedTickets>
 {
     public int MatchId { get; set; }
 
-    public string Action { get; set; }
+    public string ResourceIds { get; set; }
 }

@@ -1,8 +1,8 @@
 ﻿using MediatR;
-using Settlement.Setting.Models;
-using System.Collections.Generic;
 
 namespace Settlement.Setting.Requests.ProviderManager;
+
+using Models.ProviderManager;
 
 public class GetProviderRequest : IRequest<List<ProviderModel>>
 {

@@ -32,13 +32,13 @@
 <ng-template #header>
   <thead>
     <tr>
-      <th rowspan="2" class="map">Game/Match</th>
-      <th rowspan="2" class="ticket-status">Ticket Status</th>
-      <th rowspan="2" colspan="2" class="map">Final Score</th>
-      <th rowspan="2" class="map" *ngIf="isLeader">Trader Score</th>
-      <th colspan="2" class="map" *ngIf="isLeader">Provider Score</th>
-      <th [colSpan]="(match.resultDetails[0].externalScores.length - 3) * 2">Outside Score</th>
-      <th rowspan="2" class="status">
+      <th scope="col" rowspan="2" class="map">Game/Match</th>
+      <th scope="col" rowspan="2" class="ticket-status">Ticket Status</th>
+      <th scope="col" rowspan="2" colspan="2" class="map">Final Score</th>
+      <th scope="col" rowspan="2" class="map" *ngIf="isLeader">Trader Score</th>
+      <th scope="col" colspan="2" class="map" *ngIf="isLeader">Provider Score</th>
+      <th scope="col" [colSpan]="(match.resultDetails[0].externalScores.length - 3) * 2">Outside Score</th>
+      <th scope="col" rowspan="2" class="status">
           Select to Proceed
       </th>
     </tr>
@@ -162,3 +162,8 @@
     <span>- Matches that are on-hold will not be settled along side main match.</span>
   </div>
 </ng-template>
+
+<div *ngIf="blockUI" class="in modal-backdrop">
+  <div class="loading">
+  </div>
+</div>

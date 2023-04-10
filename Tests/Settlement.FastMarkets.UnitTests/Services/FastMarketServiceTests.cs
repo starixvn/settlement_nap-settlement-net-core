@@ -5,7 +5,6 @@ using Fanex.Settlement.ScaleOut.Models;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
 using Microsoft.Extensions.Options;
-using NSubstitute;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.FastMarkets.Constants;
@@ -20,12 +19,9 @@ public class FastMarketServiceTests
 {
     private readonly IFastMarketService service;
     private readonly IDynamicRepository repository;
-    private readonly IFastMarketBetTypeService fastMarketBetTypeService;
     private readonly ScaleOutSettleService scaleOutSettleService;
     private readonly MultipleServerFetcherService multipleServerFetcherService;
     private readonly CreateQueryService createQueryService;
-    private readonly IRefDataService refDataService;
-    private readonly IResultLabelService resultLabelService;
 
     public FastMarketServiceTests()
     {
@@ -38,9 +34,9 @@ public class FastMarketServiceTests
         scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
         multipleServerFetcherService = Substitute.For<MultipleServerFetcherService>();
         createQueryService = Substitute.For<CreateQueryService>();
-        refDataService = Substitute.For<IRefDataService>();
-        resultLabelService = Substitute.For<IResultLabelService>();
-        fastMarketBetTypeService = new FastMarketBetTypeServiceImp(refDataService, resultLabelService);
+        var refDataService = Substitute.For<IRefDataService>();
+        var resultLabelService = Substitute.For<IResultLabelService>();
+        var fastMarketBetTypeService = new FastMarketBetTypeServiceImp(refDataService, resultLabelService);
         var appSettingKey = new AppSettingsKey { SiteDbServer = new List<string> { "01", "02" } };
         var option = Options.Create(appSettingKey);
         service = new FastMarketServiceImp(repository,
@@ -129,10 +125,9 @@ public class FastMarketServiceTests
         createQueryService.QuerySettle(Arg.Any<SettleRequest>()).Returns(new PushFastMarketResultCriteria());
         scaleOutSettleService.ValidateEventAndTicketFastMarket(Arg.Any<EventTicketFastMarketRequest>())
             .Returns(new ResultMessage());
-        ;
 
         // Act
-        var result = await service.Calculate(query);
+        await service.Calculate(query);
 
         // Assert
         await scaleOutSettleService.Received().UpdateMatchInfo(Arg.Any<UpdateMatchInfoRequest>());
@@ -140,7 +135,7 @@ public class FastMarketServiceTests
     }
 
     [Fact]
-    public async Task GetLastestResult_Always_ReturnCorrectly()
+    public async Task GetLatestResult_Always_ReturnCorrectly()
     {
         const int matchId = 100;
         var result = new IEnumerable<object>[4];
@@ -155,7 +150,7 @@ public class FastMarketServiceTests
                 Arg.Any<Type[]>())
             .Returns(result);
 
-        var actual = await service.GetLastestResult(new GetLastestResultRequest { MatchId = matchId });
+        var actual = await service.GetLatestResult(new GetLatestResultRequest { MatchId = matchId });
 
         Assert.True(actual[0].Position == 1 && actual[0].BetType == 2);
     }
@@ -163,7 +158,7 @@ public class FastMarketServiceTests
     [Fact]
     public async Task GetTimeMachineResult_Always_ReturnCorrectly()
     {
-        var matchId = 100;
+        const int matchId = 100;
         var listTimeMachine = new List<TimeMachineResult>
         {
             new()

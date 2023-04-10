@@ -1,5 +1,6 @@
+import { MessageBoxService } from './../../services/message-box.service.native';
 import { CalculateAction, SettlementStatusId, TicketStatusText } from "../../constants";
-import { Language } from "../../language";
+import { Language } from "../../language.native";
 import { AioService } from "../../services";
 import { HedgeMatchDetail, MatchDetail, Permission, ResultDetail, SettleQuery } from "../../models/sportsbook-sop";
 import * as _ from "lodash";
@@ -10,19 +11,21 @@ import { ToastrService } from "ngx-toastr";
     template: '',
 })
 export class RefundActionBaseComponent {
+    public aioService: AioService;
+    public toastrService: ToastrService;
+    public messageBoxService: MessageBoxService;
     public blockUI = true;
-    protected aioService: AioService;
-    protected toastrService: ToastrService;
     public resultDetails: ResultDetail[];
     public matchDetail: MatchDetail;
     public permission: Permission;
     public hedgeMatchDetail: HedgeMatchDetail;
     public applyHedgeMatch: boolean;
-
     constructor(protected injector: Injector) {
         this.aioService = this.injector.get(AioService);
         this.toastrService = this.injector.get(ToastrService);
+        this.messageBoxService = this.injector.get(MessageBoxService);
     }
+
 
     public get selectedResources(): ResultDetail[] {
         return this.resultDetails.filter((item) => item.checked);
@@ -31,8 +34,7 @@ export class RefundActionBaseComponent {
     protected generateCheckMarkedTicketsQuery() {
         return {
             matchId: this.matchDetail.matchId,
-            selectedResources: this.selectedResources,
-            isMergedParlay: true,
+            selectedResources: this.selectedResources
         };
     }
 

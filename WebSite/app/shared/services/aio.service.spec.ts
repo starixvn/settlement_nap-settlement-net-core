@@ -61,7 +61,7 @@ describe('AioService', () => {
       () => {
         // Arrange
         const matchId = '7000000';
-        const url = 'api/aio/get-match';
+        const url = '/api/aio/get-match';
         const query = {
           matchId,
           apikey: "api-key",
@@ -81,7 +81,7 @@ describe('AioService', () => {
       () => {
         // Arrange
         const matchId = 7000000;
-        const url = 'api/aio/settle';
+        const url = '/api/aio/settle';
         const query = { matchId };
 
         // Act
@@ -100,7 +100,7 @@ describe('AioService', () => {
     service.saveScore(query);
     tick();
 
-    expect(httpRequestService.postJson).toHaveBeenCalledWith(query, 'api/aio/save-score');
+    expect(httpRequestService.postJson).toHaveBeenCalledWith(query, '/api/aio/save-score');
   }));
 
 

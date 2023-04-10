@@ -2,11 +2,9 @@
 using AutoMapper.Configuration;
 using Fanex.Caching;
 using Fanex.Data.Repository;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
-using Settlement.EventManagement.Criteria;
 using Settlement.EventManagement.Requests;
 using Settlement.EventManagement.Services.MultiSports;
 using Match = Settlement.EventManagement.Models.MultiSports.Match;
@@ -37,19 +35,10 @@ public class MultiSportServiceTests
         var config = new MapperConfiguration(mapperConfig);
         var mapper = new Mapper(config);
 
-        var accessor = Substitute.For<IHttpContextAccessor>();
-        var context = new DefaultHttpContext
-        {
-            Connection =
-                {
-                    RemoteIpAddress = new System.Net.IPAddress(1)
-                }
-        };
-        accessor.HttpContext = context;
         var appSetting = new AppSettingsKey { SiteDbServer = new List<string> { "DB01", "DB02" } };
         var option = Options.Create(appSetting);
         refDataService = Substitute.For<IRefDataService>();
-        service = new MultiSportServiceImp(repository, matchService, mapper, cacheService, permissionService, accessor, option);
+        service = new MultiSportServiceImp(repository, matchService, mapper, cacheService, permissionService, option);
     }
 
     [Fact]
@@ -59,7 +48,7 @@ public class MultiSportServiceTests
         var request = new RefreshMultiSportRequest();
         var data = new List<Match>
             {
-                new Match()
+                new()
             };
         cacheService.Get<List<Match>>(Arg.Any<string>()).Returns(data);
 
@@ -116,45 +105,5 @@ public class MultiSportServiceTests
         var actualMatches = sportBooks[0].Leagues[0].Matches;
 
         Assert.NotNull(actualMatches);
-    }
-
-    [Fact]
-    public async Task Calculate_ValidateFailedAndNotExistIdValid_StopAndReturnError()
-    {
-        await repository.ExecuteAsync(Arg.Do<ValidateCalculateParlayCriteria>(x =>
-        {
-            x.ErrCode = 1;
-            x.MatchIdsValid = "";
-            x.ErrMsg = "ABC";
-        }));
-
-        var actual = await service.Calculate(new CalculateParlayRequest());
-
-        Assert.Equal(1, actual.ErrCode);
-        Assert.Equal("All matches are being calculated, except following matches ABC Please contact Starix IT for further support!", actual.ErrMsg);
-        repository.DidNotReceive().Execute(Arg.Any<ParlayCriteria>());
-    }
-
-    [Fact]
-    public async Task Calculate_ValidateFailedAndExistIdsValid_SettleIdsValid()
-    {
-        await repository.ExecuteAsync(Arg.Do<ValidateCalculateParlayCriteria>(x =>
-        {
-            x.ErrCode = 1;
-            x.MatchIdsValid = "123, 456, 789";
-            x.ErrMsg = "ABC";
-        }));
-        await repository.ExecuteAsync(Arg.Do<ValidateTicketParlayCriteria>(x =>
-        {
-            x.ErrCode = 1;
-            x.ErrMsg = "ZYZ";
-            x.MatchIdsValid = "123, 456, 789";
-        }));
-
-        var actual = await service.Calculate(new CalculateParlayRequest());
-
-        Assert.Equal(1, actual.ErrCode);
-        Assert.Equal("All matches are being calculated, except following matches ABCZYZZYZ", actual.ErrMsg);
-        repository.Received(2).Execute(Arg.Any<ParlayCriteria>());
     }
 }

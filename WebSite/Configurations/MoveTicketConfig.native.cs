@@ -5,6 +5,8 @@ using System.Reflection;
 
 namespace Settlement.WebSites.Configurations;
 
+using Sportsbook.MoveTickets.Services.MultipleServer;
+
 public static class MoveTicketConfig
 {
     public static void ConfigMoveTicketServices(this IServiceCollection services)

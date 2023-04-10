@@ -16,11 +16,7 @@ public class BetBuilderMatchesServiceTests
 
     private readonly IRefDataService refDataService;
 
-    private readonly IMapper mapper;
-
     private readonly MergeMatchInfo mergeMatchInfo;
-
-    private readonly CachingMatchesService cachingMatchesService;
 
     private readonly BetBuilderService betBuilderService;
 
@@ -33,9 +29,9 @@ public class BetBuilderMatchesServiceTests
         var mapperConfig = new MapperConfigurationExpression();
         mapperConfig.AddProfile<ThirdPartyProductsAutoMapperProfile>();
         var config = new MapperConfiguration(mapperConfig);
-        mapper = new Mapper(config);
+        var mapper = new Mapper(config);
         mergeMatchInfo = Substitute.For<MergeMatchInfo>();
-        cachingMatchesService = Substitute.For<CachingMatchesService>();
+        var cachingMatchesService = Substitute.For<CachingMatchesService>();
         betBuilderService = Substitute.For<BetBuilderService>();
         var appSettingsKey = new AppSettingsKey { SiteDbServer = new List<string> { "01", "02" } };
         var options = Options.Create(appSettingsKey);
@@ -65,8 +61,8 @@ public class BetBuilderMatchesServiceTests
         var fakeMatches = new List<MatchDetailModel> {
                 CreateMatch(2),
                 CreateMatch(1),
-                CreateMatch(3),
-            };
+                CreateMatch(3)
+        };
 
         repository.FetchAsync<MatchDetailModel>(Arg.Any<ICriteria>()).Returns(fakeMatches);
         repository.FetchAsync<ResultDetail>(Arg.Any<GetResultDetailCriteria>()).Returns(new List<ResultDetail> { resultDetail });
@@ -77,7 +73,7 @@ public class BetBuilderMatchesServiceTests
         betBuilderService.CreateLeagues(Arg.Any<List<MatchDetailModel>>()).Returns(new List<LeagueModel>());
 
         // Act
-        var sportBooks = await service.Search(new FilterRequest { Status = "Completed, Running" });
+        await service.Search(new FilterRequest { Status = "Completed, Running" });
 
         betBuilderService.Received().CreateLeagues(Arg.Is<List<MatchDetailModel>>(item => item.Count == 2));
         mergeMatchInfo.Received(2).AddSiteMatch(Arg.Any<List<MatchDetailModel>>(), Arg.Any<List<Models.SiteMatch>>());

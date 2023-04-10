@@ -12,7 +12,7 @@ public class ChildMatchModel
 
     private string relatedResourceId;
 
-    private readonly string defaultValue = "";
+    private const string DefaultValue = "";
 
     private string eventStatus;
 
@@ -44,16 +44,16 @@ public class ChildMatchModel
 
     public byte ConfirmFT { get; set; }
 
-    public string LeagueName => ChildMatchConstant.LeagueName.TryGetValue(ChildMatchType, out leagueName) ? leagueName : defaultValue;
+    public string LeagueName => ChildMatchConstant.LeagueName.TryGetValue(ChildMatchType, out leagueName) ? leagueName : DefaultValue;
 
-    public string RelatedResourceId => ChildMatchConstant.ResourceRelated.TryGetValue(ChildMatchType, out relatedResourceId) ? relatedResourceId : defaultValue;
+    public string RelatedResourceId => ChildMatchConstant.ResourceRelated.TryGetValue(ChildMatchType, out relatedResourceId) ? relatedResourceId : DefaultValue;
 
-    public ResultDetailSetting ResultSettingData => new ResultDetailSetting
+    public ResultDetailSetting ResultSettingData => new()
     {
-        ResultSetting = Convert.ToString(ResultSetting, ToBase).Reverse(),
+        ResultSetting = Convert.ToString(ResultSetting, ToBase).Reverse()
     };
 
-    public RemarkSettingModel Remark => new RemarkSettingModel(SettlementStatus);
+    public RemarkSettingModel Remark => new(SettlementStatus);
 
     public bool IsHold
     {

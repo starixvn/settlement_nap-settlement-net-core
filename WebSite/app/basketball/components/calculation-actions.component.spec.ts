@@ -1,25 +1,22 @@
 ﻿import { TestBed, waitForAsync, ComponentFixture, fakeAsync, tick } from '@angular/core/testing';
 import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { HttpClientModule } from '@angular/common/http';
-import { of } from 'rxjs';
-import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { ElementRef, NO_ERRORS_SCHEMA } from "@angular/core";
-import { FormsModule } from '@angular/forms';
+import { ElementRef } from "@angular/core";
 import { CalculationActionsComponent } from './calculation-actions.component';
 import { BasketballService, BetStatusService, VerificationService } from '../services';
-import { MessageBoxService, HttpRequestService, BlockUIService, AioService } from '../../shared/services';
+import { MessageBoxService, AioService } from '../../shared/services';
 import { ModalDialogComponent } from "../../shared/components/modal-dialog/modal-dialog.component";
 import { Match, HedgeMatchDetail, VoidBetInfo } from '../models';
-import { TicketCountComponent, ResettleCheckerComponent, ModalContentDialogComponent } from '../../shared/components';
-import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
 import { ResourceNameByIdPipe } from '../pipes/resource-name-by-id.pipe';
 import { ResultSettingModel } from '../../shared/models';
 import { MatchDetail, Permission, ResultDetail, ExternalResultDetail } from '../../shared/models/sportsbook-sop';
-import { ResultByTeamNamePipe } from '../../shared/pipes/result-by-team-name.pipe';
 import { ExternalSourceNamePipe } from '../../shared/pipes/external-source-name.pipe';
 import { ResourcesIds } from '../constants';
 import { ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
-import { Language } from '../../shared/language';
+import { Language } from '../../shared/language.native';
+import { TicketCountComponent } from '../../shared/components/ticket-count/ticket-count.component';
+import { ResettleCheckerComponent } from '../../shared/components/resettle-checker/resettle-checker.component';
+import { ModalContentDialogComponent } from '../../shared/components/modal-dialog/modal-content-dialog.component';
 
 describe('Basketball - Calculation Actions Component', () => {
     let component: CalculationActionsComponent;
@@ -83,38 +80,19 @@ describe('Basketball - Calculation Actions Component', () => {
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             declarations: [
-                CalculationActionsComponent,
                 ModalDialogComponent,
                 ModalContentDialogComponent,
-                TicketCountComponent,
-                ResettleCheckerComponent,
-                ResourceNameByIdPipe,
-                ExternalSourceNamePipe,
             ],
-            providers: [
-                IntervalBackgroundPipe,
-                BasketballService,
-                MessageBoxService,
-                HttpRequestService,
-                BetStatusService,
-                BlockUIService,
-                AioService,
-                VerificationService,
-                ResultByTeamNamePipe,
-                NgbModal,
-                ResourceNameByIdPipe,
-                ToastrService,
-                { provide: MessageBoxService, useClass: MessageBoxService },
-                { provide: ElementRef, useValue: new MockElementRef() },
-            ],
-            schemas: [NO_ERRORS_SCHEMA],
             imports: [
-                FormsModule,
                 HttpClientModule,
-                NgbModule,
                 ToastNoAnimationModule.forRoot(),
                 ToastContainerModule,
-                ToastrModule.forRoot()
+                ToastrModule.forRoot(),
+                ResourceNameByIdPipe,
+                ExternalSourceNamePipe,
+                TicketCountComponent,
+                ResettleCheckerComponent,
+                CalculationActionsComponent
             ],
         })
             .overrideModule(BrowserDynamicTestingModule, {
@@ -132,6 +110,7 @@ describe('Basketball - Calculation Actions Component', () => {
                 verificationService = fixture.debugElement.injector.get(VerificationService);
                 betStatusService = fixture.debugElement.injector.get(BetStatusService);
                 toastrService = fixture.debugElement.injector.get(ToastrService);
+                component.initService();
             });
     }));
 
@@ -210,8 +189,8 @@ describe('Basketball - Calculation Actions Component', () => {
         match.resultDetails = [resultDetail, fullTime, halfTime];
         component.match = match;
         component.resultDetails = match.resultDetails;
-        spyOn(verificationService, 'isMismatchedWarning').and.returnValue(false);
-        spyOn(verificationService, 'autoFillScore').and.returnValue(true);
+        verificationService.isMismatchedWarning = jest.fn().mockReturnValue(false);
+        verificationService.autoFillScore = jest.fn().mockReturnValue(true);
 
         component.autoFillScoreOnLoad([resultDetail, fullTime]);
 
@@ -241,7 +220,7 @@ describe('Basketball - Calculation Actions Component', () => {
         });
 
         it('update blank outSide source for total games when score is Consecutive.', () => {
-            spyOn(verificationService, 'isScoreConsecutive').and.returnValue(false);
+            verificationService.isScoreConsecutive = jest.fn().mockReturnValue(false);
 
             component.autofillOutsideSource(1);
 
@@ -252,8 +231,8 @@ describe('Basketball - Calculation Actions Component', () => {
         });
 
         it('update correct outSide source for total games.', () => {
-            spyOn(verificationService, 'isScoreConsecutive').and.returnValue(true);
-            spyOn(verificationService, 'isMismatchedWarning').and.returnValue(false);
+            verificationService.isScoreConsecutive = jest.fn().mockReturnValue(true);
+            verificationService.isMismatchedWarning = jest.fn().mockReturnValue(false);
 
             component.autofillOutsideSource(1);
 
@@ -271,9 +250,9 @@ describe('Basketball - Calculation Actions Component', () => {
         component.match = match;
         component.match.matchDetail = matchDetail;
         component.resultDetails = match.resultDetails;
-        spyOn(verificationService, 'isMismatchedWarning').and.returnValue(false);
-        spyOn(verificationService, 'autoFillScore');
-        spyOn(basketballService, 'getExternalResults').and.returnValue([]);
+        verificationService.isMismatchedWarning = jest.fn().mockReturnValue(false);
+        verificationService.autoFillScore = jest.fn();
+        basketballService.getExternalResults = jest.fn().mockReturnValue([]);
 
         component.verifyAndAutoFillScore(fullTime);
 
@@ -284,9 +263,9 @@ describe('Basketball - Calculation Actions Component', () => {
         it('return not consistent class', () => {
             component.match = match;
             component.match.isScoreDirect = true;
-            spyOn(verificationService, "isFtScoreLowerThanHtScore").and.returnValue(true);
-            spyOn(verificationService, 'isFullTimeMismatched').and.returnValue(true);
-            spyOn(basketballService, 'getIntervalBackground').and.returnValue("class");
+            verificationService.isFtScoreLowerThanHtScore = jest.fn().mockReturnValue(true);
+            verificationService.isFullTimeMismatched = jest.fn().mockReturnValue(true);
+            basketballService.getIntervalBackground = jest.fn().mockReturnValue("class");
 
             const actual = component.getClass(halfTime);
 
@@ -297,9 +276,9 @@ describe('Basketball - Calculation Actions Component', () => {
         it('return mismatched  class', () => {
             component.match = match;
             component.match.isScoreDirect = true;
-            spyOn(verificationService, "isFtScoreLowerThanHtScore").and.returnValue(false);
-            spyOn(verificationService, 'isFullTimeMismatched').and.returnValue(true);
-            spyOn(basketballService, 'getIntervalBackground').and.returnValue("class");
+            verificationService.isFtScoreLowerThanHtScore = jest.fn().mockReturnValue(false);
+            verificationService.isFullTimeMismatched = jest.fn().mockReturnValue(true);
+            basketballService.getIntervalBackground = jest.fn().mockReturnValue("class");
 
             const actual = component.getClass(halfTime);
 
@@ -340,7 +319,7 @@ describe('Basketball - Calculation Actions Component', () => {
     it("isFullTimeMismatched - call service", () => {
         component.match = match;
         component.match.isScoreDirect = true;
-        spyOn(verificationService, 'isFullTimeMismatched');
+        verificationService.isFullTimeMismatched = jest.fn();
 
         component.isFullTimeMismatched();
 
@@ -351,9 +330,9 @@ describe('Basketball - Calculation Actions Component', () => {
         it("should true for hedgeMatch and enableUncalculate", async () => {
             match.resultDetails = [fullTime, halfTime, OTime]
             match.hedgeMatchDetail = new HedgeMatchDetail();
-            spyOn(basketballService, 'getResultDetail').and.returnValue(match.resultDetails);
-            spyOn(basketballService, 'isDisabledUndoButton').and.returnValue(true);
-            spyOn(aioService, 'getMatch').and.returnValue(of(match));
+            basketballService.getResultDetail = jest.fn().mockReturnValue(match.resultDetails);
+            basketballService.isDisabledUndoButton = jest.fn().mockReturnValue(true);
+            aioService.getMatch = jest.fn().mockReturnValue(Promise.resolve(match));
 
             await component.getMatch(12345);
 
@@ -363,9 +342,9 @@ describe('Basketball - Calculation Actions Component', () => {
 
         it("should call initial functions", async () => {
             match.resultDetails = [fullTime, halfTime, OTime]
-            spyOn(basketballService, 'getResultDetail').and.returnValue(match.resultDetails);
-            spyOn(verificationService, 'generateExternalScores');
-            spyOn(aioService, 'getMatch').and.returnValue(of(match));
+            basketballService.getResultDetail = jest.fn().mockReturnValue(match.resultDetails);
+            verificationService.generateExternalScores = jest.fn();
+            aioService.getMatch = jest.fn().mockReturnValue(Promise.resolve(match))
 
             await component.getMatch(12345);
 
@@ -400,8 +379,8 @@ describe('Basketball - Calculation Actions Component', () => {
         });
 
         it("return correct fulltime halftime score", () => {
-            spyOn(verificationService, "isScoreConsecutive").and.returnValue(true);
-            spyOn(verificationService, "isMismatchedWarning").and.returnValue(false);
+            verificationService.isScoreConsecutive = jest.fn().mockReturnValue(true);
+            verificationService.isMismatchedWarning = jest.fn().mockReturnValue(false);
             component.changeScore(resultDetail);
 
             expect(resultDetail.isScoreMismatched).toBeFalsy();
@@ -464,7 +443,7 @@ describe('Basketball - Calculation Actions Component', () => {
         it('should verifyScore when selected on half time ', () => {
             component.match = match;
             halfTime.checked = true;
-            spyOn(verificationService, 'verifyScore');
+            verificationService.verifyScore = jest.fn();
 
             component.selectedOnMap(halfTime);
 
@@ -478,7 +457,7 @@ describe('Basketball - Calculation Actions Component', () => {
             component.resultDetails = [fullTime, OTime]
             fullTime.checked = true;
             OTime.checked = false;
-            spyOn(verificationService, 'verifyScore');
+            verificationService.verifyScore = jest.fn();
 
             component.selectedOnMap(fullTime);
 
@@ -490,9 +469,9 @@ describe('Basketball - Calculation Actions Component', () => {
 
     it('saveScore - should push successfully when user confirm save score', fakeAsync(() => {
         component.resultDetails = [fullTime, resultDetail];
-        spyOn(aioService, 'saveScore').and.returnValue(of(successfulResult));
-        spyOn(verificationService, 'getChangedScores').and.returnValue([]);
-        spyOn(verificationService, 'getOutsideScores').and.returnValue([]);
+        aioService.saveScore = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
+        verificationService.getChangedScores = jest.fn().mockReturnValue([]);
+        verificationService.getOutsideScores = jest.fn().mockReturnValue([]);
         component.match = match;
 
         component.saveScore();
@@ -526,11 +505,14 @@ describe('Basketball - Calculation Actions Component', () => {
     });
 
     describe("calculate", () => {
+        beforeEach(() => {
+            messageBoxService.closePopup = jest.fn();
+            toastrService.error = jest.fn();
+        })
         it('should alert when fail to verify selected maps and score', fakeAsync(() => {
             component.match = match;
             component.resultDetails = [];
-            spyOn(aioService, 'verifyNoRunningOdds').and.returnValue(of(successfulResult));
-            spyOn(toastrService, 'error');
+            aioService.verifyNoRunningOdds = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
 
             component.calculate();
             tick();
@@ -548,20 +530,19 @@ describe('Basketball - Calculation Actions Component', () => {
             component.match.hedgeMatchDetail.matchId = 12345;
             component.isLeader = true;
             component.applyHedgeMatch = true;
-            spyOn(aioService, 'verifyNoRunningOdds').and.returnValue(of(successfulResult));
-            spyOn(verificationService, 'isInputScoreInvalid').and.returnValue(false);
-            spyOn(verificationService, 'verifyIntervalsCalculated').and.returnValue(false);
-            spyOn(verificationService, 'isFtScoreLowerThanHtScore').and.returnValue(false);
-            spyOn(verificationService, 'allMapHaveScoreSources').and.returnValue(true);
-            spyOn(verificationService, 'isExistMismatchScore').and.returnValue(false);
-            spyOn(betStatusService, 'getBetStatus').and.returnValue("");
-            spyOn(messageBoxService, 'closePopup');
-            spyOn(verificationService, 'getOutsideScores').and.returnValue([]);
-            spyOn(verificationService, 'getChangedScores').and.returnValue([]);
-            spyOn(aioService, 'getTicketInfo').and.returnValue(of([]));
-            spyOn(aioService, 'saveScore').and.returnValue(of(successfulResult));
-            spyOn(aioService, 'verifyChangedSettledTickets').and.returnValue(of(false));
-            spyOn(aioService, 'push').and.returnValue(of(successfulResult));
+            aioService.verifyNoRunningOdds = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
+            verificationService.isInputScoreInvalid = jest.fn().mockReturnValue(false);
+            verificationService.verifyIntervalsCalculated = jest.fn().mockReturnValue(false);
+            verificationService.isFtScoreLowerThanHtScore = jest.fn().mockReturnValue(false);
+            verificationService.allMapHaveScoreSources = jest.fn().mockReturnValue(true);
+            verificationService.isExistMismatchScore = jest.fn().mockReturnValue(false);
+            betStatusService.getBetStatus = jest.fn().mockReturnValue("");
+            verificationService.getOutsideScores = jest.fn().mockReturnValue([]);
+            verificationService.getChangedScores = jest.fn().mockReturnValue([]);
+            aioService.getTicketInfo = jest.fn().mockReturnValue(Promise.resolve([]));
+            aioService.saveScore = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
+            aioService.verifyChangedSettledTickets = jest.fn().mockReturnValue(Promise.resolve(false));
+            aioService.push = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
 
             component.calculate();
             tick();
@@ -579,20 +560,19 @@ describe('Basketball - Calculation Actions Component', () => {
             component.isLeader = true;
             component.applyHedgeMatch = false;
             component.resultDetails = [resultDetail];
-            spyOn(aioService, 'verifyNoRunningOdds').and.returnValue(of(successfulResult));
-            spyOn(verificationService, 'isInputScoreInvalid').and.returnValue(false);
-            spyOn(verificationService, 'verifyIntervalsCalculated').and.returnValue(false);
-            spyOn(verificationService, 'isFtScoreLowerThanHtScore').and.returnValue(false);
-            spyOn(verificationService, 'allMapHaveScoreSources').and.returnValue(true);
-            spyOn(verificationService, 'isExistMismatchScore').and.returnValue(false);
-            spyOn(betStatusService, 'getBetStatus').and.returnValue("");
-            spyOn(aioService, 'push').and.returnValue(of(successfulResult));
-            spyOn(messageBoxService, 'closePopup');
-            spyOn(verificationService, 'getOutsideScores').and.returnValue([]);
-            spyOn(verificationService, 'getChangedScores').and.returnValue([]);
-            spyOn(aioService, 'getTicketInfo').and.returnValue(of([]));
-            spyOn(aioService, 'saveScore').and.returnValue(of(successfulResult));
-            spyOn(aioService, 'verifyChangedSettledTickets').and.returnValue(of(false));
+            aioService.verifyNoRunningOdds = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
+            verificationService.isInputScoreInvalid = jest.fn().mockReturnValue(false);
+            verificationService.verifyIntervalsCalculated = jest.fn().mockReturnValue(false);
+            verificationService.isFtScoreLowerThanHtScore = jest.fn().mockReturnValue(false);
+            verificationService.allMapHaveScoreSources = jest.fn().mockReturnValue(true);
+            verificationService.isExistMismatchScore = jest.fn().mockReturnValue(false);
+            betStatusService.getBetStatus = jest.fn().mockReturnValue("");
+            aioService.push = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
+            verificationService.getOutsideScores = jest.fn().mockReturnValue([]);
+            verificationService.getChangedScores = jest.fn().mockReturnValue([]);
+            aioService.getTicketInfo = jest.fn().mockReturnValue(Promise.resolve([]));
+            aioService.saveScore = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
+            aioService.verifyChangedSettledTickets = jest.fn().mockReturnValue(Promise.resolve(false));
 
             component.calculate();
             tick();
@@ -609,20 +589,18 @@ describe('Basketball - Calculation Actions Component', () => {
             component.applyHedgeMatch = false;
             component.isReSettledTickets = true;
             component.resultDetails = [resultDetail];
-            spyOn(aioService, 'verifyNoRunningOdds').and.returnValue(of(successfulResult));
-            spyOn(verificationService, 'isInputScoreInvalid').and.returnValue(false);
-            spyOn(verificationService, 'verifyIntervalsCalculated').and.returnValue(false);
-            spyOn(verificationService, 'isFtScoreLowerThanHtScore').and.returnValue(false);
-            spyOn(verificationService, 'allMapHaveScoreSources').and.returnValue(true);
-            spyOn(verificationService, 'isExistMismatchScore').and.returnValue(false);
-            spyOn(betStatusService, 'getBetStatus').and.returnValue("");
-            spyOn(aioService, 'push').and.returnValue(of(unSuccessfulResult));
-            spyOn(messageBoxService, 'closePopup');
-            spyOn(verificationService, 'getOutsideScores').and.returnValue([]);
-            spyOn(verificationService, 'getChangedScores').and.returnValue([]);
-            spyOn(aioService, 'getTicketInfo').and.returnValue(of([]));
-            spyOn(aioService, 'saveScore').and.returnValue(of(successfulResult));
-            spyOn(toastrService, 'error');
+            aioService.verifyNoRunningOdds = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
+            verificationService.isInputScoreInvalid = jest.fn().mockReturnValue(false);
+            verificationService.verifyIntervalsCalculated = jest.fn().mockReturnValue(false);
+            verificationService.isFtScoreLowerThanHtScore = jest.fn().mockReturnValue(false);
+            verificationService.allMapHaveScoreSources = jest.fn().mockReturnValue(true);
+            verificationService.isExistMismatchScore = jest.fn().mockReturnValue(false);
+            betStatusService.getBetStatus = jest.fn().mockReturnValue("");
+            aioService.push = jest.fn().mockReturnValue(Promise.resolve(unSuccessfulResult));
+            verificationService.getOutsideScores = jest.fn().mockReturnValue([]);
+            verificationService.getChangedScores = jest.fn().mockReturnValue([]);
+            aioService.getTicketInfo = jest.fn().mockReturnValue(Promise.resolve([]));
+            aioService.saveScore = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
 
             component.calculate();
             tick();
@@ -644,20 +622,19 @@ describe('Basketball - Calculation Actions Component', () => {
                 transId: '123',
                 custId: '123'
             };
-            spyOn(aioService, 'verifyNoRunningOdds').and.returnValue(of(successfulResult));
-            spyOn(verificationService, 'isInputScoreInvalid').and.returnValue(false);
-            spyOn(verificationService, 'verifyIntervalsCalculated').and.returnValue(false);
-            spyOn(verificationService, 'isFtScoreLowerThanHtScore').and.returnValue(false);
-            spyOn(verificationService, 'allMapHaveScoreSources').and.returnValue(true);
-            spyOn(verificationService, 'isExistMismatchScore').and.returnValue(false);
-            spyOn(betStatusService, 'getBetStatus').and.returnValue("");
-            spyOn(aioService, 'push').and.returnValue(of(successfulResult));
-            spyOn(messageBoxService, 'closePopup');
-            spyOn(verificationService, 'getOutsideScores').and.returnValue([]);
-            spyOn(verificationService, 'getChangedScores').and.returnValue([]);
-            spyOn(aioService, 'getTicketInfo').and.returnValue(of([voidBetInfo]));
-            spyOn(aioService, 'voidBet').and.returnValue(of(""));
-            spyOn(aioService, 'saveScore').and.returnValue(of(successfulResult));
+            aioService.verifyNoRunningOdds = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
+            verificationService.isInputScoreInvalid = jest.fn().mockReturnValue(false);
+            verificationService.verifyIntervalsCalculated = jest.fn().mockReturnValue(false);
+            verificationService.isFtScoreLowerThanHtScore = jest.fn().mockReturnValue(false);
+            verificationService.allMapHaveScoreSources = jest.fn().mockReturnValue(true);
+            verificationService.isExistMismatchScore = jest.fn().mockReturnValue(false);
+            betStatusService.getBetStatus = jest.fn().mockReturnValue("");
+            aioService.push = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
+            verificationService.getOutsideScores = jest.fn().mockReturnValue([]);
+            verificationService.getChangedScores = jest.fn().mockReturnValue([]);
+            aioService.getTicketInfo = jest.fn().mockReturnValue(Promise.resolve([voidBetInfo]));
+            aioService.voidBet = jest.fn().mockReturnValue(Promise.resolve(""));
+            aioService.saveScore = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
 
             component.calculate();
             tick();
@@ -674,19 +651,17 @@ describe('Basketball - Calculation Actions Component', () => {
             component.applyHedgeMatch = false;
             component.isReSettledTickets = true;
             component.resultDetails = [resultDetail];
-            spyOn(aioService, 'verifyNoRunningOdds').and.returnValue(of(successfulResult));
-            spyOn(verificationService, 'isInputScoreInvalid').and.returnValue(false);
-            spyOn(verificationService, 'verifyIntervalsCalculated').and.returnValue(false);
-            spyOn(verificationService, 'isFtScoreLowerThanHtScore').and.returnValue(false);
-            spyOn(verificationService, 'allMapHaveScoreSources').and.returnValue(true);
-            spyOn(verificationService, 'isExistMismatchScore').and.returnValue(false);
-            spyOn(betStatusService, 'getBetStatus').and.returnValue("");
-            spyOn(aioService, 'push').and.returnValue(of(successfulResult));
-            spyOn(messageBoxService, 'closePopup');
-            spyOn(verificationService, 'getOutsideScores').and.returnValue([]);
-            spyOn(verificationService, 'getChangedScores').and.returnValue([]);
-            spyOn(aioService, 'saveScore').and.returnValue(of(unSuccessfulResult));
-            spyOn(toastrService, 'error');
+            aioService.verifyNoRunningOdds = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
+            verificationService.isInputScoreInvalid = jest.fn().mockReturnValue(false);
+            verificationService.verifyIntervalsCalculated = jest.fn().mockReturnValue(false);
+            verificationService.isFtScoreLowerThanHtScore = jest.fn().mockReturnValue(false);
+            verificationService.allMapHaveScoreSources = jest.fn().mockReturnValue(true);
+            verificationService.isExistMismatchScore = jest.fn().mockReturnValue(false);
+            betStatusService.getBetStatus = jest.fn().mockReturnValue("");
+            aioService.push = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
+            verificationService.getOutsideScores = jest.fn().mockReturnValue([]);
+            verificationService.getChangedScores = jest.fn().mockReturnValue([]);
+            aioService.saveScore = jest.fn().mockReturnValue(Promise.resolve(unSuccessfulResult));
 
             component.calculate();
             tick();
@@ -703,12 +678,11 @@ describe('Basketball - Calculation Actions Component', () => {
             component.isLeader = false;
             component.isReSettledTickets = true;
             component.resultDetails = [resultDetail];
-            spyOn(aioService, 'verifyNoRunningOdds').and.returnValue(of(successfulResult));
-            spyOn(verificationService, 'isInputScoreInvalid').and.returnValue(false);
-            spyOn(verificationService, 'verifyIntervalsCalculated').and.returnValue(false);
-            spyOn(verificationService, 'isFtScoreLowerThanHtScore').and.returnValue(false);
-            spyOn(verificationService, 'allMapHaveScoreSources').and.returnValue(false);
-            spyOn(toastrService, 'error');
+            aioService.verifyNoRunningOdds = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
+            verificationService.isInputScoreInvalid = jest.fn().mockReturnValue(false);
+            verificationService.verifyIntervalsCalculated = jest.fn().mockReturnValue(false);
+            verificationService.isFtScoreLowerThanHtScore = jest.fn().mockReturnValue(false);
+            verificationService.allMapHaveScoreSources = jest.fn().mockReturnValue(false);
 
             component.calculate();
             tick();
@@ -722,13 +696,12 @@ describe('Basketball - Calculation Actions Component', () => {
             component.isLeader = false;
             component.isReSettledTickets = true;
             component.resultDetails = [resultDetail];
-            spyOn(aioService, 'verifyNoRunningOdds').and.returnValue(of(successfulResult));
-            spyOn(verificationService, 'isInputScoreInvalid').and.returnValue(false);
-            spyOn(verificationService, 'verifyIntervalsCalculated').and.returnValue(false);
-            spyOn(verificationService, 'isFtScoreLowerThanHtScore').and.returnValue(false);
-            spyOn(verificationService, 'allMapHaveScoreSources').and.returnValue(true);
-            spyOn(verificationService, 'isExistMismatchScore').and.returnValue(true);
-            spyOn(toastrService, 'error');
+            aioService.verifyNoRunningOdds = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
+            verificationService.isInputScoreInvalid = jest.fn().mockReturnValue(false);
+            verificationService.verifyIntervalsCalculated = jest.fn().mockReturnValue(false);
+            verificationService.isFtScoreLowerThanHtScore = jest.fn().mockReturnValue(false);
+            verificationService.allMapHaveScoreSources = jest.fn().mockReturnValue(true);
+            verificationService.isExistMismatchScore = jest.fn().mockReturnValue(true);
 
             component.calculate();
             tick();
@@ -741,11 +714,10 @@ describe('Basketball - Calculation Actions Component', () => {
             component.match.resultDetails = [new ResultDetail()];
             component.isLeader = false;
             component.resultDetails = [resultDetail];
-            spyOn(aioService, 'verifyNoRunningOdds').and.returnValue(of(unSuccessfulResult));
-            spyOn(verificationService, 'isInputScoreInvalid').and.returnValue(false);
-            spyOn(verificationService, 'verifyIntervalsCalculated').and.returnValue(false);
-            spyOn(verificationService, 'isFtScoreLowerThanHtScore').and.returnValue(false);
-            spyOn(toastrService, 'error');
+            aioService.verifyNoRunningOdds = jest.fn().mockReturnValue(Promise.resolve(unSuccessfulResult));
+            verificationService.isInputScoreInvalid = jest.fn().mockReturnValue(false);
+            verificationService.verifyIntervalsCalculated = jest.fn().mockReturnValue(false);
+            verificationService.isFtScoreLowerThanHtScore = jest.fn().mockReturnValue(false);
 
             component.calculate();
             tick();
@@ -761,7 +733,6 @@ describe('Basketball - Calculation Actions Component', () => {
             component.match = match;
             component.match.resultDetails = [result];
             component.resultDetails = [result];
-            spyOn(toastrService, 'error');
 
             component.calculate();
 
@@ -777,12 +748,12 @@ describe('Basketball - Calculation Actions Component', () => {
                 component.resultDetails = [fullTime];
                 component.match = match;
                 component.matchDetail = matchDetail;
-                spyOn(aioService, "push").and.returnValue(of(successfulResult));
-                spyOn(aioService, 'getTicketInfo').and.returnValue(of([]));
-                spyOn(aioService, 'voidBet').and.returnValue(of(""));
-                spyOn(betStatusService, "getBetStatus").and.returnValue("");
-                spyOn(messageBoxService, "closePopup");
-                spyOn(toastrService, 'error');
+                aioService.push = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
+                aioService.getTicketInfo = jest.fn().mockReturnValue(Promise.resolve([]));
+                aioService.voidBet = jest.fn().mockReturnValue(Promise.resolve(""));
+                betStatusService.getBetStatus = jest.fn().mockReturnValue("");
+                messageBoxService.closePopup = jest.fn();
+                toastrService.error = jest.fn();
 
                 component.uncalculate();
 
@@ -806,11 +777,11 @@ describe('Basketball - Calculation Actions Component', () => {
                 transId: '123',
                 custId: '123'
             };
-            spyOn(aioService, "push").and.returnValue(of(successfulResult));
-            spyOn(aioService, 'getTicketInfo').and.returnValue(of([voidBetInfo]));
-            spyOn(aioService, 'voidBet').and.returnValue(of(""));
-            spyOn(betStatusService, "getBetStatus").and.returnValue("");
-            spyOn(messageBoxService, "closePopup");
+            aioService.push = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
+            aioService.getTicketInfo = jest.fn().mockReturnValue(Promise.resolve([voidBetInfo]));
+            aioService.voidBet = jest.fn().mockReturnValue(Promise.resolve(""));
+            betStatusService.getBetStatus = jest.fn().mockReturnValue("");
+            messageBoxService.closePopup = jest.fn();
 
             component.uncalculate();
 
@@ -829,10 +800,10 @@ describe('Basketball - Calculation Actions Component', () => {
             fakeAsync(() => {
                 component.resultDetails = [fullTime];
                 component.match = match;
-                spyOn(betStatusService, "getBetStatus").and.returnValue("");
-                spyOn(aioService, 'getTicketInfo').and.returnValue(of([]));
-                spyOn(aioService, "push").and.returnValue(of(unSuccessfulResult));
-                spyOn(toastrService, 'error');
+                betStatusService.getBetStatus = jest.fn().mockReturnValue("");
+                aioService.getTicketInfo = jest.fn().mockReturnValue(Promise.resolve([]));
+                aioService.push = jest.fn().mockReturnValue(Promise.resolve(unSuccessfulResult));
+                toastrService.error = jest.fn();
 
                 component.uncalculate();
 

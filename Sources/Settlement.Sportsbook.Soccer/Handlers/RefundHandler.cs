@@ -1,14 +1,12 @@
 ﻿using MediatR;
 using Settlement.Core.Models;
-using Settlement.Sportsbook.Soccer.GetMatch.Services;
 using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Requests;
 using Settlement.Sportsbook.Soccer.Services;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Settlement.Sportsbook.Soccer.Handlers;
+
+using Services.GetMatch;
 
 internal class RefundHandler :
     IRequestHandler<GetSpecificBetTypeRequest, List<string>>,

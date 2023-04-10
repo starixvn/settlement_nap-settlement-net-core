@@ -1,8 +1,5 @@
 ﻿using MediatR;
 using Settlement.Gaming.Services.NumberGame;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Threading;
 using Settlement.Gaming.Requests;
 using Settlement.Gaming.Models;
 using Settlement.Gaming.Models.NumberGame;

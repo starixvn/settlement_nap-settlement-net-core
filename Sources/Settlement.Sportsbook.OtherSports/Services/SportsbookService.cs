@@ -1,18 +1,15 @@
-﻿using Fanex.Data.Repository;
+﻿namespace Settlement.Sportsbook.OtherSports.Services;
+
+using AutoMapper;
+using Constants;
+using Criteria;
+using Fanex.Data.Repository;
+using Requests;
+using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
-using Settlement.Sportsbook.OtherSports.Requests;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
-using System.Collections.Generic;
-using Settlement.Sportsbook.OtherSports.Constants;
-using Settlement.Sportsbook.OtherSports.Criteria;
 using static Fanex.NAP.Client.Check;
-using MatchResultDetail = Settlement.Sportsbook.OtherSports.Models.MatchResultDetail;
-using Settlement.Core.Constants;
-
-namespace Settlement.Sportsbook.OtherSports.Services;
+using MatchResultDetail = Models.MatchResultDetail;
 
 public interface SportsbookService
 {
@@ -20,7 +17,7 @@ public interface SportsbookService
 
     Task<MatchResultDetail> GetMatch(GetMatchRequest request);
 
-    Task<MatchResultDetail> GetLastestResult(GetLastestResultRequest request);
+    Task<MatchResultDetail> GetLatestResult(GetLatestResultRequest request);
 }
 
 public class SportsbookServiceImp : SportsbookService
@@ -31,7 +28,7 @@ public class SportsbookServiceImp : SportsbookService
 
     private readonly IMapper mapper;
 
-    private readonly IBetStatusService betStatusService;
+    private readonly GenerateService generateService;
 
     private readonly MultipleServerService multipleServerService;
 
@@ -39,14 +36,14 @@ public class SportsbookServiceImp : SportsbookService
         IDynamicRepository repository,
         IRefDataService refDataService,
         IMapper mapper,
-        IBetStatusService betStatusService,
+        GenerateService generateService,
         MultipleServerService multipleServerService
-    )
+        )
     {
         this.repository = repository;
         this.refDataService = refDataService;
         this.mapper = mapper;
-        this.betStatusService = betStatusService;
+        this.generateService = generateService;
         this.multipleServerService = multipleServerService;
     }
 
@@ -66,7 +63,7 @@ public class SportsbookServiceImp : SportsbookService
         matchDetail = ProviderScore(matchDetail, externalResultDetails.ToList());
 
         var resultDetails = IsModifyResultDetailGroup(matchDetail.SportType)
-            ? betStatusService.GenerateResultDetail(matchDetail) : await GetResultDetail(request.MatchId);
+            ? generateService.GenerateResultDetail(matchDetail) : await GetResultDetail(request.MatchId);
         var hedgeMatch = await MatchHedgeDetail(request.MatchId);
 
         return new MatchResultDetail
@@ -87,14 +84,14 @@ public class SportsbookServiceImp : SportsbookService
     public bool IsModifyResultDetailGroup(int sportType)
     {
         return GroupSport.FootBall.Contains(sportType) || GroupSport.Hockey.Contains(sportType)
-                                                       || GroupSport.Squash.Contains(sportType) || SportType.BaseBall == sportType;
+               || GroupSport.Squash.Contains(sportType) || SportType.BaseBall == sportType;
     }
 
     private async Task<MatchHedgeDetail> MatchHedgeDetail(int matchId)
     {
         var criteria = new GetMatchDetailHedgeMatchCriteria { MatchId = matchId };
         var match = await repository.GetAsync<MatchHedgeDetail>(criteria);
-        return match ?? null;
+        return match;
     }
 
     private static MatchDetail ProviderScore(MatchDetail matchDetail, IReadOnlyCollection<ResultDetail> externalResultDetails)
@@ -123,13 +120,13 @@ public class SportsbookServiceImp : SportsbookService
         return matchDetail;
     }
 
-    public async Task<MatchResultDetail> GetLastestResult(GetLastestResultRequest request)
+    public async Task<MatchResultDetail> GetLatestResult(GetLatestResultRequest request)
     {
-        var criteria = mapper.Map<GetLastestResultRequest, GetLastestResultCriteria>(request);
+        var criteria = mapper.Map<GetLatestResultRequest, GetLatestResultCriteria>(request);
         var matchDetail = await repository.GetAsync<MatchDetail>(criteria);
         matchDetail.RefDataService = refDataService;
         var resultDetails = IsModifyResultDetailGroup(matchDetail.SportType)
-            ? betStatusService.GenerateResultDetail(matchDetail) : new List<ResultDetail>();
+            ? generateService.GenerateResultDetail(matchDetail) : new List<ResultDetail>();
 
         return new MatchResultDetail
         {

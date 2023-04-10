@@ -2,7 +2,6 @@
 import { Score } from "./score.model";
 import { MoreScore } from "./more-score.model";
 import { AutoSetting } from "./auto-setting.model";
-import { MixParlay } from "./mix-parlay.model";
 import { ReferenceAction } from "./reference-action.model";
 
 export class Match {
@@ -28,7 +27,6 @@ export class Match {
      public isCalculatingMP: number;
      public isExistRunningTicket: boolean;
      public isExistMarkedTicket: boolean;
-     public isExistMarkedTicketParlay: boolean;
      public eventStatusColor: string;
      public isCalculated: boolean;
      public isCalRefund: boolean;
@@ -42,15 +40,12 @@ export class Match {
      public isHavingIntervalScore: boolean;
      public homeTotalGames: number;
      public awayTotalGames: number;
-     public mixParlay: MixParlay;
      public leagueId: number;
      public exHalfTimeScore: string;
      public exFullTimeScore: string;
      public referenceActions: ReferenceAction[];
      public autoPayoutStatus: number;
-     public isMergedParlay: boolean;
      public isExistsConfirmedEarly: boolean;
-     public isExistRunningTicketParlay: boolean;
      public bestOfMap: number;
      public isMatchBOMThirty: boolean;
      public fastMarketStatus: string;

@@ -7,12 +7,11 @@ public class RemarkNodeServiceTests
 {
     private readonly PositionService positionService;
     private readonly RemarkNodeService service;
-    private XmlConvertService xmlConvertService;
 
     public RemarkNodeServiceTests()
     {
         positionService = Substitute.For<PositionService>();
-        xmlConvertService = new XmlConvertServiceImp();
+        var xmlConvertService = new XmlConvertServiceImp();
         service = new RemarkNodeServiceImp(positionService, xmlConvertService);
     }
 
@@ -20,7 +19,7 @@ public class RemarkNodeServiceTests
     public void RemarkByNode_XMLContentHasNoBetTypeNode_ReturnsEmpty()
     {
         // Arrange
-        var content = "<BetTypes />";
+        const string content = "<BetTypes />";
 
         // Act
         var remark = service.BetTypes(content, string.Empty);

@@ -35,8 +35,6 @@ export class DetectChangesService {
             || !_.isEqual(oldMatch.isRefund, newMatch.isRefund)
             || !_.isEqual(oldMatch.isCalRefund, newMatch.isCalRefund)
             || !_.isEqual(oldMatch.isHalfTimeCal, newMatch.isHalfTimeCal)
-            || !_.isEqual(oldMatch.isExistMarkedTicketParlay, newMatch.isExistMarkedTicketParlay)
-            || !_.isEqual(oldMatch.isExistRunningTicketParlay, newMatch.isExistRunningTicketParlay)
             || !_.isEqual(oldMatch.isExistRunningTicket, newMatch.isExistRunningTicket)
             || !_.isEqual(oldMatch.isExistMarkedTicket, newMatch.isExistMarkedTicket)
             || oldMatch.isNotConsistentExFtScore !== newMatch.isNotConsistentExFtScore
@@ -73,7 +71,7 @@ export class DetectChangesService {
         || !_.isEqual(oldMatch.instantStatus, newMatch.instantStatus)
         || !_.isEqual(oldMatch.instantStatusId, newMatch.instantStatusId)
         || !_.isEqual(oldMatch.instantCalculationType, newMatch.instantCalculationType)
-        || !_.isEqual(oldMatch.isFTCalculated, newMatch.isFTCalculated)
+        || !_.isEqual(oldMatch.isFtCalculated, newMatch.isFtCalculated)
         || !_.isEqual(oldMatch.instantKey, newMatch.instantKey)
         || !_.isEqual(oldMatch.referenceActions, newMatch.referenceActions);
     }

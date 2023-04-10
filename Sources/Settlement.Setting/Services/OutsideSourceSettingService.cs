@@ -4,7 +4,6 @@ using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Setting.Criteria.OutsideSourceManager;
 using Settlement.Setting.Models.OutsideSourceManager;
-using Settlement.Setting.Requests;
 using Settlement.Setting.Requests.OutsideSourceManager;
 
 namespace Settlement.Setting.Services;
@@ -129,7 +128,7 @@ public class OutsideSourceSettingServiceImp : OutsideSourceSettingService
     {
         var resources = CreateResources(query.Sources);
         var criteria = mapper.Map<UpdateLeagueOutsideSourceRequest, UpdateLeagueOutsideSourceCriteria>(query);
-        criteria.PGIdSources = resources;
+        criteria.PgIdSources = resources;
 
         await repository.ExecuteAsync(criteria);
         return new Result

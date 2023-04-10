@@ -11,7 +11,7 @@ public static class OtherSportsConfig
     {
         services.AddTransient<SettlementActionsService, SettlementActionsServiceImp>();
         services.AddTransient<SportsbookService, SportsbookServiceImp>();
-        services.AddTransient<IBetStatusService, BetStatusServiceImp>();
+        services.AddTransient<GenerateService, GenerateServiceImp>();
         services.AddTransient<MultipleServerService, MultipleServerServiceImp>();
         services.AddTransient<MergeDataService, MergeDataServiceImp>();
     }

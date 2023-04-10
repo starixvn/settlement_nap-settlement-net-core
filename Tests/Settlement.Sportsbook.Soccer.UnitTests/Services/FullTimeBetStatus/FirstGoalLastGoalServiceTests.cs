@@ -1,6 +1,4 @@
-﻿using NSubstitute;
-using Settlement.Sportsbook.Soccer.Services;
-using Xunit;
+﻿using Settlement.Sportsbook.Soccer.Services;
 using FirstGoalLastGoalServiceImp = Settlement.Sportsbook.Soccer.Services.FullTimeBetStatus.FirstGoalLastGoalServiceImp;
 using IFirstGoalLastGoalService = Settlement.Sportsbook.Soccer.Services.FullTimeBetStatus.IFirstGoalLastGoalService;
 

@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { CalculateAction } from "../../../../shared/constants";
-import { Language } from "../../../../shared/language";
+import { Language } from "../../../../shared/language.native";
 import { BetDaq, BetFair, Match, MatchDetail } from "../model/match.model";
 import { VerifyMatchService } from "./verify-match.service";
 import * as _ from "lodash";

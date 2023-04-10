@@ -1,13 +1,13 @@
 import {
   MultiSport, MatchWaitingRequest, Permission,
-  MoveTicketsRequest, GetChildMatchesRequest, ChildMatch, CalculateMPRequest
+  MoveTicketsRequest, GetChildMatchesRequest, ChildMatch
 } from './../../models';
 import { Component, Input, OnInit, OnChanges, SimpleChanges, ChangeDetectorRef, Output, EventEmitter } from '@angular/core';
 import { ResultType, SportType, BackgroundColor } from '../../../shared/constants';
 import * as _ from 'lodash';
 import { MoveTicketsService } from './move-tickets.service';
 import { MessageBoxService, SportMatchService } from './../../../shared/services';
-import { Language } from './../../../shared/language';
+import { Language } from '../../../shared/language.native';
 import { ModalDialogMessage, Result, LeagueMatch, Match, Remark, SportMatch } from '../../../shared/models';
 import { LeagueBaseComponent } from '../../../shared/components/sport-listing/league-base.component';
 
@@ -80,33 +80,6 @@ export class LeagueComponent extends LeagueBaseComponent implements OnInit, OnCh
       const request = new MoveTicketsRequest(match.matchId);
       this.moveTicketsService.moveTickets(request).subscribe((result: Result) => {
         this.handleResult(result);
-      });
-    });
-  }
-
-  public calculateMPMovedTickets(match: Match) {
-    this.dialogMessage.title = Language.confirmationBox;
-    this.dialogMessage.message = Language.moveTickets.confirmCalcMP;
-    this.messageBoxService.confirm(this.dialogMessage, () => {
-      const getChildMatchesRequest = new GetChildMatchesRequest(match.matchId);
-      this.moveTicketsService.getChildMatches(getChildMatchesRequest).subscribe((childMatches: ChildMatch[]) => {
-        if (childMatches.length === 0) {
-          this.dialogMessage.title = Language.warningTitle;
-          this.dialogMessage.message = Language.moveTickets.noParlayTicketMovedError;
-          this.messageBoxService.alert(this.dialogMessage);
-        } else if (match.remark.isKeyHold || match.remark.isMtdHold || match.remark.isPending ||
-          match.remark.isUndecided || match.remark.isUnderSettle) {
-          this.dialogMessage.title = Language.warningTitle;
-          this.dialogMessage.message = Language.moveTickets.matchOnHoldError;
-          this.messageBoxService.alert(this.dialogMessage);
-        } else {
-          const matchIds = [];
-          _.forEach(childMatches, childMatch => matchIds.push(childMatch.matchId));
-          const calculateMPRequest = new CalculateMPRequest(matchIds.join(','));
-          this.moveTicketsService.calculateMP(calculateMPRequest).subscribe((result: Result) => {
-            this.handleResult(result);
-          });
-        }
       });
     });
   }

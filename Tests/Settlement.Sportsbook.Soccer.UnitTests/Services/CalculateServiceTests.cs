@@ -70,7 +70,7 @@ public class CalculateServiceTests
         var query = new SettleRequest
         {
             GoalRecord = "AH",
-            ActionName = ActionType.CalculateAll,
+            ActionName = ActionType.CalculateAll
         };
         var criteria = new CalculateCriteria
         {
@@ -125,7 +125,7 @@ public class CalculateServiceTests
         }));
         var request = new CheckStatusRequest
         {
-            MatchId = 12345,
+            MatchId = 12345
         };
 
         var actual = await service.CheckStatus(request);

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Settlement.Sportsbook.MoveTickets.Models;
+﻿namespace Settlement.Sportsbook.MoveTickets.Models;
 
 public class MoveTicketInfo
 {

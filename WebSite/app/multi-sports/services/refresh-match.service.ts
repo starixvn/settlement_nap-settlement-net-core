@@ -3,7 +3,6 @@ import * as _ from 'lodash';
 import { HttpRequestService } from '../../shared/services';
 import { MatchWaitingRequest, MultiSport, SportMatch, Match } from '../models';
 import { DetectChangesService } from './detect-changes.service';
-import { HandleActionsService } from './handle-actions.service';
 import { SportMatchService } from './sport-match.service';
 import { Permission } from '../../shared/models/sportsbook-sop/permission.model';
 @Injectable()
@@ -12,7 +11,6 @@ export class RefreshMatchService {
   constructor(
     private readonly httpRequestService: HttpRequestService,
     private readonly detectChangesService: DetectChangesService,
-    private readonly handleActionsService: HandleActionsService,
     private readonly sportMatchService: SportMatchService
   ) { }
 
@@ -23,7 +21,7 @@ export class RefreshMatchService {
   }
 
   private getMatches(param: MatchWaitingRequest) {
-    const url = `api/multi-sports/auto-refresh`;
+    const url = `/api/multi-sports/auto-refresh`;
     return this.httpRequestService.postMessagePack(param, url, false);
   }
 
@@ -56,21 +54,17 @@ export class RefreshMatchService {
             match.newEventStatus = newMatch.newEventStatus;
             match.isHavingIntervalScore = newMatch.isHavingIntervalScore;
             match.remark = newMatch.remark;
-            match.isExistMarkedTicketParlay = newMatch.isExistMarkedTicketParlay;
             match.autoCalcSetting = newMatch.autoCalcSetting;
             match.suspenderHalfTime = newMatch.suspenderHalfTime;
             match.suspenderFullTime = newMatch.suspenderFullTime;
-            match.mixParlay = newMatch.mixParlay;
             match.isNotConsistentExFtScore = newMatch.isNotConsistentExFtScore;
             match.isNotConsistentExHtScore = newMatch.isNotConsistentExHtScore;
             match.exHalfTimeScore = newMatch.exHalfTimeScore;
             match.exFullTimeScore = newMatch.exFullTimeScore;
             match.autoPayoutStatus = newMatch.autoPayoutStatus;
-            match.isExistRunningTicketParlay = newMatch.isExistRunningTicketParlay;
             match.confirmFullTimeScore = newMatch.confirmFullTimeScore;
             match.confirmHalfTimeScore = newMatch.confirmHalfTimeScore;
             this.sportMatchService.getMatchIntervalScore(match, this.permission);
-            this.handleActionsService.resetCheckboxCalcMixParlay(match, currentSportMatches, multiSport);
           }
         });
       })

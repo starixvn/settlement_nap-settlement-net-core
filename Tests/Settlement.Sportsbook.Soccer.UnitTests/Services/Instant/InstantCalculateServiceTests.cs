@@ -23,29 +23,31 @@ public class InstantCalculateServiceFacts
 {
     private readonly IDynamicRepository repository;
 
-    private readonly INapSession currentSession;
-
-    private readonly IHttpContextAccessor accessor;
-
     private readonly IInstantResourceService instantResourceService;
 
     private readonly ScaleOutSettleService scaleOutSettleService;
 
-    private readonly IInstantCalculateService service;
+    private readonly InstantCalculateService service;
 
     private readonly LogDirectlyService logDirectlyService;
 
     public InstantCalculateServiceFacts()
     {
         repository = Substitute.For<IDynamicRepository>();
-        currentSession = Substitute.For<INapSession>();
-        accessor = Substitute.For<IHttpContextAccessor>();
+        var currentSession = Substitute.For<INapSession>();
+        var accessor = Substitute.For<IHttpContextAccessor>();
         instantResourceService = Substitute.For<IInstantResourceService>();
         scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
         logDirectlyService = Substitute.For<LogDirectlyService>();
 
-        var context = new DefaultHttpContext();
-        context.Connection.RemoteIpAddress = new System.Net.IPAddress(1);
+        var context = new DefaultHttpContext
+        {
+            Connection =
+            {
+                RemoteIpAddress = new System.Net.IPAddress(1)
+            }
+        };
+
         accessor.HttpContext = context;
         var mapperConfig = new MapperConfigurationExpression();
         mapperConfig.AddProfile<SoccerAutoMapperProfile>();
@@ -53,6 +55,7 @@ public class InstantCalculateServiceFacts
         var mapper = new Mapper(config);
         var appSettings = new AppSettingsKey { SiteDbServer = new List<string> { "DB01", "DB02", "DB03" } };
         var option = Options.Create(appSettings);
+
         service = new InstantCalculateServiceImp(repository, currentSession, mapper, accessor, instantResourceService, option, scaleOutSettleService, logDirectlyService);
     }
 
@@ -173,7 +176,7 @@ public class InstantCalculateServiceFacts
             IsHalfTime = false
         };
         instantResourceService.FullTime(Arg.Any<InstantGoalCondition>()).Returns(new List<XmlResource>());
-        scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage { ErrorCode = errorCode, ErrorMessage = errorMsg }); ;
+        scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage { ErrorCode = errorCode, ErrorMessage = errorMsg });
 
         // Act
         var result = await service.PushInstantCalculation(request);
@@ -192,7 +195,7 @@ public class InstantCalculateServiceFacts
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
 
         // Act
-        var result = await service.PushInstantCalculation(request);
+        await service.PushInstantCalculation(request);
 
         // Assert
         Received.InOrder(() =>

@@ -17,15 +17,22 @@ import { ResultPipe } from './result.pipe';
         ResultTypePipe,
         IntervalScorePipe,
         ResultPipe,
+        ExternalSourceNamePipe,
+        IntervalBackgroundPipe,
+        ScoreBySettlementPipe
     ],
     declarations: [
-        ResultByTeamNamePipe,
         ResultStatusPipe,
         TicketStatusPipe,
         ResultTypePipe,
         IntervalScorePipe,
-        ResultPipe,
     ],
+    imports: [
+        ExternalSourceNamePipe,
+        IntervalBackgroundPipe,
+        ScoreBySettlementPipe,
+        ResultPipe,
+        ResultByTeamNamePipe]
 })
 export class PipesModule {
 }

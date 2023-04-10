@@ -16,9 +16,9 @@ public class BasketballBetTypeServiceImp : IBasketballBetTypeService
 {
     private readonly IRefDataService refDataService;
     private readonly IGroupBetTypeService groupBetTypeService;
-    private const int halfBetTypeLength = 5;
-    private const int betTypeIndexLength = 2;
-    private const int quarterBetTypeLength = 7;
+    private const int HalfBetTypeLength = 5;
+    private const int BetTypeIndexLength = 2;
+    private const int QuarterBetTypeLength = 7;
 
     public BasketballBetTypeServiceImp(IRefDataService refDataService,
         IGroupBetTypeService groupBetTypeService)
@@ -32,7 +32,7 @@ public class BasketballBetTypeServiceImp : IBasketballBetTypeService
         const int maxLength = 2;
         var resourceId = item.ResourceId;
         item.BetType = resourceId.Substring(0, maxLength + 1);
-        item.BetTypeName = this.refDataService.GetBetTypeName(item.BetType, resourceId.Substring(maxLength + 1));
+        item.BetTypeName = refDataService.GetBetTypeName(item.BetType, resourceId.Substring(maxLength + 1));
         GroupBasketballBetType(item);
 
         return item;
@@ -48,7 +48,7 @@ public class BasketballBetTypeServiceImp : IBasketballBetTypeService
             group = groupBetTypeService.GroupOtherBetType(resultDetail);
         }
 
-        if (resourceId.Length == quarterBetTypeLength || resourceId.Length == halfBetTypeLength)
+        if (resourceId.Length is QuarterBetTypeLength or HalfBetTypeLength)
         {
             group = GroupHalfBetType(resultDetail, group);
             group = GroupQuarterBetType(resultDetail, group);
@@ -61,7 +61,7 @@ public class BasketballBetTypeServiceImp : IBasketballBetTypeService
     private GroupNameModel GroupHalfBetType(ResultDetail resultDetail, GroupNameModel group)
     {
         var resourceIdHalfBetType =
-            SplitBetType(resultDetail.ResourceId, 0, halfBetTypeLength - betTypeIndexLength);
+            SplitBetType(resultDetail.ResourceId, 0, HalfBetTypeLength - BetTypeIndexLength);
         return IsHalfBetType(resourceIdHalfBetType)
             ? groupBetTypeService.GroupHalfBetType(resourceIdHalfBetType)
             : group;
@@ -70,7 +70,7 @@ public class BasketballBetTypeServiceImp : IBasketballBetTypeService
     private GroupNameModel GroupQuarterBetType(ResultDetail resultDetail, GroupNameModel group)
     {
         var resourceIdQuarterBetType =
-            SplitBetType(resultDetail.ResourceId, 0, quarterBetTypeLength - betTypeIndexLength);
+            SplitBetType(resultDetail.ResourceId, 0, QuarterBetTypeLength - BetTypeIndexLength);
         return IsQuarterBetType(resourceIdQuarterBetType)
             ? groupBetTypeService.GroupQuarterBetType(resourceIdQuarterBetType)
             : group;

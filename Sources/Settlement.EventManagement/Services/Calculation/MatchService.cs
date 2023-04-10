@@ -1,10 +1,11 @@
-﻿using Settlement.Core.Criteria;
+﻿namespace Settlement.EventManagement.Services.Calculation;
+
+using Criteria;
+using Requests;
+using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
-using Settlement.EventManagement.Criteria;
-using Match = Settlement.EventManagement.Models.Calculation.Match;
-
-namespace Settlement.EventManagement.Services.Calculation;
+using Match = Models.Calculation.Match;
 
 public interface MatchService
 {

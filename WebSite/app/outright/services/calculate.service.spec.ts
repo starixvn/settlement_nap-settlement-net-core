@@ -1,7 +1,7 @@
 import { Team, } from './../models';
 import { CalculateService } from "./calculate.service";
 import * as _ from 'lodash';
-import { Language } from '../../shared/language';
+import { Language } from '../../shared/language.native';
 import { Status } from '../constants';
 
 describe('CalculateService', () => {
@@ -136,6 +136,6 @@ describe('CalculateService', () => {
         
         const actual = CalculateService.teamWonSettled([nonDeadHeatMatch], [team]);
 
-        expect(actual).toEqual(team);
+        expect(actual).toEqual([team]);
     });
 });

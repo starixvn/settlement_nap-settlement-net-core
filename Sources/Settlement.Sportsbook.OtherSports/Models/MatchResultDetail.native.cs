@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Settlement.Core.Models;
+﻿using Settlement.Core.Models;
 
 namespace Settlement.Sportsbook.OtherSports.Models;
 

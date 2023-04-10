@@ -9,7 +9,7 @@ import { RequestService } from './request.service';
 describe('Soccer refund - request service', () => {
     let service: RequestService;
     let httpRequestService: HttpRequestService;
-    const url = 'api/soccer';
+    const url = '/api/soccer';
     beforeEach(() => TestBed.configureTestingModule({
         providers: [
             RequestService,

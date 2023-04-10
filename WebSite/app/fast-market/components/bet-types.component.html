@@ -108,8 +108,7 @@
                             (change)="onEventCounterCheckedChange(event, true)" />
                     </td>
                 </tr>
-                <ng-template ngFor let-bettype [ngForOf]="fastMarkets.betTypes" let-i="index"
-                    [ngForTrackBy]="trackByFn">
+                <ng-template ngFor let-bettype [ngForOf]="fastMarkets.betTypes" let-i="index">
                     <tr [title]="bettype.resultName.isSetDefaultValue
                         ? tooltipNextFiveMinutes
                         :''" class="bettype-item"

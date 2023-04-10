@@ -4,7 +4,7 @@ namespace Settlement.Sportsbook.OtherSports.Models;
 
 public class ScoreSetModel
 {
-    public StringBuilder BetStatus { get; set; } = new StringBuilder();
+    public StringBuilder BetStatus { get; set; } = new();
 
     public int? HtHomeScore { get; set; }
 

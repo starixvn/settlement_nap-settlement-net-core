@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Settlement.Core.Models;
+﻿namespace Settlement.Core.Models;
 
 public class ReferenceAction
 {

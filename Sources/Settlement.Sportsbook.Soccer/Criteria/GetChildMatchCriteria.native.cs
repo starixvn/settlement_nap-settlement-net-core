@@ -4,9 +4,9 @@ namespace Settlement.Sportsbook.Soccer.Criteria;
 
 public class GetChildMatchCriteria : CriteriaBase
 {
-    public string matchIds { get; set; }
+    public string MatchIds { get; set; }
 
-    public string mode { get; set; }
+    public string Mode { get; set; }
 
     public string SelectedResources { get; set; }
 
@@ -17,6 +17,6 @@ public class GetChildMatchCriteria : CriteriaBase
 
     public override bool IsValid()
     {
-        return matchIds.Length > 0;
+        return MatchIds.Length > 0;
     }
 }

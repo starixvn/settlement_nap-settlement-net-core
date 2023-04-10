@@ -3,8 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Settlement.Core.ActionFilters;
 using Settlement.ThirdPartyProducts.Models;
 using Settlement.ThirdPartyProducts.Requests;
-using System;
-using System.Threading.Tasks;
 
 namespace Settlement.ThirdPartyProducts.Controllers;
 

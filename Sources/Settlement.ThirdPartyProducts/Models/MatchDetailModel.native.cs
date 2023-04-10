@@ -54,15 +54,9 @@ public class MatchDetailModel
 
     public string EventStatus
     {
-        get
-        {
-            return eventStatus.MapToString(BetStatus, IsPending);
-        }
+        get => eventStatus.MapToString(BetStatus, IsPending);
 
-        set
-        {
-            eventStatus = value;
-        }
+        set => eventStatus = value;
     }
 
     public string ParlayStatus { get; set; }
@@ -71,7 +65,7 @@ public class MatchDetailModel
 
     public int AutoSettingForLeague { get; set; }
 
-    public List<SiteMatch> SiteMatch { get; set; } = new List<SiteMatch>();
+    public List<SiteMatch> SiteMatch { get; set; } = new();
 
     public AutoSetting AutoCalcSetting => autoCalcSetting ?? (autoCalcSetting = new AutoSetting
     {

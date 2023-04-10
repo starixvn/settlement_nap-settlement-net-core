@@ -12,6 +12,8 @@ using ReferenceAction = Settlement.EventManagement.Models.Calculation.ReferenceA
 
 namespace Settlement.EventManagement.UnitTests.Services.Calculation;
 
+using Requests;
+
 public class MatchServiceTests
 {
     private readonly IDynamicRepository repository;
@@ -20,11 +22,7 @@ public class MatchServiceTests
 
     private readonly IRefDataService refDataService;
 
-    private readonly MergeDataService mergeDataService;
-
     private readonly NewInfoMatchService newInfoMatchService;
-
-    private readonly IMapper mapper;
 
     private readonly MatchService service;
 
@@ -33,12 +31,12 @@ public class MatchServiceTests
         repository = Substitute.For<IDynamicRepository>();
         cachingMatchesService = Substitute.For<CachingMatchesService>();
         refDataService = Substitute.For<IRefDataService>();
-        mergeDataService = Substitute.For<MergeDataService>();
+        var mergeDataService = Substitute.For<MergeDataService>();
         newInfoMatchService = Substitute.For<NewInfoMatchService>();
         var mapperConfig = new MapperConfigurationExpression();
         mapperConfig.AddProfile<EventManagementAutoMapperProfile>();
         var config = new MapperConfiguration(mapperConfig);
-        mapper = new Mapper(config);
+        var mapper = new Mapper(config);
         var appSettingsKey = new AppSettingsKey { SiteDbServer = new List<string> { "01", "02" } };
         var options = Options.Create(appSettingsKey);
         service = new MatchServiceImp(repository, refDataService, cachingMatchesService, mergeDataService, newInfoMatchService, options, mapper);

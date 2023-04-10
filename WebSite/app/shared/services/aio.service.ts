@@ -2,15 +2,15 @@ import { Injectable } from '@angular/core';
 import { HttpRequestService } from './http-request.service.native';
 import * as _ from 'lodash';
 import { Observable, firstValueFrom } from 'rxjs';
-import { GeneralResultDetail, MatchResource, ModalDialogMessage, Result, ResultSettingQuery } from '../models';
+import { GeneralResultDetail, MarkedTicketsModel, MatchResource, ModalDialogMessage, Result, ResultSettingQuery } from '../models';
 import { MessageBoxService } from './message-box.service.native';
-import { Language } from '../language';
-import { HedgeMatchDetail, ResultDetail, SaveScoreQuery } from '../models/sportsbook-sop';
+import { Language } from '../language.native';
+import { GeneralMatch, HedgeMatchDetail, ResultDetail, SaveScoreQuery } from '../models/sportsbook-sop';
 import { ResultSettingType, SettlementStatusId, TicketStatusText, ResultStatus } from '../../shared/constants';
 
 @Injectable()
 export class AioService {
-    private aioApi = `api/aio`;
+    private aioApi = `/api/aio`;
 
     private readonly httpRequestService: HttpRequestService;
     public readonly warningDialogMessage: ModalDialogMessage = new ModalDialogMessage();
@@ -20,16 +20,18 @@ export class AioService {
     }
 
     public getMatch(query: object) {
-        return this.httpRequestService.postJson(query, `${this.aioApi}/get-match`);
+        const request = this.httpRequestService.postJson<GeneralMatch>(query, `${this.aioApi}/get-match`);
+        return firstValueFrom(request);
     }
 
     public push(query: object) {
-        const response = this.httpRequestService.postJson<Result>(query, `${this.aioApi}/settle`);
-        return firstValueFrom(response);
+        const request = this.httpRequestService.postJson<Result>(query, `${this.aioApi}/settle`);
+        return firstValueFrom(request);
     }
 
     public verifyNoRunningOdds(query: object) {
-        return this.httpRequestService.postJson(query, `${this.aioApi}/no-running-odds`, false);
+        const request = this.httpRequestService.postJson<Result>(query, `${this.aioApi}/no-running-odds`, false);
+        return firstValueFrom(request);
     }
 
     public changeResultSetting(query: object): Observable<boolean> {
@@ -42,8 +44,8 @@ export class AioService {
     }
 
     public saveScore(query: SaveScoreQuery) {
-        const response = this.httpRequestService.postJson<Result>(query, `${this.aioApi}/save-score`);
-        return firstValueFrom(response);
+        const request = this.httpRequestService.postJson<Result>(query, `${this.aioApi}/save-score`);
+        return firstValueFrom(request);
     }
 
     public getLeagueSources(leagueId: number) {
@@ -51,25 +53,28 @@ export class AioService {
             leagueId
         };
 
-        return this.httpRequestService.postJson(query, `api/setting/get-league-outside-source`, false);
+        return this.httpRequestService.postJson(query, `/api/setting/get-league-outside-source`, false);
     }
 
     public checkMarkedTickets(query: object) {
-        return this.httpRequestService.postJson(query, `${this.aioApi}/check-marked-tickets`, false);
+        const request = this.httpRequestService.postJson<MarkedTicketsModel>(query, `${this.aioApi}/check-marked-tickets`, false);
+        return firstValueFrom(request);
     }
 
     public pushChildMatch(query: object) {
-        const response = this.httpRequestService.postJson(query, `${this.aioApi}/settle-child-match`);
-        return firstValueFrom(response);
+        const request =  this.httpRequestService.postJson(query, `${this.aioApi}/settle-child-match`);
+        return firstValueFrom(request);
     }
 
     public voidBet(query: object) {
-        return this.httpRequestService.postJson(query, `api/void-bet/update`);
+        const request = this.httpRequestService.postJson(query, `/api/void-bet/update`);
+        return firstValueFrom(request);
     }
 
     public getTicketInfo(query: object) {
-        const newApiUrl =  `api/void-bet/get-ticket`;
-        return this.httpRequestService.postJson(query, newApiUrl);
+        const newApiUrl = `/api/void-bet/get-ticket`;
+        const request = this.httpRequestService.postJson(query, newApiUrl);
+        return firstValueFrom(request);
     }
 
     public async verifyChangedSettledTickets(resultDetails: GeneralResultDetail[], query: object) {
@@ -99,7 +104,7 @@ export class AioService {
             action: actionType,
             selectedResources: [mainMatch].concat(relatedMatchResources)
         };
-        const result = await this.verifyNoRunningOdds(params).toPromise() as Result;
+        const result = await this.verifyNoRunningOdds(params);
         return result.errMsg;
     }
 

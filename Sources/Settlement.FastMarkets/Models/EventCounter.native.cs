@@ -1,5 +1,4 @@
 ﻿using Settlement.FastMarkets.Constants;
-using System.Linq;
 
 namespace Settlement.FastMarkets.Models;
 
@@ -35,10 +34,7 @@ public class EventCounter
 
             return eventResultItem;
         }
-        set
-        {
-            eventResultItem = value;
-        }
+        set => eventResultItem = value;
     }
 
     private static EventResultItem ResultMapping(string result)

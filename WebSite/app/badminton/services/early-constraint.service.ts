@@ -3,7 +3,7 @@ import { EarlyBaseService } from '../../core/services/early-base.service';
 import * as _ from 'lodash';
 import { ResultDetail,GroupMap, MatchDetail } from '../../shared/models/sportsbook-sop';
 import { SportType } from '../../shared/constants';
-import { Language } from '../../shared/language';
+import { Language } from '../../shared/language.native';
 import { InputType, VolleyballBetTypes } from '../constants';
 import { ResultByTeamNamePipe } from '../../shared/pipes/result-by-team-name.pipe';
 

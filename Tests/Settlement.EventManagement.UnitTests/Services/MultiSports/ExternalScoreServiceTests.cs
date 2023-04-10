@@ -1,7 +1,5 @@
 ﻿using Settlement.Core.Models;
 using Settlement.EventManagement.Services.MultiSports;
-using System.Collections.Generic;
-using Xunit;
 using Match = Settlement.EventManagement.Models.MultiSports.Match;
 
 namespace Settlement.EventManagement.UnitTests.Services.MultiSports;
@@ -27,13 +25,13 @@ public class ExternalScoreServiceTests
         };
         var listResultDetail = new List<ResultDetail>
         {
-            new ResultDetail { MatchId = 12345, ResourceId = "01", HomeValue = "1", AwayValue = "1", SourceId = 1, SourceName = "SBO"},
-            new ResultDetail { MatchId = 12345, ResourceId = "00", HomeValue = "1", AwayValue = "2", SourceId = 1, SourceName = "SBO"},
+            new() { MatchId = 12345, ResourceId = "01", HomeValue = "1", AwayValue = "1", SourceId = 1, SourceName = "SBO"},
+            new() { MatchId = 12345, ResourceId = "00", HomeValue = "1", AwayValue = "2", SourceId = 1, SourceName = "SBO"}
         };
 
         service.LoadExternalResultForOtherSports(match, listResultDetail, false);
 
-        Assert.Equal(listResultDetail[1], match.ExFTResult);
+        Assert.Equal(listResultDetail[1], match.ExFtResult);
     }
 
     [Fact]
@@ -50,14 +48,14 @@ public class ExternalScoreServiceTests
         };
         var listResultDetail = new List<ResultDetail>
         {
-            new ResultDetail { MatchId = 12345, ResourceId = "01", HomeValue = "1", AwayValue = "1", SourceId = 1, SourceName = "SBO"},
-            new ResultDetail { MatchId = 12345, ResourceId = "00", HomeValue = "1", AwayValue = "2", SourceId = 1, SourceName = "SBO"},
+            new() { MatchId = 12345, ResourceId = "01", HomeValue = "1", AwayValue = "1", SourceId = 1, SourceName = "SBO"},
+            new() { MatchId = 12345, ResourceId = "00", HomeValue = "1", AwayValue = "2", SourceId = 1, SourceName = "SBO"}
         };
 
         service.LoadExternalResultForOtherSports(match, listResultDetail, true);
 
-        Assert.Equal(listResultDetail[1], match.ExFTResult);
-        Assert.Equal(listResultDetail[0], match.ExHTResult);
+        Assert.Equal(listResultDetail[1], match.ExFtResult);
+        Assert.Equal(listResultDetail[0], match.ExHtResult);
     }
 
     [Fact]
@@ -69,13 +67,13 @@ public class ExternalScoreServiceTests
         };
         var listResultDetail = new List<ResultDetail>
         {
-            new ResultDetail { MatchId = 12345, ResourceId = "00", HomeValue = "1", AwayValue = "2", SourceId = 1, SourceName = "SBO"},
+            new() { MatchId = 12345, ResourceId = "00", HomeValue = "1", AwayValue = "2", SourceId = 1, SourceName = "SBO"}
         };
 
         // Act
         service.LoadExternalResultForVolleyball(match, listResultDetail);
 
         // Assert
-        Assert.Equal(match.ExFTResult, listResultDetail[0]);
+        Assert.Equal(match.ExFtResult, listResultDetail[0]);
     }
 }

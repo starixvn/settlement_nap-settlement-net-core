@@ -8,13 +8,13 @@ public class UpdateChildMatchCriteria : NonQueryCommand
 
     public string Command { get; } = "NAP_Admin_Settlement_1-CAL";
 
-    public int FTHome { get; set; }
+    public int FtHome { get; set; }
 
-    public int FTAway { get; set; }
+    public int FtAway { get; set; }
 
-    public int HTHome { get; set; }
+    public int HtHome { get; set; }
 
-    public int HTAway { get; set; }
+    public int HtAway { get; set; }
 
     public string Action { get; } = "CAL";
 

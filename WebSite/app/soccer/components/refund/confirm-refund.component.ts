@@ -12,7 +12,7 @@ import { BlockUIService, HttpRequestService, MessageBoxService } from '../../../
 import { CalculateAction } from '../../../shared/constants';
 import { ModalDialogMessage, Result } from '../../../shared/models';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
-import { Language } from '../../../shared/language';
+import { Language } from '../../../shared/language.native';
 
 @Component({
   selector: 'confirm-refund',

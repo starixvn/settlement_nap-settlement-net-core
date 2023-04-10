@@ -2,7 +2,7 @@
 
 namespace Settlement.Sportsbook.OtherSports.Criteria;
 
-public class GetLastestResultCriteria : CriteriaBase
+public class GetLatestResultCriteria : CriteriaBase
 {
     public int MatchId { get; set; }
 

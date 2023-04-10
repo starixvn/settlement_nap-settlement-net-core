@@ -16,7 +16,6 @@ export class DetectChangesService {
         return oldMatch.eventStatus !== newMatch.eventStatus
             || oldMatch.betStatus !== newMatch.betStatus
             || oldMatch.earlySettleStatus !== newMatch.earlySettleStatus
-            || oldMatch.isExistRunningTicketParlay !== newMatch.isExistRunningTicketParlay
             || !_.isEqual(oldMatch.moreScores, newMatch.moreScores)
             || !_.isEqual(oldMatch.remark, newMatch.remark);
     }
@@ -39,7 +38,6 @@ export class DetectChangesService {
             || oldMatch.isCalRefund !== newMatch.isCalRefund
             || oldMatch.isExistRunningTicket !== newMatch.isExistRunningTicket
             || oldMatch.isExistMarkedTicket !== newMatch.isExistMarkedTicket
-            || oldMatch.isExistMarkedTicketParlay !== newMatch.isExistMarkedTicketParlay
             || oldMatch.isHalfTimeCal !== newMatch.isHalfTimeCal
             || oldMatch.isNotConsistentExFtScore !== newMatch.isNotConsistentExFtScore
             || oldMatch.isNotConsistentExHtScore !== newMatch.isNotConsistentExHtScore;

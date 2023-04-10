@@ -1,11 +1,11 @@
+import { ActionOnType } from './../../../basketball/models/action-on-type.model';
 import { Component, ViewChild } from '@angular/core';
 import { RequestService } from '../../services/request.service';
-import { MatchDetail, OtherSportsMatch, Permission, QueryMatch, RequestSettleWithInterval } from '../../models';
+import { MatchDetail, Permission, QueryMatch } from '../../models';
 import * as _ from 'lodash';
-import { VerificationService } from './verification.service';
 import { MessageBoxService } from '../../../shared/services';
-import { Language } from '../../../shared/language';
-import { MarkedTicketsModel, ModalDialogMessage, Result } from '../../../shared/models';
+import { Language } from '../../../shared/language.native';
+import { ModalDialogMessage } from '../../../shared/models';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 import { HalfTimeFullTimeService } from './halftime-fulltime.service';
 import { CalculateAction } from '../../../shared/constants';
@@ -35,7 +35,7 @@ export class HalfTimeFullTimeRefundComponent implements SportTemplate {
   async getMatch(matchId: number) {
     this.toastrService.overlayContainer = this.toastContainer;
     const query = new QueryMatch(matchId, true);
-    const result = await this.requestService.getMatch(query).toPromise() as OtherSportsMatch;
+    const result = await this.requestService.getMatch(query);
     this.permission = result.permission;
     this.matchDetail = result.match.matchDetail;
     this.resultDetails = result.match.resultDetails;
@@ -59,35 +59,34 @@ export class HalfTimeFullTimeRefundComponent implements SportTemplate {
     return _.filter(this.resultDetails, (map: ResultDetail) => !_.isEqual(map.resourceId, ResourcesIds.halfTime)
       && !_.isEqual(map.resourceId, ResourcesIds.fullTime));
   }
-  public async refund(action: string, isParlay: boolean) {
+  public async refund(action: string) {
     this.toastrService.clear();
     const params = {
       matchId: this.matchDetail.matchId,
-      action: isParlay ? "MP-" + action : action,
+      resourceIds: _.isEqual(action, this.actionName.refundFullTime) ? ResourcesIds.fullTime : `${ResourcesIds.halfTime},${ResourcesIds.fullTime}`
     };
 
-    const result = await this.requestService.checkMarkedTickets(params).toPromise() as MarkedTicketsModel;
+    const result = await this.requestService.checkMarkedTickets(params);
     if (result.isExistMarkedTicket) {
       this.toastrService.error(Language.MarkedTicket);
     } else {
-      this.confirmDialogMessage.message = this.halfTimeFullTimeService.getMessageConfirmRefund(isParlay, action);
+      this.confirmDialogMessage.message = this.halfTimeFullTimeService.getMessageConfirmRefund(action);
       this.messageBoxService.confirm(this.confirmDialogMessage, async () => {
-        this.doRefund(action, isParlay);
+        this.doRefund(action);
       });
     }
   }
 
-  private async doRefund(action: string, isParlay: boolean) {
+  private async doRefund(action: string) {
     const param = {
       matchId: this.matchDetail.matchId,
       action,
       hedgeMatchId: this.applyHedgeMatch ? this.hedgeMatchDetail.matchId : 0,
-      betStatus: _.isEqual(action, this.actionName.refundFullTime) ? this.matchDetail.betStatus : null
+      betStatus: _.isEqual(action, this.actionName.refundFullTime) ? this.matchDetail.betStatus : null,
+      sportType: this.matchDetail.sportType
     };
 
-    const response = isParlay
-      ? await this.requestService.refundParlay(param).toPromise() as Result
-      : await this.requestService.refund(param).toPromise() as Result;
+    const response = await this.requestService.sendRequest(param);
     if (!response.isSuccessful) {
       this.toastrService.error(response.errMsg);
     } else {

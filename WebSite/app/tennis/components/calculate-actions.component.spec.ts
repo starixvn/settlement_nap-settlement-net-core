@@ -31,7 +31,7 @@ import { ResultByTeamNamePipe } from '../../shared/pipes/result-by-team-name.pip
 import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
 import { ToastContainerDirective, ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 import { CalculateMatchDetailComponent } from './calculate-match-detail.component';
-import { Language } from '../../shared/language';
+import { Language } from '../../shared/language.native';
 
 describe('Tennis - Calculate actions component', () => {
   let component: CalculateActionsComponent;

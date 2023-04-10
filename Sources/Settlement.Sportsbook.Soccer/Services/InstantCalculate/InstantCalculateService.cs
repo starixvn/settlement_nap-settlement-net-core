@@ -15,7 +15,7 @@ using Settlement.Sportsbook.Soccer.Services.InstantCalculate;
 
 namespace Settlement.Sportsbook.Soccer.Services;
 
-public interface IInstantCalculateService
+public interface InstantCalculateService
 {
     Task<MatchGoalRecordModel> CalculateCheckingInfo(MatchCheckingRequest request);
 
@@ -24,7 +24,7 @@ public interface IInstantCalculateService
     Task<Result> PushInstantCalculation(InstantCalculationRequest request);
 }
 
-public class InstantCalculateServiceImp : IInstantCalculateService
+public class InstantCalculateServiceImp : InstantCalculateService
 {
     private readonly IDynamicRepository repository;
 

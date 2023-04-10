@@ -18,8 +18,6 @@ public class CreateQueryServiceTests
 
     private readonly INapSession currentSession;
 
-    private readonly IHttpContextAccessor accessor;
-
     private readonly ICreateQueryService service;
 
     private readonly ILogService logService;
@@ -28,9 +26,14 @@ public class CreateQueryServiceTests
     {
         xmlConvertService = Substitute.For<XmlConvertService>();
         currentSession = Substitute.For<INapSession>();
-        accessor = Substitute.For<IHttpContextAccessor>();
-        var context = new DefaultHttpContext();
-        context.Connection.RemoteIpAddress = new System.Net.IPAddress(1);
+        var accessor = Substitute.For<IHttpContextAccessor>();
+        var context = new DefaultHttpContext
+        {
+            Connection =
+            {
+                RemoteIpAddress = new System.Net.IPAddress(1)
+            }
+        };
         accessor.HttpContext = context;
         var mapperConfig = new MapperConfigurationExpression();
         mapperConfig.AddProfile<SportsbookAioAutoMapperProfile>();
@@ -61,7 +64,7 @@ public class CreateQueryServiceTests
             BetStatus = "",
             SelectedResources = "",
             IsReSettledTickets = false,
-            IsLeader = false,
+            IsLeader = false
         };
 
         // Act
@@ -77,7 +80,7 @@ public class CreateQueryServiceTests
         // Arrange
         var request = new SaveScoreRequest
         {
-            MatchId = 1,
+            MatchId = 1
         };
 
         var expectedData = new SaveScoreRequest
@@ -120,7 +123,7 @@ public class CreateQueryServiceTests
     {
         var request = new SettleChildMatchRequest
         {
-            ActionName = "Calc",
+            ActionName = "Calc"
         };
 
         var expectedData = new SettleCriteria
@@ -186,20 +189,20 @@ public class CreateQueryServiceTests
     [Fact]
     public void CreateMatchResources_Always_ReturnExpectedData()
     {
-        var ListResources = new List<CheckOddsItem>
+        var listResources = new List<CheckOddsItem>
         {
-            new CheckOddsItem { MatchId = 1},
-            new CheckOddsItem { MatchId = 2}
+            new() { MatchId = 1},
+            new() { MatchId = 2}
         };
 
         var resources = new Resources<CheckOddsItem>
         {
-            ResourceItems = ListResources
+            ResourceItems = listResources
         };
 
         var expectedData = xmlConvertService.Serialize(resources);
 
-        var result = service.CreateMatchResources(ListResources);
+        var result = service.CreateMatchResources(listResources);
 
         Assert.Equal(expectedData, result);
     }
@@ -207,20 +210,20 @@ public class CreateQueryServiceTests
     [Fact]
     public void CreateResources_Always_ReturnExpectedData()
     {
-        var ListResources = new List<ResourceItem>
+        var listResources = new List<ResourceItem>
         {
-            new ResourceItem { ResourceId = "00"},
-            new ResourceItem { ResourceId = "01"}
+            new() { ResourceId = "00"},
+            new() { ResourceId = "01"}
         };
 
         var resources = new Resources<ResourceItem>
         {
-            ResourceItems = ListResources
+            ResourceItems = listResources
         };
 
         var expectedData = xmlConvertService.Serialize(resources);
 
-        var result = service.CreateResources(ListResources);
+        var result = service.CreateResources(listResources);
 
         Assert.Equal(expectedData, result);
     }
@@ -235,7 +238,7 @@ public class CreateQueryServiceTests
 
         var resources = new Resources<ResourceItem>
         {
-            ResourceItems = new List<ResourceItem> { new ResourceItem { ResourceId = childMatch.ResourceId } }
+            ResourceItems = new List<ResourceItem> { new() { ResourceId = childMatch.ResourceId } }
         };
 
         var expectedData = xmlConvertService.Serialize(resources);

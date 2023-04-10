@@ -1,28 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using AutoMapper.Configuration;
 using Fanex.Data.Repository;
-using NSubstitute;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.Soccer.Criteria;
-using Settlement.Sportsbook.Soccer.GetMatch.Services;
 using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Requests;
-using Xunit;
 using Match = Settlement.Sportsbook.Soccer.Models.Match;
 using MatchDetail = Settlement.Sportsbook.Soccer.Models.MatchDetail;
 
 namespace Settlement.Sportsbook.Soccer.UnitTests.Services.GetMatch;
 
+using Core.Services.SpecificService;
+using Soccer.Services.GetMatch;
+
 public class MatchServiceTests
 {
     private readonly IDynamicRepository repository;
-
-    private readonly PermissionService permission;
 
     private readonly IRefDataService refDataService;
 
@@ -34,7 +29,7 @@ public class MatchServiceTests
     public MatchServiceTests()
     {
         repository = Substitute.For<IDynamicRepository>();
-        permission = Substitute.For<PermissionService>(null, null, null, null);
+        var permission = Substitute.For<PermissionService>(null, null, null, null);
         refDataService = Substitute.For<IRefDataService>();
         goalIconService = Substitute.For<IGoalIconService>();
         fetchDataService = Substitute.For<IFetchDataService>();
@@ -114,7 +109,7 @@ public class MatchServiceTests
         goalIconService.GetGoalIcon(Arg.Any<GoalIconQueryModel>()).Returns(new GoalIcon());
         repository.FetchAsync<ResultDetail>(Arg.Any<GetResultDetailCriteria>()).Returns(new List<ResultDetail>());
         repository.GetAsync<HedgeMatchDetail>(Arg.Any<GetHedgeMatchCriteria>()).Returns(new HedgeMatchDetail());
-        var fantasyResult = (Substitute.For<IEnumerable<FantasyMatchDetail>>(), new List<FantasyRelatedMatch> { new FantasyRelatedMatch() });
+        var fantasyResult = (Substitute.For<IEnumerable<FantasyMatchDetail>>(), new List<FantasyRelatedMatch> { new() });
         repository.FetchMultipleAsync<FantasyMatchDetail, FantasyRelatedMatch>(Arg.Any<CriteriaBase>()).Returns(fantasyResult);
 
         // Act
@@ -130,7 +125,7 @@ public class MatchServiceTests
         // Arrange
         var resultDetail = new List<ResultDetail>
         {
-            new ResultDetail { ResourceId = "01", AwayValue = "1", HomeValue = "2", SourceId = SourceType.SBO}
+            new() { ResourceId = "01", AwayValue = "1", HomeValue = "2", SourceId = SourceType.Sbo}
         };
 
         var match = new Match
@@ -192,14 +187,14 @@ public class MatchServiceTests
     }
 
     [Fact]
-    public async Task GetLastestMatchDetail_Always_ReturnMatchDetail()
+    public async Task GetLatestMatchDetail_Always_ReturnMatchDetail()
     {
         // Arrange
-        repository.GetAsync<MatchDetail>(Arg.Any<GetLastestMatchDetailCriteria>())
+        repository.GetAsync<MatchDetail>(Arg.Any<GetLatestMatchDetailCriteria>())
             .Returns(new MatchDetail { MatchId = 123 });
 
         //act
-        var match = await service.GetLastestMatchDetail(new GetLastestMatchDetailRequest());
+        var match = await service.GetLatestMatchDetail(new GetLatestMatchDetailRequest());
 
         // Assert
         Assert.Equal(123, match.MatchId);
@@ -228,8 +223,8 @@ public class MatchServiceTests
         // Arrange
         var matches = new List<MatchMoveBetTicket>
         {
-            new MatchMoveBetTicket { MatchId = 123 },
-            new MatchMoveBetTicket {MatchId = 456}
+            new() { MatchId = 123 },
+            new() {MatchId = 456}
         };
         repository.FetchAsync<MatchMoveBetTicket>(Arg.Any<GetMatchDetailThirdPartyBetTicketCriteria>()).Returns(matches);
 

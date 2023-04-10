@@ -1,17 +1,10 @@
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HttpClientJsonpModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { OnlyIntegerDirective } from '../shared/directives';
-import {
-    ModalDialogComponent,
-    MultipleSelectComponent,
-    DatepickerComponent,
-    ModalContentDialogComponent,
-    TreeViewComponent,
-    MaterialDialogComponent,
-} from '../shared/components';
 import {
     AppComponent,
     FilterComponent,
@@ -24,6 +17,12 @@ import { MaterialModule } from "./../shared/material-module";
 import { ResultStatusPipe, SelectionPipe, TicketStatusPipe } from './pipes';
 import { PipesModule } from '../shared/pipes/pipes.module.native';
 import { CustomHttpRequestInterceptor } from "../shared/custom-httprequest-interceptor.native";
+import { DatepickerComponent } from '../shared/components/date-picker/date-picker.component';
+import { MaterialDialogComponent } from '../shared/components/material-dialog-iframe/material-dialog.component';
+import { ModalContentDialogComponent } from '../shared/components/modal-dialog/modal-content-dialog.component';
+import { ModalDialogComponent } from '../shared/components/modal-dialog/modal-dialog.component';
+import { MultipleSelectComponent } from '../shared/components/multiple-selection/multiple-select.component.native';
+import { TreeViewComponent } from '../shared/components/multiple-selection/tree-view.component';
 
 @NgModule({
     imports: [
@@ -32,9 +31,13 @@ import { CustomHttpRequestInterceptor } from "../shared/custom-httprequest-inter
         ReactiveFormsModule,
         HttpClientModule,
         HttpClientJsonpModule,
-        MaterialModule,
         NgbModule,
-        PipesModule
+        MaterialModule,
+        PipesModule,
+        OnlyIntegerDirective,
+        NewMultipleSelectComponent,
+        DatepickerComponent,
+        NoopAnimationsModule
     ],
     declarations: [
         AppComponent,
@@ -42,14 +45,11 @@ import { CustomHttpRequestInterceptor } from "../shared/custom-httprequest-inter
         MatchesComponent,
         MatchDetailComponent,
         CalculationComponent,
-        DatepickerComponent,
         ModalDialogComponent,
         ModalContentDialogComponent,
         MultipleSelectComponent,
         TreeViewComponent,
-        NewMultipleSelectComponent,
         MaterialDialogComponent,
-        OnlyIntegerDirective,
         ResultStatusPipe,
         SelectionPipe,
         TicketStatusPipe,

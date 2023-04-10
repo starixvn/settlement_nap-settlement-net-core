@@ -1,8 +1,7 @@
-﻿using MediatR;
-using Settlement.Setting.Models.OutsideSourceManager;
-using System.Collections.Generic;
+﻿namespace Settlement.Setting.Requests.OutsideSourceManager;
 
-namespace Settlement.Setting.Requests;
+using MediatR;
+using Settlement.Setting.Models.OutsideSourceManager;
 
 public class AddOutsideSourceRequest : IRequest<AddSourceResult>
 {

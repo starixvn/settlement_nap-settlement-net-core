@@ -8,7 +8,7 @@ import { VerifyScoreGoalService } from "./services/verify-score-goal.service";
 import { ScorePipe } from "../../pipes/score.pipe";
 import { FantasyMatch, FantasyMatchDetail, FantasyRelatedMatch } from "./models/match.model";
 import { Remark } from "../../../shared/models";
-import { Language } from "../../../shared/language";
+import { Language } from "../../../shared/language.native";
 import { BrowserDynamicTestingModule } from "@angular/platform-browser-dynamic/testing";
 import { ModalContentDialogComponent, ModalDialogComponent } from "../../../shared/components";
 

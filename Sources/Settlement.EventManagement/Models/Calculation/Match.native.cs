@@ -18,7 +18,7 @@ public class Match : BaseMatch
 
     public bool IsRunningFastMarket { get; set; }
 
-    public bool IsFTCalculated { get; set; }
+    public bool IsFtCalculated { get; set; }
 
     public bool IsExistFgLg { get; set; }
 
@@ -48,11 +48,11 @@ public class Match : BaseMatch
         set => goalRecord = string.IsNullOrWhiteSpace(value) ? string.Empty : value.ToUpperInvariant();
     }
 
-    public GoalIcon GoalIcon { get; set; } = new GoalIcon();
+    public GoalIcon GoalIcon { get; set; } = new();
 
     #region InstantCalculate
 
-    public AutoCalculationSetting AutoCalcSetting => new AutoCalculationSetting(AutoSetting, AutoSettingForLeague);
+    public AutoCalculationSetting AutoCalcSetting => new(AutoSetting, AutoSettingForLeague);
 
     public int InstantWaitingTime { get; set; }
 
@@ -60,7 +60,7 @@ public class Match : BaseMatch
 
     public int? LiveAwayScore { get; set; }
 
-    public bool IsHT { get; set; }
+    public bool IsHt { get; set; }
 
     public int LivePeriod { get; set; }
 
@@ -74,11 +74,11 @@ public class Match : BaseMatch
 
     public int InstantCalculationType { get; set; }
 
-    private bool IsHalftime => !IsHT && LivePeriod == HalftimeLive;
+    private bool IsHalftime => !IsHt && LivePeriod == HalftimeLive;
 
-    private bool IsFullTime => !IsHT && LivePeriod == FullTimeLive;
+    private bool IsFullTime => !IsHt && LivePeriod == FullTimeLive;
 
-    private bool IsBreakTime => IsHT && LivePeriod == BreakTimeLive;
+    private bool IsBreakTime => IsHt && LivePeriod == BreakTimeLive;
 
     private string Live
     {
@@ -115,7 +115,7 @@ public class Match : BaseMatch
     private bool CheckEventStatus => NewEventStatus.Equals(Core.Constants.EventStatus.Waiting)
                                      || NewEventStatus.Equals(Core.Constants.EventStatus.Calculating)
                                      || EventStatus.Equals(Core.Constants.EventStatus.Running)
-                                     || EventStatus.IgnoreCaseEquals(Core.Constants.EventStatus.RefundHT);
+                                     || EventStatus.IgnoreCaseEquals(Core.Constants.EventStatus.RefundHt);
 
     private bool ConfirmCompleted => InstantStatusId == Core.Constants.InstantStatus.Complete
         || (InstantStatusId == Core.Constants.InstantStatus.Confirm && CheckEventStatus);

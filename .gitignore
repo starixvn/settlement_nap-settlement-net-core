@@ -30,6 +30,7 @@ obj/
 _ReSharper*/
 [Tt]est[Rr]esult*
 .vs/
+reports/
 #Nuget packages folder
 packages/
 node_modules/

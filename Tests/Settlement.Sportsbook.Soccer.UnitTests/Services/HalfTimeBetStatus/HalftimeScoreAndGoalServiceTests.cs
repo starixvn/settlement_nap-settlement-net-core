@@ -1,11 +1,8 @@
-﻿using NSubstitute;
-using Settlement.Sportsbook.Soccer.Models;
-using Settlement.Sportsbook.Soccer.Requests;
+﻿namespace Settlement.Sportsbook.Soccer.UnitTests.Services.HalfTimeBetStatus;
+
+using Models;
 using Settlement.Sportsbook.Soccer.Services;
 using Settlement.Sportsbook.Soccer.Services.HalfTimeBetStatus;
-using Xunit;
-
-namespace Settlement.Sportsbook.Soccer.UnitTests.Services.HalftimeBetStatus;
 
 public class HalftimeScoreAndGoalServiceTests
 {
@@ -38,7 +35,7 @@ public class HalftimeScoreAndGoalServiceTests
     public void BetStatusHasHalftimeScoreWithoutSemicolonOnGoalRecord_ReturnsRightExpectedBetStatus()
     {
         // Arrange
-        var expectedBetStatus = "1FL:2-0;";
+        const string expectedBetStatus = "1FL:2-0;";
         goalRecordService.HomeOrAwayFirstGoal(Arg.Any<string>()).Returns("2");
 
         // Act
@@ -52,7 +49,7 @@ public class HalftimeScoreAndGoalServiceTests
     public void BetStatusHasHalftimeScoreWithSemicolonOnGoalRecord_ReturnsRightExpectedBetStatus()
     {
         // Arrange
-        var expectedBetStatus = "1FL:1-2;";
+        const string expectedBetStatus = "1FL:1-2;";
         var goalRecordModel = new GoalRecordModel
         {
             IsExistHtFgLg = true,
@@ -73,7 +70,7 @@ public class HalftimeScoreAndGoalServiceTests
     public void BetStatusWithIsNullHalftimeAndGoalRecord_ReturnsRightExpectedBetStatus()
     {
         // Arrange
-        var expectedBetStatus = "1FL:0-0;";
+        const string expectedBetStatus = "1FL:0-0;";
 
         // Act
         var actualBetStatus = service.NoGoalHalftime;

@@ -6,13 +6,13 @@ namespace Settlement.ThirdPartyProducts.UnitTests.Services;
 
 public class ScoreServiceTests
 {
-    private static List<ResultDetail> EmptyResultDetail => new List<ResultDetail>();
+    private static List<ResultDetail> EmptyResultDetail => new();
 
     [Fact]
     public void ScoreOfSets_EmptyResultDetail_ReturnsHyphenOnAllQuarter()
     {
         // Arrange
-        var expectedQuarter = new Score[5].Select(n => new Score("-")).ToArray();
+        var expectedQuarter = new Score[5].Select(_ => new Score("-")).ToArray();
         var scoreSetService = Substitute.For<IScoreSetService>();
         var scoreService = new ScoreServiceImp(scoreSetService);
 
@@ -29,17 +29,17 @@ public class ScoreServiceTests
         // Arrange
         var resultDetail = new List<ResultDetail>
             {
-                new ResultDetail { MatchId = 1 , ResourceId = "Q1" },
-                new ResultDetail { MatchId = 1 , ResourceId = "Q2" },
-                new ResultDetail { MatchId = 1 , ResourceId = "Q3" },
-                new ResultDetail { MatchId = 1 , ResourceId = "Q4" },
-                new ResultDetail { MatchId = 1 , ResourceId = "OT" },
-                new ResultDetail { MatchId = 1 , ResourceId = "00" },
-                new ResultDetail { MatchId = 1 , ResourceId = "01" }
+                new() { MatchId = 1 , ResourceId = "Q1" },
+                new() { MatchId = 1 , ResourceId = "Q2" },
+                new() { MatchId = 1 , ResourceId = "Q3" },
+                new() { MatchId = 1 , ResourceId = "Q4" },
+                new() { MatchId = 1 , ResourceId = "OT" },
+                new() { MatchId = 1 , ResourceId = "00" },
+                new() { MatchId = 1 , ResourceId = "01" }
             };
 
         var fakeQuarterScore = new Score("1", "2");
-        var expectedQuarter = new Score[5].Select(n => new Score("1", "2")).ToArray();
+        var expectedQuarter = new Score[5].Select(_ => new Score("1", "2")).ToArray();
         var scoreSetService = Substitute.For<IScoreSetService>();
         var scoreService = new ScoreServiceImp(scoreSetService);
 
@@ -76,7 +76,7 @@ public class ScoreServiceTests
         var expectedScore = new Score("1", "2");
         var resultDetail = new List<ResultDetail>
             {
-                new ResultDetail { MatchId = 1 , ResourceId = "01" }
+                new() { MatchId = 1 , ResourceId = "01" }
             };
 
         var scoreSetService = Substitute.For<IScoreSetService>();
@@ -116,7 +116,7 @@ public class ScoreServiceTests
 
         var resultDetail = new List<ResultDetail>
             {
-                new ResultDetail { MatchId = 1 , ResourceId = "00" }
+                new() { MatchId = 1 , ResourceId = "00" }
             };
         var scoreSetService = Substitute.For<IScoreSetService>();
         var scoreService = new ScoreServiceImp(scoreSetService);

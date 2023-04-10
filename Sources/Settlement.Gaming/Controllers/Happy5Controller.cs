@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using Settlement.Core.ActionFilters;
 using Settlement.Gaming.Requests;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Settlement.Gaming.Controllers;

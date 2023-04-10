@@ -7,7 +7,7 @@ import * as _ from 'lodash';
 import { ModalDialogMessage, Result } from "../../shared/models";
 import { MessageBoxService, HttpRequestService, BlockUIService } from "../../shared/services";
 import { QueryService } from "../services";
-import { Language } from "../../shared/language";
+import { Language } from "../../shared/language.native";
 
 @Component({
     selector: 'edit-source-dialog',

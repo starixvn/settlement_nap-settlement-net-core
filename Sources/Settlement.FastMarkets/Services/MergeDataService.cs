@@ -33,10 +33,7 @@ public class MergeDataServiceImp : MergeDataService
         foreach (var details in siteData)
         {
             var newResult = details.Except(baseData);
-            if (newResult.Any())
-            {
-                baseData.AddRange(newResult);
-            }
+            baseData.AddRange(newResult);
 
             SumTicketDetails(baseData, details);
         }

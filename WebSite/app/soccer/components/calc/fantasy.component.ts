@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import * as _ from "lodash";
 import { EventStatus } from "../../../shared/constants";
-import { Language } from "../../../shared/language";
+import { Language } from "../../../shared/language.native";
 import { ModalDialogMessage } from "../../../shared/models";
 import { MessageBoxService } from "../../../shared/services";
 import { BetStatus } from "../../constants";

@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Settlement.Core.ActionFilters;
 using Settlement.Sportsbook.OtherSports.Requests;
-using System.Threading.Tasks;
 
 namespace Settlement.Sportsbook.OtherSports.Controllers;
 
@@ -26,16 +25,9 @@ public class OtherSportsController : ControllerBase
     [LogPushRequest]
     public async Task<IActionResult> Calculate(CalculateRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
-    [Route("refund"), HttpPost]
-    [LogPushRequest]
-    public async Task<IActionResult> Refund(RefundRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
-
-    [Route("refund-parlay"), HttpPost]
-    public async Task<IActionResult> RefundParlay(RefundParlayRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
-
     [Route("check-marked-tickets"), HttpPost]
     public async Task<IActionResult> CheckMarkedTickets(CheckingMarkedTicketsRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
-    [Route("get-lastest-result"), HttpPost]
-    public async Task<IActionResult> GetLastestResult(GetLastestResultRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+    [Route("get-latest-result"), HttpPost]
+    public async Task<IActionResult> GetLatestResult(GetLatestResultRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 }

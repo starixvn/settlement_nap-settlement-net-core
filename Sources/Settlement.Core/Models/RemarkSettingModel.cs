@@ -21,7 +21,7 @@ public class RemarkSettingModel
 
     public RemarkSettingModel(byte settlementStatus)
     {
-        this.SettlementStatus = Convert.ToString(settlementStatus, ConvertToBase).Reverse();
+        SettlementStatus = Convert.ToString(settlementStatus, ConvertToBase).Reverse();
     }
 
     [Key("isPending")]

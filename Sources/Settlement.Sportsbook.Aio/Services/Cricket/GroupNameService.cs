@@ -1,7 +1,8 @@
-﻿using Settlement.Sportsbook.Aio.Constants;
-using Settlement.Sportsbook.Aio.Models;
+﻿using Settlement.Sportsbook.Aio.Models;
 
 namespace Settlement.Sportsbook.Aio.Services.Cricket;
+
+using Constants.Cricket;
 
 public interface IGroupNameService
 {

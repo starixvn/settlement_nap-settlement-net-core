@@ -1,4 +1,4 @@
-import { LeagueMatch, Match, MatchWaitingRequest, MultiSport, SportMatch} from '../models';
+import { LeagueMatch, Match, MatchWaitingRequest, MultiSport, SportMatch } from '../models';
 import { BlockUIService, HttpRequestService, MessageBoxService } from '../../shared/services';
 import { TestBed } from '@angular/core/testing';
 
@@ -6,13 +6,13 @@ import { RefreshMatchService } from './refresh-match.service';
 import { DetectChangesService } from './detect-changes.service';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
-import { of } from 'rxjs';
 import { MultiSportService } from './multi-sport.service';
 import { HandleActionsService } from './handle-actions.service';
-import { MixParlay, MoreScore, Remark, Score } from '../../shared/models';
+import { AutoSetting, MoreScore, Remark, Score } from '../../shared/models';
 import { SportType } from '../../shared/constants';
 import { Permission } from '../../shared/models/sportsbook-sop/permission.model';
 import { SportMatchService } from './sport-match.service';
+import { of } from 'rxjs';
 
 describe('MultiSport - RefreshMatchService', () => {
   let httpRequestService: HttpRequestService;
@@ -26,7 +26,7 @@ describe('MultiSport - RefreshMatchService', () => {
   newMatch.matchId = '12345';
   newMatch.sportType = SportType.badminton;
   newMatch.moreScores = new MoreScore(),
-  newMatch.moreScores.sets = [new Score('1', '0', '')];
+    newMatch.moreScores.sets = [new Score('1', '0', '')];
   newMatch.intervalScore = [new Score('1', '0', '')];
   newMatch.betStatus = '';
   newMatch.earlySettleStatus = '';
@@ -38,16 +38,13 @@ describe('MultiSport - RefreshMatchService', () => {
   newMatch.halfTimeHomeScore = 0;
   newMatch.isCalRefund = false;
   newMatch.isCalculated = false;
-  newMatch.isCalculatingMP = 0;
   newMatch.isCalculatingSingle = 0;
   newMatch.isExistMarkedTicket = false;
-  newMatch.isExistMarkedTicketParlay = false;
   newMatch.isExistRunningTicket = false;
   newMatch.isHalfTimeCal = false;
   newMatch.isHavingIntervalScore = true;
   newMatch.isMultiCaled = false;
   newMatch.isRefund = false;
-  newMatch.mixParlay = new MixParlay();
   newMatch.newEventStatus = '';
   newMatch.remark = new Remark();
   newMatch.suspenderFullTime = '';
@@ -57,7 +54,6 @@ describe('MultiSport - RefreshMatchService', () => {
   newMatch.confirmHalfTimeScore = "2";
   newMatch.exFullTimeScore = "1";
   newMatch.exHalfTimeScore = "2";
-  newMatch.isExistRunningTicketParlay = true;
   newMatch.isNotConsistentExFtScore = true;
   newMatch.isNotConsistentExHtScore = true;
   const league: LeagueMatch = {
@@ -65,10 +61,8 @@ describe('MultiSport - RefreshMatchService', () => {
     matches: [match],
     name: 'mock league',
     collapse: false,
-    isCheckedCalcMP: false,
-    disableCheckCalcMP: false,
-    isMergedParlay: true,
-    isAutoPayoutForLeague: false
+    autoWaitingTime: 0,
+    autoCalcSetting: new AutoSetting
   };
 
   const sport: SportMatch = {
@@ -81,7 +75,6 @@ describe('MultiSport - RefreshMatchService', () => {
   const multiSport: MultiSport = {
     sports: [sport],
     permission: new Permission(),
-    isCheckedCalcMP: false,
   };
 
   beforeEach(() => {
@@ -112,23 +105,21 @@ describe('MultiSport - RefreshMatchService', () => {
 
   describe('refreshMatchces', () => {
     it('should do nothing when new match has no change', () => {
-      spyOn(httpRequestService, 'postMessagePack').and.returnValue(of([newMatch]));
-      spyOn(detectChangesService, 'detect').and.returnValue(false);
+      httpRequestService.postMessagePack = jest.fn().mockReturnValue(of([newMatch]));
+      detectChangesService.detect = jest.fn().mockReturnValue(false);
 
-      refreshMatchService.refreshMatches([sport], new MatchWaitingRequest('', '', '', '' ,'',''), multiSport);
+      refreshMatchService.refreshMatches([sport], new MatchWaitingRequest('', '', '', '', '', ''), multiSport);
 
       expect(match).not.toEqual(newMatch);
     });
 
     it('should change match when match has been updated', () => {
-        spyOn(httpRequestService, 'postMessagePack').and.returnValue(of([newMatch]));
-        spyOn(detectChangesService, 'detect').and.returnValue(true);
-        spyOn(handleActionsService, 'resetCheckboxCalcMixParlay');
+      httpRequestService.postMessagePack = jest.fn().mockReturnValue(of([newMatch]));
+      detectChangesService.detect = jest.fn().mockReturnValue(true);
 
-        refreshMatchService.refreshMatches([sport], new MatchWaitingRequest('', '', '', '','',''), multiSport);
+      refreshMatchService.refreshMatches([sport], new MatchWaitingRequest('', '', '', '', '', ''), multiSport);
 
-        expect(match).toEqual(newMatch);
-        expect(handleActionsService.resetCheckboxCalcMixParlay).toHaveBeenCalled();
+      expect(match).toEqual(newMatch);
     });
   });
 });

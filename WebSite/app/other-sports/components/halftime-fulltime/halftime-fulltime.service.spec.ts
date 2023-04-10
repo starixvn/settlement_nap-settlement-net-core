@@ -6,14 +6,14 @@ import { BlockUIService, HttpRequestService, MessageBoxService } from "../../../
 import { HalfTimeFullTimeService } from "./halftime-fulltime.service";
 import { ResourcesIds } from "../../constants";
 import * as _ from 'lodash';
-import { of } from "rxjs";
 import { Match, MatchDetail } from "../../models";
 import { SportType } from "../../../shared/constants";
-import { ModalContentDialogComponent, ModalDialogComponent } from "../../../shared/components";
 import { BrowserDynamicTestingModule } from "@angular/platform-browser-dynamic/testing";
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
 import { FormsModule } from "@angular/forms";
-import { Language } from "../../../shared/language";
+import { Language } from "../../../shared/language.native";
+import { ModalContentDialogComponent } from "../../../shared/components/modal-dialog/modal-content-dialog.component";
+import { ModalDialogComponent } from "../../../shared/components/modal-dialog/modal-dialog.component";
 
 describe('HalfTimeFullTimeService', () => {
     let service: HalfTimeFullTimeService = null;
@@ -702,13 +702,9 @@ describe('HalfTimeFullTimeService', () => {
     });
 
     it('getMessageConfirmRefund - return correct message', () => {
-        const messageParlayAll = service.getMessageConfirmRefund(true, "REFUND");
-        const messageParlayFT = service.getMessageConfirmRefund(true, "REFUND-FT");
-        const messageFT = service.getMessageConfirmRefund(false, "REFUND-FT");
-        const messageAll = service.getMessageConfirmRefund(false, "REFUND");
+        const messageFT = service.getMessageConfirmRefund("REFUND-FT");
+        const messageAll = service.getMessageConfirmRefund("REFUND");
 
-        expect(messageParlayAll).toEqual(Language.RefundParlayConfirmMessage);
-        expect(messageParlayFT).toEqual(Language.RefundParlayFullTime);
         expect(messageFT).toEqual(Language.RefundFullMessage);
         expect(messageAll).toEqual(Language.RefundConfirmMessage);
     });

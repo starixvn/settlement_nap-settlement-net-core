@@ -6,7 +6,7 @@ import { MatchMoveBet } from './model/match.model';
 import { RequestService } from './services/request.service';
 import * as _ from 'lodash';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
-import { Language } from '../../../shared/language';
+import { Language } from '../../../shared/language.native';
 
 @Component({
   selector: 'move-bet',

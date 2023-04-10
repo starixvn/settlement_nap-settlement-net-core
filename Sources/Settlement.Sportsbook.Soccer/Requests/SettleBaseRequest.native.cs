@@ -34,16 +34,11 @@ public class SettleBaseRequest
 
     public string GoalRecord
     {
-        get
-        {
-            return string.IsNullOrWhiteSpace(goalRecord)
+        get =>
+            string.IsNullOrWhiteSpace(goalRecord)
                 ? string.Empty
                 : goalRecord.ToUpperInvariant();
-        }
-        set
-        {
-            goalRecord = value;
-        }
+        set => goalRecord = value;
     }
 
     public string BetStatus

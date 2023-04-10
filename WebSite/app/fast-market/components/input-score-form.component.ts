@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 import { RequestService } from '../services';
 import { ModalDialogMessage } from '../../shared/models';
 import { BlockUIService, HttpRequestService, MessageBoxService } from '../../shared/services';
-import { Language } from '../../shared/language';
+import { Language } from '../../shared/language.native';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 

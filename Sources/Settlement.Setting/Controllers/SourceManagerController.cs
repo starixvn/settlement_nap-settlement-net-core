@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Settlement.Core.ActionFilters;
 using Settlement.Core.Services;
-using Settlement.Setting.Requests;
 using Settlement.Setting.Requests.OutsideSourceManager;
 using Settlement.Setting.Requests.ProviderManager;
 

@@ -28,10 +28,7 @@ public class ResourceItem
     [XmlAttribute("IsDetermined")]
     public string Determined
     {
-        get
-        {
-            return IsSettleDetermined ? "1" : "0";
-        }
+        get => IsSettleDetermined ? "1" : "0";
 
         set { }
     }

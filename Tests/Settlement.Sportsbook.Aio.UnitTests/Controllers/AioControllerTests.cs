@@ -1,13 +1,9 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using NSubstitute;
 using Settlement.Core.Models;
 using Settlement.Sportsbook.Aio.Controllers;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Requests;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace Settlement.Sportsbook.Aio.UnitTests.Controllers;
 
@@ -31,7 +27,7 @@ public class AioControllerTests
 
         var actual = await controller.GetMatch(request) as OkObjectResult;
 
-        Assert.IsType<AioMatch>(actual.Value);
+        Assert.IsType<AioMatch>(actual?.Value);
         Assert.Equal(200, actual.StatusCode);
     }
 
@@ -43,7 +39,7 @@ public class AioControllerTests
 
         var actual = await controller.Settle(request) as OkObjectResult;
 
-        Assert.IsType<Result>(actual.Value);
+        Assert.IsType<Result>(actual?.Value);
         Assert.Equal(200, actual.StatusCode);
     }
 
@@ -55,7 +51,7 @@ public class AioControllerTests
 
         var actual = await controller.CheckMarkedTickets(request) as OkObjectResult;
 
-        Assert.IsType<MarkedTickets>(actual.Value);
+        Assert.IsType<MarkedTickets>(actual?.Value);
         Assert.Equal(200, actual.StatusCode);
     }
 
@@ -67,7 +63,7 @@ public class AioControllerTests
 
         var actual = await controller.GetRecalResult(request) as OkObjectResult;
 
-        Assert.IsType<List<Models.ResultDetail>>(actual.Value);
+        Assert.IsType<List<Models.ResultDetail>>(actual?.Value);
         Assert.Equal(200, actual.StatusCode);
     }
 
@@ -79,7 +75,7 @@ public class AioControllerTests
 
         var actual = await controller.VerifyNoRunningOdds(request) as OkObjectResult;
 
-        Assert.IsType<Result>(actual.Value);
+        Assert.IsType<Result>(actual?.Value);
         Assert.Equal(200, actual.StatusCode);
     }
 
@@ -91,7 +87,7 @@ public class AioControllerTests
 
         var actual = await controller.SettleChildMatch(request) as OkObjectResult;
 
-        Assert.IsType<Result>(actual.Value);
+        Assert.IsType<Result>(actual?.Value);
         Assert.Equal(200, actual.StatusCode);
     }
 
@@ -103,7 +99,7 @@ public class AioControllerTests
 
         var actual = await controller.SaveScore(request) as OkObjectResult;
 
-        Assert.IsType<Result>(actual.Value);
+        Assert.IsType<Result>(actual?.Value);
         Assert.Equal(200, actual.StatusCode);
     }
 }

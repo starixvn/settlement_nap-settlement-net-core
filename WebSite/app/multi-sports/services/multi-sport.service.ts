@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpRequestService } from "../../shared/services";
-import { Observable } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 import {
   FilterRequest,
   MultiSport,
-  ParlayQuery,
   GetRemarkQuery,
-  DateFilter
+  DateFilter,
+  League, 
+  Sport,
+  AutoCalcSetting
 } from '../models';
 import * as _ from 'lodash';
 import { AutoSettingLeagueQuery, AutoSettingMatchQuery, ChangeSettingResult, Result } from '../../shared/models';
@@ -14,45 +16,48 @@ import { AutoSettingLeagueQuery, AutoSettingMatchQuery, ChangeSettingResult, Res
 @Injectable()
 
 export class MultiSportService {
-  private multiSportApi = 'api/multi-sports';
-  private settingApi = 'api/setting';
+  private multiSportApi = '/api/multi-sports';
+  private settingApi = '/api/setting';
     
   constructor(private readonly httpRequestService: HttpRequestService) { }
 
   public getSport(params: object) {
-    return this.httpRequestService.postJson(params, `${this.multiSportApi}/getSport`, false);
+    const response =  this.httpRequestService.postJson<Sport[]>(params, `${this.multiSportApi}/getSport`, false);
+    return firstValueFrom(response);
   }
   public getLeague(params: object) {
-    return this.httpRequestService.postJson(params, `${this.multiSportApi}/getLeague`, false);
+    const response = this.httpRequestService.postJson<League[]>(params, `${this.multiSportApi}/getLeague`, false);
+    return firstValueFrom(response);
   }
 
-  public getDate(): Observable<DateFilter> {
+  public getDate() {
     const url = `${this.multiSportApi}/get-date`;
-    return this.httpRequestService.getJson(url);
+    const response =  this.httpRequestService.getJson<DateFilter>(url);
+    return firstValueFrom(response);
   }
 
-  public filter(params: FilterRequest): Observable<MultiSport> {
-    return this.httpRequestService.postMessagePack(params, `${this.multiSportApi}/filter`);
+  public filter(params: FilterRequest) {
+    const response = this.httpRequestService.postMessagePack<MultiSport>(params, `${this.multiSportApi}/filter`);
+    return firstValueFrom(response);
   }
 
-  public calculateMixParlay(param: ParlayQuery) {
-    return this.httpRequestService.postJson(param, `${this.multiSportApi}/calculate-mix-parlay`);
-  }
-
-  public getRemarkInfo(matchId: string): Observable<ChangeSettingResult> {
+  public getRemarkInfo(matchId: string) {
     const query: GetRemarkQuery = {
       matchId
     };
 
-    return this.httpRequestService.postJson(query, `${this.settingApi}/get-remark-info`);
+    const response = this.httpRequestService.postJson<ChangeSettingResult>(query, `${this.settingApi}/get-remark-info`);
+    return firstValueFrom(response);
   }
 
-  public updateSettingMatch(query: AutoSettingMatchQuery): Observable<Result> {
-    return this.httpRequestService.postJson(query, `${this.settingApi}/update-setting-match`);
+  public updateSettingMatch(query: AutoSettingMatchQuery) {
+    const response = this.httpRequestService.postJson<Result>(query, `${this.settingApi}/update-setting-match`);
+    return firstValueFrom(response);
   }
 
-  public updateSettingLeague(query: AutoSettingLeagueQuery): Observable<Result> {
-    return this.httpRequestService.postJson(query, `${this.settingApi}/update-setting-league`);
+  public updateSettingLeague(query: AutoSettingLeagueQuery) {
+    const response = this.httpRequestService.postJson<Result>(query, `${this.settingApi}/update-setting-league`);
+    return firstValueFrom(response);
   }
 
   public getSetting(leagueId: number, matchId: number) {
@@ -60,6 +65,7 @@ export class MultiSportService {
       leagueId,
       matchId
     }
-    return this.httpRequestService.postJson(params, `${this.settingApi}/get-setting`, false);
+    const response = this.httpRequestService.postJson<AutoCalcSetting>(params, `${this.settingApi}/get-setting`, false);
+    return firstValueFrom(response);
   }
 }

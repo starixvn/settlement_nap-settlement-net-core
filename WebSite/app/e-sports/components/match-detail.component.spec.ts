@@ -1,9 +1,8 @@
 import { TestBed, waitForAsync, ComponentFixture, tick, fakeAsync } from "@angular/core/testing";
-import { NgbModal, NgbModule } from "@ng-bootstrap/ng-bootstrap";
-import { FormsModule } from "@angular/forms";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { HttpClientModule } from "@angular/common/http";
 import { ResourceNameByIdPipe} from "../pipes";
-import { MatchDetailComponent } from ".";
+import { MatchDetailComponent } from "./match-detail.component";
 import {
   HttpRequestService,
   BlockUIService,
@@ -14,10 +13,11 @@ import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.p
 import { Match} from "../models";
 import { of } from "rxjs";
 import { BrowserDynamicTestingModule } from "@angular/platform-browser-dynamic/testing";
-import { ModalContentDialogComponent, ModalDialogComponent } from "../../shared/components";
 import { MatchDetail, Permission, ResultDetail } from "../../shared/models/sportsbook-sop";
 import { ResultByTeamNamePipe } from "../../shared/pipes/result-by-team-name.pipe";
 import { VerificationBaseService } from '../../core/services/verification-base.service';
+import { ModalDialogComponent } from "../../shared/components/modal-dialog/modal-dialog.component";
+import { ModalContentDialogComponent } from "../../shared/components/modal-dialog/modal-content-dialog.component";
 
 describe("E-sport - Refund Match Detail Component", () => {
   let component: MatchDetailComponent;
@@ -29,9 +29,6 @@ describe("E-sport - Refund Match Detail Component", () => {
 
     TestBed.configureTestingModule({
       declarations: [
-        MatchDetailComponent,
-        ResourceNameByIdPipe,
-        ScoreBySettlementPipe,
         ModalDialogComponent,
         ModalContentDialogComponent
       ],
@@ -45,7 +42,11 @@ describe("E-sport - Refund Match Detail Component", () => {
         NgbModal,
         { provide: MessageBoxService, useClass: MessageBoxService },
       ],
-      imports: [FormsModule, HttpClientModule, NgbModule],
+      imports: [ 
+        HttpClientModule,
+        MatchDetailComponent,
+        ResourceNameByIdPipe,
+        ScoreBySettlementPipe,],
     }).overrideModule(BrowserDynamicTestingModule, {
       set: {
         entryComponents: [ModalDialogComponent, ModalContentDialogComponent],
@@ -94,8 +95,8 @@ describe("E-sport - Refund Match Detail Component", () => {
 
     it('should call refreshPage when no result changed.', () => {
       component.match.matchDetail.isSavedScore = true;
-      spyOn(verificationBaseService, 'getChangedScores').and.returnValue(of([]));
-      spyOn(component, 'reloadPage');
+      verificationBaseService.getChangedScores= jest.fn().mockReturnValue(of([]));
+      component.reloadPage= jest.fn();
 
       component.refresh();
 
@@ -105,8 +106,8 @@ describe("E-sport - Refund Match Detail Component", () => {
     it('should show confirmBox when have changed.', () => {
       const itemOne = new ResultDetail();
       component.match.matchDetail.isSavedScore = false;
-      spyOn(verificationBaseService, 'getChangedScores').and.returnValue([itemOne]);
-      spyOn(messageBoxService, 'confirm');
+      verificationBaseService.getChangedScores= jest.fn().mockReturnValue([itemOne]);
+      messageBoxService.confirm= jest.fn();
 
       component.refresh();
 
@@ -117,8 +118,8 @@ describe("E-sport - Refund Match Detail Component", () => {
     it('should call reloadPage when user confirmed.', fakeAsync(() => {
       const itemOne = new ResultDetail();
       component.match.matchDetail.isSavedScore = false;
-      spyOn(verificationBaseService, 'getChangedScores').and.returnValue([itemOne]);
-      spyOn(component, 'reloadPage');
+      verificationBaseService.getChangedScores= jest.fn().mockReturnValue([itemOne]);
+      component.reloadPage= jest.fn();
 
       component.refresh();
       const buttonYes = document.getElementsByClassName(

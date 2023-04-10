@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Settlement.Core.Constants;
+﻿using Settlement.Core.Constants;
 
 namespace Settlement.FastMarkets.Models;
 
@@ -24,12 +22,12 @@ public static class Status
 
     private const int RefundDeterminedResult = 7;
 
-    private static Dictionary<int, string> TicketStatusName => new Dictionary<int, string>
+    private static Dictionary<int, string> TicketStatusName => new()
     {
         { RunningTicket, TicketStatus.Running }, { CalculatedTicket, TicketStatus.Calculated }, { NoTicket, TicketStatus.NoTicket }, { MarkedTicket, TicketStatus.Marked }
     };
 
-    public static Dictionary<int, string> ResultStatus => new Dictionary<int, string>
+    public static Dictionary<int, string> ResultStatus => new()
     {
         { RunningResult, "Running" }, { CompletedAutoResult, "Completed (Auto)" }, { CompletedManualResult,"Completed (Manual)" },
         { RefundResult, "Refund" }, { RefundDeterminedResult, "Refund SDT" }

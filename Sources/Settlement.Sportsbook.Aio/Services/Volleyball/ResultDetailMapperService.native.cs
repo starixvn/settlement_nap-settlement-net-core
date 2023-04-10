@@ -18,15 +18,17 @@ public class ResultDetailMapperServiceImp : IMapperService
 
     public void Decorate(dynamic obj)
     {
-        const int totalResultIdLength = 2;
-        const int betTypeLength = 4;
-        var list = obj as List<ResultDetail>;
-        var listEarly = list.Where(x => x.ResourceId.Length > totalResultIdLength && !GroupBetType.Main.Contains(SplitBetType(x.ResourceId, 0, betTypeLength))).ToList();
-        foreach (var resultDetail in listEarly)
+        if (obj is List<ResultDetail> list)
         {
-            var betTypeId = SplitBetType(resultDetail.ResourceId, 0, betTypeLength);
-            groupBetTypeService.SetGroupNameAndInputType(resultDetail, betTypeId);
-            earlyBetTypeNameService.SetBetTypeName(resultDetail, betTypeId);
+            const int totalResultIdLength = 2;
+            const int betTypeLength = 4;
+            var listEarly = list.Where(x => x.ResourceId.Length > totalResultIdLength && !GroupBetType.Main.Contains(SplitBetType(x.ResourceId, 0, betTypeLength))).ToList();
+            foreach (var resultDetail in listEarly)
+            {
+                var betTypeId = SplitBetType(resultDetail.ResourceId, 0, betTypeLength);
+                groupBetTypeService.SetGroupNameAndInputType(resultDetail, betTypeId);
+                earlyBetTypeNameService.SetBetTypeName(resultDetail, betTypeId);
+            }
         }
     }
 

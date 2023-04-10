@@ -1,14 +1,11 @@
-<!DOCTYPE html><html lang="en"><head>
-      </head><body>@{
-        var path = @ViewBag.NetCoreRootUrl;
-    }
-    <base href="@path/">
+<!DOCTYPE html><html lang="en"><head><base href="/number-game/">
+    
     <title>@ViewBag.Title</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/styles.css">
-<link rel="stylesheet" href="number-game/styles.4ac8917e39eba67a2a43.css" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="number-game/styles.4ac8917e39eba67a2a43.css"></noscript>
-
+    <link rel="stylesheet" href="/lib/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/styles.css">
+<link rel="stylesheet" href="styles.2300afa97bd40269.css" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="styles.2300afa97bd40269.css"></noscript></head>
+<body>
     @if (ViewBag.PageType == "MainPage")
     {
         <header>
@@ -22,7 +19,7 @@
         var element = document.getElementById("NumberGame-menu");
         element.className = "active-menu";
     </script>
-    <script src="js/notification.js" type="text/javascript"></script>
+    <script src="/js/notification.js" type="text/javascript"></script>
     @await Html.PartialAsync("~/Views/Shared/_Matomo.cshtml")
-<script src="number-game/runtime.12e53bd77baface2cb75.js" defer></script><script src="number-game/polyfills.66f7d172d5d6c55a8226.js" defer></script><script src="number-game/main.f62519a934919fe85113.js" defer></script>
+<script src="runtime.2ebf1ea6bf919e32.js" type="module"></script><script src="polyfills.88e2336b996b7f56.js" type="module"></script><script src="main.6706da7c6fd4bd7c.js" type="module"></script>
 </body></html>

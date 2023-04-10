@@ -25,15 +25,15 @@ public class HalftimeFullTimeServiceImp : IHalftimeFullTimeService
 
     public string HalfTimeBetStatus(SettleRequest request)
     {
-        var isExistRefundHt = request.BetStatus.IgnoreCaseContains(EventStatus.RefundHT);
+        var isExistRefundHt = request.BetStatus.IgnoreCaseContains(EventStatus.RefundHt);
         return isExistRefundHt
-            ? BetStatusHalftimeWithIsExistRefundHT(request)
+            ? BetStatusHalftimeWithIsExistRefundHt(request)
             : BetStatusHasHalftimeScoreWithSemicolonOnGoalRecord(request);
     }
 
     public string FullTimeBetStatus(SettleRequest request, string halfTimeBetStatus)
     {
-        var isExistRefundHt = request.BetStatus.IgnoreCaseContains(EventStatus.RefundHT);
+        var isExistRefundHt = request.BetStatus.IgnoreCaseContains(EventStatus.RefundHt);
         var fullTimeBetStatus = fullTimeService.BetStatusFullTimeWithSemicolon(request);
 
         return fullTimeService.IsExistRefundHt(isExistRefundHt, halfTimeBetStatus)
@@ -41,7 +41,7 @@ public class HalftimeFullTimeServiceImp : IHalftimeFullTimeService
             : fullTimeBetStatus;
     }
 
-    private string BetStatusHalftimeWithIsExistRefundHT(SettleRequest request)
+    private static string BetStatusHalftimeWithIsExistRefundHt(SettleRequest request)
     {
         var isExistHalfTime = request.BetStatus.IgnoreCaseContains("1FL");
 

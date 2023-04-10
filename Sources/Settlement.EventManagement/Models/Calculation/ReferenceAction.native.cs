@@ -10,8 +10,8 @@ public class ReferenceAction
 
     private const int FullTimeAutoAction = 196;
 
-    private readonly Dictionary<int, string> actionNames = new Dictionary<int, string>
-        {
+    private readonly Dictionary<int, string> actionNames = new()
+    {
             { 100, "All" },
             { 101, "FT(M)" },
             { 102, "HT(M)" },
@@ -62,5 +62,5 @@ public class ReferenceAction
 
     public string ClassName => IsFailed ? "fail" : string.Empty;
 
-    private bool IsShowScore => ActionId == HalftimeAction || ActionId == FullTimeAction || ActionId == HalftimeAutoAction || ActionId == FullTimeAutoAction;
+    private bool IsShowScore => ActionId is HalftimeAction or FullTimeAction or HalftimeAutoAction or FullTimeAutoAction;
 }

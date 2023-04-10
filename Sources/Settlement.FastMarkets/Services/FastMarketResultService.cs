@@ -88,7 +88,7 @@ public class FastMarketResultServiceImp : IFastMarketResultService
 
         var resultRoot = new OldResultRoot
         {
-            oldResultElements = new List<OldResultElement> { resultElement }
+            OldResultElements = new List<OldResultElement> { resultElement }
         };
 
         return xmlConvertService.Serialize(resultRoot);

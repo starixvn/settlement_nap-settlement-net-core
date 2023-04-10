@@ -9,7 +9,6 @@ public class LogDetailServiceTests
 {
     private readonly RemarkService remarkService;
     private readonly IDynamicRepository repository;
-    private LogDetailService service;
 
     public LogDetailServiceTests()
     {
@@ -23,12 +22,12 @@ public class LogDetailServiceTests
         // Arrange
         var fakeList = new List<LogDetailsModels>
             {
-                new LogDetailsModels {  Action = "Cal"}
+                new() {  Action = "Cal"}
             };
 
         repository.FetchAsync<LogDetailsModels>(Arg.Any<GetLogDetailByMatchAndProductCriteria>()).Returns(fakeList);
         remarkService.IsFastMarketAction(Arg.Any<int>()).Returns(true);
-        service = new LogDetailServiceImp(repository, remarkService);
+        var service = new LogDetailServiceImp(repository, remarkService);
 
         // Act
         var result = await service.GetLogDetailByMatchAndProduct(1, string.Empty);

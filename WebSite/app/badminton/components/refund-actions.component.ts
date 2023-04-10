@@ -1,19 +1,27 @@
-import { Component, ViewChild } from '@angular/core';
-import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
+import { BlockUIService } from './../../shared/services/block-ui.service';
+import { Component, ViewChild, Injector } from '@angular/core';
+import { ToastContainerDirective } from 'ngx-toastr';
 import * as _ from 'lodash';
-import { MessageBoxService, AioService } from '../../shared/services';
 import { CalculateAction, EventStatus, SportType } from '../../shared/constants';
-import { Result, MarkedTicketsModel, ModalDialogMessage } from '../../shared/models';
-import { Language } from '../../shared/language';
+import { ModalDialogMessage } from '../../shared/models';
+import { Language } from '../../shared/language.native';
 import { Match } from '../models';
 import { BadmintonApiKeys, ResourcesIds, VolleyballApiKeys } from '../constants';
 import { SettleQuery, SportTemplate } from '../../shared/models/sportsbook-sop';
 import { RefundActionBaseComponent } from '../../shared/components/sportsbook-sop/refund-action-base.component';
 import { UrlHelper } from '../../helper';
+import { ExcludeTotalPointPipe, ResourceNameByIdPipe } from '../pipes';
+import { MatchDetailComponent } from './match-detail.component';
+import { RefundCommonModule } from '../../shared/modules/refund-common.module';
+import { BadmintonService } from '../services';
 
 @Component({
   selector: 'refund-actions',
   templateUrl: './refund-actions.component.html',
+  standalone: true,
+  imports: [RefundCommonModule, ExcludeTotalPointPipe, MatchDetailComponent, ResourceNameByIdPipe],
+  providers: [BadmintonService]
+
 })
 export class RefundActionsComponent extends RefundActionBaseComponent implements SportTemplate {
   @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
@@ -21,15 +29,14 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
   public readonly isReSettledTickets: boolean;
   public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
   public apiKeys = null;
-  constructor(
-    private readonly messageBoxService: MessageBoxService,
-    protected toastrService: ToastrService,
-    protected aioService: AioService) {
-    super(aioService, toastrService);
+  public blockUI = true;
+  constructor(protected injector: Injector) {
+    super(injector)
     this.confirmationDialogMessage.title = Language.confirmationBox;
   }
 
   async getMatch(matchId: number): Promise<void> {
+    this.initService();
     const sportType = Number(UrlHelper.getUrlParameter('sportType'));
     this.apiKeys = sportType === SportType.volleyBall ? VolleyballApiKeys : BadmintonApiKeys;
     const matchQuery = {
@@ -38,10 +45,14 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
       apikey: this.apiKeys.NormalMatch,
       settleType: "MNL"
     };
-    this.toastrService.overlayContainer = this.toastContainer;
 
-    this.match = await this.aioService.getMatch(matchQuery).toPromise() as Match;
+    this.match = await this.aioService.getMatch(matchQuery) as Match;
     this.init();
+  }
+
+  public initService() {
+    this.injector.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
+    this.toastrService.overlayContainer = this.toastContainer;
   }
 
   public init() {
@@ -55,7 +66,7 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
 
   public async refund() {
     const paramsCheckingMarkedTickets = this.generateCheckMarkedTicketsQuery();
-    const res = await this.aioService.checkMarkedTickets(paramsCheckingMarkedTickets).toPromise() as MarkedTicketsModel;
+    const res = await this.aioService.checkMarkedTickets(paramsCheckingMarkedTickets);
     this.toastrService.clear();
     if (this.existResultNotConfirmed()) {
       this.toastrService.error(Language.confirmRefund.refundResultNotConfirmed);
@@ -71,7 +82,7 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
 
   public async doRefund() {
     const query = this.generateRefundQuery(this.apiKeys.Settle);
-    const result = await this.aioService.push(query).toPromise() as Result;
+    const result = await this.aioService.push(query);
     if (result.errCode === 0) {
       this.refundHedgeMatch(query);
       this.messageBoxService.closePopup();

@@ -6,7 +6,7 @@ export class CalculationMatch extends Match{
    instantStatus: string;
    instantStatusId: Number;
    instantCalculationType: number;
-   isFTCalculated: boolean;
+   isFtCalculated: boolean;
    instantHomeScore: string;
    instantAwayScore: string;
    instantKey: number;

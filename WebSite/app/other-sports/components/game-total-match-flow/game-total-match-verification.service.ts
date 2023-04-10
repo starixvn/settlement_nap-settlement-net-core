@@ -3,10 +3,10 @@ import * as _  from 'lodash';
 import { ResourcesIds } from "../../constants";
 import { Match, MatchDetail } from "../../models";
 import { RequestService } from "../../services/request.service";
-import { Observable } from "rxjs";
+import { firstValueFrom, Observable } from "rxjs";
 import { map } from "rxjs/operators";
 import { TicketStatusText } from "../../../shared/constants";
-import { Language } from "../../../shared/language";
+import { Language } from "../../../shared/language.native";
 import { ResultDetail } from "../../../shared/models/sportsbook-sop";
 import { GameTotalMatchService } from "./game-total-match.service";
 
@@ -109,16 +109,18 @@ export class GameTotalMatchVerificationService {
         return _.find(setsResult, item => !this.isScoreEmpty(item.homeValue, item.awayValue));
     }
 
-    public verifyChangedSettledTickets(matchId: number, resultDetails: ResultDetail[], isScoreDirect: boolean): Observable<boolean> {
+    public verifyChangedSettledTickets(matchId: number, resultDetails: ResultDetail[], isScoreDirect: boolean) {
         const query = {
             matchId
         };
-        return this.requestService.getLastestResult(query).pipe(map((lastestMatch: Match) => {
+        const request =  this.requestService.getLastestResult(query).pipe(map((lastestMatch: Match) => {
             const matchDetail = lastestMatch.matchDetail;
             const statusCalculated = _.isEqual(matchDetail.ftStatus, TicketStatusText.calculated);
             return statusCalculated && (this.isTotalSetsChanged(resultDetails, lastestMatch)
                 || this.compareScoreSets(resultDetails, lastestMatch.resultDetails, isScoreDirect));
         }));
+
+        return firstValueFrom(request);
     }
 
     private compareScoreSets(resultDetails: ResultDetail[], lastestResults: ResultDetail[], isScoreDirect: boolean) {

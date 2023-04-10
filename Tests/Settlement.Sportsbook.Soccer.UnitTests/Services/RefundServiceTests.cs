@@ -1,33 +1,23 @@
-﻿using Fanex.Data.Repository;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using AutoMapper.Configuration;
+using Fanex.Data.Repository;
 using Fanex.NAP.Client.Helpers.Web;
 using Fanex.Settlement.ScaleOut.Models;
-using Microsoft.AspNetCore.Http;
-using Settlement.Sportsbook.Soccer.Services;
-using NSubstitute;
-using Settlement.Core.Constants;
-using Xunit;
-using Settlement.Sportsbook.Soccer.Requests;
-using Settlement.Sportsbook.Soccer.Criteria;
-using Settlement.Core.Models;
-using Microsoft.Extensions.Options;
-using Fanex.Settlement.ScaleOut.Services;
 using Fanex.Settlement.ScaleOut.Request;
+using Fanex.Settlement.ScaleOut.Services;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
+using Settlement.Core.Constants;
+using Settlement.Core.Models;
+using Settlement.Sportsbook.Soccer.Criteria;
+using Settlement.Sportsbook.Soccer.Requests;
+using Settlement.Sportsbook.Soccer.Services;
 
 namespace Settlement.Sportsbook.Soccer.UnitTests.Services;
 
 public class RefundServiceTests
 {
     private readonly IDynamicRepository repository;
-
-    private readonly INapSession currentSession;
-
-    private readonly IHttpContextAccessor accessor;
-
-    private readonly IResourceService resourceService;
 
     private readonly ScaleOutSettleService scaleOutSettleService;
 
@@ -38,13 +28,17 @@ public class RefundServiceTests
     public RefundServiceTests()
     {
         repository = Substitute.For<IDynamicRepository>();
-        currentSession = Substitute.For<INapSession>();
-        accessor = Substitute.For<IHttpContextAccessor>();
-        resourceService = Substitute.For<IResourceService>();
+        var currentSession = Substitute.For<INapSession>();
+        var accessor = Substitute.For<IHttpContextAccessor>();
         createCriteriaService = Substitute.For<ICreateCriteriaService>();
         scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
-        var context = new DefaultHttpContext();
-        context.Connection.RemoteIpAddress = new System.Net.IPAddress(1);
+        var context = new DefaultHttpContext
+        {
+            Connection =
+            {
+                RemoteIpAddress = new System.Net.IPAddress(1)
+            }
+        };
         accessor.HttpContext = context;
         var mapperConfig = new MapperConfigurationExpression();
         mapperConfig.AddProfile<SoccerAutoMapperProfile>();
@@ -66,7 +60,7 @@ public class RefundServiceTests
         }));
         var request = new CheckingMarkedTicketsRequest
         {
-            MatchId = 12345,
+            MatchId = 12345
         };
 
         var actual = await service.CheckMarkedTickets(request);
@@ -141,7 +135,7 @@ public class RefundServiceTests
         var query = new RefundRequest()
         {
             GoalRecord = "AH",
-            ActionName = ActionType.CalculateAll,
+            ActionName = ActionType.CalculateAll
         };
         var criteria = new RefundCriteria()
         {

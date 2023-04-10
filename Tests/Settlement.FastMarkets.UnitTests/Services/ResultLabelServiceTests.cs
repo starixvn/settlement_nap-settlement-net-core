@@ -1,6 +1,5 @@
 ﻿using Settlement.FastMarkets.Models;
 using Settlement.FastMarkets.Services;
-using Xunit;
 
 namespace Settlement.FastMarkets.UnitTests.Services;
 
@@ -53,7 +52,7 @@ public class ResultLabelServiceTests
     public void NextFiveMinutes_OddIsNotEmptied_ReturnsRightExpectedResultItem()
     {
         // Arrange
-        var odd = "1:,2:0.7,3:0.5,4:1.5,5:0.5,6:2.5,7:,8:0.6";
+        const string odd = "1:,2:0.7,3:0.5,4:1.5,5:0.5,6:2.5,7:,8:0.6";
         var expectedResultItem = new ResultItemLabel
         {
             Goal = "0.7",

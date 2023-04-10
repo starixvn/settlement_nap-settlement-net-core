@@ -27,7 +27,7 @@ public class RefundRunningThirdPartyTicketCriteria : NonQueryCommand
     public string DbServer { get; set; }
 
     [SpParam(Ignored = true)]
-    public string SpName { get => ActionName.IgnoreCaseEquals(ActionType.BetDaq) ? BetDaqPush : BetFairPush; }
+    public string SpName => ActionName.IgnoreCaseEquals(ActionType.BetDaq) ? BetDaqPush : BetFairPush;
 
     public override string GetSettingKey() => ActionName.IgnoreCaseEquals(ActionType.BetDaq) ? $"{BetDaqPush}_{DbServer}" : $"{BetFairPush}_{DbServer}";
 

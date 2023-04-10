@@ -207,7 +207,7 @@ public class EarlyBetTypeNameServiceImp : IEarlyBetTypeNameService
             case BetType.ESportBetType.MapLaneWithMostTurretsDestroyed:
                 return $"Map {mapX} Lane With Most Turrets Destroyed (KOG)";
 
-            case BetType.ESportBetType.MapFirstTurretLocationKOG:
+            case BetType.ESportBetType.MapFirstTurretLocationKog:
                 return $"Map {mapX} First Turret Location (KOG)";
 
             default:
@@ -253,18 +253,18 @@ public class EarlyBetTypeNameServiceImp : IEarlyBetTypeNameService
     private static string GenerateOrdinals(int number)
     {
         var ordinal = number.ToString();
-        var lastCharater = ordinal.Substring(ordinal.Length - 1);
-        if (lastCharater == "1")
+        var lastCharacter = ordinal.Substring(ordinal.Length - 1);
+        if (lastCharacter == "1")
         {
             return "st";
         }
 
-        if (lastCharater == "2")
+        if (lastCharacter == "2")
         {
             return "nd";
         }
 
-        if (lastCharater == "3")
+        if (lastCharacter == "3")
         {
             return "rd";
         }

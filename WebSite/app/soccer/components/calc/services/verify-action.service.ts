@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import * as _ from "lodash";
 import { TicketStatusText, CalculateAction } from "../../../../shared/constants";
-import { Language } from '../../../../shared/language';
+import { Language } from '../../../../shared/language.native';
 import { Result } from '../../../../shared/models';
 import { ChildMatch, MatchDetail } from '../models/match.model';
 import { VerifyScoreGoalService } from "./verify-score-goal.service";

@@ -2,7 +2,7 @@ import { inject, TestBed } from "@angular/core/testing";
 import { ResourceNameByIdPipe } from "../../tennis/pipes";
 import { ExternalResultDetail, MatchDetail, ResultDetail, ExternalResult, GeneralMatch } from "../../shared/models/sportsbook-sop";
 import { VerificationBaseService } from "./verification-base.service";
-import { Language } from "../../shared/language";
+import { Language } from "../../shared/language.native";
 import { TicketStatusText, SportType } from "../../shared/constants";
 import { ResultByTeamNamePipe } from "../../shared/pipes/result-by-team-name.pipe";
 

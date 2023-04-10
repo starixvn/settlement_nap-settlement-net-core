@@ -18,7 +18,7 @@ public class MergeDataServiceTests
         var data = new List<(List<ResultDetail>, TicketCounts)>();
         var listResultDetail = new List<ResultDetail>
         {
-            new ResultDetail
+            new()
             {
                 ResourceId = "00",
                 InWaiting = 1,
@@ -32,7 +32,7 @@ public class MergeDataServiceTests
 
         var listResultDetailSecond = new List<ResultDetail>
         {
-            new ResultDetail
+            new()
             {
                 ResourceId = "00",
                 InWaiting = 1,
@@ -65,14 +65,14 @@ public class MergeDataServiceTests
         {
             BetRunningCount = 1,
             BetMarkedCount = 2,
-            BetSettledCount = 3,
+            BetSettledCount = 3
         };
 
         var ticketCountsSecond = new TicketCounts
         {
             BetRunningCount = 1,
             BetMarkedCount = 1,
-            BetSettledCount = 1,
+            BetSettledCount = 1
         };
 
         data.Add((new List<ResultDetail>(), ticketCounts));

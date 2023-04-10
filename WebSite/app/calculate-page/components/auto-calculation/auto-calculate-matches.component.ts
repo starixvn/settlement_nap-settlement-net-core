@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 import { MatchesBaseComponent } from '../base-component';
 import { CalculationMatch, FilterAutoQuery, League, MatchGoalRecord, UpdateInstantQuery } from '../../models';
 import { BackgroundColor, CalculationStatus } from '../../../shared/constants';
-import { Language } from '../../../shared/language';
+import { Language } from '../../../shared/language.native';
 import { MessageBoxService } from '../../../shared/services';
 import { AutoSettingLeagueQuery, AutoSettingMatchQuery, ModalDialogMessage, AutoSetting } from '../../../shared/models';
 import { AutoSettingType, InstantStatus } from '../../constants';
@@ -105,7 +105,7 @@ export class AutoCalculateMatchesComponent extends MatchesBaseComponent implemen
       AutoSettingType.instant,
       !match.autoCalcSetting.isInstantForMatch
     );
-    const result = await this.requestService.updateSettingMatch(query).toPromise();
+    const result = await this.requestService.updateSettingMatch(query);
     if (result.errCode === 0) {
       match.autoCalcSetting.isInstantForMatch = !match.autoCalcSetting.isInstantForMatch;
 
@@ -133,7 +133,7 @@ export class AutoCalculateMatchesComponent extends MatchesBaseComponent implemen
       !autoCalcSetting.isInstantForLeague,
       isApplyAll
     );
-    const result = await this.requestService.updateSettingLeague(query).toPromise();
+    const result = await this.requestService.updateSettingLeague(query);
     if (result.errCode === 0) {
       autoCalcSetting.isInstantForLeague = !autoCalcSetting.isInstantForLeague;
       if (isApplyAll) {
@@ -179,7 +179,7 @@ export class AutoCalculateMatchesComponent extends MatchesBaseComponent implemen
   public async updateInstantStatus(match: CalculationMatch) {
     if (!this.isNullOrEmpty(match.instantHomeScore) && !this.isNullOrEmpty(match.instantAwayScore)) {
       const query = new UpdateInstantQuery(match);
-      const result = await this.requestService.updateInstantStatus(query).toPromise();
+      const result = await this.requestService.updateInstantStatus(query);
       if (result.errCode === 0) {
         this.doUpdateInstantStatus(match, query, result);
       } else {
@@ -192,7 +192,7 @@ export class AutoCalculateMatchesComponent extends MatchesBaseComponent implemen
   private doUpdateInstantStatus(match: CalculationMatch, query: UpdateInstantQuery, result: MatchGoalRecord) {
     this.dialogConfirmMessage.message = Language.instants.confirmExecuteInstant;
     this.messageBoxService.confirm(this.dialogConfirmMessage, async () => {
-      const resultPushScore = await this.requestService.pushInstantStatus(query, result).toPromise();
+      const resultPushScore = await this.requestService.pushInstantStatus(query, result);
       if (resultPushScore.errCode === 0) {
         this.handleActionService.handleChangeInstantStatus(match);
       } else {

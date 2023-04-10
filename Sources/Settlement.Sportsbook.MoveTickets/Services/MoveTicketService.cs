@@ -76,7 +76,7 @@ public class MoveTicketServiceImp : IMoveTicketService
             MatchIds = matchIds
         };
 
-        var referenceActions = repository.Fetch<ReferenceAction>(criteria);
+        var referenceActions = repository.Fetch<ReferenceAction>(criteria).ToList();
 
         foreach (var match in data)
         {
@@ -147,7 +147,7 @@ public class MoveTicketServiceImp : IMoveTicketService
     {
         var isCalc = match.NewEventStatus.Equals(EventStatus.Refund, StringComparison.OrdinalIgnoreCase) || match.NewEventStatus.Equals(EventStatus.Completed, StringComparison.OrdinalIgnoreCase);
 
-        return isCalc && (match.IsExistMarkedTicket || match.IsExistRunningTicket || match.IsExistMarkedTicketParlay);
+        return isCalc && (match.IsExistMarkedTicket || match.IsExistRunningTicket);
     }
 
     private async Task<MultiSportResult> FetchMatchesAndResultDetails(SportsbookCriteria criteria)
@@ -206,11 +206,12 @@ public class MoveTicketServiceImp : IMoveTicketService
         var criteria = mapper.Map<GetMoveTicketsMatchesRequest, GetMoveTicketsMatchesCriteria>(request);
 
         var matches = await repository.FetchAsync<MoveTicketsMatchDetail>(criteria);
-        foreach (var match in matches)
+        var moveTicketsMatchDetails = matches.ToList();
+        foreach (var match in moveTicketsMatchDetails)
         {
             match.RefDataService = refDataService;
         }
 
-        return matches.ToList();
+        return moveTicketsMatchDetails.ToList();
     }
 }

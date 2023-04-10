@@ -7,7 +7,7 @@ import {
 import { TestBed } from '@angular/core/testing';
 import { ResultDetail } from '../../../models';
 import { ResultSettingModel } from '../../../../shared/models';
-import { Language } from '../../../../shared/language';
+import { Language } from '../../../../shared/language.native';
 import { BetTypes, Resources } from '../../../constants';
 export class CreateDataTest {
     public static FakeDataOne(

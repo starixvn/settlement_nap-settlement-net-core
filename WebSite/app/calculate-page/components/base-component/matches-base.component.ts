@@ -6,7 +6,7 @@ import { Permission } from '../../../shared/models/sportsbook-sop';
 import { BackgroundColor, CalculationStatus } from '../../../shared/constants';
 import * as _ from 'lodash';
 import { LeagueBaseComponent } from '../../../shared/components/sport-listing/league-base.component';
-import { Language } from '../../../shared/language';
+import { Language } from '../../../shared/language.native';
 @Component({
   selector: 'matches-base',
   template: ''
@@ -28,12 +28,12 @@ export class MatchesBaseComponent extends LeagueBaseComponent implements OnChang
   }
 
   public popupCalc(match: CalculationMatch) {
-    const src = `apps/soccer-recalculate?matchId=${match.matchId}`;
+    const src = `/apps/soccer-recalculate?matchId=${match.matchId}`;
     this.popupService.openAndHandlePopup(src, Language.CalcPopupTitle, '800px', '800px', match);
   }
 
   public popupRefund(match: CalculationMatch) {
-    const src = `apps/soccer-refund?matchId=${match.matchId}`;
+    const src = `/apps/soccer-refund?matchId=${match.matchId}`;
     this.popupService.openAndHandlePopup(src, Language.RefundPopupTitle, '790px', '600px', match);
   }
 

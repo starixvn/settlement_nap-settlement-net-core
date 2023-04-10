@@ -5,7 +5,8 @@ import { ResourcesIds } from '../constants';
 import { ResultStatusId, SettlementStatusId } from '../../shared/constants';
 import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
 
-@Injectable()
+@Injectable(
+)
 export class TennisService {
 
   constructor(private readonly intervalBackgroundPipe: IntervalBackgroundPipe) {

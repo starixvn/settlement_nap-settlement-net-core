@@ -20,7 +20,7 @@ import {
 import { MaterialModule } from '../../shared/material-module';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ToastContainerDirective, ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
-import { Language } from '../../shared/language';
+import { Language } from '../../shared/language.native';
 
 describe('NumberGame - Matches Component', () => {
     const buttonName = "btn-danger";

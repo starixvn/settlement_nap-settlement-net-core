@@ -12,13 +12,13 @@ public class ValidateApiKeyServiceTests
 
     private const string Key = "api";
 
-    private readonly object MockData = null;
+    private readonly object mockData;
 
     public ValidateApiKeyServiceTests()
     {
         criteriaFactory = Substitute.For<ICriteriaFactory>();
         service = new ValidateApiKeyServiceImp(criteriaFactory);
-        MockData = new { matchId = 1 };
+        mockData = new { matchId = 1 };
     }
 
     [Fact]
@@ -44,13 +44,13 @@ public class ValidateApiKeyServiceTests
     public void CriteriaName_CriteriaTypeIsNull_ThrowException()
     {
         //Arrange
-        Type value = null;
+        Type? value = null;
         criteriaFactory.GetCriteriaType(Key).Returns(value);
 
         //Assert
         Assert.Throws<EmptyKeyException>(() =>
         {
-            service.CriteriaName(MockData, Key);
+            service.CriteriaName(mockData, Key);
         });
     }
 
@@ -58,12 +58,12 @@ public class ValidateApiKeyServiceTests
     public void CriteriaName_ExistedCriteriaTypeButCriteriaIsNull_ThrowException()
     {
         //Arrange
-        ICriteria criteria = null;
+        ICriteria? criteria = null;
         criteriaFactory.GetCriteriaType(Key).Returns(typeof(GetMatchDetailCriteria));
-        criteriaFactory.CreateCriteria(Arg.Any<Type>(), MockData).Returns(criteria);
+        criteriaFactory.CreateCriteria(Arg.Any<Type>(), mockData).Returns(criteria);
 
         // Assert
-        Assert.Throws<EmptyKeyException>(() => service.CriteriaName(MockData, Key));
+        Assert.Throws<EmptyKeyException>(() => service.CriteriaName(mockData, Key));
     }
 
     [Fact]
@@ -71,10 +71,10 @@ public class ValidateApiKeyServiceTests
     {
         //Arrange
         criteriaFactory.GetCriteriaType(Key).Returns(typeof(GetMatchDetailCriteria));
-        criteriaFactory.CreateCriteria(Arg.Any<Type>(), MockData).Returns(new GetMatchDetailCriteria());
+        criteriaFactory.CreateCriteria(Arg.Any<Type>(), mockData).Returns(new GetMatchDetailCriteria());
 
         //Act
-        var result = service.CriteriaName(MockData, Key);
+        var result = service.CriteriaName(mockData, Key);
 
         //Assert
         Assert.NotNull(result);
@@ -84,23 +84,23 @@ public class ValidateApiKeyServiceTests
     public void CreateNonQueryCommand_CriteriaTypeIsNull_ThrowException()
     {
         //Arrange
-        Type value = null;
+        Type? value = null;
         criteriaFactory.GetCriteriaType(Key).Returns(value);
 
         //Assert
-        Assert.Throws<EmptyKeyException>(() => service.CreateNonQueryCommand(MockData, Key));
+        Assert.Throws<EmptyKeyException>(() => service.CreateNonQueryCommand(mockData, Key));
     }
 
     [Fact]
     public void CreateNonQueryCommand_ExistedCriteriaTypeButCreateNonQueryCommandIsNull_ThrowException()
     {
         //Arrange
-        ICriteria criteria = null;
+        ICriteria? criteria = null;
         criteriaFactory.GetCriteriaType(Key).Returns(typeof(SettleCriteria));
-        criteriaFactory.CreateNonQueryCommand(Arg.Any<Type>(), MockData).Returns(criteria);
+        criteriaFactory.CreateNonQueryCommand(Arg.Any<Type>(), mockData).Returns(criteria);
 
         //Assert
-        Assert.Throws<EmptyKeyException>(() => service.CreateNonQueryCommand(MockData, Key));
+        Assert.Throws<EmptyKeyException>(() => service.CreateNonQueryCommand(mockData, Key));
     }
 
     [Fact]
@@ -108,10 +108,10 @@ public class ValidateApiKeyServiceTests
     {
         //Arrange
         criteriaFactory.GetCriteriaType(Key).Returns(typeof(SettleCriteria));
-        criteriaFactory.CreateNonQueryCommand(Arg.Any<Type>(), MockData).Returns(new SettleCriteria());
+        criteriaFactory.CreateNonQueryCommand(Arg.Any<Type>(), mockData).Returns(new SettleCriteria());
 
         //Act
-        var result = service.CreateNonQueryCommand(MockData, Key);
+        var result = service.CreateNonQueryCommand(mockData, Key);
 
         //Assert
         Assert.NotNull(result);

@@ -15,7 +15,7 @@ import { TimeMachineResult } from "../models/interval.model";
 
 @Injectable()
 export class RequestService {
-    private fastMarketApi = 'api/fast-market';
+    private fastMarketApi = '/api/fast-market';
     constructor(private readonly httpRequestService: HttpRequestService) {
     }
 
@@ -47,12 +47,12 @@ export class RequestService {
     }
 
     public updateMatchAutoSettle(matchSetting: AutoSettingMatchQuery) {
-        const url = `api/setting/update-setting-match`;
+        const url = `/api/setting/update-setting-match`;
         return this.httpRequestService.postJson(matchSetting, url);
     }
 
     public updateLeagueAutoSettle(leagueSetting: AutoSettingLeagueQuery) {
-        const url = `api/setting/update-setting-league`;
+        const url = `/api/setting/update-setting-league`;
         return this.httpRequestService.postJson(leagueSetting, url);
     }
 
@@ -73,7 +73,7 @@ export class RequestService {
     }
 
     public checkingStatus(matchId: number, actionName: string, isSettleDetermined = false) {
-        const url = `api/soccer/check-status`;
+        const url = `/api/soccer/check-status`;
         const query = {
              matchId,
              actionName,

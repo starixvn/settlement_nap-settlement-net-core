@@ -1,8 +1,6 @@
-﻿using NSubstitute;
-using Settlement.Sportsbook.Soccer.Models;
+﻿using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Requests;
 using Settlement.Sportsbook.Soccer.Services;
-using Xunit;
 
 namespace Settlement.Sportsbook.Soccer.UnitTests.Services;
 
@@ -37,7 +35,7 @@ public class BetStatusAllServiceTests
     public void GetBetStatus_EmptyScoreAndGoal_ReturnsZeroOnFirstGoalLastGoal()
     {
         // Arrange
-        var expected = "1FL:0-0;FL:0-0;";
+        const string expected = "1FL:0-0;FL:0-0;";
         var query = new SettleRequest
         {
             IsExistFgLg = true,
@@ -66,7 +64,7 @@ public class BetStatusAllServiceTests
             LastGoal = "2"
         };
 
-        var expected = "1FL:1-2;FL:1-2;";
+        const string expected = "1FL:1-2;FL:1-2;";
 
         validationService.HasFinalScoreAndGoalRecord(Arg.Any<SettleRequest>()).Returns(true);
 

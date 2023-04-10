@@ -11,10 +11,6 @@ namespace Settlement.Sportsbook.Soccer.UnitTests.Services;
 
 public class CreateCriteriaServiceTests
 {
-    private readonly INapSession currentSession;
-
-    private readonly IHttpContextAccessor accessor;
-
     private readonly IResourceService resourceService;
 
     private readonly ISoccerBetStatusService soccerBetStatusService;
@@ -27,8 +23,8 @@ public class CreateCriteriaServiceTests
 
     public CreateCriteriaServiceTests()
     {
-        currentSession = Substitute.For<INapSession>();
-        accessor = Substitute.For<IHttpContextAccessor>();
+        var currentSession = Substitute.For<INapSession>();
+        var accessor = Substitute.For<IHttpContextAccessor>();
         soccerBetStatusService = Substitute.For<ISoccerBetStatusService>();
         xmlConvertService = Substitute.For<XmlConvertService>();
         resourceService = Substitute.For<IResourceService>();
@@ -61,7 +57,7 @@ public class CreateCriteriaServiceTests
         };
 
         resourceService.HalftimeResources(Arg.Any<GoalCondition>(), Arg.Any<int>())
-            .Returns(new List<XmlResource> { new XmlResource() });
+            .Returns(new List<XmlResource> { new() });
 
         // Act
         service.CreateCalculateCriteria(query);
@@ -84,7 +80,7 @@ public class CreateCriteriaServiceTests
             GoalRecord = "AH",
             ActionName = ActionType.CalculateFullTime
         };
-        resourceService.FullTimeResources(Arg.Any<GoalCondition>(), Arg.Any<int>()).Returns(new List<XmlResource> { new XmlResource() });
+        resourceService.FullTimeResources(Arg.Any<GoalCondition>(), Arg.Any<int>()).Returns(new List<XmlResource> { new() });
 
         // Act
         service.CreateCalculateCriteria(query);
@@ -105,9 +101,9 @@ public class CreateCriteriaServiceTests
         var query = new SettleRequest
         {
             GoalRecord = "AH",
-            ActionName = ActionType.CalculateAll,
+            ActionName = ActionType.CalculateAll
         };
-        resourceService.AllResources(Arg.Any<GoalCondition>(), Arg.Any<int>()).Returns(new List<XmlResource> { new XmlResource() });
+        resourceService.AllResources(Arg.Any<GoalCondition>(), Arg.Any<int>()).Returns(new List<XmlResource> { new() });
 
         // Act
         service.CreateCalculateCriteria(query);
@@ -130,7 +126,7 @@ public class CreateCriteriaServiceTests
             ActionName = ActionType.RefundFullTime,
             IsSettleAbandonedMatchIbc = true
         };
-        resourceService.FullTimeResourcesSettleDetermined(Arg.Any<GoalCondition>()).Returns(new List<XmlResource> { new XmlResource() });
+        resourceService.FullTimeResourcesSettleDetermined(Arg.Any<GoalCondition>()).Returns(new List<XmlResource> { new() });
 
         // Act
         service.CreateRefundCriteria(query);
@@ -149,7 +145,7 @@ public class CreateCriteriaServiceTests
     {
         // Arrange
         var query = new RefundRequest { ActionName = ActionType.RefundAll, BetStatus = "123" };
-        resourceService.AllResources(Arg.Any<GoalCondition>(), Arg.Any<int>()).Returns(new List<XmlResource> { new XmlResource() });
+        resourceService.AllResources(Arg.Any<GoalCondition>(), Arg.Any<int>()).Returns(new List<XmlResource> { new() });
 
         // Act
         var criteria = service.CreateRefundCriteria(query);
@@ -173,9 +169,9 @@ public class CreateCriteriaServiceTests
             ActionName = ActionType.RefundAll,
             IsSettleAbandonedMatchIbc = true,
             HalfTimeAwayScore = 1,
-            HalfTimeHomeScore = 2,
+            HalfTimeHomeScore = 2
         };
-        resourceService.AllResourcesSettleDetermined(Arg.Any<GoalCondition>()).Returns(new List<XmlResource> { new XmlResource() });
+        resourceService.AllResourcesSettleDetermined(Arg.Any<GoalCondition>()).Returns(new List<XmlResource> { new() });
 
         // Act
         var criteria = service.CreateRefundCriteria(query);
@@ -200,9 +196,9 @@ public class CreateCriteriaServiceTests
             ActionName = ActionType.RefundFullTime,
             BetStatus = "123",
             HalfTimeAwayScore = 1,
-            HalfTimeHomeScore = 2,
+            HalfTimeHomeScore = 2
         };
-        resourceService.FullTimeResources(Arg.Any<GoalCondition>(), Arg.Any<int>()).Returns(new List<XmlResource> { new XmlResource() });
+        resourceService.FullTimeResources(Arg.Any<GoalCondition>(), Arg.Any<int>()).Returns(new List<XmlResource> { new() });
 
         // Act
         var criteria = service.CreateRefundCriteria(query);
@@ -220,7 +216,7 @@ public class CreateCriteriaServiceTests
     }
 
     [Fact]
-    public void CreateRefundCriteria_RefundHaflTime_CallInOrderFunctionOnService()
+    public void CreateRefundCriteria_RefundHalfTime_CallInOrderFunctionOnService()
     {
         // Arrange
         var query = new RefundRequest
@@ -228,9 +224,9 @@ public class CreateCriteriaServiceTests
             ActionName = ActionType.RefundHalfTime,
             BetStatus = "123",
             HalfTimeAwayScore = 1,
-            HalfTimeHomeScore = 2,
+            HalfTimeHomeScore = 2
         };
-        resourceService.HalftimeResources(Arg.Any<GoalCondition>(), Arg.Any<int>()).Returns(new List<XmlResource> { new XmlResource() });
+        resourceService.HalftimeResources(Arg.Any<GoalCondition>(), Arg.Any<int>()).Returns(new List<XmlResource> { new() });
 
         // Act
         var criteria = service.CreateRefundCriteria(query);

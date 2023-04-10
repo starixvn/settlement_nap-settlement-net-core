@@ -1,22 +1,18 @@
-﻿using Settlement.Core.Criteria;
+﻿namespace Settlement.EventManagement.Services.MultiSports;
+
+using Criteria;
+using Requests;
+using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
-using Settlement.EventManagement.Criteria;
-using Settlement.EventManagement.Models;
 using Settlement.EventManagement.Models.MultiSports;
-using Settlement.EventManagement.Requests;
-using System.Text;
-using Match = Settlement.EventManagement.Models.MultiSports.Match;
-
-namespace Settlement.EventManagement.Services.MultiSports;
+using Match = Models.MultiSports.Match;
 
 public interface IMultiSportService
 {
     Task<List<SportModel>> GetSportBook(FilterMultiSportRequest request);
 
     Task<List<Match>> GetWaitingMatches(RefreshMultiSportRequest request);
-
-    Task<Result> Calculate(CalculateParlayRequest request);
 }
 
 public class MultiSportServiceImp : IMultiSportService
@@ -27,7 +23,6 @@ public class MultiSportServiceImp : IMultiSportService
     private readonly IMapper mapper;
     private readonly ICacheService cacheService;
     private readonly PermissionService permissionService;
-    private readonly IHttpContextAccessor accessor;
     private readonly AppSettingsKey appSettingsKey;
 
     public MultiSportServiceImp(
@@ -36,7 +31,6 @@ public class MultiSportServiceImp : IMultiSportService
         IMapper mapper,
         ICacheService cacheService,
         PermissionService permissionService,
-        IHttpContextAccessor accessor,
         IOptions<AppSettingsKey> appSettingsKey)
     {
         this.repository = repository;
@@ -44,7 +38,6 @@ public class MultiSportServiceImp : IMultiSportService
         this.permissionService = permissionService;
         this.cacheService = cacheService;
         this.mapper = mapper;
-        this.accessor = accessor;
         this.appSettingsKey = appSettingsKey.Value;
     }
 
@@ -63,7 +56,7 @@ public class MultiSportServiceImp : IMultiSportService
     {
         var matches = MatchesOnShortCaching(request.LeagueIds);
 
-        if (matches != null && matches.Count > 0)
+        if (matches is { Count: > 0 })
         {
             return matches;
         }
@@ -173,7 +166,7 @@ public class MultiSportServiceImp : IMultiSportService
                 SportType.Tennis,
                 SportType.ESports,
                 SportType.BasketBall,
-                SportType.Badminton,
+                SportType.Badminton
             };
 
         var sportBook = matches.GroupBy(match => new { match.SportName, match.SportType })
@@ -240,149 +233,5 @@ public class MultiSportServiceImp : IMultiSportService
         var listMatchId = string.Join(",", matches.Select(match => match.MatchId.ToString()).ToArray());
         var resultDetailCriteria = new GetResultDetailCriteria { MatchIdList = listMatchId };
         return (await repository.FetchAsync<ResultDetail>(resultDetailCriteria)).ToList();
-    }
-
-    public async Task<Result> Calculate(CalculateParlayRequest request)
-    {
-        var validateResult = await ValidateCalculateParlay(request);
-
-        if (!string.IsNullOrEmpty(validateResult.MatchIdsValid))
-        {
-            await UpdateResultParlay(validateResult, request);
-            ExecuteCalculateParlay(validateResult, request);
-        }
-
-        return new Result
-        {
-            ErrCode = validateResult.ErrCode,
-            ErrMsg = validateResult.ErrMsg
-        };
-    }
-
-    private async Task UpdateResultParlay(ValidateParlayResult validateResult, CalculateParlayRequest request)
-    {
-        var listMatchIds = validateResult.MatchIdsValid.Split(',');
-        var updateResultRequest = new UpdateMatchInfoRequest
-        {
-            Action = ActionType.CalculateAll,
-            AdminId = request.AdminId,
-            Mode = "MP",
-        };
-
-        foreach (var matchId in listMatchIds)
-        {
-            updateResultRequest.MatchId = Convert.ToInt32(matchId);
-            await matchService.UpdateMatchInfo(updateResultRequest);
-        }
-    }
-
-    private void ExecuteCalculateParlay(ValidateParlayResult validateResult, CalculateParlayRequest request)
-    {
-        var criteria = new ParlayCriteria
-        {
-            MatchIds = validateResult.MatchIdsValid,
-            Action = ActionType.CalculateAll,
-            Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString(),
-            AdminId = request.AdminId
-        };
-
-        foreach (var server in appSettingsKey.SiteDbServer)
-        {
-            criteria.DbServer = server;
-            repository.Execute(criteria);
-        }
-    }
-
-    private async Task<ValidateParlayResult> ValidateCalculateParlay(CalculateParlayRequest request)
-    {
-        var validateEventResult = await ValidateParlayEvent(request);
-        var errorMessage = "All matches are being calculated, except following matches ";
-        const string postErrorMessage = " Please contact Starix IT for further support!";
-        if (string.IsNullOrEmpty(validateEventResult.MatchIdsValid))
-        {
-            errorMessage += validateEventResult.ErrMsg;
-            errorMessage += postErrorMessage;
-            return new ValidateParlayResult
-            {
-                ErrCode = validateEventResult.ErrCode,
-                ErrMsg = errorMessage,
-            };
-        }
-
-        var showError = false;
-        var validateTicketResult = await ValidateParlayTicket(validateEventResult);
-
-        if (!string.IsNullOrEmpty(validateEventResult.ErrMsg))
-        {
-            showError = true;
-            errorMessage += validateEventResult.ErrMsg;
-        }
-
-        if (!string.IsNullOrEmpty(validateTicketResult.ErrMsg))
-        {
-            showError = true;
-            errorMessage += validateTicketResult.ErrMsg;
-        }
-
-        var errorCode = validateEventResult.ErrCode > 0 ? validateEventResult.ErrCode : validateTicketResult.ErrCode;
-        return showError ? new ValidateParlayResult
-        {
-            ErrCode = errorCode,
-            ErrMsg = errorMessage,
-            MatchIdsValid = validateTicketResult.MatchIdsValid
-        } : new ValidateParlayResult
-        {
-            MatchIdsValid = validateTicketResult.MatchIdsValid
-        };
-    }
-
-    private async Task<ValidateParlayResult> ValidateParlayEvent(CalculateParlayRequest request)
-    {
-        var validateEventCriteria = new ValidateCalculateParlayCriteria
-        {
-            MatchIds = request.MatchIds,
-            Action = ActionType.CalculateAll
-        };
-
-        await repository.ExecuteAsync(validateEventCriteria);
-
-        return new ValidateParlayResult
-        {
-            ErrCode = validateEventCriteria.ErrCode,
-            ErrMsg = validateEventCriteria.ErrMsg,
-            MatchIdsValid = validateEventCriteria.MatchIdsValid
-        };
-    }
-
-    private async Task<ValidateParlayResult> ValidateParlayTicket(ValidateParlayResult validateEventResult)
-    {
-        var validateTicketCriteria = new ValidateTicketParlayCriteria
-        {
-            MatchIdsValid = validateEventResult.MatchIdsValid,
-            Action = ActionType.CalculateAll
-        };
-
-        var errorMessage = new StringBuilder();
-        foreach (var server in appSettingsKey.SiteDbServer)
-        {
-            if (!string.IsNullOrEmpty(validateTicketCriteria.MatchIdsValid))
-            {
-                validateTicketCriteria.MatchIds = validateTicketCriteria.MatchIdsValid;
-                validateTicketCriteria.DbServer = server;
-                validateTicketCriteria.MatchIdsValid = null;
-                await repository.ExecuteAsync(validateTicketCriteria);
-                if (!string.IsNullOrEmpty(validateTicketCriteria.ErrMsg))
-                {
-                    errorMessage.Append(validateTicketCriteria.ErrMsg);
-                }
-            }
-        }
-
-        return new ValidateParlayResult
-        {
-            ErrCode = validateTicketCriteria.ErrCode,
-            ErrMsg = errorMessage.ToString(),
-            MatchIdsValid = validateTicketCriteria.MatchIdsValid
-        };
     }
 }

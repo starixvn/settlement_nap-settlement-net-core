@@ -2,7 +2,7 @@
 
 namespace Settlement.Sportsbook.Soccer.Criteria;
 
-public class GetLastestMatchDetailCriteria : CriteriaBase
+public class GetLatestMatchDetailCriteria : CriteriaBase
 {
     public int MatchId { get; set; }
 

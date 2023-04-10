@@ -1,7 +1,7 @@
 import { TestBed, getTestBed } from "@angular/core/testing";
 import { of } from 'rxjs';
 import { PopupService } from "./popup.service";
-import { Language } from '../../shared/language';
+import { Language } from '../../shared/language.native';
 import { MatDialog } from '@angular/material/dialog';
 import { ReCalculationModel, Ball, MatchDetail} from '../models';
 import { BlockUIService, DialogBoxService } from "../../shared/services";
@@ -39,7 +39,7 @@ describe("Popup Service", () => {
         const toDate = "08-09-2020";
         popupService.popupLog(matchId, fromDate, toDate);
 
-        const srcExpected = `home/log/?matchCode=${matchId}&fromDate=${fromDate}&toDate=${toDate}&isShowMenu=false&productType=NBG`;
+        const srcExpected = `/home/log/?matchCode=${matchId}&fromDate=${fromDate}&toDate=${toDate}&isShowMenu=false&productType=NBG`;
         expect(popupService.dialogData.title).toEqual(Language.SettlementLog);
         expect(popupService.dialogData.src).toEqual(srcExpected)
         expect(dialogBoxService.popup).toHaveBeenCalled();

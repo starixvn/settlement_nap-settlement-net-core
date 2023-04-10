@@ -16,11 +16,9 @@ public class GoalAction
 
     private static bool IsRefundAction(int settlementStatusId)
     {
-        var refund = settlementStatusId == SettlementStatus.Refund
-                     || settlementStatusId == SettlementStatus.RefundHT
-                     || settlementStatusId == SettlementStatus.RefundFT;
+        var refund = settlementStatusId is SettlementStatus.Refund or SettlementStatus.RefundHt or SettlementStatus.RefundFt;
 
-        var abandoned = settlementStatusId == SettlementStatus.Abandoned1H || settlementStatusId == SettlementStatus.Abandoned2H;
+        var abandoned = settlementStatusId is SettlementStatus.Abandoned1H or SettlementStatus.Abandoned2H;
 
         return refund || abandoned;
     }

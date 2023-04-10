@@ -14,7 +14,7 @@ public interface RemarkNodeService
 
 public class RemarkNodeServiceImp : RemarkNodeService
 {
-    private static readonly string[] eventCounterLabels = new[] { "", "G", "C", "FK", "GK", "T", "", "P" };
+    private static readonly string[] EventCounterLabels = new[] { "", "G", "C", "FK", "GK", "T", "", "P" };
 
     private readonly PositionService positionService;
 
@@ -79,7 +79,7 @@ public class RemarkNodeServiceImp : RemarkNodeService
                 var c = charArray[i];
                 if (c != '0')
                 {
-                    resultLog.Add($"{c}{eventCounterLabels[i]}");
+                    resultLog.Add($"{c}{EventCounterLabels[i]}");
                 }
             }
         }

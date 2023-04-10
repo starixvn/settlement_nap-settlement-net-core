@@ -1,11 +1,10 @@
-﻿using Settlement.Sportsbook.OtherSports.Requests;
-using System.Threading.Tasks;
-using MediatR;
-using System.Threading;
-using Settlement.Sportsbook.OtherSports.Services;
-using Settlement.Sportsbook.OtherSports.Models;
-using Settlement.Core.Services;
+﻿using MediatR;
+using Settlement.Core.Constants;
 using Settlement.Core.Models;
+using Settlement.Core.Services;
+using Settlement.Sportsbook.OtherSports.Models;
+using Settlement.Sportsbook.OtherSports.Requests;
+using Settlement.Sportsbook.OtherSports.Services;
 using MatchResultDetail = Settlement.Sportsbook.OtherSports.Models.MatchResultDetail;
 
 namespace Settlement.Sportsbook.OtherSports.Handlers;
@@ -14,15 +13,15 @@ public class SportsbookHandler :
     IRequestHandler<GetMatchRequest, OtherSportsMatchModel>,
     IRequestHandler<CalculateRequest, Result>,
     IRequestHandler<CheckingMarkedTicketsRequest, MarkedTickets>,
-    IRequestHandler<RefundRequest, Result>,
-    IRequestHandler<RefundParlayRequest, Result>,
-    IRequestHandler<GetLastestResultRequest, MatchResultDetail>
+    IRequestHandler<GetLatestResultRequest, MatchResultDetail>
 {
     private readonly SportsbookService sportsbookService;
 
     private readonly SettlementActionsService settlementActionsService;
 
     private readonly PermissionService permissionService;
+
+    private static readonly List<string> ActionRefund = new() { ActionType.RefundAll, ActionType.RefundHalfTime, ActionType.RefundFullTime };
 
     public SportsbookHandler(SportsbookService sportsbookService, SettlementActionsService settlementActionsService, PermissionService permissionService)
     {
@@ -45,7 +44,7 @@ public class SportsbookHandler :
 
     public async Task<Result> Handle(CalculateRequest request, CancellationToken cancellationToken)
     {
-        if (sportsbookService.IsModifyResultDetailGroup(request.SportType))
+        if (!ActionRefund.Exists(action => action == request.Action) && sportsbookService.IsModifyResultDetailGroup(request.SportType))
         {
             return await settlementActionsService.CalculateWithResultDetail(request);
         }
@@ -55,9 +54,5 @@ public class SportsbookHandler :
 
     public async Task<MarkedTickets> Handle(CheckingMarkedTicketsRequest request, CancellationToken cancellationToken) => await settlementActionsService.CheckMarkedTickets(request);
 
-    public async Task<Result> Handle(RefundRequest request, CancellationToken cancellationToken) => await settlementActionsService.Refund(request);
-
-    public async Task<Result> Handle(RefundParlayRequest request, CancellationToken cancellationToken) => await settlementActionsService.RefundParlay(request);
-
-    public async Task<MatchResultDetail> Handle(GetLastestResultRequest request, CancellationToken cancellationToken) => await sportsbookService.GetLastestResult(request);
+    public async Task<MatchResultDetail> Handle(GetLatestResultRequest request, CancellationToken cancellationToken) => await sportsbookService.GetLatestResult(request);
 }
