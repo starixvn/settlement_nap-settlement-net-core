@@ -181,7 +181,7 @@ public class FilterServiceImp : FilterService
                 {
                     LeagueName = team.LeagueName,
                     LeagueId = team.LeagueId,
-                    Teams = new List<Team>()
+                    Teams = new List<Team>(),
                     SportName = refDataService.GetSportName(team.SportType)
                 };
 

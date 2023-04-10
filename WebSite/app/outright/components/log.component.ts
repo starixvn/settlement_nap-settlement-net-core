@@ -132,7 +132,7 @@ export default class LogComponent {
         OutrightLogs.forEach( OutrightLog => {
             OutrightLog.outrightLogDetails.forEach(log => {
                 if(_.isEqual(log.result.toLowerCase(), Status.won) && _isNumberValue(log.remark)){
-                    log.remarkName = `isDeadHeat(${Number(log.remark)> 0 ? 'yes' : 'no'}:${Number(log.remark)})`
+                    log.remarkName = Number(log.remark)> 0 ? `isDeadHeat(yes:${Number(log.remark)})` : `isDeadHeat(no)`;
                     return;
                 }
 

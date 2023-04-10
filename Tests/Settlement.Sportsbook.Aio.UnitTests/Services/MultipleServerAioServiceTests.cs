@@ -152,7 +152,7 @@ public class MultipleServerAioServiceTests
         var expectResult = new Result
         {
             ErrCode = 1,
-            ErrMsg = "Message"
+            ErrMsg = "Message",
             ChildMatchIds = null,
         };
 

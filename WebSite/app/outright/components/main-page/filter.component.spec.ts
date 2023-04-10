@@ -175,7 +175,7 @@ describe('FilterComponent', () => {
         it('should not validate date when toDate is disable', () => {
             component.enableToDate = false;
             verifyDateService.validDate = jest.fn();
-            component.sportTypesSelected = '1';
+            component.sportTypesSelected = ['1'];
             outrightService.filter = jest.fn();
 
 
@@ -186,7 +186,7 @@ describe('FilterComponent', () => {
 
         it('should show error message when not select any sport.', () => {
             component.enableToDate = false;
-            component.sportTypesSelected = '';
+            component.sportTypesSelected = [];
 
             component.search();
 
@@ -197,7 +197,7 @@ describe('FilterComponent', () => {
         it('should call filter method and event emit when pass all validation.', async () => {
             component.enableToDate = false;
             verifyDateService.validDate = jest.fn();
-            component.sportTypesSelected = '1';
+            component.sportTypesSelected = ['1'];
             outrightService.filter = jest.fn().mockReturnValue(Promise.resolve(sportLeague));
             jest.spyOn(component.searchAction, 'emit');
             jest.spyOn(component.requestEmitter, 'emit');

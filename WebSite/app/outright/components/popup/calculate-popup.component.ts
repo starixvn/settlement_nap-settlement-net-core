@@ -135,28 +135,38 @@ export class CalculatePopupComponent implements OnInit {
 
     private async validateBeforePush(teamSettleWon: Team[], teamWonSettled: Team[], teamWonSelected: Team[], teamHideSelected: Team[], isCalc: boolean = true) {
         const setting = await this.outrightService.getDeadHeatSetting(this.data.leagueId);
+        const errorSettingMessage = this.verifySetting(setting, teamWonSettled, teamWonSelected);
 
         if (isCalc && CalculateService.VerifySettledSelected(this.teamSelected, this.originalTeam)) {
             this.toastrService.error(Language.Outright.existTeamSettled);
-        } else if (setting === DeadHeatSetting.UnSet && CalculateService.VerifyDeadHeatNoSet(teamWonSelected, teamWonSettled)) {
-            this.toastrService.error(Language.Outright.incorrectDeadHeatSetting);
-        } else if (setting === DeadHeatSetting.Yes && CalculateService.VerifyDeadHeatYesSetting(teamWonSelected, teamWonSettled)) {
-            this.toastrService.error(Language.Outright.incorrectDeadHeatSetting);
-        } else if (setting === DeadHeatSetting.No && CalculateService.VerifyDeadHeatNoSetting(teamWonSelected, teamWonSettled)) {
-            this.toastrService.error(Language.Outright.incorrectDeadHeatSetting);
         } else if (CalculateService.ExistRunningStatus(this.teamSelected)) {
             this.toastrService.error(Language.Outright.existRunning);
+        } else if (!_.isEmpty(errorSettingMessage)) {
+            this.toastrService.error(errorSettingMessage);
         } else if (CalculateService.VerifyOnlyOneTeamWon(teamWonSelected, teamWonSettled)) {
             this.toastrService.error(Language.Outright.atLeastTwoDeadHeat);
-        } else if (CalculateService.VerifyDeadheat(teamWonSelected, teamWonSettled)) {
-            this.toastrService.error(CalculateService.MessageInconsistentDeadheat(teamSettleWon));
         } else if (!(await this.VerifyHideStatus(teamHideSelected))) {
             this.toastrService.error(Language.Outright.existHideTicketNotVoided)
-        } else if (setting === DeadHeatSetting.No && CalculateService.ConfirmDeadHeatNoSetting(teamWonSelected, teamSettleWon)) {
+        } else if (setting === DeadHeatSetting.No && CalculateService.ConfirmDeadHeatNoSetting(teamWonSelected, teamWonSettled)) {
             this.confirmCalcNonDeadheat();
         } else {
             this.doCalculate(this.teamSettleWon.length);
         }
+    }
+
+    private verifySetting(setting: number, teamWonSettled: Team[], teamWonSelected: Team[]) {
+        let errorSettingMessage = "";
+        switch (setting) {
+            case DeadHeatSetting.No:
+                errorSettingMessage = CalculateService.VerifyDeadHeatNoSetting(teamWonSelected, teamWonSettled);
+                break;
+            case DeadHeatSetting.Yes:
+                errorSettingMessage = CalculateService.VerifyDeadHeatYesSetting(teamWonSelected, teamWonSettled);
+                break;
+            default: errorSettingMessage = CalculateService.VerifyDeadHeatNoSet(teamWonSelected, teamWonSettled);
+        }
+
+        return errorSettingMessage;
     }
 
     private confirmCalcNonDeadheat() {

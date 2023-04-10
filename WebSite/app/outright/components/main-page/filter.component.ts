@@ -40,7 +40,7 @@ export class FilterComponent implements OnInit {
     enableToDate = true;
     today: NgbDateStruct;
 
-    sportTypesSelected: string;
+    sportTypesSelected: string[];
     sportOptions$ = new BehaviorSubject(new MultipleSelect());
 
     leagueSelected: string;
@@ -103,7 +103,7 @@ export class FilterComponent implements OnInit {
     }
 
     onSelectSport(value: ItemsSelect[]) {
-        this.sportTypesSelected = value.map(item => Number(item.value)).join(',');
+        this.sportTypesSelected = value.map(item => item.value);
         const leagueFiltered = _.filter(this.originalLeagues, item => _.includes(this.sportTypesSelected, item.sportType.toString()));
         this.updateLeague(leagueFiltered);
     }

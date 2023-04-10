@@ -3,37 +3,13 @@ import { Injectable } from "@angular/core";
 import { Team } from "../models";
 import * as _ from "lodash";
 import { Status } from "../constants";
+import { VerifyDeadHeatService } from './verify-deadheat.service';
 
 @Injectable()
 export class CalculateService {
 
     public static ExistRunningStatus(listTeam: Team[]) {
         return listTeam.some(team => _.isEqual(team.status.toLowerCase(), Status.running));
-    }
-
-    public static VerifyDeadheat(teamWonSelected: Team[], teamWonSettled: Team[]) {
-        const teamSettledDeadHeat = _.filter(teamWonSettled, team => team.isDeadheat);
-        const teamSettledNoneDeadHeat = _.filter(teamWonSettled, team => !team.isDeadheat);
-        const teamWonSelectedDeadHeat = _.filter(teamWonSelected, team => team.isDeadheat);
-        const teamWonSelectedNoneDeadHeat = _.filter(teamWonSelected, team => !team.isDeadheat);
-
-        if (!_.isEmpty(teamSettledDeadHeat) && !_.isEmpty(teamWonSelected)) {
-            return true;
-        }
-
-        if (!_.isEmpty(teamWonSelectedDeadHeat) && !_.isEmpty(teamSettledNoneDeadHeat)) {
-            return true;
-        }
-
-        if (!_.isEmpty(teamWonSelectedDeadHeat) && !_.isEmpty(teamWonSelectedNoneDeadHeat)) {
-            return true;
-        }
-
-        if(!(_.isEmpty(teamSettledDeadHeat) || _.isEmpty(teamWonSelectedDeadHeat))) {
-            return true;
-        }
-
-        return false;
     }
 
     public static VerifySettledSelected(selectedTeams: Team[], originalTeams: Team[]) {
@@ -54,51 +30,50 @@ export class CalculateService {
         const teamSettledNoneDeadHeat = _.filter(teamWonSettled, team => !team.isDeadheat);
 
 
-        if (teamWonSelectedNoneDeadHeat.length === 1 && teamSettledNoneDeadHeat.length >= 1 && _.isEmpty(teamSettledDeadHeat)) {
-            return true;
+        if ((teamWonSelectedNoneDeadHeat.length === 1 && teamSettledNoneDeadHeat.length >= 1 && _.isEmpty(teamSettledDeadHeat)) ||
+            (teamWonSelectedNoneDeadHeat.length > 1 && _.isEmpty(teamSettledDeadHeat)) ||
+            (teamWonSelectedDeadHeat.length > 1 && _.isEmpty(teamWonSettled) && _.isEmpty(teamSettledDeadHeat))) {
+            return Language.Outright.incorrectDeadHeatSetting;
         }
-
-        if (teamWonSelectedNoneDeadHeat.length > 1 && _.isEmpty(teamSettledDeadHeat)) {
-            return true;
-        }
-
-        if (teamWonSelectedDeadHeat.length > 1 && _.isEmpty(teamWonSettled) && _.isEmpty(teamSettledDeadHeat)) {
-            return true;
-        }
-
-        return false;
+        return "";
     }
 
     public static VerifyDeadHeatYesSetting(teamWonSelected: Team[], teamWonSettled: Team[]) {
-        console.log(teamWonSelected, teamWonSettled);
         const teamWonSelectedNoneDeadHeat = _.filter(teamWonSelected, team => !team.isDeadheat);
+        const teamWonSelectedDeadHeat = _.filter(teamWonSelected, team => team.isDeadheat);
         const teamSettledDeadHeat = _.filter(teamWonSettled, team => team.isDeadheat);
         const teamSettledNoneDeadHeat = _.filter(teamWonSettled, team => !team.isDeadheat);
 
-        if (teamWonSelectedNoneDeadHeat.length === 1 && teamSettledNoneDeadHeat.length >= 1 && _.isEmpty(teamSettledDeadHeat)) {
-            return true;
+        if ((teamWonSelectedNoneDeadHeat.length === 1 && teamSettledNoneDeadHeat.length >= 1 && _.isEmpty(teamSettledDeadHeat)) ||
+            teamWonSelectedNoneDeadHeat.length > 1 ||
+            (!_.isEmpty(teamWonSelectedNoneDeadHeat) && !_.isEmpty(teamWonSelectedDeadHeat))) {
+            return Language.Outright.incorrectDeadHeatSetting;
         }
 
-        if (teamWonSelectedNoneDeadHeat.length > 1 && _.isEmpty(teamSettledDeadHeat)) {
-            return true;
+        if (VerifyDeadHeatService.VerifyDeadheatSettingYes(teamWonSelected, teamWonSettled)) {
+            return this.MessageInconsistentDeadheat(teamWonSelected.concat(teamWonSettled))
         }
 
-        return false;
+        return "";
     }
 
     public static VerifyDeadHeatNoSetting(teamWonSelected: Team[], teamWonSettled: Team[]) {
         const teamWonSelectedDeadHeat = _.filter(teamWonSelected, team => team.isDeadheat);
 
-        if (teamWonSelectedDeadHeat.length > 1) {
-            return true;
+        if (teamWonSelectedDeadHeat.length > 0) {
+            return Language.Outright.incorrectDeadHeatSetting;
         }
-        return false;
+
+        if (VerifyDeadHeatService.VerifyDeadheatSettingNo(teamWonSelected, teamWonSettled)) {
+            return this.MessageInconsistentDeadheat(teamWonSelected.concat(teamWonSettled))
+        }
+
+        return "";
     }
 
     public static ConfirmDeadHeatNoSetting(teamWonSelected: Team[], teamWonSettled: Team[]) {
         const teamSettledDeadHeat = _.filter(teamWonSettled, team => team.isDeadheat);
         const teamSettledNoneDeadHeat = _.filter(teamWonSettled, team => !team.isDeadheat);
-        const teamWonSelectedDeadHeat = _.filter(teamWonSelected, team => team.isDeadheat);
         const teamWonSelectedNoneDeadHeat = _.filter(teamWonSelected, team => !team.isDeadheat);
 
         if (teamWonSelectedNoneDeadHeat.length === 1 && teamSettledNoneDeadHeat.length >= 1 && _.isEmpty(teamSettledDeadHeat)) {
