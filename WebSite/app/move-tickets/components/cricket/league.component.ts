@@ -1,13 +1,11 @@
 import {
-  MultiSport, MatchWaitingRequest, Permission,
-  MoveTicketsRequest, GetChildMatchesRequest, ChildMatch
-} from './../../models';
+  MultiSport, MatchWaitingRequest, Permission, MoveTicketsRequest } from './../../models';
 import { Component, Input, OnInit, OnChanges, SimpleChanges, ChangeDetectorRef, Output, EventEmitter } from '@angular/core';
 import { ResultType, SportType, BackgroundColor } from '../../../shared/constants';
 import * as _ from 'lodash';
 import { MoveTicketsService } from './move-tickets.service';
 import { MessageBoxService, SportMatchService } from './../../../shared/services';
-import { Language } from '../../../shared/language.native';
+import { Language } from './../../../shared/language.native';
 import { ModalDialogMessage, Result, LeagueMatch, Match, Remark, SportMatch } from '../../../shared/models';
 import { LeagueBaseComponent } from '../../../shared/components/sport-listing/league-base.component';
 

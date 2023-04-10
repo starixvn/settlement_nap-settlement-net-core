@@ -4,11 +4,7 @@ namespace Settlement.EventManagement.Models.MultiSports;
 
 public class Match : BaseMatch
 {
-    private const int ConvertToBase = 2;
-
-    private const int DirectPayoutBit = 4;
-
-    private readonly List<int> sportSupportDirect = new List<int>
+    private readonly List<int> sportSupportDirect = new()
     {
         Core.Constants.SportType.VolleyBall,
         Core.Constants.SportType.Badminton,
