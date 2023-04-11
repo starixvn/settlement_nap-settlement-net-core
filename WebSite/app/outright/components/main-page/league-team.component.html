@@ -81,7 +81,7 @@
         </td>
         <td class="team-name w-100">{{ team.teamName }}</td>
         <td class="w-10 center">{{ team.betCount }}</td>
-        <td class="w-10 center" [ngClass]="eventStatusColor(team)">{{ team.status }}</td>
+        <td class="w-10 center" [ngClass]="eventStatusColor(team)">{{ team.status | uppercase}}</td>
       </tr>
     </ng-template>
   </ng-container>

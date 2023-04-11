@@ -103,7 +103,7 @@ export class LeagueTeamComponent implements OnChanges {
                 matchCode: !!matchId ? `${matchId}` : league.teams[0].matchCode,
                 matchId
             },
-            width: '1000px',
+            width: '1200px',
             height: '650px',
             panelClass: 'log-modalbox',
             hasBackdrop: true

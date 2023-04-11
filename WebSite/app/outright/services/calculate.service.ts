@@ -45,7 +45,7 @@ export class CalculateService {
         const teamSettledNoneDeadHeat = _.filter(teamWonSettled, team => !team.isDeadheat);
 
         if ((teamWonSelectedNoneDeadHeat.length === 1 && teamSettledNoneDeadHeat.length >= 1 && _.isEmpty(teamSettledDeadHeat)) ||
-            teamWonSelectedNoneDeadHeat.length > 1 ||
+            (!_.isEmpty(teamWonSelectedNoneDeadHeat) && !_.isEmpty(teamSettledDeadHeat))||
             (!_.isEmpty(teamWonSelectedNoneDeadHeat) && !_.isEmpty(teamWonSelectedDeadHeat))) {
             return Language.Outright.incorrectDeadHeatSetting;
         }

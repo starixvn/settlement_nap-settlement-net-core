@@ -78,7 +78,6 @@
     <Setting Key="NAP_UserLog_Settle_OutrightSelByLeagueID" SpName="NAP_UserLog_Settle_OutrightSelByLeagueID" DbName="DBLOG.bodb_CustomerLog.bodbAdminNet" />
     <Setting Key="NAP_Set_OutrightSelInfoByLeagueID" SpName="NAP_Set_OutrightSelInfoByLeagueID" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Admin_Outright_Update" SpName="NAP_Admin_Outright_Update" DbName="DBPRO.bodb02.bodbAdminNet" />
-    <Setting Key="NAP_Set_OutrightCheckTicketVoid" SpName="NAP_Set_OutrightCheckTicketVoid" DbName="DBTXN.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_DeadHeatLeagueUpd" SpName="NAP_Set_DeadHeatLeagueUpd" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_DeadHeatLeagueSel" SpName="NAP_Set_DeadHeatLeagueSel" DbName="DBPRO.bodb02.bodbAdminNet" />
   </Funtion>
@@ -149,6 +148,12 @@
       <Setting Key="NAP_Set_OutrightSelTicketCount_DBTXN" SpName="NAP_Set_OutrightSelTicketCount" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="NAP_Set_OutrightSelTicketCount_DBSID01" SpName="NAP_Set_OutrightSelTicketCount" DbName="DBSID01.bodb02.bodbAdminNet" />
       <Setting Key="NAP_Set_OutrightSelTicketCount_DBSID02" SpName="NAP_Set_OutrightSelTicketCount" DbName="DBSID02.bodb02.bodbAdminNet" />
+    </Function>
+
+    <Function Name="NAP_Set_OutrightCheckTicketVoid">
+      <Setting Key="NAP_Set_OutrightCheckTicketVoid_DBTXN" SpName="NAP_Set_OutrightCheckTicketVoid" DbName="DBTXN.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Set_OutrightCheckTicketVoid_DBSID01" SpName="NAP_Set_OutrightCheckTicketVoid" DbName="DBSID01.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Set_OutrightCheckTicketVoid_DBSID02" SpName="NAP_Set_OutrightCheckTicketVoid" DbName="DBSID02.bodb02.bodbAdminNet" />
     </Function>
 
     <Function Name="NAP_Set_GetNumberError">

@@ -141,10 +141,10 @@ export class CalculatePopupComponent implements OnInit {
             this.toastrService.error(Language.Outright.existTeamSettled);
         } else if (CalculateService.ExistRunningStatus(this.teamSelected)) {
             this.toastrService.error(Language.Outright.existRunning);
-        } else if (!_.isEmpty(errorSettingMessage)) {
-            this.toastrService.error(errorSettingMessage);
         } else if (CalculateService.VerifyOnlyOneTeamWon(teamWonSelected, teamWonSettled)) {
             this.toastrService.error(Language.Outright.atLeastTwoDeadHeat);
+        } else if (!_.isEmpty(errorSettingMessage)) {
+            this.toastrService.error(errorSettingMessage);
         } else if (!(await this.VerifyHideStatus(teamHideSelected))) {
             this.toastrService.error(Language.Outright.existHideTicketNotVoided)
         } else if (setting === DeadHeatSetting.No && CalculateService.ConfirmDeadHeatNoSetting(teamWonSelected, teamWonSettled)) {
