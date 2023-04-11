@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Fanex.Data.Repository;
-using Fanex.Logging;
 using Fanex.NAP.Client.Helpers.Web;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
@@ -37,7 +36,6 @@ public class CalculateServiceImp : ICalculateService
     private readonly LogDirectlyService logDirectlyService;
 
     private readonly INapSession currentSession;
-
 
     public CalculateServiceImp
     (IMapper mapper,

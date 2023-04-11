@@ -196,6 +196,7 @@ public class MultipleServerAioServiceImp : MultipleServerAioService
         var childMatchIds = await GetChildMatchIds(criteria.MatchId, criteria.Action, criteria.SelectedResources);
 
         var result = criteria.Action switch
+            criteria.Action.Equals(SettleType.Refund)))
         {
             SettleType.Calculate or SettleType.Refund => await netPositionService.Calculate(updateStatusCriteria,
                 resultCommands, criteria.IsHedgeMatch),
