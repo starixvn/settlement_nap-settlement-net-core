@@ -8,6 +8,8 @@ using GetMatch;
 public interface ISoccerBetStatusService
 {
     string CreateBetStatus(SettleRequest request);
+
+    string CreateBetStatusAfterUncalculateFt(UncalculateFtRequest request, string betStatus, string goalRecord);
 }
 
 public class SoccerBetStatusServiceImp : ISoccerBetStatusService
@@ -17,6 +19,8 @@ public class SoccerBetStatusServiceImp : ISoccerBetStatusService
     private readonly IBetStatusAllService betStatusAllService;
     private readonly FullTimeBetStatus.IBetStatusService fullTimeBetStatusService;
     private readonly HalfTimeBetStatus.IBetStatusService halfTimeBetStatusService;
+
+    private const string RefundHalfTime = "Refund HT;";
 
     public SoccerBetStatusServiceImp(
         IMatchService matchService,
@@ -47,5 +51,23 @@ public class SoccerBetStatusServiceImp : ISoccerBetStatusService
         }
 
         return validationService.IsRefundHalftime(request) || validationService.IsRefundFullTime(request) ? request.BetStatus : string.Empty;
+    }
+
+    public string CreateBetStatusAfterUncalculateFt(UncalculateFtRequest request, string betStatus, string goalRecord)
+    {
+        var halfTime = request.ResultDetails.FirstOrDefault(item => item.ResourceId == ResourceType.Halftime);
+        if (halfTime is null or { SettlementStatusId: 0 })
+        {
+            return string.Empty;
+        }
+
+        var betStatusHalfTimeRefunded = halfTime.SettlementStatusId == SettlementStatus.RefundHt ? RefundHalfTime : string.Empty;
+
+        if (request.IsExistFgLg || request.IsExistHtFgLg || request.IsExistFgNg)
+        {
+            return halfTimeBetStatusService.RevertBetStatus(request, betStatusHalfTimeRefunded, betStatus, goalRecord);
+        }
+
+        return betStatusHalfTimeRefunded;
     }
 }

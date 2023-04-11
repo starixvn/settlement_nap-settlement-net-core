@@ -32,7 +32,11 @@
                 </div>
                 <div class="action-button">
                     <button *ngIf="match.permission.canCalculate" [ngClass]="{'button float-left': true, 'button-disabled':isDisableFulltimeCalculate }" [disabled]="isDisableFulltimeCalculate" (click)="calculateFullTime()">Calculate FT</button>
+                    <button *ngIf="match.permission.canUncalculate" class="button uncalculate" (click)="unCalculateFT()">
+                        Uncalculate FT
+                    </button>
                 </div>
+                
             </div>
             <div class="row-2">
                 <div class="action-button">
@@ -40,8 +44,8 @@
                         Calculate All
                     </button>
                     
-                    <button *ngIf="match.permission.canUncalculate" class="button" (click)="unCalculate()">
-                        Uncalculate
+                    <button *ngIf="match.permission.canUncalculate" class="button uncalculate" (click)="unCalculate()">
+                        Uncalculate All
                     </button>
                     <button *ngIf="match.permission.canUncalculateInstant" [ngClass]="{'button instant': true, 'button-disabled': !matchDetail.hasInstantCompleted}" [disabled]="!matchDetail.hasInstantCompleted" (click)="unCalcInstant()">
                         Uncalculate Ins.Settle

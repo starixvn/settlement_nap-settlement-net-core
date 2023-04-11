@@ -6,9 +6,9 @@ namespace Settlement.Sportsbook.Soccer.Services.FullTimeBetStatus;
 
 public interface IHalftimeFullTimeService
 {
-    string HalfTimeBetStatus(SettleRequest request);
+    string HalfTimeBetStatus(SettleBaseRequest request);
 
-    string FullTimeBetStatus(SettleRequest request, string halfTimeBetStatus);
+    string FullTimeBetStatus(SettleBaseRequest request, string halfTimeBetStatus);
 }
 
 public class HalftimeFullTimeServiceImp : IHalftimeFullTimeService
@@ -23,7 +23,7 @@ public class HalftimeFullTimeServiceImp : IHalftimeFullTimeService
         this.fullTimeService = fullTimeService;
     }
 
-    public string HalfTimeBetStatus(SettleRequest request)
+    public string HalfTimeBetStatus(SettleBaseRequest request)
     {
         var isExistRefundHt = request.BetStatus.IgnoreCaseContains(EventStatus.RefundHt);
         return isExistRefundHt
@@ -31,7 +31,7 @@ public class HalftimeFullTimeServiceImp : IHalftimeFullTimeService
             : BetStatusHasHalftimeScoreWithSemicolonOnGoalRecord(request);
     }
 
-    public string FullTimeBetStatus(SettleRequest request, string halfTimeBetStatus)
+    public string FullTimeBetStatus(SettleBaseRequest request, string halfTimeBetStatus)
     {
         var isExistRefundHt = request.BetStatus.IgnoreCaseContains(EventStatus.RefundHt);
         var fullTimeBetStatus = fullTimeService.BetStatusFullTimeWithSemicolon(request);
@@ -41,7 +41,7 @@ public class HalftimeFullTimeServiceImp : IHalftimeFullTimeService
             : fullTimeBetStatus;
     }
 
-    private static string BetStatusHalftimeWithIsExistRefundHt(SettleRequest request)
+    private static string BetStatusHalftimeWithIsExistRefundHt(SettleBaseRequest request)
     {
         var isExistHalfTime = request.BetStatus.IgnoreCaseContains("1FL");
 
@@ -56,7 +56,7 @@ public class HalftimeFullTimeServiceImp : IHalftimeFullTimeService
         return goalRecord.HalftimeBetStatus;
     }
 
-    private string BetStatusHasHalftimeScoreWithSemicolonOnGoalRecord(SettleRequest request)
+    private string BetStatusHasHalftimeScoreWithSemicolonOnGoalRecord(SettleBaseRequest request)
     {
         var goal = request.GoalRecord.Split(';')[0];
         var goalRecord = new GoalRecordModel { IsExistHtFgLg = true };

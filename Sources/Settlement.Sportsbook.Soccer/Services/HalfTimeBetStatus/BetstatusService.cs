@@ -4,7 +4,9 @@ namespace Settlement.Sportsbook.Soccer.Services.HalfTimeBetStatus;
 
 public interface IBetStatusService
 {
-    string GetBetStatus(SettleRequest request);
+    string GetBetStatus(SettleBaseRequest request);
+
+    string RevertBetStatus(UncalculateFtRequest request, string betStatus, string oldBetStatus, string goalRecord);
 }
 
 public class BetStatusServiceImp : IBetStatusService
@@ -16,7 +18,7 @@ public class BetStatusServiceImp : IBetStatusService
         this.halftimeService = halftimeService;
     }
 
-    public string GetBetStatus(SettleRequest request)
+    public string GetBetStatus(SettleBaseRequest request)
     {
         var halfTimeBetStatus = string.Empty;
         if (request.IsExistHtFgLg)
@@ -29,6 +31,26 @@ public class BetStatusServiceImp : IBetStatusService
         if (request.IsExistFgNg)
         {
             var fullTimeBetStatus = halftimeService.FullTimeBetStatusForCalculateHalfTime(request.GoalRecord);
+
+            return halftimeService.AppendFullTimeBetStatus(betStatus, fullTimeBetStatus);
+        }
+
+        return betStatus;
+    }
+
+    public string RevertBetStatus(UncalculateFtRequest request, string betStatus, string oldBetStatus, string goalRecord)
+    {
+        var halfTimeBetStatus = string.Empty;
+        if (request.IsExistHtFgLg)
+        {
+            halfTimeBetStatus = halftimeService.RevertBetStatusForCalculateHalfTime(oldBetStatus);
+        }
+
+        betStatus = halftimeService.AppendHalfTimeBetStatus(betStatus, halfTimeBetStatus);
+
+        if (request.IsExistFgNg)
+        {
+            var fullTimeBetStatus = halftimeService.FullTimeBetStatusForCalculateHalfTime(goalRecord);
 
             return halftimeService.AppendFullTimeBetStatus(betStatus, fullTimeBetStatus);
         }

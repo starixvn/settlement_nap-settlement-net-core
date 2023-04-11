@@ -16,6 +16,8 @@ public interface IMatchService
 {
     string GetBetStatus(int matchId);
 
+    public MatchGoalRecordModel GetMatchGoalRecord(int matchId);
+
     Task<Match> GetMatch(GetMatchRequest request);
 
     Task<Match> GetMatchRefund(GetMatchRequest request);
@@ -67,6 +69,18 @@ public class MatchServiceImp : IMatchService
         var matchInfo = repository.Get<MatchDetail>(criteria);
 
         return matchInfo != null ? matchInfo.BetStatus : string.Empty;
+    }
+
+    public MatchGoalRecordModel GetMatchGoalRecord(int matchId)
+    {
+        var criteria = new GetMatchInfoCriteria
+        {
+            MatchId = matchId
+        };
+
+        var matchInfo = repository.Get<MatchGoalRecordModel>(criteria);
+
+        return matchInfo;
     }
 
     public async Task<Match> GetMatch(GetMatchRequest request)

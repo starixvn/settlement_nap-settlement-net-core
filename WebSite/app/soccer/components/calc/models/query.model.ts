@@ -1,3 +1,4 @@
+import { ResultDetail } from "../../../models";
 import { CalculateAction } from "../../../../shared/constants/calculate-action.native";
 import { MatchDetail, UndoChecking } from "./match.model";
 import * as _ from "lodash";
@@ -58,8 +59,8 @@ export class InstantCalculationQuery {
     public instantKey: number;
     public firstGoalValue: string;
     public betStatus: string;
-    public isExistFG : boolean;
-    public isExistHTFG : boolean;
+    public isExistFG: boolean;
+    public isExistHTFG: boolean;
 
     constructor(matchId: number, score: UndoChecking) {
         this.matchId = matchId;
@@ -73,5 +74,23 @@ export class InstantCalculationQuery {
         this.betStatus = score.betStatus;
         this.isExistFG = score.isExistFG;
         this.isExistHTFG = score.isExistHTFG;
+    }
+}
+
+export class UncalculateFullTimeQuery {
+    public matchId: number;
+    public isExistFgLg: boolean;
+    public isExistHtFgLg: boolean;
+    public isExistFgNg: boolean;
+    public isEnabledGoalRecordFt: boolean;
+    public resultDetails: ResultDetail[];
+   
+    constructor(matchDetail: MatchDetail, resultDetails: ResultDetail[]) {
+        this.isExistFgLg = matchDetail.isExistFgLg;
+        this.isExistFgNg = matchDetail.isExistFgNg;
+        this.isExistHtFgLg = matchDetail.isExistHtFgLg;
+        this.matchId = matchDetail.matchId;
+        this.resultDetails = resultDetails;
+        this.isEnabledGoalRecordFt = matchDetail.isEnabledGoalRecordFt;
     }
 }

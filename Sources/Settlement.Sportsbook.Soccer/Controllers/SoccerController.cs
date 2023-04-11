@@ -36,6 +36,10 @@ public class SoccerController : ControllerBase
     [LogPushRequest]
     public async Task<IActionResult> Calculate(SettleRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
+    [Route("uncalculate-ft"), HttpPost]
+    [LogPushRequest]
+    public async Task<IActionResult> UnCalculateFt(UncalculateFtRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+
     [Route("check-status"), HttpPost]
     public async Task<IActionResult> CheckingStatus(CheckStatusRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 

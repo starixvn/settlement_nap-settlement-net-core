@@ -1,4 +1,5 @@
-﻿using Settlement.Core.Constants;
+﻿using AutoMapper;
+using Settlement.Core.Constants;
 using Settlement.Sportsbook.Soccer.Constants;
 using Settlement.Sportsbook.Soccer.Models;
 
@@ -14,6 +15,8 @@ public interface IResourceService
 
     List<XmlResource> UnCalculateResources(GoalCondition goalCondition);
 
+    List<XmlResource> UnCalculateFtResources(GoalCondition goalCondition);
+
     List<XmlResource> FullTimeResourcesSettleDetermined(GoalCondition goalCondition);
 
     List<XmlResource> AllResourcesSettleDetermined(GoalCondition goalCondition);
@@ -25,10 +28,13 @@ public class ResourceServiceImp : IResourceService
 
     private readonly IGoalRecordService goalRecordService;
 
-    public ResourceServiceImp(IActionResourceService actionResourceService, IGoalRecordService goalRecordService)
+    private readonly IMapper mapper;
+
+    public ResourceServiceImp(IActionResourceService actionResourceService, IGoalRecordService goalRecordService, IMapper mapper)
     {
         this.actionResourceService = actionResourceService;
         this.goalRecordService = goalRecordService;
+        this.mapper = mapper;
     }
 
     public List<XmlResource> HalftimeResources(GoalCondition goalCondition, int settlementStatusId)
@@ -121,6 +127,23 @@ public class ResourceServiceImp : IResourceService
         if (goalCondition.IsEnabledGoalRecordHt)
         {
             resources.Add(InitialResource(ResourceKey.HalftimeGoalRecord));
+        }
+
+        if (goalCondition.IsEnabledGoalRecordFt)
+        {
+            resources.Add(InitialResource(ResourceKey.FullTimeGoalRecord));
+        }
+
+        return resources;
+    }
+
+    public List<XmlResource> UnCalculateFtResources(GoalCondition goalCondition)
+    {
+        var resources = new List<XmlResource>();
+        if (goalCondition.IsExistFgLg)
+        {
+            resources.Add(InitialResource(ResourceKey.FullTimeFirstGoal));
+            resources.Add(InitialResource(ResourceKey.FullTimeLastGoal));
         }
 
         if (goalCondition.IsEnabledGoalRecordFt)

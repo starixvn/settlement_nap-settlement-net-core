@@ -3,7 +3,6 @@ import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, fakeAsync, flush, TestBed, tick } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { ModalContentDialogComponent, ModalDialogComponent, NotReadyMatchComponent, ResettleCheckerComponent } from '../../../shared/components';
 import { MaterialModule } from '../../../shared/material-module';
 import { PipesModule } from '../../../shared/pipes/pipes.module.native';
 import { ScorePipe } from '../../pipes/score.pipe';
@@ -28,6 +27,13 @@ import { ModalDialogMessage } from '../../../shared/models';
 import { Language } from '../../../shared/language.native';
 import { SettleQuery } from './models/query.model';
 import { VerificationBaseService } from '../../services/verification-base.service';
+import { ResettleCheckerComponent } from '../../../shared/components/resettle-checker/resettle-checker.component';
+import { NotReadyMatchComponent } from '../../../shared/components/not-ready-match/not-ready-match.component';
+import { ModalDialogComponent } from '../../../shared/components/modal-dialog/modal-dialog.component';
+import { ModalContentDialogComponent } from '../../../shared/components/modal-dialog/modal-content-dialog.component';
+import { BetStatus, ResourceIds } from '../../constants';
+import { ResultDetail } from '../../models';
+import { SettlementStatusId } from '../../../shared/constants';
 
 describe('CalculationComponent', () => {
   let component: CalculationComponent;
@@ -104,7 +110,9 @@ describe('CalculationComponent', () => {
         MaterialModule,
         ToastNoAnimationModule.forRoot(),
         ToastContainerModule,
-        ToastrModule.forRoot()
+        ToastrModule.forRoot(),
+        ResettleCheckerComponent,
+        NotReadyMatchComponent,
       ],
       schemas: [NO_ERRORS_SCHEMA],
       declarations: [
@@ -115,8 +123,6 @@ describe('CalculationComponent', () => {
         RefundChildMatchComponent,
         SoccerTicketCountComponent,
         ScorePipe,
-        ResettleCheckerComponent,
-        NotReadyMatchComponent,
         ModalDialogComponent,
         ModalContentDialogComponent,
       ],
@@ -157,7 +163,7 @@ describe('CalculationComponent', () => {
   });
 
   it('getMatch - should get match information', async () => {
-    spyOn(requestService, 'getMatch').and.returnValue(of(match));
+    requestService.getMatch = jest.fn().mockReturnValue(Promise.resolve(match));
 
     await component.getMatch(12345);
 
@@ -206,7 +212,7 @@ describe('CalculationComponent', () => {
     });
   });
 
-  describe('ticketStatusBackgrond (halfTime & fullTime)', () => {
+  describe('ticketStatusBackground (halfTime & fullTime)', () => {
     it('should return background calculated when status is calculated', () => {
       matchDetail.htStatus = 'Calculated';
       component.matchDetail = matchDetail;
@@ -315,8 +321,8 @@ describe('CalculationComponent', () => {
       matchDetail.isWarningFinalAwayScore = true;
       matchDetail.isWarningGoalRecord = true;
       component.matchDetail = matchDetail;
-      spyOn(verifyActionService, 'verifyFirstHalf').and.returnValue(of('errorMessage'));
-      spyOn(toastrService, 'clear');
+      verifyActionService.verifyFirstHalf = jest.fn().mockReturnValue(Promise.resolve('errorMessage'));
+      toastrService.clear = jest.fn();
 
       component.calculateHalfTime();
       tick();
@@ -331,8 +337,8 @@ describe('CalculationComponent', () => {
     }));
     it('should set error message when verify service return message', fakeAsync(() => {
       component.matchDetail = matchDetail;
-      spyOn(verifyActionService, 'verifyFirstHalf').and.returnValue('errorMessage');
-      spyOn(toastrService, 'error');
+      verifyActionService.verifyFirstHalf = jest.fn().mockReturnValue('errorMessage');
+      toastrService.error = jest.fn();
 
       component.calculateHalfTime();
       tick();
@@ -342,9 +348,9 @@ describe('CalculationComponent', () => {
 
     it('should show confirm when score lastest changed', fakeAsync(() => {
       component.matchDetail = matchDetail;
-      spyOn(verifyActionService, 'verifyFirstHalf').and.returnValue('');
-      spyOn(verifyActionService, 'isScoreChangedFirstHalf').and.returnValue(true);
-      spyOn(messageBoxService, 'confirm');
+      verifyActionService.verifyFirstHalf = jest.fn().mockReturnValue('');
+      verifyActionService.isScoreChangedFirstHalf = jest.fn().mockReturnValue(true);
+      messageBoxService.confirm = jest.fn();
 
 
       component.calculateHalfTime();
@@ -355,8 +361,8 @@ describe('CalculationComponent', () => {
 
     it('resettle should be true when score lastest changed and click yes', fakeAsync(() => {
       component.matchDetail = matchDetail;
-      spyOn(verifyActionService, 'verifyFirstHalf').and.returnValue('');
-      spyOn(verifyActionService, 'isScoreChangedFirstHalf').and.returnValue(true);
+      verifyActionService.verifyFirstHalf = jest.fn().mockReturnValue('');
+      verifyActionService.isScoreChangedFirstHalf = jest.fn().mockReturnValue(true);
 
 
       component.calculateHalfTime();
@@ -370,10 +376,10 @@ describe('CalculationComponent', () => {
 
     it('should calculate match when pass two confirm box', fakeAsync(async () => {
       component.matchDetail = matchDetail;
-      spyOn(verifyActionService, 'verifyFirstHalf').and.returnValue('');
-      spyOn(verifyActionService, 'isScoreChangedFirstHalf').and.returnValue(false);
-      spyOn(requestService, 'calculate').and.returnValue(of(successfulResult));
-      spyOn(closePopupService, 'closePopup');
+      verifyActionService.verifyFirstHalf = jest.fn().mockReturnValue('');
+      verifyActionService.isScoreChangedFirstHalf = jest.fn().mockReturnValue(false);
+      requestService.calculate = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
+      closePopupService.closePopup = jest.fn();
 
       await component.calculateHalfTime();
       tick();
@@ -396,8 +402,8 @@ describe('CalculationComponent', () => {
       matchDetail.isWarningFinalAwayScore = true;
       matchDetail.isWarningGoalRecord = true;
       component.matchDetail = matchDetail;
-      spyOn(verifyActionService, 'verifyFullTime').and.returnValue(of('errorMessage'));
-      spyOn(toastrService, 'clear');
+      verifyActionService.verifyFullTime = jest.fn().mockReturnValue(Promise.resolve('errorMessage'));
+      toastrService.clear = jest.fn();
 
       component.calculateFullTime();
       tick();
@@ -412,8 +418,8 @@ describe('CalculationComponent', () => {
     }));
     it('should set error message when verify service return message', fakeAsync(() => {
       component.matchDetail = matchDetail;
-      spyOn(verifyActionService, 'verifyFullTime').and.returnValue('errorMessage');
-      spyOn(toastrService, 'error');
+      verifyActionService.verifyFullTime = jest.fn().mockReturnValue('errorMessage');
+      toastrService.error = jest.fn();
 
       component.calculateFullTime();
       tick();
@@ -423,9 +429,9 @@ describe('CalculationComponent', () => {
 
     it('should show confirm when score lastest changed', fakeAsync(() => {
       component.matchDetail = matchDetail;
-      spyOn(verifyActionService, 'verifyFullTime').and.returnValue('');
-      spyOn(verifyActionService, 'isScoreChangedFullTime').and.returnValue(true);
-      spyOn(messageBoxService, 'confirm');
+      verifyActionService.verifyFullTime = jest.fn().mockReturnValue('');
+      verifyActionService.isScoreChangedFullTime = jest.fn().mockReturnValue(true);
+      messageBoxService.confirm = jest.fn();
 
 
       component.calculateFullTime();
@@ -436,8 +442,8 @@ describe('CalculationComponent', () => {
 
     it('resettle should be true when score lastest changed and click yes', fakeAsync(() => {
       component.matchDetail = matchDetail;
-      spyOn(verifyActionService, 'verifyFullTime').and.returnValue('');
-      spyOn(verifyActionService, 'isScoreChangedFullTime').and.returnValue(true);
+      verifyActionService.verifyFullTime = jest.fn().mockReturnValue('');
+      verifyActionService.isScoreChangedFullTime = jest.fn().mockReturnValue(true);
 
       component.calculateFullTime();
       tick();
@@ -452,9 +458,9 @@ describe('CalculationComponent', () => {
       component.matchDetail = matchDetail;
       childMatch.checked = true;
       component.childMatches = [childMatch];
-      spyOn(verifyActionService, 'verifyFullTime').and.returnValue('');
-      spyOn(verifyActionService, 'isScoreChangedFullTime').and.returnValue(false);
-      spyOn(messageBoxService, 'confirm');
+      verifyActionService.verifyFullTime = jest.fn().mockReturnValue('');
+      verifyActionService.isScoreChangedFullTime = jest.fn().mockReturnValue(false);
+      messageBoxService.confirm = jest.fn();
       const expectedMessage = `${Language.doubleCheckCalculateFullTime}${Language.soccer.confirmAutoRefundChildMatch}`;
 
       component.calculateFullTime();
@@ -465,10 +471,10 @@ describe('CalculationComponent', () => {
 
     it('should calculate match when pass two confirm box', fakeAsync(async () => {
       component.matchDetail = matchDetail;
-      spyOn(verifyActionService, 'verifyFullTime').and.returnValue('');
-      spyOn(verifyActionService, 'isScoreChangedFullTime').and.returnValue(false);
-      spyOn(requestService, 'calculate').and.returnValue(of(successfulResult));
-      spyOn(closePopupService, 'closePopup');
+      verifyActionService.verifyFullTime = jest.fn().mockReturnValue('');
+      verifyActionService.isScoreChangedFullTime = jest.fn().mockReturnValue(false);
+      requestService.calculate = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
+      closePopupService.closePopup = jest.fn();
 
       await component.calculateFullTime();
       tick();
@@ -491,8 +497,8 @@ describe('CalculationComponent', () => {
       matchDetail.isWarningFinalAwayScore = true;
       matchDetail.isWarningGoalRecord = true;
       component.matchDetail = matchDetail;
-      spyOn(verifyActionService, 'verifyAll').and.returnValue(of('errorMessage'));
-      spyOn(toastrService, 'clear');
+      verifyActionService.verifyAll = jest.fn().mockReturnValue(Promise.resolve('errorMessage'));
+      toastrService.clear = jest.fn();
 
       component.calculateAll();
       tick();
@@ -507,8 +513,8 @@ describe('CalculationComponent', () => {
     }));
     it('should set error message when verify service return message', fakeAsync(() => {
       component.matchDetail = matchDetail;
-      spyOn(verifyActionService, 'verifyAll').and.returnValue('errorMessage');
-      spyOn(toastrService, 'error');
+      verifyActionService.verifyAll = jest.fn().mockReturnValue('errorMessage');
+      toastrService.error = jest.fn();
 
       component.calculateAll();
       tick();
@@ -518,9 +524,9 @@ describe('CalculationComponent', () => {
 
     it('should show confirm when score lastest changed', fakeAsync(() => {
       component.matchDetail = matchDetail;
-      spyOn(verifyActionService, 'verifyAll').and.returnValue('');
-      spyOn(verifyActionService, 'isScoreChangedAll').and.returnValue(true);
-      spyOn(messageBoxService, 'confirm');
+      verifyActionService.verifyAll = jest.fn().mockReturnValue('');
+      verifyActionService.isScoreChangedAll = jest.fn().mockReturnValue(true);
+      messageBoxService.confirm = jest.fn();
 
 
       component.calculateAll();
@@ -531,8 +537,8 @@ describe('CalculationComponent', () => {
 
     it('resettle should be true when score lastest changed and click yes', fakeAsync(() => {
       component.matchDetail = matchDetail;
-      spyOn(verifyActionService, 'verifyAll').and.returnValue('');
-      spyOn(verifyActionService, 'isScoreChangedAll').and.returnValue(true);
+      verifyActionService.verifyAll = jest.fn().mockReturnValue('');
+      verifyActionService.isScoreChangedAll = jest.fn().mockReturnValue(true);
 
 
       component.calculateAll();
@@ -548,9 +554,9 @@ describe('CalculationComponent', () => {
       component.matchDetail = matchDetail;
       childMatch.checked = true;
       component.childMatches = [childMatch];
-      spyOn(verifyActionService, 'verifyAll').and.returnValue('');
-      spyOn(verifyActionService, 'isScoreChangedAll').and.returnValue(false);
-      spyOn(messageBoxService, 'confirm');
+      verifyActionService.verifyAll = jest.fn().mockReturnValue('');
+      verifyActionService.isScoreChangedAll = jest.fn().mockReturnValue(false);
+      messageBoxService.confirm = jest.fn();
       const expectedMessage = `${Language.doubleCheckCalculateAll}${Language.soccer.confirmAutoRefundChildMatch}`;
 
       component.calculateAll();
@@ -561,10 +567,10 @@ describe('CalculationComponent', () => {
 
     it('should calculate match when pass two confirm box', fakeAsync(async () => {
       component.matchDetail = matchDetail;
-      spyOn(verifyActionService, 'verifyAll').and.returnValue('');
-      spyOn(verifyActionService, 'isScoreChangedAll').and.returnValue(false);
-      spyOn(requestService, 'calculate').and.returnValue(of(successfulResult));
-      spyOn(closePopupService, 'closePopup');
+      verifyActionService.verifyAll = jest.fn().mockReturnValue('');
+      verifyActionService.isScoreChangedAll = jest.fn().mockReturnValue(false);
+      requestService.calculate = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
+      closePopupService.closePopup = jest.fn();
 
       await component.calculateAll();
       tick();
@@ -584,9 +590,9 @@ describe('CalculationComponent', () => {
       component.matchDetail = matchDetail;
       undoCheckingScore.errCode = 0;
       undoCheckingScore.errMsg = '';
-      spyOn(requestService, 'undoCheckingScore').and.returnValue(of(undoCheckingScore));
-      spyOn(requestService, 'pushInstantScore').and.returnValue(of(successfulResult));
-      spyOn(closePopupService, 'closePopup');
+      requestService.undoCheckingScore = jest.fn().mockReturnValue(Promise.resolve(undoCheckingScore));
+      requestService.pushInstantScore = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
+      closePopupService.closePopup = jest.fn();
 
       component.unCalcInstant();
       tick();
@@ -601,9 +607,9 @@ describe('CalculationComponent', () => {
       component.matchDetail = matchDetail;
       undoCheckingScore.errCode = 0;
       undoCheckingScore.errMsg = '';
-      spyOn(requestService, 'undoCheckingScore').and.returnValue(of(undoCheckingScore));
-      spyOn(requestService, 'pushInstantScore').and.returnValue(of(unSuccessfulResult));
-      spyOn(toastrService, 'error');
+      requestService.undoCheckingScore = jest.fn().mockReturnValue(Promise.resolve(undoCheckingScore));
+      requestService.pushInstantScore = jest.fn().mockReturnValue(Promise.resolve(unSuccessfulResult));
+      toastrService.error = jest.fn();
 
       component.unCalcInstant();
       tick();
@@ -623,8 +629,8 @@ describe('CalculationComponent', () => {
       undoCheckingScore.isHt = true;
       undoCheckingScore.goalRecord = 'ha';
       const expectedMessage = `${Language.soccer.confirmUnCalcInstant} <b>1-1 [HA] (HT)</b>`;
-      spyOn(requestService, 'undoCheckingScore').and.returnValue(of(undoCheckingScore));
-      spyOn(messageBoxService, 'confirm');
+      requestService.undoCheckingScore = jest.fn().mockReturnValue(Promise.resolve(undoCheckingScore));
+      messageBoxService.confirm = jest.fn();
 
       component.unCalcInstant();
       tick();
@@ -637,8 +643,8 @@ describe('CalculationComponent', () => {
       component.matchDetail = matchDetail;
       undoCheckingScore.errCode = 1;
       undoCheckingScore.errMsg = 'Message';
-      spyOn(requestService, 'undoCheckingScore').and.returnValue(of(undoCheckingScore));
-      spyOn(toastrService, 'error');
+      requestService.undoCheckingScore = jest.fn().mockReturnValue(Promise.resolve(undoCheckingScore));
+      toastrService.error = jest.fn();
 
       await component.unCalcInstant();
 
@@ -652,8 +658,8 @@ describe('CalculationComponent', () => {
 
     it('should calculate match when pass two confirm box', fakeAsync(() => {
       component.matchDetail = matchDetail;
-      spyOn(requestService, 'calculate').and.returnValue(of(successfulResult));
-      spyOn(closePopupService, 'closePopup');
+      requestService.calculate = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
+      closePopupService.closePopup = jest.fn();
 
       component.unCalculate();
       tick();
@@ -669,8 +675,8 @@ describe('CalculationComponent', () => {
 
     it('should show alert match when calculate return unsuccess', fakeAsync(async () => {
       component.matchDetail = matchDetail;
-      spyOn(requestService, 'calculate').and.returnValue(of(unSuccessfulResult));
-      spyOn(toastrService, 'error');
+      requestService.calculate = jest.fn().mockReturnValue(Promise.resolve(unSuccessfulResult));
+      toastrService.error = jest.fn();
 
       await component.unCalculate();
       tick();
@@ -688,8 +694,8 @@ describe('CalculationComponent', () => {
       component.matchDetail = matchDetail;
       component.applyHedgeMatch = false;
       component.isReSettledTickets = false;
-      spyOn(requestService, 'calculate').and.returnValue(of(unSuccessfulResult));
-      spyOn(closePopupService, 'closePopup');
+      requestService.calculate = jest.fn().mockReturnValue(Promise.resolve(unSuccessfulResult));
+      closePopupService.closePopup = jest.fn();
       const query = new SettleQuery(matchDetail, 0, 'UNDO', false, null);
 
       component.unCalculate();
@@ -711,7 +717,7 @@ describe('CalculationComponent', () => {
       matchDetail.isWarningFinalAwayScore = true;
       matchDetail.isWarningGoalRecord = true;
       component.matchDetail = matchDetail;
-      spyOn(toastrService, 'clear');
+      toastrService.clear = jest.fn();
 
       component.unCalculate();
       tick();
@@ -723,6 +729,54 @@ describe('CalculationComponent', () => {
       expect(component.matchDetail.isWarningGoalRecord).toBeFalsy();
       expect(toastrService.clear).toHaveBeenCalled();
       flush();
+    }));
+  });
+
+
+  describe('unCalculateFT', () => {
+    it('should show error when match is Abandoned 1H', () => {
+      matchDetail.betStatus = BetStatus.abandoned1H;
+      component.matchDetail = matchDetail;
+      component.match = match;
+      toastrService.error = jest.fn();
+
+      component.unCalculateFT();
+
+      expect(toastrService.error).toHaveBeenCalled();
+    });
+
+    it('should show error when match is Refund ALL', () => {
+      const resultDetailHalfTime = new ResultDetail();
+      resultDetailHalfTime.settlementStatusId = SettlementStatusId.Refund;
+      resultDetailHalfTime.resourceId = ResourceIds.halfTime;
+      matchDetail.betStatus = `Refund; 1-2`;
+      match.resultDetails = [resultDetailHalfTime];
+      component.matchDetail = matchDetail;
+      component.match = match;
+      toastrService.error = jest.fn();
+
+      component.unCalculateFT();
+
+      expect(toastrService.error).toHaveBeenCalled();
+    });
+
+    it('should uncalculate match when pass two confirm box', fakeAsync(() => {
+      matchDetail.betStatus = '';
+      component.matchDetail = matchDetail;
+      component.match = match;
+      requestService.calculate = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
+      closePopupService.closePopup = jest.fn();
+
+      component.unCalculate();
+      tick();
+      let buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
+      buttonYes.click();
+      tick();
+      buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
+      buttonYes.click();
+      tick();
+
+      expect(requestService.calculate).toHaveBeenCalled();
     }));
   });
 });

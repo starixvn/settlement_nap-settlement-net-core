@@ -1619,6 +1619,7 @@ header .notification-container .notificationWrap .error-notify .see-all {
 .calc-popup .calc-action .row-2 .action-button .instant {
   width: 130px;
 }
+
 .calc-popup .calc-action .row-2 input[type="button"]:disabled {
   border-radius: 2px;
   -moz-border-radius: 2px;

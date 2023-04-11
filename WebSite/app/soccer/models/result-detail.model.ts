@@ -1,4 +1,3 @@
-import * as _ from 'lodash';
 import { ResultSettingModel, GeneralResultDetail } from '../../shared/models';
 export class ResultDetail extends GeneralResultDetail{
     public map: number;

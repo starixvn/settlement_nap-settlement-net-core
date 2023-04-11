@@ -10,6 +10,8 @@ public static class ActionType
 
     public const string UnCalculate = "UNDO";
 
+    public const string UnCalculateFullTime = "UNDO-FT";
+
     public const string RefundHalfTime = "REFUND-HT";
 
     public const string RefundFullTime = "REFUND-FT";
