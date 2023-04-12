@@ -14,9 +14,9 @@ export class CalculateService {
 
     public static VerifySettledSelected(selectedTeams: Team[], originalTeams: Team[]) {
         const settledTeams = originalTeams.filter(team => !_.isEqual(team.status.toLowerCase(), Status.running));
-        const settledTeamOrids = settledTeams.map(t => t.orId);
+        const settledTeamOrIds = settledTeams.map(t => t.orId);
 
-        if (selectedTeams.some(t => settledTeamOrids.includes(t.orId))) {
+        if (selectedTeams.some(t => settledTeamOrIds.includes(t.orId))) {
             return true;
         }
 
@@ -33,7 +33,7 @@ export class CalculateService {
         if ((teamWonSelectedNoneDeadHeat.length === 1 && teamSettledNoneDeadHeat.length >= 1 && _.isEmpty(teamSettledDeadHeat)) ||
             (teamWonSelectedNoneDeadHeat.length > 1 && _.isEmpty(teamSettledDeadHeat)) ||
             (teamWonSelectedDeadHeat.length > 1 && _.isEmpty(teamWonSettled) && _.isEmpty(teamSettledDeadHeat))) {
-            return Language.Outright.incorrectDeadHeatSetting;
+                return this.MessageInconsistentDeadheat(teamWonSelected.concat(teamWonSettled), Language.Outright.incorrectDeadHeatSetting);
         }
         return "";
     }
@@ -44,14 +44,20 @@ export class CalculateService {
         const teamSettledDeadHeat = _.filter(teamWonSettled, team => team.isDeadheat);
         const teamSettledNoneDeadHeat = _.filter(teamWonSettled, team => !team.isDeadheat);
 
-        if ((teamWonSelectedNoneDeadHeat.length === 1 && teamSettledNoneDeadHeat.length >= 1 && _.isEmpty(teamSettledDeadHeat)) ||
-            (!_.isEmpty(teamWonSelectedNoneDeadHeat) && !_.isEmpty(teamSettledDeadHeat))||
-            (!_.isEmpty(teamWonSelectedNoneDeadHeat) && !_.isEmpty(teamWonSelectedDeadHeat))) {
-            return Language.Outright.incorrectDeadHeatSetting;
+        if (teamWonSelectedNoneDeadHeat.length > 1) {
+            return this.MessageInconsistentDeadheat(teamWonSelected.concat(teamWonSettled), Language.Outright.incorrectDeadHeatSetting);
+        }
+
+        if (teamWonSelectedNoneDeadHeat.length === 1) {
+            if ((teamSettledNoneDeadHeat.length >= 1 && _.isEmpty(teamSettledDeadHeat)) ||
+                !_.isEmpty(teamSettledDeadHeat) ||
+                !_.isEmpty(teamWonSelectedDeadHeat)){
+                    return this.MessageInconsistentDeadheat(teamWonSelected.concat(teamWonSettled), Language.Outright.incorrectDeadHeatSetting);
+                }
         }
 
         if (VerifyDeadHeatService.VerifyDeadheatSettingYes(teamWonSelected, teamWonSettled)) {
-            return this.MessageInconsistentDeadheat(teamWonSelected.concat(teamWonSettled))
+            return this.MessageInconsistentDeadheat(teamWonSelected.concat(teamWonSettled), Language.Outright.inconsistentDeadheat);
         }
 
         return "";
@@ -61,11 +67,11 @@ export class CalculateService {
         const teamWonSelectedDeadHeat = _.filter(teamWonSelected, team => team.isDeadheat);
 
         if (teamWonSelectedDeadHeat.length > 0) {
-            return Language.Outright.incorrectDeadHeatSetting;
+            return this.MessageInconsistentDeadheat(teamWonSelected.concat(teamWonSettled), Language.Outright.incorrectDeadHeatSetting);
         }
 
         if (VerifyDeadHeatService.VerifyDeadheatSettingNo(teamWonSelected, teamWonSettled)) {
-            return this.MessageInconsistentDeadheat(teamWonSelected.concat(teamWonSettled))
+            return this.MessageInconsistentDeadheat(teamWonSelected.concat(teamWonSettled), Language.Outright.inconsistentDeadheat);
         }
 
         return "";
@@ -87,10 +93,9 @@ export class CalculateService {
         return false;
     }
 
-    public static MessageInconsistentDeadheat(wonTeams: Team[]) {
-        let message = "<br/>";
-        wonTeams.forEach(team => message += `${team.teamName} | `);
-        return Language.Outright.inconsistentDeadheat.replace('{0}', message);
+    public static MessageInconsistentDeadheat(wonTeams: Team[], message: string) {
+        const teamNames = wonTeams.map(item => item.teamName);
+        return message.replace('{0}', `<br/>${teamNames.join(' | ')}`);
     }
 
     public static VerifyOnlyOneTeamWon(teamWonSelected: Team[], teamWonSettled: Team[]) {

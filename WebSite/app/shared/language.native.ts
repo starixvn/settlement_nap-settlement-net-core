@@ -257,14 +257,14 @@
     calculatePageWarning: "Please input Match Code/ID, select at least 1 League, Match Type, or Over Status.",
     Outright: {
         existRunning: "Please input score.",
-        inconsistentDeadheat: "All Won teams must be either with or without Dead Heat. Please recheck or uncalculate first then try again.<br/>Selected and settled Won team:\n{0}",
+        inconsistentDeadheat: "All Won teams must be selected and all must either be with or without Dead Heat. Please recheck or uncalculate first then try again.<br/>Selected and settled Won teams:\n{0}",
         titleLogPopup: 'Outright Settlement Log',
         atLeastTwoDeadHeat: "Must select at least 2 Won teams to calculate with Dead Heat.",
         nonDeadHeatConfirm: "Multiple Won teams without Dead Heat detected. Are you sure you want to proceed?",
         confirmCalculate: "Are you sure you want to CALCULATE the selected matches?",
         confirmUncalculate: "Are you sure you want to UNCALCULATE the selected matches?",
         existHideTicketNotVoided: "Cannot calculate as Hide due to no accepted tickets or all tickets are not Voided.",
-        incorrectDeadHeatSetting: "Cannot continue due to Dead Heat not set or set incorrectly. Please check and try again.",
+        incorrectDeadHeatSetting: "Cannot continue due to Dead Heat is not set or set incorrectly. Please check and try again.<br/>Selected and settled Won teams:\n{0}",
         existTeamSettled: "Calculate function do not support settled Teams. Please recheck or use Re-Calculate function."
     }
 };

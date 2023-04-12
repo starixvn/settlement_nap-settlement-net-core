@@ -126,24 +126,29 @@ export class CalculatePopupComponent implements OnInit {
         const teamWonSettled = CalculateService.teamWonSettled(this.teamSelected, this.originalTeam);
         const teamHideSelected = _.filter(this.teamSelected, team => _.isEqual(team.status.toLowerCase(), Status.hide));
         this.teamSettleWon = teamWonSelected.concat(teamWonSettled);
-        await this.validateBeforePush(this.teamSettleWon, teamWonSettled, teamWonSelected, teamHideSelected, isCalc)
+        await this.validateBeforePush(teamWonSettled, teamWonSelected, teamHideSelected, isCalc)
     };
 
     public onSelectDate(value: NgbDateStruct, team: Team) {
         team.eventDate = this.verifyDateService.dateFormat(value);
     }
 
-    private async validateBeforePush(teamSettleWon: Team[], teamWonSettled: Team[], teamWonSelected: Team[], teamHideSelected: Team[], isCalc: boolean = true) {
-        const setting = await this.outrightService.getDeadHeatSetting(this.data.leagueId);
-        const errorSettingMessage = this.verifySetting(setting, teamWonSettled, teamWonSelected);
-
+    private async validateBeforePush(teamWonSettled: Team[], teamWonSelected: Team[], teamHideSelected: Team[], isCalc: boolean = true) {
         if (isCalc && CalculateService.VerifySettledSelected(this.teamSelected, this.originalTeam)) {
             this.toastrService.error(Language.Outright.existTeamSettled);
         } else if (CalculateService.ExistRunningStatus(this.teamSelected)) {
             this.toastrService.error(Language.Outright.existRunning);
         } else if (CalculateService.VerifyOnlyOneTeamWon(teamWonSelected, teamWonSettled)) {
             this.toastrService.error(Language.Outright.atLeastTwoDeadHeat);
-        } else if (!_.isEmpty(errorSettingMessage)) {
+        } else {
+            this.verifyDeadHead(teamWonSettled, teamWonSelected, teamHideSelected);
+        }
+    }
+
+    private async verifyDeadHead(teamWonSettled: Team[], teamWonSelected: Team[], teamHideSelected: Team[]) {
+        const setting = await this.outrightService.getDeadHeatSetting(this.data.leagueId);
+        const errorSettingMessage = this.verifySetting(setting, teamWonSettled, teamWonSelected);
+        if (!_.isEmpty(errorSettingMessage)) {
             this.toastrService.error(errorSettingMessage);
         } else if (!(await this.VerifyHideStatus(teamHideSelected))) {
             this.toastrService.error(Language.Outright.existHideTicketNotVoided)
