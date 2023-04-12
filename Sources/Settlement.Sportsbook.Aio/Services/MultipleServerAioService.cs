@@ -5,6 +5,7 @@ using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Sportsbook.Aio.Constants;
 using Settlement.Sportsbook.Aio.Criteria;
+using Settlement.Sportsbook.Aio.Criteria.Cricket;
 using Settlement.Sportsbook.Aio.Requests;
 using Settlement.Sportsbook.Aio.Services.Cricket;
 
@@ -186,22 +187,21 @@ public class MultipleServerAioServiceImp : MultipleServerAioService
 
     private async Task<Result> SettleChildMatchAndNetPosition(SettleCriteria criteria, List<ResultCommand> resultCommands)
     {
-        var request = new NetPositionRequest
+        var updateStatusCriteria = new UpdateStatusServiceCriteria
         {
-            Action = criteria.Action,
-            IsHedgeMatch = criteria.IsHedgeMatch,
             MatchId = criteria.MatchId,
-            ResultCommand = resultCommands
+            Action = criteria.Action
         };
 
         var childMatchIds = await GetChildMatchIds(criteria.MatchId, criteria.Action, criteria.SelectedResources);
 
-        var result = new Result();
-        if (criteria.Action.Equals(SettleType.Undo) || criteria.Action.Equals(SettleType.Calculate) ||
-            criteria.Action.Equals(SettleType.Refund))
+        var result = criteria.Action switch
         {
-            result = await netPositionService.NetPosition(request);
-        }
+            SettleType.Calculate or SettleType.Refund => await netPositionService.Calculate(updateStatusCriteria,
+                resultCommands, criteria.IsHedgeMatch),
+            SettleType.Undo => await netPositionService.UnCalculate(updateStatusCriteria, resultCommands),
+            _ => new Result()
+        };
 
         result.ChildMatchIds = childMatchIds;
 

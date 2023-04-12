@@ -323,6 +323,12 @@
       <Setting Key="NAP_Admin_Settlement_50_MoveTicket_DBSID02" SpName="NAP_Admin_Settlement_50_MoveTicket" DbName="DBSID02.bodb02.bodbAdminNet" />
     </Function>
 
+    <Function Name="NAP_Admin_Settlement_50">
+      <Setting Key="NAP_Admin_Settlement_50_DBTXN" SpName="NAP_Admin_Settlement_50" DbName="DBTXN.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Admin_Settlement_50_DBSID01" SpName="NAP_Admin_Settlement_50" DbName="DBSID01.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Admin_Settlement_50_DBSID02" SpName="NAP_Admin_Settlement_50" DbName="DBSID02.bodb02.bodbAdminNet" />
+    </Function>
+
     <Function Name="NAP_Settlement_InstantCalculation_Checking">
       <Setting Key="NAP_Settlement_InstantCalculation_Checking_DBTXN" SpName="NAP_Settlement_InstantCalculation_Checking" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="NAP_Settlement_InstantCalculation_Checking_DBSID01" SpName="NAP_Settlement_InstantCalculation_Checking" DbName="DBSID01.bodb02.bodbAdminNet" />
