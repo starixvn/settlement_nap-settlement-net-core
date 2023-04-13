@@ -100,11 +100,11 @@ export class CashOutResultUpdateQuery {
 export class CashOutResultRefundQuery {
     matchId: number;
     half: number;
-    betstatus: string;
+    betStatus: string;
 
-    constructor(matchId: number, betstatus: string, half: number) {
+    constructor(matchId: number, betStatus: string, half: number) {
         this.matchId = matchId;
-        this.betstatus = betstatus;
+        this.betStatus = betStatus;
         this.half = half;
     }
 }
