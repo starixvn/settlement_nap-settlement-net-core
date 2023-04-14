@@ -18,6 +18,8 @@ public class SoccerAutoMapperProfile : Profile
             .ForMember(dest => dest.Action, opt => opt.MapFrom(src => src.ActionName));
         CreateMap<SettleRequest, GoalCondition>();
         CreateMap<InstantCalculationRequest, PushInstantCalculationCriteria>();
+        //.ForMember(des => des.Action, opt => opt.MapFrom(src => $"{src.Action}-{src.Mode}"));
+
         CreateMap<RefundRequest, GoalCondition>();
         CreateMap<GetSpecificBetTypeRequest, SpecificBetTypesCriteria>();
         CreateMap<CheckingMarkedTicketsRequest, CheckingMarkedTicketsCriteria>().ForMember(dest => dest.Action, opt => opt.MapFrom(src => src.ActionName));

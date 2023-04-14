@@ -16,7 +16,7 @@ export class UpdateInstantQuery {
     //    goalRecord: string;
     //    firstGoalValue: string;
     //    betStatus: string;
-    //    childMatchType: number;
+    childMatchType: number;
     constructor(match: CalculationMatch) {
         this.homeScore = match.instantHomeScore;
         this.awayScore = match.instantAwayScore;
@@ -24,6 +24,6 @@ export class UpdateInstantQuery {
         this.isHalfTime = _.isEqual(match.instantCalculationType, InstantCalculationType.calcHt);
         //   this.instantKey = match.instantKey;
         this.action = "CAL";
-        //   this.childMatchType = match.childMatchType;
+        this.childMatchType = match.childMatchType;
     }
 }

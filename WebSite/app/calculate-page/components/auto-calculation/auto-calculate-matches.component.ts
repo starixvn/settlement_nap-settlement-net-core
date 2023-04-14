@@ -105,7 +105,7 @@ export class AutoCalculateMatchesComponent extends MatchesBaseComponent implemen
             AutoSettingType.instant,
             !match.autoCalcSetting.isInstantForMatch
         );
-    const result = await this.requestService.updateSettingMatch(query);
+        const result = await this.requestService.updateSettingMatch(query);
         if (result.errCode === 0) {
             match.autoCalcSetting.isInstantForMatch = !match.autoCalcSetting.isInstantForMatch;
 
@@ -133,7 +133,7 @@ export class AutoCalculateMatchesComponent extends MatchesBaseComponent implemen
             !autoCalcSetting.isInstantForLeague,
             isApplyAll
         );
-    const result = await this.requestService.updateSettingLeague(query);
+        const result = await this.requestService.updateSettingLeague(query);
         if (result.errCode === 0) {
             autoCalcSetting.isInstantForLeague = !autoCalcSetting.isInstantForLeague;
             if (isApplyAll) {
@@ -176,11 +176,11 @@ export class AutoCalculateMatchesComponent extends MatchesBaseComponent implemen
         return match.instantStatus.includes('LIVE') ? "live-red" : "";
     }
 
-    private doUpdateInstantStatus(match: CalculationMatch) {
+    public doUpdateInstantStatus(match: CalculationMatch) {
         const query = new UpdateInstantQuery(match)
         this.dialogConfirmMessage.message = Language.instants.confirmExecuteInstant;
         this.messageBoxService.confirm(this.dialogConfirmMessage, async () => {
-            const resultPushScore = await this.requestService.pushInstantStatus(query).toPromise();
+            const resultPushScore = await this.requestService.pushInstantStatus(query);
             if (resultPushScore.errCode === 0) {
                 this.handleActionService.handleChangeInstantStatus(match);
             } else {

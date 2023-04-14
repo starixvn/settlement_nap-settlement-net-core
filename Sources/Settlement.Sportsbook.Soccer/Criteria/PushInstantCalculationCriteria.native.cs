@@ -9,7 +9,7 @@ public class PushInstantCalculationCriteria : NonQueryCommand
 
     public int MatchId { get; set; }
 
-    public int InstantKey { get; set; }
+    //public int InstantKey { get; set; }
 
     public string HomeScore { get; set; }
 
@@ -17,7 +17,7 @@ public class PushInstantCalculationCriteria : NonQueryCommand
 
     public string Action { get; set; }
 
-    public string Mode { get; set; }
+    //public string Mode { get; set; }
 
     public string Ip { get; set; }
 

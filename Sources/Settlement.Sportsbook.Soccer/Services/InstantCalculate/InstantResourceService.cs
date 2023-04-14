@@ -31,6 +31,7 @@ public class InstantResourceServiceImp : IInstantResourceService
     private readonly XmlConvertService xmlConvertService;
 
     private const char HomeValue = 'H';
+    private const char AwayValue = 'A';
 
     private const string FgHomeBetStatus = "FL:1-0;";
 
@@ -70,12 +71,53 @@ public class InstantResourceServiceImp : IInstantResourceService
             resources.Add(resource);
         }
 
+        if (goalCondition.IsExistHTFirstCorner)
+        {
+            var resource = GetHTFirstCornerResource(goalCondition);
+            resources.Add(resource);
+        }
+
         if (goalCondition.IsExistFirstCorner)
         {
+            var resource = GetFirstCornerResource(goalCondition);
+            resources.Add(resource);
+        }
 
+        if (goalCondition.IsExistHTCorner)
+        {
+            var resource = GetExistHTCornerRaceResource(goalCondition);
+            resources.AddRange(resource);
         }
 
         return resources;
+    }
+
+    private List<XmlResource> GetExistHTCornerRaceResource(InstantGoalCondition goalCondition)
+    {
+        var halftimeGoal = goalRecordService.HalftimeGoal(goalCondition.GoalRecord);
+        var result = ConvertGoalRecordToRace(halftimeGoal);
+
+        return result.Select(v => new XmlResource
+        {
+            HomeValue = $"{v.value}",
+            ResourceId = $"{ResourceKey.HalftimeCornerRace}{ConvertIntToString(v.raceTo)}",
+            ResultStatusId = ResultStatus.ManuallySettled,
+            SettlementStatusId = SettlementStatus.Completed,
+        }).ToList();
+    }
+
+    private List<XmlResource> GetExistCornerRaceResource(InstantGoalCondition goalCondition)
+    {
+        var fullTimeGoalRecord = CreateFullTimeGoalRecord(goalCondition.GoalRecord);
+        var result = ConvertGoalRecordToRace(fullTimeGoalRecord);
+
+        return result.Select(v => new XmlResource
+        {
+            HomeValue = $"{v.value}",
+            ResourceId = $"{ResourceKey.HalftimeCornerRace}{ConvertIntToString(v.raceTo)}",
+            ResultStatusId = ResultStatus.ManuallySettled,
+            SettlementStatusId = SettlementStatus.Completed,
+        }).ToList();
     }
 
     public List<XmlResource> FullTime(InstantGoalCondition goalCondition)
@@ -85,6 +127,25 @@ public class InstantResourceServiceImp : IInstantResourceService
         {
             var resource = GetFirstGoalResource(goalCondition);
             resources.Add(resource);
+        }
+
+        if (goalCondition.IsExistFirstCorner)
+        {
+            var resource = GetFirstCornerResource(goalCondition);
+            resources.Add(resource);
+        }
+
+        if (goalCondition.IsExist2HFirstCorner)
+        {
+            var resource = Get2HFirstCornerResource(goalCondition);
+            resources.Add(resource);
+        }
+
+
+        if (goalCondition.IsExistCorner)
+        {
+            var resource = GetExistCornerRaceResource(goalCondition);
+            resources.AddRange(resource);
         }
 
         return resources;
@@ -171,6 +232,48 @@ public class InstantResourceServiceImp : IInstantResourceService
         };
     }
 
+    private XmlResource GetHTFirstCornerResource(InstantGoalCondition goalCondition)
+    {
+        var halftimeGoal = goalRecordService.HalftimeGoal(goalCondition.GoalRecord);
+        var firstGoalRecord = halftimeGoal.FirstOrDefault();
+
+        return new XmlResource
+        {
+            ResourceId = ResourceKey.HaftTimeFirstCorner,
+            ResultStatusId = ResultStatus.ManuallySettled,
+            SettlementStatusId = SettlementStatus.Completed,
+            HomeValue = $"{firstGoalRecord}",
+        };
+    }
+
+    private XmlResource GetFirstCornerResource(InstantGoalCondition goalCondition)
+    {
+        var fullTimeGoalRecord = CreateFullTimeGoalRecord(goalCondition.GoalRecord);
+        var firstGoalRecord = fullTimeGoalRecord.FirstOrDefault();
+
+        return new XmlResource
+        {
+            ResourceId = ResourceKey.FirstCorner,
+            ResultStatusId = ResultStatus.ManuallySettled,
+            SettlementStatusId = SettlementStatus.Completed,
+            HomeValue = $"{firstGoalRecord}",
+        };
+    }
+
+    private XmlResource Get2HFirstCornerResource(InstantGoalCondition goalCondition)
+    {
+        var towHGoalRecord = goalRecordService.FullTimeGoal(goalCondition.GoalRecord);
+        var firstGoalRecord = towHGoalRecord.FirstOrDefault();
+
+        return new XmlResource
+        {
+            ResourceId = ResourceKey.TowHFirstCorner,
+            ResultStatusId = ResultStatus.ManuallySettled,
+            SettlementStatusId = SettlementStatus.Completed,
+            HomeValue = firstGoalRecord.ToString(),
+        };
+    }
+
     private XmlResource GetHalftimeFirstGoalResource(InstantGoalCondition goalCondition)
     {
         var halftimeGoal = goalRecordService.HalftimeGoal(goalCondition.GoalRecord);
@@ -184,6 +287,38 @@ public class InstantResourceServiceImp : IInstantResourceService
             SettlementStatusId = goalAction.FirstGoalSettlementStatusId,
             HomeValue = firstGoalRecord
         };
+    }
+    private string CreateFullTimeGoalRecord(string goalRecord) => goalRecord.Replace(";", "");
+
+    private static string ConvertIntToString(int num) => num < 10 ? $"0{num}" : $"{num}";
+
+    private static List<GoalRecord> ConvertGoalRecordToRace(string goalRecord)
+    {
+        var homeRaceTo = 0;
+        var awayRaceTo = 0;
+        var result = new List<GoalRecord>();
+
+        foreach (var item in goalRecord)
+        {
+            if (item.Equals(HomeValue))
+            {
+                homeRaceTo = homeRaceTo + 1;
+                if (homeRaceTo > awayRaceTo)
+                {
+                    result.Add(new GoalRecord(item, homeRaceTo));
+                }
+            }
+            else
+            {
+                awayRaceTo = awayRaceTo + 1;
+                if (awayRaceTo > homeRaceTo)
+                {
+                    result.Add(new GoalRecord(item, awayRaceTo));
+                }
+            }
+        }
+
+        return result;
     }
 
     private XmlResource GetFirstGoalResource(InstantGoalCondition goalCondition)
@@ -229,3 +364,6 @@ public class InstantResourceServiceImp : IInstantResourceService
         };
     }
 }
+
+
+record GoalRecord(char value, int raceTo);

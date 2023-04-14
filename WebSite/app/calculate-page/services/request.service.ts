@@ -9,23 +9,23 @@ import { DetectChangesService } from "./detect-changes.service";
 import { League as BaseLeague } from "../../shared/models";
 @Injectable()
 export class RequestService {
-  private calculationApi = '/api/calculation';
-  private settingApi = '/api/setting';
-  private soccerApi = '/api/soccer';
+    private calculationApi = '/api/calculation';
+    private settingApi = '/api/setting';
+    private soccerApi = '/api/soccer';
 
     constructor(private readonly httpRequestService: HttpRequestService,
         private readonly backGroundService: BackGroundService,
         private readonly detectChangesService: DetectChangesService) { }
 
     public getLeague(params: object) {
-    const request = this.httpRequestService.postJson<BaseLeague[]>(params, `${this.calculationApi}/get-League`, false);
-    return firstValueFrom(request);
+        const request = this.httpRequestService.postJson<BaseLeague[]>(params, `${this.calculationApi}/get-League`, false);
+        return firstValueFrom(request);
     }
 
-  public getDate() {
-    const url = `/api/multi-sports/get-date`;
-    const request = this.httpRequestService.getJson<DateFilter>(url);
-    return firstValueFrom(request);
+    public getDate() {
+        const url = `/api/multi-sports/get-date`;
+        const request = this.httpRequestService.getJson<DateFilter>(url);
+        return firstValueFrom(request);
     }
 
   public search(params: FilterQuery) {
@@ -54,7 +54,7 @@ export class RequestService {
         };
         const url = `${this.calculationApi}/auto-refresh`;
     const request =  this.httpRequestService.postMessagePack<CalculationMatch[]>(query, url, false);
-    return firstValueFrom(request);
+        return firstValueFrom(request);
     }
 
     private getNewestAutoMatches(leagueId: string) {
@@ -63,40 +63,40 @@ export class RequestService {
         };
         const url = `${this.calculationApi}/auto-refresh-auto-calculation`;
     const request = this.httpRequestService.postMessagePack<CalculationMatch[]>(query, url, false);
-    return firstValueFrom(request);
+        return firstValueFrom(request);
     }
 
     public async refreshMatches(leagueIds: string, currentLeagues: League[], isAutoCalculatePage = false) {
-    const matchesWaiting = isAutoCalculatePage ? await this.getNewestAutoMatches(leagueIds) :
-      await this.getNewestMatches(leagueIds);
+        const matchesWaiting = isAutoCalculatePage ? await this.getNewestAutoMatches(leagueIds) :
+            await this.getNewestMatches(leagueIds);
         this.changeInfoAfterRefreshMatches(currentLeagues, matchesWaiting, isAutoCalculatePage);
     }
 
     public getMatchDetail(matchId: number) {
-    const url = `/api/fast-market/get-match`;
+        const url = `/api/fast-market/get-match`;
         const query = { matchId };
-    const request = this.httpRequestService.postJson(query, url);
-    return firstValueFrom(request);
+        const request = this.httpRequestService.postJson(query, url);
+        return firstValueFrom(request);
     }
 
-  public updateSettingMatch(query: AutoSettingMatchQuery) {
-    const request = this.httpRequestService.postJson<Result>(query, `${this.settingApi}/update-setting-match`);
-    return firstValueFrom(request);
+    public updateSettingMatch(query: AutoSettingMatchQuery) {
+        const request = this.httpRequestService.postJson<Result>(query, `${this.settingApi}/update-setting-match`);
+        return firstValueFrom(request);
     }
 
-  public updateSettingLeague(query: AutoSettingLeagueQuery) {
-    const request = this.httpRequestService.postJson<Result>(query, `${this.settingApi}/update-setting-league`);
-    return firstValueFrom(request);
+    public updateSettingLeague(query: AutoSettingLeagueQuery) {
+        const request = this.httpRequestService.postJson<Result>(query, `${this.settingApi}/update-setting-league`);
+        return firstValueFrom(request);
     }
 
-    public checkingMatch(query: UpdateInstantQuery): Observable<MatchCheckingResult> {
-    const request = this.httpRequestService.postJson<MatchGoalRecord>(query, `${this.soccerApi}/match-checking`);
-    return firstValueFrom(request);
+    public checkingMatch(query: UpdateInstantQuery) {
+        const request = this.httpRequestService.postJson<MatchCheckingResult>(query, `${this.soccerApi}/match-checking`);
+        return firstValueFrom(request);
     }
 
-  public pushInstantStatus(query: UpdateInstantQuery, result: MatchGoalRecord) {
-    const request = this.httpRequestService.postJson<Result>(query, `${this.soccerApi}/push-instant-score`);
-    return firstValueFrom(request);
+    public pushInstantStatus(query: UpdateInstantQuery) {
+        const request = this.httpRequestService.postJson<Result>(query, `${this.soccerApi}/push-instant-score`);
+        return firstValueFrom(request);
     }
 
     private changeInfoAfterRefreshMatches(currentLeagues: League[], matches: CalculationMatch[], isAutoCalculatePage: boolean) {
@@ -125,7 +125,6 @@ export class RequestService {
                     match.remark = newMatch.remark;
                     match.suspenderHalfTime = newMatch.suspenderHalfTime;
                     match.suspenderFullTime = newMatch.suspenderFullTime;
-                    match.mixParlay = newMatch.mixParlay;
                     match.exHalfTimeScore = newMatch.exHalfTimeScore;
                     match.exFullTimeScore = newMatch.exFullTimeScore;
                     match.showLink = this.backGroundService.isShowLink(newMatch);
@@ -133,9 +132,7 @@ export class RequestService {
                     match.fastMarketStatus = newMatch.fastMarketStatus;
                     match.isExistMarkedTicket = newMatch.isExistMarkedTicket;
                     match.isExistRunningTicket = newMatch.isExistRunningTicket;
-                    match.isExistMarkedTicketParlay = newMatch.isExistMarkedTicketParlay;
-                    match.isExistRunningTicketParlay = newMatch.isExistRunningTicketParlay;
-          match.confirmFullTimeScore = newMatch.confirmFullTimeScore;
+                    match.confirmFullTimeScore = newMatch.confirmFullTimeScore;
                     match.confirmHalfTimeScore = newMatch.confirmHalfTimeScore;
                     match.goalIcon = newMatch.goalIcon;
                     match.isNotConsistentExHtScore = newMatch.isNotConsistentExHtScore;
@@ -154,7 +151,7 @@ export class RequestService {
         oldMatch.instantStatus = newMatch.instantStatus;
         oldMatch.instantStatusId = newMatch.instantStatusId;
         oldMatch.instantCalculationType = newMatch.instantCalculationType;
-    oldMatch.isFtCalculated = newMatch.isFtCalculated;
+        oldMatch.isFtCalculated = newMatch.isFtCalculated;
         oldMatch.instantHomeScore = newMatch.instantHomeScore;
         oldMatch.instantAwayScore = newMatch.instantAwayScore;
         oldMatch.instantKey = newMatch.instantKey;

@@ -147,7 +147,7 @@
               >
                 <span [ngClass]="getColorInstant(match)">
                   <div
-                    <div *ngIf="match.instantCalculationType != instantCalcFt || !match.isFtCalculated">
+                    *ngIf="
                       match.instantStatusId == instantStatus.confirm;
                       else noNeed
                     "
