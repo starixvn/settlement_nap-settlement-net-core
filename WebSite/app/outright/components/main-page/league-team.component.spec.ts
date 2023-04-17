@@ -41,11 +41,11 @@ describe('LeagueTeamComponent', () => {
             betCount: 1,
             isDeadheat: true,
             disableDeadheat: false,
-            isSettled: true,
             selected: false,
             eventDate: '',
             dateTime: dateTime,
-            oddsStatus: 'lost'
+            oddsStatus: 'lost',
+            statusClass: ''
         }],
         collapsed: false,
         eventDate: '',

@@ -4,12 +4,11 @@ import { Match } from './match.model';
 export class Team extends Match {
     isDeadheat: boolean;
     disableDeadheat: boolean;
-    isSettled: boolean;
     selected: boolean;
     eventDate: string;
     dateTime: NgbDateStruct;
     oddsStatus: string;
-
+    statusClass: string;
 }
 
 export class TeamSettle {

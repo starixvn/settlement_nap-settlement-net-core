@@ -30,10 +30,9 @@ export class CalculateService {
         const teamSettledNoneDeadHeat = _.filter(teamWonSettled, team => !team.isDeadheat);
 
 
-        if ((teamWonSelectedNoneDeadHeat.length === 1 && teamSettledNoneDeadHeat.length >= 1 && _.isEmpty(teamSettledDeadHeat)) ||
-            (teamWonSelectedNoneDeadHeat.length > 1 && _.isEmpty(teamSettledDeadHeat)) ||
-            (teamWonSelectedDeadHeat.length > 1 && _.isEmpty(teamWonSettled) && _.isEmpty(teamSettledDeadHeat))) {
-                return this.MessageInconsistentDeadheat(teamWonSelected.concat(teamWonSettled), Language.Outright.incorrectDeadHeatSetting);
+        if ((teamWonSelectedNoneDeadHeat.length === 1 && teamSettledNoneDeadHeat.length >= 1) ||
+            teamWonSelectedNoneDeadHeat.length > 1 || teamWonSelectedDeadHeat.length > 0) {
+            return this.MessageInconsistentDeadheat(teamWonSelected.concat(teamWonSettled), Language.Outright.incorrectDeadHeatSetting);
         }
         return "";
     }
@@ -51,9 +50,9 @@ export class CalculateService {
         if (teamWonSelectedNoneDeadHeat.length === 1) {
             if ((teamSettledNoneDeadHeat.length >= 1 && _.isEmpty(teamSettledDeadHeat)) ||
                 !_.isEmpty(teamSettledDeadHeat) ||
-                !_.isEmpty(teamWonSelectedDeadHeat)){
-                    return this.MessageInconsistentDeadheat(teamWonSelected.concat(teamWonSettled), Language.Outright.incorrectDeadHeatSetting);
-                }
+                !_.isEmpty(teamWonSelectedDeadHeat)) {
+                return this.MessageInconsistentDeadheat(teamWonSelected.concat(teamWonSettled), Language.Outright.incorrectDeadHeatSetting);
+            }
         }
 
         if (VerifyDeadHeatService.VerifyDeadheatSettingYes(teamWonSelected, teamWonSettled)) {

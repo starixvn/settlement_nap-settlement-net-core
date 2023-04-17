@@ -177,7 +177,7 @@ export class FilterComponent implements OnInit {
         const initSportSelect = new MultipleSelect();
         initSportSelect.haveGroup = true;
         initSportSelect.isCheckAll = true;
-        initSportSelect.maxWidth = "180px";
+        initSportSelect.maxWidth = "220px";
         this.sportOptions$.next(initSportSelect);
     }
 

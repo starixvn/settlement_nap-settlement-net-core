@@ -78,7 +78,7 @@ export class CalculatePopupComponent implements OnInit {
         this.today = this.verifyDateService.convertToDateStruct(this.leagueSettle.today);
         this.leagueSettle.teams.forEach(team => team.disableDeadheat = !_.isEqual(team.status, 'WON'));
         this.teams = this.leagueSettle.teams;
-        this.teams = this.teams.map(team => _.isEqual(team.status.toLowerCase(), Status.running) ? team : { ...team, isSettled: true })
+        this.teams.forEach(team => team.statusClass = this.makeBackgroundByStatus(team.status.toUpperCase()));
     }
 
     public close() {
@@ -213,7 +213,7 @@ export class CalculatePopupComponent implements OnInit {
         this.toastrService.error(result.errMsg);
     }
 
-    public makeBackgroundByStatus(status: String) {
+    public makeBackgroundByStatus(status: string) {
         switch (status) {
             case "WON":
             case "LOSE":
