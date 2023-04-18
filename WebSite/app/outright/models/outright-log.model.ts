@@ -5,7 +5,7 @@ export interface OutrightLog {
     leagueId: number;
     leagueName: string;
     collapsed?: boolean;
-    outrightDetails: OutrightLogDetail[]
+    outrightLogDetails: OutrightLogDetail[]
 }
 
 

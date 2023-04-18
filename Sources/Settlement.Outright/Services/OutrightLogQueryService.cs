@@ -1,4 +1,6 @@
 ﻿using Fanex.Data.Repository;
+using Microsoft.Extensions.Options;
+using Settlement.Core.Models;
 using Settlement.Outright.Criteria;
 
 namespace Settlement.Outright.Services;
@@ -15,10 +17,12 @@ public interface OutrightLogQueryService
 public class OutrightLogQueryServiceImp : OutrightLogQueryService
 {
     private readonly IDynamicRepository repository;
+    private readonly AppSettingsKey appSettingsKey;
 
-    public OutrightLogQueryServiceImp(IDynamicRepository repository)
+    public OutrightLogQueryServiceImp(IDynamicRepository repository, IOptions<AppSettingsKey> appOptions)
     {
         this.repository = repository;
+        this.appSettingsKey = appOptions.Value;
     }
 
     public async Task<OutrightLog> GetOutrightLog(GetLogRequest request)

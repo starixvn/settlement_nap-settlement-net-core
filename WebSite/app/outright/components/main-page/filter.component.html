@@ -13,12 +13,14 @@
         ></ngbd-date-picker>
       </div>
       <div class="date">
+        <input type="checkbox" style="float: left;" [(ngModel)]="enableToDate" (ngModelChange)="enableToDateHandler()">
         <label class="inner-label to-date">
           To
         </label>
         <ngbd-date-picker
           [date]="toDate"
           [minDate]="moveBetsDay"
+          [disabled]="!enableToDate"
           (change)="onSelectToDate($event)"
         ></ngbd-date-picker>
       </div>
@@ -26,41 +28,24 @@
     <div class="row row-2">
       <div class="field">
         <label class="inner-label">
-          Sport
+          Sports
         </label>
-        <select
-          (ngModelChange)="onSelectSport($event)"
-          [(ngModel)]="sportSelected"
-        >
-          <option *ngFor="let item of sportOptions" [value]="item.sportType">
-            {{ item.sportName }}</option
-          >
-        </select>
+        <new-multiple-select [multipleSelect]="sportOptions$ | async" (formValue)="onSelectSport($event)"></new-multiple-select>
       </div>
 
-      <div class="field league-field">
+      <div class="large-field league-field">
         <label class="inner-label">
           League
         </label>
-        <div style="position: relative;">
-          <mat-select [(ngModel)]="leagueSelected" panelClass="testClass">
-            <mat-option
-              *ngFor="let item of leagueOptions; trackBy: trackByFn"
-              [value]="item.leagueId"
-              [matTooltip]="item.leagueName.length > 50 ? item.leagueName : ''"
-              #tooltip="matTooltip"
-              matTooltipPosition="right"
-              >{{
-                item.leagueName.length > 50
-                  ? item.leagueName.substr(0, 50) + "..."
-                  : item.leagueName
-              }}</mat-option
-            >
-          </mat-select>
-        </div>
+        <new-multiple-select #league [multipleSelect]="leagueOptions$ | async" (formValue)="onSelectLeague($event)"></new-multiple-select>
       </div>
 
-      <div class="field" style="margin-left: 100px;">
+      <div class="field include-test">
+        <input type="checkbox" id="test-league"[(ngModel)]="isIncludeTestLeague">
+        <label for="test-league" style="font-weight: bold;">&nbsp;Include Test Leagues</label>
+      </div>
+
+      <div class="field">
         <label class="inner-label">
           Status
         </label>

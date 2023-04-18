@@ -2,24 +2,46 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
-import { NgbCalendar, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { OutrightService } from '../../services';
 import { DatepickerComponent } from '../../../shared/components/date-picker/date-picker.component';
 import { BlockUIService, HttpRequestService, MessageBoxService, VerifyDateService } from '../../../shared/services';
 
 import { FilterComponent } from './filter.component';
+import { SportLeagueFilter, SportLeague } from '../../models';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ItemsSelect, League, Sport } from '../../../shared/models';
+import { SportType } from '../../../shared/constants';
 import { Resources } from '../../constants/resources';
-import { League } from '../../models';
-import { of } from 'rxjs';
-import { ModalDialogMessage } from '../../../shared/models';
 
 describe('FilterComponent', () => {
     let component: FilterComponent;
     let fixture: ComponentFixture<FilterComponent>;
     let verifyDateService: VerifyDateService;
     let outrightService: OutrightService;
-    let calendar: NgbCalendar;
-    let messageBoxService: MessageBoxService
+    let messageBoxService: MessageBoxService;
+
+    const league: League = {
+        leagueId: 1,
+        leagueName: "test",
+        sportType: SportType.soccer,
+        sportName: 'soccer',
+        group: ''
+    }
+
+    const sport: Sport = {
+        sportType: SportType.soccer,
+        sportName: 'soccer',
+        group: ''
+    }
+
+    const date = new Date();
+
+    const sportLeague: SportLeague = {
+        leagueMatch: [],
+        sportName: '',
+        collapsed: false
+    }
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
@@ -27,9 +49,11 @@ describe('FilterComponent', () => {
                 FormsModule,
                 DatepickerComponent,
                 HttpClientModule,
-                FilterComponent
+                FilterComponent,
+                BrowserAnimationsModule
             ],
-            providers: [OutrightService,
+            providers: [
+                OutrightService,
                 VerifyDateService,
                 MessageBoxService,
                 BlockUIService,
@@ -46,7 +70,6 @@ describe('FilterComponent', () => {
 
         outrightService = fixture.debugElement.injector.get(OutrightService);
         verifyDateService = fixture.debugElement.injector.get(VerifyDateService);
-        calendar = fixture.debugElement.injector.get(NgbCalendar);
         messageBoxService = fixture.debugElement.injector.get(MessageBoxService);
         jest.spyOn(messageBoxService, 'alert');
 
@@ -57,69 +80,125 @@ describe('FilterComponent', () => {
         expect(component).toBeTruthy();
     });
 
+    describe('select date', () => {
+        beforeEach(() => {
+            const updateList = { ...component.sportOptions$.getValue(), items: [] };
+            component.sportOptions$.next(updateList);
+        })
 
-    it('onSelectFromDate - should return leagues correct date.', fakeAsync(() => {
-        const date = new Date();
-        const fromDate: NgbDateStruct = { day: date.getUTCDay(), month: date.getUTCMonth(), year: date.getUTCFullYear() };
-        const toDate: NgbDateStruct = { day: date.getUTCDay() + 1, month: date.getUTCMonth(), year: date.getUTCFullYear() };
+        it('onSelectFromDate - should return leagues correct date.', fakeAsync(() => {
+            const fromDate: NgbDateStruct = { day: date.getUTCDay(), month: date.getUTCMonth(), year: date.getUTCFullYear() };
+            const toDate: NgbDateStruct = { day: date.getUTCDay() + 1, month: date.getUTCMonth(), year: date.getUTCFullYear() };
 
-        const leagues: League[] = [{ leagueId: 1, leagueName: 'ABC', sportType: 1 }];
-        jest.spyOn(outrightService, 'getLeagues').mockReturnValue(of(leagues));
-        component.toDate = toDate;
+            const sportLeague: SportLeagueFilter = { leagues: [league], sports: [sport] };
+            outrightService.getSportLeague = jest.fn().mockReturnValue(Promise.resolve(sportLeague));
+            component.toDate = toDate;
 
-        component.onSelectFromDate(fromDate);
-        tick();
-
-        expect(component.leagueOptions.length).toEqual(2);
-    }));
-
-    it('onSelectToDate - should return leagues correct date.', fakeAsync(() => {
-        const date = new Date();
-        const fromDate: NgbDateStruct = { day: date.getUTCDay(), month: date.getUTCMonth(), year: date.getUTCFullYear() };
-        const toDate: NgbDateStruct = { day: date.getUTCDay() + 1, month: date.getUTCMonth(), year: date.getUTCFullYear() };
-
-        const leagues: League[] = [{ leagueId: 1, leagueName: 'ABC', sportType: 1 }];
-        jest.spyOn(outrightService, 'getLeagues').mockReturnValue(of(leagues));
-        component.fromDate = fromDate;
-
-        component.onSelectToDate(toDate);
-        tick();
-
-        expect(component.leagueOptions.length).toEqual(2);
-    }));
-
-    describe('onSelectSport() method', () => {
-        it('should return leagues when correct date.', fakeAsync(() => {
-            const leagues: League[] = [{ leagueId: 1, leagueName: 'ABC', sportType: 1 }];
-            jest.spyOn(outrightService, 'getLeagues').mockReturnValue(of(leagues));
-            jest.spyOn(verifyDateService, 'validDate').mockReturnValue(true);
-
-            component.onSelectSport(1);
+            component.onSelectFromDate(fromDate);
             tick();
 
-            expect(component.leagueOptions.length).toBeGreaterThanOrEqual(1);
+            expect(component.leagueOptions$.getValue().items.length).toEqual(1);
         }));
 
-        it('should return default league when incorrect date.', () => {
-            jest.spyOn(verifyDateService, 'validDate').mockReturnValue(false);
-            component.onSelectSport(1);
+        it('onSelectToDate - should return leagues correct date.', fakeAsync(() => {
+            const fromDate: NgbDateStruct = { day: date.getUTCDay(), month: date.getUTCMonth(), year: date.getUTCFullYear() };
+            const toDate: NgbDateStruct = { day: date.getUTCDay() + 1, month: date.getUTCMonth(), year: date.getUTCFullYear() };
 
-            expect(component.leagueOptions[0].leagueId).toEqual(0);
+            const sportLeague: SportLeagueFilter = { leagues: [league], sports: [sport] };
+            outrightService.getSportLeague = jest.fn().mockReturnValue(Promise.resolve(sportLeague));
+            component.fromDate = fromDate;
+
+            component.onSelectToDate(toDate);
+            tick();
+
+            expect(component.leagueOptions$.getValue().items.length).toEqual(1);
+        }));
+
+        describe('enableToDateHandler', () => {
+            it('should set null to toDate when button not selected.', fakeAsync(() => {
+                component.enableToDate = false;
+
+                const sportLeague: SportLeagueFilter = { leagues: [league], sports: [sport] };
+                outrightService.getSportLeague = jest.fn().mockReturnValue(Promise.resolve(sportLeague));
+                const toDate: NgbDateStruct = { day: date.getUTCDay() + 1, month: date.getUTCMonth(), year: date.getUTCFullYear() };
+                component.toDate = toDate;
+                component.enableToDateHandler();
+
+                expect(component.toDate).toBeNull();
+            }))
+
+            it('should set today to toDate when button selected.', fakeAsync(() => {
+                component.enableToDate = true;
+
+                const sportLeague: SportLeagueFilter = { leagues: [league], sports: [sport] };
+                outrightService.getSportLeague = jest.fn().mockReturnValue(Promise.resolve(sportLeague));
+                const toDate: NgbDateStruct = { day: date.getUTCDay() + 1, month: date.getUTCMonth(), year: date.getUTCFullYear() };
+                const today: NgbDateStruct = { day: date.getUTCDay(), month: date.getUTCMonth(), year: date.getUTCFullYear() };
+                component.today = today;
+                component.toDate = toDate;
+                component.enableToDateHandler();
+
+                expect(component.toDate.day).toEqual(today.day);
+            }))
         });
-    });
+    })
+
+
+
+    it('onSelectSport - should return leagues select sport', fakeAsync(() => {
+        const leagueBadminton: League = {
+            leagueId: 2,
+            leagueName: "test",
+            sportType: SportType.badminton,
+            sportName: 'badminton',
+            group: ''
+        }
+        const originalLeagues: League[] = [league, leagueBadminton];
+        component.originalLeagues = originalLeagues;
+
+        component.onSelectSport([new ItemsSelect(SportType.soccer, '1', 'soccer', true, false, false, [])]);
+        tick();
+
+        expect(component.leagueOptions$.getValue().items.length).toEqual(1);
+    }));
 
     describe('search method', () => {
         it('should show error message date when select wrong from date and to date.', () => {
-            jest.spyOn(verifyDateService, 'validDate').mockReturnValue(false);
+            component.enableToDate = true;
+            verifyDateService.validDate = jest.fn().mockReturnValue(false);
             component.search();
 
             expect(messageBoxService.alert).toHaveBeenCalled();
             expect(component.warningDialogMessage.message).toEqual(Resources.invalidDate);
         });
 
+        it('should not validate date when toDate is disable', () => {
+            component.enableToDate = false;
+            verifyDateService.validDate = jest.fn();
+            component.sportTypesSelected = ['1'];
+            outrightService.filter = jest.fn();
+
+
+            component.search();
+
+            expect(verifyDateService.validDate).not.toHaveBeenCalled();
+        });
+
+        it('should show error message when not select any sport.', () => {
+            component.enableToDate = false;
+            component.sportTypesSelected = [];
+
+            component.search();
+
+            expect(messageBoxService.alert).toHaveBeenCalled();
+            expect(component.warningDialogMessage.message).toEqual(Resources.atLeastSport);
+        });
+
         it('should call filter method and event emit when pass all validation.', async () => {
-            jest.spyOn(outrightService, 'filter').mockReturnValue(of(null));
-            jest.spyOn(verifyDateService, 'validDate').mockReturnValue(true);
+            component.enableToDate = false;
+            verifyDateService.validDate = jest.fn();
+            component.sportTypesSelected = ['1'];
+            outrightService.filter = jest.fn().mockReturnValue(Promise.resolve(sportLeague));
             jest.spyOn(component.searchAction, 'emit');
             jest.spyOn(component.requestEmitter, 'emit');
 

@@ -1,114 +1,184 @@
+import { SportLeague, SportLeagueFilter } from './../../models/sport-league.model';
+import { GenerateFilterService } from './../../../shared/services/generate-filter.service';
+import { NewMultipleSelectComponent } from './../../../shared/components/multiple-select/multiple-select.component';
 import { DatePipe, CommonModule } from '@angular/common';
-import { Component, EventEmitter, Injector, OnInit, Output } from '@angular/core';
-import { NgbCalendar, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
-import { League, Sport } from '../../models';
-import { allLeague, Statuses } from '../../constants/options';
+import { Component, EventEmitter, Injector, OnInit, Output, ViewChild } from '@angular/core';
+import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
+import { Statuses } from '../../constants/options';
 import { HttpRequestService, MessageBoxService, VerifyDateService } from '../../../shared/services';
 import { OutrightService } from '../../services/outright.service';
 import { FilterRequest } from '../../models/filter-request.model';
-import { ModalDialogMessage } from '../../../shared/models';
+import { ItemsSelect, League, ModalDialogMessage, MultipleSelect, Sport } from '../../../shared/models';
 import { DatepickerComponent } from '../../../shared/components/date-picker/date-picker.component';
 import { FormsModule } from '@angular/forms';
 import { Resources } from '../../constants/resources';
-import { MatSelectModule } from '@angular/material/select';
-import { MatTooltipModule } from '@angular/material/tooltip';
-
+import { MaterialModule } from '../../../shared/material-module';
+import * as _ from "lodash";
+import { BehaviorSubject, Subject } from 'rxjs';
 
 @Component({
     selector: 'filter',
     templateUrl: './filter.component.html',
     standalone: true,
-    imports: [CommonModule, FormsModule, DatepickerComponent, MatSelectModule, MatTooltipModule],
-    providers: [DatePipe, VerifyDateService, OutrightService, HttpRequestService, MessageBoxService,
-    ],
+    imports: [CommonModule, FormsModule, DatepickerComponent, MaterialModule, NewMultipleSelectComponent],
+    providers: [DatePipe, VerifyDateService, OutrightService, HttpRequestService, MessageBoxService, GenerateFilterService],
 })
 export class FilterComponent implements OnInit {
     @Output() public readonly searchAction = new EventEmitter();
     @Output() public readonly requestEmitter = new EventEmitter();
     @Output() public readonly enableRefresh = new EventEmitter();
 
+    @ViewChild('league') leagueMultiSelect: NewMultipleSelectComponent;
+
     private verifyDateService: VerifyDateService;
     private outrightService: OutrightService;
-    private calendar: NgbCalendar;
-    private messageBoxService: MessageBoxService
+    private messageBoxService: MessageBoxService;
+    private generateFilterService: GenerateFilterService;
 
-    public fromDate: NgbDateStruct;
-    public toDate: NgbDateStruct;
+    fromDate: NgbDateStruct;
+    toDate: NgbDateStruct;
+    enableToDate = true;
+    today: NgbDateStruct;
 
-    public sportSelected: number;
-    public sportOptions: Sport[] = [];
+    sportTypesSelected: string[];
+    sportOptions$ = new BehaviorSubject(new MultipleSelect());
 
-    public leagueSelected: number;
-    public leagueOptions: League[] = [];
+    leagueSelected: string;
+    originalLeagues: League[];
+    leagueOptions$ = new BehaviorSubject(new MultipleSelect());
 
-    public statusOptions: any[] = Statuses;
-    public statusSelected: number;
+    statusOptions: any[] = Statuses;
+    statusSelected: number;
 
-    public moveBetsDay: NgbDateStruct;
-    public maxDate: NgbDateStruct;
+    isIncludeTestLeague = false
 
-    public warningDialogMessage: ModalDialogMessage = new ModalDialogMessage();
+    moveBetsDay: NgbDateStruct;
+
+    warningDialogMessage: ModalDialogMessage = new ModalDialogMessage();
 
     constructor(protected injector: Injector) { }
 
     trackByFn = (index: number, item: any) => item.leagueId;
 
 
-    ngOnInit(): void {
+    async ngOnInit(): Promise<void> {
+        this.initSportLeague();
         this.verifyDateService = this.injector.get(VerifyDateService);
         this.outrightService = this.injector.get(OutrightService);
         this.messageBoxService = this.injector.get(MessageBoxService);
-        this.calendar = this.injector.get(NgbCalendar);
-
-        this.initFilterData();
+        this.generateFilterService = this.injector.get(GenerateFilterService);
+        await this.initFilterData();
     }
 
-    private initFilterData() {
-        this.outrightService.getFilterView().subscribe((res: any) => {
-            this.fromDate = this.verifyDateService.convertToDateStruct(res.fromDate);
-            this.toDate = this.verifyDateService.convertToDateStruct(res.toDate);
-            this.moveBetsDay = this.verifyDateService.convertToDateStruct(res.moveBetsDay);
-            this.maxDate = this.calendar.getToday();
+    onSelectFromDate(value: NgbDateStruct) {
+        this.fromDate = value;
+        this.getSportLeague(this.fromDate, this.toDate);
+    }
 
-            this.sportOptions = res.sports;
-            this.leagueOptions = [allLeague, ...res.leagues];
-            this.leagueSelected = 0;
-            this.sportSelected = 1;
-            this.statusSelected = 0;
+    onSelectToDate(value: NgbDateStruct) {
+        this.toDate = value;
+        this.getSportLeague(this.fromDate, this.toDate);
+    }
+
+    private async initFilterData() {
+        const initDate = await this.outrightService.getFilterView();
+        this.fromDate = this.verifyDateService.convertToDateStruct(initDate.fromDate);
+        this.toDate = this.verifyDateService.convertToDateStruct(initDate.toDate);
+        this.moveBetsDay = this.verifyDateService.convertToDateStruct(initDate.moveBetsDay);
+        this.statusSelected = 1;
+        this.today = this.toDate;
+        this.getSportLeague(this.fromDate, this.toDate);
+    }
+
+    private async getSportLeague(fromDate: NgbDateStruct, toDate: NgbDateStruct) {
+        const fromDateValue = this.verifyDateService.dateFormat(fromDate);
+        const toDateValue = this.enableToDate ? this.verifyDateService.dateFormat(toDate) : null;
+        let sportLeague: SportLeagueFilter;
+        if (!this.enableToDate || this.isValidInput(fromDate, toDate)) {
+            sportLeague = await this.outrightService.getSportLeague({ fromDate: fromDateValue, toDate: toDateValue });
+            this.originalLeagues = sportLeague.leagues;
+        }
+        this.updateLeague(_.isUndefined(sportLeague) ? [] : sportLeague.leagues);
+        this.updateSport(_.isUndefined(sportLeague) ? [] : sportLeague.sports);
+    }
+
+    onSelectSport(value: ItemsSelect[]) {
+        this.sportTypesSelected = value.map(item => item.value);
+        const leagueFiltered = _.filter(this.originalLeagues, item => _.includes(this.sportTypesSelected, item.sportType.toString()));
+        this.updateLeague(leagueFiltered);
+    }
+
+    onSelectLeague(value: ItemsSelect[]) {
+        this.leagueSelected = value.length > 0 ? value.map(item => Number(item.value)).join(',') : '';
+    }
+
+    enableToDateHandler() {
+        if (this.enableToDate) {
+            this.toDate = this.today;
+        } else {
+            this.toDate = null;
+        }
+        this.getSportLeague(this.fromDate, this.toDate);
+    }
+
+    async search() {
+        const fromDate = this.verifyDateService.dateFormat(this.fromDate);
+        const toDate = this.enableToDate ? this.verifyDateService.dateFormat(this.toDate) : null;
+
+        const request: FilterRequest = {
+            fromDate: fromDate,
+            toDate,
+            statusId: this.statusSelected,
+            leagueIds: this.GetLeagueId(),
+            isIncludeTest: this.isIncludeTestLeague
+        }
+
+        if (this.enableToDate && !this.verifyDateService.validDate(this.fromDate, this.toDate)) {
+            this.showWarningMessage(Resources.invalidDate);
+            return;
+        }
+
+        if (_.isEmpty(this.sportTypesSelected)) {
+            this.showWarningMessage(Resources.atLeastSport);
+            return;
+        }
+
+        await this.outrightService.filter(request).then((res) => {
+            this.searchAction.emit(res);
+            this.requestEmitter.emit(request);
         })
     }
 
-    public onSelectFromDate(value: NgbDateStruct) {
-        if (value.day !== undefined) {
-            this.fromDate = value;
-            this.renderLeague(this.fromDate, this.toDate, this.sportSelected)
+    private GetLeagueId() {
+        if (_.isEmpty(this.leagueSelected)) {
+            return _.filter(this.originalLeagues, item => _.includes(this.sportTypesSelected, item.sportType.toString())).map(item => item.leagueId).join(',');
         }
+        return this.leagueSelected;
     }
 
-    public onSelectToDate(value: NgbDateStruct) {
-        if (value.day !== undefined) {
-            this.toDate = value;
-            this.renderLeague(this.fromDate, this.toDate, this.sportSelected)
-        }
+    private updateSport(sports: Sport[]) {
+        const updateList = { ... this.sportOptions$.getValue(), items: this.generateFilterService.renderSportTypes(sports, false) };
+        this.sportOptions$.next(updateList);
     }
 
-    public onSelectSport(value: any) {
-        this.sportSelected = value;
-        this.renderLeague(this.fromDate, this.toDate, this.sportSelected)
+    private updateLeague(leagues: League[]) {
+        const updateList = { ... this.leagueOptions$.getValue(), items: this.generateFilterService.renderLeagues(leagues) };
+        this.leagueOptions$.next(updateList);
     }
 
-    private async renderLeague(fromDate: NgbDateStruct, toDate: NgbDateStruct, sportType: number) {
-        const fromDateValue = this.verifyDateService.dateFormat(fromDate);
-        const toDateValue = this.verifyDateService.dateFormat(toDate);
-        this.leagueSelected = 0;
-
-        if (this.isValidInput(fromDate, toDate)) {
-            this.outrightService.getLeagues({ fromDate: fromDateValue, toDate: toDateValue, sportType }).subscribe(res => {
-                this.leagueOptions = [allLeague, ...res]
-            })
-        } else {
-            this.leagueOptions = [allLeague]
-        }
+    private initSportLeague() {
+        const showAllLeagues = "--- Show All Leagues ---";
+        const initLeagueSelect = new MultipleSelect();
+        initLeagueSelect.allItemsCheckedText = showAllLeagues;
+        initLeagueSelect.maxWidth = '85%';
+        initLeagueSelect.enableSearchBox = true;
+        initLeagueSelect.haveGroup = true;
+        this.leagueOptions$.next(initLeagueSelect);
+        const initSportSelect = new MultipleSelect();
+        initSportSelect.haveGroup = true;
+        initSportSelect.isCheckAll = true;
+        initSportSelect.maxWidth = "220px";
+        this.sportOptions$.next(initSportSelect);
     }
 
     private isValidInput(fromDate: NgbDateStruct, toDate: NgbDateStruct) {
@@ -119,30 +189,5 @@ export class FilterComponent implements OnInit {
         this.warningDialogMessage.title = Resources.warningTitle;
         this.warningDialogMessage.message = message;
         this.messageBoxService.alert(this.warningDialogMessage);
-    }
-
-    search() {
-        const fromDate = this.verifyDateService.dateFormat(this.fromDate);
-        const toDate = this.verifyDateService.dateFormat(this.toDate);
-        const moveBetsDay = this.verifyDateService.dateFormat(this.moveBetsDay);
-
-        const request: FilterRequest = {
-            fromDate: fromDate,
-            toDate,
-            statusId: this.statusSelected,
-            sportType: this.sportSelected,
-            leagueId: this.leagueSelected,
-            moveBetsDay
-        }
-
-        if (!this.isValidInput(this.fromDate, this.toDate)) {
-            this.showWarningMessage(Resources.invalidDate);
-            return;
-        }
-
-        this.outrightService.filter(request).subscribe(res => {
-            this.searchAction.emit(res);
-            this.requestEmitter.emit(request);
-        })
     }
 }

@@ -2,11 +2,9 @@
 
 namespace Settlement.Outright.Requests;
 
-public class LeagueRequest : IRequest<IEnumerable<League>>
+public class SportLeagueRequest : IRequest<SportLeague>
 {
-	public DateTime FromDate { get; set; }
+    public string FromDate { get; set; }
 
-	public DateTime ToDate { get; set; }
-
-	public int SportType { get; set; }
+    public string ToDate { get; set; }
 }

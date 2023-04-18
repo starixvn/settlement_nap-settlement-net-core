@@ -31,7 +31,8 @@ public class OutrightPermissionServiceImp : OutrightPermissionService
     public Permission Permission => new()
     {
         CanCalculateOutright = HasPermission(SettlementFunctionKeys.OutrightCalculate, Constant.Policy.Host),
-        CanUncalculateOutright = HasPermission(SettlementFunctionKeys.OutrightUncalculate, Constant.Policy.Host)
+        CanUncalculateOutright = HasPermission(SettlementFunctionKeys.OutrightUncalculate, Constant.Policy.Host),
+        IsLeader = HasPermission(SettlementFunctionKeys.LeaderCalculate, Constant.Policy.Host),
     };
 
     private bool HasPermission(string functionKey, Constant.Policy policy)

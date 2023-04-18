@@ -15,6 +15,10 @@ public interface OutrightSettleService
     Task<ResultOutright> Uncalculate(OutrightUndoRequest request);
 
     Task<ResultOutright> Calculate(OutrightCalculateRequest request);
+
+    Task UpdateDeadHeatSetting(UpdateDeadHeatSettingRequest request);
+
+    Task<byte?> GetDeadHeadLeagueSetting(GetDeatHeadLeagueSettingRequest request);
 }
 
 public class OutrightSettleServiceImp : OutrightSettleService
@@ -34,6 +38,8 @@ public class OutrightSettleServiceImp : OutrightSettleService
     private readonly IBalanceUpService balanceUpService;
 
     private const string SpName = "NAP_Admin_Settlement_Outright";
+
+    private const string StatusHide = "HIDE";
 
     private readonly List<string> runningStatus = new() { EventStatus.Running, EventStatus.Closed, EventStatus.Internal };
 
@@ -113,6 +119,25 @@ public class OutrightSettleServiceImp : OutrightSettleService
         return HandleResult(listResult, teamSettleFailed);
     }
 
+    public async Task UpdateDeadHeatSetting(UpdateDeadHeatSettingRequest request)
+    {
+        var criteria = mapper.Map<UpdateDeadHeatSettingRequest, UpdateDeadHeatSettingCriteria>(request);
+        criteria.AdminId = currentSession.UserId;
+        await repository.ExecuteAsync(criteria);
+    }
+
+    public async Task<byte?> GetDeadHeadLeagueSetting(GetDeatHeadLeagueSettingRequest request)
+    {
+        var criteria = new GetDeadHeatLeagueSettingCriteria
+        {
+            LeagueId = request.LeagueId
+        };
+
+        var result = await repository.GetAsync<byte?>(criteria);
+
+        return result;
+    }
+
     private static IEnumerable<InfoValidate> GetListInfoValidates(OutrightUndoRequest request)
     {
         var listMatch = request.MatchIds.Split(',');
@@ -162,7 +187,7 @@ public class OutrightSettleServiceImp : OutrightSettleService
         criteria.AdminId = currentSession.UserId;
         criteria.Deadheat = team.IsDeadheat ? deadHeat : null;
         var updateResult = await outrightSettleProcessService.UpdateResultCalculate(criteria);
-        if (!updateResult.IsSuccessful)
+        if (!updateResult.IsSuccessful || team.Status == StatusHide)
         {
             return updateResult;
         }

@@ -16,8 +16,6 @@ public interface GetDataFilterService
 public class GetDataFilterServiceImp : GetDataFilterService
 {
     private static readonly List<int> PopularSport = new() { SportType.Badminton, SportType.BasketBall, SportType.ESports, SportType.Tennis };
-    private const string PopularGroup = "All Popular Sports";
-    private const string OtherGroup = "All Other Sports";
 
     private readonly IMapper mapper;
 
@@ -67,12 +65,12 @@ public class GetDataFilterServiceImp : GetDataFilterService
         {
             if (PopularSport.IndexOf(item.SportType) > -1)
             {
-                item.Group = PopularGroup;
+                item.Group = SportGroup.PopularGroup;
                 list.Add(item);
             }
             else
             {
-                item.Group = OtherGroup;
+                item.Group = SportGroup.OtherGroup;
                 if (item.SportType == SportType.OtherSports)
                 {
                     otherSport.Add(item);

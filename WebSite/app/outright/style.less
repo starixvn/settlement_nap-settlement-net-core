@@ -1,4 +1,3 @@
-@import "../../Styles/common.less";
 @sprite: "../../wwwroot/css/images/sprite.png";
 
 .filter-bar {
@@ -14,51 +13,18 @@
   .league-select {
     min-width: 200px;
     width: 400px;
+
     option {
       width: 400px;
     }
   }
+
   select {
     height: 24px;
   }
-  .mat-mdc-select {
-    display: inline-block;
-    width: 100%;
-    outline: none;
-    width: 400px;
-    font-size: 12px;
-    background: white;
-    padding: 0 0px;
-    border: 1px solid #d4d4d4;
-    border-radius: 3px;
-    height: 24px;
-    position: relative;
-    .mat-mdc-select-value {
-      height: unset !important;
-      padding-left: 5px;
-      padding-right: 16px;
-    }
-    // .mat-mdc-list-item--selected.mat-mdc-option-active {
-    //   background-color: grey !important;
-    //   color: white;
-    // }
-    // .mat-mdc-select-arrow-wrapper {
-    //   display: none;
-    // }
-    .mat-select-arrow {
-      /* Remove the top part of the existing arrow triangle to form a chevron shape */
-      &::after {
-        content: "";
-        display: block;
-        width: 0;
-        height: 0;
-        margin-left: -3px;
-        margin-top: -5px;
-        border-left: 3px solid transparent;
-        border-right: 3px solid transparent;
-        border-top: 3px solid white; /* This needs to match your input field background */
-      }
-    }
+
+  .include-test {
+    margin-top: 2px;
   }
 
   .ngb-dp-arrow {
@@ -73,13 +39,13 @@
   }
 
   @media (min-width: 1530px) {
-    .to-date {
-      padding-left: 22px;
+    .from-date {
+      padding-left: 9px;
     }
 
     .date {
       padding-right: 20px;
-      padding-left: 28px;
+      padding-left: 95px;
     }
   }
 
@@ -87,9 +53,9 @@
     margin-top: 5px;
   }
 
-  .setFilterWidth(1200px, 100%, 18%, 12%, 22%, 30%, 14%, 6%, 19%, 8%);
-  .setFilterWidth(1530px, 100%, 16%, 15%, 20%, 30%, 11%, 6%, 19%, 7%);
-  .setFilterWidth(1780px, 90%, 16%, 13%, 20%, 31%, 12%, 6%, 18%, 8%);
+  .setFilterWidth(1200px, 100%, 23%, 12%, 22%, 32%, 14%, 6%, 19%, 8%);
+  .setFilterWidth(1530px, 100%, 20%, 15%, 20%, 30%, 11%, 6%, 19%, 7%);
+  .setFilterWidth(1780px, 90%, 18%, 13%, 20%, 31%, 12%, 6%, 18%, 8%);
   .setFilterWidth(2000px, 100%, 12%, 13%, 17%, 32%, 10%, 6%, 22.2%, 7%);
 
   .match-code {
@@ -127,14 +93,19 @@
     .over-status {
       margin-left: 85px;
     }
+
+    .date {
+      padding-right: 20px;
+      padding-left: 105px;
+    }
   }
 }
 
 .filter-bar-outright {
   padding-bottom: 10px;
+
   .league-field {
-    width: auto;
-    display: flex;
+    margin-left: 7px;
   }
 }
 
@@ -180,27 +151,30 @@
 
 .league-name {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
   color: #1d3968;
   background-color: #ccc;
   background-image: unset;
+  font-weight: bold;
 
-  .leangue-name__content, .league {
-    display: flex;
+  .leangue-name__content,
+  .league {
     align-items: center;
     column-gap: 10px;
     padding: 5px;
-    .name {
-      font-weight: bold;
-    }
+    margin-left: 25px;
+  }
+
+  .view_log_league {
+    flex-grow: 1;
 
     .code {
       color: white;
       background-color: #5578be;
-      //   padding: 5px 5px;
       display: inline-block;
       border-radius: 5px;
+      font-weight: 400;
     }
 
     button {
@@ -211,6 +185,16 @@
       text-align: center;
     }
   }
+}
+
+.sport-name {
+  font-weight: 700;
+  height: 21px;
+  cursor: pointer;
+  color: #1d3968;
+  background-color: #a9a9a9;
+  padding: 2px 0 0 2px;
+  display: flex;
 }
 
 .event-id {
@@ -235,6 +219,7 @@
 .table-outright {
   width: 760px;
   margin-left: 3px;
+
   .button {
     margin: 4px;
   }
@@ -248,10 +233,17 @@
   padding-left: 5px;
 }
 
+.settled {
+  background-color: #dac093;
+}
+
+.refund {
+  background-color: #aeeff9;
+}
+
 .table-calculate-outright {
   width: 900px;
   margin-left: 4px;
-
 
   .hasDatepicker {
     width: 70px;
@@ -285,10 +277,6 @@
     background-color: #ffdf00;
   }
 
-  .settled {
-    background-color: #dac093;
-  }
-
   .ngb-dp-header {
     select {
       min-width: 40px !important;
@@ -306,18 +294,38 @@
   }
 }
 
-.table-calculate-outright, .table-outright {
+.table-calculate-outright,
+.table-outright {
   .table-scroll {
-    max-height: 300px;
     overflow-y: scroll;
     overflow-x: hidden;
   }
-  
+
   .footer {
-    border:  1px solid #c8c8c8;
+    border: 1px solid #c8c8c8;
     margin-right: 17px;
   }
-  
+
+  .header {
+    padding-right: 17px;
+    background-color: #295091;
+  }
+}
+
+.table-uncal-outright {
+
+  padding: 5px;
+  .table-scroll {
+    overflow-y: scroll;
+    overflow-x: hidden;
+    max-height: 392px;
+  }
+
+  .footer {
+    border: 1px solid #c8c8c8;
+    // margin-right: 17px;
+  }
+
   .header {
     padding-right: 17px;
     background-color: #295091;
@@ -348,19 +356,25 @@
   th {
     text-align: center;
   }
+
   .team-name {
     text-align: left;
     font-weight: bold;
+    padding-left: 10px;
   }
+
   .event-status {
     width: 300px;
   }
+
   .bg-odd {
     background: #e5ebf2;
   }
+
   .table-body {
     overflow-y: scroll;
   }
+
   .empty-data {
     td {
       flex-basis: 100%;
@@ -372,6 +386,7 @@
 
 .log-content {
   padding: 5px;
+
   .league div {
     padding-top: 2px;
     margin-top: 5px;
@@ -395,13 +410,20 @@
     text-align: left;
     vertical-align: middle;
   }
+
   .table-log {
     margin-top: 5px;
 
     .bg-odd {
       background: #e5ebf2;
     }
+
+    .team-name{
+      padding-left: 10px;
+    }
+
   }
+
   .table-empty {
     margin-top: 10px;
   }
@@ -410,6 +432,7 @@
 .log-popup-content {
   max-height: 617px !important;
   overflow: auto;
+
   .body-half-screen {
     max-height: 490px !important;
   }
@@ -429,6 +452,7 @@ label.title {
 .w-5 {
   width: 5%;
 }
+
 .w-10 {
   width: 10%;
 }
@@ -444,6 +468,7 @@ label.title {
 .w-20 {
   width: 20%;
 }
+
 .w-25 {
   width: 25%;
 }
@@ -470,36 +495,40 @@ label.title {
 
 .table-scroll-down {
   display: block;
-}
+  border-bottom: 1px solid #cbcbcb;
 
-.table-scroll-down thead {
-  position: relative;
-  display: block;
-  width: 100%;
-}
-
-.table-scroll-down tbody {
-  display: block;
-  position: relative;
-  width: 100%;
-  overflow-y: scroll;
-}
-.table-scroll-down tr {
-  width: 100%;
-  display: flex;
-  td:first,
-  th:first {
-    border-left: 1px solid #cbcbcb;
+  thead {
+    position: relative;
+    display: block;
+    width: 100%;
   }
-}
-.table-scroll-down td,
-.table-scroll-down th {
-  display: flex;
-  border-right: 1px solid #cbcbcb;
-  border-top: 1px solid #cbcbcb;
-  border-left: none;
-  border-bottom: none;
-  align-items: center;
+
+  tbody {
+    display: block;
+    position: relative;
+    width: 100%;
+    overflow-y: scroll;
+  }
+
+  tr {
+    width: 100%;
+    display: flex;
+
+    td:first,
+    th:first {
+      border-left: 1px solid #cbcbcb;
+    }
+  }
+
+  td,
+  th {
+    display: flex;
+    border-right: 1px solid #cbcbcb;
+    border-top: 1px solid #cbcbcb;
+    border-left: none;
+    border-bottom: none;
+    align-items: center;
+  }
 }
 
 .center {
@@ -509,63 +538,9 @@ label.title {
 .left {
   justify-content: start;
 }
+
 .between {
   justify-content: space-between;
-}
-
-.testClass {
-  .mat-mdc-option:hover {
-    background-color: #767676 !important; //The color you want
-    color: white !important;
-    .mdc-list-item__primary-text {
-      color: white !important;
-    }
-  }
-  .mat-mdc-option.mat-mdc-option-active {
-    background-color: #767676 !important; //The color you want
-    color: white !important;
-    .mdc-list-item__primary-text {
-      color: white !important;
-    }
-  }
-
-  .mdc-list-item--selected:not(.mdc-list-item--disabled)
-    .mdc-list-item__primary-text {
-    color: white !important;
-  }
-}
-
-.chevron {
-  padding: 7px;
-  color: #726a7a;
-  position: absolute;
-  right: 0px;
-  top: -3px;
-  font-size: 11px;
-}
-
-.chevron::before {
-  border-style: solid;
-  border-width: 0.25em 0.25em 0 0;
-  content: "";
-  display: inline-block;
-  height: 0.6em;
-  left: 0.15em;
-  position: relative;
-  top: 3px;
-  transform: rotate(-45deg);
-  vertical-align: top;
-  width: 0.6em;
-}
-
-.chevron.right:before {
-  left: 0;
-  transform: rotate(45deg);
-}
-
-.chevron.bottom:before {
-  //   top: 0;
-  transform: rotate(135deg);
 }
 
 .log-modalbox {
@@ -578,5 +553,83 @@ label.title {
 
   .mdc-dialog__surface {
     overflow-y: unset !important;
+  }
+}
+
+.cdk-overlay-backdrop {
+  display: unset !important;
+}
+
+.button-setting {
+  border-radius: 8px;
+  border: 1px solid #cbcbcb;
+  width: 90px;
+  height: 25px;
+  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+  margin-right: 15px;
+  font-weight: bold;
+  padding-left: 15px;
+  position: relative;
+}
+
+.button-setting:hover {
+  box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24),
+    0 17px 50px 0 rgba(0, 0, 0, 0.19);
+}
+
+.button-not-set {
+  background-color: #e0dada;
+}
+
+.button-no {
+  background-color: #7971ec;
+}
+
+.button-yes {
+  background-color: #6fcf97;
+}
+
+.power {
+  background-image: url(power.png);
+  width: 48px;
+  height: 48px;
+  scale: 0.4;
+  position: absolute;
+  top: -12px;
+  right: 50px;
+}
+
+.button-no:after {
+  content: "NO";
+}
+
+.button-not-set:after {
+  content: "Not Set";
+}
+
+.button-yes:after {
+  content: "YES";
+}
+
+.message-deadheat {
+  font-size: 14px;
+  margin: 0 0 12px 12px;
+}
+
+.button-deadheat {
+  display: flex;
+  justify-content: space-evenly;
+
+  .allow-deatheat {
+    width: 110px;
+  }
+
+  .not-allow-deatheat {
+    width: 130px;
+  }
+
+  .button-ok {
+    width: 50px;
+    margin-right: 10px;
   }
 }

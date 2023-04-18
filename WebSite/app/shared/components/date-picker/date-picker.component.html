@@ -1,5 +1,5 @@
-﻿<input class="hasDatepicker" placeholder="yyyy-mm-dd" readonly="readonly" name="dp" [(ngModel)]="date"
-    [minDate]="minDate" [maxDate]="maxDate" [disabled]="disabled" (ngModelChange)="onSelectDate($event)" ngbDatepicker
-    #d="ngbDatepicker" (click)="d.toggle();openDatepicker(d)">
+﻿<input class="hasDatepicker" [placeholder]="disabled && date == null ? '': 'yyyy-mm-dd'" readonly=" readonly" name="dp"
+    [(ngModel)]="date" [minDate]="minDate" [maxDate]="maxDate" [disabled]="disabled"
+    (ngModelChange)="onSelectDate($event)" ngbDatepicker #d="ngbDatepicker" (click)="d.toggle();openDatepicker(d)">
 <div class="ui-datepicker" (click)="d.toggle();openDatepicker(d)" [style.pointer-events]="disabled ? 'none': 'auto'">
 </div>

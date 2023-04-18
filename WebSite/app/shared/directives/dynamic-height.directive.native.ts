@@ -14,12 +14,14 @@ import { debounceTime, throttleTime } from "rxjs/operators";
 })
 export class DynamicHeightDirective implements AfterViewInit {
     @Input() minHeight: number;
+    // @Input() bottomOffset?: number;
     @Input("dynamicHeight") topOffset: number;
 
     private domElement: HTMLElement;
 
     constructor(private renderer: Renderer2, private elementRef: ElementRef) {
         this.domElement = this.elementRef.nativeElement as HTMLElement;
+        // this.bottomOffset = this.bottomOffset ?? 0
 
         // register on window resize event
         fromEvent(window, "resize")
@@ -35,7 +37,7 @@ export class DynamicHeightDirective implements AfterViewInit {
 
         const windowHeight = window?.innerHeight;
         const topOffset = this.topOffset || this.calcTopOffset();
-        let height = windowHeight - topOffset - 5;
+        let height = windowHeight - topOffset - 5
 
         // set min height instead of the calculated
         if (this.minHeight && height < this.minHeight) {

@@ -96,7 +96,7 @@ export class GenerateFilterService {
         return this.createListOption(selection);
     }
 
-    public renderSportTypes(options: Sport[]) {
+    public renderSportTypes(options: Sport[], selected = true) {
         const tickets = new Array<ItemsSelect>();
 
         options.forEach((item: Sport) => {
@@ -104,7 +104,7 @@ export class GenerateFilterService {
                 item.sportType,
                 item.sportType.toString(),
                 item.sportName,
-                true,
+                selected,
                 true,
                 true,
                 []);

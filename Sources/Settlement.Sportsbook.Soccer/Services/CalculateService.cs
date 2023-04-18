@@ -63,7 +63,6 @@ public class CalculateServiceImp : ICalculateService
         {
             return matchChecking;
         }
-        LogService.Warn("Fanex.Settletment.WebSites(WriteDirectlyLog): ");
 
         WriteDirectlyLog(request);
 

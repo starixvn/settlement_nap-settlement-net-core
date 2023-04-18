@@ -1,10 +1,9 @@
+
 import { Injectable } from "@angular/core";
-import { League, LeagueSettle, TeamSettle } from "../models";
-import { LeagueRequest } from "../models/league-request.model";
+import { LeagueSettle, SportLeague, SportLeagueFilter, TeamSettle } from "../models";
 import { HttpRequestService } from "../../shared/services";
 import { firstValueFrom, Observable } from 'rxjs';
-import { FilterRequest } from "../models/filter-request.model";
-import { Outright } from "../models/outright.model";
+import { FilterRequest, InitFilter, SportLeagueRequest } from "../models/filter-request.model";
 import { LogRequest } from "../models/log-request.model";
 import { OutrightLog } from "../models/outright-log.model";
 import { ResultOutright } from "../../outright/models/result-outright.model";
@@ -15,17 +14,20 @@ export class OutrightService {
 
     constructor(private httpRequestService: HttpRequestService) { }
 
-    public getLeagues(request: LeagueRequest) {
-        return this.httpRequestService.postJson<League[]>(request, `${this.outrightApi}/get-league`);
+    public getSportLeague(sportLeagueRequest: SportLeagueRequest) {
+        const request = this.httpRequestService.postJson<SportLeagueFilter>(sportLeagueRequest, `${this.outrightApi}/get-sport-league`, false);
+        return firstValueFrom(request);
     }
 
     public getFilterView() {
-        return this.httpRequestService.getJson(`${this.outrightApi}/get-filter-view`);
+        const request = this.httpRequestService.getJson<InitFilter>(`${this.outrightApi}/get-filter-view`);
+        return firstValueFrom(request);
     }
 
 
-    public filter(request: FilterRequest) {
-        return this.httpRequestService.postJson<Outright>(request, `${this.outrightApi}/filter`)
+    public filter(filterRequest: FilterRequest) {
+        const request =  this.httpRequestService.postJson<SportLeague>(filterRequest, `${this.outrightApi}/filter`);
+        return firstValueFrom(request);
     }
 
     public getMatches(leagueId: number, sportType: number, statusId: number) {
@@ -57,6 +59,28 @@ export class OutrightService {
     }
 
     public getLogs(request: LogRequest): Observable<OutrightLog[]> {
-        return this.httpRequestService.postJson<OutrightLog[]>(request, `${this.outrightApi}/get-log`)
+        return this.httpRequestService.postJson<OutrightLog[]>(request, `${this.outrightApi}/get-log`, true)
+    }
+
+    public updateDeatHeat(leagueId: number, deadHeat: boolean) {
+        const updateRequest = {
+            leagueId,
+            deadHeat
+        }
+        const request = this.httpRequestService.postJson(updateRequest, `${this.outrightApi}/update-deadheat-setting`, true);
+        return firstValueFrom(request);
+    }
+
+    public checkVoidTickets(orId: number) {
+        const response = this.httpRequestService.postJson<boolean>({
+            orId
+        }, `${this.outrightApi}/check-void-tickets`);
+
+        return firstValueFrom(response);
+    }
+
+    public getDeadHeatSetting(leagueId: number) {
+        const response = this.httpRequestService.postJson<number | null>({ leagueId }, `${this.outrightApi}/get-deadheat-setting`);
+        return firstValueFrom(response);
     }
 }

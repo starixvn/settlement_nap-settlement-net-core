@@ -3,6 +3,7 @@ import { Injectable } from "@angular/core";
 import { Team } from "../models";
 import * as _ from "lodash";
 import { Status } from "../constants";
+import { VerifyDeadHeatService } from './verify-deadheat.service';
 
 @Injectable()
 export class CalculateService {
@@ -11,35 +12,89 @@ export class CalculateService {
         return listTeam.some(team => _.isEqual(team.status.toLowerCase(), Status.running));
     }
 
-    public static VerifyDeadheat(teamWonSelected: Team[], teamWonSettled: Team[]) {
-        const teamSettledDeadHeat = _.filter(teamWonSettled, team => team.isDeadheat);
-        const teamSettledNoneDeadHeat = _.filter(teamWonSettled, team => !team.isDeadheat);
-        const teamWonSelectedDeadHeat = _.filter(teamWonSelected, team => team.isDeadheat);
-        const teamWonSelectedNoneDeadHeat = _.filter(teamWonSelected, team => !team.isDeadheat);
+    public static VerifySettledSelected(selectedTeams: Team[], originalTeams: Team[]) {
+        const settledTeams = originalTeams.filter(team => !_.isEqual(team.status.toLowerCase(), Status.running));
+        const settledTeamOrIds = settledTeams.map(t => t.orId);
 
-        if (!_.isEmpty(teamSettledDeadHeat) && !_.isEmpty(teamWonSelected)) {
-            return true;
-        }
-
-        if (!_.isEmpty(teamWonSelectedDeadHeat) && !_.isEmpty(teamSettledNoneDeadHeat)) {
-            return true;
-        }
-
-        if (!_.isEmpty(teamWonSelectedDeadHeat) && !_.isEmpty(teamWonSelectedNoneDeadHeat)) {
-            return true;
-        }
-
-        if(!(_.isEmpty(teamSettledDeadHeat) || _.isEmpty(teamWonSelectedDeadHeat))) {
+        if (selectedTeams.some(t => settledTeamOrIds.includes(t.orId))) {
             return true;
         }
 
         return false;
     }
 
-    public static MessageInconsistentDeadheat(wonTeams: Team[]) {
-        let message = "<br/>";
-        wonTeams.forEach(team => message += `${team.teamName} | `);
-        return Language.Outright.inconsistentDeadheat.replace('{0}', message);
+    public static VerifyDeadHeatNoSet(teamWonSelected: Team[], teamWonSettled: Team[]) {
+        const teamWonSelectedNoneDeadHeat = _.filter(teamWonSelected, team => !team.isDeadheat);
+        const teamSettledDeadHeat = _.filter(teamWonSettled, team => team.isDeadheat);
+        const teamWonSelectedDeadHeat = _.filter(teamWonSelected, team => team.isDeadheat);
+        const teamSettledNoneDeadHeat = _.filter(teamWonSettled, team => !team.isDeadheat);
+
+
+        if ((teamWonSelectedNoneDeadHeat.length === 1 && teamSettledNoneDeadHeat.length >= 1) ||
+            teamWonSelectedNoneDeadHeat.length > 1 || teamWonSelectedDeadHeat.length > 0) {
+            return this.MessageInconsistentDeadheat(teamWonSelected.concat(teamWonSettled), Language.Outright.incorrectDeadHeatSetting);
+        }
+        return "";
+    }
+
+    public static VerifyDeadHeatYesSetting(teamWonSelected: Team[], teamWonSettled: Team[]) {
+        const teamWonSelectedNoneDeadHeat = _.filter(teamWonSelected, team => !team.isDeadheat);
+        const teamWonSelectedDeadHeat = _.filter(teamWonSelected, team => team.isDeadheat);
+        const teamSettledDeadHeat = _.filter(teamWonSettled, team => team.isDeadheat);
+        const teamSettledNoneDeadHeat = _.filter(teamWonSettled, team => !team.isDeadheat);
+
+        if (teamWonSelectedNoneDeadHeat.length > 1) {
+            return this.MessageInconsistentDeadheat(teamWonSelected.concat(teamWonSettled), Language.Outright.incorrectDeadHeatSetting);
+        }
+
+        if (teamWonSelectedNoneDeadHeat.length === 1) {
+            if ((teamSettledNoneDeadHeat.length >= 1 && _.isEmpty(teamSettledDeadHeat)) ||
+                !_.isEmpty(teamSettledDeadHeat) ||
+                !_.isEmpty(teamWonSelectedDeadHeat)) {
+                return this.MessageInconsistentDeadheat(teamWonSelected.concat(teamWonSettled), Language.Outright.incorrectDeadHeatSetting);
+            }
+        }
+
+        if (VerifyDeadHeatService.VerifyDeadheatSettingYes(teamWonSelected, teamWonSettled)) {
+            return this.MessageInconsistentDeadheat(teamWonSelected.concat(teamWonSettled), Language.Outright.inconsistentDeadheat);
+        }
+
+        return "";
+    }
+
+    public static VerifyDeadHeatNoSetting(teamWonSelected: Team[], teamWonSettled: Team[]) {
+        const teamWonSelectedDeadHeat = _.filter(teamWonSelected, team => team.isDeadheat);
+
+        if (teamWonSelectedDeadHeat.length > 0) {
+            return this.MessageInconsistentDeadheat(teamWonSelected.concat(teamWonSettled), Language.Outright.incorrectDeadHeatSetting);
+        }
+
+        if (VerifyDeadHeatService.VerifyDeadheatSettingNo(teamWonSelected, teamWonSettled)) {
+            return this.MessageInconsistentDeadheat(teamWonSelected.concat(teamWonSettled), Language.Outright.inconsistentDeadheat);
+        }
+
+        return "";
+    }
+
+    public static ConfirmDeadHeatNoSetting(teamWonSelected: Team[], teamWonSettled: Team[]) {
+        const teamSettledDeadHeat = _.filter(teamWonSettled, team => team.isDeadheat);
+        const teamSettledNoneDeadHeat = _.filter(teamWonSettled, team => !team.isDeadheat);
+        const teamWonSelectedNoneDeadHeat = _.filter(teamWonSelected, team => !team.isDeadheat);
+
+        if (teamWonSelectedNoneDeadHeat.length === 1 && teamSettledNoneDeadHeat.length >= 1 && _.isEmpty(teamSettledDeadHeat)) {
+            return true;
+        }
+
+        if (teamWonSelectedNoneDeadHeat.length > 1 && _.isEmpty(teamSettledDeadHeat)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static MessageInconsistentDeadheat(wonTeams: Team[], message: string) {
+        const teamNames = wonTeams.map(item => item.teamName);
+        return message.replace('{0}', `<br/>${teamNames.join(' | ')}`);
     }
 
     public static VerifyOnlyOneTeamWon(teamWonSelected: Team[], teamWonSettled: Team[]) {
@@ -64,9 +119,11 @@ export class CalculateService {
         return false;
     }
 
+
+
     public static teamWonSettled(teamSelected: Team[], originalTeam: Team[]) {
         const teamNotSelectButSettled = _.filter(originalTeam, team =>
-            _.isUndefined(teamSelected.find(t => _.isEqual(t.teamName, team.teamName)))
+            _.isUndefined(teamSelected.find(t => _.isEqual(t.orId, team.orId)))
             && _.isEqual(team.oddsStatus.toLowerCase(), Status.completed)
             && _.isEqual(team.status.toLowerCase(), Status.won)
         );

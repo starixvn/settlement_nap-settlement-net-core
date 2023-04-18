@@ -1,3 +1,4 @@
+import { MultipleSelect } from './../../models/multiple-select.model';
 import { CommonModule } from '@angular/common';
 import { FormControl, FormsModule } from '@angular/forms';
 import { MaterialModule } from './../../material-module';
@@ -5,7 +6,7 @@ import {
   Component, Input, ViewChild, ViewChildren, Output, ViewEncapsulation,
   OnChanges, SimpleChanges, ChangeDetectorRef, QueryList, EventEmitter, ViewContainerRef, AfterViewInit, OnDestroy
 } from '@angular/core';
-import { ItemsSelect, Group, MultipleSelect } from './../../models';
+import { ItemsSelect, Group } from './../../models';
 import { MatOption } from '@angular/material/core';
 import { MatExpansionPanel } from '@angular/material/expansion';
 import { MatSelect } from '@angular/material/select';
@@ -44,7 +45,7 @@ export class NewMultipleSelectComponent implements OnChanges, AfterViewInit {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes.multipleSelect) {
+    if (changes.multipleSelect.currentValue) {
       this.dataChanged = changes.multipleSelect.currentValue;
       this.items = this.dataChanged.items;
       this.itemAfterFilter = _.cloneDeep(this.items);
@@ -210,15 +211,17 @@ export class NewMultipleSelectComponent implements OnChanges, AfterViewInit {
     if(!this.multipleSelect.enableSearchBox){
       return;
     }
+    this.multipleSelect.items.forEach(item => item.includeSearchText = this.includeSearchText(item));
+    this.notExistItemIncludeSearchText = _.isUndefined(this.multipleSelect.items.find(item => item.includeSearchText));
+
     if (this.hasSearchText()) {
       this.status = "";
       this.searchTextEmpty = false;
     } else {
       this.changeStatus();
+      this.checkAllOption();
       this.searchTextEmpty = true;
     }
-    this.multipleSelect.items.forEach(item => item.includeSearchText = this.includeSearchText(item));
-    this.notExistItemIncludeSearchText = _.isUndefined(this.multipleSelect.items.find(item => item.includeSearchText));
   }
 
   private includeSearchText(item: ItemsSelect) {

@@ -91,12 +91,10 @@ public class OutrightLogProcessServiceTests
         var outrightLogs = new List<OutrightLog> { new() };
         outrightLogQueryService.GetOutrightLogs(Arg.Any<GetLogRequest>()).Returns(outrightLogs);
 
-        var secondService = Substitute.ForPartsOf<OutrightLogProcessServiceImp>(outrightLogQueryService, refDataService);
-        secondService.When(x => x.GetOutrightLogByOutrightId(Arg.Any<GetLogRequest>())).DoNotCallBase();
-        secondService.GetOutrightLogByOutrightId(Arg.Any<GetLogRequest>()).Returns(new List<OutrightLog>());
+        outrightLogQueryService.GetOutrightLog(Arg.Any<GetLogRequest>()).Returns(new OutrightLog());
 
         // Act
-        var actualOutrightLogs = await secondService.GetOutrightLogByMatchCode(new GetLogRequest());
+        var actualOutrightLogs = await service.GetOutrightLogByMatchCode(new GetLogRequest());
 
         // Assert
         Assert.Empty(actualOutrightLogs);
@@ -106,17 +104,17 @@ public class OutrightLogProcessServiceTests
     public async Task GetOutrightLogByMatchCode_ExistLogAndLogDetail_ReturnsNotEmptyList()
     {
         // Arrange
-        var outrightLogs = new List<OutrightLog> { new() };
-        var outrightLogDetails = new List<OutrightLogDetail> { new() };
-        var outrightLogsByMatchCode = new List<OutrightLog> { new() { OutrightLogDetails = outrightLogDetails } };
-        outrightLogQueryService.GetOutrightLogs(Arg.Any<GetLogRequest>()).Returns(outrightLogs);
 
-        var secondService = Substitute.ForPartsOf<OutrightLogProcessServiceImp>(outrightLogQueryService, refDataService);
-        secondService.When(x => x.GetOutrightLogByOutrightId(Arg.Any<GetLogRequest>())).DoNotCallBase();
-        secondService.GetOutrightLogByOutrightId(Arg.Any<GetLogRequest>()).Returns(outrightLogsByMatchCode);
+        var outrightLogs = new List<OutrightLog> { new() };
+        var outrightLog = new OutrightLog { OrId = 1, TeamId = 1000 };
+        var logDetails = new List<OutrightLogDetail> { new() };
+        outrightLogQueryService.GetOutrightLogs(Arg.Any<GetLogRequest>()).Returns(outrightLogs);
+        outrightLogQueryService.GetOutrightLog(Arg.Any<GetLogRequest>()).Returns(outrightLog);
+        outrightLogQueryService.GetOutrightLogDetails(Arg.Any<GetOutrightLogDetailCriteria>())
+            .Returns(logDetails);
 
         // Act
-        var actualOutrightLogs = await secondService.GetOutrightLogByMatchCode(new GetLogRequest());
+        var actualOutrightLogs = await service.GetOutrightLogByMatchCode(new GetLogRequest());
 
         // Assert
         Assert.True(actualOutrightLogs.Count > 0);

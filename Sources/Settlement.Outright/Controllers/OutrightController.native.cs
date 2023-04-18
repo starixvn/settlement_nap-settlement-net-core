@@ -22,11 +22,15 @@ public class OutrightController : ControllerBase
 
     [HttpGet]
     [Route("get-filter-view")]
-    public async Task<IActionResult> GetFilerView() => Ok(await getDataFilterService.GetFilterView());
+    public IActionResult GetFilerView() => Ok(getDataFilterService.GetFilterView());
 
     [HttpPost]
-    [Route("get-league")]
-    public async Task<IActionResult> GetLeagues(LeagueRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+    [Route("update-deadheat-setting")]
+    public async Task<IActionResult> UpdateDeadHeatSettingAsync(UpdateDeadHeatSettingRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+
+    [HttpPost]
+    [Route("get-sport-league")]
+    public async Task<IActionResult> GetLeagues(SportLeagueRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
     [HttpPost]
     [Route("filter")]
@@ -47,4 +51,14 @@ public class OutrightController : ControllerBase
     [HttpPost]
     [Route("get-log")]
     public async Task<IActionResult> GetLeagues(GetLogRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+
+    [HttpPost]
+    [Route("check-void-tickets")]
+    public async Task<IActionResult> CheckVoidTickets(CheckOutrightVoidTicketRequest request)
+        => Ok(await mediator.Send(request).ConfigureAwait(false));
+
+    [HttpPost]
+    [Route("get-deadheat-setting")]
+    public async Task<IActionResult> GetDeadHeatSetting(GetDeatHeadLeagueSettingRequest request)
+       => Ok(await mediator.Send(request).ConfigureAwait(false));
 }

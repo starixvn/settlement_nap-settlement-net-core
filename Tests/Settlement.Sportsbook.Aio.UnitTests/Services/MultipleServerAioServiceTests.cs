@@ -38,6 +38,7 @@ public class MultipleServerAioServiceTests
         createQueryService = Substitute.For<ICreateQueryService>();
         mergeDataService = Substitute.For<MergeDataService>();
         netPositionService = Substitute.For<NetPositionService>();
+        netPositionService.NetPosition(Arg.Any<NetPositionRequest>()).Returns(new Result());
         service = new MultipleServerAioServiceImp(repository, option, scaleOutSettleService, createQueryService, mergeDataService, netPositionService);
     }
 
@@ -151,7 +152,8 @@ public class MultipleServerAioServiceTests
         var expectResult = new Result
         {
             ErrCode = 1,
-            ErrMsg = "Message"
+            ErrMsg = "Message",
+            ChildMatchIds = null,
         };
 
         Assert.Equal(JsonConvert.SerializeObject(expectResult), JsonConvert.SerializeObject(actual));
@@ -174,6 +176,7 @@ public class MultipleServerAioServiceTests
         createQueryService.QuerySettle(Arg.Any<SettleRequest>()).Returns(new SettleCriteria { Action = "CAL" });
         netPositionService.NetPosition(Arg.Any<NetPositionRequest>()).Returns(new Result());
         repository.FetchAsync<ChildMatch>(Arg.Any<GetChildMatchCriteria>()).Returns(new List<ChildMatch> { childMatch, childMatchSecond });
+
         var actual = await service.Settle(request);
 
         var expectResult = new Result

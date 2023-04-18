@@ -21,49 +21,50 @@ export class MultipleSelect {
     public enableSearchBox: boolean;
     public disableSelectGroup: boolean;
 
-    public getValueItems() {
-        let value = '';
-        this.items.forEach((item) => {
-            const valueItem = item.getValueChildsChecked();
-            if (valueItem !== '') {
-                value = value === '' ?
-                    valueItem : `${value},${valueItem}`;
-            }
-        });
+    //will remove when all old multi-select is replaced by the newest
+    // public getValueItems() {
+    //     let value = '';
+    //     this.items.forEach((item) => {
+    //         const valueItem = item.getValueChildsChecked();
+    //         if (valueItem !== '') {
+    //             value = value === '' ?
+    //                 valueItem : `${value},${valueItem}`;
+    //         }
+    //     });
 
-        return value.toString().replace(/,/g, this.characterValue);
-    }
+    //     return value.toString().replace(/,/g, this.characterValue);
+    // }
 
-    public getItemsDisplay() {
-        const maxNumberItems = this.numberItemsDisplay !== undefined ?
-            this.numberItemsDisplay : false;
-        let text = '';
-        let countChecked = 0;
-        let count = 0;
+    // public getItemsDisplay() {
+    //     const maxNumberItems = this.numberItemsDisplay !== undefined ?
+    //         this.numberItemsDisplay : false;
+    //     let text = '';
+    //     let countChecked = 0;
+    //     let count = 0;
 
-        this.items.forEach((item) => {
-            countChecked += item.countChildsChecked();
-            count += item.countChilds;
-            const textItems = item.getTextChildsChecked();
-            if (textItems !== '') {
-                text = text === '' ?
-                    textItems : `${text},${textItems}`;
-            }
-        });
+    //     this.items.forEach((item) => {
+    //         countChecked += item.countChildsChecked();
+    //         count += item.countChilds;
+    //         const textItems = item.getTextChildsChecked();
+    //         if (textItems !== '') {
+    //             text = text === '' ?
+    //                 textItems : `${text},${textItems}`;
+    //         }
+    //     });
 
-        text = text.replace(/,/g, this.characterText);
-        return count === countChecked ? this.allItemsCheckedText :
-            countChecked === 0 ? this.noneItemCheckedText :
-                countChecked > maxNumberItems ? `${countChecked}${this.subfixNumberItemsCheckedText}` :
-                    text;
-    }
+    //     text = text.replace(/,/g, this.characterText);
+    //     return count === countChecked ? this.allItemsCheckedText :
+    //         countChecked === 0 ? this.noneItemCheckedText :
+    //             countChecked > maxNumberItems ? `${countChecked}${this.subfixNumberItemsCheckedText}` :
+    //                 text;
+    // }
 
-    public checkAllItems(isChecked: boolean) {
-        this.items.forEach((item) => {
-            item.checked = isChecked;
-            item.checkChilds();
-        });
+    // public checkAllItems(isChecked: boolean) {
+    //     this.items.forEach((item) => {
+    //         item.checked = isChecked;
+    //         item.checkChilds();
+    //     });
 
-        this.selectionTitle = this.getItemsDisplay();
-    }
+    //     this.selectionTitle = this.getItemsDisplay();
+    // }
 }
