@@ -2,11 +2,8 @@
 public class MatchTicketInfo
 {
     public bool IsExistHtFgNg { get; set; }
-
     public bool IsExistFgNg { get; set; }
-
     public bool IsExistFG { get; set; }
-
     public bool IsExistHTFG { get; set; }
     public bool IsExistCorner { get; set; }
     public bool IsExistHTCorner { get; set; }

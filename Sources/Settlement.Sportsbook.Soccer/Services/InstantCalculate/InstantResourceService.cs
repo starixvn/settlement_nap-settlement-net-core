@@ -89,6 +89,13 @@ public class InstantResourceServiceImp : IInstantResourceService
             resources.AddRange(resource);
         }
 
+
+        if (goalCondition.IsExistCorner)
+        {
+            var resource = GetExistCornerRaceResource(goalCondition);
+            resources.AddRange(resource);
+        }
+
         return resources;
     }
 
@@ -114,7 +121,7 @@ public class InstantResourceServiceImp : IInstantResourceService
         return result.Select(v => new XmlResource
         {
             HomeValue = $"{v.value}",
-            ResourceId = $"{ResourceKey.HalftimeCornerRace}{ConvertIntToString(v.raceTo)}",
+            ResourceId = $"{ResourceKey.CornerRace}{ConvertIntToString(v.raceTo)}",
             ResultStatusId = ResultStatus.ManuallySettled,
             SettlementStatusId = SettlementStatus.Completed,
         }).ToList();
@@ -270,7 +277,7 @@ public class InstantResourceServiceImp : IInstantResourceService
             ResourceId = ResourceKey.TowHFirstCorner,
             ResultStatusId = ResultStatus.ManuallySettled,
             SettlementStatusId = SettlementStatus.Completed,
-            HomeValue = firstGoalRecord.ToString(),
+            HomeValue = $"{firstGoalRecord}",
         };
     }
 
@@ -354,14 +361,6 @@ public class InstantResourceServiceImp : IInstantResourceService
         return resources.Count > 0
             ? xmlConvertService.Serialize(new XmlResults { Resources = resources })
             : string.Empty;
-    }
-
-    private XmlResource GetCornerResouce(InstantGoalCondition goalCondition)
-    {
-        return new XmlResource
-        {
-
-        };
     }
 }
 

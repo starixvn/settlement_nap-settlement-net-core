@@ -174,10 +174,10 @@
       <Setting Key="Get_SiteDBGroupID_DBSID02" SpName="Get_SiteDBGroupID" DbName="DBSID02.bodb02.bodbAdminNet" />
     </Function>
 
-    <Function Name="NAP_Admin_Settlement_1_InstantCalculation_Push">
-      <Setting Key="NAP_Admin_Settlement_1_InstantCalculation_Push_DBTXN" SpName="NAP_Admin_Settlement_1_InstantCalculation_Push" DbName="DBTXN.bodb02.bodbAdminNet" />
-      <Setting Key="NAP_Admin_Settlement_1_InstantCalculation_Push_DBSID01" SpName="NAP_Admin_Settlement_1_InstantCalculation_Push" DbName="DBSID01.bodb02.bodbAdminNet" />
-      <Setting Key="NAP_Admin_Settlement_1_InstantCalculation_Push_DBSID02" SpName="NAP_Admin_Settlement_1_InstantCalculation_Push" DbName="DBSID02.bodb02.bodbAdminNet" />
+    <Function Name="NAP_Admin_Settlement_InstantCalculation_Push">
+      <Setting Key="NAP_Admin_Settlement_InstantCalculation_Push_DBTXN" SpName="NAP_Admin_Settlement_InstantCalculation_Push" DbName="DBTXN.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Admin_Settlement_InstantCalculation_Push_DBSID01" SpName="NAP_Admin_Settlement_InstantCalculation_Push" DbName="DBSID01.bodb02.bodbAdminNet" />
+      <Setting Key="NAP_Admin_Settlement_InstantCalculation_Push_DBSID02" SpName="NAP_Admin_Settlement_InstantCalculation_Push" DbName="DBSID02.bodb02.bodbAdminNet" />
     </Function>
 
     <Function Name="Calculate">
