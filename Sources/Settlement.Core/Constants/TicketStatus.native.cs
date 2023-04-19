@@ -6,13 +6,9 @@ public static class TicketStatus
 
     public const string Running = "Running";
 
-    public const string ParlayRunning = "Parlay Running";
-
     public const string Marked = "Marked";
 
     public const string Waiting = "Waiting";
-
-    public const string ParlayWaiting = "Parlay Waiting";
 
     public const string Calculated = "Calculated";
 

@@ -227,7 +227,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
   private async push(query: SettleQuery) {
     const result = await this.aioService.push(query);
     if (result.isSuccessful) {
-      this.handleChildMatch(result.childMatchIds, query);
+      await this.handleChildMatch(result.childMatchIds, query);
       this.messageBoxService.closePopup();
     } else {
       this.toastrService.error(result.errMsg);

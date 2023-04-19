@@ -249,8 +249,8 @@ export class CalculationActionsComponent implements SportTemplate {
         
         const result = await this.aioService.push(settleQuery);
         if (result.isSuccessful) {
-            this.handleChildMatch(settleQuery, result.childMatchIds);
-            this.settleHedgeMatch(settleQuery);
+            await this.handleChildMatch(settleQuery, result.childMatchIds);
+            await this.settleHedgeMatch(settleQuery);
         } else {
             this.toastrService.error(result.errMsg);
         }
@@ -302,8 +302,8 @@ export class CalculationActionsComponent implements SportTemplate {
 
         const result = await this.aioService.push(query);
         if (result.isSuccessful) {
-            this.handleChildMatch(query, result.childMatchIds);
-            this.settleHedgeMatch(query);
+            await this.handleChildMatch(query, result.childMatchIds);
+            await this.settleHedgeMatch(query);
         } else {
             this.toastrService.error(result.errMsg);
         }

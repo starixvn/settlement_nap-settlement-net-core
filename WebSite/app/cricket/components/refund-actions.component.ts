@@ -87,8 +87,8 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
             this.match.permission.isLeader, false);
         const result = await this.aioService.push(query);
         if (result.isSuccessful) {
-            this.handleChildMatch(query, result.childMatchIds);
-            this.settleHedgeMatch(query);
+            await this.handleChildMatch(query, result.childMatchIds);
+            await this.settleHedgeMatch(query);
         } else {
             this.toastrService.error(result.errMsg);
         }

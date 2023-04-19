@@ -8,6 +8,7 @@ using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Sportsbook.Aio.Constants;
 using Settlement.Sportsbook.Aio.Criteria;
+using Settlement.Sportsbook.Aio.Criteria.Cricket;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Requests;
 using Settlement.Sportsbook.Aio.Services.Cricket;
@@ -38,7 +39,6 @@ public class MultipleServerAioServiceTests
         createQueryService = Substitute.For<ICreateQueryService>();
         mergeDataService = Substitute.For<MergeDataService>();
         netPositionService = Substitute.For<NetPositionService>();
-        netPositionService.NetPosition(Arg.Any<NetPositionRequest>()).Returns(new Result());
         service = new MultipleServerAioServiceImp(repository, option, scaleOutSettleService, createQueryService, mergeDataService, netPositionService);
     }
 
@@ -170,13 +170,12 @@ public class MultipleServerAioServiceTests
             {
                 new() { ResourceId = "00" }
             },
-            SportType = SportType.Cricket
+            SportType = SportType.Cricket,
         };
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
         createQueryService.QuerySettle(Arg.Any<SettleRequest>()).Returns(new SettleCriteria { Action = "CAL" });
-        netPositionService.NetPosition(Arg.Any<NetPositionRequest>()).Returns(new Result());
         repository.FetchAsync<ChildMatch>(Arg.Any<GetChildMatchCriteria>()).Returns(new List<ChildMatch> { childMatch, childMatchSecond });
-
+        netPositionService.Calculate(Arg.Any<UpdateStatusServiceCriteria>(), Arg.Any<List<ResultCommand>>(), Arg.Any<bool>()).Returns(new Result());
         var actual = await service.Settle(request);
 
         var expectResult = new Result

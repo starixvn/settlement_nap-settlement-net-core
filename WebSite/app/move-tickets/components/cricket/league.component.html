@@ -3,22 +3,18 @@
     <table class="table-calculation">
       <thead>
         <tr>
-          <th rowspan="2" class="code">Match Code/ID</th>
-          <th rowspan="2" class="kick-off-time">Kick-off Time</th>
-          <th rowspan="2" class="event">Event</th>
-          <th rowspan="2" class="interval-score">Interval Score</th>
-          <th rowspan="2" class="score">Total Games/ Points</th>
-          <th rowspan="2" class="score">HT Score</th>
-          <th rowspan="2" class="score">Final score</th>
-          <th rowspan="2" class="event-status">Early Settle Status</th>
-          <th rowspan="2" class="event-status">Event Status</th>
-          <th rowspan="2" class="hold-status">Hold Status</th>
-          <th colspan="2" class="confirm">Action</th>
-          <th rowspan="2" class="reference">Reference Actions</th>
-        </tr>
-        <tr>
-          <th class="move-tickets">Move Tickets</th>
-          <th class="calc-mp-moved-tickets">Calc MP Moved Tickets</th>
+          <th class="code">Match Code/ID</th>
+          <th class="kick-off-time">Kick-off Time</th>
+          <th class="event">Event</th>
+          <th class="interval-score">Interval Score</th>
+          <th class="score">Total Games/ Points</th>
+          <th class="score">HT Score</th>
+          <th class="score">Final score</th>
+          <th class="event-status">Early Settle Status</th>
+          <th class="event-status">Event Status</th>
+          <th class="hold-status">Hold Status</th>
+          <th>Action</th>
+          <th class="reference">Reference Actions</th>
         </tr>
       </thead>
     </table>
@@ -34,7 +30,7 @@
           <table class="table-calculation">
             <tbody>
               <tr class="league-name">
-                <td colspan="13" class="name" (click)="collapseLeague(leagueMatch)">
+                <td colspan="12" class="name" (click)="collapseLeague(leagueMatch)">
                   <span class="collapse-icon" [ngClass]="leagueMatch.collapse ? 'collapsed' : ''"></span>
                   &nbsp;{{leagueMatch.name}}
                 </td>
@@ -101,13 +97,6 @@
                         [disabled]="!permission.canMoveTickets"
                         (click)="moveTickets(match)" >
                         Move Tickets
-                      </button>
-                    </td>
-                    <td rowspan="2" class="calc-mp-moved-tickets">
-                      <button class="button"
-                        [ngClass]="{'button-disabled': true}"
-                        [disabled]="true">
-                        Calc MP (Moved)
                       </button>
                     </td>
                     <td rowspan="2" class="reference">
