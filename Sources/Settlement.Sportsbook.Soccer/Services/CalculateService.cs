@@ -157,14 +157,14 @@ public class CalculateServiceImp : ICalculateService
 
     private void WriteDirectlyLogUncalculateFt(CalculateCriteria criteria, IEnumerable<ResultDetail> resultDetails)
     {
-        var resultHalfTime = resultDetails.FirstOrDefault(result => result.ResourceId == ResourceType.Halftime) ?? new ResultDetail();
+        var resultHalfTime = resultDetails?.FirstOrDefault(result => result.ResourceId == ResourceType.Halftime) ?? new ResultDetail();
         var match = new Match
         {
             MatchId = criteria.MatchId,
             GoalRecord = criteria.GoalRecord,
             BetStatus = criteria.BetStatus,
             HalfTimeHomeScore = string.IsNullOrEmpty(resultHalfTime.HomeValue) ? 0 : int.Parse(resultHalfTime.HomeValue),
-            HalfTimeAwayScore = string.IsNullOrEmpty(resultHalfTime.AwayValue) ? 0 : int.Parse(resultHalfTime.AwayValue),
+            HalfTimeAwayScore = string.IsNullOrEmpty(resultHalfTime.AwayValue) ? 0 : int.Parse(resultHalfTime.AwayValue)
         };
 
         var message = LogDirectlyServiceImp.GenerateLogData(match, ActionType.UnCalculateFullTime);

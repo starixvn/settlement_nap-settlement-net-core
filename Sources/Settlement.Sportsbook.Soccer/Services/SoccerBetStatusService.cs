@@ -1,4 +1,6 @@
-﻿using Settlement.Core.Constants;
+﻿using AutoMapper;
+using Settlement.Core.Constants;
+using Settlement.Core.Models;
 using Settlement.Sportsbook.Soccer.Requests;
 
 namespace Settlement.Sportsbook.Soccer.Services;
@@ -19,6 +21,7 @@ public class SoccerBetStatusServiceImp : ISoccerBetStatusService
     private readonly IBetStatusAllService betStatusAllService;
     private readonly FullTimeBetStatus.IBetStatusService fullTimeBetStatusService;
     private readonly HalfTimeBetStatus.IBetStatusService halfTimeBetStatusService;
+    private readonly IMapper mapper;
 
     private const string RefundHalfTime = "Refund HT;";
 
@@ -27,13 +30,15 @@ public class SoccerBetStatusServiceImp : ISoccerBetStatusService
         IValidationService validationService,
         HalfTimeBetStatus.IBetStatusService halfTimeBetStatusService,
         FullTimeBetStatus.IBetStatusService fullTimeBetStatusService,
-        IBetStatusAllService betStatusAllService)
+        IBetStatusAllService betStatusAllService,
+        IMapper mapper)
     {
         this.matchService = matchService;
         this.validationService = validationService;
         this.halfTimeBetStatusService = halfTimeBetStatusService;
         this.fullTimeBetStatusService = fullTimeBetStatusService;
         this.betStatusAllService = betStatusAllService;
+        this.mapper = mapper;
     }
 
     public string CreateBetStatus(SettleRequest request)
@@ -61,13 +66,26 @@ public class SoccerBetStatusServiceImp : ISoccerBetStatusService
             return string.Empty;
         }
 
-        var betStatusHalfTimeRefunded = halfTime.SettlementStatusId == SettlementStatus.RefundHt ? RefundHalfTime : string.Empty;
+        if (halfTime.SettlementStatusId == SettlementStatus.RefundHt)
+        {
+            return RefundHalfTime;
+        }
 
         if (request.IsExistFgLg || request.IsExistHtFgLg || request.IsExistFgNg)
         {
-            return halfTimeBetStatusService.RevertBetStatus(request, betStatusHalfTimeRefunded, betStatus, goalRecord);
+            return RevertBetStatusHalfTime(request, goalRecord, halfTime);
         }
 
-        return betStatusHalfTimeRefunded;
+        return string.Empty;
+    }
+
+    private string RevertBetStatusHalfTime(UncalculateFtRequest request, string goalRecord, ResultDetail halfTimeResult)
+    {
+        var settleBaseRequest = mapper.Map<SettleBaseRequest>(request);
+        settleBaseRequest.HalfTimeAwayScore = string.IsNullOrEmpty(halfTimeResult.AwayValue) ? 0 : int.Parse(halfTimeResult.AwayValue);
+        settleBaseRequest.HalfTimeHomeScore = string.IsNullOrEmpty(halfTimeResult.HomeValue) ? 0 : int.Parse(halfTimeResult.HomeValue);
+        settleBaseRequest.GoalRecord = goalRecord;
+        settleBaseRequest.BetStatus = string.Empty;
+        return halfTimeBetStatusService.GetBetStatus(settleBaseRequest);
     }
 }

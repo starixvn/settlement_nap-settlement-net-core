@@ -1,11 +1,12 @@
 ﻿using AutoMapper;
-using AutoMapper.Configuration;
 using Fanex.NAP.Client.Helpers.Web;
 using Microsoft.AspNetCore.Http;
 using Settlement.Core.Constants;
+using Settlement.Core.Models;
 using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Requests;
 using Settlement.Sportsbook.Soccer.Services;
+using Settlement.Sportsbook.Soccer.Services.GetMatch;
 
 namespace Settlement.Sportsbook.Soccer.UnitTests.Services;
 
@@ -21,6 +22,8 @@ public class CreateCriteriaServiceTests
 
     private readonly ICreateCriteriaService service;
 
+    private readonly IMatchService matchService;
+
     public CreateCriteriaServiceTests()
     {
         var currentSession = Substitute.For<INapSession>();
@@ -29,6 +32,7 @@ public class CreateCriteriaServiceTests
         xmlConvertService = Substitute.For<XmlConvertService>();
         resourceService = Substitute.For<IResourceService>();
         betStatusAllService = Substitute.For<IBetStatusAllService>();
+        matchService = Substitute.For<IMatchService>();
         var context = new DefaultHttpContext
         {
             Connection =
@@ -43,7 +47,7 @@ public class CreateCriteriaServiceTests
         var config = new MapperConfiguration(mapperConfig);
         var mapper = new Mapper(config);
         service = new CreateCriteriaServiceImp(currentSession, resourceService, accessor, soccerBetStatusService,
-            xmlConvertService, mapper, betStatusAllService);
+            xmlConvertService, mapper, betStatusAllService, matchService);
     }
 
     [Fact]
@@ -65,9 +69,9 @@ public class CreateCriteriaServiceTests
         // Assert
         Received.InOrder(() =>
         {
-            resourceService.Received().HalftimeResources(Arg.Any<GoalCondition>(), Arg.Any<int>());
-            xmlConvertService.Received().Serialize(Arg.Any<XmlResults>());
-            soccerBetStatusService.Received().CreateBetStatus(Arg.Any<SettleRequest>());
+            resourceService.HalftimeResources(Arg.Any<GoalCondition>(), Arg.Any<int>());
+            xmlConvertService.Serialize(Arg.Any<XmlResults>());
+            soccerBetStatusService.CreateBetStatus(Arg.Any<SettleRequest>());
         });
     }
 
@@ -88,9 +92,9 @@ public class CreateCriteriaServiceTests
         // Assert
         Received.InOrder(() =>
         {
-            resourceService.Received().FullTimeResources(Arg.Any<GoalCondition>(), Arg.Any<int>());
-            xmlConvertService.Received().Serialize(Arg.Any<XmlResults>());
-            soccerBetStatusService.Received().CreateBetStatus(Arg.Any<SettleRequest>());
+            resourceService.FullTimeResources(Arg.Any<GoalCondition>(), Arg.Any<int>());
+            xmlConvertService.Serialize(Arg.Any<XmlResults>());
+            soccerBetStatusService.CreateBetStatus(Arg.Any<SettleRequest>());
         });
     }
 
@@ -111,9 +115,9 @@ public class CreateCriteriaServiceTests
         // Assert
         Received.InOrder(() =>
         {
-            resourceService.Received().AllResources(Arg.Any<GoalCondition>(), Arg.Any<int>());
-            xmlConvertService.Received().Serialize(Arg.Any<XmlResults>());
-            soccerBetStatusService.Received().CreateBetStatus(Arg.Any<SettleRequest>());
+            resourceService.AllResources(Arg.Any<GoalCondition>(), Arg.Any<int>());
+            xmlConvertService.Serialize(Arg.Any<XmlResults>());
+            soccerBetStatusService.CreateBetStatus(Arg.Any<SettleRequest>());
         });
     }
 
@@ -134,9 +138,9 @@ public class CreateCriteriaServiceTests
         // Assert
         Received.InOrder(() =>
         {
-            betStatusAllService.Received().GetBetStatusRefund(Arg.Any<RefundRequest>());
-            resourceService.Received().FullTimeResourcesSettleDetermined(Arg.Any<GoalCondition>());
-            xmlConvertService.Received().Serialize(Arg.Any<XmlResults>());
+            betStatusAllService.GetBetStatusRefund(Arg.Any<RefundRequest>());
+            resourceService.FullTimeResourcesSettleDetermined(Arg.Any<GoalCondition>());
+            xmlConvertService.Serialize(Arg.Any<XmlResults>());
         });
     }
 
@@ -153,8 +157,8 @@ public class CreateCriteriaServiceTests
         // Assert
         Received.InOrder(() =>
         {
-            resourceService.Received().AllResources(Arg.Any<GoalCondition>(), Arg.Any<int>());
-            xmlConvertService.Received().Serialize(Arg.Any<XmlResults>());
+            resourceService.AllResources(Arg.Any<GoalCondition>(), Arg.Any<int>());
+            xmlConvertService.Serialize(Arg.Any<XmlResults>());
         });
 
         Assert.Equal("123", criteria.BetStatus);
@@ -179,9 +183,9 @@ public class CreateCriteriaServiceTests
         // Assert
         Received.InOrder(() =>
         {
-            betStatusAllService.Received().GetBetStatusRefund(Arg.Any<RefundRequest>());
-            resourceService.Received().AllResourcesSettleDetermined(Arg.Any<GoalCondition>());
-            xmlConvertService.Received().Serialize(Arg.Any<XmlResults>());
+            betStatusAllService.GetBetStatusRefund(Arg.Any<RefundRequest>());
+            resourceService.AllResourcesSettleDetermined(Arg.Any<GoalCondition>());
+            xmlConvertService.Serialize(Arg.Any<XmlResults>());
         });
         Assert.Equal(1, criteria.FullTimeAway);
         Assert.Equal(2, criteria.FullTimeHome);
@@ -206,8 +210,8 @@ public class CreateCriteriaServiceTests
         // Assert
         Received.InOrder(() =>
         {
-            resourceService.Received().FullTimeResources(Arg.Any<GoalCondition>(), Arg.Any<int>());
-            xmlConvertService.Received().Serialize(Arg.Any<XmlResults>());
+            resourceService.FullTimeResources(Arg.Any<GoalCondition>(), Arg.Any<int>());
+            xmlConvertService.Serialize(Arg.Any<XmlResults>());
         });
 
         Assert.Equal("123", criteria.BetStatus);
@@ -234,12 +238,62 @@ public class CreateCriteriaServiceTests
         // Assert
         Received.InOrder(() =>
         {
-            resourceService.Received().HalftimeResources(Arg.Any<GoalCondition>(), Arg.Any<int>());
-            xmlConvertService.Received().Serialize(Arg.Any<XmlResults>());
+            resourceService.HalftimeResources(Arg.Any<GoalCondition>(), Arg.Any<int>());
+            xmlConvertService.Serialize(Arg.Any<XmlResults>());
         });
 
         Assert.Empty(criteria.BetStatus);
         Assert.Equal(0, criteria.FullTimeAway);
         Assert.Equal(0, criteria.FullTimeHome);
+    }
+
+    [Theory]
+    [InlineData("HA;A", "HA;")]
+    [InlineData("", "")]
+    [InlineData("HA", "HA")]
+    public void CreateUnCalculateFtCriteria_HalfTimeNotRefunded_ReturnCorrectGoalRecord(string currentGoalRecord, string expected)
+    {
+        var request = new UncalculateFtRequest
+        {
+            ResultDetails = new List<ResultDetail>
+            {
+                new()
+                {
+                    ResourceId = ResourceType.Halftime,
+                    SettlementStatusId = SettlementStatus.Completed
+                }
+            }
+        };
+        matchService.GetMatchGoalRecord(Arg.Any<int>()).Returns(new MatchGoalRecordModel { BetStatus = "", GoalRecord = currentGoalRecord });
+        soccerBetStatusService.CreateBetStatusAfterUncalculateFt(Arg.Any<UncalculateFtRequest>(), "", Arg.Any<string>()).Returns("");
+        resourceService.UnCalculateFtResources(Arg.Any<GoalCondition>()).Returns(new List<XmlResource>());
+
+        var criteria = service.CreateUnCalculateFtCriteria(request);
+
+        Assert.Equal(expected, criteria.GoalRecord);
+    }
+
+    [Fact]
+    public void CreateUnCalculateFtCriteria_HalfTimeRefunded_ReturnCorrectGoalRecord()
+    {
+        var request = new UncalculateFtRequest
+        {
+            ResultDetails = new List<ResultDetail>
+            {
+                new()
+                {
+                    ResourceId = ResourceType.Halftime,
+                    SettlementStatusId = SettlementStatus.RefundHt
+                }
+            }
+        };
+        matchService.GetMatchGoalRecord(Arg.Any<int>()).Returns(new MatchGoalRecordModel { BetStatus = "", GoalRecord = "HA" });
+        soccerBetStatusService.CreateBetStatusAfterUncalculateFt(Arg.Any<UncalculateFtRequest>(), "", Arg.Any<string>())
+            .Returns("");
+        resourceService.UnCalculateFtResources(Arg.Any<GoalCondition>()).Returns(new List<XmlResource>());
+
+        var criteria = service.CreateUnCalculateFtCriteria(request);
+
+        Assert.Equal(string.Empty, criteria.GoalRecord);
     }
 }

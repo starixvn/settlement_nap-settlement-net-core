@@ -31,26 +31,25 @@ public class BetStatusServiceTests
         // Assert
         Received.InOrder(() =>
         {
-            halftimeService.Received().GetBetStatusForCalculateHalfTime(Arg.Any<SettleRequest>());
-            halftimeService.Received().AppendHalfTimeBetStatus(Arg.Any<string>(), Arg.Any<string>());
-            halftimeService.Received().FullTimeBetStatusForCalculateHalfTime(Arg.Any<string>());
-            halftimeService.Received().AppendFullTimeBetStatus(Arg.Any<string>(), Arg.Any<string>());
+            halftimeService.GetBetStatusForCalculateHalfTime(Arg.Any<SettleRequest>());
+            halftimeService.AppendHalfTimeBetStatus(Arg.Any<string>(), Arg.Any<string>());
+            halftimeService.FullTimeBetStatusForCalculateHalfTime(Arg.Any<string>());
+            halftimeService.AppendFullTimeBetStatus(Arg.Any<string>(), Arg.Any<string>());
         });
     }
 
     [Fact]
-    public void GetBetStatus_NotExistHalftimeFgLg_OnlyCallApplyNewBetStatusForHalfTimeMethod()
+    public void GetBetStatus_NotExistFgLg_OnlyCallApplyNewBetStatusForHalfTimeMethod()
     {
         // Arrange
-        var query = new SettleRequest
-        {
-            IsExistHtFgLg = false
-        };
+        var query = new SettleRequest();
 
         // Act
         service.GetBetStatus(query);
 
         // Assert
+        halftimeService.DidNotReceive().GetBetStatusForCalculateHalfTime(Arg.Any<SettleRequest>());
         halftimeService.Received().AppendHalfTimeBetStatus(Arg.Any<string>(), Arg.Any<string>());
+        halftimeService.DidNotReceive().FullTimeBetStatusForCalculateHalfTime(Arg.Any<string>());
     }
 }

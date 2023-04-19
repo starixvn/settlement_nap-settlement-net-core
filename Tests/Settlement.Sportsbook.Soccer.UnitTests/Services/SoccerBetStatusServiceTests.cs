@@ -1,8 +1,11 @@
-﻿using Settlement.Sportsbook.Soccer.Requests;
+﻿using Settlement.Core.Constants;
+using Settlement.Core.Models;
+using Settlement.Sportsbook.Soccer.Requests;
 using Settlement.Sportsbook.Soccer.Services;
 
 namespace Settlement.Sportsbook.Soccer.UnitTests.Services;
 
+using AutoMapper;
 using Soccer.Services.GetMatch;
 
 public class SoccerBetStatusServiceTests
@@ -21,12 +24,17 @@ public class SoccerBetStatusServiceTests
         betStatusAllService = Substitute.For<IBetStatusAllService>();
         fullTimeBetStatusService = Substitute.For<Soccer.Services.FullTimeBetStatus.IBetStatusService>();
         halfTimeBetStatusService = Substitute.For<Soccer.Services.HalfTimeBetStatus.IBetStatusService>();
+        var mapperConfig = new MapperConfigurationExpression();
+        mapperConfig.AddProfile<SoccerAutoMapperProfile>();
+        var config = new MapperConfiguration(mapperConfig);
+        var mapper = new Mapper(config);
         service = new SoccerBetStatusServiceImp(matchService, validationService,
-            halfTimeBetStatusService, fullTimeBetStatusService, betStatusAllService);
+            halfTimeBetStatusService, fullTimeBetStatusService, betStatusAllService, mapper);
     }
 
     [Fact]
-    public void CreateBetStatus_IsExistFirstGoalLastGoalAndActionIsCalculationHalftime_CallGetBetStatusMethodOfHalftimeService()
+    public void
+        CreateBetStatus_IsExistFirstGoalLastGoalAndActionIsCalculationHalftime_CallGetBetStatusMethodOfHalftimeService()
     {
         // Arrange
         var query = new SettleRequest
@@ -43,7 +51,8 @@ public class SoccerBetStatusServiceTests
     }
 
     [Fact]
-    public void CreateBetStatus_IsExistFirstGoalLastGoalAndActionIsCalculationFullTime_CallGetBetStatusMethodOfFullTimeService()
+    public void
+        CreateBetStatus_IsExistFirstGoalLastGoalAndActionIsCalculationFullTime_CallGetBetStatusMethodOfFullTimeService()
     {
         // Arrange
         var query = new SettleRequest
@@ -128,5 +137,79 @@ public class SoccerBetStatusServiceTests
 
         // Assert
         Assert.Empty(actualBetStatus);
+    }
+
+    [Theory]
+    [InlineData(ResourceType.Halftime, 0)]
+    [InlineData(ResourceType.Final, 1)]
+    public void CreateBetStatusAfterUncalculateFt_HalfTimeResultRunningOrNull_ReturnEmpty(string resourceId,
+        byte settlementStatusId)
+    {
+        var result = new ResultDetail
+
+        {
+            ResourceId = resourceId,
+            SettlementStatusId = settlementStatusId
+        };
+
+        var request = new UncalculateFtRequest
+        {
+            ResultDetails = new List<ResultDetail> { result }
+        };
+
+        var actual = service.CreateBetStatusAfterUncalculateFt(request, "", "");
+
+        Assert.Empty(actual);
+    }
+
+    [Theory]
+    [InlineData(SettlementStatus.RefundHt, "Refund HT;")]
+    [InlineData(SettlementStatus.Completed, "")]
+    public void CreateBetStatusAfterUncalculateFt_NotExistFglgBetType_ReturnRefundHt(byte settlementStatusId, string expected)
+    {
+        var result = new ResultDetail
+
+        {
+            ResourceId = ResourceType.Halftime,
+            SettlementStatusId = settlementStatusId
+        };
+
+        var request = new UncalculateFtRequest
+        {
+            ResultDetails = new List<ResultDetail> { result }
+        };
+
+        var actual = service.CreateBetStatusAfterUncalculateFt(request, "", "");
+
+        Assert.Equal(expected, actual);
+    }
+
+    [Theory]
+    [InlineData(true, false, false)]
+    [InlineData(false, true, false)]
+    [InlineData(false, false, true)]
+    public void CreateBetStatusAfterUncalculateFt_ExistFglgBetType_ReturnRefundHt(bool isExistFgLg, bool isExistHtFgLg, bool isExistFgNg)
+    {
+        var result = new ResultDetail
+
+        {
+            ResourceId = ResourceType.Halftime,
+            SettlementStatusId = SettlementStatus.Completed
+        };
+
+        var request = new UncalculateFtRequest
+        {
+            ResultDetails = new List<ResultDetail> { result },
+            IsExistFgLg = isExistFgLg,
+            IsExistHtFgLg = isExistHtFgLg,
+            IsExistFgNg = isExistFgNg
+        };
+
+        halfTimeBetStatusService.GetBetStatus(Arg.Any<SettleBaseRequest>())
+            .Returns("betStatus");
+
+        var actual = service.CreateBetStatusAfterUncalculateFt(request, "", "");
+
+        Assert.Equal("betStatus", actual);
     }
 }

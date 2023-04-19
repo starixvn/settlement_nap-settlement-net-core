@@ -110,7 +110,7 @@ public class CreateCriteriaServiceImp : ICreateCriteriaService
     public CalculateCriteria CreateUnCalculateFtCriteria(UncalculateFtRequest request)
     {
         var matchGoalRecord = matchService.GetMatchGoalRecord(request.MatchId) ?? new MatchGoalRecordModel();
-        var htGoalRecord = GoalRecordHt(matchGoalRecord.GoalRecord);
+        var htGoalRecord = GoalRecordHt(matchGoalRecord.GoalRecord, request.ResultDetails);
         var criteria = new CalculateCriteria
         {
             AdminId = currentSession.UserId,
@@ -248,7 +248,7 @@ public class CreateCriteriaServiceImp : ICreateCriteriaService
 
     private string GetResourceResultUnCalculateFt(UncalculateFtRequest request)
     {
-        var goalCondition = new GoalCondition()
+        var goalCondition = new GoalCondition
         {
             IsEnabledGoalRecordFt = request.IsEnabledGoalRecordFt,
             IsExistFgLg = request.IsExistFgLg
@@ -261,14 +261,15 @@ public class CreateCriteriaServiceImp : ICreateCriteriaService
             : string.Empty;
     }
 
-    private string GoalRecordHt(string goalRecord)
+    private static string GoalRecordHt(string goalRecord, IEnumerable<ResultDetail> resultDetails)
     {
-        if (string.IsNullOrEmpty(goalRecord))
+        var halfTime = resultDetails.FirstOrDefault(item => item.ResourceId == ResourceType.Halftime);
+        if (string.IsNullOrEmpty(goalRecord) || halfTime?.SettlementStatusId == SettlementStatus.RefundHt)
         {
             return string.Empty;
         }
 
         var semicolonIndex = goalRecord.IndexOf(';');
-        return goalRecord[..(semicolonIndex + 1)].ToUpperInvariant();
+        return semicolonIndex < 0 ? goalRecord : goalRecord[..(semicolonIndex + 1)].ToUpperInvariant();
     }
 }
