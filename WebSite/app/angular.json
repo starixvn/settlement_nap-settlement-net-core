@@ -645,7 +645,7 @@
         }
       }
     },
-    "app": {
+    "calculate-page": {
       "root": "app",
       "sourceRoot": "calculate-page",
       "projectType": "application",
@@ -655,7 +655,7 @@
           "options": {
             "aot": true,
             "outputPath": "../wwwroot/calculate-page",
-            "index": "calculate-page/index.html",
+            "index": "calculate-page/index.cshtml",
             "main": "calculate-page/main.ts",
             "tsConfig": "calculate-page/tsconfig.app.json",
             "polyfills": "polyfills.ts",
