@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Fanex.Data.Repository;
-using Fanex.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Settlement.Core.Constants;
@@ -42,8 +41,6 @@ public class VoidBetApiServiceImp : IVoidBetApiService
 
     private readonly AppSettingsKey appSettingsKey;
 
-    private readonly ILogger logger;
-
     public VoidBetApiServiceImp(
         IDynamicRepository repository,
         XmlConvertService xmlConvertService,
@@ -51,8 +48,7 @@ public class VoidBetApiServiceImp : IVoidBetApiService
         SendMailService sendMailService,
         IRefDataService refDataService,
         IHttpClientFactory httpClientFactory,
-        IOptions<AppSettingsKey> appSettingsKey,
-        ILogger logger)
+        IOptions<AppSettingsKey> appSettingsKey)
 
     {
         this.repository = repository;
@@ -62,7 +58,6 @@ public class VoidBetApiServiceImp : IVoidBetApiService
         this.refDataService = refDataService;
         this.httpClientFactory = httpClientFactory;
         this.appSettingsKey = appSettingsKey.Value;
-        this.logger = logger;
     }
 
     public async Task VoidBet(string action, VoidBetRequest request)
@@ -88,15 +83,7 @@ public class VoidBetApiServiceImp : IVoidBetApiService
         if (!string.IsNullOrEmpty(jackTimeApi))
         {
             var apiUri = $"{jackTimeApi}{action}";
-            //await PostAsync(apiUri, request);
-            var requestContent = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
-            var httpClient = httpClientFactory.CreateClient();
-            var response = await httpClient.PostAsync(new Uri(apiUri), requestContent);
-            response.EnsureSuccessStatusCode();
-            var apiResponse = await response.Content.ReadAsStringAsync();
-            var message = $"API: {apiUri} - Params: {JsonConvert.SerializeObject(request)} - Result: {apiResponse}";
-
-            await logger.InfoAsync($"Log JT API - {message}");
+            await PostAsync(apiUri, request);
         }
     }
 
