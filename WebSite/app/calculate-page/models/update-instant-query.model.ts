@@ -7,8 +7,11 @@ export class UpdateInstantQuery {
     awayScore: string;
     matchId: string;
     isHalfTime: boolean;
-    //    instantKey: number;
+    instantKey: number;
     action: string;
+    instantHomeScoreBefore: string;
+    instantAwayScoreBefore: string;
+    instantGoalRecordBefore: string;
     //    isExistHtFgNg: boolean;
     //    isExistFgNg: boolean;
     //    isExistFg: boolean;
@@ -20,9 +23,12 @@ export class UpdateInstantQuery {
     constructor(match: CalculationMatch) {
         this.homeScore = match.instantHomeScore;
         this.awayScore = match.instantAwayScore;
+        this.instantAwayScoreBefore = match.instantAwayScoreBefore;
+        this.instantHomeScoreBefore = match.instantHomeScoreBefore;
+        this.instantGoalRecordBefore = match.instantGoalRecordBefore;
         this.matchId = match.matchId;
         this.isHalfTime = _.isEqual(match.instantCalculationType, InstantCalculationType.calcHt);
-        //   this.instantKey = match.instantKey;
+        this.instantKey = match.instantKey;
         this.action = "CAL";
         this.childMatchType = match.childMatchType;
     }

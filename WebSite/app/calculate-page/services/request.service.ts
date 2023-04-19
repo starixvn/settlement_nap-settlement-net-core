@@ -113,6 +113,11 @@ export class RequestService {
                     match.halfTimeAwayScore = newMatch.halfTimeAwayScore;
                     match.finalHomeScore = newMatch.finalHomeScore;
                     match.finalAwayScore = newMatch.finalAwayScore;
+                    //
+                    // match.instantAwayScore = newMatch.instantAwayScore;
+                    // match.instantHomeScore = newMatch.instantHomeScore;
+                    // match.in
+
                     match.isHalfTimeCal = newMatch.isHalfTimeCal;
                     match.isCalculatingSingle = newMatch.isCalculatingSingle;
                     match.isCalculatingMP = newMatch.isCalculatingMP;
@@ -154,6 +159,9 @@ export class RequestService {
         oldMatch.isFtCalculated = newMatch.isFtCalculated;
         oldMatch.instantHomeScore = newMatch.instantHomeScore;
         oldMatch.instantAwayScore = newMatch.instantAwayScore;
+        oldMatch.instantAwayScoreBefore = newMatch.instantAwayScoreBefore;
+        oldMatch.instantAwayScoreBefore = newMatch.instantAwayScoreBefore;
+        oldMatch.instantGoalRecordBefore = newMatch.instantGoalRecordBefore;
         oldMatch.instantKey = newMatch.instantKey;
         oldMatch.liveAwayScore = newMatch.liveAwayScore;
         oldMatch.liveHomeScore = newMatch.liveHomeScore;

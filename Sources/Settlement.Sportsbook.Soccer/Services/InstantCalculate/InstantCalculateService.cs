@@ -92,37 +92,29 @@ public class InstantCalculateServiceImp : InstantCalculateService
         var criteria = mapper.Map<InstantCalculationRequest, PushInstantCalculationCriteria>(request);
         // get match info
         var matchDetail = await GetMatchDetailInfo(request.MatchId);
+        request.BetStatus = matchDetail.BetStatus;
         // get ticket info
         var ticketInfo = await GetMatchTicketInfo(request.MatchId);
         // gen resource
         var resourceResult = GetResourceResultInstantCalculate(request, matchDetail, ticketInfo);
 
         // checking
-        var matchCheckingCriteria = new MatchCheckingCriteria
+        var resultMatchChecking = await CheckCalculationMatch(request, resourceResult);
+        if (resultMatchChecking.ErrCode > 0)
         {
-            MatchId = request.MatchId,
-            Action = request.Action,
-            AwayScore = request.AwayScore,
-            HomeScore = request.HomeScore,
-            ResourceResult = resourceResult,
-        };
-        var matchCheckingResult = await CalculateCheckingInfo(matchCheckingCriteria);
-        if (matchCheckingResult.ErrCode > 0)
-        {
-            return new Result
-            {
-                ErrCode = matchCheckingResult.ErrCode,
-                ErrMsg = matchCheckingResult.ErrMsg
-            };
+            return resultMatchChecking;
         }
 
 
         criteria.ResourceResult = resourceResult;
         criteria.AdminId = currentSession.UserId;
         criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
+
         criteria.Action = $"{request.Action}-{request.Mode}";
 
+        //
         var result = await ValidateBeforeExecute(request);
+
         if (result.IsSuccessful)
         {
             await UpdateResult(request);
@@ -131,6 +123,68 @@ public class InstantCalculateServiceImp : InstantCalculateService
         }
 
         return result;
+    }
+
+    //private async Task GetInstantMatchInfo()
+    //{
+
+    //}
+
+    //private async Task<Result> HandlePushInstant(InstantCalculationRequest request, string resourceResult)
+    //{
+    //    var criteria = mapper.Map<InstantCalculationRequest, PushInstantCalculationCriteria>(request);
+    //    criteria.ResourceResult = resourceResult;
+    //    criteria.AdminId = currentSession.UserId;
+    //    criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
+
+    //    criteria.Action = $"{request.Action}-{request.Mode}";
+
+    //    //
+    //    var result = await ValidateBeforeExecute(request);
+
+    //    if (result.IsSuccessful)
+    //    {
+    //        await UpdateResult(request);
+    //        await UpdateMatchInfo(request, request.IsHalfTime, criteria.ResourceResult);
+    //        await Execute(criteria);
+    //    }
+
+    //    return result;
+    //}
+
+    private async Task<Result> CheckCalculationMatch(InstantCalculationRequest request, string resourceResult)
+    {
+        var homeScore = int.Parse(request.HomeScore);
+        var awayScore = int.Parse(request.AwayScore);
+        var beforeHomeScore = int.Parse(request.InstantHomeScoreBefore);
+        var beforeAwayScore = int.Parse(request.InstantAwayScoreBefore);
+
+        var totalGoal = homeScore + awayScore;
+        var totalGoalCheck = beforeHomeScore + beforeAwayScore;
+        var goalRecordCheck = request.InstantGoalRecordBefore;
+
+        //if (totalGoalCheck > 0 &&
+        //    (totalGoal < totalGoalCheck || !goalRecordCheck.StartsWith(request.GoalRecord.FirstOrDefault())))
+        //{
+        // checking
+        var matchCheckingCriteria = new MatchCheckingCriteria
+        {
+            MatchId = request.MatchId,
+            Action = $"{request.Action}-{request.Mode}",
+            AwayScore = request.AwayScore,
+            HomeScore = request.HomeScore,
+            ResourceResult = resourceResult,
+        };
+        var matchCheckingResult = await CalculateCheckingInfo(matchCheckingCriteria);
+
+        return new Result
+        {
+            ErrCode = matchCheckingResult.ErrCode,
+            ErrMsg = matchCheckingResult.ErrMsg
+        };
+        //}
+
+        //return new Result();
     }
 
 
@@ -265,10 +319,10 @@ public class InstantCalculateServiceImp : InstantCalculateService
         var requestChecking = new EventTicketRequest
         {
             MatchId = request.MatchId,
-            Action = request.Action,
+            Action = $"{request.Action}-{request.Mode}",
             SpName = "NAP_Admin_Settlement_1_InstantCalculation_Push",
             IsAuto = false,
-            Mode = request.Mode,
+            Mode = null,
             InstantKey = request.InstantKey
         };
         var resultMessage = await scaleOutSettleService.ValidateEventAndTicket(requestChecking);
