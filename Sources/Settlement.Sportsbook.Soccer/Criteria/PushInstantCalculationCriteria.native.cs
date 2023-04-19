@@ -32,7 +32,7 @@ public class PushInstantCalculationCriteria : NonQueryCommand
 
     public override string GetSettingKey()
     {
-        return $"NAP_Admin_Settlement_1_InstantCalculation_Push_{DbServer}";
+        return $"NAP_Admin_Settlement_InstantCalculation_Push_{DbServer}";
     }
 
     public override bool IsValid()
