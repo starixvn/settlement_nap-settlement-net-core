@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Settlement.Core.Criteria;
 using Settlement.Sportsbook.OtherSports.Criteria;
 using Settlement.Sportsbook.OtherSports.Requests;
 
@@ -11,5 +12,6 @@ public class OtherSportsAutoMapperProfile : Profile
         CreateMap<GetMatchRequest, GetSportsbookMatchDetailCriteria>();
         CreateMap<CheckingMarkedTicketsRequest, CheckingMarkedTicketsCriteria>();
         CreateMap<GetLatestResultRequest, GetLatestResultCriteria>();
+        CreateMap<CalculateCriteria, InsertLogCriteria>();
     }
 }

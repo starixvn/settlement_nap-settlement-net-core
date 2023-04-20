@@ -1,4 +1,5 @@
 ﻿using Settlement.Core.Services;
+using Settlement.Core.Criteria;
 using Settlement.Sportsbook.OtherSports.Models;
 
 namespace Settlement.Sportsbook.OtherSports.Services;
@@ -105,6 +106,7 @@ public class MultipleServerServiceImp : MultipleServerService
         await scaleOutSettleService.UpdateMatchInfo(requestUpdateInfo);
 
         WriteLog(calculateCriteria.MatchId, calculateCriteria.Action, calculateCriteria.SelectedResources, calculateCriteria.BetStatus);
+        await InsertLog(calculateCriteria);
 
         foreach (var server in appSettingsKey.SiteDbServer)
         {
@@ -113,6 +115,15 @@ public class MultipleServerServiceImp : MultipleServerService
         }
 
         return requestChecking;
+    }
+
+    private async Task InsertLog(CalculateCriteria criteria)
+    {
+        if (criteria.IsReSettledTickets)
+        {
+            var insertLogCriteria = mapper.Map<InsertLogCriteria>(criteria);
+            await repository.ExecuteAsync(insertLogCriteria);
+        }
     }
 
     private void WriteLog(int matchId, string action, string resources, string betStatus)
