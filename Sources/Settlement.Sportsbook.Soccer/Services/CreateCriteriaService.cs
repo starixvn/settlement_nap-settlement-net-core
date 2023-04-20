@@ -248,17 +248,9 @@ public class CreateCriteriaServiceImp : ICreateCriteriaService
 
     private string GetResourceResultUnCalculateFt(UncalculateFtRequest request)
     {
-        var goalCondition = new GoalCondition
-        {
-            IsEnabledGoalRecordFt = request.IsEnabledGoalRecordFt,
-            IsExistFgLg = request.IsExistFgLg
-        };
+        var resources = resourceService.UnCalculateFtResources();
 
-        var resources = resourceService.UnCalculateFtResources(goalCondition);
-
-        return resources.Count > 0
-            ? xmlConvertService.Serialize(new XmlResults { Resources = resources })
-            : string.Empty;
+        return xmlConvertService.Serialize(new XmlResults { Resources = resources });
     }
 
     private static string GoalRecordHt(string goalRecord, IEnumerable<ResultDetail> resultDetails)

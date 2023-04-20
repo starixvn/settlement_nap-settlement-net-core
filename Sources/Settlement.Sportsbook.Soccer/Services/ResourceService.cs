@@ -15,7 +15,7 @@ public interface IResourceService
 
     List<XmlResource> UnCalculateResources(GoalCondition goalCondition);
 
-    List<XmlResource> UnCalculateFtResources(GoalCondition goalCondition);
+    List<XmlResource> UnCalculateFtResources();
 
     List<XmlResource> FullTimeResourcesSettleDetermined(GoalCondition goalCondition);
 
@@ -137,20 +137,15 @@ public class ResourceServiceImp : IResourceService
         return resources;
     }
 
-    public List<XmlResource> UnCalculateFtResources(GoalCondition goalCondition)
+    public List<XmlResource> UnCalculateFtResources()
     {
-        var resources = new List<XmlResource>();
-        if (goalCondition.IsExistFgLg)
+        var resources = new List<XmlResource>
         {
-            resources.Add(InitialResource(ResourceKey.FullTimeFirstGoal));
-            resources.Add(InitialResource(ResourceKey.FullTimeLastGoal));
-        }
-
-        if (goalCondition.IsEnabledGoalRecordFt)
-        {
-            resources.Add(InitialResource(ResourceKey.FullTimeGoalRecord));
-        }
-
+            InitialResource(ResourceKey.FullTime),
+            InitialResource(ResourceKey.FullTimeFirstGoal),
+            InitialResource(ResourceKey.FullTimeLastGoal),
+            InitialResource(ResourceKey.FullTimeGoalRecord)
+        };
         return resources;
     }
 
