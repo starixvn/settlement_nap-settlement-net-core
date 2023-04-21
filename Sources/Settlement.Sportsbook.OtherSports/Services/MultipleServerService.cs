@@ -119,7 +119,7 @@ public class MultipleServerServiceImp : MultipleServerService
 
     private async Task InsertLog(CalculateCriteria criteria)
     {
-        if (criteria.IsReSettledTickets)
+        if (criteria.IsReSettledTickets && !criteria.IsHedgeMatch)
         {
             var insertLogCriteria = mapper.Map<InsertLogCriteria>(criteria);
             await repository.ExecuteAsync(insertLogCriteria);

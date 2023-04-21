@@ -1,4 +1,4 @@
-﻿import { GetTicketInfoQuery, Match, ResultDetail, SettleQuery, VoidBetInfo, VoidBetQuery, CashOutResultRefundQuery } from '../models';
+﻿import { GetTicketInfoQuery, Match, ResultDetail, VoidBetInfo, VoidBetQuery } from '../models';
 import { Component, Injector, ViewChild } from '@angular/core';
 import { Language } from '../../shared/language.native';
 import { BlockUIService } from '../../shared/services';
@@ -8,7 +8,7 @@ import { BasketballApiKeys, ResourcesIds } from '../constants';
 import * as _ from 'lodash';
 import { RefundActionBaseComponent } from '../../shared/components/sportsbook-sop/refund-action-base.component';
 import { BasketballService, BetStatusService, VerificationService, CashOutService } from '../services';
-import { SportTemplate } from '../../shared/models/sportsbook-sop';
+import { SettleQuery, SportTemplate } from '../../shared/models/sportsbook-sop';
 import { ToastContainerDirective } from 'ngx-toastr';
 import { MatchDetailComponent } from './match-detail.component';
 import { RefundCommonModule } from '../../shared/modules/refund-common.module';
@@ -105,7 +105,7 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
     }
 
     private async getTicketInfo(query: SettleQuery) {
-        const getTicketQuery = new GetTicketInfoQuery(query, false);
+        const getTicketQuery = new GetTicketInfoQuery(query.matchId, query.selectedResources.map(item => item.resourceId), false);
         return await this.cashOutService.getTicketInfo(getTicketQuery) as VoidBetInfo[];
     }
 

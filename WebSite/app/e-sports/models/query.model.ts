@@ -1,4 +1,4 @@
-﻿import { CalculateAction, SportType } from '../../shared/constants';
+﻿import { NgStyle } from '@angular/common';
 import { ResultDetail } from '../../shared/models/sportsbook-sop';
 import { ApiKeys } from '../constants';
 export class SettleQuery {
@@ -9,6 +9,8 @@ export class SettleQuery {
     isReSettledTickets: boolean;
     isLeader: boolean;
     isDirectly: boolean;
+    sportType: number;
+    isHedgeMatch: boolean;
 
     constructor(
         matchId: number,
@@ -16,6 +18,7 @@ export class SettleQuery {
         actionName: string,
         isReSettledTickets: boolean,
         isLeader: boolean,
+        sportType: number,
         isDirectly = false) {
         this.matchId = matchId;
         this.selectedResources = selectedResources;
@@ -24,6 +27,7 @@ export class SettleQuery {
         this.isReSettledTickets = isReSettledTickets;
         this.isLeader = isLeader;
         this.isDirectly = isDirectly;
+        this.sportType = sportType;
     }
 }
 

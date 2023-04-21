@@ -277,7 +277,7 @@ export class CalculateActionsComponent implements SportTemplate {
     } else {
       resource = _.filter(resource, item => !_.isEqual(item.resourceId, ResourcesIds.totalGames));
       const query = new SettleQuery(this.match.matchDetail.matchId, resource, type, this.isReSettledTickets,
-        betStatus, this.match.isScoreDirect);
+        betStatus, this.match.matchDetail.sportType, this.match.isScoreDirect);
       query.isLeader = this.isLeader;
       this.push(query);
     }
@@ -293,10 +293,10 @@ export class CalculateActionsComponent implements SportTemplate {
   }
 
   private async hedgeMatch(query: SettleQuery) {
-    const matchId = query.matchId;
     const hedgeMatchId = this.applyHedgeMatch ? this.match.hedgeMatchDetail.matchId : 0;
     if (hedgeMatchId > 0) {
       query.matchId = hedgeMatchId;
+      query.isHedgeMatch = true;
       await this.aioService.push(query).then(() => {
         this.messageBoxService.closePopup();
       });
@@ -308,7 +308,7 @@ export class CalculateActionsComponent implements SportTemplate {
   private async sendRequest(type: string, resource: ResultDetail[], betStatus: string): Promise<void> {
     resource = _.filter(resource, item => !_.isEqual(item.resourceId, ResourcesIds.totalGames));
     const query = new SettleQuery(this.match.matchDetail.matchId, resource, type, this.isReSettledTickets,
-      betStatus, this.match.isScoreDirect);
+      betStatus, this.match.matchDetail.sportType, this.match.isScoreDirect);
     query.isLeader = this.isLeader;
     this.push(query);
   }

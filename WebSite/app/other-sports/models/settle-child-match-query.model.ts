@@ -1,5 +1,4 @@
 import { ChildMatch } from "../models/child-match.model";
-import { ResultDetail } from "../../shared/models/sportsbook-sop";
 
 export class SettleChildMatchQuery {
     childMatches: ChildMatch[];

@@ -189,6 +189,7 @@ export class CalculationActionsComponent implements SportTemplate {
             CalculateAction.calculate,
             this.isReSettledTickets,
             this.isLeader,
+            this.matchDetail.sportType,
             this.isScoreDirect);
         this.doSaveScore(CalculateAction.calculate, () => {
             this.push(query);
@@ -224,6 +225,7 @@ export class CalculationActionsComponent implements SportTemplate {
             CalculateAction.unCalculate,
             this.isReSettledTickets,
             false,
+            this.matchDetail.sportType,
             this.isScoreDirect);
         this.push(query);
     }
@@ -243,6 +245,7 @@ export class CalculationActionsComponent implements SportTemplate {
         const hedgeMatchId = this.applyHedgeMatch ? this.match.hedgeMatchDetail.matchId : 0;
         if (hedgeMatchId > 0) {
             query.matchId = hedgeMatchId;
+            query.isHedgeMatch = true;
             await this.aioService.push(query);
         }
     }

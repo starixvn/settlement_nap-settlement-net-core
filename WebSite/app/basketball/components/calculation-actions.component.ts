@@ -448,7 +448,7 @@ export class CalculationActionsComponent implements SportTemplate {
     }
 
     private async getTicketInfo(query: SettleQuery) {
-        const getTicketQuery = new GetTicketInfoQuery(query, true);
+        const getTicketQuery = new GetTicketInfoQuery(query.matchId, query.selectedResources.map(item => item.resourceId), true);
         return await this.cashOutService.getTicketInfo(getTicketQuery) as VoidBetInfo[];
     }
 
@@ -477,6 +477,7 @@ export class CalculationActionsComponent implements SportTemplate {
             ? this.match.hedgeMatchDetail.matchId : 0;
         if (hedgeMatchId > 0) {
             query.matchId = hedgeMatchId;
+            query.isHedgeMatch = true;
             this.aioService.push(query).then(() => {
                 this.messageBoxService.closePopup();
             });

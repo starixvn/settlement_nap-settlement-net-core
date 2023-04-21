@@ -26,9 +26,10 @@
                     Log Type
                 </label>
                 <select [(ngModel)]="filter.productType">
-                    <option value="ALL">All</option>
-                    <option value="FMK">Fast Markets</option>
-                    <option value="OTH">Other</option>
+                    <ng-container *ngFor="let item of filterType">
+                        <option [value]='item.value'>{{item.title}}</option>
+                    </ng-container>
+                
                 </select>
             </div>
             <div class="col-sm-1">

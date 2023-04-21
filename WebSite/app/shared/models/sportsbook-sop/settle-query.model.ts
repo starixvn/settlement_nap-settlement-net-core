@@ -9,6 +9,7 @@ export class SettleQuery {
     betStatus: string;
     isLeader: boolean;
     isDirectly: boolean;
+    sportType: boolean;
 
     constructor(
         matchId: number,

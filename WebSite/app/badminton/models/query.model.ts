@@ -1,4 +1,3 @@
-import { CalculateAction } from '../../shared/constants';
 import { ResultDetail } from '../../shared/models/sportsbook-sop';
 import { BadmintonApiKeys } from '../constants';
 
@@ -12,18 +11,22 @@ export class SettleQuery {
     isDirectly: boolean;
     betStatus: string;
     childMatchIds: string;
+    sportType: number;
+    isHedgeMatch: boolean;
 
     constructor(
         matchId: number,
         selectedResources: ResultDetail[],
         actionName: string,
         isReSettledTickets: boolean,
+        sportType: number,
         isDirectly = false) {
         this.matchId = matchId;
         this.selectedResources = selectedResources;
         this.actionName = actionName;
         this.apikey = BadmintonApiKeys.Settle;
         this.isReSettledTickets = isReSettledTickets;
+        this.sportType = sportType;
         this.isDirectly = isDirectly;
     }
 }

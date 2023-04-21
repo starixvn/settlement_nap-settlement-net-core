@@ -83,6 +83,7 @@ public class SettlementActionsServiceImp : SettlementActionsService
             return result;
         }
         criteria.MatchId = request.HedgeMatchId;
+        criteria.IsHedgeMatch = true;
         await multipleServerService.Calculate(criteria, score);
 
         return result;

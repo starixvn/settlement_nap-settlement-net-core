@@ -1,9 +1,11 @@
-﻿using Fanex.Data.Repository;
+﻿using AutoMapper;
+using Fanex.Data.Repository;
 using Fanex.Settlement.ScaleOut.Models;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
 using Microsoft.Extensions.Options;
 using Settlement.Core.Constants;
+using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.OtherSports.Criteria;
@@ -87,11 +89,29 @@ public class MultipleServerServiceTests
         mergeDataService.MergeTicketCounts(Arg.Any<List<List<TicketCounts>>>())
             .Returns(new List<TicketCounts> { ticketHt });
 
-        var result = await service.Calculate(new CalculateCriteria { Action = action, MatchId = 100, AdminId = 10 }, new ScoreSetModel());
+        var result = await service.Calculate(new CalculateCriteria { Action = action, MatchId = 100, AdminId = 10, IsReSettledTickets = false }, new ScoreSetModel());
 
         await scaleOutSettleService.Received().UpdateUnderSettlementFlag(100, 10, action);
         await scaleOutSettleService.Received().UpdateMatchInfo(Arg.Is<UpdateMatchInfoRequest>(item => item.IsHtTicketSettled == expected));
         await repository.Received(2).ExecuteAsync(Arg.Any<CalculateCriteria>());
+        await repository.DidNotReceive().ExecuteAsync(Arg.Any<InsertLogCriteria>());
         Assert.Null(result.ErrMsg);
+    }
+
+    [Fact]
+    public async Task Calculate_ValidatePassedAndIsResettle_InsertLog()
+    {
+        var fakeData = new IEnumerable<object>[2];
+        fakeData[0] = new List<MatchDetail> { new() };
+        fakeData[1] = new List<TicketCounts> { new() };
+        repository.FetchMultipleAsync(Arg.Any<GetTicketInfoCriteria>(), Arg.Any<Type[]>())
+            .Returns(fakeData);
+        scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
+        mergeDataService.MergeTicketCounts(Arg.Any<List<List<TicketCounts>>>())
+            .Returns(new List<TicketCounts>());
+
+        var result = await service.Calculate(new CalculateCriteria { IsReSettledTickets = true, Action = "CAL" }, new ScoreSetModel());
+
+        await repository.Received().ExecuteAsync(Arg.Any<InsertLogCriteria>());
     }
 }

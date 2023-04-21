@@ -70,19 +70,18 @@ export class GameTotalRefundComponent implements SportTemplate {
     } else {
       this.confirmationDialogMessage.message = Language.RefundConfirmMessage;
       this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
-        this.sendRequest(this.match.matchDetail.matchId,
-          this.match.resultDetails, false, false);
+        this.sendRequest(this.match.resultDetails, false, false);
       });
     }
   }
 
-  private async sendRequest(matchId: number, resultDetailList: ResultDetail[],
+  private async sendRequest( resultDetailList: ResultDetail[],
     isReSettledTickets: boolean, isScoreDirect: boolean) {
     resultDetailList.forEach((item) => {
       item.homeValue = "";
       item.awayValue = "";
     });
-    const settleQuery = new SettleQuery(matchId, resultDetailList, CalculateAction.refund,
+    const settleQuery = new SettleQuery(this.matchDetail, resultDetailList, CalculateAction.refund,
       isReSettledTickets, isScoreDirect, this.matchDetail.betStatus);
 
     const result = await this.aioService.push(settleQuery);
@@ -94,7 +93,6 @@ export class GameTotalRefundComponent implements SportTemplate {
   }
 
   private hedgeMatch(query: SettleQuery) {
-    const matchId = query.matchId;
     const hedgeMatchId = this.applyHedgeMatch ? this.hedgeMatchDetail.matchId : 0;
     if (hedgeMatchId > 0) {
       query.matchId = hedgeMatchId;

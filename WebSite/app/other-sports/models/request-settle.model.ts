@@ -15,15 +15,17 @@ export class RequestSettle {
     halfTimeAwayScore?: number;
     isApplyHedging: boolean;
     hedgeMatchId: number;
-    constructor(matchId: number, action: string, isReSettledTickets: boolean,
+    sportType: number;
+    constructor(matchDetail: MatchDetail, action: string, isReSettledTickets: boolean,
         betStatus: string, finalHomeScore: number, finalAwayScore: number, refResultStatus: number = null) {
-        this.matchId = matchId;
+        this.matchId = matchDetail.sportType;
         this.finalHomeScore = finalHomeScore;
         this.finalAwayScore = finalAwayScore;
         this.action = action;
         this.isReSettledTickets = isReSettledTickets;
         this.betStatus = betStatus;
         this.refResultStatus = refResultStatus;
+        this.sportType = matchDetail.sportType;
     }
 }
 

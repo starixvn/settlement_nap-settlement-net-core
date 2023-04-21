@@ -10,7 +10,7 @@ import {
     MatchesComponent} from './index';
 import {
     DatepickerComponent,
-} from '../../shared/components';
+} from '../../shared/components/date-picker/date-picker.component';
 describe('Component: App', () => {
     let component: AppComponent;
     let fixture: ComponentFixture<AppComponent>;

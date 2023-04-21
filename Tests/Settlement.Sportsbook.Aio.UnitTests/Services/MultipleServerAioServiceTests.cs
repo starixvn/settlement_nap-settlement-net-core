@@ -5,6 +5,7 @@ using Fanex.Settlement.ScaleOut.Services;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Settlement.Core.Constants;
+using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.Aio.Constants;
@@ -213,6 +214,28 @@ public class MultipleServerAioServiceTests
             .UpdateUnderSettlementFlag(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<string>());
         await scaleOutSettleService.Received().UpdateMatchInfo(Arg.Any<UpdateMatchInfoRequest>());
         await repository.Received(2).ExecuteAsync(Arg.Any<SettleCriteria>());
+    }
+
+    [Fact]
+    public async Task Settle_ValidatePassedAndIsResettle_InsertLog()
+    {
+        var request = new SettleRequest
+        {
+            IsReSettledTickets = true,
+            SelectedResources = new List<ResourceItem>
+            {
+                new() { ResourceId = "00" }
+            }
+        };
+        scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
+        createQueryService.QuerySettle(Arg.Any<SettleRequest>()).Returns(new SettleCriteria { Action = "CAL", IsReSettledTickets = true });
+        await repository.ExecuteAsync(Arg.Do<SettleCriteria>(x => x.ServiceCommand = "mock"));
+        scaleOutSettleService.GetSiteGroupId(Arg.Any<string>()).Returns(1, 2);
+        createQueryService.CreateInsertLogCriteria(Arg.Any<SettleCriteria>()).Returns(new InsertLogCriteria());
+
+        await service.Settle(request);
+
+        await repository.Received().ExecuteAsync(Arg.Any<InsertLogCriteria>());
     }
 
     [Fact]
