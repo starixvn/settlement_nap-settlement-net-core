@@ -14,9 +14,7 @@ public class UndoCheckingModel
 
     public string FirstGoalValue { get; set; }
 
-    public bool IsExistFG { get; set; }
-
-    public bool IsExistHTFG { get; set; }
+    public List<XmlResource> Resources { get; set; }
 
     public string BetStatus { get; set; }
 

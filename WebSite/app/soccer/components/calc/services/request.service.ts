@@ -50,6 +50,7 @@ export class RequestService {
         const query = {
             matchId,
         };
+        console.log('first')
 
         const request = this.httpRequestService.postJson<UndoChecking>(query, `${this.soccerApi}/undo-checking-score`);
         return firstValueFrom(request);

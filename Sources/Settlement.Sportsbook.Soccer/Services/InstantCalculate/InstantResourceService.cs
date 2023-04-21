@@ -177,6 +177,8 @@ public class InstantResourceServiceImp : IInstantResourceService
         return resources;
     }
 
+
+
     public string BetStatusFl(InstantCalculationRequest request, string betStatus)
     {
         var goalOnly = request.GoalRecord.Replace(";", string.Empty);
@@ -224,6 +226,8 @@ public class InstantResourceServiceImp : IInstantResourceService
             var indexOfKey = betStatus.IndexOf(Fl, StringComparison.CurrentCulture);
             betStatus = indexOfKey > -1 ? betStatus.Remove(indexOfKey, FgHomeBetStatus.Length) : betStatus;
         }
+
+
 
         return betStatus;
     }

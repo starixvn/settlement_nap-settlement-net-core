@@ -2,6 +2,7 @@ import { ResultDetail } from "../../../models";
 import { CalculateAction } from "../../../../shared/constants/calculate-action.native";
 import { MatchDetail, UndoChecking } from "./match.model";
 import * as _ from "lodash";
+import { Resource } from "./resouce.model";
 export class SettleQuery {
     public matchId: number;
     public hedgeMatchId: number;
@@ -49,6 +50,8 @@ export class SettleQuery {
     }
 }
 
+
+
 export class InstantCalculationQuery {
     public matchId: number;
     public homeScore: string;
@@ -61,6 +64,7 @@ export class InstantCalculationQuery {
     public betStatus: string;
     public isExistFG: boolean;
     public isExistHTFG: boolean;
+    public resources: Resource[]
 
     constructor(matchId: number, score: UndoChecking) {
         this.matchId = matchId;
@@ -74,7 +78,7 @@ export class InstantCalculationQuery {
         this.betStatus = score.betStatus;
         this.isExistFG = score.isExistFG;
         this.isExistHTFG = score.isExistHTFG;
-    }
+        this.resources = score.resources
 }
 
 export class UncalculateFullTimeQuery {

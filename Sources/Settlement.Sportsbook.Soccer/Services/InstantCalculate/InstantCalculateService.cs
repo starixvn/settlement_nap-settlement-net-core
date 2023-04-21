@@ -82,18 +82,21 @@ public class InstantCalculateServiceImp : InstantCalculateService
     public async Task<UndoCheckingModel> UndoCheckingScore(int matchId)
     {
         var criteria = new UndoCheckingCriteria { MatchId = matchId };
-        var undoCheckingScore = await repository.GetAsync<UndoCheckingModel>(criteria);
+        var (undoChecking, calculatedResources) = await repository.FetchMultipleAsync<UndoCheckingModel, XmlResource>(criteria);
+
+        var undoCheckingScore = undoChecking.FirstOrDefault();
 
         undoCheckingScore.ErrCode = criteria.ErrCode;
         undoCheckingScore.ErrMsg = criteria.ErrMsg;
+        undoCheckingScore.Resources = calculatedResources.ToList();
 
         return undoCheckingScore;
     }
 
     public async Task<Result> UncalPushInstantCalculation(InstantCalculationRequest request)
     {
+
         var matchTicketInfo = await GetMatchDetailWithTicketInfo(request.MatchId);
-        // 
         request.IsExistHtFgNg = matchTicketInfo.IsExistHtFgNg;
         request.IsExistFgNg = matchTicketInfo.IsExistFgNg;
         request.IsExistFG = matchTicketInfo.IsExistFG;
@@ -104,7 +107,9 @@ public class InstantCalculateServiceImp : InstantCalculateService
         request.IsExistHTFirstCorner = matchTicketInfo.IsExistHTFirstCorner;
         request.IsExist2HFirstCorner = matchTicketInfo.IsExist2HFirstCorner;
 
-        var resourceResult = GetResourceResultInstantCalculate(request);
+        var uncalResources = GetResourcesInstantCalculate(request);
+        var resourceResult = GetResourceResultInstantUncal(request.Resources, uncalResources);
+
 
         var result = await ProcessPushInstantCalculation(request, resourceResult);
 
@@ -114,10 +119,9 @@ public class InstantCalculateServiceImp : InstantCalculateService
     public async Task<Result> PushInstantCalculation(InstantCalculationRequest request)
     {
         var matchTicketInfo = await GetMatchDetailWithTicketInfo(request.MatchId);
-        //
+
         request.GoalRecord = matchTicketInfo.GoalRecord;
         request.BetStatus = matchTicketInfo.BetStatus;
-
         request.IsExistHtFgNg = matchTicketInfo.IsExistHtFgNg;
         request.IsExistFgNg = matchTicketInfo.IsExistFgNg;
         request.IsExistFG = matchTicketInfo.IsExistFG;
@@ -128,9 +132,10 @@ public class InstantCalculateServiceImp : InstantCalculateService
         request.IsExistHTFirstCorner = matchTicketInfo.IsExistHTFirstCorner;
         request.IsExist2HFirstCorner = matchTicketInfo.IsExist2HFirstCorner;
 
-        var resourceResult = GetResourceResultInstantCalculate(request);
+        var resources = GetResourcesInstantCalculate(request);
+        var resourceResult = instantResourceService.GenerateResource(resources);
 
-        // checking for instant
+
         var resultMatchChecking = await CheckCalculationMatch(request, resourceResult);
         if (resultMatchChecking.ErrCode > 0)
         {
@@ -288,7 +293,23 @@ public class InstantCalculateServiceImp : InstantCalculateService
         logService.WriteLog(criteria.MatchId, message);
     }
 
-    private string GetResourceResultInstantCalculate(InstantCalculationRequest request)
+    private string GetResourceResultInstantUncal(List<XmlResource> calculatedResources, List<XmlResource> uncalResources)
+    {
+        var resourcesId = uncalResources.Select(r => r.ResourceId).ToList();
+        var resources = calculatedResources
+            .Where(resource => !resourcesId.Contains(resource.ResourceId))
+            .Select(resource => new XmlResource
+            {
+                ResourceId = resource.ResourceId,
+                ResultStatusId = ResultStatus.Initial,
+                SettlementStatusId = SettlementStatus.Running,
+                HomeValue = string.Empty
+            })
+            .ToList();
+        return instantResourceService.GenerateResource(resources);
+    }
+
+    private List<XmlResource> GetResourcesInstantCalculate(InstantCalculationRequest request)
     {
         var goalCondition = mapper.Map<InstantGoalCondition>(request);
 
@@ -296,14 +317,10 @@ public class InstantCalculateServiceImp : InstantCalculateService
 
         if (request.HomeScore == "0" && request.AwayScore == "0" && !request.Action.Equals(ActionType.UnCalculate))
         {
-            return string.Empty;
+            return new List<XmlResource>();
         }
 
-        if (request.Action.Equals(ActionType.UnCalculate))
-        {
-            resources = instantResourceService.UnCalculate(goalCondition);
-        }
-        else if (request.IsHalfTime)
+        if (request.IsHalfTime)
         {
             resources = instantResourceService.Halftime(goalCondition);
         }
@@ -312,8 +329,9 @@ public class InstantCalculateServiceImp : InstantCalculateService
             resources = instantResourceService.FullTime(goalCondition);
         }
 
-        return instantResourceService.GenerateResource(resources);
+        return resources;
     }
+
 
     private async Task<Result> ValidateBeforeExecute(InstantCalculationRequest request)
     {
@@ -344,7 +362,7 @@ public class InstantCalculateServiceImp : InstantCalculateService
             Action = $"{request.Action}-{request.Mode}",
             ResourceResult = resourceResult,
             IsAuto = false,
-            Mode = request.Mode,
+            Mode = null,
             BetStatus = BetStatus(request)
         };
 

@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Settlement.Core.Models;
+using Settlement.Sportsbook.Soccer.Models;
 
 namespace Settlement.Sportsbook.Soccer.Requests;
 
@@ -49,4 +50,6 @@ public class InstantCalculationRequest : IRequest<Result>
     public string BetStatus { get; set; }
 
     public string Mode => IsHalfTime ? "INST-HT" : "INST-FT";
+
+    public List<XmlResource> Resources { get; set; } // undo
 }
