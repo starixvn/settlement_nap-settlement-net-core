@@ -1,5 +1,7 @@
-﻿using Settlement.Sportsbook.Aio.MapperFactory;
+﻿using Settlement.BetTypeName.MapperFactory;
+using Settlement.BetTypeName.Services;
 using Settlement.Sportsbook.Aio.Models;
+using IMapperService = Settlement.Sportsbook.Aio.MapperFactory.IMapperService;
 
 namespace Settlement.Sportsbook.Aio.Services.Badminton;
 
@@ -9,7 +11,8 @@ public class ResultDetailMapperServiceImp : IMapperService
 
     public ResultDetailMapperServiceImp()
     {
-        badmintonBetTypeService = new BadmintonBetTypeServiceImp();
+        var betTypeNameService = new BetTypeNameService(new MapperFactoryBase());
+        badmintonBetTypeService = new BadmintonBetTypeServiceImp(betTypeNameService);
     }
 
     public void Decorate(dynamic obj)

@@ -1,8 +1,7 @@
-﻿using Settlement.Core.Constants;
+﻿using Settlement.BetTypeName.Constants;
+using Settlement.Core.Constants;
 
-namespace Settlement.Sportsbook.Aio.Services.Cricket;
-
-using Constants.Cricket;
+namespace Settlement.BetTypeName.Services.Cricket;
 
 public interface IBetTypeNameService
 {
@@ -36,12 +35,12 @@ public class BetTypeNameServiceImp : IBetTypeNameService
         var numberOfInns = SplitBetType(resourceId, numberOfInnsPosition, numberOfInnsLength);
         var innsOrdinal = numberOfInns == 1 ? "1st" : "2nd";
 
-        if (GroupBetType.IncludedOvers.Contains(betTypeId))
+        if (CricketConstants.IncludedOvers.Contains(betTypeId))
         {
             var betTypeOvers = SplitBetType(resourceId, overPosition, overLength);
             return string.Format(betTypeName, innsOrdinal, betTypeOvers);
         }
-        else if (GroupBetType.IncludedOversAndBalls.Contains(betTypeId))
+        else if (CricketConstants.IncludedOversAndBalls.Contains(betTypeId))
         {
             var betTypeOvers = SplitBetType(resourceId, overPosition, overLength);
             var betTypeBalls = SplitBetType(resourceId, ballPosition, ballLength);

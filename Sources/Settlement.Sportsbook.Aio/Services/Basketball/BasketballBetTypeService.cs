@@ -1,4 +1,5 @@
-﻿using Settlement.Core.Services;
+﻿using Settlement.BetTypeName.Constants;
+using Settlement.BetTypeName.Services;
 using Settlement.Sportsbook.Aio.Constants.Basketball;
 using Settlement.Sportsbook.Aio.Models;
 using ResultDetail = Settlement.Sportsbook.Aio.Models.ResultDetail;
@@ -14,25 +15,27 @@ public interface IBasketballBetTypeService
 
 public class BasketballBetTypeServiceImp : IBasketballBetTypeService
 {
-    private readonly IRefDataService refDataService;
     private readonly IGroupBetTypeService groupBetTypeService;
+    private readonly IBetTypeNameService betTypeNameService;
+
     private const int HalfBetTypeLength = 5;
     private const int BetTypeIndexLength = 2;
     private const int QuarterBetTypeLength = 7;
 
-    public BasketballBetTypeServiceImp(IRefDataService refDataService,
-        IGroupBetTypeService groupBetTypeService)
+    public BasketballBetTypeServiceImp(
+        IGroupBetTypeService groupBetTypeService,
+        IBetTypeNameService betTypeNameService)
     {
-        this.refDataService = refDataService;
         this.groupBetTypeService = groupBetTypeService;
+        this.betTypeNameService = betTypeNameService;
     }
 
     public ResultDetail GetBetTypeNameAndGroup(ResultDetail item)
     {
         const int maxLength = 2;
         var resourceId = item.ResourceId;
-        item.BetType = resourceId.Substring(0, maxLength + 1);
-        item.BetTypeName = refDataService.GetBetTypeName(item.BetType, resourceId.Substring(maxLength + 1));
+        item.BetType = resourceId[..(maxLength + 1)];
+        item.BetTypeName = betTypeNameService.GetBetTypeName(resourceId, KeyConstants.BasketballKey);
         GroupBasketballBetType(item);
 
         return item;
@@ -43,15 +46,16 @@ public class BasketballBetTypeServiceImp : IBasketballBetTypeService
         const int otherBetTypeLength = 3;
         var resourceId = resultDetail.ResourceId;
         var group = new GroupNameModel();
-        if (resourceId.Length == otherBetTypeLength)
+        switch (resourceId.Length)
         {
-            group = groupBetTypeService.GroupOtherBetType(resultDetail);
-        }
+            case otherBetTypeLength:
+                group = groupBetTypeService.GroupOtherBetType(resultDetail);
+                break;
 
-        if (resourceId.Length is QuarterBetTypeLength or HalfBetTypeLength)
-        {
-            group = GroupHalfBetType(resultDetail, group);
-            group = GroupQuarterBetType(resultDetail, group);
+            case QuarterBetTypeLength or HalfBetTypeLength:
+                group = GroupHalfBetType(resultDetail, group);
+                group = GroupQuarterBetType(resultDetail, group);
+                break;
         }
 
         resultDetail.GroupName = group.GroupName;

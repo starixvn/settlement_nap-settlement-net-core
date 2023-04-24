@@ -7,6 +7,7 @@ using Settlement.Sportsbook.Aio.Criteria;
 using Settlement.Sportsbook.Aio.MapperFactory;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Requests;
+using Settlement.Sportsbook.Aio.Services;
 
 namespace Settlement.Sportsbook.Aio.UnitTests.Services;
 

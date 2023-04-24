@@ -1,6 +1,6 @@
-﻿using Settlement.Sportsbook.Aio.Services.Cricket;
+﻿using Settlement.BetTypeName.Services.Cricket;
 
-namespace Settlement.Sportsbook.Aio.UnitTests.Services.Cricket;
+namespace Settlement.BettypeName.UnitTests.Services.Cricket;
 
 public class BetTypeNameServiceTests
 {

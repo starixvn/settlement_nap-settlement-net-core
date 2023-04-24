@@ -1,9 +1,11 @@
-﻿using Settlement.Sportsbook.Aio.Criteria.Cricket;
+﻿using Settlement.BetTypeName.Constants;
+using Settlement.Sportsbook.Aio.Criteria.Cricket;
 using Settlement.Sportsbook.Aio.Models;
 
 namespace Settlement.Sportsbook.Aio.Services.Cricket;
 
 using Constants.Cricket;
+using Settlement.BetTypeName.Services;
 
 public interface ICricketBetTypeService
 {
@@ -81,10 +83,10 @@ public class CricketBetTypeService : ICricketBetTypeService
     private void GenerateBetTypeNameAndGroup(ResultDetail resultDetail, List<InputOption> inputOptions)
     {
         var resourceId = resultDetail.ResourceId;
+        resultDetail.BetTypeName = betTypeNameService.GetBetTypeName(resourceId, KeyConstants.CricketKey);
         if (resourceId.Length < InnsBetTypeMinLength)
         {
             var betTypeId = Convert.ToInt32(resourceId);
-            resultDetail.BetTypeName = betTypeNameService.GetNonInnsBetTypeName(betTypeId);
 
             if (IsNonInnsBetTypeGroup(betTypeId))
             {
@@ -98,7 +100,6 @@ public class CricketBetTypeService : ICricketBetTypeService
         else
         {
             var betTypeId = SplitBetType(resourceId, 0, 4);
-            resultDetail.BetTypeName = betTypeNameService.GetInnsBetTypeName(betTypeId, resourceId);
 
             if (GroupBetType.IncludedPlayerName.Contains(betTypeId) || GroupBetType.IncludedTwoPlayerName.Contains(betTypeId))
             {

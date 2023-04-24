@@ -13,6 +13,7 @@ using Settlement.Sportsbook.Aio.Criteria;
 using Settlement.Sportsbook.Aio.Criteria.Cricket;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Requests;
+using Settlement.Sportsbook.Aio.Services;
 using Settlement.Sportsbook.Aio.Services.Cricket;
 using ResultDetail = Settlement.Sportsbook.Aio.Models.ResultDetail;
 

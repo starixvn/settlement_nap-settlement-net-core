@@ -1,7 +1,7 @@
-﻿using Fanex.RemotingRef;
-using Settlement.Core.Services;
-using Settlement.Sportsbook.Aio.MapperFactory;
+﻿using Settlement.BetTypeName.MapperFactory;
+using Settlement.BetTypeName.Services;
 using Settlement.Sportsbook.Aio.Models;
+using IMapperService = Settlement.Sportsbook.Aio.MapperFactory.IMapperService;
 
 namespace Settlement.Sportsbook.Aio.Services.Basketball;
 
@@ -11,10 +11,9 @@ public class ResultDetailMapperServiceImp : IMapperService
 
     public ResultDetailMapperServiceImp()
     {
-        var remotingRefService = new RemotingRefService();
-        var refDataService = new RefDataService(remotingRefService);
+        var betTypeNameService = new BetTypeNameService(new MapperFactoryBase());
         var groupBetTypeService = new GroupBetTypeServiceImp();
-        basketballBetTypeService = new BasketballBetTypeServiceImp(refDataService, groupBetTypeService);
+        basketballBetTypeService = new BasketballBetTypeServiceImp(groupBetTypeService, betTypeNameService);
     }
 
     public void Decorate(dynamic obj)
