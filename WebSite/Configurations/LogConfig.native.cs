@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using Settlement.Log.Controllers;
 using Settlement.Log.Services;
-using System.Reflection;
 
 namespace Settlement.WebSites.Configurations;
 
@@ -19,6 +18,6 @@ public static class LogConfig
 
     public static void ConfigLogMediator(this IServiceCollection services)
     {
-        services.AddMediatR(typeof(LogController).GetTypeInfo().Assembly);
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(LogController).Assembly));
     }
 }

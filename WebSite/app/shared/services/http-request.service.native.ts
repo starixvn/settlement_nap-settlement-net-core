@@ -75,7 +75,7 @@ export class HttpRequestService {
             this.messageBoxService.alert(modalDialogMessage);
         }
 
-        return throwError(error);
+        return throwError(()=>error);
     }
 
 

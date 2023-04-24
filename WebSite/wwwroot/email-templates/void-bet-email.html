@@ -1,13 +1,13 @@
 ﻿<b>Dear all,</b>
 <br />
 <br />
-<span>@Model.MatchCode</span> (<b>@Model.HomeName</b> - @Model.AwayName) 
+<span>@Model.MatchCode</span> (<b>@Model.HomeName</b> - @Model.AwayName)
 <br />
 @Model.Message
 <br />
 <br />
 <div><b>@Model.Action</b></div>
-<b>Tickets List (Ticket Number - CustID):</b>
+<b>Tickets List (Ticket Number - CustId):</b>
 @foreach (var item in Model.VoidBetInfos)
 {
 <div>@item.TransId - @item.CustId</div>

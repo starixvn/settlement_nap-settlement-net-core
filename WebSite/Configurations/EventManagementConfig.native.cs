@@ -4,7 +4,6 @@ using Settlement.EventManagement.Services;
 using Settlement.EventManagement.Services.Calculation;
 using Settlement.EventManagement.Services.MultiSports;
 using Settlement.EventManagement.Services.SpecificService.Tennis;
-using System.Reflection;
 using CompareMatchService = Settlement.EventManagement.Services.Calculation.CompareMatchService;
 using CompareMatchServiceImp = Settlement.EventManagement.Services.Calculation.CompareMatchServiceImp;
 using CompareMultiSportMatchService = Settlement.EventManagement.Services.MultiSports.CompareMatchService;
@@ -37,7 +36,7 @@ public static class EventManagementConfig
 
     public static void ConfigEventManagementMediator(this IServiceCollection services)
     {
-        services.AddMediatR(typeof(MultiSportController).GetTypeInfo().Assembly);
-        services.AddMediatR(typeof(CalculationController).GetTypeInfo().Assembly);
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CalculationController).Assembly));
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(MultiSportController).Assembly));
     }
 }

@@ -234,4 +234,9 @@ export class VerificationService extends VerificationBaseService {
         const pinGoalLeague = 122;
         return leagueGroupId === pinGoalLeague;
     }
+
+    public isSabaMatch(leagueGroupId: number) {
+        const sabaLeague = 42;
+        return leagueGroupId === sabaLeague;
+    }
 }

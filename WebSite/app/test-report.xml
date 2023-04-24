@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testExecutions version="1">
+  <file path="D:\Projects\Olympus\nap-settlement-net-core\WebSite\app\basketball\services\cash-out.service.spec.ts">
+    <testCase name="CashOutService should create a service" duration="16"/>
+    <testCase name="CashOutService getTicketInfo - Should call right api url" duration="43"/>
+    <testCase name="CashOutService voidBet - Should call right api url" duration="8"/>
+    <testCase name="CashOutService getBetStatus Refund Quarter 2 - Should return right expected betstatus value" duration="3"/>
+    <testCase name="CashOutService getBetStatus Refund Quarter 1 - Should return right expected betstatus value" duration="3"/>
+  </file>
+</testExecutions>

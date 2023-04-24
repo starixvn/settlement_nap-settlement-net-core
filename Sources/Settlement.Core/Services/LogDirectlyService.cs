@@ -37,7 +37,7 @@ public class LogDirectlyServiceImp : LogDirectlyService
         }
         catch (Exception e)
         {
-            LogService.Error("Fanex.Settletment.WebSites(Write Log Directly): ", e);
+            LogService.Error("Settlement.WebSites(Write Log Directly): ", e);
         }
     }
 

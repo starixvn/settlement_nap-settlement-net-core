@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using Settlement.FastMarkets.Controllers;
 using Settlement.FastMarkets.Services;
-using System.Reflection;
 
 namespace Settlement.WebSites.Configurations;
 
@@ -26,6 +25,6 @@ public static class FastMarketsConfig
 
     public static void ConfigFastMarketsMediator(this IServiceCollection services)
     {
-        services.AddMediatR(typeof(FastMarketsController).GetTypeInfo().Assembly);
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(FastMarketsController).Assembly));
     }
 }

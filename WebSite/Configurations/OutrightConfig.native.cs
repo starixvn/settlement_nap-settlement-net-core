@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using Settlement.Outright.Controllers;
 using Settlement.Outright.Services;
-using System.Reflection;
 
 namespace Settlement.WebSites.Configurations;
 
@@ -20,6 +19,6 @@ public static class OutrightConfig
 
     public static void OutrightConfigMediator(this IServiceCollection services)
     {
-        services.AddMediatR(typeof(OutrightController).GetTypeInfo().Assembly);
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(OutrightController).Assembly));
     }
 }

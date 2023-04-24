@@ -55,4 +55,6 @@ public class MatchDetail
     public int LeagueGroupId { get; set; }
 
     public int GameType { get; set; }
+
+    public int ParentId { get; set; }
 }

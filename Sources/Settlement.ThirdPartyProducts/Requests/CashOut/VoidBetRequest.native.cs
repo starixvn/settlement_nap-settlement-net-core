@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Settlement.Core.Models;
 
-namespace Settlement.ThirdPartyProducts.Requests;
+namespace Settlement.ThirdPartyProducts.Requests.CashOut;
 
 public class VoidBetRequest : IRequest
 {

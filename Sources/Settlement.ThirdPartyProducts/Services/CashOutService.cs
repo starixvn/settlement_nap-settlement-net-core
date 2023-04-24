@@ -10,6 +10,7 @@ using Settlement.Setting.Services;
 using Settlement.ThirdPartyProducts.Criteria;
 using Settlement.ThirdPartyProducts.Models;
 using Settlement.ThirdPartyProducts.Requests;
+using Settlement.ThirdPartyProducts.Requests.CashOut;
 using System.Text;
 using ResourceItem = Settlement.ThirdPartyProducts.Models.ResourceItem;
 
@@ -17,7 +18,9 @@ namespace Settlement.ThirdPartyProducts.Services;
 
 public interface IVoidBetApiService
 {
-    Task VoidBetApi(VoidBetRequest request);
+    Task VoidBet(string action, VoidBetRequest request);
+
+    Task PostResult(string action, object request);
 
     Task<List<VoidBetInfo>> GetTicketInfo(GetTicketInfo request);
 }
@@ -57,33 +60,38 @@ public class VoidBetApiServiceImp : IVoidBetApiService
         this.appSettingsKey = appSettingsKey.Value;
     }
 
-    public async Task VoidBetApi(VoidBetRequest request)
+    public async Task VoidBet(string action, VoidBetRequest request)
     {
         var voidBetApiModel = new VoidBetApiModel
         {
             VoidBetInfos = request.VoidBetInfos
         };
-        if (!string.IsNullOrEmpty(appSettingsKey.ThirdPartyJackTimeUrl) && voidBetApiModel.VoidBetInfos.Any())
+        var jackTimeApi = appSettingsKey.ThirdPartyUri.JackTimeTicket;
+
+        if (!string.IsNullOrEmpty(jackTimeApi) && voidBetApiModel.VoidBetInfos.Any())
         {
-            await SendRequest(appSettingsKey.ThirdPartyJackTimeUrl, request, voidBetApiModel);
+            var apiUri = $"{jackTimeApi}{action}";
+            var response = await PostAsync(apiUri, voidBetApiModel);
+            await HandleResponse(response, request, voidBetApiModel);
         }
     }
 
-    private async Task SendRequest(string thirdPartyUrl, VoidBetRequest request, VoidBetApiModel model)
+    public async Task PostResult(string action, object request)
     {
-        var apiUrl = JackTimeApi(thirdPartyUrl, request.Action);
-        var requestContent = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json");
-        var httpClient = httpClientFactory.CreateClient();
-        var response = await httpClient.PostAsync(new Uri(apiUrl), requestContent);
-        await HandleResponse(response, request, model);
+        var jackTimeApi = appSettingsKey.ThirdPartyUri.JackTimeResult;
+
+        if (!string.IsNullOrEmpty(jackTimeApi))
+        {
+            var apiUri = $"{jackTimeApi}{action}";
+            await PostAsync(apiUri, request);
+        }
     }
 
-    private static string JackTimeApi(string thirdPartyUrl, string actionName)
+    private async Task<HttpResponseMessage> PostAsync(string apiUri, object request)
     {
-        const string voidBet = "VoidBet";
-        const string undoVoidBet = "UndoVoidBet";
-        var actionRequest = actionName.Equals(ActionType.UnCalculate) ? undoVoidBet : voidBet;
-        return $"{thirdPartyUrl}{actionRequest}";
+        var requestContent = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
+        var httpClient = httpClientFactory.CreateClient();
+        return await httpClient.PostAsync(new Uri(apiUri), requestContent);
     }
 
     private async Task HandleResponse(HttpResponseMessage response, VoidBetRequest request, VoidBetApiModel model)

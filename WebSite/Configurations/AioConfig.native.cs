@@ -3,7 +3,6 @@ using Settlement.Sportsbook.Aio.Controllers;
 using Settlement.Sportsbook.Aio.MapperFactory;
 using Settlement.Sportsbook.Aio.Services;
 using Settlement.Sportsbook.Aio.Services.Cricket;
-using System.Reflection;
 
 namespace Settlement.WebSites.Configurations;
 
@@ -24,6 +23,6 @@ public static class AioConfig
 
     public static void ConfigAioMediator(this IServiceCollection services)
     {
-        services.AddMediatR(typeof(AioController).GetTypeInfo().Assembly);
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(AioController).Assembly));
     }
 }

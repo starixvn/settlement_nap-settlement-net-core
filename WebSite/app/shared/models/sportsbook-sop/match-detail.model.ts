@@ -22,4 +22,5 @@
     public externalSourceName: string;
     public leagueGroupId: number;
     public gameType: number;
+    public parentId: number;
 }

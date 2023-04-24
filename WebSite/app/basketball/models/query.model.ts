@@ -85,3 +85,26 @@ export class VoidBetQuery {
         this.sportType = matchDetail.sportType;
     }
 }
+
+export class CashOutResultUpdateQuery {
+    matchId: number;
+    betstatus: string;
+
+    constructor(matchId: number, betstatus: string) {
+        this.matchId = matchId;
+        this.betstatus = betstatus;
+    }
+}
+
+
+export class CashOutResultRefundQuery {
+    matchId: number;
+    half: number;
+    betStatus: string;
+
+    constructor(matchId: number, betStatus: string, half: number) {
+        this.matchId = matchId;
+        this.betStatus = betStatus;
+        this.half = half;
+    }
+}
