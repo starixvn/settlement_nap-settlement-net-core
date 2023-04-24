@@ -1,4 +1,4 @@
-﻿import { GetTicketInfoQuery, Match, ResultDetail, VoidBetInfo, VoidBetQuery } from '../models';
+﻿import { CashOutResultRefundQuery, GetTicketInfoQuery, Match, ResultDetail, VoidBetInfo, VoidBetQuery } from '../models';
 import { Component, Injector, ViewChild } from '@angular/core';
 import { Language } from '../../shared/language.native';
 import { BlockUIService } from '../../shared/services';

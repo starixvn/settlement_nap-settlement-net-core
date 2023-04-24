@@ -408,7 +408,7 @@ export class CalculationActionsComponent implements SportTemplate {
         if (!saveScoreResult.isSuccessful) {
             this.toastrService.error(saveScoreResult.errMsg);
         } else {
-            const query = new SettleQuery(this.matchDetail.matchId, selectedResources, actionName, this.isReSettledTickets,
+            const query = new SettleQuery(this.matchDetail.matchId, selectedResources, actionName, this.isReSettledTickets, this.matchDetail.sportType,
                 betStatus, this.match.isScoreDirect);
             query.isLeader = this.isLeader;
             const getTicketInfos = await this.getTicketInfo(query);
@@ -435,7 +435,7 @@ export class CalculationActionsComponent implements SportTemplate {
     }
 
     private async sendRequest(actionName: string, resource: ResultDetail[], betStatus: string): Promise<void> {
-        const query = new SettleQuery(this.matchDetail.matchId, resource, actionName, this.isReSettledTickets,
+        const query = new SettleQuery(this.matchDetail.matchId, resource, actionName, this.isReSettledTickets, this.matchDetail.sportType,
             betStatus, this.match.isScoreDirect);
         const getTicketInfos = await this.getTicketInfo(query);
         const result = await this.aioService.push(query);
