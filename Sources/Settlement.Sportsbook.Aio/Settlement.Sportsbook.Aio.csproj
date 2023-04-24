@@ -28,7 +28,7 @@
 	<ItemGroup>
 		<PackageReference Include="AutoMapper" Version="12.0.1" />
 		<PackageReference Include="Fanex.Data.Repository" Version="4.2.2" />
-		<PackageReference Include="Fanex.NAP.Client.AspNetCore" Version="2.0.0.1" />
+		<PackageReference Include="Fanex.NAP.Client.AspNetCore" Version="2.0.0.2" />
 		<PackageReference Include="Fanex.Settlement.Converter" Version="1.0.0.1" />
 		<PackageReference Include="Fanex.Settlement.ScaleOut" Version="1.2.7" />
 		<PackageReference Include="MediatR" Version="12.0.1" />

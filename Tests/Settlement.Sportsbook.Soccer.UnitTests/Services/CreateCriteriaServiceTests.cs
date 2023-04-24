@@ -266,7 +266,7 @@ public class CreateCriteriaServiceTests
         };
         matchService.GetMatchGoalRecord(Arg.Any<int>()).Returns(new MatchGoalRecordModel { BetStatus = "", GoalRecord = currentGoalRecord });
         soccerBetStatusService.CreateBetStatusAfterUncalculateFt(Arg.Any<UncalculateFtRequest>(), "", Arg.Any<string>()).Returns("");
-        resourceService.UnCalculateFtResources(Arg.Any<GoalCondition>()).Returns(new List<XmlResource>());
+        resourceService.UnCalculateFtResources().Returns(new List<XmlResource>());
 
         var criteria = service.CreateUnCalculateFtCriteria(request);
 
@@ -290,7 +290,7 @@ public class CreateCriteriaServiceTests
         matchService.GetMatchGoalRecord(Arg.Any<int>()).Returns(new MatchGoalRecordModel { BetStatus = "", GoalRecord = "HA" });
         soccerBetStatusService.CreateBetStatusAfterUncalculateFt(Arg.Any<UncalculateFtRequest>(), "", Arg.Any<string>())
             .Returns("");
-        resourceService.UnCalculateFtResources(Arg.Any<GoalCondition>()).Returns(new List<XmlResource>());
+        resourceService.UnCalculateFtResources().Returns(new List<XmlResource>());
 
         var criteria = service.CreateUnCalculateFtCriteria(request);
 
