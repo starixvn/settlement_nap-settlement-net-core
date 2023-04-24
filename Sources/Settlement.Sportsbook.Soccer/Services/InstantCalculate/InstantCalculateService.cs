@@ -315,7 +315,7 @@ public class InstantCalculateServiceImp : InstantCalculateService
 
 		List<XmlResource> resources;
 
-		if (request.HomeScore == "0" && request.AwayScore == "0")
+		if (request.HomeScore == "0" && request.AwayScore == "0" || string.IsNullOrEmpty(request.GoalRecord))
 		{
 			return new List<XmlResource>();
 		}
