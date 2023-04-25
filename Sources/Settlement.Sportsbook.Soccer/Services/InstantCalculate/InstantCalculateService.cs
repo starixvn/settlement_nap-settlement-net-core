@@ -295,8 +295,8 @@ public class InstantCalculateServiceImp : InstantCalculateService
 
     private string GetResourceResultInstantUncal(List<XmlResource> calculatedResources, List<XmlResource> uncalResources)
     {
-        var resourcesId = calculatedResources.Select(r => r.ResourceId).ToList();
-        var resources = uncalResources
+        var resourcesId = uncalResources.Select(r => r.ResourceId).ToList();
+        var resources = calculatedResources
             .Where(resource => !resourcesId.Contains(resource.ResourceId))
             .Select(resource => new XmlResource
             {
