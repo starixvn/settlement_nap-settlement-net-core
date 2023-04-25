@@ -1610,7 +1610,7 @@ header {
                 font-weight: bold;
                 float: left;
                 height: 29px;
-                width: 15%;
+                width: 80px;
             }
 
             .calc-popup .calc-action .row-1 .header {
@@ -1618,7 +1618,7 @@ header {
             }
 
             .calc-popup .calc-action .row-1 .status {
-                width: 24%;
+                width: 138px;
                 line-height: 27px;
                 border-left: 1px solid #c8c8c8;
                 border-right: 1px solid #c8c8c8;

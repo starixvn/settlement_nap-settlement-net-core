@@ -1,13 +1,11 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Settlement.Core.ActionFilters;
 using Settlement.Outright.Services;
 
 namespace Settlement.Outright.Controllers;
 
 [ApiController]
 [Route("api/outright/")]
-[SessionAuthorize]
 public class OutrightController : ControllerBase
 {
     private readonly IMediator mediator;

@@ -1,14 +1,13 @@
 ﻿using MediatR;
-using Settlement.Log.Requests;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Settlement.Core.ActionFilters;
+using Settlement.Log.Requests;
 
 namespace Settlement.Log.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[SessionAuthorize]
+
 public class LogController : ControllerBase
 {
     private readonly IMediator mediator;

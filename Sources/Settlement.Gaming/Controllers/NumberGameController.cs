@@ -1,13 +1,11 @@
 ﻿using MediatR;
-using Settlement.Gaming.Requests;
 using Microsoft.AspNetCore.Mvc;
-using Settlement.Core.ActionFilters;
+using Settlement.Gaming.Requests;
 
 namespace Settlement.Gaming.Controllers;
 
 [ApiController]
 [Route("api/number-game")]
-[SessionAuthorize]
 public class NumberGameController : ControllerBase
 {
     private readonly IMediator mediator;

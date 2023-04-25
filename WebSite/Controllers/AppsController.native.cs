@@ -1,10 +1,8 @@
-﻿using Fanex.NAP.Signin.AspNetCore.Attribute;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Settlement.Core.Constants;
 
 namespace Settlement.WebSites.Controllers;
 
-[SessionAuthorize]
 [Route("[controller]")]
 public class AppsController : Controller
 {

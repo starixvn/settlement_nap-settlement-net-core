@@ -7,7 +7,7 @@ namespace Settlement.Sportsbook.MoveTickets.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[SessionAuthorize]
+
 public class MoveTicketController : ControllerBase
 {
     private readonly IMediator mediator;
