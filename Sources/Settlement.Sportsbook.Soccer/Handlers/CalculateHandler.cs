@@ -43,8 +43,6 @@ public class CalculateHandler : IRequestHandler<GetMatchRequest, Match>,
 
     public async Task<Result> Handle(SettleRequest request, CancellationToken cancellationToken)
     {
-        Console.WriteLine("Fanex.Settletment.WebSites(Handle): ");
-
         return request.ActionName.Equals(ActionType.UnCalculate)
             ? await calculateService.UnCalculate(request)
             : await calculateService.Calculate(request);
