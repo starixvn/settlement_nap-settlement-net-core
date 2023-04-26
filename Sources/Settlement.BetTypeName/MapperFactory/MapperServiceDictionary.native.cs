@@ -1,15 +1,15 @@
-﻿using Settlement.BetTypeName.Constants;
+﻿using Settlement.ResourceName.Constants;
 
-namespace Settlement.BetTypeName.MapperFactory;
+namespace Settlement.ResourceName.MapperFactory;
 
 public static class MapperServiceDictionary
 {
     public static Dictionary<string, Type> MapperServices => new()
     {
-        { KeyConstants.BadmintonKey, typeof(Services.Badminton.BadmintonBetTypeNameService) },
-        { KeyConstants.BasketballKey, typeof(Services.BasketBall.BasketballBetTypeNameService) },
-        { KeyConstants.CricketKey, typeof(Services.Cricket.CricketBetTypeNameService) },
-        { KeyConstants.ESportsKey, typeof(Services.ESports.ESportsBetTypeNameService) },
-        { KeyConstants.VolleyballKey, typeof(Services.Volleyball.VolleyballBetTypeNameService) }
+        { KeyConstants.BadmintonKey, typeof(Services.Badminton.BadmintonResourceNameService) },
+        { KeyConstants.BasketballKey, typeof(Services.BasketBall.BasketballResourceNameService) },
+        { KeyConstants.CricketKey, typeof(Services.Cricket.CricketResourceNameService) },
+        { KeyConstants.ESportsKey, typeof(Services.ESports.ESportsResourceNameService) },
+        { KeyConstants.VolleyballKey, typeof(Services.Volleyball.VolleyballResourceNameService) }
     };
 }

@@ -1,5 +1,5 @@
 ﻿using Fanex.Data.Repository;
-using Settlement.BetTypeName.Services;
+using Settlement.ResourceName.Services;
 using Settlement.Sportsbook.Aio.Criteria.Cricket;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Services.Cricket;
@@ -10,16 +10,16 @@ public class CricketBetTypeServiceTests
 {
     private readonly ICricketBetTypeService service;
 
-    private readonly IBetTypeNameService betTypeNameService;
+    private readonly IResourceNameService resourceNameService;
 
     public CricketBetTypeServiceTests()
     {
         var repository = Substitute.For<IDynamicRepository>();
-        betTypeNameService = Substitute.For<IBetTypeNameService>();
+        resourceNameService = Substitute.For<IResourceNameService>();
         var groupNameService = new GroupNameServiceImp();
         var inputTypeService = new InputTypeServiceImp();
         repository.Fetch<InputOption>(Arg.Any<GetPlayerInfoCriteria>()).Returns(GenerateInputData());
-        service = new CricketBetTypeService(repository, betTypeNameService, groupNameService, inputTypeService);
+        service = new CricketBetTypeService(repository, resourceNameService, groupNameService, inputTypeService);
     }
 
     private static IEnumerable<InputOption> GenerateInputData()
@@ -54,7 +54,7 @@ public class CricketBetTypeServiceTests
     {
         var resultDetail = new ResultDetail { ResourceId = resourceId };
         var resultDetails = new List<ResultDetail> { resultDetail };
-        betTypeNameService.GetBetTypeName(Arg.Any<string>(), Arg.Any<string>()).Returns("MockBetType");
+        resourceNameService.GetResourceName(Arg.Any<string>(), Arg.Any<string>()).Returns("MockBetType");
 
         service.GroupBetTypesAndGenerateNames(resultDetails);
 

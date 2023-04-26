@@ -38,7 +38,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Settlement.BetTypeName\Settlement.BetTypeName.csproj" />
+		<ProjectReference Include="..\Settlement.BetTypeName\Settlement.ResourceName.csproj" />
 		<ProjectReference Include="..\Settlement.Core\Settlement.Core.csproj" />
 		<ProjectReference Include="..\Settlement.Setting\Settlement.Setting.csproj" />
 	</ItemGroup>

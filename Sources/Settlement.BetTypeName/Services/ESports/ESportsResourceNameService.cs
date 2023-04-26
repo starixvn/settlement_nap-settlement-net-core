@@ -1,16 +1,18 @@
 ﻿using Fanex.RemotingRef;
-using Settlement.BetTypeName.MapperFactory;
 using Settlement.Core.Constants;
 using Settlement.Core.Services;
+using Settlement.ResourceName.Constants;
+using Settlement.ResourceName.MapperFactory;
 
-namespace Settlement.BetTypeName.Services.ESports;
+namespace Settlement.ResourceName.Services.ESports;
 
-public class ESportsBetTypeNameService : IMapperService
+public class ESportsResourceNameService : IMapperService
 {
     private readonly IRefDataService refDataService;
     private const int FourPosition = 4;
+    private const int ResourceMainLength = 2;
 
-    public ESportsBetTypeNameService()
+    public ESportsResourceNameService()
     {
         var remotingRefService = new RemotingRefService();
         refDataService = new RefDataService(remotingRefService);
@@ -18,8 +20,17 @@ public class ESportsBetTypeNameService : IMapperService
 
     public string GetResourceName(string resourceId)
     {
+        if (resourceId.Length == ResourceMainLength)
+        {
+            return GetResourceMain(resourceId);
+        }
         var betType = resourceId[..FourPosition];
         return BetTypeNameGroupOne(betType, resourceId);
+    }
+
+    private static string GetResourceMain(string resourceId)
+    {
+        return resourceId == ResourceType.Final ? ResourceNameConstants.FullTime : resourceId.Replace("M", "Map ");
     }
 
     private string BetTypeNameGroupOne(string betType, string resourceId)

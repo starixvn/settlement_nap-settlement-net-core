@@ -1,5 +1,5 @@
-﻿using Settlement.BetTypeName.Constants;
-using Settlement.BetTypeName.Services;
+﻿using Settlement.ResourceName.Constants;
+using Settlement.ResourceName.Services;
 using Settlement.Sportsbook.Aio.Constants.Basketball;
 using Settlement.Sportsbook.Aio.Models;
 using ResultDetail = Settlement.Sportsbook.Aio.Models.ResultDetail;
@@ -16,7 +16,7 @@ public interface IBasketballBetTypeService
 public class BasketballBetTypeServiceImp : IBasketballBetTypeService
 {
     private readonly IGroupBetTypeService groupBetTypeService;
-    private readonly IBetTypeNameService betTypeNameService;
+    private readonly IResourceNameService resourceNameService;
 
     private const int HalfBetTypeLength = 5;
     private const int BetTypeIndexLength = 2;
@@ -24,10 +24,10 @@ public class BasketballBetTypeServiceImp : IBasketballBetTypeService
 
     public BasketballBetTypeServiceImp(
         IGroupBetTypeService groupBetTypeService,
-        IBetTypeNameService betTypeNameService)
+        IResourceNameService resourceNameService)
     {
         this.groupBetTypeService = groupBetTypeService;
-        this.betTypeNameService = betTypeNameService;
+        this.resourceNameService = resourceNameService;
     }
 
     public ResultDetail GetBetTypeNameAndGroup(ResultDetail item)
@@ -35,7 +35,7 @@ public class BasketballBetTypeServiceImp : IBasketballBetTypeService
         const int maxLength = 2;
         var resourceId = item.ResourceId;
         item.BetType = resourceId[..(maxLength + 1)];
-        item.BetTypeName = betTypeNameService.GetBetTypeName(resourceId, KeyConstants.BasketballKey);
+        item.BetTypeName = resourceNameService.GetResourceName(resourceId, KeyConstants.BasketballKey);
         GroupBasketballBetType(item);
 
         return item;

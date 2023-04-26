@@ -1,4 +1,4 @@
-﻿namespace Settlement.BetTypeName.MapperFactory;
+﻿namespace Settlement.ResourceName.MapperFactory;
 
 public interface IMapperFactory
 {
@@ -9,7 +9,6 @@ public class MapperFactoryBase : IMapperFactory
 {
     public virtual IMapperService GetMapperService(string apiKey)
     {
-        var a = MapperServiceDictionary.MapperServices[apiKey];
         return MapperServiceDictionary.MapperServices.ContainsKey(apiKey) ?
             Activator.CreateInstance(MapperServiceDictionary.MapperServices[apiKey]) as IMapperService : null;
     }

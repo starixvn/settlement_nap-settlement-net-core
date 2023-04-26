@@ -1,4 +1,4 @@
-﻿using Settlement.BetTypeName.Services;
+﻿using Settlement.ResourceName.Services;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Services.ESport;
 
@@ -8,12 +8,12 @@ public class EarlyBetTypeNameServiceTests
 {
     private readonly IEarlyBetTypeNameService service;
 
-    private readonly IBetTypeNameService betTypeNameService;
+    private readonly IResourceNameService resourceNameService;
 
     public EarlyBetTypeNameServiceTests()
     {
-        betTypeNameService = Substitute.For<IBetTypeNameService>();
-        service = new EarlyBetTypeNameServiceImp(betTypeNameService);
+        resourceNameService = Substitute.For<IResourceNameService>();
+        service = new EarlyBetTypeNameServiceImp(resourceNameService);
     }
 
     [Theory]
@@ -26,7 +26,7 @@ public class EarlyBetTypeNameServiceTests
             ResourceId = resourceId
         };
 
-        betTypeNameService.GetBetTypeName(Arg.Any<string>(), Arg.Any<string>()).Returns("MockBettypeName");
+        resourceNameService.GetResourceName(Arg.Any<string>(), Arg.Any<string>()).Returns("MockBettypeName");
 
         resultDetail = service.GetBetTypeName(resultDetail);
 

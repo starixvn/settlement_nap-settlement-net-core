@@ -1,4 +1,4 @@
-﻿namespace Settlement.BetTypeName.MapperFactory;
+﻿namespace Settlement.ResourceName.MapperFactory;
 
 public interface IMapperService
 {

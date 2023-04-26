@@ -1,4 +1,4 @@
-﻿using Settlement.BetTypeName.Services;
+﻿using Settlement.ResourceName.Services;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Services.Basketball;
 
@@ -10,13 +10,13 @@ public class BasketballBetTypeServiceTests
 
     private readonly IGroupBetTypeService groupBetTypeService;
 
-    private readonly IBetTypeNameService betTypeNameService;
+    private readonly IResourceNameService resourceNameService;
 
     public BasketballBetTypeServiceTests()
     {
         groupBetTypeService = Substitute.For<IGroupBetTypeService>();
-        betTypeNameService = Substitute.For<IBetTypeNameService>();
-        service = new BasketballBetTypeServiceImp(groupBetTypeService, betTypeNameService);
+        resourceNameService = Substitute.For<IResourceNameService>();
+        service = new BasketballBetTypeServiceImp(groupBetTypeService, resourceNameService);
     }
 
     [Fact]
@@ -94,7 +94,7 @@ public class BasketballBetTypeServiceTests
     {
         var resultDetail = new ResultDetail { ResourceId = "123" };
         groupBetTypeService.GroupOtherBetType(Arg.Any<ResultDetail>()).Returns(new GroupNameModel());
-        betTypeNameService.GetBetTypeName(Arg.Any<string>(), Arg.Any<string>()).Returns("MockBetType");
+        resourceNameService.GetResourceName(Arg.Any<string>(), Arg.Any<string>()).Returns("MockBetType");
 
         service.GetBetTypeNameAndGroup(resultDetail);
 

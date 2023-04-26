@@ -1,5 +1,5 @@
-﻿using Settlement.BetTypeName.MapperFactory;
-using Settlement.BetTypeName.Services;
+﻿using Settlement.ResourceName.MapperFactory;
+using Settlement.ResourceName.Services;
 using Settlement.Sportsbook.Aio.Models;
 using IMapperService = Settlement.Sportsbook.Aio.MapperFactory.IMapperService;
 
@@ -11,8 +11,8 @@ public class ResultDetailMapperServiceImp : IMapperService
 
     public ResultDetailMapperServiceImp()
     {
-        var betTypeNameService = new BetTypeNameService(new MapperFactoryBase());
-        earlyBetTypeNameService = new EarlyBetTypeNameServiceImp(betTypeNameService);
+        var resourceNameService = new ResourceNameService(new MapperFactoryBase());
+        earlyBetTypeNameService = new EarlyBetTypeNameServiceImp(resourceNameService);
     }
 
     public void Decorate(dynamic obj)

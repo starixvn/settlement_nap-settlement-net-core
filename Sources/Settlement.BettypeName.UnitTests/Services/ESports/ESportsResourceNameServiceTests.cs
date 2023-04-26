@@ -1,18 +1,21 @@
-﻿using Settlement.BetTypeName.MapperFactory;
-using Settlement.BetTypeName.Services.ESports;
+﻿using Settlement.ResourceName.Constants;
+using Settlement.ResourceName.MapperFactory;
+using Settlement.ResourceName.Services.ESports;
 
 namespace Settlement.BettypeName.UnitTests.Services.ESports;
 
-public class ESportsBetTypeNameServiceTests
+public class ESportsResourceNameServiceTests
 {
     private readonly IMapperService service;
 
-    public ESportsBetTypeNameServiceTests()
+    public ESportsResourceNameServiceTests()
     {
-        service = new ESportsBetTypeNameService();
+        service = new ESportsResourceNameService();
     }
 
     [Theory]
+    [InlineData("00", ResourceNameConstants.FullTime)]
+    [InlineData("M1", "Map 1")]
     [InlineData("902801", "Map 1 Dragons Score")]
     [InlineData("903401", "Map 1 Barons Score")]
     [InlineData("904001", "Map 1 Inhibitors Score")]

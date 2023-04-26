@@ -1,16 +1,16 @@
-﻿using Settlement.BetTypeName.Constants;
-using Settlement.Core.Constants;
+﻿using Settlement.Core.Constants;
+using Settlement.ResourceName.Constants;
 
-namespace Settlement.BetTypeName.Services.Cricket;
+namespace Settlement.ResourceName.Services.Cricket;
 
-public interface IBetTypeNameService
+public interface IResourceNameService
 {
     string GetNonInnsBetTypeName(int betTypeId);
 
     string GetInnsBetTypeName(int betTypeId, string resourceId);
 }
 
-public class BetTypeNameServiceImp : IBetTypeNameService
+public class ResourceNameService : IResourceNameService
 {
     public string GetNonInnsBetTypeName(int betTypeId)
     {

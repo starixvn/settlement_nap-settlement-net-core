@@ -1,5 +1,5 @@
-﻿using Settlement.BetTypeName.MapperFactory;
-using Settlement.BetTypeName.Services;
+﻿using Settlement.ResourceName.MapperFactory;
+using Settlement.ResourceName.Services;
 using Settlement.Sportsbook.Aio.Models;
 using IMapperService = Settlement.Sportsbook.Aio.MapperFactory.IMapperService;
 
@@ -12,7 +12,7 @@ public class ResultDetailMapperServiceImp : IMapperService
     public ResultDetailMapperServiceImp()
     {
         var repository = new DynamicRepository();
-        var betTypeNameService = new BetTypeNameService(new MapperFactoryBase());
+        var betTypeNameService = new ResourceNameService(new MapperFactoryBase());
         var inputTypeService = new InputTypeServiceImp();
         var groupNameService = new GroupNameServiceImp();
         earlyBetTypeNameService = new CricketBetTypeService(repository, betTypeNameService, groupNameService, inputTypeService);

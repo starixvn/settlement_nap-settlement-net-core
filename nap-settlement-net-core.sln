@@ -61,9 +61,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Settlement.Outright", "Sour
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Settlement.Sportsbook.Outright.UnitTests", "Tests\Settlement.Sportsbook.Outright.UnitTests\Settlement.Sportsbook.Outright.UnitTests.csproj", "{D03DAB46-E71A-416F-8FB7-8FDA1DE7FDB2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Settlement.BetTypeName", "Sources\Settlement.BetTypeName\Settlement.BetTypeName.csproj", "{0EA43505-E2C5-4E1C-BCA2-76330A219A5C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Settlement.ResourceName", "Sources\Settlement.BetTypeName\Settlement.ResourceName.csproj", "{0EA43505-E2C5-4E1C-BCA2-76330A219A5C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Settlement.BettypeName.UnitTests", "Sources\Settlement.BettypeName.UnitTests\Settlement.BettypeName.UnitTests.csproj", "{19017E97-C7D1-412E-A344-45BAF1234FB1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Settlement.ResourceName.UnitTests", "Sources\Settlement.BettypeName.UnitTests\Settlement.ResourceName.UnitTests.csproj", "{19017E97-C7D1-412E-A344-45BAF1234FB1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

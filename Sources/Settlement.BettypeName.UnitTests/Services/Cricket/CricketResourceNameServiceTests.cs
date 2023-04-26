@@ -1,8 +1,9 @@
-﻿using Settlement.BetTypeName.Services.Cricket;
+﻿using Settlement.ResourceName.Constants;
+using Settlement.ResourceName.Services.Cricket;
 
 namespace Settlement.BettypeName.UnitTests.Services.Cricket;
 
-public class CricketBetTypeNameServiceTests
+public class CricketResourceNameServiceTests
 {
     [Theory]
     [InlineData("9400", "Super Over Winner")]
@@ -17,9 +18,12 @@ public class CricketBetTypeNameServiceTests
     [InlineData("9490100203", "1st Inns Over 2 Ball 3 Exact Runs")]
     [InlineData("96372001", "2nd Inns Wicket 1 Method of Dismissal (6-way)")]
     [InlineData("96241002", "1st Inns Over 2 Has Boundary Four?")]
+    [InlineData("A1", "Innings 1 Away")]
+    [InlineData("H1", "Innings 1 Home")]
+    [InlineData("00", ResourceNameConstants.MatchWinner)]
     public void GroupBetTypesAndGenerateNames_Always_SetCorrectBetTypeInfo(string resourceId, string betTypeName)
     {
-        var service = new CricketBetTypeNameService();
+        var service = new CricketResourceNameService();
         var actual = service.GetResourceName(resourceId);
 
         Assert.Equal(betTypeName, actual);

@@ -1,11 +1,11 @@
-﻿using Settlement.BetTypeName.Constants;
+﻿using Settlement.ResourceName.Constants;
+using Settlement.ResourceName.Services;
 using Settlement.Sportsbook.Aio.Criteria.Cricket;
 using Settlement.Sportsbook.Aio.Models;
 
 namespace Settlement.Sportsbook.Aio.Services.Cricket;
 
 using Constants.Cricket;
-using Settlement.BetTypeName.Services;
 
 public interface ICricketBetTypeService
 {
@@ -15,19 +15,19 @@ public interface ICricketBetTypeService
 public class CricketBetTypeService : ICricketBetTypeService
 {
     private readonly IDynamicRepository repository;
-    private readonly IBetTypeNameService betTypeNameService;
+    private readonly IResourceNameService resourceNameService;
     private readonly IGroupNameService groupNameService;
     private readonly IInputTypeService inputTypeService;
     private const int InnsBetTypeMinLength = 5;
 
     public CricketBetTypeService(
         IDynamicRepository repository,
-        IBetTypeNameService betTypeNameService,
+        IResourceNameService resourceNameService,
         IGroupNameService groupNameService,
         IInputTypeService inputTypeService)
     {
         this.repository = repository;
-        this.betTypeNameService = betTypeNameService;
+        this.resourceNameService = resourceNameService;
         this.groupNameService = groupNameService;
         this.inputTypeService = inputTypeService;
     }
@@ -83,7 +83,7 @@ public class CricketBetTypeService : ICricketBetTypeService
     private void GenerateBetTypeNameAndGroup(ResultDetail resultDetail, List<InputOption> inputOptions)
     {
         var resourceId = resultDetail.ResourceId;
-        resultDetail.BetTypeName = betTypeNameService.GetBetTypeName(resourceId, KeyConstants.CricketKey);
+        resultDetail.BetTypeName = resourceNameService.GetResourceName(resourceId, KeyConstants.CricketKey);
         if (resourceId.Length < InnsBetTypeMinLength)
         {
             var betTypeId = Convert.ToInt32(resourceId);

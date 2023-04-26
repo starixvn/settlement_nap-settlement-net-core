@@ -1,4 +1,4 @@
-﻿using Settlement.BetTypeName.Services;
+﻿using Settlement.ResourceName.Services;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Services.Badminton;
 
@@ -8,12 +8,12 @@ public class BadmintonBetTypeServiceTests
 {
     private readonly IBadmintonBetTypeService service;
 
-    private readonly IBetTypeNameService betTypeNameService;
+    private readonly IResourceNameService resourceNameService;
 
     public BadmintonBetTypeServiceTests()
     {
-        betTypeNameService = Substitute.For<IBetTypeNameService>();
-        service = new BadmintonBetTypeServiceImp(betTypeNameService);
+        resourceNameService = Substitute.For<IResourceNameService>();
+        service = new BadmintonBetTypeServiceImp(resourceNameService);
     }
 
     [Theory]
@@ -24,7 +24,7 @@ public class BadmintonBetTypeServiceTests
     {
         var resultDetail = new ResultDetail { ResourceId = resourceId };
 
-        betTypeNameService.GetBetTypeName(Arg.Any<string>(), Arg.Any<string>()).Returns("MockBetType");
+        resourceNameService.GetResourceName(Arg.Any<string>(), Arg.Any<string>()).Returns("MockBetType");
 
         var actual = service.GetBetTypeName(resultDetail);
 

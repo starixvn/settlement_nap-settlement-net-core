@@ -1,4 +1,4 @@
-﻿namespace Settlement.BetTypeName.Constants;
+﻿namespace Settlement.ResourceName.Constants;
 
 public static class CricketConstants
 {

@@ -1,5 +1,5 @@
-﻿using Settlement.BetTypeName.Constants;
-using Settlement.BetTypeName.Services;
+﻿using Settlement.ResourceName.Constants;
+using Settlement.ResourceName.Services;
 using Settlement.Sportsbook.Aio.Constants.Volleyball;
 using Settlement.Sportsbook.Aio.MapperFactory;
 using Settlement.Sportsbook.Aio.Models;
@@ -8,13 +8,13 @@ namespace Settlement.Sportsbook.Aio.Services.Volleyball;
 
 public class ResultDetailMapperServiceImp : IMapperService
 {
-    private readonly IBetTypeNameService betTypeNameService;
+    private readonly IResourceNameService resourceNameService;
 
     private readonly IGroupBetTypeService groupBetTypeService;
 
     public ResultDetailMapperServiceImp()
     {
-        betTypeNameService = new BetTypeNameService(new BetTypeName.MapperFactory.MapperFactoryBase());
+        resourceNameService = new ResourceNameService(new ResourceName.MapperFactory.MapperFactoryBase());
         groupBetTypeService = new GroupBetTypeServiceImp();
     }
 
@@ -29,7 +29,7 @@ public class ResultDetailMapperServiceImp : IMapperService
             {
                 var betTypeId = SplitBetType(resultDetail.ResourceId, 0, betTypeLength);
                 groupBetTypeService.SetGroupNameAndInputType(resultDetail, betTypeId);
-                resultDetail.BetTypeName = betTypeNameService.GetBetTypeName(resultDetail.ResourceId, KeyConstants.VolleyballKey);
+                resultDetail.BetTypeName = resourceNameService.GetResourceName(resultDetail.ResourceId, KeyConstants.VolleyballKey);
             }
         }
     }
