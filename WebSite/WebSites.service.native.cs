@@ -51,9 +51,9 @@ public static class WebSites
 {
     public static readonly string AllowOrigin = "AllowOrigin";
 
-    public static readonly int BytesPerSecond = 240;
+    public static readonly int BytesPerSecond = 100;
 
-    public static readonly TimeSpan GacePeriod = TimeSpan.FromSeconds(30);
+    public static readonly TimeSpan GacePeriod = TimeSpan.FromSeconds(10);
 
     public static void ConfigureAuthentication(this IServiceCollection services, IConfiguration configuration)
     {
