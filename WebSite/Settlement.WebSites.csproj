@@ -104,6 +104,7 @@
     <PackageReference Include="ONEbook.UM.AspNetCore" Version="3.1.0" />
     <PackageReference Include="ONEbook.UM.AspNetCore.Filters" Version="3.1.0" />
     <PackageReference Include="ONEbook.UM.Transport" Version="3.1.2-beta0" />
+    <PackageReference Include="Serilog.Extensions.Logging.File" Version="3.0.0" />
     <PackageReference Include="StackExchange.Redis" Version="2.6.48" />
   </ItemGroup>
 

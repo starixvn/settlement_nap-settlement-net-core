@@ -3,13 +3,13 @@ using Fanex.NAP.Client.Configuration;
 using Fanex.NAP.Client.Helpers.Web;
 using Fanex.NAP.Signin.AspNetCore.Attribute;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Server.Kestrel.Core;
 using ONEbook.UM.AspNetCore.Filters;
 using Settlement.Core.Models;
 using Settlement.WebSites;
 using Settlement.WebSites.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Logging.AddFile("Logs/settlement-{Date}.txt");
 
 builder.Services.ConfigureCors();
 
@@ -46,11 +46,6 @@ builder.Services.AddControllersWithViews(options =>
     options.Filters.Add(new SessionAuthorizeAttribute());
 });
 builder.Services.AddHttpClient();
-
-builder.WebHost.ConfigureKestrel(serverOptions =>
-{
-    serverOptions.Limits.MinRequestBodyDataRate = new MinDataRate(WebSites.BytesPerSecond, WebSites.GacePeriod);
-});
 
 // WEB Application
 var app = builder.Build();
