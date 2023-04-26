@@ -44,14 +44,8 @@ export class CashOutService {
 
     public getDirectBetStatusOnRefund(resultDetails: ResultDetail[]) {
         const betStatus: string[] = [];
-        
-        if(this.isRefundAllWithMatchTwoQuarters(resultDetails)) {
-            betStatus.push(this.defaultScore);
-        } else {
-            const halfTime = resultDetails.find((map) => _.isEqual(map.resourceId, ResourcesIds.htScore));
-            betStatus.push(`${Number(halfTime.homeValue)}-${Number(halfTime.awayValue)}`);
-        }
-
+        const halfTime = resultDetails.find((map) => _.isEqual(map.resourceId, ResourcesIds.htScore));
+        betStatus.push(`${Number(halfTime.homeValue)}-${Number(halfTime.awayValue)}`);
         betStatus.push(this.defaultScore);
         betStatus.push(this.defaultScore);
         betStatus.push(this.defaultScore);
@@ -89,10 +83,6 @@ export class CashOutService {
         }
     }
 
-    public getHalfWithMatchTwoQuarters(resultDetails: ResultDetail[]) {
-        return this.isRefundAllWithMatchTwoQuarters(resultDetails) ? 8 : 0;
-    }
-
     public isCalcHalftimeWithMatchTwoQuarters(betStatus: string, resultDetails: ResultDetail[]){
         const halfTimeIsCalculated = resultDetails.find((map) => _.isEqual(map.resourceId, ResourcesIds.htScore) && map.settlementStatusId === SettlementStatusId.Calculated);
         const fullTimeIsRunning = resultDetails.find((map) => _.isEqual(map.resourceId, ResourcesIds.finalScore) && map.settlementStatusId === SettlementStatusId.Running);
@@ -100,9 +90,11 @@ export class CashOutService {
         return _.isEmpty(betStatus) && halfTimeIsCalculated && fullTimeIsRunning;
     }
 
-    private isRefundAllWithMatchTwoQuarters(resultDetails: ResultDetail[]) {
-        var count = resultDetails.filter((map) => map.checked && _.includes([ResourcesIds.htScore, ResourcesIds.finalScore], map.resourceId)).length;
-        return count === 2;
+    public isNotCalcHalftimeWithMatchTwoQuarters(resultDetails: ResultDetail[]){
+        const halfTimeIsRunning = resultDetails.find((map) => _.isEqual(map.resourceId, ResourcesIds.htScore) && map.settlementStatusId === SettlementStatusId.Running);
+        const fullTimeIsRunning = resultDetails.find((map) => _.isEqual(map.resourceId, ResourcesIds.finalScore) && map.settlementStatusId === SettlementStatusId.Running);
+
+        return halfTimeIsRunning && fullTimeIsRunning;
     }
 
     private isRefundAll(resultDetails: ResultDetail[]) {

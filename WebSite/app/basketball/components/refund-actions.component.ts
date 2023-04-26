@@ -121,10 +121,11 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
         const isVirtualMatch = this.verificationService.isPinGoalMatch(this.matchDetail.leagueGroupId) || this.verificationService.isSabaMatch(this.matchDetail.leagueGroupId);
         if (final.length > 0 && !isVirtualMatch && this.matchDetail.parentId === 0) {
             let half = 0;
-            let betStatus = "";
+            let betStatus = "0-0,0-0,0-0,0-0,0-0";
             if(this.cashOutService.isCalcHalftimeWithMatchTwoQuarters(this.matchDetail.betStatus, resource)){
-                half = this.cashOutService.getHalfWithMatchTwoQuarters(resource);
                 betStatus = this.cashOutService.getDirectBetStatusOnRefund(resource);
+            } else if(this.cashOutService.isNotCalcHalftimeWithMatchTwoQuarters(resource)) {
+                half = 8;
             } else {
                 half = this.cashOutService.getHalf(resource);
                 betStatus = this.cashOutService.getBetStatus(resource);
