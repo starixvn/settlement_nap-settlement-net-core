@@ -2,11 +2,13 @@ import { Injectable } from '@angular/core';
 import * as _ from 'lodash';
 import { firstValueFrom } from 'rxjs';
 import { HttpRequestService } from "../../shared/services";
+import { SettlementStatusId } from "../../shared/constants";
 import { ResultDetail} from '../models';
 import { ResourcesIds } from '../constants';
 @Injectable()
 export class CashOutService {
     private cashOutApi = '/api/cash-out';
+    private defaultScore = "0-0";
     constructor(private readonly httpRequestService: HttpRequestService) { }
 
     public getTicketInfo(query: object) {
@@ -29,23 +31,51 @@ export class CashOutService {
         return firstValueFrom(request);
     }
 
+    public getDirectBetStatusOnCalc(halfTime: ResultDetail, fullTime: ResultDetail) {
+        const betStatus: string[] = [];
+        betStatus.push(`${Number(halfTime.homeValue)}-${Number(halfTime.awayValue)}`);
+        betStatus.push(this.defaultScore);
+        betStatus.push(`${Number(fullTime.homeValue)}-${Number(fullTime.awayValue)}`);
+        betStatus.push(this.defaultScore);
+        betStatus.push(this.defaultScore);
+        
+        return betStatus.join(',');
+    }
+
+    public getDirectBetStatusOnRefund(resultDetails: ResultDetail[]) {
+        const betStatus: string[] = [];
+        
+        if(this.isRefundAllWithMatchTwoQuarters(resultDetails)) {
+            betStatus.push(this.defaultScore);
+        } else {
+            const halfTime = resultDetails.find((map) => _.isEqual(map.resourceId, ResourcesIds.htScore));
+            betStatus.push(`${Number(halfTime.homeValue)}-${Number(halfTime.awayValue)}`);
+        }
+
+        betStatus.push(this.defaultScore);
+        betStatus.push(this.defaultScore);
+        betStatus.push(this.defaultScore);
+        betStatus.push(this.defaultScore);
+        
+        return betStatus.join(',');
+    }
+
     public getBetStatus(resultDetails: ResultDetail[]) {
         const resultDetailsQuarters = resultDetails.filter((map) =>
         map.resourceId !== ResourcesIds.htScore && map.resourceId !== ResourcesIds.finalScore);
-        const overTimeScore = "0-0";
         const betStatus: string[] = [];
         resultDetailsQuarters.forEach((map) => {
-            const score = map.checked  ? `0-0` : `${Number(map.homeValue)}-${Number(map.awayValue)}`
+            const score = map.checked  ? this.defaultScore : `${Number(map.homeValue)}-${Number(map.awayValue)}`
             betStatus.push(score);
         });
-        betStatus.push(overTimeScore);
+        betStatus.push(this.defaultScore);
 
         return  betStatus.join(',');
     }
 
     public getHalf(resultDetails: ResultDetail[]) {
-        if(this.isRefundByQuarter(resultDetails, ResourcesIds.quarter1)) {
-            return 1;
+        if(this.isRefundAll(resultDetails)) {
+            return 8;
         } else if(this.isRefundByQuarter(resultDetails, ResourcesIds.quarter2)) {
             return 2;
         } else if(this.isRefundByQuarter(resultDetails, ResourcesIds.htScore)) {
@@ -57,6 +87,28 @@ export class CashOutService {
         }else if(this.isRefundByQuarter(resultDetails, ResourcesIds.finalScore)) {
             return 0;
         }
+    }
+
+    public getHalfWithMatchTwoQuarters(resultDetails: ResultDetail[]) {
+        return this.isRefundAllWithMatchTwoQuarters(resultDetails) ? 8 : 0;
+    }
+
+    public isCalcHalftimeWithMatchTwoQuarters(betStatus: string, resultDetails: ResultDetail[]){
+        const halfTimeIsCalculated = resultDetails.find((map) => _.isEqual(map.resourceId, ResourcesIds.htScore) && map.settlementStatusId === SettlementStatusId.Calculated);
+        const fullTimeIsRunning = resultDetails.find((map) => _.isEqual(map.resourceId, ResourcesIds.finalScore) && map.settlementStatusId === SettlementStatusId.Running);
+
+        return _.isEmpty(betStatus) && halfTimeIsCalculated && fullTimeIsRunning;
+    }
+
+    private isRefundAllWithMatchTwoQuarters(resultDetails: ResultDetail[]) {
+        var count = resultDetails.filter((map) => map.checked && _.includes([ResourcesIds.htScore, ResourcesIds.finalScore], map.resourceId)).length;
+        return count === 2;
+    }
+
+    private isRefundAll(resultDetails: ResultDetail[]) {
+        var count = resultDetails.filter((map) => map.checked &&
+                    _.includes([ResourcesIds.quarter1, ResourcesIds.quarter2, ResourcesIds.quarter3, ResourcesIds.quarter4, ResourcesIds.htScore, ResourcesIds.finalScore], map.resourceId)).length;
+        return count === 6;
     }
 
     private isRefundByQuarter(resultDetails: ResultDetail[], quarter: string) {

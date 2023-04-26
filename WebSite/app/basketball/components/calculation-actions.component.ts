@@ -26,6 +26,7 @@ export class CalculationActionsComponent implements SportTemplate {
     @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
     private basketballService: BasketballService;
     private messageBoxService: MessageBoxService;
+    private betStatusService: BetStatusService
     private aioService: AioService;
     private cashOutService: CashOutService;
     private verificationService: VerificationService;
@@ -70,6 +71,7 @@ export class CalculationActionsComponent implements SportTemplate {
         this.verificationService = this.injector.get(VerificationService);
         this.toastrService = this.injector.get(ToastrService);
         this.cashOutService = this.injector.get(CashOutService);
+        this.betStatusService = this.injector.get(BetStatusService);
         this.injector.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
     }
 
@@ -388,11 +390,11 @@ export class CalculationActionsComponent implements SportTemplate {
             item.awayValue = (Number(item.awayValue)).toString();
         });
 
-        const betStatus = this.basketballService.getBetStatus(false, this.match, this.resultDetails);
+        const betStatus = this.betStatusService.getBetStatus(false, this.match, this.resultDetails);
         this.doSaveScoreAndCalculate(CalculateAction.calculate, selectedResources, betStatus);
     }
 
-    private async doSaveScoreAndCalculate(actionName: string, resources: ResultDetail[], betStatus: string) {
+    private async doSaveScoreAndCalculate(actionName: string, selectedResources: ResultDetail[], betStatus: string) {
         const scoresToSave = this.verificationService.getChangedScores(this.resultDetails, this.match.originalResultDetail);
         const checkedScores = this.verificationService.getOutsideScores(this.resultDetails);
         const saveScoreQuery: SaveScoreQuery = {
@@ -406,14 +408,14 @@ export class CalculationActionsComponent implements SportTemplate {
         if (!saveScoreResult.isSuccessful) {
             this.toastrService.error(saveScoreResult.errMsg);
         } else {
-            const query = new SettleQuery(this.matchDetail.matchId, resources, actionName, this.isReSettledTickets,
+            const query = new SettleQuery(this.matchDetail.matchId, selectedResources, actionName, this.isReSettledTickets,
                 betStatus, this.match.isScoreDirect);
             query.isLeader = this.isLeader;
             const getTicketInfos = await this.getTicketInfo(query);
             const result = await this.aioService.push(query);
             if (result.isSuccessful) {
                 await this.voidBet(getTicketInfos);
-                await this.cashOutResultUpdate(resources, betStatus);
+                await this.cashOutResultUpdate(selectedResources, betStatus);
                 this.calculateHedgeMatch(query);
             } else {
                 this.toastrService.error(result.errMsg);
@@ -460,7 +462,11 @@ export class CalculationActionsComponent implements SportTemplate {
     private async cashOutResultUpdate(resource: ResultDetail[], betStatus: string) {
         const isVirtualMatch = this.verificationService.isPinGoalMatch(this.matchDetail.leagueGroupId) || this.verificationService.isSabaMatch(this.matchDetail.leagueGroupId);
         const final = resource.filter((map) => _.isEqual(map.resourceId, ResourcesIds.finalScore) && map.checked);
-        if (final.length > 0  && !isVirtualMatch && this.matchDetail.parentId === 0 && !this.match.isScoreDirect) {
+        if (final.length > 0  && !isVirtualMatch && this.matchDetail.parentId === 0) {
+            if(this.match.isScoreDirect) {
+                betStatus = this.cashOutService.getDirectBetStatusOnCalc(this.firstHalf, this.fullTime);
+            }
+
             const query = new CashOutResultUpdateQuery(this.matchDetail.matchId, betStatus);
             await this.cashOutService.calc(query);
         }
@@ -501,7 +507,7 @@ export class CalculationActionsComponent implements SportTemplate {
             item.homeValue = "";
             item.awayValue = "";
         });
-        const betStatus = this.basketballService.getBetStatus(true, this.match, this.resultDetails);
+        const betStatus = this.betStatusService.getBetStatus(true, this.match, this.resultDetails);
 
         this.sendRequest(CalculateAction.unCalculate, this.selectedResources, betStatus);
     }
