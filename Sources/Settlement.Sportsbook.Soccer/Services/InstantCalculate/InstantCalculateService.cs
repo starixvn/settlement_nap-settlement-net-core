@@ -170,10 +170,10 @@ public class InstantCalculateServiceImp : InstantCalculateService
 
     private async Task<Result> CheckCalculationMatch(InstantCalculationRequest request, string resourceResult)
     {
-        var homeScore = int.Parse(request.HomeScore);
-        var awayScore = int.Parse(request.AwayScore);
-        var beforeHomeScore = int.Parse(request.InstantHomeScoreBefore);
-        var beforeAwayScore = int.Parse(request.InstantAwayScoreBefore);
+        var homeScore = int.Parse(request.HomeScore ?? "0");
+        var awayScore = int.Parse(request.AwayScore ?? "0");
+        var beforeHomeScore = int.Parse(request.InstantHomeScoreBefore ?? "0");
+        var beforeAwayScore = int.Parse(request.InstantAwayScoreBefore ?? "0");
 
         var totalGoal = homeScore + awayScore;
         var totalGoalCheck = beforeHomeScore + beforeAwayScore;
