@@ -120,8 +120,17 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
         const final = resource.filter((map) => _.isEqual(map.resourceId, ResourcesIds.finalScore) && map.checked);
         const isVirtualMatch = this.verificationService.isPinGoalMatch(this.matchDetail.leagueGroupId) || this.verificationService.isSabaMatch(this.matchDetail.leagueGroupId);
         if (final.length > 0 && !isVirtualMatch && this.matchDetail.parentId === 0) {
-            const half = this.cashOutService.getHalf(resource);
-            const betStatus = this.cashOutService.getBetStatus(resource);
+            let half = 0;
+            let betStatus = "0-0,0-0,0-0,0-0,0-0";
+            if(this.cashOutService.isCalcHalftimeWithMatchTwoQuarters(this.matchDetail.betStatus, resource)){
+                betStatus = this.cashOutService.getDirectBetStatusOnRefund(resource);
+            } else if(this.cashOutService.isNotCalcHalftimeWithMatchTwoQuarters(resource)) {
+                half = 8;
+            } else {
+                half = this.cashOutService.getHalf(resource);
+                betStatus = this.cashOutService.getBetStatus(resource);
+            }
+
             const query = new CashOutResultRefundQuery(this.matchDetail.matchId, betStatus, half);
             await this.cashOutService.refund(query);
         }

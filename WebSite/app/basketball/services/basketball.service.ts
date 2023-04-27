@@ -5,15 +5,12 @@ import { ResultDetail } from '../../shared/models/sportsbook-sop';
 import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
 import { ResourceNameByIdPipe } from '../pipes/resource-name-by-id.pipe';
 import { Language } from '../../shared/language.native';
-import { BetStatusService } from './bet-status.service';
-import { Match } from '../models';
 
 @Injectable()
 export class BasketballService {
     constructor(
         private readonly intervalBackgroundPipe: IntervalBackgroundPipe,
-        private readonly resourceNameByIdPipe: ResourceNameByIdPipe,
-        private readonly betStatusService: BetStatusService) { }
+        private readonly resourceNameByIdPipe: ResourceNameByIdPipe) { }
 
     public findResultDetail(resultDetails: ResultDetail[], resourceId: string) {
         return _.find(resultDetails, (item) => _.isEqual(item.resourceId, resourceId) && item.checked);
@@ -69,10 +66,6 @@ export class BasketballService {
         });
 
         return confirmMessage;
-    }
-
-    public getBetStatus(isUncalc: boolean, match: Match, resultDetail: ResultDetail[]) {
-        return this.betStatusService.getBetStatus(isUncalc, match, resultDetail);
     }
 
     public getExternalResults(resultDetail: ResultDetail[], externalSourceId: number) {
