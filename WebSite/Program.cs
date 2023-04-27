@@ -9,7 +9,6 @@ using Settlement.WebSites;
 using Settlement.WebSites.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Logging.AddFile("Logs/settlement-{Date}.txt");
 
 builder.Services.ConfigureCors();
 
