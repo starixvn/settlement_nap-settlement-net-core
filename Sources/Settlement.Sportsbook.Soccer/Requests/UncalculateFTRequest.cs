@@ -13,7 +13,9 @@ public class UncalculateFtRequest : IRequest<Result>
 
     public bool IsExistFgNg { get; set; }
 
-    public bool IsEnabledGoalRecordFt { get; set; }
+    public int HedgeMatchId { get; set; }
+
+    public bool IsApplyHedging { get; set; }
 
     public IEnumerable<ResultDetail> ResultDetails { get; set; }
 }

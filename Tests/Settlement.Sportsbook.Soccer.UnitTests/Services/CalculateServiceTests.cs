@@ -169,4 +169,28 @@ public class CalculateServiceTests
         await scaleOutSettleService.Received().UpdateMatchInfo(Arg.Any<UpdateMatchInfoRequest>());
         await repository.Received(3).ExecuteAsync(Arg.Any<CalculateCriteria>());
     }
+
+    [Fact]
+    public async Task UncalculateFT_ApplyHedgeMatch_ExecuteTwice()
+    {
+        var query = new UncalculateFtRequest
+        {
+            IsApplyHedging = true,
+            HedgeMatchId = 123
+        };
+        var criteria = new CalculateCriteria
+        {
+            Action = ActionType.UnCalculateFullTime,
+            MatchId = 1
+        };
+        createCriteriaService.CreateUnCalculateFtCriteria(Arg.Any<UncalculateFtRequest>()).Returns(criteria);
+        logDirectlyService.WriteLog(Arg.Any<int>(), Arg.Any<string>());
+        scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
+
+        await service.UncalculateFT(query);
+
+        await scaleOutSettleService.Received(2).UpdateMatchInfo(Arg.Any<UpdateMatchInfoRequest>());
+        await repository.Received(6).ExecuteAsync(Arg.Any<CalculateCriteria>());
+    }
+
 }

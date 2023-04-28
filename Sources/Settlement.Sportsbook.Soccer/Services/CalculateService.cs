@@ -89,7 +89,13 @@ public class CalculateServiceImp : ICalculateService
 
         await ExecuteAsync(criteria);
 
-        return new Result();
+        if (request.IsApplyHedging)
+        {
+            criteria.MatchId = request.HedgeMatchId;
+            await ExecuteAsync(criteria);
+        }
+
+        return requestChecking;
     }
 
     public async Task<Result> UnCalculate(SettleRequest request)

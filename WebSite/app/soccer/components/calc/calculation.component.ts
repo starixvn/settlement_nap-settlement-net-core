@@ -303,7 +303,8 @@ export class CalculationComponent implements Soccer {
   }
 
   private async doUnCalculateFt() {
-    const query = new UncalculateFullTimeQuery(this.matchDetail, this.match.resultDetails);
+    const hedgeMatchId = this.applyHedgeMatch ? this.hedgeMatchDetail.matchId : 0;
+    const query = new UncalculateFullTimeQuery(this.matchDetail, this.match.resultDetails, hedgeMatchId);
     const result = await this.requestService.unCalculateFt(query);
     if (result.isSuccessful) {
       this.closePopupService.closePopup();

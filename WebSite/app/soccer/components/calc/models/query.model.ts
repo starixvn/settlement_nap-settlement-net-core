@@ -82,15 +82,17 @@ export class UncalculateFullTimeQuery {
     public isExistFgLg: boolean;
     public isExistHtFgLg: boolean;
     public isExistFgNg: boolean;
-    public isEnabledGoalRecordFt: boolean;
     public resultDetails: ResultDetail[];
+    public hedgeMatchId: number;
+    public isApplyHedging: boolean;
    
-    constructor(matchDetail: MatchDetail, resultDetails: ResultDetail[]) {
+    constructor(matchDetail: MatchDetail, resultDetails: ResultDetail[], hedgeMatchId: number) {
         this.isExistFgLg = matchDetail.isExistFgLg;
         this.isExistFgNg = matchDetail.isExistFgNg;
         this.isExistHtFgLg = matchDetail.isExistHtFgLg;
         this.matchId = matchDetail.matchId;
         this.resultDetails = resultDetails;
-        this.isEnabledGoalRecordFt = matchDetail.isEnabledGoalRecordFt;
+        this.hedgeMatchId = hedgeMatchId;
+        this.isApplyHedging = hedgeMatchId > 0;
     }
 }
