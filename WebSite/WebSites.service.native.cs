@@ -42,6 +42,7 @@ using Settlement.WebSites.Configurations;
 using SharpRaven;
 using StackExchange.Redis;
 using System.IO.Compression;
+using Fanex.Caching.Redis;
 using ILogger = Fanex.Logging.ILogger;
 using LogServiceImp = Settlement.Core.Services.LogServiceImp;
 
@@ -117,7 +118,7 @@ public static class WebSites
             options.InstanceName = "Fanex.Settlement.Session-";
         });
 
-        services.AddMemoryCache();
+        services.AddRedisCache(configuration.GetSection("Fanex.Caching.Redis"));
     }
 
     public static void ConfigureSession(this IServiceCollection services, IConfiguration configuration)
