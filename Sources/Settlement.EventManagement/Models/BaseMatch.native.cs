@@ -26,19 +26,19 @@ public class BaseMatch
     public int LeagueId { get; set; }
 
     [Key("leagueName")]
-    public string LeagueName => RefDataService.GetLeagueName(LeagueId);
+    public string LeagueName => RefDataService == null ? string.Empty : RefDataService.GetLeagueName(LeagueId);
 
     [JsonIgnore, IgnoreMember]
     public int HomeId { get; set; }
 
     [Key("homeName")]
-    public string HomeName => RefDataService.GetTeamName(HomeId) + (IsNeutral ? " (N)" : string.Empty);
+    public string HomeName => RefDataService == null ? string.Empty : RefDataService.GetTeamName(HomeId) + (IsNeutral ? " (N)" : string.Empty);
 
     [JsonIgnore, IgnoreMember]
     public int AwayId { get; set; }
 
     [Key("awayName")]
-    public string AwayName => RefDataService.GetTeamName(AwayId);
+    public string AwayName => RefDataService == null ? string.Empty : RefDataService.GetTeamName(AwayId);
 
     [Key("matchCode")]
     public string MatchCode { get; set; }

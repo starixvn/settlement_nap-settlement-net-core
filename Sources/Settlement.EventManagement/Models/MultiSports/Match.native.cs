@@ -19,7 +19,7 @@ public class Match : BaseMatch
     public MoreScores MoreScores { get; set; }
 
     [Key("sportName")]
-    public string SportName => RefDataService.GetSportName(SportType);
+    public string SportName => RefDataService == null ? string.Empty : RefDataService.GetSportName(SportType);
 
     #region Match Status
 
