@@ -66,13 +66,13 @@ public class InstantCalculateServiceImp : InstantCalculateService
         foreach (var server in appSettingsKey.SiteDbServer)
         {
             criteria.DbServer = server;
-            var matchChecking = await repository.GetAsync<MatchCheckingResult>(criteria);
+            await repository.ExecuteAsync(criteria);
             if (criteria.ErrCode > 0)
             {
-                matchChecking.ErrCode = criteria.ErrCode;
-                matchChecking.ErrMsg = criteria.ErrMsg;
+                matchCheckingResult.ErrCode = criteria.ErrCode;
+                matchCheckingResult.ErrMsg = criteria.ErrMsg;
 
-                return matchChecking;
+                return matchCheckingResult;
             }
         }
 
