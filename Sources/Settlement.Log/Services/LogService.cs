@@ -39,7 +39,7 @@ public class LogServiceImp : LogService
         var criteria = mapper.Map<LogRequest, GetSettlementLogCriteria>(request);
         criteria.BalanceUpDay = balanceUpService.GetBalanceUpDay().BalanceUpDay;
 
-        var logs =(await repository.FetchAsync<LogModel>(criteria)).ToList();
+        var logs = (await repository.FetchAsync<LogModel>(criteria)).ToList();
         return await GetLogDetail(logs, request.ProductType);
     }
 
@@ -47,7 +47,15 @@ public class LogServiceImp : LogService
     {
         foreach (var log in logs)
         {
-            log.MatchLogDetails = await logDetailService.GetLogDetailByMatchAndProduct(log.MatchId, productType);
+            if (productType == "RES")
+            {
+                log.ResettleLogDetails = await logDetailService.GetLogDetailResettle(log.MatchId, log.SportType);
+                log.PlayerNames = await logDetailService.GetPlayerNameCricket(log.MatchId, log.SportType);
+            }
+            else
+            {
+                log.MatchLogDetails = await logDetailService.GetLogDetailByMatchAndProduct(log.MatchId, productType);
+            }
             log.RefDataService = refDataService;
         }
 

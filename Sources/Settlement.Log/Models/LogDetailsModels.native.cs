@@ -8,7 +8,13 @@ public class LogDetailsModels
 
     private string remark = string.Empty;
 
+    public int LogId { get; set; }
+
     public DateTime SettlementDate { get; set; }
+
+    public string ResourceId { get; set; }
+
+    public string ResourceName { get; set; }
 
     public string UserName { get; set; }
 
@@ -25,6 +31,10 @@ public class LogDetailsModels
     public int? FinalHomeScore { get; set; }
 
     public int? FinalAwayScore { get; set; }
+
+    public string HomeValue { get; set; }
+
+    public string AwayValue { get; set; }
 
     public string GoalRecord
     {

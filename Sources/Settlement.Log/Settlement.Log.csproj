@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Settlement.Core\Settlement.Core.csproj" />
+    <ProjectReference Include="..\Settlement.ResourceName\Settlement.ResourceName.csproj" />
   </ItemGroup>
 
 </Project>

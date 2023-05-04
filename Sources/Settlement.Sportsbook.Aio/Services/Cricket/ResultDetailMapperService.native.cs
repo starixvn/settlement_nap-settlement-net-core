@@ -12,10 +12,10 @@ public class ResultDetailMapperServiceImp : IMapperService
     public ResultDetailMapperServiceImp()
     {
         var repository = new DynamicRepository();
-        var betTypeNameService = new ResourceNameService(new MapperFactoryBase());
+        var resourceNameService = new ResourceNameService(new MapperFactoryBase());
         var inputTypeService = new InputTypeServiceImp();
         var groupNameService = new GroupNameServiceImp();
-        earlyBetTypeNameService = new CricketBetTypeService(repository, betTypeNameService, groupNameService, inputTypeService);
+        earlyBetTypeNameService = new CricketBetTypeService(repository, resourceNameService, groupNameService, inputTypeService);
     }
 
     public void Decorate(dynamic obj)

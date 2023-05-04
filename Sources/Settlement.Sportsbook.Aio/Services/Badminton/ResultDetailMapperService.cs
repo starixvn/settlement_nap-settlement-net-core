@@ -11,8 +11,8 @@ public class ResultDetailMapperServiceImp : IMapperService
 
     public ResultDetailMapperServiceImp()
     {
-        var betTypeNameService = new ResourceNameService(new MapperFactoryBase());
-        badmintonBetTypeService = new BadmintonBetTypeServiceImp(betTypeNameService);
+        var resourceNameService = new ResourceNameService(new MapperFactoryBase());
+        badmintonBetTypeService = new BadmintonBetTypeServiceImp(resourceNameService);
     }
 
     public void Decorate(dynamic obj)

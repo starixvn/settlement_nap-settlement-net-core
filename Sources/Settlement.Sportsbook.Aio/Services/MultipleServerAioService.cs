@@ -250,7 +250,7 @@ public class MultipleServerAioServiceImp : MultipleServerAioService
 
     private async Task InsertLog(SettleCriteria criteria)
     {
-        if (criteria.IsReSettledTickets && !criteria.IsHedgeMatch)
+        if (!criteria.IsHedgeMatch)
         {
             var insertLogCriteria = createQueryService.CreateInsertLogCriteria(criteria);
             await repository.ExecuteAsync(insertLogCriteria);

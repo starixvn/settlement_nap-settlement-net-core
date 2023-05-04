@@ -453,7 +453,7 @@ export class CalculationActionsComponent implements SportTemplate {
     }
 
     private async voidBet(voidBetInfos: VoidBetInfo[]) {
-         if (voidBetInfos.length > 0) {
+        if (voidBetInfos.length > 0) {
             const voidBetQuery = new VoidBetQuery(this.matchDetail, true, voidBetInfos);
             await this.cashOutService.voidBet(voidBetQuery);
         }
@@ -462,8 +462,8 @@ export class CalculationActionsComponent implements SportTemplate {
     private async cashOutResultUpdate(resource: ResultDetail[], betStatus: string) {
         const isVirtualMatch = this.verificationService.isPinGoalMatch(this.matchDetail.leagueGroupId) || this.verificationService.isSabaMatch(this.matchDetail.leagueGroupId);
         const final = resource.filter((map) => _.isEqual(map.resourceId, ResourcesIds.finalScore) && map.checked);
-        if (final.length > 0  && !isVirtualMatch && this.matchDetail.parentId === 0) {
-            if(this.match.isScoreDirect) {
+        if (final.length > 0 && !isVirtualMatch && this.matchDetail.parentId === 0) {
+            if (this.match.isScoreDirect) {
                 betStatus = this.cashOutService.getDirectBetStatusOnCalc(this.firstHalf, this.fullTime);
             }
 

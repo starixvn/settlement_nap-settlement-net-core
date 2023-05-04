@@ -32,10 +32,8 @@ public class BasketballBetTypeServiceImp : IBasketballBetTypeService
 
     public ResultDetail GetBetTypeNameAndGroup(ResultDetail item)
     {
-        const int maxLength = 2;
         var resourceId = item.ResourceId;
-        item.BetType = resourceId[..(maxLength + 1)];
-        item.BetTypeName = resourceNameService.GetResourceName(resourceId, KeyConstants.BasketballKey);
+        (item.BetType, item.BetTypeName) = resourceNameService.GetResourceName(resourceId, KeyConstants.BasketballKey);
         GroupBasketballBetType(item);
 
         return item;

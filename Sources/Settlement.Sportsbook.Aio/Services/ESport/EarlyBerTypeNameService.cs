@@ -25,8 +25,7 @@ public class EarlyBetTypeNameServiceImp : IEarlyBetTypeNameService
     {
         var resourceId = item.ResourceId;
         item.Map = Convert.ToInt32(resourceId.Substring(FourPosition, TwoPosition));
-        item.BetType = resourceId[..FourPosition];
-        item.BetTypeName = resourceNameService.GetResourceName(resourceId, KeyConstants.ESportsKey);
+        (item.BetType, item.BetTypeName) = resourceNameService.GetResourceName(resourceId, KeyConstants.ESportsKey);
 
         return item;
     }

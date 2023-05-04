@@ -54,13 +54,14 @@ public class CricketBetTypeServiceTests
     {
         var resultDetail = new ResultDetail { ResourceId = resourceId };
         var resultDetails = new List<ResultDetail> { resultDetail };
-        resourceNameService.GetResourceName(Arg.Any<string>(), Arg.Any<string>()).Returns("MockBetType");
+        resourceNameService.GetResourceName(Arg.Any<string>(), Arg.Any<string>()).Returns(("mockBettype", "mockName"));
 
         service.GroupBetTypesAndGenerateNames(resultDetails);
 
         Assert.Equal(groupId, resultDetail.GroupId);
         Assert.Equal(inputType, resultDetail.InputType);
         Assert.Equal(homeName, resultDetail.HomeName);
-        Assert.Equal("MockBetType", resultDetail.BetTypeName);
+        Assert.Equal("mockName", resultDetail.BetTypeName);
+        Assert.Equal("mockBettype", resultDetail.BetType);
     }
 }

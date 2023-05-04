@@ -94,10 +94,11 @@ public class BasketballBetTypeServiceTests
     {
         var resultDetail = new ResultDetail { ResourceId = "123" };
         groupBetTypeService.GroupOtherBetType(Arg.Any<ResultDetail>()).Returns(new GroupNameModel());
-        resourceNameService.GetResourceName(Arg.Any<string>(), Arg.Any<string>()).Returns("MockBetType");
+        resourceNameService.GetResourceName(Arg.Any<string>(), Arg.Any<string>()).Returns(("mockBettype", "MockName"));
 
         service.GetBetTypeNameAndGroup(resultDetail);
 
-        Assert.Equal("MockBetType", resultDetail.BetTypeName);
+        Assert.Equal("MockName", resultDetail.BetTypeName);
+        Assert.Equal("mockBettype", resultDetail.BetType);
     }
 }

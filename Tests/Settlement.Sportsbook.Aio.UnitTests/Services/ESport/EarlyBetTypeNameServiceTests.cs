@@ -17,21 +17,21 @@ public class EarlyBetTypeNameServiceTests
     }
 
     [Theory]
-    [InlineData("902801", 1, "9028")]
-    [InlineData("903402", 2, "9034")]
-    public void GetBetTypeName_Always_ReturnCorrectBetTypeName(string resourceId, int map, string betType)
+    [InlineData("902801", 1)]
+    [InlineData("903402", 2)]
+    public void GetBetTypeName_Always_ReturnCorrectBetTypeName(string resourceId, int map)
     {
         var resultDetail = new ResultDetail
         {
             ResourceId = resourceId
         };
 
-        resourceNameService.GetResourceName(Arg.Any<string>(), Arg.Any<string>()).Returns("MockBettypeName");
+        resourceNameService.GetResourceName(Arg.Any<string>(), Arg.Any<string>()).Returns(("mockBettype", "mockName"));
 
         resultDetail = service.GetBetTypeName(resultDetail);
 
         Assert.Equal(map, resultDetail.Map);
-        Assert.Equal(betType, resultDetail.BetType);
-        Assert.Equal("MockBettypeName", resultDetail.BetTypeName);
+        Assert.Equal("mockName", resultDetail.BetTypeName);
+        Assert.Equal("mockBettype", resultDetail.BetType);
     }
 }

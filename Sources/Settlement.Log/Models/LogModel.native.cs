@@ -47,4 +47,8 @@ public class LogModel
     public DateTime EventDate { get; set; }
 
     public List<LogDetailsModels> MatchLogDetails { get; set; }
+
+    public List<ResettleLogDetail> ResettleLogDetails { get; set; }
+
+    public List<string> PlayerNames { get; set; }
 }

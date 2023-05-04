@@ -26,8 +26,7 @@ public class BadmintonBetTypeServiceImp : IBadmintonBetTypeService
     {
         var resourceId = item.ResourceId;
         item.Map = Convert.ToInt32(resourceId.Substring(ThreePosition, MapCharacter));
-        item.BetType = resourceId[..BetTypeCharacter];
-        item.BetTypeName = resourceNameService.GetResourceName(resourceId, KeyConstants.BadmintonKey);
+        (item.BetType, item.BetTypeName) = resourceNameService.GetResourceName(resourceId, KeyConstants.BadmintonKey);
 
         return item;
     }

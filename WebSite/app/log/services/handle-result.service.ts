@@ -1,0 +1,65 @@
+import { Injectable } from "@angular/core";
+import { Match, ResettleLogDetail } from "../models";
+import * as _ from 'lodash';
+import { SportType } from "../../shared/constants";
+import { BetType, BetTypeWithNo, MappingValue } from "../constants/bet-type";
+
+@Injectable()
+export class HandleResultService {
+    static HandleResult(match: Match, logDetail: ResettleLogDetail, homeName: string, awayName: string) {
+        if (!_.isEmpty(logDetail.homeValue) && !_.isEmpty(logDetail.awayValue)) {
+            return `${logDetail.homeValue} - ${logDetail.awayValue}`;
+        }
+
+        if (_.isEmpty(logDetail.homeValue)) {
+            return '-';
+        }
+
+        if (_.isEqual(match.sportType, SportType.cricket) && _.includes(BetType.relatePlayer, logDetail.betType)) {
+            return this.handlePlayerName(match.playerNames, logDetail.otherInfo, logDetail.homeValue)
+        }
+
+        return this.HandleHomeValue(logDetail, homeName, awayName, match.sportType);
+    }
+
+
+    private static HandleHomeValue(logDetail: ResettleLogDetail, homeName: string, awayName: string, sportType: number) {
+        if (_.isEqual(logDetail.homeValue, 'H') || _.isEqual(logDetail.homeValue, 'A')) {
+            return _.isEqual(logDetail.homeValue, 'H') ? homeName : awayName;
+        }
+
+        if(_.isEqual(logDetail.homeValue, 'N')){
+            return _.includes(BetTypeWithNo[sportType], logDetail.betType)  ? 'No' : 'None';
+        }
+
+        if (MappingValue[logDetail.homeValue] != null) {
+            return MappingValue[logDetail.homeValue];
+        }
+
+        if (MappingValue[`${logDetail.homeValue}-${logDetail.betType}`] != null) {
+            return MappingValue[`${logDetail.homeValue}-${logDetail.betType}`];
+        }
+
+        if (_.isNumber(logDetail.homeValue)) {
+            return logDetail.homeValue;
+        }
+
+        return "-";
+    }
+
+    private static handlePlayerName(players: string[], otherInfo: string, homeValue: string) {
+        const playerIds = otherInfo.split(',');
+        const values = homeValue.split(',');
+        const listPlayer = [];
+        playerIds.forEach((value, index) => {
+            const player = players.find(item => item.includes(value))?.split(',');
+            if(_.isUndefined(player)){
+                listPlayer.push(`${values[index]}`);
+            } else {
+                listPlayer.push(`${values[index]}(${player[1] ?? player[0] ?? ""})`);
+            }
+        });
+
+        return listPlayer.join('; ');
+    }
+}

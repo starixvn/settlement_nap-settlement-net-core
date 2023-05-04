@@ -12,6 +12,7 @@ import {
 import { SearchService } from '../services';
 import { Match } from '../models';
 import * as _ from 'lodash';
+import { HandleResultService } from '../services/handle-result.service';
 
 @Component({
     selector: 'app-root',
@@ -23,7 +24,8 @@ import * as _ from 'lodash';
         BlockUIService,
         HttpRequestService,
         ReCheckInService,
-        NgbActiveModal],
+        NgbActiveModal,
+        HandleResultService],
 })
 
 export class AppComponent implements OnInit, OnDestroy {

@@ -17,19 +17,19 @@ public class BadmintonBetTypeServiceTests
     }
 
     [Theory]
-    [InlineData("7120103", 1, "712")]
-    [InlineData("7120203", 2, "712")]
-    [InlineData("7130301", 3, "713")]
-    public void GetBetTypeName_Always_ReturnCorrectBetTypeInfo(string resourceId, int map, string betType)
+    [InlineData("7120103", 1)]
+    [InlineData("7120203", 2)]
+    [InlineData("7130301", 3)]
+    public void GetBetTypeName_Always_ReturnCorrectBetTypeInfo(string resourceId, int map)
     {
         var resultDetail = new ResultDetail { ResourceId = resourceId };
 
-        resourceNameService.GetResourceName(Arg.Any<string>(), Arg.Any<string>()).Returns("MockBetType");
+        resourceNameService.GetResourceName(Arg.Any<string>(), Arg.Any<string>()).Returns(("mockBettype", "MockName"));
 
         var actual = service.GetBetTypeName(resultDetail);
 
         Assert.Equal(map, actual.Map);
-        Assert.Equal(betType, actual.BetType);
+        Assert.Equal("mockBettype", actual.BetType);
         Assert.Equal("MockBetType", actual.BetTypeName);
     }
 }

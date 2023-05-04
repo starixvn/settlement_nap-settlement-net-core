@@ -1,0 +1,66 @@
+<div [hidden]="match.collapsed">
+    <div class="match">
+        <div class="match-name">
+            {{match.matchName}} -
+        </div>
+        <div class="event-date">
+            Event date: {{match.eventDate | date : 'mediumDate'}}
+        </div>
+    </div>
+
+    <table class="table-calculation">
+        <thead>
+            <tr>
+                <th class="index">
+                    #
+                </th>
+                <th class="resource-name">
+                    Result ID/Name
+                </th>
+                <th class="match-date">
+                    Date
+                </th>
+                <th class="user-name">
+                    Username
+                </th>
+                <th class="action">
+                    Action
+                </th>
+
+                <th>
+                    Result Value
+                </th>
+
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let logDetail of match.resettleLogDetails; let i = index;" [ngClass]="logDetail.class">
+                <td>
+                    {{i+1}}
+                </td>
+                <ng-container *ngIf="listLog[logDetail.resourceName][0] === logDetail">
+                    <td [attr.rowspan]="listLog[logDetail.resourceName].length">
+                        {{logDetail.resourceId}}-{{logDetail.resourceName}}
+                    </td>
+                </ng-container>
+                <td>
+                    <div>{{logDetail.settlementDate | date : 'mediumDate' }}</div>
+                    <div>{{logDetail.settlementDate | date : 'hh:mm:ss a' }}</div>
+
+                </td>
+                <td>
+                     {{logDetail.userName}}
+                </td>
+                <td>
+                   {{logDetail.action}}
+                </td>
+                <td>
+                    {{logDetail.resultValue}}
+                </td>
+            </tr>
+            <tr *ngIf="match.resettleLogDetails.length == 0">
+                <td colspan="9">There is no information available</td>
+            </tr>
+        </tbody>
+    </table>
+</div>

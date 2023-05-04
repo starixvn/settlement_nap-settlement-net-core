@@ -38,7 +38,7 @@ public class CricketBetTypeService : ICricketBetTypeService
 
         if (IsExistedPlayerName(resultDetails))
         {
-            inputOptions = GetInputOptions(resultDetails);
+            inputOptions = GetInputOptions(resultDetails.FirstOrDefault());
         }
 
         resultDetails.ForEach(resultDetail =>
@@ -47,17 +47,16 @@ public class CricketBetTypeService : ICricketBetTypeService
         });
     }
 
-    private List<InputOption> GetInputOptions(List<ResultDetail> resultDetails)
+    private List<InputOption> GetInputOptions(ResultDetail resultDetail)
     {
         const char semicolon = ',';
 
-        var matchInfo = resultDetails.FirstOrDefault();
-        if (matchInfo == null)
+        if (resultDetail == null)
         {
             return new List<InputOption>();
         }
 
-        var getPlayerCriteria = new GetPlayerInfoCriteria { MatchId = matchInfo.MatchId };
+        var getPlayerCriteria = new GetPlayerInfoCriteria { MatchId = resultDetail.MatchId };
         var inputOptions = repository.Fetch<InputOption>(getPlayerCriteria)
             .Where(option => option.OddsInfo.Contains(semicolon)).ToList();
 
@@ -83,7 +82,7 @@ public class CricketBetTypeService : ICricketBetTypeService
     private void GenerateBetTypeNameAndGroup(ResultDetail resultDetail, List<InputOption> inputOptions)
     {
         var resourceId = resultDetail.ResourceId;
-        resultDetail.BetTypeName = resourceNameService.GetResourceName(resourceId, KeyConstants.CricketKey);
+        (resultDetail.BetType, resultDetail.BetTypeName) = resourceNameService.GetResourceName(resourceId, KeyConstants.CricketKey);
         if (resourceId.Length < InnsBetTypeMinLength)
         {
             var betTypeId = Convert.ToInt32(resourceId);

@@ -29,7 +29,7 @@ public class ResultDetailMapperServiceImp : IMapperService
             {
                 var betTypeId = SplitBetType(resultDetail.ResourceId, 0, betTypeLength);
                 groupBetTypeService.SetGroupNameAndInputType(resultDetail, betTypeId);
-                resultDetail.BetTypeName = resourceNameService.GetResourceName(resultDetail.ResourceId, KeyConstants.VolleyballKey);
+                (resultDetail.BetType, resultDetail.BetTypeName) = resourceNameService.GetResourceName(resultDetail.ResourceId, KeyConstants.VolleyballKey);
             }
         }
     }
