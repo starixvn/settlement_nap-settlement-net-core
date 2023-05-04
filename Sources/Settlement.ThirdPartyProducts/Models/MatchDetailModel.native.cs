@@ -67,11 +67,11 @@ public class MatchDetailModel
 
     public List<SiteMatch> SiteMatch { get; set; } = new();
 
-    public AutoSetting AutoCalcSetting => autoCalcSetting ?? (autoCalcSetting = new AutoSetting
+    public AutoSetting AutoCalcSetting => autoCalcSetting ??= new AutoSetting
     {
         MatchSetting = Convert.ToString(AutoSetting, ConvertToBase).Reverse(),
         LeagueSetting = Convert.ToString(AutoSettingForLeague, ConvertToBase).Reverse()
-    });
+    };
 
     public MoreScores MoreScores { get; set; }
 

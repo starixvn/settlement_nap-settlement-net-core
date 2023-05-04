@@ -14,10 +14,15 @@
            @await Html.PartialAsync("~/Views/Menu.cshtml")
         </header>
     }
+    
     <div class="content">
         <app-root page-type="@ViewBag.PageType">Loading...</app-root>
     </div>
-    <script src="/js/notification.js" type="text/javascript"></script>
+
+    @if (ViewBag.PageType == "MainPage")
+    {
+        <script src="/js/notification.js" type="text/javascript"></script>
+    }
     @await Html.PartialAsync("~/Views/Shared/_Matomo.cshtml")
 </body>
 </html>
