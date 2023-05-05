@@ -50,8 +50,6 @@ namespace Settlement.WebSites;
 
 public static class WebSites
 {
-    public static readonly string AllowOrigin = "AllowOrigin";
-
     public static void ConfigureAuthentication(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -81,24 +79,6 @@ public static class WebSites
                              .RequireAuthenticatedUser()
                              .Build();
             config.Filters.Add(new AuthorizeFilter(policy));
-        });
-    }
-
-    public static void ConfigureCors(this IServiceCollection services)
-    {
-        services.AddCors(options =>
-        {
-            options.AddPolicy(AllowOrigin,
-                builder =>
-                {
-                    builder.WithOrigins("http://localhost:5001",
-                                        "https://localhost:44346",
-                                        "http://localhost:55201",
-                                        "http://localhost:58793")
-                          .AllowAnyMethod()
-                          .AllowAnyHeader()
-                          .AllowCredentials();
-                });
         });
     }
 
