@@ -24,12 +24,12 @@ public class BadmintonBetTypeServiceTests
     {
         var resultDetail = new ResultDetail { ResourceId = resourceId };
 
-        resourceNameService.GetResourceName(Arg.Any<string>(), Arg.Any<string>()).Returns(("mockBettype", "MockName"));
+        resourceNameService.GetResourceName(Arg.Any<string>(), Arg.Any<string>()).Returns(("mockBettype", "mockName"));
 
         var actual = service.GetBetTypeName(resultDetail);
 
         Assert.Equal(map, actual.Map);
         Assert.Equal("mockBettype", actual.BetType);
-        Assert.Equal("MockBetType", actual.BetTypeName);
+        Assert.Equal("mockName", actual.BetTypeName);
     }
 }

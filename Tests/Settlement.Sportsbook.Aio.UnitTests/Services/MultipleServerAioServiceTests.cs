@@ -202,10 +202,11 @@ public class MultipleServerAioServiceTests
             SelectedResources = new List<ResourceItem>
             {
                 new() { ResourceId = "00" }
-            }
+            },
         };
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
         createQueryService.QuerySettle(Arg.Any<SettleRequest>()).Returns(new SettleCriteria { Action = "CAL" });
+        createQueryService.CreateInsertLogCriteria(Arg.Any<SettleCriteria>()).Returns(new InsertLogCriteria());
         await repository.ExecuteAsync(Arg.Do<SettleCriteria>(x => x.ServiceCommand = "mock"));
         scaleOutSettleService.GetSiteGroupId(Arg.Any<string>()).Returns(1, 2);
 
@@ -254,6 +255,7 @@ public class MultipleServerAioServiceTests
                 new() { ResourceId = "00" }
             }
         };
+        createQueryService.CreateInsertLogCriteria(Arg.Any<SettleCriteria>()).Returns(new InsertLogCriteria());
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
         createQueryService.QuerySettleChildMatch(Arg.Any<SettleChildMatchRequest>()).Returns(new SettleCriteria { Action = "CAL" });
         createQueryService.CreateResourceChildMatch(Arg.Any<ChildMatchModel>()).Returns("");
@@ -275,6 +277,7 @@ public class MultipleServerAioServiceTests
                 new() { ResourceId = "00" }
             }
         };
+        createQueryService.CreateInsertLogCriteria(Arg.Any<SettleCriteria>()).Returns(new InsertLogCriteria());
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
         createQueryService.QuerySettleChildMatch(Arg.Any<SettleChildMatchRequest>()).Returns(new SettleCriteria { Action = "CAL" });
         createQueryService.CreateResources(Arg.Any<List<ResourceItem>>()).Returns("");

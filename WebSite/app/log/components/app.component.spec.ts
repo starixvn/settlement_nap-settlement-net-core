@@ -20,8 +20,7 @@ describe('Component: App', () => {
             declarations: [
                 AppComponent,
                 FilterComponent,
-                MatchesComponent,
-                DatepickerComponent
+                MatchesComponent
             ],
             providers: [
                 BlockUIService,
@@ -33,6 +32,7 @@ describe('Component: App', () => {
                 ReactiveFormsModule,
                 HttpClientModule,
                 NgbModule,
+                DatepickerComponent
             ],
         })
             .compileComponents()
@@ -48,11 +48,11 @@ describe('Component: App', () => {
     }));
 
     it('should call reCheckin function from re-checkin service.', fakeAsync(() => {
-        const spy = spyOn(reCheckInService, 'reCheckin');
+        reCheckInService.reCheckin = jest.fn();
         component.ngOnInit();
         tick(60000);
         component.ngOnDestroy();
-        expect(spy).toHaveBeenCalled();
+        expect(reCheckInService.reCheckin).toHaveBeenCalled();
     }));
 
     it('should return right input value', () => {

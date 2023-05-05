@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { Match, ResettleLogDetail } from "../models";
 import * as _ from 'lodash';
 import { SportType } from "../../shared/constants";
-import { BetType, BetTypeWithNo, MappingValue } from "../constants/bet-type";
+import { BetType, BetTypeWithNo, MappingValue, MappingValueWithBettype } from "../constants/bet-type";
 
 @Injectable()
 export class HandleResultService {
@@ -32,19 +32,15 @@ export class HandleResultService {
             return _.includes(BetTypeWithNo[sportType], logDetail.betType)  ? 'No' : 'None';
         }
 
-        if (MappingValue[logDetail.homeValue] != null) {
+        if (MappingValue[logDetail.homeValue] != undefined) {
             return MappingValue[logDetail.homeValue];
         }
 
-        if (MappingValue[`${logDetail.homeValue}-${logDetail.betType}`] != null) {
-            return MappingValue[`${logDetail.homeValue}-${logDetail.betType}`];
+        if (MappingValueWithBettype[`${logDetail.homeValue}-${logDetail.betType}`] != undefined) {
+            return MappingValueWithBettype[`${logDetail.homeValue}-${logDetail.betType}`];
         }
 
-        if (_.isNumber(logDetail.homeValue)) {
-            return logDetail.homeValue;
-        }
-
-        return "-";
+        return logDetail.homeValue;
     }
 
     private static handlePlayerName(players: string[], otherInfo: string, homeValue: string) {

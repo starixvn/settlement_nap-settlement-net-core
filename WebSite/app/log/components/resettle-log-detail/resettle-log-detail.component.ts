@@ -9,12 +9,12 @@ import { HandleResultService } from '../../services/handle-result.service';
 })
 
 export class ResettleLogDetailComponent implements OnChanges {
-    @Input() public readonly match: Match;
+    @Input() public match: Match;
     listLog: _.Dictionary<ResettleLogDetail[]>;
     isEvenRow = false;
     resourceNameProcessed: string;
 
-    ngOnChanges(changes: SimpleChanges): void {
+    ngOnChanges(): void {
         this.resourceNameProcessed = this.match.resettleLogDetails[0].resourceName;
         this.match.resettleLogDetails.forEach(item => {
             item.resultValue = HandleResultService.HandleResult(this.match, item, this.match.home, this.match.away);

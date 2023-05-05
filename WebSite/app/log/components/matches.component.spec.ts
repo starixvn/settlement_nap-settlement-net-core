@@ -1,4 +1,4 @@
-import { TestBed, waitForAsync, ComponentFixture, tick, fakeAsync } from '@angular/core/testing';
+import { TestBed, waitForAsync, ComponentFixture} from '@angular/core/testing';
 import { MatchesComponent } from './matches.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -36,14 +36,14 @@ describe('Matches Component', () => {
     }));
 
     it('should hide menu when isShowMenu param is false', () => {
-        spyOn(UrlHelper, 'getUrlParameter').and.returnValue("false");
-        fixture.detectChanges();
+        UrlHelper.getUrlParameter= jest.fn().mockReturnValue("false");
+        component.ngOnInit();
         expect(component.scrollName).toEqual("hide-menu");
     });
 
     it('should show menu when isShowMenu param is true', () => {
-        spyOn(UrlHelper, 'getUrlParameter').and.returnValue("true");
-        fixture.detectChanges();
+        UrlHelper.getUrlParameter= jest.fn().mockReturnValue("true");
+        component.ngOnInit();
         expect(component.scrollName).toEqual("show-menu");
     });
 
