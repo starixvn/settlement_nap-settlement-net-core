@@ -23,6 +23,8 @@ public class PushInstantCalculationCriteria : NonQueryCommand
 
     public string ResourceResult { get; set; }
 
+    public string GoalRecord { get; set; }
+
     public int ErrCode { get; set; }
 
     public string ErrMsg { get; set; }

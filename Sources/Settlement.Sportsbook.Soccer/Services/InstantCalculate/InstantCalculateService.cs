@@ -95,7 +95,6 @@ public class InstantCalculateServiceImp : InstantCalculateService
 
     public async Task<Result> UncalPushInstantCalculation(InstantCalculationRequest request)
     {
-
         var matchTicketInfo = await GetMatchDetailWithTicketInfo(request.MatchId);
         request.IsExistHtFgNg = matchTicketInfo.IsExistHtFgNg;
         request.IsExistFgNg = matchTicketInfo.IsExistFgNg;
