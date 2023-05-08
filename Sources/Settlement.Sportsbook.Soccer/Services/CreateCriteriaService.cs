@@ -117,7 +117,7 @@ public class CreateCriteriaServiceImp : ICreateCriteriaService
             MatchId = request.MatchId,
             GoalRecord = htGoalRecord,
             BetStatus = soccerBetStatusService.CreateBetStatusAfterUncalculateFt(request, matchGoalRecord.BetStatus, htGoalRecord),
-            ResourceResult = GetResourceResultUnCalculateFt(request),
+            ResourceResult = GetResourceResultUnCalculateFt(),
             Action = ActionType.UnCalculateFullTime,
             Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString(),
         };
@@ -246,7 +246,7 @@ public class CreateCriteriaServiceImp : ICreateCriteriaService
             : string.Empty;
     }
 
-    private string GetResourceResultUnCalculateFt(UncalculateFtRequest request)
+    private string GetResourceResultUnCalculateFt()
     {
         var resources = resourceService.UnCalculateFtResources();
 

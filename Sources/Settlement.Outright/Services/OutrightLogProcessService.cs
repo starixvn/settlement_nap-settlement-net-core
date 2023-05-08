@@ -104,7 +104,7 @@ public class OutrightLogProcessServiceImp : OutrightLogProcessService
                 {
                     LeagueId = logDetails[0].LeagueId
                 };
-                ; logDetails.ForEach(x =>
+                logDetails.ForEach(x =>
                                 {
                                     x.TeamName = refDataService.GetLeagueName(x.LeagueId);
                                     x.RefDataService = refDataService;

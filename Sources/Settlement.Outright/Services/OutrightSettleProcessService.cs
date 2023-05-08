@@ -157,13 +157,13 @@ public class OutrightSettleProcessServiceImp : OutrightSettleProcessService
             Orid = request.Orid,
         };
 
-        var results = appSettingsKey.SiteDbServer
+        var tasks = appSettingsKey.SiteDbServer
             .Select(async server =>
             {
                 criteria.DbServer = server;
                 return await repository.GetAsync<int>(criteria);
-            })
-            .Select(t => t.Result).ToList();
+            });
+        var results = await Task.WhenAll(tasks);
         await Task.CompletedTask;
 
         return results.Any(r => r == 1) && results.All(r => r != 0);

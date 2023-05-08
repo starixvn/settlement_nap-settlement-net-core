@@ -57,9 +57,11 @@ public class GenerateServiceImp : GenerateService
             resources.ResourceItems.Add(halfTime);
         }
 
-        if (ResourceFullTimeAction.Exists(item => item == action))
+        var fullTime = selectedResources.FirstOrDefault(item => item.ResourceId == ResourceType.Final);
+
+        if (fullTime is not null && ResourceFullTimeAction.Exists(item => item == action))
         {
-            resources.ResourceItems.Add(selectedResources.FirstOrDefault(item => item.ResourceId is ResourceType.Final));
+            resources.ResourceItems.Add(fullTime);
         }
 
         return xmlConvertService.Serialize(resources);
@@ -118,7 +120,7 @@ public class GenerateServiceImp : GenerateService
         return listResource;
     }
 
-    private bool ExistHalfTimeResult(string action, ResourceItem halfTime)
+    private static bool ExistHalfTimeResult(string action, ResourceItem halfTime)
     {
         return action == ActionType.CalculateAll && !string.IsNullOrEmpty(halfTime.AwayValue) && !string.IsNullOrEmpty(halfTime.HomeValue);
     }

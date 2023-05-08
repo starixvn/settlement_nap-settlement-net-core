@@ -43,7 +43,8 @@ public class CashOutServiceTests
         httpClientFactory = Substitute.For<IHttpClientFactory>();
         var thirdPartySettingKeys = new ThirdPartySettingKeys
         {
-            JackTimeResult = "https://www.google.com/"
+            JackTimeResult = "https://www.google.com/",
+            JackTimeTicket = "https://www.google.com/"
         };
 
         var appSetting = new AppSettingsKey { ThirdPartyUri = thirdPartySettingKeys, SiteDbServer = new List<string> { "01", "02" } };

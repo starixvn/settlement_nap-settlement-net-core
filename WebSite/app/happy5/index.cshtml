@@ -21,7 +21,10 @@
         var element = document.getElementById("NumberGame-menu");
         element.className = "active-menu";
     </script>
-    <script src="/js/notification.js" type="text/javascript"></script>
-    @await Html.PartialAsync("~/Views/Shared/_Matomo.cshtml")
+    @if (ViewBag.PageType == "MainPage")
+    {
+        <script src="/js/notification.js" type="text/javascript"></script>
+        @await Html.PartialAsync("~/Views/Shared/_Matomo.cshtml")
+    }
 </body>
 </html>
