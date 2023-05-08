@@ -2,11 +2,9 @@ using AutoMapper;
 using Fanex.Data.Repository;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
-using Settlement.Core.Services;
 using Settlement.Sportsbook.Soccer.Criteria;
 using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Requests;
@@ -31,12 +29,10 @@ public class InstantCalculateServiceImp : InstantCalculateService
 
     private readonly IMapper mapper;
 
-    private readonly IHttpContextAccessor accessor;
-
     private readonly IInstantResourceService instantResourceService;
 
     private readonly ScaleOutSettleService scaleOutSettleService;
-
+    private readonly PushInstantCalculationService pushInstantService;
     private readonly LogService logService;
 
     private readonly AppSettingsKey appSettingsKey;
@@ -44,19 +40,19 @@ public class InstantCalculateServiceImp : InstantCalculateService
     public InstantCalculateServiceImp(
         IDynamicRepository repository,
         IMapper mapper,
-        IHttpContextAccessor accessor,
         IInstantResourceService instantResourceService,
         IOptions<AppSettingsKey> appSettingsKey,
         ScaleOutSettleService scaleOutSettleService,
-        LogService logService)
+        LogService logService,
+        PushInstantCalculationService pushInstantService)
     {
         this.repository = repository;
         this.mapper = mapper;
-        this.accessor = accessor;
         this.instantResourceService = instantResourceService;
         this.appSettingsKey = appSettingsKey.Value;
         this.scaleOutSettleService = scaleOutSettleService;
         this.logService = logService;
+        this.pushInstantService = pushInstantService;
     }
 
     public async Task<MatchCheckingResult> CalculateCheckingInfo(MatchCheckingCriteria criteria)
@@ -67,6 +63,7 @@ public class InstantCalculateServiceImp : InstantCalculateService
         {
             criteria.DbServer = server;
             await repository.ExecuteAsync(criteria);
+
             if (criteria.ErrCode > 0)
             {
                 matchCheckingResult.ErrCode = criteria.ErrCode;
@@ -84,7 +81,7 @@ public class InstantCalculateServiceImp : InstantCalculateService
         var criteria = new UndoCheckingCriteria { MatchId = matchId };
         var (undoChecking, calculatedResources) = await repository.FetchMultipleAsync<UndoCheckingModel, XmlResource>(criteria);
 
-        var undoCheckingScore = undoChecking.FirstOrDefault();
+        var undoCheckingScore = undoChecking.FirstOrDefault() ?? new UndoCheckingModel();
 
         undoCheckingScore.ErrCode = criteria.ErrCode;
         undoCheckingScore.ErrMsg = criteria.ErrMsg;
@@ -151,8 +148,6 @@ public class InstantCalculateServiceImp : InstantCalculateService
         var criteria = mapper.Map<InstantCalculationRequest, PushInstantCalculationCriteria>(request);
         criteria.ResourceResult = resourceResult;
         criteria.AdminId = currentSession.UserId;
-        criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
-
         criteria.Action = $"{request.Action}-{request.Mode}";
 
         var result = await ValidateBeforeExecute(request);
@@ -161,7 +156,7 @@ public class InstantCalculateServiceImp : InstantCalculateService
         {
             await UpdateResult(request);
             await UpdateMatchInfo(request, request.IsHalfTime, criteria.ResourceResult);
-            await Execute(criteria);
+            await pushInstantService.Execute(criteria);
         }
 
         return result;
@@ -274,18 +269,8 @@ public class InstantCalculateServiceImp : InstantCalculateService
         return betStatus;
     }
 
-    private async Task Execute(PushInstantCalculationCriteria criteria)
-    {
-        WriteLogDirectly(criteria);
 
-        foreach (var server in appSettingsKey.SiteDbServer)
-        {
-            criteria.DbServer = server;
-            await repository.ExecuteAsync(criteria);
-        }
-    }
-
-    private void WriteLogDirectly(PushInstantCalculationCriteria criteria)
+       private void WriteLogDirectly(PushInstantCalculationCriteria criteria)
     {
         var score = $"{criteria.HomeScore}-{criteria.AwayScore}";
         var message = $"NAP: Instant Uncalculate {criteria.Mode} for matchId: {criteria.MatchId} Score: {score} Instant action: {criteria.Mode}";

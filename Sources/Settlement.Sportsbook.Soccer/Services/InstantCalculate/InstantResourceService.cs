@@ -304,11 +304,11 @@ public class InstantResourceServiceImp : IInstantResourceService
 
     private static string ConvertIntToString(int num) => num < 10 ? $"0{num}" : $"{num}";
 
-    private static List<GoalRecord> ConvertGoalRecordToRace(string goalRecord)
+    private static List<GoalRecordCorner> ConvertGoalRecordToRace(string goalRecord)
     {
         var homeRaceTo = 0;
         var awayRaceTo = 0;
-        var result = new List<GoalRecord>();
+        var result = new List<GoalRecordCorner>();
 
         foreach (var item in goalRecord)
         {
@@ -317,7 +317,7 @@ public class InstantResourceServiceImp : IInstantResourceService
                 homeRaceTo = homeRaceTo + 1;
                 if (homeRaceTo > awayRaceTo)
                 {
-                    result.Add(new GoalRecord(item, homeRaceTo));
+                    result.Add(new GoalRecordCorner(item, homeRaceTo));
                 }
             }
             else
@@ -325,7 +325,7 @@ public class InstantResourceServiceImp : IInstantResourceService
                 awayRaceTo = awayRaceTo + 1;
                 if (awayRaceTo > homeRaceTo)
                 {
-                    result.Add(new GoalRecord(item, awayRaceTo));
+                    result.Add(new GoalRecordCorner(item, awayRaceTo));
                 }
             }
         }
@@ -370,4 +370,4 @@ public class InstantResourceServiceImp : IInstantResourceService
 }
 
 
-record GoalRecord(char value, int raceTo);
+
