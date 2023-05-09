@@ -100,7 +100,7 @@ public class MultipleServerServiceImp : MultipleServerService
         await IsHtTicketSettled(requestUpdateInfo);
 
         await scaleOutSettleService.UpdateMatchInfo(requestUpdateInfo);
-
+        //TODO
         foreach (var server in appSettingsKey.SiteDbServer)
         {
             calculateCriteria.DbServer = server;
