@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
+using Settlement.Core.Services;
 using Settlement.Gaming.Criteria.NumberGame;
 using Settlement.Gaming.Models;
 using Settlement.Gaming.Models.NumberGame;
@@ -35,6 +36,7 @@ public class SettlementServiceImp : SettlementService
     private readonly ScaleOutSettleService scaleOutSettleService;
 
     private readonly AppSettingsKey appSettingsKey;
+    private readonly LogDirectlyService logDirectlyService;
 
     public SettlementServiceImp(
         IDynamicRepository repository,
@@ -43,7 +45,8 @@ public class SettlementServiceImp : SettlementService
         IHttpContextAccessor accessor,
         ScaleOutSettleThirdPartyService scaleOutSettleThirdPartyService,
         ScaleOutSettleService scaleOutSettleService,
-        IOptions<AppSettingsKey> options)
+        IOptions<AppSettingsKey> options,
+        LogDirectlyService logDirectlyService)
     {
         this.repository = repository;
         this.currentSession = currentSession;
@@ -51,6 +54,7 @@ public class SettlementServiceImp : SettlementService
         this.accessor = accessor;
         this.scaleOutSettleThirdPartyService = scaleOutSettleThirdPartyService;
         this.scaleOutSettleService = scaleOutSettleService;
+        this.logDirectlyService = logDirectlyService;
         appSettingsKey = options.Value;
     }
 
@@ -75,7 +79,10 @@ public class SettlementServiceImp : SettlementService
         {
             await UpdateResult(criteria);
             await UpdateMatchInfo(request);
+
             //TODO
+            logDirectlyService.WriteLog(criteria.MatchId, LogDirectlyServiceImp.CreateHappyFive(criteria.MatchId));
+
             return await Execute(criteria);
         }
 

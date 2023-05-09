@@ -1,4 +1,5 @@
-﻿using Settlement.Sportsbook.OtherSports.Models;
+﻿using Settlement.Core.Services;
+using Settlement.Sportsbook.OtherSports.Models;
 
 namespace Settlement.Sportsbook.OtherSports.Services;
 
@@ -28,18 +29,20 @@ public class MultipleServerServiceImp : MultipleServerService
     private readonly AppSettingsKey appSettingsKey;
     private readonly MergeDataService mergeDataService;
     private readonly ScaleOutSettleService scaleOutSettleService;
+    private readonly LogDirectlyService logDirectlyService;
 
     public MultipleServerServiceImp(
         IDynamicRepository repository,
         IOptions<AppSettingsKey> appSettingsKey,
         MergeDataService mergeDataService,
-        ScaleOutSettleService scaleOutSettleService
-    )
+        ScaleOutSettleService scaleOutSettleService,
+        LogDirectlyService logDirectlyService)
     {
         this.repository = repository;
         this.appSettingsKey = appSettingsKey.Value;
         this.mergeDataService = mergeDataService;
         this.scaleOutSettleService = scaleOutSettleService;
+        this.logDirectlyService = logDirectlyService;
     }
 
     public async Task<(MatchDetail, List<TicketCounts>)> GetMatchInfo(GetMatchRequest request)
@@ -101,6 +104,14 @@ public class MultipleServerServiceImp : MultipleServerService
 
         await scaleOutSettleService.UpdateMatchInfo(requestUpdateInfo);
         //TODO
+        var messageLog = LogDirectlyServiceImp.CreateProfileLog(new ProfileLog(
+            calculateCriteria.MatchId,
+            calculateCriteria.Action,
+            calculateCriteria.SelectedResources,
+            calculateCriteria.BetStatus));
+
+        logDirectlyService.WriteLog(calculateCriteria.MatchId, messageLog);
+
         foreach (var server in appSettingsKey.SiteDbServer)
         {
             calculateCriteria.DbServer = server;

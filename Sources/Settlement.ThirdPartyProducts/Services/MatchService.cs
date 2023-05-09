@@ -34,6 +34,8 @@ public class MatchServiceImp : MatchService
 
     private readonly AppSettingsKey appSettingsKey;
 
+    private readonly LogDirectlyService logDirectlyService;
+
     public MatchServiceImp(
         IRefDataService refDataService,
         IMapper mapper,
@@ -41,7 +43,8 @@ public class MatchServiceImp : MatchService
         BetBuilderCalculateService betBuilderCalculateService,
         BetBuilderMatchesService betBuilderMatchesService,
         BetBuilderService betBuilderService,
-        IOptions<AppSettingsKey> appSettingsKey)
+        IOptions<AppSettingsKey> appSettingsKey,
+        LogDirectlyService logDirectlyService)
     {
         this.refDataService = refDataService;
         this.mapper = mapper;
@@ -49,6 +52,7 @@ public class MatchServiceImp : MatchService
         this.betBuilderCalculateService = betBuilderCalculateService;
         this.betBuilderMatchesService = betBuilderMatchesService;
         this.betBuilderService = betBuilderService;
+        this.logDirectlyService = logDirectlyService;
         this.appSettingsKey = appSettingsKey.Value;
     }
 
@@ -60,8 +64,15 @@ public class MatchServiceImp : MatchService
         var selectedMarket = await betBuilderCalculateService.GetInfoMarket(criteria);
         await betBuilderCalculateService.UpdateMatchInfo(criteria, selectedMarket);
         criteria.SelectedMarket = selectedMarket;
+
         //TODO
+        var messageLog = LogDirectlyServiceImp.CreateBetBuilderLog(new ProfileLog(criteria.MatchId, criteria.Action,
+            criteria.SelectedSelection, ""));
+
+        logDirectlyService.WriteLog(criteria.MatchId, messageLog);
+
         await ExecuteMultiServer(criteria);
+
         return new Result();
     }
 

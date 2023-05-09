@@ -1,17 +1,17 @@
 ﻿namespace Settlement.Sportsbook.MoveTickets.Services.MultipleServer;
 
 using AutoMapper;
+using Criteria;
 using Fanex.Data.Repository;
 using Fanex.NAP.Client.Helpers.Web;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
-using Settlement.Core.Models;
-using Settlement.Core.Services;
-using Criteria;
 using Models;
 using Requests;
+using Settlement.Core.Models;
+using Settlement.Core.Services;
 
 public interface MoveTicketMultipleServerService
 {
@@ -35,6 +35,7 @@ public class MoveTicketMultipleServerServiceImp : MoveTicketMultipleServerServic
     private readonly ILogService logService;
     private readonly AppSettingsKey appSettingsKey;
     private readonly ScaleOutSettleService scaleOutSettleService;
+    private readonly LogDirectlyService logDirectlyService;
 
     public MoveTicketMultipleServerServiceImp(
         IDynamicRepository repository,
@@ -43,7 +44,8 @@ public class MoveTicketMultipleServerServiceImp : MoveTicketMultipleServerServic
         IHttpContextAccessor accessor,
         ILogService logService,
         IOptions<AppSettingsKey> appSettingsKey,
-        ScaleOutSettleService scaleOutSettleService)
+        ScaleOutSettleService scaleOutSettleService,
+        LogDirectlyService logDirectlyService)
     {
         this.repository = repository;
         this.mapper = mapper;
@@ -52,6 +54,7 @@ public class MoveTicketMultipleServerServiceImp : MoveTicketMultipleServerServic
         this.logService = logService;
         this.appSettingsKey = appSettingsKey.Value;
         this.scaleOutSettleService = scaleOutSettleService;
+        this.logDirectlyService = logDirectlyService;
     }
 
     public async Task<Result> MoveTicket(MoveTicketRequest request)
@@ -92,6 +95,12 @@ public class MoveTicketMultipleServerServiceImp : MoveTicketMultipleServerServic
         var updateChildMatchCriteria = new UpdateChildMatchCriteria { MatchId = moveTicketInfo.ChildMatchId };
         await repository.ExecuteAsync(updateChildMatchCriteria);
         var updateChildMatchRemarkCriteria = new UpdateChildMatchRemarkCriteria { MatchId = moveTicketInfo.ChildMatchId };
+
+        //TODO
+        var messageLog =
+            $"Move ticket of matchid: {criteria.MatchId} into child match: {criteria.ChildMatchId}, Settled Results: {criteria.Resources}";
+        logDirectlyService.WriteLog(criteria.MatchId, messageLog);
+
         await repository.ExecuteAsync(updateChildMatchRemarkCriteria);
 
         return new Result

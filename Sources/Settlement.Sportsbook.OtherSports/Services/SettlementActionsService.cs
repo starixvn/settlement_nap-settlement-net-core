@@ -99,7 +99,7 @@ public class SettlementActionsServiceImp : SettlementActionsService
             IsReSettledTickets = request.IsReSettledTickets,
             RefResultStatus = request.RefResultStatus,
             SelectedResources = generateService.CreateResources(request.SelectedResources, request.Action),
-            BetStatus = betStatus
+            BetStatus = betStatus,
         };
 
         return calculate;

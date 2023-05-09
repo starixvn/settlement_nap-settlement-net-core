@@ -1,13 +1,14 @@
 ﻿using Fanex.Data.Repository;
+using Fanex.NAP.Client.Helpers.Web;
+using Fanex.Settlement.ScaleOut.Request;
+using Fanex.Settlement.ScaleOut.Services;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
+using Settlement.Core.Constants;
 using Settlement.Core.Models;
+using Settlement.Core.Services;
 using Settlement.Gaming.Criteria.Happy5;
 using Settlement.Gaming.Requests;
-using Fanex.NAP.Client.Helpers.Web;
-using Microsoft.AspNetCore.Http;
-using Settlement.Core.Constants;
-using Fanex.Settlement.ScaleOut.Services;
-using Fanex.Settlement.ScaleOut.Request;
-using Microsoft.Extensions.Options;
 
 namespace Settlement.Gaming.Services.Happy5;
 
@@ -33,6 +34,7 @@ public class SettlementServiceImp : SettlementService
     private readonly AppSettingsKey appSettingsKey;
 
     private readonly ScaleOutSettleService scaleOutSettleService;
+    private readonly LogDirectlyService logDirectlyService;
 
     public SettlementServiceImp(
         IDynamicRepository repository,
@@ -41,7 +43,8 @@ public class SettlementServiceImp : SettlementService
         BallService ballService,
         ScaleOutSettleThirdPartyService scaleOutSettleThirdPartyService,
         IOptions<AppSettingsKey> options,
-        ScaleOutSettleService scaleOutSettleService)
+        ScaleOutSettleService scaleOutSettleService,
+        LogDirectlyService logDirectlyService)
     {
         this.repository = repository;
         this.currentSession = currentSession;
@@ -50,6 +53,7 @@ public class SettlementServiceImp : SettlementService
         this.scaleOutSettleThirdPartyService = scaleOutSettleThirdPartyService;
         appSettingsKey = options.Value;
         this.scaleOutSettleService = scaleOutSettleService;
+        this.logDirectlyService = logDirectlyService;
     }
 
     public async Task<Result> Settle(Happy5SettlementRequest request)
@@ -78,6 +82,8 @@ public class SettlementServiceImp : SettlementService
             await UpdateResult(request);
             await UpdateMatchInfo(request);
             //TODO
+            logDirectlyService.WriteLog(criteria.MatchId, LogDirectlyServiceImp.CreateHappyFive(criteria.MatchId));
+
             return await Execute(criteria);
         }
 
