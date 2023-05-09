@@ -8,15 +8,15 @@ using Settlement.Sportsbook.Soccer.Services.InstantCalculate;
 
 namespace Settlement.Sportsbook.Soccer.UnitTests.Services.Instant;
 
-public class InstantResourceServiceFacts
+public class InstantResourceServiceTests
 {
     private readonly IInstantGoalCheckingService instantGoalCheckingService;
 
     private readonly IGoalRecordService goalRecordService;
 
-    private readonly IInstantResourceService service;
+    private readonly InstantResourceService service;
 
-    public InstantResourceServiceFacts()
+    public InstantResourceServiceTests()
     {
         instantGoalCheckingService = Substitute.For<IInstantGoalCheckingService>();
         goalRecordService = Substitute.For<IGoalRecordService>();

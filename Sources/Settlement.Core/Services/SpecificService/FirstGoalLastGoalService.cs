@@ -2,7 +2,7 @@
 
 using Models;
 
-public interface IFirstGoalLastGoalService
+public interface FirstGoalLastGoalService
 {
     GoalModel GetHalftimeGoalByBetStatus(GoalIconQueryModel query);
 
@@ -13,7 +13,7 @@ public interface IFirstGoalLastGoalService
     GoalModel GetFullTimeGoalByGoalRecord(string goalRecord, bool isFinalScore);
 }
 
-public class FirstGoalLastGoalServiceImp : IFirstGoalLastGoalService
+public class FirstGoalLastGoalServiceImp : FirstGoalLastGoalService
 {
     private const string HtPrefix = "ht-";
     private const string HtFirstLastGoalSymbol = "1FL:";

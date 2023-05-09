@@ -5,7 +5,7 @@ using Settlement.Sportsbook.Soccer.Requests;
 
 namespace Settlement.Sportsbook.Soccer.Services.InstantCalculate;
 
-public interface IInstantResourceService
+public interface InstantResourceService
 {
     List<XmlResource> Halftime(InstantGoalCondition goalCondition);
 
@@ -22,7 +22,7 @@ public interface IInstantResourceService
     string GenerateResource(List<XmlResource> resources);
 }
 
-public class InstantResourceServiceImp : IInstantResourceService
+public class InstantResourceServiceImp : InstantResourceService
 {
     private readonly IInstantGoalCheckingService instantGoalCheckingService;
 
@@ -31,7 +31,6 @@ public class InstantResourceServiceImp : IInstantResourceService
     private readonly XmlConvertService xmlConvertService;
 
     private const char HomeValue = 'H';
-    private const char AwayValue = 'A';
 
     private const string FgHomeBetStatus = "FL:1-0;";
 
@@ -73,7 +72,7 @@ public class InstantResourceServiceImp : IInstantResourceService
 
         if (goalCondition.IsExistHTFirstCorner)
         {
-            var resource = GetHTFirstCornerResource(goalCondition);
+            var resource = GetHtFirstCornerResource(goalCondition);
             resources.Add(resource);
         }
 
@@ -85,10 +84,9 @@ public class InstantResourceServiceImp : IInstantResourceService
 
         if (goalCondition.IsExistHTCorner)
         {
-            var resource = GetExistHTCornerRaceResource(goalCondition);
+            var resource = GetExistHtCornerRaceResource(goalCondition);
             resources.AddRange(resource);
         }
-
 
         if (goalCondition.IsExistCorner)
         {
@@ -99,7 +97,7 @@ public class InstantResourceServiceImp : IInstantResourceService
         return resources;
     }
 
-    private List<XmlResource> GetExistHTCornerRaceResource(InstantGoalCondition goalCondition)
+    private List<XmlResource> GetExistHtCornerRaceResource(InstantGoalCondition goalCondition)
     {
         var halftimeGoal = goalRecordService.HalftimeGoal(goalCondition.GoalRecord);
         var result = ConvertGoalRecordToRace(halftimeGoal);
@@ -113,7 +111,7 @@ public class InstantResourceServiceImp : IInstantResourceService
         }).ToList();
     }
 
-    private List<XmlResource> GetExistCornerRaceResource(InstantGoalCondition goalCondition)
+    private static List<XmlResource> GetExistCornerRaceResource(InstantGoalCondition goalCondition)
     {
         var fullTimeGoalRecord = CreateFullTimeGoalRecord(goalCondition.GoalRecord);
         var result = ConvertGoalRecordToRace(fullTimeGoalRecord);
@@ -149,7 +147,6 @@ public class InstantResourceServiceImp : IInstantResourceService
             resources.Add(resource);
         }
 
-
         if (goalCondition.IsExistCorner)
         {
             var resource = GetExistCornerRaceResource(goalCondition);
@@ -177,8 +174,6 @@ public class InstantResourceServiceImp : IInstantResourceService
 
         return resources;
     }
-
-
 
     public string BetStatusFl(InstantCalculationRequest request, string betStatus)
     {
@@ -228,12 +223,10 @@ public class InstantResourceServiceImp : IInstantResourceService
             betStatus = indexOfKey > -1 ? betStatus.Remove(indexOfKey, FgHomeBetStatus.Length) : betStatus;
         }
 
-
-
         return betStatus;
     }
 
-    private XmlResource InitialResource(string resourceId)
+    private static XmlResource InitialResource(string resourceId)
     {
         return new XmlResource
         {
@@ -244,7 +237,7 @@ public class InstantResourceServiceImp : IInstantResourceService
         };
     }
 
-    private XmlResource GetHTFirstCornerResource(InstantGoalCondition goalCondition)
+    private XmlResource GetHtFirstCornerResource(InstantGoalCondition goalCondition)
     {
         var halftimeGoal = goalRecordService.HalftimeGoal(goalCondition.GoalRecord);
         var firstGoalRecord = goalRecordService.FirstGoalRecord(halftimeGoal);
@@ -300,7 +293,8 @@ public class InstantResourceServiceImp : IInstantResourceService
             HomeValue = firstGoalRecord
         };
     }
-    private string CreateFullTimeGoalRecord(string goalRecord) => goalRecord.Replace(";", "");
+
+    private static string CreateFullTimeGoalRecord(string goalRecord) => goalRecord.Replace(";", string.Empty);
 
     private static string ConvertIntToString(int num) => num < 10 ? $"0{num}" : $"{num}";
 
@@ -314,7 +308,7 @@ public class InstantResourceServiceImp : IInstantResourceService
         {
             if (item.Equals(HomeValue))
             {
-                homeRaceTo = homeRaceTo + 1;
+                homeRaceTo++;
                 if (homeRaceTo > awayRaceTo)
                 {
                     result.Add(new GoalRecordCorner(item, homeRaceTo));
@@ -322,7 +316,7 @@ public class InstantResourceServiceImp : IInstantResourceService
             }
             else
             {
-                awayRaceTo = awayRaceTo + 1;
+                awayRaceTo++;
                 if (awayRaceTo > homeRaceTo)
                 {
                     result.Add(new GoalRecordCorner(item, awayRaceTo));
@@ -350,7 +344,7 @@ public class InstantResourceServiceImp : IInstantResourceService
         };
     }
 
-    private GoalAction CreateGoalAction(string halftimeGoal, string fullTimeGoal)
+    private static GoalAction CreateGoalAction(string halftimeGoal, string fullTimeGoal)
     {
         return new GoalAction
         {
@@ -368,6 +362,3 @@ public class InstantResourceServiceImp : IInstantResourceService
             : string.Empty;
     }
 }
-
-
-

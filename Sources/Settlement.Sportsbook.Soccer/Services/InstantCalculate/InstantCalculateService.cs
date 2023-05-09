@@ -8,11 +8,10 @@ using Settlement.Core.Models;
 using Settlement.Sportsbook.Soccer.Criteria;
 using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Requests;
-using Settlement.Sportsbook.Soccer.Services.InstantCalculate;
 using MatchCheckingCriteria = Settlement.Sportsbook.Soccer.Criteria.MatchCheckingCriteria;
 using MatchDetail = Settlement.Sportsbook.Soccer.Models.MatchDetail;
 
-namespace Settlement.Sportsbook.Soccer.Services;
+namespace Settlement.Sportsbook.Soccer.Services.InstantCalculate;
 
 public interface InstantCalculateService
 {
@@ -29,9 +28,10 @@ public class InstantCalculateServiceImp : InstantCalculateService
 
     private readonly IMapper mapper;
 
-    private readonly IInstantResourceService instantResourceService;
+    private readonly InstantResourceService instantResourceService;
 
     private readonly ScaleOutSettleService scaleOutSettleService;
+
     private readonly PushInstantCalculationService pushInstantService;
     private readonly LogService logService;
 
@@ -40,7 +40,7 @@ public class InstantCalculateServiceImp : InstantCalculateService
     public InstantCalculateServiceImp(
         IDynamicRepository repository,
         IMapper mapper,
-        IInstantResourceService instantResourceService,
+        InstantResourceService instantResourceService,
         IOptions<AppSettingsKey> appSettingsKey,
         ScaleOutSettleService scaleOutSettleService,
         LogService logService,
@@ -55,7 +55,7 @@ public class InstantCalculateServiceImp : InstantCalculateService
         this.pushInstantService = pushInstantService;
     }
 
-    public async Task<MatchCheckingResult> CalculateCheckingInfo(MatchCheckingCriteria criteria)
+    private async Task<MatchCheckingResult> CalculateCheckingInfo(MatchCheckingCriteria criteria)
     {
         var matchCheckingResult = new MatchCheckingResult();
 
@@ -106,7 +106,6 @@ public class InstantCalculateServiceImp : InstantCalculateService
         var uncalResources = GetResourcesInstantCalculate(request);
         var resourceResult = GetResourceResultInstantUncal(request.Resources, uncalResources);
 
-
         var result = await ProcessPushInstantCalculation(request, resourceResult);
 
         return result;
@@ -130,7 +129,6 @@ public class InstantCalculateServiceImp : InstantCalculateService
 
         var resources = GetResourcesInstantCalculate(request);
         var resourceResult = instantResourceService.GenerateResource(resources);
-
 
         var resultMatchChecking = await CheckCalculationMatch(request, resourceResult);
         if (resultMatchChecking.ErrCode > 0)
@@ -176,7 +174,6 @@ public class InstantCalculateServiceImp : InstantCalculateService
         if (totalGoalCheck > 0 &&
             (totalGoal < totalGoalCheck || !goalRecordCheck.StartsWith(request.GoalRecord.FirstOrDefault())))
         {
-            // checking
             var matchCheckingCriteria = new MatchCheckingCriteria
             {
                 MatchId = request.MatchId,
@@ -207,7 +204,6 @@ public class InstantCalculateServiceImp : InstantCalculateService
 
         return ticketInfo;
     }
-
 
     private async Task<MatchDetail> GetMatchDetailInfo(int matchId)
     {
@@ -315,7 +311,6 @@ public class InstantCalculateServiceImp : InstantCalculateService
 
         return resources;
     }
-
 
     private async Task<Result> ValidateBeforeExecute(InstantCalculationRequest request)
     {

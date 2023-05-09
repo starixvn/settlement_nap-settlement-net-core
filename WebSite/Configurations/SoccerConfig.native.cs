@@ -1,5 +1,4 @@
-﻿using MediatR;
-using Settlement.Sportsbook.Soccer.Controllers;
+﻿using Settlement.Sportsbook.Soccer.Controllers;
 using Settlement.Sportsbook.Soccer.Services;
 using Settlement.Sportsbook.Soccer.Services.FullTimeBetStatus;
 using Settlement.Sportsbook.Soccer.Services.HalfTimeBetStatus;
@@ -14,16 +13,16 @@ public static class SoccerConfig
 {
     public static void ConfigSoccerServices(this IServiceCollection services)
     {
-        services.AddTransient<IFirstGoalLastGoalService, FirstGoalLastGoalServiceImp>();
+        services.AddTransient<FirstGoalLastGoalService, FirstGoalLastGoalServiceImp>();
         services.AddTransient<IMatchService, MatchServiceImp>();
-        services.AddTransient<IGoalIconService, GoalIconServiceImp>();
+        services.AddTransient<GoalIconService, GoalIconServiceImp>();
         services.AddTransient<IBetStatusAllService, BetStatusAllServiceImp>();
         services.AddTransient<IGoalRecordService, GoalRecordServiceImp>();
         services.AddTransient<ICalculateService, CalculateServiceImp>();
         services.AddTransient<ISoccerBetStatusService, SoccerBetStatusServiceImp>();
         services.AddTransient<IValidationService, ValidationServiceImp>();
         services.AddTransient<Sportsbook.Soccer.Services.FullTimeBetStatus.IBetStatusService, Sportsbook.Soccer.Services.FullTimeBetStatus.BetStatusServiceImp>();
-        services.AddTransient<Sportsbook.Soccer.Services.FullTimeBetStatus.IFirstGoalLastGoalService, Sportsbook.Soccer.Services.FullTimeBetStatus.FirstGoalLastGoalServiceImp>();
+        services.AddTransient<FirstLastGoalService, FirstLastGoalServiceImp>();
         services.AddTransient<IFullTimeService, FullTimeServiceImp>();
         services.AddTransient<IHalftimeFullTimeService, HalftimeFullTimeServiceImp>();
         services.AddTransient<IScoreAndGoalService, ScoreAndGoalServiceImp>();
@@ -33,7 +32,7 @@ public static class SoccerConfig
         services.AddTransient<IResourceService, ResourceServiceImp>();
         services.AddTransient<IActionResourceService, ActionResourceServiceImp>();
         services.AddTransient<IInstantGoalCheckingService, InstantGoalCheckingServiceImp>();
-        services.AddTransient<IInstantResourceService, InstantResourceServiceImp>();
+        services.AddTransient<InstantResourceService, InstantResourceServiceImp>();
         services.AddTransient<InstantCalculateService, InstantCalculateServiceImp>();
         services.AddTransient<PushInstantCalculationService, PushInstantCalculationServiceImp>();
 

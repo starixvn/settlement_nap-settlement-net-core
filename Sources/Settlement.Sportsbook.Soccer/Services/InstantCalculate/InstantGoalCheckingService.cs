@@ -23,7 +23,7 @@ public class InstantGoalCheckingServiceImp : IInstantGoalCheckingService
 
         if (goalCondition.GoalRecord.Length > 1)
         {
-            firstGoalRecordFullTime = firstGoalRecordFullTime.Substring(0, 1);
+            firstGoalRecordFullTime = firstGoalRecordFullTime[..1];
         }
 
         return !firstGoalRecordFullTime.Equals(goalCondition.FirstGoalValue);
@@ -32,7 +32,7 @@ public class InstantGoalCheckingServiceImp : IInstantGoalCheckingService
     private static string HalftimeFirstGoal(string goalRecord)
     {
         return goalRecord.IndexOf(';') >= 1
-            ? goalRecord.Split(';')[0].Substring(0, 1)
+            ? goalRecord.Split(';')[0][..1]
             : goalRecord;
     }
 }

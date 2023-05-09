@@ -19,7 +19,7 @@ public class MatchDetailServiceTests
     public MatchDetailServiceTests()
     {
         dynamicRepository = Substitute.For<IDynamicRepository>();
-        var goalIconService = Substitute.For<IGoalIconService>();
+        var goalIconService = Substitute.For<GoalIconService>();
         var refDataService = Substitute.For<IRefDataService>();
         var fastMarketResultService = Substitute.For<IFastMarketResultService>();
         fastMarketResultService.Result(Arg.Any<List<BetType>>(), Arg.Any<string>()).Returns("XML");

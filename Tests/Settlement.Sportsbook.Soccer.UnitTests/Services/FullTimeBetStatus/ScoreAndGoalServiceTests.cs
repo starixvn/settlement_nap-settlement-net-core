@@ -6,14 +6,14 @@ namespace Settlement.Sportsbook.Soccer.UnitTests.Services.FullTimeBetStatus;
 public class ScoreAndGoalServiceTests
 {
     private readonly IHalftimeFullTimeService halftimeFullTimeService;
-    private readonly IFirstGoalLastGoalService firstGoalLastGoalService;
+    private readonly FirstLastGoalService firstLastGoalService;
     private readonly IScoreAndGoalService service;
 
     public ScoreAndGoalServiceTests()
     {
         halftimeFullTimeService = Substitute.For<IHalftimeFullTimeService>();
-        firstGoalLastGoalService = Substitute.For<IFirstGoalLastGoalService>();
-        service = new ScoreAndGoalServiceImp(halftimeFullTimeService, firstGoalLastGoalService);
+        firstLastGoalService = Substitute.For<FirstLastGoalService>();
+        service = new ScoreAndGoalServiceImp(halftimeFullTimeService, firstLastGoalService);
     }
 
     [Fact]
@@ -26,7 +26,7 @@ public class ScoreAndGoalServiceTests
         service.ReplaceBetStatusWhenScoreAndGoalRecordIsNull(betStatus);
 
         // Assert
-        firstGoalLastGoalService.Received().FirstGoalOnBetStatus(Arg.Any<string>());
+        firstLastGoalService.Received().FirstGoalOnBetStatus(Arg.Any<string>());
     }
 
     [Fact]
@@ -39,7 +39,7 @@ public class ScoreAndGoalServiceTests
         service.ReplaceBetStatusWhenScoreAndGoalRecordIsNull(betStatus);
 
         // Assert
-        firstGoalLastGoalService.Received().LastGoalOnBetStatus(Arg.Any<string>());
+        firstLastGoalService.Received().LastGoalOnBetStatus(Arg.Any<string>());
     }
 
     [Fact]

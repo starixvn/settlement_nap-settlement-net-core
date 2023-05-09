@@ -3,11 +3,9 @@ using Fanex.Data.Repository;
 using Fanex.Settlement.ScaleOut.Models;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
-using Settlement.Core.Services;
 using Settlement.Sportsbook.Soccer.Criteria;
 using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Requests;
@@ -15,36 +13,25 @@ using Settlement.Sportsbook.Soccer.Services;
 using Settlement.Sportsbook.Soccer.Services.InstantCalculate;
 using MatchDetail = Settlement.Sportsbook.Soccer.Models.MatchDetail;
 
-
 namespace Settlement.Sportsbook.Soccer.UnitTests.Services.Instant;
 
-public class InstantCalculateServiceFacts
+public class InstantCalculateServiceTests
 {
     private readonly IDynamicRepository repository;
 
-    private readonly IInstantResourceService instantResourceService;
+    private readonly InstantResourceService instantResourceService;
 
     private readonly ScaleOutSettleService scaleOutSettleService;
 
     private readonly InstantCalculateService service;
 
-    public InstantCalculateServiceFacts()
     {
         repository = Substitute.For<IDynamicRepository>();
-        var accessor = Substitute.For<IHttpContextAccessor>();
-        instantResourceService = Substitute.For<IInstantResourceService>();
+        instantResourceService = Substitute.For<InstantResourceService>();
         scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
         var logService = Substitute.For<LogService>();
+        var pushInstantService = Substitute.For<PushInstantCalculationService>();
 
-        var context = new DefaultHttpContext
-        {
-            Connection =
-            {
-                RemoteIpAddress = new System.Net.IPAddress(1)
-            }
-        };
-
-        accessor.HttpContext = context;
         var mapperConfig = new MapperConfigurationExpression();
         mapperConfig.AddProfile<SoccerAutoMapperProfile>();
         var config = new MapperConfiguration(mapperConfig);
@@ -53,6 +40,7 @@ public class InstantCalculateServiceFacts
         var option = Options.Create(appSettings);
 
         service = new InstantCalculateServiceImp(repository, mapper, accessor, instantResourceService, option, scaleOutSettleService, logService);
+            instantResourceService, option, scaleOutSettleService, pushInstantService);
     }
 
     [Fact]

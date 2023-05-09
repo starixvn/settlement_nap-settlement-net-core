@@ -2,16 +2,16 @@
 
 using Models;
 
-public interface IGoalIconService
+public interface GoalIconService
 {
     GoalIcon GetGoalIcon(GoalIconQueryModel query);
 }
 
-public class GoalIconServiceImp : IGoalIconService
+public class GoalIconServiceImp : GoalIconService
 {
-    private readonly IFirstGoalLastGoalService firstGoalLastGoalService;
+    private readonly FirstGoalLastGoalService firstGoalLastGoalService;
 
-    public GoalIconServiceImp(IFirstGoalLastGoalService firstGoalLastGoalService)
+    public GoalIconServiceImp(FirstGoalLastGoalService firstGoalLastGoalService)
     {
         this.firstGoalLastGoalService = firstGoalLastGoalService;
     }

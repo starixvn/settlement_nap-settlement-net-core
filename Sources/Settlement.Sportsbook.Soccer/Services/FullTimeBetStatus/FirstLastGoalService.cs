@@ -1,17 +1,17 @@
 ﻿namespace Settlement.Sportsbook.Soccer.Services.FullTimeBetStatus;
 
-public interface IFirstGoalLastGoalService
+public interface FirstLastGoalService
 {
     string FirstGoalOnBetStatus(string betStatus);
 
     string LastGoalOnBetStatus(string betStatus);
 }
 
-public class FirstGoalLastGoalServiceImp : IFirstGoalLastGoalService
+public class FirstLastGoalServiceImp : FirstLastGoalService
 {
     private readonly IGoalRecordService goalRecordService;
 
-    public FirstGoalLastGoalServiceImp(IGoalRecordService goalRecordService)
+    public FirstLastGoalServiceImp(IGoalRecordService goalRecordService)
     {
         this.goalRecordService = goalRecordService;
     }

@@ -24,7 +24,7 @@ public class MatchDetailServiceImp : IMatchDetailService
 
     private readonly IDynamicRepository repository;
 
-    private readonly IGoalIconService goalIconService;
+    private readonly GoalIconService goalIconService;
 
     private readonly IFastMarketResultService fastMarketResultService;
 
@@ -33,7 +33,7 @@ public class MatchDetailServiceImp : IMatchDetailService
     public MatchDetailServiceImp(
         IDynamicRepository repository,
         IRefDataService refDataService,
-        IGoalIconService goalIconService,
+        GoalIconService goalIconService,
         IFastMarketResultService fastMarketResultService,
         IOptions<AppSettingsKey> appSettingsKey)
     {

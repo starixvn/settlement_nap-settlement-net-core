@@ -6,13 +6,13 @@ using Core.Services.SpecificService;
 
 public class GoalIconServiceTests
 {
-    private readonly IFirstGoalLastGoalService firstGoalLastGoalService;
+    private readonly FirstGoalLastGoalService firstGoalLastGoalService;
 
-    private readonly IGoalIconService service;
+    private readonly GoalIconService service;
 
     public GoalIconServiceTests()
     {
-        firstGoalLastGoalService = Substitute.For<IFirstGoalLastGoalService>();
+        firstGoalLastGoalService = Substitute.For<FirstGoalLastGoalService>();
         service = new GoalIconServiceImp(firstGoalLastGoalService);
     }
 

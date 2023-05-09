@@ -39,7 +39,7 @@ public class MatchServiceImp : IMatchService
 
     private readonly IRefDataService refDataService;
 
-    private readonly IGoalIconService goalIconService;
+    private readonly GoalIconService goalIconService;
 
     private readonly IFetchDataService fetchDataService;
 
@@ -48,7 +48,7 @@ public class MatchServiceImp : IMatchService
         PermissionService permission,
         IMapper mapper,
         IRefDataService refDataService,
-        IGoalIconService goalIconService,
+        GoalIconService goalIconService,
         IFetchDataService fetchDataService)
     {
         this.repository = repository;

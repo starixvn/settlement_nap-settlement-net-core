@@ -12,20 +12,20 @@ public interface IScoreAndGoalService
 public class ScoreAndGoalServiceImp : IScoreAndGoalService
 {
     private readonly IHalftimeFullTimeService halftimeFullTimeService;
-    private readonly IFirstGoalLastGoalService firstGoalLastGoalService;
+    private readonly FirstLastGoalService firstLastGoalService;
 
-    public ScoreAndGoalServiceImp(IHalftimeFullTimeService halftimeFullTimeService, IFirstGoalLastGoalService firstGoalLastGoalService)
+    public ScoreAndGoalServiceImp(IHalftimeFullTimeService halftimeFullTimeService, FirstLastGoalService firstLastGoalService)
     {
         this.halftimeFullTimeService = halftimeFullTimeService;
-        this.firstGoalLastGoalService = firstGoalLastGoalService;
+        this.firstLastGoalService = firstLastGoalService;
     }
 
     public string ReplaceBetStatusWhenScoreAndGoalRecordIsNull(string betStatus)
     {
         var isExistHalfTimeFirstGoalLastGoal = betStatus.IgnoreCaseContains("1FL");
         return isExistHalfTimeFirstGoalLastGoal
-            ? firstGoalLastGoalService.FirstGoalOnBetStatus(betStatus)
-            : firstGoalLastGoalService.LastGoalOnBetStatus(betStatus);
+            ? firstLastGoalService.FirstGoalOnBetStatus(betStatus)
+            : firstLastGoalService.LastGoalOnBetStatus(betStatus);
     }
 
     public string BetStatusHasFinalScoreAndGoalRecord(SettleRequest request)

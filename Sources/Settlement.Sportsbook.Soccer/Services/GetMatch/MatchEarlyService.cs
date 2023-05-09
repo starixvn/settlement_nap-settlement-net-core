@@ -24,7 +24,7 @@ public class MatchEarlyServiceImp : MatchEarlyService
 
     private readonly IRefDataService refDataService;
 
-    private readonly IGoalIconService goalIconService;
+    private readonly GoalIconService goalIconService;
 
     private readonly EarlyBetTypeNameService earlyBetTypeNameService;
 
@@ -37,7 +37,7 @@ public class MatchEarlyServiceImp : MatchEarlyService
         PermissionService permission,
         IMapper mapper,
         IRefDataService refDataService,
-        IGoalIconService goalIconService,
+        GoalIconService goalIconService,
         EarlyBetTypeNameService earlyBetTypeNameService,
         IFetchDataService fetchDataService)
     {
