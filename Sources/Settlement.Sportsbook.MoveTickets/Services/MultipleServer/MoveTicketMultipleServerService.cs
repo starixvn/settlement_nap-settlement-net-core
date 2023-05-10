@@ -86,6 +86,12 @@ public class MoveTicketMultipleServerServiceImp : MoveTicketMultipleServerServic
         criteria.EventDate = moveTicketInfo.EventDate;
         criteria.ChildMatchId = moveTicketInfo.ChildMatchId;
         criteria.Resources = moveTicketInfo.Resources;
+
+        //TODO
+        var messageLog =
+            $"Move ticket of matchid: {criteria.MatchId} into child match: {criteria.ChildMatchId}, Settled Results: {criteria.Resources}";
+        logDirectlyService.WriteLog(criteria.MatchId, messageLog);
+
         foreach (var server in appSettingsKey.SiteDbServer)
         {
             criteria.DbServer = server;
@@ -95,11 +101,6 @@ public class MoveTicketMultipleServerServiceImp : MoveTicketMultipleServerServic
         var updateChildMatchCriteria = new UpdateChildMatchCriteria { MatchId = moveTicketInfo.ChildMatchId };
         await repository.ExecuteAsync(updateChildMatchCriteria);
         var updateChildMatchRemarkCriteria = new UpdateChildMatchRemarkCriteria { MatchId = moveTicketInfo.ChildMatchId };
-
-        //TODO
-        var messageLog =
-            $"Move ticket of matchid: {criteria.MatchId} into child match: {criteria.ChildMatchId}, Settled Results: {criteria.Resources}";
-        logDirectlyService.WriteLog(criteria.MatchId, messageLog);
 
         await repository.ExecuteAsync(updateChildMatchRemarkCriteria);
 
