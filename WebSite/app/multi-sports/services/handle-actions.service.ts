@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Match} from "../models";
+import { LeagueMatch, Match} from "../models";
 import { ChangeSettingResult } from "../../shared/models";
 import * as _ from 'lodash';
 import { BackgroundColor, EventStatus } from '../../shared/constants';
@@ -39,5 +39,14 @@ export class HandleActionsService {
       match.eventStatus = result.match.eventStatus;
       match.newEventStatus = result.match.eventStatus;
       match.eventStatusColor = this.handleEventStatusColor(match, result.match.remark.isPending);
+    }
+
+    public handleAutoInstantForMatch(leagueMatch: LeagueMatch, isAutoInstant: boolean) {
+      leagueMatch.matches.forEach(item => {
+        const eventStatus = item.eventStatus.toLocaleLowerCase();
+        if ( _.isEqual(eventStatus, EventStatus.running.toLocaleLowerCase()) || _.isEqual(eventStatus, EventStatus.closed.toLocaleLowerCase())) {
+          item.autoCalcSetting.isInstantForMatch = isAutoInstant;
+        }
+      });
     }
 }
