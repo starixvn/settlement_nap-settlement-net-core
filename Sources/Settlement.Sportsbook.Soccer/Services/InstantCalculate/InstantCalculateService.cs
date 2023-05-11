@@ -171,9 +171,13 @@ public class InstantCalculateServiceImp : InstantCalculateService
         var totalGoalCheck = beforeHomeScore + beforeAwayScore;
         var goalRecordCheck = request.InstantGoalRecordBefore;
 
+        LogService.Warn($"Instant Checking BeforeHomeScore {beforeHomeScore}-{beforeAwayScore}; {homeScore}-{awayScore};goalRecordCheck: {goalRecordCheck} GoalRecord: {request.GoalRecord}");
+
         if (totalGoalCheck > 0 &&
             (totalGoal < totalGoalCheck || !goalRecordCheck.StartsWith(request.GoalRecord.FirstOrDefault())))
         {
+            LogService.Warn($"CalculateCheckingInfo Running");
+
             var matchCheckingCriteria = new MatchCheckingCriteria
             {
                 MatchId = request.MatchId,
