@@ -95,6 +95,7 @@ export class RequestService {
     }
 
     public pushInstantStatus(query: UpdateInstantQuery) {
+        console.log('UpdateInstantQuery', query)
         const request = this.httpRequestService.postJson<Result>(query, `${this.soccerApi}/push-instant-score`);
         return firstValueFrom(request);
     }
@@ -113,11 +114,6 @@ export class RequestService {
                     match.halfTimeAwayScore = newMatch.halfTimeAwayScore;
                     match.finalHomeScore = newMatch.finalHomeScore;
                     match.finalAwayScore = newMatch.finalAwayScore;
-                    //
-                    // match.instantAwayScore = newMatch.instantAwayScore;
-                    // match.instantHomeScore = newMatch.instantHomeScore;
-                    // match.in
-
                     match.isHalfTimeCal = newMatch.isHalfTimeCal;
                     match.isCalculatingSingle = newMatch.isCalculatingSingle;
                     match.isCalculatingMP = newMatch.isCalculatingMP;
@@ -145,6 +141,8 @@ export class RequestService {
                     if (isAutoCalculatePage) {
                         this.mapNewestAutoCalculationMatch(match, newMatch);
                     }
+
+                    console.log('match', match);
                 }
             });
         });

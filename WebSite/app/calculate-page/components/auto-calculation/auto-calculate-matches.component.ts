@@ -177,6 +177,7 @@ export class AutoCalculateMatchesComponent extends MatchesBaseComponent implemen
     }
 
     public doUpdateInstantStatus(match: CalculationMatch) {
+        console.log('doUpdateInstantStatus', match)
         const query = new UpdateInstantQuery(match)
         this.dialogConfirmMessage.message = Language.instants.confirmExecuteInstant;
         this.messageBoxService.confirm(this.dialogConfirmMessage, async () => {
