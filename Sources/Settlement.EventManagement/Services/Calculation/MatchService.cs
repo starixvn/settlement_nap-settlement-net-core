@@ -188,7 +188,7 @@ public class MatchServiceImp : MatchService
 
         var matches = SetNewMatchInfo(waitingMatches, listResultDetail);
 
-        return await cachingMatchesService.SetToCache(matches, hashLeagueIds);
+        return await cachingMatchesService.SetToCache(matches, hashLeagueIds, true);
     }
 
     private static List<Match> SortingMatches(List<Match> matches, FilterCalculationRequest request)

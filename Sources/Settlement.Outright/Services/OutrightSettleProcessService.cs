@@ -95,7 +95,7 @@ public class OutrightSettleProcessServiceImp : OutrightSettleProcessService
         return await ValidateMoveBetDay(teams);
     }
 
-    public async Task<ResultOutright> ValidateMoveBetDay(IEnumerable<InfoValidate> teams)
+    private async Task<ResultOutright> ValidateMoveBetDay(IEnumerable<InfoValidate> teams)
     {
         const string eventTable = "outright";
         var listMatchFailed = new List<string>();

@@ -171,7 +171,7 @@ public class MultiSportServiceImp : IMultiSportService
         return listMatch;
     }
 
-    private List<SportModel> GroupSport(List<Match> matches)
+    private static List<SportModel> GroupSport(List<Match> matches)
     {
         var sportSorting = new List<int>
             {

@@ -39,10 +39,8 @@ public class CachingMatchesServiceImp : CachingMatchesService
         const int shortCacheExpirationTime = 3;
         const int longCacheExpirationTime = 20;
         var waitingMatch = mapper.Map<List<CalculateMatchWaiting>>(matches);
-
         await cacheService.SetAsync(shortCachingKey, waitingMatch, new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromSeconds(shortCacheExpirationTime)));
         await cacheService.SetAsync(longCachingKey, waitingMatch, new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(longCacheExpirationTime)));
-
         return waitingMatch;
     }
 
@@ -54,14 +52,12 @@ public class CachingMatchesServiceImp : CachingMatchesService
     public async Task<List<CalculateMatchWaiting>> GetShortCache(string hashLeagueIds, bool autoCalculate = false)
     {
         var shortCachingKey = ShortCachingKey(hashLeagueIds, autoCalculate);
-
         return await cacheService.GetAsync<List<CalculateMatchWaiting>>(shortCachingKey);
     }
 
     public async Task<List<CalculateMatchWaiting>> GetLongCache(string hashLeagueIds, bool autoCalculate = false)
     {
         var longCachingKey = LongCachingKey(hashLeagueIds, autoCalculate);
-
         return await cacheService.GetAsync<List<CalculateMatchWaiting>>(longCachingKey);
     }
 

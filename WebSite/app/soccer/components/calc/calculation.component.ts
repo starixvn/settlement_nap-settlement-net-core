@@ -222,7 +222,7 @@ export class CalculationComponent implements Soccer {
 
   public async unCalculateFT() {
     this.resetAllWarning();
-    const betStatus = this.matchDetail.betStatus.toLocaleLowerCase();
+    const betStatus = this.matchDetail.betStatus?.toLocaleLowerCase();
     const resultHalfTime = _.find(this.match.resultDetails, item => item.resourceId === ResourceIds.halfTime) ?? new ResultDetail();
     if (_.includes(betStatus, BetStatus.abandoned1H) 
     || (_.includes(betStatus, `${BetStatus.refunded};`) && _.isEqual(resultHalfTime.settlementStatusId, SettlementStatusId.Refund))) {

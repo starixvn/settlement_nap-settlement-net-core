@@ -8,6 +8,6 @@ public class CalculationLeagues
     [Key("permission")]
     public Permission Permission { get; set; }
 
-    [Key("sports")]
+    [Key("leagues")]
     public List<League> Leagues { get; set; }
 }
