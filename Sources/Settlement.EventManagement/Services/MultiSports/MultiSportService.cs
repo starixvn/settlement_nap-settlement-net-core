@@ -15,7 +15,7 @@ public interface IMultiSportService
 {
     Task<List<SportModel>> GetSportBook(FilterMultiSportRequest request);
 
-    Task<List<Match>> GetWaitingMatches(RefreshMultiSportRequest request);
+    Task<List<MultiSportMatchWaiting>> GetWaitingMatches(RefreshMultiSportRequest request);
 }
 
 public class MultiSportServiceImp : IMultiSportService
@@ -55,7 +55,7 @@ public class MultiSportServiceImp : IMultiSportService
         return sportBooks;
     }
 
-    public async Task<List<Match>> GetWaitingMatches(RefreshMultiSportRequest request)
+    public async Task<List<MultiSportMatchWaiting>> GetWaitingMatches(RefreshMultiSportRequest request)
     {
         var hashLeagueIds = ConvertKeyToHash(request.LeagueIds);
         var matches = MatchesOnShortCaching(hashLeagueIds);
@@ -86,23 +86,23 @@ public class MultiSportServiceImp : IMultiSportService
         return Convert.ToHexString(data).ToLowerInvariant();
     }
 
-    private List<Match> MatchesOnShortCaching(string hashLeagueIds)
+    private List<MultiSportMatchWaiting> MatchesOnShortCaching(string hashLeagueIds)
     {
         var shortCachingKey = ShortCachingKey(hashLeagueIds);
-        return cacheService.Get<List<Match>>(shortCachingKey);
+        return cacheService.Get<List<MultiSportMatchWaiting>>(shortCachingKey);
     }
 
-    private List<Match> MatchesOnLongCaching(string hashLeagueIds)
+    private List<MultiSportMatchWaiting> MatchesOnLongCaching(string hashLeagueIds)
     {
         var longCachingKey = LongCachingKey(hashLeagueIds);
-        return cacheService.Get<List<Match>>(longCachingKey);
+        return cacheService.Get<List<MultiSportMatchWaiting>>(longCachingKey);
     }
 
     private static string ShortCachingKey(string hashLeagueIds) => $"{CacheServiceKey.MemoryCacheMultiSportCacheKey}-{hashLeagueIds}";
 
     private static string LongCachingKey(string hashLeagueIds) => $"{ShortCachingKey(hashLeagueIds)}-long";
 
-    private async Task<List<Match>> GetAndCachingMatches(RefreshMultiSportRequest request, string hashLeagueIds)
+    private async Task<List<MultiSportMatchWaiting>> GetAndCachingMatches(RefreshMultiSportRequest request, string hashLeagueIds)
     {
         var criteria = mapper.Map<RefreshMultiSportRequest, GetWaitingMultiSportCriteria>(request);
         var waitingMatches = await GetMatchesAllSites(criteria);
@@ -112,9 +112,7 @@ public class MultiSportServiceImp : IMultiSportService
 
         var matches = GetMoreScore(new MultiSportResult { Matches = waitingMatches, ResultDetails = listResultDetail });
 
-        SetToCache(hashLeagueIds, matches);
-
-        return matches;
+        return SetToCache(hashLeagueIds, matches);
     }
 
     private async Task<List<Match>> GetMatchesAllSites(MultipleSiteCriteria criteria)
@@ -143,14 +141,17 @@ public class MultiSportServiceImp : IMultiSportService
         return repository.FetchAsync<Match>(criteria);
     }
 
-    private void SetToCache(string hashLeagueIds, List<Match> matches)
+    private List<MultiSportMatchWaiting> SetToCache(string hashLeagueIds, List<Match> matches)
     {
         var shortCachingKey = ShortCachingKey(hashLeagueIds);
         var longCachingKey = LongCachingKey(hashLeagueIds);
         const int shortCacheExpirationTime = 3;
         const int longCacheExpirationTime = 20;
-        cacheService.SetAsync(shortCachingKey, matches, new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromSeconds(shortCacheExpirationTime)));
-        cacheService.SetAsync(longCachingKey, matches, new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(longCacheExpirationTime)));
+        var waitingMatches = mapper.Map<List<MultiSportMatchWaiting>>(matches);
+        cacheService.SetAsync(shortCachingKey, waitingMatches, new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromSeconds(shortCacheExpirationTime)));
+        cacheService.SetAsync(longCachingKey, waitingMatches, new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(longCacheExpirationTime)));
+
+        return waitingMatches;
     }
 
     private List<Match> GetMoreScore(MultiSportResult data)

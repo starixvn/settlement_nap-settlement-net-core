@@ -63,9 +63,6 @@ public class MultiSportMatchWaiting
     [Key("isExistMarkedTicket")]
     public bool IsExistMarkedTicket { get; set; }
 
-    [Key("isExistMarkedTicketParlay")]
-    public bool IsExistMarkedTicketParlay { get; set; }
-
     [Key("autoPayoutStatus")]
     public int AutoPayoutStatus { get; set; }
 
@@ -98,9 +95,6 @@ public class MultiSportMatchWaiting
 
     [Key("isExistsConfirmedEarly")]
     public bool IsExistsConfirmedEarly { get; set; }
-
-    [Key("isExistRunningTicketParlay")]
-    public bool IsExistRunningTicketParlay { get; set; }
 
     [Key("isNotConsistentExHtScore")]
     public bool IsNotConsistentExHtScore { get; set; }
