@@ -1,16 +1,16 @@
 ﻿namespace Settlement.EventManagement.Services.Calculation;
 
 using Criteria;
+using Fanex.Caching;
 using Settlement.EventManagement.Models.Calculation;
-
 
 public interface CachingMatchesService
 {
-    void SetToCache(List<Match> matches, string leagueIds, bool autoCalculate = false);
+    void SetToCache(List<Match> matches, string hashLeagueIds, bool autoCalculate = false);
 
-    Task<List<Match>> GetShortCache(string leagueIds, bool autoCalculate = false);
+    Task<List<Match>> GetShortCache(string hashLeagueIds, bool autoCalculate = false);
 
-    Task<List<Match>> GetLongCache(string leagueIds, bool autoCalculate = false);
+    Task<List<Match>> GetLongCache(string hashLeagueIds, bool autoCalculate = false);
 
     Task<Dictionary<int, List<ReferenceAction>>> GetReferenceActions(IEnumerable<int> matchIds);
 }
@@ -28,29 +28,46 @@ public class CachingMatchesServiceImp : CachingMatchesService
         this.repository = repository;
     }
 
-    public void SetToCache(List<Match> matches, string leagueIds, bool autoCalculate = false)
+    public void SetToCache(List<Match> matches, string hashLeagueIds, bool autoCalculate = false)
     {
-        var shortCachingKey = ShortCachingKey(leagueIds, autoCalculate);
-        var longCachingKey = LongCachingKey(leagueIds, autoCalculate);
+        var shortCachingKey = ShortCachingKey(hashLeagueIds, autoCalculate);
+        var longCachingKey = LongCachingKey(hashLeagueIds, autoCalculate);
         const int shortCacheExpirationTime = 3;
         const int longCacheExpirationTime = 20;
-        cacheService.SetAsync(shortCachingKey, matches, new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromSeconds(shortCacheExpirationTime)));
+
+        cacheService.Set(shortCachingKey, matches, new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromSeconds(shortCacheExpirationTime)));
         cacheService.SetAsync(longCachingKey, matches, new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(longCacheExpirationTime)));
     }
 
-    private static string ShortCachingKey(string leagueIds, bool autoCalculate) => autoCalculate ? $"{CacheServiceKey.WaitingAutoPayoutCacheKey}-{leagueIds}"
-                                                                                            : $"{CacheServiceKey.WaitingListCacheKey}-{leagueIds}";
+    private static string ShortCachingKey(string hashLeagueIds, bool autoCalculate) => autoCalculate ? $"{CacheServiceKey.WaitingAutoPayoutCacheKey}-{hashLeagueIds}"
+                                                                                            : $"{CacheServiceKey.WaitingListCacheKey}-{hashLeagueIds}";
 
-    private static string LongCachingKey(string leagueIds, bool autoCalculate) => $"{ShortCachingKey(leagueIds, autoCalculate)}-longCaching";
+    private static string LongCachingKey(string hashLeagueIds, bool autoCalculate) => $"{ShortCachingKey(hashLeagueIds, autoCalculate)}-long";
 
-    public async Task<List<Match>> GetShortCache(string leagueIds, bool autoCalculate = false)
+    public async Task<List<Match>> GetShortCache(string hashLeagueIds, bool autoCalculate = false)
     {
-        return await cacheService.GetAsync<List<Match>>(ShortCachingKey(leagueIds, autoCalculate));
+        var shortCachingKey = ShortCachingKey(hashLeagueIds, autoCalculate);
+
+        var (_, test) = await cacheService.TryGetAsync<List<Match>>(shortCachingKey);
+        if (test != null)
+        {
+            var value = test;
+        }
+
+        return await cacheService.GetAsync<List<Match>>(ShortCachingKey(hashLeagueIds, autoCalculate));
     }
 
-    public async Task<List<Match>> GetLongCache(string leagueIds, bool autoCalculate = false)
+    public async Task<List<Match>> GetLongCache(string hashLeagueIds, bool autoCalculate = false)
     {
-        return await cacheService.GetAsync<List<Match>>(LongCachingKey(leagueIds, autoCalculate)) ?? new List<Match>();
+        var shortCachingKey = LongCachingKey(hashLeagueIds, autoCalculate);
+
+        var (_, test) = await cacheService.TryGetAsync<List<Match>>(shortCachingKey);
+        if (test != null)
+        {
+            var value = test;
+        }
+
+        return await cacheService.GetAsync<List<Match>>(LongCachingKey(hashLeagueIds, autoCalculate)) ?? new List<Match>();
     }
 
     public async Task<Dictionary<int, List<ReferenceAction>>> GetReferenceActions(IEnumerable<int> matchIds)
