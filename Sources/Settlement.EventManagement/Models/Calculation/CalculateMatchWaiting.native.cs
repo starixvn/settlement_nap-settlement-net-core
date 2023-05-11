@@ -50,7 +50,7 @@ public class CalculateMatchWaiting
 
     public string NewEventStatus { get; set; }
 
-    public Core.Models.RemarkSettingModel Remark { get; set; }
+    public RemarkSettingModel Remark { get; set; }
 
     public string ExHalfTimeScore { get; set; }
 

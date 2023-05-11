@@ -1,4 +1,5 @@
-﻿using Fanex.Caching;
+﻿using AutoMapper;
+using Fanex.Caching;
 using Fanex.Data.Repository;
 using Settlement.Core.Constants;
 using Settlement.EventManagement.Criteria;
@@ -17,9 +18,14 @@ public class CachingMatchesServiceTests
 
     public CachingMatchesServiceTests()
     {
+        var mapperConfig = new MapperConfigurationExpression();
+        mapperConfig.AddProfile<EventManagementAutoMapperProfile>();
+        var config = new MapperConfiguration(mapperConfig);
+        var mapper = new Mapper(config);
+
         cacheService = Substitute.For<ICacheService>();
         repository = Substitute.For<IDynamicRepository>();
-        service = new CachingMatchesServiceImp(cacheService, repository);
+        service = new CachingMatchesServiceImp(cacheService, repository, mapper);
     }
 
     [Theory]

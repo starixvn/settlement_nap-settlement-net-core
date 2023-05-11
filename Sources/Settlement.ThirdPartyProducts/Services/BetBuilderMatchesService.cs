@@ -78,7 +78,7 @@ public class BetBuilderMatchesServiceImp : BetBuilderMatchesService
 
     public async Task<List<MatchDetailModel>> RefreshMatches(MatchesWaitingRequest request)
     {
-        var matches = cachingMatchesService.MatchesOnShortCaching(request.LeagueIds);
+        var matches = await cachingMatchesService.MatchesOnShortCaching(request.LeagueIds);
 
         if (matches != null && matches.Count > 0)
         {
@@ -97,7 +97,7 @@ public class BetBuilderMatchesServiceImp : BetBuilderMatchesService
             }
         }
 
-        return cachingMatchesService.MatchesOnLongCaching(request.LeagueIds);
+        return await cachingMatchesService.MatchesOnLongCaching(request.LeagueIds);
     }
 
     public async Task<List<ResultDetail>> ResultDetailByMatchIds(List<MatchDetailModel> matches)

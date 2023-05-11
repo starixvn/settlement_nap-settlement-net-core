@@ -51,7 +51,7 @@ public class MultiSportControllerTests
     {
         // Arrange
 
-        mediator.Send(Arg.Any<RefreshMultiSportRequest>()).Returns(new List<Match>());
+        mediator.Send(Arg.Any<RefreshMultiSportRequest>()).Returns(new List<MultiSportMatchWaiting>());
 
         // Act
         var actual = await controller.RefreshMatches(new RefreshMultiSportRequest()) as OkObjectResult;

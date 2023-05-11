@@ -153,7 +153,7 @@ public class MatchServiceImp : MatchService
 
         var matches = SetNewMatchInfo(waitingMatches, listResultDetail);
 
-        return cachingMatchesService.SetToCache(matches, hashLeagueIds);
+        return await cachingMatchesService.SetToCache(matches, hashLeagueIds);
     }
 
     public async Task<List<Match>> GetMatchesAutoCalculate(FilterAutoCalculationRequest request)
@@ -188,7 +188,7 @@ public class MatchServiceImp : MatchService
 
         var matches = SetNewMatchInfo(waitingMatches, listResultDetail);
 
-        return cachingMatchesService.SetToCache(matches, hashLeagueIds);
+        return await cachingMatchesService.SetToCache(matches, hashLeagueIds);
     }
 
     private static List<Match> SortingMatches(List<Match> matches, FilterCalculationRequest request)
