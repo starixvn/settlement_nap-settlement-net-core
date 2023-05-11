@@ -7,6 +7,7 @@ using Requests;
 using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
+using Settlement.EventManagement.Models.Calculation;
 using System.Text;
 using Match = Models.Calculation.Match;
 
@@ -16,7 +17,7 @@ public interface MatchService
 
     Task<List<Match>> GetMatchesAutoCalculate(FilterAutoCalculationRequest request);
 
-    Task<List<Match>> GetWaitingMatches(string leagueIds, bool isAutoPage);
+    Task<List<CalculateMatchWaiting>> GetWaitingMatches(string leagueIds, bool isAutoPage);
 }
 
 public class MatchServiceImp : MatchService
@@ -119,7 +120,7 @@ public class MatchServiceImp : MatchService
         return (await repository.FetchAsync<ResultDetail>(resultDetailCriteria)).ToList();
     }
 
-    public async Task<List<Match>> GetWaitingMatches(string leagueIds, bool isAutoPage)
+    public async Task<List<CalculateMatchWaiting>> GetWaitingMatches(string leagueIds, bool isAutoPage)
     {
         var hashLeagueIds = ConvertKeyToHash(leagueIds);
         var matches = await cachingMatchesService.GetShortCache(hashLeagueIds, isAutoPage);
@@ -144,7 +145,7 @@ public class MatchServiceImp : MatchService
         return await cachingMatchesService.GetLongCache(hashLeagueIds, isAutoPage);
     }
 
-    private async Task<List<Match>> GetAndCachingMatches(string leagueIds, string hashLeagueIds)
+    private async Task<List<CalculateMatchWaiting>> GetAndCachingMatches(string leagueIds, string hashLeagueIds)
     {
         var criteria = new GetWaitingCalculationCriteria { LeagueIds = leagueIds };
         var waitingMatches = await GetMatchesAllSites(criteria);
@@ -152,9 +153,7 @@ public class MatchServiceImp : MatchService
 
         var matches = SetNewMatchInfo(waitingMatches, listResultDetail);
 
-        cachingMatchesService.SetToCache(matches, hashLeagueIds);
-
-        return matches;
+        return cachingMatchesService.SetToCache(matches, hashLeagueIds);
     }
 
     public async Task<List<Match>> GetMatchesAutoCalculate(FilterAutoCalculationRequest request)
@@ -180,7 +179,7 @@ public class MatchServiceImp : MatchService
         matches.ForEach(m => m.ReferenceActions = referenceActions.ContainsKey(m.MatchId) ? referenceActions[m.MatchId] : new List<Models.Calculation.ReferenceAction>());
     }
 
-    private async Task<List<Match>> GetAndCachingAutoCalculationMatches(string leagueId, string hashLeagueIds)
+    private async Task<List<CalculateMatchWaiting>> GetAndCachingAutoCalculationMatches(string leagueId, string hashLeagueIds)
     {
         var criteria = new GetWaitingAutoCalculationCriteria { LeagueId = int.Parse(leagueId) };
         var waitingMatches = await GetMatchesAllSites(criteria);
@@ -189,9 +188,7 @@ public class MatchServiceImp : MatchService
 
         var matches = SetNewMatchInfo(waitingMatches, listResultDetail);
 
-        cachingMatchesService.SetToCache(matches, hashLeagueIds);
-
-        return matches;
+        return cachingMatchesService.SetToCache(matches, hashLeagueIds);
     }
 
     private static List<Match> SortingMatches(List<Match> matches, FilterCalculationRequest request)

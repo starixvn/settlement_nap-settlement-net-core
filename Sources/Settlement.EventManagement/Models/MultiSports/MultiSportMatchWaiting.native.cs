@@ -107,4 +107,7 @@ public class MultiSportMatchWaiting
 
     [Key("confirmFullTimeScore")]
     public string ConfirmFullTimeScore { get; set; }
+
+    [Key("autoCalcSetting")]
+    public AutoCalculationSetting AutoCalcSetting { get; set; }
 }
