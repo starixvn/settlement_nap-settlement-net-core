@@ -3,6 +3,7 @@ using Fanex.Settlement.ScaleOut.Services;
 using Microsoft.Extensions.Options;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
+using Settlement.Core.Services;
 using Settlement.Sportsbook.Aio.Constants;
 using Settlement.Sportsbook.Aio.Criteria;
 using Settlement.Sportsbook.Aio.Criteria.Cricket;
@@ -30,13 +31,14 @@ public class MultipleServerAioServiceImp : MultipleServerAioService
     private readonly ICreateQueryService createQueryService;
     private readonly MergeDataService mergeDataService;
     private readonly NetPositionService netPositionService;
+    private readonly LogDirectlyService logDirectlyService;
 
     public MultipleServerAioServiceImp(IDynamicRepository repository,
         IOptions<AppSettingsKey> appSettingsKey,
         ScaleOutSettleService scaleOutSettleService,
         ICreateQueryService createQueryService,
         MergeDataService mergeDataService,
-        NetPositionService netPositionService)
+        NetPositionService netPositionService, LogDirectlyService logDirectlyService)
     {
         this.repository = repository;
         this.appSettingsKey = appSettingsKey.Value;
@@ -44,6 +46,7 @@ public class MultipleServerAioServiceImp : MultipleServerAioService
         this.createQueryService = createQueryService;
         this.mergeDataService = mergeDataService;
         this.netPositionService = netPositionService;
+        this.logDirectlyService = logDirectlyService;
     }
 
     public async Task<(List<Models.ResultDetail>, TicketCounts)> FetchResultDetails(GetResultDetailCriteria criteria, int sportType)
@@ -224,6 +227,11 @@ public class MultipleServerAioServiceImp : MultipleServerAioService
         await UpdateMatchInfo(criteria);
 
         var commandList = new List<ResultCommand>();
+
+        //TODO
+        logDirectlyService.WriteLog(criteria.MatchId, LogDirectlyServiceImp
+            .CreateProfileLog(new ProfileLog(criteria.MatchId, criteria.Action, criteria.SelectedResources, criteria.BetStatus)));
+
         foreach (var server in appSettingsKey.SiteDbServer)
         {
             criteria.DbServer = server;
