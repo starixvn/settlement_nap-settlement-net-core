@@ -159,7 +159,7 @@ export class RequestService {
         oldMatch.instantHomeScore = newMatch.instantHomeScore;
         oldMatch.instantAwayScore = newMatch.instantAwayScore;
         oldMatch.instantAwayScoreBefore = newMatch.instantAwayScoreBefore;
-        oldMatch.instantAwayScoreBefore = newMatch.instantAwayScoreBefore;
+        oldMatch.instantHomeScoreBefore = newMatch.instantHomeScoreBefore;
         oldMatch.instantGoalRecordBefore = newMatch.instantGoalRecordBefore;
         oldMatch.instantKey = newMatch.instantKey;
         oldMatch.liveAwayScore = newMatch.liveAwayScore;
