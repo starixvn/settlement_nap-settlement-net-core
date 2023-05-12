@@ -5,6 +5,7 @@ using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
 using Microsoft.Extensions.Options;
 using Settlement.Core.Models;
+using Settlement.Core.Services;
 using Settlement.FastMarkets.Constants;
 using Settlement.FastMarkets.Criteria;
 using Settlement.FastMarkets.Models;
@@ -38,6 +39,7 @@ public class FastMarketServiceImp : IFastMarketService
     private readonly CreateQueryService createQueryService;
 
     private readonly ScaleOutSettleService scaleOutSettleService;
+    private readonly LogDirectlyService logDirectlyService;
 
     public FastMarketServiceImp(
         IDynamicRepository repository,
@@ -46,7 +48,8 @@ public class FastMarketServiceImp : IFastMarketService
         MultipleServerFetcherService multipleServerFetcherService,
         IOptions<AppSettingsKey> appSettingsKey,
         ScaleOutSettleService scaleOutSettleService,
-        CreateQueryService createQueryService)
+        CreateQueryService createQueryService,
+        LogDirectlyService logDirectlyService)
     {
         this.repository = repository;
         this.fastMarketBetTypeService = fastMarketBetTypeService;
@@ -55,6 +58,7 @@ public class FastMarketServiceImp : IFastMarketService
         this.appSettingsKey = appSettingsKey.Value;
         this.scaleOutSettleService = scaleOutSettleService;
         this.createQueryService = createQueryService;
+        this.logDirectlyService = logDirectlyService;
     }
 
     public async Task<FastMarketModel> Query(int matchId)
@@ -141,6 +145,8 @@ public class FastMarketServiceImp : IFastMarketService
         };
 
         await scaleOutSettleService.UpdateMatchInfo(requestUpdateInfo);
+        //
+        logDirectlyService.WriteLog(criteria.MatchId, $"NAP: Fast Market {criteria.Action} for matchid: {criteria.MatchId}");
 
         ExecuteCalculate(criteria);
 
