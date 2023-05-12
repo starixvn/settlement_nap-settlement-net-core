@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
+using Settlement.Core.Services;
 using Settlement.Sportsbook.Soccer.Constants;
 using Settlement.Sportsbook.Soccer.Criteria;
 using Settlement.Sportsbook.Soccer.Requests;
@@ -40,6 +41,8 @@ public class RefundServiceImp : IRefundService
 
     private readonly AppSettingsKey appSettingsKey;
 
+    private readonly LogDirectlyService logDirectlyService;
+
     public RefundServiceImp(
         IDynamicRepository repository,
         IMapper mapper,
@@ -47,7 +50,8 @@ public class RefundServiceImp : IRefundService
         IOptions<AppSettingsKey> appSettingsKey,
         ICreateCriteriaService createCriteriaService,
         INapSession currentSession,
-        ScaleOutSettleService scaleOutSettleService)
+        ScaleOutSettleService scaleOutSettleService,
+        LogDirectlyService logDirectlyService)
     {
         this.repository = repository;
         this.mapper = mapper;
@@ -56,6 +60,7 @@ public class RefundServiceImp : IRefundService
         this.createCriteriaService = createCriteriaService;
         this.currentSession = currentSession;
         this.scaleOutSettleService = scaleOutSettleService;
+        this.logDirectlyService = logDirectlyService;
     }
 
     public async Task<MarkedTickets> CheckMarkedTickets(CheckingMarkedTicketsRequest request)
@@ -88,6 +93,7 @@ public class RefundServiceImp : IRefundService
         }
 
         await ExecuteRefund(criteria);
+
         await RefundHedgeMatch(request, criteria);
 
         return validationResult;
@@ -169,12 +175,23 @@ public class RefundServiceImp : IRefundService
     {
         await UpdateMatchInfo(criteria);
 
+        //TODO
+        logDirectlyService.WriteLog(criteria.MatchId, GenerateLogMessage(criteria));
+
         foreach (var server in appSettingsKey.SiteDbServer)
         {
             criteria.DbServer = server;
             await repository.ExecuteAsync(criteria);
         }
     }
+
+    private string GenerateLogMessage(RefundCriteria criteria)
+        => $"NAP: Calculate {criteria.Action} for matchid:{criteria.MatchId} "
+            + $"score FT: {criteria.FullTimeHome}-{criteria.FullTimeAway} "
+            + $"HT: {criteria.HalfTimeHome}-{criteria.HalfTimeAway} "
+            + (string.IsNullOrEmpty(criteria.GoalSequence) ? "GoalRecord:" + criteria.GoalSequence : "")
+            + $" SDTRecord: {criteria.SdtRecord} "
+            + (!string.IsNullOrEmpty(criteria.BetStatus) ? $"Remark({criteria.BetStatus})" : "");
 
     public async Task<Result> RefundRunningThirdPartyTickets(RefundRunningThirdPartyTicketRequest request)
     {
