@@ -95,7 +95,6 @@ export class RequestService {
     }
 
     public pushInstantStatus(query: UpdateInstantQuery) {
-        console.log('UpdateInstantQuery', query)
         const request = this.httpRequestService.postJson<Result>(query, `${this.soccerApi}/push-instant-score`);
         return firstValueFrom(request);
     }
@@ -141,9 +140,6 @@ export class RequestService {
                     if (isAutoCalculatePage) {
                         this.mapNewestAutoCalculationMatch(match, newMatch);
                     }
-
-                    console.log('match', match);
-                    console.log('new', newMatch);
                 }
             });
         });

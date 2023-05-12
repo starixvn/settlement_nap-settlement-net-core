@@ -90,20 +90,20 @@ export class AutoSettingComponent implements OnInit {
     });
   }
 
-  private changeSingleSetting() {
+  private async changeSingleSetting() {
     const params = new AutoSettingMatchQuery(
       this.matchId,
       this.getAutoType(),
       this.currentState !== 0,
     );
-    this.requestService.updateSettingMatch(params).subscribe((result: Result) => {
-      if (result.isSuccessful) {
-        parent.document.getElementById('dialog-response').setAttribute('value', this.currentState.toString());
-        this.messageBoxService.closePopup();
-      } else {
-        this.errorMessage = result.errMsg;
-      }
-    });
+
+    const result = await this.requestService.updateSettingMatch(params);
+    if (result.isSuccessful) {
+      parent.document.getElementById('dialog-response').setAttribute('value', this.currentState.toString());
+      this.messageBoxService.closePopup();
+    } else {
+      this.errorMessage = result.errMsg;
+    }
   }
 
   private async changeMultiSettingMatch() {
@@ -114,7 +114,8 @@ export class AutoSettingComponent implements OnInit {
         listItem[i].type,
         listItem[i].isEnable,
       );
-      const result = await this.requestService.updateSettingMatch(params).toPromise();
+
+      const result = await this.requestService.updateSettingMatch(params);
       if (result.errCode > 0) {
         this.errorMessage = result.errMsg;
         return;
@@ -159,21 +160,21 @@ export class AutoSettingComponent implements OnInit {
     }
   }
 
-  private updateSetting(isApplyAll: boolean) {
+  private async updateSetting(isApplyAll: boolean) {
     const query = new AutoSettingLeagueQuery(
       this.leagueId,
       this.getAutoType(),
       this.currentState !== 0,
       isApplyAll,
     );
-    this.requestService.updateSettingLeague(query).subscribe((result: Result) => {
-      if (result.isSuccessful) {
-        parent.document.getElementById('dialog-response')?.setAttribute('value', `${this.currentState},${isApplyAll}`);
-        this.messageBoxService.closePopup();
-      } else {
-        this.errorMessage = result.errMsg;
-      }
-    });
+
+    const result = await this.requestService.updateSettingLeague(query);
+    if (result.isSuccessful) {
+      parent.document.getElementById('dialog-response')?.setAttribute('value', `${this.currentState},${isApplyAll}`);
+      this.messageBoxService.closePopup();
+    } else {
+      this.errorMessage = result.errMsg;
+    }
   }
 
 
@@ -186,7 +187,7 @@ export class AutoSettingComponent implements OnInit {
         listItem[i].isEnable,
         isApplyAll,
       );
-      const result = await this.requestService.updateSettingLeague(query).toPromise();
+      const result = await this.requestService.updateSettingLeague(query);
       if (result.errCode > 0) {
         this.errorMessage = result.errMsg;
         return;

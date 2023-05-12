@@ -235,9 +235,7 @@ export class CalculationComponent implements Soccer {
     public async unCalcInstant() {
         this.resetAllWarning();
         const matchId = this.matchDetail.matchId;
-        const result = await this.requestService.undoCheckingScore(matchId).toPromise() as UndoChecking;
-        console.log(result);
-        debugger
+        const result = await this.requestService.undoCheckingScore(matchId);
         const errorMessage = result.errMsg;
         if (_.isEmpty(errorMessage)) {
             this.confirmUnCalcInstant(matchId, result);
@@ -257,8 +255,6 @@ export class CalculationComponent implements Soccer {
   }
 
     private async confirmUnCalcInstant(matchId: number, scoreResult: UndoChecking) {
-        console.log(scoreResult);
-
         const currentScore = `${scoreResult.homeScore}-${scoreResult.awayScore}`;
         const halfTime = scoreResult.isHt ? "(HT)" : "(FT)";
         const goalRecord = _.isEmpty(scoreResult.goalRecord) ? "" : scoreResult.goalRecord.toUpperCase();
@@ -283,7 +279,6 @@ export class CalculationComponent implements Soccer {
         this.matchDetail.isWarningFinalAwayScore = false;
         this.matchDetail.isWarningGoalRecord = false;
         this.toastrService.clear();
-
     }
 
     private autoCheckedReSettledTickets() {

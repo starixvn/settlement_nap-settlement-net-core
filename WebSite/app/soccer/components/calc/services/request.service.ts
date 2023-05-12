@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
+import { firstValueFrom } from 'rxjs';
 import { HttpRequestService } from "../../../../shared/services";
 import { InstantCalculationQuery, SettleQuery, UncalculateFullTimeQuery } from "../models/query.model";
-import { firstValueFrom } from "rxjs";
 import { Result } from "../../../../shared/models";
 import { Match, UndoChecking } from "../models/match.model";
 
@@ -50,9 +50,8 @@ export class RequestService {
         const query = {
             matchId,
         };
-        console.log('first')
+        const request =  this.httpRequestService.postJson<UndoChecking>(query, `${this.soccerApi}/undo-checking-score`);
 
-        const request = this.httpRequestService.postJson<UndoChecking>(query, `${this.soccerApi}/undo-checking-score`);
         return firstValueFrom(request);
     }
 

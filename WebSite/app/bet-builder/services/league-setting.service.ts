@@ -37,7 +37,7 @@ export class LeagueSettingService {
             !league.isAutoSettingForLeague,
             isApplyAll
         );
-        const result = await this.requestService.updateLeague(query).toPromise();
+        const result = await this.requestService.updateLeague(query);
         if (result.isSuccessful) {
             this.reSetMatchOfLeague(league, result.childMatchIds);
         } else {

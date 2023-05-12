@@ -67,6 +67,5 @@ export class BadmintonService {
     }
 
     return refund + betStatus.join(',');
-}
-
+  }
 }
