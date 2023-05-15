@@ -44,7 +44,7 @@ public class ResourceServiceImp : IResourceService
         var goalAction = CreateGoalAction(halftimeGoal, settlementStatusId);
         var resources = goalCondition.IsExistHtFgLg ? actionResourceService.HalftimeResources(goalAction) : new List<XmlResource>();
 
-        if (goalCondition.IsExistFgNg)
+        if (goalCondition.IsExistFgNg && !string.IsNullOrWhiteSpace(halftimeGoal))
         {
             var firstGoal = goalRecordService.FirstGoalRecord(goalAction.FirstGoal, goalAction.IsRefund);
             var resource = actionResourceService.FullTimeResource(firstGoal, settlementStatusId);

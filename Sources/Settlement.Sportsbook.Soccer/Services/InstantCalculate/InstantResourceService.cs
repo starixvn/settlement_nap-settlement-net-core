@@ -211,7 +211,7 @@ public class InstantResourceServiceImp : InstantResourceService
 
         var betStatus = request.BetStatus;
 
-        if (request.IsExistHTFG)
+        if (request.IsExistHTFG && request.IsHalfTime)
         {
             var indexOfKey = betStatus.IndexOf(HalfTimeFl, StringComparison.CurrentCulture);
             betStatus = indexOfKey > -1 ? betStatus.Remove(indexOfKey, HtfgHomeBetStatus.Length) : betStatus;
