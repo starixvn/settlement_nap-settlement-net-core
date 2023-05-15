@@ -16,7 +16,8 @@ public class CalculateHandler : IRequestHandler<GetMatchRequest, Match>,
     IRequestHandler<CheckStatusRequest, Result>,
     IRequestHandler<UndoCheckingRequest, UndoCheckingModel>,
     IRequestHandler<InstantCalculationRequest, Result>,
-    IRequestHandler<MatchCheckingRequest, MatchGoalRecordModel>
+    IRequestHandler<MatchCheckingRequest, MatchGoalRecordModel>,
+    IRequestHandler<UncalculateFtRequest, Result>
 
 {
     private readonly IMatchService matchService;
@@ -50,6 +51,9 @@ public class CalculateHandler : IRequestHandler<GetMatchRequest, Match>,
 
     public async Task<Result> Handle(CheckStatusRequest request, CancellationToken cancellationToken) =>
         await calculateService.CheckStatus(request);
+
+    public async Task<Result> Handle(UncalculateFtRequest request, CancellationToken cancellationToken) =>
+        await calculateService.UncalculateFT(request);
 
     public async Task<UndoCheckingModel> Handle(UndoCheckingRequest request, CancellationToken cancellationToken) =>
         await instantCalculateService.UndoCheckingScore(request.MatchId);

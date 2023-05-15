@@ -1,4 +1,5 @@
-﻿using Settlement.Core.Constants;
+﻿using AutoMapper;
+using Settlement.Core.Constants;
 using Settlement.Sportsbook.Soccer.Constants;
 using Settlement.Sportsbook.Soccer.Models;
 
@@ -14,6 +15,8 @@ public interface IResourceService
 
     List<XmlResource> UnCalculateResources(GoalCondition goalCondition);
 
+    List<XmlResource> UnCalculateFtResources();
+
     List<XmlResource> FullTimeResourcesSettleDetermined(GoalCondition goalCondition);
 
     List<XmlResource> AllResourcesSettleDetermined(GoalCondition goalCondition);
@@ -25,10 +28,13 @@ public class ResourceServiceImp : IResourceService
 
     private readonly IGoalRecordService goalRecordService;
 
-    public ResourceServiceImp(IActionResourceService actionResourceService, IGoalRecordService goalRecordService)
+    private readonly IMapper mapper;
+
+    public ResourceServiceImp(IActionResourceService actionResourceService, IGoalRecordService goalRecordService, IMapper mapper)
     {
         this.actionResourceService = actionResourceService;
         this.goalRecordService = goalRecordService;
+        this.mapper = mapper;
     }
 
     public List<XmlResource> HalftimeResources(GoalCondition goalCondition, int settlementStatusId)
@@ -128,6 +134,18 @@ public class ResourceServiceImp : IResourceService
             resources.Add(InitialResource(ResourceKey.FullTimeGoalRecord));
         }
 
+        return resources;
+    }
+
+    public List<XmlResource> UnCalculateFtResources()
+    {
+        var resources = new List<XmlResource>
+        {
+            InitialResource(ResourceKey.FullTime),
+            InitialResource(ResourceKey.FullTimeFirstGoal),
+            InitialResource(ResourceKey.FullTimeLastGoal),
+            InitialResource(ResourceKey.FullTimeGoalRecord)
+        };
         return resources;
     }
 

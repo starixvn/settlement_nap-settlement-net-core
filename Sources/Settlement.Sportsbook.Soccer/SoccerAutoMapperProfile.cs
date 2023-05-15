@@ -22,5 +22,6 @@ public class SoccerAutoMapperProfile : Profile
         CreateMap<CheckingMarkedTicketsRequest, CheckingMarkedTicketsCriteria>().ForMember(dest => dest.Action, opt => opt.MapFrom(src => src.ActionName));
         CreateMap<MoveBetRequest, MoveThirdPartyBetTicketCriteria>();
         CreateMap<Models.MatchDetail, GoalIconQueryModel>();
+        CreateMap<UncalculateFtRequest, SettleBaseRequest>();
     }
 }

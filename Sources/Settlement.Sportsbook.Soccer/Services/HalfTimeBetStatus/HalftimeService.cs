@@ -4,7 +4,9 @@ namespace Settlement.Sportsbook.Soccer.Services.HalfTimeBetStatus;
 
 public interface IHalftimeService
 {
-    string GetBetStatusForCalculateHalfTime(SettleRequest request);
+    string GetBetStatusForCalculateHalfTime(SettleBaseRequest request);
+
+    string RevertBetStatusForCalculateHalfTime(string oldBetStatus);
 
     string FullTimeBetStatusForCalculateHalfTime(string goalRecord);
 
@@ -24,7 +26,7 @@ public class HalftimeServiceImp : IHalftimeService
         this.halftimeScoreAndGoalService = halftimeScoreAndGoalService;
     }
 
-    public string GetBetStatusForCalculateHalfTime(SettleRequest request)
+    public string GetBetStatusForCalculateHalfTime(SettleBaseRequest request)
     {
         if (validationService.IsNullHalftimeScoreAndGoalRecord(request))
         {
@@ -39,6 +41,17 @@ public class HalftimeServiceImp : IHalftimeService
         return validationService.HasHalftimeScoreWithoutSemicolonOnGoalRecord(request)
             ? halftimeScoreAndGoalService.BetStatusHasHalftimeScoreWithoutSemicolonOnGoalRecord(request.GoalRecord)
             : string.Empty;
+    }
+
+    public string RevertBetStatusForCalculateHalfTime(string oldBetStatus)
+    {
+        var maxLengthHalfTime = 7;
+        if (oldBetStatus.Contains(";"))
+        {
+            maxLengthHalfTime += 1;
+        }
+
+        return oldBetStatus.Substring(oldBetStatus.IgnoreCaseIndexOf("1FL"), maxLengthHalfTime);
     }
 
     public string AppendHalfTimeBetStatus(string oldBetStatus, string halfTimeBetStatus)

@@ -10,4 +10,6 @@ public static class ResourceKey
 
     public const string HalftimeGoalRecord = "09";
     public const string FullTimeGoalRecord = "08";
+
+    public const string FullTime = "00";
 }

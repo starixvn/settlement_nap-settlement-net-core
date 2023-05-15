@@ -6,7 +6,7 @@ namespace Settlement.Sportsbook.Soccer.Services.FullTimeBetStatus;
 
 public interface IFullTimeService
 {
-    string BetStatusFullTimeWithSemicolon(SettleRequest request);
+    string BetStatusFullTimeWithSemicolon(SettleBaseRequest request);
 
     bool IsExistRefundHt(bool isRefundHt, string halfTimeBetStatus);
 
@@ -22,7 +22,7 @@ public class FullTimeServiceImp : IFullTimeService
         this.goalRecordService = goalRecordService;
     }
 
-    public string BetStatusFullTimeWithSemicolon(SettleRequest request)
+    public string BetStatusFullTimeWithSemicolon(SettleBaseRequest request)
     {
         var goalRecord = new GoalRecordModel { IsExistFgLg = request.IsExistFgLg };
         var goal = request.GoalRecord.Replace(";", string.Empty);

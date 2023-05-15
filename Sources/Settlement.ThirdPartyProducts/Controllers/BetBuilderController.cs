@@ -8,7 +8,6 @@ namespace Settlement.ThirdPartyProducts.Controllers;
 
 [ApiController]
 [Route("api/bet-builder")]
-[SessionAuthorize]
 public class BetBuilderController : ControllerBase
 {
     private readonly IMediator mediator;

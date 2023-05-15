@@ -6,14 +6,16 @@ import { RequestService } from './services/request.service';
 import { VerifyMatchService } from './services/verify-match.service';
 import { TimeMinute, LeagueGroup } from './models/constant.native';
 import * as _ from 'lodash';
-import { TicketStatusText, BackgroundColor, CalculateAction } from '../../../shared/constants';
+import { TicketStatusText, BackgroundColor, CalculateAction, SettlementStatusId } from '../../../shared/constants';
 import { ClosePopupService, MessageBoxService } from '../../../shared/services';
-import { ModalDialogMessage, Result } from '../../../shared/models';
+import { ModalDialogMessage } from '../../../shared/models';
 import { Language } from '../../../shared/language.native';
-import { InstantCalculationQuery, SettleQuery } from './models/query.model';
+import { InstantCalculationQuery, SettleQuery, UncalculateFullTimeQuery } from './models/query.model';
 import { VerifyActionService } from './services/verify-action.service';
 import { VerifyScoreGoalService } from './services/verify-score-goal.service';
 import { VerificationBaseService } from '../../services/verification-base.service';
+import { BetStatus, ResourceIds } from '../../constants';
+import { ResultDetail } from '../../models';
 
 @Component({
   selector: 'calculation',
@@ -50,7 +52,7 @@ export class CalculationComponent implements Soccer {
 
   async getMatch(matchId: number) {
     this.toastrService.overlayContainer = this.toastContainer;
-    this.match = await this.requestService.getMatch(matchId).toPromise() as Match;
+    this.match = await this.requestService.getMatch(matchId);
     this.matchDetail = this.match.matchDetail;
     this.isMatchReady = this.isReadyToSettle(this.matchDetail);
     this.childMatches = this.match.childMatches;
@@ -218,16 +220,38 @@ export class CalculationComponent implements Soccer {
     });
   }
 
+  public async unCalculateFT() {
+    this.resetAllWarning();
+    const betStatus = this.matchDetail.betStatus?.toLocaleLowerCase();
+    const resultHalfTime = _.find(this.match.resultDetails, item => item.resourceId === ResourceIds.halfTime) ?? new ResultDetail();
+    if (_.includes(betStatus, BetStatus.abandoned1H) 
+    || (_.includes(betStatus, `${BetStatus.refunded};`) && _.isEqual(resultHalfTime.settlementStatusId, SettlementStatusId.Refund))) {
+      this.toastrService.error(Language.CannotUncalculateFTMessage);
+    } else {
+      this.confirmUnCalcFt();
+    }
+  }
+
   public async unCalcInstant() {
     this.resetAllWarning();
     const matchId = this.matchDetail.matchId;
-    const result = await this.requestService.undoCheckingScore(matchId).toPromise() as UndoChecking;
+    const result = await this.requestService.undoCheckingScore(matchId);
     const errorMessage = result.errMsg;
     if (_.isEmpty(errorMessage)) {
       this.confirmUnCalcInstant(matchId, result);
     } else {
       this.toastrService.error(errorMessage);
     }
+  }
+
+  private confirmUnCalcFt() {
+    this.dialogMessage.message = Language.UncalculateFTConfirmMessage;
+    this.messageBoxService.confirm(this.dialogMessage, () => {
+      this.dialogMessage.message = Language.checkAgainUncalculateFTConfirmation;
+      this.messageBoxService.confirm(this.dialogMessage, () => {
+        this.doUnCalculateFt();
+      });
+    });
   }
 
   private async confirmUnCalcInstant(matchId: number, scoreResult: UndoChecking) {
@@ -239,7 +263,7 @@ export class CalculationComponent implements Soccer {
     this.dialogMessage.message = message;
     this.messageBoxService.confirm(this.dialogMessage, async () => {
       const query = new InstantCalculationQuery(matchId, scoreResult);
-      const result = await this.requestService.pushInstantScore(query).toPromise() as Result;
+      const result = await this.requestService.pushInstantScore(query);
       if (result.isSuccessful) {
         this.closePopupService.closePopup();
       } else {
@@ -270,7 +294,18 @@ export class CalculationComponent implements Soccer {
       ? null : (_.isEmpty(this.selectedChildMatchIds) ? '0' : this.selectedChildMatchIds);
     const hedgeMatchId = this.applyHedgeMatch ? this.hedgeMatchDetail.matchId : 0;
     const query = new SettleQuery(this.matchDetail, hedgeMatchId, actionName, this.isReSettledTickets, childMatchIds);
-    const result = await this.requestService.calculate(query).toPromise() as Result;
+    const result = await this.requestService.calculate(query);
+    if (result.isSuccessful) {
+      this.closePopupService.closePopup();
+    } else {
+      this.toastrService.error(result.errMsg);
+    }
+  }
+
+  private async doUnCalculateFt() {
+    const hedgeMatchId = this.applyHedgeMatch ? this.hedgeMatchDetail.matchId : 0;
+    const query = new UncalculateFullTimeQuery(this.matchDetail, this.match.resultDetails, hedgeMatchId);
+    const result = await this.requestService.unCalculateFt(query);
     if (result.isSuccessful) {
       this.closePopupService.closePopup();
     } else {

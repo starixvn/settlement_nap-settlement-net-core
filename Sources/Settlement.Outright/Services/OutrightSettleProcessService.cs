@@ -95,7 +95,7 @@ public class OutrightSettleProcessServiceImp : OutrightSettleProcessService
         return await ValidateMoveBetDay(teams);
     }
 
-    public async Task<ResultOutright> ValidateMoveBetDay(IEnumerable<InfoValidate> teams)
+    private async Task<ResultOutright> ValidateMoveBetDay(IEnumerable<InfoValidate> teams)
     {
         const string eventTable = "outright";
         var listMatchFailed = new List<string>();
@@ -157,13 +157,13 @@ public class OutrightSettleProcessServiceImp : OutrightSettleProcessService
             Orid = request.Orid,
         };
 
-        var results = appSettingsKey.SiteDbServer
+        var tasks = appSettingsKey.SiteDbServer
             .Select(async server =>
             {
                 criteria.DbServer = server;
                 return await repository.GetAsync<int>(criteria);
-            })
-            .Select(t => t.Result).ToList();
+            });
+        var results = await Task.WhenAll(tasks);
         await Task.CompletedTask;
 
         return results.Any(r => r == 1) && results.All(r => r != 0);

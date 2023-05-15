@@ -8,7 +8,6 @@ namespace Settlement.ThirdPartyProducts.Controllers;
 
 [ApiController]
 [Route("api/cash-out")]
-[SessionAuthorize]
 public class CashOutController : ControllerBase
 {
     private readonly IMediator mediator;

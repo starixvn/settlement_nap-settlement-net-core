@@ -24,7 +24,7 @@ public class CachingMatchesServiceTests
         service.SetToCache(leagueIds, new List<MatchDetailModel>());
 
         cacheService.Received().SetAsync(logKey, Arg.Any<List<MatchDetailModel>>(), Arg.Any<CacheItemOptions>());
-        cacheService.Received().SetAsync(logKey + "-longCaching", Arg.Any<List<MatchDetailModel>>(), Arg.Any<CacheItemOptions>());
+        cacheService.Received().SetAsync(logKey + "-long", Arg.Any<List<MatchDetailModel>>(), Arg.Any<CacheItemOptions>());
     }
 
     [Theory]
@@ -34,16 +34,16 @@ public class CachingMatchesServiceTests
     {
         service.MatchesOnShortCaching(leagueId);
 
-        cacheService.Received().Get<List<MatchDetailModel>>(logKey);
+        cacheService.Received().GetAsync<List<MatchDetailModel>>(logKey);
     }
 
     [Theory]
-    [InlineData("123", CacheServiceKey.WaitingBetBuilderCacheKey + "-123-longCaching")]
-    [InlineData("1234,567", CacheServiceKey.WaitingBetBuilderCacheKey + "-1234,567-longCaching")]
+    [InlineData("123", CacheServiceKey.WaitingBetBuilderCacheKey + "-123-long")]
+    [InlineData("1234,567", CacheServiceKey.WaitingBetBuilderCacheKey + "-1234,567-long")]
     public void GetLongCache_Always_CallServiceWithCorrectParams(string leagueId, string logKey)
     {
         service.MatchesOnLongCaching(leagueId);
 
-        cacheService.Received().Get<List<MatchDetailModel>>(logKey);
+        cacheService.Received().GetAsync<List<MatchDetailModel>>(logKey);
     }
 }

@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
-using AutoMapper.Configuration;
 using Fanex.Caching;
 using Fanex.Data.Repository;
 using Microsoft.Extensions.Options;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
+using Settlement.EventManagement.Models.MultiSports;
 using Settlement.EventManagement.Requests;
 using Settlement.EventManagement.Services.MultiSports;
 using Match = Settlement.EventManagement.Models.MultiSports.Match;
@@ -45,12 +45,12 @@ public class MultiSportServiceTests
     public async Task GetWaitingMatches_ExistMatchesOnCache_ReturnNotNullWhenHaveMatchInCache()
     {
         // Arrange
-        var request = new RefreshMultiSportRequest();
-        var data = new List<Match>
+        var request = new RefreshMultiSportRequest { LeagueIds = "1,2" };
+        var data = new List<MultiSportMatchWaiting>
             {
                 new()
             };
-        cacheService.Get<List<Match>>(Arg.Any<string>()).Returns(data);
+        cacheService.GetAsync<List<MultiSportMatchWaiting>>(Arg.Any<string>()).Returns(data);
 
         // Act
         var matches = await service.GetWaitingMatches(request);
@@ -65,12 +65,17 @@ public class MultiSportServiceTests
         var match = new Match
         {
             MatchId = 700000,
-            SportType = 2
+            SportType = 2,
+            LeagueId = 1
         };
         var resultDetail = new ResultDetail
         {
             MatchId = 700000,
             ResourceId = "01"
+        };
+        var request = new RefreshMultiSportRequest
+        {
+            LeagueIds = "1,2"
         };
         var listMatch = new List<Match> { match };
         repository.FetchAsync<Match>(Arg.Any<ICriteria>()).Returns(listMatch);
@@ -78,7 +83,7 @@ public class MultiSportServiceTests
         refDataService.GetLeagueName(Arg.Any<string>()).Returns(string.Empty);
         matchService.GetScoreForMatchBySportType(Arg.Any<List<Match>>(), Arg.Any<List<ResultDetail>>(), Arg.Any<int>()).Returns(new List<Match> { match });
         matchService.SetNewMatchInfo(Arg.Any<List<Match>>(), Arg.Any<List<ResultDetail>>()).Returns(listMatch);
-        var waitingMatches = await service.GetWaitingMatches(new RefreshMultiSportRequest());
+        var waitingMatches = await service.GetWaitingMatches(request);
 
         Assert.NotNull(waitingMatches);
     }

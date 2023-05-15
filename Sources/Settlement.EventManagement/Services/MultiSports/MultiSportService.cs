@@ -1,4 +1,6 @@
-﻿namespace Settlement.EventManagement.Services.MultiSports;
+﻿using System.Security.Cryptography;
+
+namespace Settlement.EventManagement.Services.MultiSports;
 
 using Criteria;
 using Requests;
@@ -6,13 +8,14 @@ using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.EventManagement.Models.MultiSports;
+using System.Text;
 using Match = Models.MultiSports.Match;
 
 public interface IMultiSportService
 {
     Task<List<SportModel>> GetSportBook(FilterMultiSportRequest request);
 
-    Task<List<Match>> GetWaitingMatches(RefreshMultiSportRequest request);
+    Task<List<MultiSportMatchWaiting>> GetWaitingMatches(RefreshMultiSportRequest request);
 }
 
 public class MultiSportServiceImp : IMultiSportService
@@ -52,9 +55,10 @@ public class MultiSportServiceImp : IMultiSportService
         return sportBooks;
     }
 
-    public async Task<List<Match>> GetWaitingMatches(RefreshMultiSportRequest request)
+    public async Task<List<MultiSportMatchWaiting>> GetWaitingMatches(RefreshMultiSportRequest request)
     {
-        var matches = MatchesOnShortCaching(request.LeagueIds);
+        var hashLeagueIds = ConvertKeyToHash(request.LeagueIds);
+        var matches = await MatchesOnShortCaching(hashLeagueIds);
 
         if (matches is { Count: > 0 })
         {
@@ -65,7 +69,7 @@ public class MultiSportServiceImp : IMultiSportService
         {
             try
             {
-                return await GetAndCachingMatches(request);
+                return await GetAndCachingMatches(request, hashLeagueIds);
             }
             finally
             {
@@ -73,26 +77,32 @@ public class MultiSportServiceImp : IMultiSportService
             }
         }
 
-        return MatchesOnLongCaching(request.LeagueIds);
+        return await MatchesOnLongCaching(hashLeagueIds);
     }
 
-    private List<Match> MatchesOnShortCaching(string leagueIds)
+    private static string ConvertKeyToHash(string input)
     {
-        var shortCachingKey = ShortCachingKey(leagueIds);
-        return cacheService.Get<List<Match>>(shortCachingKey);
+        var data = SHA1.HashData(Encoding.Unicode.GetBytes(input));
+        return Convert.ToHexString(data).ToLowerInvariant();
     }
 
-    private List<Match> MatchesOnLongCaching(string leagueIds)
+    private async Task<List<MultiSportMatchWaiting>> MatchesOnShortCaching(string hashLeagueIds)
     {
-        var longCachingKey = LongCachingKey(leagueIds);
-        return cacheService.Get<List<Match>>(longCachingKey);
+        var shortCachingKey = ShortCachingKey(hashLeagueIds);
+        return await cacheService.GetAsync<List<MultiSportMatchWaiting>>(shortCachingKey);
     }
 
-    private static string ShortCachingKey(string leagueIds) => $"{CacheServiceKey.MemoryCacheMultiSportCacheKey}-{leagueIds}";
+    private async Task<List<MultiSportMatchWaiting>> MatchesOnLongCaching(string hashLeagueIds)
+    {
+        var longCachingKey = LongCachingKey(hashLeagueIds);
+        return await cacheService.GetAsync<List<MultiSportMatchWaiting>>(longCachingKey);
+    }
 
-    private static string LongCachingKey(string leagueIds) => $"{ShortCachingKey(leagueIds)}-longCaching";
+    private static string ShortCachingKey(string hashLeagueIds) => $"{CacheServiceKey.MemoryCacheMultiSportCacheKey}-{hashLeagueIds}";
 
-    private async Task<List<Match>> GetAndCachingMatches(RefreshMultiSportRequest request)
+    private static string LongCachingKey(string hashLeagueIds) => $"{ShortCachingKey(hashLeagueIds)}-long";
+
+    private async Task<List<MultiSportMatchWaiting>> GetAndCachingMatches(RefreshMultiSportRequest request, string hashLeagueIds)
     {
         var criteria = mapper.Map<RefreshMultiSportRequest, GetWaitingMultiSportCriteria>(request);
         var waitingMatches = await GetMatchesAllSites(criteria);
@@ -102,9 +112,7 @@ public class MultiSportServiceImp : IMultiSportService
 
         var matches = GetMoreScore(new MultiSportResult { Matches = waitingMatches, ResultDetails = listResultDetail });
 
-        SetToCache(request.LeagueIds, matches);
-
-        return matches;
+        return await SetToCache(hashLeagueIds, matches);
     }
 
     private async Task<List<Match>> GetMatchesAllSites(MultipleSiteCriteria criteria)
@@ -133,14 +141,18 @@ public class MultiSportServiceImp : IMultiSportService
         return repository.FetchAsync<Match>(criteria);
     }
 
-    private void SetToCache(string leagueIds, List<Match> matches)
+    private async Task<List<MultiSportMatchWaiting>> SetToCache(string hashLeagueIds, List<Match> matches)
     {
-        var shortCachingKey = ShortCachingKey(leagueIds);
-        var longCachingKey = LongCachingKey(leagueIds);
+        var shortCachingKey = ShortCachingKey(hashLeagueIds);
+        var longCachingKey = LongCachingKey(hashLeagueIds);
         const int shortCacheExpirationTime = 3;
         const int longCacheExpirationTime = 20;
-        cacheService.SetAsync(shortCachingKey, matches, new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromSeconds(shortCacheExpirationTime)));
-        cacheService.SetAsync(longCachingKey, matches, new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(longCacheExpirationTime)));
+        var waitingMatches = mapper.Map<List<MultiSportMatchWaiting>>(matches);
+
+        await cacheService.SetAsync(shortCachingKey, waitingMatches, new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromSeconds(shortCacheExpirationTime)));
+        await cacheService.SetAsync(longCachingKey, waitingMatches, new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(longCacheExpirationTime)));
+
+        return waitingMatches;
     }
 
     private List<Match> GetMoreScore(MultiSportResult data)
@@ -159,7 +171,7 @@ public class MultiSportServiceImp : IMultiSportService
         return listMatch;
     }
 
-    private List<SportModel> GroupSport(List<Match> matches)
+    private static List<SportModel> GroupSport(List<Match> matches)
     {
         var sportSorting = new List<int>
             {

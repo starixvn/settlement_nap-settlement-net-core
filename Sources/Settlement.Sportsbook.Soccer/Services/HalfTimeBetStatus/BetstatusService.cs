@@ -4,7 +4,7 @@ namespace Settlement.Sportsbook.Soccer.Services.HalfTimeBetStatus;
 
 public interface IBetStatusService
 {
-    string GetBetStatus(SettleRequest request);
+    string GetBetStatus(SettleBaseRequest request);
 }
 
 public class BetStatusServiceImp : IBetStatusService
@@ -16,7 +16,7 @@ public class BetStatusServiceImp : IBetStatusService
         this.halftimeService = halftimeService;
     }
 
-    public string GetBetStatus(SettleRequest request)
+    public string GetBetStatus(SettleBaseRequest request)
     {
         var halfTimeBetStatus = string.Empty;
         if (request.IsExistHtFgLg)

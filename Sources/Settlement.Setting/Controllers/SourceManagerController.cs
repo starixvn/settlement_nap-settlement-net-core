@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Settlement.Core.ActionFilters;
 using Settlement.Core.Services;
 using Settlement.Setting.Requests.OutsideSourceManager;
 using Settlement.Setting.Requests.ProviderManager;
@@ -9,7 +8,6 @@ namespace Settlement.Setting.Controllers;
 
 [ApiController]
 [Route("api/setting")]
-[SessionAuthorize]
 public class SourceManagerController : ControllerBase
 {
     private readonly IMediator mediator;

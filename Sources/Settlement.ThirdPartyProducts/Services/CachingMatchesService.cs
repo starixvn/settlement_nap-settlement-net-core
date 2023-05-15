@@ -6,11 +6,11 @@ namespace Settlement.ThirdPartyProducts.Services;
 
 public interface CachingMatchesService
 {
-    List<MatchDetailModel> MatchesOnShortCaching(string leagueIds);
+    Task<List<MatchDetailModel>> MatchesOnShortCaching(string leagueIds);
 
-    List<MatchDetailModel> MatchesOnLongCaching(string leagueIds);
+    Task<List<MatchDetailModel>> MatchesOnLongCaching(string leagueIds);
 
-    public void SetToCache(string leagueIds, List<MatchDetailModel> matches);
+    Task SetToCache(string leagueIds, List<MatchDetailModel> matches);
 }
 
 public class CachingMatchesServiceImp : CachingMatchesService
@@ -22,29 +22,30 @@ public class CachingMatchesServiceImp : CachingMatchesService
         this.cacheService = cacheService;
     }
 
-    public List<MatchDetailModel> MatchesOnShortCaching(string leagueIds)
+    public async Task<List<MatchDetailModel>> MatchesOnShortCaching(string leagueIds)
     {
         var shortCachingKey = ShortCachingKey(leagueIds);
-        return cacheService.Get<List<MatchDetailModel>>(shortCachingKey);
+        return await cacheService.GetAsync<List<MatchDetailModel>>(shortCachingKey);
     }
 
-    public List<MatchDetailModel> MatchesOnLongCaching(string leagueIds)
+    public async Task<List<MatchDetailModel>> MatchesOnLongCaching(string leagueIds)
     {
         var longCachingKey = LongCachingKey(leagueIds);
-        return cacheService.Get<List<MatchDetailModel>>(longCachingKey);
+
+        return await cacheService.GetAsync<List<MatchDetailModel>>(longCachingKey);
     }
 
-    public void SetToCache(string leagueIds, List<MatchDetailModel> matches)
+    public async Task SetToCache(string leagueIds, List<MatchDetailModel> matches)
     {
         var shortCachingKey = ShortCachingKey(leagueIds);
         var longCachingKey = LongCachingKey(leagueIds);
         const int shortCacheExpirationTime = 3;
         const int longCacheExpirationTime = 20;
-        cacheService.SetAsync(shortCachingKey, matches, new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromSeconds(shortCacheExpirationTime)));
-        cacheService.SetAsync(longCachingKey, matches, new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(longCacheExpirationTime)));
+        await cacheService.SetAsync(shortCachingKey, matches, new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromSeconds(shortCacheExpirationTime)));
+        await cacheService.SetAsync(longCachingKey, matches, new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(longCacheExpirationTime)));
     }
 
     private static string ShortCachingKey(string leagueIds) => $"{CacheServiceKey.WaitingBetBuilderCacheKey}-{leagueIds}";
 
-    private static string LongCachingKey(string leagueIds) => $"{ShortCachingKey(leagueIds)}-longCaching";
+    private static string LongCachingKey(string leagueIds) => $"{ShortCachingKey(leagueIds)}-long";
 }

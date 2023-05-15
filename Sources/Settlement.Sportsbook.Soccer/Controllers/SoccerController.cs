@@ -7,7 +7,7 @@ namespace Settlement.Sportsbook.Soccer.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[SessionAuthorize]
+
 public class SoccerController : ControllerBase
 {
     private readonly IMediator mediator;
@@ -35,6 +35,10 @@ public class SoccerController : ControllerBase
     [Route("calculate"), HttpPost]
     [LogPushRequest]
     public async Task<IActionResult> Calculate(SettleRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+
+    [Route("uncalculate-ft"), HttpPost]
+    [LogPushRequest]
+    public async Task<IActionResult> UnCalculateFt(UncalculateFtRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
     [Route("check-status"), HttpPost]
     public async Task<IActionResult> CheckingStatus(CheckStatusRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));

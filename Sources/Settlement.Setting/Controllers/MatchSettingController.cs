@@ -1,13 +1,11 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Settlement.Core.ActionFilters;
 using Settlement.Setting.Requests;
 
 namespace Settlement.Setting.Controllers;
 
 [ApiController]
 [Route("api/setting")]
-[SessionAuthorize]
 public class MatchSettingController : ControllerBase
 {
     private readonly IMediator mediator;

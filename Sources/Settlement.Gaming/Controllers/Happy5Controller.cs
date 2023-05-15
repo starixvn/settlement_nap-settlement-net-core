@@ -1,13 +1,11 @@
 ﻿using MediatR;
-using Settlement.Core.ActionFilters;
-using Settlement.Gaming.Requests;
 using Microsoft.AspNetCore.Mvc;
+using Settlement.Gaming.Requests;
 
 namespace Settlement.Gaming.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[SessionAuthorize]
 public class Happy5Controller : ControllerBase
 {
     private readonly IMediator mediator;

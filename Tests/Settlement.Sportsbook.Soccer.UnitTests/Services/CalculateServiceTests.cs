@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using AutoMapper.Configuration;
 using Fanex.Data.Repository;
 using Fanex.Settlement.ScaleOut.Models;
 using Fanex.Settlement.ScaleOut.Request;
@@ -132,4 +131,66 @@ public class CalculateServiceTests
 
         Assert.Equal(result, actual.IsSuccessful);
     }
+
+    [Theory]
+    [InlineData(0, "", true)]
+    [InlineData(1, "Error", false)]
+    public async Task UncalculateFT_Always_ReturnCorrectResult(int errorCode, string errorMsg, bool result)
+    {
+        var query = new UncalculateFtRequest();
+        var criteria = new CalculateCriteria
+        {
+            Action = ActionType.UnCalculateFullTime
+        };
+        createCriteriaService.CreateUnCalculateFtCriteria(Arg.Any<UncalculateFtRequest>()).Returns(criteria);
+        logDirectlyService.WriteLog(Arg.Any<int>(), Arg.Any<string>());
+        scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage { ErrorCode = errorCode, ErrorMessage = errorMsg });
+
+        var actual = await service.UncalculateFT(query);
+
+        Assert.Equal(result, actual.IsSuccessful);
+    }
+
+    [Fact]
+    public async Task UncalculateFT_ValidatePassed_UpdateMatchAndExecuteAllDb()
+    {
+        var query = new UncalculateFtRequest();
+        var criteria = new CalculateCriteria
+        {
+            Action = ActionType.UnCalculateFullTime,
+            MatchId = 1
+        };
+        createCriteriaService.CreateUnCalculateFtCriteria(Arg.Any<UncalculateFtRequest>()).Returns(criteria);
+        logDirectlyService.WriteLog(Arg.Any<int>(), Arg.Any<string>());
+        scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
+
+        await service.UncalculateFT(query);
+
+        await scaleOutSettleService.Received().UpdateMatchInfo(Arg.Any<UpdateMatchInfoRequest>());
+        await repository.Received(3).ExecuteAsync(Arg.Any<CalculateCriteria>());
+    }
+
+    [Fact]
+    public async Task UncalculateFT_ApplyHedgeMatch_ExecuteTwice()
+    {
+        var query = new UncalculateFtRequest
+        {
+            IsApplyHedging = true,
+            HedgeMatchId = 123
+        };
+        var criteria = new CalculateCriteria
+        {
+            Action = ActionType.UnCalculateFullTime,
+            MatchId = 1
+        };
+        createCriteriaService.CreateUnCalculateFtCriteria(Arg.Any<UncalculateFtRequest>()).Returns(criteria);
+        logDirectlyService.WriteLog(Arg.Any<int>(), Arg.Any<string>());
+        scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
+
+        await service.UncalculateFT(query);
+
+        await scaleOutSettleService.Received(2).UpdateMatchInfo(Arg.Any<UpdateMatchInfoRequest>());
+        await repository.Received(6).ExecuteAsync(Arg.Any<CalculateCriteria>());
+    }
+
 }

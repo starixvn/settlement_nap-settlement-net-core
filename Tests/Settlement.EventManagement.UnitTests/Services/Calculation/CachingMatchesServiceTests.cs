@@ -1,4 +1,5 @@
-﻿using Fanex.Caching;
+﻿using AutoMapper;
+using Fanex.Caching;
 using Fanex.Data.Repository;
 using Settlement.Core.Constants;
 using Settlement.EventManagement.Criteria;
@@ -17,9 +18,14 @@ public class CachingMatchesServiceTests
 
     public CachingMatchesServiceTests()
     {
+        var mapperConfig = new MapperConfigurationExpression();
+        mapperConfig.AddProfile<EventManagementAutoMapperProfile>();
+        var config = new MapperConfiguration(mapperConfig);
+        var mapper = new Mapper(config);
+
         cacheService = Substitute.For<ICacheService>();
         repository = Substitute.For<IDynamicRepository>();
-        service = new CachingMatchesServiceImp(cacheService, repository);
+        service = new CachingMatchesServiceImp(cacheService, repository, mapper);
     }
 
     [Theory]
@@ -29,8 +35,8 @@ public class CachingMatchesServiceTests
     {
         service.SetToCache(new List<Match>(), leagueId, autoCalc);
 
-        cacheService.Received().SetAsync(logKey, Arg.Any<List<Match>>(), Arg.Any<CacheItemOptions>());
-        cacheService.Received().SetAsync(logKey + "-longCaching", Arg.Any<List<Match>>(), Arg.Any<CacheItemOptions>());
+        cacheService.Received().SetAsync(logKey, Arg.Any<List<CalculateMatchWaiting>>(), Arg.Any<CacheItemOptions>());
+        cacheService.Received().SetAsync(logKey + "-long", Arg.Any<List<CalculateMatchWaiting>>(), Arg.Any<CacheItemOptions>());
     }
 
     [Theory]
@@ -40,17 +46,17 @@ public class CachingMatchesServiceTests
     {
         service.GetShortCache(leagueId, autoCalc);
 
-        cacheService.Received().GetAsync<List<Match>>(logKey);
+        cacheService.Received().GetAsync<List<CalculateMatchWaiting>>(logKey);
     }
 
     [Theory]
-    [InlineData(false, "123", CacheServiceKey.WaitingListCacheKey + "-123-longCaching")]
-    [InlineData(true, "1234", CacheServiceKey.WaitingAutoPayoutCacheKey + "-1234-longCaching")]
+    [InlineData(false, "123", CacheServiceKey.WaitingListCacheKey + "-123-long")]
+    [InlineData(true, "1234", CacheServiceKey.WaitingAutoPayoutCacheKey + "-1234-long")]
     public void GetLongCache_Always_CallServiceWithCorrectParams(bool autoCalc, string leagueId, string logKey)
     {
         service.GetLongCache(leagueId, autoCalc);
 
-        cacheService.Received().GetAsync<List<Match>>(logKey);
+        cacheService.Received().GetAsync<List<CalculateMatchWaiting>>(logKey);
     }
 
     [Fact]

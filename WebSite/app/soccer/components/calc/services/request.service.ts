@@ -1,18 +1,22 @@
 import { Injectable } from "@angular/core";
 import { HttpRequestService } from "../../../../shared/services";
-import { InstantCalculationQuery, SettleQuery } from "../models/query.model";
+import { InstantCalculationQuery, SettleQuery, UncalculateFullTimeQuery } from "../models/query.model";
+import { firstValueFrom } from "rxjs";
+import { Result } from "../../../../shared/models";
+import { Match, UndoChecking } from "../models/match.model";
 
 @Injectable()
 export class RequestService {
     private soccerApi = '/api/soccer';
-    constructor(private readonly httpRequestService: HttpRequestService) {}
+    constructor(private readonly httpRequestService: HttpRequestService) { }
 
     public getMatch(matchId: number) {
         const query = {
             matchId,
             isRefundPage: false
         };
-        return this.httpRequestService.postJson(query, `${this.soccerApi}/get-match`);
+        const request =  this.httpRequestService.postJson<Match>(query, `${this.soccerApi}/get-match`);
+        return firstValueFrom(request);
     }
 
     public checkNewStatus(matchId: number, actionName: string) {
@@ -33,7 +37,13 @@ export class RequestService {
     }
 
     public calculate(query: SettleQuery) {
-        return this.httpRequestService.postJson(query, `${this.soccerApi}/calculate`);
+        const request = this.httpRequestService.postJson<Result>(query, `${this.soccerApi}/calculate`);
+        return firstValueFrom(request);
+    }
+
+    public unCalculateFt(query: UncalculateFullTimeQuery) {
+        const request = this.httpRequestService.postJson<Result>(query, `${this.soccerApi}/uncalculate-ft`);
+        return firstValueFrom(request);
     }
 
     public undoCheckingScore(matchId: number) {
@@ -41,10 +51,12 @@ export class RequestService {
             matchId,
         };
 
-        return this.httpRequestService.postJson(query, `${this.soccerApi}/undo-checking-score`);
+        const request = this.httpRequestService.postJson<UndoChecking>(query, `${this.soccerApi}/undo-checking-score`);
+        return firstValueFrom(request);
     }
 
     public pushInstantScore(query: InstantCalculationQuery) {
-        return this.httpRequestService.postJson(query, `${this.soccerApi}/push-instant-score`);
+        const request = this.httpRequestService.postJson<Result>(query, `${this.soccerApi}/push-instant-score`);
+        return firstValueFrom(request);
     }
 }

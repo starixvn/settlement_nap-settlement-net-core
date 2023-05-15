@@ -57,7 +57,7 @@ export class FilterComponent extends FilterBaseComponent implements OnInit {
     }
 
     this.disableRefresh.emit(true);
-    this.requestService.search(this.query).subscribe((calculation: Calculation) => {
+    this.requestService.search(this.query).then(calculation => {
       this.disableRefund.emit(_.isEmpty(this.query.matchCode) && !_.isEqual(this.query.filterOver.toString(), this.overStatus[0].value));
       this.searchAction.emit({ calculation, filterQuery: this.query });
       this.disableRefresh.emit(false);

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using AutoMapper;
+using Newtonsoft.Json;
 using Settlement.Core.Constants;
 using Settlement.Sportsbook.Soccer.Constants;
 using Settlement.Sportsbook.Soccer.Models;
@@ -18,7 +19,11 @@ public class ResourceServiceTests
     {
         goalRecordService = Substitute.For<IGoalRecordService>();
         actionResourceService = Substitute.For<IActionResourceService>();
-        service = new ResourceServiceImp(actionResourceService, goalRecordService);
+        var mapperConfig = new MapperConfigurationExpression();
+        mapperConfig.AddProfile<SoccerAutoMapperProfile>();
+        var config = new MapperConfiguration(mapperConfig);
+        var mapper = new Mapper(config);
+        service = new ResourceServiceImp(actionResourceService, goalRecordService, mapper);
     }
 
     [Fact]

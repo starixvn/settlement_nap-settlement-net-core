@@ -14,7 +14,7 @@ public static class OnebookUmInitializer
         var umConfig = new UMClientConfiguration();
         services.AddSingleton(umConfig.Initialize(configuration));
         services.AddScoped<CheckUMFilterAttribute>();
-        services.AddSingleton<IUMCacheService, UMCacheService>();
+        services.AddSingleton<IUMCacheService, MemoryUmCacheService>();
         services.AddSingleton<IUMRestClient, UMRestClient>();
         services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         services.AddSingleton<IHttpContextHelper, HttpContextHelper>();

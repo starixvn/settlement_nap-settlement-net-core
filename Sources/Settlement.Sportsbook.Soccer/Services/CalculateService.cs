@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using Fanex.Data.Repository;
-using Fanex.NAP.Client.Helpers.Web;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
 using Microsoft.Extensions.Options;
+using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.Soccer.Constants;
@@ -17,6 +17,8 @@ public interface ICalculateService
     Task<Result> Calculate(SettleRequest request);
 
     Task<Result> UnCalculate(SettleRequest request);
+
+    Task<Result> UncalculateFT(UncalculateFtRequest request);
 
     Task<Result> CheckStatus(CheckStatusRequest request);
 }
@@ -34,8 +36,6 @@ public class CalculateServiceImp : ICalculateService
     private readonly ScaleOutSettleService scaleOutSettleService;
 
     private readonly LogDirectlyService logDirectlyService;
-
-    private readonly INapSession currentSession;
 
     public CalculateServiceImp
     (IMapper mapper,
@@ -74,6 +74,28 @@ public class CalculateServiceImp : ICalculateService
         }
 
         return matchChecking;
+    }
+
+    public async Task<Result> UncalculateFT(UncalculateFtRequest request)
+    {
+        var criteria = createQueryCriteria.CreateUnCalculateFtCriteria(request);
+        var requestChecking = await ValidateBeforeExecute(criteria);
+        if (requestChecking.ErrCode > 0)
+        {
+            return requestChecking;
+        }
+
+        WriteDirectlyLogUncalculateFt(criteria, request.ResultDetails);
+
+        await ExecuteAsync(criteria);
+
+        if (request.IsApplyHedging)
+        {
+            criteria.MatchId = request.HedgeMatchId;
+            await ExecuteAsync(criteria);
+        }
+
+        return requestChecking;
     }
 
     public async Task<Result> UnCalculate(SettleRequest request)
@@ -121,9 +143,9 @@ public class CalculateServiceImp : ICalculateService
         }
     }
 
-    private void WriteDirectlyLog(SettleRequest request)
+    private void WriteDirectlyLog(SettleBaseRequest request)
     {
-        var match = new Core.Models.Match
+        var match = new Match
         {
             MatchId = request.MatchId,
             HalfTimeAwayScore = request.HalfTimeAwayScore,
@@ -137,6 +159,23 @@ public class CalculateServiceImp : ICalculateService
         var message = LogDirectlyServiceImp.GenerateLogData(match, request.ActionName);
 
         logDirectlyService.WriteLog(request.MatchId, message);
+    }
+
+    private void WriteDirectlyLogUncalculateFt(CalculateCriteria criteria, IEnumerable<ResultDetail> resultDetails)
+    {
+        var resultHalfTime = resultDetails?.FirstOrDefault(result => result.ResourceId == ResourceType.Halftime) ?? new ResultDetail();
+        var match = new Match
+        {
+            MatchId = criteria.MatchId,
+            GoalRecord = criteria.GoalRecord,
+            BetStatus = criteria.BetStatus,
+            HalfTimeHomeScore = string.IsNullOrEmpty(resultHalfTime.HomeValue) ? 0 : int.Parse(resultHalfTime.HomeValue),
+            HalfTimeAwayScore = string.IsNullOrEmpty(resultHalfTime.AwayValue) ? 0 : int.Parse(resultHalfTime.AwayValue)
+        };
+
+        var message = LogDirectlyServiceImp.GenerateLogData(match, ActionType.UnCalculateFullTime);
+
+        logDirectlyService.WriteLog(criteria.MatchId, message);
     }
 
     private async Task<Result> ValidateBeforeExecute(CalculateCriteria criteria)

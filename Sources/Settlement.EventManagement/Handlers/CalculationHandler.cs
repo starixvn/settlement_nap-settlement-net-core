@@ -3,16 +3,15 @@ using Settlement.EventManagement.Models;
 using Settlement.EventManagement.Models.Calculation;
 using Settlement.EventManagement.Requests;
 using Settlement.EventManagement.Services.Calculation;
-using Match = Settlement.EventManagement.Models.Calculation.Match;
 
 namespace Settlement.EventManagement.Handlers;
 
 public class CalculationHandler :
         IRequestHandler<FilterCalculationRequest, CalculationLeagues>,
         IRequestHandler<LeagueCalculationRequest, List<LeagueTypeModel>>,
-        IRequestHandler<RefreshCalculationRequest, List<Match>>,
+        IRequestHandler<RefreshCalculationRequest, List<CalculateMatchWaiting>>,
         IRequestHandler<FilterAutoCalculationRequest, CalculationLeagues>,
-        IRequestHandler<RefreshAutoCalculationRequest, List<Match>>
+        IRequestHandler<RefreshAutoCalculationRequest, List<CalculateMatchWaiting>>
 {
     private readonly LeagueService leagueService;
 
@@ -42,9 +41,9 @@ public class CalculationHandler :
 
     public async Task<List<LeagueTypeModel>> Handle(LeagueCalculationRequest request, CancellationToken cancellationToken) => await leagueService.Leagues(request);
 
-    public async Task<List<Match>> Handle(RefreshCalculationRequest request, CancellationToken cancellationToken) => await matchService.GetWaitingMatches(request.LeagueIds, false);
+    public async Task<List<CalculateMatchWaiting>> Handle(RefreshCalculationRequest request, CancellationToken cancellationToken) => await matchService.GetWaitingMatches(request.LeagueIds, false);
 
-    public async Task<List<Match>> Handle(RefreshAutoCalculationRequest request,
+    public async Task<List<CalculateMatchWaiting>> Handle(RefreshAutoCalculationRequest request,
         CancellationToken cancellationToken) => await matchService.GetWaitingMatches(request.LeagueId.ToString(), true);
 
     public async Task<CalculationLeagues> Handle(FilterAutoCalculationRequest request, CancellationToken cancellationToken)

@@ -10,6 +10,7 @@ public class ActionKey
         {"UNDO", "ALL"},
         {"REFUND", "ALL"},
         {"REFUND-HT", "HT"},
-        {"REFUND-FT", "FT"}
+        {"REFUND-FT", "FT"},
+        {"UNDO-FT","FT"}
     };
 }

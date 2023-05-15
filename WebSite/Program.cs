@@ -10,8 +10,6 @@ using Settlement.WebSites.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.ConfigureCors();
-
 builder.Services.ConfigureAuthorization();
 
 builder.Services.ConfigureAuthentication(builder.Configuration);
@@ -56,7 +54,6 @@ app.UseCookiePolicy();
 app.UseSession();
 app.UseMiddleware<ErrorHandler>();
 app.UseRouting();
-app.UseCors(WebSites.AllowOrigin);
 app.UseAuthentication();
 app.UseAuthorization();
 

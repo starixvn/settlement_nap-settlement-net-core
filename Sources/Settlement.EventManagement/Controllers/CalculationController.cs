@@ -1,11 +1,9 @@
-﻿using Settlement.Core.ActionFilters;
-using Settlement.EventManagement.Requests;
+﻿using Settlement.EventManagement.Requests;
 
 namespace Settlement.EventManagement.Controllers;
 
 [ApiController]
 [Route("api/calculation")]
-[SessionAuthorize]
 public class CalculationController : ControllerBase
 {
     private readonly IMediator mediator;

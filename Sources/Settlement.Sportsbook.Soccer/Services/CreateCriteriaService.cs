@@ -6,6 +6,7 @@ using Settlement.Core.Models;
 using Settlement.Sportsbook.Soccer.Criteria;
 using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Requests;
+using Settlement.Sportsbook.Soccer.Services.GetMatch;
 
 namespace Settlement.Sportsbook.Soccer.Services;
 
@@ -18,6 +19,8 @@ public interface ICreateCriteriaService
     public CalculateEarlyCriteria CreateCalculateEarlyCriteria(SettleEarlyRequest request);
 
     public RefundCriteria CreateRefundCriteria(RefundRequest request);
+
+    public CalculateCriteria CreateUnCalculateFtCriteria(UncalculateFtRequest request);
 }
 
 public class CreateCriteriaServiceImp : ICreateCriteriaService
@@ -36,13 +39,16 @@ public class CreateCriteriaServiceImp : ICreateCriteriaService
 
     private readonly IBetStatusAllService betStatusAllService;
 
+    private readonly IMatchService matchService;
+
     public CreateCriteriaServiceImp(INapSession currentSession,
         IResourceService resourceService,
         IHttpContextAccessor accessor,
         ISoccerBetStatusService soccerBetStatusService,
         XmlConvertService xmlConvertService,
         IMapper mapper,
-        IBetStatusAllService betStatusAllService)
+        IBetStatusAllService betStatusAllService,
+        IMatchService matchService)
     {
         this.currentSession = currentSession;
         this.resourceService = resourceService;
@@ -51,6 +57,7 @@ public class CreateCriteriaServiceImp : ICreateCriteriaService
         this.xmlConvertService = xmlConvertService;
         this.mapper = mapper;
         this.betStatusAllService = betStatusAllService;
+        this.matchService = matchService;
     }
 
     public CalculateCriteria CreateCalculateCriteria(SettleRequest request)
@@ -95,6 +102,24 @@ public class CreateCriteriaServiceImp : ICreateCriteriaService
             Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString(),
             IsReSettledTickets = request.IsReSettledTickets,
             ChildMatchIds = request.ChildMatchIds
+        };
+
+        return criteria;
+    }
+
+    public CalculateCriteria CreateUnCalculateFtCriteria(UncalculateFtRequest request)
+    {
+        var matchGoalRecord = matchService.GetMatchGoalRecord(request.MatchId) ?? new MatchGoalRecordModel();
+        var htGoalRecord = GoalRecordHt(matchGoalRecord.GoalRecord, request.ResultDetails);
+        var criteria = new CalculateCriteria
+        {
+            AdminId = currentSession.UserId,
+            MatchId = request.MatchId,
+            GoalRecord = htGoalRecord,
+            BetStatus = soccerBetStatusService.CreateBetStatusAfterUncalculateFt(request, matchGoalRecord.BetStatus, htGoalRecord),
+            ResourceResult = GetResourceResultUnCalculateFt(),
+            Action = ActionType.UnCalculateFullTime,
+            Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString(),
         };
 
         return criteria;
@@ -219,5 +244,24 @@ public class CreateCriteriaServiceImp : ICreateCriteriaService
         return resources.Count > 0
             ? xmlConvertService.Serialize(new XmlResults { Resources = resources })
             : string.Empty;
+    }
+
+    private string GetResourceResultUnCalculateFt()
+    {
+        var resources = resourceService.UnCalculateFtResources();
+
+        return xmlConvertService.Serialize(new XmlResults { Resources = resources });
+    }
+
+    private static string GoalRecordHt(string goalRecord, IEnumerable<ResultDetail> resultDetails)
+    {
+        var halfTime = resultDetails.FirstOrDefault(item => item.ResourceId == ResourceType.Halftime);
+        if (string.IsNullOrEmpty(goalRecord) || halfTime?.SettlementStatusId == SettlementStatus.RefundHt)
+        {
+            return string.Empty;
+        }
+
+        var semicolonIndex = goalRecord.IndexOf(';');
+        return semicolonIndex < 0 ? goalRecord : goalRecord[..(semicolonIndex + 1)].ToUpperInvariant();
     }
 }

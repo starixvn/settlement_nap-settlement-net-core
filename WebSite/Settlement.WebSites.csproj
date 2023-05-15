@@ -88,23 +88,22 @@
     <PackageReference Include="Fanex.Logging.Extensions.Database" Version="1.0.8" />
     <PackageReference Include="Fanex.Logging.Sentry.RavenClient" Version="1.0.1" />
     <PackageReference Include="Fanex.MailDeliver.MailClient" Version="2.0.8" />
-    <PackageReference Include="Fanex.NAP.Client.AspNetCore" Version="2.0.0.1" />
-		<PackageReference Include="Fanex.NAP.Signin.AspNetCore" Version="2.0.0.5-beta3" />
+    <PackageReference Include="Fanex.NAP.Client.AspNetCore" Version="2.0.0.2" />
+		<PackageReference Include="Fanex.NAP.Signin.AspNetCore" Version="2.0.0.5" />
 		<PackageReference Include="Fanex.RemotingRef" Version="1.5.0.1" />
 		<PackageReference Include="Fanex.Settlement.Converter" Version="1.0.0.1" />
 		<PackageReference Include="Fanex.Settlement.ScaleOut" Version="1.2.7" />
     <PackageReference Include="MediatR" Version="12.0.1" />
-    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.1.0" />
-    <PackageReference Include="MessagePack" Version="2.4.35" />
-    <PackageReference Include="MessagePack.AspNetCoreMvcFormatter" Version="2.4.35" />
-    <PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="5.0.2" />
-    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="5.0.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="ONEbook.UM" Version="3.1.4-beta0" />
+    <PackageReference Include="MessagePack" Version="2.5.108" />
+    <PackageReference Include="MessagePack.AspNetCoreMvcFormatter" Version="2.5.108" />
+    <PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="7.0.5" />
+    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="7.0.5" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="ONEbook.UM" Version="3.1.4" />
     <PackageReference Include="ONEbook.UM.AspNetCore" Version="3.1.0" />
     <PackageReference Include="ONEbook.UM.AspNetCore.Filters" Version="3.1.0" />
-    <PackageReference Include="ONEbook.UM.Transport" Version="3.1.2-beta0" />
-    <PackageReference Include="StackExchange.Redis" Version="2.6.48" />
+    <PackageReference Include="ONEbook.UM.Transport" Version="3.1.2" />
+    <PackageReference Include="StackExchange.Redis" Version="2.6.104" />
   </ItemGroup>
 
   <ItemGroup>

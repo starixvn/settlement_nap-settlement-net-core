@@ -2,7 +2,7 @@
 
 namespace Settlement.EventManagement.Requests;
 
-public class RefreshCalculationRequest : IRequest<List<Match>>
+public class RefreshCalculationRequest : IRequest<List<CalculateMatchWaiting>>
 {
     public string LeagueIds { get; set; }
 }

@@ -1,13 +1,12 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Settlement.Core.ActionFilters;
 using Settlement.Setting.Requests.Notification;
 
 namespace Settlement.Setting.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[SessionAuthorize]
+
 public class NotificationsController : ControllerBase
 {
     private readonly IMediator mediator;
