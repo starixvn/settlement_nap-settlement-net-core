@@ -219,7 +219,7 @@ public class InstantResourceServiceImp : InstantResourceService
 
         if (request.IsExistFG)
         {
-            var indexOfKey = betStatus.IndexOf(Fl, StringComparison.CurrentCulture);
+            var indexOfKey = betStatus.LastIndexOf(Fl, StringComparison.CurrentCulture);
             betStatus = indexOfKey > -1 ? betStatus.Remove(indexOfKey, FgHomeBetStatus.Length) : betStatus;
         }
 
