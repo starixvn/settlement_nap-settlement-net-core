@@ -6,6 +6,7 @@ using System.Text;
 
 namespace Settlement.Core.ActionFilters;
 
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
 public class LogPushRequestAttribute : ActionFilterAttribute
 {
     public override async void OnActionExecuting(ActionExecutingContext context)

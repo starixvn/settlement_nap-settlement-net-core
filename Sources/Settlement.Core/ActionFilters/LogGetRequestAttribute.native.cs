@@ -7,6 +7,7 @@ using System.Text;
 
 namespace Settlement.Core.ActionFilters;
 
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
 public class LogGetRequestAttribute : ActionFilterAttribute
 {
     public override async void OnActionExecuted(ActionExecutedContext context)
