@@ -8,7 +8,7 @@ import { SearchService } from '../services';
 import { ModalDialogMessage } from '../../shared/models';
 import { MessageBoxService, VerifyDateService } from '../../shared/services';
 import { Match, Filter, LogQuery } from '../models';
-import { LogType, LogTypeFilter } from "../constants/log-Type";
+import { LogType, LogTypeFilter, ResettleType } from "../constants/log-Type";
 
 @Component({
     selector: 'filter',
@@ -23,6 +23,7 @@ export class FilterComponent implements OnInit {
     public readonly warningDialogMessage: ModalDialogMessage = new ModalDialogMessage();
     public filter = new Filter();
     readonly filterType = LogTypeFilter;
+    readonly resettleType = ResettleType;
 
     constructor(
         private readonly verifyDateService: VerifyDateService,

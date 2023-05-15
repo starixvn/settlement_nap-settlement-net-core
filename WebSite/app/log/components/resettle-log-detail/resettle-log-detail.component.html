@@ -38,8 +38,8 @@
                 <td>
                     {{i+1}}
                 </td>
-                <ng-container *ngIf="listLog[logDetail.resourceName][0] === logDetail">
-                    <td [attr.rowspan]="listLog[logDetail.resourceName].length">
+                <ng-container *ngIf="listLog[logDetail.resourceId][0] === logDetail">
+                    <td [attr.rowspan]="listLog[logDetail.resourceId].length">
                         {{logDetail.resourceId}}-{{logDetail.resourceName}}
                     </td>
                 </ng-container>

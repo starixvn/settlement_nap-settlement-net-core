@@ -5,6 +5,8 @@ export const LogTypeFilter = [
     { value: 'RES', title: 'Re-Settlement'}
 ]
 
+export const ResettleType = 'RES';
+
 export const LogType = {
     BetBuilder: "BBD",
     Happy5: "HPF",

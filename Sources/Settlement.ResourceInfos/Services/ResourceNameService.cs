@@ -1,6 +1,6 @@
-﻿using Settlement.ResourceName.MapperFactory;
+﻿using Settlement.ResourceInfos.MapperFactory;
 
-namespace Settlement.ResourceName.Services;
+namespace Settlement.ResourceInfos.Services;
 
 public interface IResourceNameService
 {

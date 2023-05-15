@@ -1,9 +1,10 @@
-﻿using Settlement.Core.Services;
-using Settlement.Core.Criteria;
+﻿using Settlement.Core.Criteria;
+using Settlement.Core.Services;
 using Settlement.Sportsbook.OtherSports.Models;
 
 namespace Settlement.Sportsbook.OtherSports.Services;
 
+using AutoMapper;
 using Constants;
 using Criteria;
 using Fanex.Data.Repository;
@@ -31,19 +32,22 @@ public class MultipleServerServiceImp : MultipleServerService
     private readonly MergeDataService mergeDataService;
     private readonly ScaleOutSettleService scaleOutSettleService;
     private readonly LogService logService;
+    private readonly IMapper mapper;
 
     public MultipleServerServiceImp(
         IDynamicRepository repository,
         IOptions<AppSettingsKey> appSettingsKey,
         MergeDataService mergeDataService,
         ScaleOutSettleService scaleOutSettleService,
-        LogService logService)
+        LogService logService,
+        IMapper mapper)
     {
         this.repository = repository;
         this.appSettingsKey = appSettingsKey.Value;
         this.mergeDataService = mergeDataService;
         this.scaleOutSettleService = scaleOutSettleService;
         this.logService = logService;
+        this.mapper = mapper;
     }
 
     public async Task<(MatchDetail, List<TicketCounts>)> GetMatchInfo(GetMatchRequest request)
@@ -119,10 +123,17 @@ public class MultipleServerServiceImp : MultipleServerService
 
     private async Task InsertLog(CalculateCriteria criteria)
     {
-        if (!criteria.IsHedgeMatch)
+        try
         {
-            var insertLogCriteria = mapper.Map<InsertLogCriteria>(criteria);
-            await repository.ExecuteAsync(insertLogCriteria);
+            if (!criteria.IsHedgeMatch)
+            {
+                var insertLogCriteria = mapper.Map<InsertLogCriteria>(criteria);
+                await repository.ExecuteAsync(insertLogCriteria);
+            }
+        }
+        catch (Exception e)
+        {
+            await Fanex.Logging.LogService.ErrorAsync("Settlement.WebSites(Write resettle Log): ", e);
         }
     }
 

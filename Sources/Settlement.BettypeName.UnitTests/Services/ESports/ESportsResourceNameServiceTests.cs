@@ -1,6 +1,6 @@
-﻿using Settlement.ResourceName.Constants;
-using Settlement.ResourceName.MapperFactory;
-using Settlement.ResourceName.Services.ESports;
+﻿using Settlement.ResourceInfos.Constants;
+using Settlement.ResourceInfos.MapperFactory;
+using Settlement.ResourceInfos.Services.ESports;
 
 namespace Settlement.BettypeName.UnitTests.Services.ESports;
 

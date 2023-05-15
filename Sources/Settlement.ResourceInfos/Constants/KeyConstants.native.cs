@@ -1,6 +1,6 @@
 ﻿using Settlement.Core.Constants;
 
-namespace Settlement.ResourceName.Constants;
+namespace Settlement.ResourceInfos.Constants;
 
 public static class KeyConstants
 {

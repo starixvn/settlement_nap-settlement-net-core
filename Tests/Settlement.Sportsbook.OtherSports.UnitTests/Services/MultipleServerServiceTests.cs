@@ -89,7 +89,7 @@ public class MultipleServerServiceTests
         mergeDataService.MergeTicketCounts(Arg.Any<List<List<TicketCounts>>>())
             .Returns(new List<TicketCounts> { ticketHt });
 
-        var result = await service.Calculate(new CalculateCriteria { Action = action, MatchId = 100, AdminId = 10, IsReSettledTickets = false }, new ScoreSetModel());
+        var result = await service.Calculate(new CalculateCriteria { Action = action, MatchId = 100, AdminId = 10, IsReSettledTickets = false, IsHedgeMatch = true }, new ScoreSetModel());
 
         await scaleOutSettleService.Received().UpdateUnderSettlementFlag(100, 10, action);
         await scaleOutSettleService.Received().UpdateMatchInfo(Arg.Is<UpdateMatchInfoRequest>(item => item.IsHtTicketSettled == expected));

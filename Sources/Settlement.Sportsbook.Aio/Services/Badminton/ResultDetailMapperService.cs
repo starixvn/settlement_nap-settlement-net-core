@@ -1,5 +1,5 @@
-﻿using Settlement.ResourceName.MapperFactory;
-using Settlement.ResourceName.Services;
+﻿using Settlement.ResourceInfos.MapperFactory;
+using Settlement.ResourceInfos.Services;
 using Settlement.Sportsbook.Aio.Models;
 using IMapperService = Settlement.Sportsbook.Aio.MapperFactory.IMapperService;
 

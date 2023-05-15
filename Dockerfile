@@ -3,7 +3,7 @@ WORKDIR /src
 
 COPY ./.sonarlint/. ./.sonarlint
 COPY ./Sources/Settlement.Core/. ./Sources/Settlement.Core
-COPY ./Sources/Settlement.ResourceName/. ./Sources/Settlement.ResourceName
+COPY ./Sources/Settlement.ResourceInfos/. ./Sources/Settlement.ResourceInfos
 COPY ./Sources/Settlement.EventManagement/. ./Sources/Settlement.EventManagement
 COPY ./Sources/Settlement.FastMarkets/. ./Sources/Settlement.FastMarkets
 COPY ./Sources/Settlement.Log/. ./Sources/Settlement.Log

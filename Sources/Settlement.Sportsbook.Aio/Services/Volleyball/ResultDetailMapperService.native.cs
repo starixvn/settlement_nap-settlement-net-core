@@ -1,5 +1,5 @@
-﻿using Settlement.ResourceName.Constants;
-using Settlement.ResourceName.Services;
+﻿using Settlement.ResourceInfos.Constants;
+using Settlement.ResourceInfos.Services;
 using Settlement.Sportsbook.Aio.Constants.Volleyball;
 using Settlement.Sportsbook.Aio.MapperFactory;
 using Settlement.Sportsbook.Aio.Models;
@@ -14,7 +14,7 @@ public class ResultDetailMapperServiceImp : IMapperService
 
     public ResultDetailMapperServiceImp()
     {
-        resourceNameService = new ResourceNameService(new ResourceName.MapperFactory.MapperFactoryBase());
+        resourceNameService = new ResourceNameService(new ResourceInfos.MapperFactory.MapperFactoryBase());
         groupBetTypeService = new GroupBetTypeServiceImp();
     }
 

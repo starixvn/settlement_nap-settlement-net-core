@@ -1,6 +1,6 @@
-﻿using Settlement.ResourceName.Constants;
+﻿using Settlement.ResourceInfos.Constants;
 
-namespace Settlement.ResourceName.MapperFactory;
+namespace Settlement.ResourceInfos.MapperFactory;
 
 public static class MapperServiceDictionary
 {

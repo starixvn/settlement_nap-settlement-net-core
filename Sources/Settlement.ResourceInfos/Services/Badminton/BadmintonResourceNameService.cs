@@ -1,8 +1,8 @@
 ﻿using Settlement.Core.Constants;
-using Settlement.ResourceName.Constants;
-using Settlement.ResourceName.MapperFactory;
+using Settlement.ResourceInfos.Constants;
+using Settlement.ResourceInfos.MapperFactory;
 
-namespace Settlement.ResourceName.Services.Badminton;
+namespace Settlement.ResourceInfos.Services.Badminton;
 
 public class BadmintonResourceNameService : IMapperService
 {
@@ -16,7 +16,7 @@ public class BadmintonResourceNameService : IMapperService
         {
             return (resourceId, GetResourceMain(resourceId));
         }
-        var betType = resourceId[..BetTypeCharacter]; ;
+        var betType = resourceId[..BetTypeCharacter];
         var gameX = resourceId.Substring(4, 1);
         var pointChar = resourceId.Substring(5, 2);
         var point = Convert.ToInt32(pointChar);

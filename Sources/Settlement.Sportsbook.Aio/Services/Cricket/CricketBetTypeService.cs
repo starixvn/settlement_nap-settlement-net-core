@@ -1,11 +1,11 @@
-﻿using Settlement.ResourceName.Constants;
-using Settlement.ResourceName.Services;
+﻿using Settlement.ResourceInfos.Constants;
 using Settlement.Sportsbook.Aio.Criteria.Cricket;
 using Settlement.Sportsbook.Aio.Models;
 
 namespace Settlement.Sportsbook.Aio.Services.Cricket;
 
 using Constants.Cricket;
+using Settlement.ResourceInfos.Services;
 
 public interface ICricketBetTypeService
 {

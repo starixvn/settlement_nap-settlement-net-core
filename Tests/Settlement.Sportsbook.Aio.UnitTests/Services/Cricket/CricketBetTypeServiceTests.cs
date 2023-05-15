@@ -1,5 +1,5 @@
 ﻿using Fanex.Data.Repository;
-using Settlement.ResourceName.Services;
+using Settlement.ResourceInfos.Services;
 using Settlement.Sportsbook.Aio.Criteria.Cricket;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Services.Cricket;

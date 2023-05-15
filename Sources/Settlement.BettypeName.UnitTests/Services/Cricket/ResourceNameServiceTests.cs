@@ -1,4 +1,4 @@
-﻿using Settlement.ResourceName.Services.Cricket;
+﻿using Settlement.ResourceInfos.Services.Cricket;
 
 namespace Settlement.BettypeName.UnitTests.Services.Cricket;
 

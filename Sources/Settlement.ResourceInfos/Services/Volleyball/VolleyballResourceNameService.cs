@@ -1,8 +1,8 @@
 ﻿using Settlement.Core.Constants;
-using Settlement.ResourceName.Constants;
-using Settlement.ResourceName.MapperFactory;
+using Settlement.ResourceInfos.Constants;
+using Settlement.ResourceInfos.MapperFactory;
 
-namespace Settlement.ResourceName.Services.Volleyball;
+namespace Settlement.ResourceInfos.Services.Volleyball;
 
 public class VolleyballResourceNameService : IMapperService
 {

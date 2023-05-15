@@ -6,13 +6,14 @@ import { BetType, BetTypeWithNo, MappingValue, MappingValueWithBettype } from ".
 
 @Injectable()
 export class HandleResultService {
+
     static HandleResult(match: Match, logDetail: ResettleLogDetail, homeName: string, awayName: string) {
-        if (!_.isEmpty(logDetail.homeValue) && !_.isEmpty(logDetail.awayValue)) {
-            return `${logDetail.homeValue} - ${logDetail.awayValue}`;
+        if (_.isEmpty(logDetail.homeValue) || _.includes(logDetail.action.toLocaleLowerCase(), 'refund')) {
+            return '-';
         }
 
-        if (_.isEmpty(logDetail.homeValue)) {
-            return '-';
+        if (!_.isEmpty(logDetail.homeValue) && !_.isEmpty(logDetail.awayValue)) {
+            return `${logDetail.homeValue} - ${logDetail.awayValue}`;
         }
 
         if (_.isEqual(match.sportType, SportType.cricket) && _.includes(BetType.relatePlayer, logDetail.betType)) {
@@ -44,6 +45,7 @@ export class HandleResultService {
     }
 
     private static handlePlayerName(players: string[], otherInfo: string, homeValue: string) {
+        if(_.isNull(homeValue) || _.isNull(otherInfo)) return "-";
         const playerIds = otherInfo.split(',');
         const values = homeValue.split(',');
         const listPlayer = [];

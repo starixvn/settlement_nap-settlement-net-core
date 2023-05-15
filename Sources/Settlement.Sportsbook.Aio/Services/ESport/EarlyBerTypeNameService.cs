@@ -1,5 +1,5 @@
-﻿using Settlement.ResourceName.Constants;
-using Settlement.ResourceName.Services;
+﻿using Settlement.ResourceInfos.Constants;
+using Settlement.ResourceInfos.Services;
 using Settlement.Sportsbook.Aio.Models;
 
 namespace Settlement.Sportsbook.Aio.Services.ESport;

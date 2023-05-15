@@ -1,8 +1,8 @@
 ﻿using Settlement.Core.Constants;
-using Settlement.ResourceName.Constants;
-using Settlement.ResourceName.Services.Others;
+using Settlement.ResourceInfos.Constants;
+using Settlement.ResourceInfos.Services.Others;
 
-namespace Settlement.ResourceName.UnitTests.Services.Others;
+namespace Settlement.ResourceInfos.UnitTests.Services.Others;
 
 public class OtherResourceNameTests
 {

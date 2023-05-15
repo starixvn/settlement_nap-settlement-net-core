@@ -1,10 +1,10 @@
 ﻿using Fanex.RemotingRef;
 using Settlement.Core.Constants;
 using Settlement.Core.Services;
-using Settlement.ResourceName.Constants;
-using Settlement.ResourceName.MapperFactory;
+using Settlement.ResourceInfos.Constants;
+using Settlement.ResourceInfos.MapperFactory;
 
-namespace Settlement.ResourceName.Services.BasketBall;
+namespace Settlement.ResourceInfos.Services.BasketBall;
 
 public class BasketballResourceNameService : IMapperService
 {
@@ -34,7 +34,7 @@ public class BasketballResourceNameService : IMapperService
             ResourceType.Final => ResourceNameConstants.FullTime,
             ResourceType.Halftime => ResourceNameConstants.HalfTime,
             ResourceType.OverTime => ResourceNameConstants.OverTime,
-            _ => resourceId.IndexOf("Q") > -1 ? resourceId.Replace("Q", "Quarter ") : string.Empty
+            _ => resourceId.IndexOf("Q", StringComparison.Ordinal) > -1 ? resourceId.Replace("Q", "Quarter ") : string.Empty
         };
     }
 }

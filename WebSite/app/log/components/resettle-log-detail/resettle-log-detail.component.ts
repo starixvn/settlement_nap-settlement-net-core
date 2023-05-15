@@ -20,7 +20,7 @@ export class ResettleLogDetailComponent implements OnChanges {
             item.resultValue = HandleResultService.HandleResult(this.match, item, this.match.home, this.match.away);
             item.class = this.isEven(item);
         });
-        this.listLog = _.groupBy(this.match.resettleLogDetails, 'resourceName');
+        this.listLog = _.groupBy(this.match.resettleLogDetails, 'resourceId');
     }
 
 

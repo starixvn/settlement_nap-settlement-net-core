@@ -250,10 +250,17 @@ public class MultipleServerAioServiceImp : MultipleServerAioService
 
     private async Task InsertLog(SettleCriteria criteria)
     {
-        if (!criteria.IsHedgeMatch)
+        try
         {
-            var insertLogCriteria = createQueryService.CreateInsertLogCriteria(criteria);
-            await repository.ExecuteAsync(insertLogCriteria);
+            if (!criteria.IsHedgeMatch)
+            {
+                var insertLogCriteria = createQueryService.CreateInsertLogCriteria(criteria);
+                await repository.ExecuteAsync(insertLogCriteria);
+            }
+        }
+        catch (Exception e)
+        {
+            await Fanex.Logging.LogService.ErrorAsync("Settlement.WebSites(Write resettle Log): ", e);
         }
     }
 

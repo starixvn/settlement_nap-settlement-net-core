@@ -20,6 +20,8 @@ public class LogServiceImp : LogService
     private readonly IRefDataService refDataService;
     private readonly IMapper mapper;
 
+    private const string ResettleType = "RES";
+
     public LogServiceImp(
         IDynamicRepository repository,
         IBalanceUpService balanceUpService,
@@ -38,6 +40,8 @@ public class LogServiceImp : LogService
     {
         var criteria = mapper.Map<LogRequest, GetSettlementLogCriteria>(request);
         criteria.BalanceUpDay = balanceUpService.GetBalanceUpDay().BalanceUpDay;
+        criteria.FromDate = request.ProductType == ResettleType ? null : request.FromDate;
+        criteria.ToDate = request.ProductType == ResettleType ? DateTime.Today : request.ToDate;
 
         var logs = (await repository.FetchAsync<LogModel>(criteria)).ToList();
         return await GetLogDetail(logs, request.ProductType);
@@ -47,7 +51,7 @@ public class LogServiceImp : LogService
     {
         foreach (var log in logs)
         {
-            if (productType == "RES")
+            if (productType == ResettleType)
             {
                 log.ResettleLogDetails = await logDetailService.GetLogDetailResettle(log.MatchId, log.SportType);
                 log.PlayerNames = await logDetailService.GetPlayerNameCricket(log.MatchId, log.SportType);

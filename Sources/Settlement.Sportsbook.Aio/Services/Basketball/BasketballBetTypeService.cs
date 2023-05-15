@@ -1,5 +1,5 @@
-﻿using Settlement.ResourceName.Constants;
-using Settlement.ResourceName.Services;
+﻿using Settlement.ResourceInfos.Constants;
+using Settlement.ResourceInfos.Services;
 using Settlement.Sportsbook.Aio.Constants.Basketball;
 using Settlement.Sportsbook.Aio.Models;
 using ResultDetail = Settlement.Sportsbook.Aio.Models.ResultDetail;
@@ -44,16 +44,15 @@ public class BasketballBetTypeServiceImp : IBasketballBetTypeService
         const int otherBetTypeLength = 3;
         var resourceId = resultDetail.ResourceId;
         var group = new GroupNameModel();
-        switch (resourceId.Length)
+        if (resourceId.Length == otherBetTypeLength)
         {
-            case otherBetTypeLength:
-                group = groupBetTypeService.GroupOtherBetType(resultDetail);
-                break;
+            group = groupBetTypeService.GroupOtherBetType(resultDetail);
+        }
 
-            case QuarterBetTypeLength or HalfBetTypeLength:
-                group = GroupHalfBetType(resultDetail, group);
-                group = GroupQuarterBetType(resultDetail, group);
-                break;
+        if (resourceId.Length is QuarterBetTypeLength or HalfBetTypeLength)
+        {
+            group = GroupHalfBetType(resultDetail, group);
+            group = GroupQuarterBetType(resultDetail, group);
         }
 
         resultDetail.GroupName = group.GroupName;

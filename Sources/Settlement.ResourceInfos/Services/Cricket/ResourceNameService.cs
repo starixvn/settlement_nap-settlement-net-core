@@ -1,7 +1,7 @@
 ﻿using Settlement.Core.Constants;
-using Settlement.ResourceName.Constants;
+using Settlement.ResourceInfos.Constants;
 
-namespace Settlement.ResourceName.Services.Cricket;
+namespace Settlement.ResourceInfos.Services.Cricket;
 
 public interface IResourceNameService
 {

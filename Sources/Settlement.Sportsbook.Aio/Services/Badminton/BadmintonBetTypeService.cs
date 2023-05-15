@@ -1,5 +1,5 @@
-﻿using Settlement.ResourceName.Constants;
-using Settlement.ResourceName.Services;
+﻿using Settlement.ResourceInfos.Constants;
+using Settlement.ResourceInfos.Services;
 using Settlement.Sportsbook.Aio.Models;
 
 namespace Settlement.Sportsbook.Aio.Services.Badminton;
@@ -11,7 +11,6 @@ public interface IBadmintonBetTypeService
 
 public class BadmintonBetTypeServiceImp : IBadmintonBetTypeService
 {
-    private const int BetTypeCharacter = 3;
     private const int ThreePosition = 3;
     private const int MapCharacter = 2;
 

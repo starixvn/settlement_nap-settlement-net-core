@@ -6,7 +6,7 @@ public class GetSettlementLogCriteria : CriteriaBase
 {
     public string MatchCode { get; set; }
 
-    public DateTime FromDate { get; set; }
+    public DateTime? FromDate { get; set; }
 
     public DateTime ToDate { get; set; }
 
@@ -21,6 +21,6 @@ public class GetSettlementLogCriteria : CriteriaBase
 
     public override bool IsValid()
     {
-        return FromDate <= ToDate;
+        return MatchCode.Length > 0;
     }
 }

@@ -1,10 +1,10 @@
 ﻿using Fanex.RemotingRef;
 using Settlement.Core.Constants;
 using Settlement.Core.Services;
-using Settlement.ResourceName.Constants;
-using Settlement.ResourceName.MapperFactory;
+using Settlement.ResourceInfos.Constants;
+using Settlement.ResourceInfos.MapperFactory;
 
-namespace Settlement.ResourceName.Services.ESports;
+namespace Settlement.ResourceInfos.Services.ESports;
 
 public class ESportsResourceNameService : IMapperService
 {
@@ -47,17 +47,15 @@ public class ESportsResourceNameService : IMapperService
             BetType.ESportBetType.MapDuration => $"Map {mapX} Duration",
             BetType.ESportBetType.MapRoundsScore => $"Map {mapX} Rounds Score",
             BetType.ESportBetType.MapRoundsScoreOvertime => $"Map {mapX} Rounds Score (including Overtime)",
-            BetType.ESportBetType.MapTotalFirstKills => $"Map {mapX} Total First Kills",
-            _ => BetTypeNameGroupTwo(betTypeId, resourceId)
+            _ => BetTypeNameGroupTwo(betTypeId, resourceId, mapX)
         };
     }
 
-    private string BetTypeNameGroupTwo(int betTypeId, string resourceId)
+    private string BetTypeNameGroupTwo(int betTypeId, string resourceId, string mapX)
     {
-        var mapX = resourceId.Substring(5, 1);
-
         return betTypeId switch
         {
+            BetType.ESportBetType.MapTotalFirstKills => $"Map {mapX} Total First Kills",
             BetType.ESportBetType.MapKillsScore => $"Map {mapX} Total Kills Score",
             BetType.ESportBetType.MapTowersScore => $"Map {mapX} Towers Score",
             BetType.ESportBetType.MapRoshansScore => $"Map {mapX} Roshans Score",
@@ -65,74 +63,75 @@ public class ESportsResourceNameService : IMapperService
             BetType.ESportBetType.MapTurretsScore => $"Map {mapX} Turrets Score",
             BetType.ESportBetType.MapClutchesScore => $"Map {mapX} Clutches Score",
             BetType.ESportBetType.MapFirstBloodTime => $"Map {mapX} First Blood Time",
-            BetType.ESportBetType.MapTotalKillTenMin => $"Map {mapX} Total Kills at 10 Mins",
-            BetType.ESportBetType.MapTotalKillTwentyMin => $"Map {mapX} Total Kills at 20 Mins",
-            _ => BetTypeNameGroupThree(betTypeId, resourceId)
+            _ => BetTypeNameGroupThree(betTypeId, resourceId, mapX)
         };
     }
 
-    private string BetTypeNameGroupThree(int betTypeId, string resourceId)
+    private string BetTypeNameGroupThree(int betTypeId, string resourceId, string mapX)
     {
-        var mapX = resourceId.Substring(5, 1);
-
         return betTypeId switch
         {
+            BetType.ESportBetType.MapTotalKillTenMin => $"Map {mapX} Total Kills at 10 Mins",
+            BetType.ESportBetType.MapTotalKillTwentyMin => $"Map {mapX} Total Kills at 20 Mins",
             BetType.ESportBetType.MapMostTurretsDestroyedLane => $"Map {mapX} Lane With Most Turrets Destroyed",
             BetType.ESportBetType.MapFirstTurretLocation => $"Map {mapX} First Turret Location",
             BetType.ESportBetType.MapTotalGold => $"Map {mapX} Total Gold",
             BetType.ESportBetType.MapFirstTyrantTime => $"Map {mapX} First Tyrant Time",
             BetType.ESportBetType.MapFirstDarkTyrant => $"Map {mapX} First Dark Tyrant",
             BetType.ESportBetType.MapFirstOverlordTime => $"Map {mapX} First Overlord Time",
-            BetType.ESportBetType.MapStormDragonKilled => $"Map {mapX} Will Storm Dragon Be Killed",
-            BetType.ESportBetType.MapFirstHerald => $"Map {mapX} First Herald",
-            BetType.ESportBetType.MapFirstHeraldTime => $"Map {mapX} First Herald Time",
-            _ => BetTypeNameGroupFour(betTypeId, resourceId)
+            _ => BetTypeNameGroupFour(betTypeId, resourceId, mapX)
         };
     }
 
-    private string BetTypeNameGroupFour(int betTypeId, string resourceId)
+    private string BetTypeNameGroupFour(int betTypeId, string resourceId, string mapX)
     {
-        var mapX = resourceId.Substring(5, 1);
-
         return betTypeId switch
         {
+            BetType.ESportBetType.MapStormDragonKilled => $"Map {mapX} Will Storm Dragon Be Killed",
+            BetType.ESportBetType.MapFirstHerald => $"Map {mapX} First Herald",
+            BetType.ESportBetType.MapFirstHeraldTime => $"Map {mapX} First Herald Time",
             BetType.ESportBetType.MapFirstBaronTime => $"Map {mapX} First Baron Time",
             BetType.ESportBetType.MapNumberOfPlayersFirstBaronBuffed => $"Map {mapX} First Baron No. Players Buff",
             BetType.ESportBetType.MapFirstInhibitorTime => $"Map {mapX} First Inhibitor Time",
             BetType.ESportBetType.MapFirstInhibitorLocation => $"Map {mapX} First Inhibitor Location",
             BetType.ESportBetType.MapFirstDragonTime => $"Map {mapX} First Dragon Time",
+            _ => BetTypeNameGroupFive(betTypeId, resourceId, mapX)
+        };
+    }
+
+    private string BetTypeNameGroupFive(int betTypeId, string resourceId, string mapX)
+    {
+        return betTypeId switch
+        {
             BetType.ESportBetType.MapElderDragonKilled => $"Map {mapX} Will Elder Dragon Be Killed",
             BetType.ESportBetType.MapFirstAegisSnatched => $"Map {mapX} Will Any Aegis Be Snatched Yes/No",
             BetType.ESportBetType.MapFirstTowerTime => $"Map {mapX} First Tower Time",
             BetType.ESportBetType.MapFirstTowerLocation => $"Map {mapX} First Tower Location",
-            _ => BetTypeNameGroupFive(betTypeId, resourceId)
-        };
-    }
-
-    private string BetTypeNameGroupFive(int betTypeId, string resourceId)
-    {
-        var mapX = resourceId.Substring(5, 1);
-
-        return betTypeId switch
-        {
             BetType.ESportBetType.MapFirstRoshanTime => $"Map {mapX} First Roshan Time",
             BetType.ESportBetType.MapFirstBarrackTime => $"Map {mapX} First Barrack Time",
             BetType.ESportBetType.MapFirstBarrackLocation => $"Map {mapX} First Barrack Location",
+            _ => BetTypeNameGroupSix(betTypeId, resourceId, mapX)
+        };
+    }
+
+    private string BetTypeNameGroupSix(int betTypeId, string resourceId, string mapX)
+    {
+        return betTypeId switch
+        {
             BetType.ESportBetType.MapTotalBombDetonation => $"Map {mapX} Total Bomb Detonations (excl. OT)",
             BetType.ESportBetType.MapTotalBombDefuses => $"Map {mapX} Total Bomb Defuses (excl. OT)",
             BetType.ESportBetType.MapLaneWithMostTurretsDestroyed =>
                 $"Map {mapX} Lane With Most Turrets Destroyed (KOG)",
             BetType.ESportBetType.MapFirstTurretLocationKog => $"Map {mapX} First Turret Location (KOG)",
-            _ => BetTypeNameGroupSix(betTypeId, resourceId)
+            _ => BetTypeNameGroupSeven(betTypeId, resourceId, mapX)
         };
     }
 
-    private string BetTypeNameGroupSix(int betTypeId, string resourceId)
+    private string BetTypeNameGroupSeven(int betTypeId, string resourceId, string mapX)
     {
         const int twoPosition = 2;
         const int fourPosition = 4;
         const int sixPosition = 6;
-        var mapX = resourceId.Substring(5, 1);
         int mapY;
 
         switch (betTypeId)

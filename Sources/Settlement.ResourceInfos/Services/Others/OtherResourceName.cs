@@ -1,8 +1,8 @@
 ﻿using Settlement.Core.Constants;
-using Settlement.ResourceName.Constants;
-using Settlement.ResourceName.MapperFactory;
+using Settlement.ResourceInfos.Constants;
+using Settlement.ResourceInfos.MapperFactory;
 
-namespace Settlement.ResourceName.Services.Others;
+namespace Settlement.ResourceInfos.Services.Others;
 
 public class OtherResourceName : IMapperService
 {
@@ -17,10 +17,19 @@ public class OtherResourceName : IMapperService
             ResourceType.Halftime => ResourceNameConstants.HalfTime,
             ResourceType.Final => ResourceNameConstants.Final,
             ResourceType.OverTime => sportType == SportType.BaseBall ? ResourceNameConstants.ExtraInning : ResourceNameConstants.OverTime,
-            _ => sportQuarter.IndexOf(sportType) > -1 ? $"{resourceId}Q" :
-                sportPeriod.IndexOf(sportType) > -1 ? $"{resourceId}P" : resourceId
+            _ => QuarterPeriod(resourceId, sportType)
         };
 
         return (resourceId, resourceName);
+    }
+
+    private string QuarterPeriod(string resourceId, int sportType)
+    {
+        if (sportQuarter.IndexOf(sportType) > -1)
+        {
+            return $"{resourceId}Q";
+        }
+
+        return sportPeriod.IndexOf(sportType) > -1 ? $"{resourceId}P" : resourceId;
     }
 }

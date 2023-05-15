@@ -1,5 +1,5 @@
-﻿using Settlement.ResourceName.Constants;
-using Settlement.ResourceName.Services.Volleyball;
+﻿using Settlement.ResourceInfos.Constants;
+using Settlement.ResourceInfos.Services.Volleyball;
 
 namespace Settlement.BettypeName.UnitTests.Services.Volleyball;
 

@@ -13,6 +13,7 @@ import { SearchService } from '../services';
 import { Match } from '../models';
 import * as _ from 'lodash';
 import { HandleResultService } from '../services/handle-result.service';
+import { ResettleType } from '../constants/log-Type';
 
 @Component({
     selector: 'app-root',
@@ -38,7 +39,6 @@ export class AppComponent implements OnInit, OnDestroy {
     private subscriber: ISubscription;
     private readonly period = 60000;
     public intervalTimer = interval(this.period);
-    readonly resettleType = 'RES';
     constructor(
         private readonly elementRef: ElementRef<HTMLElement>,
         private readonly blockUIService: BlockUIService,
@@ -60,7 +60,7 @@ export class AppComponent implements OnInit, OnDestroy {
         this.matchCode = $event.matchCode;
         this.fromDate = $event.fromDate;
         this.toDate = $event.toDate;
-        this.isResettleLog = _.isEqual($event.productType, this.resettleType);
+        this.isResettleLog = _.isEqual($event.productType, ResettleType);
     }
 
     public getMatch($event) {

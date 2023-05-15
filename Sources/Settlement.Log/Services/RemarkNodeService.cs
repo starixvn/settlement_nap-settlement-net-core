@@ -33,13 +33,8 @@ public class RemarkNodeServiceImp : RemarkNodeService
             return string.Empty;
         }
 
-        var eventCounterLog = new List<string>();
-        var eventCountersRoot = xmlConvertService.Deserialize<EventCountersRoot>(content);
-        foreach (var item in eventCountersRoot.Items)
-        {
-            var resultLog = ParseEventCounterResult(item.Result);
-            eventCounterLog.Add($"{item.Position}:{resultLog}");
-        }
+        var eventCountersRoot = xmlConvertService.Deserialize<EventCountersRoot>(content) ?? new EventCountersRoot();
+        var eventCounterLog = (from item in eventCountersRoot.Items let resultLog = ParseEventCounterResult(item.Result) select $"{item.Position}:{resultLog}").ToList();
 
         return $"Event Counter: {string.Join("; ", eventCounterLog)}<br/>";
     }

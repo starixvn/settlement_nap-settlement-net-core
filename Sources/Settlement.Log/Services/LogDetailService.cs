@@ -2,9 +2,9 @@
 using Settlement.Core.Constants;
 using Settlement.Log.Criteria;
 using Settlement.Log.Models;
-using Settlement.ResourceName.Constants;
-using Settlement.ResourceName.MapperFactory;
-using Settlement.ResourceName.Services;
+using Settlement.ResourceInfos.Constants;
+using Settlement.ResourceInfos.MapperFactory;
+using Settlement.ResourceInfos.Services;
 
 namespace Settlement.Log.Services;
 
@@ -63,7 +63,10 @@ public class LogDetailServiceImp : LogDetailService
 
     public async Task<List<string>> GetPlayerNameCricket(int matchId, int sportType)
     {
-        if (sportType != SportType.Cricket) return new List<string>();
+        if (sportType != SportType.Cricket)
+        {
+            return new List<string>();
+        }
 
         var criteria = new GetPlayerInfoCriteria { MatchId = matchId };
         var listPlayer = (await repository.FetchAsync<PlayerCricketInfo>(criteria)).DistinctBy(item => item.OddsInfo).ToList();

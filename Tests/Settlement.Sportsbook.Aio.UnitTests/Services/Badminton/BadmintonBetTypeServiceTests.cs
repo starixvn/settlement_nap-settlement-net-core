@@ -1,4 +1,4 @@
-﻿using Settlement.ResourceName.Services;
+﻿using Settlement.ResourceInfos.Services;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Services.Badminton;
 
