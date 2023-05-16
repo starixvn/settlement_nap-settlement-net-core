@@ -172,7 +172,7 @@ public class InstantCalculateServiceImp : InstantCalculateService
         var goalRecordCheck = request.InstantGoalRecordBefore;
 
         if (totalGoalCheck > 0 &&
-            (totalGoal < totalGoalCheck || !goalRecordCheck.StartsWith(request.GoalRecord.FirstOrDefault())))
+            (totalGoal < totalGoalCheck || !goalRecordCheck.Equals(request.GoalRecord)))
         {
             var matchCheckingCriteria = new MatchCheckingCriteria
             {
