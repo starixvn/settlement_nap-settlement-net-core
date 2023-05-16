@@ -37,7 +37,6 @@ export class RequestService {
     public searchAutoCalculation(params: FilterAutoQuery) {
         const url = `${this.calculationApi}/filter-auto-calculate`;
         const request = this.httpRequestService.postMessagePack<Calculation>(params, url);
-        console.log('request', request)
         return firstValueFrom(request);
     }
 

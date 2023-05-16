@@ -86,13 +86,10 @@ export class AutoCalculateFilterComponent extends FilterBaseComponent implements
         this.query.toDate = this.verifyDateService.dateFormat(this.toDate);
 
         this.disableRefresh.emit(true);
-        // this.requestService.searchAutoCalculation(this.query).then(calculation => {
-        //     console.log(calculation)
-        //     this.searchAction.emit({ calculation, filterQuery: this.query });
-        //     this.disableRefresh.emit(false);
-        // });
-        const calculation = await this.requestService.searchAutoCalculation(this.query);
-        console.log('calculation', calculation);
+        this.requestService.searchAutoCalculation(this.query).then(calculation => {
+            this.searchAction.emit({ calculation, filterQuery: this.query });
+            this.disableRefresh.emit(false);
+        });
     }
 
     public onSelectPayout(value: ItemsSelect[]) {
