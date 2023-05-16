@@ -57,9 +57,12 @@ public class LogDirectlyServiceImp : LogDirectlyService
     public static string CreateHappyFive(int matchId) => $"Settlement for matchid: {matchId}";
 
     public static string CreateProfileLog(ProfileLog profileLog) =>
-        $"NAP: Calculate {profileLog.Action} for matchid: {profileLog.MatchId} Result: {profileLog.Resources} <br/> Betstatus {profileLog.BetStatus}";
+        $"NAP: Calculate {profileLog.Action} for matchid: {profileLog.MatchId} Result: {profileLog.Resources} <br/> Betstatus ({profileLog.BetStatus})";
 
     public static string CreateBetBuilderLog(ProfileLog profileLog) =>
+        $"NAP: Calculate {profileLog.Action} for matchid: {profileLog.MatchId} {(string.IsNullOrEmpty(profileLog.Resources) ? "" : profileLog.Resources + "<br/>")}   ; IsAuto:false; Bettype:38";
+
+    public static string CreateNumberGameLog(ProfileLog profileLog) =>
         $"NAP: Calculate {profileLog.Action} for matchid: {profileLog.MatchId} {(string.IsNullOrEmpty(profileLog.Resources) ? "" : profileLog.Resources + "<br/>")}   ; IsAuto:false; Bettype:38";
 }
 

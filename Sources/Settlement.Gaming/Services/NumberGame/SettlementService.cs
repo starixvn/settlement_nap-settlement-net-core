@@ -22,6 +22,9 @@ public interface SettlementService
 public class SettlementServiceImp : SettlementService
 {
     private const int NotAuthorized = 1000;
+    private const byte SeqOne = 1;
+    private const byte SeqTwo = 2;
+    private const byte SeqThree = 3;
 
     private readonly IDynamicRepository repository;
 
@@ -81,7 +84,7 @@ public class SettlementServiceImp : SettlementService
             await UpdateMatchInfo(request);
 
             //TODO
-            logDirectlyService.WriteLog(criteria.MatchId, LogDirectlyServiceImp.CreateHappyFive(criteria.MatchId));
+            WriteDirectlyLog(request, criteria);
 
             return await Execute(criteria);
         }
@@ -91,6 +94,36 @@ public class SettlementServiceImp : SettlementService
             ErrCode = validateDeploymentResult.ErrorCode,
             ErrMsg = validateDeploymentResult.ErrorMessage
         };
+    }
+
+    private void WriteDirectlyLog(NumberGameSettlementRequest request, RecalculateNumberGameCriteria criteria)
+    {
+        logDirectlyService.WriteLog(criteria.MatchId, $"REFUND Number Game for matchid: {criteria.MatchId}");
+
+        if (!request.Balls.Any()) return;
+
+        logDirectlyService.WriteLog(criteria.MatchId,
+            $"Calculate Number Game for matchid:{criteria.MatchId} - [LIVE] - Sequence number: (1)");
+
+        if (request.Balls.Exists(x => x.Seq == SeqTwo))
+        {
+            logDirectlyService.WriteLog(criteria.MatchId, $"Calculate Number Game for matchid:{criteria.MatchId} - [LIVE] - Sequence number: (2)");
+        }
+        else
+        {
+            logDirectlyService.WriteLog(criteria.MatchId, $"REFUND FT Number Game for matchid:{criteria.MatchId}");
+            return;
+        }
+
+        if (request.Balls.Exists(x => x.Seq == SeqThree))
+        {
+            logDirectlyService.WriteLog(criteria.MatchId, $"Calculate Number Game for matchid:{criteria.MatchId} - [LIVE] - Sequence number: (3)");
+            logDirectlyService.WriteLog(criteria.MatchId, $"Calculate Number Game for matchid: {criteria.MatchId}");
+        }
+        else
+        {
+            logDirectlyService.WriteLog(criteria.MatchId, $"REFUND FT Number Game for matchid:{criteria.MatchId}");
+        }
     }
 
     private async Task UpdateResult(RecalculateNumberGameCriteria criteria)
