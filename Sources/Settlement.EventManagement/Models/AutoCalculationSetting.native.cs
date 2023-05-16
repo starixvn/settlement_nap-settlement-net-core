@@ -6,18 +6,22 @@ public class AutoCalculationSetting
     private const int ConvertToBase = 2;
     private const int DirectPayoutBit = 4;
 
+    [IgnoreMember]
+    private bool IsMultiSportPage { get; }
+
     [Key("matchSetting")]
-    private string MatchSetting { get; }
+    public string MatchSetting { get; set; }
 
     [Key("leagueSetting")]
-    private string LeagueSetting { get; }
+    public string LeagueSetting { get; set; }
 
     public AutoCalculationSetting()
     {
     }
 
-    public AutoCalculationSetting(int autoSettingForMatch, int autoSettingForLeague)
+    public AutoCalculationSetting(int autoSettingForMatch, int autoSettingForLeague, bool isMultiSportPage = false)
     {
+        IsMultiSportPage = isMultiSportPage;
         MatchSetting = Convert.ToString(autoSettingForMatch, ConvertToBase).Reverse();
         LeagueSetting = Convert.ToString(autoSettingForLeague, ConvertToBase).Reverse();
     }
@@ -32,7 +36,7 @@ public class AutoCalculationSetting
                 return false;
             }
 
-            if (MatchSetting.Length <= DirectPayoutBit)
+            if (IsMultiSportPage || MatchSetting.Length <= DirectPayoutBit)
             {
                 return MatchSetting[0].Equals('1');
             }
@@ -57,7 +61,7 @@ public class AutoCalculationSetting
                 return false;
             }
 
-            if (LeagueSetting.Length <= DirectPayoutBit)
+            if (IsMultiSportPage || LeagueSetting.Length <= DirectPayoutBit)
             {
                 return LeagueSetting[0].Equals('1');
             }

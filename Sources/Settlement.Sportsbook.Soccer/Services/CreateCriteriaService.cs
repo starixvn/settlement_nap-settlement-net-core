@@ -118,6 +118,8 @@ public class CreateCriteriaServiceImp : ICreateCriteriaService
             GoalRecord = htGoalRecord,
             BetStatus = soccerBetStatusService.CreateBetStatusAfterUncalculateFt(request, matchGoalRecord.BetStatus, htGoalRecord),
             ResourceResult = GetResourceResultUnCalculateFt(),
+            HalfTimeAway = request.HalfTimeAway ?? 0,
+            HalfTimeHome = request.HalfTimeHome ?? 0,
             Action = ActionType.UnCalculateFullTime,
             Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString(),
         };

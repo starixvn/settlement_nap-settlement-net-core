@@ -85,6 +85,8 @@ export class UncalculateFullTimeQuery {
     public resultDetails: ResultDetail[];
     public hedgeMatchId: number;
     public isApplyHedging: boolean;
+    public halfTimeHome: number;
+    public halfTimeAway: number;
    
     constructor(matchDetail: MatchDetail, resultDetails: ResultDetail[], hedgeMatchId: number) {
         this.isExistFgLg = matchDetail.isExistFgLg;
@@ -94,5 +96,7 @@ export class UncalculateFullTimeQuery {
         this.resultDetails = resultDetails;
         this.hedgeMatchId = hedgeMatchId;
         this.isApplyHedging = hedgeMatchId > 0;
+        this.halfTimeAway = matchDetail.halfTimeAwayScore;
+        this.halfTimeHome = matchDetail.halfTimeHomeScore;
     }
 }

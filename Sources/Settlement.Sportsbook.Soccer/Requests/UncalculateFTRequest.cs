@@ -17,5 +17,9 @@ public class UncalculateFtRequest : IRequest<Result>
 
     public bool IsApplyHedging { get; set; }
 
+    public int? HalfTimeHome { get; set; }
+
+    public int? HalfTimeAway { get; set; }
+
     public IEnumerable<ResultDetail> ResultDetails { get; set; }
 }
