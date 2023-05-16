@@ -12,13 +12,6 @@ export class UpdateInstantQuery {
     instantHomeScoreBefore: string;
     instantAwayScoreBefore: string;
     instantGoalRecordBefore: string;
-    //    isExistHtFgNg: boolean;
-    //    isExistFgNg: boolean;
-    //    isExistFg: boolean;
-    //    isExistHtFg: boolean;
-    //    goalRecord: string;
-    //    firstGoalValue: string;
-    //    betStatus: string;
     childMatchType: number;
     constructor(match: CalculationMatch) {
         this.homeScore = match.instantHomeScore;
