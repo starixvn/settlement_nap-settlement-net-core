@@ -1,35 +1,47 @@
 ﻿using AutoMapper;
 using Fanex.NAP.Client.Helpers.Web;
 using Microsoft.AspNetCore.Http;
+using Settlement.Core.Services;
+using Settlement.FastMarkets.Constants;
 using Settlement.FastMarkets.Criteria;
+using Settlement.FastMarkets.Models;
 using Settlement.FastMarkets.Requests;
 
 namespace Settlement.FastMarkets.Services;
 
-public interface CreateQueryService
+public interface GenerationService
 {
+    List<BetType> BetTypesList(List<FastMarketResult> fastMarkets, string odds);
+
     Task<PushFastMarketResultCriteria> QuerySettle(SettleRequest request);
 }
 
-public class CreateQueryServiceImp : CreateQueryService
+public class GenerationServiceImp : GenerationService
 {
     private readonly IFastMarketResultService fastMarketResultService;
     private readonly IEventCounterService eventCounterService;
     private readonly IMapper mapper;
     private readonly INapSession currentSession;
     private readonly IHttpContextAccessor accessor;
+    private readonly IRefDataService refDataService;
+    private readonly ResultLabelService resultLabelService;
 
-    public CreateQueryServiceImp(IFastMarketResultService fastMarketResultService,
+    public GenerationServiceImp(
+        IFastMarketResultService fastMarketResultService,
         IEventCounterService eventCounterService,
         IMapper mapper,
         INapSession currentSession,
-        IHttpContextAccessor accessor)
+        IHttpContextAccessor accessor,
+        IRefDataService refDataService,
+        ResultLabelService resultLabelService)
     {
         this.fastMarketResultService = fastMarketResultService;
         this.eventCounterService = eventCounterService;
         this.mapper = mapper;
         this.currentSession = currentSession;
         this.accessor = accessor;
+        this.refDataService = refDataService;
+        this.resultLabelService = resultLabelService;
     }
 
     public async Task<PushFastMarketResultCriteria> QuerySettle(SettleRequest request)
@@ -45,5 +57,25 @@ public class CreateQueryServiceImp : CreateQueryService
         criteria.OldResults = await fastMarketResultService.OldResults(request.BetTypes, request.MatchId);
 
         return criteria;
+    }
+
+    public List<BetType> BetTypesList(List<FastMarketResult> fastMarkets, string odds)
+    {
+        return fastMarkets
+        .GroupBy(m => m.BetType)
+            .Select(m => new BetType { RefDataService = refDataService, BetTypeId = m.Key, ResultName = ResultName(m.Key, odds), FastMarketResults = m.ToList() })
+            .OrderBy(m => m.BetTypeId)
+            .ToList();
+    }
+
+    private ResultItemLabel ResultName(int betType, string odds)
+    {
+        return betType switch
+        {
+            FastMarketBetType.NextFiveMinutes => resultLabelService.NextFiveMinutes(odds),
+            FastMarketBetType.NextOneMinuteSetPiece => resultLabelService.NextOneMinuteSetPiece(),
+            FastMarketBetType.TimeMachineHdp => resultLabelService.TimeMachineHdp(),
+            _ => new ResultItemLabel()
+        };
     }
 }

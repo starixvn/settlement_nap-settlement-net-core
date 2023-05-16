@@ -1,5 +1,4 @@
-﻿using MediatR;
-using Settlement.FastMarkets.Controllers;
+﻿using Settlement.FastMarkets.Controllers;
 using Settlement.FastMarkets.Services;
 
 namespace Settlement.WebSites.Configurations;
@@ -12,15 +11,14 @@ public static class FastMarketsConfig
         services.AddTransient<IEventCounterElementService, EventCounterElementServiceImp>();
         services.AddTransient<IEventCounterResultService, EventCounterResultServiceImp>();
         services.AddTransient<IEventCounterService, EventCounterServiceImp>();
-        services.AddTransient<IFastMarketBetTypeService, FastMarketBetTypeServiceImp>();
         services.AddTransient<IFastMarketResultService, FastMarketResultServiceImp>();
         services.AddTransient<IFastMarketService, FastMarketServiceImp>();
         services.AddTransient<IMatchDetailService, MatchDetailServiceImp>();
-        services.AddTransient<IResultLabelService, ResultLabelServiceImp>();
+        services.AddTransient<ResultLabelService, ResultLabelServiceImp>();
         services.AddTransient<ISettingService, SettingServiceImp>();
         services.AddTransient<MergeDataService, MergeDataServiceImp>();
         services.AddTransient<MultipleServerFetcherService, MultipleServerFetcherServiceImp>();
-        services.AddTransient<CreateQueryService, CreateQueryServiceImp>();
+        services.AddTransient<GenerationService, GenerationServiceImp>();
     }
 
     public static void ConfigFastMarketsMediator(this IServiceCollection services)

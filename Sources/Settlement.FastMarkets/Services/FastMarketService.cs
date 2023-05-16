@@ -28,36 +28,33 @@ public class FastMarketServiceImp : IFastMarketService
 {
     private readonly IDynamicRepository repository;
 
-    private readonly IFastMarketBetTypeService fastMarketBetTypeService;
-
     private readonly IMapper mapper;
 
     private readonly MultipleServerFetcherService multipleServerFetcherService;
 
     private readonly AppSettingsKey appSettingsKey;
 
-    private readonly CreateQueryService createQueryService;
+    private readonly GenerationService generationService;
 
     private readonly ScaleOutSettleService scaleOutSettleService;
+
     private readonly LogDirectlyService logDirectlyService;
 
     public FastMarketServiceImp(
         IDynamicRepository repository,
-        IFastMarketBetTypeService fastMarketBetTypeService,
         IMapper mapper,
         MultipleServerFetcherService multipleServerFetcherService,
         IOptions<AppSettingsKey> appSettingsKey,
         ScaleOutSettleService scaleOutSettleService,
-        CreateQueryService createQueryService,
+        GenerationService generationService,
         LogDirectlyService logDirectlyService)
     {
         this.repository = repository;
-        this.fastMarketBetTypeService = fastMarketBetTypeService;
         this.mapper = mapper;
         this.multipleServerFetcherService = multipleServerFetcherService;
         this.appSettingsKey = appSettingsKey.Value;
         this.scaleOutSettleService = scaleOutSettleService;
-        this.createQueryService = createQueryService;
+        this.generationService = generationService;
         this.logDirectlyService = logDirectlyService;
     }
 
@@ -74,7 +71,7 @@ public class FastMarketServiceImp : IFastMarketService
 
         var (fastMarketTicketDetails, ticketsCount) = await multipleServerFetcherService.GetFastMarketTicketDetail(matchId);
         MergeFastMarketTicketsToResults(fastMarketResult, fastMarketTicketDetails);
-        var groupFastMarketByBetType = fastMarketBetTypeService.BetTypesList(fastMarketResult, handicapValue);
+        var groupFastMarketByBetType = generationService.BetTypesList(fastMarketResult, handicapValue);
 
         return new FastMarketModel
         {
@@ -120,7 +117,7 @@ public class FastMarketServiceImp : IFastMarketService
 
     public async Task<Result> Calculate(SettleRequest request)
     {
-        var criteria = await createQueryService.QuerySettle(request);
+        var criteria = await generationService.QuerySettle(request);
 
         var validationRequest = mapper.Map<PushFastMarketResultCriteria, EventTicketFastMarketRequest>(criteria);
 
@@ -145,8 +142,9 @@ public class FastMarketServiceImp : IFastMarketService
         };
 
         await scaleOutSettleService.UpdateMatchInfo(requestUpdateInfo);
-        //
-        logDirectlyService.WriteLog(criteria.MatchId, $"NAP: Fast Market {criteria.Action} for matchid: {criteria.MatchId}");
+
+        var message = $"NAP: Fast Market {criteria.Action} for matchId: {criteria.MatchId}";
+        logDirectlyService.WriteLog(criteria.MatchId, message);
 
         ExecuteCalculate(criteria);
 
