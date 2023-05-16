@@ -17,7 +17,6 @@ export class AutoCalculatePageComponent extends PageBaseComponent {
 
     public search($event) {
         this.calculation = $event.calculation;
-        console.log(this.calculation)
         this.filterQuery = $event.filterQuery;
     }
 
