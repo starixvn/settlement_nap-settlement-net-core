@@ -28,16 +28,17 @@ export class RequestService {
         return firstValueFrom(request);
     }
 
-  public search(params: FilterQuery) {
+    public search(params: FilterQuery) {
         const url = `${this.calculationApi}/filter`;
-    const request =  this.httpRequestService.postMessagePack<Calculation>(params, url);
-    return firstValueFrom(request);
+        const request = this.httpRequestService.postMessagePack<Calculation>(params, url);
+        return firstValueFrom(request);
     }
 
-  public searchAutoCalculation(params: FilterAutoQuery){
+    public searchAutoCalculation(params: FilterAutoQuery) {
         const url = `${this.calculationApi}/filter-auto-calculate`;
-    const request =  this.httpRequestService.postMessagePack<Calculation>(params, url);
-    return firstValueFrom(request);
+        const request = this.httpRequestService.postMessagePack<Calculation>(params, url);
+        console.log('request', request)
+        return firstValueFrom(request);
     }
 
     public getRemarkInfo(matchId: string): Observable<ChangeSettingResult> {
@@ -53,7 +54,7 @@ export class RequestService {
             leagueIds
         };
         const url = `${this.calculationApi}/auto-refresh`;
-    const request =  this.httpRequestService.postMessagePack<CalculationMatch[]>(query, url, false);
+        const request = this.httpRequestService.postMessagePack<CalculationMatch[]>(query, url, false);
         return firstValueFrom(request);
     }
 
@@ -62,7 +63,7 @@ export class RequestService {
             leagueId,
         };
         const url = `${this.calculationApi}/auto-refresh-auto-calculation`;
-    const request = this.httpRequestService.postMessagePack<CalculationMatch[]>(query, url, false);
+        const request = this.httpRequestService.postMessagePack<CalculationMatch[]>(query, url, false);
         return firstValueFrom(request);
     }
 

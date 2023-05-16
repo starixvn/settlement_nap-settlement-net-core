@@ -79,6 +79,7 @@ export class InstantCalculationQuery {
         this.isExistFG = score.isExistFG;
         this.isExistHTFG = score.isExistHTFG;
         this.resources = score.resources
+    }
 }
 
 export class UncalculateFullTimeQuery {
@@ -91,7 +92,7 @@ export class UncalculateFullTimeQuery {
     public isApplyHedging: boolean;
     public halfTimeHome: number;
     public halfTimeAway: number;
-   
+
     constructor(matchDetail: MatchDetail, resultDetails: ResultDetail[], hedgeMatchId: number) {
         this.isExistFgLg = matchDetail.isExistFgLg;
         this.isExistFgNg = matchDetail.isExistFgNg;

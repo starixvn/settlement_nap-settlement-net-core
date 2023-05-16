@@ -12,87 +12,90 @@ import { Statuses } from '../../constants';
 import { FilterBaseComponent } from '../../../shared/components/gaming/filter-base.component';
 
 @Component({
-  selector: 'auto-calculate-filter',
-  templateUrl: './auto-calculate-filter.component.html',
-  providers: [DatePipe,
-    { provide: NgbDateParserFormatter, useFactory: () => new CustomNgbDateParserFormatter('MMM dd, y') }],
+    selector: 'auto-calculate-filter',
+    templateUrl: './auto-calculate-filter.component.html',
+    providers: [DatePipe,
+        { provide: NgbDateParserFormatter, useFactory: () => new CustomNgbDateParserFormatter('MMM dd, y') }],
 })
 export class AutoCalculateFilterComponent extends FilterBaseComponent implements OnInit {
-  @Output() public readonly searchAction = new EventEmitter();
-  @Output() public readonly disableRefresh = new EventEmitter();
-  public statuses = Statuses;
-  public leagues: League[];
-  private readonly completedWithRunningTicket = "16";
-  public readonly query = new FilterAutoQuery();
-  public payoutSelect = new MultipleSelect();
-  constructor(
-    protected verifyDateService: VerifyDateService,
-    protected messageBoxService: MessageBoxService,
-    private readonly requestService: RequestService,
-    private readonly autoCalculateService: AutoCalculateService
-  ) {
-    super(verifyDateService, messageBoxService);
-  }
-
-  public ngOnInit() {
-    this.defaultDateFilter();
-    this.initFilterData();
-  }
-
-  private defaultDateFilter() {
-    this.query.statusId = Number(this.statuses[0].value);
-    this.query.leagueId = '0';
-    this.payoutSelect.items = this.autoCalculateService.createAutoPayoutFilter();
-    this.statuses = this.statuses.filter(status => status.value !== this.completedWithRunningTicket);
-  }
-
-  public async initFilterData() {
-    const date = await this.requestService.getDate();
-    this.fromDate = this.verifyDateService.convertToDateStruct(date.fromDate);
-    this.toDate = this.verifyDateService.convertToDateStruct(date.toDate);
-    this.renderLeague(this.fromDate, this.toDate);
-  }
-
-  public onSelectFromDate(value: NgbDateStruct) {
-    this.fromDate = value;
-    this.isDisabled = !this.verifyDate();
-    this.renderLeague(this.fromDate, this.toDate);
-  }
-
-  public onSelectToDate(value: NgbDateStruct) {
-    this.toDate = value;
-    this.isDisabled = !this.verifyDate();
-    this.renderLeague(this.fromDate, this.toDate);
-  }
-
-  private async renderLeague(fromDate: NgbDateStruct, toDate: NgbDateStruct) {
-    const allLeague = new League();
-    allLeague.leagueId = 0;
-    allLeague.leagueName = '--- Show ALL Leagues ---';
-
-    if (this.verifyDateService.validDate(this.fromDate, this.toDate)) {
-      const fromDateValue = this.verifyDateService.dateFormat(fromDate);
-      const toDateValue = this.verifyDateService.dateFormat(toDate);
-      var query = new LeagueQuery(fromDateValue, toDateValue);
-      const league = await this.requestService.getLeague(query);
-      this.leagues = [allLeague, ...league];
-    } else {
-      this.leagues = [allLeague];
+    @Output() public readonly searchAction = new EventEmitter();
+    @Output() public readonly disableRefresh = new EventEmitter();
+    public statuses = Statuses;
+    public leagues: League[];
+    private readonly completedWithRunningTicket = "16";
+    public readonly query = new FilterAutoQuery();
+    public payoutSelect = new MultipleSelect();
+    constructor(
+        protected verifyDateService: VerifyDateService,
+        protected messageBoxService: MessageBoxService,
+        private readonly requestService: RequestService,
+        private readonly autoCalculateService: AutoCalculateService
+    ) {
+        super(verifyDateService, messageBoxService);
     }
-  }
 
-  public async search() {
-    this.query.fromDate = this.verifyDateService.dateFormat(this.fromDate);
-    this.query.toDate = this.verifyDateService.dateFormat(this.toDate);
+    public ngOnInit() {
+        this.defaultDateFilter();
+        this.initFilterData();
+    }
 
-    this.disableRefresh.emit(true);
-    this.requestService.searchAutoCalculation(this.query).then(calculation => {
-      this.searchAction.emit({ calculation, filterQuery: this.query });
-      this.disableRefresh.emit(false);
-    });
-  }
+    private defaultDateFilter() {
+        this.query.statusId = Number(this.statuses[0].value);
+        this.query.leagueId = '0';
+        this.payoutSelect.items = this.autoCalculateService.createAutoPayoutFilter();
+        this.statuses = this.statuses.filter(status => status.value !== this.completedWithRunningTicket);
+    }
 
-  public onSelectPayout(value: ItemsSelect[]) {
-    this.query.autoSetting = value.length > 0 && value.length < this.payoutSelect.items.length ? value.map(item => Number(item.value)).join() : '';
-  }
+    public async initFilterData() {
+        const date = await this.requestService.getDate();
+        this.fromDate = this.verifyDateService.convertToDateStruct(date.fromDate);
+        this.toDate = this.verifyDateService.convertToDateStruct(date.toDate);
+        this.renderLeague(this.fromDate, this.toDate);
+    }
+
+    public onSelectFromDate(value: NgbDateStruct) {
+        this.fromDate = value;
+        this.isDisabled = !this.verifyDate();
+        this.renderLeague(this.fromDate, this.toDate);
+    }
+
+    public onSelectToDate(value: NgbDateStruct) {
+        this.toDate = value;
+        this.isDisabled = !this.verifyDate();
+        this.renderLeague(this.fromDate, this.toDate);
+    }
+
+    private async renderLeague(fromDate: NgbDateStruct, toDate: NgbDateStruct) {
+        const allLeague = new League();
+        allLeague.leagueId = 0;
+        allLeague.leagueName = '--- Show ALL Leagues ---';
+
+        if (this.verifyDateService.validDate(this.fromDate, this.toDate)) {
+            const fromDateValue = this.verifyDateService.dateFormat(fromDate);
+            const toDateValue = this.verifyDateService.dateFormat(toDate);
+            var query = new LeagueQuery(fromDateValue, toDateValue);
+            const league = await this.requestService.getLeague(query);
+            this.leagues = [allLeague, ...league];
+        } else {
+            this.leagues = [allLeague];
+        }
+    }
+
+    public async search() {
+        this.query.fromDate = this.verifyDateService.dateFormat(this.fromDate);
+        this.query.toDate = this.verifyDateService.dateFormat(this.toDate);
+
+        this.disableRefresh.emit(true);
+        // this.requestService.searchAutoCalculation(this.query).then(calculation => {
+        //     console.log(calculation)
+        //     this.searchAction.emit({ calculation, filterQuery: this.query });
+        //     this.disableRefresh.emit(false);
+        // });
+        const calculation = await this.requestService.searchAutoCalculation(this.query);
+        console.log('calculation', calculation);
+    }
+
+    public onSelectPayout(value: ItemsSelect[]) {
+        this.query.autoSetting = value.length > 0 && value.length < this.payoutSelect.items.length ? value.map(item => Number(item.value)).join() : '';
+    }
 }
