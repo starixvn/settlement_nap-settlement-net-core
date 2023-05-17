@@ -169,6 +169,7 @@ public class InstantCalculateServiceImp : InstantCalculateService
             Action = $"{request.Action}-{request.Mode}",
             AwayScore = request.AwayScore,
             HomeScore = request.HomeScore,
+            InstantKey = request.InstantKey,
             ResourceResult = resourceResult,
         };
         var matchCheckingResult = await CalculateCheckingInfo(matchCheckingCriteria);

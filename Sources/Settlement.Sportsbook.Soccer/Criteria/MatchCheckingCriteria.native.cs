@@ -7,7 +7,7 @@ public class MatchCheckingCriteria : NonQueryCommand
 {
     public int MatchId { get; set; }
 
-    //public int InstantKey { get; set; }
+    public int InstantKey { get; set; }
 
     public string HomeScore { get; set; }
 
