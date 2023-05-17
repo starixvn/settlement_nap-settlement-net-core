@@ -9,9 +9,6 @@ export class CalculationMatch extends Match {
     isFtCalculated: boolean;
     instantHomeScore: string;
     instantAwayScore: string;
-    instantHomeScoreBefore: string;
-    instantAwayScoreBefore: string;
-    instantGoalRecordBefore: string;
     instantKey: number;
     liveAwayScore: string;
     liveHomeScore: string;
