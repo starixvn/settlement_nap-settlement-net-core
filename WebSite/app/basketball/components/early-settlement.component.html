@@ -1,7 +1,7 @@
 ﻿<span toastContainer></span>
 <div class="padding" *ngIf="match">
     <div *ngIf="isReadyMatch">
-        <match-detail [match]="match" [isEarlySettlement]="true"></match-detail>
+        <match-detail [match]="match"></match-detail>
         <ticket-count [ticketCounts]="match.ticketCounts"></ticket-count>
         <div class="table-wrapper">
             <div class="table-header">

@@ -7,9 +7,10 @@ import { BlockUIService, HttpRequestService } from "../services";
 import { MessageBoxService } from "../services/message-box.service.native";
 import { IntervalBackgroundPipe } from '../pipes/interval-background.pipe';
 import { ResultByTeamNamePipe } from '../pipes/result-by-team-name.pipe';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
-    exports: [FormsModule, CommonModule, ToastContainerModule],
+    exports: [FormsModule, CommonModule, ToastContainerModule, MatDialogModule],
     providers: [
         MessageBoxService,
         ToastrService,

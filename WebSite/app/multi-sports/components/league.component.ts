@@ -406,7 +406,7 @@ export class LeagueComponent implements OnInit, OnChanges, OnDestroy {
 
   public updateInstantForLeague(autoCalcSetting: AutoSetting, leagueMatch: LeagueMatch) {
     this.dialogMessage.title = Language.confirmationBox;
-    this.dialogMessage.message = autoCalcSetting.isAutoPayoutForLeague ? Language.instants.confirmOffLeague : Language.instants.confirmOnLeague;
+    this.dialogMessage.message = autoCalcSetting.isInstantForLeague ? Language.instants.confirmOffLeague : Language.instants.confirmOnLeague;
     this.dialogMessage.hasActionOnNoBtn = true;
     this.messageBoxService.confirm(this.dialogMessage, () => {
       this.doUpdateSettingLeague(autoCalcSetting, leagueMatch, true);

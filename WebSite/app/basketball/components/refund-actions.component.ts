@@ -10,15 +10,15 @@ import { RefundActionBaseComponent } from '../../shared/components/sportsbook-so
 import { BasketballService, BetStatusService, VerificationService, CashOutService } from '../services';
 import { SettleQuery, SportTemplate } from '../../shared/models/sportsbook-sop';
 import { ToastContainerDirective } from 'ngx-toastr';
-import { MatchDetailComponent } from './match-detail.component';
 import { RefundCommonModule } from '../../shared/modules/refund-common.module';
 import { ResourceNameByIdPipe } from '../pipes/resource-name-by-id.pipe';
+import { CalculationMatchDetailComponent } from './calculation-match-detail.component';
 
 @Component({
     selector: 'refund-actions',
     templateUrl: './refund-actions.component.html',
     standalone: true,
-    imports: [RefundCommonModule, MatchDetailComponent, ResourceNameByIdPipe],
+    imports: [RefundCommonModule, CalculationMatchDetailComponent, ResourceNameByIdPipe],
     providers: [VerificationService, BasketballService, ResourceNameByIdPipe, BetStatusService, CashOutService]
 })
 export class RefundActionsComponent extends RefundActionBaseComponent implements SportTemplate {
@@ -31,6 +31,9 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
     public originalMatch: Match;
     public matchId: number;
     public resultDetail: ResultDetail[];
+    public isDirectly: boolean;
+    public isSDTSettle: boolean;
+    public resultDetailDisableInput: boolean[];
     public readonly isReSettledTickets: boolean;
     public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
     constructor(protected injector: Injector) {
@@ -52,11 +55,11 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
         this.init();
     }
 
-    public initService (){
+    public initService() {
         this.verificationService = this.injector.get(VerificationService);
         this.basketballService = this.injector.get(BasketballService);
         this.cashOutService = this.injector.get(CashOutService);
-        this.injector.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI  = event);
+        this.injector.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
     }
 
     public init() {
@@ -65,8 +68,22 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
         this.applyHedgeMatch = this.hedgeMatchDetail != null;
         this.resultDetails = this.basketballService.getResultDetail(this.match.resultDetails);
         this.resultDetails = this.resultDetails.filter(item => item.resourceId !== ResourcesIds.ot);
+        this.resultDetailDisableInput = new Array(this.resultDetails.length).fill(true);
         this.matchDetail = this.match.matchDetail;
         this.permission = this.match.permission;
+    }
+
+    public selectResult() {
+        if (!this.isSDTSettle) {
+            return;
+        }
+
+        const firstResultSelected = this.resultDetails.find(result => result.checked);
+        if(firstResultSelected) {
+            const index = this.resultDetail.indexOf(firstResultSelected);
+            this.resultDetailDisableInput = new Array(this.resultDetails.length).fill(true);
+            this.resultDetailDisableInput[index] = false;
+        }
     }
 
     public async refund() {
@@ -122,9 +139,9 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
         if (final.length > 0 && !isVirtualMatch && this.matchDetail.parentId === 0) {
             let half = 0;
             let betStatus = "0-0,0-0,0-0,0-0,0-0";
-            if(this.cashOutService.isCalcHalftimeWithMatchTwoQuarters(this.matchDetail.betStatus, resource)){
+            if (this.cashOutService.isCalcHalftimeWithMatchTwoQuarters(this.matchDetail.betStatus, resource)) {
                 betStatus = this.cashOutService.getDirectBetStatusOnRefund(resource);
-            } else if(this.cashOutService.isNotCalcHalftimeWithMatchTwoQuarters(resource)) {
+            } else if (this.cashOutService.isNotCalcHalftimeWithMatchTwoQuarters(resource)) {
                 half = 8;
             } else {
                 half = this.cashOutService.getHalf(resource);
