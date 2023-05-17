@@ -83,15 +83,6 @@ public class Match : BaseMatch
     [Key("instantAwayScore")]
     public string InstantAwayScore { get; set; }
 
-    [Key("instantHomeScoreBefore")]
-    public string InstantHomeScoreBefore { get; set; }
-
-    [Key("instantAwayScoreBefore")]
-    public string InstantAwayScoreBefore { get; set; }
-
-    [Key("instantGoalRecordBefore")]
-    public string InstantGoalRecordBefore { get; set; }
-
     [Key("instantStatusId")]
     public int InstantStatusId { get; set; }
 

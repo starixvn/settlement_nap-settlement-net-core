@@ -162,36 +162,23 @@ public class InstantCalculateServiceImp : InstantCalculateService
 
     private async Task<Result> CheckCalculationMatch(InstantCalculationRequest request, string resourceResult)
     {
-        var homeScore = int.Parse(request.HomeScore ?? "0");
-        var awayScore = int.Parse(request.AwayScore ?? "0");
-        var beforeHomeScore = int.Parse(request.InstantHomeScoreBefore ?? "0");
-        var beforeAwayScore = int.Parse(request.InstantAwayScoreBefore ?? "0");
 
-        var totalGoal = homeScore + awayScore;
-        var totalGoalCheck = beforeHomeScore + beforeAwayScore;
-        var goalRecordCheck = request.InstantGoalRecordBefore;
-
-        if (totalGoalCheck > 0 &&
-            (totalGoal < totalGoalCheck || !goalRecordCheck.Equals(request.GoalRecord)))
+        var matchCheckingCriteria = new MatchCheckingCriteria
         {
-            var matchCheckingCriteria = new MatchCheckingCriteria
-            {
-                MatchId = request.MatchId,
-                Action = $"{request.Action}-{request.Mode}",
-                AwayScore = request.AwayScore,
-                HomeScore = request.HomeScore,
-                ResourceResult = resourceResult,
-            };
-            var matchCheckingResult = await CalculateCheckingInfo(matchCheckingCriteria);
+            MatchId = request.MatchId,
+            Action = $"{request.Action}-{request.Mode}",
+            AwayScore = request.AwayScore,
+            HomeScore = request.HomeScore,
+            ResourceResult = resourceResult,
+        };
+        var matchCheckingResult = await CalculateCheckingInfo(matchCheckingCriteria);
 
-            return new Result
-            {
-                ErrCode = matchCheckingResult.ErrCode,
-                ErrMsg = matchCheckingResult.ErrMsg
-            };
-        }
+        return new Result
+        {
+            ErrCode = matchCheckingResult.ErrCode,
+            ErrMsg = matchCheckingResult.ErrMsg
+        };
 
-        return new Result();
     }
 
     private async Task<MatchTicketInfo> GetMatchDetailWithTicketInfo(int matchId)

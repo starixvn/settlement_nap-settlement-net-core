@@ -140,12 +140,4 @@ public class CalculateMatchWaiting
     [Key("directWaitingTime")]
     public int DirectWaitingTime { get; set; }
 
-    [Key("instantHomeScoreBefore")]
-    public string InstantHomeScoreBefore { get; set; }
-
-    [Key("instantAwayScoreBefore")]
-    public string InstantAwayScoreBefore { get; set; }
-
-    [Key("instantGoalRecordBefore")]
-    public string InstantGoalRecordBefore { get; set; }
 }
