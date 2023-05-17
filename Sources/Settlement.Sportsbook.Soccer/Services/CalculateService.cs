@@ -62,7 +62,7 @@ public class CalculateServiceImp : ICalculateService
             return matchChecking;
         }
 
-        WriteDirectlyLog(request);
+        WriteDirectlyLog(criteria);
 
         await ExecuteAsync(criteria);
         await RefundChildMatch(criteria);
@@ -107,7 +107,7 @@ public class CalculateServiceImp : ICalculateService
             return requestChecking;
         }
 
-        WriteDirectlyLog(request);
+        WriteDirectlyLog(criteria);
 
         await ExecuteAsync(criteria);
 
@@ -143,22 +143,22 @@ public class CalculateServiceImp : ICalculateService
         }
     }
 
-    private void WriteDirectlyLog(SettleBaseRequest request)
+    private void WriteDirectlyLog(CalculateCriteria criteria)
     {
         var match = new Match
         {
-            MatchId = request.MatchId,
-            HalfTimeAwayScore = request.HalfTimeAwayScore,
-            HalfTimeHomeScore = request.HalfTimeHomeScore,
-            FinalAwayScore = request.FinalAwayScore,
-            FinalHomeScore = request.FinalHomeScore,
-            GoalRecord = request.GoalRecord,
-            BetStatus = request.BetStatus,
+            MatchId = criteria.MatchId,
+            HalfTimeAwayScore = criteria.HalfTimeAway,
+            HalfTimeHomeScore = criteria.HalfTimeHome,
+            FinalAwayScore = criteria.FullTimeAway ?? 0,
+            FinalHomeScore = criteria.FullTimeHome ?? 0,
+            GoalRecord = criteria.GoalRecord,
+            BetStatus = criteria.BetStatus,
         };
 
-        var message = LogDirectlyServiceImp.GenerateLogData(match, request.ActionName);
+        var message = LogDirectlyServiceImp.GenerateLogData(match, criteria.Action);
 
-        logDirectlyService.WriteLog(request.MatchId, message);
+        logDirectlyService.WriteLog(criteria.MatchId, message);
     }
 
     private void WriteDirectlyLogUncalculateFt(CalculateCriteria criteria, IEnumerable<ResultDetail> resultDetails)
