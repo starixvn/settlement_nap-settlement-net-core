@@ -15,18 +15,18 @@ public class PushInstantCalculationServiceImp : PushInstantCalculationService
 {
     private readonly IDynamicRepository repository;
     private readonly IHttpContextAccessor accessor;
-    private readonly LogDirectlyService logDirectlyService;
+    private readonly LogService logService;
     private readonly AppSettingsKey appSettingsKey;
 
     public PushInstantCalculationServiceImp(
         IDynamicRepository repository,
         IHttpContextAccessor accessor,
-        LogDirectlyService logDirectlyService,
+        LogService logService,
         IOptions<AppSettingsKey> appSettingsKey)
     {
         this.repository = repository;
         this.accessor = accessor;
-        this.logDirectlyService = logDirectlyService;
+        this.logService = logService;
         this.appSettingsKey = appSettingsKey.Value;
     }
 
@@ -46,9 +46,7 @@ public class PushInstantCalculationServiceImp : PushInstantCalculationService
     private void WriteLogDirectly(PushInstantCalculationCriteria criteria)
     {
         var score = $"{criteria.HomeScore}-{criteria.AwayScore}";
-
-        var message = LogDirectlyServiceImp.CreateInstantLog(criteria.MatchId, criteria.Action, score);
-
-        logDirectlyService.WriteLog(criteria.MatchId, message);
+        var message = $"NAP: Instant Uncalculate {criteria.Action} for matchId: {criteria.MatchId} Score: {score}";
+        logService.WriteLog(criteria.MatchId, message);
     }
 }

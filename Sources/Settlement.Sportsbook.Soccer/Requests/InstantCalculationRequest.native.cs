@@ -48,5 +48,5 @@ public class InstantCalculationRequest : IRequest<Result>
 
     public string Mode => IsHalfTime ? "INST-HT" : "INST-FT";
 
-    public List<XmlResource> Resources { get; set; } // undo
+    public List<XmlResource> Resources { get; set; }
 }

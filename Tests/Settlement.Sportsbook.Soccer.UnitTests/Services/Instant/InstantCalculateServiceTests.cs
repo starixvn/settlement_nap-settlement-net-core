@@ -24,12 +24,11 @@ public class InstantCalculateServiceTests
     private readonly ScaleOutSettleService scaleOutSettleService;
 
     private readonly InstantCalculateService service;
-
+    public InstantCalculateServiceTests()
     {
         repository = Substitute.For<IDynamicRepository>();
         instantResourceService = Substitute.For<InstantResourceService>();
         scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
-        var logService = Substitute.For<LogService>();
         var pushInstantService = Substitute.For<PushInstantCalculationService>();
 
         var mapperConfig = new MapperConfigurationExpression();
@@ -39,8 +38,8 @@ public class InstantCalculateServiceTests
         var appSettings = new AppSettingsKey { SiteDbServer = new List<string> { "DB01", "DB02", "DB03" } };
         var option = Options.Create(appSettings);
 
-        service = new InstantCalculateServiceImp(repository, mapper, accessor, instantResourceService, option, scaleOutSettleService, logService);
-            instantResourceService, option, scaleOutSettleService, pushInstantService);
+        service = new InstantCalculateServiceImp(repository, mapper, instantResourceService, option, scaleOutSettleService, pushInstantService);
+
     }
 
     [Fact]

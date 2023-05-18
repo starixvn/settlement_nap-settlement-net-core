@@ -33,7 +33,6 @@ public class InstantCalculateServiceImp : InstantCalculateService
     private readonly ScaleOutSettleService scaleOutSettleService;
 
     private readonly PushInstantCalculationService pushInstantService;
-    private readonly LogService logService;
 
     private readonly AppSettingsKey appSettingsKey;
 
@@ -43,7 +42,6 @@ public class InstantCalculateServiceImp : InstantCalculateService
         InstantResourceService instantResourceService,
         IOptions<AppSettingsKey> appSettingsKey,
         ScaleOutSettleService scaleOutSettleService,
-        LogService logService,
         PushInstantCalculationService pushInstantService)
     {
         this.repository = repository;
@@ -51,7 +49,6 @@ public class InstantCalculateServiceImp : InstantCalculateService
         this.instantResourceService = instantResourceService;
         this.appSettingsKey = appSettingsKey.Value;
         this.scaleOutSettleService = scaleOutSettleService;
-        this.logService = logService;
         this.pushInstantService = pushInstantService;
     }
 
@@ -145,7 +142,6 @@ public class InstantCalculateServiceImp : InstantCalculateService
     {
         var criteria = mapper.Map<InstantCalculationRequest, PushInstantCalculationCriteria>(request);
         criteria.ResourceResult = resourceResult;
-        criteria.AdminId = currentSession.UserId;
         criteria.Action = $"{request.Action}-{request.Mode}";
 
         var result = await ValidateBeforeExecute(request);
@@ -162,7 +158,6 @@ public class InstantCalculateServiceImp : InstantCalculateService
 
     private async Task<Result> CheckCalculationMatch(InstantCalculationRequest request, string resourceResult)
     {
-
         var matchCheckingCriteria = new MatchCheckingCriteria
         {
             MatchId = request.MatchId,
@@ -179,7 +174,6 @@ public class InstantCalculateServiceImp : InstantCalculateService
             ErrCode = matchCheckingResult.ErrCode,
             ErrMsg = matchCheckingResult.ErrMsg
         };
-
     }
 
     private async Task<MatchTicketInfo> GetMatchDetailWithTicketInfo(int matchId)
@@ -253,14 +247,6 @@ public class InstantCalculateServiceImp : InstantCalculateService
         return betStatus;
     }
 
-
-       private void WriteLogDirectly(PushInstantCalculationCriteria criteria)
-    {
-        var score = $"{criteria.HomeScore}-{criteria.AwayScore}";
-        var message = $"NAP: Instant Uncalculate {criteria.Mode} for matchId: {criteria.MatchId} Score: {score} Instant action: {criteria.Mode}";
-        logService.WriteLog(criteria.MatchId, message);
-    }
-
     private string GetResourceResultInstantUncal(List<XmlResource> calculatedResources, List<XmlResource> uncalResources)
     {
         var resourcesId = uncalResources.Select(r => r.ResourceId).ToList();
@@ -272,8 +258,7 @@ public class InstantCalculateServiceImp : InstantCalculateService
                 ResultStatusId = ResultStatus.Initial,
                 SettlementStatusId = SettlementStatus.Running,
                 HomeValue = string.Empty
-            })
-            .ToList();
+            }).ToList();
         return instantResourceService.GenerateResource(resources);
     }
 
@@ -281,21 +266,14 @@ public class InstantCalculateServiceImp : InstantCalculateService
     {
         var goalCondition = mapper.Map<InstantGoalCondition>(request);
 
-        List<XmlResource> resources;
-
         if (request.HomeScore == "0" && request.AwayScore == "0" || string.IsNullOrEmpty(request.GoalRecord))
         {
             return new List<XmlResource>();
         }
 
-        if (request.IsHalfTime)
-        {
-            resources = instantResourceService.Halftime(goalCondition);
-        }
-        else
-        {
-            resources = instantResourceService.FullTime(goalCondition);
-        }
+        var resources = request.IsHalfTime
+            ? instantResourceService.Halftime(goalCondition)
+            : instantResourceService.FullTime(goalCondition);
 
         return resources;
     }

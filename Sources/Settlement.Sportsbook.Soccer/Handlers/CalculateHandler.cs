@@ -72,9 +72,8 @@ public class CalculateHandler : IRequestHandler<GetMatchRequest, Match>,
     public async Task<Result> Handle(InstantCalculationRequest request, CancellationToken cancellationToken)
     {
         request.AdminId = currentSession.UserId;
-        return await instantCalculateService.PushInstantCalculation(request);
+        return request.Action.Equals(ActionType.UnCalculate)
+            ? await instantCalculateService.UncalPushInstantCalculation(request)
+            : await instantCalculateService.PushInstantCalculation(request);
     }
-
-    //public async Task<MatchCheckingResult> Handle(MatchCheckingRequest request, CancellationToken cancellationToken) =>
-    //    await instantCalculateService.CalculateCheckingInfo(request);
 }
