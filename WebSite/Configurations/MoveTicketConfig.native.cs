@@ -12,11 +12,12 @@ public static class MoveTicketConfig
     {
         services.AddTransient<IMatchResultDetailService, MatchResultDetailServiceImp>();
         services.AddTransient<IMatchService, MatchServiceImp>();
-        services.AddTransient<IMoveTicketService, MoveTicketServiceImp>();
+        services.AddTransient<MoveTicketService, MoveTicketServiceImp>();
         services.AddTransient<IScoreService, ScoreServiceImp>();
         services.AddTransient<IScoreSetService, ScoreSetServiceImp>();
         services.AddTransient<CompareMatchService, CompareMatchServiceImp>();
-        services.AddTransient<MoveTicketMultipleServerService, MoveTicketMultipleServerServiceImp>();
+        services.AddTransient<MoveActionService, MoveActionServiceImp>();
+        services.AddTransient<MoveRunningService, MoveRunningServiceImp>();
         services.AddTransient<NewInfoMatchService, NewInfoMatchServiceImp>();
         services.AddTransient<SiteMatchService, SiteMatchServiceImp>();
     }

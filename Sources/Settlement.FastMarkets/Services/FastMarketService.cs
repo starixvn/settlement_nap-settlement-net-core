@@ -38,7 +38,7 @@ public class FastMarketServiceImp : IFastMarketService
 
     private readonly ScaleOutSettleService scaleOutSettleService;
 
-    private readonly LogDirectlyService logDirectlyService;
+    private readonly LogService logService;
 
     public FastMarketServiceImp(
         IDynamicRepository repository,
@@ -47,7 +47,7 @@ public class FastMarketServiceImp : IFastMarketService
         IOptions<AppSettingsKey> appSettingsKey,
         ScaleOutSettleService scaleOutSettleService,
         GenerationService generationService,
-        LogDirectlyService logDirectlyService)
+        LogService logService)
     {
         this.repository = repository;
         this.mapper = mapper;
@@ -55,7 +55,7 @@ public class FastMarketServiceImp : IFastMarketService
         this.appSettingsKey = appSettingsKey.Value;
         this.scaleOutSettleService = scaleOutSettleService;
         this.generationService = generationService;
-        this.logDirectlyService = logDirectlyService;
+        this.logService = logService;
     }
 
     public async Task<FastMarketModel> Query(int matchId)
@@ -144,7 +144,7 @@ public class FastMarketServiceImp : IFastMarketService
         await scaleOutSettleService.UpdateMatchInfo(requestUpdateInfo);
 
         var message = $"NAP: Fast Market {criteria.Action} for matchId: {criteria.MatchId}";
-        logDirectlyService.WriteLog(criteria.MatchId, message);
+        logService.WriteLog(criteria.MatchId, message);
 
         ExecuteCalculate(criteria);
 

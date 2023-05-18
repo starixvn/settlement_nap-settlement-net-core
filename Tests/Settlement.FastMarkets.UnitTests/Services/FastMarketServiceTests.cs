@@ -30,7 +30,7 @@ public class FastMarketServiceTests
         var mapper = new Mapper(config);
 
         repository = Substitute.For<IDynamicRepository>();
-        var logDirectlyService = Substitute.For<LogDirectlyService>();
+        var logService = Substitute.For<LogService>();
         scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
         multipleServerFetcherService = Substitute.For<MultipleServerFetcherService>();
         generationService = Substitute.For<GenerationService>();
@@ -43,7 +43,7 @@ public class FastMarketServiceTests
             option,
             scaleOutSettleService,
             generationService,
-            logDirectlyService);
+            logService);
     }
 
     [Theory]

@@ -8,6 +8,8 @@ public class SettleEarlyRequest : IRequest<Result>
 {
     public int MatchId { get; set; }
 
+    public int AdminId { get; set; }
+
     public string ActionName { get; set; }
 
     public bool IsReSettledTickets { get; set; }

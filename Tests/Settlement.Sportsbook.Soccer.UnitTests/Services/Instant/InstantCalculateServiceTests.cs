@@ -1,7 +1,5 @@
 ﻿using AutoMapper;
-using AutoMapper.Configuration;
 using Fanex.Data.Repository;
-using Fanex.NAP.Client.Helpers.Web;
 using Fanex.Settlement.ScaleOut.Models;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
@@ -29,16 +27,13 @@ public class InstantCalculateServiceFacts
 
     private readonly InstantCalculateService service;
 
-    private readonly LogDirectlyService logDirectlyService;
-
     public InstantCalculateServiceFacts()
     {
         repository = Substitute.For<IDynamicRepository>();
-        var currentSession = Substitute.For<INapSession>();
         var accessor = Substitute.For<IHttpContextAccessor>();
         instantResourceService = Substitute.For<IInstantResourceService>();
         scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
-        logDirectlyService = Substitute.For<LogDirectlyService>();
+        var logService = Substitute.For<LogService>();
 
         var context = new DefaultHttpContext
         {
@@ -56,7 +51,7 @@ public class InstantCalculateServiceFacts
         var appSettings = new AppSettingsKey { SiteDbServer = new List<string> { "DB01", "DB02", "DB03" } };
         var option = Options.Create(appSettings);
 
-        service = new InstantCalculateServiceImp(repository, currentSession, mapper, accessor, instantResourceService, option, scaleOutSettleService, logDirectlyService);
+        service = new InstantCalculateServiceImp(repository, mapper, accessor, instantResourceService, option, scaleOutSettleService, logService);
     }
 
     [Fact]
@@ -200,11 +195,11 @@ public class InstantCalculateServiceFacts
         // Assert
         Received.InOrder(() =>
         {
-            repository.Received().ExecuteAsync(Arg.Any<AddAutoResultCriteria>());
-            scaleOutSettleService.Received().UpdateMatchInfo(Arg.Any<UpdateMatchInfoRequest>());
-            repository.Received().ExecuteAsync(Arg.Any<PushInstantCalculationCriteria>());
-            repository.Received().ExecuteAsync(Arg.Any<PushInstantCalculationCriteria>());
-            repository.Received().ExecuteAsync(Arg.Any<PushInstantCalculationCriteria>());
+            repository.ExecuteAsync(Arg.Any<AddAutoResultCriteria>());
+            scaleOutSettleService.UpdateMatchInfo(Arg.Any<UpdateMatchInfoRequest>());
+            repository.ExecuteAsync(Arg.Any<PushInstantCalculationCriteria>());
+            repository.ExecuteAsync(Arg.Any<PushInstantCalculationCriteria>());
+            repository.ExecuteAsync(Arg.Any<PushInstantCalculationCriteria>());
         });
     }
 }

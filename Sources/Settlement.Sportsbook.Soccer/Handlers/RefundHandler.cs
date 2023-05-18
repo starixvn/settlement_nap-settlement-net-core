@@ -1,11 +1,14 @@
 ﻿using MediatR;
 using Settlement.Core.Models;
+using Settlement.Sportsbook.Soccer.Criteria;
 using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Requests;
 using Settlement.Sportsbook.Soccer.Services;
 
 namespace Settlement.Sportsbook.Soccer.Handlers;
 
+using AutoMapper;
+using Fanex.NAP.Client.Helpers.Web;
 using Services.GetMatch;
 
 internal class RefundHandler :
@@ -17,32 +20,53 @@ internal class RefundHandler :
     IRequestHandler<GetMatchDetailThirdPartyBetTicketsRequest, List<MatchMoveBetTicket>>
 
 {
+    private readonly INapSession currentSession;
+
+    private readonly IMapper mapper;
+
     private readonly IMatchService matchService;
 
     private readonly IRefundService refundService;
 
-    public RefundHandler(IMatchService matchService, IRefundService refundService)
+    public RefundHandler(
+        INapSession currentSession,
+        IMatchService matchService,
+        IRefundService refundService,
+        IMapper mapper)
     {
+        this.currentSession = currentSession;
         this.matchService = matchService;
         this.refundService = refundService;
+        this.mapper = mapper;
     }
 
     public async Task<List<string>> Handle(GetSpecificBetTypeRequest request, CancellationToken cancellationToken) =>
         await matchService.GetSpecificBetTypes(request);
 
-    public async Task<MarkedTickets>
-        Handle(CheckingMarkedTicketsRequest request, CancellationToken cancellationToken) =>
-        await refundService.CheckMarkedTickets(request);
+    public async Task<MarkedTickets> Handle(CheckingMarkedTicketsRequest request, CancellationToken cancellationToken)
+    {
+        var criteria = mapper.Map<CheckingMarkedTicketsRequest, CheckingMarkedTicketsCriteria>(request);
+        return await refundService.CheckMarkedTickets(criteria);
+    }
 
-    public async Task<Result> Handle(RefundRequest request, CancellationToken cancellationToken) =>
-        await refundService.Refund(request);
+    public async Task<Result> Handle(RefundRequest request, CancellationToken cancellationToken)
+    {
+        request.AdminId = currentSession.UserId;
+        return await refundService.Refund(request);
+    }
 
-    public async Task<Result> Handle(RefundRunningThirdPartyTicketRequest request,
-        CancellationToken cancellationToken) =>
-        await refundService.RefundRunningThirdPartyTickets(request);
+    public async Task<Result> Handle(RefundRunningThirdPartyTicketRequest request, CancellationToken cancellationToken)
+    {
+        request.AdminId = currentSession.UserId;
+        return await refundService.RefundRunningThirdPartyTickets(request);
+    }
 
-    public async Task<Result> Handle(MoveBetRequest request, CancellationToken cancellationToken) =>
-        await refundService.MoveThirdPartyBetTickets(request);
+    public async Task<Result> Handle(MoveBetRequest request, CancellationToken cancellationToken)
+    {
+        var criteria = mapper.Map<MoveBetRequest, MoveThirdPartyBetTicketCriteria>(request);
+        criteria.AdminId = currentSession.UserId;
+        return await refundService.MoveThirdPartyBetTickets(criteria);
+    }
 
     public async Task<List<MatchMoveBetTicket>> Handle(GetMatchDetailThirdPartyBetTicketsRequest request,
         CancellationToken cancellationToken) =>

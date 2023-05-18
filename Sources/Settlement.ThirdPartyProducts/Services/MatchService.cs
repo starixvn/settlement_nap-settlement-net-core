@@ -1,7 +1,5 @@
 ﻿using AutoMapper;
 using Fanex.Data.Repository;
-using Microsoft.Extensions.Options;
-using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.ThirdPartyProducts.Criteria;
 using Settlement.ThirdPartyProducts.Models;
@@ -11,8 +9,6 @@ namespace Settlement.ThirdPartyProducts.Services;
 
 public interface MatchService
 {
-    Task<Result> Calculate(CalculateRequest request);
-
     Task<MatchDetailModel> GetMatch(MatchInfoRequest request);
 
     Task<List<SelectionDetailModel>> GetSelection(int matchId);
@@ -26,54 +22,22 @@ public class MatchServiceImp : MatchService
 
     private readonly IMapper mapper;
 
-    private readonly BetBuilderCalculateService betBuilderCalculateService;
-
     private readonly BetBuilderMatchesService betBuilderMatchesService;
 
     private readonly BetBuilderService betBuilderService;
-
-    private readonly AppSettingsKey appSettingsKey;
-
-    private readonly LogDirectlyService logDirectlyService;
 
     public MatchServiceImp(
         IRefDataService refDataService,
         IMapper mapper,
         IDynamicRepository repository,
-        BetBuilderCalculateService betBuilderCalculateService,
         BetBuilderMatchesService betBuilderMatchesService,
-        BetBuilderService betBuilderService,
-        IOptions<AppSettingsKey> appSettingsKey,
-        LogDirectlyService logDirectlyService)
+        BetBuilderService betBuilderService)
     {
         this.refDataService = refDataService;
         this.mapper = mapper;
         this.repository = repository;
-        this.betBuilderCalculateService = betBuilderCalculateService;
         this.betBuilderMatchesService = betBuilderMatchesService;
         this.betBuilderService = betBuilderService;
-        this.logDirectlyService = logDirectlyService;
-        this.appSettingsKey = appSettingsKey.Value;
-    }
-
-    public async Task<Result> Calculate(CalculateRequest request)
-    {
-        var resourcesResult = betBuilderCalculateService.CreateResources(request.Resources);
-
-        var criteria = betBuilderCalculateService.CreateCriteria(request.MatchId, request.ActionName, resourcesResult);
-        var selectedMarket = await betBuilderCalculateService.GetInfoMarket(criteria);
-        await betBuilderCalculateService.UpdateMatchInfo(criteria, selectedMarket);
-        criteria.SelectedMarket = selectedMarket;
-
-        //TODO
-        var messageLog = LogDirectlyServiceImp.CreateBetBuilderLog(new ProfileLog(criteria.MatchId, criteria.Action,
-            criteria.SelectedSelection, ""));
-
-        logDirectlyService.WriteLog(criteria.MatchId, messageLog);
-
-        await ExecuteMultiServer(criteria);
-
-        return new Result();
     }
 
     public async Task<MatchDetailModel> GetMatch(MatchInfoRequest request)
@@ -95,14 +59,5 @@ public class MatchServiceImp : MatchService
         };
 
         return (await repository.FetchAsync<SelectionDetailModel>(criteria)).ToList();
-    }
-
-    private async Task ExecuteMultiServer(CalculationCriteria criteria)
-    {
-        foreach (var server in appSettingsKey.SiteDbServer)
-        {
-            criteria.DbServer = server;
-            await repository.ExecuteAsync(criteria);
-        }
     }
 }

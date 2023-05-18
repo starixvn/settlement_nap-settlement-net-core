@@ -39,13 +39,13 @@ public class CreateQueryServiceImp : ICreateQueryService
 
     private readonly IMapper mapper;
 
-    private readonly ILogService logService;
+    private readonly LogService logService;
 
     public CreateQueryServiceImp(XmlConvertService xmlConvertService,
                                 INapSession currentSession,
                                 IHttpContextAccessor accessor,
                                 IMapper mapper,
-                                ILogService logService)
+                                LogService logService)
     {
         this.xmlConvertService = xmlConvertService;
         this.currentSession = currentSession;

@@ -23,21 +23,21 @@ public class CalculateServiceTests
 
     private readonly ICalculateService service;
 
-    private readonly LogDirectlyService logDirectlyService;
+    private readonly LogService logService;
 
     public CalculateServiceTests()
     {
         repository = Substitute.For<IDynamicRepository>();
         createCriteriaService = Substitute.For<ICreateCriteriaService>();
         scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
-        logDirectlyService = Substitute.For<LogDirectlyService>();
+        logService = Substitute.For<LogService>();
         var mapperConfig = new MapperConfigurationExpression();
         mapperConfig.AddProfile<SoccerAutoMapperProfile>();
         var config = new MapperConfiguration(mapperConfig);
         var mapper = new Mapper(config);
         var appSettings = new AppSettingsKey { SiteDbServer = new List<string> { "DB01", "DB02", "DB03" } };
         var appSettingsOptions = Options.Create(appSettings);
-        service = new CalculateServiceImp(mapper, repository, appSettingsOptions, createCriteriaService, scaleOutSettleService, logDirectlyService);
+        service = new CalculateServiceImp(mapper, repository, appSettingsOptions, createCriteriaService, scaleOutSettleService, logService);
     }
 
     [Theory]
@@ -55,7 +55,7 @@ public class CalculateServiceTests
             Action = ActionType.CalculateAll
         };
         createCriteriaService.CreateCalculateCriteria(Arg.Any<SettleRequest>()).Returns(criteria);
-        logDirectlyService.WriteLog(Arg.Any<int>(), Arg.Any<string>());
+        logService.WriteLog(Arg.Any<int>(), Arg.Any<string>());
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage { ErrorCode = errorCode, ErrorMessage = errorMsg });
 
         var actual = await service.Calculate(query);
@@ -76,7 +76,7 @@ public class CalculateServiceTests
             Action = ActionType.CalculateAll
         };
         createCriteriaService.CreateCalculateCriteria(Arg.Any<SettleRequest>()).Returns(criteria);
-        logDirectlyService.WriteLog(Arg.Any<int>(), Arg.Any<string>());
+        logService.WriteLog(Arg.Any<int>(), Arg.Any<string>());
 
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
 
@@ -103,7 +103,7 @@ public class CalculateServiceTests
             Action = ActionType.CalculateAll
         };
         createCriteriaService.CreateCalculateCriteria(Arg.Any<SettleRequest>()).Returns(criteria);
-        logDirectlyService.WriteLog(Arg.Any<int>(), Arg.Any<string>());
+        logService.WriteLog(Arg.Any<int>(), Arg.Any<string>());
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
         await repository.ExecuteAsync(Arg.Any<CalculateCriteria>());
 
@@ -143,10 +143,10 @@ public class CalculateServiceTests
             Action = ActionType.UnCalculateFullTime
         };
         createCriteriaService.CreateUnCalculateFtCriteria(Arg.Any<UncalculateFtRequest>()).Returns(criteria);
-        logDirectlyService.WriteLog(Arg.Any<int>(), Arg.Any<string>());
+        logService.WriteLog(Arg.Any<int>(), Arg.Any<string>());
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage { ErrorCode = errorCode, ErrorMessage = errorMsg });
 
-        var actual = await service.UncalculateFT(query);
+        var actual = await service.UncalculateFt(query);
 
         Assert.Equal(result, actual.IsSuccessful);
     }
@@ -161,10 +161,10 @@ public class CalculateServiceTests
             MatchId = 1
         };
         createCriteriaService.CreateUnCalculateFtCriteria(Arg.Any<UncalculateFtRequest>()).Returns(criteria);
-        logDirectlyService.WriteLog(Arg.Any<int>(), Arg.Any<string>());
+        logService.WriteLog(Arg.Any<int>(), Arg.Any<string>());
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
 
-        await service.UncalculateFT(query);
+        await service.UncalculateFt(query);
 
         await scaleOutSettleService.Received().UpdateMatchInfo(Arg.Any<UpdateMatchInfoRequest>());
         await repository.Received(3).ExecuteAsync(Arg.Any<CalculateCriteria>());
@@ -184,13 +184,12 @@ public class CalculateServiceTests
             MatchId = 1
         };
         createCriteriaService.CreateUnCalculateFtCriteria(Arg.Any<UncalculateFtRequest>()).Returns(criteria);
-        logDirectlyService.WriteLog(Arg.Any<int>(), Arg.Any<string>());
+        logService.WriteLog(Arg.Any<int>(), Arg.Any<string>());
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
 
-        await service.UncalculateFT(query);
+        await service.UncalculateFt(query);
 
         await scaleOutSettleService.Received(2).UpdateMatchInfo(Arg.Any<UpdateMatchInfoRequest>());
         await repository.Received(6).ExecuteAsync(Arg.Any<CalculateCriteria>());
     }
-
 }

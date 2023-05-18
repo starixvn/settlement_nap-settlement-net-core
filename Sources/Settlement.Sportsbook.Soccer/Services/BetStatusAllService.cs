@@ -29,14 +29,8 @@ public class BetStatusAllServiceImp : IBetStatusAllService
         {
             return NoGoal(singleQuery);
         }
-        else if (validationService.HasFinalScoreAndGoalRecord(singleQuery))
-        {
-            return WithSemicolon(singleQuery);
-        }
-        else
-        {
-            return string.Empty;
-        }
+
+        return validationService.HasFinalScoreAndGoalRecord(singleQuery) ? WithSemicolon(singleQuery) : string.Empty;
     }
 
     public string GetBetStatusRefund(RefundRequest request)
@@ -45,25 +39,21 @@ public class BetStatusAllServiceImp : IBetStatusAllService
         {
             return string.Empty;
         }
-        else if (validationService.IsNullScoreAndGoalRecord(request))
+
+        if (validationService.IsNullScoreAndGoalRecord(request))
         {
             return NoGoal(request);
         }
-        else if (validationService.HasHalftimeScoreWithoutSemicolonOnGoalRecord(request))
+
+        if (validationService.HasHalftimeScoreWithoutSemicolonOnGoalRecord(request))
         {
             return WithoutSemicolon(request);
         }
-        else if (validationService.HasHalftimeScoreWithSemicolonOnGoalRecord(request))
-        {
-            return WithSemicolon(request);
-        }
-        else
-        {
-            return string.Empty;
-        }
+
+        return validationService.HasHalftimeScoreWithSemicolonOnGoalRecord(request) ? WithSemicolon(request) : string.Empty;
     }
 
-    private string NoGoal(SettleBaseRequest singleQuery)
+    private static string NoGoal(SettleBaseRequest singleQuery)
     {
         var goalRecord = new GoalRecordModel
         {

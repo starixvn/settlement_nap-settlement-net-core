@@ -7,6 +7,8 @@ public class UncalculateFtRequest : IRequest<Result>
 {
     public int MatchId { get; set; }
 
+    public int AdminId { get; set; }
+
     public bool IsExistFgLg { get; set; }
 
     public bool IsExistHtFgLg { get; set; }

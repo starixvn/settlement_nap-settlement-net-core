@@ -6,7 +6,6 @@ import {
   MultiSport,
   DateFilter,
   MoveTicketsRequest,
-  GetChildMatchesRequest,
   ChildMatch,
 } from '../../models';
 import * as _ from 'lodash';
@@ -35,10 +34,6 @@ export class MoveTicketsService {
 
   public moveTickets(request: MoveTicketsRequest): Observable<Result> {
     return this.httpRequestService.postJson(request, `/api/moveticket/move-ticket`);
-  }
-
-  public getChildMatches(request: GetChildMatchesRequest): Observable<ChildMatch[]> {
-    return this.httpRequestService.postJson(request, `/api/moveticket/get-child-match`);
   }
 
   public popupLog(matchId: number, fromDate: string, toData: string ) {

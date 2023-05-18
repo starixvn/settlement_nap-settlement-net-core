@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
+using Settlement.Core.Services;
 using Settlement.Sportsbook.Aio.Constants;
 using Settlement.Sportsbook.Aio.Criteria;
 using Settlement.Sportsbook.Aio.Criteria.Cricket;
@@ -30,6 +31,8 @@ public class MultipleServerAioServiceTests
 
     private readonly NetPositionService netPositionService;
 
+    private readonly LogService logService;
+
     public MultipleServerAioServiceTests()
     {
         var appSetting = new AppSettingsKey { SiteDbServer = new List<string> { "01", "02" } };
@@ -39,7 +42,8 @@ public class MultipleServerAioServiceTests
         createQueryService = Substitute.For<ICreateQueryService>();
         mergeDataService = Substitute.For<MergeDataService>();
         netPositionService = Substitute.For<NetPositionService>();
-        service = new MultipleServerAioServiceImp(repository, option, scaleOutSettleService, createQueryService, mergeDataService, netPositionService);
+        logService = Substitute.For<LogService>();
+        service = new MultipleServerAioServiceImp(repository, option, scaleOutSettleService, createQueryService, mergeDataService, netPositionService, logService);
     }
 
     [Theory]

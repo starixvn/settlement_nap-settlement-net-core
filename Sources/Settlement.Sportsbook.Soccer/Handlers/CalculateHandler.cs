@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using Fanex.NAP.Client.Helpers.Web;
+using MediatR;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Sportsbook.Soccer.Models;
@@ -20,15 +21,21 @@ public class CalculateHandler : IRequestHandler<GetMatchRequest, Match>,
     IRequestHandler<UncalculateFtRequest, Result>
 
 {
+    private readonly INapSession currentSession;
+
     private readonly IMatchService matchService;
 
     private readonly ICalculateService calculateService;
 
     private readonly InstantCalculateService instantCalculateService;
 
-    public CalculateHandler(IMatchService matchService, ICalculateService calculateService,
+    public CalculateHandler(
+        INapSession currentSession,
+        IMatchService matchService,
+        ICalculateService calculateService,
         InstantCalculateService instantCalculateService)
     {
+        this.currentSession = currentSession;
         this.matchService = matchService;
         this.calculateService = calculateService;
         this.instantCalculateService = instantCalculateService;
@@ -44,6 +51,7 @@ public class CalculateHandler : IRequestHandler<GetMatchRequest, Match>,
 
     public async Task<Result> Handle(SettleRequest request, CancellationToken cancellationToken)
     {
+        request.AdminId = currentSession.UserId;
         return request.ActionName.Equals(ActionType.UnCalculate)
             ? await calculateService.UnCalculate(request)
             : await calculateService.Calculate(request);
@@ -52,14 +60,20 @@ public class CalculateHandler : IRequestHandler<GetMatchRequest, Match>,
     public async Task<Result> Handle(CheckStatusRequest request, CancellationToken cancellationToken) =>
         await calculateService.CheckStatus(request);
 
-    public async Task<Result> Handle(UncalculateFtRequest request, CancellationToken cancellationToken) =>
-        await calculateService.UncalculateFT(request);
+    public async Task<Result> Handle(UncalculateFtRequest request, CancellationToken cancellationToken)
+    {
+        request.AdminId = currentSession.UserId;
+        return await calculateService.UncalculateFt(request);
+    }
 
     public async Task<UndoCheckingModel> Handle(UndoCheckingRequest request, CancellationToken cancellationToken) =>
         await instantCalculateService.UndoCheckingScore(request.MatchId);
 
-    public async Task<Result> Handle(InstantCalculationRequest request, CancellationToken cancellationToken) =>
-        await instantCalculateService.PushInstantCalculation(request);
+    public async Task<Result> Handle(InstantCalculationRequest request, CancellationToken cancellationToken)
+    {
+        request.AdminId = currentSession.UserId;
+        return await instantCalculateService.PushInstantCalculation(request);
+    }
 
     public async Task<MatchGoalRecordModel> Handle(MatchCheckingRequest request, CancellationToken cancellationToken) =>
         await instantCalculateService.CalculateCheckingInfo(request);

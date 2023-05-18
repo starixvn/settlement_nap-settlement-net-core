@@ -1,5 +1,4 @@
 ﻿using Fanex.Data.Repository;
-using Fanex.NAP.Client.Helpers.Web;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
 using Microsoft.AspNetCore.Http;
@@ -22,13 +21,10 @@ public interface SettlementService
 public class SettlementServiceImp : SettlementService
 {
     private const int NotAuthorized = 1000;
-    private const byte SeqOne = 1;
     private const byte SeqTwo = 2;
     private const byte SeqThree = 3;
 
     private readonly IDynamicRepository repository;
-
-    private readonly INapSession currentSession;
 
     private readonly XmlConvertService xmlConvertService;
 
@@ -39,25 +35,24 @@ public class SettlementServiceImp : SettlementService
     private readonly ScaleOutSettleService scaleOutSettleService;
 
     private readonly AppSettingsKey appSettingsKey;
-    private readonly LogDirectlyService logDirectlyService;
+
+    private readonly LogService logService;
 
     public SettlementServiceImp(
         IDynamicRepository repository,
-        INapSession currentSession,
         XmlConvertService xmlConvertService,
         IHttpContextAccessor accessor,
         ScaleOutSettleThirdPartyService scaleOutSettleThirdPartyService,
         ScaleOutSettleService scaleOutSettleService,
         IOptions<AppSettingsKey> options,
-        LogDirectlyService logDirectlyService)
+        LogService logService)
     {
         this.repository = repository;
-        this.currentSession = currentSession;
         this.xmlConvertService = xmlConvertService;
         this.accessor = accessor;
         this.scaleOutSettleThirdPartyService = scaleOutSettleThirdPartyService;
         this.scaleOutSettleService = scaleOutSettleService;
-        this.logDirectlyService = logDirectlyService;
+        this.logService = logService;
         appSettingsKey = options.Value;
     }
 
@@ -83,7 +78,6 @@ public class SettlementServiceImp : SettlementService
             await UpdateResult(criteria);
             await UpdateMatchInfo(request);
 
-            //TODO
             WriteDirectlyLog(request, criteria);
 
             return await Execute(criteria);
@@ -98,31 +92,42 @@ public class SettlementServiceImp : SettlementService
 
     private void WriteDirectlyLog(NumberGameSettlementRequest request, RecalculateNumberGameCriteria criteria)
     {
-        logDirectlyService.WriteLog(criteria.MatchId, $"REFUND Number Game for matchid: {criteria.MatchId}");
+        var message = $"REFUND Number Game for matchId: {criteria.MatchId}";
+        logService.WriteLog(criteria.MatchId, message);
 
-        if (!request.Balls.Any()) return;
-
-        logDirectlyService.WriteLog(criteria.MatchId,
-            $"Calculate Number Game for matchid:{criteria.MatchId} - [LIVE] - Sequence number: (1)");
-
-        if (request.Balls.Exists(x => x.Seq == SeqTwo))
+        if (request.Balls.Any())
         {
-            logDirectlyService.WriteLog(criteria.MatchId, $"Calculate Number Game for matchid:{criteria.MatchId} - [LIVE] - Sequence number: (2)");
+            message = $"Calculate Number Game for matchId: {criteria.MatchId} - [LIVE] - Sequence number: (1)";
+            logService.WriteLog(criteria.MatchId, message);
+
+            WriteLogSequenceTwo(criteria.MatchId, request.Balls);
+            WriteLogSequenceThree(criteria.MatchId, request.Balls);
         }
-        else
+    }
+
+    private void WriteLogSequenceTwo(int matchId, List<BallModel> balls)
+    {
+        var message = balls.Exists(x => x.Seq == SeqTwo)
+                            ? $"Calculate Number Game for matchId: {matchId} - [LIVE] - Sequence number: (2)"
+                            : $"REFUND FT Number Game for matchId: {matchId}";
+        logService.WriteLog(matchId, message);
+    }
+
+    private void WriteLogSequenceThree(int matchId, List<BallModel> balls)
+    {
+        if (!balls.Exists(x => x.Seq == SeqTwo))
         {
-            logDirectlyService.WriteLog(criteria.MatchId, $"REFUND FT Number Game for matchid:{criteria.MatchId}");
             return;
         }
 
-        if (request.Balls.Exists(x => x.Seq == SeqThree))
+        if (balls.Exists(x => x.Seq == SeqThree))
         {
-            logDirectlyService.WriteLog(criteria.MatchId, $"Calculate Number Game for matchid:{criteria.MatchId} - [LIVE] - Sequence number: (3)");
-            logDirectlyService.WriteLog(criteria.MatchId, $"Calculate Number Game for matchid: {criteria.MatchId}");
+            logService.WriteLog(matchId, $"Calculate Number Game for matchId: {matchId} - [LIVE] - Sequence number: (3)");
+            logService.WriteLog(matchId, $"Calculate Number Game for matchId: {matchId}");
         }
         else
         {
-            logDirectlyService.WriteLog(criteria.MatchId, $"REFUND FT Number Game for matchid:{criteria.MatchId}");
+            logService.WriteLog(matchId, $"REFUND FT Number Game for matchId: {matchId}");
         }
     }
 
@@ -143,7 +148,7 @@ public class SettlementServiceImp : SettlementService
         {
             Command = EventStatus.Completed,
             MatchId = request.MatchId,
-            Creator = currentSession.UserId,
+            Creator = request.UserId,
             Action = request.Action
         };
 
@@ -188,13 +193,13 @@ public class SettlementServiceImp : SettlementService
         return new RecalculateNumberGameCriteria
         {
             MatchId = request.MatchId,
-            AdminId = currentSession.UserId,
+            AdminId = request.UserId,
             Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString(),
             BallResults = GetBallResults(request.Balls)
         };
     }
 
-    private Result NoPermission => new()
+    private static Result NoPermission => new()
     {
         ErrCode = NotAuthorized,
         ErrMsg = "You are not authorized to use this function. Please contact the admin for help."
