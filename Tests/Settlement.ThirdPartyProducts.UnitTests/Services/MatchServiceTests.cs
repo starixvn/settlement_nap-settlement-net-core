@@ -1,8 +1,6 @@
 ﻿using AutoFixture;
 using AutoMapper;
-using AutoMapper.Configuration;
 using Fanex.Data.Repository;
-using Microsoft.Extensions.Options;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.ThirdPartyProducts.Criteria;
@@ -35,9 +33,7 @@ public class MatchServiceTests
         mapperConfig.AddProfile<ThirdPartyProductsAutoMapperProfile>();
         var config = new MapperConfiguration(mapperConfig);
         var mapper = new Mapper(config);
-        var appSetting = new AppSettingsKey { SiteDbServer = new List<string> { "01", "02" } };
-        var option = Options.Create(appSetting);
-        service = new MatchServiceImp(refDataService, mapper, repository, betBuilderCalculateService, betBuilderMatchesService, betBuilderService, option);
+        service = new MatchServiceImp(refDataService, mapper, repository, betBuilderMatchesService, betBuilderService);
     }
 
     [Fact]
@@ -73,23 +69,5 @@ public class MatchServiceTests
 
         // Assert
         Assert.True(selection.Count == 4);
-    }
-
-    [Fact]
-    public async Task Calculate_Always_CallRelatedMethods()
-    {
-        // Arrange
-        betBuilderCalculateService.CreateCriteria(100, "test", Arg.Any<string>()).Returns(new CalculationCriteria());
-
-        // Act
-        var result = await service.Calculate(new CalculateRequest { MatchId = 100, ActionName = "test" });
-
-        // Assert
-        Assert.Null(result.ErrMsg);
-        betBuilderCalculateService.Received().CreateResources(Arg.Any<List<ResourcesItemModel>>());
-        betBuilderCalculateService.Received().CreateCriteria(100, "test", Arg.Any<string>());
-        await betBuilderCalculateService.Received().GetInfoMarket(Arg.Any<CalculationCriteria>());
-        await betBuilderCalculateService.Received().UpdateMatchInfo(Arg.Any<CalculationCriteria>(), Arg.Any<string>());
-        await repository.Received(2).ExecuteAsync(Arg.Any<CalculationCriteria>());
     }
 }

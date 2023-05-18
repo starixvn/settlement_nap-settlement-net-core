@@ -1,12 +1,11 @@
-﻿using AutoMapper;
-using Fanex.Data.Repository;
-using Fanex.NAP.Client.Helpers.Web;
+﻿using Fanex.Data.Repository;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
+using Settlement.Core.Services;
 using Settlement.Sportsbook.Soccer.Constants;
 using Settlement.Sportsbook.Soccer.Criteria;
 using Settlement.Sportsbook.Soccer.Requests;
@@ -15,22 +14,18 @@ namespace Settlement.Sportsbook.Soccer.Services;
 
 public interface IRefundService
 {
-    Task<MarkedTickets> CheckMarkedTickets(CheckingMarkedTicketsRequest request);
+    Task<MarkedTickets> CheckMarkedTickets(CheckingMarkedTicketsCriteria criteria);
+
+    Task<Result> MoveThirdPartyBetTickets(MoveThirdPartyBetTicketCriteria criteria);
 
     Task<Result> Refund(RefundRequest request);
 
     Task<Result> RefundRunningThirdPartyTickets(RefundRunningThirdPartyTicketRequest request);
-
-    Task<Result> MoveThirdPartyBetTickets(MoveBetRequest request);
 }
 
 public class RefundServiceImp : IRefundService
 {
     private readonly IDynamicRepository repository;
-
-    private readonly INapSession currentSession;
-
-    private readonly IMapper mapper;
 
     private readonly IHttpContextAccessor accessor;
 
@@ -40,27 +35,26 @@ public class RefundServiceImp : IRefundService
 
     private readonly AppSettingsKey appSettingsKey;
 
+    private readonly LogService logService;
+
     public RefundServiceImp(
         IDynamicRepository repository,
-        IMapper mapper,
         IHttpContextAccessor accessor,
         IOptions<AppSettingsKey> appSettingsKey,
         ICreateCriteriaService createCriteriaService,
-        INapSession currentSession,
-        ScaleOutSettleService scaleOutSettleService)
+        ScaleOutSettleService scaleOutSettleService,
+        LogService logService)
     {
         this.repository = repository;
-        this.mapper = mapper;
         this.accessor = accessor;
         this.appSettingsKey = appSettingsKey.Value;
         this.createCriteriaService = createCriteriaService;
-        this.currentSession = currentSession;
         this.scaleOutSettleService = scaleOutSettleService;
+        this.logService = logService;
     }
 
-    public async Task<MarkedTickets> CheckMarkedTickets(CheckingMarkedTicketsRequest request)
+    public async Task<MarkedTickets> CheckMarkedTickets(CheckingMarkedTicketsCriteria criteria)
     {
-        var criteria = mapper.Map<CheckingMarkedTicketsRequest, CheckingMarkedTicketsCriteria>(request);
         foreach (var server in appSettingsKey.SiteDbServer)
         {
             criteria.DbServer = server;
@@ -88,6 +82,7 @@ public class RefundServiceImp : IRefundService
         }
 
         await ExecuteRefund(criteria);
+
         await RefundHedgeMatch(request, criteria);
 
         return validationResult;
@@ -169,11 +164,25 @@ public class RefundServiceImp : IRefundService
     {
         await UpdateMatchInfo(criteria);
 
+        WriteLog(criteria);
+
         foreach (var server in appSettingsKey.SiteDbServer)
         {
             criteria.DbServer = server;
             await repository.ExecuteAsync(criteria);
         }
+    }
+
+    private void WriteLog(RefundCriteria criteria)
+    {
+        var messageLog = $"NAP: Calculate {criteria.Action} for matchId:{criteria.MatchId} "
+                         + $"score FT: {criteria.FullTimeHome}-{criteria.FullTimeAway} "
+                         + $"HT: {criteria.HalfTimeHome}-{criteria.HalfTimeAway} "
+                         + (!string.IsNullOrEmpty(criteria.GoalSequence) ? "GoalRecord:" + criteria.GoalSequence : string.Empty)
+                         + $" SDTRecord: {criteria.SdtRecord} "
+                         + (!string.IsNullOrEmpty(criteria.BetStatus) ? $"Remark({criteria.BetStatus})" : string.Empty);
+
+        logService.WriteLog(criteria.MatchId, messageLog);
     }
 
     public async Task<Result> RefundRunningThirdPartyTickets(RefundRunningThirdPartyTicketRequest request)
@@ -182,26 +191,14 @@ public class RefundServiceImp : IRefundService
         {
             ActionName = request.ActionName,
             MatchId = request.MatchId,
-            Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString(),
-            AdminId = currentSession.UserId
+            AdminId = request.AdminId,
+            Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString()
         };
 
-        var validationRequest = new EventTicketRequest
+        var result = await VerifyBeforeRefundRunningTickets(request.MatchId, request.ActionName, criteria.SpName);
+        if (result.ErrCode > 0)
         {
-            MatchId = request.MatchId,
-            Action = request.ActionName,
-            SpName = criteria.SpName,
-            Mode = "REFUND"
-        };
-
-        var validationResult = await scaleOutSettleService.ValidateEventAndTicket(validationRequest);
-        if (validationResult.ErrorCode > 0)
-        {
-            return new Result
-            {
-                ErrCode = validationResult.ErrorCode,
-                ErrMsg = validationResult.ErrorMessage
-            };
+            return result;
         }
 
         foreach (var server in appSettingsKey.SiteDbServer)
@@ -210,33 +207,43 @@ public class RefundServiceImp : IRefundService
             await repository.ExecuteAsync(criteria);
         }
 
-        return new Result();
+        return result;
     }
 
-    public async Task<Result> MoveThirdPartyBetTickets(MoveBetRequest request)
+    private async Task<Result> VerifyBeforeRefundRunningTickets(int matchId, string actionName, string spName)
     {
-        var spName = request.ActionName.IgnoreCaseEquals(ActionType.BetDaq) ? "NAP_Admin_Settlement_BetDaq_Move" : "NAP_Admin_Settlement_BetFair_Move";
         var validationRequest = new EventTicketRequest
         {
-            MatchId = request.MatchId,
-            DestinationMatchId = request.NewMatchId,
-            Action = "MoveTicket",
+            MatchId = matchId,
+            Action = actionName,
             SpName = spName,
-            Mode = request.ActionName
+            Mode = "REFUND"
         };
 
-        var validationResult = await scaleOutSettleService.ValidateEventAndTicket(validationRequest);
-        if (validationResult.ErrorCode > 0)
+        var resultMessage = await scaleOutSettleService.ValidateEventAndTicket(validationRequest);
+        return new Result
         {
-            return new Result
-            {
-                ErrCode = validationResult.ErrorCode,
-                ErrMsg = validationResult.ErrorMessage
-            };
+            ErrCode = resultMessage.ErrorCode,
+            ErrMsg = resultMessage.ErrorMessage
+        };
+    }
+
+    public async Task<Result> MoveThirdPartyBetTickets(MoveThirdPartyBetTicketCriteria criteria)
+    {
+        var spName = criteria.ActionName.IgnoreCaseEquals(ActionType.BetDaq) ? "NAP_Admin_Settlement_BetDaq_Move" : "NAP_Admin_Settlement_BetFair_Move";
+        var result = await VerifyBeforeMoveBetTickets(criteria, spName);
+        if (result.ErrCode > 0)
+        {
+            return result;
         }
 
-        var criteria = mapper.Map<MoveBetRequest, MoveThirdPartyBetTicketCriteria>(request);
-        criteria.AdminId = currentSession.UserId;
+        await ExecuteMoveBetTickets(criteria, spName);
+
+        return result;
+    }
+
+    private async Task ExecuteMoveBetTickets(MoveThirdPartyBetTicketCriteria criteria, string spName)
+    {
         criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
         criteria.SpName = spName;
         foreach (var server in appSettingsKey.SiteDbServer)
@@ -244,7 +251,24 @@ public class RefundServiceImp : IRefundService
             criteria.DbServer = server;
             await repository.ExecuteAsync(criteria);
         }
+    }
 
-        return new Result();
+    private async Task<Result> VerifyBeforeMoveBetTickets(MoveThirdPartyBetTicketCriteria criteria, string spName)
+    {
+        var validationRequest = new EventTicketRequest
+        {
+            MatchId = criteria.MatchId,
+            DestinationMatchId = criteria.NewMatchId,
+            Action = "MoveTicket",
+            SpName = spName,
+            Mode = criteria.ActionName
+        };
+
+        var resultMessage = await scaleOutSettleService.ValidateEventAndTicket(validationRequest);
+        return new Result
+        {
+            ErrCode = resultMessage.ErrorCode,
+            ErrMsg = resultMessage.ErrorMessage
+        };
     }
 }

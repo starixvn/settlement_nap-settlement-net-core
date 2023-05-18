@@ -3,6 +3,7 @@ using Fanex.Settlement.ScaleOut.Services;
 using Microsoft.Extensions.Options;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
+using Settlement.Core.Services;
 using Settlement.Sportsbook.Aio.Constants;
 using Settlement.Sportsbook.Aio.Criteria;
 using Settlement.Sportsbook.Aio.Criteria.Cricket;
@@ -30,13 +31,16 @@ public class MultipleServerAioServiceImp : MultipleServerAioService
     private readonly ICreateQueryService createQueryService;
     private readonly MergeDataService mergeDataService;
     private readonly NetPositionService netPositionService;
+    private readonly LogService logService;
 
-    public MultipleServerAioServiceImp(IDynamicRepository repository,
+    public MultipleServerAioServiceImp(
+        IDynamicRepository repository,
         IOptions<AppSettingsKey> appSettingsKey,
         ScaleOutSettleService scaleOutSettleService,
         ICreateQueryService createQueryService,
         MergeDataService mergeDataService,
-        NetPositionService netPositionService)
+        NetPositionService netPositionService,
+        LogService logService)
     {
         this.repository = repository;
         this.appSettingsKey = appSettingsKey.Value;
@@ -44,6 +48,7 @@ public class MultipleServerAioServiceImp : MultipleServerAioService
         this.createQueryService = createQueryService;
         this.mergeDataService = mergeDataService;
         this.netPositionService = netPositionService;
+        this.logService = logService;
     }
 
     public async Task<(List<Models.ResultDetail>, TicketCounts)> FetchResultDetails(GetResultDetailCriteria criteria, int sportType)
@@ -163,11 +168,7 @@ public class MultipleServerAioServiceImp : MultipleServerAioService
 
     private static string GetResourceIds(List<ResourceItem> betTypes)
     {
-        var listResourceId = new List<string>();
-        foreach (var betType in betTypes)
-        {
-            listResourceId.Add(betType.ResourceId);
-        }
+        var listResourceId = betTypes.Select(betType => betType.ResourceId).ToList();
 
         return string.Join(",", listResourceId);
     }
@@ -217,6 +218,13 @@ public class MultipleServerAioServiceImp : MultipleServerAioService
         }
     }
 
+    private void WriteLog(int matchId, string action, string resources, string betStatus)
+    {
+        var messageLog = $"NAP: Calculate {action} for matchId: {matchId} Result: {resources} <br/> BetStatus ({betStatus})";
+
+        logService.WriteLog(matchId, messageLog);
+    }
+
     private async Task<List<ResultCommand>> UpdateInfoAndSettle(SettleCriteria criteria, List<ResourceItem> selectedResources)
     {
         await SetUnderSettleFlag(criteria, selectedResources);
@@ -224,6 +232,9 @@ public class MultipleServerAioServiceImp : MultipleServerAioService
         await UpdateMatchInfo(criteria);
 
         var commandList = new List<ResultCommand>();
+
+        WriteLog(criteria.MatchId, criteria.Action, criteria.SelectedResources, criteria.BetStatus);
+
         foreach (var server in appSettingsKey.SiteDbServer)
         {
             criteria.DbServer = server;

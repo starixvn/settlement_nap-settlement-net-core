@@ -42,16 +42,4 @@ public class MoveTicketControllerTests
         Assert.IsType<Result>(actual?.Value);
         Assert.Equal(200, actual.StatusCode);
     }
-
-    [Fact]
-    public async Task GetChildMatch_Always_ReturnOkStatus()
-    {
-        var request = new GetChildMatchRequest();
-        mediator.Send(Arg.Any<GetChildMatchRequest>()).Returns(new List<ChildMatch>());
-
-        var actual = await controller.GetChildMatch(request) as OkObjectResult;
-
-        Assert.IsType<List<ChildMatch>>(actual?.Value);
-        Assert.Equal(200, actual.StatusCode);
-    }
 }

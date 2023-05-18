@@ -1,30 +1,26 @@
-﻿namespace Settlement.Sportsbook.MoveTickets.Services.MultipleServer;
+﻿namespace Settlement.Sportsbook.MoveTickets.Services;
 
 using AutoMapper;
+using Criteria;
 using Fanex.Data.Repository;
 using Fanex.NAP.Client.Helpers.Web;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
+using Requests;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
-using Criteria;
-using Models;
-using Requests;
 
-public interface MoveTicketMultipleServerService
+public interface MoveRunningService
 {
-    Task<Result> MoveTicket(MoveTicketRequest request);
-
     Task<Result> MoveRunningTickets(MoveRunningTicketsRequest request);
 
     Task<Result> ValidateMovingRunningTickets(ValidateMatchesRequest request);
 }
 
-public class MoveTicketMultipleServerServiceImp : MoveTicketMultipleServerService
+public class MoveRunningServiceImp : MoveRunningService
 {
-    private const int ActionIdMoveTicket = 81026;
     private const int ActionIdMoveRunningTickets = 81035;
     private const string ActionMoveTicket = "MoveTicket";
     private const string ModeRunningTicket = "43";
@@ -32,16 +28,16 @@ public class MoveTicketMultipleServerServiceImp : MoveTicketMultipleServerServic
     private readonly IMapper mapper;
     private readonly INapSession currentSession;
     private readonly IHttpContextAccessor accessor;
-    private readonly ILogService logService;
+    private readonly LogService logService;
     private readonly AppSettingsKey appSettingsKey;
     private readonly ScaleOutSettleService scaleOutSettleService;
 
-    public MoveTicketMultipleServerServiceImp(
+    public MoveRunningServiceImp(
         IDynamicRepository repository,
         IMapper mapper,
         INapSession currentSession,
         IHttpContextAccessor accessor,
-        ILogService logService,
+        LogService logService,
         IOptions<AppSettingsKey> appSettingsKey,
         ScaleOutSettleService scaleOutSettleService)
     {
@@ -54,60 +50,13 @@ public class MoveTicketMultipleServerServiceImp : MoveTicketMultipleServerServic
         this.scaleOutSettleService = scaleOutSettleService;
     }
 
-    public async Task<Result> MoveTicket(MoveTicketRequest request)
-    {
-        var criteria = mapper.Map<MoveTicketRequest, MoveTicketCriteria>(request);
-        criteria.AdminId = currentSession.UserId;
-        criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
-        var validateRequest = new EventTicketRequest
-        {
-            MatchId = criteria.MatchId,
-            Action = ActionMoveTicket,
-            SpName = criteria.SpName,
-            Mode = "50"
-        };
-
-        var resultMessage = await scaleOutSettleService.ValidateEventAndTicket(validateRequest);
-        if (resultMessage.ErrorCode > 0)
-        {
-            logService.ActionLog(request.MatchId, resultMessage.ErrorMessage, ActionIdMoveTicket);
-            return new Result
-            {
-                ErrCode = resultMessage.ErrorCode,
-                ErrMsg = resultMessage.ErrorMessage
-            };
-        }
-
-        var getMoveTicketInfoCriteria = new GetMoveTicketInfoCriteria { MatchId = request.MatchId };
-        var moveTicketInfo = await repository.GetAsync<MoveTicketInfo>(getMoveTicketInfoCriteria);
-        criteria.EventDate = moveTicketInfo.EventDate;
-        criteria.ChildMatchId = moveTicketInfo.ChildMatchId;
-        criteria.Resources = moveTicketInfo.Resources;
-        foreach (var server in appSettingsKey.SiteDbServer)
-        {
-            criteria.DbServer = server;
-            await repository.ExecuteAsync(criteria);
-        }
-
-        var updateChildMatchCriteria = new UpdateChildMatchCriteria { MatchId = moveTicketInfo.ChildMatchId };
-        await repository.ExecuteAsync(updateChildMatchCriteria);
-        var updateChildMatchRemarkCriteria = new UpdateChildMatchRemarkCriteria { MatchId = moveTicketInfo.ChildMatchId };
-        await repository.ExecuteAsync(updateChildMatchRemarkCriteria);
-
-        return new Result
-        {
-            ErrCode = resultMessage.ErrorCode,
-            ErrMsg = resultMessage.ErrorMessage
-        };
-    }
-
     public async Task<Result> MoveRunningTickets(MoveRunningTicketsRequest request)
     {
         var criteria = mapper.Map<MoveRunningTicketsRequest, MoveRunningTicketsCriteria>(request);
         criteria.AdminId = currentSession.UserId;
         criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
         var validateResult = await VerifyBeforeMovingRunningTickets(criteria);
-        if (validateResult.ErrCode != 0)
+        if (validateResult.ErrCode > 0)
         {
             logService.ActionLog(request.MatchId, validateResult.ErrMsg, ActionIdMoveRunningTickets);
             return validateResult;

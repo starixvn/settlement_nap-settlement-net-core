@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Fanex.NAP.Client.Helpers.Web;
 using Microsoft.AspNetCore.Http;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
@@ -26,7 +25,6 @@ public class CreateCriteriaServiceTests
 
     public CreateCriteriaServiceTests()
     {
-        var currentSession = Substitute.For<INapSession>();
         var accessor = Substitute.For<IHttpContextAccessor>();
         soccerBetStatusService = Substitute.For<ISoccerBetStatusService>();
         xmlConvertService = Substitute.For<XmlConvertService>();
@@ -46,7 +44,7 @@ public class CreateCriteriaServiceTests
         mapperConfig.AddProfile<SoccerAutoMapperProfile>();
         var config = new MapperConfiguration(mapperConfig);
         var mapper = new Mapper(config);
-        service = new CreateCriteriaServiceImp(currentSession, resourceService, accessor, soccerBetStatusService,
+        service = new CreateCriteriaServiceImp(resourceService, accessor, soccerBetStatusService,
             xmlConvertService, mapper, betStatusAllService, matchService);
     }
 

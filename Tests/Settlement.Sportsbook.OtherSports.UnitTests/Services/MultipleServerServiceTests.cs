@@ -5,6 +5,7 @@ using Fanex.Settlement.ScaleOut.Services;
 using Microsoft.Extensions.Options;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
+using Settlement.Core.Services;
 using Settlement.Sportsbook.OtherSports.Criteria;
 using Settlement.Sportsbook.OtherSports.Models;
 using Settlement.Sportsbook.OtherSports.Requests;
@@ -21,14 +22,17 @@ public class MultipleServerServiceTests
 
     private readonly MultipleServerService service;
 
+    private readonly LogService logService;
+
     public MultipleServerServiceTests()
     {
         repository = Substitute.For<IDynamicRepository>();
         mergeDataService = Substitute.For<MergeDataService>();
         scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
+        logService = Substitute.For<LogService>();
         var appSettingsKey = new AppSettingsKey { SiteDbServer = new List<string> { "01", "02" } };
         var options = Options.Create(appSettingsKey);
-        service = new MultipleServerServiceImp(repository, options, mergeDataService, scaleOutSettleService);
+        service = new MultipleServerServiceImp(repository, options, mergeDataService, scaleOutSettleService, logService);
     }
 
     [Fact]

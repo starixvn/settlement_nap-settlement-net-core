@@ -4,21 +4,19 @@ using Fanex.Settlement.ScaleOut.Constants;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 using Settlement.Core.Constants;
+using Settlement.Core.Models;
+using Settlement.Core.Services;
 using Settlement.ThirdPartyProducts.Criteria;
 using Settlement.ThirdPartyProducts.Models;
+using Settlement.ThirdPartyProducts.Requests;
 
 namespace Settlement.ThirdPartyProducts.Services;
 
 public interface BetBuilderCalculateService
 {
-    Task UpdateMatchInfo(CalculationCriteria criteria, string selectedMarket);
-
-    string CreateResources(List<ResourcesItemModel> selectedResources);
-
-    CalculationCriteria CreateCriteria(int matchId, string actionName, string resources);
-
-    Task<string> GetInfoMarket(CalculationCriteria criteria);
+    Task<Result> Calculate(CalculateRequest request);
 }
 
 public class BetBuilderCalculateServiceImp : BetBuilderCalculateService
@@ -33,20 +31,54 @@ public class BetBuilderCalculateServiceImp : BetBuilderCalculateService
 
     private readonly ScaleOutSettleService scaleOutSettleService;
 
+    private readonly LogService logService;
+
+    private readonly AppSettingsKey appSettingsKey;
+
     public BetBuilderCalculateServiceImp(IDynamicRepository repository,
         XmlConvertService xmlConvertService,
         INapSession currentSession,
         IHttpContextAccessor accessor,
-        ScaleOutSettleService scaleOutSettleService)
+        ScaleOutSettleService scaleOutSettleService,
+        LogService logService,
+        IOptions<AppSettingsKey> appSettingsKey)
     {
         this.repository = repository;
         this.xmlConvertService = xmlConvertService;
         this.currentSession = currentSession;
         this.accessor = accessor;
         this.scaleOutSettleService = scaleOutSettleService;
+        this.logService = logService;
+        this.appSettingsKey = appSettingsKey.Value;
     }
 
-    public async Task UpdateMatchInfo(CalculationCriteria criteria, string selectedMarket)
+    public async Task<Result> Calculate(CalculateRequest request)
+    {
+        var resourcesResult = CreateResources(request.Resources);
+        var criteria = CreateCriteria(request.MatchId, request.ActionName, resourcesResult);
+        var selectedMarket = await GetInfoMarket(criteria);
+        await UpdateMatchInfo(criteria, selectedMarket);
+        criteria.SelectedMarket = selectedMarket;
+
+        var messageLog = MessageLog(criteria.MatchId, criteria.Action, criteria.SelectedSelection);
+
+        logService.WriteLog(criteria.MatchId, messageLog);
+
+        await ExecuteMultiServer(criteria);
+
+        return new Result();
+    }
+
+    private async Task ExecuteMultiServer(CalculationCriteria criteria)
+    {
+        foreach (var server in appSettingsKey.SiteDbServer)
+        {
+            criteria.DbServer = server;
+            await repository.ExecuteAsync(criteria);
+        }
+    }
+
+    private async Task UpdateMatchInfo(CalculationCriteria criteria, string selectedMarket)
     {
         var requestUpdate = new UpdateMatchInfoRequest
         {
@@ -61,9 +93,9 @@ public class BetBuilderCalculateServiceImp : BetBuilderCalculateService
         await scaleOutSettleService.UpdateMatchInfo(requestUpdate);
     }
 
-    public string CreateResources(List<ResourcesItemModel> selectedResources)
+    private string CreateResources(List<ResourcesItemModel> selectedResources)
     {
-        var resources = new Resources<ResourcesItemModel>
+        var resources = new Models.Resources<ResourcesItemModel>
         {
             ResourceItems = selectedResources
         };
@@ -71,7 +103,7 @@ public class BetBuilderCalculateServiceImp : BetBuilderCalculateService
         return xmlConvertService.Serialize(resources);
     }
 
-    public CalculationCriteria CreateCriteria(int matchId, string actionName, string resources) => new()
+    private CalculationCriteria CreateCriteria(int matchId, string actionName, string resources) => new()
     {
         MatchId = matchId,
         AdminId = currentSession.UserId,
@@ -80,7 +112,7 @@ public class BetBuilderCalculateServiceImp : BetBuilderCalculateService
         SelectedSelection = resources
     };
 
-    public async Task<string> GetInfoMarket(CalculationCriteria criteria)
+    private async Task<string> GetInfoMarket(CalculationCriteria criteria)
     {
         var getMarketIdCriteria = new GetMarketIdCriteria
         {
@@ -97,5 +129,10 @@ public class BetBuilderCalculateServiceImp : BetBuilderCalculateService
         };
 
         return xmlConvertService.Serialize(resources);
+    }
+
+    private static string MessageLog(int matchId, string action, string resources)
+    {
+        return $"NAP: Calculate {action} for matchId: {matchId} {(string.IsNullOrEmpty(resources) ? string.Empty : resources + "<br/>")}; IsAuto:false; Bettype:38";
     }
 }

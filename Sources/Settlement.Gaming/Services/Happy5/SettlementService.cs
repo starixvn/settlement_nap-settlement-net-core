@@ -1,13 +1,13 @@
 ﻿using Fanex.Data.Repository;
+using Fanex.Settlement.ScaleOut.Request;
+using Fanex.Settlement.ScaleOut.Services;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
+using Settlement.Core.Constants;
 using Settlement.Core.Models;
+using Settlement.Core.Services;
 using Settlement.Gaming.Criteria.Happy5;
 using Settlement.Gaming.Requests;
-using Fanex.NAP.Client.Helpers.Web;
-using Microsoft.AspNetCore.Http;
-using Settlement.Core.Constants;
-using Fanex.Settlement.ScaleOut.Services;
-using Fanex.Settlement.ScaleOut.Request;
-using Microsoft.Extensions.Options;
 
 namespace Settlement.Gaming.Services.Happy5;
 
@@ -22,8 +22,6 @@ public class SettlementServiceImp : SettlementService
 
     private readonly IDynamicRepository repository;
 
-    private readonly INapSession currentSession;
-
     private readonly BallService ballService;
 
     private readonly IHttpContextAccessor accessor;
@@ -34,22 +32,24 @@ public class SettlementServiceImp : SettlementService
 
     private readonly ScaleOutSettleService scaleOutSettleService;
 
+    private readonly LogService logService;
+
     public SettlementServiceImp(
         IDynamicRepository repository,
-        INapSession currentSession,
         IHttpContextAccessor accessor,
         BallService ballService,
         ScaleOutSettleThirdPartyService scaleOutSettleThirdPartyService,
         IOptions<AppSettingsKey> options,
-        ScaleOutSettleService scaleOutSettleService)
+        ScaleOutSettleService scaleOutSettleService,
+        LogService logService)
     {
         this.repository = repository;
-        this.currentSession = currentSession;
         this.accessor = accessor;
         this.ballService = ballService;
         this.scaleOutSettleThirdPartyService = scaleOutSettleThirdPartyService;
         appSettingsKey = options.Value;
         this.scaleOutSettleService = scaleOutSettleService;
+        this.logService = logService;
     }
 
     public async Task<Result> Settle(Happy5SettlementRequest request)
@@ -64,8 +64,7 @@ public class SettlementServiceImp : SettlementService
 
     private async Task<Result> SettleWhenHavePermission(Happy5SettlementRequest request)
     {
-        var criteria = CreateCriteria(request);
-
+        var criteria = await CreateCriteria(request);
         var validateDeploymentCriteria = new GetDeploymentInfoRequest
         {
             SPName = "NAP_Admin_Settlement_s164"
@@ -74,9 +73,10 @@ public class SettlementServiceImp : SettlementService
         var validateDeploymentResult = await scaleOutSettleThirdPartyService.GetDeploymentInfo(validateDeploymentCriteria);
         if (validateDeploymentResult.ErrorCode == 0)
         {
-            criteria.StrOldResult = await GetOldResult(request.MatchId);
             await UpdateResult(request);
             await UpdateMatchInfo(request);
+            WriteLog(criteria.MatchId);
+
             return await Execute(criteria);
         }
 
@@ -85,6 +85,12 @@ public class SettlementServiceImp : SettlementService
             ErrCode = validateDeploymentResult.ErrorCode,
             ErrMsg = validateDeploymentResult.ErrorMessage
         };
+    }
+
+    private void WriteLog(int matchId)
+    {
+        var messageLog = $"Settlement for matchId: {matchId}";
+        logService.WriteLog(matchId, messageLog);
     }
 
     private async Task<Result> Execute(SettlementCriteria criteria)
@@ -145,19 +151,21 @@ public class SettlementServiceImp : SettlementService
             Command = "completed",
             Action = request.Action,
             MatchId = request.MatchId,
-            Creator = currentSession.UserId
+            Creator = request.UserId
         };
 
         await scaleOutSettleThirdPartyService.UpdateMatchInfo3rd(updateRequest);
     }
 
-    private SettlementCriteria CreateCriteria(Happy5SettlementRequest request)
+    private async Task<SettlementCriteria> CreateCriteria(Happy5SettlementRequest request)
     {
+        var oldResult = await GetOldResult(request.MatchId);
         return new SettlementCriteria
         {
             MatchId = request.MatchId,
             Action = request.Action,
-            AdminId = currentSession.UserId,
+            AdminId = request.UserId,
+            StrOldResult = oldResult,
             Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString()
         };
     }

@@ -25,24 +25,23 @@ public class SettleEarlyServiceImp : SettleEarlyService
 
     private readonly ScaleOutSettleService scaleOutSettleService;
 
-    private readonly LogDirectlyService logDirectlyService;
+    private readonly LogService logService;
 
     private readonly XmlConvertService xmlConvertService;
-
 
     public SettleEarlyServiceImp(
         ICreateCriteriaService createCriteriaService,
         IOptions<AppSettingsKey> appSettingsKey,
         IDynamicRepository repository,
         ScaleOutSettleService scaleOutSettleService,
-        LogDirectlyService logDirectlyService,
+        LogService logService,
         XmlConvertService xmlConvertService)
     {
         this.createCriteriaService = createCriteriaService;
         this.appSettingsKey = appSettingsKey.Value;
         this.repository = repository;
         this.scaleOutSettleService = scaleOutSettleService;
-        this.logDirectlyService = logDirectlyService;
+        this.logService = logService;
         this.xmlConvertService = xmlConvertService;
     }
 
@@ -66,15 +65,11 @@ public class SettleEarlyServiceImp : SettleEarlyService
 
     private void WriteDirectlyLog(SettleEarlyRequest request)
     {
-        var message = LogDirectlyServiceImp.CreateEarlyLog(
-            request.ActionName,
-            request.MatchId,
-            xmlConvertService.Serialize(request.SelectedResources))
-            .Replace("ArrayOfResourceItem", "Resources").Replace("ResourceItem", "Resource");
+        var selectedResources = xmlConvertService.Serialize(request.SelectedResources).Replace("ResourceItem", "Resource");
+        var message = $"NAP: Auto-Settlement ({request.ActionName}) for matchId: {request.MatchId} Result: {selectedResources}";
 
-        logDirectlyService.WriteLog(request.MatchId, message);
+        logService.WriteLog(request.MatchId, message);
     }
-
 
     private async Task<Result> Execute(CalculateEarlyCriteria criteria)
     {

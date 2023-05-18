@@ -1,5 +1,6 @@
-﻿using Settlement.Core.Models;
+﻿using Fanex.NAP.Client.Helpers.Web;
 using Settlement.Core.Constants;
+using Settlement.Core.Models;
 using Settlement.Sportsbook.Soccer.Handlers;
 using Settlement.Sportsbook.Soccer.Requests;
 using Settlement.Sportsbook.Soccer.Services;
@@ -9,7 +10,6 @@ using MatchDetail = Settlement.Sportsbook.Soccer.Models.MatchDetail;
 namespace Settlement.Sportsbook.Soccer.UnitTests.Handlers;
 
 using Soccer.Services.GetMatch;
-using Soccer.Services.InstantCalculate;
 
 public class SoccerHandlerTests
 {
@@ -20,10 +20,12 @@ public class SoccerHandlerTests
 
     public SoccerHandlerTests()
     {
+        var currentSession = Substitute.For<INapSession>();
+        currentSession.UserId = 8;
         matchService = Substitute.For<IMatchService>();
         calculateService = Substitute.For<ICalculateService>();
         var instantCalculateService = Substitute.For<InstantCalculateService>();
-        handler = new CalculateHandler(matchService, calculateService, instantCalculateService);
+        handler = new CalculateHandler(currentSession, matchService, calculateService, instantCalculateService);
     }
 
     [Fact]

@@ -7,6 +7,7 @@ using Settlement.Log.Criteria;
 using Settlement.Log.Models;
 using Settlement.Log.Requests;
 using Settlement.Log.Services;
+using LogService = Settlement.Log.Services.LogService;
 
 namespace Settlement.Log.UnitTests.Services;
 

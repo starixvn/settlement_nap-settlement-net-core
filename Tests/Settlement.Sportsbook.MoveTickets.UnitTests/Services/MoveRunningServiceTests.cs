@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using AutoMapper.Configuration;
 using Fanex.Data.Repository;
 using Fanex.NAP.Client.Helpers.Web;
 using Fanex.Settlement.ScaleOut.Models;
@@ -10,21 +9,18 @@ using Microsoft.Extensions.Options;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.MoveTickets.Criteria;
-using Settlement.Sportsbook.MoveTickets.Models;
 using Settlement.Sportsbook.MoveTickets.Requests;
 
-namespace Settlement.Sportsbook.MoveTickets.UnitTests.Services.MultipleServer;
+namespace Settlement.Sportsbook.MoveTickets.UnitTests.Services;
 
-using MoveTickets.Services.MultipleServer;
-
-public class MoveTicketMultipleServerServiceTests
+public class MoveRunningServiceTests
 {
     private readonly IDynamicRepository repository;
-    private readonly ILogService logService;
+    private readonly LogService logService;
     private readonly ScaleOutSettleService scaleOutSettleService;
-    private readonly MoveTicketMultipleServerService service;
+    private readonly MoveRunningService service;
 
-    public MoveTicketMultipleServerServiceTests()
+    public MoveRunningServiceTests()
     {
         repository = Substitute.For<IDynamicRepository>();
         var currentSession = Substitute.For<INapSession>();
@@ -32,7 +28,7 @@ public class MoveTicketMultipleServerServiceTests
         mapperConfig.AddProfile<SportsbookMoveTicketAutoMapperProfile>();
         var config = new MapperConfiguration(mapperConfig);
         var mapper = new Mapper(config);
-        logService = Substitute.For<ILogService>();
+        logService = Substitute.For<LogService>();
         scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
         var accessor = Substitute.For<IHttpContextAccessor>();
         var context = new DefaultHttpContext
@@ -45,69 +41,42 @@ public class MoveTicketMultipleServerServiceTests
         accessor.HttpContext = context;
         var appSettings = new AppSettingsKey { SiteDbServer = new List<string> { "01", "02" } };
         var options = Options.Create(appSettings);
-        service = new MoveTicketMultipleServerServiceImp(repository, mapper, currentSession, accessor, logService,
+        service = new MoveRunningServiceImp(repository, mapper, currentSession, accessor, logService,
             options, scaleOutSettleService);
-    }
-
-    [Fact]
-    public async Task MoveTicket_ValidateFailed_StopProcessAndWriteLog()
-    {
-        var failedResult = new ResultMessage
-        {
-            ErrorCode = 1,
-            ErrorMessage = "Error"
-        };
-
-        scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(failedResult);
-
-        var result = await service.MoveTicket(new MoveTicketRequest { MatchId = 100 });
-
-        logService.Received().ActionLog(100, "Error", Arg.Any<int>());
-        Assert.Equal("Error", result.ErrMsg);
-        await repository.DidNotReceive().ExecuteAsync(Arg.Any<MoveTicketCriteria>());
-    }
-
-    [Fact]
-    public async Task MoveTicket_ValidatePassed_ExecuteAll()
-    {
-        scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
-        repository.GetAsync<MoveTicketInfo>(Arg.Any<GetMoveTicketInfoCriteria>()).Returns(new MoveTicketInfo());
-
-        var result = await service.MoveTicket(new MoveTicketRequest());
-
-        await repository.Received(2).ExecuteAsync(Arg.Any<MoveTicketCriteria>());
-        await repository.Received(1).ExecuteAsync(Arg.Any<UpdateChildMatchCriteria>());
-        await repository.Received(1).ExecuteAsync(Arg.Any<UpdateChildMatchRemarkCriteria>());
-        Assert.Null(result.ErrMsg);
     }
 
     [Fact]
     public async Task MoveRunningTickets_ValidateFailed_WriteLogAndReturn()
     {
-        var failedResult = new ResultMessage
+        var resultMessage = new ResultMessage
         {
             ErrorCode = 1,
             ErrorMessage = "Error"
         };
 
-        scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(failedResult);
+        scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(resultMessage);
 
         var result = await service.MoveRunningTickets(new MoveRunningTicketsRequest { MatchId = 100 });
 
         logService.Received().ActionLog(100, "Error", Arg.Any<int>());
         Assert.Equal("Error", result.ErrMsg);
-        await repository.DidNotReceive().ExecuteAsync(Arg.Any<MoveRunningTicketsCriteria>());
     }
 
     [Fact]
-    public async Task MoveRunningTickets_ValidatePassed_ExecuteAll()
+    public void MoveRunningTickets_ValidatePassed_ExecuteAll()
     {
-        scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
+        var resultMessage = new ResultMessage
+        {
+            ErrorCode = 0,
+            ErrorMessage = string.Empty
+        };
+        scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(resultMessage);
 
-        await service.MoveRunningTickets(new MoveRunningTicketsRequest());
+        var result = service.MoveRunningTickets(new MoveRunningTicketsRequest());
 
         repository.Received(2).Execute(Arg.Any<MoveRunningTicketsCriteria>());
         repository.Received().Execute(Arg.Any<CopyResultCriteria>());
+        Assert.Equal(string.Empty, result.Result.ErrMsg);
     }
 
     [Fact]

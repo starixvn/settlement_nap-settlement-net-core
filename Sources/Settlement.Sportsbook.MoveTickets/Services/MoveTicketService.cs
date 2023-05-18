@@ -10,16 +10,14 @@ using Settlement.Sportsbook.MoveTickets.Requests;
 
 namespace Settlement.Sportsbook.MoveTickets.Services;
 
-public interface IMoveTicketService
+public interface MoveTicketService
 {
     Task<List<SportModel>> GetSportBook(GetMatchRequest request);
-
-    Task<List<ChildMatch>> GetChildMatch(GetChildMatchRequest request);
 
     Task<List<MoveTicketsMatchDetail>> GetMoveTicketsMatches(GetMoveTicketsMatchesRequest request);
 }
 
-public class MoveTicketServiceImp : IMoveTicketService
+public class MoveTicketServiceImp : MoveTicketService
 {
     private readonly IDynamicRepository repository;
     private readonly IRefDataService refDataService;
@@ -190,15 +188,6 @@ public class MoveTicketServiceImp : IMoveTicketService
         var listMatchId = string.Join(",", matches.Select(match => match.MatchId.ToString()).ToArray());
         var resultDetailCriteria = new GetResultDetailCriteria { MatchIdList = listMatchId };
         return (await repository.FetchAsync<ResultDetail>(resultDetailCriteria)).ToList();
-    }
-
-    public async Task<List<ChildMatch>> GetChildMatch(GetChildMatchRequest request)
-    {
-        var criteria = mapper.Map<GetChildMatchRequest, GetChildMatchCriteria>(request);
-
-        var listMatch = await repository.FetchAsync<ChildMatch>(criteria);
-
-        return listMatch.ToList();
     }
 
     public async Task<List<MoveTicketsMatchDetail>> GetMoveTicketsMatches(GetMoveTicketsMatchesRequest request)

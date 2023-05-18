@@ -22,16 +22,20 @@ public class BetBuilderHandler : IRequestHandler<FilterRequest, MultiSportsModel
 
     private readonly BetBuilderMatchesService betBuilderMatchesService;
 
+    private readonly BetBuilderCalculateService calculateService;
+
     public BetBuilderHandler(
         MatchService matchService,
         PermissionService permissionService,
         BetBuilderService betBuilderService,
-        BetBuilderMatchesService betBuilderMatchesService)
+        BetBuilderMatchesService betBuilderMatchesService,
+        BetBuilderCalculateService calculateService)
     {
         this.matchService = matchService;
         this.permissionService = permissionService;
         this.betBuilderService = betBuilderService;
         this.betBuilderMatchesService = betBuilderMatchesService;
+        this.calculateService = calculateService;
     }
 
     public async Task<MultiSportsModel> Handle(FilterRequest request, CancellationToken cancellationToken) => new()
@@ -59,5 +63,5 @@ public class BetBuilderHandler : IRequestHandler<FilterRequest, MultiSportsModel
         => await matchService.GetMatch(request);
 
     public async Task<Result> Handle(CalculateRequest request, CancellationToken cancellationToken)
-        => await matchService.Calculate(request);
+        => await calculateService.Calculate(request);
 }

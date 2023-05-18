@@ -1,6 +1,5 @@
 using AutoMapper;
 using Fanex.Data.Repository;
-using Fanex.NAP.Client.Helpers.Web;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
 using Microsoft.AspNetCore.Http;
@@ -28,8 +27,6 @@ public class InstantCalculateServiceImp : InstantCalculateService
 {
     private readonly IDynamicRepository repository;
 
-    private readonly INapSession currentSession;
-
     private readonly IMapper mapper;
 
     private readonly IHttpContextAccessor accessor;
@@ -38,28 +35,26 @@ public class InstantCalculateServiceImp : InstantCalculateService
 
     private readonly ScaleOutSettleService scaleOutSettleService;
 
-    private readonly LogDirectlyService logDirectlyService;
+    private readonly LogService logService;
 
     private readonly AppSettingsKey appSettingsKey;
 
     public InstantCalculateServiceImp(
         IDynamicRepository repository,
-        INapSession currentSession,
         IMapper mapper,
         IHttpContextAccessor accessor,
         IInstantResourceService instantResourceService,
         IOptions<AppSettingsKey> appSettingsKey,
         ScaleOutSettleService scaleOutSettleService,
-        LogDirectlyService logDirectlyService)
+        LogService logService)
     {
         this.repository = repository;
-        this.currentSession = currentSession;
         this.mapper = mapper;
         this.accessor = accessor;
         this.instantResourceService = instantResourceService;
         this.appSettingsKey = appSettingsKey.Value;
         this.scaleOutSettleService = scaleOutSettleService;
-        this.logDirectlyService = logDirectlyService;
+        this.logService = logService;
     }
 
     public async Task<MatchGoalRecordModel> CalculateCheckingInfo(MatchCheckingRequest request)
@@ -100,7 +95,6 @@ public class InstantCalculateServiceImp : InstantCalculateService
     {
         var criteria = mapper.Map<InstantCalculationRequest, PushInstantCalculationCriteria>(request);
         criteria.ResourceResult = GetResourceResultInstantCalculate(request);
-        criteria.AdminId = currentSession.UserId;
         criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
 
         var result = await ValidateBeforeExecute(request);
@@ -174,10 +168,8 @@ public class InstantCalculateServiceImp : InstantCalculateService
     private void WriteLogDirectly(PushInstantCalculationCriteria criteria)
     {
         var score = $"{criteria.HomeScore}-{criteria.AwayScore}";
-
-        var message = LogDirectlyServiceImp.CreateInstantLog(criteria.MatchId, criteria.Mode, score);
-
-        logDirectlyService.WriteLog(criteria.MatchId, message);
+        var message = $"NAP: Instant Uncalculate {criteria.Mode} for matchId: {criteria.MatchId} Score: {score} Instant action: {criteria.Mode}";
+        logService.WriteLog(criteria.MatchId, message);
     }
 
     private string GetResourceResultInstantCalculate(InstantCalculationRequest request)
@@ -240,7 +232,7 @@ public class InstantCalculateServiceImp : InstantCalculateService
         {
             MatchId = request.MatchId,
             Action = request.Action,
-            AdminId = currentSession.UserId,
+            AdminId = request.AdminId,
             ResourceResult = resourceResult,
             IsAuto = false,
             Mode = request.Mode,

@@ -44,6 +44,7 @@ using StackExchange.Redis;
 using System.IO.Compression;
 using Fanex.Caching.Redis;
 using ILogger = Fanex.Logging.ILogger;
+using LogService = Settlement.Core.Services.LogService;
 using LogServiceImp = Settlement.Core.Services.LogServiceImp;
 
 namespace Settlement.WebSites;
@@ -187,8 +188,7 @@ public static class WebSites
         services.AddTransient<IRefDataService, RefDataService>();
         services.AddSingleton<PermissionService, PermissionServiceImp>();
         services.AddSingleton<XmlConvertService, XmlConvertServiceImp>();
-        services.AddTransient<ILogService, LogServiceImp>();
-        services.AddScoped<LogDirectlyService, LogDirectlyServiceImp>();
+        services.AddTransient<LogService, LogServiceImp>();
 
         services.AddTransient<IScoreSetService, ScoreSetServiceImp>();
         services.AddTransient<ScaleOutSettleService, ScaleOutSettleServiceImp>();

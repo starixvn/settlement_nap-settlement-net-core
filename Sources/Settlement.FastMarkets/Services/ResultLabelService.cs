@@ -3,7 +3,7 @@ using Settlement.FastMarkets.Models;
 
 namespace Settlement.FastMarkets.Services;
 
-public interface IResultLabelService
+public interface ResultLabelService
 {
     ResultItemLabel NextOneMinuteSetPiece();
 
@@ -12,7 +12,7 @@ public interface IResultLabelService
     ResultItemLabel TimeMachineHdp();
 }
 
-public class ResultLabelServiceImp : IResultLabelService
+public class ResultLabelServiceImp : ResultLabelService
 {
     public ResultItemLabel NextOneMinuteSetPiece()
     {
@@ -34,19 +34,17 @@ public class ResultLabelServiceImp : IResultLabelService
                 Penalty = "0.5"
             };
         }
-        else
+
+        var name = odd.Split(',');
+        return new ResultItemLabel
         {
-            var name = odd.Split(',');
-            return new ResultItemLabel
-            {
-                Goal = ResultName(name, PositionResult.Goal),
-                Corner = ResultName(name, PositionResult.Corner),
-                FreeKick = ResultName(name, PositionResult.FreeKick),
-                GoalKick = ResultName(name, PositionResult.GoalKick),
-                ThrowIn = ResultName(name, PositionResult.ThrowIn),
-                Penalty = ResultName(name, PositionResult.Penalty)
-            };
-        }
+            Goal = ResultName(name, PositionResult.Goal),
+            Corner = ResultName(name, PositionResult.Corner),
+            FreeKick = ResultName(name, PositionResult.FreeKick),
+            GoalKick = ResultName(name, PositionResult.GoalKick),
+            ThrowIn = ResultName(name, PositionResult.ThrowIn),
+            Penalty = ResultName(name, PositionResult.Penalty)
+        };
     }
 
     private static string ResultName(string[] name, int index)

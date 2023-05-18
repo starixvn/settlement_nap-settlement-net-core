@@ -20,7 +20,7 @@ public class CreateQueryServiceTests
 
     private readonly ICreateQueryService service;
 
-    private readonly ILogService logService;
+    private readonly LogService logService;
 
     public CreateQueryServiceTests()
     {
@@ -39,7 +39,7 @@ public class CreateQueryServiceTests
         mapperConfig.AddProfile<SportsbookAioAutoMapperProfile>();
         var config = new MapperConfiguration(mapperConfig);
         var mapper = new Mapper(config);
-        logService = Substitute.For<ILogService>();
+        logService = Substitute.For<LogService>();
         service = new CreateQueryServiceImp(xmlConvertService, currentSession, accessor, mapper, logService);
     }
 

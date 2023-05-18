@@ -1,11 +1,11 @@
 ﻿using Fanex.Data.Repository;
-using Fanex.NAP.Client.Helpers.Web;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
+using Settlement.Core.Services;
 using Settlement.Gaming.Criteria.NumberGame;
 using Settlement.Gaming.Models;
 using Settlement.Gaming.Models.NumberGame;
@@ -21,10 +21,10 @@ public interface SettlementService
 public class SettlementServiceImp : SettlementService
 {
     private const int NotAuthorized = 1000;
+    private const byte SeqTwo = 2;
+    private const byte SeqThree = 3;
 
     private readonly IDynamicRepository repository;
-
-    private readonly INapSession currentSession;
 
     private readonly XmlConvertService xmlConvertService;
 
@@ -36,21 +36,23 @@ public class SettlementServiceImp : SettlementService
 
     private readonly AppSettingsKey appSettingsKey;
 
+    private readonly LogService logService;
+
     public SettlementServiceImp(
         IDynamicRepository repository,
-        INapSession currentSession,
         XmlConvertService xmlConvertService,
         IHttpContextAccessor accessor,
         ScaleOutSettleThirdPartyService scaleOutSettleThirdPartyService,
         ScaleOutSettleService scaleOutSettleService,
-        IOptions<AppSettingsKey> options)
+        IOptions<AppSettingsKey> options,
+        LogService logService)
     {
         this.repository = repository;
-        this.currentSession = currentSession;
         this.xmlConvertService = xmlConvertService;
         this.accessor = accessor;
         this.scaleOutSettleThirdPartyService = scaleOutSettleThirdPartyService;
         this.scaleOutSettleService = scaleOutSettleService;
+        this.logService = logService;
         appSettingsKey = options.Value;
     }
 
@@ -75,6 +77,9 @@ public class SettlementServiceImp : SettlementService
         {
             await UpdateResult(criteria);
             await UpdateMatchInfo(request);
+
+            WriteDirectlyLog(request, criteria);
+
             return await Execute(criteria);
         }
 
@@ -83,6 +88,47 @@ public class SettlementServiceImp : SettlementService
             ErrCode = validateDeploymentResult.ErrorCode,
             ErrMsg = validateDeploymentResult.ErrorMessage
         };
+    }
+
+    private void WriteDirectlyLog(NumberGameSettlementRequest request, RecalculateNumberGameCriteria criteria)
+    {
+        var message = $"REFUND Number Game for matchId: {criteria.MatchId}";
+        logService.WriteLog(criteria.MatchId, message);
+
+        if (request.Balls.Any())
+        {
+            message = $"Calculate Number Game for matchId: {criteria.MatchId} - [LIVE] - Sequence number: (1)";
+            logService.WriteLog(criteria.MatchId, message);
+
+            WriteLogSequenceTwo(criteria.MatchId, request.Balls);
+            WriteLogSequenceThree(criteria.MatchId, request.Balls);
+        }
+    }
+
+    private void WriteLogSequenceTwo(int matchId, List<BallModel> balls)
+    {
+        var message = balls.Exists(x => x.Seq == SeqTwo)
+                            ? $"Calculate Number Game for matchId: {matchId} - [LIVE] - Sequence number: (2)"
+                            : $"REFUND FT Number Game for matchId: {matchId}";
+        logService.WriteLog(matchId, message);
+    }
+
+    private void WriteLogSequenceThree(int matchId, List<BallModel> balls)
+    {
+        if (!balls.Exists(x => x.Seq == SeqTwo))
+        {
+            return;
+        }
+
+        if (balls.Exists(x => x.Seq == SeqThree))
+        {
+            logService.WriteLog(matchId, $"Calculate Number Game for matchId: {matchId} - [LIVE] - Sequence number: (3)");
+            logService.WriteLog(matchId, $"Calculate Number Game for matchId: {matchId}");
+        }
+        else
+        {
+            logService.WriteLog(matchId, $"REFUND FT Number Game for matchId: {matchId}");
+        }
     }
 
     private async Task UpdateResult(RecalculateNumberGameCriteria criteria)
@@ -102,7 +148,7 @@ public class SettlementServiceImp : SettlementService
         {
             Command = EventStatus.Completed,
             MatchId = request.MatchId,
-            Creator = currentSession.UserId,
+            Creator = request.UserId,
             Action = request.Action
         };
 
@@ -147,13 +193,13 @@ public class SettlementServiceImp : SettlementService
         return new RecalculateNumberGameCriteria
         {
             MatchId = request.MatchId,
-            AdminId = currentSession.UserId,
+            AdminId = request.UserId,
             Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString(),
             BallResults = GetBallResults(request.Balls)
         };
     }
 
-    private Result NoPermission => new()
+    private static Result NoPermission => new()
     {
         ErrCode = NotAuthorized,
         ErrMsg = "You are not authorized to use this function. Please contact the admin for help."

@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Fanex.NAP.Client.Helpers.Web;
 using Microsoft.AspNetCore.Http;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
@@ -27,8 +26,6 @@ public class CreateCriteriaServiceImp : ICreateCriteriaService
 {
     private readonly IMapper mapper;
 
-    private readonly INapSession currentSession;
-
     private readonly IHttpContextAccessor accessor;
 
     private readonly IResourceService resourceService;
@@ -41,7 +38,7 @@ public class CreateCriteriaServiceImp : ICreateCriteriaService
 
     private readonly IMatchService matchService;
 
-    public CreateCriteriaServiceImp(INapSession currentSession,
+    public CreateCriteriaServiceImp(
         IResourceService resourceService,
         IHttpContextAccessor accessor,
         ISoccerBetStatusService soccerBetStatusService,
@@ -50,7 +47,6 @@ public class CreateCriteriaServiceImp : ICreateCriteriaService
         IBetStatusAllService betStatusAllService,
         IMatchService matchService)
     {
-        this.currentSession = currentSession;
         this.resourceService = resourceService;
         this.accessor = accessor;
         this.soccerBetStatusService = soccerBetStatusService;
@@ -64,7 +60,7 @@ public class CreateCriteriaServiceImp : ICreateCriteriaService
     {
         var criteria = new CalculateCriteria
         {
-            AdminId = currentSession.UserId,
+            AdminId = request.AdminId,
             MatchId = request.MatchId,
             GoalRecord = string.IsNullOrWhiteSpace(request.GoalRecord) ? string.Empty : request.GoalRecord.ToUpperInvariant(),
             ResourceResult = GetResourceResultCalculate(request),
@@ -91,7 +87,7 @@ public class CreateCriteriaServiceImp : ICreateCriteriaService
     {
         var criteria = new CalculateCriteria
         {
-            AdminId = currentSession.UserId,
+            AdminId = request.AdminId,
             MatchId = request.MatchId,
             GoalRecord = string.IsNullOrWhiteSpace(request.GoalRecord) ? string.Empty : request.GoalRecord.ToUpperInvariant(),
             ResourceResult = GetResourceResultUnCalculate(request),
@@ -113,7 +109,7 @@ public class CreateCriteriaServiceImp : ICreateCriteriaService
         var htGoalRecord = GoalRecordHt(matchGoalRecord.GoalRecord, request.ResultDetails);
         var criteria = new CalculateCriteria
         {
-            AdminId = currentSession.UserId,
+            AdminId = request.AdminId,
             MatchId = request.MatchId,
             GoalRecord = htGoalRecord,
             BetStatus = soccerBetStatusService.CreateBetStatusAfterUncalculateFt(request, matchGoalRecord.BetStatus, htGoalRecord),
@@ -131,7 +127,7 @@ public class CreateCriteriaServiceImp : ICreateCriteriaService
     {
         var criteria = new CalculateEarlyCriteria
         {
-            AdminId = currentSession.UserId,
+            AdminId = request.AdminId,
             MatchId = request.MatchId,
             Action = request.ActionName,
             Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString(),
@@ -148,7 +144,7 @@ public class CreateCriteriaServiceImp : ICreateCriteriaService
         {
             MatchId = request.MatchId,
             Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString(),
-            AdminId = currentSession.UserId,
+            AdminId = request.AdminId,
             GoalSequence = request.GoalRecord,
             HalfTimeHome = request.HalfTimeHomeScore ?? 0,
             HalfTimeAway = request.HalfTimeAwayScore ?? 0,

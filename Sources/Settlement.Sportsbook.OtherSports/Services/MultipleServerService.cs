@@ -1,4 +1,5 @@
-﻿using Settlement.Sportsbook.OtherSports.Models;
+﻿using Settlement.Core.Services;
+using Settlement.Sportsbook.OtherSports.Models;
 
 namespace Settlement.Sportsbook.OtherSports.Services;
 
@@ -28,18 +29,20 @@ public class MultipleServerServiceImp : MultipleServerService
     private readonly AppSettingsKey appSettingsKey;
     private readonly MergeDataService mergeDataService;
     private readonly ScaleOutSettleService scaleOutSettleService;
+    private readonly LogService logService;
 
     public MultipleServerServiceImp(
         IDynamicRepository repository,
         IOptions<AppSettingsKey> appSettingsKey,
         MergeDataService mergeDataService,
-        ScaleOutSettleService scaleOutSettleService
-    )
+        ScaleOutSettleService scaleOutSettleService,
+        LogService logService)
     {
         this.repository = repository;
         this.appSettingsKey = appSettingsKey.Value;
         this.mergeDataService = mergeDataService;
         this.scaleOutSettleService = scaleOutSettleService;
+        this.logService = logService;
     }
 
     public async Task<(MatchDetail, List<TicketCounts>)> GetMatchInfo(GetMatchRequest request)
@@ -101,6 +104,8 @@ public class MultipleServerServiceImp : MultipleServerService
 
         await scaleOutSettleService.UpdateMatchInfo(requestUpdateInfo);
 
+        WriteLog(calculateCriteria.MatchId, calculateCriteria.Action, calculateCriteria.SelectedResources, calculateCriteria.BetStatus);
+
         foreach (var server in appSettingsKey.SiteDbServer)
         {
             calculateCriteria.DbServer = server;
@@ -110,7 +115,14 @@ public class MultipleServerServiceImp : MultipleServerService
         return requestChecking;
     }
 
-    private UpdateMatchInfoRequest CreateUpdateRequest(CalculateCriteria criteria, ScoreSetModel score)
+    private void WriteLog(int matchId, string action, string resources, string betStatus)
+    {
+        var messageLog = $"NAP: Calculate {action} for matchId: {matchId} Result: {resources} <br/> BetStatus ({betStatus})";
+
+        logService.WriteLog(matchId, messageLog);
+    }
+
+    private static UpdateMatchInfoRequest CreateUpdateRequest(CalculateCriteria criteria, ScoreSetModel score)
     {
         var requestUpdateInfo = new UpdateMatchInfoRequest
         {

@@ -11,7 +11,7 @@ public class MoveThirdPartyBetTicketCriteria : NonQueryCommand
 
     public string Ip { get; set; }
 
-    public string NewMatchId { get; set; }
+    public int NewMatchId { get; set; }
 
     public string NewMatchCode { get; set; }
 

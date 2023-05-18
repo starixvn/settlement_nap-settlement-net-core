@@ -35,9 +35,7 @@ public class EventCounterServiceImp : IEventCounterService
 
             return xmlConvertService.Serialize(eventCountersRoot);
         }
-        else
-        {
-            return string.Empty;
-        }
+
+        return string.Empty;
     }
 }

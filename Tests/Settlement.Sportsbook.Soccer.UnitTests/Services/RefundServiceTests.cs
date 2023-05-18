@@ -1,7 +1,4 @@
-﻿using AutoMapper;
-using AutoMapper.Configuration;
-using Fanex.Data.Repository;
-using Fanex.NAP.Client.Helpers.Web;
+﻿using Fanex.Data.Repository;
 using Fanex.Settlement.ScaleOut.Models;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
@@ -9,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
+using Settlement.Core.Services;
 using Settlement.Sportsbook.Soccer.Criteria;
 using Settlement.Sportsbook.Soccer.Requests;
 using Settlement.Sportsbook.Soccer.Services;
@@ -23,15 +21,17 @@ public class RefundServiceTests
 
     private readonly ICreateCriteriaService createCriteriaService;
 
+    private readonly LogService logService;
+
     private readonly IRefundService service;
 
     public RefundServiceTests()
     {
         repository = Substitute.For<IDynamicRepository>();
-        var currentSession = Substitute.For<INapSession>();
         var accessor = Substitute.For<IHttpContextAccessor>();
         createCriteriaService = Substitute.For<ICreateCriteriaService>();
         scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
+        logService = Substitute.For<LogService>();
         var context = new DefaultHttpContext
         {
             Connection =
@@ -40,13 +40,10 @@ public class RefundServiceTests
             }
         };
         accessor.HttpContext = context;
-        var mapperConfig = new MapperConfigurationExpression();
-        mapperConfig.AddProfile<SoccerAutoMapperProfile>();
-        var config = new MapperConfiguration(mapperConfig);
-        var mapper = new Mapper(config);
+
         var appSettings = new AppSettingsKey { SiteDbServer = new List<string> { "DB01", "DB02", "DB03" } };
         var option = Options.Create(appSettings);
-        service = new RefundServiceImp(repository, mapper, accessor, option, createCriteriaService, currentSession, scaleOutSettleService);
+        service = new RefundServiceImp(repository, accessor, option, createCriteriaService, scaleOutSettleService, logService);
     }
 
     [Theory]
@@ -58,12 +55,12 @@ public class RefundServiceTests
         {
             x.IsExistMarkedTicket = result;
         }));
-        var request = new CheckingMarkedTicketsRequest
+        var criteria = new CheckingMarkedTicketsCriteria
         {
             MatchId = 12345
         };
 
-        var actual = await service.CheckMarkedTickets(request);
+        var actual = await service.CheckMarkedTickets(criteria);
 
         Assert.Equal(result, actual.IsExistMarkedTicket);
         await repository.Received(executeTime).ExecuteAsync(Arg.Any<CheckingMarkedTicketsCriteria>());
@@ -92,7 +89,7 @@ public class RefundServiceTests
     public async Task MoveThirdPartyBetTickets_Always_ReturnsTrue(byte errorCode, string errorMsg, byte executeTime)
     {
         // Arrange
-        var request = new MoveBetRequest
+        var criteria = new MoveThirdPartyBetTicketCriteria
         {
             MatchId = 123,
             NewMatchId = 456,
@@ -104,7 +101,7 @@ public class RefundServiceTests
         await repository.ExecuteAsync(Arg.Do<MoveThirdPartyBetTicketCriteria>(x => { x.ErrCode = errorCode; x.ErrMsg = errorMsg; }));
 
         // Act
-        var result = await service.MoveThirdPartyBetTickets(request);
+        var result = await service.MoveThirdPartyBetTickets(criteria);
 
         // Assert
         Assert.True(result.ErrCode == errorCode && result.ErrMsg == errorMsg);

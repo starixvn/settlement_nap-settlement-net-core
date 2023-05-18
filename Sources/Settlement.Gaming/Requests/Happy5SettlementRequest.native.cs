@@ -8,6 +8,8 @@ public class Happy5SettlementRequest : IRequest<Result>
 {
     public int MatchId { get; set; }
 
+    public int UserId { get; set; }
+
     public List<BallModel> Balls { get; set; }
 
     public string Action { get; set; }

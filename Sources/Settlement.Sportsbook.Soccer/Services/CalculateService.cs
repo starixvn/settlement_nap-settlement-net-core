@@ -18,7 +18,7 @@ public interface ICalculateService
 
     Task<Result> UnCalculate(SettleRequest request);
 
-    Task<Result> UncalculateFT(UncalculateFtRequest request);
+    Task<Result> UncalculateFt(UncalculateFtRequest request);
 
     Task<Result> CheckStatus(CheckStatusRequest request);
 }
@@ -35,22 +35,22 @@ public class CalculateServiceImp : ICalculateService
 
     private readonly ScaleOutSettleService scaleOutSettleService;
 
-    private readonly LogDirectlyService logDirectlyService;
+    private readonly LogService logService;
 
-    public CalculateServiceImp
-    (IMapper mapper,
+    public CalculateServiceImp(
+        IMapper mapper,
         IDynamicRepository repository,
         IOptions<AppSettingsKey> appSettingsKey,
         ICreateCriteriaService createQueryCriteria,
         ScaleOutSettleService scaleOutSettleService,
-        LogDirectlyService logDirectlyService)
+        LogService logService)
     {
         this.repository = repository;
         this.appSettingsKey = appSettingsKey.Value;
         this.mapper = mapper;
         this.createQueryCriteria = createQueryCriteria;
         this.scaleOutSettleService = scaleOutSettleService;
-        this.logDirectlyService = logDirectlyService;
+        this.logService = logService;
     }
 
     public async Task<Result> Calculate(SettleRequest request)
@@ -62,8 +62,7 @@ public class CalculateServiceImp : ICalculateService
             return matchChecking;
         }
 
-        WriteDirectlyLog(request);
-
+        WriteDirectlyLog(criteria);
         await ExecuteAsync(criteria);
         await RefundChildMatch(criteria);
 
@@ -76,7 +75,7 @@ public class CalculateServiceImp : ICalculateService
         return matchChecking;
     }
 
-    public async Task<Result> UncalculateFT(UncalculateFtRequest request)
+    public async Task<Result> UncalculateFt(UncalculateFtRequest request)
     {
         var criteria = createQueryCriteria.CreateUnCalculateFtCriteria(request);
         var requestChecking = await ValidateBeforeExecute(criteria);
@@ -85,8 +84,7 @@ public class CalculateServiceImp : ICalculateService
             return requestChecking;
         }
 
-        WriteDirectlyLogUncalculateFt(criteria, request.ResultDetails);
-
+        WriteDirectlyLog(criteria, request.ResultDetails);
         await ExecuteAsync(criteria);
 
         if (request.IsApplyHedging)
@@ -107,8 +105,7 @@ public class CalculateServiceImp : ICalculateService
             return requestChecking;
         }
 
-        WriteDirectlyLog(request);
-
+        WriteDirectlyLog(criteria);
         await ExecuteAsync(criteria);
 
         if (request.IsApplyHedging)
@@ -143,25 +140,32 @@ public class CalculateServiceImp : ICalculateService
         }
     }
 
-    private void WriteDirectlyLog(SettleBaseRequest request)
+    private void WriteLog(Match match, string actionName)
+    {
+        var messageLog = $"NAP:Calculate({actionName}) for matchId: {match.MatchId} score: "
+                         + $"{match.FinalHomeScore ?? 0}-{match.FinalAwayScore ?? 0} HT: {match.HalfTimeHomeScore ?? 0}-{match.HalfTimeAwayScore ?? 0} "
+                         + $"GoalRecord: {match.GoalRecord} Remark({match.BetStatus})";
+
+        logService.WriteLog(match.MatchId, messageLog);
+    }
+
+    private void WriteDirectlyLog(CalculateCriteria criteria)
     {
         var match = new Match
         {
-            MatchId = request.MatchId,
-            HalfTimeAwayScore = request.HalfTimeAwayScore,
-            HalfTimeHomeScore = request.HalfTimeHomeScore,
-            FinalAwayScore = request.FinalAwayScore,
-            FinalHomeScore = request.FinalHomeScore,
-            GoalRecord = request.GoalRecord,
-            BetStatus = request.BetStatus,
+            MatchId = criteria.MatchId,
+            HalfTimeAwayScore = criteria.HalfTimeAway,
+            HalfTimeHomeScore = criteria.HalfTimeHome,
+            FinalAwayScore = criteria.FullTimeAway ?? 0,
+            FinalHomeScore = criteria.FullTimeHome ?? 0,
+            GoalRecord = criteria.GoalRecord,
+            BetStatus = criteria.BetStatus,
         };
 
-        var message = LogDirectlyServiceImp.GenerateLogData(match, request.ActionName);
-
-        logDirectlyService.WriteLog(request.MatchId, message);
+        WriteLog(match, criteria.Action);
     }
 
-    private void WriteDirectlyLogUncalculateFt(CalculateCriteria criteria, IEnumerable<ResultDetail> resultDetails)
+    private void WriteDirectlyLog(CalculateCriteria criteria, IEnumerable<ResultDetail> resultDetails)
     {
         var resultHalfTime = resultDetails?.FirstOrDefault(result => result.ResourceId == ResourceType.Halftime) ?? new ResultDetail();
         var match = new Match
@@ -173,9 +177,7 @@ public class CalculateServiceImp : ICalculateService
             HalfTimeAwayScore = string.IsNullOrEmpty(resultHalfTime.AwayValue) ? 0 : int.Parse(resultHalfTime.AwayValue)
         };
 
-        var message = LogDirectlyServiceImp.GenerateLogData(match, ActionType.UnCalculateFullTime);
-
-        logDirectlyService.WriteLog(criteria.MatchId, message);
+        WriteLog(match, criteria.Action);
     }
 
     private async Task<Result> ValidateBeforeExecute(CalculateCriteria criteria)

@@ -261,7 +261,6 @@ describe('MoveTickets - LeagueComponent', () => {
     it('should refresh page when successfully move tickets', fakeAsync(() => {
         match.remark = new Remark();
         match.newEventStatus = "Running";
-        spyOn(moveTicketsService, 'getChildMatches').and.returnValue(of([]));
         spyOn(moveTicketsService, 'moveTickets').and.returnValue(of(successfulResult));
         spyOn(component.refreshAction, 'emit');
         spyOn(messageBoxService, 'alert');
@@ -278,7 +277,6 @@ describe('MoveTickets - LeagueComponent', () => {
     it('should refresh page and alert when move tickets not successfully', fakeAsync(() => {
         match.remark = new Remark();
         match.newEventStatus = "Running";
-        spyOn(moveTicketsService, 'getChildMatches').and.returnValue(of([]));
         spyOn(moveTicketsService, 'moveTickets').and.returnValue(of(unsuccessfulResult));
         spyOn(component.refreshAction, 'emit');
         spyOn(messageBoxService, 'alert');

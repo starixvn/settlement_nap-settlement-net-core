@@ -5,7 +5,7 @@ namespace Settlement.FastMarkets.UnitTests.Services;
 
 public class ResultLabelServiceTests
 {
-    private readonly IResultLabelService service;
+    private readonly ResultLabelService service;
 
     public ResultLabelServiceTests()
     {

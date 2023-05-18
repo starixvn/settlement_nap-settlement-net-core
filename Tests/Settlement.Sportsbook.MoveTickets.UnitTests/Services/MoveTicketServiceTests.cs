@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using AutoMapper.Configuration;
 using Fanex.Data.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
@@ -17,7 +16,7 @@ public class MoveTicketServiceTests
     private readonly IDynamicRepository repository;
     private readonly IRefDataService refDataService;
     private readonly IMatchService matchService;
-    private readonly IMoveTicketService service;
+    private readonly MoveTicketService service;
 
     public MoveTicketServiceTests()
     {
@@ -110,49 +109,6 @@ public class MoveTicketServiceTests
 
         Assert.Equal(JsonConvert.SerializeObject(expectedMatches), JsonConvert.SerializeObject(actualMatches));
         await repository.Received(2).FetchAsync<Match>(Arg.Any<SportsbookCriteria>());
-    }
-
-    //[Fact]
-    //public async Task MoveTicket_Always_ReturnResult()
-    //{
-    //    await repository.ExecuteAsync(Arg.Do<MoveTicketCriteria>(x =>
-    //    {
-    //        x.ErrCode = 0;
-    //        x.ErrMsg = "";
-    //    }));
-
-    //    var actual = await service.MoveTicket(new MoveTicketRequest());
-
-    //    Assert.True(actual.IsSuccessful);
-    //}
-
-    //[Fact]
-    //public async Task MoveTicket_IsFail_AlwaysCallActionLog()
-    //{
-    //    await repository.ExecuteAsync(Arg.Do<MoveTicketCriteria>(x =>
-    //    {
-    //        x.ErrCode = 1;
-    //        x.ErrMsg = "message";
-    //    }));
-
-    //    await service.MoveTicket(new MoveTicketRequest());
-
-    //    logService.Received().ActionLog(Arg.Any<int>(), Arg.Any<string>(), Arg.Any<int>());
-    //}
-
-    [Fact]
-    public async Task GetChildMatch_Always_ReturnCorrectMatch()
-    {
-        var listMatch = new List<ChildMatch>
-        {
-            new() {MatchId = 1}
-        };
-
-        repository.FetchAsync<ChildMatch>(Arg.Any<ICriteria>()).Returns(listMatch);
-
-        var actual = await service.GetChildMatch(new GetChildMatchRequest());
-
-        Assert.Equal(listMatch, actual);
     }
 
     [Fact]

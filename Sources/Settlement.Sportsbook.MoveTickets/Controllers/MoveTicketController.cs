@@ -25,10 +25,6 @@ public class MoveTicketController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> MoveTicket(MoveTicketRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
-    [Route("get-child-match")]
-    [HttpPost]
-    public async Task<IActionResult> GetChildMatch(GetChildMatchRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
-
     [Route("validate-matches")]
     [HttpPost]
     public async Task<IActionResult> ValidateMatches(ValidateMatchesRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
