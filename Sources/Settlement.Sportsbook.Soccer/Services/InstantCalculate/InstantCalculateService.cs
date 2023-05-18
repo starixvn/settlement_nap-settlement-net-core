@@ -17,9 +17,9 @@ public interface InstantCalculateService
 {
     Task<UndoCheckingModel> UndoCheckingScore(int matchId);
 
-    Task<Result> PushInstantCalculation(InstantCalculationRequest request);
+    Task<Result> PushInstantCalculation(InstantCalculationRequest instantCalculationRequest);
 
-    Task<Result> UncalPushInstantCalculation(InstantCalculationRequest request);
+    Task<Result> UncalPushInstantCalculation(InstantCalculationRequest instantCalculationRequest);
 }
 
 public class InstantCalculateServiceImp : InstantCalculateService
@@ -87,19 +87,10 @@ public class InstantCalculateServiceImp : InstantCalculateService
         return undoCheckingScore;
     }
 
-    public async Task<Result> UncalPushInstantCalculation(InstantCalculationRequest request)
+    public async Task<Result> UncalPushInstantCalculation(InstantCalculationRequest instantCalculationRequest)
     {
-        var matchTicketInfo = await GetMatchDetailWithTicketInfo(request.MatchId);
-        request.IsExistHtFgNg = matchTicketInfo.IsExistHtFgNg;
-        request.IsExistFgNg = matchTicketInfo.IsExistFgNg;
-        request.IsExistFG = matchTicketInfo.IsExistFG;
-        request.IsExistHTFG = matchTicketInfo.IsExistHTFG;
-        request.IsExistCorner = matchTicketInfo.IsExistCorner;
-        request.IsExistHTCorner = matchTicketInfo.IsExistHTCorner;
-        request.IsExistFirstCorner = matchTicketInfo.IsExistFirstCorner;
-        request.IsExistHTFirstCorner = matchTicketInfo.IsExistHTFirstCorner;
-        request.IsExist2HFirstCorner = matchTicketInfo.IsExist2HFirstCorner;
-
+        var matchTicketInfo = await GetMatchDetailWithTicketInfo(instantCalculationRequest.MatchId);
+        var request = CreateInstantCalculationRequest(instantCalculationRequest, matchTicketInfo);
         var uncalResources = GetResourcesInstantCalculate(request);
         var resourceResult = GetResourceResultInstantUncal(request.Resources, uncalResources);
 
@@ -108,21 +99,12 @@ public class InstantCalculateServiceImp : InstantCalculateService
         return result;
     }
 
-    public async Task<Result> PushInstantCalculation(InstantCalculationRequest request)
+    public async Task<Result> PushInstantCalculation(InstantCalculationRequest instantCalculationRequest)
     {
-        var matchTicketInfo = await GetMatchDetailWithTicketInfo(request.MatchId);
-
+        var matchTicketInfo = await GetMatchDetailWithTicketInfo(instantCalculationRequest.MatchId);
+        var request = CreateInstantCalculationRequest(instantCalculationRequest, matchTicketInfo);
         request.GoalRecord = matchTicketInfo.GoalRecord;
         request.BetStatus = matchTicketInfo.BetStatus;
-        request.IsExistHtFgNg = matchTicketInfo.IsExistHtFgNg;
-        request.IsExistFgNg = matchTicketInfo.IsExistFgNg;
-        request.IsExistFG = matchTicketInfo.IsExistFG;
-        request.IsExistHTFG = matchTicketInfo.IsExistHTFG;
-        request.IsExistCorner = matchTicketInfo.IsExistCorner;
-        request.IsExistHTCorner = matchTicketInfo.IsExistHTCorner;
-        request.IsExistFirstCorner = matchTicketInfo.IsExistFirstCorner;
-        request.IsExistHTFirstCorner = matchTicketInfo.IsExistHTFirstCorner;
-        request.IsExist2HFirstCorner = matchTicketInfo.IsExist2HFirstCorner;
 
         var resources = GetResourcesInstantCalculate(request);
         var resourceResult = instantResourceService.GenerateResource(resources);
@@ -136,6 +118,20 @@ public class InstantCalculateServiceImp : InstantCalculateService
         var result = await ProcessPushInstantCalculation(request, resourceResult);
 
         return result;
+    }
+
+    private static InstantCalculationRequest CreateInstantCalculationRequest(InstantCalculationRequest request, MatchTicketInfo matchTicketInfo)
+    {
+        request.IsExistHtFgNg = matchTicketInfo.IsExistHtFgNg;
+        request.IsExistFgNg = matchTicketInfo.IsExistFgNg;
+        request.IsExistFG = matchTicketInfo.IsExistFG;
+        request.IsExistHTFG = matchTicketInfo.IsExistHTFG;
+        request.IsExistCorner = matchTicketInfo.IsExistCorner;
+        request.IsExistHTCorner = matchTicketInfo.IsExistHTCorner;
+        request.IsExistFirstCorner = matchTicketInfo.IsExistFirstCorner;
+        request.IsExistHTFirstCorner = matchTicketInfo.IsExistHTFirstCorner;
+        request.IsExist2HFirstCorner = matchTicketInfo.IsExist2HFirstCorner;
+        return request;
     }
 
     private async Task<Result> ProcessPushInstantCalculation(InstantCalculationRequest request, string resourceResult)
