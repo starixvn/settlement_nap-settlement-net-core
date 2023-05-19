@@ -6,6 +6,7 @@ using Settlement.Core.Services;
 using Settlement.Sportsbook.Soccer.Criteria;
 
 namespace Settlement.Sportsbook.Soccer.Services;
+
 public interface PushInstantCalculationService
 {
     Task Execute(PushInstantCalculationCriteria criteria);

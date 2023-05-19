@@ -1,13 +1,13 @@
 ﻿namespace Settlement.Sportsbook.Soccer.Services.GetMatch;
 
 using AutoMapper;
+using Criteria;
 using Fanex.Data.Repository;
 using Fanex.NAP.Client;
 using Microsoft.Extensions.Options;
-using Settlement.Core.Models;
-using Criteria;
 using Models;
 using Requests;
+using Settlement.Core.Models;
 using Match = Models.Match;
 using MatchDetail = Models.MatchDetail;
 

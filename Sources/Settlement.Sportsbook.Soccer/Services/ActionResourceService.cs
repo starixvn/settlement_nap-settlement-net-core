@@ -1,6 +1,6 @@
-﻿using Settlement.Sportsbook.Soccer.Constants;
+﻿using Settlement.Core.Constants;
+using Settlement.Sportsbook.Soccer.Constants;
 using Settlement.Sportsbook.Soccer.Models;
-using Settlement.Core.Constants;
 
 namespace Settlement.Sportsbook.Soccer.Services;
 

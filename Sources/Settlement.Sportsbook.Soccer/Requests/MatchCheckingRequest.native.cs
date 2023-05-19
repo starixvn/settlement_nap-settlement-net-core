@@ -1,9 +1,9 @@
 ﻿using MediatR;
-using Settlement.Sportsbook.Soccer.Models;
+using Settlement.Core.Models;
 
 namespace Settlement.Sportsbook.Soccer.Requests;
 
-public class MatchCheckingRequest : IRequest<MatchCheckingResult>
+public class MatchCheckingRequest : IRequest<Result>
 {
     public int MatchId { get; set; }
 

@@ -52,9 +52,9 @@ public class InstantCalculateServiceImp : InstantCalculateService
         this.pushInstantService = pushInstantService;
     }
 
-    private async Task<MatchCheckingResult> CalculateCheckingInfo(MatchCheckingCriteria criteria)
+    private async Task<Result> CalculateCheckingInfo(MatchCheckingCriteria criteria)
     {
-        var matchCheckingResult = new MatchCheckingResult();
+        var matchCheckingResult = new Result();
 
         foreach (var server in appSettingsKey.SiteDbServer)
         {

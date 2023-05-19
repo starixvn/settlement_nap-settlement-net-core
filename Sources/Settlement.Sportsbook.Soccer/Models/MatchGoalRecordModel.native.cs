@@ -1,4 +1,5 @@
 ﻿namespace Settlement.Sportsbook.Soccer.Models;
+
 public class MatchGoalRecordModel
 {
     public bool IsExistHtFgNg { get; set; }
