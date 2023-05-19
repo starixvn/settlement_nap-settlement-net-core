@@ -6,7 +6,7 @@ import { RequestService } from './services/request.service';
 import { VerifyMatchService } from './services/verify-match.service';
 import { TimeMinute, LeagueGroup } from './models/constant.native';
 import * as _ from 'lodash';
-import { TicketStatusText, BackgroundColor, CalculateAction, SettlementStatusId } from '../../../shared/constants';
+import { TicketStatusText, BackgroundColor, CalculateAction, SettlementStatusId, ResultStatusId } from '../../../shared/constants';
 import { ClosePopupService, MessageBoxService } from '../../../shared/services';
 import { ModalDialogMessage } from '../../../shared/models';
 import { Language } from '../../../shared/language.native';
@@ -115,6 +115,12 @@ export class CalculationComponent implements Soccer {
             || this.matchDetail.isHtOnly || _.isEqual(this.matchDetail.htStatus, TicketStatusText.running);
 
         return this.isPinGoal ? false : flag;
+    }
+
+    public get isDisableUncalculateFT() {
+        const resultHalfTime = _.find(this.match.resultDetails, item => item.resourceId === ResourceIds.halfTime) ?? new ResultDetail();
+        return !(_.isEqual(resultHalfTime.resultStatusId, ResultStatusId.ManualCompleted)
+            || _.isEqual(resultHalfTime.resultStatusId, ResultStatusId.AutoCompleted));
     }
     public get isDisableFulltimeTextbox() {
         return this.isPinGoal ? false : this.matchDetail.isHtOnly;

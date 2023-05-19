@@ -1057,4 +1057,92 @@ public class ResourceServiceTests
         // Assert
         Assert.Empty(actual);
     }
+
+    [Fact]
+    public void UnCalculateFtResources_ExistScoreHT_ReturnExpect()
+    {
+        var goalRecord = "h;";
+
+        var expect = new List<XmlResource>
+        {
+            new()
+            {
+                ResourceId=ResourceKey.FullTime,
+                ResultStatusId = ResultStatus.Initial,
+                SettlementStatusId = SettlementStatus.Running,
+                HomeValue = string.Empty
+            },
+
+            new()
+        {
+            ResourceId=ResourceKey.FullTimeLastGoal,
+            ResultStatusId = ResultStatus.Initial,
+            SettlementStatusId = SettlementStatus.Running,
+            HomeValue = string.Empty
+        },
+
+        new()
+        {
+            ResourceId=ResourceKey.FullTimeGoalRecord,
+            ResultStatusId = ResultStatus.Initial,
+            SettlementStatusId = SettlementStatus.Running,
+            HomeValue = string.Empty
+        }
+        };
+
+        // Actual
+
+        var actual = service.UnCalculateFtResources(goalRecord);
+
+        // Assert
+        Assert.Equal(JsonConvert.SerializeObject(expect), JsonConvert.SerializeObject(actual));
+    }
+
+    [Fact]
+    public void UnCalculateFtResources_NotExistScoreHT_ReturnExpect()
+    {
+        var goalRecord = ";h";
+
+        var expect = new List<XmlResource>
+        {
+            new()
+            {
+                ResourceId=ResourceKey.FullTime,
+                ResultStatusId = ResultStatus.Initial,
+                SettlementStatusId = SettlementStatus.Running,
+                HomeValue = string.Empty
+            },
+
+            new()
+            {
+                ResourceId=ResourceKey.FullTimeLastGoal,
+                ResultStatusId = ResultStatus.Initial,
+                SettlementStatusId = SettlementStatus.Running,
+                HomeValue = string.Empty
+            },
+
+            new()
+            {
+                ResourceId=ResourceKey.FullTimeGoalRecord,
+                ResultStatusId = ResultStatus.Initial,
+                SettlementStatusId = SettlementStatus.Running,
+                HomeValue = string.Empty
+            },
+
+            new()
+            {
+                ResourceId=ResourceKey.FullTimeFirstGoal,
+                ResultStatusId = ResultStatus.Initial,
+                SettlementStatusId = SettlementStatus.Running,
+                HomeValue = string.Empty
+            },
+        };
+
+        // Actual
+
+        var actual = service.UnCalculateFtResources(goalRecord);
+
+        // Assert
+        Assert.Equal(JsonConvert.SerializeObject(expect), JsonConvert.SerializeObject(actual));
+    }
 }
