@@ -1,0 +1,26 @@
+<!DOCTYPE html><html lang="en"><head><base href="/move-tickets/">
+    
+    <title>@ViewBag.Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/lib/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/styles.css">
+<link rel="stylesheet" href="styles.05126cba39f6e094.css" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="styles.05126cba39f6e094.css"></noscript></head>
+<body>
+    <header>
+        @await Html.PartialAsync("~/Views/Menu.cshtml")
+    </header>
+    <section>
+        <div class="content">
+            <app-root page-type="@ViewBag.PageType">Loading...</app-root>
+        </div>
+    </section>
+    <script type="text/javascript">
+        var element = document.getElementById("MoveTickets-menu");
+        if (element !== null) {
+            element.className = "active-menu";
+        }
+    </script>
+    <script src="/js/notification.js" type="text/javascript"></script>
+    @await Html.PartialAsync("~/Views/Shared/_Matomo.cshtml")
+<script src="runtime.ec46827492bc92f3.js" type="module"></script><script src="polyfills.2bc609bff0a025a5.js" type="module"></script><script src="main.54dacdafed50cd84.js" type="module"></script>
+</body></html>
