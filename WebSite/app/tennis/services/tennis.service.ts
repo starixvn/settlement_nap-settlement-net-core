@@ -24,7 +24,7 @@ export class TennisService {
       totalGames.settlementStatusId = SettlementStatusId.Refund;
     } else {
       const games = resultDetail.filter((game) => !_.isEmpty(game.homeValue) && !_.isEmpty(game.awayValue)
-        && game.resultStatusId == ResultStatusId.ManualCompleted);
+        && (game.resultStatusId == ResultStatusId.ManualCompleted || game.resultStatusId == ResultStatusId.AutoCompleted));
 
       totalGames.settlementStatusId = totalSets.settlementStatusId;
       if (games.length > 0) {

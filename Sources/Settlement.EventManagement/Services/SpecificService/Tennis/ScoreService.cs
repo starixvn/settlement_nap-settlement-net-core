@@ -1,4 +1,5 @@
 ﻿namespace Settlement.EventManagement.Services.SpecificService.Tennis;
+
 using Settlement.Core.Models;
 
 public interface IScoreService
@@ -26,7 +27,7 @@ public class ScoreServiceImp : IScoreService
     {
         var resultHasScore = resultDetails.Where(m => !string.IsNullOrWhiteSpace(m.HomeValue)
                                                       && !string.IsNullOrWhiteSpace(m.AwayValue)
-                                                      && m.ResultStatusId == ResultStatus.ManuallySettled).ToList();
+                                                      && (m.ResultStatusId == ResultStatus.ManuallySettled || m.ResultStatusId == ResultStatus.AutoSettled)).ToList();
 
         if (resultHasScore.Count > 0)
         {
