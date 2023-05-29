@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 import { BlockUIService } from '../../shared/services';
 import { ModalDialogMessage } from '../../shared/models';
 import { Language } from '../../shared/language.native';
-import { Match  } from '../models';
+import { Match } from '../models';
 import { HedgeMatchDetail, SettleQuery, SportTemplate } from '../../shared/models/sportsbook-sop';
 import { ApiKeys } from '../constants';
 import { RefundActionBaseComponent } from '../../shared/components/sportsbook-sop/refund-action-base.component';
@@ -26,13 +26,8 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
     public match: Match;
     public isRefundOldMatch: boolean;
     public oldMatchDetail: HedgeMatchDetail;
-    public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
+    public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage(Language.confirmationBox);
     private readonly leaguePinGoal = 151;
-    constructor(
-        protected inject: Injector) {
-        super(inject);
-        this.confirmationDialogMessage.title = Language.confirmationBox;
-    }
 
     async getMatch(matchId: number): Promise<void> {
         this.initService();
@@ -54,7 +49,7 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
     }
 
     public initService(){
-        this.inject.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
+        this.blockUIService.blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
         this.toastrService.overlayContainer = this.toastContainer;
     }
 
@@ -102,7 +97,7 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
         }
     }
 
-    public confirmRefund(hedgeMatchDetail: HedgeMatchDetail, applyHedgeMatch: boolean,
+    public actionConfirmRefund(hedgeMatchDetail: HedgeMatchDetail, applyHedgeMatch: boolean,
         oldMatchDetail: HedgeMatchDetail = null, applyOldMatch: boolean = null) {
         this.toastrService.clear();
         if (!applyHedgeMatch) {

@@ -1,14 +1,14 @@
-﻿import { CashOutResultRefundQuery, GetTicketInfoQuery, Match, ResultDetail, VoidBetInfo, VoidBetQuery } from '../models';
-import { Component, Injector, ViewChild } from '@angular/core';
+﻿import { GetTicketInfoQuery, Match, VoidBetInfo, VoidBetQuery, CashOutResultRefundQuery } from '../models';
+import { Component, Injector, ViewChild, inject } from '@angular/core';
 import { Language } from '../../shared/language.native';
 import { BlockUIService } from '../../shared/services';
 import { ModalDialogMessage } from '../../shared/models';
-import { SportType } from '../../shared/constants';
+import { ScoreSourceType, SportType } from '../../shared/constants';
 import { BasketballApiKeys, ResourcesIds } from '../constants';
 import * as _ from 'lodash';
 import { RefundActionBaseComponent } from '../../shared/components/sportsbook-sop/refund-action-base.component';
 import { BasketballService, BetStatusService, VerificationService, CashOutService } from '../services';
-import { SettleQuery, SportTemplate } from '../../shared/models/sportsbook-sop';
+import { ResultDetail, SettleQuery, SportTemplate } from '../../shared/models/sportsbook-sop';
 import { ToastContainerDirective } from 'ngx-toastr';
 import { RefundCommonModule } from '../../shared/modules/refund-common.module';
 import { ResourceNameByIdPipe } from '../pipes/resource-name-by-id.pipe';
@@ -23,30 +23,39 @@ import { CalculationMatchDetailComponent } from './calculation-match-detail.comp
 })
 export class RefundActionsComponent extends RefundActionBaseComponent implements SportTemplate {
     @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
-    private verificationService: VerificationService;
-    private basketballService: BasketballService;
-    private cashOutService: CashOutService;
-    public blockUI = true;
-    public match: Match;
-    public originalMatch: Match;
-    public matchId: number;
-    public resultDetail: ResultDetail[];
-    public isDirectly: boolean;
-    public isSDTSettle: boolean;
-    public resultDetailDisableInput: boolean[];
-    public readonly isReSettledTickets: boolean;
-    public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
-    constructor(protected injector: Injector) {
-        super(injector);
-        this.confirmationDialogMessage.title = Language.confirmationBox;
+    verificationService = inject(VerificationService);
+    basketballService = inject(BasketballService);
+    cashOutService = inject(CashOutService);
+    blockUIService= inject(BlockUIService);
+    blockUI = true;
+    match: Match;
+    originalMatch: Match;
+    matchId: number;
+    resultDetailDisableInput: boolean[];
+    disableScoreDirect: boolean;
+    readonly overTimeId = ResourcesIds.ot;
+    readonly isReSettledTickets: boolean;
+    readonly confirmationDialogMessage = new ModalDialogMessage(Language.confirmationBox);
+
+    get quarterResults() {
+        return _.filter(this.resultDetails, (map: ResultDetail) => !_.isEqual(map.resourceId, ResourcesIds.htScore)
+            && !_.isEqual(map.resourceId, ResourcesIds.finalScore));
+    }
+
+    get overTimeResult() {
+        return _.find(this.resultDetails, (map: ResultDetail) => _.isEqual(map.resourceId, ResourcesIds.ot));
+    }
+
+    get fullTimeResult() {
+        return _.find(this.resultDetails, (map: ResultDetail) => _.isEqual(map.resourceId, ResourcesIds.finalScore));
     }
 
     async getMatch(matchId: number): Promise<void> {
-        this.initService();
+        this.blockUIService.blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
         const matchQuery = {
             matchId,
             sportType: SportType.basketBall,
-            apikey: BasketballApiKeys.normalMatch,
+            apikey: BasketballApiKeys.normalMatchRefund,
             settleType: "MNL"
         };
         this.toastrService.overlayContainer = this.toastContainer;
@@ -55,43 +64,34 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
         this.init();
     }
 
-    public initService() {
-        this.verificationService = this.injector.get(VerificationService);
-        this.basketballService = this.injector.get(BasketballService);
-        this.cashOutService = this.injector.get(CashOutService);
-        this.injector.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
-    }
 
-    public init() {
+    init() {
         this.matchId = this.match.matchDetail.matchId;
         this.hedgeMatchDetail = this.match.hedgeMatchDetail;
         this.applyHedgeMatch = this.hedgeMatchDetail != null;
         this.resultDetails = this.basketballService.getResultDetail(this.match.resultDetails);
-        this.resultDetails = this.resultDetails.filter(item => item.resourceId !== ResourcesIds.ot);
         this.resultDetailDisableInput = new Array(this.resultDetails.length).fill(true);
         this.matchDetail = this.match.matchDetail;
         this.permission = this.match.permission;
+        this.resourceConfirmedSdt = this.match.externalResults.find(r => r.sourceId === ScoreSourceType.confirmRefundSource)?.resultDetails ?? [];
+        this.basketballService.getResourceExternalRefund(this.permission.isLeader, this.match.externalResults, this.resultDetails);
+        this.isConfirmRefund = this.resultDetails.findIndex(result => result.resultSettingData.isConfirmedRefund || result.resultSettingData.isConfirmedRefundSdt) == -1;
+        this.isSDTSettle = this.permission.isLeader ? this.initSDTSettle() : false;
+        this.disableScoreDirect = this.verificationService.isTicketOnQuarter(this.resultDetails, this.match.resultDetails);
     }
 
-    public selectResult() {
-        if (!this.isSDTSettle) {
-            return;
-        }
-
-        const firstResultSelected = this.resultDetails.find(result => result.checked);
-        if(firstResultSelected) {
-            const index = this.resultDetail.indexOf(firstResultSelected);
-            this.resultDetailDisableInput = new Array(this.resultDetails.length).fill(true);
-            this.resultDetailDisableInput[index] = false;
-        }
-    }
-
-    public async refund() {
+    async refund() {
         this.toastrService.clear();
         if (!this.verificationService.isPinGoalMatch(this.matchDetail.leagueGroupId) && this.existResultNotConfirmed()) {
             this.toastrService.error(Language.confirmRefund.refundResultNotConfirmed);
             return;
         }
+
+        if (this.isSDTSettle && this.existResultNotConfirmedSdt()) {
+            this.toastrService.error(Language.confirmRefund.sdtErrorMessage);
+            return;
+        }
+        
         const paramsCheckRefund = {
             matchId: this.matchId,
             selectedResources: this.selectedResources
@@ -114,7 +114,7 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
         if (result.errCode === 0) {
             await this.voidBet(getTicketInfos);
             await this.cashOutResultRefund(this.resultDetails);
-            this.refundHedgeMatch(query);
+            await this.refundHedgeMatch(query);
             this.messageBoxService.closePopup();
         } else {
             this.toastrService.error(result.errMsg);
@@ -151,5 +151,62 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
             const query = new CashOutResultRefundQuery(this.matchDetail.matchId, betStatus, half);
             await this.cashOutService.refund(query);
         }
+    }
+
+    changeScore(resultDetail: ResultDetail) {
+        const firstResourceIndex = this.resultDetails.indexOf(resultDetail);
+        const resultDetailAfter = this.resultDetails.slice(firstResourceIndex != -1 ? firstResourceIndex + 1 : 0);
+        resultDetailAfter.forEach(resource => {
+            if (resource.resourceId !== resultDetail.resourceId) {
+                resource.awayValue = "";
+                resource.homeValue = "";
+            }
+        });
+
+    }
+
+    inputDirectly() {
+        let isDisable = false;
+        if (this.isDirectly) {
+            isDisable = true;
+        }
+        for (let i = 0; i < this.resultDetails.length; i++) {
+            this.resultDetailDisableInput[i] = !this.isEnableResult(this.resultDetails[i]);
+        }
+
+        this.quarterResults.forEach(result => {
+            result.checked = false;
+            result.isShow = isDisable;
+        });
+    }
+
+    selectFullTimeCheckBox() {
+        if (this.isSDTSettle && !this.isDirectly) {
+            this.overTimeResult.checked = this.fullTimeResult.checked;
+        } else {
+            this.overTimeResult.checked = false;
+        }
+    }
+
+    enableInput(resultDetail: ResultDetail = null, isFullTime: boolean = false) {
+        if (_.isNull(resultDetail)) {
+            for (let i = 0; i < this.resultDetails.length; i++) {
+                this.resultDetailDisableInput[i] = !this.isEnableResult(this.resultDetails[i]);
+            }
+        } else {
+            const resultDetailSelected = isFullTime ? this.fullTimeResult : resultDetail
+            this.resultDetailDisableInput[this.resultDetails.indexOf(resultDetailSelected)] = !this.isEnableResult(resultDetailSelected);
+        }
+    }
+
+    private isEnableResult(resultDetail: ResultDetail) {
+        if (resultDetail.resourceId === ResourcesIds.htScore || resultDetail.resourceId === ResourcesIds.finalScore) {
+            return this.isSDTSettle && this.isDirectly && resultDetail.checked;
+        }
+
+        if (resultDetail.resourceId == this.overTimeId) {
+            return this.isSDTSettle && !this.isDirectly && this.overTimeResult.checked;
+        }
+        return this.isSDTSettle && resultDetail.checked && !this.isDirectly;
     }
 }

@@ -15,6 +15,8 @@ public class ValidateApiKeyServiceImp : IValidateApiKeyService
 {
     private readonly ICriteriaFactory criteriaFactory;
 
+    private const string RefundKey = "-refund";
+
     public ValidateApiKeyServiceImp(ICriteriaFactory simpleCriteriaFactory)
     {
         criteriaFactory = simpleCriteriaFactory;
@@ -27,7 +29,8 @@ public class ValidateApiKeyServiceImp : IValidateApiKeyService
             throw new EmptyKeyException($"apiKey({apiKey}) is empty");
         }
 
-        return apiKey;
+
+        return apiKey.Replace(RefundKey, "");
     }
 
     public ICriteria CriteriaName(object queryModel, string apiKey)

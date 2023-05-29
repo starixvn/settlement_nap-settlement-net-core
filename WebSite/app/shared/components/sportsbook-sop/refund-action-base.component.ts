@@ -1,34 +1,39 @@
 import { MessageBoxService } from './../../services/message-box.service.native';
-import { CalculateAction, SettlementStatusId, TicketStatusText } from "../../constants";
+import { CalculateAction, ResourceIds, ResultStatusId, SettlementStatusId, TicketStatusText } from "../../constants";
 import { Language } from "../../language.native";
-import { AioService } from "../../services";
-import { HedgeMatchDetail, MatchDetail, Permission, ResultDetail, SettleQuery } from "../../models/sportsbook-sop";
+import { AioService, BlockUIService } from "../../services";
+import { ExternalResultDetail, HedgeMatchDetail, MatchDetail, Permission, ResultDetail, SettleQuery } from "../../models/sportsbook-sop";
 import * as _ from "lodash";
-import { Component, Injector } from "@angular/core";
+import { Component, Injector, inject } from "@angular/core";
 import { ToastrService } from "ngx-toastr";
+import { ResourceItem } from '../../models';
 
 @Component({
     template: '',
 })
 export class RefundActionBaseComponent {
-    public aioService: AioService;
-    public toastrService: ToastrService;
-    public messageBoxService: MessageBoxService;
-    public blockUI = true;
-    public resultDetails: ResultDetail[];
-    public matchDetail: MatchDetail;
-    public permission: Permission;
-    public hedgeMatchDetail: HedgeMatchDetail;
-    public applyHedgeMatch: boolean;
-    constructor(protected injector: Injector) {
-        this.aioService = this.injector.get(AioService);
-        this.toastrService = this.injector.get(ToastrService);
-        this.messageBoxService = this.injector.get(MessageBoxService);
+    aioService = inject(AioService);
+    toastrService = inject(ToastrService);
+    messageBoxService = inject(MessageBoxService);
+    blockUIService = inject(BlockUIService);
+    blockUI = true;
+    resultDetails: ResultDetail[];
+    matchDetail: MatchDetail;
+    permission: Permission;
+    hedgeMatchDetail: HedgeMatchDetail;
+    applyHedgeMatch: boolean;
+    isSDTSettle: boolean;
+    isDirectly: boolean;
+    isConfirmRefund: boolean;
+    resourceConfirmedSdt: ExternalResultDetail[];
+
+    get selectedResources(): ResultDetail[] {
+        return this.resultDetails.filter((item) => item.checked);
     }
 
-
-    public get selectedResources(): ResultDetail[] {
-        return this.resultDetails.filter((item) => item.checked);
+    get HalfAndFullTimeResults() {
+        return _.filter(this.resultDetails, (map: ResultDetail) => _.isEqual(map.resourceId, ResourceIds.halfTime)
+            || _.isEqual(map.resourceId, ResourceIds.fullTime));
     }
 
     protected generateCheckMarkedTicketsQuery() {
@@ -39,32 +44,34 @@ export class RefundActionBaseComponent {
     }
 
     protected generateRefundQuery(apikey: string) {
-        this.selectedResources.forEach((item) => {
-            item.homeValue = "";
-            item.awayValue = "";
-        });
-        const betStatus = this.getBetStatus();
+        if(!this.isSDTSettle) {
+            this.selectedResources.forEach((item) => {
+                item.homeValue = "";
+                item.awayValue = "";
+            });
+        }
 
-        return new SettleQuery(this.matchDetail.matchId,
+        const query = new SettleQuery(this.matchDetail.matchId,
             this.selectedResources,
             CalculateAction.refund,
             false,
-            betStatus,
+            "",
             apikey);
+        query.hasSdt = this.isSDTSettle;
+        query.isDirectly = this.isDirectly;
+        return query;
     }
 
-    public getBetStatus() {
-        return "";
-    }
-
-    public isConfirmed(resultDetail: ResultDetail) {
+    isConfirmed(resultDetail: ResultDetail) {
         return this.permission.isLeader && resultDetail.resultSettingData.isConfirmedRefund;
     }
 
-    public confirmRefund(hedgeMatchDetail: HedgeMatchDetail, applyHedgeMatch: boolean) {
+    confirmRefund() {
         this.toastrService.clear();
-        if (!applyHedgeMatch) {
-            hedgeMatchDetail = new HedgeMatchDetail();
+        const hedgeMatchDetail = this.applyHedgeMatch ? this.hedgeMatchDetail : new HedgeMatchDetail();
+        if (this.isSDTSettle) {
+            this.confirmRefundSdt();
+            return;
         }
         const resourceIds = _.join(this.selectedResources.map(item => item.resourceId), ',');
         const resultConfirmed = _.find(this.selectedResources, item => item.resultSettingData.isConfirmedRefund);
@@ -75,7 +82,7 @@ export class RefundActionBaseComponent {
         }
     }
 
-    public undoConfirmedResult(resultDetails: ResultDetail[], matchId: number, resourceIds: string,
+    undoConfirmedResult(resultDetails: ResultDetail[], matchId: number, resourceIds: string,
         hedgeMatchDetail: HedgeMatchDetail, oldMatchDetail: HedgeMatchDetail = null) {
         const resultNotConfirmed = _.find(resultDetails, item => !item.resultSettingData.isConfirmedRefund);
         if (_.isNil(resultNotConfirmed)) {
@@ -86,7 +93,19 @@ export class RefundActionBaseComponent {
         }
     }
 
-    public confirmResult(resultDetails: ResultDetail[], matchId: number, resourceIds: string,
+    undoConfirmedAllResult() {
+        this.toastrService.clear();
+        if (this.resultDetails.some(item => item.resultSettingData.isConfirmedRefund)) {
+            const resourceIds = this.resultDetails.map(resource => resource.resourceId).join(',');
+            this.aioService.changeConfirmResultSetting(Language.confirmRefund.undoConfirmAll, this.matchDetail.matchId, resourceIds, false,
+                this.applyHedgeMatch ? this.hedgeMatchDetail : null);
+        } else {
+            const resourceItems = this.resultDetails.map(item => new ResourceItem(item.resourceId, item.homeValue, item.awayValue))
+            this.aioService.changeConfirmResultSDTSetting(this.matchDetail.matchId, resourceItems, false);
+        }
+    }
+
+    confirmResult(resultDetails: ResultDetail[], matchId: number, resourceIds: string,
         hedgeMatchDetail: HedgeMatchDetail, oldMatchDetail: HedgeMatchDetail = null) {
         const refundedResultHasNoRunningTicket = _.find(resultDetails, item =>
             item.settlementStatusId === SettlementStatusId.Refund && !_.isEqual(item.ticketStatus, TicketStatusText.running));
@@ -98,17 +117,81 @@ export class RefundActionBaseComponent {
         }
     }
 
-    public existResultNotConfirmed() {
+    confirmRefundSdt() {
+        const selectedResources = this.selectedResources;
+        const resultDetails = this.isDirectly ? this.HalfAndFullTimeResults : this.resultDetails
+        const firstSelectedResourceIndex = resultDetails.indexOf(selectedResources[0]);
+
+        const isFirstResourceEmpty = _.isEmpty(selectedResources[0].awayValue) || _.isEmpty(selectedResources[0].homeValue);
+
+        if (this.validateResourceBeforeFirstSelected(firstSelectedResourceIndex, resultDetails)
+            || isFirstResourceEmpty
+            || this.validateResourceFrom2nd(firstSelectedResourceIndex, resultDetails)) {
+            this.toastrService.error(Language.confirmRefund.sdtErrorMessage);
+        } else {
+            const resourceItems = this.selectedResources.map(item => new ResourceItem(item.resourceId, item.homeValue, item.awayValue))
+            this.aioService.changeConfirmResultSDTSetting(this.matchDetail.matchId, resourceItems, true);
+        }
+    }
+
+    private validateResourceBeforeFirstSelected(firstResourceIndex: number, resultDetails: ResultDetail[]) {
+        const resultDetailBefore = resultDetails.slice(0, firstResourceIndex);
+        return resultDetailBefore.some(resource => resource.settlementStatusId === SettlementStatusId.Running);
+    }
+
+    private validateResourceFrom2nd(firstResourceIndex: number, resultDetails: ResultDetail[]) {
+        const resultDetailAfter = resultDetails.slice(firstResourceIndex + 1);
+        const isExistValueNotEmptyAfter = resultDetailAfter.some(resource => !_.isEmpty(resource.awayValue) || !_.isEmpty(resource.homeValue));
+        const isExistValueNotCheckedAfter = resultDetailAfter.some(result => {
+            if (result.resourceId === ResourceIds.fullTime) {
+                return this.isDirectly && !result.checked;
+            }
+            return !result.checked && !this.isDirectly
+        });
+
+        return isExistValueNotCheckedAfter || isExistValueNotEmptyAfter;
+    }
+
+
+    existResultNotConfirmed() {
+        if (this.isSDTSettle) return false;
         const resultNotConfirmed = _.find(this.selectedResources, item => !item.resultSettingData.isConfirmedRefund);
         return !_.isNil(resultNotConfirmed);
     }
 
-    public async refundHedgeMatch(query: SettleQuery) {
+    existResultNotConfirmedSdt() {
+        const resultValueNotConfirmed = !this.resourceConfirmedSdt.every(result => {
+            const resourceConfirmed = this.resultDetails.find(resource => result.resourceId === resource.resourceId);
+            return resourceConfirmed.checked
+                && _.isEqual(result.homeValue, resourceConfirmed.homeValue)
+                && _.isEqual(result.awayValue, resourceConfirmed.awayValue)
+        });
+        return resultValueNotConfirmed;
+    }
+
+    async refundHedgeMatch(query: SettleQuery) {
         const hedgeMatchId = this.applyHedgeMatch ? this.hedgeMatchDetail.matchId : 0;
         if (hedgeMatchId > 0) {
             query.matchId = hedgeMatchId;
             await this.aioService.push(query);
-        } 
+        }
+    }
+
+    initSDTSettle() {
+        const existResultConfirmedSDT = this.resultDetails.some(item => item.resultSettingData.isConfirmedRefundSdt);
+        if (existResultConfirmedSDT) {
+            return true;
+        }
+
+        const resultConfirmNormal = this.resultDetails.some(item => item.resultSettingData.isConfirmedRefund);
+
+        if (resultConfirmNormal) {
+           return false;
+        }
+
+        return this.resultDetails.some(item =>
+            item.resultStatusId == ResultStatusId.AutoCompleted
+            || item.resultStatusId == ResultStatusId.ManualCompleted);
     }
 
     protected cloneResultDetail() {

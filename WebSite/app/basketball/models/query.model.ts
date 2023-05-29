@@ -1,38 +1,8 @@
 import { CalculateAction } from '../../shared/constants';
-import { ResultDetail } from './result-detail.model';
 import { BasketballApiKeys } from '../constants';
-import { MatchDetail } from '../../shared/models/sportsbook-sop';
+import { MatchDetail, SettleQuery } from '../../shared/models/sportsbook-sop';
 import { VoidBetInfo } from './void-bet-info.model';
 
-export class SettleQuery {
-    matchId: number;
-    selectedResources: ResultDetail[];
-    actionName: string;
-    apikey: string;
-    isReSettledTickets: boolean;
-    betStatus: string;
-    isLeader: boolean;
-    isDirectly: boolean;
-    sportType: number;
-    isHedgeMatch: boolean;
-    constructor(
-        matchId: number,
-        selectedResources: ResultDetail[],
-        actionName: string,
-        isReSettledTickets: boolean,
-        sportType: number,
-        betStatus?: string,
-        isDirectly = false) {
-        this.matchId = matchId;
-        this.selectedResources = selectedResources;
-        this.actionName = actionName;
-        this.apikey = BasketballApiKeys.settle;
-        this.isReSettledTickets = isReSettledTickets;
-        this.betStatus = betStatus === undefined ? '' : betStatus;
-        this.isDirectly = isDirectly;
-        this.sportType = sportType;
-    }
-}
 
 export class RefundParlayQuery {
     matchId: number;

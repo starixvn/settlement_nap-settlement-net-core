@@ -176,7 +176,10 @@
         differentStates: "WARNING! Cannot continue due to selected results have different confirm states! Please select confirmed or not confirmed results only.",
         refundedNoRunningTicket: "WARNING! Cannot continue due to selected results are Refund and have no Running ticket.",
         refundResultNotConfirmed: "WARNING! Cannot continue due to selected results are not confirmed to refund. Please confirm refund and try again.",
-        calculateResultNotConfirmed: "WARNING! Cannot continue due to selected results are confirmed to refund. Please undo-confirm refund and try again."
+        calculateResultNotConfirmed: "WARNING! Cannot continue due to selected results are confirmed to refund. Please undo-confirm refund and try again.",
+        sdtConfirm: 'WARNING! Are you sure you want to confirm-refund SDT for selected results?',
+        undoConfirmAll: 'WARNING! Are you sure you want to undo confirm-refund for all results?',
+        sdtErrorMessage: 'Cannot continue with Refund due to confirm state or value mismatch. Please check and try again.'
     },
     gaming: {
         reCalculateConfirmMessage: 'Are you sure you want to Recalculate this match?',

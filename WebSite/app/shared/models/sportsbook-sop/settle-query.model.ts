@@ -1,14 +1,16 @@
+import { ResourceItem } from "../resource-item.model";
 import { ResultDetail } from "./result-detail.model";
 
 export class SettleQuery {
     matchId: number;
-    selectedResources: ResultDetail[];
+    selectedResources: ResultDetail[] | ResourceItem[];
     actionName: string;
     apikey: string;
     isReSettledTickets: boolean;
     betStatus: string;
     isLeader: boolean;
     isDirectly: boolean;
+    hasSdt: boolean;
     sportType: boolean;
 
     constructor(
@@ -25,7 +27,6 @@ export class SettleQuery {
         this.apikey = apikey;
         this.isReSettledTickets = isReSettledTickets;
         this.betStatus = betStatus;
-        this.isDirectly = false;
         this.isLeader = isLeader;
     }
 }

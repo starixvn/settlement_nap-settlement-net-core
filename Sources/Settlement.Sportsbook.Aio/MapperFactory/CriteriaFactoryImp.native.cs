@@ -70,6 +70,7 @@ public class CriteriaFactoryImp : CriteriaFactoryBase
         CriteriaTypes.Add($"basketball-{ApiKeyConstant.ResultDetailKey}", typeof(Criteria.GetResultDetailCriteria));
         CriteriaTypes.Add($"basketball-{ApiKeyConstant.LatestResultKey}", typeof(Criteria.GetRecalResultCriteria));
         CriteriaTypes.Add($"basketball-{ApiKeyConstant.ProviderKey}", typeof(Criteria.GetProviderCriteria));
+        CriteriaTypes.Add($"basketball-refund-{ApiKeyConstant.ProviderKey}", typeof(Criteria.GetResultConfirmRefundCriteria));
         CriteriaTypes.Add($"basketball-{ApiKeyConstant.SaveScore}", typeof(Criteria.SaveScoreCriteria));
 
         CriteriaTypes.Add("basketball-settle", typeof(Criteria.SettleCriteria));

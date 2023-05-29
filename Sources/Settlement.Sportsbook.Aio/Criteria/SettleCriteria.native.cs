@@ -28,6 +28,8 @@ public class SettleCriteria : NonQueryCommand
 
     public int? RefResultStatus { get; set; }
 
+    public bool HasSDT { get; set; }
+
     public string BroadcastSessionId { get; } = Guid.NewGuid().ToString();
 
     [SpParam(Ignored = true)]

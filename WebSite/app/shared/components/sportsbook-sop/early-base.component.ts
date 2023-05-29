@@ -216,7 +216,7 @@ export class EarlyBaseComponent {
             this.confirmationDialogMessage.message = Language.holdResultConfirmMessage;
 
             this.messageBoxService.confirm(this.confirmationDialogMessage, async () => {
-                const result = await this.aioService.changeResultSetting(query).toPromise();
+                const result = await this.aioService.changeResultSetting(query);
                 this.setValueResult(resultDetail, groupMap, result);
             });
         }
@@ -230,7 +230,7 @@ export class EarlyBaseComponent {
             this.confirmationDialogMessage.message = Language.holdResultGroupConfirmMessage;
 
             this.messageBoxService.confirm(this.confirmationDialogMessage, async () => {
-                await this.aioService.changeResultSetting(query).toPromise().then((result) => {
+               this.aioService.changeResultSetting(query).then((result) => {
                     this.setValueGroup(groupMap, result);
                 });
             });

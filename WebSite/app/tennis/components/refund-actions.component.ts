@@ -26,11 +26,7 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
   @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
   @Input() public match: Match;
   public blockUI = true;
-  public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
-  constructor(protected injector: Injector) {
-    super(injector);
-    this.confirmationDialogMessage.title = Language.confirmationBox;
-  }
+  public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage(Language.confirmationBox);
 
   async getMatch(matchId: number): Promise<void> {
     this.initService();
@@ -43,7 +39,7 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
   }
 
   public initService () {
-    this.injector.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
+    this.blockUIService.blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
     this.toastrService.overlayContainer = this.toastContainer;
   }
 

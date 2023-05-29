@@ -56,9 +56,9 @@ export class FilterComponent implements OnInit {
     constructor(protected injector: Injector) {
     }
 
-    ngOnInit() {
+    async ngOnInit() {
         this.initServices();
-        this.initialData();
+        await this.initialData();
         this.generateFilter();
     }
 
@@ -73,7 +73,8 @@ export class FilterComponent implements OnInit {
         const date = await this.multiSportService.getDate();
         this.fromDate = this.verifyDateService.convertToDateStruct(date.fromDate);
         this.toDate = this.verifyDateService.convertToDateStruct(date.toDate);
-        this.getSport(this.fromDate, this.toDate);
+        await this.getSport(this.fromDate, this.toDate);
+        this.initLeague();
     }
 
     private generateFilter() {
@@ -208,10 +209,9 @@ export class FilterComponent implements OnInit {
         this.getLeagueParams = new LeagueFilterRequest(fromDateValue, toDateValue, sportTypes);
         if (this.isValidInput(fromDate, toDate)) {
             const league = await this.multiSportService.getLeague(this.getLeagueParams);
-            this.initLeague();
-            this.leagueSelect.items = this.generateFilterService.renderLeagues(league);
+            this.leagueSelect = {...this.leagueSelect, items: this.generateFilterService.renderLeagues(league)};
         } else {
-            this.initLeague();
+            this.leagueSelect = {...this.leagueSelect, items: []};
         }
     }
 
@@ -230,8 +230,7 @@ export class FilterComponent implements OnInit {
         const league = await this.multiSportService.getLeague(this.getLeagueParams);
         const newLeague = this.generateFilterService.renderNewestLeagues(league, _.cloneDeep(this.leagueSelect.items));
         if (newLeague.length > this.leagueSelect.items.length) {
-            this.initLeague();
-            this.leagueSelect.items = newLeague;
+            this.leagueSelect = {...this.leagueSelect, items: newLeague};
         }
     }
 

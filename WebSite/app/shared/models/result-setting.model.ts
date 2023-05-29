@@ -1,4 +1,5 @@
 export class ResultSettingModel {
-    public isHoldResult: boolean;
-    public isConfirmedRefund: boolean;
+    isHoldResult: boolean;
+    isConfirmedRefund: boolean;
+    isConfirmedRefundSdt: boolean;
 }

@@ -268,7 +268,8 @@ public class MultipleServerAioServiceImp : MultipleServerAioService
             AdminId = criteria.AdminId,
             MatchId = criteria.MatchId,
             SelectedResources = criteria.SelectedResources,
-            BetStatus = criteria.BetStatus
+            BetStatus = criteria.BetStatus,
+            HasSDT = criteria.HasSDT
         };
 
         await scaleOutSettleService.UpdateMatchInfo(requestUpdateInfo);

@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpRequestService } from './http-request.service.native';
 import * as _ from 'lodash';
-import { Observable, firstValueFrom } from 'rxjs';
-import { GeneralResultDetail, MarkedTicketsModel, MatchResource, ModalDialogMessage, Result, ResultSettingQuery } from '../models';
+import { firstValueFrom } from 'rxjs';
+import { GeneralResultDetail, MarkedTicketsModel, MatchResource, ModalDialogMessage, ResourceItem, Result, ResultSettingQuery } from '../models';
 import { MessageBoxService } from './message-box.service.native';
 import { Language } from '../language.native';
 import { GeneralMatch, HedgeMatchDetail, ResultDetail, SaveScoreQuery } from '../models/sportsbook-sop';
@@ -34,8 +34,9 @@ export class AioService {
         return firstValueFrom(request);
     }
 
-    public changeResultSetting(query: object): Observable<boolean> {
-        return this.httpRequestService.postJson(query, `${this.aioApi}/result-setting`);
+    public changeResultSetting(query: object) {
+        const request = this.httpRequestService.postJson<boolean>(query, `${this.aioApi}/result-setting`);
+        return firstValueFrom(request);
     }
 
     private getLastestMatchResult(query: object) {
@@ -62,7 +63,7 @@ export class AioService {
     }
 
     public pushChildMatch(query: object) {
-        const request =  this.httpRequestService.postJson(query, `${this.aioApi}/settle-child-match`);
+        const request = this.httpRequestService.postJson(query, `${this.aioApi}/settle-child-match`);
         return firstValueFrom(request);
     }
 
@@ -120,32 +121,42 @@ export class AioService {
         }
     }
 
+    public changeConfirmResultSDTSetting(matchId: number, resourceItems: ResourceItem[], isEnabled: boolean) {
+        this.warningDialogMessage.title = Language.confirmationBox;
+        this.warningDialogMessage.message = isEnabled ? Language.confirmRefund.sdtConfirm : Language.confirmRefund.undoConfirmAll;
+        const resourceIds = resourceItems.map(resource => resource.resourceId).join(',');
+        this.messageBoxService.confirm(this.warningDialogMessage, () => {
+            const query = new ResultSettingQuery(matchId, ResultSettingType.confirmRefundSDT,
+                isEnabled, resourceIds, resourceItems);
+            this.changeResultSetting(query).finally(() => this.messageBoxService.closePopupNotChanged())
+        });
+    }
+
     public changeConfirmResultSetting(message: string, matchId: number, resourceIds: string,
         isEnabled: boolean, hedgeMatchDetail: HedgeMatchDetail, oldMatchDetail: HedgeMatchDetail = null) {
         this.warningDialogMessage.title = Language.confirmationBox;
         this.warningDialogMessage.message = message;
-        this.messageBoxService.confirm(this.warningDialogMessage, async () => {
+        this.messageBoxService.confirm(this.warningDialogMessage, () => {
             const query = new ResultSettingQuery(matchId, ResultSettingType.confirmRefund,
                 isEnabled, resourceIds);
-            await this.changeResultSetting(query).toPromise().then(async () => {
+            this.changeResultSetting(query).then(async () => {
                 await this.confirmHedgeMatch(query, hedgeMatchDetail);
                 await this.confirmOldMatch(query, oldMatchDetail);
-                this.messageBoxService.closePopupNotChanged();
-            });
+            }).finally(() => this.messageBoxService.closePopupNotChanged());
         });
     }
 
     private async confirmHedgeMatch(query: ResultSettingQuery, hedgeMatchDetail: HedgeMatchDetail) {
         if (!_.isNil(hedgeMatchDetail) && hedgeMatchDetail.matchId > 0) {
             query.matchID = hedgeMatchDetail.matchId;
-            await this.changeResultSetting(query).toPromise();
+            await this.changeResultSetting(query);
         }
     }
 
     private async confirmOldMatch(query: ResultSettingQuery, oldMatchDetail: HedgeMatchDetail) {
         if (!_.isNil(oldMatchDetail) && oldMatchDetail.matchId > 0) {
             query.matchID = oldMatchDetail.matchId;
-            await this.changeResultSetting(query).toPromise();
+            await this.changeResultSetting(query);
         }
     }
 

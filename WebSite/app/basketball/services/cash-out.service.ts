@@ -3,8 +3,8 @@ import * as _ from 'lodash';
 import { firstValueFrom } from 'rxjs';
 import { HttpRequestService } from "../../shared/services";
 import { SettlementStatusId } from "../../shared/constants";
-import { ResultDetail} from '../models';
 import { ResourcesIds } from '../constants';
+import { ResultDetail } from '../../shared/models/sportsbook-sop';
 @Injectable()
 export class CashOutService {
     private cashOutApi = '/api/cash-out';

@@ -27,13 +27,9 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
   @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
   public match: Match;
   public readonly isReSettledTickets: boolean;
-  public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
+  public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage(Language.confirmationBox);
   public apiKeys = null;
   public blockUI = true;
-  constructor(protected injector: Injector) {
-    super(injector)
-    this.confirmationDialogMessage.title = Language.confirmationBox;
-  }
 
   async getMatch(matchId: number): Promise<void> {
     this.initService();
@@ -51,7 +47,7 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
   }
 
   public initService() {
-    this.injector.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
+    this.blockUIService.blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
     this.toastrService.overlayContainer = this.toastContainer;
   }
 

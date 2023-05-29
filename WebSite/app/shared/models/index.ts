@@ -28,3 +28,4 @@ export * from './date-filter.model';
 export * from './change-setting-result.model';
 export * from './changed-match-setting.model';
 export * from './match-details/goal-icon.model';
+export * from './resource-item.model';

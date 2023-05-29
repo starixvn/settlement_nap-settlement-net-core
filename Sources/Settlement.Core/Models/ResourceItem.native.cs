@@ -2,7 +2,7 @@
 
 namespace Settlement.Core.Models;
 
-public class ResourceItem
+public class ResourceItem : BaseResourceItem
 {
     public ResourceItem()
     {
@@ -12,15 +12,6 @@ public class ResourceItem
     {
         ResourceId = id;
     }
-
-    [XmlAttribute("Id")]
-    public string ResourceId { get; set; }
-
-    [XmlAttribute("Home")]
-    public string HomeValue { get; set; }
-
-    [XmlAttribute("Away")]
-    public string AwayValue { get; set; }
 
     [XmlAttribute("OtherInfo")]
     public string OtherInfo { get; set; }

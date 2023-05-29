@@ -71,7 +71,7 @@ public class AioServiceImp : IAioService
         var providerMapperService = mapperFactory.GetMapperService($"{apiKey}-{ApiKeyConstant.ProviderKey}");
         if (providerMapperService != null)
         {
-            var providerCriteria = validateApiKeyService.CriteriaName(request, $"{apiKey}-{ApiKeyConstant.ProviderKey}");
+            var providerCriteria = validateApiKeyService.CriteriaName(request, $"{request.ApiKey}-{ApiKeyConstant.ProviderKey}");
             var providerResult = await repository.FetchAsync<ExternalResultDetailModel>(providerCriteria);
             var provider = new Tuple<List<ExternalResultDetailModel>, List<ExternalResultModel>>(providerResult.ToList(), new List<ExternalResultModel>());
             providerMapperService.Decorate(provider);
@@ -144,7 +144,7 @@ public class AioServiceImp : IAioService
             MatchId = request.MatchId,
             Action = request.Action,
             CheckType = request.SelectedResources.Count > 1,
-            SelectedResource = createQueryService.CreateMatchResources(request.SelectedResources)
+            SelectedResource = createQueryService.CreateResources(request.SelectedResources)
         };
 
         await repository.ExecuteAsync(criteria);

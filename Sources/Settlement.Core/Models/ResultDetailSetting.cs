@@ -6,9 +6,13 @@ public class ResultDetailSetting
 
     private const int ConfirmedRefundPosition = 1;
 
+    private const int ConfirmedRefundSdtPosition = 2;
+
     public string ResultSetting { get; set; }
 
     public bool IsHoldResult => !string.IsNullOrWhiteSpace(ResultSetting) && ResultSetting[HoldResultPosition].Equals('1');
 
     public bool IsConfirmedRefund => !string.IsNullOrWhiteSpace(ResultSetting) && ResultSetting.Length > ConfirmedRefundPosition && ResultSetting[ConfirmedRefundPosition].Equals('1');
+
+    public bool IsConfirmedRefundSdt => !string.IsNullOrWhiteSpace(ResultSetting) && ResultSetting.Length > ConfirmedRefundSdtPosition && ResultSetting[ConfirmedRefundSdtPosition].Equals('1');
 }
