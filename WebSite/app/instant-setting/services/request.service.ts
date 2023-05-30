@@ -1,7 +1,7 @@
 ﻿import * as _ from 'lodash';
 import { Injectable } from '@angular/core';
 import { HttpRequestService } from '../../shared/services';
-import { Observable } from 'rxjs';
+import { Observable, firstValueFrom } from 'rxjs';
 import { TimeSettingQuery, GetRemarkQuery, ChangeSettingQuery, RemarkAndPermission } from '../models';
 import { AutoSettingLeagueQuery, AutoSettingMatchQuery, Result } from '../../shared/models';
 import { SettingType } from '../constants';
@@ -35,11 +35,13 @@ export class RequestService {
         return this.httpRequestService.postJson(query, `${this.settingApi}/proceed`);
     }
 
-    public updateSettingMatch(query: AutoSettingMatchQuery): Observable<Result> {
-        return this.httpRequestService.postJson(query, `${this.settingApi}/update-setting-match`);
+    public updateSettingMatch(query: AutoSettingMatchQuery) {
+        const request = this.httpRequestService.postJson<Result>(query, `${this.settingApi}/update-setting-match`);
+        return firstValueFrom(request);
     }
 
-    public updateSettingLeague(query: AutoSettingLeagueQuery): Observable<Result> {
-        return this.httpRequestService.postJson(query, `${this.settingApi}/update-setting-league`);
+    public updateSettingLeague(query: AutoSettingLeagueQuery) {
+        const request =  this.httpRequestService.postJson<Result>(query, `${this.settingApi}/update-setting-league`);
+        return firstValueFrom(request);
     }
 }

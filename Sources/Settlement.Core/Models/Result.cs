@@ -9,4 +9,15 @@ public class Result
     public string ChildMatchIds { get; set; }
 
     public bool IsSuccessful => string.IsNullOrEmpty(ErrMsg) && ErrCode == 0;
+
+    public Result()
+    {
+
+    }
+
+    public Result(int errCode, string errMsg)
+    {
+        ErrMsg = errMsg;
+        ErrCode = errCode;
+    }
 }

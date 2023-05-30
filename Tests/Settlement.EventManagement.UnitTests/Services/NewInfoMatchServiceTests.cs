@@ -11,14 +11,14 @@ public class NewInfoMatchServiceTests
 {
     private readonly SiteMatchService siteMatchService;
 
-    private readonly IGoalIconService goalIconService;
+    private readonly GoalIconService goalIconService;
 
     private readonly NewInfoMatchService service;
 
     public NewInfoMatchServiceTests()
     {
         siteMatchService = Substitute.For<SiteMatchService>();
-        goalIconService = Substitute.For<IGoalIconService>();
+        goalIconService = Substitute.For<GoalIconService>();
         service = new NewInfoMatchServiceImp(siteMatchService, goalIconService);
     }
 

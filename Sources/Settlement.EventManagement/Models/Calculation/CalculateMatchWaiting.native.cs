@@ -139,4 +139,5 @@ public class CalculateMatchWaiting
 
     [Key("directWaitingTime")]
     public int DirectWaitingTime { get; set; }
+
 }

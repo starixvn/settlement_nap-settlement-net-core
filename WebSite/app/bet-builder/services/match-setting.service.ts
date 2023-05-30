@@ -20,7 +20,7 @@ export class MatchSettingService {
             !match.autoCalcSetting.isAutoSettingForMatch
         );
 
-        const result = await this.requestService.updateMatch(query).toPromise();
+        const result = await this.requestService.updateMatch(query);
         if (result.isSuccessful) {
             match.autoCalcSetting.isAutoSettingForMatch = !match.autoCalcSetting.isAutoSettingForMatch;
         } else {

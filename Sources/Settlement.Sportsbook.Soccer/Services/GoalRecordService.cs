@@ -14,7 +14,7 @@ public interface IGoalRecordService
 
     string FullTimeGoal(string goalRecord);
 
-    string FirstGoalRecord(string goalRecord, bool isRefund);
+    string FirstGoalRecord(string goalRecord, bool isRefund = false);
 
     string LastGoalRecord(string goalRecord, bool isRefund);
 }
@@ -74,7 +74,7 @@ public class GoalRecordServiceImp : IGoalRecordService
         return IsExistedSemiColon(goalRecord) ? goalRecord.Split(';')[1] : string.Empty;
     }
 
-    public string FirstGoalRecord(string goalRecord, bool isRefund)
+    public string FirstGoalRecord(string goalRecord, bool isRefund = false)
     {
         if (string.IsNullOrWhiteSpace(goalRecord))
         {

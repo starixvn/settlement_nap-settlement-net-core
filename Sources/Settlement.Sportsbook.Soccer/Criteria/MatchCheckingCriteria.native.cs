@@ -3,7 +3,7 @@ using Fanex.Data.Repository;
 
 namespace Settlement.Sportsbook.Soccer.Criteria;
 
-public class InstantCheckingCriteria : NonQueryCommand
+public class MatchCheckingCriteria : NonQueryCommand
 {
     public int MatchId { get; set; }
 
@@ -15,7 +15,9 @@ public class InstantCheckingCriteria : NonQueryCommand
 
     public string Action { get; set; }
 
-    public string Mode { get; set; }
+    public string ResourceResult { get; set; }
+
+    //public string Mode { get; set; }
 
     public int ErrCode { get; set; }
 

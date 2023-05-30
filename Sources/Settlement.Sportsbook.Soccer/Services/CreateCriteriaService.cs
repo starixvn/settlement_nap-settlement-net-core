@@ -113,7 +113,7 @@ public class CreateCriteriaServiceImp : ICreateCriteriaService
             MatchId = request.MatchId,
             GoalRecord = htGoalRecord,
             BetStatus = soccerBetStatusService.CreateBetStatusAfterUncalculateFt(request, matchGoalRecord.BetStatus, htGoalRecord),
-            ResourceResult = GetResourceResultUnCalculateFt(),
+            ResourceResult = GetResourceResultUnCalculateFt(htGoalRecord),
             HalfTimeAway = request.HalfTimeAway ?? 0,
             HalfTimeHome = request.HalfTimeHome ?? 0,
             Action = ActionType.UnCalculateFullTime,
@@ -244,9 +244,9 @@ public class CreateCriteriaServiceImp : ICreateCriteriaService
             : string.Empty;
     }
 
-    private string GetResourceResultUnCalculateFt()
+    private string GetResourceResultUnCalculateFt(string goalRecord)
     {
-        var resources = resourceService.UnCalculateFtResources();
+        var resources = resourceService.UnCalculateFtResources(goalRecord);
 
         return xmlConvertService.Serialize(new XmlResults { Resources = resources });
     }

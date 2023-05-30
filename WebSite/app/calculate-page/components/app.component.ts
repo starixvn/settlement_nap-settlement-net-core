@@ -7,49 +7,50 @@ import { AutoCalculatePageComponent, AutoCalculateService } from './auto-calcula
 import { PageBaseComponent } from './base-component';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  providers: [
-    BlockUIService,
-    VerifyDateService,
-    MessageBoxService,
-    RequestService,
-    HttpRequestService,
-    PopupService,
-    ReCheckInService,
-    DialogBoxService,
-    HandleActionsService,
-    BackGroundService,
-    DetectChangesService,
-    AutoCalculateService,
-    GenerateFilterService
-  ],
+    selector: 'app-root',
+    templateUrl: './app.component.html',
+    providers: [
+        BlockUIService,
+        VerifyDateService,
+        MessageBoxService,
+        RequestService,
+        HttpRequestService,
+        PopupService,
+        ReCheckInService,
+        DialogBoxService,
+        HandleActionsService,
+        BackGroundService,
+        DetectChangesService,
+        AutoCalculateService,
+        GenerateFilterService
+    ],
 })
 export class AppComponent implements OnInit {
-  @ViewChild('container', { read: ViewContainerRef, static: true }) container: ViewContainerRef;
-  public component: ComponentRef<PageBaseComponent>;
-  public blockUI = false;
-  constructor(private readonly blockUIService: BlockUIService,
-    private readonly elementRef: ElementRef<HTMLElement>,
-    private readonly componentFactoryResolver: ComponentFactoryResolver,
-  ) { }
+    @ViewChild('container', { read: ViewContainerRef, static: true }) container: ViewContainerRef;
+    public component: ComponentRef<PageBaseComponent>;
+    public blockUI = false;
+    constructor(private readonly blockUIService: BlockUIService,
+        private readonly elementRef: ElementRef<HTMLElement>,
+        private readonly componentFactoryResolver: ComponentFactoryResolver,
+    ) { }
 
-  ngOnInit(): void {
-    this.blockUIService.blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
-    this.createTemplateComponent();
-  }
+    ngOnInit(): void {
+        this.blockUIService.blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
+        this.createTemplateComponent();
+    }
 
-  private createTemplateComponent() {
-    const factory = this.getComponentFactory();
-    this.component = this.container.createComponent(factory);
-    return this.component;
-  }
+    private createTemplateComponent() {
+        const factory = this.getComponentFactory();
+        this.component = this.container.createComponent(factory);
+        return this.component;
+    }
 
 
-  private getComponentFactory(): ComponentFactory<PageBaseComponent> {
-    const pageType = this.elementRef.nativeElement.getAttribute('page-type');
-    return _.isEqual(pageType, 'Calculation')
-      ? this.componentFactoryResolver.resolveComponentFactory(PageComponent)
-      : this.componentFactoryResolver.resolveComponentFactory(AutoCalculatePageComponent);
-  }
+    private getComponentFactory(): ComponentFactory<PageBaseComponent> {
+        const pageType = this.elementRef.nativeElement.getAttribute('page-type');
+        return _.isEqual(pageType, 'Calculation')
+            ? this.componentFactoryResolver.resolveComponentFactory(PageComponent)
+            : this.componentFactoryResolver.resolveComponentFactory(AutoCalculatePageComponent);
+        // return this.componentFactoryResolver.resolveComponentFactory(AutoCalculatePageComponent);
+    }
 }

@@ -41,11 +41,11 @@ public class NewInfoMatchServiceImp : NewInfoMatchService
 
     private readonly SiteMatchService siteMatchService;
 
-    private readonly IGoalIconService goalIconService;
+    private readonly GoalIconService goalIconService;
 
     public NewInfoMatchServiceImp(
         SiteMatchService siteMatchService,
-        IGoalIconService goalIconService)
+        GoalIconService goalIconService)
     {
         this.siteMatchService = siteMatchService;
         this.goalIconService = goalIconService;

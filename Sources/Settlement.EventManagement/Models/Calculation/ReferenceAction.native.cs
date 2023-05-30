@@ -26,7 +26,8 @@ public class ReferenceAction
         { 179, "(FT)" },
         { 182, "Uncalculate Ins.Settle" },
         { 195, "(HT-A)" },
-        { 196, "(FT-A)" }
+        { 196, "(FT-A)" },
+        { 81040, "Uncalc(FT)"}
     };
 
     [Key("matchId")]

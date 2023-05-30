@@ -9,7 +9,7 @@ public class PushInstantCalculationCriteria : NonQueryCommand
 
     public int MatchId { get; set; }
 
-    public int InstantKey { get; set; }
+    //public int InstantKey { get; set; }
 
     public string HomeScore { get; set; }
 
@@ -17,11 +17,13 @@ public class PushInstantCalculationCriteria : NonQueryCommand
 
     public string Action { get; set; }
 
-    public string Mode { get; set; }
+    //public string Mode { get; set; }
 
     public string Ip { get; set; }
 
     public string ResourceResult { get; set; }
+
+    public string GoalRecord { get; set; }
 
     public int ErrCode { get; set; }
 
@@ -32,7 +34,7 @@ public class PushInstantCalculationCriteria : NonQueryCommand
 
     public override string GetSettingKey()
     {
-        return $"NAP_Admin_Settlement_1_InstantCalculation_Push_{DbServer}";
+        return $"NAP_Admin_Settlement_InstantCalculation_Push_{DbServer}";
     }
 
     public override bool IsValid()

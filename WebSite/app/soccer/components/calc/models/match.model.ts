@@ -1,5 +1,6 @@
 import { Remark } from "../../../../shared/models";
 import { Permission, TicketCount, ResultDetail, MatchDetailBase } from '../../../models';
+import { Resource } from "./resouce.model";
 
 export interface Match {
     matchDetail: MatchDetail;
@@ -88,6 +89,7 @@ export interface UndoChecking {
     betStatus: string;
     errCode: number;
     errMsg: string;
+    resources: Resource[]
 }
 
 export class GoalRecord {

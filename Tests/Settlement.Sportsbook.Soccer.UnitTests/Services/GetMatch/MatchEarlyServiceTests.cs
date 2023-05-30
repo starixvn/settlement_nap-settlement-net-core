@@ -29,7 +29,7 @@ public class MatchEarlyServiceTests
         repository = Substitute.For<IDynamicRepository>();
         var permission = Substitute.For<PermissionService>(null, null, null, null);
         var refDataService = Substitute.For<IRefDataService>();
-        var goalIconService = Substitute.For<IGoalIconService>();
+        var goalIconService = Substitute.For<GoalIconService>();
         earlyBetTypeNameService = Substitute.For<EarlyBetTypeNameService>();
         fetchDataService = Substitute.For<IFetchDataService>();
         var mapperConfig = new MapperConfigurationExpression();

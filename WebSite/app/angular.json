@@ -22,7 +22,8 @@
           },
           "configurations": {
             "production": {
-              "budgets": [{
+              "budgets": [
+                {
                   "type": "initial",
                   "maximumWarning": "4mb",
                   "maximumError": "5mb"
@@ -33,10 +34,12 @@
                   "maximumError": "5mb"
                 }
               ],
-              "fileReplacements": [{
-                "replace": "environments/environment.ts",
-                "with": "environments/environment.prod.ts"
-              }],
+              "fileReplacements": [
+                {
+                  "replace": "environments/environment.ts",
+                  "with": "environments/environment.prod.ts"
+                }
+              ],
               "outputHashing": "all",
               "baseHref": "/notification/"
             },
@@ -93,7 +96,8 @@
           },
           "configurations": {
             "production": {
-              "budgets": [{
+              "budgets": [
+                {
                   "type": "initial",
                   "maximumWarning": "4mb",
                   "maximumError": "5mb"
@@ -104,10 +108,12 @@
                   "maximumError": "5mb"
                 }
               ],
-              "fileReplacements": [{
-                "replace": "environments/environment.ts",
-                "with": "environments/environment.prod.ts"
-              }],
+              "fileReplacements": [
+                {
+                  "replace": "environments/environment.ts",
+                  "with": "environments/environment.prod.ts"
+                }
+              ],
               "outputHashing": "all",
               "baseHref": "/bet-builder/"
             },
@@ -158,7 +164,8 @@
           },
           "configurations": {
             "production": {
-              "budgets": [{
+              "budgets": [
+                {
                   "type": "initial",
                   "maximumWarning": "4mb",
                   "maximumError": "5mb"
@@ -169,10 +176,12 @@
                   "maximumError": "5mb"
                 }
               ],
-              "fileReplacements": [{
-                "replace": "environments/environment.ts",
-                "with": "environments/environment.prod.ts"
-              }],
+              "fileReplacements": [
+                {
+                  "replace": "environments/environment.ts",
+                  "with": "environments/environment.prod.ts"
+                }
+              ],
               "outputHashing": "all",
               "baseHref": "/instant-setting/"
             },
@@ -223,7 +232,8 @@
           },
           "configurations": {
             "production": {
-              "budgets": [{
+              "budgets": [
+                {
                   "type": "initial",
                   "maximumWarning": "4mb",
                   "maximumError": "5mb"
@@ -234,10 +244,12 @@
                   "maximumError": "5mb"
                 }
               ],
-              "fileReplacements": [{
-                "replace": "environments/environment.ts",
-                "with": "environments/environment.prod.ts"
-              }],
+              "fileReplacements": [
+                {
+                  "replace": "environments/environment.ts",
+                  "with": "environments/environment.prod.ts"
+                }
+              ],
               "outputHashing": "all",
               "baseHref": "/log/"
             },
@@ -294,7 +306,8 @@
           },
           "configurations": {
             "production": {
-              "budgets": [{
+              "budgets": [
+                {
                   "type": "initial",
                   "maximumWarning": "4mb",
                   "maximumError": "5mb"
@@ -305,10 +318,12 @@
                   "maximumError": "5mb"
                 }
               ],
-              "fileReplacements": [{
-                "replace": "environments/environment.ts",
-                "with": "environments/environment.prod.ts"
-              }],
+              "fileReplacements": [
+                {
+                  "replace": "environments/environment.ts",
+                  "with": "environments/environment.prod.ts"
+                }
+              ],
               "outputHashing": "all",
               "baseHref": "/happy5/"
             },
@@ -364,7 +379,8 @@
           },
           "configurations": {
             "production": {
-              "budgets": [{
+              "budgets": [
+                {
                   "type": "initial",
                   "maximumWarning": "4mb",
                   "maximumError": "5mb"
@@ -375,10 +391,12 @@
                   "maximumError": "5mb"
                 }
               ],
-              "fileReplacements": [{
-                "replace": "environments/environment.ts",
-                "with": "environments/environment.prod.ts"
-              }],
+              "fileReplacements": [
+                {
+                  "replace": "environments/environment.ts",
+                  "with": "environments/environment.prod.ts"
+                }
+              ],
               "outputHashing": "all",
               "baseHref": "/number-game/"
             },
@@ -434,7 +452,8 @@
           },
           "configurations": {
             "production": {
-              "budgets": [{
+              "budgets": [
+                {
                   "type": "initial",
                   "maximumWarning": "4mb",
                   "maximumError": "5mb"
@@ -445,10 +464,12 @@
                   "maximumError": "5mb"
                 }
               ],
-              "fileReplacements": [{
-                "replace": "environments/environment.ts",
-                "with": "environments/environment.prod.ts"
-              }],
+              "fileReplacements": [
+                {
+                  "replace": "environments/environment.ts",
+                  "with": "environments/environment.prod.ts"
+                }
+              ],
               "outputHashing": "all",
               "baseHref": "/move-tickets/"
             },
@@ -503,7 +524,8 @@
           },
           "configurations": {
             "production": {
-              "budgets": [{
+              "budgets": [
+                {
                   "type": "initial",
                   "maximumWarning": "4mb",
                   "maximumError": "5mb"
@@ -514,10 +536,12 @@
                   "maximumError": "5mb"
                 }
               ],
-              "fileReplacements": [{
-                "replace": "environments/environment.ts",
-                "with": "environments/environment.prod.ts"
-              }],
+              "fileReplacements": [
+                {
+                  "replace": "environments/environment.ts",
+                  "with": "environments/environment.prod.ts"
+                }
+              ],
               "outputHashing": "all",
               "baseHref": "/score-source-setting/"
             },
@@ -571,7 +595,8 @@
           },
           "configurations": {
             "production": {
-              "budgets": [{
+              "budgets": [
+                {
                   "type": "initial",
                   "maximumWarning": "4mb",
                   "maximumError": "5mb"
@@ -582,10 +607,12 @@
                   "maximumError": "5mb"
                 }
               ],
-              "fileReplacements": [{
-                "replace": "environments/environment.ts",
-                "with": "environments/environment.prod.ts"
-              }],
+              "fileReplacements": [
+                {
+                  "replace": "environments/environment.ts",
+                  "with": "environments/environment.prod.ts"
+                }
+              ],
               "outputHashing": "all",
               "baseHref": "/multi-sports/"
             },
@@ -642,7 +669,8 @@
           },
           "configurations": {
             "production": {
-              "budgets": [{
+              "budgets": [
+                {
                   "type": "initial",
                   "maximumWarning": "4mb",
                   "maximumError": "5mb"
@@ -653,10 +681,12 @@
                   "maximumError": "5mb"
                 }
               ],
-              "fileReplacements": [{
-                "replace": "environments/environment.ts",
-                "with": "environments/environment.prod.ts"
-              }],
+              "fileReplacements": [
+                {
+                  "replace": "environments/environment.ts",
+                  "with": "environments/environment.prod.ts"
+                }
+              ],
               "outputHashing": "all",
               "baseHref": "/calculate-page/"
             },
@@ -714,7 +744,8 @@
           },
           "configurations": {
             "production": {
-              "budgets": [{
+              "budgets": [
+                {
                   "type": "initial",
                   "maximumWarning": "4mb",
                   "maximumError": "5mb"
@@ -725,10 +756,12 @@
                   "maximumError": "5mb"
                 }
               ],
-              "fileReplacements": [{
-                "replace": "environments/environment.ts",
-                "with": "environments/environment.prod.ts"
-              }],
+              "fileReplacements": [
+                {
+                  "replace": "environments/environment.ts",
+                  "with": "environments/environment.prod.ts"
+                }
+              ],
               "outputHashing": "all",
               "baseHref": "/fast-market/"
             },
@@ -793,7 +826,8 @@
               "buildOptimizer": false
             },
             "production": {
-              "budgets": [{
+              "budgets": [
+                {
                   "type": "initial",
                   "maximumWarning": "4mb",
                   "maximumError": "5mb"
@@ -804,10 +838,12 @@
                   "maximumError": "5mb"
                 }
               ],
-              "fileReplacements": [{
-                "replace": "environments/environment.ts",
-                "with": "environments/environment.prod.ts"
-              }],
+              "fileReplacements": [
+                {
+                  "replace": "environments/environment.ts",
+                  "with": "environments/environment.prod.ts"
+                }
+              ],
               "outputHashing": "all",
               "baseHref": "/soccer/"
             }
@@ -856,7 +892,8 @@
           },
           "configurations": {
             "production": {
-              "budgets": [{
+              "budgets": [
+                {
                   "type": "initial",
                   "maximumWarning": "4mb",
                   "maximumError": "5mb"
@@ -867,10 +904,12 @@
                   "maximumError": "5mb"
                 }
               ],
-              "fileReplacements": [{
-                "replace": "environments/environment.ts",
-                "with": "environments/environment.prod.ts"
-              }],
+              "fileReplacements": [
+                {
+                  "replace": "environments/environment.ts",
+                  "with": "environments/environment.prod.ts"
+                }
+              ],
               "outputHashing": "all",
               "baseHref": "/e-sports/"
             },
@@ -928,7 +967,8 @@
           },
           "configurations": {
             "production": {
-              "budgets": [{
+              "budgets": [
+                {
                   "type": "initial",
                   "maximumWarning": "4mb",
                   "maximumError": "5mb"
@@ -939,10 +979,12 @@
                   "maximumError": "5mb"
                 }
               ],
-              "fileReplacements": [{
-                "replace": "environments/environment.ts",
-                "with": "environments/environment.prod.ts"
-              }],
+              "fileReplacements": [
+                {
+                  "replace": "environments/environment.ts",
+                  "with": "environments/environment.prod.ts"
+                }
+              ],
               "outputHashing": "all",
               "baseHref": "/basketball/"
             },
@@ -999,7 +1041,8 @@
           },
           "configurations": {
             "production": {
-              "budgets": [{
+              "budgets": [
+                {
                   "type": "initial",
                   "maximumWarning": "4mb",
                   "maximumError": "5mb"
@@ -1010,10 +1053,12 @@
                   "maximumError": "5mb"
                 }
               ],
-              "fileReplacements": [{
-                "replace": "environments/environment.ts",
-                "with": "environments/environment.prod.ts"
-              }],
+              "fileReplacements": [
+                {
+                  "replace": "environments/environment.ts",
+                  "with": "environments/environment.prod.ts"
+                }
+              ],
               "outputHashing": "all",
               "baseHref": "/badminton/"
             },
@@ -1070,7 +1115,8 @@
           },
           "configurations": {
             "production": {
-              "budgets": [{
+              "budgets": [
+                {
                   "type": "initial",
                   "maximumWarning": "4mb",
                   "maximumError": "5mb"
@@ -1081,10 +1127,12 @@
                   "maximumError": "5mb"
                 }
               ],
-              "fileReplacements": [{
-                "replace": "environments/environment.ts",
-                "with": "environments/environment.prod.ts"
-              }],
+              "fileReplacements": [
+                {
+                  "replace": "environments/environment.ts",
+                  "with": "environments/environment.prod.ts"
+                }
+              ],
               "outputHashing": "all",
               "baseHref": "/tennis/"
             },
@@ -1141,7 +1189,8 @@
           },
           "configurations": {
             "production": {
-              "budgets": [{
+              "budgets": [
+                {
                   "type": "initial",
                   "maximumWarning": "4mb",
                   "maximumError": "5mb"
@@ -1152,10 +1201,12 @@
                   "maximumError": "5mb"
                 }
               ],
-              "fileReplacements": [{
-                "replace": "environments/environment.ts",
-                "with": "environments/environment.prod.ts"
-              }],
+              "fileReplacements": [
+                {
+                  "replace": "environments/environment.ts",
+                  "with": "environments/environment.prod.ts"
+                }
+              ],
               "outputHashing": "all",
               "baseHref": "/cricket/"
             },
@@ -1213,7 +1264,8 @@
           },
           "configurations": {
             "production": {
-              "budgets": [{
+              "budgets": [
+                {
                   "type": "initial",
                   "maximumWarning": "4mb",
                   "maximumError": "5mb"
@@ -1224,10 +1276,12 @@
                   "maximumError": "5mb"
                 }
               ],
-              "fileReplacements": [{
-                "replace": "environments/environment.ts",
-                "with": "environments/environment.prod.ts"
-              }],
+              "fileReplacements": [
+                {
+                  "replace": "environments/environment.ts",
+                  "with": "environments/environment.prod.ts"
+                }
+              ],
               "outputHashing": "all",
               "baseHref": "/other-sports/"
             },
@@ -1284,7 +1338,8 @@
           },
           "configurations": {
             "production": {
-              "budgets": [{
+              "budgets": [
+                {
                   "type": "initial",
                   "maximumWarning": "4mb",
                   "maximumError": "5mb"
@@ -1295,10 +1350,12 @@
                   "maximumError": "5mb"
                 }
               ],
-              "fileReplacements": [{
-                "replace": "environments/environment.ts",
-                "with": "environments/environment.prod.ts"
-              }],
+              "fileReplacements": [
+                {
+                  "replace": "environments/environment.ts",
+                  "with": "environments/environment.prod.ts"
+                }
+              ],
               "outputHashing": "all",
               "baseHref": "/outright/"
             },

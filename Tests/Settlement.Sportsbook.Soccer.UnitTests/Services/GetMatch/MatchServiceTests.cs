@@ -21,7 +21,7 @@ public class MatchServiceTests
 
     private readonly IRefDataService refDataService;
 
-    private readonly IGoalIconService goalIconService;
+    private readonly GoalIconService goalIconService;
 
     private readonly IFetchDataService fetchDataService;
     private readonly IMatchService service;
@@ -31,7 +31,7 @@ public class MatchServiceTests
         repository = Substitute.For<IDynamicRepository>();
         var permission = Substitute.For<PermissionService>(null, null, null, null);
         refDataService = Substitute.For<IRefDataService>();
-        goalIconService = Substitute.For<IGoalIconService>();
+        goalIconService = Substitute.For<GoalIconService>();
         fetchDataService = Substitute.For<IFetchDataService>();
         var mapperConfig = new MapperConfigurationExpression();
         mapperConfig.AddProfile<SoccerAutoMapperProfile>();

@@ -1,9 +1,9 @@
-﻿using Fanex.Data.Repository;
-using Fanex.Data;
+﻿using Fanex.Data;
+using Fanex.Data.Repository;
 
 namespace Settlement.Sportsbook.Soccer.Criteria;
 
-public class InstantTicketCheckingCriteria : CriteriaBase
+public class MatchTicketInfoCriteria : CriteriaBase
 {
     public int MatchId { get; set; }
 

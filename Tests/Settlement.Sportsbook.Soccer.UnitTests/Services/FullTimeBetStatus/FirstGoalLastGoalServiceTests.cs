@@ -1,6 +1,5 @@
 ﻿using Settlement.Sportsbook.Soccer.Services;
-using FirstGoalLastGoalServiceImp = Settlement.Sportsbook.Soccer.Services.FullTimeBetStatus.FirstGoalLastGoalServiceImp;
-using IFirstGoalLastGoalService = Settlement.Sportsbook.Soccer.Services.FullTimeBetStatus.IFirstGoalLastGoalService;
+using Settlement.Sportsbook.Soccer.Services.FullTimeBetStatus;
 
 namespace Settlement.Sportsbook.Soccer.UnitTests.Services.FullTimeBetStatus;
 
@@ -8,13 +7,13 @@ public class FirstGoalLastGoalServiceTests
 {
     private readonly IGoalRecordService goalRecordService;
 
-    private readonly IFirstGoalLastGoalService service;
+    private readonly FirstLastGoalService service;
 
     public FirstGoalLastGoalServiceTests()
     {
         goalRecordService = Substitute.For<IGoalRecordService>();
 
-        service = new FirstGoalLastGoalServiceImp(goalRecordService);
+        service = new FirstLastGoalServiceImp(goalRecordService);
     }
 
     [Theory]

@@ -6,6 +6,7 @@ using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Requests;
 using Settlement.Sportsbook.Soccer.Services;
 using Settlement.Sportsbook.Soccer.Services.GetMatch;
+using Settlement.Sportsbook.Soccer.Services.InstantCalculate;
 using Match = Settlement.Sportsbook.Soccer.Models.Match;
 using MatchDetail = Settlement.Sportsbook.Soccer.Models.MatchDetail;
 
@@ -17,7 +18,6 @@ public class CalculateHandler : IRequestHandler<GetMatchRequest, Match>,
     IRequestHandler<CheckStatusRequest, Result>,
     IRequestHandler<UndoCheckingRequest, UndoCheckingModel>,
     IRequestHandler<InstantCalculationRequest, Result>,
-    IRequestHandler<MatchCheckingRequest, MatchGoalRecordModel>,
     IRequestHandler<UncalculateFtRequest, Result>
 
 {
@@ -72,9 +72,8 @@ public class CalculateHandler : IRequestHandler<GetMatchRequest, Match>,
     public async Task<Result> Handle(InstantCalculationRequest request, CancellationToken cancellationToken)
     {
         request.AdminId = currentSession.UserId;
-        return await instantCalculateService.PushInstantCalculation(request);
+        return request.Action.Equals(ActionType.UnCalculate)
+            ? await instantCalculateService.UncalPushInstantCalculation(request)
+            : await instantCalculateService.PushInstantCalculation(request);
     }
-
-    public async Task<MatchGoalRecordModel> Handle(MatchCheckingRequest request, CancellationToken cancellationToken) =>
-        await instantCalculateService.CalculateCheckingInfo(request);
 }

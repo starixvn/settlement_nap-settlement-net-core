@@ -32,7 +32,7 @@
                 </div>
                 <div class="action-button">
                     <button *ngIf="match.permission.canCalculate" [ngClass]="{'button float-left': true, 'button-disabled':isDisableFulltimeCalculate }" [disabled]="isDisableFulltimeCalculate" (click)="calculateFullTime()">Calculate FT</button>
-                    <button *ngIf="match.permission.canUncalculate" class="button uncalculate" (click)="unCalculateFT()">
+                    <button *ngIf="match.permission.canUncalculate" [ngClass]="{'button uncalculate': true, 'button-disabled':isDisableUncalculateFT }" [disabled]="isDisableUncalculateFT" (click)="unCalculateFT()">
                         Uncalculate FT
                     </button>
                 </div>

@@ -2,25 +2,24 @@ using AutoMapper;
 using Fanex.Data.Repository;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
-using Settlement.Core.Services;
 using Settlement.Sportsbook.Soccer.Criteria;
 using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Requests;
-using Settlement.Sportsbook.Soccer.Services.InstantCalculate;
+using MatchCheckingCriteria = Settlement.Sportsbook.Soccer.Criteria.MatchCheckingCriteria;
+using MatchDetail = Settlement.Sportsbook.Soccer.Models.MatchDetail;
 
-namespace Settlement.Sportsbook.Soccer.Services;
+namespace Settlement.Sportsbook.Soccer.Services.InstantCalculate;
 
 public interface InstantCalculateService
 {
-    Task<MatchGoalRecordModel> CalculateCheckingInfo(MatchCheckingRequest request);
-
     Task<UndoCheckingModel> UndoCheckingScore(int matchId);
 
-    Task<Result> PushInstantCalculation(InstantCalculationRequest request);
+    Task<Result> PushInstantCalculation(InstantCalculationRequest instantCalculationRequest);
+
+    Task<Result> UncalPushInstantCalculation(InstantCalculationRequest instantCalculationRequest);
 }
 
 public class InstantCalculateServiceImp : InstantCalculateService
@@ -29,96 +28,200 @@ public class InstantCalculateServiceImp : InstantCalculateService
 
     private readonly IMapper mapper;
 
-    private readonly IHttpContextAccessor accessor;
-
-    private readonly IInstantResourceService instantResourceService;
+    private readonly InstantResourceService instantResourceService;
 
     private readonly ScaleOutSettleService scaleOutSettleService;
 
-    private readonly LogService logService;
+    private readonly PushInstantCalculationService pushInstantService;
 
     private readonly AppSettingsKey appSettingsKey;
 
     public InstantCalculateServiceImp(
         IDynamicRepository repository,
         IMapper mapper,
-        IHttpContextAccessor accessor,
-        IInstantResourceService instantResourceService,
+        InstantResourceService instantResourceService,
         IOptions<AppSettingsKey> appSettingsKey,
         ScaleOutSettleService scaleOutSettleService,
-        LogService logService)
+        PushInstantCalculationService pushInstantService)
     {
         this.repository = repository;
         this.mapper = mapper;
-        this.accessor = accessor;
         this.instantResourceService = instantResourceService;
         this.appSettingsKey = appSettingsKey.Value;
         this.scaleOutSettleService = scaleOutSettleService;
-        this.logService = logService;
+        this.pushInstantService = pushInstantService;
     }
 
-    public async Task<MatchGoalRecordModel> CalculateCheckingInfo(MatchCheckingRequest request)
+    private async Task<Result> CalculateCheckingInfo(MatchCheckingCriteria criteria)
     {
-        var criteria = mapper.Map<MatchCheckingRequest, InstantCheckingCriteria>(request);
-        var matchGoalRecord = new MatchGoalRecordModel();
-        var firstMatch = true;
+        var matchCheckingResult = new Result();
+
         foreach (var server in appSettingsKey.SiteDbServer)
         {
             criteria.DbServer = server;
-            var matchChecking = await repository.GetAsync<MatchGoalRecordModel>(criteria);
+            await repository.ExecuteAsync(criteria);
+
             if (criteria.ErrCode > 0)
             {
-                matchChecking.ErrCode = criteria.ErrCode;
-                matchChecking.ErrMsg = criteria.ErrMsg;
+                matchCheckingResult.ErrCode = criteria.ErrCode;
+                matchCheckingResult.ErrMsg = criteria.ErrMsg;
 
-                return matchChecking;
+                return matchCheckingResult;
             }
-
-            MergeData(matchGoalRecord, matchChecking, firstMatch);
-            firstMatch = false;
         }
 
-        return matchGoalRecord;
+        return matchCheckingResult;
     }
 
     public async Task<UndoCheckingModel> UndoCheckingScore(int matchId)
     {
         var criteria = new UndoCheckingCriteria { MatchId = matchId };
-        var undoCheckingScore = await repository.GetAsync<UndoCheckingModel>(criteria);
+        var (undoChecking, calculatedResources) = await repository.FetchMultipleAsync<UndoCheckingModel, XmlResource>(criteria);
+
+        var undoCheckingScore = undoChecking.FirstOrDefault() ?? new UndoCheckingModel();
+
         undoCheckingScore.ErrCode = criteria.ErrCode;
         undoCheckingScore.ErrMsg = criteria.ErrMsg;
-        await GetTicketInfo(matchId, undoCheckingScore);
+        undoCheckingScore.Resources = calculatedResources.ToList();
+
         return undoCheckingScore;
     }
 
-    public async Task<Result> PushInstantCalculation(InstantCalculationRequest request)
+    public async Task<Result> UncalPushInstantCalculation(InstantCalculationRequest instantCalculationRequest)
+    {
+        var matchTicketInfo = await GetMatchDetailWithTicketInfo(instantCalculationRequest.MatchId);
+        var request = CreateInstantCalculationRequest(instantCalculationRequest, matchTicketInfo);
+        var uncalResources = GetResourcesInstantCalculate(request);
+        var resourceResult = GetResourceResultInstantUncal(request.Resources, uncalResources);
+
+        var result = await ProcessPushInstantCalculation(request, resourceResult);
+
+        return result;
+    }
+
+    public async Task<Result> PushInstantCalculation(InstantCalculationRequest instantCalculationRequest)
+    {
+        var matchTicketInfo = await GetMatchDetailWithTicketInfo(instantCalculationRequest.MatchId);
+        var request = CreateInstantCalculationRequest(instantCalculationRequest, matchTicketInfo);
+        request.GoalRecord = matchTicketInfo.GoalRecord;
+        request.BetStatus = matchTicketInfo.BetStatus;
+
+        var resources = GetResourcesInstantCalculate(request);
+        var resourceResult = instantResourceService.GenerateResource(resources);
+
+        var resultMatchChecking = await CheckCalculationMatch(request, resourceResult);
+        if (resultMatchChecking.ErrCode > 0)
+        {
+            return resultMatchChecking;
+        }
+
+        var result = await ProcessPushInstantCalculation(request, resourceResult);
+
+        return result;
+    }
+
+    private static InstantCalculationRequest CreateInstantCalculationRequest(InstantCalculationRequest request, MatchTicketInfo matchTicketInfo)
+    {
+        request.IsExistHtFgNg = matchTicketInfo.IsExistHtFgNg;
+        request.IsExistFgNg = matchTicketInfo.IsExistFgNg;
+        request.IsExistFG = matchTicketInfo.IsExistFG;
+        request.IsExistHTFG = matchTicketInfo.IsExistHTFG;
+        request.IsExistCorner = matchTicketInfo.IsExistCorner;
+        request.IsExistHTCorner = matchTicketInfo.IsExistHTCorner;
+        request.IsExistFirstCorner = matchTicketInfo.IsExistFirstCorner;
+        request.IsExistHTFirstCorner = matchTicketInfo.IsExistHTFirstCorner;
+        request.IsExist2HFirstCorner = matchTicketInfo.IsExist2HFirstCorner;
+        return request;
+    }
+
+    private async Task<Result> ProcessPushInstantCalculation(InstantCalculationRequest request, string resourceResult)
     {
         var criteria = mapper.Map<InstantCalculationRequest, PushInstantCalculationCriteria>(request);
-        criteria.ResourceResult = GetResourceResultInstantCalculate(request);
-        criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
+        criteria.ResourceResult = resourceResult;
+        criteria.Action = $"{request.Action}-{request.Mode}";
 
         var result = await ValidateBeforeExecute(request);
+
         if (result.IsSuccessful)
         {
             await UpdateResult(request);
             await UpdateMatchInfo(request, request.IsHalfTime, criteria.ResourceResult);
-            await Execute(criteria);
+            await pushInstantService.Execute(criteria);
         }
 
         return result;
     }
 
-    private async Task GetTicketInfo(int matchId, UndoCheckingModel model)
+    private async Task<Result> CheckCalculationMatch(InstantCalculationRequest request, string resourceResult)
     {
-        var criteria = new InstantTicketCheckingCriteria { MatchId = matchId };
+        var matchCheckingCriteria = new MatchCheckingCriteria
+        {
+            MatchId = request.MatchId,
+            Action = $"{request.Action}-{request.Mode}",
+            AwayScore = request.AwayScore,
+            HomeScore = request.HomeScore,
+            InstantKey = request.InstantKey,
+            ResourceResult = resourceResult,
+        };
+        var matchCheckingResult = await CalculateCheckingInfo(matchCheckingCriteria);
+
+        return new Result
+        {
+            ErrCode = matchCheckingResult.ErrCode,
+            ErrMsg = matchCheckingResult.ErrMsg
+        };
+    }
+
+    private async Task<MatchTicketInfo> GetMatchDetailWithTicketInfo(int matchId)
+    {
+        var matchDetail = await GetMatchDetailInfo(matchId);
+        var ticketInfo = await GetMatchTicketInfo(matchId);
+
+        ticketInfo.GoalRecord = matchDetail.GoalRecord;
+        ticketInfo.BetStatus = matchDetail.BetStatus;
+
+        return ticketInfo;
+    }
+
+    private async Task<MatchDetail> GetMatchDetailInfo(int matchId)
+    {
+        var criteria = new GetMatchInfoCriteria
+        {
+            MatchId = matchId
+        };
+
+        var match = await repository.GetAsync<MatchDetail>(criteria);
+
+        return match;
+    }
+
+    private async Task<MatchTicketInfo> GetMatchTicketInfo(int matchId)
+    {
+        var listTicketInfo = new List<MatchTicketInfo>();
+        var criteria = new MatchTicketInfoCriteria
+        {
+            MatchId = matchId,
+        };
+
         foreach (var server in appSettingsKey.SiteDbServer)
         {
             criteria.DbServer = server;
-            var matchChecking = await repository.GetAsync<MatchGoalRecordModel>(criteria);
-
-            model.IsExistFG = model.IsExistFG || matchChecking.IsExistFG;
-            model.IsExistHTFG = model.IsExistHTFG || matchChecking.IsExistHTFG;
+            var item = await repository.GetAsync<MatchTicketInfo>(criteria) ?? new MatchTicketInfo();
+            listTicketInfo.Add(item);
         }
+
+        return new MatchTicketInfo
+        {
+            IsExistFgNg = listTicketInfo.Exists(item => item.IsExistFgNg),
+            IsExistHtFgNg = listTicketInfo.Exists(item => item.IsExistHtFgNg),
+            IsExistFG = listTicketInfo.Exists(item => item.IsExistFG),
+            IsExistHTFG = listTicketInfo.Exists(item => item.IsExistHTFG),
+            IsExistCorner = listTicketInfo.Exists(item => item.IsExistCorner),
+            IsExist2HFirstCorner = listTicketInfo.Exists(item => item.IsExist2HFirstCorner),
+            IsExistFirstCorner = listTicketInfo.Exists(item => item.IsExistFirstCorner),
+            IsExistHTCorner = listTicketInfo.Exists(item => item.IsExistHTCorner),
+            IsExistHTFirstCorner = listTicketInfo.Exists(item => item.IsExistHTFirstCorner),
+        };
     }
 
     private string BetStatus(InstantCalculationRequest request)
@@ -140,70 +243,35 @@ public class InstantCalculateServiceImp : InstantCalculateService
         return betStatus;
     }
 
-    private static void MergeData(MatchGoalRecordModel baseMatch, MatchGoalRecordModel siteMatch, bool isBaseMatch)
+    private string GetResourceResultInstantUncal(List<XmlResource> calculatedResources, List<XmlResource> uncalResources)
     {
-        if (isBaseMatch)
-        {
-            baseMatch.GoalRecord = siteMatch.GoalRecord;
-            baseMatch.BetStatus = siteMatch.BetStatus;
-        }
-
-        baseMatch.IsExistFgNg = baseMatch.IsExistFgNg || siteMatch.IsExistFgNg;
-        baseMatch.IsExistHtFgNg = baseMatch.IsExistHtFgNg || siteMatch.IsExistHtFgNg;
-        baseMatch.IsExistFG = baseMatch.IsExistFG || siteMatch.IsExistFG;
-        baseMatch.IsExistHTFG = baseMatch.IsExistHTFG || siteMatch.IsExistHTFG;
-    }
-
-    private async Task Execute(PushInstantCalculationCriteria criteria)
-    {
-        WriteLogDirectly(criteria);
-
-        foreach (var server in appSettingsKey.SiteDbServer)
-        {
-            criteria.DbServer = server;
-            await repository.ExecuteAsync(criteria);
-        }
-    }
-
-    private void WriteLogDirectly(PushInstantCalculationCriteria criteria)
-    {
-        var score = $"{criteria.HomeScore}-{criteria.AwayScore}";
-        var message = $"NAP: Instant Uncalculate {criteria.Mode} for matchId: {criteria.MatchId} Score: {score} Instant action: {criteria.Mode}";
-        logService.WriteLog(criteria.MatchId, message);
-    }
-
-    private string GetResourceResultInstantCalculate(InstantCalculationRequest request)
-    {
-        var goalCondition = new InstantGoalCondition
-        {
-            GoalRecord = request.GoalRecord,
-            FirstGoalValue = request.FirstGoalValue,
-            IsExistFgNg = request.IsExistFgNg,
-            IsExistHtFgNg = request.IsExistHtFgNg,
-            IsHalfTime = request.IsHalfTime
-        };
-
-        List<XmlResource> resources;
-
-        if (request.HomeScore == "0" && request.AwayScore == "0" && !request.Action.Equals(ActionType.UnCalculate))
-        {
-            return string.Empty;
-        }
-
-        if (request.Action.Equals(ActionType.UnCalculate))
-        {
-            resources = instantResourceService.UnCalculate(goalCondition);
-        }
-        else if (request.IsHalfTime)
-        {
-            resources = instantResourceService.Halftime(goalCondition);
-        }
-        else
-        {
-            resources = instantResourceService.FullTime(goalCondition);
-        }
-
+        var resourcesId = uncalResources.Select(r => r.ResourceId).ToList();
+        var resources = calculatedResources
+            .Where(resource => !resourcesId.Contains(resource.ResourceId))
+            .Select(resource => new XmlResource
+            {
+                ResourceId = resource.ResourceId,
+                ResultStatusId = ResultStatus.Initial,
+                SettlementStatusId = SettlementStatus.Running,
+                HomeValue = string.Empty
+            }).ToList();
         return instantResourceService.GenerateResource(resources);
+    }
+
+    private List<XmlResource> GetResourcesInstantCalculate(InstantCalculationRequest request)
+    {
+        var goalCondition = mapper.Map<InstantGoalCondition>(request);
+
+        if (request.HomeScore == "0" && request.AwayScore == "0" || string.IsNullOrEmpty(request.GoalRecord))
+        {
+            return new List<XmlResource>();
+        }
+
+        var resources = request.IsHalfTime
+            ? instantResourceService.Halftime(goalCondition)
+            : instantResourceService.FullTime(goalCondition);
+
+        return resources;
     }
 
     private async Task<Result> ValidateBeforeExecute(InstantCalculationRequest request)
@@ -211,10 +279,10 @@ public class InstantCalculateServiceImp : InstantCalculateService
         var requestChecking = new EventTicketRequest
         {
             MatchId = request.MatchId,
-            Action = request.Action,
-            SpName = "NAP_Admin_Settlement_1_InstantCalculation_Push",
+            Action = $"{request.Action}-{request.Mode}",
+            SpName = "NAP_Admin_Settlement_InstantCalculation_Push",
             IsAuto = false,
-            Mode = request.Mode,
+            Mode = null,
             InstantKey = request.InstantKey
         };
         var resultMessage = await scaleOutSettleService.ValidateEventAndTicket(requestChecking);
@@ -231,11 +299,11 @@ public class InstantCalculateServiceImp : InstantCalculateService
         var requestUpdateInfo = new UpdateMatchInfoRequest
         {
             MatchId = request.MatchId,
-            Action = request.Action,
             AdminId = request.AdminId,
+            Action = $"{request.Action}-{request.Mode}",
             ResourceResult = resourceResult,
             IsAuto = false,
-            Mode = request.Mode,
+            Mode = null,
             BetStatus = BetStatus(request)
         };
 

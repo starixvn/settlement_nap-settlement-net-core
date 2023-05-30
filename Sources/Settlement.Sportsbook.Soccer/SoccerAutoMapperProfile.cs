@@ -10,13 +10,18 @@ public class SoccerAutoMapperProfile : Profile
 {
     public SoccerAutoMapperProfile()
     {
-        CreateMap<MatchCheckingRequest, InstantCheckingCriteria>();
+        CreateMap<MatchCheckingRequest, MatchCheckingCriteria>()
+            .ForMember(des => des.Action, opt => opt.MapFrom(src => $"{src.Action}{src.Mode}"));
         CreateMap<GetMatchRequest, GetMatchDetailCriteria>();
         CreateMap<GetLatestMatchDetailRequest, GetLatestMatchDetailCriteria>();
         CreateMap<CheckStatusRequest, CheckStatusCriteria>()
             .ForMember(dest => dest.Action, opt => opt.MapFrom(src => src.ActionName));
         CreateMap<SettleRequest, GoalCondition>();
         CreateMap<InstantCalculationRequest, PushInstantCalculationCriteria>();
+        CreateMap<InstantCalculationRequest, InstantGoalCondition>();
+
+        //.ForMember(des => des.Action, opt => opt.MapFrom(src => $"{src.Action}-{src.Mode}"));
+
         CreateMap<RefundRequest, GoalCondition>();
         CreateMap<GetSpecificBetTypeRequest, SpecificBetTypesCriteria>();
         CreateMap<CheckingMarkedTicketsRequest, CheckingMarkedTicketsCriteria>().ForMember(dest => dest.Action, opt => opt.MapFrom(src => src.ActionName));

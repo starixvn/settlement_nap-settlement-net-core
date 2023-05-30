@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpRequestService } from '../../shared/services';
 import { GetMatchesQuery, DateFilter, MatchWaitingRequest } from '../models';
-import { Observable } from 'rxjs';
+import { Observable, firstValueFrom } from 'rxjs';
 import { AutoSettingLeagueQuery, AutoSettingMatchQuery, Result } from '../../shared/models';
 @Injectable()
 export class RequestService {
@@ -49,11 +49,13 @@ export class RequestService {
         return this.httpRequestService.postJson(param, `${this.betBuilderApi}/refresh-matches`, false);
     }
 
-    public updateLeague(query: AutoSettingLeagueQuery): Observable<Result> {
-        return this.httpRequestService.postJson(query, `/api/setting/update-setting-league`);
+    public updateLeague(query: AutoSettingLeagueQuery) {
+        const request = this.httpRequestService.postJson<Result>(query, `/api/setting/update-setting-league`);
+        return firstValueFrom(request);
     }
 
-    public updateMatch(query: AutoSettingMatchQuery): Observable<Result> {
-        return this.httpRequestService.postJson(query, `/api/setting/update-setting-match`);
+    public updateMatch(query: AutoSettingMatchQuery) {
+        const request = this.httpRequestService.postJson<Result>(query, `/api/setting/update-setting-match`);
+        return firstValueFrom(request);
     }
 }

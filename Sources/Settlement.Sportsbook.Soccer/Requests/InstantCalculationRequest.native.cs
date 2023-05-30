@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Settlement.Core.Models;
+using Settlement.Sportsbook.Soccer.Models;
 
 namespace Settlement.Sportsbook.Soccer.Requests;
 
@@ -27,6 +28,16 @@ public class InstantCalculationRequest : IRequest<Result>
 
     public bool IsExistHTFG { get; set; }
 
+    public bool IsExistCorner { get; set; }
+
+    public bool IsExistHTCorner { get; set; }
+
+    public bool IsExistFirstCorner { get; set; }
+
+    public bool IsExistHTFirstCorner { get; set; }
+
+    public bool IsExist2HFirstCorner { get; set; }
+
     public string GoalRecord { get; set; }
 
     public string FirstGoalValue { get; set; }
@@ -36,4 +47,6 @@ public class InstantCalculationRequest : IRequest<Result>
     public string BetStatus { get; set; }
 
     public string Mode => IsHalfTime ? "INST-HT" : "INST-FT";
+
+    public List<XmlResource> Resources { get; set; }
 }

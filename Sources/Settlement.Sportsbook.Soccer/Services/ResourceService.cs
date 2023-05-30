@@ -15,7 +15,7 @@ public interface IResourceService
 
     List<XmlResource> UnCalculateResources(GoalCondition goalCondition);
 
-    List<XmlResource> UnCalculateFtResources();
+    List<XmlResource> UnCalculateFtResources(string goalRecord);
 
     List<XmlResource> FullTimeResourcesSettleDetermined(GoalCondition goalCondition);
 
@@ -44,7 +44,7 @@ public class ResourceServiceImp : IResourceService
         var goalAction = CreateGoalAction(halftimeGoal, settlementStatusId);
         var resources = goalCondition.IsExistHtFgLg ? actionResourceService.HalftimeResources(goalAction) : new List<XmlResource>();
 
-        if (goalCondition.IsExistFgNg)
+        if (goalCondition.IsExistFgNg && !string.IsNullOrWhiteSpace(halftimeGoal))
         {
             var firstGoal = goalRecordService.FirstGoalRecord(goalAction.FirstGoal, goalAction.IsRefund);
             var resource = actionResourceService.FullTimeResource(firstGoal, settlementStatusId);
@@ -137,15 +137,20 @@ public class ResourceServiceImp : IResourceService
         return resources;
     }
 
-    public List<XmlResource> UnCalculateFtResources()
+    public List<XmlResource> UnCalculateFtResources(string goalRecord)
     {
+        var halftimeGoal = goalRecordService.HalftimeGoal(goalRecord);
         var resources = new List<XmlResource>
         {
             InitialResource(ResourceKey.FullTime),
-            InitialResource(ResourceKey.FullTimeFirstGoal),
             InitialResource(ResourceKey.FullTimeLastGoal),
             InitialResource(ResourceKey.FullTimeGoalRecord)
         };
+
+        if (string.IsNullOrEmpty(halftimeGoal))
+        {
+            resources.Add(InitialResource(ResourceKey.FullTimeFirstGoal));
+        }
         return resources;
     }
 
