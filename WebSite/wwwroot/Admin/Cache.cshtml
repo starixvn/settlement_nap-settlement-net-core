@@ -1,0 +1,36 @@
+﻿@{
+	Layout = null;
+}
+<html>
+<head>
+	<style>
+		td {
+			border: 1px solid #808080;
+		}
+	</style>
+</head>
+<body>
+
+	<div>
+		<table>
+			<thead>
+				<tr>
+					<td>
+						Cache Key
+					</td>
+					<td>Action</td>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var key in ViewBag.CacheKeys)
+				{
+					<tr>
+						<td>@key</td>
+						<td><a href="CacheContent?cacheKey=@key">View</a></td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+</body>
+</html>

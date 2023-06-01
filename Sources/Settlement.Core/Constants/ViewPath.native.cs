@@ -39,4 +39,8 @@ public static class ViewPath
     public const string Notification = "~/wwwroot/notification/index.cshtml";
 
     public const string Outright = "~/wwwroot/outright/index.cshtml";
+
+    public const string Cache = "~/wwwroot/Admin/Cache.cshtml";
+
+    public const string CacheContent = "~/wwwroot/Admin/CacheContent.cshtml";
 }
