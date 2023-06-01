@@ -27,6 +27,7 @@ public class MultiSportServiceImp : IMultiSportService
     private readonly ICacheService cacheService;
     private readonly PermissionService permissionService;
     private readonly AppSettingsKey appSettingsKey;
+    private readonly RedisCacheService redisCache;
 
     public MultiSportServiceImp(
         IDynamicRepository repository,
@@ -34,7 +35,8 @@ public class MultiSportServiceImp : IMultiSportService
         IMapper mapper,
         ICacheService cacheService,
         PermissionService permissionService,
-        IOptions<AppSettingsKey> appSettingsKey)
+        IOptions<AppSettingsKey> appSettingsKey,
+        RedisCacheService redisCache)
     {
         this.repository = repository;
         this.matchService = matchService;
@@ -42,6 +44,7 @@ public class MultiSportServiceImp : IMultiSportService
         this.cacheService = cacheService;
         this.mapper = mapper;
         this.appSettingsKey = appSettingsKey.Value;
+        this.redisCache = redisCache;
     }
 
     public async Task<List<SportModel>> GetSportBook(FilterMultiSportRequest request)
@@ -89,7 +92,9 @@ public class MultiSportServiceImp : IMultiSportService
     private async Task<List<MultiSportMatchWaiting>> MatchesOnShortCaching(string hashLeagueIds)
     {
         var shortCachingKey = ShortCachingKey(hashLeagueIds);
-        return await cacheService.GetAsync<List<MultiSportMatchWaiting>>(shortCachingKey);
+        var (found, value) = await cacheService.TryGetAsync<List<MultiSportMatchWaiting>>(shortCachingKey);
+        redisCache.IncrementCount(found);
+        return value;
     }
 
     private async Task<List<MultiSportMatchWaiting>> MatchesOnLongCaching(string hashLeagueIds)

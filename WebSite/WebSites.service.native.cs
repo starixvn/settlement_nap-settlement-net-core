@@ -1,5 +1,6 @@
 using AutoMapper;
 using Fanex.Caching;
+using Fanex.Caching.Redis;
 using Fanex.Data;
 using Fanex.Data.Repository;
 using Fanex.Data.SqlServer;
@@ -42,7 +43,6 @@ using Settlement.WebSites.Configurations;
 using SharpRaven;
 using StackExchange.Redis;
 using System.IO.Compression;
-using Fanex.Caching.Redis;
 using ILogger = Fanex.Logging.ILogger;
 using LogService = Settlement.Core.Services.LogService;
 using LogServiceImp = Settlement.Core.Services.LogServiceImp;
@@ -138,6 +138,7 @@ public static class WebSites
         services.AddSingleton<IUserService, UserService>();
         services.AddSingleton<ISecurityService, SecurityService>();
         services.AddTransient<IBalanceUpService, BalanceUpServiceImp>();
+        services.AddSingleton<RedisCacheService, RedisCacheServiceImp>();
 
         RefDataTypeContainer
             .ConnectTo(new Uri(configuration.GetSection("Fanex.RemotingRef.Service.Url").Value))
