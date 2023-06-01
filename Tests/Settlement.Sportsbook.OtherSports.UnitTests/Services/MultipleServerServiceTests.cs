@@ -24,17 +24,19 @@ public class MultipleServerServiceTests
 
     private readonly MultipleServerService service;
 
-    private readonly LogService logService;
-
     public MultipleServerServiceTests()
     {
         repository = Substitute.For<IDynamicRepository>();
         mergeDataService = Substitute.For<MergeDataService>();
         scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
-        logService = Substitute.For<LogService>();
+        var logService = Substitute.For<LogService>();
         var appSettingsKey = new AppSettingsKey { SiteDbServer = new List<string> { "01", "02" } };
         var options = Options.Create(appSettingsKey);
-        service = new MultipleServerServiceImp(repository, options, mergeDataService, scaleOutSettleService, logService);
+        var mapperConfig = new MapperConfigurationExpression();
+        mapperConfig.AddProfile<OtherSportsAutoMapperProfile>();
+        var config = new MapperConfiguration(mapperConfig);
+        var mapper = new Mapper(config);
+        service = new MultipleServerServiceImp(repository, options, mergeDataService, scaleOutSettleService, logService, mapper);
     }
 
     [Fact]
