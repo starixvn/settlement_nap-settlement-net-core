@@ -39,13 +39,12 @@ public class CachingMatchesServiceImp : CachingMatchesService
     {
         var shortCachingKey = ShortCachingKey(leagueIds);
         var longCachingKey = LongCachingKey(leagueIds);
-        const int shortCacheExpirationTime = 3;
-        const int longCacheExpirationTime = 20;
-        await cacheService.SetAsync(shortCachingKey, matches, new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromSeconds(shortCacheExpirationTime)));
-        await cacheService.SetAsync(longCachingKey, matches, new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(longCacheExpirationTime)));
+
+        await cacheService.SetAsync(shortCachingKey, matches, new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromSeconds(CacheSettings.Expiration.ShortCallRefreshTimerSeconds)));
+        await cacheService.SetAsync(longCachingKey, matches, new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(CacheSettings.Expiration.LongCallRefreshTimerMinutes)));
     }
 
-    private static string ShortCachingKey(string leagueIds) => $"{CacheServiceKey.WaitingBetBuilderCacheKey}-{leagueIds}";
+    private static string ShortCachingKey(string leagueIds) => $"{CacheSettings.Keys.WaitingBetBuilderCacheKey}-{leagueIds}";
 
     private static string LongCachingKey(string leagueIds) => $"{ShortCachingKey(leagueIds)}-long";
 }

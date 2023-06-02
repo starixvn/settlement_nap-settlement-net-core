@@ -29,8 +29,8 @@ public class CachingMatchesServiceTests
     }
 
     [Theory]
-    [InlineData(false, "123", CacheServiceKey.WaitingListCacheKey + "-123")]
-    [InlineData(true, "1234", CacheServiceKey.WaitingAutoPayoutCacheKey + "-1234")]
+    [InlineData(false, "123", CacheSettings.Keys.WaitingListCacheKey + "-123")]
+    [InlineData(true, "1234", CacheSettings.Keys.WaitingAutoPayoutCacheKey + "-1234")]
     public void SetToCache_Always_SetLongAndShortCache(bool autoCalc, string leagueId, string logKey)
     {
         service.SetToCache(new List<Match>(), leagueId, autoCalc);
@@ -40,8 +40,8 @@ public class CachingMatchesServiceTests
     }
 
     [Theory]
-    [InlineData(false, "123", CacheServiceKey.WaitingListCacheKey + "-123")]
-    [InlineData(true, "1234", CacheServiceKey.WaitingAutoPayoutCacheKey + "-1234")]
+    [InlineData(false, "123", CacheSettings.Keys.WaitingListCacheKey + "-123")]
+    [InlineData(true, "1234", CacheSettings.Keys.WaitingAutoPayoutCacheKey + "-1234")]
     public void GetShortCache_Always_CallServiceWithCorrectParams(bool autoCalc, string leagueId, string logKey)
     {
         service.GetShortCache(leagueId, autoCalc);
@@ -50,8 +50,8 @@ public class CachingMatchesServiceTests
     }
 
     [Theory]
-    [InlineData(false, "123", CacheServiceKey.WaitingListCacheKey + "-123-long")]
-    [InlineData(true, "1234", CacheServiceKey.WaitingAutoPayoutCacheKey + "-1234-long")]
+    [InlineData(false, "123", CacheSettings.Keys.WaitingListCacheKey + "-123-long")]
+    [InlineData(true, "1234", CacheSettings.Keys.WaitingAutoPayoutCacheKey + "-1234-long")]
     public void GetLongCache_Always_CallServiceWithCorrectParams(bool autoCalc, string leagueId, string logKey)
     {
         service.GetLongCache(leagueId, autoCalc);

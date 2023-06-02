@@ -103,7 +103,7 @@ public class MultiSportServiceImp : IMultiSportService
         return await cacheService.GetAsync<List<MultiSportMatchWaiting>>(longCachingKey);
     }
 
-    private static string ShortCachingKey(string hashLeagueIds) => $"{CacheServiceKey.MemoryCacheMultiSportCacheKey}-{hashLeagueIds}";
+    private static string ShortCachingKey(string hashLeagueIds) => $"{CacheSettings.Keys.MemoryCacheMultiSportCacheKey}-{hashLeagueIds}";
 
     private static string LongCachingKey(string hashLeagueIds) => $"{ShortCachingKey(hashLeagueIds)}-long";
 
@@ -150,12 +150,10 @@ public class MultiSportServiceImp : IMultiSportService
     {
         var shortCachingKey = ShortCachingKey(hashLeagueIds);
         var longCachingKey = LongCachingKey(hashLeagueIds);
-        const int shortCacheExpirationTime = 3;
-        const int longCacheExpirationTime = 20;
         var waitingMatches = mapper.Map<List<MultiSportMatchWaiting>>(matches);
 
-        await cacheService.SetAsync(shortCachingKey, waitingMatches, new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromSeconds(shortCacheExpirationTime)));
-        await cacheService.SetAsync(longCachingKey, waitingMatches, new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(longCacheExpirationTime)));
+        await cacheService.SetAsync(shortCachingKey, waitingMatches, new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromSeconds(CacheSettings.Expiration.ShortCallRefreshTimerSeconds)));
+        await cacheService.SetAsync(longCachingKey, waitingMatches, new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(CacheSettings.Expiration.LongCallRefreshTimerMinutes)));
 
         return waitingMatches;
     }
@@ -165,7 +163,7 @@ public class MultiSportServiceImp : IMultiSportService
         var matchesByEachSport = data.Matches.GroupBy(match => match.SportType)
             .Select(sports => new MatchesBySportTypeModel { SportType = sports.Key, Matches = sports.ToList() })
             .ToList();
-        var permission = permissionService.GetPermission(CacheServiceKey.MemoryCacheManualPermission);
+        var permission = permissionService.GetPermission(CacheSettings.Keys.MemoryCacheManualPermission);
         var listMatch = new List<Match>();
         foreach (var item in matchesByEachSport)
         {

@@ -13,7 +13,6 @@ public interface IBalanceUpService
 
 public class BalanceUpServiceImp : IBalanceUpService
 {
-    private const int CacheTimeoutMinute = 1;
     private readonly ICacheService cacheService;
     private readonly IDynamicRepository repository;
 
@@ -28,7 +27,7 @@ public class BalanceUpServiceImp : IBalanceUpService
     private BalanceUp BalanceUp => repository.Get<BalanceUp>(new GetBalanceUpDayCriteria());
 
     public BalanceUp GetBalanceUpDay() => cacheService.GetOrSet(
-        CacheServiceKey.MemoryCacheBalanceUpDay,
+       CacheSettings.Keys.MemoryCacheBalanceUpDay,
         () => BalanceUp,
-        new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(CacheTimeoutMinute)));
+        new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(CacheSettings.Expiration.BalanceUpTimerMinutes)));
 }

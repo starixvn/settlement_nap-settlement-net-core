@@ -1,4 +1,4 @@
-import { SportLeague, SportLeagueFilter } from './../../models/sport-league.model';
+import { SportLeagueFilter } from './../../models/sport-league.model';
 import { GenerateFilterService } from './../../../shared/services/generate-filter.service';
 import { NewMultipleSelectComponent } from './../../../shared/components/multiple-select/multiple-select.component';
 import { DatePipe, CommonModule } from '@angular/common';
@@ -14,7 +14,7 @@ import { FormsModule } from '@angular/forms';
 import { Resources } from '../../constants/resources';
 import { MaterialModule } from '../../../shared/material-module';
 import * as _ from "lodash";
-import { BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
     selector: 'filter',
