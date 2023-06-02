@@ -6,7 +6,7 @@ import { GeneralResultDetail, MarkedTicketsModel, MatchResource, ModalDialogMess
 import { MessageBoxService } from './message-box.service.native';
 import { Language } from '../language.native';
 import { GeneralMatch, HedgeMatchDetail, ResultDetail, SaveScoreQuery } from '../models/sportsbook-sop';
-import { ResultSettingType, SettlementStatusId, TicketStatusText, ResultStatus } from '../../shared/constants';
+import { ResultSettingType, SettlementStatusId, TicketStatusText, ResultStatus, ResourceIds } from '../../shared/constants';
 
 @Injectable()
 export class AioService {
@@ -144,6 +144,31 @@ export class AioService {
                 await this.confirmOldMatch(query, oldMatchDetail);
             }).finally(() => this.messageBoxService.closePopupNotChanged());
         });
+    }
+
+    public generateDeterminedType(resultDetails: ResultDetail[]) {
+        const roundBitStartAt = 3;
+        const bitArray = new Array(8).fill(0);
+        const resultWithoutFinal = resultDetails.filter(resultDetail =>
+            resultDetail.resourceId !== ResourceIds.fullTime
+            && resultDetail.resourceId !== ResourceIds.halfTime).map(resultDetail => resultDetail.resourceId);
+        resultDetails.forEach(resultDetail => {
+            let bitPosition;
+            switch (resultDetail.resourceId) {
+                case ResourceIds.fullTime:
+                    bitPosition = 0;
+                    break;
+                case ResourceIds.halfTime:
+                    bitPosition = 2;
+                    break;
+                default:
+                    bitPosition = resultWithoutFinal.indexOf(resultDetail.resourceId) + roundBitStartAt;
+            };
+
+            bitArray[bitPosition] = resultDetail.checked ? 1 : 0;
+        });
+
+        return parseInt(bitArray.reverse().join(''), 2);
     }
 
     private async confirmHedgeMatch(query: ResultSettingQuery, hedgeMatchDetail: HedgeMatchDetail) {

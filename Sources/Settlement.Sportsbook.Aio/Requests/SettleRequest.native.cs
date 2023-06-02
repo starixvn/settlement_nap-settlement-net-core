@@ -28,5 +28,6 @@ public class SettleRequest : IRequest<Result>
 
     public bool IsHedgeMatch { get; set; }
     
-    public bool HasSDT { get; set; }
+    public int DeterminedType { get; set; }
+    
 }

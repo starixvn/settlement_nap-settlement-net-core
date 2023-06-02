@@ -57,7 +57,7 @@ export class RefundActionBaseComponent {
             false,
             "",
             apikey);
-        query.hasSdt = this.isSDTSettle;
+        query.determinedType  = this.isSDTSettle && this.aioService.generateDeterminedType(this.resultDetails);
         query.isDirectly = this.isDirectly;
         return query;
     }
