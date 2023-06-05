@@ -123,7 +123,7 @@ public class MatchServiceImp : MatchService
     public async Task<List<CalculateMatchWaiting>> GetWaitingMatches(string leagueIds, bool isAutoPage)
     {
         var hashLeagueIds = ConvertKeyToHash(leagueIds);
-        var matches = await cachingMatchesService.GetShortCache(hashLeagueIds, isAutoPage);
+        var matches = cachingMatchesService.GetShortCache(hashLeagueIds, isAutoPage);
 
         if (matches != null)
         {
@@ -134,7 +134,9 @@ public class MatchServiceImp : MatchService
         {
             try
             {
-                return isAutoPage ? await GetAndCachingAutoCalculationMatches(leagueIds, hashLeagueIds) : await GetAndCachingMatches(leagueIds, hashLeagueIds);
+                return isAutoPage
+                    ? await GetAndCachingAutoCalculationMatches(leagueIds, hashLeagueIds)
+                    : await GetAndCachingMatches(leagueIds, hashLeagueIds);
             }
             finally
             {
@@ -142,7 +144,7 @@ public class MatchServiceImp : MatchService
             }
         }
 
-        return await cachingMatchesService.GetLongCache(hashLeagueIds, isAutoPage);
+        return cachingMatchesService.GetLongCache(hashLeagueIds, isAutoPage);
     }
 
     private async Task<List<CalculateMatchWaiting>> GetAndCachingMatches(string leagueIds, string hashLeagueIds)
@@ -153,7 +155,7 @@ public class MatchServiceImp : MatchService
 
         var matches = SetNewMatchInfo(waitingMatches, listResultDetail);
 
-        return await cachingMatchesService.SetToCache(matches, hashLeagueIds);
+        return cachingMatchesService.SetToCache(matches, hashLeagueIds);
     }
 
     public async Task<List<Match>> GetMatchesAutoCalculate(FilterAutoCalculationRequest request)
@@ -188,7 +190,7 @@ public class MatchServiceImp : MatchService
 
         var matches = SetNewMatchInfo(waitingMatches, listResultDetail);
 
-        return await cachingMatchesService.SetToCache(matches, hashLeagueIds, true);
+        return cachingMatchesService.SetToCache(matches, hashLeagueIds, true);
     }
 
     private static List<Match> SortingMatches(List<Match> matches, FilterCalculationRequest request)

@@ -1,29 +1,29 @@
 ﻿namespace Settlement.EventManagement.Services.Calculation;
 
 using Criteria;
-using Fanex.Caching;
+using Microsoft.Extensions.Caching.Memory;
 using Settlement.EventManagement.Models.Calculation;
 
 public interface CachingMatchesService
 {
-    Task<List<CalculateMatchWaiting>> SetToCache(List<Match> matches, string hashLeagueIds, bool autoCalculate = false);
+    List<CalculateMatchWaiting> SetToCache(List<Match> matches, string hashLeagueIds, bool autoCalculate = false);
 
-    Task<List<CalculateMatchWaiting>> GetShortCache(string hashLeagueIds, bool autoCalculate = false);
+    List<CalculateMatchWaiting> GetShortCache(string hashLeagueIds, bool autoCalculate = false);
 
-    Task<List<CalculateMatchWaiting>> GetLongCache(string hashLeagueIds, bool autoCalculate = false);
+    List<CalculateMatchWaiting> GetLongCache(string hashLeagueIds, bool autoCalculate = false);
 
     Task<Dictionary<int, List<ReferenceAction>>> GetReferenceActions(IEnumerable<int> matchIds);
 }
 
 public class CachingMatchesServiceImp : CachingMatchesService
 {
-    private readonly ICacheService cacheService;
+    private readonly IMemoryCache cacheService;
 
     private readonly IDynamicRepository repository;
 
     private readonly IMapper mapper;
 
-    public CachingMatchesServiceImp(ICacheService cacheService,
+    public CachingMatchesServiceImp(IMemoryCache cacheService,
         IDynamicRepository repository,
         IMapper mapper)
     {
@@ -32,14 +32,14 @@ public class CachingMatchesServiceImp : CachingMatchesService
         this.mapper = mapper;
     }
 
-    public async Task<List<CalculateMatchWaiting>> SetToCache(List<Match> matches, string hashLeagueIds, bool autoCalculate = false)
+    public List<CalculateMatchWaiting> SetToCache(List<Match> matches, string hashLeagueIds, bool autoCalculate = false)
     {
         var shortCachingKey = ShortCachingKey(hashLeagueIds, autoCalculate);
         var longCachingKey = LongCachingKey(hashLeagueIds, autoCalculate);
         var waitingMatch = mapper.Map<List<CalculateMatchWaiting>>(matches);
 
-        await cacheService.SetAsync(shortCachingKey, waitingMatch, new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromSeconds(CacheSettings.Expiration.ShortCallRefreshTimerSeconds)));
-        await cacheService.SetAsync(longCachingKey, waitingMatch, new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(CacheSettings.Expiration.LongCallRefreshTimerMinutes)));
+        cacheService.Set(shortCachingKey, waitingMatch, new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromSeconds(CacheSettings.Expiration.ShortCallRefreshTimerSeconds)));
+        cacheService.Set(longCachingKey, waitingMatch, new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(CacheSettings.Expiration.LongCallRefreshTimerMinutes)));
         return waitingMatch;
     }
 
@@ -48,16 +48,16 @@ public class CachingMatchesServiceImp : CachingMatchesService
 
     private static string LongCachingKey(string hashLeagueIds, bool autoCalculate) => $"{ShortCachingKey(hashLeagueIds, autoCalculate)}-long";
 
-    public async Task<List<CalculateMatchWaiting>> GetShortCache(string hashLeagueIds, bool autoCalculate = false)
+    public List<CalculateMatchWaiting> GetShortCache(string hashLeagueIds, bool autoCalculate = false)
     {
         var shortCachingKey = ShortCachingKey(hashLeagueIds, autoCalculate);
-        return await cacheService.GetAsync<List<CalculateMatchWaiting>>(shortCachingKey);
+        return cacheService.Get<List<CalculateMatchWaiting>>(shortCachingKey);
     }
 
-    public async Task<List<CalculateMatchWaiting>> GetLongCache(string hashLeagueIds, bool autoCalculate = false)
+    public List<CalculateMatchWaiting> GetLongCache(string hashLeagueIds, bool autoCalculate = false)
     {
         var longCachingKey = LongCachingKey(hashLeagueIds, autoCalculate);
-        return await cacheService.GetAsync<List<CalculateMatchWaiting>>(longCachingKey);
+        return cacheService.Get<List<CalculateMatchWaiting>>(longCachingKey);
     }
 
     public async Task<Dictionary<int, List<ReferenceAction>>> GetReferenceActions(IEnumerable<int> matchIds)

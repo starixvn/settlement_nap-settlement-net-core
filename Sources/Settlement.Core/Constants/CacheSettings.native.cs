@@ -19,7 +19,7 @@ public static class CacheSettings
 
     public static class Expiration
     {
-        public const int ShortCallRefreshTimerSeconds = 4;
+        public const int ShortCallRefreshTimerSeconds = 3;
         public const int LongCallRefreshTimerMinutes = 10;
         public const int BalanceUpTimerMinutes = 1;
     }
