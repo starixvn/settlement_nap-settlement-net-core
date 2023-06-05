@@ -25,4 +25,6 @@ public class SettleRequest : IRequest<Result>
     public string ChildMatchIds { get; set; }
 
     public int? RefResultStatus { get; set; }
+
+    public bool IsHedgeMatch { get; set; }
 }

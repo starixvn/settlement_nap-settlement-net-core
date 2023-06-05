@@ -1,4 +1,5 @@
-﻿using Settlement.Core.Models;
+﻿using Settlement.Core.Criteria;
+using Settlement.Core.Models;
 using Settlement.Sportsbook.Aio.Criteria;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Requests;
@@ -22,5 +23,6 @@ public class SportsbookAioAutoMapperProfile : Profile
        .ForMember(dest => dest.SelectedResources, map => map.Ignore())
        .ForMember(dest => dest.MatchId, map => map.Ignore());
         CreateMap<ChildMatchModel, ResourceItem>();
+        CreateMap<SettleCriteria, InsertLogCriteria>();
     }
 }

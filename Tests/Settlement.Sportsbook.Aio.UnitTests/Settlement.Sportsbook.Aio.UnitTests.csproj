@@ -15,7 +15,7 @@
     <PackageReference Include="AutoFixture" Version="4.18.0" />
     <PackageReference Include="Fanex.Settlement.Converter" Version="1.0.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.0" />
     <PackageReference Include="NSubstitute" Version="5.0.0" />
     <PackageReference Include="NSubstitute.Analyzers.CSharp" Version="1.0.16">
       <PrivateAssets>all</PrivateAssets>
@@ -26,7 +26,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="coverlet.collector" Version="3.2.0">
+    <PackageReference Include="coverlet.collector" Version="6.0.0">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>

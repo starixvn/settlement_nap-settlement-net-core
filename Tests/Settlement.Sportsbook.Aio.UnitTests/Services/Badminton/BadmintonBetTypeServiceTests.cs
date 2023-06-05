@@ -1,4 +1,5 @@
-﻿using Settlement.Sportsbook.Aio.Models;
+﻿using Settlement.ResourceInfos.Services;
+using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Services.Badminton;
 
 namespace Settlement.Sportsbook.Aio.UnitTests.Services.Badminton;
@@ -7,23 +8,28 @@ public class BadmintonBetTypeServiceTests
 {
     private readonly IBadmintonBetTypeService service;
 
+    private readonly IResourceNameService resourceNameService;
+
     public BadmintonBetTypeServiceTests()
     {
-        service = new BadmintonBetTypeServiceImp();
+        resourceNameService = Substitute.For<IResourceNameService>();
+        service = new BadmintonBetTypeServiceImp(resourceNameService);
     }
 
     [Theory]
-    [InlineData("7120103", 1, "712", "Game 1 Race to 3 Points")]
-    [InlineData("7120203", 2, "712", "Game 2 Race to 3 Points")]
-    [InlineData("7130301", 3, "713", "Game 3 Point 1 Winner")]
-    public void GetBetTypeName_Always_ReturnCorrectBetTypeInfo(string resourceId, int map, string betType, string betTypeName)
+    [InlineData("7120103", 1)]
+    [InlineData("7120203", 2)]
+    [InlineData("7130301", 3)]
+    public void GetBetTypeName_Always_ReturnCorrectBetTypeInfo(string resourceId, int map)
     {
         var resultDetail = new ResultDetail { ResourceId = resourceId };
+
+        resourceNameService.GetResourceName(Arg.Any<string>(), Arg.Any<string>()).Returns(("mockBettype", "mockName"));
 
         var actual = service.GetBetTypeName(resultDetail);
 
         Assert.Equal(map, actual.Map);
-        Assert.Equal(betType, actual.BetType);
-        Assert.Equal(betTypeName, actual.BetTypeName);
+        Assert.Equal("mockBettype", actual.BetType);
+        Assert.Equal("mockName", actual.BetTypeName);
     }
 }

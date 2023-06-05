@@ -12,19 +12,20 @@ export class MatchesComponent implements OnInit {
     @Input() public readonly matches: Match[];
     @Input() public readonly fromDate: string;
     @Input() public readonly toDate: string;
-    public scrollName: string;
+    @Input() public readonly isResettleLog: boolean;
+     scrollName: string;
 
-    public ngOnInit() {
+     ngOnInit() {
         this.scrollName = UrlHelper.getUrlParameter('isShowMenu') === "false"
             ? "hide-menu"
             : "show-menu";
     }
 
-    public onCollapsedClick(match: Match) {
+     onCollapsedClick(match: Match) {
         match.collapsed = !match.collapsed;
     }
 
-    public getBackgroundIcon(isCollapsed: boolean) {
+     getBackgroundIcon(isCollapsed: boolean) {
         return isCollapsed ? "btn-right-up" : "btn-right";
     }
 }

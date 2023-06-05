@@ -33,6 +33,9 @@ public class SettleCriteria : NonQueryCommand
     public string BroadcastSessionId { get; } = Guid.NewGuid().ToString();
 
     [SpParam(Ignored = true)]
+    public int SportType { get; set; }
+
+    [SpParam(Ignored = true)]
     public bool IsHedgeMatch { get; set; }
 
     [SpParam(Ignored = true)]

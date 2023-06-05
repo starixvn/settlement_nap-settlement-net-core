@@ -12,6 +12,8 @@ import {
 import { ModalDialogComponent } from '../shared/components/modal-dialog/modal-dialog.component';
 import { ModalContentDialogComponent } from '../shared/components/modal-dialog/modal-content-dialog.component';
 import { DatepickerComponent } from '../shared/components/date-picker/date-picker.component';
+import { ResettleLogDetailComponent } from './components/resettle-log-detail/resettle-log-detail.component';
+import { LogDetailComponent } from './components/log-detail/log-detail.component';
 
 @NgModule({
     imports: [
@@ -29,7 +31,8 @@ import { DatepickerComponent } from '../shared/components/date-picker/date-picke
         FilterComponent,
         ModalDialogComponent,
         ModalContentDialogComponent,
-
+        ResettleLogDetailComponent,
+        LogDetailComponent
     ],
     entryComponents: [ModalDialogComponent, ModalContentDialogComponent],
     providers: [ { provide: HTTP_INTERCEPTORS, useClass: CustomHttpRequestInterceptor, multi: true }],

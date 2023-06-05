@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using AutoMapper.Configuration;
 using Fanex.NAP.Client.Helpers.Web;
+using Fanex.Settlement.Converter.Services;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Settlement.Core.Models;
@@ -9,6 +9,7 @@ using Settlement.Core.UnitTests;
 using Settlement.Sportsbook.Aio.Criteria;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Requests;
+using Settlement.Sportsbook.Aio.Services;
 
 namespace Settlement.Sportsbook.Aio.UnitTests.Services;
 

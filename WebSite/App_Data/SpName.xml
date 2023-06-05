@@ -91,6 +91,8 @@
 		<Setting Key="NAP_UserLog_Settle_MatchSelByCode" SpName="NAP_UserLog_Settle_MatchSelByCode" DbName="DBAGE.bodb02.bodbAdminNet" />
 		<Setting Key="NAP_UserLog_Settle_MatchSelByID_by_Product" SpName="NAP_UserLog_Settle_MatchSelByID_by_Product" DbName="DBLOG.bodb_CustomerLog.bodbAdminNet" />
 		<Setting Key="NAP_UserLog_WriteLogPreSettlement" SpName="NAP_UserLog_WriteLogPreSettlement" DbName="DBUserLog.LogTDB.bodbAdminNet" />
+    <Setting Key="NAP_SettlementLog_Ins" SpName="NAP_SettlementLog_Ins" DbName="DBLOG.bodb_CustomerLog.bodbAdminNet" />
+    <Setting Key="NAP_SettlementLog_SelReSettle" SpName="NAP_SettlementLog_SelReSettle" DbName="DBLOG.bodb_CustomerLog.bodbAdminNet" />
 	</Function>
 
 	<Function Name="Balance">

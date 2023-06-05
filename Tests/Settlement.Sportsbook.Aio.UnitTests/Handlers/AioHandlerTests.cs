@@ -4,6 +4,7 @@ using Settlement.Core.Services;
 using Settlement.Sportsbook.Aio.Handlers;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Requests;
+using Settlement.Sportsbook.Aio.Services;
 
 namespace Settlement.Sportsbook.Aio.UnitTests.Handlers;
 

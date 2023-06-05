@@ -142,6 +142,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
                 this.selectedResources,
                 CalculateAction.earlyCalculate,
                 this.isReSettledTickets,
+                this.matchDetail.sportType,
                 this.matchDetail.betStatus);
             query.isLeader = this.permission.isLeader;
             this.doSaveResult(CalculateAction.calculate,
@@ -164,6 +165,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
                 this.selectedResources,
                 CalculateAction.earlyUnCalculate,
                 this.isReSettledTickets,
+                this.matchDetail.sportType,
                 this.match.matchDetail.betStatus);
             query.isLeader = this.permission.isLeader;
             this.push(query);
@@ -184,6 +186,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
             this.selectedResources,
             CalculateAction.earlyRefund,
             this.isReSettledTickets,
+            this.matchDetail.sportType,
             this.match.matchDetail.betStatus);
         query.isLeader = this.permission.isLeader;
         this.push(query);

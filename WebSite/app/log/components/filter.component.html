@@ -13,22 +13,23 @@
                 <label for="FromDate" class="inner-label from-date">
                     From
                 </label>
-                <ngbd-date-picker [date]="filter.fromDate" (change)="onSelectFromDate($event)"></ngbd-date-picker>
+                <ngbd-date-picker [disabled]="filter.productType === resettleType" [date]="filter.fromDate" (change)="onSelectFromDate($event)"></ngbd-date-picker>
             </div>
             <div class="col-md-2">
                 <label for="ToDate" class="inner-label to-date">
                     To
                 </label>
-                <ngbd-date-picker [date]="filter.toDate" (change)="onSelectToDate($event)"></ngbd-date-picker>
+                <ngbd-date-picker [disabled]="filter.productType === resettleType" [date]="filter.toDate" (change)="onSelectToDate($event)"></ngbd-date-picker>
             </div>
             <div class="col-md-2" [hidden]="isHideLogType">
                 <label for="productType" class="inner-label">
                     Log Type
                 </label>
                 <select [(ngModel)]="filter.productType">
-                    <option value="ALL">All</option>
-                    <option value="FMK">Fast Markets</option>
-                    <option value="OTH">Other</option>
+                    <ng-container *ngFor="let item of filterType">
+                        <option [value]='item.value'>{{item.title}}</option>
+                    </ng-container>
+                
                 </select>
             </div>
             <div class="col-sm-1">

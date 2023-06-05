@@ -39,7 +39,7 @@ describe('Log - SearchService', () => {
             const expectedUrl = '/api/log/filter';
 
             // Act
-            spyOn(httpRequestService, 'getJson');
+            httpRequestService.getJson = jest.fn();
             service.filter();
             tick();
 
@@ -54,7 +54,7 @@ describe('Log - SearchService', () => {
         const param = new LogQuery('700000', '', '2020-01-01', '2020-01-02');
 
         // Act
-        spyOn(httpRequestService, 'postJson');
+        httpRequestService.postJson = jest.fn();
         service.search(param);
         tick();
 

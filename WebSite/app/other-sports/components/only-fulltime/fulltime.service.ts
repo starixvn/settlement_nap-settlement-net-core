@@ -14,23 +14,23 @@ export class FullTimeService {
         if (matchDetail.sportType !== SportType.muayThai) {
             matchDetail.betStatus = '';
         }
-        const query = new RequestSettle(matchDetail.matchId,
+        const query = new RequestSettle(matchDetail,
         type, isReSettledTickets, matchDetail.betStatus,
         matchDetail.finalHomeScore, matchDetail.finalAwayScore, refResultStatus);
 
         const result = await this.requestService.sendRequest(query);
-        return this.getMessage(matchDetail.matchId, result);
+        return this.getMessage(result);
     }
 
     public async refund(matchDetail: MatchDetail) {
-        const query = new RequestSettle(matchDetail.matchId,
+        const query = new RequestSettle(matchDetail,
         CalculateAction.refund, false, "",
         matchDetail.finalHomeScore, matchDetail.finalAwayScore);
         const result = await this.requestService.sendRequest(query);
-        return this.getMessage(matchDetail.matchId, result);
+        return this.getMessage(result);
     }
 
-    private getMessage(matchId: number, result: Result){
+    private getMessage(result: Result){
         if (result.isSuccessful) {
             this.messageBoxService.closePopup();
             return "";

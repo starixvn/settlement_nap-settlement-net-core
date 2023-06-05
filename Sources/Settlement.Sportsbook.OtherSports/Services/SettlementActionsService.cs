@@ -83,6 +83,7 @@ public class SettlementActionsServiceImp : SettlementActionsService
             return result;
         }
         criteria.MatchId = request.HedgeMatchId;
+        criteria.IsHedgeMatch = true;
         await multipleServerService.Calculate(criteria, score);
 
         return result;
@@ -100,6 +101,7 @@ public class SettlementActionsServiceImp : SettlementActionsService
             RefResultStatus = request.RefResultStatus,
             SelectedResources = generateService.CreateResources(request.SelectedResources, request.Action),
             BetStatus = betStatus,
+            SportType = request.SportType
         };
 
         return calculate;

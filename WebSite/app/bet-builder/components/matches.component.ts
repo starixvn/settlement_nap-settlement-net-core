@@ -16,7 +16,7 @@ import { ISubscription } from 'rxjs-compat/Subscription';
 })
 
 export class MatchesComponent implements OnInit, OnDestroy {
-    private readonly period = 5000;
+    private readonly period = 10000;
     private subscriber: ISubscription;
     public multiSports: MultiSports;
     public readonly leagueMatch: LeagueMatches[];

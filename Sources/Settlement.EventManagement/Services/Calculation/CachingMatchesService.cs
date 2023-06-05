@@ -36,16 +36,15 @@ public class CachingMatchesServiceImp : CachingMatchesService
     {
         var shortCachingKey = ShortCachingKey(hashLeagueIds, autoCalculate);
         var longCachingKey = LongCachingKey(hashLeagueIds, autoCalculate);
-        const int shortCacheExpirationTime = 3;
-        const int longCacheExpirationTime = 20;
         var waitingMatch = mapper.Map<List<CalculateMatchWaiting>>(matches);
-        await cacheService.SetAsync(shortCachingKey, waitingMatch, new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromSeconds(shortCacheExpirationTime)));
-        await cacheService.SetAsync(longCachingKey, waitingMatch, new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(longCacheExpirationTime)));
+
+        await cacheService.SetAsync(shortCachingKey, waitingMatch, new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromSeconds(CacheSettings.Expiration.ShortCallRefreshTimerSeconds)));
+        await cacheService.SetAsync(longCachingKey, waitingMatch, new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(CacheSettings.Expiration.LongCallRefreshTimerMinutes)));
         return waitingMatch;
     }
 
-    private static string ShortCachingKey(string hashLeagueIds, bool autoCalculate) => autoCalculate ? $"{CacheServiceKey.WaitingAutoPayoutCacheKey}-{hashLeagueIds}"
-                                                                                            : $"{CacheServiceKey.WaitingListCacheKey}-{hashLeagueIds}";
+    private static string ShortCachingKey(string hashLeagueIds, bool autoCalculate) => autoCalculate ? $"{CacheSettings.Keys.WaitingAutoPayoutCacheKey}-{hashLeagueIds}"
+                                                                                            : $"{CacheSettings.Keys.WaitingListCacheKey}-{hashLeagueIds}";
 
     private static string LongCachingKey(string hashLeagueIds, bool autoCalculate) => $"{ShortCachingKey(hashLeagueIds, autoCalculate)}-long";
 

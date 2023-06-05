@@ -247,7 +247,7 @@ export class GameTotalCalculationComponent implements SportTemplate {
     }
 
     const betStatus = this.getBetStatus(type === CalculateAction.unCalculate);
-    const settleQuery = new SettleQuery(matchId, resultDetailList, type,
+    const settleQuery = new SettleQuery(this.match.matchDetail, resultDetailList, type,
       isReSettledTickets, isScoreDirect, betStatus, childMatchIds);
     settleQuery.refResultStatus = this.refResultStatus;
 
@@ -269,10 +269,10 @@ export class GameTotalCalculationComponent implements SportTemplate {
   }
 
   private settleHedgeMatch(query: SettleQuery) {
-    const matchId = query.matchId;
     const hedgeMatchId = this.applyHedgeMatch ? this.match.hedgeMatchDetail.matchId : 0;
     if (hedgeMatchId > 0) {
       query.matchId = hedgeMatchId;
+      query.isHedgeMatch = true;
       query.childMatchIds = "";
       this.aioService.push(query).then(() => {
         this.messageBoxService.closePopup();

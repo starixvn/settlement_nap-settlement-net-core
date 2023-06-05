@@ -20,7 +20,7 @@ import { ResultPipe } from '../../shared/pipes/result.pipe';
   templateUrl: './calculate-actions.component.html',
   standalone: true,
   imports: [CalculateCommonModule, ResultPipe, ResourceNameByIdPipe, CalculateMatchDetailComponent],
-  providers: [BadmintonService, VerificationService, IntervalCalculationService ]
+  providers: [BadmintonService, VerificationService, IntervalCalculationService]
 })
 export class CalculateActionsComponent implements SportTemplate {
   @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
@@ -66,10 +66,10 @@ export class CalculateActionsComponent implements SportTemplate {
 
   public initService() {
     this.aioService = this.injector.get(AioService);
-    this.messageBoxService= this.injector.get(MessageBoxService);
-    this.badmintonService= this.injector.get(BadmintonService);
-    this.verificationService= this.injector.get(VerificationService);
-    this.toastrService= this.injector.get(ToastrService);
+    this.messageBoxService = this.injector.get(MessageBoxService);
+    this.badmintonService = this.injector.get(BadmintonService);
+    this.verificationService = this.injector.get(VerificationService);
+    this.toastrService = this.injector.get(ToastrService);
     this.injector.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
     this.toastrService.overlayContainer = this.toastContainer;
   }
@@ -309,7 +309,7 @@ export class CalculateActionsComponent implements SportTemplate {
     const result = await this.aioService.saveScore(saveScoreQuery);
     if (result.isSuccessful) {
       resource = _.filter(resource, item => !_.isEqual(item.resourceId, ResourcesIds.totalPoints));
-      const query = new SettleQuery(this.match.matchDetail.matchId, resource, type, this.isReSettledTickets, this.match.isScoreDirect);
+      const query = new SettleQuery(this.match.matchDetail.matchId, resource, type, this.isReSettledTickets, this.match.matchDetail.sportType, this.match.isScoreDirect);
       query.isLeader = this.isLeader;
       query.betStatus = betStatus;
       query.childMatchIds = childMatchIds;
@@ -375,7 +375,7 @@ export class CalculateActionsComponent implements SportTemplate {
 
   private async sendRequest(type: string, resource: ResultDetail[], betStatus: string, childMatchIds: string): Promise<void> {
     resource = _.filter(resource, item => !_.isEqual(item.resourceId, ResourcesIds.totalPoints));
-    const query = new SettleQuery(this.match.matchDetail.matchId, resource, type, this.isReSettledTickets, this.match.isScoreDirect);
+    const query = new SettleQuery(this.match.matchDetail.matchId, resource, type, this.isReSettledTickets, this.match.matchDetail.sportType, this.match.isScoreDirect);
     query.isLeader = this.isLeader;
     query.betStatus = betStatus;
     query.childMatchIds = childMatchIds;
@@ -392,6 +392,7 @@ export class CalculateActionsComponent implements SportTemplate {
     const hedgeMatchId = this.applyHedgeMatch ? this.match.hedgeMatchDetail.matchId : 0;
     if (hedgeMatchId > 0) {
       query.matchId = hedgeMatchId;
+      query.isHedgeMatch = true;
       this.aioService.push(query).then(() => {
         this.messageBoxService.closePopup();
       });
@@ -590,7 +591,7 @@ export class CalculateActionsComponent implements SportTemplate {
     if (this.childMatchSelected.length > 0 && type === CalculateAction.calculate) {
       const settleChildMatchQuery = new SettleChildMatchQuery(this.childMatchSelected,
         settleQuery.actionName, settleQuery.isReSettledTickets, settleQuery.selectedResources);
-        await this.aioService.pushChildMatch(settleChildMatchQuery);
+      await this.aioService.pushChildMatch(settleChildMatchQuery);
     }
   }
 }

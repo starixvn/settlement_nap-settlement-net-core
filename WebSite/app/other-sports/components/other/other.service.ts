@@ -80,7 +80,7 @@ export class OtherService {
     public async settle(type: string, isReSettledTickets: boolean, matchDetail: MatchDetail, refResultStatus: number = null,
         hedgeMatchId = 0) {
         const betStatus = this.getBetStatus(matchDetail, type);
-        const query = new RequestSettle(matchDetail.matchId,
+        const query = new RequestSettle(matchDetail,
             type, isReSettledTickets, betStatus,
             matchDetail.finalHomeScore, matchDetail.finalAwayScore, refResultStatus);
         query.halfTimeHomeScore = matchDetail.halfTimeHomeScore;

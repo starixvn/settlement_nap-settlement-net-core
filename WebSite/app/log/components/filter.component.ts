@@ -7,7 +7,8 @@ import { UrlHelper } from '../../helper';
 import { SearchService } from '../services';
 import { ModalDialogMessage } from '../../shared/models';
 import { MessageBoxService, VerifyDateService } from '../../shared/services';
-import { Match, Filter, LogQuery, LogType } from '../models';
+import { Match, Filter, LogQuery } from '../models';
+import { LogType, LogTypeFilter, ResettleType } from "../constants/log-Type";
 
 @Component({
     selector: 'filter',
@@ -17,9 +18,12 @@ import { Match, Filter, LogQuery, LogType } from '../models';
 })
 
 export class FilterComponent implements OnInit {
-    @Output() public readonly searchAction = new EventEmitter();
+    @Output() public readonly searchAction = new EventEmitter<LogQuery>();
+    @Output() public readonly matches = new EventEmitter<Match[]>();
     public readonly warningDialogMessage: ModalDialogMessage = new ModalDialogMessage();
     public filter = new Filter();
+    readonly filterType = LogTypeFilter;
+    readonly resettleType = ResettleType;
 
     constructor(
         private readonly verifyDateService: VerifyDateService,
@@ -28,9 +32,9 @@ export class FilterComponent implements OnInit {
     }
 
     public ngOnInit() {
-         const matchCode = decodeURIComponent(UrlHelper.getUrlParameter('matchCode'));
+        const matchCode = decodeURIComponent(UrlHelper.getUrlParameter('matchCode'));
         if (_.isEmpty(matchCode)) {
-             this.searchService.filter().subscribe((query: LogQuery) => {
+            this.searchService.filter().subscribe((query: LogQuery) => {
                 this.filter.productType = query.productType;
                 this.filter.fromDate = this.verifyDateService.convertToDateStruct(query.fromDate);
                 this.filter.toDate = this.verifyDateService.convertToDateStruct(query.toDate);
@@ -55,8 +59,9 @@ export class FilterComponent implements OnInit {
         const query = new LogQuery(this.filter.matchCode, this.filter.productType, fromDate, toDate);
 
         if (this.isValidInput()) {
-            this.searchService.search(query).subscribe((match: Match[]) => {
-                this.searchAction.emit({ match, fromDate, toDate });
+            this.searchService.search(query).subscribe((matches: Match[]) => {
+                this.searchAction.emit(query);
+                this.matches.emit(matches);
             });
         } else {
             this.showWarningMessage();

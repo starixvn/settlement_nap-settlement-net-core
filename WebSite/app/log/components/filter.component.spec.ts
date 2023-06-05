@@ -1,19 +1,18 @@
-import { TestBed, waitForAsync, ComponentFixture, tick, fakeAsync } from '@angular/core/testing';
+import { TestBed, waitForAsync, ComponentFixture} from '@angular/core/testing';
 import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-import { BlockUIService, HttpRequestService } from '../../shared/services';
 import { BrowserModule } from '@angular/platform-browser';
 import { FilterComponent} from './index';
 import { SearchService } from '../services';
-import { MessageBoxService, VerifyDateService } from '../../shared/services';
+import { MessageBoxService, VerifyDateService, BlockUIService, HttpRequestService  } from '../../shared/services';
 import { ModalDialogComponent } from "../../shared/components/modal-dialog/modal-dialog.component";
 import { of } from 'rxjs';
 import {
     DatepickerComponent,
-} from '../../shared/components';
-import { Filter } from '../models';
+} from '../../shared/components/date-picker/date-picker.component';
+import { Filter, LogQuery } from '../models';
 describe('Filter component', () => {
     let component: FilterComponent;
     let fixture: ComponentFixture<FilterComponent>;
@@ -31,7 +30,6 @@ describe('Filter component', () => {
         TestBed.configureTestingModule({
             declarations: [
                 FilterComponent,
-                DatepickerComponent,
                 ModalDialogComponent
             ],
             providers: [
@@ -47,6 +45,7 @@ describe('Filter component', () => {
                 ReactiveFormsModule,
                 HttpClientModule,
                 NgbModule,
+                DatepickerComponent
             ],
         })
             .overrideModule(BrowserDynamicTestingModule, {
@@ -62,7 +61,7 @@ describe('Filter component', () => {
                 verifyDateService = fixture.debugElement.injector.get(VerifyDateService);
                 messageBoxService = fixture.debugElement.injector.get(MessageBoxService);
 
-                spyOn(searchService, 'filter').and.returnValue(of(filter));
+                searchService.filter = jest.fn().mockReturnValue(Promise.resolve(filter));
             });
     }));
 
@@ -74,6 +73,7 @@ describe('Filter component', () => {
         it('should return fromDate and toDate as expected when matchCode is empty', () => {
             const fromDateExpected = { year: 2018, month: 12, day: 1 };
             const toDateExpected = { year: 2018, month: 12, day: 31 };
+            searchService.filter = jest.fn().mockReturnValue(of(new LogQuery("", "", "12/1/2018", "12/31/2018")));
             fixture.detectChanges();
 
             expect(component.filter.fromDate).toEqual(fromDateExpected);
@@ -83,9 +83,9 @@ describe('Filter component', () => {
 
     describe('search', () => {
         it('should call emit when input correct value', () => {
-            spyOn(verifyDateService, 'validDate').and.returnValue(of(true));
-            spyOn(searchService, 'search').and.returnValue(of(""));
-            spyOn(component.searchAction, 'emit');
+            verifyDateService.validDate = jest.fn().mockReturnValue(Promise.resolve(true));
+            searchService.search = jest.fn().mockReturnValue(of(""));
+            component.searchAction.emit = jest.fn();
             const input = new Filter();
             input.matchCode = "123";
             component.filter = input;
@@ -95,7 +95,7 @@ describe('Filter component', () => {
         });
 
         it('should call alert when input incorrect value', () => {
-            spyOn(messageBoxService, 'alert');
+            messageBoxService.alert = jest.fn();
             const input = new Filter();
             input.matchCode = "";
             component.filter = input;

@@ -146,7 +146,8 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
       const query = new SettleQuery(this.matchId,
         this.selectedResources,
         CalculateAction.earlyCalculate,
-        this.isReSettledTickets);
+        this.isReSettledTickets,
+        this.matchDetail.sportType);
       query.isLeader = isLeader;
       this.doSaveResult(CalculateAction.calculate, this.match.originalResultDetail, this.match.resultDetails,
         this.apiKeys.NormalMatch, () => {
@@ -166,7 +167,8 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
       const query = new SettleQuery(this.matchId,
         this.selectedResources,
         CalculateAction.earlyUnCalculate,
-        this.isReSettledTickets);
+        this.isReSettledTickets,
+        this.matchDetail.sportType);
       query.isLeader = this.permission.isLeader;
       this.push(query);
     });
@@ -185,7 +187,8 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     const query = new SettleQuery(this.matchId,
       this.selectedResources,
       CalculateAction.earlyRefund,
-      this.isReSettledTickets);
+      this.isReSettledTickets,
+      this.matchDetail.sportType);
     query.isLeader = this.permission.isLeader;
     this.push(query);
   }

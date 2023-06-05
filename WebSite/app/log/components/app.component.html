@@ -1,5 +1,5 @@
-﻿<filter (searchAction)="search($event)"></filter>
-<matches *ngIf="matches" [matches]="matches" [fromDate]="fromDate" [toDate]="toDate"></matches>
+﻿<filter (searchAction)="search($event)" (matches)="getMatch($event)" ></filter>
+<matches *ngIf="matches" [matches]="matches" [fromDate]="fromDate" [toDate]="toDate" [isResettleLog]="isResettleLog"></matches>
 <div *ngIf="blockUI" class="in modal-backdrop">
     <div class="loading">
     </div>

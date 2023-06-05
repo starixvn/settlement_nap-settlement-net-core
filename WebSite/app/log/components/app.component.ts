@@ -11,6 +11,9 @@ import {
 } from '../../shared/services';
 import { SearchService } from '../services';
 import { Match } from '../models';
+import * as _ from 'lodash';
+import { HandleResultService } from '../services/handle-result.service';
+import { ResettleType } from '../constants/log-Type';
 
 @Component({
     selector: 'app-root',
@@ -22,7 +25,8 @@ import { Match } from '../models';
         BlockUIService,
         HttpRequestService,
         ReCheckInService,
-        NgbActiveModal],
+        NgbActiveModal,
+        HandleResultService],
 })
 
 export class AppComponent implements OnInit, OnDestroy {
@@ -30,10 +34,11 @@ export class AppComponent implements OnInit, OnDestroy {
     public fromDate: string;
     public toDate: string;
     public matchCode: string;
+    public isResettleLog: boolean
     public matches: Match[];
     private subscriber: ISubscription;
     private readonly period = 60000;
-    public intervallTimer = interval(this.period);
+    public intervalTimer = interval(this.period);
     constructor(
         private readonly elementRef: ElementRef<HTMLElement>,
         private readonly blockUIService: BlockUIService,
@@ -52,14 +57,18 @@ export class AppComponent implements OnInit, OnDestroy {
     }
 
     public search($event) {
-        this.matches = $event.match;
         this.matchCode = $event.matchCode;
         this.fromDate = $event.fromDate;
         this.toDate = $event.toDate;
+        this.isResettleLog = _.isEqual($event.productType, ResettleType);
+    }
+
+    public getMatch($event) {
+        this.matches = $event;
     }
 
     private reCheckIn() {
-        this.subscriber = this.intervallTimer.subscribe(() => {
+        this.subscriber = this.intervalTimer.subscribe(() => {
                 this.reCheckInService.reCheckin();
         });
     }

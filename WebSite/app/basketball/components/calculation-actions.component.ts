@@ -408,7 +408,7 @@ export class CalculationActionsComponent implements SportTemplate {
         if (!saveScoreResult.isSuccessful) {
             this.toastrService.error(saveScoreResult.errMsg);
         } else {
-            const query = new SettleQuery(this.matchDetail.matchId, selectedResources, actionName, this.isReSettledTickets,
+            const query = new SettleQuery(this.matchDetail.matchId, selectedResources, actionName, this.isReSettledTickets, this.matchDetail.sportType,
                 betStatus, this.match.isScoreDirect);
             query.isLeader = this.isLeader;
             const getTicketInfos = await this.getTicketInfo(query);
@@ -435,7 +435,7 @@ export class CalculationActionsComponent implements SportTemplate {
     }
 
     private async sendRequest(actionName: string, resource: ResultDetail[], betStatus: string): Promise<void> {
-        const query = new SettleQuery(this.matchDetail.matchId, resource, actionName, this.isReSettledTickets,
+        const query = new SettleQuery(this.matchDetail.matchId, resource, actionName, this.isReSettledTickets, this.matchDetail.sportType,
             betStatus, this.match.isScoreDirect);
         const getTicketInfos = await this.getTicketInfo(query);
         const result = await this.aioService.push(query);
@@ -448,12 +448,12 @@ export class CalculationActionsComponent implements SportTemplate {
     }
 
     private async getTicketInfo(query: SettleQuery) {
-        const getTicketQuery = new GetTicketInfoQuery(query, true);
+        const getTicketQuery = new GetTicketInfoQuery(query.matchId, query.selectedResources.map(item => item.resourceId), true);
         return await this.cashOutService.getTicketInfo(getTicketQuery) as VoidBetInfo[];
     }
 
     private async voidBet(voidBetInfos: VoidBetInfo[]) {
-         if (voidBetInfos.length > 0) {
+        if (voidBetInfos.length > 0) {
             const voidBetQuery = new VoidBetQuery(this.matchDetail, true, voidBetInfos);
             await this.cashOutService.voidBet(voidBetQuery);
         }
@@ -462,8 +462,8 @@ export class CalculationActionsComponent implements SportTemplate {
     private async cashOutResultUpdate(resource: ResultDetail[], betStatus: string) {
         const isVirtualMatch = this.verificationService.isPinGoalMatch(this.matchDetail.leagueGroupId) || this.verificationService.isSabaMatch(this.matchDetail.leagueGroupId);
         const final = resource.filter((map) => _.isEqual(map.resourceId, ResourcesIds.finalScore) && map.checked);
-        if (final.length > 0  && !isVirtualMatch && this.matchDetail.parentId === 0) {
-            if(this.match.isScoreDirect) {
+        if (final.length > 0 && !isVirtualMatch && this.matchDetail.parentId === 0) {
+            if (this.match.isScoreDirect) {
                 betStatus = this.cashOutService.getDirectBetStatusOnCalc(this.firstHalf, this.fullTime);
             }
 
@@ -477,6 +477,7 @@ export class CalculationActionsComponent implements SportTemplate {
             ? this.match.hedgeMatchDetail.matchId : 0;
         if (hedgeMatchId > 0) {
             query.matchId = hedgeMatchId;
+            query.isHedgeMatch = true;
             this.aioService.push(query).then(() => {
                 this.messageBoxService.closePopup();
             });

@@ -231,6 +231,8 @@ public class MultipleServerAioServiceImp : MultipleServerAioService
 
         await UpdateMatchInfo(criteria);
 
+        await InsertLog(criteria);
+
         var commandList = new List<ResultCommand>();
 
         WriteLog(criteria.MatchId, criteria.Action, criteria.SelectedResources, criteria.BetStatus);
@@ -244,6 +246,22 @@ public class MultipleServerAioServiceImp : MultipleServerAioService
         }
 
         return commandList;
+    }
+
+    private async Task InsertLog(SettleCriteria criteria)
+    {
+        try
+        {
+            if (!criteria.IsHedgeMatch)
+            {
+                var insertLogCriteria = createQueryService.CreateInsertLogCriteria(criteria);
+                await repository.ExecuteAsync(insertLogCriteria);
+            }
+        }
+        catch (Exception e)
+        {
+            await Fanex.Logging.LogService.ErrorAsync("Settlement.WebSites(Write resettle Log): ", e);
+        }
     }
 
     private async Task<(Result, List<ResultCommand>)> Execute(SettleCriteria criteria, List<ResourceItem> selectedResources)

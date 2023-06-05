@@ -38,7 +38,8 @@ public class MultiSportServiceTests
         var appSetting = new AppSettingsKey { SiteDbServer = new List<string> { "DB01", "DB02" } };
         var option = Options.Create(appSetting);
         refDataService = Substitute.For<IRefDataService>();
-        service = new MultiSportServiceImp(repository, matchService, mapper, cacheService, permissionService, option);
+        var redisCache = Substitute.For<RedisCacheService>();
+        service = new MultiSportServiceImp(repository, matchService, mapper, cacheService, permissionService, option, redisCache);
     }
 
     [Fact]

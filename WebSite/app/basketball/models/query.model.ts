@@ -13,12 +13,14 @@ export class SettleQuery {
     betStatus: string;
     isLeader: boolean;
     isDirectly: boolean;
-
+    sportType: number;
+    isHedgeMatch: boolean;
     constructor(
         matchId: number,
         selectedResources: ResultDetail[],
         actionName: string,
         isReSettledTickets: boolean,
+        sportType: number,
         betStatus?: string,
         isDirectly = false) {
         this.matchId = matchId;
@@ -28,6 +30,7 @@ export class SettleQuery {
         this.isReSettledTickets = isReSettledTickets;
         this.betStatus = betStatus === undefined ? '' : betStatus;
         this.isDirectly = isDirectly;
+        this.sportType = sportType;
     }
 }
 
@@ -59,9 +62,9 @@ export class GetTicketInfoQuery {
     selectedResources: string[];
     action: string;
 
-    constructor(query: SettleQuery, isUndo: boolean) {
-        this.matchId = query.matchId;
-        this.selectedResources = query.selectedResources.map(item => item.resourceId);
+    constructor(matchId: number, selectedResources: string[], isUndo: boolean) {
+        this.matchId = matchId;
+        this.selectedResources = selectedResources;
         this.action = isUndo ? CalculateAction.unCalculate : CalculateAction.refund;
     }
 }

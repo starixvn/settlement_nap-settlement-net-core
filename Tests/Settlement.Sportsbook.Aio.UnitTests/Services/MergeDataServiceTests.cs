@@ -1,4 +1,5 @@
 ﻿using Settlement.Core.Models;
+using Settlement.Sportsbook.Aio.Services;
 using ResultDetail = Settlement.Sportsbook.Aio.Models.ResultDetail;
 
 namespace Settlement.Sportsbook.Aio.UnitTests.Services;

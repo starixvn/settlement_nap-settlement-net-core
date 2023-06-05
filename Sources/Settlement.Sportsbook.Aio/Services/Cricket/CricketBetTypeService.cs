@@ -1,9 +1,11 @@
-﻿using Settlement.Sportsbook.Aio.Criteria.Cricket;
+﻿using Settlement.ResourceInfos.Constants;
+using Settlement.Sportsbook.Aio.Criteria.Cricket;
 using Settlement.Sportsbook.Aio.Models;
 
 namespace Settlement.Sportsbook.Aio.Services.Cricket;
 
 using Constants.Cricket;
+using Settlement.ResourceInfos.Services;
 
 public interface ICricketBetTypeService
 {
@@ -13,19 +15,19 @@ public interface ICricketBetTypeService
 public class CricketBetTypeService : ICricketBetTypeService
 {
     private readonly IDynamicRepository repository;
-    private readonly IBetTypeNameService betTypeNameService;
+    private readonly IResourceNameService resourceNameService;
     private readonly IGroupNameService groupNameService;
     private readonly IInputTypeService inputTypeService;
     private const int InnsBetTypeMinLength = 5;
 
     public CricketBetTypeService(
         IDynamicRepository repository,
-        IBetTypeNameService betTypeNameService,
+        IResourceNameService resourceNameService,
         IGroupNameService groupNameService,
         IInputTypeService inputTypeService)
     {
         this.repository = repository;
-        this.betTypeNameService = betTypeNameService;
+        this.resourceNameService = resourceNameService;
         this.groupNameService = groupNameService;
         this.inputTypeService = inputTypeService;
     }
@@ -36,7 +38,7 @@ public class CricketBetTypeService : ICricketBetTypeService
 
         if (IsExistedPlayerName(resultDetails))
         {
-            inputOptions = GetInputOptions(resultDetails);
+            inputOptions = GetInputOptions(resultDetails.FirstOrDefault());
         }
 
         resultDetails.ForEach(resultDetail =>
@@ -45,17 +47,16 @@ public class CricketBetTypeService : ICricketBetTypeService
         });
     }
 
-    private List<InputOption> GetInputOptions(List<ResultDetail> resultDetails)
+    private List<InputOption> GetInputOptions(ResultDetail resultDetail)
     {
         const char semicolon = ',';
 
-        var matchInfo = resultDetails.FirstOrDefault();
-        if (matchInfo == null)
+        if (resultDetail == null)
         {
             return new List<InputOption>();
         }
 
-        var getPlayerCriteria = new GetPlayerInfoCriteria { MatchId = matchInfo.MatchId };
+        var getPlayerCriteria = new GetPlayerInfoCriteria { MatchId = resultDetail.MatchId };
         var inputOptions = repository.Fetch<InputOption>(getPlayerCriteria)
             .Where(option => option.OddsInfo.Contains(semicolon)).ToList();
 
@@ -81,10 +82,10 @@ public class CricketBetTypeService : ICricketBetTypeService
     private void GenerateBetTypeNameAndGroup(ResultDetail resultDetail, List<InputOption> inputOptions)
     {
         var resourceId = resultDetail.ResourceId;
+        (resultDetail.BetType, resultDetail.BetTypeName) = resourceNameService.GetResourceName(resourceId, KeyConstants.CricketKey);
         if (resourceId.Length < InnsBetTypeMinLength)
         {
             var betTypeId = Convert.ToInt32(resourceId);
-            resultDetail.BetTypeName = betTypeNameService.GetNonInnsBetTypeName(betTypeId);
 
             if (IsNonInnsBetTypeGroup(betTypeId))
             {
@@ -98,7 +99,6 @@ public class CricketBetTypeService : ICricketBetTypeService
         else
         {
             var betTypeId = SplitBetType(resourceId, 0, 4);
-            resultDetail.BetTypeName = betTypeNameService.GetInnsBetTypeName(betTypeId, resourceId);
 
             if (GroupBetType.IncludedPlayerName.Contains(betTypeId) || GroupBetType.IncludedTwoPlayerName.Contains(betTypeId))
             {
