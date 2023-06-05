@@ -13,7 +13,8 @@ public class RemarkSettingModel
 
     private const int KeyHoldPosition = 6;
 
-    private string SettlementStatus { get; set; }
+    [Key("settlementStatus")]
+    public string SettlementStatus { get; set; }
 
     public RemarkSettingModel()
     {

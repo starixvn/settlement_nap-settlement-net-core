@@ -34,6 +34,7 @@ export class CalculatePopupComponent implements OnInit {
     public dialogRef: MatDialogRef<CalculatePopupComponent>;
     public blockUI = true;
     public teams: Team[];
+    public selectAllTeam = false;
     public originalTeam: Team[];
     public leagueSettle: LeagueSettle;
     public moveBetsDay: NgbDateStruct;
@@ -106,11 +107,13 @@ export class CalculatePopupComponent implements OnInit {
     }
 
     public selectStatus() {
+        this.selectAllTeam = false;
         this.teams.forEach(team => team.selected = false);
     }
 
     public changeStatus(team: Team) {
         this.clearError();
+
         if (!_.isEqual(team.status, 'WON')) {
             team.isDeadheat = false;
             team.disableDeadheat = true;
@@ -131,6 +134,10 @@ export class CalculatePopupComponent implements OnInit {
 
     public onSelectDate(value: NgbDateStruct, team: Team) {
         team.eventDate = this.verifyDateService.dateFormat(value);
+    }
+
+    public onSelectAllTeam(e: any) {
+        this.teams.forEach(team => team.selected = e.target.checked)
     }
 
     private async validateBeforePush(teamWonSettled: Team[], teamWonSelected: Team[], teamHideSelected: Team[], isCalc: boolean = true) {
