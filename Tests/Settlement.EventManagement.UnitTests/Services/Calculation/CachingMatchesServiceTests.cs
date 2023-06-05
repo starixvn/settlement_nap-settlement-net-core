@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using Fanex.Caching;
 using Fanex.Data.Repository;
+using Microsoft.Extensions.Caching.Memory;
 using Settlement.Core.Constants;
 using Settlement.EventManagement.Criteria;
 using Settlement.EventManagement.Models.Calculation;
@@ -10,7 +10,7 @@ namespace Settlement.EventManagement.UnitTests.Services.Calculation;
 
 public class CachingMatchesServiceTests
 {
-    private readonly ICacheService cacheService;
+    private readonly IMemoryCache cacheService;
 
     private readonly IDynamicRepository repository;
 
@@ -23,7 +23,7 @@ public class CachingMatchesServiceTests
         var config = new MapperConfiguration(mapperConfig);
         var mapper = new Mapper(config);
 
-        cacheService = Substitute.For<ICacheService>();
+        cacheService = Substitute.For<IMemoryCache>();
         repository = Substitute.For<IDynamicRepository>();
         service = new CachingMatchesServiceImp(cacheService, repository, mapper);
     }
@@ -35,8 +35,8 @@ public class CachingMatchesServiceTests
     {
         service.SetToCache(new List<Match>(), leagueId, autoCalc);
 
-        cacheService.Received().SetAsync(logKey, Arg.Any<List<CalculateMatchWaiting>>(), Arg.Any<CacheItemOptions>());
-        cacheService.Received().SetAsync(logKey + "-long", Arg.Any<List<CalculateMatchWaiting>>(), Arg.Any<CacheItemOptions>());
+        cacheService.Received().Set(logKey, Arg.Any<List<CalculateMatchWaiting>>(), Arg.Any<MemoryCacheEntryOptions>());
+        cacheService.Received().Set(logKey + "-long", Arg.Any<List<CalculateMatchWaiting>>(), Arg.Any<MemoryCacheEntryOptions>());
     }
 
     [Theory]
@@ -46,7 +46,7 @@ public class CachingMatchesServiceTests
     {
         service.GetShortCache(leagueId, autoCalc);
 
-        cacheService.Received().GetAsync<List<CalculateMatchWaiting>>(logKey);
+        cacheService.Received().Get<List<CalculateMatchWaiting>>(logKey);
     }
 
     [Theory]
@@ -56,7 +56,7 @@ public class CachingMatchesServiceTests
     {
         service.GetLongCache(leagueId, autoCalc);
 
-        cacheService.Received().GetAsync<List<CalculateMatchWaiting>>(logKey);
+        cacheService.Received().Get<List<CalculateMatchWaiting>>(logKey);
     }
 
     [Fact]

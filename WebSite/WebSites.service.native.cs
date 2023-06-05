@@ -138,7 +138,6 @@ public static class WebSites
         services.AddSingleton<IUserService, UserService>();
         services.AddSingleton<ISecurityService, SecurityService>();
         services.AddTransient<IBalanceUpService, BalanceUpServiceImp>();
-        services.AddSingleton<RedisCacheService, RedisCacheServiceImp>();
 
         RefDataTypeContainer
             .ConnectTo(new Uri(configuration.GetSection("Fanex.RemotingRef.Service.Url").Value))

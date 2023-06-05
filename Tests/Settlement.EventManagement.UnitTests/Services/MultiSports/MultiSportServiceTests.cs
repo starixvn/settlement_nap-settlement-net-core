@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using Fanex.Caching;
 using Fanex.Data.Repository;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
@@ -19,7 +19,7 @@ public class MultiSportServiceTests
 
     private readonly IMatchService matchService;
 
-    private readonly ICacheService cacheService;
+    private readonly IMemoryCache cacheService;
 
     private readonly IRefDataService refDataService;
 
@@ -28,7 +28,7 @@ public class MultiSportServiceTests
         repository = Substitute.For<IDynamicRepository>();
         var permissionService = Substitute.For<PermissionService>(null, null, null, null);
         matchService = Substitute.For<IMatchService>();
-        cacheService = Substitute.For<ICacheService>();
+        cacheService = new MemoryCache(new MemoryCacheOptions());
 
         var mapperConfig = new MapperConfigurationExpression();
         mapperConfig.AddProfile<EventManagementAutoMapperProfile>();
@@ -38,8 +38,7 @@ public class MultiSportServiceTests
         var appSetting = new AppSettingsKey { SiteDbServer = new List<string> { "DB01", "DB02" } };
         var option = Options.Create(appSetting);
         refDataService = Substitute.For<IRefDataService>();
-        var redisCache = Substitute.For<RedisCacheService>();
-        service = new MultiSportServiceImp(repository, matchService, mapper, cacheService, permissionService, option, redisCache);
+        service = new MultiSportServiceImp(repository, matchService, mapper, cacheService, permissionService, option);
     }
 
     [Fact]
@@ -51,7 +50,7 @@ public class MultiSportServiceTests
             {
                 new()
             };
-        cacheService.GetAsync<List<MultiSportMatchWaiting>>(Arg.Any<string>()).Returns(data);
+        cacheService.Get<List<MultiSportMatchWaiting>>(Arg.Any<string>()).Returns(data);
 
         // Act
         var matches = await service.GetWaitingMatches(request);
