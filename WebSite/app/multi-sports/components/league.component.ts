@@ -24,7 +24,7 @@ export class LeagueComponent implements OnInit, OnChanges, OnDestroy {
   private popupService: PopupService;
   private backGroundService: BackGroundService;
   public language = Language;
-  private readonly period = 7000;
+  private readonly period = 6000;
   private readonly autoSettingCompleted = 2;
   private readonly autoSettingFailed = 3;
   private readonly earlyOverOnlyValue = "1";

@@ -13,7 +13,7 @@ import { FilterQuery, Calculation } from '../../models';
 })
 export class PageBaseComponent implements OnInit {
     private subscriber: ISubscription;
-    private readonly period = 70000;
+    private readonly period = 60000;
     public blockUI = false;
     public calculation: Calculation;
     public intervalTimer = interval(this.period);

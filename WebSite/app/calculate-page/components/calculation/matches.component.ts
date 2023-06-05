@@ -18,7 +18,7 @@ export class MatchesComponent extends MatchesBaseComponent implements OnChanges,
   @Input() public filterQuery: FilterQuery;
   @Input() public disableRefresh: boolean;
   private subscriber: ISubscription;
-  private readonly period = 5000;
+  private readonly period = 6000;
   private intervalTimer = interval(this.period);
   constructor(
     protected popupService: PopupService,

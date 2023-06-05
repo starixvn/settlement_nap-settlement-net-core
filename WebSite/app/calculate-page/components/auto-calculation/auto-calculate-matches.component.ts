@@ -25,7 +25,7 @@ export class AutoCalculateMatchesComponent extends MatchesBaseComponent implemen
     public instantCalcFt = 102;
     private readonly autoSettingInstantType = 2;
     private subscriber: ISubscription;
-    private readonly period = 5000;
+    private readonly period = 6000;
     private intervalTimer = interval(this.period);
     constructor(
         protected popupService: PopupService,

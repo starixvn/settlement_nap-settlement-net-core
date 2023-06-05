@@ -51,6 +51,5 @@ export class AppComponent implements OnInit {
         return _.isEqual(pageType, 'Calculation')
             ? this.componentFactoryResolver.resolveComponentFactory(PageComponent)
             : this.componentFactoryResolver.resolveComponentFactory(AutoCalculatePageComponent);
-        // return this.componentFactoryResolver.resolveComponentFactory(AutoCalculatePageComponent);
     }
 }
