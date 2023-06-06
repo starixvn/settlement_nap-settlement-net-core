@@ -86,7 +86,6 @@
             "tsConfig": "bet-builder/tsconfig.app.json",
             "polyfills": "polyfills.ts",
             "styles": [
-              "shared/components/multiple-selection/multiple-select.component.less",
               "shared/styles/material.style.less",
               "shared/styles/styles.less",
               "bet-builder/style.less",

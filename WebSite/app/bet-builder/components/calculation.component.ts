@@ -11,6 +11,7 @@ import {
   ModalDialogMessage,
   Result,
   MultipleSelect,
+  ItemsSelect,
 } from "../../shared/models";
 import { MessageBoxService } from "../../shared/services";
 import {
@@ -72,10 +73,12 @@ export class CalculationComponent implements OnInit {
   }
 
   private renderSelection(listSelection: GroupSelection[]) {
-    this.selectionSelect.items = this.calculationFilterService.renderSelection(
+    const items = this.calculationFilterService.renderSelection(
       listSelection,
       this.selectedSelection
     );
+
+    this.selectionSelect = {...this.selectionSelect, items};
   }
 
   public correctGroupSelectionName(name: string) {
@@ -230,18 +233,18 @@ export class CalculationComponent implements OnInit {
     this.selectedAll = false;
   }
 
-  public changeSelection(value: string) {
-    this.selectedSelection = value.length > 0 ? value.split(",") : [];
+  public changeSelection(value: ItemsSelect[]) {
+    this.selectedSelection = value.length > 0 ? value.map((item) => item.value) : [];
     this.disableActionAfterFilter();
   }
 
-  public changeTicketStatus(value: string) {
-    this.selectedTicketStatus = value.length > 0 ? value.split(",") : [];
+  public changeTicketStatus(value: ItemsSelect[]) {
+    this.selectedTicketStatus = value.length > 0 ? value.map((item) => item.value) : [];
     this.disableActionAfterFilter();
   }
 
-  public changeResultStatus(value: string) {
-    this.selectedResultStatus = value.length > 0 ? value.split(",") : [];
+  public changeResultStatus(value: ItemsSelect[]) {
+    this.selectedResultStatus = value.length > 0 ? value.map((item) => item.value) : [];
     this.disableActionAfterFilter();
   }
 
