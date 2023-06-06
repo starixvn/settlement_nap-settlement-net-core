@@ -408,9 +408,7 @@ export class CalculationActionsComponent implements SportTemplate {
         if (!saveScoreResult.isSuccessful) {
             this.toastrService.error(saveScoreResult.errMsg);
         } else {
-            const query = new SettleQuery(this.matchDetail.matchId, selectedResources, actionName, this.isReSettledTickets, this.matchDetail.sportType,
-                betStatus, BasketballApiKeys.settle, this.match.permission.isLeader);
-            query.isDirectly = this.match.isScoreDirect;
+            const query = this.createRequestQuery(actionName, selectedResources, betStatus);
             const getTicketInfos = await this.getTicketInfo(query);
             const result = await this.aioService.push(query);
             if (result.isSuccessful) {
@@ -424,6 +422,15 @@ export class CalculationActionsComponent implements SportTemplate {
         }
     }
 
+    private createRequestQuery(actionName: string, resource: ResultDetail[], betStatus){
+        const query = new SettleQuery(this.matchDetail, resource, actionName, this.isReSettledTickets,
+            betStatus, BasketballApiKeys.settle, this.match.permission.isLeader);
+        query.isDirectly = this.match.isScoreDirect;
+        query.determinedType = CalculateAction.calculate ? this.aioService.generateDeterminedType(this.resultDetails) : 0;
+        return query;
+    }
+
+
     changeScore(map: ResultDetail) {
         map.isScoreMismatched = this.verificationService.isMismatchedWarning(map);
         if (!this.match.isScoreDirect) {
@@ -435,9 +442,7 @@ export class CalculationActionsComponent implements SportTemplate {
     }
 
     private async sendRequest(actionName: string, resource: ResultDetail[], betStatus: string): Promise<void> {
-        const query = new SettleQuery(this.matchDetail.matchId, resource, actionName, this.isReSettledTickets, this.matchDetail.sportType,
-            betStatus, BasketballApiKeys.settle, this.match.permission.isLeader);
-        query.isDirectly = this.match.isScoreDirect;
+        const query = this.createRequestQuery(actionName, resource, betStatus);
         const getTicketInfos = await this.getTicketInfo(query);
         const result = await this.aioService.push(query);
         if (result.isSuccessful) {

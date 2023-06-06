@@ -51,7 +51,7 @@ export class RefundActionBaseComponent {
             });
         }
 
-        const query = new SettleQuery(this.matchDetail.matchId,
+        const query = new SettleQuery(this.matchDetail,
             this.selectedResources,
             CalculateAction.refund,
             false,

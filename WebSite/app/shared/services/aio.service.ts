@@ -149,9 +149,10 @@ export class AioService {
     public generateDeterminedType(resultDetails: ResultDetail[]) {
         const roundBitStartAt = 3;
         const bitArray = new Array(8).fill(0);
-        const resultWithoutFinal = resultDetails.filter(resultDetail =>
-            resultDetail.resourceId !== ResourceIds.fullTime
-            && resultDetail.resourceId !== ResourceIds.halfTime).map(resultDetail => resultDetail.resourceId);
+        const resultWithoutFinal = resultDetails
+            .filter(resultDetail => ![ResourceIds.fullTime, ResourceIds.halfTime].includes(resultDetail.resourceId))
+            .map(resultDetail => resultDetail.resourceId);
+
         resultDetails.forEach(resultDetail => {
             let bitPosition;
             switch (resultDetail.resourceId) {

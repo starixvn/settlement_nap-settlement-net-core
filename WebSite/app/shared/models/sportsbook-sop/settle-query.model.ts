@@ -1,4 +1,5 @@
 import { ResourceItem } from "../resource-item.model";
+import { MatchDetail } from "./match-detail.model";
 import { ResultDetail } from "./result-detail.model";
 
 export class SettleQuery {
@@ -11,17 +12,18 @@ export class SettleQuery {
     isLeader: boolean;
     isDirectly: boolean;
     determinedType : number;
-    sportType: boolean;
-
+    sportType: number;
+    isHedgeMatch: boolean;
     constructor(
-        matchId: number,
+        matchDetail: MatchDetail,
         selectedResources: ResultDetail[],
         actionName: string,
         isReSettledTickets: boolean,
         betStatus: string,
         apikey: string,
         isLeader = false) {
-        this.matchId = matchId;
+        this.matchId = matchDetail.matchId;
+        this.sportType = matchDetail.sportType;
         this.selectedResources = selectedResources;
         this.actionName = actionName;
         this.apikey = apikey;

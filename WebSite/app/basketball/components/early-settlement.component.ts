@@ -138,18 +138,19 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     private confirmCalculation(resultDetails: ResultDetail[]) {
         this.confirmationDialogMessage.message = this.earlyService.getConfirmMessage(resultDetails, this.match.matchDetail);
         this.messageBoxService.confirm(this.confirmationDialogMessage, async () => {
-            const query = new SettleQuery(this.match.matchDetail.matchId,
+            const query = new SettleQuery(this.match.matchDetail,
                 this.selectedResources,
                 CalculateAction.earlyCalculate,
                 this.isReSettledTickets,
                 this.matchDetail.betStatus,
                 BasketballApiKeys.settle,
                 this.permission.isLeader);
+
             await this.doSaveResult(CalculateAction.calculate,
                 this.match.originalResultDetail,
                 this.resultDetails,
-                BasketballApiKeys.normalMatch, () => {
-                    this.push(query);
+                BasketballApiKeys.normalMatch, async () => {
+                    await this.push(query);
                 });
         });
     }
@@ -161,7 +162,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
                 map.homeValue = "";
                 map.awayValue = "";
             });
-            const query = new SettleQuery(this.match.matchDetail.matchId,
+            const query = new SettleQuery(this.match.matchDetail,
                 this.selectedResources,
                 CalculateAction.earlyUnCalculate,
                 this.isReSettledTickets,
@@ -182,7 +183,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     }
 
     private createQueryRefundAndPush() {
-        const query = new SettleQuery(this.match.matchDetail.matchId,
+        const query = new SettleQuery(this.match.matchDetail,
             this.selectedResources,
             CalculateAction.earlyRefund,
             this.isReSettledTickets,
