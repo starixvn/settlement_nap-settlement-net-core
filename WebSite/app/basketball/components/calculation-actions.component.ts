@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import { MessageBoxService, AioService, BlockUIService } from '../../shared/services';
 import { ModalDialogMessage } from '../../shared/models';
 import { Language } from '../../shared/language.native';
-import { CalculateAction, SettlementStatusId, SportType } from '../../shared/constants';
+import { CalculateAction, SettingPosition, SettlementStatusId, SportType } from '../../shared/constants';
 import { BasketballService, BetStatusService, VerificationService, CashOutService } from '../services';
 import { BasketballApiKeys, KickOffTime, ResourcesIds } from '../constants';
 import { GetTicketInfoQuery, Match, VoidBetInfo, VoidBetQuery, CashOutResultUpdateQuery } from '../models';
@@ -426,8 +426,13 @@ export class CalculationActionsComponent implements SportTemplate {
         const query = new SettleQuery(this.matchDetail, resource, actionName, this.isReSettledTickets,
             betStatus, BasketballApiKeys.settle, this.match.permission.isLeader);
         query.isDirectly = this.match.isScoreDirect;
-        query.determinedType = CalculateAction.calculate ? this.aioService.generateDeterminedType(this.resultDetails) : 0;
+        query.determinedType = this.setDeterminedType();
         return query;
+    }
+
+    private setDeterminedType(){
+        const isInstant = this.matchDetail.autoSetting > 1 ? this.matchDetail.autoSetting.toString(2).split("").reverse()[SettingPosition.instant] === "1" : false;
+        return CalculateAction.calculate && isInstant ? this.aioService.generateDeterminedType(this.resultDetails) : 0;
     }
 
 
