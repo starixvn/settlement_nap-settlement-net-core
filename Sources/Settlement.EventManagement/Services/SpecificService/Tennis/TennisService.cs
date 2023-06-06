@@ -6,6 +6,8 @@ using Match = Models.MultiSports.Match;
 
 public interface ITennisService
 {
+    string GetEventStatus(IEnumerable<ResultDetail> resultDetails, string currentStatus);
+
     MoreScores ScoreLoader(Match match, List<ResultDetail> resultDetails, Permission permission);
 }
 
@@ -25,6 +27,13 @@ public class TennisServiceImp : ITennisService
         this.scoreService = scoreService;
     }
 
+    public string GetEventStatus(IEnumerable<ResultDetail> resultDetails, string currentStatus)
+    {
+        var totalSet = resultDetails.FirstOrDefault(n => n.ResourceId == ResourceType.Final);
+
+        return totalSet != null && scoreService.IsRefundMatch(totalSet.HomeValue) ? BetStatus.Refund : currentStatus;
+    }
+
     public MoreScores ScoreLoader(Match match, List<ResultDetail> resultDetails, Permission permission)
     {
         var moreScore = new MoreScores
@@ -35,18 +44,17 @@ public class TennisServiceImp : ITennisService
         };
 
         var items = resultDetails.Where(item => setResource.Contains(item.ResourceId)).OrderBy(n => n.ResourceId).ToList();
-        var totalGame = scoreService.ScoreSet(items);
+
         foreach (var item in items)
         {
             var scoreSet = scoreSetService.GetScore(item, permission);
             moreScore.Sets[int.Parse(item.ResourceId) - 1] = scoreSet;
         }
+
         var totalSet = resultDetails.FirstOrDefault(n => n.ResourceId == ResourceType.Final);
-
-        match.EventStatus = GetEventStatus(totalSet, match.EventStatus);
-
         if (totalSet is { MatchId: > 0 })
         {
+            var totalGame = GetTotalGame(items);
             moreScore.FinalScore = scoreSetService.GetScore(totalSet, permission);
             moreScore.HalfTimeScore = scoreService.TotalGame(moreScore.FinalScore.Home, totalGame);
         }
@@ -54,8 +62,14 @@ public class TennisServiceImp : ITennisService
         return moreScore;
     }
 
-    private string GetEventStatus(ResultDetail totalSet, string currentStatus)
+    private Score GetTotalGame(IEnumerable<ResultDetail> resultDetails)
     {
-        return totalSet != null && scoreService.IsRefundMatch(totalSet.HomeValue) ? "Refund" : currentStatus;
+        var resultHasScore = resultDetails.Where(m => !string.IsNullOrWhiteSpace(m.HomeValue)
+                                                      && !string.IsNullOrWhiteSpace(m.AwayValue)
+                                                      && m.ResultStatusId is ResultStatus.ManuallySettled or ResultStatus.AutoSettled).ToList();
+
+        return scoreSetService.SumScore(resultHasScore);
     }
+
+
 }

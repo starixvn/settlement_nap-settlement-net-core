@@ -27,12 +27,9 @@ public class ScoreSetServiceImp : IScoreSetService
             return new Score(SetStatus.RefundFt);
         }
 
-        if (item.SettlementStatusId == SettlementStatus.Completed)
-        {
-            return new Score(ConvertScore(item.HomeValue), ConvertScore(item.AwayValue), Background.Calculated);
-        }
-
-        return new Score(ConvertScore(item.HomeValue), ConvertScore(item.AwayValue));
+        return item.SettlementStatusId == SettlementStatus.Completed
+            ? new Score(ConvertScore(item.HomeValue), ConvertScore(item.AwayValue), Background.Calculated)
+            : new Score(ConvertScore(item.HomeValue), ConvertScore(item.AwayValue));
     }
 
     private static string ConvertScore(string value)

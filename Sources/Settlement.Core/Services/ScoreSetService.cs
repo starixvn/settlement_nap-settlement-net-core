@@ -6,6 +6,8 @@ namespace Settlement.Core.Services;
 public interface IScoreSetService
 {
     Score GetScore(ResultDetail item, Permission permission);
+
+    Score SumScore(IReadOnlyCollection<ResultDetail> resultDetails);
 }
 
 public class ScoreSetServiceImp : IScoreSetService
@@ -38,13 +40,35 @@ public class ScoreSetServiceImp : IScoreSetService
             IsNotSettled = true
         };
 
-        if (permission != null && !permission.IsLeader)
+        if (permission is { IsLeader: false })
         {
             score.Home = "-";
             score.Away = "-";
         }
 
         return score;
+    }
+
+    public Score SumScore(IReadOnlyCollection<ResultDetail> resultDetails)
+    {
+        if (resultDetails.Count == 0)
+        {
+            return new Score("-");
+        }
+
+        var home = resultDetails.Sum(m =>
+        {
+            int.TryParse(m.HomeValue, out var homeValue);
+            return homeValue;
+        });
+
+        var away = resultDetails.Sum(m =>
+        {
+            int.TryParse(m.AwayValue, out var awayValue);
+            return awayValue;
+        });
+
+        return new Score(home.ToString(), away.ToString());
     }
 
     private static string ConvertScore(string value)
