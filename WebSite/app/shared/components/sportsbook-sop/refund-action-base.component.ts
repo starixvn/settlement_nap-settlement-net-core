@@ -57,7 +57,7 @@ export class RefundActionBaseComponent {
             false,
             "",
             apikey);
-        query.determinedType  = this.isSDTSettle && this.aioService.generateDeterminedType(this.resultDetails);
+        query.determinedType  = this.isSDTSettle ? this.aioService.generateDeterminedType(this.resultDetails) : 0;
         query.isDirectly = this.isDirectly;
         return query;
     }
