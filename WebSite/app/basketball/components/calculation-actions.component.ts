@@ -1,4 +1,4 @@
-﻿import { Component, Injector, ViewChild } from '@angular/core';
+﻿import { Component, Injector, ViewChild, inject } from '@angular/core';
 import * as _ from 'lodash';
 import { MessageBoxService, AioService, BlockUIService } from '../../shared/services';
 import { ModalDialogMessage } from '../../shared/models';
@@ -24,13 +24,14 @@ import { CalculateCommonModule } from '../../shared/modules/calculate-common.mod
 })
 export class CalculationActionsComponent implements SportTemplate {
     @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
-    private basketballService: BasketballService;
-    private messageBoxService: MessageBoxService;
-    private betStatusService: BetStatusService
-    private aioService: AioService;
-    private cashOutService: CashOutService;
-    private verificationService: VerificationService;
-    private toastrService: ToastrService;
+    private basketballService = inject(BasketballService);
+    private messageBoxService= inject(MessageBoxService);
+    private betStatusService= inject(BetStatusService);
+    private aioService= inject(AioService);
+    private cashOutService= inject(CashOutService);
+    private verificationService= inject(VerificationService);
+    private toastrService= inject(ToastrService);
+    private blockUiService = inject(BlockUIService);
     readonly overTimeId = ResourcesIds.ot;
     blockUI = false;
     match: Match;
@@ -45,10 +46,6 @@ export class CalculationActionsComponent implements SportTemplate {
     isReadyMatch: boolean;
     readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
 
-    constructor(private readonly injector: Injector) {
-        this.confirmationDialogMessage.title = Language.confirmationBox;
-    }
-
     async getMatch(matchId: number) {
         this.initService();
         const matchQuery = {
@@ -57,7 +54,6 @@ export class CalculationActionsComponent implements SportTemplate {
             sportType: SportType.basketBall,
             settleType: "MNL"
         };
-        this.toastrService.overlayContainer = this.toastContainer;
         this.match = await this.aioService.getMatch(matchQuery) as Match;
         this.isReadyMatch = this.match.matchDetail.playTime >= KickOffTime.playTime;
         this.cloneResultDetail();
@@ -65,14 +61,9 @@ export class CalculationActionsComponent implements SportTemplate {
     }
 
     initService() {
-        this.basketballService = this.injector.get(BasketballService);
-        this.messageBoxService = this.injector.get(MessageBoxService);
-        this.aioService = this.injector.get(AioService);
-        this.verificationService = this.injector.get(VerificationService);
-        this.toastrService = this.injector.get(ToastrService);
-        this.cashOutService = this.injector.get(CashOutService);
-        this.betStatusService = this.injector.get(BetStatusService);
-        this.injector.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
+        this.toastrService.overlayContainer = this.toastContainer;
+        this.confirmationDialogMessage.title = Language.confirmationBox;
+        this.blockUiService.blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
     }
 
     private cloneResultDetail() {
