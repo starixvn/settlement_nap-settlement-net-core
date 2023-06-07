@@ -1,37 +1,30 @@
-﻿namespace Settlement.EventManagement.Services.SpecificService.Tennis;
+﻿namespace Settlement.EventManagement.Services;
 
-using Settlement.Core.Models;
-using Settlement.Core.Services;
 using Match = Models.MultiSports.Match;
 
-public interface ITennisService
+public interface ScoreTennisService
 {
     string GetEventStatus(IEnumerable<ResultDetail> resultDetails, string currentStatus);
 
     MoreScores ScoreLoader(Match match, List<ResultDetail> resultDetails, Permission permission);
 }
 
-public class TennisServiceImp : ITennisService
+public class ScoreTennisServiceImp : ScoreTennisService
 {
-    private readonly IScoreService scoreService;
-
     private readonly IScoreSetService scoreSetService;
 
     private readonly List<string> setResource = new() { "01", "02", "03", "04", "05" };
 
-    public TennisServiceImp(
-        IScoreSetService scoreSetService,
-        IScoreService scoreService)
+    public ScoreTennisServiceImp(IScoreSetService scoreSetService)
     {
         this.scoreSetService = scoreSetService;
-        this.scoreService = scoreService;
     }
 
     public string GetEventStatus(IEnumerable<ResultDetail> resultDetails, string currentStatus)
     {
         var totalSet = resultDetails.FirstOrDefault(n => n.ResourceId == ResourceType.Final);
 
-        return totalSet != null && scoreService.IsRefundMatch(totalSet.HomeValue) ? BetStatus.Refund : currentStatus;
+        return totalSet != null && IsRefundMatch(totalSet.HomeValue) ? BetStatus.Refund : currentStatus;
     }
 
     public MoreScores ScoreLoader(Match match, List<ResultDetail> resultDetails, Permission permission)
@@ -54,9 +47,8 @@ public class TennisServiceImp : ITennisService
         var totalSet = resultDetails.FirstOrDefault(n => n.ResourceId == ResourceType.Final);
         if (totalSet is { MatchId: > 0 })
         {
-            var totalGame = GetTotalGame(items);
             moreScore.FinalScore = scoreSetService.GetScore(totalSet, permission);
-            moreScore.HalfTimeScore = scoreService.TotalGame(moreScore.FinalScore.Home, totalGame);
+            moreScore.HalfTimeScore = TotalGame(moreScore.FinalScore.Home, items);
         }
 
         return moreScore;
@@ -71,5 +63,13 @@ public class TennisServiceImp : ITennisService
         return scoreSetService.SumScore(resultHasScore);
     }
 
+    private Score TotalGame(string totalSetHomeValue, IEnumerable<ResultDetail> resultDetails)
+    {
+        return IsRefundMatch(totalSetHomeValue) ? new Score(SetStatus.Refund, SetStatus.Refund) : GetTotalGame(resultDetails);
+    }
 
+    private static bool IsRefundMatch(string totalSetHomeValue)
+    {
+        return !string.IsNullOrWhiteSpace(totalSetHomeValue) && totalSetHomeValue.Equals(SetStatus.Refund);
+    }
 }

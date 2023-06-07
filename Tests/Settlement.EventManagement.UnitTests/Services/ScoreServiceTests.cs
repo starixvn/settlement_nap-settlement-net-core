@@ -7,7 +7,7 @@ namespace Settlement.EventManagement.UnitTests.Services;
 
 public class ScoreServiceTests
 {
-    private readonly IScoreService service;
+    private readonly ScoreService service;
 
     private readonly IScoreSetService scoreSetService;
 

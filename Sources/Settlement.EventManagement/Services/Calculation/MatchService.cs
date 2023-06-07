@@ -69,18 +69,18 @@ public class MatchServiceImp : MatchService
     {
         foreach (var match in matches)
         {
-            var listSourceByMatchId = listResultDetail.Where(m => m.MatchId == match.MatchId && m.SourceId != SourceType.Normal).ToList();
-            var resultDetailByMatchId = listResultDetail.Where(m => m.MatchId == match.MatchId && m.SourceId == SourceType.Normal).ToList();
+            var sourceResultDetail = listResultDetail.Where(m => m.MatchId == match.MatchId && m.SourceId != SourceType.Normal).ToList();
+            var currentResultDetail = listResultDetail.Where(m => m.MatchId == match.MatchId && m.SourceId == SourceType.Normal).ToList();
 
             newInfoMatchService.TicketInfo(match);
             match.NewEventStatus = newInfoMatchService.NewEventStatus(match);
             match.EventStatusColor = newInfoMatchService.EventStatusColor(match);
             match.EarlySettleStatus = newInfoMatchService.EarlySettlementStatus(match);
             match.FastMarketStatus = newInfoMatchService.FastMarketStatus(match);
-            match.ConfirmHalfTimeScore = newInfoMatchService.ConfirmScore(listSourceByMatchId, ResourceType.Halftime);
-            match.ConfirmFullTimeScore = newInfoMatchService.ConfirmScore(listSourceByMatchId, ResourceType.Final);
-            match.IsNotConsistentExHtScore = newInfoMatchService.IsNotConsistentScore(match.SuspenderHalfTime, resultDetailByMatchId, listSourceByMatchId, ResourceType.Halftime);
-            match.IsNotConsistentExFtScore = newInfoMatchService.IsNotConsistentScore(match.SuspenderFullTime, resultDetailByMatchId, listSourceByMatchId, ResourceType.Final);
+            match.ConfirmHalfTimeScore = newInfoMatchService.ConfirmScore(sourceResultDetail, ResourceType.Halftime);
+            match.ConfirmFullTimeScore = newInfoMatchService.ConfirmScore(sourceResultDetail, ResourceType.Final);
+            match.IsNotConsistentExHtScore = newInfoMatchService.IsInconsistentScore(match.SuspenderHalfTime, currentResultDetail, sourceResultDetail, ResourceType.Halftime);
+            match.IsNotConsistentExFtScore = newInfoMatchService.IsInconsistentScore(match.SuspenderFullTime, currentResultDetail, sourceResultDetail, ResourceType.Final);
             match.GoalIcon = newInfoMatchService.GoalIcon(match);
             match.RefDataService = refDataService;
         }

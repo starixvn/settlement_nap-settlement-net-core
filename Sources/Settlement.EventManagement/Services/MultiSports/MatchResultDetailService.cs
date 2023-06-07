@@ -1,9 +1,8 @@
-﻿using Settlement.EventManagement.Services.SpecificService.Tennis;
-
-namespace Settlement.EventManagement.Services.MultiSports;
+﻿namespace Settlement.EventManagement.Services.MultiSports;
 
 using Settlement.Core.Models;
 using Settlement.Core.Services;
+using Settlement.EventManagement.Services;
 using Match = Models.MultiSports.Match;
 
 public interface IMatchResultDetailService
@@ -27,21 +26,21 @@ public interface IMatchResultDetailService
 
 public class MatchResultDetailServiceImp : IMatchResultDetailService
 {
-    private readonly ITennisService tennisService;
+    private readonly ScoreTennisService scoreTennisService;
 
     private readonly IRefDataService refDataService;
 
     private readonly IExternalScoreService externalScoreService;
 
-    private readonly IScoreService scoreService;
+    private readonly ScoreService scoreService;
 
     public MatchResultDetailServiceImp(
-        ITennisService tennisService,
+        ScoreTennisService scoreTennisService,
         IRefDataService refDataService,
         IExternalScoreService externalScoreService,
-        IScoreService scoreService)
+        ScoreService scoreService)
     {
-        this.tennisService = tennisService;
+        this.scoreTennisService = scoreTennisService;
         this.refDataService = refDataService;
         this.externalScoreService = externalScoreService;
         this.scoreService = scoreService;
@@ -53,9 +52,9 @@ public class MatchResultDetailServiceImp : IMatchResultDetailService
         {
             match.RefDataService = refDataService;
             var resultDetailByMatchId = resultDetails.Where(m => m.MatchId == match.MatchId && m.SourceId == SourceType.Normal).ToList();
-            match.MoreScores = tennisService.ScoreLoader(match, resultDetailByMatchId, permission);
+            match.MoreScores = scoreTennisService.ScoreLoader(match, resultDetailByMatchId, permission);
             match.IsHavingIntervalScore = scoreService.IsDisplayIntervalScore(match.SportType, resultDetailByMatchId);
-            match.EventStatus = tennisService.GetEventStatus(resultDetails, match.EventStatus);
+            match.EventStatus = scoreTennisService.GetEventStatus(resultDetails, match.EventStatus);
         }
 
         return matches;

@@ -1,9 +1,6 @@
 ﻿namespace Settlement.EventManagement.Services;
 
-using Settlement.Core.Models;
-using Settlement.Core.Services;
-
-public interface IScoreService
+public interface ScoreService
 {
     bool IsDisplayIntervalScore(int sportType, List<ResultDetail> resultDetails);
 
@@ -14,7 +11,7 @@ public interface IScoreService
     Score FinalScore(IEnumerable<ResultDetail> resultDetails, Permission permission);
 }
 
-public class ScoreServiceImp : IScoreService
+public class ScoreServiceImp : ScoreService
 {
     private readonly List<int> totalPointSports = new() { SportType.BeachVolleyball, SportType.Badminton, SportType.VolleyBall };
 

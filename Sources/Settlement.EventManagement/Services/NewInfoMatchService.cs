@@ -1,7 +1,6 @@
 ﻿namespace Settlement.EventManagement.Services;
 
 using Models;
-using Settlement.Core.Models;
 using Settlement.Core.Services.SpecificService;
 using Match = Models.Calculation.Match;
 using MultiSportMatch = Models.MultiSports.Match;
@@ -18,7 +17,7 @@ public interface NewInfoMatchService
 
     string ConfirmScore(List<ResultDetail> listResultDetail, string resource);
 
-    bool IsNotConsistentScore(string suspenderConfirm, List<ResultDetail> resultDetail, List<ResultDetail> sourceResultDetail, string resource);
+    bool IsInconsistentScore(string suspenderConfirm, List<ResultDetail> currentResultDetailList, List<ResultDetail> sourceResultDetailList, string resource);
 
     GoalIcon GoalIcon(Match match);
 
@@ -107,23 +106,23 @@ public class NewInfoMatchServiceImp : NewInfoMatchService
             : string.Empty;
     }
 
-    public bool IsNotConsistentScore(string suspenderConfirm, List<ResultDetail> resultDetail, List<ResultDetail> sourceResultDetail, string resource)
+    public bool IsInconsistentScore(string suspenderConfirm, List<ResultDetail> currentResultDetailList, List<ResultDetail> sourceResultDetailList, string resource)
     {
         if (string.Equals(suspenderConfirm, "-"))
         {
             return false;
         }
 
-        var resultDetailByResource = resultDetail.Find(r => r.ResourceId == resource);
-        var sourceResultDetailByResource = sourceResultDetail.Find(r => r.ResourceId == resource);
+        var sourceResultDetailByResource = sourceResultDetailList.Find(r => r.ResourceId == resource);
 
-        if (sourceResultDetailByResource != null)
-        {
-            return (resultDetailByResource != null
-                    && (resultDetailByResource.HomeValue != sourceResultDetailByResource.HomeValue || resultDetailByResource.AwayValue != sourceResultDetailByResource.AwayValue))
-                   || resultDetailByResource == null;
-        }
-        return false;
+        return sourceResultDetailByResource != null && IsDifferentScore(currentResultDetailList, sourceResultDetailByResource, resource);
+    }
+
+    private static bool IsDifferentScore(List<ResultDetail> currentResultDetailList, ResultDetail sourceResultDetail, string resource)
+    {
+        var resultDetail = currentResultDetailList.Find(r => r.ResourceId == resource);
+
+        return resultDetail == null || (resultDetail.HomeValue != sourceResultDetail.HomeValue || resultDetail.AwayValue != sourceResultDetail.AwayValue);
     }
 
     public GoalIcon GoalIcon(Match match)

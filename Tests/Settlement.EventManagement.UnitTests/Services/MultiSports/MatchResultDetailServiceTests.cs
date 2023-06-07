@@ -1,29 +1,29 @@
 ﻿using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
+using Settlement.EventManagement.Services;
 using Settlement.EventManagement.Services.MultiSports;
-using Settlement.EventManagement.Services.SpecificService.Tennis;
 using Match = Settlement.EventManagement.Models.MultiSports.Match;
 
 namespace Settlement.EventManagement.UnitTests.Services.MultiSports;
 
 public class MatchResultDetailServiceTests
 {
-    private readonly ITennisService tennisService;
+    private readonly ScoreTennisService scoreTennisService;
 
     private readonly IRefDataService refDataService;
 
-    private readonly EventManagement.Services.IScoreService scoreService;
+    private readonly EventManagement.Services.ScoreService scoreService;
 
     private readonly IMatchResultDetailService service;
 
     public MatchResultDetailServiceTests()
     {
-        tennisService = Substitute.For<ITennisService>();
+        scoreTennisService = Substitute.For<ScoreTennisService>();
         refDataService = Substitute.For<IRefDataService>();
         var externalScoreService = Substitute.For<IExternalScoreService>();
-        scoreService = Substitute.For<EventManagement.Services.IScoreService>();
-        service = new MatchResultDetailServiceImp(tennisService, refDataService, externalScoreService,
+        scoreService = Substitute.For<EventManagement.Services.ScoreService>();
+        service = new MatchResultDetailServiceImp(scoreTennisService, refDataService, externalScoreService,
             scoreService);
     }
 
@@ -63,7 +63,7 @@ public class MatchResultDetailServiceTests
         // Arrange
         var matches = Matches;
 
-        tennisService.ScoreLoader(matches[0], Arg.Any<List<ResultDetail>>(), permission).Returns(FakedScore);
+        scoreTennisService.ScoreLoader(matches[0], Arg.Any<List<ResultDetail>>(), permission).Returns(FakedScore);
 
         // Act
         var actualMatches = service.TennisResultDetail(matches, ResultDetail, permission);

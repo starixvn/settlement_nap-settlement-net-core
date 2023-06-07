@@ -113,7 +113,7 @@ public class NewInfoMatchServiceTests
     [Fact]
     public void IsNotConsistentScore_SuspenderIsBlank_ReturnFalse()
     {
-        var result = service.IsNotConsistentScore("-", new List<ResultDetail>(), new List<ResultDetail>(), "01");
+        var result = service.IsInconsistentScore("-", new List<ResultDetail>(), new List<ResultDetail>(), "01");
 
         Assert.False(result);
     }
@@ -142,7 +142,7 @@ public class NewInfoMatchServiceTests
             AwayValue = away
         };
 
-        var result = service.IsNotConsistentScore("Test", new List<ResultDetail> { resultDetail },
+        var result = service.IsInconsistentScore("Test", new List<ResultDetail> { resultDetail },
             new List<ResultDetail> { sourceResultDetail }, "01");
 
         Assert.Equal(expected, result);

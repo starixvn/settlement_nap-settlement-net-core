@@ -3,7 +3,6 @@ using Settlement.EventManagement.Controllers;
 using Settlement.EventManagement.Services;
 using Settlement.EventManagement.Services.Calculation;
 using Settlement.EventManagement.Services.MultiSports;
-using Settlement.EventManagement.Services.SpecificService.Tennis;
 using CompareMatchService = Settlement.EventManagement.Services.Calculation.CompareMatchService;
 using CompareMatchServiceImp = Settlement.EventManagement.Services.Calculation.CompareMatchServiceImp;
 using CompareMultiSportMatchService = Settlement.EventManagement.Services.MultiSports.CompareMatchService;
@@ -17,7 +16,7 @@ public static class EventManagementConfig
     public static void ConfigEventManagementServices(this IServiceCollection services)
     {
         services.AddTransient<IMultiSportService, MultiSportServiceImp>();
-        services.AddTransient<ITennisService, TennisServiceImp>();
+        services.AddTransient<ScoreTennisService, ScoreTennisServiceImp>();
         services.AddTransient<IExternalScoreService, ExternalScoreServiceImp>();
         services.AddTransient<IMatchResultDetailService, MatchResultDetailServiceImp>();
         services.AddTransient<IMatchService, MatchServiceImp>();
@@ -27,8 +26,7 @@ public static class EventManagementConfig
         services.AddTransient<MergeDataService, MergeDataServiceImp>();
         services.AddTransient<NewInfoMatchService, NewInfoMatchServiceImp>();
         services.AddTransient<SiteMatchService, SiteMatchServiceImp>();
-        services.AddTransient<EventManagement.Services.IScoreService, EventManagement.Services.ScoreServiceImp>();
-        services.AddTransient<EventManagement.Services.SpecificService.Tennis.IScoreService, EventManagement.Services.SpecificService.Tennis.ScoreServiceImp>();
+        services.AddTransient<ScoreService, ScoreServiceImp>();
         services.AddTransient<CachingMatchesService, CachingMatchesServiceImp>();
         services.AddTransient<CompareMultiSportMatchService, CompareMultiSportMatchServiceImp>();
         services.AddTransient<GetDataFilterService, GetDataFilterServiceImp>();
