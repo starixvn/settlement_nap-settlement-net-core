@@ -1,6 +1,6 @@
 import { SportSupportInstant } from './../constants/sport-instant';
 import { MultiSport, MatchWaitingRequest, LeagueMatch, Match, SportMatch } from './../models';
-import { Component, Input, OnInit, OnChanges, SimpleChanges, OnDestroy, ChangeDetectorRef, Injector } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, SimpleChanges, OnDestroy, ChangeDetectorRef, Injector, inject } from '@angular/core';
 import { AutoSettingPosition, DefaultValue } from '../constants';
 import * as _ from 'lodash';
 import { RefreshMatchService, PopupService, MultiSportService, HandleActionsService } from '../services/';
@@ -20,13 +20,13 @@ export class LeagueComponent implements OnInit, OnChanges, OnDestroy {
   @Input() public multiSport: MultiSport;
   @Input() public request: MatchWaitingRequest;
   @Input() public enableRefresh: boolean;
-  private sportMatchService: SportMatchService;
-  private refreshMatchesService: RefreshMatchService;
-  private popupService: PopupService;
-  private backGroundService: BackGroundService;
-  private messageBoxService: MessageBoxService;
-  private multiSportService: MultiSportService;
-  private handleActionService: HandleActionsService;
+  private sportMatchService = inject(SportMatchService);
+  private refreshMatchesService = inject( RefreshMatchService);
+  private popupService = inject( PopupService);
+  private backGroundService = inject(BackGroundService);
+  private messageBoxService = inject( MessageBoxService);
+  private multiSportService = inject( MultiSportService);
+  private handleActionService = inject(HandleActionsService);
   public language = Language;
   private readonly period = 6000;
   private readonly autoSettingCompleted = 2;
@@ -56,13 +56,6 @@ export class LeagueComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnInit() {
-    this.sportMatchService = this.injector.get(SportMatchService);
-    this.refreshMatchesService = this.injector.get(RefreshMatchService);
-    this.popupService = this.injector.get(PopupService);
-    this.backGroundService = this.injector.get(BackGroundService);
-    this.messageBoxService = this.injector.get(MessageBoxService);
-    this.multiSportService = this.injector.get(MultiSportService);
-    this.handleActionService = this.injector.get(HandleActionsService);
     this.permission = this.multiSport.permission;
     this.refreshMatches();
   }

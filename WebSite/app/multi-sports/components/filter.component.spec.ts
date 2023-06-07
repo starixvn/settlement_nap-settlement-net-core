@@ -22,7 +22,6 @@ import { ModalDialogComponent } from '../../shared/components/modal-dialog/modal
 import { ModalContentDialogComponent } from '../../shared/components/modal-dialog/modal-content-dialog.component';
 import { DatepickerComponent } from '../../shared/components/date-picker/date-picker.component';
 import { NewMultipleSelectComponent } from '../../shared/components/multiple-select/multiple-select.component';
-import { TreeViewComponent } from '../../shared/components/multiple-selection/tree-view.component';
 import { DatePipe } from '@angular/common';
 
 describe('MultiSport - FilterComponent', () => {
@@ -40,8 +39,7 @@ describe('MultiSport - FilterComponent', () => {
             declarations: [
                 FilterComponent,
                 ModalDialogComponent,
-                ModalContentDialogComponent,
-                TreeViewComponent,
+                ModalContentDialogComponent
             ],
             providers: [
                 VerifyDateService,
@@ -78,7 +76,6 @@ describe('MultiSport - FilterComponent', () => {
                 multiSportService = fixture.debugElement.injector.get(MultiSportService);
                 generateFilterService = fixture.debugElement.injector.get(GenerateFilterService);
                 messageBoxService.alert = jest.fn().mockReturnValue(new ModalDialogMessage());
-                component.initServices();
             });
     }));
 

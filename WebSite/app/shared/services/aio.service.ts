@@ -166,7 +166,7 @@ export class AioService {
                     bitPosition = resultWithoutFinal.indexOf(resultDetail.resourceId) + roundBitStartAt;
             };
 
-            bitArray[bitPosition] = resultDetail.checked ? 1 : 0;
+            bitArray[bitPosition] = resultDetail.checked && !_.isEmpty(resultDetail.homeValue) && !_.isEmpty(resultDetail.awayValue) ? 1 : 0;
         });
 
         return parseInt(bitArray.reverse().join(''), 2);

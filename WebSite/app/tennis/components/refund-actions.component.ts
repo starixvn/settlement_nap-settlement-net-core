@@ -102,7 +102,7 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
         item.awayValue = "";
     });
 
-    return new SettleQuery(this.matchDetail.matchId,
+    return new SettleQuery(this.matchDetail,
         this.selectedResources,
         CalculateAction.refund,
         false,
