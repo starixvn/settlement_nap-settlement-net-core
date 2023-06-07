@@ -23,7 +23,7 @@
                 <input type="text" [ngClass]="{'warning' :isErrorOnVerification(waterBreakOne.endSecond, waterBreakOne)}"maxlength="2" myOnlyInteger [disabled]="!waterBreakOne.apply" [(ngModel)]="waterBreakOne.endSecond" (keyup)="changeSecond(waterBreakOne)">
             </td>
             <td>
-                <button class="btn btn-outline-primary" (click)="saveAndSelectWaterBreak(waterBreakOne)">Save and Select</button>
+                <button class="btn btn-outline-primary" (click)="saveAndSelectWaterBreak(waterBreakOne)">Save & Select</button>
             </td>
         </tr>
         <tr>
@@ -40,7 +40,41 @@
                 <input type="text" maxlength="2" [ngClass]="{'warning' :isErrorOnVerification(waterBreakTwo.endSecond, waterBreakTwo)}" myOnlyInteger [disabled]="!waterBreakTwo.apply" [(ngModel)]="waterBreakTwo.endSecond" (keyup)="changeSecond(waterBreakTwo)">
             </td>
             <td>
-                <button class="btn btn-outline-primary" (click)="saveAndSelectWaterBreak(waterBreakTwo)">Save and Select</button>
+                <button class="btn btn-outline-primary" (click)="saveAndSelectWaterBreak(waterBreakTwo)">Save & Select</button>
+            </td>
+        </tr>
+        <tr>
+            <td>Water Break 3</td>
+            <td>
+                <mat-slide-toggle [(ngModel)]="waterBreakThree.apply" [color]="slideColor" (ngModelChange)="getColorSession(waterBreakThree)"></mat-slide-toggle>
+            </td>
+            <td [ngClass]="waterBreakThree.color">
+                <input type="text" maxlength="2" [ngClass]="{'warning' :isErrorOnVerification(waterBreakThree.startMinute, waterBreakThree)}" myOnlyInteger [disabled]="!waterBreakThree.apply" [(ngModel)]="waterBreakThree.startMinute" (keyup)="changeMinute(waterBreakThree)"> : 
+                <input type="text" maxlength="2" [ngClass]="{'warning' :isErrorOnVerification(waterBreakThree.startSecond, waterBreakThree)}" myOnlyInteger [disabled]="!waterBreakThree.apply" [(ngModel)]="waterBreakThree.startSecond" (keyup)="changeSecond(waterBreakThree)">
+            </td>
+            <td [ngClass]="waterBreakThree.color">
+                <input type="text" maxlength="2" [ngClass]="{'warning' :isErrorOnVerification(waterBreakThree.endMinute, waterBreakThree) }" myOnlyInteger [disabled]="!waterBreakThree.apply" [(ngModel)]="waterBreakThree.endMinute" (keyup)="changeMinute(waterBreakThree)"> : 
+                <input type="text" maxlength="2" [ngClass]="{'warning' :isErrorOnVerification(waterBreakThree.endSecond, waterBreakThree)}" myOnlyInteger [disabled]="!waterBreakThree.apply" [(ngModel)]="waterBreakThree.endSecond" (keyup)="changeSecond(waterBreakThree)">
+            </td>
+            <td>
+                <button class="btn btn-outline-primary" (click)="saveAndSelectWaterBreak(waterBreakThree)">Save & Select</button>
+            </td>
+        </tr>
+        <tr>
+            <td>Water Break 4</td>
+            <td>
+                <mat-slide-toggle [(ngModel)]="waterBreakFour.apply" [color]="slideColor" (ngModelChange)="getColorSession(waterBreakTwo)"></mat-slide-toggle>
+            </td>
+            <td [ngClass]="waterBreakFour.color">
+                <input type="text" maxlength="2" [ngClass]="{'warning' :isErrorOnVerification(waterBreakFour.startMinute, waterBreakFour)}" myOnlyInteger [disabled]="!waterBreakFour.apply" [(ngModel)]="waterBreakFour.startMinute" (keyup)="changeMinute(waterBreakFour)"> : 
+                <input type="text" maxlength="2" [ngClass]="{'warning' :isErrorOnVerification(waterBreakFour.startSecond, waterBreakFour)}" myOnlyInteger [disabled]="!waterBreakFour.apply" [(ngModel)]="waterBreakFour.startSecond" (keyup)="changeSecond(waterBreakFour)">
+            </td>
+            <td [ngClass]="waterBreakFour.color">
+                <input type="text" maxlength="2" [ngClass]="{'warning' :isErrorOnVerification(waterBreakFour.endMinute, waterBreakFour)}" myOnlyInteger [disabled]="!waterBreakFour.apply" [(ngModel)]="waterBreakFour.endMinute" (keyup)="changeMinute(waterBreakFour)"> : 
+                <input type="text" maxlength="2" [ngClass]="{'warning' :isErrorOnVerification(waterBreakFour.endSecond, waterBreakFour)}" myOnlyInteger [disabled]="!waterBreakFour.apply" [(ngModel)]="waterBreakFour.endSecond" (keyup)="changeSecond(waterBreakFour)">
+            </td>
+            <td>
+                <button class="btn btn-outline-primary" (click)="saveAndSelectWaterBreak(waterBreakFour)">Save & Select</button>
             </td>
         </tr>
         <tr>
@@ -56,7 +90,7 @@
                 -
             </td>
             <td>
-                <button class="btn btn-outline-primary" (click)="saveAndSelectSuspendedTime(suspendedTime)">Save and Select</button>
+                <button class="btn btn-outline-primary" (click)="saveAndSelectSuspendedTime(suspendedTime)">Save & Select</button>
             </td>
         </tr>
     </tbody>

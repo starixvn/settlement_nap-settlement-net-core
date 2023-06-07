@@ -4,30 +4,30 @@
             <th rowspan="2" class="time-interval">
                 <div>Interval</div>
                 <div>
-                    <multiple-select class="multiple-select" [multipleSelect]="timeIntervalSelect"
-                                     (loseFocus)="changeTimeInterval($event)"></multiple-select>
+                    <new-multiple-select class="multiple-select" [multipleSelect]="timeIntervalSelect"
+                    (formValue)="changeTimeInterval($event)"></new-multiple-select>
                 </div>
             </th>
             <th rowspan="2" class="ticket-status">
                 Ticket Status
                 <div>
-                    <multiple-select class="multiple-select" [multipleSelect]="ticketStatusSelect"
-                                     (loseFocus)="changeTicketStatus($event)"></multiple-select>
+                    <new-multiple-select class="multiple-select" [multipleSelect]="ticketStatusSelect"
+                    (formValue)="changeTicketStatus($event)"></new-multiple-select>
                 </div>
             </th>
             <th colspan="8" class="result">Result</th>
             <th rowspan="2" class="result-status">
                 Result Status
                 <div>
-                    <multiple-select class="multiple-select" [multipleSelect]="resultStatusSelect"
-                                     (loseFocus)="changeResultStatus($event)"></multiple-select>
+                    <new-multiple-select class="multiple-select" [multipleSelect]="resultStatusSelect"
+                    (formValue)="changeResultStatus($event)"></new-multiple-select>
                 </div>
             </th>
             <th rowspan="2" class="select-proceed">
                 <label>
                     Select to Proceed
                     <input type="checkbox" [checked]="checkedProceed" [(ngModel)]="filter.checked"
-                           (change)="onChangeProceed($event.target.checked)" />
+                        (change)="onChangeProceed($event.target.checked)" />
                 </label>
             </th>
         </tr>
