@@ -1,12 +1,10 @@
 ﻿namespace Settlement.EventManagement.Services;
 
-using Match = Models.MultiSports.Match;
-
 public interface ScoreTennisService
 {
     string GetEventStatus(IEnumerable<ResultDetail> resultDetails, string currentStatus);
 
-    MoreScores ScoreLoader(Match match, List<ResultDetail> resultDetails, Permission permission);
+    MoreScores ScoreLoader(List<ResultDetail> resultDetails, Permission permission);
 }
 
 public class ScoreTennisServiceImp : ScoreTennisService
@@ -27,7 +25,7 @@ public class ScoreTennisServiceImp : ScoreTennisService
         return totalSet != null && IsRefundMatch(totalSet.HomeValue) ? BetStatus.Refund : currentStatus;
     }
 
-    public MoreScores ScoreLoader(Match match, List<ResultDetail> resultDetails, Permission permission)
+    public MoreScores ScoreLoader(List<ResultDetail> resultDetails, Permission permission)
     {
         var moreScore = new MoreScores
         {

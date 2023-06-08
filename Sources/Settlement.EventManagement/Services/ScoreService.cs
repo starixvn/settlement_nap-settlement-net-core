@@ -2,7 +2,7 @@
 
 public interface ScoreService
 {
-    bool IsDisplayIntervalScore(int sportType, List<ResultDetail> resultDetails);
+    bool IsIntervalScore(int sportType, List<ResultDetail> resultDetails);
 
     Score[] ScoreOfSets(List<ResultDetail> resultDetails, List<string> resources, Permission permission);
 
@@ -22,7 +22,7 @@ public class ScoreServiceImp : ScoreService
         this.scoreSetService = scoreSetService;
     }
 
-    public bool IsDisplayIntervalScore(int sportType, List<ResultDetail> resultDetails)
+    public bool IsIntervalScore(int sportType, List<ResultDetail> resultDetails)
     {
         return sportType == SportType.BasketBall
             ? resultDetails.Exists(item => !item.ResourceId.Equals(ResourceType.Halftime) && !item.ResourceId.Equals(ResourceType.Final))

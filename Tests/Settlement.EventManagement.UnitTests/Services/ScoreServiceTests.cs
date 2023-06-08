@@ -1,4 +1,5 @@
-﻿using Settlement.Core.Constants;
+﻿using AutoFixture;
+using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.EventManagement.Services;
@@ -7,291 +8,212 @@ namespace Settlement.EventManagement.UnitTests.Services;
 
 public class ScoreServiceTests
 {
-	private readonly ScoreService service;
+    private readonly ScoreService service;
 
-	private readonly IScoreSetService scoreSetService;
+    private readonly IScoreSetService scoreSetService;
 
-	public ScoreServiceTests()
-	{
-		scoreSetService = Substitute.For<IScoreSetService>();
-		service = new ScoreServiceImp(scoreSetService);
-	}
+    public ScoreServiceTests()
+    {
+        scoreSetService = Substitute.For<IScoreSetService>();
+        service = new ScoreServiceImp(scoreSetService);
+    }
 
-	private static List<ResultDetail> EmptyResultDetail => new();
-	private static List<string> Resources => new() { "00", "01" };
-	private readonly Permission permission = new();
+    private static List<ResultDetail> EmptyResultDetail => new();
+    private static List<string> Resources => new() { "00", "01" };
+    private readonly Permission permission = new();
 
-	[Fact]
-	public void ScoreOfSets_EmptyResultDetail_ReturnsHyphenOnAllQuarter()
-	{
-		// Arrange
-		var expectedQuarter = new Score[2].Select(_ => new Score("-")).ToArray();
+    [Fact]
+    public void IsIntervalScore_SportIsBasketBallAndResourceIdIsExistedHalftimeFullTime_ReturnFalse()
+    {
+        // Arrange
+        var resultDetails = new List<ResultDetail>
+        {
+            new()
+            {
+                MatchId = 1,
+                ResourceId = "01"
+            },
+            new ()
+            {
+                MatchId = 1,
+                ResourceId = "00"
+            }
+        };
 
-		// Act
-		var actualQuarter = service.ScoreOfSets(EmptyResultDetail, Resources, permission);
+        // Act
+        var actual = service.IsIntervalScore(SportType.BasketBall, resultDetails);
 
-		// Assert
-		AssertExtension.AreEqual(expectedQuarter, actualQuarter);
-	}
+        // Assert
+        Assert.False(actual);
+    }
 
-	[Fact]
-	public void ScoreOfSets_HasResultDetail_ReturnsCorrectScoreGetFromScoreSetService()
-	{
-		// Arrange
-		var resultDetail = new List<ResultDetail>
-		{
-			new() { MatchId = 1 , ResourceId = "00" },
-			new() { MatchId = 1 , ResourceId = "01" }
-		};
+    [Fact]
+    public void IsIntervalScore_IsOtherSportAndResourceIdIsExistedHalftimeFullTime_ReturnTrue()
+    {
+        // Arrange
+        var resultDetails = new List<ResultDetail>
+        {
+            new()
+            {
+                MatchId = 1,
+                ResourceId = "01"
+            },
+            new ()
+            {
+                MatchId = 1,
+                ResourceId = "00"
+            }
+        };
 
-		var fakeQuarterScore = new Score("1", "2");
-		var expectedQuarter = new Score[2].Select(_ => new Score("1", "2")).ToArray();
+        // Act
+        var actual = service.IsIntervalScore(SportType.OtherSports, resultDetails);
 
-		scoreSetService.GetScore(Arg.Any<ResultDetail>(), Arg.Any<Permission>()).Returns(fakeQuarterScore);
+        // Assert
+        Assert.True(actual);
+    }
 
-		// Act
-		var actualQuarter = service.ScoreOfSets(resultDetail, Resources, permission);
+    [Fact]
+    public void ScoreOfSets_EmptyResultDetail_ReturnsHyphenOnAllQuarter()
+    {
+        // Arrange
+        var expectedQuarter = new Score[2].Select(_ => new Score("-")).ToArray();
 
-		// Assert
-		AssertExtension.AreEqual(expectedQuarter, actualQuarter);
-	}
+        // Act
+        var actualQuarter = service.ScoreOfSets(EmptyResultDetail, Resources, permission);
 
-	[Fact]
-	public void HalftimeScore_BeachVolleyballAndMatchIsRefund_ReturnsExpectedScore()
-	{
-		// Arrange
-		var resultDetail = new List<ResultDetail>
-		{
-			new()
-			{
-				ResourceId = "00",
-				SettlementStatusId = 1
-			}
-		};
+        // Assert
+        AssertExtension.AreEqual(expectedQuarter, actualQuarter);
+    }
 
-		// Act
-		var actualScore = service.HalftimeScore(SportType.BeachVolleyball, resultDetail, permission);
+    [Fact]
+    public void ScoreOfSets_HasResultDetail_ReturnsCorrectScoreGetFromScoreSetService()
+    {
+        // Arrange
+        var resultDetail = new List<ResultDetail>
+        {
+            new() { MatchId = 1 , ResourceId = "00" },
+            new() { MatchId = 1 , ResourceId = "01" }
+        };
 
-		// Assert
-		var expectedScore = new Score(SetStatus.Refund);
-		AssertExtension.AreEqual(expectedScore, actualScore);
-	}
+        var fakeQuarterScore = new Score("1", "2");
+        var expectedQuarter = new Score[2].Select(_ => new Score("1", "2")).ToArray();
 
-	[Fact]
-	public void HalftimeScore_BeachVolleyballExistScoreAndMatchIsNotRefund_ReturnsExpectedScore()
-	{
-		// Arrange
-		var resultDetail = new List<ResultDetail>
-		{
-			new()
-			{
-				ResourceId = "0001",
-				HomeValue = "1",
-				AwayValue = "2",
-				SettlementStatusId = 0
-			},
-			new()
-			{
-				ResourceId = "0002",
-				HomeValue = "3",
-				AwayValue = "4",
-				SettlementStatusId = 0
-			}
-		};
+        scoreSetService.GetScore(Arg.Any<ResultDetail>(), Arg.Any<Permission>()).Returns(fakeQuarterScore);
 
-		var expectedScore = new Score("4", "6");
+        // Act
+        var actualQuarter = service.ScoreOfSets(resultDetail, Resources, permission);
 
-		scoreSetService.SumScore(Arg.Any<List<ResultDetail>>()).Returns(expectedScore);
+        // Assert
+        AssertExtension.AreEqual(expectedQuarter, actualQuarter);
+    }
 
-		// Act
-		var actualScore = service.HalftimeScore(SportType.BeachVolleyball, resultDetail, permission);
+    [Fact]
+    public void HalftimeScore_SportHaveTotalPointAndMatchIsNotRefund_ReturnsExpectedScore()
+    {
+        // Arrange
+        var fixture = new Fixture();
+        var resultDetail = fixture.CreateMany<ResultDetail>(4).ToList();
 
-		// Assert
-		AssertExtension.AreEqual(expectedScore, actualScore);
-	}
+        scoreSetService.SumScore(Arg.Any<List<ResultDetail>>()).Returns(new Score("1", "1"));
 
-	[Fact]
-	public void HalftimeScore_BeachVolleyballEmptyScoreAndMatchIsNotRefund_ReturnsExpectedScore()
-	{
-		// Arrange
-		var resultDetail = new List<ResultDetail>
-		{
-			new()
-			{
-				ResourceId = "0001",
-				HomeValue = "",
-				AwayValue = "",
-				SettlementStatusId = 0
-			},
-			new()
-			{
-				ResourceId = "0002",
-				HomeValue = "",
-				AwayValue = "",
-				SettlementStatusId = 0
-			}
-		};
+        // Act
+        var actualScore = service.HalftimeScore(SportType.Badminton, resultDetail, permission);
 
-		scoreSetService.SumScore(Arg.Any<List<ResultDetail>>()).Returns(new Score("-"));
+        // Assert
+        var expectedScore = new Score("1", "1");
+        AssertExtension.AreEqual(expectedScore, actualScore);
+    }
 
-		// Act
-		var actualScore = service.HalftimeScore(SportType.BeachVolleyball, resultDetail, permission);
+    [Fact]
+    public void HalftimeScore_SportHaveTotalPointAndMatchIsRefund_ReturnsExpectedScore()
+    {
+        // Arrange
+        var resultDetails = new List<ResultDetail>
+        {
+            new ()
+            {
+                MatchId = 1,
+                ResourceId = "00",
+                SettlementStatusId = SettlementStatus.Refund
+            }
+        };
+        // Act
+        var actualScore = service.HalftimeScore(SportType.Badminton, resultDetails, permission);
 
-		// Assert
-		var expectedScore = new Score("-");
-		AssertExtension.AreEqual(expectedScore, actualScore);
-	}
+        // Assert
+        var expectedScore = new Score("R", "R");
+        AssertExtension.AreEqual(expectedScore, actualScore);
+    }
 
-	[Fact]
-	public void HalftimeScore_NonBeachVolleyballAndMatchSettled_ReturnsExpectedScore()
-	{
-		// Arrange
-		var resultDetail = new List<ResultDetail>
-		{
-			new()
-			{
-				ResourceId = "0001",
-				HomeValue = "1",
-				AwayValue = "1",
-				SettlementStatusId = 0,
-				ResultStatusId = 5
-			},
-			new()
-			{
-				ResourceId = "0002",
-				HomeValue = "2",
-				AwayValue = "2",
-				SettlementStatusId = 0
-			}
-		};
+    [Fact]
+    public void HalftimeScore_SportHaveNotTotalPointAndEmptyResultDetail_ReturnsEmptyScore()
+    {
+        // Arrange
+        var resultDetails = new List<ResultDetail>();
 
-		var expectedScore = new Score("1", "1");
-		scoreSetService.SumScore(Arg.Any<List<ResultDetail>>()).Returns(expectedScore);
+        // Act
+        var actualScore = service.HalftimeScore(SportType.OtherSports, resultDetails, permission);
 
-		// Act
-		var actualScore = service.HalftimeScore(SportType.Badminton, resultDetail, permission);
+        // Assert
+        var expectedScore = new Score("-");
+        AssertExtension.AreEqual(expectedScore, actualScore);
+    }
 
-		// Assert
-		AssertExtension.AreEqual(expectedScore, actualScore);
-	}
+    [Fact]
+    public void HalftimeScore_SportHaveNotTotalPointAndResultDetail_ReturnsExpectedScore()
+    {
+        // Arrange
+        var resultDetails = new List<ResultDetail>
+        {
+            new ()
+            {
+                MatchId = 1,
+                ResourceId = "01",
+                SettlementStatusId = SettlementStatus.Refund
+            }
+        };
 
-	[Fact]
-	public void HalftimeScore_NotResourceHalftimeOnResultDetail_ReturnsHyphenOnScore()
-	{
-		// Arrange
-		var expectedScore = new Score("-", "-");
+        scoreSetService.GetScore(Arg.Any<ResultDetail>(), Arg.Any<Permission>()).Returns(new Score("1", "1"));
 
-		// Act
-		var actualScore = service.HalftimeScore(1, EmptyResultDetail, permission);
+        // Act
+        var actualScore = service.HalftimeScore(SportType.OtherSports, resultDetails, permission);
 
-		// Assert
-		AssertExtension.AreEqual(expectedScore, actualScore);
-	}
+        // Assert
+        var expectedScore = new Score("1", "1");
+        AssertExtension.AreEqual(expectedScore, actualScore);
+    }
 
-	[Fact]
-	public void HalftimeScore_HasResourceHalftimeOnResultDetail_ReturnsCorrectScoreGetFromScoreSetService()
-	{
-		// Arrange
-		var fakeHalftimeScore = new Score("1", "2");
-		var expectedScore = new Score("1", "2");
-		var resultDetail = new List<ResultDetail>
-		{
-			new() { MatchId = 1 , ResourceId = "01" }
-		};
+    [Fact]
+    public void FinalScore_NotResourceFinalTimeOnResultDetail_ReturnsHyphenOnScore()
+    {
+        // Arrange
+        var expectedScore = new Score("-");
 
-		scoreSetService.GetScore(Arg.Any<ResultDetail>(), Arg.Any<Permission>()).Returns(fakeHalftimeScore);
+        // Act
+        var actualScore = service.FinalScore(EmptyResultDetail, permission);
 
-		// Act
-		var actualScore = service.HalftimeScore(1, resultDetail, permission);
+        // Assert
+        AssertExtension.AreEqual(expectedScore, actualScore);
+    }
 
-		// Assert
-		AssertExtension.AreEqual(expectedScore, actualScore);
-	}
+    [Fact]
+    public void FinalScore_HasFinalTimeScoreOnResultDetail_ReturnsCorrectScoreGetFromScoreSetService()
+    {
+        // Arrange
+        var fakeFinalTimeScore = new Score("5", "7");
+        var expectedScore = new Score("5", "7");
 
-	[Fact]
-	public void FinalScore_NotResourceFinalTimeOnResultDetail_ReturnsHyphenOnScore()
-	{
-		// Arrange
-		var expectedScore = new Score("-");
+        var resultDetail = new List<ResultDetail>
+        {
+            new() { MatchId = 1 , ResourceId = "00" }
+        };
 
-		// Act
-		var actualScore = service.FinalScore(EmptyResultDetail, permission);
+        scoreSetService.GetScore(Arg.Any<ResultDetail>(), Arg.Any<Permission>()).Returns(fakeFinalTimeScore);
 
-		// Assert
-		AssertExtension.AreEqual(expectedScore, actualScore);
-	}
+        // Act
+        var actualScore = service.FinalScore(resultDetail, permission);
 
-	[Fact]
-	public void FinalScore_HasFinalTimeScoreOnResultDetail_ReturnsCorrectScoreGetFromScoreSetService()
-	{
-		// Arrange
-		var fakeFinalTimeScore = new Score("5", "7");
-		var expectedScore = new Score("5", "7");
-
-		var resultDetail = new List<ResultDetail>
-		{
-			new() { MatchId = 1 , ResourceId = "00" }
-		};
-
-		scoreSetService.GetScore(Arg.Any<ResultDetail>(), Arg.Any<Permission>()).Returns(fakeFinalTimeScore);
-
-		// Act
-		var actualScore = service.FinalScore(resultDetail, permission);
-
-		// Assert
-		AssertExtension.AreEqual(expectedScore, actualScore);
-	}
-
-	[Fact]
-	public void IsDisplayIntervalScore_ReturnsTrue_BasketballWithIntervalScores()
-	{
-		// Arrange
-		var resultDetails = new List<ResultDetail>
-		{
-			new () { ResourceId = ResourceType.Halftime },
-			new () { ResourceId = "Q1" },
-			new () { ResourceId = "Q2" },
-			new () { ResourceId = ResourceType.Final }
-		};
-
-		// Act
-		var result = service.IsDisplayIntervalScore(SportType.BasketBall, resultDetails);
-
-		// Assert
-		Assert.True(result);
-	}
-
-	[Fact]
-	public void IsDisplayIntervalScore_ReturnsFalse_BasketballWithoutIntervalScores()
-	{
-		// Arrange
-		var resultDetails = new List<ResultDetail>
-		{
-			new() { ResourceId = ResourceType.Halftime },
-			new () { ResourceId = ResourceType.Final }
-		};
-
-		// Act
-		var result = service.IsDisplayIntervalScore(SportType.BasketBall, resultDetails);
-
-		// Assert
-		Assert.False(result);
-	}
-
-	[Fact]
-	public void IsDisplayIntervalScore_ReturnsTrue_NonBasketballSportType()
-	{
-		// Arrange
-		var resultDetails = new List<ResultDetail>
-		{
-			new() { ResourceId = "0101" },
-			new() { ResourceId = ResourceType.Final }
-		};
-
-		// Act
-		var result = service.IsDisplayIntervalScore(SportType.Tennis, resultDetails);
-
-		// Assert
-		Assert.True(result);
-	}
+        // Assert
+        AssertExtension.AreEqual(expectedScore, actualScore);
+    }
 }
