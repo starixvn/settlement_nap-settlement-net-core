@@ -196,7 +196,7 @@ public class MatchResultDetailServiceTests
         scoreService.Received(1).FinalScore(Arg.Any<List<ResultDetail>>(), Arg.Any<Permission>());
         scoreService.Received(1).ScoreOfSets(Arg.Any<List<ResultDetail>>(), Arg.Any<List<string>>(), Arg.Any<Permission>());
         scoreService.Received(1).IsIntervalScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>());
-        externalScoreService.Received(1).LoadExternalResultForVolleyball(Arg.Any<Match>(), Arg.Any<List<ResultDetail>>());
+        externalScoreService.Received(1).IsInconsistentScore(Arg.Any<Match>(), Arg.Any<List<ResultDetail>>());
         Assert.True(actualMatches.Count > 0);
     }
 
@@ -224,7 +224,6 @@ public class MatchResultDetailServiceTests
         scoreService.Received(1).FinalScore(Arg.Any<List<ResultDetail>>(), Arg.Any<Permission>());
         scoreService.Received(1).ScoreOfSets(Arg.Any<List<ResultDetail>>(), Arg.Any<List<string>>(), Arg.Any<Permission>());
         scoreService.Received(1).IsIntervalScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>());
-        externalScoreService.Received(1).LoadExternalResultForVolleyball(Arg.Any<Match>(), Arg.Any<List<ResultDetail>>());
         Assert.True(actualMatches.Count > 0);
     }
 

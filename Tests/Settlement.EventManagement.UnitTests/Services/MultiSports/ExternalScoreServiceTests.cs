@@ -71,7 +71,7 @@ public class ExternalScoreServiceTests
         };
 
         // Act
-        service.LoadExternalResultForVolleyball(match, listResultDetail);
+        service.IsInconsistentScore(match, listResultDetail);
 
         // Assert
         Assert.Equal(match.ExFtResult, listResultDetail[0]);

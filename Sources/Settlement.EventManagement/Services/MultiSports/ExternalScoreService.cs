@@ -1,30 +1,45 @@
 ﻿namespace Settlement.EventManagement.Services.MultiSports;
 
 using Settlement.Core.Models;
-using Match = Settlement.EventManagement.Models.MultiSports.Match;
+using Match = Models.MultiSports.Match;
 
 public interface IExternalScoreService
 {
     void LoadExternalResultForOtherSports(Match match, List<ResultDetail> resultDetails, bool includeHalfTime);
 
-    void LoadExternalResultForVolleyball(Match match, List<ResultDetail> resultDetails);
+    bool IsInconsistentScore(Match match, List<ResultDetail> resultDetails);
 }
 
 public class ExternalScoreServiceImp : IExternalScoreService
 {
-    public void LoadExternalResultForVolleyball(Match match, List<ResultDetail> resultDetails)
+    public bool IsInconsistentScore(Match match, List<ResultDetail> resultDetails)
     {
-        var internalResultDetails = resultDetails.Where(m => m.MatchId == match.MatchId && m.SourceId == SourceType.Normal).ToList();
         var externalResultDetails = GetSboResults(match.MatchId, resultDetails);
-        SetExternalFullTime(match, externalResultDetails);
-        if (match.ExFtResult != null)
+        var finalExternalResult = externalResultDetails.Find(result => result.ResourceId == ResourceType.Final);
+        if (finalExternalResult == null)
         {
-            var result = internalResultDetails.Find(r => r.ResourceId == match.ExFtResult.ResourceId);
-            if (ConsistentResultDetail(result, match.ExFtResult))
-            {
-                match.IsNotConsistentExFtScore = !string.Equals(match.SuspenderFullTime, "-") || ExistResult(result);
-            }
+            return false;
         }
+
+        var currentResult = resultDetails.Find(result => result.MatchId == match.MatchId &&
+                                                         result.SourceId == SourceType.Normal &&
+                                                         result.ResourceId == finalExternalResult.ResourceId);
+
+        return ScoresDifferent(currentResult, finalExternalResult);
+    }
+
+    private static bool ScoresDifferent(ResultDetail currentResult, ResultDetail finalExternalResult)
+    {
+        if (currentResult == null)
+        {
+            return true;
+        }
+
+        var score = !string.IsNullOrWhiteSpace(currentResult.HomeValue) && !string.IsNullOrWhiteSpace(currentResult.AwayValue);
+        var isHomeValueDifferent = !string.Equals(currentResult.HomeValue, finalExternalResult.HomeValue);
+        var isAwayValueDifferent = !string.Equals(currentResult.AwayValue, finalExternalResult.AwayValue);
+
+        return score && (isHomeValueDifferent || isAwayValueDifferent);
     }
 
     public void LoadExternalResultForOtherSports(Match match, List<ResultDetail> resultDetails, bool includeHalfTime)
@@ -73,20 +88,14 @@ public class ExternalScoreServiceImp : IExternalScoreService
         }
     }
 
-    private static bool ConsistentResultDetail(ResultDetail result, ResultDetail externalResult) =>
-      result != null && (result.HomeValue != externalResult.HomeValue || result.AwayValue != externalResult.AwayValue) || result == null;
-
     private static bool ConsistentMatchScore(int? homeValue, int? awayValue, ResultDetail externalResult) =>
         ExistMatchScore(homeValue, awayValue) && (homeValue.ToString() != externalResult.HomeValue || awayValue.ToString() != externalResult.AwayValue)
         || !ExistMatchScore(homeValue, awayValue);
 
-    private static bool ExistResult(ResultDetail result) =>
-         result != null && !string.IsNullOrEmpty(result.HomeValue) && !string.IsNullOrEmpty(result.AwayValue);
-
     private static bool ExistMatchScore(int? homeValue, int? awayValue) =>
         homeValue != null && awayValue != null;
 
-    private static List<ResultDetail> GetSboResults(int matchId, List<ResultDetail> resultDetails)
+    private static List<ResultDetail> GetSboResults(int matchId, IEnumerable<ResultDetail> resultDetails)
     {
         return resultDetails.Where(m => m.MatchId == matchId && m.SourceId != SourceType.Normal
                                         && !string.IsNullOrWhiteSpace(m.AwayValue)
