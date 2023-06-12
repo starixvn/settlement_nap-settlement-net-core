@@ -94,13 +94,10 @@ public class MatchResultDetailServiceImp : IMatchResultDetailService
     private MoreScores GetMoreScoresESport(Match match, List<ResultDetail> resultDetailByMatchId, List<string> resources, Permission permission)
     {
         const int maxResultNormalEs = 9;
-        if (match.BestOfMap > maxResultNormalEs)
-        {
-            var resourcesBom30 = Enumerable.Range(1, match.BestOfMap).Select(i => $"M{i}").ToList();
-            return ScoreLoader(match.SportType, resultDetailByMatchId, resourcesBom30, permission);
-        }
+        var resourcesBom30 = Enumerable.Range(1, match.BestOfMap).Select(i => $"M{i}").ToList();
+        var newResources = match.BestOfMap > maxResultNormalEs ? resourcesBom30 : resources;
 
-        return ScoreLoader(match.SportType, resultDetailByMatchId, resources, permission);
+        return ScoreLoader(match.SportType, resultDetailByMatchId, newResources, permission);
     }
 
     public List<Match> BeachVolleyballResultDetail(List<Match> matches, List<ResultDetail> resultDetails, Permission permission)
@@ -112,7 +109,7 @@ public class MatchResultDetailServiceImp : IMatchResultDetailService
             var resultDetailByMatchId = resultDetails.Where(m => m.MatchId == match.MatchId && m.SourceId == SourceType.Normal).ToList();
             match.MoreScores = ScoreLoader(match.SportType, resultDetailByMatchId, resources, permission);
             match.IsHavingIntervalScore = scoreService.IsIntervalScore(match.SportType, resultDetailByMatchId);
-            match.IsNotConsistentExFtScore = externalScoreService.IsInconsistentScore(match, resultDetails);
+            match.IsNotConsistentExFtScore = externalScoreService.IsInconsistentFullTimeScore(match.MatchId, match.SuspenderFullTime, resultDetails);
         }
 
         return matches;
@@ -159,7 +156,12 @@ public class MatchResultDetailServiceImp : IMatchResultDetailService
     {
         foreach (var match in matches)
         {
-            externalScoreService.LoadExternalResultForOtherSports(match, resultDetails, includeHalfTime);
+            if (includeHalfTime)
+            {
+                match.IsNotConsistentExHtScore = externalScoreService.IsInconsistentHalftimeScore(match, resultDetails);
+            }
+
+            match.IsNotConsistentExFtScore = externalScoreService.IsInconsistentFullTimeScore(match, resultDetails);
         }
 
         return matches;

@@ -167,8 +167,7 @@ public class MatchServiceImp : IMatchService
     {
         if (fullTimeSports.Contains(sportType))
         {
-            // Nhớ reset include HT = false
-            return matchResultDetailService.OtherSportsResultDetail(matches, resultDetails, true);
+            return matchResultDetailService.OtherSportsResultDetail(matches, resultDetails, false);
         }
 
         return halfTimeFullTimeSports.Contains(sportType) ? matchResultDetailService.OtherSportsResultDetail(matches, resultDetails, true) : matches;
