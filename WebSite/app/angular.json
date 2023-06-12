@@ -727,7 +727,7 @@
           "options": {
             "aot": true,
             "outputPath": "../wwwroot/fast-market",
-            "index": "fast-market/index.html",
+            "index": "fast-market/index.cshtml",
             "main": "fast-market/main.ts",
             "tsConfig": "fast-market/tsconfig.app.json",
             "polyfills": "polyfills.ts",
