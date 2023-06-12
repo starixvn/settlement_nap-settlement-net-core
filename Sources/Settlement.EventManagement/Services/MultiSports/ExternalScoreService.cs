@@ -7,6 +7,10 @@ public interface IExternalScoreService
 {
     void LoadExternalResultForOtherSports(Match match, List<ResultDetail> resultDetails, bool includeHalfTime);
 
+    bool IsInconsistentHalftimeScore(Match match, List<ResultDetail> resultDetails);
+
+    bool IsInconsistentFullTimeScore(Match match, List<ResultDetail> resultDetails);
+
     bool IsInconsistentScore(Match match, List<ResultDetail> resultDetails);
 }
 
@@ -28,7 +32,7 @@ public class ExternalScoreServiceImp : IExternalScoreService
         return ScoresDifferent(currentResult, finalExternalResult);
     }
 
-    private static bool ScoresDifferent(ResultDetail currentResult, ResultDetail finalExternalResult)
+    private static bool ScoresDifferent(ResultDetail currentResult, ResultDetail externalResult)
     {
         if (currentResult == null)
         {
@@ -36,10 +40,25 @@ public class ExternalScoreServiceImp : IExternalScoreService
         }
 
         var score = !string.IsNullOrWhiteSpace(currentResult.HomeValue) && !string.IsNullOrWhiteSpace(currentResult.AwayValue);
-        var isHomeValueDifferent = !string.Equals(currentResult.HomeValue, finalExternalResult.HomeValue);
-        var isAwayValueDifferent = !string.Equals(currentResult.AwayValue, finalExternalResult.AwayValue);
+        var isHomeValueDifferent = !string.Equals(currentResult.HomeValue, externalResult.HomeValue);
+        var isAwayValueDifferent = !string.Equals(currentResult.AwayValue, externalResult.AwayValue);
 
         return score && (isHomeValueDifferent || isAwayValueDifferent);
+    }
+
+    public bool IsInconsistentHalftimeScore(Match match, List<ResultDetail> resultDetails)
+    {
+        var externalResultDetails = GetSboResults(match.MatchId, resultDetails);
+        var halftimeExternalResult = externalResultDetails.Find(result => result.ResourceId == ResourceType.Halftime);
+        var finalExternalResult = externalResultDetails.Find(result => result.ResourceId == ResourceType.Final);
+        return true;
+    }
+
+    public bool IsInconsistentFullTimeScore(Match match, List<ResultDetail> resultDetails)
+    {
+        var externalResultDetails = GetSboResults(match.MatchId, resultDetails);
+        var finalExternalResult = externalResultDetails.Find(result => result.ResourceId == ResourceType.Final);
+        return true;
     }
 
     public void LoadExternalResultForOtherSports(Match match, List<ResultDetail> resultDetails, bool includeHalfTime)
