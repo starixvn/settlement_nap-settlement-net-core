@@ -3,7 +3,7 @@ import { Component, Injector, ViewChild, inject } from '@angular/core';
 import { Language } from '../../shared/language.native';
 import { BlockUIService } from '../../shared/services';
 import { ModalDialogMessage } from '../../shared/models';
-import { ScoreSourceType, SportType } from '../../shared/constants';
+import { ScoreSourceType, SettlementStatusId, SportType } from '../../shared/constants';
 import { BasketballApiKeys, ResourcesIds } from '../constants';
 import * as _ from 'lodash';
 import { RefundActionBaseComponent } from '../../shared/components/sportsbook-sop/refund-action-base.component';
@@ -78,6 +78,13 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
         this.isConfirmRefund = this.resultDetails.findIndex(result => result.resultSettingData.isConfirmedRefund || result.resultSettingData.isConfirmedRefundSdt) == -1;
         this.isSDTSettle = this.permission.isLeader ? this.initSDTSettle() : false;
         this.disableScoreDirect = this.verificationService.isTicketOnQuarter(this.resultDetails, this.match.resultDetails);
+        this.resetHomeAway(this.resultDetails);
+    }
+    private resetHomeAway(resultDetails: ResultDetail[]) {
+        resultDetails.forEach((map) => {
+            map.homeValue = map.settlementStatusId === SettlementStatusId.Refund ? "" : map.homeValue;
+            map.awayValue = map.settlementStatusId === SettlementStatusId.Refund ? "" : map.awayValue;
+        });
     }
 
     async refund() {

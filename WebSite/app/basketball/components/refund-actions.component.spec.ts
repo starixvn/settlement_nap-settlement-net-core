@@ -123,7 +123,6 @@ describe('Component: RefundActionsComponent', () => {
         it('should call close popup when have not marked tickets, no hedge match and refund has been successfully', fakeAsync(async () => {
             component.match = match;
             component.applyHedgeMatch = false;
-            component.matchDetail = matchDetail;
             aioService.checkMarkedTickets = jest.fn().mockReturnValue(Promise.resolve(noMarkedTicket));
             aioService.push = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
             messageBoxService.closePopup = jest.fn();
@@ -146,7 +145,6 @@ describe('Component: RefundActionsComponent', () => {
                 match.hedgeMatchDetail = new HedgeMatchDetail();
                 component.applyHedgeMatch = true;
                 component.match = match;
-                component.matchDetail = matchDetail;
                 component.hedgeMatchDetail = new HedgeMatchDetail();
                 component.hedgeMatchDetail.matchId = 700000;
                 component.permission = new Permission();
@@ -171,7 +169,6 @@ describe('Component: RefundActionsComponent', () => {
 
         it('should alert when exist marked tickets', fakeAsync(async () => {
             component.match = match;
-            component.matchDetail = match.matchDetail;
             aioService.checkMarkedTickets = jest.fn().mockReturnValue(Promise.resolve(existMarkedTicket));
             toastrService.error = jest.fn();
 
@@ -181,29 +178,8 @@ describe('Component: RefundActionsComponent', () => {
             expect(toastrService.error).toHaveBeenCalledWith(Language.MarkedTicket);
         }));
 
-        it('should alert when result mismatch with result confirmed', fakeAsync(async () => {
-            component.match = match;
-            component.isSDTSettle = true;
-            resultDetail.resourceId = '01';
-            resultDetail.checked = true;
-            resultDetail.homeValue = '1';
-            resultDetail.awayValue = '2';
-            const secondResult = { ...resultDetail, resourceId: '02' };
-            const externalResult = new ExternalResultDetail(99, '01', '', '', '1', '2');
-            const secondExternalResult = { ...externalResult, resouceId: '02', homeValue: '', awayValue: '' }
-            component.resourceConfirmedSdt = [externalResult, secondExternalResult]
-            component.resultDetails = [resultDetail, secondResult]
-            toastrService.error = jest.fn();
-
-            component.refund();
-            tick();
-
-            expect(toastrService.error).toHaveBeenCalledWith(Language.confirmRefund.sdtErrorMessage);
-        }));
-
         it('should return error message when result is unsuccessful', fakeAsync(async () => {
             component.match = match;
-            component.matchDetail = match.matchDetail;
             aioService.checkMarkedTickets = jest.fn().mockReturnValue(Promise.resolve(noMarkedTicket));
             aioService.push = jest.fn().mockReturnValue(Promise.resolve(unSuccessfulResult));
             cashOutService.getTicketInfo = jest.fn().mockReturnValue(Promise.resolve([]));
@@ -222,7 +198,6 @@ describe('Component: RefundActionsComponent', () => {
 
         it('should call void bet when result is successful and exist ticket ', fakeAsync(async () => {
             component.match = match;
-            component.matchDetail = match.matchDetail;
             const voidBetInfo: VoidBetInfo = {
                 transId: '123',
                 custId: '123'
@@ -239,8 +214,47 @@ describe('Component: RefundActionsComponent', () => {
             const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
             buttonYes.click();
             tick();
-
+            
             expect(cashOutService.voidBet).toHaveBeenCalled();
+        }));
+
+        it('should alert when score result mismatch with result confirmed', fakeAsync(async () => {
+            component.match = match;
+            component.isSDTSettle = true;
+            resultDetail.resourceId = '01';
+            resultDetail.checked = true;
+            resultDetail.homeValue = '1';
+            resultDetail.awayValue = '2';
+            const secondResult = { ...resultDetail, resourceId: '02' };
+            const externalResult = new ExternalResultDetail(99, '01', '', '', '1', '2');
+            const secondExternalResult = { ...externalResult, resourceId: '02', homeValue: '', awayValue: '' }
+            component.resourceConfirmedSdt = [externalResult, secondExternalResult]
+            component.resultDetails = [resultDetail, secondResult]
+            toastrService.error = jest.fn();
+
+            component.refund();
+            tick();
+
+            expect(toastrService.error).toHaveBeenCalledWith(Language.confirmRefund.sdtErrorMessage);
+        }));
+
+        it('should alert when result mismatch with result confirmed', fakeAsync(async () => {
+            component.match = match;
+            component.isSDTSettle = true;
+            resultDetail.resourceId = '01';
+            resultDetail.checked = true;
+            resultDetail.homeValue = '1';
+            resultDetail.awayValue = '2';
+            const secondResult = { ...resultDetail, resourceId: '02', homeValue: '', awayValue: '' };
+            const externalResult = new ExternalResultDetail(99, '01', '', '', '1', '2');
+            component.resourceConfirmedSdt = [externalResult]
+            component.resultDetails = [resultDetail, secondResult]
+            toastrService.error = jest.fn();
+
+            component.refund();
+            tick();
+
+            expect(toastrService.error).toHaveBeenCalledWith(Language.confirmRefund.sdtErrorMessage);
         }));
 
         it('should alert when exist result not confirmed', fakeAsync(async () => {
@@ -249,7 +263,6 @@ describe('Component: RefundActionsComponent', () => {
             result.resultSettingData.isConfirmedRefund = false;
             result.checked = true;
             component.match = match;
-            component.matchDetail = match.matchDetail;
             component.resultDetails = [result];
             toastrService.error = jest.fn();
 

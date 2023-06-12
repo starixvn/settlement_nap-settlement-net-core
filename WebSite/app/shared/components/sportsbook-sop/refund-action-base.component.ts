@@ -44,7 +44,7 @@ export class RefundActionBaseComponent {
     }
 
     protected generateRefundQuery(apikey: string) {
-        if(!this.isSDTSettle) {
+        if (!this.isSDTSettle) {
             this.selectedResources.forEach((item) => {
                 item.homeValue = "";
                 item.awayValue = "";
@@ -57,7 +57,7 @@ export class RefundActionBaseComponent {
             false,
             "",
             apikey);
-        query.determinedType  = this.isSDTSettle ? this.aioService.generateDeterminedType(this.resultDetails) : 0;
+        query.determinedType = this.isSDTSettle ? this.aioService.generateDeterminedType(this.resultDetails) : 0;
         query.isDirectly = this.isDirectly;
         return query;
     }
@@ -95,20 +95,21 @@ export class RefundActionBaseComponent {
 
     undoConfirmedAllResult() {
         this.toastrService.clear();
+        const hedgeMatch = this.applyHedgeMatch ? this.hedgeMatchDetail : null;
         if (this.resultDetails.some(item => item.resultSettingData.isConfirmedRefund)) {
             const resourceIds = this.resultDetails.map(resource => resource.resourceId).join(',');
             this.aioService.changeConfirmResultSetting(Language.confirmRefund.undoConfirmAll, this.matchDetail.matchId, resourceIds, false,
-                this.applyHedgeMatch ? this.hedgeMatchDetail : null);
+                hedgeMatch);
         } else {
             const resourceItems = this.resultDetails.map(item => new ResourceItem(item.resourceId, item.homeValue, item.awayValue))
-            this.aioService.changeConfirmResultSDTSetting(this.matchDetail.matchId, resourceItems, false);
+            this.aioService.changeConfirmResultSDTSetting(this.matchDetail.matchId, resourceItems, false, hedgeMatch);
         }
     }
 
     confirmResult(resultDetails: ResultDetail[], matchId: number, resourceIds: string,
         hedgeMatchDetail: HedgeMatchDetail, oldMatchDetail: HedgeMatchDetail = null) {
         const refundedResultHasNoRunningTicket = _.find(resultDetails, item =>
-            item.settlementStatusId === SettlementStatusId.Refund && !_.isEqual(item.ticketStatus, TicketStatusText.running));
+            [SettlementStatusId.Refund, SettlementStatusId.RefundSettleDetermined].includes(item.settlementStatusId) && !_.isEqual(item.ticketStatus, TicketStatusText.running));
         if (_.isNil(refundedResultHasNoRunningTicket)) {
             this.aioService.changeConfirmResultSetting(Language.confirmRefund.confirmRefund, matchId, resourceIds, true,
                 hedgeMatchDetail, oldMatchDetail);
@@ -119,24 +120,38 @@ export class RefundActionBaseComponent {
 
     confirmRefundSdt() {
         const selectedResources = this.selectedResources;
+        const refundedResultHasNoRunningTicket = _.find(selectedResources, item =>
+            [SettlementStatusId.Refund, SettlementStatusId.RefundSettleDetermined].includes(item.settlementStatusId) && !_.isEqual(item.ticketStatus, TicketStatusText.running));
+
+        if (refundedResultHasNoRunningTicket) {
+            this.toastrService.error(Language.confirmRefund.refundedNoRunningTicket);
+            return;
+        } 
+
+        this.validateAndConfirmResultSDT(selectedResources);
+    
+    }
+
+    private validateAndConfirmResultSDT(selectedResources: ResultDetail[]){
         const resultDetails = this.isDirectly ? this.HalfAndFullTimeResults : this.resultDetails
         const firstSelectedResourceIndex = resultDetails.indexOf(selectedResources[0]);
-
+        const hedgeMatch = this.applyHedgeMatch ? this.hedgeMatchDetail : null;
         const isFirstResourceEmpty = _.isEmpty(selectedResources[0].awayValue) || _.isEmpty(selectedResources[0].homeValue);
-
+       
         if (this.validateResourceBeforeFirstSelected(firstSelectedResourceIndex, resultDetails)
             || isFirstResourceEmpty
             || this.validateResourceFrom2nd(firstSelectedResourceIndex, resultDetails)) {
             this.toastrService.error(Language.confirmRefund.sdtErrorMessage);
         } else {
             const resourceItems = this.selectedResources.map(item => new ResourceItem(item.resourceId, item.homeValue, item.awayValue))
-            this.aioService.changeConfirmResultSDTSetting(this.matchDetail.matchId, resourceItems, true);
+            this.aioService.changeConfirmResultSDTSetting(this.matchDetail.matchId, resourceItems, true, hedgeMatch);
         }
     }
 
+
     private validateResourceBeforeFirstSelected(firstResourceIndex: number, resultDetails: ResultDetail[]) {
         const resultDetailBefore = resultDetails.slice(0, firstResourceIndex);
-        return resultDetailBefore.some(resource => resource.settlementStatusId === SettlementStatusId.Running);
+        return resultDetailBefore.some(resource => resource.settlementStatusId !== SettlementStatusId.Calculated);
     }
 
     private validateResourceFrom2nd(firstResourceIndex: number, resultDetails: ResultDetail[]) {
@@ -189,7 +204,7 @@ export class RefundActionBaseComponent {
         const resultConfirmNormal = this.resultDetails.some(item => item.resultSettingData.isConfirmedRefund);
 
         if (resultConfirmNormal) {
-           return false;
+            return false;
         }
 
         return this.resultDetails.some(item =>

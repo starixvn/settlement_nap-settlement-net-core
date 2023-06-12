@@ -121,14 +121,16 @@ export class AioService {
         }
     }
 
-    public changeConfirmResultSDTSetting(matchId: number, resourceItems: ResourceItem[], isEnabled: boolean) {
+    public changeConfirmResultSDTSetting(matchId: number, resourceItems: ResourceItem[], isEnabled: boolean, hedgeMatchDetail: HedgeMatchDetail) {
         this.warningDialogMessage.title = Language.confirmationBox;
         this.warningDialogMessage.message = isEnabled ? Language.confirmRefund.sdtConfirm : Language.confirmRefund.undoConfirmAll;
         const resourceIds = resourceItems.map(resource => resource.resourceId).join(',');
         this.messageBoxService.confirm(this.warningDialogMessage, () => {
             const query = new ResultSettingQuery(matchId, ResultSettingType.confirmRefundSDT,
                 isEnabled, resourceIds, resourceItems);
-            this.changeResultSetting(query).finally(() => this.messageBoxService.closePopupNotChanged())
+            this.changeResultSetting(query).then( async () => {
+                await this.confirmHedgeMatch(query, hedgeMatchDetail);
+            }).finally(this.messageBoxService.closePopupNotChanged);
         });
     }
 
