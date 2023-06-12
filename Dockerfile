@@ -26,10 +26,12 @@ COPY ./WebSite .
 
 RUN dotnet publish -r linux-x64 --self-contained false -c Release -o /app
 
-FROM hub.nexdev.net/base/dotnet/core/aspnet:7.0 AS base
+FROM hub.nexdev.net/base/dotnet/core/aspnet:7.0-alpine AS base
 
 WORKDIR /app
 COPY --from=builder /app .
 
+RUN apk add --no-cache icu-libs
+ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
 ENV TZ="America/La_Paz"
 ENTRYPOINT ["dotnet", "Settlement.WebSites.dll"]

@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
+    <InvariantGlobalization>false</InvariantGlobalization>
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <CodeAnalysisRuleSet>..\.sonarlint\settlement-netcorecsharp.ruleset</CodeAnalysisRuleSet>
