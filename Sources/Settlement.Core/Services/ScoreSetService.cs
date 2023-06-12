@@ -14,24 +14,18 @@ public class ScoreSetServiceImp : IScoreSetService
 {
     public Score GetScore(ResultDetail item, Permission permission)
     {
-        if (item.SettlementStatusId == SettlementStatus.Refund)
+        switch (item.SettlementStatusId)
         {
-            return new Score(SetStatus.Refund);
-        }
-
-        if (item.SettlementStatusId == SettlementStatus.RefundHt)
-        {
-            return new Score(SetStatus.RefundHt);
-        }
-
-        if (item.SettlementStatusId == SettlementStatus.RefundFt)
-        {
-            return new Score(SetStatus.RefundFt);
-        }
-
-        if (item.SettlementStatusId == SettlementStatus.Completed)
-        {
-            return new Score(ConvertScore(item.HomeValue), ConvertScore(item.AwayValue), Background.Calculated);
+            case SettlementStatus.Refund:
+                return new Score(SetStatus.Refund);
+            case SettlementStatus.Abandoned:
+                return string.IsNullOrEmpty(item.HomeValue) || string.IsNullOrEmpty(item.AwayValue) ? new Score(SetStatus.Refund) : new Score(ConvertScore(item.HomeValue), ConvertScore(item.AwayValue));
+            case SettlementStatus.RefundHt:
+                return new Score(SetStatus.RefundHt);
+            case SettlementStatus.RefundFt:
+                return new Score(SetStatus.RefundFt);
+            case SettlementStatus.Completed:
+                return new Score(ConvertScore(item.HomeValue), ConvertScore(item.AwayValue), Background.Calculated);
         }
 
         var score = new Score(ConvertScore(item.HomeValue), ConvertScore(item.AwayValue))
@@ -40,11 +34,9 @@ public class ScoreSetServiceImp : IScoreSetService
             IsNotSettled = true
         };
 
-        if (permission is { IsLeader: false })
-        {
-            score.Home = "-";
-            score.Away = "-";
-        }
+        if (permission is not { IsLeader: false }) return score;
+        score.Home = "-";
+        score.Away = "-";
 
         return score;
     }

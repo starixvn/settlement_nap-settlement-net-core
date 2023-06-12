@@ -17,121 +17,128 @@ namespace Settlement.Sportsbook.Soccer.UnitTests.Services.Instant;
 
 public class InstantCalculateServiceTests
 {
-	private readonly IDynamicRepository repository;
+    private readonly IDynamicRepository repository;
 
-	private readonly InstantResourceService instantResourceService;
+    private readonly InstantResourceService instantResourceService;
 
-	private readonly ScaleOutSettleService scaleOutSettleService;
+    private readonly ScaleOutSettleService scaleOutSettleService;
 
-	private readonly InstantCalculateService service;
+    private readonly InstantCalculateService service;
+    private readonly PushInstantCalculationService pushInstantCalculationService;
 
-	public InstantCalculateServiceTests()
-	{
-		repository = Substitute.For<IDynamicRepository>();
-		instantResourceService = Substitute.For<InstantResourceService>();
-		scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
-		var pushInstantService = Substitute.For<PushInstantCalculationService>();
+    public InstantCalculateServiceTests()
+    {
+        repository = Substitute.For<IDynamicRepository>();
+        instantResourceService = Substitute.For<InstantResourceService>();
+        scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
+        pushInstantCalculationService = Substitute.For<PushInstantCalculationService>();
 
-		var mapperConfig = new MapperConfigurationExpression();
-		mapperConfig.AddProfile<SoccerAutoMapperProfile>();
-		var config = new MapperConfiguration(mapperConfig);
-		var mapper = new Mapper(config);
-		var appSettings = new AppSettingsKey { SiteDbServer = new List<string> { "DB01", "DB02", "DB03" } };
-		var option = Options.Create(appSettings);
+        var mapperConfig = new MapperConfigurationExpression();
+        mapperConfig.AddProfile<SoccerAutoMapperProfile>();
+        var config = new MapperConfiguration(mapperConfig);
+        var mapper = new Mapper(config);
+        var appSettings = new AppSettingsKey { SiteDbServer = new List<string> { "DB01", "DB02", "DB03" } };
+        var option = Options.Create(appSettings);
 
-		service = new InstantCalculateServiceImp(repository, mapper, instantResourceService, option, scaleOutSettleService, pushInstantService);
-	}
+        service = new InstantCalculateServiceImp(repository, mapper, instantResourceService, option, scaleOutSettleService, pushInstantCalculationService);
+    }
 
-	[Fact]
-	public async Task PushInstantCalculation_ActionIsUnCalculate_CallUnCalculateOnInstantResourceServiceAndReturnsResultFromRepositoryExecuteAsync()
-	{
-		// Arrange
-		const int errorCode = 100;
-		const string errorMsg = "Error Message";
-		var request = new InstantCalculationRequest
-		{
-			Action = ActionType.UnCalculate,
-			IsHalfTime = false
-		};
-		instantResourceService.UnCalculate(Arg.Any<InstantGoalCondition>()).Returns(new List<XmlResource>());
-		scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage { ErrorCode = errorCode, ErrorMessage = errorMsg });
-		repository.GetAsync<MatchTicketInfo>(Arg.Any<MatchTicketInfoCriteria>()).Returns(new MatchTicketInfo { });
-		repository.GetAsync<MatchDetail>(Arg.Any<GetMatchInfoCriteria>()).Returns(new MatchDetail { });
+    [Fact]
+    public async Task PushInstantCalculation_ActionIsUnCalculate_CallUnCalculateOnInstantResourceServiceAndReturnsResultFromRepositoryExecuteAsync()
+    {
+        // Arrange
+        const int errorCode = 100;
+        const string errorMsg = "Error Message";
+        var request = new InstantCalculationRequest
+        {
+            Action = ActionType.UnCalculate,
+            IsHalfTime = false
+        };
+        instantResourceService.UnCalculate(Arg.Any<InstantGoalCondition>()).Returns(new List<XmlResource>());
+        scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage { ErrorCode = errorCode, ErrorMessage = errorMsg });
+        repository.GetAsync<MatchTicketInfo>(Arg.Any<MatchTicketInfoCriteria>()).Returns(new MatchTicketInfo { });
+        repository.GetAsync<MatchDetail>(Arg.Any<GetMatchInfoCriteria>()).Returns(new MatchDetail { });
 
-		// Act
-		var result = await service.PushInstantCalculation(request);
+        // Act
+        var result = await service.PushInstantCalculation(request);
 
-		// Assert
-		//instantResourceService.Received().UnCalculate(Arg.Any<InstantGoalCondition>());
+        // Assert
+        //instantResourceService.Received().UnCalculate(Arg.Any<InstantGoalCondition>());
 
-		Assert.True(result.ErrCode == errorCode && result.ErrMsg == errorMsg);
-	}
+        Assert.True(result.ErrCode == errorCode && result.ErrMsg == errorMsg);
+    }
 
-	[Fact]
-	public async Task PushInstantCalculation_IsHalfTime_CallHalftimeOnInstantResourceServiceAndReturnsResultFromRepositoryExecute()
-	{
-		// Arrange
-		const int errorCode = 100;
-		const string errorMsg = "Error Message";
-		var request = new InstantCalculationRequest
-		{
-			Action = string.Empty,
-			IsHalfTime = true
-		};
-		instantResourceService.Halftime(Arg.Any<InstantGoalCondition>()).Returns(new List<XmlResource>());
-		scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage { ErrorCode = errorCode, ErrorMessage = errorMsg });
-		repository.GetAsync<MatchTicketInfo>(Arg.Any<MatchTicketInfoCriteria>()).Returns(new MatchTicketInfo { });
-		repository.GetAsync<MatchDetail>(Arg.Any<GetMatchInfoCriteria>()).Returns(new MatchDetail { });
-		// Act
-		var result = await service.PushInstantCalculation(request);
+    [Fact]
+    public async Task PushInstantCalculation_IsHalfTime_CallHalftimeOnInstantResourceServiceAndReturnsResultFromRepositoryExecute()
+    {
+        // Arrange
+        const int errorCode = 100;
+        const string errorMsg = "Error Message";
+        var request = new InstantCalculationRequest
+        {
+            Action = string.Empty,
+            IsHalfTime = true,
+            HomeScore = "1",
+            AwayScore = "1",
+            GoalRecord = "AH"
+        };
+        instantResourceService.Halftime(Arg.Any<InstantGoalCondition>()).Returns(new List<XmlResource>());
+        scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage { ErrorCode = errorCode, ErrorMessage = errorMsg });
+        repository.GetAsync<MatchTicketInfo>(Arg.Any<MatchTicketInfoCriteria>()).Returns(new MatchTicketInfo { GoalRecord = "AH" });
+        repository.GetAsync<MatchDetail>(Arg.Any<GetMatchInfoCriteria>()).Returns(new MatchDetail { GoalRecord = "AH" });
 
-		// Assert
-		instantResourceService.Received().Halftime(Arg.Any<InstantGoalCondition>());
+        // Act
+        var result = await service.PushInstantCalculation(request);
 
-		Assert.True(result.ErrCode == errorCode && result.ErrMsg == errorMsg);
-	}
+        // Assert
+        instantResourceService.Received().Halftime(Arg.Any<InstantGoalCondition>());
 
-	[Fact]
-	public async Task PushInstantCalculation_FullTime_CallFullTimeOnInstantResourceServiceAndReturnsResultFromRepositoryExecute()
-	{
-		// Arrange
-		const int errorCode = 100;
-		const string errorMsg = "Error Message";
-		var request = new InstantCalculationRequest
-		{
-			Action = ActionType.CalculateFullTime,
-			IsHalfTime = false
-		};
-		instantResourceService.FullTime(Arg.Any<InstantGoalCondition>()).Returns(new List<XmlResource>());
-		scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage { ErrorCode = errorCode, ErrorMessage = errorMsg });
-		repository.GetAsync<MatchDetail>(Arg.Any<GetMatchInfoCriteria>()).Returns(new MatchDetail());
-		// Act
-		var result = await service.PushInstantCalculation(request);
+        Assert.True(result.ErrCode == errorCode && result.ErrMsg == errorMsg);
+    }
 
-		// Assert
-		instantResourceService.Received().FullTime(Arg.Any<InstantGoalCondition>());
+    [Fact]
+    public async Task PushInstantCalculation_FullTime_CallFullTimeOnInstantResourceServiceAndReturnsResultFromRepositoryExecute()
+    {
+        // Arrange
+        const int errorCode = 100;
+        const string errorMsg = "Error Message";
+        var request = new InstantCalculationRequest
+        {
+            Action = ActionType.CalculateFullTime,
+            IsHalfTime = false
+        };
+        instantResourceService.FullTime(Arg.Any<InstantGoalCondition>()).Returns(new List<XmlResource>());
+        scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage { ErrorCode = errorCode, ErrorMessage = errorMsg });
+        repository.GetAsync<MatchTicketInfo>(Arg.Any<MatchTicketInfoCriteria>()).Returns(new MatchTicketInfo { GoalRecord = "AH" });
+        repository.GetAsync<MatchDetail>(Arg.Any<GetMatchInfoCriteria>()).Returns(new MatchDetail { GoalRecord = "AH" });
 
-		Assert.True(result.ErrCode == errorCode && result.ErrMsg == errorMsg);
-	}
+        // Act
+        var result = await service.PushInstantCalculation(request);
 
-	[Fact]
-	public async Task PushInstantCalculation_NotExistError_CallUpdateResultAndMatchInfoBeforePush()
-	{
-		// Arrange
-		var request = new InstantCalculationRequest { Action = ActionType.CalculateAll, HomeScore = "0", AwayScore = "0" };
-		scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
+        // Assert
+        instantResourceService.Received().FullTime(Arg.Any<InstantGoalCondition>());
 
-		// Act
-		await service.PushInstantCalculation(request);
+        Assert.True(result.ErrCode == errorCode && result.ErrMsg == errorMsg);
+    }
 
-		// Assert
-		Received.InOrder(() =>
-		{
-			repository.ExecuteAsync(Arg.Any<AddAutoResultCriteria>());
-			scaleOutSettleService.UpdateMatchInfo(Arg.Any<UpdateMatchInfoRequest>());
-			repository.ExecuteAsync(Arg.Any<PushInstantCalculationCriteria>());
-			repository.ExecuteAsync(Arg.Any<PushInstantCalculationCriteria>());
-			repository.ExecuteAsync(Arg.Any<PushInstantCalculationCriteria>());
-		});
-	}
+    [Fact]
+    public async Task PushInstantCalculation_NotExistError_CallUpdateResultAndMatchInfoBeforePush()
+    {
+        // Arrange
+        var request = new InstantCalculationRequest { Action = ActionType.CalculateAll, HomeScore = "0", AwayScore = "0" };
+        scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
+        repository.GetAsync<MatchTicketInfo>(Arg.Any<MatchTicketInfoCriteria>()).Returns(new MatchTicketInfo { GoalRecord = "AH" });
+        repository.GetAsync<MatchDetail>(Arg.Any<GetMatchInfoCriteria>()).Returns(new MatchDetail { GoalRecord = "AH" });
+
+        // Act
+        await service.PushInstantCalculation(request);
+
+        // Assert
+        Received.InOrder(() =>
+        {
+            repository.ExecuteAsync(Arg.Any<AddAutoResultCriteria>());
+            scaleOutSettleService.UpdateMatchInfo(Arg.Any<UpdateMatchInfoRequest>());
+            pushInstantCalculationService.Execute(Arg.Any<PushInstantCalculationCriteria>());
+        });
+    }
 }

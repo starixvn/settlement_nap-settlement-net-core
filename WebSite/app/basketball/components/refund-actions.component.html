@@ -38,7 +38,7 @@
 						<input id="final-checkbox" type="checkbox" [(ngModel)]="resultDetails[i+1].checked" (ngModelChange)="selectFullTimeCheckBox(); enableInput(quarter, isDirectly)" />
 					</td>
 					<td *ngIf="quarter.resourceId !== overTimeId && !last" class="temp">
-						<input type="checkbox" [(ngModel)]="quarter.checked" (ngModelChange)="enableInput(quarter)" [disabled]="quarter.isShow" />
+						<input type="checkbox" [(ngModel)]="quarter.checked" (ngModelChange)="enableInput(quarter)" [disabled]="quarter.disabled" />
 					</td>
 				</tr>
 				<tr>

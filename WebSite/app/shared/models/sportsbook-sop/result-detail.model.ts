@@ -17,6 +17,7 @@ export class ResultDetail extends GeneralResultDetail {
     externalScores: ExternalResultDetail[];
     isScoreMismatched: boolean;
     isShow = true;
+    disabled: boolean;
     resultSettingData: ResultSettingModel;
     originalHomeValue: string;
     originalAwayValue: string;

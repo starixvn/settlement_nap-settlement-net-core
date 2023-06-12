@@ -15,6 +15,7 @@ import { ModalContentDialogComponent } from "../modal-dialog/modal-content-dialo
 
 describe("Refund Base Component", () => {
     let component: RefundActionBaseComponent;
+    
     let fixture: ComponentFixture<RefundActionBaseComponent>;
     let aioService: AioService;
     let toastrService: ToastrService;

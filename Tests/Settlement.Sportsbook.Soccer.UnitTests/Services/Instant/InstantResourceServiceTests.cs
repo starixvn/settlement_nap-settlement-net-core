@@ -348,9 +348,8 @@ public class InstantResourceServiceTests
 
     [Theory]
     [InlineData("", true, true, "")]
-    [InlineData("1FL:2-0;", true, true, "")]
     [InlineData("FL:2-0;", true, true, "")]
-    [InlineData("1FL:2-0;FL:2-0;", true, true, "")]
+    [InlineData("1FL:2-0;FL:2-0;", true, true, "1FL:2-0;")]
     [InlineData("1FL:2-0;FL:2-0;", false, false, "1FL:2-0;FL:2-0;")]
     public void RemoveBetStatus_Always_RemoveBetStatus(string betStatus, bool isExistHtfg, bool isExistFg, string expected)
     {

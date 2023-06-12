@@ -3,7 +3,7 @@ import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/t
 import { HttpClientModule } from '@angular/common/http';
 import { ElementRef } from "@angular/core";
 import { CalculationActionsComponent } from './calculation-actions.component';
-import { BasketballService, BetStatusService, VerificationService } from '../services';
+import { BasketballService, BetStatusService, VerificationService, CashOutService } from '../services';
 import { MessageBoxService, AioService } from '../../shared/services';
 import { ModalDialogComponent } from "../../shared/components/modal-dialog/modal-dialog.component";
 import { Match, HedgeMatchDetail, VoidBetInfo } from '../models';
@@ -27,6 +27,7 @@ describe('Basketball - Calculation Actions Component', () => {
     let aioService: AioService;
     let betStatusService: BetStatusService;
     let toastrService: ToastrService;
+    let cashOutService: CashOutService;
     const resultDetail = new ResultDetail();
     resultDetail.resourceId = ResourcesIds.quarter1;
     resultDetail.ticketStatus = null;
@@ -93,7 +94,7 @@ describe('Basketball - Calculation Actions Component', () => {
                 TicketCountComponent,
                 ResettleCheckerComponent,
                 CalculationActionsComponent
-            ],
+            ]
         })
             .overrideModule(BrowserDynamicTestingModule, {
                 set: {
@@ -110,6 +111,7 @@ describe('Basketball - Calculation Actions Component', () => {
                 verificationService = fixture.debugElement.injector.get(VerificationService);
                 betStatusService = fixture.debugElement.injector.get(BetStatusService);
                 toastrService = fixture.debugElement.injector.get(ToastrService);
+                cashOutService = fixture.debugElement.injector.get(CashOutService);
                 component.initService();
             });
     }));
@@ -469,6 +471,7 @@ describe('Basketball - Calculation Actions Component', () => {
 
     it('saveScore - should push successfully when user confirm save score', fakeAsync(() => {
         component.resultDetails = [fullTime, resultDetail];
+        component.matchDetail = matchDetail;
         aioService.saveScore = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
         verificationService.getChangedScores = jest.fn().mockReturnValue([]);
         verificationService.getOutsideScores = jest.fn().mockReturnValue([]);
@@ -522,6 +525,7 @@ describe('Basketball - Calculation Actions Component', () => {
 
         it('should push twice and save score when all verifications passed', fakeAsync(() => {
             component.match = match;
+            component.matchDetail = matchDetail;
             resultDetail.checked = true;
             resultDetail.homeValue = '1';
             resultDetail.awayValue = '1';
@@ -539,7 +543,7 @@ describe('Basketball - Calculation Actions Component', () => {
             betStatusService.getBetStatus = jest.fn().mockReturnValue("");
             verificationService.getOutsideScores = jest.fn().mockReturnValue([]);
             verificationService.getChangedScores = jest.fn().mockReturnValue([]);
-            aioService.getTicketInfo = jest.fn().mockReturnValue(Promise.resolve([]));
+            cashOutService.getTicketInfo = jest.fn().mockReturnValue(Promise.resolve([]));
             aioService.saveScore = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
             aioService.verifyChangedSettledTickets = jest.fn().mockReturnValue(Promise.resolve(false));
             aioService.push = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
@@ -554,8 +558,41 @@ describe('Basketball - Calculation Actions Component', () => {
             expect(aioService.saveScore).toHaveBeenCalled();
         }));
 
+        it('should generate determine type when setting SDT On', fakeAsync(() => {
+            component.match = match;
+            matchDetail.autoSetting = 2;
+            component.matchDetail = matchDetail;
+            component.isLeader = true;
+            component.applyHedgeMatch = false;
+            component.isReSettledTickets = true;
+            component.resultDetails = [resultDetail];
+            aioService.verifyNoRunningOdds = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
+            verificationService.isInputScoreInvalid = jest.fn().mockReturnValue(false);
+            verificationService.verifyIntervalsCalculated = jest.fn().mockReturnValue(false);
+            verificationService.isFtScoreLowerThanHtScore = jest.fn().mockReturnValue(false);
+            verificationService.allMapHaveScoreSources = jest.fn().mockReturnValue(true);
+            verificationService.isExistMismatchScore = jest.fn().mockReturnValue(false);
+            betStatusService.getBetStatus = jest.fn().mockReturnValue("");
+            aioService.push = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
+            
+            verificationService.getOutsideScores = jest.fn().mockReturnValue([]);
+            verificationService.getChangedScores = jest.fn().mockReturnValue([]);
+            cashOutService.getTicketInfo = jest.fn().mockReturnValue(Promise.resolve([]));
+            aioService.saveScore = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
+            aioService.generateDeterminedType = jest.fn();
+
+            component.calculate();
+            tick();
+            const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
+            buttonYes.click();
+            tick();
+
+            expect(aioService.generateDeterminedType).toHaveBeenCalled();
+        }));
+
         it('should not push hedge match when not apply for hedge match', fakeAsync(() => {
             component.match = match;
+            component.matchDetail = matchDetail;
             component.match.resultDetails = [new ResultDetail()];
             component.isLeader = true;
             component.applyHedgeMatch = false;
@@ -570,7 +607,7 @@ describe('Basketball - Calculation Actions Component', () => {
             aioService.push = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
             verificationService.getOutsideScores = jest.fn().mockReturnValue([]);
             verificationService.getChangedScores = jest.fn().mockReturnValue([]);
-            aioService.getTicketInfo = jest.fn().mockReturnValue(Promise.resolve([]));
+            cashOutService.getTicketInfo = jest.fn().mockReturnValue(Promise.resolve([]));
             aioService.saveScore = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
             aioService.verifyChangedSettledTickets = jest.fn().mockReturnValue(Promise.resolve(false));
 
@@ -585,6 +622,7 @@ describe('Basketball - Calculation Actions Component', () => {
 
         it('should set error message when calculate unsuccessfully', fakeAsync(() => {
             component.match = match;
+            component.matchDetail = matchDetail;
             component.isLeader = true;
             component.applyHedgeMatch = false;
             component.isReSettledTickets = true;
@@ -599,7 +637,7 @@ describe('Basketball - Calculation Actions Component', () => {
             aioService.push = jest.fn().mockReturnValue(Promise.resolve(unSuccessfulResult));
             verificationService.getOutsideScores = jest.fn().mockReturnValue([]);
             verificationService.getChangedScores = jest.fn().mockReturnValue([]);
-            aioService.getTicketInfo = jest.fn().mockReturnValue(Promise.resolve([]));
+            cashOutService.getTicketInfo = jest.fn().mockReturnValue(Promise.resolve([]));
             aioService.saveScore = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
 
             component.calculate();
@@ -632,8 +670,8 @@ describe('Basketball - Calculation Actions Component', () => {
             aioService.push = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
             verificationService.getOutsideScores = jest.fn().mockReturnValue([]);
             verificationService.getChangedScores = jest.fn().mockReturnValue([]);
-            aioService.getTicketInfo = jest.fn().mockReturnValue(Promise.resolve([voidBetInfo]));
-            aioService.voidBet = jest.fn().mockReturnValue(Promise.resolve(""));
+            cashOutService.getTicketInfo = jest.fn().mockReturnValue(Promise.resolve([voidBetInfo]));
+            cashOutService.voidBet = jest.fn().mockReturnValue(Promise.resolve(""));
             aioService.saveScore = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
 
             component.calculate();
@@ -642,11 +680,12 @@ describe('Basketball - Calculation Actions Component', () => {
             buttonYes.click();
             tick();
 
-            expect(aioService.voidBet).toHaveBeenCalled();
+            expect(cashOutService.voidBet).toHaveBeenCalled();
         }));
 
         it('should set error message when save score unsuccessfully', fakeAsync(() => {
             component.match = match;
+            component.matchDetail = matchDetail;
             component.isLeader = true;
             component.applyHedgeMatch = false;
             component.isReSettledTickets = true;
@@ -674,6 +713,7 @@ describe('Basketball - Calculation Actions Component', () => {
 
         it('should alert when missing score source for maps and user is not leader', fakeAsync(() => {
             component.match = match;
+            component.matchDetail = matchDetail;
             component.match.resultDetails = [new ResultDetail()];
             component.isLeader = false;
             component.isReSettledTickets = true;
@@ -692,6 +732,7 @@ describe('Basketball - Calculation Actions Component', () => {
 
         it('should alert when score is mismatch and user is not leader', fakeAsync(() => {
             component.match = match;
+            component.matchDetail = matchDetail;
             component.match.resultDetails = [new ResultDetail()];
             component.isLeader = false;
             component.isReSettledTickets = true;
@@ -711,6 +752,7 @@ describe('Basketball - Calculation Actions Component', () => {
 
         it('should alert when pass validation and exist running odds', fakeAsync(() => {
             component.match = match;
+            component.matchDetail = matchDetail;
             component.match.resultDetails = [new ResultDetail()];
             component.isLeader = false;
             component.resultDetails = [resultDetail];
@@ -749,8 +791,8 @@ describe('Basketball - Calculation Actions Component', () => {
                 component.match = match;
                 component.matchDetail = matchDetail;
                 aioService.push = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
-                aioService.getTicketInfo = jest.fn().mockReturnValue(Promise.resolve([]));
-                aioService.voidBet = jest.fn().mockReturnValue(Promise.resolve(""));
+                cashOutService.getTicketInfo = jest.fn().mockReturnValue(Promise.resolve([]));
+                cashOutService.voidBet = jest.fn().mockReturnValue(Promise.resolve(""));
                 betStatusService.getBetStatus = jest.fn().mockReturnValue("");
                 messageBoxService.closePopup = jest.fn();
                 toastrService.error = jest.fn();
@@ -778,8 +820,8 @@ describe('Basketball - Calculation Actions Component', () => {
                 custId: '123'
             };
             aioService.push = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
-            aioService.getTicketInfo = jest.fn().mockReturnValue(Promise.resolve([voidBetInfo]));
-            aioService.voidBet = jest.fn().mockReturnValue(Promise.resolve(""));
+            cashOutService.getTicketInfo = jest.fn().mockReturnValue(Promise.resolve([voidBetInfo]));
+            cashOutService.voidBet = jest.fn().mockReturnValue(Promise.resolve(""));
             betStatusService.getBetStatus = jest.fn().mockReturnValue("");
             messageBoxService.closePopup = jest.fn();
 
@@ -791,7 +833,7 @@ describe('Basketball - Calculation Actions Component', () => {
             buttonYes.click();
             tick();
 
-            expect(aioService.voidBet).toHaveBeenCalled();
+            expect(cashOutService.voidBet).toHaveBeenCalled();
         }));
 
         it(
@@ -800,8 +842,9 @@ describe('Basketball - Calculation Actions Component', () => {
             fakeAsync(() => {
                 component.resultDetails = [fullTime];
                 component.match = match;
+                component.matchDetail = matchDetail;
                 betStatusService.getBetStatus = jest.fn().mockReturnValue("");
-                aioService.getTicketInfo = jest.fn().mockReturnValue(Promise.resolve([]));
+                cashOutService.getTicketInfo = jest.fn().mockReturnValue(Promise.resolve([]));
                 aioService.push = jest.fn().mockReturnValue(Promise.resolve(unSuccessfulResult));
                 toastrService.error = jest.fn();
 

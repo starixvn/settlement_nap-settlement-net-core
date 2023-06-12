@@ -1,14 +1,15 @@
+import { CashOutService } from './../services/cash-out.service';
 import { TestBed, waitForAsync, ComponentFixture, fakeAsync, tick } from '@angular/core/testing';
 import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { HttpClientModule } from '@angular/common/http';
 import { RefundActionsComponent } from './refund-actions.component';
-import { BasketballService} from '../services';
+import { BasketballService, VerificationService } from '../services';
 import { Match, HedgeMatchDetail, VoidBetInfo } from '../models';
-import { MessageBoxService,AioService } from '../../shared/services';
+import { MessageBoxService, AioService } from '../../shared/services';
 import { Language } from '../../shared/language.native';
-import { SettlementStatusId } from '../../shared/constants';
+import { ResultStatusId, SettlementStatusId } from '../../shared/constants';
 import { ResultSettingModel } from '../../shared/models';
-import { MatchDetail, Permission, ResultDetail } from '../../shared/models/sportsbook-sop';
+import { ExternalResult, ExternalResultDetail, MatchDetail, Permission, ResultDetail } from '../../shared/models/sportsbook-sop';
 import { ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 import { ModalContentDialogComponent } from '../../shared/components/modal-dialog/modal-content-dialog.component';
 import { ModalDialogComponent } from '../../shared/components/modal-dialog/modal-dialog.component';
@@ -21,6 +22,8 @@ describe('Component: RefundActionsComponent', () => {
     let aioService: AioService;
     let toastrService: ToastrService;
     let basketballService: BasketballService;
+    let cashOutService: CashOutService;
+    let verificationService: VerificationService;
     const buttonName = "btn-danger";
     const errorMessage = "Error message";
     const successfulResult = {
@@ -57,6 +60,7 @@ describe('Component: RefundActionsComponent', () => {
     matchDetail.matchId = 70000000;
     matchDetail.leagueGroupId = 1;
     const match = new Match(matchDetail);
+    const permission = new Permission();
 
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
@@ -72,10 +76,10 @@ describe('Component: RefundActionsComponent', () => {
                 RefundActionsComponent
             ],
         }).overrideModule(BrowserDynamicTestingModule, {
-                set: {
-                    entryComponents: [ModalDialogComponent, ModalContentDialogComponent],
-                },
-            })
+            set: {
+                entryComponents: [ModalDialogComponent, ModalContentDialogComponent],
+            },
+        })
             .compileComponents()
             .then(() => {
                 fixture = TestBed.createComponent(RefundActionsComponent);
@@ -84,7 +88,8 @@ describe('Component: RefundActionsComponent', () => {
                 aioService = fixture.debugElement.injector.get(AioService);
                 toastrService = fixture.debugElement.injector.get(ToastrService);
                 basketballService = fixture.debugElement.injector.get(BasketballService);
-                component.initService();
+                cashOutService = fixture.debugElement.injector.get(CashOutService);
+                verificationService = fixture.debugElement.injector.get(VerificationService);
             });
     }));
 
@@ -122,7 +127,7 @@ describe('Component: RefundActionsComponent', () => {
             aioService.checkMarkedTickets = jest.fn().mockReturnValue(Promise.resolve(noMarkedTicket));
             aioService.push = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
             messageBoxService.closePopup = jest.fn();
-            aioService.getTicketInfo = jest.fn().mockReturnValue(Promise.resolve([]));
+            cashOutService.getTicketInfo = jest.fn().mockReturnValue(Promise.resolve([]));
             toastrService.error = jest.fn();
 
             component.refund();
@@ -148,7 +153,7 @@ describe('Component: RefundActionsComponent', () => {
 
                 aioService.checkMarkedTickets = jest.fn().mockReturnValue(Promise.resolve(noMarkedTicket));
                 aioService.push = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
-                aioService.getTicketInfo = jest.fn().mockReturnValue(Promise.resolve([]));
+                cashOutService.getTicketInfo = jest.fn().mockReturnValue(Promise.resolve([]));
                 messageBoxService.closePopup = jest.fn();
                 toastrService.error = jest.fn();
 
@@ -176,12 +181,32 @@ describe('Component: RefundActionsComponent', () => {
             expect(toastrService.error).toHaveBeenCalledWith(Language.MarkedTicket);
         }));
 
+        it('should alert when result mismatch with result confirmed', fakeAsync(async () => {
+            component.match = match;
+            component.isSDTSettle = true;
+            resultDetail.resourceId = '01';
+            resultDetail.checked = true;
+            resultDetail.homeValue = '1';
+            resultDetail.awayValue = '2';
+            const secondResult = { ...resultDetail, resourceId: '02' };
+            const externalResult = new ExternalResultDetail(99, '01', '', '', '1', '2');
+            const secondExternalResult = { ...externalResult, resouceId: '02', homeValue: '', awayValue: '' }
+            component.resourceConfirmedSdt = [externalResult, secondExternalResult]
+            component.resultDetails = [resultDetail, secondResult]
+            toastrService.error = jest.fn();
+
+            component.refund();
+            tick();
+
+            expect(toastrService.error).toHaveBeenCalledWith(Language.confirmRefund.sdtErrorMessage);
+        }));
+
         it('should return error message when result is unsuccessful', fakeAsync(async () => {
             component.match = match;
             component.matchDetail = match.matchDetail;
             aioService.checkMarkedTickets = jest.fn().mockReturnValue(Promise.resolve(noMarkedTicket));
             aioService.push = jest.fn().mockReturnValue(Promise.resolve(unSuccessfulResult));
-            aioService.getTicketInfo = jest.fn().mockReturnValue(Promise.resolve([]));
+            cashOutService.getTicketInfo = jest.fn().mockReturnValue(Promise.resolve([]));
             messageBoxService.closePopup = jest.fn();
             toastrService.error = jest.fn();
 
@@ -204,8 +229,8 @@ describe('Component: RefundActionsComponent', () => {
             };
             aioService.checkMarkedTickets = jest.fn().mockReturnValue(Promise.resolve(noMarkedTicket));
             aioService.push = jest.fn().mockReturnValue(Promise.resolve(successfulResult));
-            aioService.getTicketInfo = jest.fn().mockReturnValue(Promise.resolve([voidBetInfo]));
-            aioService.voidBet = jest.fn().mockReturnValue(Promise.resolve(""));
+            cashOutService.getTicketInfo = jest.fn().mockReturnValue(Promise.resolve([voidBetInfo]));
+            cashOutService.voidBet = jest.fn().mockReturnValue(Promise.resolve(""));
             messageBoxService.closePopup = jest.fn();
             toastrService.error = jest.fn();
 
@@ -215,7 +240,7 @@ describe('Component: RefundActionsComponent', () => {
             buttonYes.click();
             tick();
 
-            expect(aioService.voidBet).toHaveBeenCalled();
+            expect(cashOutService.voidBet).toHaveBeenCalled();
         }));
 
         it('should alert when exist result not confirmed', fakeAsync(async () => {
@@ -234,14 +259,208 @@ describe('Component: RefundActionsComponent', () => {
             expect(toastrService.error).toHaveBeenCalledWith("WARNING! Cannot continue due to selected results are not confirmed to refund. Please confirm refund and try again.");
         }));
     });
-    it('init - should set components properties, apply hedge match', () => {
-        component.match = match;
-        basketballService.getResultDetail = jest.fn().mockReturnValue([]);
+    describe('Init', () => {
+        beforeEach(() => {
+            match.externalResults = [new ExternalResult(99, [])];
+            match.permission = permission;
+            match.hedgeMatchDetail = new HedgeMatchDetail();
+            component.permission = permission;
+            component.match = match;
+            basketballService.getResourceExternalRefund = jest.fn();
+        });
 
-        component.init();
+        it('should set components properties, apply hedge match', () => {
+            basketballService.getResultDetail = jest.fn().mockReturnValue([]);
+            verificationService.isTicketOnQuarter = jest.fn().mockReturnValue(false);
 
-        expect(component.matchId).toEqual(match.matchDetail.matchId);
-        expect(component.hedgeMatchDetail).toEqual(match.hedgeMatchDetail);
-        expect(component.applyHedgeMatch).toBe(true);
+            component.init();
+
+            expect(component.matchId).toEqual(match.matchDetail.matchId);
+            expect(component.hedgeMatchDetail).toEqual(match.hedgeMatchDetail);
+            expect(component.applyHedgeMatch).toBeTruthy();
+            expect(component.isDirectly).toBeFalsy()
+            expect(verificationService.isTicketOnQuarter).toHaveBeenCalled();
+            expect(basketballService.getResourceExternalRefund).toHaveBeenCalled();
+        });
+
+        it('should turn on SDT when exist result confirmed SDT', () => {
+            component.permission.isLeader = true;
+            const resultSettingData = new ResultSettingModel();
+            resultSettingData.isConfirmedRefundSdt = true;
+            resultDetail.resultSettingData = resultSettingData;
+
+            basketballService.getResultDetail = jest.fn().mockReturnValue([resultDetail]);
+            component.init();
+
+
+            expect(component.isSDTSettle).toBeTruthy();
+        });
+
+        it('should turn on SDT when exist result calculated', () => {
+            component.permission.isLeader = true;
+            resultDetail.resultStatusId = ResultStatusId.AutoCompleted;
+
+            basketballService.getResultDetail = jest.fn().mockReturnValue([resultDetail]);
+            component.init();
+
+
+            expect(component.isSDTSettle).toBeTruthy();
+        });
+
+        it('should turn off SDT when exist result calculated but exist result confirm refund normal ', () => {
+            component.permission.isLeader = true;
+            resultDetail.resultStatusId = ResultStatusId.AutoCompleted;
+            const resultSettingData = new ResultSettingModel();
+            resultSettingData.isConfirmedRefund = true;
+            resultDetail.resultSettingData = resultSettingData;
+
+            basketballService.getResultDetail = jest.fn().mockReturnValue([resultDetail]);
+            component.init();
+
+
+            expect(component.isSDTSettle).toBeFalsy();
+        });
+    });
+
+    it('changeScore - should clear score result behind result has inputted', () => {
+        const resultDetail1 = { resourceId: '01', awayValue: "1", homeValue: "2" } as ResultDetail;
+        const resultDetail2 = { ...resultDetail1, resourceId: '02' };
+        const resultDetail3 = { ...resultDetail1, resourceId: '03' };
+
+        component.resultDetails = [resultDetail1, resultDetail2, resultDetail3]
+
+        component.changeScore(resultDetail2);
+
+        expect(component.resultDetails[0].awayValue).toBe("1");
+        expect(component.resultDetails[0].homeValue).toBe("2");
+        expect(component.resultDetails[1].awayValue).toBe("1");
+        expect(component.resultDetails[1].homeValue).toBe("2");
+        expect(component.resultDetails[2].awayValue).toBe("");
+        expect(component.resultDetails[2].homeValue).toBe("");
+    });
+
+    describe('inputDirectly', () => {
+        it('should disable quarter and enable HT & FT for both input & select when select settle directly and SDT', () => {
+            component.isDirectly = true;
+            component.isSDTSettle = true;
+            const ht = { resourceId: '01', awayValue: "1", homeValue: "2", checked: true } as ResultDetail;
+            const ft = { ...ht, resourceId: '00' };
+            const resultDetail2 = { ...ht, resourceId: '02' };
+            const resultDetail3 = { ...ht, resourceId: '06' };
+
+            component.resultDetails = [ht, ft, resultDetail2, resultDetail3];
+            component.resultDetailDisableInput = new Array(component.resultDetails.length).fill(true);
+            component.inputDirectly();
+
+            expect(component.resultDetails.map(i => i.disabled)).toEqual([undefined, undefined, true, true]);
+            expect(component.resultDetailDisableInput).toEqual([false, false, true, true]);
+        });
+
+        it('Status input and select correct for FT,HT and quarter when select settle directly and not SDT', () => {
+            component.isDirectly = true;
+            component.isSDTSettle = false;
+            const ht = { resourceId: '01', awayValue: "1", homeValue: "2", checked: true } as ResultDetail;
+            const ft = { ...ht, resourceId: '00' };
+            const resultDetail2 = { ...ht, resourceId: '02' };
+            const resultDetail3 = { ...ht, resourceId: '06' };
+
+            component.resultDetails = [ht, ft, resultDetail2, resultDetail3];
+            component.resultDetailDisableInput = new Array(component.resultDetails.length).fill(true);
+            component.inputDirectly();
+
+            expect(component.resultDetails.map(i => i.disabled)).toEqual([undefined, undefined, true, true]);
+            expect(component.resultDetailDisableInput).toEqual([true, true, true, true]);
+        });
+    });
+
+
+
+    describe('selectFullTimeCheckBox', () => {
+        beforeEach(() => {
+            component.resultDetails = [{ ...resultDetail, resourceId: '00', checked: true }, { ...resultDetail, resourceId: 'OT' }];
+        });
+
+        it('should set overTime checked to fullTime checked when isSDTSettle is true and isDirectly is false', () => {
+            component.isSDTSettle = true;
+            component.isDirectly = false;
+
+            component.selectFullTimeCheckBox();
+
+            expect(component.overTimeResult.checked).toBe(component.fullTimeResult.checked);
+        });
+
+        it('should set overTimeResult.checked to false when isSDTSettle is false or isDirectly is true', () => {
+            component.isSDTSettle = false;
+            component.isDirectly = true;
+
+            component.selectFullTimeCheckBox();
+
+            expect(component.overTimeResult.checked).toBe(false);
+        });
+    });
+
+    describe('enableInput - should return correct status of input text box', () => {
+
+        beforeEach(() => {
+            const ht = { resourceId: '01', awayValue: "1", homeValue: "2", checked: true } as ResultDetail;
+            const ft = { ...ht, resourceId: '00' };
+            const resultDetail1 = { ...ht, resourceId: '02' };
+            const OT = { ...ht, resourceId: '06' };
+            component.resultDetails = [ht, ft, resultDetail1, OT];
+            component.resultDetailDisableInput = new Array(component.resultDetails.length).fill(true);
+        })
+        it('When not pass result specifically and not is SDT ', () =>{
+            component.isSDTSettle = false;
+
+            component.enableInput();
+
+            expect(component.resultDetailDisableInput.every(i => i)).toBeTruthy();
+        });
+
+        it('When not pass result specifically and SDT ', () =>{
+            component.isSDTSettle = true;
+
+            component.enableInput();
+
+            expect(component.resultDetailDisableInput.map(i => i)).toEqual([true, true, false, false]);
+        });
+
+        it('When not pass result specifically and SDT ON and directly ON ', () =>{
+            component.isSDTSettle = true;
+            component.isDirectly = true;
+
+            component.enableInput();
+
+            expect(component.resultDetailDisableInput.map(i => i)).toEqual([false, false, true, true]);
+        });
+
+        it('When pass result specifically and SDT ON and directly ON', () =>{
+            component.isSDTSettle = true;
+            component.isDirectly = true;
+
+            component.enableInput(component.resultDetails[2]);
+
+            expect(component.resultDetailDisableInput[2]).toBeTruthy();
+        });
+
+        it('When pass result specifically and result is fulltime and SDT ON and directly ON', () =>{
+            component.isSDTSettle = true;
+            component.isDirectly = true;
+
+            component.enableInput(component.resultDetails[3], true);
+
+            expect(component.resultDetailDisableInput[1]).toBeFalsy();
+            expect(component.resultDetailDisableInput[3]).toBeTruthy();
+        });
+
+        it('When pass result specifically and result is fulltime and SDT ON and directly off', () =>{
+            component.isSDTSettle = true;
+            component.isDirectly = false;
+
+            component.enableInput(component.resultDetails[3], true);
+
+            expect(component.resultDetailDisableInput[1]).toBeTruthy();
+            expect(component.resultDetailDisableInput[3]).toBeTruthy();
+        });
     });
 });

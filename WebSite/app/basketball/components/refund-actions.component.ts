@@ -170,13 +170,13 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
         if (this.isDirectly) {
             isDisable = true;
         }
-        for (let i = 0; i < this.resultDetails.length; i++) {
-            this.resultDetailDisableInput[i] = !this.isEnableResult(this.resultDetails[i]);
-        }
+        this.resultDetails.forEach((resultDetail, i) => {
+            this.resultDetailDisableInput[i] = !this.isEnableResult(resultDetail);
+        });
 
         this.quarterResults.forEach(result => {
             result.checked = false;
-            result.isShow = isDisable;
+            result.disabled = isDisable;
         });
     }
 

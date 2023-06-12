@@ -417,13 +417,13 @@ export class CalculationActionsComponent implements SportTemplate {
         const query = new SettleQuery(this.matchDetail, resource, actionName, this.isReSettledTickets,
             betStatus, BasketballApiKeys.settle, this.match.permission.isLeader);
         query.isDirectly = this.match.isScoreDirect;
-        query.determinedType = this.setDeterminedType();
+        query.determinedType = this.setDeterminedType(actionName);
         return query;
     }
 
-    private setDeterminedType(){
+    private setDeterminedType(actionName: string){
         const isInstant = this.matchDetail.autoSetting > 1 ? this.matchDetail.autoSetting.toString(2).split("").reverse()[SettingPosition.instant] === "1" : false;
-        return CalculateAction.calculate && isInstant ? this.aioService.generateDeterminedType(this.resultDetails) : 0;
+        return _.isEqual(actionName, CalculateAction.calculate) && isInstant ? this.aioService.generateDeterminedType(this.resultDetails) : 0;
     }
 
 
