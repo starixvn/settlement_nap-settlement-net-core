@@ -46,7 +46,11 @@ export class FilterComponent implements OnInit, OnChanges {
   private subfixNumberItemsCheckedText: string =
     DefaultSetting.SUBFIX_NUMBER_ITEMS_CHECKED_TEXT;
 
-  constructor(private readonly requestService: RequestService) {}
+  constructor(private readonly requestService: RequestService) {
+    this.intervalEvent = new EventEmitter();
+    this.ticketStatusEvent = new EventEmitter();
+    this.resultStatusEvent = new EventEmitter();
+  }
 
   public ngOnInit() {
     this.configFilter();
@@ -65,9 +69,7 @@ export class FilterComponent implements OnInit, OnChanges {
       this.updateIntervalSelectionByWaterBreak();
       this.selectTicketStatusFilterBySpecialSession();
     }
-
     this.waterBreakUnchecked(changes[specialSession]);
-
     if (
       changes[specialSessionPos] &&
       !this.isApplySpecialSession &&
@@ -76,7 +78,6 @@ export class FilterComponent implements OnInit, OnChanges {
       this.selectIntervalFilterByWaterBreak();
       this.intervalEvent.emit(new IntervalEvent(this.specialSessionPositions));
     }
-
     if (changes[pos] && !_.isNil(this.positions)) {
       this.updateIntervalSelection();
     }
@@ -127,26 +128,44 @@ export class FilterComponent implements OnInit, OnChanges {
 
   private configFilter() {
     this.filter = new Filter();
-    this.ticketStatusSelect.items = [];
-    this.ticketStatusSelect.maxWidth = "150px";
-    this.resultStatusSelect.items = [];
-    this.resultStatusSelect.maxWidth = "160px";
-    this.timeIntervalSelect.items = [];
-    this.timeIntervalSelect.maxWidth = "130px";
+
+    // this.ticketStatusSelect = new MultipleSelect();
+    // this.ticketStatusSelect.items = [];
+    // this.ticketStatusSelect.maxWidth = "150px";
+
+    // this.resultStatusSelect = new MultipleSelect();
+    // this.resultStatusSelect.maxWidth = "160px";
+    // this.resultStatusSelect.items = [];
+
+    // this.timeIntervalSelect = new MultipleSelect();
+    // this.timeIntervalSelect.items = [];
+    // this.timeIntervalSelect.maxWidth = "130px";
   }
 
-  private getFilterData() {
-    this.requestService.getFilterData().subscribe((filter: Filter) => {
-      this.filter.checked = false;
-      this.resultStatusSelect.items = this.renderResultStatus(
-        filter.resultStatus
-      );
-      this.timeIntervalSelect.items = this.renderTimeInterval(filter.interval);
-      this.initialTimeIntervalSelect = _.cloneDeep(this.timeIntervalSelect);
-      this.initialResultStatusSelect = _.cloneDeep(this.resultStatusSelect);
-    });
+  private async getFilterData() {
+    const result = await this.requestService.getFilterData();
+    this.filter.checked = false;
 
+    this.resultStatusSelect = new MultipleSelect();
+    this.resultStatusSelect.maxWidth = "160px";
+    // this.resultStatusSelect.items = [];
+    this.resultStatusSelect.items = this.renderResultStatus(
+      result.resultStatus
+    );
+    this.initialResultStatusSelect = _.cloneDeep(this.resultStatusSelect);
+
+    this.timeIntervalSelect = new MultipleSelect();
+    this.timeIntervalSelect.maxWidth = "130px";
+    this.timeIntervalSelect.haveGroup = true;
+    this.timeIntervalSelect.items = this.renderTimeInterval(result.interval);
+    this.initialTimeIntervalSelect = _.cloneDeep(this.timeIntervalSelect);
+
+    this.ticketStatusSelect = new MultipleSelect();
+    this.ticketStatusSelect.maxWidth = "150px";
     this.ticketStatusSelect.items = this.renderTicketStatus();
+    this.ticketStatusSelect.selectionTitle = this.getItemsDisplay(
+      this.ticketStatusSelect
+    );
     this.initialTicketStatusSelect = _.cloneDeep(this.ticketStatusSelect);
   }
 
@@ -223,9 +242,8 @@ export class FilterComponent implements OnInit, OnChanges {
   }
 
   private renderTimeInterval(interval: ItemSelect[]) {
-    const intervalTime = new Array<ItemsSelect>();
+    const childItems = new Array<ItemsSelect>();
     interval.forEach((item) => {
-      const childItems = new Array<ItemsSelect>();
       item.items.forEach((child) => {
         const childTemp = new ItemsSelect(
           Number(child.id),
@@ -237,38 +255,26 @@ export class FilterComponent implements OnInit, OnChanges {
           []
         );
 
+        childTemp.type = item.id.toString();
         childItems.push(childTemp);
       });
-
-      const temp = new ItemsSelect(
-        Number(item.id),
-        item.value,
-        item.text,
-        item.checked,
-        true,
-        item.enable,
-        childItems
-      );
-
-      intervalTime.push(temp);
     });
-
-    return intervalTime;
+    return childItems;
   }
 
   public changeTimeInterval(value: ItemSelect[]) {
     const list = value.length > 0 ? value.map((x) => Number(x.value)) : [];
-    this.intervalEvent.emit(new IntervalEvent(list, true));
+    this.intervalEvent?.emit(new IntervalEvent(list, true));
   }
 
   public changeTicketStatus(value: ItemSelect[]) {
     const list = value.length > 0 ? value.map((x) => x.value) : [];
-    this.ticketStatusEvent.emit(list);
+    this.ticketStatusEvent?.emit(list);
   }
 
   public changeResultStatus(value: ItemSelect[]) {
     const list = value.length > 0 ? value.map((x) => x.value) : [];
-    this.resultStatusEvent.emit(list);
+    this.resultStatusEvent?.emit(list);
   }
 
   private updateIntervalSelection() {
@@ -290,10 +296,9 @@ export class FilterComponent implements OnInit, OnChanges {
       item.checked = checked;
     });
 
-    this.timeIntervalSelect.selectionTitle = this.getItemsDisplay(
-      this.timeIntervalSelect
-    );
-    this.ticketStatusSelect = { ...this.timeIntervalSelect };
+    // this.timeIntervalSelect.selectionTitle = this.getItemsDisplay(
+    //   this.timeIntervalSelect
+    // );
     this.intervalEvent.emit(new IntervalEvent(intervalSelection));
   }
 
@@ -328,10 +333,9 @@ export class FilterComponent implements OnInit, OnChanges {
       item.checked = checked;
     });
 
-    this.timeIntervalSelect.selectionTitle = this.getItemsDisplay(
-      this.timeIntervalSelect
-    );
-    this.ticketStatusSelect = { ...this.timeIntervalSelect };
+    // this.timeIntervalSelect.selectionTitle = this.getItemsDisplay(
+    //   this.timeIntervalSelect
+    // );
   }
 
   private selectTicketStatusFilterBySpecialSession() {
@@ -340,13 +344,11 @@ export class FilterComponent implements OnInit, OnChanges {
       item.checked = true;
       ticketStatusSelections.push(item.id.toString());
     });
-    this.ticketStatusSelect.isCheckAll = true;
+    // this.ticketStatusSelect.isCheckAll = true;
 
     this.ticketStatusSelect.selectionTitle = this.getItemsDisplay(
       this.ticketStatusSelect
     );
-
-    this.ticketStatusSelect = { ...this.ticketStatusSelect };
 
     this.ticketStatusEvent.emit(ticketStatusSelections);
   }

@@ -717,7 +717,7 @@
         }
       }
     },
-    "app": {
+    "fast-market": {
       "root": "app",
       "sourceRoot": "fast-market",
       "projectType": "application",
