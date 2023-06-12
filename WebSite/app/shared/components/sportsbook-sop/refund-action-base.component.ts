@@ -160,11 +160,14 @@ export class RefundActionBaseComponent {
     }
 
     existResultNotConfirmedSdt() {
+        if(this.selectedResources.length !== this.resourceConfirmedSdt.length) {
+            return true;
+        }
         const resultValueNotConfirmed = !this.selectedResources.every(result => {
-            const resourceConfirmed = this.resourceConfirmedSdt.find(resource => result.resourceId === resource.resourceId);
-            return !_.isUndefined(resourceConfirmed) && result.resultSettingData.isConfirmedRefundSdt
-                && _.isEqual(result.homeValue, resourceConfirmed.homeValue)
-                && _.isEqual(result.awayValue, resourceConfirmed.awayValue)
+            const resource = this.resourceConfirmedSdt.find(resource => resource.resourceId === result.resourceId);
+            return !_.isUndefined(resource) && result.resultSettingData.isConfirmedRefundSdt
+                && _.isEqual(result.homeValue, resource.homeValue)
+                && _.isEqual(result.awayValue, resource.awayValue)
         });
         return resultValueNotConfirmed;
     }

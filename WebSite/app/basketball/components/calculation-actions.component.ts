@@ -136,7 +136,7 @@ export class CalculationActionsComponent implements SportTemplate {
         if (intervals.length > 0) {
             _.forEach(intervals, (map) => {
                 map.isScoreMismatched = this.verificationService.isMismatchedWarning(map);
-                if (map.settlementStatusId !== SettlementStatusId.Refund) {
+                if (this.statusNotRefunded(map.settlementStatusId)) {
                     this.verifyAndAutoFillScore(map, true);
                 }
             });
@@ -146,11 +146,15 @@ export class CalculationActionsComponent implements SportTemplate {
         }
     }
 
+    private statusNotRefunded(settlementStatusId: number){
+        return settlementStatusId !== SettlementStatusId.Refund && settlementStatusId !== SettlementStatusId.RefundSettleDetermined;
+    }
+
     private adjustFinalScoreOnChange(isOnload = false) {
         this.verificationService.sumScoreFullTime(this.quarterResults, this.fullTime);
         this.fullTime.isScoreMismatched = this.verificationService.isMismatchedWarning(this.fullTime);
         if ((_.isEmpty(this.fullTime.homeValue) && _.isEmpty(this.fullTime.awayValue))
-            && (isOnload && this.fullTime.settlementStatusId !== SettlementStatusId.Refund || !isOnload)) {
+            && (isOnload && this.statusNotRefunded(this.fullTime.settlementStatusId) || !isOnload)) {
             this.verificationService.autoFillScore(this.fullTime);
         }
     }
@@ -159,7 +163,7 @@ export class CalculationActionsComponent implements SportTemplate {
         this.verificationService.sumScoreHalfTime(this.firstHalfResults, this.firstHalf);
         this.firstHalf.isScoreMismatched = this.verificationService.isMismatchedWarning(this.firstHalf);
         if ((_.isEmpty(this.firstHalf.homeValue) && _.isEmpty(this.firstHalf.awayValue))
-            && (isOnload && this.firstHalf.settlementStatusId !== SettlementStatusId.Refund || !isOnload)) {
+            && (isOnload && this.statusNotRefunded(this.firstHalf.settlementStatusId) || !isOnload)) {
             this.verificationService.autoFillScore(this.firstHalf);
         }
     }
@@ -206,14 +210,14 @@ export class CalculationActionsComponent implements SportTemplate {
 
     private checkHalfScoreOnLoad() {
         if (this.firstHalf.settlementStatusId === SettlementStatusId.Calculated
-            || this.firstHalf.settlementStatusId === SettlementStatusId.Refund) {
+            || this.firstHalf.settlementStatusId === SettlementStatusId.Refund || this.firstHalf.settlementStatusId === SettlementStatusId.RefundSettleDetermined) {
             this.firstHalf.isScoreMismatched = this.verificationService.isMismatchedWarning(this.firstHalf);
         } else {
             this.adjustHalfTimeScoreOnChange(true);
         }
 
         if (this.fullTime.settlementStatusId === SettlementStatusId.Calculated
-            || this.fullTime.settlementStatusId === SettlementStatusId.Refund) {
+            || this.fullTime.settlementStatusId === SettlementStatusId.Refund || this.fullTime.settlementStatusId === SettlementStatusId.RefundSettleDetermined) {
             this.fullTime.isScoreMismatched = this.verificationService.isMismatchedWarning(this.fullTime);
         } else {
             this.adjustFinalScoreOnChange(true);
