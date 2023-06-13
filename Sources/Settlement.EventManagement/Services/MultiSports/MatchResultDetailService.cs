@@ -1,6 +1,7 @@
 ﻿namespace Settlement.EventManagement.Services.MultiSports;
 
 using Services;
+using Settlement.Core.Models;
 using Match = Models.MultiSports.Match;
 
 public interface IMatchResultDetailService
@@ -156,6 +157,7 @@ public class MatchResultDetailServiceImp : IMatchResultDetailService
     {
         foreach (var match in matches)
         {
+            match.RefDataService = refDataService;
             if (includeHalfTime)
             {
                 match.IsNotConsistentExHtScore = externalScoreService.IsInconsistentHalftimeScore(match, resultDetails);
