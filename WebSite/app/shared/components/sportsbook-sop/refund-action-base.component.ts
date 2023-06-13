@@ -144,8 +144,7 @@ export class RefundActionBaseComponent {
 
 
     existResultNotConfirmed() {
-        if (this.isSDTSettle) return false;
-        const resultNotConfirmed = _.find(this.selectedResources, item => !item.resultSettingData.isConfirmedRefund);
+        const resultNotConfirmed = _.find(this.selectedResources, item => !item.resultSettingData.isConfirmedRefund && !item.resultSettingData.isConfirmedRefundSdt);
         return !_.isNil(resultNotConfirmed);
     }
 
@@ -155,7 +154,7 @@ export class RefundActionBaseComponent {
         }
         const resultValueNotConfirmed = !this.selectedResources.every(result => {
             const resource = this.resourceConfirmedSdt.find(resource => resource.resourceId === result.resourceId);
-            return !_.isUndefined(resource) && result.resultSettingData.isConfirmedRefundSdt
+            return !_.isUndefined(resource)
                 && _.isEqual(result.homeValue, resource.homeValue)
                 && _.isEqual(result.awayValue, resource.awayValue)
         });

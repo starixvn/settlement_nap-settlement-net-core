@@ -3,7 +3,7 @@ import { Component, Injector, ViewChild, inject } from '@angular/core';
 import { Language } from '../../shared/language.native';
 import { BlockUIService } from '../../shared/services';
 import { ModalDialogMessage } from '../../shared/models';
-import { ScoreSourceType, SettlementStatusId, SportType } from '../../shared/constants';
+import { BackgroundColor, ScoreSourceType, SettlementStatusId, SportType } from '../../shared/constants';
 import { BasketballApiKeys, ResourcesIds } from '../constants';
 import * as _ from 'lodash';
 import { RefundActionBaseComponent } from '../../shared/components/sportsbook-sop/refund-action-base.component';
@@ -26,7 +26,7 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
     verificationService = inject(VerificationService);
     basketballService = inject(BasketballService);
     cashOutService = inject(CashOutService);
-    blockUIService= inject(BlockUIService);
+    blockUIService = inject(BlockUIService);
     blockUI = true;
     match: Match;
     originalMatch: Match;
@@ -78,12 +78,15 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
         this.isConfirmRefund = this.resultDetails.findIndex(result => result.resultSettingData.isConfirmedRefund || result.resultSettingData.isConfirmedRefundSdt) == -1;
         this.isSDTSettle = this.permission.isLeader ? this.initSDTSettle() : false;
         this.disableScoreDirect = this.verificationService.isTicketOnQuarter(this.resultDetails, this.match.resultDetails);
-        this.resetHomeAway(this.resultDetails);
+        this.resetHomeAwayAndAddClass(this.resultDetails);
     }
-    private resetHomeAway(resultDetails: ResultDetail[]) {
+    private resetHomeAwayAndAddClass(resultDetails: ResultDetail[]) {
         resultDetails.forEach((map) => {
-            map.homeValue = map.settlementStatusId === SettlementStatusId.Refund || map.settlementStatusId === SettlementStatusId.Running ? "" : map.homeValue;
-            map.awayValue = map.settlementStatusId === SettlementStatusId.Refund || map.settlementStatusId === SettlementStatusId.Running ? "" : map.awayValue;
+            if (!map.resultSettingData.isConfirmedRefundSdt) {
+                map.homeValue = map.settlementStatusId === SettlementStatusId.Refund || map.settlementStatusId === SettlementStatusId.Running ? "" : map.homeValue;
+                map.awayValue = map.settlementStatusId === SettlementStatusId.Refund || map.settlementStatusId === SettlementStatusId.Running ? "" : map.awayValue;
+            }
+            map.className = map.ticketStatus.toLowerCase();
         });
     }
 
@@ -98,7 +101,7 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
             this.toastrService.error(Language.confirmRefund.sdtErrorMessage);
             return;
         }
-        
+
         const paramsCheckRefund = {
             matchId: this.matchId,
             selectedResources: this.selectedResources
@@ -107,7 +110,7 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
         if (res.isExistMarkedTicket) {
             this.toastrService.error(Language.MarkedTicket);
         } else {
-            this.confirmationDialogMessage.message = Language.RefundConfirmMessage;
+            this.confirmationDialogMessage.message = this.isSDTSettle ? Language.RefundConfirmSdtMessage : Language.RefundConfirmMessage;
             this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
                 this.doRefund();
             });
@@ -169,7 +172,7 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
                 resource.homeValue = "";
             }
         });
-
+        resultDetail.className = this.inputClass(resultDetail);
     }
 
     inputDirectly() {
@@ -204,6 +207,16 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
             const resultDetailSelected = isFullTime ? this.fullTimeResult : resultDetail
             this.resultDetailDisableInput[this.resultDetails.indexOf(resultDetailSelected)] = !this.isEnableResult(resultDetailSelected);
         }
+    }
+
+    private inputClass(resultDetail: ResultDetail) {
+        const externalResource = this.resourceConfirmedSdt.find(r => r.resourceId === resultDetail.resourceId);
+        if (externalResource) {
+            return _.isEqual(resultDetail.awayValue, externalResource.awayValue)
+                && _.isEqual(resultDetail.homeValue, externalResource.homeValue)
+                ? resultDetail.ticketStatus.toLowerCase() : BackgroundColor.scoreSdtNotConsistent;
+        }
+        return resultDetail.ticketStatus.toLowerCase();
     }
 
     private isEnableResult(resultDetail: ResultDetail) {

@@ -283,9 +283,14 @@ table {
     }
 }
 
-.confirmed-refund td:not(.temp) {
+.confirmed-refund td:not(.temp):not(.not-consistent-score-sdt) {
     background: #FFFF00 !important;
 }
+
+.not-consistent-score-sdt {
+    background: #E17356;
+}
+
 
 .cdk-drag-preview {
     box-sizing: border-box;
@@ -818,8 +823,4 @@ tr.mismatched td:not(:first-child):not(:nth-child(2)):not(.calculated):not(.refu
             transform: rotate(180deg);
         }
     }
-}
-
-.consistent-score-sdt {
-    background: #E17356;
 }

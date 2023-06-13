@@ -28,11 +28,11 @@
 			<tbody>
 				<tr *ngFor="let quarter of resultDetails; let i = index; let last = last" [ngClass]="{ 'confirmed-refund': permission.isLeader && (quarter.resultSettingData.isConfirmedRefund || quarter.resultSettingData.isConfirmedRefundSdt) }">
 					<td>{{ quarter.resourceId | resourceName }}</td>
-					<td [ngClass]="quarter.ticketStatus.toLowerCase()">
-						<input [disabled]="resultDetailDisableInput[i]" (ngModelChange)="changeScore(resultDetails[i])" [(ngModel)]="quarter.homeValue" type="text" />
+					<td [ngClass]="quarter.className">
+						<input [disabled]="resultDetailDisableInput[i]" [(ngModel)]="quarter.homeValue" (ngModelChange)="changeScore(quarter)" type="text" />
 					</td>
-					<td [ngClass]="quarter.ticketStatus.toLowerCase()">
-						<input [disabled]="resultDetailDisableInput[i]" (ngModelChange)="changeScore(resultDetails[i])" [(ngModel)]="quarter.awayValue" type="text" />
+					<td [ngClass]="quarter.className">
+						<input [disabled]="resultDetailDisableInput[i]"  [(ngModel)]="quarter.awayValue" (ngModelChange)="changeScore(quarter)" type="text" />
 					</td>
 					<td *ngIf="quarter.resourceId === overTimeId" rowspan="2" class="temp">
 						<input id="final-checkbox" type="checkbox" [(ngModel)]="resultDetails[i+1].checked" (ngModelChange)="selectFullTimeCheckBox(); enableInput(quarter, isDirectly)" />

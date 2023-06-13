@@ -18,6 +18,7 @@
     CannotUncalculateFTMessage: 'WARNING! cannot proceed due to match has been Refunded All. Please recheck or use Uncalculate All instead.',
     RefundConfirmationBox: 'Refund confirmation box',
     RefundConfirmMessage: 'Are you sure you want to REFUND/CANCEL? This function is only in use when the match cancel?',
+    RefundConfirmSdtMessage: 'Are you sure you want to REFUND with SETTLE DETERMINED TICKETS for selected results? This function is only in use when the match suspended.',
     RefundFullMessage: "Are you sure you want to REFUND FULLTIME? This function is only in use when the match cancel?",
     RefundParlayConfirmMessage: 'Are you sure you want to REFUND PARLAY this match?',
     RefundParlayFullTime: "Are you sure you want to REFUND PARLAY FULL TIME this match?",
