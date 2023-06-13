@@ -92,12 +92,13 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
 
     async refund() {
         this.toastrService.clear();
-        if (!this.verificationService.isPinGoalMatch(this.matchDetail.leagueGroupId) && this.existResultNotConfirmed()) {
+        const isPinGoal = this.verificationService.isPinGoalMatch(this.matchDetail.leagueGroupId);
+        if (!isPinGoal && this.existResultNotConfirmed()) {
             this.toastrService.error(Language.confirmRefund.refundResultNotConfirmed);
             return;
         }
 
-        if (this.isSDTSettle && this.existResultNotConfirmedSdt()) {
+        if (this.isSDTSettle ? this.existResultNotConfirmedSdt() : this.existResultNotConfirmedNormal()) {
             this.toastrService.error(Language.confirmRefund.sdtErrorMessage);
             return;
         }

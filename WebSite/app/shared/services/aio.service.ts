@@ -39,7 +39,7 @@ export class AioService {
         return firstValueFrom(request);
     }
 
-    private getLastestMatchResult(query: object) {
+    public getLastestMatchResult(query: object) {
         const response = this.httpRequestService.postJson<GeneralResultDetail[]>(query, `${this.aioApi}/get-recal-result`);
         return firstValueFrom(response);
     }
@@ -152,10 +152,10 @@ export class AioService {
         resultDetails.forEach(resultDetail => {
             let bitPosition;
             switch (resultDetail.resourceId) {
-                case ResourceIds.fullTime:
+                case ResourceIds.halfTime:
                     bitPosition = 0;
                     break;
-                case ResourceIds.halfTime:
+                case ResourceIds.fullTime:
                     bitPosition = 2;
                     break;
                 default:

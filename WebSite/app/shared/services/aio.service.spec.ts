@@ -2,20 +2,20 @@ import { TestBed, inject, fakeAsync, tick } from '@angular/core/testing';
 import { HttpClientModule } from '@angular/common/http';
 import { AioService } from './aio.service';
 import { HttpRequestService, BlockUIService, MessageBoxService } from '../../shared/services';
-import { of } from 'rxjs';
-import { ResultDetail, SaveScoreQuery } from '../models/sportsbook-sop';
+import { HedgeMatchDetail, ResultDetail, SaveScoreQuery } from '../models/sportsbook-sop';
 import { GeneralResultDetail, ResultSettingModel, ResultSettingQuery } from '../models';
-import { ResultSettingType, SettlementStatusId, TicketStatusText } from '../constants';
-import { ModalContentDialogComponent, ModalDialogComponent } from '../../shared/components';
+import { ResourceIds, ResultSettingType } from '../constants';
 import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ClosePopupService } from './close-popup.service.native';
+import { ModalDialogComponent } from '../../shared/components/modal-dialog/modal-dialog.component';
+import { ModalContentDialogComponent } from '../../shared/components/modal-dialog/modal-content-dialog.component';
+import { Language } from '../../shared/language.native';
 
 describe('AioService', () => {
   let service: AioService = null;
   let httpRequestService: HttpRequestService;
   let messageBoxService: MessageBoxService;
-  let closePopupService: ClosePopupService;
   const result = new ResultDetail();
   result.resultSettingData = new ResultSettingModel();
   beforeEach(() => {
@@ -45,7 +45,6 @@ describe('AioService', () => {
     service = TestBed.inject(AioService);
     httpRequestService = TestBed.inject(HttpRequestService);
     messageBoxService = TestBed.inject(MessageBoxService);
-    closePopupService = TestBed.inject(ClosePopupService);
   });
 
   beforeEach(inject([AioService], (aioService: AioService) => {
@@ -56,94 +55,83 @@ describe('AioService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('getMatch - Call exact Url and param',
-    fakeAsync(
-      () => {
-        // Arrange
-        const matchId = '7000000';
-        const url = '/api/aio/get-match';
-        const query = {
-          matchId,
-          apikey: "api-key",
-        };
+  it('getMatch - Call exact Url and param', () => {
+    // Arrange
+    const matchId = '7000000';
+    const url = '/api/aio/get-match';
+    const query = {
+      matchId,
+      apikey: "api-key",
+    };
 
-        // Act
-        spyOn(httpRequestService, 'postJson');
-        service.getMatch(query);
-        tick();
+    // Act
+    httpRequestService.postJson = jest.fn();
+    service.getMatch(query);
 
-        // Assert
-        expect(httpRequestService.postJson).toHaveBeenCalledWith(query, url);
-      }));
+    // Assert
+    expect(httpRequestService.postJson).toHaveBeenCalledWith(query, url);
+  });
 
-  it('push - Call exact Url and param',
-    fakeAsync(
-      () => {
-        // Arrange
-        const matchId = 7000000;
-        const url = '/api/aio/settle';
-        const query = { matchId };
+  it('push - Call exact Url and param', () => {
+    // Arrange
+    const matchId = 7000000;
+    const url = '/api/aio/settle';
+    const query = { matchId };
 
-        // Act
-        spyOn(httpRequestService, 'postJson');
-        service.push(query);
-        tick();
+    // Act
+    httpRequestService.postJson = jest.fn();
+    service.push(query);
 
-        // Assert
-        expect(httpRequestService.postJson).toHaveBeenCalledWith(query, url);
-      }));
+    // Assert
+    expect(httpRequestService.postJson).toHaveBeenCalledWith(query, url);
+  });
 
-  it('saveScore - Call exact Url and param', fakeAsync(() => {
+  it('saveScore - Call exact Url and param', () => {
     const query = new SaveScoreQuery();
 
-    spyOn(httpRequestService, 'postJson');
+    httpRequestService.postJson = jest.fn();
     service.saveScore(query);
-    tick();
 
     expect(httpRequestService.postJson).toHaveBeenCalledWith(query, '/api/aio/save-score');
-  }));
+  });
 
 
   describe('verifyChangedSettledTickets', () => {
     const lastestResult = new GeneralResultDetail();
     lastestResult.resourceId = '12345';
-    lastestResult.resultStatus = 'Complete';
+    lastestResult.resultStatus = 'Completed';
     lastestResult.homeValue = '4';
     lastestResult.awayValue = '5';
     const lastestResults = [lastestResult];
 
-    it('should return false when no need to check for recalc tickets', fakeAsync(() => {
-      let actualResult: boolean;
-      spyOn(httpRequestService, 'postJson').and.returnValue(of(lastestResults));
+    it('should return false when no need to check for recalc tickets', async () => {
+      service.getLastestMatchResult = jest.fn().mockReturnValue(lastestResults);
 
-      service.verifyChangedSettledTickets(lastestResults, { matchId: 123 }).subscribe((result) => {
-        actualResult = result;
-      });
+      const actualResult = await service.verifyChangedSettledTickets(lastestResults, { matchId: 123 });
 
       expect(actualResult).toBe(false);
-    }));
+    });
 
-    it('should return true when need to check for recalc tickets', fakeAsync(() => {
+    it('should return true when need to check for recalc tickets', async () => {
       const newResult = new GeneralResultDetail();
       newResult.resourceId = '12345';
       newResult.resultStatus = 'Complete';
       newResult.homeValue = '7';
       newResult.awayValue = '5';
       const newResults = [newResult];
-      let actualResult: boolean;
-      spyOn(httpRequestService, 'postJson').and.returnValue(of(lastestResults));
+      service.getLastestMatchResult = jest.fn().mockReturnValue(lastestResults);
 
-      service.verifyChangedSettledTickets(newResults, { matchId: 123 }).subscribe((result) => {
-        actualResult = result;
-      });
+      const actualResult = await service.verifyChangedSettledTickets(newResults, { matchId: 123 });
 
       expect(actualResult).toBe(true);
-    }));
+    });
   });
+
+
   describe('undoConfirmedResult', () => {
     it('should show alert when exist result not confirmed', () => {
       result.resultSettingData.isConfirmedRefund = false;
-      spyOn(messageBoxService, 'alert');
+      messageBoxService.alert = jest.fn();
 
       service.undoConfirmedResult([result], 0, '', null);
 
@@ -154,7 +142,7 @@ describe('AioService', () => {
     it('should show confirm when all result confirmed', () => {
       result.resultSettingData.isConfirmedRefund = true;
 
-      spyOn(messageBoxService, 'confirm');
+      messageBoxService.confirm = jest.fn();
 
       service.undoConfirmedResult([result], 0, '', null);
 
@@ -164,7 +152,7 @@ describe('AioService', () => {
 
     it('should push request when click ok on confirm box', fakeAsync(async () => {
       result.resultSettingData.isConfirmedRefund = true;
-      spyOn(service, 'changeResultSetting').and.returnValue(of(true));
+      service.changeResultSetting = jest.fn().mockReturnValue(Promise.resolve(true));
       const query = new ResultSettingQuery(0, ResultSettingType.confirmRefund,
         false, '');
 
@@ -178,45 +166,156 @@ describe('AioService', () => {
     }));
   });
 
-  describe("confirmResult", () => {
-    it('should show alert when exist result refunded and has no running ticket', () => {
-      result.resultSettingData.isConfirmedRefund = false;
-      result.settlementStatusId = SettlementStatusId.Refund;
-      result.ticketStatus = TicketStatusText.calculated;
+  describe('changeConfirmResultSDTSetting', () => {
+    test.each([[true, Language.confirmRefund.sdtConfirm], [false, Language.confirmRefund.undoConfirmAll]])('show correct confirm when enbale is %p', (isEnable: boolean, message: string) => {
 
-      spyOn(messageBoxService, 'alert');
+      messageBoxService.confirm = jest.fn();
 
-      service.confirmResult([result], 0, '', null);
-
-      expect(messageBoxService.alert).toHaveBeenCalled();
-      expect(service.warningDialogMessage.message).toEqual("WARNING! Cannot continue due to selected results are Refund and have no Running ticket.");
-    });
-
-    it('should show confirm when all result confirmed', () => {
-      result.resultSettingData.isConfirmedRefund = false;
-      result.settlementStatusId = SettlementStatusId.Running;
-      spyOn(messageBoxService, 'confirm');
-
-      service.confirmResult([result], 0, '', null);
+      service.changeConfirmResultSDTSetting(0, [], isEnable, null);
 
       expect(messageBoxService.confirm).toHaveBeenCalled();
-      expect(service.warningDialogMessage.message).toEqual("WARNING! Are you sure you want to confirm-refund for selected results?");
+      expect(service.warningDialogMessage.message).toEqual(message);
     });
 
-    it('should push request when click ok on confirm box', fakeAsync(async () => {
-      result.resultSettingData.isConfirmedRefund = true;
-      result.settlementStatusId = SettlementStatusId.Running;
-      spyOn(service, 'changeResultSetting').and.returnValue(of(true));
-      const query = new ResultSettingQuery(0, ResultSettingType.confirmRefund,
-        true, '');
+    it('should change push request and close popup when click ok on confirm box', fakeAsync(() => {
+      service.changeResultSetting = jest.fn().mockReturnValue(Promise.resolve(true));
+      messageBoxService.closePopupNotChanged = jest.fn();
+      const query = new ResultSettingQuery(0, ResultSettingType.confirmRefundSDT,
+        true, '', []);
 
-      service.confirmResult([result], 0, '', null);
-
+      service.changeConfirmResultSDTSetting(0, [], true, null);
       const buttonYes = document.getElementsByClassName("btn-danger")[0] as HTMLElement;
       buttonYes.click();
       tick();
 
       expect(service.changeResultSetting).toHaveBeenCalledWith(query);
+      expect(messageBoxService.closePopupNotChanged).toHaveBeenCalled();
     }));
+
+    it('should change setting for hedgeMatch when select hedgeMatch', fakeAsync(() => {
+      service.changeResultSetting = jest.fn().mockReturnValue(Promise.resolve(true));
+      messageBoxService.closePopupNotChanged = jest.fn();
+      const hedgeMatch = new HedgeMatchDetail();
+      hedgeMatch.matchId = 1;
+
+      service.changeConfirmResultSDTSetting(0, [], true, hedgeMatch);
+      const buttonYes = document.getElementsByClassName("btn-danger")[0] as HTMLElement;
+      buttonYes.click();
+      tick();
+
+      expect(service.changeResultSetting).toBeCalledTimes(2);
+      expect(messageBoxService.closePopupNotChanged).toHaveBeenCalled();
+    }));
+  });
+
+  describe('changeConfirmResultSetting', () => {
+    it('should show confirm box ', () => {
+
+      messageBoxService.confirm = jest.fn();
+
+      service.changeConfirmResultSetting("message", 0, '', true, null);
+
+      expect(messageBoxService.confirm).toHaveBeenCalled();
+      expect(service.warningDialogMessage.message).toEqual("message");
+    });
+
+    it('should change push request and close popup when click ok on confirm box', fakeAsync(() => {
+      service.changeResultSetting = jest.fn().mockReturnValue(Promise.resolve(true));
+      messageBoxService.closePopupNotChanged = jest.fn();
+      const query = new ResultSettingQuery(0, ResultSettingType.confirmRefund,
+        true, '01');
+
+      service.changeConfirmResultSetting("", 0, '01', true, null);
+      const buttonYes = document.getElementsByClassName("btn-danger")[0] as HTMLElement;
+      buttonYes.click();
+      tick();
+
+      expect(service.changeResultSetting).toHaveBeenCalledWith(query);
+      expect(messageBoxService.closePopupNotChanged).toHaveBeenCalled();
+    }));
+
+    it('should change setting for hedgeMatch when select hedgeMatch', fakeAsync(() => {
+      service.changeResultSetting = jest.fn().mockReturnValue(Promise.resolve(true));
+      messageBoxService.closePopupNotChanged = jest.fn();
+      const hedgeMatch = new HedgeMatchDetail();
+      hedgeMatch.matchId = 1;
+
+      service.changeConfirmResultSetting("", 0, '01', true, hedgeMatch);
+      const buttonYes = document.getElementsByClassName("btn-danger")[0] as HTMLElement;
+      buttonYes.click();
+      tick();
+
+      expect(service.changeResultSetting).toBeCalledTimes(2);
+      expect(messageBoxService.closePopupNotChanged).toHaveBeenCalled();
+    }));
+
+    it('should change setting for old match and hedgeMatch when select old match and hedgeMatch', fakeAsync(() => {
+      service.changeResultSetting = jest.fn().mockReturnValue(Promise.resolve(true));
+      messageBoxService.closePopupNotChanged = jest.fn();
+      const hedgeMatch = new HedgeMatchDetail();
+      hedgeMatch.matchId = 1;
+
+      const oldMatch = {...hedgeMatch};
+
+      service.changeConfirmResultSetting("", 0, '01', true, hedgeMatch, oldMatch);
+      const buttonYes = document.getElementsByClassName("btn-danger")[0] as HTMLElement;
+      buttonYes.click();
+      tick();
+
+      expect(service.changeResultSetting).toBeCalledTimes(3);
+      expect(messageBoxService.closePopupNotChanged).toHaveBeenCalled();
+    }));
+  });
+
+  describe('generateDeterminedType', () => {
+    it('should generate the determined type for full-time result', () => {
+      const resultDetails = [
+        { resourceId: ResourceIds.fullTime, checked: true, homeValue: '1', awayValue: '2' },
+        { resourceId: ResourceIds.halfTime, checked: true, homeValue: '', awayValue: '' },
+        { resourceId: 'OtherId', checked: false, homeValue: '', awayValue: '' },
+      ] as ResultDetail[];
+
+      const result = service.generateDeterminedType(resultDetails);
+
+      expect(result).toBe(4);
+    });
+
+    it('should generate the determined type for half-time result', () => {
+      const resultDetails: ResultDetail[] = [
+        { resourceId: ResourceIds.fullTime, checked: true, homeValue: '', awayValue: '' },
+        { resourceId: ResourceIds.halfTime, checked: true, homeValue: '1', awayValue: '2' },
+        { resourceId: 'OtherId', checked: false, homeValue: '', awayValue: '' },
+      ] as ResultDetail[];
+
+
+      const result = service.generateDeterminedType(resultDetails);
+
+      expect(result).toBe(1);
+    });
+
+    it('should generate the determined type for other results', () => {
+      const resultDetails = [
+        { resourceId: ResourceIds.fullTime, checked: false, homeValue: '', awayValue: '' },
+        { resourceId: ResourceIds.halfTime, checked: false, homeValue: '', awayValue: '' },
+        { resourceId: 'OtherId1', checked: true, homeValue: '1', awayValue: '2' },
+        { resourceId: 'OtherId2', checked: true, homeValue: '3', awayValue: '4' },
+      ] as ResultDetail[];
+
+      const result = service.generateDeterminedType(resultDetails);
+
+      expect(result.toString(2)).toBe("11000");
+    });
+
+    it('should generate the determined type when no results are checked', () => {
+      const resultDetails = [
+        { resourceId: ResourceIds.fullTime, checked: false, homeValue: '', awayValue: '' },
+        { resourceId: ResourceIds.halfTime, checked: false, homeValue: '', awayValue: '' },
+        { resourceId: 'OtherId', checked: false, homeValue: '', awayValue: '' },
+      ] as ResultDetail[];
+
+      const result = service.generateDeterminedType(resultDetails);
+
+      expect(result).toBe(0);
+    });
   });
 });

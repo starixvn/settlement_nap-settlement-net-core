@@ -1,10 +1,10 @@
 import { MessageBoxService } from './../../services/message-box.service.native';
-import { CalculateAction, ResourceIds, ResultStatusId, SettlementStatusId, TicketStatusText } from "../../constants";
+import { CalculateAction, ResourceIds, ResultStatusId, SettlementStatusId, SportType, TicketStatusText } from "../../constants";
 import { Language } from "../../language.native";
 import { AioService, BlockUIService } from "../../services";
 import { ExternalResultDetail, HedgeMatchDetail, MatchDetail, Permission, ResultDetail, SettleQuery } from "../../models/sportsbook-sop";
 import * as _ from "lodash";
-import { Component, Injector, inject } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { ToastrService } from "ngx-toastr";
 import { ResourceItem } from '../../models';
 
@@ -26,6 +26,7 @@ export class RefundActionBaseComponent {
     isDirectly: boolean;
     isConfirmRefund: boolean;
     resourceConfirmedSdt: ExternalResultDetail[];
+    readonly supportSdtSettle = [SportType.basketBall];
 
     get selectedResources(): ResultDetail[] {
         return this.resultDetails.filter((item) => item.checked);
@@ -119,7 +120,7 @@ export class RefundActionBaseComponent {
             || this.validateResourceFrom2nd(firstSelectedResourceIndex, resultDetails)) {
             this.toastrService.error(Language.confirmRefund.sdtErrorMessage);
         } else {
-            const resourceItems = this.selectedResources.map(item => new ResourceItem(item.resourceId, item.homeValue, item.awayValue))
+            const resourceItems = selectedResources.map(item => new ResourceItem(item.resourceId, item.homeValue, item.awayValue))
             this.aioService.changeConfirmResultSDTSetting(this.matchDetail.matchId, resourceItems, true, hedgeMatch);
         }
     }
@@ -142,9 +143,12 @@ export class RefundActionBaseComponent {
         return isExistValueNotCheckedAfter || isExistValueNotEmptyAfter;
     }
 
-
     existResultNotConfirmed() {
-        const resultNotConfirmed = _.find(this.selectedResources, item => !item.resultSettingData.isConfirmedRefund && !item.resultSettingData.isConfirmedRefundSdt);
+        if (this.supportSdtSettle.indexOf(this.matchDetail.sportType) > -1) {
+            return _.every(this.selectedResources, item => !item.resultSettingData.isConfirmedRefund && !item.resultSettingData.isConfirmedRefundSdt);
+        }
+
+        const resultNotConfirmed = _.find(this.selectedResources, item => !item.resultSettingData.isConfirmedRefund);
         return !_.isNil(resultNotConfirmed);
     }
 
@@ -154,11 +158,16 @@ export class RefundActionBaseComponent {
         }
         const resultValueNotConfirmed = !this.selectedResources.every(result => {
             const resource = this.resourceConfirmedSdt.find(resource => resource.resourceId === result.resourceId);
-            return !_.isUndefined(resource)
+            return !_.isUndefined(resource) && result.resultSettingData.isConfirmedRefundSdt
                 && _.isEqual(result.homeValue, resource.homeValue)
                 && _.isEqual(result.awayValue, resource.awayValue)
         });
         return resultValueNotConfirmed;
+    }
+
+    existResultNotConfirmedNormal() {
+        const resultNotConfirmed = _.find(this.selectedResources, item => !item.resultSettingData.isConfirmedRefund);
+        return !_.isNil(resultNotConfirmed);
     }
 
     async refundHedgeMatch(query: SettleQuery) {
