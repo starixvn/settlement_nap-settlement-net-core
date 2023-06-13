@@ -49,6 +49,7 @@ export class CalculatePopupComponent implements OnInit {
     private readonly statusRunning = [Status.running, Status.closed, Status.internal];
 
     constructor(protected injector: Injector,
+        private statusPipe: StatusPipe,
         @Inject(MAT_DIALOG_DATA) public data: { leagueId: number, sportType: number, eventDate: string }) {
         this.confirmationDialogMessage.title = Language.confirmationBox;
         this.injector.get(MatDialog).closeAll();
@@ -137,7 +138,11 @@ export class CalculatePopupComponent implements OnInit {
     }
 
     public onSelectAllTeam(e: any) {
-        this.teams.forEach(team => team.selected = e.target.checked)
+        const currentTeams = this.statusPipe.transform(this.teams,this.statusSelected);
+        this.teams.forEach(team => {
+            const isSelected = currentTeams.some(value => value.orId === team.orId);
+            team.selected = isSelected ? e.target.checked : team.selected ?? false;
+          });
     }
 
     private async validateBeforePush(teamWonSettled: Team[], teamWonSelected: Team[], teamHideSelected: Team[], isCalc: boolean = true) {
