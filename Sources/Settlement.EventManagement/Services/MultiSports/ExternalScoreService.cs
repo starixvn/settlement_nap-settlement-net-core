@@ -5,11 +5,11 @@ using Match = Models.MultiSports.Match;
 
 public interface IExternalScoreService
 {
+    bool IsInconsistentFullTimeScore(int matchId, string userConfirmation, List<ResultDetail> resultDetails);
+
     bool IsInconsistentHalftimeScore(Match match, IEnumerable<ResultDetail> resultDetails);
 
     bool IsInconsistentFullTimeScore(Match match, IEnumerable<ResultDetail> resultDetails);
-
-    bool IsInconsistentFullTimeScore(int matchId, string userConfirmation, List<ResultDetail> resultDetails);
 }
 
 public class ExternalScoreServiceImp : IExternalScoreService

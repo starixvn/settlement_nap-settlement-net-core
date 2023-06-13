@@ -196,7 +196,7 @@ public class MatchResultDetailServiceTests
         scoreService.Received(1).FinalScore(Arg.Any<List<ResultDetail>>(), Arg.Any<Permission>());
         scoreService.Received(1).ScoreOfSets(Arg.Any<List<ResultDetail>>(), Arg.Any<List<string>>(), Arg.Any<Permission>());
         scoreService.Received(1).IsIntervalScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>());
-        externalScoreService.Received(1).IsInconsistentScore(Arg.Any<Match>(), Arg.Any<List<ResultDetail>>());
+        externalScoreService.Received(1).IsInconsistentFullTimeScore(Arg.Any<int>(), Arg.Any<string>(), Arg.Any<List<ResultDetail>>());
         Assert.True(actualMatches.Count > 0);
     }
 
@@ -238,16 +238,30 @@ public class MatchResultDetailServiceTests
     }
 
     [Fact]
-    public void OtherSportsResultDetail_HasMatches_CallAllMethod()
+    public void OtherSportsResultDetail_HasMatchesAndIncludeHalfTime_CallAllMethod()
     {
         // Arrange
         var matches = Matches;
 
         // Act
-        var actualMatches = service.OtherSportsResultDetail(matches, ResultDetail, true);
+        service.OtherSportsResultDetail(matches, ResultDetail, true);
 
         // Assert
-        externalScoreService.Received(1).LoadExternalResultForOtherSports(Arg.Any<Match>(), Arg.Any<List<ResultDetail>>(), Arg.Any<bool>());
-        Assert.True(actualMatches.Count > 0);
+        externalScoreService.Received(1).IsInconsistentHalftimeScore(Arg.Any<Match>(), Arg.Any<List<ResultDetail>>());
+        externalScoreService.Received(1).IsInconsistentFullTimeScore(Arg.Any<Match>(), Arg.Any<List<ResultDetail>>());
+    }
+
+    [Fact]
+    public void OtherSportsResultDetail_HasMatchesAndNotIncludeHalfTime_CallAllMethod()
+    {
+        // Arrange
+        var matches = Matches;
+
+        // Act
+        service.OtherSportsResultDetail(matches, ResultDetail, false);
+
+        // Assert
+        externalScoreService.DidNotReceive().IsInconsistentHalftimeScore(Arg.Any<Match>(), Arg.Any<List<ResultDetail>>());
+        externalScoreService.Received(1).IsInconsistentFullTimeScore(Arg.Any<Match>(), Arg.Any<List<ResultDetail>>());
     }
 }
