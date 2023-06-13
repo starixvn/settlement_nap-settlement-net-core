@@ -109,7 +109,7 @@ export class GameTotalRefundComponent implements SportTemplate {
       hedgeMatchDetail = new HedgeMatchDetail();
     }
     if (!this.totalSet.resultSettingData.isConfirmedRefund) {
-      this.aioService.confirmResult([this.totalSet], this.match.matchDetail.matchId, ResourcesIds.totalSets, hedgeMatchDetail);
+      this.aioService.changeConfirmResultSetting(Language.confirmRefund.confirmRefund, this.match.matchDetail.matchId, ResourcesIds.totalSets, true, hedgeMatchDetail);
     } else {
       this.aioService.undoConfirmedResult([this.totalSet], this.match.matchDetail.matchId, ResourcesIds.totalSets, hedgeMatchDetail);
     }

@@ -76,7 +76,8 @@ export class RefundActionBaseComponent {
         const resourceIds = _.join(this.selectedResources.map(item => item.resourceId), ',');
         const resultConfirmed = _.find(this.selectedResources, item => item.resultSettingData.isConfirmedRefund);
         if (_.isNil(resultConfirmed)) {
-            this.confirmResult(this.selectedResources, this.matchDetail.matchId, resourceIds, hedgeMatchDetail);
+            this.aioService.changeConfirmResultSetting(Language.confirmRefund.confirmRefund, this.matchDetail.matchId, resourceIds, true,
+                hedgeMatchDetail);
         } else {
             this.undoConfirmedResult(this.selectedResources, this.matchDetail.matchId, resourceIds, hedgeMatchDetail);
         }
@@ -106,38 +107,13 @@ export class RefundActionBaseComponent {
         }
     }
 
-    confirmResult(resultDetails: ResultDetail[], matchId: number, resourceIds: string,
-        hedgeMatchDetail: HedgeMatchDetail, oldMatchDetail: HedgeMatchDetail = null) {
-        const refundedResultHasNoRunningTicket = _.find(resultDetails, item =>
-            [SettlementStatusId.Refund, SettlementStatusId.RefundSettleDetermined].includes(item.settlementStatusId) && !_.isEqual(item.ticketStatus, TicketStatusText.running));
-        if (_.isNil(refundedResultHasNoRunningTicket)) {
-            this.aioService.changeConfirmResultSetting(Language.confirmRefund.confirmRefund, matchId, resourceIds, true,
-                hedgeMatchDetail, oldMatchDetail);
-        } else {
-            this.toastrService.error(Language.confirmRefund.refundedNoRunningTicket);
-        }
-    }
-
     confirmRefundSdt() {
         const selectedResources = this.selectedResources;
-        const refundedResultHasNoRunningTicket = _.find(selectedResources, item =>
-            [SettlementStatusId.Refund, SettlementStatusId.RefundSettleDetermined].includes(item.settlementStatusId) && !_.isEqual(item.ticketStatus, TicketStatusText.running));
-
-        if (refundedResultHasNoRunningTicket) {
-            this.toastrService.error(Language.confirmRefund.refundedNoRunningTicket);
-            return;
-        } 
-
-        this.validateAndConfirmResultSDT(selectedResources);
-    
-    }
-
-    private validateAndConfirmResultSDT(selectedResources: ResultDetail[]){
         const resultDetails = this.isDirectly ? this.HalfAndFullTimeResults : this.resultDetails
         const firstSelectedResourceIndex = resultDetails.indexOf(selectedResources[0]);
         const hedgeMatch = this.applyHedgeMatch ? this.hedgeMatchDetail : null;
         const isFirstResourceEmpty = _.isEmpty(selectedResources[0].awayValue) || _.isEmpty(selectedResources[0].homeValue);
-       
+
         if (this.validateResourceBeforeFirstSelected(firstSelectedResourceIndex, resultDetails)
             || isFirstResourceEmpty
             || this.validateResourceFrom2nd(firstSelectedResourceIndex, resultDetails)) {
@@ -147,7 +123,6 @@ export class RefundActionBaseComponent {
             this.aioService.changeConfirmResultSDTSetting(this.matchDetail.matchId, resourceItems, true, hedgeMatch);
         }
     }
-
 
     private validateResourceBeforeFirstSelected(firstResourceIndex: number, resultDetails: ResultDetail[]) {
         const resultDetailBefore = resultDetails.slice(0, firstResourceIndex);
@@ -175,7 +150,7 @@ export class RefundActionBaseComponent {
     }
 
     existResultNotConfirmedSdt() {
-        if(this.selectedResources.length !== this.resourceConfirmedSdt.length) {
+        if (this.selectedResources.length !== this.resourceConfirmedSdt.length) {
             return true;
         }
         const resultValueNotConfirmed = !this.selectedResources.every(result => {

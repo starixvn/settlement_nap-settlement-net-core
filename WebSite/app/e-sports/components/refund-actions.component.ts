@@ -110,7 +110,8 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
         const resourceIds = _.join(this.selectedResources.map(item => item.resourceId), ',');
         const resultConfirmed = _.find(this.selectedResources, item => item.resultSettingData.isConfirmedRefund);
         if (_.isNil(resultConfirmed)) {
-            this.confirmResult(this.selectedResources, this.matchDetail.matchId, resourceIds, hedgeMatchDetail, oldMatchDetail);
+            this.aioService.changeConfirmResultSetting(Language.confirmRefund.undoConfirm, this.matchDetail.matchId, resourceIds, true,
+                hedgeMatchDetail, oldMatchDetail);
         } else {
             this.undoConfirmedResult(this.selectedResources, this.matchDetail.matchId, resourceIds,
                 hedgeMatchDetail, oldMatchDetail);

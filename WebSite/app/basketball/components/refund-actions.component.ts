@@ -82,8 +82,8 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
     }
     private resetHomeAway(resultDetails: ResultDetail[]) {
         resultDetails.forEach((map) => {
-            map.homeValue = map.settlementStatusId === SettlementStatusId.Refund ? "" : map.homeValue;
-            map.awayValue = map.settlementStatusId === SettlementStatusId.Refund ? "" : map.awayValue;
+            map.homeValue = map.settlementStatusId === SettlementStatusId.Refund || map.settlementStatusId === SettlementStatusId.Running ? "" : map.homeValue;
+            map.awayValue = map.settlementStatusId === SettlementStatusId.Refund || map.settlementStatusId === SettlementStatusId.Running ? "" : map.awayValue;
         });
     }
 

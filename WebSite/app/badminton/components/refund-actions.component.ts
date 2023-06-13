@@ -94,7 +94,7 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
       });
       const betStatus = this.matchDetail.sportType === SportType.volleyBall ? this.getBetStatus() : "";
 
-      return new SettleQuery(this.matchDetail.matchId,
+      return new SettleQuery(this.matchDetail,
           this.selectedResources,
           CalculateAction.refund,
           false,

@@ -109,16 +109,10 @@ export class AioService {
         }
     }
 
-    public confirmResult(resultDetails: ResultDetail[], matchId: number, resourceIds: string,
+    public confirmResult(matchId: number, resourceIds: string,
         hedgeMatchDetail: HedgeMatchDetail, oldMatchDetail: HedgeMatchDetail = null) {
-        const refundedResultHasNoRunningTicket = _.find(resultDetails, item =>
-            item.settlementStatusId === SettlementStatusId.Refund && !_.isEqual(item.ticketStatus, TicketStatusText.running));
-        if (_.isNil(refundedResultHasNoRunningTicket)) {
-            this.changeConfirmResultSetting(Language.confirmRefund.confirmRefund, matchId, resourceIds, true,
-                hedgeMatchDetail, oldMatchDetail);
-        } else {
-            this.alertMessage(Language.confirmRefund.refundedNoRunningTicket);
-        }
+        this.changeConfirmResultSetting(Language.confirmRefund.confirmRefund, matchId, resourceIds, true,
+            hedgeMatchDetail, oldMatchDetail);
     }
 
     public changeConfirmResultSDTSetting(matchId: number, resourceItems: ResourceItem[], isEnabled: boolean, hedgeMatchDetail: HedgeMatchDetail) {
@@ -128,7 +122,7 @@ export class AioService {
         this.messageBoxService.confirm(this.warningDialogMessage, () => {
             const query = new ResultSettingQuery(matchId, ResultSettingType.confirmRefundSDT,
                 isEnabled, resourceIds, resourceItems);
-            this.changeResultSetting(query).then( async () => {
+            this.changeResultSetting(query).then(async () => {
                 await this.confirmHedgeMatch(query, hedgeMatchDetail);
             }).finally(this.messageBoxService.closePopupNotChanged);
         });
