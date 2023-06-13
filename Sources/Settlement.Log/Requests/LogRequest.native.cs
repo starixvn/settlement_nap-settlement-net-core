@@ -19,4 +19,8 @@ public class LogRequest : IRequest<List<LogModel>>
     public DateTime FromDate { get; set; }
 
     public DateTime ToDate { get; set; }
+
+    public DateTime BalanceUpDay { get; set; }
+
+    public bool IsArchivedLog => FromDate < BalanceUpDay;
 }

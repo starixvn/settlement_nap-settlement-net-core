@@ -2,7 +2,7 @@
 
 namespace Settlement.Log.Criteria;
 
-public class GetSettlementLogCriteria : CriteriaBase
+public class GetArchivedLogCriteria : CriteriaBase
 {
     public string MatchCode { get; set; }
 
@@ -16,7 +16,7 @@ public class GetSettlementLogCriteria : CriteriaBase
 
     public override string GetSettingKey()
     {
-        return "NAP_UserLog_Settle_MatchSelByCode";
+        return "NAP_UserLog_Settle_MatchArchivedSelByCode";
     }
 
     public override bool IsValid()
