@@ -190,9 +190,7 @@ export class RefundActionBaseComponent {
             return false;
         }
 
-        return this.resultDetails.some(item =>
-            item.resultStatusId == ResultStatusId.AutoCompleted
-            || item.resultStatusId == ResultStatusId.ManualCompleted);
+        return this.resultDetails.some(item => item.settlementStatusId === SettlementStatusId.Calculated);
     }
 
     protected cloneResultDetail() {

@@ -44,6 +44,8 @@ public class InstantResourceServiceImp : InstantResourceService
 
     private const string HalfTimeFl = "1FL";
 
+    private const int Ten = 10;
+
     public InstantResourceServiceImp(
         IInstantGoalCheckingService instantGoalCheckingService,
         IGoalRecordService goalRecordService,
@@ -296,7 +298,7 @@ public class InstantResourceServiceImp : InstantResourceService
 
     private static string CreateFullTimeGoalRecord(string goalRecord) => goalRecord.Replace(";", string.Empty);
 
-    private static string ConvertIntToString(int num) => num < 10 ? $"0{num}" : $"{num}";
+    private static string ConvertIntToString(int num) => num < Ten ? $"0{num}" : $"{num}";
 
     private static List<GoalRecordCorner> ConvertGoalRecordToRace(string goalRecord)
     {
