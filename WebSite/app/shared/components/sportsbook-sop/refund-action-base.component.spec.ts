@@ -158,7 +158,7 @@ describe("Refund Base Component", () => {
 
             component.confirmRefundSdt();
 
-            expect(toastrService.error).toHaveBeenCalledWith(Language.confirmRefund.sdtErrorMessage);
+            expect(toastrService.error).toHaveBeenCalledWith(Language.warningInputScore);
             expect(aioService.changeConfirmResultSDTSetting).not.toHaveBeenCalled();
         });
     });

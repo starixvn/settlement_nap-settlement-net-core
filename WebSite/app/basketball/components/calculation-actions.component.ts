@@ -25,12 +25,12 @@ import { CalculateCommonModule } from '../../shared/modules/calculate-common.mod
 export class CalculationActionsComponent implements SportTemplate {
     @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
     private basketballService = inject(BasketballService);
-    private messageBoxService= inject(MessageBoxService);
-    private betStatusService= inject(BetStatusService);
-    private aioService= inject(AioService);
-    private cashOutService= inject(CashOutService);
-    private verificationService= inject(VerificationService);
-    private toastrService= inject(ToastrService);
+    private messageBoxService = inject(MessageBoxService);
+    private betStatusService = inject(BetStatusService);
+    private aioService = inject(AioService);
+    private cashOutService = inject(CashOutService);
+    private verificationService = inject(VerificationService);
+    private toastrService = inject(ToastrService);
     private blockUiService = inject(BlockUIService);
     readonly overTimeId = ResourcesIds.ot;
     blockUI = false;
@@ -146,7 +146,7 @@ export class CalculationActionsComponent implements SportTemplate {
         }
     }
 
-    private statusNotRefunded(settlementStatusId: number){
+    private statusNotRefunded(settlementStatusId: number) {
         return settlementStatusId !== SettlementStatusId.Refund && settlementStatusId !== SettlementStatusId.RefundSettleDetermined;
     }
 
@@ -417,7 +417,7 @@ export class CalculationActionsComponent implements SportTemplate {
         }
     }
 
-    private createRequestQuery(actionName: string, resource: ResultDetail[], betStatus){
+    private createRequestQuery(actionName: string, resource: ResultDetail[], betStatus) {
         const query = new SettleQuery(this.matchDetail, resource, actionName, this.isReSettledTickets,
             betStatus, BasketballApiKeys.settle, this.match.permission.isLeader);
         query.isDirectly = this.match.isScoreDirect;
@@ -425,7 +425,7 @@ export class CalculationActionsComponent implements SportTemplate {
         return query;
     }
 
-    private setDeterminedType(actionName: string){
+    private setDeterminedType(actionName: string) {
         const isInstant = this.matchDetail.autoSetting > 1 ? this.matchDetail.autoSetting.toString(2).split("").reverse()[SettingPosition.instant] === "1" : false;
         return _.isEqual(actionName, CalculateAction.calculate) && isInstant ? this.aioService.generateDeterminedType(this.resultDetails) : 0;
     }

@@ -98,12 +98,14 @@ export class RefundActionBaseComponent {
     undoConfirmedAllResult() {
         this.toastrService.clear();
         const hedgeMatch = this.applyHedgeMatch ? this.hedgeMatchDetail : null;
-        if (this.resultDetails.some(item => item.resultSettingData.isConfirmedRefund)) {
-            const resourceIds = this.resultDetails.map(resource => resource.resourceId).join(',');
+        const refundNormal = this.resultDetails.filter(item => item.resultSettingData.isConfirmedRefund);
+        if (refundNormal.length > 0) {
+            const resourceIds = refundNormal.map(resource => resource.resourceId).join(',');
             this.aioService.changeConfirmResultSetting(Language.confirmRefund.undoConfirmAll, this.matchDetail.matchId, resourceIds, false,
                 hedgeMatch);
         } else {
-            const resourceItems = this.resultDetails.map(item => new ResourceItem(item.resourceId, item.homeValue, item.awayValue))
+            const resultConfirmed = this.resultDetails.filter(item => item.resultSettingData.isConfirmedRefundSdt)
+            const resourceItems = resultConfirmed.map(item => new ResourceItem(item.resourceId, item.homeValue, item.awayValue))
             this.aioService.changeConfirmResultSDTSetting(this.matchDetail.matchId, resourceItems, false, hedgeMatch);
         }
     }
@@ -115,7 +117,9 @@ export class RefundActionBaseComponent {
         const hedgeMatch = this.applyHedgeMatch ? this.hedgeMatchDetail : null;
         const isFirstResourceEmpty = _.isEmpty(selectedResources[0].awayValue) || _.isEmpty(selectedResources[0].homeValue);
 
-        if (this.validateResourceBeforeFirstSelected(firstSelectedResourceIndex, resultDetails)
+        if (isFirstResourceEmpty) {
+            this.toastrService.error(Language.warningInputScore);
+        } else if (this.validateResourceBeforeFirstSelected(firstSelectedResourceIndex, resultDetails)
             || isFirstResourceEmpty
             || this.validateResourceFrom2nd(firstSelectedResourceIndex, resultDetails)) {
             this.toastrService.error(Language.confirmRefund.sdtErrorMessage);

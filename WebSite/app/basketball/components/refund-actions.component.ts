@@ -82,23 +82,28 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
     }
     private resetHomeAwayAndAddClass(resultDetails: ResultDetail[]) {
         resultDetails.forEach((map) => {
-            if (!map.resultSettingData.isConfirmedRefundSdt) {
+            if (!this.permission.isLeader || !map.resultSettingData.isConfirmedRefundSdt) {
                 map.homeValue = map.settlementStatusId === SettlementStatusId.Refund || map.settlementStatusId === SettlementStatusId.Running ? "" : map.homeValue;
                 map.awayValue = map.settlementStatusId === SettlementStatusId.Refund || map.settlementStatusId === SettlementStatusId.Running ? "" : map.awayValue;
             }
-            map.className = map.ticketStatus.toLowerCase();
+            map.className = this.basketballService.getIntervalBackground(map.settlementStatusId);
         });
     }
 
     async refund() {
         this.toastrService.clear();
+        if (this.isInputScoreEmpty()) {
+            this.toastrService.error(Language.warningInputScore);
+            return;
+        }
+
         const isPinGoal = this.verificationService.isPinGoalMatch(this.matchDetail.leagueGroupId);
         if (!isPinGoal && this.existResultNotConfirmed()) {
             this.toastrService.error(Language.confirmRefund.refundResultNotConfirmed);
             return;
         }
 
-        if (this.isSDTSettle ? this.existResultNotConfirmedSdt() : this.existResultNotConfirmedNormal()) {
+        if (!isPinGoal && (this.isSDTSettle ? this.existResultNotConfirmedSdt() : this.existResultNotConfirmedNormal())) {
             this.toastrService.error(Language.confirmRefund.sdtErrorMessage);
             return;
         }
@@ -116,6 +121,11 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
                 this.doRefund();
             });
         }
+    }
+
+    private isInputScoreEmpty(): boolean {
+        const selectedResources = this.selectedResources;
+        return this.isSDTSettle && (_.isEmpty(selectedResources[0].awayValue) || _.isEmpty(selectedResources[0].homeValue));
     }
 
     private async doRefund() {
@@ -189,6 +199,8 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
             result.checked = false;
             result.disabled = isDisable;
         });
+
+        this.selectFullTimeCheckBox();
     }
 
     selectFullTimeCheckBox() {
@@ -211,13 +223,17 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
     }
 
     private inputClass(resultDetail: ResultDetail) {
+        if ((!resultDetail.resultSettingData.isConfirmedRefund && !resultDetail.resultSettingData.isConfirmedRefundSdt) ||
+            _.isEmpty(resultDetail.awayValue) || _.isEmpty(resultDetail.homeValue)) {
+            return this.basketballService.getIntervalBackground(resultDetail.settlementStatusId);
+        }
         const externalResource = this.resourceConfirmedSdt.find(r => r.resourceId === resultDetail.resourceId);
         if (externalResource) {
             return _.isEqual(resultDetail.awayValue, externalResource.awayValue)
                 && _.isEqual(resultDetail.homeValue, externalResource.homeValue)
-                ? resultDetail.ticketStatus.toLowerCase() : BackgroundColor.scoreSdtNotConsistent;
+                ? this.basketballService.getIntervalBackground(resultDetail.settlementStatusId) : BackgroundColor.scoreSdtNotConsistent;
         }
-        return resultDetail.ticketStatus.toLowerCase();
+        return BackgroundColor.scoreSdtNotConsistent;
     }
 
     private isEnableResult(resultDetail: ResultDetail) {

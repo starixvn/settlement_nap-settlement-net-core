@@ -85,6 +85,16 @@ public class CreateQueryServiceImp : ICreateQueryService
         return xmlConvertService.Serialize(resources);
     }
 
+    private string CreateScoreResources(List<SaveScoreModel> selectedResources)
+    {
+        var resources = new SaveScoreResources<SaveScoreModel>
+        {
+            SourceItems = selectedResources
+        };
+
+        return xmlConvertService.Serialize(resources);
+    }
+
     public string CreateResourceChildMatch(ChildMatchModel childMatch)
     {
         var resource = new Resources<ResourceItem>
@@ -97,8 +107,8 @@ public class CreateQueryServiceImp : ICreateQueryService
 
     public SaveScoreRequest QuerySaveScore(SaveScoreRequest request)
     {
-        var scoreToSaveResources = CreateResources(request.ScoresToSave);
-        var scoreResources = CreateResources(request.CheckedScores);
+        var scoreToSaveResources = CreateScoreResources(request.ScoresToSave);
+        var scoreResources = CreateScoreResources(request.CheckedScores);
         return new SaveScoreRequest
         {
             MatchId = request.MatchId,

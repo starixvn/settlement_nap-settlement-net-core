@@ -1,3 +1,4 @@
+import { ResultSettingModel } from './../../shared/models/result-setting.model';
 import { CashOutService } from './../services/cash-out.service';
 import { TestBed, waitForAsync, ComponentFixture, fakeAsync, tick } from '@angular/core/testing';
 import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
@@ -7,8 +8,7 @@ import { BasketballService, VerificationService } from '../services';
 import { Match, HedgeMatchDetail, VoidBetInfo } from '../models';
 import { MessageBoxService, AioService } from '../../shared/services';
 import { Language } from '../../shared/language.native';
-import { ResultStatusId, SettlementStatusId } from '../../shared/constants';
-import { ResultSettingModel } from '../../shared/models';
+import { BackgroundColor, ResultStatusId, SettlementStatusId } from '../../shared/constants';
 import { ExternalResult, ExternalResultDetail, MatchDetail, Permission, ResultDetail } from '../../shared/models/sportsbook-sop';
 import { ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 import { ModalContentDialogComponent } from '../../shared/components/modal-dialog/modal-content-dialog.component';
@@ -214,7 +214,7 @@ describe('Component: RefundActionsComponent', () => {
             const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
             buttonYes.click();
             tick();
-            
+
             expect(cashOutService.voidBet).toHaveBeenCalled();
         }));
 
@@ -335,21 +335,57 @@ describe('Component: RefundActionsComponent', () => {
         });
     });
 
-    it('changeScore - should clear score result behind result has inputted', () => {
-        const resultDetail1 = { resourceId: '01', awayValue: "1", homeValue: "2" } as ResultDetail;
-        const resultDetail2 = { ...resultDetail1, resourceId: '02' };
-        const resultDetail3 = { ...resultDetail1, resourceId: '03' };
+    describe('changeScore', () => {
+        it('should clear score result behind result has inputted', () => {
+            const resultDetail1 = { resourceId: '01', awayValue: "1", homeValue: "2", ticketStatus: "class", resultSettingData: new ResultSettingModel } as ResultDetail;
+            const resultDetail2 = { ...resultDetail1, resourceId: '02' };
+            const resultDetail3 = { ...resultDetail1, resourceId: '03' };
 
-        component.resultDetails = [resultDetail1, resultDetail2, resultDetail3]
+            component.resultDetails = [resultDetail1, resultDetail2, resultDetail3]
 
-        component.changeScore(resultDetail2);
+            component.changeScore(resultDetail2);
 
-        expect(component.resultDetails[0].awayValue).toBe("1");
-        expect(component.resultDetails[0].homeValue).toBe("2");
-        expect(component.resultDetails[1].awayValue).toBe("1");
-        expect(component.resultDetails[1].homeValue).toBe("2");
-        expect(component.resultDetails[2].awayValue).toBe("");
-        expect(component.resultDetails[2].homeValue).toBe("");
+            expect(component.resultDetails[0].awayValue).toBe("1");
+            expect(component.resultDetails[0].homeValue).toBe("2");
+            expect(component.resultDetails[1].awayValue).toBe("1");
+            expect(component.resultDetails[1].homeValue).toBe("2");
+            expect(component.resultDetails[2].awayValue).toBe("");
+            expect(component.resultDetails[2].homeValue).toBe("");
+        });
+
+        it('should change class of result when result not consistent with confirm score', () => {
+            const resultDetail = { resourceId: '01', awayValue: "1", homeValue: "2", resultSettingData: { isConfirmedRefundSdt: true } } as ResultDetail;
+            const externalResult = { resourceId: '01', awayValue: "1", homeValue: "3" } as ExternalResultDetail;
+            component.resourceConfirmedSdt = [externalResult];
+
+            component.resultDetails = [resultDetail]
+
+            component.changeScore(resultDetail);
+
+            expect(resultDetail.className).toBe(BackgroundColor.scoreSdtNotConsistent);
+        });
+
+        it('should set class of result is ticketStatus result consistent with confirm score', () => {
+            const resultDetail = { resourceId: '01', awayValue: "1", homeValue: "2", ticketStatus: "class", resultSettingData: { isConfirmedRefundSdt: true } } as ResultDetail;
+            const externalResult = { resourceId: '01', awayValue: "1", homeValue: "2" } as ExternalResultDetail;
+            component.resourceConfirmedSdt = [externalResult];
+
+            component.resultDetails = [resultDetail]
+
+            component.changeScore(resultDetail);
+
+            expect(resultDetail.className).toBe(resultDetail.ticketStatus);
+        });
+
+        it('should set class of result is ticketStatus when result not confirmed', () => {
+            const resultDetail = { resourceId: '01', awayValue: "1", homeValue: "2", ticketStatus: "class", resultSettingData: new ResultSettingModel } as ResultDetail;
+
+            component.resultDetails = [resultDetail]
+
+            component.changeScore(resultDetail);
+
+            expect(resultDetail.className).toBe(resultDetail.ticketStatus);
+        });
     });
 
     describe('inputDirectly', () => {
@@ -422,7 +458,7 @@ describe('Component: RefundActionsComponent', () => {
             component.resultDetails = [ht, ft, resultDetail1, OT];
             component.resultDetailDisableInput = new Array(component.resultDetails.length).fill(true);
         })
-        it('When not pass result specifically and not is SDT ', () =>{
+        it('When not pass result specifically and not is SDT ', () => {
             component.isSDTSettle = false;
 
             component.enableInput();
@@ -430,7 +466,7 @@ describe('Component: RefundActionsComponent', () => {
             expect(component.resultDetailDisableInput.every(i => i)).toBeTruthy();
         });
 
-        it('When not pass result specifically and SDT ', () =>{
+        it('When not pass result specifically and SDT ', () => {
             component.isSDTSettle = true;
 
             component.enableInput();
@@ -438,7 +474,7 @@ describe('Component: RefundActionsComponent', () => {
             expect(component.resultDetailDisableInput.map(i => i)).toEqual([true, true, false, false]);
         });
 
-        it('When not pass result specifically and SDT ON and directly ON ', () =>{
+        it('When not pass result specifically and SDT ON and directly ON ', () => {
             component.isSDTSettle = true;
             component.isDirectly = true;
 
@@ -447,7 +483,7 @@ describe('Component: RefundActionsComponent', () => {
             expect(component.resultDetailDisableInput.map(i => i)).toEqual([false, false, true, true]);
         });
 
-        it('When pass result specifically and SDT ON and directly ON', () =>{
+        it('When pass result specifically and SDT ON and directly ON', () => {
             component.isSDTSettle = true;
             component.isDirectly = true;
 
@@ -456,7 +492,7 @@ describe('Component: RefundActionsComponent', () => {
             expect(component.resultDetailDisableInput[2]).toBeTruthy();
         });
 
-        it('When pass result specifically and result is fulltime and SDT ON and directly ON', () =>{
+        it('When pass result specifically and result is fulltime and SDT ON and directly ON', () => {
             component.isSDTSettle = true;
             component.isDirectly = true;
 
@@ -466,7 +502,7 @@ describe('Component: RefundActionsComponent', () => {
             expect(component.resultDetailDisableInput[3]).toBeTruthy();
         });
 
-        it('When pass result specifically and result is fulltime and SDT ON and directly off', () =>{
+        it('When pass result specifically and result is fulltime and SDT ON and directly off', () => {
             component.isSDTSettle = true;
             component.isDirectly = false;
 
