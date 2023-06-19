@@ -4,7 +4,7 @@ import { MessageBoxService, AioService, BlockUIService } from '../../shared/serv
 import { ModalDialogMessage } from '../../shared/models';
 import { Language } from '../../shared/language.native';
 import { CalculateAction, SettingPosition, SettlementStatusId, SportType } from '../../shared/constants';
-import { BasketballService, BetStatusService, VerificationService, CashOutService } from '../services';
+import { BasketballService, BetStatusService, VerificationService, CashOutService, GenerateCashOutService } from '../services';
 import { BasketballApiKeys, KickOffTime, ResourcesIds } from '../constants';
 import { GetTicketInfoQuery, Match, VoidBetInfo, VoidBetQuery, CashOutResultUpdateQuery } from '../models';
 import { MatchDetail, HedgeMatchDetail, ResultDetail, SaveScoreQuery, SportTemplate, ExternalResultDetail, SettleQuery } from '../../shared/models/sportsbook-sop';
@@ -20,7 +20,7 @@ import { CalculateCommonModule } from '../../shared/modules/calculate-common.mod
     standalone: true,
     imports: [CalculateCommonModule, CalculationMatchDetailComponent,
         ExternalSourceNamePipe, ResourceNameByIdPipe],
-    providers: [BasketballService, ResourceNameByIdPipe, BetStatusService, VerificationService, CashOutService]
+    providers: [BasketballService, ResourceNameByIdPipe, BetStatusService, VerificationService, CashOutService, GenerateCashOutService]
 })
 export class CalculationActionsComponent implements SportTemplate {
     @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;

@@ -7,7 +7,7 @@ import { BackgroundColor, ScoreSourceType, SettlementStatusId, SportType } from 
 import { BasketballApiKeys, ResourcesIds } from '../constants';
 import * as _ from 'lodash';
 import { RefundActionBaseComponent } from '../../shared/components/sportsbook-sop/refund-action-base.component';
-import { BasketballService, BetStatusService, VerificationService, CashOutService } from '../services';
+import { BasketballService, BetStatusService, VerificationService, CashOutService, GenerateCashOutService } from '../services';
 import { ResultDetail, SettleQuery, SportTemplate } from '../../shared/models/sportsbook-sop';
 import { ToastContainerDirective } from 'ngx-toastr';
 import { RefundCommonModule } from '../../shared/modules/refund-common.module';
@@ -19,7 +19,7 @@ import { CalculationMatchDetailComponent } from './calculation-match-detail.comp
     templateUrl: './refund-actions.component.html',
     standalone: true,
     imports: [RefundCommonModule, CalculationMatchDetailComponent, ResourceNameByIdPipe],
-    providers: [VerificationService, BasketballService, ResourceNameByIdPipe, BetStatusService, CashOutService]
+    providers: [VerificationService, BasketballService, ResourceNameByIdPipe, BetStatusService, CashOutService, GenerateCashOutService]
 })
 export class RefundActionsComponent extends RefundActionBaseComponent implements SportTemplate {
     @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
@@ -159,20 +159,22 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
         const isVirtualMatch = this.verificationService.isPinGoalMatch(this.matchDetail.leagueGroupId) || this.verificationService.isSabaMatch(this.matchDetail.leagueGroupId);
         if (final.length > 0 && !isVirtualMatch && this.matchDetail.parentId === 0) {
             let half = 0;
-            let betStatus = "0-0,0-0,0-0,0-0,0-0";
-            if (this.cashOutService.isCalcHalftimeWithMatchTwoQuarters(this.matchDetail.betStatus, resource)) {
-                betStatus = this.cashOutService.getDirectBetStatusOnRefund(resource);
-            } else if (this.cashOutService.isNotCalcHalftimeWithMatchTwoQuarters(resource)) {
-                half = 8;
+            let betStatus = "";
+
+            if(this.isSDTSettle){
+                half = this.cashOutService.getHalfForSettleDetermined(this.matchDetail.betStatus, resource);
+                betStatus = this.cashOutService.getBetStatusForSettleDetermined(this.matchDetail.betStatus, resource);
             } else {
-                half = this.cashOutService.getHalf(resource);
-                betStatus = this.cashOutService.getBetStatus(resource);
+                half = this.cashOutService.getHalf(this.matchDetail.betStatus, resource);
+                betStatus = this.cashOutService.getBetStatus(this.matchDetail.betStatus, resource); 
             }
 
             const query = new CashOutResultRefundQuery(this.matchDetail.matchId, betStatus, half);
             await this.cashOutService.refund(query);
         }
     }
+
+
 
     changeScore(resultDetail: ResultDetail) {
         const firstResourceIndex = this.resultDetails.indexOf(resultDetail);
