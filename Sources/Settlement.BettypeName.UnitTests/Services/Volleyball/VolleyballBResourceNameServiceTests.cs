@@ -1,7 +1,7 @@
-﻿using Settlement.ResourceInfos.Constants;
-using Settlement.ResourceInfos.Services.Volleyball;
+﻿namespace Settlement.ResourceInfos.UnitTests.Services.Volleyball;
 
-namespace Settlement.BettypeName.UnitTests.Services.Volleyball;
+using Settlement.ResourceInfos.Constants;
+using Settlement.ResourceInfos.Services.Volleyball;
 
 public class VolleyballBResourceNameServiceTests
 {

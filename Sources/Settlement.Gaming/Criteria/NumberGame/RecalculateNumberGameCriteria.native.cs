@@ -21,7 +21,7 @@ public class RecalculateNumberGameCriteria : NonQueryCommand
     public string DbServer { get; set; }
 
     [SpParam(Ignored = true)]
-    public string SpName { get; } = "NAP_Admin_Settlement_s161_Manual";
+    public string SpName => "NAP_Admin_Settlement_s161_Manual";
 
     public override string GetSettingKey()
     {

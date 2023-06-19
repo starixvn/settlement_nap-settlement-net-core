@@ -23,7 +23,7 @@ public class MoveRunningTicketsCriteria : NonQueryCommand
     public string DbServer { get; set; }
 
     [SpParam(Ignored = true)]
-    public string SpName { get; } = "NAP_Admin_Settlement_MoveTicket";
+    public string SpName => "NAP_Admin_Settlement_MoveTicket";
 
     public override string GetSettingKey()
     {

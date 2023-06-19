@@ -17,7 +17,7 @@ public class LogCriteria : NonQueryCommand
 
     public string Remark { get; set; }
 
-    public string Ip { get; } = string.Empty;
+    public string Ip => string.Empty;
 
     public int ActionId { get; }
 

@@ -8,7 +8,7 @@ import { BasketballService, VerificationService } from '../services';
 import { Match, HedgeMatchDetail, VoidBetInfo } from '../models';
 import { MessageBoxService, AioService } from '../../shared/services';
 import { Language } from '../../shared/language.native';
-import { BackgroundColor, ResultStatusId, SettlementStatusId } from '../../shared/constants';
+import { BackgroundColor, ResultStatusId, SettlementStatusId, SportType } from '../../shared/constants';
 import { ExternalResult, ExternalResultDetail, MatchDetail, Permission, ResultDetail } from '../../shared/models/sportsbook-sop';
 import { ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from 'ngx-toastr';
 import { ModalContentDialogComponent } from '../../shared/components/modal-dialog/modal-content-dialog.component';
@@ -116,7 +116,7 @@ describe('Component: RefundActionsComponent', () => {
             match.resultDetails.push(q4);
             match.resultDetails.push(ht);
             match.resultDetails.push(ft);
-            component.matchDetail = matchDetail;
+            component.matchDetail = { ...matchDetail, sportType: SportType.basketBall };
             component.resultDetails = match.resultDetails;
         });
 
@@ -225,6 +225,8 @@ describe('Component: RefundActionsComponent', () => {
             resultDetail.checked = true;
             resultDetail.homeValue = '1';
             resultDetail.awayValue = '2';
+            resultDetail.resultSettingData = new ResultSettingModel();
+            resultDetail.resultSettingData.isConfirmedRefundSdt = true;
             const secondResult = { ...resultDetail, resourceId: '02' };
             const externalResult = new ExternalResultDetail(99, '01', '', '', '1', '2');
             const secondExternalResult = { ...externalResult, resourceId: '02', homeValue: '', awayValue: '' }
@@ -245,6 +247,8 @@ describe('Component: RefundActionsComponent', () => {
             resultDetail.checked = true;
             resultDetail.homeValue = '1';
             resultDetail.awayValue = '2';
+            resultDetail.resultSettingData = new ResultSettingModel();
+            resultDetail.resultSettingData.isConfirmedRefundSdt = true;
             const secondResult = { ...resultDetail, resourceId: '02', homeValue: '', awayValue: '' };
             const externalResult = new ExternalResultDetail(99, '01', '', '', '1', '2');
             component.resourceConfirmedSdt = [externalResult]
@@ -260,7 +264,6 @@ describe('Component: RefundActionsComponent', () => {
         it('should alert when exist result not confirmed', fakeAsync(async () => {
             const result = new ResultDetail();
             result.resultSettingData = new ResultSettingModel();
-            result.resultSettingData.isConfirmedRefund = false;
             result.checked = true;
             component.match = match;
             component.resultDetails = [result];
@@ -269,7 +272,7 @@ describe('Component: RefundActionsComponent', () => {
             component.refund();
             tick();
 
-            expect(toastrService.error).toHaveBeenCalledWith("WARNING! Cannot continue due to selected results are not confirmed to refund. Please confirm refund and try again.");
+            expect(toastrService.error).toHaveBeenCalledWith(Language.confirmRefund.refundResultNotConfirmed);
         }));
     });
     describe('Init', () => {

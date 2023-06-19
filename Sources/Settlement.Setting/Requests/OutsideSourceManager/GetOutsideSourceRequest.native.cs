@@ -11,7 +11,7 @@ public class GetOutsideSourceRequest : IRequest<List<OutsideSourceModel>>
 
     public int SourceStatus { get; set; }
 
-    public int SourceType { get; } = 1;
+    public int SourceType => 1;
 
     public int SportType { get; set; }
 }

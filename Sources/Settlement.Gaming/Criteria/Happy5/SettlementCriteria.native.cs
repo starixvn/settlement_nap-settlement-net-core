@@ -25,7 +25,7 @@ public class SettlementCriteria : NonQueryCommand
     public string DbServer { get; set; }
 
     [SpParam(Ignored = true)]
-    public string SpName { get; } = "NAP_Admin_Settlement_s164";
+    public string SpName => "NAP_Admin_Settlement_s164";
 
     public override string GetSettingKey()
     {

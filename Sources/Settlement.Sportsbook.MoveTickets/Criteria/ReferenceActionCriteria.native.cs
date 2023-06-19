@@ -6,7 +6,7 @@ public class GetReferenceActionCriteria : CriteriaBase
 {
     public string MatchIds { get; set; }
 
-    public string ActionIds { get; } = "81025,81026";
+    public string ActionIds => "81025,81026";
 
     public override string GetSettingKey()
     {

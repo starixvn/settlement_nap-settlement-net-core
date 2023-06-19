@@ -6,7 +6,7 @@ public class UpdateChildMatchCriteria : NonQueryCommand
 {
     public int MatchId { get; set; }
 
-    public string Command { get; } = "NAP_Admin_Settlement_1-CAL";
+    public string Command => "NAP_Admin_Settlement_1-CAL";
 
     public int FtHome { get; set; }
 
@@ -16,9 +16,9 @@ public class UpdateChildMatchCriteria : NonQueryCommand
 
     public int HtAway { get; set; }
 
-    public string Action { get; } = "CAL";
+    public string Action => "CAL";
 
-    public bool IsMovedMatch { get; } = true;
+    public bool IsMovedMatch => true;
 
     public override string GetSettingKey()
     {
