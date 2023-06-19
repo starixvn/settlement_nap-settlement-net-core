@@ -6,7 +6,7 @@ import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.p
 import { ResourceNameByIdPipe } from '../pipes/resource-name-by-id.pipe';
 import { Language } from '../../shared/language.native';
 import { ResourceItem } from '../../shared/models/resource-item.model';
-import { ResultStatusId, ScoreSourceType } from '../../shared/constants';
+import { ResultStatusId, ScoreSourceType, SettlementStatusId } from '../../shared/constants';
 
 @Injectable()
 export class BasketballService {
@@ -53,23 +53,20 @@ export class BasketballService {
     getResourceExternalRefund(isLeader: boolean, externalResults: ExternalResult[], resultDetails: ResultDetail[]) {
         const resultConfirmRefund = externalResults.find(r => r.sourceId === ScoreSourceType.confirmRefundSource);
         if (isLeader && resultConfirmRefund) {
-            resultDetails.forEach(result => this.resourceConfirmed(resultConfirmRefund.resultDetails ,result));
+            resultDetails.forEach(result => {
+                if (result.resultSettingData.isConfirmedRefundSdt) {
+                    this.resourceConfirmed(resultConfirmRefund.resultDetails, result)
+                }
+            });
         }
     }
 
-    private resourceConfirmed(externalResults: ExternalResultDetail[], resultDetail :ResultDetail){
+    private resourceConfirmed(externalResults: ExternalResultDetail[], resultDetail: ResultDetail) {
         const resource = externalResults.find(resultConfirmed => resultConfirmed.resourceId === resultDetail.resourceId);
-        if(resource) {
+        if (resource) {
             resultDetail.homeValue = resource.homeValue;
             resultDetail.awayValue = resource.awayValue;
-        } 
-    }
-
-    private resourceNormal(resultDetail :ResultDetail){
-        if(resultDetail.resultStatusId == ResultStatusId.AutoCompleted || resultDetail.resultStatusId == ResultStatusId.ManualCompleted) {
-            return new ResourceItem(resultDetail.resourceId, resultDetail.homeValue, resultDetail.awayValue);
         }
-        return new ResourceItem(resultDetail.resourceId, "", "");
     }
 
     isDisabledUndoButton(resultDetails: ResultDetail[]) {
