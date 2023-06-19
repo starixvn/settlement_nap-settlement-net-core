@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using AutoMapper.Configuration;
 using Fanex.Data.Repository;
 using Settlement.Setting.Criteria.ProviderManager;
 using Settlement.Setting.Requests.ProviderManager;

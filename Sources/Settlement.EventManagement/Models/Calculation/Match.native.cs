@@ -1,6 +1,4 @@
-﻿using Settlement.Core.Models;
-
-namespace Settlement.EventManagement.Models.Calculation;
+﻿namespace Settlement.EventManagement.Models.Calculation;
 
 [MessagePackObject]
 public class Match : BaseMatch

@@ -48,7 +48,7 @@ public class CriteriaFactoryImp : CriteriaFactoryBase
         CriteriaTypes.Add($"esport-{ApiKeyConstant.SaveScore}", typeof(Criteria.ESport.SaveScoreCriteria));
         CriteriaTypes.Add($"esport-{ApiKeyConstant.OldMatch}", typeof(Criteria.ESport.GetOldMatchCriteria));
 
-        CriteriaTypes.Add($"esport-settle", typeof(Criteria.SettleCriteria));
+        CriteriaTypes.Add("esport-settle", typeof(Criteria.SettleCriteria));
     }
 
     private static void Badminton()
@@ -86,6 +86,6 @@ public class CriteriaFactoryImp : CriteriaFactoryBase
         CriteriaTypes.Add($"game-total-{ApiKeyConstant.ChildMatchKey}", typeof(Criteria.Volleyball.GetChildMatchCriteria));
         CriteriaTypes.Add($"game-total-{ApiKeyConstant.SaveScore}", typeof(Criteria.SaveScoreCriteria));
 
-        CriteriaTypes.Add($"game-total-settle", typeof(Criteria.SettleCriteria));
+        CriteriaTypes.Add("game-total-settle", typeof(Criteria.SettleCriteria));
     }
 }

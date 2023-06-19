@@ -1,6 +1,4 @@
 ﻿using Newtonsoft.Json;
-using Settlement.Core.Models;
-using Settlement.Core.Services;
 using System.Globalization;
 
 namespace Settlement.EventManagement.Models;

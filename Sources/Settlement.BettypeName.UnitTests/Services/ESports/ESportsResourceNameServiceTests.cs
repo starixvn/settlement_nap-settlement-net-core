@@ -1,7 +1,7 @@
 ﻿namespace Settlement.ResourceInfos.UnitTests.Services.ESports;
 
-using Settlement.ResourceInfos.Constants;
-using Settlement.ResourceInfos.MapperFactory;
+using Constants;
+using MapperFactory;
 using Settlement.ResourceInfos.Services.ESports;
 
 public class ESportsResourceNameServiceTests

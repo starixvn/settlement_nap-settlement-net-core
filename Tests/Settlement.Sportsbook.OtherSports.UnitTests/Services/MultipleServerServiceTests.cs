@@ -112,7 +112,7 @@ public class MultipleServerServiceTests
         mergeDataService.MergeTicketCounts(Arg.Any<List<List<TicketCounts>>>())
             .Returns(new List<TicketCounts>());
 
-        var result = await service.Calculate(new CalculateCriteria { IsReSettledTickets = true, Action = "CAL" }, new ScoreSetModel());
+        await service.Calculate(new CalculateCriteria { IsReSettledTickets = true, Action = "CAL" }, new ScoreSetModel());
 
         await repository.Received().ExecuteAsync(Arg.Any<InsertLogCriteria>());
     }

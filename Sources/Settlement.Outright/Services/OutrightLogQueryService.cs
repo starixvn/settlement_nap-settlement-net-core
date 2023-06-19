@@ -22,7 +22,7 @@ public class OutrightLogQueryServiceImp : OutrightLogQueryService
     public OutrightLogQueryServiceImp(IDynamicRepository repository, IOptions<AppSettingsKey> appOptions)
     {
         this.repository = repository;
-        this.appSettingsKey = appOptions.Value;
+        appSettingsKey = appOptions.Value;
     }
 
     public async Task<OutrightLog> GetOutrightLog(GetLogRequest request)

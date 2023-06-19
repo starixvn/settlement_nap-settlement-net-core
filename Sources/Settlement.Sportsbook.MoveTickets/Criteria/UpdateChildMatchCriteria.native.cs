@@ -22,7 +22,7 @@ public class UpdateChildMatchCriteria : NonQueryCommand
 
     public override string GetSettingKey()
     {
-        return $"NAP_Admin_Match_Update";
+        return "NAP_Admin_Match_Update";
     }
 
     public override bool IsValid()

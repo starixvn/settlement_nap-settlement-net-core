@@ -31,7 +31,7 @@ public class EventStatusServiceImp : EventStatusService
             return eventStatus;
         }
 
-        var resultDetailSorted = resultDetails.OrderBy((resultDetail) =>
+        var resultDetailSorted = resultDetails.OrderBy(resultDetail =>
             ResourcePosition.ResourceBySport[sportType].IndexOf(resultDetail.ResourceId)).ToList();
 
         var statusRound = GetStatusRound(eventStatus, resultDetailSorted);

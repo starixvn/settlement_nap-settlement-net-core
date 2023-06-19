@@ -12,7 +12,7 @@ public class UpdateChildMatchRemarkCriteria : NonQueryCommand
 
     public override string GetSettingKey()
     {
-        return $"NAP_UpdateMatch_Remark";
+        return "NAP_UpdateMatch_Remark";
     }
 
     public override bool IsValid()

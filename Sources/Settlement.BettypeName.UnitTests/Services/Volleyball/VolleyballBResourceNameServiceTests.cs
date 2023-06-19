@@ -1,6 +1,6 @@
 ﻿namespace Settlement.ResourceInfos.UnitTests.Services.Volleyball;
 
-using Settlement.ResourceInfos.Constants;
+using Constants;
 using Settlement.ResourceInfos.Services.Volleyball;
 
 public class VolleyballBResourceNameServiceTests

@@ -17,13 +17,10 @@ public class OutrightSettleServiceTests
 {
     private readonly IDynamicRepository repository;
 
-    private readonly IMapper mapper;
     private readonly IRefDataService refDataService;
 
     private readonly OutrightSettleProcessService outrightSettleProcessService;
 
-    private readonly OutrightPermissionService permission;
-    private readonly INapSession currentSession;
     private readonly IBalanceUpService balanceUpService;
 
     private readonly OutrightSettleService service;
@@ -40,7 +37,7 @@ public class OutrightSettleServiceTests
         var mapperConfig = new MapperConfigurationExpression();
         mapperConfig.AddProfile<OutrightMapperProfile>();
         var config = new MapperConfiguration(mapperConfig);
-        mapper = new Mapper(config);
+        IMapper mapper = new Mapper(config);
 
         service = new OutrightSettleServiceImp(repository, mapper, refDataService, outrightSettleProcessService,
             permission, currentSession, balanceUpService);
@@ -117,7 +114,7 @@ public class OutrightSettleServiceTests
         outrightSettleProcessService.ValidateRequest(Arg.Any<string>(), Arg.Any<IEnumerable<InfoValidate>>())
             .Returns(new ResultOutright());
         outrightSettleProcessService.UpdateResultCalculate(Arg.Any<OutrightSettleCriteria>())
-            .Returns(x => new Result { ErrMsg = "test" });
+            .Returns(_ => new Result { ErrMsg = "test" });
         refDataService.GetTeamName(Arg.Any<string>()).Returns("TeamName");
 
         var request = new OutrightCalculateRequest

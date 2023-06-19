@@ -15,8 +15,6 @@ public class MatchServiceTests
 
     private readonly IDynamicRepository repository;
 
-    private readonly BetBuilderCalculateService betBuilderCalculateService;
-
     private readonly BetBuilderMatchesService betBuilderMatchesService;
 
     private readonly BetBuilderService betBuilderService;
@@ -25,7 +23,7 @@ public class MatchServiceTests
     {
         repository = Substitute.For<IDynamicRepository>();
         var refDataService = Substitute.For<IRefDataService>();
-        betBuilderCalculateService = Substitute.For<BetBuilderCalculateService>();
+        Substitute.For<BetBuilderCalculateService>();
         betBuilderMatchesService = Substitute.For<BetBuilderMatchesService>();
         betBuilderService = Substitute.For<BetBuilderService>();
         repository.Fetch<MatchDetailModel>(Arg.Any<CriteriaBase>()).Returns(new List<MatchDetailModel>());

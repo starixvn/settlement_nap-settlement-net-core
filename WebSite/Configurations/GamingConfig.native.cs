@@ -1,5 +1,4 @@
-﻿using MediatR;
-using Settlement.Gaming.Controllers;
+﻿using Settlement.Gaming.Controllers;
 using Happy5 = Settlement.Gaming.Services.Happy5;
 using NumberGame = Settlement.Gaming.Services.NumberGame;
 

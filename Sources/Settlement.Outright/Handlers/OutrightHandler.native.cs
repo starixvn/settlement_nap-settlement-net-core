@@ -37,7 +37,7 @@ public class OutrightHandler :
         this.settleService = settleService;
         this.outrightLogService = outrightLogService;
         this.outrightLogQueryService = outrightLogQueryService;
-        this.outrightSettleProcessService = outrightSettleProcessService; ;
+        this.outrightSettleProcessService = outrightSettleProcessService;
     }
 
     public async Task<SportLeague> Handle(SportLeagueRequest request, CancellationToken cancellationToken) => await getDataFilterService.GetSportLeague(request);

@@ -1,5 +1,4 @@
-﻿using Settlement.Core.Services;
-using Settlement.EventManagement.Models;
+﻿using Settlement.EventManagement.Models;
 using Settlement.EventManagement.Models.Calculation;
 using Settlement.EventManagement.Requests;
 using Settlement.EventManagement.Services.Calculation;

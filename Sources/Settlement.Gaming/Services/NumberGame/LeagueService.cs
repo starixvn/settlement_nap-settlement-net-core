@@ -7,7 +7,7 @@ namespace Settlement.Gaming.Services.NumberGame;
 public interface LeagueService
 {
     Task<List<LeaguesModel>> Search(NumberGameMatchRequest request);
-};
+}
 
 public class LeagueServiceImp : LeagueService
 {

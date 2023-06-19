@@ -1,6 +1,6 @@
 ﻿namespace Settlement.ResourceInfos.UnitTests.Services.Cricket;
 
-using Settlement.ResourceInfos.Constants;
+using Constants;
 using Settlement.ResourceInfos.Services.Cricket;
 
 public class CricketResourceNameServiceTests

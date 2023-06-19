@@ -1,6 +1,4 @@
-﻿using Settlement.Core.Models;
-
-namespace Settlement.EventManagement.Requests;
+﻿namespace Settlement.EventManagement.Requests;
 
 public class SportRequest : IRequest<List<Sport>>
 {

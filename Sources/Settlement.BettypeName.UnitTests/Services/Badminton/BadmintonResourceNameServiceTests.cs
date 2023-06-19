@@ -1,6 +1,6 @@
 ﻿namespace Settlement.ResourceInfos.UnitTests.Services.Badminton;
 
-using Settlement.ResourceInfos.Constants;
+using Constants;
 using Settlement.ResourceInfos.Services.Badminton;
 
 public class BadmintonResourceNameServiceTests

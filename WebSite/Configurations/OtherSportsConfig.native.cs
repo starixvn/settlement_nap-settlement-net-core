@@ -1,5 +1,4 @@
-﻿using MediatR;
-using Settlement.Sportsbook.OtherSports.Controllers;
+﻿using Settlement.Sportsbook.OtherSports.Controllers;
 using Settlement.Sportsbook.OtherSports.Services;
 
 namespace Settlement.WebSites.Configurations;

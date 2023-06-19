@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using AutoMapper.Configuration;
 using Fanex.Data.Repository;
 using Microsoft.Extensions.Options;
 using Settlement.Core.Models;

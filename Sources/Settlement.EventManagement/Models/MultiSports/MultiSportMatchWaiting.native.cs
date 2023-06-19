@@ -67,7 +67,7 @@ public class MultiSportMatchWaiting
     public int AutoPayoutStatus { get; set; }
 
     [Key("moreScores")]
-    public Core.Models.MoreScores MoreScores { get; set; }
+    public MoreScores MoreScores { get; set; }
 
     [Key("eventStatusColor")]
     public string EventStatusColor { get; set; }
@@ -85,7 +85,7 @@ public class MultiSportMatchWaiting
     public bool IsAutoPayoutForLeague { get; set; }
 
     [Key("remark")]
-    public Core.Models.RemarkSettingModel Remark { get; set; }
+    public RemarkSettingModel Remark { get; set; }
 
     [Key("exHalfTimeScore")]
     public string ExHalfTimeScore { get; set; }

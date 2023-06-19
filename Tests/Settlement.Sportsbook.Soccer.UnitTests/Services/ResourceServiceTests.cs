@@ -1061,7 +1061,7 @@ public class ResourceServiceTests
 	[Fact]
 	public void UnCalculateFtResources_ExistScoreHT_ReturnExpect()
 	{
-		var goalRecord = "h;";
+		const string goalRecord = "h;";
 
 		var expect = new List<XmlResource>
 		{
@@ -1102,7 +1102,7 @@ public class ResourceServiceTests
 	[Fact]
 	public void UnCalculateFtResources_NotExistScoreHT_ReturnExpect()
 	{
-		var goalRecord = ";h";
+		const string goalRecord = ";h";
 
 		var expect = new List<XmlResource>
 		{
