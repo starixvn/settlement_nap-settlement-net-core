@@ -547,8 +547,9 @@ export class CalculationActionsComponent implements SportTemplate {
 
     private resetHomeAway(resultDetails: ResultDetail[]) {
         resultDetails.forEach((map) => {
-            map.homeValue = map.settlementStatusId === SettlementStatusId.Refund ? "" : map.homeValue;
-            map.awayValue = map.settlementStatusId === SettlementStatusId.Refund ? "" : map.awayValue;
+            const needReset = this.basketballService.isFinalSdt(map, this.quarterResults) || map.settlementStatusId === SettlementStatusId.Refund;
+            map.homeValue = needReset ? "" : map.homeValue;
+            map.awayValue = needReset ? "" : map.awayValue;
         });
     }
 

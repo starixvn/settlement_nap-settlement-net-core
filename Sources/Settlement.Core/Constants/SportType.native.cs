@@ -122,4 +122,6 @@ public static class SportGroup
     public const string PopularGroup = "All Popular Sports";
 
     public const string OtherGroup = "All Other Sports";
+
+    public static int[] SupportSettleDetermine = { SportType.BasketBall };
 }

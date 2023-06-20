@@ -82,7 +82,7 @@ public class MatchResultDetailServiceTests
 
         // Assert
         scoreService.Received(1).HalftimeScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>(), Arg.Any<Permission>());
-        scoreService.Received(1).FinalScore(Arg.Any<List<ResultDetail>>(), Arg.Any<Permission>());
+        scoreService.Received(1).FinalScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>(), Arg.Any<Permission>());
         scoreService.Received(1).ScoreOfSets(Arg.Any<List<ResultDetail>>(), Arg.Any<List<string>>(), Arg.Any<Permission>());
         scoreService.Received(1).IsIntervalScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>());
         Assert.True(actualMatches.Count > 0);
@@ -109,7 +109,7 @@ public class MatchResultDetailServiceTests
 
         // Assert
         scoreService.Received(1).HalftimeScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>(), Arg.Any<Permission>());
-        scoreService.Received(1).FinalScore(Arg.Any<List<ResultDetail>>(), Arg.Any<Permission>());
+        scoreService.Received(1).FinalScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>(), Arg.Any<Permission>());
         scoreService.Received(1).ScoreOfSets(Arg.Any<List<ResultDetail>>(), Arg.Any<List<string>>(), Arg.Any<Permission>());
         scoreService.Received(1).IsIntervalScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>());
         Assert.True(actualMatches.Count > 0);
@@ -136,7 +136,7 @@ public class MatchResultDetailServiceTests
 
         // Assert
         scoreService.Received(1).HalftimeScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>(), Arg.Any<Permission>());
-        scoreService.Received(1).FinalScore(Arg.Any<List<ResultDetail>>(), Arg.Any<Permission>());
+        scoreService.Received(1).FinalScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>(), Arg.Any<Permission>());
         scoreService.Received(1).ScoreOfSets(Arg.Any<List<ResultDetail>>(), Arg.Any<List<string>>(), Arg.Any<Permission>());
         scoreService.Received(1).IsIntervalScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>());
         Assert.True(actualMatches.Count > 0);
@@ -166,7 +166,7 @@ public class MatchResultDetailServiceTests
 
         // Assert
         scoreService.Received(1).HalftimeScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>(), Arg.Any<Permission>());
-        scoreService.Received(1).FinalScore(Arg.Any<List<ResultDetail>>(), Arg.Any<Permission>());
+        scoreService.Received(1).FinalScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>(), Arg.Any<Permission>());
         scoreService.Received(1).ScoreOfSets(Arg.Any<List<ResultDetail>>(), Arg.Any<List<string>>(), Arg.Any<Permission>());
         scoreService.Received(1).IsIntervalScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>());
         Assert.True(actualMatches.Count > 0);
@@ -193,7 +193,7 @@ public class MatchResultDetailServiceTests
 
         // Assert
         scoreService.Received(1).HalftimeScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>(), Arg.Any<Permission>());
-        scoreService.Received(1).FinalScore(Arg.Any<List<ResultDetail>>(), Arg.Any<Permission>());
+        scoreService.Received(1).FinalScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>(), Arg.Any<Permission>());
         scoreService.Received(1).ScoreOfSets(Arg.Any<List<ResultDetail>>(), Arg.Any<List<string>>(), Arg.Any<Permission>());
         scoreService.Received(1).IsIntervalScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>());
         externalScoreService.Received(1).IsInconsistentFullTimeScore(Arg.Any<int>(), Arg.Any<string>(), Arg.Any<List<ResultDetail>>());
@@ -221,7 +221,7 @@ public class MatchResultDetailServiceTests
 
         // Assert
         scoreService.Received(1).HalftimeScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>(), Arg.Any<Permission>());
-        scoreService.Received(1).FinalScore(Arg.Any<List<ResultDetail>>(), Arg.Any<Permission>());
+        scoreService.Received(1).FinalScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>(), Arg.Any<Permission>());
         scoreService.Received(1).ScoreOfSets(Arg.Any<List<ResultDetail>>(), Arg.Any<List<string>>(), Arg.Any<Permission>());
         scoreService.Received(1).IsIntervalScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>());
         Assert.True(actualMatches.Count > 0);

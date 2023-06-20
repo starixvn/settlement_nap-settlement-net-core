@@ -135,7 +135,7 @@ public class MatchResultDetailServiceImp : IMatchResultDetailService
         return new MoreScores
         {
             HalfTimeScore = scoreService.HalftimeScore(sportType, resultDetails, permission),
-            FinalScore = scoreService.FinalScore(resultDetails, permission),
+            FinalScore = scoreService.FinalScore(sportType, resultDetails, permission),
             Sets = scoreService.ScoreOfSets(resultDetails, resources, permission)
         };
     }

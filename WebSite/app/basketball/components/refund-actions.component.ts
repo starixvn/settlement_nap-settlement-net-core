@@ -4,7 +4,7 @@ import { Language } from '../../shared/language.native';
 import { BlockUIService } from '../../shared/services';
 import { ModalDialogMessage } from '../../shared/models';
 import { BackgroundColor, ScoreSourceType, SettlementStatusId, SportType } from '../../shared/constants';
-import { BasketballApiKeys, ResourcesIds } from '../constants';
+import { BasketballApiKeys, Resources, ResourcesIds } from '../constants';
 import * as _ from 'lodash';
 import { RefundActionBaseComponent } from '../../shared/components/sportsbook-sop/refund-action-base.component';
 import { BasketballService, BetStatusService, VerificationService, CashOutService, GenerateCashOutService } from '../services';
@@ -83,8 +83,9 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
     private resetHomeAwayAndAddClass(resultDetails: ResultDetail[]) {
         resultDetails.forEach((map) => {
             if (!this.permission.isLeader || !map.resultSettingData.isConfirmedRefundSdt) {
-                map.homeValue = map.settlementStatusId === SettlementStatusId.Refund || map.settlementStatusId === SettlementStatusId.Running ? "" : map.homeValue;
-                map.awayValue = map.settlementStatusId === SettlementStatusId.Refund || map.settlementStatusId === SettlementStatusId.Running ? "" : map.awayValue;
+                const needReset = this.basketballService.isFinalSdt(map, this.quarterResults) || map.settlementStatusId === SettlementStatusId.Refund || map.settlementStatusId === SettlementStatusId.Running;
+                map.homeValue = needReset ? "" : map.homeValue;
+                map.awayValue = needReset ? "" : map.awayValue;
             }
             map.className = this.basketballService.getIntervalBackground(map.settlementStatusId);
         });
@@ -161,12 +162,12 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
             let half = 0;
             let betStatus = "";
 
-            if(this.isSDTSettle){
+            if (this.isSDTSettle) {
                 half = this.cashOutService.getHalfForSettleDetermined(this.matchDetail.betStatus, resource);
                 betStatus = this.cashOutService.getBetStatusForSettleDetermined(this.matchDetail.betStatus, resource);
             } else {
                 half = this.cashOutService.getHalf(this.matchDetail.betStatus, resource);
-                betStatus = this.cashOutService.getBetStatus(this.matchDetail.betStatus, resource); 
+                betStatus = this.cashOutService.getBetStatus(this.matchDetail.betStatus, resource);
             }
 
             const query = new CashOutResultRefundQuery(this.matchDetail.matchId, betStatus, half);

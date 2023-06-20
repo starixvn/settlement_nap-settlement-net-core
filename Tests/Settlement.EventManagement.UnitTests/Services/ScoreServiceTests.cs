@@ -190,7 +190,7 @@ public class ScoreServiceTests
         var expectedScore = new Score("-");
 
         // Act
-        var actualScore = service.FinalScore(EmptyResultDetail, permission);
+        var actualScore = service.FinalScore(1, EmptyResultDetail, permission);
 
         // Assert
         AssertExtension.AreEqual(expectedScore, actualScore);
@@ -211,7 +211,7 @@ public class ScoreServiceTests
         scoreSetService.GetScore(Arg.Any<ResultDetail>(), Arg.Any<Permission>()).Returns(fakeFinalTimeScore);
 
         // Act
-        var actualScore = service.FinalScore(resultDetail, permission);
+        var actualScore = service.FinalScore(1, resultDetail, permission);
 
         // Assert
         AssertExtension.AreEqual(expectedScore, actualScore);

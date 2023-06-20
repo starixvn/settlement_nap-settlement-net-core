@@ -28,8 +28,6 @@ public interface NewInfoMatchService
 
 public class NewInfoMatchServiceImp : NewInfoMatchService
 {
-    private readonly List<int> supportSettleDetermine = new() { SportType.BasketBall };
-
     private readonly SiteMatchService siteMatchService;
 
     private readonly GoalIconService goalIconService;
@@ -72,7 +70,7 @@ public class NewInfoMatchServiceImp : NewInfoMatchService
 
     public string NewEventStatus(BaseMatch match, IEnumerable<ResultDetail> resultDetails = null)
     {
-        var eventStatus = supportSettleDetermine.Contains(match.SportType)
+        var eventStatus = SportGroup.SupportSettleDetermine.Contains(match.SportType)
             ? eventStatusService.AdjustEventStatusAbandoned(match.EventStatus, resultDetails, match.SportType)
             : match.EventStatus;
 

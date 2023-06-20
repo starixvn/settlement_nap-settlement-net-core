@@ -1,6 +1,6 @@
 ﻿import { Injectable } from '@angular/core';
 import * as _ from 'lodash';
-import { ResourcesIds } from '../constants';
+import { Resources, ResourcesIds } from '../constants';
 import { ExternalResult, ExternalResultDetail, ResultDetail } from '../../shared/models/sportsbook-sop';
 import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
 import { ResourceNameByIdPipe } from '../pipes/resource-name-by-id.pipe';
@@ -96,5 +96,19 @@ export class BasketballService {
             externalResults.push(externalFirstHalfResult);
         });
         return externalResults;
+    }
+
+
+    isFinalSdt(resultDetail: ResultDetail, quarterResults: ResultDetail[]) {
+        let isSdt = false;
+        if (resultDetail.resourceId === ResourcesIds.htScore) {
+            isSdt = quarterResults.some(r => Resources.ht.includes(r.resourceId) && r.settlementStatusId === SettlementStatusId.RefundSettleDetermined);
+        }
+
+        if (resultDetail.resourceId === ResourcesIds.finalScore) {
+            isSdt = quarterResults.some(r => Resources.ft.includes(r.resourceId) && r.settlementStatusId === SettlementStatusId.RefundSettleDetermined);
+        }
+
+        return isSdt;
     }
 }

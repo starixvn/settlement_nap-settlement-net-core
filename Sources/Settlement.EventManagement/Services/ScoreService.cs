@@ -8,7 +8,7 @@ public interface ScoreService
 
     Score HalftimeScore(int sportType, List<ResultDetail> resultDetails, Permission permission);
 
-    Score FinalScore(IEnumerable<ResultDetail> resultDetails, Permission permission);
+    Score FinalScore(int sportType, List<ResultDetail> resultDetails, Permission permission);
 }
 
 public class ScoreServiceImp : ScoreService
@@ -44,14 +44,35 @@ public class ScoreServiceImp : ScoreService
 
     public Score HalftimeScore(int sportType, List<ResultDetail> resultDetails, Permission permission)
     {
+        if (SportGroup.SupportSettleDetermine.Contains(sportType))
+        {
+            ClearScore(sportType, resultDetails, ResourceType.Halftime);
+        }
         return totalPointSports.Contains(sportType)
             ? TotalPoints(resultDetails, sportType == SportType.BeachVolleyball)
             : ScoreByResource(resultDetails, ResourceType.Halftime, permission);
     }
 
-    public Score FinalScore(IEnumerable<ResultDetail> resultDetails, Permission permission)
+    public Score FinalScore(int sportType, List<ResultDetail> resultDetails, Permission permission)
     {
+        if (SportGroup.SupportSettleDetermine.Contains(sportType))
+        {
+            ClearScore(sportType, resultDetails, ResourceType.Final, false);
+        }
         return ScoreByResource(resultDetails, ResourceType.Final, permission);
+    }
+
+    private void ClearScore(int sportType, List<ResultDetail> resultDetails, string resource, bool isHalfTime = true)
+    {
+        var resultSettleSdt = resultDetails.Where(r => (isHalfTime
+            ? Resources.ResultHaftTime[sportType].Contains(r.ResourceId)
+            : Resources.ResultFullTime[sportType].Contains(r.ResourceId)) && r.SettlementStatusId == SettlementStatus.Abandoned).ToList();
+        var resultDetail = resultDetails.FirstOrDefault(n => n.ResourceId == resource);
+        if (resultDetail != null && resultSettleSdt.Any())
+        {
+            resultDetail.HomeValue = string.Empty;
+            resultDetail.AwayValue = string.Empty;
+        }
     }
 
     private Score ScoreByResource(IEnumerable<ResultDetail> resultDetails, string resource, Permission permission)
