@@ -5,18 +5,13 @@ import { ExternalResult, ExternalResultDetail, ResultDetail } from '../../shared
 import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
 import { ResourceNameByIdPipe } from '../pipes/resource-name-by-id.pipe';
 import { Language } from '../../shared/language.native';
-import { ResourceItem } from '../../shared/models/resource-item.model';
-import { ResultStatusId, ScoreSourceType, SettlementStatusId } from '../../shared/constants';
+import { ScoreSourceType, SettlementStatusId } from '../../shared/constants';
 
 @Injectable()
 export class BasketballService {
     constructor(
         private readonly intervalBackgroundPipe: IntervalBackgroundPipe,
         private readonly resourceNameByIdPipe: ResourceNameByIdPipe) { }
-
-    findResultDetail(resultDetails: ResultDetail[], resourceId: string) {
-        return _.find(resultDetails, (item) => _.isEqual(item.resourceId, resourceId) && item.checked);
-    }
 
     getResultDetail(resultDetailList: ResultDetail[], isPopupCalc = true): ResultDetail[] {
         const resultDetail = resultDetailList.filter((map) => map.resourceId.length === 2);
@@ -89,7 +84,7 @@ export class BasketballService {
         return confirmMessage;
     }
 
-    getExternalResults(resultDetail: ResultDetail[], externalSourceId: number) {
+    getExternalResults(resultDetail: ResultDetail[], externalSourceId: number): ExternalResultDetail[] {
         const externalResults = [];
         _.forEach(resultDetail, (item: ResultDetail) => {
             const externalFirstHalfResult = _.find(item.externalScores, result => result.sourceId === externalSourceId);
@@ -100,15 +95,15 @@ export class BasketballService {
 
 
     isFinalSdt(resultDetail: ResultDetail, quarterResults: ResultDetail[]) {
-        let isSdt = false;
+        let needReset = false;
         if (resultDetail.resourceId === ResourcesIds.htScore) {
-            isSdt = quarterResults.some(r => Resources.ht.includes(r.resourceId) && r.settlementStatusId === SettlementStatusId.RefundSettleDetermined);
+            needReset = quarterResults.some(r => Resources.ht.includes(r.resourceId) && r.settlementStatusId === SettlementStatusId.RefundSettleDetermined);
         }
 
         if (resultDetail.resourceId === ResourcesIds.finalScore) {
-            isSdt = quarterResults.some(r => Resources.ft.includes(r.resourceId) && r.settlementStatusId === SettlementStatusId.RefundSettleDetermined);
+            needReset = quarterResults.some(r => Resources.ft.includes(r.resourceId) && r.settlementStatusId === SettlementStatusId.RefundSettleDetermined);
         }
 
-        return isSdt;
+        return needReset;
     }
 }

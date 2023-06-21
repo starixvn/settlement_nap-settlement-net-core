@@ -125,6 +125,23 @@ public class ScoreServiceTests
     }
 
     [Fact]
+    public void HalftimeScore_SportWasRefundSDT_ReturnsExpectedScore()
+    {
+        // Arrange
+        var resultDetails = new List<ResultDetail>
+        {
+            new() { MatchId = 1 , SettlementStatusId = SettlementStatus.Abandoned, ResourceId =  Core.Constants.Resources.ResultHaftTime[SportGroup.SupportSettleDetermine[0]][0] },
+            new() { MatchId = 1 , ResourceId = "01" ,HomeValue = "1" , AwayValue = "1"}
+        };
+
+        // Act
+        var actualScore = service.HalftimeScore(SportGroup.SupportSettleDetermine[0], resultDetails, permission);
+
+        // Assert
+        scoreSetService.Received().GetScore(Arg.Is<ResultDetail>(r => r.HomeValue == null && r.AwayValue == string.Empty), permission);
+    }
+
+    [Fact]
     public void HalftimeScore_SportHaveTotalPointAndMatchIsRefund_ReturnsExpectedScore()
     {
         // Arrange
@@ -194,6 +211,23 @@ public class ScoreServiceTests
 
         // Assert
         AssertExtension.AreEqual(expectedScore, actualScore);
+    }
+
+    [Fact]
+    public void FinalScore_SportWasRefundSDT_ReturnsExpectedScore()
+    {
+        // Arrange
+        var resultDetails = new List<ResultDetail>
+        {
+            new() { MatchId = 1 , SettlementStatusId = SettlementStatus.Abandoned, ResourceId =  Core.Constants.Resources.ResultFullTime[SportGroup.SupportSettleDetermine[0]][0] },
+            new() { MatchId = 1 , ResourceId = "00" ,HomeValue = "1" , AwayValue = "1"}
+        };
+
+        // Act
+        var actualScore = service.FinalScore(SportGroup.SupportSettleDetermine[0], resultDetails, permission);
+
+        // Assert
+        scoreSetService.Received().GetScore(Arg.Is<ResultDetail>(r => r.HomeValue == null && r.AwayValue == string.Empty), permission);
     }
 
     [Fact]
