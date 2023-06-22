@@ -1,11 +1,7 @@
 ﻿using AutoMapper;
-using AutoMapper.Configuration;
 using Fanex.Data.Repository;
-using Settlement.Core.Models;
 using Settlement.Core.Services;
-using Settlement.Log.Criteria;
 using Settlement.Log.Models;
-using Settlement.Log.Requests;
 using Settlement.Log.Services;
 using LogService = Settlement.Log.Services.LogService;
 
@@ -14,7 +10,6 @@ namespace Settlement.Log.UnitTests.Services;
 public class LogServiceTests
 {
     private readonly LogDetailService logDetailService;
-    private readonly IDynamicRepository repository;
     private readonly LogService service;
 
     public LogServiceTests()
@@ -24,50 +19,45 @@ public class LogServiceTests
         var config = new MapperConfiguration(mapperConfig);
         var mapper = new Mapper(config);
 
-        var balanceUpService = Substitute.For<IBalanceUpService>();
         logDetailService = Substitute.For<LogDetailService>();
-        repository = Substitute.For<IDynamicRepository>();
+        var repository = Substitute.For<IDynamicRepository>();
         var refDataService = Substitute.For<IRefDataService>();
 
-        var balanceUpDay = new DateTime();
-        var balanceUp = new BalanceUp
-        {
-            BalanceUpDay = balanceUpDay
-        };
-
-        balanceUpService.GetBalanceUpDay().Returns(balanceUp);
-
-        service = new Log.Services.LogServiceImp(repository, balanceUpService, logDetailService, mapper, refDataService);
+        service = new Log.Services.LogServiceImp(repository, logDetailService, mapper, refDataService);
     }
 
     [Fact]
-    public async Task GetLog_ByMatchCodeAndProductTypeAndExistLog_ReturnsListLogModelsAndInvokeGetLogDetailByMatchAndProduct()
+    public async Task GetLogDetail_ProductTypeIsResettle_CallTwoExpectedMethods()
     {
         // Arrange
-        var request = new LogRequest
+        var logs = new List<LogModel>
         {
-            MatchCode = "MatchCode",
-            ProductType = "BBD"
+                new() { MatchId = 1}
         };
 
-        var fakeListLogDetails = new List<LogDetailsModels>
-            {
-                new() {  Action = "Cal"}
-            };
-
-        var fakeList = new List<LogModel>
-            {
-                new() { MatchId = 1}
-            };
-
-        repository.FetchAsync<LogModel>(Arg.Any<GetSettlementLogCriteria>()).Returns(fakeList);
-        logDetailService.GetLogDetailByMatchAndProduct(Arg.Any<int>(), Arg.Any<string>()).Returns(fakeListLogDetails);
-
         // Act
-        var logs = await service.GetLog(request);
+        var logsDetail = await service.GetLogDetail(logs, "RES");
 
         // Assert
-        await logDetailService.Received().GetLogDetailByMatchAndProduct(Arg.Any<int>(), Arg.Any<string>());
-        Assert.Single(logs);
+        await logDetailService.Received(1).GetLogDetailResettle(Arg.Any<int>(), Arg.Any<int>());
+        await logDetailService.Received(1).GetPlayerNameCricket(Arg.Any<int>(), Arg.Any<int>());
+        Assert.Single(logsDetail);
+    }
+
+    [Fact]
+    public async Task GetLogDetail_ProductTypeIsNotResettle_CallOneExpectedMethods()
+    {
+        // Arrange
+        var logs = new List<LogModel>
+        {
+            new() { MatchId = 1}
+        };
+
+        // Act
+        var logsDetail = await service.GetLogDetail(logs, "FMK");
+
+        // Assert
+        await logDetailService.Received(1).GetLogDetailByMatchAndProduct(Arg.Any<int>(), Arg.Any<string>());
+        Assert.Single(logsDetail);
     }
 }

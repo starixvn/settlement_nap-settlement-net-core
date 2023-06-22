@@ -9,49 +9,57 @@ namespace Settlement.Log.Services;
 
 public interface LogService
 {
-    Task<List<LogModel>> GetLog(LogRequest request);
+    Task<IEnumerable<LogModel>> GetLog(LogRequest request);
+
+    Task<IEnumerable<LogModel>> GetArchiveLog(LogRequest request);
+
+    Task<List<LogModel>> GetLogDetail(List<LogModel> logs, string productType);
 }
 
 public class LogServiceImp : LogService
 {
     private readonly IDynamicRepository repository;
-    private readonly IBalanceUpService balanceUpService;
     private readonly LogDetailService logDetailService;
     private readonly IRefDataService refDataService;
     private readonly IMapper mapper;
-
     private const string ResettleType = "RES";
 
     public LogServiceImp(
         IDynamicRepository repository,
-        IBalanceUpService balanceUpService,
         LogDetailService logDetailService,
         IMapper mapper,
         IRefDataService refDataService)
     {
         this.repository = repository;
-        this.balanceUpService = balanceUpService;
         this.logDetailService = logDetailService;
         this.mapper = mapper;
         this.refDataService = refDataService;
     }
 
-    public async Task<List<LogModel>> GetLog(LogRequest request)
+    public async Task<IEnumerable<LogModel>> GetLog(LogRequest request)
     {
-        var criteria = mapper.Map<LogRequest, GetSettlementLogCriteria>(request);
-        criteria.BalanceUpDay = balanceUpService.GetBalanceUpDay().BalanceUpDay;
+        var criteria = mapper.Map<LogRequest, GetLogCriteria>(request);
         criteria.FromDate = request.ProductType == ResettleType ? null : request.FromDate;
         criteria.ToDate = request.ProductType == ResettleType ? DateTime.Today : request.ToDate;
 
-        var logs = (await repository.FetchAsync<LogModel>(criteria)).ToList();
-        return await GetLogDetail(logs, request.ProductType);
+        return await repository.FetchAsync<LogModel>(criteria);
     }
 
-    private async Task<List<LogModel>> GetLogDetail(List<LogModel> logs, string productType)
+    public async Task<IEnumerable<LogModel>> GetArchiveLog(LogRequest request)
+    {
+        var criteria = mapper.Map<LogRequest, GetArchivedLogCriteria>(request);
+        criteria.FromDate = request.ProductType == ResettleType ? null : request.FromDate;
+        criteria.ToDate = request.ProductType == ResettleType ? DateTime.Today : request.ToDate;
+
+        return await repository.FetchAsync<LogModel>(criteria);
+    }
+
+    public async Task<List<LogModel>> GetLogDetail(List<LogModel> logs, string productType)
     {
         foreach (var log in logs)
         {
-            if (productType == ResettleType)
+            log.RefDataService = refDataService;
+            if (string.Equals(productType, ResettleType))
             {
                 log.ResettleLogDetails = await logDetailService.GetLogDetailResettle(log.MatchId, log.SportType);
                 log.PlayerNames = await logDetailService.GetPlayerNameCricket(log.MatchId, log.SportType);
@@ -60,7 +68,6 @@ public class LogServiceImp : LogService
             {
                 log.MatchLogDetails = await logDetailService.GetLogDetailByMatchAndProduct(log.MatchId, productType);
             }
-            log.RefDataService = refDataService;
         }
 
         return logs;
