@@ -18,6 +18,6 @@ public static class Resources
 
     public static Dictionary<int, string[]> ResultFullTime => new()
     {
-        {SportType.BasketBall, new[] { "Q2", "Q3", "OT"} }
+        {SportType.BasketBall, new[] { "Q1", "Q2", "Q3", "Q4", "OT"} }
     };
 }

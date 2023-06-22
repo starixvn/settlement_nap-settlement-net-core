@@ -1,51 +1,47 @@
 ﻿<div class="calculate-league">
-    <div class="icon">
-    </div>
-    BASKETBALL - {{matchDetail.leagueName}}
+	<div class="icon"></div>
+	BASKETBALL - {{ matchDetail.leagueName }}
 </div>
 <table>
-    <thead>
-        <tr>
-            <th class="code">Match Code/ID</th>
-            <th class="kick-off-time">Kick-off Time</th>
-            <th class="team">Team</th>
-            <th class="quarter-score">1Q</th>
-            <th class="quarter-score">2Q</th>
-            <th class="quarter-score">3Q</th>
-            <th class="quarter-score">4Q</th>
-            <th class="quarter-score">OT</th>
-            <th class="score">HT Score</th>
-            <th class="score">Final Score</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>{{matchDetail.matchCode}}</td>
-            <td rowspan="2">
-                {{matchDetail.kickOffTime | date : 'mediumDate'  }}
-                <br />
-                {{matchDetail.kickOffTime | date : 'hh:mm:ss a' }}
-            </td>
-            <td class="home-team-name">{{matchDetail.homeName}}</td>
-            <td *ngFor="let quarter of resultDetail;  let last=last;"
-                [ngClass]="quarter.className">
-                <ng-container *ngIf="quarter.isDisplayedForMember; else emptyScore">
-                    {{quarter.homeValue | scoreBySettlement:quarter.settlementStatusId}}
-                </ng-container>
-            </td>
-        </tr>
-        <tr>
-            <td>{{matchDetail.matchId}}</td>
-            <td class="away-team-name">{{matchDetail.awayName}}</td>
-            <td *ngFor="let quarter of resultDetail;  let last=last;"
-                [ngClass]="quarter.className" >
-                <ng-container *ngIf="quarter.isDisplayedForMember; else emptyScore">
-                    {{quarter.awayValue | scoreBySettlement:quarter.settlementStatusId}}
-                </ng-container>
-            </td>
-        </tr>
-    </tbody>
+	<thead>
+		<tr>
+			<th class="code">Match Code/ID</th>
+			<th class="kick-off-time">Kick-off Time</th>
+			<th class="team">Team</th>
+			<th class="quarter-score">1Q</th>
+			<th class="quarter-score">2Q</th>
+			<th class="quarter-score">3Q</th>
+			<th class="quarter-score">4Q</th>
+			<th class="quarter-score">OT</th>
+			<th class="score">HT Score</th>
+			<th class="score">Final Score</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>{{ matchDetail.matchCode }}</td>
+			<td rowspan="2">
+				{{ matchDetail.kickOffTime | date: "mediumDate" }}
+				<br />
+				{{ matchDetail.kickOffTime | date: "hh:mm:ss a" }}
+			</td>
+			<td class="home-team-name">{{ matchDetail.homeName }}</td>
+			<td *ngFor="let quarter of resultDetails; let last = last" [ngClass]="quarter.className">
+				<ng-container *ngIf="quarter.isDisplayedForMember; else emptyScore">
+					{{ quarter.homeValue | scoreBySettlement: quarter.settlementStatusId }}
+				</ng-container>
+			</td>
+		</tr>
+		<tr>
+			<td>{{ matchDetail.matchId }}</td>
+			<td class="away-team-name">{{ matchDetail.awayName }}</td>
+			<td *ngFor="let quarter of resultDetails; let last = last" [ngClass]="quarter.className">
+				<ng-container *ngIf="quarter.isDisplayedForMember; else emptyScore">
+					{{ quarter.awayValue | scoreBySettlement: quarter.settlementStatusId }}
+				</ng-container>
+			</td>
+		</tr>
+	</tbody>
 </table>
-<div (click)="refresh()" class="icon-refresh">
-</div>
+<div (click)="refresh()" class="icon-refresh"></div>
 <ng-template #emptyScore>-</ng-template>

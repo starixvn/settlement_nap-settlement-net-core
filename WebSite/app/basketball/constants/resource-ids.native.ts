@@ -10,7 +10,7 @@ export const ResourcesIds = {
 
 export const Resources = {
     ht: ["Q1", "Q2"],
-    ft: ["Q3", "Q3", "OT"],
+    ft: ["Q1", "Q2", "Q3", "Q4", "OT"],
 };
 
 
