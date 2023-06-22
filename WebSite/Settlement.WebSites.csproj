@@ -29,7 +29,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <AdditionalFiles Include="..\.sonarlint\settlement-netcore\CSharp\SonarLint.xml" Link="SonarLint.xml" />
     <Content Include="App_Data\SpName.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

@@ -11,10 +11,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <AdditionalFiles Include="..\..\.sonarlint\settlement-netcore\CSharp\SonarLint.xml" Link="SonarLint.xml" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="12.0.1" />
     <PackageReference Include="Fanex.NAP.Client.AspNetCore" Version="2.0.0.3" />
     <PackageReference Include="Fanex.Settlement.Converter" Version="1.0.0.1" />
