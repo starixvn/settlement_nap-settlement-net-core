@@ -53,7 +53,7 @@ public class MergeMatchInfoTests
     [InlineData(0, 0, TicketStatus.NoTicket)]
     public void ParlayStatus_Always_ReturnStatusCorrectly(int totalTicket, int totalTicketRunning, string expected)
     {
-        var match = new MatchDetailModel()
+        var match = new MatchDetailModel
         {
             SiteMatch = new List<SiteMatch>
                 {
@@ -78,7 +78,7 @@ public class MergeMatchInfoTests
     [InlineData(CalculateStatus.IsSuccess, 2, CalculateStatus.IsSuccess)]
     public void QueueStatus_Always_ReturnStatusCorrectly(int statusSite, int statusMain, int expected)
     {
-        var match = new MatchDetailModel()
+        var match = new MatchDetailModel
         {
             SiteMatch = new List<SiteMatch>
                 {

@@ -114,7 +114,7 @@ public class NewInfoMatchServiceImp : NewInfoMatchService
     {
         var resultDetail = currentResultDetailList.Find(r => r.ResourceId == resource);
 
-        return resultDetail == null || (resultDetail.HomeValue != sourceResultDetail.HomeValue || resultDetail.AwayValue != sourceResultDetail.AwayValue);
+        return resultDetail == null || resultDetail.HomeValue != sourceResultDetail.HomeValue || resultDetail.AwayValue != sourceResultDetail.AwayValue;
     }
 
     public GoalIcon GoalIcon(Match match)

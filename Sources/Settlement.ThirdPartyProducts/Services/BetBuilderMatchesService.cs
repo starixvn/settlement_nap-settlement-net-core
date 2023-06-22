@@ -80,7 +80,7 @@ public class BetBuilderMatchesServiceImp : BetBuilderMatchesService
     {
         var matches = await cachingMatchesService.MatchesOnShortCaching(request.LeagueIds);
 
-        if (matches != null && matches.Count > 0)
+        if (matches is { Count: > 0 })
         {
             return matches;
         }
@@ -144,7 +144,7 @@ public class BetBuilderMatchesServiceImp : BetBuilderMatchesService
             match.MoreScores = betBuilderService.GetScoreByMatchId(resultDetails, match.MatchId, match.SportType, false);
         });
 
-        cachingMatchesService.SetToCache(request.LeagueIds, matches);
+        await cachingMatchesService.SetToCache(request.LeagueIds, matches);
 
         return matches;
     }

@@ -20,7 +20,7 @@ public class VolleyballResourceNameService : IMapperService
             return (resourceId, GetResourceMain(resourceId));
         }
         var betType = Convert.ToInt32(resourceId[..BetTypeLength]);
-        var betTypeName = BetType.VolleyballBetTypeNames.ContainsKey(betType) ? BetType.VolleyballBetTypeNames[betType] : string.Empty;
+        var betTypeName = BetType.VolleyballBetTypeNames.TryGetValue(betType, out var name) ? name : string.Empty;
         var set = SplitBetType(resourceId, SetPosition, VariableLength);
         var point = SplitBetType(resourceId, PointPosition, VariableLength);
 

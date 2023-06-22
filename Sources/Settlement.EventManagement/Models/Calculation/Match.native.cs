@@ -53,12 +53,12 @@ public class Match : BaseMatch
     }
 
     [Key("goalIcon")]
-    public GoalIcon GoalIcon { get; set; } = new GoalIcon();
+    public GoalIcon GoalIcon { get; set; } = new();
 
     #region InstantCalculate
 
     [Key("autoCalcSetting")]
-    public AutoCalculationSetting AutoCalcSetting => new AutoCalculationSetting(AutoSetting, AutoSettingForLeague);
+    public AutoCalculationSetting AutoCalcSetting => new(AutoSetting, AutoSettingForLeague);
 
     [Key("instantWaitingTime")]
     public int InstantWaitingTime { get; set; }

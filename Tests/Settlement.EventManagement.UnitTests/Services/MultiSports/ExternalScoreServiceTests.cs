@@ -21,7 +21,7 @@ public class ExternalScoreServiceTests
     {
         var listResultDetail = new List<ResultDetail>
         {
-            new() { MatchId = MatchId, ResourceId = "00", HomeValue = "1", AwayValue = "1", SourceId = 0},
+            new() { MatchId = MatchId, ResourceId = "00", HomeValue = "1", AwayValue = "1", SourceId = 0}
         };
 
         var actual = service.IsInconsistentFullTimeScore(MatchId, UserConfirmation, listResultDetail);
@@ -82,7 +82,7 @@ public class ExternalScoreServiceTests
         };
         var listResultDetail = new List<ResultDetail>
         {
-            new() { MatchId = MatchId, ResourceId = "01", HomeValue = "1", AwayValue = "1", SourceId = 0},
+            new() { MatchId = MatchId, ResourceId = "01", HomeValue = "1", AwayValue = "1", SourceId = 0}
         };
 
         var actual = service.IsInconsistentHalftimeScore(match, listResultDetail);
@@ -123,7 +123,7 @@ public class ExternalScoreServiceTests
         };
         var listResultDetail = new List<ResultDetail>
         {
-            new() { MatchId = MatchId, ResourceId = "00", HomeValue = "1", AwayValue = "1", SourceId = 0},
+            new() { MatchId = MatchId, ResourceId = "00", HomeValue = "1", AwayValue = "1", SourceId = 0}
         };
 
         var actual = service.IsInconsistentFullTimeScore(match, listResultDetail);

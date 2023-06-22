@@ -40,7 +40,7 @@ public class GoalRecord
             return Goal;
         }
 
-        var homeAwayGoal = BetStatus.Substring(index + 3).Split('-');
+        var homeAwayGoal = BetStatus[(index + 3)..].Split('-');
 
         var lastGoalScoredTeam = homeAwayGoal[1];
         var firstGoalScoredTeam = homeAwayGoal[0];

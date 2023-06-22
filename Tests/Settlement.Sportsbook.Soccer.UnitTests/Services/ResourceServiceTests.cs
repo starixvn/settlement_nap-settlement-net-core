@@ -23,7 +23,7 @@ public class ResourceServiceTests
 		mapperConfig.AddProfile<SoccerAutoMapperProfile>();
 		var config = new MapperConfiguration(mapperConfig);
 		var mapper = new Mapper(config);
-		service = new ResourceServiceImp(actionResourceService, goalRecordService, mapper);
+		service = new ResourceServiceImp(actionResourceService, goalRecordService);
 	}
 
 	[Fact]
@@ -1136,8 +1136,8 @@ public class ResourceServiceTests
 				ResultStatusId = ResultStatus.Initial,
 				SettlementStatusId = SettlementStatus.Running,
 				HomeValue = string.Empty
-			},
-		};
+			}
+        };
 
 		// Actual
 		goalRecordService.HalftimeGoal(Arg.Any<string>()).Returns(string.Empty);

@@ -135,7 +135,7 @@ public class ScoreServiceTests
         };
 
         // Act
-        var actualScore = service.HalftimeScore(SportGroup.SupportSettleDetermine[0], resultDetails, permission);
+        service.HalftimeScore(SportGroup.SupportSettleDetermine[0], resultDetails, permission);
 
         // Assert
         scoreSetService.Received().GetScore(Arg.Is<ResultDetail>(r => r.HomeValue == null && r.AwayValue == string.Empty), permission);
@@ -224,7 +224,7 @@ public class ScoreServiceTests
         };
 
         // Act
-        var actualScore = service.FinalScore(SportGroup.SupportSettleDetermine[0], resultDetails, permission);
+        service.FinalScore(SportGroup.SupportSettleDetermine[0], resultDetails, permission);
 
         // Assert
         scoreSetService.Received().GetScore(Arg.Is<ResultDetail>(r => r.HomeValue == null && r.AwayValue == string.Empty), permission);

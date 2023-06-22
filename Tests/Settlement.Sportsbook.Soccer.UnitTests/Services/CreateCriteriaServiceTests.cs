@@ -52,7 +52,7 @@ public class CreateCriteriaServiceTests
     public void CalculateCriteria_ActionHalftime_CallInOrderFunctionOnService()
     {
         // Arrange
-        var query = new SettleRequest()
+        var query = new SettleRequest
         {
             GoalRecord = "AH",
             ActionName = ActionType.CalculateHalfTime

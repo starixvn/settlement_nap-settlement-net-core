@@ -153,7 +153,7 @@ public class MultipleServerServiceImp : MultipleServerService
             AdminId = criteria.AdminId,
             BetStatus = criteria.BetStatus,
             HalfTimeHome = score.HtHomeScore ?? 0,
-            HalfTimeAway = score.HtAwayScore ?? 0,
+            HalfTimeAway = score.HtAwayScore ?? 0
         };
 
         if (!criteria.Action.Equals(ActionType.CalculateFullTime) && !criteria.Action.Equals(ActionType.CalculateAll))

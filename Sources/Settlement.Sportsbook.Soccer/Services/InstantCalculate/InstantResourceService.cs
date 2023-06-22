@@ -109,7 +109,7 @@ public class InstantResourceServiceImp : InstantResourceService
             HomeValue = $"{v.value}",
             ResourceId = $"{ResourceKey.HalftimeCornerRace}{ConvertIntToString(v.raceTo)}",
             ResultStatusId = ResultStatus.ManuallySettled,
-            SettlementStatusId = SettlementStatus.Completed,
+            SettlementStatusId = SettlementStatus.Completed
         }).ToList();
     }
 
@@ -123,7 +123,7 @@ public class InstantResourceServiceImp : InstantResourceService
             HomeValue = $"{v.value}",
             ResourceId = $"{ResourceKey.CornerRace}{ConvertIntToString(v.raceTo)}",
             ResultStatusId = ResultStatus.ManuallySettled,
-            SettlementStatusId = SettlementStatus.Completed,
+            SettlementStatusId = SettlementStatus.Completed
         }).ToList();
     }
 
@@ -249,7 +249,7 @@ public class InstantResourceServiceImp : InstantResourceService
             ResourceId = ResourceKey.HaftTimeFirstCorner,
             ResultStatusId = ResultStatus.ManuallySettled,
             SettlementStatusId = SettlementStatus.Completed,
-            HomeValue = $"{firstGoalRecord}",
+            HomeValue = $"{firstGoalRecord}"
         };
     }
 
@@ -263,7 +263,7 @@ public class InstantResourceServiceImp : InstantResourceService
             ResourceId = ResourceKey.FirstCorner,
             ResultStatusId = ResultStatus.ManuallySettled,
             SettlementStatusId = SettlementStatus.Completed,
-            HomeValue = $"{firstGoalRecord}",
+            HomeValue = $"{firstGoalRecord}"
         };
     }
 
@@ -277,7 +277,7 @@ public class InstantResourceServiceImp : InstantResourceService
             ResourceId = ResourceKey.TowHFirstCorner,
             ResultStatusId = ResultStatus.ManuallySettled,
             SettlementStatusId = SettlementStatus.Completed,
-            HomeValue = $"{firstGoalRecord}",
+            HomeValue = $"{firstGoalRecord}"
         };
     }
 

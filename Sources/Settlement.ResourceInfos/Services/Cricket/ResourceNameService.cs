@@ -14,7 +14,7 @@ public class ResourceNameService : IResourceNameService
 {
     public string GetNonInnsBetTypeName(int betTypeId)
     {
-        return BetType.CricketBetTypeNames.ContainsKey(betTypeId) ? BetType.CricketBetTypeNames[betTypeId] : string.Empty;
+        return BetType.CricketBetTypeNames.TryGetValue(betTypeId, out var name) ? name : string.Empty;
     }
 
     public string GetInnsBetTypeName(int betTypeId, string resourceId)

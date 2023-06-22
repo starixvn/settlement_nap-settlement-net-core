@@ -81,7 +81,7 @@ public class OutrightSettleServiceTests
     [Fact]
     public async Task Uncalculate_ExistExecuteFailed_ReturnResultFailed()
     {
-        outrightSettleProcessService.ValidateRequest(Arg.Any<String>(), Arg.Any<IEnumerable<InfoValidate>>())
+        outrightSettleProcessService.ValidateRequest(Arg.Any<string>(), Arg.Any<IEnumerable<InfoValidate>>())
              .Returns(new ResultOutright());
         outrightSettleProcessService.UpdateResultUndo(Arg.Any<OutrightSettleCriteria>())
             .Returns(new Result { ErrMsg = "test" });
@@ -123,7 +123,7 @@ public class OutrightSettleServiceTests
             Teams = new List<TeamSettleModel>
             {
                 new() { TeamId = "1" },
-                new() { TeamId = "2" },
+                new() { TeamId = "2" }
             }
         };
         var actual = await service.Calculate(request);

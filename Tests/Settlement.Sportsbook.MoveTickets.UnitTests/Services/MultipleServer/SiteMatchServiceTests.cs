@@ -115,7 +115,7 @@ public class SiteMatchServiceTests
             {
                 new ()
                 {
-                    IsRunningEarlyBetTypes = isRunningEarlyBetTypesSite,
+                    IsRunningEarlyBetTypes = isRunningEarlyBetTypesSite
                 }
             }
         };

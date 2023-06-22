@@ -37,7 +37,7 @@ public class LogServiceImp : LogService
             {
                 Extend = matchId,
                 Doing = message,
-                UserId = session.UserId,
+                UserId = session.UserId
             };
 
             repository.Execute(criteria);

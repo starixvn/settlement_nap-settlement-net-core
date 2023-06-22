@@ -159,7 +159,7 @@ public class CalculateServiceImp : ICalculateService
             FinalAwayScore = criteria.FullTimeAway ?? 0,
             FinalHomeScore = criteria.FullTimeHome ?? 0,
             GoalRecord = criteria.GoalRecord,
-            BetStatus = criteria.BetStatus,
+            BetStatus = criteria.BetStatus
         };
 
         WriteLog(match, criteria.Action);

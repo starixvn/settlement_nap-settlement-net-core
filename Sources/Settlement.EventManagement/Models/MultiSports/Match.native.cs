@@ -54,7 +54,7 @@ public class Match : BaseMatch
     public int AutoWaitingTime { get; set; }
 
     [Key("autoCalcSetting")]
-    public AutoCalculationSetting AutoCalcSetting => new AutoCalculationSetting(AutoSetting, AutoSettingForLeague, true);
+    public AutoCalculationSetting AutoCalcSetting => new(AutoSetting, AutoSettingForLeague, true);
 
     public override bool Equals(object obj)
     {

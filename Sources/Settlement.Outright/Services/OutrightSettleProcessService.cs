@@ -154,7 +154,7 @@ public class OutrightSettleProcessServiceImp : OutrightSettleProcessService
     {
         var criteria = new OutrightVoidTicketCriteria
         {
-            Orid = request.Orid,
+            Orid = request.Orid
         };
 
         var tasks = appSettingsKey.SiteDbServer

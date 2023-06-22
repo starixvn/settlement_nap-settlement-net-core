@@ -94,8 +94,7 @@ public class SportsbookServiceTests
         var result = await service.GetMatch(new GetMatchRequest());
         var actual = result.MatchDetail;
 
-        Assert.True(actual.ExFTAwayScore == 1 && actual.ExFTHomeScore == 0
-                                              && actual.ExHTAwayScore == 3 && actual.ExHTHomeScore == 2 && actual.ExternalSourceName == "test");
+        Assert.True(actual.ExFTAwayScore == 1 && actual is { ExFTHomeScore: 0, ExHTAwayScore: 3 } and { ExHTHomeScore: 2, ExternalSourceName: "test" });
     }
 
     [Fact]
@@ -112,7 +111,7 @@ public class SportsbookServiceTests
     [Fact]
     public async Task GetLatestResult_MatchWithOutResultDetail_ReturnList()
     {
-        var resultDetails = new List<ResultDetail>()
+        var resultDetails = new List<ResultDetail>
         {
             new()
             {

@@ -149,7 +149,7 @@ public class MatchServiceTests
 		var matches = service.SetNewMatchInfo(new List<Match> { new() }, new List<ResultDetail>());
 		var match = matches.First();
 
-		Assert.True(match.IsExistsConfirmedEarly && match.IsExistMarkedTicket && match.IsExistRunningTicket && match.IsCalculatingSingle == 1);
+		Assert.True(match.IsExistsConfirmedEarly && match.IsExistMarkedTicket && match is { IsExistRunningTicket: true, IsCalculatingSingle: 1 });
 		Assert.Equal("EventStatus", match.NewEventStatus);
 		Assert.Equal("EventStatusColor", match.EventStatusColor);
 		Assert.Equal("Early", match.EarlySettleStatus);

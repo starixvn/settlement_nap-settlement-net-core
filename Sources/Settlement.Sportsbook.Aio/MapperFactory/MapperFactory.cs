@@ -16,6 +16,6 @@ public class MapperFactoryBase : IMapperFactory
 
     public virtual IMapperService GetMapperService(string apiKey)
     {
-        return MapperServices.ContainsKey(apiKey) ? Activator.CreateInstance(MapperServices[apiKey]) as IMapperService : null;
+        return MapperServices.TryGetValue(apiKey, out var service) ? Activator.CreateInstance(service) as IMapperService : null;
     }
 }

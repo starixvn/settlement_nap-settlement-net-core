@@ -10,7 +10,7 @@ public class LeagueModel
     public string Name { get; set; }
 
     [Key("autoCalcSetting")]
-    public AutoCalculationSetting AutoCalcSetting { get; set; } = new AutoCalculationSetting();
+    public AutoCalculationSetting AutoCalcSetting { get; set; } = new();
 
     [Key("autoWaitingTime")]
     public int AutoWaitingTime { get; set; }

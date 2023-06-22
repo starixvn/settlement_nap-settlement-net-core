@@ -14,7 +14,7 @@ public interface RemarkNodeService
 
 public class RemarkNodeServiceImp : RemarkNodeService
 {
-    private static readonly string[] EventCounterLabels = new[] { "", "G", "C", "FK", "GK", "T", "", "P" };
+    private static readonly string[] EventCounterLabels = { "", "G", "C", "FK", "GK", "T", "", "P" };
 
     private readonly PositionService positionService;
 

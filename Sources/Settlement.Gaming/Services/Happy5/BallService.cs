@@ -54,7 +54,7 @@ public class BallServiceImp : BallService
         foreach (var item in fiveBall)
         {
             var currentBall = balls.Find(b => b.Seq == item);
-            var number = currentBall == null ? (byte)0 : currentBall.NumberBall;
+            var number = currentBall?.NumberBall ?? 0;
             var ball = new BallModel(matchId, item, number);
             newBalls.Add(ball);
         }

@@ -62,7 +62,7 @@ public class ScoreServiceImp : IScoreService
     {
         var resultDetail = resultDetails.FirstOrDefault(n => n.ResourceId == resource);
 
-        var hasResult = resultDetail != null && resultDetail.MatchId > 0;
+        var hasResult = resultDetail is { MatchId: > 0 };
 
         return hasResult ? scoreSetService.GetScore(resultDetail) : new Score("-");
     }

@@ -14,9 +14,11 @@ public class EventCounterResultServiceTests
     public EventCounterResultServiceTests()
     {
         service = new EventCounterResultServiceImp();
-        eventCounters = new List<EventCounter>();
-        eventCounters.Add(NewEventCounter(1, "12345678"));
-        eventCounters.Add(NewEventCounter(3, "95684201"));
+        eventCounters = new List<EventCounter>
+        {
+            NewEventCounter(1, "12345678"),
+            NewEventCounter(3, "95684201")
+        };
     }
 
     private EventCounter NewEventCounter(int position, string result)
@@ -41,9 +43,11 @@ public class EventCounterResultServiceTests
     public void GoalResult_HasEventCounters_ReturnsRightExpectedValue()
     {
         // Arrange
-        var items = new List<ItemElement>();
-        items.Add(NewItemElement(1, "7"));
-        items.Add(NewItemElement(3, "0"));
+        var items = new List<ItemElement>
+        {
+            NewItemElement(1, "7"),
+            NewItemElement(3, "0")
+        };
         var expected = new EventCounterElement
         {
             Id = EventCounterResource.Goal,
@@ -61,9 +65,11 @@ public class EventCounterResultServiceTests
     public void CornerResult_HasEventCounters_ReturnsRightExpectedValue()
     {
         // Arrange
-        var items = new List<ItemElement>();
-        items.Add(NewItemElement(1, "6"));
-        items.Add(NewItemElement(3, "2"));
+        var items = new List<ItemElement>
+        {
+            NewItemElement(1, "6"),
+            NewItemElement(3, "2")
+        };
         var expected = new EventCounterElement
         {
             Id = EventCounterResource.Corner,
@@ -81,9 +87,11 @@ public class EventCounterResultServiceTests
     public void FreeKickResult_HasEventCounters_ReturnsRightExpectedValue()
     {
         // Arrange
-        var items = new List<ItemElement>();
-        items.Add(NewItemElement(1, "5"));
-        items.Add(NewItemElement(3, "4"));
+        var items = new List<ItemElement>
+        {
+            NewItemElement(1, "5"),
+            NewItemElement(3, "4")
+        };
         var expected = new EventCounterElement
         {
             Id = EventCounterResource.FreeKick,
@@ -101,9 +109,11 @@ public class EventCounterResultServiceTests
     public void GoalKickResult_HasEventCounters_ReturnsRightExpectedValue()
     {
         // Arrange
-        var items = new List<ItemElement>();
-        items.Add(NewItemElement(1, "4"));
-        items.Add(NewItemElement(3, "8"));
+        var items = new List<ItemElement>
+        {
+            NewItemElement(1, "4"),
+            NewItemElement(3, "8")
+        };
         var expected = new EventCounterElement
         {
             Id = EventCounterResource.GoalKick,
@@ -121,9 +131,11 @@ public class EventCounterResultServiceTests
     public void ThrowInResult_HasEventCounters_ReturnsRightExpectedValue()
     {
         // Arrange
-        var items = new List<ItemElement>();
-        items.Add(NewItemElement(1, "3"));
-        items.Add(NewItemElement(3, "6"));
+        var items = new List<ItemElement>
+        {
+            NewItemElement(1, "3"),
+            NewItemElement(3, "6")
+        };
         var expected = new EventCounterElement
         {
             Id = EventCounterResource.ThrowIn,
@@ -141,9 +153,11 @@ public class EventCounterResultServiceTests
     public void PenaltyResult_HasEventCounters_ReturnsRightExpectedValue()
     {
         // Arrange
-        var items = new List<ItemElement>();
-        items.Add(NewItemElement(1, "1"));
-        items.Add(NewItemElement(3, "9"));
+        var items = new List<ItemElement>
+        {
+            NewItemElement(1, "1"),
+            NewItemElement(3, "9")
+        };
         var expected = new EventCounterElement
         {
             Id = EventCounterResource.Penalty,

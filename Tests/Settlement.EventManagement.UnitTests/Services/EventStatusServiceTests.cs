@@ -45,8 +45,8 @@ public class EventStatusServiceTests
 		{
 			new () { ResourceId = ResourceType.Halftime, SettlementStatusId = SettlementStatus.Abandoned},
 			new () { ResourceId = ResourceType.Final, SettlementStatusId = SettlementStatus.Abandoned },
-			new() { ResourceId = "Q1", SettlementStatusId = SettlementStatus.Abandoned },
-		};
+			new() { ResourceId = "Q1", SettlementStatusId = SettlementStatus.Abandoned }
+        };
 		const string expectedStatus = "Abandoned Q1";
 
 		// Act
@@ -64,8 +64,8 @@ public class EventStatusServiceTests
 		{
 			new () { ResourceId = ResourceType.Halftime, SettlementStatusId = SettlementStatus.Running},
 			new () { ResourceId = ResourceType.Final, SettlementStatusId = SettlementStatus.Abandoned },
-			new() { ResourceId = "Q1", SettlementStatusId = SettlementStatus.Running },
-		};
+			new() { ResourceId = "Q1", SettlementStatusId = SettlementStatus.Running }
+        };
 		const string expectedStatus = "Abandoned FT";
 
 		// Act
@@ -83,8 +83,8 @@ public class EventStatusServiceTests
 		{
 			new () { ResourceId = ResourceType.Halftime, SettlementStatusId = SettlementStatus.Abandoned},
 			new () { ResourceId = ResourceType.Final, SettlementStatusId = SettlementStatus.Abandoned },
-			new() { ResourceId = "Q1", SettlementStatusId = SettlementStatus.Running },
-		};
+			new() { ResourceId = "Q1", SettlementStatusId = SettlementStatus.Running }
+        };
 		const string expectedStatus = "Abandoned HT";
 
 		// Act

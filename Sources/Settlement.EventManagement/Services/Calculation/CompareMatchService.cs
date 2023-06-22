@@ -27,7 +27,7 @@ public class CompareMatchServiceImp : CompareMatchService
                 IsExistFastMarketResult = siteMatch.IsExistFastMarketResult,
                 IsRunningFastMarket = siteMatch.IsRunningFastMarket,
                 IsExistFgLg = siteMatch.IsExistFgLg,
-                IsExistHtFgLg = siteMatch.IsExistHtFgLg,
+                IsExistHtFgLg = siteMatch.IsExistHtFgLg
             };
         }
 

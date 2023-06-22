@@ -50,7 +50,7 @@ public class CricketHandlerTests
     {
         var result = new List<SportModel>
         {
-            new SportModel()
+            new()
             {
                 Id = 1,
                 Name = "Cricket"

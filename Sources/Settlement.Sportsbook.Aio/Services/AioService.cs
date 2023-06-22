@@ -110,7 +110,7 @@ public class AioServiceImp : IAioService
 
     private async Task<HedgeMatchDetail> GetOldMatch(Models.MatchDetail matchDetail, GetMatchRequest request, string apiKey)
     {
-        if (matchDetail != null && matchDetail.SportType == Core.Constants.SportType.ESports)
+        if (matchDetail is { SportType: Core.Constants.SportType.ESports })
         {
             var getOldMatchCriteria = validateApiKeyService.CriteriaName(request, $"{apiKey}-{ApiKeyConstant.OldMatch}");
             return await repository.GetAsync<HedgeMatchDetail>(getOldMatchCriteria);

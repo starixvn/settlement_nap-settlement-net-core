@@ -13,11 +13,11 @@ public static class Resources
 {
     public static Dictionary<int, string[]> ResultHaftTime => new()
     {
-        {SportType.BasketBall, new string[] { "Q1", "Q2"} }
+        {SportType.BasketBall, new[] { "Q1", "Q2"} }
     };
 
     public static Dictionary<int, string[]> ResultFullTime => new()
     {
-        {SportType.BasketBall, new string[] { "Q2", "Q3", "OT"} }
+        {SportType.BasketBall, new[] { "Q2", "Q3", "OT"} }
     };
 }

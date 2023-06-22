@@ -152,7 +152,7 @@ public class MultipleServerAioServiceTests
         {
             ErrCode = 1,
             ErrMsg = "Message",
-            ChildMatchIds = null,
+            ChildMatchIds = null
         };
 
         Assert.Equal(JsonConvert.SerializeObject(expectResult), JsonConvert.SerializeObject(actual));
@@ -169,7 +169,7 @@ public class MultipleServerAioServiceTests
             {
                 new() { ResourceId = "00" }
             },
-            SportType = SportType.Cricket,
+            SportType = SportType.Cricket
         };
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
         createQueryService.QuerySettle(Arg.Any<SettleRequest>()).Returns(new SettleCriteria { Action = "CAL" });
@@ -180,7 +180,7 @@ public class MultipleServerAioServiceTests
         {
             ErrCode = 0,
             ErrMsg = null,
-            ChildMatchIds = "123,456",
+            ChildMatchIds = "123,456"
         };
 
         Assert.Equal(JsonConvert.SerializeObject(expectResult), JsonConvert.SerializeObject(actual));
@@ -194,7 +194,7 @@ public class MultipleServerAioServiceTests
             SelectedResources = new List<ResourceItem>
             {
                 new() { ResourceId = "00" }
-            },
+            }
         };
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
         createQueryService.QuerySettle(Arg.Any<SettleRequest>()).Returns(new SettleCriteria { Action = "CAL" });

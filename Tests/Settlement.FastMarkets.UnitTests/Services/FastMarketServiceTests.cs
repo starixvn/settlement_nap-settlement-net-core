@@ -84,10 +84,10 @@ public class FastMarketServiceTests
 
         var betTypes = new List<BetType>
         {
-            new BetType
+            new()
             {
                 BetTypeId = 1,
-                FastMarketResults = fastMarketResult,
+                FastMarketResults = fastMarketResult
             }
         };
         generationService.BetTypesList(Arg.Any<List<FastMarketResult>>(), Arg.Any<string>()).Returns(betTypes);

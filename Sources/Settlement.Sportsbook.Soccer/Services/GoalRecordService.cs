@@ -81,7 +81,7 @@ public class GoalRecordServiceImp : IGoalRecordService
             return isRefund ? string.Empty : NoGoal;
         }
 
-        return goalRecord.Substring(0, 1);
+        return goalRecord[..1];
     }
 
     public string LastGoalRecord(string goalRecord, bool isRefund)
