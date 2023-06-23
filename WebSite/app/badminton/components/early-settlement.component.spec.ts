@@ -42,14 +42,12 @@ describe('EarlySettlementComponent', () => {
     errCode: 0,
     errMsg: "",
     isSuccessful: true,
-    resultCommand: [],
     childMatchIds: ''
   };
   const unSuccessfulResult: Result = {
     errCode: 1,
     errMsg: errorMessage,
     isSuccessful: false,
-    resultCommand: [],
     childMatchIds: ''
   };
   const existMarkedTicket: MarkedTicketsModel = {

@@ -60,7 +60,6 @@ describe('CalculatePopupComponent', () => {
     errCode: 0,
     errMsg: '',
     teamFailedIds: '',
-    resultCommand: [],
     isSuccessful: true,
     childMatchIds: ''
   };
@@ -69,7 +68,6 @@ describe('CalculatePopupComponent', () => {
     errCode: 1,
     errMsg: 'mock error',
     teamFailedIds: '',
-    resultCommand: [],
     isSuccessful: false,
     childMatchIds: ''
   };

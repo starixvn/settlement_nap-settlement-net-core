@@ -1,9 +1,8 @@
-import { ResultCommand } from './../../shared/models/result.model';
 import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { AioService, BlockUIService, HttpRequestService, MessageBoxService } from '../../shared/services';
 import { ModalContentDialogComponent, ModalDialogComponent, NotReadyMatchComponent, ResettleCheckerComponent, TicketCountComponent } from '../../shared/components';
 import { CalculationActionsComponent } from './calculation-actions.component';
-import { CricketService, VerificationService } from '../services';
+import { VerificationService } from '../services';
 import { ResultNameByIdPipe, ResultValuePipe } from '../pipes';
 import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { FormsModule } from '@angular/forms';
@@ -11,7 +10,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
 import { HedgeMatchDetail, Match } from '../models';
-import { Language } from '../../shared/language';
+import { Language } from '../../shared/language.native';
 import { of } from 'rxjs';
 import { SettlementStatusId } from '../../shared/constants';
 import { MatchDetail, Permission, ResultDetail, ExternalResultDetail } from '../../shared/models/sportsbook-sop';
@@ -58,20 +57,18 @@ describe('CalculationActionsComponent', () => {
   const successfulResult = {
     errCode: 0,
     errMsg: null,
-    isSuccessful: true,
-    resultCommand: ''
+    isSuccessful: true
   };
   const unSuccessfulResult = {
     errCode: 1,
     errMsg: errorMessage,
-    isSuccessful: false,
+    isSuccessful: false
   };
 
   const successfulResultWithCommand = {
     errCode: 0,
     errMsg: "",
-    isSuccessful: true,
-    resultCommand: 'mock command'
+    isSuccessful: true
   };
 
   const permission = new Permission();
@@ -424,7 +421,6 @@ describe('CalculationActionsComponent', () => {
       component.match.hedgeMatchDetail = new HedgeMatchDetail();
       component.match.hedgeMatchDetail.matchId = 1234;
       component.applyHedgeMatch = true;
-      successfulResult.resultCommand = 'abc';
       spyOn(aioService, 'push').and.returnValue(of(successfulResultWithCommand));
       spyOn(verificationService, 'invalidInputScore').and.returnValue(false);
       spyOn(aioService, 'verifyNoRunningOdds').and.returnValue(of(successfulResult));

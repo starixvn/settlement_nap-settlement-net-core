@@ -10,11 +10,9 @@ using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.Aio.Constants;
 using Settlement.Sportsbook.Aio.Criteria;
-using Settlement.Sportsbook.Aio.Criteria.Cricket;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Requests;
 using Settlement.Sportsbook.Aio.Services;
-using Settlement.Sportsbook.Aio.Services.Cricket;
 using ResultDetail = Settlement.Sportsbook.Aio.Models.ResultDetail;
 
 namespace Settlement.Sportsbook.Aio.UnitTests.Services;
@@ -31,10 +29,6 @@ public class MultipleServerAioServiceTests
 
     private readonly MultipleServerAioService service;
 
-    private readonly NetPositionService netPositionService;
-
-    private readonly LogService logService;
-
     public MultipleServerAioServiceTests()
     {
         var appSetting = new AppSettingsKey { SiteDbServer = new List<string> { "01", "02" } };
@@ -43,9 +37,8 @@ public class MultipleServerAioServiceTests
         scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
         createQueryService = Substitute.For<ICreateQueryService>();
         mergeDataService = Substitute.For<MergeDataService>();
-        netPositionService = Substitute.For<NetPositionService>();
-        logService = Substitute.For<LogService>();
-        service = new MultipleServerAioServiceImp(repository, option, scaleOutSettleService, createQueryService, mergeDataService, netPositionService, logService);
+        var logService = Substitute.For<LogService>();
+        service = new MultipleServerAioServiceImp(repository, option, scaleOutSettleService, createQueryService, mergeDataService, logService);
     }
 
     [Theory]
@@ -181,7 +174,6 @@ public class MultipleServerAioServiceTests
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
         createQueryService.QuerySettle(Arg.Any<SettleRequest>()).Returns(new SettleCriteria { Action = "CAL" });
         repository.FetchAsync<ChildMatch>(Arg.Any<GetChildMatchCriteria>()).Returns(new List<ChildMatch> { childMatch, childMatchSecond });
-        netPositionService.Calculate(Arg.Any<UpdateStatusServiceCriteria>(), Arg.Any<List<ResultCommand>>(), Arg.Any<bool>()).Returns(new Result());
         var actual = await service.Settle(request);
 
         var expectResult = new Result
@@ -207,7 +199,6 @@ public class MultipleServerAioServiceTests
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
         createQueryService.QuerySettle(Arg.Any<SettleRequest>()).Returns(new SettleCriteria { Action = "CAL" });
         createQueryService.CreateInsertLogCriteria(Arg.Any<SettleCriteria>()).Returns(new InsertLogCriteria());
-        await repository.ExecuteAsync(Arg.Do<SettleCriteria>(x => x.ServiceCommand = "mock"));
         scaleOutSettleService.GetSiteGroupId(Arg.Any<string>()).Returns(1, 2);
 
         await service.Settle(request);
@@ -231,7 +222,6 @@ public class MultipleServerAioServiceTests
         };
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
         createQueryService.QuerySettle(Arg.Any<SettleRequest>()).Returns(new SettleCriteria { Action = "CAL", IsReSettledTickets = true });
-        await repository.ExecuteAsync(Arg.Do<SettleCriteria>(x => x.ServiceCommand = "mock"));
         scaleOutSettleService.GetSiteGroupId(Arg.Any<string>()).Returns(1, 2);
         createQueryService.CreateInsertLogCriteria(Arg.Any<SettleCriteria>()).Returns(new InsertLogCriteria());
 

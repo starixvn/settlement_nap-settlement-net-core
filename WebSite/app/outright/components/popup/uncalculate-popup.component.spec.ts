@@ -55,7 +55,6 @@ describe('UncalculatePopupComponent', () => {
     errCode: 0,
     errMsg: '',
     teamFailedIds: '',
-    resultCommand: [],
     isSuccessful: true,
     childMatchIds: ''
   };
@@ -64,7 +63,6 @@ describe('UncalculatePopupComponent', () => {
     errCode: 1,
     errMsg: 'mock error',
     teamFailedIds: '',
-    resultCommand: [],
     isSuccessful: false,
     childMatchIds: ''
   };

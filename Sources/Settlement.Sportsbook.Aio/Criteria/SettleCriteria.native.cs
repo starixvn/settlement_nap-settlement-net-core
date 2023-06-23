@@ -26,8 +26,6 @@ public class SettleCriteria : NonQueryCommand
 
     public string ErrMsg { get; set; }
 
-    public string ServiceCommand { get; set; }
-
     public int? RefResultStatus { get; set; }
 
     public string BroadcastSessionId { get; } = Guid.NewGuid().ToString();

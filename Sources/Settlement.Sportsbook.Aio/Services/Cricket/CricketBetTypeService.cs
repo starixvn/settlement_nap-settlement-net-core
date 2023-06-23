@@ -17,14 +17,14 @@ public class CricketBetTypeService : ICricketBetTypeService
     private readonly IDynamicRepository repository;
     private readonly IResourceNameService resourceNameService;
     private readonly IGroupNameService groupNameService;
-    private readonly IInputTypeService inputTypeService;
+    private readonly InputTypeService inputTypeService;
     private const int InnsBetTypeMinLength = 5;
 
     public CricketBetTypeService(
         IDynamicRepository repository,
         IResourceNameService resourceNameService,
         IGroupNameService groupNameService,
-        IInputTypeService inputTypeService)
+        InputTypeService inputTypeService)
     {
         this.repository = repository;
         this.resourceNameService = resourceNameService;

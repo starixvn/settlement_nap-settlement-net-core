@@ -8,5 +8,4 @@ public class AppSettingsKey
 
     public bool EnableVerifyingRunningOdds { get; set; }
 
-    public string NetPositionApi { get; set; }
 }
