@@ -4,14 +4,15 @@ namespace Settlement.Core.Criteria;
 
 public class LogCriteria : NonQueryCommand
 {
-    public LogCriteria(int matchId, string errorMessage, int actionId)
+    public LogCriteria(int matchId, string errorMessage, int actionId, int userId)
     {
         MatchId = matchId;
         Remark = errorMessage;
         ActionId = actionId;
+        UserId = userId;
     }
 
-    public int UserId { get; }
+    public int UserId { get; set; }
 
     public int MatchId { get; set; }
 

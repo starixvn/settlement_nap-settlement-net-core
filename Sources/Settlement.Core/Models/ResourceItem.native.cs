@@ -4,6 +4,8 @@ namespace Settlement.Core.Models;
 
 public class ResourceItem : BaseResourceItem
 {
+    private string determined = "0";
+
     public ResourceItem()
     {
     }
@@ -19,9 +21,8 @@ public class ResourceItem : BaseResourceItem
     [XmlAttribute("IsDetermined")]
     public string Determined
     {
-        get => IsSettleDetermined ? "1" : "0";
-
-        set { }
+        get => IsSettleDetermined ? "1" : determined;
+        set => determined = value;
     }
 
     [XmlIgnore]

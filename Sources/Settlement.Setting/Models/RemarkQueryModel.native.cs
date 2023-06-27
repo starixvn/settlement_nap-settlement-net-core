@@ -30,9 +30,16 @@ public class RemarkQueryModel
         }
     }
 
-    public string NewEventStatus =>
-        originalEventStatus.IgnoreCaseEquals(Core.Constants.EventStatus.Running) &&
-        eventStatusReasons.Contains(EventStatusReason ?? 0) ? eventStatusReasonTitles[(int)EventStatusReason - 1] : EventStatus;
+    public string NewEventStatus
+    {
+        get
+        {
+            var status = EventStatusReason ?? 0;
+
+            return originalEventStatus.IgnoreCaseEquals(Core.Constants.EventStatus.Running) &&
+                   eventStatusReasons.Contains(status) ? eventStatusReasonTitles[status - 1] : EventStatus;
+        }
+    }
 
     protected byte SettlementStatus { get; set; }
 

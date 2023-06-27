@@ -25,7 +25,7 @@ public class LogServiceImp : LogService
 
     public void ActionLog(int matchId, string message, int actionId)
     {
-        var criteria = new LogCriteria(matchId, message, actionId);
+        var criteria = new LogCriteria(matchId, message, actionId, session.UserId);
         repository.Execute(criteria);
     }
 
