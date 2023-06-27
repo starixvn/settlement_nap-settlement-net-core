@@ -6,6 +6,7 @@ namespace Settlement.Sportsbook.Aio.Services.Cricket;
 
 using Constants.Cricket;
 using Settlement.ResourceInfos.Services;
+using System.Collections.Generic;
 
 public interface ICricketBetTypeService
 {
@@ -38,7 +39,8 @@ public class CricketBetTypeService : ICricketBetTypeService
 
         if (IsExistedPlayerName(resultDetails))
         {
-            inputOptions = GetInputOptions(resultDetails.FirstOrDefault());
+            var matchId = resultDetails.FirstOrDefault()!.MatchId;
+            inputOptions = GetInputOptions(matchId);
         }
 
         resultDetails.ForEach(resultDetail =>
@@ -47,16 +49,11 @@ public class CricketBetTypeService : ICricketBetTypeService
         });
     }
 
-    private List<InputOption> GetInputOptions(ResultDetail resultDetail)
+    private List<InputOption> GetInputOptions(int matchId)
     {
         const char semicolon = ',';
 
-        if (resultDetail == null)
-        {
-            return new List<InputOption>();
-        }
-
-        var getPlayerCriteria = new GetPlayerInfoCriteria { MatchId = resultDetail.MatchId };
+        var getPlayerCriteria = new GetPlayerInfoCriteria { MatchId = matchId };
         var inputOptions = repository.Fetch<InputOption>(getPlayerCriteria)
             .Where(option => option.OddsInfo.Contains(semicolon)).ToList();
 
@@ -79,47 +76,57 @@ public class CricketBetTypeService : ICricketBetTypeService
         });
     }
 
+    private void GetResultDetailWithResourceIdLessThanFive(ResultDetail resultDetail)
+    {
+        var betTypeId = Convert.ToInt32(resultDetail.ResourceId);
+        if (IsNonInnsBetTypeGroup(betTypeId))
+        {
+            var group = groupNameService.GroupNonInnsBetType(betTypeId);
+            resultDetail.GroupId = group.GroupId;
+            resultDetail.GroupName = group.GroupName;
+        }
+
+        resultDetail.InputType = inputTypeService.GetNonInnsBetTypeInputType(betTypeId);
+    }
+
+    private void GetResultDetailWithResourceIdGreaterThanFive(ResultDetail resultDetail, List<InputOption> inputOptions)
+    {
+        var resourceId = resultDetail.ResourceId;
+        var betTypeId = SplitBetType(resourceId, 0, 4);
+
+        if (GroupBetType.IncludedPlayerName.Contains(betTypeId) || GroupBetType.IncludedTwoPlayerName.Contains(betTypeId))
+        {
+            var value = inputTypeService.GetInnsInputLabel(resourceId, betTypeId, inputOptions);
+            resultDetail.HomeName = value.HomeValue;
+            resultDetail.AwayName = value.AwayValue;
+        }
+
+        if (IsInnsBetTypeGroup(betTypeId))
+        {
+            var group = groupNameService.GroupInnsBetType(betTypeId, resourceId);
+            resultDetail.GroupId = group.GroupId;
+            resultDetail.GroupName = group.GroupName;
+        }
+
+        if (InputType.PlayerSelectGroup.Contains(betTypeId) || InputType.PlayerMultipleSelectGroup.Contains(betTypeId) || InputType.ScoreWithLabelGroup.Contains(betTypeId))
+        {
+            resultDetail.InputOptions = inputTypeService.GetInputOptions(betTypeId, resourceId, inputOptions);
+        }
+
+        resultDetail.InputType = inputTypeService.GetInnsBetTypeInputType(betTypeId);
+    }
+
     private void GenerateBetTypeNameAndGroup(ResultDetail resultDetail, List<InputOption> inputOptions)
     {
         var resourceId = resultDetail.ResourceId;
         (resultDetail.BetType, resultDetail.BetTypeName) = resourceNameService.GetResourceName(resourceId, KeyConstants.CricketKey);
         if (resourceId.Length < InnsBetTypeMinLength)
         {
-            var betTypeId = Convert.ToInt32(resourceId);
-
-            if (IsNonInnsBetTypeGroup(betTypeId))
-            {
-                var group = groupNameService.GroupNonInnsBetType(betTypeId);
-                resultDetail.GroupId = group.GroupId;
-                resultDetail.GroupName = group.GroupName;
-            }
-
-            resultDetail.InputType = inputTypeService.GetNonInnsBetTypeInputType(betTypeId);
+            GetResultDetailWithResourceIdLessThanFive(resultDetail);
         }
         else
         {
-            var betTypeId = SplitBetType(resourceId, 0, 4);
-
-            if (GroupBetType.IncludedPlayerName.Contains(betTypeId) || GroupBetType.IncludedTwoPlayerName.Contains(betTypeId))
-            {
-                var value = inputTypeService.GetInnsInputLabel(resourceId, betTypeId, inputOptions);
-                resultDetail.HomeName = value.HomeValue;
-                resultDetail.AwayName = value.AwayValue;
-            }
-
-            if (IsInnsBetTypeGroup(betTypeId))
-            {
-                var group = groupNameService.GroupInnsBetType(betTypeId, resourceId);
-                resultDetail.GroupId = group.GroupId;
-                resultDetail.GroupName = group.GroupName;
-            }
-
-            if (InputType.PlayerSelectGroup.Contains(betTypeId) || InputType.PlayerMultipleSelectGroup.Contains(betTypeId) || InputType.ScoreWithLabelGroup.Contains(betTypeId))
-            {
-                resultDetail.InputOptions = inputTypeService.GetInputOptions(betTypeId, resourceId, inputOptions);
-            }
-
-            resultDetail.InputType = inputTypeService.GetInnsBetTypeInputType(betTypeId);
+            GetResultDetailWithResourceIdGreaterThanFive(resultDetail, inputOptions);
         }
     }
 
