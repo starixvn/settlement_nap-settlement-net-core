@@ -64,7 +64,6 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
         this.init();
     }
 
-
     init() {
         this.matchId = this.match.matchDetail.matchId;
         this.hedgeMatchDetail = this.match.hedgeMatchDetail;

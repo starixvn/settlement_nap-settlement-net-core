@@ -228,7 +228,7 @@ export class CalculationActionsComponent implements SportTemplate {
         let className: string;
         className = this.isFullTimeMismatched() || this.isHalfTimeMismatched() ? 'col-mismatched ' : '';
         if (_.isEqual(resultDetail.resourceId, ResourcesIds.htScore) || _.isEqual(resultDetail.resourceId, ResourcesIds.finalScore)) {
-            className = this.verificationService.isFtScoreLowerThanHtScore(this.resultDetails) ? 'not-consistent ' : className;
+            className = this.verificationService.isFtScoreLowerThanHtScore(this.firstHalf, this.fullTime) ? 'not-consistent ' : className;
         }
 
         return className + this.basketballService.getIntervalBackground(resultDetail.settlementStatusId);
@@ -295,7 +295,7 @@ export class CalculationActionsComponent implements SportTemplate {
             this.toastrService.error(Language.confirmRefund.calculateResultNotConfirmed);
         } else if (this.verificationService.isInputScoreInvalid(this.selectedResources, this.match.isScoreDirect)) {
             this.toastrService.error(this.isLeader ? Language.sop.leader.blankScore : Language.sop.nonLeader.blankScore);
-        } else if (this.verificationService.isFtScoreLowerThanHtScore(this.selectedResources)) {
+        } else if (this.verificationService.isFtScoreLowerThanHtScore(this.firstHalf, this.fullTime, false)) {
             this.toastrService.error(Language.inconsistentValues);
         } else if (this.verificationService.verifyIntervalsCalculated(this.firstHalf, this.firstHalfResults, this.match.isScoreDirect)
             || this.verificationService.verifyIntervalsCalculated(this.fullTime, this.quartersWithoutOverTime, this.match.isScoreDirect)) {
