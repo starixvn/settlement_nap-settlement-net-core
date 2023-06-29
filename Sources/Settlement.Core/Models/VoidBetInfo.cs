@@ -9,5 +9,5 @@ public class VoidBetInfo
     public string CustId { get; set; }
 
     [JsonIgnore]
-    public int StatusId { get; set; }
+    public string Action { get; set; }
 }

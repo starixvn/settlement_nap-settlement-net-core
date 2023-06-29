@@ -62,24 +62,6 @@ public class CashOutServiceTests
     }
 
     [Fact]
-    public async Task GetTicketInfo_ActionUndoAndStatusNotRefund_NotReturnThisItem()
-    {
-        var listTicket = new List<VoidBetInfo>
-        {
-            new()
-            {
-                StatusId = 102
-            }
-        };
-
-        repository.FetchAsync<VoidBetInfo>(Arg.Any<GetTicketInfoCriteria>()).Returns(listTicket);
-
-        var result = await service.GetTicketInfo(new GetTicketInfo { SelectedResources = new List<string> { "Q1" }, Action = "UNDO" });
-
-        Assert.Empty(result);
-    }
-
-    [Fact]
     public async Task VoidBetApi_3rdAPIFailed_SendMail()
     {
         var mockHttpMessageHandler = new Mock<HttpMessageHandler>();

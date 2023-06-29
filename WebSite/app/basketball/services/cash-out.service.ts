@@ -58,10 +58,10 @@ export class CashOutService {
     public getHalfForSettleDetermined(currentBetStatus: string, resultDetails: ResultDetail[]) {
         if(this.generateCashOutService.isCalcHalftimeWithMatchTwoQuarters(currentBetStatus, resultDetails)){
             return 10;
+         } else if(this.generateCashOutService.isNotCalcHalftimeWithMatchTwoQuarters(resultDetails)){
+            return 15;
         } else if(this.generateCashOutService.isSuspendedFullTimeMatchThreeQuarter(resultDetails)) {
             return 18;
-        } else if(this.generateCashOutService.isNotCalcHalftimeWithMatchTwoQuarters(resultDetails)){
-            return 15;
         } else {
             return this.generateCashOutService.generateHalfForSettleDetermined(resultDetails);
         }
@@ -80,10 +80,10 @@ export class CashOutService {
     public getBetStatusForSettleDetermined(currentBetStatus: string, resultDetails: ResultDetail[]) {
         if(this.generateCashOutService.isCalcHalftimeWithMatchTwoQuarters(currentBetStatus, resultDetails)){
             return this.generateCashOutService.generateBetStatus2HSuspendedForSettleDetermined(resultDetails);
-        } else if(this.generateCashOutService.isSuspendedFullTimeMatchThreeQuarter(resultDetails)) {
-            return this.generateCashOutService.getDirectFullTimeBetStatus(resultDetails);
         } else if(this.generateCashOutService.isNotCalcHalftimeWithMatchTwoQuarters(resultDetails)){
             return this.generateCashOutService.getDirectHalftimeBetStatus(resultDetails);
+        } else if(this.generateCashOutService.isSuspendedFullTimeMatchThreeQuarter(resultDetails)) {
+            return this.generateCashOutService.getDirectFullTimeBetStatus(resultDetails);
         } else {
             return this.generateCashOutService.generateBetStatusForSettleDetermined(resultDetails);
         }

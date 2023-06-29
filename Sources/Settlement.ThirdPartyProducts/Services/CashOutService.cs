@@ -2,7 +2,6 @@
 using Fanex.Data.Repository;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Setting.Models.Notification;
@@ -126,18 +125,7 @@ public class VoidBetApiServiceImp : IVoidBetApiService
             listVoidBetInfo.AddRange(listVoidBet);
         }
 
-        return HandleListVoidBet(listVoidBetInfo, request.Action);
-    }
-
-    private static List<VoidBetInfo> HandleListVoidBet(List<VoidBetInfo> voidBetInfos, string action)
-    {
-        if (action.Equals(ActionType.UnCalculate))
-        {
-            const int statusIdRefund = 103;
-            voidBetInfos = voidBetInfos.Where(item => item.StatusId == statusIdRefund).ToList();
-        }
-
-        return voidBetInfos;
+        return listVoidBetInfo;
     }
 
     private string CreateResources(List<ResourceItem> selectedResources)
