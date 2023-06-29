@@ -63,7 +63,7 @@
 						<label for="inputDirectly">Input HT Score and Final Score directly</label>
 						&nbsp;
 						<span [hidden]="disableScoreDirect">
-							<input type="checkbox" id="3x3Match" [(ngModel)]="isIgnoreForMatch3x3" />&nbsp;
+							<input type="checkbox" id="3x3Match" [disabled]="!isDirectly" [(ngModel)]="isIgnoreForMatch3x3" />&nbsp;
 							<label for="3x3Match">3x3 Match</label>
 						</span>
 					</td>

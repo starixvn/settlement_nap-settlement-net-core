@@ -62,7 +62,7 @@ public class ScoreServiceImp : ScoreService
         return ScoreByResource(resultDetails, ResourceType.Final, permission);
     }
 
-    private void ClearScore(int sportType, List<ResultDetail> resultDetails, string resource, bool isHalfTime = true)
+    private static void ClearScore(int sportType, List<ResultDetail> resultDetails, string resource, bool isHalfTime = true)
     {
         var resultSettleSdt = resultDetails.Where(r => (isHalfTime
             ? Resources.ResultHaftTime[sportType].Contains(r.ResourceId)

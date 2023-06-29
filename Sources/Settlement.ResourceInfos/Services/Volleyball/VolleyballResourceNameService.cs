@@ -15,7 +15,7 @@ public class VolleyballResourceNameService : IMapperService
 
     public (string, string) GetResourceName(string resourceId, int sportType)
     {
-        if (resourceId.Length == ResourceMainLength || resourceId.IndexOf("01") == 0)
+        if (resourceId.Length == ResourceMainLength || resourceId.IndexOf("01", StringComparison.CurrentCulture) == 0)
         {
             return (resourceId, GetResourceMain(resourceId));
         }

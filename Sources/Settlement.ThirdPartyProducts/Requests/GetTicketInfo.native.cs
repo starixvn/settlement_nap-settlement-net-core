@@ -10,4 +10,8 @@ public class GetTicketInfo : IRequest<List<VoidBetInfo>>
     public List<string> SelectedResources { get; set; }
 
     public string Action { get; set; }
+
+    public bool IsResettledTickets { get; set; }
+
+    public int DeterminedType { get; set; }
 }

@@ -110,11 +110,8 @@ public class VoidBetApiServiceImp : IVoidBetApiService
     public async Task<List<VoidBetInfo>> GetTicketInfo(GetTicketInfo request)
     {
         var listResource = request.SelectedResources.Select(i => new ResourceItem(i)).ToList();
-        var getTicketInfoCriteria = new GetTicketInfoCriteria
-        {
-            MatchId = request.MatchId,
-            SelectedResources = CreateResources(listResource)
-        };
+        var getTicketInfoCriteria = mapper.Map<GetTicketInfo, GetTicketInfoCriteria>(request);
+        getTicketInfoCriteria.SelectedResources = CreateResources(listResource);
 
         var listVoidBetInfo = new List<VoidBetInfo>();
 

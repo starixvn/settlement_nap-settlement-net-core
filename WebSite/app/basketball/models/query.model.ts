@@ -31,11 +31,13 @@ export class GetTicketInfoQuery {
     matchId: number;
     selectedResources: string[];
     action: string;
+    determinedType: number;
 
-    constructor(matchId: number, selectedResources: string[], isUndo: boolean) {
+    constructor(matchId: number, selectedResources: string[], isUndo: boolean, determinedType: number) {
         this.matchId = matchId;
         this.selectedResources = selectedResources;
         this.action = isUndo ? CalculateAction.unCalculate : CalculateAction.refund;
+        this.determinedType = determinedType;
     }
 }
 

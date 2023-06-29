@@ -35,10 +35,10 @@ export class HandleActionsService {
   }
 
   public handleChangeRemarkSetting(result: ChangeSettingResult, match: Match) {
-    const runningStatus = [EventStatus.closed, EventStatus.running].map(i => i.toLowerCase());
+    const runningStatus = [EventStatus.closed, EventStatus.running, EventStatus.resultPending].map(i => i.toLowerCase());
     match.remark = result.match.remark;
-    match.eventStatus = result.match.eventStatus;
     match.newEventStatus = _.includes(runningStatus, match.eventStatus.toLowerCase()) ? result.match.newEventStatus : match.newEventStatus;
+    match.eventStatus = result.match.eventStatus;
     match.eventStatusColor = this.handleEventStatusColor(match, result.match.remark.isPending);
   }
 

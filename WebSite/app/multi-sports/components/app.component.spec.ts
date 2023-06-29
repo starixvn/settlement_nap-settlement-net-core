@@ -25,7 +25,6 @@ import { DatepickerComponent } from '../../shared/components/date-picker/date-pi
 describe('MultiSport - AppComponent', () => {
     let component: AppComponent;
     let fixture: ComponentFixture<AppComponent>;
-    let blockUIService: BlockUIService;
     let reCheckInService: ReCheckInService;
 
     beforeEach(waitForAsync(() => {
@@ -65,7 +64,6 @@ describe('MultiSport - AppComponent', () => {
             .then(() => {
                 fixture = TestBed.createComponent(AppComponent);
                 component = fixture.componentInstance;
-                blockUIService = fixture.debugElement.injector.get(BlockUIService);
                 reCheckInService = fixture.debugElement.injector.get(ReCheckInService);
             });
     }));

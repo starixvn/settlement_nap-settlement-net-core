@@ -58,7 +58,7 @@ public class NewInfoMatchServiceImp : NewInfoMatchService
             return siteMatchService.GetBackgroundCompletedStatus(match);
         }
 
-        if (match.Remark.IsPending && match.EventStatus.IgnoreCaseEquals(EventStatus.ResultPending))
+        if (match.Remark.IsPending)
         {
             return siteMatchService.IsExistMarkedTickets(match)
                 ? Background.BrightYellowBlinking

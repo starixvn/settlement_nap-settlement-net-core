@@ -404,7 +404,7 @@ export class CalculationActionsComponent implements SportTemplate {
             this.toastrService.error(saveScoreResult.errMsg);
         } else {
             const query = this.createRequestQuery(actionName, selectedResources, betStatus);
-            const getTicketInfos = await this.getTicketInfo(query);
+            const getTicketInfos = await this.getTicketInfo(query, query.determinedType);
             const result = await this.aioService.push(query);
             if (result.isSuccessful) {
                 await this.voidBet(getTicketInfos);
@@ -453,8 +453,8 @@ export class CalculationActionsComponent implements SportTemplate {
         }
     }
 
-    private async getTicketInfo(query: SettleQuery) {
-        const getTicketQuery = new GetTicketInfoQuery(query.matchId, query.selectedResources.map(item => item.resourceId), true);
+    private async getTicketInfo(query: SettleQuery, determinedType: number = 0) {
+        const getTicketQuery = new GetTicketInfoQuery(query.matchId, query.selectedResources.map(item => item.resourceId), true, determinedType);
         return await this.cashOutService.getTicketInfo(getTicketQuery) as VoidBetInfo[];
     }
 

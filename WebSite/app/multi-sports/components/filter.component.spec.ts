@@ -22,7 +22,6 @@ import { ModalDialogComponent } from '../../shared/components/modal-dialog/modal
 import { ModalContentDialogComponent } from '../../shared/components/modal-dialog/modal-content-dialog.component';
 import { DatepickerComponent } from '../../shared/components/date-picker/date-picker.component';
 import { NewMultipleSelectComponent } from '../../shared/components/multiple-select/multiple-select.component';
-import { DatePipe } from '@angular/common';
 
 describe('MultiSport - FilterComponent', () => {
     let component: FilterComponent;
@@ -49,7 +48,6 @@ describe('MultiSport - FilterComponent', () => {
                 MultiSportService,
                 BlockUIService,
                 GenerateFilterService,
-                DatePipe
             ],
             imports: [
                 BrowserModule,
