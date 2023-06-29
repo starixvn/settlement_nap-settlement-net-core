@@ -1,10 +1,10 @@
 ﻿import { GetTicketInfoQuery, Match, VoidBetInfo, VoidBetQuery, CashOutResultRefundQuery } from '../models';
-import { Component, Injector, ViewChild, inject } from '@angular/core';
+import { Component, ViewChild, inject } from '@angular/core';
 import { Language } from '../../shared/language.native';
 import { BlockUIService } from '../../shared/services';
 import { ModalDialogMessage } from '../../shared/models';
-import { BackgroundColor, ScoreSourceType, SettlementStatusId, SportType } from '../../shared/constants';
-import { BasketballApiKeys, Resources, ResourcesIds } from '../constants';
+import { BackgroundColor, ScoreSourceType, SettlementStatusId, SportType, TicketStatus, TicketStatusText } from '../../shared/constants';
+import { BasketballApiKeys, ResourcesIds } from '../constants';
 import * as _ from 'lodash';
 import { RefundActionBaseComponent } from '../../shared/components/sportsbook-sop/refund-action-base.component';
 import { BasketballService, BetStatusService, VerificationService, CashOutService, GenerateCashOutService } from '../services';
@@ -193,6 +193,7 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
         if (this.isDirectly) {
             isDisable = true;
         }
+        this.isIgnoreForMatch3x3 = isDisable ? this.isIgnoreForMatch3x3 : false;
         this.resultDetails.forEach((resultDetail, i) => {
             this.resultDetailDisableInput[i] = !this.isEnableResult(resultDetail);
         });

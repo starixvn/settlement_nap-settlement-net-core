@@ -26,16 +26,26 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr *ngFor="let quarter of resultDetails; let i = index; let last = last" [ngClass]="{ 'confirmed-refund': permission.isLeader && (quarter.resultSettingData.isConfirmedRefund || quarter.resultSettingData.isConfirmedRefundSdt) }">
+				<tr
+					*ngFor="let quarter of resultDetails; let i = index; let last = last"
+					[ngClass]="{
+						'confirmed-refund': permission.isLeader && (quarter.resultSettingData.isConfirmedRefund || quarter.resultSettingData.isConfirmedRefundSdt)
+					}"
+				>
 					<td>{{ quarter.resourceId | resourceName }}</td>
 					<td [ngClass]="quarter.className">
 						<input [disabled]="resultDetailDisableInput[i]" [(ngModel)]="quarter.homeValue" (ngModelChange)="changeScore(quarter)" type="text" />
 					</td>
 					<td [ngClass]="quarter.className">
-						<input [disabled]="resultDetailDisableInput[i]"  [(ngModel)]="quarter.awayValue" (ngModelChange)="changeScore(quarter)" type="text" />
+						<input [disabled]="resultDetailDisableInput[i]" [(ngModel)]="quarter.awayValue" (ngModelChange)="changeScore(quarter)" type="text" />
 					</td>
 					<td *ngIf="quarter.resourceId === overTimeId" rowspan="2" class="temp">
-						<input id="final-checkbox" type="checkbox" [(ngModel)]="resultDetails[i+1].checked" (ngModelChange)="selectFullTimeCheckBox(); enableInput(quarter, isDirectly)" />
+						<input
+							id="final-checkbox"
+							type="checkbox"
+							[(ngModel)]="resultDetails[i + 1].checked"
+							(ngModelChange)="selectFullTimeCheckBox(); enableInput(quarter, isDirectly)"
+						/>
 					</td>
 					<td *ngIf="quarter.resourceId !== overTimeId && !last" class="temp">
 						<input type="checkbox" [(ngModel)]="quarter.checked" (ngModelChange)="enableInput(quarter)" [disabled]="quarter.disabled" />
@@ -43,16 +53,36 @@
 				</tr>
 				<tr>
 					<td colspan="4" class="input-directly">
-						<input type="checkbox" id="inputDirectly" [(ngModel)]="isDirectly" [disabled]="disableScoreDirect"   (ngModelChange)="selectFullTimeCheckBox(); inputDirectly();" />
+						<input
+							type="checkbox"
+							id="inputDirectly"
+							[(ngModel)]="isDirectly"
+							[disabled]="disableScoreDirect"
+							(ngModelChange)="selectFullTimeCheckBox(); inputDirectly()"
+						/>
 						<label for="inputDirectly">Input HT Score and Final Score directly</label>
+						&nbsp;
+						<span [hidden]="disableScoreDirect">
+							<input type="checkbox" id="3x3Match" [(ngModel)]="isIgnoreForMatch3x3" />&nbsp;
+							<label for="3x3Match">3x3 Match</label>
+						</span>
 					</td>
 				</tr>
 				<tr>
 					<td colspan="4">
-						<button *ngIf="isConfirmRefund && match.permission.isLeader" class="btn btn-outline-primary button-confirmed" [disabled]="selectedResources.length === 0" (click)="confirmRefund()">
+						<button
+							*ngIf="isConfirmRefund && match.permission.isLeader"
+							class="btn btn-outline-primary button-confirmed"
+							[disabled]="selectedResources.length === 0"
+							(click)="confirmRefund()"
+						>
 							Confirm Refund
 						</button>
-						<button *ngIf="!isConfirmRefund && match.permission.isLeader" class="btn btn-outline-primary button-confirmed" (click)="undoConfirmedAllResult()">
+						<button
+							*ngIf="!isConfirmRefund && match.permission.isLeader"
+							class="btn btn-outline-primary button-confirmed"
+							(click)="undoConfirmedAllResult()"
+						>
 							Undo Confirm Refund All
 						</button>
 						<button class="btn btn-outline-primary" [disabled]="selectedResources.length === 0" (click)="refund()">Refund</button>

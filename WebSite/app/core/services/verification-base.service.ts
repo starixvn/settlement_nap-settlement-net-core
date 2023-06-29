@@ -309,8 +309,8 @@ export class VerificationBaseService {
                 if (_.isNil(score)) {
                     if (result.sourceId === ScoreSourceType.trader && (newSportsSOP.includes(sportType))
                         && !_.isEqual(map.resultStatus, "Refund")
-                        && (!_.isEmpty(map.homeValue) || !_.isEmpty(map.awayValue)
-                            && !_.isEqual(map.settlementStatusId, SettlementStatusId.RefundSettleDetermined))) {
+                        && (!_.isEmpty(map.homeValue) || !_.isEmpty(map.awayValue))
+                        && !_.isEqual(map.settlementStatusId, SettlementStatusId.RefundSettleDetermined)) {
                         const tempScore = new ExternalResultDetail(result.sourceId, map.resourceId, result.sourceName, result.remark);
                         tempScore.homeValue = map.homeValue;
                         tempScore.awayValue = map.awayValue;

@@ -26,6 +26,7 @@ export class RefundActionBaseComponent {
     isDirectly: boolean;
     isConfirmRefund: boolean;
     resourceConfirmedSdt: ExternalResultDetail[];
+    isIgnoreForMatch3x3: boolean;
     readonly supportSdtSettle = [SportType.basketBall];
 
     get selectedResources(): ResultDetail[] {
@@ -120,7 +121,6 @@ export class RefundActionBaseComponent {
         if (isFirstResourceEmpty) {
             this.toastrService.error(Language.warningInputScore);
         } else if (this.validateResourceBeforeFirstSelected(firstSelectedResourceIndex, resultDetails)
-            || isFirstResourceEmpty
             || this.validateResourceFrom2nd(firstSelectedResourceIndex, resultDetails)) {
             this.toastrService.error(Language.confirmRefund.sdtErrorMessage);
         } else {
@@ -130,6 +130,9 @@ export class RefundActionBaseComponent {
     }
 
     private validateResourceBeforeFirstSelected(firstResourceIndex: number, resultDetails: ResultDetail[]) {
+        if (this.isDirectly && this.isIgnoreForMatch3x3) {
+            return false;
+        }
         const resultDetailBefore = resultDetails.slice(0, firstResourceIndex);
         return resultDetailBefore.some(resource => resource.settlementStatusId !== SettlementStatusId.Calculated);
     }
