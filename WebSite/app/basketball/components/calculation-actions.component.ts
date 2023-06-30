@@ -404,10 +404,11 @@ export class CalculationActionsComponent implements SportTemplate {
             this.toastrService.error(saveScoreResult.errMsg);
         } else {
             const query = this.createRequestQuery(actionName, selectedResources, betStatus);
-            const getTicketInfos = await this.getTicketInfo(query, query.determinedType);
+           
             const result = await this.aioService.push(query);
             if (result.isSuccessful) {
-                await this.voidBet(getTicketInfos);
+                const getTicketInfos = await this.getTicketInfo(query, query.determinedType);
+                await this.voidBet(getTicketInfos, actionName);
                 await this.cashOutResultUpdate(selectedResources, betStatus);
                 this.calculateHedgeMatch(query);
             } else {
@@ -443,10 +444,10 @@ export class CalculationActionsComponent implements SportTemplate {
 
     private async sendRequest(actionName: string, resource: ResultDetail[], betStatus: string): Promise<void> {
         const query = this.createRequestQuery(actionName, resource, betStatus);
-        const getTicketInfos = await this.getTicketInfo(query);
         const result = await this.aioService.push(query);
         if (result.isSuccessful) {
-            await this.voidBet(getTicketInfos);
+            const getTicketInfos = await this.getTicketInfo(query);
+            await this.voidBet(getTicketInfos, actionName);
             this.calculateHedgeMatch(query);
         } else {
             this.toastrService.error(result.errMsg);
@@ -458,9 +459,9 @@ export class CalculationActionsComponent implements SportTemplate {
         return await this.cashOutService.getTicketInfo(getTicketQuery) as VoidBetInfo[];
     }
 
-    private async voidBet(voidBetInfos: VoidBetInfo[]) {
+    private async voidBet(voidBetInfos: VoidBetInfo[], actionName: string) {
         if (voidBetInfos.length > 0) {
-            const voidBetQuery = new VoidBetQuery(this.matchDetail, true, voidBetInfos);
+            const voidBetQuery = new VoidBetQuery(this.matchDetail, actionName, voidBetInfos);
             await this.cashOutService.voidBet(voidBetQuery);
         }
     }

@@ -2,10 +2,12 @@
 using Fanex.Data.Repository;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Setting.Models.Notification;
 using Settlement.Setting.Services;
+using Settlement.ThirdPartyProducts.Constants;
 using Settlement.ThirdPartyProducts.Criteria;
 using Settlement.ThirdPartyProducts.Models;
 using Settlement.ThirdPartyProducts.Requests;
@@ -17,7 +19,7 @@ namespace Settlement.ThirdPartyProducts.Services;
 
 public interface IVoidBetApiService
 {
-    Task VoidBet(string action, VoidBetRequest request);
+    Task VoidBet(VoidBetRequest request);
 
     Task PostResult(string action, object request);
 
@@ -59,17 +61,28 @@ public class VoidBetApiServiceImp : IVoidBetApiService
         this.appSettingsKey = appSettingsKey.Value;
     }
 
-    public async Task VoidBet(string action, VoidBetRequest request)
+    public async Task VoidBet(VoidBetRequest request)
     {
-        var voidBetApiModel = new VoidBetApiModel
-        {
-            VoidBetInfos = request.VoidBetInfos
-        };
-        var jackTimeApi = appSettingsKey.ThirdPartyUri.JackTimeTicket;
+        var cashOutApi = appSettingsKey.ThirdPartyUri.JackTimeTicket;
 
-        if (!string.IsNullOrEmpty(jackTimeApi) && voidBetApiModel.VoidBetInfos.Any())
+        if (!string.IsNullOrEmpty(cashOutApi) && request.VoidBetInfos.Any())
         {
-            var apiUri = $"{jackTimeApi}{action}";
+            await CallApiVoidBet(request, cashOutApi);
+        }
+    }
+
+    private async Task CallApiVoidBet(VoidBetRequest request, string cashOutApi)
+    {
+        var actions = request.VoidBetInfos.GroupBy(m => m.Action).Select(m => m.Key);
+        foreach (var action in actions)
+        {
+            var voidBetInfos = request.VoidBetInfos.Where(m => m.Action == action);
+            var actionApi = action.Equals(ActionType.UnCalculate, StringComparison.OrdinalIgnoreCase) ? CashOutAction.UndoVoidBet : CashOutAction.VoidBet;
+            var apiUri = $"{cashOutApi}{actionApi}";
+            var voidBetApiModel = new VoidBetApiModel
+            {
+                VoidBetInfos = voidBetInfos
+            };
             var response = await PostAsync(apiUri, voidBetApiModel);
             await HandleResponse(response, request, voidBetApiModel);
         }

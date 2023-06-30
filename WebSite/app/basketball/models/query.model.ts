@@ -50,14 +50,14 @@ export class VoidBetQuery {
     matchCode: string;
     sportType: number;
 
-    constructor(matchDetail: MatchDetail, isUndo: boolean, voidBetInfos: VoidBetInfo[]) {
+    constructor(matchDetail: MatchDetail, action: string, voidBetInfos: VoidBetInfo[]) {
         this.matchId = matchDetail.matchId;
-        this.voidBetInfos = voidBetInfos;
-        this.action = isUndo ? CalculateAction.unCalculate : CalculateAction.refund;
         this.homeId = matchDetail.homeId;
         this.awayId = matchDetail.awayId;
         this.matchCode = matchDetail.matchCode;
         this.sportType = matchDetail.sportType;
+        this.voidBetInfos = voidBetInfos;
+        this.action = action;
     }
 }
 
