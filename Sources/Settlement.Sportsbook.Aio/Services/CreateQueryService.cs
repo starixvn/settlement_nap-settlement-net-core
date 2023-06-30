@@ -123,15 +123,12 @@ public class CreateQueryServiceImp : ICreateQueryService
 
     public ResultSettingCriteria QueryChangeSetting(ResultSettingRequest request)
     {
-        var criteria = new ResultSettingCriteria
-        {
-            MatchId = request.MatchId,
-            IsEnabled = request.IsEnabled,
-            Type = request.Type,
-            ResourceIds = request.ResourceIds,
-            AdminId = currentSession.UserId,
-            SelectedResources = request.SelectedResources == null ? string.Empty : CreateResources(request.SelectedResources.ToList())
-        };
+        var criteria = mapper.Map<ResultSettingRequest, ResultSettingCriteria>(request);
+
+        criteria.AdminId = currentSession.UserId;
+        criteria.SelectedResources = request.SelectedResources == null
+            ? string.Empty
+            : CreateResources(request.SelectedResources.ToList());
 
         return criteria;
     }

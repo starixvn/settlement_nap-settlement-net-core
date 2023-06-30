@@ -6,7 +6,7 @@ import { GeneralResultDetail, MarkedTicketsModel, MatchResource, ModalDialogMess
 import { MessageBoxService } from './message-box.service.native';
 import { Language } from '../language.native';
 import { GeneralMatch, HedgeMatchDetail, ResultDetail, SaveScoreQuery } from '../models/sportsbook-sop';
-import { ResultSettingType, SettlementStatusId, TicketStatusText, ResultStatus, ResourceIds } from '../../shared/constants';
+import { ResultSettingType, ResultStatus, ResourceIds } from '../../shared/constants';
 
 @Injectable()
 export class AioService {
@@ -115,13 +115,16 @@ export class AioService {
             hedgeMatchDetail, oldMatchDetail);
     }
 
-    public changeConfirmResultSDTSetting(matchId: number, resourceItems: ResourceItem[], isEnabled: boolean, hedgeMatchDetail: HedgeMatchDetail) {
+    public changeConfirmResultSDTSetting(matchId: number, resourceItems: ResourceItem[], isEnabled: boolean, hedgeMatchDetail: HedgeMatchDetail, is3x3 = false) {
         this.warningDialogMessage.title = Language.confirmationBox;
-        this.warningDialogMessage.message = isEnabled ? Language.confirmRefund.sdtConfirm : Language.confirmRefund.undoConfirmAll;
+        this.warningDialogMessage.message = isEnabled ?
+            Language.confirmRefund.sdtConfirm.replace('{0}', `${resourceItems[0].resourceName}: ${resourceItems[0].homeValue} - ${resourceItems[0].awayValue}`)
+            : Language.confirmRefund.undoConfirmAll;
         const resourceIds = resourceItems.map(resource => resource.resourceId).join(',');
         this.messageBoxService.confirm(this.warningDialogMessage, () => {
             const query = new ResultSettingQuery(matchId, ResultSettingType.confirmRefundSDT,
                 isEnabled, resourceIds, resourceItems);
+            query.is3x3 = is3x3;
             this.changeResultSetting(query).then(async () => {
                 await this.confirmHedgeMatch(query, hedgeMatchDetail);
             }).finally(this.messageBoxService.closePopupNotChanged);

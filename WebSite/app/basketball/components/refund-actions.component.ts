@@ -27,6 +27,7 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
     basketballService = inject(BasketballService);
     cashOutService = inject(CashOutService);
     blockUIService = inject(BlockUIService);
+    resourceNamePipe = inject(ResourceNameByIdPipe);
     blockUI = true;
     match: Match;
     originalMatch: Match;
@@ -86,6 +87,7 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
                 map.homeValue = needReset ? "" : map.homeValue;
                 map.awayValue = needReset ? "" : map.awayValue;
             }
+            map.resourceName = this.resourceNamePipe.transform(map.resourceId);
             map.className = this.basketballService.getIntervalBackground(map.settlementStatusId);
         });
     }

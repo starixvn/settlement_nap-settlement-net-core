@@ -6,6 +6,7 @@ export class ResultSettingQuery {
     isEnabled: boolean;
     resourceIds: string;
     selectedResources: ResourceItem[];
+    is3x3: boolean;
 
     constructor(matchId: number, type: number, isEnabled: boolean, resourceIds?: string, selectedResources?: ResourceItem[]) {
         this.matchID = matchId;

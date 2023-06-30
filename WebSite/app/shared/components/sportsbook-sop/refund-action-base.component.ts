@@ -106,7 +106,7 @@ export class RefundActionBaseComponent {
                 hedgeMatch);
         } else {
             const resultConfirmed = this.resultDetails.filter(item => item.resultSettingData.isConfirmedRefundSdt)
-            const resourceItems = resultConfirmed.map(item => new ResourceItem(item.resourceId, item.homeValue, item.awayValue))
+            const resourceItems = resultConfirmed.map(item => new ResourceItem(item.resourceId, item.resourceName, item.homeValue, item.awayValue))
             this.aioService.changeConfirmResultSDTSetting(this.matchDetail.matchId, resourceItems, false, hedgeMatch);
         }
     }
@@ -124,8 +124,8 @@ export class RefundActionBaseComponent {
             || this.validateResourceFrom2nd(firstSelectedResourceIndex, resultDetails)) {
             this.toastrService.error(Language.confirmRefund.sdtErrorMessage);
         } else {
-            const resourceItems = selectedResources.map(item => new ResourceItem(item.resourceId, item.homeValue, item.awayValue))
-            this.aioService.changeConfirmResultSDTSetting(this.matchDetail.matchId, resourceItems, true, hedgeMatch);
+            const resourceItems = selectedResources.map(item => new ResourceItem(item.resourceId, item.resourceName, item.homeValue, item.awayValue))
+            this.aioService.changeConfirmResultSDTSetting(this.matchDetail.matchId, resourceItems, true, hedgeMatch, this.isIgnoreForMatch3x3);
         }
     }
 

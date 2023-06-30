@@ -12,5 +12,7 @@ public class ResultSettingRequest : IRequest<bool>
 
     public string ResourceIds { get; set; }
 
+    public bool Is3x3 { get; set; }
+
     public IEnumerable<ResourceItem> SelectedResources { get; set; }
 }

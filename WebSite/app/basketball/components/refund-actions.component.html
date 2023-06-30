@@ -32,7 +32,7 @@
 						'confirmed-refund': permission.isLeader && (quarter.resultSettingData.isConfirmedRefund || quarter.resultSettingData.isConfirmedRefundSdt)
 					}"
 				>
-					<td>{{ quarter.resourceId | resourceName }}</td>
+					<td>{{ quarter.resourceName }}</td>
 					<td [ngClass]="quarter.className">
 						<input [disabled]="resultDetailDisableInput[i]" [(ngModel)]="quarter.homeValue" (ngModelChange)="changeScore(quarter)" type="text" />
 					</td>
@@ -62,7 +62,7 @@
 						/>
 						<label for="inputDirectly">Input HT Score and Final Score directly</label>
 						&nbsp;
-						<span [hidden]="disableScoreDirect">
+						<span [hidden]="disableScoreDirect || !permission.isLeader">
 							<input type="checkbox" id="3x3Match" [disabled]="!isDirectly" [(ngModel)]="isIgnoreForMatch3x3" />&nbsp;
 							<label for="3x3Match">3x3 Match</label>
 						</span>
