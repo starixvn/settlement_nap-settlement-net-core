@@ -1,6 +1,6 @@
 import { CalculateAction } from '../../shared/constants';
 import { BasketballApiKeys } from '../constants';
-import { MatchDetail, SettleQuery } from '../../shared/models/sportsbook-sop';
+import { MatchDetail, ResultDetail, SettleQuery } from '../../shared/models/sportsbook-sop';
 import { VoidBetInfo } from './void-bet-info.model';
 
 
@@ -29,14 +29,14 @@ export class MatchQuery {
 
 export class GetTicketInfoQuery {
     matchId: number;
-    selectedResources: string[];
+    selectedResources: ResultDetail[];
     action: string;
     determinedType: number;
 
-    constructor(matchId: number, selectedResources: string[], isUndo: boolean, determinedType: number) {
+    constructor(matchId: number, selectedResources: ResultDetail[], action: string, determinedType: number) {
         this.matchId = matchId;
         this.selectedResources = selectedResources;
-        this.action = isUndo ? CalculateAction.unCalculate : CalculateAction.refund;
+        this.action = action;
         this.determinedType = determinedType;
     }
 }

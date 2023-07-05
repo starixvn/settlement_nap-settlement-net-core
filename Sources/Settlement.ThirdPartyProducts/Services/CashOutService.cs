@@ -122,9 +122,8 @@ public class VoidBetApiServiceImp : IVoidBetApiService
 
     public async Task<List<VoidBetInfo>> GetTicketInfo(GetTicketInfo request)
     {
-        var listResource = request.SelectedResources.Select(i => new ResourceItem(i)).ToList();
         var getTicketInfoCriteria = mapper.Map<GetTicketInfo, GetTicketInfoCriteria>(request);
-        getTicketInfoCriteria.SelectedResources = CreateResources(listResource);
+        getTicketInfoCriteria.SelectedResources = CreateResources(request.SelectedResources);
 
         var listVoidBetInfo = new List<VoidBetInfo>();
 
@@ -138,11 +137,11 @@ public class VoidBetApiServiceImp : IVoidBetApiService
         return listVoidBetInfo;
     }
 
-    private string CreateResources(List<ResourceItem> selectedResources)
+    private string CreateResources(IEnumerable<ResourceItem> selectedResources)
     {
         var resources = new Models.Resources<ResourceItem>
         {
-            ResourceItems = selectedResources
+            ResourceItems = selectedResources.ToList()
         };
 
         return xmlConvertService.Serialize(resources);

@@ -51,7 +51,14 @@ public class CashOutServiceTests
     [Fact]
     public async Task GetTicketInfo_Always_CallSP()
     {
-        await service.GetTicketInfo(new GetTicketInfo { SelectedResources = new List<string> { "Q1" }, Action = "REFUND" });
+        var selectedResources = new List<Models.ResourceItem>
+        {
+            new()
+            {
+                ResourceId = "Q1"
+            }
+        };
+        await service.GetTicketInfo(new GetTicketInfo { SelectedResources = selectedResources, Action = "REFUND" });
 
         await repository.Received(2).FetchAsync<VoidBetInfo>(Arg.Any<GetTicketInfoCriteria>());
     }

@@ -145,7 +145,7 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
     }
 
     private async getTicketInfo(query: SettleQuery, determinedType: number) {
-        const getTicketQuery = new GetTicketInfoQuery(query.matchId, query.selectedResources.map(item => item.resourceId), false, determinedType);
+        const getTicketQuery = new GetTicketInfoQuery(query.matchId, query.selectedResources as ResultDetail[], query.actionName, determinedType);
         return await this.cashOutService.getTicketInfo(getTicketQuery) as VoidBetInfo[];
     }
 
