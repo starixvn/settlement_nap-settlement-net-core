@@ -404,10 +404,9 @@ export class CalculationActionsComponent implements SportTemplate {
             this.toastrService.error(saveScoreResult.errMsg);
         } else {
             const query = this.createRequestQuery(actionName, selectedResources, betStatus);
-
+            const getTicketInfos = await this.getTicketInfo(query);
             const result = await this.aioService.push(query);
             if (result.isSuccessful) {
-                const getTicketInfos = await this.getTicketInfo(query, query.determinedType);
                 await this.voidBet(getTicketInfos, actionName);
                 await this.cashOutResultUpdate(selectedResources, betStatus);
                 this.calculateHedgeMatch(query);
@@ -444,9 +443,9 @@ export class CalculationActionsComponent implements SportTemplate {
 
     private async sendRequest(actionName: string, resource: ResultDetail[], betStatus: string): Promise<void> {
         const query = this.createRequestQuery(actionName, resource, betStatus);
+        const getTicketInfos = await this.getTicketInfo(query);
         const result = await this.aioService.push(query);
         if (result.isSuccessful) {
-            const getTicketInfos = await this.getTicketInfo(query);
             await this.voidBet(getTicketInfos, actionName);
             this.calculateHedgeMatch(query);
         } else {
@@ -454,8 +453,12 @@ export class CalculationActionsComponent implements SportTemplate {
         }
     }
 
-    private async getTicketInfo(query: SettleQuery, determinedType: number = 0) {
-        const getTicketQuery = new GetTicketInfoQuery(query.matchId, query.selectedResources as ResultDetail[], query.actionName, determinedType);
+    private async getTicketInfo(query: SettleQuery) {
+        const getTicketQuery = new GetTicketInfoQuery(
+            query.matchId,
+            query.selectedResources as ResultDetail[],
+            query.actionName,
+            query.determinedType);
         return await this.cashOutService.getTicketInfo(getTicketQuery) as VoidBetInfo[];
     }
 

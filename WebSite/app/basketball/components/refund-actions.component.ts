@@ -132,9 +132,9 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
 
     private async doRefund() {
         const query = this.generateRefundQuery(BasketballApiKeys.settle);
+        const getTicketInfos = await this.getTicketInfo(query);
         const result = await this.aioService.push(query);
-        if (result.errCode === 0) {
-            const getTicketInfos = await this.getTicketInfo(query, query.determinedType);
+        if (result.isSuccessful) {
             await this.voidBet(getTicketInfos, query.actionName);
             await this.cashOutResultRefund(this.resultDetails);
             await this.refundHedgeMatch(query);
@@ -144,8 +144,9 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
         }
     }
 
-    private async getTicketInfo(query: SettleQuery, determinedType: number) {
-        const getTicketQuery = new GetTicketInfoQuery(query.matchId, query.selectedResources as ResultDetail[], query.actionName, determinedType);
+    private async getTicketInfo(query: SettleQuery) {
+        const getTicketQuery = new GetTicketInfoQuery(
+            query.matchId, query.selectedResources as ResultDetail[], query.actionName, query.determinedType);
         return await this.cashOutService.getTicketInfo(getTicketQuery) as VoidBetInfo[];
     }
 
