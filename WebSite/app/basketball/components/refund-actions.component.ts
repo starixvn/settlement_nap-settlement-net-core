@@ -177,8 +177,6 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
         }
     }
 
-
-
     changeScore(resultDetail: ResultDetail) {
         const firstResourceIndex = this.resultDetails.indexOf(resultDetail);
         const resultDetailAfter = this.resultDetails.slice(firstResourceIndex != -1 ? firstResourceIndex + 1 : 0);

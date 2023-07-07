@@ -2,8 +2,6 @@ import { Injectable } from '@angular/core';
 import * as _ from 'lodash';
 import { firstValueFrom } from 'rxjs';
 import { HttpRequestService } from "../../shared/services";
-import { SettlementStatusId } from "../../shared/constants";
-import { ResourcesIds } from '../constants';
 import { ResultDetail } from '../../shared/models/sportsbook-sop';
 import { GenerateCashOutService } from './generate-cash-out.service';
 @Injectable()
