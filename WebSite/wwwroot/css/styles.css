@@ -14,7 +14,7 @@
 thead {
     background-color: #295091;
     border: 1px solid #CBC9CA;
-    padding-right: 15px;
+    -webkit-padding-end: 15px;
 }
 /* Icon: first goal and last goal*/
 .first-last-goal {
