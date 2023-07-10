@@ -43,8 +43,8 @@ export class CashOutService {
         return betStatus.join(',');
     }
 
-    public getHalf(currentBetStatus: string, resultDetails: ResultDetail[]) {
-        if(this.generateCashOutService.isCalcHalftimeWithMatchTwoQuarters(currentBetStatus, resultDetails)){
+    public getHalf(resultDetails: ResultDetail[]) {
+        if(this.generateCashOutService.isCalcHalftimeWithMatchTwoQuarters(resultDetails)){
             return 0;
         } else if(this.generateCashOutService.isNotCalcHalftimeWithMatchTwoQuarters(resultDetails)){
             return 8;
@@ -53,8 +53,8 @@ export class CashOutService {
         }
     }
 
-    public getHalfForSettleDetermined(currentBetStatus: string, resultDetails: ResultDetail[]) {
-        if(this.generateCashOutService.isCalcHalftimeWithMatchTwoQuarters(currentBetStatus, resultDetails)){
+    public getHalfForSettleDetermined(resultDetails: ResultDetail[]) {
+        if(this.generateCashOutService.isCalcHalftimeWithMatchTwoQuarters(resultDetails)){
             return 10;
          } else if(this.generateCashOutService.isNotCalcHalftimeWithMatchTwoQuarters(resultDetails)){
             return 15;
@@ -65,8 +65,8 @@ export class CashOutService {
         }
     }
 
-    public getBetStatus(currentBetStatus: string, resultDetails: ResultDetail[]) {
-        if(this.generateCashOutService.isCalcHalftimeWithMatchTwoQuarters(currentBetStatus, resultDetails)){
+    public getBetStatus(resultDetails: ResultDetail[]) {
+        if(this.generateCashOutService.isCalcHalftimeWithMatchTwoQuarters(resultDetails)){
             return this.generateCashOutService.getDirectHalftimeBetStatus(resultDetails);
         } else if(this.generateCashOutService.isNotCalcHalftimeWithMatchTwoQuarters(resultDetails)){
             return "0-0,0-0,0-0,0-0,0-0";
@@ -75,8 +75,8 @@ export class CashOutService {
         }
     }
 
-    public getBetStatusForSettleDetermined(currentBetStatus: string, resultDetails: ResultDetail[]) {
-        if(this.generateCashOutService.isCalcHalftimeWithMatchTwoQuarters(currentBetStatus, resultDetails)){
+    public getBetStatusForSettleDetermined(resultDetails: ResultDetail[]) {
+        if(this.generateCashOutService.isCalcHalftimeWithMatchTwoQuarters(resultDetails)){
             return this.generateCashOutService.generateBetStatus2HSuspendedForSettleDetermined(resultDetails);
         } else if(this.generateCashOutService.isNotCalcHalftimeWithMatchTwoQuarters(resultDetails)){
             return this.generateCashOutService.getDirectHalftimeBetStatus(resultDetails);

@@ -165,11 +165,11 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
             let betStatus = "";
 
             if (this.isSDTSettle) {
-                half = this.cashOutService.getHalfForSettleDetermined(this.matchDetail.betStatus, resource);
-                betStatus = this.cashOutService.getBetStatusForSettleDetermined(this.matchDetail.betStatus, resource);
+                half = this.cashOutService.getHalfForSettleDetermined(resource);
+                betStatus = this.cashOutService.getBetStatusForSettleDetermined(resource);
             } else {
-                half = this.cashOutService.getHalf(this.matchDetail.betStatus, resource);
-                betStatus = this.cashOutService.getBetStatus(this.matchDetail.betStatus, resource);
+                half = this.cashOutService.getHalf(resource);
+                betStatus = this.cashOutService.getBetStatus(resource);
             }
 
             const query = new CashOutResultRefundQuery(this.matchDetail.matchId, betStatus, half);

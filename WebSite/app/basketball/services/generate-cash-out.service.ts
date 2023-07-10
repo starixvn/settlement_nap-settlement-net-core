@@ -7,13 +7,13 @@ import { ResultDetail } from '../../shared/models/sportsbook-sop';
 export class GenerateCashOutService {
     private defaultScore = "0-0";
 
-    public isCalcHalftimeWithMatchTwoQuarters(betStatus: string, resultDetails: ResultDetail[]){
+    public isCalcHalftimeWithMatchTwoQuarters(resultDetails: ResultDetail[]){
         const settlementStatusId = [SettlementStatusId.Running, SettlementStatusId.Refund, SettlementStatusId.RefundSettleDetermined];
        
         const halfTimeIsCalculated = _.find(resultDetails, (item) =>  _.isEqual(item.resourceId, ResourcesIds.htScore) && item.settlementStatusId === SettlementStatusId.Calculated);
         const fullTimeIsRunning = _.find(resultDetails, (item) => _.isEqual(item.resourceId, ResourcesIds.finalScore) && _.includes(settlementStatusId, item.settlementStatusId));
 
-        return _.isEmpty(betStatus) && halfTimeIsCalculated && fullTimeIsRunning;
+        return halfTimeIsCalculated && fullTimeIsRunning;
     }
 
     public isNotCalcHalftimeWithMatchTwoQuarters(resultDetails: ResultDetail[]){
