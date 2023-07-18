@@ -185,6 +185,7 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
                 resource.awayValue = "";
                 resource.homeValue = "";
             }
+            resource.className = this.inputClass(resource);
         });
         resultDetail.className = this.inputClass(resultDetail);
     }
