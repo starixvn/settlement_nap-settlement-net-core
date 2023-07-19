@@ -7,7 +7,7 @@ import { BlockUIService, HttpRequestService, MessageBoxService } from '../../../
 import { HttpClientModule } from '@angular/common/http';
 import { CreateDataTest } from './create-data-test.native';
 import { Language } from '../../../../shared/language.native';
-import { Result, ResultCommand } from '../../../../shared/models';
+import { Result } from '../../../../shared/models';
 import { of } from 'rxjs';
 import { TicketStatusText } from '../../../../shared/constants';
 import { ChildMatch } from '../models/match.model';
@@ -21,7 +21,6 @@ describe('Soccer - verify action service', () => {
         errCode: 1,
         errMsg: "errorMessage",
         isSuccessful: false,
-        resultCommand: [],
         childMatchIds: ''
     };
 

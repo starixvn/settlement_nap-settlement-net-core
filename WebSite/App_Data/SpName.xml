@@ -88,8 +88,8 @@
   </Function>
 
   <Function Name="SettlementLog">
-    <Setting Key="NAP_UserLog_Settle_MatchSelByCode" SpName="NAP_UserLog_Settle_MatchSelByCode" DbName="DBAGE.bodb02.bodbAdminNet" TimeOut="120"/>
-    <Setting Key="NAP_UserLog_Settle_MatchArchivedSelByCode" SpName="NAP_UserLog_Settle_MatchArchivedSelByCode" DbName="DBARC.bodb_Archive.bodbAdminNet" TimeOut="120"/>
+    <Setting Key="NAP_UserLog_Settle_MatchSelByCode" SpName="NAP_UserLog_Settle_MatchSelByCode" DbName="DBAGE.bodb02.bodbAdminNet" TimeOut="120" />
+    <Setting Key="NAP_UserLog_Settle_MatchArchivedSelByCode" SpName="NAP_UserLog_Settle_MatchArchivedSelByCode" DbName="DBARC.bodb_Archive.bodbAdminNet" TimeOut="120" />
     <Setting Key="NAP_UserLog_Settle_MatchSelByID_by_Product" SpName="NAP_UserLog_Settle_MatchSelByID_by_Product" DbName="DBLOG.bodb_CustomerLog.bodbAdminNet" />
     <Setting Key="NAP_UserLog_WriteLogPreSettlement" SpName="NAP_UserLog_WriteLogPreSettlement" DbName="DBUserLog.LogTDB.bodbAdminNet" />
     <Setting Key="NAP_SettlementLog_Ins" SpName="NAP_SettlementLog_Ins" DbName="DBLOG.bodb_CustomerLog.bodbAdminNet" />
@@ -324,12 +324,6 @@
       <Setting Key="NAP_Admin_Settlement_50_MoveTicket_DBTXN" SpName="NAP_Admin_Settlement_50_MoveTicket" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="NAP_Admin_Settlement_50_MoveTicket_DBSID01" SpName="NAP_Admin_Settlement_50_MoveTicket" DbName="DBSID01.bodb02.bodbAdminNet" />
       <Setting Key="NAP_Admin_Settlement_50_MoveTicket_DBSID02" SpName="NAP_Admin_Settlement_50_MoveTicket" DbName="DBSID02.bodb02.bodbAdminNet" />
-    </Function>
-
-    <Function Name="NAP_Admin_Settlement_50">
-      <Setting Key="NAP_Admin_Settlement_50_DBTXN" SpName="NAP_Admin_Settlement_50" DbName="DBTXN.bodb02.bodbAdminNet" />
-      <Setting Key="NAP_Admin_Settlement_50_DBSID01" SpName="NAP_Admin_Settlement_50" DbName="DBSID01.bodb02.bodbAdminNet" />
-      <Setting Key="NAP_Admin_Settlement_50_DBSID02" SpName="NAP_Admin_Settlement_50" DbName="DBSID02.bodb02.bodbAdminNet" />
     </Function>
 
     <Function Name="NAP_Settlement_InstantCalculation_Checking">

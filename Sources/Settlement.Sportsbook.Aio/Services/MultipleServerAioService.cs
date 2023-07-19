@@ -6,9 +6,7 @@ using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.Aio.Constants;
 using Settlement.Sportsbook.Aio.Criteria;
-using Settlement.Sportsbook.Aio.Criteria.Cricket;
 using Settlement.Sportsbook.Aio.Requests;
-using Settlement.Sportsbook.Aio.Services.Cricket;
 
 namespace Settlement.Sportsbook.Aio.Services;
 
@@ -30,7 +28,6 @@ public class MultipleServerAioServiceImp : MultipleServerAioService
     private readonly ScaleOutSettleService scaleOutSettleService;
     private readonly ICreateQueryService createQueryService;
     private readonly MergeDataService mergeDataService;
-    private readonly NetPositionService netPositionService;
     private readonly LogService logService;
 
     public MultipleServerAioServiceImp(
@@ -39,7 +36,6 @@ public class MultipleServerAioServiceImp : MultipleServerAioService
         ScaleOutSettleService scaleOutSettleService,
         ICreateQueryService createQueryService,
         MergeDataService mergeDataService,
-        NetPositionService netPositionService,
         LogService logService)
     {
         this.repository = repository;
@@ -47,7 +43,6 @@ public class MultipleServerAioServiceImp : MultipleServerAioService
         this.scaleOutSettleService = scaleOutSettleService;
         this.createQueryService = createQueryService;
         this.mergeDataService = mergeDataService;
-        this.netPositionService = netPositionService;
         this.logService = logService;
     }
 
@@ -176,35 +171,13 @@ public class MultipleServerAioServiceImp : MultipleServerAioService
     public async Task<Result> Settle(SettleRequest request)
     {
         var criteria = createQueryService.QuerySettle(request);
-        var (result, resultCommands) = await Execute(criteria, request.SelectedResources);
+        var result = await Execute(criteria, request.SelectedResources);
 
         if (request.SportType == SportType.Cricket && result.IsSuccessful)
         {
-            return await SettleChildMatchAndNetPosition(criteria, resultCommands);
+            var childMatchIds = await GetChildMatchIds(criteria.MatchId, criteria.Action, criteria.SelectedResources);
+            result.ChildMatchIds = childMatchIds;
         }
-
-        return result;
-    }
-
-    private async Task<Result> SettleChildMatchAndNetPosition(SettleCriteria criteria, List<ResultCommand> resultCommands)
-    {
-        var updateStatusCriteria = new UpdateStatusServiceCriteria
-        {
-            MatchId = criteria.MatchId,
-            Action = criteria.Action
-        };
-
-        var childMatchIds = await GetChildMatchIds(criteria.MatchId, criteria.Action, criteria.SelectedResources);
-
-        var result = criteria.Action switch
-        {
-            SettleType.Calculate or SettleType.Refund => await netPositionService.Calculate(updateStatusCriteria,
-                resultCommands, criteria.IsHedgeMatch),
-            SettleType.Undo => await netPositionService.UnCalculate(updateStatusCriteria, resultCommands),
-            _ => new Result()
-        };
-
-        result.ChildMatchIds = childMatchIds;
 
         return result;
     }
@@ -225,7 +198,7 @@ public class MultipleServerAioServiceImp : MultipleServerAioService
         logService.WriteLog(matchId, messageLog);
     }
 
-    private async Task<List<ResultCommand>> UpdateInfoAndSettle(SettleCriteria criteria, List<ResourceItem> selectedResources)
+    private async Task UpdateInfoAndSettle(SettleCriteria criteria, List<ResourceItem> selectedResources)
     {
         await SetUnderSettleFlag(criteria, selectedResources);
 
@@ -233,19 +206,13 @@ public class MultipleServerAioServiceImp : MultipleServerAioService
 
         await InsertLog(criteria);
 
-        var commandList = new List<ResultCommand>();
-
         WriteLog(criteria.MatchId, criteria.Action, criteria.SelectedResources, criteria.BetStatus);
 
         foreach (var server in appSettingsKey.SiteDbServer)
         {
             criteria.DbServer = server;
             await repository.ExecuteAsync(criteria);
-            var serviceCommand = criteria.ServiceCommand;
-            commandList = await SetResultCommand(commandList, serviceCommand, server);
         }
-
-        return commandList;
     }
 
     private async Task InsertLog(SettleCriteria criteria)
@@ -264,32 +231,15 @@ public class MultipleServerAioServiceImp : MultipleServerAioService
         }
     }
 
-    private async Task<(Result, List<ResultCommand>)> Execute(SettleCriteria criteria, List<ResourceItem> selectedResources)
+    private async Task<Result> Execute(SettleCriteria criteria, List<ResourceItem> selectedResources)
     {
         var result = await ValidateBeforeExecute(criteria);
-        var commandList = new List<ResultCommand>();
         if (result.IsSuccessful)
         {
-            commandList = await UpdateInfoAndSettle(criteria, selectedResources);
+            await UpdateInfoAndSettle(criteria, selectedResources);
         }
 
-        return (result, commandList);
-    }
-
-    private async Task<List<ResultCommand>> SetResultCommand(List<ResultCommand> commandList, string serviceCommand, string server)
-    {
-        if (!string.IsNullOrWhiteSpace(serviceCommand))
-        {
-            var siteDbGroupId = await scaleOutSettleService.GetSiteGroupId(server);
-            commandList.Add(new ResultCommand
-            {
-                DbServer = server,
-                SiteDbGroupId = siteDbGroupId,
-                ServiceCommand = serviceCommand
-            });
-        }
-
-        return commandList;
+        return result;
     }
 
     private async Task<Result> ValidateBeforeExecute(SettleCriteria criteria)
@@ -352,7 +302,7 @@ public class MultipleServerAioServiceImp : MultipleServerAioService
             {
                 criteria.MatchId = match.MatchId;
                 criteria.SelectedResources = createQueryService.CreateResourceChildMatch(match);
-                var (result, _) = await Execute(criteria, request.SelectedResources);
+                var result = await Execute(criteria, request.SelectedResources);
                 createQueryService.WriteLogChildMatch(criteria, result);
             }
         }

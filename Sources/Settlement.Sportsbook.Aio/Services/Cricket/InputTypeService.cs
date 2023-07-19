@@ -4,7 +4,7 @@ namespace Settlement.Sportsbook.Aio.Services.Cricket;
 
 using Constants.Cricket;
 
-public interface IInputTypeService
+public interface InputTypeService
 {
     int GetNonInnsBetTypeInputType(int betTypeId);
 
@@ -15,7 +15,7 @@ public interface IInputTypeService
     List<InputOption> GetInputOptions(int betTypeId, string resourceId, List<InputOption> inputOptions);
 }
 
-public class InputTypeServiceImp : IInputTypeService
+public class InputTypeServiceImp : InputTypeService
 {
     private const int MaxPlayerSelected = 2;
 
@@ -41,38 +41,38 @@ public class InputTypeServiceImp : IInputTypeService
         {
             return InputType.CaughtOrNot;
         }
-        else if (InputType.OneToSixGroup.Contains(betTypeId))
+
+        if (InputType.OneToSixGroup.Contains(betTypeId))
         {
             return InputType.OneToSix;
         }
-        else if (InputType.PlayerSelectGroup.Contains(betTypeId))
+
+        if (InputType.PlayerSelectGroup.Contains(betTypeId))
         {
             return InputType.PlayerSelect;
         }
-        else if (InputType.PlayerMultipleSelectGroup.Contains(betTypeId))
+
+        if (InputType.PlayerMultipleSelectGroup.Contains(betTypeId))
         {
             return InputType.PlayerMultipleSelect;
         }
-        else if (InputType.DismissalMethodGroup.Contains(betTypeId))
+
+        if (InputType.DismissalMethodGroup.Contains(betTypeId))
         {
             return InputType.DismissalMethod;
         }
-        else if (InputType.YesNoGroup.Contains(betTypeId))
+
+        if (InputType.YesNoGroup.Contains(betTypeId))
         {
             return InputType.YesNo;
         }
-        else if (InputType.ScoreWithLabelGroup.Contains(betTypeId))
+
+        if (InputType.ScoreWithLabelGroup.Contains(betTypeId))
         {
             return InputType.ScoreWithLabel;
         }
-        else if (InputType.CoupleScoresGroup.Contains(betTypeId))
-        {
-            return InputType.CoupleScores;
-        }
-        else
-        {
-            return InputType.SingleScore;
-        }
+
+        return InputType.CoupleScoresGroup.Contains(betTypeId) ? InputType.CoupleScores : InputType.SingleScore;
     }
 
     public SaveScoreModel GetInnsInputLabel(string resourceId, int betTypeId, List<InputOption> inputOptions)
@@ -100,14 +100,10 @@ public class InputTypeServiceImp : IInputTypeService
             ? inputOptions.FindAll(option => option.ResourceId == resourceId).Take(MaxPlayerSelected).ToList()
             : inputOptions.FindAll(option => option.ResourceId == resourceId);
 
-        if (InputType.OptionOtherGroup.Contains(betTypeId))
-        {
-            AddOtherOption(listOption, resourceId);
-        }
-        return listOption;
+        return InputType.OptionOtherGroup.Contains(betTypeId) ? AddOtherOption(listOption, resourceId) : listOption;
     }
 
-    private void AddOtherOption(List<InputOption> listOption, string resourceId)
+    private static List<InputOption> AddOtherOption(List<InputOption> listOption, string resourceId)
     {
         var otherOptionIndex = listOption.FindIndex(option => option.Value == OtherValue);
         if (otherOptionIndex >= 0)
@@ -123,6 +119,9 @@ public class InputTypeServiceImp : IInputTypeService
             OddsInfo = $"{OtherValue},{OtherBetTypeName}",
             ResourceId = resourceId
         };
+
         listOption.Add(optionOther);
+
+        return listOption;
     }
 }

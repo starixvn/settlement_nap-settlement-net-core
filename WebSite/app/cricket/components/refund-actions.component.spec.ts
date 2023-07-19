@@ -52,7 +52,6 @@ describe("Cricket - Refund Component", () => {
     errCode: 0,
     errMsg: "",
     isSuccessful: true,
-    resultCommand: ''
   };
   const unSuccessfulResult = {
     errCode: 1,
@@ -64,7 +63,6 @@ describe("Cricket - Refund Component", () => {
     errCode: 0,
     errMsg: "",
     isSuccessful: true,
-    resultCommand: 'mock command'
   };
   const existMarkedTicket = {
     isExistMarkedTicket: true,

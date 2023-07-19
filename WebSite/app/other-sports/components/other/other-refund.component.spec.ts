@@ -48,7 +48,6 @@ describe('OtherRefundComponent', () => {
         errCode: 1,
         errMsg: errorMessage,
         isSuccessful: false,
-        resultCommand: [],
         childMatchIds: "",
     };
 
