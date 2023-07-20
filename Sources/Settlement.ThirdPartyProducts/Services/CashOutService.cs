@@ -101,9 +101,17 @@ public class VoidBetApiServiceImp : IVoidBetApiService
 
     private async Task<HttpResponseMessage> PostAsync(string apiUri, object request)
     {
-        var requestContent = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
-        var httpClient = httpClientFactory.CreateClient();
-        return await httpClient.PostAsync(new Uri(apiUri), requestContent);
+        try
+        {
+            var requestContent = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
+            var httpClient = httpClientFactory.CreateClient();
+            return await httpClient.PostAsync(new Uri(apiUri), requestContent);
+        }
+        catch (Exception exception)
+        {
+            await Fanex.Logging.LogService.ErrorAsync("Settlement.WebSites (Call JackTime API): ", exception);
+            return new HttpResponseMessage();
+        }
     }
 
     private async Task HandleResponse(HttpResponseMessage response, VoidBetRequest request, VoidBetApiModel model)

@@ -10,25 +10,30 @@ export class GenerateCashOutService {
     public isCalcHalftimeWithMatchTwoQuarters(resultDetails: ResultDetail[]){
         const settlementStatusId = [SettlementStatusId.Running, SettlementStatusId.Refund, SettlementStatusId.RefundSettleDetermined];
        
+        const quaterOneIsNotCalculated = _.find(resultDetails, (item) =>  _.isEqual(item.resourceId, ResourcesIds.quarter1) && item.settlementStatusId !== SettlementStatusId.Calculated);
+        const quaterTwoIsNotCalculated = _.find(resultDetails, (item) =>  _.isEqual(item.resourceId, ResourcesIds.quarter2) && item.settlementStatusId !== SettlementStatusId.Calculated);
         const halfTimeIsCalculated = _.find(resultDetails, (item) =>  _.isEqual(item.resourceId, ResourcesIds.htScore) && item.settlementStatusId === SettlementStatusId.Calculated);
         const fullTimeIsRunning = _.find(resultDetails, (item) => _.isEqual(item.resourceId, ResourcesIds.finalScore) && _.includes(settlementStatusId, item.settlementStatusId));
 
-        return halfTimeIsCalculated && fullTimeIsRunning;
+        return quaterOneIsNotCalculated && quaterTwoIsNotCalculated && halfTimeIsCalculated && fullTimeIsRunning;
     }
 
     public isNotCalcHalftimeWithMatchTwoQuarters(resultDetails: ResultDetail[]){
         const settlementStatusId = [SettlementStatusId.Running, SettlementStatusId.Refund, SettlementStatusId.RefundSettleDetermined];
         const halfTimeIsRunning = _.find(resultDetails, (item) => _.isEqual(item.resourceId, ResourcesIds.htScore) &&  _.includes(settlementStatusId, item.settlementStatusId));
         const fullTimeIsRunning = _.find(resultDetails, (item) => _.isEqual(item.resourceId, ResourcesIds.finalScore) && _.includes(settlementStatusId, item.settlementStatusId));
-        const quarter =  resultDetails.filter((map) => map.checked && _.includes([ResourcesIds.quarter1, ResourcesIds.quarter2, ResourcesIds.quarter3, ResourcesIds.quarter4], map.resourceId)).length;
+        const quarter =  resultDetails.filter((item) => item.checked && _.includes([ResourcesIds.quarter1, ResourcesIds.quarter2, ResourcesIds.quarter3, ResourcesIds.quarter4], item.resourceId)).length;
         return halfTimeIsRunning && fullTimeIsRunning && quarter === 0;
     }
 
     public isSuspendedFullTimeMatchThreeQuarter(resultDetails: ResultDetail[]){
         const settlementStatusId = [SettlementStatusId.Running, SettlementStatusId.RefundSettleDetermined];
         const fullTimeIsRunning = _.find(resultDetails, (item) => _.isEqual(item.resourceId, ResourcesIds.finalScore) && _.includes(settlementStatusId, item.settlementStatusId));
-        const quarter =  resultDetails.filter((map) => map.checked && _.includes([ResourcesIds.quarter1, ResourcesIds.quarter2, ResourcesIds.htScore, ResourcesIds.quarter3, ResourcesIds.quarter4], map.resourceId)).length;
-        return fullTimeIsRunning && quarter === 0;
+        const quarter =  resultDetails.filter((item) => item.checked && _.includes([ResourcesIds.quarter1, ResourcesIds.quarter2, ResourcesIds.htScore, ResourcesIds.quarter3, ResourcesIds.quarter4], item.resourceId)).length;
+        const quaterIsNotCalculated =  resultDetails.filter((item) => item.settlementStatusId !== SettlementStatusId.Calculated 
+                    && _.includes([ResourcesIds.quarter1, ResourcesIds.quarter2, ResourcesIds.htScore, ResourcesIds.quarter3, ResourcesIds.quarter4], item.resourceId));
+        
+        return fullTimeIsRunning && quarter === 0 && quaterIsNotCalculated.length === 5;
     }
 
     public getDirectHalftimeBetStatus(resultDetails: ResultDetail[]) {
@@ -57,12 +62,11 @@ export class GenerateCashOutService {
 
     public generateBetStatus(resultDetails: ResultDetail[]) {
         const betStatus: string[] = [];
-        const resultDetailsQuarters = _.filter(resultDetails, (item) =>  !_.isEqual(item.resourceId, ResourcesIds.htScore) && !_.isEqual(item.resourceId, ResourcesIds.finalScore));
+        const resultDetailsQuarters = _.filter(resultDetails, (item) => _.includes([ResourcesIds.quarter1, ResourcesIds.quarter2, ResourcesIds.quarter3, ResourcesIds.quarter4, ResourcesIds.ot], item.resourceId));
         resultDetailsQuarters.forEach((map) => {
             const score = map.checked  ? this.defaultScore : `${Number(map.homeValue)}-${Number(map.awayValue)}`
             betStatus.push(score);
         });
-        betStatus.push(this.defaultScore);
         return  betStatus.join(',');
     }
 
