@@ -385,8 +385,8 @@ export class SpecialSessionComponent implements OnChanges, OnInit {
       : `${isApply}:${session.resourceId}`;
     const resultDetail: ResultDetail = {
       resourceId: session.resourceId,
-      homeValue: session.startMinute,
-      awayValue: session.endMinute,
+      homeValue: Number(session.startMinute),
+      awayValue: Number(session.endMinute),
       otherInfo: `${startTime},${endTime}`,
       isApply: session.apply ? 1 : 0,
       resultStatusId: session.resultStatusId,
@@ -411,7 +411,7 @@ export class SpecialSessionComponent implements OnChanges, OnInit {
       : `${isApply}:${session.resourceId}`;
     const resultDetail: ResultDetail = {
       resourceId: session.resourceId,
-      homeValue: session.startMinute,
+      homeValue: Number(session.startMinute),
       awayValue: 0,
       otherInfo: time,
       isApply: session.apply ? 1 : 0,
