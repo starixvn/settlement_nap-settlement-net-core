@@ -1,6 +1,6 @@
 import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { OutrightService } from './../../services/outright.service';
-import { Component, Inject, Injector, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BlockUIService, HttpRequestService, MessageBoxService, VerifyDateService } from '../../../shared/services';
 import { LeagueSettle, Team, TeamSettle } from '../../models';
@@ -12,26 +12,35 @@ import * as _ from "lodash";
 import { StatusPipe } from '../../pipes/status-pipe';
 import { CalculateService } from '../../services';
 import { Language } from '../../../shared/language.native';
-import { ModalDialogMessage } from '../../../shared/models';
+import { ItemsSelect, ModalDialogMessage, MultipleSelect } from '../../../shared/models';
 import { MatDialog, MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { ResultOutright } from '../../models/result-outright.model';
 import { DynamicHeightDirective } from '../../../shared/directives';
 import { DeadHeatSetting } from '../../constants/deadheat-setting';
+import { NewMultipleSelectComponent } from '../../../shared/components/multiple-select/multiple-select.component';
+import { TicketStatusPipe } from '../../pipes/ticket-status-pipe';
+import { TicketStatusFilterPipe } from '../../pipes/ticket-status-filter-pipe';
 
 @Component({
     selector: 'calculate-popup',
     templateUrl: './calculate-popup.component.html',
     standalone: true,
-    imports: [CommonModule, DynamicHeightDirective, FormsModule, DatepickerComponent, ToastContainerModule, StatusPipe, MatDialogModule, DragDropModule],
-    providers: [OutrightService, HttpRequestService, BlockUIService, MessageBoxService, VerifyDateService, CalculateService],
+    imports: [CommonModule, DynamicHeightDirective, FormsModule, DatepickerComponent, ToastContainerModule, StatusPipe, TicketStatusPipe, TicketStatusFilterPipe, MatDialogModule, DragDropModule, NewMultipleSelectComponent],
+    providers: [OutrightService, HttpRequestService, BlockUIService, MessageBoxService, VerifyDateService, CalculateService, StatusPipe, TicketStatusFilterPipe],
 })
 export class CalculatePopupComponent implements OnInit {
     @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
-    private toastrService: ToastrService;
-    private outrightService: OutrightService;
-    private verifyDateService: VerifyDateService;
-    public dialogRef: MatDialogRef<CalculatePopupComponent>;
+    private toastrService = inject(ToastrService);
+    private outrightService = inject(OutrightService);
+    private verifyDateService = inject(VerifyDateService);
+    private calculateService = inject(CalculateService);
+    public dialogRef = inject(MatDialogRef<CalculatePopupComponent>);
+    private dialog = inject(MatDialog);
+    private blockUIService = inject(BlockUIService);
+    private messageBoxService = inject(MessageBoxService);
+    private ticketStatusPipe = inject(TicketStatusFilterPipe);
+    private statusPipe = inject(StatusPipe);
     public blockUI = true;
     public teams: Team[];
     public selectAllTeam = false;
@@ -42,27 +51,25 @@ export class CalculatePopupComponent implements OnInit {
     public teamStatus = TeamStatuses;
     public filterStatuses = FilterStatuses;
     public statusSelected = FilterStatuses[1].toUpperCase();
+    public ticketsStatusSelect = new MultipleSelect();
+    public ticketStatusSelected: string;
     public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
     private teamSettleWon: Team[];
     public teamJustSettled: TeamSettle[] = [];
     private readonly completedStatus = "Completed";
     private readonly statusRunning = [Status.running, Status.closed, Status.internal];
 
-    constructor(protected injector: Injector,
-        private statusPipe: StatusPipe,
+    constructor(
         @Inject(MAT_DIALOG_DATA) public data: { leagueId: number, sportType: number, eventDate: string }) {
         this.confirmationDialogMessage.title = Language.confirmationBox;
-        this.injector.get(MatDialog).closeAll();
+        this.dialog.closeAll();
     }
 
     ngOnInit(): void {
-        this.injector.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
-        this.toastrService = this.injector.get(ToastrService);
-        this.outrightService = this.injector.get(OutrightService);
-        this.verifyDateService = this.injector.get(VerifyDateService);
-        this.dialogRef = this.injector.get(MatDialogRef<CalculatePopupComponent>);
+        this.blockUIService.blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
         this.toastrService.overlayContainer = this.toastContainer;
         this.getMatches();
+        this.ticketsStatusSelect.items = this.calculateService.renderTicketStatus();
     }
 
     public get teamSelected(): Team[] {
@@ -75,12 +82,12 @@ export class CalculatePopupComponent implements OnInit {
             team.status = team.status.toUpperCase();
             team.eventDate = _.includes(this.statusRunning, team.oddsStatus.toLowerCase()) ? this.leagueSettle.today : team.eventDate;
             team.dateTime = this.verifyDateService.convertToDateStruct(team.eventDate);
+            team.disableDeadheat = !_.isEqual(team.status, 'WON');
+            team.statusClass = this.makeBackgroundByStatus(team.status);
         });
         this.moveBetsDay = this.verifyDateService.convertToDateStruct(this.leagueSettle.moveBetsDay);
         this.today = this.verifyDateService.convertToDateStruct(this.leagueSettle.today);
-        this.leagueSettle.teams.forEach(team => team.disableDeadheat = !_.isEqual(team.status, 'WON'));
         this.teams = this.leagueSettle.teams;
-        this.teams.forEach(team => team.statusClass = this.makeBackgroundByStatus(team.status.toUpperCase()));
     }
 
     public close() {
@@ -112,6 +119,10 @@ export class CalculatePopupComponent implements OnInit {
         this.teams.forEach(team => team.selected = false);
     }
 
+    public onSelectTicketsStatus(value: ItemsSelect[]) {
+        this.ticketStatusSelected = value.length > 0 ? value.map(item => item.value).join() : "";
+    }
+
     public changeStatus(team: Team) {
         this.clearError();
 
@@ -138,11 +149,12 @@ export class CalculatePopupComponent implements OnInit {
     }
 
     public onSelectAllTeam(e: any) {
-        const currentTeams = this.statusPipe.transform(this.teams,this.statusSelected);
+        const filterStatus = this.statusPipe.transform(this.teams, this.statusSelected);
+        const filterTicketStatus = this.ticketStatusPipe.transform(filterStatus, this.ticketStatusSelected);
         this.teams.forEach(team => {
-            const isSelected = currentTeams.some(value => value.orId === team.orId);
+            const isSelected = filterTicketStatus.some(value => value.orId === team.orId);
             team.selected = isSelected ? e.target.checked : team.selected ?? false;
-          });
+        });
     }
 
     private async validateBeforePush(teamWonSettled: Team[], teamWonSelected: Team[], teamHideSelected: Team[], isCalc: boolean = true) {
@@ -188,7 +200,7 @@ export class CalculatePopupComponent implements OnInit {
 
     private confirmCalcNonDeadheat() {
         this.confirmationDialogMessage.message = Language.Outright.nonDeadHeatConfirm;
-        this.injector.get(MessageBoxService).confirm(this.confirmationDialogMessage, () => {
+        this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
             this.doCalculate(this.teamSettleWon.some(team => team.isDeadheat) ? this.teamSettleWon.length : 1);
         });
     }
@@ -204,7 +216,7 @@ export class CalculatePopupComponent implements OnInit {
 
     private async doCalculate(deadHeat: number) {
         this.confirmationDialogMessage.message = Language.Outright.confirmCalculate;
-        this.injector.get(MessageBoxService).confirm(this.confirmationDialogMessage, async () => {
+        this.messageBoxService.confirm(this.confirmationDialogMessage, async () => {
             const teams = this.teamSelected.map(team => new TeamSettle(team.orId, team.teamId.toString(), team.isDeadheat, team.status, team.eventDate));
             const result = await this.outrightService.calculate(teams, deadHeat);
             if (result.isSuccessful) {
@@ -226,16 +238,10 @@ export class CalculatePopupComponent implements OnInit {
     }
 
     public makeBackgroundByStatus(status: string) {
-        switch (status) {
-            case "WON":
-            case "LOSE":
-            case "HIDE":
-                return 'settled';
-            case "REFUND":
-                return 'refund';
-            default:
-                return '';
+        if (_.isEqual(status.toLocaleLowerCase(), 'running')) {
+            return '';
         }
+        return 'calculated';
     }
 
     public async VerifyHideStatus(teamHideSelected: Team[]) {

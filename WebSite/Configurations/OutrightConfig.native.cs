@@ -14,6 +14,7 @@ public static class OutrightConfig
         services.AddTransient<OutrightLogQueryService, OutrightLogQueryServiceImp>();
         services.AddTransient<OutrightLogProcessService, OutrightLogProcessServiceImp>();
         services.AddTransient<OutrightLogService, OutrightLogServiceImp>();
+        services.AddTransient<OutrightTicketService, OutrightTicketServiceImp>();
     }
 
     public static void OutrightConfigMediator(this IServiceCollection services)

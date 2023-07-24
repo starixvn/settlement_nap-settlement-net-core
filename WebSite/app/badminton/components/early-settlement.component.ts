@@ -39,7 +39,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
   public apiKeys = null;
 
   constructor(protected injector: Injector,
-        protected verificationService: VerificationService) {
+    protected verificationService: VerificationService) {
     super(injector, verificationService);
   }
 

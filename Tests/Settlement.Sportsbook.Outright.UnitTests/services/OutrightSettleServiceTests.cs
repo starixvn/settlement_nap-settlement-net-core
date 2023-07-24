@@ -25,22 +25,23 @@ public class OutrightSettleServiceTests
 
     private readonly OutrightSettleService service;
 
+    private readonly OutrightTicketService outrightTicketService;
+
     public OutrightSettleServiceTests()
     {
         refDataService = Substitute.For<IRefDataService>();
         repository = Substitute.For<IDynamicRepository>();
         outrightSettleProcessService = Substitute.For<OutrightSettleProcessService>();
-        var permission = Substitute.For<OutrightPermissionService>();
         var currentSession = Substitute.For<INapSession>();
         balanceUpService = Substitute.For<IBalanceUpService>();
+        outrightTicketService = Substitute.For<OutrightTicketService>();
 
         var mapperConfig = new MapperConfigurationExpression();
         mapperConfig.AddProfile<OutrightMapperProfile>();
         var config = new MapperConfiguration(mapperConfig);
         IMapper mapper = new Mapper(config);
 
-        service = new OutrightSettleServiceImp(repository, mapper, refDataService, outrightSettleProcessService,
-            permission, currentSession, balanceUpService);
+        service = new OutrightSettleServiceImp(repository, mapper, refDataService, outrightSettleProcessService, currentSession, balanceUpService, outrightTicketService);
     }
 
     [Fact]
@@ -54,6 +55,7 @@ public class OutrightSettleServiceTests
         repository.FetchAsync<Team>(Arg.Any<GetLeagueInfoCriteria>())
             .Returns(new List<Team> { teamOne, teamTwo, teamThree });
         refDataService.GetTeamName(Arg.Any<int>()).Returns("c", "b", "a");
+        outrightTicketService.GetTeamsTicketCount(Arg.Any<IEnumerable<Team>>()).Returns(new List<TeamTicketModel>());
 
         var actual = await service.GetLeagueInfo(new GetLeagueInfoRequest());
 

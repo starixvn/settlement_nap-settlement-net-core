@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Fanex.Data.Repository;
-using Microsoft.Extensions.Options;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
@@ -23,24 +22,21 @@ public class FilterServiceImp : FilterService
     private readonly IDynamicRepository repository;
     private readonly IBalanceUpService balanceUpService;
     private readonly IMapper mapper;
-    private readonly OutrightPermissionService permissionService;
     private readonly IRefDataService refDataService;
-    private readonly AppSettingsKey appSettingsKey;
+    private readonly OutrightTicketService outrightTicketService;
 
     public FilterServiceImp(
         IDynamicRepository repository,
         IBalanceUpService balanceUpService,
         IMapper mapper,
-        OutrightPermissionService permissionService,
         IRefDataService refDataService,
-        IOptions<AppSettingsKey> appSettingsKey)
+        OutrightTicketService outrightTicketService)
     {
         this.repository = repository;
         this.balanceUpService = balanceUpService;
         this.mapper = mapper;
-        this.permissionService = permissionService;
         this.refDataService = refDataService;
-        this.appSettingsKey = appSettingsKey.Value;
+        this.outrightTicketService = outrightTicketService;
     }
 
     public FilterViewModel GetFilterView()
@@ -84,13 +80,11 @@ public class FilterServiceImp : FilterService
     {
         var criteria = mapper.Map<FilterRequest, GetOutrightDetailCriteria>(request);
         var (deadHeatSettings, teams) = await repository.FetchMultipleAsync<DeadHeatSetting, Team>(criteria);
-        var listTeams = teams.ToList();
-        var teamTickets = await GetTeamsTicketCount(listTeams);
-        var group = GroupTeamTicket(teamTickets.ToList());
+        var groupTeam = await outrightTicketService.GetTeamsTicketCount(teams);
 
-        AddTicketCountToTeam(listTeams, group.ToList());
+        AddTicketCountToTeam(teams, groupTeam.ToList());
 
-        var sortedTeams = SortList(listTeams,
+        var sortedTeams = SortList(teams.ToList(),
             item => item.SportName,
             item => item.LeagueName,
             item => item.SportType == SportType.Soccer,
@@ -102,7 +96,6 @@ public class FilterServiceImp : FilterService
         return new SportOutright
         {
             SportLeague = CreateSportOutright(leagues),
-            Permission = permissionService.Permission
         };
     }
 
@@ -143,34 +136,6 @@ public class FilterServiceImp : FilterService
                 team.BetCount = foundTeam.TotalTicket;
             }
         }
-    }
-
-    private async Task<IEnumerable<TeamTicketModel>> GetTeamsTicketCount(IEnumerable<Team> teams)
-    {
-        var orIds = string.Join(',', teams.Select(t => t.OrId));
-        var teamsTicketCount = new List<TeamTicketModel>();
-
-        foreach (var criteria in appSettingsKey.SiteDbServer.Select(server => new GetTeamTicketCountCriteria
-        {
-            OrIds = orIds,
-            DbServer = server
-        }))
-        {
-            var result = await repository.FetchAsync<TeamTicketModel>(criteria);
-            teamsTicketCount.AddRange(result);
-        }
-
-        return teamsTicketCount;
-    }
-
-    private static IEnumerable<TeamTicketModel> GroupTeamTicket(IEnumerable<TeamTicketModel> teams)
-    {
-        var result = teams.GroupBy(team => team.OrId).Select(groupTeam => new TeamTicketModel
-        {
-            OrId = groupTeam.First().OrId,
-            TotalTicket = groupTeam.Sum(item => item.TotalTicket)
-        });
-        return result;
     }
 
     private IEnumerable<LeagueMatch> GroupLeague(IEnumerable<Team> teams, IEnumerable<DeadHeatSetting> deadHeatSettings)

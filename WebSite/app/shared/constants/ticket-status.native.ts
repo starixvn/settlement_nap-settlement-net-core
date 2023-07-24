@@ -5,6 +5,7 @@
 
 export const TicketStatusText = {
     noTicket: "No Ticket",
+    noTicketHide: "No Ticket (Hide)",
     running: "Running",
     calculated: "Calculated",
     refunded: "Refunded",

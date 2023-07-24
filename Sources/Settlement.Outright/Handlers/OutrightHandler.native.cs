@@ -18,6 +18,8 @@ public class OutrightHandler :
 {
     private readonly FilterService getDataFilterService;
 
+    private readonly OutrightPermissionService permission;
+
     private readonly OutrightSettleService settleService;
 
     private readonly OutrightLogService outrightLogService;
@@ -28,19 +30,31 @@ public class OutrightHandler :
         FilterService getDataFilterService,
         OutrightSettleService settleService,
         OutrightLogService outrightLogService,
-        OutrightSettleProcessService outrightSettleProcessService)
+        OutrightSettleProcessService outrightSettleProcessService,
+        OutrightPermissionService permission)
     {
         this.getDataFilterService = getDataFilterService;
         this.settleService = settleService;
         this.outrightLogService = outrightLogService;
         this.outrightSettleProcessService = outrightSettleProcessService;
+        this.permission = permission;
     }
 
     public async Task<SportLeague> Handle(SportLeagueRequest request, CancellationToken cancellationToken) => await getDataFilterService.GetSportLeague(request);
 
-    public async Task<SportOutright> Handle(FilterRequest request, CancellationToken cancellationToken) => await getDataFilterService.Filter(request);
+    public async Task<SportOutright> Handle(FilterRequest request, CancellationToken cancellationToken)
+    {
+        var sportOutright = await getDataFilterService.Filter(request);
+        sportOutright.Permission = permission.Permission;
+        return sportOutright;
+    }
 
-    public async Task<LeagueInfo> Handle(GetLeagueInfoRequest request, CancellationToken cancellationToken) => await settleService.GetLeagueInfo(request);
+    public async Task<LeagueInfo> Handle(GetLeagueInfoRequest request, CancellationToken cancellationToken)
+    {
+        var leagueInfo = await settleService.GetLeagueInfo(request);
+        leagueInfo.Permission = permission.Permission;
+        return leagueInfo;
+    }
 
     public async Task<Result> Handle(OutrightUndoRequest request, CancellationToken cancellationToken) => await settleService.Uncalculate(request);
 

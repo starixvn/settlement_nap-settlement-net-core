@@ -17,7 +17,7 @@ import * as _ from 'lodash';
   templateUrl: './multiple-select.component.html',
   encapsulation: ViewEncapsulation.None,
   standalone: true,
-  imports:[MaterialModule, FormsModule, CommonModule]
+  imports: [MaterialModule, FormsModule, CommonModule]
 })
 export class NewMultipleSelectComponent implements OnChanges, AfterViewInit {
   @Input() public multipleSelect: MultipleSelect;
@@ -66,7 +66,7 @@ export class NewMultipleSelectComponent implements OnChanges, AfterViewInit {
 
   public clickOutside() {
     document.addEventListener('click', (event) => {
-      const ignoreClickOnMyElement = document.getElementsByClassName("cdk-overlay-pane")[0];
+      const ignoreClickOnMyElement = document.getElementsByClassName("mat-mdc-select-panel")[0];
       if (!this.isOpened || ignoreClickOnMyElement == null) {
         return;
       }
@@ -148,7 +148,7 @@ export class NewMultipleSelectComponent implements OnChanges, AfterViewInit {
 
   public changeStatus(emitValue = true) {
     this.formControl.setValue(this.valueSelected);
-    if(emitValue) { 
+    if (emitValue) {
       this.formValue.emit(this.formControl.value);
     }
 
@@ -208,7 +208,7 @@ export class NewMultipleSelectComponent implements OnChanges, AfterViewInit {
   }
 
   public search() {
-    if(!this.multipleSelect.enableSearchBox){
+    if (!this.multipleSelect.enableSearchBox) {
       return;
     }
     this.multipleSelect.items.forEach(item => item.includeSearchText = this.includeSearchText(item));
@@ -228,11 +228,11 @@ export class NewMultipleSelectComponent implements OnChanges, AfterViewInit {
     return this.hasSearchText() ? _.includes(item.text.toLowerCase(), this.searchText.toLowerCase()) : true;
   }
 
-  public collapse(group: Group){
+  public collapse(group: Group) {
     group.collapse = !group.collapse;
   }
 
-  public openSearch(){
+  public openSearch() {
     return this.isOpened && this.multipleSelect.enableSearchBox;
   }
 }
