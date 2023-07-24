@@ -27,7 +27,7 @@ public class CalculateEarlyCriteria : NonQueryCommand
     public string DbServer { get; set; }
 
     [SpParam(Ignored = true)]
-    public string SpName { get; } = "NAP_Admin_Settlement_Auto_1s_Push";
+    public string SpName => "NAP_Admin_Settlement_Auto_1s_Push";
 
     public override string GetSettingKey() => $"NAP_Admin_Settlement_Auto_1s_Push_{DbServer}";
 

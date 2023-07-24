@@ -1,6 +1,4 @@
-﻿using System.Security.Cryptography;
-
-namespace Settlement.EventManagement.Services.Calculation;
+﻿namespace Settlement.EventManagement.Services.Calculation;
 
 using Criteria;
 using Requests;
@@ -8,6 +6,7 @@ using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.EventManagement.Models.Calculation;
+using System.Security.Cryptography;
 using System.Text;
 using Match = Models.Calculation.Match;
 
@@ -69,18 +68,18 @@ public class MatchServiceImp : MatchService
     {
         foreach (var match in matches)
         {
-            var listSourceByMatchId = listResultDetail.Where(m => m.MatchId == match.MatchId && m.SourceId != SourceType.Normal).ToList();
-            var resultDetailByMatchId = listResultDetail.Where(m => m.MatchId == match.MatchId && m.SourceId == SourceType.Normal).ToList();
+            var sourceResultDetail = listResultDetail.Where(m => m.MatchId == match.MatchId && m.SourceId != SourceType.Normal).ToList();
+            var currentResultDetail = listResultDetail.Where(m => m.MatchId == match.MatchId && m.SourceId == SourceType.Normal).ToList();
 
             newInfoMatchService.TicketInfo(match);
             match.NewEventStatus = newInfoMatchService.NewEventStatus(match);
             match.EventStatusColor = newInfoMatchService.EventStatusColor(match);
             match.EarlySettleStatus = newInfoMatchService.EarlySettlementStatus(match);
             match.FastMarketStatus = newInfoMatchService.FastMarketStatus(match);
-            match.ConfirmHalfTimeScore = newInfoMatchService.ConfirmScore(listSourceByMatchId, ResourceType.Halftime);
-            match.ConfirmFullTimeScore = newInfoMatchService.ConfirmScore(listSourceByMatchId, ResourceType.Final);
-            match.IsNotConsistentExHtScore = newInfoMatchService.IsNotConsistentScore(match.SuspenderHalfTime, resultDetailByMatchId, listSourceByMatchId, ResourceType.Halftime);
-            match.IsNotConsistentExFtScore = newInfoMatchService.IsNotConsistentScore(match.SuspenderFullTime, resultDetailByMatchId, listSourceByMatchId, ResourceType.Final);
+            match.ConfirmHalfTimeScore = newInfoMatchService.ConfirmScore(sourceResultDetail, ResourceType.Halftime);
+            match.ConfirmFullTimeScore = newInfoMatchService.ConfirmScore(sourceResultDetail, ResourceType.Final);
+            match.IsNotConsistentExHtScore = newInfoMatchService.IsInconsistentScore(match.SuspenderHalfTime, currentResultDetail, sourceResultDetail, ResourceType.Halftime);
+            match.IsNotConsistentExFtScore = newInfoMatchService.IsInconsistentScore(match.SuspenderFullTime, currentResultDetail, sourceResultDetail, ResourceType.Final);
             match.GoalIcon = newInfoMatchService.GoalIcon(match);
             match.RefDataService = refDataService;
         }
@@ -178,7 +177,7 @@ public class MatchServiceImp : MatchService
     {
         var matchIds = matches.Select(m => m.MatchId);
         var referenceActions = await cachingMatchesService.GetReferenceActions(matchIds);
-        matches.ForEach(m => m.ReferenceActions = referenceActions.ContainsKey(m.MatchId) ? referenceActions[m.MatchId] : new List<Models.Calculation.ReferenceAction>());
+        matches.ForEach(m => m.ReferenceActions = referenceActions.TryGetValue(m.MatchId, out var action) ? action : new List<Models.Calculation.ReferenceAction>());
     }
 
     private async Task<List<CalculateMatchWaiting>> GetAndCachingAutoCalculationMatches(string leagueId, string hashLeagueIds)

@@ -1,38 +1,8 @@
 import { CalculateAction } from '../../shared/constants';
-import { ResultDetail } from './result-detail.model';
 import { BasketballApiKeys } from '../constants';
-import { MatchDetail } from '../../shared/models/sportsbook-sop';
+import { MatchDetail, ResultDetail, SettleQuery } from '../../shared/models/sportsbook-sop';
 import { VoidBetInfo } from './void-bet-info.model';
 
-export class SettleQuery {
-    matchId: number;
-    selectedResources: ResultDetail[];
-    actionName: string;
-    apikey: string;
-    isReSettledTickets: boolean;
-    betStatus: string;
-    isLeader: boolean;
-    isDirectly: boolean;
-    sportType: number;
-    isHedgeMatch: boolean;
-    constructor(
-        matchId: number,
-        selectedResources: ResultDetail[],
-        actionName: string,
-        isReSettledTickets: boolean,
-        sportType: number,
-        betStatus?: string,
-        isDirectly = false) {
-        this.matchId = matchId;
-        this.selectedResources = selectedResources;
-        this.actionName = actionName;
-        this.apikey = BasketballApiKeys.settle;
-        this.isReSettledTickets = isReSettledTickets;
-        this.betStatus = betStatus === undefined ? '' : betStatus;
-        this.isDirectly = isDirectly;
-        this.sportType = sportType;
-    }
-}
 
 export class RefundParlayQuery {
     matchId: number;
@@ -59,13 +29,15 @@ export class MatchQuery {
 
 export class GetTicketInfoQuery {
     matchId: number;
-    selectedResources: string[];
+    selectedResources: ResultDetail[];
     action: string;
+    determinedType: number;
 
-    constructor(matchId: number, selectedResources: string[], isUndo: boolean) {
+    constructor(matchId: number, selectedResources: ResultDetail[], action: string, determinedType: number) {
         this.matchId = matchId;
         this.selectedResources = selectedResources;
-        this.action = isUndo ? CalculateAction.unCalculate : CalculateAction.refund;
+        this.action = action;
+        this.determinedType = determinedType;
     }
 }
 
@@ -78,14 +50,14 @@ export class VoidBetQuery {
     matchCode: string;
     sportType: number;
 
-    constructor(matchDetail: MatchDetail, isUndo: boolean, voidBetInfos: VoidBetInfo[]) {
+    constructor(matchDetail: MatchDetail, action: string, voidBetInfos: VoidBetInfo[]) {
         this.matchId = matchDetail.matchId;
-        this.voidBetInfos = voidBetInfos;
-        this.action = isUndo ? CalculateAction.unCalculate : CalculateAction.refund;
         this.homeId = matchDetail.homeId;
         this.awayId = matchDetail.awayId;
         this.matchCode = matchDetail.matchCode;
         this.sportType = matchDetail.sportType;
+        this.voidBetInfos = voidBetInfos;
+        this.action = action;
     }
 }
 

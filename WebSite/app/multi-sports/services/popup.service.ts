@@ -81,9 +81,9 @@ export class PopupService {
         this.properties.height = '270px';
         const frameSrc = encodeURI(this.properties.src);
         const dialogData = new DialogDataIframe(this.properties.title, frameSrc);
-        this.dialogBoxService.popup(dialogData, this.properties.width, this.properties.height).subscribe(async() => {
-           const settingResult = await this.multiSportService.getRemarkInfo(match.matchId);
-           this.handleActionsService.handleChangeRemarkSetting(settingResult, match);
+        this.dialogBoxService.popup(dialogData, this.properties.width, this.properties.height).subscribe(async () => {
+            const settingResult = await this.multiSportService.getRemarkInfo(match.matchId);
+            this.handleActionsService.handleChangeRemarkSetting(settingResult, match);
         });
     }
 
@@ -181,7 +181,7 @@ export class PopupService {
     public async openUpdatePayoutForMatch(match: Match) {
         const autoSetting = await this.multiSportService.getSetting(0, Number(match.matchId));
         this.applyNewSetting(match.autoCalcSetting, autoSetting.setting);
-        
+
         const src = `/apps/auto-setting-league?matchId=${match.matchId}&currentState=${autoSetting.setting}&pageType=AutoSettingMatch&multiSelect=true`;
         const frameSrc = encodeURI(src);
         const dialogData = new DialogDataIframe(Language.payout.titlePopup, frameSrc);

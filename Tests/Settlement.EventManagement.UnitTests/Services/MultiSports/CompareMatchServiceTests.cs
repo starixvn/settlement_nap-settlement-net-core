@@ -45,7 +45,7 @@ public class CompareMatchServiceTests
             MatchId = 1,
             IsExistEarlyBetTypes = isExistEarlyBetTypes,
             IsRunningEarlyBetTypes = isRunningEarlyBetTypes,
-            IsWaitingEarlyBetTypes = isWaitingEarlyBetTypes,
+            IsWaitingEarlyBetTypes = isWaitingEarlyBetTypes
         };
 
         var match = new MultiSportMatch { MatchId = 1 };

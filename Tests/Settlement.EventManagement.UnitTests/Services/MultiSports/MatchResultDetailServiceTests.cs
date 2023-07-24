@@ -1,46 +1,34 @@
-﻿using Settlement.Core.Constants;
-using Settlement.Core.Models;
+﻿using Settlement.Core.Models;
 using Settlement.Core.Services;
+using Settlement.EventManagement.Services;
 using Settlement.EventManagement.Services.MultiSports;
-using Settlement.EventManagement.Services.SpecificService.Tennis;
 using Match = Settlement.EventManagement.Models.MultiSports.Match;
 
 namespace Settlement.EventManagement.UnitTests.Services.MultiSports;
 
 public class MatchResultDetailServiceTests
 {
-    private readonly ITennisService tennisService;
+    private readonly ScoreTennisService scoreTennisService;
 
-    private readonly IRefDataService refDataService;
+    private readonly ScoreService scoreService;
 
-    private readonly EventManagement.Services.IScoreService scoreService;
+    private readonly IExternalScoreService externalScoreService;
 
     private readonly IMatchResultDetailService service;
 
     public MatchResultDetailServiceTests()
     {
-        tennisService = Substitute.For<ITennisService>();
-        refDataService = Substitute.For<IRefDataService>();
-        var externalScoreService = Substitute.For<IExternalScoreService>();
-        scoreService = Substitute.For<EventManagement.Services.IScoreService>();
-        service = new MatchResultDetailServiceImp(tennisService, refDataService, externalScoreService,
+        scoreTennisService = Substitute.For<ScoreTennisService>();
+        var refDataService = Substitute.For<IRefDataService>();
+        externalScoreService = Substitute.For<IExternalScoreService>();
+        scoreService = Substitute.For<ScoreService>();
+        service = new MatchResultDetailServiceImp(scoreTennisService, refDataService, externalScoreService,
             scoreService);
     }
-
-    private static MoreScores FakedScore => new()
-    {
-        HalfTimeScore = new Score("1", "2"),
-        FinalScore = new Score("3", "4")
-    };
 
     private static List<Match> Matches => new()
     {
         new Match { MatchId = 1 }
-    };
-
-    private List<Match> ExpectedMatches => new()
-    {
-        new Match { MatchId = 1, MoreScores = FakedScore, RefDataService = refDataService }
     };
 
     private static List<ResultDetail> ResultDetail => new();
@@ -58,18 +46,19 @@ public class MatchResultDetailServiceTests
     }
 
     [Fact]
-    public void TennisResultDetail_HasMatches_ReturnsCorrectTennisScoreFromTennisService()
+    public void TennisResultDetail_HasMatches_CallAllMethod()
     {
         // Arrange
         var matches = Matches;
-
-        tennisService.ScoreLoader(matches[0], Arg.Any<List<ResultDetail>>(), permission).Returns(FakedScore);
 
         // Act
         var actualMatches = service.TennisResultDetail(matches, ResultDetail, permission);
 
         // Assert
-        AssertExtension.AreEqual(ExpectedMatches, actualMatches);
+        scoreTennisService.Received(1).ScoreLoader(Arg.Any<List<ResultDetail>>(), Arg.Any<Permission>());
+        scoreService.Received(1).IsIntervalScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>());
+        scoreTennisService.Received(1).GetEventStatus(Arg.Any<List<ResultDetail>>(), Arg.Any<string>());
+        Assert.True(actualMatches.Count > 0);
     }
 
     [Fact]
@@ -83,89 +72,20 @@ public class MatchResultDetailServiceTests
     }
 
     [Fact]
-    public void ESportsResultDetail_EmptyMatch_ReturnsEmpty()
-    {
-        // Act
-        var actual = service.ESportsResultDetail(new List<Match>(), ResultDetail, permission);
-
-        // Assert
-        Assert.Empty(actual);
-    }
-
-    [Fact]
-    public void CricketResultDetail_Match_ReturnsListItem()
+    public void BasketballResultDetail_HasMatches_CallAllMethod()
     {
         // Arrange
-        var matches = new List<Match>
-        {
-            new()
-            {
-                MatchId = 1
-            },
-            new()
-            {
-                MatchId = 2
-            }
-        };
-
-        var resultDetail = new List<ResultDetail>
-        {
-            new()
-            {
-                MatchId = 1,
-                SourceId = 0,
-                ResourceId = "00"
-            }
-        };
+        var matches = Matches;
 
         // Act
-        var actual = service.CricketResultDetail(matches, resultDetail, permission);
+        var actualMatches = service.BasketballResultDetail(matches, ResultDetail, permission);
 
         // Assert
-        Assert.True(actual.Count > 0);
-    }
-
-    [Fact]
-    public void BeachVolleyballResultDetail_Always_ReturnsListItem()
-    {
-        // Arrange
-        var matches = new List<Match>
-        {
-            new()
-            {
-                MatchId = 1
-            },
-            new()
-            {
-                MatchId = 2
-            }
-        };
-
-        var resultDetail = new List<ResultDetail>
-        {
-            new()
-            {
-                MatchId = 1,
-                SourceId = 0,
-                ResourceId = "00"
-            }
-        };
-
-        // Act
-        var actual = service.BeachVolleyballResultDetail(matches, resultDetail, permission);
-
-        // Assert
-        Assert.True(actual.Count > 0);
-    }
-
-    [Fact]
-    public void BeachVolleyballResultDetail_EmptyMatch_ReturnsEmpty()
-    {
-        // Act
-        var actual = service.BeachVolleyballResultDetail(new List<Match>(), ResultDetail, permission);
-
-        // Assert
-        Assert.Empty(actual);
+        scoreService.Received(1).HalftimeScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>(), Arg.Any<Permission>());
+        scoreService.Received(1).FinalScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>(), Arg.Any<Permission>());
+        scoreService.Received(1).ScoreOfSets(Arg.Any<List<ResultDetail>>(), Arg.Any<List<string>>(), Arg.Any<Permission>());
+        scoreService.Received(1).IsIntervalScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>());
+        Assert.True(actualMatches.Count > 0);
     }
 
     [Fact]
@@ -179,6 +99,23 @@ public class MatchResultDetailServiceTests
     }
 
     [Fact]
+    public void CricketResultDetail_HasMatches_CallAllMethod()
+    {
+        // Arrange
+        var matches = Matches;
+
+        // Act
+        var actualMatches = service.CricketResultDetail(matches, ResultDetail, permission);
+
+        // Assert
+        scoreService.Received(1).HalftimeScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>(), Arg.Any<Permission>());
+        scoreService.Received(1).FinalScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>(), Arg.Any<Permission>());
+        scoreService.Received(1).ScoreOfSets(Arg.Any<List<ResultDetail>>(), Arg.Any<List<string>>(), Arg.Any<Permission>());
+        scoreService.Received(1).IsIntervalScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>());
+        Assert.True(actualMatches.Count > 0);
+    }
+
+    [Fact]
     public void BadmintonResultDetail_EmptyMatch_ReturnsEmpty()
     {
         // Act
@@ -189,16 +126,105 @@ public class MatchResultDetailServiceTests
     }
 
     [Fact]
-    public void BadmintonResultDetail_HasMatches_ReturnsExpectedMatch()
+    public void BadmintonResultDetail_HasMatches_CallAllMethod()
     {
         // Arrange
-        scoreService.ScoreLoader(Arg.Any<int>(), Arg.Any<List<ResultDetail>>(), Arg.Any<List<string>>(), Arg.Any<Permission>()).Returns(FakedScore);
+        var matches = Matches;
 
         // Act
-        var actualMatches = service.BadmintonResultDetail(Matches, ResultDetail, permission);
+        var actualMatches = service.BadmintonResultDetail(matches, ResultDetail, permission);
 
         // Assert
-        AssertExtension.AreEqual(ExpectedMatches, actualMatches);
+        scoreService.Received(1).HalftimeScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>(), Arg.Any<Permission>());
+        scoreService.Received(1).FinalScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>(), Arg.Any<Permission>());
+        scoreService.Received(1).ScoreOfSets(Arg.Any<List<ResultDetail>>(), Arg.Any<List<string>>(), Arg.Any<Permission>());
+        scoreService.Received(1).IsIntervalScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>());
+        Assert.True(actualMatches.Count > 0);
+    }
+
+    [Fact]
+    public void ESportsResultDetail_EmptyMatch_ReturnsEmpty()
+    {
+        // Act
+        var actual = service.ESportsResultDetail(new List<Match>(), ResultDetail, permission);
+
+        // Assert
+        Assert.Empty(actual);
+    }
+
+    [Theory]
+    [InlineData(5)]
+    [InlineData(15)]
+    public void ESportsResultDetail_HasMatches_CallAllMethod(int bestOfMap)
+    {
+        // Arrange
+        var matches = Matches;
+        matches[0].BestOfMap = bestOfMap;
+
+        // Act
+        var actualMatches = service.ESportsResultDetail(matches, ResultDetail, permission);
+
+        // Assert
+        scoreService.Received(1).HalftimeScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>(), Arg.Any<Permission>());
+        scoreService.Received(1).FinalScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>(), Arg.Any<Permission>());
+        scoreService.Received(1).ScoreOfSets(Arg.Any<List<ResultDetail>>(), Arg.Any<List<string>>(), Arg.Any<Permission>());
+        scoreService.Received(1).IsIntervalScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>());
+        Assert.True(actualMatches.Count > 0);
+    }
+
+    [Fact]
+    public void BeachVolleyballResultDetail_EmptyMatch_ReturnsEmpty()
+    {
+        // Act
+        var actual = service.BeachVolleyballResultDetail(new List<Match>(), ResultDetail, permission);
+
+        // Assert
+        Assert.Empty(actual);
+    }
+
+    [Fact]
+    public void BeachVolleyballResultDetail_HasMatches_CallAllMethod()
+    {
+        // Arrange
+        var matches = Matches;
+
+        // Act
+        var actualMatches = service.BeachVolleyballResultDetail(matches, ResultDetail, permission);
+
+        // Assert
+        scoreService.Received(1).HalftimeScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>(), Arg.Any<Permission>());
+        scoreService.Received(1).FinalScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>(), Arg.Any<Permission>());
+        scoreService.Received(1).ScoreOfSets(Arg.Any<List<ResultDetail>>(), Arg.Any<List<string>>(), Arg.Any<Permission>());
+        scoreService.Received(1).IsIntervalScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>());
+        externalScoreService.Received(1).IsInconsistentFullTimeScore(Arg.Any<int>(), Arg.Any<string>(), Arg.Any<List<ResultDetail>>());
+        Assert.True(actualMatches.Count > 0);
+    }
+
+    [Fact]
+    public void VolleyballResultDetail_EmptyMatch_ReturnsEmpty()
+    {
+        // Act
+        var actual = service.VolleyballResultDetail(new List<Match>(), ResultDetail, permission);
+
+        // Assert
+        Assert.Empty(actual);
+    }
+
+    [Fact]
+    public void VolleyballResultDetail_HasMatches_CallAllMethod()
+    {
+        // Arrange
+        var matches = Matches;
+
+        // Act
+        var actualMatches = service.VolleyballResultDetail(matches, ResultDetail, permission);
+
+        // Assert
+        scoreService.Received(1).HalftimeScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>(), Arg.Any<Permission>());
+        scoreService.Received(1).FinalScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>(), Arg.Any<Permission>());
+        scoreService.Received(1).ScoreOfSets(Arg.Any<List<ResultDetail>>(), Arg.Any<List<string>>(), Arg.Any<Permission>());
+        scoreService.Received(1).IsIntervalScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>());
+        Assert.True(actualMatches.Count > 0);
     }
 
     [Fact]
@@ -212,58 +238,30 @@ public class MatchResultDetailServiceTests
     }
 
     [Fact]
-    public void ESportsResultDetail_HasMatches_ReturnsExpectedMatch()
+    public void OtherSportsResultDetail_HasMatchesAndIncludeHalfTime_CallAllMethod()
     {
         // Arrange
-        scoreService.ScoreLoader(Arg.Any<int>(), Arg.Any<List<ResultDetail>>(), Arg.Any<List<string>>(), Arg.Any<Permission>()).Returns(FakedScore);
+        var matches = Matches;
 
         // Act
-        var actualMatches = service.ESportsResultDetail(Matches, ResultDetail, permission);
+        service.OtherSportsResultDetail(matches, ResultDetail, true);
 
         // Assert
-        AssertExtension.AreEqual(ExpectedMatches, actualMatches);
+        externalScoreService.Received(1).IsInconsistentHalftimeScore(Arg.Any<Match>(), Arg.Any<List<ResultDetail>>());
+        externalScoreService.Received(1).IsInconsistentFullTimeScore(Arg.Any<Match>(), Arg.Any<List<ResultDetail>>());
     }
 
     [Fact]
-    public void ESportsResultDetail_HasMatchBOM30_CallServiceWithCorrectParam()
+    public void OtherSportsResultDetail_HasMatchesAndNotIncludeHalfTime_CallAllMethod()
     {
         // Arrange
-        Matches[0].SportType = SportType.ESports;
-        Matches[0].BestOfMap = 11;
-        var match = new Match
-        {
-            SportType = SportType.ESports,
-            BestOfMap = 11,
-            MatchId = 1
-        };
-        var resources = new List<string> { "M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8", "M9", "M10", "M11" };
+        var matches = Matches;
+
         // Act
-        service.ESportsResultDetail(new List<Match> { match }, ResultDetail, permission);
+        service.OtherSportsResultDetail(matches, ResultDetail, false);
 
         // Assert
-        scoreService.Received().ScoreLoader(SportType.ESports, Arg.Any<List<ResultDetail>>(), Arg.Is<List<string>>(x => x.SequenceEqual(resources)), permission);
-    }
-
-    [Fact]
-    public void BasketballResultDetail_HasMatches_ReturnsExpectedMatches()
-    {
-        //Arrange
-        scoreService.ScoreLoader(Arg.Any<int>(), Arg.Any<List<ResultDetail>>(), Arg.Any<List<string>>(), Arg.Any<Permission>()).Returns(FakedScore);
-        Matches[0].SportType = SportType.BasketBall;
-        var resultDetail = new List<ResultDetail>
-        {
-            new()
-            {
-                MatchId = 1,
-                SourceId = 0,
-                ResourceId = "00"
-            }
-        };
-
-        //Act
-        var actualMatches = service.BasketballResultDetail(Matches, resultDetail, permission);
-
-        //Assert
-        AssertExtension.AreEqual(ExpectedMatches, actualMatches);
+        externalScoreService.DidNotReceive().IsInconsistentHalftimeScore(Arg.Any<Match>(), Arg.Any<List<ResultDetail>>());
+        externalScoreService.Received(1).IsInconsistentFullTimeScore(Arg.Any<Match>(), Arg.Any<List<ResultDetail>>());
     }
 }

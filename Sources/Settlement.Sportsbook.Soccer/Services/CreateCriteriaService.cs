@@ -117,7 +117,7 @@ public class CreateCriteriaServiceImp : ICreateCriteriaService
             HalfTimeAway = request.HalfTimeAway ?? 0,
             HalfTimeHome = request.HalfTimeHome ?? 0,
             Action = ActionType.UnCalculateFullTime,
-            Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString(),
+            Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString()
         };
 
         return criteria;

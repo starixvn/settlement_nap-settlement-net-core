@@ -23,15 +23,13 @@ public class SettleEarlyServiceTests
 
     private readonly LogService logService;
 
-    private readonly XmlConvertService xmlConvertService;
-
     public SettleEarlyServiceTests()
     {
         createCriteriaService = Substitute.For<ICreateCriteriaService>();
         repository = Substitute.For<IDynamicRepository>();
         scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
         logService = Substitute.For<LogService>();
-        xmlConvertService = Substitute.For<XmlConvertService>();
+        var xmlConvertService = Substitute.For<XmlConvertService>();
 
         var appSettings = new AppSettingsKey { SiteDbServer = new List<string> { "DB01", "DB02" } };
         var appSettingsOptions = Options.Create(appSettings);

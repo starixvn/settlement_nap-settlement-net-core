@@ -44,6 +44,8 @@ public class InstantResourceServiceImp : InstantResourceService
 
     private const string HalfTimeFl = "1FL";
 
+    private const int Ten = 10;
+
     public InstantResourceServiceImp(
         IInstantGoalCheckingService instantGoalCheckingService,
         IGoalRecordService goalRecordService,
@@ -107,7 +109,7 @@ public class InstantResourceServiceImp : InstantResourceService
             HomeValue = $"{v.value}",
             ResourceId = $"{ResourceKey.HalftimeCornerRace}{ConvertIntToString(v.raceTo)}",
             ResultStatusId = ResultStatus.ManuallySettled,
-            SettlementStatusId = SettlementStatus.Completed,
+            SettlementStatusId = SettlementStatus.Completed
         }).ToList();
     }
 
@@ -121,7 +123,7 @@ public class InstantResourceServiceImp : InstantResourceService
             HomeValue = $"{v.value}",
             ResourceId = $"{ResourceKey.CornerRace}{ConvertIntToString(v.raceTo)}",
             ResultStatusId = ResultStatus.ManuallySettled,
-            SettlementStatusId = SettlementStatus.Completed,
+            SettlementStatusId = SettlementStatus.Completed
         }).ToList();
     }
 
@@ -247,7 +249,7 @@ public class InstantResourceServiceImp : InstantResourceService
             ResourceId = ResourceKey.HaftTimeFirstCorner,
             ResultStatusId = ResultStatus.ManuallySettled,
             SettlementStatusId = SettlementStatus.Completed,
-            HomeValue = $"{firstGoalRecord}",
+            HomeValue = $"{firstGoalRecord}"
         };
     }
 
@@ -261,7 +263,7 @@ public class InstantResourceServiceImp : InstantResourceService
             ResourceId = ResourceKey.FirstCorner,
             ResultStatusId = ResultStatus.ManuallySettled,
             SettlementStatusId = SettlementStatus.Completed,
-            HomeValue = $"{firstGoalRecord}",
+            HomeValue = $"{firstGoalRecord}"
         };
     }
 
@@ -275,7 +277,7 @@ public class InstantResourceServiceImp : InstantResourceService
             ResourceId = ResourceKey.TowHFirstCorner,
             ResultStatusId = ResultStatus.ManuallySettled,
             SettlementStatusId = SettlementStatus.Completed,
-            HomeValue = $"{firstGoalRecord}",
+            HomeValue = $"{firstGoalRecord}"
         };
     }
 
@@ -296,7 +298,7 @@ public class InstantResourceServiceImp : InstantResourceService
 
     private static string CreateFullTimeGoalRecord(string goalRecord) => goalRecord.Replace(";", string.Empty);
 
-    private static string ConvertIntToString(int num) => num < 10 ? $"0{num}" : $"{num}";
+    private static string ConvertIntToString(int num) => num < Ten ? $"0{num}" : $"{num}";
 
     private static List<GoalRecordCorner> ConvertGoalRecordToRace(string goalRecord)
     {

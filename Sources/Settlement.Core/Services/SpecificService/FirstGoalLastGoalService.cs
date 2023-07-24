@@ -122,7 +122,7 @@ public class FirstGoalLastGoalServiceImp : FirstGoalLastGoalService
             return goal;
         }
 
-        var halfTimeGoalRecord = goalRecord.Substring(0, indexSemicolon);
+        var halfTimeGoalRecord = goalRecord[..indexSemicolon];
         const StringComparison comparisonType = StringComparison.CurrentCultureIgnoreCase;
         if (halfTimeGoalRecord.StartsWith("a", comparisonType) && halfTimeGoalRecord.EndsWith("a", comparisonType))
         {

@@ -1,6 +1,6 @@
 import { FilterRequest, GetRemarkQuery } from '../models';
 import { BlockUIService, HttpRequestService, MessageBoxService } from '../../shared/services';
-import { TestBed} from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 import { MultiSportService } from './multi-sport.service';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
@@ -48,7 +48,7 @@ describe('MultiSport - MultiSportService', () => {
     });
 
     it(`getSport - Call right Url and param`, () => {
-        const url = `/api/multi-sports/getSport`;
+        const url = `api/multi-sports/getSport`;
         const param = {
             apikey: ApiKeys.MultiSportGetCombobox,
         };
@@ -60,7 +60,7 @@ describe('MultiSport - MultiSportService', () => {
     });
 
     it(`getLeague - Call right Url and param`, () => {
-        const url = `/api/multi-sports/getLeague`;
+        const url = `api/multi-sports/getLeague`;
         const param = {
             apikey: ApiKeys.MultiSportGetCombobox,
         };
@@ -102,7 +102,7 @@ describe('MultiSport - MultiSportService', () => {
     }
     );
 
-    it('getRemarkInfo - Call exact Url and param',  () => {
+    it('getRemarkInfo - Call exact Url and param', () => {
         const url = '/api/setting/get-remark-info';
         const param: GetRemarkQuery = {
             matchId: '12345'
@@ -114,7 +114,7 @@ describe('MultiSport - MultiSportService', () => {
         expect(httpRequestService.postJson).toHaveBeenCalledWith(param, url);
     });
 
-    it('updateSettingMatch - should post with correct param',  () => {
+    it('updateSettingMatch - should post with correct param', () => {
         const query = {} as AutoSettingMatchQuery;
 
         const url = '/api/setting/update-setting-match';
@@ -124,7 +124,7 @@ describe('MultiSport - MultiSportService', () => {
         expect(httpRequestService.postJson).toHaveBeenCalledWith(query, url);
     });
 
-    it('updateSettingLeague - should post with correct param',  () => {
+    it('updateSettingLeague - should post with correct param', () => {
         const query = {} as AutoSettingLeagueQuery;
 
         const url = '/api/setting/update-setting-league';

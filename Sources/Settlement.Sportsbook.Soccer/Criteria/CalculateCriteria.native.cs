@@ -44,7 +44,7 @@ public class CalculateCriteria : NonQueryCommand
     public string DbServer { get; set; }
 
     [SpParam(Ignored = true)]
-    public string SpName { get; } = "NAP_Admin_Settlement_1_Push";
+    public string SpName => "NAP_Admin_Settlement_1_Push";
 
     public override bool IsValid() => AdminId > 0 && MatchId > 0;
 

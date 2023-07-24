@@ -115,7 +115,7 @@ export class CalculationFilterService {
     }
 
     private currentSelectedSelection(selectedSelection: string[], value: string) {
-        return _.isNil(selectedSelection) ? true : _.includes(selectedSelection, value);
+        return _.isNil(selectedSelection) || _.isEmpty(selectedSelection) ? true : _.includes(selectedSelection, value);
     }
 
     public getSelectionByResultStatus(listSelection: Selection[], selectedResultStatus: string[]) {

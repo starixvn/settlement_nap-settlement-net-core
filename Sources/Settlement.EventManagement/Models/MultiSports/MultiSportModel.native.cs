@@ -1,6 +1,4 @@
-﻿using Settlement.Core.Models;
-
-namespace Settlement.EventManagement.Models.MultiSports;
+﻿namespace Settlement.EventManagement.Models.MultiSports;
 
 [MessagePackObject]
 public class MultiSportModel

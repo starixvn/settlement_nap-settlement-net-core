@@ -1,5 +1,4 @@
 
-import { TreeViewComponent } from './../shared/components/multiple-selection/tree-view.component';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -40,7 +39,6 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
     declarations: [
         AppComponent,
         FilterComponent,
-        TreeViewComponent,
         ModalDialogComponent,
         ModalContentDialogComponent,
         MaterialDialogWithResponseComponent,

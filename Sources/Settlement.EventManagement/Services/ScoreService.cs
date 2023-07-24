@@ -1,24 +1,18 @@
 ﻿namespace Settlement.EventManagement.Services;
 
-using Settlement.Core.Models;
-using Settlement.Core.Services;
-
-
-public interface IScoreService
+public interface ScoreService
 {
+    bool IsIntervalScore(int sportType, List<ResultDetail> resultDetails);
+
     Score[] ScoreOfSets(List<ResultDetail> resultDetails, List<string> resources, Permission permission);
 
     Score HalftimeScore(int sportType, List<ResultDetail> resultDetails, Permission permission);
 
-    Score FinalScore(List<ResultDetail> resultDetails, Permission permission);
-
-    MoreScores ScoreLoader(int sportType, List<ResultDetail> resultDetails, List<string> resources, Permission permission);
+    Score FinalScore(int sportType, List<ResultDetail> resultDetails, Permission permission);
 }
 
-public class ScoreServiceImp : IScoreService
+public class ScoreServiceImp : ScoreService
 {
-    private const string Halftime = "01";
-    private const string Final = "00";
     private readonly List<int> totalPointSports = new() { SportType.BeachVolleyball, SportType.Badminton, SportType.VolleyBall };
 
     private readonly IScoreSetService scoreSetService;
@@ -26,6 +20,13 @@ public class ScoreServiceImp : IScoreService
     public ScoreServiceImp(IScoreSetService scoreSetService)
     {
         this.scoreSetService = scoreSetService;
+    }
+
+    public bool IsIntervalScore(int sportType, List<ResultDetail> resultDetails)
+    {
+        return sportType == SportType.BasketBall
+            ? resultDetails.Exists(item => !item.ResourceId.Equals(ResourceType.Halftime) && !item.ResourceId.Equals(ResourceType.Final))
+            : resultDetails.Exists(item => !item.ResourceId.Equals(ResourceType.Final));
     }
 
     public Score[] ScoreOfSets(List<ResultDetail> resultDetails, List<string> resources, Permission permission)
@@ -43,27 +44,38 @@ public class ScoreServiceImp : IScoreService
 
     public Score HalftimeScore(int sportType, List<ResultDetail> resultDetails, Permission permission)
     {
+        if (SportGroup.SupportSettleDetermine.Contains(sportType))
+        {
+            ClearScore(sportType, resultDetails, ResourceType.Halftime);
+        }
         return totalPointSports.Contains(sportType)
             ? TotalPoints(resultDetails, sportType == SportType.BeachVolleyball)
-            : ScoreByResource(resultDetails, Halftime, permission);
+            : ScoreByResource(resultDetails, ResourceType.Halftime, permission);
     }
 
-    public Score FinalScore(List<ResultDetail> resultDetails, Permission permission)
+    public Score FinalScore(int sportType, List<ResultDetail> resultDetails, Permission permission)
     {
-        return ScoreByResource(resultDetails, Final, permission);
-    }
-
-    public MoreScores ScoreLoader(int sportType, List<ResultDetail> resultDetails, List<string> resources, Permission permission)
-    {
-        return new MoreScores
+        if (SportGroup.SupportSettleDetermine.Contains(sportType))
         {
-            HalfTimeScore = HalftimeScore(sportType, resultDetails, permission),
-            FinalScore = FinalScore(resultDetails, permission),
-            Sets = ScoreOfSets(resultDetails, resources, permission)
-        };
+            ClearScore(sportType, resultDetails, ResourceType.Final, false);
+        }
+        return ScoreByResource(resultDetails, ResourceType.Final, permission);
     }
 
-    private Score ScoreByResource(List<ResultDetail> resultDetails, string resource, Permission permission)
+    private static void ClearScore(int sportType, List<ResultDetail> resultDetails, string resource, bool isHalfTime = true)
+    {
+        var resultSettleSdt = resultDetails.Where(r => (isHalfTime
+            ? Resources.ResultHaftTime[sportType].Contains(r.ResourceId)
+            : Resources.ResultFullTime[sportType].Contains(r.ResourceId)) && r.SettlementStatusId == SettlementStatus.Abandoned).ToList();
+        var resultDetail = resultDetails.FirstOrDefault(n => n.ResourceId == resource);
+        if (resultDetail != null && resultSettleSdt.Any())
+        {
+            resultDetail.HomeValue = string.Empty;
+            resultDetail.AwayValue = string.Empty;
+        }
+    }
+
+    private Score ScoreByResource(IEnumerable<ResultDetail> resultDetails, string resource, Permission permission)
     {
         var resultDetail = resultDetails.FirstOrDefault(n => n.ResourceId == resource);
 
@@ -72,46 +84,31 @@ public class ScoreServiceImp : IScoreService
         return hasResult ? scoreSetService.GetScore(resultDetail, permission) : new Score("-");
     }
 
-    private static Score TotalPoints(List<ResultDetail> resultDetails, bool isBeachVolleyball)
+    private static List<ResultDetail> ResultDetailsFilter(IEnumerable<ResultDetail> resultDetails, bool isBeachVolleyball)
     {
-        var statusSettled = new List<byte?> { ResultStatus.AutoSettled, ResultStatus.ManuallySettled };
+        var settledStatuses = new List<byte?> { ResultStatus.AutoSettled, ResultStatus.ManuallySettled };
+        var validGames = resultDetails.Where(result => result.ResourceId.Length == 4
+                                                       && !string.IsNullOrWhiteSpace(result.HomeValue)
+                                                       && !string.IsNullOrWhiteSpace(result.AwayValue)).ToList();
+
+        return validGames.Where(m => (isBeachVolleyball && m.SettlementStatusId != SettlementStatus.Refund)
+                                           || (!isBeachVolleyball && settledStatuses.Contains(m.ResultStatusId))).ToList();
+    }
+
+    private Score TotalPoints(IReadOnlyCollection<ResultDetail> resultDetails, bool isBeachVolleyball)
+    {
         if (IsRefundMatch(resultDetails))
         {
             return new Score(SetStatus.Refund);
         }
 
-        var games = resultDetails.Where(m => m.ResourceId.LongCount() == 4
-                            && !string.IsNullOrWhiteSpace(m.HomeValue)
-                            && !string.IsNullOrWhiteSpace(m.AwayValue)).ToList();
+        var validGames = ResultDetailsFilter(resultDetails, isBeachVolleyball);
 
-        games = games.Where(m => (isBeachVolleyball && m.SettlementStatusId != SettlementStatus.Refund)
-                                 || (!isBeachVolleyball && statusSettled.Contains(m.ResultStatusId)))
-            .ToList();
-
-        if (games.Count > 0)
-        {
-            var home = games.Sum(m =>
-            {
-                int.TryParse(m.HomeValue, out var homeValue);
-                return homeValue;
-            });
-
-            var away = games.Sum(m =>
-            {
-                int.TryParse(m.AwayValue, out var awayValue);
-                return awayValue;
-            });
-
-            return new Score(home.ToString(), away.ToString());
-        }
-        else
-        {
-            return new Score("-");
-        }
+        return scoreSetService.SumScore(validGames);
     }
 
-    private static bool IsRefundMatch(List<ResultDetail> resultDetails)
+    private static bool IsRefundMatch(IEnumerable<ResultDetail> resultDetails)
     {
-        return resultDetails.Count(m => m.ResourceId.Equals(Final) && m.SettlementStatusId == SettlementStatus.Refund) == 1;
+        return resultDetails.Count(m => m.ResourceId.Equals(ResourceType.Final) && m.SettlementStatusId == SettlementStatus.Refund) == 1;
     }
 }

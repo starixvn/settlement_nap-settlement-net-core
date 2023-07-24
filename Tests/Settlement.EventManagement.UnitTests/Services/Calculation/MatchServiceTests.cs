@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using AutoMapper.Configuration;
 using Fanex.Data.Repository;
 using Microsoft.Extensions.Options;
 using Settlement.Core.Constants;
@@ -91,7 +90,7 @@ public class MatchServiceTests
         newInfoMatchService.Received().ConfirmScore(Arg.Any<List<ResultDetail>>(), ResourceType.Halftime);
         newInfoMatchService.Received().ConfirmScore(Arg.Any<List<ResultDetail>>(), ResourceType.Final);
         newInfoMatchService.Received().GoalIcon(Arg.Any<Match>());
-        newInfoMatchService.Received(6).IsNotConsistentScore(Arg.Any<string>(), Arg.Any<List<ResultDetail>>(), Arg.Any<List<ResultDetail>>(), Arg.Any<string>());
+        newInfoMatchService.Received(6).IsInconsistentScore(Arg.Any<string>(), Arg.Any<List<ResultDetail>>(), Arg.Any<List<ResultDetail>>(), Arg.Any<string>());
         newInfoMatchService.Received().GoalIcon(Arg.Any<Match>());
     }
 
@@ -123,7 +122,7 @@ public class MatchServiceTests
         newInfoMatchService.Received().ConfirmScore(Arg.Any<List<ResultDetail>>(), ResourceType.Halftime);
         newInfoMatchService.Received().ConfirmScore(Arg.Any<List<ResultDetail>>(), ResourceType.Final);
         newInfoMatchService.Received().GoalIcon(Arg.Any<Match>());
-        newInfoMatchService.Received(2).IsNotConsistentScore(Arg.Any<string>(), Arg.Any<List<ResultDetail>>(), Arg.Any<List<ResultDetail>>(), Arg.Any<string>());
+        newInfoMatchService.Received(2).IsInconsistentScore(Arg.Any<string>(), Arg.Any<List<ResultDetail>>(), Arg.Any<List<ResultDetail>>(), Arg.Any<string>());
         newInfoMatchService.Received().GoalIcon(Arg.Any<Match>());
     }
 }

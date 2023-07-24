@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpRequestService } from './http-request.service.native';
 import * as _ from 'lodash';
-import { Observable, firstValueFrom } from 'rxjs';
-import { GeneralResultDetail, MarkedTicketsModel, MatchResource, ModalDialogMessage, Result, ResultSettingQuery } from '../models';
+import { firstValueFrom } from 'rxjs';
+import { GeneralResultDetail, MarkedTicketsModel, MatchResource, ModalDialogMessage, ResourceItem, Result, ResultSettingQuery } from '../models';
 import { MessageBoxService } from './message-box.service.native';
 import { Language } from '../language.native';
 import { GeneralMatch, HedgeMatchDetail, ResultDetail, SaveScoreQuery } from '../models/sportsbook-sop';
-import { ResultSettingType, SettlementStatusId, TicketStatusText, ResultStatus } from '../../shared/constants';
+import { ResultSettingType, ResultStatus, ResourceIds } from '../../shared/constants';
 
 @Injectable()
 export class AioService {
@@ -34,11 +34,12 @@ export class AioService {
         return firstValueFrom(request);
     }
 
-    public changeResultSetting(query: object): Observable<boolean> {
-        return this.httpRequestService.postJson(query, `${this.aioApi}/result-setting`);
+    public changeResultSetting(query: object) {
+        const request = this.httpRequestService.postJson<boolean>(query, `${this.aioApi}/result-setting`);
+        return firstValueFrom(request);
     }
 
-    private getLastestMatchResult(query: object) {
+    public getLastestMatchResult(query: object) {
         const response = this.httpRequestService.postJson<GeneralResultDetail[]>(query, `${this.aioApi}/get-recal-result`);
         return firstValueFrom(response);
     }
@@ -62,7 +63,7 @@ export class AioService {
     }
 
     public pushChildMatch(query: object) {
-        const request =  this.httpRequestService.postJson(query, `${this.aioApi}/settle-child-match`);
+        const request = this.httpRequestService.postJson(query, `${this.aioApi}/settle-child-match`);
         return firstValueFrom(request);
     }
 
@@ -108,44 +109,79 @@ export class AioService {
         }
     }
 
-    public confirmResult(resultDetails: ResultDetail[], matchId: number, resourceIds: string,
+    public confirmResult(matchId: number, resourceIds: string,
         hedgeMatchDetail: HedgeMatchDetail, oldMatchDetail: HedgeMatchDetail = null) {
-        const refundedResultHasNoRunningTicket = _.find(resultDetails, item =>
-            item.settlementStatusId === SettlementStatusId.Refund && !_.isEqual(item.ticketStatus, TicketStatusText.running));
-        if (_.isNil(refundedResultHasNoRunningTicket)) {
-            this.changeConfirmResultSetting(Language.confirmRefund.confirmRefund, matchId, resourceIds, true,
-                hedgeMatchDetail, oldMatchDetail);
-        } else {
-            this.alertMessage(Language.confirmRefund.refundedNoRunningTicket);
-        }
+        this.changeConfirmResultSetting(Language.confirmRefund.confirmRefund, matchId, resourceIds, true,
+            hedgeMatchDetail, oldMatchDetail);
+    }
+
+    public changeConfirmResultSDTSetting(matchId: number, resourceItems: ResourceItem[], isEnabled: boolean, hedgeMatchDetail: HedgeMatchDetail, is3x3 = false) {
+        this.warningDialogMessage.title = Language.confirmationBox;
+        this.warningDialogMessage.message = isEnabled ?
+            Language.confirmRefund.sdtConfirm.replace('{0}', `${resourceItems[0].resourceName}: ${resourceItems[0].homeValue} - ${resourceItems[0].awayValue}`)
+            : Language.confirmRefund.undoConfirmAll;
+        const resourceIds = resourceItems.map(resource => resource.resourceId).join(',');
+        this.messageBoxService.confirm(this.warningDialogMessage, () => {
+            const query = new ResultSettingQuery(matchId, ResultSettingType.confirmRefundSDT,
+                isEnabled, resourceIds, resourceItems);
+            query.is3x3 = is3x3;
+            this.changeResultSetting(query).then(async () => {
+                await this.confirmHedgeMatch(query, hedgeMatchDetail);
+            }).finally(this.messageBoxService.closePopupNotChanged);
+        });
     }
 
     public changeConfirmResultSetting(message: string, matchId: number, resourceIds: string,
         isEnabled: boolean, hedgeMatchDetail: HedgeMatchDetail, oldMatchDetail: HedgeMatchDetail = null) {
         this.warningDialogMessage.title = Language.confirmationBox;
         this.warningDialogMessage.message = message;
-        this.messageBoxService.confirm(this.warningDialogMessage, async () => {
+        this.messageBoxService.confirm(this.warningDialogMessage, () => {
             const query = new ResultSettingQuery(matchId, ResultSettingType.confirmRefund,
                 isEnabled, resourceIds);
-            await this.changeResultSetting(query).toPromise().then(async () => {
+            this.changeResultSetting(query).then(async () => {
                 await this.confirmHedgeMatch(query, hedgeMatchDetail);
                 await this.confirmOldMatch(query, oldMatchDetail);
-                this.messageBoxService.closePopupNotChanged();
-            });
+            }).finally(() => this.messageBoxService.closePopupNotChanged());
         });
+    }
+
+    public generateDeterminedType(resultDetails: ResultDetail[]) {
+        const roundBitStartAt = 3;
+        const bitArray = new Array(8).fill(0);
+        const resultWithoutFinal = resultDetails
+            .filter(resultDetail => ![ResourceIds.fullTime, ResourceIds.halfTime].includes(resultDetail.resourceId))
+            .map(resultDetail => resultDetail.resourceId);
+
+        resultDetails.forEach(resultDetail => {
+            let bitPosition;
+            switch (resultDetail.resourceId) {
+                case ResourceIds.halfTime:
+                    bitPosition = 0;
+                    break;
+                case ResourceIds.fullTime:
+                    bitPosition = 2;
+                    break;
+                default:
+                    bitPosition = resultWithoutFinal.indexOf(resultDetail.resourceId) + roundBitStartAt;
+            };
+
+            bitArray[bitPosition] = resultDetail.checked && !_.isEmpty(resultDetail.homeValue) && !_.isEmpty(resultDetail.awayValue) ? 1 : 0;
+        });
+
+        return parseInt(bitArray.reverse().join(''), 2);
     }
 
     private async confirmHedgeMatch(query: ResultSettingQuery, hedgeMatchDetail: HedgeMatchDetail) {
         if (!_.isNil(hedgeMatchDetail) && hedgeMatchDetail.matchId > 0) {
             query.matchID = hedgeMatchDetail.matchId;
-            await this.changeResultSetting(query).toPromise();
+            await this.changeResultSetting(query);
         }
     }
 
     private async confirmOldMatch(query: ResultSettingQuery, oldMatchDetail: HedgeMatchDetail) {
         if (!_.isNil(oldMatchDetail) && oldMatchDetail.matchId > 0) {
             query.matchID = oldMatchDetail.matchId;
-            await this.changeResultSetting(query).toPromise();
+            await this.changeResultSetting(query);
         }
     }
 

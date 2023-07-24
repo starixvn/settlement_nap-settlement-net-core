@@ -12,6 +12,10 @@ public class ResultSettingCriteria : NonQueryCommand
 
     public int AdminId { get; set; }
 
+    public string SelectedResources { get; set; }
+
+    public bool Is3x3 { get; set; }
+
     public override string GetSettingKey()
     {
         return "NAP_Set_ResultDetailSettingUpd";

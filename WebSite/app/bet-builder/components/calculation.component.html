@@ -9,15 +9,15 @@
                     <th class="selection-name">
                         <div>Selection</div>
                         <div>
-                            <multiple-select class="multiple-select" [multipleSelect]="selectionSelect"
-                                            (loseFocus)="changeSelection($event)"></multiple-select>
+                            <new-multiple-select [multipleSelect]="selectionSelect"
+                                            (formValue)="changeSelection($event)"></new-multiple-select>
                         </div>
                     </th>
                     <th class="result">
                         Ticket Status
                         <div>
-                            <multiple-select class="multiple-select" [multipleSelect]="ticketStatusSelect"
-                                            (loseFocus)="changeTicketStatus($event)"></multiple-select>
+                            <new-multiple-select [multipleSelect]="ticketStatusSelect"
+                                            (formValue)="changeTicketStatus($event)"></new-multiple-select>
                         </div>
                     </th>
                     <th class="result">
@@ -26,8 +26,8 @@
                     <th class="result-status">
                         Result Status
                         <div>
-                            <multiple-select class="multiple-select" [multipleSelect]="resultStatusSelect"
-                                            (loseFocus)="changeResultStatus($event)"></multiple-select>
+                            <new-multiple-select [multipleSelect]="resultStatusSelect"
+                                            (formValue)="changeResultStatus($event)"></new-multiple-select>
                         </div>
                     </th>
                     <th class="select-proceed">

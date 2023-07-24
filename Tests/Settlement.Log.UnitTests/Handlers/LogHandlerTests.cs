@@ -9,7 +9,7 @@ namespace Settlement.Log.UnitTests.Handlers;
 
 public class LogHandlerTests
 {
-    private readonly Core.Services.IBalanceUpService balanceUpService;
+    private readonly IBalanceUpService balanceUpService;
     private readonly LogService logService;
     private readonly LogHandler handler;
 

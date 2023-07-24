@@ -15,7 +15,7 @@ public class ProviderMapperServiceTests
     [Fact]
     public void Decorate_Always_FetchCorrectResultsAndGroupThem()
     {
-        var fakeList = new List<ExternalResultDetailModel>()
+        var fakeList = new List<ExternalResultDetailModel>
         {
             new(),
             new(),

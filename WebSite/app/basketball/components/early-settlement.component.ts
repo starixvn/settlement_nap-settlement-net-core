@@ -7,9 +7,9 @@ import { ToastContainerDirective } from 'ngx-toastr';
 import { BasketballApiKeys, EarlyResourcesIds, KickOffTime, ResultStatus } from '../constants';
 import { BasketballService, BetStatusService, EarlyService, VerificationService } from '../services';
 import { Language } from '../../shared/language.native';
-import { Match, SettleQuery } from '../models';
+import { Match } from '../models';
 import { BlockUIService } from '../../shared/services';
-import { ResultDetail, SportTemplate } from '../../shared/models/sportsbook-sop';
+import { ResultDetail, SettleQuery, SportTemplate } from '../../shared/models/sportsbook-sop';
 import { EarlyBaseComponent } from '../../shared/components/sportsbook-sop/early-base.component';
 import { MatchDetailComponent } from './match-detail.component';
 import { NewMultipleSelectComponent } from '../../shared/components/multiple-select/multiple-select.component';
@@ -20,7 +20,7 @@ import { ResourceNameByIdPipe } from '../pipes/resource-name-by-id.pipe';
     templateUrl: './early-settlement.component.html',
     standalone: true,
     imports: [EarlyCommonModule, MatchDetailComponent, NewMultipleSelectComponent, ExternalSourceNamePipe],
-    providers: [EarlyService, VerificationService, BasketballService, ResourceNameByIdPipe, BetStatusService  ]
+    providers: [EarlyService, VerificationService, BasketballService, ResourceNameByIdPipe, BetStatusService]
 })
 export class EarlySettlementComponent extends EarlyBaseComponent implements SportTemplate {
     @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
@@ -51,10 +51,10 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         this.init();
     }
 
-    public initService(){
+    public initService() {
         this.earlyService = this.injector.get(EarlyService);
         this.verificationService = this.injector.get(VerificationService);
-        this.injector.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI  = event);
+        this.injector.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
         this.toastrService.overlayContainer = this.toastContainer;
     }
 
@@ -137,19 +137,20 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
 
     private confirmCalculation(resultDetails: ResultDetail[]) {
         this.confirmationDialogMessage.message = this.earlyService.getConfirmMessage(resultDetails, this.match.matchDetail);
-        this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
-            const query = new SettleQuery(this.match.matchDetail.matchId,
+        this.messageBoxService.confirm(this.confirmationDialogMessage, async () => {
+            const query = new SettleQuery(this.match.matchDetail,
                 this.selectedResources,
                 CalculateAction.earlyCalculate,
                 this.isReSettledTickets,
-                this.matchDetail.sportType,
-                this.matchDetail.betStatus);
-            query.isLeader = this.permission.isLeader;
-            this.doSaveResult(CalculateAction.calculate,
+                this.matchDetail.betStatus,
+                BasketballApiKeys.settle,
+                this.permission.isLeader);
+
+            await this.doSaveResult(CalculateAction.calculate,
                 this.match.originalResultDetail,
                 this.resultDetails,
-                BasketballApiKeys.normalMatch, () => {
-                    this.push(query);
+                BasketballApiKeys.normalMatch, async () => {
+                    await this.push(query);
                 });
         });
     }
@@ -161,13 +162,13 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
                 map.homeValue = "";
                 map.awayValue = "";
             });
-            const query = new SettleQuery(this.match.matchDetail.matchId,
+            const query = new SettleQuery(this.match.matchDetail,
                 this.selectedResources,
                 CalculateAction.earlyUnCalculate,
                 this.isReSettledTickets,
-                this.matchDetail.sportType,
-                this.match.matchDetail.betStatus);
-            query.isLeader = this.permission.isLeader;
+                this.match.matchDetail.betStatus,
+                BasketballApiKeys.settle,
+                this.permission.isLeader);
             this.push(query);
         });
     }
@@ -182,13 +183,13 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     }
 
     private createQueryRefundAndPush() {
-        const query = new SettleQuery(this.match.matchDetail.matchId,
+        const query = new SettleQuery(this.match.matchDetail,
             this.selectedResources,
             CalculateAction.earlyRefund,
             this.isReSettledTickets,
-            this.matchDetail.sportType,
-            this.match.matchDetail.betStatus);
-        query.isLeader = this.permission.isLeader;
+            this.match.matchDetail.betStatus,
+            BasketballApiKeys.settle,
+            this.permission.isLeader);
         this.push(query);
     }
 

@@ -4,6 +4,8 @@ namespace Settlement.ThirdPartyProducts.Models;
 
 public class ResourceSelectionItemModel
 {
+    private int status;
+
     [XmlAttribute("Id")]
     public int MarketId { get; set; }
 
@@ -13,9 +15,8 @@ public class ResourceSelectionItemModel
     [XmlAttribute("s")]
     public int Status
     {
-        get => IsRunning ? 1 : 0;
-
-        set { }
+        get => IsRunning ? 1 : status;
+        set => status = value;
     }
 
     public override bool Equals(object obj)

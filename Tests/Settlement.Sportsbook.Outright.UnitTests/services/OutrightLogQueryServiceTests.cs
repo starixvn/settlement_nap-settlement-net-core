@@ -1,7 +1,5 @@
 ﻿using Fanex.Data.Repository;
-using Microsoft.Extensions.Options;
 using NSubstitute;
-using Settlement.Core.Models;
 using Settlement.Outright.Criteria;
 using Settlement.Outright.Models;
 using Settlement.Outright.Requests;
@@ -18,9 +16,7 @@ public class OutrightLogQueryServiceTests
     public OutrightLogQueryServiceTests()
     {
         repository = Substitute.For<IDynamicRepository>();
-        var appSettings = new AppSettingsKey { SiteDbServer = new List<string> { "DB01", "DB02", "DB03" } };
-        var appSettingsOptions = Options.Create(appSettings);
-        service = new OutrightLogQueryServiceImp(repository, appSettingsOptions);
+        service = new OutrightLogQueryServiceImp(repository);
     }
 
     [Fact]

@@ -21,8 +21,6 @@ import { DatepickerComponent } from '../shared/components/date-picker/date-picke
 import { MaterialDialogComponent } from '../shared/components/material-dialog-iframe/material-dialog.component';
 import { ModalContentDialogComponent } from '../shared/components/modal-dialog/modal-content-dialog.component';
 import { ModalDialogComponent } from '../shared/components/modal-dialog/modal-dialog.component';
-import { MultipleSelectComponent } from '../shared/components/multiple-selection/multiple-select.component.native';
-import { TreeViewComponent } from '../shared/components/multiple-selection/tree-view.component';
 
 @NgModule({
     imports: [
@@ -47,8 +45,6 @@ import { TreeViewComponent } from '../shared/components/multiple-selection/tree-
         CalculationComponent,
         ModalDialogComponent,
         ModalContentDialogComponent,
-        MultipleSelectComponent,
-        TreeViewComponent,
         MaterialDialogComponent,
         ResultStatusPipe,
         SelectionPipe,

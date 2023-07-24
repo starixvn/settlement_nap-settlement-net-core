@@ -38,8 +38,7 @@ public class BetTypeElementServiceTests
             }
         };
 
-        var betTypes = new List<BetType>();
-        betTypes.Add(betType);
+        var betTypes = new List<BetType> { betType };
 
         return betTypes;
     }
@@ -156,8 +155,7 @@ public class BetTypeElementServiceTests
                 new ()  { BetType = 228, Position = 1, Checked = true, IsShow = true, Result = 1 }
             }
         };
-        var betTypes = new List<BetType>();
-        betTypes.Add(betType);
+        var betTypes = new List<BetType> { betType };
         const string actionName = "CAL";
 
         var actual = service.GetBetTypes(betTypes, actionName);

@@ -232,13 +232,13 @@ public class HomeController : Controller
         using var currentProcess = Process.GetCurrentProcess();
         var stringBuilder = new StringBuilder();
 
-        stringBuilder.AppendFormat("GC.GetTotalMemory(false): {0:n0}\n", GC.GetTotalMemory(false));
-        stringBuilder.AppendFormat("VirtualMemorySize64 is: {0:n0}\n", currentProcess.VirtualMemorySize64);
-        stringBuilder.AppendFormat("PrivateMemorySize64 is: {0:n0}\n", currentProcess.PrivateMemorySize64);
-        stringBuilder.AppendFormat("WorkingSet64 is: {0:n0}\n", currentProcess.WorkingSet64);
-        stringBuilder.AppendFormat("PagedMemorySize64 is: {0:n0}\n", currentProcess.PagedMemorySize64);
-        stringBuilder.AppendFormat("NonpagedSystemMemorySize64 is: {0:n0}\n", currentProcess.NonpagedSystemMemorySize64);
-        stringBuilder.AppendFormat("NonpagedSystemMemorySize64 is: {0:n0}\n", currentProcess.NonpagedSystemMemorySize64);
+        stringBuilder.Append($"GC.GetTotalMemory(false): {GC.GetTotalMemory(false):n0}\n");
+        stringBuilder.Append($"VirtualMemorySize64 is: {currentProcess.VirtualMemorySize64:n0}\n");
+        stringBuilder.Append($"PrivateMemorySize64 is: {currentProcess.PrivateMemorySize64:n0}\n");
+        stringBuilder.Append($"WorkingSet64 is: {currentProcess.WorkingSet64:n0}\n");
+        stringBuilder.Append($"PagedMemorySize64 is: {currentProcess.PagedMemorySize64:n0}\n");
+        stringBuilder.Append($"NonpagedSystemMemorySize64 is: {currentProcess.NonpagedSystemMemorySize64:n0}\n");
+        stringBuilder.Append($"NonpagedSystemMemorySize64 is: {currentProcess.NonpagedSystemMemorySize64:n0}\n");
         stringBuilder.AppendLine($@"Threads.Count: {currentProcess.Threads.Count}");
         stringBuilder.AppendLine($@"ThreadPool.PendingWorkItemCount: {ThreadPool.PendingWorkItemCount}");
 

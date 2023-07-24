@@ -35,4 +35,5 @@ export const BackgroundColor = {
     brightYellow: "bg-pending",
     autoSettleCompleted: "bg-completed-blinking",
     autoSettleRunningBlinking:"bg-running-blinking",
+    scoreSdtNotConsistent: "not-consistent-score-sdt"
 };

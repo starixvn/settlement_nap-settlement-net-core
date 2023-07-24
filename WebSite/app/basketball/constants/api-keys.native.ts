@@ -3,5 +3,6 @@ export const BasketballApiKeys = {
     settle: "basketball-settle",
     earlyMatch: "basketball-early",
     normalMatch: "basketball",
+    normalMatchRefund: "basketball-refund",
     checkingMarkedTicketsParlay: "MP-REFUND",
 };

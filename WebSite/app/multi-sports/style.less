@@ -55,7 +55,7 @@
             width: 250px;
         }
 
-        .auto-setting {
+        .auto-setting, .auto-instant {
             min-width: 63px;
             width: 63px;
         }
@@ -83,6 +83,37 @@
         background-color: #a9a9a9;
         padding: 2px 0 0 2px;
     }
+
+    .icon-on{
+        background: url(@sprite) no-repeat;
+        background-position: -35px -292px;
+        .icon(45px, 16px, 8px);
+        cursor: pointer;
+        display: block;
+    }
+    
+    .icon-on-disable{
+        background: url(@sprite) no-repeat;
+        background-position: -184px -292px;
+        .icon(45px, 16px, 8px);
+        cursor: pointer;
+        display: block;
+    }
+    
+    .icon-off {
+        background: url(@sprite) no-repeat -84px -292px;
+        .icon(45px, 16px, 8px);
+        cursor: pointer;
+        display: block;
+    }
+    
+    .icon-off-disable {
+        background: url(@sprite) no-repeat -135px -292px;
+        .icon(45px, 16px, 8px);
+        cursor: pointer;
+        display: block;
+    }
+    
 }
 
 .match {

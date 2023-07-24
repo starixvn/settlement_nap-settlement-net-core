@@ -1,47 +1,103 @@
 ﻿<span toastContainer></span>
 <div class="padding" *ngIf="match">
-    <match-detail [match]="originalMatch" [isEarlySettlement]="false"></match-detail>
-    <div class="refund-actions">
-        <div class="normal-tickets">
-            <div class="icon">
-            </div>
-            Normal Tickets
-        </div>
-        <div *ngIf="hedgeMatchDetail" class="hedge-match">
-            <input type="checkbox" [(ngModel)]="applyHedgeMatch" id="ApplyHedgeMatch" />
-            <label for="ApplyHedgeMatch">Apply for hedge match '<strong>{{hedgeMatchDetail.matchCode}}</strong>' also.</label>
-        </div>
-        <table>
-            <thead>
-                <tr>
-                    <th>Quarter/HT/FT</th>
-                    <th>
-                        Select to Proceed
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let game of resultDetails"  [ngClass]="{'confirmed-refund': permission.isLeader && game.resultSettingData.isConfirmedRefund}">
-                    <td>{{ game.resourceId | resourceName}}</td>
-                    <td [ngClass]="game.ticketStatus.toLowerCase()">
-                        <input type="checkbox" [(ngModel)]="game.checked"/>
-                    </td>
-                </tr>
-                <tr>
-            <td colspan="2">
-                <button *ngIf="match.permission.isLeader" [ngClass]="{'btn btn-outline-primary button-confirmed': true}"
-                    [disabled]="selectedResources.length === 0" (click)="confirmRefund(hedgeMatchDetail, applyHedgeMatch)">
-                    Confirm/Undo-confirm Refund
-                </button>
-                <button [ngClass]="{'refund-button': true, 'button-disabled': selectedResources.length === 0}"
-                            [disabled]="selectedResources.length === 0" (click)="refund()">Refund</button></td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+	<calculation-match-detail [match]="originalMatch"></calculation-match-detail>
+	<div class="refund-actions">
+		<div class="normal-tickets">
+			<div class="icon"></div>
+			Normal Tickets
+		</div>
+		<div *ngIf="hedgeMatchDetail" class="hedge-match">
+			<input type="checkbox" [(ngModel)]="applyHedgeMatch" id="ApplyHedgeMatch" />
+			<label for="ApplyHedgeMatch"
+				>Apply for hedge match '<strong>{{ hedgeMatchDetail.matchCode }}</strong
+				>' also.</label
+			>
+		</div>
+		<table>
+			<thead>
+				<tr>
+					<th scope="col" class="resource-name">Quarter/HT/FT</th>
+					<th scope="col" colspan="2" class="result">
+						Result
+					</th>
+					<th scope="col" class="status">
+						Select to Proceed
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr
+					*ngFor="let quarter of resultDetails; let i = index; let last = last"
+					[ngClass]="{
+						'confirmed-refund': permission.isLeader && (quarter.resultSettingData.isConfirmedRefund || quarter.resultSettingData.isConfirmedRefundSdt)
+					}"
+				>
+					<td>{{ quarter.resourceName }}</td>
+					<td [ngClass]="quarter.className">
+						<input [disabled]="resultDetailDisableInput[i]" [(ngModel)]="quarter.homeValue" (ngModelChange)="changeScore(quarter)" type="text" />
+					</td>
+					<td [ngClass]="quarter.className">
+						<input [disabled]="resultDetailDisableInput[i]" [(ngModel)]="quarter.awayValue" (ngModelChange)="changeScore(quarter)" type="text" />
+					</td>
+					<td *ngIf="quarter.resourceId === overTimeId" rowspan="2" class="temp">
+						<input
+							id="final-checkbox"
+							type="checkbox"
+							[(ngModel)]="resultDetails[i + 1].checked"
+							(ngModelChange)="selectFullTimeCheckBox(); enableInput(quarter, isDirectly)"
+						/>
+					</td>
+					<td *ngIf="quarter.resourceId !== overTimeId && !last" class="temp">
+						<input type="checkbox" [(ngModel)]="quarter.checked" (ngModelChange)="enableInput(quarter)" [disabled]="quarter.disabled" />
+					</td>
+				</tr>
+				<tr>
+					<td colspan="4" class="input-directly">
+						<input
+							type="checkbox"
+							id="inputDirectly"
+							[(ngModel)]="isDirectly"
+							[disabled]="disableScoreDirect"
+							(ngModelChange)="selectFullTimeCheckBox(); inputDirectly()"
+						/>
+						<label for="inputDirectly">Input HT Score and Final Score directly</label>
+						&nbsp;
+						<span [hidden]="disableScoreDirect || !permission.isLeader">
+							<input type="checkbox" id="3x3Match" [disabled]="!isDirectly" [(ngModel)]="isIgnoreForMatch3x3" />&nbsp;
+							<label for="3x3Match">3x3 Match</label>
+						</span>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="4">
+						<button
+							*ngIf="isConfirmRefund && match.permission.isLeader"
+							class="btn btn-outline-primary button-confirmed"
+							[disabled]="selectedResources.length === 0"
+							(click)="confirmRefund()"
+						>
+							Confirm Refund
+						</button>
+						<button
+							*ngIf="!isConfirmRefund && match.permission.isLeader"
+							class="btn btn-outline-primary button-confirmed"
+							(click)="undoConfirmedAllResult()"
+						>
+							Undo Confirm Refund All
+						</button>
+						<button class="btn btn-outline-primary" [disabled]="selectedResources.length === 0" (click)="refund()">Refund</button>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<div>- <strong>Settlement options for current match.</strong></div>
+		<div class="check-box">
+			<input type="checkbox" [(ngModel)]="isSDTSettle" (ngModelChange)="selectFullTimeCheckBox(); enableInput()" id="isSDTSettle" />&nbsp;
+			<label for="isSDTSettle">Settle determinable tickets of next results.</label>
+		</div>
+	</div>
 </div>
 
 <div *ngIf="blockUI" class="in modal-backdrop">
-    <div class="loading">
-    </div>
-  </div>
+	<div class="loading"></div>
+</div>

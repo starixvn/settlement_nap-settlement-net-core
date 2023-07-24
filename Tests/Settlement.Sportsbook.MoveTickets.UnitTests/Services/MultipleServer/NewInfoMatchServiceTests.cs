@@ -94,6 +94,6 @@ public class NewInfoMatchServiceTests
 
         service.TicketInfo(match);
 
-        Assert.True(match.IsExistMarkedTicket && match.IsExistRunningTicket && match.IsCalculatingSingle == 1);
+        Assert.True(match.IsExistMarkedTicket && match is { IsExistRunningTicket: true, IsCalculatingSingle: 1 });
     }
 }

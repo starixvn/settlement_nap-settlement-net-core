@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
-using Settlement.Setting.Criteria;
-using Settlement.Setting.Requests;
-using Settlement.Setting.Criteria.OutsideSourceManager;
-using Settlement.Setting.Requests.OutsideSourceManager;
-using Settlement.Setting.Criteria.ProviderManager;
-using Settlement.Setting.Requests.ProviderManager;
 using Settlement.Core.Criteria;
+using Settlement.Setting.Criteria;
+using Settlement.Setting.Criteria.OutsideSourceManager;
+using Settlement.Setting.Criteria.ProviderManager;
+using Settlement.Setting.Requests;
+using Settlement.Setting.Requests.OutsideSourceManager;
+using Settlement.Setting.Requests.ProviderManager;
 
 namespace Settlement.Setting;
 

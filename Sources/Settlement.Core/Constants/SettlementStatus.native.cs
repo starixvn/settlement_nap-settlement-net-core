@@ -15,4 +15,6 @@ public static class SettlementStatus
     public const byte Abandoned1H = 5;
 
     public const byte Abandoned2H = 6;
+
+    public const byte Abandoned = 7;
 }

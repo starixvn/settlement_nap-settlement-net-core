@@ -9,7 +9,7 @@ import { AppBaseComponent } from '../../shared/components/sportsbook-sop/app-bas
 
 @Component({
     selector: 'app-root',
-    templateUrl: './app.component.html',
+    template: '<div #container></div>',
     standalone: true
 })
 

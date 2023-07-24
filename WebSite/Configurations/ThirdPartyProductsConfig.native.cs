@@ -1,5 +1,4 @@
-﻿using MediatR;
-using Settlement.ThirdPartyProducts.Controllers;
+﻿using Settlement.ThirdPartyProducts.Controllers;
 using Settlement.ThirdPartyProducts.Services;
 
 namespace Settlement.WebSites.Configurations;

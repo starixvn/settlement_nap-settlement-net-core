@@ -24,12 +24,14 @@ public class InstantCalculateServiceTests
     private readonly ScaleOutSettleService scaleOutSettleService;
 
     private readonly InstantCalculateService service;
+    private readonly PushInstantCalculationService pushInstantCalculationService;
+
     public InstantCalculateServiceTests()
     {
         repository = Substitute.For<IDynamicRepository>();
         instantResourceService = Substitute.For<InstantResourceService>();
         scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
-        var pushInstantService = Substitute.For<PushInstantCalculationService>();
+        pushInstantCalculationService = Substitute.For<PushInstantCalculationService>();
 
         var mapperConfig = new MapperConfigurationExpression();
         mapperConfig.AddProfile<SoccerAutoMapperProfile>();
@@ -38,8 +40,7 @@ public class InstantCalculateServiceTests
         var appSettings = new AppSettingsKey { SiteDbServer = new List<string> { "DB01", "DB02", "DB03" } };
         var option = Options.Create(appSettings);
 
-        service = new InstantCalculateServiceImp(repository, mapper, instantResourceService, option, scaleOutSettleService, pushInstantService);
-
+        service = new InstantCalculateServiceImp(repository, mapper, instantResourceService, option, scaleOutSettleService, pushInstantCalculationService);
     }
 
     [Fact]
@@ -55,8 +56,8 @@ public class InstantCalculateServiceTests
         };
         instantResourceService.UnCalculate(Arg.Any<InstantGoalCondition>()).Returns(new List<XmlResource>());
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage { ErrorCode = errorCode, ErrorMessage = errorMsg });
-        repository.GetAsync<MatchTicketInfo>(Arg.Any<MatchTicketInfoCriteria>()).Returns(new MatchTicketInfo { });
-        repository.GetAsync<MatchDetail>(Arg.Any<GetMatchInfoCriteria>()).Returns(new MatchDetail { });
+        repository.GetAsync<MatchTicketInfo>(Arg.Any<MatchTicketInfoCriteria>()).Returns(new MatchTicketInfo());
+        repository.GetAsync<MatchDetail>(Arg.Any<GetMatchInfoCriteria>()).Returns(new MatchDetail());
 
         // Act
         var result = await service.PushInstantCalculation(request);
@@ -76,12 +77,16 @@ public class InstantCalculateServiceTests
         var request = new InstantCalculationRequest
         {
             Action = string.Empty,
-            IsHalfTime = true
+            IsHalfTime = true,
+            HomeScore = "1",
+            AwayScore = "1",
+            GoalRecord = "AH"
         };
         instantResourceService.Halftime(Arg.Any<InstantGoalCondition>()).Returns(new List<XmlResource>());
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage { ErrorCode = errorCode, ErrorMessage = errorMsg });
-        repository.GetAsync<MatchTicketInfo>(Arg.Any<MatchTicketInfoCriteria>()).Returns(new MatchTicketInfo { });
-        repository.GetAsync<MatchDetail>(Arg.Any<GetMatchInfoCriteria>()).Returns(new MatchDetail { });
+        repository.GetAsync<MatchTicketInfo>(Arg.Any<MatchTicketInfoCriteria>()).Returns(new MatchTicketInfo { GoalRecord = "AH" });
+        repository.GetAsync<MatchDetail>(Arg.Any<GetMatchInfoCriteria>()).Returns(new MatchDetail { GoalRecord = "AH" });
+
         // Act
         var result = await service.PushInstantCalculation(request);
 
@@ -104,6 +109,8 @@ public class InstantCalculateServiceTests
         };
         instantResourceService.FullTime(Arg.Any<InstantGoalCondition>()).Returns(new List<XmlResource>());
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage { ErrorCode = errorCode, ErrorMessage = errorMsg });
+        repository.GetAsync<MatchTicketInfo>(Arg.Any<MatchTicketInfoCriteria>()).Returns(new MatchTicketInfo { GoalRecord = "AH" });
+        repository.GetAsync<MatchDetail>(Arg.Any<GetMatchInfoCriteria>()).Returns(new MatchDetail { GoalRecord = "AH" });
 
         // Act
         var result = await service.PushInstantCalculation(request);
@@ -120,6 +127,8 @@ public class InstantCalculateServiceTests
         // Arrange
         var request = new InstantCalculationRequest { Action = ActionType.CalculateAll, HomeScore = "0", AwayScore = "0" };
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
+        repository.GetAsync<MatchTicketInfo>(Arg.Any<MatchTicketInfoCriteria>()).Returns(new MatchTicketInfo { GoalRecord = "AH" });
+        repository.GetAsync<MatchDetail>(Arg.Any<GetMatchInfoCriteria>()).Returns(new MatchDetail { GoalRecord = "AH" });
 
         // Act
         await service.PushInstantCalculation(request);
@@ -129,9 +138,7 @@ public class InstantCalculateServiceTests
         {
             repository.ExecuteAsync(Arg.Any<AddAutoResultCriteria>());
             scaleOutSettleService.UpdateMatchInfo(Arg.Any<UpdateMatchInfoRequest>());
-            repository.ExecuteAsync(Arg.Any<PushInstantCalculationCriteria>());
-            repository.ExecuteAsync(Arg.Any<PushInstantCalculationCriteria>());
-            repository.ExecuteAsync(Arg.Any<PushInstantCalculationCriteria>());
+            pushInstantCalculationService.Execute(Arg.Any<PushInstantCalculationCriteria>());
         });
     }
 }

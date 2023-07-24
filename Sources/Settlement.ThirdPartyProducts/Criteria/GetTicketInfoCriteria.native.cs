@@ -9,6 +9,10 @@ public class GetTicketInfoCriteria : NonQueryCommand
 
     public string SelectedResources { get; set; }
 
+    public string Action { get; set; }
+
+    public int DeterminedType { get; set; }
+
     [SpParam(Ignored = true)]
     public string DbServer { get; set; }
 

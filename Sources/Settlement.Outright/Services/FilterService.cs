@@ -84,12 +84,13 @@ public class FilterServiceImp : FilterService
     {
         var criteria = mapper.Map<FilterRequest, GetOutrightDetailCriteria>(request);
         var (deadHeatSettings, teams) = await repository.FetchMultipleAsync<DeadHeatSetting, Team>(criteria);
-        var teamTickets = await GetTeamsTicketCount(teams);
+        var listTeams = teams.ToList();
+        var teamTickets = await GetTeamsTicketCount(listTeams);
         var group = GroupTeamTicket(teamTickets.ToList());
 
-        AddTicketCountToTeam(teams, group.ToList());
+        AddTicketCountToTeam(listTeams, group.ToList());
 
-        var sortedTeams = SortList(teams.ToList(),
+        var sortedTeams = SortList(listTeams,
             item => item.SportName,
             item => item.LeagueName,
             item => item.SportType == SportType.Soccer,

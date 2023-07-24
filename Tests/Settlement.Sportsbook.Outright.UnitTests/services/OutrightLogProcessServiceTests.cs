@@ -11,14 +11,12 @@ public class OutrightLogProcessServiceTests
 {
     private readonly OutrightLogQueryService outrightLogQueryService;
 
-    private readonly IRefDataService refDataService;
-
     private readonly OutrightLogProcessService service;
 
     public OutrightLogProcessServiceTests()
     {
         outrightLogQueryService = Substitute.For<OutrightLogQueryService>();
-        refDataService = Substitute.For<IRefDataService>();
+        var refDataService = Substitute.For<IRefDataService>();
         service = new OutrightLogProcessServiceImp(outrightLogQueryService, refDataService);
     }
 

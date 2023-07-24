@@ -47,9 +47,10 @@ public class MatchServiceImp : IMatchService
         foreach (var match in matches)
         {
             var listSourceByMatchId = listResultDetail.Where(m => m.MatchId == match.MatchId && m.SourceId != SourceType.Normal).ToList();
+            var currentResultDetail = listResultDetail.Where(m => m.MatchId == match.MatchId && m.SourceId == SourceType.Normal).ToList();
 
             newInfoMatchService.TicketInfo(match);
-            match.NewEventStatus = newInfoMatchService.NewEventStatus(match);
+            match.NewEventStatus = newInfoMatchService.NewEventStatus(match, currentResultDetail);
             match.EventStatusColor = newInfoMatchService.EventStatusColor(match);
             match.EarlySettleStatus = newInfoMatchService.EarlySettlementStatus(match);
             match.ConfirmHalfTimeScore = newInfoMatchService.ConfirmScore(listSourceByMatchId, ResourceType.Halftime);
@@ -63,47 +64,18 @@ public class MatchServiceImp : IMatchService
 
     public List<Match> GetScoreForMatchBySportType(List<Match> matches, List<ResultDetail> resultDetails, int sportType, Permission permission = null)
     {
-        if (sportType == SportType.Tennis)
+        return sportType switch
         {
-            return matchResultDetailService.TennisResultDetail(matches, resultDetails, permission);
-        }
-
-        if (sportType == SportType.BasketBall)
-        {
-            return matchResultDetailService.BasketballResultDetail(matches, resultDetails, permission);
-        }
-
-        if (sportType == SportType.ESports)
-        {
-            return matchResultDetailService.ESportsResultDetail(matches, resultDetails, permission);
-        }
-
-        if (sportType == SportType.Badminton)
-        {
-            return matchResultDetailService.BadmintonResultDetail(matches, resultDetails, permission);
-        }
-
-        if (sportType == SportType.Cricket)
-        {
-            return matchResultDetailService.CricketResultDetail(matches, resultDetails, permission);
-        }
-
-        if (sportType == SportType.BeachVolleyball)
-        {
-            return matchResultDetailService.BeachVolleyballResultDetail(matches, resultDetails, permission);
-        }
-
-        if (sportType == SportType.VolleyBall)
-        {
-            return matchResultDetailService.VolleyballResultDetail(matches, resultDetails, permission);
-        }
-
-        foreach (var result in matches)
-        {
-            result.RefDataService = refDataService;
-        }
-
-        return LoadExternalResults(matches, resultDetails, sportType);
+            SportType.Tennis => matchResultDetailService.TennisResultDetail(matches, resultDetails, permission),
+            SportType.BasketBall => matchResultDetailService.BasketballResultDetail(matches, resultDetails, permission),
+            SportType.ESports => matchResultDetailService.ESportsResultDetail(matches, resultDetails, permission),
+            SportType.Badminton => matchResultDetailService.BadmintonResultDetail(matches, resultDetails, permission),
+            SportType.Cricket => matchResultDetailService.CricketResultDetail(matches, resultDetails, permission),
+            SportType.BeachVolleyball => matchResultDetailService.BeachVolleyballResultDetail(matches, resultDetails,
+                permission),
+            SportType.VolleyBall => matchResultDetailService.VolleyballResultDetail(matches, resultDetails, permission),
+            _ => LoadExternalResults(matches, resultDetails, sportType)
+        };
     }
 
     private readonly List<int> fullTimeSports = new()
@@ -169,7 +141,14 @@ public class MatchServiceImp : IMatchService
             return matchResultDetailService.OtherSportsResultDetail(matches, resultDetails, false);
         }
 
-        return halfTimeFullTimeSports.Contains(sportType) ? matchResultDetailService.OtherSportsResultDetail(matches, resultDetails, true) : matches;
+        if (halfTimeFullTimeSports.Contains(sportType))
+        {
+            return matchResultDetailService.OtherSportsResultDetail(matches, resultDetails, true);
+        }
+
+        matches.ForEach(match => match.RefDataService = refDataService);
+
+        return matches;
     }
 
     public void AddSiteInfo(List<Match> baseMatches, List<Match> siteMatches)

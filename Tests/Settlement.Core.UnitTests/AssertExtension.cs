@@ -13,7 +13,7 @@ public static class AssertExtension
 
     public static string RemoveSessionId(this string value)
     {
-        var index = value.IndexOf($"\"BroadcastSessionId\"", StringComparison.Ordinal);
+        var index = value.IndexOf("\"BroadcastSessionId\"", StringComparison.Ordinal);
         return value.Remove(index, 60);
     }
 }

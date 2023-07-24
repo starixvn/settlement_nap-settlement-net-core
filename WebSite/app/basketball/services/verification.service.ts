@@ -116,14 +116,14 @@ export class VerificationService extends VerificationBaseService {
         }
     }
 
-    public isFtScoreLowerThanHtScore(resultDetailList: ResultDetail[]) {
-        const fullTime = _.find(resultDetailList, set => _.isEqual(set.resourceId, ResourcesIds.finalScore) &&
-            this.isExistedHomeAwayScore(set.homeValue, set.awayValue));
-        const halfTime = _.find(resultDetailList, set => _.isEqual(set.resourceId, ResourcesIds.htScore) &&
-            this.isExistedHomeAwayScore(set.homeValue, set.awayValue));
 
-        return fullTime && halfTime && (Number(halfTime.homeValue) > Number(fullTime.homeValue)
-            || Number(halfTime.awayValue) > Number(fullTime.awayValue));
+    public isFtScoreLowerThanHtScore(htResult: ResultDetail, ftResult: ResultDetail, onChangeScore = true): boolean {
+        const isSelectedHtOrFt = onChangeScore || htResult.checked || ftResult.checked;
+        const isBothNotEmpty = this.isExistedHomeAwayScore(ftResult.homeValue, ftResult.awayValue)
+            && this.isExistedHomeAwayScore(htResult.homeValue, htResult.awayValue)
+        return isSelectedHtOrFt && isBothNotEmpty &&
+            (Number(htResult.homeValue) > Number(ftResult.homeValue)
+                || Number(htResult.awayValue) > Number(ftResult.awayValue));
     }
 
     public isTicketOnQuarter(resultDetails: ResultDetail[], matchResultDetails: ResultDetail[]) {

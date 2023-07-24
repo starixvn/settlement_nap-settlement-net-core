@@ -8,6 +8,12 @@ export const ResourcesIds = {
     quarter4: "Q4"
 };
 
+export const Resources = {
+    ht: ["Q1", "Q2"],
+    ft: ["Q1", "Q2", "Q3", "Q4", "OT"],
+};
+
+
 export const OddResourceId = {
     htScore: "1H",
     finalScore: "FT",

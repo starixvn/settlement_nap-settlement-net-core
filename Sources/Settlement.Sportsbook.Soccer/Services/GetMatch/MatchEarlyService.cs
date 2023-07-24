@@ -97,7 +97,7 @@ public class MatchEarlyServiceImp : MatchEarlyService
         foreach (var result in results)
         {
             var ticketDetail = ticketDetails.FirstOrDefault(detail => detail.ResourceId == result.ResourceId);
-            var betType = result.ResourceId.Substring(0, 3);
+            var betType = result.ResourceId[..3];
             result.TicketStatus = CreateTicketStatus(ticketDetail, betType);
         }
     }
@@ -141,7 +141,7 @@ public class MatchEarlyServiceImp : MatchEarlyService
         foreach (var item in listEarly)
         {
             var resourceId = item.ResourceId;
-            var betType = resourceId.Substring(0, maxResource);
+            var betType = resourceId[..maxResource];
             var betTypeId = Convert.ToInt32(betType);
             item.BetType = betType;
             item.Map = earlyBetTypeNameService.GetGroupMap(betTypeId, resourceId);

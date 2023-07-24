@@ -1,13 +1,18 @@
-export class ResultSettingQuery {
-    public matchID: number;
-    public type: number;
-    public isEnabled: boolean;
-    public resourceIds: string;
+import { ResourceItem } from "./resource-item.model";
 
-    constructor(matchId: number, type: number, isEnabled: boolean, resourceIds: string) {
+export class ResultSettingQuery {
+    matchID: number;
+    type: number;
+    isEnabled: boolean;
+    resourceIds: string;
+    selectedResources: ResourceItem[];
+    is3x3: boolean;
+
+    constructor(matchId: number, type: number, isEnabled: boolean, resourceIds?: string, selectedResources?: ResourceItem[]) {
         this.matchID = matchId;
         this.type = type;
         this.isEnabled = isEnabled;
         this.resourceIds = resourceIds;
+        this.selectedResources = selectedResources;
     }
 }

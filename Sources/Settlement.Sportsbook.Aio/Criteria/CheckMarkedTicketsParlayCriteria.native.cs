@@ -6,7 +6,7 @@ public class CheckMarkedTicketsParlayCriteria : NonQueryCommand
 
     public int MatchId { get; set; }
 
-    public string Action { get; } = RefundParlayAction;
+    public string Action => RefundParlayAction;
 
     public bool IsExistMarkedTicket { get; set; }
 

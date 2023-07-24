@@ -11,10 +11,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <AdditionalFiles Include="..\..\.sonarlint\settlement-netcore\CSharp\SonarLint.xml" Link="SonarLint.xml" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="Configurations\SettlementFunctionKeys.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>

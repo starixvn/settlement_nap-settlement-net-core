@@ -86,7 +86,6 @@
             "tsConfig": "bet-builder/tsconfig.app.json",
             "polyfills": "polyfills.ts",
             "styles": [
-              "shared/components/multiple-selection/multiple-select.component.less",
               "shared/styles/material.style.less",
               "shared/styles/styles.less",
               "bet-builder/style.less",
@@ -1397,6 +1396,9 @@
     }
   },
   "cli": {
-    "analytics": "09292d6d-1293-4179-9639-00a7cd991d80"
+    "analytics": "09292d6d-1293-4179-9639-00a7cd991d80",
+    "cache": {
+      "enabled": false
+    }
   }
 }

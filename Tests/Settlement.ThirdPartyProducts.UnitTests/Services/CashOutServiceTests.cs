@@ -7,7 +7,6 @@ using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Setting.Models.Notification;
 using Settlement.Setting.Services;
-using Settlement.ThirdPartyProducts.Constants;
 using Settlement.ThirdPartyProducts.Criteria;
 using Settlement.ThirdPartyProducts.Requests;
 using Settlement.ThirdPartyProducts.Requests.CashOut;
@@ -24,10 +23,6 @@ public class CashOutServiceTests
     private readonly IVoidBetApiService service;
 
     private readonly IHttpClientFactory httpClientFactory;
-
-    private readonly List<VoidBetInfo> listVoidBetInfos = new() { new VoidBetInfo { TransId = "123" } };
-
-    private readonly VoidBetRequest request = new() { MatchId = 123, VoidBetInfos = new List<VoidBetInfo> { new() { TransId = "123" } }, Action = "UNDO" };
 
     public CashOutServiceTests()
     {
@@ -56,58 +51,72 @@ public class CashOutServiceTests
     [Fact]
     public async Task GetTicketInfo_Always_CallSP()
     {
-        await service.GetTicketInfo(new GetTicketInfo { SelectedResources = new List<string> { "Q1" }, Action = "REFUND" });
+        var selectedResources = new List<Models.ResourceItem>
+        {
+            new()
+            {
+                ResourceId = "Q1"
+            }
+        };
+        await service.GetTicketInfo(new GetTicketInfo { SelectedResources = selectedResources, Action = "REFUND" });
 
         await repository.Received(2).FetchAsync<VoidBetInfo>(Arg.Any<GetTicketInfoCriteria>());
     }
 
     [Fact]
-    public async Task GetTicketInfo_ActionUndoAndStatusNotRefund_NotReturnThisItem()
+    public async Task VoidBetApi_VoidBetInfosIsEmptied_NotCallAnyMethod()
     {
-        var listTicket = new List<VoidBetInfo>
+        var request = new VoidBetRequest() { MatchId = 123, VoidBetInfos = new List<VoidBetInfo>() };
+        repository.FetchAsync<VoidBetInfo>(Arg.Any<GetTicketInfoCriteria>()).Returns(new List<VoidBetInfo>());
+        await service.VoidBet(request);
+
+        httpClientFactory.DidNotReceive().CreateClient();
+        sendMailService.DidNotReceive().SendMail(Arg.Any<NotificationModel>());
+    }
+
+    [Fact]
+    public async Task VoidBetApi_HaveTwoActionNameOnListVoidBetInfo_CreateClientTwoTimes()
+    {
+        var request = new VoidBetRequest()
         {
-            new()
-            {
-                StatusId = 102
+            MatchId = 123,
+            VoidBetInfos = new List<VoidBetInfo> {
+                 new() { TransId = "123", Action = "Undo"},
+                 new() { TransId = "1234", Action = "Void" }
             }
         };
 
-        repository.FetchAsync<VoidBetInfo>(Arg.Any<GetTicketInfoCriteria>()).Returns(listTicket);
-
-        var result = await service.GetTicketInfo(new GetTicketInfo { SelectedResources = new List<string> { "Q1" }, Action = "UNDO" });
-
-        Assert.Empty(result);
-    }
-
-    [Fact]
-    public async Task VoidBetApi_3rdAPIFailed_SendMail()
-    {
-        var mockHttpMessageHandler = new Mock<HttpMessageHandler>();
-        mockHttpMessageHandler.Protected()
-            .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync(new HttpResponseMessage { StatusCode = HttpStatusCode.BadGateway });
-        repository.FetchAsync<VoidBetInfo>(Arg.Any<GetTicketInfoCriteria>()).Returns(listVoidBetInfos);
-        var httpClient = new HttpClient(mockHttpMessageHandler.Object);
-        httpClientFactory.CreateClient().Returns(httpClient);
-
-        await service.VoidBet(CashOutAction.VoidBet, request);
-
-        sendMailService.Received().SendMail(Arg.Any<NotificationModel>());
-    }
-
-    [Fact]
-    public async Task VoidBetApi_3rdAPISuccess_NotSendMail()
-    {
         var mockHttpMessageHandler = new Mock<HttpMessageHandler>();
         mockHttpMessageHandler.Protected()
             .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>())
             .ReturnsAsync(new HttpResponseMessage { StatusCode = HttpStatusCode.OK });
         var httpClient = new HttpClient(mockHttpMessageHandler.Object);
         httpClientFactory.CreateClient().Returns(httpClient);
-        repository.FetchAsync<VoidBetInfo>(Arg.Any<GetTicketInfoCriteria>()).Returns(listVoidBetInfos);
 
-        await service.VoidBet(CashOutAction.VoidBet, request);
-
+        await service.VoidBet(request);
+        httpClientFactory.Received(2).CreateClient();
         sendMailService.DidNotReceive().SendMail(Arg.Any<NotificationModel>());
+    }
+
+    [Fact]
+    public async Task VoidBetApi_3rdAPIFailed_SendMail()
+    {
+        var request = new VoidBetRequest()
+        {
+            MatchId = 123,
+            VoidBetInfos = new List<VoidBetInfo> {
+                new() { TransId = "1234", Action = "Void" }
+            }
+        };
+        var mockHttpMessageHandler = new Mock<HttpMessageHandler>();
+        mockHttpMessageHandler.Protected()
+            .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>())
+            .ReturnsAsync(new HttpResponseMessage { StatusCode = HttpStatusCode.BadGateway });
+        var httpClient = new HttpClient(mockHttpMessageHandler.Object);
+        httpClientFactory.CreateClient().Returns(httpClient);
+
+        await service.VoidBet(request);
+        httpClientFactory.Received(1).CreateClient();
+        sendMailService.Received(1).SendMail(Arg.Any<NotificationModel>());
     }
 }

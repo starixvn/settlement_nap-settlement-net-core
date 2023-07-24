@@ -7,6 +7,7 @@ using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Setting.Models.Notification;
 using Settlement.Setting.Services;
+using Settlement.ThirdPartyProducts.Constants;
 using Settlement.ThirdPartyProducts.Criteria;
 using Settlement.ThirdPartyProducts.Models;
 using Settlement.ThirdPartyProducts.Requests;
@@ -18,7 +19,7 @@ namespace Settlement.ThirdPartyProducts.Services;
 
 public interface IVoidBetApiService
 {
-    Task VoidBet(string action, VoidBetRequest request);
+    Task VoidBet(VoidBetRequest request);
 
     Task PostResult(string action, object request);
 
@@ -60,17 +61,28 @@ public class VoidBetApiServiceImp : IVoidBetApiService
         this.appSettingsKey = appSettingsKey.Value;
     }
 
-    public async Task VoidBet(string action, VoidBetRequest request)
+    public async Task VoidBet(VoidBetRequest request)
     {
-        var voidBetApiModel = new VoidBetApiModel
-        {
-            VoidBetInfos = request.VoidBetInfos
-        };
-        var jackTimeApi = appSettingsKey.ThirdPartyUri.JackTimeTicket;
+        var cashOutApi = appSettingsKey.ThirdPartyUri.JackTimeTicket;
 
-        if (!string.IsNullOrEmpty(jackTimeApi) && voidBetApiModel.VoidBetInfos.Any())
+        if (!string.IsNullOrEmpty(cashOutApi) && request.VoidBetInfos.Any())
         {
-            var apiUri = $"{jackTimeApi}{action}";
+            await CallApiVoidBet(request, cashOutApi);
+        }
+    }
+
+    private async Task CallApiVoidBet(VoidBetRequest request, string cashOutApi)
+    {
+        var actions = request.VoidBetInfos.GroupBy(m => m.Action).Select(m => m.Key);
+        foreach (var action in actions)
+        {
+            var voidBetInfos = request.VoidBetInfos.Where(m => m.Action == action);
+            var actionApi = action.Equals(ActionType.UnCalculate, StringComparison.OrdinalIgnoreCase) ? CashOutAction.UndoVoidBet : CashOutAction.VoidBet;
+            var apiUri = $"{cashOutApi}{actionApi}";
+            var voidBetApiModel = new VoidBetApiModel
+            {
+                VoidBetInfos = voidBetInfos
+            };
             var response = await PostAsync(apiUri, voidBetApiModel);
             await HandleResponse(response, request, voidBetApiModel);
         }
@@ -89,9 +101,17 @@ public class VoidBetApiServiceImp : IVoidBetApiService
 
     private async Task<HttpResponseMessage> PostAsync(string apiUri, object request)
     {
-        var requestContent = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
-        var httpClient = httpClientFactory.CreateClient();
-        return await httpClient.PostAsync(new Uri(apiUri), requestContent);
+        try
+        {
+            var requestContent = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
+            var httpClient = httpClientFactory.CreateClient();
+            return await httpClient.PostAsync(new Uri(apiUri), requestContent);
+        }
+        catch (Exception exception)
+        {
+            await Fanex.Logging.LogService.ErrorAsync("Settlement.WebSites (Call JackTime API): ", exception);
+            return new HttpResponseMessage();
+        }
     }
 
     private async Task HandleResponse(HttpResponseMessage response, VoidBetRequest request, VoidBetApiModel model)
@@ -110,12 +130,8 @@ public class VoidBetApiServiceImp : IVoidBetApiService
 
     public async Task<List<VoidBetInfo>> GetTicketInfo(GetTicketInfo request)
     {
-        var listResource = request.SelectedResources.Select(i => new ResourceItem(i)).ToList();
-        var getTicketInfoCriteria = new GetTicketInfoCriteria
-        {
-            MatchId = request.MatchId,
-            SelectedResources = CreateResources(listResource)
-        };
+        var getTicketInfoCriteria = mapper.Map<GetTicketInfo, GetTicketInfoCriteria>(request);
+        getTicketInfoCriteria.SelectedResources = CreateResources(request.SelectedResources);
 
         var listVoidBetInfo = new List<VoidBetInfo>();
 
@@ -126,25 +142,14 @@ public class VoidBetApiServiceImp : IVoidBetApiService
             listVoidBetInfo.AddRange(listVoidBet);
         }
 
-        return HandleListVoidBet(listVoidBetInfo, request.Action);
+        return listVoidBetInfo;
     }
 
-    private static List<VoidBetInfo> HandleListVoidBet(List<VoidBetInfo> voidBetInfos, string action)
-    {
-        if (action.Equals(ActionType.UnCalculate))
-        {
-            const int statusIdRefund = 103;
-            voidBetInfos = voidBetInfos.Where(item => item.StatusId == statusIdRefund).ToList();
-        }
-
-        return voidBetInfos;
-    }
-
-    private string CreateResources(List<ResourceItem> selectedResources)
+    private string CreateResources(IEnumerable<ResourceItem> selectedResources)
     {
         var resources = new Models.Resources<ResourceItem>
         {
-            ResourceItems = selectedResources
+            ResourceItems = selectedResources.ToList()
         };
 
         return xmlConvertService.Serialize(resources);

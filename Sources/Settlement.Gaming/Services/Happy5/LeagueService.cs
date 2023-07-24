@@ -7,7 +7,7 @@ namespace Settlement.Gaming.Services.Happy5;
 public interface LeagueService
 {
     Task<List<LeaguesModel>> Search(Happy5MatchRequest request);
-};
+}
 
 public class LeagueServiceImp : LeagueService
 {

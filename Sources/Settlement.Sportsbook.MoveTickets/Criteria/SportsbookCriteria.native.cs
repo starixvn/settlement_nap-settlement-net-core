@@ -23,7 +23,7 @@ public class SportsbookCriteria : CriteriaBase
 
     public string HoldStatus { get; set; }
 
-    public byte Page { get; } = 1;
+    public byte Page => 1;
 
     [SpParam(Ignored = true)]
     public string DbServer { get; set; }

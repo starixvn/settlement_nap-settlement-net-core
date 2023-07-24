@@ -12,19 +12,19 @@ import { ResultByTeamNamePipe } from '../../shared/pipes/result-by-team-name.pip
 
 export class CreateDataTest {
     public static CreateResultDetail(
-      resourceId: string,
-      home: string,
-      away: string,
-      checked: boolean
+        resourceId: string,
+        home: string,
+        away: string,
+        checked: boolean
     ) {
-      const item = new ResultDetail();
-      item.resourceId = resourceId;
-      item.checked = checked;
-      item.homeValue = home;
-      item.awayValue = away;
-      return item;
+        const item = new ResultDetail();
+        item.resourceId = resourceId;
+        item.checked = checked;
+        item.homeValue = home;
+        item.awayValue = away;
+        return item;
     }
-  }
+}
 describe('Basketball - Verify Service', () => {
     let service: VerificationService = null;
     let messageBoxService: MessageBoxService;
@@ -224,7 +224,7 @@ describe('Basketball - Verify Service', () => {
     });
 
     it('verifyIntervalsCalculated - should return true when interval not calculated', () => {
-        const fullTime = CreateDataTest.CreateResultDetail('00', '', '' , true);
+        const fullTime = CreateDataTest.CreateResultDetail('00', '', '', true);
         resultDetail.checked = false;
         resultDetail.settlementStatusId = 0;
 
@@ -233,13 +233,35 @@ describe('Basketball - Verify Service', () => {
         expect(result).toBe(true);
     });
 
-    it('isFtScoreLowerThanHtScore - should return true when full time lower than half time', () => {
-        const halfTime = CreateDataTest.CreateResultDetail('01', '4', '3', true);
-        const fullTime = CreateDataTest.CreateResultDetail('00', '2', '4', true);
+    test.each([
+        [
+            CreateDataTest.CreateResultDetail('01', '2', '1', true),
+            CreateDataTest.CreateResultDetail('00', '1', '0', true),
+            true,
+            true,
+        ],
+        [
+            CreateDataTest.CreateResultDetail('01', '2', '1', false),
+            CreateDataTest.CreateResultDetail('00', '2', '0', false),
+            true,
+            true,
+        ],
+        [
+            CreateDataTest.CreateResultDetail('01', '2', '1', false),
+            CreateDataTest.CreateResultDetail('00', '2', '0', false),
+            false,
+            false,
+        ],
 
-        const result = service.isFtScoreLowerThanHtScore([halfTime, fullTime]);
-
-        expect(result).toBe(true);
+        [
+            CreateDataTest.CreateResultDetail('01', '2', '1', true),
+            CreateDataTest.CreateResultDetail('00', '2', '0', false),
+            false,
+            true,
+        ],
+    ])('should return %s', (htResult: ResultDetail, ftResult: ResultDetail, onChangeScore: boolean, expected: boolean) => {
+        const result = service.isFtScoreLowerThanHtScore(htResult, ftResult, onChangeScore);
+        expect(result).toBe(expected);
     });
 
     it('isTicketOnQuarter - should return true when exist ticket on quarter', () => {
@@ -323,9 +345,9 @@ describe('Basketball - Verify Service', () => {
 
     describe('AutoSumHalfTimeAndFullTime', () => {
         it('sumScoreHalfTime - return correct when scores consecutive', () => {
-            const map1 = CreateDataTest.CreateResultDetail('Q1', '1', '1' , true);
-            const map2 = CreateDataTest.CreateResultDetail('Q2', '2', '2' , true);
-            const halfTime = CreateDataTest.CreateResultDetail('01', '', '' , true);
+            const map1 = CreateDataTest.CreateResultDetail('Q1', '1', '1', true);
+            const map2 = CreateDataTest.CreateResultDetail('Q2', '2', '2', true);
+            const halfTime = CreateDataTest.CreateResultDetail('01', '', '', true);
 
 
             service.sumScoreHalfTime([map1, map2], halfTime);
@@ -335,9 +357,9 @@ describe('Basketball - Verify Service', () => {
         });
 
         it('sumScoreHalfTime - return correct when scores not consecutive', () => {
-            const map1 = CreateDataTest.CreateResultDetail('Q1', '1', '1' , true);
-            const map3 = CreateDataTest.CreateResultDetail('Q3', '2', '2' , true);
-            const halfTime = CreateDataTest.CreateResultDetail('01', '', '' , true);
+            const map1 = CreateDataTest.CreateResultDetail('Q1', '1', '1', true);
+            const map3 = CreateDataTest.CreateResultDetail('Q3', '2', '2', true);
+            const halfTime = CreateDataTest.CreateResultDetail('01', '', '', true);
 
 
             service.sumScoreHalfTime([map1, map3], halfTime);
@@ -347,11 +369,11 @@ describe('Basketball - Verify Service', () => {
         });
 
         it('sumScoreFullTime - return correct when scores consecutive', () => {
-            const map1 = CreateDataTest.CreateResultDetail('Q1', '1', '1' , true);
-            const map2 = CreateDataTest.CreateResultDetail('Q2', '2', '2' , true);
-            const map3 = CreateDataTest.CreateResultDetail('Q3', '2', '2' , true);
-            const map4 = CreateDataTest.CreateResultDetail('Q3', '1', '1' , true);
-            const fullTime = CreateDataTest.CreateResultDetail('00', '', '' , true);
+            const map1 = CreateDataTest.CreateResultDetail('Q1', '1', '1', true);
+            const map2 = CreateDataTest.CreateResultDetail('Q2', '2', '2', true);
+            const map3 = CreateDataTest.CreateResultDetail('Q3', '2', '2', true);
+            const map4 = CreateDataTest.CreateResultDetail('Q3', '1', '1', true);
+            const fullTime = CreateDataTest.CreateResultDetail('00', '', '', true);
 
 
             service.sumScoreFullTime([map1, map2, map3, map4], fullTime);
@@ -361,10 +383,10 @@ describe('Basketball - Verify Service', () => {
         });
 
         it('sumScoreFullTime - return correct when scores not consecutive', () => {
-            const map1 = CreateDataTest.CreateResultDetail('Q1', '1', '1' , true);
-            const map2 = CreateDataTest.CreateResultDetail('Q2', '2', '2' , true);
-            const map4 = CreateDataTest.CreateResultDetail('Q3', '1', '1' , true);
-            const fullTime = CreateDataTest.CreateResultDetail('00', '', '' , true);
+            const map1 = CreateDataTest.CreateResultDetail('Q1', '1', '1', true);
+            const map2 = CreateDataTest.CreateResultDetail('Q2', '2', '2', true);
+            const map4 = CreateDataTest.CreateResultDetail('Q3', '1', '1', true);
+            const fullTime = CreateDataTest.CreateResultDetail('00', '', '', true);
 
 
             service.sumScoreFullTime([map1, map2, map4], fullTime);

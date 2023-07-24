@@ -40,12 +40,13 @@ public class GoalRecord
             return Goal;
         }
 
-        var homeAwayGoal = BetStatus.Substring(index + 3).Split('-');
+        var homeAwayGoal = BetStatus[(index + 3)..].Split('-');
 
         var lastGoalScoredTeam = homeAwayGoal[1];
         var firstGoalScoredTeam = homeAwayGoal[0];
 
-        if (lastGoalScoredTeam.Equals("0") && !firstGoalScoredTeam.Equals("0"))
+        var isExistedHalfTimeScore = HalfTimeAwayScore != null && HalfTimeHomeScore != null;
+        if (lastGoalScoredTeam.Equals("0") && !firstGoalScoredTeam.Equals("0") && isExistedHalfTimeScore)
         {
             return Goal[..((int)HalfTimeAwayScore + (int)HalfTimeHomeScore)];
         }

@@ -15,237 +15,238 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services;
 
 public class CreateQueryServiceTests
 {
-    private readonly XmlConvertService xmlConvertService;
+	private readonly XmlConvertService xmlConvertService;
 
-    private readonly INapSession currentSession;
+	private readonly INapSession currentSession;
 
-    private readonly ICreateQueryService service;
+	private readonly ICreateQueryService service;
 
-    private readonly LogService logService;
+	private readonly LogService logService;
 
-    public CreateQueryServiceTests()
-    {
-        xmlConvertService = Substitute.For<XmlConvertService>();
-        currentSession = Substitute.For<INapSession>();
-        var accessor = Substitute.For<IHttpContextAccessor>();
-        var context = new DefaultHttpContext
-        {
-            Connection =
-            {
-                RemoteIpAddress = new System.Net.IPAddress(1)
-            }
-        };
-        accessor.HttpContext = context;
-        var mapperConfig = new MapperConfigurationExpression();
-        mapperConfig.AddProfile<SportsbookAioAutoMapperProfile>();
-        var config = new MapperConfiguration(mapperConfig);
-        var mapper = new Mapper(config);
-        logService = Substitute.For<LogService>();
-        service = new CreateQueryServiceImp(xmlConvertService, currentSession, accessor, mapper, logService);
-    }
+	public CreateQueryServiceTests()
+	{
+		xmlConvertService = Substitute.For<XmlConvertService>();
+		currentSession = Substitute.For<INapSession>();
+		var accessor = Substitute.For<IHttpContextAccessor>();
+		var context = new DefaultHttpContext
+		{
+			Connection =
+			{
+				RemoteIpAddress = new System.Net.IPAddress(1)
+			}
+		};
+		accessor.HttpContext = context;
+		var mapperConfig = new MapperConfigurationExpression();
+		mapperConfig.AddProfile<SportsbookAioAutoMapperProfile>();
+		var config = new MapperConfiguration(mapperConfig);
+		var mapper = new Mapper(config);
+		logService = Substitute.For<LogService>();
+		service = new CreateQueryServiceImp(xmlConvertService, currentSession, accessor, mapper, logService);
+	}
 
-    [Fact]
-    public void QuerySettle_Always_ReturnsExpectedData()
-    {
-        // Arrange
-        var request = new SettleRequest
-        {
-            MatchId = 1,
-            ActionName = "Settle",
-            BetStatus = string.Empty,
-            IsLeader = false
-        };
+	[Fact]
+	public void QuerySettle_Always_ReturnsExpectedData()
+	{
+		// Arrange
+		var request = new SettleRequest
+		{
+			MatchId = 1,
+			ActionName = "Settle",
+			BetStatus = string.Empty,
+			IsLeader = false
+		};
 
-        var expectedData = new SettleCriteria
-        {
-            MatchId = request.MatchId,
-            AdminId = 0,
-            Action = request.ActionName,
-            Ip = "1.0.0.0",
-            BetStatus = "",
-            SelectedResources = "",
-            IsReSettledTickets = false,
-            IsLeader = false
-        };
+		var expectedData = new SettleCriteria
+		{
+			MatchId = request.MatchId,
+			AdminId = 0,
+			Action = request.ActionName,
+			Ip = "1.0.0.0",
+			BetStatus = "",
+			SelectedResources = "",
+			IsReSettledTickets = false,
+			IsLeader = false
+		};
 
-        // Act
-        var result = service.QuerySettle(request);
+		// Act
+		var result = service.QuerySettle(request);
 
-        // Assert
-        Assert.Equal(JsonConvert.SerializeObject(expectedData).RemoveSessionId(), JsonConvert.SerializeObject(result).RemoveSessionId());
-    }
+		// Assert
+		Assert.Equal(JsonConvert.SerializeObject(expectedData).RemoveSessionId(), JsonConvert.SerializeObject(result).RemoveSessionId());
+	}
 
-    [Fact]
-    public void QuerySaveScore__Always_ReturnsExpectedData()
-    {
-        // Arrange
-        var request = new SaveScoreRequest
-        {
-            MatchId = 1
-        };
+	[Fact]
+	public void QuerySaveScore__Always_ReturnsExpectedData()
+	{
+		// Arrange
+		var request = new SaveScoreRequest
+		{
+			MatchId = 1
+		};
 
-        var expectedData = new SaveScoreRequest
-        {
-            MatchId = request.MatchId,
-            UserId = currentSession.UserId,
-            OutsideSources = "",
-            Sources = "",
-            Ip = "1.0.0.0",
-            IsTrader = false
-        };
+		var expectedData = new SaveScoreRequest
+		{
+			MatchId = request.MatchId,
+			UserId = currentSession.UserId,
+			OutsideSources = "",
+			Sources = "",
+			Ip = "1.0.0.0",
+			IsTrader = false
+		};
 
-        var result = service.QuerySaveScore(request);
+		var result = service.QuerySaveScore(request);
 
-        Assert.Equal(JsonConvert.SerializeObject(expectedData), JsonConvert.SerializeObject(result));
-    }
+		Assert.Equal(JsonConvert.SerializeObject(expectedData), JsonConvert.SerializeObject(result));
+	}
 
-    [Fact]
-    public void WriteLogChildMatch__CriteriaExistError_WriteLog()
-    {
-        var criteria = new SettleCriteria
-        {
-            MatchId = 1,
-            ErrMsg = ""
-        };
+	[Fact]
+	public void WriteLogChildMatch__CriteriaExistError_WriteLog()
+	{
+		var criteria = new SettleCriteria
+		{
+			MatchId = 1,
+			ErrMsg = ""
+		};
 
-        var result = new Result
-        {
-            ErrMsg = "Message"
-        };
+		var result = new Result
+		{
+			ErrMsg = "Message"
+		};
 
-        service.WriteLogChildMatch(criteria, result);
+		service.WriteLogChildMatch(criteria, result);
 
-        Assert.Equal("", criteria.ErrMsg);
-        logService.Received(1).ActionLog(Arg.Any<int>(), Arg.Any<string>(), 100);
-    }
+		Assert.Equal("", criteria.ErrMsg);
+		logService.Received(1).ActionLog(Arg.Any<int>(), Arg.Any<string>(), 100);
+	}
 
-    [Fact]
-    public void QuerySettleChildMatch_Always_ReturnExpectedData()
-    {
-        var request = new SettleChildMatchRequest
-        {
-            ActionName = "Calc"
-        };
+	[Fact]
+	public void QuerySettleChildMatch_Always_ReturnExpectedData()
+	{
+		var request = new SettleChildMatchRequest
+		{
+			ActionName = "Calc"
+		};
 
-        var expectedData = new SettleCriteria
-        {
-            Action = request.ActionName,
-            AdminId = currentSession.UserId,
-            BetStatus = null,
-            SelectedResources = "",
-            Ip = "1.0.0.0",
-            IsDirectly = false
-        };
+		var expectedData = new SettleCriteria
+		{
+			Action = request.ActionName,
+			AdminId = currentSession.UserId,
+			BetStatus = null,
+			SelectedResources = "",
+			Ip = "1.0.0.0",
+			IsDirectly = false
+		};
 
-        var result = service.QuerySettleChildMatch(request);
+		var result = service.QuerySettleChildMatch(request);
 
-        Assert.Equal(JsonConvert.SerializeObject(expectedData).RemoveSessionId(), JsonConvert.SerializeObject(result).RemoveSessionId());
-    }
+		Assert.Equal(JsonConvert.SerializeObject(expectedData).RemoveSessionId(), JsonConvert.SerializeObject(result).RemoveSessionId());
+	}
 
-    [Fact]
-    public void QueryRecalResult_Always_ReturnExpectedData()
-    {
-        var request = new GetRecalResultRequest
-        {
-            MatchId = 1,
-            SportType = 1
-        };
+	[Fact]
+	public void QueryRecalResult_Always_ReturnExpectedData()
+	{
+		var request = new GetRecalResultRequest
+		{
+			MatchId = 1,
+			SportType = 1
+		};
 
-        var expectedData = new GetRecalResultCriteria
-        {
-            MatchId = request.MatchId,
-            SportType = request.SportType
-        };
+		var expectedData = new GetRecalResultCriteria
+		{
+			MatchId = request.MatchId,
+			SportType = request.SportType
+		};
 
-        var result = service.QueryRecalResult(request);
+		var result = service.QueryRecalResult(request);
 
-        Assert.Equal(JsonConvert.SerializeObject(expectedData), JsonConvert.SerializeObject(result));
-    }
+		Assert.Equal(JsonConvert.SerializeObject(expectedData), JsonConvert.SerializeObject(result));
+	}
 
-    [Fact]
-    public void QueryChangeSetting_Always_ReturnExpectedData()
-    {
-        var request = new ResultSettingRequest
-        {
-            MatchId = 1,
-            IsEnabled = true,
-            ResourceIds = "",
-            Type = 2
-        };
+	[Fact]
+	public void QueryChangeSetting_Always_ReturnExpectedData()
+	{
+		var request = new ResultSettingRequest
+		{
+			MatchId = 1,
+			IsEnabled = true,
+			ResourceIds = "",
+			Type = 2
+		};
 
-        var expectedData = new ResultSettingCriteria
-        {
-            MatchId = request.MatchId,
-            IsEnabled = request.IsEnabled,
-            Type = request.Type,
-            AdminId = currentSession.UserId,
-            ResourceIds = request.ResourceIds
-        };
+		var expectedData = new ResultSettingCriteria
+		{
+			MatchId = request.MatchId,
+			IsEnabled = request.IsEnabled,
+			Type = request.Type,
+			AdminId = currentSession.UserId,
+			ResourceIds = request.ResourceIds,
+			SelectedResources = string.Empty
+		};
 
-        var result = service.QueryChangeSetting(request);
+		var result = service.QueryChangeSetting(request);
 
-        Assert.Equal(JsonConvert.SerializeObject(expectedData), JsonConvert.SerializeObject(result));
-    }
+		Assert.Equal(JsonConvert.SerializeObject(expectedData), JsonConvert.SerializeObject(result));
+	}
 
-    [Fact]
-    public void CreateMatchResources_Always_ReturnExpectedData()
-    {
-        var listResources = new List<CheckOddsItem>
-        {
-            new() { MatchId = 1},
-            new() { MatchId = 2}
-        };
+	[Fact]
+	public void CreateMatchResources_Always_ReturnExpectedData()
+	{
+		var listResources = new List<CheckOddsItem>
+		{
+			new() { MatchId = 1},
+			new() { MatchId = 2}
+		};
 
-        var resources = new Resources<CheckOddsItem>
-        {
-            ResourceItems = listResources
-        };
+		var resources = new Resources<CheckOddsItem>
+		{
+			ResourceItems = listResources
+		};
 
-        var expectedData = xmlConvertService.Serialize(resources);
+		var expectedData = xmlConvertService.Serialize(resources);
 
-        var result = service.CreateMatchResources(listResources);
+		var result = service.CreateResources(listResources);
 
-        Assert.Equal(expectedData, result);
-    }
+		Assert.Equal(expectedData, result);
+	}
 
-    [Fact]
-    public void CreateResources_Always_ReturnExpectedData()
-    {
-        var listResources = new List<ResourceItem>
-        {
-            new() { ResourceId = "00"},
-            new() { ResourceId = "01"}
-        };
+	[Fact]
+	public void CreateResources_Always_ReturnExpectedData()
+	{
+		var listResources = new List<ResourceItem>
+		{
+			new() { ResourceId = "00"},
+			new() { ResourceId = "01"}
+		};
 
-        var resources = new Resources<ResourceItem>
-        {
-            ResourceItems = listResources
-        };
+		var resources = new Resources<ResourceItem>
+		{
+			ResourceItems = listResources
+		};
 
-        var expectedData = xmlConvertService.Serialize(resources);
+		var expectedData = xmlConvertService.Serialize(resources);
 
-        var result = service.CreateResources(listResources);
+		var result = service.CreateResources(listResources);
 
-        Assert.Equal(expectedData, result);
-    }
+		Assert.Equal(expectedData, result);
+	}
 
-    [Fact]
-    public void CreateResourceChildMatch_Always_ReturnExpectedData()
-    {
-        var childMatch = new ChildMatchModel
-        {
-            ResourceId = "0001"
-        };
+	[Fact]
+	public void CreateResourceChildMatch_Always_ReturnExpectedData()
+	{
+		var childMatch = new ChildMatchModel
+		{
+			ResourceId = "0001"
+		};
 
-        var resources = new Resources<ResourceItem>
-        {
-            ResourceItems = new List<ResourceItem> { new() { ResourceId = childMatch.ResourceId } }
-        };
+		var resources = new Resources<ResourceItem>
+		{
+			ResourceItems = new List<ResourceItem> { new() { ResourceId = childMatch.ResourceId } }
+		};
 
-        var expectedData = xmlConvertService.Serialize(resources);
+		var expectedData = xmlConvertService.Serialize(resources);
 
-        var result = service.CreateResourceChildMatch(childMatch);
+		var result = service.CreateResourceChildMatch(childMatch);
 
-        Assert.Equal(expectedData, result);
-    }
+		Assert.Equal(expectedData, result);
+	}
 }

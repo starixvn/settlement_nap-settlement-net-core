@@ -1,6 +1,6 @@
-﻿using Settlement.ResourceInfos.Services.Cricket;
+﻿namespace Settlement.ResourceInfos.UnitTests.Services.Cricket;
 
-namespace Settlement.BettypeName.UnitTests.Services.Cricket;
+using Settlement.ResourceInfos.Services.Cricket;
 
 public class ResourceNameServiceTests
 {

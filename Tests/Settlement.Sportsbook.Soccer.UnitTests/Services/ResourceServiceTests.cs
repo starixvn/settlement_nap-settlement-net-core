@@ -21,9 +21,7 @@ public class ResourceServiceTests
         actionResourceService = Substitute.For<IActionResourceService>();
         var mapperConfig = new MapperConfigurationExpression();
         mapperConfig.AddProfile<SoccerAutoMapperProfile>();
-        var config = new MapperConfiguration(mapperConfig);
-        var mapper = new Mapper(config);
-        service = new ResourceServiceImp(actionResourceService, goalRecordService, mapper);
+        service = new ResourceServiceImp(actionResourceService, goalRecordService);
     }
 
     [Fact]
@@ -1061,7 +1059,7 @@ public class ResourceServiceTests
     [Fact]
     public void UnCalculateFtResources_ExistScoreHT_ReturnExpect()
     {
-        var goalRecord = "h;";
+        const string goalRecord = "h;";
 
         var expect = new List<XmlResource>
         {
@@ -1089,6 +1087,7 @@ public class ResourceServiceTests
             HomeValue = string.Empty
         }
         };
+        goalRecordService.HalftimeGoal(Arg.Any<string>()).Returns("h");
 
         // Actual
 
@@ -1101,7 +1100,7 @@ public class ResourceServiceTests
     [Fact]
     public void UnCalculateFtResources_NotExistScoreHT_ReturnExpect()
     {
-        var goalRecord = ";h";
+        const string goalRecord = ";h";
 
         var expect = new List<XmlResource>
         {
@@ -1135,10 +1134,11 @@ public class ResourceServiceTests
                 ResultStatusId = ResultStatus.Initial,
                 SettlementStatusId = SettlementStatus.Running,
                 HomeValue = string.Empty
-            },
+            }
         };
 
         // Actual
+        goalRecordService.HalftimeGoal(Arg.Any<string>()).Returns(string.Empty);
 
         var actual = service.UnCalculateFtResources(goalRecord);
 

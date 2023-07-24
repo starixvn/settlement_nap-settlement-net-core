@@ -24,5 +24,6 @@ public class SportsbookAioAutoMapperProfile : Profile
        .ForMember(dest => dest.MatchId, map => map.Ignore());
         CreateMap<ChildMatchModel, ResourceItem>();
         CreateMap<SettleCriteria, InsertLogCriteria>();
+        CreateMap<ResultSettingRequest, ResultSettingCriteria>();
     }
 }

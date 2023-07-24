@@ -32,5 +32,5 @@ public class OutrightLogDetail
 
     public string LeagueName => RefDataService.GetLeagueName(LeagueId);
 
-    public string RemarkName => string.IsNullOrWhiteSpace(Remark) ? string.Empty : (int.TryParse(Remark, out _) ? $"Dead Heat({Remark})" : Remark);
+    public string RemarkName => string.IsNullOrWhiteSpace(Remark) ? string.Empty : int.TryParse(Remark, out _) ? $"Dead Heat({Remark})" : Remark;
 }

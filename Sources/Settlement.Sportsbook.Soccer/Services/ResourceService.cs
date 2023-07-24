@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Settlement.Core.Constants;
+﻿using Settlement.Core.Constants;
 using Settlement.Sportsbook.Soccer.Constants;
 using Settlement.Sportsbook.Soccer.Models;
 
@@ -28,13 +27,10 @@ public class ResourceServiceImp : IResourceService
 
     private readonly IGoalRecordService goalRecordService;
 
-    private readonly IMapper mapper;
-
-    public ResourceServiceImp(IActionResourceService actionResourceService, IGoalRecordService goalRecordService, IMapper mapper)
+    public ResourceServiceImp(IActionResourceService actionResourceService, IGoalRecordService goalRecordService)
     {
         this.actionResourceService = actionResourceService;
         this.goalRecordService = goalRecordService;
-        this.mapper = mapper;
     }
 
     public List<XmlResource> HalftimeResources(GoalCondition goalCondition, int settlementStatusId)

@@ -69,7 +69,7 @@ export class FilterComponent implements OnInit {
     }
 
     private isValidInput() {
-        return !_.isEmpty(this.filter.matchCode) && this.verifyDateService.validDate(this.filter.fromDate, this.filter.toDate);
+        return !_.isEmpty(this.filter.matchCode) && (this.filter.productType === this.resettleType || this.verifyDateService.validDate(this.filter.fromDate, this.filter.toDate));
     }
 
     private getErrorMessage() {

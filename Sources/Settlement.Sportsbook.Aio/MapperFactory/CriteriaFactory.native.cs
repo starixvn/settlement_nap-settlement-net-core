@@ -31,6 +31,6 @@ public class CriteriaFactoryBase : ICriteriaFactory
 
     public Type GetCriteriaType(string apiKey)
     {
-        return CriteriaTypes.ContainsKey(apiKey) ? CriteriaTypes[apiKey] : null;
+        return CriteriaTypes.TryGetValue(apiKey, out var type) ? type : null;
     }
 }

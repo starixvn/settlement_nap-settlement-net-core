@@ -35,7 +35,7 @@ describe('Component: MatchDetailComponent', () => {
 
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
-              providers: [
+            providers: [
                 MessageBoxService,
                 BasketballService,
                 HttpRequestService,
@@ -45,21 +45,21 @@ describe('Component: MatchDetailComponent', () => {
                 ResourceNameByIdPipe,
                 NgbModal,
                 { provide: MessageBoxService, useClass: MessageBoxService },
-              ],
-              imports: [
+            ],
+            imports: [
                 HttpClientModule,
                 MatchDetailComponent,
                 ScoreBySettlementPipe
-              ],
-            })
+            ],
+        })
             .compileComponents()
             .then(() => {
-              fixture = TestBed.createComponent(MatchDetailComponent);
-              component = fixture.componentInstance;
-              basketballService = fixture.debugElement.injector.get(BasketballService);
-              basketballService.getResultDetail = jest.fn().mockReturnValue(resultDetails);
+                fixture = TestBed.createComponent(MatchDetailComponent);
+                component = fixture.componentInstance;
+                basketballService = fixture.debugElement.injector.get(BasketballService);
+                basketballService.getResultDetail = jest.fn().mockReturnValue(resultDetails);
             });
-          }));
+    }));
 
     it('should create the app', waitForAsync(() => {
         expect(component).toBeTruthy();
@@ -70,7 +70,7 @@ describe('Component: MatchDetailComponent', () => {
 
         component.ngOnInit();
         expect(component.matchDetail).toEqual(match.matchDetail);
-        expect(component.resultDetail).not.toBeNull();
+        expect(component.resultDetails).not.toBeNull();
     });
 
     describe('getClass', () => {

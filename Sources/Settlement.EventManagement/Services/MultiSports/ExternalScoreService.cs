@@ -1,92 +1,96 @@
 ﻿namespace Settlement.EventManagement.Services.MultiSports;
 
 using Settlement.Core.Models;
-using Match = Settlement.EventManagement.Models.MultiSports.Match;
+using Match = Models.MultiSports.Match;
 
 public interface IExternalScoreService
 {
-    void LoadExternalResultForOtherSports(Match match, List<ResultDetail> resultDetails, bool includeHalfTime);
+    bool IsInconsistentFullTimeScore(int matchId, string userConfirmation, List<ResultDetail> resultDetails);
 
-    void LoadExternalResultForVolleyball(Match match, List<ResultDetail> resultDetails);
+    bool IsInconsistentHalftimeScore(Match match, IEnumerable<ResultDetail> resultDetails);
+
+    bool IsInconsistentFullTimeScore(Match match, IEnumerable<ResultDetail> resultDetails);
 }
 
 public class ExternalScoreServiceImp : IExternalScoreService
 {
-    public void LoadExternalResultForVolleyball(Match match, List<ResultDetail> resultDetails)
+    public bool IsInconsistentFullTimeScore(int matchId, string userConfirmation, List<ResultDetail> resultDetails)
     {
-        var internalResultDetails = resultDetails.Where(m => m.MatchId == match.MatchId && m.SourceId == SourceType.Normal).ToList();
+        var externalResultDetails = GetSboResults(matchId, resultDetails);
+        var finalExternalResult = externalResultDetails.Find(result => result.ResourceId == ResourceType.Final);
+        if (finalExternalResult == null)
+        {
+            return false;
+        }
+
+        var currentResult = resultDetails.Find(result => result.MatchId == matchId &&
+                                                         result.SourceId == SourceType.Normal &&
+                                                         result.ResourceId == finalExternalResult.ResourceId);
+
+        return ScoresDifferent(currentResult, finalExternalResult, userConfirmation);
+    }
+
+    private static bool ScoresDifferent(ResultDetail currentResult, ResultDetail externalResult, string userConfirmation)
+    {
+        if (currentResult == null)
+        {
+            return true;
+        }
+
+        var isHomeValue = string.Equals(currentResult.HomeValue, externalResult.HomeValue);
+        var isAwayValue = string.Equals(currentResult.AwayValue, externalResult.AwayValue);
+
+        if (isHomeValue && isAwayValue)
+        {
+            return false;
+        }
+
+        var scoreExists = !string.IsNullOrWhiteSpace(currentResult.HomeValue) && !string.IsNullOrWhiteSpace(currentResult.AwayValue);
+
+        return scoreExists || !string.Equals(userConfirmation, "-");
+    }
+
+    public bool IsInconsistentHalftimeScore(Match match, IEnumerable<ResultDetail> resultDetails)
+    {
         var externalResultDetails = GetSboResults(match.MatchId, resultDetails);
-        SetExternalFullTime(match, externalResultDetails);
-        if (match.ExFtResult != null)
+        var halftimeExternalResult = externalResultDetails.Find(result => result.ResourceId == ResourceType.Halftime);
+        if (halftimeExternalResult == null)
         {
-            var result = internalResultDetails.Find(r => r.ResourceId == match.ExFtResult.ResourceId);
-            if (ConsistentResultDetail(result, match.ExFtResult))
-            {
-                match.IsNotConsistentExFtScore = !string.Equals(match.SuspenderFullTime, "-") || ExistResult(result);
-            }
+            return false;
         }
+
+        if (match.HalfTimeHomeScore == null && match.HalfTimeAwayScore == null)
+        {
+            return !string.Equals(match.SuspenderHalfTime, "-");
+        }
+
+        var isHomeValue = string.Equals(match.HalfTimeHomeScore.ToString(), halftimeExternalResult.HomeValue);
+        var isAwayValue = string.Equals(match.HalfTimeAwayScore.ToString(), halftimeExternalResult.AwayValue);
+
+        return !isHomeValue || !isAwayValue;
     }
 
-    public void LoadExternalResultForOtherSports(Match match, List<ResultDetail> resultDetails, bool includeHalfTime)
+    public bool IsInconsistentFullTimeScore(Match match, IEnumerable<ResultDetail> resultDetails)
     {
         var externalResultDetails = GetSboResults(match.MatchId, resultDetails);
-        if (includeHalfTime)
+        var finalExternalResult = externalResultDetails.Find(result => result.ResourceId == ResourceType.Final);
+        if (finalExternalResult == null)
         {
-            SetExternalResult(match, externalResultDetails);
-            if (match.ExHtResult != null && ConsistentMatchScore(match.HalfTimeHomeScore, match.HalfTimeAwayScore, match.ExHtResult))
-            {
-                match.IsNotConsistentExHtScore = !string.Equals(match.SuspenderHalfTime, "-") || ExistMatchScore(match.HalfTimeHomeScore, match.HalfTimeAwayScore);
-            }
-        }
-        else
-        {
-            SetExternalFullTime(match, externalResultDetails);
+            return false;
         }
 
-        if (match.ExFtResult != null && ConsistentMatchScore(match.FinalHomeScore, match.FinalAwayScore, match.ExFtResult))
+        if (match.FinalHomeScore == null && match.FinalAwayScore == null)
         {
-            match.IsNotConsistentExFtScore = !string.Equals(match.SuspenderFullTime, "-") || ExistMatchScore(match.FinalHomeScore, match.FinalAwayScore);
+            return !string.Equals(match.SuspenderFullTime, "-");
         }
+
+        var isHomeValue = string.Equals(match.FinalHomeScore.ToString(), finalExternalResult.HomeValue);
+        var isAwayValue = string.Equals(match.FinalAwayScore.ToString(), finalExternalResult.AwayValue);
+
+        return !isHomeValue || !isAwayValue;
     }
 
-    private static void SetExternalResult(Match match, List<ResultDetail> externalResultDetails)
-    {
-        SetExternalHalfTime(match, externalResultDetails);
-        SetExternalFullTime(match, externalResultDetails);
-    }
-
-    private static void SetExternalHalfTime(Match match, List<ResultDetail> externalResultDetails)
-    {
-        var halfTimeResult = externalResultDetails.Find(result => result.ResourceId == ResourceType.Halftime);
-        if (halfTimeResult != null && !string.IsNullOrEmpty(halfTimeResult.AwayValue) && !string.IsNullOrEmpty(halfTimeResult.HomeValue))
-        {
-            match.ExHtResult = halfTimeResult;
-        }
-    }
-
-    private static void SetExternalFullTime(Match match, List<ResultDetail> externalResultDetails)
-    {
-        var fullTimeResult = externalResultDetails.Find(result => result.ResourceId == ResourceType.Final);
-        if (fullTimeResult != null && !string.IsNullOrEmpty(fullTimeResult.AwayValue) && !string.IsNullOrEmpty(fullTimeResult.HomeValue))
-        {
-            match.ExFtResult = fullTimeResult;
-        }
-    }
-
-    private static bool ConsistentResultDetail(ResultDetail result, ResultDetail externalResult) =>
-      result != null && (result.HomeValue != externalResult.HomeValue || result.AwayValue != externalResult.AwayValue) || result == null;
-
-    private static bool ConsistentMatchScore(int? homeValue, int? awayValue, ResultDetail externalResult) =>
-        ExistMatchScore(homeValue, awayValue) && (homeValue.ToString() != externalResult.HomeValue || awayValue.ToString() != externalResult.AwayValue)
-        || !ExistMatchScore(homeValue, awayValue);
-
-    private static bool ExistResult(ResultDetail result) =>
-         result != null && !string.IsNullOrEmpty(result.HomeValue) && !string.IsNullOrEmpty(result.AwayValue);
-
-    private static bool ExistMatchScore(int? homeValue, int? awayValue) =>
-        homeValue != null && awayValue != null;
-
-    private static List<ResultDetail> GetSboResults(int matchId, List<ResultDetail> resultDetails)
+    private static List<ResultDetail> GetSboResults(int matchId, IEnumerable<ResultDetail> resultDetails)
     {
         return resultDetails.Where(m => m.MatchId == matchId && m.SourceId != SourceType.Normal
                                         && !string.IsNullOrWhiteSpace(m.AwayValue)

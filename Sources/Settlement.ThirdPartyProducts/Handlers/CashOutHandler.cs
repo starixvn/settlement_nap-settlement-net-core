@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.ThirdPartyProducts.Constants;
 using Settlement.ThirdPartyProducts.Requests;
@@ -28,8 +27,7 @@ public class CashOutHandler :
 
     public async Task Handle(VoidBetRequest request, CancellationToken cancellationToken)
     {
-        var action = request.Action.Equals(ActionType.UnCalculate) ? CashOutAction.UndoVoidBet : CashOutAction.VoidBet;
-        await voidBetApiService.VoidBet(action, request);
+        await voidBetApiService.VoidBet(request);
     }
 
     public async Task Handle(CalcRequest request, CancellationToken cancellationToken)

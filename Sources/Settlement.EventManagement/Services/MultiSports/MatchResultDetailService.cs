@@ -1,9 +1,7 @@
-﻿using Settlement.EventManagement.Services.SpecificService.Tennis;
+﻿namespace Settlement.EventManagement.Services.MultiSports;
 
-namespace Settlement.EventManagement.Services.MultiSports;
-
+using Services;
 using Settlement.Core.Models;
-using Settlement.Core.Services;
 using Match = Models.MultiSports.Match;
 
 public interface IMatchResultDetailService
@@ -27,21 +25,21 @@ public interface IMatchResultDetailService
 
 public class MatchResultDetailServiceImp : IMatchResultDetailService
 {
-    private readonly ITennisService tennisService;
+    private readonly ScoreTennisService scoreTennisService;
 
     private readonly IRefDataService refDataService;
 
     private readonly IExternalScoreService externalScoreService;
 
-    private readonly IScoreService scoreService;
+    private readonly ScoreService scoreService;
 
     public MatchResultDetailServiceImp(
-        ITennisService tennisService,
+        ScoreTennisService scoreTennisService,
         IRefDataService refDataService,
         IExternalScoreService externalScoreService,
-        IScoreService scoreService)
+        ScoreService scoreService)
     {
-        this.tennisService = tennisService;
+        this.scoreTennisService = scoreTennisService;
         this.refDataService = refDataService;
         this.externalScoreService = externalScoreService;
         this.scoreService = scoreService;
@@ -53,8 +51,9 @@ public class MatchResultDetailServiceImp : IMatchResultDetailService
         {
             match.RefDataService = refDataService;
             var resultDetailByMatchId = resultDetails.Where(m => m.MatchId == match.MatchId && m.SourceId == SourceType.Normal).ToList();
-            match.MoreScores = tennisService.ScoreLoader(match, resultDetailByMatchId, permission);
-            match.IsHavingIntervalScore = IsDisplayIntervalScore(match, resultDetailByMatchId);
+            match.MoreScores = scoreTennisService.ScoreLoader(resultDetailByMatchId, permission);
+            match.IsHavingIntervalScore = scoreService.IsIntervalScore(match.SportType, resultDetailByMatchId);
+            match.EventStatus = scoreTennisService.GetEventStatus(resultDetails, match.EventStatus);
         }
 
         return matches;
@@ -66,78 +65,10 @@ public class MatchResultDetailServiceImp : IMatchResultDetailService
         return SetMatchInfo(matches, resultDetails, resources, permission);
     }
 
-    public List<Match> ESportsResultDetail(List<Match> matches, List<ResultDetail> resultDetails, Permission permission)
-    {
-        var resources = new List<string> { "M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8", "M9" };
-        return ESportSetMatchInfo(matches, resultDetails, resources, permission);
-    }
-
     public List<Match> CricketResultDetail(List<Match> matches, List<ResultDetail> resultDetails, Permission permission)
     {
         var resources = new List<string> { "H1", "H2", "A1", "A2" };
         return SetMatchInfo(matches, resultDetails, resources, permission);
-    }
-
-    public List<Match> BeachVolleyballResultDetail(List<Match> matches, List<ResultDetail> resultDetails, Permission permission)
-    {
-        var resources = new List<string> { "0101", "0102", "0103" };
-        return VolleyballSetMatchInfo(matches, resultDetails, resources, permission);
-    }
-
-    public List<Match> VolleyballResultDetail(List<Match> matches, List<ResultDetail> resultDetails, Permission permission)
-    {
-        var resources = new List<string> { "0101", "0102", "0103", "0104", "0105" };
-        return VolleyballSetMatchInfo(matches, resultDetails, resources, permission);
-    }
-
-    private List<Match> VolleyballSetMatchInfo(List<Match> matches, List<ResultDetail> resultDetails, List<string> resources, Permission permission)
-    {
-        foreach (var match in matches)
-        {
-            match.RefDataService = refDataService;
-            var resultDetailByMatchId = resultDetails.Where(m => m.MatchId == match.MatchId && m.SourceId == SourceType.Normal).ToList();
-            match.MoreScores = scoreService.ScoreLoader(match.SportType, resultDetailByMatchId, resources, permission);
-            match.IsHavingIntervalScore = IsDisplayIntervalScore(match, resultDetailByMatchId);
-            externalScoreService.LoadExternalResultForVolleyball(match, resultDetails);
-        }
-
-        return matches;
-    }
-
-    private List<Match> ESportSetMatchInfo(List<Match> matches, List<ResultDetail> resultDetails, List<string> resources, Permission permission)
-    {
-        foreach (var match in matches)
-        {
-            match.RefDataService = refDataService;
-            var resultDetailByMatchId = resultDetails.Where(m => m.MatchId == match.MatchId && m.SourceId == SourceType.Normal).ToList();
-            match.MoreScores = GetMoreScoresESport(match, resultDetailByMatchId, resources, permission);
-            match.IsHavingIntervalScore = IsDisplayIntervalScore(match, resultDetailByMatchId);
-        }
-        return matches;
-    }
-
-    private MoreScores GetMoreScoresESport(Match match, List<ResultDetail> resultDetailByMatchId, List<string> resources, Permission permission)
-    {
-        const int maxResultNormalEs = 9;
-        if (match.BestOfMap > maxResultNormalEs)
-        {
-            var resourcesBom30 = Enumerable.Range(1, match.BestOfMap).Select(i => $"M{i}").ToList();
-            return scoreService.ScoreLoader(match.SportType, resultDetailByMatchId, resourcesBom30, permission);
-        }
-        return scoreService.ScoreLoader(match.SportType, resultDetailByMatchId, resources, permission);
-    }
-
-    private List<Match> SetMatchInfo(List<Match> matches, List<ResultDetail> resultDetails, List<string> resources, Permission permission)
-    {
-        foreach (var match in matches)
-        {
-            match.RefDataService = refDataService;
-            var resultDetailByMatchId = resultDetails.Where(m => m.MatchId == match.MatchId && m.SourceId == SourceType.Normal).ToList();
-            match.MoreScores = scoreService.ScoreLoader(match.SportType, resultDetailByMatchId, resources, permission);
-            match.IsHavingIntervalScore = IsDisplayIntervalScore(match, resultDetailByMatchId);
-        }
-
-        return matches;
     }
 
     public List<Match> BadmintonResultDetail(List<Match> matches, List<ResultDetail> resultDetails, Permission permission)
@@ -146,21 +77,93 @@ public class MatchResultDetailServiceImp : IMatchResultDetailService
         return SetMatchInfo(matches, resultDetails, resources, permission);
     }
 
-    private static bool IsDisplayIntervalScore(Match match, List<ResultDetail> resultDetails)
+    public List<Match> ESportsResultDetail(List<Match> matches, List<ResultDetail> resultDetails, Permission permission)
     {
-        if (match.SportType == SportType.BasketBall)
+        var resources = new List<string> { "M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8", "M9" };
+
+        foreach (var match in matches)
         {
-            return resultDetails.Exists(item => !item.ResourceId.Equals(ResourceType.Halftime) && !item.ResourceId.Equals(ResourceType.Final));
+            match.RefDataService = refDataService;
+            var resultDetailByMatchId = resultDetails.Where(m => m.MatchId == match.MatchId && m.SourceId == SourceType.Normal).ToList();
+            match.MoreScores = GetMoreScoresESport(match, resultDetailByMatchId, resources, permission);
+            match.IsHavingIntervalScore = scoreService.IsIntervalScore(match.SportType, resultDetailByMatchId);
         }
 
-        return resultDetails.Exists(item => !item.ResourceId.Equals(ResourceType.Final));
+        return matches;
+    }
+
+    private MoreScores GetMoreScoresESport(Match match, List<ResultDetail> resultDetailByMatchId, List<string> resources, Permission permission)
+    {
+        const int maxResultNormalEs = 9;
+        var resourcesBom30 = Enumerable.Range(1, match.BestOfMap).Select(i => $"M{i}").ToList();
+        var newResources = match.BestOfMap > maxResultNormalEs ? resourcesBom30 : resources;
+
+        return ScoreLoader(match.SportType, resultDetailByMatchId, newResources, permission);
+    }
+
+    public List<Match> BeachVolleyballResultDetail(List<Match> matches, List<ResultDetail> resultDetails, Permission permission)
+    {
+        var resources = new List<string> { "0101", "0102", "0103" };
+        foreach (var match in matches)
+        {
+            match.RefDataService = refDataService;
+            var resultDetailByMatchId = resultDetails.Where(m => m.MatchId == match.MatchId && m.SourceId == SourceType.Normal).ToList();
+            match.MoreScores = ScoreLoader(match.SportType, resultDetailByMatchId, resources, permission);
+            match.IsHavingIntervalScore = scoreService.IsIntervalScore(match.SportType, resultDetailByMatchId);
+            match.IsNotConsistentExFtScore = externalScoreService.IsInconsistentFullTimeScore(match.MatchId, match.SuspenderFullTime, resultDetails);
+        }
+
+        return matches;
+    }
+
+    public List<Match> VolleyballResultDetail(List<Match> matches, List<ResultDetail> resultDetails, Permission permission)
+    {
+        var resources = new List<string> { "0101", "0102", "0103", "0104", "0105" };
+        foreach (var match in matches)
+        {
+            match.RefDataService = refDataService;
+            var resultDetailByMatchId = resultDetails.Where(m => m.MatchId == match.MatchId && m.SourceId == SourceType.Normal).ToList();
+            match.MoreScores = ScoreLoader(match.SportType, resultDetailByMatchId, resources, permission);
+            match.IsHavingIntervalScore = scoreService.IsIntervalScore(match.SportType, resultDetailByMatchId);
+        }
+
+        return matches;
+    }
+
+    private MoreScores ScoreLoader(int sportType, List<ResultDetail> resultDetails, List<string> resources, Permission permission)
+    {
+        return new MoreScores
+        {
+            HalfTimeScore = scoreService.HalftimeScore(sportType, resultDetails, permission),
+            FinalScore = scoreService.FinalScore(sportType, resultDetails, permission),
+            Sets = scoreService.ScoreOfSets(resultDetails, resources, permission)
+        };
+    }
+
+    private List<Match> SetMatchInfo(List<Match> matches, IReadOnlyCollection<ResultDetail> resultDetails, List<string> resources, Permission permission)
+    {
+        foreach (var match in matches)
+        {
+            match.RefDataService = refDataService;
+            var resultDetailByMatchId = resultDetails.Where(m => m.MatchId == match.MatchId && m.SourceId == SourceType.Normal).ToList();
+            match.MoreScores = ScoreLoader(match.SportType, resultDetailByMatchId, resources, permission);
+            match.IsHavingIntervalScore = scoreService.IsIntervalScore(match.SportType, resultDetailByMatchId);
+        }
+
+        return matches;
     }
 
     public List<Match> OtherSportsResultDetail(List<Match> matches, List<ResultDetail> resultDetails, bool includeHalfTime)
     {
         foreach (var match in matches)
         {
-            externalScoreService.LoadExternalResultForOtherSports(match, resultDetails, includeHalfTime);
+            match.RefDataService = refDataService;
+            if (includeHalfTime)
+            {
+                match.IsNotConsistentExHtScore = externalScoreService.IsInconsistentHalftimeScore(match, resultDetails);
+            }
+
+            match.IsNotConsistentExFtScore = externalScoreService.IsInconsistentFullTimeScore(match, resultDetails);
         }
 
         return matches;

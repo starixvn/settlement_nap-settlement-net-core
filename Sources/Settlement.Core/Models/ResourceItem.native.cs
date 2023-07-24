@@ -2,8 +2,10 @@
 
 namespace Settlement.Core.Models;
 
-public class ResourceItem
+public class ResourceItem : BaseResourceItem
 {
+    private string determined = "0";
+
     public ResourceItem()
     {
     }
@@ -13,24 +15,14 @@ public class ResourceItem
         ResourceId = id;
     }
 
-    [XmlAttribute("Id")]
-    public string ResourceId { get; set; }
-
-    [XmlAttribute("Home")]
-    public string HomeValue { get; set; }
-
-    [XmlAttribute("Away")]
-    public string AwayValue { get; set; }
-
     [XmlAttribute("OtherInfo")]
     public string OtherInfo { get; set; }
 
     [XmlAttribute("IsDetermined")]
     public string Determined
     {
-        get => IsSettleDetermined ? "1" : "0";
-
-        set { }
+        get => IsSettleDetermined ? "1" : determined;
+        set => determined = value;
     }
 
     [XmlIgnore]

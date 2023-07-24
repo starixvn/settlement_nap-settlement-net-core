@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using AutoMapper.Configuration;
 using Fanex.Data.Repository;
 using Settlement.Core.Services;
 using Settlement.EventManagement.Criteria;

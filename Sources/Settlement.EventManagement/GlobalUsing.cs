@@ -1,5 +1,4 @@
 ﻿global using AutoMapper;
-global using Fanex.Caching;
 global using Fanex.Data.Repository;
 global using Fanex.Settlement.Converter.Helpers;
 global using Fanex.Settlement.ScaleOut.Request;
@@ -9,3 +8,5 @@ global using MessagePack;
 global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.Extensions.Options;
 global using Settlement.Core.Constants;
+global using Settlement.Core.Models;
+global using Settlement.Core.Services;

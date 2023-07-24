@@ -22,22 +22,18 @@ public class OutrightHandler :
 
     private readonly OutrightLogService outrightLogService;
 
-    private readonly OutrightLogQueryService outrightLogQueryService;
-
     private readonly OutrightSettleProcessService outrightSettleProcessService;
 
     public OutrightHandler(
         FilterService getDataFilterService,
         OutrightSettleService settleService,
         OutrightLogService outrightLogService,
-        OutrightLogQueryService outrightLogQueryService,
         OutrightSettleProcessService outrightSettleProcessService)
     {
         this.getDataFilterService = getDataFilterService;
         this.settleService = settleService;
         this.outrightLogService = outrightLogService;
-        this.outrightLogQueryService = outrightLogQueryService;
-        this.outrightSettleProcessService = outrightSettleProcessService; ;
+        this.outrightSettleProcessService = outrightSettleProcessService;
     }
 
     public async Task<SportLeague> Handle(SportLeagueRequest request, CancellationToken cancellationToken) => await getDataFilterService.GetSportLeague(request);

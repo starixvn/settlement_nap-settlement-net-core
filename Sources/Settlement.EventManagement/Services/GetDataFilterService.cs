@@ -3,8 +3,6 @@
 using Criteria;
 using Models;
 using Requests;
-using Settlement.Core.Models;
-using Settlement.Core.Services;
 
 public interface GetDataFilterService
 {

@@ -4,26 +4,26 @@ import { BasketballService } from './basketball.service';
 import { BlockUIService, HttpRequestService, MessageBoxService } from '../../shared/services';
 import * as _ from 'lodash';
 import { SettlementStatusId } from '../../shared/constants';
-import { ResultDetail } from '../../shared/models/sportsbook-sop';
+import { ExternalResult, ExternalResultDetail, ResultDetail } from '../../shared/models/sportsbook-sop';
 import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
 import { ResourceNameByIdPipe } from '../pipes/resource-name-by-id.pipe';
 import { BetStatusService, VerificationService } from '.';
 
 export class CreateDataTest {
     public static CreateResultDetail(
-      resourceId: string,
-      home: string,
-      away: string,
-      checked: boolean
+        resourceId: string,
+        home: string,
+        away: string,
+        checked: boolean
     ) {
-      const item = new ResultDetail();
-      item.resourceId = resourceId;
-      item.checked = checked;
-      item.homeValue = home;
-      item.awayValue = away;
-      return item;
+        const item = new ResultDetail();
+        item.resourceId = resourceId;
+        item.checked = checked;
+        item.homeValue = home;
+        item.awayValue = away;
+        return item;
     }
-  }
+}
 
 describe('Basketball - Basketball Service', () => {
     let service: BasketballService = null;
@@ -62,10 +62,10 @@ describe('Basketball - Basketball Service', () => {
     });
 
     it('getResultDetail - Should return resultDetail with correct position.', () => {
-       resultDetails = [quarter1, halfTime, fullTime, ot, quarter4, quarter2, quarter3];
-       const actualResultDetails = service.getResultDetail(resultDetails);
-       const expectedResultDetails = [quarter1, quarter2, halfTime, quarter3, quarter4, ot, fullTime];
-       expect(expectedResultDetails).toEqual(actualResultDetails);
+        resultDetails = [quarter1, halfTime, fullTime, ot, quarter4, quarter2, quarter3];
+        const actualResultDetails = service.getResultDetail(resultDetails);
+        const expectedResultDetails = [quarter1, quarter2, halfTime, quarter3, quarter4, ot, fullTime];
+        expect(expectedResultDetails).toEqual(actualResultDetails);
     });
 
     it('getResultDetail - Should return resultDetail with correct position popup refund.', () => {
@@ -73,7 +73,7 @@ describe('Basketball - Basketball Service', () => {
         const actualResultDetails = service.getResultDetail(resultDetails, false);
         const expectedResultDetails = [quarter1, quarter2, quarter3, quarter4, ot, halfTime, fullTime];
         expect(expectedResultDetails).toEqual(actualResultDetails);
-     });
+    });
 
     it('should return true when all quarters with settlementStatusId = running.', () => {
         const q1 = _.clone(quarter1);
@@ -102,4 +102,62 @@ describe('Basketball - Basketball Service', () => {
 
         expect(result).toBe(true);
     });
+
+    it('getExternalResults - Return list external resource by sourceId', () => {
+        quarter1.externalScores = [new ExternalResultDetail(1, '', '')];
+        quarter2.externalScores = [new ExternalResultDetail(2, '', '')]
+        quarter3.externalScores = [new ExternalResultDetail(1, '', '')];
+
+        const result = service.getExternalResults([quarter1, quarter2, quarter3], 1);
+
+        expect(result.length).toBe(3);
+        expect(result[1]).toBeUndefined();
+        expect(result[0].sourceId).toBe(1);
+        expect(result[2].sourceId).toBe(1);
+    });
+
+    describe('isFinalSdt', () => {
+        const sdt = SettlementStatusId.RefundSettleDetermined;
+        const calculated = SettlementStatusId.Calculated;
+        test.each([[sdt, sdt, sdt, sdt, true],
+        [calculated, sdt, sdt, sdt, true],
+        [calculated, calculated, sdt, sdt, false],
+        [calculated, calculated, calculated, sdt, false]])
+            ('should return correct with result is first half %#',
+                (status1: number, status2: number, status3: number, status4: number, expected: boolean) => {
+                    quarter1.settlementStatusId = status1;
+                    quarter2.settlementStatusId = status2;
+                    quarter3.settlementStatusId = status3;
+                    quarter4.settlementStatusId = status4;
+
+                    const actual = service.isFinalSdt(halfTime, [quarter1, quarter2, quarter3, quarter4]);
+
+                    expect(actual).toBe(expected);
+                });
+
+        test.each([[sdt, sdt, sdt, sdt, sdt, true],
+        [calculated, sdt, sdt, sdt, sdt, true],
+        [calculated, calculated, sdt, sdt, sdt, true],
+        [calculated, calculated, calculated, sdt, sdt, true],
+        [calculated, calculated, calculated, calculated, sdt, true],
+        [calculated, calculated, calculated, calculated, calculated, false]])
+            ('should return correct with result is FT %#',
+                (status1: number, status2: number, status3: number, status4: number, otStatus: number, expected: boolean) => {
+                    quarter1.settlementStatusId = status1;
+                    quarter2.settlementStatusId = status2;
+                    quarter3.settlementStatusId = status3;
+                    quarter4.settlementStatusId = status4;
+                    ot.settlementStatusId = otStatus;
+
+                    const actual = service.isFinalSdt(fullTime, [quarter1, quarter2, quarter3, quarter4, ot]);
+
+                    expect(actual).toBe(expected);
+                });
+    });
+
+    it('should return false when result is quarter', () => {
+        const actual = service.isFinalSdt(quarter1, [quarter1, quarter2, quarter3, quarter4, ot]);
+
+        expect(actual).toBeFalsy();
+    })
 });

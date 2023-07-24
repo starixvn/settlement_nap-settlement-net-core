@@ -16,5 +16,6 @@ public class ThirdPartyProductsAutoMapperProfile : Profile
         CreateMap<MatchesWaitingRequest, MatchesWaitingCriteria>();
         CreateMap<MatchInfoRequest, MatchInfoCriteria>();
         CreateMap<VoidBetRequest, NotificationModel>();
+        CreateMap<GetTicketInfo, GetTicketInfoCriteria>();
     }
 }

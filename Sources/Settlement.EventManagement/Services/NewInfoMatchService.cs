@@ -1,14 +1,13 @@
 ﻿namespace Settlement.EventManagement.Services;
 
 using Models;
-using Settlement.Core.Models;
 using Settlement.Core.Services.SpecificService;
 using Match = Models.Calculation.Match;
 using MultiSportMatch = Models.MultiSports.Match;
 
 public interface NewInfoMatchService
 {
-    string NewEventStatus(BaseMatch match);
+    string NewEventStatus(BaseMatch match, IEnumerable<ResultDetail> resultDetails = null);
 
     string EventStatusColor(BaseMatch match);
 
@@ -18,7 +17,7 @@ public interface NewInfoMatchService
 
     string ConfirmScore(List<ResultDetail> listResultDetail, string resource);
 
-    bool IsNotConsistentScore(string suspenderConfirm, List<ResultDetail> resultDetail, List<ResultDetail> sourceResultDetail, string resource);
+    bool IsInconsistentScore(string suspenderConfirm, List<ResultDetail> currentResultDetailList, List<ResultDetail> sourceResultDetailList, string resource);
 
     GoalIcon GoalIcon(Match match);
 
@@ -29,26 +28,20 @@ public interface NewInfoMatchService
 
 public class NewInfoMatchServiceImp : NewInfoMatchService
 {
-    private readonly List<int> eventStatusReasons = new() { 1, 2, 3, 4 };
-
-    private readonly List<string> eventStatusReasonTitles = new()
-    {
-            EventStatus.IrregularTime1H,
-            EventStatus.IrregularTime,
-            EventStatus.WrongTeamName,
-            EventStatus.Suspended
-        };
-
     private readonly SiteMatchService siteMatchService;
 
     private readonly GoalIconService goalIconService;
 
+    private readonly EventStatusService eventStatusService;
+
     public NewInfoMatchServiceImp(
         SiteMatchService siteMatchService,
-        GoalIconService goalIconService)
+        GoalIconService goalIconService,
+        EventStatusService eventStatusService)
     {
         this.siteMatchService = siteMatchService;
         this.goalIconService = goalIconService;
+        this.eventStatusService = eventStatusService;
     }
 
     public string EventStatusColor(BaseMatch match)
@@ -65,7 +58,7 @@ public class NewInfoMatchServiceImp : NewInfoMatchService
             return siteMatchService.GetBackgroundCompletedStatus(match);
         }
 
-        if (match.Remark.IsPending && match.EventStatus.IgnoreCaseEquals(EventStatus.ResultPending))
+        if (match.Remark.IsPending)
         {
             return siteMatchService.IsExistMarkedTickets(match)
                 ? Background.BrightYellowBlinking
@@ -75,15 +68,13 @@ public class NewInfoMatchServiceImp : NewInfoMatchService
         return siteMatchService.IsExistMarkedTickets(match) ? Background.WhiteBlinking : string.Empty;
     }
 
-    public string NewEventStatus(BaseMatch match)
+    public string NewEventStatus(BaseMatch match, IEnumerable<ResultDetail> resultDetails = null)
     {
-        var newEventStatus = IsCheckingEventStatusReasons(match) ? eventStatusReasonTitles[match.EventStatusReason - 1] : match.EventStatus;
-        if (match.IsCalculatingSingle != CalculateStatus.IsWaiting && match.IsCalculatingSingle != CalculateStatus.IsCalculating)
-        {
-            return newEventStatus;
-        }
+        var eventStatus = SportGroup.SupportSettleDetermine.Contains(match.SportType)
+            ? eventStatusService.AdjustEventStatusAbandoned(match.EventStatus, resultDetails, match.SportType)
+            : match.EventStatus;
 
-        return match.IsCalculatingSingle == CalculateStatus.IsWaiting ? EventStatus.Waiting : EventStatus.Calculating;
+        return eventStatusService.CheckProcessingStatus(eventStatus, match);
     }
 
     public string EarlySettlementStatus(BaseMatch match)
@@ -107,23 +98,23 @@ public class NewInfoMatchServiceImp : NewInfoMatchService
             : string.Empty;
     }
 
-    public bool IsNotConsistentScore(string suspenderConfirm, List<ResultDetail> resultDetail, List<ResultDetail> sourceResultDetail, string resource)
+    public bool IsInconsistentScore(string suspenderConfirm, List<ResultDetail> currentResultDetailList, List<ResultDetail> sourceResultDetailList, string resource)
     {
         if (string.Equals(suspenderConfirm, "-"))
         {
             return false;
         }
 
-        var resultDetailByResource = resultDetail.Find(r => r.ResourceId == resource);
-        var sourceResultDetailByResource = sourceResultDetail.Find(r => r.ResourceId == resource);
+        var sourceResultDetailByResource = sourceResultDetailList.Find(r => r.ResourceId == resource);
 
-        if (sourceResultDetailByResource != null)
-        {
-            return (resultDetailByResource != null
-                    && (resultDetailByResource.HomeValue != sourceResultDetailByResource.HomeValue || resultDetailByResource.AwayValue != sourceResultDetailByResource.AwayValue))
-                   || resultDetailByResource == null;
-        }
-        return false;
+        return sourceResultDetailByResource != null && IsDifferentScore(currentResultDetailList, sourceResultDetailByResource, resource);
+    }
+
+    private static bool IsDifferentScore(List<ResultDetail> currentResultDetailList, ResultDetail sourceResultDetail, string resource)
+    {
+        var resultDetail = currentResultDetailList.Find(r => r.ResourceId == resource);
+
+        return resultDetail == null || resultDetail.HomeValue != sourceResultDetail.HomeValue || resultDetail.AwayValue != sourceResultDetail.AwayValue;
     }
 
     public GoalIcon GoalIcon(Match match)
@@ -156,11 +147,5 @@ public class NewInfoMatchServiceImp : NewInfoMatchService
             IsExistFgLg = siteMatchService.IsExistFgLg(match),
             IsExistHtFgLg = siteMatchService.IsExistHtFgLg(match)
         };
-    }
-
-    private bool IsCheckingEventStatusReasons(BaseMatch match)
-    {
-        return match.EventStatus.IgnoreCaseEquals(EventStatus.Running)
-               && eventStatusReasons.Contains(match.EventStatusReason);
     }
 }

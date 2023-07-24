@@ -307,9 +307,10 @@ export class VerificationBaseService {
             _.forEach(listGroupExternalResult, (result: ExternalResult) => {
                 const score = result.resultDetails.find((item) => _.isEqual(item.resourceId, map.resourceId));
                 if (_.isNil(score)) {
-                    if(result.sourceId === ScoreSourceType.trader && (newSportsSOP.includes(sportType))
+                    if (result.sourceId === ScoreSourceType.trader && (newSportsSOP.includes(sportType))
                         && !_.isEqual(map.resultStatus, "Refund")
-                        && (!_.isEmpty(map.homeValue) || !_.isEmpty(map.awayValue))) {
+                        && (!_.isEmpty(map.homeValue) || !_.isEmpty(map.awayValue))
+                        && !_.isEqual(map.settlementStatusId, SettlementStatusId.RefundSettleDetermined)) {
                         const tempScore = new ExternalResultDetail(result.sourceId, map.resourceId, result.sourceName, result.remark);
                         tempScore.homeValue = map.homeValue;
                         tempScore.awayValue = map.awayValue;
@@ -351,8 +352,8 @@ export class VerificationBaseService {
         const maximumProviders = 2;
         const listProvidersScore: ExternalResult[] = [];
         const providersScore = _.filter(externalResults, (item: ExternalResult) =>
-        item.sourceId !== ScoreSourceType.trader && item.sourceId < ScoreSourceType.screenshot);
-        for (let i = 0; i < maximumProviders ; i++) {
+            item.sourceId !== ScoreSourceType.trader && item.sourceId < ScoreSourceType.screenshot);
+        for (let i = 0; i < maximumProviders; i++) {
             if (_.isNil(providersScore[i])) {
                 listProvidersScore.push(new ExternalResult(ScoreSourceType.emptySource, []));
             } else {
@@ -364,15 +365,15 @@ export class VerificationBaseService {
     }
 
     private outSidesScore(externalResults: ExternalResult[]) {
-        return  _.take(_.filter(externalResults, (item: ExternalResult) => item.sourceId >= ScoreSourceType.screenshot), 4);
+        return _.take(_.filter(externalResults, (item: ExternalResult) => item.sourceId >= ScoreSourceType.screenshot), 4);
     }
 
     public getTraderScores(resultDetails: ResultDetail[]) {
         const outsideScores: ExternalResultDetail[] = [];
         const mapsChecked = resultDetails.filter((map) => map.checked);
         _.forEach(mapsChecked, (map) => {
-            const traderScore = map.externalScores.find((source) => source.sourceId  === ScoreSourceType.trader);
-                    outsideScores.push(traderScore);
+            const traderScore = map.externalScores.find((source) => source.sourceId === ScoreSourceType.trader);
+            outsideScores.push(traderScore);
         });
         return outsideScores;
     }
@@ -383,7 +384,7 @@ export class VerificationBaseService {
         _.forEach(mapsChecked, (map) => {
             const currentSources = map.externalScores.filter((source) => source.sourceId === ScoreSourceType.trader);
             const originalMap = originalResultDetails.find((item) => _.isEqual(item.resourceId, map.resourceId));
-            const originalSources = originalMap.externalScores.filter((source) => source.sourceId  === ScoreSourceType.trader);
+            const originalSources = originalMap.externalScores.filter((source) => source.sourceId === ScoreSourceType.trader);
             const changedScores = _.differenceWith(currentSources, originalSources, _.isEqual);
             if (changedScores.length > 0) {
                 outsideScores = outsideScores.concat(changedScores);

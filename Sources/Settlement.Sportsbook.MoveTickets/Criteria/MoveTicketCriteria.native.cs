@@ -25,7 +25,7 @@ public class MoveTicketCriteria : NonQueryCommand
     public string DbServer { get; set; }
 
     [SpParam(Ignored = true)]
-    public string SpName { get; } = "NAP_Admin_Settlement_50_MoveTicket";
+    public string SpName => "NAP_Admin_Settlement_50_MoveTicket";
 
     public override string GetSettingKey()
     {

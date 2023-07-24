@@ -1,4 +1,6 @@
-﻿namespace Settlement.Sportsbook.Aio.Requests;
+﻿using Settlement.Core.Models;
+
+namespace Settlement.Sportsbook.Aio.Requests;
 
 public class ResultSettingRequest : IRequest<bool>
 {
@@ -9,4 +11,8 @@ public class ResultSettingRequest : IRequest<bool>
     public bool IsEnabled { get; set; }
 
     public string ResourceIds { get; set; }
+
+    public bool Is3x3 { get; set; }
+
+    public IEnumerable<ResourceItem> SelectedResources { get; set; }
 }

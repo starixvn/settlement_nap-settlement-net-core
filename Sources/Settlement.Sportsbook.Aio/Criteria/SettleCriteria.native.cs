@@ -28,6 +28,8 @@ public class SettleCriteria : NonQueryCommand
 
     public int? RefResultStatus { get; set; }
 
+    public int DeterminedType { get; set; }
+
     public string BroadcastSessionId { get; } = Guid.NewGuid().ToString();
 
     [SpParam(Ignored = true)]
@@ -40,7 +42,7 @@ public class SettleCriteria : NonQueryCommand
     public string DbServer { get; set; }
 
     [SpParam(Ignored = true)]
-    public string SpName { get; } = "NAP_Admin_Settlement_Profile_Push";
+    public string SpName => "NAP_Admin_Settlement_Profile_Push";
 
     public string ChildMatchIds
     {

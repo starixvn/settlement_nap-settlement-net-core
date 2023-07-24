@@ -1,12 +1,13 @@
+import { SportSupportInstant } from './../constants/sport-instant';
 import { MultiSport, MatchWaitingRequest, LeagueMatch, Match, SportMatch } from './../models';
-import { Component, Input, OnInit, OnChanges, SimpleChanges, OnDestroy, ChangeDetectorRef, Injector } from '@angular/core';
-import { DefaultValue } from '../constants';
+import { Component, Input, OnInit, OnChanges, SimpleChanges, OnDestroy, ChangeDetectorRef, Injector, inject } from '@angular/core';
+import { AutoSettingPosition, DefaultValue } from '../constants';
 import * as _ from 'lodash';
-import { RefreshMatchService, PopupService } from '../services/';
+import { RefreshMatchService, PopupService, MultiSportService, HandleActionsService } from '../services/';
 import { Subscription, interval } from 'rxjs';
 import { MessageBoxService } from './../../shared/services';
 import { Language } from './../../shared/language.native';
-import { ModalDialogMessage, Score, Remark, AutoSetting } from '../../shared/models';
+import { ModalDialogMessage, Score, Remark, AutoSetting, AutoSettingMatchQuery, AutoSettingLeagueQuery } from '../../shared/models';
 import { SportType, ResultType, BackgroundColor, CalculationStatus } from '../../shared/constants';
 import { Permission } from '../../shared/models/sportsbook-sop';
 import { BackGroundService, SportMatchService } from '../services';
@@ -19,10 +20,13 @@ export class LeagueComponent implements OnInit, OnChanges, OnDestroy {
   @Input() public multiSport: MultiSport;
   @Input() public request: MatchWaitingRequest;
   @Input() public enableRefresh: boolean;
-  private sportMatchService: SportMatchService;
-  private refreshMatchesService: RefreshMatchService;
-  private popupService: PopupService;
-  private backGroundService: BackGroundService;
+  private sportMatchService = inject(SportMatchService);
+  private refreshMatchesService = inject( RefreshMatchService);
+  private popupService = inject( PopupService);
+  private backGroundService = inject(BackGroundService);
+  private messageBoxService = inject( MessageBoxService);
+  private multiSportService = inject( MultiSportService);
+  private handleActionService = inject(HandleActionsService);
   public language = Language;
   private readonly period = 6000;
   private readonly autoSettingCompleted = 2;
@@ -34,10 +38,12 @@ export class LeagueComponent implements OnInit, OnChanges, OnDestroy {
   public match: Match;
   public intervalTimer = interval(this.period);
   public readonly sportTypeCricket = SportType.cricket;
+  public readonly sportSupportInstant = SportSupportInstant;
   public readonly dialogMessage: ModalDialogMessage = new ModalDialogMessage();
 
-  constructor(protected injector: Injector, private readonly cd: ChangeDetectorRef) {
-    
+  constructor(protected injector: Injector,
+    private readonly cd: ChangeDetectorRef) {
+
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -50,10 +56,6 @@ export class LeagueComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnInit() {
-    this.sportMatchService = this.injector.get(SportMatchService);
-    this.refreshMatchesService = this.injector.get(RefreshMatchService);
-    this.popupService = this.injector.get(PopupService);
-    this.backGroundService = this.injector.get(BackGroundService);
     this.permission = this.multiSport.permission;
     this.refreshMatches();
   }
@@ -189,8 +191,8 @@ export class LeagueComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   public getBackgroundAutoSetting(match: Match) {
-    const enableLink = this.permission.canAutoPayout ?  BackgroundColor.codeLink : "";
-    const colorStatus =  _.isEqual(match.autoPayoutStatus, this.autoSettingCompleted) ? 'auto-setting-completed' :
+    const enableLink = this.permission.canAutoPayout ? BackgroundColor.codeLink : "";
+    const colorStatus = _.isEqual(match.autoPayoutStatus, this.autoSettingCompleted) ? 'auto-setting-completed' :
       _.isEqual(match.autoPayoutStatus, this.autoSettingFailed) ? 'auto-setting-failed' : '';
 
     return `${enableLink} ${colorStatus}`;
@@ -361,6 +363,68 @@ export class LeagueComponent implements OnInit, OnChanges, OnDestroy {
   public openUpdateTime(league: LeagueMatch) {
     if (this.permission.canAutoPayout) {
       this.popupService.openUpdateTime(league);
+    }
+  }
+
+  public getClassInstant(isInstant: boolean) {
+      if (this.permission.canAutoPayout) {
+        return isInstant ? BackgroundColor.iconOn : BackgroundColor.iconOff;
+      } else {
+        return isInstant ? BackgroundColor.iconOnDisabled : BackgroundColor.iconOffDisabled;
+      }
+  }
+
+  public updateInstant(match: Match) {
+    this.dialogMessage.message = Language.instants.confirm;
+    this.dialogMessage.title = Language.confirmationBox;
+    this.messageBoxService.confirm(this.dialogMessage, () => {
+       this.doUpdateInstant(match);
+    });
+  }
+
+  private async doUpdateInstant(match: Match) {
+    const query = new AutoSettingMatchQuery(
+      Number(match.matchId),
+      AutoSettingPosition.autoInstant,
+      !match.autoCalcSetting.isInstantForMatch
+    );
+    const result = await this.multiSportService.updateSettingMatch(query);
+    if (result.errCode === 0) {
+      match.autoCalcSetting.isInstantForMatch = !match.autoCalcSetting.isInstantForMatch;
+    } else {
+      this.dialogMessage.message = result.errMsg;
+      this.messageBoxService.alert(this.dialogMessage);
+    }
+  }
+
+  public updateInstantForLeague(autoCalcSetting: AutoSetting, leagueMatch: LeagueMatch) {
+    this.dialogMessage.title = Language.confirmationBox;
+    this.dialogMessage.message = autoCalcSetting.isInstantForLeague ? Language.instants.confirmOffLeague : Language.instants.confirmOnLeague;
+    this.dialogMessage.hasActionOnNoBtn = true;
+    this.messageBoxService.confirm(this.dialogMessage, () => {
+      this.doUpdateSettingLeague(autoCalcSetting, leagueMatch, true);
+    }, () => {
+      this.doUpdateSettingLeague(autoCalcSetting, leagueMatch, false);
+    });
+  }
+
+  private async doUpdateSettingLeague(autoCalcSetting: AutoSetting, leagueMatch: LeagueMatch, isApplyAll: boolean) {
+    this.dialogMessage.hasActionOnNoBtn = false;
+    const query = new AutoSettingLeagueQuery(
+      Number(leagueMatch.leagueId),
+      AutoSettingPosition.autoInstant,
+      !autoCalcSetting.isInstantForLeague,
+      isApplyAll
+    );
+    const result = await this.multiSportService.updateSettingLeague(query);
+    if (result.errCode === 0) {
+      autoCalcSetting.isInstantForLeague = !autoCalcSetting.isInstantForLeague;
+      if (isApplyAll) {
+        this.handleActionService.handleAutoInstantForMatch(leagueMatch, autoCalcSetting.isInstantForLeague);
+      }
+    } else {
+      this.dialogMessage.message = result.errMsg;
+      this.messageBoxService.alert(this.dialogMessage);
     }
   }
 }

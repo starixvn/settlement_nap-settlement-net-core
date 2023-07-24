@@ -77,8 +77,10 @@ public class ScoreSetServiceTests
     {
         // Arrange
         var resultDetail = new ResultDetail { MatchId = 1, SettlementStatusId = SettlementStatus.Running };
-        var expectedScore = new Score("-", "-");
-        expectedScore.IsNotSettled = true;
+        var expectedScore = new Score("-", "-")
+        {
+            IsNotSettled = true
+        };
         permission.IsLeader = true;
 
         // Act
@@ -93,8 +95,10 @@ public class ScoreSetServiceTests
     {
         // Arrange
         var resultDetail = new ResultDetail { MatchId = 1, HomeValue = "1", AwayValue = "2", SettlementStatusId = SettlementStatus.Running };
-        var expectedScore = new Score("1", "2");
-        expectedScore.IsNotSettled = true;
+        var expectedScore = new Score("1", "2")
+        {
+            IsNotSettled = true
+        };
         permission.IsLeader = true;
 
         // Act

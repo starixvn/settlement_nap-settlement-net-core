@@ -21,9 +21,7 @@ public interface ICreateQueryService
 
     string CreateResourceChildMatch(ChildMatchModel childMatch);
 
-    string CreateResources(List<ResourceItem> selectedResources);
-
-    string CreateMatchResources(List<CheckOddsItem> selectedResources);
+    string CreateResources<T>(List<T> selectedResources);
 
     GetRecalResultCriteria QueryRecalResult(GetRecalResultRequest request);
 
@@ -67,16 +65,6 @@ public class CreateQueryServiceImp : ICreateQueryService
         return criteria;
     }
 
-    public string CreateMatchResources(List<CheckOddsItem> selectedResources)
-    {
-        var resources = new Resources<CheckOddsItem>
-        {
-            ResourceItems = selectedResources
-        };
-
-        return xmlConvertService.Serialize(resources);
-    }
-
     public SettleCriteria QuerySettleChildMatch(SettleChildMatchRequest request)
     {
         var resourcesResult = CreateResources(request.SelectedResources);
@@ -87,11 +75,21 @@ public class CreateQueryServiceImp : ICreateQueryService
         return criteria;
     }
 
-    public string CreateResources(List<ResourceItem> selectedResources)
+    public string CreateResources<T>(List<T> selectedResources)
     {
-        var resources = new Resources<ResourceItem>
+        var resources = new Resources<T>
         {
             ResourceItems = selectedResources
+        };
+
+        return xmlConvertService.Serialize(resources);
+    }
+
+    private string CreateScoreResources(List<SaveScoreModel> selectedResources)
+    {
+        var resources = new SaveScoreResources<SaveScoreModel>
+        {
+            SourceItems = selectedResources
         };
 
         return xmlConvertService.Serialize(resources);
@@ -123,26 +121,14 @@ public class CreateQueryServiceImp : ICreateQueryService
         };
     }
 
-    private string CreateScoreResources(List<SaveScoreModel> selectedResources)
-    {
-        var resources = new SaveScoreResources<SaveScoreModel>
-        {
-            SourceItems = selectedResources
-        };
-
-        return xmlConvertService.Serialize(resources);
-    }
-
     public ResultSettingCriteria QueryChangeSetting(ResultSettingRequest request)
     {
-        var criteria = new ResultSettingCriteria
-        {
-            MatchId = request.MatchId,
-            IsEnabled = request.IsEnabled,
-            Type = request.Type,
-            ResourceIds = request.ResourceIds,
-            AdminId = currentSession.UserId
-        };
+        var criteria = mapper.Map<ResultSettingRequest, ResultSettingCriteria>(request);
+
+        criteria.AdminId = currentSession.UserId;
+        criteria.SelectedResources = request.SelectedResources == null
+            ? string.Empty
+            : CreateResources(request.SelectedResources.ToList());
 
         return criteria;
     }

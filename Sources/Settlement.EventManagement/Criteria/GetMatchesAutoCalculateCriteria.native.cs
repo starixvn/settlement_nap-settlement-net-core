@@ -8,7 +8,7 @@ public class GetMatchesAutoCalculateCriteria : MultipleSiteCriteria
 
     public DateTime ToDate { get; set; }
 
-    public int SportType { get; } = 1;
+    public int SportType => 1;
 
     public int LeagueId { get; set; }
 

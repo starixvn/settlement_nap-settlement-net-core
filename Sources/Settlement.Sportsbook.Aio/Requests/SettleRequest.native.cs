@@ -27,4 +27,7 @@ public class SettleRequest : IRequest<Result>
     public int? RefResultStatus { get; set; }
 
     public bool IsHedgeMatch { get; set; }
+    
+    public int DeterminedType { get; set; }
+    
 }

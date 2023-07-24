@@ -21,8 +21,6 @@ public class RefundServiceTests
 
     private readonly ICreateCriteriaService createCriteriaService;
 
-    private readonly LogService logService;
-
     private readonly IRefundService service;
 
     public RefundServiceTests()
@@ -31,7 +29,7 @@ public class RefundServiceTests
         var accessor = Substitute.For<IHttpContextAccessor>();
         createCriteriaService = Substitute.For<ICreateCriteriaService>();
         scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
-        logService = Substitute.For<LogService>();
+        var logService = Substitute.For<LogService>();
         var context = new DefaultHttpContext
         {
             Connection =
@@ -129,12 +127,12 @@ public class RefundServiceTests
     [Fact]
     public async Task Refund_Always_UpdateMatch()
     {
-        var query = new RefundRequest()
+        var query = new RefundRequest
         {
             GoalRecord = "AH",
             ActionName = ActionType.CalculateAll
         };
-        var criteria = new RefundCriteria()
+        var criteria = new RefundCriteria
         {
             Action = ActionType.CalculateAll
         };
@@ -157,7 +155,7 @@ public class RefundServiceTests
             IsApplyHedging = true,
             HedgeMatchId = 123
         };
-        var criteria = new RefundCriteria()
+        var criteria = new RefundCriteria
         {
             Action = ActionType.CalculateAll
         };

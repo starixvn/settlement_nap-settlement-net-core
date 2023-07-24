@@ -161,7 +161,7 @@ public class InstantCalculateServiceImp : InstantCalculateService
             AwayScore = request.AwayScore,
             HomeScore = request.HomeScore,
             InstantKey = request.InstantKey,
-            ResourceResult = resourceResult,
+            ResourceResult = resourceResult
         };
         var matchCheckingResult = await CalculateCheckingInfo(matchCheckingCriteria);
 
@@ -200,7 +200,7 @@ public class InstantCalculateServiceImp : InstantCalculateService
         var listTicketInfo = new List<MatchTicketInfo>();
         var criteria = new MatchTicketInfoCriteria
         {
-            MatchId = matchId,
+            MatchId = matchId
         };
 
         foreach (var server in appSettingsKey.SiteDbServer)
@@ -220,7 +220,7 @@ public class InstantCalculateServiceImp : InstantCalculateService
             IsExist2HFirstCorner = listTicketInfo.Exists(item => item.IsExist2HFirstCorner),
             IsExistFirstCorner = listTicketInfo.Exists(item => item.IsExistFirstCorner),
             IsExistHTCorner = listTicketInfo.Exists(item => item.IsExistHTCorner),
-            IsExistHTFirstCorner = listTicketInfo.Exists(item => item.IsExistHTFirstCorner),
+            IsExistHTFirstCorner = listTicketInfo.Exists(item => item.IsExistHTFirstCorner)
         };
     }
 

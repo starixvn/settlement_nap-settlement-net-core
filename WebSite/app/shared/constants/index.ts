@@ -13,3 +13,5 @@ export * from './score-source-type.native';
 export * from './calculation-status.native';
 export * from './result-status.native';
 export * from './page-type.native';
+export * from './resource-id.native';
+export * from './setting-position.native';

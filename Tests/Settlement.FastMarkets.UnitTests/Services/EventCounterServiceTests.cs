@@ -54,7 +54,7 @@ public class EventCounterServiceTests
 
         // Assert
         xmlDoc.LoadXml(result);
-        Assert.True(xmlDoc.DocumentElement != null && xmlDoc.DocumentElement.ChildNodes.Count == 0);
+        Assert.True(xmlDoc.DocumentElement is { ChildNodes.Count: 0 });
     }
 
     [Fact]
@@ -79,6 +79,6 @@ public class EventCounterServiceTests
 
         // Assert
         xmlDoc.LoadXml(result);
-        Assert.True(xmlDoc.DocumentElement != null && xmlDoc.DocumentElement.ChildNodes.Count == 1);
+        Assert.True(xmlDoc.DocumentElement is { ChildNodes.Count: 1 });
     }
 }

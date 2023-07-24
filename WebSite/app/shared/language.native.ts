@@ -18,6 +18,7 @@
     CannotUncalculateFTMessage: 'WARNING! cannot proceed due to match has been Refunded All. Please recheck or use Uncalculate All instead.',
     RefundConfirmationBox: 'Refund confirmation box',
     RefundConfirmMessage: 'Are you sure you want to REFUND/CANCEL? This function is only in use when the match cancel?',
+    RefundConfirmSdtMessage: 'Are you sure you want to REFUND with SETTLE DETERMINED TICKETS for selected results? This function is only in use when the match suspended.',
     RefundFullMessage: "Are you sure you want to REFUND FULLTIME? This function is only in use when the match cancel?",
     RefundParlayConfirmMessage: 'Are you sure you want to REFUND PARLAY this match?',
     RefundParlayFullTime: "Are you sure you want to REFUND PARLAY FULL TIME this match?",
@@ -176,7 +177,10 @@
         differentStates: "WARNING! Cannot continue due to selected results have different confirm states! Please select confirmed or not confirmed results only.",
         refundedNoRunningTicket: "WARNING! Cannot continue due to selected results are Refund and have no Running ticket.",
         refundResultNotConfirmed: "WARNING! Cannot continue due to selected results are not confirmed to refund. Please confirm refund and try again.",
-        calculateResultNotConfirmed: "WARNING! Cannot continue due to selected results are confirmed to refund. Please undo-confirm refund and try again."
+        calculateResultNotConfirmed: "WARNING! Cannot continue due to selected results are confirmed to refund. Please undo-confirm refund and try again.",
+        sdtConfirm: 'WARNING! Are you sure you want to confirm-refund SDT for selected results?<br/>{0}',
+        undoConfirmAll: 'WARNING! Are you sure you want to undo confirm-refund for all results?',
+        sdtErrorMessage: 'Cannot continue with Refund due to confirm state or value mismatch. Please check and try again.'
     },
     gaming: {
         reCalculateConfirmMessage: 'Are you sure you want to Recalculate this match?',

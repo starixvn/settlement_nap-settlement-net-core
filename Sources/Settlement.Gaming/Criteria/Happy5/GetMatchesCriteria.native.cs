@@ -12,7 +12,7 @@ public class GetMatchesCriteria : CriteriaBase
 
     public DateTime ToDate { get; set; }
 
-    public int SportType { get; } = Core.Constants.SportType.Happy5;
+    public int SportType => Core.Constants.SportType.Happy5;
 
     public override string GetSettingKey()
     {

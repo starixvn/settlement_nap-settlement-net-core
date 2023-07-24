@@ -1,7 +1,6 @@
-import { PopupProperties } from './../models/popup-properties.model';
 import { NgbDateStruct, NgbDateParserFormatter } from "@ng-bootstrap/ng-bootstrap";
 import { DefaultValue, MatchType, Resources } from '../constants';
-import { Component, OnInit, Output, EventEmitter, Injector } from "@angular/core";
+import { Component, OnInit, Output, EventEmitter, Injector, inject } from "@angular/core";
 import { DatePipe } from "@angular/common";
 import { CustomNgbDateParserFormatter } from '../../shared/components/date-picker/custom-ngb-date-parser-formatter';
 import { MultiSportService } from '../services';
@@ -27,10 +26,10 @@ export class FilterComponent implements OnInit {
     @Output() public readonly searchAction = new EventEmitter();
     @Output() public readonly requestEmitter = new EventEmitter();
     @Output() public readonly enableRefresh = new EventEmitter();
-    private multiSportService: MultiSportService;
-    private generateFilterService: GenerateFilterService;
-    private verifyDateService: VerifyDateService;
-    private messageBoxService: MessageBoxService;
+    private multiSportService = inject(MultiSportService);
+    private generateFilterService = inject(GenerateFilterService);
+    private verifyDateService = inject(VerifyDateService);
+    private messageBoxService = inject(MessageBoxService);
     public readonly warningDialogMessage = new ModalDialogMessage();
     public matchCode = "";
     public fromDate: NgbDateStruct;
@@ -53,27 +52,18 @@ export class FilterComponent implements OnInit {
     public getLeagueParams: LeagueFilterRequest;
     private readonly widthMultiSelect = "205px";
 
-    constructor(protected injector: Injector) {
-    }
-
-    ngOnInit() {
-        this.initServices();
-        this.initialData();
+    async ngOnInit() {
         this.generateFilter();
+        await this.initialData();
     }
 
-    public initServices() {
-        this.multiSportService = this.injector.get(MultiSportService);
-        this.generateFilterService = this.injector.get(GenerateFilterService);
-        this.verifyDateService = this.injector.get(VerifyDateService);
-        this.messageBoxService = this.injector.get(MessageBoxService);
-    }
 
     private async initialData() {
         const date = await this.multiSportService.getDate();
         this.fromDate = this.verifyDateService.convertToDateStruct(date.fromDate);
         this.toDate = this.verifyDateService.convertToDateStruct(date.toDate);
-        this.getSport(this.fromDate, this.toDate);
+        await this.getSport(this.fromDate, this.toDate);
+        this.initLeague();
     }
 
     private generateFilter() {
@@ -208,10 +198,9 @@ export class FilterComponent implements OnInit {
         this.getLeagueParams = new LeagueFilterRequest(fromDateValue, toDateValue, sportTypes);
         if (this.isValidInput(fromDate, toDate)) {
             const league = await this.multiSportService.getLeague(this.getLeagueParams);
-            this.initLeague();
-            this.leagueSelect.items = this.generateFilterService.renderLeagues(league);
+            this.leagueSelect = { ...this.leagueSelect, items: this.generateFilterService.renderLeagues(league) };
         } else {
-            this.initLeague();
+            this.leagueSelect = { ...this.leagueSelect, items: [] };
         }
     }
 
@@ -230,8 +219,7 @@ export class FilterComponent implements OnInit {
         const league = await this.multiSportService.getLeague(this.getLeagueParams);
         const newLeague = this.generateFilterService.renderNewestLeagues(league, _.cloneDeep(this.leagueSelect.items));
         if (newLeague.length > this.leagueSelect.items.length) {
-            this.initLeague();
-            this.leagueSelect.items = newLeague;
+            this.leagueSelect = { ...this.leagueSelect, items: newLeague };
         }
     }
 

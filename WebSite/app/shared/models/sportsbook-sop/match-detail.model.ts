@@ -23,4 +23,5 @@
     public leagueGroupId: number;
     public gameType: number;
     public parentId: number;
+    public autoSetting: number;
 }
