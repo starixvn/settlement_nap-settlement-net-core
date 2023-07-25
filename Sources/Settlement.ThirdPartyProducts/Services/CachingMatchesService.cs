@@ -1,4 +1,4 @@
-﻿using Fanex.Caching;
+﻿using Microsoft.Extensions.Caching.Memory;
 using Settlement.Core.Constants;
 using Settlement.ThirdPartyProducts.Models;
 
@@ -6,42 +6,42 @@ namespace Settlement.ThirdPartyProducts.Services;
 
 public interface CachingMatchesService
 {
-    Task<List<MatchDetailModel>> MatchesOnShortCaching(string leagueIds);
+    List<MatchDetailModel> MatchesOnShortCaching(string leagueIds);
 
-    Task<List<MatchDetailModel>> MatchesOnLongCaching(string leagueIds);
+    List<MatchDetailModel> MatchesOnLongCaching(string leagueIds);
 
-    Task SetToCache(string leagueIds, List<MatchDetailModel> matches);
+    void SetToCache(string leagueIds, List<MatchDetailModel> matches);
 }
 
 public class CachingMatchesServiceImp : CachingMatchesService
 {
-    private readonly ICacheService cacheService;
+    private readonly IMemoryCache cacheService;
 
-    public CachingMatchesServiceImp(ICacheService cacheService)
+    public CachingMatchesServiceImp(IMemoryCache cacheService)
     {
         this.cacheService = cacheService;
     }
 
-    public async Task<List<MatchDetailModel>> MatchesOnShortCaching(string leagueIds)
+    public List<MatchDetailModel> MatchesOnShortCaching(string leagueIds)
     {
         var shortCachingKey = ShortCachingKey(leagueIds);
-        return await cacheService.GetAsync<List<MatchDetailModel>>(shortCachingKey);
+        return cacheService.Get<List<MatchDetailModel>>(shortCachingKey);
     }
 
-    public async Task<List<MatchDetailModel>> MatchesOnLongCaching(string leagueIds)
+    public List<MatchDetailModel> MatchesOnLongCaching(string leagueIds)
     {
         var longCachingKey = LongCachingKey(leagueIds);
 
-        return await cacheService.GetAsync<List<MatchDetailModel>>(longCachingKey);
+        return cacheService.Get<List<MatchDetailModel>>(longCachingKey);
     }
 
-    public async Task SetToCache(string leagueIds, List<MatchDetailModel> matches)
+    public void SetToCache(string leagueIds, List<MatchDetailModel> matches)
     {
         var shortCachingKey = ShortCachingKey(leagueIds);
         var longCachingKey = LongCachingKey(leagueIds);
 
-        await cacheService.SetAsync(shortCachingKey, matches, new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromSeconds(CacheSettings.Expiration.ShortCallRefreshTimerSeconds)));
-        await cacheService.SetAsync(longCachingKey, matches, new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(CacheSettings.Expiration.LongCallRefreshTimerMinutes)));
+        cacheService.Set(shortCachingKey, matches, new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromSeconds(CacheSettings.Expiration.ShortCallRefreshTimerSeconds)));
+        cacheService.Set(longCachingKey, matches, new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(CacheSettings.Expiration.LongCallRefreshTimerMinutes)));
     }
 
     private static string ShortCachingKey(string leagueIds) => $"{CacheSettings.Keys.WaitingBetBuilderCacheKey}-{leagueIds}";
