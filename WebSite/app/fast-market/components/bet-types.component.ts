@@ -520,11 +520,11 @@ export class BetTypesComponent implements OnInit, DoCheck {
   public intervalEvent(event: IntervalEvent) {
     const maxInterval = 90;
     this.selectedInterval = event.list;
-
-    // if (this.fastMarkets) {
+    if (!this.fastMarkets) {
+      return;
+    }
     this.fastMarkets.eventCounterHided =
       event.list.length < maxInterval && event.list.length > 0;
-    // }
 
     if (event.emitFromSelection) {
       this.specialTimeFilter = new SpecialSession("");
@@ -893,9 +893,12 @@ export class BetTypesComponent implements OnInit, DoCheck {
     this.checkedProceed = checked;
   }
 
-  private async getFastMarketResult(matchId: number) {
-    const result = await this.requestService.getFastMarketResult(matchId);
-    this.fastMarkets = result;
+  private getFastMarketResult(matchId: number) {
+    this.requestService.getFastMarketResult(matchId).subscribe({
+      next: (result) => {
+        this.fastMarkets = result;
+      },
+    });
     if (!_.isNil(this.fastMarkets)) {
       this.manipulateResultRadio();
       this.resetTimeMachineIntervals();

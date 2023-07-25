@@ -8,6 +8,8 @@ import {
   SimpleChanges,
   ViewChild,
   SimpleChange,
+  ChangeDetectorRef,
+  AfterContentChecked,
 } from "@angular/core";
 import {
   DefaultSetting,
@@ -22,7 +24,7 @@ import { RequestService } from "../services/request.service";
   selector: "filter",
   templateUrl: "./filter.component.html",
 })
-export class FilterComponent implements OnInit, OnChanges {
+export class FilterComponent implements OnInit, OnChanges, AfterContentChecked  {
   public filter: Filter;
   public resultStatusSelect = new MultipleSelect();
   public timeIntervalSelect = new MultipleSelect();
@@ -46,11 +48,10 @@ export class FilterComponent implements OnInit, OnChanges {
   private subfixNumberItemsCheckedText: string =
     DefaultSetting.SUBFIX_NUMBER_ITEMS_CHECKED_TEXT;
 
-  constructor(private readonly requestService: RequestService) {
-    this.intervalEvent = new EventEmitter();
-    this.ticketStatusEvent = new EventEmitter();
-    this.resultStatusEvent = new EventEmitter();
-  }
+  constructor(
+    private readonly requestService: RequestService,
+    private changeDetector: ChangeDetectorRef
+  ) {}
 
   public ngOnInit() {
     this.configFilter();
@@ -66,7 +67,9 @@ export class FilterComponent implements OnInit, OnChanges {
       this.isApplySpecialSession
     ) {
       this.selectIntervalFilterByWaterBreak();
+
       this.updateIntervalSelectionByWaterBreak();
+
       this.selectTicketStatusFilterBySpecialSession();
     }
     this.waterBreakUnchecked(changes[specialSession]);
@@ -81,6 +84,10 @@ export class FilterComponent implements OnInit, OnChanges {
     if (changes[pos] && !_.isNil(this.positions)) {
       this.updateIntervalSelection();
     }
+  }
+
+  ngAfterContentChecked(): void {
+    this.changeDetector.detectChanges();
   }
 
   private waterBreakUnchecked(change: SimpleChange) {
@@ -128,18 +135,6 @@ export class FilterComponent implements OnInit, OnChanges {
 
   private configFilter() {
     this.filter = new Filter();
-
-    // this.ticketStatusSelect = new MultipleSelect();
-    // this.ticketStatusSelect.items = [];
-    // this.ticketStatusSelect.maxWidth = "150px";
-
-    // this.resultStatusSelect = new MultipleSelect();
-    // this.resultStatusSelect.maxWidth = "160px";
-    // this.resultStatusSelect.items = [];
-
-    // this.timeIntervalSelect = new MultipleSelect();
-    // this.timeIntervalSelect.items = [];
-    // this.timeIntervalSelect.maxWidth = "130px";
   }
 
   private async getFilterData() {
@@ -148,7 +143,6 @@ export class FilterComponent implements OnInit, OnChanges {
 
     this.resultStatusSelect = new MultipleSelect();
     this.resultStatusSelect.maxWidth = "160px";
-    // this.resultStatusSelect.items = [];
     this.resultStatusSelect.items = this.renderResultStatus(
       result.resultStatus
     );
@@ -163,6 +157,23 @@ export class FilterComponent implements OnInit, OnChanges {
     this.ticketStatusSelect = new MultipleSelect();
     this.ticketStatusSelect.maxWidth = "150px";
     this.ticketStatusSelect.items = this.renderTicketStatus();
+    this.ticketStatusSelect.selectionTitle = this.getItemsDisplay(
+      this.ticketStatusSelect
+    );
+    this.initialTicketStatusSelect = _.cloneDeep(this.ticketStatusSelect);
+  }
+
+  private renderIntervalSelect(intervals: ItemsSelect[]) {
+    this.timeIntervalSelect = new MultipleSelect();
+    this.timeIntervalSelect.maxWidth = "130px";
+    this.timeIntervalSelect.haveGroup = true;
+    this.timeIntervalSelect.items = intervals;
+  }
+
+  private renderTicketStatusSelect(items: ItemsSelect[]) {
+    this.ticketStatusSelect = new MultipleSelect();
+    this.ticketStatusSelect.maxWidth = "150px";
+    this.ticketStatusSelect.items = items;
     this.ticketStatusSelect.selectionTitle = this.getItemsDisplay(
       this.ticketStatusSelect
     );
@@ -262,81 +273,64 @@ export class FilterComponent implements OnInit, OnChanges {
     return childItems;
   }
 
-  public changeTimeInterval(value: ItemSelect[]) {
-    const list = value.length > 0 ? value.map((x) => Number(x.value)) : [];
-    this.intervalEvent?.emit(new IntervalEvent(list, true));
+  public changeTimeInterval(value: ItemsSelect[]) {
+    const list = value.length > 0 ? value.map((x) => +x.value) : [];
+    this.intervalEvent.emit(new IntervalEvent(list));
   }
 
-  public changeTicketStatus(value: ItemSelect[]) {
+  public changeTicketStatus(value: ItemsSelect[]) {
     const list = value.length > 0 ? value.map((x) => x.value) : [];
-    this.ticketStatusEvent?.emit(list);
+    this.ticketStatusEvent.emit(list);
   }
 
-  public changeResultStatus(value: ItemSelect[]) {
+  public changeResultStatus(value: ItemsSelect[]) {
     const list = value.length > 0 ? value.map((x) => x.value) : [];
-    this.resultStatusEvent?.emit(list);
+    this.resultStatusEvent.emit(list);
   }
 
   private updateIntervalSelection() {
     const intervalSelection: number[] = [];
     this.timeIntervalSelect.items.forEach((item) => {
       let checked = true;
-      item.items.forEach((subItem) => {
-        if (!subItem.checked) {
-          subItem.checked = this.positions.indexOf(subItem.id) !== -1;
-        }
+      if (!item.checked) {
+        item.checked = this.positions.includes(item.id);
+      }
 
-        if (subItem.checked) {
-          intervalSelection.push(subItem.id);
-        } else {
-          checked = false;
-        }
-      });
+      if (item.checked) {
+        intervalSelection.push(item.id);
+      } else {
+        checked = false;
+      }
 
       item.checked = checked;
     });
-
-    // this.timeIntervalSelect.selectionTitle = this.getItemsDisplay(
-    //   this.timeIntervalSelect
-    // );
     this.intervalEvent.emit(new IntervalEvent(intervalSelection));
   }
 
   private updateIntervalSelectionByWaterBreak() {
     const intervals: number[] = [];
     this.timeIntervalSelect.items.forEach((item) => {
-      item.items.forEach((subItem) => {
-        if (subItem.checked) {
-          intervals.push(subItem.id);
-        }
-      });
+      if (item.checked) {
+        intervals.push(item.id);
+      }
     });
 
     this.intervalEvent.emit(new IntervalEvent(intervals));
   }
 
   private selectIntervalFilterByWaterBreak() {
-    this.timeIntervalSelect.items.forEach((item) => {
-      let checked = true;
-      item.items.forEach((subItem) => {
-        if (this.specialSessionPositions.indexOf(subItem.id) !== -1) {
-          subItem.checked = true;
-        } else {
-          subItem.checked = false;
-        }
-
-        if (!subItem.checked) {
-          checked = false;
-        }
-      });
-
-      item.checked = checked;
+    const currentItem = _.cloneDeep(this.timeIntervalSelect.items);
+    currentItem.forEach((v) => {
+      if (this.specialSessionPositions.includes(v.id)) {
+        v.checked = true;
+      } else {
+        v.checked = false;
+      }
     });
 
-    // this.timeIntervalSelect.selectionTitle = this.getItemsDisplay(
-    //   this.timeIntervalSelect
-    // );
-  }
+    this.renderIntervalSelect(currentItem);
+}
+
 
   private selectTicketStatusFilterBySpecialSession() {
     const ticketStatusSelections = [];
@@ -344,12 +338,6 @@ export class FilterComponent implements OnInit, OnChanges {
       item.checked = true;
       ticketStatusSelections.push(item.id.toString());
     });
-    // this.ticketStatusSelect.isCheckAll = true;
-
-    this.ticketStatusSelect.selectionTitle = this.getItemsDisplay(
-      this.ticketStatusSelect
-    );
-
     this.ticketStatusEvent.emit(ticketStatusSelections);
   }
 }

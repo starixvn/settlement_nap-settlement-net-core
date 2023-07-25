@@ -34,12 +34,11 @@ export class RequestService {
     return this.httpRequestService.postJson(query, url);
   }
 
-  public getFastMarketResult(matchId: number): Promise<FastMarkets> {
+  public getFastMarketResult(matchId: number): Observable<FastMarkets> {
     const url = `${this.fastMarketApi}/get-bettype-interval`;
     const query = { matchId };
-    return firstValueFrom(
-      this.httpRequestService.postJson<FastMarkets>(query, url)
-    );
+    return this.httpRequestService.postJson<FastMarkets>(query, url)
+   
   }
 
   public doSubmitByAction(query: SettleQuery) {

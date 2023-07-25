@@ -1,5 +1,6 @@
 import { ResultDetail, UpdateWaterBreakQuery, SpecialSession } from "../models";
 import {
+  ChangeDetectorRef,
   Component,
   EventEmitter,
   Input,
@@ -47,7 +48,8 @@ export class SpecialSessionComponent implements OnChanges, OnInit {
   constructor(
     private readonly requestService: RequestService,
     private readonly messageBoxService: MessageBoxService,
-    private readonly toastrService: ToastrService
+    private readonly toastrService: ToastrService,
+
   ) {}
 
   ngOnChanges(): void {
