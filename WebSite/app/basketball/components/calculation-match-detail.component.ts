@@ -14,16 +14,17 @@ import { CalculationMatchDetailBaseComponent } from '../../shared/components/spo
     standalone: true,
     imports: [CommonModule]
 })
-export class CalculationMatchDetailComponent extends CalculationMatchDetailBaseComponent  implements OnInit {
+export class CalculationMatchDetailComponent extends CalculationMatchDetailBaseComponent implements OnInit {
     @Input() match: Match;
+    @Input() isCalculate: boolean;
     public matchDetail: MatchDetail;
 
     constructor(protected basketBallDialog: MatDialog,
         protected basketBallAioService: AioService) {
-            super(basketBallDialog, basketBallAioService);
-        }
+        super(basketBallDialog, basketBallAioService);
+    }
 
     public ngOnInit() {
-         this.matchDetail = this.match.matchDetail;
+        this.matchDetail = this.match.matchDetail;
     }
 }
