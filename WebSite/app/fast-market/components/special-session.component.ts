@@ -190,8 +190,8 @@ export class SpecialSessionComponent implements OnChanges, OnInit {
     suspendSession: SpecialSession
   ) {
     return (
-      session.endMinute <= suspendSession.startMinute &&
-      session.endSecond <= suspendSession.startSecond
+      (session.endMinute < suspendSession.startMinute) ||
+      (session.endMinute === suspendSession.startMinute && session.endSecond <= suspendSession.startSecond)
     );
   }
 
