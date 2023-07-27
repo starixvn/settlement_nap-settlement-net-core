@@ -1,4 +1,4 @@
-﻿using Fanex.Caching;
+﻿using Microsoft.Extensions.Caching.Memory;
 using Settlement.Core.Constants;
 using Settlement.ThirdPartyProducts.Models;
 
@@ -6,13 +6,13 @@ namespace Settlement.ThirdPartyProducts.UnitTests.Services;
 
 public class CachingMatchesServiceTests
 {
-    private readonly ICacheService cacheService;
+    private readonly IMemoryCache cacheService;
 
     private readonly CachingMatchesService service;
 
     public CachingMatchesServiceTests()
     {
-        cacheService = Substitute.For<ICacheService>();
+        cacheService = Substitute.For<IMemoryCache>();
         service = new CachingMatchesServiceImp(cacheService);
     }
 
@@ -23,8 +23,8 @@ public class CachingMatchesServiceTests
     {
         service.SetToCache(leagueIds, new List<MatchDetailModel>());
 
-        cacheService.Received().SetAsync(logKey, Arg.Any<List<MatchDetailModel>>(), Arg.Any<CacheItemOptions>());
-        cacheService.Received().SetAsync(logKey + "-long", Arg.Any<List<MatchDetailModel>>(), Arg.Any<CacheItemOptions>());
+        cacheService.Received().CreateEntry(logKey);
+        cacheService.Received().CreateEntry(logKey + "-long");
     }
 
     [Theory]
@@ -34,7 +34,7 @@ public class CachingMatchesServiceTests
     {
         service.MatchesOnShortCaching(leagueId);
 
-        cacheService.Received().GetAsync<List<MatchDetailModel>>(logKey);
+        cacheService.Received().Get<List<MatchDetailModel>>(logKey);
     }
 
     [Theory]
@@ -44,6 +44,6 @@ public class CachingMatchesServiceTests
     {
         service.MatchesOnLongCaching(leagueId);
 
-        cacheService.Received().GetAsync<List<MatchDetailModel>>(logKey);
+        cacheService.Received().Get<List<MatchDetailModel>>(logKey);
     }
 }

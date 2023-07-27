@@ -1,46 +1,74 @@
-<mat-form-field [style.width]="multipleSelect.maxWidth" [ngClass]="{'focus': openSearch()}">
-    <mat-label class="px-2">{{status}}</mat-label>
-    <input *ngIf="multipleSelect.enableSearchBox" [ngClass]="{'above': isOpened, 'mat-search-box' : true}" matInput
-        (click)="dropdown.open()" [(ngModel)]="searchText" (input)="search()" >
+<mat-form-field [style.width]="multipleSelect.maxWidth" [ngClass]="{ focus: openSearch() }">
+	<mat-label class="px-2">{{ status }}</mat-label>
+	<input
+		*ngIf="multipleSelect.enableSearchBox"
+		[ngClass]="{ above: isOpened, 'mat-search-box': true }"
+		matInput
+		(click)="dropdown.open()"
+		[(ngModel)]="searchText"
+		(input)="search()"
+	/>
 
-    <mat-select #dropdown [formControl]="formControl" (openedChange)="checkOpenState($event)" [disabled]="disabled" multiple>
-        <mat-select-trigger></mat-select-trigger>
-        <mat-option #allSelected *ngIf="items.length > 0" class="px-2 select-all" (click)="selectAllSelection()"
-            [value]="0" [hidden]="multipleSelect.disableCheckAll || !searchTextEmpty">
-            {{multipleSelect.checkAllCheckBoxText}}</mat-option>
+	<mat-select #dropdown [formControl]="formControl" (openedChange)="checkOpenState($event)" [disabled]="disabled" multiple>
+		<mat-select-trigger></mat-select-trigger>
+		<mat-option
+			#allSelected
+			*ngIf="items.length > 0"
+			class="px-2 select-all"
+			(click)="selectAllSelection()"
+			[value]="0"
+			[hidden]="multipleSelect.disableCheckAll || !searchTextEmpty"
+		>
+			{{ multipleSelect.checkAllCheckBoxText }}</mat-option
+		>
 
-        <cdk-virtual-scroll-viewport [itemSize]="20" *ngIf="groups.length > 0 && searchTextEmpty" [ngClass]="{'open-search': openSearch()}">
-            <div *ngFor="let group of groups">
-                <div style="cursor: pointer;" (click)="collapse(group)">
-                    <mat-checkbox *ngIf="!multipleSelect.disableSelectGroup; else onlyGroupName" class="select-group"
-                        [(ngModel)]="group.selected" (click)="selectGroupParent($event, group)"> {{group.name}}
-                    </mat-checkbox>
-                    <ng-template #onlyGroupName>
-                        <div class="select-group">{{group.name}}</div>
-                    </ng-template>
-                    <span class="icon-collapse" [ngClass]="{'collapse-group': group.collapse}"></span>
-                </div>
-                <ng-container *ngFor="let item of items">
-                    <mat-option *ngIf="item.type == group.name && item.isShow" [value]="item"
-                        (click)="selectOneInGroup(group.name, item)" title="{{item.text}}" [hidden]="group.collapse"
-                        class="item-group">
-                        {{item.text}}
-                    </mat-option>
-                </ng-container>
-            </div>
-        </cdk-virtual-scroll-viewport>
+		<cdk-virtual-scroll-viewport [itemSize]="20" *ngIf="groups.length > 0 && searchTextEmpty" [ngClass]="{ 'open-search': openSearch() }">
+			<div *ngFor="let group of groups">
+				<div style="cursor: pointer;" (click)="collapse(group)">
+					<mat-checkbox
+						*ngIf="!multipleSelect.disableSelectGroup; else onlyGroupName"
+						class="select-group"
+						[(ngModel)]="group.selected"
+						(click)="selectGroupParent($event, group)"
+					>
+						{{ group.name }}
+					</mat-checkbox>
+					<ng-template #onlyGroupName>
+						<div class="select-group">{{ group.name }}</div>
+					</ng-template>
+					<span class="icon-collapse" [ngClass]="{ 'collapse-group': group.collapse }"></span>
+				</div>
+				<ng-container *ngFor="let item of items">
+					<mat-option
+						*ngIf="item.type == group.name && item.isShow"
+						[value]="item"
+						(click)="selectOneInGroup(group.name, item)"
+						title="{{ item.text }}"
+						[hidden]="group.collapse"
+						class="item-group"
+					>
+						{{ item.text }}
+					</mat-option>
+				</ng-container>
+			</div>
+		</cdk-virtual-scroll-viewport>
 
-        <cdk-virtual-scroll-viewport [itemSize]="20" *ngIf="groups.length === 0 || !searchTextEmpty" [ngClass]="{'open-search': openSearch()}">
-            <ng-container *ngFor="let item of items;let first = first">
-                <div *ngIf="first" name="top"></div>
-                <mat-option [hidden]="!(item.isShow && item.includeSearchText)" [value]="item" [disabled]="!item.enable"
-                    (click)="selectPerOne(item)" title="{{item.text}}">
-                    {{item.text}}
-                </mat-option>
-            </ng-container>
-        </cdk-virtual-scroll-viewport>
-        <mat-label class="mat-option-text" *ngIf="multipleSelect.enableSearchBox && notExistItemIncludeSearchText">
-            &nbsp;No Data
-        </mat-label>
-    </mat-select>
+		<cdk-virtual-scroll-viewport [itemSize]="20" *ngIf="groups.length === 0 || !searchTextEmpty" [ngClass]="{ 'open-search': openSearch() }">
+			<ng-container *ngFor="let item of items; let first = first">
+				<div *ngIf="first" name="top"></div>
+				<mat-option
+					[hidden]="!(item.isShow && item.includeSearchText)"
+					[value]="item"
+					[disabled]="!item.enable"
+					(click)="selectPerOne(item)"
+					title="{{ item.text }}"
+				>
+					{{ item.text }}
+				</mat-option>
+			</ng-container>
+		</cdk-virtual-scroll-viewport>
+		<mat-label class="mat-option-text" *ngIf="multipleSelect.enableSearchBox && notExistItemIncludeSearchText">
+			&nbsp;No Data
+		</mat-label>
+	</mat-select>
 </mat-form-field>

@@ -56,7 +56,7 @@ public class FetchDateServiceImp : IFetchDataService
 
         var siteMatch = GetSiteMatchInfo(criteria.MatchId);
 
-        baseMatchDetail.SiteMatch = siteMatch;
+        baseMatchDetail!.SiteMatch = siteMatch;
 
         var ticketCounts = mergeDataService.MergeTicketCounts(siteMatch);
         var matchDetail = mergeDataService.MergeSiteMatch(baseMatchDetail, ticketCounts);
@@ -84,7 +84,7 @@ public class FetchDateServiceImp : IFetchDataService
         var criteria = new GetTicketInfoCriteria { MatchId = matchId, DbServer = server };
         var result = repository.FetchMultiple(criteria, mappingTypes);
 
-        var siteMatch = result[0].Cast<SiteMatch>().FirstOrDefault();
+        var siteMatch = result[0].Cast<SiteMatch>().First();
         siteMatch.TicketCounts = result[1].Cast<TicketCounts>().ToList();
         siteMatch.SiteChildMatches = result[childMatchResultPosition].Cast<ChildMatchTicketInfos>().ToList();
 

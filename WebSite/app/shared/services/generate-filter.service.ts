@@ -7,17 +7,15 @@ export class GenerateFilterService {
     private readonly RunningGroup = 'All "Running" Status';
     private readonly CompletedGroup = 'All "Completed" Status';
     popularSportType = [9, 2, 43, 5];
-    constructor() {
-    }
 
-    private createListOption(items) {
+    public static createListOption(items) {
         const tickets = new Array<ItemsSelect>();
         items.forEach((item) => {
             const temp = new ItemsSelect(
                 item.id,
                 item.value,
                 item.text,
-                false,
+                item.checked,
                 true,
                 true,
                 []);
@@ -34,10 +32,10 @@ export class GenerateFilterService {
             { id: 1, value: "1", text: "Result Pending" },
             { id: 4, value: "4", text: "Under Settlement" },
             { id: 64, value: "64", text: "Hold Key" },
-            { id: 87, value: "87", text: "Not On-hold"},
+            { id: 87, value: "87", text: "Not On-hold" },
         ];
 
-        return this.createListOption(options);
+        return GenerateFilterService.createListOption(options);
     }
 
     public renderMatchStatus() {
@@ -51,7 +49,7 @@ export class GenerateFilterService {
             { id: 6, value: "6", text: "Refund" },
             { id: 7, value: "7", text: "Internal" }];
 
-        return this.createListOption(options);
+        return GenerateFilterService.createListOption(options);
     }
 
     public renderMatchStatusGroupSelect() {
@@ -74,7 +72,7 @@ export class GenerateFilterService {
             { id: 3, value: "3", text: "Un-Calculated Single" },
             { id: 4, value: "4", text: "Un-Calculated Parlay" }];
 
-        return this.createListOption(selection);
+        return GenerateFilterService.createListOption(selection);
     }
 
     public renderAutoPayout() {
@@ -83,7 +81,7 @@ export class GenerateFilterService {
             { id: 16, value: "16", text: "Direct Settlement" },
             { id: 0, value: "0", text: "OFF" }];
 
-        return this.createListOption(selection);
+        return GenerateFilterService.createListOption(selection);
     }
 
     public renderOverStatus() {
@@ -93,7 +91,7 @@ export class GenerateFilterService {
             { id: 3, value: "3", text: "Over" },
             { id: 4, value: "4", text: "Settled with Running Ticket" }];
 
-        return this.createListOption(selection);
+        return GenerateFilterService.createListOption(selection);
     }
 
     public renderSportTypes(options: Sport[], selected = true) {
@@ -142,7 +140,7 @@ export class GenerateFilterService {
                 true,
                 true,
                 []);
-                temp.type = item.group;
+            temp.type = item.group;
             tickets.push(temp);
         });
 
@@ -150,7 +148,7 @@ export class GenerateFilterService {
     }
     public renderNewestLeagues(newLeague: League[], oldLeagues: ItemsSelect[]) {
         const newestLeagues = _.filter(newLeague, item => !_.some(oldLeagues, league => league.id === item.leagueId));
-        if(newestLeagues.length > 0 ) {
+        if (newestLeagues.length > 0) {
             newestLeagues.forEach((item: League) => {
                 const temp = new ItemsSelect(
                     item.leagueId,
@@ -167,11 +165,11 @@ export class GenerateFilterService {
         return oldLeagues;
     }
 
-    private reorganizeLeague(listLeague: ItemsSelect[], newItem: ItemsSelect){
+    private reorganizeLeague(listLeague: ItemsSelect[], newItem: ItemsSelect) {
         const firstIndexOfGroup = _.findIndex(listLeague, item => item.type === newItem.type);
         const lastIndexOfGroup = _.findLastIndex(listLeague, item => item.type === newItem.type);
-        for(let i = firstIndexOfGroup; i <= lastIndexOfGroup; i++) {
-            if(listLeague[i].text.localeCompare(newItem.text) > 0 ){
+        for (let i = firstIndexOfGroup; i <= lastIndexOfGroup; i++) {
+            if (listLeague[i].text.localeCompare(newItem.text) > 0) {
                 listLeague.splice(i, 0, newItem);
                 return;
             }

@@ -31,11 +31,11 @@ public class OutrightSettleServiceImp : OutrightSettleService
 
     private readonly OutrightSettleProcessService outrightSettleProcessService;
 
-    private readonly OutrightPermissionService permission;
-
     private readonly INapSession currentSession;
 
     private readonly IBalanceUpService balanceUpService;
+
+    private readonly OutrightTicketService outrightTicketService;
 
     private const string SpName = "NAP_Admin_Settlement_Outright";
 
@@ -47,18 +47,18 @@ public class OutrightSettleServiceImp : OutrightSettleService
         IMapper mapper,
         IRefDataService refDataService,
         OutrightSettleProcessService outrightSettleProcessService,
-        OutrightPermissionService permission,
         INapSession currentSession,
-        IBalanceUpService balanceUpService
+        IBalanceUpService balanceUpService,
+        OutrightTicketService outrightTicketService
         )
     {
         this.repository = repository;
         this.mapper = mapper;
         this.refDataService = refDataService;
         this.outrightSettleProcessService = outrightSettleProcessService;
-        this.permission = permission;
         this.currentSession = currentSession;
         this.balanceUpService = balanceUpService;
+        this.outrightTicketService = outrightTicketService;
     }
 
     public async Task<LeagueInfo> GetLeagueInfo(GetLeagueInfoRequest request)
@@ -67,13 +67,12 @@ public class OutrightSettleServiceImp : OutrightSettleService
 
         var listTeam = (await repository.FetchAsync<Team>(criteria)).ToList();
 
-        listTeam.ForEach(team => team.RefDataService = refDataService);
+        await GetTicketInfo(listTeam);
 
         return new LeagueInfo
         {
             Teams = SortTeam(listTeam),
             LeagueName = refDataService.GetLeagueName(request.LeagueId),
-            Permission = permission.Permission,
             MoveBetsDay = balanceUpService.GetBalanceUpDay().MoveBetsDay.AddDays(1),
             SportName = refDataService.GetSportName(request.SportType)
         };
@@ -136,6 +135,23 @@ public class OutrightSettleServiceImp : OutrightSettleService
         var result = await repository.GetAsync<byte?>(criteria);
 
         return result;
+    }
+
+    private async Task GetTicketInfo(List<Team> teams)
+    {
+        var ticketInfo = await outrightTicketService.GetTeamsTicketCount(teams);
+        foreach (var team in teams)
+        {
+            team.RefDataService = refDataService;
+            var foundTeam = ticketInfo.FirstOrDefault(t => t.OrId == team.OrId);
+            if (foundTeam is not null)
+            {
+                team.TotalCal = foundTeam.TotalCal;
+                team.TotalHide = foundTeam.TotalHide;
+                team.TotalRunning = foundTeam.TotalRunning;
+                team.BetCount = foundTeam.TotalTicket;
+            }
+        }
     }
 
     private static IEnumerable<InfoValidate> GetListInfoValidates(OutrightUndoRequest request)

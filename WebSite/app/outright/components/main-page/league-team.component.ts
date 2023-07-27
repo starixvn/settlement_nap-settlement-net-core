@@ -77,7 +77,7 @@ export class LeagueTeamComponent implements OnChanges {
             height: '150px',
             hasBackdrop: true
         }).afterClosed().subscribe(newSetting => {
-            if(!_.isUndefined(newSetting)){
+            if (!_.isUndefined(newSetting)) {
                 leagueMatch.deadHeat = newSetting;
                 leagueMatch.deadHeatClass = leagueMatch.deadHeat ? 'button-yes' : 'button-no';
                 this.cdRef.detectChanges();
@@ -90,7 +90,7 @@ export class LeagueTeamComponent implements OnChanges {
             return "refund";
         }
         if (_.includes(this.settledStatus, team.status.toLocaleLowerCase())) {
-            return "settled";
+            return "calculated";
         }
         return "";
     }
@@ -138,7 +138,7 @@ export class LeagueTeamComponent implements OnChanges {
                 sportType: league.teams[0].sportType
             },
             width: '800px',
-            height: '500px',
+            height: '550px',
             disableClose: true,
             hasBackdrop: true
         }).afterClosed().subscribe((teamIds: string) => {
@@ -152,8 +152,8 @@ export class LeagueTeamComponent implements OnChanges {
         });
     }
 
-    UpperCaseFirstChar(string : string){
-        
+    UpperCaseFirstChar(string: string) {
+
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
 }

@@ -69,6 +69,7 @@
   }
 
   @media (max-width: 1024px) {
+
     .include-test,
     .submit {
       left: 0px;
@@ -233,14 +234,6 @@
   padding-left: 5px;
 }
 
-.settled {
-  background-color: #dac093;
-}
-
-.refund {
-  background-color: #aeeff9;
-}
-
 .table-calculate-outright {
   width: 900px;
   margin-left: 4px;
@@ -273,8 +266,37 @@
     width: 120px;
   }
 
+  .ticket-status {
+    min-width: 160px;
+    width: 160px;
+  }
+
   .won-color {
-    background-color: #ffdf00;
+    >* {
+      background: #ffdf00;
+    }
+
+    >.no-ticket {
+      background: #fff;
+    }
+
+    >.calculated {
+      background: #DAC093;
+    }
+  }
+
+  .refund {
+    >* {
+      background: #aeeff9;
+    }
+
+    >.no-ticket {
+      background: #fff;
+    }
+
+    >.calculated {
+      background: #DAC093;
+    }
   }
 
   .ngb-dp-header {
@@ -293,6 +315,7 @@
     margin: 4px;
   }
 }
+
 
 .table-calculate-outright,
 .table-outright {
@@ -315,6 +338,7 @@
 .table-uncal-outright {
 
   padding: 5px;
+
   .table-scroll {
     overflow-y: scroll;
     overflow-x: hidden;
@@ -334,6 +358,10 @@
 
 .modal-backdrop {
   z-index: 1050 !important;
+}
+
+.refund {
+  background: #aeeff9;
 }
 
 .processing {
@@ -418,7 +446,7 @@
       background: #e5ebf2;
     }
 
-    .team-name{
+    .team-name {
       padding-left: 10px;
     }
 

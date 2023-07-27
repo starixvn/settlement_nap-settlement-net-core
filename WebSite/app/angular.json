@@ -1163,7 +1163,7 @@
         }
       }
     },
-    "app": {
+    "cricket": {
       "root": "app",
       "sourceRoot": "cricket",
       "projectType": "application",
@@ -1173,7 +1173,7 @@
           "options": {
             "aot": true,
             "outputPath": "../wwwroot/cricket",
-            "index": "cricket/index.html",
+            "index": "cricket/index.cshtml",
             "main": "cricket/main.ts",
             "tsConfig": "cricket/tsconfig.app.json",
             "polyfills": "polyfills.ts",

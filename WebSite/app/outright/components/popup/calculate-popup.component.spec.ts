@@ -15,6 +15,7 @@ import { LeagueSettle, Permission, Team } from '../../models';
 import { Language } from '../../../shared/language.native';
 import { ResultOutright } from '../../models/result-outright.model';
 import * as _ from "lodash";
+import { DeadHeatSetting } from '../../constants/deadheat-setting';
 
 describe('CalculatePopupComponent', () => {
   let component: CalculatePopupComponent;
@@ -25,7 +26,6 @@ describe('CalculatePopupComponent', () => {
   const team: Team = {
     isDeadheat: false,
     disableDeadheat: false,
-    isSettled: false,
     selected: false,
     eventDate: '',
     dateTime: undefined,
@@ -39,7 +39,11 @@ describe('CalculatePopupComponent', () => {
     leagueName: '',
     teamId: 0,
     teamName: '',
-    betCount: 0
+    betCount: 0,
+    statusClass: '',
+    totalCal: 0,
+    totalRunning: 0,
+    totalHide: 0
   }
   const leagueSettle: LeagueSettle = {
     leagueName: '',
@@ -232,6 +236,7 @@ describe('CalculatePopupComponent', () => {
   describe("Calculate", () => {
     it('should get Lastest data to check', fakeAsync(() => {
       outrightService.getMatches = jest.fn().mockReturnValue(Promise.resolve(leagueSettle));
+      outrightService.getDeadHeatSetting = jest.fn().mockReturnValue(Promise.resolve(1));
       CalculateService.teamWonSettled = jest.fn();
 
       component.calculate();
@@ -243,6 +248,7 @@ describe('CalculatePopupComponent', () => {
 
     it('should error when exist match running', fakeAsync(() => {
       outrightService.getMatches = jest.fn().mockReturnValue(Promise.resolve(leagueSettle));
+      outrightService.getDeadHeatSetting = jest.fn().mockReturnValue(Promise.resolve(1));
       CalculateService.ExistRunningStatus = jest.fn().mockReturnValue(true);
       toastrService.error = jest.fn();
       toastrService.clear = jest.fn();
@@ -254,8 +260,25 @@ describe('CalculatePopupComponent', () => {
       expect(toastrService.error).toBeCalledWith(Language.Outright.existRunning);
     }));
 
+    it('should error when matches selected inconsistent Dead heat value', fakeAsync(() => {
+      outrightService.getMatches = jest.fn().mockReturnValue(Promise.resolve(leagueSettle));
+      outrightService.getDeadHeatSetting = jest.fn().mockReturnValue(Promise.resolve(DeadHeatSetting.No));
+      CalculateService.ExistRunningStatus = jest.fn().mockReturnValue(false);
+      CalculateService.VerifyOnlyOneTeamWon = jest.fn().mockReturnValue(false);
+      CalculateService.VerifyDeadHeatNoSetting = jest.fn().mockReturnValue("Mock Test");
+      toastrService.error = jest.fn();
+      toastrService.clear = jest.fn();
+
+      component.calculate();
+      flush();
+
+      expect(toastrService.clear).toBeCalled();
+      expect(toastrService.error).toBeCalledWith("Mock Test");
+    }));
+
     it('should error when exist only one match death heat', fakeAsync(() => {
       outrightService.getMatches = jest.fn().mockReturnValue(Promise.resolve(leagueSettle));
+      outrightService.getDeadHeatSetting = jest.fn().mockReturnValue(Promise.resolve(1));
       CalculateService.ExistRunningStatus = jest.fn().mockReturnValue(false);
       CalculateService.VerifyOnlyOneTeamWon = jest.fn().mockReturnValue(true);
       toastrService.error = jest.fn();
@@ -268,29 +291,12 @@ describe('CalculatePopupComponent', () => {
       expect(toastrService.error).toBeCalledWith(Language.Outright.atLeastTwoDeadHeat);
     }));
 
-    it('should error when matches selected inconsistent Dead heat value', fakeAsync(() => {
-      outrightService.getMatches = jest.fn().mockReturnValue(Promise.resolve(leagueSettle));
-      CalculateService.ExistRunningStatus = jest.fn().mockReturnValue(false);
-      CalculateService.VerifyOnlyOneTeamWon = jest.fn().mockReturnValue(false);
-      CalculateService.VerifyDeadheat = jest.fn().mockReturnValue(true);
-      CalculateService.MessageInconsistentDeadheat = jest.fn().mockReturnValue("Mock Test");
-      toastrService.error = jest.fn();
-      toastrService.clear = jest.fn();
-
-      component.calculate();
-      flush();
-
-      expect(toastrService.clear).toBeCalled();
-      expect(toastrService.error).toBeCalledWith("Mock Test");
-      expect(CalculateService.MessageInconsistentDeadheat).toBeCalled();
-    }));
-
     it('should confirm one time when pass all validate', fakeAsync(() => {
       outrightService.getMatches = jest.fn().mockReturnValue(Promise.resolve(leagueSettle));
+      outrightService.getDeadHeatSetting = jest.fn().mockReturnValue(Promise.resolve(1));
       CalculateService.ExistRunningStatus = jest.fn().mockReturnValue(false);
       CalculateService.VerifyOnlyOneTeamWon = jest.fn().mockReturnValue(false);
-      CalculateService.VerifyDeadheat = jest.fn().mockReturnValue(false);
-      CalculateService.VerifyNonDeadheat = jest.fn().mockReturnValue(false);
+      CalculateService.VerifySettledSelected = jest.fn().mockReturnValue(false);
       toastrService.clear = jest.fn();
       outrightService.calculate = jest.fn().mockReturnValue(Promise.resolve(ResultSuccessful));
       component.dialogRef.close = jest.fn();
@@ -307,12 +313,23 @@ describe('CalculatePopupComponent', () => {
       expect(component.dialogRef.close).toBeCalled();
     }));
 
-    it('should confirm twice when exist more than one team dead heat', fakeAsync(() => {
+    it('should confirm twice when exist team dead heat with setting no deadhead', fakeAsync(() => {
+      team.orId = '1';
+      team.selected = true;
+      team.status = "WON";
+      team.isDeadheat = true;
+      team.isDeadheat = true;
+      const teamSecond = _.cloneDeep(team);
+      teamSecond.orId = '2';
+      leagueSettle.teams = [team, teamSecond];
+      component.teams = [team, teamSecond];
       outrightService.getMatches = jest.fn().mockReturnValue(Promise.resolve(leagueSettle));
+      outrightService.getDeadHeatSetting = jest.fn().mockReturnValue(Promise.resolve(DeadHeatSetting.No));
       CalculateService.ExistRunningStatus = jest.fn().mockReturnValue(false);
       CalculateService.VerifyOnlyOneTeamWon = jest.fn().mockReturnValue(false);
-      CalculateService.VerifyDeadheat = jest.fn().mockReturnValue(false);
-      CalculateService.VerifyNonDeadheat = jest.fn().mockReturnValue(true);
+      CalculateService.VerifySettledSelected = jest.fn().mockReturnValue(false);
+      CalculateService.VerifyDeadHeatNoSetting = jest.fn().mockReturnValue("");
+      CalculateService.ConfirmDeadHeatNoSetting = jest.fn().mockReturnValue(true);
       toastrService.clear = jest.fn();
       outrightService.calculate = jest.fn().mockReturnValue(Promise.resolve(ResultSuccessful));
       component.dialogRef.close = jest.fn();
@@ -341,10 +358,12 @@ describe('CalculatePopupComponent', () => {
       component.teams = [team, teamSecond];
       ResultFailed.teamFailedIds = '1';
       outrightService.getMatches = jest.fn().mockReturnValue(Promise.resolve(leagueSettle));
+      outrightService.getDeadHeatSetting = jest.fn().mockReturnValue(Promise.resolve(DeadHeatSetting.No));
       CalculateService.ExistRunningStatus = jest.fn().mockReturnValue(false);
       CalculateService.VerifyOnlyOneTeamWon = jest.fn().mockReturnValue(false);
-      CalculateService.VerifyDeadheat = jest.fn().mockReturnValue(false);
-      CalculateService.VerifyNonDeadheat = jest.fn().mockReturnValue(false);
+      CalculateService.VerifySettledSelected = jest.fn().mockReturnValue(false);
+      CalculateService.VerifyDeadHeatNoSetting = jest.fn().mockReturnValue("");
+      CalculateService.ConfirmDeadHeatNoSetting = jest.fn().mockReturnValue(false);
       toastrService.clear = jest.fn();
       toastrService.error = jest.fn();
       outrightService.calculate = jest.fn().mockReturnValue(Promise.resolve(ResultFailed));

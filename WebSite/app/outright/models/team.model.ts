@@ -9,6 +9,9 @@ export class Team extends Match {
     dateTime: NgbDateStruct;
     oddsStatus: string;
     statusClass: string;
+    totalCal: number;
+    totalRunning: number;
+    totalHide: number;
 }
 
 export class TeamSettle {

@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Fanex.Data.Repository;
-using Microsoft.Extensions.Options;
 using NSubstitute;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
@@ -19,23 +18,21 @@ public class FilterServiceTests
     private readonly IBalanceUpService balanceUpService;
     private readonly FilterService service;
     private readonly IRefDataService refDataService;
+    private readonly OutrightTicketService outrightTicketService;
 
     public FilterServiceTests()
     {
         repository = Substitute.For<IDynamicRepository>();
         balanceUpService = Substitute.For<IBalanceUpService>();
-        var permissionService = Substitute.For<OutrightPermissionService>();
         refDataService = Substitute.For<IRefDataService>();
+        outrightTicketService = Substitute.For<OutrightTicketService>();
 
         var mapperConfig = new MapperConfigurationExpression();
         mapperConfig.AddProfile<OutrightMapperProfile>();
         var config = new MapperConfiguration(mapperConfig);
         var mapper = new Mapper(config);
 
-        var appSettingKey = new AppSettingsKey { SiteDbServer = new List<string> { "01", "02" } };
-        var option = Options.Create(appSettingKey);
-
-        service = new FilterServiceImp(repository, balanceUpService, mapper, permissionService, refDataService, option);
+        service = new FilterServiceImp(repository, balanceUpService, mapper, refDataService, outrightTicketService);
     }
 
     private static List<League> FakeLeagues => new()
@@ -90,16 +87,17 @@ public class FilterServiceTests
     {
         var teamOne = new Team { LeagueId = 1, BetCount = 1, OrId = 1 };
         var teamTwo = new Team { LeagueId = 1, OrId = 2 };
-        repository.FetchMultipleAsync<DeadHeatSetting, Team>(Arg.Any<GetOutrightDetailCriteria>()).Returns((new List<DeadHeatSetting>(), new List<Team> { teamOne, teamTwo }));
-        repository.FetchAsync<TeamTicketModel>(Arg.Any<GetTeamTicketCountCriteria>())
-            .Returns(new List<TeamTicketModel>
+        var listTeam = new List<Team> { teamOne, teamTwo };
+        repository.FetchMultipleAsync<DeadHeatSetting, Team>(Arg.Any<GetOutrightDetailCriteria>()).Returns((new List<DeadHeatSetting>(), listTeam));
+
+        outrightTicketService.GetTeamsTicketCount(listTeam).Returns(new List<TeamTicketModel>
+        {
+            new TeamTicketModel
             {
-                new()
-                {
-                    OrId = 1,
-                    TotalTicket = 2
-                }
-            });
+                OrId = 1,
+                TotalTicket = 4
+            }
+        });
 
         var actual = await service.Filter(new FilterRequest());
 

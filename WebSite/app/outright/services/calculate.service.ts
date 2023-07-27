@@ -4,6 +4,8 @@ import { Team } from "../models";
 import * as _ from "lodash";
 import { Status } from "../constants";
 import { VerifyDeadHeatService } from './verify-deadheat.service';
+import { TicketStatusText } from '../../shared/constants';
+import { GenerateFilterService } from '../../shared/services';
 
 @Injectable()
 export class CalculateService {
@@ -25,7 +27,6 @@ export class CalculateService {
 
     public static VerifyDeadHeatNoSet(teamWonSelected: Team[], teamWonSettled: Team[]) {
         const teamWonSelectedNoneDeadHeat = _.filter(teamWonSelected, team => !team.isDeadheat);
-        const teamSettledDeadHeat = _.filter(teamWonSettled, team => team.isDeadheat);
         const teamWonSelectedDeadHeat = _.filter(teamWonSelected, team => team.isDeadheat);
         const teamSettledNoneDeadHeat = _.filter(teamWonSettled, team => !team.isDeadheat);
 
@@ -119,6 +120,17 @@ export class CalculateService {
         return false;
     }
 
+    public renderTicketStatus() {
+        const selection = [
+            { id: 1, value: TicketStatusText.running, text: TicketStatusText.running, checked: true },
+            { id: 2, value: TicketStatusText.calculated, text: TicketStatusText.calculated },
+            { id: 3, value: TicketStatusText.noTicketHide, text: TicketStatusText.noTicketHide },
+            { id: 4, value: TicketStatusText.noTicket, text: TicketStatusText.noTicket }
+        ];
+
+
+        return GenerateFilterService.createListOption(selection);
+    }
 
 
     public static teamWonSettled(teamSelected: Team[], originalTeam: Team[]) {
