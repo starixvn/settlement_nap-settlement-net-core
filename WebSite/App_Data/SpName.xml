@@ -136,7 +136,6 @@
       <Setting Key="NAP_Set_OutrightSelTicketCount_DBSID02" SpName="NAP_Set_OutrightSelTicketCount" DbName="DBSID02.bodb02.bodbAdminNet" />
       <Setting Key="NAP_Set_OutrightSelTicketCount_DBSID03" SpName="NAP_Set_OutrightSelTicketCount" DbName="DBSID03.bodb02.bodbAdminNet" />
     </Function>
-      <Setting Key="NAP_Set_OutrightSelTicketCount_DBSID03" SpName="NAP_Set_OutrightSelTicketCount" DbName="DBSID03.bodb02.bodbAdminNet" />
     <Function Name="NAP_Set_OutrightCheckTicketVoid">
       <Setting Key="NAP_Set_OutrightCheckTicketVoid_DBTXN" SpName="NAP_Set_OutrightCheckTicketVoid" DbName="DBTXN.bodb02.bodbAdminNet" />
       <Setting Key="NAP_Set_OutrightCheckTicketVoid_DBSID01" SpName="NAP_Set_OutrightCheckTicketVoid" DbName="DBSID01.bodb02.bodbAdminNet" />
