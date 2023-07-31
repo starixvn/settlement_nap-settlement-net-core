@@ -252,7 +252,6 @@ export class SpecialSessionComponent implements OnChanges, OnInit {
   public saveAndSelectSuspendedTime(session: SpecialSession) {
     this.toastrService.clear();
     session.isSaveButtonPressed = true;
-    console.log('saveAndSelectSuspendedTime',session)
 
     if (this.verifyBeforeSavingSuspendedTime(session)) {
       if (session.apply) {
@@ -472,9 +471,6 @@ export class SpecialSessionComponent implements OnChanges, OnInit {
     const allValidEndTimes = validEndTime.every((originalWater) =>
       this.isLessThanEndTime(originalWater, session)
     );
-    console.log('validEndTime',validEndTime);
-
-    console.log('allValidEndTimes',allValidEndTimes);
 
     if (!allValidEndTimes) {
       this.toastrService.clear();
