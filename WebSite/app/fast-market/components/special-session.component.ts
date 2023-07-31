@@ -190,8 +190,8 @@ export class SpecialSessionComponent implements OnChanges, OnInit {
     suspendSession: SpecialSession
   ) {
     return (
-      (session.endMinute < suspendSession.startMinute) ||
-      (session.endMinute === suspendSession.startMinute && session.endSecond <= suspendSession.startSecond)
+      (Number(session.endMinute) < Number(suspendSession.startMinute)) ||
+      (Number(session.endMinute) === Number(suspendSession.startMinute) && Number(session.endSecond) <= Number(suspendSession.startSecond))
     );
   }
 
@@ -252,6 +252,7 @@ export class SpecialSessionComponent implements OnChanges, OnInit {
   public saveAndSelectSuspendedTime(session: SpecialSession) {
     this.toastrService.clear();
     session.isSaveButtonPressed = true;
+    console.log('saveAndSelectSuspendedTime',session)
 
     if (this.verifyBeforeSavingSuspendedTime(session)) {
       if (session.apply) {
@@ -471,6 +472,9 @@ export class SpecialSessionComponent implements OnChanges, OnInit {
     const allValidEndTimes = validEndTime.every((originalWater) =>
       this.isLessThanEndTime(originalWater, session)
     );
+    console.log('validEndTime',validEndTime);
+
+    console.log('allValidEndTimes',allValidEndTimes);
 
     if (!allValidEndTimes) {
       this.toastrService.clear();
@@ -484,7 +488,7 @@ export class SpecialSessionComponent implements OnChanges, OnInit {
   private verifyWaterBreakWithSuspendedTime(session: SpecialSession) {
     return (
       !this.isSuspendedTimeEmpty(this.originalSuspendedTime) &&
-      !this.isLessThanEndTime(session, this.originalSuspendedTime)
+      !this.isLessThanEndTime(session, this.originalSuspendedTime) // true
     );
   }
 
