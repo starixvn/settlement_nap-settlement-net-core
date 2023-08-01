@@ -894,15 +894,15 @@ export class BetTypesComponent implements OnInit, DoCheck {
   }
 
   private getFastMarketResult(matchId: number) {
-    this.requestService.getFastMarketResult(matchId).subscribe({
-      next: (result) => {
-        this.fastMarkets = result;
-      },
-    });
-    if (!_.isNil(this.fastMarkets)) {
-      this.manipulateResultRadio();
-      this.resetTimeMachineIntervals();
-    }
+    this.requestService.getFastMarketResult(matchId).subscribe(
+      (fastMarkets: FastMarkets) => {
+          this.fastMarkets = fastMarkets;
+          if (!_.isNil(this.fastMarkets)) {
+              this.manipulateResultRadio();
+              this.resetTimeMachineIntervals();
+
+          }
+      });
   }
 
   private fastMatketsSelection(betType: BetType, checked: boolean) {
