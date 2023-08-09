@@ -18,10 +18,12 @@
 
 			<resettle-checker [checked]="isReSettledTickets" (proceedEvent)="onResettleCheckboxChange($event)"></resettle-checker>
 		</div>
+		<related-matches *ngIf="matchDetail.isFantasy" [fantasyMatch]="fantasyMatch" (errorMsgEmitter)="getErrorMsg($event)"></related-matches>
 	</div>
 	<div *ngIf="!isReadyMatch">
 		<not-ready-match></not-ready-match>
 	</div>
+	
 </div>
 
 <ng-template #header>

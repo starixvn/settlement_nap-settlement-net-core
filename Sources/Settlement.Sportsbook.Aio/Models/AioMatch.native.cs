@@ -6,6 +6,8 @@ public class AioMatch
 {
     public MatchDetail MatchDetail { get; set; }
 
+    public FantasyMatch FantasyMatch { get; set; }
+
     public List<ResultDetail> ResultDetails { get; set; }
 
     public TicketCounts TicketCounts { get; set; }

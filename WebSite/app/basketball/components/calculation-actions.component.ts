@@ -13,13 +13,15 @@ import { ExternalSourceNamePipe } from '../../shared/pipes/external-source-name.
 import { ResourceNameByIdPipe } from '../pipes/resource-name-by-id.pipe';
 import { CalculationMatchDetailComponent } from './calculation-match-detail.component';
 import { CalculateCommonModule } from '../../shared/modules/calculate-common.module';
+import { RelatedMatchesComponent } from './fantasy/related-matches.compoment';
+import { FantasyMatch } from '../models/fantasy.model';
 
 @Component({
     selector: 'calculation-actions',
     templateUrl: './calculation-actions.component.html',
     standalone: true,
     imports: [CalculateCommonModule, CalculationMatchDetailComponent,
-        ExternalSourceNamePipe, ResourceNameByIdPipe],
+        ExternalSourceNamePipe, ResourceNameByIdPipe, RelatedMatchesComponent],
     providers: [BasketballService, ResourceNameByIdPipe, BetStatusService, VerificationService, CashOutService, GenerateCashOutService]
 })
 export class CalculationActionsComponent implements SportTemplate {
@@ -36,6 +38,7 @@ export class CalculationActionsComponent implements SportTemplate {
     blockUI = false;
     match: Match;
     matchDetail: MatchDetail;
+    fantasyMatch: FantasyMatch;
     hedgeMatchDetail: HedgeMatchDetail;
     applyHedgeMatch: boolean;
     isDisabledUndo: boolean;
@@ -55,6 +58,7 @@ export class CalculationActionsComponent implements SportTemplate {
             settleType: "MNL"
         };
         this.match = await this.aioService.getMatch(matchQuery) as Match;
+       // console.log(this.match);
         this.isReadyMatch = this.match.matchDetail.playTime >= KickOffTime.playTime;
         this.cloneResultDetail();
         this.init();
@@ -83,6 +87,7 @@ export class CalculationActionsComponent implements SportTemplate {
         this.verificationService.generateExternalScores(this.match, this.resultDetails, SportType.cricket);
         this.resetHomeAway(this.resultDetails);
         this.matchDetail = this.match.matchDetail;
+        this.fantasyMatch = (this.match as any).fantasyMatch;
         this.hedgeMatchDetail = this.match.hedgeMatchDetail;
         this.applyHedgeMatch = this.hedgeMatchDetail != null;
         this.disableScoreDirect = this.verificationService.isTicketOnQuarter(this.resultDetails, this.match.resultDetails);
@@ -132,7 +137,9 @@ export class CalculationActionsComponent implements SportTemplate {
     autoFillScoreOnLoad(resultDetails: ResultDetail[]) {
         const intervals = resultDetails.filter((map) => !_.isEqual(map.resourceId, ResourcesIds.htScore)
             && !_.isEqual(map.resourceId, ResourcesIds.finalScore));
+
         _.forEach(this.firstHalf.externalScores, item => this.autofillOutsideSource(item.sourceId));
+        
         if (intervals.length > 0) {
             _.forEach(intervals, (map) => {
                 map.isScoreMismatched = this.verificationService.isMismatchedWarning(map);
@@ -610,6 +617,14 @@ export class CalculationActionsComponent implements SportTemplate {
             return this.match.permission.isLeader && (this.fullTime.resultSettingData.isConfirmedRefund || this.fullTime.resultSettingData.isConfirmedRefundSdt);
         } else {
             return this.match.permission.isLeader && (resultDetail.resultSettingData.isConfirmedRefund || resultDetail.resultSettingData.isConfirmedRefundSdt);
+        }
+    }
+
+    public getErrorMsg(value: string) {
+        if (!_.isEmpty(value)) {
+            this.toastrService.error(value);
+        } else {
+            this.toastrService.clear();
         }
     }
 }

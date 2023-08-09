@@ -7,9 +7,10 @@ import { Language } from '../language.native';
     standalone: true
 })
 export class ScoreBySettlementPipe implements PipeTransform {
-    public transform(score: string, settlementStatusId: number) {
+    public transform(score: string, settlementStatusId: number = -1) {
         switch (settlementStatusId) {
-            case SettlementStatusId.Running: case SettlementStatusId.Calculated:
+            case SettlementStatusId.Running: 
+            case SettlementStatusId.Calculated:
                 return score === null || score === '' ? '-' : score;
 
             case SettlementStatusId.Refund:
