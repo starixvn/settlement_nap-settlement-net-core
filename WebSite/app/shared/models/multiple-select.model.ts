@@ -1,5 +1,5 @@
 ﻿import { ItemsSelect } from "./items-select.model";
-import { DefaultSetting } from './default-setting.model';
+import { DefaultSetting } from "./default-setting.model";
 
 export class MultipleSelect {
     public selectionTitle: string;
