@@ -54,7 +54,7 @@ public class SettleEarlyServiceTests
     }
 
     [Fact]
-    public async Task CalculateEarly_NotExistError_UpdateAndSettlematch()
+    public async Task CalculateEarly_NotExistError_UpdateAndSettleMatch()
     {
         //arrange
         createCriteriaService.CreateCalculateEarlyCriteria(Arg.Any<SettleEarlyRequest>())
@@ -69,9 +69,9 @@ public class SettleEarlyServiceTests
         //assert
         Received.InOrder(() =>
         {
-            scaleOutSettleService.Received().UpdateMatchInfo(Arg.Any<UpdateMatchInfoRequest>());
-            repository.Received().ExecuteAsync(Arg.Any<CalculateEarlyCriteria>());
-            repository.Received().ExecuteAsync(Arg.Any<CalculateEarlyCriteria>());
+            scaleOutSettleService.UpdateMatchInfo(Arg.Any<UpdateMatchInfoRequest>());
+            repository.ExecuteAsync(Arg.Any<CalculateEarlyCriteria>());
+            repository.ExecuteAsync(Arg.Any<CalculateEarlyCriteria>());
         });
     }
 }

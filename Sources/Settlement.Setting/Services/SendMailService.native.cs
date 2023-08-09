@@ -15,13 +15,13 @@ public interface SendMailService
 
 public class SendMailServiceImp : SendMailService
 {
-    private readonly IHostingEnvironment environment;
+    private readonly IWebHostEnvironment environment;
 
     private readonly IConfiguration configuration;
 
     public SendMailServiceImp(
         IConfiguration configuration,
-        IHostingEnvironment environment)
+        IWebHostEnvironment environment)
     {
         this.configuration = configuration;
         this.environment = environment;
@@ -60,18 +60,13 @@ public class SendMailServiceImp : SendMailService
     private string MailBody(NotificationModel item)
     {
         var filePath = environment.WebRootPath;
-        string templateKey;
-        string template;
+        var templateKey = "notification-key";
+        var template = $"{Path.Combine(filePath, "email-templates")}{Path.DirectorySeparatorChar}notification-error.html";
 
         if (item.SportType == SportType.BasketBall)
         {
             templateKey = "void-bet-key";
             template = $"{Path.Combine(filePath, "email-templates")}{Path.DirectorySeparatorChar}void-bet-email.html";
-        }
-        else
-        {
-            templateKey = "notification-key";
-            template = $"{Path.Combine(filePath, "email-templates")}{Path.DirectorySeparatorChar}notification-error.html";
         }
 
         return Engine.Razor.RunCompile(File.ReadAllText(template), templateKey, null, item);

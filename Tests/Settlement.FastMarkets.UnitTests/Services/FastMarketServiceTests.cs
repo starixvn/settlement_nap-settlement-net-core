@@ -6,7 +6,6 @@ using Fanex.Settlement.ScaleOut.Services;
 using Microsoft.Extensions.Options;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
-using Settlement.FastMarkets.Constants;
 using Settlement.FastMarkets.Criteria;
 using Settlement.FastMarkets.Models;
 using Settlement.FastMarkets.Requests;
@@ -47,12 +46,11 @@ public class FastMarketServiceTests
     }
 
     [Theory]
-    [InlineData(0, 0, 0, TicketStatus.NoTicket)]
-    [InlineData(1, 1, 0, TicketStatus.Running)]
-    [InlineData(1, 0, 1, TicketStatus.Marked)]
-    [InlineData(1, 0, 0, TicketStatus.Calculated)]
-    public async Task Query_Always_ReturnsTrue(int ticketCount, int ticketRunning, int ticketMarked,
-        int ticketStatus)
+    [InlineData(0, 0, 0)]
+    [InlineData(1, 1, 0)]
+    [InlineData(1, 0, 1)]
+    [InlineData(1, 0, 0)]
+    public async Task Query_Always_ReturnsTrue(int ticketCount, int ticketRunning, int ticketMarked)
     {
         // Arrange
         const int matchId = 100;

@@ -12,10 +12,8 @@ public class InstantGoalCheckingServiceTests
         service = new InstantGoalCheckingServiceImp();
     }
 
-    [Theory]
-    [InlineData("AH;H", "A")]
-    [InlineData("", "")]
-    public void IsHalftimeGoalChecking_TheSameNewFirstGoalWithOldFirstGoalValue_ReturnsFalse(string newGoal, string oldGoal)
+    [Fact]
+    public void IsHalftimeGoalChecking_TheSameNewFirstGoalWithOldFirstGoalValue_ReturnsFalse()
     {
         // Arrange
         var goalCondition = new InstantGoalCondition
