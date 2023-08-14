@@ -37,14 +37,15 @@ public class RelatedMatch
     public byte SettlementStatus { get; set; }
     public string BetStatus { get; set; }
     public string EventStatus { get; set; }
+    public string NewEventStatus { get; set; }
     public bool IsDeleted { get; set; }
 }
 
-public class RelatedMatchResult
+public class RelatedMatchResult : ResultDetailBase
 {
-    public string ResourceId { get; set; }
+    public new string ResourceId { get; set; }
     public string HomeValue { get; set; }
     public string AwayValue { get; set; }
     public byte? ResultStatusId { get; set; }
-    public byte SettlementStatusId { get; set; }
+    public new byte? SettlementStatusId { get; set; }
 }

@@ -22,6 +22,7 @@ export interface FantasyRelatedMatch {
     awayValue: string;
     remark: Remark;
     eventStatus: string;
+    newEventStatus: string;
     settlementStatus: boolean;
     betStatus: string;
     isDeleted: boolean;

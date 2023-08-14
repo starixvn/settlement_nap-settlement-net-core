@@ -58,7 +58,6 @@ export class CalculationActionsComponent implements SportTemplate {
             settleType: "MNL"
         };
         this.match = await this.aioService.getMatch(matchQuery) as Match;
-       // console.log(this.match);
         this.isReadyMatch = this.match.matchDetail.playTime >= KickOffTime.playTime;
         this.cloneResultDetail();
         this.init();
@@ -627,4 +626,10 @@ export class CalculationActionsComponent implements SportTemplate {
             this.toastrService.clear();
         }
     }
+
+    public autoFillFantasyMatch(score) {
+       this.resultDetails = this.resultDetails.map(result => {
+        const findScore = score.find(score => score.resourceId == result.resourceId);
+        return findScore ? ({...result, homeValue : findScore.homeValue,awayValue: findScore.awayValue}) : ({...result})
+       });    }
 }

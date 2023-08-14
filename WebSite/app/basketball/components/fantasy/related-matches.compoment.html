@@ -14,7 +14,7 @@
                     Team
                 </th>
                 <th colspan="7" class="group-score">
-                    Score <span class="icon-copy" (click)="verifyAndFillFantasyMatch()"></span>
+                    Score <span class="icon-copy" [ngClass]="{'disable-copy': !isSupportCopyScore}" (click)="verifyAndFillFantasyMatch()"></span>
                 </th>
                 <th rowspan="2" class="event-status">
                     Event Status
@@ -31,9 +31,6 @@
                     Q2
                 </th>
                 <th class="score">
-                    HT
-                </th>
-                <th class="score">
                     Q3
                 </th>
                 <th class="score">
@@ -43,14 +40,17 @@
                     OT
                 </th>
                 <th class="score">
+                    HT
+                </th>
+                <th class="score">
                     FT
                 </th>
             </tr>
         </thead>
 
-        <ng-container *ngIf="relatedMatches.length > 0; else noInformation">
+        <ng-container *ngIf="relatedMatchesView.length > 0; else noInformation">
             <tbody>
-                <ng-container *ngFor="let item of relatedMatches; let i = index">
+                <ng-container *ngFor="let item of relatedMatchesView; let i = index">
                     <tr [ngClass]="{'even': i % 2 !== 0}">
                         <td class="code">
                             {{item.matchCode}}
@@ -63,12 +63,12 @@
                             {{item.homeName}}
                         </td>
                         <ng-container *ngFor="let result of item.results">
-                            <td class="score" [ngClass]="getClass(result.resourceId)">
+                            <td class="score" [ngClass]="getScoreClass(result.resourceId)">
                                 <span>{{result.homeValue  | scoreBySettlement: result.settlementStatusId}}</span>
                             </td>
                         </ng-container>
-                        <td rowspan="2" class="event-status">
-                            {{item.eventStatus}}
+                        <td rowspan="2" class="event-status" [ngClass]="getEventStatusClass(item.newEventStatus )">
+                            {{item.newEventStatus || item.eventStatus}}
                         </td>
                         <td rowspan="2" class="hold-status">
                             {{item.remark.isKeyHold || item.remark.isMtdHold || item.remark.isPending || item.remark.isUndecided || item.remark.isUnderSettle ? 'YES' : 'NO'}}
@@ -82,7 +82,7 @@
                             {{item.awayName}}
                         </td>
                         <ng-container *ngFor="let result of item.results">
-                            <td class="score" [ngClass]="getClass(result.resourceId)">
+                            <td class="score" [ngClass]="getScoreClass(result.resourceId)">
                                 <span>{{result.awayValue | scoreBySettlement: result.settlementStatusId}}</span>
                             </td>
                         </ng-container>

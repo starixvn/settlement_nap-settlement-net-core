@@ -25,4 +25,5 @@
     public parentId: number;
     public autoSetting: number;
     public isFantasy: boolean;
+    public isSupportCopyScore: boolean
 }

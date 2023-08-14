@@ -58,7 +58,6 @@ export class LeagueComponent implements OnInit, OnChanges, OnDestroy {
   ngOnInit() {
     this.permission = this.multiSport.permission;
     this.refreshMatches();
-  console.log(this.sports);
   }
 
   public ngOnDestroy() {

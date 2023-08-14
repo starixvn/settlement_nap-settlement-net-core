@@ -34,14 +34,18 @@ public class NewInfoMatchServiceImp : NewInfoMatchService
 
     private readonly EventStatusService eventStatusService;
 
+    private readonly BasketballEventStatusService basketballEventStatusService;
+
     public NewInfoMatchServiceImp(
         SiteMatchService siteMatchService,
         GoalIconService goalIconService,
-        EventStatusService eventStatusService)
+        EventStatusService eventStatusService,
+        BasketballEventStatusService basketballEventStatusService)
     {
         this.siteMatchService = siteMatchService;
         this.goalIconService = goalIconService;
         this.eventStatusService = eventStatusService;
+        this.basketballEventStatusService = basketballEventStatusService;
     }
 
     public string EventStatusColor(BaseMatch match)
@@ -71,7 +75,7 @@ public class NewInfoMatchServiceImp : NewInfoMatchService
     public string NewEventStatus(BaseMatch match, IEnumerable<ResultDetail> resultDetails = null)
     {
         var eventStatus = SportGroup.SupportSettleDetermine.Contains(match.SportType)
-            ? eventStatusService.AdjustEventStatusAbandoned(match.EventStatus, resultDetails, match.SportType)
+            ? basketballEventStatusService.AdjustEventStatusAbandoned(match.EventStatus, resultDetails, match.SportType)
             : match.EventStatus;
 
         return eventStatusService.CheckProcessingStatus(eventStatus, match);

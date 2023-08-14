@@ -73,4 +73,13 @@ public class MatchDetail
             return leagueIds.Contains(LeagueId);
         }
     }
+
+    public bool IsSupportCopyScore
+    {
+        get
+        {
+            var leagueIds = new List<int> { 56037, 56053, 56069, 99321, 16926, 97008 };
+            return leagueIds.Contains(LeagueId);
+        }
+    }
 }
