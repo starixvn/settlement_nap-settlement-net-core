@@ -195,26 +195,8 @@ public class AioServiceImp : IAioService
     {
         relatedMatches.ForEach(match =>
         {
-            //match.Results = FillResults(match.Results);
             match.NewEventStatus = basketballEventStatusService.AdjustEventStatusAbandoned(match.EventStatus, match.Results, SportType.BasketBall);
         });
-    }
-
-    private List<RelatedMatchResult> FillResults(List<RelatedMatchResult> results)
-    {
-        var resourceIds = ResourcePosition.ResourceBySport[SportType.BasketBall];
-        var newResults = new List<RelatedMatchResult>();
-
-        foreach (var resource in resourceIds)
-        {
-            var foundResult = results.FirstOrDefault(x => (x.ResourceId ?? string.Empty).Equals(resource), new RelatedMatchResult());
-            newResults.Add(foundResult ?? new RelatedMatchResult
-            {
-                ResourceId = resource
-            });
-        }
-
-        return newResults;
     }
 
     private async Task<HedgeMatchDetail> GetOldMatch(Models.MatchDetail matchDetail, GetMatchRequest request, string apiKey)
