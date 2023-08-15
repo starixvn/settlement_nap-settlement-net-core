@@ -1,5 +1,6 @@
 ﻿using Settlement.Core.Constants;
 using Settlement.Core.Models;
+using Settlement.Core.Services;
 using Settlement.EventManagement.Services;
 using Match = Settlement.EventManagement.Models.MultiSports.Match;
 
@@ -9,177 +10,180 @@ using Core.Services.SpecificService;
 
 public class NewInfoMatchServiceTests
 {
-	private readonly SiteMatchService siteMatchService;
+    private readonly SiteMatchService siteMatchService;
 
-	private readonly GoalIconService goalIconService;
+    private readonly GoalIconService goalIconService;
 
-	private readonly NewInfoMatchService service;
+    private readonly NewInfoMatchService service;
 
-	private readonly EventStatusService eventStatusService;
+    private readonly EventStatusService eventStatusService;
+    private readonly BasketballEventStatusService basketballEventStatusService;
 
-	public NewInfoMatchServiceTests()
-	{
-		siteMatchService = Substitute.For<SiteMatchService>();
-		goalIconService = Substitute.For<GoalIconService>();
-		eventStatusService = Substitute.For<EventStatusService>();
-		service = new NewInfoMatchServiceImp(siteMatchService, goalIconService, eventStatusService);
-	}
+    public NewInfoMatchServiceTests()
+    {
+        siteMatchService = Substitute.For<SiteMatchService>();
+        goalIconService = Substitute.For<GoalIconService>();
+        eventStatusService = Substitute.For<EventStatusService>();
+        basketballEventStatusService = Substitute.For<BasketballEventStatusService>();
 
-	[Theory]
-	[InlineData(true, EventStatus.Postponed, 0, Background.YellowBlinking)]
-	[InlineData(false, EventStatus.Postponed, 0, Background.Yellow)]
-	[InlineData(true, EventStatus.Running, 0, Background.WhiteBlinking)]
-	[InlineData(false, EventStatus.Running, 0, "")]
-	[InlineData(true, EventStatus.ResultPending, 1, Background.BrightYellowBlinking)]
-	[InlineData(false, EventStatus.ResultPending, 1, Background.BrightYellow)]
-	public void EventStatusColor_PostponedStatus_ReturnCorrectColor(bool existMarkedTickets, string eventStatus,
-		int settlementStatus, string color)
-	{
-		var match = new Match { EventStatus = eventStatus, SettlementStatus = (byte)settlementStatus };
+        service = new NewInfoMatchServiceImp(siteMatchService, goalIconService, eventStatusService, basketballEventStatusService);
+    }
 
-		siteMatchService.IsExistMarkedTickets(Arg.Any<Match>()).Returns(existMarkedTickets);
+    [Theory]
+    [InlineData(true, EventStatus.Postponed, 0, Background.YellowBlinking)]
+    [InlineData(false, EventStatus.Postponed, 0, Background.Yellow)]
+    [InlineData(true, EventStatus.Running, 0, Background.WhiteBlinking)]
+    [InlineData(false, EventStatus.Running, 0, "")]
+    [InlineData(true, EventStatus.ResultPending, 1, Background.BrightYellowBlinking)]
+    [InlineData(false, EventStatus.ResultPending, 1, Background.BrightYellow)]
+    public void EventStatusColor_PostponedStatus_ReturnCorrectColor(bool existMarkedTickets, string eventStatus,
+        int settlementStatus, string color)
+    {
+        var match = new Match { EventStatus = eventStatus, SettlementStatus = (byte)settlementStatus };
 
-		var actual = service.EventStatusColor(match);
+        siteMatchService.IsExistMarkedTickets(Arg.Any<Match>()).Returns(existMarkedTickets);
 
-		Assert.Equal(color, actual);
-	}
+        var actual = service.EventStatusColor(match);
 
-	[Fact]
-	public void EventStatusColor_MatchCompleted_ReturnBackgroundFromService()
-	{
-		var match = new Match { EventStatus = EventStatus.Completed };
+        Assert.Equal(color, actual);
+    }
 
-		siteMatchService.GetBackgroundCompletedStatus(Arg.Any<Match>()).Returns("Red");
+    [Fact]
+    public void EventStatusColor_MatchCompleted_ReturnBackgroundFromService()
+    {
+        var match = new Match { EventStatus = EventStatus.Completed };
 
-		var actual = service.EventStatusColor(match);
+        siteMatchService.GetBackgroundCompletedStatus(Arg.Any<Match>()).Returns("Red");
 
-		Assert.Equal("Red", actual);
-	}
+        var actual = service.EventStatusColor(match);
 
-	[Fact]
-	public void NewEventStatus_MatchSupportSDT_CallRelateFunction()
-	{
-		service.NewEventStatus(new Match { SportType = SportType.BasketBall });
+        Assert.Equal("Red", actual);
+    }
 
-		eventStatusService.Received()
-			.AdjustEventStatusAbandoned(Arg.Any<string>(), Arg.Any<IEnumerable<ResultDetail>>(), Arg.Any<int>());
-		eventStatusService.Received()
-			.CheckProcessingStatus(Arg.Any<string>(), Arg.Any<Match>());
-	}
+    [Fact]
+    public void NewEventStatus_MatchSupportSDT_CallRelateFunction()
+    {
+        service.NewEventStatus(new Match { SportType = SportType.BasketBall });
 
-	[Fact]
-	public void NewEventStatus_MatchDoNotSupportSDT_NotCallRelateFunction()
-	{
-		service.NewEventStatus(new Match { SportType = SportType.Badminton });
+        basketballEventStatusService.Received()
+            .AdjustEventStatusAbandoned(Arg.Any<string>(), Arg.Any<IEnumerable<ResultDetail>>(), Arg.Any<int>());
+        eventStatusService.Received()
+            .CheckProcessingStatus(Arg.Any<string>(), Arg.Any<Match>());
+    }
 
-		eventStatusService.DidNotReceive()
-			.AdjustEventStatusAbandoned(Arg.Any<string>(), Arg.Any<IEnumerable<ResultDetail>>(), Arg.Any<int>());
-		eventStatusService.Received()
-			.CheckProcessingStatus(Arg.Any<string>(), Arg.Any<Match>());
-	}
+    [Fact]
+    public void NewEventStatus_MatchDoNotSupportSDT_NotCallRelateFunction()
+    {
+        service.NewEventStatus(new Match { SportType = SportType.Badminton });
 
-	[Fact]
-	public void EarlySettlementStatus_Always_CallRelatedMethod()
-	{
-		service.EarlySettlementStatus(new Match());
+        basketballEventStatusService.DidNotReceive()
+            .AdjustEventStatusAbandoned(Arg.Any<string>(), Arg.Any<IEnumerable<ResultDetail>>(), Arg.Any<int>());
+        eventStatusService.Received()
+            .CheckProcessingStatus(Arg.Any<string>(), Arg.Any<Match>());
+    }
 
-		siteMatchService.Received().EarlySettlementStatus(Arg.Any<Match>());
-	}
+    [Fact]
+    public void EarlySettlementStatus_Always_CallRelatedMethod()
+    {
+        service.EarlySettlementStatus(new Match());
 
-	[Fact]
-	public void FastMarketStatus_Always_CallRelatedMethod()
-	{
-		service.FastMarketStatus(new Models.Calculation.Match());
+        siteMatchService.Received().EarlySettlementStatus(Arg.Any<Match>());
+    }
 
-		siteMatchService.Received().FastMarketStatus(Arg.Any<Models.Calculation.Match>());
-	}
+    [Fact]
+    public void FastMarketStatus_Always_CallRelatedMethod()
+    {
+        service.FastMarketStatus(new Models.Calculation.Match());
 
-	[Theory]
-	[InlineData("01", "1", "2", "Test", "(Test: 1-2)")]
-	[InlineData("02", "1", "2", "Test", "")]
-	[InlineData("01", "", "2", "Test", "")]
-	[InlineData("01", "1", "", "Test", "")]
-	public void ConfirmScore_Always_ReturnCorrectValue(string resource, string home, string away, string sourceName,
-		string expected)
-	{
-		var resultDetail = new ResultDetail
-		{
-			ResourceId = resource,
-			HomeValue = home,
-			AwayValue = away,
-			SourceName = sourceName
-		};
+        siteMatchService.Received().FastMarketStatus(Arg.Any<Models.Calculation.Match>());
+    }
 
-		var result = service.ConfirmScore(new List<ResultDetail> { resultDetail }, "01");
+    [Theory]
+    [InlineData("01", "1", "2", "Test", "(Test: 1-2)")]
+    [InlineData("02", "1", "2", "Test", "")]
+    [InlineData("01", "", "2", "Test", "")]
+    [InlineData("01", "1", "", "Test", "")]
+    public void ConfirmScore_Always_ReturnCorrectValue(string resource, string home, string away, string sourceName,
+        string expected)
+    {
+        var resultDetail = new ResultDetail
+        {
+            ResourceId = resource,
+            HomeValue = home,
+            AwayValue = away,
+            SourceName = sourceName
+        };
 
-		Assert.Equal(expected, result);
-	}
+        var result = service.ConfirmScore(new List<ResultDetail> { resultDetail }, "01");
 
-	[Fact]
-	public void IsNotConsistentScore_SuspenderIsBlank_ReturnFalse()
-	{
-		var result = service.IsInconsistentScore("-", new List<ResultDetail>(), new List<ResultDetail>(), "01");
+        Assert.Equal(expected, result);
+    }
 
-		Assert.False(result);
-	}
+    [Fact]
+    public void IsNotConsistentScore_SuspenderIsBlank_ReturnFalse()
+    {
+        var result = service.IsInconsistentScore("-", new List<ResultDetail>(), new List<ResultDetail>(), "01");
 
-	[Theory]
-	[InlineData("01", "01", "1", "2", "1", "2", false)]
-	[InlineData("01", "01", "2", "2", "1", "2", true)]
-	[InlineData("01", "01", "1", "1", "1", "2", true)]
-	[InlineData("01", "02", "1", "2", "1", "2", true)]
-	[InlineData("02", "01", "1", "2", "1", "2", false)]
-	public void IsNotConsistentScore_SuspenderNotBlank_ReturnCorrect(string resourceOfSource, string resourceOfResultDetail,
-		string homeSource, string awaySource,
-		string home, string away, bool expected)
-	{
-		var sourceResultDetail = new ResultDetail
-		{
-			ResourceId = resourceOfSource,
-			HomeValue = homeSource,
-			AwayValue = awaySource
-		};
+        Assert.False(result);
+    }
 
-		var resultDetail = new ResultDetail
-		{
-			ResourceId = resourceOfResultDetail,
-			HomeValue = home,
-			AwayValue = away
-		};
+    [Theory]
+    [InlineData("01", "01", "1", "2", "1", "2", false)]
+    [InlineData("01", "01", "2", "2", "1", "2", true)]
+    [InlineData("01", "01", "1", "1", "1", "2", true)]
+    [InlineData("01", "02", "1", "2", "1", "2", true)]
+    [InlineData("02", "01", "1", "2", "1", "2", false)]
+    public void IsNotConsistentScore_SuspenderNotBlank_ReturnCorrect(string resourceOfSource, string resourceOfResultDetail,
+        string homeSource, string awaySource,
+        string home, string away, bool expected)
+    {
+        var sourceResultDetail = new ResultDetail
+        {
+            ResourceId = resourceOfSource,
+            HomeValue = homeSource,
+            AwayValue = awaySource
+        };
 
-		var result = service.IsInconsistentScore("Test", new List<ResultDetail> { resultDetail },
-			new List<ResultDetail> { sourceResultDetail }, "01");
+        var resultDetail = new ResultDetail
+        {
+            ResourceId = resourceOfResultDetail,
+            HomeValue = home,
+            AwayValue = away
+        };
 
-		Assert.Equal(expected, result);
-	}
+        var result = service.IsInconsistentScore("Test", new List<ResultDetail> { resultDetail },
+            new List<ResultDetail> { sourceResultDetail }, "01");
 
-	[Fact]
-	public void GoalIcon_Always_CallRelatedMethod()
-	{
-		service.GoalIcon(new Models.Calculation.Match());
+        Assert.Equal(expected, result);
+    }
 
-		goalIconService.Received().GetGoalIcon(Arg.Any<GoalIconQueryModel>());
-	}
+    [Fact]
+    public void GoalIcon_Always_CallRelatedMethod()
+    {
+        service.GoalIcon(new Models.Calculation.Match());
 
-	[Fact]
-	public void TicketInfo_Always_ReturnCorrect()
-	{
-		var match = new Match();
+        goalIconService.Received().GetGoalIcon(Arg.Any<GoalIconQueryModel>());
+    }
 
-		siteMatchService.IsExistMarkedTickets(Arg.Any<Match>()).Returns(true);
-		siteMatchService.IsExistRunningTickets(Arg.Any<Match>()).Returns(true);
-		siteMatchService.IsCalculating(Arg.Any<int?>(), Arg.Any<List<int?>>()).Returns(1);
+    [Fact]
+    public void TicketInfo_Always_ReturnCorrect()
+    {
+        var match = new Match();
 
-		service.TicketInfo(match);
+        siteMatchService.IsExistMarkedTickets(Arg.Any<Match>()).Returns(true);
+        siteMatchService.IsExistRunningTickets(Arg.Any<Match>()).Returns(true);
+        siteMatchService.IsCalculating(Arg.Any<int?>(), Arg.Any<List<int?>>()).Returns(1);
 
-		Assert.True(match.IsExistMarkedTicket && match is { IsExistRunningTicket: true, IsCalculatingSingle: 1 });
-	}
+        service.TicketInfo(match);
 
-	[Fact]
-	public void IsExistsConfirmedEarly_Always_CallRelatedMethod()
-	{
-		service.IsExistsConfirmedEarly(new Match());
+        Assert.True(match.IsExistMarkedTicket && match is { IsExistRunningTicket: true, IsCalculatingSingle: 1 });
+    }
 
-		siteMatchService.Received().IsExistsConfirmedEarly(Arg.Any<Match>());
-	}
+    [Fact]
+    public void IsExistsConfirmedEarly_Always_CallRelatedMethod()
+    {
+        service.IsExistsConfirmedEarly(new Match());
+
+        siteMatchService.Received().IsExistsConfirmedEarly(Arg.Any<Match>());
+    }
 }
