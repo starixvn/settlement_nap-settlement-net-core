@@ -1,4 +1,6 @@
-﻿namespace Settlement.EventManagement.Services;
+﻿using Microsoft.VisualBasic;
+
+namespace Settlement.EventManagement.Services;
 
 using Models;
 

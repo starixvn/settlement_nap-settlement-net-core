@@ -64,20 +64,6 @@ public class MatchDetail
     {
         get
         {
-            var leagueIds = new List<int> { 110131, 110132, 110133, 110134, 111441,
-                 111443, 111444, 111445, 111442, 56037,
-                 56053, 56069, 95746, 99321, 99329,
-                 99367, 16926 , 97008, 109275, 109276,
-                 109277, 109278, 109279 };
-
-            return leagueIds.Contains(LeagueId);
-        }
-    }
-
-    public bool IsSupportCopyScore
-    {
-        get
-        {
             var leagueIds = new List<int> { 56037, 56053, 56069, 99321, 16926, 97008 };
             return leagueIds.Contains(LeagueId);
         }

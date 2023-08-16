@@ -15,7 +15,7 @@
 		<Setting Key="NAP_Set_PlayerInfoSel" SpName="NAP_Set_PlayerInfoSel" DbName="DBPRO.bodb02.bodbAdminNet">
 			<Mapping DataField="BetChoice" ObjectProperty="Value" />
 		</Setting>
-		<Setting Key="NAP_Set_FantasyMatchOSSel" SpName="NAP_Set_FantasyMatchOSSel" DbName="DBPRO.bodb02.bodbAdminNet" />
+		<Setting Key="NAP_Set_FantasyMatchOSSel" SpName="NAP_Set_FantasyMatchOSSel_xpre" DbName="DBPRO.bodb02.bodbAdminNet" />
 	</Function>
 	<Function Name="MoveTickets">
 		<Setting Key="NAP_Set_AutoPayout_ReferenceActionByMatchSel" SpName="NAP_Set_AutoPayout_ReferenceActionByMatchSel" DbName="DBLOG.bodb_CustomerLog.bodbAdminNet" />

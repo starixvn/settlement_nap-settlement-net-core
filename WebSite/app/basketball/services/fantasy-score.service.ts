@@ -3,7 +3,7 @@ import {
   FantasyRelatedMatch,
   RelatedMatchResult,
 } from "../models/fantasy.model";
-import { flatMap, sum } from "lodash";
+import { flatMap, isEmpty, sum } from "lodash";
 import { ResourcesIds } from "../constants/resource-ids.native";
 
 @Injectable()
@@ -18,10 +18,15 @@ export class FantasyScoreService {
     ResourcesIds.finalScore,
   ];
 
-  public sumScore(homes: FantasyRelatedMatch[], aways: FantasyRelatedMatch[]) {
+  public sumScore(
+    homeTeams: string[],
+    homes: FantasyRelatedMatch[],
+    awayTeams: string[],
+    aways: FantasyRelatedMatch[]
+  ) {
     const resutls = this.combineResults(
-      this.getResultsHome(homes),
-      this.getResultsAway(aways)
+      this.getResultsHome(homeTeams, homes),
+      this.getResultsAway(awayTeams, aways)
     );
     return resutls;
   }
@@ -34,46 +39,89 @@ export class FantasyScoreService {
       const matchingItem = homesResults.find(
         (homeResult) => homeResult.resourceId === awayResult.resourceId
       );
-      if (matchingItem) {
-        return { ...awayResult, homeValue: matchingItem.homeValue };
-      } else {
-        return awayResult;
-      }
+      return matchingItem
+        ? { ...awayResult, homeValue: matchingItem.homeValue }
+        : awayResult;
     });
 
     return results;
   }
 
-  private getResultsAway(aways: FantasyRelatedMatch[]) {
-    const resultsAway = flatMap(aways, (x) => x.results);
-    return this.sumResultsScore(resultsAway,false)
+  private getResultsAway(awayTeams: string[], aways: FantasyRelatedMatch[]) {
+    const newAways = this.changeMatchesByFantasyTeam(awayTeams, aways);
+    const results = this.sumResultsScore(
+      flatMap(newAways, (x) => x.results),
+      false
+    );
 
+    return results;
   }
 
-  private getResultsHome(homes: FantasyRelatedMatch[]) {
-    const resultsHome = flatMap(homes, (x) => x.results);
-    return this.sumResultsScore(resultsHome)
+  private getResultsHome(homeTeams: string[], homes: FantasyRelatedMatch[]) {
+    const newHomes = this.changeMatchesByFantasyTeam(homeTeams, homes);
+    const results = this.sumResultsScore(flatMap(newHomes, (x) => x.results));
+
+    return results;
+  }
+
+  private changeMatchesByFantasyTeam(
+    teams: string[],
+    matches: FantasyRelatedMatch[]
+  ) {
+    const newHomes = matches.map((home) => {
+      const isHome = teams.includes(`${home.homeId}`);
+
+      const updatedResults = home.results.map((result) => ({
+        ...result,
+        isHome: isHome,
+      }));
+
+      return {
+        ...home,
+        results: updatedResults,
+      };
+    });
+
+    return newHomes;
+  }
+
+  private getCorrectResults(results: RelatedMatchResult[], resourceId: string) {
+    const resourceResults = results.filter((x) => x.resourceId === resourceId);
+
+    if (resourceId === ResourcesIds.ot) {
+      return resourceResults.filter(
+        (x) => !isEmpty(x.homeValue) && !isEmpty(x.awayValue)
+      );
+    }
+
+    const existsNullScore = resourceResults.some(
+      (x) => isEmpty(x.homeValue) || isEmpty(x.awayValue)
+    );
+    if (existsNullScore) {
+      return [];
+    }
+
+    return resourceResults;
   }
 
   private sumResultsScore(results: RelatedMatchResult[], home: boolean = true) {
-    const result = [];  
-    this.resourcesIds.forEach((resourceId) => {
-      const resourceResults = results.filter(
-        (x) =>
-          x.resourceId === resourceId &&
-          (x.homeValue !== null ||
-          x.awayValue !== null)
-      );
+    const result = [];
 
-      if (resourceResults.length > 1) {
+    this.resourcesIds.forEach((resourceId) => {
+      const resourceResults = this.getCorrectResults(results, resourceId);
+
+      if (resourceResults && resourceResults.length) {
+        const score = sum(
+          resourceResults.map((x) => (x.isHome ? +x.homeValue : +x.awayValue))
+        );
         const item = home
           ? {
               resourceId,
-              homeValue: sum(resourceResults.map((x) => +x.homeValue)),
+              homeValue: score,
             }
           : {
               resourceId,
-              awayValue: sum(resourceResults.map((x) => +x.awayValue)),
+              awayValue: score,
             };
         result.push(item);
       }

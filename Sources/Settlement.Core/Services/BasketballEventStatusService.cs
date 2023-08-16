@@ -33,8 +33,12 @@ public class BasketballEventStatusServiceImp : BasketballEventStatusService
 
     private static string GetStatusRound(string eventStatus, IEnumerable<ResultDetailBase> resultDetails)
     {
-        var resultRounds = resultDetails.Where(resultDetail => resultDetail.ResourceId is not (ResourceType.Final or ResourceType.Halftime));
+        var resultRounds = resultDetails
+            .Where(resultDetail => resultDetail.ResourceId is not (ResourceType.Final or ResourceType.Halftime))
+            .ToList();
+
         var firstResultAbandoned = resultRounds.FirstOrDefault(item => item.SettlementStatusId == SettlementStatus.Abandoned);
+
         return firstResultAbandoned != null ? $"{Abandoned} {firstResultAbandoned.ResourceId}" : eventStatus;
     }
 

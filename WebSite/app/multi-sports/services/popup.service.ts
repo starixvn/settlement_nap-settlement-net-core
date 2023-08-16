@@ -108,7 +108,8 @@ export class PopupService {
         const groupTwo = [SportType.beachVolleyball, SportType.volleyBall];
         if (_.includes(groupOne, sportType)) {
             this.properties.width = '1005px';
-            this.properties.height = "730px";
+            this.properties.height = "760px";
+            
         } else if (_.includes(groupTwo, sportType)) {
             this.properties.width = '900px';
             this.properties.height = "820px";

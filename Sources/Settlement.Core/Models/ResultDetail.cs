@@ -1,6 +1,6 @@
 ﻿namespace Settlement.Core.Models;
 
-public abstract class ResultDetailBase
+public interface ResultDetailBase
 {
     public string ResourceId { get; set; }
     public byte? SettlementStatusId { get; set; }
@@ -12,7 +12,7 @@ public class ResultDetail : ResultDetailBase
 
     public int? MatchId { get; set; }
 
-    public new string ResourceId { get; set; }
+    public string ResourceId { get; set; }
 
     public int SourceId { get; set; }
 
@@ -33,7 +33,7 @@ public class ResultDetail : ResultDetailBase
 
     public byte? ResultStatusId { get; set; }
 
-    public new byte? SettlementStatusId { get; set; }
+    public byte? SettlementStatusId { get; set; }
 
     public string OtherInfo { get; set; }
 

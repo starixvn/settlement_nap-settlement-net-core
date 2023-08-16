@@ -92,9 +92,6 @@ export class RelatedMatchesComponent{
   }
 
   public verifyAndFillFantasyMatch() {
-    if(!this.isSupportCopyScore) {
-      return;
-    }
     
     const homeTeams = this.fantasyMatchDetail.fantasyHomeTeam.split(",");
     const awayTeams = this.fantasyMatchDetail.fantasyAwayTeam.split(",");
@@ -106,13 +103,16 @@ export class RelatedMatchesComponent{
       return;
     }
 
-    if (this.verificationFantasyMatchService.isExistHoldMatch(this.relatedMatches)) {
-      this.errorMsgEmitter.emit(Language.fantasyMatch.confirmAutoFillOnHoldMatch);
+    if (this.verificationFantasyMatchService.isExistNotCalculatedMatch(this.relatedMatches)) {
+      this.errorMsgEmitter.emit(Language.fantasyMatch.warningMatchNotCalculated);
       return;
     }
 
-    if (this.verificationFantasyMatchService.isExistNotCalculatedMatch(this.relatedMatches)) {
-      this.errorMsgEmitter.emit(Language.fantasyMatch.warningMatchNotCalculated);
+    if (this.verificationFantasyMatchService.isExistHoldMatch(this.relatedMatches)) {
+      this.dialogMessage.message = Language.fantasyMatch.confirmAutoFillOnHoldMatch;
+      this.messageBoxService.confirm(this.dialogMessage, () => {
+        this.confirmAutoFillScore(homeTeams, awayTeams);
+      });
       return;
     }
 
@@ -123,10 +123,12 @@ export class RelatedMatchesComponent{
     this.dialogMessage.message =
       Language.fantasyMatch.confirmAutoFillFantasyMatch;
     this.messageBoxService.confirm(this.dialogMessage, () => {
-      const homes = this.relatedMatches.filter((item) => homeTeams.includes(`${item.homeId}`));
-      const aways = this.relatedMatches.filter((item) => awayTeams.includes(`${item.awayId}`));
+      
+      const homes = this.relatedMatches.filter((item) => homeTeams.includes(`${item.homeId}`) || homeTeams.includes(`${item.awayId}`));
+  
+      const aways = this.relatedMatches.filter((item) => awayTeams.includes(`${item.awayId}`) || awayTeams.includes(`${item.homeId}`));
 
-      const resutls = this.fantasyScoreService.sumScore(homes, aways);
+      const resutls = this.fantasyScoreService.sumScore(homeTeams,homes, awayTeams,aways);
 
       this.autoFillScore.emit(resutls);
     });

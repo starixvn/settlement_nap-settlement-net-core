@@ -34,5 +34,7 @@ export type RelatedMatchResult = {
     homeValue: string
     awayValue:	 string
     resultStatusId: number	
-    settlementStatusId: number
+    settlementStatusId: number,
+    isHome: boolean
 }
+
