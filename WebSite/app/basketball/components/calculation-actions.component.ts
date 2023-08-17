@@ -996,8 +996,8 @@ export class CalculationActionsComponent implements SportTemplate {
       return findScore
         ? {
             ...result,
-            homeValue: findScore.homeValue.toString(),
-            awayValue: findScore.awayValue.toString(),
+            homeValue: `${findScore.homeValue}`,
+            awayValue: `${findScore.awayValue}`,
           }
         : { ...result };
     });
