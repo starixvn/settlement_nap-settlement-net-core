@@ -57,17 +57,17 @@ public class ScoreServiceImp : ScoreService
     {
         if (SportGroup.SupportSettleDetermine.Contains(sportType))
         {
-            ClearScore(sportType, resultDetails, ResourceType.Final, false);
+            ClearScore(sportType, resultDetails, ResourceType.Final);
         }
         return ScoreByResource(resultDetails, ResourceType.Final, permission);
     }
 
-    private static void ClearScore(int sportType, List<ResultDetail> resultDetails, string resource, bool isHalfTime = true)
+    private static void ClearScore(int sportType, List<ResultDetail> resultDetails, string resourceId)
     {
-        var resultSettleSdt = resultDetails.Where(r => (isHalfTime
+        var resultSettleSdt = resultDetails.Where(r => (resourceId == ResourceType.Halftime
             ? Resources.ResultHaftTime[sportType].Contains(r.ResourceId)
             : Resources.ResultFullTime[sportType].Contains(r.ResourceId)) && r.SettlementStatusId == SettlementStatus.Abandoned).ToList();
-        var resultDetail = resultDetails.FirstOrDefault(n => n.ResourceId == resource);
+        var resultDetail = resultDetails.FirstOrDefault(n => n.ResourceId == resourceId);
         if (resultDetail != null && resultSettleSdt.Any())
         {
             resultDetail.HomeValue = string.Empty;

@@ -27,7 +27,7 @@ import { FantasyScoreService } from "../../services/fantasy-score.service";
   templateUrl: "./related-matches.compoment.html",
   standalone: true,
   imports: [CommonModule, ScoreBySettlementPipe],
-  providers: [VerificationFantasyMatchService,FantasyScoreService],
+  providers: [VerificationFantasyMatchService,FantasyScoreService,MessageBoxService],
 })
 export class RelatedMatchesComponent{
   @Input() fantasyMatch: FantasyMatch;
@@ -133,6 +133,4 @@ export class RelatedMatchesComponent{
       this.autoFillScore.emit(resutls);
     });
   }
-
-
 }

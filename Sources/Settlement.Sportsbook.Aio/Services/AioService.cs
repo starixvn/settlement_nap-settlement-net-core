@@ -1,4 +1,5 @@
 ﻿using Fanex.NAP.Client;
+using Fanex.NAP.Client.Helpers.Common;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
@@ -123,7 +124,7 @@ public class AioServiceImp : IAioService
         var matchCriteria = validateApiKeyService.CriteriaName(request, $"{apiKey}-{ApiKeyConstant.MatchInfoKey}");
         var matchDetail = await repository.GetAsync<Models.MatchDetail>(matchCriteria);
 
-        ArgumentNullException.ThrowIfNull(matchDetail, $"Match ${request.MatchId} does not exist");
+        Check.Argument.IsNotNull(matchDetail, $"Match ${request.MatchId} does not exist");
 
         matchDetail.RefDataService = refDataService;
 
@@ -171,6 +172,9 @@ public class AioServiceImp : IAioService
                 SettlementStatusId = match.SettlementStatusId,
             }).ToList();
 
+            ClearScore(results, ResourceType.Halftime);
+            ClearScore(results, ResourceType.Final);
+
             return new RelatedMatch
             {
                 MatchId = group.Key,
@@ -189,6 +193,21 @@ public class AioServiceImp : IAioService
         }).ToList();
 
         return newMatches;
+    }
+
+    private static void ClearScore(List<RelatedMatchResult> resultDetails, string resourceId)
+    {
+        var resultSettleSdt = resultDetails.Where(r => (resourceId == ResourceType.Halftime
+            ? Resources.ResultHaftTime[SportType.BasketBall].Contains(r.ResourceId)
+            : Resources.ResultFullTime[SportType.BasketBall].Contains(r.ResourceId)) && r.SettlementStatusId == SettlementStatus.Abandoned).ToList();
+
+        var resultDetail = resultDetails.FirstOrDefault(n => n.ResourceId == resourceId);
+
+        if (resultDetail != null && resultSettleSdt.Any())
+        {
+            resultDetail.HomeValue = string.Empty;
+            resultDetail.AwayValue = string.Empty;
+        }
     }
 
     private void GenerateResultsRelatedMatches(List<RelatedMatch> relatedMatches)

@@ -993,13 +993,18 @@ export class CalculationActionsComponent implements SportTemplate {
       const findScore = score.find(
         (score) => score.resourceId == result.resourceId
       );
+
       return findScore
         ? {
             ...result,
-            homeValue: `${findScore.homeValue}`,
-            awayValue: `${findScore.awayValue}`,
+            homeValue: (findScore.homeValue ?? "0").toString(),
+            awayValue: (findScore.awayValue ?? "0").toString(),
           }
         : { ...result };
     });
+
+    this.resultDetails.forEach(map => {
+      map.isScoreMismatched = this.verificationService.isMismatchedWarning(map);
+    })
   }
 }

@@ -89,9 +89,11 @@ export class FantasyScoreService {
     const resourceResults = results.filter((x) => x.resourceId === resourceId);
 
     if (resourceId === ResourcesIds.ot) {
-      return resourceResults.filter(
+      const otResults = resourceResults.filter(
         (x) => !isEmpty(x.homeValue) && !isEmpty(x.awayValue)
       );
+      console.log('resourceResultszz',resourceResults)
+      return otResults;
     }
 
     const existsNullScore = resourceResults.some(
@@ -109,7 +111,6 @@ export class FantasyScoreService {
 
     this.resourcesIds.forEach((resourceId) => {
       const resourceResults = this.getCorrectResults(results, resourceId);
-
       if (resourceResults && resourceResults.length) {
         const score = sum(
           resourceResults.map((x) => (x.isHome ? +x.homeValue : +x.awayValue))
