@@ -206,6 +206,9 @@ export class VerificationService extends VerificationBaseService {
     }
 
     public sumScoreHalfTime(firstHalfResults: GeneralResultDetail[], firstHalf: GeneralResultDetail) {
+        
+        console.log('firstHalfResults',firstHalfResults);
+
         const firstHalfHasValue = firstHalfResults.filter((item) =>
             this.isExistedHomeAwayScore(item.homeValue, item.awayValue));
         if (firstHalfHasValue.length > 1 && this.isScoreConsecutive(firstHalfHasValue)) {
