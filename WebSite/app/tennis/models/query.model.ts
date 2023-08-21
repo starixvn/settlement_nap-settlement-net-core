@@ -13,6 +13,7 @@ export class SettleQuery {
     isDirectly: boolean;
     sportType: number;
     isHedgeMatch: boolean;
+    parentId: number;
 
     constructor(
         matchId: number,
@@ -21,6 +22,7 @@ export class SettleQuery {
         isReSettledTickets: boolean,
         betStatus: string,
         sportType: number,
+        parentId: number,
         isDirectly = false) {
         this.matchId = matchId;
         this.selectedResources = selectedResources;
@@ -30,5 +32,6 @@ export class SettleQuery {
         this.betStatus = betStatus;
         this.isDirectly = isDirectly;
         this.sportType = sportType;
+        this.parentId = parentId
     }
 }

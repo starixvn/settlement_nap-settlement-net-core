@@ -1087,7 +1087,7 @@
         }
       }
     },
-    "tennis": {
+    "app": {
       "root": "app",
       "sourceRoot": "tennis",
       "projectType": "application",
@@ -1097,7 +1097,7 @@
           "options": {
             "aot": true,
             "outputPath": "../wwwroot/tennis",
-            "index": "tennis/index.cshtml",
+            "index": "tennis/index.html",
             "main": "tennis/main.ts",
             "tsConfig": "tennis/tsconfig.app.json",
             "polyfills": "polyfills.ts",

@@ -20,6 +20,8 @@ public class SettleRequest : IRequest<Result>
 
     public bool IsDirectly { get; set; }
 
+    public int ParentId { get; set; }
+
     public List<ResourceItem> SelectedResources { get; set; }
 
     public string ChildMatchIds { get; set; }
@@ -27,7 +29,6 @@ public class SettleRequest : IRequest<Result>
     public int? RefResultStatus { get; set; }
 
     public bool IsHedgeMatch { get; set; }
-    
+
     public int DeterminedType { get; set; }
-    
 }
