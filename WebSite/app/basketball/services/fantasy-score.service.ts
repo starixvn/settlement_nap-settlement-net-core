@@ -36,7 +36,7 @@ export class FantasyScoreService {
     awayResults: { resourceId: string; awayValue: number }[]
   ) {
     const results = [];
-    
+
     this.resourcesIds.forEach((resourceId) => {
       const resultHomeItem = homesResults.find(
         (homeResult) => homeResult.resourceId === resourceId
@@ -45,7 +45,15 @@ export class FantasyScoreService {
         (awayResult) => awayResult.resourceId === resourceId
       );
 
-      if(resultAwayItem || resultHomeItem) {
+      if(resultAwayItem && resultHomeItem) {
+        results.push({
+          resourceId,
+          homeValue: resultHomeItem?.homeValue,
+          awayValue:resultAwayItem?.awayValue
+        })
+      }
+
+      if(resourceId == ResourcesIds.ot && (resultHomeItem || resultAwayItem)) {
         results.push({
           resourceId,
           homeValue: resultHomeItem?.homeValue,
