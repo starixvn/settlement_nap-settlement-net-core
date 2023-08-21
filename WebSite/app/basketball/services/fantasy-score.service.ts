@@ -35,14 +35,24 @@ export class FantasyScoreService {
     homesResults: { resourceId: string; homeValue: number }[],
     awayResults: { resourceId: string; awayValue: number }[]
   ) {
-    const results = awayResults.map((awayResult) => {
-      const matchingItem = homesResults.find(
-        (homeResult) => homeResult.resourceId === awayResult.resourceId
+    const results = [];
+    
+    this.resourcesIds.forEach((resourceId) => {
+      const resultHomeItem = homesResults.find(
+        (homeResult) => homeResult.resourceId === resourceId
       );
-      return matchingItem
-        ? { ...awayResult, homeValue: matchingItem.homeValue }
-        : awayResult;
-    });
+      const resultAwayItem = awayResults.find(
+        (awayResult) => awayResult.resourceId === resourceId
+      );
+
+      if(resultAwayItem || resultHomeItem) {
+        results.push({
+          resourceId,
+          homeValue: resultHomeItem?.homeValue,
+          awayValue:resultAwayItem?.awayValue
+        })
+      }
+    })
 
     return results;
   }
@@ -92,7 +102,7 @@ export class FantasyScoreService {
       const otResults = resourceResults.filter(
         (x) => !isEmpty(x.homeValue) && !isEmpty(x.awayValue)
       );
-      console.log('resourceResultszz',resourceResults)
+
       return otResults;
     }
 
@@ -111,6 +121,7 @@ export class FantasyScoreService {
 
     this.resourcesIds.forEach((resourceId) => {
       const resourceResults = this.getCorrectResults(results, resourceId);
+
       if (resourceResults && resourceResults.length) {
         const score = sum(
           resourceResults.map((x) => (x.isHome ? +x.homeValue : +x.awayValue))
