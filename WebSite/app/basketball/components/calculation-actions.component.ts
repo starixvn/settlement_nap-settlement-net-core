@@ -784,11 +784,11 @@ export class CalculationActionsComponent implements SportTemplate {
           this.fullTime
         );
       }
-
-      const query = new CashOutResultUpdateQuery(
-        this.matchDetail.matchId,
-        betStatus
-      );
+            const lsHalf = [];
+            lsHalf.push(1);
+            lsHalf.push(5);
+            lsHalf.push(6);
+            const query = new CashOutResultUpdateQuery(this.matchDetail.matchId, betStatus, lsHalf);
       await this.cashOutService.calc(query);
     }
   }

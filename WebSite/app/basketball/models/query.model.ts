@@ -64,10 +64,12 @@ export class VoidBetQuery {
 export class CashOutResultUpdateQuery {
     matchId: number;
     betstatus: string;
+    lsHalf: number[];
 
-    constructor(matchId: number, betstatus: string) {
+    constructor(matchId: number, betstatus: string, lsHalf:number[]) {
         this.matchId = matchId;
         this.betstatus = betstatus;
+        this.lsHalf = lsHalf;
     }
 }
 
