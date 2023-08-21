@@ -1,4 +1,6 @@
-﻿namespace Settlement.Sportsbook.MoveTickets.Services;
+﻿using Settlement.Core.Constants;
+
+namespace Settlement.Sportsbook.MoveTickets.Services;
 
 using Criteria;
 using Fanex.Data.Repository;
@@ -8,18 +10,18 @@ using Fanex.Settlement.ScaleOut.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Models;
+using Requests;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 
 public interface MoveActionService
 {
-    Task<Result> MoveTicket(MoveTicketCriteria criteria);
+    Task<Result> MoveTicket(MoveTicketRequest request);
 }
 
 public class MoveActionServiceImp : MoveActionService
 {
     private const int ActionIdMoveTicket = 81026;
-    private const string ActionMoveTicket = "MoveTicket";
     private readonly IDynamicRepository repository;
     private readonly INapSession currentSession;
     private readonly IHttpContextAccessor accessor;
@@ -43,34 +45,32 @@ public class MoveActionServiceImp : MoveActionService
         this.scaleOutSettleService = scaleOutSettleService;
     }
 
-    public async Task<Result> MoveTicket(MoveTicketCriteria criteria)
+    public async Task<Result> MoveTicket(MoveTicketRequest request)
     {
-        criteria.AdminId = currentSession.UserId;
-        criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
-
-        var result = await VerifyBeforeMoveTickets(criteria);
+        var result = await VerifyBeforeMoveTickets(request);
         if (result.ErrCode > 0)
         {
-            logService.ActionLog(criteria.MatchId, result.ErrMsg, ActionIdMoveTicket);
+            logService.ActionLog(request.MatchId, result.ErrMsg, ActionIdMoveTicket);
             return result;
         }
 
-        WriteLog(criteria.MatchId, criteria.ChildMatchId, criteria.Resources);
+        var getTickets = await GetTickets(request.MatchId);
+        WriteLog(request.MatchId, getTickets.ChildMatchId, getTickets.Resources);
 
-        var childMatchId = await ExecuteMultiServer(criteria);
+        await ExecuteMoveTicket(request, getTickets);
 
-        await UpdateChildMatchInfo(childMatchId);
+        await UpdateChildMatchInfo(getTickets.ChildMatchId);
 
         return result;
     }
 
-    private async Task<Result> VerifyBeforeMoveTickets(MoveTicketCriteria criteria)
+    private async Task<Result> VerifyBeforeMoveTickets(MoveTicketRequest request)
     {
         var validateRequest = new EventTicketRequest
         {
-            MatchId = criteria.MatchId,
-            Action = ActionMoveTicket,
-            SpName = criteria.SpName,
+            MatchId = request.MatchId,
+            Action = ActionType.MoveTicket,
+            SpName = "NAP_Admin_Settlement_50_MoveTicket",
             Mode = "50"
         };
 
@@ -82,29 +82,37 @@ public class MoveActionServiceImp : MoveActionService
         };
     }
 
-    private async Task<int> ExecuteMultiServer(MoveTicketCriteria criteria)
+    private async Task<MoveTicketInfo> GetTickets(int matchId)
     {
-        var getMoveTicketInfoCriteria = new GetMoveTicketInfoCriteria { MatchId = criteria.MatchId };
-        var moveTicketInfo = await repository.GetAsync<MoveTicketInfo>(getMoveTicketInfoCriteria);
-        criteria.EventDate = moveTicketInfo.EventDate;
-        criteria.ChildMatchId = moveTicketInfo.ChildMatchId;
-        criteria.Resources = moveTicketInfo.Resources;
+        var criteria = new GetMoveTicketInfoCriteria { MatchId = matchId };
+        return await repository.GetAsync<MoveTicketInfo>(criteria);
+    }
+
+    private async Task ExecuteMoveTicket(MoveTicketRequest request, MoveTicketInfo getTickets)
+    {
+        var criteria = new MoveTicketCriteria
+        {
+            MatchId = request.MatchId,
+            AdminId = currentSession.UserId,
+            Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString(),
+            EventDate = getTickets.EventDate,
+            ChildMatchId = getTickets.ChildMatchId,
+            Resources = getTickets.Resources
+        };
 
         foreach (var server in appSettingsKey.SiteDbServer)
         {
             criteria.DbServer = server;
             await repository.ExecuteAsync(criteria);
         }
-
-        return moveTicketInfo.ChildMatchId;
     }
 
     private async Task UpdateChildMatchInfo(int childMatchId)
     {
         var updateChildMatchCriteria = new UpdateChildMatchCriteria { MatchId = childMatchId };
         await repository.ExecuteAsync(updateChildMatchCriteria);
-        var updateChildMatchRemarkCriteria = new UpdateChildMatchRemarkCriteria { MatchId = childMatchId };
 
+        var updateChildMatchRemarkCriteria = new UpdateChildMatchRemarkCriteria { MatchId = childMatchId };
         await repository.ExecuteAsync(updateChildMatchRemarkCriteria);
     }
 

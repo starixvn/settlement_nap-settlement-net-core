@@ -580,7 +580,7 @@ export class CalculationActionsComponent implements SportTemplate {
 
   private async confirmChangedResults() {
     if (this.isReSettledTickets) {
-      this.confirmCalculation(this.selectedResources);
+            this.confirmCalculation();
     } else {
       const getBasketballResultQuery = {
         matchId: this.matchDetail.matchId,
@@ -601,13 +601,13 @@ export class CalculationActionsComponent implements SportTemplate {
           this.isReSettledTickets = true;
         });
       } else {
-        this.confirmCalculation(this.selectedResources);
+                this.confirmCalculation();
       }
     }
   }
 
-  private confirmCalculation(resultDetails: ResultDetail[]) {
-    this.confirmationDialogMessage.message = this.basketballService.confirmationMessage(
+    private confirmCalculation() {
+        this.confirmationDialogMessage.message = this.basketballService.confirmationMessage(this.selectedResources);
       resultDetails
     );
     this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
@@ -665,7 +665,7 @@ export class CalculationActionsComponent implements SportTemplate {
       const result = await this.aioService.push(query);
       if (result.isSuccessful) {
         await this.voidBet(getTicketInfos, actionName);
-        await this.cashOutResultUpdate(selectedResources, betStatus);
+                await this.cashOutResultUpdate(betStatus);
         this.calculateHedgeMatch(query);
       } else {
         this.toastrService.error(result.errMsg);
@@ -763,7 +763,7 @@ export class CalculationActionsComponent implements SportTemplate {
     }
   }
 
-  private async cashOutResultUpdate(
+    private async cashOutResultUpdate(betStatus: string) {
     resource: ResultDetail[],
     betStatus: string
   ) {
@@ -784,10 +784,8 @@ export class CalculationActionsComponent implements SportTemplate {
           this.fullTime
         );
       }
-            const lsHalf = [];
-            lsHalf.push(1);
-            lsHalf.push(5);
-            lsHalf.push(6);
+            
+            const lsHalf = this.cashOutService.getListHalf(this.selectedResources)
             const query = new CashOutResultUpdateQuery(this.matchDetail.matchId, betStatus, lsHalf);
       await this.cashOutService.calc(query);
     }

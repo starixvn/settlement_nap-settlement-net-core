@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
-using Settlement.Sportsbook.MoveTickets.Criteria;
 using Settlement.Sportsbook.MoveTickets.Handlers;
 using Settlement.Sportsbook.MoveTickets.Models;
 using Settlement.Sportsbook.MoveTickets.Requests;
@@ -23,12 +22,11 @@ public class CricketHandlerTests
         var mapperConfig = new MapperConfigurationExpression();
         mapperConfig.AddProfile<SportsbookMoveTicketAutoMapperProfile>();
         var config = new MapperConfiguration(mapperConfig);
-        var mapper = new Mapper(config);
 
         moveTicketService = Substitute.For<MoveTicketService>();
         moveActionService = Substitute.For<MoveActionService>();
         permissionService = Substitute.For<PermissionService>(null, null, null, null);
-        handler = new CricketHandler(mapper, moveTicketService, permissionService, moveActionService);
+        handler = new CricketHandler(moveTicketService, permissionService, moveActionService);
     }
 
     [Fact]
@@ -73,7 +71,7 @@ public class CricketHandlerTests
     {
         var result = new Result();
 
-        moveActionService.MoveTicket(Arg.Any<MoveTicketCriteria>()).Returns(result);
+        moveActionService.MoveTicket(Arg.Any<MoveTicketRequest>()).Returns(result);
 
         var actual = await handler.Handle(new MoveTicketRequest(), new CancellationToken());
 

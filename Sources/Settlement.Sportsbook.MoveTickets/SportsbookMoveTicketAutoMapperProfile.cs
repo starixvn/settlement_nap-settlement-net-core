@@ -9,7 +9,6 @@ public class SportsbookMoveTicketAutoMapperProfile : Profile
     public SportsbookMoveTicketAutoMapperProfile()
     {
         CreateMap<GetMatchRequest, SportsbookCriteria>();
-        CreateMap<MoveTicketRequest, MoveTicketCriteria>();
         CreateMap<GetMoveTicketsMatchesRequest, GetMoveTicketsMatchesCriteria>();
         CreateMap<ValidateMatchesRequest, ValidateMatchesCriteria>().ForMember(dest => dest.DestinationMatchId, map => map.MapFrom(src => src.TargetMatchId));
         CreateMap<MoveRunningTicketsRequest, MoveRunningTicketsCriteria>();

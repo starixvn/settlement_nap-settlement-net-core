@@ -4,6 +4,7 @@ import { firstValueFrom } from 'rxjs';
 import { HttpRequestService } from "../../shared/services";
 import { ResultDetail } from '../../shared/models/sportsbook-sop';
 import { GenerateCashOutService } from './generate-cash-out.service';
+import { ResourcesIds } from '../constants';
 @Injectable()
 export class CashOutService {
     private cashOutApi = '/api/cash-out';
@@ -31,7 +32,7 @@ export class CashOutService {
         const request = this.httpRequestService.postJson(query, `${this.cashOutApi}/refund`);
         return firstValueFrom(request);
     }
-
+    
     public getDirectBetStatusOnCalc(halfTime: ResultDetail, fullTime: ResultDetail) {
         const betStatus: string[] = [];
         betStatus.push(`${Number(halfTime.homeValue)}-${Number(halfTime.awayValue)}`);
@@ -41,6 +42,35 @@ export class CashOutService {
         betStatus.push(this.defaultScore);
         
         return betStatus.join(',');
+    }
+
+    public getListHalf(resultDetails: ResultDetail[]){
+        const lsHalf = [];
+        if(this.generateCashOutService.isSelectedQuarter(resultDetails, ResourcesIds.finalScore)){
+            lsHalf.push(0);
+        } 
+
+        if(this.generateCashOutService.isSelectedQuarter(resultDetails, ResourcesIds.quarter1)){
+            lsHalf.push(1);
+        }
+
+        if(this.generateCashOutService.isSelectedQuarter(resultDetails, ResourcesIds.quarter2)) {
+            lsHalf.push(2);
+        }
+
+        if(this.generateCashOutService.isSelectedQuarter(resultDetails, ResourcesIds.quarter3)) {
+            lsHalf.push(3);
+        } 
+
+        if(this.generateCashOutService.isSelectedQuarter(resultDetails, ResourcesIds.quarter4)) {
+            lsHalf.push(4);
+        }
+        
+        if(this.generateCashOutService.isSelectedQuarter(resultDetails, ResourcesIds.htScore)) {
+            lsHalf.push(5);
+        }
+
+        return lsHalf;
     }
 
     public getHalf(resultDetails: ResultDetail[]) {
