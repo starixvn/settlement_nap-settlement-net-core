@@ -64,7 +64,7 @@ public class MatchDetail
     {
         get
         {
-            var leagueIds = new List<int> { 56037, 56053, 56069, 99321, 16926, 97008 };
+            var leagueIds = new List<int> { 56037, 56053, 56069, 99321, 16926, 97008, 132325 };
             return leagueIds.Contains(LeagueId);
         }
     }
