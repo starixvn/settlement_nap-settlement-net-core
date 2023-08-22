@@ -1,5 +1,6 @@
 ﻿using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
@@ -180,12 +181,19 @@ public class MultipleServerAioServiceImp : MultipleServerAioService
             result.ChildMatchIds = childMatchIds;
         }
 
-        if (request.SportType == SportType.Tennis && request.ParentId == 0 && result.IsSuccessful)
+        await HandleRefundGameWinner(request, result);
+
+        return result;
+    }
+
+    private async Task HandleRefundGameWinner(SettleRequest request, Result result)
+    {
+        var isMatchGameWinner = request.SportType == SportType.Tennis && request.ParentId == 0 && result.IsSuccessful;
+
+        if (isMatchGameWinner && (request.ActionName == ActionType.CalculateAll || request.ActionName == ActionType.RefundAll))
         {
             await InsRefundResultOS(request.MatchId);
         }
-
-        return result;
     }
 
     private async Task InsRefundResultOS(int matchId)
