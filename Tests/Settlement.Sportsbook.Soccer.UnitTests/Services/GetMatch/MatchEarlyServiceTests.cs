@@ -107,7 +107,7 @@ public class MatchEarlyServiceTests
         var resultDetail = match.ResultDetail.First();
 
         Assert.Single(match.ResultDetail);
-        Assert.Equal(resultDetail.TicketStatus, TicketStatus.NoTicket);
+        Assert.Equal(TicketStatus.NoTicket, resultDetail.TicketStatus);
     }
 
     [Fact]
@@ -145,7 +145,7 @@ public class MatchEarlyServiceTests
         var match = await service.GetMatch(1);
         var resultDetail = match.ResultDetail.First();
 
-        Assert.Equal(resultDetail.TicketStatus, TicketStatus.NoTicket);
+        Assert.Equal(TicketStatus.NoTicket, resultDetail.TicketStatus);
         Assert.Equal(1, resultDetail.Map);
         Assert.Equal(betType.ToString(), resultDetail.BetType);
         Assert.Equal("betTypeName", resultDetail.BetTypeName);

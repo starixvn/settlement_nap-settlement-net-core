@@ -38,15 +38,14 @@ public class CompareMatchServiceTests
     }
 
     [Theory]
-    [InlineData(true, false, false, false, false, false)]
-    [InlineData(false, true, false, false, false, false)]
-    [InlineData(false, false, true, false, false, false)]
-    [InlineData(false, false, false, true, false, false)]
-    [InlineData(false, false, false, false, true, false)]
-    [InlineData(false, false, false, false, false, true)]
-    public void GetDifferentMatchSiteInfo_ExistMatchDifferentBetTypeInfo_ReturnSiteMatch(bool isExistEarlyBetTypes,
+    [InlineData(true, false, false)]
+    [InlineData(false, true, false)]
+    [InlineData(false, false, true)]
+    [InlineData(false, false, false)]
+    public void GetDifferentMatchSiteInfo_ExistMatchDifferentBetTypeInfo_ReturnSiteMatch(
+        bool isExistEarlyBetTypes,
         bool isRunningEarlyBetTypes,
-        bool isWaitingEarlyBetTypes, bool isExistEarlyBettypesParlay, bool isRunningEarlyBettypesParlay, bool isWaitingEarlyBettypesParlay)
+        bool isWaitingEarlyBetTypes)
     {
         var match = new Match
         {

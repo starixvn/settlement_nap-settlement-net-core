@@ -1,6 +1,12 @@
 ﻿namespace Settlement.Core.Models;
 
-public class ResultDetail
+public interface ResultDetailBase
+{
+    public string ResourceId { get; set; }
+    public byte? SettlementStatusId { get; set; }
+}
+
+public class ResultDetail : ResultDetailBase
 {
     private string value;
 

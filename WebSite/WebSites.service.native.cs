@@ -10,8 +10,6 @@ using Fanex.Logging.Extensions.AspNetCore;
 using Fanex.Logging.Extensions.Database;
 using Fanex.Logging.Sentry.RavenClient;
 using Fanex.MailDeliver.MailClient;
-using Fanex.NAP.Client.AspNetCore.Configuration;
-using Fanex.NAP.Client.AspNetCore.Session;
 using Fanex.NAP.Client.Configuration;
 using Fanex.NAP.Client.Helpers.Web;
 using Fanex.NAP.Client.Services;
@@ -43,6 +41,7 @@ using Settlement.WebSites.Configurations;
 using SharpRaven;
 using StackExchange.Redis;
 using System.IO.Compression;
+using Fanex.NAP.Client.Session;
 using ILogger = Fanex.Logging.ILogger;
 using LogService = Settlement.Core.Services.LogService;
 using LogServiceImp = Settlement.Core.Services.LogServiceImp;
@@ -189,6 +188,7 @@ public static class WebSites
         services.AddSingleton<PermissionService, PermissionServiceImp>();
         services.AddSingleton<XmlConvertService, XmlConvertServiceImp>();
         services.AddTransient<LogService, LogServiceImp>();
+        services.AddTransient<BasketballEventStatusService, BasketballEventStatusServiceImp>();
 
         services.AddTransient<IScoreSetService, ScoreSetServiceImp>();
         services.AddTransient<ScaleOutSettleService, ScaleOutSettleServiceImp>();

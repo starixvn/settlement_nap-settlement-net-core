@@ -1,4 +1,5 @@
-﻿using Settlement.Core.Criteria;
+﻿using Fanex.NAP.Client.Helpers.Common;
+using Settlement.Core.Criteria;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.OtherSports.Models;
 
@@ -8,7 +9,6 @@ using AutoMapper;
 using Constants;
 using Criteria;
 using Fanex.Data.Repository;
-using Fanex.NAP.Client;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
 using Microsoft.Extensions.Options;

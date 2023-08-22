@@ -1,10 +1,11 @@
-﻿namespace Settlement.Sportsbook.Soccer.Services.GetMatch;
+﻿using Fanex.NAP.Client.Helpers.Common;
+
+namespace Settlement.Sportsbook.Soccer.Services.GetMatch;
 
 using AutoMapper;
 using Core.Services.SpecificService;
 using Criteria;
 using Fanex.Data.Repository;
-using Fanex.NAP.Client;
 using Models;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;

@@ -1,8 +1,11 @@
 ﻿using Fanex.NAP.Client;
+using Fanex.NAP.Client.Helpers.Common;
+using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.Aio.Constants;
 using Settlement.Sportsbook.Aio.Criteria;
+using Settlement.Sportsbook.Aio.Criteria.Basketball;
 using Settlement.Sportsbook.Aio.MapperFactory;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Requests;
@@ -43,13 +46,16 @@ public class AioServiceImp : IAioService
 
     private readonly MultipleServerAioService multipleServerAioService;
 
+    private readonly BasketballEventStatusService basketballEventStatusService;
+
     public AioServiceImp(
         IDynamicRepository repository,
         IRefDataService refDataService,
         IMapperFactory mapperFactory,
         IValidateApiKeyService validateApiKeyService,
         ICreateQueryService createQueryService,
-        MultipleServerAioService multipleServerAioService)
+        MultipleServerAioService multipleServerAioService,
+        BasketballEventStatusService basketballEventStatusService)
     {
         this.repository = repository;
         this.refDataService = refDataService;
@@ -57,17 +63,15 @@ public class AioServiceImp : IAioService
         this.validateApiKeyService = validateApiKeyService;
         this.createQueryService = createQueryService;
         this.multipleServerAioService = multipleServerAioService;
+        this.basketballEventStatusService = basketballEventStatusService;
     }
 
     public async Task<AioMatch> GetMatch(GetMatchRequest request)
     {
         var apiKey = validateApiKeyService.GetApiKey(request.ApiKey);
-        var matchCriteria = validateApiKeyService.CriteriaName(request, $"{apiKey}-{ApiKeyConstant.MatchInfoKey}");
-        var matchDetail = await repository.GetAsync<Models.MatchDetail>(matchCriteria);
-        var externalResults = new List<ExternalResultModel>();
-        Check.Argument.IsNotNull(matchDetail, $"Match ${request.MatchId} does not exist");
+        var matchDetail = await GetMatchDetail(request, apiKey);
 
-        matchDetail.RefDataService = refDataService;
+        var externalResults = new List<ExternalResultModel>();
         var providerMapperService = mapperFactory.GetMapperService($"{apiKey}-{ApiKeyConstant.ProviderKey}");
         if (providerMapperService != null)
         {
@@ -95,9 +99,16 @@ public class AioServiceImp : IAioService
         var childMatches = await GetChildMatch(resultDetails, request, apiKey);
         resultDetails = resultDetails.OrderBy(result => result.OrdNo).ToList();
 
+        var fantasyMatch = new FantasyMatch();
+        if (matchDetail.IsFantasy)
+        {
+            fantasyMatch = await GetRelatedMatches(matchDetail.MatchId);
+        }
+
         return new AioMatch
         {
             MatchDetail = matchDetail,
+            FantasyMatch = fantasyMatch,
             ResultDetails = resultDetails,
             TicketCounts = ticketCounts,
             Permission = request.Permission,
@@ -106,6 +117,105 @@ public class AioServiceImp : IAioService
             ChildMatches = childMatches,
             OldMatchDetail = oldMatch
         };
+    }
+
+    private async Task<Models.MatchDetail> GetMatchDetail(GetMatchRequest request, string apiKey)
+    {
+        var matchCriteria = validateApiKeyService.CriteriaName(request, $"{apiKey}-{ApiKeyConstant.MatchInfoKey}");
+        var matchDetail = await repository.GetAsync<Models.MatchDetail>(matchCriteria);
+
+        Check.Argument.IsNotNull(matchDetail, $"Match ${request.MatchId} does not exist");
+
+        matchDetail.RefDataService = refDataService;
+
+        return matchDetail;
+    }
+
+    private async Task<FantasyMatch> GetRelatedMatches(int matchId)
+    {
+        var criteria = new GetFantasyMatchCriteria
+        {
+            MatchId = matchId
+        };
+
+        var (firstResultSet, secondResultSet) = await repository.FetchMultipleAsync<FantasyMatchDetail, FantasyRelatedMatch>(criteria);
+
+        var fansFantasyRelatedMatches = secondResultSet.OrderBy(match => match.MatchCode).ToList();
+
+        fansFantasyRelatedMatches.ForEach(match => match.RefDataService = refDataService);
+
+        var relatedMatches = GetRelatedMatchesFromFantasyMatches(fansFantasyRelatedMatches);
+
+        GenerateResultsRelatedMatches(relatedMatches);
+
+        return new FantasyMatch
+        {
+            FantasyMatchDetail = firstResultSet.FirstOrDefault(),
+            RelatedMatches = relatedMatches,
+        };
+    }
+
+    private List<RelatedMatch> GetRelatedMatchesFromFantasyMatches(List<FantasyRelatedMatch> relatedMatches)
+    {
+        var groupMatches = relatedMatches.GroupBy(match => match.MatchId);
+
+        var newMatches = groupMatches.Select(group =>
+        {
+            var firstMatch = group.FirstOrDefault() ?? new FantasyRelatedMatch();
+
+            var results = group.Select(match => new RelatedMatchResult
+            {
+                HomeValue = match.HomeValue,
+                AwayValue = match.AwayValue,
+                ResourceId = match.ResourceId,
+                ResultStatusId = match.ResultStatusId,
+                SettlementStatusId = match.SettlementStatusId,
+            }).ToList();
+
+            ClearScore(results, ResourceType.Halftime);
+            ClearScore(results, ResourceType.Final);
+
+            return new RelatedMatch
+            {
+                MatchId = group.Key,
+                MatchCode = firstMatch.MatchCode,
+                HomeName = firstMatch.HomeName,
+                AwayName = firstMatch.AwayName,
+                KickOffTime = firstMatch.KickOffTime,
+                Remark = firstMatch.Remark,
+                EventStatus = firstMatch.EventStatus,
+                BetStatus = firstMatch.BetStatus,
+                HomeId = firstMatch.HomeId,
+                AwayId = firstMatch.AwayId,
+                IsDeleted = firstMatch.IsDeleted,
+                Results = results
+            };
+        }).ToList();
+
+        return newMatches;
+    }
+
+    private static void ClearScore(List<RelatedMatchResult> resultDetails, string resourceId)
+    {
+        var resultSettleSdt = resultDetails.Where(r => (resourceId == ResourceType.Halftime
+            ? Resources.ResultHaftTime[SportType.BasketBall].Contains(r.ResourceId)
+            : Resources.ResultFullTime[SportType.BasketBall].Contains(r.ResourceId)) && r.SettlementStatusId == SettlementStatus.Abandoned).ToList();
+
+        var resultDetail = resultDetails.FirstOrDefault(n => n.ResourceId == resourceId);
+
+        if (resultDetail != null && resultSettleSdt.Any())
+        {
+            resultDetail.HomeValue = string.Empty;
+            resultDetail.AwayValue = string.Empty;
+        }
+    }
+
+    private void GenerateResultsRelatedMatches(List<RelatedMatch> relatedMatches)
+    {
+        relatedMatches.ForEach(match =>
+        {
+            match.NewEventStatus = basketballEventStatusService.AdjustEventStatusAbandoned(match.EventStatus, match.Results, SportType.BasketBall);
+        });
     }
 
     private async Task<HedgeMatchDetail> GetOldMatch(Models.MatchDetail matchDetail, GetMatchRequest request, string apiKey)
