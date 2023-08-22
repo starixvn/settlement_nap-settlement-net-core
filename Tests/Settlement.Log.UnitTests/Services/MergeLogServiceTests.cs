@@ -1,4 +1,5 @@
-﻿using Settlement.Log.Models.LogElement;
+﻿using Settlement.Log.Contants;
+using Settlement.Log.Models.LogElement;
 using Settlement.Log.Services;
 
 namespace Settlement.Log.UnitTests.Services;
@@ -12,26 +13,33 @@ public class MergeLogServiceTests
         service = new MergeLogServiceImp();
     }
 
-    private List<LogItem> CreateLogs(string name, string firstLogValue, string secondLogValue, string thirdLogValue)
+    private IEnumerable<RootElement> CreateLogs(string name, string type, string firstLogValue, string secondLogValue, string thirdLogValue)
     {
-        return new List<LogItem>
+        return new List<RootElement>
         {
-            new()
+            new RootElement
             {
-                Value = firstLogValue,
-                Name = name
-            },
-
-            new()
-            {
-                Value = secondLogValue,
-                Name = name
-            },
-
-            new()
-            {
-                Value = thirdLogValue,
-                Name = name
+                Logs = new LogItem[]
+                {
+                    new()
+                    {
+                        Type = type,
+                        Value = firstLogValue,
+                        Name = name
+                    },
+                    new()
+                    {
+                        Type = type,
+                        Value = secondLogValue,
+                        Name = name
+                    },
+                    new()
+                    {
+                        Type = type,
+                        Value = thirdLogValue,
+                        Name = name
+                    }
+                }
             }
         };
     }
@@ -39,9 +47,9 @@ public class MergeLogServiceTests
     [Fact]
     public void GetMaxDate_Always_ReturnDateLatest()
     {
-        var logs = CreateLogs("StartTime", "2023-08-18 06:00:50", "NOT_DATE_TYPE", "2023-08-18 06:00:42");
+        var logs = CreateLogs("StartTime", LogType.DateMax, "2023-08-18 06:00:50", "NOT_DATE_TYPE", "2023-08-18 06:00:42");
 
-        var actual = service.GetMaxDate(logs);
+        var actual = service.MergeLog(logs);
 
         Assert.Equal("StartTime: 2023-08-18 06:00:50", actual);
     }
@@ -49,29 +57,62 @@ public class MergeLogServiceTests
     [Fact]
     public void GetMinDate_Always_ReturnDateEarliest()
     {
-        var logs = CreateLogs("EndTime", "2023-08-18 06:00:50", "NOT_DATE_TYPE", "2023-08-18 06:00:42");
+        var logs = CreateLogs("EndTime", LogType.DateMin, "2023-08-18 06:00:50", "NOT_DATE_TYPE", "2023-08-18 06:00:42");
 
-        var actual = service.GetMinDate(logs);
+        var actual = service.MergeLog(logs);
 
-        Assert.Equal("StartTime: 2023-08-18 06:00:42", actual);
+        Assert.Equal("EndTime: 2023-08-18 06:00:42", actual);
     }
 
     [Theory]
     [MemberData(nameof(TestCases))]
-    public void GetStatistic_Always_ReturnCorrectValue(string name, string firstLogValue, string secondLogValue, string thirdLogValue, Func<IEnumerable<int>, int> aggregation, string expected)
+    public void GetStatistic_Always_ReturnCorrectValue(string name, string type, string firstLogValue, string secondLogValue, string thirdLogValue, string expected)
     {
-        var logs = CreateLogs(name, firstLogValue, secondLogValue, thirdLogValue);
+        var logs = CreateLogs(name, type, firstLogValue, secondLogValue, thirdLogValue);
 
-        var actual = service.GetStatistic(logs, aggregation);
+        var actual = service.MergeLog(logs);
 
         Assert.Equal(expected, actual);
     }
 
     public static IEnumerable<object[]> TestCases()
     {
-        yield return new object[] { "TC", "10", "20", "3d14", (Func<IEnumerable<int>, int>)(values => values.Sum()), "TC: 33" };
-        yield return new object[] { "Duration", "10ms", "20ms", "50ms", (Func<IEnumerable<int>, int>)(values => values.Max()), "Duration: 50ms" };
-        yield return new object[] { "Duration", "10ms", "20ms", "50ms", (Func<IEnumerable<int>, int>)(values => values.Min()), "Duration: 10ms" };
-        yield return new object[] { "TC", "Not_Valid_Value", "md5", "abc", (Func<IEnumerable<int>, int>)(values => values.Min()), "TC: 0" };
+        yield return new object[] { "TC", LogType.Sum, "10", "20", "3d14", "TC: 33" };
+        yield return new object[] { "Duration", LogType.Max, "10ms", "20ms", "50ms", "Duration: 50ms" };
+        yield return new object[] { "Duration", LogType.Min, "10ms", "20ms", "50ms", "Duration: 10ms" };
+        yield return new object[] { "TC", LogType.Min, "Not_Valid_Value", "md5", "abc", "TC: 0" };
+    }
+
+    [Fact]
+    public void DistinctLogsString_HasLog_ReturnCorrectLog()
+    {
+        var distinctLogs = new List<DistinctElement>
+        {
+            new DistinctElement
+            {
+                Logs = new []
+                {
+                    new LogItem()
+                    {
+                        Name = "name",
+                        Value = "value",
+                    }
+                }
+            }
+        };
+
+        var actual = service.DistinctLogsString(distinctLogs);
+
+        Assert.Equal("name: value", actual);
+    }
+
+    [Fact]
+    public void DistinctLogsString_EmptyLog_ReturnEmpty()
+    {
+        var distinctLogs = new List<DistinctElement>();
+
+        var actual = service.DistinctLogsString(distinctLogs);
+
+        Assert.Empty(actual);
     }
 }

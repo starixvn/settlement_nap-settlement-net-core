@@ -1,6 +1,5 @@
 ﻿using Fanex.Data.Repository;
 using Settlement.Core.Constants;
-using Settlement.Log.Contants;
 using Settlement.Log.Criteria;
 using Settlement.Log.Models;
 using Settlement.Log.Models.LogElement;
@@ -85,36 +84,34 @@ public class LogDetailServiceImp : LogDetailService
 
     private string ParseLog(string remark)
     {
-        var log = xmlConvertService.Deserialize<LogRoot>($"<logs>{remark}</logs>");
-        if (log != null && (log.DistinctLogs != null || log.RootLogs.Any()))
+        try
         {
-            return $"{string.Join("; ", log.DistinctLogs.Logs.Select(l => $"{l.Name}: {l.Value}"))}; {MergeLog(log.RootLogs)}";
-        }
+            var log = xmlConvertService.Deserialize<LogRoot>($"<logs>{remark}</logs>");
 
-        return remark;
+            if (ShouldProcessLogs(log))
+            {
+                var distinctLogs = mergeLogService.DistinctLogsString(log.DistinctLogs);
+                var rootLogs = mergeLogService.MergeLog(log.RootLogs);
+
+                var nonEmptyRemarks = new List<string>
+                {
+                    distinctLogs,
+                    rootLogs
+                }.Where(r => !string.IsNullOrEmpty(r));
+
+                return string.Join("; ", nonEmptyRemarks);
+            }
+
+            return remark;
+        }
+        catch
+        {
+            return remark;
+        }
     }
 
-    private string MergeLog(IEnumerable<RootElement> roots)
+    private static bool ShouldProcessLogs(LogRoot log)
     {
-        var logGroups = roots.SelectMany(r => r.Logs).GroupBy(log => (log.Name, log.Type))
-            .ToDictionary(
-                group => group.Key,
-                group => group.ToList());
-
-        var mergedLogs = logGroups.Where(group => group.Value.Any()).Select(item =>
-            {
-                return item.Key.Item2 switch
-                {
-                    LogType.DateMin => mergeLogService.GetMinDate(item.Value),
-                    LogType.DateMax => mergeLogService.GetMaxDate(item.Value),
-                    LogType.Min => mergeLogService.GetStatistic(item.Value, values => values.Min()),
-                    LogType.Max => mergeLogService.GetStatistic(item.Value, values => values.Max()),
-                    LogType.Sum => mergeLogService.GetStatistic(item.Value, values => values.Sum()),
-                    _ => string.Empty
-                };
-            })
-            .ToList();
-
-        return string.Join("; ", mergedLogs.Where(log => !string.IsNullOrEmpty(log)));
+        return log.DistinctLogs.Any() || log.RootLogs.Any();
     }
 }

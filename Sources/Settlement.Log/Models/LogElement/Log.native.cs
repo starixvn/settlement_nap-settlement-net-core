@@ -6,7 +6,7 @@ namespace Settlement.Log.Models.LogElement;
 public class LogRoot
 {
     [XmlElement("distinct")]
-    public DistinctElement DistinctLogs { get; set; }
+    public List<DistinctElement> DistinctLogs { get; set; }
 
     [XmlElement("root")]
     public List<RootElement> RootLogs { get; set; }
