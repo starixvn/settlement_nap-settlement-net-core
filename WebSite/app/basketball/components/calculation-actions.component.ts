@@ -1,4 +1,4 @@
-﻿import { Component, Injector, ViewChild, inject } from "@angular/core";
+﻿import { Component, ViewChild, inject } from "@angular/core";
 import * as _ from "lodash";
 import {
   MessageBoxService,
@@ -607,9 +607,7 @@ export class CalculationActionsComponent implements SportTemplate {
   }
 
     private confirmCalculation() {
-        this.confirmationDialogMessage.message = this.basketballService.confirmationMessage(this.selectedResources);
-      resultDetails
-    );
+      this.confirmationDialogMessage.message = this.basketballService.confirmationMessage(this.selectedResources);
     this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
       this.doCalculation(this.selectedResources);
     });
@@ -665,7 +663,7 @@ export class CalculationActionsComponent implements SportTemplate {
       const result = await this.aioService.push(query);
       if (result.isSuccessful) {
         await this.voidBet(getTicketInfos, actionName);
-                await this.cashOutResultUpdate(betStatus);
+        await this.cashOutResultUpdate(betStatus);
         this.calculateHedgeMatch(query);
       } else {
         this.toastrService.error(result.errMsg);
@@ -763,30 +761,19 @@ export class CalculationActionsComponent implements SportTemplate {
     }
   }
 
-    private async cashOutResultUpdate(betStatus: string) {
-    resource: ResultDetail[],
-    betStatus: string
-  ) {
-    const isVirtualMatch =
-      this.verificationService.isPinGoalMatch(this.matchDetail.leagueGroupId) ||
+  private async cashOutResultUpdate(betStatus: string) {
+    const isVirtualMatch =  this.verificationService.isPinGoalMatch(this.matchDetail.leagueGroupId) ||
       this.verificationService.isSabaMatch(this.matchDetail.leagueGroupId);
-    const final = resource.filter(
-      (map) => _.isEqual(map.resourceId, ResourcesIds.finalScore) && map.checked
-    );
-    if (
-      final.length > 0 &&
-      !isVirtualMatch &&
-      this.matchDetail.parentId === 0
-    ) {
+    if (!isVirtualMatch && this.matchDetail.parentId === 0) {
       if (this.match.isScoreDirect) {
         betStatus = this.cashOutService.getDirectBetStatusOnCalc(
           this.firstHalf,
           this.fullTime
         );
       }
-            
-            const lsHalf = this.cashOutService.getListHalf(this.selectedResources)
-            const query = new CashOutResultUpdateQuery(this.matchDetail.matchId, betStatus, lsHalf);
+
+      const lsHalf = this.cashOutService.getListHalf(this.selectedResources)
+      const query = new CashOutResultUpdateQuery(this.matchDetail.matchId, betStatus, lsHalf);
       await this.cashOutService.calc(query);
     }
   }
