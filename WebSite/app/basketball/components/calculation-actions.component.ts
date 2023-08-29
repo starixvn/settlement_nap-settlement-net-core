@@ -44,6 +44,7 @@ import { CalculationMatchDetailComponent } from "./calculation-match-detail.comp
 import { CalculateCommonModule } from "../../shared/modules/calculate-common.module";
 import { RelatedMatchesComponent } from "./fantasy/related-matches.compoment";
 import { FantasyMatch } from "../models/fantasy.model";
+import { SourceIds } from "../constants/source-ids";
 
 @Component({
   selector: "calculation-actions",
@@ -979,17 +980,28 @@ export class CalculationActionsComponent implements SportTemplate {
         (score) => score.resourceId == result.resourceId
       );
 
+      const homeValue = (findScore.homeValue ?? "0").toString();
+      const awayValue = (findScore.awayValue ?? "0").toString();
+
+      const externalScores = result.externalScores.map(score => {
+         if([SourceIds.trader,SourceIds.screenshot].includes(score.sourceId)) {
+          return {...score,homeValue, awayValue }
+         }
+        return score;
+      })
+
       return findScore
         ? {
             ...result,
-            homeValue: (findScore.homeValue ?? "0").toString(),
-            awayValue: (findScore.awayValue ?? "0").toString(),
+            homeValue,
+            awayValue,
+            externalScores
           }
         : { ...result };
     });
 
-    this.resultDetails.forEach(map => {
+    this.resultDetails.forEach((map) => {
       map.isScoreMismatched = this.verificationService.isMismatchedWarning(map);
-    })
+    });
   }
 }
