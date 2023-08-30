@@ -1,4 +1,5 @@
-﻿using Settlement.Core.Models;
+﻿using Settlement.Core.Constants;
+using Settlement.Core.Models;
 using Settlement.Core.Services;
 using System.Text.Json.Serialization;
 
@@ -112,15 +113,7 @@ public class MatchDetail
 
     public string ExternalSourceName { get; set; }
 
-    public bool IsFantasyMatch
-    {
-        get
-        {
-            var fantasyLeagueGroup = new List<int> { 125351, 16371, 65550, 89611 };
-
-            return fantasyLeagueGroup.Contains(LeagueId);
-        }
-    }
+    public bool IsFantasyMatch => (LeagueName ?? string.Empty).Contains(LeagueType.Fantasy, StringComparison.OrdinalIgnoreCase);
 
     public byte SettlementStatus { get; set; }
 

@@ -61,5 +61,5 @@ public class MatchDetail
 
     public int AutoSetting { get; set; }
 
-    public bool IsFantasy => LeagueName.Contains(LeagueType.Fantasy, StringComparison.OrdinalIgnoreCase);
+    public bool IsFantasy => (LeagueName ?? string.Empty).Contains(LeagueType.Fantasy, StringComparison.OrdinalIgnoreCase);
 }
