@@ -980,24 +980,26 @@ export class CalculationActionsComponent implements SportTemplate {
         (score) => score.resourceId == result.resourceId
       );
 
+      if (!findScore) {
+        return { ...result };
+      }
+
       const homeValue = (findScore.homeValue ?? "0").toString();
       const awayValue = (findScore.awayValue ?? "0").toString();
 
-      const externalScores = result.externalScores.map(score => {
-         if([SourceIds.trader,SourceIds.screenshot].includes(score.sourceId)) {
-          return {...score,homeValue, awayValue }
-         }
+      const externalScores = result.externalScores.map((score) => {
+        if ([SourceIds.trader, SourceIds.screenshot].includes(score.sourceId)) {
+          return { ...score, homeValue, awayValue };
+        }
         return score;
-      })
+      });
 
-      return findScore
-        ? {
-            ...result,
-            homeValue,
-            awayValue,
-            externalScores
-          }
-        : { ...result };
+      return {
+        ...result,
+        homeValue,
+        awayValue,
+        externalScores,
+      };
     });
 
     this.resultDetails.forEach((map) => {
