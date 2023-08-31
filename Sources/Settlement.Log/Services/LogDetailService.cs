@@ -2,6 +2,8 @@
 using Settlement.Core.Constants;
 using Settlement.Log.Criteria;
 using Settlement.Log.Models;
+using Settlement.Log.Models.BetTypeElement;
+using Settlement.Log.Models.EventCounterElement;
 using Settlement.Log.Models.LogElement;
 using Settlement.ResourceInfos.Constants;
 using Settlement.ResourceInfos.MapperFactory;
@@ -47,12 +49,7 @@ public class LogDetailServiceImp : LogDetailService
     {
         var criteria = new GetLogDetailByMatchAndProductCriteria { MatchId = matchId, ProductType = productType };
         var logDetails = (await repository.FetchAsync<LogDetailsModels>(criteria)).ToList();
-        logDetails.ForEach(log => log.Remark = ParseLog(log.Remark));
-        foreach (var log in logDetails.Where(log => remarkService.IsFastMarketAction(log.ActionId)))
-        {
-            log.Remark = remarkService.RemarkValue(log.Remark);
-        }
-
+        logDetails.ForEach(log => log.Remark = ParseLog(log.Remark, log.ActionId));
         return logDetails;
     }
 
@@ -60,7 +57,9 @@ public class LogDetailServiceImp : LogDetailService
     {
         var criteria = new GetLogResettleCriteria { MatchId = matchId, SportType = sportType };
         var listLog = (await repository.FetchAsync<ResettleLogDetail>(criteria)).ToList();
-        var key = KeyConstants.KeyDictionary.TryGetValue(sportType, out var value) ? value : KeyConstants.KeyDictionary[0];
+        var key = KeyConstants.KeyDictionary.TryGetValue(sportType, out var value)
+            ? value
+            : KeyConstants.KeyDictionary[0];
 
         listLog.ForEach(log =>
         {
@@ -78,11 +77,12 @@ public class LogDetailServiceImp : LogDetailService
         }
 
         var criteria = new GetPlayerInfoCriteria { MatchId = matchId };
-        var listPlayer = (await repository.FetchAsync<PlayerCricketInfo>(criteria)).DistinctBy(item => item.OddsInfo).ToList();
+        var listPlayer = (await repository.FetchAsync<PlayerCricketInfo>(criteria)).DistinctBy(item => item.OddsInfo)
+            .ToList();
         return listPlayer.Select(item => item.OddsInfo).ToList();
     }
 
-    private string ParseLog(string remark)
+    private string ParseLog(string remark, int actionId)
     {
         try
         {
@@ -92,11 +92,13 @@ public class LogDetailServiceImp : LogDetailService
             {
                 var distinctLogs = mergeLogService.DistinctLogsString(log.DistinctLogs);
                 var rootLogs = mergeLogService.MergeLog(log.RootLogs);
+                var fastMarketLogs = GetFastMarketLogsString(actionId, log);
 
                 var nonEmptyRemarks = new List<string>
                 {
                     distinctLogs,
-                    rootLogs
+                    rootLogs,
+                    fastMarketLogs
                 }.Where(r => !string.IsNullOrEmpty(r));
 
                 return string.Join("; ", nonEmptyRemarks);
@@ -112,6 +114,18 @@ public class LogDetailServiceImp : LogDetailService
 
     private static bool ShouldProcessLogs(LogRoot log)
     {
-        return log.DistinctLogs.Any() || log.RootLogs.Any();
+        return log.BetTypeRoot.Any() || log.EventCounterRoot.Any() || log.DistinctLogs.Any() || log.RootLogs.Any();
+    }
+
+    private string GetFastMarketLogsString(int actionId, LogRoot log)
+    {
+        if (remarkService.IsFastMarketAction(actionId))
+        {
+            var betTypes = (log.BetTypeRoot.FirstOrDefault() ?? new BetTypesRoot()).BetTypes;
+            var eventCounters = (log.EventCounterRoot.FirstOrDefault() ?? new EventCountersRoot()).Items;
+            return remarkService.RemarkValue(betTypes, eventCounters);
+        }
+
+        return string.Empty;
     }
 }

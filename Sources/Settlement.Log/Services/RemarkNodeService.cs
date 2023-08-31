@@ -1,15 +1,14 @@
 ﻿using Settlement.Log.Models.BetTypeElement;
-using Settlement.Log.Models.EventCounterElement;
 using System.Text;
-using static Settlement.Core.Constants.BetType;
+using ItemElement = Settlement.Log.Models.EventCounterElement.ItemElement;
 
 namespace Settlement.Log.Services;
 
 public interface RemarkNodeService
 {
-    string EventCounter(string content);
+    string EventCounterLogs(IEnumerable<ItemElement> items);
 
-    string BetTypes(string content, string goalValue);
+    string BetTypeLogs(IEnumerable<BetTypeElement> betTypes);
 }
 
 public class RemarkNodeServiceImp : RemarkNodeService
@@ -18,39 +17,27 @@ public class RemarkNodeServiceImp : RemarkNodeService
 
     private readonly PositionService positionService;
 
-    private readonly XmlConvertService xmlConvertService;
-
-    public RemarkNodeServiceImp(PositionService positionService, XmlConvertService xmlConvertService)
+    public RemarkNodeServiceImp(PositionService positionService)
     {
         this.positionService = positionService;
-        this.xmlConvertService = xmlConvertService;
     }
 
-    public string EventCounter(string content)
+    public string EventCounterLogs(IEnumerable<ItemElement> items)
     {
-        if (string.IsNullOrEmpty(content))
-        {
-            return string.Empty;
-        }
+        var eventCounterLog = (from item in items let resultLog = ParseEventCounterResult(item.Result) select $"{item.Position}:{resultLog}").ToList();
 
-        var eventCountersRoot = xmlConvertService.Deserialize<EventCountersRoot>(content) ?? new EventCountersRoot();
-        var eventCounterLog = (from item in eventCountersRoot.Items let resultLog = ParseEventCounterResult(item.Result) select $"{item.Position}:{resultLog}").ToList();
-
-        return $"Event Counter: {string.Join("; ", eventCounterLog)}<br/>";
+        return eventCounterLog.Count > 0 ? $"<br/>Event Counter: {string.Join("; ", eventCounterLog)}<br/>" : "<br/>";
     }
 
-    public string BetTypes(string content, string goalValue)
+    public string BetTypeLogs(IEnumerable<BetTypeElement> betTypes)
     {
-        var betTypes = xmlConvertService.Deserialize<BetTypesRoot>(content);
         var remark = new StringBuilder();
-        foreach (var betType in betTypes.BetType)
+        foreach (var betType in betTypes)
         {
             var betTypeId = Convert.ToInt32(betType.Id);
-            var positionAndResult = positionService.PositionName(betTypeId, betType.Item);
+            var positionAndResult = positionService.PositionName(betTypeId, betType.Item.FirstOrDefault());
 
-            remark.Append(betTypeId == FastMarketBetType.TimeMachineOverUnder && !string.IsNullOrWhiteSpace(goalValue)
-                ? $"ResourceId: {betTypeId} | Result: {positionAndResult}, ({goalValue})<br/>"
-                : $"ResourceId: {betTypeId} | Result: {positionAndResult}<br/>");
+            remark.Append($"ResourceId: {betTypeId} | Result: {positionAndResult}<br/>");
         }
 
         return remark.ToString();

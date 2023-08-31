@@ -2,9 +2,9 @@
 
 namespace Settlement.Log.Models.BetTypeElement;
 
-[XmlRoot("BetTypes")]
+[XmlRoot("bettypes")]
 public class BetTypesRoot
 {
-    [XmlElement("BetType")]
-    public List<BetTypeElement> BetType { get; set; }
+    [XmlElement("bettype")]
+    public BetTypeElement[] BetTypes { get; set; }
 }

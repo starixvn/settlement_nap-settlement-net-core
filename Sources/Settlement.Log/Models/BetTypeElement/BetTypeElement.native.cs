@@ -8,5 +8,5 @@ public class BetTypeElement
     public int Id { get; set; }
 
     [XmlElement]
-    public ItemElement Item { get; set; }
+    public BetTypeItemElement[] Item { get; set; }
 }

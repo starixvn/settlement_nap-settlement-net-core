@@ -5,7 +5,7 @@ namespace Settlement.Log.Services;
 
 public interface PositionService
 {
-    string PositionName(int betTypeId, ItemElement item);
+    string PositionName(int betTypeId, BetTypeItemElement item);
 }
 
 public class PositionServiceImp : PositionService
@@ -23,7 +23,7 @@ public class PositionServiceImp : PositionService
         this.resultService = resultService;
     }
 
-    public string PositionName(int betTypeId, ItemElement item)
+    public string PositionName(int betTypeId, BetTypeItemElement item)
     {
         if (string.IsNullOrWhiteSpace(item.Result))
         {
@@ -61,18 +61,18 @@ public class PositionServiceImp : PositionService
         switch (betTypeId)
         {
             case FastMarketBetType.TimeMachineOverUnder:
-            {
-                var positionName = GetTimeMachinePosition(position);
-                return $"{positionName}({result})";
-            }
+                {
+                    var positionName = GetTimeMachinePosition(position);
+                    return $"{positionName}({result})";
+                }
             case FastMarketBetType.TimeMachineHandicap:
-            {
-                var home = Convert.ToInt32(result) % TimeMachineHandicapScoreRange;
-                var away = Convert.ToInt32(result) / TimeMachineHandicapScoreRange;
-                var positionName = GetTimeMachinePosition(position);
+                {
+                    var home = Convert.ToInt32(result) % TimeMachineHandicapScoreRange;
+                    var away = Convert.ToInt32(result) / TimeMachineHandicapScoreRange;
+                    var positionName = GetTimeMachinePosition(position);
 
-                return $"{positionName}({home}-{away})";
-            }
+                    return $"{positionName}({home}-{away})";
+                }
             default:
                 return betTypeId == FastMarketBetType.NextOneMinuteSetPiece ? resultService.MinuteSetPieceResultName(position, result) : resultService.ResultName(position, result);
         }
