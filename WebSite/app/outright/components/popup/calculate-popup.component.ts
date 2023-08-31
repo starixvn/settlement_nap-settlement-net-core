@@ -120,6 +120,7 @@ export class CalculatePopupComponent implements OnInit {
     }
 
     public onSelectTicketsStatus(value: ItemsSelect[]) {
+        this.selectStatus();
         this.ticketStatusSelected = value.length > 0 ? value.map(item => item.value).join() : "";
     }
 
@@ -152,8 +153,8 @@ export class CalculatePopupComponent implements OnInit {
         const filterStatus = this.statusPipe.transform(this.teams, this.statusSelected);
         const filterTicketStatus = this.ticketStatusPipe.transform(filterStatus, this.ticketStatusSelected);
         this.teams.forEach(team => {
-            const isSelected = filterTicketStatus.some(value => value.orId === team.orId);
-            team.selected = isSelected ? e.target.checked : team.selected ?? false;
+            const isShowed = filterTicketStatus.some(value => value.orId === team.orId);
+            team.selected = isShowed ? e.target.checked : false;
         });
     }
 
