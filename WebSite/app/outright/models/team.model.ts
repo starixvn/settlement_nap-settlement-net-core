@@ -12,6 +12,7 @@ export class Team extends Match {
     totalCal: number;
     totalRunning: number;
     totalHide: number;
+    originalStatus: string;
 }
 
 export class TeamSettle {
