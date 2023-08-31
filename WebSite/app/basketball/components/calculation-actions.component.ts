@@ -975,6 +975,8 @@ export class CalculationActionsComponent implements SportTemplate {
   }
 
   public autoFillFantasyMatch(score) {
+    this.resetExternalScores();
+
     this.resultDetails = this.resultDetails.map((result) => {
       const findScore = score.find(
         (score) => score.resourceId == result.resourceId
@@ -1005,5 +1007,16 @@ export class CalculationActionsComponent implements SportTemplate {
     this.resultDetails.forEach((map) => {
       map.isScoreMismatched = this.verificationService.isMismatchedWarning(map);
     });
+  }
+
+  private resetExternalScores() {
+    this.resultDetails.forEach(result => {
+      result.externalScores.forEach(score => {
+        if ([SourceIds.trader, SourceIds.screenshot].includes(score.sourceId)) {
+          score.homeValue = null;
+          score.awayValue = null;
+        }
+      })
+    })
   }
 }
