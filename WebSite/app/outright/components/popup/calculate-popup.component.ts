@@ -84,6 +84,7 @@ export class CalculatePopupComponent implements OnInit {
             team.dateTime = this.verifyDateService.convertToDateStruct(team.eventDate);
             team.disableDeadheat = !_.isEqual(team.status, 'WON');
             team.statusClass = this.makeBackgroundByStatus(team.status);
+            team.originalStatus = team.status;
         });
         this.moveBetsDay = this.verifyDateService.convertToDateStruct(this.leagueSettle.moveBetsDay);
         this.today = this.verifyDateService.convertToDateStruct(this.leagueSettle.today);
@@ -120,6 +121,7 @@ export class CalculatePopupComponent implements OnInit {
     }
 
     public onSelectTicketsStatus(value: ItemsSelect[]) {
+        this.selectStatus();
         this.ticketStatusSelected = value.length > 0 ? value.map(item => item.value).join() : "";
     }
 
@@ -149,12 +151,26 @@ export class CalculatePopupComponent implements OnInit {
     }
 
     public onSelectAllTeam(e: any) {
+       
+        const filteredTeams = this.fillteredTeam()
+        this.teams.forEach(team => {
+            const isShowed = filteredTeams.some(value => value.orId === team.orId);
+            team.selected = isShowed ? e.target.checked : false;
+        });
+    }
+
+    public fillteredTeam() {
         const filterStatus = this.statusPipe.transform(this.teams, this.statusSelected);
         const filterTicketStatus = this.ticketStatusPipe.transform(filterStatus, this.ticketStatusSelected);
-        this.teams.forEach(team => {
-            const isSelected = filterTicketStatus.some(value => value.orId === team.orId);
-            team.selected = isSelected ? e.target.checked : team.selected ?? false;
-        });
+
+        return filterTicketStatus;
+    }
+
+    onSelectTeam(e: any) {
+        const filteredTeams = this.fillteredTeam()
+        const selectedTeams = filteredTeams.every(team => team.selected);
+        this.selectAllTeam = selectedTeams;
+
     }
 
     private async validateBeforePush(teamWonSettled: Team[], teamWonSelected: Team[], teamHideSelected: Team[], isCalc: boolean = true) {

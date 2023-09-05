@@ -32,13 +32,15 @@ export class StatusPipe implements PipeTransform {
 
   private filterStatus(teams: Team[], status: string) {
     if (_.isEqual(status.toLowerCase(), Status.running)) {
-      return _.filter(teams, (team) =>
-        _.includes(this.runningStatus, team.status.toLowerCase())
-      );
+      return this.getTeamByStatus(this.runningStatus, teams);
     }
-
-    return _.filter(teams, (team) =>
-      _.includes(this.completedStatus, team.status.toLowerCase())
-    );
+    return this.getTeamByStatus(this.completedStatus, teams);
   }
+
+  private getTeamByStatus(statuses: string[], teams: Team[]): Team[] {
+    return _.filter(teams, (team) =>
+      _.includes(statuses, team.originalStatus.toLowerCase()));
+  }
+
 }
+
