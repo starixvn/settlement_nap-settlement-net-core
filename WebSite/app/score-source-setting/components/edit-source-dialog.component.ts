@@ -1,19 +1,20 @@
 import { FormsModule } from '@angular/forms';
 import { Component, Inject } from "@angular/core";
 import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
-import { DefaultGames, sportSupport } from "../constants";
+import { sportSupport } from "../constants";
 import { OutsideSource } from "../models";
 import * as _ from 'lodash';
 import { ModalDialogMessage, Result } from "../../shared/models";
 import { MessageBoxService, HttpRequestService, BlockUIService } from "../../shared/services";
 import { QueryService } from "../services";
 import { Language } from "../../shared/language.native";
+import { CommonModule } from '@angular/common';
 
 @Component({
     selector: 'edit-source-dialog',
     templateUrl: 'edit-source-dialog.component.html',
     standalone: true,
-    imports: [FormsModule],
+    imports: [FormsModule, CommonModule],
     providers: [
         MessageBoxService,
         QueryService,
@@ -29,14 +30,15 @@ export class EditSourceDialogComponent {
     private readonly dialogMessage: ModalDialogMessage = new ModalDialogMessage();
 
     constructor(public dialogRef: MatDialogRef<EditSourceDialogComponent>,
-                @Inject(MAT_DIALOG_DATA) public data: OutsideSource,
-                @Inject(MAT_DIALOG_DATA) public newApi: string,
-                private readonly messageBoxService: MessageBoxService,
-                private readonly queryService: QueryService) {
+        @Inject(MAT_DIALOG_DATA) public data: OutsideSource,
+        @Inject(MAT_DIALOG_DATA) public newApi: string,
+        private readonly messageBoxService: MessageBoxService,
+        private readonly queryService: QueryService) {
         this.outsideSource = _.cloneDeep(data);
         this.dialogRef.disableClose = true;
         this.disabledGameType = !_.includes(sportSupport.gameTypes, data.sportType);
     }
+
 
     saveSource() {
         this.isButtonClicked = true;
@@ -44,7 +46,7 @@ export class EditSourceDialogComponent {
     }
 
     closePopup(): void {
-        this.dialogRef.close({event: 'Close'});
+        this.dialogRef.close({ event: 'Close' });
     }
 
     private confirmEditSource() {
@@ -62,7 +64,7 @@ export class EditSourceDialogComponent {
     private updateSource() {
         this.queryService.updateOutsideSource(this.outsideSource).subscribe((result: Result) => {
             if (result.isSuccessful) {
-                this.dialogRef.close({event: 'Save', newData: this.outsideSource});
+                this.dialogRef.close({ event: 'Save', newData: this.outsideSource });
             } else {
                 this.errorMessage = result.errMsg;
             }
