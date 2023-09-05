@@ -7,4 +7,6 @@ public class CalcRequest : IRequest
     public int MatchId { get; set; }
 
     public string Betstatus { get; set; }
+
+    public int[] LsHalf { get; set; }
 }

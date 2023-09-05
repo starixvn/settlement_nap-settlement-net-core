@@ -75,11 +75,11 @@ export class GenerateCashOutService {
             
         if(this.isRefundAll(resultDetails)) {
             return this.getBetStatusByQuarter(resultDetailsQuarters, [ResourcesIds.quarter1]);
-        } else if(this.isRefundByQuarter(resultDetails, ResourcesIds.quarter2)) {
+        } else if(this.isSelectedQuarter(resultDetails, ResourcesIds.quarter2)) {
             return this.getBetStatusByQuarter(resultDetailsQuarters, [ResourcesIds.quarter1, ResourcesIds.quarter2]);
-        } else if(this.isRefundByQuarter(resultDetails, ResourcesIds.quarter3)) {
+        } else if(this.isSelectedQuarter(resultDetails, ResourcesIds.quarter3)) {
             return this.getBetStatusByQuarter(resultDetailsQuarters, [ResourcesIds.quarter1, ResourcesIds.quarter2, ResourcesIds.quarter3]);
-        } else if(this.isRefundByQuarter(resultDetails, ResourcesIds.quarter4)) {
+        } else if(this.isSelectedQuarter(resultDetails, ResourcesIds.quarter4)) {
             return this.getBetStatusByQuarter(resultDetailsQuarters, [ResourcesIds.quarter1, ResourcesIds.quarter2, ResourcesIds.quarter3, ResourcesIds.quarter4]);
         } 
 
@@ -104,15 +104,15 @@ export class GenerateCashOutService {
     public generateHalf(resultDetails: ResultDetail[]) {
         if(this.isRefundAll(resultDetails)) {
             return 8;
-        } else if(this.isRefundByQuarter(resultDetails, ResourcesIds.quarter2)) {
+        } else if(this.isSelectedQuarter(resultDetails, ResourcesIds.quarter2)) {
             return 2;
-        } else if(this.isRefundByQuarter(resultDetails, ResourcesIds.htScore)) {
+        } else if(this.isSelectedQuarter(resultDetails, ResourcesIds.htScore)) {
             return 5;
-        } else if(this.isRefundByQuarter(resultDetails, ResourcesIds.quarter3)) {
+        } else if(this.isSelectedQuarter(resultDetails, ResourcesIds.quarter3)) {
             return 3;
-        } else if(this.isRefundByQuarter(resultDetails, ResourcesIds.quarter4)) {
+        } else if(this.isSelectedQuarter(resultDetails, ResourcesIds.quarter4)) {
             return 4;
-        } else if(this.isRefundByQuarter(resultDetails, ResourcesIds.finalScore)) {
+        } else if(this.isSelectedQuarter(resultDetails, ResourcesIds.finalScore)) {
             return 0;
         }
     }
@@ -120,15 +120,15 @@ export class GenerateCashOutService {
     public generateHalfForSettleDetermined(resultDetails: ResultDetail[]) {
         if(this.isRefundAll(resultDetails)) {
             return 11;
-        } else if(this.isRefundByQuarter(resultDetails, ResourcesIds.quarter2)) {
+        } else if(this.isSelectedQuarter(resultDetails, ResourcesIds.quarter2)) {
             return 12;
-        } else if(this.isRefundByQuarter(resultDetails, ResourcesIds.htScore)) {
+        } else if(this.isSelectedQuarter(resultDetails, ResourcesIds.htScore)) {
             return 15;
-        } else if(this.isRefundByQuarter(resultDetails, ResourcesIds.quarter3)) {
+        } else if(this.isSelectedQuarter(resultDetails, ResourcesIds.quarter3)) {
             return 13;
-        } else if(this.isRefundByQuarter(resultDetails, ResourcesIds.quarter4)) {
+        } else if(this.isSelectedQuarter(resultDetails, ResourcesIds.quarter4)) {
             return 14;
-        }else if(this.isRefundByQuarter(resultDetails, ResourcesIds.finalScore)) {
+        }else if(this.isSelectedQuarter(resultDetails, ResourcesIds.finalScore)) {
             return 10;
         }
     }
@@ -149,7 +149,7 @@ export class GenerateCashOutService {
         return count === 6;
     }
 
-    private isRefundByQuarter(resultDetails: ResultDetail[], quarter: string) {
+    public isSelectedQuarter(resultDetails: ResultDetail[], quarter: string) {
        return _.find(resultDetails, (item) => _.isEqual(item.resourceId, quarter) && item.checked);
     }
 }

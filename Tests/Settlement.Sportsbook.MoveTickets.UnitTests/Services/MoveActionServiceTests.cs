@@ -9,6 +9,7 @@ using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.MoveTickets.Criteria;
 using Settlement.Sportsbook.MoveTickets.Models;
+using Settlement.Sportsbook.MoveTickets.Requests;
 
 namespace Settlement.Sportsbook.MoveTickets.UnitTests.Services;
 
@@ -51,7 +52,7 @@ public class MoveActionServiceTests
 
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(failedResult);
 
-        var result = await service.MoveTicket(new MoveTicketCriteria { MatchId = 100 });
+        var result = await service.MoveTicket(new MoveTicketRequest { MatchId = 100 });
 
         logService.Received().ActionLog(100, "Error", Arg.Any<int>());
         Assert.Equal("Error", result.ErrMsg);
@@ -63,7 +64,7 @@ public class MoveActionServiceTests
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
         repository.GetAsync<MoveTicketInfo>(Arg.Any<GetMoveTicketInfoCriteria>()).Returns(new MoveTicketInfo());
 
-        var result = await service.MoveTicket(new MoveTicketCriteria());
+        var result = await service.MoveTicket(new MoveTicketRequest());
 
         logService.Received(1).WriteLog(Arg.Any<int>(), Arg.Any<string>());
         await repository.Received(2).ExecuteAsync(Arg.Any<MoveTicketCriteria>());

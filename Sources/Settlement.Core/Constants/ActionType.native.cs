@@ -19,4 +19,6 @@ public static class ActionType
     public const string RefundAll = "REFUND";
 
     public const string BetDaq = "BETDAQ";
+
+    public const string MoveTicket = "MoveTicket";
 }

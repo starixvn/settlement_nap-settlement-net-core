@@ -1,4 +1,4 @@
-﻿import { Component, Injector, ViewChild, inject } from "@angular/core";
+﻿import { Component, ViewChild, inject } from "@angular/core";
 import * as _ from "lodash";
 import {
   MessageBoxService,
@@ -580,7 +580,7 @@ export class CalculationActionsComponent implements SportTemplate {
 
   private async confirmChangedResults() {
     if (this.isReSettledTickets) {
-      this.confirmCalculation(this.selectedResources);
+            this.confirmCalculation();
     } else {
       const getBasketballResultQuery = {
         matchId: this.matchDetail.matchId,
@@ -601,15 +601,13 @@ export class CalculationActionsComponent implements SportTemplate {
           this.isReSettledTickets = true;
         });
       } else {
-        this.confirmCalculation(this.selectedResources);
+                this.confirmCalculation();
       }
     }
   }
 
-  private confirmCalculation(resultDetails: ResultDetail[]) {
-    this.confirmationDialogMessage.message = this.basketballService.confirmationMessage(
-      resultDetails
-    );
+    private confirmCalculation() {
+      this.confirmationDialogMessage.message = this.basketballService.confirmationMessage(this.selectedResources);
     this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
       this.doCalculation(this.selectedResources);
     });
@@ -665,7 +663,7 @@ export class CalculationActionsComponent implements SportTemplate {
       const result = await this.aioService.push(query);
       if (result.isSuccessful) {
         await this.voidBet(getTicketInfos, actionName);
-        await this.cashOutResultUpdate(selectedResources, betStatus);
+        await this.cashOutResultUpdate(betStatus);
         this.calculateHedgeMatch(query);
       } else {
         this.toastrService.error(result.errMsg);
@@ -763,21 +761,10 @@ export class CalculationActionsComponent implements SportTemplate {
     }
   }
 
-  private async cashOutResultUpdate(
-    resource: ResultDetail[],
-    betStatus: string
-  ) {
-    const isVirtualMatch =
-      this.verificationService.isPinGoalMatch(this.matchDetail.leagueGroupId) ||
+  private async cashOutResultUpdate(betStatus: string) {
+    const isVirtualMatch =  this.verificationService.isPinGoalMatch(this.matchDetail.leagueGroupId) ||
       this.verificationService.isSabaMatch(this.matchDetail.leagueGroupId);
-    const final = resource.filter(
-      (map) => _.isEqual(map.resourceId, ResourcesIds.finalScore) && map.checked
-    );
-    if (
-      final.length > 0 &&
-      !isVirtualMatch &&
-      this.matchDetail.parentId === 0
-    ) {
+    if (!isVirtualMatch && this.matchDetail.parentId === 0) {
       if (this.match.isScoreDirect) {
         betStatus = this.cashOutService.getDirectBetStatusOnCalc(
           this.firstHalf,
@@ -785,10 +772,8 @@ export class CalculationActionsComponent implements SportTemplate {
         );
       }
 
-      const query = new CashOutResultUpdateQuery(
-        this.matchDetail.matchId,
-        betStatus
-      );
+      const lsHalf = this.cashOutService.getListHalf(this.selectedResources)
+      const query = new CashOutResultUpdateQuery(this.matchDetail.matchId, betStatus, lsHalf);
       await this.cashOutService.calc(query);
     }
   }
