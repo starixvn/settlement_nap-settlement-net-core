@@ -107,11 +107,7 @@ export class FantasyScoreService {
     const resourceResults = results.filter((x) => x.resourceId === resourceId);
 
     if (resourceId === ResourcesIds.ot) {
-      const otResults = resourceResults.filter(
-        (x) => !isEmpty(x.homeValue) && !isEmpty(x.awayValue)
-      );
-
-      return otResults;
+      return resourceResults;
     }
 
     const existsNullScore = resourceResults.some(

@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Settlement.Core.Constants;
 using Settlement.Core.Services;
 
 namespace Settlement.Sportsbook.Aio.Models;
@@ -60,12 +61,5 @@ public class MatchDetail
 
     public int AutoSetting { get; set; }
 
-    public bool IsFantasy
-    {
-        get
-        {
-            var leagueIds = new List<int> { 56037, 56053, 56069, 99321, 16926, 97008, 132325 };
-            return leagueIds.Contains(LeagueId);
-        }
-    }
+    public bool IsFantasy => (LeagueName ?? string.Empty).Contains(LeagueType.Fantasy, StringComparison.OrdinalIgnoreCase);
 }
