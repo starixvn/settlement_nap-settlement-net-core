@@ -18,7 +18,6 @@ public class AioServiceTests
     private readonly IValidateApiKeyService validateApiKeyService;
     private readonly MultipleServerAioService multipleServerAioService;
     private readonly IAioService service;
-    private readonly BasketballEventStatusService basketballEventStatusService;
 
     public AioServiceTests()
     {
@@ -28,7 +27,7 @@ public class AioServiceTests
         var mapperFactory = Substitute.For<IMapperFactory>();
         multipleServerAioService = Substitute.For<MultipleServerAioService>();
         validateApiKeyService = Substitute.For<IValidateApiKeyService>();
-        basketballEventStatusService = Substitute.For<BasketballEventStatusService>();
+        var basketballEventStatusService = Substitute.For<BasketballEventStatusService>();
 
         var mapperConfig = new MapperConfigurationExpression();
         mapperConfig.AddProfile<SportsbookAioAutoMapperProfile>();

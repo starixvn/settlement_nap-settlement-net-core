@@ -1,5 +1,4 @@
-﻿using Fanex.NAP.Client;
-using Fanex.NAP.Client.Helpers.Common;
+﻿using Fanex.NAP.Client.Helpers.Common;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
@@ -220,7 +219,7 @@ public class AioServiceImp : IAioService
 
     private async Task<HedgeMatchDetail> GetOldMatch(Models.MatchDetail matchDetail, GetMatchRequest request, string apiKey)
     {
-        if (matchDetail is { SportType: Core.Constants.SportType.ESports })
+        if (matchDetail is { SportType: SportType.ESports })
         {
             var getOldMatchCriteria = validateApiKeyService.CriteriaName(request, $"{apiKey}-{ApiKeyConstant.OldMatch}");
             return await repository.GetAsync<HedgeMatchDetail>(getOldMatchCriteria);

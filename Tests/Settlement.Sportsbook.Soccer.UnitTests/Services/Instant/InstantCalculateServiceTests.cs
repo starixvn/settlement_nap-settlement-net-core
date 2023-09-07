@@ -41,7 +41,6 @@ public class InstantCalculateServiceTests
         var option = Options.Create(appSettings);
 
         service = new InstantCalculateServiceImp(repository, mapper, instantResourceService, option, scaleOutSettleService, pushInstantCalculationService);
-
     }
 
     [Fact]
@@ -57,14 +56,13 @@ public class InstantCalculateServiceTests
         };
         instantResourceService.UnCalculate(Arg.Any<InstantGoalCondition>()).Returns(new List<XmlResource>());
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage { ErrorCode = errorCode, ErrorMessage = errorMsg });
-        repository.GetAsync<MatchTicketInfo>(Arg.Any<MatchTicketInfoCriteria>()).Returns(new MatchTicketInfo { });
-        repository.GetAsync<MatchDetail>(Arg.Any<GetMatchInfoCriteria>()).Returns(new MatchDetail { });
+        repository.GetAsync<MatchTicketInfo>(Arg.Any<MatchTicketInfoCriteria>()).Returns(new MatchTicketInfo());
+        repository.GetAsync<MatchDetail>(Arg.Any<GetMatchInfoCriteria>()).Returns(new MatchDetail());
 
         // Act
         var result = await service.PushInstantCalculation(request);
 
         // Assert
-        //instantResourceService.Received().UnCalculate(Arg.Any<InstantGoalCondition>());
 
         Assert.True(result.ErrCode == errorCode && result.ErrMsg == errorMsg);
     }

@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Settlement.Core.Constants;
-using Settlement.Core.Models;
-using Settlement.Core.Services;
+﻿using Settlement.Core.Models;
 
 namespace Settlement.Sportsbook.Aio.Models;
 
@@ -43,9 +36,9 @@ public class RelatedMatch
 
 public class RelatedMatchResult : ResultDetailBase
 {
-    public new string ResourceId { get; set; }
+    public string ResourceId { get; set; }
     public string HomeValue { get; set; }
     public string AwayValue { get; set; }
     public byte? ResultStatusId { get; set; }
-    public new byte? SettlementStatusId { get; set; }
+    public byte? SettlementStatusId { get; set; }
 }

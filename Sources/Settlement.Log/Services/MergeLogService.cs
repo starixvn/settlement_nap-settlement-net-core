@@ -62,7 +62,7 @@ public class MergeLogServiceImp : MergeLogService
         return validDates.Any() ? $"{logs.First().Name}: {validDates.Min():yyyy-MM-dd HH:mm:ss}" : string.Empty;
     }
 
-    private static string GetStatistic(IEnumerable<LogItem> logs, Func<IEnumerable<int>, int> aggregation)
+    private static string GetStatistic(List<LogItem> logs, Func<IEnumerable<int>, int> aggregation)
     {
         var firstLog = logs.First();
         var values = logs.Select(l => ExtractNumericValue(l.Value));

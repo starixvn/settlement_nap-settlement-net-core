@@ -21,8 +21,6 @@ public class CricketHandlerTests
     {
         var mapperConfig = new MapperConfigurationExpression();
         mapperConfig.AddProfile<SportsbookMoveTicketAutoMapperProfile>();
-        var config = new MapperConfiguration(mapperConfig);
-
         moveTicketService = Substitute.For<MoveTicketService>();
         moveActionService = Substitute.For<MoveActionService>();
         permissionService = Substitute.For<PermissionService>(null, null, null, null);

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Settlement.Sportsbook.Aio.Criteria.Basketball;
+﻿namespace Settlement.Sportsbook.Aio.Criteria.Basketball;
 
 public class GetFantasyMatchCriteria : CriteriaBase
 {
