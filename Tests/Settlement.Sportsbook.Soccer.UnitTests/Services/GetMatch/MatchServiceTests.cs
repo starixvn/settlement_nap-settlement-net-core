@@ -110,6 +110,7 @@ public class MatchServiceTests
         repository.GetAsync<HedgeMatchDetail>(Arg.Any<GetHedgeMatchCriteria>()).Returns(new HedgeMatchDetail());
         var fantasyResult = (Substitute.For<IEnumerable<FantasyMatchDetail>>(), new List<FantasyRelatedMatch> { new() });
         repository.FetchMultipleAsync<FantasyMatchDetail, FantasyRelatedMatch>(Arg.Any<CriteriaBase>()).Returns(fantasyResult);
+        refDataService.GetLeagueName(Arg.Any<int>()).Returns("test fantasy matches");
 
         // Act
         var actualMatch = await service.GetMatch(new GetMatchRequest { MatchId = 1 });
