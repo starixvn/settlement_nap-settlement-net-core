@@ -85,7 +85,7 @@ public class FilterServiceTests
     [Fact]
     public async Task Filter_Always_ReturnLeagueOfMatchWithTicketCount()
     {
-        var teamOne = new Team { LeagueId = 1, BetCount = 1, OrId = 1 };
+        var teamOne = new Team { LeagueId = 1, BetCount = 4, OrId = 1 };
         var teamTwo = new Team { LeagueId = 1, OrId = 2 };
         var listTeam = new List<Team> { teamOne, teamTwo };
         repository.FetchMultipleAsync<DeadHeatSetting, Team>(Arg.Any<GetOutrightDetailCriteria>()).Returns((new List<DeadHeatSetting>(), listTeam));
