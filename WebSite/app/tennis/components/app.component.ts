@@ -25,14 +25,14 @@ export class AppComponent extends AppBaseComponent implements OnInit {
   }
 
   private getComponentFactory(): Type<SportTemplate> {
-    // const pageType = this.elementRef.nativeElement.getAttribute('page-type');
-    // switch (pageType) {
-    //   case PageType.ReCalculate:
+    const pageType = this.elementRef.nativeElement.getAttribute('page-type');
+    switch (pageType) {
+      case PageType.ReCalculate:
         return CalculationTennis;
-      // case PageType.Refund:
-    //     return RefundTennis;
-    //   default:
-    //     throw new Error('Not implemented yet');
-    // }
+      case PageType.Refund:
+        return RefundTennis;
+      default:
+        throw new Error('Not implemented yet');
+    }
   }
 }
