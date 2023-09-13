@@ -18,8 +18,6 @@ public class MultiSportServiceTests
 
     private readonly IMatchService matchService;
 
-    private readonly IMemoryCache cacheService;
-
     private readonly IRefDataService refDataService;
 
     public MultiSportServiceTests()
@@ -27,7 +25,7 @@ public class MultiSportServiceTests
         repository = Substitute.For<IDynamicRepository>();
         var permissionService = Substitute.For<PermissionService>(null, null, null, null);
         matchService = Substitute.For<IMatchService>();
-        cacheService = Substitute.For<IMemoryCache>();
+        var cacheService = Substitute.For<IMemoryCache>();
 
         var mapperConfig = new MapperConfigurationExpression();
         mapperConfig.AddProfile<EventManagementAutoMapperProfile>();

@@ -139,7 +139,7 @@ public class OutrightSettleServiceImp : OutrightSettleService
 
     private async Task GetTicketInfo(List<Team> teams)
     {
-        var ticketInfo = await outrightTicketService.GetTeamsTicketCount(teams);
+        var ticketInfo = (await outrightTicketService.GetTeamsTicketCount(teams)).ToList();
         foreach (var team in teams)
         {
             team.RefDataService = refDataService;

@@ -1,0 +1,86 @@
+﻿using Settlement.Log.Contants;
+using Settlement.Log.Models.LogElement;
+using System.Text.RegularExpressions;
+
+namespace Settlement.Log.Services;
+
+public interface MergeLogService
+{
+    public string DistinctLogsString(List<DistinctElement> distinctElements);
+
+    public string MergeLog(IEnumerable<RootElement> roots);
+}
+
+public class MergeLogServiceImp : MergeLogService
+{
+    public string DistinctLogsString(List<DistinctElement> distinctElements)
+    {
+        if (distinctElements.Any())
+        {
+            var logs = distinctElements.First().Logs ?? Array.Empty<LogItem>();
+            return string.Join("; ", logs.Select(l => $"{l.Name}: {l.Value}"));
+        }
+
+        return string.Empty;
+    }
+
+    public string MergeLog(IEnumerable<RootElement> roots)
+    {
+        var logGroups = roots.SelectMany(r => r.Logs ?? Array.Empty<LogItem>()).GroupBy(log => (log.Name, log.Type))
+            .ToDictionary(
+                group => group.Key,
+                group => group.ToList());
+
+        var mergedLogs = logGroups.Where(group => group.Value.Any()).Select(item =>
+        {
+            return item.Key.Item2 switch
+            {
+                LogType.DateMin => GetMinDate(item.Value),
+                LogType.DateMax => GetMaxDate(item.Value),
+                LogType.Min => GetStatistic(item.Value, values => values.Min()),
+                LogType.Max => GetStatistic(item.Value, values => values.Max()),
+                LogType.Sum => GetStatistic(item.Value, values => values.Sum()),
+                _ => string.Empty
+            };
+        })
+            .ToList();
+
+        return string.Join("; ", mergedLogs.Where(log => !string.IsNullOrEmpty(log)));
+    }
+
+    private static string GetMaxDate(List<LogItem> logs)
+    {
+        var validDates = logs.Select(log => DateTime.TryParse(log.Value, out var date) ? date : (DateTime?)null).Where(date => date.HasValue).ToList();
+
+        return validDates.Any() ? $"{logs.First().Name}: {validDates.Max():yyyy-MM-dd HH:mm:ss}" : string.Empty;
+    }
+
+    private static string GetMinDate(List<LogItem> logs)
+    {
+        var validDates = logs.Select(log => DateTime.TryParse(log.Value, out var date) ? date : (DateTime?)null).Where(date => date.HasValue).ToList();
+
+        return validDates.Any() ? $"{logs.First().Name}: {validDates.Min():yyyy-MM-dd HH:mm:ss}" : string.Empty;
+    }
+
+    private static string GetStatistic(List<LogItem> logs, Func<IEnumerable<int>, int> aggregation)
+    {
+        var firstLog = logs.First();
+        var values = logs.Select(l => ExtractNumericValue(l.Value));
+        var unit = GetUnit(firstLog.Value);
+
+        return $"{firstLog.Name}: {aggregation(values)}{unit}";
+    }
+
+    private static string GetUnit(string input)
+    {
+        var unitPart = Regex.Match(input, @"\D+").Value;
+
+        return unitPart.Length == input.Length ? string.Empty : unitPart;
+    }
+
+    private static int ExtractNumericValue(string input)
+    {
+        var numericPart = Regex.Match(input, @"^\d+").Value;
+        return int.TryParse(numericPart, out var numericValue) ? numericValue : 0;
+    }
+}

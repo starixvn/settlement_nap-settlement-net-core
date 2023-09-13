@@ -2,6 +2,7 @@
 using Settlement.Core.Constants;
 using Settlement.Log.Criteria;
 using Settlement.Log.Models;
+using Settlement.Log.Models.LogElement;
 using Settlement.ResourceInfos.Constants;
 using Settlement.ResourceInfos.MapperFactory;
 using Settlement.ResourceInfos.Services;
@@ -25,20 +26,28 @@ public class LogDetailServiceImp : LogDetailService
 
     private readonly IResourceNameService resourceNameService;
 
+    private readonly XmlConvertService xmlConvertService;
+
+    private readonly MergeLogService mergeLogService;
+
     public LogDetailServiceImp(
         IDynamicRepository repository,
-        RemarkService remarkService)
+        RemarkService remarkService,
+        XmlConvertService xmlConvertService,
+        MergeLogService mergeLogService)
     {
         this.repository = repository;
         this.remarkService = remarkService;
         resourceNameService = new ResourceNameService(new MapperFactoryBase());
+        this.xmlConvertService = xmlConvertService;
+        this.mergeLogService = mergeLogService;
     }
 
     public async Task<List<LogDetailsModels>> GetLogDetailByMatchAndProduct(int matchId, string productType)
     {
         var criteria = new GetLogDetailByMatchAndProductCriteria { MatchId = matchId, ProductType = productType };
         var logDetails = (await repository.FetchAsync<LogDetailsModels>(criteria)).ToList();
-
+        logDetails.ForEach(log => log.Remark = ParseLog(log.Remark));
         foreach (var log in logDetails.Where(log => remarkService.IsFastMarketAction(log.ActionId)))
         {
             log.Remark = remarkService.RemarkValue(log.Remark);
@@ -71,5 +80,38 @@ public class LogDetailServiceImp : LogDetailService
         var criteria = new GetPlayerInfoCriteria { MatchId = matchId };
         var listPlayer = (await repository.FetchAsync<PlayerCricketInfo>(criteria)).DistinctBy(item => item.OddsInfo).ToList();
         return listPlayer.Select(item => item.OddsInfo).ToList();
+    }
+
+    private string ParseLog(string remark)
+    {
+        try
+        {
+            var log = xmlConvertService.Deserialize<LogRoot>($"<logs>{remark}</logs>");
+
+            if (ShouldProcessLogs(log))
+            {
+                var distinctLogs = mergeLogService.DistinctLogsString(log.DistinctLogs);
+                var rootLogs = mergeLogService.MergeLog(log.RootLogs);
+
+                var nonEmptyRemarks = new List<string>
+                {
+                    distinctLogs,
+                    rootLogs
+                }.Where(r => !string.IsNullOrEmpty(r));
+
+                return string.Join("; ", nonEmptyRemarks);
+            }
+
+            return remark;
+        }
+        catch
+        {
+            return remark;
+        }
+    }
+
+    private static bool ShouldProcessLogs(LogRoot log)
+    {
+        return log.DistinctLogs.Any() || log.RootLogs.Any();
     }
 }

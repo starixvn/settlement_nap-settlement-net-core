@@ -201,6 +201,8 @@ public class RefundServiceImp : IRefundService
             return result;
         }
 
+        WriteLogDirectly(request);
+
         foreach (var server in appSettingsKey.SiteDbServer)
         {
             criteria.DbServer = server;
@@ -237,6 +239,7 @@ public class RefundServiceImp : IRefundService
             return result;
         }
 
+        WriteLogDirectlyMoveTicket(criteria);
         await ExecuteMoveBetTickets(criteria, spName);
 
         return result;
@@ -270,5 +273,19 @@ public class RefundServiceImp : IRefundService
             ErrCode = resultMessage.ErrorCode,
             ErrMsg = resultMessage.ErrorMessage
         };
+    }
+
+    private void WriteLogDirectly(RefundRunningThirdPartyTicketRequest request)
+    {
+        var action = request.ActionName == ActionType.BetDaq ? "BetDaq" : "BetFair";
+        var message = $"NAP: Calculate (Refund Running {action}) for matchId: {request.MatchId}";
+        logService.WriteLog(request.MatchId, message);
+    }
+
+    private void WriteLogDirectlyMoveTicket(MoveThirdPartyBetTicketCriteria criteria)
+    {
+        var action = criteria.ActionName == ActionType.BetDaq ? "BetDaq" : "BetFair";
+        var message = $"{action} Movement from OldMatch: {criteria.MatchId}, NewMatch: {criteria.NewMatchId}";
+        logService.WriteLog(criteria.MatchId, message);
     }
 }
