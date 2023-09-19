@@ -63,7 +63,7 @@ public class MoveRunningServiceTests
     }
 
     [Fact]
-    public void MoveRunningTickets_ValidatePassed_ExecuteAll()
+    public async Task MoveRunningTickets_ValidatePassed_ExecuteAll()
     {
         var resultMessage = new ResultMessage
         {
@@ -72,11 +72,11 @@ public class MoveRunningServiceTests
         };
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(resultMessage);
 
-        var result = service.MoveRunningTickets(new MoveRunningTicketsRequest());
+        var result = await service.MoveRunningTickets(new MoveRunningTicketsRequest());
 
         repository.Received(2).Execute(Arg.Any<MoveRunningTicketsCriteria>());
         repository.Received().Execute(Arg.Any<CopyResultCriteria>());
-        Assert.Equal(string.Empty, result.Result.ErrMsg);
+        Assert.Equal(string.Empty, result.ErrMsg);
     }
 
     [Fact]
