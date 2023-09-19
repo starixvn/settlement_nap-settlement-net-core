@@ -1,4 +1,5 @@
-﻿using ONEbook.UM.AspNetCore;
+﻿using Microsoft.Extensions.Caching.Memory;
+using ONEbook.UM.AspNetCore;
 using ONEbook.UM.AspNetCore.Filters;
 using ONEbook.UM.Configurations;
 using ONEbook.UM.Helpers;
@@ -22,31 +23,19 @@ public static class OnebookUmInitializer
     }
 }
 
-public class HttpContextHelper : IHttpContextHelper
+public class MemoryUmCacheService : IUMCacheService
 {
-    private readonly IHttpContextAccessor httpContextAccessor;
+    private readonly IMemoryCache memoryCache;
 
-    public HttpContextHelper(IHttpContextAccessor httpContextAccessor)
+    public MemoryUmCacheService(IMemoryCache memoryCache)
     {
-        this.httpContextAccessor = httpContextAccessor;
+        this.memoryCache = memoryCache;
     }
 
-    public string GetSession(string key)
-    {
-        var value = httpContextAccessor?.HttpContext?.Session.GetString(key);
-        return value ?? string.Empty;
-    }
+    public T Get<T>(string key) => memoryCache.Get<T>(key);
 
-    public void SetSession(string key, string value)
-    {
-        var session = httpContextAccessor?.HttpContext?.Session;
-        session?.SetString(key, value);
-    }
+    public void Set<T>(string key, T value, TimeSpan absoluteExpiration)
+        => memoryCache.Set(key, value, new MemoryCacheEntryOptions().SetAbsoluteExpiration(absoluteExpiration));
 
-    public string GetValueFromQueryString(string queryKey)
-    {
-        var context = httpContextAccessor.HttpContext;
-        var value = context == null ? string.Empty : context.Request.Query[queryKey].ToString();
-        return value;
-    }
+    public void Remove(string key) => memoryCache.Remove(key);
 }
