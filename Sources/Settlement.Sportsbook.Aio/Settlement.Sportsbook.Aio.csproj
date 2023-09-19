@@ -37,6 +37,5 @@
 	<ItemGroup>
     <ProjectReference Include="..\Settlement.Core\Settlement.Core.csproj" />
     <ProjectReference Include="..\Settlement.ResourceInfos\Settlement.ResourceInfos.csproj" />
-		<ProjectReference Include="..\Settlement.Setting\Settlement.Setting.csproj" />
 	</ItemGroup>
 </Project>
