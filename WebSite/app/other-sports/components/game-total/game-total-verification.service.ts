@@ -11,7 +11,7 @@ import { ResultStatusId } from "../../../shared/constants";
 import { ChildMatch } from "../../models/child-match.model";
 
 @Injectable()
-export class GameTotalVerificationService {
+export class GameTotalVerificationService  {
     constructor(private readonly gameTotalService: GameTotalService,
         private readonly intervalBackgroundPipe: IntervalBackgroundPipe) {
     }
@@ -74,6 +74,19 @@ export class GameTotalVerificationService {
         return "";
     }
 
+    public verifyCopyScoreNew(externalResults: ExternalResultDetail[], totalSet: ResultDetail) {
+        if (totalSet.resultStatusId === ResultStatusId.ManualCompleted || totalSet.resultStatusId === ResultStatusId.AutoCompleted) {
+            return Language.scoreSettledWarning;
+        }
+
+       if(_.every(externalResults,externalResult => _.isEmpty(externalResult.homeValue?.toString()) || _.isEmpty(externalResult.awayValue?.toString()) )) {
+        return Language.missingScoreWarning;
+       }
+
+
+        return "";
+    }
+
     public verifyConsistentChildMatch(resultDetails: ResultDetail[], childMatch: ChildMatch[]) {
         if (childMatch.length > 0) {
             const notConsistent = _.find(childMatch, item => this.isNotConsistent(resultDetails, item));
@@ -86,6 +99,7 @@ export class GameTotalVerificationService {
         const resultRelated = _.find(resultDetails, item => item.resourceId === childMatch.relatedResourceId);
         const homeValue = _.isEmpty(resultRelated.homeValue) ? null : resultRelated.homeValue;
         const awayValue = _.isEmpty(resultRelated.awayValue) ? null : resultRelated.awayValue;
+        
         return !resultRelated || !_.isEqual(homeValue, childMatch.homeValue) || !_.isEqual(awayValue, childMatch.awayValue);
     }
 
@@ -94,13 +108,48 @@ export class GameTotalVerificationService {
         const isExistTraderScore = this.isScoreConfirmed(matchDetail, originalResultDetail);
         const isExistProviderScore = !this.isEmptyHomeOrAwayValue(externalResult);
         if (!this.isEmptyHomeOrAwayValue(resultDetail)) {
-            resultDetail.isScoreMismatched = this.compareInputScoreWithExternalScore(isExistTraderScore,
-                isExistProviderScore, matchDetail, originalResultDetail, resultDetail, externalResult);
+            resultDetail.isScoreMismatched = true;
+            // this.compareInputScoreWithExternalScore(isExistTraderScore,
+            //     isExistProviderScore, matchDetail, originalResultDetail, resultDetail, externalResult);
         } else if (isExistTraderScore && isExistProviderScore) {
-            resultDetail.isScoreMismatched = (!_.isEqual(originalResultDetail.homeValue, externalResult.homeValue.toString())
-                || !_.isEqual(originalResultDetail.awayValue, externalResult.awayValue.toString()));
+            resultDetail.isScoreMismatched =  true
+            // (!_.isEqual(originalResultDetail.homeValue, externalResult.homeValue.toString())
+            //     || !_.isEqual(originalResultDetail.awayValue, externalResult.awayValue.toString()));
         }
     }
+
+    public isScoreNewMismatched(resultDetails: ResultDetail[], externalResults: ExternalResultDetail[],
+        originalResultDetails: ResultDetail[], matchDetail: MatchDetail) {
+            const originalTotalSetResultDetail = originalResultDetails.find(r => r.resourceId === ResourcesIds.totalSets);
+            const isExistTraderScore = this.isScoreConfirmed(matchDetail, originalTotalSetResultDetail);
+            
+            if(isExistTraderScore) {
+                this.compareResultDetailsTraderScores(originalResultDetails,resultDetails);
+            }
+            
+            if(externalResults && externalResults.length) {
+                this.compareResultDetailsWithProviderResultDetails(resultDetails,externalResults)
+            }
+        }
+
+    private compareResultDetailsWithProviderResultDetails(resultDetails: ResultDetail[], externalResults: ExternalResultDetail[])  {
+        _.forEach(resultDetails, result => {
+            const providerResult = externalResults.find(x => x.resourceId === result.resourceId);
+            
+            result.isScoreMismatched = providerResult 
+                    && (!_.isEqual(providerResult.homeValue,result.homeValue) || !_.isEqual(providerResult.awayValue,result.awayValue))
+        });
+    }
+
+    private compareResultDetailsTraderScores(originalResultDetails: ResultDetail[], resultDetails: ResultDetail[]) {
+        _.forEach(resultDetails, resultDetail => {
+            const originalResultDetail = originalResultDetails.find(x => x.resourceId === resultDetail.resourceId);
+            
+            resultDetail.isScoreMismatched = !_.isEqual(resultDetail.homeValue, originalResultDetail.homeValue)
+            || !_.isEqual(resultDetail.awayValue, originalResultDetail.awayValue);
+        });
+    }
+
 
     public isScoreConfirmed(matchDetail: MatchDetail, resultDetail: ResultDetail) {
         return matchDetail.confirmFT > 0 && !this.isEmptyHomeOrAwayValue(resultDetail);

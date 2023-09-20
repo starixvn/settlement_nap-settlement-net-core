@@ -19,7 +19,9 @@
                 <input type="checkbox" [(ngModel)]="applyHedgeMatch" id="ApplyHedgeMatch" />
                 <label for="ApplyHedgeMatch">Apply for hedge match '<strong>{{hedgeMatchDetail.matchCode}}</strong>' also.</label>
             </div>
-            <button *ngIf="permission.isLeader" class="btn btn-outline-primary button-confirmed" (click)="confirmRefund(hedgeMatchDetail, applyHedgeMatch)">Confirm/Undo-confirm Refund</button>
+            <!-- <button *ngIf="permission.isLeader" class="btn btn-outline-primary button-confirmed" (click)="confirmRefund(hedgeMatchDetail, applyHedgeMatch)">Confirm/Undo-confirm Refund</button> -->
+            <button *ngIf="!totalSet.resultSettingData.isConfirmedRefund && permission.isLeader" class="btn btn-outline-primary button-confirmed" (click)="confirmRefund(hedgeMatchDetail, applyHedgeMatch)"> Confirm Refund</button>
+            <button *ngIf="totalSet.resultSettingData.isConfirmedRefund && permission.isLeader" class="btn btn-outline-primary button-confirmed" (click)="confirmRefund(hedgeMatchDetail, applyHedgeMatch)">Undo Confirm Refund All</button>
             <button [ngClass]="{'refund-button': true, 'button-disabled': !totalSet.resultSettingData.isConfirmedRefund}" (click)="refund()" [disabled]="!totalSet.resultSettingData.isConfirmedRefund">Refund All</button>
         </div>
     </div>

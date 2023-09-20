@@ -4,8 +4,8 @@ import { MatchAio, SettleQuery } from '../../models';
 import { ResultPipe, ScorePipe } from '../../pipes';
 import { AioService, MessageBoxService } from '../../../shared/services';
 import * as _ from 'lodash';
-import { ExternalResultDetail, HedgeMatchDetail, MatchDetail, Permission, ResultDetail, SportTemplate } from '../../../shared/models/sportsbook-sop';
-import { CalculateAction, MatchStatus, ResultStatusId, SettlementStatusId, SportType } from '../../../shared/constants';
+import { ExternalResult, ExternalResultDetail, HedgeMatchDetail, MatchDetail, Permission, ResultDetail, SportTemplate } from '../../../shared/models/sportsbook-sop';
+import { CalculateAction, MatchStatus, ResultStatusId, ScoreSourceType, SettlementStatusId, SportType } from '../../../shared/constants';
 import { ApiKeys, KickOffTime, ResourcesIds } from '../../constants';
 import { GameTotalService } from './game-total.service';
 import { GameTotalVerificationService } from './game-total-verification.service';
@@ -27,6 +27,7 @@ export class GameTotalCalculationComponent implements SportTemplate {
   public match: MatchAio;
   public matchDetail: MatchDetail;
   public resultDetails: ResultDetail[];
+  public providerResultDetails: ExternalResultDetail[];
   public permission: Permission;
   public isReSettledTickets: boolean;
   public scoreClass: string;
@@ -74,17 +75,43 @@ export class GameTotalCalculationComponent implements SportTemplate {
     this.verificationService.getClassWithScore(this.resultDetails, this.match);
     this.getExternalSource();
     this.checkConsistent();
-    this.verificationService.isScoreMismatched(this.totalSet, this.externalResult, this.totalSetOriginal, this.matchDetail);
+    // this.verificationService.isScoreMismatched(this.totalSet, this.externalResult, this.totalSetOriginal, this.matchDetail);
+    this.verificationService.isScoreNewMismatched(this.resultDetails, this.providerResultDetails, this.resultDetailOriginal, this.matchDetail);
+
   }
 
   private getExternalSource() {
-    if (this.match.externalResults.length > 0 && this.match.externalResults[0].resultDetails.length > 0) {
-      this.externalResult = this.match.externalResults[0].resultDetails[0];
-      this.externalSourceName = this.externalResult.sourceName;
-    } else {
-      this.externalResult = new ExternalResultDetail(0, '00', '-', '', '', '');
-      this.externalSourceName = '-';
+    const sopExternalResult = this.match.externalResults.find(result => result.sourceId < ScoreSourceType.screenshot 
+      && ![ScoreSourceType.trader,ScoreSourceType.screenshot,ScoreSourceType.newScore].includes(result.sourceId));
+
+    console.log(this.match.externalResults);
+    
+    if(sopExternalResult) {
+       this.externalSourceName = sopExternalResult.sourceName;
+       this.providerResultDetails = this.getExternalByResultDetails(this.resultDetailOriginal,sopExternalResult);
+       this.externalResult = this.match.externalResults[0].resultDetails[0];
+       return;
     }
+  }
+
+  private getExternalByResultDetails(resultDetails,externalResult: ExternalResult) {
+    return resultDetails.map(result => {
+      const external = externalResult.resultDetails.find(providerResult => providerResult.resourceId === result.resourceId);
+
+      if(result.resourceId === ResourcesIds.totalPoints) {
+        return this.sumExternalTotalPoint(externalResult);
+      }
+
+      return external ? external : {resourceId: result.resourceId, homeValue: null,awayValue: null}
+    })
+  }
+
+  private sumExternalTotalPoint(externalResult: ExternalResult) {
+    const resultDetailSets = externalResult.resultDetails.filter(p => p.resourceId !== ResourcesIds.totalSets);
+    const homeValue = _.sumBy(resultDetailSets, r =>  Number(r.homeValue));
+    const awayValue = _.sumBy(resultDetailSets, r => Number(r.awayValue));
+
+    return new ExternalResultDetail(externalResult.sourceId,ResourcesIds.totalPoints,"",null,homeValue.toString(),awayValue.toString());
   }
 
   private get isCompletedOrConfirmScore() {
@@ -303,7 +330,7 @@ export class GameTotalCalculationComponent implements SportTemplate {
       this.totalSet.awayValue = total.awayValue;
     }
     this.checkConsistent();
-    this.verificationService.isScoreMismatched(this.totalSet, this.externalResult, this.totalSetOriginal, this.matchDetail);
+    this.verificationService.isScoreNewMismatched(this.resultDetails, this.providerResultDetails, this.resultDetailOriginal, this.matchDetail);
     this.verificationService.getClassWithScore([this.totalSet], this.match);
   }
 
@@ -342,13 +369,18 @@ export class GameTotalCalculationComponent implements SportTemplate {
 
   public copyScore() {
     this.toastrService.clear();
-    const errorMessage = this.verificationService.verifyCopyScore(this.externalResult, this.totalSet);
+    const errorMessage = this.verificationService.verifyCopyScoreNew(this.providerResultDetails, this.totalSet);
     if (_.isEmpty(errorMessage)) {
       const message = Language.confirmMessageCopySBOScore.replace("'provider_name'", this.externalSourceName);
       this.confirmDialogMessage.message = message;
       this.messageBoxService.confirm(this.confirmDialogMessage, () => {
-        this.totalSet.homeValue = this.externalResult.homeValue;
-        this.totalSet.awayValue = this.externalResult.awayValue;
+        _.forEach(this.resultDetails, resultDetail => {
+          const providerResult = this.providerResultDetails.find(p => resultDetail.resourceId === p.resourceId);
+          if(providerResult) {
+            resultDetail.homeValue = providerResult.homeValue;
+            resultDetail.awayValue = providerResult.awayValue;
+          }
+        })
         this.checkConsistentTotalSet();
       });
     } else {
@@ -385,6 +417,6 @@ export class GameTotalCalculationComponent implements SportTemplate {
   }
 
   public getMismatchedBackground(total: ResultDetail, isFinal: boolean) {
-    return isFinal && total.isScoreMismatched ? "mismatched" : "";
+    return  total.isScoreMismatched ? "mismatched" : "";
   }
 }
