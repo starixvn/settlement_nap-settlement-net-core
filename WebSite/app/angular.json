@@ -1237,7 +1237,7 @@
       }
     },
 
-    "app": {
+    "other-sports": {
       "root": "app",
       "sourceRoot": "other-sports",
       "projectType": "application",
@@ -1246,7 +1246,7 @@
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
             "outputPath": "../wwwroot/other-sports",
-            "index": "other-sports/index.html",
+            "index": "other-sports/index.cshtml",
             "main": "other-sports/main.ts",
             "tsConfig": "other-sports/tsconfig.app.json",
             "polyfills": "polyfills.ts",

@@ -1,6 +1,4 @@
 ﻿using Fanex.NAP.Client.Helpers.Common;
-using MediatR;
-using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;

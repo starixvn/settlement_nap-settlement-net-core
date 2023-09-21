@@ -76,7 +76,7 @@ export class GameTotalCalculationComponent implements SportTemplate {
     this.getExternalSource();
     this.checkConsistent();
     // this.verificationService.isScoreMismatched(this.totalSet, this.externalResult, this.totalSetOriginal, this.matchDetail);
-    this.verificationService.isScoreNewMismatched(this.resultDetails, this.providerResultDetails, this.resultDetailOriginal, this.matchDetail);
+    this.verificationService.isScoreMismatched(this.resultDetails, this.providerResultDetails, this.resultDetailOriginal, this.matchDetail);
 
   }
 
@@ -331,7 +331,7 @@ export class GameTotalCalculationComponent implements SportTemplate {
       this.totalSet.awayValue = total.awayValue;
     }
     this.checkConsistent();
-    this.verificationService.isScoreNewMismatched(this.resultDetails, this.providerResultDetails, this.resultDetailOriginal, this.matchDetail);
+    this.verificationService.isScoreMismatched(this.resultDetails, this.providerResultDetails, this.resultDetailOriginal, this.matchDetail);
     this.verificationService.getClassWithScore([this.totalSet], this.match);
   }
 

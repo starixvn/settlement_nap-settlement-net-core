@@ -1,7 +1,7 @@
 import { SportType } from "../../shared/constants";
 
 export const TemplateType = {
-    gameTotalTemplate: [SportType.beachVolleyball, SportType.volleyBall],
+    gameTotalTemplate: [SportType.beachVolleyball],
     halfTimeFullTimeTemplate: [SportType.baseBall, SportType.football,
     SportType.rugby, SportType.netBall, SportType.iceHockey, SportType.fieldHockey],
     gameTotalMatchTemplate: [SportType.squash, SportType.sepakTakraw],
