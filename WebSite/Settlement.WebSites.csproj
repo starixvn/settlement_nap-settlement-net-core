@@ -88,8 +88,8 @@
     <PackageReference Include="Fanex.Logging.Extensions.Database" Version="1.0.8" />
     <PackageReference Include="Fanex.Logging.Sentry.RavenClient" Version="1.0.1" />
     <PackageReference Include="Fanex.MailDeliver.MailClient" Version="2.0.9" />
-    <PackageReference Include="Fanex.NAP.Client.AspNetCore" Version="2.0.0.10" />
-		<PackageReference Include="Fanex.NAP.Signin.AspNetCore" Version="2.0.0.15" />
+    <PackageReference Include="Fanex.NAP.Client.AspNetCore" Version="2.0.0.13" />
+		<PackageReference Include="Fanex.NAP.Signin.AspNetCore" Version="2.0.0.17" />
 		<PackageReference Include="Fanex.RemotingRef" Version="1.5.0.1" />
 		<PackageReference Include="Fanex.Settlement.Converter" Version="1.0.0.1" />
 		<PackageReference Include="Fanex.Settlement.ScaleOut" Version="1.3.4-alpha" />
@@ -99,11 +99,10 @@
     <PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="7.0.5" />
     <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="7.0.5" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="ONEbook.UM" Version="3.1.4" />
-    <PackageReference Include="ONEbook.UM.AspNetCore" Version="3.1.0" />
-    <PackageReference Include="ONEbook.UM.AspNetCore.Filters" Version="3.1.1" />
+    <PackageReference Include="ONEbook.UM" Version="3.1.6" />
+    <PackageReference Include="ONEbook.UM.AspNetCore" Version="3.1.1.1" />
+    <PackageReference Include="ONEbook.UM.AspNetCore.Filters" Version="3.1.1.1" />
     <PackageReference Include="ONEbook.UM.Transport" Version="3.1.2" />
-    <PackageReference Include="StackExchange.Redis" Version="2.6.111" />
   </ItemGroup>
 
   <ItemGroup>
