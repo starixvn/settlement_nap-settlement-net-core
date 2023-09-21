@@ -1,8 +1,6 @@
 ﻿using Fanex.Data.Repository;
 using Fanex.NAP.Client.Helpers.Web;
-using Fanex.Settlement.ScaleOut.Models;
-using Fanex.Settlement.ScaleOut.Request;
-using Fanex.Settlement.ScaleOut.Services;
+using Fanex.Settlement.ScaleOut.Criteria.Normal;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Settlement.Core.Models;
@@ -17,7 +15,6 @@ public class MoveActionServiceTests
 {
     private readonly IDynamicRepository repository;
     private readonly LogService logService;
-    private readonly ScaleOutSettleService scaleOutSettleService;
     private readonly MoveActionService service;
 
     public MoveActionServiceTests()
@@ -25,7 +22,6 @@ public class MoveActionServiceTests
         repository = Substitute.For<IDynamicRepository>();
         var currentSession = Substitute.For<INapSession>();
         logService = Substitute.For<LogService>();
-        scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
         var accessor = Substitute.For<IHttpContextAccessor>();
         var context = new DefaultHttpContext
         {
@@ -38,35 +34,61 @@ public class MoveActionServiceTests
         var appSettings = new AppSettingsKey { SiteDbServer = new List<string> { "01", "02" } };
         var options = Options.Create(appSettings);
         service = new MoveActionServiceImp(repository, currentSession, accessor, logService,
-            options, scaleOutSettleService);
+            options);
     }
 
     [Fact]
-    public async Task MoveTicket_ValidateFailed_StopProcessAndWriteLog()
+    public async Task MoveTicket_ValidateEventFailed_WriteLogFailAndStop()
     {
-        var failedResult = new ResultMessage
+        await repository.ExecuteAsync(Arg.Do<ValidateEventCriteria>(c =>
         {
-            ErrorCode = 1,
-            ErrorMessage = "Error"
-        };
-
-        scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(failedResult);
-
+            c.ErrCode = 1;
+            c.ErrMsg = "error";
+        }));
         var result = await service.MoveTicket(new MoveTicketRequest { MatchId = 100 });
 
-        logService.Received().ActionLog(100, "Error", Arg.Any<int>());
-        Assert.Equal("Error", result.ErrMsg);
+        logService.Received().ActionLog(100, "error", 81026);
+        Assert.Equal("error", result.ErrMsg);
+    }
+
+    [Fact]
+    public async Task MoveTicket_NotExistTicketMoved_WriteLogFailAndStop()
+    {
+        repository.GetAsync<MoveTicketInfo>(Arg.Any<GetMoveTicketInfoCriteria>()).Returns(new MoveTicketInfo());
+        await repository.ExecuteAsync(Arg.Any<MoveTicketCriteria>());
+        var result = await service.MoveTicket(new MoveTicketRequest { MatchId = 100 });
+
+        logService.Received().ActionLog(100, "WARNING! Cannot continue due to current has no valid ticket to move.", 81026);
+        Assert.Equal("WARNING! Cannot continue due to current has no valid ticket to move.", result.ErrMsg);
+    }
+
+    [Fact]
+    public async Task MoveTicket_MoveFailed_WriteLogFailAndStop()
+    {
+        repository.GetAsync<MoveTicketInfo>(Arg.Any<GetMoveTicketInfoCriteria>()).Returns(new MoveTicketInfo());
+        await repository.ExecuteAsync(Arg.Do<MoveTicketCriteria>(c =>
+        {
+            c.ErrCode = 1;
+            c.ErrMsg = "error";
+        }));
+        var result = await service.MoveTicket(new MoveTicketRequest { MatchId = 100 });
+
+        logService.Received().ActionLog(100, "error", 81026);
+        Assert.Equal("error", result.ErrMsg);
     }
 
     [Fact]
     public async Task MoveTicket_ValidatePassed_ExecuteAll()
     {
-        scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
         repository.GetAsync<MoveTicketInfo>(Arg.Any<GetMoveTicketInfoCriteria>()).Returns(new MoveTicketInfo());
-
+        await repository.ExecuteAsync(Arg.Do<MoveTicketCriteria>(c =>
+        {
+            c.TicketCount = 1;
+        }));
         var result = await service.MoveTicket(new MoveTicketRequest());
 
         logService.Received(1).WriteLog(Arg.Any<int>(), Arg.Any<string>());
+        logService.Received(1).ActionLog(Arg.Any<int>(), Arg.Any<string>(), 81025);
         await repository.Received(2).ExecuteAsync(Arg.Any<MoveTicketCriteria>());
         await repository.Received(1).ExecuteAsync(Arg.Any<UpdateChildMatchCriteria>());
         await repository.Received(1).ExecuteAsync(Arg.Any<UpdateChildMatchRemarkCriteria>());

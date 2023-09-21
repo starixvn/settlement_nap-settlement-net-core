@@ -21,6 +21,8 @@ public class MoveTicketCriteria : NonQueryCommand
 
     public string Resources { get; set; }
 
+    public int TicketCount { get; set; }
+
     [SpParam(Ignored = true)]
     public string DbServer { get; set; }
 
