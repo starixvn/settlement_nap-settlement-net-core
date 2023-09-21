@@ -36,7 +36,7 @@
         + "Do you want to update them to NEW_SCORE?",
     InstantSetting: {
         ConfirmMessageSetting: 'Are you sure you want to update the waiting-time setting with the inputted value?',
-        InvalidTimeSetting: 'Please input a number in the range from 1 seconds to 300 seconds!',
+        InvalidTimeSetting: 'Please input a number in the range from 1 seconds to 9999 seconds!',
         WarningTitle: 'Warning!',
     },
     AutoPayoutSetting: {

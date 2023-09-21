@@ -52,8 +52,7 @@ export class TimeSettingComponent implements OnInit {
 
     private verifyTimeSetting() {
         const minTime = 1;
-        const maxTime = 300;
-        if (this.time < minTime || this.time > maxTime) {
+        if (this.time < minTime) {
             this.warningDialogMessage.message = Language.InstantSetting.InvalidTimeSetting;
             this.messageBoxService.alert(this.warningDialogMessage);
             return false;
