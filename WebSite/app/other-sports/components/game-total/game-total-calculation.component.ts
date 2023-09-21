@@ -34,7 +34,7 @@ export class GameTotalCalculationComponent implements SportTemplate {
   private resultDetailsToAction: ResultDetail[];
   public totalSetOriginal: ResultDetail;
   public resultDetailOriginal: ResultDetail[];
-  public externalResult: ExternalResultDetail;
+  // public externalResult: ExternalResultDetail;
   public externalSourceName: string;
   public hedgeMatchDetail: HedgeMatchDetail;
   public applyHedgeMatch: boolean;
@@ -89,7 +89,7 @@ export class GameTotalCalculationComponent implements SportTemplate {
     if(sopExternalResult) {
        this.externalSourceName = sopExternalResult.sourceName;
        this.providerResultDetails = this.getExternalByResultDetails(this.resultDetailOriginal,sopExternalResult);
-       this.externalResult = this.match.externalResults[0].resultDetails[0];
+      //  this.externalResult = this.match.externalResults[0].resultDetails[0];
        return;
     }
   }
@@ -191,7 +191,6 @@ export class GameTotalCalculationComponent implements SportTemplate {
     }
   }
 
-
   private createMatchResource() {
     if (this.match.matchDetail.sportType === SportType.volleyBall) {
       const list = [];
@@ -216,8 +215,10 @@ export class GameTotalCalculationComponent implements SportTemplate {
 
   private confirmScoreSource() {
     const isSourceInsufficient = this.verificationService.isInsufficient(this.matchDetail.confirmFT,
-      this.externalResult, this.totalSetOriginal);
-    const isInconsistent = this.totalSet.isScoreMismatched;
+      this.providerResultDetails, this.totalSetOriginal);
+   
+      const isInconsistent = this.resultDetails.some(x => x.isScoreMismatched);
+    
     if (isSourceInsufficient || isInconsistent) {
       if (!this.permission.isLeader) {
         this.toastrService.error(Language.otherSports.warningCalculateInconsistent);

@@ -7,7 +7,7 @@ import { GeneralResultDetail } from "../../../shared/models";
 import * as _ from 'lodash';
 import { IntervalBackgroundPipe } from "../../../shared/pipes/interval-background.pipe";
 import { MatchAio } from "../../models";
-import { ResultStatusId } from "../../../shared/constants";
+import { ResourceIds, ResultStatusId } from "../../../shared/constants";
 import { ChildMatch } from "../../models/child-match.model";
 
 @Injectable()
@@ -121,33 +121,35 @@ export class GameTotalVerificationService  {
     public isScoreNewMismatched(resultDetails: ResultDetail[], externalResults: ExternalResultDetail[],
         originalResultDetails: ResultDetail[], matchDetail: MatchDetail) {
             const originalTotalSetResultDetail = originalResultDetails.find(r => r.resourceId === ResourcesIds.totalSets);
+
             const isExistTraderScore = this.isScoreConfirmed(matchDetail, originalTotalSetResultDetail);
+            const isProviderScore = externalResults && externalResults.length;
             
             if(isExistTraderScore) {
-                this.compareResultDetailsTraderScores(originalResultDetails,resultDetails);
+                _.forEach(resultDetails, result => {
+                    if(result.resourceId === ResourcesIds.totalSets) {
+                        result.isScoreMismatched = this.compareInputScoresTraderScores(originalTotalSetResultDetail,result);
+                    }
+                })
             }
             
-            if(externalResults && externalResults.length) {
-                this.compareResultDetailsWithProviderResultDetails(resultDetails,externalResults)
+            if(isProviderScore) {
+                this.compareInputScoreWithProviderScores(resultDetails,externalResults)
             }
         }
 
-    private compareResultDetailsWithProviderResultDetails(resultDetails: ResultDetail[], externalResults: ExternalResultDetail[])  {
+    private compareInputScoreWithProviderScores(resultDetails: ResultDetail[], externalResults: ExternalResultDetail[])  {
         _.forEach(resultDetails, result => {
-            const providerResult = externalResults.find(x => x.resourceId === result.resourceId);
+            const providerResult = externalResults.find(x => x.resourceId === result.resourceId && !this.isEmptyHomeOrAwayValue(x));
             
             result.isScoreMismatched = providerResult 
                     && (!_.isEqual(providerResult.homeValue,result.homeValue) || !_.isEqual(providerResult.awayValue,result.awayValue))
         });
     }
 
-    private compareResultDetailsTraderScores(originalResultDetails: ResultDetail[], resultDetails: ResultDetail[]) {
-        _.forEach(resultDetails, resultDetail => {
-            const originalResultDetail = originalResultDetails.find(x => x.resourceId === resultDetail.resourceId);
-            
-            resultDetail.isScoreMismatched = !_.isEqual(resultDetail.homeValue, originalResultDetail.homeValue)
-            || !_.isEqual(resultDetail.awayValue, originalResultDetail.awayValue);
-        });
+    private compareInputScoresTraderScores(originalTotalSetResultDetail: ResultDetail, totalSetResultDetail: ResultDetail) {
+        return !_.isEqual(totalSetResultDetail.homeValue, originalTotalSetResultDetail.homeValue)
+        || !_.isEqual(totalSetResultDetail.awayValue, originalTotalSetResultDetail.awayValue);
     }
 
 
@@ -171,7 +173,7 @@ export class GameTotalVerificationService  {
         return isMismatched;
     }
 
-    public isInsufficient(confirmFt: number, externalResult: GeneralResultDetail, traderResult:ResultDetail){
-        return this.isEmptyHomeOrAwayValue(externalResult) && (confirmFt < 1 || this.isEmptyHomeOrAwayValue(traderResult));
+    public isInsufficient(confirmFt: number, externalResults: ExternalResultDetail[], traderResult:ResultDetail){
+        return (!externalResults?.length || !_.some(externalResults, x => this.isEmptyHomeOrAwayValue(x))) && (confirmFt < 1 || this.isEmptyHomeOrAwayValue(traderResult));
     }
 }
