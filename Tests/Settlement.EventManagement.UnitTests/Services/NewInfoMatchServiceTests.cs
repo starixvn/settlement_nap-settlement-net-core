@@ -1,6 +1,9 @@
-﻿using Settlement.Core.Constants;
+﻿using Fanex.Data.Repository;
+using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
+using Settlement.EventManagement.Criteria;
+using Settlement.EventManagement.Models;
 using Settlement.EventManagement.Services;
 using Match = Settlement.EventManagement.Models.MultiSports.Match;
 
@@ -17,7 +20,10 @@ public class NewInfoMatchServiceTests
     private readonly NewInfoMatchService service;
 
     private readonly EventStatusService eventStatusService;
+
     private readonly BasketballEventStatusService basketballEventStatusService;
+
+    private readonly IDynamicRepository repository;
 
     public NewInfoMatchServiceTests()
     {
@@ -25,8 +31,9 @@ public class NewInfoMatchServiceTests
         goalIconService = Substitute.For<GoalIconService>();
         eventStatusService = Substitute.For<EventStatusService>();
         basketballEventStatusService = Substitute.For<BasketballEventStatusService>();
+        repository = Substitute.For<IDynamicRepository>();
 
-        service = new NewInfoMatchServiceImp(siteMatchService, goalIconService, eventStatusService, basketballEventStatusService);
+        service = new NewInfoMatchServiceImp(siteMatchService, goalIconService, eventStatusService, basketballEventStatusService, repository);
     }
 
     [Theory]
@@ -185,5 +192,36 @@ public class NewInfoMatchServiceTests
         service.IsExistsConfirmedEarly(new Match());
 
         siteMatchService.Received().IsExistsConfirmedEarly(Arg.Any<Match>());
+    }
+
+    [Fact]
+    public void GetAutoSetting_Always_MapDataIntoList()
+    {
+        var matches = new List<Match>
+        {
+            new()
+            {
+                MatchId = 1
+            },
+            new()
+            {
+                MatchId = 2
+            }
+        };
+
+        var matchStatuses = new List<MatchStatusModel>
+        {
+            new ()
+            {
+                MatchId = 1,
+                StatusId = 1
+            }
+        };
+
+        repository.FetchAsync<MatchStatusModel>(Arg.Any<GetMatchWaitingInfo>()).Returns(matchStatuses);
+        service.GetAutoSetting(matches);
+
+        Assert.Equal(1, matches[0].AutoPayoutStatus);
+        Assert.Equal(0, matches[1].AutoPayoutStatus);
     }
 }

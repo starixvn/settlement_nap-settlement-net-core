@@ -10,7 +10,7 @@ public interface IMatchService
 
     void AddSiteInfo(List<Match> baseMatches, List<Match> siteMatches);
 
-    List<Match> SetNewMatchInfo(List<Match> matches, List<ResultDetail> listResultDetail);
+    Task<List<Match>> SetNewMatchInfo(List<Match> matches, List<ResultDetail> listResultDetail);
 
     Task UpdateMatchInfo(UpdateMatchInfoRequest request);
 
@@ -42,7 +42,7 @@ public class MatchServiceImp : IMatchService
         this.scaleOutSettleService = scaleOutSettleService;
     }
 
-    public List<Match> SetNewMatchInfo(List<Match> matches, List<ResultDetail> listResultDetail)
+    public async Task<List<Match>> SetNewMatchInfo(List<Match> matches, List<ResultDetail> listResultDetail)
     {
         foreach (var match in matches)
         {
@@ -59,7 +59,7 @@ public class MatchServiceImp : IMatchService
             match.RefDataService = refDataService;
         }
 
-        return matches;
+        return await newInfoMatchService.GetAutoSetting(matches);
     }
 
     public List<Match> GetScoreForMatchBySportType(List<Match> matches, List<ResultDetail> resultDetails, int sportType, Permission permission = null)

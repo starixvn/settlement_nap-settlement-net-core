@@ -109,7 +109,7 @@ public class MultiSportServiceImp : IMultiSportService
         var waitingMatches = await GetMatchesAllSites(criteria);
         var listResultDetail = await ResultDetailByMatchIds(waitingMatches);
 
-        waitingMatches = matchService.SetNewMatchInfo(waitingMatches, listResultDetail);
+        waitingMatches = await matchService.SetNewMatchInfo(waitingMatches, listResultDetail);
 
         var matches = GetMoreScore(new MultiSportResult { Matches = waitingMatches, ResultDetails = listResultDetail });
 
@@ -230,7 +230,7 @@ public class MultiSportServiceImp : IMultiSportService
         var criteria = mapper.Map<FilterMultiSportRequest, SportsbookCriteria>(request);
         var matches = await GetMatchesAllSites(criteria);
         var resultDetails = await ResultDetailByMatchIds(matches);
-        matches = matchService.SetNewMatchInfo(matches, resultDetails);
+        matches = await matchService.SetNewMatchInfo(matches, resultDetails);
 
         return new MultiSportResult
         {
