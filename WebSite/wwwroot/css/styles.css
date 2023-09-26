@@ -253,14 +253,14 @@ thead {
         }
 
     .table-calculation .remark {
-        min-width: 120px;
-        width: 120px;
+        min-width: 135px;
+        width: 135px;
     }
 
     .table-calculation .remark-status,
     .table-calculation .auto-setting-status {
-        min-width: 120px;
-        width: 120px;
+        min-width: 135px;
+        width: 135px;
     }
 
         .table-calculation .remark-status div.auto-setting,

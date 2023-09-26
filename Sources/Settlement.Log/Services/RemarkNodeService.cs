@@ -69,7 +69,7 @@ public class RemarkNodeServiceImp : RemarkNodeService
         Array.Reverse(charArray);
         for (var i = 0; i < charArray.Length; i++)
         {
-            if (i != 0 && i != position)
+            if (i != 0 && i != position) // NOSONAR
             {
                 var c = charArray[i];
                 if (c != '0')
