@@ -145,6 +145,7 @@ public class MatchServiceTests
         newInfoMatchService.ConfirmScore(Arg.Any<List<ResultDetail>>(), ResourceType.Halftime).Returns("1");
         newInfoMatchService.ConfirmScore(Arg.Any<List<ResultDetail>>(), ResourceType.Final).Returns("2");
         newInfoMatchService.IsExistsConfirmedEarly(Arg.Any<Match>()).Returns(true);
+        newInfoMatchService.GetAutoSetting(Arg.Any<List<Match>>()).Returns(x => x[0] as List<Match>);
 
         var matches = await service.SetNewMatchInfo(new List<Match> { new() }, new List<ResultDetail>());
         var match = matches.First();

@@ -21,18 +21,12 @@ export class EarlyBaseService {
     return item.homeValue === null || _.isEmpty(item.homeValue);
   }
 
-  public renderTicketStatus(hasNoTicket = false) {
+  public renderTicketStatus() {
     const selection = [
       { id: 1, value: "Running;", text: "Running", checked: true },
       { id: 2, value: "Marked", text: "Marked" },
       { id: 3, value: "Calculated", text: "Calculated" },
     ];
-
-    if(hasNoTicket) {
-      const noTicket = { id: 4, value: "No Ticket", text: "No Ticket" };
-      selection.push(noTicket);
-    }
-
     return this.createListOption(selection);
   }
 
