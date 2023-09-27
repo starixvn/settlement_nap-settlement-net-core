@@ -1,11 +1,19 @@
+FROM hub.nexdev.net/base/dotnet/core/sdk:7.0-alpine AS prepare-restore-files
+
+ENV PATH="${PATH}:/root/.dotnet/tools"
+RUN dotnet tool install --global --no-cache dotnet-subset --version 0.3.2
+WORKDIR /src
+COPY . .
+RUN dotnet subset restore WebSite/Settlement.WebSites.csproj --root-directory /src --output /src/restore_subset/
+
 FROM hub.nexdev.net/base/dotnet/core/sdk:7.0-alpine AS builder
 
 WORKDIR /src
-COPY ./Sources/Settlement.Core/*.csproj ./Sources/Settlement.Core/
-COPY ./Sources/Settlement.ResourceInfos/*.csproj ./Sources/Settlement.ResourceInfos/
-COPY ./Sources/Settlement.EventManagement/*.csproj ./Sources/Settlement.EventManagement/
-COPY ./Sources/Settlement.FastMarkets/*.csproj ./Sources/Settlement.FastMarkets/
-COPY ./Sources/Settlement.Log/*.csproj ./Sources/Settlement.Log/
+COPY --from=prepare-restore-files /src/restore_subset .
+RUN dotnet nuget add source https://nuget.nexdev.net/api/v2
+RUN --mount=type=cache,target=/root/.nuget/packages \
+    dotnet restore WebSite/Settlement.WebSites.csproj 
+
 COPY ./Sources/Settlement.Sportsbook.Aio/*.csproj ./Sources/Settlement.Sportsbook.Aio/
 COPY ./Sources/Settlement.Sportsbook.MoveTickets/*.csproj ./Sources/Settlement.Sportsbook.MoveTickets/
 COPY ./Sources/Settlement.Sportsbook.OtherSports/*.csproj ./Sources/Settlement.Sportsbook.OtherSports/
@@ -27,7 +35,7 @@ COPY ./WebSite/. ./WebSite
 RUN ls /src -l
 WORKDIR /src/WebSite
 RUN --mount=type=cache,target=/root/.nuget/packages \
-	dotnet publish -r linux-x64 --self-contained false -c Release -o /app
+    dotnet publish -r linux-x64 --self-contained false -c Release -o /app
 
 FROM hub.nexdev.net/base/dotnet/core/aspnet:7.0-alpine AS base
 
