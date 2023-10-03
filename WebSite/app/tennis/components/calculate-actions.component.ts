@@ -277,7 +277,7 @@ export class CalculateActionsComponent implements SportTemplate {
     } else {
       resource = _.filter(resource, item => !_.isEqual(item.resourceId, ResourcesIds.totalGames));
       const query = new SettleQuery(this.match.matchDetail.matchId, resource, type, this.isReSettledTickets,
-        betStatus, this.match.matchDetail.sportType, this.match.isScoreDirect);
+        betStatus, this.match.matchDetail.sportType,this.match.matchDetail.parentId ,this.match.isScoreDirect);
       query.isLeader = this.isLeader;
       this.push(query);
     }
@@ -308,7 +308,7 @@ export class CalculateActionsComponent implements SportTemplate {
   private async sendRequest(type: string, resource: ResultDetail[], betStatus: string): Promise<void> {
     resource = _.filter(resource, item => !_.isEqual(item.resourceId, ResourcesIds.totalGames));
     const query = new SettleQuery(this.match.matchDetail.matchId, resource, type, this.isReSettledTickets,
-      betStatus, this.match.matchDetail.sportType, this.match.isScoreDirect);
+      betStatus, this.match.matchDetail.sportType,this.match.matchDetail.parentId, this.match.isScoreDirect);
     query.isLeader = this.isLeader;
     this.push(query);
   }

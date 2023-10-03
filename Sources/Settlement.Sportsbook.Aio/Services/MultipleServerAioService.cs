@@ -1,11 +1,13 @@
 ﻿using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.Aio.Constants;
 using Settlement.Sportsbook.Aio.Criteria;
+using Settlement.Sportsbook.Aio.Criteria.Tennis;
 using Settlement.Sportsbook.Aio.Requests;
 
 namespace Settlement.Sportsbook.Aio.Services;
@@ -179,7 +181,29 @@ public class MultipleServerAioServiceImp : MultipleServerAioService
             result.ChildMatchIds = childMatchIds;
         }
 
+        await HandleRefundGameWinner(request, result);
+
         return result;
+    }
+
+    private async Task HandleRefundGameWinner(SettleRequest request, Result result)
+    {
+        var isMatchGameWinner = request.SportType == SportType.Tennis && request.ParentId == 0 && result.IsSuccessful;
+
+        if (isMatchGameWinner && (request.ActionName == ActionType.CalculateAll || request.ActionName == ActionType.RefundAll))
+        {
+            await InsRefundResultOS(request.MatchId);
+        }
+    }
+
+    private async Task InsRefundResultOS(int matchId)
+    {
+        var criteria = new InsRefundResultOSCriteria
+        {
+            MatchId = matchId
+        };
+
+        await repository.ExecuteAsync(criteria);
     }
 
     private async Task SetUnderSettleFlag(SettleCriteria criteria, List<ResourceItem> selectedResources)
