@@ -174,6 +174,6 @@ export class GameTotalVerificationService {
     }
 
     public isInsufficient(confirmFt: number, externalResults: ExternalResultDetail[], traderResult: ResultDetail) {
-        return (!externalResults?.length || !_.some(externalResults, x => this.isEmptyHomeOrAwayValue(x))) && (confirmFt < 1 || this.isEmptyHomeOrAwayValue(traderResult));
+        return (!externalResults?.length || _.some(externalResults, x => this.isEmptyHomeOrAwayValue(x))) && (confirmFt < 1 || this.isEmptyHomeOrAwayValue(traderResult));
     }
 }
