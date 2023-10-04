@@ -124,7 +124,7 @@ export class GameTotalVerificationService {
         const isProviderScore = externalResults && externalResults.length;
 
         if (isExistTraderScore) {
-            this.compareInputScoreTraderScores(originalTotalSetResultDetail, resultDetails);
+            this.compareInputScoreTraderScores(originalResultDetails, resultDetails);
         }
 
         if (isProviderScore) {
@@ -141,12 +141,14 @@ export class GameTotalVerificationService {
         });
     }
 
-    private compareInputScoreTraderScores(originalTotalSetResultDetail: ResultDetail, resultDetails: ResultDetail[]) {
+    private compareInputScoreTraderScores(originalTotalSetResultDetails: ResultDetail[], resultDetails: ResultDetail[]) {
+        console.log('originalTotalSetResultDetails',originalTotalSetResultDetails)
         _.forEach(resultDetails, result => {
-            if (result.resourceId === ResourcesIds.totalSets) {
-                result.isScoreMismatched = !this.isEmptyHomeOrAwayValue(originalTotalSetResultDetail) && (!_.isEqual(result.homeValue, originalTotalSetResultDetail.homeValue)
-                    || !_.isEqual(result.awayValue, originalTotalSetResultDetail.awayValue));
-            }
+            // if (result.resourceId === ResourcesIds.totalSets) {
+                const originalResult = originalTotalSetResultDetails.find(x => x.resourceId === result.resourceId)
+                result.isScoreMismatched = !this.isEmptyHomeOrAwayValue(originalResult) && (!_.isEqual(result.homeValue, originalResult.homeValue)
+                    || !_.isEqual(result.awayValue, originalResult.awayValue));
+            // }
         })
     }
 
