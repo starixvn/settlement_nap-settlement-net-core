@@ -136,7 +136,7 @@ export class GameTotalVerificationService {
         _.forEach(resultDetails, result => {
             const providerResult = externalResults.find(x => x.resourceId === result.resourceId && !this.isEmptyHomeOrAwayValue(x));
 
-            result.isScoreMismatched = providerResult
+            result.isScoreMismatched = providerResult  && !this.isEmptyHomeOrAwayValue(result) 
                 && (!_.isEqual(providerResult.homeValue, result.homeValue) || !_.isEqual(providerResult.awayValue, result.awayValue))
         });
     }
@@ -144,8 +144,8 @@ export class GameTotalVerificationService {
     private compareInputScoreTraderScores(originalTotalSetResultDetail: ResultDetail, resultDetails: ResultDetail[]) {
         _.forEach(resultDetails, result => {
             if (result.resourceId === ResourcesIds.totalSets) {
-                result.isScoreMismatched = !_.isEqual(result.homeValue, originalTotalSetResultDetail.homeValue)
-                    || !_.isEqual(result.awayValue, originalTotalSetResultDetail.awayValue);
+                result.isScoreMismatched = !this.isEmptyHomeOrAwayValue(originalTotalSetResultDetail) && (!_.isEqual(result.homeValue, originalTotalSetResultDetail.homeValue)
+                    || !_.isEqual(result.awayValue, originalTotalSetResultDetail.awayValue));
             }
         })
     }
