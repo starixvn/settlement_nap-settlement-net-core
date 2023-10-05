@@ -81,8 +81,6 @@
     <PackageReference Include="Fanex.Caching.AspNetCore" Version="2.2.3" />
 		<PackageReference Include="Fanex.Caching.Redis" Version="2.2.3" />
     <PackageReference Include="Fanex.Caching.Redis.AspNetCore" Version="2.2.3" />
-    <PackageReference Include="Fanex.Data" Version="4.2.2" />
-    <PackageReference Include="Fanex.Data.Repository" Version="4.2.2" />
     <PackageReference Include="Fanex.Data.SqlServer" Version="4.2.2" />
     <PackageReference Include="Fanex.Logging.Extensions.AspNetCore" Version="1.0.1-beta1" />
     <PackageReference Include="Fanex.Logging.Extensions.Database" Version="1.0.8" />
