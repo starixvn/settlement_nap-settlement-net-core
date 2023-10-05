@@ -15,66 +15,17 @@
   </ItemGroup>
 
   <ItemGroup>
-	  <Content Remove="appsettings.LOCAL_1.json" />
-	  <Content Remove="appsettings.LOCAL_2.json" />
-	  <Content Remove="appsettings.LOCAL_3.json" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<None Remove="appsettings.LOCAL_1.json.orig" />
-		<None Remove="appsettings.LOCAL_2.json.orig" />
-		<None Remove="appsettings.LOCAL_3.json.orig" />
-    <None Remove="App_Data\SpName.UAT_1.xml" />
-    <None Remove="App_Data\SpName.xml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="App_Data\SpName.xml">
+    <None Include="Styles\**">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="appsettings.Development.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="appsettings.SIT.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="appsettings.UAT.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="App_Data\SpName.PROD_2.xml">
+    </None>
+    <None Include="App_Data\**">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Styles\colors.less" />
-    <Content Include="Styles\common.less" />
-    <Content Include="Styles\grid.less" />
-    <Content Include="Styles\images\bg-menu-header.png" />
-    <Content Include="Styles\images\calendar.png" />
-    <Content Include="Styles\images\check-box.png" />
-    <Content Include="Styles\images\favicon.ico" />
-    <Content Include="Styles\images\filter_bg.png" />
-    <Content Include="Styles\images\loader.gif" />
-    <Content Include="Styles\images\lotto_ball.png" />
-    <Content Include="Styles\images\small-arrow-down.png" />
-    <Content Include="Styles\images\sprite.png" />
-    <Content Include="Styles\images\user.png" />
-    <Content Include="Styles\styles.less" />
+    </None>
+    <None Include="Views\**">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
-  <ItemGroup>
-    <None Include="Views\Auth\AccessDenied.cshtml" />
-    <None Include="Views\Auth\ChangePassword.cshtml" />
-    <None Include="Views\Auth\Error.cshtml" />
-    <None Include="Views\Auth\Index.cshtml" />
-    <None Include="Views\Auth\NotFound.cshtml" />
-    <None Include="Views\Auth\Offline.cshtml" />
-    <None Include="Views\Home\ExpiredSession.cshtml" />
-    <None Include="Views\Home\Index.cshtml" />
-    <None Include="Views\Shared\Error.cshtml" />
-    <None Include="Views\Shared\_Layout.cshtml" />
-    <None Include="Views\Shared\_ValidationScriptsPartial.cshtml" />
-    <None Include="Views\_ViewImports.cshtml" />
-    <None Include="Views\_ViewStart.cshtml" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="12.0.1" />
@@ -121,45 +72,5 @@
     <ProjectReference Include="..\Sources\Settlement.ThirdPartyProducts\Settlement.ThirdPartyProducts.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Content Update="appsettings.SIT_3.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="appsettings.UAT_3.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="appsettings.AWS.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="appsettings.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="appsettings.LOCAL.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="appsettings.LOCAL_1.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="appsettings.LOCAL_2.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="appsettings.LOCAL_3.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="appsettings.PROD.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="appsettings.SIT.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="appsettings.SIT_2.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="appsettings.UAT.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="appsettings.UAT_2.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
+  
 </Project>
