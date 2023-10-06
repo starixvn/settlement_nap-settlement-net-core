@@ -2,7 +2,6 @@
 
 	<PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
-    <CodeAnalysisRuleSet>..\..\.sonarlint\settlement-netcorecsharp.ruleset</CodeAnalysisRuleSet>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 

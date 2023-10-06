@@ -4,7 +4,6 @@
     <InvariantGlobalization>false</InvariantGlobalization>
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
-    <CodeAnalysisRuleSet>..\.sonarlint\settlement-netcorecsharp.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
 
   <ItemGroup>
