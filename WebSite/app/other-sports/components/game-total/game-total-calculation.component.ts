@@ -6,7 +6,7 @@ import { AioService, MessageBoxService } from '../../../shared/services';
 import * as _ from 'lodash';
 import { ExternalResult, ExternalResultDetail, HedgeMatchDetail, MatchDetail, Permission, ResultDetail, SportTemplate } from '../../../shared/models/sportsbook-sop';
 import { CalculateAction, MatchStatus, ResultStatusId, ScoreSourceType, SettlementStatusId, SportType } from '../../../shared/constants';
-import { ApiKeys, KickOffTime, ResourcesIds } from '../../constants';
+import { ApiKeys, KickOffTime, Resources, ResourcesIds } from '../../constants';
 import { GameTotalService } from './game-total.service';
 import { GameTotalVerificationService } from './game-total-verification.service';
 import { Language } from '../../../shared/language.native';
@@ -33,8 +33,7 @@ export class GameTotalCalculationComponent implements SportTemplate {
   public scoreClass: string;
   private resultDetailsToAction: ResultDetail[];
   public totalSetOriginal: ResultDetail;
-  public resultDetailOriginal: ResultDetail[];
-  // public externalResult: ExternalResultDetail;
+  public resultDetailsOriginal: ResultDetail[];
   public externalSourceName: string;
   public hedgeMatchDetail: HedgeMatchDetail;
   public applyHedgeMatch: boolean;
@@ -58,7 +57,11 @@ export class GameTotalCalculationComponent implements SportTemplate {
     };
     this.match = await this.aioService.getMatch(matchQuery) as MatchAio;
     this.resultDetails = this.match.resultDetails;
+    
     this.totalSetOriginal = _.cloneDeep(this.totalSet);
+    this.resultDetailsOriginal = _.cloneDeep(this.match.resultDetails);
+    this.resultDetailsOriginal = this.gameTotalService.getResultDetail(this.resultDetailsOriginal);
+
     this.gameTotalService.resetHomeAway(this.match.resultDetails, this.match.permission.isLeader);
     this.mapValue();
   }
@@ -67,42 +70,45 @@ export class GameTotalCalculationComponent implements SportTemplate {
     this.toastrService.overlayContainer = this.toastContainer;
     this.hedgeMatchDetail = this.match.hedgeMatchDetail;
     this.applyHedgeMatch = this.hedgeMatchDetail != null;
+    
     this.permission = this.match.permission;
+    
     this.matchDetail = this.match.matchDetail;
     this.resultDetails = this.gameTotalService.getResultDetail(this.match.resultDetails);
-    this.resultDetailOriginal = _.cloneDeep(this.resultDetails);
+    
     this.isReadyMatch = this.isCompletedOrConfirmScore || this.matchDetail.playTime >= KickOffTime.playTime;
+    
     this.verificationService.getClassWithScore(this.resultDetails, this.match);
+    
     this.getExternalSource();
     this.checkConsistent();
-    // this.verificationService.isScoreMismatched(this.totalSet, this.externalResult, this.totalSetOriginal, this.matchDetail);
-    this.verificationService.isScoreMismatched(this.resultDetails, this.providerResultDetails, this.resultDetailOriginal, this.matchDetail);
+
+    if(this.resultDetails.some(result => !this.verificationService.isEmptyHomeOrAwayValue(result))) {
+      this.verificationService.isScoreMismatched(this.resultDetails, this.providerResultDetails, this.resultDetailsOriginal, this.matchDetail);
+    }
 
   }
 
   private getExternalSource() {
     const sopExternalResult = this.match.externalResults.find(result => result.sourceId < ScoreSourceType.screenshot 
       && ![ScoreSourceType.trader,ScoreSourceType.screenshot,ScoreSourceType.newScore].includes(result.sourceId));
-
-    console.log(this.match.externalResults);
     
     if(sopExternalResult) {
        this.externalSourceName = sopExternalResult.sourceName;
-       this.providerResultDetails = this.getExternalByResultDetails(this.resultDetailOriginal,sopExternalResult);
-      //  this.externalResult = this.match.externalResults[0].resultDetails[0];
+       this.providerResultDetails = this.createFullyExternal(sopExternalResult);
        return;
     }
   }
 
-  private getExternalByResultDetails(resultDetails,externalResult: ExternalResult) {
-    return resultDetails.map(result => {
-      const external = externalResult.resultDetails.find(providerResult => providerResult.resourceId === result.resourceId);
+  private createFullyExternal(externalResult: ExternalResult) {
+    return Resources.map(resourceId => {
+      const external = externalResult.resultDetails.find(providerResult => providerResult.resourceId === resourceId);
 
-      if(result.resourceId === ResourcesIds.totalPoints) {
+      if(resourceId === ResourcesIds.totalPoints) {
         return this.sumExternalTotalPoint(externalResult);
       }
 
-      return external ? external : {resourceId: result.resourceId, homeValue: null,awayValue: null}
+      return external ? external : new ExternalResultDetail(externalResult.sourceId,resourceId,externalResult.sourceName);
     })
   }
 
@@ -217,7 +223,7 @@ export class GameTotalCalculationComponent implements SportTemplate {
     const isSourceInsufficient = this.verificationService.isInsufficient(this.matchDetail.confirmFT,
       this.providerResultDetails, this.totalSetOriginal);
    
-      const isInconsistent = this.resultDetails.some(x => x.isScoreMismatched);
+      const isInconsistent = this.verificationService.isConsistent(this.resultDetails,this.providerResultDetails,this.resultDetailsOriginal);
     
     if (isSourceInsufficient || isInconsistent) {
       if (!this.permission.isLeader) {
@@ -331,14 +337,14 @@ export class GameTotalCalculationComponent implements SportTemplate {
       this.totalSet.awayValue = total.awayValue;
     }
     this.checkConsistent();
-    this.verificationService.isScoreMismatched(this.resultDetails, this.providerResultDetails, this.resultDetailOriginal, this.matchDetail);
+    this.verificationService.isScoreMismatched(this.resultDetails, this.providerResultDetails, this.resultDetailsOriginal, this.matchDetail);
     this.verificationService.getClassWithScore([this.totalSet], this.match);
   }
 
   public changeInputDirectly() {
     this.match.isClickOnCalculate = false;
     this.resultDetails.forEach((map) => {
-      const originalResult = _.find(this.resultDetailOriginal, (item) => _.isEqual(item.resourceId, map.resourceId));
+      const originalResult = _.find(this.resultDetailsOriginal, (item) => _.isEqual(item.resourceId, map.resourceId));
       if (map.resourceId !== ResourcesIds.totalSets) {
         map.homeValue = this.match.isScoreDirect ? "" : originalResult.homeValue;
         map.awayValue = this.match.isScoreDirect ? "" : originalResult.awayValue;

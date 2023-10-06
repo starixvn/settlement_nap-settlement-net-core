@@ -103,19 +103,6 @@ export class GameTotalVerificationService {
         return !resultRelated || !_.isEqual(homeValue, childMatch.homeValue) || !_.isEqual(awayValue, childMatch.awayValue);
     }
 
-    // public isScoreMismatched(resultDetail: ResultDetail, externalResult: ExternalResultDetail,
-    //     originalResultDetail: ResultDetail, matchDetail: MatchDetail) {
-    //     const isExistTraderScore = this.isScoreConfirmed(matchDetail, originalResultDetail);
-    //     const isExistProviderScore = !this.isEmptyHomeOrAwayValue(externalResult);
-    //     if (!this.isEmptyHomeOrAwayValue(resultDetail)) {
-    //         resultDetail.isScoreMismatched =  this.compareInputScoreWithExternalScore(isExistTraderScore,
-    //             isExistProviderScore, matchDetail, originalResultDetail, resultDetail, externalResult);
-    //     } else if (isExistTraderScore && isExistProviderScore) {
-    //         resultDetail.isScoreMismatched =  (!_.isEqual(originalResultDetail.homeValue, externalResult.homeValue.toString())
-    //             || !_.isEqual(originalResultDetail.awayValue, externalResult.awayValue.toString()));
-    //     }
-    // }
-
     public isScoreMismatched(resultDetails: ResultDetail[], externalResults: ExternalResultDetail[],
         originalResultDetails: ResultDetail[], matchDetail: MatchDetail) {
         const originalTotalSetResultDetail = originalResultDetails.find(r => r.resourceId === ResourcesIds.totalSets);
@@ -142,16 +129,12 @@ export class GameTotalVerificationService {
     }
 
     private compareInputScoreTraderScores(originalTotalSetResultDetails: ResultDetail[], resultDetails: ResultDetail[]) {
-        console.log('originalTotalSetResultDetails',originalTotalSetResultDetails)
         _.forEach(resultDetails, result => {
-            // if (result.resourceId === ResourcesIds.totalSets) {
-                const originalResult = originalTotalSetResultDetails.find(x => x.resourceId === result.resourceId)
-                result.isScoreMismatched = !this.isEmptyHomeOrAwayValue(originalResult) && (!_.isEqual(result.homeValue, originalResult.homeValue)
+                const originalResult = originalTotalSetResultDetails.find(x => x.resourceId === result.resourceId && !this.isEmptyHomeOrAwayValue(x))
+                result.isScoreMismatched = originalResult && !this.isEmptyHomeOrAwayValue(result) && (!_.isEqual(result.homeValue, originalResult.homeValue)
                     || !_.isEqual(result.awayValue, originalResult.awayValue));
-            // }
         })
     }
-
 
     public isScoreConfirmed(matchDetail: MatchDetail, resultDetail: ResultDetail) {
         return matchDetail.confirmFT > 0 && !this.isEmptyHomeOrAwayValue(resultDetail);
@@ -175,5 +158,25 @@ export class GameTotalVerificationService {
 
     public isInsufficient(confirmFt: number, externalResults: ExternalResultDetail[], traderResult: ResultDetail) {
         return (!externalResults?.length || !_.some(externalResults, x => this.isEmptyHomeOrAwayValue(x))) && (confirmFt < 1 || this.isEmptyHomeOrAwayValue(traderResult));
+    }
+
+    public isConsistent(resultDetails: ResultDetail[], externalResults: ExternalResultDetail[],originalResultDetails: ResultDetail[]) {
+        return this.isConsistentTranderConfirm(resultDetails,originalResultDetails) || this.isConsistentProviderScore(resultDetails,externalResults)
+    }
+   
+   private isConsistentProviderScore(resultDetails: ResultDetail[], externalResults: ExternalResultDetail[]) {
+       return resultDetails.some(result => {
+            const providerResult = externalResults?.find(x => x.resourceId === result.resourceId && !this.isEmptyHomeOrAwayValue(x));
+            return providerResult  && (!_.isEqual(providerResult.homeValue, result.homeValue) || !_.isEqual(providerResult.awayValue, result.awayValue));
+       })
+    }
+
+    private isConsistentTranderConfirm(resultDetails: ResultDetail[], originalResultDetails: ResultDetail[]) {
+       return resultDetails.some(result => {
+        const originalResult = originalResultDetails?.find(x => x.resourceId === result.resourceId)
+       
+        return originalResult && (!_.isEqual(result.homeValue, originalResult.homeValue)
+                || !_.isEqual(result.awayValue, originalResult.awayValue));
+        })
     }
 }
