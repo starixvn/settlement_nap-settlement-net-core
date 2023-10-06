@@ -34,3 +34,7 @@ reports/
 #Nuget packages folder
 packages/
 node_modules/
+
+# directories
+**/bin/
+**/obj/
