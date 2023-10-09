@@ -1,3 +1,4 @@
+using Fanex.Data.SqlServer;
 using Fanex.NAP.Client;
 using Fanex.NAP.Client.Configuration;
 using Fanex.NAP.Client.Helpers.Web;
@@ -21,6 +22,8 @@ builder.Services.ConfigureSession(builder.Configuration);
 builder.Services.OnebookUM(builder.Configuration);
 
 builder.Services.ConfigureNapServices(builder.Configuration);
+
+builder.Services.AddFanexSql(builder.Configuration);
 
 WebSites.ConfigureFanex(builder.Configuration);
 

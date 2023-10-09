@@ -147,21 +147,6 @@ public static class WebSites
 
     public static void ConfigureFanex(IConfiguration configuration)
     {
-        var connections = configuration.GetSection("ConnectionStrings")
-                               .GetChildren()
-                               .AsEnumerable()
-                               .ToDictionary(
-                                        x => x.GetValue<string>("Name"),
-                                        y => new ConnectionConfiguration(y.GetValue<string>("Name"), y.GetValue<string>("ConnectionString"), y.GetValue<string>("ProviderName"))
-                                );
-
-        DbSettingProviderManager
-          .StartNewSession()
-          .Use(connections)
-          .WithSqlServer()
-          .UseDefaultDbSettingProvider(resourcePath: configuration.GetSection("StoredProcedurePath").Value)
-          .Run();
-
         LogManager
         .SetDefaultLogCategory(configuration.GetSection("LogCategory").Value)
         .Use(new List<ILogEngine>
