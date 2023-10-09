@@ -1,7 +1,9 @@
 ﻿namespace Settlement.EventManagement.Services;
 
+using Criteria;
 using Models;
 using Settlement.Core.Services.SpecificService;
+using System.Threading.Tasks;
 using Match = Models.Calculation.Match;
 using MultiSportMatch = Models.MultiSports.Match;
 
@@ -24,6 +26,8 @@ public interface NewInfoMatchService
     void TicketInfo(BaseMatch match);
 
     bool IsExistsConfirmedEarly(MultiSportMatch match);
+
+    Task<List<MultiSportMatch>> GetAutoSetting(List<MultiSportMatch> matches);
 }
 
 public class NewInfoMatchServiceImp : NewInfoMatchService
@@ -36,16 +40,20 @@ public class NewInfoMatchServiceImp : NewInfoMatchService
 
     private readonly BasketballEventStatusService basketballEventStatusService;
 
+    private readonly IDynamicRepository repository;
+
     public NewInfoMatchServiceImp(
         SiteMatchService siteMatchService,
         GoalIconService goalIconService,
         EventStatusService eventStatusService,
-        BasketballEventStatusService basketballEventStatusService)
+        BasketballEventStatusService basketballEventStatusService,
+        IDynamicRepository repository)
     {
         this.siteMatchService = siteMatchService;
         this.goalIconService = goalIconService;
         this.eventStatusService = eventStatusService;
         this.basketballEventStatusService = basketballEventStatusService;
+        this.repository = repository;
     }
 
     public string EventStatusColor(BaseMatch match)
@@ -138,6 +146,30 @@ public class NewInfoMatchServiceImp : NewInfoMatchService
     public bool IsExistsConfirmedEarly(MultiSportMatch match)
     {
         return siteMatchService.IsExistsConfirmedEarly(match);
+    }
+
+    public async Task<List<MultiSportMatch>> GetAutoSetting(List<MultiSportMatch> matches)
+    {
+        var matchStatuses = await getMatchStatus(matches);
+        var dictionary = matches.ToDictionary(m => m.MatchId);
+
+        foreach (var matchStatus in matchStatuses)
+        {
+            dictionary[matchStatus.MatchId].AutoPayoutStatus = matchStatus.StatusId;
+        }
+
+        return dictionary.Values.ToList();
+    }
+
+    private async Task<IEnumerable<MatchStatusModel>> getMatchStatus(List<MultiSportMatch> matches)
+    {
+        var matchIds = string.Join(',', matches.Select(m => m.MatchId));
+        var criteria = new GetMatchWaitingInfo
+        {
+            MatchIds = matchIds
+        };
+
+        return await repository.FetchAsync<MatchStatusModel>(criteria);
     }
 
     private GoalIconQueryModel GoalIconQuery(Match match)

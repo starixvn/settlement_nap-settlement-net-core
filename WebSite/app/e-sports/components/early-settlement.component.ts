@@ -87,7 +87,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     }
 
     private renderFilterSelect() {
-        this.ticketsStatusSelect.items = this.earlyConstraintService.renderTicketStatus(true);
+        this.ticketsStatusSelect.items = this.earlyConstraintService.renderTicketStatus();
         this.resultStatusSelect.items = this.earlyConstraintService.renderResultStatus(this.match.permission);
         this.ticketsStatusSelect.maxWidth = '108px';
         this.resultStatusSelect.maxWidth = '144px';
