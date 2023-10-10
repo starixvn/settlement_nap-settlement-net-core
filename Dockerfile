@@ -21,20 +21,8 @@ RUN --mount=type=cache,target=/root/.nuget/packages \
   dotnet restore -r linux-x64 WebSite/Settlement.WebSites.csproj 
 
 COPY ./.sonarlint/. ./.sonarlint
-COPY ./Sources/Settlement.Core/. ./Sources/Settlement.Core
-COPY ./Sources/Settlement.ResourceInfos/. ./Sources/Settlement.ResourceInfos
-COPY ./Sources/Settlement.EventManagement/. ./Sources/Settlement.EventManagement
-COPY ./Sources/Settlement.FastMarkets/. ./Sources/Settlement.FastMarkets
-COPY ./Sources/Settlement.Log/. ./Sources/Settlement.Log
-COPY ./Sources/Settlement.Sportsbook.Aio/. ./Sources/Settlement.Sportsbook.Aio
-COPY ./Sources/Settlement.Sportsbook.MoveTickets/. ./Sources/Settlement.Sportsbook.MoveTickets
-COPY ./Sources/Settlement.Sportsbook.OtherSports/. ./Sources/Settlement.Sportsbook.OtherSports
-COPY ./Sources/Settlement.Sportsbook.Soccer/. ./Sources/Settlement.Sportsbook.Soccer
-COPY ./Sources/Settlement.Gaming/. ./Sources/Settlement.Gaming
-COPY ./Sources/Settlement.ThirdPartyProducts/. ./Sources/Settlement.ThirdPartyProducts
-COPY ./Sources/Settlement.Setting/. ./Sources/Settlement.Setting
-COPY ./Sources/Settlement.Outright/. ./Sources/Settlement.Outright
-COPY ./WebSite ./WebSite
+COPY ./Sources/. ./Sources
+COPY ./WebSite/. ./WebSite
 
 
 RUN ls /src -l
