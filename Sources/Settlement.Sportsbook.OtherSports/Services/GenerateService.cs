@@ -50,14 +50,14 @@ public class GenerateServiceImp : GenerateService
         {
             ResourceItems = new List<ResourceItem>()
         };
-        var halfTime = selectedResources.FirstOrDefault(item => item.ResourceId == ResourceType.Halftime);
+        var halfTime = selectedResources.Find(item => item.ResourceId == ResourceType.Halftime);
         if (halfTime is not null && (ResourceHalfTimeAction.Exists(item => item == action)
                                      || ExistHalfTimeResult(action, halfTime)))
         {
             resources.ResourceItems.Add(halfTime);
         }
 
-        var fullTime = selectedResources.FirstOrDefault(item => item.ResourceId == ResourceType.Final);
+        var fullTime = selectedResources.Find(item => item.ResourceId == ResourceType.Final);
 
         if (fullTime is not null && ResourceFullTimeAction.Exists(item => item == action))
         {
@@ -341,8 +341,8 @@ public class GenerateServiceImp : GenerateService
 
     private static ScoreSetModel GetScore(CalculateRequest request)
     {
-        var htResult = request.SelectedResources.FirstOrDefault(item => item.ResourceId == ResourceType.Halftime);
-        var ftResult = request.SelectedResources.FirstOrDefault(item => item.ResourceId == ResourceType.Final);
+        var htResult = request.SelectedResources.Find(item => item.ResourceId == ResourceType.Halftime);
+        var ftResult = request.SelectedResources.Find(item => item.ResourceId == ResourceType.Final);
         var scoreSet = new ScoreSetModel
         {
             BetStatus = new StringBuilder(),

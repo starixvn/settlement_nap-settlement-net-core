@@ -30,7 +30,16 @@ public class BaseMatch
     public int HomeId { get; set; }
 
     [Key("homeName")]
-    public string HomeName => RefDataService == null ? string.Empty : RefDataService.GetTeamName(HomeId) + (IsNeutral ? " (N)" : string.Empty);
+    public string HomeName
+    {
+        get
+        {
+            var neutralText = IsNeutral ? " (N)" : string.Empty;
+            return RefDataService == null
+                ? string.Empty
+                : RefDataService.GetTeamName(HomeId) + neutralText;
+        }
+    }
 
     [JsonIgnore, IgnoreMember]
     public int AwayId { get; set; }

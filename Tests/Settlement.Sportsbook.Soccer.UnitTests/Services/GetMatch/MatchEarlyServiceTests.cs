@@ -71,7 +71,7 @@ public class MatchEarlyServiceTests
             .Returns((listResult, new TicketCounts()));
 
         var match = await service.GetMatch(1);
-        var resultDetail = match.ResultDetail.First();
+        var resultDetail = match.ResultDetail[0];
 
         Assert.Equal(resultDetail.TicketStatus, ticketStatus);
     }
@@ -104,7 +104,7 @@ public class MatchEarlyServiceTests
             .Returns((new List<ResultDetailModel>(), new TicketCounts()));
 
         var match = await service.GetMatch(1);
-        var resultDetail = match.ResultDetail.First();
+        var resultDetail = match.ResultDetail[0];
 
         Assert.Single(match.ResultDetail);
         Assert.Equal(TicketStatus.NoTicket, resultDetail.TicketStatus);
@@ -143,7 +143,7 @@ public class MatchEarlyServiceTests
         earlyBetTypeNameService.GetBetTypeName(betType, resourceId).Returns("betTypeName");
 
         var match = await service.GetMatch(1);
-        var resultDetail = match.ResultDetail.First();
+        var resultDetail = match.ResultDetail[0];
 
         Assert.Equal(TicketStatus.NoTicket, resultDetail.TicketStatus);
         Assert.Equal(1, resultDetail.Map);

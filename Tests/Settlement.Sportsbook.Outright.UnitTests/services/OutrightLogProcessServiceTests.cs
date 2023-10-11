@@ -66,7 +66,7 @@ public class OutrightLogProcessServiceTests
         // Assert
         Assert.Equal(outrightLog, actualOutrightLogs.FirstOrDefault());
         Assert.Equal(logDetails, outrightLog.OutrightLogDetails);
-        Assert.True(logDetails.All(x => x.TeamId == teamId));
+        Assert.True(logDetails.TrueForAll(x => x.TeamId == teamId));
     }
 
     [Fact]

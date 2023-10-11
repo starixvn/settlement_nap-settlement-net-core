@@ -63,13 +63,12 @@ public class RemarkNodeServiceImp : RemarkNodeService
             return "N";
         }
 
-        const int position = 6;
         var resultLog = new List<string>();
         var charArray = result.ToCharArray();
         Array.Reverse(charArray);
         for (var i = 0; i < charArray.Length; i++)
         {
-            if (i != 0 && i != position) // NOSONAR
+            if (i != 0 && i != 6)
             {
                 var c = charArray[i];
                 if (c != '0')

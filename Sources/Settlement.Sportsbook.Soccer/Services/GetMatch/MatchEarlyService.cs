@@ -87,7 +87,7 @@ public class MatchEarlyServiceImp : MatchEarlyService
 
     private static void MergeEarlyTicketsToResults(List<ResultDetailModel> resultDetails, List<ResultDetailModel> ticketDetails)
     {
-        var newTicketDetails = ticketDetails.Where(ticketDetail => !resultDetails.Any(result => result.Equals(ticketDetail)));
+        var newTicketDetails = ticketDetails.Where(ticketDetail => !resultDetails.Exists(result => result.Equals(ticketDetail)));
         resultDetails.AddRange(newTicketDetails);
 
         GenerateTicketsStatus(resultDetails, ticketDetails);
@@ -97,7 +97,7 @@ public class MatchEarlyServiceImp : MatchEarlyService
     {
         foreach (var result in results)
         {
-            var ticketDetail = ticketDetails.FirstOrDefault(detail => detail.ResourceId == result.ResourceId);
+            var ticketDetail = ticketDetails.Find(detail => detail.ResourceId == result.ResourceId);
             var betType = result.ResourceId[..3];
             result.TicketStatus = CreateTicketStatus(ticketDetail, betType);
         }

@@ -244,7 +244,7 @@ public class MergeDataServiceTests
 
         //act
         var list = service.MergeTicketCounts(listSiteMatch);
-        var actual = list.First();
+        var actual = list[0];
 
         //assert
         Assert.Single(list);

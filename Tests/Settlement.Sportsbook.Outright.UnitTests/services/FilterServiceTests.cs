@@ -102,7 +102,7 @@ public class FilterServiceTests
         var actual = await service.Filter(new FilterRequest());
 
         Assert.Single(actual.SportLeague.First().LeagueMatch);
-        Assert.Equal(4, actual.SportLeague.First()!.LeagueMatch.First().Teams.First()!.BetCount);
+        Assert.Equal(4, actual.SportLeague.First().LeagueMatch.First().Teams[0]!.BetCount);
     }
 
     [Fact]
@@ -136,9 +136,9 @@ public class FilterServiceTests
 
         // Assert
 
-        Assert.Equal(SportType.Soccer, leagues.First().SportType);
-        Assert.Equal("A", leagues.First().LeagueName);
-        Assert.Equal("All Soccer Leagues", leagues.First().Group);
+        Assert.Equal(SportType.Soccer, leagues[0].SportType);
+        Assert.Equal("A", leagues[0].LeagueName);
+        Assert.Equal("All Soccer Leagues", leagues[0].Group);
         Assert.Equal(SportType.Soccer, leagues[1].SportType);
         Assert.Equal("B", leagues[1].LeagueName);
         Assert.Equal(SportType.Badminton, leagues[2].SportType);
@@ -161,8 +161,8 @@ public class FilterServiceTests
 
         // Assert
 
-        Assert.Equal(SportType.Soccer, sports.First().SportType);
-        Assert.Equal(SportGroup.PopularGroup, sports.First().Group);
+        Assert.Equal(SportType.Soccer, sports[0].SportType);
+        Assert.Equal(SportGroup.PopularGroup, sports[0].Group);
         Assert.Equal(SportType.Badminton, sports[1].SportType);
         Assert.Equal(SportGroup.PopularGroup, sports[1].Group);
         Assert.Equal(SportType.Diving, sports[2].SportType);

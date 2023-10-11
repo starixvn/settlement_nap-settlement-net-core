@@ -122,11 +122,11 @@ public class MoveActionServiceImp : MoveActionService
     private async Task<Result> HandleAfterMoveTicketAsync(ResultMoveTicket[] results, string duration, MoveTicketRequest request, MoveTicketInfo getTickets)
     {
         var resultFailed = results.Where(r => r.ErrCode > 0).ToList();
-        var notExistTicketMoved = !results.Any(r => r.TicketCount > 0);
+        var notExistTicketMoved = !results.ToList().Exists(r => r.TicketCount > 0);
         if (resultFailed.Any())
         {
-            logService.ActionLog(request.MatchId, resultFailed.First().ErrMsg, ActionIdMoveTicketFailed);
-            return resultFailed.First();
+            logService.ActionLog(request.MatchId, resultFailed[0].ErrMsg, ActionIdMoveTicketFailed);
+            return resultFailed[0];
         }
 
         if (notExistTicketMoved)
@@ -140,7 +140,7 @@ public class MoveActionServiceImp : MoveActionService
         logService.ActionLog(request.MatchId, logMessage, ActionIdMoveTicket);
         await UpdateChildMatchInfo(getTickets.ChildMatchId);
 
-        return results.First();
+        return results[0];
     }
 
     private async Task UpdateChildMatchInfo(int childMatchId)

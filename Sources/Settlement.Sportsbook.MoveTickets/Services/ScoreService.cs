@@ -60,7 +60,7 @@ public class ScoreServiceImp : IScoreService
 
     private Score ScoreByResource(List<ResultDetail> resultDetails, string resource)
     {
-        var resultDetail = resultDetails.FirstOrDefault(n => n.ResourceId == resource);
+        var resultDetail = resultDetails.Find(n => n.ResourceId == resource);
 
         var hasResult = resultDetail is { MatchId: > 0 };
 

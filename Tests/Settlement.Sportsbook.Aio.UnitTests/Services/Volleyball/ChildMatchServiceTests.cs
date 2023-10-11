@@ -8,7 +8,7 @@ public class ChildMatchServiceTests
 {
     private readonly ChildMatchService service;
 
-    private ResultDetail resultDetail;
+    private readonly ResultDetail resultDetail;
 
     public ChildMatchServiceTests()
     {

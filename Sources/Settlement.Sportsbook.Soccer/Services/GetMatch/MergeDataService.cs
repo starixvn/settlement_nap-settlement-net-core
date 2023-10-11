@@ -54,7 +54,7 @@ public class MergeDataServiceImp : IMergeDataService
     {
         baseTicketCounts.ForEach(item =>
         {
-            var ticketCount = match.TicketCounts.FirstOrDefault(count => count.GroupId == item.GroupId);
+            var ticketCount = match.TicketCounts.Find(count => count.GroupId == item.GroupId);
             if (ticketCount != null)
             {
                 SumTicket(item, ticketCount);
@@ -130,20 +130,20 @@ public class MergeDataServiceImp : IMergeDataService
 
     public BetDaq MergeBetDaq(BetDaq baseBetDaq, List<BetDaq> siteBetDaqs)
     {
-        baseBetDaq.IsExcludeBetDaq = siteBetDaqs.Any(betDaq => betDaq.IsExcludeBetDaq) || baseBetDaq.IsExcludeBetDaq;
-        baseBetDaq.IsMoveBetDaq = siteBetDaqs.Any(betDaq => betDaq.IsMoveBetDaq) || baseBetDaq.IsMoveBetDaq;
-        baseBetDaq.IsRefundRunningBetDaq = siteBetDaqs.Any(betDaq => betDaq.IsRefundRunningBetDaq) || baseBetDaq.IsRefundRunningBetDaq;
-        baseBetDaq.IsSettleAbandonedMatchBetDaq = siteBetDaqs.Any(betDaq => betDaq.IsSettleAbandonedMatchBetDaq) || baseBetDaq.IsSettleAbandonedMatchBetDaq;
+        baseBetDaq.IsExcludeBetDaq = siteBetDaqs.Exists(betDaq => betDaq.IsExcludeBetDaq) || baseBetDaq.IsExcludeBetDaq;
+        baseBetDaq.IsMoveBetDaq = siteBetDaqs.Exists(betDaq => betDaq.IsMoveBetDaq) || baseBetDaq.IsMoveBetDaq;
+        baseBetDaq.IsRefundRunningBetDaq = siteBetDaqs.Exists(betDaq => betDaq.IsRefundRunningBetDaq) || baseBetDaq.IsRefundRunningBetDaq;
+        baseBetDaq.IsSettleAbandonedMatchBetDaq = siteBetDaqs.Exists(betDaq => betDaq.IsSettleAbandonedMatchBetDaq) || baseBetDaq.IsSettleAbandonedMatchBetDaq;
 
         return baseBetDaq;
     }
 
     public BetFair MergeBetFair(BetFair baseBetFair, List<BetFair> siteBetFairs)
     {
-        baseBetFair.IsExcludeBetFair = siteBetFairs.Any(betDaq => betDaq.IsExcludeBetFair) || baseBetFair.IsExcludeBetFair;
-        baseBetFair.IsMoveBetFair = siteBetFairs.Any(betDaq => betDaq.IsMoveBetFair) || baseBetFair.IsMoveBetFair;
-        baseBetFair.IsRefundRunningBetFair = siteBetFairs.Any(betDaq => betDaq.IsRefundRunningBetFair) || baseBetFair.IsRefundRunningBetFair;
-        baseBetFair.IsSettleAbandonedMatchBetFair = siteBetFairs.Any(betDaq => betDaq.IsSettleAbandonedMatchBetFair) || baseBetFair.IsSettleAbandonedMatchBetFair;
+        baseBetFair.IsExcludeBetFair = siteBetFairs.Exists(betDaq => betDaq.IsExcludeBetFair) || baseBetFair.IsExcludeBetFair;
+        baseBetFair.IsMoveBetFair = siteBetFairs.Exists(betDaq => betDaq.IsMoveBetFair) || baseBetFair.IsMoveBetFair;
+        baseBetFair.IsRefundRunningBetFair = siteBetFairs.Exists(betDaq => betDaq.IsRefundRunningBetFair) || baseBetFair.IsRefundRunningBetFair;
+        baseBetFair.IsSettleAbandonedMatchBetFair = siteBetFairs.Exists(betDaq => betDaq.IsSettleAbandonedMatchBetFair) || baseBetFair.IsSettleAbandonedMatchBetFair;
 
         return baseBetFair;
     }
@@ -166,7 +166,7 @@ public class MergeDataServiceImp : IMergeDataService
 
     private static List<ResultDetailModel> ResolveTicketDetails(List<List<ResultDetailModel>> data)
     {
-        var baseData = data.First();
+        var baseData = data[0];
         var siteData = data.Skip(1).ToList();
         foreach (var details in siteData)
         {
@@ -183,7 +183,7 @@ public class MergeDataServiceImp : IMergeDataService
     {
         baseData.ForEach(item =>
         {
-            var ticketCount = siteData.FirstOrDefault(data => data.ResourceId == item.ResourceId);
+            var ticketCount = siteData.Find(data => data.ResourceId == item.ResourceId);
             if (ticketCount != null)
             {
                 SumTicketDetail(item, ticketCount);

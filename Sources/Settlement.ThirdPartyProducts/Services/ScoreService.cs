@@ -55,7 +55,7 @@ public class ScoreServiceImp : ScoreService
 
     private Score ScoreByResource(List<ResultDetail> resultDetails, string resource, int sportType)
     {
-        var resultDetail = resultDetails.FirstOrDefault(n => n.ResourceId == resource);
+        var resultDetail = resultDetails.Find(n => n.ResourceId == resource);
 
         var hasResult = resultDetail is { MatchId: > 0 };
 

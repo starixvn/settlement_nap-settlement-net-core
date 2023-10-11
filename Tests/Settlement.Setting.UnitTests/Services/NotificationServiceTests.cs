@@ -64,7 +64,7 @@ public class NotificationServiceTests
     }
 
     [Fact]
-    public async void IsNotificationsBetBuilder_Always_ReturnValueFromSp()
+    public async Task IsNotificationsBetBuilder_Always_ReturnValueFromSp()
     {
         repository.GetAsync<bool>(Arg.Any<NotificationBetBuilderCriteria>()).Returns(true);
 

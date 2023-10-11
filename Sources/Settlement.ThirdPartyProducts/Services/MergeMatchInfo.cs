@@ -22,8 +22,8 @@ public class MergeMatchInfoImp : MergeMatchInfo
     {
         matches.ForEach(item =>
         {
-            var siteMatch = siteMatches.FirstOrDefault(match => match.MatchId == item.MatchId);
-            if (siteMatch != null && (item.SiteMatch.Count == 0 || IsChangedOnTicket(item.SiteMatch.First(), siteMatch)))
+            var siteMatch = siteMatches.Find(match => match.MatchId == item.MatchId);
+            if (siteMatch != null && (item.SiteMatch.Count == 0 || IsChangedOnTicket(item.SiteMatch[0], siteMatch)))
             {
                 item.SiteMatch.Add(siteMatch);
             }
@@ -44,20 +44,20 @@ public class MergeMatchInfoImp : MergeMatchInfo
 
     public int QueueStatus(MatchDetailModel match, int queueStatusCentral = 2)
     {
-        if (queueStatusCentral == CalculateStatus.IsWaiting || match.SiteMatch.FirstOrDefault(i => i.QueueStatus == CalculateStatus.IsWaiting) != null)
+        if (queueStatusCentral == CalculateStatus.IsWaiting || match.SiteMatch.Find(i => i.QueueStatus == CalculateStatus.IsWaiting) != null)
         {
             return CalculateStatus.IsWaiting;
         }
 
         return queueStatusCentral == CalculateStatus.IsCalculating
-               || match.SiteMatch.FirstOrDefault(i => i.QueueStatus == CalculateStatus.IsCalculating) != null ? CalculateStatus.IsCalculating : CalculateStatus.IsSuccess;
+               || match.SiteMatch.Find(i => i.QueueStatus == CalculateStatus.IsCalculating) != null ? CalculateStatus.IsCalculating : CalculateStatus.IsSuccess;
     }
 
     public void MergeStatusTicket(List<ResourceSelectionItemModel> baseList, List<ResourceSelectionItemModel> siteList)
     {
         foreach (var item in baseList)
         {
-            var siteItem = siteList.FirstOrDefault(i => i.MarketId == item.MarketId);
+            var siteItem = siteList.Find(i => i.MarketId == item.MarketId);
             if (siteItem != null)
             {
                 item.IsRunning = item.IsRunning || siteItem.IsRunning;
@@ -89,7 +89,7 @@ public class MergeMatchInfoImp : MergeMatchInfo
 
     private SiteMatch GetDifferentMatchSiteInfo(MatchDetailModel match, List<MatchDetailModel> siteMatches)
     {
-        var siteMatch = siteMatches.FirstOrDefault(m => m.MatchId == match.MatchId);
+        var siteMatch = siteMatches.Find(m => m.MatchId == match.MatchId);
         if (siteMatch != null && (match.TotalTickets != siteMatch.TotalTickets ||
                                   match.TotalTicketsRunning != siteMatch.TotalTicketsRunning
                                   || match.QueueStatus != siteMatch.QueueStatus))

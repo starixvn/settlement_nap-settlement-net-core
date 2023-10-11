@@ -28,7 +28,7 @@ public class MergeDataServiceImp : MergeDataService
 
     private static List<FastMarketResult> ResolveFastMarketTickets(List<List<FastMarketResult>> data)
     {
-        var baseData = data.First();
+        var baseData = data[0];
         var siteData = data.Skip(1).ToList();
         foreach (var details in siteData)
         {
@@ -45,7 +45,7 @@ public class MergeDataServiceImp : MergeDataService
     {
         baseData.ForEach(item =>
         {
-            var ticketCount = siteData.FirstOrDefault(data => data.BetType == item.BetType && data.Position == item.Position);
+            var ticketCount = siteData.Find(data => data.BetType == item.BetType && data.Position == item.Position);
             if (ticketCount != null)
             {
                 SumTicketDetail(item, ticketCount);

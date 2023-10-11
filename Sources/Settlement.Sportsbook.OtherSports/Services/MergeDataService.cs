@@ -20,8 +20,8 @@ public class MergeDataServiceImp : MergeDataService
 
     public void MergeMatchDetail(MatchDetail matchDetail, List<TicketCounts> ticketCounts)
     {
-        matchDetail.HtStatus = GetStatus(ticketCounts.FirstOrDefault(item => item.GroupId == HalfTimeGroupId));
-        matchDetail.FtStatus = GetStatus(ticketCounts.FirstOrDefault(item => item.GroupId == FullTimeGroupId));
+        matchDetail.HtStatus = GetStatus(ticketCounts.Find(item => item.GroupId == HalfTimeGroupId));
+        matchDetail.FtStatus = GetStatus(ticketCounts.Find(item => item.GroupId == FullTimeGroupId));
     }
 
     private static string GetStatus(TicketCounts ticketCount)
@@ -63,7 +63,7 @@ public class MergeDataServiceImp : MergeDataService
     {
         baseTicketCounts.ForEach(item =>
         {
-            var ticketCount = siteTicketCounts.FirstOrDefault(count => count.GroupId == item.GroupId);
+            var ticketCount = siteTicketCounts.Find(count => count.GroupId == item.GroupId);
             if (ticketCount != null)
             {
                 SumTicket(item, ticketCount);

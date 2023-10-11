@@ -11,7 +11,7 @@ public class CompareMatchServiceImp : CompareMatchService
 {
     public SiteMatch GetDifferentMatchSiteInfo(Match match, List<Match> siteMatches)
     {
-        var siteMatch = siteMatches.FirstOrDefault(m => m.MatchId == match.MatchId);
+        var siteMatch = siteMatches.Find(m => m.MatchId == match.MatchId);
         if (siteMatch != null && (IsChangedOnTicket(match, siteMatch) || IsChangeOnSpecialBetType(match, siteMatch)))
         {
             return new SiteMatch

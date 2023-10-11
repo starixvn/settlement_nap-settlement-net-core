@@ -33,22 +33,22 @@ public static class InputType
             9490, 9491
         };
 
-    public static List<int> PlayerSelectGroup = new()
+    public static List<int> PlayerSelectGroup => new()
     {
             9662, 9663
-        };
+    };
 
-    public static List<int> PlayerMultipleSelectGroup = new()
+    public static List<int> PlayerMultipleSelectGroup => new()
     {
             9668, 9650, 9672, 9656, 9671, 9651, 9675, 9657
-        };
+    };
 
-    public static List<int> DismissalMethodGroup = new()
+    public static List<int> DismissalMethodGroup => new()
     {
             9636, 9637
-        };
+    };
 
-    public static List<int> YesNoGroup = new()
+    public static List<int> YesNoGroup => new()
     {
             9624, 9630, 9625, 9631
         };

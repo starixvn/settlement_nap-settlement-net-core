@@ -17,7 +17,7 @@ public class MergeLogServiceImp : MergeLogService
     {
         if (distinctElements.Any())
         {
-            var logs = distinctElements.First().Logs ?? Array.Empty<LogItem>();
+            var logs = distinctElements[0].Logs ?? Array.Empty<LogItem>();
             return string.Join("; ", logs.Select(l => $"{l.Name}: {l.Value}"));
         }
 
@@ -52,19 +52,19 @@ public class MergeLogServiceImp : MergeLogService
     {
         var validDates = logs.Select(log => DateTime.TryParse(log.Value, out var date) ? date : (DateTime?)null).Where(date => date.HasValue).ToList();
 
-        return validDates.Any() ? $"{logs.First().Name}: {validDates.Max():yyyy-MM-dd HH:mm:ss}" : string.Empty;
+        return validDates.Any() ? $"{logs[0].Name}: {validDates.Max():yyyy-MM-dd HH:mm:ss}" : string.Empty;
     }
 
     private static string GetMinDate(List<LogItem> logs)
     {
         var validDates = logs.Select(log => DateTime.TryParse(log.Value, out var date) ? date : (DateTime?)null).Where(date => date.HasValue).ToList();
 
-        return validDates.Any() ? $"{logs.First().Name}: {validDates.Min():yyyy-MM-dd HH:mm:ss}" : string.Empty;
+        return validDates.Any() ? $"{logs[0].Name}: {validDates.Min():yyyy-MM-dd HH:mm:ss}" : string.Empty;
     }
 
     private static string GetStatistic(List<LogItem> logs, Func<IEnumerable<int>, int> aggregation)
     {
-        var firstLog = logs.First();
+        var firstLog = logs[0];
         var values = logs.Select(l => ExtractNumericValue(l.Value));
         var unit = GetUnit(firstLog.Value);
 

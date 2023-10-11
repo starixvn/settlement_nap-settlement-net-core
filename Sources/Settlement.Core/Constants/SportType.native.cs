@@ -123,5 +123,5 @@ public static class SportGroup
 
     public const string OtherGroup = "All Other Sports";
 
-    public static int[] SupportSettleDetermine = { SportType.BasketBall };
+    public static readonly int[] SupportSettleDetermine = { SportType.BasketBall };
 }

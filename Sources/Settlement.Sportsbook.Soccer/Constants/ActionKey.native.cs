@@ -1,6 +1,6 @@
 ﻿namespace Settlement.Sportsbook.Soccer.Constants;
 
-public class ActionKey
+public static class ActionKey
 {
     public static Dictionary<string, string> ActionDictionary => new()
     {

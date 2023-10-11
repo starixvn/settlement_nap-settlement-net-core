@@ -194,7 +194,7 @@ public class InstantResourceServiceImp : InstantResourceService
     public string BetStatusHtFl(InstantCalculationRequest request, string betStatus)
     {
         var goalRecord = request.GoalRecord ?? string.Empty;
-        var goalOnly = goalRecord.Split(";").First();
+        var goalOnly = goalRecord.Split(";")[0];
         var isNotExistBetStatusHtFl = !betStatus.Contains(HalfTimeFl);
         if (goalOnly.Length > 0 && request.IsExistHTFG && isNotExistBetStatusHtFl)
         {

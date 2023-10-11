@@ -200,7 +200,7 @@ public class AioServiceImp : IAioService
             ? Resources.ResultHaftTime[SportType.BasketBall].Contains(r.ResourceId)
             : Resources.ResultFullTime[SportType.BasketBall].Contains(r.ResourceId)) && r.SettlementStatusId == SettlementStatus.Abandoned).ToList();
 
-        var resultDetail = resultDetails.FirstOrDefault(n => n.ResourceId == resourceId);
+        var resultDetail = resultDetails.Find(n => n.ResourceId == resourceId);
 
         if (resultDetail != null && resultSettleSdt.Any())
         {
