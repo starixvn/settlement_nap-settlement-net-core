@@ -9,15 +9,11 @@ public class PushInstantCalculationCriteria : NonQueryCommand
 
     public int MatchId { get; set; }
 
-    //public int InstantKey { get; set; }
-
     public string HomeScore { get; set; }
 
     public string AwayScore { get; set; }
 
     public string Action { get; set; }
-
-    //public string Mode { get; set; }
 
     public string Ip { get; set; }
 

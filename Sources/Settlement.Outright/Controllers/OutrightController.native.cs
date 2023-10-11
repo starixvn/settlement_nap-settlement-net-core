@@ -31,6 +31,10 @@ public class OutrightController : ControllerBase
     public async Task<IActionResult> GetLeagues(SportLeagueRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
     [HttpPost]
+    [Route("get-log")]
+    public async Task<IActionResult> GetLeagues(GetLogRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+
+    [HttpPost]
     [Route("filter")]
     public async Task<IActionResult> Filter(FilterRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
@@ -45,10 +49,6 @@ public class OutrightController : ControllerBase
     [HttpPost]
     [Route("calculate")]
     public async Task<IActionResult> Calculate(OutrightCalculateRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
-
-    [HttpPost]
-    [Route("get-log")]
-    public async Task<IActionResult> GetLeagues(GetLogRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
     [HttpPost]
     [Route("check-void-tickets")]

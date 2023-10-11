@@ -90,7 +90,7 @@ public class GenerationServiceTests
         var betTypes = service.BetTypesList(fastMarkets, string.Empty);
 
         // Assert
-        Assert.Equal(betTypeId, betTypes.First().BetTypeId);
+        Assert.Equal(betTypeId, betTypes[0].BetTypeId);
     }
 
     [Fact]
@@ -120,7 +120,7 @@ public class GenerationServiceTests
         var betTypes = service.BetTypesList(fastMarkets, string.Empty);
 
         // Assert
-        Assert.Equal(betTypeId, betTypes.First().BetTypeId);
+        Assert.Equal(betTypeId, betTypes[0].BetTypeId);
     }
 
     [Fact]
@@ -135,7 +135,7 @@ public class GenerationServiceTests
         var betTypes = service.BetTypesList(fastMarkets, string.Empty);
 
         // Assert
-        Assert.Equal(2, betTypes.First().FastMarketResults.Count);
+        Assert.Equal(2, betTypes[0].FastMarketResults.Count);
     }
 
     [Fact]
@@ -165,6 +165,6 @@ public class GenerationServiceTests
         var betTypes = service.BetTypesList(fastMarkets, string.Empty);
 
         // Assert
-        Assert.Equal(betType1, betTypes.First().BetTypeId);
+        Assert.Equal(betType1, betTypes[0].BetTypeId);
     }
 }

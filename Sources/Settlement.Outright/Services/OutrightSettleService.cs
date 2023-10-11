@@ -143,7 +143,7 @@ public class OutrightSettleServiceImp : OutrightSettleService
         foreach (var team in teams)
         {
             team.RefDataService = refDataService;
-            var foundTeam = ticketInfo.FirstOrDefault(t => t.OrId == team.OrId);
+            var foundTeam = ticketInfo.Find(t => t.OrId == team.OrId);
             if (foundTeam is not null)
             {
                 team.TotalCal = foundTeam.TotalCal;

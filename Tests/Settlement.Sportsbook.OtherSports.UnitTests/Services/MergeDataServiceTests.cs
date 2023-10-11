@@ -81,13 +81,13 @@ public class MergeDataServiceTests
 
         Assert.True(result[0].BetRunningCount == 2 &&
                     result[0].BetMarkedCount == 4 &&
-                    result[0].BetSettledCount == 6 &&
-                    result[0].BetWaitingCount == 8 &&
+                    result[0].BetSettledCount == 6);
+        Assert.True(result[0].BetWaitingCount == 8 &&
                     result[0].BetCount == 20);
         Assert.True(result[1].BetRunningCount == 1 &&
                     result[1].BetMarkedCount == 2 &&
-                    result[1].BetSettledCount == 3 &&
-                    result[1].BetWaitingCount == 4 &&
+                    result[1].BetSettledCount == 3);
+        Assert.True(result[1].BetWaitingCount == 4 &&
                     result[1].BetCount == 10);
     }
 
@@ -120,8 +120,8 @@ public class MergeDataServiceTests
 
         Assert.True(ticketCounts[0].BetRunningCount == 2 &&
                     ticketCounts[0].BetMarkedCount == 4 &&
-                    ticketCounts[0].BetSettledCount == 6 &&
-                    ticketCounts[0].BetWaitingCount == 8 &&
+                    ticketCounts[0].BetSettledCount == 6);
+        Assert.True(ticketCounts[0].BetWaitingCount == 8 &&
                     ticketCounts[0].BetCount == 20 &&
                     ticketCounts[0].GroupId == 0);
     }

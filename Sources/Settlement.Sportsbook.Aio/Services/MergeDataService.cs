@@ -27,7 +27,7 @@ public class MergeDataServiceImp : MergeDataService
 
     private static List<Models.ResultDetail> ResolveTicketDetails(List<List<Models.ResultDetail>> data)
     {
-        var baseData = data.First();
+        var baseData = data[0];
         var siteData = data.Skip(1).ToList();
         foreach (var details in siteData)
         {
@@ -44,7 +44,7 @@ public class MergeDataServiceImp : MergeDataService
     {
         baseData.ForEach(item =>
         {
-            var ticketCount = siteData.FirstOrDefault(data => data.ResourceId == item.ResourceId);
+            var ticketCount = siteData.Find(data => data.ResourceId == item.ResourceId);
             if (ticketCount != null)
             {
                 SumTicketDetail(item, ticketCount);

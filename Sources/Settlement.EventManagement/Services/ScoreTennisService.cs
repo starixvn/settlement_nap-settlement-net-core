@@ -42,7 +42,7 @@ public class ScoreTennisServiceImp : ScoreTennisService
             moreScore.Sets[int.Parse(item.ResourceId) - 1] = scoreSet;
         }
 
-        var totalSet = resultDetails.FirstOrDefault(n => n.ResourceId == ResourceType.Final);
+        var totalSet = resultDetails.Find(n => n.ResourceId == ResourceType.Final);
         if (totalSet is { MatchId: > 0 })
         {
             moreScore.FinalScore = scoreSetService.GetScore(totalSet, permission);

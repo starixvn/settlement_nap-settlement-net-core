@@ -64,7 +64,7 @@ public class SiteMatchServiceImp : SiteMatchService
             return CalculateStatus.IsFailed;
         }
 
-        if (baseValue == CalculateStatus.IsSuccess && siteValues.All(m => m == CalculateStatus.IsSuccess))
+        if (baseValue == CalculateStatus.IsSuccess && siteValues.TrueForAll(m => m == CalculateStatus.IsSuccess))
         {
             return CalculateStatus.IsSuccess;
         }

@@ -32,7 +32,7 @@ public class BasketballEventStatusServiceImp : BasketballEventStatusService
             .Where(resultDetail => resultDetail.ResourceId is not (ResourceType.Final or ResourceType.Halftime))
             .ToList();
 
-        var firstResultAbandoned = resultRounds.FirstOrDefault(item => item.SettlementStatusId == SettlementStatus.Abandoned);
+        var firstResultAbandoned = resultRounds.Find(item => item.SettlementStatusId == SettlementStatus.Abandoned);
 
         return firstResultAbandoned != null ? $"{Abandoned} {firstResultAbandoned.ResourceId}" : eventStatus;
     }

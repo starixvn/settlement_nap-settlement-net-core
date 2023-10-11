@@ -64,7 +64,7 @@ public class ChildMatchModel
                     Remark.IsKeyHold, Remark.IsMtdHold, Remark.IsPending, Remark.IsUndecided,
                     Remark.IsUnderSettle
                 };
-            return settingMatch.Any(item => item);
+            return settingMatch.ToList().Exists(item => item);
         }
     }
 }

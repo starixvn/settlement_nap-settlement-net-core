@@ -65,7 +65,7 @@ public class MoveTicketServiceTests
         };
         var referenceAction = new ReferenceAction
         {
-            LogDate = new DateTime(2000, 1, 3, 7, 0, 0),
+            LogDate = new DateTime(2000, 1, 3, 7, 0, 0,DateTimeKind.Utc),
             MatchId = 1
         };
         var fakeReferenceAction = new List<ReferenceAction> { referenceAction };

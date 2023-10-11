@@ -47,7 +47,7 @@ public class FastMarketResultServiceImp : IFastMarketResultService
         var mappingTypes = new[] { typeof(EventCounter), typeof(string), typeof(OldResult), typeof(ResultDetail) };
         var fetchedData = await repository.FetchMultipleAsync(criteria, mappingTypes);
         var oldResults = fetchedData[2].Cast<OldResult>().Where(result => result.BetType == 228).ToList();
-        var timeMachineBetType = betTypes.FirstOrDefault(betType => betType.BetTypeId == 228);
+        var timeMachineBetType = betTypes.Find(betType => betType.BetTypeId == 228);
         var accumulatedScore = 0;
         foreach (var result in oldResults)
         {
@@ -63,7 +63,7 @@ public class FastMarketResultServiceImp : IFastMarketResultService
         if (timeMachineBetType != null)
         {
             var timeMachineOuResults = timeMachineBetType.FastMarketResults;
-            oldResults = oldResults.Where(result => timeMachineOuResults.Any(r => r.BetType == result.BetType && r.Position == result.Position)).ToList();
+            oldResults = oldResults.Where(result => timeMachineOuResults.Exists(r => r.BetType == result.BetType && r.Position == result.Position)).ToList();
         }
         else
         {

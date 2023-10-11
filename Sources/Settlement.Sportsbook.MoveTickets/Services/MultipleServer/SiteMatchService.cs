@@ -48,7 +48,7 @@ public class SiteMatchServiceImp : SiteMatchService
             return CalculateStatus.IsFailed;
         }
 
-        if (match.IsCalculatingSingle == CalculateStatus.IsSuccess && match.SiteMatch.All(m => m.IsCalculatingSingle == CalculateStatus.IsSuccess))
+        if (match.IsCalculatingSingle == CalculateStatus.IsSuccess && match.SiteMatch.TrueForAll(m => m.IsCalculatingSingle == CalculateStatus.IsSuccess))
         {
             return CalculateStatus.IsSuccess;
         }

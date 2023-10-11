@@ -67,7 +67,7 @@ public class ScoreServiceImp : ScoreService
         var resultSettleSdt = resultDetails.Where(r => (resourceId == ResourceType.Halftime
             ? Resources.ResultHaftTime[sportType].Contains(r.ResourceId)
             : Resources.ResultFullTime[sportType].Contains(r.ResourceId)) && r.SettlementStatusId == SettlementStatus.Abandoned).ToList();
-        var resultDetail = resultDetails.FirstOrDefault(n => n.ResourceId == resourceId);
+        var resultDetail = resultDetails.Find(n => n.ResourceId == resourceId);
         if (resultDetail != null && resultSettleSdt.Any())
         {
             resultDetail.HomeValue = string.Empty;

@@ -178,7 +178,7 @@ public class MultipleServerServiceImp : MultipleServerService
             };
             var multipleTicketCounts = await GetTicketInfo(criteria);
             var ticketCounts = mergeDataService.MergeTicketCounts(multipleTicketCounts);
-            var ticketHt = ticketCounts.FirstOrDefault(item => item.GroupId == halfTimeGroupId);
+            var ticketHt = ticketCounts.Find(item => item.GroupId == halfTimeGroupId);
             request.IsHtTicketSettled = ticketHt is { BetRunningCount: 0 };
         }
     }

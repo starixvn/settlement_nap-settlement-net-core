@@ -59,7 +59,7 @@ public class HomeController : Controller
         ViewBag.UserId = session.UserId;
         ViewBag.Username = session.UserName;
         var instanceName = Dns.GetHostName();
-        var ip = Dns.GetHostEntry(instanceName).AddressList.FirstOrDefault(x => x.AddressFamily == AddressFamily.InterNetwork);
+        var ip = Dns.GetHostEntry(instanceName).AddressList.ToList().Find(x => x.AddressFamily == AddressFamily.InterNetwork);
         ViewBag.InstanceName = instanceName;
         ViewBag.InstanceIp = ip;
 

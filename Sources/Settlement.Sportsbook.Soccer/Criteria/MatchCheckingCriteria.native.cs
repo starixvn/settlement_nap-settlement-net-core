@@ -17,8 +17,6 @@ public class MatchCheckingCriteria : NonQueryCommand
 
     public string ResourceResult { get; set; }
 
-    //public string Mode { get; set; }
-
     public int ErrCode { get; set; }
 
     public string ErrMsg { get; set; }

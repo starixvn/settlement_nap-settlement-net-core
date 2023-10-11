@@ -86,7 +86,7 @@ public class FastMarketServiceImp : IFastMarketService
 
     private static void MergeFastMarketTicketsToResults(List<FastMarketResult> fastMarketResults, List<FastMarketResult> fastMarketTicketDetails)
     {
-        var newTicketDetails = fastMarketTicketDetails.Where(ticketDetail => !fastMarketResults.Any(result => result.Equals(ticketDetail)));
+        var newTicketDetails = fastMarketTicketDetails.Where(ticketDetail => !fastMarketResults.Exists(result => result.Equals(ticketDetail)));
         fastMarketResults.AddRange(newTicketDetails);
         GenerateTicketsStatus(fastMarketResults, fastMarketTicketDetails);
     }
@@ -95,7 +95,7 @@ public class FastMarketServiceImp : IFastMarketService
     {
         foreach (var result in fastMarketResults)
         {
-            var ticketDetail = fastMarketTicketDetails.FirstOrDefault(detail => detail.BetType == result.BetType && detail.Position == result.Position);
+            var ticketDetail = fastMarketTicketDetails.Find(detail => detail.BetType == result.BetType && detail.Position == result.Position);
             result.TicketStatus = CreateTicketStatus(ticketDetail);
         }
     }

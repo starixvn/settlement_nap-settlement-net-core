@@ -60,7 +60,7 @@ public class MultipleServerAioServiceImp : MultipleServerAioService
 
     private static void MergeTicketsToResults(List<Models.ResultDetail> resultDetails, List<Models.ResultDetail> ticketDetails, int sportType, string settleType)
     {
-        var newTicketDetails = ticketDetails.Where(ticketDetail => !resultDetails.Any(result => result.Equals(ticketDetail)));
+        var newTicketDetails = ticketDetails.Where(ticketDetail => !resultDetails.Exists(result => result.Equals(ticketDetail)));
 
         resultDetails.AddRange(newTicketDetails);
 
@@ -71,7 +71,7 @@ public class MultipleServerAioServiceImp : MultipleServerAioService
     {
         foreach (var result in results)
         {
-            var ticketDetail = ticketDetails.FirstOrDefault(detail => detail.ResourceId == result.ResourceId);
+            var ticketDetail = ticketDetails.Find(detail => detail.ResourceId == result.ResourceId);
             result.TicketStatus = CreateTicketStatus(ticketDetail, sportType, settleType);
         }
     }
@@ -208,7 +208,7 @@ public class MultipleServerAioServiceImp : MultipleServerAioService
     private async Task SetUnderSettleFlag(SettleCriteria criteria, List<ResourceItem> selectedResources)
     {
         var actionToSetFlag = new List<string> { SettleType.Calculate, SettleType.Undo, SettleType.Refund };
-        if (actionToSetFlag.Contains(criteria.Action) && selectedResources.Any(resource => resource.ResourceId == ResourceType.Final))
+        if (actionToSetFlag.Contains(criteria.Action) && selectedResources.Exists(resource => resource.ResourceId == ResourceType.Final))
         {
             await scaleOutSettleService.UpdateUnderSettlementFlag(criteria.MatchId, criteria.AdminId, criteria.Action);
         }

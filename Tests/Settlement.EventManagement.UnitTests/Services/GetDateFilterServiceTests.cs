@@ -52,7 +52,7 @@ public class GetDateFilterServiceTests
 
         Assert.Equal(SportType.Badminton, list[0].SportType);
         Assert.Equal(SportType.Diving, list[1].SportType);
-        Assert.Equal(SportType.OtherSports, list.Last().SportType);
+        Assert.Equal(SportType.OtherSports, list[^1].SportType);
     }
 
     [Fact]
@@ -69,9 +69,9 @@ public class GetDateFilterServiceTests
 
         // Assert
 
-        Assert.Equal(SportType.Badminton, leagues.First().SportType);
-        Assert.Equal("A", leagues.First().LeagueName);
-        Assert.Equal("All  Leagues", leagues.First().Group);
+        Assert.Equal(SportType.Badminton, leagues[0].SportType);
+        Assert.Equal("A", leagues[0].LeagueName);
+        Assert.Equal("All  Leagues", leagues[0].Group);
         Assert.Equal(SportType.Badminton, leagues[1].SportType);
         Assert.Equal("C", leagues[1].LeagueName);
         Assert.Equal(SportType.Diving, leagues[2].SportType);

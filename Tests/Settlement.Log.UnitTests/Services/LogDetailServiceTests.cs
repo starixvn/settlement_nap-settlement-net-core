@@ -73,6 +73,6 @@ public class LogDetailServiceTests
         var result = await service.GetLogDetailByMatchAndProduct(1, string.Empty);
 
         // Assert
-        Assert.Equal("Is Leader: 0; Recalc: 0; confirmed/provider: no; StartTime: 2023-08-18 06:00:40; EndTime: 2023-08-18 06:00:42; duration: 20ms; TC: 10", result.First().Remark);
+        Assert.Equal("Is Leader: 0; Recalc: 0; confirmed/provider: no; StartTime: 2023-08-18 06:00:40; EndTime: 2023-08-18 06:00:42; duration: 20ms; TC: 10", result[0].Remark);
     }
 }

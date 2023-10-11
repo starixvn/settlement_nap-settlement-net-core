@@ -102,11 +102,11 @@ public class FetchDateServiceImp : IFetchDataService
             betDaqs.Add(betDaq);
         }
 
-        var baseData = betDaqs.First();
+        var baseData = betDaqs[0];
         var nodeData = betDaqs.Skip(1).ToList();
 
         // merge function
-        var existConflictData = nodeData.Any(betDaq => baseData.IsExcludeBetDaq != betDaq.IsExcludeBetDaq
+        var existConflictData = nodeData.Exists(betDaq => baseData.IsExcludeBetDaq != betDaq.IsExcludeBetDaq
                                                        || baseData.IsMoveBetDaq != betDaq.IsMoveBetDaq
                                                        || baseData.IsRefundRunningBetDaq !=
                                                        betDaq.IsRefundRunningBetDaq
@@ -130,16 +130,16 @@ public class FetchDateServiceImp : IFetchDataService
             betFairs.Add(betFair);
         }
 
-        var baseData = betFairs.First();
+        var baseData = betFairs[0];
         var nodeData = betFairs.Skip(1).ToList();
 
         // merge function
-        var existConflictData = nodeData.Any(betDaq => baseData.IsExcludeBetFair != betDaq.IsExcludeBetFair
-                                                       || baseData.IsMoveBetFair != betDaq.IsMoveBetFair
-                                                       || baseData.IsRefundRunningBetFair !=
-                                                       betDaq.IsRefundRunningBetFair
-                                                       || baseData.IsSettleAbandonedMatchBetFair !=
-                                                       betDaq.IsSettleAbandonedMatchBetFair);
+        var existConflictData = nodeData.Exists(betDaq => baseData.IsExcludeBetFair != betDaq.IsExcludeBetFair
+                                                          || baseData.IsMoveBetFair != betDaq.IsMoveBetFair
+                                                          || baseData.IsRefundRunningBetFair !=
+                                                          betDaq.IsRefundRunningBetFair
+                                                          || baseData.IsSettleAbandonedMatchBetFair !=
+                                                          betDaq.IsSettleAbandonedMatchBetFair);
         if (existConflictData)
         {
             return mergeDataService.MergeBetFair(baseData, nodeData);

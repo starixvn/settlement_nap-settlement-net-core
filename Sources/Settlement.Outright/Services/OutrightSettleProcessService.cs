@@ -163,9 +163,9 @@ public class OutrightSettleProcessServiceImp : OutrightSettleProcessService
                 criteria.DbServer = server;
                 return await repository.GetAsync<int>(criteria);
             });
-        var results = await Task.WhenAll(tasks);
+        var results = (await Task.WhenAll(tasks)).ToList();
         await Task.CompletedTask;
 
-        return results.Any(r => r == 1) && results.All(r => r != 0);
+        return results.Exists(r => r == 1) && results.Exists(r => r != 0);
     }
 }
