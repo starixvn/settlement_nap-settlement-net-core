@@ -105,16 +105,12 @@ export class GameTotalVerificationService {
 
     public isScoreMismatched(resultDetails: ResultDetail[], externalResults: ExternalResultDetail[],
         originalResultDetails: ResultDetail[], matchDetail: MatchDetail) {
-        const originalTotalSetResultDetail = originalResultDetails.find(r => r.resourceId === ResourcesIds.totalSets);
 
-        const isExistTraderScore = this.isScoreConfirmed(matchDetail, originalTotalSetResultDetail);
-        const isProviderScore = externalResults && externalResults.length;
-
-        if (isExistTraderScore) {
+        if (this.hasTraderConfirmed(matchDetail,originalResultDetails)) {
             this.compareInputScoreTraderScores(originalResultDetails, resultDetails);
         }
 
-        if (isProviderScore) {
+        if (this.hasProvider(externalResults)) {
             this.compareInputScoreWithProviderScores(resultDetails, externalResults)
         }
     }
@@ -156,27 +152,37 @@ export class GameTotalVerificationService {
         return isMismatched;
     }
 
-    public isInsufficient(confirmFt: number, externalResults: ExternalResultDetail[], traderResult: ResultDetail) {
-        return (!externalResults?.length || !_.some(externalResults, x => this.isEmptyHomeOrAwayValue(x))) && (confirmFt < 1 || this.isEmptyHomeOrAwayValue(traderResult));
+    public isInsufficient(matchDetail: MatchDetail,originalResultDetails: ResultDetail[],externalResults: ExternalResultDetail[]) {
+        return !this.hasTraderConfirmed(matchDetail,originalResultDetails);// || !this.hasProvider(externalResults);
     }
 
-    public isConsistent(resultDetails: ResultDetail[], externalResults: ExternalResultDetail[],originalResultDetails: ResultDetail[]) {
-        return this.isConsistentTranderConfirm(resultDetails,originalResultDetails) || this.isConsistentProviderScore(resultDetails,externalResults)
+    public hasTraderConfirmed(matchDetail: MatchDetail,originalResultDetails: ResultDetail[]) {
+        const originalTotalSetResultDetail = originalResultDetails.find(r => r.resourceId === ResourcesIds.totalSets);
+        return matchDetail.confirmFT > 0 && !this.isEmptyHomeOrAwayValue(originalTotalSetResultDetail);
+    }
+
+    public hasProvider(externalResults: ExternalResultDetail[]) {
+        return externalResults?.length && _.some(externalResults, x => !this.isEmptyHomeOrAwayValue(x));
+    }
+
+
+    public isConsidentScore(originalResultDetails: ResultDetail[],externalResults: ExternalResultDetail[],resultDetails: ResultDetail[]) {
+        return this.isConsidentScoreTraderConfirm(originalResultDetails,resultDetails) || this.isConsidentScoreProvider(resultDetails,externalResults);
     }
    
-   private isConsistentProviderScore(resultDetails: ResultDetail[], externalResults: ExternalResultDetail[]) {
-       return resultDetails.some(result => {
-            const providerResult = externalResults?.find(x => x.resourceId === result.resourceId && !this.isEmptyHomeOrAwayValue(x));
-            return providerResult  && (!_.isEqual(providerResult.homeValue, result.homeValue) || !_.isEqual(providerResult.awayValue, result.awayValue));
-       })
+    public isConsidentScoreTraderConfirm(originalResultDetails: ResultDetail[], resultDetails: ResultDetail[]) {
+        return resultDetails.some(result => {
+            const originalResult = originalResultDetails?.find(x => x.resourceId === result.resourceId && !this.isEmptyHomeOrAwayValue(x));
+            return originalResult && (!_.isEqual(result.homeValue, originalResult.homeValue)
+                || !_.isEqual(result.awayValue, originalResult.awayValue));
+        })
     }
 
-    private isConsistentTranderConfirm(resultDetails: ResultDetail[], originalResultDetails: ResultDetail[]) {
-       return resultDetails.some(result => {
-        const originalResult = originalResultDetails?.find(x => x.resourceId === result.resourceId)
-       
-        return originalResult && (!_.isEqual(result.homeValue, originalResult.homeValue)
-                || !_.isEqual(result.awayValue, originalResult.awayValue));
+    public isConsidentScoreProvider(resultDetails: ResultDetail[], externalResults: ExternalResultDetail[]) {
+        return resultDetails.some(result => {
+            const providerResult = externalResults?.find(x => x.resourceId === result.resourceId && !this.isEmptyHomeOrAwayValue(x));
+            return providerResult && (!_.isEqual(providerResult.homeValue, result.homeValue) 
+                || !_.isEqual(providerResult.awayValue, result.awayValue));
         })
     }
 }

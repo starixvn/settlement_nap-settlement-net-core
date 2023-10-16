@@ -220,10 +220,8 @@ export class GameTotalCalculationComponent implements SportTemplate {
   }
 
   private confirmScoreSource() {
-    const isSourceInsufficient = this.verificationService.isInsufficient(this.matchDetail.confirmFT,
-      this.providerResultDetails, this.totalSetOriginal);
-   
-      const isInconsistent = this.verificationService.isConsistent(this.resultDetails,this.providerResultDetails,this.resultDetailsOriginal);
+    const isSourceInsufficient = this.verificationService.isInsufficient(this.matchDetail,this.resultDetailsOriginal, this.providerResultDetails);
+    const isInconsistent = this.verificationService.isConsidentScore(this.resultDetailsOriginal,this.providerResultDetails,this.resultDetails);
     
     if (isSourceInsufficient || isInconsistent) {
       if (!this.permission.isLeader) {
