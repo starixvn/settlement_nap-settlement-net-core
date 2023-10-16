@@ -15,6 +15,8 @@ public class RemarkNodeServiceImp : RemarkNodeService
 {
     private static readonly string[] EventCounterLabels = { "", "G", "C", "FK", "GK", "T", "", "P" };
 
+    private const int MaxLength = 6;
+
     private readonly PositionService positionService;
 
     public RemarkNodeServiceImp(PositionService positionService)
@@ -55,7 +57,7 @@ public class RemarkNodeServiceImp : RemarkNodeService
         Array.Reverse(charArray);
         for (var i = 0; i < charArray.Length; i++)
         {
-            if (i != 0 && i != 6)
+            if (i != 0 && i != MaxLength) //NOSONAR
             {
                 var c = charArray[i];
                 if (c != '0')

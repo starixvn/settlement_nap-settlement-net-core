@@ -16,6 +16,8 @@ public class RefundRunningThirdPartyTicketCriteria : NonQueryCommand
 
     public string Ip { get; set; }
 
+    public string BroadcastSessionId { get; } = Guid.NewGuid().ToString();
+
     public int ErrCode { get; set; }
 
     public string ErrMsg { get; set; }
