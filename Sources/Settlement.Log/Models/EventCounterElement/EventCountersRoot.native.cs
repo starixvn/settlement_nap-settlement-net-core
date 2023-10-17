@@ -8,3 +8,10 @@ public class EventCountersRoot
     [XmlElement("Item")]
     public ItemElement[] Items { get; set; }
 }
+
+[XmlRoot("EventCounters")]
+public class EventCountersRootOldStyle
+{
+    [XmlElement("Item")]
+    public ItemElement[] Items { get; set; }
+}

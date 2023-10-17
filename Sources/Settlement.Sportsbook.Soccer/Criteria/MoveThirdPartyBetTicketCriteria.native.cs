@@ -25,6 +25,8 @@ public class MoveThirdPartyBetTicketCriteria : NonQueryCommand
 
     public string ErrMsg { get; set; }
 
+    public string BroadcastSessionId { get; } = Guid.NewGuid().ToString();
+
     [SpParam(Ignored = true)]
     public string SpName { get; set; }
 

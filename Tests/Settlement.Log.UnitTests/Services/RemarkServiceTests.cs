@@ -66,4 +66,35 @@ public class RemarkServiceTests
         const string expectedRemark = eventCounterLog + bettypeLogs;
         Assert.Equal(expectedRemark, remarkValue);
     }
+
+    [Fact]
+    public void RemarkValueOldStyle_FromValueNotContainsBrokenBar_ReturnsEmpty()
+    {
+        // Arrange
+        var value = string.Empty;
+
+        // Act
+        var remarkValue = service.RemarkValue(value);
+
+        // Assert
+        Assert.Empty(remarkValue);
+    }
+
+    [Fact]
+    public void RemarkValueOldStyle_FromValueContainsBrokenBar_ReturnsFromRemarkNodeServiceWithSecondElementAndFirstElement()
+    {
+        // Arrange
+        const string first = "First";
+        const string second = "Second";
+        const string remarkByNode = "Remark By Node";
+        const string value = $"{first}|{second}|";
+        remarkNodeService.BetTypes(second, string.Empty).Returns(remarkByNode);
+
+        // Act
+        var remarkValue = service.RemarkValue(value);
+
+        // Assert
+        const string expectedRemark = remarkByNode + first;
+        Assert.Equal(expectedRemark, remarkValue);
+    }
 }

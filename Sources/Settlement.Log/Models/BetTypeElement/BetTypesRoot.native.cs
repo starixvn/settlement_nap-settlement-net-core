@@ -8,3 +8,10 @@ public class BetTypesRoot
     [XmlElement("bettype")]
     public BetTypeElement[] BetTypes { get; set; }
 }
+
+[XmlRoot("BetTypes")]
+public class BetTypesRootOldStyle
+{
+    [XmlElement("BetType")]
+    public BetTypeElement[] BetTypes { get; set; }
+}

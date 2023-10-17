@@ -26,6 +26,8 @@ public class CalculationCriteria : NonQueryCommand
     [SpParam(Ignored = true)]
     public string DbServer { get; set; }
 
+    public string BroadcastSessionId { get; } = Guid.NewGuid().ToString();
+
     public override string GetSettingKey()
     {
         return $"NAP_Admin_Settlement_BetBuilder_Push_{DbServer}";

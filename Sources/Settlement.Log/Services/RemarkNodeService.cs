@@ -1,4 +1,6 @@
-﻿using Settlement.Log.Models.BetTypeElement;
+﻿using Settlement.Core.Constants;
+using Settlement.Log.Models.BetTypeElement;
+using Settlement.Log.Models.EventCounterElement;
 using System.Text;
 using ItemElement = Settlement.Log.Models.EventCounterElement.ItemElement;
 
@@ -9,6 +11,10 @@ public interface RemarkNodeService
     string EventCounterLogs(IEnumerable<ItemElement> items);
 
     string BetTypeLogs(IEnumerable<BetTypeElement> betTypes);
+
+    string BetTypes(string content, string goalValue);
+
+    string EventCounter(string content);
 }
 
 public class RemarkNodeServiceImp : RemarkNodeService
@@ -19,9 +25,12 @@ public class RemarkNodeServiceImp : RemarkNodeService
 
     private readonly PositionService positionService;
 
-    public RemarkNodeServiceImp(PositionService positionService)
+    private readonly XmlConvertService xmlConvertService;
+
+    public RemarkNodeServiceImp(PositionService positionService, XmlConvertService xmlConvertService)
     {
         this.positionService = positionService;
+        this.xmlConvertService = xmlConvertService;
     }
 
     public string EventCounterLogs(IEnumerable<ItemElement> items)
@@ -40,6 +49,40 @@ public class RemarkNodeServiceImp : RemarkNodeService
             var positionAndResult = positionService.PositionName(betTypeId, betType.Item.FirstOrDefault());
 
             remark.Append($"ResourceId: {betTypeId} | Result: {positionAndResult}<br/>");
+        }
+
+        return remark.ToString();
+    }
+
+    public string EventCounter(string content)
+    {
+        if (string.IsNullOrEmpty(content))
+        {
+            return string.Empty;
+        }
+
+        var eventCountersRoot = xmlConvertService.Deserialize<EventCountersRootOldStyle>(content) ?? new EventCountersRootOldStyle();
+        var eventCounterLog = (from item in eventCountersRoot.Items let resultLog = ParseEventCounterResult(item.Result) select $"{item.Position}:{resultLog}").ToList();
+
+        return $"Event Counter: {string.Join("; ", eventCounterLog)}<br/>";
+    }
+
+    public string BetTypes(string content, string goalValue)
+    {
+        var betTypes = xmlConvertService.Deserialize<BetTypesRootOldStyle>(content);
+        var remark = new StringBuilder();
+        if (betTypes.BetTypes is null)
+        {
+            return remark.ToString();
+        }
+        foreach (var betType in betTypes.BetTypes)
+        {
+            var betTypeId = Convert.ToInt32(betType.Id);
+            var positionAndResult = positionService.PositionName(betTypeId, betType.Item.FirstOrDefault());
+
+            remark.Append(betTypeId == BetType.FastMarketBetType.TimeMachineOverUnder && !string.IsNullOrWhiteSpace(goalValue)
+                ? $"ResourceId: {betTypeId} | Result: {positionAndResult}, ({goalValue})<br/>"
+                : $"ResourceId: {betTypeId} | Result: {positionAndResult}<br/>");
         }
 
         return remark.ToString();

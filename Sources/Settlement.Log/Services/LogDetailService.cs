@@ -92,7 +92,7 @@ public class LogDetailServiceImp : LogDetailService
             {
                 var distinctLogs = mergeLogService.DistinctLogsString(log.DistinctLogs);
                 var rootLogs = mergeLogService.MergeLog(log.RootLogs);
-                var fastMarketLogs = GetFastMarketLogsString(actionId, log);
+                var fastMarketLogs = GetFastMarketLogsString(actionId, remark, log);
 
                 var nonEmptyRemarks = new List<string>
                 {
@@ -104,11 +104,11 @@ public class LogDetailServiceImp : LogDetailService
                 return string.Join("; ", nonEmptyRemarks);
             }
 
-            return remark;
+            return GetFastMarketLogsString(actionId, remark, null, false);
         }
         catch
         {
-            return remark;
+            return GetFastMarketLogsString(actionId, remark, null, false);
         }
     }
 
@@ -117,15 +117,20 @@ public class LogDetailServiceImp : LogDetailService
         return log.BetTypeRoot.Any() || log.EventCounterRoot.Any() || log.DistinctLogs.Any() || log.RootLogs.Any();
     }
 
-    private string GetFastMarketLogsString(int actionId, LogRoot log)
+    private string GetFastMarketLogsString(int actionId, string remark, LogRoot log, bool newLogStyle = true)
     {
-        if (remarkService.IsFastMarketAction(actionId))
+        if (!remarkService.IsFastMarketAction(actionId))
         {
-            var betTypes = (log.BetTypeRoot.FirstOrDefault() ?? new BetTypesRoot()).BetTypes;
-            var eventCounters = (log.EventCounterRoot.FirstOrDefault() ?? new EventCountersRoot()).Items;
-            return remarkService.RemarkValue(betTypes, eventCounters);
+            return newLogStyle ? string.Empty : remark;
         }
 
-        return string.Empty;
+        if (!newLogStyle)
+        {
+            return remarkService.RemarkValue(remark);
+        }
+
+        var betTypes = (log.BetTypeRoot.FirstOrDefault() ?? new BetTypesRoot()).BetTypes;
+        var eventCounters = (log.EventCounterRoot.FirstOrDefault() ?? new EventCountersRoot()).Items;
+        return remarkService.RemarkValue(betTypes, eventCounters);
     }
 }
