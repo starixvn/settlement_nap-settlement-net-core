@@ -44,8 +44,8 @@ public class FilterServiceImp : FilterService
         return new FilterViewModel
         {
             MoveBetsDay = balanceUpService.GetBalanceUpDay().MoveBetsDay.AddDays(1),
-            FromDate = Convert.ToDateTime(DateTime.Now.AddDays(-1).ToShortDateString()),
-            ToDate = DateTime.Today
+            FromDate = DateTimeOffset.Now.AddDays(-1),
+            ToDate = DateTimeOffset.Now.Date
         };
     }
 

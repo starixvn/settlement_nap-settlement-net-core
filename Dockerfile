@@ -17,17 +17,16 @@ COPY ./Sources/Settlement.Outright/*.csproj ./Sources/Settlement.Outright/
 COPY ./WebSite/Settlement.WebSites.csproj  ./WebSite/
 
 RUN dotnet nuget add source https://nuget.nexdev.net/api/v2
-RUN --mount=type=cache,target=/root/.nuget/packages \
-  dotnet restore -r linux-x64 WebSite/Settlement.WebSites.csproj 
+RUN --mount=type=cache,target=/root/.nuget/packages \ 
+	dotnet restore -r linux-x64 WebSite/Settlement.WebSites.csproj 
 
 COPY ./.sonarlint/. ./.sonarlint
 COPY ./Sources/. ./Sources
 COPY ./WebSite/. ./WebSite
 
-
 RUN ls /src -l
 WORKDIR /src/WebSite
-RUN --mount=type=cache,target=/root/.nuget/packages \ 
+RUN --mount=type=cache,target=/root/.nuget/packages \
 	dotnet publish -r linux-x64 --self-contained false -c Release -o /app
 
 FROM hub.nexdev.net/base/dotnet/core/aspnet:7.0-alpine AS base

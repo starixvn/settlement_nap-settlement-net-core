@@ -40,8 +40,7 @@ public class LogServiceImp : LogService
     {
         var criteria = mapper.Map<LogRequest, GetLogCriteria>(request);
         criteria.FromDate = request.ProductType == ResettleType ? null : request.FromDate;
-        criteria.ToDate = request.ProductType == ResettleType ? DateTime.Today : request.ToDate;
-
+        criteria.ToDate = request.ProductType == ResettleType ? DateTimeOffset.Now.Date : request.ToDate;
         return await repository.FetchAsync<LogModel>(criteria);
     }
 
@@ -49,7 +48,7 @@ public class LogServiceImp : LogService
     {
         var criteria = mapper.Map<LogRequest, GetArchivedLogCriteria>(request);
         criteria.FromDate = request.ProductType == ResettleType ? null : request.FromDate;
-        criteria.ToDate = request.ProductType == ResettleType ? DateTime.Today : request.ToDate;
+        criteria.ToDate = request.ProductType == ResettleType ? DateTimeOffset.Now.Date : request.ToDate;
 
         return await repository.FetchAsync<LogModel>(criteria);
     }

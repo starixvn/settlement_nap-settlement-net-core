@@ -122,7 +122,7 @@ public class VoidBetApiServiceImp : IVoidBetApiService
             mailModel.RefDataService = refDataService;
             mailModel.Message = await response.Content.ReadAsStringAsync();
             mailModel.Action = $"CO-{mailModel.Action}-JackTime";
-            mailModel.StartTime = DateTime.Now;
+            mailModel.StartTime = DateTimeOffset.Now.DateTime;
             mailModel.VoidBetInfos = model.VoidBetInfos;
             sendMailService.SendMail(mailModel);
         }

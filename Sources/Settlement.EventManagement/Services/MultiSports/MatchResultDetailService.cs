@@ -1,6 +1,5 @@
 ﻿namespace Settlement.EventManagement.Services.MultiSports;
 
-using Services;
 using Settlement.Core.Models;
 using Match = Models.MultiSports.Match;
 
