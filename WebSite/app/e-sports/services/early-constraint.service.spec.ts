@@ -78,7 +78,7 @@ describe('EarlyConstraintService', () => {
 
     describe('getBetTypeGroup', () => {
         it('should return HomeAway group', () => {
-            const result = service.getBetTypeGroup('9063');
+            const result = service.getBetTypeGroup('9067');
 
             expect(result).toBe(1);
         });
