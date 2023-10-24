@@ -9,4 +9,9 @@ export const ResourcesIds = {
     setThree: '0103'
 };
 
+export const RefResultStatus = {
+    NoReference: 1,
+    ValuesInsconsistency: 2
+}
+
 export const Resources = [ResourcesIds.setOne,ResourcesIds.setTwo,ResourcesIds.setThree,ResourcesIds.totalPoints,ResourcesIds.totalSets]

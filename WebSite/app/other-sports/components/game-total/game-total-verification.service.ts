@@ -153,7 +153,8 @@ export class GameTotalVerificationService {
     }
 
     public isInsufficient(matchDetail: MatchDetail,originalResultDetails: ResultDetail[],externalResults: ExternalResultDetail[]) {
-        return !this.hasTraderConfirmed(matchDetail,originalResultDetails);// || !this.hasProvider(externalResults);
+        const originalTotalSetResultDetail = originalResultDetails.find(r => r.resourceId === ResourcesIds.totalSets);
+        return  matchDetail.confirmFT < 1 || this.isEmptyHomeOrAwayValue(originalTotalSetResultDetail)
     }
 
     public hasTraderConfirmed(matchDetail: MatchDetail,originalResultDetails: ResultDetail[]) {
@@ -167,7 +168,10 @@ export class GameTotalVerificationService {
 
 
     public isConsidentScore(originalResultDetails: ResultDetail[],externalResults: ExternalResultDetail[],resultDetails: ResultDetail[]) {
-        return this.isConsidentScoreTraderConfirm(originalResultDetails,resultDetails) || this.isConsidentScoreProvider(resultDetails,externalResults);
+        if(this.hasProvider(externalResults)) {
+            return this.isConsidentScoreTraderConfirm(originalResultDetails,resultDetails) || this.isConsidentScoreProvider(resultDetails,externalResults);
+        }
+        return this.isConsidentScoreTraderConfirm(originalResultDetails,resultDetails);
     }
    
     public isConsidentScoreTraderConfirm(originalResultDetails: ResultDetail[], resultDetails: ResultDetail[]) {

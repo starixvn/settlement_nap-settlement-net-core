@@ -6,7 +6,7 @@ import { AioService, MessageBoxService } from '../../../shared/services';
 import * as _ from 'lodash';
 import { ExternalResult, ExternalResultDetail, HedgeMatchDetail, MatchDetail, Permission, ResultDetail, SportTemplate } from '../../../shared/models/sportsbook-sop';
 import { CalculateAction, MatchStatus, ResultStatusId, ScoreSourceType, SettlementStatusId, SportType } from '../../../shared/constants';
-import { ApiKeys, KickOffTime, Resources, ResourcesIds } from '../../constants';
+import { ApiKeys, KickOffTime, RefResultStatus, Resources, ResourcesIds } from '../../constants';
 import { GameTotalService } from './game-total.service';
 import { GameTotalVerificationService } from './game-total-verification.service';
 import { Language } from '../../../shared/language.native';
@@ -229,7 +229,7 @@ export class GameTotalCalculationComponent implements SportTemplate {
       } else {
         this.confirmDialogMessage.message = Language.otherSports.confirmCalculateInconsistent;
         this.messageBoxService.confirm(this.confirmDialogMessage, () => {
-          this.refResultStatus = isSourceInsufficient ? 1 : 2;
+          this.refResultStatus = isSourceInsufficient ? RefResultStatus.NoReference : RefResultStatus.ValuesInsconsistency; // dcm
           this.confirmChangedResult();
         });
       }
