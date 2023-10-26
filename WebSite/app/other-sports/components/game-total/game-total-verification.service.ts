@@ -110,8 +110,6 @@ export class GameTotalVerificationService {
             const hasProvider = this.hasProvider(externalResults);
 
             if(hasProvider) {
-                console.log('hasProvider')
-                // check trader
                 if(hasTrader) {
                     _.forEach(resultDetails, result => {
                         const providerResult = externalResults.find(x => x.resourceId === result.resourceId);
@@ -125,12 +123,9 @@ export class GameTotalVerificationService {
                 if(resultDetails.some(x => x.isScoreMismatched)) {
                     return;
                 }
-
-                // check input
                 this.compareInputScoreWithProviderScores(resultDetails, externalResults);
                 return;
             }
-            // 
             this.compareInputScoreTraderScores(originalResultDetails, resultDetails);
     }
 
@@ -139,7 +134,7 @@ export class GameTotalVerificationService {
             const providerResult = externalResults.find(x => x.resourceId === result.resourceId);
 
             result.isScoreMismatched = providerResult  && !this.isEmptyHomeOrAwayValue(result) 
-                && (!_.isEqual(providerResult.homeValue, result.homeValue) || !_.isEqual(providerResult.awayValue, result.awayValue))
+                && (!_.isEqual(providerResult.homeValue, result.homeValue) || !_.isEqual(providerResult.awayValue, result.awayValue)) && !this.acceptCaseZero(providerResult,result);
         });
     }
 
@@ -152,7 +147,7 @@ export class GameTotalVerificationService {
         })
     }
 
-    private acceptCaseZero(orinalResult: ResultDetail, result: ResultDetail) {
+    private acceptCaseZero(orinalResult: GeneralResultDetail, result: ResultDetail) {
        return (result.awayValue === "0" && result.homeValue === "0" && _.isEmpty(orinalResult.homeValue) && _.isEmpty(orinalResult.awayValue));
     }
 
@@ -193,24 +188,27 @@ export class GameTotalVerificationService {
 
     public isConsidentScore(originalResultDetails: ResultDetail[],externalResults: ExternalResultDetail[],resultDetails: ResultDetail[]) {
         if(this.hasProvider(externalResults)) {
-            return this.isConsidentScoreTraderConfirm(originalResultDetails,resultDetails) || this.isConsidentScoreProvider(resultDetails,externalResults);
+            return this.isConsidentScoreProvider(resultDetails,externalResults)
+      || this.isConsidentScoreTraderConfirm(originalResultDetails,resultDetails);
         }
         return this.isConsidentScoreTraderConfirm(originalResultDetails,resultDetails);
     }
    
     public isConsidentScoreTraderConfirm(originalResultDetails: ResultDetail[], resultDetails: ResultDetail[]) {
         return resultDetails.some(result => {
-            const originalResult = originalResultDetails?.find(x => x.resourceId === result.resourceId && !this.isEmptyHomeOrAwayValue(x));
-            return originalResult && (!_.isEqual(result.homeValue, originalResult.homeValue)
-                || !_.isEqual(result.awayValue, originalResult.awayValue));
+            const originalResult = originalResultDetails?.find(x => x.resourceId === result.resourceId);
+            return originalResult && (!_.isEqual(result.homeValue ?? "", originalResult.homeValue ?? "")
+                || !_.isEqual(result.awayValue ?? "", originalResult.awayValue ?? ""))
+                && !this.acceptCaseZero(originalResult,result);
         })
     }
 
     public isConsidentScoreProvider(resultDetails: ResultDetail[], externalResults: ExternalResultDetail[]) {
         return resultDetails.some(result => {
-            const providerResult = externalResults?.find(x => x.resourceId === result.resourceId && !this.isEmptyHomeOrAwayValue(x));
-            return providerResult && (!_.isEqual(providerResult.homeValue, result.homeValue) 
-                || !_.isEqual(providerResult.awayValue, result.awayValue));
+            const providerResult = externalResults?.find(x => x.resourceId === result.resourceId);
+            return providerResult && (!_.isEqual(providerResult.homeValue ?? "", result.homeValue ?? "") 
+                || !_.isEqual(providerResult.awayValue ?? "", result.awayValue ?? ""))
+                && !this.acceptCaseZero(providerResult,result);
         })
     }
 }
