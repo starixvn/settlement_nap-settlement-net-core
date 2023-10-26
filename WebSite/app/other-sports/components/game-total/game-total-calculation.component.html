@@ -189,14 +189,14 @@
       <tr>
         <td class="score" *ngFor="let game of providerResultDetails; let i= index; let last=last;"
           [ngClass]="[getConfirmedBackground(game, last)]">
-          <span [ngClass]="{'final-score' : last}"> {{game.homeValue}} </span>
+          <span [ngClass]="{'final-score' : last}"> {{game.homeValue  | result}} </span>
         </td>
         
       </tr>
       <tr>
         <td class="score" *ngFor="let game of providerResultDetails; let i= index; let last=last;"
           [ngClass]="[getConfirmedBackground(game, last)]">
-          <span [ngClass]="{'final-score' : last}">{{game.awayValue}}</span>
+          <span [ngClass]="{'final-score' : last}">{{game.awayValue | result}}</span>
         </td>
       </tr>
     </tbody>

@@ -9,6 +9,7 @@ import { IntervalBackgroundPipe } from "../../../shared/pipes/interval-backgroun
 import { MatchAio } from "../../models";
 import { ResourceIds, ResultStatusId } from "../../../shared/constants";
 import { ChildMatch } from "../../models/child-match.model";
+import { iif } from "rxjs";
 
 @Injectable()
 export class GameTotalVerificationService {
@@ -105,31 +106,54 @@ export class GameTotalVerificationService {
 
     public isScoreMismatched(resultDetails: ResultDetail[], externalResults: ExternalResultDetail[],
         originalResultDetails: ResultDetail[], matchDetail: MatchDetail) {
+            const hasTrader = this.hasTraderConfirmed(matchDetail,originalResultDetails);
+            const hasProvider = this.hasProvider(externalResults);
 
-        if (this.hasTraderConfirmed(matchDetail,originalResultDetails)) {
+            if(hasProvider) {
+                console.log('hasProvider')
+                // check trader
+                if(hasTrader) {
+                    _.forEach(resultDetails, result => {
+                        const providerResult = externalResults.find(x => x.resourceId === result.resourceId);
+                        const originalResult = originalResultDetails.find(x => x.resourceId === result.resourceId)
+         
+                        result.isScoreMismatched = providerResult && originalResult && (!_.isEqual(providerResult.homeValue ?? "", originalResult.homeValue ?? "")
+                        || !_.isEqual(providerResult.awayValue ?? "", originalResult.awayValue ?? ""))
+                    });
+                }
+
+                if(resultDetails.some(x => x.isScoreMismatched)) {
+                    return;
+                }
+
+                // check input
+                this.compareInputScoreWithProviderScores(resultDetails, externalResults);
+                return;
+            }
+            // 
             this.compareInputScoreTraderScores(originalResultDetails, resultDetails);
-        }
-
-        if (this.hasProvider(externalResults)) {
-            this.compareInputScoreWithProviderScores(resultDetails, externalResults)
-        }
     }
 
     private compareInputScoreWithProviderScores(resultDetails: ResultDetail[], externalResults: ExternalResultDetail[]) {
         _.forEach(resultDetails, result => {
-            const providerResult = externalResults.find(x => x.resourceId === result.resourceId && !this.isEmptyHomeOrAwayValue(x));
+            const providerResult = externalResults.find(x => x.resourceId === result.resourceId);
 
             result.isScoreMismatched = providerResult  && !this.isEmptyHomeOrAwayValue(result) 
                 && (!_.isEqual(providerResult.homeValue, result.homeValue) || !_.isEqual(providerResult.awayValue, result.awayValue))
         });
     }
 
-    private compareInputScoreTraderScores(originalTotalSetResultDetails: ResultDetail[], resultDetails: ResultDetail[]) {
+    private compareInputScoreTraderScores(originalResultDetails: ResultDetail[], resultDetails: ResultDetail[]) {
         _.forEach(resultDetails, result => {
-                const originalResult = originalTotalSetResultDetails.find(x => x.resourceId === result.resourceId && !this.isEmptyHomeOrAwayValue(x))
+                const originalResult = originalResultDetails.find(x => x.resourceId === result.resourceId)
                 result.isScoreMismatched = originalResult && !this.isEmptyHomeOrAwayValue(result) && (!_.isEqual(result.homeValue, originalResult.homeValue)
-                    || !_.isEqual(result.awayValue, originalResult.awayValue));
+                    || !_.isEqual(result.awayValue, originalResult.awayValue)) 
+                    && !this.acceptCaseZero(originalResult,result);
         })
+    }
+
+    private acceptCaseZero(orinalResult: ResultDetail, result: ResultDetail) {
+       return (result.awayValue === "0" && result.homeValue === "0" && _.isEmpty(orinalResult.homeValue) && _.isEmpty(orinalResult.awayValue));
     }
 
     public isScoreConfirmed(matchDetail: MatchDetail, resultDetail: ResultDetail) {

@@ -27,7 +27,7 @@ export class GameTotalCalculationComponent implements SportTemplate {
   public match: MatchAio;
   public matchDetail: MatchDetail;
   public resultDetails: ResultDetail[];
-  public providerResultDetails: ExternalResultDetail[];
+  public providerResultDetails: ExternalResultDetail[] = [];
   public permission: Permission;
   public isReSettledTickets: boolean;
   public scoreClass: string;
@@ -82,18 +82,17 @@ export class GameTotalCalculationComponent implements SportTemplate {
     
     this.getExternalSource();
     this.checkConsistent();
-
-    if(this.resultDetails.some(result => !this.verificationService.isEmptyHomeOrAwayValue(result))) {
-      this.verificationService.isScoreMismatched(this.resultDetails, this.providerResultDetails, this.resultDetailsOriginal, this.matchDetail);
-    }
+    this.verificationService.isScoreMismatched(this.resultDetails, this.providerResultDetails, this.resultDetailsOriginal, this.matchDetail);
 
   }
 
   private getExternalSource() {
     const sopExternalResult = this.match.externalResults.find(result => result.sourceId < ScoreSourceType.screenshot 
       && ![ScoreSourceType.trader,ScoreSourceType.screenshot,ScoreSourceType.newScore].includes(result.sourceId));
+
+    const existsValidExternal = sopExternalResult && sopExternalResult.resultDetails.some(x => !this.verificationService.isEmptyHomeOrAwayValue(x));
     
-    if(sopExternalResult) {
+    if(existsValidExternal) {
        this.externalSourceName = sopExternalResult.sourceName;
        this.providerResultDetails = this.createFullyExternal(sopExternalResult);
        return;
@@ -113,11 +112,18 @@ export class GameTotalCalculationComponent implements SportTemplate {
   }
 
   private sumExternalTotalPoint(externalResult: ExternalResult) {
-    const resultDetailSets = externalResult.resultDetails.filter(p => p.resourceId !== ResourcesIds.totalSets);
-    const homeValue = _.sumBy(resultDetailSets, r =>  Number(r.homeValue));
-    const awayValue = _.sumBy(resultDetailSets, r => Number(r.awayValue));
+    const resultDetailSets = externalResult.resultDetails.filter(p => p.resourceId !== ResourcesIds.totalSets 
+      && !this.verificationService.isEmptyHomeOrAwayValue(p));
+   
+      if(resultDetailSets?.length) {
+      const homeValue = _.sumBy(resultDetailSets, r =>  Number(r.homeValue));
+      const awayValue = _.sumBy(resultDetailSets, r => Number(r.awayValue));
+  
+      return new ExternalResultDetail(externalResult.sourceId,ResourcesIds.totalPoints,"",null,homeValue.toString(),awayValue.toString());
+    }
 
-    return new ExternalResultDetail(externalResult.sourceId,ResourcesIds.totalPoints,"",null,homeValue.toString(),awayValue.toString());
+    return new ExternalResultDetail(externalResult.sourceId,ResourcesIds.totalPoints,"");
+   
   }
 
   private get isCompletedOrConfirmScore() {
@@ -341,17 +347,28 @@ export class GameTotalCalculationComponent implements SportTemplate {
 
   public changeInputDirectly() {
     this.match.isClickOnCalculate = false;
-    this.resultDetails.forEach((map) => {
-      const originalResult = _.find(this.resultDetailsOriginal, (item) => _.isEqual(item.resourceId, map.resourceId));
-      if (map.resourceId !== ResourcesIds.totalSets) {
-        map.homeValue = this.match.isScoreDirect ? "" : originalResult.homeValue;
-        map.awayValue = this.match.isScoreDirect ? "" : originalResult.awayValue;
-      } else {
-        map.homeValue = originalResult.homeValue;
-        map.awayValue = originalResult.awayValue;
-      }
-    });
+   
+    if(this.permission.isLeader) {
+      this.resultDetails.forEach((map) => {
+        const originalResult = _.find(this.resultDetailsOriginal, (item) => _.isEqual(item.resourceId, map.resourceId));
+        if (map.resourceId !== ResourcesIds.totalSets) {
+          map.homeValue = this.match.isScoreDirect ? "" : originalResult.homeValue;
+          map.awayValue = this.match.isScoreDirect ? "" : originalResult.awayValue;
+        } else {
+          map.homeValue = originalResult.homeValue;
+          map.awayValue = originalResult.awayValue;
+        }
+      });
+    } else {
+
+      this.resultDetails.forEach((map) => {
+        map.homeValue =  "" ;
+        map.awayValue =  "" ;
+      });
+    }
+    
     this.checkConsistent();
+    this.verificationService.isScoreMismatched(this.resultDetails, this.providerResultDetails, this.resultDetailsOriginal, this.matchDetail);
     this.verificationService.getClassWithScore([this.totalSet], this.match);
   }
 
@@ -394,8 +411,10 @@ export class GameTotalCalculationComponent implements SportTemplate {
   }
 
   private checkConsistentTotalSet() {
-    const childMatchRelated = _.find(this.match.childMatches, item => item.relatedResourceId === ResourcesIds.totalSets);
+    if(this.match.childMatches?.length) {
+      const childMatchRelated = _.find(this.match.childMatches, item => item.relatedResourceId === ResourcesIds.totalSets);
     childMatchRelated.isNotConsistent = this.verificationService.isNotConsistent(this.resultDetails, childMatchRelated);
+    }
   }
 
   public collapseChildMatch() {
