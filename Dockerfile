@@ -11,8 +11,7 @@ FROM hub.nexdev.net/base/dotnet/core/sdk:7.0-alpine AS builder
 WORKDIR /src
 COPY --from=prepare-restore-files /src/restore_subset .
 RUN dotnet nuget add source https://nuget.nexdev.net/api/v2
-RUN --mount=type=cache,target=/root/.nuget/packages \
-	dotnet restore -r linux-x64 WebSite/Settlement.WebSites.csproj 
+RUN dotnet restore -r linux-x64 WebSite/Settlement.WebSites.csproj 
 
 COPY ./Sources/Settlement.Sportsbook.Aio/*.csproj ./Sources/Settlement.Sportsbook.Aio/
 COPY ./Sources/Settlement.Sportsbook.MoveTickets/*.csproj ./Sources/Settlement.Sportsbook.MoveTickets/
@@ -34,8 +33,7 @@ COPY ./WebSite/. ./WebSite
 
 RUN ls /src -l
 WORKDIR /src/WebSite
-RUN --mount=type=cache,target=/root/.nuget/packages \ 
-	dotnet publish -r linux-x64 --self-contained false -c Release -o /app --no-restore
+RUN dotnet publish -r linux-x64 --self-contained false -c Release -o /app --no-restore
 
 FROM hub.nexdev.net/base/dotnet/core/aspnet:7.0-alpine AS base
 

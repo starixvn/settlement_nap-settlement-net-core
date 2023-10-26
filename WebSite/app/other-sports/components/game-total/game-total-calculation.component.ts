@@ -90,9 +90,9 @@ export class GameTotalCalculationComponent implements SportTemplate {
     const sopExternalResult = this.match.externalResults.find(result => result.sourceId < ScoreSourceType.screenshot 
       && ![ScoreSourceType.trader,ScoreSourceType.screenshot,ScoreSourceType.newScore].includes(result.sourceId));
 
-    const existsValidExternal = sopExternalResult && sopExternalResult.resultDetails.some(x => !this.verificationService.isEmptyHomeOrAwayValue(x));
+    // const existsValidExternal = sopExternalResult && sopExternalResult.resultDetails.some(x => !this.verificationService.isEmptyHomeOrAwayValue(x));
     
-    if(existsValidExternal) {
+    if(sopExternalResult) {
        this.externalSourceName = sopExternalResult.sourceName;
        this.providerResultDetails = this.createFullyExternal(sopExternalResult);
        return;
@@ -235,7 +235,7 @@ export class GameTotalCalculationComponent implements SportTemplate {
       } else {
         this.confirmDialogMessage.message = Language.otherSports.confirmCalculateInconsistent;
         this.messageBoxService.confirm(this.confirmDialogMessage, () => {
-          this.refResultStatus = isSourceInsufficient ? RefResultStatus.NoReference : RefResultStatus.ValuesInsconsistency; // dcm
+          this.refResultStatus = isSourceInsufficient ? RefResultStatus.NoReference : RefResultStatus.ValuesInsconsistency;
           this.confirmChangedResult();
         });
       }

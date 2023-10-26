@@ -182,7 +182,8 @@ export class GameTotalVerificationService {
     }
 
     public hasProvider(externalResults: ExternalResultDetail[]) {
-        return externalResults?.length && _.some(externalResults, x => !this.isEmptyHomeOrAwayValue(x));
+        return externalResults?.length;
+        // && _.some(externalResults, x => !this.isEmptyHomeOrAwayValue(x));
     }
 
 
