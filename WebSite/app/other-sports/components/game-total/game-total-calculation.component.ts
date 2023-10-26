@@ -107,7 +107,7 @@ export class GameTotalCalculationComponent implements SportTemplate {
         return this.sumExternalTotalPoint(externalResult);
       }
 
-      return external ? external : new ExternalResultDetail(externalResult.sourceId,resourceId,externalResult.sourceName);
+      return  external ?? new ExternalResultDetail(externalResult.sourceId,resourceId,externalResult.sourceName);
     })
   }
 
@@ -227,7 +227,7 @@ export class GameTotalCalculationComponent implements SportTemplate {
 
   private confirmScoreSource() {
     const isSourceInsufficient = this.verificationService.isInsufficient(this.matchDetail,this.resultDetailsOriginal, this.providerResultDetails);
-    const isInconsistent = this.verificationService.isConsidentScore(this.resultDetailsOriginal,this.providerResultDetails,this.resultDetails,this.matchDetail);
+    const isInconsistent = this.verificationService.isConsistentScore(this.resultDetailsOriginal,this.providerResultDetails,this.resultDetails,this.matchDetail);
     
     if (isSourceInsufficient || isInconsistent) {
       if (!this.permission.isLeader) {
