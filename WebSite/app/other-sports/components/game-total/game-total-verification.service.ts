@@ -112,6 +112,7 @@ export class GameTotalVerificationService {
             if(hasProvider) {
                 console.log('hasProvider')
                 if(hasTrader) {
+                    console.log('hasProviderhasTrader')
                     _.forEach(resultDetails, result => {
                         const providerResult = externalResults.find(x => x.resourceId === result.resourceId);
                         const originalResult = originalResultDetails.find(x => x.resourceId === result.resourceId)
@@ -119,11 +120,12 @@ export class GameTotalVerificationService {
                         result.isScoreMismatched = providerResult && originalResult && (!_.isEqual(providerResult.homeValue ?? "", originalResult.homeValue ?? "")
                         || !_.isEqual(providerResult.awayValue ?? "", originalResult.awayValue ?? ""))
                     });
+                    
+                    if(resultDetails.some(x => x.isScoreMismatched)) {
+                        return;
+                    }
                 }
 
-                if(resultDetails.some(x => x.isScoreMismatched)) {
-                    return;
-                }
                 this.compareInputScoreWithProviderScores(resultDetails, externalResults);
                 return;
             }
@@ -141,6 +143,8 @@ export class GameTotalVerificationService {
             result.isScoreMismatched = providerResult  && !this.isEmptyHomeOrAwayValue(result) 
                 && (!_.isEqual(providerResult.homeValue, result.homeValue) || !_.isEqual(providerResult.awayValue, result.awayValue)) && !this.acceptCaseZero(providerResult,result);
         });
+        console.log(resultDetails)
+        console.log('externalResults',externalResults)
     }
 
     private compareInputScoreTraderScores(originalResultDetails: ResultDetail[], resultDetails: ResultDetail[]) {
