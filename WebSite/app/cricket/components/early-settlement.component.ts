@@ -67,8 +67,8 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     this.resetResult(this.match.resultDetails);
     this.resultDetails = this.match.resultDetails;
     this.earlyConstraintService.generateMultipleResultSelect(this.resultDetails);
-    this.autoFillResultOnLoad(this.match.resultDetails);
     this.groupMap = this.earlyConstraintService.getGroupMap(this.match.resultDetails, this.match.matchDetail);
+    this.autoFillResultOnLoad(this.match.resultDetails);    
     this.match.originalResultDetail = _.cloneDeep(this.match.resultDetails);
     this.hideTicketWaiting(this.groupMap);
     this.renderFilterSelect();
