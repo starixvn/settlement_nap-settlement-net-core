@@ -1204,8 +1204,9 @@
                   "with": "environments/environment.prod.ts"
                 }
               ],
-              "outputHashing": "all",
-              "baseHref": "/cricket/"
+              "outputHashing": "all",              
+              "baseHref": "/cricket/",
+              "sourceMap": true
             },
             "development": {
               "buildOptimizer": false,
