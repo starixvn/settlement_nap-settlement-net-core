@@ -98,7 +98,7 @@ export class EarlyConstraintService extends EarlyBaseService {
 
     private generateExternalMultipleResultSelect(externalScores: ExternalResultDetail[], inputOptions: InputOption[]) {
         externalScores.forEach((externalScore) => {
-            if (externalScore.sourceId >= 100) {
+            if (externalScore.sourceId >= 100 || externalScore.sourceId == 32) {
                 externalScore.multipleResultSelect = this.createMultipleResultSelect();
                 externalScore.multipleResultSelect.items = this.renderPlayersSelect(inputOptions, externalScore.homeValue);
                 externalScore.multipleResultSelect.maxWidth = '70px';
