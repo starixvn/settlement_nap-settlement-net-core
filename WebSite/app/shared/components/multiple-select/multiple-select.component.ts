@@ -45,7 +45,7 @@ export class NewMultipleSelectComponent implements OnChanges, AfterViewInit {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes.multipleSelect.currentValue) {
+    if (changes.multipleSelect?.currentValue) {
       this.dataChanged = changes.multipleSelect.currentValue;
       this.items = this.dataChanged.items;
       this.itemAfterFilter = _.cloneDeep(this.items);

@@ -5,7 +5,7 @@ import { MatchDetail, ResultDetail, GroupMap, InputOption, ExternalResultDetail 
 import { EarlyBaseService } from '../../core/services/early-base.service';
 import { ResultByPlayerNamePipe, ResultValuePipe } from '../pipes';
 import { Language } from '../../shared/language.native';
-import { MultipleSelect } from '../../shared/models';
+import { ItemsSelect, MultipleSelect } from '../../shared/models';
 @Injectable()
 export class EarlyConstraintService extends EarlyBaseService {
     constructor(
@@ -19,9 +19,9 @@ export class EarlyConstraintService extends EarlyBaseService {
             || item.awayValue === null || _.isEmpty(item.awayValue);
     }
 
-    public getGroupMap(resultDetail: ResultDetail[], matchDetail: MatchDetail) {
+    getGroupMap(resultDetail: ResultDetail[], matchDetail: MatchDetail) {
         resultDetail.forEach(item => item.groupName = item.groupName.replace('Home', matchDetail.homeName)
-        .replace('Away', matchDetail.awayName));
+            .replace('Away', matchDetail.awayName));
         const list = _.uniqBy(resultDetail, (item) => item.groupName);
         const maps: GroupMap[] = [];
 
@@ -30,25 +30,25 @@ export class EarlyConstraintService extends EarlyBaseService {
             maps.push(new GroupMap(item.groupName, newResultDetail));
         });
         maps.forEach(item => {
-             item.isHoldResult = item.resultDetail.every(i => i.resultSettingData.isHoldResult);
-             item.teamName = _.includes(item.groupName, matchDetail.homeName) ? matchDetail.homeName :
-              _.includes(item.groupName, matchDetail.awayName) ? matchDetail.awayName : '';
-            });
+            item.isHoldResult = item.resultDetail.every(i => i.resultSettingData.isHoldResult);
+            item.teamName = _.includes(item.groupName, matchDetail.homeName) ? matchDetail.homeName :
+                _.includes(item.groupName, matchDetail.awayName) ? matchDetail.awayName : '';
+        });
 
         return maps;
     }
 
-    public async verifyBeforeCalculation(selectedResultDetail: ResultDetail[], isLeader: boolean) {
+    async verifyBeforeCalculation(selectedResultDetail: ResultDetail[], isLeader: boolean) {
         const existResultConfirmed = _.find(selectedResultDetail, item => item.resultSettingData.isConfirmedRefund);
         this.verifyResultValue(selectedResultDetail);
         const isInValid = this.isInValidResultValue(selectedResultDetail);
 
-        if(!_.isNil(existResultConfirmed)) {
-          return Language.confirmRefund.calculateResultNotConfirmed;
+        if (!_.isNil(existResultConfirmed)) {
+            return Language.confirmRefund.calculateResultNotConfirmed;
         } else if (isInValid) {
-          return isLeader ? Language.sop.leader.blankResult : Language.sop.nonLeader.blankResult;
+            return isLeader ? Language.sop.leader.blankResult : Language.sop.nonLeader.blankResult;
         } else {
-          return "";
+            return "";
         }
     }
 
@@ -62,17 +62,17 @@ export class EarlyConstraintService extends EarlyBaseService {
         });
     }
 
-    public renderPlayersSelect(inputOptions: InputOption[], value: string) {
+    private static renderPlayersSelect(inputOptions: InputOption[], value: string) {
         const options = [];
         inputOptions.forEach((item) => {
             const checked = value.includes(item.value);
-            options.push({id: item.playerId, value: item.value, text: item.optionName, checked});
+            options.push({ id: item.playerId, value: item.value, text: item.optionName, checked });
         });
 
         return this.createListOption(options);
     }
 
-    public getPlayerResultName(result: ResultDetail) {
+    getPlayerResultName(result: ResultDetail) {
         if (result.inputType === ResultControlGroup.PlayerSelect && _.isEqual(result.homeValue, "N")) {
             return "None";
         }
@@ -80,15 +80,15 @@ export class EarlyConstraintService extends EarlyBaseService {
         return this.resultByPlayerNamePipe.transform(result.homeValue, result.inputOptions);
     }
 
-    public getResultNameByValue(result: ResultDetail) {
+    getResultNameByValue(result: ResultDetail) {
         return this.resultValuePipe.transform(result.homeValue, result.betType);
     }
 
-    public generateMultipleResultSelect(resultDetails: ResultDetail[]) {
+    generateMultipleResultSelect(resultDetails: ResultDetail[]) {
         resultDetails.forEach((result) => {
             if (result.inputOptions && result.inputOptions.length > 0) {
                 result.multipleResultSelect = this.createMultipleResultSelect();
-                result.multipleResultSelect.items = this.renderPlayersSelect(result.inputOptions, result.homeValue);
+                result.multipleResultSelect.items = EarlyConstraintService.renderPlayersSelect(result.inputOptions, result.homeValue);
                 result.multipleResultSelect.maxWidth = '160px';
 
                 this.generateExternalMultipleResultSelect(result.externalScores, result.inputOptions);
@@ -98,9 +98,9 @@ export class EarlyConstraintService extends EarlyBaseService {
 
     private generateExternalMultipleResultSelect(externalScores: ExternalResultDetail[], inputOptions: InputOption[]) {
         externalScores.forEach((externalScore) => {
-            if (externalScore.sourceId >= 100 || externalScore.sourceId == 32) {
+            if (externalScore.sourceId >= 100) {
                 externalScore.multipleResultSelect = this.createMultipleResultSelect();
-                externalScore.multipleResultSelect.items = this.renderPlayersSelect(inputOptions, externalScore.homeValue);
+                externalScore.multipleResultSelect.items = EarlyConstraintService.renderPlayersSelect(inputOptions, externalScore.homeValue);
                 externalScore.multipleResultSelect.maxWidth = '70px';
             }
         });
@@ -113,12 +113,12 @@ export class EarlyConstraintService extends EarlyBaseService {
         return multipleResultSelect;
     }
 
-    public getOtherInfo(resultDetails: ResultDetail[]) {
+    getOtherInfo(resultDetails: ResultDetail[]) {
         resultDetails.forEach(resultDetail => {
             if (resultDetail.inputType === ResultControlGroup.PlayerMultipleSelect) {
-                    const selectedItems = resultDetail.multipleResultSelect.items.filter(item => item.checked);
-                    const otherInfo = selectedItems.length > 0 ? selectedItems.map(item => item.id).join(',') : '';
-                    resultDetail.otherInfo = otherInfo;
+                const selectedItems = resultDetail.multipleResultSelect.items.filter(item => item.checked);
+                const otherInfo = selectedItems.length > 0 ? selectedItems.map(item => item.id).join(',') : '';
+                resultDetail.otherInfo = otherInfo;
             }
 
             if (resultDetail.inputType === ResultControlGroup.PlayerSelect) {
@@ -131,5 +131,38 @@ export class EarlyConstraintService extends EarlyBaseService {
                 resultDetail.otherInfo = resultDetail.inputOptions[0]?.playerId.toString();
             }
         });
+    }
+
+    static autoFillItemSelect(resultDetail: ResultDetail, correctScore: ExternalResultDetail = null) {
+        if (resultDetail.inputType === ResultControlGroup.PlayerMultipleSelect) {
+            if (_.isNil(correctScore)) {
+                resultDetail.multipleResultSelect = _.cloneDeep(resultDetail.multipleResultSelect);
+                resultDetail.multipleResultSelect.items.forEach(item => item.checked = false);
+            } else {
+                resultDetail.multipleResultSelect = _.isNil(correctScore.multipleResultSelect)
+                    ? { ...resultDetail.multipleResultSelect, items: this.renderPlayersSelect(resultDetail.inputOptions, correctScore.homeValue) }
+                    : _.cloneDeep(correctScore.multipleResultSelect);
+                resultDetail.multipleResultSelect.maxWidth = '160px';
+            }
+        }
+    }
+
+    private static createListOption(items) {
+        const tickets = new Array<ItemsSelect>();
+        items.forEach((item) => {
+            const temp = new ItemsSelect(
+                item.id,
+                item.value,
+                item.text,
+                item.checked,
+                true,
+                true,
+                []);
+            if (item.hasPermission ?? true) {
+                tickets.push(temp);
+            }
+        });
+
+        return tickets;
     }
 }
