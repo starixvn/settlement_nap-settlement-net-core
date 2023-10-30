@@ -3,6 +3,7 @@ import { ResourcesIds, ResultControlGroup } from "../constants";
 import * as _ from 'lodash';
 import { ExternalResultDetail, ResultDetail } from "../../shared/models/sportsbook-sop";
 import { ResultStatusId, ScoreSourceType } from "../../shared/constants";
+import { EarlyConstraintService } from "./early-constraint.service";
 
 @Injectable()
 export class VerificationService  {
@@ -69,12 +70,12 @@ export class VerificationService  {
                 if (!map.isScoreMismatched) {
                     map.homeValue = correctScore.homeValue;
                     map.awayValue = coupleScores ? correctScore.awayValue : '';
-                    this.autoFillItemSelect(map, correctScore);
+                    EarlyConstraintService.autoFillItemSelect(map, correctScore);
                 }
             } else {
                 map.homeValue = '';
                 map.awayValue = '';
-                this.autoFillItemSelect(map);
+                EarlyConstraintService.autoFillItemSelect(map);
             }
         }
     }
@@ -122,17 +123,5 @@ export class VerificationService  {
 
     public isDisableUncalculate(resultDetails: ResultDetail[]) {
         return _.every(resultDetails, (result) => !result.checked);
-    }
-
-    public autoFillItemSelect(resultDetail: ResultDetail, correctScore: ExternalResultDetail = null) {
-        if (resultDetail.inputType === ResultControlGroup.PlayerMultipleSelect) {
-            if (_.isNil(correctScore)) {
-                resultDetail.multipleResultSelect = _.cloneDeep(resultDetail.multipleResultSelect);
-                resultDetail.multipleResultSelect.items.forEach(item => item.checked = false);
-            } else {
-                resultDetail.multipleResultSelect = _.cloneDeep(correctScore.multipleResultSelect);
-                resultDetail.multipleResultSelect.maxWidth = '160px';
-            }
-        }
     }
 }

@@ -275,7 +275,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     if (resultDetail.resultStatusId !== ResultStatusId.ManualCompleted && resultDetail.resultStatusId !== ResultStatusId.AutoCompleted) {
       resultDetail.homeValue = '';
       resultDetail.awayValue = '';
-      this.verificationService.autoFillItemSelect(resultDetail);
+      EarlyConstraintService.autoFillItemSelect(resultDetail);
     }
     const isExistedCoupleResult = resultDetail.inputType === ResultControlGroup.CoupleScores;
     const valueIsString = this.valueIsString(resultDetail.inputType);
@@ -329,7 +329,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
       if (resultDetail.resultStatusId !== ResultStatusId.ManualCompleted && resultDetail.resultStatusId !== ResultStatusId.AutoCompleted) {
         resultDetail.homeValue = '';
         resultDetail.awayValue = '';
-        this.verificationService.autoFillItemSelect(resultDetail);
+        EarlyConstraintService.autoFillItemSelect(resultDetail);
       }
       resultDetail.isScoreMismatched = this.verificationService.isMismatchedWarning(resultDetail, isExistedCoupleResult, valueIsString);
       this.verificationService.autoFillScore(resultDetail, isExistedCoupleResult);
