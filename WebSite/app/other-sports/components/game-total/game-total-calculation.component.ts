@@ -229,7 +229,9 @@ export class GameTotalCalculationComponent implements SportTemplate {
     const isSourceInsufficient = this.verificationService.isInsufficient(this.matchDetail,this.resultDetailsOriginal, this.providerResultDetails);
     const isInconsistent = this.verificationService.isConsistentScore(this.resultDetailsOriginal,this.providerResultDetails,this.resultDetails,this.matchDetail);
     
-    if (isSourceInsufficient || isInconsistent) {
+    if(this.validScoreInputDirectly()) {
+      this.confirmChangedResult();
+    } else if (isSourceInsufficient || isInconsistent) {
       if (!this.permission.isLeader) {
         this.toastrService.error(Language.otherSports.warningCalculateInconsistent);
       } else {
@@ -242,6 +244,15 @@ export class GameTotalCalculationComponent implements SportTemplate {
     } else {
       this.confirmChangedResult();
     }
+  }
+
+
+  private validScoreInputDirectly() {
+    if(this.match.isScoreDirect) {
+      return this.verificationService.validFinalScore(this.resultDetailsOriginal,this.providerResultDetails,this.resultDetails,this.matchDetail);
+    }
+
+    return false;
   }
 
   private async confirmChangedResult() {

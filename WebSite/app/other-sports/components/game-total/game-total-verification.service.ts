@@ -217,6 +217,26 @@ export class GameTotalVerificationService {
         return isConsistent;
     }
 
+    public validFinalScore(originalResultDetails: ResultDetail[],externalResults: ExternalResultDetail[],resultDetails: ResultDetail[],matchDetail: MatchDetail) {
+        if(this.hasProvider(externalResults) && this.hasTraderConfirmed(matchDetail,originalResultDetails)) {
+            const finalResultProvider = externalResults.find(x => x.resourceId ===  ResourcesIds.totalSets);
+            const finalResultTrader = originalResultDetails.find(x => x.resourceId ===  ResourcesIds.totalSets);
+            const finalInputScore = resultDetails.find(x => x.resourceId ===  ResourcesIds.totalSets);
+
+            return finalResultProvider 
+                && finalResultTrader 
+                && finalInputScore 
+                && (_.isEqual(finalInputScore.homeValue,finalResultProvider.homeValue))
+                && (_.isEqual(finalInputScore.awayValue,finalResultProvider.awayValue))
+                && (_.isEqual(finalInputScore.homeValue,finalResultTrader.homeValue))
+                && (_.isEqual(finalInputScore.awayValue,finalResultTrader.awayValue))
+                && (_.isEqual(finalResultProvider.homeValue,finalResultTrader.homeValue))
+                && (_.isEqual(finalResultProvider.awayValue,finalResultTrader.awayValue))
+
+        }
+        return false;
+    }
+
     private isConsistentTraderAndProvider(originalResultDetails: ResultDetail[],externalResults: ExternalResultDetail[]){
         return originalResultDetails.some(trader => {
             const suitableProvider = externalResults?.find(x => x.resourceId === trader.resourceId);
