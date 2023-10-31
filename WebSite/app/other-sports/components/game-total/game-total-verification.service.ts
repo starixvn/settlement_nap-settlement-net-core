@@ -210,21 +210,33 @@ export class GameTotalVerificationService {
     }
 
     public validFinalScore(originalResultDetails: ResultDetail[],externalResults: ExternalResultDetail[],resultDetails: ResultDetail[],matchDetail: MatchDetail) {
-        if(this.hasProvider(externalResults) && this.hasTraderConfirmed(matchDetail,originalResultDetails)) {
-            const finalResultProvider = externalResults.find(x => x.resourceId ===  ResourcesIds.totalSets);
-            const finalResultTrader = originalResultDetails.find(x => x.resourceId ===  ResourcesIds.totalSets);
-            const finalInputScore = resultDetails.find(x => x.resourceId ===  ResourcesIds.totalSets);
+        const hasProvider = this.hasProvider(externalResults);
+        const hasTraderConfirmed = this.hasTraderConfirmed(matchDetail,originalResultDetails);
+        const finalResultProvider = externalResults.find(x => x.resourceId ===  ResourcesIds.totalSets);
+        const finalResultTrader = originalResultDetails.find(x => x.resourceId ===  ResourcesIds.totalSets);
+        const finalInputScore = resultDetails.find(x => x.resourceId ===  ResourcesIds.totalSets);
 
+        if(hasProvider  && hasTraderConfirmed) {
             return finalResultProvider 
-                && finalResultTrader 
-                && finalInputScore 
-                && (_.isEqual(finalInputScore.homeValue,finalResultProvider.homeValue))
-                && (_.isEqual(finalInputScore.awayValue,finalResultProvider.awayValue))
-                && (_.isEqual(finalInputScore.homeValue,finalResultTrader.homeValue))
-                && (_.isEqual(finalInputScore.awayValue,finalResultTrader.awayValue))
-                && (_.isEqual(finalResultProvider.homeValue,finalResultTrader.homeValue))
-                && (_.isEqual(finalResultProvider.awayValue,finalResultTrader.awayValue))
+            && finalResultTrader 
+            && (_.isEqual(finalInputScore.homeValue,finalResultProvider.homeValue))
+            && (_.isEqual(finalInputScore.awayValue,finalResultProvider.awayValue))
+            && (_.isEqual(finalInputScore.homeValue,finalResultTrader.homeValue))
+            && (_.isEqual(finalInputScore.awayValue,finalResultTrader.awayValue))
+            && (_.isEqual(finalResultProvider.homeValue,finalResultTrader.homeValue))
+            && (_.isEqual(finalResultProvider.awayValue,finalResultTrader.awayValue))
+        }
 
+        if(hasProvider) {
+            return finalResultProvider 
+            && (_.isEqual(finalInputScore.homeValue,finalResultProvider.homeValue))
+            && (_.isEqual(finalInputScore.awayValue,finalResultProvider.awayValue))
+        }
+
+        if(hasTraderConfirmed) {
+            return finalResultTrader 
+            && (_.isEqual(finalInputScore.homeValue,finalResultTrader.homeValue))
+            && (_.isEqual(finalInputScore.awayValue,finalResultTrader.awayValue))
         }
         return false;
     }
