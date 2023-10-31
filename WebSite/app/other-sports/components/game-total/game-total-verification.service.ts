@@ -7,9 +7,8 @@ import { GeneralResultDetail } from "../../../shared/models";
 import * as _ from 'lodash';
 import { IntervalBackgroundPipe } from "../../../shared/pipes/interval-background.pipe";
 import { MatchAio } from "../../models";
-import { ResourceIds, ResultStatusId } from "../../../shared/constants";
+import {  ResultStatusId } from "../../../shared/constants";
 import { ChildMatch } from "../../models/child-match.model";
-import { iif } from "rxjs";
 
 @Injectable()
 export class GameTotalVerificationService {
@@ -110,9 +109,7 @@ export class GameTotalVerificationService {
             const hasProvider = this.hasProvider(externalResults);
 
             if(hasProvider) {
-                console.log('hasProvider')
                 if(hasTrader) {
-                    console.log('hasProviderhasTrader')
                     _.forEach(resultDetails, result => {
                         const providerResult = externalResults.find(x => x.resourceId === result.resourceId);
                         const originalResult = originalResultDetails.find(x => x.resourceId === result.resourceId)
@@ -131,7 +128,6 @@ export class GameTotalVerificationService {
             }
            
             if(hasTrader) {
-                console.log('hasTrader')
                 this.compareInputScoreTraderScores(originalResultDetails,resultDetails);
             }
     }
@@ -143,8 +139,6 @@ export class GameTotalVerificationService {
             result.isScoreMismatched = providerResult  && !this.isEmptyHomeOrAwayValue(result) 
                 && (!_.isEqual(providerResult.homeValue, result.homeValue) || !_.isEqual(providerResult.awayValue, result.awayValue)) && !this.acceptCaseZero(providerResult,result);
         });
-        console.log(resultDetails)
-        console.log('externalResults',externalResults)
     }
 
     private compareInputScoreTraderScores(originalResultDetails: ResultDetail[], resultDetails: ResultDetail[]) {
@@ -192,7 +186,6 @@ export class GameTotalVerificationService {
 
     public hasProvider(externalResults: ExternalResultDetail[]) {
         return externalResults?.length;
-        // && _.some(externalResults, x => !this.isEmptyHomeOrAwayValue(x));
     }
 
 
@@ -206,7 +199,6 @@ export class GameTotalVerificationService {
 
         if(!isConsistent && hasProvider) {
             isConsistent = this.isConsistentScoreProvider(resultDetails,externalResults);
-    //   || this.isConsidentScoreTraderConfirm(originalResultDetails,resultDetails);
         }
         
         
