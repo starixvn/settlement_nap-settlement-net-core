@@ -37,7 +37,7 @@ COPY --from=builder /app .
 ENV TZ="America/La_Paz"
 ENV COMPlus_EnableDiagnostics=0
 
-# Donâ€™t run as root
+# Don’t run as root
 RUN adduser --disabled-password \
   --home /app \
   --gecos '' dotnetuser && chown -R dotnetuser /app && chown -R dotnetuser /tmp

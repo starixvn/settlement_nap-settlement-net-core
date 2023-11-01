@@ -6,4 +6,4 @@ export class GeneralResultDetail {
     public resultStatusId: number;
     public settlementStatusId: number;
     public resultStatus: string;
-}
+}   

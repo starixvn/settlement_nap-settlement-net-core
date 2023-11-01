@@ -1,144 +1,145 @@
 <span toastContainer></span>
 <div *ngIf="match">
-    <div *ngIf="isReadyMatch">
-        <div class="padding">
-            <div class="league">
-                <div class="icon">
-                </div>
-                {{matchDetail.sportName.toUpperCase()}} - {{matchDetail.leagueName}}
-            </div>
-            <table>
-                <ng-template *ngTemplateOutlet="header"></ng-template>
-                <ng-template *ngTemplateOutlet="body"></ng-template>
-            </table>
-            <div *ngIf="permission.isLeader" class='result'>
-                <ng-template *ngTemplateOutlet="externalSource"></ng-template>
-            </div>
-            <div class="current-match">Current Match</div>
-            <div class="settle-current-match">
-                <ticket-count [ticketCounts]="match.ticketCounts"></ticket-count>
-                <div *ngIf="hedgeMatchDetail" class="hedge-match">
-                    <input type="checkbox" [(ngModel)]="applyHedgeMatch" id="ApplyHedgeMatch" />
-                    <label for="ApplyHedgeMatch">Apply for hedge match '<strong>{{hedgeMatchDetail.matchCode}}</strong>' also.</label>
-                </div>
-                <div class="calc-action">
-                    <button class="button" *ngIf="permission.canCalculate" (click)="calculation()">Calculate
-                        All</button>
-                    <button class="button" *ngIf="permission.canUncalculate"
-                        (click)="uncalculation()">Uncalculate</button>
-                </div>
-                <div class="clear-both">
-                    <resettle-checker (proceedEvent)="onResettleCheckboxChange($event)" [checked]="isReSettledTickets"></resettle-checker>
-                </div>
-            </div>
-            <div *ngIf="match.childMatches.length > 0 && permission.canRefund">
-                <div class="child-match">
-                    <span class="collapse-icon" [ngClass]="collapse ? 'collapsed' : ''"
-                        (click)="collapseChildMatch()">&emsp;Related Matches</span>
-                </div>
-                <div *ngIf="!collapse">
-                    <ng-template *ngTemplateOutlet="childMatch"></ng-template>
-                </div>
-            </div>
+  <div *ngIf="isReadyMatch">
+    <div class="padding">
+      <div class="league">
+        <div class="icon">
         </div>
+        {{matchDetail.sportName.toUpperCase()}} - {{matchDetail.leagueName}}
+      </div>
+      <table>
+        <ng-template *ngTemplateOutlet="header"></ng-template>
+        <ng-template *ngTemplateOutlet="body"></ng-template>
+      </table>
+      <div *ngIf="permission.isLeader && providerResultDetails && providerResultDetails.length" class='result'>
+        <ng-template *ngTemplateOutlet="externalSource"></ng-template>
+      </div>
+      <!-- <div class="current-match">Current Match</div> -->
+      <div class="settle-current-match">
+        <ticket-count [ticketCounts]="match.ticketCounts"></ticket-count>
+        <div *ngIf="hedgeMatchDetail" class="hedge-match">
+          <input type="checkbox" [(ngModel)]="applyHedgeMatch" id="ApplyHedgeMatch" />
+          <label for="ApplyHedgeMatch">Apply for hedge match '<strong>{{hedgeMatchDetail.matchCode}}</strong>'
+            also.</label>
+        </div>
+        <div class="calc-action">
+          <button class="button" *ngIf="permission.canCalculate" (click)="calculation()">Calculate
+            All</button>
+          <button class="button" *ngIf="permission.canUncalculate" (click)="uncalculation()">Uncalculate</button>
+        </div>
+        <div class="clear-both">
+          <resettle-checker (proceedEvent)="onResettleCheckboxChange($event)"
+            [checked]="isReSettledTickets"></resettle-checker>
+        </div>
+      </div>
+      <div *ngIf="match.childMatches.length > 0 && permission.canRefund">
+        <div class="child-match">
+          <span class="collapse-icon" [ngClass]="collapse ? 'collapsed' : ''"
+            (click)="collapseChildMatch()">&emsp;Related Matches</span>
+        </div>
+        <div *ngIf="!collapse">
+          <ng-template *ngTemplateOutlet="childMatch"></ng-template>
+        </div>
+      </div>
     </div>
-    <div *ngIf="!isReadyMatch">
-        <not-ready-match></not-ready-match>
-    </div>
+  </div>
+  <div *ngIf="!isReadyMatch">
+    <not-ready-match></not-ready-match>
+  </div>
 </div>
 <ng-template #header>
-    <thead>
-        <tr>
-            <th class="code">Match Code/ID</th>
-            <th class="kick-off-time">Kick-off Time</th>
-            <th class="team">Team</th>
-            <th *ngFor="let game of resultDetails">
-                {{game.resourceId | resourceHeader}}
-            </th>
-        </tr>
-    </thead>
+  <thead>
+    <tr>
+      <th class="code">Match Code/ID</th>
+      <th class="kick-off-time">Kick-off Time</th>
+      <th class="team">Team</th>
+      <th *ngFor="let game of resultDetails">
+        {{game.resourceId | resourceHeader}}
+      </th>
+    </tr>
+  </thead>
 </ng-template>
 
 <ng-template #body>
-    <tbody>
-        <tr>
-            <td>{{matchDetail.matchCode}}</td>
-            <td rowspan="2">
-                {{matchDetail.kickOffTime | date : 'mediumDate'}}
-                <br />
-                {{matchDetail.kickOffTime | date : 'hh:mm:ss a'}}
-            </td>
-            <td class="home-team-name">{{matchDetail.homeName}}</td>
-            <td class="score" *ngFor="let game of resultDetails; let i= index; let last=last;"
-                [ngClass]="[getConfirmedBackground(game, last), getMismatchedBackground(game, last), game.className]">
-                <input type="text" myOnlyInteger tabindex="{{i*2 + 1 }}" maxlength="2"
-                    [disabled]="disableTextBox(game.resourceId)" [(ngModel)]="game.homeValue"
-                    (ngModelChange)="changeScore()" [ngClass]="{'final-score' : last,
+  <tbody>
+    <tr>
+      <td>{{matchDetail.matchCode}}</td>
+      <td rowspan="2">
+        {{matchDetail.kickOffTime | date : 'mediumDate'}}
+        <br />
+        {{matchDetail.kickOffTime | date : 'hh:mm:ss a'}}
+      </td>
+      <td class="home-team-name">{{matchDetail.homeName}}</td>
+      <td class="score" *ngFor="let game of resultDetails; let i= index; let last=last;"
+        [ngClass]="[getConfirmedBackground(game, last), getMismatchedBackground(game, last), game.className]">
+        <input type="text" myOnlyInteger tabindex="{{i*2 + 1 }}" maxlength="2"
+          [disabled]="disableTextBox(game.resourceId)" [(ngModel)]="game.homeValue" (ngModelChange)="changeScore()"
+          [ngClass]="{'final-score' : last,
                                'warning' :isErrorOnVerification(game)}" />
-            </td>
-        </tr>
-        <tr>
-            <td>{{matchDetail.matchId}}</td>
-            <td class="away-team-name">{{matchDetail.awayName}}</td>
-            <td class="score" *ngFor="let game of resultDetails; let i= index; let last=last;"
-                [ngClass]="[getConfirmedBackground(game, last), getMismatchedBackground(game, last), game.className]">
-                <input type="text" myOnlyInteger tabindex="{{i*2 + 2}}" maxlength="2"
-                    [disabled]="disableTextBox(game.resourceId)" [(ngModel)]="game.awayValue"
-                    (ngModelChange)="changeScore()" [ngClass]="{'final-score' : last,
+      </td>
+    </tr>
+    <tr>
+      <td>{{matchDetail.matchId}}</td>
+      <td class="away-team-name">{{matchDetail.awayName}}</td>
+      <td class="score" *ngFor="let game of resultDetails; let i= index; let last=last;"
+        [ngClass]="[getConfirmedBackground(game, last), getMismatchedBackground(game, last), game.className]">
+        <input type="text" myOnlyInteger tabindex="{{i*2 + 2}}" maxlength="2"
+          [disabled]="disableTextBox(game.resourceId)" [(ngModel)]="game.awayValue" (ngModelChange)="changeScore()"
+          [ngClass]="{'final-score' : last,
                                'warning' :isErrorOnVerification(game)}" />
-            </td>
-        </tr>
-        <tr>
-            <td colspan="13" class="input-directly">
-                <input type="checkbox" [(ngModel)]="match.isScoreDirect"
-                    (ngModelChange)="changeInputDirectly()" id="isScoreDirect" />
-                <label for="isScoreDirect">Input Total Sets directly</label>
-            </td>
-        </tr>
-    </tbody>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="13" class="input-directly">
+        <input type="checkbox" [(ngModel)]="match.isScoreDirect" (ngModelChange)="changeInputDirectly()"
+          id="isScoreDirect" />
+        <label for="isScoreDirect">Input Total Sets directly</label>
+      </td>
+    </tr>
+  </tbody>
 </ng-template>
 
 <ng-template #childMatch>
-    <div class="table-child-match">
-        <table>
-            <thead>
-                <tr>
-                    <th class="code">Match Code/ID</th>
-                    <th class="team-name">Team</th>
-                    <th>Total Set</th>
-                    <th class="eventStatus">Event Status</th>
-                    <th>Hold Status</th>
-                    <th>Select To Calculate</th>
-                </tr>
-            </thead>
-            <tbody>
-                <ng-container *ngFor="let childMatch of match.childMatches">
-                    <tr>
-                        <td>{{childMatch.matchCode}}</td>
-                        <td class="home-team-name">{{matchDetail.homeName}}  ({{childMatch.leagueName}})</td>
-                        <td [ngClass]="getClass(childMatch)">{{childMatch.homeValue | result}}</td>
-                        <td rowspan="2">{{childMatch.eventStatus}}</td>
-                        <td rowspan="2">{{childMatch.isHold ? 'YES' : 'NO'}}</td>
-                        <td rowspan="2">
-                            <input type="checkbox" [(ngModel)]="childMatch.checked" [disabled]="childMatch.isHold"/>
-                        </td>
-                    </tr>
+  <div class="table-child-match">
+    <table>
+      <thead>
+        <tr>
+          <th class="code">Match Code/ID</th>
+          <th class="team-name">Team</th>
+          <th>Total Set</th>
+          <th class="eventStatus">Event Status</th>
+          <th>Hold Status</th>
+          <th>Select To Calculate</th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngFor="let childMatch of match.childMatches">
+          <tr>
+            <td>{{childMatch.matchCode}}</td>
+            <td class="home-team-name">{{matchDetail.homeName}} ({{childMatch.leagueName}})</td>
+            <td [ngClass]="getClass(childMatch)">{{childMatch.homeValue | result}}</td>
+            <td rowspan="2">{{childMatch.eventStatus}}</td>
+            <td rowspan="2">{{childMatch.isHold ? 'YES' : 'NO'}}</td>
+            <td rowspan="2">
+              <input type="checkbox" [(ngModel)]="childMatch.checked" [disabled]="childMatch.isHold" />
+            </td>
+          </tr>
 
-                    <tr>
-                        <td>{{childMatch.matchId}}</td>
-                        <td class="away-team-name">{{matchDetail.awayName}}  ({{childMatch.leagueName}})</td>
-                        <td [ngClass]="getClass(childMatch)">{{childMatch.awayValue | result}}</td>
-                    </tr>
-                </ng-container>
+          <tr>
+            <td>{{childMatch.matchId}}</td>
+            <td class="away-team-name">{{matchDetail.awayName}} ({{childMatch.leagueName}})</td>
+            <td [ngClass]="getClass(childMatch)">{{childMatch.awayValue | result}}</td>
+          </tr>
+        </ng-container>
 
-            </tbody>
-        </table>
-        <span>- Marked tickets will not be settled.</span><br>
-        <span>- Matches that are on-hold will not be settled along side main match.</span>
-    </div>
+      </tbody>
+    </table>
+    <span>- Marked tickets will not be settled.</span><br>
+    <span>- Matches that are on-hold will not be settled along side main match.</span>
+  </div>
 </ng-template>
 
-<ng-template ng-template #externalSource>
+<!-- <ng-template ng-template #externalSource>
     <table>
         <thead>
           <tr>
@@ -166,4 +167,38 @@
           </tr>
         </tbody>
       </table>
+</ng-template> -->
+
+
+<ng-template ng-template #externalSource>
+  <table>
+    <thead>
+      <tr>
+        <th colSpan="5">{{externalSourceName}}
+          <span *ngIf="externalSourceName !== '-'" [ngClass]="{'icon-copy': true, 'disable-copy': !match.isScoreDirect}"
+              (click)="match.isScoreDirect ? copyScore() : ''"></span>
+        </th>
+      </tr>
+      <tr>
+        <th *ngFor="let game of providerResultDetails">
+          {{game.resourceId | resourceHeader}}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="score" *ngFor="let game of providerResultDetails; let i= index; let last=last;"
+          [ngClass]="[getConfirmedBackground(game, last)]">
+          <span [ngClass]="{'final-score' : last}"> {{game.homeValue  | result}} </span>
+        </td>
+        
+      </tr>
+      <tr>
+        <td class="score" *ngFor="let game of providerResultDetails; let i= index; let last=last;"
+          [ngClass]="[getConfirmedBackground(game, last)]">
+          <span [ngClass]="{'final-score' : last}">{{game.awayValue | result}}</span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 </ng-template>

@@ -89,6 +89,8 @@ export class AppComponent extends AppBaseComponent implements OnInit {
         return pageType === PageType.ReCalculate
             ? GameTotalCalculationComponent
             : GameTotalRefundComponent;
+
+            // return GameTotalRefundComponent;
     }
 
     private getComponentGameTotalMatch(pageType: string): Type<SportTemplate> {

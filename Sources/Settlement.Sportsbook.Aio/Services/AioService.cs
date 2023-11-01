@@ -70,16 +70,7 @@ public class AioServiceImp : IAioService
         var apiKey = validateApiKeyService.GetApiKey(request.ApiKey);
         var matchDetail = await GetMatchDetail(request, apiKey);
 
-        var externalResults = new List<ExternalResultModel>();
-        var providerMapperService = mapperFactory.GetMapperService($"{apiKey}-{ApiKeyConstant.ProviderKey}");
-        if (providerMapperService != null)
-        {
-            var providerCriteria = validateApiKeyService.CriteriaName(request, $"{request.ApiKey}-{ApiKeyConstant.ProviderKey}");
-            var providerResult = await repository.FetchAsync<ExternalResultDetailModel>(providerCriteria);
-            var provider = new Tuple<List<ExternalResultDetailModel>, List<ExternalResultModel>>(providerResult.ToList(), new List<ExternalResultModel>());
-            providerMapperService.Decorate(provider);
-            externalResults = provider.Item2;
-        }
+        var externalResults = await GetExternalResults(request, apiKey);
 
         var resultDetailCriteria = (GetResultDetailCriteria)validateApiKeyService.CriteriaName(request, $"{apiKey}-{ApiKeyConstant.ResultDetailKey}");
         var (resultDetails, ticketCounts) = await multipleServerAioService.FetchResultDetails(resultDetailCriteria, matchDetail.SportType);
@@ -128,6 +119,23 @@ public class AioServiceImp : IAioService
         matchDetail.RefDataService = refDataService;
 
         return matchDetail;
+    }
+
+    private async Task<List<ExternalResultModel>> GetExternalResults(GetMatchRequest request, string apiKey)
+    {
+        var externalResults = new List<ExternalResultModel>();
+        var providerMapperService = mapperFactory.GetMapperService($"{apiKey}-{ApiKeyConstant.ProviderKey}");
+
+        if (providerMapperService != null)
+        {
+            var providerCriteria = validateApiKeyService.CriteriaName(request, $"{request.ApiKey}-{ApiKeyConstant.ProviderKey}");
+            var providerResult = await repository.FetchAsync<ExternalResultDetailModel>(providerCriteria);
+            var provider = new Tuple<List<ExternalResultDetailModel>, List<ExternalResultModel>>(providerResult.ToList(), new List<ExternalResultModel>());
+            providerMapperService.Decorate(provider);
+            externalResults = provider.Item2;
+        }
+
+        return externalResults;
     }
 
     private async Task<FantasyMatch> GetRelatedMatches(int matchId)
