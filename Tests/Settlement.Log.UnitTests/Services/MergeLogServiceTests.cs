@@ -103,6 +103,7 @@ public class MergeLogServiceTests
 
         var actual = service.DistinctLogsString(distinctLogs);
 
+
         Assert.Equal("name: value", actual);
     }
 
@@ -112,6 +113,7 @@ public class MergeLogServiceTests
         var distinctLogs = new List<DistinctElement>();
 
         var actual = service.DistinctLogsString(distinctLogs);
+
 
         Assert.Empty(actual);
     }

@@ -2,9 +2,16 @@
 
 namespace Settlement.Log.Models.EventCounterElement;
 
-[XmlRoot("EventCounters")]
+[XmlRoot("eventcounter")]
 public class EventCountersRoot
 {
     [XmlElement("Item")]
-    public List<ItemElement> Items { get; set; }
+    public ItemElement[] Items { get; set; }
+}
+
+[XmlRoot("EventCounters")]
+public class EventCountersRootOldStyle
+{
+    [XmlElement("Item")]
+    public ItemElement[] Items { get; set; }
 }

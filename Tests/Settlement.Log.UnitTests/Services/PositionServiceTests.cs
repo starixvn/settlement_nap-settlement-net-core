@@ -20,7 +20,7 @@ public class PositionServiceTests
     {
         // Arrange
         const string position = "Position";
-        var item = new ItemElement
+        var item = new BetTypeItemElement()
         {
             Position = "Position",
             Result = string.Empty
@@ -38,7 +38,7 @@ public class PositionServiceTests
     {
         // Arrange
         const string position = "44+-49";
-        var item = new ItemElement
+        var item = new BetTypeItemElement
         {
             Position = "Position",
             Result = string.Empty,
@@ -58,7 +58,7 @@ public class PositionServiceTests
     {
         // Arrange
         const string position = "Position MinuteSetPieceResultName";
-        var item = new ItemElement
+        var item = new BetTypeItemElement
         {
             Position = "Position",
             Result = "R1",
@@ -82,7 +82,7 @@ public class PositionServiceTests
         string position)
     {
         // Arrange
-        var item = new ItemElement
+        var item = new BetTypeItemElement
         {
             Position = position,
             Result = result
@@ -103,7 +103,7 @@ public class PositionServiceTests
         string position)
     {
         // Arrange
-        var item = new ItemElement
+        var item = new BetTypeItemElement
         {
             Position = position,
             Result = result
@@ -121,7 +121,7 @@ public class PositionServiceTests
     {
         // Arrange
         const string position = "44+-49(1(8-0),2(5-1),3(5-3))";
-        var item = new ItemElement
+        var item = new BetTypeItemElement
         {
             Position = "1,2,3",
             Result = "8,15,35",

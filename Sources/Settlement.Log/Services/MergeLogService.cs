@@ -32,17 +32,17 @@ public class MergeLogServiceImp : MergeLogService
                 group => group.ToList());
 
         var mergedLogs = logGroups.Where(group => group.Value.Any()).Select(item =>
-        {
-            return item.Key.Item2 switch
             {
-                LogType.DateMin => GetMinDate(item.Value),
-                LogType.DateMax => GetMaxDate(item.Value),
-                LogType.Min => GetStatistic(item.Value, values => values.Min()),
-                LogType.Max => GetStatistic(item.Value, values => values.Max()),
-                LogType.Sum => GetStatistic(item.Value, values => values.Sum()),
-                _ => string.Empty
-            };
-        })
+                return item.Key.Item2 switch
+                {
+                    LogType.DateMin => GetMinDate(item.Value),
+                    LogType.DateMax => GetMaxDate(item.Value),
+                    LogType.Min => GetStatistic(item.Value, values => values.Min()),
+                    LogType.Max => GetStatistic(item.Value, values => values.Max()),
+                    LogType.Sum => GetStatistic(item.Value, values => values.Sum()),
+                    _ => string.Empty
+                };
+            })
             .ToList();
 
         return string.Join("; ", mergedLogs.Where(log => !string.IsNullOrEmpty(log)));

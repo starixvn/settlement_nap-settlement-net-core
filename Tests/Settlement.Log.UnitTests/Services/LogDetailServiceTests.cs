@@ -1,6 +1,8 @@
 ﻿using Fanex.Data.Repository;
 using Settlement.Log.Criteria;
 using Settlement.Log.Models;
+using Settlement.Log.Models.BetTypeElement;
+using Settlement.Log.Models.EventCounterElement;
 using Settlement.Log.Services;
 
 namespace Settlement.Log.UnitTests.Services;
@@ -27,7 +29,7 @@ public class LogDetailServiceTests
         // Arrange
         var fakeList = new List<LogDetailsModels>
             {
-                new() {  Action = "Cal"}
+                new() {  Action = "Cal" , Remark = "<distinct></distinct><root></root><eventcounter><Item position=\"position\"></Item> </eventcounter>"}
             };
 
         repository.FetchAsync<LogDetailsModels>(Arg.Any<GetLogDetailByMatchAndProductCriteria>()).Returns(fakeList);
@@ -37,7 +39,7 @@ public class LogDetailServiceTests
         var result = await service.GetLogDetailByMatchAndProduct(1, string.Empty);
 
         // Assert
-        remarkService.Received().RemarkValue(Arg.Any<string>());
+        remarkService.Received().RemarkValue(Arg.Is<IEnumerable<BetTypeElement>>(b => b == null), Arg.Is<IEnumerable<ItemElement>>(c => c.Count() == 1));
         Assert.Single(result);
     }
 
@@ -67,12 +69,32 @@ public class LogDetailServiceTests
                                                "<r t=\"s\" n=\"TC\" v=\"0\"/></root>"}
         };
 
+        remarkService.IsFastMarketAction(Arg.Any<int>()).Returns(true);
+        remarkService.RemarkValue(Arg.Any<IEnumerable<BetTypeElement>>(), Arg.Any<IEnumerable<ItemElement>>()).Returns("Bettype-log and Eventcouter-log");
         repository.FetchAsync<LogDetailsModels>(Arg.Any<GetLogDetailByMatchAndProductCriteria>()).Returns(fakeList);
 
         // Act
         var result = await service.GetLogDetailByMatchAndProduct(1, string.Empty);
 
         // Assert
-        Assert.Equal("Is Leader: 0; Recalc: 0; confirmed/provider: no; StartTime: 2023-08-18 06:00:40; EndTime: 2023-08-18 06:00:42; duration: 20ms; TC: 10", result[0].Remark);
+        Assert.Equal("Is Leader: 0; Recalc: 0; confirmed/provider: no; StartTime: 2023-08-18 06:00:40; EndTime: 2023-08-18 06:00:42; duration: 20ms; TC: 10; Bettype-log and Eventcouter-log", result.First().Remark);
+    }
+
+    [Fact]
+    public async Task GetLogDetailByMatchAndProduct_LogOldFormat_ReturnsCorrectLog()
+    {
+        // Arrange
+        var fakeList = new List<LogDetailsModels>
+        {
+            new() {  Action = "Cal" , Remark = "log test"}
+        };
+
+        repository.FetchAsync<LogDetailsModels>(Arg.Any<GetLogDetailByMatchAndProductCriteria>()).Returns(fakeList);
+
+        // Act
+        var result = await service.GetLogDetailByMatchAndProduct(1, string.Empty);
+
+        // Assert
+        Assert.Equal("log test", result.First().Remark);
     }
 }

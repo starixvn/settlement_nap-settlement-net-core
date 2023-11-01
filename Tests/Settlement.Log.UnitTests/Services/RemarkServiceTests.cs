@@ -1,4 +1,6 @@
-﻿using Settlement.Log.Services;
+﻿using Settlement.Log.Models.BetTypeElement;
+using Settlement.Log.Models.EventCounterElement;
+using Settlement.Log.Services;
 
 namespace Settlement.Log.UnitTests.Services;
 
@@ -42,6 +44,32 @@ public class RemarkServiceTests
     [Fact]
     public void RemarkValue_FromValueNotContainsBrokenBar_ReturnsEmpty()
     {
+        // Act
+        var remarkValue = service.RemarkValue(new List<BetTypeElement>(), new List<ItemElement>());
+
+        // Assert
+        Assert.Empty(remarkValue);
+    }
+
+    [Fact]
+    public void RemarkValue_FromValueContainsBrokenBar_ReturnsFromRemarkNodeServiceWithSecondElementAndFirstElement()
+    {
+        // Arrange
+        const string eventCounterLog = "EventCounter";
+        const string bettypeLogs = "Bettype log";
+        remarkNodeService.BetTypeLogs(Arg.Any<List<BetTypeElement>>()).Returns(bettypeLogs);
+        remarkNodeService.EventCounterLogs(Arg.Any<IEnumerable<ItemElement>>()).Returns(eventCounterLog);
+        // Act
+        var remarkValue = service.RemarkValue(new List<BetTypeElement>(), new List<ItemElement>());
+
+        // Assert
+        const string expectedRemark = eventCounterLog + bettypeLogs;
+        Assert.Equal(expectedRemark, remarkValue);
+    }
+
+    [Fact]
+    public void RemarkValueOldStyle_FromValueNotContainsBrokenBar_ReturnsEmpty()
+    {
         // Arrange
         var value = string.Empty;
 
@@ -53,7 +81,7 @@ public class RemarkServiceTests
     }
 
     [Fact]
-    public void RemarkValue_FromValueContainsBrokenBar_ReturnsFromRemarkNodeServiceWithSecondElementAndFirstElement()
+    public void RemarkValueOldStyle_FromValueContainsBrokenBar_ReturnsFromRemarkNodeServiceWithSecondElementAndFirstElement()
     {
         // Arrange
         const string first = "First";

@@ -1,6 +1,6 @@
-﻿using System.Text.Json.Serialization;
-using Settlement.Core.Models;
+﻿using Settlement.Core.Models;
 using Settlement.Core.Services;
+using System.Text.Json.Serialization;
 
 namespace Settlement.Setting.Models.Notification;
 

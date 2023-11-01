@@ -2,7 +2,7 @@
 
 namespace Settlement.Log.Models.BetTypeElement;
 
-public class ItemElement
+public class BetTypeItemElement
 {
     [XmlAttribute]
     public string Position { get; set; }

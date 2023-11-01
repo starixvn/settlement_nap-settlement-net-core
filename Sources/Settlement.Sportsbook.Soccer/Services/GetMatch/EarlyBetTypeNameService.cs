@@ -45,22 +45,11 @@ public class EarlyBetTypeNameServiceImp : EarlyBetTypeNameService
 
     private static int GetPenaltyShootoutRound(string resourceId)
     {
-        if (Convert.ToInt32(Round(resourceId)) > PenaltyShootoutRound5Group)
-        {
-            return PenaltyShootoutSuddenDeadGroup;
-        }
-        else
-        {
-            foreach (var item in PenaltyShootoutRound)
-            {
-                if (item.Value.Contains(resourceId))
-                {
-                    return item.Key;
-                }
-            }
-
-            return 0;
-        }
+        return Convert.ToInt32(Round(resourceId)) > PenaltyShootoutRound5Group ?
+            PenaltyShootoutSuddenDeadGroup :
+            (from item in PenaltyShootoutRound
+             where item.Value.Contains(resourceId)
+             select item.Key).FirstOrDefault();
     }
 
     private static int PenaltyShootoutGroup(int betTypeId, string resourceId)

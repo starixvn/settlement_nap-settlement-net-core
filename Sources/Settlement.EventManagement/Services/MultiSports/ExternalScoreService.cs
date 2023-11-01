@@ -7,9 +7,9 @@ public interface IExternalScoreService
 {
     bool IsInconsistentFullTimeScore(int matchId, string userConfirmation, List<ResultDetail> resultDetails);
 
-    bool IsInconsistentHalftimeScore(Match match, IEnumerable<ResultDetail> resultDetails);
-
     bool IsInconsistentFullTimeScore(Match match, IEnumerable<ResultDetail> resultDetails);
+
+    bool IsInconsistentHalftimeScore(Match match, IEnumerable<ResultDetail> resultDetails);
 }
 
 public class ExternalScoreServiceImp : IExternalScoreService
@@ -29,6 +29,27 @@ public class ExternalScoreServiceImp : IExternalScoreService
 
         return ScoresDifferent(currentResult, finalExternalResult, userConfirmation);
     }
+
+    public bool IsInconsistentFullTimeScore(Match match, IEnumerable<ResultDetail> resultDetails)
+    {
+        var externalResultDetails = GetSboResults(match.MatchId, resultDetails);
+        var finalExternalResult = externalResultDetails.Find(result => result.ResourceId == ResourceType.Final);
+        if (finalExternalResult == null)
+        {
+            return false;
+        }
+
+        if (match.FinalHomeScore == null && match.FinalAwayScore == null)
+        {
+            return !string.Equals(match.SuspenderFullTime, "-");
+        }
+
+        var isHomeValue = string.Equals(match.FinalHomeScore.ToString(), finalExternalResult.HomeValue);
+        var isAwayValue = string.Equals(match.FinalAwayScore.ToString(), finalExternalResult.AwayValue);
+
+        return !isHomeValue || !isAwayValue;
+    }
+
 
     private static bool ScoresDifferent(ResultDetail currentResult, ResultDetail externalResult, string userConfirmation)
     {
@@ -66,26 +87,6 @@ public class ExternalScoreServiceImp : IExternalScoreService
 
         var isHomeValue = string.Equals(match.HalfTimeHomeScore.ToString(), halftimeExternalResult.HomeValue);
         var isAwayValue = string.Equals(match.HalfTimeAwayScore.ToString(), halftimeExternalResult.AwayValue);
-
-        return !isHomeValue || !isAwayValue;
-    }
-
-    public bool IsInconsistentFullTimeScore(Match match, IEnumerable<ResultDetail> resultDetails)
-    {
-        var externalResultDetails = GetSboResults(match.MatchId, resultDetails);
-        var finalExternalResult = externalResultDetails.Find(result => result.ResourceId == ResourceType.Final);
-        if (finalExternalResult == null)
-        {
-            return false;
-        }
-
-        if (match.FinalHomeScore == null && match.FinalAwayScore == null)
-        {
-            return !string.Equals(match.SuspenderFullTime, "-");
-        }
-
-        var isHomeValue = string.Equals(match.FinalHomeScore.ToString(), finalExternalResult.HomeValue);
-        var isAwayValue = string.Equals(match.FinalAwayScore.ToString(), finalExternalResult.AwayValue);
 
         return !isHomeValue || !isAwayValue;
     }

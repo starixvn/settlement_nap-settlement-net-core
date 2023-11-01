@@ -23,13 +23,17 @@ public class RefundServiceTests
 
     private readonly IRefundService service;
 
+    private readonly LogService logService;
+
+    private readonly AppSettingsKey appSettings = new() { SiteDbServer = new List<string> { "DB01", "DB02", "DB03" } };
+
     public RefundServiceTests()
     {
         repository = Substitute.For<IDynamicRepository>();
         var accessor = Substitute.For<IHttpContextAccessor>();
         createCriteriaService = Substitute.For<ICreateCriteriaService>();
         scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
-        var logService = Substitute.For<LogService>();
+        logService = Substitute.For<LogService>();
         var context = new DefaultHttpContext
         {
             Connection =
@@ -39,7 +43,6 @@ public class RefundServiceTests
         };
         accessor.HttpContext = context;
 
-        var appSettings = new AppSettingsKey { SiteDbServer = new List<string> { "DB01", "DB02", "DB03" } };
         var option = Options.Create(appSettings);
         service = new RefundServiceImp(repository, accessor, option, createCriteriaService, scaleOutSettleService, logService);
     }
@@ -64,21 +67,35 @@ public class RefundServiceTests
         await repository.Received(executeTime).ExecuteAsync(Arg.Any<CheckingMarkedTicketsCriteria>());
     }
 
-    [Theory]
-    [InlineData(0, null, 3)]
-    [InlineData(1, "Error", 0)]
-    public async Task RefundRunningThirdPartyTickets_Always_ReturnsTrue(byte errorCode, string errorMsg, byte executeTime)
+    [Fact]
+    public async Task RefundRunningThirdPartyTickets_PassedValidate_WriteLogAndSettle()
     {
         // Arrange
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>())
-            .Returns(new ResultMessage { ErrorCode = errorCode, ErrorMessage = errorMsg });
+            .Returns(new ResultMessage { ErrorCode = 0, ErrorMessage = string.Empty });
+        await repository.ExecuteAsync(Arg.Any<RefundRunningThirdPartyTicketCriteria>());
+        // Act
+        await service.RefundRunningThirdPartyTickets(new RefundRunningThirdPartyTicketRequest());
+
+        // Assert
+        logService.Received().WriteLog(Arg.Any<int>(), Arg.Any<string>());
+        await repository.Received(appSettings.SiteDbServer.Count).ExecuteAsync(Arg.Any<RefundRunningThirdPartyTicketCriteria>());
+    }
+
+    [Fact]
+    public async Task RefundRunningThirdPartyTickets_FailedValidate_StopProgress()
+    {
+        // Arrange
+        scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>())
+            .Returns(new ResultMessage { ErrorCode = 1, ErrorMessage = "error" });
         await repository.ExecuteAsync(Arg.Any<RefundRunningThirdPartyTicketCriteria>());
         // Act
         var result = await service.RefundRunningThirdPartyTickets(new RefundRunningThirdPartyTicketRequest());
 
         // Assert
-        Assert.True(result.ErrCode == errorCode && result.ErrMsg == errorMsg);
-        await repository.Received(executeTime).ExecuteAsync(Arg.Any<RefundRunningThirdPartyTicketCriteria>());
+        Assert.False(result.IsSuccessful);
+        logService.DidNotReceive().WriteLog(Arg.Any<int>(), Arg.Any<string>());
+        await repository.DidNotReceive().ExecuteAsync(Arg.Any<RefundRunningThirdPartyTicketCriteria>());
     }
 
     [Theory]
@@ -103,6 +120,7 @@ public class RefundServiceTests
 
         // Assert
         Assert.True(result.ErrCode == errorCode && result.ErrMsg == errorMsg);
+        logService.Received(result.IsSuccessful ? 1 : 0).WriteLog(Arg.Any<int>(), Arg.Any<string>());
         await repository.Received(executeTime).ExecuteAsync(Arg.Any<MoveThirdPartyBetTicketCriteria>());
     }
 
