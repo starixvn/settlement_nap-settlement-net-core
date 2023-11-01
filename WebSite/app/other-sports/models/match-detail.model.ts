@@ -36,4 +36,5 @@ export class MatchDetail {
     public isScoreDirect: boolean;
     public originalHalfTimeHomeScore?: number;
     public originalHalfTimeAwayScore?: number;
+    public leagueType?:number
 }

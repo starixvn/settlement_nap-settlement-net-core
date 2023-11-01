@@ -16,6 +16,7 @@ import { GameTotalMatchCalculationComponent } from './game-total-match-flow/game
 import { GameTotalMatchRefundComponent } from './game-total-match-flow/game-total-match-refund.component';
 import { OtherRefundComponent } from './other/other-refund.component';
 import { OtherCalculationComponent } from './other/other-calculation.component';
+import { BandyCalculationComponent } from './bandy/calculation.component';
 
 @Component({
     selector: 'app-root',
@@ -63,7 +64,13 @@ export class AppComponent extends AppBaseComponent implements OnInit {
 
     private getComponentFourthGroup(pageType: string): Type<SportTemplate> {
         return _.includes(TemplateType.onlyFullTimeTemplate, this.sportType)
-            ? this.getComponentOnlyFullTime(pageType)
+            ? this.getComponentFiveGroup(pageType)
+            : this.getComponentOther(pageType);
+    }
+
+    private getComponentFiveGroup(pageType: string) : Type<SportTemplate> {
+        return _.includes(TemplateType.hasOT, this.sportType)
+            ? this.getComponentBandy(pageType)
             : this.getComponentOther(pageType);
     }
 
@@ -97,6 +104,10 @@ export class AppComponent extends AppBaseComponent implements OnInit {
         return pageType === PageType.ReCalculate
             ? GameTotalMatchCalculationComponent
             : GameTotalMatchRefundComponent;
+    }
+
+    private getComponentBandy(pageType: string): Type<SportTemplate> {
+        return BandyCalculationComponent;
     }
 }
 

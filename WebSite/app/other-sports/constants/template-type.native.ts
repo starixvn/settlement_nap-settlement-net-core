@@ -14,6 +14,7 @@ export const TemplateType = {
         SportType.upcomingSport63, SportType.upcomingSport64, SportType.upcomingSport65, SportType.upcomingSport66,
         SportType.archery, SportType.athletics, SportType.boxingMMA,
         SportType.canoeing, SportType.diving, SportType.entertainment, SportType.equestrian, SportType.gymnastics,
-        SportType.politics, SportType.swimming, SportType.tableTennis, SportType.weightLifting]
+        SportType.politics, SportType.swimming, SportType.tableTennis, SportType.weightLifting],
+    hasOT: [SportType.bandy]
 
 };
