@@ -110,7 +110,6 @@ export class FilterComponent implements OnInit {
 
         this.enableRefresh.emit(false);
         const multiSport = await this.multiSportService.filter(query);
-        console.log('multiSport',multiSport)
 
         const matchIds = this.getAllMatchId(multiSport.sports);
         this.searchAction.emit(multiSport);

@@ -38,7 +38,7 @@ export class AutoSettingComponent implements OnInit {
 
   ngOnInit(): void {
     this.pageType = UrlHelper.getUrlParameter('pageType');
-    this.isMultiSelect = Boolean(UrlHelper.getUrlParameter('multiSelect'));
+    this.isMultiSelect = UrlHelper.getUrlParameter('multiSelect') == 'true';
     this.currentState = Number(UrlHelper.getUrlParameter('currentState'));
     this.parseValue();
     this.getId();
