@@ -20,7 +20,6 @@ RUN dotnet nuget add source https://nuget.nexdev.net/api/v2
 RUN --mount=type=cache,target=/root/.nuget/packages \ 
 	dotnet restore -r linux-x64 WebSite/Settlement.WebSites.csproj 
 
-COPY ./.sonarlint/. ./.sonarlint
 COPY ./Sources/. ./Sources
 COPY ./WebSite/. ./WebSite
 
@@ -37,7 +36,7 @@ COPY --from=builder /app .
 ENV TZ="America/La_Paz"
 ENV COMPlus_EnableDiagnostics=0
 
-# Don�t run as root
+# Don t run as root
 RUN adduser --disabled-password \
   --home /app \
   --gecos '' dotnetuser && chown -R dotnetuser /app && chown -R dotnetuser /tmp

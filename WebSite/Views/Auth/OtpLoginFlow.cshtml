@@ -13,8 +13,8 @@
     <meta charset="utf-8" />
     <title>OTP</title>
     <meta name="viewport" content="width=device-width" />
-    <link href="@Url.Content("~/nap-auth/auth.css")" rel="stylesheet" type="text/css" />
-    <link href="@Url.Content("~/nap-auth/otp.css")" rel="stylesheet" type="text/css" />
+    <link href="/nap-auth/auth.css" rel="stylesheet" type="text/css" />
+    <link href="/nap-auth/otp.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
     <div id='not-supported-browser-panel' style="display: none">
@@ -43,7 +43,7 @@
                 </div>
                 <div class="auth">
                     <input type="text" id="otp" name="otp" class="otp" autocomplete="off" />
-                    <input type="button" id="btnCancel" value="CANCEL" class="submit" onclick="location.href = '@Url.Content("~/Auth")'" />
+                    <input type="button" id="btnCancel" value="CANCEL" class="submit" onclick="location.href = '/Auth'" />
                     <input type="submit" id="btnSubmit" value="ENTER OTP" class="submit" />
                     <div class="bestview">
                         <span>Best view in </span><span class="ff4">Firefox 60+</span><span class="chrome">Chrome 67+</span>
