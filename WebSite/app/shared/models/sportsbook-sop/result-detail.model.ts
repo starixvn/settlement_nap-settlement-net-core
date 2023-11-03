@@ -11,7 +11,7 @@ export class ResultDetail extends GeneralResultDetail {
     betTypeName: string;
     homeName = '';
     awayName = '';
-    checked: boolean;
+    checked: boolean = false;
     isResultWarning: boolean;
     isDurationWarning: boolean;
     externalScores: ExternalResultDetail[];

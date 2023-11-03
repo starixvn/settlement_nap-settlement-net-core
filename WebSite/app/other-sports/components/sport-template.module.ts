@@ -41,6 +41,7 @@ import { ResettleCheckerComponent } from '../../shared/components/resettle-check
 import { NotReadyMatchComponent } from '../../shared/components/not-ready-match/not-ready-match.component';
 import { BandyCalculationComponent } from './bandy/calculation.component';
 import { MatchInfoCompoment } from './bandy/match-info.compoment';
+import { ResultDetailsService } from './bandy/resultdetails.service';
 @NgModule({
     imports: [
         BrowserModule,
@@ -105,7 +106,8 @@ import { MatchInfoCompoment } from './bandy/match-info.compoment';
         ScoreByPermissionPipe,
         GameTotalMatchVerificationService,
         GameTotalMatchService,
-        OtherService
+        OtherService,
+        ResultDetailsService
     ]
 })
 

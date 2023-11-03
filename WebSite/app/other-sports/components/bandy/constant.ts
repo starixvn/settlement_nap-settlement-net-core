@@ -4,10 +4,12 @@ export const LeagueType = {
   OtPenalty: 2
 }
 
-export const ResourceIDs = {
+export const ResourceID = {
   HT: "01",
   FT: "0001",
   ET: "ET",
   PEN: "PEN",
   MATCH: "00"
 }
+
+export const ResourceIDs = [ResourceID.HT,ResourceID.FT,ResourceID.ET,ResourceID.PEN,ResourceID.MATCH];

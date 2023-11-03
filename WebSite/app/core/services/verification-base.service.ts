@@ -76,6 +76,10 @@ export class VerificationBaseService {
         return !_.isEmpty(homeValue) && !_.isEmpty(awayValue);
     }
 
+    public hasScore(resultDetail: ResultDetail) {
+        return resultDetail &&  !_.isEmpty(resultDetail.homeValue) && !_.isEmpty(resultDetail.awayValue);
+    }
+
     public autoFillScore(map: ResultDetail) {
         if (map.resultStatusId !== ResultStatusId.ManualCompleted && map.resultStatusId !== ResultStatusId.AutoCompleted) {
             if (this.isExistScoreSources(map)) {
