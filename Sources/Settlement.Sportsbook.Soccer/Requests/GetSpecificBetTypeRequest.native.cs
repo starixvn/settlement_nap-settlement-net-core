@@ -1,6 +1,4 @@
-﻿using MediatR;
-
-namespace Settlement.Sportsbook.Soccer.Requests;
+﻿namespace Settlement.Sportsbook.Soccer.Requests;
 
 public class GetSpecificBetTypeRequest : IRequest<List<string>>
 {
