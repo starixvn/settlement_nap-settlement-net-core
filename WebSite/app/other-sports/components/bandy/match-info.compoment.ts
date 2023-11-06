@@ -1,10 +1,15 @@
 import { Component, Input } from "@angular/core";
 import { MatchDetail } from "../../models";
 import { ResultDetail } from "../../../bet-builder/models";
+import { CommonModule } from "@angular/common";
+import { CalculateCommonModule } from "../../../shared/modules/calculate-common.module";
+import { ResourceNameByIdPipe } from "../../pipes";
 
 @Component({
   templateUrl:"./match-info.compoment.html",
-  selector: 'match-info'
+  selector: 'match-info',
+  standalone: true,
+  imports: [CommonModule]
 })
 export class MatchInfoCompoment {
   @Input() matchDetail: MatchDetail;

@@ -79,7 +79,7 @@ public class AioServiceImp : IAioService
         if (mapperService != null)
         {
             resultDetails.ForEach(result => result.MatchId = request.MatchId);
-            //mapperService.Decorate(resultDetails);
+            mapperService.Decorate(resultDetails);
         }
 
         var hedgeMatchCriteria = validateApiKeyService.CriteriaName(request, $"{apiKey}-{ApiKeyConstant.HedgeMatchInfoKey}");

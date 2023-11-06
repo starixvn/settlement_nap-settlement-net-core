@@ -16,6 +16,9 @@
   <div *ngIf="!isReadyMatch">
     <not-ready-match></not-ready-match>
   </div>
+
+  <resettle-checker (proceedEvent)="onResettleCheckboxChange($event)"
+  [checked]="isReSettledTickets"></resettle-checker>
 </div>
 
 
@@ -25,14 +28,14 @@
       <th scope="col" rowspan="2" class="code">Result</th>
       <th scope="col" rowspan="2" class="ticket-status">Ticket Status</th>
       <th scope="col" rowspan="2" colspan="2" class="kick-off-time">Score</th>
-      <th>Provider Score</th>
-      <th scope="col" rowspan="2">Select to Proceed</th>
+      <th  *ngIf="isLeader">Provider Score</th>
+      <th scope="col" rowspan="2" class="kick-off-time" >Select to Proceed</th>
     </tr>
     <tr>
-      <ng-container *ngFor="let externalResult of externalResults">
-        <th class="code">
+      <ng-container *ngIf="isLeader" >
+        <th  class="code" *ngFor="let externalResult of externalResults">
           {{externalResult.sourceName}}
-          <span [ngClass]="{ 'icon-copy': true, 'disable-copy': true }"></span>
+          <span [ngClass]="{ 'icon-copy': true, 'disable-copy': false }" (click)="copyScore()"></span>
         </th>
       </ng-container>
 
@@ -42,33 +45,46 @@
 
 <ng-template #calcBody>
   <ng-container *ngFor="let result of resultDetails; let i = index; let last = last">
-    <tr [ngClass]="{'mismatched': false}">
+    <tr    [ngClass]="{'mismatched': result.isScoreMismatched, 'confirmed-refund': isConfirmed(result)}">
       <td>
-        {{ result.resourceId | resourceName: matchDetail.sportType }}
+        {{ result.resourceId | badyResourceName}}
       </td>
 
-      <td *ngIf="isFistHalf(result.resourceId)" [ngClass]="result.ticketStatus?.toLowerCase()">{{result.ticketStatus}}
+      <td *ngIf="isFistHalf(result.resourceId)" [ngClass]="result.ticketStatus?.toLowerCase()" class="set-status">{{result.ticketStatus}}
       </td>
-      <td *ngIf="isMatchResult(result.resourceId)" [rowSpan]="4" [ngClass]="result.ticketStatus?.toLowerCase()">
+      <td *ngIf="isMatchResult(result.resourceId)" [rowSpan]="4" [ngClass]="result.ticketStatus?.toLowerCase()" class="match-status">
         {{result.ticketStatus}}</td>
 
-      <td [ngClass]="{'mismatched': false}">
-        <input type="text" myOnlyInteger tabindex="{{ i * 2 + 1 }}" [(ngModel)]="result.homeValue" (ngModelChange)="changeScore()"
+      <td [ngClass]="[getClass(result)]">
+        <input type="text" 
+          myOnlyInteger 
+          tabindex="{{ i * 2 + 1 }}" [(ngModel)]="result.homeValue" 
+          (ngModelChange)="verifyAndAutoFillScore(result)"
           [disabled]="result.resourceId === '00' || (result.resourceId === 'ET' && disabledET) || (result.resourceId === 'PEN' && disbaledPEN)"
-          [ngClass]="{'warning' :true}" />
+          [ngClass]="{'warning' :isErrorOnVerification(result)}" 
+       
+          />
       </td>
-      <td [ngClass]="{'mismatched': false}">
-        <input type="text" myOnlyInteger tabindex="{{ (i + 1) * 2 }}" [(ngModel)]="result.awayValue" (ngModelChange)="changeScore()"
-          [disabled]="result.resourceId === '00' || (result.resourceId === 'ET' && disabledET) || (result.resourceId === 'PEN' && disbaledPEN)"  [ngClass]="{'warning' :true}"/>
+      <td  [ngClass]="[getClass(result)]">
+        <input type="text" 
+          myOnlyInteger 
+          tabindex="{{ (i + 1) * 2 }}" 
+          [(ngModel)]="result.awayValue" 
+          (ngModelChange)="verifyAndAutoFillScore(result)"
+          [disabled]="result.resourceId === '00' || (result.resourceId === 'ET' && disabledET) || (result.resourceId === 'PEN' && disbaledPEN)"  
+          [ngClass]="{'warning' :isErrorOnVerification(result)}"/>
       </td>
-      <ng-container *ngFor="let externalResult of externalResults">
-        <td>{{ viewExternalScore(result.resourceId,externalResult)}}</td>
+
+
+      <ng-container *ngIf="isLeader">
+        <td  *ngFor="let externalResult of externalResults">{{ viewExternalScore(result.resourceId,externalResult)}}</td>
       </ng-container>
 
       <td *ngIf="isFistHalf(result.resourceId)" [ngClass]="result.ticketStatus?.toLowerCase()"><input type="checkbox"
-          [(ngModel)]="result.checked" (ngModelChange)="onCheckboxChange($event,result.resourceId)"/></td>
-      <td *ngIf="isMatchResult(result.resourceId)" [rowSpan]="4" [ngClass]="result.ticketStatus?.toLowerCase()"><input
-          type="checkbox" [(ngModel)]="result.checked" (ngModelChange)="onCheckboxChange($event,result.resourceId)"/></td>
+          [(ngModel)]="result.checked" (ngModelChange)="onSelectResult($event,result.resourceId)"/></td>
+      <td *ngIf="isMatchResult(result.resourceId)" [rowSpan]="4" [ngClass]="result.ticketStatus?.toLowerCase()">
+        <input id="final-checkbox" type="checkbox" [(ngModel)]="result.checked" (ngModelChange)="onSelectResult($event,result.resourceId)"/>
+      </td>
 
     </tr>
   </ng-container>

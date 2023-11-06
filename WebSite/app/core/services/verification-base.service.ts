@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { Injectable, PipeTransform } from "@angular/core";
-import { ExternalResultDetail, ResultDetail, GeneralMatch, ExternalResult } from "../../shared/models/sportsbook-sop";
+import { ExternalResultDetail, ResultDetail, GeneralMatch, ExternalResult, MatchDetail } from "../../shared/models/sportsbook-sop";
 import { ResultStatusId, TicketStatusText, ScoreSourceType, SettlementStatusId, SportType } from "../../shared/constants";
 import { Language } from "../../shared/language.native";
 import { ResultByTeamNamePipe } from '../../shared/pipes/result-by-team-name.pipe';
@@ -14,6 +14,8 @@ export class VerificationBaseService {
     public invalidInputScore(resultDetails: ResultDetail[], isScoreDirect: boolean, totalGames: string) {
         const findMap = _.find(resultDetails, (map: ResultDetail) =>
             _.isEmpty(map.homeValue) || _.isEmpty(map.awayValue));
+
+        console.log(';findMap',resultDetails)
 
         const total = _.find(resultDetails, (map: ResultDetail) =>
             map.resourceId === totalGames
@@ -421,5 +423,81 @@ export class VerificationBaseService {
             totalPoints.awayValue = "";
         }
     }
+
+    // sop lite
+    public hasTraderConfirmed(matchDetail: MatchDetail,originalResultDetails: ResultDetail[], totalResourceId: string) {
+        const originalTotalSetResultDetail = originalResultDetails.find(r => r.resourceId === totalResourceId);
+        return this.isScoreConfirmed(matchDetail,originalTotalSetResultDetail);
+    }
+
+    public hasProvider(externalResults: ExternalResultDetail[]) {
+        return externalResults?.length;
+    }
+
+    public isScoreConfirmed(matchDetail: MatchDetail, resultDetail: ResultDetail) {
+        return matchDetail.confirmFT > 0 && !this.isEmptyHomeOrAwayValue(resultDetail);
+    }
+
+    public isInsufficientSOPLite(matchDetail: MatchDetail,originalResultDetails: ResultDetail[],externalResults: ExternalResultDetail[],totalResourceId) {
+        const originalTotalSetResultDetail = originalResultDetails.find(r => r.resourceId === totalResourceId);
+        return  (matchDetail.confirmFT < 1 || this.isEmptyHomeOrAwayValue(originalTotalSetResultDetail)) && !externalResults?.length;
+    }
+
+    public isEmptyHomeOrAwayValue(item: GeneralResultDetail) {
+        return item.homeValue === null || _.isEmpty(item.homeValue)
+            || item.awayValue === null || _.isEmpty(item.awayValue);
+    }
+
+    public isScoreMismatched(resultDetails: ResultDetail[], externalResults: ExternalResultDetail[],
+        originalResultDetails: ResultDetail[], matchDetail: MatchDetail) {
+            const hasTrader = this.hasTraderConfirmed(matchDetail,originalResultDetails,"");
+            const hasProvider = this.hasProvider(externalResults);
+
+            if(hasProvider) {
+                if(hasTrader) {
+                    _.forEach(resultDetails, result => {
+                        const providerResult = externalResults.find(x => x.resourceId === result.resourceId);
+                        const originalResult = originalResultDetails.find(x => x.resourceId === result.resourceId)
+         
+                        result.isScoreMismatched = providerResult && originalResult && (!_.isEqual(providerResult.homeValue ?? "", originalResult.homeValue ?? "")
+                        || !_.isEqual(providerResult.awayValue ?? "", originalResult.awayValue ?? ""))
+                    });
+                    
+                    if(resultDetails.some(x => x.isScoreMismatched)) {
+                        return;
+                    }
+                }
+
+                this.compareInputScoreWithProviderScores(resultDetails, externalResults);
+                return;
+            }
+           
+            if(hasTrader) {
+                this.compareInputScoreTraderScores(originalResultDetails,resultDetails);
+            }
+    }
+
+    private compareInputScoreWithProviderScores(resultDetails: ResultDetail[], externalResults: ExternalResultDetail[]) {
+        _.forEach(resultDetails, result => {
+            const providerResult = externalResults.find(x => x.resourceId === result.resourceId);
+
+            result.isScoreMismatched = providerResult  && !this.isEmptyHomeOrAwayValue(result) 
+                && (!_.isEqual(providerResult.homeValue, result.homeValue) || !_.isEqual(providerResult.awayValue, result.awayValue)) && !this.acceptCaseZero(providerResult,result);
+        });
+    }
+
+    private compareInputScoreTraderScores(originalResultDetails: ResultDetail[], resultDetails: ResultDetail[]) {
+        _.forEach(resultDetails, result => {
+                const originalResult = originalResultDetails.find(x => x.resourceId === result.resourceId)
+                result.isScoreMismatched = originalResult && !this.isEmptyHomeOrAwayValue(result) && (!_.isEqual(result.homeValue, originalResult.homeValue)
+                    || !_.isEqual(result.awayValue, originalResult.awayValue)) 
+                    && !this.acceptCaseZero(originalResult,result);
+        })
+    }
+
+    private acceptCaseZero(orinalResult: GeneralResultDetail, result: ResultDetail) {
+       return (result.awayValue === "0" && result.homeValue === "0" && _.isEmpty(orinalResult.homeValue) && _.isEmpty(orinalResult.awayValue));
+    }
+
 
 }

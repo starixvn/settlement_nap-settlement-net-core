@@ -5,5 +5,11 @@ import { IntervalBackgroundPipe } from '../../../shared/pipes/interval-backgroun
 
 @Injectable()
 export class BandyService {
-  constructor(private readonly intervalBackgroundPipe: IntervalBackgroundPipe) {}
+  constructor(private readonly intervalBackgroundPipe: IntervalBackgroundPipe) {
+   
+  }
+
+  public getIntervalBackground(settlementStatusId: number) {
+    return this.intervalBackgroundPipe.transform(settlementStatusId);
+  }
 }

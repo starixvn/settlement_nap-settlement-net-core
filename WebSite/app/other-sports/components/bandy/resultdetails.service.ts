@@ -33,8 +33,14 @@ export class ResultDetailsService {
       [ResourceID.FT, ResourceID.ET, ResourceID.PEN].includes(r.resourceId)
     );
 
+    if(gameResults.some(x => _.isEmpty(x.homeValue) || _.isEmpty(x.awayValue))) {
+      return resultDetails;
+    }
+
     const homeValue = _.sumBy(gameResults, (x) => Number(x.homeValue));
     const awayValue = _.sumBy(gameResults, (x) => Number(x.awayValue));
+
+  
 
     return resultDetails.map((result) =>
       result.resourceId === ResourceID.MATCH

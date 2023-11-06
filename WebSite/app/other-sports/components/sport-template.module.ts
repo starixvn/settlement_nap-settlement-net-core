@@ -42,6 +42,8 @@ import { NotReadyMatchComponent } from '../../shared/components/not-ready-match/
 import { BandyCalculationComponent } from './bandy/calculation.component';
 import { MatchInfoCompoment } from './bandy/match-info.compoment';
 import { ResultDetailsService } from './bandy/resultdetails.service';
+import { ValidationService } from './bandy/validation.service';
+import { ResultByTeamNamePipe } from '../../shared/pipes/result-by-team-name.pipe';
 @NgModule({
     imports: [
         BrowserModule,
@@ -78,9 +80,7 @@ import { ResultDetailsService } from './bandy/resultdetails.service';
         GameTotalMatchCalculationComponent,
         GameTotalMatchRefundComponent,
         ScoreMatchByPermissionPipe,
-        OtherCalculationComponent,
-        BandyCalculationComponent,
-        MatchInfoCompoment
+        OtherCalculationComponent
     ],
     providers: [
         BlockUIService,
@@ -107,7 +107,8 @@ import { ResultDetailsService } from './bandy/resultdetails.service';
         GameTotalMatchVerificationService,
         GameTotalMatchService,
         OtherService,
-        ResultDetailsService
+        ResultDetailsService,
+        ValidationService
     ]
 })
 

@@ -1,42 +1,33 @@
 import { Component, Injector, OnInit, ViewChild } from "@angular/core";
 import { ToastContainerDirective, ToastrService } from "ngx-toastr";
-import {
-  ExternalResult,
-  ExternalResultDetail,
-  GeneralMatch,
-  HedgeMatchDetail,
-  MatchDetail,
-  Permission,
-  ResultDetail,
-} from "../../../shared/models/sportsbook-sop";
+import { ExternalResult, ExternalResultDetail, MatchDetail, Permission, ResultDetail, } from "../../../shared/models/sportsbook-sop";
 
-import { ModalDialogMessage, MultipleSelect } from "../../../shared/models";
-import {
-  AioService,
-  BlockUIService,
-  MessageBoxService,
-} from "../../../shared/services";
-import {
-  CalculateAction,
-  MatchStatus,
-  SportType,
-} from "../../../shared/constants";
+import { ModalDialogMessage, ResultSettingModel } from "../../../shared/models";
+import { AioService, BlockUIService, MessageBoxService, } from "../../../shared/services";
 import { Language } from "../../../shared/language.native";
 import * as _ from "lodash";
-import { KickOffTime, UpcommingSports } from "../../constants";
-import { ScorePipe } from "../../pipes";
-import { RequestService } from "../../services/request.service";
+import { RefResultStatus } from "../../constants";
 import { SportTemplate } from "../../../shared/models/sportsbook-sop";
 import { LeagueType, ResourceID, ResourceIDs } from "./constant";
 import { UrlHelper } from "../../../helper/url-helper";
 import { VolleyballApiKeys } from "../../../badminton/constants/volleyball-api-keys.native";
-import { BadmintonApiKeys } from "../../../badminton/constants/api-keys.native";
+import { IntervalBackgroundPipe } from '../../../shared/pipes/interval-background.pipe';
+
 import { MatchAio } from "../../models/match-aio.model";
 import { ResultDetailsService } from "./resultdetails.service";
+import { ValidationService } from "./validation.service";
+import { MatchInfoCompoment } from "./match-info.compoment";
+import { CalculateCommonModule } from "../../../shared/modules/calculate-common.module";
+import { BandyResourceNamePipe } from "./bandy-resource.pipe";
+import { CalculateAction } from "../../../shared/constants";
+import { SettleQuery } from "../../models";
+
 @Component({
   selector: "calculation-actions",
   templateUrl: "./calculation.component.html",
-  providers: [ScorePipe],
+  providers: [IntervalBackgroundPipe,ValidationService],
+  standalone: true,
+  imports: [CalculateCommonModule, MatchInfoCompoment,BandyResourceNamePipe],
 })
 export class BandyCalculationComponent implements SportTemplate, OnInit {
   @ViewChild(ToastContainerDirective, { static: true })
@@ -50,27 +41,32 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
   public resultDetails: ResultDetail[] = [];
   public originalResultDetails: ResultDetail[];
   public permission: Permission;
+
   public externalResults: ExternalResult[];
+  public providerResultDetails: ExternalResultDetail[] = [];
+  public externalSourceName: string;
 
   public isReSettledTickets: boolean;
   public scoreClass: string;
   public confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
   public isSupportExternalResult: boolean;
-  private oldBetStatus = "";
-  private readonly maxRound = 5;
-  private refResultStatus: number = null;
   public blockUI = true;
   public apiKeys = null;
+  private refResultStatus: number = null;
+
 
   constructor(
-    private readonly requestService: RequestService,
     private readonly resultDetailService: ResultDetailsService,
+    private readonly validationService: ValidationService,
     private readonly messageBoxService: MessageBoxService,
     private readonly aioService: AioService,
     private readonly toastrService: ToastrService,
-    private readonly injector: Injector
+    private readonly injector: Injector,
+    private readonly intervalBackgroundPipe: IntervalBackgroundPipe
   ) {
     this.confirmationDialogMessage.title = Language.confirmationBox;
+    this.toastrService.overlayContainer = this.toastContainer;
+
   }
 
   ngOnInit(): void {
@@ -84,7 +80,7 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
     this.apiKeys = VolleyballApiKeys;
     const matchQuery = {
       matchId,
-      apikey: this.apiKeys.NormalMatch,
+      apikey: 'bandy',
       sportType,
       settleType: "MNL",
     };
@@ -107,16 +103,22 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
 
     this.externalResults = this.match.externalResults;
 
-    console.log(this.resultDetails);
+    this.externalSourceName = this.externalResults[0].sourceName;
+
+    this.providerResultDetails = this.externalResults[0].resultDetails;
+
   }
 
   public changeScore() {
-    this.resultDetails = this.resultDetailService.calcMatchResultDetails(this.resultDetails);
+    const maps = this.match.resultDetails.filter((item) => !_.isEqual(item.resourceId, ResourceID.MATCH)
+      && this.validationService.isExistedHomeAwayScore(item.homeValue, item.awayValue));
+
+    this.validationService.sumTotalScores(maps, ResourceID.FT, this.matchResult);
+
   }
 
   private viewData() {
     this.resultDetails = this.generateFullResultDetails();
-    console.log(this.resultDetails);
   }
 
   private generateFullResultDetails(): ResultDetail[] {
@@ -131,16 +133,40 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
       newResult.resourceId = resourceId;
       newResult.homeValue = '';
       newResult.awayValue = '';
+      newResult.resultSettingData = new ResultSettingModel();
+      newResult.resultSettingData.isConfirmedRefund = false;
+
       return newResult;
     });
   }
 
-  private get numberOfProvider() {
-    return this.externalResults.length || 0;
+  public get isLeader() {
+    return this.permission.isLeader;
   }
 
   public get existsSelectedResult() {
     return this.resultDetails.some((result) => result.checked);
+  }
+
+  public get selectedResults() {
+    return this.resultDetails.filter((result) => result.checked);
+  }
+
+  public get matchResult() {
+    return this.resultDetails.find(x => x.resourceId === ResourceID.MATCH);
+  }
+
+  public existResultConfirmed() {
+    return _.find(this.selectedResults, item => item.resultSettingData.isConfirmedRefund);
+  }
+
+  public isConfirmed(resultDetail: ResultDetail) {
+    if ([ResourceID.ET,ResourceID.PEN,ResourceID.MATCH,ResourceID.FT]) {
+      return this.isLeader && this.matchResult.resultSettingData.isConfirmedRefund;
+    } else {
+
+      return this.isLeader && resultDetail.resultSettingData.isConfirmedRefund;
+    }
   }
 
   public getExternalResultDetail(
@@ -204,87 +230,151 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
       && !_.isEqual(et.homeValue,et.awayValue)
   }
 
-  private enableUncalculateButton() {
-  }
-
   public calculation() {
+    this.match.isClickOnCalculate = true;
     this.toastrService.clear();
+    this.refResultStatus = null;
+
+    if (!_.isNil(this.existResultConfirmed())) {
+      this.toastrService.error(Language.confirmRefund.calculateResultNotConfirmed);
+    } else if (this.validationService.invalidInputScore(this.selectedResults, this.match.isScoreDirect, ResourceID.MATCH)) {
+      this.toastrService.error(Language.warningInputScore);
+    } else if(this.validationService.inValidFirstHalf(this.resultDetails) || this.validationService.inValidMatch(this.resultDetails)) {
+      this.toastrService.error(Language.inconsistentValues);
+    } else {
+      this.confirmScoreSource();
+    }   
   }
 
-  onCheckboxChange(e,resourceId) {
-    console.log(e,resourceId)
+  private confirmScoreSource() {
+    const isSourceInsufficient = this.validationService.isInsufficientSOPLite(this.matchDetail,this.originalResultDetails, this.providerResultDetails,ResourceID.MATCH);
+    // const isInconsistent = this.va.isConsistentScore(this.resultDetailsOriginal,this.providerResultDetails,this.resultDetails,this.matchDetail);
+    
+    if (isSourceInsufficient) {
+      if (!this.isLeader) {
+        this.toastrService.error(Language.otherSports.warningCalculateInconsistent);
+      } else {
+        this.confirmationDialogMessage.message = Language.otherSports.confirmCalculateInconsistent;
+        this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
+          this.refResultStatus = isSourceInsufficient ? RefResultStatus.NoReference : RefResultStatus.ValuesInsconsistency;
+          this.confirmChangedResult();
+        });
+      }
+    } else {
+      this.confirmChangedResult();
+    }
   }
 
-  private verifyExternalSourceAndCalculate() {}
+  public isErrorOnVerification(resultDetail: ResultDetail) {
+    let disabled = this.match.isScoreDirect;
+    if (resultDetail.resourceId === ResourceID.MATCH) {
+      disabled = !this.match.isScoreDirect;
+    }
+    return this.match.isClickOnCalculate && !disabled && resultDetail.checked && (!resultDetail.homeValue || !resultDetail.awayValue);
+  }
+
+  public onSelectResult(event,resourceId) {
+   if(resourceId === ResourceID.FT) {
+      _.forEach(this.resultDetails, result => {
+        if([ResourceID.ET,ResourceID.PEN,ResourceID.MATCH]) {
+          result.checked = event; // handle for leagueType
+        }
+      })
+   }
+  }
 
   private async confirmChangedResult() {
+    if (this.isReSettledTickets) {
+      this.confirmCalculation(this.resultDetails);
+    } else {
+      const getResultQuery = {
+        matchId: this.match.matchDetail.matchId,
+        apikey: this.apiKeys.NormalMatch,
+        sportType: this.match.matchDetail.sportType,
+      };
+
+      const result = await this.aioService.verifyChangedSettledTickets(this.match.resultDetails, getResultQuery);
+      if (result) {
+        this.confirmationDialogMessage.message = Language.recalculateNotification;
+        this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
+          this.isReSettledTickets = true;
+        });
+      } else {
+        this.confirmCalculation(this.resultDetails);
+      }
+    }
   }
 
-  private confirmCalculation() {
-    this.confirmationDialogMessage.message = Language.CalculationConfirmMessage;
+  private confirmCalculation(resultDetails: ResultDetail[]) {
+    const confirmMessage = this.validationService.getCalculationConfirmMessage(resultDetails, new BandyResourceNamePipe());
+    this.confirmationDialogMessage.message = confirmMessage;
     this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
-      this.confirmationDialogMessage.message = Language.checkAgainConfirmation;
-      this.messageBoxService.confirm(this.confirmationDialogMessage, async() => {
-        // const errorMessage = await this.fullTimeService.settle(CalculateAction.calculate,
-        //                                 this.isReSettledTickets, this.matchDetail, this.refResultStatus);
-        // if(!_.isEmpty(errorMessage)) {
-        //   this.toastrService.error(errorMessage);
-        // }
-      });
+      this.sendRequest(CalculateAction.calculate, this.match.matchDetail.matchId,
+        this.selectedResults, this.isReSettledTickets, this.match.isScoreDirect);
     });
   }
 
+  public getClass(resultDetail: ResultDetail) {
+    let className = '';
+    if(this.validationService.inValidFirstHalfNEW(resultDetail,this.resultDetails)) {
+      className = 'col-mismatched ';
+    }
+    return className 
+    // + this.intervalBackgroundPipe.transform(resultDetail.settlementStatusId)
+  }
+
+  private async sendRequest(type: string, matchId: number, resultDetailList: ResultDetail[],
+    isReSettledTickets: boolean, isScoreDirect: boolean) {
+    // const childMatchIds = this.ChildMatchSelected.map(item => item.matchId).join(',');
+    if (type === CalculateAction.unCalculate) {
+      resultDetailList.forEach((item) => {
+        item.homeValue = "";
+        item.awayValue = "";
+      });
+    }
+
+    const settleQuery = new SettleQuery(this.match.matchDetail, resultDetailList, type,
+      isReSettledTickets, isScoreDirect, "");
+    settleQuery.refResultStatus = this.refResultStatus;
+
+    const result = await this.aioService.push(settleQuery);
+    
+  }
+
   public uncalculation() {
-    this.clearErrorMessage();
-    // this.confirmationDialogMessage.message = Language.UncalculationConfirmMessage;
-    // this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
-    //   this.confirmationDialogMessage.message = Language.checkAgainUnSettleConfirmation;
-    //   this.messageBoxService.confirm(this.confirmationDialogMessage, async() => {
-    //     const errorMessage = await this.fullTimeService.settle(CalculateAction.unCalculate, this.isReSettledTickets, this.matchDetail);
-    //     if(!_.isEmpty(errorMessage)) {
-    //       this.toastrService.error(errorMessage);
-    //     }
-    //   });
-    // });
+    this.toastrService.clear();
+    this.confirmationDialogMessage.message = Language.UncalculationConfirmMessage;
+    this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
+      this.sendRequest(CalculateAction.unCalculate, this.match.matchDetail.matchId,
+        this.match.resultDetails, this.isReSettledTickets, this.match.isScoreDirect);
+    });
+  }
+
+  public verifyAndAutoFillScore(resultDetail: ResultDetail) {
+   
+    this.changeScore();
   }
 
   
-
-  private clearErrorMessage() {
-    this.toastrService.clear();
-    this.refResultStatus = null;
-  }
 
   public onResettleCheckboxChange(isChecked: boolean) {
     this.isReSettledTickets = isChecked;
   }
 
-  // public changeBetStatus() {
-  //   this.matchDetail.betStatus = Number(this.matchDetail.betStatus) > this.maxRound || this.isZero(this.matchDetail.betStatus) ? this.oldBetStatus : this.matchDetail.betStatus;
-  //   this.oldBetStatus = this.matchDetail.betStatus;
-  // }
-
-  private isZero(value: string) {
-    return !_.isEmpty(value) && Number(value) === 0;
-  }
-
   public copyScore() {
-    // this.toastrService.clear();
-    // const errorMessage = this.verificationService.verifyCopyScore(this.match.matchDetail);
-    // if(_.isEmpty(errorMessage)) {
-    //   const message = Language.confirmMessageCopySBOScore.replace("'provider_name'", this.externalSourceName);
-    //   this.confirmationDialogMessage.message = message;
-    //   this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
-    //     this.match.matchDetail.finalHomeScore = this.match.matchDetail.exFTHomeScore;
-    //     this.match.matchDetail.finalAwayScore = this.match.matchDetail.exFTAwayScore;
-    //   });
-    // } else {
-    //   this.toastrService.error(errorMessage);
-    // }
-  }
+    this.toastrService.clear();
 
-  public isFinalScoreConfirmed() {
-    // return this.verificationService.isFinalScoreConfirmed(this.matchDetail)
-    //   && !this.matchDetail.isCalculated && !this.matchDetail.isCalRefund;
+      const message = Language.confirmMessageCopySBOScore.replace("'provider_name'", this.externalSourceName);
+      this.confirmationDialogMessage.message = message;
+      this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
+        _.forEach(this.resultDetails, resultDetail => {
+          const providerResult = this.providerResultDetails.find(p => resultDetail.resourceId === p.resourceId);
+          if(providerResult) {
+            resultDetail.homeValue = providerResult.homeValue;
+            resultDetail.awayValue = providerResult.awayValue;
+          }
+        })
+
+      });
   }
 }

@@ -549,7 +549,7 @@ export class CalculateActionsComponent implements SportTemplate {
       return this.match.permission.isLeader && this.totalGames.resultSettingData.isConfirmedRefund;
     } else {
       return this.match.permission.isLeader && resultDetail.resultSettingData.isConfirmedRefund;
-    }
+    } 
   }
 
   private checkConsistent() {
