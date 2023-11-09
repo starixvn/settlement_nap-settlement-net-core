@@ -63,6 +63,7 @@ public class CalculateServiceImp : ICalculateService
         }
 
         WriteDirectlyLog(criteria);
+        InsertLog(criteria);
         await ExecuteAsync(criteria);
         await RefundChildMatch(criteria);
 
@@ -85,6 +86,7 @@ public class CalculateServiceImp : ICalculateService
         }
 
         WriteDirectlyLog(criteria, request.ResultDetails);
+        InsertLog(criteria);
         await ExecuteAsync(criteria);
 
         if (request.IsApplyHedging)
@@ -106,6 +108,7 @@ public class CalculateServiceImp : ICalculateService
         }
 
         WriteDirectlyLog(criteria);
+        InsertLog(criteria);
         await ExecuteAsync(criteria);
 
         if (request.IsApplyHedging)
@@ -128,6 +131,19 @@ public class CalculateServiceImp : ICalculateService
             ErrCode = criteria.ErrCode,
             ErrMsg = criteria.ErrMsg
         };
+    }
+
+    private void InsertLog(CalculateCriteria criteria)
+    {
+        try
+        {
+            var insertLogCriteria = createQueryCriteria.CreateResettleLogCriteria(criteria);
+            repository.Execute(insertLogCriteria);
+        }
+        catch (Exception e)
+        {
+            Fanex.Logging.LogService.Error("Settlement.WebSites(Write resettle Log): ", e);
+        }
     }
 
     private async Task ExecuteAsync(CalculateCriteria criteria)

@@ -81,6 +81,7 @@ public class RefundServiceImp : IRefundService
             return validationResult;
         }
 
+        InsertLog(criteria);
         await ExecuteRefund(criteria);
 
         await RefundHedgeMatch(request, criteria);
@@ -101,6 +102,19 @@ public class RefundServiceImp : IRefundService
 
             criteria.MatchId = request.HedgeMatchId;
             await ExecuteRefund(criteria);
+        }
+    }
+
+    private void InsertLog(RefundCriteria criteria)
+    {
+        try
+        {
+            var insertLogCriteria = createCriteriaService.CreateResettleLogRefundCriteria(criteria);
+            repository.Execute(insertLogCriteria);
+        }
+        catch (Exception e)
+        {
+            Fanex.Logging.LogService.Error("Settlement.WebSites(Write resettle Log): ", e);
         }
     }
 

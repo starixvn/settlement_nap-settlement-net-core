@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Settlement.Core.Constants;
+using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.Sportsbook.Soccer.Criteria;
 using Settlement.Sportsbook.Soccer.Models;
@@ -20,6 +21,10 @@ public interface ICreateCriteriaService
     public RefundCriteria CreateRefundCriteria(RefundRequest request);
 
     public CalculateCriteria CreateUnCalculateFtCriteria(UncalculateFtRequest request);
+
+    public InsertLogCriteria CreateResettleLogCriteria(CalculateCriteria request);
+
+    public InsertLogCriteria CreateResettleLogRefundCriteria(RefundCriteria request);
 }
 
 public class CreateCriteriaServiceImp : ICreateCriteriaService
@@ -261,5 +266,60 @@ public class CreateCriteriaServiceImp : ICreateCriteriaService
 
         var semicolonIndex = goalRecord.IndexOf(';');
         return semicolonIndex < 0 ? goalRecord : goalRecord[..(semicolonIndex + 1)].ToUpperInvariant();
+    }
+
+    public InsertLogCriteria CreateResettleLogCriteria(CalculateCriteria criteria)
+    {
+        var resettleLogCriteria = mapper.Map<InsertLogCriteria>(criteria);
+        resettleLogCriteria.Sporttype = SportType.Soccer;
+        var resourceItems = new List<ResourceItem>();
+        if (criteria.Action is ActionType.CalculateHalfTime or ActionType.CalculateAll)
+        {
+            resourceItems.Add(new ResourceItem(ResourceType.Halftime) { AwayValue = criteria.HalfTimeAway.ToString(), HomeValue = criteria.HalfTimeHome.ToString() });
+        }
+
+        if (criteria.Action is ActionType.CalculateFullTime or ActionType.CalculateAll)
+        {
+            resourceItems.Add(new ResourceItem(ResourceType.Final) { AwayValue = criteria.FullTimeAway.ToString(), HomeValue = criteria.FullTimeHome.ToString() });
+        }
+
+        AddResourceResult(resourceItems, criteria.ResourceResult);
+
+        resettleLogCriteria.SelectedResources = CreateResources(resourceItems);
+
+        return resettleLogCriteria;
+    }
+
+    public InsertLogCriteria CreateResettleLogRefundCriteria(RefundCriteria criteria)
+    {
+        var resettleLogCriteria = mapper.Map<InsertLogCriteria>(criteria);
+        resettleLogCriteria.Sporttype = SportType.Soccer;
+        var resourceItems = new List<ResourceItem>();
+        if (criteria.HalfTimeAway is not null && criteria.HalfTimeHome is not null)
+        {
+            resourceItems.Add(new ResourceItem(ResourceType.Halftime) { AwayValue = criteria.HalfTimeAway.ToString(), HomeValue = criteria.HalfTimeHome.ToString() });
+        }
+
+        if (criteria.FullTimeAway is not null && criteria.FullTimeHome is not null)
+        {
+            resourceItems.Add(new ResourceItem(ResourceType.Final) { AwayValue = criteria.FullTimeAway.ToString(), HomeValue = criteria.FullTimeHome.ToString() });
+        }
+
+        AddResourceResult(resourceItems, criteria.ResourceResult);
+
+        resettleLogCriteria.SelectedResources = CreateResources(resourceItems);
+
+        return resettleLogCriteria;
+    }
+
+    private void AddResourceResult(List<ResourceItem> resourceItems, string ResourceResult)
+    {
+        if (string.IsNullOrEmpty(ResourceResult))
+        {
+            return;
+        }
+        var resourceResult = xmlConvertService.Deserialize<XmlResults>(ResourceResult);
+        var resourceItemFromResult = mapper.Map<List<ResourceItem>>(resourceResult.Resources);
+        resourceItems.AddRange(resourceItemFromResult);
     }
 }

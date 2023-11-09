@@ -1,8 +1,11 @@
-﻿using Fanex.Data.Repository;
+﻿using AutoMapper;
+using Fanex.Data.Repository;
 using Fanex.Settlement.ScaleOut.Constants;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
 using Microsoft.Extensions.Options;
+using Settlement.Core.Constants;
+using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.Soccer.Criteria;
@@ -29,13 +32,16 @@ public class SettleEarlyServiceImp : SettleEarlyService
 
     private readonly XmlConvertService xmlConvertService;
 
+    private readonly IMapper mapper;
+
     public SettleEarlyServiceImp(
         ICreateCriteriaService createCriteriaService,
         IOptions<AppSettingsKey> appSettingsKey,
         IDynamicRepository repository,
         ScaleOutSettleService scaleOutSettleService,
         LogService logService,
-        XmlConvertService xmlConvertService)
+        XmlConvertService xmlConvertService,
+        IMapper mapper)
     {
         this.createCriteriaService = createCriteriaService;
         this.appSettingsKey = appSettingsKey.Value;
@@ -43,6 +49,7 @@ public class SettleEarlyServiceImp : SettleEarlyService
         this.scaleOutSettleService = scaleOutSettleService;
         this.logService = logService;
         this.xmlConvertService = xmlConvertService;
+        this.mapper = mapper;
     }
 
     public async Task<Result> CalculateEarly(SettleEarlyRequest request)
@@ -55,12 +62,26 @@ public class SettleEarlyServiceImp : SettleEarlyService
         }
 
         WriteDirectlyLog(request);
-
+        InsertLog(criteria);
         await UpdateMatchInfo(criteria);
 
         var result = await Execute(criteria);
 
         return result;
+    }
+
+    private void InsertLog(CalculateEarlyCriteria criteria)
+    {
+        try
+        {
+            var insertLogCriteria = mapper.Map<InsertLogCriteria>(criteria);
+            insertLogCriteria.Sporttype = SportType.Soccer;
+            repository.Execute(insertLogCriteria);
+        }
+        catch (Exception e)
+        {
+            Fanex.Logging.LogService.Error("Settlement.WebSites(Write resettle Log): ", e);
+        }
     }
 
     private void WriteDirectlyLog(SettleEarlyRequest request)
