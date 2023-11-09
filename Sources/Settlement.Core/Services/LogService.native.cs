@@ -1,14 +1,17 @@
 ﻿using Fanex.Data.Repository;
 using Fanex.NAP.Client.Helpers.Web;
 using Settlement.Core.Criteria;
+using Log = Fanex.Logging.LogService;
 
 namespace Settlement.Core.Services;
 
 public interface LogService
 {
-    void WriteLog(int matchId, string message);
+    Task WriteLog(int matchId, string message);
 
-    void ActionLog(int matchId, string message, int actionId);
+    Task WriteLog(InsertLogCriteria criteria);
+
+    Task ActionLog(int matchId, string message, int actionId);
 }
 
 public class LogServiceImp : LogService
@@ -23,13 +26,13 @@ public class LogServiceImp : LogService
         this.session = session;
     }
 
-    public void ActionLog(int matchId, string message, int actionId)
+    public async Task ActionLog(int matchId, string message, int actionId)
     {
         var criteria = new LogCriteria(matchId, message, actionId, session.UserId);
-        repository.Execute(criteria);
+        await repository.ExecuteAsync(criteria);
     }
 
-    public void WriteLog(int matchId, string message)
+    public async Task WriteLog(int matchId, string message)
     {
         try
         {
@@ -40,11 +43,26 @@ public class LogServiceImp : LogService
                 UserId = session.UserId
             };
 
-            repository.Execute(criteria);
+            await repository.ExecuteAsync(criteria);
         }
         catch (Exception e)
         {
-            Fanex.Logging.LogService.Error("Settlement.WebSites(Write Log Directly): ", e);
+            await Log.ErrorAsync("Settlement.WebSites(Write Log Directly): ", e);
+        }
+    }
+
+    public async Task WriteLog(InsertLogCriteria criteria)
+    {
+        try
+        {
+            if (!criteria.IsHedgeMatch)
+            {
+                await repository.ExecuteAsync(criteria);
+            }
+        }
+        catch (Exception e)
+        {
+            await Log.ErrorAsync("Settlement.WebSites(Write resettle Log): ", e);
         }
     }
 }

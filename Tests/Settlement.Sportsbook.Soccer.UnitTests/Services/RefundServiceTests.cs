@@ -78,7 +78,7 @@ public class RefundServiceTests
         await service.RefundRunningThirdPartyTickets(new RefundRunningThirdPartyTicketRequest());
 
         // Assert
-        logService.Received().WriteLog(Arg.Any<int>(), Arg.Any<string>());
+        await logService.Received().WriteLog(Arg.Any<int>(), Arg.Any<string>());
         await repository.Received(appSettings.SiteDbServer.Count).ExecuteAsync(Arg.Any<RefundRunningThirdPartyTicketCriteria>());
     }
 
@@ -94,7 +94,7 @@ public class RefundServiceTests
 
         // Assert
         Assert.False(result.IsSuccessful);
-        logService.DidNotReceive().WriteLog(Arg.Any<int>(), Arg.Any<string>());
+        await logService.DidNotReceive().WriteLog(Arg.Any<int>(), Arg.Any<string>());
         await repository.DidNotReceive().ExecuteAsync(Arg.Any<RefundRunningThirdPartyTicketCriteria>());
     }
 
@@ -120,7 +120,7 @@ public class RefundServiceTests
 
         // Assert
         Assert.True(result.ErrCode == errorCode && result.ErrMsg == errorMsg);
-        logService.Received(result.IsSuccessful ? 1 : 0).WriteLog(Arg.Any<int>(), Arg.Any<string>());
+        await logService.Received(result.IsSuccessful ? 1 : 0).WriteLog(Arg.Any<int>(), Arg.Any<string>());
         await repository.Received(executeTime).ExecuteAsync(Arg.Any<MoveThirdPartyBetTicketCriteria>());
     }
 

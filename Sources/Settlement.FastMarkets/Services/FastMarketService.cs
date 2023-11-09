@@ -144,7 +144,7 @@ public class FastMarketServiceImp : IFastMarketService
         await scaleOutSettleService.UpdateMatchInfo(requestUpdateInfo);
 
         var message = $"NAP: Fast Market {criteria.Action} for matchId: {criteria.MatchId}";
-        logService.WriteLog(criteria.MatchId, message);
+        await logService.WriteLog(criteria.MatchId, message);
 
         ExecuteCalculate(criteria);
 

@@ -1,6 +1,4 @@
-﻿using Fanex.Data.Repository;
-
-namespace Settlement.Sportsbook.Soccer.Criteria;
+﻿namespace Settlement.Sportsbook.Soccer.Criteria;
 
 public class GetMatchDetailCriteria : CriteriaBase
 {

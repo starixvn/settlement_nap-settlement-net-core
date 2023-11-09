@@ -2,6 +2,7 @@
 using Fanex.Settlement.ScaleOut.Services;
 using Microsoft.Extensions.Options;
 using Settlement.Core.Constants;
+using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.Aio.Constants;
@@ -30,6 +31,7 @@ public class MultipleServerAioServiceImp : MultipleServerAioService
     private readonly ICreateQueryService createQueryService;
     private readonly MergeDataService mergeDataService;
     private readonly LogService logService;
+    private readonly IMapper mapper;
 
     public MultipleServerAioServiceImp(
         IDynamicRepository repository,
@@ -37,7 +39,8 @@ public class MultipleServerAioServiceImp : MultipleServerAioService
         ScaleOutSettleService scaleOutSettleService,
         ICreateQueryService createQueryService,
         MergeDataService mergeDataService,
-        LogService logService)
+        LogService logService,
+        IMapper mapper)
     {
         this.repository = repository;
         this.appSettingsKey = appSettingsKey.Value;
@@ -45,6 +48,7 @@ public class MultipleServerAioServiceImp : MultipleServerAioService
         this.createQueryService = createQueryService;
         this.mergeDataService = mergeDataService;
         this.logService = logService;
+        this.mapper = mapper;
     }
 
     public async Task<(List<Models.ResultDetail>, TicketCounts)> FetchResultDetails(GetResultDetailCriteria criteria, int sportType)
@@ -214,11 +218,13 @@ public class MultipleServerAioServiceImp : MultipleServerAioService
         }
     }
 
-    private void WriteLog(int matchId, string action, string resources, string betStatus)
+    private async Task WriteLog(SettleCriteria criteria)
     {
-        var messageLog = $"NAP: Calculate {action} for matchId: {matchId} Result: {resources} <br/> BetStatus ({betStatus})";
+        var insertLogCriteria = mapper.Map<InsertLogCriteria>(criteria);
+        await logService.WriteLog(insertLogCriteria);
 
-        logService.WriteLog(matchId, messageLog);
+        var messageLog = $"NAP: Calculate {criteria.Action} for matchId: {criteria.MatchId} Result: {criteria.SelectedResources} <br/> BetStatus ({criteria.BetStatus})";
+        await logService.WriteLog(criteria.MatchId, messageLog);
     }
 
     private async Task UpdateInfoAndSettle(SettleCriteria criteria, List<ResourceItem> selectedResources)
@@ -227,30 +233,12 @@ public class MultipleServerAioServiceImp : MultipleServerAioService
 
         await UpdateMatchInfo(criteria);
 
-        await InsertLog(criteria);
-
-        WriteLog(criteria.MatchId, criteria.Action, criteria.SelectedResources, criteria.BetStatus);
+        await WriteLog(criteria);
 
         foreach (var server in appSettingsKey.SiteDbServer)
         {
             criteria.DbServer = server;
             await repository.ExecuteAsync(criteria);
-        }
-    }
-
-    private async Task InsertLog(SettleCriteria criteria)
-    {
-        try
-        {
-            if (!criteria.IsHedgeMatch)
-            {
-                var insertLogCriteria = createQueryService.CreateInsertLogCriteria(criteria);
-                await repository.ExecuteAsync(insertLogCriteria);
-            }
-        }
-        catch (Exception e)
-        {
-            await Fanex.Logging.LogService.ErrorAsync("Settlement.WebSites(Write resettle Log): ", e);
         }
     }
 

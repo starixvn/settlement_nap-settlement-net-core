@@ -1,9 +1,5 @@
-﻿using AutoMapper;
-using Fanex.Data.Repository;
-using Fanex.Settlement.ScaleOut.Request;
-using Fanex.Settlement.ScaleOut.Services;
-using Microsoft.Extensions.Options;
-using Settlement.Core.Constants;
+﻿using Settlement.Core.Constants;
+using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.Soccer.Constants;
@@ -31,7 +27,7 @@ public class CalculateServiceImp : ICalculateService
 
     private readonly AppSettingsKey appSettingsKey;
 
-    private readonly ICreateCriteriaService createQueryCriteria;
+    private readonly ICreateCriteriaService createCriteriaService;
 
     private readonly ScaleOutSettleService scaleOutSettleService;
 
@@ -41,30 +37,34 @@ public class CalculateServiceImp : ICalculateService
         IMapper mapper,
         IDynamicRepository repository,
         IOptions<AppSettingsKey> appSettingsKey,
-        ICreateCriteriaService createQueryCriteria,
+        ICreateCriteriaService createCriteriaService,
         ScaleOutSettleService scaleOutSettleService,
         LogService logService)
     {
         this.repository = repository;
         this.appSettingsKey = appSettingsKey.Value;
         this.mapper = mapper;
-        this.createQueryCriteria = createQueryCriteria;
+        this.createCriteriaService = createCriteriaService;
         this.scaleOutSettleService = scaleOutSettleService;
         this.logService = logService;
     }
 
     public async Task<Result> Calculate(SettleRequest request)
     {
-        var criteria = createQueryCriteria.CreateCalculateCriteria(request);
+        var criteria = createCriteriaService.CreateCalculateCriteria(request);
         var matchChecking = await ValidateBeforeExecute(criteria);
         if (matchChecking.ErrCode > 0)
         {
             return matchChecking;
         }
 
-        WriteDirectlyLog(criteria);
-        InsertLog(criteria);
+        var match = CreatedMatch(criteria);
+        var insertLogCriteria = createCriteriaService.CreateCalculateLogCriteria(request);
+
+        await WriteLog(match, insertLogCriteria);
+
         await ExecuteAsync(criteria);
+
         await RefundChildMatch(criteria);
 
         if (request.IsApplyHedging)
@@ -78,15 +78,17 @@ public class CalculateServiceImp : ICalculateService
 
     public async Task<Result> UncalculateFt(UncalculateFtRequest request)
     {
-        var criteria = createQueryCriteria.CreateUnCalculateFtCriteria(request);
+        var criteria = createCriteriaService.CreateUnCalculateFtCriteria(request);
         var requestChecking = await ValidateBeforeExecute(criteria);
         if (requestChecking.ErrCode > 0)
         {
             return requestChecking;
         }
 
-        WriteDirectlyLog(criteria, request.ResultDetails);
-        InsertLog(criteria);
+        var match = CreatedMatch(criteria, request.ResultDetails);
+        var insertLogCriteria = createCriteriaService.CreateUnCalculateFtLogCriteria(request);
+        await WriteLog(match, insertLogCriteria);
+
         await ExecuteAsync(criteria);
 
         if (request.IsApplyHedging)
@@ -100,15 +102,18 @@ public class CalculateServiceImp : ICalculateService
 
     public async Task<Result> UnCalculate(SettleRequest request)
     {
-        var criteria = createQueryCriteria.CreateUnCalculateCriteria(request);
+        var criteria = createCriteriaService.CreateUnCalculateCriteria(request);
         var requestChecking = await ValidateBeforeExecute(criteria);
         if (requestChecking.ErrCode > 0)
         {
             return requestChecking;
         }
 
-        WriteDirectlyLog(criteria);
-        InsertLog(criteria);
+        var match = CreatedMatch(criteria);
+        var insertLogCriteria = createCriteriaService.CreateUnCalculateLogCriteria(request);
+
+        await WriteLog(match, insertLogCriteria);
+
         await ExecuteAsync(criteria);
 
         if (request.IsApplyHedging)
@@ -133,19 +138,6 @@ public class CalculateServiceImp : ICalculateService
         };
     }
 
-    private void InsertLog(CalculateCriteria criteria)
-    {
-        try
-        {
-            var insertLogCriteria = createQueryCriteria.CreateResettleLogCriteria(criteria);
-            repository.Execute(insertLogCriteria);
-        }
-        catch (Exception e)
-        {
-            Fanex.Logging.LogService.Error("Settlement.WebSites(Write resettle Log): ", e);
-        }
-    }
-
     private async Task ExecuteAsync(CalculateCriteria criteria)
     {
         await UpdateMatchInfo(criteria);
@@ -156,18 +148,19 @@ public class CalculateServiceImp : ICalculateService
         }
     }
 
-    private void WriteLog(Match match, string actionName)
+    private async Task WriteLog(Match match, InsertLogCriteria insertLogCriteria)
     {
-        var messageLog = $"NAP:Calculate({actionName}) for matchId: {match.MatchId} score: "
+        await logService.WriteLog(insertLogCriteria);
+
+        var messageLog = $"NAP:Calculate({insertLogCriteria.Action}) for matchId: {match.MatchId} score: "
                          + $"{match.FinalHomeScore ?? 0}-{match.FinalAwayScore ?? 0} HT: {match.HalfTimeHomeScore ?? 0}-{match.HalfTimeAwayScore ?? 0} "
                          + $"GoalRecord: {match.GoalRecord} Remark({match.BetStatus})";
-
-        logService.WriteLog(match.MatchId, messageLog);
+        await logService.WriteLog(match.MatchId, messageLog);
     }
 
-    private void WriteDirectlyLog(CalculateCriteria criteria)
+    private Match CreatedMatch(CalculateCriteria criteria)
     {
-        var match = new Match
+        return new Match
         {
             MatchId = criteria.MatchId,
             HalfTimeAwayScore = criteria.HalfTimeAway,
@@ -177,14 +170,12 @@ public class CalculateServiceImp : ICalculateService
             GoalRecord = criteria.GoalRecord,
             BetStatus = criteria.BetStatus
         };
-
-        WriteLog(match, criteria.Action);
     }
 
-    private void WriteDirectlyLog(CalculateCriteria criteria, IEnumerable<ResultDetail> resultDetails)
+    private Match CreatedMatch(CalculateCriteria criteria, IEnumerable<ResultDetail> resultDetails)
     {
         var resultHalfTime = resultDetails?.FirstOrDefault(result => result.ResourceId == ResourceType.Halftime) ?? new ResultDetail();
-        var match = new Match
+        return new Match
         {
             MatchId = criteria.MatchId,
             GoalRecord = criteria.GoalRecord,
@@ -192,8 +183,6 @@ public class CalculateServiceImp : ICalculateService
             HalfTimeHomeScore = string.IsNullOrEmpty(resultHalfTime.HomeValue) ? 0 : int.Parse(resultHalfTime.HomeValue),
             HalfTimeAwayScore = string.IsNullOrEmpty(resultHalfTime.AwayValue) ? 0 : int.Parse(resultHalfTime.AwayValue)
         };
-
-        WriteLog(match, criteria.Action);
     }
 
     private async Task<Result> ValidateBeforeExecute(CalculateCriteria criteria)

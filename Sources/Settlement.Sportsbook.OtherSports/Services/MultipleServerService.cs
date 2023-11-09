@@ -109,8 +109,7 @@ public class MultipleServerServiceImp : MultipleServerService
 
         await scaleOutSettleService.UpdateMatchInfo(requestUpdateInfo);
 
-        WriteLog(calculateCriteria.MatchId, calculateCriteria.Action, calculateCriteria.SelectedResources, calculateCriteria.BetStatus);
-        await InsertLog(calculateCriteria);
+        await WriteLog(calculateCriteria);
 
         foreach (var server in appSettingsKey.SiteDbServer)
         {
@@ -121,27 +120,13 @@ public class MultipleServerServiceImp : MultipleServerService
         return requestChecking;
     }
 
-    private async Task InsertLog(CalculateCriteria criteria)
+    private async Task WriteLog(CalculateCriteria criteria)
     {
-        try
-        {
-            if (!criteria.IsHedgeMatch)
-            {
-                var insertLogCriteria = mapper.Map<InsertLogCriteria>(criteria);
-                await repository.ExecuteAsync(insertLogCriteria);
-            }
-        }
-        catch (Exception e)
-        {
-            await Fanex.Logging.LogService.ErrorAsync("Settlement.WebSites(Write resettle Log): ", e);
-        }
-    }
+        var insertLogCriteria = mapper.Map<InsertLogCriteria>(criteria);
+        await logService.WriteLog(insertLogCriteria);
 
-    private void WriteLog(int matchId, string action, string resources, string betStatus)
-    {
-        var messageLog = $"NAP: Calculate {action} for matchId: {matchId} Result: {resources} <br/> BetStatus ({betStatus})";
-
-        logService.WriteLog(matchId, messageLog);
+        var messageLog = $"NAP: Calculate {criteria.Action} for matchId: {criteria.MatchId} Result: {criteria.SelectedResources} <br/> BetStatus ({criteria.BetStatus})";
+        await logService.WriteLog(criteria.MatchId, messageLog);
     }
 
     private static UpdateMatchInfoRequest CreateUpdateRequest(CalculateCriteria criteria, ScoreSetModel score)

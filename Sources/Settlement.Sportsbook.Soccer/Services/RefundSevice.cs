@@ -1,9 +1,5 @@
-﻿using Fanex.Data.Repository;
-using Fanex.Settlement.ScaleOut.Request;
-using Fanex.Settlement.ScaleOut.Services;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Options;
-using Settlement.Core.Constants;
+﻿using Settlement.Core.Constants;
+using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.Soccer.Constants;
@@ -81,7 +77,9 @@ public class RefundServiceImp : IRefundService
             return validationResult;
         }
 
-        InsertLog(criteria);
+        var insertLogCriteria = createCriteriaService.CreateRefundLogCriteria(request);
+        await WriteLog(criteria, insertLogCriteria);
+
         await ExecuteRefund(criteria);
 
         await RefundHedgeMatch(request, criteria);
@@ -102,19 +100,6 @@ public class RefundServiceImp : IRefundService
 
             criteria.MatchId = request.HedgeMatchId;
             await ExecuteRefund(criteria);
-        }
-    }
-
-    private void InsertLog(RefundCriteria criteria)
-    {
-        try
-        {
-            var insertLogCriteria = createCriteriaService.CreateResettleLogRefundCriteria(criteria);
-            repository.Execute(insertLogCriteria);
-        }
-        catch (Exception e)
-        {
-            Fanex.Logging.LogService.Error("Settlement.WebSites(Write resettle Log): ", e);
         }
     }
 
@@ -178,8 +163,6 @@ public class RefundServiceImp : IRefundService
     {
         await UpdateMatchInfo(criteria);
 
-        WriteLog(criteria);
-
         foreach (var server in appSettingsKey.SiteDbServer)
         {
             criteria.DbServer = server;
@@ -187,8 +170,10 @@ public class RefundServiceImp : IRefundService
         }
     }
 
-    private void WriteLog(RefundCriteria criteria)
+    private async Task WriteLog(RefundCriteria criteria, InsertLogCriteria insertLogCriteria)
     {
+        await logService.WriteLog(insertLogCriteria);
+
         var messageLog = $"NAP: Calculate {criteria.Action} for matchId:{criteria.MatchId} "
                          + $"score FT: {criteria.FullTimeHome}-{criteria.FullTimeAway} "
                          + $"HT: {criteria.HalfTimeHome}-{criteria.HalfTimeAway} "
@@ -196,7 +181,7 @@ public class RefundServiceImp : IRefundService
                          + $" SDTRecord: {criteria.SdtRecord} "
                          + (!string.IsNullOrEmpty(criteria.BetStatus) ? $"Remark({criteria.BetStatus})" : string.Empty);
 
-        logService.WriteLog(criteria.MatchId, messageLog);
+        await logService.WriteLog(criteria.MatchId, messageLog);
     }
 
     public async Task<Result> RefundRunningThirdPartyTickets(RefundRunningThirdPartyTicketRequest request)
@@ -215,7 +200,7 @@ public class RefundServiceImp : IRefundService
             return result;
         }
 
-        WriteLogDirectly(request);
+        await WriteLogDirectly(request);
 
         foreach (var server in appSettingsKey.SiteDbServer)
         {
@@ -253,7 +238,8 @@ public class RefundServiceImp : IRefundService
             return result;
         }
 
-        WriteLogDirectlyMoveTicket(criteria);
+        await WriteLogDirectlyMoveTicket(criteria);
+
         await ExecuteMoveBetTickets(criteria, spName);
 
         return result;
@@ -289,17 +275,17 @@ public class RefundServiceImp : IRefundService
         };
     }
 
-    private void WriteLogDirectly(RefundRunningThirdPartyTicketRequest request)
+    private async Task WriteLogDirectly(RefundRunningThirdPartyTicketRequest request)
     {
         var action = request.ActionName == ActionType.BetDaq ? "BetDaq" : "BetFair";
         var message = $"NAP: Calculate (Refund Running {action}) for matchId: {request.MatchId}";
-        logService.WriteLog(request.MatchId, message);
+        await logService.WriteLog(request.MatchId, message);
     }
 
-    private void WriteLogDirectlyMoveTicket(MoveThirdPartyBetTicketCriteria criteria)
+    private async Task WriteLogDirectlyMoveTicket(MoveThirdPartyBetTicketCriteria criteria)
     {
         var action = criteria.ActionName == ActionType.BetDaq ? "BetDaq" : "BetFair";
         var message = $"{action} Movement from OldMatch: {criteria.MatchId}, NewMatch: {criteria.NewMatchId}";
-        logService.WriteLog(criteria.MatchId, message);
+        await logService.WriteLog(criteria.MatchId, message);
     }
 }

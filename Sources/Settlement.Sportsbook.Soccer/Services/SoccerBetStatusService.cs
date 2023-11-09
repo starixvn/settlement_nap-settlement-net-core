@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Settlement.Core.Constants;
+﻿using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Sportsbook.Soccer.Requests;
 

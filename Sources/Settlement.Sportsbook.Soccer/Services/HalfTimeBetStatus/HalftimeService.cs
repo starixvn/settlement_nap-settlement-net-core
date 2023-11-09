@@ -6,8 +6,6 @@ public interface IHalftimeService
 {
     string GetBetStatusForCalculateHalfTime(SettleBaseRequest request);
 
-    string RevertBetStatusForCalculateHalfTime(string oldBetStatus);
-
     string FullTimeBetStatusForCalculateHalfTime(string goalRecord);
 
     string AppendHalfTimeBetStatus(string oldBetStatus, string halfTimeBetStatus);
@@ -41,17 +39,6 @@ public class HalftimeServiceImp : IHalftimeService
         return validationService.HasHalftimeScoreWithoutSemicolonOnGoalRecord(request)
             ? halftimeScoreAndGoalService.BetStatusHasHalftimeScoreWithoutSemicolonOnGoalRecord(request.GoalRecord)
             : string.Empty;
-    }
-
-    public string RevertBetStatusForCalculateHalfTime(string oldBetStatus)
-    {
-        var maxLengthHalfTime = 7;
-        if (oldBetStatus.Contains(";"))
-        {
-            maxLengthHalfTime += 1;
-        }
-
-        return oldBetStatus.Substring(oldBetStatus.IgnoreCaseIndexOf("1FL"), maxLengthHalfTime);
     }
 
     public string AppendHalfTimeBetStatus(string oldBetStatus, string halfTimeBetStatus)

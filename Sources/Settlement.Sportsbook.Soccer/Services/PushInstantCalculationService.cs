@@ -1,7 +1,4 @@
-﻿using Fanex.Data.Repository;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Options;
-using Settlement.Core.Models;
+﻿using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.Soccer.Criteria;
 

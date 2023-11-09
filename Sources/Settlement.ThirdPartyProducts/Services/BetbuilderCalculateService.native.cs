@@ -62,7 +62,7 @@ public class BetBuilderCalculateServiceImp : BetBuilderCalculateService
 
         var messageLog = MessageLog(criteria.MatchId, criteria.Action, criteria.SelectedSelection);
 
-        logService.WriteLog(criteria.MatchId, messageLog);
+        await logService.WriteLog(criteria.MatchId, messageLog);
 
         await ExecuteMultiServer(criteria);
 

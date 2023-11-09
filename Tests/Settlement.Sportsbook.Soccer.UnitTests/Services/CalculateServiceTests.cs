@@ -55,7 +55,7 @@ public class CalculateServiceTests
             Action = ActionType.CalculateAll
         };
         createCriteriaService.CreateCalculateCriteria(Arg.Any<SettleRequest>()).Returns(criteria);
-        logService.WriteLog(Arg.Any<int>(), Arg.Any<string>());
+        await logService.WriteLog(Arg.Any<int>(), Arg.Any<string>());
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage { ErrorCode = errorCode, ErrorMessage = errorMsg });
 
         var actual = await service.Calculate(query);
@@ -76,7 +76,7 @@ public class CalculateServiceTests
             Action = ActionType.CalculateAll
         };
         createCriteriaService.CreateCalculateCriteria(Arg.Any<SettleRequest>()).Returns(criteria);
-        logService.WriteLog(Arg.Any<int>(), Arg.Any<string>());
+        await logService.WriteLog(Arg.Any<int>(), Arg.Any<string>());
 
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
 
@@ -103,7 +103,7 @@ public class CalculateServiceTests
             Action = ActionType.CalculateAll
         };
         createCriteriaService.CreateCalculateCriteria(Arg.Any<SettleRequest>()).Returns(criteria);
-        logService.WriteLog(Arg.Any<int>(), Arg.Any<string>());
+        await logService.WriteLog(Arg.Any<int>(), Arg.Any<string>());
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
         await repository.ExecuteAsync(Arg.Any<CalculateCriteria>());
 
@@ -143,7 +143,7 @@ public class CalculateServiceTests
             Action = ActionType.UnCalculateFullTime
         };
         createCriteriaService.CreateUnCalculateFtCriteria(Arg.Any<UncalculateFtRequest>()).Returns(criteria);
-        logService.WriteLog(Arg.Any<int>(), Arg.Any<string>());
+        await logService.WriteLog(Arg.Any<int>(), Arg.Any<string>());
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage { ErrorCode = errorCode, ErrorMessage = errorMsg });
 
         var actual = await service.UncalculateFt(query);
@@ -161,7 +161,7 @@ public class CalculateServiceTests
             MatchId = 1
         };
         createCriteriaService.CreateUnCalculateFtCriteria(Arg.Any<UncalculateFtRequest>()).Returns(criteria);
-        logService.WriteLog(Arg.Any<int>(), Arg.Any<string>());
+        await logService.WriteLog(Arg.Any<int>(), Arg.Any<string>());
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
 
         await service.UncalculateFt(query);
@@ -184,7 +184,7 @@ public class CalculateServiceTests
             MatchId = 1
         };
         createCriteriaService.CreateUnCalculateFtCriteria(Arg.Any<UncalculateFtRequest>()).Returns(criteria);
-        logService.WriteLog(Arg.Any<int>(), Arg.Any<string>());
+        await logService.WriteLog(Arg.Any<int>(), Arg.Any<string>());
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
 
         await service.UncalculateFt(query);

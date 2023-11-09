@@ -1,4 +1,5 @@
-﻿using Fanex.Data.Repository;
+﻿using AutoMapper;
+using Fanex.Data.Repository;
 using Fanex.Settlement.ScaleOut.Models;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
@@ -27,18 +28,26 @@ public class MultipleServerAioServiceTests
 
     private readonly MergeDataService mergeDataService;
 
+    private readonly LogService logService;
+
     private readonly MultipleServerAioService service;
 
     public MultipleServerAioServiceTests()
     {
+        var mapperConfig = new MapperConfigurationExpression();
+        mapperConfig.AddProfile<SportsbookAioAutoMapperProfile>();
+        var config = new MapperConfiguration(mapperConfig);
+        var mapper = new Mapper(config);
+
         var appSetting = new AppSettingsKey { SiteDbServer = new List<string> { "01", "02" } };
         var option = Options.Create(appSetting);
         repository = Substitute.For<IDynamicRepository>();
         scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
         createQueryService = Substitute.For<ICreateQueryService>();
         mergeDataService = Substitute.For<MergeDataService>();
-        var logService = Substitute.For<LogService>();
-        service = new MultipleServerAioServiceImp(repository, option, scaleOutSettleService, createQueryService, mergeDataService, logService);
+        logService = Substitute.For<LogService>();
+
+        service = new MultipleServerAioServiceImp(repository, option, scaleOutSettleService, createQueryService, mergeDataService, logService, mapper);
     }
 
     [Theory]
@@ -198,7 +207,6 @@ public class MultipleServerAioServiceTests
         };
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
         createQueryService.QuerySettle(Arg.Any<SettleRequest>()).Returns(new SettleCriteria { Action = "CAL" });
-        createQueryService.CreateInsertLogCriteria(Arg.Any<SettleCriteria>()).Returns(new InsertLogCriteria());
         scaleOutSettleService.GetSiteGroupId(Arg.Any<string>()).Returns(1, 2);
 
         await service.Settle(request);
@@ -223,11 +231,10 @@ public class MultipleServerAioServiceTests
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
         createQueryService.QuerySettle(Arg.Any<SettleRequest>()).Returns(new SettleCriteria { Action = "CAL", IsReSettledTickets = true });
         scaleOutSettleService.GetSiteGroupId(Arg.Any<string>()).Returns(1, 2);
-        createQueryService.CreateInsertLogCriteria(Arg.Any<SettleCriteria>()).Returns(new InsertLogCriteria());
 
         await service.Settle(request);
 
-        await repository.Received().ExecuteAsync(Arg.Any<InsertLogCriteria>());
+        await logService.Received().WriteLog(Arg.Any<InsertLogCriteria>());
     }
 
     [Fact]
@@ -245,7 +252,6 @@ public class MultipleServerAioServiceTests
                 new() { ResourceId = "00" }
             }
         };
-        createQueryService.CreateInsertLogCriteria(Arg.Any<SettleCriteria>()).Returns(new InsertLogCriteria());
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
         createQueryService.QuerySettleChildMatch(Arg.Any<SettleChildMatchRequest>()).Returns(new SettleCriteria { Action = "CAL" });
         createQueryService.CreateResourceChildMatch(Arg.Any<ChildMatchModel>()).Returns("");
@@ -267,7 +273,6 @@ public class MultipleServerAioServiceTests
                 new() { ResourceId = "00" }
             }
         };
-        createQueryService.CreateInsertLogCriteria(Arg.Any<SettleCriteria>()).Returns(new InsertLogCriteria());
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
         createQueryService.QuerySettleChildMatch(Arg.Any<SettleChildMatchRequest>()).Returns(new SettleCriteria { Action = "CAL" });
         createQueryService.CreateResources(Arg.Any<List<ResourceItem>>()).Returns("");

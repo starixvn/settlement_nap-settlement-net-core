@@ -47,7 +47,7 @@ public class MoveActionServiceTests
         }));
         var result = await service.MoveTicket(new MoveTicketRequest { MatchId = 100 });
 
-        logService.Received().ActionLog(100, "error", 81026);
+        await logService.Received().ActionLog(100, "error", 81026);
         Assert.Equal("error", result.ErrMsg);
     }
 
@@ -58,7 +58,7 @@ public class MoveActionServiceTests
         await repository.ExecuteAsync(Arg.Any<MoveTicketCriteria>());
         var result = await service.MoveTicket(new MoveTicketRequest { MatchId = 100 });
 
-        logService.Received().ActionLog(100, "WARNING! Cannot continue due to current has no valid ticket to move.", 81026);
+        await logService.Received().ActionLog(100, "WARNING! Cannot continue due to current has no valid ticket to move.", 81026);
         Assert.Equal("WARNING! Cannot continue due to current has no valid ticket to move.", result.ErrMsg);
     }
 
@@ -73,7 +73,7 @@ public class MoveActionServiceTests
         }));
         var result = await service.MoveTicket(new MoveTicketRequest { MatchId = 100 });
 
-        logService.Received().ActionLog(100, "error", 81026);
+        await logService.Received().ActionLog(100, "error", 81026);
         Assert.Equal("error", result.ErrMsg);
     }
 
@@ -87,8 +87,8 @@ public class MoveActionServiceTests
         }));
         var result = await service.MoveTicket(new MoveTicketRequest());
 
-        logService.Received(1).WriteLog(Arg.Any<int>(), Arg.Any<string>());
-        logService.Received(1).ActionLog(Arg.Any<int>(), Arg.Any<string>(), 81025);
+        await logService.Received(1).WriteLog(Arg.Any<int>(), Arg.Any<string>());
+        await logService.Received(1).ActionLog(Arg.Any<int>(), Arg.Any<string>(), 81025);
         await repository.Received(2).ExecuteAsync(Arg.Any<MoveTicketCriteria>());
         await repository.Received(1).ExecuteAsync(Arg.Any<UpdateChildMatchCriteria>());
         await repository.Received(1).ExecuteAsync(Arg.Any<UpdateChildMatchRemarkCriteria>());

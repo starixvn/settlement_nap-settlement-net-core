@@ -58,7 +58,7 @@ public class MoveRunningServiceTests
 
         var result = await service.MoveRunningTickets(new MoveRunningTicketsRequest { MatchId = 100 });
 
-        logService.Received().ActionLog(100, "Error", Arg.Any<int>());
+        await logService.Received().ActionLog(100, "Error", Arg.Any<int>());
         Assert.Equal("Error", result.ErrMsg);
     }
 

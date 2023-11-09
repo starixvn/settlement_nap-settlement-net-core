@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Settlement.Core.Criteria;
+﻿using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.Sportsbook.Soccer.Criteria;
 using Settlement.Sportsbook.Soccer.Models;
@@ -24,8 +23,6 @@ public class SoccerAutoMapperProfile : Profile
         CreateMap<MoveBetRequest, MoveThirdPartyBetTicketCriteria>();
         CreateMap<Models.MatchDetail, GoalIconQueryModel>();
         CreateMap<UncalculateFtRequest, SettleBaseRequest>();
-        CreateMap<CalculateCriteria, InsertLogCriteria>();
-        CreateMap<CalculateEarlyCriteria, InsertLogCriteria>();
         CreateMap<RefundCriteria, InsertLogCriteria>();
         CreateMap<XmlResource, ResourceItem>();
     }

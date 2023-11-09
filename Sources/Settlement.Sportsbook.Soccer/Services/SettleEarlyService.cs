@@ -1,12 +1,4 @@
-﻿using AutoMapper;
-using Fanex.Data.Repository;
-using Fanex.Settlement.ScaleOut.Constants;
-using Fanex.Settlement.ScaleOut.Request;
-using Fanex.Settlement.ScaleOut.Services;
-using Microsoft.Extensions.Options;
-using Settlement.Core.Constants;
-using Settlement.Core.Criteria;
-using Settlement.Core.Models;
+﻿using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.Soccer.Criteria;
 using Settlement.Sportsbook.Soccer.Requests;
@@ -30,26 +22,18 @@ public class SettleEarlyServiceImp : SettleEarlyService
 
     private readonly LogService logService;
 
-    private readonly XmlConvertService xmlConvertService;
-
-    private readonly IMapper mapper;
-
     public SettleEarlyServiceImp(
         ICreateCriteriaService createCriteriaService,
         IOptions<AppSettingsKey> appSettingsKey,
         IDynamicRepository repository,
         ScaleOutSettleService scaleOutSettleService,
-        LogService logService,
-        XmlConvertService xmlConvertService,
-        IMapper mapper)
+        LogService logService)
     {
         this.createCriteriaService = createCriteriaService;
         this.appSettingsKey = appSettingsKey.Value;
         this.repository = repository;
         this.scaleOutSettleService = scaleOutSettleService;
         this.logService = logService;
-        this.xmlConvertService = xmlConvertService;
-        this.mapper = mapper;
     }
 
     public async Task<Result> CalculateEarly(SettleEarlyRequest request)
@@ -61,8 +45,8 @@ public class SettleEarlyServiceImp : SettleEarlyService
             return requestChecking;
         }
 
-        WriteDirectlyLog(request);
-        InsertLog(criteria);
+        await WriteDirectlyLog(request);
+
         await UpdateMatchInfo(criteria);
 
         var result = await Execute(criteria);
@@ -70,26 +54,13 @@ public class SettleEarlyServiceImp : SettleEarlyService
         return result;
     }
 
-    private void InsertLog(CalculateEarlyCriteria criteria)
+    private async Task WriteDirectlyLog(SettleEarlyRequest request)
     {
-        try
-        {
-            var insertLogCriteria = mapper.Map<InsertLogCriteria>(criteria);
-            insertLogCriteria.Sporttype = SportType.Soccer;
-            repository.Execute(insertLogCriteria);
-        }
-        catch (Exception e)
-        {
-            Fanex.Logging.LogService.Error("Settlement.WebSites(Write resettle Log): ", e);
-        }
-    }
+        var insertLogCriteria = createCriteriaService.CreateCalculateEarlyLogCriteria(request);
+        await logService.WriteLog(insertLogCriteria);
 
-    private void WriteDirectlyLog(SettleEarlyRequest request)
-    {
-        var selectedResources = xmlConvertService.Serialize(request.SelectedResources).Replace("ResourceItem", "Resource");
-        var message = $"NAP: Auto-Settlement ({request.ActionName}) for matchId: {request.MatchId} Result: {selectedResources}";
-
-        logService.WriteLog(request.MatchId, message);
+        var message = $"NAP: Auto-Settlement ({request.ActionName}) for matchId: {request.MatchId} Result: {insertLogCriteria.SelectedResources}";
+        await logService.WriteLog(request.MatchId, message);
     }
 
     private async Task<Result> Execute(CalculateEarlyCriteria criteria)
