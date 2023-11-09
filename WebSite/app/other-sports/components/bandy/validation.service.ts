@@ -1,10 +1,11 @@
 import { Injectable } from "@angular/core";
 import { VerificationBaseService } from "../../../core/services/verification-base.service";
-import { ResultDetail } from "../../../shared/models/sportsbook-sop";
+import { ExternalResultDetail, ResultDetail } from "../../../shared/models/sportsbook-sop";
 
 import * as _ from "lodash";
-import { ResourceID } from "./constant";
+import { LeagueType, ResourceID } from "./constant";
 import { ResultByTeamNamePipe } from "../../../shared/pipes/result-by-team-name.pipe";
+import { GeneralResultDetail } from "../../../shared/models";
 
 @Injectable()
 export class ValidationService extends VerificationBaseService {
@@ -12,160 +13,91 @@ export class ValidationService extends VerificationBaseService {
     protected resultByTeamNamePipe: ResultByTeamNamePipe) {
         super(resultByTeamNamePipe);
 }
+  public inValidFirstHalfFullTime(resultDetails: ResultDetail[]) {
+    const firstHalf = resultDetails.find((x) => x.resourceId === ResourceID.FirstHalf);
+    const fullTime = resultDetails.find((x) => x.resourceId === ResourceID.FullTime);
 
-
-  public inValidFirstHalf(resultDetails: ResultDetail[]) {
-    const fh = resultDetails.find((x) => x.resourceId === ResourceID.HT);
-    const ft = resultDetails.find((x) => x.resourceId === ResourceID.FT);
-
-    const matchResult = resultDetails.find(
-      (x) => x.resourceId === ResourceID.MATCH
-    );
-
-    if (this.hasScore(fh) && this.hasScore(ft)) {
-      return (
-        Number(fh.homeValue) > Number(ft.homeValue) ||
-        Number(fh.awayValue) > Number(ft.awayValue)
-      );
-    }
-
-    if (this.hasScore(fh) && this.hasScore(matchResult)) {
-      return (
-        Number(fh.homeValue) > Number(matchResult.homeValue) ||
-        Number(fh.awayValue) > Number(matchResult.awayValue)
-      );
-    }
-
-    return false;
+    return this.greaterThan(firstHalf,fullTime);
   }
 
-  public inValidFirstHalfNEW(firstHalf:ResultDetail,resultDetails: ResultDetail[]) {
-    const fullTime = resultDetails.find((x) => x.resourceId === ResourceID.FT);
-    const matchResult = resultDetails.find(
-      (x) => x.resourceId === ResourceID.MATCH
-    );
+  public inValidFirstHalfMatch(resultDetails: ResultDetail[]) {
+    const firstHalf = resultDetails.find((x) => x.resourceId === ResourceID.FirstHalf);
+    const matchResult = resultDetails.find((x) => x.resourceId === ResourceID.Match);
 
-    if (this.hasScore(firstHalf) && this.hasScore(fullTime)) {
-      return (
-        Number(firstHalf.homeValue) > Number(fullTime.homeValue) ||
-        Number(firstHalf.awayValue) > Number(fullTime.awayValue)
-      );
-    }
-
-    if (this.hasScore(firstHalf) && this.hasScore(matchResult)) {
-      return (
-        Number(firstHalf.homeValue) > Number(matchResult.homeValue) ||
-        Number(firstHalf.awayValue) > Number(matchResult.awayValue)
-      );
-    }
-
-    return false;
+    return this.greaterThan(firstHalf,matchResult);
   }
 
-  public inValidFullTime(fullTime: ResultDetail, resultDetails: ResultDetail[])  { // fullTime > Match
-    const match = resultDetails.find((x) => x.resourceId === ResourceID.MATCH);
-    if (this.hasScore(fullTime) && this.hasScore(match)) {
-      return (
-        Number(fullTime.homeValue) > Number(match.homeValue) ||
-        Number(fullTime.awayValue) > Number(match.awayValue)
-      );
-    }
+  public inValidFullTimeMatch(resultDetails: ResultDetail[])  {
+    const match = resultDetails.find((x) => x.resourceId === ResourceID.Match);
+    const fullTime = resultDetails.find((x) => x.resourceId === ResourceID.FullTime);
 
-    return false;
+    return this.greaterThan(fullTime,match);
   }
 
-  public inValidET(et: ResultDetail,resultDetails: ResultDetail[]) { // ET > Match
-    const match = resultDetails.find((x) => x.resourceId === ResourceID.MATCH);
-    if (this.hasScore(et) && this.hasScore(match)) {
-      return (
-        Number(et.homeValue) > Number(match.homeValue) ||
-        Number(et.awayValue) > Number(match.awayValue)
-      );
-    }
+  public inValidETMatch(resultDetails: ResultDetail[]) {
+    const et = resultDetails.find((x) => x.resourceId === ResourceID.Et);
+    const match = resultDetails.find((x) => x.resourceId === ResourceID.Match);
 
-    return false;
+    return this.greaterThan(et,match);
   }
 
-  public inValidPenNEW(pen: ResultDetail,resultDetails: ResultDetail[]) {
-    const match = resultDetails.find((x) => x.resourceId === ResourceID.MATCH);
+  public inValidPenMatch(resultDetails: ResultDetail[]) {
+    const pen = resultDetails.find((x) => x.resourceId === ResourceID.Pen);
+    const match = resultDetails.find((x) => x.resourceId === ResourceID.Match);
 
-    if (this.hasScore(pen)) {
-      return Number(pen.homeValue) === Number(pen.awayValue);
-    }
-
-    if (this.hasScore(match)) {
-      return (
-        Number(pen.homeValue) > Number(match.homeValue) ||
-        Number(pen.awayValue) > Number(match.awayValue)
-      );
-    }
-
-    return false;
+    return this.greaterThan(pen,match);
   }
 
-
-
-  public inValidPen(resultDetails: ResultDetail[]) {
-    const pen = resultDetails.find((x) => x.resourceId === ResourceID.PEN);
-
-    if (this.hasScore(pen)) {
-      return Number(pen.homeValue) === Number(pen.awayValue);
-    }
-
-    return false;
+  public inValidPenDraw(resultDetails: ResultDetail[]) {
+    const pen = resultDetails.find((x) => x.resourceId === ResourceID.Pen);
+    return (this.hasScore(pen) && Number(pen.homeValue) === Number(pen.awayValue));
   }
-
-  public inValidMatch(resultDetails: ResultDetail[]) {
-    const match = resultDetails.find((x) => x.resourceId === ResourceID.MATCH);
-
-    if (this.hasScore(match)) {
+  
+  public inValidMatchSumScore(resultDetails: ResultDetail[], leagueType: number) {
+    const match = resultDetails.find((x) => x.resourceId === ResourceID.Match);
+    
+    if (!this.hasScore(match)) {
       return false;
     }
-
-    const ft = resultDetails.find((x) => x.resourceId === ResourceID.FT);
-    const et = resultDetails.find((x) => x.resourceId === ResourceID.ET);
-    const pen = resultDetails.find((x) => x.resourceId === ResourceID.PEN);
-
-    if (this.hasScore(ft)) {
-      return (
-        Number(ft.homeValue) > Number(match.homeValue) ||
-        Number(ft.awayValue) > Number(match.awayValue)
-      );
-    }
-
-    if (this.hasScore(et)) {
-      return (
-        Number(et.homeValue) > Number(match.homeValue) ||
-        Number(et.awayValue) > Number(match.awayValue)
-      );
-    }
-
-    if (this.hasScore(pen)) {
-      return (
-        Number(pen.homeValue) > Number(match.homeValue) ||
-        Number(pen.awayValue) > Number(match.awayValue)
-      );
-    }
-
-    if (this.hasScore(ft) && this.hasScore(et) && this.hasScore(pen)) {
-      const gameResults = resultDetails.filter((r) =>
-        [ResourceID.FT, ResourceID.ET, ResourceID.PEN].includes(r.resourceId)
-      );
-
-      const homeValue = _.sumBy(gameResults, (x) => Number(x.homeValue));
-      const awayValue = _.sumBy(gameResults, (x) => Number(x.awayValue));
-
-      return homeValue === Number(match.homeValue) && awayValue === Number(match.awayValue);
-    }
-
-    return false;
-  }
-
-  public inValidResult(resultDetails: ResultDetail[]) {
-    return this.inValidFirstHalf(resultDetails) || this.inValidPen(resultDetails) || this.inValidMatch(resultDetails);
-  }
-
-  public missScoreMatched(resultDetails: ResultDetail[]) {
     
+    const resourceIds = leagueType === LeagueType.OtPenalty ? [ResourceID.FullTime, ResourceID.Et, ResourceID.Pen] : [ResourceID.FullTime];
+    
+    const gameResults = resultDetails.filter((r) => resourceIds.includes(r.resourceId) && this.hasScore(r));
+    
+    const homeValue = _.sumBy(gameResults, (x) => Number(x.homeValue));
+    const awayValue = _.sumBy(gameResults, (x) => Number(x.awayValue));
+    
+    return homeValue !== Number(match.homeValue) || awayValue !== Number(match.awayValue);
+  }
+
+
+
+  public inValidResult(resultDetails: ResultDetail[], leagueType: number) {
+    return  this.inValidFirstHalfFullTime(resultDetails) 
+      ||  this.inValidFirstHalfMatch(resultDetails)
+      || this.inValidFullTimeMatch(resultDetails)
+      || this.inValidETMatch(resultDetails) 
+      || this.inValidPenMatch(resultDetails)
+      || this.inValidPenDraw(resultDetails) 
+      || this.inValidMatchSumScore(resultDetails,leagueType);
+  }
+
+  public inValidResultDetailWithOriginal(result: ResultDetail,originalResultDetails: GeneralResultDetail[]) {
+    const originalResult = originalResultDetails.find(x => x.resourceId === result.resourceId);
+    
+    return this.hasScore(originalResult) 
+      && (!_.isEqual(originalResult.homeValue, result.homeValue) || !_.isEqual(originalResult.awayValue, result.awayValue));
+  }
+
+  
+  public inValidResultDetailWithProvider(result: ResultDetail,providerResultDetails: ExternalResultDetail[]) {
+    return this.inValidResultDetailWithOriginal(result,providerResultDetails);
+  }
+  
+  public greaterThan(result: ResultDetail, ortherResult: ResultDetail) {
+    return this.hasScore(result) 
+      && this.hasScore(ortherResult) 
+      && (Number(result.homeValue) > Number(ortherResult.homeValue) 
+        || Number(result.awayValue) > Number(ortherResult.awayValue));
   }
 }

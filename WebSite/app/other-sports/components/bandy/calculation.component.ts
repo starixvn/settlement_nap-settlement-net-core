@@ -1,9 +1,19 @@
 import { Component, Injector, OnInit, ViewChild } from "@angular/core";
 import { ToastContainerDirective, ToastrService } from "ngx-toastr";
-import { ExternalResult, ExternalResultDetail, MatchDetail, Permission, ResultDetail, } from "../../../shared/models/sportsbook-sop";
+import {
+  ExternalResult,
+  ExternalResultDetail,
+  MatchDetail,
+  Permission,
+  ResultDetail,
+} from "../../../shared/models/sportsbook-sop";
 
 import { ModalDialogMessage, ResultSettingModel } from "../../../shared/models";
-import { AioService, BlockUIService, MessageBoxService, } from "../../../shared/services";
+import {
+  AioService,
+  BlockUIService,
+  MessageBoxService,
+} from "../../../shared/services";
 import { Language } from "../../../shared/language.native";
 import * as _ from "lodash";
 import { RefResultStatus } from "../../constants";
@@ -11,7 +21,7 @@ import { SportTemplate } from "../../../shared/models/sportsbook-sop";
 import { LeagueType, ResourceID, ResourceIDs } from "./constant";
 import { UrlHelper } from "../../../helper/url-helper";
 import { VolleyballApiKeys } from "../../../badminton/constants/volleyball-api-keys.native";
-import { IntervalBackgroundPipe } from '../../../shared/pipes/interval-background.pipe';
+import { IntervalBackgroundPipe } from "../../../shared/pipes/interval-background.pipe";
 
 import { MatchAio } from "../../models/match-aio.model";
 import { ResultDetailsService } from "./resultdetails.service";
@@ -19,15 +29,15 @@ import { ValidationService } from "./validation.service";
 import { MatchInfoCompoment } from "./match-info.compoment";
 import { CalculateCommonModule } from "../../../shared/modules/calculate-common.module";
 import { BandyResourceNamePipe } from "./bandy-resource.pipe";
-import { CalculateAction } from "../../../shared/constants";
+import { CalculateAction, SettlementStatusId } from "../../../shared/constants";
 import { SettleQuery } from "../../models";
 
 @Component({
   selector: "calculation-actions",
   templateUrl: "./calculation.component.html",
-  providers: [IntervalBackgroundPipe,ValidationService],
+  providers: [IntervalBackgroundPipe, ValidationService],
   standalone: true,
-  imports: [CalculateCommonModule, MatchInfoCompoment,BandyResourceNamePipe],
+  imports: [CalculateCommonModule, MatchInfoCompoment, BandyResourceNamePipe],
 })
 export class BandyCalculationComponent implements SportTemplate, OnInit {
   @ViewChild(ToastContainerDirective, { static: true })
@@ -40,6 +50,7 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
 
   public resultDetails: ResultDetail[] = [];
   public originalResultDetails: ResultDetail[];
+  public matchResultOriginal: ResultDetail;
   public permission: Permission;
 
   public externalResults: ExternalResult[];
@@ -54,7 +65,6 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
   public apiKeys = null;
   private refResultStatus: number = null;
 
-
   constructor(
     private readonly resultDetailService: ResultDetailsService,
     private readonly validationService: ValidationService,
@@ -66,7 +76,6 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
   ) {
     this.confirmationDialogMessage.title = Language.confirmationBox;
     this.toastrService.overlayContainer = this.toastContainer;
-
   }
 
   ngOnInit(): void {
@@ -80,7 +89,7 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
     this.apiKeys = VolleyballApiKeys;
     const matchQuery = {
       matchId,
-      apikey: 'bandy',
+      apikey: "bandy",
       sportType,
       settleType: "MNL",
     };
@@ -99,26 +108,92 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
 
     this.originalResultDetails = _.cloneDeep(this.match.resultDetails);
 
+    this.matchResultOriginal = _.clone(this.matchResult);
+
     this.permission = this.match.permission;
 
+    this.generateProviderResultDetails();
+  }
+
+  private generateProviderResultDetails() {
     this.externalResults = this.match.externalResults;
 
-    this.externalSourceName = this.externalResults[0].sourceName;
-
-    this.providerResultDetails = this.externalResults[0].resultDetails;
-
+    if (this.externalResults?.length) {
+      this.externalSourceName = this.externalResults[0].sourceName;
+      this.providerResultDetails = this.externalResults[0].resultDetails;
+    }
   }
 
   public changeScore() {
-    const maps = this.match.resultDetails.filter((item) => !_.isEqual(item.resourceId, ResourceID.MATCH)
-      && this.validationService.isExistedHomeAwayScore(item.homeValue, item.awayValue));
+    this.resultDetailService.calcMatchResultDetails(
+      this.resultDetails,
+      this.leagueType,
+      this.matchResult
+    );
 
-    this.validationService.sumTotalScores(maps, ResourceID.FT, this.matchResult);
-
+    this.disabledInputResult();
+    this.resultDetailService.resetHomeAwayValue(this.resultDetails);
+    // this.checkConsistentScore();
   }
 
   private viewData() {
     this.resultDetails = this.generateFullResultDetails();
+
+    this.disabledInputResult();
+
+    this.checkScoreMissMatchedOnload();
+  }
+
+  private checkScoreMissMatchedOnload() {
+      this.checkTraderScore();
+      this.checkProviderScore();
+  }
+
+  private hasTrader() {
+    return this.validationService.hasTraderConfirmed(
+      this.matchDetail,
+      this.originalResultDetails,
+      ResourceID.Match
+    );
+  }
+
+  private hasProvider() {
+    return this.validationService.hasProvider(this.providerResultDetails);
+  }
+
+  private checkTraderScore() {
+   if(this.hasTrader()) {
+    _.forEach(this.resultDetails, (result) => {
+      if ([ResourceID.FirstHalf, ResourceID.FullTime].includes(result.resourceId)) {
+        result.inValid = this.validationService.inValidFirstHalfFullTime(this.originalResultDetails)
+      } else if ([ResourceID.FirstHalf, ResourceID.Match].includes(result.resourceId)) {
+        result.inValid = this.validationService.inValidFirstHalfMatch(this.originalResultDetails)
+      } else if ([ResourceID.FullTime, ResourceID.Match].includes(result.resourceId)) {
+        result.inValid = this.validationService.inValidFullTimeMatch(this.originalResultDetails)
+      } else if([ResourceID.Pen].includes(result.resourceId)) {
+        result.inValid = this.validationService.inValidPenDraw(this.originalResultDetails)
+      } else if([ResourceID.Pen,ResourceID.Match].includes(result.resourceId)) {
+        result.inValid = this.validationService.inValidPenMatch(this.originalResultDetails)
+      } else if([ResourceID.Et,ResourceID.Match].includes(result.resourceId)) {
+        result.inValid = this.validationService.inValidETMatch(this.originalResultDetails)
+      }  else if([ResourceID.FullTime,ResourceID.Pen,ResourceID.Et,ResourceID.Match].includes(result.resourceId)) {
+        result.inValid = this.validationService.inValidMatchSumScore(this.originalResultDetails,this.leagueType)
+      }
+    });
+   }
+  }
+
+  private checkProviderScore() {
+    _.forEach(this.resultDetails, (result) => {
+      result.isScoreMismatched = this.validationService.inValidResultDetailWithProvider(result,this.providerResultDetails);
+    })
+  }
+
+  private disabledInputResult() {
+    this.resultDetailService.disabledInputResult(
+      this.matchDetail,
+      this.resultDetails
+    );
   }
 
   private generateFullResultDetails(): ResultDetail[] {
@@ -127,17 +202,22 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
         (x) => resourceId === x.resourceId
       );
       if (result) {
-        return result;
+        return { ...result, className: "" };
       }
       const newResult = new ResultDetail();
       newResult.resourceId = resourceId;
-      newResult.homeValue = '';
-      newResult.awayValue = '';
+      newResult.homeValue = "";
+      newResult.awayValue = "";
+      newResult.className = "";
       newResult.resultSettingData = new ResultSettingModel();
       newResult.resultSettingData.isConfirmedRefund = false;
 
       return newResult;
     });
+  }
+
+  public get leagueType() {
+    return this.matchDetail.leagueType;
   }
 
   public get isLeader() {
@@ -153,23 +233,29 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
   }
 
   public get matchResult() {
-    return this.resultDetails.find(x => x.resourceId === ResourceID.MATCH);
+    return this.resultDetails.find((x) => x.resourceId === ResourceID.Match);
   }
 
   public existResultConfirmed() {
-    return _.find(this.selectedResults, item => item.resultSettingData.isConfirmedRefund);
+    return _.find(
+      this.selectedResults,
+      (item) => item.resultSettingData.isConfirmedRefund
+    );
   }
 
   public isConfirmed(resultDetail: ResultDetail) {
-    if ([ResourceID.ET,ResourceID.PEN,ResourceID.MATCH,ResourceID.FT]) {
-      return this.isLeader && this.matchResult.resultSettingData.isConfirmedRefund;
+    if (
+      [ResourceID.Et, ResourceID.Pen, ResourceID.Match, ResourceID.FullTime]
+    ) {
+      return (
+        this.isLeader && this.matchResult.resultSettingData.isConfirmedRefund
+      );
     } else {
-
       return this.isLeader && resultDetail.resultSettingData.isConfirmedRefund;
     }
   }
 
-  public getExternalResultDetail(
+  private getExternalResultDetail(
     resourceId: string,
     externalResult: ExternalResult
   ) {
@@ -194,40 +280,16 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
       : `${resultDetail.homeValue}:${resultDetail.awayValue}`;
   }
 
-  public isMatchResult(resourceId: string) {
-    return ResourceID.FT === resourceId;
+  public isFulltimeResult(resourceId: string) {
+    return ResourceID.FullTime === resourceId;
   }
 
   public isFistHalf(resourceId: string) {
-    return ResourceID.HT === resourceId;
+    return ResourceID.FirstHalf === resourceId;
   }
 
   public showSelectCheckbox(resourceId: string) {
-    return [ResourceID.FT, ResourceID.HT].includes(resourceId);
-  }
-
-  public get disabledET() {
-    const { leagueType } = this.matchDetail;
-    if([LeagueType.General, LeagueType.Regular].includes(leagueType)) {
-      return true;
-    }
-    const fullTime = this.resultDetails.find(x => x.resourceId === ResourceID.FT);
-    return  leagueType === LeagueType.OtPenalty && 
-    !_.isEmpty(fullTime.homeValue) 
-      && !_.isEmpty(fullTime.awayValue) 
-      && !_.isEqual(fullTime.homeValue,fullTime.awayValue)
-  }
-
-  public get disbaledPEN() {
-    const { leagueType } = this.matchDetail;
-    if([LeagueType.General, LeagueType.Regular].includes(leagueType)) {
-      return true;
-    }
-    const et = this.resultDetails.find(x => x.resourceId === ResourceID.ET);
-    return  leagueType === LeagueType.OtPenalty && 
-    !_.isEmpty(et.homeValue) 
-      && !_.isEmpty(et.awayValue) 
-      && !_.isEqual(et.homeValue,et.awayValue)
+    return [ResourceID.FullTime, ResourceID.FirstHalf].includes(resourceId);
   }
 
   public calculation() {
@@ -237,26 +299,39 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
 
     if (!_.isNil(this.existResultConfirmed())) {
       this.toastrService.error(Language.confirmRefund.calculateResultNotConfirmed);
-    } else if (this.validationService.invalidInputScore(this.selectedResults, this.match.isScoreDirect, ResourceID.MATCH)) {
+    } else if (this.validationService.invalidInputScore(this.selectedResults,this.match.isScoreDirect,ResourceID.Match)) {
       this.toastrService.error(Language.warningInputScore);
-    } else if(this.validationService.inValidFirstHalf(this.resultDetails) || this.validationService.inValidMatch(this.resultDetails)) {
+    } else if (
+      // this.validationService.inValidFirstHalfFullTime(this.resultDetails) ||
+      this.validationService.inValidMatchSumScore(this.resultDetails, 0)
+    ) {
       this.toastrService.error(Language.inconsistentValues);
     } else {
       this.confirmScoreSource();
-    }   
+    }
   }
 
   private confirmScoreSource() {
-    const isSourceInsufficient = this.validationService.isInsufficientSOPLite(this.matchDetail,this.originalResultDetails, this.providerResultDetails,ResourceID.MATCH);
-    // const isInconsistent = this.va.isConsistentScore(this.resultDetailsOriginal,this.providerResultDetails,this.resultDetails,this.matchDetail);
-    
+    const isSourceInsufficient = this.validationService.isInsufficientSOPLite(
+      this.matchDetail,
+      this.originalResultDetails,
+      this.providerResultDetails,
+      ResourceID.Match
+    );
+    // const isInconsistent = this.validationService.isConsistentScore(this.resultDetailsOriginal,this.providerResultDetails,this.resultDetails,this.matchDetail);
+
     if (isSourceInsufficient) {
       if (!this.isLeader) {
-        this.toastrService.error(Language.otherSports.warningCalculateInconsistent);
+        this.toastrService.error(
+          Language.otherSports.warningCalculateInconsistent
+        );
       } else {
-        this.confirmationDialogMessage.message = Language.otherSports.confirmCalculateInconsistent;
+        this.confirmationDialogMessage.message =
+          Language.otherSports.confirmCalculateInconsistent;
         this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
-          this.refResultStatus = isSourceInsufficient ? RefResultStatus.NoReference : RefResultStatus.ValuesInsconsistency;
+          this.refResultStatus = isSourceInsufficient
+            ? RefResultStatus.NoReference
+            : RefResultStatus.ValuesInsconsistency;
           this.confirmChangedResult();
         });
       }
@@ -267,20 +342,29 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
 
   public isErrorOnVerification(resultDetail: ResultDetail) {
     let disabled = this.match.isScoreDirect;
-    if (resultDetail.resourceId === ResourceID.MATCH) {
+    if (resultDetail.resourceId === ResourceID.Match) {
       disabled = !this.match.isScoreDirect;
     }
-    return this.match.isClickOnCalculate && !disabled && resultDetail.checked && (!resultDetail.homeValue || !resultDetail.awayValue);
+    return (
+      this.match.isClickOnCalculate &&
+      !disabled &&
+      resultDetail.checked &&
+      (!resultDetail.homeValue || !resultDetail.awayValue)
+    );
   }
 
-  public onSelectResult(event,resourceId) {
-   if(resourceId === ResourceID.FT) {
-      _.forEach(this.resultDetails, result => {
-        if([ResourceID.ET,ResourceID.PEN,ResourceID.MATCH]) {
-          result.checked = event; // handle for leagueType
+  public onSelectResult(event, resourceId) {
+    if (resourceId === ResourceID.FullTime) {
+      _.forEach(this.resultDetails, (result) => {
+        if (
+          [ResourceID.Et, ResourceID.Pen, ResourceID.Match].includes(
+            result.resourceId
+          )
+        ) {
+          result.checked = event;
         }
-      })
-   }
+      });
+    }
   }
 
   private async confirmChangedResult() {
@@ -293,38 +377,57 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
         sportType: this.match.matchDetail.sportType,
       };
 
-      const result = await this.aioService.verifyChangedSettledTickets(this.match.resultDetails, getResultQuery);
+      const result = await this.aioService.verifyChangedSettledTickets(
+        this.match.resultDetails,
+        getResultQuery
+      );
       if (result) {
-        this.confirmationDialogMessage.message = Language.recalculateNotification;
+        this.confirmationDialogMessage.message =
+          Language.recalculateNotification;
         this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
           this.isReSettledTickets = true;
         });
       } else {
-        this.confirmCalculation(this.resultDetails);
+        this.confirmCalculation(this.selectedResults);
       }
     }
   }
 
   private confirmCalculation(resultDetails: ResultDetail[]) {
-    const confirmMessage = this.validationService.getCalculationConfirmMessage(resultDetails, new BandyResourceNamePipe());
+    const confirmMessage = this.validationService.getCalculationConfirmMessage(
+      resultDetails,
+      new BandyResourceNamePipe()
+    );
     this.confirmationDialogMessage.message = confirmMessage;
     this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
-      this.sendRequest(CalculateAction.calculate, this.match.matchDetail.matchId,
-        this.selectedResults, this.isReSettledTickets, this.match.isScoreDirect);
+      this.sendRequest(
+        CalculateAction.calculate,
+        this.match.matchDetail.matchId,
+        this.selectedResults,
+        this.isReSettledTickets,
+        this.match.isScoreDirect
+      );
     });
   }
 
-  public getClass(resultDetail: ResultDetail) {
-    let className = '';
-    if(this.validationService.inValidFirstHalfNEW(resultDetail,this.resultDetails)) {
-      className = 'col-mismatched ';
-    }
-    return className 
-    // + this.intervalBackgroundPipe.transform(resultDetail.settlementStatusId)
+  public getConfirmedBackground(total: ResultDetail, isFinal: boolean) {
+    return isFinal &&
+      this.validationService.isScoreConfirmed(
+        this.matchDetail,
+        this.matchResultOriginal
+      ) &&
+      total.settlementStatusId === SettlementStatusId.Running
+      ? "bg-result-confirmed"
+      : "";
   }
 
-  private async sendRequest(type: string, matchId: number, resultDetailList: ResultDetail[],
-    isReSettledTickets: boolean, isScoreDirect: boolean) {
+  private async sendRequest(
+    type: string,
+    matchId: number,
+    resultDetailList: ResultDetail[],
+    isReSettledTickets: boolean,
+    isScoreDirect: boolean
+  ) {
     // const childMatchIds = this.ChildMatchSelected.map(item => item.matchId).join(',');
     if (type === CalculateAction.unCalculate) {
       resultDetailList.forEach((item) => {
@@ -333,29 +436,81 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
       });
     }
 
-    const settleQuery = new SettleQuery(this.match.matchDetail, resultDetailList, type,
-      isReSettledTickets, isScoreDirect, "");
+    const settleQuery = new SettleQuery(
+      this.match.matchDetail,
+      resultDetailList,
+      type,
+      isReSettledTickets,
+      isScoreDirect,
+      ""
+    );
     settleQuery.refResultStatus = this.refResultStatus;
+    settleQuery.isLeader = this.isLeader;
 
     const result = await this.aioService.push(settleQuery);
-    
+    if(result.errMsg) {
+      this.toastrService.error(result.errMsg);
+    }
   }
 
   public uncalculation() {
     this.toastrService.clear();
-    this.confirmationDialogMessage.message = Language.UncalculationConfirmMessage;
+    this.confirmationDialogMessage.message =
+      Language.UncalculationConfirmMessage;
     this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
-      this.sendRequest(CalculateAction.unCalculate, this.match.matchDetail.matchId,
-        this.match.resultDetails, this.isReSettledTickets, this.match.isScoreDirect);
+      this.sendRequest(
+        CalculateAction.unCalculate,
+        this.match.matchDetail.matchId,
+        this.match.resultDetails,
+        this.isReSettledTickets,
+        this.match.isScoreDirect
+      );
     });
   }
 
   public verifyAndAutoFillScore(resultDetail: ResultDetail) {
-   
+    //
+    this.verifyInputScore(resultDetail);
+
     this.changeScore();
   }
 
-  
+  private verifyInputScore(resultDetail: ResultDetail) {
+    // verify currentResults
+    if(resultDetail.resourceId === ResourceID.FirstHalf) {
+      // check full
+      const fullTime = this.resultDetails.find((x) => x.resourceId === ResourceID.FullTime);
+      resultDetail.inValid = this.validationService.greaterThan(resultDetail,fullTime);
+      fullTime.inValid = this.validationService.greaterThan(resultDetail,fullTime);
+
+      // check match
+      const matchResult = this.resultDetails.find((x) => x.resourceId === ResourceID.Match);
+      resultDetail.inValid = this.validationService.greaterThan(resultDetail,matchResult);
+      matchResult.inValid = this.validationService.greaterThan(resultDetail,matchResult);
+    }
+
+    if(resultDetail.resourceId === ResourceID.FullTime) {
+      // check first
+      const firstHalf = this.resultDetails.find((x) => x.resourceId === ResourceID.FirstHalf);
+      resultDetail.inValid = this.validationService.greaterThan(firstHalf,resultDetail);
+      firstHalf.inValid = this.validationService.greaterThan(firstHalf,resultDetail);
+
+      // check match
+      const matchResult = this.resultDetails.find((x) => x.resourceId === ResourceID.Match);
+      resultDetail.inValid = this.validationService.greaterThan(resultDetail,matchResult);
+      matchResult.inValid = this.validationService.greaterThan(resultDetail,matchResult);
+    }
+
+    // verify originalResults
+    if (this.hasTrader()) {
+      resultDetail.inValid = this.validationService.inValidResultDetailWithOriginal(resultDetail, this.originalResultDetails);
+    }
+
+    // verify Provider
+    if(this.hasProvider()) {
+      resultDetail.isScoreMismatched = this.validationService.inValidResultDetailWithProvider(resultDetail,this.providerResultDetails);
+    }
+  }
 
   public onResettleCheckboxChange(isChecked: boolean) {
     this.isReSettledTickets = isChecked;
@@ -364,17 +519,25 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
   public copyScore() {
     this.toastrService.clear();
 
-      const message = Language.confirmMessageCopySBOScore.replace("'provider_name'", this.externalSourceName);
-      this.confirmationDialogMessage.message = message;
-      this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
-        _.forEach(this.resultDetails, resultDetail => {
-          const providerResult = this.providerResultDetails.find(p => resultDetail.resourceId === p.resourceId);
-          if(providerResult) {
-            resultDetail.homeValue = providerResult.homeValue;
-            resultDetail.awayValue = providerResult.awayValue;
-          }
-        })
-
+    const message = Language.confirmMessageCopySBOScore.replace(
+      "'provider_name'",
+      this.externalSourceName
+    );
+    this.confirmationDialogMessage.message = message;
+    this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
+      _.forEach(this.resultDetails, (resultDetail) => {
+        const providerResult = this.providerResultDetails.find(
+          (p) => resultDetail.resourceId === p.resourceId
+        );
+        if (providerResult) {
+          resultDetail.homeValue = providerResult.homeValue;
+          resultDetail.awayValue = providerResult.awayValue;
+        }
       });
+    });
+  }
+
+  public getIntervalBackground(settlementStatusId: number) {
+    return this.intervalBackgroundPipe.transform(settlementStatusId);
   }
 }

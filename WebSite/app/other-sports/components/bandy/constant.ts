@@ -5,11 +5,11 @@ export const LeagueType = {
 }
 
 export const ResourceID = {
-  HT: "01",
-  FT: "0001",
-  ET: "ET",
-  PEN: "PEN",
-  MATCH: "00"
+  FirstHalf: "01",
+  FullTime: "0001",
+  Et: "ET",
+  Pen: "PEN",
+  Match: "00"
 }
 
-export const ResourceIDs = [ResourceID.HT,ResourceID.FT,ResourceID.ET,ResourceID.PEN,ResourceID.MATCH];
+export const ResourceIDs = [ResourceID.FirstHalf,ResourceID.FullTime,ResourceID.Et,ResourceID.Pen,ResourceID.Match];

@@ -64,8 +64,8 @@ export class AppComponent extends AppBaseComponent implements OnInit {
 
     private getComponentFourthGroup(pageType: string): Type<SportTemplate> {
         return _.includes(TemplateType.onlyFullTimeTemplate, this.sportType)
-            ? this.getComponentFiveGroup(pageType)
-            : this.getComponentOther(pageType);
+            ? this.getComponentOnlyFullTime(pageType)
+            : this.getComponentFiveGroup(pageType);
     }
 
     private getComponentFiveGroup(pageType: string) : Type<SportTemplate> {
@@ -96,8 +96,6 @@ export class AppComponent extends AppBaseComponent implements OnInit {
         return pageType === PageType.ReCalculate
             ? GameTotalCalculationComponent
             : GameTotalRefundComponent;
-
-            // return GameTotalRefundComponent;
     }
 
     private getComponentGameTotalMatch(pageType: string): Type<SportTemplate> {

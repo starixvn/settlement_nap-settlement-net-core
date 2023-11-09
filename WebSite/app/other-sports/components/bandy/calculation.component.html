@@ -28,11 +28,11 @@
       <th scope="col" rowspan="2" class="code">Result</th>
       <th scope="col" rowspan="2" class="ticket-status">Ticket Status</th>
       <th scope="col" rowspan="2" colspan="2" class="kick-off-time">Score</th>
-      <th  *ngIf="isLeader">Provider Score</th>
+      <th  *ngIf="isLeader && externalResults.length">Provider Score</th>
       <th scope="col" rowspan="2" class="kick-off-time" >Select to Proceed</th>
     </tr>
     <tr>
-      <ng-container *ngIf="isLeader" >
+      <ng-container *ngIf="isLeader && externalResults.length" >
         <th  class="code" *ngFor="let externalResult of externalResults">
           {{externalResult.sourceName}}
           <span [ngClass]="{ 'icon-copy': true, 'disable-copy': false }" (click)="copyScore()"></span>
@@ -52,37 +52,37 @@
 
       <td *ngIf="isFistHalf(result.resourceId)" [ngClass]="result.ticketStatus?.toLowerCase()" class="set-status">{{result.ticketStatus}}
       </td>
-      <td *ngIf="isMatchResult(result.resourceId)" [rowSpan]="4" [ngClass]="result.ticketStatus?.toLowerCase()" class="match-status">
+      <td *ngIf="isFulltimeResult(result.resourceId)" rowSpan="4" [ngClass]="result.ticketStatus?.toLowerCase()" class="match-status">
         {{result.ticketStatus}}</td>
 
-      <td [ngClass]="[getClass(result)]">
+      <td [ngClass]="[getConfirmedBackground(result, last), getIntervalBackground(result.settlementStatusId)]" [ngClass]="{'col-mismatched' : result.inValid}">
         <input type="text" 
           myOnlyInteger 
           tabindex="{{ i * 2 + 1 }}" [(ngModel)]="result.homeValue" 
           (ngModelChange)="verifyAndAutoFillScore(result)"
-          [disabled]="result.resourceId === '00' || (result.resourceId === 'ET' && disabledET) || (result.resourceId === 'PEN' && disbaledPEN)"
+          [disabled]="result.disabled"
           [ngClass]="{'warning' :isErrorOnVerification(result)}" 
        
           />
       </td>
-      <td  [ngClass]="[getClass(result)]">
+      <td  [ngClass]="[getConfirmedBackground(result, last),getIntervalBackground(result.settlementStatusId)]" [ngClass]="{'col-mismatched' : result.inValid}">
         <input type="text" 
           myOnlyInteger 
           tabindex="{{ (i + 1) * 2 }}" 
           [(ngModel)]="result.awayValue" 
           (ngModelChange)="verifyAndAutoFillScore(result)"
-          [disabled]="result.resourceId === '00' || (result.resourceId === 'ET' && disabledET) || (result.resourceId === 'PEN' && disbaledPEN)"  
+          [disabled]="result.disabled"
           [ngClass]="{'warning' :isErrorOnVerification(result)}"/>
       </td>
 
 
-      <ng-container *ngIf="isLeader">
+      <ng-container *ngIf="isLeader && externalResults.length">
         <td  *ngFor="let externalResult of externalResults">{{ viewExternalScore(result.resourceId,externalResult)}}</td>
       </ng-container>
 
       <td *ngIf="isFistHalf(result.resourceId)" [ngClass]="result.ticketStatus?.toLowerCase()"><input type="checkbox"
           [(ngModel)]="result.checked" (ngModelChange)="onSelectResult($event,result.resourceId)"/></td>
-      <td *ngIf="isMatchResult(result.resourceId)" [rowSpan]="4" [ngClass]="result.ticketStatus?.toLowerCase()">
+      <td *ngIf="isFulltimeResult(result.resourceId)" rowSpan="4" [ngClass]="result.ticketStatus?.toLowerCase()">
         <input id="final-checkbox" type="checkbox" [(ngModel)]="result.checked" (ngModelChange)="onSelectResult($event,result.resourceId)"/>
       </td>
 
