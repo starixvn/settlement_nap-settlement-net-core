@@ -2,35 +2,62 @@ import { Inject, Injectable } from "@angular/core";
 import { MatchDetail, ResultDetail } from "../../../shared/models/sportsbook-sop";
 import { LeagueType, ResourceID, ResourceIDs } from "./constant";
 import * as _ from "lodash";
+import { ResultSettingModel } from "../../../shared/models/result-setting.model";
 
 @Injectable()
 export class ResultDetailsService {
-  public generateFullResultDetails(
-    resultDetails: ResultDetail[],
-    sportType: number
-  ): ResultDetail[] {
-    const resourcesTemp = this.getTempResourceIDs(sportType);
-
-    return resourcesTemp.map((resourceId) => {
-      const result = resultDetails.find((x) => resourceId === x.resourceId);
+  
+  public generateFullResultDetails(resultDetails: ResultDetail[]): ResultDetail[] {
+    return ResourceIDs.map((resourceId) => {
+      const result = resultDetails.find(
+        (x) => resourceId === x.resourceId
+      );
       if (result) {
-        return result;
+        return { ...result, className: "" };
       }
       const newResult = new ResultDetail();
       newResult.resourceId = resourceId;
+      newResult.homeValue = "";
+      newResult.awayValue = "";
+      newResult.className = "";
+      newResult.resultSettingData = new ResultSettingModel();
+      newResult.resultSettingData.isConfirmedRefund = false;
+
       return newResult;
     });
   }
 
-  public generateByMenber(resultDetails: ResultDetail[], isLeader: boolean) {
+  public generateRefundResultDetails(resultDetails: ResultDetail[]): ResultDetail[] {
+    return [ResourceID.FirstHalf,ResourceID.Match].map((resourceId) => {
+      const result = resultDetails.find(
+        (x) => resourceId === x.resourceId
+      );
+      if (result) {
+        return { ...result, className: "" };
+      }
+      const newResult = new ResultDetail();
+      newResult.resourceId = resourceId;
+      newResult.homeValue = "";
+      newResult.awayValue = "";
+      newResult.className = "";
+      newResult.resultSettingData = new ResultSettingModel();
+      newResult.resultSettingData.isConfirmedRefund = false;
+
+      return newResult;
+    });
+  }
+
+  public generateByMember(resultDetails: ResultDetail[], isLeader: boolean) {
     return resultDetails.map((x) =>
       isLeader ? x : { ...x, homeValue: "", awayValue: "" }
     );
   }
 
-  public calcMatchResultDetails(resultDetails: ResultDetail[], leagueType: number, matchResult: ResultDetail) {
+  public calcMatchResultDetails(resultDetails: ResultDetail[], leagueType: number) {
     const resourceIds = leagueType === LeagueType.OtPenalty ? [ResourceID.FullTime, ResourceID.Et, ResourceID.Pen] : [ResourceID.FullTime]
     
+    const matchResult = resultDetails.find(x => x.resourceId === ResourceID.Match);
+
     const gameResults = resultDetails.filter((r) => resourceIds.includes(r.resourceId)
       && (!_.isEmpty(r.homeValue) && !_.isEmpty(r.awayValue)));
 
@@ -46,9 +73,7 @@ export class ResultDetailsService {
     }
   }
 
-  public disabledInputResult(matchDetail: MatchDetail, resultDetails: ResultDetail[]) {
-    const  leagueType  = matchDetail.leagueType;
-   
+  public disabledInputResult(resultDetails: ResultDetail[], leagueType: number) {
     const matchResult = resultDetails.find(x => x.resourceId === ResourceID.Match);
     matchResult.disabled = true;
 
@@ -79,7 +104,7 @@ export class ResultDetailsService {
         pen.disabled = true;
       }
 
-      if(!this.isEmptyHomeAwayValue(fullTime) && _.isEqual(et.homeValue, et.awayValue)) {
+      if(!this.isEmptyHomeAwayValue(et) && _.isEqual(et.homeValue, et.awayValue)) {
         et.disabled = false;
         pen.disabled = false;
       }
@@ -95,6 +120,18 @@ export class ResultDetailsService {
       }
     })
   } 
+
+  public copyResultFromProvider(resultDetails,providerResultDetails) {
+    _.forEach(resultDetails, (resultDetail) => {
+      const providerResult = providerResultDetails.find(
+        (p) => resultDetail.resourceId === p.resourceId
+      );
+      if (providerResult) {
+        resultDetail.homeValue = providerResult.homeValue;
+        resultDetail.awayValue = providerResult.awayValue;
+      }
+    });
+  }
 
   private isEmptyHomeAwayValue(result: ResultDetail) {
     return result && (_.isEmpty(result.homeValue) || _.isEmpty(result.awayValue));

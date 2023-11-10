@@ -1,0 +1,52 @@
+<span toastContainer></span>
+<div class="padding" *ngIf="match">
+    <match-info [matchDetail]="matchDetail" [resultDetails]="resultDetails" [permission]="permission" [showResultDetails]="true"/>
+  <div class="refund-actions">
+    <div class="normal-tickets">
+      <div class="icon">
+      </div>
+      Normal Tickets
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Results</th>
+          <th>
+            Select to Proceed
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let result of refundResultDetails; let last=last;" [ngClass]="{'confirmed-refund': permission.isLeader && result.resultSettingData.isConfirmedRefund}">
+          <td>{{ result.resourceId | badyResourceName}}</td>
+          <td [ngClass]="result.ticketStatus.toLowerCase()" >
+            <input type="checkbox" [(ngModel)]="result.checked" [disabled]="last? false : match.isScoreDirect"/>
+          </td>
+        </tr>
+
+        <tr>
+        <td colspan="2">
+          <button *ngIf="permission.isLeader && !existsConfirmed" [ngClass]="{'btn btn-outline-primary button-confirmed': true}"
+                    [disabled]="selectedResources.length === 0" (click)="confirmRefund()">
+                    Confirm Refund
+                </button>
+            <button *ngIf="permission.isLeader && existsConfirmed" [ngClass]="{'btn btn-outline-primary button-confirmed': true}"
+                [disabled]="selectedResources.length === 0" (click)="confirmRefund()">
+                Undo Confirm Refund All
+            </button>
+          <button [ngClass]="{'refund-button': true, 'button-disabled': selectedResources.length === 0}"
+                      [disabled]="selectedResources.length === 0"
+                    (click)="refund()">Refund</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<div *ngIf="blockUI" class="in modal-backdrop">
+  <div class="loading">
+  </div>
+</div>

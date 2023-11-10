@@ -34,15 +34,26 @@
       </td>
       <td class="home-team-name">{{matchDetail.homeName}}</td>
       <ng-container *ngIf="showResultDetails" >
-        <td class="score"  *ngFor="let result of resultDetails"> {{ result.homeValue}}</td>
+        <td *ngFor="let result of resultDetails; let i= index; let last=last;" [ngClass]="result.className">
+          <ng-container *ngIf="result.isDisplayedForMember; else emptyScore">
+            {{result.homeValue | scoreBySettlement:result.settlementStatusId}}
+          </ng-container>
+        </td>
       </ng-container>
+     
     </tr>
     <tr>
       <td>{{matchDetail.matchId}}</td>
       <td class="away-team-name">{{matchDetail.awayName}}</td>
       <ng-container *ngIf="showResultDetails" >
-        <td class="score" *ngFor="let result of resultDetails"> {{ result.awayValue}}</td>
+        <td *ngFor="let result of resultDetails; let i= index; let last=last;" [ngClass]="result.className">
+          <ng-container *ngIf="result.isDisplayedForMember; else emptyScore">
+            {{result.awayValue | scoreBySettlement:result.settlementStatusId}}
+          </ng-container>
+        </td>
       </ng-container>
     </tr>
   </tbody>
 </ng-template>
+
+<ng-template #emptyScore>-</ng-template>

@@ -1,26 +1,14 @@
 import { Component, Injector, OnInit, ViewChild } from "@angular/core";
 import { ToastContainerDirective, ToastrService } from "ngx-toastr";
-import {
-  ExternalResult,
-  ExternalResultDetail,
-  MatchDetail,
-  Permission,
-  ResultDetail,
-} from "../../../shared/models/sportsbook-sop";
-
-import { ModalDialogMessage, ResultSettingModel } from "../../../shared/models";
-import {
-  AioService,
-  BlockUIService,
-  MessageBoxService,
-} from "../../../shared/services";
+import { ExternalResult, ExternalResultDetail, MatchDetail, Permission, ResultDetail} from "../../../shared/models/sportsbook-sop";
+import { ModalDialogMessage } from "../../../shared/models";
+import { AioService,BlockUIService,MessageBoxService } from "../../../shared/services";
 import { Language } from "../../../shared/language.native";
 import * as _ from "lodash";
 import { RefResultStatus } from "../../constants";
 import { SportTemplate } from "../../../shared/models/sportsbook-sop";
-import { LeagueType, ResourceID, ResourceIDs } from "./constant";
+import { ResourceID } from "./constant";
 import { UrlHelper } from "../../../helper/url-helper";
-import { VolleyballApiKeys } from "../../../badminton/constants/volleyball-api-keys.native";
 import { IntervalBackgroundPipe } from "../../../shared/pipes/interval-background.pipe";
 
 import { MatchAio } from "../../models/match-aio.model";
@@ -30,12 +18,12 @@ import { MatchInfoCompoment } from "./match-info.compoment";
 import { CalculateCommonModule } from "../../../shared/modules/calculate-common.module";
 import { BandyResourceNamePipe } from "./bandy-resource.pipe";
 import { CalculateAction, SettlementStatusId } from "../../../shared/constants";
-import { SettleQuery } from "../../models";
+import { BandyService } from "./bandy.service";
 
 @Component({
   selector: "calculation-actions",
   templateUrl: "./calculation.component.html",
-  providers: [IntervalBackgroundPipe, ValidationService],
+  providers: [IntervalBackgroundPipe, ValidationService,BandyService],
   standalone: true,
   imports: [CalculateCommonModule, MatchInfoCompoment, BandyResourceNamePipe],
 })
@@ -58,12 +46,12 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
   public externalSourceName: string;
 
   public isReSettledTickets: boolean;
-  public scoreClass: string;
+  
   public confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
-  public isSupportExternalResult: boolean;
+  
   public blockUI = true;
-  public apiKeys = null;
-  private refResultStatus: number = null;
+  
+  private refResultStatus: number | null = null;
 
   constructor(
     private readonly resultDetailService: ResultDetailsService,
@@ -72,7 +60,8 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
     private readonly aioService: AioService,
     private readonly toastrService: ToastrService,
     private readonly injector: Injector,
-    private readonly intervalBackgroundPipe: IntervalBackgroundPipe
+    private readonly intervalBackgroundPipe: IntervalBackgroundPipe,
+    private readonly bandyService: BandyService
   ) {
     this.confirmationDialogMessage.title = Language.confirmationBox;
     this.toastrService.overlayContainer = this.toastContainer;
@@ -86,7 +75,6 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
 
   async getMatch(matchId: number) {
     const sportType = Number(UrlHelper.getUrlParameter("sportType"));
-    this.apiKeys = VolleyballApiKeys;
     const matchQuery = {
       matchId,
       apikey: "bandy",
@@ -124,20 +112,8 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
     }
   }
 
-  public changeScore() {
-    this.resultDetailService.calcMatchResultDetails(
-      this.resultDetails,
-      this.leagueType,
-      this.matchResult
-    );
-
-    this.disabledInputResult();
-    this.resultDetailService.resetHomeAwayValue(this.resultDetails);
-    // this.checkConsistentScore();
-  }
-
   private viewData() {
-    this.resultDetails = this.generateFullResultDetails();
+    this.resultDetails = this.resultDetailService.generateFullResultDetails(this.resultDetails);
 
     this.disabledInputResult();
 
@@ -149,38 +125,8 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
       this.checkProviderScore();
   }
 
-  private hasTrader() {
-    return this.validationService.hasTraderConfirmed(
-      this.matchDetail,
-      this.originalResultDetails,
-      ResourceID.Match
-    );
-  }
-
-  private hasProvider() {
-    return this.validationService.hasProvider(this.providerResultDetails);
-  }
-
   private checkTraderScore() {
-   if(this.hasTrader()) {
-    _.forEach(this.resultDetails, (result) => {
-      if ([ResourceID.FirstHalf, ResourceID.FullTime].includes(result.resourceId)) {
-        result.inValid = this.validationService.inValidFirstHalfFullTime(this.originalResultDetails)
-      } else if ([ResourceID.FirstHalf, ResourceID.Match].includes(result.resourceId)) {
-        result.inValid = this.validationService.inValidFirstHalfMatch(this.originalResultDetails)
-      } else if ([ResourceID.FullTime, ResourceID.Match].includes(result.resourceId)) {
-        result.inValid = this.validationService.inValidFullTimeMatch(this.originalResultDetails)
-      } else if([ResourceID.Pen].includes(result.resourceId)) {
-        result.inValid = this.validationService.inValidPenDraw(this.originalResultDetails)
-      } else if([ResourceID.Pen,ResourceID.Match].includes(result.resourceId)) {
-        result.inValid = this.validationService.inValidPenMatch(this.originalResultDetails)
-      } else if([ResourceID.Et,ResourceID.Match].includes(result.resourceId)) {
-        result.inValid = this.validationService.inValidETMatch(this.originalResultDetails)
-      }  else if([ResourceID.FullTime,ResourceID.Pen,ResourceID.Et,ResourceID.Match].includes(result.resourceId)) {
-        result.inValid = this.validationService.inValidMatchSumScore(this.originalResultDetails,this.leagueType)
-      }
-    });
-   }
+    this.validationService.verifyTraderScore(this.resultDetails,this.leagueType);
   }
 
   private checkProviderScore() {
@@ -190,30 +136,7 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
   }
 
   private disabledInputResult() {
-    this.resultDetailService.disabledInputResult(
-      this.matchDetail,
-      this.resultDetails
-    );
-  }
-
-  private generateFullResultDetails(): ResultDetail[] {
-    return ResourceIDs.map((resourceId) => {
-      const result = this.resultDetails.find(
-        (x) => resourceId === x.resourceId
-      );
-      if (result) {
-        return { ...result, className: "" };
-      }
-      const newResult = new ResultDetail();
-      newResult.resourceId = resourceId;
-      newResult.homeValue = "";
-      newResult.awayValue = "";
-      newResult.className = "";
-      newResult.resultSettingData = new ResultSettingModel();
-      newResult.resultSettingData.isConfirmedRefund = false;
-
-      return newResult;
-    });
+    this.resultDetailService.disabledInputResult(this.resultDetails,this.leagueType);
   }
 
   public get leagueType() {
@@ -236,11 +159,20 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
     return this.resultDetails.find((x) => x.resourceId === ResourceID.Match);
   }
 
-  public existResultConfirmed() {
-    return _.find(
-      this.selectedResults,
-      (item) => item.resultSettingData.isConfirmedRefund
-    );
+  public get fullTimeResult() {
+    return this.resultDetails.find((x) => x.resourceId === ResourceID.FullTime);
+  }
+
+  public get firstHalfResult() {
+    return this.resultDetails.find((x) => x.resourceId === ResourceID.FirstHalf);
+  }
+
+  public get existsInValidResult() {
+    return this.resultDetails.some(x => x.inValid);
+  }
+
+  public existsConfirmedRefund() {
+    return this.selectedResults.some(x => x.resultSettingData.isConfirmedRefund)
   }
 
   public isConfirmed(resultDetail: ResultDetail) {
@@ -297,14 +229,11 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
     this.toastrService.clear();
     this.refResultStatus = null;
 
-    if (!_.isNil(this.existResultConfirmed())) {
+    if (this.existsConfirmedRefund()) {
       this.toastrService.error(Language.confirmRefund.calculateResultNotConfirmed);
     } else if (this.validationService.invalidInputScore(this.selectedResults,this.match.isScoreDirect,ResourceID.Match)) {
       this.toastrService.error(Language.warningInputScore);
-    } else if (
-      // this.validationService.inValidFirstHalfFullTime(this.resultDetails) ||
-      this.validationService.inValidMatchSumScore(this.resultDetails, 0)
-    ) {
+    } else if ( this.validationService.inValidResult(this.resultDetails, this.leagueType)) {
       this.toastrService.error(Language.inconsistentValues);
     } else {
       this.confirmScoreSource();
@@ -312,22 +241,16 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
   }
 
   private confirmScoreSource() {
-    const isSourceInsufficient = this.validationService.isInsufficientSOPLite(
-      this.matchDetail,
-      this.originalResultDetails,
-      this.providerResultDetails,
-      ResourceID.Match
-    );
-    // const isInconsistent = this.validationService.isConsistentScore(this.resultDetailsOriginal,this.providerResultDetails,this.resultDetails,this.matchDetail);
+    const isSourceInsufficient = this.validationService.isInsufficientSOPLite(this.matchDetail,this.originalResultDetails,this.providerResultDetails,ResourceID.Match);
+    const isInconsistent = this.validationService.isConsistentScore(this.originalResultDetails,this.providerResultDetails,this.resultDetails,this.matchDetail,ResourceID.Match);
 
-    if (isSourceInsufficient) {
+    if (isSourceInsufficient || isInconsistent) {
       if (!this.isLeader) {
         this.toastrService.error(
           Language.otherSports.warningCalculateInconsistent
         );
       } else {
-        this.confirmationDialogMessage.message =
-          Language.otherSports.confirmCalculateInconsistent;
+        this.confirmationDialogMessage.message = Language.otherSports.confirmCalculateInconsistent;
         this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
           this.refResultStatus = isSourceInsufficient
             ? RefResultStatus.NoReference
@@ -373,7 +296,7 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
     } else {
       const getResultQuery = {
         matchId: this.match.matchDetail.matchId,
-        apikey: this.apiKeys.NormalMatch,
+        apikey: "bandy",
         sportType: this.match.matchDetail.sportType,
       };
 
@@ -394,18 +317,17 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
   }
 
   private confirmCalculation(resultDetails: ResultDetail[]) {
-    const confirmMessage = this.validationService.getCalculationConfirmMessage(
-      resultDetails,
-      new BandyResourceNamePipe()
-    );
+    const confirmMessage = this.validationService.getCalculationConfirmMessage(resultDetails,new BandyResourceNamePipe());
     this.confirmationDialogMessage.message = confirmMessage;
     this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
-      this.sendRequest(
+      this.bandyService.sendSettleRequest(
         CalculateAction.calculate,
-        this.match.matchDetail.matchId,
+        this.matchDetail,
         this.selectedResults,
         this.isReSettledTickets,
-        this.match.isScoreDirect
+        this.match.isScoreDirect,
+        this.isLeader,
+        this.refResultStatus
       );
     });
   }
@@ -421,84 +343,43 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
       : "";
   }
 
-  private async sendRequest(
-    type: string,
-    matchId: number,
-    resultDetailList: ResultDetail[],
-    isReSettledTickets: boolean,
-    isScoreDirect: boolean
-  ) {
-    // const childMatchIds = this.ChildMatchSelected.map(item => item.matchId).join(',');
-    if (type === CalculateAction.unCalculate) {
-      resultDetailList.forEach((item) => {
-        item.homeValue = "";
-        item.awayValue = "";
-      });
-    }
-
-    const settleQuery = new SettleQuery(
-      this.match.matchDetail,
-      resultDetailList,
-      type,
-      isReSettledTickets,
-      isScoreDirect,
-      ""
-    );
-    settleQuery.refResultStatus = this.refResultStatus;
-    settleQuery.isLeader = this.isLeader;
-
-    const result = await this.aioService.push(settleQuery);
-    if(result.errMsg) {
-      this.toastrService.error(result.errMsg);
-    }
-  }
 
   public uncalculation() {
     this.toastrService.clear();
-    this.confirmationDialogMessage.message =
-      Language.UncalculationConfirmMessage;
+    this.confirmationDialogMessage.message = Language.UncalculationConfirmMessage;
     this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
-      this.sendRequest(
+      this.bandyService.sendSettleRequest(
         CalculateAction.unCalculate,
-        this.match.matchDetail.matchId,
+        this.matchDetail,
         this.match.resultDetails,
         this.isReSettledTickets,
-        this.match.isScoreDirect
+        this.match.isScoreDirect,
       );
     });
   }
 
   public verifyAndAutoFillScore(resultDetail: ResultDetail) {
-    //
+    this.resultDetailService.calcMatchResultDetails(this.resultDetails,this.leagueType);
+
     this.verifyInputScore(resultDetail);
 
     this.changeScore();
   }
 
+  private changeScore() {
+    this.disabledInputResult();
+    this.resultDetailService.resetHomeAwayValue(this.resultDetails);
+  }
+
   private verifyInputScore(resultDetail: ResultDetail) {
-    // verify currentResults
-    if(resultDetail.resourceId === ResourceID.FirstHalf) {
-      // check full
-      const fullTime = this.resultDetails.find((x) => x.resourceId === ResourceID.FullTime);
-      resultDetail.inValid = this.validationService.greaterThan(resultDetail,fullTime);
-      fullTime.inValid = this.validationService.greaterThan(resultDetail,fullTime);
-
-      // check match
-      const matchResult = this.resultDetails.find((x) => x.resourceId === ResourceID.Match);
-      resultDetail.inValid = this.validationService.greaterThan(resultDetail,matchResult);
-      matchResult.inValid = this.validationService.greaterThan(resultDetail,matchResult);
+    this.validationService.verifyFhFtPen(this.resultDetails);
+    
+    if(!this.existsInValidResult) {
+      this.validationService.verifyMatch(this.resultDetails);
     }
-
-    if(resultDetail.resourceId === ResourceID.FullTime) {
-      // check first
-      const firstHalf = this.resultDetails.find((x) => x.resourceId === ResourceID.FirstHalf);
-      resultDetail.inValid = this.validationService.greaterThan(firstHalf,resultDetail);
-      firstHalf.inValid = this.validationService.greaterThan(firstHalf,resultDetail);
-
-      // check match
-      const matchResult = this.resultDetails.find((x) => x.resourceId === ResourceID.Match);
-      resultDetail.inValid = this.validationService.greaterThan(resultDetail,matchResult);
-      matchResult.inValid = this.validationService.greaterThan(resultDetail,matchResult);
+   
+    if(!this.existsInValidResult) {
+      this.validationService.verifyMatchSum(this.resultDetails,this.leagueType);
     }
 
     // verify originalResults
@@ -511,33 +392,34 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
       resultDetail.isScoreMismatched = this.validationService.inValidResultDetailWithProvider(resultDetail,this.providerResultDetails);
     }
   }
-
   public onResettleCheckboxChange(isChecked: boolean) {
     this.isReSettledTickets = isChecked;
   }
 
   public copyScore() {
     this.toastrService.clear();
-
-    const message = Language.confirmMessageCopySBOScore.replace(
-      "'provider_name'",
-      this.externalSourceName
-    );
-    this.confirmationDialogMessage.message = message;
+    this.createConfirmMessageCopy();
     this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
-      _.forEach(this.resultDetails, (resultDetail) => {
-        const providerResult = this.providerResultDetails.find(
-          (p) => resultDetail.resourceId === p.resourceId
-        );
-        if (providerResult) {
-          resultDetail.homeValue = providerResult.homeValue;
-          resultDetail.awayValue = providerResult.awayValue;
-        }
-      });
+      this.resultDetailService.copyResultFromProvider(this.resultDetails,this.providerResultDetails);
     });
   }
 
+  private createConfirmMessageCopy() {
+    const message = Language.confirmMessageCopySBOScore.replace("'provider_name'",this.externalSourceName);
+    this.confirmationDialogMessage.message = message;
+  }
+
+  
   public getIntervalBackground(settlementStatusId: number) {
     return this.intervalBackgroundPipe.transform(settlementStatusId);
   }
+
+  private hasTrader() {
+    return this.validationService.hasTraderConfirmed(this.matchDetail,this.originalResultDetails,ResourceID.Match);
+  }
+
+  private hasProvider() {
+    return this.validationService.hasProvider(this.providerResultDetails);
+  }
+
 }

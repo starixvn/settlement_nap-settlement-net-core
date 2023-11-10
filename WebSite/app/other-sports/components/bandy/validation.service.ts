@@ -50,7 +50,7 @@ export class ValidationService extends VerificationBaseService {
 
   public inValidPenDraw(resultDetails: ResultDetail[]) {
     const pen = resultDetails.find((x) => x.resourceId === ResourceID.Pen);
-    return (this.hasScore(pen) && Number(pen.homeValue) === Number(pen.awayValue));
+    return this.draw(pen);
   }
   
   public inValidMatchSumScore(resultDetails: ResultDetail[], leagueType: number) {
@@ -70,14 +70,16 @@ export class ValidationService extends VerificationBaseService {
     return homeValue !== Number(match.homeValue) || awayValue !== Number(match.awayValue);
   }
 
-
+  public invalidMatchResult(resultDetails: ResultDetail[]) {
+    return this.inValidFirstHalfMatch(resultDetails)
+    || this.inValidFullTimeMatch(resultDetails)
+    || this.inValidETMatch(resultDetails) 
+    || this.inValidPenMatch(resultDetails)
+  }
 
   public inValidResult(resultDetails: ResultDetail[], leagueType: number) {
     return  this.inValidFirstHalfFullTime(resultDetails) 
-      ||  this.inValidFirstHalfMatch(resultDetails)
-      || this.inValidFullTimeMatch(resultDetails)
-      || this.inValidETMatch(resultDetails) 
-      || this.inValidPenMatch(resultDetails)
+      || this.invalidMatchResult(resultDetails)
       || this.inValidPenDraw(resultDetails) 
       || this.inValidMatchSumScore(resultDetails,leagueType);
   }
@@ -99,5 +101,69 @@ export class ValidationService extends VerificationBaseService {
       && this.hasScore(ortherResult) 
       && (Number(result.homeValue) > Number(ortherResult.homeValue) 
         || Number(result.awayValue) > Number(ortherResult.awayValue));
+  }
+
+  public draw(result: ResultDetail) {
+    return this.hasScore(result) && _.isEqual(result.homeValue, result.awayValue)
+  }
+
+
+  public verifyFhFtPen(resultDetails: ResultDetail[]) { 
+    const firstHalf = resultDetails.find((x) => x.resourceId === ResourceID.FirstHalf);
+    const fullTime = resultDetails.find((x) => x.resourceId === ResourceID.FullTime);
+
+    const fhFt = resultDetails.filter(x => [ResourceID.FirstHalf,ResourceID.FullTime].includes(x.resourceId));
+    
+    _.forEach(fhFt, (result) => {
+      result.inValid = this.greaterThan(firstHalf,fullTime);
+    });
+   
+   
+    const pen = resultDetails.find(x => x.resourceId === ResourceID.Pen);
+    pen.inValid = this.draw(pen);
+  }
+
+  public verifyMatch(resultDetails: ResultDetail[]) {
+    const match = resultDetails.find((x) => x.resourceId === ResourceID.Match);
+
+    _.forEach(resultDetails, result => {
+      result.inValid = this.greaterThan(result,match)
+    });
+  }
+
+  public verifyMatchSum(resultDetails: ResultDetail[],leagueType: number) {
+    const setSums = resultDetails.filter(x=> x.resourceId !== ResourceID.FirstHalf);
+    _.forEach(setSums, result => {
+      result.inValid = this.hasScore(result) 
+        && this.inValidMatchSumScore(resultDetails,leagueType)
+    });
+  }
+
+  public verifyTraderScore(originalResultDetails: ResultDetail[], leagueType: number) {
+    const firstHalf = originalResultDetails.find((x) => x.resourceId === ResourceID.FirstHalf);
+    const fullTime = originalResultDetails.find((x) => x.resourceId === ResourceID.FullTime);
+
+    const fhFt = originalResultDetails.filter(x => [ResourceID.FirstHalf,ResourceID.FullTime].includes(x.resourceId));
+    
+    _.forEach(fhFt, (result) => {
+      result.inValid = result.inValid || this.greaterThan(firstHalf,fullTime);
+    });
+   
+   
+    const pen = originalResultDetails.find(x => x.resourceId === ResourceID.Pen);
+    pen.inValid =  pen.inValid || this.draw(pen);
+
+    const match = originalResultDetails.find((x) => x.resourceId === ResourceID.Match);
+    _.forEach(originalResultDetails, result => {
+      result.inValid = result.inValid || this.greaterThan(result,match)
+    });
+    match.inValid = originalResultDetails.some(x => this.greaterThan(x, match))
+
+
+    const setSums = originalResultDetails.filter(x=> x.resourceId !== ResourceID.FirstHalf);
+    _.forEach(setSums, result => {
+      result.inValid = result.inValid || this.hasScore(result) 
+        && this.inValidMatchSumScore(originalResultDetails,leagueType)
+    });
   }
 }
