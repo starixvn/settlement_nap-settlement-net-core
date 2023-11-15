@@ -8,7 +8,7 @@
 	<Function Name="Aio">
 		<Setting Key="NAP_Set_MatchSelDetail_Resources" SpName="NAP_Set_MatchSelDetail_Resources_xpre" DbName="DBPRO.bodb02.bodbAdminNet" />
 		<Setting Key="NAP_Admin_Settlement_Validation_PrePush" SpName="NAP_Admin_Settlement_Validation_PrePush" DbName="DBPRO.bodb02.bodbAdminNet" />
-		<Setting Key="NAP_Set_ResultDetailSettingUpd" SpName="NAP_Set_ResultDetailSettingUpd" DbName="DBPRO.bodb02.bodbAdminNet" />
+		<Setting Key="NAP_Set_ResultDetailSettingUpd" SpName="NAP_Set_ResultDetailSettingUpd_xpre" DbName="DBPRO.bodb02.bodbAdminNet" />
 		<Setting Key="NAP_Set_ResultConfirmRefundSel" SpName="NAP_Set_ResultConfirmRefundSel" DbName="DBPRO.bodb02.bodbAdminNet" />
 		<Setting Key="NAP_Set_ChildMatchSel" SpName="NAP_Set_ChildMatchSel" DbName="DBPRO.bodb02.bodbAdminNet" />
 		<Setting Key="NAP_Set_MatchSelBetDaq" SpName="NAP_Set_MatchSelBetDaq" DbName="DBPRO.bodb02.bodbAdminNet" />
@@ -36,7 +36,7 @@
 		<Setting Key="NAP_Set_ProviderExternalResultDetailLatestInfoSel" SpName="NAP_Set_ProviderExternalResultDetailLatestInfoSel" DbName="DBPRO.bodb02.bodbAdminNet" />
 		<Setting Key="NAP_Set_OutsideSourceByLeagueSel" SpName="NAP_Set_OutsideSourceByLeagueSel" DbName="DBPRO.bodb02.bodbAdminNet" />
 		<Setting Key="NAP_Set_OutsideSourceByLeagueIns" SpName="NAP_Set_OutsideSourceByLeagueIns" DbName="DBPRO.bodb02.bodbAdminNet" />
-		<Setting Key="NAP_Set_ResultDetailSettingUpd" SpName="NAP_Set_ResultDetailSettingUpd" DbName="DBPRO.bodb02.bodbAdminNet" />
+		<Setting Key="NAP_Set_ResultDetailSettingUpd" SpName="NAP_Set_ResultDetailSettingUpd_xpre" DbName="DBPRO.bodb02.bodbAdminNet" />
 	</Function>
 	<Function Name="Setting">
 		<Setting Key="NAP_Set_ExternalResultDetailOSIns" SpName="NAP_Set_ExternalResultDetailOSIns" DbName="DBPRO.bodb02.bodbAdminNet" />
@@ -55,7 +55,7 @@
 		<Setting Key="Nap_Set_FantasyMatchSel" SpName="Nap_Set_FantasyMatchSel" DbName="DBPRO.bodb02.bodbAdminNet" />
 		<Setting Key="NAP_Set_BetDaq_MatchSel" SpName="NAP_Set_BetDaq_MatchSel" DbName="DBPRO.bodb02.bodbAdminNet" />
 		<Setting Key="NAP_Set_AutoPayout_MatchSelDetail" SpName="NAP_Set_AutoPayout_MatchSelDetail" DbName="DBPRO.bodb02.bodbAdminNet" />
-		<Setting Key="NAP_Set_ResultDetailSel" SpName="NAP_Set_ResultDetailSel" DbName="DBPRO.bodb02.bodbAdminNet" />
+		<Setting Key="NAP_Set_ResultDetailSel" SpName="NAP_Set_ResultDetailSel_xpre" DbName="DBPRO.bodb02.bodbAdminNet" />
 		<Setting Key="NAP_Set_MatchSelDetail_Auto_1s" SpName="NAP_Set_MatchSelDetail_Auto_1s" DbName="DBPRO.bodb02.bodbAdminNet" />
 	</Function>
 	<Function Name="Execute Calculate and refund">
@@ -64,7 +64,7 @@
 		<Setting Key="NAP_Settlement_InstantCalculation_UndoChecking" SpName="NAP_Settlement_InstantCalculation_UndoChecking" DbName="DBPRO.bodb02.bodbAdminNet" />
 		<Setting Key="NAP_Set_SpecificBettypes" SpName="NAP_Set_SpecificBettypes" DbName="DBPRO.bodb02.bodbAdminNet" />
 		<Setting Key="NAP_Set_AutoRefund_ResultIns" SpName="NAP_Set_AutoRefund_ResultIns" DbName="DBPRO.bodb02.bodbAdminNet" />
-		<Setting Key="NAP_Admin_MatchInfoUpd" SpName="NAP_Admin_MatchInfoUpd" DbName="DBPRO.bodb02.bodbAdminNet" />
+		<Setting Key="NAP_Admin_MatchInfoUpd" SpName="NAP_Admin_MatchInfoUpd_xpre" DbName="DBPRO.bodb02.bodbAdminNet" />
 		<Setting Key="NAP_Set_AutoPayoutResultIns" SpName="NAP_Set_AutoPayoutResultIns" DbName="DBPRO.bodb02.bodbAdminNet" />
 		<Setting Key="NAP_Admin_Settlement_ValidationFM_Event" SpName="NAP_Admin_Settlement_ValidationFM_Event" DbName="DBPRO.bodb02.bodbAdminNet" />
 		<Setting Key="NAP_Admin_Settlement_Validation_MP" SpName="NAP_Admin_Settlement_Validation_MP" DbName="DBPRO.bodb02.bodbAdminNet" />
@@ -91,7 +91,7 @@
 		<Setting Key="NAP_UserLog_Settle_MatchSelByID_by_Product" SpName="NAP_UserLog_Settle_MatchSelByID_by_Product" DbName="DBLOG.bodb_CustomerLog.bodbAdminNet" />
 		<Setting Key="NAP_UserLog_WriteLogPreSettlement" SpName="NAP_UserLog_WriteLogPreSettlement" DbName="DBUserLog.LogTDB.bodbAdminNet" />
 		<Setting Key="NAP_SettlementLog_Ins" SpName="NAP_SettlementLog_Ins" DbName="DBLOG.bodb_CustomerLog.bodbAdminNet" />
-		<Setting Key="NAP_SettlementLog_SelReSettle" SpName="NAP_SettlementLog_SelReSettle" DbName="DBLOG.bodb_CustomerLog.bodbAdminNet" />
+		<Setting Key="NAP_SettlementLog_SelReSettle" SpName="NAP_SettlementLog_SelReSettle_xpre" DbName="DBLOG.bodb_CustomerLog.bodbAdminNet" />
 	</Function>
 	<Function Name="Balance">
 		<Setting Key="NAP_SelBalanceUpDay" SpName="Age_SelBalanceUpDay" DbName="DBAGE.bodb02.bodbAdminNet" />
@@ -272,10 +272,10 @@
 			<Setting Key="NAP_Set_MatchSelHedge_Ticket_DBSID03" SpName="NAP_Set_MatchSelHedge_Ticket" DbName="DBSID03.bodb02.bodbAdminNet" />
 		</Function>
 		<Function Name="NAP_Admin_Settlement_Profile_Push">
-			<Setting Key="NAP_Admin_Settlement_Profile_Push_DBTXN" SpName="NAP_Admin_Settlement_Profile_Push" DbName="DBTXN.bodb02.bodbAdminNet" />
-			<Setting Key="NAP_Admin_Settlement_Profile_Push_DBSID01" SpName="NAP_Admin_Settlement_Profile_Push" DbName="DBSID01.bodb02.bodbAdminNet" />
-			<Setting Key="NAP_Admin_Settlement_Profile_Push_DBSID02" SpName="NAP_Admin_Settlement_Profile_Push" DbName="DBSID02.bodb02.bodbAdminNet" />
-			<Setting Key="NAP_Admin_Settlement_Profile_Push_DBSID03" SpName="NAP_Admin_Settlement_Profile_Push" DbName="DBSID03.bodb02.bodbAdminNet" />
+			<Setting Key="NAP_Admin_Settlement_Profile_Push_DBTXN" SpName="NAP_Admin_Settlement_Profile_Push_xpre" DbName="DBTXN.bodb02.bodbAdminNet" />
+			<Setting Key="NAP_Admin_Settlement_Profile_Push_DBSID01" SpName="NAP_Admin_Settlement_Profile_Push_xpre" DbName="DBSID01.bodb02.bodbAdminNet" />
+			<Setting Key="NAP_Admin_Settlement_Profile_Push_DBSID02" SpName="NAP_Admin_Settlement_Profile_Push_xpre" DbName="DBSID02.bodb02.bodbAdminNet" />
+			<Setting Key="NAP_Admin_Settlement_Profile_Push_DBSID03" SpName="NAP_Admin_Settlement_Profile_Push_xpre" DbName="DBSID03.bodb02.bodbAdminNet" />
 		</Function>
 		<Function Name="NAP_Set_EarlySettlement_CheckingMarkedTransaction">
 			<Setting Key="NAP_Set_EarlySettlement_CheckingMarkedTransaction_DBTXN" SpName="NAP_Set_EarlySettlement_CheckingMarkedTransaction" DbName="DBTXN.bodb02.bodbAdminNet" />
@@ -290,10 +290,10 @@
 			<Setting Key="NAP_Set_MatchSelDetail_Resources_Ticket_DBSID03" SpName="NAP_Set_MatchSelDetail_Resources_Ticket_xpre" DbName="DBSID03.bodb02.bodbAdminNet" />
 		</Function>
 		<Function Name="NAP_Set_MatchOtherSportsSel">
-			<Setting Key="NAP_Set_MatchOtherSportsSel_DBTXN" SpName="NAP_Set_MatchOtherSportsSel" DbName="DBTXN.bodb02.bodbAdminNet" />
-			<Setting Key="NAP_Set_MatchOtherSportsSel_DBSID01" SpName="NAP_Set_MatchOtherSportsSel" DbName="DBSID01.bodb02.bodbAdminNet" />
-			<Setting Key="NAP_Set_MatchOtherSportsSel_DBSID02" SpName="NAP_Set_MatchOtherSportsSel" DbName="DBSID02.bodb02.bodbAdminNet" />
-			<Setting Key="NAP_Set_MatchOtherSportsSel_DBSID03" SpName="NAP_Set_MatchOtherSportsSel" DbName="DBSID03.bodb02.bodbAdminNet" />
+			<Setting Key="NAP_Set_MatchOtherSportsSel_DBTXN" SpName="NAP_Set_MatchOtherSportsSel_xpre" DbName="DBTXN.bodb02.bodbAdminNet" />
+			<Setting Key="NAP_Set_MatchOtherSportsSel_DBSID01" SpName="NAP_Set_MatchOtherSportsSel_xpre" DbName="DBSID01.bodb02.bodbAdminNet" />
+			<Setting Key="NAP_Set_MatchOtherSportsSel_DBSID02" SpName="NAP_Set_MatchOtherSportsSel_xpre" DbName="DBSID02.bodb02.bodbAdminNet" />
+			<Setting Key="NAP_Set_MatchOtherSportsSel_DBSID03" SpName="NAP_Set_MatchOtherSportsSel_xpre" DbName="DBSID03.bodb02.bodbAdminNet" />
 		</Function>
 		<Function Name="NAP_Set_WaitingOtherSportSel">
 			<Setting Key="NAP_Set_WaitingOtherSportSel_DBTXN" SpName="NAP_Set_WaitingOtherSportSel" DbName="DBTXN.bodb02.bodbAdminNet" />

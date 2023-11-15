@@ -320,10 +320,11 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
     const confirmMessage = this.validationService.getCalculationConfirmMessage(resultDetails,new BandyResourceNamePipe());
     this.confirmationDialogMessage.message = confirmMessage;
     this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
+      const settleResult = this.selectedResults.filter(x => this.validationService.hasScore(x));
       this.bandyService.sendSettleRequest(
         CalculateAction.calculate,
         this.matchDetail,
-        this.selectedResults,
+        settleResult,
         this.isReSettledTickets,
         this.match.isScoreDirect,
         this.isLeader,
@@ -348,10 +349,12 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
     this.toastrService.clear();
     this.confirmationDialogMessage.message = Language.UncalculationConfirmMessage;
     this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
+      const settleResult = this.selectedResults.filter(x => this.validationService.hasScore(x));
+
       this.bandyService.sendSettleRequest(
         CalculateAction.unCalculate,
         this.matchDetail,
-        this.match.resultDetails,
+        settleResult,
         this.isReSettledTickets,
         this.match.isScoreDirect,
       );

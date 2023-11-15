@@ -193,7 +193,7 @@ public class MultipleServerAioServiceImp : MultipleServerAioService
     {
         var isMatchGameWinner = request.SportType == SportType.Tennis && request.ParentId == 0 && result.IsSuccessful;
 
-        if (isMatchGameWinner && (request.ActionName == ActionType.CalculateAll || request.ActionName == ActionType.RefundAll))
+        if (isMatchGameWinner && request.ActionName is ActionType.CalculateAll or ActionType.RefundAll)
         {
             await InsRefundResultOS(request.MatchId);
         }

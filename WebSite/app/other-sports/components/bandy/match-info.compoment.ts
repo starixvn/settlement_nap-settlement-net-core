@@ -5,12 +5,13 @@ import { ScoreBySettlementPipe } from "../../../shared/pipes/score-by-settlement
 import { ResultDetail } from "../../../shared/models/sportsbook-sop/result-detail.model";
 import { SettlementStatusId } from "../../../shared/constants/settlement-status-id.native";
 import { Permission } from "../../../shared/models/sportsbook-sop";
+import { BandyResourceNamePipe } from "./bandy-resource.pipe";
 
 @Component({
   templateUrl:"./match-info.compoment.html",
   selector: 'match-info',
   standalone: true,
-  imports: [CommonModule, ScoreBySettlementPipe]
+  imports: [CommonModule, ScoreBySettlementPipe,BandyResourceNamePipe]
 
 })
 export class MatchInfoCompoment implements OnInit {

@@ -1,15 +1,16 @@
 import { ToastContainerDirective } from "ngx-toastr";
 import { RefundActionBaseComponent } from "../../../shared/components/sportsbook-sop/refund-action-base.component";
-import { Permission, SportTemplate } from "../../../shared/models/sportsbook-sop";
+import { Permission, ResultDetail, SportTemplate } from "../../../shared/models/sportsbook-sop";
 import { Match, MatchAio } from "../../models";
 import { Component, ViewChild } from "@angular/core";
-import { ModalDialogMessage } from "../../../shared/models";
+import { ModalDialogMessage, ResultSettingModel } from "../../../shared/models";
 import { Language } from "../../../shared/language.native";
 import { UrlHelper } from "../../../helper";
 import { MatchInfoCompoment } from "./match-info.compoment";
 import { BandyResourceNamePipe } from "./bandy-resource.pipe";
 import { CalculateCommonModule } from "../../../shared/modules/calculate-common.module";
 import { ResultDetailsService } from "./resultdetails.service";
+import { ResourceID } from "./constant";
 
 @Component({
   templateUrl: './refund.component.html',
@@ -18,13 +19,15 @@ import { ResultDetailsService } from "./resultdetails.service";
   imports: [CalculateCommonModule, MatchInfoCompoment, BandyResourceNamePipe,],
 
 })
-export class RefundComponent extends RefundActionBaseComponent implements SportTemplate {
+export class BandyRefundComponent extends RefundActionBaseComponent implements SportTemplate {
   @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
   public match: MatchAio;
 
   public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage(Language.confirmationBox);
  
   async getMatch(matchId: number) {
+    this.blockUIService.blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
+    this.toastrService.overlayContainer = this.toastContainer;
     const sportType = Number(UrlHelper.getUrlParameter("sportType"));
     const matchQuery = {
       matchId,
@@ -34,18 +37,22 @@ export class RefundComponent extends RefundActionBaseComponent implements SportT
     };
 
     this.match = (await this.aioService.getMatch(matchQuery)) as MatchAio;
+
+    console.log(this.match)
+
+    this.initData();
   }
 
   constructor(private readonly resultDetailService: ResultDetailsService,
     ) {
-      super()
+      super();
     }
 
   public get refundResultDetails() {
-    return this.resultDetailService.generateRefundResultDetails(this.resultDetails);
+    return this.resultDetails.filter(x => [ResourceID.FirstHalf,ResourceID.Match].includes(x.resourceId))
   } 
 
-  public existsConfirmed() {
+  public get existsConfirmed() {
     return this.resultDetails.some(x => x.resultSettingData.isConfirmedRefund);
   }
 

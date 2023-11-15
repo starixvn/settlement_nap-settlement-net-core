@@ -26,8 +26,8 @@
         </tr>
 
         <tr>
-        <td colspan="2">
-          <button *ngIf="permission.isLeader && !existsConfirmed" [ngClass]="{'btn btn-outline-primary button-confirmed': true}"
+          <td colspan="2">
+            <button *ngIf="permission.isLeader && !existsConfirmed" [ngClass]="{'btn btn-outline-primary button-confirmed': true}"
                     [disabled]="selectedResources.length === 0" (click)="confirmRefund()">
                     Confirm Refund
                 </button>
@@ -35,7 +35,7 @@
                 [disabled]="selectedResources.length === 0" (click)="confirmRefund()">
                 Undo Confirm Refund All
             </button>
-          <button [ngClass]="{'refund-button': true, 'button-disabled': selectedResources.length === 0}"
+            <button [ngClass]="{'refund-button': true, 'button-disabled': selectedResources.length === 0}"
                       [disabled]="selectedResources.length === 0"
                     (click)="refund()">Refund</button>
           </td>

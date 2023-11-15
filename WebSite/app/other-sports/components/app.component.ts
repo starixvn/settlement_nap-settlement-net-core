@@ -17,6 +17,7 @@ import { GameTotalMatchRefundComponent } from './game-total-match-flow/game-tota
 import { OtherRefundComponent } from './other/other-refund.component';
 import { OtherCalculationComponent } from './other/other-calculation.component';
 import { BandyCalculationComponent } from './bandy/calculation.component';
+import { BandyRefundComponent } from './bandy/refund.component';
 
 @Component({
     selector: 'app-root',
@@ -105,8 +106,15 @@ export class AppComponent extends AppBaseComponent implements OnInit {
     }
 
     private getComponentBandy(pageType: string): Type<SportTemplate> {
-        return BandyCalculationComponent;
+        // return pageType !== PageType.ReCalculate 
+        //     ? BandyRefundComponent
+        //     :   BandyCalculationComponent;
+
+            // return pageType !== PageType.ReCalculate 
+            // ? BandyRefundComponent
+            return   BandyRefundComponent;
     }
 }
+
 
 

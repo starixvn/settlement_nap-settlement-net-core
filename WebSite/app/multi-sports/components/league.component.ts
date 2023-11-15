@@ -218,6 +218,7 @@ export class LeagueComponent implements OnInit, OnChanges, OnDestroy {
 
   public isHalfTimeConfirmed(match: Match) {
     if (ResultType.havingHalfTimeConfirmedStatus.includes(match.sportType)) {
+    
       if (ResultType.intervalScoreByResultDetail.includes(match.sportType)) {
         return match.moreScores.halfTimeScore.isConfirmed && match.moreScores.halfTimeScore.isNotSettled;
       }

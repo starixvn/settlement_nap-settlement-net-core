@@ -17,7 +17,7 @@
       <th class="kick-off-time">Kick-off Time</th>
       <th class="team">Team</th>
       <ng-container *ngIf="showResultDetails">
-        <th class="score" *ngFor="let result of resultDetails"> {{ result.resourceId }}</th>
+        <th class="score" *ngFor="let result of resultDetails"> {{ result.resourceId | badyResourceName}}</th>
       </ng-container>
     </tr>
   </thead>
