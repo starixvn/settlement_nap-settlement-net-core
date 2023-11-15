@@ -1,7 +1,8 @@
 import * as _ from 'lodash';
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from "@angular/core";
+import { Component, Input, OnChanges, Injector } from "@angular/core";
 import { ResettleLogDetail, Match } from '../../models';
-import { HandleResultService } from '../../services/handle-result.service';
+import { ResultOtherSportService, ResultSoccerService } from '../../services';
+import { SportType } from '../../../shared/constants';
 
 @Component({
     selector: 'resettle-log-detail',
@@ -9,15 +10,24 @@ import { HandleResultService } from '../../services/handle-result.service';
 })
 
 export class ResettleLogDetailComponent implements OnChanges {
+    private resultSoccerService: ResultSoccerService;
+    private resultOtherSportService: ResultOtherSportService;
     @Input() public match: Match;
     listLog: _.Dictionary<ResettleLogDetail[]>;
     isEvenRow = false;
     resourceNameProcessed: string;
-
+    constructor(protected injector: Injector){
+        this.resultSoccerService = this.injector.get(ResultSoccerService);
+        this.resultOtherSportService = this.injector.get(ResultOtherSportService);
+    }
     ngOnChanges(): void {
         this.resourceNameProcessed = this.match.resettleLogDetails[0].resourceName;
         this.match.resettleLogDetails.forEach(item => {
-            item.resultValue = HandleResultService.HandleResult(this.match, item, this.match.home, this.match.away);
+            if(this.match.sportType== SportType.soccer){
+                item.resultValue = this.resultSoccerService.getResultValue(item);
+            } else {
+                item.resultValue = this.resultOtherSportService.getResultValue(this.match, item, this.match.home, this.match.away);
+            }
             item.class = this.isEven(item);
         });
         this.listLog = _.groupBy(this.match.resettleLogDetails, 'resourceId');

@@ -33,3 +33,39 @@ export const BetTypeWithNo: { [key: number]: string[] } = {
     [SportType.cricket]: ['9624', '9630', '9625', '9631'],
     [SportType.eSports]: ['9073', '9075', '9087', '9124', '9132', '9133']
 }
+
+export const SoccerResultValue: { [key: string]: string } = {
+    '1-10': '00:01-10:00',
+    '11-20': '10:01-20:00',
+    '21-30': '20:01-30:00',
+    '31-40': '30:01-40:00',
+    '41-50': '40:01-50:00',
+    '51-60': '50:01-60:00',
+    '61-70': '60:01-70:00',
+    '71-80': '70:01-80:00',
+    '81-90': '80:01-FT',
+    'NG': 'No Goal',
+    'Y': 'Yes',
+    'P': 'Penalty',
+    'FK': 'Free Kick',
+    'OG': 'Own Goal',
+    'M': 'Miss',
+    'NT': 'Not Taken',
+    'X': 'Draw',
+    'B': 'Both',
+    'O': 'One',
+    '1SNT': 'Home Score - Away Not Taken',
+    '1MNT': 'Home Miss - Away Not Taken',
+    'NT2S': 'Home Not Taken - Away Score',
+    'NT2M': 'Home Not Taken - Away Miss'
+}
+export const SoccerResultValueWithBettype: { [key: string]: string } = {
+    'S-424': 'Shot',
+    'S-395': 'Shot',
+    'S-381': 'Score',
+    'S-382': 'Score',
+    'N-390': 'No',
+    'N-384': 'No Goal',
+    'H-383': 'Hit',
+    'N-383': 'Not Hit',
+}

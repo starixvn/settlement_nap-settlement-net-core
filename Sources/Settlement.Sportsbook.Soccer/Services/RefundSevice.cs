@@ -218,7 +218,7 @@ public class RefundServiceImp : IRefundService
             MatchId = matchId,
             Action = actionName,
             SpName = spName,
-            Mode = "REFUND"
+            Mode = ActionType.RefundAll
         };
 
         var resultMessage = await scaleOutSettleService.ValidateEventAndTicket(validationRequest);

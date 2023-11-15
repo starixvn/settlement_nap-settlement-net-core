@@ -279,6 +279,7 @@ public class CreateCriteriaServiceImp : ICreateCriteriaService
             Action = request.ActionName,
             Sporttype = SportType.Soccer,
             AdminId = request.AdminId,
+            IsAuto = true,
             SelectedResources = selectedResources
         };
     }
@@ -352,17 +353,14 @@ public class CreateCriteriaServiceImp : ICreateCriteriaService
         var refundResources = GetResourcesRefund(request);
         var resourcesMapper = mapper.Map<List<ResourceItem>>(refundResources);
         var resourceItems = new List<ResourceItem>();
-
-        if (request.HalfTimeHomeScore is not null && request.HalfTimeAwayScore is not null)
+        if (IsAbandonedMatch(request))
         {
-            resourceItems.Add(new ResourceItem { ResourceId = ResourceType.Halftime, AwayValue = request.HalfTimeAwayScore.ToString(), HomeValue = request.HalfTimeHomeScore.ToString() });
+            resourceItems.Add(resourceService.RefundAbandonedMatchLogResources(request));
         }
-
-        if (request.FinalHomeScore is not null && request.FinalAwayScore is not null)
+        else
         {
-            resourceItems.Add(new ResourceItem { ResourceId = ResourceType.Final, AwayValue = request.FinalAwayScore.ToString(), HomeValue = request.FinalHomeScore.ToString() });
+            resourceItems = resourceService.RefundLogResources(request);
         }
-
         resourceItems.AddRange(resourcesMapper);
 
         var selectedResources = CreateResources(resourceItems);

@@ -25,6 +25,10 @@ public interface IResourceService
 
     List<ResourceItem> CalculateLogResources(SettleRequest request);
 
+    List<ResourceItem> RefundLogResources(RefundRequest request);
+
+    ResourceItem RefundAbandonedMatchLogResources(RefundRequest request);
+
     List<ResourceItem> UnCalculateLogResources(string actionName);
 }
 
@@ -249,6 +253,53 @@ public class ResourceServiceImp : IResourceService
         }
 
         return resourceItems;
+    }
+
+    public List<ResourceItem> RefundLogResources(RefundRequest request)
+    {
+        var resourceItems = new List<ResourceItem>();
+        if (request.ActionName is ActionType.RefundHalfTime or ActionType.RefundAll)
+        {
+            var halfTimeHome = request.HalfTimeHomeScore ?? 0;
+            var halfTimeAway = request.HalfTimeAwayScore ?? 0;
+            resourceItems.Add(new ResourceItem { ResourceId = ResourceType.Halftime, AwayValue = halfTimeAway.ToString(), HomeValue = halfTimeHome.ToString() });
+        }
+
+        if (request.ActionName is ActionType.RefundFullTime or ActionType.RefundAll)
+        {
+            var fullTimeHome = request.FinalHomeScore ?? 0;
+            var fullTimeAway = request.FinalAwayScore ?? 0;
+
+            resourceItems.Add(new ResourceItem { ResourceId = ResourceType.Final, AwayValue = fullTimeAway.ToString(), HomeValue = fullTimeHome.ToString() });
+        }
+
+        return resourceItems;
+    }
+
+    public ResourceItem RefundAbandonedMatchLogResources(RefundRequest request)
+    {
+        if (request.ActionName == ActionType.RefundFullTime)
+        {
+            var fullTimeHome = request.FinalHomeScore ?? 0;
+            var fullTimeAway = request.FinalAwayScore ?? 0;
+
+            return new ResourceItem
+            {
+                ResourceId = ResourceType.Final,
+                AwayValue = fullTimeAway.ToString(),
+                HomeValue = fullTimeHome.ToString()
+            };
+        }
+
+        var halfTimeHome = request.HalfTimeHomeScore ?? 0;
+        var halfTimeAway = request.HalfTimeAwayScore ?? 0;
+        return new ResourceItem
+        {
+            ResourceId = ResourceType.Halftime,
+            AwayValue = halfTimeAway.ToString(),
+            HomeValue = halfTimeHome.ToString()
+        };
+
     }
 
     public List<ResourceItem> UnCalculateLogResources(string actionName)
