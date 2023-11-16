@@ -339,6 +339,8 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
 
     if (!result.isSuccessful) {
       this.toastrService.error(result.errMsg);
+    } else {
+      this.messageBoxService.closePopup();
     }
   }
 
