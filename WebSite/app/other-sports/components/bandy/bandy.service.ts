@@ -17,7 +17,13 @@ export class BandyService {
     return this.intervalBackgroundPipe.transform(settlementStatusId);
   }
 
-  public async sendSettleRequest(type: string,matchDetail,resultDetais: ResultDetail[],isReSettledTickets: boolean,isScoreDirect: boolean,isLeader = false, refResultStatus = null) {
+  public async sendSettleRequest(type: string,
+    matchDetail,
+    resultDetais: ResultDetail[],
+    isReSettledTickets: boolean,
+    isScoreDirect: boolean,
+    isLeader = false, 
+    refResultStatus = null) {
     
     if (type === CalculateAction.unCalculate) {
       resultDetais.forEach((item) => {

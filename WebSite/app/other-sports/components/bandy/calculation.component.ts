@@ -321,6 +321,7 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
     this.confirmationDialogMessage.message = confirmMessage;
     this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
       const settleResult = this.selectedResults.filter(x => this.validationService.hasScore(x));
+      
       this.bandyService.sendSettleRequest(
         CalculateAction.calculate,
         this.matchDetail,
