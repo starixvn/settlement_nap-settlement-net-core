@@ -152,7 +152,7 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
   }
 
   public get selectedResults() {
-    return this.resultDetails.filter((result) => result.checked);
+    return this.resultDetails.filter((result) => result.checked && (!result.disabled || result.resourceId === ResourceID.Match));
   }
 
   public get matchResult() {
@@ -233,7 +233,7 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
       this.toastrService.error(Language.confirmRefund.calculateResultNotConfirmed);
     } else if (this.validationService.invalidInputScore(this.selectedResults,this.match.isScoreDirect,ResourceID.Match)) {
       this.toastrService.error(Language.warningInputScore);
-    } else if ( this.validationService.inValidResult(this.resultDetails, this.leagueType)) {
+    } else if ( this.validationService.inValidResult(this.selectedResults, this.leagueType)) {
       this.toastrService.error(Language.inconsistentValues);
     } else {
       this.confirmScoreSource();
@@ -242,9 +242,9 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
 
   private confirmScoreSource() {
     const isSourceInsufficient = this.validationService.isInsufficientSOPLite(this.matchDetail,this.originalResultDetails,this.providerResultDetails,ResourceID.Match);
-    const isInconsistent = this.validationService.isConsistentScore(this.originalResultDetails,this.providerResultDetails,this.resultDetails,this.matchDetail,ResourceID.Match);
+    const isInconsistent = this.validationService.isConsistentScore(this.originalResultDetails,this.providerResultDetails,this.selectedResults,this.matchDetail,ResourceID.Match);
 
-    if (isSourceInsufficient || isInconsistent) {
+    if (isSourceInsufficient) {
       if (!this.isLeader) {
         this.toastrService.error(
           Language.otherSports.warningCalculateInconsistent
@@ -271,7 +271,7 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
     return (
       this.match.isClickOnCalculate &&
       !disabled &&
-      resultDetail.checked &&
+      resultDetail.checked && !resultDetail.disabled &&
       (!resultDetail.homeValue || !resultDetail.awayValue)
     );
   }
@@ -316,22 +316,30 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
     }
   }
 
-  private confirmCalculation(resultDetails: ResultDetail[]) {
+  private  confirmCalculation(resultDetails: ResultDetail[]) {
     const confirmMessage = this.validationService.getCalculationConfirmMessage(resultDetails,new BandyResourceNamePipe());
     this.confirmationDialogMessage.message = confirmMessage;
     this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
       const settleResult = this.selectedResults.filter(x => this.validationService.hasScore(x));
-      
-      this.bandyService.sendSettleRequest(
-        CalculateAction.calculate,
-        this.matchDetail,
-        settleResult,
-        this.isReSettledTickets,
-        this.match.isScoreDirect,
-        this.isLeader,
-        this.refResultStatus
-      );
+      this.sendRequest(settleResult, CalculateAction.calculate)
+     
     });
+  }
+
+  private async sendRequest(settleResult: ResultDetail[],action: string) {
+    const result = await this.bandyService.sendSettleRequest(
+     action,
+      this.matchDetail,
+      settleResult,
+      this.isReSettledTickets,
+      this.match.isScoreDirect,
+      this.isLeader,
+      this.refResultStatus
+    );
+
+    if (!result.isSuccessful) {
+      this.toastrService.error(result.errMsg);
+    }
   }
 
   public getConfirmedBackground(total: ResultDetail, isFinal: boolean) {
@@ -351,14 +359,7 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
     this.confirmationDialogMessage.message = Language.UncalculationConfirmMessage;
     this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
       const settleResult = this.selectedResults.filter(x => this.validationService.hasScore(x));
-
-      this.bandyService.sendSettleRequest(
-        CalculateAction.unCalculate,
-        this.matchDetail,
-        settleResult,
-        this.isReSettledTickets,
-        this.match.isScoreDirect,
-      );
+      this.sendRequest(settleResult, CalculateAction.unCalculate)
     });
   }
 

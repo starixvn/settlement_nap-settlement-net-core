@@ -42,6 +42,7 @@ export class BandyService {
     );
     settleQuery.refResultStatus = refResultStatus;
     settleQuery.isLeader = isLeader;
+    settleQuery.apikey = 'bandy'
 
     const result = await this.aioService.push(settleQuery);
 
