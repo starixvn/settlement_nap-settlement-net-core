@@ -114,6 +114,7 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
 
   private viewData() {
     this.resultDetails = this.resultDetailService.generateFullResultDetails(this.resultDetails);
+    this.resultDetailService.hidenScoreResultDetails(this.resultDetails,this.isLeader);
 
     this.disabledInputResult();
 
@@ -360,8 +361,7 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
     this.toastrService.clear();
     this.confirmationDialogMessage.message = Language.UncalculationConfirmMessage;
     this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
-      const settleResult = this.selectedResults.filter(x => this.validationService.hasScore(x));
-      this.sendRequest(settleResult, CalculateAction.unCalculate)
+      this.sendRequest(this.selectedResults, CalculateAction.unCalculate)
     });
   }
 

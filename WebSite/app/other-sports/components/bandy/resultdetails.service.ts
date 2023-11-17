@@ -3,6 +3,7 @@ import { MatchDetail, ResultDetail } from "../../../shared/models/sportsbook-sop
 import { LeagueType, ResourceID, ResourceIDs } from "./constant";
 import * as _ from "lodash";
 import { ResultSettingModel } from "../../../shared/models/result-setting.model";
+import { ResultStatusId, SettlementStatusId } from "../../../shared/constants";
 
 @Injectable()
 export class ResultDetailsService {
@@ -25,6 +26,15 @@ export class ResultDetailsService {
 
       return newResult;
     });
+  }
+
+  public hidenScoreResultDetails(resultDetails: ResultDetail[],isLeader: boolean) {
+    resultDetails.forEach((map) => {
+      const showScore = (isLeader || map.settlementStatusId === SettlementStatusId.Calculated)
+          && map.settlementStatusId !== SettlementStatusId.Refund;
+      map.homeValue = showScore ? map.homeValue : "";
+      map.awayValue = showScore ? map.awayValue : "";
+  });
   }
 
   public generateRefundResultDetails(resultDetails: ResultDetail[]): ResultDetail[] {
