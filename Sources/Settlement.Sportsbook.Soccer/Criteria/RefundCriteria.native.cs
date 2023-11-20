@@ -1,7 +1,4 @@
-﻿using Fanex.Data;
-using Fanex.Data.Repository;
-
-namespace Settlement.Sportsbook.Soccer.Criteria;
+﻿namespace Settlement.Sportsbook.Soccer.Criteria;
 
 public class RefundCriteria : NonQueryCommand
 {
@@ -40,6 +37,9 @@ public class RefundCriteria : NonQueryCommand
 
     [SpParam(Ignored = true)]
     public string SpName => "NAP_Admin_Settlement_Refund_1_Push";
+
+    [SpParam(Ignored = true)]
+    public int SportType { get; } = Core.Constants.SportType.Soccer;
 
     public override string GetSettingKey() => $"Refund_{DbServer}";
 

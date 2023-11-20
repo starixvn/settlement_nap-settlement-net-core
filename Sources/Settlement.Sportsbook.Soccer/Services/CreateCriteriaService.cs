@@ -1,6 +1,5 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
-using Settlement.Core.Constants;
+﻿using Settlement.Core.Constants;
+using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.Sportsbook.Soccer.Criteria;
 using Settlement.Sportsbook.Soccer.Models;
@@ -20,6 +19,16 @@ public interface ICreateCriteriaService
     public RefundCriteria CreateRefundCriteria(RefundRequest request);
 
     public CalculateCriteria CreateUnCalculateFtCriteria(UncalculateFtRequest request);
+
+    public InsertLogCriteria CreateCalculateLogCriteria(SettleRequest request);
+
+    public InsertLogCriteria CreateCalculateEarlyLogCriteria(SettleEarlyRequest request);
+
+    public InsertLogCriteria CreateUnCalculateLogCriteria(SettleRequest request);
+
+    public InsertLogCriteria CreateUnCalculateFtLogCriteria(UncalculateFtRequest request);
+
+    public InsertLogCriteria CreateRefundLogCriteria(RefundRequest request);
 }
 
 public class CreateCriteriaServiceImp : ICreateCriteriaService
@@ -58,12 +67,15 @@ public class CreateCriteriaServiceImp : ICreateCriteriaService
 
     public CalculateCriteria CreateCalculateCriteria(SettleRequest request)
     {
+        var resources = GetResourcesCalculate(request);
+        var resourceResult = CreateResources(resources);
+
         var criteria = new CalculateCriteria
         {
             AdminId = request.AdminId,
             MatchId = request.MatchId,
             GoalRecord = string.IsNullOrWhiteSpace(request.GoalRecord) ? string.Empty : request.GoalRecord.ToUpperInvariant(),
-            ResourceResult = GetResourceResultCalculate(request),
+            ResourceResult = resourceResult,
             BetStatus = soccerBetStatusService.CreateBetStatus(request),
             Action = request.ActionName,
             HalfTimeHome = request.HalfTimeHomeScore ?? 0,
@@ -85,12 +97,15 @@ public class CreateCriteriaServiceImp : ICreateCriteriaService
 
     public CalculateCriteria CreateUnCalculateCriteria(SettleRequest request)
     {
-        var criteria = new CalculateCriteria
+        var resources = GetResourcesUnCalculate(request);
+        var resourceResult = CreateResources(resources);
+
+        return new CalculateCriteria
         {
             AdminId = request.AdminId,
             MatchId = request.MatchId,
             GoalRecord = string.IsNullOrWhiteSpace(request.GoalRecord) ? string.Empty : request.GoalRecord.ToUpperInvariant(),
-            ResourceResult = GetResourceResultUnCalculate(request),
+            ResourceResult = resourceResult,
             BetStatus = string.Empty,
             Action = request.ActionName,
             HalfTimeHome = request.HalfTimeHomeScore ?? 0,
@@ -99,33 +114,33 @@ public class CreateCriteriaServiceImp : ICreateCriteriaService
             IsReSettledTickets = request.IsReSettledTickets,
             ChildMatchIds = request.ChildMatchIds
         };
-
-        return criteria;
     }
 
     public CalculateCriteria CreateUnCalculateFtCriteria(UncalculateFtRequest request)
     {
         var matchGoalRecord = matchService.GetMatchGoalRecord(request.MatchId) ?? new MatchGoalRecordModel();
         var htGoalRecord = GoalRecordHt(matchGoalRecord.GoalRecord, request.ResultDetails);
-        var criteria = new CalculateCriteria
+
+        var resources = resourceService.UnCalculateFtResources(htGoalRecord);
+        var resourceResult = CreateResources(resources);
+
+        return new CalculateCriteria
         {
             AdminId = request.AdminId,
             MatchId = request.MatchId,
             GoalRecord = htGoalRecord,
             BetStatus = soccerBetStatusService.CreateBetStatusAfterUncalculateFt(request, matchGoalRecord.BetStatus, htGoalRecord),
-            ResourceResult = GetResourceResultUnCalculateFt(htGoalRecord),
+            ResourceResult = resourceResult,
             HalfTimeAway = request.HalfTimeAway ?? 0,
             HalfTimeHome = request.HalfTimeHome ?? 0,
             Action = ActionType.UnCalculateFullTime,
             Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString()
         };
-
-        return criteria;
     }
 
     public CalculateEarlyCriteria CreateCalculateEarlyCriteria(SettleEarlyRequest request)
     {
-        var criteria = new CalculateEarlyCriteria
+        return new CalculateEarlyCriteria
         {
             AdminId = request.AdminId,
             MatchId = request.MatchId,
@@ -134,12 +149,13 @@ public class CreateCriteriaServiceImp : ICreateCriteriaService
             IsReSettledTickets = request.IsReSettledTickets,
             SelectedResources = CreateResources(request.SelectedResources)
         };
-
-        return criteria;
     }
 
     public RefundCriteria CreateRefundCriteria(RefundRequest request)
     {
+        var resources = GetResourcesRefund(request);
+        var resourceResult = CreateResources(resources);
+
         var criteria = new RefundCriteria
         {
             MatchId = request.MatchId,
@@ -152,7 +168,7 @@ public class CreateCriteriaServiceImp : ICreateCriteriaService
             FullTimeHome = request.FinalHomeScore ?? 0,
             Action = request.ActionName,
             BetStatus = GetBetStatus(request),
-            ResourceResult = GetResourceResult(request)
+            ResourceResult = resourceResult
         };
 
         if (IsAbandonedMatch(request) && request.ActionName.Equals(ActionType.RefundAll))
@@ -169,7 +185,7 @@ public class CreateCriteriaServiceImp : ICreateCriteriaService
         return request.IsSettleAbandonedMatchIbc || request.IsSettleAbandonedMatchBetDaq || request.IsSettleAbandonedMatchBetFair;
     }
 
-    private string GetResourceResult(RefundRequest request)
+    private List<XmlResource> GetResourcesRefund(RefundRequest request)
     {
         var goalCondition = mapper.Map<RefundRequest, GoalCondition>(request);
         List<XmlResource> resources;
@@ -193,9 +209,7 @@ public class CreateCriteriaServiceImp : ICreateCriteriaService
             };
         }
 
-        return resources.Count > 0
-            ? xmlConvertService.Serialize(new XmlResults { Resources = resources })
-            : string.Empty;
+        return resources;
     }
 
     private string GetBetStatus(RefundRequest request)
@@ -218,37 +232,29 @@ public class CreateCriteriaServiceImp : ICreateCriteriaService
         return xmlConvertService.Serialize(resources);
     }
 
-    private string GetResourceResultCalculate(SettleRequest request)
+    private string CreateResources(List<XmlResource> resources)
+    {
+        return resources.Count > 0
+            ? xmlConvertService.Serialize(new XmlResults { Resources = resources })
+            : string.Empty;
+    }
+
+    private List<XmlResource> GetResourcesCalculate(SettleRequest request)
     {
         var goalCondition = mapper.Map<SettleRequest, GoalCondition>(request);
         var actionName = request.ActionName;
-        var resources = actionName switch
+        return actionName switch
         {
             ActionType.CalculateHalfTime => resourceService.HalftimeResources(goalCondition, SettlementStatus.Completed),
             ActionType.CalculateFullTime => resourceService.FullTimeResources(goalCondition, SettlementStatus.Completed),
             _ => resourceService.AllResources(goalCondition, SettlementStatus.Completed)
         };
-
-        return resources.Count > 0
-            ? xmlConvertService.Serialize(new XmlResults { Resources = resources })
-            : string.Empty;
     }
 
-    private string GetResourceResultUnCalculate(SettleRequest request)
+    private List<XmlResource> GetResourcesUnCalculate(SettleRequest request)
     {
         var goalCondition = mapper.Map<SettleRequest, GoalCondition>(request);
-        var resources = resourceService.UnCalculateResources(goalCondition);
-
-        return resources.Count > 0
-            ? xmlConvertService.Serialize(new XmlResults { Resources = resources })
-            : string.Empty;
-    }
-
-    private string GetResourceResultUnCalculateFt(string goalRecord)
-    {
-        var resources = resourceService.UnCalculateFtResources(goalRecord);
-
-        return xmlConvertService.Serialize(new XmlResults { Resources = resources });
+        return resourceService.UnCalculateResources(goalCondition);
     }
 
     private static string GoalRecordHt(string goalRecord, IEnumerable<ResultDetail> resultDetails)
@@ -261,5 +267,106 @@ public class CreateCriteriaServiceImp : ICreateCriteriaService
 
         var semicolonIndex = goalRecord.IndexOf(';');
         return semicolonIndex < 0 ? goalRecord : goalRecord[..(semicolonIndex + 1)].ToUpperInvariant();
+    }
+
+    public InsertLogCriteria CreateCalculateEarlyLogCriteria(SettleEarlyRequest request)
+    {
+        var selectedResources = CreateResources(request.SelectedResources);
+
+        return new InsertLogCriteria
+        {
+            MatchId = request.MatchId,
+            Action = request.ActionName,
+            Sporttype = SportType.Soccer,
+            AdminId = request.AdminId,
+            IsAuto = true,
+            SelectedResources = selectedResources
+        };
+    }
+
+    public InsertLogCriteria CreateCalculateLogCriteria(SettleRequest request)
+    {
+        var calResources = GetResourcesCalculate(request);
+        var resourcesMapper = mapper.Map<List<ResourceItem>>(calResources);
+
+        var resourceItems = resourceService.CalculateLogResources(request);
+        resourceItems.AddRange(resourcesMapper);
+
+        var selectedResources = CreateResources(resourceItems);
+
+        return new InsertLogCriteria
+        {
+            MatchId = request.MatchId,
+            Action = request.ActionName,
+            Sporttype = SportType.Soccer,
+            AdminId = request.AdminId,
+            SelectedResources = selectedResources
+        };
+    }
+
+    public InsertLogCriteria CreateUnCalculateLogCriteria(SettleRequest request)
+    {
+        var calResources = GetResourcesUnCalculate(request);
+        var resourcesMapper = mapper.Map<List<ResourceItem>>(calResources);
+
+        var resourceItems = resourceService.UnCalculateLogResources();
+        resourceItems.AddRange(resourcesMapper);
+
+        var selectedResources = CreateResources(resourceItems);
+
+        return new InsertLogCriteria
+        {
+            MatchId = request.MatchId,
+            Action = request.ActionName,
+            Sporttype = SportType.Soccer,
+            AdminId = request.AdminId,
+            SelectedResources = selectedResources
+        };
+    }
+
+    public InsertLogCriteria CreateUnCalculateFtLogCriteria(UncalculateFtRequest request)
+    {
+        var matchGoalRecord = matchService.GetMatchGoalRecord(request.MatchId) ?? new MatchGoalRecordModel();
+        var htGoalRecord = GoalRecordHt(matchGoalRecord.GoalRecord, request.ResultDetails);
+        var calResources = resourceService.UnCalculateFtResources(htGoalRecord);
+
+        var resourceItems = mapper.Map<List<ResourceItem>>(calResources);
+        var selectedResources = CreateResources(resourceItems);
+
+        return new InsertLogCriteria
+        {
+            MatchId = request.MatchId,
+            Action = ActionType.UnCalculateFullTime,
+            Sporttype = SportType.Soccer,
+            AdminId = request.AdminId,
+            SelectedResources = selectedResources
+        };
+    }
+
+    public InsertLogCriteria CreateRefundLogCriteria(RefundRequest request)
+    {
+        var refundResources = GetResourcesRefund(request);
+        var resourcesMapper = mapper.Map<List<ResourceItem>>(refundResources);
+        var resourceItems = new List<ResourceItem>();
+        if (IsAbandonedMatch(request))
+        {
+            resourceItems.Add(resourceService.RefundAbandonedMatchLogResources(request));
+        }
+        else
+        {
+            resourceItems = resourceService.RefundLogResources(request);
+        }
+        resourceItems.AddRange(resourcesMapper);
+
+        var selectedResources = CreateResources(resourceItems);
+
+        return new InsertLogCriteria
+        {
+            MatchId = request.MatchId,
+            Action = request.ActionName,
+            Sporttype = SportType.Soccer,
+            AdminId = request.AdminId,
+            SelectedResources = selectedResources
+        };
     }
 }

@@ -67,7 +67,7 @@ public class SettlementServiceImp : SettlementService
         var criteria = await CreateCriteria(request);
         var validateDeploymentCriteria = new GetDeploymentInfoRequest
         {
-            SPName = "NAP_Admin_Settlement_s164"
+            SpName = "NAP_Admin_Settlement_s164"
         };
 
         var validateDeploymentResult = await scaleOutSettleThirdPartyService.GetDeploymentInfo(validateDeploymentCriteria);
@@ -146,7 +146,7 @@ public class SettlementServiceImp : SettlementService
 
     private async Task UpdateMatchInfo(Happy5SettlementRequest request)
     {
-        var updateRequest = new UpdateMatchInfo3rdRequest
+        var updateRequest = new UpdateMatchInfo3RdRequest
         {
             Command = "completed",
             Action = request.Action,

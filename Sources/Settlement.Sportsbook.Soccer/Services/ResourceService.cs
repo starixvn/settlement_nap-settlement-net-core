@@ -1,8 +1,11 @@
 ﻿using Settlement.Core.Constants;
+using Settlement.Core.Models;
 using Settlement.Sportsbook.Soccer.Constants;
-using Settlement.Sportsbook.Soccer.Models;
 
 namespace Settlement.Sportsbook.Soccer.Services;
+
+using Models;
+using Requests;
 
 public interface IResourceService
 {
@@ -19,6 +22,14 @@ public interface IResourceService
     List<XmlResource> FullTimeResourcesSettleDetermined(GoalCondition goalCondition);
 
     List<XmlResource> AllResourcesSettleDetermined(GoalCondition goalCondition);
+
+    List<ResourceItem> CalculateLogResources(SettleRequest request);
+
+    List<ResourceItem> RefundLogResources(RefundRequest request);
+
+    ResourceItem RefundAbandonedMatchLogResources(RefundRequest request);
+
+    List<ResourceItem> UnCalculateLogResources();
 }
 
 public class ResourceServiceImp : IResourceService
@@ -220,6 +231,83 @@ public class ResourceServiceImp : IResourceService
         }
 
         return resources;
+    }
+
+    public List<ResourceItem> CalculateLogResources(SettleRequest request)
+    {
+        var resourceItems = new List<ResourceItem>();
+
+        if (request.ActionName is ActionType.CalculateHalfTime or ActionType.CalculateAll)
+        {
+            var halfTimeHome = request.HalfTimeHomeScore ?? 0;
+            var halfTimeAway = request.HalfTimeAwayScore ?? 0;
+            resourceItems.Add(new ResourceItem { ResourceId = ResourceType.Halftime, AwayValue = halfTimeAway.ToString(), HomeValue = halfTimeHome.ToString() });
+        }
+
+        if (request.ActionName is ActionType.CalculateFullTime or ActionType.CalculateAll)
+        {
+            var fullTimeHome = request.FinalHomeScore ?? 0;
+            var fullTimeAway = request.FinalAwayScore ?? 0;
+
+            resourceItems.Add(new ResourceItem { ResourceId = ResourceType.Final, AwayValue = fullTimeAway.ToString(), HomeValue = fullTimeHome.ToString() });
+        }
+
+        return resourceItems;
+    }
+
+    public List<ResourceItem> RefundLogResources(RefundRequest request)
+    {
+        var resourceItems = new List<ResourceItem>();
+        if (request.ActionName is ActionType.RefundHalfTime or ActionType.RefundAll)
+        {
+            var halfTimeHome = request.HalfTimeHomeScore ?? 0;
+            var halfTimeAway = request.HalfTimeAwayScore ?? 0;
+            resourceItems.Add(new ResourceItem { ResourceId = ResourceType.Halftime, AwayValue = halfTimeAway.ToString(), HomeValue = halfTimeHome.ToString() });
+        }
+
+        if (request.ActionName is ActionType.RefundFullTime or ActionType.RefundAll)
+        {
+            var fullTimeHome = request.FinalHomeScore ?? 0;
+            var fullTimeAway = request.FinalAwayScore ?? 0;
+
+            resourceItems.Add(new ResourceItem { ResourceId = ResourceType.Final, AwayValue = fullTimeAway.ToString(), HomeValue = fullTimeHome.ToString() });
+        }
+
+        return resourceItems;
+    }
+
+    public ResourceItem RefundAbandonedMatchLogResources(RefundRequest request)
+    {
+        if (request.ActionName == ActionType.RefundFullTime)
+        {
+            var fullTimeHome = request.FinalHomeScore ?? 0;
+            var fullTimeAway = request.FinalAwayScore ?? 0;
+
+            return new ResourceItem
+            {
+                ResourceId = ResourceType.Final,
+                AwayValue = fullTimeAway.ToString(),
+                HomeValue = fullTimeHome.ToString()
+            };
+        }
+
+        var halfTimeHome = request.HalfTimeHomeScore ?? 0;
+        var halfTimeAway = request.HalfTimeAwayScore ?? 0;
+        return new ResourceItem
+        {
+            ResourceId = ResourceType.Halftime,
+            AwayValue = halfTimeAway.ToString(),
+            HomeValue = halfTimeHome.ToString()
+        };
+    }
+
+    public List<ResourceItem> UnCalculateLogResources()
+    {
+        return new List<ResourceItem>
+        {
+            new() { ResourceId = ResourceType.Halftime, AwayValue = string.Empty, HomeValue = string.Empty },
+            new() { ResourceId = ResourceType.Final, AwayValue = string.Empty, HomeValue = string.Empty }
+        };
     }
 
     private static XmlResource InitialResource(string resourceId)

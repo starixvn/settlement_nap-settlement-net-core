@@ -19,4 +19,10 @@ public static class ResourceNameConstants
     public const string ExtraInning = "E.T";
 
     public const string Final = "Final Score";
+
+    public const string FullTimeGoalRecord = "FT Goal Record";
+
+    public const string HalftimeGoalRecord = "HT Goal Record";
+
+    public const string FirstLastGoal = "First Goal/Last Goal";
 }

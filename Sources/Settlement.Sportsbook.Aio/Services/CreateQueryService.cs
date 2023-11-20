@@ -1,6 +1,5 @@
 ﻿using Fanex.NAP.Client.Helpers.Web;
 using Microsoft.AspNetCore.Http;
-using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.Aio.Criteria;
@@ -26,8 +25,6 @@ public interface ICreateQueryService
     GetRecalResultCriteria QueryRecalResult(GetRecalResultRequest request);
 
     void WriteLogChildMatch(SettleCriteria criteria, Result result);
-
-    InsertLogCriteria CreateInsertLogCriteria(SettleCriteria criteria);
 }
 
 public class CreateQueryServiceImp : ICreateQueryService
@@ -146,10 +143,5 @@ public class CreateQueryServiceImp : ICreateQueryService
             const int actionCalculate = 100;
             logService.ActionLog(criteria.MatchId, result.ErrMsg, actionCalculate);
         }
-    }
-
-    public InsertLogCriteria CreateInsertLogCriteria(SettleCriteria criteria)
-    {
-        return mapper.Map<InsertLogCriteria>(criteria);
     }
 }

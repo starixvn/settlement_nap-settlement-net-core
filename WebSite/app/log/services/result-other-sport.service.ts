@@ -5,9 +5,9 @@ import { SportType } from "../../shared/constants";
 import { BetType, BetTypeWithNo, MappingValue, MappingValueWithBettype } from "../constants/bet-type";
 
 @Injectable()
-export class HandleResultService {
+export class ResultOtherSportService {
 
-    static HandleResult(match: Match, logDetail: ResettleLogDetail, homeName: string, awayName: string) {
+    public getResultValue(match: Match, logDetail: ResettleLogDetail, homeName: string, awayName: string) {
         if (_.isEmpty(logDetail.homeValue) || _.includes(logDetail.action.toLocaleLowerCase(), 'refund')) {
             return '-';
         }
@@ -17,14 +17,14 @@ export class HandleResultService {
         }
 
         if (_.isEqual(match.sportType, SportType.cricket) && _.includes(BetType.relatePlayer, logDetail.betType)) {
-            return this.handlePlayerName(match.playerNames, logDetail.otherInfo, logDetail.homeValue)
+            return this.getPlayerName(match.playerNames, logDetail.otherInfo, logDetail.homeValue)
         }
 
-        return this.HandleHomeValue(logDetail, homeName, awayName, match.sportType);
+        return this.getHomeValue(logDetail, homeName, awayName, match.sportType);
     }
 
 
-    private static HandleHomeValue(logDetail: ResettleLogDetail, homeName: string, awayName: string, sportType: number) {
+    private getHomeValue(logDetail: ResettleLogDetail, homeName: string, awayName: string, sportType: number) {
         if (_.isEqual(logDetail.homeValue, 'H') || _.isEqual(logDetail.homeValue, 'A')) {
             return _.isEqual(logDetail.homeValue, 'H') ? homeName : awayName;
         }
@@ -44,7 +44,7 @@ export class HandleResultService {
         return logDetail.homeValue;
     }
 
-    private static handlePlayerName(players: string[], otherInfo: string, homeValue: string) {
+    private getPlayerName(players: string[], otherInfo: string, homeValue: string) {
         if(_.isNull(homeValue) || _.isNull(otherInfo)) return "-";
         const playerIds = otherInfo.split(',');
         const values = homeValue.split(',');

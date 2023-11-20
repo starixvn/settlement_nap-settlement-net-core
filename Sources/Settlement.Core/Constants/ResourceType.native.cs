@@ -7,6 +7,14 @@ public static class ResourceType
     public const string Final = "00";
 
     public const string OverTime = "OT";
+
+    public const string FullTimeFirstGoal = "14F";
+
+    public const string FullTimeLastGoal = "14L";
+
+    public const string HalftimeGoalRecord = "09";
+
+    public const string FullTimeGoalRecord = "08";
 }
 
 public static class Resources

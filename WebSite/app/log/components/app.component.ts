@@ -9,10 +9,12 @@ import {
     VerifyDateService,
     ReCheckInService,
 } from '../../shared/services';
-import { SearchService } from '../services';
+import { 
+    SearchService, 
+    ResultSoccerService, 
+    ResultOtherSportService } from '../services';
 import { Match } from '../models';
 import * as _ from 'lodash';
-import { HandleResultService } from '../services/handle-result.service';
 import { ResettleType } from '../constants/log-Type';
 
 @Component({
@@ -26,7 +28,8 @@ import { ResettleType } from '../constants/log-Type';
         HttpRequestService,
         ReCheckInService,
         NgbActiveModal,
-        HandleResultService],
+        ResultOtherSportService,
+        ResultSoccerService],
 })
 
 export class AppComponent implements OnInit, OnDestroy {

@@ -9,9 +9,9 @@
     <PackageReference Include="AutoMapper" Version="12.0.1" />
     <PackageReference Include="Fanex.NAP.Client" Version="2.0.0" />
     <PackageReference Include="Fanex.Settlement.Converter" Version="1.0.0.1" />
-    <PackageReference Include="Fanex.Settlement.ScaleOut" Version="1.3.4-alpha" />
-    <PackageReference Include="MediatR" Version="12.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
+    <PackageReference Include="Fanex.Settlement.ScaleOut" Version="1.3.6" />
+    <PackageReference Include="MediatR" Version="12.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>

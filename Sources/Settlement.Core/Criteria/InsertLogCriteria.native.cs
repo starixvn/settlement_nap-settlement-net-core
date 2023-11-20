@@ -1,10 +1,14 @@
-﻿using Fanex.Data.Repository;
+﻿using Fanex.Data;
+using Fanex.Data.Repository;
 
 namespace Settlement.Core.Criteria;
 
 public class InsertLogCriteria : NonQueryCommand
 {
     public int MatchId { get; set; }
+
+    [SpParam(Ignored = true)]
+    public bool IsHedgeMatch { get; set; }
 
     public string Action { get; set; }
 
@@ -18,8 +22,5 @@ public class InsertLogCriteria : NonQueryCommand
 
     public override string GetSettingKey() => "NAP_SettlementLog_Ins";
 
-    public override bool IsValid()
-    {
-        return MatchId > 0;
-    }
+    public override bool IsValid() => MatchId > 0;
 }

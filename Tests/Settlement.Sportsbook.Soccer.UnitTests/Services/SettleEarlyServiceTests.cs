@@ -29,11 +29,12 @@ public class SettleEarlyServiceTests
         repository = Substitute.For<IDynamicRepository>();
         scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
         logService = Substitute.For<LogService>();
-        var xmlConvertService = Substitute.For<XmlConvertService>();
 
         var appSettings = new AppSettingsKey { SiteDbServer = new List<string> { "DB01", "DB02" } };
         var appSettingsOptions = Options.Create(appSettings);
-        service = new SettleEarlyServiceImp(createCriteriaService, appSettingsOptions, repository, scaleOutSettleService, logService, xmlConvertService);
+        service = new SettleEarlyServiceImp(
+            createCriteriaService, appSettingsOptions,
+            repository, scaleOutSettleService, logService);
     }
 
     [Fact]
@@ -59,7 +60,7 @@ public class SettleEarlyServiceTests
         //arrange
         createCriteriaService.CreateCalculateEarlyCriteria(Arg.Any<SettleEarlyRequest>())
             .Returns(new CalculateEarlyCriteria());
-        logService.WriteLog(Arg.Any<int>(), Arg.Any<string>());
+        await logService.WriteLog(Arg.Any<int>(), Arg.Any<string>());
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>())
             .Returns(new ResultMessage());
 

@@ -52,7 +52,7 @@ public class MoveActionServiceImp : MoveActionService
         var result = await VerifyBeforeMoveTickets(request);
         if (result.ErrCode > 0)
         {
-            logService.ActionLog(request.MatchId, result.ErrMsg, ActionIdMoveTicketFailed);
+            await logService.ActionLog(request.MatchId, result.ErrMsg, ActionIdMoveTicketFailed);
             return result;
         }
 
@@ -125,19 +125,19 @@ public class MoveActionServiceImp : MoveActionService
         var notExistTicketMoved = !results.ToList().Exists(r => r.TicketCount > 0);
         if (resultFailed.Any())
         {
-            logService.ActionLog(request.MatchId, resultFailed[0].ErrMsg, ActionIdMoveTicketFailed);
+            await logService.ActionLog(request.MatchId, resultFailed[0].ErrMsg, ActionIdMoveTicketFailed);
             return resultFailed[0];
         }
 
         if (notExistTicketMoved)
         {
-            logService.ActionLog(request.MatchId, NotExistValidTicketToMove, ActionIdMoveTicketFailed);
+            await logService.ActionLog(request.MatchId, NotExistValidTicketToMove, ActionIdMoveTicketFailed);
             return new Result { ErrMsg = NotExistValidTicketToMove, ErrCode = NotExistValidTicketToMoveCode };
         }
 
         var logMessage = $"{getTickets.ChildMatchId}<br/> ({getTickets.Resources})<br/>Duration:{duration}ms; TC:{results.Select(r => r.TicketCount).Sum()}";
         WriteLog(request.MatchId, getTickets.ChildMatchId, getTickets.Resources);
-        logService.ActionLog(request.MatchId, logMessage, ActionIdMoveTicket);
+        await logService.ActionLog(request.MatchId, logMessage, ActionIdMoveTicket);
         await UpdateChildMatchInfo(getTickets.ChildMatchId);
 
         return results[0];

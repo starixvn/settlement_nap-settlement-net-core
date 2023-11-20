@@ -1,16 +1,10 @@
-﻿using Fanex.Data;
-using Fanex.Data.Repository;
-
-namespace Settlement.Sportsbook.Soccer.Criteria;
+﻿namespace Settlement.Sportsbook.Soccer.Criteria;
 
 public class CalculateCriteria : NonQueryCommand
 {
     public int AdminId { get; set; }
 
     public int MatchId { get; set; }
-
-    [SpParam(Ignored = true)]
-    public int LeagueGroupId { get; set; }
 
     public int? FullTimeHome { get; set; }
 
@@ -45,6 +39,9 @@ public class CalculateCriteria : NonQueryCommand
 
     [SpParam(Ignored = true)]
     public string SpName => "NAP_Admin_Settlement_1_Push";
+
+    [SpParam(Ignored = true)]
+    public int LeagueGroupId { get; set; }
 
     public override bool IsValid() => AdminId > 0 && MatchId > 0;
 

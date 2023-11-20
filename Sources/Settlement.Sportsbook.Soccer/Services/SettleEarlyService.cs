@@ -1,9 +1,4 @@
-﻿using Fanex.Data.Repository;
-using Fanex.Settlement.ScaleOut.Constants;
-using Fanex.Settlement.ScaleOut.Request;
-using Fanex.Settlement.ScaleOut.Services;
-using Microsoft.Extensions.Options;
-using Settlement.Core.Models;
+﻿using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.Soccer.Criteria;
 using Settlement.Sportsbook.Soccer.Requests;
@@ -27,22 +22,18 @@ public class SettleEarlyServiceImp : SettleEarlyService
 
     private readonly LogService logService;
 
-    private readonly XmlConvertService xmlConvertService;
-
     public SettleEarlyServiceImp(
         ICreateCriteriaService createCriteriaService,
         IOptions<AppSettingsKey> appSettingsKey,
         IDynamicRepository repository,
         ScaleOutSettleService scaleOutSettleService,
-        LogService logService,
-        XmlConvertService xmlConvertService)
+        LogService logService)
     {
         this.createCriteriaService = createCriteriaService;
         this.appSettingsKey = appSettingsKey.Value;
         this.repository = repository;
         this.scaleOutSettleService = scaleOutSettleService;
         this.logService = logService;
-        this.xmlConvertService = xmlConvertService;
     }
 
     public async Task<Result> CalculateEarly(SettleEarlyRequest request)
@@ -54,7 +45,7 @@ public class SettleEarlyServiceImp : SettleEarlyService
             return requestChecking;
         }
 
-        WriteDirectlyLog(request);
+        await WriteDirectlyLog(request);
 
         await UpdateMatchInfo(criteria);
 
@@ -63,12 +54,13 @@ public class SettleEarlyServiceImp : SettleEarlyService
         return result;
     }
 
-    private void WriteDirectlyLog(SettleEarlyRequest request)
+    private async Task WriteDirectlyLog(SettleEarlyRequest request)
     {
-        var selectedResources = xmlConvertService.Serialize(request.SelectedResources).Replace("ResourceItem", "Resource");
-        var message = $"NAP: Auto-Settlement ({request.ActionName}) for matchId: {request.MatchId} Result: {selectedResources}";
+        var insertLogCriteria = createCriteriaService.CreateCalculateEarlyLogCriteria(request);
+        await logService.WriteLog(insertLogCriteria);
 
-        logService.WriteLog(request.MatchId, message);
+        var message = $"NAP: Auto-Settlement ({request.ActionName}) for matchId: {request.MatchId} Result: {insertLogCriteria.SelectedResources}";
+        await logService.WriteLog(request.MatchId, message);
     }
 
     private async Task<Result> Execute(CalculateEarlyCriteria criteria)

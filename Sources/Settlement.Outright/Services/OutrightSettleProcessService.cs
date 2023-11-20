@@ -81,7 +81,7 @@ public class OutrightSettleProcessServiceImp : OutrightSettleProcessService
 
     public async Task<ResultOutright> ValidateRequest(string spName, IEnumerable<InfoValidate> teams)
     {
-        var validateDeployFlag = await scaleOutSettleService.GetDeploymentInfo(new GetDeploymentInfoRequest { SPName = spName });
+        var validateDeployFlag = await scaleOutSettleService.GetDeploymentInfo(new GetDeploymentInfoRequest { SpName = spName });
 
         if (validateDeployFlag.ErrorCode > 0)
         {

@@ -58,7 +58,7 @@ public class MoveRunningServiceImp : MoveRunningService
         var validateResult = await VerifyBeforeMovingRunningTickets(criteria);
         if (validateResult.ErrCode > 0)
         {
-            logService.ActionLog(request.MatchId, validateResult.ErrMsg, ActionIdMoveRunningTickets);
+            await logService.ActionLog(request.MatchId, validateResult.ErrMsg, ActionIdMoveRunningTickets);
             return validateResult;
         }
 
