@@ -174,9 +174,7 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
   }
 
   public isConfirmed(resultDetail: ResultDetail) {
-    if (
-      [ResourceID.Et, ResourceID.Pen, ResourceID.Match, ResourceID.FullTime]
-    ) {
+    if ([ResourceID.Et, ResourceID.Pen, ResourceID.Match, ResourceID.FullTime].includes(resultDetail.resourceId)) {
       return (
         this.isLeader && this.matchResult.resultSettingData.isConfirmedRefund
       );

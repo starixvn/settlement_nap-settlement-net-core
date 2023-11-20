@@ -31,8 +31,7 @@
                     [disabled]="selectedResources.length === 0" (click)="confirmRefund()">
                     Confirm Refund
                 </button>
-            <button *ngIf="permission.isLeader && existsConfirmed" [ngClass]="{'btn btn-outline-primary button-confirmed': true}"
-                [disabled]="selectedResources.length === 0" (click)="confirmRefund()">
+            <button *ngIf="permission.isLeader && existsConfirmed" [ngClass]="{'btn btn-outline-primary button-confirmed': true}" (click)="confirmRefund()">
                 Undo Confirm Refund All
             </button>
             <button [ngClass]="{'refund-button': true, 'button-disabled': selectedResources.length === 0}"

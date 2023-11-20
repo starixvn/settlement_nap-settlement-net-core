@@ -56,8 +56,6 @@ export class BandyRefundComponent extends RefundActionBaseComponent implements S
     return this.resultDetails.some(x => x.resultSettingData.isConfirmedRefund);
   }
 
-
-
   private initData() {
     this.resultDetails = this.match.resultDetails;
     this.matchDetail = this.match.matchDetail;

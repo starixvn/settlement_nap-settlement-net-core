@@ -46,7 +46,7 @@
 
 <ng-template #calcBody>
   <ng-container *ngFor="let result of resultDetails; let i = index; let last = last">
-    <tr    [ngClass]="{'mismatched': result.isScoreMismatched, 'confirmed-refund': isConfirmed(result)}">
+    <tr [ngClass]="{'mismatched': result.isScoreMismatched, 'confirmed-refund': isConfirmed(result)}">
       <td>
         {{ result.resourceId | badyResourceName}}
       </td>

@@ -32,8 +32,7 @@ export class ResultDetailsService {
     const resultDetails = externalResult ? externalResult.resultDetails : [];
     return ResourceIDs.map(resourceId => {
       const external = resultDetails.find(providerResult => providerResult.resourceId === resourceId);
-      console.log('external',external)
-      return  !external ? new ExternalResultDetail(externalResult.sourceId,resourceId,externalResult.sourceName) : external;
+      return  !external ? new ExternalResultDetail(externalResult?.sourceId,resourceId,externalResult?.sourceName) : external;
     })
   }
 
