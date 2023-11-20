@@ -309,7 +309,7 @@ public class CreateCriteriaServiceImp : ICreateCriteriaService
         var calResources = GetResourcesUnCalculate(request);
         var resourcesMapper = mapper.Map<List<ResourceItem>>(calResources);
 
-        var resourceItems = resourceService.UnCalculateLogResources(request.ActionName);
+        var resourceItems = resourceService.UnCalculateLogResources();
         resourceItems.AddRange(resourcesMapper);
 
         var selectedResources = CreateResources(resourceItems);
@@ -328,14 +328,9 @@ public class CreateCriteriaServiceImp : ICreateCriteriaService
     {
         var matchGoalRecord = matchService.GetMatchGoalRecord(request.MatchId) ?? new MatchGoalRecordModel();
         var htGoalRecord = GoalRecordHt(matchGoalRecord.GoalRecord, request.ResultDetails);
-
         var calResources = resourceService.UnCalculateFtResources(htGoalRecord);
 
-        var resourcesMapper = mapper.Map<List<ResourceItem>>(calResources);
-
-        var resourceItems = resourceService.UnCalculateLogResources(ActionType.UnCalculateFullTime);
-        resourceItems.AddRange(resourcesMapper);
-
+        var resourceItems = mapper.Map<List<ResourceItem>>(calResources);
         var selectedResources = CreateResources(resourceItems);
 
         return new InsertLogCriteria

@@ -69,7 +69,7 @@ public class SettlementServiceImp : SettlementService
         var criteria = CreateCriteria(request);
         var validateDeploymentCriteria = new GetDeploymentInfoRequest
         {
-            SPName = "NAP_Admin_Settlement_s161_Manual"
+            SpName = "NAP_Admin_Settlement_s161_Manual"
         };
 
         var validateDeploymentResult = await scaleOutSettleThirdPartyService.GetDeploymentInfo(validateDeploymentCriteria);
@@ -144,7 +144,7 @@ public class SettlementServiceImp : SettlementService
 
     private async Task UpdateMatchInfo(NumberGameSettlementRequest request)
     {
-        var updateRequest = new UpdateMatchInfo3rdRequest
+        var updateRequest = new UpdateMatchInfo3RdRequest
         {
             Command = EventStatus.Completed,
             MatchId = request.MatchId,

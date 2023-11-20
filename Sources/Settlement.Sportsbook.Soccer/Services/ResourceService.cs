@@ -29,7 +29,7 @@ public interface IResourceService
 
     ResourceItem RefundAbandonedMatchLogResources(RefundRequest request);
 
-    List<ResourceItem> UnCalculateLogResources(string actionName);
+    List<ResourceItem> UnCalculateLogResources();
 }
 
 public class ResourceServiceImp : IResourceService
@@ -299,22 +299,13 @@ public class ResourceServiceImp : IResourceService
             AwayValue = halfTimeAway.ToString(),
             HomeValue = halfTimeHome.ToString()
         };
-
     }
 
-    public List<ResourceItem> UnCalculateLogResources(string actionName)
+    public List<ResourceItem> UnCalculateLogResources()
     {
-        if (actionName.Equals(ActionType.UnCalculate))
-        {
-            return new List<ResourceItem>
-            {
-                new() { ResourceId = ResourceType.Halftime, AwayValue = string.Empty, HomeValue = string.Empty },
-                new() { ResourceId = ResourceType.Final, AwayValue = string.Empty, HomeValue = string.Empty }
-            };
-        }
-
         return new List<ResourceItem>
         {
+            new() { ResourceId = ResourceType.Halftime, AwayValue = string.Empty, HomeValue = string.Empty },
             new() { ResourceId = ResourceType.Final, AwayValue = string.Empty, HomeValue = string.Empty }
         };
     }
