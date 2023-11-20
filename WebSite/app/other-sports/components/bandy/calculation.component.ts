@@ -41,9 +41,9 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
   public matchResultOriginal: ResultDetail;
   public permission: Permission;
 
-  public externalResults: ExternalResult[];
+  public externalResult: ExternalResult | null = null;
   public providerResultDetails: ExternalResultDetail[] = [];
-  public externalSourceName: string;
+  public externalSourceName: string = '-';
 
   public isReSettledTickets: boolean;
   
@@ -104,12 +104,9 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
   }
 
   private generateProviderResultDetails() {
-    this.externalResults = this.match.externalResults;
-
-    if (this.externalResults?.length) {
-      this.externalSourceName = this.externalResults[0].sourceName;
-      this.providerResultDetails = this.externalResults[0].resultDetails;
-    }
+    this.externalResult = this.match.externalResults.length ? this.match.externalResults[0] : null;
+    this.externalSourceName = this.externalResult ? this.externalResult.sourceName : '-';
+    this.providerResultDetails = this.resultDetailService.generateFullExternalResultDetails(this.externalResult);
   }
 
   private viewData() {
@@ -131,7 +128,7 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
   }
 
   private checkProviderScore() {
-    _.forEach(this.resultDetails, (result) => {
+    _.forEach(this.originalResultDetails, (result) => {
       result.isScoreMismatched = this.validationService.inValidResultDetailWithProvider(result,this.providerResultDetails);
     })
   }
@@ -188,23 +185,10 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
     }
   }
 
-  private getExternalResultDetail(
-    resourceId: string
-  ) {
-    const externalResultDetail = this.providerResultDetails.find(
-      (result) => resourceId === result.resourceId
-    );
-
-    return (
-      externalResultDetail ??
-      new ExternalResultDetail(0, resourceId, this.externalSourceName)
-    );
-  }
-
   public viewExternalScore(resourceId: string) {
-    const resultDetail = this.getExternalResultDetail(resourceId);
-    return _.isEmpty(resultDetail.homeValue) &&
-      _.isEmpty(resultDetail.awayValue)
+    const resultDetail = this.providerResultDetails.find(x => x.resourceId === resourceId);
+    return _.isEmpty(resultDetail?.homeValue) &&
+      _.isEmpty(resultDetail?.awayValue)
       ? "-"
       : `${resultDetail.homeValue}:${resultDetail.awayValue}`;
   }
@@ -232,7 +216,9 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
       this.toastrService.error(Language.warningInputScore);
     } else if ( this.validationService.inValidResult(this.resultDetails, this.leagueType)) {
       this.toastrService.error(Language.inconsistentValues);
-    } else {
+    } else if (!this.validationService.checkFistHaflCaculatedOrNoTicket(this.firstHalfResult,this.matchResult)) { // check firstHafl no ticket
+      this.toastrService.error(Language.IntervalWarning);
+    }else {
       this.confirmScoreSource();
     }
   }
@@ -241,7 +227,7 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
     const isSourceInsufficient = this.validationService.isInsufficientSOPLite(this.matchDetail,this.originalResultDetails,this.providerResultDetails,ResourceID.Match);
     const isInconsistent = this.validationService.isConsistentScore(this.originalResultDetails,this.providerResultDetails,this.selectedResults,this.matchDetail,ResourceID.Match);
 
-    if (isSourceInsufficient) {
+    if (isSourceInsufficient || isInconsistent) {
       if (!this.isLeader) {
         this.toastrService.error(
           Language.otherSports.warningCalculateInconsistent
@@ -401,6 +387,9 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
 
   public copyScore() {
     this.toastrService.clear();
+    if(!this.hasProvider) {
+      return;
+    } 
     this.createConfirmMessageCopy();
     this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
       this.resultDetailService.copyResultFromProvider(this.resultDetails,this.providerResultDetails);

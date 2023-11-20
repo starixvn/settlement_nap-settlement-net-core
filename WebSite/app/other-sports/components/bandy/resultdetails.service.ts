@@ -1,5 +1,5 @@
 import { Inject, Injectable } from "@angular/core";
-import { MatchDetail, ResultDetail } from "../../../shared/models/sportsbook-sop";
+import { ExternalResult, ExternalResultDetail, MatchDetail, ResultDetail } from "../../../shared/models/sportsbook-sop";
 import { LeagueType, ResourceID, ResourceIDs } from "./constant";
 import * as _ from "lodash";
 import { ResultSettingModel } from "../../../shared/models/result-setting.model";
@@ -26,6 +26,15 @@ export class ResultDetailsService {
 
       return newResult;
     });
+  }
+
+  public generateFullExternalResultDetails(externalResult : ExternalResult) {
+    const resultDetails = externalResult ? externalResult.resultDetails : [];
+    return ResourceIDs.map(resourceId => {
+      const external = resultDetails.find(providerResult => providerResult.resourceId === resourceId);
+      console.log('external',external)
+      return  !external ? new ExternalResultDetail(externalResult.sourceId,resourceId,externalResult.sourceName) : external;
+    })
   }
 
   public hidenScoreResultDetails(resultDetails: ResultDetail[],isLeader: boolean) {

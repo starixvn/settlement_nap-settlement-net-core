@@ -474,6 +474,8 @@ export class VerificationBaseService {
     }
 
     private isConsistentScoreProvider(resultDetails: ResultDetail[], externalResults: ExternalResultDetail[]) {
+        console.log(resultDetails);
+        console.log(externalResults);
         return resultDetails.some(result => {
             const providerResult = externalResults?.find(x => x.resourceId === result.resourceId);
             return providerResult && (!_.isEqual(providerResult.homeValue ?? "", result.homeValue ?? "") 

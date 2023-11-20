@@ -6,6 +6,7 @@ import * as _ from "lodash";
 import { LeagueType, ResourceID } from "./constant";
 import { ResultByTeamNamePipe } from "../../../shared/pipes/result-by-team-name.pipe";
 import { GeneralResultDetail } from "../../../shared/models";
+import { SettlementStatusId } from "../../../shared/constants";
 
 @Injectable()
 export class ValidationService extends VerificationBaseService {
@@ -140,6 +141,11 @@ export class ValidationService extends VerificationBaseService {
   }
 
   public verifyTraderScore(originalResultDetails: ResultDetail[], leagueType: number) {
+
+    if(!originalResultDetails.some(x => this.hasScore(x))) {
+      return;
+    }
+
     const firstHalf = originalResultDetails.find((x) => x.resourceId === ResourceID.FirstHalf);
     const fullTime = originalResultDetails.find((x) => x.resourceId === ResourceID.FullTime);
 
@@ -165,5 +171,11 @@ export class ValidationService extends VerificationBaseService {
       result.inValid = result.inValid || this.hasScore(result) 
         && this.inValidMatchSumScore(originalResultDetails,leagueType)
     });
+  }
+
+
+  public checkFistHaflCaculatedOrNoTicket(firstHalf: ResultDetail,matchResult: ResultDetail) {
+    return matchResult.checked && (firstHalf.ticketStatus === 'No Ticket' ||
+      (firstHalf.settlementStatusId === SettlementStatusId.Calculated || firstHalf.checked));
   }
 }
