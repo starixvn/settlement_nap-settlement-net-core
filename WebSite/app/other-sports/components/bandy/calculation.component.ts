@@ -23,9 +23,9 @@ import { BandyService } from "./bandy.service";
 @Component({
   selector: "calculation-actions",
   templateUrl: "./calculation.component.html",
-  providers: [IntervalBackgroundPipe, ValidationService,BandyService],
+  providers: [IntervalBackgroundPipe, ValidationService,BandyService,],
   standalone: true,
-  imports: [CalculateCommonModule, MatchInfoCompoment, BandyResourceNamePipe],
+  imports: [CalculateCommonModule, MatchInfoCompoment, BandyResourceNamePipe,],
 })
 export class BandyCalculationComponent implements SportTemplate, OnInit {
   @ViewChild(ToastContainerDirective, { static: true })
@@ -63,11 +63,11 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
     private readonly intervalBackgroundPipe: IntervalBackgroundPipe,
     private readonly bandyService: BandyService
   ) {
-    this.confirmationDialogMessage.title = Language.confirmationBox;
-    this.toastrService.overlayContainer = this.toastContainer;
   }
 
   ngOnInit(): void {
+    this.confirmationDialogMessage.title = Language.confirmationBox;
+    this.toastrService.overlayContainer = this.toastContainer;
     this.injector
       .get(BlockUIService)
       .blockUIEvent.subscribe((event: boolean) => (this.blockUI = event));
@@ -189,24 +189,20 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
   }
 
   private getExternalResultDetail(
-    resourceId: string,
-    externalResult: ExternalResult
+    resourceId: string
   ) {
-    const externalResultDetail = externalResult.resultDetails.find(
+    const externalResultDetail = this.providerResultDetails.find(
       (result) => resourceId === result.resourceId
     );
 
     return (
       externalResultDetail ??
-      new ExternalResultDetail(0, resourceId, externalResult.sourceName)
+      new ExternalResultDetail(0, resourceId, this.externalSourceName)
     );
   }
 
-  public viewExternalScore(resourceId: string, externalResult: ExternalResult) {
-    const resultDetail = this.getExternalResultDetail(
-      resourceId,
-      externalResult
-    );
+  public viewExternalScore(resourceId: string) {
+    const resultDetail = this.getExternalResultDetail(resourceId);
     return _.isEmpty(resultDetail.homeValue) &&
       _.isEmpty(resultDetail.awayValue)
       ? "-"

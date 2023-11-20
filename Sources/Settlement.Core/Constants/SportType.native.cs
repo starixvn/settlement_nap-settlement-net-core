@@ -112,6 +112,8 @@ public static class SportType
 
     public const int UpcomingSport56 = 56;
 
+    public const int Bandy = 58;
+
     public const int NumberGame = 161;
 
     public const int Happy5 = 164;

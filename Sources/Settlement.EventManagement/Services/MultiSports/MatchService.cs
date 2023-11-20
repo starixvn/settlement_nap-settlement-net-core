@@ -74,6 +74,7 @@ public class MatchServiceImp : IMatchService
             SportType.BeachVolleyball => matchResultDetailService.BeachVolleyballResultDetail(matches, resultDetails,
                 permission),
             SportType.VolleyBall => matchResultDetailService.VolleyballResultDetail(matches, resultDetails, permission),
+            SportType.Bandy => matchResultDetailService.BandyResultDetail(matches, resultDetails, permission),
             _ => LoadExternalResults(matches, resultDetails, sportType)
         };
     }
@@ -131,7 +132,8 @@ public class MatchServiceImp : IMatchService
             SportType.Football,
             SportType.BaseBall,
             SportType.Rugby,
-            SportType.NetBall
+            SportType.NetBall,
+            SportType.Bandy
         };
 
     private List<Match> LoadExternalResults(List<Match> matches, List<ResultDetail> resultDetails, int sportType)

@@ -4,14 +4,14 @@ export const ResultType = {
     havingTotalGames: [SportType.tennis, SportType.badminton, SportType.volleyBall, SportType.squash,
                        SportType.sepakTakraw, SportType.beachVolleyball],
     scoreInResultDetail: [SportType.tennis, SportType.badminton, SportType.basketBall,
-                          SportType.eSports, SportType.cricket, SportType.beachVolleyball, SportType.volleyBall],
+                          SportType.eSports, SportType.cricket, SportType.beachVolleyball, SportType.volleyBall,SportType.bandy],
     notHavingHalfTimeScore: [SportType.snookerPool, SportType.eSports, SportType.iceHockey, SportType.fieldHockey,
         SportType.badminton, SportType.tennis, SportType.volleyBall, SportType.squash, SportType.sepakTakraw,
         SportType.beachSoccer, SportType.chess, SportType.cycling, SportType.darts, SportType.fencing,
         SportType.finance, SportType.golf, SportType.judo, SportType.mPentathlon, SportType.motorsports,
         SportType.muayThai, SportType.olympics, SportType.poker, SportType.rowing,
         SportType.sailing, SportType.shooting, SportType.taekwondo,
-        SportType.triathlon, SportType.winterSports, SportType.wrestling, SportType.upcomingSport57, SportType.upcomingSport58,
+        SportType.triathlon, SportType.winterSports, SportType.wrestling, SportType.upcomingSport57,
         SportType.upcomingSport59, SportType.upcomingSport60, SportType.upcomingSport61, SportType.upcomingSport62,
         SportType.upcomingSport63, SportType.upcomingSport64, SportType.upcomingSport65, SportType.upcomingSport66, SportType.cricket,
         SportType.beachVolleyball, SportType.archery, SportType.athletics, SportType.boxingMMA,
@@ -42,5 +42,6 @@ export const ResultType = {
     havingHalfTimeConfirmedStatus: [SportType.basketBall, SportType.handball,
         SportType.otherSports,  SportType.waterPolo,
         SportType.futsal, SportType.kabaddi, SportType.lotto, SportType.baseBall, SportType.football, SportType.rugby,
-        SportType.netBall]
+        SportType.netBall,
+        SportType.bandy]
 };

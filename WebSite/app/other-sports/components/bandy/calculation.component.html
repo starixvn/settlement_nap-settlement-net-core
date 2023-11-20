@@ -1,25 +1,25 @@
-<span toastContainer></span>
+<!-- <span toastContainer></span> -->
 
 <div *ngIf="match">
   <div *ngIf="isReadyMatch">
     <div class="padding">
       <match-info [matchDetail]="matchDetail" [resultDetails]="resultDetails" />
       <ticket-count [ticketCounts]="match.ticketCounts"></ticket-count>
-    </div>
-    
-    <div class="calculation-actions">
-      <table>
-        <ng-template *ngTemplateOutlet="calcHeader"></ng-template>
-        <ng-template *ngTemplateOutlet="calcBody"></ng-template>
-      </table>
-    </div>
-  </div>
-  <div *ngIf="!isReadyMatch">
-    <not-ready-match></not-ready-match>
-  </div>
 
-  <resettle-checker (proceedEvent)="onResettleCheckboxChange($event)"
-  [checked]="isReSettledTickets"></resettle-checker>
+      <div class="calculation-actions">
+        <table>
+          <ng-template *ngTemplateOutlet="calcHeader"></ng-template>
+          <ng-template *ngTemplateOutlet="calcBody"></ng-template>
+        </table>
+      </div>
+    </div>
+    <div *ngIf="!isReadyMatch">
+      <not-ready-match></not-ready-match>
+    </div>
+  
+    <resettle-checker (proceedEvent)="onResettleCheckboxChange($event)"
+    [checked]="isReSettledTickets"></resettle-checker>
+    </div>
 </div>
 
 
@@ -28,12 +28,12 @@
     <tr>
       <th scope="col" rowspan="2" class="code">Result</th>
       <th scope="col" rowspan="2" class="ticket-status">Ticket Status</th>
-      <th scope="col" rowspan="2" colspan="2" class="kick-off-time">Score</th>
-      <th  *ngIf="isLeader && externalResults.length">Provider Score</th>
+      <th scope="col" rowspan="2" colspan="2" class="kick-off-time">Score Value</th>
+      <th  *ngIf="isLeader">Provider Score</th>
       <th scope="col" rowspan="2" class="kick-off-time" >Select to Proceed</th>
     </tr>
     <tr>
-      <ng-container *ngIf="isLeader && externalResults.length" >
+      <ng-container *ngIf="isLeader" >
         <th  class="code" *ngFor="let externalResult of externalResults">
           {{externalResult.sourceName}}
           <span [ngClass]="{ 'icon-copy': true, 'disable-copy': false }" (click)="copyScore()"></span>
@@ -77,8 +77,8 @@
       </td>
 
 
-      <ng-container *ngIf="isLeader && externalResults.length">
-        <td  *ngFor="let externalResult of externalResults">{{ viewExternalScore(result.resourceId,externalResult)}}</td>
+      <ng-container *ngIf="isLeader">
+        <td>{{ viewExternalScore(result.resourceId)}}</td>
       </ng-container>
 
       <td *ngIf="isFistHalf(result.resourceId)" [ngClass]="result.ticketStatus?.toLowerCase()"><input type="checkbox"

@@ -2,7 +2,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { CommonModule } from "@angular/common";
 import { NgModule } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { ToastContainerModule, ToastrService } from "ngx-toastr";
+import { ToastContainerModule, ToastNoAnimationModule, ToastrModule, ToastrService } from "ngx-toastr";
 import { TicketCountComponent } from "../components/ticket-count/ticket-count.component";
 import { ResettleCheckerComponent } from "../components/resettle-checker/resettle-checker.component";
 import { AioService, BlockUIService, HttpRequestService } from "../services";
@@ -18,7 +18,16 @@ import { OnlyIntegerDirective } from '../../shared/directives';
 @NgModule({
         exports: [FormsModule, CommonModule, ToastContainerModule, ResettleCheckerComponent, TicketCountComponent,
                 NotReadyMatchComponent, ExternalSourceNamePipe, MatTooltipModule, MatDialogModule, ExternalLinkPipe, OnlyIntegerDirective],
-        imports: [ResettleCheckerComponent, TicketCountComponent, NotReadyMatchComponent, ExternalSourceNamePipe, ExternalLinkPipe, OnlyIntegerDirective],
+        imports: [ResettleCheckerComponent, TicketCountComponent, NotReadyMatchComponent, ExternalSourceNamePipe, ExternalLinkPipe, OnlyIntegerDirective,
+                ToastNoAnimationModule.forRoot({
+                        disableTimeOut: true,
+                        enableHtml: true,
+                        tapToDismiss: false,
+                        positionClass: "inline",
+                        maxOpened: 1,
+                      }),
+                      ToastContainerModule,
+                ],
         providers: [
                 MessageBoxService,
                 ToastrService,

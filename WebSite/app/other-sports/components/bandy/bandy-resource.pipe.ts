@@ -6,7 +6,7 @@ export class BandyResourceNamePipe implements PipeTransform {
    
       switch (resourceId) {
         case "01":
-          return "First half";
+          return "First Half";
         case "0001":
           return "Full Time";
         case "ET":
