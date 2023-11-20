@@ -2,19 +2,19 @@ import { Pipe, PipeTransform } from "@angular/core";
 
 @Pipe({ name: "badyResourceName",standalone: true })
 export class BandyResourceNamePipe implements PipeTransform {
-  public transform(resourceId: string) {
+  public transform(resourceId: string, showFull = false) {
    
       switch (resourceId) {
         case "01":
-          return "First Half";
+          return showFull ? "First Half" : "FH";
         case "0001":
-          return "Full Time";
+          return showFull ? "Full Time" : "FT";
         case "ET":
           return "ET";
         case "PEN":
           return "PEN";
         case "00":
-          return "Match";
+          return showFull ? "Match" : "Final Score";
         default:
           return "";
       }

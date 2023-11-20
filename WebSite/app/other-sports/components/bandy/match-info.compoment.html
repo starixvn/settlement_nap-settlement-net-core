@@ -17,7 +17,7 @@
       <th class="kick-off-time">Kick-off Time</th>
       <th class="team">Team</th>
       <ng-container *ngIf="showResultDetails">
-        <th class="score" *ngFor="let result of resultDetails"> {{ result.resourceId | badyResourceName}}</th>
+        <th class="score" *ngFor="let result of resultDetails"> {{ result.resourceId | badyResourceName: false}}</th>
       </ng-container>
     </tr>
   </thead>
@@ -34,7 +34,7 @@
       </td>
       <td class="home-team-name">{{matchDetail.homeName}}</td>
       <ng-container *ngIf="showResultDetails" >
-        <td *ngFor="let result of resultDetails; let i= index; let last=last;" [ngClass]="result.className">
+        <td *ngFor="let result of resultDetails; let i= index; let last=last;" [ngClass]="result.ticketStatus?.toLowerCase()">
           <ng-container *ngIf="result.isDisplayedForMember; else emptyScore">
             {{result.homeValue | scoreBySettlement:result.settlementStatusId}}
           </ng-container>
@@ -46,7 +46,7 @@
       <td>{{matchDetail.matchId}}</td>
       <td class="away-team-name">{{matchDetail.awayName}}</td>
       <ng-container *ngIf="showResultDetails" >
-        <td *ngFor="let result of resultDetails; let i= index; let last=last;" [ngClass]="result.className">
+        <td *ngFor="let result of resultDetails; let i= index; let last=last;" [ngClass]="result.ticketStatus?.toLowerCase()">
           <ng-container *ngIf="result.isDisplayedForMember; else emptyScore">
             {{result.awayValue | scoreBySettlement:result.settlementStatusId}}
           </ng-container>
