@@ -106,25 +106,13 @@ export class ResultDetailsService {
     }
 
     if([LeagueType.OtPenalty].includes(leagueType)) {
-      if (this.isEmptyHomeAwayValue(fullTime)) {
+      if (this.isEmptyHomeAwayValue(fullTime) || !_.isEqual(fullTime.homeValue, fullTime.awayValue)) {
         et.disabled = true;
         pen.disabled = true;
-        return;
-      }
-
-      if (!this.isEmptyHomeAwayValue(fullTime) && !_.isEqual(fullTime.homeValue, fullTime.awayValue)) {
-        et.disabled = true;
-        pen.disabled = true;
-      }
-
-      if(!this.isEmptyHomeAwayValue(fullTime) && _.isEqual(fullTime.homeValue, fullTime.awayValue)) {
+      } else {
         et.disabled = false;
-        pen.disabled = true;
-      }
-
-      if(!this.isEmptyHomeAwayValue(et) && _.isEqual(et.homeValue, et.awayValue)) {
-        et.disabled = false;
-        pen.disabled = false;
+        //
+        pen.disabled =  this.isEmptyHomeAwayValue(et) || !_.isEqual(et.homeValue, et.awayValue)
       }
     }
   }

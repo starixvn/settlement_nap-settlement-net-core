@@ -385,7 +385,7 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
 
   public copyScore() {
     this.toastrService.clear();
-    if(!this.hasProvider) {
+    if(!this.externalResult) {
       return;
     } 
     this.createConfirmMessageCopy();
@@ -409,7 +409,7 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
   }
 
   private hasProvider() {
-    return this.validationService.hasProvider(this.providerResultDetails);
+    return !!this.externalResult;
   }
 
 }
