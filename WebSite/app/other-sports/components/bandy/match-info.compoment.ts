@@ -6,11 +6,14 @@ import { ResultDetail } from "../../../shared/models/sportsbook-sop/result-detai
 import { SettlementStatusId } from "../../../shared/constants/settlement-status-id.native";
 import { Permission } from "../../../shared/models/sportsbook-sop";
 import { BandyResourceNamePipe } from "./bandy-resource.pipe";
+import { BandyService } from "./bandy.service";
+import { IntervalBackgroundPipe } from "../../../shared/pipes/interval-background.pipe";
 
 @Component({
   templateUrl:"./match-info.compoment.html",
   selector: 'match-info',
   standalone: true,
+  providers: [IntervalBackgroundPipe,BandyService,],
   imports: [CommonModule, ScoreBySettlementPipe,BandyResourceNamePipe]
 
 })
@@ -24,4 +27,12 @@ export class MatchInfoCompoment implements OnInit {
   @Input() resultDetails: ResultDetail[] = [];
   @Input() showResultDetails: boolean = false;
   @Input() permission: Permission;
+
+  constructor(private bandyService: BandyService
+    ) {
+    }
+
+  public getIntervalBackground(settlementStatusId: number) {
+    return this.bandyService.getIntervalBackground(settlementStatusId)
+  }
 }

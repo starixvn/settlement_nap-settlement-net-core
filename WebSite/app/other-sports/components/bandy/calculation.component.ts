@@ -401,7 +401,7 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
 
   
   public getIntervalBackground(settlementStatusId: number) {
-    return this.intervalBackgroundPipe.transform(settlementStatusId);
+    return this.bandyService.getIntervalBackground(settlementStatusId)
   }
 
   private hasTrader() {

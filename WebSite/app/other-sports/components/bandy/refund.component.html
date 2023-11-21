@@ -19,7 +19,7 @@
       </thead>
       <tbody>
         <tr *ngFor="let result of refundResultDetails; let last=last;" [ngClass]="{'confirmed-refund': permission.isLeader && result.resultSettingData.isConfirmedRefund}">
-          <td>{{ result.resourceId | badyResourceName}}</td>
+          <td>{{ result.resourceId | badyResourceName: false}}</td>
           <td [ngClass]="result.ticketStatus.toLowerCase()" >
             <input type="checkbox" [(ngModel)]="result.checked" [disabled]="last? false : match.isScoreDirect"/>
           </td>
@@ -31,7 +31,7 @@
                     [disabled]="selectedResources.length === 0" (click)="confirmRefund()">
                     Confirm Refund
                 </button>
-            <button *ngIf="permission.isLeader && existsConfirmed" [ngClass]="{'btn btn-outline-primary button-confirmed': true}" (click)="confirmRefund()">
+            <button *ngIf="permission.isLeader && existsConfirmed" [ngClass]="{'btn btn-outline-primary button-confirmed': true}" (click)="undoConfirmedAllResult()">
                 Undo Confirm Refund All
             </button>
             <button [ngClass]="{'refund-button': true, 'button-disabled': selectedResources.length === 0}"

@@ -2,7 +2,7 @@ import { Pipe, PipeTransform } from "@angular/core";
 
 @Pipe({ name: "badyResourceName",standalone: true })
 export class BandyResourceNamePipe implements PipeTransform {
-  public transform(resourceId: string, showFull = false) {
+  public transform(resourceId: string, showFull = true) {
    
       switch (resourceId) {
         case "01":

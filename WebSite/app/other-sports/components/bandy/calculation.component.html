@@ -48,7 +48,7 @@
   <ng-container *ngFor="let result of resultDetails; let i = index; let last = last">
     <tr [ngClass]="{'mismatched': result.isScoreMismatched, 'confirmed-refund': isConfirmed(result)}">
       <td>
-        {{ result.resourceId | badyResourceName}}
+        {{ result.resourceId | badyResourceName:true}}
       </td>
 
       <td *ngIf="isFistHalf(result.resourceId)" [ngClass]="result.ticketStatus?.toLowerCase()" class="set-status">{{result.ticketStatus}}
@@ -56,7 +56,7 @@
       <td *ngIf="isFulltimeResult(result.resourceId)" rowSpan="4" [ngClass]="matchResult.ticketStatus?.toLowerCase()" class="match-status">
         {{matchResult.ticketStatus}}</td>
 
-      <td [ngClass]="[getConfirmedBackground(result, last), getIntervalBackground(result.settlementStatusId)]" [ngClass]="{'col-mismatched' : result.inValid}">
+      <td [ngClass]="{'col-mismatched' : result.inValid}" [ngClass]="[getConfirmedBackground(result, last), getIntervalBackground(result.settlementStatusId)]">
         <input type="text" 
           myOnlyInteger 
           tabindex="{{ i * 2 + 1 }}" [(ngModel)]="result.homeValue" 
@@ -66,7 +66,7 @@
        
           />
       </td>
-      <td  [ngClass]="[getConfirmedBackground(result, last),getIntervalBackground(result.settlementStatusId)]" [ngClass]="{'col-mismatched' : result.inValid}">
+      <td [ngClass]="{'col-mismatched' : result.inValid}"  [ngClass]="[getConfirmedBackground(result, last),getIntervalBackground(result.settlementStatusId)]">
         <input type="text" 
           myOnlyInteger 
           tabindex="{{ (i + 1) * 2 }}" 

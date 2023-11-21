@@ -11,11 +11,13 @@ import { BandyResourceNamePipe } from "./bandy-resource.pipe";
 import { CalculateCommonModule } from "../../../shared/modules/calculate-common.module";
 import { ResultDetailsService } from "./resultdetails.service";
 import { ResourceID } from "./constant";
+import { BandyService } from "./bandy.service";
+import { IntervalBackgroundPipe } from "../../../shared/pipes/interval-background.pipe";
 
 @Component({
   templateUrl: './refund.component.html',
   standalone: true,
-  providers: [ResultDetailsService],
+  providers: [ResultDetailsService,IntervalBackgroundPipe,BandyService,],
   imports: [CalculateCommonModule, MatchInfoCompoment, BandyResourceNamePipe,],
 
 })
@@ -44,6 +46,7 @@ export class BandyRefundComponent extends RefundActionBaseComponent implements S
   }
 
   constructor(private readonly resultDetailService: ResultDetailsService,
+    private bandyService: BandyService
     ) {
       super();
     }
@@ -87,6 +90,10 @@ export class BandyRefundComponent extends RefundActionBaseComponent implements S
     } else {
       this.toastrService.error(result.errMsg);
     }
+  }
+
+  public getIntervalBackground(settlementStatusId: number) {
+    return this.bandyService.getIntervalBackground(settlementStatusId)
   }
 
 
