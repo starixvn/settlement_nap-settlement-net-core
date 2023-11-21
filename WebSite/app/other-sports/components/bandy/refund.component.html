@@ -19,9 +19,9 @@
       </thead>
       <tbody>
         <tr *ngFor="let result of refundResultDetails; let last=last;" [ngClass]="{'confirmed-refund': permission.isLeader && result.resultSettingData.isConfirmedRefund}">
-          <td>{{ result.resourceId | badyResourceName: false}}</td>
+          <td>{{ result.resourceId | badyResourceName: true}}</td>
           <td [ngClass]="result.ticketStatus.toLowerCase()" >
-            <input type="checkbox" [(ngModel)]="result.checked" [disabled]="last? false : match.isScoreDirect"/>
+            <input type="checkbox" [(ngModel)]="result.checked" (ngModelChange)="onSelectResult($event,result.resourceId)"/>
           </td>
         </tr>
 

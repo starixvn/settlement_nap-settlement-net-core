@@ -10,9 +10,10 @@ import { MatchInfoCompoment } from "./match-info.compoment";
 import { BandyResourceNamePipe } from "./bandy-resource.pipe";
 import { CalculateCommonModule } from "../../../shared/modules/calculate-common.module";
 import { ResultDetailsService } from "./resultdetails.service";
-import { ResourceID } from "./constant";
+import { LeagueType, ResourceID } from "./constant";
 import { BandyService } from "./bandy.service";
 import { IntervalBackgroundPipe } from "../../../shared/pipes/interval-background.pipe";
+import * as _ from "lodash";
 
 @Component({
   templateUrl: './refund.component.html',
@@ -39,8 +40,6 @@ export class BandyRefundComponent extends RefundActionBaseComponent implements S
     };
 
     this.match = (await this.aioService.getMatch(matchQuery)) as MatchAio;
-
-    console.log(this.match)
 
     this.initData();
   }
@@ -96,5 +95,18 @@ export class BandyRefundComponent extends RefundActionBaseComponent implements S
     return this.bandyService.getIntervalBackground(settlementStatusId)
   }
 
+  public onSelectResult(event, resourceId) {
+    if (resourceId === ResourceID.Match) {
+      const resourceIds = this.matchDetail.leagueType === LeagueType.OtPenalty 
+      ? [ResourceID.FullTime, ResourceID.Et, ResourceID.Pen] 
+      : [ResourceID.FullTime];
+      
+      _.forEach(this.resultDetails, (result) => {
+        if (resourceIds.includes(result.resourceId)) {
+          result.checked = event;
+        }
+      });
+    }
+  }
 
 }

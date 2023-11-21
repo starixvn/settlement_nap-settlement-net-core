@@ -174,8 +174,9 @@ export class ValidationService extends VerificationBaseService {
   }
 
 
-  public notAllowCalcFinalResult(firstHalf: ResultDetail,matchResult: ResultDetail) {
-    return matchResult.checked && (firstHalf.ticketStatus !== 'No Ticket' &&
-      (firstHalf.settlementStatusId !== SettlementStatusId.Calculated && !firstHalf.checked));
+  public allowCalcFinalResult(firstHalf: ResultDetail,matchResult: ResultDetail) {
+    return matchResult.checked && (!firstHalf.checked 
+      || firstHalf.ticketStatus === 'No Ticket' 
+      || firstHalf.settlementStatusId === SettlementStatusId.Running);
   }
 }
