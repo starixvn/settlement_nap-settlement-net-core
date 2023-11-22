@@ -128,9 +128,11 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
   }
 
   private checkProviderScore() {
-    _.forEach(this.originalResultDetails, (result) => {
+   if(this.hasProvider) {
+    _.forEach(this.resultDetails, (result) => {
       result.isScoreMismatched = this.validationService.inValidResultDetailWithProvider(result,this.providerResultDetails);
     })
+   }
   }
 
   private disabledInputResult() {
@@ -214,7 +216,7 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
       this.toastrService.error(Language.warningInputScore);
     } else if ( this.validationService.inValidResult(this.resultDetails, this.leagueType)) {
       this.toastrService.error(Language.inconsistentValues);
-    } else if (!this.validationService.allowCalcFinalResult(this.firstHalfResult,this.matchResult)) { // check firstHafl no ticket
+    } else if (this.validationService.notAllowCalcFinalResult(this.firstHalfResult,this.matchResult)) { // check firstHafl no ticket
       this.toastrService.error(Language.IntervalWarning);
     }else {
       this.confirmScoreSource();
@@ -273,16 +275,17 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
 
   private async confirmChangedResult() {
     if (this.isReSettledTickets) {
-      this.confirmCalculation(this.resultDetails);
+      this.confirmCalculation(this.selectedResults);
     } else {
       const getResultQuery = {
         matchId: this.match.matchDetail.matchId,
         apikey: "bandy",
         sportType: this.match.matchDetail.sportType,
       };
+      const bandyResultDetails = this.match.resultDetails.filter(x=> x.checked);
 
       const result = await this.aioService.verifyChangedSettledTickets(
-        this.match.resultDetails,
+        bandyResultDetails,
         getResultQuery
       );
       if (result) {
@@ -303,7 +306,6 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
     this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
       const settleResult = this.selectedResults.filter(x => this.validationService.hasScore(x));
       this.sendRequest(settleResult, CalculateAction.calculate)
-     
     });
   }
 
@@ -346,17 +348,14 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
   }
 
   public verifyAndAutoFillScore(resultDetail: ResultDetail) {
-    this.resultDetailService.calcMatchResultDetails(this.resultDetails,this.leagueType);
-
-    this.verifyInputScore(resultDetail);
-
-    this.changeScore();
-  }
-
-  private changeScore() {
     this.disabledInputResult();
     this.resultDetailService.resetHomeAwayValue(this.resultDetails);
+    
+    this.resultDetails = this.resultDetailService.calcMatchResultDetails(this.resultDetails,this.leagueType);
+
+    this.verifyInputScore(resultDetail);
   }
+
 
   private verifyInputScore(resultDetail: ResultDetail) {
     this.validationService.verifyFhFtPen(this.resultDetails);

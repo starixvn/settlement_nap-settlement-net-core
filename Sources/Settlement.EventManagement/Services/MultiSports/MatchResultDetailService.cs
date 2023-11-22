@@ -142,6 +142,8 @@ public class MatchResultDetailServiceImp : IMatchResultDetailService
             match.IsHavingIntervalScore = scoreService.IsIntervalScore(match.SportType, resultDetailByMatchId);
         }
 
+        OtherSportsResultDetail(matches, resultDetails, true);
+
         return matches;
     }
 

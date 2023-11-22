@@ -100,7 +100,6 @@ export class RefundActionBaseComponent {
         this.toastrService.clear();
         const hedgeMatch = this.applyHedgeMatch ? this.hedgeMatchDetail : null;
         const refundNormal = this.resultDetails.filter(item => item.resultSettingData.isConfirmedRefund);
-        console.log('refundNormal',refundNormal);
         if (refundNormal.length > 0) {
             const resourceIds = refundNormal.map(resource => resource.resourceId).join(',');
             this.aioService.changeConfirmResultSetting(Language.confirmRefund.undoConfirmAll, this.matchDetail.matchId, resourceIds, false,

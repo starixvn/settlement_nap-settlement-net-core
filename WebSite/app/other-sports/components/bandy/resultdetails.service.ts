@@ -72,23 +72,19 @@ export class ResultDetailsService {
   }
 
   public calcMatchResultDetails(resultDetails: ResultDetail[], leagueType: number) {
-    const resourceIds = leagueType === LeagueType.OtPenalty ? [ResourceID.FullTime, ResourceID.Et, ResourceID.Pen] : [ResourceID.FullTime]
-    
-    const matchResult = resultDetails.find(x => x.resourceId === ResourceID.Match);
+    const resourceIds = leagueType === LeagueType.OtPenalty ? [ResourceID.FullTime, ResourceID.Et, ResourceID.Pen] : [ResourceID.FullTime];
 
     const gameResults = resultDetails.filter((r) => resourceIds.includes(r.resourceId)
       && (!_.isEmpty(r.homeValue) && !_.isEmpty(r.awayValue)));
 
-    if(gameResults.length) {
-      const homeValue = _.sumBy(gameResults, (x) => Number(x.homeValue));
-      const awayValue = _.sumBy(gameResults, (x) => Number(x.awayValue));
-  
-      matchResult.homeValue = homeValue.toString();
-      matchResult.awayValue = awayValue.toString();
-    } else {
-      matchResult.homeValue = '';
-      matchResult.awayValue = '';
-    }
+    const homeValue = gameResults.length ? `${_.sumBy(gameResults, (x) => Number(x.homeValue))}` : '';
+    const awayValue = gameResults.length ? `${_.sumBy(gameResults, (x) => Number(x.awayValue))}` : '';
+
+    return resultDetails.map(x => x.resourceId !== ResourceID.Match ? x : ({
+      ...x,
+      homeValue,
+      awayValue
+    }));
   }
 
   public disabledInputResult(resultDetails: ResultDetail[], leagueType: number) {

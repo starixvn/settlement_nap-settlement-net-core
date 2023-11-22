@@ -87,8 +87,10 @@ export class ValidationService extends VerificationBaseService {
 
   public inValidResultDetailWithOriginal(result: ResultDetail,originalResultDetails: GeneralResultDetail[]) {
     const originalResult = originalResultDetails.find(x => x.resourceId === result.resourceId);
+    // console.log(result);
+    // console.log(originalResult)
     
-    return this.hasScore(originalResult) 
+    return this.hasScore(originalResult) && this.hasScore(result)
       && (!_.isEqual(originalResult.homeValue, result.homeValue) || !_.isEqual(originalResult.awayValue, result.awayValue));
   }
 
@@ -174,9 +176,8 @@ export class ValidationService extends VerificationBaseService {
   }
 
 
-  public allowCalcFinalResult(firstHalf: ResultDetail,matchResult: ResultDetail) {
-    return matchResult.checked && (!firstHalf.checked 
-      || firstHalf.ticketStatus === 'No Ticket' 
-      || firstHalf.settlementStatusId === SettlementStatusId.Running);
+  public notAllowCalcFinalResult(firstHalf: ResultDetail,matchResult: ResultDetail) {
+    return matchResult.checked && firstHalf.ticketStatus !== 'No Ticket' && ((firstHalf.checked   
+      || firstHalf.settlementStatusId === SettlementStatusId.Calculated) || firstHalf.settlementStatusId === SettlementStatusId.Running && firstHalf.checked);
   }
 }

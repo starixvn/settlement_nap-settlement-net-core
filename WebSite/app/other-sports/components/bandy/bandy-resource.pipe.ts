@@ -14,7 +14,7 @@ export class BandyResourceNamePipe implements PipeTransform {
         case "PEN":
           return "PEN";
         case "00":
-          return showFull ? "Match" : "Final Score";
+          return "Final Score";
         default:
           return "";
       }
