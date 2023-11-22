@@ -464,7 +464,7 @@ export class VerificationBaseService {
         })
     }
    
-    private isConsistentScoreTraderConfirm(originalResultDetails: ResultDetail[], resultDetails: ResultDetail[]) {
+    public isConsistentScoreTraderConfirm(originalResultDetails: ResultDetail[], resultDetails: ResultDetail[]) {
         return resultDetails.some(result => {
             const originalResult = originalResultDetails?.find(x => x.resourceId === result.resourceId);
             return originalResult && (!_.isEqual(result.homeValue ?? "", originalResult.homeValue ?? "")

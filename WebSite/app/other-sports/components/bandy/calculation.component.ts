@@ -119,13 +119,13 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
   }
 
   private checkScoreMissMatchedOnload() {
-      this.checkTraderScore();
+      // this.checkTraderScore();
       this.checkProviderScore();
   }
 
-  private checkTraderScore() {
-    this.validationService.verifyTraderScore(this.resultDetails,this.leagueType);
-  }
+  // private checkTraderScore() {
+  //   this.validationService.verifyTraderScore(this.resultDetails,this.leagueType);
+  // }
 
   private checkProviderScore() {
    if(this.hasProvider) {
@@ -329,18 +329,16 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
     }
   }
 
-
-
   public getClassName(result: ResultDetail) {
     let className = '';
   
-    if([ResourceID.FirstHalf,ResourceID.Match].includes(result.resourceId) 
-      && this.validationService.isScoreConfirmed(this.matchDetail,result) 
-      && result.settlementStatusId === SettlementStatusId.Running) {
+    if(this.validationService.isScoreConfirmed(this.matchDetail,result) && result.settlementStatusId === SettlementStatusId.Running) {
       className = 'bg-result-confirmed '
     }
 
-    className += result.inValid ? 'col-mismatched ' : '';
+    if(this.validationService.inValidResult(this.resultDetails,this.leagueType)) {
+        className += 'col-mismatched ';
+    }
 
     className += this.getIntervalBackground(result.settlementStatusId)
     return className;
@@ -366,20 +364,20 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
 
 
   private verifyInputScore(resultDetail: ResultDetail) {
-    this.validationService.verifyFhFtPen(this.resultDetails);
+    // this.validationService.verifyFhFtPen(this.resultDetails);
     
-    if(!this.existsInValidResult) {
-      this.validationService.verifyMatch(this.resultDetails);
-    }
+    // if(!this.existsInValidResult) {
+    //   this.validationService.verifyMatch(this.resultDetails);
+    // }
    
-    if(!this.existsInValidResult) {
-      this.validationService.verifyMatchSum(this.resultDetails,this.leagueType);
-    }
+    // if(!this.existsInValidResult) {
+    //   this.validationService.verifyMatchSum(this.resultDetails,this.leagueType);
+    // }
 
-    // verify originalResults
-    if (this.hasTrader()) {
-      resultDetail.inValid = this.validationService.inValidResultDetailWithOriginal(resultDetail, this.originalResultDetails);
-    }
+    // // verify originalResults
+    // if (this.hasTrader()) {
+    //   resultDetail.inValid = this.validationService.inValidResultDetailWithOriginal(resultDetail, this.originalResultDetails);
+    // }
 
     // verify Provider
     if(this.hasProvider()) {

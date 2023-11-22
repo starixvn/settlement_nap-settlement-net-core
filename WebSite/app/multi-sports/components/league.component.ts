@@ -258,7 +258,6 @@ export class LeagueComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   public getFinalHomeScore(match: Match) {
-    console.log(match)
     let finalHomeScore;
     if (this.isHideFinalScore(match)) {
       finalHomeScore = null;

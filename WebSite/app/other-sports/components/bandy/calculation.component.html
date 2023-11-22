@@ -81,9 +81,9 @@
         <td>{{ viewExternalScore(result.resourceId)}}</td>
       </ng-container>
 
-      <td *ngIf="isFistHalf(result.resourceId)" [ngClass]="result.ticketStatus?.toLowerCase()"><input type="checkbox"
+      <td *ngIf="isFistHalf(result.resourceId)"><input type="checkbox"
           [(ngModel)]="result.checked" (ngModelChange)="onSelectResult($event,result.resourceId)"/></td>
-      <td *ngIf="isFulltimeResult(result.resourceId)" rowSpan="4" [ngClass]="matchResult.ticketStatus?.toLowerCase()">
+      <td *ngIf="isFulltimeResult(result.resourceId)" rowSpan="4">
         <input id="final-checkbox" type="checkbox" [(ngModel)]="result.checked" (ngModelChange)="onSelectResult($event,result.resourceId)"/>
       </td>
 
