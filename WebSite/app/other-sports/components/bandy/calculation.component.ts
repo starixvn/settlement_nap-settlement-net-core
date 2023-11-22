@@ -216,9 +216,11 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
       this.toastrService.error(Language.warningInputScore);
     } else if ( this.validationService.inValidResult(this.resultDetails, this.leagueType)) {
       this.toastrService.error(Language.inconsistentValues);
-    } else if (this.validationService.notAllowCalcFinalResult(this.firstHalfResult,this.matchResult)) { // check firstHafl no ticket
-      this.toastrService.error(Language.IntervalWarning);
-    }else {
+    } 
+    // else if (this.validationService.notAllowCalcFinalResult(this.firstHalfResult,this.matchResult)) { // check firstHafl no ticket
+    //   this.toastrService.error(Language.IntervalWarning);
+    // }
+    else {
       this.confirmScoreSource();
     }
   }
