@@ -329,15 +329,21 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
     }
   }
 
-  public getConfirmedBackground(total: ResultDetail, isFinal: boolean) {
-    return isFinal &&
-      this.validationService.isScoreConfirmed(
-        this.matchDetail,
-        this.matchResultOriginal
-      ) &&
-      total.settlementStatusId === SettlementStatusId.Running
-      ? "bg-result-confirmed"
-      : "";
+
+
+  public getClassName(result: ResultDetail) {
+    let className = '';
+  
+    if([ResourceID.FirstHalf,ResourceID.Match].includes(result.resourceId) 
+      && this.validationService.isScoreConfirmed(this.matchDetail,result) 
+      && result.settlementStatusId === SettlementStatusId.Running) {
+      className = 'bg-result-confirmed '
+    }
+
+    className += result.inValid ? 'col-mismatched ' : '';
+
+    className += this.getIntervalBackground(result.settlementStatusId)
+    return className;
   }
 
 

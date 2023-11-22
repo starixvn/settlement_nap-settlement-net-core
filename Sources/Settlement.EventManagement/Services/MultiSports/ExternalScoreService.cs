@@ -50,7 +50,6 @@ public class ExternalScoreServiceImp : IExternalScoreService
         return !isHomeValue || !isAwayValue;
     }
 
-
     private static bool ScoresDifferent(ResultDetail currentResult, ResultDetail externalResult, string userConfirmation)
     {
         if (currentResult == null)

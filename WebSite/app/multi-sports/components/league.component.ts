@@ -258,6 +258,7 @@ export class LeagueComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   public getFinalHomeScore(match: Match) {
+    console.log(match)
     let finalHomeScore;
     if (this.isHideFinalScore(match)) {
       finalHomeScore = null;
@@ -265,6 +266,7 @@ export class LeagueComponent implements OnInit, OnChanges, OnDestroy {
       finalHomeScore = _.includes(ResultType.scoreInResultDetail, match.sportType)
         ? match.moreScores.finalScore.home
         : match.finalHomeScore;
+        console.log(finalHomeScore)
     }
     return _.isNil(finalHomeScore) ? '-' : finalHomeScore.toString();
   }
