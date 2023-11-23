@@ -17,7 +17,7 @@ import { ValidationService } from "./validation.service";
 import { MatchInfoCompoment } from "./match-info.compoment";
 import { CalculateCommonModule } from "../../../shared/modules/calculate-common.module";
 import { BandyResourceNamePipe } from "./bandy-resource.pipe";
-import { CalculateAction, SettlementStatusId } from "../../../shared/constants";
+import { CalculateAction, ResultStatusId, SettlementStatusId } from "../../../shared/constants";
 import { BandyService } from "./bandy.service";
 
 @Component({
@@ -332,7 +332,9 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
   public getClassName(result: ResultDetail) {
     let className = '';
   
-    if(this.validationService.isScoreConfirmed(this.matchDetail,result) && result.settlementStatusId === SettlementStatusId.Running) {
+    if(this.validationService.hasScore(result) 
+      && result.resultStatusId === ResultStatusId.TraderConfirm
+      && result.settlementStatusId === SettlementStatusId.Running) {
       className = 'bg-result-confirmed '
     }
 
@@ -390,12 +392,13 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
 
   public copyScore() {
     this.toastrService.clear();
-    if(!this.externalResult) {
+    if(!this.externalResult || !this.providerResultDetails?.length) {
       return;
     } 
     this.createConfirmMessageCopy();
     this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
       this.resultDetailService.copyResultFromProvider(this.resultDetails,this.providerResultDetails);
+      this.resultDetailService.disabledInputResult(this.resultDetails,this.leagueType);
     });
   }
 
