@@ -7,7 +7,7 @@ import { Language } from "../../../shared/language.native";
 import * as _ from "lodash";
 import { RefResultStatus } from "../../constants";
 import { SportTemplate } from "../../../shared/models/sportsbook-sop";
-import { ResourceID } from "./constant";
+import { LeagueType, ResourceID } from "./constant";
 import { UrlHelper } from "../../../helper/url-helper";
 import { IntervalBackgroundPipe } from "../../../shared/pipes/interval-background.pipe";
 
@@ -333,7 +333,11 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
     this.confirmationDialogMessage.message = Language.UncalculationConfirmMessage;
     this.match.isClickOnCalculate = false;
 
-    const undoResults = this.resultDetails.filter(x => x.checked);
+    const resourceIds = this.leagueType === LeagueType.OtPenalty 
+    ? [ResourceID.FullTime, ResourceID.Et, ResourceID.Pen] 
+    : [ResourceID.FullTime];
+    
+    const undoResults = this.resultDetails.filter(x => x.checked && resourceIds.includes(x.resourceId));
 
     this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
       this.sendRequest(undoResults, CalculateAction.unCalculate)
