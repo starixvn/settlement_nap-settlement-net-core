@@ -158,9 +158,11 @@ export class ValidationService extends VerificationBaseService {
   }
 
 
-  public notAllowCalcFinalResult(firstHalf: ResultDetail,matchResult: ResultDetail) {
-    return matchResult.checked && firstHalf.ticketStatus !== 'No Ticket' && ((firstHalf.checked   
-      || firstHalf.settlementStatusId === SettlementStatusId.Calculated) || firstHalf.settlementStatusId === SettlementStatusId.Running && firstHalf.checked);
+  public allowCalcFinalResult(firstHalf: ResultDetail,finalResult: ResultDetail) {
+    if(!finalResult.checked) {
+      return true;
+    }
+    return firstHalf.checked || firstHalf.ticketStatus === 'No Ticket' || firstHalf.settlementStatusId !== SettlementStatusId.Running;
   }
 
   public isInsufficientSOPLite(originalResultDetails: ResultDetail[],externalResult: ExternalResult) {

@@ -139,7 +139,7 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
   }
 
   public get selectedResults() {
-    return this.resultDetails.filter((result) => result.checked);
+    return this.resultDetails.filter((result) => result.checked && (!result.disabled || result.resourceId === ResourceID.Final));
   }
 
   public get finalResult() {
@@ -199,10 +199,9 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
       this.toastrService.error(Language.warningInputScore);
     } else if ( this.validationService.inValidResult(this.resultDetails)) {
       this.toastrService.error(Language.inconsistentValues);
-    } 
-    // else if (this.validationService.notAllowCalcFinalResult(this.firstHalfResult,this.matchResult)) { // check firstHafl no ticket
-    //   this.toastrService.error(Language.IntervalWarning);
-    // }
+    } else if (!this.validationService.allowCalcFinalResult(this.firstHalfResult,this.finalResult)) { // check firstHafl no ticket
+      this.toastrService.error(Language.IntervalWarning);
+    }
     else {
       this.confirmScoreSource();
     }
@@ -289,8 +288,7 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
     const confirmMessage = this.validationService.getCalculationConfirmMessage(resultDetails,new BandyResourceNamePipe());
     this.confirmationDialogMessage.message = confirmMessage;
     this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
-      const settleResult = this.selectedResults.filter(x =>  (!x.disabled || x.resourceId === ResourceID.Final) 
-                                                              && this.validationService.hasScore(x));
+      const settleResult = this.selectedResults.filter(x => this.validationService.hasScore(x));
       this.sendRequest(settleResult, CalculateAction.calculate)
     });
   }
@@ -335,9 +333,10 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
   public uncalculation() {
     this.toastrService.clear();
     this.confirmationDialogMessage.message = Language.UncalculationConfirmMessage;
+    const undoResults = this.resultDetails.filter(x => x.checked);
 
     this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
-      this.sendRequest(this.selectedResults, CalculateAction.unCalculate)
+      this.sendRequest(undoResults, CalculateAction.unCalculate)
     });
   }
 
