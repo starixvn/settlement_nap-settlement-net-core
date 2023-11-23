@@ -541,7 +541,7 @@ export class VerificationBaseService {
         })
     }
 
-    private acceptCaseZero(orinalResult: GeneralResultDetail, result: ResultDetail) {
+    public acceptCaseZero(orinalResult: GeneralResultDetail, result: ResultDetail) {
        return (result.awayValue === "0" && result.homeValue === "0" && _.isEmpty(orinalResult.homeValue) && _.isEmpty(orinalResult.awayValue));
     }
 

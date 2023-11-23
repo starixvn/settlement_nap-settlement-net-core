@@ -3,13 +3,13 @@ import { ExternalResult, ExternalResultDetail, MatchDetail, ResultDetail } from 
 import { LeagueType, ResourceID, ResourceIDs } from "./constant";
 import * as _ from "lodash";
 import { ResultSettingModel } from "../../../shared/models/result-setting.model";
-import { ResultStatusId, SettlementStatusId } from "../../../shared/constants";
+import {SettlementStatusId } from "../../../shared/constants";
 
 @Injectable()
 export class ResultDetailsService {
   
   public generateFullResultDetails(resultDetails: ResultDetail[]): ResultDetail[] {
-    return ResourceIDs.map((resourceId) => {
+    const tempResults = ResourceIDs.map((resourceId) => {
       const result = resultDetails.find(
         (x) => resourceId === x.resourceId
       );
@@ -26,6 +26,13 @@ export class ResultDetailsService {
 
       return newResult;
     });
+
+    const finalResult = resultDetails.find(x => x.resourceId === ResourceID.Final && !this.isEmptyHomeAwayValue(x));
+    if(finalResult) {
+      return tempResults;
+    }
+
+    return this.calcMatchResultDetails(tempResults);
   }
 
   public generateFullExternalResultDetails(externalResult : ExternalResult) {
@@ -46,7 +53,7 @@ export class ResultDetailsService {
   }
 
   public generateRefundResultDetails(resultDetails: ResultDetail[]): ResultDetail[] {
-    return [ResourceID.FirstHalf,ResourceID.Match].map((resourceId) => {
+    return [ResourceID.FirstHalf,ResourceID.Final].map((resourceId) => {
       const result = resultDetails.find(
         (x) => resourceId === x.resourceId
       );
@@ -65,22 +72,15 @@ export class ResultDetailsService {
     });
   }
 
-  public generateByMember(resultDetails: ResultDetail[], isLeader: boolean) {
-    return resultDetails.map((x) =>
-      isLeader ? x : { ...x, homeValue: "", awayValue: "" }
-    );
-  }
+  public calcMatchResultDetails(resultDetails: ResultDetail[]) {
+    const resourceIds = [ResourceID.FullTime, ResourceID.Et, ResourceID.Pen];
 
-  public calcMatchResultDetails(resultDetails: ResultDetail[], leagueType: number) {
-    const resourceIds = leagueType === LeagueType.OtPenalty ? [ResourceID.FullTime, ResourceID.Et, ResourceID.Pen] : [ResourceID.FullTime];
-
-    const gameResults = resultDetails.filter((r) => resourceIds.includes(r.resourceId)
-      && (!_.isEmpty(r.homeValue) && !_.isEmpty(r.awayValue)));
+    const gameResults = resultDetails.filter((r) => resourceIds.includes(r.resourceId) && (!_.isEmpty(r.homeValue) && !_.isEmpty(r.awayValue)));
 
     const homeValue = gameResults.length ? `${_.sumBy(gameResults, (x) => Number(x.homeValue))}` : '';
     const awayValue = gameResults.length ? `${_.sumBy(gameResults, (x) => Number(x.awayValue))}` : '';
 
-    return resultDetails.map(x => x.resourceId !== ResourceID.Match ? x : ({
+    return resultDetails.map(x => x.resourceId !== ResourceID.Final ? x : ({
       ...x,
       homeValue,
       awayValue
@@ -88,8 +88,8 @@ export class ResultDetailsService {
   }
 
   public disabledInputResult(resultDetails: ResultDetail[], leagueType: number) {
-    const matchResult = resultDetails.find(x => x.resourceId === ResourceID.Match);
-    matchResult.disabled = true;
+    const finalResult = resultDetails.find(x => x.resourceId === ResourceID.Final);
+    finalResult.disabled = true;
 
     const fullTime = resultDetails.find(x => x.resourceId === ResourceID.FullTime);
     const et = resultDetails.find(x => x.resourceId === ResourceID.Et);
@@ -107,7 +107,6 @@ export class ResultDetailsService {
         pen.disabled = true;
       } else {
         et.disabled = false;
-        //
         pen.disabled =  this.isEmptyHomeAwayValue(et) || !_.isEqual(et.homeValue, et.awayValue)
       }
     }
@@ -116,7 +115,7 @@ export class ResultDetailsService {
 
   public resetHomeAwayValue(resultDetails: ResultDetail[]) {
     _.forEach(resultDetails, result => {
-      if(result.disabled && result.resourceId !== ResourceID.Match) {
+      if(result.disabled && result.resourceId !== ResourceID.Final) {
         result.homeValue = '';
         result.awayValue = ''
       }
@@ -137,9 +136,5 @@ export class ResultDetailsService {
 
   private isEmptyHomeAwayValue(result: ResultDetail) {
     return result && (_.isEmpty(result.homeValue) || _.isEmpty(result.awayValue));
-  }
-
-  private getTempResourceIDs(sportType: number) {
-    return ResourceIDs;
   }
 }

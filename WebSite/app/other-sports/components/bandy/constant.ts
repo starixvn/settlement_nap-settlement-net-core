@@ -9,7 +9,7 @@ export const ResourceID = {
   FullTime: "0001",
   Et: "ET",
   Pen: "PEN",
-  Match: "00"
+  Final: "00"
 }
 
-export const ResourceIDs = [ResourceID.FirstHalf,ResourceID.FullTime,ResourceID.Et,ResourceID.Pen,ResourceID.Match];
+export const ResourceIDs = [ResourceID.FirstHalf,ResourceID.FullTime,ResourceID.Et,ResourceID.Pen,ResourceID.Final];

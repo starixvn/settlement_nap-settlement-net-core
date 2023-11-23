@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit, ViewChild } from "@angular/core";
+import { Component, Injector, OnInit, ViewChild, inject } from "@angular/core";
 import { ToastContainerDirective, ToastrService } from "ngx-toastr";
 import { ExternalResult, ExternalResultDetail, MatchDetail, Permission, ResultDetail} from "../../../shared/models/sportsbook-sop";
 import { ModalDialogMessage } from "../../../shared/models";
@@ -28,12 +28,10 @@ import { BandyService } from "./bandy.service";
   imports: [CalculateCommonModule, MatchInfoCompoment, BandyResourceNamePipe,],
 })
 export class BandyCalculationComponent implements SportTemplate, OnInit {
-  @ViewChild(ToastContainerDirective, { static: true })
-  toastContainer: ToastContainerDirective;
+  @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
+  private apiKey = 'bandy';
   public isReadyMatch = true;
-
   public match: MatchAio;
-
   public matchDetail: MatchDetail;
 
   public resultDetails: ResultDetail[] = [];
@@ -46,38 +44,33 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
   public externalSourceName: string = '-';
 
   public isReSettledTickets: boolean;
-  
+  private refResultStatus: number | null = null;
+
   public confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
   
   public blockUI = true;
-  
-  private refResultStatus: number | null = null;
 
-  constructor(
-    private readonly resultDetailService: ResultDetailsService,
-    private readonly validationService: ValidationService,
-    private readonly messageBoxService: MessageBoxService,
-    private readonly aioService: AioService,
-    private readonly toastrService: ToastrService,
-    private readonly injector: Injector,
-    private readonly intervalBackgroundPipe: IntervalBackgroundPipe,
-    private readonly bandyService: BandyService
-  ) {
-  }
+  toastrService = inject(ToastrService);
+  blockUIService = inject(BlockUIService);
+  resultDetailService= inject( ResultDetailsService);
+  validationService= inject( ValidationService);
+  messageBoxService= inject(MessageBoxService);
+  aioService= inject(AioService);
+  bandyService= inject( BandyService);
+
+
 
   ngOnInit(): void {
     this.confirmationDialogMessage.title = Language.confirmationBox;
+    this.blockUIService.blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
     this.toastrService.overlayContainer = this.toastContainer;
-    this.injector
-      .get(BlockUIService)
-      .blockUIEvent.subscribe((event: boolean) => (this.blockUI = event));
   }
 
   async getMatch(matchId: number) {
     const sportType = Number(UrlHelper.getUrlParameter("sportType"));
     const matchQuery = {
       matchId,
-      apikey: "bandy",
+      apikey:this.apiKey,
       sportType,
       settleType: "MNL",
     };
@@ -96,7 +89,7 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
 
     this.originalResultDetails = _.cloneDeep(this.match.resultDetails);
 
-    this.matchResultOriginal = _.clone(this.matchResult);
+    this.matchResultOriginal = _.clone(this.finalResult);
 
     this.permission = this.match.permission;
 
@@ -119,14 +112,8 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
   }
 
   private checkScoreMissMatchedOnload() {
-      // this.checkTraderScore();
       this.checkProviderScore();
   }
-
-  // private checkTraderScore() {
-  //   this.validationService.verifyTraderScore(this.resultDetails,this.leagueType);
-  // }
-
   private checkProviderScore() {
    if(this.hasProvider) {
     _.forEach(this.resultDetails, (result) => {
@@ -152,11 +139,11 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
   }
 
   public get selectedResults() {
-    return this.resultDetails.filter((result) => result.checked && (!result.disabled || result.resourceId === ResourceID.Match));
+    return this.resultDetails.filter((result) => result.checked && (!result.disabled || result.resourceId === ResourceID.Final));
   }
 
-  public get matchResult() {
-    return this.resultDetails.find((x) => x.resourceId === ResourceID.Match);
+  public get finalResult() {
+    return this.resultDetails.find((x) => x.resourceId === ResourceID.Final);
   }
 
   public get fullTimeResult() {
@@ -176,9 +163,9 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
   }
 
   public isConfirmed(resultDetail: ResultDetail) {
-    if ([ResourceID.Et, ResourceID.Pen, ResourceID.Match, ResourceID.FullTime].includes(resultDetail.resourceId)) {
+    if ([ResourceID.Et, ResourceID.Pen, ResourceID.Final, ResourceID.FullTime].includes(resultDetail.resourceId)) {
       return (
-        this.isLeader && this.matchResult.resultSettingData.isConfirmedRefund
+        this.isLeader && this.finalResult.resultSettingData.isConfirmedRefund
       );
     } else {
       return this.isLeader && resultDetail.resultSettingData.isConfirmedRefund;
@@ -201,10 +188,6 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
     return ResourceID.FirstHalf === resourceId;
   }
 
-  public showSelectCheckbox(resourceId: string) {
-    return [ResourceID.FullTime, ResourceID.FirstHalf].includes(resourceId);
-  }
-
   public calculation() {
     this.match.isClickOnCalculate = true;
     this.toastrService.clear();
@@ -212,9 +195,9 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
 
     if (this.existsConfirmedRefund()) {
       this.toastrService.error(Language.confirmRefund.calculateResultNotConfirmed);
-    } else if (this.validationService.invalidInputScore(this.selectedResults,this.match.isScoreDirect,ResourceID.Match)) {
+    } else if (this.validationService.invalidInputScore(this.selectedResults,this.match.isScoreDirect,ResourceID.Final)) {
       this.toastrService.error(Language.warningInputScore);
-    } else if ( this.validationService.inValidResult(this.resultDetails, this.leagueType)) {
+    } else if ( this.validationService.inValidResult(this.resultDetails)) {
       this.toastrService.error(Language.inconsistentValues);
     } 
     // else if (this.validationService.notAllowCalcFinalResult(this.firstHalfResult,this.matchResult)) { // check firstHafl no ticket
@@ -226,8 +209,8 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
   }
 
   private confirmScoreSource() {
-    const isSourceInsufficient = this.validationService.isInsufficientSOPLite(this.matchDetail,this.originalResultDetails,this.providerResultDetails,ResourceID.Match);
-    const isInconsistent = this.validationService.isConsistentScore(this.originalResultDetails,this.providerResultDetails,this.selectedResults,this.matchDetail,ResourceID.Match);
+    const isSourceInsufficient = this.validationService.isInsufficientSOPLite(this.matchDetail,this.originalResultDetails,this.providerResultDetails,ResourceID.Final);
+    const isInconsistent = this.validationService.isConsistentScore(this.originalResultDetails,this.providerResultDetails,this.selectedResults,this.matchDetail,ResourceID.Final);
 
     if (isSourceInsufficient || isInconsistent) {
       if (!this.isLeader) {
@@ -250,7 +233,7 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
 
   public isErrorOnVerification(resultDetail: ResultDetail) {
     let disabled = this.match.isScoreDirect;
-    if (resultDetail.resourceId === ResourceID.Match) {
+    if (resultDetail.resourceId === ResourceID.Final) {
       disabled = !this.match.isScoreDirect;
     }
     return (
@@ -265,7 +248,7 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
     if (resourceId === ResourceID.FullTime) {
       _.forEach(this.resultDetails, (result) => {
         if (
-          [ResourceID.Et, ResourceID.Pen, ResourceID.Match].includes(
+          [ResourceID.Et, ResourceID.Pen, ResourceID.Final].includes(
             result.resourceId
           )
         ) {
@@ -281,7 +264,7 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
     } else {
       const getResultQuery = {
         matchId: this.match.matchDetail.matchId,
-        apikey: "bandy",
+        apikey:this.apiKey,
         sportType: this.match.matchDetail.sportType,
       };
       const bandyResultDetails = this.match.resultDetails.filter(x=> x.checked);
@@ -338,10 +321,11 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
       className = 'bg-result-confirmed '
     }
 
-    if(this.validationService.inValidResult(this.resultDetails,this.leagueType)) {
+    if(this.validationService.inValidResult(this.resultDetails)) {
         className += 'col-mismatched ';
     }
 
+    className += result.inValid ? 'col-mismatched ' : ''; // trader
     className += this.getIntervalBackground(result.settlementStatusId)
     return className;
   }
@@ -359,33 +343,21 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
     this.disabledInputResult();
     this.resultDetailService.resetHomeAwayValue(this.resultDetails);
     
-    this.resultDetails = this.resultDetailService.calcMatchResultDetails(this.resultDetails,this.leagueType);
+    this.resultDetails = this.resultDetailService.calcMatchResultDetails(this.resultDetails);
 
     this.verifyInputScore(resultDetail);
   }
 
 
   private verifyInputScore(resultDetail: ResultDetail) {
-    // this.validationService.verifyFhFtPen(this.resultDetails);
-    
-    // if(!this.existsInValidResult) {
-    //   this.validationService.verifyMatch(this.resultDetails);
-    // }
-   
-    // if(!this.existsInValidResult) {
-    //   this.validationService.verifyMatchSum(this.resultDetails,this.leagueType);
-    // }
-
-    // // verify originalResults
-    // if (this.hasTrader()) {
-    //   resultDetail.inValid = this.validationService.inValidResultDetailWithOriginal(resultDetail, this.originalResultDetails);
-    // }
-
-    // verify Provider
     if(this.hasProvider()) {
-      resultDetail.isScoreMismatched = this.validationService.inValidResultDetailWithProvider(resultDetail,this.providerResultDetails);
+      this.validationService.verifyProviderScore(resultDetail,this.finalResult,this.providerResultDetails);
+    }
+    if(this.hasTraderConfirmScore()) {
+      this.validationService.verifyTraderScore(resultDetail,this.finalResult,this.originalResultDetails);
     }
   }
+
   public onResettleCheckboxChange(isChecked: boolean) {
     this.isReSettledTickets = isChecked;
   }
@@ -412,12 +384,13 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
     return this.bandyService.getIntervalBackground(settlementStatusId)
   }
 
-  private hasTrader() {
-    return this.validationService.hasTraderConfirmed(this.matchDetail,this.originalResultDetails,ResourceID.Match);
-  }
-
   private hasProvider() {
     return !!this.externalResult;
+  }
+
+  private hasTraderConfirmScore() {
+    return this.originalResultDetails?.length 
+      && this.originalResultDetails.some(x => x.resultStatusId === ResultStatusId.TraderConfirm)
   }
 
 }

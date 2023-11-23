@@ -51,7 +51,7 @@ export class BandyRefundComponent extends RefundActionBaseComponent implements S
     }
 
   public get refundResultDetails() {
-    return this.resultDetails.filter(x => [ResourceID.FirstHalf,ResourceID.Match].includes(x.resourceId))
+    return this.resultDetails.filter(x => [ResourceID.FirstHalf,ResourceID.Final].includes(x.resourceId))
   } 
 
   public get existsConfirmed() {
@@ -96,7 +96,7 @@ export class BandyRefundComponent extends RefundActionBaseComponent implements S
   }
 
   public onSelectResult(event, resourceId) {
-    if (resourceId === ResourceID.Match) {
+    if (resourceId === ResourceID.Final) {
       const resourceIds = this.matchDetail.leagueType === LeagueType.OtPenalty 
       ? [ResourceID.FullTime, ResourceID.Et, ResourceID.Pen] 
       : [ResourceID.FullTime];

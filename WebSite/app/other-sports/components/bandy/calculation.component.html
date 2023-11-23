@@ -53,8 +53,8 @@
 
       <td *ngIf="isFistHalf(result.resourceId)" [ngClass]="result.ticketStatus?.toLowerCase()" class="set-status">{{result.ticketStatus}}
       </td>
-      <td *ngIf="isFulltimeResult(result.resourceId)" rowSpan="4" [ngClass]="matchResult.ticketStatus?.toLowerCase()" class="match-status">
-        {{matchResult.ticketStatus}}</td>
+      <td *ngIf="isFulltimeResult(result.resourceId)" rowSpan="4" [ngClass]="finalResult.ticketStatus?.toLowerCase()" class="match-status">
+        {{finalResult.ticketStatus}}</td>
 
       <td [ngClass]="[getClassName(result)]">
         <input type="text" 

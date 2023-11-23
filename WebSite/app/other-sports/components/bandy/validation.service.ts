@@ -6,7 +6,7 @@ import * as _ from "lodash";
 import { LeagueType, ResourceID } from "./constant";
 import { ResultByTeamNamePipe } from "../../../shared/pipes/result-by-team-name.pipe";
 import { GeneralResultDetail } from "../../../shared/models";
-import { SettlementStatusId } from "../../../shared/constants";
+import { ResultStatusId, SettlementStatusId } from "../../../shared/constants";
 
 @Injectable()
 export class ValidationService extends VerificationBaseService {
@@ -23,13 +23,13 @@ export class ValidationService extends VerificationBaseService {
 
   public inValidFirstHalfMatch(resultDetails: ResultDetail[]) {
     const firstHalf = resultDetails.find((x) => x.resourceId === ResourceID.FirstHalf);
-    const matchResult = resultDetails.find((x) => x.resourceId === ResourceID.Match);
+    const matchResult = resultDetails.find((x) => x.resourceId === ResourceID.Final);
 
     return this.greaterThan(firstHalf,matchResult);
   }
 
   public inValidFullTimeMatch(resultDetails: ResultDetail[])  {
-    const match = resultDetails.find((x) => x.resourceId === ResourceID.Match);
+    const match = resultDetails.find((x) => x.resourceId === ResourceID.Final);
     const fullTime = resultDetails.find((x) => x.resourceId === ResourceID.FullTime);
 
     return this.greaterThan(fullTime,match);
@@ -37,14 +37,14 @@ export class ValidationService extends VerificationBaseService {
 
   public inValidETMatch(resultDetails: ResultDetail[]) {
     const et = resultDetails.find((x) => x.resourceId === ResourceID.Et);
-    const match = resultDetails.find((x) => x.resourceId === ResourceID.Match);
+    const match = resultDetails.find((x) => x.resourceId === ResourceID.Final);
 
     return this.greaterThan(et,match);
   }
 
   public inValidPenMatch(resultDetails: ResultDetail[]) {
     const pen = resultDetails.find((x) => x.resourceId === ResourceID.Pen);
-    const match = resultDetails.find((x) => x.resourceId === ResourceID.Match);
+    const match = resultDetails.find((x) => x.resourceId === ResourceID.Final);
 
     return this.greaterThan(pen,match);
   }
@@ -54,21 +54,21 @@ export class ValidationService extends VerificationBaseService {
     return this.draw(pen);
   }
   
-  public inValidMatchSumScore(resultDetails: ResultDetail[], leagueType: number) {
-    const match = resultDetails.find((x) => x.resourceId === ResourceID.Match);
+  public inValidMatchSumScore(resultDetails: ResultDetail[]) {
+    const finalResult = resultDetails.find((x) => x.resourceId === ResourceID.Final);
     
-    if (!this.hasScore(match)) {
+    if (!this.hasScore(finalResult)) {
       return false;
     }
     
-    const resourceIds = leagueType === LeagueType.OtPenalty ? [ResourceID.FullTime, ResourceID.Et, ResourceID.Pen] : [ResourceID.FullTime];
+    const resourceIds = [ResourceID.FullTime, ResourceID.Et, ResourceID.Pen];
     
     const gameResults = resultDetails.filter((r) => resourceIds.includes(r.resourceId) && this.hasScore(r));
     
     const homeValue = _.sumBy(gameResults, (x) => Number(x.homeValue));
     const awayValue = _.sumBy(gameResults, (x) => Number(x.awayValue));
     
-    return homeValue !== Number(match.homeValue) || awayValue !== Number(match.awayValue);
+    return homeValue !== Number(finalResult.homeValue) || awayValue !== Number(finalResult.awayValue);
   }
 
   public invalidMatchResult(resultDetails: ResultDetail[]) {
@@ -78,17 +78,15 @@ export class ValidationService extends VerificationBaseService {
     || this.inValidPenMatch(resultDetails)
   }
 
-  public inValidResult(resultDetails: ResultDetail[], leagueType: number) {
+  public inValidResult(resultDetails: ResultDetail[]) {
     return  this.inValidFirstHalfFullTime(resultDetails) 
       || this.invalidMatchResult(resultDetails)
       || this.inValidPenDraw(resultDetails) 
-      || this.inValidMatchSumScore(resultDetails,leagueType);
+      || this.inValidMatchSumScore(resultDetails);
   }
 
   public inValidResultDetailWithOriginal(result: ResultDetail,originalResultDetails: GeneralResultDetail[]) {
     const originalResult = originalResultDetails.find(x => x.resourceId === result.resourceId);
-    // console.log(result);
-    // console.log(originalResult)
     
     return this.hasScore(originalResult) && this.hasScore(result)
       && (!_.isEqual(originalResult.homeValue, result.homeValue) || !_.isEqual(originalResult.awayValue, result.awayValue));
@@ -127,7 +125,7 @@ export class ValidationService extends VerificationBaseService {
   }
 
   public verifyMatch(resultDetails: ResultDetail[]) {
-    const match = resultDetails.find((x) => x.resourceId === ResourceID.Match);
+    const match = resultDetails.find((x) => x.resourceId === ResourceID.Final);
 
     _.forEach(resultDetails, result => {
       result.inValid = this.greaterThan(result,match)
@@ -138,41 +136,25 @@ export class ValidationService extends VerificationBaseService {
     const setSums = resultDetails.filter(x=> x.resourceId !== ResourceID.FirstHalf);
     _.forEach(setSums, result => {
       result.inValid = this.hasScore(result) 
-        && this.inValidMatchSumScore(resultDetails,leagueType)
+        && this.inValidMatchSumScore(resultDetails)
     });
   }
 
-  public verifyTraderScore(originalResultDetails: ResultDetail[], leagueType: number) {
+  public verifyTraderScore(result: ResultDetail, finalResult: ResultDetail,originalResultDetails: ResultDetail[]) {
+    const traderResults = originalResultDetails.filter(result => result.resultStatusId === ResultStatusId.TraderConfirm);
+    result.inValid = this.inValidResultDetailWithOriginal(result,traderResults);
 
-    if(!originalResultDetails.some(x => this.hasScore(x))) {
-      return;
+    if([ResourceID.FullTime,ResourceID.Et,ResourceID.Pen]) {
+      finalResult.inValid = this.inValidResultDetailWithOriginal(finalResult,traderResults);
     }
+  }
 
-    const firstHalf = originalResultDetails.find((x) => x.resourceId === ResourceID.FirstHalf);
-    const fullTime = originalResultDetails.find((x) => x.resourceId === ResourceID.FullTime);
+  public verifyProviderScore(result: ResultDetail, finalResult: ResultDetail,providerResultDetails: ExternalResultDetail[]) {
+    result.isScoreMismatched = this.inValidResultDetailWithOriginal(result,providerResultDetails);
 
-    const fhFt = originalResultDetails.filter(x => [ResourceID.FirstHalf,ResourceID.FullTime].includes(x.resourceId));
-    
-    _.forEach(fhFt, (result) => {
-      result.inValid = result.inValid || this.greaterThan(firstHalf,fullTime);
-    });
-   
-   
-    const pen = originalResultDetails.find(x => x.resourceId === ResourceID.Pen);
-    pen.inValid =  pen.inValid || this.draw(pen);
-
-    const match = originalResultDetails.find((x) => x.resourceId === ResourceID.Match);
-    _.forEach(originalResultDetails, result => {
-      result.inValid = result.inValid || this.greaterThan(result,match)
-    });
-    match.inValid = originalResultDetails.some(x => this.greaterThan(x, match))
-
-
-    const setSums = originalResultDetails.filter(x=> x.resourceId !== ResourceID.FirstHalf);
-    _.forEach(setSums, result => {
-      result.inValid = result.inValid || this.hasScore(result) 
-        && this.inValidMatchSumScore(originalResultDetails,leagueType)
-    });
+    if([ResourceID.FullTime,ResourceID.Et,ResourceID.Pen]) {
+      finalResult.isScoreMismatched = this.inValidResultDetailWithOriginal(finalResult,providerResultDetails);
+    }
   }
 
 
