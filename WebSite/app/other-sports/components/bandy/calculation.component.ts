@@ -103,11 +103,11 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
   }
 
   private viewData() {
-    this.resultDetails = this.resultDetailService.generateFullResultDetails(this.resultDetails);
     this.resultDetailService.hidenScoreResultDetails(this.resultDetails,this.isLeader);
-
+    
+    this.resultDetails = this.resultDetailService.generateFullResultDetails(this.resultDetails);
+    
     this.disabledInputResult();
-
     this.checkScoreMissMatchedOnload();
   }
 
@@ -139,7 +139,7 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
   }
 
   public get selectedResults() {
-    return this.resultDetails.filter((result) => result.checked && (!result.disabled || result.resourceId === ResourceID.Final));
+    return this.resultDetails.filter((result) => result.checked);
   }
 
   public get finalResult() {
@@ -289,7 +289,8 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
     const confirmMessage = this.validationService.getCalculationConfirmMessage(resultDetails,new BandyResourceNamePipe());
     this.confirmationDialogMessage.message = confirmMessage;
     this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
-      const settleResult = this.selectedResults.filter(x => this.validationService.hasScore(x));
+      const settleResult = this.selectedResults.filter(x =>  (!x.disabled || x.resourceId === ResourceID.Final) 
+                                                              && this.validationService.hasScore(x));
       this.sendRequest(settleResult, CalculateAction.calculate)
     });
   }
@@ -334,6 +335,7 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
   public uncalculation() {
     this.toastrService.clear();
     this.confirmationDialogMessage.message = Language.UncalculationConfirmMessage;
+
     this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
       this.sendRequest(this.selectedResults, CalculateAction.unCalculate)
     });

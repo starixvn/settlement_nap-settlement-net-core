@@ -137,4 +137,5 @@ export class ResultDetailsService {
   private isEmptyHomeAwayValue(result: ResultDetail) {
     return result && (_.isEmpty(result.homeValue) || _.isEmpty(result.awayValue));
   }
+
 }
