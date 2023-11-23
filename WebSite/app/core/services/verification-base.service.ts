@@ -423,40 +423,9 @@ export class VerificationBaseService {
     }
 
     // sop lite
-    public hasTraderConfirmed(matchDetail: MatchDetail,originalResultDetails: ResultDetail[], totalResourceId: string) {
-        const originalTotalSetResultDetail = originalResultDetails.find(r => r.resourceId === totalResourceId);
-        return this.isScoreConfirmed(matchDetail,originalTotalSetResultDetail);
-    }
 
-    public hasProvider(externalResults: ExternalResultDetail[]) {
-        return externalResults?.length;
-    }
 
-    public isScoreConfirmed(matchDetail: MatchDetail, resultDetail: ResultDetail) {
-        return matchDetail.confirmFT > 0 && !this.isEmptyHomeOrAwayValue(resultDetail);
-    }
-
-    public isConsistentScore(originalResultDetails: ResultDetail[],externalResults: ExternalResultDetail[],resultDetails: ResultDetail[],matchDetail: MatchDetail,totalResourceId: string) {
-        const hasProvider = this.hasProvider(externalResults);
-        const hasTraderConfirmed = this.hasTraderConfirmed(matchDetail,originalResultDetails,totalResourceId);
-        let isConsistent = false;
-        if(hasProvider && hasTraderConfirmed) {
-            isConsistent = this.isConsistentTraderAndProvider(originalResultDetails, externalResults);
-        }
-
-        if(!isConsistent && hasProvider) {
-            isConsistent = this.isConsistentScoreProvider(resultDetails,externalResults);
-        }
-        
-        
-        if(!isConsistent && hasTraderConfirmed) {
-            isConsistent = this.isConsistentScoreTraderConfirm(originalResultDetails,resultDetails);
-        }
-
-        return isConsistent;
-    }
-
-    private isConsistentTraderAndProvider(originalResultDetails: ResultDetail[],externalResults: ExternalResultDetail[]){
+    public isConsistentTraderAndProvider(originalResultDetails: ResultDetail[],externalResults: ExternalResultDetail[]){
         return originalResultDetails.some(trader => {
             const suitableProvider = externalResults?.find(x => x.resourceId === trader.resourceId);
             return suitableProvider && (!_.isEqual(trader.homeValue ?? "", suitableProvider.homeValue ?? "")
@@ -473,7 +442,7 @@ export class VerificationBaseService {
         })
     }
 
-    private isConsistentScoreProvider(resultDetails: ResultDetail[], externalResults: ExternalResultDetail[]) {
+    public isConsistentScoreProvider(resultDetails: ResultDetail[], externalResults: ExternalResultDetail[]) {
         console.log(resultDetails);
         console.log(externalResults);
         return resultDetails.some(result => {
@@ -484,43 +453,9 @@ export class VerificationBaseService {
         })
     }
 
-    public isInsufficientSOPLite(matchDetail: MatchDetail,originalResultDetails: ResultDetail[],externalResults: ExternalResultDetail[],totalResourceId) {
-        const originalTotalSetResultDetail = originalResultDetails.find(r => r.resourceId === totalResourceId);
-        return  (matchDetail.confirmFT < 1 || this.isEmptyHomeOrAwayValue(originalTotalSetResultDetail)) && !externalResults?.length;
-    }
-
     public isEmptyHomeOrAwayValue(item: GeneralResultDetail) {
         return item.homeValue === null || _.isEmpty(item.homeValue)
             || item.awayValue === null || _.isEmpty(item.awayValue);
-    }
-
-    public isScoreMismatched(resultDetails: ResultDetail[], externalResults: ExternalResultDetail[],
-        originalResultDetails: ResultDetail[], matchDetail: MatchDetail) {
-            const hasTrader = this.hasTraderConfirmed(matchDetail,originalResultDetails,"00");
-            const hasProvider = this.hasProvider(externalResults);
-
-            if(hasProvider) {
-                if(hasTrader) {
-                    _.forEach(resultDetails, result => {
-                        const providerResult = externalResults.find(x => x.resourceId === result.resourceId);
-                        const originalResult = originalResultDetails.find(x => x.resourceId === result.resourceId)
-         
-                        result.isScoreMismatched = providerResult && originalResult && (!_.isEqual(providerResult.homeValue ?? "", originalResult.homeValue ?? "")
-                        || !_.isEqual(providerResult.awayValue ?? "", originalResult.awayValue ?? ""))
-                    });
-                    
-                    if(resultDetails.some(x => x.isScoreMismatched)) {
-                        return;
-                    }
-                }
-
-                this.compareInputScoreWithProviderScores(resultDetails, externalResults);
-                return;
-            }
-           
-            if(hasTrader) {
-                this.compareInputScoreTraderScores(originalResultDetails,resultDetails);
-            }
     }
 
     public compareInputScoreWithProviderScores(resultDetails: ResultDetail[], externalResults: ExternalResultDetail[]) {

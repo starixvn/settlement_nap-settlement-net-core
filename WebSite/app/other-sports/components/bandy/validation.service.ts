@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { VerificationBaseService } from "../../../core/services/verification-base.service";
-import { ExternalResultDetail, ResultDetail } from "../../../shared/models/sportsbook-sop";
+import { ExternalResult, ExternalResultDetail, ResultDetail } from "../../../shared/models/sportsbook-sop";
 
 import * as _ from "lodash";
 import { LeagueType, ResourceID } from "./constant";
@@ -142,10 +142,10 @@ export class ValidationService extends VerificationBaseService {
 
   public verifyTraderScore(result: ResultDetail, finalResult: ResultDetail,originalResultDetails: ResultDetail[]) {
     const traderResults = originalResultDetails.filter(result => result.resultStatusId === ResultStatusId.TraderConfirm);
-    result.inValid = this.inValidResultDetailWithOriginal(result,traderResults);
+    result.isScoreMismatched = this.inValidResultDetailWithOriginal(result,traderResults);
 
     if([ResourceID.FullTime,ResourceID.Et,ResourceID.Pen]) {
-      finalResult.inValid = this.inValidResultDetailWithOriginal(finalResult,traderResults);
+      finalResult.isScoreMismatched = this.inValidResultDetailWithOriginal(finalResult,traderResults);
     }
   }
 
@@ -162,4 +162,32 @@ export class ValidationService extends VerificationBaseService {
     return matchResult.checked && firstHalf.ticketStatus !== 'No Ticket' && ((firstHalf.checked   
       || firstHalf.settlementStatusId === SettlementStatusId.Calculated) || firstHalf.settlementStatusId === SettlementStatusId.Running && firstHalf.checked);
   }
+
+  public isInsufficientSOPLite(originalResultDetails: ResultDetail[],externalResult: ExternalResult) {
+    const hasTrader = originalResultDetails.some(r => r.resultStatusId  === ResultStatusId.TraderConfirm && this.hasScore(r));
+    const hasProvider = externalResult && externalResult.resultDetails.some(x => this.hasScore(x));
+
+    return !hasTrader && !hasProvider;
+  }
+
+  public isConsistentScoreSOPLite(resultDetails: ResultDetail[],originalResultDetails: ResultDetail[],externalResult: ExternalResult) {
+    const hasTrader = originalResultDetails.some(r => r.resultStatusId  === ResultStatusId.TraderConfirm && this.hasScore(r));
+    const hasProvider = externalResult && externalResult.resultDetails.some(x => this.hasScore(x));
+    
+    let isConsistent = false;
+    if(hasProvider && hasTrader) {
+        isConsistent = this.isConsistentTraderAndProvider(originalResultDetails, externalResult.resultDetails);
+    }
+
+    if(!isConsistent && hasProvider) {
+        isConsistent = this.isConsistentScoreProvider(resultDetails,externalResult.resultDetails);
+    }
+    
+    
+    if(!isConsistent && hasTrader) {
+        isConsistent = this.isConsistentScoreTraderConfirm(originalResultDetails,resultDetails);
+    }
+
+    return isConsistent;
+}
 }
