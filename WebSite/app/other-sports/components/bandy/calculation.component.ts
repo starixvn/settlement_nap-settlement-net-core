@@ -218,6 +218,7 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
         );
       } else {
         this.confirmationDialogMessage.message = Language.otherSports.confirmCalculateInconsistent;
+        this.match.isClickOnCalculate = false;
         this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
           this.refResultStatus = isSourceInsufficient
             ? RefResultStatus.NoReference
@@ -231,19 +232,15 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
   }
 
   public isErrorOnVerification(resultDetail: ResultDetail) {
-    let disabled = this.match.isScoreDirect;
-    if (resultDetail.resourceId === ResourceID.Final) {
-      disabled = !this.match.isScoreDirect;
-    }
     return (
       this.match.isClickOnCalculate &&
-      !disabled &&
       resultDetail.checked && !resultDetail.disabled &&
       (!resultDetail.homeValue || !resultDetail.awayValue)
     );
   }
 
   public onSelectResult(event, resourceId) {
+    this.match.isClickOnCalculate = false;
     if (resourceId === ResourceID.FullTime) {
       _.forEach(this.resultDetails, (result) => {
         if (
@@ -285,6 +282,7 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
   }
 
   private  confirmCalculation(resultDetails: ResultDetail[]) {
+    this.match.isClickOnCalculate = false;
     const confirmMessage = this.validationService.getCalculationConfirmMessage(resultDetails,new BandyResourceNamePipe());
     this.confirmationDialogMessage.message = confirmMessage;
     this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
@@ -333,6 +331,8 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
   public uncalculation() {
     this.toastrService.clear();
     this.confirmationDialogMessage.message = Language.UncalculationConfirmMessage;
+    this.match.isClickOnCalculate = false;
+
     const undoResults = this.resultDetails.filter(x => x.checked);
 
     this.messageBoxService.confirm(this.confirmationDialogMessage, () => {

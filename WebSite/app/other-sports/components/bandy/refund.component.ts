@@ -25,6 +25,7 @@ import * as _ from "lodash";
 export class BandyRefundComponent extends RefundActionBaseComponent implements SportTemplate {
   @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
   public match: MatchAio;
+  private apiKey = 'bandy';
 
   public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage(Language.confirmationBox);
  
@@ -34,7 +35,7 @@ export class BandyRefundComponent extends RefundActionBaseComponent implements S
     const sportType = Number(UrlHelper.getUrlParameter("sportType"));
     const matchQuery = {
       matchId,
-      apikey: "bandy",
+      apikey: this.apiKey,
       sportType,
       settleType: "MNL",
     };
