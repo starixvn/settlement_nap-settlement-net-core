@@ -29,7 +29,7 @@ export class BetStatusService {
       return finalResult.settlementStatusId === SettlementStatusId.Refund ? 'Refund;' : ''
     }
 
-    if(!_.isNil(finalSelectedResult)) {
+    if(!_.isNil(finalSelectedResult) && _.isNil(firstSelectHalfResult)) {
       return firstHalfResult.settlementStatusId === SettlementStatusId.Refund ? 'RefundHT;' : '';
     }
 

@@ -3,7 +3,7 @@ import { ExternalResult, ExternalResultDetail, MatchDetail, ResultDetail } from 
 import { LeagueType, ResourceID, ResourceIDs } from "./constant";
 import * as _ from "lodash";
 import { ResultSettingModel } from "../../../shared/models/result-setting.model";
-import {SettlementStatusId } from "../../../shared/constants";
+import {ResultStatusId, SettlementStatusId } from "../../../shared/constants";
 
 @Injectable()
 export class ResultDetailsService {
@@ -45,8 +45,10 @@ export class ResultDetailsService {
 
   public hidenScoreResultDetails(resultDetails: ResultDetail[],isLeader: boolean) {
     resultDetails.forEach((map) => {
-      const showScore = (isLeader || map.settlementStatusId === SettlementStatusId.Calculated)
-          && map.settlementStatusId !== SettlementStatusId.Refund;
+      const showScore = (isLeader 
+        || [ResultStatusId.AutoCompleted,ResultStatusId.ManualCompleted,ResultStatusId.TraderConfirm].includes(map.resultStatusId)
+        || map.settlementStatusId === SettlementStatusId.Calculated)
+            && map.settlementStatusId !== SettlementStatusId.Refund;
       map.homeValue = showScore ? map.homeValue : "";
       map.awayValue = showScore ? map.awayValue : "";
   });
