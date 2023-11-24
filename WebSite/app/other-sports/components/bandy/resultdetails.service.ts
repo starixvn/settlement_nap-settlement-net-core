@@ -45,8 +45,7 @@ export class ResultDetailsService {
 
   public hidenScoreResultDetails(resultDetails: ResultDetail[],isLeader: boolean) {
     resultDetails.forEach((map) => {
-      const showScore = (isLeader 
-        || [ResultStatusId.AutoCompleted,ResultStatusId.ManualCompleted,ResultStatusId.TraderConfirm].includes(map.resultStatusId)
+      const showScore = isLeader && ([ResultStatusId.AutoCompleted,ResultStatusId.ManualCompleted,ResultStatusId.TraderConfirm].includes(map.resultStatusId)
         || map.settlementStatusId === SettlementStatusId.Calculated)
             && map.settlementStatusId !== SettlementStatusId.Refund;
       map.homeValue = showScore ? map.homeValue : "";
