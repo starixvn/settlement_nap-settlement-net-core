@@ -334,10 +334,11 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
     this.match.isClickOnCalculate = false;
 
     const resourceIds = this.leagueType === LeagueType.OtPenalty 
-    ? [ResourceID.FullTime, ResourceID.Et, ResourceID.Pen] 
-    : [ResourceID.FullTime];
+    ? [ResourceID.FullTime, ResourceID.Et, ResourceID.Pen, ResourceID.Final] 
+    : [ResourceID.FullTime,ResourceID.Final];
     
-    const undoResults = this.resultDetails.filter(x => x.checked && resourceIds.includes(x.resourceId));
+    const undoResults = this.resultDetails.filter(x => x.checked 
+        && (x.resourceId === ResourceID.FirstHalf || resourceIds.includes(x.resourceId)));
 
     this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
       this.sendRequest(undoResults, CalculateAction.unCalculate)
