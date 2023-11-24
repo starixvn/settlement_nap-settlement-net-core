@@ -191,5 +191,5 @@ export class ValidationService extends VerificationBaseService {
     }
 
     return isConsistent;
-}
+  }
 }

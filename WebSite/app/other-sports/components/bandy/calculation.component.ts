@@ -19,11 +19,12 @@ import { CalculateCommonModule } from "../../../shared/modules/calculate-common.
 import { BandyResourceNamePipe } from "./bandy-resource.pipe";
 import { CalculateAction, ResultStatusId, SettlementStatusId } from "../../../shared/constants";
 import { BandyService } from "./bandy.service";
+import { BetStatusService } from "./betstatus.service";
 
 @Component({
   selector: "calculation-actions",
   templateUrl: "./calculation.component.html",
-  providers: [IntervalBackgroundPipe, ValidationService,BandyService,],
+  providers: [IntervalBackgroundPipe, ValidationService,BandyService,BetStatusService],
   standalone: true,
   imports: [CalculateCommonModule, MatchInfoCompoment, BandyResourceNamePipe,],
 })
@@ -57,6 +58,7 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
   messageBoxService= inject(MessageBoxService);
   aioService= inject(AioService);
   bandyService= inject( BandyService);
+  betStatusService = inject(BetStatusService);
 
 
 
@@ -263,10 +265,9 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
         apikey:this.apiKey,
         sportType: this.match.matchDetail.sportType,
       };
-      const bandyResultDetails = this.match.resultDetails.filter(x=> x.checked);
-
+      const settleResult = this.selectedResults.filter(x => this.validationService.hasScore(x));
       const result = await this.aioService.verifyChangedSettledTickets(
-        bandyResultDetails,
+        settleResult,
         getResultQuery
       );
       if (result) {
@@ -292,6 +293,8 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
   }
 
   private async sendRequest(settleResult: ResultDetail[],action: string) {
+    const betStatus = this.betStatusService.createBetStatusCalc(settleResult,this.firstHalfResult,this.firstHalfResult);
+
     const result = await this.bandyService.sendSettleRequest(
      action,
       this.matchDetail,
@@ -299,7 +302,8 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
       this.isReSettledTickets,
       this.match.isScoreDirect,
       this.isLeader,
-      this.refResultStatus
+      this.refResultStatus,
+      betStatus
     );
 
     if (!result.isSuccessful) {
@@ -312,9 +316,7 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
   public getClassName(result: ResultDetail) {
     let className = '';
   
-    if(this.validationService.hasScore(result) 
-      && result.resultStatusId === ResultStatusId.TraderConfirm
-      && result.settlementStatusId === SettlementStatusId.Running) {
+    if(result.resultStatusId === ResultStatusId.TraderConfirm) {
       className = 'bg-result-confirmed '
     }
 

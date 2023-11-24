@@ -14,11 +14,12 @@ import { LeagueType, ResourceID } from "./constant";
 import { BandyService } from "./bandy.service";
 import { IntervalBackgroundPipe } from "../../../shared/pipes/interval-background.pipe";
 import * as _ from "lodash";
+import { BetStatusService } from "./betstatus.service";
 
 @Component({
   templateUrl: './refund.component.html',
   standalone: true,
-  providers: [ResultDetailsService,IntervalBackgroundPipe,BandyService,],
+  providers: [ResultDetailsService,IntervalBackgroundPipe,BandyService,BetStatusService],
   imports: [CalculateCommonModule, MatchInfoCompoment, BandyResourceNamePipe,],
 
 })
@@ -45,8 +46,9 @@ export class BandyRefundComponent extends RefundActionBaseComponent implements S
     this.initData();
   }
 
-  constructor(private readonly resultDetailService: ResultDetailsService,
-    private bandyService: BandyService
+  constructor(
+    private bandyService: BandyService,
+    private betstatusService: BetStatusService
     ) {
       super();
     }
@@ -54,6 +56,10 @@ export class BandyRefundComponent extends RefundActionBaseComponent implements S
   public get refundResultDetails() {
     return this.resultDetails.filter(x => [ResourceID.FirstHalf,ResourceID.Final].includes(x.resourceId))
   } 
+
+  public get finalResult() {
+    return this.resultDetails.find(x => [ResourceID.Final].includes(x.resourceId))
+  }
 
   public get existsConfirmed() {
     return this.resultDetails.some(x => x.resultSettingData.isConfirmedRefund);
@@ -83,6 +89,8 @@ export class BandyRefundComponent extends RefundActionBaseComponent implements S
 
   public async doRefund() {
     const query = this.generateRefundQuery("");
+    query.betStatus = this.betstatusService.createBetStatusRefund(this.selectedResources,this.finalResult);
+    
     const result = await this.aioService.push(query);
     if (result.errCode === 0) {
       this.refundHedgeMatch(query);

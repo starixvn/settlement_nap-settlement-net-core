@@ -151,7 +151,6 @@ export class RefundActionBaseComponent {
     }
 
     existResultNotConfirmed() {
-        console.log(this.selectedResources);
         if (this.supportSdtSettle.indexOf(this.matchDetail.sportType) > -1) {
             return _.every(this.selectedResources, item => !item.resultSettingData.isConfirmedRefund && !item.resultSettingData.isConfirmedRefundSdt);
         }

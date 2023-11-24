@@ -23,7 +23,8 @@ export class BandyService {
     isReSettledTickets: boolean,
     isScoreDirect: boolean,
     isLeader = false, 
-    refResultStatus = null) {
+    refResultStatus = null,
+    betStatus = '') {
     
     if (type === CalculateAction.unCalculate) {
       resultDetais.forEach((item) => {
@@ -38,7 +39,7 @@ export class BandyService {
       type,
       isReSettledTickets,
       isScoreDirect,
-      ""
+      betStatus
     );
     settleQuery.refResultStatus = refResultStatus;
     settleQuery.isLeader = isLeader;
