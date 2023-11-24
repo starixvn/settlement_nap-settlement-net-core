@@ -86,6 +86,12 @@ public class NewInfoMatchServiceImp : NewInfoMatchService
             ? basketballEventStatusService.AdjustEventStatusAbandoned(match.EventStatus, resultDetails, match.SportType)
             : match.EventStatus;
 
+        if (match.SportType == SportType.Bandy
+            && !string.IsNullOrEmpty(match.BetStatus) && match.BetStatus.Contains("RefundHT;"))
+        {
+            return BetStatus.RefundHt;
+        }
+
         return eventStatusService.CheckProcessingStatus(eventStatus, match);
     }
 
