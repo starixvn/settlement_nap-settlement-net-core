@@ -116,8 +116,7 @@ export class ResultDetailsService {
       }
     }
   }
-
-
+  
   public resetHomeAwayValue(resultDetails: ResultDetail[]) {
     _.forEach(resultDetails, result => {
       if(result.disabled && result.resourceId !== ResourceID.Final) {

@@ -284,7 +284,7 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
   }
 
   private async sendRequest(settleResult: ResultDetail[],action: string) {
-    const betStatus = this.betStatusService.createBetStatusCalc(settleResult,this.firstHalfResult,this.firstHalfResult);
+    const betStatus = this.betStatusService.createBetStatusCalc(settleResult,this.firstHalfResult,this.finalResult);
 
     const result = await this.bandyService.sendSettleRequest(
      action,
@@ -343,18 +343,9 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
     
     this.resultDetails = this.resultDetailService.calcMatchResultDetails(this.resultDetails);
 
-    this.verifyInputScore(resultDetail);
+    this.validationService.verifyChangeInputScore(this.resultDetails,this.confirmResultDetails,this.externalResult);
   }
 
-
-  private verifyInputScore(resultDetail: ResultDetail) {
-    if(this.hasProvider()) {
-      this.validationService.verifyProviderScore(resultDetail,this.finalResult,this.providerResultDetails);
-    }
-    if(this.hasTraderConfirmScore()) {
-      this.validationService.verifyTraderScore(resultDetail,this.finalResult,this.confirmResultDetails);
-    }
-  }
 
   public onResettleCheckboxChange(isChecked: boolean) {
     this.isReSettledTickets = isChecked;
@@ -386,9 +377,6 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
     return !!this.externalResult;
   }
 
-  private hasTraderConfirmScore() {
-    return this.confirmResultDetails?.length 
-      && this.confirmResultDetails.some(x => x.resultStatusId === ResultStatusId.TraderConfirm)
-  }
+
 
 }
