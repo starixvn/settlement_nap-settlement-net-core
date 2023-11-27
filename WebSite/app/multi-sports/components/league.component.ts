@@ -237,11 +237,18 @@ export class LeagueComponent implements OnInit, OnChanges, OnDestroy {
     } else {
       halfTimeHomeScore = !_.includes(ResultType.notHavingHalfTimeScore, match.sportType)
         ? _.includes(ResultType.scoreInResultDetail, match.sportType)
-          ? match.moreScores.halfTimeScore.home
+          ? this.getHalfTimeHomeScoreForSportType(match)
           : match.halfTimeHomeScore : null;
     }
-
     return _.isNil(halfTimeHomeScore) ? '-' : halfTimeHomeScore.toString();
+  }
+
+  private getHalfTimeHomeScoreForSportType(match: Match) {
+    const {halfTimeScore} = match.moreScores;
+    if(match.sportType === SportType.bandy) {
+      return (halfTimeScore.isConfirmed || !halfTimeScore.isNotSettled) ? halfTimeScore.home : null
+    }
+    return match.moreScores.halfTimeScore.home;
   }
 
   public getHalfTimeAwayScore(match: Match) {

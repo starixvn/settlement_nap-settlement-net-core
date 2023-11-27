@@ -35,6 +35,11 @@ export class ResultDetailsService {
     return this.calcMatchResultDetails(tempResults);
   }
 
+  public generateConfirmResultDetails(resultDetails: ResultDetail[]) : ResultDetail[] {
+    const confirmResults = _.cloneDeep(resultDetails).filter(result => result.resultStatusId === ResultStatusId.TraderConfirm);
+    return confirmResults;
+  }
+
   public generateFullExternalResultDetails(externalResult : ExternalResult) {
     const resultDetails = externalResult ? externalResult.resultDetails : [];
     return ResourceIDs.map(resourceId => {
@@ -45,16 +50,10 @@ export class ResultDetailsService {
 
   public hidenScoreResultDetails(resultDetails: ResultDetail[],isLeader: boolean) {
     resultDetails.forEach((map) => {
-      const showScore = (isLeader 
-        && ([ResultStatusId.AutoCompleted,ResultStatusId.ManualCompleted,ResultStatusId.TraderConfirm].includes(map.resultStatusId)
-        ||  map.settlementStatusId === SettlementStatusId.Calculated))
-            && map.settlementStatusId !== SettlementStatusId.Refund;
-      
-      const showScoreMenber = !isLeader && ([ResultStatusId.AutoCompleted,ResultStatusId.ManualCompleted].includes(map.resultStatusId)
-      ||  map.settlementStatusId === SettlementStatusId.Calculated) && map.settlementStatusId !== SettlementStatusId.Refund;
+      const showScore = this.isShowScore(map,isLeader);
 
-      map.homeValue = (showScore || showScoreMenber) ? map.homeValue : "";
-      map.awayValue =  (showScore || showScoreMenber)  ? map.awayValue : "";
+      map.homeValue = showScore ? map.homeValue : "";
+      map.awayValue =  showScore ? map.awayValue : "";
   });
   }
 
@@ -142,6 +141,14 @@ export class ResultDetailsService {
 
   private isEmptyHomeAwayValue(result: ResultDetail) {
     return result && (_.isEmpty(result.homeValue) || _.isEmpty(result.awayValue));
+  }
+
+  public isShowScore(result: ResultDetail, isLeader: boolean) {
+    const resultStatusIds = isLeader ? [ResultStatusId.AutoCompleted,ResultStatusId.ManualCompleted,ResultStatusId.TraderConfirm]
+                                     : [ResultStatusId.AutoCompleted,ResultStatusId.ManualCompleted];
+
+    return (resultStatusIds.includes(result.resultStatusId) || result.settlementStatusId === SettlementStatusId.Calculated) 
+      && result.settlementStatusId !== SettlementStatusId.Refund;
   }
 
 }

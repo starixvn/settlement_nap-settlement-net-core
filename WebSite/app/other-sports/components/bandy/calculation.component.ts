@@ -36,8 +36,7 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
   public matchDetail: MatchDetail;
 
   public resultDetails: ResultDetail[] = [];
-  public originalResultDetails: ResultDetail[];
-  public matchResultOriginal: ResultDetail;
+  public confirmResultDetails: ResultDetail[];
   public permission: Permission;
 
   public externalResult: ExternalResult | null = null;
@@ -89,9 +88,7 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
 
     this.resultDetails = this.match.resultDetails;
 
-    this.originalResultDetails = _.cloneDeep(this.match.resultDetails);
-
-    this.matchResultOriginal = _.clone(this.finalResult);
+    this.confirmResultDetails = this.resultDetailService.generateConfirmResultDetails(this.match.resultDetails);
 
     this.permission = this.match.permission;
 
@@ -110,6 +107,7 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
     this.resultDetails = this.resultDetailService.generateFullResultDetails(this.resultDetails);
     
     this.disabledInputResult();
+    
     this.checkScoreMissMatchedOnload();
   }
 
@@ -119,7 +117,8 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
   private checkProviderScore() {
    if(this.hasProvider) {
     _.forEach(this.resultDetails, (result) => {
-      result.isScoreMismatched = this.validationService.inValidResultDetailWithProvider(result,this.providerResultDetails);
+      const confirmResult = this.confirmResultDetails.find(x => x.resourceId === result.resourceId);
+      result.isScoreMismatched = this.validationService.inValidResultDetailWithProvider(confirmResult,this.providerResultDetails);
     })
    }
   }
@@ -148,16 +147,8 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
     return this.resultDetails.find((x) => x.resourceId === ResourceID.Final);
   }
 
-  public get fullTimeResult() {
-    return this.resultDetails.find((x) => x.resourceId === ResourceID.FullTime);
-  }
-
   public get firstHalfResult() {
     return this.resultDetails.find((x) => x.resourceId === ResourceID.FirstHalf);
-  }
-
-  public get existsInValidResult() {
-    return this.resultDetails.some(x => x.inValid);
   }
 
   public existsConfirmedRefund() {
@@ -210,8 +201,8 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
   }
 
   private confirmScoreSource() {
-    const isSourceInsufficient = this.validationService.isInsufficientSOPLite(this.originalResultDetails,this.externalResult);
-    const isInconsistent = this.validationService.isConsistentScoreSOPLite(this.selectedResults,this.originalResultDetails,this.externalResult);
+    const isSourceInsufficient = this.validationService.isInsufficientSOPLite(this.confirmResultDetails,this.externalResult);
+    const isInconsistent = this.validationService.isConsistentScoreSOPLite(this.selectedResults,this.confirmResultDetails,this.externalResult);
 
     if (isSourceInsufficient || isInconsistent) {
       if (!this.isLeader) {
@@ -362,7 +353,7 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
       this.validationService.verifyProviderScore(resultDetail,this.finalResult,this.providerResultDetails);
     }
     if(this.hasTraderConfirmScore()) {
-      this.validationService.verifyTraderScore(resultDetail,this.finalResult,this.originalResultDetails);
+      this.validationService.verifyTraderScore(resultDetail,this.finalResult,this.confirmResultDetails);
     }
   }
 
@@ -397,8 +388,8 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
   }
 
   private hasTraderConfirmScore() {
-    return this.originalResultDetails?.length 
-      && this.originalResultDetails.some(x => x.resultStatusId === ResultStatusId.TraderConfirm)
+    return this.confirmResultDetails?.length 
+      && this.confirmResultDetails.some(x => x.resultStatusId === ResultStatusId.TraderConfirm)
   }
 
 }

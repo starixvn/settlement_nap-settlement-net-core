@@ -422,9 +422,6 @@ export class VerificationBaseService {
         }
     }
 
-    // sop lite
-
-
     public isConsistentTraderAndProvider(originalResultDetails: ResultDetail[],externalResults: ExternalResultDetail[]){
         return originalResultDetails.some(trader => {
             const suitableProvider = externalResults?.find(x => x.resourceId === trader.resourceId);

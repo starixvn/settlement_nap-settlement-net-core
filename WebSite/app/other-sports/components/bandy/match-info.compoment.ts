@@ -8,6 +8,7 @@ import { Permission } from "../../../shared/models/sportsbook-sop";
 import { BandyResourceNamePipe } from "./bandy-resource.pipe";
 import { BandyService } from "./bandy.service";
 import { IntervalBackgroundPipe } from "../../../shared/pipes/interval-background.pipe";
+import { ResultDetailsService } from "./resultdetails.service";
 
 @Component({
   templateUrl:"./match-info.compoment.html",
@@ -19,8 +20,8 @@ import { IntervalBackgroundPipe } from "../../../shared/pipes/interval-backgroun
 })
 export class MatchInfoCompoment implements OnInit {
   ngOnInit(): void {
-    this.resultDetails.forEach(item => {
-      item.isDisplayedForMember = this.permission?.isLeader || Number(item.settlementStatusId) !== SettlementStatusId.Running;
+    this.showResultDetails && this.resultDetails.forEach(item => {
+      item.isDisplayedForMember = this.resultDetailService.isShowScore(item,this.permission?.isLeader);
     });
   }
   @Input() matchDetail: MatchDetail;
@@ -28,7 +29,8 @@ export class MatchInfoCompoment implements OnInit {
   @Input() showResultDetails: boolean = false;
   @Input() permission: Permission;
 
-  constructor(private bandyService: BandyService
+  constructor(private bandyService: BandyService,
+    private resultDetailService: ResultDetailsService
     ) {
     }
 

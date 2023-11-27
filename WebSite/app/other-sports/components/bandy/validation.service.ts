@@ -87,7 +87,7 @@ export class ValidationService extends VerificationBaseService {
 
   public inValidResultDetailWithOriginal(result: ResultDetail,originalResultDetails: GeneralResultDetail[]) {
     const originalResult = originalResultDetails.find(x => x.resourceId === result.resourceId);
-    
+
     return this.hasScore(originalResult) && this.hasScore(result)
       && (!_.isEqual(originalResult.homeValue, result.homeValue) || !_.isEqual(originalResult.awayValue, result.awayValue));
   }
@@ -140,21 +140,16 @@ export class ValidationService extends VerificationBaseService {
     });
   }
 
-  public verifyTraderScore(result: ResultDetail, finalResult: ResultDetail,originalResultDetails: ResultDetail[]) {
-    const traderResults = originalResultDetails.filter(result => result.resultStatusId === ResultStatusId.TraderConfirm);
-    result.isScoreMismatched = this.inValidResultDetailWithOriginal(result,traderResults);
-
-    if([ResourceID.FullTime,ResourceID.Et,ResourceID.Pen]) {
-      finalResult.isScoreMismatched = this.inValidResultDetailWithOriginal(finalResult,traderResults);
-    }
+  public verifyTraderScore(result: ResultDetail, finalResult: ResultDetail,confirmResultDetails: ResultDetail[]) {
+    result.isScoreMismatched = this.inValidResultDetailWithOriginal(result,confirmResultDetails);
+    
+    finalResult.isScoreMismatched = this.inValidResultDetailWithOriginal(finalResult,confirmResultDetails);
   }
 
   public verifyProviderScore(result: ResultDetail, finalResult: ResultDetail,providerResultDetails: ExternalResultDetail[]) {
     result.isScoreMismatched = this.inValidResultDetailWithOriginal(result,providerResultDetails);
 
-    if([ResourceID.FullTime,ResourceID.Et,ResourceID.Pen]) {
-      finalResult.isScoreMismatched = this.inValidResultDetailWithOriginal(finalResult,providerResultDetails);
-    }
+    finalResult.isScoreMismatched = this.inValidResultDetailWithOriginal(finalResult,providerResultDetails);
   }
 
 
@@ -166,19 +161,19 @@ export class ValidationService extends VerificationBaseService {
   }
 
   public isInsufficientSOPLite(originalResultDetails: ResultDetail[],externalResult: ExternalResult) {
-    const hasTrader = originalResultDetails.some(r => r.resultStatusId  === ResultStatusId.TraderConfirm && this.hasScore(r));
+    const hasTrader = originalResultDetails.some(r => r.resultStatusId  === ResultStatusId.TraderConfirm);
     const hasProvider = externalResult && externalResult.resultDetails.some(x => this.hasScore(x));
 
     return !hasTrader && !hasProvider;
   }
 
-  public isConsistentScoreSOPLite(resultDetails: ResultDetail[],originalResultDetails: ResultDetail[],externalResult: ExternalResult) {
-    const hasTrader = originalResultDetails.some(r => r.resultStatusId  === ResultStatusId.TraderConfirm && this.hasScore(r));
+  public isConsistentScoreSOPLite(resultDetails: ResultDetail[],confirmResultDetails: ResultDetail[],externalResult: ExternalResult) {
+    const hasTrader = confirmResultDetails.some(r => r.resultStatusId  === ResultStatusId.TraderConfirm);
     const hasProvider = externalResult && externalResult.resultDetails.some(x => this.hasScore(x));
     
     let isConsistent = false;
     if(hasProvider && hasTrader) {
-        isConsistent = this.isConsistentTraderAndProvider(originalResultDetails, externalResult.resultDetails);
+        isConsistent = this.isConsistentTraderAndProvider(confirmResultDetails, externalResult.resultDetails);
     }
 
     if(!isConsistent && hasProvider) {
@@ -187,7 +182,7 @@ export class ValidationService extends VerificationBaseService {
     
     
     if(!isConsistent && hasTrader) {
-        isConsistent = this.isConsistentScoreTraderConfirm(originalResultDetails,resultDetails);
+        isConsistent = this.isConsistentScoreTraderConfirm(confirmResultDetails,resultDetails);
     }
 
     return isConsistent;

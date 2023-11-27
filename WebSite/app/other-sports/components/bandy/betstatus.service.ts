@@ -15,7 +15,7 @@ export class BetStatusService {
     }
 
     if(!_.isNil(firstHalfResult)) {
-      return finalResult.settlementStatusId === SettlementStatusId.Refund ? 'Refund;' : 'RefundHT;';
+      return finalResult.settlementStatusId === SettlementStatusId.Refund ? 'Refund;' : 'Refund HT;';
     }
 
     return '';
@@ -30,13 +30,9 @@ export class BetStatusService {
     }
 
     if(!_.isNil(finalSelectedResult) && _.isNil(firstSelectHalfResult)) {
-      return firstHalfResult.settlementStatusId === SettlementStatusId.Refund ? 'RefundHT;' : '';
+      return firstHalfResult.settlementStatusId === SettlementStatusId.Refund ? 'Refund HT;' : '';
     }
 
     return ''
   }
 }
-
-// calc 
-// - 01 and 00 refund => refund
-// - 01 => ''
