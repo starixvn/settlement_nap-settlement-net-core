@@ -87,7 +87,7 @@ public class NewInfoMatchServiceImp : NewInfoMatchService
             : match.EventStatus;
 
         if (match.SportType == SportType.Bandy
-            && !string.IsNullOrEmpty(match.BetStatus) && match.BetStatus.Contains("RefundHT;"))
+            && !string.IsNullOrEmpty(match.BetStatus) && match.BetStatus.Contains(BetStatus.RefundHt))
         {
             return BetStatus.RefundHt;
         }

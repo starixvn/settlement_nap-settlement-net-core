@@ -109,47 +109,17 @@ export class ValidationService extends VerificationBaseService {
   }
 
 
-  public verifyFhFtPen(resultDetails: ResultDetail[]) { 
-    const firstHalf = resultDetails.find((x) => x.resourceId === ResourceID.FirstHalf);
-    const fullTime = resultDetails.find((x) => x.resourceId === ResourceID.FullTime);
-
-    const fhFt = resultDetails.filter(x => [ResourceID.FirstHalf,ResourceID.FullTime].includes(x.resourceId));
-    
-    _.forEach(fhFt, (result) => {
-      result.inValid = this.greaterThan(firstHalf,fullTime);
-    });
-   
-   
-    const pen = resultDetails.find(x => x.resourceId === ResourceID.Pen);
-    pen.inValid = this.draw(pen);
-  }
-
-  public verifyMatch(resultDetails: ResultDetail[]) {
-    const match = resultDetails.find((x) => x.resourceId === ResourceID.Final);
-
-    _.forEach(resultDetails, result => {
-      result.inValid = this.greaterThan(result,match)
-    });
-  }
-
-  public verifyMatchSum(resultDetails: ResultDetail[],leagueType: number) {
-    const setSums = resultDetails.filter(x=> x.resourceId !== ResourceID.FirstHalf);
-    _.forEach(setSums, result => {
-      result.inValid = this.hasScore(result) 
-        && this.inValidMatchSumScore(resultDetails)
-    });
-  }
+  
 
   public verifyTraderScore(result: ResultDetail, finalResult: ResultDetail,confirmResultDetails: ResultDetail[]) {
-    result.isScoreMismatched = this.inValidResultDetailWithOriginal(result,confirmResultDetails);
+    result.isScoreMismatched = result.isScoreMismatched || this.inValidResultDetailWithOriginal(result,confirmResultDetails);
     
-    finalResult.isScoreMismatched = this.inValidResultDetailWithOriginal(finalResult,confirmResultDetails);
+    finalResult.isScoreMismatched = finalResult.isScoreMismatched || this.inValidResultDetailWithOriginal(finalResult,confirmResultDetails);
   }
 
   public verifyProviderScore(result: ResultDetail, finalResult: ResultDetail,providerResultDetails: ExternalResultDetail[]) {
-    result.isScoreMismatched = this.inValidResultDetailWithOriginal(result,providerResultDetails);
-
-    finalResult.isScoreMismatched = this.inValidResultDetailWithOriginal(finalResult,providerResultDetails);
+    result.isScoreMismatched =  result.isScoreMismatched || this.inValidResultDetailWithOriginal(result,providerResultDetails);
+    finalResult.isScoreMismatched = finalResult.isScoreMismatched || this.inValidResultDetailWithOriginal(finalResult,providerResultDetails);
   }
 
 

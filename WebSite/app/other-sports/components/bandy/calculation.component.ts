@@ -311,11 +311,10 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
       className = 'bg-result-confirmed '
     }
 
-    if(this.validationService.inValidResult(this.resultDetails)) {
+    if(this.validationService.inValidResult(this.resultDetails)) {//confirm or calculation score
         className += 'col-mismatched ';
     }
 
-    className += result.inValid ? 'col-mismatched ' : ''; // trader
     className += this.getIntervalBackground(result.settlementStatusId)
     return className;
   }

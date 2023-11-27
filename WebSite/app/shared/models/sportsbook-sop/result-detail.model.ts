@@ -33,5 +33,5 @@ export class ResultDetail extends GeneralResultDetail {
     otherInfo: string;
     isResultWarningByBetType: boolean;
     ordNo: number;
-    inValid: boolean = false
+    // inValid: boolean = false
 }
