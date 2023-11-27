@@ -23,7 +23,7 @@ export const ResultType = {
         SportType.football, SportType.rugby, SportType.netBall, SportType.iceHockey, SportType.fieldHockey, SportType.volleyBall,
         SportType.squash, SportType.sepakTakraw, SportType.beachVolleyball],
     intervalScoreByResultDetail: [SportType.badminton, SportType.basketBall, SportType.eSports, SportType.tennis, SportType.cricket,
-                                  SportType.beachVolleyball, SportType.volleyBall],
+                                  SportType.beachVolleyball, SportType.volleyBall,SportType.bandy],
     havingFiveMaxRound: [SportType.football, SportType.rugby, SportType.netBall, SportType.squash, SportType.sepakTakraw],
     havingFourMaxRound: [SportType.iceHockey, SportType.fieldHockey],
     havingTenMaxRound: [SportType.baseBall],
