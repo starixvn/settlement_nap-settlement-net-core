@@ -43,5 +43,7 @@ export const ResultType = {
         SportType.otherSports,  SportType.waterPolo,
         SportType.futsal, SportType.kabaddi, SportType.lotto, SportType.baseBall, SportType.football, SportType.rugby,
         SportType.netBall,
-        SportType.bandy]
+        SportType.bandy],
+    
+    notUseIsCalRefun: [SportType.bandy]
 };

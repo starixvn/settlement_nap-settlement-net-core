@@ -231,25 +231,17 @@ export class LeagueComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   public getHalfTimeHomeScore(match: Match) {
-    console.log(match);
+
     let halfTimeHomeScore;
     if (this.isHideHtScore(match)) {
       halfTimeHomeScore = null;
     } else {
       halfTimeHomeScore = !_.includes(ResultType.notHavingHalfTimeScore, match.sportType)
         ? _.includes(ResultType.scoreInResultDetail, match.sportType)
-          ? this.getHalfTimeHomeScoreForSportType(match)
+          ? match.moreScores.halfTimeScore.home
           : match.halfTimeHomeScore : null;
     }
     return _.isNil(halfTimeHomeScore) ? '-' : halfTimeHomeScore.toString();
-  }
-
-  private getHalfTimeHomeScoreForSportType(match: Match) {
-    const {halfTimeScore} = match.moreScores;
-    if(match.sportType === SportType.bandy) {
-      return (halfTimeScore.isConfirmed || !halfTimeScore.isNotSettled) ? halfTimeScore.home : null
-    }
-    return match.moreScores.halfTimeScore.home;
   }
 
   public getHalfTimeAwayScore(match: Match) {
@@ -292,13 +284,19 @@ export class LeagueComponent implements OnInit, OnChanges, OnDestroy {
 
   public isHideHtScore(match: Match) {
     return ResultType.havingHalfTimeConfirmedStatus.includes(match.sportType)
-      && !this.permission.isLeader && !match.isHalfTimeCal && !match.isCalRefund;
+      && !this.permission.isLeader 
+      && !match.isHalfTimeCal 
+      && !ResultType.notUseIsCalRefun.includes(match.sportType) 
+      && !match.isCalRefund 
   }
 
   public isHideFinalScore(match: Match) {
     return (ResultType.havingConfirmedStatus.includes(match.sportType)
       || ResultType.havingHalfTimeConfirmedStatus.includes(match.sportType))
-      && !this.permission.isLeader && !match.isCalculated && !match.isCalRefund;
+      && !this.permission.isLeader 
+      && !match.isCalculated 
+      && !ResultType.notUseIsCalRefun.includes(match.sportType)
+      && !match.isCalRefund;
   }
 
   public getInterval(match: Match) {
