@@ -231,6 +231,7 @@ export class LeagueComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   public getHalfTimeHomeScore(match: Match) {
+    console.log(match);
     let halfTimeHomeScore;
     if (this.isHideHtScore(match)) {
       halfTimeHomeScore = null;

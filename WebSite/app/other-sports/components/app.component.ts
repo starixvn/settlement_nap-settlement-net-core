@@ -106,9 +106,9 @@ export class AppComponent extends AppBaseComponent implements OnInit {
     }
 
     private getComponentBandy(pageType: string): Type<SportTemplate> {
-        // return pageType !== PageType.ReCalculate 
-        //     ? BandyRefundComponent
-        //     :   BandyCalculationComponent;
+        return pageType !== PageType.ReCalculate 
+            ? BandyRefundComponent
+            :   BandyCalculationComponent;
 
             // return pageType !== PageType.ReCalculate 
             // ? BandyRefundComponent

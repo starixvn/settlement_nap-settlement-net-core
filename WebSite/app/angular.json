@@ -571,7 +571,7 @@
         }
       }
     },
-    "multi-sports": {
+    "app": {
       "root": "",
       "sourceRoot": "multi-sports",
       "projectType": "application",
@@ -580,7 +580,7 @@
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
             "outputPath": "../wwwroot/multi-sports",
-            "index": "multi-sports/index.cshtml",
+            "index": "multi-sports/index.html",
             "main": "multi-sports/main.ts",
             "tsConfig": "multi-sports/tsconfig.app.json",
             "polyfills": "polyfills.ts",
