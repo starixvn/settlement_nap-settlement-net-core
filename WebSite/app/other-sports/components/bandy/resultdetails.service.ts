@@ -30,16 +30,8 @@ export class ResultDetailsService {
 
   public generateConfirmResultDetails(resultDetails: ResultDetail[]) : ResultDetail[] {
     const confirmResults = _.cloneDeep(resultDetails).filter(result => result.resultStatusId === ResultStatusId.TraderConfirm);
-    const results = ResourceIDs.map(resourceId => {
-      const confirmResult = confirmResults.find((x) => resourceId === x.resourceId);
-      if(confirmResult) {
-        const homeValue = !_.isEmpty(confirmResult.homeValue) ? confirmResult.homeValue : '';
-        const awayValue = !_.isEmpty(confirmResult.awayValue) ? confirmResult.awayValue : '';
-        return {...confirmResult,homeValue,awayValue}
-      }
-      return this.defaultResult(resourceId,ResultStatusId.TraderConfirm);
-    });
-    return results;
+    
+    return confirmResults;
   }
 
   public generateFullExternalResultDetails(externalResult : ExternalResult) {
@@ -149,7 +141,7 @@ export class ResultDetailsService {
                                      : [ResultStatusId.AutoCompleted,ResultStatusId.ManualCompleted];
 
     return (resultStatusIds.includes(result.resultStatusId) || result.settlementStatusId === SettlementStatusId.Calculated) 
-      && result.settlementStatusId !== SettlementStatusId.Refund;
+     && result.settlementStatusId !== SettlementStatusId.Refund;
   }
 
   private defaultResult(resourceId: string,resultStatusId = 0 ) {

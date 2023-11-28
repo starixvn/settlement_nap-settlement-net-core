@@ -21,7 +21,7 @@ import { ResultDetailsService } from "./resultdetails.service";
 export class MatchInfoCompoment implements OnInit {
   ngOnInit(): void {
     this.showResultDetails && this.resultDetails.forEach(item => {
-      item.isDisplayedForMember = this.resultDetailService.isShowScore(item,this.permission?.isLeader);
+      item.isDisplayedForMember = this.resultDetailService.isShowScore(item,this.permission?.isLeader) || item.settlementStatusId === SettlementStatusId.Refund;
     });
   }
   @Input() matchDetail: MatchDetail;
