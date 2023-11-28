@@ -142,7 +142,7 @@ public class MatchResultDetailServiceImp : IMatchResultDetailService
             match.IsHavingIntervalScore = scoreService.IsIntervalScore(match.SportType, resultDetailByMatchId);
         }
 
-        OtherSportsResultDetail(matches, resultDetails, true);
+        ValidateConsistentConfirmResultScore(matches, resultDetails);
 
         return matches;
     }
@@ -170,6 +170,9 @@ public class MatchResultDetailServiceImp : IMatchResultDetailService
         return matches;
     }
 
+    private void ValidateConsistentConfirmResultScore(List<Match> matches, List<ResultDetail> resultDetails)
+            match.IsNotConsistentExHtScore = externalScoreService.IsInconsistentHalftimeConfirmScore(match, resultDetails);
+            match.IsNotConsistentExFtScore = externalScoreService.IsInconsistentFullTimeConfirmScore(match, resultDetails);
     public List<Match> OtherSportsResultDetail(List<Match> matches, List<ResultDetail> resultDetails, bool includeHalfTime)
     {
         foreach (var match in matches)

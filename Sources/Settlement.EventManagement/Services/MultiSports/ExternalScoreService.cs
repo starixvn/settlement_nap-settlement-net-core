@@ -12,6 +12,8 @@ public interface IExternalScoreService
     bool IsInconsistentHalftimeScore(Match match, IEnumerable<ResultDetail> resultDetails);
 
     bool IsInconsistentFullTimeConfirmScore(Match match, IEnumerable<ResultDetail> resultDetails);
+
+    bool IsInconsistentHalftimeConfirmScore(Match match, IEnumerable<ResultDetail> resultDetails);
 }
 
 public class ExternalScoreServiceImp : IExternalScoreService
@@ -78,18 +80,20 @@ public class ExternalScoreServiceImp : IExternalScoreService
     {
         var externalResultDetails = GetSboResults(match.MatchId, resultDetails);
         var halftimeExternalResult = externalResultDetails.Find(result => result.ResourceId == ResourceType.Halftime);
-        if (halftimeExternalResult == null)
+        var halftimeScore = match.MoreScores?.HalfTimeScore;
+
+        if (halftimeExternalResult == null || halftimeScore is null)
         {
             return false;
         }
 
-        if (match.HalfTimeHomeScore == null && match.HalfTimeAwayScore == null)
+        if (string.IsNullOrEmpty(halftimeScore.Home) && string.IsNullOrEmpty(halftimeScore.Away))
         {
             return !string.Equals(match.SuspenderHalfTime, "-");
         }
 
-        var isHomeValue = string.Equals(match.HalfTimeHomeScore.ToString(), halftimeExternalResult.HomeValue);
-        var isAwayValue = string.Equals(match.HalfTimeAwayScore.ToString(), halftimeExternalResult.AwayValue);
+        var isHomeValue = string.Equals(halftimeScore.Home, halftimeExternalResult.HomeValue);
+        var isAwayValue = string.Equals(halftimeScore.Away, halftimeExternalResult.AwayValue);
 
         return !isHomeValue || !isAwayValue;
     }
