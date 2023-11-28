@@ -191,15 +191,15 @@ export class ValidationService extends VerificationBaseService {
       const providerResult = providerResutls.find(x => x.resourceId === currentResult.resourceId);
 
       if(providerResult && confirmResult) {
-        notMatch = this.hasScore(providerResult) && this.hasScore(confirmResult) &&this.isNotEqualResult(providerResult,confirmResult);
+        notMatch = this.hasScore(providerResult) && this.hasScore(confirmResult) && this.isNotEqualResult(providerResult,confirmResult);
       }
 
       if(!notMatch && providerResult) {
-        notMatch = (!_.isEmpty(currentResult.homeValue) && !_.isEmpty(currentResult.awayValue)) && this.isNotEqualResult(currentResult,providerResult);
+        notMatch = (!_.isEmpty(currentResult.homeValue) && !_.isEmpty(currentResult.awayValue)) && this.hasScore(providerResult) && this.isNotEqualResult(currentResult,providerResult);
       }
 
       if(!notMatch && confirmResult) {
-        notMatch =(!_.isEmpty(currentResult.homeValue) && !_.isEmpty(currentResult.awayValue)) && this.isNotEqualResult(currentResult,confirmResult);
+        notMatch =(!_.isEmpty(currentResult.homeValue) && !_.isEmpty(currentResult.awayValue)) && this.hasScore(confirmResult) && this.isNotEqualResult(currentResult,confirmResult);
       }
 
       currentResult.isScoreMismatched = notMatch;
