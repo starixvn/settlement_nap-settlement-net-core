@@ -55,7 +55,7 @@ public class MergeLogServiceImp : MergeLogService
         return DateTime.TryParseExact(log.Value, formatDate, CultureInfo.InvariantCulture,
             DateTimeStyles.None, out var date)
             ? date
-            : (DateTime?)null;
+            : null;
     }
 
     private static string GetMaxDate(List<LogItem> logs)
