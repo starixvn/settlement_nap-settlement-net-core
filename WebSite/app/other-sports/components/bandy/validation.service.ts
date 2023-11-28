@@ -144,9 +144,17 @@ export class ValidationService extends VerificationBaseService {
     return isConsistent;
   }
 
-  public verifyChangeInputScore(resultDetails: ResultDetail[], confirmResultDetails: ResultDetail[], externalResult: ExternalResult) {
+  public verifyChangeInputScore(currentResult: ResultDetail, resultDetails: ResultDetail[], confirmResultDetails: ResultDetail[], externalResult: ExternalResult) {
     const hasTrader = confirmResultDetails.some(r => r.resultStatusId === ResultStatusId.TraderConfirm);
     const hasProvider = externalResult && externalResult.resultDetails.some(x => this.hasScore(x));
+
+    const finalResult = resultDetails.find(x => x.resourceId === ResourceID.Final);
+
+    if(currentResult.isScoreMismatched || finalResult.isScoreMismatched) {
+      return;
+    }
+
+    //
 
     if (hasProvider) {
       if (hasTrader) {
@@ -174,5 +182,37 @@ export class ValidationService extends VerificationBaseService {
         && (!_.isEqual(providerResult.homeValue ?? "", originalResult.homeValue ?? "")
           || !_.isEqual(providerResult.awayValue ?? "", originalResult.awayValue ?? ""))
     });
+  }
+
+  public verifyResultChanged(resultsChanged:ResultDetail[],confirmResults: ResultDetail[],providerResutls:ExternalResultDetail[]) {
+    _.forEach(resultsChanged,currentResult => {
+      let notMatch = false;
+      const confirmResult = confirmResults.find(x => x.resourceId === currentResult.resourceId);
+      const providerResult = providerResutls.find(x => x.resourceId === currentResult.resourceId);
+
+      if(providerResult && confirmResult) {
+        notMatch = this.hasScore(providerResult) && this.hasScore(confirmResult) &&this.isNotEqualResult(providerResult,confirmResult);
+      }
+
+      if(!notMatch && providerResult) {
+        notMatch = (!_.isEmpty(currentResult.homeValue) && !_.isEmpty(currentResult.awayValue)) && this.isNotEqualResult(currentResult,providerResult);
+      }
+
+      if(!notMatch && confirmResult) {
+        notMatch =(!_.isEmpty(currentResult.homeValue) && !_.isEmpty(currentResult.awayValue)) && this.isNotEqualResult(currentResult,confirmResult);
+      }
+
+      currentResult.isScoreMismatched = notMatch;
+    });
+  }
+
+  private isNotEqualResult(result: GeneralResultDetail,otherResult: GeneralResultDetail) {
+    return (!_.isEqual(result.homeValue,otherResult.homeValue) || !_.isEqual(result.awayValue,otherResult.awayValue));
+  }
+
+  private acceptableResult(result: ResultDetail,otherResult: ResultDetail) {
+    return (_.isEmpty(result.homeValue) && _.isEmpty(result.awayValue)) 
+      && (_.isEmpty(otherResult.homeValue) && _.isEmpty(otherResult.awayValue)
+          || _.isEqual(otherResult.homeValue,'0') && _.isEqual(otherResult.awayValue,'0'))
   }
 }

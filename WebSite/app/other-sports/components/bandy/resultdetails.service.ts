@@ -16,15 +16,8 @@ export class ResultDetailsService {
       if (result) {
         return { ...result, className: "" };
       }
-      const newResult = new ResultDetail();
-      newResult.resourceId = resourceId;
-      newResult.homeValue = "";
-      newResult.awayValue = "";
-      newResult.className = "";
-      newResult.resultSettingData = new ResultSettingModel();
-      newResult.resultSettingData.isConfirmedRefund = false;
 
-      return newResult;
+      return this.defaultResult(resourceId);
     });
 
     const finalResult = resultDetails.find(x => x.resourceId === ResourceID.Final && !this.isEmptyHomeAwayValue(x));
@@ -37,7 +30,16 @@ export class ResultDetailsService {
 
   public generateConfirmResultDetails(resultDetails: ResultDetail[]) : ResultDetail[] {
     const confirmResults = _.cloneDeep(resultDetails).filter(result => result.resultStatusId === ResultStatusId.TraderConfirm);
-    return confirmResults;
+    const results = ResourceIDs.map(resourceId => {
+      const confirmResult = confirmResults.find((x) => resourceId === x.resourceId);
+      if(confirmResult) {
+        const homeValue = !_.isEmpty(confirmResult.homeValue) ? confirmResult.homeValue : '';
+        const awayValue = !_.isEmpty(confirmResult.awayValue) ? confirmResult.awayValue : '';
+        return {...confirmResult,homeValue,awayValue}
+      }
+      return this.defaultResult(resourceId,ResultStatusId.TraderConfirm);
+    });
+    return results;
   }
 
   public generateFullExternalResultDetails(externalResult : ExternalResult) {
@@ -148,6 +150,19 @@ export class ResultDetailsService {
 
     return (resultStatusIds.includes(result.resultStatusId) || result.settlementStatusId === SettlementStatusId.Calculated) 
       && result.settlementStatusId !== SettlementStatusId.Refund;
+  }
+
+  private defaultResult(resourceId: string,resultStatusId = 0 ) {
+    const newResult = new ResultDetail();
+    newResult.resourceId = resourceId;
+    newResult.resultStatusId = resultStatusId;
+    newResult.homeValue = "";
+    newResult.awayValue = "";
+    newResult.className = "";
+    newResult.resultSettingData = new ResultSettingModel();
+    newResult.resultSettingData.isConfirmedRefund = false;
+
+    return newResult;
   }
 
 }

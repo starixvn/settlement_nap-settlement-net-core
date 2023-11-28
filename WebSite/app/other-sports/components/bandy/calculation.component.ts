@@ -36,6 +36,7 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
   public matchDetail: MatchDetail;
 
   public resultDetails: ResultDetail[] = [];
+  public originalResults: ResultDetail[] = [];
   public confirmResultDetails: ResultDetail[];
   public permission: Permission;
 
@@ -88,14 +89,15 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
 
     this.resultDetails = this.match.resultDetails;
 
+    this.originalResults = _.cloneDeep(this.match.resultDetails);
     this.confirmResultDetails = this.resultDetailService.generateConfirmResultDetails(this.match.resultDetails);
 
     this.permission = this.match.permission;
 
-    this.generateProviderResultDetails();
+    this.createProviderResource();
   }
 
-  private generateProviderResultDetails() {
+  private createProviderResource() {
     this.externalResult = this.match.externalResults.length ? this.match.externalResults[0] : null;
     this.externalSourceName = this.externalResult ? this.externalResult.sourceName : '-';
     this.providerResultDetails = this.resultDetailService.generateFullExternalResultDetails(this.externalResult);
@@ -117,8 +119,8 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
   private checkProviderScore() {
    if(this.hasProvider) {
     _.forEach(this.resultDetails, (result) => {
-      const confirmResult = this.confirmResultDetails.find(x => x.resourceId === result.resourceId);
-      result.isScoreMismatched = this.validationService.inValidResultDetailWithProvider(confirmResult,this.providerResultDetails);
+      const originalResult = this.originalResults.find(x => x.resourceId === result.resourceId && this.resultDetailService.isShowScore(x,this.isLeader));
+      result.isScoreMismatched = this.validationService.inValidResultDetailWithProvider(originalResult,this.providerResultDetails);
     })
    }
   }
@@ -202,7 +204,9 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
 
   private confirmScoreSource() {
     const isSourceInsufficient = this.validationService.isInsufficientSOPLite(this.confirmResultDetails,this.externalResult);
-    const isInconsistent = this.validationService.isConsistentScoreSOPLite(this.selectedResults,this.confirmResultDetails,this.externalResult);
+
+    const currentSelectedResults = this.resultDetails.filter(x => x.checked);
+    const isInconsistent = this.validationService.isConsistentScoreSOPLite(currentSelectedResults,this.confirmResultDetails,this.externalResult);
 
     if (isSourceInsufficient || isInconsistent) {
       if (!this.isLeader) {
@@ -339,11 +343,16 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
 
   public verifyAndAutoFillScore(resultDetail: ResultDetail) {
     this.disabledInputResult();
+    
     this.resultDetailService.resetHomeAwayValue(this.resultDetails);
     
     this.resultDetails = this.resultDetailService.calcMatchResultDetails(this.resultDetails);
 
-    this.validationService.verifyChangeInputScore(this.resultDetails,this.confirmResultDetails,this.externalResult);
+    const resultsChanged = [ResourceID.FullTime,ResourceID.Et,ResourceID.Pen].includes(resultDetail.resourceId) 
+    ? [resultDetail,this.finalResult] 
+    : [resultDetail];
+
+    this.validationService.verifyResultChanged(resultsChanged,this.confirmResultDetails,this.providerResultDetails);
   }
 
 
