@@ -142,7 +142,7 @@ public class MatchResultDetailServiceImp : IMatchResultDetailService
             match.IsHavingIntervalScore = scoreService.IsIntervalScore(match.SportType, resultDetailByMatchId);
         }
 
-        ValidateConsistentConfirmResultScore(matches, resultDetails);
+        OtherSportsResultDetail(matches, resultDetails, true);
 
         return matches;
     }
