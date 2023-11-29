@@ -112,7 +112,7 @@ export class AppComponent extends AppBaseComponent implements OnInit {
 
             // return pageType !== PageType.ReCalculate 
             // ? BandyRefundComponent
-            return   BandyRefundComponent;
+            // return   BandyRefundComponent;
     }
 }
 

@@ -119,7 +119,8 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
   private checkProviderScore() {
    if(this.hasProvider) {
     _.forEach(this.resultDetails, (result) => {
-      const originalResult = this.originalResults.find(x => x.resourceId === result.resourceId);
+      const originalResult = this.originalResults.find(x => x.resourceId === result.resourceId 
+        && result.settlementStatusId !== SettlementStatusId.Refund);
       result.isScoreMismatched = this.validationService.inValidResultDetailWithProvider(originalResult,this.providerResultDetails);
     })
    }
