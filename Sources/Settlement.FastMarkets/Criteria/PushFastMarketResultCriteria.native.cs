@@ -1,7 +1,4 @@
-﻿using Fanex.Data;
-using Fanex.Data.Repository;
-
-namespace Settlement.FastMarkets.Criteria;
+﻿namespace Settlement.FastMarkets.Criteria;
 
 public class PushFastMarketResultCriteria : NonQueryCommand
 {

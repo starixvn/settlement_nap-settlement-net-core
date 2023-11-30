@@ -66,7 +66,7 @@ export class ConfirmRefundComponent implements OnInit {
   public async refundSus(actionName: string) {
     this.toastrService.clear();
     this.matchDetail.isSettleAbandonedMatchIBC = true;
-    const checkingStatus = await this.requestService.checkNewStatus(this.matchDetail.matchId, actionName, true).toPromise() as Result;
+    const checkingStatus = await this.requestService.checkNewStatus(this.matchDetail.matchId, actionName, true);
     if (checkingStatus.isSuccessful) {
       this.dialogRef.close(true);
     } else {
@@ -77,7 +77,7 @@ export class ConfirmRefundComponent implements OnInit {
   public async refundNotSdtAndPos(actionName: string) {
     this.toastrService.clear();
     this.matchDetail.isSettleAbandonedMatchIBC = false;
-    const checkingStatus = await this.requestService.checkNewStatus(this.matchDetail.matchId, actionName, false).toPromise() as Result;
+    const checkingStatus = await this.requestService.checkNewStatus(this.matchDetail.matchId, actionName, false);
     if (checkingStatus.isSuccessful) {
       this.confirmRefund();
     } else {

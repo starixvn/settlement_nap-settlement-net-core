@@ -1,5 +1,4 @@
-﻿using Fanex.Data.Repository;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using Settlement.Core.Models;
 using Settlement.FastMarkets.Criteria;
 using Settlement.FastMarkets.Models;
@@ -8,7 +7,7 @@ namespace Settlement.FastMarkets.Services;
 
 public interface MultipleServerFetcherService
 {
-    public Task<(List<FastMarketResult> ticketDetails, TicketCounts ticketCounts)> GetFastMarketTicketDetail(int matchId);
+    Task<(List<FastMarketResult> ticketDetails, TicketCounts ticketCounts)> GetFastMarketTicketDetail(int matchId);
 }
 
 public class MultipleServerFetcherServiceImp : MultipleServerFetcherService

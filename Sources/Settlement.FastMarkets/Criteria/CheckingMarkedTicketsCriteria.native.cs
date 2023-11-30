@@ -1,7 +1,4 @@
-﻿using Fanex.Data;
-using Fanex.Data.Repository;
-
-namespace Settlement.FastMarkets.Criteria;
+﻿namespace Settlement.FastMarkets.Criteria;
 
 public class CheckingMarkedTicketsCriteria : CriteriaBase
 {
@@ -12,13 +9,7 @@ public class CheckingMarkedTicketsCriteria : CriteriaBase
     [SpParam(Ignored = true)]
     public string DbServer { get; set; }
 
-    public override string GetSettingKey()
-    {
-        return $"NAP_Set_FastMarket_CheckingMarkedTransaction_{DbServer}";
-    }
+    public override string GetSettingKey() => $"NAP_Set_FastMarket_CheckingMarkedTransaction_{DbServer}";
 
-    public override bool IsValid()
-    {
-        return MatchId > 0;
-    }
+    public override bool IsValid() => MatchId > 0;
 }

@@ -1,9 +1,9 @@
-﻿using MediatR;
+﻿using Fanex.NAP.Client.Helpers.Web;
+using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.FastMarkets.Models;
 using Settlement.FastMarkets.Requests;
 using Settlement.FastMarkets.Services;
-using Settlement.Core.Models;
 using MatchDetail = Settlement.FastMarkets.Models.MatchDetail;
 
 namespace Settlement.FastMarkets.Handlers;
@@ -14,7 +14,8 @@ public class FastMarketHandler : IRequestHandler<MatchDetailRequest, MatchDetail
     IRequestHandler<GetTimeMachineResultRequest, List<TimeMachineResult>>,
     IRequestHandler<UpdateWaterBreakSettingRequest, Result>,
     IRequestHandler<SettleRequest, Result>,
-    IRequestHandler<CheckingMarkedTicketsRequest, MarkedTickets>
+    IRequestHandler<CheckingMarkedTicketsRequest, MarkedTickets>,
+    IRequestHandler<InsertMessageRequest, Unit>
 {
     private readonly IMatchDetailService matchDetailService;
 
@@ -24,16 +25,20 @@ public class FastMarketHandler : IRequestHandler<MatchDetailRequest, MatchDetail
 
     private readonly ISettingService settingService;
 
+    private readonly INapSession session;
+
     public FastMarketHandler(
-        IMatchDetailService matchDetailService, 
-        PermissionService permissionService, 
+        IMatchDetailService matchDetailService,
+        PermissionService permissionService,
         IFastMarketService fastMarketService,
-        ISettingService settingService)
+        ISettingService settingService,
+        INapSession session)
     {
         this.matchDetailService = matchDetailService;
         this.permissionService = permissionService;
         this.fastMarketService = fastMarketService;
         this.settingService = settingService;
+        this.session = session;
     }
 
     public async Task<MatchDetail> Handle(MatchDetailRequest request, CancellationToken cancellationToken)
@@ -50,18 +55,25 @@ public class FastMarketHandler : IRequestHandler<MatchDetailRequest, MatchDetail
         return fastMarketModel;
     }
 
-    public async Task<List<FastMarketResult>> Handle(GetLatestResultRequest request, CancellationToken cancellationToken) 
+    public async Task<List<FastMarketResult>> Handle(GetLatestResultRequest request, CancellationToken cancellationToken)
         => await fastMarketService.GetLatestResult(request);
 
-    public async Task<List<TimeMachineResult>> Handle(GetTimeMachineResultRequest request, CancellationToken cancellationToken) 
+    public async Task<List<TimeMachineResult>> Handle(GetTimeMachineResultRequest request, CancellationToken cancellationToken)
         => await fastMarketService.GetTimeMachineResult(request);
 
-    public async Task<Result> Handle(UpdateWaterBreakSettingRequest request, CancellationToken cancellationToken) 
+    public async Task<Result> Handle(UpdateWaterBreakSettingRequest request, CancellationToken cancellationToken)
         => await settingService.UpdateWaterBreakSetting(request);
 
-    public async Task<Result> Handle(SettleRequest request, CancellationToken cancellationToken) 
+    public async Task<Result> Handle(SettleRequest request, CancellationToken cancellationToken)
         => await fastMarketService.Calculate(request);
 
-    public async Task<MarkedTickets> Handle(CheckingMarkedTicketsRequest request, CancellationToken cancellationToken) 
+    public async Task<MarkedTickets> Handle(CheckingMarkedTicketsRequest request, CancellationToken cancellationToken)
         => await matchDetailService.CheckingMarkedTickets(request);
+
+    public async Task<Unit> Handle(InsertMessageRequest request, CancellationToken cancellationToken)
+    {
+        request.UserId = session.UserId;
+        await fastMarketService.InsertMessageToLetstalk(request);
+        return Unit.Value;
+    }
 }

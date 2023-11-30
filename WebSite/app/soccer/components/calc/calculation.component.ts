@@ -301,9 +301,16 @@ export class CalculationComponent implements Soccer {
         const query = new SettleQuery(this.matchDetail, hedgeMatchId, actionName, this.isReSettledTickets, childMatchIds);
         const result = await this.requestService.calculate(query);
         if (result.isSuccessful) {
+            await this.alertMessageToLetstalkForFastMarket(this.matchDetail.matchId, actionName);
             this.closePopupService.closePopup();
         } else {
             this.toastrService.error(result.errMsg);
+        }
+    }
+
+    private async alertMessageToLetstalkForFastMarket(matchId: number, actionName: string) {
+        if(_.includes([CalculateAction.calculateFullTime, CalculateAction.calculate], actionName)) {
+            await this.requestService.alertMessageToLetstalkForFastMarket(matchId, actionName);
         }
     }
 

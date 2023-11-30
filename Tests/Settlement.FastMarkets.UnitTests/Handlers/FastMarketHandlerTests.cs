@@ -1,4 +1,5 @@
-﻿using Settlement.Core.Models;
+﻿using Fanex.NAP.Client.Helpers.Web;
+using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.FastMarkets.Handlers;
 using Settlement.FastMarkets.Models;
@@ -26,7 +27,8 @@ public class FastMarketHandlerTests
         permissionService = Substitute.For<PermissionService>(null, null, null, null);
         fastMarketService = Substitute.For<IFastMarketService>();
         settingService = Substitute.For<ISettingService>();
-        handler = new FastMarketHandler(matchDetailService, permissionService, fastMarketService, settingService);
+        var session = Substitute.For<INapSession>();
+        handler = new FastMarketHandler(matchDetailService, permissionService, fastMarketService, settingService, session);
     }
 
     [Fact]

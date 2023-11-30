@@ -1,6 +1,4 @@
-﻿using Fanex.Data.Repository;
-
-namespace Settlement.FastMarkets.Criteria;
+﻿namespace Settlement.FastMarkets.Criteria;
 
 public class WriteLogUpdateWaterBreakCriteria : NonQueryCommand
 {
@@ -14,13 +12,7 @@ public class WriteLogUpdateWaterBreakCriteria : NonQueryCommand
 
     public string Ip { get; set; }
 
-    public override string GetSettingKey()
-    {
-        return "WriteLog_UserLog_Settle";
-    }
+    public override string GetSettingKey() => "WriteLog_UserLog_Settle";
 
-    public override bool IsValid()
-    {
-        return MatchId > 0;
-    }
+    public override bool IsValid() => MatchId > 0;
 }

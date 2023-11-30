@@ -68,7 +68,7 @@ export class RequestService {
   }
 
   public getLastestResult(query: GetLastestResultQuery) {
-    const url = `${this.fastMarketApi}/get-lastest-result`;
+    const url = `${this.fastMarketApi}/get-latest-result`;
     return this.httpRequestService.postJson(query, url);
   }
 

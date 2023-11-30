@@ -27,7 +27,7 @@ public class SoccerController : ControllerBase
     [LogGetRequest]
     public async Task<IActionResult> GetMatch(GetMatchRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
-    [Route("get-lastest-match-detail"), HttpPost]
+    [Route("get-latest-match-detail"), HttpPost]
     public async Task<IActionResult> GetLatestMatchDetail(GetLatestMatchDetailRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
     [Route("calculate"), HttpPost]

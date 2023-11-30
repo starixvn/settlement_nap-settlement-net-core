@@ -2,7 +2,6 @@ import { Injectable } from "@angular/core";
 import * as _ from "lodash";
 import { TicketStatusText, CalculateAction } from "../../../../shared/constants";
 import { Language } from '../../../../shared/language.native';
-import { Result } from '../../../../shared/models';
 import { ChildMatch, MatchDetail } from '../models/match.model';
 import { VerifyScoreGoalService } from "./verify-score-goal.service";
 import { RequestService } from './request.service';
@@ -30,7 +29,7 @@ export class VerifyActionService {
   }
 
   private async checkNewStatus(matchDetail: MatchDetail, actionName: string) {
-    const result = await this.requestService.checkNewStatus(matchDetail.matchId, actionName).toPromise() as Result;
+    const result = await this.requestService.checkNewStatus(matchDetail.matchId, actionName);
     return result.isSuccessful ? "" : result.errMsg;
   }
 
@@ -85,7 +84,7 @@ export class VerifyActionService {
     if (isReSettledTickets) {
       return false;
     } else {
-      const lastestMatch = await this.requestService.getLastestMatchResult(matchDetail.matchId).toPromise() as MatchDetail;
+      const lastestMatch = await this.requestService.getLastestMatchResult(matchDetail.matchId);
 
       return _.isEqual(lastestMatch.htStatus, TicketStatusText.calculated)
         && (this.verifyScoreGoalService.isSettledFirstHalf(lastestMatch.betStatus)
@@ -98,7 +97,7 @@ export class VerifyActionService {
     if (isReSettledTickets) {
       return false;
     } else {
-      const lastestMatch = await this.requestService.getLastestMatchResult(matchDetail.matchId).toPromise() as MatchDetail;
+      const lastestMatch = await this.requestService.getLastestMatchResult(matchDetail.matchId);
 
       return _.isEqual(lastestMatch.ftStatus, TicketStatusText.calculated)
         && (this.verifyScoreGoalService.isSettledFullTime(lastestMatch.betStatus)
@@ -111,7 +110,7 @@ export class VerifyActionService {
     if (isReSettledTickets) {
       return false;
     } else {
-      const lastestMatch = await this.requestService.getLastestMatchResult(matchDetail.matchId).toPromise() as MatchDetail;
+      const lastestMatch = await this.requestService.getLastestMatchResult(matchDetail.matchId);
 
       return (_.isEqual(lastestMatch.htStatus, TicketStatusText.calculated)
         || _.isEqual(lastestMatch.ftStatus, TicketStatusText.calculated))
