@@ -170,15 +170,6 @@ public class MatchResultDetailServiceImp : IMatchResultDetailService
         return matches;
     }
 
-    private void ValidateConsistentConfirmResultScore(List<Match> matches, List<ResultDetail> resultDetails)
-    {
-        foreach (var match in matches)
-        {
-            match.IsNotConsistentExHtScore = externalScoreService.IsInconsistentHalftimeConfirmScore(match, resultDetails);
-            match.IsNotConsistentExFtScore = externalScoreService.IsInconsistentFullTimeConfirmScore(match, resultDetails);
-        }
-    }
-
     public List<Match> OtherSportsResultDetail(List<Match> matches, List<ResultDetail> resultDetails, bool includeHalfTime)
     {
         foreach (var match in matches)

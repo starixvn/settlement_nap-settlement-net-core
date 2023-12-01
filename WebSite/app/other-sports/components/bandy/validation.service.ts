@@ -52,9 +52,8 @@ export class ValidationService extends VerificationBaseService {
   public inValidPen(resultDetails: ResultDetail[]) {
     const pen = resultDetails.find((x) => x.resourceId === ResourceID.Pen);
     return this.draw(pen) 
-      || (this.hasScore(pen) 
-            && !['0','1'].includes(pen.homeValue.toString()) 
-            && !['0','1'].includes(pen.awayValue.toString()));
+      || this.hasScore(pen) 
+          && (!['0','1'].includes(pen.homeValue.toString()) || !['0','1'].includes(pen.awayValue.toString()));
   }
 
   public inValidMatchSumScore(resultDetails: ResultDetail[]) {
