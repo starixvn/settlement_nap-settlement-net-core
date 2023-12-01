@@ -195,7 +195,7 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
 
     if (this.existsConfirmedRefund()) {
       this.toastrService.error(Language.confirmRefund.calculateResultNotConfirmed);
-    } else if (this.validationService.invalidInputScore(this.selectedResults,this.match.isScoreDirect,ResourceID.Final)) {
+    } else if (this.validationService.invalidInputScore(this.selectedResults,true,ResourceID.Final)) {
       this.toastrService.error(Language.warningInputScore);
     } else if (this.onlySelectedFirstHalf && this.validationService.invalidFistHalf(this.resultDetails)) {
       this.toastrService.error(Language.inconsistentValues);
