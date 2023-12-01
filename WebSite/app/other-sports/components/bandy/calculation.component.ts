@@ -154,6 +154,10 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
     return this.resultDetails.find((x) => x.resourceId === ResourceID.FirstHalf);
   }
 
+  public get onlySelectedFirstHalf() {
+    return this.selectedResults.length === 1 && this.selectedResults.some(x => x.resourceId === ResourceID.FirstHalf);
+  }
+
   public existsConfirmedRefund() {
     return this.selectedResults.some(x => x.resultSettingData.isConfirmedRefund)
   }
@@ -193,7 +197,9 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
       this.toastrService.error(Language.confirmRefund.calculateResultNotConfirmed);
     } else if (this.validationService.invalidInputScore(this.selectedResults,this.match.isScoreDirect,ResourceID.Final)) {
       this.toastrService.error(Language.warningInputScore);
-    } else if ( this.validationService.inValidResult(this.resultDetails)) {
+    } else if (this.onlySelectedFirstHalf && this.validationService.invalidFistHalf(this.resultDetails)) {
+      this.toastrService.error(Language.inconsistentValues);
+    }  else if (!this.onlySelectedFirstHalf && this.validationService.inValidResult(this.resultDetails)) {
       this.toastrService.error(Language.inconsistentValues);
     } else if (!this.validationService.allowCalcFinalResult(this.firstHalfResult,this.finalResult)) { // check firstHafl no ticket
       this.toastrService.error(Language.IntervalWarning);

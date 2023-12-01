@@ -77,6 +77,11 @@ export class ValidationService extends VerificationBaseService {
     return homeValue !== Number(finalResult.homeValue) || awayValue !== Number(finalResult.awayValue);
   }
 
+  public invalidFistHalf(resultDetails: ResultDetail[]) {
+    return this.inValidFirstHalfFullTime(resultDetails)
+      || this.inValidFirstHalfMatch(resultDetails)
+  }
+
   public invalidMatchResult(resultDetails: ResultDetail[]) {
     return this.inValidFirstHalfMatch(resultDetails)
       || this.inValidFullTimeMatch(resultDetails)
