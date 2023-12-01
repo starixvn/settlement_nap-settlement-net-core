@@ -370,6 +370,7 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
     this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
       this.resultDetailService.copyResultFromProvider(this.resultDetails,this.providerResultDetails);
       this.resultDetailService.disabledInputResult(this.resultDetails,this.leagueType);
+      this.validationService.verifyResultChanged(this.resultDetails,this.confirmResultDetails,this.providerResultDetails)
     });
   }
 

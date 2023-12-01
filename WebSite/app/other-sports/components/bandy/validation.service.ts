@@ -49,9 +49,12 @@ export class ValidationService extends VerificationBaseService {
     return this.greaterThan(pen, match);
   }
 
-  public inValidPenDraw(resultDetails: ResultDetail[]) {
+  public inValidPen(resultDetails: ResultDetail[]) {
     const pen = resultDetails.find((x) => x.resourceId === ResourceID.Pen);
-    return this.draw(pen);
+    return this.draw(pen) 
+      || (this.hasScore(pen) 
+            && !['0','1'].includes(pen.homeValue.toString()) 
+            && !['0','1'].includes(pen.awayValue.toString()));
   }
 
   public inValidMatchSumScore(resultDetails: ResultDetail[]) {
@@ -64,6 +67,10 @@ export class ValidationService extends VerificationBaseService {
     const resourceIds = [ResourceID.FullTime, ResourceID.Et, ResourceID.Pen];
 
     const gameResults = resultDetails.filter((r) => resourceIds.includes(r.resourceId) && this.hasScore(r));
+
+    if(!gameResults.length) {
+      return false
+    }
 
     const homeValue = _.sumBy(gameResults, (x) => Number(x.homeValue));
     const awayValue = _.sumBy(gameResults, (x) => Number(x.awayValue));
@@ -81,7 +88,7 @@ export class ValidationService extends VerificationBaseService {
   public inValidResult(resultDetails: ResultDetail[]) {
     return this.inValidFirstHalfFullTime(resultDetails)
       || this.invalidMatchResult(resultDetails)
-      || this.inValidPenDraw(resultDetails)
+      || this.inValidPen(resultDetails)
       || this.inValidMatchSumScore(resultDetails);
   }
 
