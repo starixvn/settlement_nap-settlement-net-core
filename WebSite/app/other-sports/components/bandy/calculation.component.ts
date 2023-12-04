@@ -5,7 +5,7 @@ import { ModalDialogMessage } from "../../../shared/models";
 import { AioService,BlockUIService,MessageBoxService } from "../../../shared/services";
 import { Language } from "../../../shared/language.native";
 import * as _ from "lodash";
-import { RefResultStatus } from "../../constants";
+import { KickOffTime, RefResultStatus } from "../../constants";
 import { SportTemplate } from "../../../shared/models/sportsbook-sop";
 import { LeagueType, ResourceID } from "./constant";
 import { UrlHelper } from "../../../helper/url-helper";
@@ -17,7 +17,7 @@ import { ValidationService } from "./validation.service";
 import { MatchInfoCompoment } from "./match-info.compoment";
 import { CalculateCommonModule } from "../../../shared/modules/calculate-common.module";
 import { BandyResourceNamePipe } from "./bandy-resource.pipe";
-import { CalculateAction, ResultStatusId, SettlementStatusId } from "../../../shared/constants";
+import { CalculateAction, MatchStatus, ResultStatusId, SettlementStatusId } from "../../../shared/constants";
 import { BandyService } from "./bandy.service";
 import { BetStatusService } from "./betstatus.service";
 
@@ -94,6 +94,9 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
 
     this.permission = this.match.permission;
 
+    this.isReadyMatch = this.isCompletedOrConfirmScore(this.matchDetail) || this.matchDetail.playTime >= KickOffTime.playTime;
+
+    console.log(this.isReadyMatch);
     this.createProviderResource();
   }
 
@@ -186,6 +189,11 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
 
   public isFistHalf(resourceId: string) {
     return ResourceID.FirstHalf === resourceId;
+  }
+
+  private isCompletedOrConfirmScore(matchDetail: MatchDetail) {
+      return matchDetail.confirmHT > 0 || matchDetail.confirmFT > 0 || !!this.confirmResultDetails?.length
+          || _.isEqual(matchDetail.eventStatus, MatchStatus.Completed);
   }
 
   public calculation() {

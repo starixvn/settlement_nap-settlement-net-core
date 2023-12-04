@@ -19,14 +19,6 @@ import { OnlyIntegerDirective } from '../../shared/directives';
         exports: [FormsModule, CommonModule, ToastContainerModule, ResettleCheckerComponent, TicketCountComponent,
                 NotReadyMatchComponent, ExternalSourceNamePipe, MatTooltipModule, MatDialogModule, ExternalLinkPipe, OnlyIntegerDirective],
         imports: [ResettleCheckerComponent, TicketCountComponent, NotReadyMatchComponent, ExternalSourceNamePipe, ExternalLinkPipe, OnlyIntegerDirective,
-                // ToastNoAnimationModule.forRoot({
-                //         disableTimeOut: true,
-                //         enableHtml: true,
-                //         tapToDismiss: false,
-                //         positionClass: "inline",
-                //         maxOpened: 1,
-                //       }),
-                //       ToastContainerModule,
                 ],
         providers: [
                 MessageBoxService,

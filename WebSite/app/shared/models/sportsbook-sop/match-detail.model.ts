@@ -14,6 +14,7 @@
     public isSavedScore: boolean;
     public betStatus: string;
     public confirmFT: number;
+    public confirmHT: number;
     public eventStatus: string;
     public sportName: string;
     public sportType: number;
