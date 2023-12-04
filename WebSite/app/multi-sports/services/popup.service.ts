@@ -212,13 +212,14 @@ export class PopupService {
   }
 
   public async openUpdatePayoutForLeague(league: LeagueMatch) {
+    const isMultiSelect = _.isNil(league.matches[0]) ? true :  !_.isEqual(league.matches[0].sportType, SportType.cricket);
     const autoSetting = await this.multiSportService.getSetting(
       league.leagueId,
       0
     );
     this.applyNewSetting(league.autoCalcSetting, autoSetting.setting, false);
-
-    const src = `/apps/auto-setting-league?leagueId=${league.leagueId}&currentState=${autoSetting.setting}&pageType=AutoSettingLeague&multiSelect=true`;
+    const currentState = league.autoCalcSetting.isAutoPayoutForLeague ? 1 : league.autoCalcSetting.isDirectPayoutForLeague ? 5 : 0
+    const src = `/apps/auto-setting-league?leagueId=${league.leagueId}&currentState=${isMultiSelect ? autoSetting.setting : currentState}&pageType=AutoSettingLeague&multiSelect=${isMultiSelect}`;
     const frameSrc = encodeURI(src);
     const dialogData = new DialogDataIframe(
       Language.payout.titlePopupForLeague,
@@ -231,7 +232,8 @@ export class PopupService {
           this.applyNewSetting(
             league.autoCalcSetting,
             result.split(",")[0],
-            false
+            false,
+             !isMultiSelect
           );
           this.affectAutoPayoutForMatch(
             league,
@@ -269,13 +271,14 @@ export class PopupService {
   }
 
   public async openUpdatePayoutForMatch(match: Match) {
+    const isMultiSelect = !_.isEqual(match.sportType, SportType.cricket);
     const autoSetting = await this.multiSportService.getSetting(
       0,
       Number(match.matchId)
     );
     this.applyNewSetting(match.autoCalcSetting, autoSetting.setting);
-
-    const src = `/apps/auto-setting-league?matchId=${match.matchId}&currentState=${autoSetting.setting}&pageType=AutoSettingMatch&multiSelect=true`;
+    const currentState = match.autoCalcSetting.isAutoPayoutForMatch ? 1 : match.autoCalcSetting.isDirectPayoutForMatch ? 5 : 0
+    const src = `/apps/auto-setting-league?matchId=${match.matchId}&currentState=${isMultiSelect ? autoSetting.setting : currentState}&pageType=AutoSettingMatch&multiSelect=${isMultiSelect}`;
     const frameSrc = encodeURI(src);
     const dialogData = new DialogDataIframe(
       Language.payout.titlePopup,
@@ -285,7 +288,7 @@ export class PopupService {
       .popupHasResponse(dialogData, "500px", "270px")
       .subscribe((result) => {
         if (!_.isNull(result)) {
-          this.applyNewSetting(match.autoCalcSetting, result);
+          this.applyNewSetting(match.autoCalcSetting, result, true, !isMultiSelect);
         }
       });
   }
@@ -293,21 +296,19 @@ export class PopupService {
   private applyNewSetting(
     autoSetting: AutoSetting,
     setting: string,
-    isMatch = true
+    isMatch = true,
+    isNonBinary = false
   ) {
-    const settings = setting.split("");
     if (isMatch) {
-      autoSetting.isAutoPayoutForMatch =
-        settings[AutoSettingPosition.autoPayout] == "1";
-      autoSetting.isDirectPayoutForMatch =
-        settings[AutoSettingPosition.directPayout] == "1";
-      autoSetting.matchSetting = setting;
+      autoSetting.isAutoPayoutForMatch = this.getSettingValue(setting, AutoSettingPosition.autoPayout, isNonBinary);
+      autoSetting.isDirectPayoutForMatch = this.getSettingValue(setting, AutoSettingPosition.directPayout, isNonBinary);
     } else {
-      autoSetting.isAutoPayoutForLeague =
-        settings[AutoSettingPosition.autoPayout] == "1";
-      autoSetting.isDirectPayoutForLeague =
-        settings[AutoSettingPosition.directPayout] == "1";
-      autoSetting.leagueSetting = setting;
+      autoSetting.isAutoPayoutForLeague = this.getSettingValue(setting, AutoSettingPosition.autoPayout, isNonBinary);
+      autoSetting.isDirectPayoutForLeague = this.getSettingValue(setting, AutoSettingPosition.directPayout, isNonBinary);
     }
+  }
+
+  private getSettingValue(setting: string, position: number, isNonBinary: boolean): boolean {
+    return isNonBinary ? Number(setting) === (position + 1) : setting[position] === "1";
   }
 }
