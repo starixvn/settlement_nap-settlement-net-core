@@ -8,7 +8,7 @@ import { Subscription, interval } from 'rxjs';
 import { MessageBoxService } from './../../shared/services';
 import { Language } from './../../shared/language.native';
 import { ModalDialogMessage, Score, Remark, AutoSetting, AutoSettingMatchQuery, AutoSettingLeagueQuery } from '../../shared/models';
-import { SportType, ResultType, BackgroundColor, CalculationStatus } from '../../shared/constants';
+import { SportType, ResultType, BackgroundColor, CalculationStatus, EventStatus } from '../../shared/constants';
 import { Permission } from '../../shared/models/sportsbook-sop';
 import { BackGroundService, SportMatchService } from '../services';
 
@@ -284,10 +284,9 @@ export class LeagueComponent implements OnInit, OnChanges, OnDestroy {
 
   public isHideHtScore(match: Match) {
     return ResultType.havingHalfTimeConfirmedStatus.includes(match.sportType)
-      && !this.permission.isLeader 
-      && !match.isHalfTimeCal 
-      && !ResultType.notUseIsCalRefun.includes(match.sportType) 
-      && !match.isCalRefund 
+      && !this.permission.isLeader // false => true
+      && !match.isHalfTimeCal // flase => true
+      && (!this.isRefundHt(match) && !match.isCalRefund);
   }
 
   public isHideFinalScore(match: Match) {
@@ -295,8 +294,11 @@ export class LeagueComponent implements OnInit, OnChanges, OnDestroy {
       || ResultType.havingHalfTimeConfirmedStatus.includes(match.sportType))
       && !this.permission.isLeader 
       && !match.isCalculated 
-      && !ResultType.notUseIsCalRefun.includes(match.sportType)
       && !match.isCalRefund;
+  }
+
+  private isRefundHt(match: Match) {
+   return match.eventStatus === EventStatus.refundHalftime
   }
 
   public getInterval(match: Match) {
