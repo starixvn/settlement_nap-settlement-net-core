@@ -24,6 +24,7 @@ public class InstantCalculateServiceTests
     private readonly ScaleOutSettleService scaleOutSettleService;
 
     private readonly InstantCalculateService service;
+
     private readonly PushInstantCalculationService pushInstantCalculationService;
 
     public InstantCalculateServiceTests()

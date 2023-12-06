@@ -12,6 +12,7 @@ public class CriteriaFactoryImp : CriteriaFactoryBase
         Badminton();
         GameTotal();
         Basketball();
+        Bandy();
     }
 
     private static void Tennis()
@@ -87,5 +88,17 @@ public class CriteriaFactoryImp : CriteriaFactoryBase
         CriteriaTypes.Add($"game-total-{ApiKeyConstant.SaveScore}", typeof(Criteria.SaveScoreCriteria));
 
         CriteriaTypes.Add("game-total-settle", typeof(Criteria.SettleCriteria));
+    }
+
+    private static void Bandy()
+    {
+        CriteriaTypes.Add($"bandy-{ApiKeyConstant.MatchInfoKey}", typeof(Criteria.GetMatchDetailCriteria));
+        CriteriaTypes.Add($"bandy-{ApiKeyConstant.HedgeMatchInfoKey}", typeof(Criteria.GetHedgeMatchCriteria));
+        CriteriaTypes.Add($"bandy-{ApiKeyConstant.ResultDetailKey}", typeof(Criteria.GetResultDetailCriteria));
+        CriteriaTypes.Add($"bandy-{ApiKeyConstant.LatestResultKey}", typeof(Criteria.GetRecalResultCriteria));
+        CriteriaTypes.Add($"bandy-{ApiKeyConstant.ProviderKey}", typeof(Criteria.GetProviderCriteria));
+        CriteriaTypes.Add($"bandy-{ApiKeyConstant.ChildMatchKey}", typeof(Criteria.Volleyball.GetChildMatchCriteria));
+        CriteriaTypes.Add($"bandy-{ApiKeyConstant.SaveScore}", typeof(Criteria.SaveScoreCriteria));
+        CriteriaTypes.Add("bandy-settle", typeof(Criteria.SettleCriteria));
     }
 }

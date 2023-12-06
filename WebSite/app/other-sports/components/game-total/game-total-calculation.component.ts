@@ -89,8 +89,6 @@ export class GameTotalCalculationComponent implements SportTemplate {
   private getExternalSource() {
     const sopExternalResult = this.match.externalResults.find(result => result.sourceId < ScoreSourceType.screenshot 
       && ![ScoreSourceType.trader,ScoreSourceType.screenshot,ScoreSourceType.newScore].includes(result.sourceId));
-
-    // const existsValidExternal = sopExternalResult && sopExternalResult.resultDetails.some(x => !this.verificationService.isEmptyHomeOrAwayValue(x));
     
     if(sopExternalResult) {
        this.externalSourceName = sopExternalResult.sourceName;

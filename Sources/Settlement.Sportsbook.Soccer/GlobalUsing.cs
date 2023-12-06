@@ -1,9 +1,11 @@
 ﻿global using AutoMapper;
+global using Fanex.NAP.Client.Helpers.Web;
 global using Fanex.Data;
 global using Fanex.Data.Repository;
 global using Fanex.Settlement.Converter.Helpers;
 global using Fanex.Settlement.Converter.Services;
 global using Fanex.Settlement.ScaleOut.Constants;
+global using MediatR;
 global using Fanex.Settlement.ScaleOut.Request;
 global using Fanex.Settlement.ScaleOut.Services;
 global using Microsoft.AspNetCore.Http;

@@ -16,6 +16,8 @@ import { GameTotalMatchCalculationComponent } from './game-total-match-flow/game
 import { GameTotalMatchRefundComponent } from './game-total-match-flow/game-total-match-refund.component';
 import { OtherRefundComponent } from './other/other-refund.component';
 import { OtherCalculationComponent } from './other/other-calculation.component';
+import { BandyCalculationComponent } from './bandy/calculation.component';
+import { BandyRefundComponent } from './bandy/refund.component';
 
 @Component({
     selector: 'app-root',
@@ -64,6 +66,12 @@ export class AppComponent extends AppBaseComponent implements OnInit {
     private getComponentFourthGroup(pageType: string): Type<SportTemplate> {
         return _.includes(TemplateType.onlyFullTimeTemplate, this.sportType)
             ? this.getComponentOnlyFullTime(pageType)
+            : this.getComponentFiveGroup(pageType);
+    }
+
+    private getComponentFiveGroup(pageType: string) : Type<SportTemplate> {
+        return _.includes(TemplateType.hasOT, this.sportType)
+            ? this.getComponentBandy(pageType)
             : this.getComponentOther(pageType);
     }
 
@@ -89,8 +97,6 @@ export class AppComponent extends AppBaseComponent implements OnInit {
         return pageType === PageType.ReCalculate
             ? GameTotalCalculationComponent
             : GameTotalRefundComponent;
-
-            // return GameTotalRefundComponent;
     }
 
     private getComponentGameTotalMatch(pageType: string): Type<SportTemplate> {
@@ -98,6 +104,17 @@ export class AppComponent extends AppBaseComponent implements OnInit {
             ? GameTotalMatchCalculationComponent
             : GameTotalMatchRefundComponent;
     }
+
+    private getComponentBandy(pageType: string): Type<SportTemplate> {
+        return pageType !== PageType.ReCalculate 
+            ? BandyRefundComponent
+            :   BandyCalculationComponent;
+
+            // return pageType !== PageType.ReCalculate 
+            // ? BandyRefundComponent
+            // return   BandyRefundComponent;
+    }
 }
+
 
 

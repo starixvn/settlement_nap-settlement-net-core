@@ -4,4 +4,5 @@
     RunningThree: 3,
     AutoCompleted: 2,
     ManualCompleted: 5,
+    TraderConfirm: 3
 };

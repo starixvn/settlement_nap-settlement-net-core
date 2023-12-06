@@ -436,6 +436,7 @@ export class CalculateActionsComponent implements SportTemplate {
     const maps = this.match.resultDetails.filter((item) => !_.isEqual(item.resourceId, ResourcesIds.totalGames)
       && !_.isEqual(item.resourceId, ResourcesIds.totalPoints)
       && this.verificationService.isExistedHomeAwayScore(item.homeValue, item.awayValue));
+      
     if (!this.match.isScoreDirect) {
       this.verificationService.sumTotalResultWin(maps, ResourcesIds.GameOne, this.totalGames);
       this.verificationService.sumTotalScores(maps, ResourcesIds.GameOne, this.totalPoints);
@@ -548,7 +549,7 @@ export class CalculateActionsComponent implements SportTemplate {
       return this.match.permission.isLeader && this.totalGames.resultSettingData.isConfirmedRefund;
     } else {
       return this.match.permission.isLeader && resultDetail.resultSettingData.isConfirmedRefund;
-    }
+    } 
   }
 
   private checkConsistent() {

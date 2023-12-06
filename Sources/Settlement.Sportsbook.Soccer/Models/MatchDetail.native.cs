@@ -113,7 +113,7 @@ public class MatchDetail
 
     public string ExternalSourceName { get; set; }
 
-    public bool IsFantasyMatch => (LeagueName ?? string.Empty).Contains(LeagueType.Fantasy, StringComparison.OrdinalIgnoreCase);
+    public bool IsFantasyMatch => (LeagueName ?? string.Empty).Contains(LeagueCategory.Fantasy, StringComparison.OrdinalIgnoreCase);
 
     public byte SettlementStatus { get; set; }
 

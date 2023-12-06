@@ -1,0 +1,99 @@
+<span toastContainer></span>
+
+<div *ngIf="match">
+  <div *ngIf="isReadyMatch">
+    <div class="padding">
+      <match-info [matchDetail]="matchDetail" [resultDetails]="resultDetails" />
+      <ticket-count [ticketCounts]="match.ticketCounts"></ticket-count>
+
+      <div class="calculation-actions">
+        <table>
+          <ng-template *ngTemplateOutlet="calcHeader"></ng-template>
+          <ng-template *ngTemplateOutlet="calcBody"></ng-template>
+        </table>
+      </div>
+    </div>
+
+    <resettle-checker (proceedEvent)="onResettleCheckboxChange($event)"
+      [checked]="isReSettledTickets"></resettle-checker>
+  </div>
+  <div *ngIf="!isReadyMatch">
+    <not-ready-match></not-ready-match>
+  </div>
+</div>
+
+
+<ng-template #calcHeader>
+  <thead>
+    <tr>
+      <th scope="col" rowspan="2" class="code">Result</th>
+      <th scope="col" rowspan="2" class="ticket-status">Ticket Status</th>
+      <th scope="col" rowspan="2" colspan="2" class="kick-off-time">Score Value</th>
+      <th *ngIf="isLeader">Provider Score</th>
+      <th scope="col" rowspan="2" class="kick-off-time">Select to Proceed</th>
+    </tr>
+    <tr>
+      <ng-container *ngIf="isLeader">
+        <th class="code">
+          {{externalSourceName}}
+          <span [ngClass]="{ 'icon-copy': true, 'disable-copy': !externalResult}" (click)="copyScore()"></span>
+        </th>
+      </ng-container>
+
+    </tr>
+  </thead>
+</ng-template>
+
+<ng-template #calcBody>
+  <ng-container *ngFor="let result of resultDetails; let i = index; let last = last">
+    <tr [ngClass]="{'mismatched': result.isScoreMismatched, 'confirmed-refund': isConfirmed(result)}">
+      <td>
+        {{ result.resourceId | badyResourceName:true}}
+      </td>
+
+      <td *ngIf="isFistHalf(result.resourceId)" [ngClass]="result.ticketStatus?.toLowerCase()" class="set-status">
+        {{result.ticketStatus}}
+      </td>
+      <td *ngIf="isFulltimeResult(result.resourceId)" rowSpan="4" [ngClass]="finalResult.ticketStatus?.toLowerCase()"
+        class="match-status">
+        {{finalResult.ticketStatus}}</td>
+
+      <td [ngClass]="[getClassName(result)]">
+        <input type="text" myOnlyInteger tabindex="{{ i * 2 + 1 }}" [(ngModel)]="result.homeValue"
+          (ngModelChange)="verifyAndAutoFillScore(result)" [disabled]="result.disabled"
+          [ngClass]="{'warning' :isErrorOnVerification(result)}" />
+      </td>
+      <td [ngClass]="[getClassName(result)]">
+        <input type="text" myOnlyInteger tabindex="{{ (i + 1) * 2 }}" [(ngModel)]="result.awayValue"
+          (ngModelChange)="verifyAndAutoFillScore(result)" [disabled]="result.disabled"
+          [ngClass]="{'warning' :isErrorOnVerification(result)}" />
+      </td>
+
+
+      <ng-container *ngIf="isLeader">
+        <td>{{ viewExternalScore(result.resourceId)}}</td>
+      </ng-container>
+
+      <td *ngIf="isFistHalf(result.resourceId)"><input type="checkbox" [(ngModel)]="result.checked"
+          (ngModelChange)="onSelectResult($event,result.resourceId)" /></td>
+      <td *ngIf="isFulltimeResult(result.resourceId)" rowSpan="4">
+        <input id="final-checkbox" type="checkbox" [(ngModel)]="result.checked"
+          (ngModelChange)="onSelectResult($event,result.resourceId)" />
+      </td>
+
+    </tr>
+  </ng-container>
+
+  <tr>
+    <td colSpan="100%" class="button-group">
+      <button class="button" *ngIf="permission.canCalculate" (click)="calculation()"
+        [disabled]="!existsSelectedResult">Calculate</button>
+      <button class="button" *ngIf="permission.canUncalculate" [disabled]="!existsSelectedResult"
+        (click)="uncalculation()">Uncalculate</button>
+    </td>
+  </tr>
+</ng-template>
+
+<div *ngIf="blockUI" class="in modal-backdrop">
+  <div class="loading"></div>
+</div>

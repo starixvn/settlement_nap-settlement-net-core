@@ -58,6 +58,7 @@ export const SportType = {
     horseRacingFixedOdds: 154,
     upcomingSport57: 57,
     upcomingSport58: 58,
+    bandy: 58,
     upcomingSport59: 59,
     upcomingSport60: 60,
     upcomingSport61: 61,

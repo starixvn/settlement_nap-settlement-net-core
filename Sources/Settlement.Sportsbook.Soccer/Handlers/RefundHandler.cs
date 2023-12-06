@@ -1,5 +1,4 @@
-﻿using MediatR;
-using Settlement.Core.Models;
+﻿using Settlement.Core.Models;
 using Settlement.Sportsbook.Soccer.Criteria;
 using Settlement.Sportsbook.Soccer.Models;
 using Settlement.Sportsbook.Soccer.Requests;
@@ -11,7 +10,7 @@ using AutoMapper;
 using Fanex.NAP.Client.Helpers.Web;
 using Services.GetMatch;
 
-internal class RefundHandler :
+public class RefundHandler :
     IRequestHandler<GetSpecificBetTypeRequest, List<string>>,
     IRequestHandler<CheckingMarkedTicketsRequest, MarkedTickets>,
     IRequestHandler<RefundRequest, Result>,

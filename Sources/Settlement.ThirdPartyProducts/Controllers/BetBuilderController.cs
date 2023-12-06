@@ -23,8 +23,8 @@ public class BetBuilderController : ControllerBase
     {
         var respond = new DateSelection
         {
-            FromDate = Convert.ToDateTime(DateTime.Now.AddDays(-1).ToShortDateString()),
-            ToDate = DateTime.Today
+            FromDate = DateTimeOffset.Now.AddDays(-1),
+            ToDate = DateTimeOffset.Now
         };
 
         return Ok(respond);

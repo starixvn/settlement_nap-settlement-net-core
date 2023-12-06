@@ -8,7 +8,7 @@ import { Subscription, interval } from 'rxjs';
 import { MessageBoxService } from './../../shared/services';
 import { Language } from './../../shared/language.native';
 import { ModalDialogMessage, Score, Remark, AutoSetting, AutoSettingMatchQuery, AutoSettingLeagueQuery } from '../../shared/models';
-import { SportType, ResultType, BackgroundColor, CalculationStatus } from '../../shared/constants';
+import { SportType, ResultType, BackgroundColor, CalculationStatus, EventStatus } from '../../shared/constants';
 import { Permission } from '../../shared/models/sportsbook-sop';
 import { BackGroundService, SportMatchService } from '../services';
 
@@ -218,6 +218,7 @@ export class LeagueComponent implements OnInit, OnChanges, OnDestroy {
 
   public isHalfTimeConfirmed(match: Match) {
     if (ResultType.havingHalfTimeConfirmedStatus.includes(match.sportType)) {
+    
       if (ResultType.intervalScoreByResultDetail.includes(match.sportType)) {
         return match.moreScores.halfTimeScore.isConfirmed && match.moreScores.halfTimeScore.isNotSettled;
       }
@@ -230,6 +231,7 @@ export class LeagueComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   public getHalfTimeHomeScore(match: Match) {
+
     let halfTimeHomeScore;
     if (this.isHideHtScore(match)) {
       halfTimeHomeScore = null;
@@ -239,7 +241,6 @@ export class LeagueComponent implements OnInit, OnChanges, OnDestroy {
           ? match.moreScores.halfTimeScore.home
           : match.halfTimeHomeScore : null;
     }
-
     return _.isNil(halfTimeHomeScore) ? '-' : halfTimeHomeScore.toString();
   }
 
@@ -283,13 +284,24 @@ export class LeagueComponent implements OnInit, OnChanges, OnDestroy {
 
   public isHideHtScore(match: Match) {
     return ResultType.havingHalfTimeConfirmedStatus.includes(match.sportType)
-      && !this.permission.isLeader && !match.isHalfTimeCal && !match.isCalRefund;
+      && !this.permission.isLeader // false => true
+      && !match.isHalfTimeCal // flase => true
+      && (!this.isRefundHt(match) 
+      && !match.isCalRefund);
   }
 
   public isHideFinalScore(match: Match) {
     return (ResultType.havingConfirmedStatus.includes(match.sportType)
       || ResultType.havingHalfTimeConfirmedStatus.includes(match.sportType))
-      && !this.permission.isLeader && !match.isCalculated && !match.isCalRefund;
+      && !this.permission.isLeader 
+      && !match.isCalculated 
+      && !match.isCalRefund;
+  }
+
+  private isRefundHt(match: Match) {
+   return match.eventStatus === EventStatus.refundHalftime
+   || (_.includes(ResultType.scoreInResultDetail, match.sportType) 
+            && _.isEqual(match.moreScores?.halfTimeScore?.home, Language.RefundSymbol.All))
   }
 
   public getInterval(match: Match) {

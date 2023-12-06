@@ -1,5 +1,6 @@
 ﻿using Settlement.Log.Contants;
 using Settlement.Log.Models.LogElement;
+using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace Settlement.Log.Services;
@@ -48,16 +49,25 @@ public class MergeLogServiceImp : MergeLogService
         return string.Join("; ", mergedLogs.Where(log => !string.IsNullOrEmpty(log)));
     }
 
+    private static DateTime? GetDate(LogItem log)
+    {
+        const string formatDate = "yyyy-MM-dd HH:mm:ss";
+        return DateTime.TryParseExact(log.Value, formatDate, CultureInfo.InvariantCulture,
+            DateTimeStyles.None, out var date)
+            ? date
+            : null;
+    }
+
     private static string GetMaxDate(List<LogItem> logs)
     {
-        var validDates = logs.Select(log => DateTime.TryParse(log.Value, out var date) ? date : (DateTime?)null).Where(date => date.HasValue).ToList();
+        var validDates = logs.Select(GetDate).Where(date => date.HasValue).ToList();
 
         return validDates.Any() ? $"{logs[0].Name}: {validDates.Max():yyyy-MM-dd HH:mm:ss}" : string.Empty;
     }
 
     private static string GetMinDate(List<LogItem> logs)
     {
-        var validDates = logs.Select(log => DateTime.TryParse(log.Value, out var date) ? date : (DateTime?)null).Where(date => date.HasValue).ToList();
+        var validDates = logs.Select(GetDate).Where(date => date.HasValue).ToList();
 
         return validDates.Any() ? $"{logs[0].Name}: {validDates.Min():yyyy-MM-dd HH:mm:ss}" : string.Empty;
     }

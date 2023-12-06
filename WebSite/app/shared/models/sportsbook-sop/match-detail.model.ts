@@ -14,6 +14,7 @@
     public isSavedScore: boolean;
     public betStatus: string;
     public confirmFT: number;
+    public confirmHT: number;
     public eventStatus: string;
     public sportName: string;
     public sportType: number;
@@ -25,5 +26,6 @@
     public parentId: number;
     public autoSetting: number;
     public isFantasy: boolean;
-    public isSupportCopyScore: boolean
+    public isSupportCopyScore: boolean;
+    public leagueType: number;
 }

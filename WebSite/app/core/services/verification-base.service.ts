@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { Injectable, PipeTransform } from "@angular/core";
-import { ExternalResultDetail, ResultDetail, GeneralMatch, ExternalResult } from "../../shared/models/sportsbook-sop";
+import { ExternalResultDetail, ResultDetail, GeneralMatch, ExternalResult, MatchDetail } from "../../shared/models/sportsbook-sop";
 import { ResultStatusId, TicketStatusText, ScoreSourceType, SettlementStatusId, SportType } from "../../shared/constants";
 import { Language } from "../../shared/language.native";
 import { ResultByTeamNamePipe } from '../../shared/pipes/result-by-team-name.pipe';
@@ -74,6 +74,10 @@ export class VerificationBaseService {
 
     public isExistedHomeAwayScore(homeValue: string, awayValue: string) {
         return !_.isEmpty(homeValue) && !_.isEmpty(awayValue);
+    }
+
+    public hasScore(resultDetail: GeneralResultDetail) {
+        return resultDetail &&  !_.isEmpty(resultDetail.homeValue) && !_.isEmpty(resultDetail.awayValue);
     }
 
     public autoFillScore(map: ResultDetail) {
@@ -417,5 +421,59 @@ export class VerificationBaseService {
             totalPoints.awayValue = "";
         }
     }
+
+    public isConsistentTraderAndProvider(originalResultDetails: ResultDetail[],externalResults: ExternalResultDetail[]){
+        return originalResultDetails.some(trader => {
+            const suitableProvider = externalResults?.find(x => x.resourceId === trader.resourceId);
+            return suitableProvider && (!_.isEqual(trader.homeValue ?? "", suitableProvider.homeValue ?? "")
+                || !_.isEqual(trader.awayValue ?? "", suitableProvider.awayValue ?? ""))
+        })
+    }
+   
+    public isConsistentScoreTraderConfirm(originalResultDetails: ResultDetail[], resultDetails: ResultDetail[]) {
+        return resultDetails.some(result => {
+            const originalResult = originalResultDetails?.find(x => x.resourceId === result.resourceId);
+            return originalResult && (!_.isEqual(result.homeValue ?? "", originalResult.homeValue ?? "")
+                || !_.isEqual(result.awayValue ?? "", originalResult.awayValue ?? ""))
+                && !this.acceptCaseZero(originalResult,result);
+        })
+    }
+
+    public isConsistentScoreProvider(resultDetails: ResultDetail[], externalResults: ExternalResultDetail[]) {
+        return resultDetails.some(result => {
+            const providerResult = externalResults?.find(x => x.resourceId === result.resourceId);
+            return providerResult && (!_.isEqual(providerResult.homeValue ?? "", result.homeValue ?? "") 
+                || !_.isEqual(providerResult.awayValue ?? "", result.awayValue ?? ""))
+                && !this.acceptCaseZero(providerResult,result);
+        })
+    }
+
+    public isEmptyHomeOrAwayValue(item: GeneralResultDetail) {
+        return item.homeValue === null || _.isEmpty(item.homeValue)
+            || item.awayValue === null || _.isEmpty(item.awayValue);
+    }
+
+    public compareInputScoreWithProviderScores(resultDetails: ResultDetail[], externalResults: ExternalResultDetail[]) {
+        _.forEach(resultDetails, result => {
+            const providerResult = externalResults.find(x => x.resourceId === result.resourceId);
+
+            result.isScoreMismatched = providerResult  && !this.isEmptyHomeOrAwayValue(result) 
+                && (!_.isEqual(providerResult.homeValue, result.homeValue) || !_.isEqual(providerResult.awayValue, result.awayValue)) && !this.acceptCaseZero(providerResult,result);
+        });
+    }
+
+    public compareInputScoreTraderScores(originalResultDetails: ResultDetail[], resultDetails: ResultDetail[]) {
+        _.forEach(resultDetails, result => {
+                const originalResult = originalResultDetails.find(x => x.resourceId === result.resourceId)
+                result.isScoreMismatched = originalResult && !this.isEmptyHomeOrAwayValue(result) && (!_.isEqual(result.homeValue, originalResult.homeValue)
+                    || !_.isEqual(result.awayValue, originalResult.awayValue)) 
+                    && !this.acceptCaseZero(originalResult,result);
+        })
+    }
+
+    public acceptCaseZero(orinalResult: GeneralResultDetail, result: ResultDetail) {
+       return (result.awayValue === "0" && result.homeValue === "0" && _.isEmpty(orinalResult.homeValue) && _.isEmpty(orinalResult.awayValue));
+    }
+
 
 }

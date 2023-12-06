@@ -11,7 +11,7 @@ export class ResultDetail extends GeneralResultDetail {
     betTypeName: string;
     homeName = '';
     awayName = '';
-    checked: boolean;
+    checked: boolean = false;
     isResultWarning: boolean;
     isDurationWarning: boolean;
     externalScores: ExternalResultDetail[];
@@ -21,7 +21,7 @@ export class ResultDetail extends GeneralResultDetail {
     resultSettingData: ResultSettingModel;
     originalHomeValue: string;
     originalAwayValue: string;
-    className: string;
+    className = '';
     groupId: string;
     resultName: string;
     groupName: string;
@@ -33,4 +33,5 @@ export class ResultDetail extends GeneralResultDetail {
     otherInfo: string;
     isResultWarningByBetType: boolean;
     ordNo: number;
+    // inValid: boolean = false
 }

@@ -1,5 +1,4 @@
-﻿using MediatR;
-using Settlement.Core.Models;
+﻿using Settlement.Core.Models;
 using System.Xml.Serialization;
 
 namespace Settlement.Sportsbook.Soccer.Requests;

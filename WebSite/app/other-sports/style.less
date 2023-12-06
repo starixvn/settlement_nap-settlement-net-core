@@ -100,3 +100,14 @@ td.mismatched {
 .score-set{
     width: 23px;
 }
+
+.refund-actions {
+    table {
+        min-width: 400px;
+        width: 30%;
+    }
+}
+
+tr.mismatched td:not(:first-child):not(.set-status):not(.match-status):not(.calculated):not(.refunded) {
+    background: #f00;
+}
