@@ -864,7 +864,7 @@
         }
       }
     },
-    "e-sports": {
+    "app": {
       "root": "app",
       "sourceRoot": "e-sports",
       "projectType": "application",
@@ -874,7 +874,7 @@
           "options": {
             "aot": true,
             "outputPath": "../wwwroot/e-sports",
-            "index": "e-sports/index.cshtml",
+            "index": "e-sports/index.html",
             "main": "e-sports/main.ts",
             "tsConfig": "e-sports/tsconfig.app.json",
             "polyfills": "polyfills.ts",

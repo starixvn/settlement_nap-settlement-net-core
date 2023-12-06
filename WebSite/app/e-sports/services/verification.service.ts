@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { ResultDetail } from "../../shared/models/sportsbook-sop";
+import { ExternalResultDetail, ResultDetail } from "../../shared/models/sportsbook-sop";
 import { ResourcesIds, TicketStatus, ResultControlGroup } from "../constants";
 import * as _ from 'lodash';
 import { ScoreSourceType } from "../../shared/constants";
@@ -42,5 +42,29 @@ export class VerificationService extends VerificationBaseService  {
             ? _.find(result.externalScores, (source) => source.sourceId < ScoreSourceType.screenshot
                 && this.isExistedHomeAwayScore(source.homeValue, source.awayValue))
             : _.find(result.externalScores, (source) => source.sourceId < ScoreSourceType.screenshot && !_.isEmpty(source.homeValue));
+    }
+
+    public isMismatchedDurationWarning(map: ResultDetail) {
+        const internalScore = _.find(map.externalScores, (source) => this.isExistedHomeAwayScore(source.homeValue, source.awayValue) 
+            && source.sourceId !== ScoreSourceType.screenshot);
+        
+        if (internalScore) {
+            return !this.isDurationScoreMatched(map, internalScore);
+        }
+
+        return false;
+    }
+
+    private isDurationScoreMatched(map: ResultDetail, scoreToCompare: ExternalResultDetail) {
+        if (!map.homeValue || !map.awayValue) {
+            return _.every(map.externalScores, (result: ExternalResultDetail) =>
+                (_.isEmpty(result.homeValue) || (_.isEqual(scoreToCompare.homeValue, result.homeValue))
+            ));
+        }
+
+        return _.every(map.externalScores, (result: ExternalResultDetail) =>
+            _.isEmpty(result.homeValue) ||
+            (_.isEqual(map.homeValue, result.homeValue))
+        );
     }
 }

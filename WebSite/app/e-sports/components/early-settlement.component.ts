@@ -232,10 +232,14 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
 
     public verifyAndAutoFillResult(resultDetail: ResultDetail) {
         this.match.matchDetail.isSavedScore = false;
-        if (resultDetail.groupBetType === ResultControlGroup.CoupleScores || resultDetail.groupBetType === ResultControlGroup.Duration) {
+        if (resultDetail.groupBetType === ResultControlGroup.CoupleScores) {
             resultDetail.isScoreMismatched = this.verificationService.isMismatchedWarning(resultDetail);
             this.verificationService.autoFillScore(resultDetail);
             resultDetail.isScoreMismatched = this.verificationService.isMismatchedWarning(resultDetail);
+        } else if(resultDetail.groupBetType === ResultControlGroup.Duration) { // TODO
+            resultDetail.isScoreMismatched = this.verificationService.isMismatchedDurationWarning(resultDetail);
+            this.verificationService.autoFileScreenShotScore(resultDetail);
+            resultDetail.isScoreMismatched = this.verificationService.isMismatchedDurationWarning(resultDetail);
         } else {
             this.verificationService.autoFillEarlyResult(resultDetail);
             resultDetail.isScoreMismatched = this.verificationService.isEarlyMismatchedWarning(resultDetail);

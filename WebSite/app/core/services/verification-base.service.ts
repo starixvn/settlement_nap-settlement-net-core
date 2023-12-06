@@ -99,6 +99,24 @@ export class VerificationBaseService {
         }
     }
 
+    public autoFileScreenShotScore(map: ResultDetail) {
+        if (!(map.resultStatusId !== ResultStatusId.ManualCompleted && map.resultStatusId !== ResultStatusId.AutoCompleted)) {
+            return;
+        }
+
+        if (!this.isExistScoreSources(map) || map.isScoreMismatched) {
+            map.homeValue = '';
+            map.awayValue = '';
+            return;
+        }
+
+        const correctScore = _.find(map.externalScores, (source) =>
+            this.isExistedHomeScore(source.homeValue, source.awayValue) && source.sourceId === ScoreSourceType.screenshot);
+
+        map.homeValue = correctScore ? correctScore.homeValue : '';
+        map.awayValue =correctScore ? correctScore.awayValue : '';
+    }
+
     public isScoreConsecutive(resultDetails: GeneralResultDetail[], firstResourceId: string) {
         if (resultDetails.length === 1) {
             return false;
