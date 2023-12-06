@@ -286,7 +286,8 @@ export class LeagueComponent implements OnInit, OnChanges, OnDestroy {
     return ResultType.havingHalfTimeConfirmedStatus.includes(match.sportType)
       && !this.permission.isLeader // false => true
       && !match.isHalfTimeCal // flase => true
-      && (!this.isRefundHt(match) && !match.isCalRefund);
+      && (!this.isRefundHt(match) 
+      && !match.isCalRefund);
   }
 
   public isHideFinalScore(match: Match) {
@@ -299,6 +300,8 @@ export class LeagueComponent implements OnInit, OnChanges, OnDestroy {
 
   private isRefundHt(match: Match) {
    return match.eventStatus === EventStatus.refundHalftime
+   || (_.includes(ResultType.scoreInResultDetail, match.sportType) 
+            && _.isEqual(match.moreScores?.halfTimeScore?.home, Language.RefundSymbol.All))
   }
 
   public getInterval(match: Match) {
