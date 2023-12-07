@@ -451,18 +451,16 @@ export class VerificationBaseService {
     public isConsistentScoreTraderConfirm(originalResultDetails: ResultDetail[], resultDetails: ResultDetail[]) {
         return resultDetails.some(result => {
             const originalResult = originalResultDetails?.find(x => x.resourceId === result.resourceId);
-            return originalResult && (!_.isEqual(result.homeValue ?? "", originalResult.homeValue ?? "")
-                || !_.isEqual(result.awayValue ?? "", originalResult.awayValue ?? ""))
-                && !this.acceptCaseZero(originalResult,result);
+            return (!_.isEqual(result.homeValue, originalResult?.homeValue ?? "")
+                || !_.isEqual(result.awayValue, originalResult?.awayValue ?? ""));
         })
     }
 
     public isConsistentScoreProvider(resultDetails: ResultDetail[], externalResults: ExternalResultDetail[]) {
         return resultDetails.some(result => {
             const providerResult = externalResults?.find(x => x.resourceId === result.resourceId);
-            return providerResult && (!_.isEqual(providerResult.homeValue ?? "", result.homeValue ?? "") 
-                || !_.isEqual(providerResult.awayValue ?? "", result.awayValue ?? ""))
-                && !this.acceptCaseZero(providerResult,result);
+            return (!_.isEqual(providerResult?.homeValue ?? "", result.homeValue) 
+                || !_.isEqual(providerResult?.awayValue ?? "", result.awayValue));
         })
     }
 
