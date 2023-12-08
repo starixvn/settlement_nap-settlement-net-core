@@ -44,27 +44,8 @@ export class VerificationService extends VerificationBaseService  {
             : _.find(result.externalScores, (source) => source.sourceId < ScoreSourceType.screenshot && !_.isEmpty(source.homeValue));
     }
 
-    public isMismatchedDurationWarning(map: ResultDetail) {
-        const internalScore = _.find(map.externalScores, (source) => this.isExistedHomeAwayScore(source.homeValue, source.awayValue) 
-            && source.sourceId !== ScoreSourceType.screenshot);
-        
-        if (internalScore) {
-            return !this.isDurationScoreMatched(map, internalScore);
-        }
-
-        return false;
-    }
-
-    private isDurationScoreMatched(map: ResultDetail, scoreToCompare: ExternalResultDetail) {
-        if (!map.homeValue || !map.awayValue) {
-            return _.every(map.externalScores, (result: ExternalResultDetail) =>
-                (_.isEmpty(result.homeValue) || (_.isEqual(scoreToCompare.homeValue, result.homeValue))
-            ));
-        }
-
-        return _.every(map.externalScores, (result: ExternalResultDetail) =>
-            _.isEmpty(result.homeValue) ||
-            (_.isEqual(map.homeValue, result.homeValue))
-        );
-    }
+    public isMismatchedDurationWarning(map: ResultDetail) {  
+        return this.isEarlyMismatchedWarning(map) 
+        || this.isMismatchedScoreScreenshot(map);
+    } 
 }

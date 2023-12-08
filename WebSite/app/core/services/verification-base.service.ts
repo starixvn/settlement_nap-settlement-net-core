@@ -100,21 +100,40 @@ export class VerificationBaseService {
     }
 
     public autoFileScreenShotScore(map: ResultDetail) {
-        if (!(map.resultStatusId !== ResultStatusId.ManualCompleted && map.resultStatusId !== ResultStatusId.AutoCompleted)) {
-            return;
+        if (map.resultStatusId !== ResultStatusId.ManualCompleted && map.resultStatusId !== ResultStatusId.AutoCompleted) {
+            if (this.isExistScoreSources(map)) {
+                const correctScore = _.find(map.externalScores, (source) =>
+                    this.isExistedHomeAwayScore(source.homeValue, source.awayValue) && source.sourceId === ScoreSourceType.screenshot);
+                if (map.isScoreMismatched) {
+                    map.homeValue = '';
+                    map.awayValue = '';
+                } else {
+                    map.homeValue = correctScore.homeValue;
+                    map.awayValue = correctScore.awayValue;
+                }
+            } else {
+                map.homeValue = '';
+                map.awayValue = '';
+            }
         }
+    }
 
-        if (!this.isExistScoreSources(map) || map.isScoreMismatched) {
-            map.homeValue = '';
-            map.awayValue = '';
-            return;
-        }
+    public isExistMismatchedScoreScreenshot(resultDetails: ResultDetail[]) {
+        let isFlag = false;
+        resultDetails.forEach((map) => {
+            if (map.checked && this.isMismatchedScoreScreenshot(map)) {
+                isFlag = true;
+            }
+        });
 
-        const correctScore = _.find(map.externalScores, (source) =>
-            this.isExistedHomeScore(source.homeValue, source.awayValue) && source.sourceId === ScoreSourceType.screenshot);
+        return isFlag;
+    }
+    public isMismatchedScoreScreenshot(map: ResultDetail) {  
+        const screenshotScore = map.externalScores.find(x => x.sourceId === ScoreSourceType.screenshot 
+            && this.isExistedHomeAwayScore(x.homeValue,x.awayValue));
 
-        map.homeValue = correctScore ? correctScore.homeValue : '';
-        map.awayValue =correctScore ? correctScore.awayValue : '';
+        return this.isExistedHomeAwayScore(map.homeValue,map.awayValue)
+            && (!_.isEqual(map.homeValue,screenshotScore.homeValue) || !_.isEqual(map.awayValue,screenshotScore.awayValue));
     }
 
     public isScoreConsecutive(resultDetails: GeneralResultDetail[], firstResourceId: string) {
@@ -241,7 +260,7 @@ export class VerificationBaseService {
     public isExistEarlyResultSources(result: ResultDetail) {
         const providerResult = _.find(result.externalScores, (source) => source.sourceId < ScoreSourceType.screenshot
             && !_.isEmpty(source.homeValue));
-        const outsideResult = _.find(result.externalScores, (source) => source.sourceId >= ScoreSourceType.screenshot
+        const outsideResult = _.find(result.externalScores, (source) => source.sourceId === ScoreSourceType.screenshot
             && !_.isEmpty(source.homeValue));
 
         return providerResult && outsideResult;

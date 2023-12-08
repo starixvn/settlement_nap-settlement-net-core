@@ -200,8 +200,18 @@ export class EarlyBaseComponent {
             } else {
                 this.confirmationDialogMessage.message = Language.eSports.leader.mismatchedResult;
                 this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
-                    confirmChangedResults();
+                    this.confirmFinalScreenshotScore(confirmChangedResults);
                 });
+            }
+        } else {
+            confirmChangedResults();
+        }
+    }
+
+    public confirmFinalScreenshotScore(confirmChangedResults: () => void) {
+        if (this.verificationBaseService.isExistMismatchedScoreScreenshot(this.resultDetails)) {
+            if (this.permission.isLeader) {
+                this.toastrService.error(Language.eSports.nonLeader.mismatchedResult);
             }
         } else {
             confirmChangedResults();

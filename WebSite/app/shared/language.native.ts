@@ -153,7 +153,8 @@
             blankResult: `WARNING! Selected intervals' "Final Result" must not be blank. Please input "Final Result" values!`,
             insufficientSources: "WARNING! Insufficient Score Sources! Are you sure you want to proceed?",
             mismatchedScore: 'WARNING! There are inconsistent scores! Are you sure you want to proceed with "Final Score" values?',
-            mismatchedResult: 'WARNING! There are inconsistent results! Are you sure you want to proceed with "Final Result" values?'
+            mismatchedResult: 'WARNING! There are inconsistent results! Are you sure you want to proceed with "Final Result" values?',
+            mismatchedScreenshot: 'WARNING! Cannot continue due to values from Final Score inconsistent with Screenshot'
         },
         nonLeader: {
             blankScore: `WARNING! Selected intervals' "Final Score" must not be blank! Please check Score Sources or contact leaders.`,
