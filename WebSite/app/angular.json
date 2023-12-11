@@ -939,7 +939,7 @@
       }
     },
 
-    "basketball": {
+    "app": {
       "root": "app",
       "sourceRoot": "basketball",
       "projectType": "application",
@@ -949,7 +949,7 @@
           "options": {
             "aot": true,
             "outputPath": "../wwwroot/basketball",
-            "index": "basketball/index.cshtml",
+            "index": "basketball/index.html",
             "main": "basketball/main.ts",
             "tsConfig": "basketball/tsconfig.app.json",
             "polyfills": "polyfills.ts",

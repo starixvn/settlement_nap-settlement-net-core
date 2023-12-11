@@ -127,14 +127,14 @@ export class CalculationActionsComponent implements SportTemplate {
         if (this.verificationService.allMapHaveScoreSources(this.selectedResources)) {
             this.confirmCalculateMismatchScores();
         } else {
-            if (!this.isLeader) {
+            // if (!this.isLeader) {
                 this.toastrService.error(Language.eSports.nonLeader.insufficientSources);
-            } else {
-                this.confirmationDialogMessage.message = Language.eSports.leader.insufficientSources;
-                this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
-                    this.confirmCalculateMismatchScores();
-                });
-            }
+            // } else {
+            //     this.confirmationDialogMessage.message = Language.eSports.leader.insufficientSources;
+            //     this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
+            //         this.confirmCalculateMismatchScores();
+            //     });
+            // }
         }
     }
 

@@ -180,16 +180,16 @@ export class EarlyBaseComponent {
 
     public verifyScoreSourcesAndCalculate(confirmChangedResults: () => void) {
         if (this.verificationBaseService.allResultsHaveScoreSources(this.resultDetails)) {
-            this.confirmCalculateMismatchScores(confirmChangedResults);
+            this.confirmFinalScreenshotScore(confirmChangedResults);
         } else {
-            if (!this.permission.isLeader) {
+            // if (!this.permission.isLeader) {
                 this.toastrService.error(Language.eSports.nonLeader.insufficientSources);
-            } else {
-                this.confirmationDialogMessage.message = Language.eSports.leader.insufficientSources;
-                this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
-                    this.confirmCalculateMismatchScores(confirmChangedResults);
-                });
-            }
+            // } else {
+            //     this.confirmationDialogMessage.message = Language.eSports.leader.insufficientSources;
+            //     this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
+            //         this.confirmCalculateMismatchScores(confirmChangedResults);
+            //     });
+            // }
         }
     }
 
@@ -214,7 +214,7 @@ export class EarlyBaseComponent {
                 this.toastrService.error(Language.sop.leader.mismatchedScreenshot);
             }
         } else {
-            confirmChangedResults();
+            this.confirmCalculateMismatchScores(confirmChangedResults);
         }
     }
 
