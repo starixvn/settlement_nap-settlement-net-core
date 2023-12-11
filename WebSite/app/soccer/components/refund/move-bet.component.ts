@@ -56,7 +56,7 @@ export class MoveBetComponent implements OnInit {
   private async doMoveBetType() {
     const matchCode = _.find(this.listMatch, item => _.isEqual(item.matchId, this.matchIdSelected)).matchCode;
     const actionName = this.title.toUpperCase();
-    const result = await this.requestService.moveBetType(this.data.matchId, this.matchIdSelected, matchCode, actionName).toPromise();
+    const result = await this.requestService.moveBetType(this.data.matchId, this.matchIdSelected, matchCode, actionName);
     this.dialogRef.close({ result });
   }
 }

@@ -36,6 +36,7 @@
 		<Setting Key="NAP_Set_ProviderExternalResultDetailLatestInfoSel" SpName="NAP_Set_ProviderExternalResultDetailLatestInfoSel" DbName="DBPRO.bodb02.bodbAdminNet" />
 		<Setting Key="NAP_Set_OutsideSourceByLeagueSel" SpName="NAP_Set_OutsideSourceByLeagueSel" DbName="DBPRO.bodb02.bodbAdminNet" />
 		<Setting Key="NAP_Set_OutsideSourceByLeagueIns" SpName="NAP_Set_OutsideSourceByLeagueIns" DbName="DBPRO.bodb02.bodbAdminNet" />
+		<Setting Key="NAP_Set_ResultDetailSettingUpd" SpName="NAP_Set_ResultDetailSettingUpd" DbName="DBPRO.bodb02.bodbAdminNet" />
 	</Function>
 	<Function Name="Setting">
 		<Setting Key="NAP_Set_ExternalResultDetailOSIns" SpName="NAP_Set_ExternalResultDetailOSIns" DbName="DBPRO.bodb02.bodbAdminNet" />
@@ -56,6 +57,7 @@
 		<Setting Key="NAP_Set_AutoPayout_MatchSelDetail" SpName="NAP_Set_AutoPayout_MatchSelDetail" DbName="DBPRO.bodb02.bodbAdminNet" />
 		<Setting Key="NAP_Set_ResultDetailSel" SpName="NAP_Set_ResultDetailSel" DbName="DBPRO.bodb02.bodbAdminNet" />
 		<Setting Key="NAP_Set_MatchSelDetail_Auto_1s" SpName="NAP_Set_MatchSelDetail_Auto_1s" DbName="DBPRO.bodb02.bodbAdminNet" />
+		<Setting Key="NAP_Set_LetstalkMessage_Insert" SpName="NAP_Set_LetstalkMessage_Insert" DbName="DBTXN.bodb02.bodbAdminNet" />
 	</Function>
 	<Function Name="Execute Calculate and refund">
 		<Setting Key="NAP_Admin_Settlement_Validation_Event" SpName="NAP_Admin_Settlement_Validation_Event" DbName="DBPRO.bodb02.bodbAdminNet" />

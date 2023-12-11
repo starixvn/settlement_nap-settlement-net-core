@@ -17,5 +17,5 @@ export * from './query.model';
 export * from './result-detail.model';
 export * from './special-session.model';
 export * from './interval-event.model';
-export * from './get-lastest-result-query.model';
+export * from './get-latest-result-query.model';
 export * from './interval.model';

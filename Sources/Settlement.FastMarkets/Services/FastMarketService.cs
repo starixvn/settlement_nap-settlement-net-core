@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Fanex.Data.Repository;
 using Fanex.Settlement.ScaleOut.Constants;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
@@ -22,6 +21,8 @@ public interface IFastMarketService
     Task<List<FastMarketResult>> GetLatestResult(GetLatestResultRequest request);
 
     Task<List<TimeMachineResult>> GetTimeMachineResult(GetTimeMachineResultRequest request);
+
+    Task InsertMessageToLetstalk(InsertMessageRequest request);
 }
 
 public class FastMarketServiceImp : IFastMarketService
@@ -177,5 +178,38 @@ public class FastMarketServiceImp : IFastMarketService
         var result = await repository.FetchAsync<TimeMachineResult>(criteria);
 
         return result.ToList();
+    }
+
+    public async Task InsertMessageToLetstalk(InsertMessageRequest request)
+    {
+        var isOnAuto = await IsOnAutoSettle(request.MatchId);
+        if (isOnAuto)
+        {
+            return;
+        }
+
+        var (_, ticketsCount) = await multipleServerFetcherService.GetFastMarketTicketDetail(request.MatchId);
+        if (ticketsCount.BetRunningCount > 0)
+        {
+            const string message = "The match has been completed at @latest_settle_time with Auto-Settle FM turned OFF";
+            var criteria = new AddNotificationCriteria
+            {
+                MatchId = request.MatchId,
+                UserId = request.UserId,
+                ActionName = request.ActionName,
+                MessageContent = message
+            };
+            await repository.ExecuteAsync(criteria);
+        }
+    }
+
+    private async Task<bool> IsOnAutoSettle(int matchId)
+    {
+        const int convertToBase = 2;
+        var criteria = new GetMatchDetailCriteria { MatchId = matchId };
+        var matchDetail = await repository.GetAsync<Models.MatchDetail>(criteria);
+        var settingMatch = Convert.ToString(matchDetail.AutoSetting, convertToBase).Reverse();
+
+        return !string.IsNullOrWhiteSpace(settingMatch) && settingMatch.Length > 2 && settingMatch[2].Equals('1');
     }
 }

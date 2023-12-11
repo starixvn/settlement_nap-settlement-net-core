@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 import { Language } from '../../../shared/language.native';
 import { CalculateAction } from '../../../shared/constants';
-import { ModalDialogMessage, Result } from '../../../shared/models';
+import { ModalDialogMessage } from '../../../shared/models';
 import { Soccer } from '../soccer.model';
 import { MainRefundButtonStatus } from './model/button-status';
 import { BetDaq, BetFair, HedgeMatchDetail, Match, MatchDetail } from './model/match.model';
@@ -53,7 +53,7 @@ export class RefundComponent implements Soccer {
 
   async getMatch(matchId: number) {
     this.toastrService.overlayContainer = this.toastContainer;
-    this.match = await this.requestService.getMatch(matchId).toPromise() as Match;
+    this.match = await this.requestService.getMatch(matchId);
     this.matchDetail = this.match.matchDetail;
     this.hedgeMatchDetail = this.match.hedgeMatchDetail;
     this.matchDetail.applyHedgeMatch = this.hedgeMatchDetail != null && !this.hedgeMatchDetail.isUndecided;
@@ -106,7 +106,7 @@ export class RefundComponent implements Soccer {
 
   public async refundHalftime() {
     this.toastrService.clear();
-    const response = await this.requestService.checkingMarkedTicket(CalculateAction.refundHalfTime, this.matchDetail.matchId).toPromise();
+    const response = await this.requestService.checkingMarkedTicket(CalculateAction.refundHalfTime, this.matchDetail.matchId);
     if (response.isExistMarkedTicket) {
       this.toastrService.error(Language.MarkedTicket);
     } else {
@@ -115,8 +115,7 @@ export class RefundComponent implements Soccer {
   }
 
   private async checkStatusHalfTime() {
-    const response = await this.requestService.checkNewStatus(this.matchDetail.matchId,
-      CalculateAction.refundHalfTime, false).toPromise() as Result;
+    const response = await this.requestService.checkNewStatus(this.matchDetail.matchId, CalculateAction.refundHalfTime, false);
     if (response.isSuccessful) {
       this.matchDetail.isSettleAbandonedMatchIBC = false;
       this.dialogMessage.message = Language.soccer.refundHalfTime;
@@ -129,8 +128,7 @@ export class RefundComponent implements Soccer {
   }
 
   public async refundFullTime() {
-    const markedTicket = await this.requestService.checkingMarkedTicket(CalculateAction.refundFullTime,
-      this.matchDetail.matchId).toPromise();
+    const markedTicket = await this.requestService.checkingMarkedTicket(CalculateAction.refundFullTime, this.matchDetail.matchId);
     if (markedTicket.isExistMarkedTicket) {
       this.toastrService.error(Language.MarkedTicket);
     } else {
@@ -139,7 +137,7 @@ export class RefundComponent implements Soccer {
   }
 
   public async refundAll() {
-    const markedTicket = await this.requestService.checkingMarkedTicket(CalculateAction.refund, this.matchDetail.matchId).toPromise();
+    const markedTicket = await this.requestService.checkingMarkedTicket(CalculateAction.refund, this.matchDetail.matchId);
     if (markedTicket.isExistMarkedTicket) {
       this.toastrService.error(Language.MarkedTicket);
     } else {
@@ -186,7 +184,7 @@ export class RefundComponent implements Soccer {
   private async confirmRefund(refundType: string) {
     this.toastrService.clear();
     const actionName = _.isEqual(refundType, RefundType.refundAll) ? CalculateAction.refund : CalculateAction.refundFullTime;
-    const markedTicket = await this.requestService.checkingMarkedTicket(actionName, this.matchDetail.matchId).toPromise();
+    const markedTicket = await this.requestService.checkingMarkedTicket(actionName, this.matchDetail.matchId);
     if (markedTicket.isExistMarkedTicket) {
       this.toastrService.error(Language.MarkedTicket);
     } else {
@@ -201,18 +199,24 @@ export class RefundComponent implements Soccer {
     const hedgeMatch = this.matchDetail.applyHedgeMatch ? this.match.hedgeMatchDetail : null;
     const query = new RefundQuery(this.matchDetail, hedgeMatch,
       actionName, this.betDaq, this.betFair, this.isDeterminedHedgeMatch);
-    const result = await this.requestService.refundMatch(query).toPromise() as Result;
+    const result = await this.requestService.refundMatch(query);
     if (result.isSuccessful) {
+      await this.alertMessageToLetstalkForFastMarket(this.matchDetail.matchId, actionName);
       this.messageBoxService.closePopup();
     } else {
       this.toastrService.error(result.errMsg);
     }
   }
 
+  private async alertMessageToLetstalkForFastMarket(matchId: number, actionName: string) {
+    if(_.includes([CalculateAction.refundFullTime, CalculateAction.refund], actionName)) {
+        await this.requestService.alertMessageToLetstalkForFastMarket(matchId, actionName);
+    }
+}
   public async refundRunningThirdPartyTickets(isBetDaq: boolean) {
     this.toastrService.clear();
     const refundType = isBetDaq ? RefundType.refundBetDaq : RefundType.refundBetFair;
-    const result = await this.requestService.refundRunningThirdPartyTickets(this.matchDetail.matchId, refundType).toPromise() as Result;
+    const result = await this.requestService.refundRunningThirdPartyTickets(this.matchDetail.matchId, refundType);
     if (result.isSuccessful) {
       this.messageBoxService.closePopup();
     } else {

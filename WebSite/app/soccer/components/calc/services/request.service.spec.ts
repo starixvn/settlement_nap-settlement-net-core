@@ -60,7 +60,7 @@ describe('Soccer - request service', () => {
 
     it('getLastestMatchResult - Call exact Url and param', fakeAsync(() => {
         const matchId = 7000000;
-        const url = `${ApiUrl}/get-lastest-match-detail`;
+        const url = `${ApiUrl}/get-latest-match-detail`;
         const query = {
             matchId
         };

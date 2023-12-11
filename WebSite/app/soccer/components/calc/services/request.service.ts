@@ -3,7 +3,7 @@ import { firstValueFrom } from 'rxjs';
 import { HttpRequestService } from "../../../../shared/services";
 import { InstantCalculationQuery, SettleQuery, UncalculateFullTimeQuery } from "../models/query.model";
 import { Result } from "../../../../shared/models";
-import { Match, UndoChecking } from "../models/match.model";
+import { Match, MatchDetail, UndoChecking } from "../models/match.model";
 
 @Injectable()
 export class RequestService {
@@ -25,7 +25,8 @@ export class RequestService {
             actionName
         };
 
-        return this.httpRequestService.postJson(query, `${this.soccerApi}/check-status`);
+        const request = this.httpRequestService.postJson<Result>(query, `${this.soccerApi}/check-status`);
+        return firstValueFrom(request);
     }
 
     public getLastestMatchResult(matchId: number) {
@@ -33,7 +34,8 @@ export class RequestService {
             matchId
         };
 
-        return this.httpRequestService.postJson(query, `${this.soccerApi}/get-lastest-match-detail`);
+        const request =  this.httpRequestService.postJson<MatchDetail>(query, `${this.soccerApi}/get-latest-match-detail`);
+        return firstValueFrom(request);
     }
 
     public calculate(query: SettleQuery) {
@@ -57,6 +59,16 @@ export class RequestService {
 
     public pushInstantScore(query: InstantCalculationQuery) {
         const request = this.httpRequestService.postJson<Result>(query, `${this.soccerApi}/push-instant-score`);
+        return firstValueFrom(request);
+    }
+
+    public alertMessageToLetstalkForFastMarket(matchId: number, actionName: string) {
+        const query = {
+            matchId,
+            actionName
+        };
+        const fastMarketApi = "/api/fast-market";
+        const request = this.httpRequestService.postJson(query, `${fastMarketApi}/insert-message-letstalk`);
         return firstValueFrom(request);
     }
 }
