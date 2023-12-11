@@ -231,6 +231,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     }
 
     public verifyAndAutoFillResult(resultDetail: ResultDetail) {
+        console.log('abc');
         this.match.matchDetail.isSavedScore = false;
         if (resultDetail.groupBetType === ResultControlGroup.CoupleScores) {
             resultDetail.isScoreMismatched = this.verificationService.isMismatchedWarning(resultDetail);
@@ -248,10 +249,18 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
 
     public checkResultIsMatched(resultDetail: ResultDetail) {
         const isExistedCoupleResult = resultDetail.groupBetType === ResultControlGroup.CoupleScores
-            || resultDetail.groupBetType === ResultControlGroup.Duration;
-        resultDetail.isScoreMismatched = isExistedCoupleResult
-            ? this.verificationService.isMismatchedWarning(resultDetail)
-            : this.verificationService.isEarlyMismatchedWarning(resultDetail);
+        const isExistedDurationResult = resultDetail.groupBetType === ResultControlGroup.Duration
+        let isScoreMismatched = false; 
+        
+        if(isExistedCoupleResult) {
+            isScoreMismatched = this.verificationService.isMismatchedWarning(resultDetail)
+        } else if(isExistedDurationResult) {
+            isScoreMismatched = this.verificationService.isMismatchedDurationWarning(resultDetail);
+        } else {
+            isScoreMismatched = this.verificationService.isEarlyMismatchedWarning(resultDetail)
+        }
+
+        resultDetail.isScoreMismatched = isScoreMismatched;
     }
 
     public saveResult() {

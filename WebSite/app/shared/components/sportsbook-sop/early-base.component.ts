@@ -211,7 +211,7 @@ export class EarlyBaseComponent {
     public confirmFinalScreenshotScore(confirmChangedResults: () => void) {
         if (this.verificationBaseService.isExistMismatchedScoreScreenshot(this.resultDetails)) {
             if (this.permission.isLeader) {
-                this.toastrService.error(Language.eSports.nonLeader.mismatchedResult);
+                this.toastrService.error(Language.sop.leader.mismatchedScreenshot);
             }
         } else {
             confirmChangedResults();
