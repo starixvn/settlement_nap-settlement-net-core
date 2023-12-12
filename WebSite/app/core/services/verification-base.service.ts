@@ -121,7 +121,7 @@ export class VerificationBaseService {
     public isExistMismatchedScoreScreenshot(resultDetails: ResultDetail[]) {
         let isFlag = false;
         resultDetails.forEach((map) => {
-            if (map.checked && this.isMismatchedScoreScreenshot(map) && map.groupBetType === 5) { // duration
+            if (map.checked && this.isMismatchedScoreScreenshot(map)) { // duration
                 isFlag = true;
             }
         });

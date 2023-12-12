@@ -44,7 +44,8 @@ export class VerificationService extends VerificationBaseService  {
             : _.find(result.externalScores, (source) => source.sourceId < ScoreSourceType.screenshot && !_.isEmpty(source.homeValue));
     }
 
-    public isMismatchedDurationWarning(map: ResultDetail) {  
-        return  this.isEarlyMismatchedWarning(map) || this.isMismatchedScoreScreenshot(map);
+    public isMismatchedDurationWarning(map: ResultDetail,onLoad = false) {  
+        return  this.isEarlyMismatchedWarning(map) 
+        || (onLoad && this.isMismatchedScoreScreenshot(map));
     } 
 }

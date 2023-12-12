@@ -226,21 +226,20 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
 
     public autoFillResultOnLoad(resultDetails: ResultDetail[]) {
         _.forEach(resultDetails, (resultDetail) => {
-            this.verifyAndAutoFillResult(resultDetail);
+            this.verifyAndAutoFillResult(resultDetail,true);
         });
     }
 
-    public verifyAndAutoFillResult(resultDetail: ResultDetail) {
-        console.log('abc');
+    public verifyAndAutoFillResult(resultDetail: ResultDetail,onLoad = false) {
         this.match.matchDetail.isSavedScore = false;
         if (resultDetail.groupBetType === ResultControlGroup.CoupleScores) {
             resultDetail.isScoreMismatched = this.verificationService.isMismatchedWarning(resultDetail);
             this.verificationService.autoFillScore(resultDetail);
             resultDetail.isScoreMismatched = this.verificationService.isMismatchedWarning(resultDetail);
         } else if(resultDetail.groupBetType === ResultControlGroup.Duration) { // TODO
-            // resultDetail.isScoreMismatched = this.verificationService.isMismatchedDurationWarning(resultDetail);
+            resultDetail.isScoreMismatched = this.verificationService.isMismatchedDurationWarning(resultDetail,onLoad);
             this.verificationService.autoFileScreenShotScore(resultDetail);
-            resultDetail.isScoreMismatched = this.verificationService.isMismatchedDurationWarning(resultDetail);
+            resultDetail.isScoreMismatched = this.verificationService.isMismatchedDurationWarning(resultDetail,onLoad);
         } else {
             this.verificationService.autoFillEarlyResult(resultDetail);
             resultDetail.isScoreMismatched = this.verificationService.isEarlyMismatchedWarning(resultDetail);
@@ -255,7 +254,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         if(isExistedCoupleResult) {
             isScoreMismatched = this.verificationService.isMismatchedWarning(resultDetail)
         } else if(isExistedDurationResult) {
-            isScoreMismatched = this.verificationService.isMismatchedDurationWarning(resultDetail);
+            isScoreMismatched = this.verificationService.isMismatchedDurationWarning(resultDetail,true);
         } else {
             isScoreMismatched = this.verificationService.isEarlyMismatchedWarning(resultDetail)
         }
