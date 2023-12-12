@@ -1013,7 +1013,7 @@
         }
       }
     },
-    "app": {
+    "badminton": {
       "root": "app",
       "sourceRoot": "badminton",
       "projectType": "application",
@@ -1023,7 +1023,7 @@
           "options": {
             "aot": true,
             "outputPath": "../wwwroot/badminton",
-            "index": "badminton/index.html",
+            "index": "badminton/index.cshtml",
             "main": "badminton/main.ts",
             "tsConfig": "badminton/tsconfig.app.json",
             "polyfills": "polyfills.ts",
