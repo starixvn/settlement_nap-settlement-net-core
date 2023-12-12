@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import { Component, Injector } from '@angular/core';
 import { ResultDetail, GroupMap, Permission, SaveScoreQuery, MatchDetail } from '../../models/sportsbook-sop';
 import { ItemsSelect, ModalDialogMessage, MultipleSelect, ResultSettingQuery } from '../../models';
-import { BackgroundColor, CalculateAction, ResultSettingType, ResultStatusId, SettlementStatusId, TicketStatusText } from '../../constants';
+import { BackgroundColor, CalculateAction, ResultSettingType, ResultStatusId, SettlementStatusId, SportType, TicketStatusText } from '../../constants';
 import { AioService, MessageBoxService } from '../../services';
 import { VerificationBaseService } from '../../../core/services/verification-base.service';
 import { Language } from '../../language.native';
@@ -200,7 +200,7 @@ export class EarlyBaseComponent {
             } else {
                 this.confirmationDialogMessage.message = Language.eSports.leader.mismatchedResult;
                 this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
-                    this.confirmFinalScreenshotScore(confirmChangedResults);
+                    confirmChangedResults();
                 });
             }
         } else {
@@ -210,9 +210,7 @@ export class EarlyBaseComponent {
 
     public confirmFinalScreenshotScore(confirmChangedResults: () => void) {
         if (this.verificationBaseService.isExistMismatchedScoreScreenshot(this.resultDetails)) {
-            if (this.permission.isLeader) {
                 this.toastrService.error(Language.sop.leader.mismatchedScreenshot);
-            }
         } else {
             this.confirmCalculateMismatchScores(confirmChangedResults);
         }

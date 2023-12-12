@@ -135,16 +135,26 @@ export class CalculateActionsComponent implements SportTemplate {
 
   private verifyScoreSourcesAndCalculate() {
     if (this.verificationService.allMapHaveScoreSources(this.selectedResources)) {
-      this.confirmCalculateMismatchScores();
+      this.confirmFinalScreenshotScore();
     } else {
-      if (!this.isLeader) {
+      // if (!this.isLeader) {
         this.toastrService.error(Language.eSports.nonLeader.insufficientSources);
-      } else {
-        this.confirmationDialogMessage.message = Language.eSports.leader.insufficientSources;
-        this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
-          this.confirmCalculateMismatchScores();
-        });
-      }
+      // } else {
+      //   this.confirmationDialogMessage.message = Language.eSports.leader.insufficientSources;
+      //   this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
+      //     this.confirmCalculateMismatchScores();
+      //   });
+      // }
+    }
+  }
+
+  private confirmFinalScreenshotScore() {
+    if (this.verificationService.isExistMismatchedScoreScreenshot(this.selectedResources)) {
+        // if (this.isLeader) {
+            this.toastrService.error(Language.sop.leader.mismatchedScreenshot);
+        // }
+    } else {
+        this.confirmCalculateMismatchScores();
     }
   }
 

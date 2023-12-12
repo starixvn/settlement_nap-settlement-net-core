@@ -939,7 +939,7 @@
       }
     },
 
-    "app": {
+    "basketball": {
       "root": "app",
       "sourceRoot": "basketball",
       "projectType": "application",
@@ -949,7 +949,7 @@
           "options": {
             "aot": true,
             "outputPath": "../wwwroot/basketball",
-            "index": "basketball/index.html",
+            "index": "basketball/index.cshtml",
             "main": "basketball/main.ts",
             "tsConfig": "basketball/tsconfig.app.json",
             "polyfills": "polyfills.ts",
@@ -1013,7 +1013,7 @@
         }
       }
     },
-    "badminton": {
+    "app": {
       "root": "app",
       "sourceRoot": "badminton",
       "projectType": "application",
@@ -1023,7 +1023,7 @@
           "options": {
             "aot": true,
             "outputPath": "../wwwroot/badminton",
-            "index": "badminton/index.cshtml",
+            "index": "badminton/index.html",
             "main": "badminton/main.ts",
             "tsConfig": "badminton/tsconfig.app.json",
             "polyfills": "polyfills.ts",

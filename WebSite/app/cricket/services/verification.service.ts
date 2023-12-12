@@ -124,4 +124,33 @@ export class VerificationService  {
     public isDisableUncalculate(resultDetails: ResultDetail[]) {
         return _.every(resultDetails, (result) => !result.checked);
     }
+
+    public isExistMismatchedScoreScreenshot(resultDetails: ResultDetail[]) {
+        let isFlag = false;
+        resultDetails.forEach((map) => {
+            if (map.checked && this.isMismatchedScoreScreenshot(map)) {
+                isFlag = true;
+            }
+        });
+
+        return isFlag;
+    }
+
+    public isMismatchedScoreScreenshot(map: ResultDetail) {  
+        const screenshotScore = map.externalScores.find(x => x.sourceId === ScoreSourceType.screenshot);
+        if(_.isEmpty(screenshotScore?.homeValue)) {
+             return false;
+        }
+
+        if(this.isExistedHomeAwayScore(screenshotScore?.homeValue,screenshotScore?.awayValue,true)) {
+            return this.isExistedHomeAwayScore(map.homeValue,map.awayValue,true) 
+                && (!_.isEqual(map.homeValue,screenshotScore?.homeValue) || !_.isEqual(map.awayValue,screenshotScore?.awayValue));
+        }
+
+        if(!_.isEmpty(screenshotScore?.homeValue) && _.isEmpty(screenshotScore?.awayValue)) {
+            return !_.isEmpty(map.homeValue) && !_.isEqual(map.homeValue,screenshotScore?.homeValue)
+        }
+        
+        return false;
+    }
 }

@@ -571,7 +571,7 @@ export class CalculationActionsComponent implements SportTemplate {
     } else {
         this.confirmCalculateMismatchScores();
     }
-}
+  }
 
   private confirmCalculateMismatchScores() {
     if (this.verificationService.isExistMismatchScore(this.resultDetails)) {

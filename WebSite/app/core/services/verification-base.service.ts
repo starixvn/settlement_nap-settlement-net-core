@@ -121,20 +121,49 @@ export class VerificationBaseService {
     public isExistMismatchedScoreScreenshot(resultDetails: ResultDetail[]) {
         let isFlag = false;
         resultDetails.forEach((map) => {
-            if (map.checked && this.isMismatchedScoreScreenshot(map)) { // duration
+            if (map.checked && this.isMismatchedScoreScreenshot(map)) {
                 isFlag = true;
             }
         });
 
         return isFlag;
     }
-    public isMismatchedScoreScreenshot(map: ResultDetail) {  
-        const screenshotScore = map.externalScores.find(x => x.sourceId === ScoreSourceType.screenshot 
-            && this.isExistedHomeAwayScore(x.homeValue,x.awayValue));
 
-        return this.isExistedHomeAwayScore(map.homeValue,map.awayValue)
-            && (!_.isEqual(map.homeValue,screenshotScore.homeValue) || !_.isEqual(map.awayValue,screenshotScore.awayValue));
+    public isMismatchedScoreScreenshot(map: ResultDetail) {  
+        const screenshotScore = map.externalScores.find(x => x.sourceId === ScoreSourceType.screenshot);
+        if(_.isEmpty(screenshotScore?.homeValue)) {
+             return false;
+        }
+
+        if(this.isExistedHomeAwayScore(screenshotScore?.homeValue,screenshotScore?.awayValue)) {
+            return this.isExistedHomeAwayScore(map.homeValue,map.awayValue) 
+                && (!_.isEqual(map.homeValue,screenshotScore?.homeValue) || !_.isEqual(map.awayValue,screenshotScore?.awayValue));
+        }
+
+        if(!_.isEmpty(screenshotScore?.homeValue) && _.isEmpty(screenshotScore?.awayValue)) {
+            return !_.isEmpty(map.homeValue) && !_.isEqual(map.homeValue,screenshotScore?.homeValue)
+        }
+        
+        return false;
     }
+
+
+    // public isExistMismatchedHomeScoreScreenshot(resultDetails: ResultDetail[]) {
+    //     let isFlag = false;
+    //     resultDetails.forEach((map) => {
+    //         if (map.checked && this.isMismatchedHomeScoreScreenshot(map)) { // duration
+    //             isFlag = true;
+    //         }
+    //     });
+
+    //     return isFlag;
+    // }
+
+    // public isMismatchedHomeScoreScreenshot(map: ResultDetail) {  
+    //     const screenshotScore = map.externalScores.find(x => x.sourceId === ScoreSourceType.screenshot && !_.isEmpty(x.homeValue));
+
+    //     return !_.isEmpty(map.homeValue) && (!_.isEqual(map.homeValue,screenshotScore.homeValue));
+    // }
 
     public isScoreConsecutive(resultDetails: GeneralResultDetail[], firstResourceId: string) {
         if (resultDetails.length === 1) {
