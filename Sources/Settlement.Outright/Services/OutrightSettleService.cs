@@ -203,7 +203,7 @@ public class OutrightSettleServiceImp : OutrightSettleService
         criteria.AdminId = currentSession.UserId;
         criteria.Deadheat = team.IsDeadheat ? deadHeat : null;
         var updateResult = await outrightSettleProcessService.UpdateResultCalculate(criteria);
-        if (!updateResult.IsSuccessful || team.Status == StatusHide)
+        if (!updateResult.IsSuccessful)
         {
             return updateResult;
         }
