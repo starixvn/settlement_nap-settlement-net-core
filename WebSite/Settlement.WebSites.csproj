@@ -70,5 +70,11 @@
     <ProjectReference Include="..\Sources\Settlement.ThirdPartyProducts\Settlement.ThirdPartyProducts.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="appsettings.KLDR.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
   
 </Project>
