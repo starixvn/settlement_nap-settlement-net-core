@@ -180,7 +180,7 @@ export class EarlyBaseComponent {
 
     public verifyScoreSourcesAndCalculate(confirmChangedResults: () => void) {
         if(this.verificationBaseService.allMapHaveScreenshotSource(this.resultDetails)) {
-            this.toastrService.error(Language.sop.mismatchedScreenshot)
+            this.toastrService.error(Language.sop.notScreenshot)
         } else if (this.verificationBaseService.allResultsHaveScoreSources(this.resultDetails)) {
             this.confirmFinalScreenshotScore(confirmChangedResults);
         } else {
