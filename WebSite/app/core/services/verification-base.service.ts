@@ -86,7 +86,6 @@ export class VerificationBaseService {
 
     public isExistScreenshotSource(map: ResultDetail) {
         const outsideScore = _.find(map.externalScores, (source) => source.sourceId === ScoreSourceType.screenshot && !_.isEmpty(source.homeValue));
-        console.log(outsideScore)
         return outsideScore;
     }
 
