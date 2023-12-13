@@ -101,6 +101,25 @@ export class VerificationService  {
         return result;
     }
 
+    public allMapHaveScreenshotSource(resultDetails: ResultDetail[]) {
+        const checkedResults = resultDetails.filter((result: ResultDetail) => result.checked);
+        let result = true;
+        _.forEach(checkedResults, (map) => {
+            if (!this.isExistScoreSources(map, map.resourceId === ResourcesIds.final) && !this.isExistScreenshotSource(map)) {
+                result = false;
+            }
+        });
+
+        return result;
+    }
+
+    
+    public isExistScreenshotSource(map: ResultDetail) {
+        const outsideScore = _.find(map.externalScores, (source) => source.sourceId === ScoreSourceType.screenshot && !_.isEmpty(source.homeValue));
+        return outsideScore;
+    }
+
+
     public isExistInhouseResult(result: ResultDetail) {
         return (result.inputType === ResultControlGroup.CoupleScores)
             ? _.find(result.externalScores, (source) => source.sourceId < ScoreSourceType.screenshot

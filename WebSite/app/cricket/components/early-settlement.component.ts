@@ -114,17 +114,19 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
   }
 
   private verifyScoreSources() {
-    if (this.verificationService.allResultsHaveScoreSources(this.match.resultDetails)) {
+    if(!this.verificationService.allMapHaveScreenshotSource(this.match.resultDetails)) {
+      this.toastrService.error(Language.sop.notScreenshot);
+    } else if (this.verificationService.allResultsHaveScoreSources(this.match.resultDetails)) {
        this.confirmFinalScreenshotScore(() => this.confirmChangedResults());
     } else {
-      // if (!this.permission.isLeader) {
+      if (!this.permission.isLeader) {
         this.toastrService.error(Language.eSports.nonLeader.insufficientSources);
-      // } else {
-      //   this.confirmationDialogMessage.message = Language.eSports.leader.insufficientSources;
-      //   this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
-      //     this.confirmCalculateMismatchScores(() => this.confirmChangedResults());
-      //   });
-      // }
+      } else {
+        this.confirmationDialogMessage.message = Language.eSports.leader.insufficientSources;
+        this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
+          this.confirmFinalScreenshotScore(() => this.confirmChangedResults());
+        });
+      }
     }
   }
   

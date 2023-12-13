@@ -547,7 +547,7 @@ export class CalculationActionsComponent implements SportTemplate {
 
   private verifyScoreSourcesAndCalculate() {
     if(!this.verificationService.allMapHaveScreenshotSource(this.resultDetails)) {
-      this.toastrService.error(Language.sop.notScreenshot)
+      this.toastrService.error(Language.sop.notScreenshot);
     } else if (this.verificationService.allMapHaveScoreSources(this.resultDetails)) {
       this.confirmFinalScreenshotScore();
     } else {
