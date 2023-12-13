@@ -73,8 +73,9 @@ export class VerificationBaseService {
     }
 
     public allMapHaveScreenshotSource(resultDetails: ResultDetail[]) {
+        const checkedResults = resultDetails.filter((result: ResultDetail) => result.checked);
         let result = true;
-        _.forEach(resultDetails, (map) => {
+        _.forEach(checkedResults, (map) => {
             if (!this.isExistScreenshotSource(map)) {
                 result = false;
             }
@@ -85,8 +86,8 @@ export class VerificationBaseService {
 
     public isExistScreenshotSource(map: ResultDetail) {
         const outsideScore = _.find(map.externalScores, (source) => source.sourceId === ScoreSourceType.screenshot && !_.isEmpty(source.homeValue));
-
-        return !!outsideScore;
+        console.log(outsideScore)
+        return outsideScore;
     }
 
     public isExistedHomeAwayScore(homeValue: string, awayValue: string) {
@@ -163,24 +164,6 @@ export class VerificationBaseService {
         
         return false;
     }
-
-
-    // public isExistMismatchedHomeScoreScreenshot(resultDetails: ResultDetail[]) {
-    //     let isFlag = false;
-    //     resultDetails.forEach((map) => {
-    //         if (map.checked && this.isMismatchedHomeScoreScreenshot(map)) { // duration
-    //             isFlag = true;
-    //         }
-    //     });
-
-    //     return isFlag;
-    // }
-
-    // public isMismatchedHomeScoreScreenshot(map: ResultDetail) {  
-    //     const screenshotScore = map.externalScores.find(x => x.sourceId === ScoreSourceType.screenshot && !_.isEmpty(x.homeValue));
-
-    //     return !_.isEmpty(map.homeValue) && (!_.isEqual(map.homeValue,screenshotScore.homeValue));
-    // }
 
     public isScoreConsecutive(resultDetails: GeneralResultDetail[], firstResourceId: string) {
         if (resultDetails.length === 1) {
