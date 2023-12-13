@@ -72,6 +72,23 @@ export class VerificationBaseService {
         return providerScore && outsideScore;
     }
 
+    public allMapHaveScreenshotSource(resultDetails: ResultDetail[]) {
+        let result = true;
+        _.forEach(resultDetails, (map) => {
+            if (!this.isExistScreenshotSource(map)) {
+                result = false;
+            }
+        });
+
+        return result;
+    }
+
+    public isExistScreenshotSource(map: ResultDetail) {
+        const outsideScore = _.find(map.externalScores, (source) => source.sourceId === ScoreSourceType.screenshot && !_.isEmpty(source.homeValue));
+
+        return !!outsideScore;
+    }
+
     public isExistedHomeAwayScore(homeValue: string, awayValue: string) {
         return !_.isEmpty(homeValue) && !_.isEmpty(awayValue);
     }
@@ -99,7 +116,7 @@ export class VerificationBaseService {
         }
     }
 
-    public autoFileScreenShotScore(map: ResultDetail) {
+    public autoFillScreenShotScore(map: ResultDetail) {
         if (map.resultStatusId !== ResultStatusId.ManualCompleted && map.resultStatusId !== ResultStatusId.AutoCompleted) {
             if (this.isExistScoreSources(map)) {
                 const correctScore = _.find(map.externalScores, (source) =>

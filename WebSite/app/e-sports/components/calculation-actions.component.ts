@@ -124,29 +124,29 @@ export class CalculationActionsComponent implements SportTemplate {
     }
 
     private verifyScoreSourcesAndCalculate() {
-        if (this.verificationService.allMapHaveScoreSources(this.selectedResources)) {
+        if(this.verificationService.allMapHaveScreenshotSource(this.selectedResources)) {
+            this.toastrService.error(Language.sop.mismatchedScreenshot)
+        } else if (this.verificationService.allMapHaveScoreSources(this.selectedResources)) {
             this.confirmFinalScreenshotScore();
-        } else {
-            // if (!this.isLeader) {
+        }  else {
+            if (!this.isLeader) {
                 this.toastrService.error(Language.eSports.nonLeader.insufficientSources);
-            // } else {
-            //     this.confirmationDialogMessage.message = Language.eSports.leader.insufficientSources;
-            //     this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
-            //         this.confirmCalculateMismatchScores();
-            //     });
-            // }
+            } else {
+                this.confirmationDialogMessage.message = Language.eSports.leader.insufficientSources;
+                this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
+                    this.confirmFinalScreenshotScore();
+                });
+            }
         }
     }
     
     private confirmFinalScreenshotScore() {
         if (this.verificationService.isExistMismatchedScoreScreenshot(this.selectedResources)) {
-        // if (this.isLeader) {
-            this.toastrService.error(Language.sop.leader.mismatchedScreenshot);
-        // }
+            this.toastrService.error(Language.sop.mismatchedScreenshot);
         } else {
             this.confirmCalculateMismatchScores();
         }
-        }
+    }
 
     private confirmCalculateMismatchScores() {
         if (this.verificationService.isExistMismatchScore(this.match.resultDetails)) {
