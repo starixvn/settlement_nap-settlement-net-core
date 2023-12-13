@@ -546,9 +546,9 @@ export class CalculationActionsComponent implements SportTemplate {
   }
 
   private verifyScoreSourcesAndCalculate() {
-    if(this.verificationService.allMapHaveScreenshotSource(this.resultDetails)) {
-
-    } else if (this.verificationService.allMapHaveScoreSources(this.resultDetails)) {
+    if(!this.verificationService.allMapHaveScreenshotSource(this.resultDetails)) {
+      this.toastrService.error(Language.sop.notScreenshot)
+    }  if (this.verificationService.allMapHaveScoreSources(this.resultDetails)) {
       this.confirmFinalScreenshotScore();
     } else {
       // if (!this.isLeader) {
