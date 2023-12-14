@@ -153,12 +153,13 @@ export class VerificationBaseService {
         }
 
         if(this.hasScore(map) || this.hasScore(screenshotScore)) {
-            return (!_.isEqual(map.homeValue,screenshotScore?.homeValue) || !_.isEqual(map.awayValue,screenshotScore?.awayValue));
+            return !(_.isEmpty(map.homeValue) && _.isEmpty(map.awayValue)) 
+                && (!_.isEqual(map.homeValue,screenshotScore?.homeValue) || !_.isEqual(map.awayValue,screenshotScore?.awayValue));
         }
 
         if((!_.isEmpty(screenshotScore?.homeValue) && _.isEmpty(screenshotScore?.awayValue)) 
             || (!_.isEmpty(map.homeValue) && _.isEmpty(map.awayValue))) {
-            return !_.isEqual(map.homeValue,screenshotScore?.homeValue)
+            return !_.isEmpty(map.homeValue) && !_.isEqual(map.homeValue,screenshotScore?.homeValue)
         }
         
         return false;
