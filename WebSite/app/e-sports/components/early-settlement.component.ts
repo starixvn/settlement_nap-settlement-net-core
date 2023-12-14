@@ -237,9 +237,9 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
             this.verificationService.autoFillScore(resultDetail);
             resultDetail.isScoreMismatched = this.verificationService.isMismatchedWarning(resultDetail);
         } else if(resultDetail.groupBetType === ResultControlGroup.Duration) { // TODO
-            resultDetail.isScoreMismatched = this.verificationService.isMismatchedDurationWarning(resultDetail,onLoad);
+            resultDetail.isScoreMismatched = this.verificationService.isMismatchedDurationWarning(resultDetail,true);
             this.verificationService.autoFillScreenShotScore(resultDetail);
-            resultDetail.isScoreMismatched = this.verificationService.isMismatchedDurationWarning(resultDetail,onLoad);
+            resultDetail.isScoreMismatched = this.verificationService.isMismatchedDurationWarning(resultDetail,true);
         } else {
             this.verificationService.autoFillEarlyResult(resultDetail);
             resultDetail.isScoreMismatched = this.verificationService.isEarlyMismatchedWarning(resultDetail);
