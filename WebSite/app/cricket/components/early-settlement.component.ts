@@ -116,15 +116,23 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
   private verifyScoreSources() {
     if(!this.verificationService.allMapHaveScreenshotSource(this.match.resultDetails)) {
       this.toastrService.error(Language.sop.notScreenshot);
-    } else if (this.verificationService.allResultsHaveScoreSources(this.match.resultDetails)) {
-       this.confirmFinalScreenshotScore(() => this.confirmChangedResults());
+      return;
+    }
+
+    if(this.verificationService.isExistMismatchedScoreScreenshot(this.match.resultDetails)) {
+      this.toastrService.error(Language.sop.mismatchedScreenshot);
+      return;
+    }
+    
+    if (this.verificationService.allResultsHaveScoreSources(this.match.resultDetails)) {
+       this.confirmCalculateMismatchScores(() => this.confirmChangedResults());
     } else {
       if (!this.permission.isLeader) {
         this.toastrService.error(Language.eSports.nonLeader.insufficientSources);
       } else {
         this.confirmationDialogMessage.message = Language.eSports.leader.insufficientSources;
         this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
-          this.confirmFinalScreenshotScore(() => this.confirmChangedResults());
+          this.confirmCalculateMismatchScores(() => this.confirmChangedResults());
         });
       }
     }

@@ -168,28 +168,28 @@ export class CalculationActionsComponent implements SportTemplate {
     private verifyScoreSourcesAndCalculate() {
         if(!this.verificationService.allMapHaveScreenshotSource(this.match.resultDetails)) {
             this.toastrService.error(Language.sop.notScreenshot);
-        } else if (this.verificationService.allMapHaveScoreSources(this.match.resultDetails)) {
-            this.confirmFinalScreenshotScore();
+            return;
+        }
+
+        if (this.verificationService.isExistMismatchedScoreScreenshot(this.match.resultDetails)) {
+            this.toastrService.error(Language.sop.mismatchedScreenshot);
+            return;
+        } 
+        
+        if (this.verificationService.allMapHaveScoreSources(this.match.resultDetails)) {
+            this.confirmCalculateMismatchScores();
         } else {
             if (this.isLeader) {
                 this.confirmationDialogMessage.message = Language.eSports.leader.insufficientSources;
                 this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
-                    this.confirmFinalScreenshotScore();
+                    this.confirmCalculateMismatchScores();
                 });
             } else {
                 this.toastrService.error(Language.eSports.nonLeader.insufficientSources);
             }
         }
     }
-
-    private confirmFinalScreenshotScore() {
-        if (this.verificationService.isExistMismatchedScoreScreenshot(this.match.resultDetails)) {
-            this.toastrService.error(Language.sop.mismatchedScreenshot);
-        } else {
-            this.confirmCalculateMismatchScores();
-        }
-      }
-
+    
     private confirmCalculateMismatchScores() {
         if (this.verificationBaseService.isExistMismatchScore(this.match.resultDetails)) {
             if (this.isLeader) {
