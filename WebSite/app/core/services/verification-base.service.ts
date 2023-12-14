@@ -85,7 +85,7 @@ export class VerificationBaseService {
     }
 
     public isExistScreenshotSource(map: ResultDetail) {
-        const outsideScore = _.find(map.externalScores, (source) => source.sourceId === ScoreSourceType.screenshot && !_.isEmpty(source.homeValue));
+        const outsideScore = _.find(map.externalScores, (source) => source.sourceId === ScoreSourceType.screenshot && (!_.isEmpty(source.homeValue) || !_.isEmpty(source.awayValue)));
         return outsideScore;
     }
 
@@ -152,13 +152,13 @@ export class VerificationBaseService {
              return false;
         }
 
-        if(this.isExistedHomeAwayScore(screenshotScore?.homeValue,screenshotScore?.awayValue)) {
-            return this.isExistedHomeAwayScore(map.homeValue,map.awayValue) 
-                && (!_.isEqual(map.homeValue,screenshotScore?.homeValue) || !_.isEqual(map.awayValue,screenshotScore?.awayValue));
+        if(this.hasScore(map) || this.hasScore(screenshotScore)) {
+            return (!_.isEqual(map.homeValue,screenshotScore?.homeValue) || !_.isEqual(map.awayValue,screenshotScore?.awayValue));
         }
 
-        if(!_.isEmpty(screenshotScore?.homeValue) && _.isEmpty(screenshotScore?.awayValue)) {
-            return !_.isEmpty(map.homeValue) && !_.isEqual(map.homeValue,screenshotScore?.homeValue)
+        if((!_.isEmpty(screenshotScore?.homeValue) && _.isEmpty(screenshotScore?.awayValue)) 
+            || (!_.isEmpty(map.homeValue) && _.isEmpty(map.awayValue))) {
+            return !_.isEqual(map.homeValue,screenshotScore?.homeValue)
         }
         
         return false;

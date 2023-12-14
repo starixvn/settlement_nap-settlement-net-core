@@ -161,13 +161,13 @@ export class VerificationService  {
              return false;
         }
 
-        if(this.isExistedHomeAwayScore(screenshotScore?.homeValue,screenshotScore?.awayValue,true)) {
-            return this.isExistedHomeAwayScore(map.homeValue,map.awayValue,true) 
-                && (!_.isEqual(map.homeValue,screenshotScore?.homeValue) || !_.isEqual(map.awayValue,screenshotScore?.awayValue));
+        if(this.isExistedHomeAwayScore(map.homeValue,map.awayValue,true) || this.isExistedHomeAwayScore(screenshotScore.homeValue,screenshotScore.awayValue,true)) {
+            return (!_.isEqual(map.homeValue,screenshotScore?.homeValue) || !_.isEqual(map.awayValue,screenshotScore?.awayValue));
         }
 
-        if(!_.isEmpty(screenshotScore?.homeValue) && _.isEmpty(screenshotScore?.awayValue)) {
-            return !_.isEmpty(map.homeValue) && !_.isEqual(map.homeValue,screenshotScore?.homeValue)
+        if((!_.isEmpty(screenshotScore?.homeValue) && _.isEmpty(screenshotScore?.awayValue)) 
+            || (!_.isEmpty(map.homeValue) && _.isEmpty(map.awayValue))) {
+            return !_.isEqual(map.homeValue,screenshotScore?.homeValue)
         }
         
         return false;
