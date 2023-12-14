@@ -180,16 +180,24 @@ export class EarlyBaseComponent {
 
     public verifyScoreSourcesAndCalculate(confirmChangedResults: () => void) {
         if(!this.verificationBaseService.allMapHaveScreenshotSource(this.resultDetails)) {
-            this.toastrService.error(Language.sop.notScreenshot)
-        } else if (this.verificationBaseService.allResultsHaveScoreSources(this.resultDetails)) {
-            this.confirmFinalScreenshotScore(confirmChangedResults);
+            this.toastrService.error(Language.sop.notScreenshot);
+            return;
+        }
+ 
+        if(this.verificationBaseService.isExistMismatchedScoreScreenshot(this.resultDetails)) {
+            this.toastrService.error(Language.sop.mismatchedScreenshot);
+            return;
+        }
+        
+        if (this.verificationBaseService.allResultsHaveScoreSources(this.resultDetails)) {
+            this.confirmCalculateMismatchScores(confirmChangedResults);
         } else {
             if (!this.permission.isLeader) {
                 this.toastrService.error(Language.eSports.nonLeader.insufficientSources);
             } else {
                 this.confirmationDialogMessage.message = Language.eSports.leader.insufficientSources;
                 this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
-                    this.confirmFinalScreenshotScore(confirmChangedResults);
+                    this.confirmCalculateMismatchScores(confirmChangedResults);
                 });
             }
         }
@@ -207,14 +215,6 @@ export class EarlyBaseComponent {
             }
         } else {
             confirmChangedResults();
-        }
-    }
-
-    public confirmFinalScreenshotScore(confirmChangedResults: () => void) {
-        if (this.verificationBaseService.isExistMismatchedScoreScreenshot(this.resultDetails)) {
-                this.toastrService.error(Language.sop.mismatchedScreenshot);
-        } else {
-            this.confirmCalculateMismatchScores(confirmChangedResults);
         }
     }
 

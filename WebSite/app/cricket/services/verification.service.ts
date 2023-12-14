@@ -83,7 +83,7 @@ export class VerificationService  {
     private isExistScoreSources(map: ResultDetail, coupleScores: boolean) {
         const providerScore = _.find(map.externalScores, (source) => source.sourceId < ScoreSourceType.screenshot
             && this.isExistedHomeAwayScore(source.homeValue, source.awayValue, coupleScores));
-        const outsideScore = _.find(map.externalScores, (source) => source.sourceId >= ScoreSourceType.screenshot
+        const outsideScore = _.find(map.externalScores, (source) => source.sourceId === ScoreSourceType.screenshot
             && this.isExistedHomeAwayScore(source.homeValue, source.awayValue, coupleScores));
 
         return providerScore && outsideScore;
