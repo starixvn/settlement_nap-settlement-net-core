@@ -268,7 +268,7 @@ export class VerificationBaseService {
                 _.isEqual(scoreToCompare.homeValue, externalResult.homeValue)
             );
         }
-
+        
         return _.every(result.externalScores, (externalResult: ExternalResultDetail) =>
             _.isEmpty(externalResult.homeValue) ||
             _.isEqual(result.homeValue, externalResult.homeValue)
