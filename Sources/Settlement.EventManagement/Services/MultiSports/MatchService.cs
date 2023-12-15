@@ -124,7 +124,16 @@ public class MatchServiceImp : IMatchService
             SportType.Finance,
             SportType.FieldHockey,
             SportType.Squash,
-            SportType.SepakTakraw
+            SportType.SepakTakraw,
+            SportType.AlpineSkiing,
+            SportType.Biathlon,
+            SportType.Curling,
+            SportType.FigureSkating,
+            SportType.FreestyleSkiing,
+            SportType.Luge,
+            SportType.Skeleton,
+            SportType.SkiJumping,
+            SportType.SpeedSkating
         };
 
     private readonly List<int> halfTimeFullTimeSports = new()

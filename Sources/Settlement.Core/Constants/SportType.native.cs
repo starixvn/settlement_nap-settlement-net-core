@@ -114,6 +114,24 @@ public static class SportType
 
     public const int Bandy = 58;
 
+    public const int AlpineSkiing = 57;
+
+    public const int Biathlon = 59;
+
+    public const int Curling = 60;
+
+    public const int FigureSkating = 61;
+
+    public const int FreestyleSkiing = 62;
+
+    public const int Luge = 63;
+
+    public const int Skeleton = 64;
+
+    public const int SkiJumping = 65;
+
+    public const int SpeedSkating = 66;
+
     public const int NumberGame = 161;
 
     public const int Happy5 = 164;

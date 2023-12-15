@@ -29,7 +29,6 @@ export class FullTimeCalculationComponent implements SportTemplate {
   public scoreClass: string;
   public confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
   public muayThai = SportType.muayThai;
-  public isSupportExternalResult: boolean;
   private oldBetStatus = '';
   private readonly maxRound = 5;
   private refResultStatus: number = null;
@@ -49,7 +48,6 @@ export class FullTimeCalculationComponent implements SportTemplate {
     this.permission = otherSportsMatch.permission;
     this.matchDetail = this.match.matchDetail;
     this.isReadyMatch = this.isCompletedOrConfirmScore || this.checkPlayTimeBySportType;
-    this.isSupportExternalResult = !UpcommingSports.includes(this.matchDetail.sportType);
     this.fullTimeService.initScoreByPermission(this.matchDetail, this.permission);
     this.resetScore();
   }
