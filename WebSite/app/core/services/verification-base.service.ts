@@ -148,18 +148,20 @@ export class VerificationBaseService {
 
     public isMismatchedScoreScreenshot(map: ResultDetail) {  
         const screenshotScore = map.externalScores.find(x => x.sourceId === ScoreSourceType.screenshot);
-        if(_.isEmpty(screenshotScore?.homeValue)) {
+        if(_.isEmpty(screenshotScore.homeValue)) {
              return false;
         }
 
         if(this.hasScore(map) || this.hasScore(screenshotScore)) {
-            return !(_.isEmpty(map.homeValue) && _.isEmpty(map.awayValue)) 
-                && (!_.isEqual(map.homeValue,screenshotScore?.homeValue) || !_.isEqual(map.awayValue,screenshotScore?.awayValue));
+            console.log(map);
+            console.log(screenshotScore);
+            return !(_.isEmpty(map.homeValue) && _.isEmpty(map.awayValue)) && !(_.isEmpty(screenshotScore.homeValue) && _.isEmpty(screenshotScore.awayValue))
+                && (!_.isEqual(map.homeValue,screenshotScore?.homeValue) || !_.isEqual(map.awayValue,screenshotScore.awayValue));
         }
 
-        if((!_.isEmpty(screenshotScore?.homeValue) && _.isEmpty(screenshotScore?.awayValue)) 
+        if((!_.isEmpty(screenshotScore.homeValue) && _.isEmpty(screenshotScore?.awayValue)) 
             || (!_.isEmpty(map.homeValue) && _.isEmpty(map.awayValue))) {
-            return !_.isEmpty(map.homeValue) && !_.isEqual(map.homeValue,screenshotScore?.homeValue)
+            return !_.isEmpty(map.homeValue) && !_.isEqual(map.homeValue,screenshotScore.homeValue)
         }
         
         return false;

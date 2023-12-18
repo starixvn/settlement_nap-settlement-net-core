@@ -44,17 +44,19 @@ export class VerificationService extends VerificationBaseService {
             : _.find(result.externalScores, (source) => source.sourceId < ScoreSourceType.screenshot && !_.isEmpty(source.homeValue));
     }
 
-    public isMismatchedDurationWarning(map: ResultDetail) {
+    public isMismatchedDurationWarning(map: ResultDetail,onScreenshot = false) {
         if (this.isEarlyMismatchedWarning(map)) {
             return true;
         }
     
         const screenshotScore = map.externalScores.find(x => x.sourceId === ScoreSourceType.screenshot);
     
-        if (this.hasScore(map) && this.hasScore(screenshotScore)) {
-            return !_.isEqual(map.homeValue, screenshotScore?.homeValue) || !_.isEqual(map.awayValue, screenshotScore?.awayValue);
+        if (onScreenshot && this.hasScore(map) && this.hasScore(screenshotScore)) {
+            return !_.isEqual(map.homeValue, screenshotScore.homeValue) || !_.isEqual(map.awayValue, screenshotScore.awayValue);
         }
 
         return false;
+
+        // return  this.isEarlyMismatchedWarning(map) || this.isMismatchedScoreScreenshot(map);
     }
 }

@@ -239,7 +239,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         } else if(resultDetail.groupBetType === ResultControlGroup.Duration) { // TODO
             resultDetail.isScoreMismatched = this.verificationService.isMismatchedDurationWarning(resultDetail);
             this.verificationService.autoFillScreenShotScore(resultDetail);
-            resultDetail.isScoreMismatched = this.verificationService.isMismatchedDurationWarning(resultDetail);
+            resultDetail.isScoreMismatched = this.verificationService.isMismatchedDurationWarning(resultDetail,true);
         } else {
             this.verificationService.autoFillEarlyResult(resultDetail);
             resultDetail.isScoreMismatched = this.verificationService.isEarlyMismatchedWarning(resultDetail);
@@ -254,7 +254,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         if(isExistedCoupleResult) {
             isScoreMismatched = this.verificationService.isMismatchedWarning(resultDetail)
         } else if(isExistedDurationResult) {
-            isScoreMismatched = this.verificationService.isMismatchedDurationWarning(resultDetail);
+            isScoreMismatched = this.verificationService.isMismatchedDurationWarning(resultDetail,true);
         } else {
             isScoreMismatched = this.verificationService.isEarlyMismatchedWarning(resultDetail)
         }
