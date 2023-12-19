@@ -1,0 +1,23 @@
+<div class="title">
+	<div>
+		<div class="square-icon"></div>
+		Turn On/Off Auto Settle for League
+	</div>
+
+	<div class="content">
+		<ul class="auto-settings">
+			<li>
+				<input type="radio" [(ngModel)]="leagueSettings.AutoSetting" [value]="1" id="auto-payout" name="auto-setting" />
+				<label for="auto-payout">Auto Payout</label>
+			</li>
+			<li>
+				<input type="radio" [(ngModel)]="leagueSettings.AutoSetting" [value]="5" id="direct-payout" name="auto-setting" />
+				<label for="direct-payout">Direct Payout</label>
+			</li>
+			<li>
+				<input type="radio" [(ngModel)]="leagueSettings.AutoSetting" [value]="0" id="off" name="auto-setting" />
+				<label for="off">OFF</label>
+			</li>
+		</ul>
+	</div>
+</div>

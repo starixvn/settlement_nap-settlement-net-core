@@ -5,6 +5,7 @@ import { Observable, firstValueFrom } from 'rxjs';
 import { TimeSettingQuery, GetRemarkQuery, ChangeSettingQuery, RemarkAndPermission } from '../models';
 import { AutoSettingLeagueQuery, AutoSettingMatchQuery, Result } from '../../shared/models';
 import { SettingType } from '../constants';
+import { LeagueSettings } from '../models/league-settings.model';
 
 @Injectable()
 export class RequestService {
@@ -42,6 +43,14 @@ export class RequestService {
 
     public updateSettingLeague(query: AutoSettingLeagueQuery) {
         const request =  this.httpRequestService.postJson<Result>(query, `${this.settingApi}/update-setting-league`);
+        return firstValueFrom(request);
+    }
+
+    public getLeagueSetting(leagueId: string) {
+        const query = {
+            leagueId
+        }
+        const request =  this.httpRequestService.postJson<LeagueSettings>(query, `${this.settingApi}/get-setting-league`);
         return firstValueFrom(request);
     }
 }

@@ -9,7 +9,6 @@ import { ModalDialogComponent } from '../shared/components/modal-dialog/modal-di
 import { TimeSettingComponent, AutoSettingComponent, RemarkSettingComponent } from './components';
 import { CustomHttpRequestInterceptor } from "../shared/custom-httprequest-interceptor.native";
 import { AppComponent } from './components/app.component';
-
 @NgModule({
     imports: [
         BrowserModule,
@@ -26,7 +25,7 @@ import { AppComponent } from './components/app.component';
         ModalDialogComponent,
         ModalContentDialogComponent,
         AutoSettingComponent,
-        RemarkSettingComponent,
+        RemarkSettingComponent
     ],
     entryComponents: [ModalDialogComponent, ModalContentDialogComponent],
     providers: [ { provide: HTTP_INTERCEPTORS, useClass: CustomHttpRequestInterceptor, multi: true }],

@@ -1,0 +1,11 @@
+<div class="league-setting">
+	<div class="league" ng-bind-html="">
+		<div class="icon"></div>
+		{{ leagueSettings.LeagueName }}
+	</div>
+	<div class="line"></div>
+  <auto-type [(leagueSettings)]="leagueSettings" />
+  <direct-setting [(leagueSettings)]="leagueSettings" />
+
+  <auto-payout-setting [(leagueSettings)]="leagueSettings" />
+</div>

@@ -15,6 +15,7 @@ import { BlockUIService, HttpRequestService, MessageBoxService, ClosePopupServic
 import { TimeSettingComponent } from './time-setting.component';
 import { AutoSettingComponent } from './auto-setting.component';
 import { RemarkSettingComponent } from './remark-setting.component';
+import { LeagueAutoSettingsComponent } from './league-auto-settings/league-auto-settings.component';
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
@@ -62,6 +63,8 @@ export class AppComponent implements OnInit, AfterContentChecked {
                 return this.componentFactoryResolver.resolveComponentFactory(TimeSettingComponent);
             case "RemarkSetting":
                 return this.componentFactoryResolver.resolveComponentFactory(RemarkSettingComponent);
+            case "LeagueSetting":
+                return this.componentFactoryResolver.resolveComponentFactory(LeagueAutoSettingsComponent);
             default:
                 return this.componentFactoryResolver.resolveComponentFactory(AutoSettingComponent);
         }
