@@ -59,7 +59,7 @@ public class MultipleServerAioServiceImp : MultipleServerAioService
         var resultDetails = fetchedResultDetails.ToList();
         MergeTicketsToResults(resultDetails, ticketDetails, criteria.SettleType);
 
-        return (resultDetails.Where(result => result.TicketStatus != TicketStatus.NoTicket).ToList(), ticketCount);
+        return (resultDetails.Where(result => result.TicketStatus != TicketStatus.NotIncluded).ToList(), ticketCount);
     }
 
     private static void MergeTicketsToResults(List<Models.ResultDetail> resultDetails, List<Models.ResultDetail> ticketDetails, string settleType)
@@ -82,7 +82,12 @@ public class MultipleServerAioServiceImp : MultipleServerAioService
 
     private static string CreateTicketStatus(Models.ResultDetail ticketDetail, string settleType)
     {
-        if (ticketDetail == null || ticketDetail.BetCount == 0 || ticketDetail.BetCount == ticketDetail.InWaiting)
+        if (ticketDetail == null)
+        {
+            return TicketStatus.NotIncluded;
+        }
+
+        if (ticketDetail.BetCount == 0 || ticketDetail.BetCount == ticketDetail.InWaiting)
         {
             return TicketStatus.NoTicket;
         }
