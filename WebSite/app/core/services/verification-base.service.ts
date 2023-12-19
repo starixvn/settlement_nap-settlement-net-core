@@ -148,13 +148,8 @@ export class VerificationBaseService {
 
     public isMismatchedScoreScreenshot(map: ResultDetail) {  
         const screenshotScore = map.externalScores.find(x => x.sourceId === ScoreSourceType.screenshot);
-        if(_.isEmpty(screenshotScore.homeValue)) {
-             return false;
-        }
 
         if(this.hasScore(map) || this.hasScore(screenshotScore)) {
-            console.log(map);
-            console.log(screenshotScore);
             return !(_.isEmpty(map.homeValue) && _.isEmpty(map.awayValue)) && !(_.isEmpty(screenshotScore.homeValue) && _.isEmpty(screenshotScore.awayValue))
                 && (!_.isEqual(map.homeValue,screenshotScore?.homeValue) || !_.isEqual(map.awayValue,screenshotScore.awayValue));
         }
