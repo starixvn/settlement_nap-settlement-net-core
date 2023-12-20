@@ -11,7 +11,7 @@
         <ng-template *ngTemplateOutlet="header"></ng-template>
         <ng-template *ngTemplateOutlet="body"></ng-template>
       </table>
-      <div *ngIf="permission.isLeader && providerResultDetails && providerResultDetails.length" class='result'>
+      <div *ngIf="permission.isLeader" class='result'>
         <ng-template *ngTemplateOutlet="externalSource"></ng-template>
       </div>
       <!-- <div class="current-match">Current Match</div> -->
@@ -139,37 +139,6 @@
   </div>
 </ng-template>
 
-<!-- <ng-template ng-template #externalSource>
-    <table>
-        <thead>
-          <tr>
-            <th colSpan="1">{{externalSourceName}}
-              <span *ngIf="externalSourceName !== '-'" [ngClass]="{'icon-copy': true, 'disable-copy': !match.isScoreDirect}"
-              (click)="match.isScoreDirect ? copyScore() : ''"></span>
-            </th>
-          </tr>
-          <tr>
-            <th class="score">
-              Total Sets
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="final-score">
-              {{externalResult.homeValue | result}}
-            </td>
-          </tr>
-          <tr>
-            <td class="final-score">
-              {{externalResult.awayValue | result}}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-</ng-template> -->
-
-
 <ng-template ng-template #externalSource>
   <table>
     <thead>
@@ -180,21 +149,21 @@
         </th>
       </tr>
       <tr>
-        <th *ngFor="let game of providerResultDetails">
+        <th *ngFor="let game of providerResultDetailsView">
           {{game.resourceId | resourceHeader}}
         </th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td class="score" *ngFor="let game of providerResultDetails; let i= index; let last=last;"
+        <td class="score" *ngFor="let game of providerResultDetailsView; let i= index; let last=last;"
           [ngClass]="[getConfirmedBackground(game, last)]">
           <span [ngClass]="{'final-score' : last}"> {{game.homeValue  | result}} </span>
         </td>
         
       </tr>
       <tr>
-        <td class="score" *ngFor="let game of providerResultDetails; let i= index; let last=last;"
+        <td class="score" *ngFor="let game of providerResultDetailsView; let i= index; let last=last;"
           [ngClass]="[getConfirmedBackground(game, last)]">
           <span [ngClass]="{'final-score' : last}">{{game.awayValue | result}}</span>
         </td>

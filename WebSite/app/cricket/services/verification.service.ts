@@ -83,7 +83,7 @@ export class VerificationService  {
     private isExistScoreSources(map: ResultDetail, coupleScores: boolean) {
         const providerScore = _.find(map.externalScores, (source) => source.sourceId < ScoreSourceType.screenshot
             && this.isExistedHomeAwayScore(source.homeValue, source.awayValue, coupleScores));
-        const outsideScore = _.find(map.externalScores, (source) => source.sourceId >= ScoreSourceType.screenshot
+        const outsideScore = _.find(map.externalScores, (source) => source.sourceId === ScoreSourceType.screenshot
             && this.isExistedHomeAwayScore(source.homeValue, source.awayValue, coupleScores));
 
         return providerScore && outsideScore;
@@ -100,6 +100,25 @@ export class VerificationService  {
 
         return result;
     }
+
+    public allMapHaveScreenshotSource(resultDetails: ResultDetail[]) {
+        const checkedResults = resultDetails.filter((result: ResultDetail) => result.checked);
+        let result = true;
+        _.forEach(checkedResults, (map) => {
+            if (!this.isExistScoreSources(map, map.resourceId === ResourcesIds.final) && !this.isExistScreenshotSource(map)) {
+                result = false;
+            }
+        });
+
+        return result;
+    }
+
+    
+    public isExistScreenshotSource(map: ResultDetail) {
+        const outsideScore = _.find(map.externalScores, (source) => source.sourceId === ScoreSourceType.screenshot && !_.isEmpty(source.homeValue));
+        return outsideScore;
+    }
+
 
     public isExistInhouseResult(result: ResultDetail) {
         return (result.inputType === ResultControlGroup.CoupleScores)
@@ -123,5 +142,34 @@ export class VerificationService  {
 
     public isDisableUncalculate(resultDetails: ResultDetail[]) {
         return _.every(resultDetails, (result) => !result.checked);
+    }
+
+    public isExistMismatchedScoreScreenshot(resultDetails: ResultDetail[]) {
+        let isFlag = false;
+        resultDetails.forEach((map) => {
+            if (map.checked && this.isMismatchedScoreScreenshot(map)) {
+                isFlag = true;
+            }
+        });
+
+        return isFlag;
+    }
+
+    public isMismatchedScoreScreenshot(map: ResultDetail) {  
+        const screenshotScore = map.externalScores.find(x => x.sourceId === ScoreSourceType.screenshot);
+        if(_.isEmpty(screenshotScore?.homeValue)) {
+             return false;
+        }
+
+        if(this.isExistedHomeAwayScore(map.homeValue,map.awayValue,true) || this.isExistedHomeAwayScore(screenshotScore.homeValue,screenshotScore.awayValue,true)) {
+            return (!_.isEqual(map.homeValue,screenshotScore?.homeValue) || !_.isEqual(map.awayValue,screenshotScore?.awayValue));
+        }
+
+        if((!_.isEmpty(screenshotScore?.homeValue) && _.isEmpty(screenshotScore?.awayValue)) 
+            || (!_.isEmpty(map.homeValue) && _.isEmpty(map.awayValue))) {
+            return !_.isEqual(map.homeValue,screenshotScore?.homeValue)
+        }
+        
+        return false;
     }
 }

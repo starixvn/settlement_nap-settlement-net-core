@@ -164,6 +164,18 @@ export class VerificationService extends VerificationBaseService {
         return result;
     }
 
+    public allMapHaveScreenshotSource(resultDetails: ResultDetail[]) {
+        const checkedResults = resultDetails.filter((result: ResultDetail) => result.checked);
+        let result = true;
+        _.forEach(checkedResults, (map) => {
+            if (!this.isExistScreenshotSource(map) && !this.isExistOverTimeScoreSources(map)) {
+                result = false;
+            }
+        });
+
+        return result;
+    }
+
     public isExistedHomeAwayScore(homeValue: string, awayValue: string) {
         return !_.isEmpty(homeValue) && !_.isEmpty(awayValue);
     }

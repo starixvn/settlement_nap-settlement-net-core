@@ -153,7 +153,7 @@
             blankResult: `WARNING! Selected intervals' "Final Result" must not be blank. Please input "Final Result" values!`,
             insufficientSources: "WARNING! Insufficient Score Sources! Are you sure you want to proceed?",
             mismatchedScore: 'WARNING! There are inconsistent scores! Are you sure you want to proceed with "Final Score" values?',
-            mismatchedResult: 'WARNING! There are inconsistent results! Are you sure you want to proceed with "Final Result" values?'
+            mismatchedResult: 'WARNING! There are inconsistent results! Are you sure you want to proceed with "Final Result" values?',
         },
         nonLeader: {
             blankScore: `WARNING! Selected intervals' "Final Score" must not be blank! Please check Score Sources or contact leaders.`,
@@ -163,7 +163,9 @@
             mismatchedResult: 'WARNING! There are inconsistent results! Please check inputted values.'
         },
         saveScore: 'Are you sure you want to save changes made to selected Outside Scores?',
-        invalidResultByBetType: 'WARNING! Cannot continue due to invalid value inputted. Please check and try again.'
+        invalidResultByBetType: 'WARNING! Cannot continue due to invalid value inputted. Please check and try again.',
+        mismatchedScreenshot: 'WARNING! Cannot continue due to values from Final Score inconsistent with Screenshot',
+        notScreenshot: 'WARNING! Cannot continue due to missing Screenshot value.'
     },
     intervalsAndMatch: {
         matchNotSelected: "WARNING! Changed values may affect other results. Do you want to select Match/Full Time score also?",

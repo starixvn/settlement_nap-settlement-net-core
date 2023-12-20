@@ -196,6 +196,16 @@ export class CalculateActionsComponent implements SportTemplate {
   }
 
   private verifyScoreSourcesAndCalculate() {
+    if(!this.verificationService.allMapHaveScreenshotSource(this.selectedResources)) {
+      this.toastrService.error(Language.sop.notScreenshot);
+      return;
+    }
+
+    if (this.verificationService.isExistMismatchedScoreScreenshot(this.selectedResources)) {
+      this.toastrService.error(Language.sop.mismatchedScreenshot);
+      return;
+    }
+    
     if (this.verificationService.allMapHaveScoreSources(this.selectedResources)) {
       this.confirmCalculateMismatchScores();
     } else {
@@ -209,6 +219,7 @@ export class CalculateActionsComponent implements SportTemplate {
       }
     }
   }
+
 
   private confirmCalculateMismatchScores() {
     if (this.verificationService.isExistMismatchScore(this.match.resultDetails)) {

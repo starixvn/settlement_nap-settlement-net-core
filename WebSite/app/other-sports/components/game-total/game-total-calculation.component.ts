@@ -34,7 +34,7 @@ export class GameTotalCalculationComponent implements SportTemplate {
   private resultDetailsToAction: ResultDetail[];
   public totalSetOriginal: ResultDetail;
   public resultDetailsOriginal: ResultDetail[];
-  public externalSourceName: string;
+  public externalSourceName: string = '-';
   public hedgeMatchDetail: HedgeMatchDetail;
   public applyHedgeMatch: boolean;
   public readonly confirmDialogMessage: ModalDialogMessage = new ModalDialogMessage();
@@ -95,6 +95,10 @@ export class GameTotalCalculationComponent implements SportTemplate {
        this.providerResultDetails = this.createFullyExternal(sopExternalResult);
        return;
     }
+  }
+
+  public get providerResultDetailsView() {
+    return this.providerResultDetails?.length ? this.providerResultDetails : this.createFullyExternal(new ExternalResult(0,[]))
   }
 
   private createFullyExternal(externalResult: ExternalResult) {

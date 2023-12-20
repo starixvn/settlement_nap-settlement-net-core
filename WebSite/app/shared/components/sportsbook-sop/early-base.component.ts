@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import { Component, Injector } from '@angular/core';
 import { ResultDetail, GroupMap, Permission, SaveScoreQuery, MatchDetail } from '../../models/sportsbook-sop';
 import { ItemsSelect, ModalDialogMessage, MultipleSelect, ResultSettingQuery } from '../../models';
-import { BackgroundColor, CalculateAction, ResultSettingType, ResultStatusId, SettlementStatusId, TicketStatusText } from '../../constants';
+import { BackgroundColor, CalculateAction, ResultSettingType, ResultStatusId, SettlementStatusId, SportType, TicketStatusText } from '../../constants';
 import { AioService, MessageBoxService } from '../../services';
 import { VerificationBaseService } from '../../../core/services/verification-base.service';
 import { Language } from '../../language.native';
@@ -179,6 +179,16 @@ export class EarlyBaseComponent {
     }
 
     public verifyScoreSourcesAndCalculate(confirmChangedResults: () => void) {
+        if(!this.verificationBaseService.allMapHaveScreenshotSource(this.resultDetails)) {
+            this.toastrService.error(Language.sop.notScreenshot);
+            return;
+        }
+ 
+        if(this.verificationBaseService.isExistMismatchedScoreScreenshot(this.resultDetails)) {
+            this.toastrService.error(Language.sop.mismatchedScreenshot);
+            return;
+        }
+        
         if (this.verificationBaseService.allResultsHaveScoreSources(this.resultDetails)) {
             this.confirmCalculateMismatchScores(confirmChangedResults);
         } else {

@@ -114,8 +114,18 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
   }
 
   private verifyScoreSources() {
+    if(!this.verificationService.allMapHaveScreenshotSource(this.match.resultDetails)) {
+      this.toastrService.error(Language.sop.notScreenshot);
+      return;
+    }
+
+    if(this.verificationService.isExistMismatchedScoreScreenshot(this.match.resultDetails)) {
+      this.toastrService.error(Language.sop.mismatchedScreenshot);
+      return;
+    }
+    
     if (this.verificationService.allResultsHaveScoreSources(this.match.resultDetails)) {
-      this.confirmCalculateMismatchScores(() => this.confirmChangedResults());
+       this.confirmCalculateMismatchScores(() => this.confirmChangedResults());
     } else {
       if (!this.permission.isLeader) {
         this.toastrService.error(Language.eSports.nonLeader.insufficientSources);
@@ -127,6 +137,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
       }
     }
   }
+  
 
   private getConfirmMessage(resultDetails: ResultDetail[]) {
     let confirmMessage = `${Language.CalculationConfirmMessageEarly}<br/>`;

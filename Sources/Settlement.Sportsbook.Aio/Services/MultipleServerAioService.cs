@@ -57,34 +57,34 @@ public class MultipleServerAioServiceImp : MultipleServerAioService
         var fetchedResultDetails = await repository.FetchAsync<Models.ResultDetail>(criteria);
         var (ticketDetails, ticketCount) = await GetEarlyTicketDetails(criteria);
         var resultDetails = fetchedResultDetails.ToList();
-        MergeTicketsToResults(resultDetails, ticketDetails, sportType, criteria.SettleType);
+        MergeTicketsToResults(resultDetails, ticketDetails, criteria.SettleType);
 
         return (resultDetails.Where(result => result.TicketStatus != TicketStatus.NotIncluded).ToList(), ticketCount);
     }
 
-    private static void MergeTicketsToResults(List<Models.ResultDetail> resultDetails, List<Models.ResultDetail> ticketDetails, int sportType, string settleType)
+    private static void MergeTicketsToResults(List<Models.ResultDetail> resultDetails, List<Models.ResultDetail> ticketDetails, string settleType)
     {
         var newTicketDetails = ticketDetails.Where(ticketDetail => !resultDetails.Exists(result => result.Equals(ticketDetail)));
 
         resultDetails.AddRange(newTicketDetails);
 
-        GenerateTicketsStatus(resultDetails, ticketDetails, sportType, settleType);
+        GenerateTicketsStatus(resultDetails, ticketDetails, settleType);
     }
 
-    private static void GenerateTicketsStatus(List<Models.ResultDetail> results, List<Models.ResultDetail> ticketDetails, int sportType, string settleType)
+    private static void GenerateTicketsStatus(List<Models.ResultDetail> results, List<Models.ResultDetail> ticketDetails, string settleType)
     {
         foreach (var result in results)
         {
             var ticketDetail = ticketDetails.Find(detail => detail.ResourceId == result.ResourceId);
-            result.TicketStatus = CreateTicketStatus(ticketDetail, sportType, settleType);
+            result.TicketStatus = CreateTicketStatus(ticketDetail, settleType);
         }
     }
 
-    private static string CreateTicketStatus(Models.ResultDetail ticketDetail, int sportType, string settleType)
+    private static string CreateTicketStatus(Models.ResultDetail ticketDetail, string settleType)
     {
         if (ticketDetail == null)
         {
-            return sportType == SportType.ESports ? TicketStatus.NoTicket : TicketStatus.NotIncluded;
+            return TicketStatus.NotIncluded;
         }
 
         if (ticketDetail.BetCount == 0 || ticketDetail.BetCount == ticketDetail.InWaiting)

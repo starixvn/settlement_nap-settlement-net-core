@@ -66,10 +66,27 @@ export class VerificationBaseService {
     public isExistScoreSources(map: ResultDetail) {
         const providerScore = _.find(map.externalScores, (source) => source.sourceId < ScoreSourceType.screenshot
             && this.isExistedHomeAwayScore(source.homeValue, source.awayValue));
-        const outsideScore = _.find(map.externalScores, (source) => source.sourceId >= ScoreSourceType.screenshot
+        const outsideScore = _.find(map.externalScores, (source) => source.sourceId === ScoreSourceType.screenshot
             && this.isExistedHomeAwayScore(source.homeValue, source.awayValue));
 
         return providerScore && outsideScore;
+    }
+
+    public allMapHaveScreenshotSource(resultDetails: ResultDetail[]) {
+        const checkedResults = resultDetails.filter((result: ResultDetail) => result.checked);
+        let result = true;
+        _.forEach(checkedResults, (map) => {
+            if (!this.isExistScreenshotSource(map)) {
+                result = false;
+            }
+        });
+
+        return result;
+    }
+
+    public isExistScreenshotSource(map: ResultDetail) {
+        const outsideScore = _.find(map.externalScores, (source) => source.sourceId === ScoreSourceType.screenshot && (!_.isEmpty(source.homeValue) || !_.isEmpty(source.awayValue)));
+        return outsideScore;
     }
 
     public isExistedHomeAwayScore(homeValue: string, awayValue: string) {
@@ -97,6 +114,52 @@ export class VerificationBaseService {
                 map.awayValue = '';
             }
         }
+    }
+
+    public autoFillScreenShotScore(map: ResultDetail) {
+        if (map.resultStatusId !== ResultStatusId.ManualCompleted && map.resultStatusId !== ResultStatusId.AutoCompleted) {
+            if (this.isExistScoreSources(map)) {
+                const correctScore = _.find(map.externalScores, (source) =>
+                    this.isExistedHomeAwayScore(source.homeValue, source.awayValue) && source.sourceId === ScoreSourceType.screenshot);
+                if (map.isScoreMismatched) {
+                    map.homeValue = '';
+                    map.awayValue = '';
+                } else {
+                    map.homeValue = correctScore.homeValue;
+                    map.awayValue = correctScore.awayValue;
+                }
+            } else {
+                map.homeValue = '';
+                map.awayValue = '';
+            }
+        }
+    }
+
+    public isExistMismatchedScoreScreenshot(resultDetails: ResultDetail[]) {
+        let isFlag = false;
+        resultDetails.forEach((map) => {
+            if (map.checked && this.isMismatchedScoreScreenshot(map)) {
+                isFlag = true;
+            }
+        });
+
+        return isFlag;
+    }
+
+    public isMismatchedScoreScreenshot(map: ResultDetail) {  
+        const screenshotScore = map.externalScores.find(x => x.sourceId === ScoreSourceType.screenshot);
+
+        if(this.hasScore(map) || this.hasScore(screenshotScore)) {
+            return !(_.isEmpty(map.homeValue) && _.isEmpty(map.awayValue)) && !(_.isEmpty(screenshotScore.homeValue) && _.isEmpty(screenshotScore.awayValue))
+                && (!_.isEqual(map.homeValue,screenshotScore?.homeValue) || !_.isEqual(map.awayValue,screenshotScore.awayValue));
+        }
+
+        if((!_.isEmpty(screenshotScore.homeValue) && _.isEmpty(screenshotScore?.awayValue)) 
+            || (!_.isEmpty(map.homeValue) && _.isEmpty(map.awayValue))) {
+            return !_.isEmpty(map.homeValue) && !_.isEqual(map.homeValue,screenshotScore.homeValue)
+        }
+        
+        return false;
     }
 
     public isScoreConsecutive(resultDetails: GeneralResultDetail[], firstResourceId: string) {
@@ -202,7 +265,7 @@ export class VerificationBaseService {
                 _.isEqual(scoreToCompare.homeValue, externalResult.homeValue)
             );
         }
-
+        
         return _.every(result.externalScores, (externalResult: ExternalResultDetail) =>
             _.isEmpty(externalResult.homeValue) ||
             _.isEqual(result.homeValue, externalResult.homeValue)
@@ -223,7 +286,7 @@ export class VerificationBaseService {
     public isExistEarlyResultSources(result: ResultDetail) {
         const providerResult = _.find(result.externalScores, (source) => source.sourceId < ScoreSourceType.screenshot
             && !_.isEmpty(source.homeValue));
-        const outsideResult = _.find(result.externalScores, (source) => source.sourceId >= ScoreSourceType.screenshot
+        const outsideResult = _.find(result.externalScores, (source) => source.sourceId === ScoreSourceType.screenshot
             && !_.isEmpty(source.homeValue));
 
         return providerResult && outsideResult;
@@ -433,18 +496,16 @@ export class VerificationBaseService {
     public isConsistentScoreTraderConfirm(originalResultDetails: ResultDetail[], resultDetails: ResultDetail[]) {
         return resultDetails.some(result => {
             const originalResult = originalResultDetails?.find(x => x.resourceId === result.resourceId);
-            return originalResult && (!_.isEqual(result.homeValue ?? "", originalResult.homeValue ?? "")
-                || !_.isEqual(result.awayValue ?? "", originalResult.awayValue ?? ""))
-                && !this.acceptCaseZero(originalResult,result);
+            return (!_.isEqual(result.homeValue, originalResult?.homeValue ?? "")
+                || !_.isEqual(result.awayValue, originalResult?.awayValue ?? ""));
         })
     }
 
     public isConsistentScoreProvider(resultDetails: ResultDetail[], externalResults: ExternalResultDetail[]) {
         return resultDetails.some(result => {
             const providerResult = externalResults?.find(x => x.resourceId === result.resourceId);
-            return providerResult && (!_.isEqual(providerResult.homeValue ?? "", result.homeValue ?? "") 
-                || !_.isEqual(providerResult.awayValue ?? "", result.awayValue ?? ""))
-                && !this.acceptCaseZero(providerResult,result);
+            return (!_.isEqual(providerResult?.homeValue ?? "", result.homeValue) 
+                || !_.isEqual(providerResult?.awayValue ?? "", result.awayValue));
         })
     }
 
