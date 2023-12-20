@@ -12,6 +12,7 @@ import { Match, SettleQuery } from '../models';
 import { HedgeMatchDetail, ResultDetail, MatchDetail, ExternalResult, SaveScoreQuery, ExternalResultDetail, SportTemplate } from '../../shared/models/sportsbook-sop';
 import { VerificationService, ESportsService } from '../services';
 import { ResourceNameByIdPipe } from '../pipes';
+import { LeagueGroupId } from '../../shared/constants/league-group-id.native';
 
 @Component({
     selector: 'calculation-actions',
@@ -103,7 +104,7 @@ export class CalculationActionsComponent implements SportTemplate {
         const existResultConfirmed = _.find(this.selectedResources, item => item.resultSettingData.isConfirmedRefund);
         if (_.isEmpty(this.selectedResources)) {
             this.toastrService.error(Resources.UnSelectedMapForCalculation);
-        } else if (!_.isNil(existResultConfirmed)) {
+        } else if (!LeagueGroupId.RedCat.includes(this.matchDetail.leagueGroupId) && !_.isNil(existResultConfirmed)) {
             this.toastrService.error(Language.confirmRefund.calculateResultNotConfirmed);
         } else if (this.verificationService.invalidInputScore(this.selectedResources, this.match.isScoreDirect, "")) {
             this.toastrService.error(this.isLeader ? Language.sop.leader.blankScore : Language.sop.nonLeader.blankScore);
@@ -114,8 +115,10 @@ export class CalculationActionsComponent implements SportTemplate {
 
     private async verifyRunningOdds() {
         const selectedResourceIds = this.selectedResources.map(item => item.resourceId);
-        const errorMessage = await this.aioService.checkingNoRunningOdds(this.match.matchDetail.matchId,
-            selectedResourceIds, CalculateAction.calculate);
+        const errorMessage = !LeagueGroupId.RedCat.includes(this.matchDetail.leagueGroupId) 
+            ? await this.aioService.checkingNoRunningOdds(this.match.matchDetail.matchId,selectedResourceIds, CalculateAction.calculate)
+            : null;
+
         if (_.isNil(errorMessage)) {
             this.verifyScoreSourcesAndCalculate();
         } else {
