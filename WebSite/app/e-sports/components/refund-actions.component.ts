@@ -57,7 +57,7 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
         const paramsCheckingMarkedTickets = this.generateCheckMarkedTicketsQuery();
         const response = await this.aioService.checkMarkedTickets(paramsCheckingMarkedTickets);
         this.toastrService.clear();
-        if ((!LeagueGroupId.RedCat.includes(this.matchDetail.leagueGroupId) || !LeagueGroupId.Pingoal.includes(this.matchDetail.leagueGroupId)) 
+        if ((![...LeagueGroupId.RedCat,...LeagueGroupId.Pingoal].includes(this.matchDetail.leagueGroupId)) 
             && this.existResultNotConfirmed()) {
             this.toastrService.error(Language.confirmRefund.refundResultNotConfirmed);
         } else if (response.isExistMarkedTicket) {
