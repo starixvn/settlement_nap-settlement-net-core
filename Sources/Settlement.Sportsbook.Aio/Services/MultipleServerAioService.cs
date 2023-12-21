@@ -219,11 +219,17 @@ public class MultipleServerAioServiceImp(
 
         await WriteLog(criteria);
 
+        //TODO
+
         foreach (var server in appSettingsKey.SiteDbServer)
         {
             criteria.DbServer = server;
             await repository.ExecuteAsync(criteria);
         }
+    }
+
+    private async Task HandleResultAmendment()
+    {
     }
 
     private async Task<Result> Execute(SettleCriteria criteria, List<ResourceItem> selectedResources)
