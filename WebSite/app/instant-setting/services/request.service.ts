@@ -10,6 +10,7 @@ import { LeagueSettings } from '../models/league-settings.model';
 @Injectable()
 export class RequestService {
     private settingApi = '/api/setting';
+    private leagueSettingApi = '/api/league-settings'
     constructor(private readonly httpRequestService: HttpRequestService) {
     }
 
@@ -46,11 +47,12 @@ export class RequestService {
         return firstValueFrom(request);
     }
 
-    public getLeagueSetting(leagueId: string) {
+    public getLeagueSetting(leagueId: number, sportType: number) {
         const query = {
-            leagueId
+            leagueId,
+            sportType
         }
-        const request =  this.httpRequestService.postJson<LeagueSettings>(query, `${this.settingApi}/get-setting-league`);
+        const request =  this.httpRequestService.postJson<LeagueSettings>(query, `${this.leagueSettingApi}/get-settings`);
         return firstValueFrom(request);
     }
 }

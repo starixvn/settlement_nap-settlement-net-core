@@ -1,16 +1,16 @@
-export type LeagueSettings = {
-  LeagueName: string;
-  AutoSetting: number;
-  WaitingTime: number;
-  RetryTime: number;
-  MainResultSetting: ResultSettings;
-  EarlyResultSetting: ResultSettings;
+export class LeagueSettings {
+  leagueName: string;
+  autoSetting: number;
+  waitingTime: number;
+  retryTime: number;
+  mainResultSettings: ResultSettings;
+  earlyResultSettings: ResultSettings;
 }
 
 
 export type ResultSettings = {
-  NeedTrader: boolean;
-  MinimumTrader: 1 | 2;
-  PrimaryTrader: string[];
-  SecondaryTrader: string[];
+  hasTrader: boolean;
+  minimumTrader: 1 | 2;
+  primaryTrader: string;
+  secondaryTrader: string;
 }

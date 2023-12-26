@@ -144,7 +144,7 @@
         }
       }
     },
-    "instant-setting": {
+    "app": {
       "root": "app",
       "sourceRoot": "instant-setting",
       "projectType": "application",
@@ -154,7 +154,7 @@
           "options": {
             "aot": true,
             "outputPath": "../wwwroot/instant-setting",
-            "index": "instant-setting/index.cshtml",
+            "index": "instant-setting/index.html",
             "main": "instant-setting/main.ts",
             "tsConfig": "instant-setting/tsconfig.app.json",
             "polyfills": "polyfills.ts",

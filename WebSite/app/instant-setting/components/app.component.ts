@@ -63,7 +63,7 @@ export class AppComponent implements OnInit, AfterContentChecked {
                 return this.componentFactoryResolver.resolveComponentFactory(TimeSettingComponent);
             case "RemarkSetting":
                 return this.componentFactoryResolver.resolveComponentFactory(RemarkSettingComponent);
-            case "LeagueSetting":
+            case "LeagueSettings":
                 return this.componentFactoryResolver.resolveComponentFactory(LeagueAutoSettingsComponent);
             default:
                 return this.componentFactoryResolver.resolveComponentFactory(AutoSettingComponent);
