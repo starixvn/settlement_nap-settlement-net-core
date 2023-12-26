@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AutoTypeComponent } from './auto-type.component';
+import { AutoTypeComponent } from './auto-setting.component';
 
 describe('AutoTypeComponent', () => {
   let component: AutoTypeComponent;

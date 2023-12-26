@@ -2,13 +2,13 @@ import { LeagueSettingsStore } from '../../services/league-settings.store';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { LeagueSettings } from '../../models/league-settings.model';
 import { UrlHelper } from '../../../helper';
-import {AutoTypeComponent} from './auto-type/auto-type.component';
+import {AutoTypeComponent} from './auto-setting/auto-setting.component';
 import { CommonModule } from '@angular/common';
 import { DirectSettingComponent } from './direct-setting/direct-setting.component';
 import { AutoPayoutSettingComponent } from './auto-payout-setting/auto-payout-setting.component';
 import { Subject, distinctUntilChanged, map, takeUntil } from 'rxjs';
 import { RequestService } from '../../services/request.service';
-import * as _ from 'lodash';
+import { MessageBoxService } from '../../../shared/services';
 
 @Component({
   selector: 'league-auto-settings',
@@ -26,7 +26,10 @@ export class LeagueAutoSettingsComponent  implements OnInit, OnDestroy{
   public leagueName: string;
   ngUnsubscribe = new Subject();
 
-  constructor(public store: LeagueSettingsStore, private readonly requestService: RequestService) {
+  constructor(
+    private readonly store: LeagueSettingsStore, 
+    private readonly requestService: RequestService,
+    private readonly messageBoxService: MessageBoxService) {
   }
   ngOnDestroy() {
     this.ngUnsubscribe.complete();
@@ -49,5 +52,13 @@ export class LeagueAutoSettingsComponent  implements OnInit, OnDestroy{
       const leagueSettings = await  this.requestService.getLeagueSetting(Number(this.leagueId), Number(this.sportType));
 
       this.store.setState({...leagueSettings, waitingTime: this.waitingTime, autoSetting: this.autoSetting});
+  }
+
+  cancel(){
+    this.messageBoxService.closePopup();
+  }
+
+  submit(){
+    this.messageBoxService.closePopup();
   }
 }

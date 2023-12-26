@@ -5,7 +5,6 @@ import { CommonModule } from '@angular/common';
 import { SettingContainerComponent } from './setting-container/setting-container.component';
 import { LeagueSettingsStore } from '../../../services/league-settings.store';
 import { distinctUntilChanged, map } from 'rxjs';
-import * as _ from 'lodash';
 import { ZeroFallbackDirective } from '../../../../shared/directives/zero-fall-back.directive.native';
 import { OnlyIntegerDirective } from '../../../../shared/directives';
 
@@ -47,7 +46,7 @@ export class AutoPayoutSettingComponent implements OnInit {
   ngOnInit(): void {
     this.store.state$.pipe(
       map(state =>  state.retryTime),
-      distinctUntilChanged((prev, curr) => _.isEqual(prev, curr)))
+      distinctUntilChanged((prev, curr) => prev == curr))
       .subscribe(data => {
         this.retryTime = data;
         this.cd.detectChanges();

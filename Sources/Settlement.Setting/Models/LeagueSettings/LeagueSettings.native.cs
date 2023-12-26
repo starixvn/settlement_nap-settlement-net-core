@@ -31,9 +31,11 @@ public class LeagueSettings
 
     public string LeagueName { get; set; }
 
+    public List<ProviderInfo> Providers { get; set; }
+
     public ResultSettings MainResultSettings => new(Main_HasTrader, Main_NumberProvider,
-        Main_PrimaryProvider, Main_SecondaryProvider);
+        Main_PrimaryProvider, Main_SecondaryProvider, Providers);
 
     public ResultSettings EarlyResultSettings =>
-        new(EAR_HasTrader, EAR_NumberProvider, EAR_PrimaryProvider, EAR_SecondaryProvider);
+        new(EAR_HasTrader, EAR_NumberProvider, EAR_PrimaryProvider, EAR_SecondaryProvider, Providers);
 }

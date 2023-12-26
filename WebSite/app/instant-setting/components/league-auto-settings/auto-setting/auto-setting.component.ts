@@ -4,27 +4,27 @@ import { LeagueSettingsStore } from '../../../services/league-settings.store';
 import { distinctUntilChanged, map } from 'rxjs';
 
 @Component({
-  selector: 'auto-type',
+  selector: 'auto-setting',
   template: `<div class="title">
 	<div>
 		<div class="square-icon"></div>
 		Turn On/Off Auto Settle for League
 	</div>
 	<div class="content">
-		<ul class="auto-settings">
-			<li>
+		<div class="auto-settings">
+			<span>
 				<input type="radio" [ngModel]="autoSetting" (ngModelChange)="changeAutoSetting($event)" [value]="1" id="auto-payout" name="auto-setting" />
 				<label for="auto-payout">Auto Payout</label>
-			</li>
-			<li>
+			</span>
+			<span>
 				<input type="radio" [ngModel]="autoSetting" (ngModelChange)="changeAutoSetting($event)" [value]="5" id="direct-payout" name="auto-setting" />
 				<label for="direct-payout">Direct Payout</label>
-			</li>
-			<li>
+			</span>
+			<span>
 				<input type="radio" [ngModel]="autoSetting" (ngModelChange)="changeAutoSetting($event)" [value]="0" id="off" name="auto-setting" />
 				<label for="off">OFF</label>
-			</li>
-		</ul>
+			</span>
+		</div>
 	</div>
 </div>`,
   standalone: true,

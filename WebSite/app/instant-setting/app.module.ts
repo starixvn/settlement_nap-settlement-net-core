@@ -9,6 +9,7 @@ import { ModalDialogComponent } from '../shared/components/modal-dialog/modal-di
 import { TimeSettingComponent, AutoSettingComponent, RemarkSettingComponent } from './components';
 import { CustomHttpRequestInterceptor } from "../shared/custom-httprequest-interceptor.native";
 import { AppComponent } from './components/app.component';
+import { ProviderSelectionComponent } from './components/league-auto-settings/auto-payout-setting/provider-selection/provider-selection.component';
 @NgModule({
     imports: [
         BrowserModule,

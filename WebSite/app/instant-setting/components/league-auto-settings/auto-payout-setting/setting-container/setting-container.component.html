@@ -4,31 +4,31 @@
 <ul>
 	<li>
 		<label>Trader source: </label>
-		<span style="cursor: pointer;" [ngClass]="resultSettings.hasTrader ? 'toggle-on' : 'toggle-off'"></span>
+		<span style="cursor: pointer;" (click)="changeSetting()" [ngClass]="resultSettings.hasTrader ? 'toggle-on' : 'toggle-off'"></span>
 	</li>
 	<li>
 		<label>Provider source: </label>
 		<ul>
 			<li>
 				<label>Minimum sources:&nbsp;</label>
-				<select [(ngModel)]="resultSettings.minimumTrader">
+				<select [(ngModel)]="resultSettings.minimumProvider">
 					<option value="1" [text]="1"></option>
 					<option value="2" [text]="2"></option>
 				</select>
 			</li>
 			<li>
 				<label>Provider list:&nbsp;</label>
-				<button type="button" class="btn btn-outline-primary">Edit...</button>
+				<button type="button" class="btn btn-outline-primary" (click)="openProviderSelection()">Edit...</button>
 			</li>
 
 			<ul style="list-style-type: circle;">
 				<li>
 					<label>Primary: &nbsp;</label>
-					{{ resultSettings.primaryTrader }}
+					{{ resultSettings.primaryProvider }}
 				</li>
 				<li>
 					<label>Secondary: &nbsp;</label>
-					{{ resultSettings.secondaryTrader }}
+					{{ resultSettings.secondaryProvider }}
 				</li>
 			</ul>
 		</ul>

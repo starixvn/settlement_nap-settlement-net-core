@@ -4,7 +4,14 @@
 		{{ leagueName }}
 	</div>
 	<div class="line"></div>
-  <auto-type/>
-  <direct-setting />
-  <auto-payout-setting />
+	<div class="content">
+		<auto-setting> </auto-setting>
+		<direct-setting> </direct-setting>
+		<auto-payout-setting> </auto-payout-setting>
+	</div>
+	<div class="line"></div>
+	<div class="bottom">
+		<button type="button" style="margin-right: 16px;" class="btn btn-outline-primary" (click)="submit()">Submit</button>
+		<button type="button" class="btn btn-outline-primary" (click)="cancel()">Cancel</button>
+	</div>
 </div>

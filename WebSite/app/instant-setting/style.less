@@ -114,7 +114,10 @@
     z-index: 1050 !important;
 }
 
-
+.line {
+    border-bottom: 1px solid black;
+    margin-left: 8px;
+}
 
 .league-setting {
     color: @title-color;
@@ -122,21 +125,12 @@
     width: 500px;
     line-height: 30px;
 
-    .line {
-        border-bottom: 1px solid black;
-        margin-left: 8px;
-    }
-
     .title {
         padding-left: 10px;
-
-        .line {
-            margin-left: 4px;
-        }
     }
 
     .content {
-        padding-left: 20px;
+        margin-left: 10px;
     }
 
     .auto-settings {
@@ -146,7 +140,7 @@
         justify-content: space-between;
         list-style: none;
 
-        li {
+        span {
             display: flex;
             justify-content: space-between;
 
@@ -179,4 +173,38 @@
         width: 40px;
         text-align-last: center;
     }
+}
+
+.provider-selection {
+    .provider-table {
+        width: 100%;
+
+        thead {
+            background-color: white;
+            border: none;
+            color: @title-color;
+            font-weight: bold;
+        }
+
+        td:not(:first-child),
+        thead :not(:first-child) {
+            text-align: center;
+        }
+
+        .provider {
+            width: 30%;
+        }
+
+        input[type="radio"] {
+            margin-top: 0;
+            margin-right: 5px;
+        }
+    }
+}
+
+.bottom {
+    padding: 10px;
+    width: 100%;
+    text-align: center;
+    text-wrap: true;
 }

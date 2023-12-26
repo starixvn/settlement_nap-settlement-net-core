@@ -5,12 +5,17 @@ export class LeagueSettings {
   retryTime: number;
   mainResultSettings: ResultSettings;
   earlyResultSettings: ResultSettings;
+  providers: ProviderSource[];
 }
 
-
+export type ProviderSource = {
+  sourceId: number;
+  sourceName: string;
+  priority: number;
+}
 export type ResultSettings = {
   hasTrader: boolean;
-  minimumTrader: 1 | 2;
-  primaryTrader: string;
-  secondaryTrader: string;
+  minimumProvider: 1 | 2;
+  primaryProvider: string;
+  secondaryProvider: string;
 }

@@ -25,8 +25,18 @@ public class LeagueSettingsServiceImp(IDynamicRepository repository, IRemotingRe
         var leagueSettings = await repository.GetAsync<LeagueSettings>(criteria);
 
         leagueSettings.LeagueName = remotingRef.GetLeagueName(request.LeagueId.ToString(), "EN");
+        leagueSettings.Providers = (await GetProviderInfo(request.SportType)).ToList();
 
         return leagueSettings;
-        ;
+    }
+
+    private async Task<IEnumerable<ProviderInfo>> GetProviderInfo(int sportType)
+    {
+        var criteria = new GetProviderInfoCriteria
+        {
+            SportType = sportType
+        };
+
+        return await repository.FetchAsync<ProviderInfo>(criteria); ;
     }
 }
