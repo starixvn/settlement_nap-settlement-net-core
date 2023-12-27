@@ -12,6 +12,7 @@ import { Match, SettleQuery } from '../models';
 import { HedgeMatchDetail, ResultDetail, MatchDetail, ExternalResult, SaveScoreQuery, ExternalResultDetail, SportTemplate } from '../../shared/models/sportsbook-sop';
 import { VerificationService, ESportsService } from '../services';
 import { ResourceNameByIdPipe } from '../pipes';
+import { LeagueGroupId } from '../../shared/constants/league-group-id.native';
 
 @Component({
     selector: 'calculation-actions',
@@ -114,8 +115,8 @@ export class CalculationActionsComponent implements SportTemplate {
 
     private async verifyRunningOdds() {
         const selectedResourceIds = this.selectedResources.map(item => item.resourceId);
-        const errorMessage = await this.aioService.checkingNoRunningOdds(this.match.matchDetail.matchId,
-            selectedResourceIds, CalculateAction.calculate);
+        const errorMessage = await this.aioService.checkingNoRunningOdds(this.match.matchDetail.matchId,selectedResourceIds, CalculateAction.calculate);
+
         if (_.isNil(errorMessage)) {
             this.verifyScoreSourcesAndCalculate();
         } else {

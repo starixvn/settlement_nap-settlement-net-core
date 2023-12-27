@@ -3,7 +3,7 @@ import { Component, ViewChild, Injector } from '@angular/core';
 import { ToastContainerDirective } from 'ngx-toastr';
 import * as _ from 'lodash';
 import { BlockUIService } from '../../shared/services';
-import { ModalDialogMessage } from '../../shared/models';
+import { League, ModalDialogMessage } from '../../shared/models';
 import { Language } from '../../shared/language.native';
 import { Match } from '../models';
 import { HedgeMatchDetail, SettleQuery, SportTemplate } from '../../shared/models/sportsbook-sop';
@@ -12,6 +12,7 @@ import { RefundActionBaseComponent } from '../../shared/components/sportsbook-so
 import { MatchDetailComponent } from './match-detail.component';
 import { ResourceNameByIdPipe } from '../pipes/resource-name-by-id.pipe';
 import { VerificationBaseService } from '../../core/services/verification-base.service';
+import { LeagueGroupId } from '../../shared/constants/league-group-id.native';
 
 @Component({
     selector: 'refund-actions',
@@ -27,7 +28,6 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
     public isRefundOldMatch: boolean;
     public oldMatchDetail: HedgeMatchDetail;
     public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage(Language.confirmationBox);
-    private readonly leaguePinGoal = 151;
 
     async getMatch(matchId: number): Promise<void> {
         this.initService();
@@ -57,7 +57,8 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
         const paramsCheckingMarkedTickets = this.generateCheckMarkedTicketsQuery();
         const response = await this.aioService.checkMarkedTickets(paramsCheckingMarkedTickets);
         this.toastrService.clear();
-        if (this.matchDetail.leagueGroupId != this.leaguePinGoal && this.existResultNotConfirmed()) {
+        if ((![...LeagueGroupId.RedCat,...LeagueGroupId.Pingoal].includes(this.matchDetail.leagueGroupId)) 
+            && this.existResultNotConfirmed()) {
             this.toastrService.error(Language.confirmRefund.refundResultNotConfirmed);
         } else if (response.isExistMarkedTicket) {
             this.toastrService.error(Language.MarkedTicket);
