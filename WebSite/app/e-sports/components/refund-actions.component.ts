@@ -1,9 +1,8 @@
 ﻿import { RefundCommonModule } from './../../shared/modules/refund-common.module';
-import { Component, ViewChild, Injector } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { ToastContainerDirective } from 'ngx-toastr';
 import * as _ from 'lodash';
-import { BlockUIService } from '../../shared/services';
-import { League, ModalDialogMessage } from '../../shared/models';
+import { ModalDialogMessage } from '../../shared/models';
 import { Language } from '../../shared/language.native';
 import { Match } from '../models';
 import { HedgeMatchDetail, SettleQuery, SportTemplate } from '../../shared/models/sportsbook-sop';

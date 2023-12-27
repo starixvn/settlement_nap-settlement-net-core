@@ -24,7 +24,6 @@
     @if (string.IsNullOrEmpty(Context.Request.Query["isShowMenu"]) || Context.Request.Query["isShowMenu"] == "true")
     {
         <script src="/js/notification.js" type="text/javascript"></script>
-        @await Html.PartialAsync("~/Views/Shared/_Matomo.cshtml")
     }
 </body>
 </html>
