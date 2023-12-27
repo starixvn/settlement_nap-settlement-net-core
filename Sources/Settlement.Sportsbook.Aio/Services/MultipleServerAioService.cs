@@ -7,8 +7,10 @@ using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.Aio.Constants;
 using Settlement.Sportsbook.Aio.Criteria;
+using Settlement.Sportsbook.Aio.Criteria.Cricket;
 using Settlement.Sportsbook.Aio.Criteria.Tennis;
 using Settlement.Sportsbook.Aio.Requests;
+using Settlement.Sportsbook.Aio.Services.Cricket;
 
 namespace Settlement.Sportsbook.Aio.Services;
 
@@ -24,16 +26,18 @@ public interface MultipleServerAioService
 }
 
 public class MultipleServerAioServiceImp(
+    private readonly ResultAmendmentService resultAmendmentService;
     IDynamicRepository repository,
     IOptions<AppSettingsKey> appSettingsKey,
     ScaleOutSettleService scaleOutSettleService,
     ICreateQueryService createQueryService,
     MergeDataService mergeDataService,
     LogService logService,
-    IMapper mapper)
-    : MultipleServerAioService
+        IMapper mapper,
+        ResultAmendmentService resultAmendmentService)
 {
     private readonly AppSettingsKey appSettingsKey = appSettingsKey.Value;
+        this.resultAmendmentService = resultAmendmentService;
 
     public async Task<(List<Models.ResultDetail>, TicketCounts)> FetchResultDetails(GetResultDetailCriteria criteria, int sportType)
     {
@@ -213,23 +217,30 @@ public class MultipleServerAioServiceImp(
 
     private async Task UpdateInfoAndSettle(SettleCriteria criteria, List<ResourceItem> selectedResources)
     {
-        await SetUnderSettleFlag(criteria, selectedResources);
+        //await SetUnderSettleFlag(criteria, selectedResources);
 
-        await UpdateMatchInfo(criteria);
+        //await UpdateMatchInfo(criteria);
 
         await WriteLog(criteria);
 
         //TODO
+        await HandleResultAmendment(criteria, selectedResources);
 
-        foreach (var server in appSettingsKey.SiteDbServer)
-        {
-            criteria.DbServer = server;
-            await repository.ExecuteAsync(criteria);
-        }
+        //foreach (var server in appSettingsKey.SiteDbServer)
+        //{
+        //    criteria.DbServer = server;
+        //    await repository.ExecuteAsync(criteria);
+        //}
     }
 
-    private async Task HandleResultAmendment()
+    private async Task HandleResultAmendment(SettleCriteria settleCriteria, List<ResourceItem> selectedResources)
     {
+        if (settleCriteria.SportType != SportType.Cricket)
+        {
+            return;
+        }
+
+        await resultAmendmentService.HandleResultAmendment(settleCriteria, selectedResources);
     }
 
     private async Task<Result> Execute(SettleCriteria criteria, List<ResourceItem> selectedResources)

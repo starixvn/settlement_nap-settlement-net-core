@@ -4,12 +4,11 @@
 		<Setting Key="NAP_Set_MatchSelInfo" SpName="NAP_Set_MatchSelInfo" DbName="DBPRO.bodb02.wsv_nap" />
 		<Setting Key="NAP_Set_MatchSelDetail_Resources_ReCal" SpName="NAP_Set_MatchSelDetail_Resources_ReCal" DbName="DBPRO.bodb02.wsv_nap" />
 		<Setting Key="NAP_Set_MatchSelHedge" SpName="NAP_Set_MatchSelHedge" DbName="DBPRO.bodb02.wsv_nap" />
-		<Setting Key="NAP_SettlementLog_CheckReSettle" SpName="NAP_SettlementLog_CheckReSettle" DbName="DBLOG.bodb_CustomerLog.bodbAdminNet" />
-		<Setting Key="NAP_SettlementResultHistory_Ins" SpName="NAP_SettlementResultHistory_Ins" DbName="DBLOG.bodb_CustomerLog.bodbAdminNet" />
+		<Setting Key="NAP_SettlementLog_CheckReSettle" SpName="NAP_SettlementLog_CheckReSettle_UAT4" DbName="DBLOG.bodb_CustomerLog.bodbAdminNet" />
 		<Function Name="NAP_SettlementResultHistory_Ins">
-			<Setting Key="NAP_SettlementResultHistory_Ins_DBSID01" SpName="NAP_SettlementResultHistory_Ins" DbName="DBSID01.bodb02.bodbAdminNet" />
-			<Setting Key="NAP_SettlementResultHistory_Ins_DBSID02" SpName="NAP_SettlementResultHistory_Ins" DbName="DBSID02.bodb02.bodbAdminNet" />
-			<Setting Key="NAP_SettlementResultHistory_Ins_DBSID03" SpName="NAP_SettlementResultHistory_Ins" DbName="DBSID03.bodb02.bodbAdminNet" />
+			<Setting Key="NAP_SettlementResultHistory_Ins_DBSID01" SpName="NAP_SettlementResultHistory_Ins_UAT4" DbName="DBSID01.bodb02.bodbAdminNet" />
+			<Setting Key="NAP_SettlementResultHistory_Ins_DBSID02" SpName="NAP_SettlementResultHistory_Ins_UAT4" DbName="DBSID02.bodb02.bodbAdminNet" />
+			<Setting Key="NAP_SettlementResultHistory_Ins_DBSID03" SpName="NAP_SettlementResultHistory_Ins_UAT4" DbName="DBSID03.bodb02.bodbAdminNet" />
 		</Function>
 	</Function>
 	<Function Name="Aio">

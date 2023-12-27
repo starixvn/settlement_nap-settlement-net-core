@@ -96,7 +96,7 @@ public class CricketBetTypeService : ICricketBetTypeService
 
         if (GroupBetType.IncludedPlayerName.Contains(betTypeId) || GroupBetType.IncludedTwoPlayerName.Contains(betTypeId))
         {
-            var value = inputTypeService.GetInnsInputLabel(resourceId, betTypeId, inputOptions);
+            var value = inputTypeService.GetInnsInputLabel(resourceId, betTypeId, inputOptions); //G
             resultDetail.HomeName = value.HomeValue;
             resultDetail.AwayName = value.AwayValue;
         }

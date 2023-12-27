@@ -185,8 +185,13 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
   private confirmCalculation(resultDetails: ResultDetail[]) {
     this.confirmationDialogMessage.message = this.getConfirmMessage(resultDetails);
     this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
+      const resultSettle = _.cloneDeep(this.selectedResources);
+      console.log(resultSettle)
+
+      this.createResultSettle(resultSettle);
+      
       const query = new SettleQuery(this.match.matchDetail.matchId,
-        this.selectedResources,
+        resultSettle,
         CalculateAction.earlyCalculate,
         this.isReSettledTickets,
         this.permission.isLeader, false);
@@ -197,6 +202,15 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         ApiKeys.NormalMatch, () => {
           this.push(query);
         });
+    });
+  }
+
+  private createResultSettle(resultDetails: ResultDetail[]) {
+    resultDetails.forEach(result => {
+      if(result.inputType === ResultControlGroup.HomeAway) {
+        result.teamId = result.homeValue === 'H' ? this.matchDetail.homeId.toString()
+          : (result.homeValue === 'A' ? this.matchDetail.awayId.toString() : 'None')
+      }
     });
   }
 

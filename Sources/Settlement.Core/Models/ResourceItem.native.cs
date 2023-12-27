@@ -27,4 +27,7 @@ public class ResourceItem : BaseResourceItem
 
     [XmlIgnore]
     public bool IsSettleDetermined { get; set; }
+
+    [XmlIgnore]
+    public string TeamId { get; set; }
 }
