@@ -1,4 +1,4 @@
 export const LeagueGroupId = {
-  RedCat : [155,215], // 151 = pingoal
+  RedCat : [155,215],
   Pingoal: [151]
 }

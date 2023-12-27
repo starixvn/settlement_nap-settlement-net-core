@@ -4,7 +4,7 @@ import { Component, Injector, ViewChild } from '@angular/core';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 import * as _ from 'lodash';
 import { MessageBoxService, AioService, BlockUIService } from '../../shared/services';
-import { ModalDialogMessage, Result } from '../../shared/models';
+import { ModalDialogMessage } from '../../shared/models';
 import { Language } from '../../shared/language.native';
 import { CalculateAction, SettlementStatusId, ResultStatusId, SportType } from '../../shared/constants';
 import { ApiKeys, Resources, ResourcesIds, KickOffTime } from '../constants';
@@ -12,7 +12,6 @@ import { Match, SettleQuery } from '../models';
 import { HedgeMatchDetail, ResultDetail, MatchDetail, ExternalResult, SaveScoreQuery, ExternalResultDetail, SportTemplate } from '../../shared/models/sportsbook-sop';
 import { VerificationService, ESportsService } from '../services';
 import { ResourceNameByIdPipe } from '../pipes';
-import { LeagueGroupId } from '../../shared/constants/league-group-id.native';
 
 @Component({
     selector: 'calculation-actions',
