@@ -15,6 +15,9 @@ public class LeagueModel
     [Key("autoWaitingTime")]
     public int AutoWaitingTime { get; set; }
 
+    [Key("autoRetryTime")]
+    public int AutoRetryTime { get; set; }
+
     [Key("matches")]
     public List<Match> Matches { get; set; }
 

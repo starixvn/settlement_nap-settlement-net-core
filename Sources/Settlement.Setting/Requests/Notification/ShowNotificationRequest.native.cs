@@ -2,6 +2,4 @@
 
 namespace Settlement.Setting.Requests.Notification;
 
-public class ShowNotificationRequest : IRequest<int>
-{
-}
+public class ShowNotificationRequest : IRequest<int>;

@@ -11,7 +11,7 @@
 		<ul>
 			<li>
 				<label>Minimum sources:&nbsp;</label>
-				<select [(ngModel)]="resultSettings.minimumProvider">
+				<select [(ngModel)]="resultSettings.minimumProvider" [disabled]="!resultSettings.hasTrader">
 					<option value="1" [text]="1"></option>
 					<option value="2" [text]="2"></option>
 				</select>
@@ -24,11 +24,11 @@
 			<ul style="list-style-type: circle;">
 				<li>
 					<label>Primary: &nbsp;</label>
-					{{ resultSettings.primaryProvider }}
+					{{ resultSettings.primaryProvider == "" ? "any." : resultSettings.primaryProvider }}
 				</li>
 				<li>
 					<label>Secondary: &nbsp;</label>
-					{{ resultSettings.secondaryProvider }}
+					{{ resultSettings.secondaryProvider == "" ? "any." : resultSettings.secondaryProvider }}
 				</li>
 			</ul>
 		</ul>

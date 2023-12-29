@@ -1,13 +1,30 @@
-﻿namespace Settlement.Setting.Models.LeagueSettings;
-public class ResultSettings(bool hasTrader, int minimumProvider, string primaryProvider, string secondaryProvider, IList<ProviderInfo> providerInfos)
+﻿using Newtonsoft.Json;
+
+namespace Settlement.Setting.Models.LeagueSettings;
+public class ResultSettings
 {
-    public bool HasTrader { get; set; } = hasTrader;
+    public ResultSettings(bool hasTrader, int minimumProvider, string primaryProvider, string secondaryProvider,
+        IList<ProviderInfo> providerInfos)
+    {
+        HasTrader = hasTrader;
+        MinimumProvider = minimumProvider;
+        PrimaryProvider = ParseProvider(primaryProvider, providerInfos);
+        SecondaryProvider = ParseProvider(secondaryProvider, providerInfos);
+    }
 
-    public int MinimumProvider { get; set; } = minimumProvider;
+    [JsonConstructor()]
+    public ResultSettings()
+    {
 
-    public string PrimaryProvider { get; set; } = ParseProvider(primaryProvider, providerInfos);
+    }
 
-    public string SecondaryProvider { get; } = ParseProvider(secondaryProvider, providerInfos);
+    public bool HasTrader { get; set; }
+
+    public int MinimumProvider { get; set; }
+
+    public string SecondaryProvider { get; set; }
+
+    public string PrimaryProvider { get; set; }
 
 
     private static string ParseProvider(string providers, IEnumerable<ProviderInfo> providerInfos)

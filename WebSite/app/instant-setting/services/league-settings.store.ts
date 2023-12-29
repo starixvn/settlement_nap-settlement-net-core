@@ -7,7 +7,9 @@ import { LeagueSettings } from "../models/league-settings.model";
 })
 
 export class LeagueSettingsStore{
+  originalState: LeagueSettings;
   state$: Observable<LeagueSettings>;
+  actionAfterUpdate: () => void;
   private _state$: BehaviorSubject<LeagueSettings>;
 
   protected constructor() {
@@ -19,6 +21,7 @@ export class LeagueSettingsStore{
   }
   setState(nextState: LeagueSettings): void {
     this._state$.next(nextState);
+    this.actionAfterUpdate()
   }
 }
 

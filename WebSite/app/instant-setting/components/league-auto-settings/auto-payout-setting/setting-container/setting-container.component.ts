@@ -1,4 +1,5 @@
-import { Component, Input, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { DoCheck } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy, ChangeDetectorRef, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { OnlyIntegerDirective } from '../../../../../shared/directives';
@@ -22,18 +23,17 @@ export class SettingContainerComponent {
   public resultSettings: ResultSettings;
 
   constructor(
-    private readonly store: LeagueSettingsStore, 
+    private readonly store: LeagueSettingsStore,
     private readonly dialog: MatDialog,
     private readonly cd: ChangeDetectorRef) {
-
   }
+
   ngOnInit(): void {
     this.store.state$.pipe(
       map(state => this.isEarly ? state.earlyResultSettings : state.mainResultSettings),
       distinctUntilChanged((prev, curr) => prev === curr))
       .subscribe(data => {
         this.resultSettings = data;
-        console.count("Render: ");
         this.cd.detectChanges();
       });
   }
@@ -46,8 +46,9 @@ export class SettingContainerComponent {
     });
   }
 
-  changeSetting(){
+  changeSetting() {
     this.resultSettings.hasTrader = !this.resultSettings.hasTrader;
+    this.resultSettings.minimumProvider = this.resultSettings.hasTrader ? this.resultSettings.minimumProvider : 2;
     if (this.isEarly) {
       this.store.setState({ ... this.store.state, earlyResultSettings: { ...this.resultSettings } });
     } else {

@@ -1,5 +1,5 @@
 
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { SettingContainerComponent } from './setting-container/setting-container.component';
@@ -17,6 +17,7 @@ import { OnlyIntegerDirective } from '../../../../shared/directives';
 		<div class="square-icon"></div>
 		Auto Payout Setting
 	</div>
+  </div>
 	<ul>
 		<li>
 			<label>Retry-time: </label>
@@ -30,7 +31,6 @@ import { OnlyIntegerDirective } from '../../../../shared/directives';
       <setting-container [isEarly] = "true"/>
     </li>
 	</ul>
-</div>
 `,
   standalone: true,
   imports: [FormsModule, CommonModule, SettingContainerComponent, ZeroFallbackDirective, OnlyIntegerDirective],
@@ -38,10 +38,13 @@ import { OnlyIntegerDirective } from '../../../../shared/directives';
 })
 
 
-export class AutoPayoutSettingComponent implements OnInit {
+export class AutoPayoutSettingComponent implements OnInit, OnChanges {
   public retryTime: number;
   constructor(private readonly store: LeagueSettingsStore, private readonly cd: ChangeDetectorRef) {
 
+  }
+  ngOnChanges(changes: SimpleChanges): void {
+    console.count('render auto-payout-setting: ');
   }
   ngOnInit(): void {
     this.store.state$.pipe(

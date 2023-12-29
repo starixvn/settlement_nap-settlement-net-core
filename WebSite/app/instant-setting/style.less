@@ -43,7 +43,7 @@
     height: 5px;
     width: 3px;
     margin-right: 2px;
-    margin-top: 12px;
+    margin-top: 7px;
 }
 
 .icon {
@@ -120,12 +120,26 @@
 }
 
 .league-setting {
-    color: @title-color;
     font-weight: bold;
-    width: 500px;
     line-height: 30px;
+    padding: 10px;
+
+    .league {
+        color: @title-color;
+        font-weight: bold;
+        text-transform: uppercase;
+
+        .icon {
+            margin-top: 12px !important;
+        }
+    }
+
+    .square-icon {
+        margin-top: 12px !important;
+    }
 
     .title {
+        color: @title-color;
         padding-left: 10px;
     }
 
@@ -207,4 +221,15 @@
     width: 100%;
     text-align: center;
     text-wrap: true;
+}
+
+.toast-container {
+    position: inherit !important;
+    padding-right: 5px;
+
+    .ngx-toastr {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 5px 0 6px !important;
+    }
 }

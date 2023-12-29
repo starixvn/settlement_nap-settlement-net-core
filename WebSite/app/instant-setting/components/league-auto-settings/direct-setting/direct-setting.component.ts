@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { LeagueSettingsStore } from '../../../services/league-settings.store';
 import { CommonModule } from '@angular/common';
@@ -22,10 +22,10 @@ import { OnlyIntegerDirective } from '../../../../shared/directives';
 			<label>&nbsp;seconds. </label>
 		</li>
 	</ul>
-</div>
-`,
+</div>`,
   standalone: true,
-  imports: [FormsModule, CommonModule, ZeroFallbackDirective , OnlyIntegerDirective]
+  imports: [FormsModule, CommonModule, ZeroFallbackDirective , OnlyIntegerDirective],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DirectSettingComponent implements OnInit {
   waitingTime: number = 1;
@@ -37,9 +37,7 @@ export class DirectSettingComponent implements OnInit {
       .pipe(
         map(state => state.waitingTime),
         distinctUntilChanged((prev, curr) => prev == curr))
-      .subscribe(data => {
-        this.waitingTime = data;
-      });
+      .subscribe(data => this.waitingTime = data);
   }
 
   changeWaiting(seconds: string ) {

@@ -7,14 +7,20 @@ import { MessageBoxService } from '../../shared/services';
 import { Language } from '../../shared/language.native';
 import { SettingType, TooltipMessage } from '../constants';
 import { HttpUrlEncodingCodec } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
+import { OnlyIntegerDirective } from '../../shared/directives';
+import { CommonModule } from '@angular/common';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'settlement-setting',
   templateUrl: './remark-setting.component.html',
+  imports: [OnlyIntegerDirective, FormsModule, CommonModule, NgbModule],
   providers: [
     RequestService,
     HttpUrlEncodingCodec,
   ],
+  standalone: true
 })
 
 export class RemarkSettingComponent implements OnInit {

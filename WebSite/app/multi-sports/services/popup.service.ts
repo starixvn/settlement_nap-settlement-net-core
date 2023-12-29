@@ -19,6 +19,8 @@ import {
   EventStatus,
 } from "../../shared/constants";
 import { AutoType } from "../constants";
+import { SportSingleAutoType } from "../constants/sport-instant";
+import { LeagueAutoSettings } from "../../shared/models/leagus-auto-settings.model";
 
 @Injectable()
 export class PopupService {
@@ -228,7 +230,7 @@ export class PopupService {
     this.dialogBoxService
       .popupHasResponse(dialogData, "500px", "270px")
       .subscribe((result) => {
-        if (!_.isNull(result)) {
+        if (!_.isNil(result)) {
           this.applyNewSetting(
             league.autoCalcSetting,
             result.split(",")[0],
@@ -238,6 +240,43 @@ export class PopupService {
           this.affectAutoPayoutForMatch(
             league,
             _.isEqual(result.split(",")[1], "true")
+          );
+        }
+      });
+  }
+
+
+  public async openUpdateNewPayoutForLeague(league: LeagueMatch) {
+    const setting = await this.multiSportService.getSetting(
+      league.leagueId,
+      0
+    );
+    this.applyNewSetting(league.autoCalcSetting, setting.setting, false);
+    const currentState = league.autoCalcSetting.isAutoPayoutForLeague ? 1 : league.autoCalcSetting.isDirectPayoutForLeague ? 5 : 0;
+    const src =  `/apps/advanced-auto-setting-league?leagueId=${league.leagueId}&sportType=${league.sportType}&autoSetting=${currentState}&waitingTime=${league.autoWaitingTime}`;
+    const frameSrc = encodeURI(src);
+    const dialogData = new DialogDataIframe(
+      Language.payout.titlePopupForLeague,
+      frameSrc
+    );
+    this.dialogBoxService
+      .popupHasResponse(dialogData, "500px", "830px")
+      .subscribe((result) => {
+        if (!_.isNil(result)) {
+          const setting = Object.assign(new LeagueAutoSettings(), JSON.parse(result));
+          this.applyNewSetting(
+            league.autoCalcSetting,
+            setting.autoSetting.toString(),
+            false,
+            true
+          );
+
+          league.autoWaitingTime = setting.waitingTime;
+          league.autoRetryTime = setting.retryTime;
+
+          this.affectAutoPayoutForMatch(
+            league,
+            setting.isApplyAll
           );
         }
       });
@@ -271,7 +310,7 @@ export class PopupService {
   }
 
   public async openUpdatePayoutForMatch(match: Match) {
-    const isMultiSelect = !_.isEqual(match.sportType, SportType.cricket);
+    const isMultiSelect = !_.includes(SportSingleAutoType, match.sportType);
     const autoSetting = await this.multiSportService.getSetting(
       0,
       Number(match.matchId)
@@ -287,7 +326,7 @@ export class PopupService {
     this.dialogBoxService
       .popupHasResponse(dialogData, "500px", "270px")
       .subscribe((result) => {
-        if (!_.isNull(result)) {
+        if (!_.isNil(result)) {
           this.applyNewSetting(match.autoCalcSetting, result, true, !isMultiSelect);
         }
       });

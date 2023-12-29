@@ -211,6 +211,7 @@ public class MultiSportServiceImp : IMultiSportService
                     Name = match.LeagueName,
                     LeagueId = match.LeagueId,
                     AutoWaitingTime = match.AutoWaitingTime,
+                    AutoRetryTime = match.AutoRetryTime,
                     AutoCalcSetting = match.AutoCalcSetting,
                     Matches = new List<Match>(),
                     SportType = match.SportType

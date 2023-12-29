@@ -1,5 +1,4 @@
-﻿using Fanex.Data.Repository;
-using Fanex.NAP.Client.Helpers.Common;
+﻿using Fanex.NAP.Client.Helpers.Common;
 using Microsoft.Extensions.Options;
 using Settlement.Core.Models;
 using Settlement.Core.Services;

@@ -1,4 +1,5 @@
 export class LeagueSettings {
+  leagueId: number;
   leagueName: string;
   autoSetting: number;
   waitingTime: number;

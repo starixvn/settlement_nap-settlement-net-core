@@ -18,4 +18,8 @@ public class LeagueSettingsController : ControllerBase
     [HttpPost]
     [Route("get-settings")]
     public async Task<IActionResult> Proceed(GetLeagueSettingsRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+
+    [HttpPost]
+    [Route("update-settings")]
+    public async Task<IActionResult> Proceed(UpdateLeagueSettingsRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 }

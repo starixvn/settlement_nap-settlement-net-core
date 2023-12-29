@@ -1,4 +1,4 @@
-import { SportSupportInstant } from './../constants/sport-instant';
+import { SportNewAutoPayout, SportSupportInstant } from './../constants/sport-instant';
 import { MultiSport, MatchWaitingRequest, LeagueMatch, Match, SportMatch } from './../models';
 import { Component, Input, OnInit, OnChanges, SimpleChanges, OnDestroy, ChangeDetectorRef, Injector, inject } from '@angular/core';
 import { AutoSettingPosition, DefaultValue } from '../constants';
@@ -39,6 +39,7 @@ export class LeagueComponent implements OnInit, OnChanges, OnDestroy {
   public intervalTimer = interval(this.period);
   public readonly sportTypeCricket = SportType.cricket;
   public readonly sportSupportInstant = SportSupportInstant;
+  public readonly sportSupportNewAutoPayout = SportNewAutoPayout;
   public readonly dialogMessage: ModalDialogMessage = new ModalDialogMessage();
 
   constructor(protected injector: Injector,
@@ -145,7 +146,9 @@ export class LeagueComponent implements OnInit, OnChanges, OnDestroy {
 
   public changeAutoLeague(leagueMatch: LeagueMatch) {
     if (this.permission.canAutoPayout) {
-      this.popupService.openUpdatePayoutForLeague(leagueMatch);
+      SportNewAutoPayout.includes(leagueMatch.sportType) ? 
+      this.popupService.openUpdateNewPayoutForLeague(leagueMatch) 
+      : this.popupService.openUpdatePayoutForLeague(leagueMatch);
     }
   }
 

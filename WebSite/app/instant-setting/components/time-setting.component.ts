@@ -7,10 +7,15 @@ import { ModalDialogMessage, Result } from '../../shared/models';
 import { Language } from '../../shared/language.native';
 import { League, TimeSettingQuery } from '../models';
 import { AutoType } from '../constants/auto-type';
+import { OnlyIntegerDirective } from '../../shared/directives';
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 @Component({
     selector: 'time-setting',
     templateUrl: './time-setting.component.html',
+    imports: [OnlyIntegerDirective, FormsModule, CommonModule],
     providers: [RequestService],
+    standalone: true,
 })
 export class TimeSettingComponent implements OnInit {
     public pageType: string;

@@ -28,11 +28,15 @@
 				</tr>
 			</tbody>
 		</table>
+		<div class="message-box" *ngIf="errorMessage">
+			<div class="icon error" style="margin-top: 5px;"></div>
+			<div class="message-info error">{{ errorMessage }}</div>
+		</div>
 		<div class="line"></div>
 	</div>
 
 	<div class="bottom">
-		<button type="button" style="margin-right: 16px;" class="btn btn-outline-primary" (click)="submit()">Submit</button>
-		<button type="button" class="btn btn-outline-primary" (click)="close()">Cancel</button>
+		<button type="button" style="margin-right: 16px;" class="btn btn-primary" (click)="submit()">Submit</button>
+		<button type="button" class="btn btn-danger" (click)="close()">Cancel</button>
 	</div>
 </div>

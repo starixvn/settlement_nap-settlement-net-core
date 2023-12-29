@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { LeagueSettingsStore } from '../../../services/league-settings.store';
 import { distinctUntilChanged, map } from 'rxjs';
@@ -28,7 +28,8 @@ import { distinctUntilChanged, map } from 'rxjs';
 	</div>
 </div>`,
   standalone: true,
-  imports: [FormsModule]
+  imports: [FormsModule],
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AutoTypeComponent implements OnInit {
   public autoSetting: number;
@@ -40,9 +41,7 @@ export class AutoTypeComponent implements OnInit {
       .pipe(
         map(state => state.autoSetting),
 				distinctUntilChanged((prev, curr) => prev == curr))
-      .subscribe(data => {
-        this.autoSetting = data;
-      });
+      .subscribe(data => this.autoSetting = data);
   }
 
   changeAutoSetting(value: number): void { 

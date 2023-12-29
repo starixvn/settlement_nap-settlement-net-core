@@ -4,7 +4,7 @@ namespace Settlement.Setting.Criteria.LeagueSettings;
 public class GetProviderInfoCriteria : CriteriaBase
 {
     public int SportType { get; set; }
-    public override string GetSettingKey() => "NAP_Set_AutoPayout_Source_Sel";
+    public override string GetSettingKey() => "NAP_Set_AutoPayout_SourceInfo_Sel";
 
     public override bool IsValid() => SportType > 0;
 }

@@ -6,11 +6,15 @@ import { AutoSettingLeagueQuery, AutoSettingMatchQuery, ModalDialogMessage } fro
 import { Language } from '../../shared/language.native';
 import { RequestService } from '../services/request.service';
 import { SettingQuery } from '../models';
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'auto-setting',
   templateUrl: './auto-setting.component.html',
+  imports: [FormsModule, CommonModule],
   providers: [RequestService],
+  standalone: true
 })
 export class AutoSettingComponent implements OnInit {
   public currentState: number;

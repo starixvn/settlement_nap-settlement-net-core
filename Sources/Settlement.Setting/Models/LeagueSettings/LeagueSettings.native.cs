@@ -3,6 +3,8 @@
 namespace Settlement.Setting.Models.LeagueSettings;
 public class LeagueSettings
 {
+    public int LeagueId { get; set; }
+
     public int RetryTime { get; set; }
 
     [JsonIgnore]
