@@ -186,10 +186,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     this.confirmationDialogMessage.message = this.getConfirmMessage(resultDetails);
     this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
       const resultSettle = _.cloneDeep(this.selectedResources);
-      console.log(resultSettle)
-
-      this.createResultSettle(resultSettle);
-      
+      this.setTeamResultSettle(resultSettle);
       const query = new SettleQuery(this.match.matchDetail.matchId,
         resultSettle,
         CalculateAction.earlyCalculate,
@@ -205,11 +202,17 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     });
   }
 
-  private createResultSettle(resultDetails: ResultDetail[]) {
+  private setTeamResultSettle(resultDetails: ResultDetail[]) {
     resultDetails.forEach(result => {
       if(result.inputType === ResultControlGroup.HomeAway) {
-        result.teamId = result.homeValue === 'H' ? this.matchDetail.homeId.toString()
-          : (result.homeValue === 'A' ? this.matchDetail.awayId.toString() : 'None')
+        result.homeId = this.matchDetail.homeId;
+        result.awayId = this.matchDetail.awayId;
+      }
+
+      if (result.inputType === ResultControlGroup.PlayerSelect) {
+        const players = result.inputOptions;
+        result.homeId = players.length < 2 ? null : players[0].playerId;
+        result.awayId = players.length < 2 ? null : players[0].playerId
       }
     });
   }

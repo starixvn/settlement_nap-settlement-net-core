@@ -38,7 +38,7 @@ public class CricketResultItem
     public string Y { get; set; }
 
     [XmlAttribute("TeamIds")]
-    public string TeamId { get; set; }
+    public string TeamIds { get; set; }
 
     [XmlAttribute("OtherInfo")]
     public string OtherInfo { get; set; }
@@ -57,7 +57,7 @@ public class ExtraInfoItem
     public string ResourceId { get; set; }
 
     [XmlAttribute("ReCalc")]
-    public string ReCalcDateTime { get; set; } = DateTime.Now.ToString();
+    public string ReCalcDateTime { get; set; }
 
     [XmlAttribute("Calc")]
     public string CalcDateTime { get; set; }

@@ -248,10 +248,19 @@ export class CalculationActionsComponent implements SportTemplate {
             item.awayValue = _.isEmpty(item.awayValue) ? '' : (Number(item.awayValue)).toString();
         });
 
+        this.setTeamResultSettle(selectedResources);
+
         this.doSaveScore(CalculateAction.calculate, () => {
             this.sendRequest(selectedResources);
         });
     }
+
+    private setTeamResultSettle(resultDetails: ResultDetail[]) {
+        resultDetails.forEach(result => {
+            result.homeId = this.match.matchDetail.homeId;
+            result.awayId = this.match.matchDetail.awayId;
+        });
+      }
 
     private async sendRequest(resource: ResultDetail[]): Promise<void> {
         const settleQuery = new SettleQuery(this.match.matchDetail.matchId, resource, CalculateAction.calculate,

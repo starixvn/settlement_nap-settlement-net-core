@@ -235,7 +235,7 @@ public class MultipleServerAioServiceImp(
 
     private async Task HandleResultAmendment(SettleCriteria settleCriteria, List<ResourceItem> selectedResources)
     {
-        if (settleCriteria.SportType != SportType.Cricket)
+        if (settleCriteria.SportType != SportType.Cricket || settleCriteria.Action == ActionType.UnCalculate)
         {
             return;
         }

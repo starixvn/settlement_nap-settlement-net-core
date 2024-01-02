@@ -14,7 +14,10 @@ public class ResultHistoryInsCriteria : NonQueryCommand
     public short ResultType { get; set; } = 1;
     public string ResourceInfo { get; set; }
 
-    public override string GetSettingKey() => "NAP_SettlementResultHistory_Ins";
+    [SpParam(Ignored = true)]
+    public string DbServer { get; set; }
+
+    public override string GetSettingKey() => $"NAP_SettlementResultHistory_Ins_{DbServer}";
 
     public override bool IsValid() => MatchId > 0;
 }

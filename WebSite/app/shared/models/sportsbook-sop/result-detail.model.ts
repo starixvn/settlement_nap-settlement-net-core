@@ -10,6 +10,8 @@ export class ResultDetail extends GeneralResultDetail {
     betType: string;
     betTypeName: string;
     homeName = '';
+    homeId : number | null = null;
+    awayId  : number | null = null;
     awayName = '';
     checked: boolean = false;
     isResultWarning: boolean;
@@ -33,5 +35,4 @@ export class ResultDetail extends GeneralResultDetail {
     otherInfo: string;
     isResultWarningByBetType: boolean;
     ordNo: number;
-    teamId: string | undefined = undefined
 }

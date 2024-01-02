@@ -13,7 +13,6 @@ public class ResultChanged
     public string AwayValue { get; set; }
     public string Action { get; set; }
     public string OtherInfo { get; set; }
-    public string TeamId { get; set; }
     public DateTime LogDate { get; set; }
     public short ReSettleType { get; set; }
 }
