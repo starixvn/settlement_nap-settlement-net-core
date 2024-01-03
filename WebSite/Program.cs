@@ -14,43 +14,46 @@ using Settlement.WebSites.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.ConfigureAuthorization();
+var services = builder.Services;
+var configuration=builder.Configuration;
 
-builder.Services.ConfigureAuthentication(builder.Configuration);
+services.AddAuthorizationPolicy();
 
-builder.Services.ConfigureRedis(builder.Configuration);
+services.AddAuthentication(configuration);
 
-builder.Services.ConfigureSession(builder.Configuration);
+services.AddRedis(configuration);
 
-builder.Services.OnebookUM(builder.Configuration);
+services.AddSession(configuration);
 
-builder.Services.ConfigureNapServices(builder.Configuration);
+services.AddOnebookUM(configuration);
 
-builder.Services.AddFanexSql(builder.Configuration);
+services.AddNapServices(configuration);
 
-WebSites.ConfigureFanex(builder.Configuration);
+services.AddFanexSql(configuration);
 
-builder.Services.ConfigureAutoMapper();
+services.AddFanex(configuration);
 
-builder.Services.ConfigureCore();
+services.AddAutoMapper();
 
-builder.Services.ConfigureMediator();
+services.AddCoreServices();
 
-builder.Services.ConfigInternalService();
+services.AddMediator();
 
-builder.Services.ConfigureMessagePack();
+services.AddInternalService();
 
-builder.Services.Configure<AppSettingsKey>(builder.Configuration);
+services.AddMessagePack();
 
-builder.Services.AddRazorPages();
-builder.Services.AddControllersWithViews(options =>
+services.Configure<AppSettingsKey>(configuration);
+
+services.AddRazorPages();
+services.AddControllersWithViews(options =>
 {
     options.Filters.Add(new ServiceFilterAttribute(typeof(CheckUMFilterAttribute)));
     options.Filters.Add(new SessionAuthorizeAttribute());
 });
-builder.Services.AddHttpClient();
+services.AddHttpClient();
 
-builder.Services.AddDataProtection().UseCryptographicAlgorithms(
+services.AddDataProtection().UseCryptographicAlgorithms(
     new AuthenticatedEncryptorConfiguration
     {
         EncryptionAlgorithm = EncryptionAlgorithm.AES_256_CBC,

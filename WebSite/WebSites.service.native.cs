@@ -48,7 +48,7 @@ namespace Settlement.WebSites;
 
 public static class WebSites
 {
-    public static void ConfigureAuthentication(this IServiceCollection services, IConfiguration configuration)
+    public static void AddAuthentication(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                     .AddCookie(options =>
@@ -69,7 +69,7 @@ public static class WebSites
                     });
     }
 
-    public static void ConfigureAuthorization(this IServiceCollection services)
+    public static void AddAuthorizationPolicy(this IServiceCollection services)
     {
         services.AddControllers(config =>
         {
@@ -80,7 +80,7 @@ public static class WebSites
         });
     }
 
-    public static void ConfigureRedis(this IServiceCollection services, IConfiguration configuration)
+    public static void AddRedis(this IServiceCollection services, IConfiguration configuration)
     {
         var redisConfig = configuration.GetSection("AuthSettings:RedisConfig").Value;
         var redisMultiplexer = ConnectionMultiplexer.Connect(redisConfig);
@@ -99,7 +99,7 @@ public static class WebSites
         services.AddRedisCache(configuration.GetSection("Fanex.Caching.Redis"));
     }
 
-    public static void ConfigureSession(this IServiceCollection services, IConfiguration configuration)
+    public static void AddSession(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddSession(options =>
         {
@@ -109,7 +109,7 @@ public static class WebSites
         });
     }
 
-    public static void ConfigInternalService(this IServiceCollection services)
+    public static void AddInternalService(this IServiceCollection services)
     {
         services.ConfigOtherSportsServices();
         services.ConfigMoveTicketServices();
@@ -124,7 +124,7 @@ public static class WebSites
         services.OutrightConfigServices();
     }
 
-    public static void ConfigureNapServices(this IServiceCollection services, IConfiguration configuration)
+    public static void AddNapServices(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddTransient<ILogger, Logger>();
         services.AddSingleton<INapSettings>(new NapSettings(configuration));
@@ -143,7 +143,7 @@ public static class WebSites
         services.AddSingleton<IRemotingRefService, RemotingRefService>();
     }
 
-    public static void ConfigureFanex(IConfiguration configuration)
+    public static void AddFanex(this IServiceCollection services, IConfiguration configuration)
     {
         LogManager
         .SetDefaultLogCategory(configuration.GetSection("LogCategory").Value)
@@ -163,7 +163,7 @@ public static class WebSites
         AppSettings.AppMailAddress = configuration.GetSection("MailServer:Address").Value;
     }
 
-    public static void ConfigureCore(this IServiceCollection services)
+    public static void AddCoreServices(this IServiceCollection services)
     {
         services.AddScoped<IDynamicRepository, DynamicRepository>();
         services.AddScoped<IRemotingRefService, RemotingRefService>();
@@ -179,7 +179,7 @@ public static class WebSites
         services.AddTransient<GeneralService, GeneralServiceImp>();
     }
 
-    public static void ConfigureMediator(this IServiceCollection services)
+    public static void AddMediator(this IServiceCollection services)
     {
         services.ConfigAioMediator();
         services.ConfigMoveTicketMediator();
@@ -194,7 +194,7 @@ public static class WebSites
         services.OutrightConfigMediator();
     }
 
-    public static void ConfigureAutoMapper(this IServiceCollection services)
+    public static void AddAutoMapper(this IServiceCollection services)
     {
         var mapperConfig = new MapperConfiguration(mc =>
         {
@@ -216,12 +216,12 @@ public static class WebSites
         services.AddSingleton(mapper);
     }
 
-    public static void OnebookUM(this IServiceCollection services, IConfiguration configuration)
+    public static void AddOnebookUM(this IServiceCollection services, IConfiguration configuration)
     {
         services.RegisterServiceCollection(configuration);
     }
 
-    public static void ConfigureMessagePack(this IServiceCollection services)
+    public static void AddMessagePack(this IServiceCollection services)
     {
         services.AddMvc().AddMvcOptions(option =>
         {
