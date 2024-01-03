@@ -49,9 +49,12 @@ public class ResultAmendmentServiceImp : ResultAmendmentService
 
         SetReSettleActionType(settleCriteria.Action, resultsChanged);
 
-        var resultsChangedGroupBy = resultsChanged.GroupBy(x => x.ReSettleType);
+        var resultsChangedGroupBy = resultsChanged
+            .Where(x => x.ReSettleType != 0)
+            .GroupBy(x => x.ReSettleType);
 
-        var resultHistoryItems = resultsChangedGroupBy.Select((item, index) => CreateResultHistoryItem(item.ToList(), selectedResources, item.Key, index + 1));
+        var resultHistoryItems = resultsChangedGroupBy
+            .Select((item, index) => CreateResultHistoryItem(item.ToList(), selectedResources, item.Key, index + 1));
 
         var resultHistoryInsCriteria = CreateResultHistoryInsCriteria(settleCriteria, resultHistoryItems.ToList());
 
@@ -62,7 +65,7 @@ public class ResultAmendmentServiceImp : ResultAmendmentService
     {
         var results = await _repository.FetchAsync<ResultChanged>(criteria);
 
-        return results.ToList();
+        return results.Where(x => x.Action != ActionType.UnCalculate).ToList();
     }
 
     private void CreateResultHistory(ResultHistoryInsCriteria resultHistoryInsCriteria)
@@ -106,11 +109,6 @@ public class ResultAmendmentServiceImp : ResultAmendmentService
         }
 
         return (new CricketResult { CricketResultItems = wrongResults }, new CricketResult { CricketResultItems = actualResults });
-    }
-
-    private bool IsMainResult(string resourceId)
-    {
-        return resourceId == ResourceType.Final || resourceId[..1] is "A" or "H";
     }
 
     private ResultHistoryItem CreateResultHistoryItem(List<ResultChanged> resultsChanged, List<ResourceItem> selectedResources, int actionType, int seqNo)
@@ -267,10 +265,12 @@ public class ResultAmendmentServiceImp : ResultAmendmentService
             itemChanged.Game = $"{inning}";
             itemChanged.TeamIds = resultChanged.OtherInfo;
             itemChanged.OtherInfo = otherInfo;
+            itemChanged.Home = itemChanged.Home == "N" ? "None" : itemChanged.Home;
 
             itemSelected.Game = $"{inning}";
             itemSelected.TeamIds = resourceItem.OtherInfo;
-            itemChanged.OtherInfo = otherInfo;
+            itemSelected.OtherInfo = otherInfo;
+            itemSelected.Home = itemSelected.Home == "N" ? "None" : itemSelected.Home;
 
             return (itemChanged, itemSelected);
         }
@@ -320,17 +320,25 @@ public class ResultAmendmentServiceImp : ResultAmendmentService
 
     private short GetReSettleActionType(string beforeAction, string currentAction)
     {
-        if (beforeAction == "Refund")
+        if (beforeAction.ToUpperInvariant().Equals(ActionType.RefundAll)
+                && currentAction.ToUpperInvariant().Equals(ActionType.CalculateAll))
         {
             return 3;
         }
 
-        if (currentAction == "Refund")
+        if (beforeAction.ToUpperInvariant().Equals(ActionType.CalculateAll)
+            && currentAction.ToUpperInvariant().Equals(ActionType.RefundAll))
         {
             return 2;
         }
 
-        return 1;
+        if (beforeAction.ToUpperInvariant().Equals(ActionType.CalculateAll)
+            && currentAction.ToUpperInvariant().Equals(ActionType.CalculateAll))
+        {
+            return 1;
+        }
+
+        return 0;
     }
 
     private (CricketResultItem, CricketResultItem) CreateResultItemBase(ResultChanged resultChanged, ResourceItem resourceItem)
@@ -411,10 +419,7 @@ public class ResultAmendmentServiceImp : ResultAmendmentService
         return betTypeOvers;
     }
 
-    private string CreateResourceInfo(List<ResultHistoryItem> resultHistoryItems)
-    {
-        var json = JsonSerializer.Serialize(resultHistoryItems);
+    private string CreateResourceInfo(List<ResultHistoryItem> resultHistoryItems) => JsonSerializer.Serialize(resultHistoryItems);
 
-        return json;
-    }
+    private bool IsMainResult(string resourceId) => resourceId == ResourceType.Final || resourceId[..1] is "A" or "H";
 }

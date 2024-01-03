@@ -217,20 +217,19 @@ public class MultipleServerAioServiceImp(
 
     private async Task UpdateInfoAndSettle(SettleCriteria criteria, List<ResourceItem> selectedResources)
     {
-        //await SetUnderSettleFlag(criteria, selectedResources);
+        await SetUnderSettleFlag(criteria, selectedResources);
 
-        //await UpdateMatchInfo(criteria);
+        await UpdateMatchInfo(criteria);
 
         await WriteLog(criteria);
 
-        //TODO
         await HandleResultAmendment(criteria, selectedResources);
 
-        //foreach (var server in appSettingsKey.SiteDbServer)
-        //{
-        //    criteria.DbServer = server;
-        //    await repository.ExecuteAsync(criteria);
-        //}
+        foreach (var server in appSettingsKey.SiteDbServer)
+        {
+            criteria.DbServer = server;
+            await repository.ExecuteAsync(criteria);
+        }
     }
 
     private async Task HandleResultAmendment(SettleCriteria settleCriteria, List<ResourceItem> selectedResources)

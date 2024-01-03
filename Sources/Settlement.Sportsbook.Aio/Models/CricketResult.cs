@@ -16,7 +16,7 @@ public class CricketResult
 
 public class CricketResultItem
 {
-    [XmlAttribute("ID")]
+    [XmlAttribute("Id")]
     public string ResourceId { get; set; }
 
     [XmlAttribute("Home")]
