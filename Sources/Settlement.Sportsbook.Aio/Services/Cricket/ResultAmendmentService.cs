@@ -1,5 +1,6 @@
 ﻿using System.Security.Cryptography;
 using System.Text.Json;
+using Fanex.Logging;
 using Microsoft.Extensions.Options;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
@@ -18,20 +19,32 @@ public interface ResultAmendmentService
 
 public class ResultAmendmentServiceImp : ResultAmendmentService
 {
-    private readonly IDynamicRepository _repository;
+    private readonly IDynamicRepository repository;
     private readonly XmlConvertService xmlConvertService;
-    private readonly AppSettingsKey _appSettingsKey;
+    private readonly AppSettingsKey appSettingsKey;
 
     public ResultAmendmentServiceImp(IDynamicRepository repository,
         XmlConvertService xmlConvertService,
         IOptions<AppSettingsKey> appSettingsKey)
     {
-        _repository = repository;
+        this.repository = repository;
         this.xmlConvertService = xmlConvertService;
-        _appSettingsKey = appSettingsKey.Value;
+        this.appSettingsKey = appSettingsKey.Value;
     }
 
     public async Task HandleResultAmendment(SettleCriteria settleCriteria, List<ResourceItem> selectedResources)
+    {
+        try
+        {
+            await ProcessResultAmendment(settleCriteria, selectedResources);
+        }
+        catch (Exception ex)
+        {
+            LogService.Error("ResultAmendmentService", ex);
+        }
+    }
+
+    private async Task ProcessResultAmendment(SettleCriteria settleCriteria, List<ResourceItem> selectedResources)
     {
         var criteria = new CheckReSettleCriteria
         {
@@ -63,17 +76,17 @@ public class ResultAmendmentServiceImp : ResultAmendmentService
 
     private async Task<List<ResultChanged>> CheckReSettleTicket(CheckReSettleCriteria criteria)
     {
-        var results = await _repository.FetchAsync<ResultChanged>(criteria);
+        var results = await repository.FetchAsync<ResultChanged>(criteria);
 
         return results.Where(x => x.Action != ActionType.UnCalculate).ToList();
     }
 
     private void CreateResultHistory(ResultHistoryInsCriteria resultHistoryInsCriteria)
     {
-        foreach (var server in _appSettingsKey.SiteDbServer.Where(x => x != "DBTXN"))
+        foreach (var server in appSettingsKey.SiteDbServer.Where(x => x != "DBTXN"))
         {
             resultHistoryInsCriteria.DbServer = server;
-            _repository.Execute(resultHistoryInsCriteria);
+            repository.Execute(resultHistoryInsCriteria);
         }
     }
 
