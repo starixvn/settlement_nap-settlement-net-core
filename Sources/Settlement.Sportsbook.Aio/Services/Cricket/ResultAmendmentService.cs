@@ -55,16 +55,16 @@ public class ResultAmendmentServiceImp : ResultAmendmentService
 
         var resultsChanged = await CheckReSettleTicket(criteria);
 
-        if (resultsChanged.Count == 0)
-        {
-            return;
-        }
-
         SetReSettleActionType(settleCriteria.Action, resultsChanged);
 
         var resultsChangedGroupBy = resultsChanged
             .Where(x => x.ReSettleType != 0)
-            .GroupBy(x => x.ReSettleType);
+            .GroupBy(x => x.ReSettleType).ToList();
+
+        if (resultsChangedGroupBy.Count == 0)
+        {
+            return;
+        }
 
         var resultHistoryItems = resultsChangedGroupBy
             .Select((item, index) => CreateResultHistoryItem(item.ToList(), selectedResources, item.Key, index + 1));
@@ -152,8 +152,8 @@ public class ResultAmendmentServiceImp : ResultAmendmentService
             return new ExtraInfoItem
             {
                 ResourceId = x.ResourceId,
-                ReCalcDateTime = x.LogDate.ToString("yyyy-MM-dd HH:mm:ss.fff"),
-                CalcDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"),
+                CalcDateTime = x.LogDate.ToString("yyyy-MM-dd HH:mm:ss.fff"),
+                ReCalcDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"),
             };
         }).ToList();
 
@@ -333,20 +333,20 @@ public class ResultAmendmentServiceImp : ResultAmendmentService
 
     private short GetReSettleActionType(string beforeAction, string currentAction)
     {
-        if (beforeAction.ToUpperInvariant().Equals(ActionType.RefundAll)
-                && currentAction.ToUpperInvariant().Equals(ActionType.CalculateAll))
+        if (beforeAction.ToUpperInvariant().Contains(ActionType.RefundAll)
+                && currentAction.ToUpperInvariant().Contains(ActionType.CalculateAll))
         {
             return 3;
         }
 
-        if (beforeAction.ToUpperInvariant().Equals(ActionType.CalculateAll)
-            && currentAction.ToUpperInvariant().Equals(ActionType.RefundAll))
+        if (beforeAction.ToUpperInvariant().Contains(ActionType.CalculateAll)
+            && currentAction.ToUpperInvariant().Contains(ActionType.RefundAll))
         {
             return 2;
         }
 
-        if (beforeAction.ToUpperInvariant().Equals(ActionType.CalculateAll)
-            && currentAction.ToUpperInvariant().Equals(ActionType.CalculateAll))
+        if (beforeAction.ToUpperInvariant().Contains(ActionType.CalculateAll)
+            && currentAction.ToUpperInvariant().Contains(ActionType.CalculateAll))
         {
             return 1;
         }
