@@ -3,7 +3,6 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { LeagueSettingsStore } from '../../../../services/league-settings.store';
 import { ProviderSource, ResultSettings } from '../../../../models/league-settings.model';
-import { distinctUntilChanged, map } from 'rxjs';
 import * as _ from 'lodash';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';

@@ -13,6 +13,7 @@ import { ToastContainerDirective, ToastContainerModule, ToastrService } from 'ng
 import { Language } from '../../../shared/language.native';
 import { ModalDialogMessage } from '../../../shared/models';
 import { LeagueAutoSettings } from '../../../shared/models/leagus-auto-settings.model';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'league-auto-settings',
@@ -61,7 +62,7 @@ export class LeagueAutoSettingsComponent  implements OnInit, OnDestroy {
       const leagueSettings = await  this.requestService.getLeagueSetting(Number(this.leagueId), Number(this.sportType));
 
       this.store.setState({...leagueSettings, waitingTime: this.waitingTime, autoSetting: this.autoSetting});
-      this.store.originalState = {...this.store.state};
+      this.store.originalState = _.cloneDeep(this.store.state);
     }
 
   cancel(){

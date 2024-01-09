@@ -23,6 +23,8 @@ public class LeagueSettingsServiceImp
 {
 
     private const int ActionChangeLeagueSettingsId = 81048;
+
+    private const int DirectSetting = 5;
     public async Task<LeagueSettings> GetLeagueSettings(GetLeagueSettingsRequest request)
     {
         var criteria = new GetLeagueSettings
@@ -73,7 +75,7 @@ public class LeagueSettingsServiceImp
     {
         return await settingService.UpdateTimeSettingLeague(new TimeSettingRequest
         {
-            AutoType = request.NewSettings.AutoSetting,
+            AutoType = DirectSetting,
             LeagueId = request.NewSettings.LeagueId,
             WaitingTime = request.NewSettings.WaitingTime
         });
