@@ -69,13 +69,19 @@ export class LeagueAutoSettingsComponent  implements OnInit, OnDestroy {
   }
 
   submit(){
+    if((!this.store.state.mainResultSettings.hasTrader && this.store.state.mainResultSettings.minimumProvider == 1 )
+      || (!this.store.state.earlyResultSettings.hasTrader && this.store.state.earlyResultSettings.minimumProvider == 1 )){
+        this.toastrService.error(Language.AutoPayoutSetting.MinimumSource);
+        return;
+      }
     const confirmBox = new ModalDialogMessage(Language.confirmationBox);
-    confirmBox.message = Language.AutoPayoutSetting.ConfirmMessageForAutoSetting;;
+    confirmBox.message = Language.AutoPayoutSetting.ConfirmMessageForAutoSetting;
+    confirmBox.hasActionOnNoBtn = true;
     this.messageBoxService.confirm( confirmBox, () =>{
       this.updateSetting(true);
     }, () => {
       this.updateSetting(false);
-    })
+    });
   }
 
   private async updateSetting(isApplyAll: boolean = false) {

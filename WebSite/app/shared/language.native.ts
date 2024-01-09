@@ -47,6 +47,7 @@
         ConfirmMessageForLeague: 'You have changed Auto Setting of League to EXPECTED_STATE. Do you want to update EXPECTED_STATE for Un-Calculated matches?',
         ConfirmMessageForLeagueAutoSetting: 'You have changed Auto Setting of League from OLD_SETTING to NEW_SETTING. Do you want to update NEW_SETTING for Un-Calculated matches?',
         ConfirmMessageForAutoSetting: "This will update current League's Auto Payout Setting. Do you want to apply the setting to Un-Calculated matches?",
+        MinimumSource: 'Pattern: Minimum 2 sources needed to start Auto Payout.',
         MissingPrimarySource: 'Pattern: Please assign Primary source(s).',
       },
     MarkedTicket: "ERROR! Cannot proceed due to marked tickets. Please unmark them and try again.",
