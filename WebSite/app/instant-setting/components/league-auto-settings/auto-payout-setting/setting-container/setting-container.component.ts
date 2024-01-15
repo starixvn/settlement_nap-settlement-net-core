@@ -31,7 +31,7 @@ export class SettingContainerComponent {
   ngOnInit(): void {
     this.store.state$.pipe(
       map(state => this.isEarly ? state.earlyResultSettings : state.mainResultSettings),
-      distinctUntilChanged((prev, curr) => prev === curr))
+      distinctUntilChanged((prev, curr) => _.isEqual(prev,curr)))
       .subscribe(data => {
         this.resultSettings = data;
         this.cd.detectChanges();

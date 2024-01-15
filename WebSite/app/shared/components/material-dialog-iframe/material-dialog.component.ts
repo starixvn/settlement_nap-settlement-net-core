@@ -10,7 +10,9 @@ import { DomSanitizer} from '@angular/platform-browser';
 export class MaterialDialogComponent {
   constructor(private readonly dialogRef: MatDialogRef<MaterialDialogComponent>,
               private readonly sanitizer: DomSanitizer,
-              @Inject(MAT_DIALOG_DATA) public data: DialogDataIframe) { }
+              @Inject(MAT_DIALOG_DATA) public data: DialogDataIframe) { 
+                this.dialogRef.disableClose = true;
+              }
 
   public src = this.sanitizer.bypassSecurityTrustResourceUrl(this.data.src);
 

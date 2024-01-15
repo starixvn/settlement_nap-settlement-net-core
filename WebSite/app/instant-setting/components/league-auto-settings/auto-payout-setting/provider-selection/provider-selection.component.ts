@@ -56,7 +56,7 @@ export class ProviderSelectionComponent implements OnInit {
       } else {
         this.store.setState({ ... this.store.state, mainResultSettings: { ...this.resultSettings } });
       }
-      this.dialogRef.close();
+      this.close();
     }
   }
 
