@@ -205,14 +205,13 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
   private setTeamResultSettle(resultDetails: ResultDetail[]) {
     resultDetails.forEach(result => {
       if(result.inputType === ResultControlGroup.HomeAway) {
-        result.homeId = this.matchDetail.homeId;
-        result.awayId = this.matchDetail.awayId;
+        result.homeId = `${this.matchDetail.homeId}`;
+        result.awayId = `${this.matchDetail.awayId}`;
       }
 
       if (result.inputType === ResultControlGroup.PlayerSelect) {
         const players = result.inputOptions;
-        result.homeId = players.length < 2 ? null : players[0].playerId;
-        result.awayId = players.length < 2 ? null : players[0].playerId
+        result.homeId = players.length > 0 ? players.map(x => x.playerId).join(',') : '';
       }
     });
   }

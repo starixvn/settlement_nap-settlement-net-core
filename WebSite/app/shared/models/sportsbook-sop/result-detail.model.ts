@@ -10,8 +10,8 @@ export class ResultDetail extends GeneralResultDetail {
     betType: string;
     betTypeName: string;
     homeName = '';
-    homeId : number | null = null;
-    awayId  : number | null = null;
+    homeId : string | null = null;
+    awayId  : string | null = null;
     awayName = '';
     checked: boolean = false;
     isResultWarning: boolean;

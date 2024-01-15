@@ -270,7 +270,7 @@ public class ResultAmendmentServiceImp : ResultAmendmentService
     {
         var betTypeId = GetBetType(resultChanged.ResourceId);
         var (itemChanged, itemSelected) = CreateEarlyResultItemBase(resultChanged, resourceItem);
-        var otherInfo = $"{resourceItem.HomeId},{resourceItem.AwayId}";
+        var otherInfo = $"{resourceItem.HomeId}";
         var inning = GetInning(resultChanged.ResourceId);
 
         if (PatternResultType.EarlyTypeSeven.Contains(betTypeId))

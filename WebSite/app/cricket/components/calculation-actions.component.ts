@@ -257,8 +257,8 @@ export class CalculationActionsComponent implements SportTemplate {
 
     private setTeamResultSettle(resultDetails: ResultDetail[]) {
         resultDetails.forEach(result => {
-            result.homeId = this.match.matchDetail.homeId;
-            result.awayId = this.match.matchDetail.awayId;
+            result.homeId = `${this.match.matchDetail.homeId}`;
+            result.awayId = `${this.match.matchDetail.awayId}`;
         });
       }
 
