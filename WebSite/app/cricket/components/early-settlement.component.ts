@@ -243,8 +243,10 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
   }
 
   private createQueryRefundAndPush() {
+    const resultSettle = _.cloneDeep(this.selectedResources);
+    this.setTeamResultSettle(resultSettle);
     const query = new SettleQuery(this.match.matchDetail.matchId,
-      this.selectedResources,
+      resultSettle,
       CalculateAction.earlyRefund,
       this.isReSettledTickets,
       this.permission.isLeader, false);

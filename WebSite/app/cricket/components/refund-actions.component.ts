@@ -10,7 +10,7 @@ import { SettleQuery, SettleChildMatchQuery, Match
 } from '../models';
 import { ApiKeys } from '../constants';
 import { RefundActionBaseComponent } from '../../shared/components/sportsbook-sop/refund-action-base.component';
-import { SportTemplate } from '../../shared/models/sportsbook-sop';
+import { ResultDetail, SportTemplate } from '../../shared/models/sportsbook-sop';
 import { RefundCommonModule } from '../../shared/modules/refund-common.module';
 import { ResultNameByIdPipe } from '../pipes';
 import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
@@ -76,6 +76,9 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
             item.homeValue = "";
             item.awayValue = "";
         });
+
+        this.setTeamResultSettle(selectedResources);
+        
         const query = new SettleQuery(this.match.matchDetail.matchId,
             selectedResources,
             CalculateAction.refund,
@@ -89,6 +92,13 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
             this.toastrService.error(result.errMsg);
         }
     }
+
+    private setTeamResultSettle(resultDetails: ResultDetail[]) {
+        resultDetails.forEach(result => {
+            result.homeId = `${this.match.matchDetail.homeId}`;
+            result.awayId = `${this.match.matchDetail.awayId}`;
+        });
+      }
 
     private async settleHedgeMatch(settleQuery: SettleQuery) {
         const hedgeMatchId = this.applyHedgeMatch ? this.match.hedgeMatchDetail.matchId : 0;
