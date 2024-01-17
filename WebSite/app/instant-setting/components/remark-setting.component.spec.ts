@@ -2,14 +2,14 @@ import { HttpClientModule, HttpUrlEncodingCodec } from '@angular/common/http';
 import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { of } from 'rxjs';
-import { ModalContentDialogComponent, ModalDialogComponent } from '../../shared/components';
 import { BlockUIService, HttpRequestService, MessageBoxService } from '../../shared/services';
 import { Permission, Remark, RemarkAndPermission, RemarkStatus } from '../models';
 import { RequestService } from '../services/request.service';
 import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { RemarkSettingComponent } from './remark-setting.component';
 import { UrlHelper } from '../../helper';
+import { ModalDialogComponent } from '../../shared/components/modal-dialog/modal-dialog.component';
+import { ModalContentDialogComponent } from '../../shared/components/modal-dialog/modal-content-dialog.component';
 
 describe('SettlementSettingComponent', () => {
   let component: RemarkSettingComponent;
@@ -27,11 +27,6 @@ describe('SettlementSettingComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [
-        RemarkSettingComponent,
-        ModalDialogComponent,
-        ModalContentDialogComponent,
-      ],
       providers: [
         RequestService,
         MessageBoxService,
@@ -45,6 +40,7 @@ describe('SettlementSettingComponent', () => {
         FormsModule,
         HttpClientModule,
         NgbModule,
+        RemarkSettingComponent
       ],
     })
     .overrideModule(BrowserDynamicTestingModule, {
@@ -60,7 +56,7 @@ describe('SettlementSettingComponent', () => {
       fixture = TestBed.createComponent(RemarkSettingComponent);
       component = fixture.componentInstance;
       requestService = fixture.debugElement.injector.get(RequestService);
-      spyOn(requestService, 'getRemarkInfo').and.returnValue(of(mockRemarkedResult));
+      jest.spyOn(requestService, 'getRemarkInfo').mockResolvedValue(mockRemarkedResult);
       fixture.detectChanges();
     });
   }))
@@ -70,7 +66,7 @@ describe('SettlementSettingComponent', () => {
   });
 
   it('ngOnInit - should set properties and get remark info', () => {
-    spyOn(UrlHelper, 'getUrlParameter').and.callFake((param) => {
+    jest.spyOn(UrlHelper, 'getUrlParameter').mockImplementation((param) => {
       if (param === 'matchId') {
         return '12345'
       }
@@ -88,8 +84,8 @@ describe('SettlementSettingComponent', () => {
 
   describe('Change Settings', () => {
     it('changeMTDHoldSetting - should set new setting and lock links', fakeAsync(() => {
-      spyOn(requestService, 'changeSetting').and.returnValue(of(mockRemarkedResult));
-      spyOn(component, 'refreshRemarkStatusOnMainPage');
+      jest.spyOn(requestService, 'changeSetting').mockResolvedValue(mockRemarkedResult);
+      jest.spyOn(component, 'refreshRemarkStatusOnMainPage');
 
       component.changeMTDHoldSetting();
       const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
@@ -101,8 +97,8 @@ describe('SettlementSettingComponent', () => {
     }));
 
     it('changeUndecidedSetting - should set new setting', fakeAsync(() => {
-      spyOn(requestService, 'changeSetting').and.returnValue(of(mockRemarkedResult));
-      spyOn(component, 'refreshRemarkStatusOnMainPage');
+      jest.spyOn(requestService, 'changeSetting').mockResolvedValue(mockRemarkedResult);
+      jest.spyOn(component, 'refreshRemarkStatusOnMainPage');
 
       component.changeUndecidedSetting();
       const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
@@ -114,8 +110,8 @@ describe('SettlementSettingComponent', () => {
     }));
 
     it('changePendingSetting - should set new setting', fakeAsync(() => {
-      spyOn(requestService, 'changeSetting').and.returnValue(of(mockRemarkedResult));
-      spyOn(component, 'refreshRemarkStatusOnMainPage');
+      jest.spyOn(requestService, 'changeSetting').mockResolvedValue(mockRemarkedResult);
+      jest.spyOn(component, 'refreshRemarkStatusOnMainPage');
 
       component.changePendingSetting();
       const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
@@ -127,8 +123,8 @@ describe('SettlementSettingComponent', () => {
     }));
 
     it('changeUnderSettleSetting - should set new setting', fakeAsync(() => {
-      spyOn(requestService, 'changeSetting').and.returnValue(of(mockRemarkedResult));
-      spyOn(component, 'refreshRemarkStatusOnMainPage');
+      jest.spyOn(requestService, 'changeSetting').mockResolvedValue(mockRemarkedResult);
+      jest.spyOn(component, 'refreshRemarkStatusOnMainPage');
 
       component.changeUnderSettleSetting();
       const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;

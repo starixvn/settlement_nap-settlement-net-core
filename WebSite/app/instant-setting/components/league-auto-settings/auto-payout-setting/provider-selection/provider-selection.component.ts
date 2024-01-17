@@ -62,7 +62,7 @@ export class ProviderSelectionComponent implements OnInit {
 
   private validateSources():boolean {
     if(_.isEmpty(this.resultSettings.primaryProvider) && !_.isEmpty(this.resultSettings.secondaryProvider)) {
-      this.errorMessage = Language.AutoPayoutSetting.MissingPrimarySource
+      this.errorMessage = Language.AutoPayoutSetting.MissingPrimarySource;
       return false
     }
     return true;

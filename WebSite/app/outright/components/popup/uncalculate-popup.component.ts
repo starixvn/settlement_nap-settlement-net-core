@@ -34,6 +34,7 @@ export class UncalculatePopupComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: { leagueId: number, sportType: number }) {
     this.injector.get(MatDialog).closeAll();
     this.confirmationDialogMessage.title = Language.confirmationBox;
+    this.dialogRef.disableClose = true;
   }
 
   ngOnInit(): void {

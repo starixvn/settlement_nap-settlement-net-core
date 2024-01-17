@@ -18,23 +18,30 @@ export class RequestService {
         const query: GetRemarkQuery = {
             matchId
         };
-        return this.httpRequestService.postJson(query, `${this.settingApi}/get-remark-info`);
+        const request = this.httpRequestService.postJson(query, `${this.settingApi}/get-remark-info`);
+
+        return firstValueFrom(request);
     }
 
-    public changeSetting(param: ChangeSettingQuery): Observable<RemarkAndPermission> {
+    public changeSetting(param: ChangeSettingQuery) {
+        let request;
         if (_.isEqual(param.type, SettingType.pending)) {
-            return this.httpRequestService.postJson(param, `${this.settingApi}/mark-pending`);
+            request = this.httpRequestService.postJson(param, `${this.settingApi}/mark-pending`);
         } else {
-            return this.httpRequestService.postJson(param, `${this.settingApi}/mark-undecided`);
+            request = this.httpRequestService.postJson(param, `${this.settingApi}/mark-undecided`);
         }
+
+        return firstValueFrom(request);
     }
 
     public getLeagueName(leagueId: number) {
-        return this.httpRequestService.getJson(`${this.settingApi}/get-league-name?leagueId=${leagueId}`);
+        const request = this.httpRequestService.getJson(`${this.settingApi}/get-league-name?leagueId=${leagueId}`);
+        return firstValueFrom(request);
     }
 
     public proceed(query: TimeSettingQuery) {
-        return this.httpRequestService.postJson(query, `${this.settingApi}/proceed`);
+        const request = this.httpRequestService.postJson(query, `${this.settingApi}/proceed`);
+        return firstValueFrom(request);
     }
 
     public updateSettingMatch(query: AutoSettingMatchQuery) {

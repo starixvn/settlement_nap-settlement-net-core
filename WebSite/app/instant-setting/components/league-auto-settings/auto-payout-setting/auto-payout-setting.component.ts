@@ -38,21 +38,17 @@ import { OnlyIntegerDirective } from '../../../../shared/directives';
 })
 
 
-export class AutoPayoutSettingComponent implements OnInit, OnChanges {
+export class AutoPayoutSettingComponent implements OnInit {
   public retryTime: number;
   constructor(private readonly store: LeagueSettingsStore, private readonly cd: ChangeDetectorRef) {
+  }
 
-  }
-  ngOnChanges(changes: SimpleChanges): void {
-    console.count('render auto-payout-setting: ');
-  }
   ngOnInit(): void {
     this.store.state$.pipe(
       map(state =>  state.retryTime),
       distinctUntilChanged((prev, curr) => prev == curr))
       .subscribe(data => {
         this.retryTime = data;
-        this.cd.detectChanges();
       });
   }
 

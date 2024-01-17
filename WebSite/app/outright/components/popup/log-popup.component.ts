@@ -26,7 +26,9 @@ export class LogPopupComponent implements OnInit {
     constructor(
         protected injector: Injector,
         @Inject(MAT_DIALOG_DATA) public data: LogRequest
-    ) { }
+    ) {
+        this.dialogRef.disableClose = true;
+     }
 
     ngOnInit(): void {
         this.dialogRef = this.injector.get(MatDialogRef<LogPopupComponent>);

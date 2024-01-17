@@ -43,8 +43,8 @@ export class RemarkSettingComponent implements OnInit {
     this.getRemarkAndPermissionInfo();
   }
 
-  private getRemarkAndPermissionInfo() {
-    this.requestService.getRemarkInfo(this.matchId).subscribe((queryResult: RemarkAndPermission) => {
+  private  getRemarkAndPermissionInfo() {
+     this.requestService.getRemarkInfo(this.matchId).then((queryResult: RemarkAndPermission) => {
       this.remark = queryResult.match.remark;
       this.permission = queryResult.permission;
     });
@@ -93,7 +93,7 @@ export class RemarkSettingComponent implements OnInit {
       isEnabled
     };
 
-    this.requestService.changeSetting(query).subscribe((result: RemarkAndPermission) => {
+    this.requestService.changeSetting(query).then((result: RemarkAndPermission) => {
       const remark = result.match.remark;
       const eventStatus = result.match.eventStatus;
       this.remark = remark;

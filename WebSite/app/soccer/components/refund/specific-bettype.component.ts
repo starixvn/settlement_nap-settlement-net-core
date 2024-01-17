@@ -17,7 +17,9 @@ export class SpecificBettypeComponent implements OnInit {
     public betTypeName: string;
     constructor(private readonly requestService: RequestService,
         private readonly dialogRef: MatDialogRef<SpecificBettypeComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: { type: string, action: string }) { }
+        @Inject(MAT_DIALOG_DATA) public data: { type: string, action: string }) { 
+            this.dialogRef.disableClose = true;
+        }
 
     async ngOnInit(): Promise<void> {
         this.listBettype = await this.requestService.getSpecificBetType(this.data.type, this.data.action).toPromise() as string[];

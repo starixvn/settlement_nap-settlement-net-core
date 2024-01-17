@@ -36,7 +36,7 @@ export class TimeSettingComponent implements OnInit {
     public async ngOnInit() {
         this.pageType = UrlHelper.getUrlParameter("pageType");
         this.leagueId = Number(UrlHelper.getUrlParameter("leagueId"));
-        this.leagueName = await this.requestService.getLeagueName(this.leagueId).toPromise().then((league: League) => {
+        this.leagueName = await this.requestService.getLeagueName(this.leagueId).then((league: League) => {
             return league.leagueName;
         });
 
@@ -70,7 +70,7 @@ export class TimeSettingComponent implements OnInit {
         this.confirmationDialogMessage.message = Language.InstantSetting.ConfirmMessageSetting;
         this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
             const query = new TimeSettingQuery(this.leagueId, this.time, this.autoType);
-            this.requestService.proceed(query).subscribe((result: Result) => {
+            this.requestService.proceed(query).then((result: Result) => {
                 if (result.isSuccessful) {
                     parent.document.getElementById('dialog-response').setAttribute('value', query.waitingTime.toString());
                    this.messageBoxService.closePopup();

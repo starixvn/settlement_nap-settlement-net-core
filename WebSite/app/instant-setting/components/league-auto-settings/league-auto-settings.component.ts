@@ -29,7 +29,6 @@ export class LeagueAutoSettingsComponent implements OnInit, OnDestroy {
   private sportType: string;
   private waitingTime: number;
   private autoSetting: number;
-  public leagueSettings: LeagueSettings;
   public leagueName: string;
   ngUnsubscribe = new Subject();
 

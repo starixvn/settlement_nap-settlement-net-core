@@ -63,6 +63,7 @@ export class CalculatePopupComponent implements OnInit {
         @Inject(MAT_DIALOG_DATA) public data: { leagueId: number, sportType: number, eventDate: string }) {
         this.confirmationDialogMessage.title = Language.confirmationBox;
         this.dialog.closeAll();
+        this.dialogRef.disableClose = true;
     }
 
     ngOnInit(): void {

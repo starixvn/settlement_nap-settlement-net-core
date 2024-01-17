@@ -5,10 +5,12 @@ import { MessageBoxService, HttpRequestService, BlockUIService, ClosePopupServic
 import { FormsModule } from '@angular/forms';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { HttpClientModule } from '@angular/common/http';
-import { ModalDialogComponent, ModalContentDialogComponent } from '../../shared/components';
-import { of } from 'rxjs';
 import { UrlHelper } from '../../helper';
 import { RequestService } from '../services/request.service';
+import { ModalDialogComponent } from '../../shared/components/modal-dialog/modal-dialog.component';
+import { ModalContentDialogComponent } from '../../shared/components/modal-dialog/modal-content-dialog.component';
+import { Result } from '../../shared/models';
+import * as _ from 'lodash';
 
 
 describe('AutoSettingComponent', () => {
@@ -28,10 +30,11 @@ describe('AutoSettingComponent', () => {
     auto: 'AUTO',
     off: 'OFF',
   };
-  const mockResult = {
+  const mockResult: Result = {
     errCode: 0,
     errMsg: "",
     isSuccessful: true,
+    childMatchIds: ''
   };
 
   const mockFailResult = {
@@ -44,7 +47,6 @@ describe('AutoSettingComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [
-        AutoSettingComponent,
         ModalDialogComponent,
         ModalContentDialogComponent
       ],
@@ -58,6 +60,7 @@ describe('AutoSettingComponent', () => {
         { provide: MessageBoxService, useClass: MessageBoxService },
       ],
       imports: [
+        AutoSettingComponent,
         FormsModule,
         HttpClientModule,
         NgbModule,
@@ -77,9 +80,8 @@ describe('AutoSettingComponent', () => {
     requestService = fixture.debugElement.injector.get(RequestService);
     httpRequestService = fixture.debugElement.injector.get(HttpRequestService);
     messageBoxService = fixture.debugElement.injector.get(MessageBoxService);
-    spyOn(httpRequestService, 'postJson').and.returnValue(mockResult);
-    spyOn(messageBoxService, 'closePopup').and.returnValue(1);
-    spyOn(UrlHelper, 'getUrlParameter').and.returnValue(mockUrlParameter);
+    messageBoxService.closePopup = jest.fn();
+    jest.spyOn(UrlHelper, 'getUrlParameter').mockReturnValue(mockUrlParameter);
 
     fixture.detectChanges();
   });
@@ -94,10 +96,10 @@ describe('AutoSettingComponent', () => {
       component.pageType = 'AutoSettingMatch';
       component.isMultiSelect = false;
 
-      spyOn(requestService, 'updateSettingMatch').and.returnValue(of(mockResult));
+      jest.spyOn(requestService, 'updateSettingMatch').mockResolvedValue(mockResult);
 
       const element = document.createElement("dialog-response");
-      spyOn(document, 'getElementById').and.returnValue(element);
+      jest.spyOn(document, 'getElementById').mockReturnValue(element);
       // Act
 
       component.submit();
@@ -114,13 +116,13 @@ describe('AutoSettingComponent', () => {
       // Arrange
       component.pageType = 'AutoSettingMatch';
       component.isMultiSelect = true;
+      component.originalListSetting = _.cloneDeep(component.listSetting);
       component.listSetting[0].isEnable = true;
       component.listSetting[1].isEnable = true;
 
-      spyOn(requestService, 'updateSettingMatch').and.returnValue(of(mockResult));
-
+      jest.spyOn(requestService, 'updateSettingMatch').mockResolvedValue(mockResult);
       const element = document.createElement("dialog-response");
-      spyOn(document, 'getElementById').and.returnValue(element);
+      jest.spyOn(document, 'getElementById').mockReturnValue(element);
 
       // Act
       component.submit();
@@ -139,8 +141,8 @@ describe('AutoSettingComponent', () => {
       component.pageType = 'AutoSettingLeague';
       component.isMultiSelect = false;
       const element = document.createElement("dialog-response");
-      spyOn(document, 'getElementById').and.returnValue(element);
-      spyOn(requestService, 'updateSettingLeague').and.returnValue(of(mockResult));
+      jest.spyOn(document, 'getElementById').mockReturnValue(element);
+      jest.spyOn(requestService, 'updateSettingLeague').mockResolvedValue(mockResult);
       // Act
 
       component.submit();
@@ -156,12 +158,14 @@ describe('AutoSettingComponent', () => {
     it('should invoke updateSettingLeague & close popup when pageType is AutoSettingLeague', fakeAsync(() => {
       // Arrange
       component.pageType = 'AutoSettingLeague';
+      component.isMultiSelect = true;
+      component.originalListSetting = _.cloneDeep(component.listSetting);
       component.listSetting[0].isEnable = true;
       component.listSetting[1].isEnable = true;
 
       const element = document.createElement("dialog-response");
-      spyOn(document, 'getElementById').and.returnValue(element);
-      spyOn(requestService, 'updateSettingLeague').and.returnValue(of(mockResult));
+      jest.spyOn(document, 'getElementById').mockReturnValue(element);
+      jest.spyOn(requestService, 'updateSettingLeague').mockResolvedValue(mockResult);
       // Act
 
       component.submit();
