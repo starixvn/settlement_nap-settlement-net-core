@@ -33,12 +33,7 @@ describe('Component: CalculationMatchDetail', () => {
         NgbModal
       ],
       imports: [FormsModule, HttpClientModule, MaterialModule, CalculationMatchDetailComponent, ManageLeagueComponent],
-    }).overrideModule(BrowserDynamicTestingModule, {
-      set: {
-        entryComponents: [ManageLeagueComponent],
-      },
-    })
-      .compileComponents()
+    }).compileComponents()
       .then(() => {
         fixture = TestBed.createComponent(CalculationMatchDetailComponent);
         component = fixture.componentInstance;

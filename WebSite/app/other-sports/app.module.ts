@@ -36,7 +36,6 @@ import { SportTemplateModule } from './components/sport-template.module';
         ModalDialogComponent,
         ModalContentDialogComponent,
     ],
-    entryComponents: [ModalDialogComponent, ModalContentDialogComponent],
     bootstrap: [AppComponent],
     providers: [
         { provide: HTTP_INTERCEPTORS, useClass: CustomHttpRequestInterceptor, multi: true }

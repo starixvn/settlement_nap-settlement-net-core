@@ -95,13 +95,7 @@ describe('Basketball - Calculation Actions Component', () => {
                 ResettleCheckerComponent,
                 CalculationActionsComponent
             ]
-        })
-            .overrideModule(BrowserDynamicTestingModule, {
-                set: {
-                    entryComponents: [ModalDialogComponent, ModalContentDialogComponent],
-                },
-            })
-            .compileComponents()
+        }) .compileComponents()
             .then(() => {
                 fixture = TestBed.createComponent(CalculationActionsComponent);
                 component = fixture.componentInstance;

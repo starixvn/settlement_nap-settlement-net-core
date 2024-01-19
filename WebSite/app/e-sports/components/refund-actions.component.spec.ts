@@ -106,11 +106,7 @@ describe("E-sport - Refund Component", () => {
         CalculationMatchDetailComponent,
         ResourceNameByIdPipe],
     })
-      .overrideModule(BrowserDynamicTestingModule, {
-        set: {
-          entryComponents: [ModalDialogComponent, ModalContentDialogComponent],
-        },
-      })
+     
       .compileComponents()
       .then(() => {
         fixture = TestBed.createComponent(RefundActionsComponent);

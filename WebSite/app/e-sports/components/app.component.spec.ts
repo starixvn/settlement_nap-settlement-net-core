@@ -58,11 +58,7 @@ describe("Component: App", () => {
         ToastContainerModule,
         ToastrModule.forRoot()
       ],
-      }).overrideModule(BrowserDynamicTestingModule, {
-        set: {
-          entryComponents: [EarlySettlementComponent, CalculationActionsComponent, RefundActionsComponent],
-        },
-    })
+      })
       .compileComponents()
       .then(() => {
         fixture = TestBed.createComponent(AppComponent);

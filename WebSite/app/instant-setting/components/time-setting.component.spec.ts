@@ -49,11 +49,6 @@ describe('TimeSettingComponent', () => {
             TimeSettingComponent
           ],
         })
-        .overrideModule(BrowserDynamicTestingModule, {
-          set: {
-              entryComponents: [ModalDialogComponent, ModalContentDialogComponent],
-          },
-        })
         .compileComponents()
         .then(() => {
             fixture = TestBed.createComponent(TimeSettingComponent);

@@ -41,11 +41,6 @@ describe('Happy 5 - Filter Component', () => {
                 NgbModule,
             ],
         })
-            .overrideModule(BrowserDynamicTestingModule, {
-                set: {
-                    entryComponents: [ModalDialogComponent],
-                },
-            })
             .compileComponents()
             .then(() => {
                 fixture = TestBed.createComponent(FilterComponent);

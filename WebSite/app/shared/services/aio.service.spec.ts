@@ -36,10 +36,6 @@ describe('AioService', () => {
         HttpClientModule,
         NgbModule
       ],
-    }).overrideModule(BrowserDynamicTestingModule, {
-      set: {
-        entryComponents: [ModalDialogComponent, ModalContentDialogComponent],
-      },
     });
 
     service = TestBed.inject(AioService);

@@ -47,10 +47,6 @@ describe('SpecialSessionComponent', () => {
         ToastContainerModule,
         ToastrModule.forRoot()
       ],
-    }).overrideModule(BrowserDynamicTestingModule, {
-      set: {
-        entryComponents: [ModalDialogComponent, ModalContentDialogComponent],
-      },
     })
       .compileComponents();
   });

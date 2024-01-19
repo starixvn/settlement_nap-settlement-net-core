@@ -6,7 +6,7 @@
       "types": []
     },
     "files": [
-      "../polyfills.ts",
+      
       "main.ts",
     ],
     "include": [

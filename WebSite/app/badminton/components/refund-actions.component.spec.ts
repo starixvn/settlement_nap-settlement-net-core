@@ -73,13 +73,7 @@ describe('Badminton - Refund actions component', () => {
         ScoreBySettlementPipe,
         ResourceNameByIdPipe
       ],
-    })
-      .overrideModule(BrowserDynamicTestingModule, {
-        set: {
-          entryComponents: [ModalDialogComponent, ModalContentDialogComponent],
-        },
-      })
-      .compileComponents()
+    }).compileComponents()
       .then(() => {
         fixture = TestBed.createComponent(RefundActionsComponent);
         component = fixture.componentInstance;

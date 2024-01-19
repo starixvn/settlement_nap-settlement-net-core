@@ -95,11 +95,6 @@ describe('Component: FilterComponent', () => {
                 NgbModule,
             ],
         })
-            .overrideModule(BrowserDynamicTestingModule, {
-                set: {
-                    entryComponents: [ModalDialogComponent, ModalContentDialogComponent],
-                },
-            })
             .compileComponents()
             .then(() => {
                 fixture = TestBed.createComponent(FilterComponent);

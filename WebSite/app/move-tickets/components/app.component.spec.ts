@@ -63,11 +63,7 @@ describe('AppComponent', () => {
             NgbModule,
             MoveTicketsTemplateModule,
         ],
-      }).overrideModule(BrowserDynamicTestingModule, {
-        set: {
-            entryComponents: [CricketComponent, RunningTicketsComponent],
-        },
-    })
+      })
         .compileComponents()
         .then(() => {
             fixture = TestBed.createComponent(AppComponent);

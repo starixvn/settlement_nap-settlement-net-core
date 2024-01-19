@@ -33,12 +33,7 @@ describe('Badminton - Calculation Match Detail Component', () => {
         { provide: MessageBoxService, useClass: MessageBoxService },
       ],
       imports: [FormsModule, HttpClientModule, MaterialModule, CalculateMatchDetailComponent, ManageLeagueComponent],
-    }) .overrideModule(BrowserDynamicTestingModule, {
-      set: {
-        entryComponents: [ManageLeagueComponent],
-      },
-    })
-      .compileComponents()
+    }).compileComponents()
       .then(() => {
         fixture = TestBed.createComponent(CalculateMatchDetailComponent);
         component = fixture.componentInstance;

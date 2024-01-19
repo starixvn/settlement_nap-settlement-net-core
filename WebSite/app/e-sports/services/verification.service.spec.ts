@@ -33,12 +33,7 @@ describe('E-Sports - VerificationService', () => {
             imports: [
                 NgbModule
             ]
-        })
-            .overrideModule(BrowserDynamicTestingModule, {
-                set: {
-                    entryComponents: [ModalDialogComponent, ModalContentDialogComponent],
-                },
-            });
+        });
 
         mapOne = new ResultDetail();
         mapOne.resourceId = 'M1';

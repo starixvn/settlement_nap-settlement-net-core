@@ -2,7 +2,6 @@
 import { ModalDialogComponent } from './modal-dialog.component';
 
 @NgModule({
-    declarations: [ModalDialogComponent],
-    entryComponents: [ModalDialogComponent],
+    declarations: [ModalDialogComponent]
 })
 export class FakeModalDialogComponent { }

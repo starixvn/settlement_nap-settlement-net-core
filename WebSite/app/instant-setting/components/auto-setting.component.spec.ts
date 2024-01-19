@@ -66,11 +66,6 @@ describe('AutoSettingComponent', () => {
         NgbModule,
       ],
     })
-      .overrideModule(BrowserDynamicTestingModule, {
-        set: {
-          entryComponents: [ModalDialogComponent, ModalContentDialogComponent],
-        },
-      })
       .compileComponents();
   }));
 

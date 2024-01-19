@@ -89,13 +89,7 @@ describe('Bet Builder - Matches Component', () => {
                 NgbModule,
                 MaterialModule
             ],
-        })
-            .overrideModule(BrowserDynamicTestingModule, {
-                set: {
-                    entryComponents: [ModalDialogComponent, ModalContentDialogComponent, MaterialDialogComponent],
-                },
-            })
-            .compileComponents()
+        }).compileComponents()
             .then(() => {
                 match = new MatchDetail();
                 match.matchId = 1;

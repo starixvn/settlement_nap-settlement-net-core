@@ -60,10 +60,6 @@ describe("E-sport - Calculation Match Detail Component", () => {
         { provide: MessageBoxService, useClass: MessageBoxService },
       ],
       imports: [FormsModule, HttpClientModule, MaterialModule, CalculationMatchDetailComponent,  ResourceNameByIdPipe, ManageLeagueComponent],
-    }).overrideModule(BrowserDynamicTestingModule, {
-      set: {
-        entryComponents: [ManageLeagueComponent],
-      },
     })
       .compileComponents()
       .then(() => {

@@ -67,7 +67,6 @@ import { NoopAnimationsModule } from "@angular/platform-browser/animations";
     SpecialTimeEventCounterPipe,
     InputScoreFormComponent,
   ],
-  entryComponents: [ModalDialogComponent],
   providers: [
     {
       provide: HTTP_INTERCEPTORS,

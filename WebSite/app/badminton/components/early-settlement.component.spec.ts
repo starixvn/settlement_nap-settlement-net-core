@@ -95,13 +95,7 @@ describe('EarlySettlementComponent', () => {
         ResultByTeamNamePipe,
         PipesModule
       ],
-    })
-      .overrideModule(BrowserDynamicTestingModule, {
-        set: {
-          entryComponents: [ModalDialogComponent, ModalContentDialogComponent],
-        },
-      })
-      .compileComponents()
+    }).compileComponents()
       .then(() => {
         fixture = TestBed.createComponent(EarlySettlementComponent);
         component = fixture.componentInstance;

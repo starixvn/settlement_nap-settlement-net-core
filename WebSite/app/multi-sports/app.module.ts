@@ -47,7 +47,6 @@ import { TimeConverterPipe } from '../shared/pipes/time-converter.pipe';
         MaterialDialogComponent,
         TimeConverterPipe
     ],
-    entryComponents: [ModalDialogComponent, ModalContentDialogComponent],
     providers: [ { provide: HTTP_INTERCEPTORS, useClass: CustomHttpRequestInterceptor, multi: true }],
     bootstrap: [AppComponent],
 })

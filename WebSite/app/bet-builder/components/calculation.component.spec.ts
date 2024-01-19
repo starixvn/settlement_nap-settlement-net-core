@@ -93,11 +93,6 @@ describe('Bet Builder - Calculation Component', () => {
                 NgbModule,
             ],
         })
-            .overrideModule(BrowserDynamicTestingModule, {
-                set: {
-                    entryComponents: [ModalDialogComponent, ModalContentDialogComponent],
-                },
-            })
             .compileComponents()
             .then(() => {
                 const item = new Selection("Selection Name");

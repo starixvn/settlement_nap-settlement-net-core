@@ -107,10 +107,6 @@ describe('GameTotalRefundComponent', () => {
                 { provide: ToastrService, useClass: ToastrService },
                 { provide: MessageBoxService, useClass: MessageBoxService },
             ]
-        }).overrideModule(BrowserDynamicTestingModule, {
-            set: {
-                entryComponents: [ModalDialogComponent, ModalContentDialogComponent],
-            },
         })
             .compileComponents();
     });

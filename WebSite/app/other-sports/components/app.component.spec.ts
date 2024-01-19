@@ -47,10 +47,6 @@ describe('Component: App', () => {
                 NgbModal,
                 { provide: ElementRef, useValue: new MockElementRef() },
             ],
-        }).overrideModule(BrowserDynamicTestingModule, {
-            set: {
-                entryComponents: [FullTimeCalculationComponent, FullTimeRefundComponent],
-            },
         }).compileComponents()
             .then(() => {
                 fixture = TestBed.createComponent(AppComponent);
