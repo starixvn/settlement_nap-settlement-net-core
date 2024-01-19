@@ -7,15 +7,8 @@ public interface MergeDataService
     void AddSiteInfo(List<Match> baseMatches, List<Match> siteMatches);
 }
 
-public class MergeDataServiceImp : MergeDataService
+public class MergeDataServiceImp(CompareMatchService compareMatchService) : MergeDataService
 {
-    private readonly CompareMatchService compareMatchService;
-
-    public MergeDataServiceImp(CompareMatchService compareMatchService)
-    {
-        this.compareMatchService = compareMatchService;
-    }
-
     public void AddSiteInfo(List<Match> baseMatches, List<Match> siteMatches)
     {
         foreach (var match in baseMatches)

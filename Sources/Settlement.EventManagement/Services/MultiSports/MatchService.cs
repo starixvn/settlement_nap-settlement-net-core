@@ -17,31 +17,14 @@ public interface IMatchService
     List<Match> SortingMatches(List<Match> matches);
 }
 
-public class MatchServiceImp : IMatchService
+public class MatchServiceImp(
+    IRefDataService refDataService,
+    IMatchResultDetailService matchResultDetailService,
+    CompareMatchService compareMatchService,
+    NewInfoMatchService newInfoMatchService,
+    ScaleOutSettleService scaleOutSettleService)
+    : IMatchService
 {
-    private readonly IMatchResultDetailService matchResultDetailService;
-
-    private readonly IRefDataService refDataService;
-
-    private readonly CompareMatchService compareMatchService;
-
-    private readonly NewInfoMatchService newInfoMatchService;
-
-    private readonly ScaleOutSettleService scaleOutSettleService;
-
-    public MatchServiceImp(IRefDataService refDataService,
-        IMatchResultDetailService matchResultDetailService,
-        CompareMatchService compareMatchService,
-        NewInfoMatchService newInfoMatchService,
-        ScaleOutSettleService scaleOutSettleService)
-    {
-        this.matchResultDetailService = matchResultDetailService;
-        this.refDataService = refDataService;
-        this.compareMatchService = compareMatchService;
-        this.newInfoMatchService = newInfoMatchService;
-        this.scaleOutSettleService = scaleOutSettleService;
-    }
-
     public async Task<List<Match>> SetNewMatchInfo(List<Match> matches, List<ResultDetail> listResultDetail)
     {
         foreach (var match in matches)

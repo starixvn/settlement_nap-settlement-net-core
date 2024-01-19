@@ -4,15 +4,8 @@ namespace Settlement.EventManagement.Controllers;
 
 [ApiController]
 [Route("api/calculation")]
-public class CalculationController : ControllerBase
+public class CalculationController(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator mediator;
-
-    public CalculationController(IMediator mediator)
-    {
-        this.mediator = mediator;
-    }
-
     [HttpPost]
     [Route("get-league")]
     public async Task<IActionResult> GetLeagues(LeagueCalculationRequest request) =>

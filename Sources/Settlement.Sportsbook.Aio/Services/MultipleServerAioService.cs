@@ -23,33 +23,17 @@ public interface MultipleServerAioService
     public Task<Result> SettleChildMatch(SettleChildMatchRequest request);
 }
 
-public class MultipleServerAioServiceImp : MultipleServerAioService
+public class MultipleServerAioServiceImp(
+    IDynamicRepository repository,
+    IOptions<AppSettingsKey> appSettingsKey,
+    ScaleOutSettleService scaleOutSettleService,
+    ICreateQueryService createQueryService,
+    MergeDataService mergeDataService,
+    LogService logService,
+    IMapper mapper)
+    : MultipleServerAioService
 {
-    private readonly IDynamicRepository repository;
-    private readonly AppSettingsKey appSettingsKey;
-    private readonly ScaleOutSettleService scaleOutSettleService;
-    private readonly ICreateQueryService createQueryService;
-    private readonly MergeDataService mergeDataService;
-    private readonly LogService logService;
-    private readonly IMapper mapper;
-
-    public MultipleServerAioServiceImp(
-        IDynamicRepository repository,
-        IOptions<AppSettingsKey> appSettingsKey,
-        ScaleOutSettleService scaleOutSettleService,
-        ICreateQueryService createQueryService,
-        MergeDataService mergeDataService,
-        LogService logService,
-        IMapper mapper)
-    {
-        this.repository = repository;
-        this.appSettingsKey = appSettingsKey.Value;
-        this.scaleOutSettleService = scaleOutSettleService;
-        this.createQueryService = createQueryService;
-        this.mergeDataService = mergeDataService;
-        this.logService = logService;
-        this.mapper = mapper;
-    }
+    private readonly AppSettingsKey appSettingsKey = appSettingsKey.Value;
 
     public async Task<(List<Models.ResultDetail>, TicketCounts)> FetchResultDetails(GetResultDetailCriteria criteria, int sportType)
     {

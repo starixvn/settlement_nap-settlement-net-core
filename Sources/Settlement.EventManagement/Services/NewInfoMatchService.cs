@@ -30,32 +30,14 @@ public interface NewInfoMatchService
     Task<List<MultiSportMatch>> GetAutoSetting(List<MultiSportMatch> matches);
 }
 
-public class NewInfoMatchServiceImp : NewInfoMatchService
+public class NewInfoMatchServiceImp(
+    SiteMatchService siteMatchService,
+    GoalIconService goalIconService,
+    EventStatusService eventStatusService,
+    BasketballEventStatusService basketballEventStatusService,
+    IDynamicRepository repository)
+    : NewInfoMatchService
 {
-    private readonly SiteMatchService siteMatchService;
-
-    private readonly GoalIconService goalIconService;
-
-    private readonly EventStatusService eventStatusService;
-
-    private readonly BasketballEventStatusService basketballEventStatusService;
-
-    private readonly IDynamicRepository repository;
-
-    public NewInfoMatchServiceImp(
-        SiteMatchService siteMatchService,
-        GoalIconService goalIconService,
-        EventStatusService eventStatusService,
-        BasketballEventStatusService basketballEventStatusService,
-        IDynamicRepository repository)
-    {
-        this.siteMatchService = siteMatchService;
-        this.goalIconService = goalIconService;
-        this.eventStatusService = eventStatusService;
-        this.basketballEventStatusService = basketballEventStatusService;
-        this.repository = repository;
-    }
-
     public string EventStatusColor(BaseMatch match)
     {
         if (match.EventStatus.IgnoreCaseEquals(EventStatus.Postponed))

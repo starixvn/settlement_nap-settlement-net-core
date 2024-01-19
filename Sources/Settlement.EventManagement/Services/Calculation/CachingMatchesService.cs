@@ -15,23 +15,12 @@ public interface CachingMatchesService
     Task<Dictionary<int, List<ReferenceAction>>> GetReferenceActions(IEnumerable<int> matchIds);
 }
 
-public class CachingMatchesServiceImp : CachingMatchesService
+public class CachingMatchesServiceImp(
+    IMemoryCache cacheService,
+    IDynamicRepository repository,
+    IMapper mapper)
+    : CachingMatchesService
 {
-    private readonly IMemoryCache cacheService;
-
-    private readonly IDynamicRepository repository;
-
-    private readonly IMapper mapper;
-
-    public CachingMatchesServiceImp(IMemoryCache cacheService,
-        IDynamicRepository repository,
-        IMapper mapper)
-    {
-        this.cacheService = cacheService;
-        this.repository = repository;
-        this.mapper = mapper;
-    }
-
     public List<CalculateMatchWaiting> SetToCache(List<Match> matches, string hashLeagueIds, bool autoCalculate = false)
     {
         var shortCachingKey = ShortCachingKey(hashLeagueIds, autoCalculate);

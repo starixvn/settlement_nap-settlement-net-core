@@ -6,7 +6,6 @@ using Requests;
 using Settlement.EventManagement.Models.Calculation;
 using Match = Models.Calculation.Match;
 
-
 public interface LeagueService
 {
     Task<List<LeagueTypeModel>> Leagues(LeagueCalculationRequest request);
@@ -14,17 +13,8 @@ public interface LeagueService
     List<League> Leagues(List<Match> matches);
 }
 
-public class LeagueServiceImp : LeagueService
+public class LeagueServiceImp(IDynamicRepository repository, IMapper mapper) : LeagueService
 {
-    private readonly IDynamicRepository repository;
-    private readonly IMapper mapper;
-
-    public LeagueServiceImp(IDynamicRepository repository, IMapper mapper)
-    {
-        this.repository = repository;
-        this.mapper = mapper;
-    }
-
     public async Task<List<LeagueTypeModel>> Leagues(LeagueCalculationRequest request)
     {
         var criteria = mapper.Map<LeagueCalculationRequest, LeagueCalculationCriteria>(request);

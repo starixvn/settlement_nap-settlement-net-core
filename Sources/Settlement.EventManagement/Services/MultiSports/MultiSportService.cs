@@ -19,31 +19,17 @@ public interface IMultiSportService
     Task<List<MultiSportMatchWaiting>> GetWaitingMatches(RefreshMultiSportRequest request);
 }
 
-public class MultiSportServiceImp : IMultiSportService
+public class MultiSportServiceImp(
+    IDynamicRepository repository,
+    IMatchService matchService,
+    IMapper mapper,
+    IMemoryCache cacheService,
+    PermissionService permissionService,
+    IOptions<AppSettingsKey> appSettingsKey)
+    : IMultiSportService
 {
     private static int _isProcessing;
-    private readonly IDynamicRepository repository;
-    private readonly IMatchService matchService;
-    private readonly IMapper mapper;
-    private readonly IMemoryCache cacheService;
-    private readonly PermissionService permissionService;
-    private readonly AppSettingsKey appSettingsKey;
-
-    public MultiSportServiceImp(
-        IDynamicRepository repository,
-        IMatchService matchService,
-        IMapper mapper,
-        IMemoryCache cacheService,
-        PermissionService permissionService,
-        IOptions<AppSettingsKey> appSettingsKey)
-    {
-        this.repository = repository;
-        this.matchService = matchService;
-        this.permissionService = permissionService;
-        this.cacheService = cacheService;
-        this.mapper = mapper;
-        this.appSettingsKey = appSettingsKey.Value;
-    }
+    private readonly AppSettingsKey appSettingsKey = appSettingsKey.Value;
 
     public async Task<List<SportModel>> GetSportBook(FilterMultiSportRequest request)
     {
@@ -136,10 +122,10 @@ public class MultiSportServiceImp : IMultiSportService
         return baseMatches;
     }
 
-    private Task<IEnumerable<Match>> FetchMatches(string server, MultipleSiteCriteria criteria)
+    private async Task<IEnumerable<Match>> FetchMatches(string server, MultipleSiteCriteria criteria)
     {
         criteria.DbServer = server;
-        return repository.FetchAsync<Match>(criteria);
+        return await repository.FetchAsync<Match>(criteria);
     }
 
     private List<MultiSportMatchWaiting> SetToCache(string hashLeagueIds, List<Match> matches)

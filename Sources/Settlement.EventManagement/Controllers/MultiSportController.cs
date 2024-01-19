@@ -5,15 +5,8 @@ namespace Settlement.EventManagement.Controllers;
 
 [ApiController]
 [Route("api/multi-sports")]
-public class MultiSportController : ControllerBase
+public class MultiSportController(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator mediator;
-
-    public MultiSportController(IMediator mediator)
-    {
-        this.mediator = mediator;
-    }
-
     [HttpGet]
     [Route("get-date")]
     public IActionResult GetDate()
