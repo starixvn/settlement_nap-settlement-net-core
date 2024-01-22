@@ -13,7 +13,8 @@ import {
     MatchDetail,
     HedgeMatchDetail,
     SettleChildMatchQuery,
-    Match
+    Match,
+    UpdateSettlementResultHistoryStatus
 } from '../models';
 import { VerificationService } from '../services';
 import { ApiKeys, KickOffTime, Resources, ResourcesIds } from '../constants';
@@ -65,7 +66,7 @@ export class CalculationActionsComponent implements SportTemplate {
         };
 
         this.toastrService.overlayContainer = this.toastContainer;
-        
+
         this.match = await this.aioService.getMatch(matchQuery) as Match;
         this.isLeader = this.match.permission.isLeader;
         this.isTrader = this.match.permission.isTrader;
@@ -166,7 +167,7 @@ export class CalculationActionsComponent implements SportTemplate {
     }
 
     private verifyScoreSourcesAndCalculate() {
-        if(!this.verificationService.allMapHaveScreenshotSource(this.match.resultDetails)) {
+        if (!this.verificationService.allMapHaveScreenshotSource(this.match.resultDetails)) {
             this.toastrService.error(Language.sop.notScreenshot);
             return;
         }
@@ -174,8 +175,8 @@ export class CalculationActionsComponent implements SportTemplate {
         if (this.verificationService.isExistMismatchedScoreScreenshot(this.match.resultDetails)) {
             this.toastrService.error(Language.sop.mismatchedScreenshot);
             return;
-        } 
-        
+        }
+
         if (this.verificationService.allMapHaveScoreSources(this.match.resultDetails)) {
             this.confirmCalculateMismatchScores();
         } else {
@@ -189,7 +190,7 @@ export class CalculationActionsComponent implements SportTemplate {
             }
         }
     }
-    
+
     private confirmCalculateMismatchScores() {
         if (this.verificationBaseService.isExistMismatchScore(this.match.resultDetails)) {
             if (this.isLeader) {
@@ -260,16 +261,22 @@ export class CalculationActionsComponent implements SportTemplate {
             result.homeId = `${this.match.matchDetail.homeId}`;
             result.awayId = `${this.match.matchDetail.awayId}`;
         });
-      }
+    }
 
     private async sendRequest(resource: ResultDetail[]): Promise<void> {
         const settleQuery = new SettleQuery(this.match.matchDetail.matchId, resource, CalculateAction.calculate,
             this.isReSettledTickets, this.isLeader, false);
-        
+
         const result = await this.aioService.push(settleQuery);
         if (result.isSuccessful) {
-            await this.handleChildMatch(settleQuery, result.childMatchIds);
-            await this.settleHedgeMatch(settleQuery);
+            await this.handleChildMatch(settleQuery, result.childMatchIds, result.settledSessionId);
+            const resultSettleHedge = await this.settleHedgeMatch(settleQuery);
+            result.hasResultAmendment && await this.handleUpdateSettlementResultHistoryStatus(settleQuery, result.settledSessionId);
+            if (!_.isEmpty(resultSettleHedge)) {
+                this.toastrService.error(result.errMsg);
+                return;
+            }
+            this.messageBoxService.closePopup();
         } else {
             this.toastrService.error(result.errMsg);
         }
@@ -277,18 +284,17 @@ export class CalculationActionsComponent implements SportTemplate {
 
     private async settleHedgeMatch(settleQuery: SettleQuery) {
         const hedgeMatchId = this.applyHedgeMatch ? this.match.hedgeMatchDetail.matchId : 0;
+        let errMsg = "";
         if (hedgeMatchId > 0) {
             settleQuery.matchId = hedgeMatchId;
             settleQuery.isHedgeMatch = true;
             const result = await this.aioService.push(settleQuery);
-            if (result.isSuccessful) {
-                this.messageBoxService.closePopup();
-            } else {
-                this.toastrService.error(result.errMsg);
+
+            if (!result.isSuccessful) {
+                errMsg = result.errMsg
             }
-        } else {
-            this.messageBoxService.closePopup();
         }
+        return errMsg;
     }
 
     public uncalculate() {
@@ -317,21 +323,37 @@ export class CalculationActionsComponent implements SportTemplate {
 
         const query = new SettleQuery(this.match.matchDetail.matchId, selectedResources, CalculateAction.unCalculate,
             this.isReSettledTickets, this.isLeader, false);
-        
+
 
         const result = await this.aioService.push(query);
-        if (result.isSuccessful) {
-            await this.handleChildMatch(query, result.childMatchIds);
-            await this.settleHedgeMatch(query);
-        } else {
+        if (!result.isSuccessful) {
             this.toastrService.error(result.errMsg);
+            return;
         }
+
+        await this.handleChildMatch(query, result.childMatchIds, result.settledSessionId);
+        const resultSettleHedge = await this.settleHedgeMatch(query);
+        if (!_.isEmpty(resultSettleHedge)) {
+            this.toastrService.error(result.errMsg);
+            return;
+        }
+        this.messageBoxService.closePopup();
+
     }
 
-    private async handleChildMatch(settleQuery: SettleQuery, childMatchIds: string) {
+    private async handleUpdateSettlementResultHistoryStatus(settleQuery: SettleQuery, sessionId: string) {
+        const query = new UpdateSettlementResultHistoryStatus(settleQuery.matchId, sessionId)
+        await this.aioService.updateSettlementResultHistoryStatus(query);
+    }
+
+    private async handleChildMatch(settleQuery: SettleQuery, childMatchIds: string, parentSessionId: string) {
         if (!_.isEmpty(childMatchIds)) {
             const settleChildMatchQuery = new SettleChildMatchQuery(childMatchIds, settleQuery.selectedResources,
                 settleQuery.actionName, settleQuery.isReSettledTickets);
+
+            settleChildMatchQuery.sportType = settleQuery.sportType;
+            settleChildMatchQuery.parentSessionId = parentSessionId;
+
             await this.aioService.pushChildMatch(settleChildMatchQuery);
         }
     }

@@ -6,7 +6,7 @@ import { MessageBoxService, BlockUIService } from '../../shared/services';
 import { CalculateAction } from '../../shared/constants';
 import { MarkedTicketsModel, ModalDialogMessage } from '../../shared/models';
 import { Language } from '../../shared/language.native';
-import { SettleQuery, SettleChildMatchQuery, Match
+import { SettleQuery, SettleChildMatchQuery, Match, UpdateSettlementResultHistoryStatus
 } from '../models';
 import { ApiKeys } from '../constants';
 import { RefundActionBaseComponent } from '../../shared/components/sportsbook-sop/refund-action-base.component';
@@ -85,12 +85,21 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
             this.isReSettledTickets,
             this.match.permission.isLeader, false);
         const result = await this.aioService.push(query);
-        if (result.isSuccessful) {
-            await this.handleChildMatch(query, result.childMatchIds);
-            await this.settleHedgeMatch(query);
-        } else {
+        if (!result.isSuccessful) {
             this.toastrService.error(result.errMsg);
+            return;
         }
+
+        await this.handleChildMatch(query, result.childMatchIds,result.settledSessionId);
+        const resultSettleHedge =  await this.settleHedgeMatch(query);
+       
+        result.hasResultAmendment && await this.handleUpdateSettlementResultHistoryStatus(query,result.settledSessionId);
+       
+        if (!_.isEmpty(resultSettleHedge)) {
+            this.toastrService.error(result.errMsg);
+            return;
+        }
+        this.messageBoxService.closePopup();
     }
 
     private setTeamResultSettle(resultDetails: ResultDetail[]) {
@@ -102,25 +111,33 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
 
     private async settleHedgeMatch(settleQuery: SettleQuery) {
         const hedgeMatchId = this.applyHedgeMatch ? this.match.hedgeMatchDetail.matchId : 0;
+        let errMsg = "";
         if (hedgeMatchId > 0) {
             settleQuery.matchId = hedgeMatchId;
             settleQuery.isHedgeMatch = true;
             const result = await this.aioService.push(settleQuery);
-            if (result.isSuccessful) {
-                this.messageBoxService.closePopup();
-            } else {
-                this.toastrService.error(result.errMsg);
+            if (!result.isSuccessful) {
+                errMsg = result.errMsg
             }
-        } else {
-            this.messageBoxService.closePopup();
         }
+
+        return errMsg;
     }
 
-    private async handleChildMatch(settleQuery: SettleQuery, childMatchIds: string) {
+    private async handleChildMatch(settleQuery: SettleQuery, childMatchIds: string,parentSessionId: string) {
         if (!_.isEmpty(childMatchIds)) {
             const settleChildMatchQuery = new SettleChildMatchQuery(childMatchIds, settleQuery.selectedResources,
                 settleQuery.actionName, settleQuery.isReSettledTickets);
-            await this.aioService.pushChildMatch(settleChildMatchQuery);
+
+                settleChildMatchQuery.sportType = settleQuery.sportType;
+                settleChildMatchQuery.parentSessionId = parentSessionId;
+
+                await this.aioService.pushChildMatch(settleChildMatchQuery);
         }
     }
+
+    private async handleUpdateSettlementResultHistoryStatus(settleQuery: SettleQuery,sessionId: string) {
+        const query = new UpdateSettlementResultHistoryStatus(settleQuery.matchId,sessionId)
+        await this.aioService.updateSettlementResultHistoryStatus(query);
+      }
 }

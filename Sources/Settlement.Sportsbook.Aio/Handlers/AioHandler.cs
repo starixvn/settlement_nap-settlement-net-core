@@ -1,10 +1,13 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Fanex.Settlement.ScaleOut.Criteria.Update;
+using Microsoft.Extensions.Options;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
+using Settlement.Sportsbook.Aio.Criteria.Cricket;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Requests;
 using Settlement.Sportsbook.Aio.Services;
+using Settlement.Sportsbook.Aio.Services.Cricket;
 
 namespace Settlement.Sportsbook.Aio.Handlers;
 
@@ -20,9 +23,14 @@ public class AioHandler(
         IRequestHandler<CheckRunningOddsRequest, Result>,
         IRequestHandler<SaveScoreRequest, Result>,
         IRequestHandler<SettleChildMatchRequest, Result>,
-        IRequestHandler<ResultSettingRequest, bool>
+        IRequestHandler<ResultSettingRequest, bool>,
+        IRequestHandler<UpdateSettlementResultHistoryStatusRequest, bool>
 
 {
+    private readonly ResultAmendmentService resultAmendmentService;
+
+        ResultAmendmentService resultAmendmentService,
+        this.resultAmendmentService = resultAmendmentService;
     public async Task<AioMatch> Handle(GetMatchRequest request, CancellationToken cancellationToken)
     {
         request.Permission = permissionService.GetPermission(CacheSettings.Keys.MemoryCacheManualPermission);
@@ -57,4 +65,17 @@ public class AioHandler(
 
     public async Task<bool> Handle(ResultSettingRequest request, CancellationToken cancellationToken) =>
         await aioService.ResultSetting(request);
+
+    public async Task<bool> Handle(UpdateSettlementResultHistoryStatusRequest request, CancellationToken cancellationToken)
+    {
+        var criteria = new ResultHistoryUpdateCriteria
+        {
+            MatchId = request.MatchId,
+            SessionIds = request.SessionIds,
+            StatusId = -1 // initial
+        };
+        await resultAmendmentService.UpdateResultHistory(criteria);
+
+        return true;
+    }
 }

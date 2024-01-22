@@ -14,6 +14,8 @@ public class SettleChildMatchRequest : IRequest<Result>
     public bool IsReSettledTickets { get; set; }
 
     public string BetStatus { get; set; }
+    public int SportType { get; set; }
+    public string ParentSessionId { get; set; }
 
     public List<ResourceItem> SelectedResources { get; set; }
 }

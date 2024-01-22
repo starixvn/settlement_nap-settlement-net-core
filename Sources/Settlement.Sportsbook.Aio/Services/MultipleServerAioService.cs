@@ -170,6 +170,7 @@ public class MultipleServerAioServiceImp(
         {
             var childMatchIds = await GetChildMatchIds(criteria.MatchId, criteria.Action, criteria.SelectedResources);
             result.ChildMatchIds = childMatchIds;
+            result.SettledSessionId = criteria.BroadcastSessionId;
         }
 
         await HandleRefundGameWinner(request, result);
@@ -215,7 +216,7 @@ public class MultipleServerAioServiceImp(
         await logService.WriteLog(criteria.MatchId, messageLog);
     }
 
-    private async Task UpdateInfoAndSettle(SettleCriteria criteria, List<ResourceItem> selectedResources)
+    private async Task<Result> UpdateInfoAndSettle(SettleCriteria criteria, List<ResourceItem> selectedResources)
     {
         await SetUnderSettleFlag(criteria, selectedResources);
 
@@ -223,23 +224,30 @@ public class MultipleServerAioServiceImp(
 
         await WriteLog(criteria);
 
-        await HandleResultAmendment(criteria, selectedResources);
+        var isResultAmendment = await HandleResultAmendment(criteria, selectedResources);
 
         foreach (var server in appSettingsKey.SiteDbServer)
         {
             criteria.DbServer = server;
             await repository.ExecuteAsync(criteria);
         }
+
+        return new Result
+        {
+            HasResultAmendment = isResultAmendment,
+        };
     }
 
-    private async Task HandleResultAmendment(SettleCriteria settleCriteria, List<ResourceItem> selectedResources)
+    private async Task<bool> HandleResultAmendment(SettleCriteria settleCriteria, List<ResourceItem> selectedResources)
     {
-        if (settleCriteria.SportType != SportType.Cricket || settleCriteria.Action == ActionType.UnCalculate)
+        if (settleCriteria.SportType == SportType.Cricket
+            && !settleCriteria.IsChildMatch
+            && settleCriteria.Action != ActionType.UnCalculate)
         {
-            return;
+            return await resultAmendmentService.HandleResultAmendment(settleCriteria, selectedResources);
         }
 
-        await resultAmendmentService.HandleResultAmendment(settleCriteria, selectedResources);
+        return false;
     }
 
     private async Task<Result> Execute(SettleCriteria criteria, List<ResourceItem> selectedResources)
@@ -247,7 +255,7 @@ public class MultipleServerAioServiceImp(
         var result = await ValidateBeforeExecute(criteria);
         if (result.IsSuccessful)
         {
-            await UpdateInfoAndSettle(criteria, selectedResources);
+            return await UpdateInfoAndSettle(criteria, selectedResources);
         }
 
         return result;

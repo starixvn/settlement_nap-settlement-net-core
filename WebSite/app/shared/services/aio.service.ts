@@ -67,6 +67,11 @@ export class AioService {
         return firstValueFrom(request);
     }
 
+    public updateSettlementResultHistoryStatus(query: object) {
+        const request = this.httpRequestService.postJson(query, `${this.aioApi}/update-settlement-result-history-status`);
+        return firstValueFrom(request);
+    }
+
     public async verifyChangedSettledTickets(resultDetails: GeneralResultDetail[], query: object) {
         const latestResults = await this.getLastestMatchResult(query);
         let needConfirm = false;

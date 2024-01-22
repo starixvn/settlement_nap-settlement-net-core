@@ -16,6 +16,7 @@ public static class AioConfig
         services.AddTransient<ICriteriaFactory, CriteriaFactoryImp>();
         services.AddTransient<ICreateQueryService, CreateQueryServiceImp>();
         services.AddTransient<MergeDataService, MergeDataServiceImp>();
+        services.AddTransient<GenerateResultAmendmentService, GenerateResultAmendmentServiceImp>();
         services.AddTransient<ResultAmendmentService, ResultAmendmentServiceImp>();
 
         services.AddTransient<MultipleServerAioService, MultipleServerAioServiceImp>();
