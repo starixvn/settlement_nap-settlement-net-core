@@ -1,77 +1,81 @@
 <div class="filter-bar">
-	<div class="line"></div>
-	<div class="filter-bar-inner">
-		<div class="row">
-			<div class="col-md-2">
-				<label class="inner-label from-date">
-					From
-				</label>
-				<ngbd-date-picker [date]="fromDate" (change)="onSelectFromDate($event)"></ngbd-date-picker>
-			</div>
-			<div class="to-date-field">
-				<label class="inner-label to-date">
-					To
-				</label>
-				<ngbd-date-picker [date]="toDate" (change)="onSelectToDate($event)"></ngbd-date-picker>
-			</div>
-			<div class="col-md-7">
-				<div class="row">
-					<div class="field margin">
-						<label class="inner-label">
-							Over Status
-						</label>
-						<select [(ngModel)]="query.filterOver">
-							<option *ngFor="let item of overStatus" [value]="item.value">{{ item.text }}</option>
-						</select>
-					</div>
+  <div class="line"></div>
+  <div class="filter-bar-inner">
+    <div class="row">
+      <div class="col-md-2">
+        <label class="inner-label from-date">
+          From
+        </label>
+        <ngbd-date-picker [date]="fromDate" (change)="onSelectFromDate($event)"></ngbd-date-picker>
+      </div>
+      <div class="to-date-field">
+        <label class="inner-label to-date">
+          To
+        </label>
+        <ngbd-date-picker [date]="toDate" (change)="onSelectToDate($event)"></ngbd-date-picker>
+      </div>
+      <div class="col-md-7">
+        <div class="row">
+          <div class="field margin">
+            <label class="inner-label">
+              Over Status
+            </label>
+            <select [(ngModel)]="query.filterOver">
+              @for (item of overStatus; track item) {
+                <option [value]="item.value">{{ item.text }}</option>
+              }
+            </select>
+          </div>
 
-					<div class="field margin">
-						<label class="inner-label">
-							Match Status
-						</label>
-						<new-multiple-select (formValue)="onSelectMatchStatus($event)" [multipleSelect]="matchStatusSelect"></new-multiple-select>
-					</div>
-					<div class="field margin">
-						<label class="inner-label">
-							Hold Status
-						</label>
-						<new-multiple-select (formValue)="onSelectHoldStatus($event)" [multipleSelect]="holdStatusSelect"></new-multiple-select>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="row" style="margin-top: 5px;">
-			<div class="col-md-2">
-				<label for="matchCode" class="inner-label">
-					Match Code/ID
-				</label>
-				<input id="matchCode" maxlength="50" style="width: 107px;" type="text" [(ngModel)]="query.matchCode" />
-			</div>
-			<div class="league-list">
-				<label style="margin-left: 4px;" class="inner-label">League</label>
-				<div>
-					<new-multiple-select
-						[style.width]="leagueSelect.maxWidth"
-						(formValue)="onSelectLeague($event)"
-						[multipleSelect]="leagueSelect"
-					></new-multiple-select>
-				</div>
-			</div>
-			<div class="field">
-				<label class="inner-label">
-					Match Type
-				</label>
-				<select [(ngModel)]="query.matchType">
-					<option *ngFor="let item of matchTypes" [value]="item.value">{{ item.text }}</option>
-				</select>
-			</div>
-			<div class="include-test field">
-				<input id="isIncludeTest" type="checkbox" [(ngModel)]="query.isIncludeTest" />
-				<label for="isIncludeTest" class="bold">&nbsp;Include Test Matches</label>
-			</div>
-			<div class="col-md-1">
-				<button class="button" (click)="search()" [disabled]="isDisabled">Submit</button>
-			</div>
-		</div>
-	</div>
+          <div class="field margin">
+            <label class="inner-label">
+              Match Status
+            </label>
+            <new-multiple-select (formValue)="onSelectMatchStatus($event)" [multipleSelect]="matchStatusSelect"></new-multiple-select>
+          </div>
+          <div class="field margin">
+            <label class="inner-label">
+              Hold Status
+            </label>
+            <new-multiple-select (formValue)="onSelectHoldStatus($event)" [multipleSelect]="holdStatusSelect"></new-multiple-select>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row" style="margin-top: 5px;">
+      <div class="col-md-2">
+        <label for="matchCode" class="inner-label">
+          Match Code/ID
+        </label>
+        <input id="matchCode" maxlength="50" style="width: 107px;" type="text" [(ngModel)]="query.matchCode" />
+      </div>
+      <div class="league-list">
+        <label style="margin-left: 4px;" class="inner-label">League</label>
+        <div>
+          <new-multiple-select
+            [style.width]="leagueSelect.maxWidth"
+            (formValue)="onSelectLeague($event)"
+            [multipleSelect]="leagueSelect"
+          ></new-multiple-select>
+        </div>
+      </div>
+      <div class="field">
+        <label class="inner-label">
+          Match Type
+        </label>
+        <select [(ngModel)]="query.matchType">
+          @for (item of matchTypes; track item) {
+            <option [value]="item.value">{{ item.text }}</option>
+          }
+        </select>
+      </div>
+      <div class="include-test field">
+        <input id="isIncludeTest" type="checkbox" [(ngModel)]="query.isIncludeTest" />
+        <label for="isIncludeTest" class="bold">&nbsp;Include Test Matches</label>
+      </div>
+      <div class="col-md-1">
+        <button class="button" (click)="search()" [disabled]="isDisabled">Submit</button>
+      </div>
+    </div>
+  </div>
 </div>

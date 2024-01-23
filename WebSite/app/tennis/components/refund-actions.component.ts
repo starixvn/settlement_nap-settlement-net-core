@@ -2,7 +2,6 @@ import { RefundCommonModule } from './../../shared/modules/refund-common.module'
 import { ExcludeTotalPointPipe, ResourceNameByIdPipe } from '../pipes';
 import { Component, Injector, Input, ViewChild } from '@angular/core';
 import * as _ from 'lodash';
-import { BlockUIService } from '../../shared/services';
 import { ModalDialogMessage } from '../../shared/models';
 import { CalculateAction, EventStatus } from '../../shared/constants';
 import { Language } from '../../shared/language.native';
@@ -19,7 +18,7 @@ import { TennisService } from '../services';
   templateUrl: './refund-actions.component.html',
   standalone: true,
   imports: [ExcludeTotalPointPipe, MatchDetailComponent, RefundCommonModule, ResourceNameByIdPipe],
-  providers: [TennisService ]
+  providers: [TennisService]
 
 })
 export class RefundActionsComponent extends RefundActionBaseComponent implements SportTemplate {
@@ -38,7 +37,7 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
     this.init();
   }
 
-  public initService () {
+  public initService() {
     this.blockUIService.blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
     this.toastrService.overlayContainer = this.toastContainer;
   }
@@ -61,7 +60,7 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
     const paramsCheckingMarkedTickets = this.generateCheckMarkedTicketsQuery();
     const response = await this.aioService.checkMarkedTickets(paramsCheckingMarkedTickets);
     this.toastrService.clear();
-    if(this.existResultNotConfirmed()) {
+    if (this.existResultNotConfirmed()) {
       this.toastrService.error(Language.confirmRefund.refundResultNotConfirmed);
     } else if (response.isExistMarkedTicket) {
       this.toastrService.error(Language.MarkedTicket);
@@ -98,16 +97,16 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
 
   protected generateRefundQuery(apikey: string) {
     this.selectedResources.forEach((item) => {
-        item.homeValue = "";
-        item.awayValue = "";
+      item.homeValue = "";
+      item.awayValue = "";
     });
 
     return new SettleQuery(this.matchDetail,
-        this.selectedResources,
-        CalculateAction.refund,
-        false,
-        this.getBetStatus(),
-        apikey);
+      this.selectedResources,
+      CalculateAction.refund,
+      false,
+      this.getBetStatus(),
+      apikey);
   }
 
   public getBetStatus() {

@@ -46,6 +46,7 @@ export class DetectChangesService {
     private isSuspenderDifferent(oldMatch: Match, newMatch: Match) {
         return oldMatch.suspenderHalfTime !== newMatch.suspenderHalfTime
             || oldMatch.suspenderFullTime !== newMatch.suspenderFullTime
-            || oldMatch.autoPayoutStatus !== newMatch.autoPayoutStatus;
+            || oldMatch.autoPayoutStatus !== newMatch.autoPayoutStatus
+            || oldMatch.autoInstantStatus !== newMatch.autoInstantStatus;
     }
 }

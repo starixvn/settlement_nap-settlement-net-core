@@ -35,16 +35,16 @@ import { TimeConverterPipe } from '../shared/pipes/time-converter.pipe';
         DatepickerComponent,
         DynamicHeightDirective,
         NewMultipleSelectComponent,
-        NoopAnimationsModule
+        NoopAnimationsModule,
+        MaterialDialogWithResponseComponent,
+        MaterialDialogComponent,
     ],
     declarations: [
         AppComponent,
         FilterComponent,
         ModalDialogComponent,
         ModalContentDialogComponent,
-        MaterialDialogWithResponseComponent,
-        LeagueComponent,
-        MaterialDialogComponent,
+        LeagueComponent
         TimeConverterPipe
     ],
     providers: [ { provide: HTTP_INTERCEPTORS, useClass: CustomHttpRequestInterceptor, multi: true }],

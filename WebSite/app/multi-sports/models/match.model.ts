@@ -41,6 +41,7 @@ export class Match {
      public exHalfTimeScore: string;
      public exFullTimeScore: string;
      public autoPayoutStatus: number;
+     public autoInstantStatus: number
      public isExistsConfirmedEarly: boolean;
      public bestOfMap: number;
      public isMatchBOMThirty: boolean;

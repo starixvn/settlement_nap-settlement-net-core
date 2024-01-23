@@ -10,12 +10,22 @@ import { ItemsSelect, League, Match, MultipleSelect } from '../../../shared/mode
 import { AutoCalculateService } from './auto-calculate.service';
 import { Statuses } from '../../constants';
 import { FilterBaseComponent } from '../../../shared/components/gaming/filter-base.component';
+import { NewMultipleSelectComponent } from '../../../shared/components/multiple-select/multiple-select.component';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { DatepickerComponent } from '../../../shared/components/date-picker/date-picker.component';
 
 @Component({
     selector: 'auto-calculate-filter',
     templateUrl: './auto-calculate-filter.component.html',
     providers: [DatePipe,
         { provide: NgbDateParserFormatter, useFactory: () => new CustomNgbDateParserFormatter('MMM dd, y') }],
+    standalone: true,
+    imports: [
+    DatepickerComponent,
+    ReactiveFormsModule,
+    FormsModule,
+    NewMultipleSelectComponent
+],
 })
 export class AutoCalculateFilterComponent extends FilterBaseComponent implements OnInit {
     @Output() public readonly searchAction = new EventEmitter();

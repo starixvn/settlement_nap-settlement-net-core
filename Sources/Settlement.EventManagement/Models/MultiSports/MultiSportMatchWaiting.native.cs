@@ -66,6 +66,9 @@ public class MultiSportMatchWaiting
     [Key("autoPayoutStatus")]
     public int AutoPayoutStatus { get; set; }
 
+    [Key("instantStatus")]
+    public int InstantStatus { get; set; }
+
     [Key("moreScores")]
     public MoreScores MoreScores { get; set; }
 

@@ -32,6 +32,9 @@ public class Match : BaseMatch
     [Key("autoPayoutStatus")]
     public int AutoPayoutStatus { get; set; }
 
+    [Key("autoInstantStatus")]
+    public int AutoInstantStatus { get; set; }
+
     [IgnoreMember]
     public bool IsKeyScore => BetStatus.IsKeyScore(HalfTimeHomeScore, HalfTimeAwayScore, FinalHomeScore, FinalAwayScore);
 

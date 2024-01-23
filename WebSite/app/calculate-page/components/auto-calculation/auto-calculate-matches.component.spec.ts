@@ -12,7 +12,6 @@ import { Permission } from '../../../shared/models/sportsbook-sop/permission.mod
 import { Language } from '../../../shared/language.native';
 import { AutoSetting } from '../../../shared/models';
 import { of } from 'rxjs';
-import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { ModalDialogComponent } from '../../../shared/components/modal-dialog/modal-dialog.component';
 
 describe('MatchesComponent', () => {
@@ -326,9 +325,9 @@ describe('MatchesComponent', () => {
             ["1", ""]])('Should Stop when exist score instant empty', (home: string, away: string) => {
                 match.instantAwayScore = away;
                 match.instantHomeScore = home;
-                spyOn(requestService, 'updateInstantStatus');
+                spyOn(requestService, 'pushInstantStatus');
 
-                component.updateInstantStatus(match);
+                component.doUpdateInstantStatus(match);
 
                 expect(requestService.checkingMatch).not.toHaveBeenCalled();
             });
@@ -336,10 +335,10 @@ describe('MatchesComponent', () => {
         it('should alert when update failed', fakeAsync(() => {
             match.instantAwayScore = "1";
             match.instantHomeScore = "1";
-            spyOn(requestService, 'updateInstantStatus').and.returnValue(of(mockResultFailed));
+            spyOn(requestService, 'pushInstantStatus').and.returnValue(of(mockResultFailed));
             spyOn(messageBoxService, 'alert');
 
-            component.updateInstantStatus(match);
+            component.doUpdateInstantStatus(match);
             tick();
 
             expect(messageBoxService.alert).toHaveBeenCalled();
@@ -348,11 +347,10 @@ describe('MatchesComponent', () => {
         it('should push instant score when update failed', fakeAsync(() => {
             match.instantAwayScore = "1";
             match.instantHomeScore = "1";
-            spyOn(requestService, 'updateInstantStatus').and.returnValue(of(mockResultSuccess));
             spyOn(requestService, 'pushInstantStatus').and.returnValue(of(mockResultSuccess));
             spyOn(handleActionsService, 'handleChangeInstantStatus');
 
-            component.updateInstantStatus(match);
+            component.doUpdateInstantStatus(match);
             tick();
             const buttonYes = document.getElementsByClassName('btn-danger')[0] as HTMLElement;
             buttonYes.click();
@@ -365,11 +363,10 @@ describe('MatchesComponent', () => {
         it('should alert when push score failed', fakeAsync(() => {
             match.instantAwayScore = "1";
             match.instantHomeScore = "1";
-            spyOn(requestService, 'updateInstantStatus').and.returnValue(of(mockResultSuccess));
             spyOn(requestService, 'pushInstantStatus').and.returnValue(of(mockResultFailed));
             spyOn(messageBoxService, 'alert');
 
-            component.updateInstantStatus(match);
+            component.doUpdateInstantStatus(match);
             tick();
             const buttonYes = document.getElementsByClassName('btn-danger')[0] as HTMLElement;
             buttonYes.click();

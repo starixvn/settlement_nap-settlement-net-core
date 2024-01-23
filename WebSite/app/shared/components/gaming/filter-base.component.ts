@@ -7,6 +7,7 @@ import { Language } from '../../language.native';
 @Component({
     selector: "filter-base",
     template: "",
+    standalone: true,
 })
 export class FilterBaseComponent {
     public readonly warningDialogMessage: ModalDialogMessage = new ModalDialogMessage();

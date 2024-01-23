@@ -19,4 +19,12 @@ module.exports = {
     target: "http://localhost:55201/",
     secure: false,
   },
+  "/css": {
+    target: "http://localhost:55201/",
+    secure: false,
+  },
+  "/lib": {
+    target: "http://localhost:55201/",
+    secure: false,
+  },
 };

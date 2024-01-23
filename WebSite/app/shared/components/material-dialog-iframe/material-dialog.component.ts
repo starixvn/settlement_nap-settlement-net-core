@@ -1,11 +1,14 @@
 import { Component, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { DialogDataIframe } from '../../models';
 import { DomSanitizer} from '@angular/platform-browser';
+import { CdkDrag, CdkDragHandle } from '@angular/cdk/drag-drop';
 
 @Component({
-  selector: 'material-dialog',
-  templateUrl: './material-dialog.component.html'
+    selector: 'material-dialog',
+    templateUrl: './material-dialog.component.html',
+    standalone: true,
+    imports: [MatDialogModule, CdkDrag, CdkDragHandle]
 })
 export class MaterialDialogComponent {
   constructor(private readonly dialogRef: MatDialogRef<MaterialDialogComponent>,

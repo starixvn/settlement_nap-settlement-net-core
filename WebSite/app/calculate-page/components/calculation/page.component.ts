@@ -2,13 +2,21 @@ import { FilterQuery } from './../../models/filter-query.model';
 import { Component, ElementRef } from '@angular/core';
 import { ReCheckInService } from '../../../shared/services';
 import { PageBaseComponent } from '../base-component';
+import { MatchesComponent } from './matches.component';
+
+import { FilterComponent } from './filter.component';
 
 @Component({
-  selector: 'calculate-page',
-  templateUrl: './page.component.html',
-  providers: [
-    ReCheckInService,
-  ],
+    selector: 'calculate-page',
+    templateUrl: './page.component.html',
+    providers: [
+        ReCheckInService,
+    ],
+    standalone: true,
+    imports: [
+    FilterComponent,
+    MatchesComponent
+],
 })
 export class PageComponent extends PageBaseComponent {
   public disableRefund: boolean;

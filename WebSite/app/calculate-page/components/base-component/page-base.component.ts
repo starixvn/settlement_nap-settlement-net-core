@@ -10,6 +10,7 @@ import { FilterQuery, Calculation } from '../../models';
     providers: [
         ReCheckInService,
     ],
+    standalone: true,
 })
 export class PageBaseComponent implements OnInit {
     private subscriber: ISubscription;

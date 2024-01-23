@@ -61,6 +61,7 @@
     <Setting Key="NAP_Set_ResultDetailSel" SpName="NAP_Set_ResultDetailSel" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_MatchSelDetail_Auto_1s" SpName="NAP_Set_MatchSelDetail_Auto_1s" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_LetstalkMessage_Insert" SpName="NAP_Set_LetstalkMessage_Insert" DbName="DBTXN.bodb02.bodbAdminNet" />
+    <Setting Key="NAP_Set_AutoPayoutStatus_Sel" SpName="NAP_Set_AutoPayoutStatus_Sel" DbName="DBPRO.bodb02.bodbAdminNet" />
   </Function>
   <Function Name="Execute Calculate and refund">
     <Setting Key="NAP_Admin_Settlement_Validation_Event" SpName="NAP_Admin_Settlement_Validation_Event" DbName="DBPRO.bodb02.bodbAdminNet" />
@@ -87,7 +88,6 @@
     <Setting Key="NAP_Set_OtherSportsSel" SpName="NAP_Set_OtherSportsSel" DbName="DBPRO.bodb02.bodbAdminNet" TimeOut="120" />
     <Setting Key="NAP_Set_SportLeagueSel" SpName="NAP_Set_SportLeagueSel" DbName="DBPRO.bodb02.bodbAdminNet" />
     <Setting Key="NAP_Set_AutoRefundResultOS_Ins" SpName="NAP_Set_AutoRefundResultOS_Ins" DbName="DBPRO.bodb02.bodbAdminNet" />
-    <Setting Key="NAP_Set_WaitingOtherSportSel_MatchInfo" SpName="NAP_Set_WaitingOtherSportSel_MatchInfo" DbName="DBPRO.bodb02.bodbAdminNet" />
   </Function>
   <Function Name="SettlementLog">
     <Setting Key="NAP_UserLog_Settle_MatchSelByCode" SpName="NAP_UserLog_Settle_MatchSelByCode" DbName="DBAGE.bodb02.bodbAdminNet" TimeOut="120" />

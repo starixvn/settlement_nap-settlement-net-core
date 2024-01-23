@@ -12,12 +12,22 @@ import { FilterBaseComponent } from '../../../shared/components/gaming/filter-ba
 import { MatchType, OverStatus } from '../../constants';
 import { _isNumberValue } from '@angular/cdk/coercion';
 import { Language } from '../../../shared/language.native';
+import { NewMultipleSelectComponent } from '../../../shared/components/multiple-select/multiple-select.component';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { DatepickerComponent } from '../../../shared/components/date-picker/date-picker.component';
 
 @Component({
-  selector: 'filter',
-  templateUrl: './filter.component.html',
-  providers: [DatePipe,
-    { provide: NgbDateParserFormatter, useFactory: () => new CustomNgbDateParserFormatter('MMM dd, y') }],
+    selector: 'filter',
+    templateUrl: './filter.component.html',
+    providers: [DatePipe,
+        { provide: NgbDateParserFormatter, useFactory: () => new CustomNgbDateParserFormatter('MMM dd, y') }],
+    standalone: true,
+    imports: [
+    DatepickerComponent,
+    ReactiveFormsModule,
+    FormsModule,
+    NewMultipleSelectComponent
+],
 })
 export class FilterComponent extends FilterBaseComponent implements OnInit {
   @Output() public readonly searchAction = new EventEmitter();

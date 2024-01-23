@@ -214,14 +214,23 @@ public class NewInfoMatchServiceTests
             new ()
             {
                 MatchId = 1,
-                StatusId = 1
-            }
+                HasAutoPayoutFail = true,
+                InstantStatus = 1
+            },
+            new ()
+            {
+            MatchId = 2,
+            HasInstantFail = true,
+            AutoPayoutStatus = 2
+        }
         };
 
-        repository.FetchAsync<MatchStatusModel>(Arg.Any<GetMatchWaitingInfo>()).Returns(matchStatuses);
+        repository.FetchAsync<MatchStatusModel>(Arg.Any<GetAutoStatusCriteria>()).Returns(matchStatuses);
         service.GetAutoSetting(matches);
 
-        Assert.Equal(1, matches[0].AutoPayoutStatus);
-        Assert.Equal(0, matches[1].AutoPayoutStatus);
+        Assert.Equal(3, matches[0].AutoPayoutStatus);
+        Assert.Equal(1, matches[1].AutoPayoutStatus);
+        Assert.Equal(1, matches[0].AutoInstantStatus);
+        Assert.Equal(3, matches[1].AutoInstantStatus);
     }
 }

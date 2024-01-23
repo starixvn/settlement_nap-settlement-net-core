@@ -194,10 +194,11 @@ export class LeagueComponent implements OnInit, OnChanges, OnDestroy {
       && match.isCalculatingMP !== CalculationStatus.waiting && match.isCalculatingMP !== CalculationStatus.calculating;
   }
 
-  public getBackgroundAutoSetting(match: Match) {
-    const enableLink = this.permission.canAutoPayout ? BackgroundColor.codeLink : "";
-    const colorStatus = _.isEqual(match.autoPayoutStatus, this.autoSettingCompleted) ? 'auto-setting-completed' :
-      _.isEqual(match.autoPayoutStatus, this.autoSettingFailed) ? 'auto-setting-failed' : '';
+  public getBackgroundAutoSetting(match: Match, isPayout: boolean = true) {
+    const enableLink = this.permission.canAutoPayout && isPayout ? BackgroundColor.codeLink : "";
+    const status = isPayout ? match.autoPayoutStatus : match.autoInstantStatus;
+    const colorStatus = _.isEqual(status, this.autoSettingCompleted) ? 'auto-setting-completed' :
+      _.isEqual(status, this.autoSettingFailed) ? 'auto-setting-failed' : '';
 
     return `${enableLink} ${colorStatus}`;
   }

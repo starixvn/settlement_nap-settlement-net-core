@@ -1,2 +1,4 @@
 <auto-calculate-filter (searchAction)="search($event)" (disableRefresh)="getInfoDisableRefresh($event)"></auto-calculate-filter>
-<auto-calculate-matches *ngIf="calculation" [calculation]="calculation" [filterQuery]="filterQuery" [disableRefresh]="disableRefresh"></auto-calculate-matches>
+@if (calculation) {
+  <auto-calculate-matches [calculation]="calculation" [filterQuery]="filterQuery" [disableRefresh]="disableRefresh"></auto-calculate-matches>
+}
