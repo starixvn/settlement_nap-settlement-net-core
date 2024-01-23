@@ -1,17 +1,18 @@
-<label
-	>Requirement for <b>{{ isEarly ? "Early" : "Main" }}</b> results:
+<label>Requirement for <b>{{ isEarly ? "Early" : "Main" }}</b> results:
 </label>
 <ul>
 	<li>
 		<label>Trader source: </label>
-		<span style="cursor: pointer;" (click)="changeSetting()" [ngClass]="resultSettings.hasTrader ? 'toggle-on' : 'toggle-off'"></span>
+		<span style="cursor: pointer;" (click)="changeSetting()"
+			[ngClass]="resultSettings.hasTrader ? 'toggle-on' : 'toggle-off'"></span>
 	</li>
 	<li>
 		<label>Provider source: </label>
 		<ul>
 			<li>
 				<label>Minimum sources:&nbsp;</label>
-				<select [(ngModel)]="resultSettings.minimumProvider" [disabled]="!resultSettings.hasTrader">
+				<select [(ngModel)]="resultSettings.minimumProvider" (ngModelChange)="updateSetting()"
+					[disabled]="!resultSettings.hasTrader">
 					<option value="1" [text]="1"></option>
 					<option value="2" [text]="2"></option>
 				</select>

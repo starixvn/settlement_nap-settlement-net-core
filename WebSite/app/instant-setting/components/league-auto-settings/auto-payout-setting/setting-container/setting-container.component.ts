@@ -49,6 +49,10 @@ export class SettingContainerComponent {
   changeSetting() {
     this.resultSettings.hasTrader = !this.resultSettings.hasTrader;
     this.resultSettings.minimumProvider = this.resultSettings.hasTrader ? this.resultSettings.minimumProvider : 2;
+    this.updateSetting();
+  }
+
+  updateSetting() {
     if (this.isEarly) {
       this.store.setState({ ... this.store.state, earlyResultSettings: { ...this.resultSettings } });
     } else {
