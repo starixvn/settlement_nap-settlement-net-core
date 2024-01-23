@@ -13,8 +13,8 @@ public interface ScoreService
 
 public class ScoreServiceImp(IScoreSetService scoreSetService) : ScoreService
 {
-    private readonly List<int> totalPointSports =
-        [SportType.BeachVolleyball, SportType.Badminton, SportType.VolleyBall];
+    private readonly List<int> totalPointSports = new()
+        {SportType.BeachVolleyball, SportType.Badminton, SportType.VolleyBall};
 
     public bool IsIntervalScore(int sportType, List<ResultDetail> resultDetails)
     {

@@ -17,8 +17,8 @@ public class GetDataFilterServiceImp(
     IRefDataService refDataService)
     : GetDataFilterService
 {
-    private static readonly List<int> PopularSport =
-        [SportType.Badminton, SportType.BasketBall, SportType.ESports, SportType.Tennis];
+    private static readonly List<int> PopularSport = new()
+        {SportType.Badminton, SportType.BasketBall, SportType.ESports, SportType.Tennis};
 
     public async Task<List<Sport>> GetSports(SportRequest request)
     {

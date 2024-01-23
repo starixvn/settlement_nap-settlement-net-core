@@ -9,7 +9,7 @@ public interface ScoreTennisService
 
 public class ScoreTennisServiceImp(IScoreSetService scoreSetService) : ScoreTennisService
 {
-    private readonly List<string> setResource = ["01", "02", "03", "04", "05"];
+    private readonly List<string> setResource = new() { "01", "02", "03", "04", "05" };
 
     public string GetEventStatus(IEnumerable<ResultDetail> resultDetails, string currentStatus)
     {
