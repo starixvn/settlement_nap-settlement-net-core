@@ -9,7 +9,7 @@
 		(input)="search()"
 	/>
 
-	<mat-select #dropdown [formControl]="formControl" (openedChange)="checkOpenState($event)" [disabled]="disabled" multiple>
+	<mat-select #dropdown [formControl]="formControl" (openedChange)="checkOpenState($event)" [attr.disabled]="disabled" multiple>
 		<mat-select-trigger></mat-select-trigger>
 		<mat-option
 			#allSelected

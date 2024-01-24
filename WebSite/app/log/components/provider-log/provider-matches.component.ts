@@ -1,18 +1,15 @@
 ﻿import * as _ from 'lodash';
 import { Component, Input, OnInit } from "@angular/core";
-import { Match } from '../models';
-import { UrlHelper } from '../../helper';
+import { Match } from '../../models';
+import { UrlHelper } from '../../../helper';
 
 @Component({
-    selector: 'matches',
-    templateUrl: './matches.component.html',
+    selector: 'provider-matches',
+    templateUrl: './provider-matches.component.html',
 })
 
-export class MatchesComponent implements OnInit {
+export class ProviderMatchesComponent implements OnInit {
     @Input() public readonly matches: Match[];
-    @Input() public readonly fromDate: string;
-    @Input() public readonly toDate: string;
-    @Input() public readonly isResettleLog: boolean;
      scrollName: string;
 
      ngOnInit() {

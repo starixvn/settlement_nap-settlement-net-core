@@ -2,12 +2,13 @@ import { ResettleLogDetail } from './../../models/resettle-log-detail.model';
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { ResettleLogDetailComponent } from "./resettle-log-detail.component";
 import { FormsModule } from "@angular/forms";
-import { HandleResultService } from "../../services/handle-result.service";
 import { Match } from "../../models";
+import { ResultOtherSportService } from "../../services";
 
 describe('Matches Component', () => {
     let component: ResettleLogDetailComponent;
     let fixture: ComponentFixture<ResettleLogDetailComponent>;
+    let resultOtherSportService: ResultOtherSportService;
     const resettleLogDetail: ResettleLogDetail = {
         userName: '',
         resourceId: '',
@@ -48,7 +49,7 @@ describe('Matches Component', () => {
         const secondLogDetail = {...resettleLogDetail, resourceName: 'b'};
         match.resettleLogDetails = [resettleLogDetail, secondLogDetail];
         component.match = match;
-        HandleResultService.HandleResult = jest.fn().mockReturnValue('resultValue');
+        resultOtherSportService.getResultValue = jest.fn().mockReturnValue('resultValue');
 
         component.ngOnChanges();
 

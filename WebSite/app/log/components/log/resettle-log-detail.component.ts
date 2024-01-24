@@ -40,7 +40,6 @@ export class ResettleLogDetailComponent implements OnChanges {
             this.resourceNameProcessed = logDetail.resourceName;
         }
 
-
         return this.isEvenRow ? 'even' : '';
     }
 }

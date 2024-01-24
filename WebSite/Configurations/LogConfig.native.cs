@@ -14,6 +14,7 @@ public static class LogConfig
         services.AddTransient<RemarkService, RemarkServiceImp>();
         services.AddTransient<ResultService, ResultServiceImp>();
         services.AddTransient<MergeLogService, MergeLogServiceImp>();
+        services.AddTransient<ProviderLogService, ProviderLogServiceImp>();
     }
 
     public static void ConfigLogMediator(this IServiceCollection services)

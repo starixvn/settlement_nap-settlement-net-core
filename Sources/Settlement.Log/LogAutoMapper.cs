@@ -9,6 +9,7 @@ public class LogAutoMapper : Profile
     public LogAutoMapper()
     {
         CreateMap<LogRequest, GetLogCriteria>();
+        CreateMap<ProviderLogRequest, GetProviderLogCriteria>();
         CreateMap<LogRequest, GetArchivedLogCriteria>();
     }
 }

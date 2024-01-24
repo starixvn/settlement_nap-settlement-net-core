@@ -1,18 +1,17 @@
 import { TestBed, waitForAsync, ComponentFixture} from '@angular/core/testing';
-import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserModule } from '@angular/platform-browser';
 import { FilterComponent} from './index';
-import { SearchService } from '../services';
-import { MessageBoxService, VerifyDateService, BlockUIService, HttpRequestService  } from '../../shared/services';
-import { ModalDialogComponent } from "../../shared/components/modal-dialog/modal-dialog.component";
+import { SearchService } from '../../services';
+import { MessageBoxService, VerifyDateService, BlockUIService, HttpRequestService  } from '../../../shared/services';
+import { ModalDialogComponent } from "../../../shared/components/modal-dialog/modal-dialog.component";
 import { of } from 'rxjs';
 import {
     DatepickerComponent,
-} from '../../shared/components/date-picker/date-picker.component';
-import { Filter, LogQuery } from '../models';
+} from '../../../shared/components/date-picker/date-picker.component';
+import { Filter, LogQuery } from '../../models';
 describe('Filter component', () => {
     let component: FilterComponent;
     let fixture: ComponentFixture<FilterComponent>;

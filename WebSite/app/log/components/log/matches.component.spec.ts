@@ -4,8 +4,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserModule } from '@angular/platform-browser';
-import { UrlHelper } from '../../helper';
-import { Match } from '../models';
+import { UrlHelper } from '../../../helper';
+import { Match } from '../../models';
 
 describe('Matches Component', () => {
     let component: MatchesComponent;

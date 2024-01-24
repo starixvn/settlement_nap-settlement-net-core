@@ -1,0 +1,37 @@
+﻿<div class="filter-bar">
+  <div class="line">
+  </div>
+  <div class="filter-bar-inner">
+    <div class="row">
+      <div class="col-md-3">
+        <label for="MatchCode" class="inner-label">
+          Match Code/ID
+        </label>
+        <input name="matchCode" maxlength="50" type="text" [(ngModel)]="filter.matchCode" class="match-code">
+      </div>
+      <div class="col-md-2">
+        <label for="FromDate" class="inner-label from-date">
+          From
+        </label>
+      </div>
+      <div class="col-md-2">
+        <label for="ToDate" class="inner-label to-date">
+          To
+        </label>
+      </div>
+      <div class="col-md-2">
+        <label for="productType" class="inner-label">
+          Log Type
+        </label>
+        <div>
+          <new-multiple-select (formValue)="onSelectProvider($event)" [multipleSelect]="providerSelect"></new-multiple-select>
+        </div>
+      </div>
+      <div class="col-sm-1">
+        <button class="button" (click)="search()">Submit</button>
+      </div>
+    </div>
+  </div>
+  <div class="line">
+  </div>
+</div>

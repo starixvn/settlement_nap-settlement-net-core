@@ -235,7 +235,11 @@
             "main": "log/main.ts",
             "tsConfig": "log/tsconfig.app.json",
             "polyfills": ["zone.js"],
-            "styles": ["log/style.less"],
+            "styles": [
+              "shared/styles/material.style.less",
+              "log/style.less",
+              "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css"
+            ],
             "allowedCommonJsDependencies": ["lodash"]
           },
           "configurations": {

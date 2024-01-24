@@ -2,23 +2,23 @@ import { TestBed, waitForAsync, ComponentFixture, tick, fakeAsync } from '@angul
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-import { BlockUIService, ReCheckInService } from '../../shared/services';
+import { BlockUIService, ReCheckInService } from '../../../shared/services';
 import { BrowserModule } from '@angular/platform-browser';
 import {
-    AppComponent,
+    LogComponent,
     FilterComponent,
     MatchesComponent} from './index';
 import {
     DatepickerComponent,
-} from '../../shared/components/date-picker/date-picker.component';
+} from '../../../shared/components/date-picker/date-picker.component';
 describe('Component: App', () => {
-    let component: AppComponent;
-    let fixture: ComponentFixture<AppComponent>;
+    let component: LogComponent;
+    let fixture: ComponentFixture<LogComponent>;
     let reCheckInService: ReCheckInService;
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             declarations: [
-                AppComponent,
+                LogComponent,
                 FilterComponent,
                 MatchesComponent
             ],
@@ -37,7 +37,7 @@ describe('Component: App', () => {
         })
             .compileComponents()
             .then(() => {
-                fixture = TestBed.createComponent(AppComponent);
+                fixture = TestBed.createComponent(LogComponent);
                 component = fixture.componentInstance;
                 reCheckInService = fixture.debugElement.injector.get(ReCheckInService);
             });

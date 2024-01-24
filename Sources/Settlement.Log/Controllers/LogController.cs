@@ -25,4 +25,16 @@ public class LogController : ControllerBase
     [HttpPost]
     [Route("getLog")]
     public async Task<IActionResult> GetLog(LogRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+
+    [HttpGet]
+    [Route("get-provider-name")]
+    public async Task<IActionResult> GetProviderName()
+    {
+        var request = new ProviderNameRequest();
+        return Ok(await mediator.Send(request).ConfigureAwait(false));
+    }
+
+    [HttpPost]
+    [Route("get-provider-log")]
+    public async Task<IActionResult> GetProviderLog(ProviderLogRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 }

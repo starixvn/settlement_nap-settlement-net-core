@@ -1,7 +1,6 @@
 import * as _ from 'lodash';
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input } from "@angular/core";
 import { Match } from '../../models';
-import { UrlHelper } from '../../../helper';
 
 @Component({
     selector: 'log-detail',

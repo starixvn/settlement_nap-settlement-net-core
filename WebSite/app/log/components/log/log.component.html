@@ -1,0 +1,10 @@
+﻿<filter (searchAction)="search($event)" (matches)="getMatch($event)" ></filter>
+@if (matches) {
+  <matches [matches]="matches" [fromDate]="fromDate" [toDate]="toDate" [isResettleLog]="isResettleLog"></matches>
+}
+@if (blockUI) {
+  <div class="in modal-backdrop">
+    <div class="loading">
+    </div>
+  </div>
+}

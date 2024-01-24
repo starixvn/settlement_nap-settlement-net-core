@@ -1,0 +1,10 @@
+﻿<provider-filter (searchAction)="search($event)" (matches)="getMatch($event)" ></provider-filter>
+@if (matches) {
+  <provider-matches></provider-matches>
+}
+@if (blockUI) {
+  <div class="in modal-backdrop">
+    <div class="loading">
+    </div>
+  </div>
+}
