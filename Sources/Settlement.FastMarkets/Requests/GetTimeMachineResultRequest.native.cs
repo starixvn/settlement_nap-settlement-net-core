@@ -1,6 +1,4 @@
-﻿using MediatR;
-
-namespace Settlement.FastMarkets.Requests;
+﻿namespace Settlement.FastMarkets.Requests;
 
 public class GetTimeMachineResultRequest : IRequest<List<TimeMachineResult>>
 {

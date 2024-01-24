@@ -20,6 +20,7 @@ import { PipesModule } from '../shared/pipes/pipes.module.native';
 import { CustomHttpRequestInterceptor } from '../shared/custom-httprequest-interceptor.native';
 import { DynamicHeightDirective } from '../shared/directives';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { TimeConverterPipe } from '../shared/pipes/time-converter.pipe';
 
 @NgModule({
     imports: [
@@ -44,6 +45,7 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
         MaterialDialogWithResponseComponent,
         LeagueComponent,
         MaterialDialogComponent,
+        TimeConverterPipe
     ],
     entryComponents: [ModalDialogComponent, ModalContentDialogComponent],
     providers: [ { provide: HTTP_INTERCEPTORS, useClass: CustomHttpRequestInterceptor, multi: true }],

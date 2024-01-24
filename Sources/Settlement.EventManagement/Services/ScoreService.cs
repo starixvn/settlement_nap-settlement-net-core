@@ -11,16 +11,10 @@ public interface ScoreService
     Score FinalScore(int sportType, List<ResultDetail> resultDetails, Permission permission);
 }
 
-public class ScoreServiceImp : ScoreService
+public class ScoreServiceImp(IScoreSetService scoreSetService) : ScoreService
 {
-    private readonly List<int> totalPointSports = new() { SportType.BeachVolleyball, SportType.Badminton, SportType.VolleyBall };
-
-    private readonly IScoreSetService scoreSetService;
-
-    public ScoreServiceImp(IScoreSetService scoreSetService)
-    {
-        this.scoreSetService = scoreSetService;
-    }
+    private readonly List<int> totalPointSports = new()
+        {SportType.BeachVolleyball, SportType.Badminton, SportType.VolleyBall};
 
     public bool IsIntervalScore(int sportType, List<ResultDetail> resultDetails)
     {

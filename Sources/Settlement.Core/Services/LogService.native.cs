@@ -9,6 +9,8 @@ public interface LogService
 {
     Task WriteLog(int matchId, string message);
 
+    Task WriteLog(string message, int actionId);
+
     Task WriteLog(InsertLogCriteria criteria);
 
     Task ActionLog(int matchId, string message, int actionId);
@@ -64,5 +66,11 @@ public class LogServiceImp : LogService
         {
             await Log.ErrorAsync("Settlement.WebSites(Write resettle Log): ", e);
         }
+    }
+
+    public async Task WriteLog(string message, int actionId)
+    {
+        var criteria = new LogCriteria(message, actionId, session.UserId);
+        await repository.ExecuteAsync(criteria);
     }
 }

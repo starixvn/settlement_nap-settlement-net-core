@@ -1,18 +1,20 @@
-import { MultipleSelect } from './../../shared/models/multiple-select.model';
 import { Component, OnInit } from '@angular/core';
 import { UrlHelper } from '../../helper';
 import * as _ from 'lodash';
 import { MessageBoxService } from '../../shared/services';
-import { AutoSettingLeagueQuery, AutoSettingMatchQuery, ModalDialogMessage, Result } from '../../shared/models';
+import { AutoSettingLeagueQuery, AutoSettingMatchQuery, ModalDialogMessage } from '../../shared/models';
 import { Language } from '../../shared/language.native';
 import { RequestService } from '../services/request.service';
 import { SettingQuery } from '../models';
-import { AutoType } from '../constants';
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'auto-setting',
   templateUrl: './auto-setting.component.html',
+  imports: [FormsModule, CommonModule],
   providers: [RequestService],
+  standalone: true
 })
 export class AutoSettingComponent implements OnInit {
   public currentState: number;

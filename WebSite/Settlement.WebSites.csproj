@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <InvariantGlobalization>false</InvariantGlobalization>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 

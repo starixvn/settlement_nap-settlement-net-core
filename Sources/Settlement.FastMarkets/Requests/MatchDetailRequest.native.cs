@@ -1,5 +1,4 @@
-﻿using MediatR;
-using Settlement.FastMarkets.Models;
+﻿using Settlement.FastMarkets.Models;
 
 namespace Settlement.FastMarkets.Requests;
 

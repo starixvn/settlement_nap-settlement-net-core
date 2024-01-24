@@ -6,12 +6,12 @@ import { MessageBoxService, HttpRequestService, BlockUIService, ClosePopupServic
 import { FormsModule } from '@angular/forms';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { HttpClientModule } from '@angular/common/http';
-import { ModalDialogComponent, ModalContentDialogComponent } from '../../shared/components';
 import { League } from '../models';
-import { of } from 'rxjs';
 import { UrlHelper } from '../../helper';
 import { Language } from '../../shared/language.native';
 import { AutoType } from '../constants/auto-type';
+import { ModalDialogComponent } from '../../shared/components/modal-dialog/modal-dialog.component';
+import { ModalContentDialogComponent } from '../../shared/components/modal-dialog/modal-content-dialog.component';
 
 describe('TimeSettingComponent', () => {
     let component: TimeSettingComponent;
@@ -34,11 +34,6 @@ describe('TimeSettingComponent', () => {
 
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
-          declarations: [
-            TimeSettingComponent,
-            ModalDialogComponent,
-            ModalContentDialogComponent
-          ],
           providers: [
             RequestService,
             HttpRequestService,
@@ -51,6 +46,7 @@ describe('TimeSettingComponent', () => {
             FormsModule,
             HttpClientModule,
             NgbModule,
+            TimeSettingComponent
           ],
         })
         .overrideModule(BrowserDynamicTestingModule, {
@@ -76,7 +72,7 @@ describe('TimeSettingComponent', () => {
       it('should successfully set component fields with DirectTime', fakeAsync(async() => {
         const mockIdAndTime = '1000';
         const mockLeague: League = { leagueName: 'Champion League'};
-        spyOn(UrlHelper, 'getUrlParameter').and.callFake((param) => {
+        jest.spyOn(UrlHelper, 'getUrlParameter').mockImplementation((param) => {
           if (param === "pageType") {
             return 'DirectTime';
           }
@@ -87,7 +83,7 @@ describe('TimeSettingComponent', () => {
 
           return mockIdAndTime;
         })
-        spyOn(requestService, 'getLeagueName').and.returnValue(of(mockLeague));
+        jest.spyOn(requestService, 'getLeagueName').mockResolvedValue(mockLeague);
 
         await component.ngOnInit();
 
@@ -100,8 +96,8 @@ describe('TimeSettingComponent', () => {
       it('should set InstantTime setting for autoType', fakeAsync(async() => {
         const mockLeague: League = { leagueName: 'Champion League'};
         component.pageType = 'InstantTime';
-        spyOn(UrlHelper, 'getUrlParameter').and.returnValue("");
-        spyOn(requestService, 'getLeagueName').and.returnValue(of(mockLeague));
+        jest.spyOn(UrlHelper, 'getUrlParameter').mockReturnValue("");
+        jest.spyOn(requestService, 'getLeagueName').mockResolvedValue(mockLeague);
 
         await component.ngOnInit();
 
@@ -110,13 +106,13 @@ describe('TimeSettingComponent', () => {
 
       it('should set time setting for autoType', fakeAsync(async() => {
         const mockLeague: League = { leagueName: 'Champion League'};
-        spyOn(UrlHelper, 'getUrlParameter').and.callFake((arg) => {
+        jest.spyOn(UrlHelper, 'getUrlParameter').mockImplementation((arg) => {
            if(arg === 'pageType'){
               return 'AutoPayOut';
            } 
            return "";
         })
-        spyOn(requestService, 'getLeagueName').and.returnValue(of(mockLeague));
+        jest.spyOn(requestService, 'getLeagueName').mockResolvedValue(mockLeague);
 
         component.ngOnInit();
         tick();
@@ -128,10 +124,10 @@ describe('TimeSettingComponent', () => {
     describe('proceed', () => {
       it('should pass all validation and successfully close pop-up', fakeAsync(() => {
         component.time = 10;
-        spyOn(requestService, 'proceed').and.returnValue(of(successfulResult));
-        spyOn(messageBoxService, 'closePopup');
+        jest.spyOn(requestService, 'proceed').mockResolvedValue(successfulResult);
+        jest.spyOn(messageBoxService, 'closePopup');
         const element = document.createElement("dialog-response");
-        spyOn(document, 'getElementById').and.returnValue(element);
+        jest.spyOn(document, 'getElementById').mockReturnValue(element);
 
         component.proceed();
         const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
@@ -143,9 +139,9 @@ describe('TimeSettingComponent', () => {
 
       it('should return error message when result is unsuccessful', fakeAsync(() => {
         component.time = 10;
-        spyOn(requestService, 'proceed').and.returnValue(of(unSuccessfulResult));
+        jest.spyOn(requestService, 'proceed').mockResolvedValue(unSuccessfulResult);
         const element = document.createElement("dialog-response");
-        spyOn(document, 'getElementById').and.returnValue(element);
+        jest.spyOn(document, 'getElementById').mockReturnValue(element);
 
         component.proceed();
         const buttonYes = document.getElementsByClassName(buttonName)[0] as HTMLElement;
@@ -156,8 +152,8 @@ describe('TimeSettingComponent', () => {
       }));
 
       it('should alert when input time is out of range', () => {
-        component.time = 301;
-        spyOn(messageBoxService, 'alert');
+        component.time = 0;
+        jest.spyOn(messageBoxService, 'alert');
 
         component.proceed();
         const expectedMessage = Language.InstantSetting.InvalidTimeSetting;

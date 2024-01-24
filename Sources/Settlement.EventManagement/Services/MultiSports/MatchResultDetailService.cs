@@ -24,28 +24,13 @@ public interface IMatchResultDetailService
     List<Match> BandyResultDetail(List<Match> matches, List<ResultDetail> resultDetails, Permission permission);
 }
 
-public class MatchResultDetailServiceImp : IMatchResultDetailService
+public class MatchResultDetailServiceImp(
+    ScoreTennisService scoreTennisService,
+    IRefDataService refDataService,
+    IExternalScoreService externalScoreService,
+    ScoreService scoreService)
+    : IMatchResultDetailService
 {
-    private readonly ScoreTennisService scoreTennisService;
-
-    private readonly IRefDataService refDataService;
-
-    private readonly IExternalScoreService externalScoreService;
-
-    private readonly ScoreService scoreService;
-
-    public MatchResultDetailServiceImp(
-        ScoreTennisService scoreTennisService,
-        IRefDataService refDataService,
-        IExternalScoreService externalScoreService,
-        ScoreService scoreService)
-    {
-        this.scoreTennisService = scoreTennisService;
-        this.refDataService = refDataService;
-        this.externalScoreService = externalScoreService;
-        this.scoreService = scoreService;
-    }
-
     public List<Match> TennisResultDetail(List<Match> matches, List<ResultDetail> resultDetails, Permission permission)
     {
         foreach (var match in matches)

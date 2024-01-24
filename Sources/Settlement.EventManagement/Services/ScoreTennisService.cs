@@ -7,16 +7,9 @@ public interface ScoreTennisService
     MoreScores ScoreLoader(List<ResultDetail> resultDetails, Permission permission);
 }
 
-public class ScoreTennisServiceImp : ScoreTennisService
+public class ScoreTennisServiceImp(IScoreSetService scoreSetService) : ScoreTennisService
 {
-    private readonly IScoreSetService scoreSetService;
-
     private readonly List<string> setResource = new() { "01", "02", "03", "04", "05" };
-
-    public ScoreTennisServiceImp(IScoreSetService scoreSetService)
-    {
-        this.scoreSetService = scoreSetService;
-    }
 
     public string GetEventStatus(IEnumerable<ResultDetail> resultDetails, string currentStatus)
     {

@@ -35,6 +35,7 @@ export class RefundComponent implements OnInit {
         @Inject(MAT_DIALOG_DATA) public data: PopupModel) {
         this.confirmationDialogMessage.title = Language.gaming.reCalculateConfirmationBox;
         this.match = data.matchDetail;
+        this.dialogRef.disableClose = true;
     }
 
     public async ngOnInit() {

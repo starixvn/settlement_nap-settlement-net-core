@@ -10,10 +10,6 @@ public interface IExternalScoreService
     bool IsInconsistentFullTimeScore(Match match, IEnumerable<ResultDetail> resultDetails);
 
     bool IsInconsistentHalftimeScore(Match match, IEnumerable<ResultDetail> resultDetails);
-
-    bool IsInconsistentFullTimeConfirmScore(Match match, IEnumerable<ResultDetail> resultDetails);
-
-    bool IsInconsistentHalftimeConfirmScore(Match match, IEnumerable<ResultDetail> resultDetails);
 }
 
 public class ExternalScoreServiceImp : IExternalScoreService
@@ -50,50 +46,6 @@ public class ExternalScoreServiceImp : IExternalScoreService
 
         var isHomeValue = string.Equals(match.FinalHomeScore.ToString(), finalExternalResult.HomeValue);
         var isAwayValue = string.Equals(match.FinalAwayScore.ToString(), finalExternalResult.AwayValue);
-
-        return !isHomeValue || !isAwayValue;
-    }
-
-    public bool IsInconsistentFullTimeConfirmScore(Match match, IEnumerable<ResultDetail> resultDetails)
-    {
-        var externalResultDetails = GetSboResults(match.MatchId, resultDetails);
-        var finalExternalResult = externalResultDetails.Find(result => result.ResourceId == ResourceType.Final);
-        var finalScore = match.MoreScores?.FinalScore;
-
-        if (finalExternalResult == null || finalScore is null)
-        {
-            return false;
-        }
-
-        if (string.IsNullOrEmpty(finalScore.Home) && string.IsNullOrEmpty(finalScore.Away))
-        {
-            return !string.Equals(match.SuspenderFullTime, "-");
-        }
-
-        var isHomeValue = string.Equals(finalScore.Home, finalExternalResult.HomeValue);
-        var isAwayValue = string.Equals(finalScore.Away, finalExternalResult.AwayValue);
-
-        return !isHomeValue || !isAwayValue;
-    }
-
-    public bool IsInconsistentHalftimeConfirmScore(Match match, IEnumerable<ResultDetail> resultDetails)
-    {
-        var externalResultDetails = GetSboResults(match.MatchId, resultDetails);
-        var halftimeExternalResult = externalResultDetails.Find(result => result.ResourceId == ResourceType.Halftime);
-        var halftimeScore = match.MoreScores?.HalfTimeScore;
-
-        if (halftimeExternalResult == null || halftimeScore is null)
-        {
-            return false;
-        }
-
-        if (string.IsNullOrEmpty(halftimeScore.Home) && string.IsNullOrEmpty(halftimeScore.Away))
-        {
-            return !string.Equals(match.SuspenderHalfTime, "-");
-        }
-
-        var isHomeValue = string.Equals(halftimeScore.Home, halftimeExternalResult.HomeValue);
-        var isAwayValue = string.Equals(halftimeScore.Away, halftimeExternalResult.AwayValue);
 
         return !isHomeValue || !isAwayValue;
     }

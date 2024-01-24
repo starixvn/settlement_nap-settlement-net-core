@@ -106,10 +106,10 @@ public class MatchServiceImp : MatchService
         return baseMatches;
     }
 
-    private Task<IEnumerable<Match>> FetchMatches(string server, MultipleSiteCriteria criteria)
+    private async Task<IEnumerable<Match>> FetchMatches(string server, MultipleSiteCriteria criteria)
     {
         criteria.DbServer = server;
-        return repository.FetchAsync<Match>(criteria);
+        return await repository.FetchAsync<Match>(criteria);
     }
 
     private async Task<List<ResultDetail>> ResultDetailByMatchIds(List<Match> matches)

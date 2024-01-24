@@ -11,24 +11,14 @@ public interface GetDataFilterService
     Task<List<LeagueTypeModel>> GetLeagues(LeagueRequest request);
 }
 
-public class GetDataFilterServiceImp : GetDataFilterService
+public class GetDataFilterServiceImp(
+    IMapper mapper,
+    IDynamicRepository repository,
+    IRefDataService refDataService)
+    : GetDataFilterService
 {
-    private static readonly List<int> PopularSport = new() { SportType.Badminton, SportType.BasketBall, SportType.ESports, SportType.Tennis };
-
-    private readonly IMapper mapper;
-
-    private readonly IDynamicRepository repository;
-
-    private readonly IRefDataService refDataService;
-
-    public GetDataFilterServiceImp(IMapper mapper,
-        IDynamicRepository repository,
-        IRefDataService refDataService)
-    {
-        this.repository = repository;
-        this.refDataService = refDataService;
-        this.mapper = mapper;
-    }
+    private static readonly List<int> PopularSport = new()
+        {SportType.Badminton, SportType.BasketBall, SportType.ESports, SportType.Tennis};
 
     public async Task<List<Sport>> GetSports(SportRequest request)
     {

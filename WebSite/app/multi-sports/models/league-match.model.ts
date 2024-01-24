@@ -2,10 +2,12 @@ import { AutoSetting } from './../../shared/models/match-details/auto-setting.mo
 import { Match } from './match.model';
 
 export class LeagueMatch {
+    public sportType: number;
     public leagueId: number;
     public name: string;
     public matches: Match[];
     public collapse = false;
     public autoWaitingTime: number;
+    public autoRetryTime: number;
     public autoCalcSetting: AutoSetting;
 }

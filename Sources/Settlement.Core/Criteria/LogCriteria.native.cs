@@ -12,9 +12,16 @@ public class LogCriteria : NonQueryCommand
         UserId = userId;
     }
 
+    public LogCriteria(string errorMessage, int actionId, int userId)
+    {
+        Remark = errorMessage;
+        ActionId = actionId;
+        UserId = userId;
+    }
+
     public int UserId { get; set; }
 
-    public int MatchId { get; set; }
+    public int? MatchId { get; set; }
 
     public string Remark { get; set; }
 
@@ -22,7 +29,7 @@ public class LogCriteria : NonQueryCommand
 
     public int ActionId { get; }
 
-    public override bool IsValid() => MatchId > 0;
+    public override bool IsValid() => true;
 
     public override string GetSettingKey() => "WriteLog_UserLog_Settle";
 }

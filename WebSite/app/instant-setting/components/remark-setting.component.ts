@@ -7,14 +7,20 @@ import { MessageBoxService } from '../../shared/services';
 import { Language } from '../../shared/language.native';
 import { SettingType, TooltipMessage } from '../constants';
 import { HttpUrlEncodingCodec } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
+import { OnlyIntegerDirective } from '../../shared/directives';
+import { CommonModule } from '@angular/common';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'settlement-setting',
   templateUrl: './remark-setting.component.html',
+  imports: [OnlyIntegerDirective, FormsModule, CommonModule, NgbModule],
   providers: [
     RequestService,
     HttpUrlEncodingCodec,
   ],
+  standalone: true
 })
 
 export class RemarkSettingComponent implements OnInit {
@@ -37,8 +43,8 @@ export class RemarkSettingComponent implements OnInit {
     this.getRemarkAndPermissionInfo();
   }
 
-  private getRemarkAndPermissionInfo() {
-    this.requestService.getRemarkInfo(this.matchId).subscribe((queryResult: RemarkAndPermission) => {
+  private  getRemarkAndPermissionInfo() {
+     this.requestService.getRemarkInfo(this.matchId).then((queryResult: RemarkAndPermission) => {
       this.remark = queryResult.match.remark;
       this.permission = queryResult.permission;
     });
@@ -87,7 +93,7 @@ export class RemarkSettingComponent implements OnInit {
       isEnabled
     };
 
-    this.requestService.changeSetting(query).subscribe((result: RemarkAndPermission) => {
+    this.requestService.changeSetting(query).then((result: RemarkAndPermission) => {
       const remark = result.match.remark;
       const eventStatus = result.match.eventStatus;
       this.remark = remark;

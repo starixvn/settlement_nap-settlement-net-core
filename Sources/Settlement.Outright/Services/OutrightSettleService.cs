@@ -39,8 +39,6 @@ public class OutrightSettleServiceImp : OutrightSettleService
 
     private const string SpName = "NAP_Admin_Settlement_Outright";
 
-    private const string StatusHide = "HIDE";
-
     private readonly List<string> runningStatus = new() { EventStatus.Running, EventStatus.Closed, EventStatus.Internal };
 
     public OutrightSettleServiceImp(IDynamicRepository repository,

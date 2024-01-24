@@ -9,12 +9,14 @@
     .check-box {
         padding-left: 180px;
     }
-    
+
     .button-payout-setting {
         margin-left: 200px;
     }
 }
-.auto-container, .time-container {
+
+.auto-container,
+.time-container {
     padding-top: 9px;
     padding-left: 6px;
 
@@ -32,7 +34,6 @@
     color: @title-color;
     font-weight: bold;
     text-transform: uppercase;
-    margin-bottom: -10px;
 }
 
 .icon(@pos-x, @pos-y) {
@@ -42,15 +43,21 @@
     height: 5px;
     width: 3px;
     margin-right: 2px;
-    margin-top: 8px;
+    margin-top: 7px;
 }
 
 .icon {
     .icon(-71px, -67px);
 }
+
+.square-icon {
+    .icon(-116px, -67px);
+}
+
 .setting-container {
     padding-top: 30px;
     padding-left: 60px;
+
     div {
         font-size: 9pt;
     }
@@ -105,4 +112,124 @@
 
 .modal-backdrop {
     z-index: 1050 !important;
+}
+
+.line {
+    border-bottom: 1px solid black;
+    margin-left: 8px;
+}
+
+.league-setting {
+    font-weight: bold;
+    line-height: 30px;
+    padding: 10px;
+
+    .league {
+        color: @title-color;
+        font-weight: bold;
+        text-transform: uppercase;
+
+        .icon {
+            margin-top: 12px !important;
+        }
+    }
+
+    .square-icon {
+        margin-top: 12px !important;
+    }
+
+    .title {
+        color: @title-color;
+        padding-left: 10px;
+    }
+
+    .content {
+        margin-left: 10px;
+    }
+
+    .auto-settings {
+        width: 80%;
+        padding: 0;
+        display: flex;
+        justify-content: space-between;
+        list-style: none;
+
+        span {
+            display: flex;
+            justify-content: space-between;
+
+            input[type="radio"] {
+                margin-top: 0;
+                margin-right: 5px;
+            }
+        }
+    }
+
+    .toggle (@pos-x, @pos-y) {
+        background: url(@sprite) no-repeat;
+        background-position: @pos-x @pos-y;
+        position: absolute;
+        height: 20px;
+        width: 36px;
+        margin-left: 4px;
+        margin-top: 6px;
+    }
+
+    .toggle-on {
+        .toggle(-120px, -30px);
+    }
+
+    .toggle-off {
+        .toggle(-64px, -30px);
+    }
+
+    select {
+        width: 40px;
+        text-align-last: center;
+    }
+}
+
+.provider-selection {
+    .provider-table {
+        width: 100%;
+
+        thead {
+            background-color: white;
+            border: none;
+            color: @title-color;
+            font-weight: bold;
+        }
+
+        td:not(:first-child),
+        thead :not(:first-child) {
+            text-align: center;
+        }
+
+        .provider {
+            width: 30%;
+        }
+
+        input[type="radio"] {
+            margin-top: 0;
+            margin-right: 5px;
+        }
+    }
+}
+
+.bottom {
+    padding: 10px;
+    width: 100%;
+    text-align: center;
+    text-wrap: true;
+}
+
+.toast-container {
+    position: inherit !important;
+    padding-right: 5px;
+
+    .ngx-toastr {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 5px 0 6px !important;
+    }
 }

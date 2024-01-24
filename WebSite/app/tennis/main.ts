@@ -17,7 +17,7 @@ bootstrapApplication(AppComponent, {
       disableTimeOut: true,
       enableHtml: true,
       tapToDismiss: false,
-      maxOpened: 1,
+      maxOpened: 1
     })),
     provideHttpClient()
   ],

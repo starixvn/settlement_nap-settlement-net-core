@@ -158,7 +158,11 @@
             "main": "instant-setting/main.ts",
             "tsConfig": "instant-setting/tsconfig.app.json",
             "polyfills": "polyfills.ts",
-            "styles": ["instant-setting/style.less"],
+            "styles": [
+              "instant-setting/style.less" ,
+              "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
+              "shared/styles/material.style.less",
+              "node_modules/ngx-toastr/toastr.css"],
             "allowedCommonJsDependencies": ["lodash"]
           },
           "configurations": {

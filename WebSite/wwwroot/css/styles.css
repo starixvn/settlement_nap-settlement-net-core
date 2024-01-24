@@ -2698,7 +2698,6 @@ header {
 
     .sub-footer button {
         margin-left: 150px;
-        vertical-align: middle;
     }
 
 @-webkit-keyframes running-completed {
