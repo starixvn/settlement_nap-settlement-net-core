@@ -98,8 +98,7 @@ export class MatchesComponent extends MatchesBaseComponent implements OnChanges,
   }
 
   public getBackgroundAutoSetting(match: Match) {
-    const colorStatus = _.isEqual(match.autoPayoutStatus, this.autoSettingCompleted) ? 'auto-setting-completed' :
-      _.isEqual(match.autoPayoutStatus, this.autoSettingFailed) ? 'auto-setting-failed' : '';
+    const colorStatus = _.isEqual(match.autoPayoutStatus, this.autoSettingFailed) ? 'auto-setting-failed' : '';
 
     return colorStatus;
   }

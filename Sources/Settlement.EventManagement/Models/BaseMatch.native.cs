@@ -191,4 +191,10 @@ public class BaseMatch
 
     [Key("directWaitingTime")]
     public int DirectWaitingTime { get; set; }
+
+    [Key("autoPayoutStatus")]
+    public int AutoPayoutStatus { get; set; }
+
+    [Key("autoInstantStatus")]
+    public int AutoInstantStatus { get; set; }
 }

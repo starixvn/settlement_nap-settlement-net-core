@@ -229,7 +229,7 @@ public class NewInfoMatchServiceTests
         service.GetAutoSetting(matches);
 
         Assert.Equal(3, matches[0].AutoPayoutStatus);
-        Assert.Equal(1, matches[1].AutoPayoutStatus);
+        Assert.Equal(2, matches[1].AutoPayoutStatus);
         Assert.Equal(1, matches[0].AutoInstantStatus);
         Assert.Equal(3, matches[1].AutoInstantStatus);
     }

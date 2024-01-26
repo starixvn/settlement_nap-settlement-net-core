@@ -27,7 +27,7 @@ public interface NewInfoMatchService
 
     bool IsExistsConfirmedEarly(MultiSportMatch match);
 
-    Task<List<MultiSportMatch>> GetAutoSetting(List<MultiSportMatch> matches);
+    Task<List<T>> GetAutoSetting<T>(List<T> matches) where T : BaseMatch;
 }
 
 public class NewInfoMatchServiceImp(
@@ -130,7 +130,7 @@ public class NewInfoMatchServiceImp(
         return siteMatchService.IsExistsConfirmedEarly(match);
     }
 
-    public async Task<List<MultiSportMatch>> GetAutoSetting(List<MultiSportMatch> matches)
+    public async Task<List<T>> GetAutoSetting<T>(List<T> matches) where T : BaseMatch
     {
         var matchStatuses = (await GetMatchStatus(matches)).ToList();
         return matches.Join(matchStatuses, m => m.MatchId, s => s.MatchId, (m, s) =>
@@ -141,7 +141,7 @@ public class NewInfoMatchServiceImp(
         }).ToList();
     }
 
-    private async Task<IEnumerable<MatchStatusModel>> GetMatchStatus(IEnumerable<MultiSportMatch> matches)
+    private async Task<IEnumerable<MatchStatusModel>> GetMatchStatus(IEnumerable<BaseMatch> matches)
     {
         var matchIds = string.Join(',', matches.Select(m => m.MatchId));
         var criteria = new GetAutoStatusCriteria()
