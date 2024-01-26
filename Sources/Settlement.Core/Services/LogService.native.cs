@@ -14,6 +14,8 @@ public interface LogService
     Task WriteLog(InsertLogCriteria criteria);
 
     Task ActionLog(int matchId, string message, int actionId);
+
+    Task WriteLog(LogCriteria criteria);
 }
 
 public class LogServiceImp : LogService
@@ -71,6 +73,11 @@ public class LogServiceImp : LogService
     public async Task WriteLog(string message, int actionId)
     {
         var criteria = new LogCriteria(message, actionId, session.UserId);
+        await repository.ExecuteAsync(criteria);
+    }
+
+    public async Task WriteLog(LogCriteria criteria)
+    {
         await repository.ExecuteAsync(criteria);
     }
 }

@@ -14,7 +14,8 @@ public class MatchSettingHandler :
         IRequestHandler<UpdateRemarkRequest, MatchAndPermission>,
         IRequestHandler<TimeSettingRequest, Result>,
         IRequestHandler<LeagueRequest, string>,
-        IRequestHandler<GetSettingRequest, string>
+        IRequestHandler<GetSettingRequest, string>,
+        IRequestHandler<UpdateHoldMatchSettingRequest, MatchAndPermission>
 
 {
     private readonly SettingService settingService;
@@ -58,4 +59,17 @@ public class MatchSettingHandler :
     public async Task<string> Handle(LeagueRequest request, CancellationToken cancellationToken) => await Task.Run(() => refDataService.GetLeagueName(request.LeagueId), cancellationToken);
 
     public async Task<string> Handle(GetSettingRequest request, CancellationToken cancellationToken) => await settingService.GetSetting(request);
+
+    public async Task<MatchAndPermission> Handle(UpdateHoldMatchSettingRequest request, CancellationToken cancellationToken)
+    {
+        await settingService.ProcessUpdateHoldMatchSetting(request);
+
+        var match = await settingService.GetRemarkInfo(request.MatchId);
+
+        return new MatchAndPermission
+        {
+            Permission = permissionService.Permission,
+            Match = match
+        };
+    }
 }

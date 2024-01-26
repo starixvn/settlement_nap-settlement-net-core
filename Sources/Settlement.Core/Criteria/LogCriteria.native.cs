@@ -19,15 +19,20 @@ public class LogCriteria : NonQueryCommand
         UserId = userId;
     }
 
+    public LogCriteria()
+    {
+    }
+
     public int UserId { get; set; }
 
     public int? MatchId { get; set; }
 
     public string Remark { get; set; }
+    public string RemarkJson { get; set; }
 
     public string Ip => string.Empty;
 
-    public int ActionId { get; }
+    public int ActionId { get; set; }
 
     public override bool IsValid() => true;
 

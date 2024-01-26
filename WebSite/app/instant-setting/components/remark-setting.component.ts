@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Remark, Permission, RemarkAndPermission, ChangeSettingQuery } from '../models';
+import { Remark, Permission, RemarkAndPermission, ChangeSettingQuery, League } from '../models';
 import { UrlHelper } from '../../helper';
 import { RequestService } from '../services/request.service';
 import { ModalDialogMessage } from '../../shared/models';
@@ -27,6 +27,8 @@ export class RemarkSettingComponent implements OnInit {
   public matchId: string;
   public matchCode: string;
   public remark: Remark;
+  public orgRemark:Remark;
+  public isApplyChild: boolean;
   public permission: Permission;
   public errorMessage: string;
   public tooltipMessage = TooltipMessage;
@@ -46,6 +48,7 @@ export class RemarkSettingComponent implements OnInit {
   private  getRemarkAndPermissionInfo() {
      this.requestService.getRemarkInfo(this.matchId).then((queryResult: RemarkAndPermission) => {
       this.remark = queryResult.match.remark;
+      this.orgRemark = {...this.remark};
       this.permission = queryResult.permission;
     });
   }
@@ -104,5 +107,33 @@ export class RemarkSettingComponent implements OnInit {
   public refreshRemarkStatusOnMainPage(remark: Remark, eventStatus: string, newEventStatus: string) {
     const mainPage = 'Sportsbook';
     window.parent[mainPage]?.refreshRemarkStatus(this.matchId, remark, eventStatus,newEventStatus, this.permission);
+  }
+
+  public submit() {
+    this.dialogMessage.title = Language.confirmationBox;
+    this.dialogMessage.message = this.isApplyChild ? Language.UpdateSettingConfirmMessage.ChildMatch : Language.UpdateSettingConfirmMessage.ParentMatch;
+
+    this.messageBoxService.confirm(this.dialogMessage,async () => {
+      await this.changeHoldMatchSetting();
+    });
+  }
+
+  public cancel() {
+    this.messageBoxService.closePopupNotChanged();
+}
+
+  private async changeHoldMatchSetting() {
+    const query = {
+      matchId: this.matchId,
+      remark: this.remark,
+      orgRemark: this.orgRemark,
+      isApplyChild: this.isApplyChild
+    }
+    // console.log(query)
+    var result = await this.requestService.changeHoldMatchSetting(query);
+    const remark = result.match.remark;
+      const eventStatus = result.match.eventStatus;
+      this.remark = remark;
+      this.refreshRemarkStatusOnMainPage(remark, eventStatus, result.match.newEventStatus);
   }
 }
