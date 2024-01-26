@@ -38,6 +38,7 @@ import { TimeConverterPipe } from '../shared/pipes/time-converter.pipe';
         NoopAnimationsModule,
         MaterialDialogWithResponseComponent,
         MaterialDialogComponent,
+        TimeConverterPipe
     ],
     declarations: [
         AppComponent,
@@ -45,7 +46,6 @@ import { TimeConverterPipe } from '../shared/pipes/time-converter.pipe';
         ModalDialogComponent,
         ModalContentDialogComponent,
         LeagueComponent,
-        TimeConverterPipe
     ],
     providers: [ { provide: HTTP_INTERCEPTORS, useClass: CustomHttpRequestInterceptor, multi: true }],
     bootstrap: [AppComponent],

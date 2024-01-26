@@ -1,6 +1,9 @@
 import { Pipe, PipeTransform } from "@angular/core";
 
-@Pipe({ name: 'timeConverter' })
+@Pipe({
+  name: 'timeConverter',
+  standalone: true
+})
 export class TimeConverterPipe implements PipeTransform {
   transform(second: number): string {
     if (second === null || second === undefined || isNaN(second)) {
@@ -18,5 +21,5 @@ export class TimeConverterPipe implements PipeTransform {
       return `${minutes}m ${seconds}s`;
     }
   }
-  
+
 }
