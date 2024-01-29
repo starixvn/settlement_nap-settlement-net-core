@@ -668,7 +668,7 @@
           "options": {
             "aot": true,
             "outputPath": "../wwwroot/calculate-page",
-            "index": "calculate-page/index.html",
+            "index": "calculate-page/index.cshtml",
             "main": "calculate-page/main.ts",
             "tsConfig": "calculate-page/tsconfig.app.json",
             "polyfills": ["zone.js"],

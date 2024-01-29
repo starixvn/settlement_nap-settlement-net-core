@@ -12,6 +12,6 @@ export class BackGroundService {
             (!_.isEqual(match.isCalculatingSingle, CalculationStatus.waiting)
                 && !_.isEqual(match.isCalculatingSingle, CalculationStatus.calculating));
 
-        return !_.isNull(match.remark) && !remarkSetting && isSingleNotCalculating;
+        return !_.isNull(match.remark)  && isSingleNotCalculating;
     }
 }

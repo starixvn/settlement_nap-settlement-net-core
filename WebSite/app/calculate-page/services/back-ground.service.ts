@@ -11,7 +11,7 @@ export class BackGroundService {
         const isSingleNotCalculating = _.isNull(match.isCalculatingSingle) ||
                                      (!_.isEqual(match.isCalculatingSingle, CalculationStatus.waiting)
                                      && !_.isEqual(match.isCalculatingSingle, CalculationStatus.calculating));
-        return !_.isNull(match.remark) && !remarkSetting && isSingleNotCalculating;
+        return !_.isNull(match.remark)  && isSingleNotCalculating;
     }
 
     public completedBackground(match: Match) {
