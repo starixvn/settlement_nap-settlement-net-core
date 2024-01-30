@@ -21,6 +21,7 @@ import {
 import { AutoType } from "../constants";
 import { SportSingleAutoType } from "../constants/sport-instant";
 import { LeagueAutoSettings } from "../../shared/models/leagus-auto-settings.model";
+import { PopularSports } from "../constants/popular-sports.native";
 
 @Injectable()
 export class PopupService {
@@ -48,15 +49,12 @@ export class PopupService {
     this.dialogBoxService.popup(dialogData, "1011px", "800px");
   }
 
-  public popupCalc(match: Match, sports: SportMatch[]) {
+  public popupCalc(match: Match) {
     this.properties.title = Language.CalcPopupTitle;
     this.setPopupSize(match.sportType);
 
     if (this.listNewSport.includes(match.sportType)) {
-      let sportName = sports
-        .find((item) => item.id === match.sportType)
-        .name.toLowerCase();
-      sportName = _.isEqual(sportName, "volleyball") ? "badminton" : sportName;
+      let sportName = PopularSports.get(match.sportType);
       this.properties.src = `/apps/${sportName}-recalculate?matchId=${match.matchId}&sportType=${match.sportType}`;
     } else {
       this.properties.src = `/apps/other-sports-recalculate?matchId=${match.matchId}&sportType=${match.sportType}`;
@@ -65,15 +63,12 @@ export class PopupService {
     this.openAndHandlePopup(this.properties, match);
   }
 
-  public popupRefund(match: Match, sports: SportMatch[]) {
+  public popupRefund(match: Match) {
     this.properties.title = Language.RefundPopupTitle;
     this.setPopupRefundSize(match.sportType);
 
     if (_.includes(this.listNewSport, match.sportType)) {
-      let sportName = sports
-        .find((item) => item.id === match.sportType)
-        .name.toLowerCase();
-      sportName = _.isEqual(sportName, "volleyball") ? "badminton" : sportName;
+      let sportName = PopularSports.get(match.sportType);
       this.properties.src = `/apps/${sportName}-refund?matchId=${match.matchId}&sportType=${match.sportType}`;
     } else {
       this.properties.src = `/apps/other-sports-refund?matchId=${match.matchId}&sportType=${match.sportType}`;
@@ -82,12 +77,9 @@ export class PopupService {
     this.openAndHandlePopup(this.properties, match);
   }
 
-  public popupEarly(match: Match, sports: SportMatch[]) {
+  public popupEarly(match: Match) {
     this.properties.title = Language.EarlyPopupTitle;
-    let sportName = sports
-      .find((item) => item.id === match.sportType)
-      .name.toLowerCase();
-    sportName = _.isEqual(sportName, "volleyball") ? "badminton" : sportName;
+    let sportName = PopularSports.get(match.sportType);
     this.properties.src = `/apps/${sportName}-early?matchId=${match.matchId}&sportType=${match.sportType}`;
     this.properties.width =
       match.sportType === SportType.cricket

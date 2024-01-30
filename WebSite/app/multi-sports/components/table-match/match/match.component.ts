@@ -1,109 +1,87 @@
-import { SportNewAutoPayout, SportSupportInstant } from './../constants/sport-instant';
-import { MultiSport, MatchWaitingRequest, LeagueMatch, Match, SportMatch } from './../models';
-import { Component, Input, OnInit, OnChanges, SimpleChanges, OnDestroy, ChangeDetectorRef, Injector, inject } from '@angular/core';
-import { AutoSettingPosition, DefaultValue } from '../constants';
+import { Match } from '../../../models';
+import { Component, Input, OnChanges, SimpleChanges, ChangeDetectorRef, inject, ChangeDetectionStrategy } from '@angular/core';
+import { AutoSettingPosition, DefaultValue } from '../../../constants';
 import * as _ from 'lodash';
-import { RefreshMatchService, PopupService, MultiSportService, HandleActionsService } from '../services/';
-import { Subscription, interval } from 'rxjs';
-import { MessageBoxService } from './../../shared/services';
-import { Language } from './../../shared/language.native';
-import { ModalDialogMessage, Score, Remark, AutoSetting, AutoSettingMatchQuery, AutoSettingLeagueQuery } from '../../shared/models';
-import { SportType, ResultType, BackgroundColor, CalculationStatus, EventStatus } from '../../shared/constants';
-import { Permission } from '../../shared/models/sportsbook-sop';
-import { BackGroundService, SportMatchService } from '../services';
+import { PopupService, MultiSportService, BackGroundService, SportMatchService } from '../../../services';
+import { MessageBoxService } from '../../../../shared/services';
+import { Language } from '../../../../shared/language.native';
+import { ModalDialogMessage, Remark, AutoSetting, AutoSettingMatchQuery } from '../../../../shared/models';
+import { SportType, ResultType, BackgroundColor, CalculationStatus, EventStatus } from '../../../../shared/constants';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { PipesModule } from '../../../../shared/pipes/pipes.module.native';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
+import { MultiSportsStore } from '../../../services/multi-sports.store';
+import { SportSupportInstant } from '../../../constants/sport-instant';
+import { MatchState } from '../../../models/match-state.model';
+import { IntervalScorePipe } from '../../../../shared/pipes/interval-score.pipe';
 
 @Component({
-  selector: 'league',
-  templateUrl: './league.component.html'
+  selector: 'match',
+  templateUrl: './match.component.html',
+  standalone: true,
+  imports: [CommonModule, FormsModule, MatTooltipModule, PipesModule, NgbTooltip],
+  providers: [IntervalScorePipe],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class LeagueComponent implements OnInit, OnChanges, OnDestroy {
-  @Input() public multiSport: MultiSport;
-  @Input() public request: MatchWaitingRequest;
-  @Input() public enableRefresh: boolean;
+export class MatchComponent implements OnChanges {
+  @Input() match: Match;
   private sportMatchService = inject(SportMatchService);
-  private refreshMatchesService = inject( RefreshMatchService);
-  private popupService = inject( PopupService);
+  private popupService = inject(PopupService);
   private backGroundService = inject(BackGroundService);
-  private messageBoxService = inject( MessageBoxService);
-  private multiSportService = inject( MultiSportService);
-  private handleActionService = inject(HandleActionsService);
+  private messageBoxService = inject(MessageBoxService);
+  private multiSportService = inject(MultiSportService);
+  private intervalPipe = inject(IntervalScorePipe);
+  public store = inject(MultiSportsStore);
   public language = Language;
-  private readonly period = 6000;
   private readonly autoSettingCompleted = 2;
   private readonly autoSettingFailed = 3;
   private readonly earlyOverOnlyValue = "1";
-  private subscriber: Subscription;
-  public sports: SportMatch[];
-  public permission: Permission;
-  public match: Match;
-  public intervalTimer = interval(this.period);
   public readonly sportTypeCricket = SportType.cricket;
   public readonly sportSupportInstant = SportSupportInstant;
-  public readonly sportSupportNewAutoPayout = SportNewAutoPayout;
   public readonly dialogMessage: ModalDialogMessage = new ModalDialogMessage();
+  public math = Math;
+  public matchState = new MatchState();
 
-  constructor(protected injector: Injector,
-    private readonly cd: ChangeDetectorRef) {
+  constructor( readonly cd: ChangeDetectorRef) {}
+    console.log(this.multiSport.sports)
+    
 
+  public ChangeDetectionCount = 0
+  public get GetChangeDetectionCount() {
+
+    return this.ChangeDetectionCount++
   }
+
 
   ngOnChanges(changes: SimpleChanges) {
-    if (!_.isUndefined(changes.multiSport) && !changes.multiSport.firstChange) {
-      this.permission = this.multiSport.permission;
-      this.refreshMatchesService.permission = this.permission;
-      this.sports = this.sportMatchService.getSportsWithIntervalScore(this.multiSport.sports, this.permission);
-    }
+    this.sportMatchService.getMatchIntervalScore(this.match, this.store.state.permission);
+    this.matchState.isChanged = true;
+    this.matchState.undecidedColor = this.undecidedColor(this.match.remark);
+    this.matchState.autoSettingBackgroundColor = this.getBackgroundAutoSetting();
+    this.matchState.resultHomeConfirmedBackgroundColor = this.ResultConfirmedBackGround(this.match.isHavingIntervalScore, 'home');
+    this.matchState.resultAwayConfirmedBackgroundColor = this.ResultConfirmedBackGround(this.match.isHavingIntervalScore, 'away');
     this.cd.detectChanges();
-    console.log(this.multiSport.sports)
   }
 
-  ngOnInit() {
-    this.permission = this.multiSport.permission;
-  
-    
-    this.refreshMatches();
+  private undecidedColor(remark: Remark) {
+    return remark.isMtdHold || remark.isUndecided || remark.isUnderSettle || remark.isKeyHold ? BackgroundColor.undecidedRow : '';
   }
-
-  public ngOnDestroy() {
-    if (this.subscriber) {
-      this.subscriber.unsubscribe();
-    }
-  }
-
-  public get isExistedSport(): boolean | undefined {
-    return this.sports && this.sports.length > 0;
-  }
-
-  public collapseSport(sport: SportMatch) {
-    sport.collapse = !sport.collapse;
-  }
-
-  public collapseLeague(league: LeagueMatch) {
-    league.collapse = !league.collapse;
-  }
-
-  private refreshMatches() {
-    this.subscriber = this.intervalTimer.subscribe(() => {
-      if (this.enableRefresh && this.isExistedSport) {
-        this.refreshMatchesService.refreshMatches(this.sports, this.request);
-      }
-    });
-  }
-
 
   public isShowCalculationLink(match: Match) {
-    return this.backGroundService.isShowLink(match) && (this.permission.canCalculate || (this.permission.isTrader && match.sportType === SportType.cricket))
+    return this.backGroundService.isShowLink(match) && (this.store.state.permission.canCalculate || (this.store.state.permission.isTrader && match.sportType === SportType.cricket))
       ? BackgroundColor.codeLink : '';
   }
 
   public isShowRefundLink(match: Match) {
-    const disableRefund = _.isEmpty(this.request.matchCode) && !_.isEqual(this.request.overStatus, DefaultValue.unCheckAll);
-    return this.backGroundService.isShowLink(match) && this.permission.canRefund && !disableRefund ? BackgroundColor.codeLink : '';
+    const disableRefund = _.isEmpty(this.store.request.matchCode) && !_.isEqual(this.store.request.overStatus, DefaultValue.unCheckAll);
+    return this.backGroundService.isShowLink(match) && this.store.state.permission.canRefund && !disableRefund ? BackgroundColor.codeLink : '';
   }
 
   public isShowEarlySettleLink(match: Match) {
-    return this.backGroundService.isShowLink(match) && (this.permission.canCalculate || this.permission.canUncalculate || this.permission.canRefund
-      || (this.permission.isTrader && match.sportType === SportType.cricket))
+    return this.backGroundService.isShowLink(match) && (this.store.state.permission.canCalculate || this.store.state.permission.canUncalculate || this.store.state.permission.canRefund
+      || (this.store.state.permission.isTrader && match.sportType === SportType.cricket))
       ? BackgroundColor.codeLink : '';
   }
 
@@ -112,7 +90,7 @@ export class LeagueComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   public getEarlySettleBackground(match: Match) {
-    const backgroundColorBlinking = match.isExistsConfirmedEarly && this.isEarlyOverAndOtherStatus(this.request.overStatus) ? BackgroundColor.confirmedEarlyBlinking : '';
+    const backgroundColorBlinking = match.isExistsConfirmedEarly && this.isEarlyOverAndOtherStatus(this.store.request.overStatus) ? BackgroundColor.confirmedEarlyBlinking : '';
     const isRunning = !_.isNull(match.earlySettleStatus) && _.isEqual(match.earlySettleStatus.toLowerCase(), BackgroundColor.running)
       && _.isEqual(match.eventStatus.toLowerCase(), BackgroundColor.completed);
     const isCompleted = !_.isNull(match.earlySettleStatus) && _.isEqual(match.earlySettleStatus.toLowerCase(), BackgroundColor.completed);
@@ -140,49 +118,34 @@ export class LeagueComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   public changeAutoSetting(match: Match) {
-    if (this.permission.canAutoPayout) {
+    if (this.store.state.permission.canAutoPayout) {
       this.popupService.openUpdatePayoutForMatch(match);
     }
   }
 
-
-  public changeAutoLeague(leagueMatch: LeagueMatch) {
-    if (this.permission.canAutoPayout) {
-      SportNewAutoPayout.includes(leagueMatch.sportType) ? 
-      this.popupService.openUpdateNewPayoutForLeague(leagueMatch) 
-      : this.popupService.openUpdatePayoutForLeague(leagueMatch);
+  getClassInstant(isInstant: boolean) {
+    if (this.store.state.permission.canAutoPayout) {
+      return isInstant ? BackgroundColor.iconOn : BackgroundColor.iconOff;
+    } else {
+      return isInstant ? BackgroundColor.iconOnDisabled : BackgroundColor.iconOffDisabled;
     }
   }
 
-
-  public getAutoSettingLeague(autoSetting: AutoSetting) {
-    if (autoSetting.isAutoPayoutForLeague && autoSetting.isDirectPayoutForLeague) {
-      return "BOTH";
-    }
-    if (autoSetting.isAutoPayoutForLeague) {
-      return "AUTO";
-    }
-    if (autoSetting.isDirectPayoutForLeague) {
-      return "DIRECT";
-    }
-
-    return "OFF";
-  }
 
   public getLog(matchId: string) {
-    this.popupService.popupLog(matchId, this.request.fromDate, this.request.toDate);
+    this.popupService.popupLog(matchId, this.store.request.fromDate, this.store.request.toDate);
   }
 
   public popupCalc(match: Match) {
-    this.popupService.popupCalc(match, this.sports);
+    this.popupService.popupCalc(match);
   }
 
   public popupRefund(match: Match) {
-    this.popupService.popupRefund(match, this.sports);
+    this.popupService.popupRefund(match);
   }
 
   public popupEarly(match: Match) {
-    this.popupService.popupEarly(match, this.sports);
+    this.popupService.popupEarly(match);
   }
 
   public popupChangeRemarkSetting(match: Match) {
@@ -205,8 +168,11 @@ export class LeagueComponent implements OnInit, OnChanges, OnDestroy {
     return `${enableLink} ${colorStatus}`;
   }
 
-  public isExistIntervalConfirmed(intervalScores: Score[]) {
-    return _.some(intervalScores, score => score.isConfirmed && score.isNotSettled);
+  private ResultConfirmedBackGround(isHavingIntervalScore : boolean, teamName: string) {
+    if(isHavingIntervalScore) {
+      return _.some(this.match.intervalScore, score => score.isConfirmed && score.isNotSettled) ? BackgroundColor.resultConfirmed : '';
+    }
+    return _.some(this.intervalPipe.transform(this.match.intervalScore, teamName), score => score.isConfirmed && score.isNotSettled) ? BackgroundColor.resultConfirmed : '';
   }
 
   public isFinalConfirmed(match: Match) {
@@ -224,7 +190,7 @@ export class LeagueComponent implements OnInit, OnChanges, OnDestroy {
 
   public isHalfTimeConfirmed(match: Match) {
     if (ResultType.havingHalfTimeConfirmedStatus.includes(match.sportType)) {
-    
+
       if (ResultType.intervalScoreByResultDetail.includes(match.sportType)) {
         return match.moreScores.halfTimeScore.isConfirmed && match.moreScores.halfTimeScore.isNotSettled;
       }
@@ -290,24 +256,24 @@ export class LeagueComponent implements OnInit, OnChanges, OnDestroy {
 
   public isHideHtScore(match: Match) {
     return ResultType.havingHalfTimeConfirmedStatus.includes(match.sportType)
-      && !this.permission.isLeader // false => true
+      && !this.store.state.permission.isLeader // false => true
       && !match.isHalfTimeCal // flase => true
-      && (!this.isRefundHt(match) 
-      && !match.isCalRefund);
+      && (!this.isRefundHt(match)
+        && !match.isCalRefund);
   }
 
   public isHideFinalScore(match: Match) {
     return (ResultType.havingConfirmedStatus.includes(match.sportType)
       || ResultType.havingHalfTimeConfirmedStatus.includes(match.sportType))
-      && !this.permission.isLeader 
-      && !match.isCalculated 
+      && !this.store.state.permission.isLeader
+      && !match.isCalculated
       && !match.isCalRefund;
   }
 
   private isRefundHt(match: Match) {
-   return match.eventStatus === EventStatus.refundHalftime
-   || (_.includes(ResultType.scoreInResultDetail, match.sportType) 
-            && _.isEqual(match.moreScores?.halfTimeScore?.home, Language.RefundSymbol.All))
+    return match.eventStatus === EventStatus.refundHalftime
+      || (_.includes(ResultType.scoreInResultDetail, match.sportType)
+        && _.isEqual(match.moreScores?.halfTimeScore?.home, Language.RefundSymbol.All))
   }
 
   public getInterval(match: Match) {
@@ -318,10 +284,6 @@ export class LeagueComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     return match.intervalScore;
-  }
-
-  public undecidedColor(remark: Remark) {
-    return remark.isMtdHold || remark.isUndecided || remark.isUnderSettle || remark.isKeyHold ? BackgroundColor.undecidedRow : '';
   }
 
   public getTotalHomeGames(match: Match) {
@@ -379,25 +341,11 @@ export class LeagueComponent implements OnInit, OnChanges, OnDestroy {
           : '';
   }
 
-  public openUpdateTime(league: LeagueMatch) {
-    if (this.permission.canAutoPayout) {
-      this.popupService.openUpdateTime(league);
-    }
-  }
-
-  public getClassInstant(isInstant: boolean) {
-      if (this.permission.canAutoPayout) {
-        return isInstant ? BackgroundColor.iconOn : BackgroundColor.iconOff;
-      } else {
-        return isInstant ? BackgroundColor.iconOnDisabled : BackgroundColor.iconOffDisabled;
-      }
-  }
-
   public updateInstant(match: Match) {
     this.dialogMessage.message = Language.instants.confirm;
     this.dialogMessage.title = Language.confirmationBox;
     this.messageBoxService.confirm(this.dialogMessage, () => {
-       this.doUpdateInstant(match);
+      this.doUpdateInstant(match);
     });
   }
 
@@ -410,37 +358,6 @@ export class LeagueComponent implements OnInit, OnChanges, OnDestroy {
     const result = await this.multiSportService.updateSettingMatch(query);
     if (result.errCode === 0) {
       match.autoCalcSetting.isInstantForMatch = !match.autoCalcSetting.isInstantForMatch;
-    } else {
-      this.dialogMessage.message = result.errMsg;
-      this.messageBoxService.alert(this.dialogMessage);
-    }
-  }
-
-  public updateInstantForLeague(autoCalcSetting: AutoSetting, leagueMatch: LeagueMatch) {
-    this.dialogMessage.title = Language.confirmationBox;
-    this.dialogMessage.message = autoCalcSetting.isInstantForLeague ? Language.instants.confirmOffLeague : Language.instants.confirmOnLeague;
-    this.dialogMessage.hasActionOnNoBtn = true;
-    this.messageBoxService.confirm(this.dialogMessage, () => {
-      this.doUpdateSettingLeague(autoCalcSetting, leagueMatch, true);
-    }, () => {
-      this.doUpdateSettingLeague(autoCalcSetting, leagueMatch, false);
-    });
-  }
-
-  private async doUpdateSettingLeague(autoCalcSetting: AutoSetting, leagueMatch: LeagueMatch, isApplyAll: boolean) {
-    this.dialogMessage.hasActionOnNoBtn = false;
-    const query = new AutoSettingLeagueQuery(
-      Number(leagueMatch.leagueId),
-      AutoSettingPosition.autoInstant,
-      !autoCalcSetting.isInstantForLeague,
-      isApplyAll
-    );
-    const result = await this.multiSportService.updateSettingLeague(query);
-    if (result.errCode === 0) {
-      autoCalcSetting.isInstantForLeague = !autoCalcSetting.isInstantForLeague;
-      if (isApplyAll) {
-        this.handleActionService.handleAutoInstantForMatch(leagueMatch, autoCalcSetting.isInstantForLeague);
-      }
     } else {
       this.dialogMessage.message = result.errMsg;
       this.messageBoxService.alert(this.dialogMessage);

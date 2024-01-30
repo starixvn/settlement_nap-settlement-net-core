@@ -7,6 +7,7 @@ export const BackgroundColor = {
     calculating: 'calculating',
     calculated: 'bg-calculated',
     halfTimeCalculated: 'bg-halftime',
+    resultConfirmed: 'bg-result-confirmed',
     calRefund: 'bg-refund',
     codeLink: 'code-link',
     running: 'running',

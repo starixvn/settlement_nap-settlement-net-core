@@ -1,41 +1,42 @@
 import { waitForAsync, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import {
-  LeagueComponent,
-} from '.';
+ MatchComponent,
+} from '../..';
 import {
   MultiSport,
   MatchWaitingRequest,
   SportMatch,
   LeagueMatch,
   Match
-} from '../models';
-import { RefreshMatchService, MultiSportService, PopupService, HandleActionsService, DetectChangesService, BackGroundService, SportMatchService } from '../services';
+} from '../../../models';
+import { RefreshMatchService, MultiSportService, PopupService, HandleActionsService, DetectChangesService, BackGroundService, SportMatchService } from '../../../services';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-import { HttpRequestService, BlockUIService, MessageBoxService, DialogBoxService } from '../../shared/services';
+import { HttpRequestService, BlockUIService, MessageBoxService, DialogBoxService } from '../../../../shared/services';
 import { SimpleChange } from '@angular/core';
-import { MaterialModule } from '../../shared/material-module';
-import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
-import { IntervalScorePipe } from '../../shared/pipes/interval-score.pipe';
+import { MaterialModule } from '../../../../shared/material-module';
+import { IntervalScorePipe } from '../../../../shared/pipes/interval-score.pipe';
 import {
   MoreScore,
   Score,
   Remark,
   AutoSetting
-} from '../../shared/models';
-import { BackgroundColor, SportType } from '../../shared/constants';
-import { Permission } from '../../shared/models/sportsbook-sop/permission.model';
-import { ModalDialogComponent } from '../../shared/components/modal-dialog/modal-dialog.component';
-import { ModalContentDialogComponent } from '../../shared/components/modal-dialog/modal-content-dialog.component';
+} from '../../../../shared/models';
+import { BackgroundColor, SportType } from '../../../../shared/constants';
+import { Permission } from '../../../../shared/models/sportsbook-sop/permission.model';
+import { ModalDialogComponent } from '../../../../shared/components/modal-dialog/modal-dialog.component';
+import { ModalContentDialogComponent } from '../../../../shared/components/modal-dialog/modal-content-dialog.component';
+import { MultiSportsStore } from '../../../services/multi-sports.store';
 
-describe('LeagueComponent', () => {
-  let component: LeagueComponent;
-  let fixture: ComponentFixture<LeagueComponent>;
+describe('matchComponent', () => {
+  let component: MatchComponent;
+  let fixture: ComponentFixture<MatchComponent>;
   let refreshMatchService: RefreshMatchService;
   let sportMatchService: SportMatchService;
   let backGroundService: BackGroundService;
   let popupService: PopupService;
+  let store : MultiSportsStore;
   let match = new Match();
   match.sportType = SportType.eSports;
   match.autoCalcSetting = new AutoSetting();
@@ -45,7 +46,9 @@ describe('LeagueComponent', () => {
     name: 'mock league',
     collapse: false,
     autoWaitingTime: 0,
-    autoCalcSetting: new AutoSetting()
+    autoCalcSetting: new AutoSetting(),
+    sportType: 0,
+    autoRetryTime: 0
   };
 
   const sport: SportMatch = {
@@ -64,7 +67,6 @@ describe('LeagueComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [
-        LeagueComponent,
         ModalDialogComponent,
         ModalContentDialogComponent,
         IntervalScorePipe,
@@ -89,19 +91,21 @@ describe('LeagueComponent', () => {
         HttpClientModule,
         NgbModule,
         MaterialModule,
+        MatchComponent
       ],
     })
       .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(LeagueComponent);
+    fixture = TestBed.createComponent(MatchComponent);
     component = fixture.componentInstance;
     refreshMatchService = fixture.debugElement.injector.get(RefreshMatchService);
     popupService = fixture.debugElement.injector.get(PopupService);
     sportMatchService = fixture.debugElement.injector.get(SportMatchService);
     backGroundService = fixture.debugElement.injector.get(BackGroundService);
-    component.multiSport = multiSport;
+    store = fixture.debugElement.injector.get(MultiSportsStore);
+    store.setState(multiSport);
     component.ngOnInit();
   });
 
@@ -110,9 +114,9 @@ describe('LeagueComponent', () => {
   });
 
   it('ngOnInit - should set permission and refresh matches', fakeAsync(() => {
-    component.multiSport = multiSport;
+    store.setState(multiSport);
     component.sports = multiSport.sports;
-    component.enableRefresh = true;
+    store.enableRefresh = true;
     refreshMatchService.refreshMatches = jest.fn();
 
     component.ngOnInit();
@@ -124,7 +128,7 @@ describe('LeagueComponent', () => {
   }));
 
   it('should set sports and permission when component has changes', () => {
-    component.multiSport = multiSport;
+    store.setState(multiSport);
     sportMatchService.getSportsWithIntervalScore = jest.fn();
 
     component.ngOnChanges({ multiSport: new SimpleChange(null, multiSport, false) });
@@ -132,47 +136,6 @@ describe('LeagueComponent', () => {
 
     expect(sportMatchService.getSportsWithIntervalScore).toHaveBeenCalled();
     expect(component.permission).toEqual(permission);
-  });
-
-  describe('isExistedSport', () => {
-    it('should return true sports list is not empty', () => {
-      component.sports = [sport];
-      const result = component.isExistedSport;
-
-      expect(result).toBe(true);
-    });
-
-    it('should return undefined when sport list is null', () => {
-      const result = component.isExistedSport;
-
-      expect(result).toBe(undefined);
-    });
-
-    it('should return false when sports list is empty', () => {
-      component.sports = [];
-
-      const result = component.isExistedSport;
-
-      expect(result).toBe(false);
-    });
-  });
-
-  it('collapseSport - should collapse or uncollapse sport', () => {
-    const mockSport = new SportMatch();
-    mockSport.collapse = false;
-
-    component.collapseSport(mockSport);
-
-    expect(mockSport.collapse).toBe(true);
-  });
-
-  it('collapseLeague - should collapse or uncollapse league', () => {
-    const mockLeague = new LeagueMatch();
-    mockLeague.collapse = false;
-
-    component.collapseLeague(mockLeague);
-
-    expect(mockLeague.collapse).toBe(true);
   });
 
   describe('getCalcColumnColor', () => {
@@ -254,7 +217,7 @@ describe('LeagueComponent', () => {
 
   describe('isShowRefundLink', () => {
     beforeEach(() => {
-      component.request = new MatchWaitingRequest("", "", "", "", "", "123");
+      store.request = new MatchWaitingRequest("", "", "", "", "", "123");
     });
     it('should show refund link when has permission refund', () => {
       match.sportType = SportType.eSports;
@@ -293,7 +256,7 @@ describe('LeagueComponent', () => {
       const permission = new Permission();
       permission.canCalculate = true;
       component.permission = permission;
-      component.request = new MatchWaitingRequest("", "", "", "", "", "");
+      store.request = new MatchWaitingRequest("", "", "", "", "", "");
       backGroundService.isShowLink = jest.fn().mockReturnValue(false);
 
       const result = component.isShowRefundLink(match);
@@ -376,7 +339,7 @@ describe('LeagueComponent', () => {
 
   describe('getEarlySettleBackground', () => {
     beforeEach(() => {
-      component.request = new MatchWaitingRequest("", "", "", "", "", "");
+      store.request = new MatchWaitingRequest("", "", "", "", "", "");
     });
     it('should return background running when early settle is running', () => {
       match.earlySettleStatus = 'running';
@@ -390,7 +353,7 @@ describe('LeagueComponent', () => {
     it('should return background blinking when early confirmed, earlyOver and 1 other Over Status option selected.', () => {
       match.isExistsConfirmedEarly = true;
       match.earlySettleStatus = 'running';
-      component.request = new MatchWaitingRequest("", "", "", "", "1,3", "");
+      store.request = new MatchWaitingRequest("", "", "", "", "1,3", "");
 
       const result = component.getEarlySettleBackground(match);
 
@@ -400,7 +363,7 @@ describe('LeagueComponent', () => {
     it('should return background not blinking when early confirmed but filter only earlyOver', () => {
       match.isExistsConfirmedEarly = true;
       match.earlySettleStatus = 'running';
-      component.request = new MatchWaitingRequest("", "", "", "", "1", "");
+      store.request = new MatchWaitingRequest("", "", "", "", "1", "");
 
       const result = component.getEarlySettleBackground(match);
 
@@ -428,7 +391,7 @@ describe('LeagueComponent', () => {
 
   it('getLog - should call popupService', () => {
     const request = new MatchWaitingRequest('12345', '', '01/01/2020', '01/02/2020', "", "");
-    component.request = request;
+    store.request = request;
     popupService.popupLog = jest.fn();
 
     component.getLog('12345');

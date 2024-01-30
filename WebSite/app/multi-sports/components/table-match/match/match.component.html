@@ -1,0 +1,164 @@
+<ng-container *ngIf="matchState.isChanged">
+	<tr class="row-3" [ngClass]="matchState.undecidedColor">
+		<td class="code">
+			@if (store.state.permission.canViewSettlementLog) {
+			<div>
+				<div class="code-link" (click)="getLog(match.matchId)">
+					{{ match.matchCode }}
+				</div>
+			</div>
+			} @else {
+			<div class="no-link">
+				{{ match.matchCode }}
+			</div>
+			}
+		</td>
+		<td class="kick-off-time" rowspan="2">
+			{{ match.kickOffTime | date: "mediumDate" }}
+			{{ match.kickOffTime | date: "hh:mm:ss a" }}
+		</td>
+		<td>
+			<div class="match-home">{{ match.homeName }}</div>
+			@if (match.offerLive) {
+			<span class="red">&nbsp;(LIVE)</span>
+			}
+		</td>
+		<td class="interval-score">
+			@if (match.isHavingIntervalScore) {
+			<div>
+				@if (match.sportType != sportTypeCricket) {
+				<div [ngClass]="matchState.resultHomeConfirmedBackgroundColor">
+					@for (score of getInterval(match); track score; let i = $index; let last = $last) {
+					<span [ngClass]="score.background">
+						{{ score.home }}@if (!last) {
+						<span>; </span>
+						}
+						@if (last && match.isMatchBOMThirty) {
+						<span>;...</span>
+						}
+					</span>
+					}
+					rendered: {{ GetChangeDetectionCount}}
+				</div>
+				} @else {
+				<div [ngClass]="matchState.resultHomeConfirmedBackgroundColor">
+					@for (score of match.intervalScore | intervalScore: 'Home'; track score; let i = $index; let last =
+					$last) {
+					<span [ngClass]="score.background"> {{ score.home }}@if (!last) {
+						<span>; </span>
+						} </span>
+					}
+				</div>
+				}
+			</div>
+			}
+		</td>
+		<td class="score total-game-color">{{ getTotalHomeGames(match) }}</td>
+		<td class="score total-game-color" [ngClass]="{ 'bg-result-confirmed': isHalfTimeConfirmed(match) }">
+			{{ getHalfTimeHomeScore(match) }}
+		</td>
+		<td class="score final-score" [ngClass]="{ 'bg-result-confirmed': isFinalConfirmed(match) }">
+			{{ getFinalHomeScore(match) }}
+		</td>
+		@if (canAutoSettlement(match.sportType)) {
+		<td rowspan="2" class="auto-status" [ngClass]="getEarlySettleBackground(match)">
+			@if (match.earlySettleStatus == null || match.earlySettleStatus.toLowerCase() === 'n/a') {
+			<div>N/A</div>
+			} @else {
+			<div>{{ match.earlySettleStatus }}</div>
+			<div [ngClass]="isShowEarlySettleLink(match)" (click)="isShowEarlySettleLink(match) ? popupEarly(match) : ''">
+				Detail
+			</div>
+			}
+		</td>
+		} @else {
+		<td rowspan="2" class="auto-status"></td>
+		}
+		<td rowspan="2" class="event-status" [ngClass]="getEventStatusColor(match)">{{ match.newEventStatus }}
+		</td>
+		<td rowspan="2" class="calc-column" [ngClass]="getCalcColumnColor(match)">
+			<div [ngClass]="isShowCalculationLink(match)" (click)="isShowCalculationLink(match) ? popupCalc(match) : ''">
+				Calc
+			</div>
+		</td>
+		<td rowspan="2" class="refund-column">
+			<div [ngClass]="isShowRefundLink(match)" (click)="isShowRefundLink(match) ? popupRefund(match) : ''">
+				Refund
+			</div>
+		</td>
+		<td rowspan="2" class="confirm-score" [ngClass]="{ 'bg-white-blinking': match.isNotConsistentExHtScore }">
+			<div>{{ match.suspenderHalfTime }}</div>
+			@if (!isHideHtScore(match)) {
+			<div>{{ match.confirmHalfTimeScore }}</div>
+			}
+		</td>
+		<td rowspan="2" class="confirm-score" [ngClass]="{ 'bg-white-blinking': match.isNotConsistentExFtScore }">
+			<div>{{ match.suspenderFullTime }}</div>
+			@if (!isHideFinalScore(match)) {
+			<div>{{ match.confirmFullTimeScore }}</div>
+			}
+		</td>
+		<td rowspan="2" class="auto-instant">
+			@if (sportSupportInstant.includes(match.sportType)) {
+			<div [class]="getClassInstant(match.autoCalcSetting.isInstantForMatch)"
+				(click)="store.state.permission.canAutoPayout && updateInstant(match)"></div>
+			}
+		</td>
+		<td rowspan="2" class="remark-status">
+			<div placement="top" [ngClass]="{ 'act-change-setting title': isChangeSetting(match) }"
+				[ngbTooltip]="getRemarkStatusTooltip(match.remark)" (click)="popupChangeRemarkSetting(match)">
+				{{ match.remark.isKeyHold || match.remark.isMtdHold || match.remark.isPending ||
+				match.remark.isUndecided || match.remark.isUnderSettle ? "YES" : "NO" }}
+			</div>
+		</td>
+		<td rowspan="2" class="auto-setting auto-setting-text" [ngClass]="matchState.autoSettingBackgroundColor">
+			<div class="cursor-pointer" (click)="changeAutoSetting(match)">{{
+				getAutoSetting(match.autoCalcSetting) }}</div>
+		</td>
+	</tr>
+	<tr class="row-3" [ngClass]="matchState.undecidedColor">
+		<td>{{ match.matchId }}</td>
+		<td>
+			<div class="match-away">{{ match.awayName }}</div>
+			@if (match.offerLive) {
+			<span class="red">&nbsp;(LIVE)</span>
+			}
+		</td>
+		<td class="interval-score">
+			@if (match.isHavingIntervalScore) {
+			<div>
+				@if (match.sportType !== sportTypeCricket) {
+				<div [ngClass]="matchState.resultAwayConfirmedBackgroundColor">
+					@for (score of getInterval(match); track score; let i = $index; let last = $last) {
+					<span [ngClass]="score.background">
+						{{ score.away }}@if (!last) {
+						<span>; </span>
+						}
+						@if (last && match.isMatchBOMThirty) {
+						<span>;...</span>
+						}
+					</span>
+					}
+				</div>
+				} @else {
+				<div [ngClass]="matchState.resultAwayConfirmedBackgroundColor">
+					@for (score of match.intervalScore | intervalScore: 'Away'; track score; let i = $index; let last =
+					$last) {
+					<span [ngClass]="score.background"> {{ score.home }}@if (!last) {
+						<span>; </span>
+						} </span>
+					}
+				</div>
+				}
+			</div>
+			}
+		</td>
+		<td class="score total-game-color">{{ getTotalAwayGames(match) }}</td>
+		<td class="score total-game-color" [ngClass]="{ 'bg-result-confirmed': isHalfTimeConfirmed(match) }">
+			{{ getHalfTimeAwayScore(match) }}
+		</td>
+		<td class="score final-score" [ngClass]="{ 'bg-result-confirmed': isFinalConfirmed(match) }">
+			{{ getFinalAwayScore(match) }}
+		</td>
+	</tr>
+</ng-container>

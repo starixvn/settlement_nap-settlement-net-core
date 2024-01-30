@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testExecutions version="1">
-  <file path="D:\Projects\nap-settlement-net-core\WebSite\app\basketball\components\fantasy\related-matches.compoment.spec.ts">
-    <testCase name="RelatedMatchesComponent should create the app" duration="37"/>
+  <file path="D:\nap-settlement-net-core\WebSite\app\shared\components\multiple-select\multiple-select.component.spec.ts">
   </file>
 </testExecutions>

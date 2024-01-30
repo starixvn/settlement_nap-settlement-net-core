@@ -25,14 +25,14 @@ import { ResultPipe } from './result.pipe';
         ResultStatusPipe,
         TicketStatusPipe,
         ResultTypePipe,
-        IntervalScorePipe,
     ],
     imports: [
         ExternalSourceNamePipe,
         IntervalBackgroundPipe,
         ScoreBySettlementPipe,
         ResultPipe,
-        ResultByTeamNamePipe]
+        ResultByTeamNamePipe,
+        IntervalScorePipe]
 })
 export class PipesModule {
 }

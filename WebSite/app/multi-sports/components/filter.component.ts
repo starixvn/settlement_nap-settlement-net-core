@@ -1,7 +1,7 @@
 import { NgbDateStruct, NgbDateParserFormatter } from "@ng-bootstrap/ng-bootstrap";
 import { DefaultValue, MatchType, Resources } from '../constants';
-import { Component, OnInit, Output, EventEmitter, inject } from "@angular/core";
-import { DatePipe } from "@angular/common";
+import { Component, OnInit, Output, EventEmitter, Injector, inject, ChangeDetectionStrategy, ChangeDetectorRef } from "@angular/core";
+import { CommonModule, DatePipe } from "@angular/common";
 import { CustomNgbDateParserFormatter } from '../../shared/components/date-picker/custom-ngb-date-parser-formatter';
 import { MultiSportService } from '../services';
 import { ModalDialogMessage, MultipleSelect, ItemsSelect } from '../../shared/models';
@@ -15,21 +15,33 @@ import {
 } from '../models';
 import * as _ from 'lodash';
 import { Language } from '../../shared/language.native';
+import { ReactiveFormsModule, FormsModule } from "@angular/forms";
+import { NewMultipleSelectComponent } from "../../shared/components/multiple-select/multiple-select.component";
+import { DatepickerComponent } from "../../shared/components/date-picker/date-picker.component";
+import { MultiSportsStore } from "../services/multi-sports.store";
+import { BehaviorSubject } from "rxjs";
 
 @Component({
     selector: 'filter',
     templateUrl: './filter.component.html',
     providers: [DatePipe,
         { provide: NgbDateParserFormatter, useFactory: () => new CustomNgbDateParserFormatter('MMM dd, y') }],
+    standalone: true,
+    imports: [
+        DatepickerComponent,
+        NewMultipleSelectComponent,
+        ReactiveFormsModule,
+        FormsModule,
+        CommonModule
+    ],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FilterComponent implements OnInit {
-    @Output() public readonly searchAction = new EventEmitter();
-    @Output() public readonly requestEmitter = new EventEmitter();
-    @Output() public readonly enableRefresh = new EventEmitter();
     private multiSportService = inject(MultiSportService);
     private generateFilterService = inject(GenerateFilterService);
     private verifyDateService = inject(VerifyDateService);
     private messageBoxService = inject(MessageBoxService);
+    private multiSportsStore = inject(MultiSportsStore);
     public readonly warningDialogMessage = new ModalDialogMessage();
     public matchCode = "";
     public fromDate: NgbDateStruct;
@@ -43,8 +55,8 @@ export class FilterComponent implements OnInit {
     public matchType = 0;
     public isIncludeTestMatch = false;
     public matchTypes = MatchType;
-    public sportSelect = new MultipleSelect();
-    public leagueSelect = new MultipleSelect();
+    sportOptions$ = new BehaviorSubject(new MultipleSelect());
+    leagueOption$ =  new BehaviorSubject(new MultipleSelect());
     public readonly holdStatusSelect = new MultipleSelect();
     public readonly autoPayoutSelect = new MultipleSelect();
     public readonly matchStatusSelect = new MultipleSelect();
@@ -58,12 +70,19 @@ export class FilterComponent implements OnInit {
     }
 
 
+    public ChangeDetectionCount = 0
+    public get GetChangeDetectionCount() {
+        return this.ChangeDetectionCount++
+    }
+
     private async initialData() {
         const date = await this.multiSportService.getDate();
         this.fromDate = this.verifyDateService.convertToDateStruct(date.fromDate);
         this.toDate = this.verifyDateService.convertToDateStruct(date.toDate);
-        await this.getSport(this.fromDate, this.toDate);
         this.initLeague();
+        await this.getSport(this.fromDate, this.toDate);
+        // this.matchCode = '79374969';
+        // this.search();
     }
 
     private generateFilter() {
@@ -71,7 +90,7 @@ export class FilterComponent implements OnInit {
         this.holdStatusSelect.items = this.generateFilterService.renderRemarks();
         this.matchStatusSelect.items = this.generateFilterService.renderMatchStatusGroupSelect();
         this.autoPayoutSelect.items = this.generateFilterService.renderAutoPayout();
-        this.overStatusSelect.maxWidth = this.sportSelect.maxWidth = this.widthMultiSelect;
+        this.overStatusSelect.maxWidth  = this.widthMultiSelect;
         this.matchStatusSelect.maxWidth = "190px";
         this.matchStatusSelect.haveGroup = true;
     }
@@ -108,14 +127,13 @@ export class FilterComponent implements OnInit {
             return;
         }
 
-        this.enableRefresh.emit(false);
         const multiSport = await this.multiSportService.filter(query);
 
         const matchIds = this.getAllMatchId(multiSport.sports);
-        this.searchAction.emit(multiSport);
         const request = new MatchWaitingRequest(this.leaguesSelected, matchIds, fromDate, toDate, this.overStatusSelected, this.matchCode);
-        this.requestEmitter.emit(request);
-        this.enableRefresh.emit(true);
+        this.multiSportsStore.request = { ...request };
+        this.multiSportsStore.enableRefresh = multiSport.sports.length > 0;
+        this.multiSportsStore.setState(multiSport);
         this.updateLeagues();
     }
 
@@ -185,42 +203,47 @@ export class FilterComponent implements OnInit {
         const toDateValue = this.verifyDateService.dateFormat(toDate);
         const params = new SportFilterRequest(fromDateValue, toDateValue);
         const listSport = await this.multiSportService.getSport(params);
-        this.sportSelect = new MultipleSelect();
-        this.sportSelect.haveGroup = true;
-        this.sportSelect.isCheckAll = true;
-        this.sportSelect.maxWidth = this.widthMultiSelect;
-        this.sportSelect.items = this.generateFilterService.renderSportTypes(listSport);
-        this.sportTypesSelected = this.sportSelect.items.map(item => Number(item.value)).join();
+        const newSportOptions = {...this.sportOptions$.value, items: this.generateFilterService.renderSportTypes(listSport), haveGroup: true, isCheckAll: true};
+        this.sportOptions$.next(newSportOptions);
+        this.sportTypesSelected = this.sportOptions$.value.items.map(item => Number(item.value)).join();
     }
 
     private async renderLeague(fromDate: NgbDateStruct, toDate: NgbDateStruct, sportTypes: string) {
         const fromDateValue = this.verifyDateService.dateFormat(fromDate);
         const toDateValue = this.verifyDateService.dateFormat(toDate);
         this.getLeagueParams = new LeagueFilterRequest(fromDateValue, toDateValue, sportTypes);
+        let newLeagueOption;
         if (this.isValidInput(fromDate, toDate)) {
             const league = await this.multiSportService.getLeague(this.getLeagueParams);
-            this.leagueSelect = { ...this.leagueSelect, items: this.generateFilterService.renderLeagues(league) };
+            newLeagueOption = { ...this.leagueOption$.value, items: this.generateFilterService.renderLeagues(league) };
         } else {
-            this.leagueSelect = { ...this.leagueSelect, items: [] };
+            newLeagueOption = { ...this.leagueOption$.value, items: [] };
         }
+
+        this.leagueOption$.next(newLeagueOption);
     }
 
     private initLeague() {
         const showAllLeagues = "--- Show All Leagues ---";
-        this.leagueSelect = new MultipleSelect();
-        this.leagueSelect.allItemsCheckedText = showAllLeagues;
-        this.leagueSelect.maxWidth = '85%';
-        this.leagueSelect.enableSearchBox = true;
-        this.leagueSelect.haveGroup = true;
-        this.leagueSelect.disableCheckAll = true;
-        this.leagueSelect.disableSelectGroup = true;
+        let initLeagueSelect = new MultipleSelect();
+        initLeagueSelect.allItemsCheckedText = showAllLeagues;
+        initLeagueSelect.maxWidth = '85%';
+        initLeagueSelect.enableSearchBox = true;
+        initLeagueSelect.haveGroup = true;
+        initLeagueSelect.disableCheckAll = true;
+        initLeagueSelect.disableSelectGroup = true;
+        this.leagueOption$.next(initLeagueSelect);
+        let initSportSelect = new MultipleSelect();
+        initSportSelect.maxWidth = this.widthMultiSelect;
+        this.sportOptions$.next(initSportSelect);
     }
 
     private async updateLeagues() {
         const league = await this.multiSportService.getLeague(this.getLeagueParams);
-        const newLeague = this.generateFilterService.renderNewestLeagues(league, _.cloneDeep(this.leagueSelect.items));
-        if (newLeague.length > this.leagueSelect.items.length) {
-            this.leagueSelect = { ...this.leagueSelect, items: newLeague };
+        const newLeague = this.generateFilterService.renderNewestLeagues(league, _.cloneDeep(this.leagueOption$.value.items));
+        if (newLeague.length > this.leagueOption$.value.items.length) {
+            const updateList = { ... this.leagueOption$.getValue(), items: newLeague };
+            this.leagueOption$.next(updateList);
         }
     }
 

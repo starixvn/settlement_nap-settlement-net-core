@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Match } from "../models";
 import * as _ from 'lodash';
+import { MatchWaiting } from '../models/match-waiting.model';
 
 @Injectable()
 export class DetectChangesService {
-    public detect(oldMatch: Match, newMatch: Match) {
+    public detect(oldMatch: Match, newMatch: MatchWaiting) {
         return oldMatch.matchId === newMatch.matchId
             && (this.isInfoDifferent(oldMatch, newMatch)
                 || this.isScoreDifferent(oldMatch, newMatch)
@@ -12,7 +13,7 @@ export class DetectChangesService {
                 || this.isSuspenderDifferent(oldMatch, newMatch));
     }
 
-    private isInfoDifferent(oldMatch: Match, newMatch: Match) {
+    private isInfoDifferent(oldMatch: Match, newMatch: MatchWaiting) {
         return oldMatch.eventStatus !== newMatch.eventStatus
             || oldMatch.betStatus !== newMatch.betStatus
             || oldMatch.earlySettleStatus !== newMatch.earlySettleStatus
@@ -20,7 +21,7 @@ export class DetectChangesService {
             || !_.isEqual(oldMatch.remark, newMatch.remark);
     }
 
-    private isScoreDifferent(oldMatch: Match, newMatch: Match) {
+    private isScoreDifferent(oldMatch: Match, newMatch: MatchWaiting) {
         return oldMatch.halfTimeHomeScore !== newMatch.halfTimeHomeScore
             || oldMatch.halfTimeAwayScore !== newMatch.halfTimeAwayScore
             || oldMatch.finalHomeScore !== newMatch.finalHomeScore
@@ -29,7 +30,7 @@ export class DetectChangesService {
             || !_.isEqual(oldMatch.confirmFullTimeScore, newMatch.confirmFullTimeScore);
     }
 
-    private isStatusDifferent(oldMatch: Match, newMatch: Match) {
+    private isStatusDifferent(oldMatch: Match, newMatch: MatchWaiting) {
         return oldMatch.isCalculatingSingle !== newMatch.isCalculatingSingle
             || oldMatch.isCalculatingMP !== newMatch.isCalculatingMP
             || oldMatch.isCalculated !== newMatch.isCalculated
@@ -43,7 +44,7 @@ export class DetectChangesService {
             || oldMatch.isNotConsistentExHtScore !== newMatch.isNotConsistentExHtScore;
     }
 
-    private isSuspenderDifferent(oldMatch: Match, newMatch: Match) {
+    private isSuspenderDifferent(oldMatch: Match, newMatch: MatchWaiting) {
         return oldMatch.suspenderHalfTime !== newMatch.suspenderHalfTime
             || oldMatch.suspenderFullTime !== newMatch.suspenderFullTime
             || oldMatch.autoPayoutStatus !== newMatch.autoPayoutStatus

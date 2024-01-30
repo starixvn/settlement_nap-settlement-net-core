@@ -5,6 +5,8 @@ import { MatchWaitingRequest, SportMatch, Match } from '../models';
 import { DetectChangesService } from './detect-changes.service';
 import { SportMatchService } from './sport-match.service';
 import { Permission } from '../../shared/models/sportsbook-sop/permission.model';
+import { MatchWaiting } from '../models/match-waiting.model';
+import { BehaviorSubject, Observable } from 'rxjs';
 @Injectable()
 export class RefreshMatchService {
   public permission: Permission;
@@ -14,9 +16,9 @@ export class RefreshMatchService {
     private readonly sportMatchService: SportMatchService
   ) { }
 
-  public refreshMatches(currentSportMatches: SportMatch[], request: MatchWaitingRequest) {
+  public refreshMatches(currentSportMatches: SportMatch[], request: MatchWaitingRequest, refreshedCount: BehaviorSubject<number>) {
     this.getMatches(request).subscribe((matchesWaiting: Match[]) => {
-      this.changeInfoAfterRefreshMatches(currentSportMatches, matchesWaiting);
+      this.changeInfoAfterRefreshMatches(currentSportMatches, matchesWaiting, refreshedCount);
     });
   }
 
@@ -25,49 +27,25 @@ export class RefreshMatchService {
     return this.httpRequestService.postMessagePack(param, url, false);
   }
 
-  private changeInfoAfterRefreshMatches(currentSportMatches: SportMatch[], matches: Match[]) {
+  private changeInfoAfterRefreshMatches(currentSportMatches: SportMatch[], matches: Match[], refreshedCount: BehaviorSubject<number>) {
+    let isHasChanged = false;
     currentSportMatches.forEach((sport) =>
       sport.leagues.forEach((league) => {
         league.matches.forEach((match) => {
-          const newMatch = _.find(matches, (matchWaiting: Match) =>
+          const newMatch = _.find(matches, (matchWaiting: MatchWaiting) =>
             this.detectChangesService.detect(match, matchWaiting)
           );
           if (!_.isNil(newMatch)) {
-            match.eventStatus = newMatch.eventStatus;
-            match.halfTimeHomeScore = newMatch.halfTimeHomeScore;
-            match.halfTimeAwayScore = newMatch.halfTimeAwayScore;
-            match.finalHomeScore = newMatch.finalHomeScore;
-            match.finalAwayScore = newMatch.finalAwayScore;
-            match.betStatus = newMatch.betStatus;
-            match.isHalfTimeCal = newMatch.isHalfTimeCal;
-            match.isCalculatingSingle = newMatch.isCalculatingSingle;
-            match.isCalculatingMP = newMatch.isCalculatingMP;
-            match.isCalculated = newMatch.isCalculated;
-            match.isMultiCaled = newMatch.isMultiCaled;
-            match.isRefund = newMatch.isRefund;
-            match.isCalRefund = newMatch.isCalRefund;
-            match.earlySettleStatus = newMatch.earlySettleStatus;
-            match.isExistRunningTicket = newMatch.isExistRunningTicket;
-            match.isExistMarkedTicket = newMatch.isExistMarkedTicket;
-            match.moreScores = newMatch.moreScores;
-            match.eventStatusColor = newMatch.eventStatusColor;
-            match.newEventStatus = newMatch.newEventStatus;
-            match.isHavingIntervalScore = newMatch.isHavingIntervalScore;
-            match.remark = newMatch.remark;
-            match.autoCalcSetting = newMatch.autoCalcSetting;
-            match.suspenderHalfTime = newMatch.suspenderHalfTime;
-            match.suspenderFullTime = newMatch.suspenderFullTime;
-            match.isNotConsistentExFtScore = newMatch.isNotConsistentExFtScore;
-            match.isNotConsistentExHtScore = newMatch.isNotConsistentExHtScore;
-            match.exHalfTimeScore = newMatch.exHalfTimeScore;
-            match.exFullTimeScore = newMatch.exFullTimeScore;
-            match.autoPayoutStatus = newMatch.autoPayoutStatus;
-            match.confirmFullTimeScore = newMatch.confirmFullTimeScore;
-            match.confirmHalfTimeScore = newMatch.confirmHalfTimeScore;
+            match = { ...match, ...newMatch};
+            isHasChanged = true;
             this.sportMatchService.getMatchIntervalScore(match, this.permission);
           }
         });
       })
     );
+
+    if(isHasChanged){
+    refreshedCount.next(refreshedCount.value + 1 );
+    }
   }
 }
