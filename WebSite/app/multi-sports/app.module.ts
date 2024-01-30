@@ -44,7 +44,7 @@ import { TimeConverterPipe } from '../shared/pipes/time-converter.pipe';
         FilterComponent,
         ModalDialogComponent,
         ModalContentDialogComponent,
-        LeagueComponent
+        LeagueComponent,
         TimeConverterPipe
     ],
     providers: [ { provide: HTTP_INTERCEPTORS, useClass: CustomHttpRequestInterceptor, multi: true }],
