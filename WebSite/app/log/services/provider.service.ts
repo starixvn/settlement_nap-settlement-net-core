@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpRequestService } from '../../shared/services';
 import { ItemsSelect } from './../../shared/models';
-import { Observable } from 'rxjs';
-import { ProviderName } from '../models';
+import { ProviderName, ProviderFilter } from '../models';
 
 @Injectable()
 export class ProviderService {
@@ -35,7 +34,7 @@ export class ProviderService {
         return items;
     }
 
-    // public search(query: LogQuery) {
-    //     return this.httpRequestService.postJson(query, `/api/log/getLog`);
-    // }
+    public search(query: ProviderFilter) {
+        return this.httpRequestService.postJson(query, `/api/log/get-provider-result`);
+    }
 }

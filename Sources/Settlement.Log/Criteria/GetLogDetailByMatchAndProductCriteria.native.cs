@@ -8,13 +8,7 @@ public class GetLogDetailByMatchAndProductCriteria : CriteriaBase
 
     public string ProductType { get; set; }
 
-    public override string GetSettingKey()
-    {
-        return "NAP_UserLog_Settle_MatchSelByID_by_Product";
-    }
+    public override string GetSettingKey() => "NAP_UserLog_Settle_MatchSelByID_by_Product";
 
-    public override bool IsValid()
-    {
-        return MatchId > 0;
-    }
+    public override bool IsValid() => MatchId > 0;
 }

@@ -60,7 +60,7 @@
                 <label>{{matchDetail.exFTHomeScore | score}}</label>
             </td>
             <td class="score" [ngClass]="{'not-consistent': matchDetail.isScoreInconsistent}">
-                <input type="text"  myOnlyInteger [ngClass]="{'score-width-soccer':1, 'warning':matchDetail.isWarningHalfTimeHomeScore}" [(ngModel)]="matchDetail.halfTimeHomeScore" tabindex="1" (ngModelChange)="changeScore()">
+                <input type="text" myOnlyInteger [ngClass]="{'score-width-soccer':1, 'warning':matchDetail.isWarningHalfTimeHomeScore}" [(ngModel)]="matchDetail.halfTimeHomeScore" tabindex="1" (ngModelChange)="changeScore()">
             </td>
             <td class="score final-score" [ngClass]="{'not-consistent': matchDetail.isScoreInconsistent}">
                 <input type="text" myOnlyInteger [ngClass]="{'score-width-soccer':1, 'warning':matchDetail.isWarningFinalHomeScore}" [disabled]="disableFinal" [(ngModel)]="matchDetail.finalHomeScore" tabindex="3" (ngModelChange)="changeScore()">

@@ -1,6 +1,6 @@
-﻿<provider-filter (searchAction)="search($event)" (matches)="getMatch($event)" ></provider-filter>
-@if (matches) {
-  <provider-matches></provider-matches>
+﻿<provider-filter (providerLog)="getProviderResult($event)"></provider-filter>
+@if(providerLog) {
+  <provider-result [providerLog]="providerLog"></provider-result>
 }
 @if (blockUI) {
   <div class="in modal-backdrop">

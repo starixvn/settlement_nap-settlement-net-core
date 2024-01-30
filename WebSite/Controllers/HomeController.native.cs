@@ -17,18 +17,8 @@ using System.Text;
 
 namespace Settlement.WebSites.Controllers;
 
-public class HomeController : Controller
+public class HomeController(INapSession session, IConfiguration configuration) : Controller
 {
-    private readonly INapSession session;
-
-    private readonly IConfiguration configuration;
-
-    public HomeController(INapSession session, IConfiguration configuration)
-    {
-        this.session = session;
-        this.configuration = configuration;
-    }
-
     [Authorize]
     public IActionResult Index()
     {
@@ -145,6 +135,12 @@ public class HomeController : Controller
     public IActionResult Log()
     {
         return SetView("Settlement Log", string.Empty, ViewPath.Log);
+    }
+
+    [Route("Home/provider-log")]
+    public IActionResult ProviderLog()
+    {
+        return SetView("Settlement Provider Log", PagesType.ProviderLog, ViewPath.Log);
     }
 
     [Route("Home/happy5/{matchId?}")]

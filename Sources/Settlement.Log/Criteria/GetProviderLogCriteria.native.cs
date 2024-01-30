@@ -6,18 +6,13 @@ public class GetProviderLogCriteria : CriteriaBase
 {
     public int MatchId { get; set; }
 
-    public string ResultId { get; set; }
+    public string ResourceIds { get; set; }
 
-    public string ResultName { get; set; }
+    public string SourceIds { get; set; }
 
-    public string Provider { get; set; }
+    public bool LatestRecord { get; set; }
 
-    public bool IsLatestRecord { get; set; }
-
-    public override string GetSettingKey()
-    {
-        return "NAP_Set_ProviderResultSel";
-    }
+    public override string GetSettingKey() => "NAP_Set_ProviderResultSel";
 
     public override bool IsValid() => MatchId > 0;
 }

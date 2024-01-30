@@ -1,8 +1,5 @@
 import { NgModule } from '@angular/core';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
-import {NewMultipleSelectComponent} from "../../shared/components/multiple-select/multiple-select.component";
-import { MaterialModule } from "../../shared/material-module";
 
 import {
     BlockUIService,
@@ -12,15 +9,12 @@ import {
     ReCheckInService,
     VerifyDateService
 } from "../../shared/services";
-import { ProviderService } from '../services'
+import { 
+    SearchService, 
+    ResultSoccerService, 
+    ResultOtherSportService,
+    ProviderService } from '../services';
 @NgModule({
-    imports: [
-        MaterialModule,
-        NewMultipleSelectComponent,
-        NoopAnimationsModule
-    ],
-    declarations: [
-    ],
     providers: [
         VerifyDateService,
         MessageBoxService,
@@ -29,7 +23,10 @@ import { ProviderService } from '../services'
         NgbActiveModal,
         ReCheckInService,
         DialogBoxService,
-        ProviderService
+        ProviderService,
+        SearchService,
+        ResultOtherSportService,
+        ResultSoccerService
     ]
 })
 

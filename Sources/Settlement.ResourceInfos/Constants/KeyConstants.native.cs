@@ -20,6 +20,8 @@ public static class KeyConstants
 
     public const string SoccerKey = "SoccerKey";
 
+    public const string TennisKey = "TennisKey";
+
     public static Dictionary<int, string> KeyDictionary => new()
     {
         {SportType.Badminton, BadmintonKey},
@@ -30,6 +32,7 @@ public static class KeyConstants
         {SportType.BeachVolleyball, GameTotalKey},
         {SportType.Squash, GameTotalKey},
         {SportType.Soccer, SoccerKey},
+        {SportType.Tennis, TennisKey},
         {0, GameTotalKey}
     };
 }

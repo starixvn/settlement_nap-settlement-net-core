@@ -6,6 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Services\Tennis\GameTotalResourceName.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Settlement.Core\Settlement.Core.csproj" />
   </ItemGroup>
 

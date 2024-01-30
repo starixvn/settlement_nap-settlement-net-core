@@ -7,7 +7,7 @@ namespace Settlement.Log.Handlers;
 
 public class ProviderHandler :
     IRequestHandler<ProviderNameRequest, List<ProviderName>>,
-    IRequestHandler<ProviderLogRequest, List<ProviderResultLog>>
+    IRequestHandler<ProviderLogRequest, ProviderLog>
 
 {
     private readonly ProviderLogService providerLogService;
@@ -22,8 +22,21 @@ public class ProviderHandler :
         return (await providerLogService.GetProviderName()).ToList();
     }
 
-    public async Task<List<ProviderResultLog>> Handle(ProviderLogRequest request, CancellationToken cancellationToken)
+    public async Task<ProviderLog> Handle(ProviderLogRequest request, CancellationToken cancellationToken)
     {
-        return (await providerLogService.GetProviderLog(request)).ToList();
+        var matchDetail = await providerLogService.GetMatchDetail(request.MatchId);
+        if (matchDetail == null)
+        {
+            return new ProviderLog();
+        }
+
+        var sportType = matchDetail.SportType;
+        var resultLog = (await providerLogService.GetProviderLog(request, sportType)).ToList();
+
+        return new ProviderLog
+        {
+            MatchDetail = matchDetail,
+            ProviderResultLog = resultLog
+        };
     }
 }

@@ -13,9 +13,9 @@
            @await Html.PartialAsync("~/Views/Menu.cshtml")
         </header>
     }
-    <div class="content"><app-root>Loading...</app-root></div>
+    <div class="content"><app-root page-type="@ViewBag.PageType">Loading...</app-root></div>
     <script type="text/javascript">
-        var element = document.getElementById("SettlementLog-menu");
+        var element = document.getElementById("Log-menu");
         if (element !== null) {
             element.className = "active-menu";
         }

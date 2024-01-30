@@ -8,15 +8,8 @@ namespace Settlement.Log.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 
-public class LogController : ControllerBase
+public class LogController(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator mediator;
-
-    public LogController(IMediator mediator)
-    {
-        this.mediator = mediator;
-    }
-
     [AllowAnonymous]
     [HttpGet]
     [Route("filter")]
@@ -35,6 +28,6 @@ public class LogController : ControllerBase
     }
 
     [HttpPost]
-    [Route("get-provider-log")]
-    public async Task<IActionResult> GetProviderLog(ProviderLogRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+    [Route("get-provider-result")]
+    public async Task<IActionResult> GetProviderResultLog(ProviderLogRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 }

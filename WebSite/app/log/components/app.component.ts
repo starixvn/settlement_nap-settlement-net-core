@@ -1,8 +1,8 @@
 import { Component, OnInit, ViewContainerRef, ViewChild, ComponentRef, ElementRef } from '@angular/core';
 import { BlockUIService } from '../../shared/services';
+import { PageType } from '../../shared/constants';
 import { LogComponent } from '../components/log';
 import { ProviderLogComponent } from '../components/provider-log/provider-log.component';
-import { PageType } from '../constants/page-type.native'
 import * as _ from 'lodash';
 
 @Component({
@@ -30,10 +30,10 @@ export class AppComponent implements OnInit {
         return this.component;
     }
 
-
     private getComponentFactory()  {
         const pageType = this.elementRef.nativeElement.getAttribute('page-type');
-        return  _.isEqual(pageType, PageType.providerLog)
+       
+        return  _.isEqual(pageType, PageType.ProviderLog)
             ? this.viewContainerRef.createComponent(ProviderLogComponent)
             : this.viewContainerRef.createComponent(LogComponent);
     }

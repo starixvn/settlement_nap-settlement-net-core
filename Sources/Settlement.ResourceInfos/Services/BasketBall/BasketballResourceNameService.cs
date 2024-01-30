@@ -29,12 +29,14 @@ public class BasketballResourceNameService : IMapperService
 
     private static string GetResourceMain(string resourceId)
     {
+        const string quarter = "Q";
         return resourceId switch
         {
             ResourceType.Final => ResourceNameConstants.FullTime,
             ResourceType.Halftime => ResourceNameConstants.HalfTime,
+            ResourceType.SecondHalf => ResourceNameConstants.SecondHalf,
             ResourceType.OverTime => ResourceNameConstants.OverTime,
-            _ => resourceId.IndexOf("Q", StringComparison.Ordinal) > -1 ? resourceId.Replace("Q", "Quarter ") : string.Empty
+            _ => resourceId.IndexOf(quarter, StringComparison.Ordinal) > -1 ? resourceId.Replace(quarter, "Quarter ") : string.Empty
         };
     }
 }

@@ -1,35 +1,17 @@
 ﻿import { interval } from 'rxjs';
 import { ISubscription } from "rxjs-compat/Subscription";
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import {
     BlockUIService,
-    HttpRequestService,
-    MessageBoxService,
-    VerifyDateService,
     ReCheckInService,
 } from '../../../shared/services';
-import { 
-    SearchService, 
-    ResultSoccerService, 
-    ResultOtherSportService } from '../../services';
 import { Match } from '../../models';
 import * as _ from 'lodash';
 import { ResettleType } from '../../constants/log-Type';
 
 @Component({
     selector: 'app-root',
-    templateUrl: './log.component.html',
-    providers: [
-        SearchService,
-        VerifyDateService,
-        MessageBoxService,
-        BlockUIService,
-        HttpRequestService,
-        ReCheckInService,
-        NgbActiveModal,
-        ResultOtherSportService,
-        ResultSoccerService],
+    templateUrl: './log.component.html'
 })
 
 export class LogComponent implements OnInit, OnDestroy {

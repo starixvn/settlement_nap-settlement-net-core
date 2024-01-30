@@ -12,6 +12,8 @@ public static class ResourceNameConstants
 
     public const string HalfTime = "Half Time";
 
+    public const string SecondHalf = "Second Half";
+
     public const string FullTime = "Full Time";
 
     public const string OverTime = "Over Time";

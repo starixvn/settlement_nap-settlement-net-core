@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -11,7 +12,7 @@ import {
     FilterComponent,
 } from './components/log';
 import { ProviderLogComponent } from './components/provider-log/provider-log.component';
-import { ProviderMatchesComponent } from './components/provider-log/provider-matches.component';
+import { ProviderMatchesComponent } from './components/provider-log/provider-result.component';
 import { ProviderFilterComponent } from './components/provider-log/provider-filter.component';
 import { ModalDialogComponent } from '../shared/components/modal-dialog/modal-dialog.component';
 import { ModalContentDialogComponent } from '../shared/components/modal-dialog/modal-content-dialog.component';
@@ -19,7 +20,7 @@ import { DatepickerComponent } from '../shared/components/date-picker/date-picke
 import { ResettleLogDetailComponent } from './components/log/resettle-log-detail.component';
 import { LogDetailComponent } from './components/log/log-detail.component';
 import { NewMultipleSelectComponent } from "../shared/components/multiple-select/multiple-select.component";
-
+import { OnlyIntegerDirective } from '../shared/directives';
 @NgModule({
     declarations: [
         AppComponent,
@@ -45,7 +46,9 @@ import { NewMultipleSelectComponent } from "../shared/components/multiple-select
         NgbModule,
         DatepickerComponent,
         LogModule,
-        NewMultipleSelectComponent
+        NewMultipleSelectComponent,
+        NoopAnimationsModule,
+        OnlyIntegerDirective,
     ]
 })
 export class AppModule {

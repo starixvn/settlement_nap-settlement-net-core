@@ -3,15 +3,15 @@ using Settlement.Log.Models;
 
 namespace Settlement.Log.Requests;
 
-public class ProviderLogRequest : IRequest<List<ProviderResultLog>>
+public class ProviderLogRequest : IRequest<ProviderLog>
 {
     public int MatchId { get; set; }
 
-    public string ResultId { get; set; }
+    public string ResourceIds { get; set; }
 
-    public string ResultName { get; set; }
+    public string ResourceName { get; set; }
 
-    public string Provider { get; set; }
+    public string SourceIds { get; set; }
 
-    public bool IsLatestRecord { get; set; }
+    public bool LatestRecord { get; set; }
 }
