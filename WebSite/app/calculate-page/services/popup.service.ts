@@ -25,7 +25,7 @@ export class PopupService {
         const src = `/apps/remark-setting?matchId=${match.matchId}&matchCode=${match.matchCode}`;
         const frameSrc = encodeURI(src);
         const dialogData = new DialogDataIframe(Language.remarkSettingTitle, frameSrc);
-        this.dialogBoxService.popup(dialogData, '500px', '270px').subscribe(() => {
+        this.dialogBoxService.popup(dialogData, '400px', '250px').subscribe(() => {
             this.requestService.getRemarkInfo(match.matchId).subscribe((settingResult) => {
                 this.handleActionService.handleChangeRemarkSetting(settingResult, match);
             });
