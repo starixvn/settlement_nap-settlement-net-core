@@ -1,6 +1,6 @@
 import { MessageBoxService } from './../../../../shared/services/message-box.service.native';
 
-import { Component, Input, OnDestroy, OnInit } from "@angular/core";
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from "@angular/core";
 import { LeagueMatch } from "../../../models";
 import { CommonModule } from "@angular/common";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -20,7 +20,8 @@ import { MatchComponent } from '../match/match.component';
   selector: 'tr[league-row]',
   templateUrl: './league.component.html',
   standalone: true,
-  imports: [CommonModule, MatTooltipModule, TimeConverterPipe, MatchComponent]
+  imports: [CommonModule, MatTooltipModule, TimeConverterPipe, MatchComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 
 export class LeagueComponent implements OnInit, OnDestroy {
@@ -36,7 +37,8 @@ export class LeagueComponent implements OnInit, OnDestroy {
     private readonly multiSportService: MultiSportService,
     private readonly handleActionService: HandleActionsService,
     private readonly messageBoxService: MessageBoxService,
-    private readonly popupService: PopupService) {
+    private readonly popupService: PopupService,
+    private readonly cd: ChangeDetectorRef) {
   }
 
   ngOnDestroy() {
@@ -87,6 +89,7 @@ export class LeagueComponent implements OnInit, OnDestroy {
       autoCalcSetting.isInstantForLeague = !autoCalcSetting.isInstantForLeague;
       if (isApplyAll) {
         this.handleActionService.handleAutoInstantForMatch(leagueMatch, autoCalcSetting.isInstantForLeague);
+        this.cd.markForCheck();
       }
     } else {
       this.store.dialogMessage.message = result.errMsg;
@@ -94,19 +97,22 @@ export class LeagueComponent implements OnInit, OnDestroy {
     }
   }
 
-   openUpdateTime(league: LeagueMatch) {
+  openUpdateTime(league: LeagueMatch) {
     if (this.permission.canAutoPayout) {
       this.popupService.openUpdateTime(league);
     }
   }
 
-   changeAutoLeague(leagueMatch: LeagueMatch) {
+  changeAutoLeague(leagueMatch: LeagueMatch) {
     if (this.permission.canAutoPayout) {
-      this.popupService.openUpdatePayoutForLeague(leagueMatch);
+      SportNewAutoPayout.includes(leagueMatch.sportType) ? 
+      this.popupService.openUpdateNewPayoutForLeague(leagueMatch, () => { this.cd.markForCheck() }) 
+      : this.popupService.openUpdatePayoutForLeague(leagueMatch, () => { this.cd.markForCheck() });
     }
+
   }
 
-   getAutoSettingLeague(autoSetting: AutoSetting) {
+  getAutoSettingLeague(autoSetting: AutoSetting) {
     if (autoSetting.isAutoPayoutForLeague && autoSetting.isDirectPayoutForLeague) {
       return "BOTH";
     }

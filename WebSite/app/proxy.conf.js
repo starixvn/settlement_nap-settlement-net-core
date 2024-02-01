@@ -27,4 +27,28 @@ module.exports = {
     target: "http://localhost:55201/",
     secure: false,
   },
+  "/badminton": {
+    target: "http://localhost:55201/",
+    secure: false,
+  },
+  "/eSports": {
+    target: "http://localhost:55201/",
+    secure: false,
+  },
+  "/cricket": {
+    target: "http://localhost:55201/",
+    secure: false,
+  },
+  "/basketball": {
+    target: "http://localhost:55201/",
+    secure: false,
+  },
+  "/other-sports": {
+    target: "http://localhost:55201/",
+    secure: false,
+  },
+  "/instant-setting": {
+    target: "http://localhost:55201/",
+    secure: false,
+  }
 };

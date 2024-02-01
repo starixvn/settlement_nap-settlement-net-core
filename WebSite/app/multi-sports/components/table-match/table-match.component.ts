@@ -1,8 +1,8 @@
 
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { MultiSportsStore } from '../../services/multi-sports.store';
 import { RefreshMatchService, SportMatchService } from '../../services';
-import { SportMatch } from '../../models';
+import { MultiSport, SportMatch } from '../../models';
 import * as _ from 'lodash';
 import { CommonModule } from '@angular/common';
 import { Subject, Subscription, interval, map, takeUntil, Observable, BehaviorSubject } from 'rxjs';
@@ -22,7 +22,6 @@ export class TableMatchComponent implements OnInit {
   public sports: SportMatch[];
   private subscriber: Subscription;
   private readonly period = 6000;
-  private refreshedCount$: BehaviorSubject<number>;
   public intervalTimer = interval(this.period);
   ngUnsubscribe = new Subject();
   constructor(public store: MultiSportsStore,
@@ -34,14 +33,14 @@ export class TableMatchComponent implements OnInit {
   public get GetChangeDetectionCount() {
     return this.ChangeDetectionCount++
   }
-  
+
   ngOnInit(): void {
     this.store.state$.pipe(
       takeUntil(this.ngUnsubscribe),
       map(state => state.sports),
     ).subscribe(data => {
       this.sports = data;
-     this.cd.detectChanges();
+      this.cd.detectChanges();
     });
     this.refreshMatches();
   }
@@ -54,10 +53,15 @@ export class TableMatchComponent implements OnInit {
     }
   }
 
+  collapseSport(sport: SportMatch) {
+    sport.collapse = !sport.collapse;
+    this.cd.detectChanges();
+  }
+
   private refreshMatches() {
     this.subscriber = this.intervalTimer.subscribe(() => {
       if (this.store.enableRefresh) {
-        this.refreshMatchesService.refreshMatches(this.sports, this.store.request, this.refreshedCount$);
+        this.refreshMatchesService.refreshMatches(this.sports, this.store.request);
         this.cd.detectChanges();
       }
     });

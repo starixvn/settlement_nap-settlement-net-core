@@ -42,26 +42,26 @@ export class FilterComponent implements OnInit {
     private verifyDateService = inject(VerifyDateService);
     private messageBoxService = inject(MessageBoxService);
     private multiSportsStore = inject(MultiSportsStore);
-    public readonly warningDialogMessage = new ModalDialogMessage();
-    public matchCode = "";
-    public fromDate: NgbDateStruct;
-    public toDate: NgbDateStruct;
-    public sportTypesSelected: string;
-    public leaguesSelected: string;
-    public autoPayoutSelected: string;
-    public matchStatusSelected: string;
-    public holdStatusSelected: string;
-    public overStatusSelected: string;
-    public matchType = 0;
-    public isIncludeTestMatch = false;
-    public matchTypes = MatchType;
+    readonly warningDialogMessage = new ModalDialogMessage();
+    matchCode = "";
+    fromDate: NgbDateStruct;
+    toDate: NgbDateStruct;
+    sportTypesSelected: string;
+    leaguesSelected: string;
+    autoPayoutSelected: string;
+    matchStatusSelected: string;
+    holdStatusSelected: string;
+    overStatusSelected: string;
+    matchType = 0;
+    isIncludeTestMatch = false;
+    matchTypes = MatchType;
     sportOptions$ = new BehaviorSubject(new MultipleSelect());
-    leagueOption$ =  new BehaviorSubject(new MultipleSelect());
-    public readonly holdStatusSelect = new MultipleSelect();
-    public readonly autoPayoutSelect = new MultipleSelect();
-    public readonly matchStatusSelect = new MultipleSelect();
-    public readonly overStatusSelect = new MultipleSelect();
-    public getLeagueParams: LeagueFilterRequest;
+    leagueOption$ = new BehaviorSubject(new MultipleSelect());
+    readonly holdStatusSelect = new MultipleSelect();
+    readonly autoPayoutSelect = new MultipleSelect();
+    readonly matchStatusSelect = new MultipleSelect();
+    readonly overStatusSelect = new MultipleSelect();
+    getLeagueParams: LeagueFilterRequest;
     private readonly widthMultiSelect = "205px";
 
     async ngOnInit() {
@@ -70,8 +70,8 @@ export class FilterComponent implements OnInit {
     }
 
 
-    public ChangeDetectionCount = 0
-    public get GetChangeDetectionCount() {
+    ChangeDetectionCount = 0
+    get GetChangeDetectionCount() {
         return this.ChangeDetectionCount++
     }
 
@@ -81,7 +81,7 @@ export class FilterComponent implements OnInit {
         this.toDate = this.verifyDateService.convertToDateStruct(date.toDate);
         this.initLeague();
         await this.getSport(this.fromDate, this.toDate);
-        // this.matchCode = '79374969';
+        // this.matchCode = '79648780';
         // this.search();
     }
 
@@ -90,12 +90,12 @@ export class FilterComponent implements OnInit {
         this.holdStatusSelect.items = this.generateFilterService.renderRemarks();
         this.matchStatusSelect.items = this.generateFilterService.renderMatchStatusGroupSelect();
         this.autoPayoutSelect.items = this.generateFilterService.renderAutoPayout();
-        this.overStatusSelect.maxWidth  = this.widthMultiSelect;
+        this.overStatusSelect.maxWidth = this.widthMultiSelect;
         this.matchStatusSelect.maxWidth = "190px";
         this.matchStatusSelect.haveGroup = true;
     }
 
-    public async search() {
+    async search() {
         const fromDate = this.verifyDateService.dateFormat(this.fromDate);
         const toDate = this.verifyDateService.dateFormat(this.toDate);
         const query: FilterRequest = {
@@ -149,39 +149,39 @@ export class FilterComponent implements OnInit {
         return matchIds;
     }
 
-    public onSelectLeague(value: ItemsSelect[]) {
+    onSelectLeague(value: ItemsSelect[]) {
         this.leaguesSelected = value.length > 0 ? value.map(item => Number(item.value)).join() : DefaultValue.unCheckAll;
     }
 
-    public onSelectSport(value: ItemsSelect[]) {
+    onSelectSport(value: ItemsSelect[]) {
         this.sportTypesSelected = value.map(item => Number(item.value)).join();
         this.renderLeague(this.fromDate, this.toDate, this.sportTypesSelected);
     }
 
-    public onSelectAutoPayout(value: ItemsSelect[]) {
+    onSelectAutoPayout(value: ItemsSelect[]) {
         this.autoPayoutSelected = value.length > 0 ? value.map(item => Number(item.value)).join() : '';
     }
 
-    public onSelectMatchStatus(value: ItemsSelect[]) {
+    onSelectMatchStatus(value: ItemsSelect[]) {
         this.matchStatusSelected = value.length > 0 ? value.map(item => Number(item.value)).join() : DefaultValue.unCheckAll;
     }
 
-    public onSelectHoldStatus(value: ItemsSelect[]) {
+    onSelectHoldStatus(value: ItemsSelect[]) {
         this.holdStatusSelected = value.length > 0 ? value.map(item => Number(item.value)).join() : DefaultValue.unCheckAll;
     }
 
-    public onSelectOverStatus(value: ItemsSelect[]) {
+    onSelectOverStatus(value: ItemsSelect[]) {
         this.overStatusSelected = value.length > 0 ? value.map(item => Number(item.value)).join() : DefaultValue.unCheckAll;
     }
 
-    public onSelectFromDate(value: NgbDateStruct) {
+    onSelectFromDate(value: NgbDateStruct) {
         if (value.day !== undefined) {
             this.fromDate = value;
             this.getSport(this.fromDate, this.toDate);
         }
     }
 
-    public onSelectToDate(value: NgbDateStruct) {
+    onSelectToDate(value: NgbDateStruct) {
         if (value.day !== undefined) {
             this.toDate = value;
             this.getSport(this.fromDate, this.toDate);
@@ -203,7 +203,7 @@ export class FilterComponent implements OnInit {
         const toDateValue = this.verifyDateService.dateFormat(toDate);
         const params = new SportFilterRequest(fromDateValue, toDateValue);
         const listSport = await this.multiSportService.getSport(params);
-        const newSportOptions = {...this.sportOptions$.value, items: this.generateFilterService.renderSportTypes(listSport), haveGroup: true, isCheckAll: true};
+        const newSportOptions = { ...this.sportOptions$.value, items: this.generateFilterService.renderSportTypes(listSport)};
         this.sportOptions$.next(newSportOptions);
         this.sportTypesSelected = this.sportOptions$.value.items.map(item => Number(item.value)).join();
     }
@@ -235,6 +235,8 @@ export class FilterComponent implements OnInit {
         this.leagueOption$.next(initLeagueSelect);
         let initSportSelect = new MultipleSelect();
         initSportSelect.maxWidth = this.widthMultiSelect;
+        initSportSelect.haveGroup = true;
+        initSportSelect.isCheckAll = true;
         this.sportOptions$.next(initSportSelect);
     }
 
@@ -242,8 +244,7 @@ export class FilterComponent implements OnInit {
         const league = await this.multiSportService.getLeague(this.getLeagueParams);
         const newLeague = this.generateFilterService.renderNewestLeagues(league, _.cloneDeep(this.leagueOption$.value.items));
         if (newLeague.length > this.leagueOption$.value.items.length) {
-            const updateList = { ... this.leagueOption$.getValue(), items: newLeague };
-            this.leagueOption$.next(updateList);
+            this.leagueOption$.next({ ... this.leagueOption$.getValue(), items: newLeague });
         }
     }
 

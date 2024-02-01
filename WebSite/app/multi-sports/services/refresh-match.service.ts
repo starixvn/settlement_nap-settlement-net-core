@@ -16,9 +16,9 @@ export class RefreshMatchService {
     private readonly sportMatchService: SportMatchService
   ) { }
 
-  public refreshMatches(currentSportMatches: SportMatch[], request: MatchWaitingRequest, refreshedCount: BehaviorSubject<number>) {
+  public refreshMatches(currentSportMatches: SportMatch[], request: MatchWaitingRequest) {
     this.getMatches(request).subscribe((matchesWaiting: Match[]) => {
-      this.changeInfoAfterRefreshMatches(currentSportMatches, matchesWaiting, refreshedCount);
+      this.changeInfoAfterRefreshMatches(currentSportMatches, matchesWaiting);
     });
   }
 
@@ -27,25 +27,18 @@ export class RefreshMatchService {
     return this.httpRequestService.postMessagePack(param, url, false);
   }
 
-  private changeInfoAfterRefreshMatches(currentSportMatches: SportMatch[], matches: Match[], refreshedCount: BehaviorSubject<number>) {
-    let isHasChanged = false;
-    currentSportMatches.forEach((sport) =>
-      sport.leagues.forEach((league) => {
-        league.matches.forEach((match) => {
+  private changeInfoAfterRefreshMatches(currentSportMatches: SportMatch[], matches: Match[]) {
+    for (const sport of currentSportMatches) {
+      sport.leagues.forEach((league, leagueIndex) => {
+        league.matches.forEach((match, matchIndex) => {
           const newMatch = _.find(matches, (matchWaiting: MatchWaiting) =>
             this.detectChangesService.detect(match, matchWaiting)
           );
           if (!_.isNil(newMatch)) {
-            match = { ...match, ...newMatch};
-            isHasChanged = true;
-            this.sportMatchService.getMatchIntervalScore(match, this.permission);
+            sport.leagues[leagueIndex].matches[matchIndex] = { ...match, ...newMatch };
           }
-        });
-      })
-    );
-
-    if(isHasChanged){
-    refreshedCount.next(refreshedCount.value + 1 );
+        })
+      });
     }
   }
 }

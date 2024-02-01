@@ -107,6 +107,7 @@ public class MultiSportServiceImp(
 
         var matchesInAllServers = listMatch.Select(m => m.ToList()).ToList();
 
+        // var baseMatches = matchesInAllServers.SelectMany(m => m).Distinct().ToList();
         var baseMatches = matchesInAllServers.SelectMany(m => m).ToList();
 
         for (var i = 1; i < siteDbServer.Count; i++)
@@ -212,7 +213,7 @@ public class MultiSportServiceImp(
         var criteria = mapper.Map<FilterMultiSportRequest, SportsbookCriteria>(request);
         var matches = await GetMatchesAllSites(criteria);
         var resultDetails = await ResultDetailByMatchIds(matches);
-        //  matches = await matchService.SetNewMatchInfo(matches, resultDetails);
+        matches = await matchService.SetNewMatchInfo(matches, resultDetails);
 
         return new MultiSportResult
         {

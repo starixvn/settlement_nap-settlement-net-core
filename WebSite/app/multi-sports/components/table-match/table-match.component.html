@@ -37,36 +37,38 @@
 
 
 <ng-template #body>
-  <cdk-virtual-scroll-viewport dynamicHeight itemSize="15" class="table-matches-content">
-    @for (sport of sports; track sport) {
-    <div>
-      <div (click)="sport.collapse == !sport.collapse" class="sport-name">
-        <span class="collapse-icon" [ngClass]="sport.collapse ? 'collapsed' : ''"></span>
-        &nbsp;{{ sport.name }}
+  <div dynamicHeight class="table-matches-content">
+    <cdk-virtual-scroll-viewport itemSize="20" [style]="{'display': 'contents'}">
+      @for (sport of sports; track sport) {
+      <div>
+        <div (click)="collapseSport(sport)" class="sport-name">
+          <span class="collapse-icon" [ngClass]="sport.collapse ? 'collapsed' : ''"></span>
+          &nbsp;{{ sport.name }}
+        </div>
+        @if (!sport.collapse) {
+        <div class="league">
+          <table class="table-calculation">
+            <tbody>
+              @for (league of sport.leagues; track league.leagueId) {
+              <tr league-row [league]="league" class="league-name"> </tr>
+              @for (match of league.matches; track match.matchId) {
+              @if(!league.collapse) {
+              <match [style]="{'display': 'contents'}" [match]="match"> </match>
+              }
+              }
+              }
+            </tbody>
+          </table>
+        </div>
+        }
       </div>
-      @if (!sport.collapse) {
-      <div class="league">
-        <table class="table-calculation">
-          <tbody>
-            @for (league of sport.leagues; track league.leagueId) {
-            <tr league-row [league]="league" class="league-name"> </tr>
-            @for (match of league.matches; track match.matchId) {
-            @if(!league.collapse) {
-            <match [style]="{'display': 'contents'}" [match]="match"> </match>
-            }
-            }
-            }
-          </tbody>
-        </table>
+      } @empty {
+      <div>
+        <div class="empty-data">
+          There is no information available
+        </div>
       </div>
       }
-    </div>
-    } @empty {
-    <div>
-      <div class="empty-data">
-        There is no information available
-      </div>
-    </div>
-    }
-  </cdk-virtual-scroll-viewport>
+    </cdk-virtual-scroll-viewport>
+  </div>
 </ng-template>

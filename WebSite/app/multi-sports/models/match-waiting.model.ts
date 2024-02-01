@@ -32,5 +32,5 @@ export class MatchWaiting {
   public eventStatusColor: string;
   public isHavingIntervalScore: boolean;
   public exHalfTimeScore: string;
-     public exFullTimeScore: string;
+  public exFullTimeScore: string;
 }
