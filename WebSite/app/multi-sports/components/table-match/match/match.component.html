@@ -18,7 +18,7 @@
 			{{ match.kickOffTime | date: "hh:mm:ss a" }}
 		</td>
 		<td>
-			<div class="match-home">{{ match.homeName }}</div>
+			<div class="match-home">{{ match.homeName }} rendered: {{ GetChangeDetectionCount}}</div>
 			@if (match.offerLive) {
 			<span class="red">&nbsp;(LIVE)</span>
 			}
@@ -66,6 +66,7 @@
 			} @else {
 			<div>{{ match.earlySettleStatus }}</div>
 			<div [ngClass]="matchState.isShowEarlySettleLink" (click)="matchState.isShowEarlySettleLink ? popupEarly() : ''">
+				(click)="matchState.isShowEarlySettleLink ? popupEarly(match) : ''">
 				Detail
 			</div>
 			}

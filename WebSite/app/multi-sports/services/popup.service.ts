@@ -41,7 +41,7 @@ export class PopupService {
   constructor(
     private readonly dialogBoxService: DialogBoxService,
     private readonly multiSportService: MultiSportService,
-    private readonly handleActionsService: HandleActionsService,
+    private readonly handleActionsService: HandleActionsService
     private readonly refreshMatchService: RefreshMatchService
   ) { }
   public popupLog(matchCode: string, fromDate: string, toDate: string) {

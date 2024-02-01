@@ -23,11 +23,10 @@ export class MatchStateService {
     return remark.isMtdHold || remark.isUndecided || remark.isUnderSettle || remark.isKeyHold ? BackgroundColor.undecidedRow : '';
   }
 
-  getBackgroundAutoSetting(match: Match, permission: Permission, isPayout: boolean = true) {
-    const enableLink = permission.canAutoPayout && isPayout ? BackgroundColor.codeLink : "";
-    const status = isPayout ? match.autoPayoutStatus : match.autoInstantStatus;
-    const colorStatus = _.isEqual(status, this.autoSettingCompleted) ? 'auto-setting-completed' :
-      _.isEqual(status, this.autoSettingFailed) ? 'auto-setting-failed' : '';
+  getBackgroundAutoSetting(match: Match, permission: Permission) {
+    const enableLink = permission.canAutoPayout ? BackgroundColor.codeLink : "";
+    const colorStatus = _.isEqual(match.autoPayoutStatus, this.autoSettingCompleted) ? 'auto-setting-completed' :
+      _.isEqual(match.autoPayoutStatus, this.autoSettingFailed) ? 'auto-setting-failed' : '';
 
     return `${enableLink} ${colorStatus}`;
   }
@@ -111,9 +110,10 @@ export class MatchStateService {
 
   isHideHtScore(match: Match, permission: Permission) {
     return ResultType.havingHalfTimeConfirmedStatus.includes(match.sportType)
-      && !permission.isLeader 
-      && !match.isHalfTimeCal
-      && (!this.isRefundHt(match) && !match.isCalRefund);
+      && !permission.isLeader // false => true
+      && !match.isHalfTimeCal // flase => true
+      && (!this.isRefundHt(match)
+        && !match.isCalRefund);
   }
 
   private isRefundHt(match: Match) {
@@ -258,5 +258,6 @@ export class MatchStateService {
     }
 
     return "OFF";
+
   }
 }

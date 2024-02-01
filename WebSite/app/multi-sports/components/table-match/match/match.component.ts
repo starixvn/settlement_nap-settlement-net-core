@@ -26,7 +26,7 @@ import { BehaviorSubject } from 'rxjs';
   templateUrl: './match.component.html',
   standalone: true,
   imports: [CommonModule, FormsModule, MatTooltipModule, PipesModule, NgbTooltip],
-  providers: [IntervalScorePipe],
+  providers: [IntervalScorePipe, MatchStateService],
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: [' :host { display: contents; } ']
 })
@@ -125,5 +125,10 @@ export class MatchComponent implements OnChanges, OnInit {
       this.dialogMessage.message = result.errMsg;
       this.messageBoxService.alert(this.dialogMessage);
     }
+  }
+
+  triggerRerender() {
+    this.matchState.getState(this.match, this.store);
+    this.cd.detectChanges();
   }
 }

@@ -53,6 +53,7 @@ export class TableMatchComponent implements OnInit {
     sport.collapse = !sport.collapse;
   }
 
+
   private refreshMatches() {
     this.subscriber = this.intervalTimer.subscribe(() => {
       if (this.store.enableRefresh) {
