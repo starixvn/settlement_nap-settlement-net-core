@@ -166,7 +166,7 @@ public class SettingServiceImp : SettingService
     {
         var remarkChanged = holdMatchInfo.Select(x => $"{GetHoldName(x.Type)}({(x.Value ? "yes" : "no")})").ToList();
 
-        var childInfo = CreateChildInfo(request.IsApplyChild, childMatches);
+        var childInfo = CreateChildInfo(request, holdMatchInfo, childMatches);
 
         var parentRemark = remarkChanged.Count > 0 ? string.Join(", ", remarkChanged) : string.Empty;
         var remarkLogs = new List<RemarkLog>
@@ -174,7 +174,7 @@ public class SettingServiceImp : SettingService
             new ()
             {
                 MatchId = request.MatchId,
-                Remark = $"{parentRemark} child({childInfo})"
+                Remark = $"{parentRemark}{childInfo}"
             }
         };
 
@@ -201,14 +201,20 @@ public class SettingServiceImp : SettingService
         return criteria.ChildMatchList;
     }
 
-    private string CreateChildInfo(bool isApplyChild, string childMatchesUpdated)
+    private string CreateChildInfo(UpdateHoldMatchSettingRequest request, List<HoldMatchInfoItem> holdSettingInfo, string childMatches)
     {
-        if (!isApplyChild)
+        var mtdHold = holdSettingInfo.Find(x => x.Type == RemarkType.IsMtdHold);
+        if (mtdHold is null)
         {
-            return "off";
+            return string.Empty;
         }
 
-        return string.IsNullOrEmpty(childMatchesUpdated) ? "0" : childMatchesUpdated;
+        if (!request.IsApplyChild)
+        {
+            return " child(off)";
+        }
+
+        return string.IsNullOrEmpty(childMatches) ? " child(0)" : $" child({childMatches})";
     }
 
     private string GetHoldName(int remarkType) => remarkType switch
