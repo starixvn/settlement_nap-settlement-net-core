@@ -125,7 +125,7 @@ export class RemarkSettingComponent implements OnInit {
   private async changeHoldMatchSetting() {
     const query = {
       matchId: this.matchId,
-      remark: this.remark,
+      remark:this.remark,
       orgRemark: this.orgRemark,
       isApplyChild: this.isApplyChild
     }
@@ -135,5 +135,6 @@ export class RemarkSettingComponent implements OnInit {
       const eventStatus = result.match.eventStatus;
       this.remark = remark;
       this.refreshRemarkStatusOnMainPage(remark, eventStatus, result.match.newEventStatus);
+      this.messageBoxService.closePopupNotChanged();
   }
 }

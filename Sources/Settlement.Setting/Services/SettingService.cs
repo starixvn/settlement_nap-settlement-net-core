@@ -5,9 +5,11 @@ using Azure.Core;
 using Fanex.Data.Repository;
 using Fanex.Logging;
 using Fanex.NAP.Client.Helpers.Web;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Settlement.Core.Criteria;
 using Settlement.Core.Models;
+using Settlement.Setting.Constants;
 using Settlement.Setting.Criteria;
 using Settlement.Setting.Models;
 using Settlement.Setting.Requests;
@@ -108,35 +110,47 @@ public class SettingServiceImp : SettingService
 
     public async Task<string> ProcessUpdateHoldMatchSetting(UpdateHoldMatchSettingRequest request)
     {
-        try
-        {
-            var diffRemark = DetectDiffProperties(request.OrgRemark, request.Remark);
+        var diffRemark = DetectDiffProperties(request.OrgRemark, request.Remark);
 
-            if (diffRemark.Count == 0 && !request.IsApplyChild) return string.Empty;
+        if (!request.IsApplyChild && diffRemark.Count == 0) return string.Empty;
 
-            var holdInfos = diffRemark.Select(x => new HoldMatchInfoItem
-            {
-                Type = GetRemarkType(x.Key),
-                Value = x.Value,
-                IsApplyChild = x.Key == nameof(Remark.IsMtdHold) && request.IsApplyChild
-            }).ToList();
+        var holdSettingInfo = CreateHoldMatchInfoItems(request, diffRemark);
 
-            var criteria = CreateUpdateHoldMatchSettingCriteria(request, holdInfos);
-            var childMatches = await UpdateHoldMatchSetting(criteria);
+        var criteria = CreateUpdateHoldMatchSettingCriteria(request, holdSettingInfo);
+        var childMatches = await UpdateHoldMatchSetting(criteria);
 
-            WriteLogUpdateHoldSetting(request, diffRemark, childMatches);
+        WriteLogUpdateHoldSetting(request, holdSettingInfo, childMatches);
 
-            return childMatches;
-        }
-        catch (Exception ex)
-        {
-            throw;
-        }
+        return childMatches;
     }
 
-    private void WriteLogUpdateHoldSetting(UpdateHoldMatchSettingRequest request, Dictionary<string, bool> diffRemark, string childMatches)
+    private List<HoldMatchInfoItem> CreateHoldMatchInfoItems(UpdateHoldMatchSettingRequest request, Dictionary<string, bool> diffRemark)
     {
-        var remarkLogs = CreateRemarkLogs(request, diffRemark, childMatches);
+        var holdSettingInfo = diffRemark.Select(x => new HoldMatchInfoItem
+        {
+            Type = GetRemarkType(x.Key),
+            Value = x.Value,
+            IsApplyChild = x.Key == nameof(Remark.IsMtdHold) && request.IsApplyChild
+        }).ToList();
+
+        var mtdHold = holdSettingInfo.Find(x => x.Type == RemarkType.IsMtdHold);
+
+        if (mtdHold is null && request.IsApplyChild)
+        {
+            holdSettingInfo.Add(new HoldMatchInfoItem
+            {
+                Type = RemarkType.IsMtdHold,
+                Value = request.Remark.IsMtdHold,
+                IsApplyChild = request.IsApplyChild
+            });
+        }
+
+        return holdSettingInfo;
+    }
+
+    private void WriteLogUpdateHoldSetting(UpdateHoldMatchSettingRequest request, List<HoldMatchInfoItem> holdMatchInfo, string childMatches)
+    {
+        var remarkLogs = CreateRemarkLogs(request, holdMatchInfo, childMatches);
 
         var logCriteria = new LogCriteria
         {
@@ -148,9 +162,9 @@ public class SettingServiceImp : SettingService
         logService.WriteLog(logCriteria);
     }
 
-    private List<RemarkLog> CreateRemarkLogs(UpdateHoldMatchSettingRequest request, Dictionary<string, bool> diffRemark, string childMatches)
+    private List<RemarkLog> CreateRemarkLogs(UpdateHoldMatchSettingRequest request, List<HoldMatchInfoItem> holdMatchInfo, string childMatches)
     {
-        var remarkChanged = diffRemark.Select(x => $"{GetHoldName(x.Key)}({(x.Value ? "yes" : "no")})").ToList();
+        var remarkChanged = holdMatchInfo.Select(x => $"{GetHoldName(x.Type)}({(x.Value ? "yes" : "no")})").ToList();
 
         var childInfo = CreateChildInfo(request.IsApplyChild, childMatches);
 
@@ -197,13 +211,13 @@ public class SettingServiceImp : SettingService
         return string.IsNullOrEmpty(childMatchesUpdated) ? "0" : childMatchesUpdated;
     }
 
-    private string GetHoldName(string holdName) => holdName switch
+    private string GetHoldName(int remarkType) => remarkType switch
     {
-        nameof(Remark.IsMtdHold) => "Mtd. Hold",
-        nameof(Remark.IsUndecided) => "Undecided",
-        nameof(Remark.IsPending) => "Result Pending",
-        nameof(Remark.IsUnderSettle) => "Under Settlement",
-        nameof(Remark.IsKeyHold) => "Hold Key",
+        RemarkType.IsMtdHold => "Mtd. Hold",
+        RemarkType.IsUndecided => "Undecided",
+        RemarkType.IsPending => "Result Pending",
+        RemarkType.IsUnderSettle => "Under Settlement",
+        RemarkType.IsKeyHold => "Hold Key",
         _ => string.Empty,
     };
 

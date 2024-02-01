@@ -61,47 +61,65 @@
         <div class="message-info error">{{errorMessage}}</div>
     </div> -->
 
-    <table *ngIf="remark">
-            <tr class="header-setting">
-                <td style="width: 120px;">Hold State</td>
-                <td style="width: 30px;">No</td>
-                <td style="width: 30px;" >Yes</td>
-                <td >Aplly to all child-matches</td>
-            </tr>
-
-            <tr>
-                <td>MTD. Hold</td>
-                <td><input type="radio" [(ngModel)]="remark.isMtdHold" [value]="false" name="isMtdHold" [disabled]="!permission?.canMarkUnDecided"/></td>
-                <td><input type="radio" [(ngModel)]="remark.isMtdHold" [value]="true" name="isMtdHold" [disabled]="!permission?.canMarkUnDecided"/></td>
-                <td style="text-align: center;" ><input type="checkbox" [(ngModel)] = "isApplyChild"/></td>
-            </tr>
-            <tr>
-                <td>Undecided</td> 
-                <td><input type="radio" [(ngModel)]="remark.isUndecided" [value]="false"  name="isUndecided" [disabled]="!permission?.canMarkUnDecided"/></td>
-                <td><input type="radio" [(ngModel)]="remark.isUndecided" [value]="true"  name="isUndecided" [disabled]="!permission?.canMarkUnDecided"/></td>
-                <td></td>
-            </tr>
-            <tr>
-                <td>Result Pending</td>
-                <td><input type="radio" [(ngModel)]="remark.isPending" [value]="false"  name="isPending" [disabled]="!permission?.canMarkPending"/></td>
-                <td><input type="radio" [(ngModel)]="remark.isPending" [value]="true"  name="isPending" [disabled]="!permission?.canMarkPending"/></td>
-                <td></td>
-            </tr>
-            <tr>
-                <td>Under Settlement</td>
-                <td><input type="radio" [(ngModel)]="remark.isUnderSettle" [value]="false"  name="isUnderSettle" [disabled]="!permission?.canMarkUnDecided"/></td>
-                <td><input type="radio" [(ngModel)]="remark.isUnderSettle" [value]="true"  name="isUnderSettle" [disabled]="!permission?.canMarkUnDecided"/></td>
-                <td></td>
-            </tr>
-            <tr>
-                <td class="disabled">  Hold Key</td>
-                <td><input type="radio" [(ngModel)]="remark.isKeyHold" [value]="false"  name="isKeyHold" disabled/></td>
-                <td><input type="radio" [(ngModel)]="remark.isKeyHold" [value]="true"  name="isKeyHold" disabled/></td>
-                <td></td>
-            </tr>
-    </table>
-   <div *ngIf="remark" style="margin-left: 30px; margin-top: 20px;">
-    <button type="button" style="margin-right: 16px;" class="button" (click)="submit()">Submit</button>
-	<button type="button" class="button" (click)="cancel()">Cancel</button>
-   </div>
+    <div style="display: flex;justify-content: center;">
+        <table *ngIf="remark" class="hold-setting-table">
+          
+                <tr class="header-setting">
+                    <th style="width: 120px;">Hold State</th>
+                    <th style="width: 40px;">No</th>
+                    <th style="width: 40px;">Yes</th>
+                    <th>Aplly to all child-matches</th>
+                </tr>
+            <tbody>
+                <tr>
+                    <td>MTD. Hold</td>
+                    <td><input type="radio" [(ngModel)]="remark.isMtdHold" [value]="false" name="isMtdHold"
+                            [disabled]="!permission?.canMarkUnDecided" /></td>
+                    <td><input type="radio" [(ngModel)]="remark.isMtdHold" [value]="true" name="isMtdHold"
+                            [disabled]="!permission?.canMarkUnDecided" /></td>
+                    <td style="text-align: center;"><input type="checkbox" [(ngModel)]="isApplyChild" /></td>
+                </tr>
+                <tr>
+                    <td>Undecided</td>
+                    <td><input type="radio" [(ngModel)]="remark.isUndecided" [value]="false" name="isUndecided"
+                            [disabled]="!permission?.canMarkUnDecided" /></td>
+                    <td><input type="radio" [(ngModel)]="remark.isUndecided" [value]="true" name="isUndecided"
+                            [disabled]="!permission?.canMarkUnDecided" /></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Result Pending</td>
+                    <td><input type="radio" [(ngModel)]="remark.isPending" [value]="false" name="isPending"
+                            [disabled]="!permission?.canMarkPending" /></td>
+                    <td><input type="radio" [(ngModel)]="remark.isPending" [value]="true" name="isPending"
+                            [disabled]="!permission?.canMarkPending" /></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Under Settlement</td>
+                    <td><input type="radio" [(ngModel)]="remark.isUnderSettle" [value]="false" name="isUnderSettle"
+                            [disabled]="!permission?.canMarkUnDecided" /></td>
+                    <td><input type="radio" [(ngModel)]="remark.isUnderSettle" [value]="true" name="isUnderSettle"
+                            [disabled]="!permission?.canMarkUnDecided" /></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td class="disabled"> Hold Key</td>
+                    <td><input type="radio" [(ngModel)]="remark.isKeyHold" [value]="false" name="isKeyHold" disabled />
+                    </td>
+                    <td><input type="radio" [(ngModel)]="remark.isKeyHold" [value]="true" name="isKeyHold" disabled />
+                    </td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div *ngIf="remark" style="margin-top: 20px;display: flex;justify-content: center;">
+        <button type="button" style="margin-right: 16px;" class="button" (click)="submit()">Submit</button>
+        <button type="button" class="button" (click)="cancel()">Cancel</button>
+    </div>
+    <div class="message-box" *ngIf="errorMessage">
+        <div class="icon error"></div>
+        <div class="message-info error">{{errorMessage}}</div>
+    </div>
 </div>
