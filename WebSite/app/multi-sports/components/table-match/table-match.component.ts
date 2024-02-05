@@ -1,5 +1,5 @@
 
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnInit, SimpleChanges, ViewEncapsulation } from '@angular/core';
 import { MultiSportsStore } from '../../services/multi-sports.store';
 import { RefreshMatchService, SportMatchService } from '../../services';
 import { MultiSport, SportMatch } from '../../models';
@@ -29,10 +29,10 @@ export class TableMatchComponent implements OnInit {
     private readonly refreshMatchesService: RefreshMatchService) {
   }
 
-  public ChangeDetectionCount = 0
-  public get GetChangeDetectionCount() {
-    return this.ChangeDetectionCount++
-  }
+  // public ChangeDetectionCount = 0
+  // public get GetChangeDetectionCount() {
+  //   return this.ChangeDetectionCount++
+  // }
 
   ngOnInit(): void {
     this.store.state$.pipe(

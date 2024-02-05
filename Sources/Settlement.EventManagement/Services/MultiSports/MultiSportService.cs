@@ -107,8 +107,7 @@ public class MultiSportServiceImp(
 
         var matchesInAllServers = listMatch.Select(m => m.ToList()).ToList();
 
-        // var baseMatches = matchesInAllServers.SelectMany(m => m).Distinct().ToList();
-        var baseMatches = matchesInAllServers.SelectMany(m => m).ToList();
+        var baseMatches = matchesInAllServers.SelectMany(m => m).Distinct().ToList();
 
         for (var i = 1; i < siteDbServer.Count; i++)
         {

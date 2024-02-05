@@ -70,10 +70,10 @@ export class FilterComponent implements OnInit {
     }
 
 
-    ChangeDetectionCount = 0
-    get GetChangeDetectionCount() {
-        return this.ChangeDetectionCount++
-    }
+    // ChangeDetectionCount = 0
+    // get GetChangeDetectionCount() {
+    //     return this.ChangeDetectionCount++
+    // }
 
     private async initialData() {
         const date = await this.multiSportService.getDate();

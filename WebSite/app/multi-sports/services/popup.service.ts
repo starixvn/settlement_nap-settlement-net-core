@@ -1,5 +1,5 @@
 import { AutoSettingPosition } from "./../constants/change-setting-type.native";
-import { Injectable } from "@angular/core";
+import { ChangeDetectorRef, Injectable } from "@angular/core";
 import {
   PopupProperties,
   Match,
@@ -22,8 +22,9 @@ import { AutoType } from "../constants";
 import { SportSingleAutoType } from "../constants/sport-instant";
 import { LeagueAutoSettings } from "../../shared/models/leagus-auto-settings.model";
 import { PopularSports } from "../constants/popular-sports.native";
-import { Observable } from "rxjs";
-
+import { RefreshMatchService } from "./refresh-match.service";
+import { MatchState } from "../models/match-state.model";
+import { BehaviorSubject } from "rxjs";
 @Injectable()
 export class PopupService {
   private readonly generalWidthPopup = "845px";
@@ -40,7 +41,8 @@ export class PopupService {
   constructor(
     private readonly dialogBoxService: DialogBoxService,
     private readonly multiSportService: MultiSportService,
-    private readonly handleActionsService: HandleActionsService
+    private readonly handleActionsService: HandleActionsService,
+    private readonly refreshMatchService: RefreshMatchService
   ) { }
   public popupLog(matchCode: string, fromDate: string, toDate: string) {
     const src = `/home/log?matchCode=${encodeURIComponent(
@@ -50,7 +52,7 @@ export class PopupService {
     this.dialogBoxService.popup(dialogData, "1011px", "800px");
   }
 
-  public popupCalc(match: Match) {
+  public popupCalc(match: Match, state$: BehaviorSubject<MatchState>) {
     this.properties.title = Language.CalcPopupTitle;
     this.setPopupSize(match.sportType);
 
@@ -61,10 +63,10 @@ export class PopupService {
       this.properties.src = `/apps/other-sports-recalculate?matchId=${match.matchId}&sportType=${match.sportType}`;
     }
 
-    this.openAndHandlePopup(this.properties, match);
+    this.openAndHandlePopup(this.properties, match, state$);
   }
 
-  public popupRefund(match: Match) {
+  public popupRefund(match: Match, state$: BehaviorSubject<MatchState>) {
     this.properties.title = Language.RefundPopupTitle;
     this.setPopupRefundSize(match.sportType);
 
@@ -75,10 +77,10 @@ export class PopupService {
       this.properties.src = `/apps/other-sports-refund?matchId=${match.matchId}&sportType=${match.sportType}`;
     }
 
-    this.openAndHandlePopup(this.properties, match);
+    this.openAndHandlePopup(this.properties, match, state$);
   }
 
-  public popupEarly(match: Match) {
+  public popupEarly(match: Match, state$: BehaviorSubject<MatchState>) {
     this.properties.title = Language.EarlyPopupTitle;
     let sportName = PopularSports.get(match.sportType);
     this.properties.src = `/apps/${sportName}-early?matchId=${match.matchId}&sportType=${match.sportType}`;
@@ -91,7 +93,7 @@ export class PopupService {
     this.properties.height = this.isPopupEarlySOP(match.sportType)
       ? "958px"
       : "910px";
-    this.openAndHandlePopup(this.properties, match);
+    this.openAndHandlePopup(this.properties, match, state$);
   }
 
   private isPopupEarlySOP(sportType: number) {
@@ -107,7 +109,7 @@ export class PopupService {
     );
   }
 
-  public popupChangeRemark(match: Match, updateUI: () => any) {
+  public popupChangeRemark(match: Match, state$: BehaviorSubject<MatchState>): void {
     this.properties.title = Language.remarkSettingTitle;
     this.properties.src = `/apps/remark-setting?matchId=${match.matchId}&matchCode=${match.matchCode}`;
     this.properties.width = "400px";
@@ -122,26 +124,27 @@ export class PopupService {
         settingResult,
         match
       );
-      updateUI();
+      this.refreshMatchService.refreshMatch(state$, match);
     });
   }
 
-  public openAndHandlePopup(properties: PopupProperties, match: Match) {
+  public openAndHandlePopup(properties: PopupProperties, match: Match , state$: BehaviorSubject<MatchState>) {
     const frameSrc = encodeURI(properties.src);
     const dialogData = new DialogDataIframe(properties.title, frameSrc);
     this.dialogBoxService
       .popup(dialogData, properties.width, properties.height)
       .subscribe((result) => {
         if (result) {
-          this.handleChangedMatch(match);
+          this.handleChangedMatch(match, state$);
         }
       });
   }
 
-  public handleChangedMatch(match: Match) {
+  public handleChangedMatch(match: Match, state$: BehaviorSubject<MatchState>) {
     match.isCalculatingSingle = CalculationStatus.waiting;
     match.showLink = false;
     match.newEventStatus = EventStatus.waiting;
+    this.refreshMatchService.refreshMatch(state$, match);
   }
 
   private setPopupSize(sportType: number) {
@@ -300,7 +303,7 @@ export class PopupService {
     });
   }
 
-  public async openUpdatePayoutForMatch(match: Match, updateUI: () => any) {
+  public async openUpdatePayoutForMatch(match: Match, state$: BehaviorSubject<MatchState>) {
     const isMultiSelect = !_.includes(SportSingleAutoType, match.sportType);
     const autoSetting = await this.multiSportService.getSetting(
       0,
@@ -319,7 +322,7 @@ export class PopupService {
       .subscribe((result) => {
         if (!_.isNil(result)) {
           this.applyNewSetting(match.autoCalcSetting, result, true, !isMultiSelect);
-          updateUI();
+          this.refreshMatchService.refreshMatch(state$, match);
         }
       });
   }

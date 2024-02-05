@@ -1,22 +1,24 @@
-﻿import { Injectable } from '@angular/core';
+﻿import { ChangeDetectorRef, Injectable } from '@angular/core';
 import * as _ from 'lodash';
 import { HttpRequestService } from '../../shared/services';
 import { MatchWaitingRequest, SportMatch, Match } from '../models';
 import { DetectChangesService } from './detect-changes.service';
-import { SportMatchService } from './sport-match.service';
 import { Permission } from '../../shared/models/sportsbook-sop/permission.model';
 import { MatchWaiting } from '../models/match-waiting.model';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { MatchState } from '../models/match-state.model';
+import { MultiSportsStore } from './multi-sports.store';
+import { BehaviorSubject } from 'rxjs';
+import { MatchStateService } from './match-state.service';
 @Injectable()
 export class RefreshMatchService {
   public permission: Permission;
   constructor(
     private readonly httpRequestService: HttpRequestService,
     private readonly detectChangesService: DetectChangesService,
-    private readonly sportMatchService: SportMatchService
-  ) { }
+    private readonly matchStateService: MatchStateService,
+    private readonly store: MultiSportsStore) { }
 
-  public refreshMatches(currentSportMatches: SportMatch[], request: MatchWaitingRequest) {
+  refreshMatches(currentSportMatches: SportMatch[], request: MatchWaitingRequest) {
     this.getMatches(request).subscribe((matchesWaiting: Match[]) => {
       this.changeInfoAfterRefreshMatches(currentSportMatches, matchesWaiting);
     });
@@ -40,5 +42,9 @@ export class RefreshMatchService {
         })
       });
     }
+  }
+
+  refreshMatch(state$: BehaviorSubject<MatchState>, match: Match) {
+    state$.next(new MatchState(this.matchStateService, match, this.store));
   }
 }

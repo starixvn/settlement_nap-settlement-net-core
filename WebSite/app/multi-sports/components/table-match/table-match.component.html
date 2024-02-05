@@ -1,4 +1,4 @@
-<div>ChangeDetectionCycleCount: {{ GetChangeDetectionCount }}</div>
+<!-- <div>ChangeDetectionCycleCount: {{ GetChangeDetectionCount }}</div> -->
 @if(store.state.sports) {
 <div class="sportbook">
   <ng-template *ngTemplateOutlet="header"></ng-template>
@@ -37,38 +37,33 @@
 
 
 <ng-template #body>
-  <div dynamicHeight class="table-matches-content">
-    <cdk-virtual-scroll-viewport itemSize="20" [style]="{'display': 'contents'}">
-      @for (sport of sports; track sport) {
-      <div>
-        <div (click)="collapseSport(sport)" class="sport-name">
-          <span class="collapse-icon" [ngClass]="sport.collapse ? 'collapsed' : ''"></span>
-          &nbsp;{{ sport.name }}
-        </div>
-        @if (!sport.collapse) {
-        <div class="league">
-          <table class="table-calculation">
-            <tbody>
-              @for (league of sport.leagues; track league.leagueId) {
-              <tr league-row [league]="league" class="league-name"> </tr>
-              @for (match of league.matches; track match.matchId) {
-              @if(!league.collapse) {
-              <match [style]="{'display': 'contents'}" [match]="match"> </match>
-              }
-              }
-              }
-            </tbody>
-          </table>
-        </div>
-        }
+  <cdk-virtual-scroll-viewport dynamicHeight itemSize="20">
+    @for (sport of sports; track sport) {
+    <div>
+      <div (click)="collapseSport(sport)" class="sport-name">
+        <span class="collapse-icon" [ngClass]="sport.collapse ? 'collapsed' : ''"></span>
+        &nbsp;{{ sport.name }}
       </div>
-      } @empty {
-      <div>
-        <div class="empty-data">
-          There is no information available
-        </div>
+
+      <div class="league" [style]="{'display': !sport.collapse ?  'contents' : 'none'}">
+        <table class="table-calculation">
+          <tbody>
+            @for (league of sport.leagues; track league.leagueId) {
+            <tr league-row [league]="league" class="league-name"> </tr>
+            @for (match of league.matches; track match.matchId) {
+            <match [style]="{'display': !league.collapse ?  'contents' : 'none'}" [match]="match"> </match>
+            }
+            }
+          </tbody>
+        </table>
       </div>
-      }
-    </cdk-virtual-scroll-viewport>
-  </div>
+    </div>
+    } @empty {
+    <div>
+      <div class="empty-data">
+        There is no information available
+      </div>
+    </div>
+    }
+  </cdk-virtual-scroll-viewport>
 </ng-template>

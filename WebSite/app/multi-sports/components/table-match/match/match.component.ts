@@ -1,8 +1,8 @@
 import { Match } from '../../../models';
-import { Component, Input, OnChanges, ChangeDetectorRef, inject, ChangeDetectionStrategy, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, ChangeDetectorRef, inject, ChangeDetectionStrategy, SimpleChanges, OnInit, input } from '@angular/core';
 import { AutoSettingPosition } from '../../../constants';
 import * as _ from 'lodash';
-import { PopupService, MultiSportService, SportMatchService, HandleActionsService } from '../../../services';
+import { PopupService, MultiSportService, SportMatchService, HandleActionsService, RefreshMatchService } from '../../../services';
 import { MessageBoxService } from '../../../../shared/services';
 import { Language } from '../../../../shared/language.native';
 import { ModalDialogMessage, AutoSettingMatchQuery } from '../../../../shared/models';
@@ -17,50 +17,55 @@ import { SportSupportInstant } from '../../../constants/sport-instant';
 import { MatchState } from '../../../models/match-state.model';
 import { IntervalScorePipe } from '../../../../shared/pipes/interval-score.pipe';
 import { MatchStateService } from '../../../services/match-state.service';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 @Component({
   selector: 'match',
   templateUrl: './match.component.html',
   standalone: true,
   imports: [CommonModule, FormsModule, MatTooltipModule, PipesModule, NgbTooltip],
-  providers: [IntervalScorePipe, MatchStateService],
+  providers: [IntervalScorePipe],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class MatchComponent implements OnChanges {
+export class MatchComponent implements OnChanges, OnInit {
   @Input() match: Match;
   private sportMatchService = inject(SportMatchService);
   private popupService = inject(PopupService);
   private messageBoxService = inject(MessageBoxService);
   private multiSportService = inject(MultiSportService);
-  private handleActionsService = inject(HandleActionsService);
+  private refreshMatchService = inject(RefreshMatchService);
   private matchStateService = inject(MatchStateService);
   public store = inject(MultiSportsStore);
   public language = Language;
   public readonly sportTypeCricket = SportType.cricket;
   public readonly sportSupportInstant = SportSupportInstant;
   public readonly dialogMessage: ModalDialogMessage = new ModalDialogMessage();
-  public math = Math;
-  public matchState = new MatchState(this.matchStateService);
+  public matchState: MatchState;
+  public state$ = new BehaviorSubject<MatchState>(null)
 
   constructor(readonly cd: ChangeDetectorRef) { }
-    console.log(this.multiSport.sports)
-    
-
-  public ChangeDetectionCount = 0
-  public get GetChangeDetectionCount() {
-
-    return this.ChangeDetectionCount++
+  ngOnInit(): void {
+    this.state$.subscribe(state => {
+      this.matchState = state;
+      this.cd.detectChanges();
+    })
   }
+
+  // public ChangeDetectionCount = 0
+  // public get GetChangeDetectionCount() {
+
+  //   return this.ChangeDetectionCount++
+  // }
 
 
   ngOnChanges(changes: SimpleChanges) {
-    this.sportMatchService.getMatchIntervalScore(this.match, this.store.state.permission);
-    this.matchState.getState(this.match, this.store);
+      this.sportMatchService.getMatchIntervalScore(this.match, this.store.state.permission);
+      this.state$.next(new MatchState(this.matchStateService, this.match, this.store));
   }
 
-  public changeAutoSetting(match: Match) {
+  public changeAutoSetting() {
     if (this.store.state.permission.canAutoPayout) {
-      this.popupService.openUpdatePayoutForMatch(match, () => { this.triggerRerender() });
+      this.popupService.openUpdatePayoutForMatch(this.match, this.state$);
     }
   }
 
@@ -68,65 +73,60 @@ export class MatchComponent implements OnChanges {
     this.popupService.popupLog(matchId, this.store.request.fromDate, this.store.request.toDate);
   }
 
-  public popupCalc(match: Match) {
-    this.popupService.popupCalc(match);
+  public popupCalc() {
+    this.popupService.popupCalc(this.match, this.state$);
   }
 
-  public popupRefund(match: Match) {
-    this.popupService.popupRefund(match);
+  public popupRefund() {
+    this.popupService.popupRefund(this.match, this.state$);
   }
 
-  public popupEarly(match: Match) {
-    this.popupService.popupEarly(match);
+  public popupEarly() {
+    this.popupService.popupEarly(this.match, this.state$);
   }
 
-  public popupChangeRemarkSetting(match: Match) {
-    if (this.isChangeSetting(match)) {
-      this.popupService.popupChangeRemark(match, () => { this.triggerRerender(); });
+  public popupChangeRemarkSetting() {
+    if (this.isChangeSetting()) {
+      this.popupService.popupChangeRemark(this.match, this.state$);
     }
   }
 
-  public isChangeSetting(match: Match) {
-    return match.isCalculatingSingle !== CalculationStatus.waiting && match.isCalculatingSingle !== CalculationStatus.calculating
-      && match.isCalculatingMP !== CalculationStatus.waiting && match.isCalculatingMP !== CalculationStatus.calculating;
+  public isChangeSetting() {
+    return this.match.isCalculatingSingle !== CalculationStatus.waiting && this.match.isCalculatingSingle !== CalculationStatus.calculating
+      && this.match.isCalculatingMP !== CalculationStatus.waiting && this.match.isCalculatingMP !== CalculationStatus.calculating;
   }
 
-  public getInterval(match: Match) {
+  public getInterval() {
     const eSportNormalMaxMap = 9;
-    if (_.isEqual(match.sportType, SportType.eSports) && match.bestOfMap > eSportNormalMaxMap) {
-      match.isMatchBOMThirty = true;
-      return _.slice(match.intervalScore, 0, eSportNormalMaxMap);
+    if (_.isEqual(this.match.sportType, SportType.eSports) && this.match.bestOfMap > eSportNormalMaxMap) {
+      this.match.isMatchBOMThirty = true;
+      return _.slice(this.match.intervalScore, 0, eSportNormalMaxMap);
     }
 
-    return match.intervalScore;
+    return this.match.intervalScore;
   }
 
-  public updateInstant(match: Match) {
+  public updateInstant() {
     this.dialogMessage.message = Language.instants.confirm;
     this.dialogMessage.title = Language.confirmationBox;
     this.messageBoxService.confirm(this.dialogMessage, () => {
-      this.doUpdateInstant(match);
+      this.doUpdateInstant();
     });
   }
 
-  private async doUpdateInstant(match: Match) {
+  private async doUpdateInstant() {
     const query = new AutoSettingMatchQuery(
-      Number(match.matchId),
+      Number(this.match.matchId),
       AutoSettingPosition.autoInstant,
-      !match.autoCalcSetting.isInstantForMatch
+      !this.match.autoCalcSetting.isInstantForMatch
     );
     const result = await this.multiSportService.updateSettingMatch(query);
     if (result.errCode === 0) {
-      match.autoCalcSetting.isInstantForMatch = !match.autoCalcSetting.isInstantForMatch;
-      this.triggerRerender();
+      this.match.autoCalcSetting.isInstantForMatch = !this.match.autoCalcSetting.isInstantForMatch;
+      this.refreshMatchService.refreshMatch(this.state$, this.match);
     } else {
       this.dialogMessage.message = result.errMsg;
       this.messageBoxService.alert(this.dialogMessage);
     }
-  }
-
-  triggerRerender() {
-    this.matchState.getState(this.match, this.store);
-    this.cd.detectChanges();
   }
 }

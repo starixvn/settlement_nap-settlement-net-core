@@ -17,6 +17,8 @@ import { MultiSport } from '../models';
 import { FilterComponent } from './filter.component';
 import { TableMatchComponent } from './table-match/table-match.component';
 import { CommonModule } from '@angular/common';
+import { MatchStateService } from '../services/match-state.service';
+import { IntervalScorePipe } from '../../shared/pipes/interval-score.pipe';
 
 @Component({
     selector: 'app-root',
@@ -37,7 +39,9 @@ import { CommonModule } from '@angular/common';
         DetectChangesService,
         HandleActionsService,
         SportMatchService,
-        BackGroundService
+        BackGroundService,
+        MatchStateService ,
+        IntervalScorePipe
     ],
     standalone: true,
     imports: [FilterComponent, TableMatchComponent, CommonModule],

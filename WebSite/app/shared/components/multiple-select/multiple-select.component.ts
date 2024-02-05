@@ -48,12 +48,6 @@ export class NewMultipleSelectComponent implements OnChanges {
     this.element = viewContainerRef.element.nativeElement;
   }
 
-  public ChangeDetectionCount = 0
-  public get GetChangeDetectionCount() {
-
-    return this.ChangeDetectionCount++
-  }
-
   ngOnChanges(changes: SimpleChanges) {
     if (changes.multipleSelect?.currentValue) {
       this.dataChanged = changes.multipleSelect.currentValue;
