@@ -110,7 +110,12 @@ public class GenerateResultAmendmentServiceImp : GenerateResultAmendmentService
         if (PatternResultType.EarlyTypeOne.Contains(betTypeId))
         {
             itemChanged.Game = "1";
+            itemChanged.Home = itemChanged.Home == "N" ? "None" : itemChanged.Home;
+            itemChanged.TeamIds = resultChanged.HomeValue == "H" ? $"{resourceItem.HomeId}" : (resultChanged.HomeValue == "A" ? $"{resourceItem.AwayId}" : "");
+
             itemSelected.Game = "1";
+            itemSelected.Home = itemSelected.Home == "N" ? "None" : itemSelected.Home;
+            itemSelected.TeamIds = resourceItem.HomeValue == "H" ? $"{resourceItem.HomeId}" : (resourceItem.HomeValue == "A" ? $"{resourceItem.AwayId}" : "");
 
             return (itemChanged, itemSelected);
         }
