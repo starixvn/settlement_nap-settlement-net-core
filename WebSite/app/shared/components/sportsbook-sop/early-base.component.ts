@@ -311,13 +311,13 @@ export class EarlyBaseComponent {
     }
 
     public confirmResult(resultDetails: ResultDetail[], matchId: number, resourceIds: string) {
-        const refundedResultHasNoRunningTicket = _.find(resultDetails, item =>
-            item.settlementStatusId === SettlementStatusId.Refund && !_.isEqual(item.ticketStatus, TicketStatusText.running));
-        if (_.isNil(refundedResultHasNoRunningTicket)) {
+        // const refundedResultHasNoRunningTicket = _.find(resultDetails, item =>
+        //     item.settlementStatusId === SettlementStatusId.Refund && !_.isEqual(item.ticketStatus, TicketStatusText.running));
+        // if (_.isNil(refundedResultHasNoRunningTicket)) {
             this.aioService.changeConfirmResultSetting(Language.confirmRefund.confirmRefund, matchId, resourceIds, true, null);
-        } else {
-            this.toastrService.error(Language.confirmRefund.refundedNoRunningTicket);
-        }
+        // } else {
+        //     this.toastrService.error(Language.confirmRefund.refundedNoRunningTicket);
+        // }
     }
 
     public allResultConfirmed() {
