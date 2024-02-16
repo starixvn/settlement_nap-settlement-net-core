@@ -4,8 +4,10 @@ using Fanex.Settlement.ScaleOut.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Settlement.Core.Constants;
+using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
+using Settlement.Gaming.Constants;
 using Settlement.Gaming.Criteria.NumberGame;
 using Settlement.Gaming.Models;
 using Settlement.Gaming.Models.NumberGame;
@@ -80,7 +82,11 @@ public class SettlementServiceImp : SettlementService
 
             WriteDirectlyLog(request, criteria);
 
-            return await Execute(criteria);
+            var settledResult = await Execute(criteria);
+
+            WriteSettledLog(request, criteria, settledResult);
+
+            return settledResult;
         }
 
         return new Result
@@ -88,6 +94,22 @@ public class SettlementServiceImp : SettlementService
             ErrCode = validateDeploymentResult.ErrorCode,
             ErrMsg = validateDeploymentResult.ErrorMessage
         };
+    }
+
+    private void WriteSettledLog(NumberGameSettlementRequest request, RecalculateNumberGameCriteria criteria, Result settledResult)
+    {
+        var actionId = request.Action.ToUpperInvariant() switch
+        {
+            ActionType.CalculateAll => ActionId.Cal,
+            ActionType.CalculateHalfTime => ActionId.CalHt,
+            ActionType.RefundAll => ActionId.Refund,
+            ActionType.RefundFullTime => ActionId.RefundFt,
+            _ => 0,
+        };
+
+        var message = $"Ball results: {criteria.BallResults} {settledResult.ErrMsg}";
+
+        logService.ActionLog(criteria.MatchId, message, actionId);
     }
 
     private void WriteDirectlyLog(NumberGameSettlementRequest request, RecalculateNumberGameCriteria criteria)
