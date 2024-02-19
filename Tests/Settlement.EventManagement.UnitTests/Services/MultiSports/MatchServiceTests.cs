@@ -148,7 +148,7 @@ public class MatchServiceTests
         newInfoMatchService.GetAutoSetting(Arg.Any<List<Match>>()).Returns(x => x[0] as List<Match>);
 
         var matches = await service.SetNewMatchInfo(new List<Match> { new() }, new List<ResultDetail>());
-        var match = matches[0];
+        var match = matches.ToList()[0];
 
         Assert.True(match.IsExistsConfirmedEarly && match.IsExistMarkedTicket && match is { IsExistRunningTicket: true, IsCalculatingSingle: 1 });
         Assert.Equal("EventStatus", match.NewEventStatus);

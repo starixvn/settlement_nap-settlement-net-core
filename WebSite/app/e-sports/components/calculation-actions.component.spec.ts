@@ -112,11 +112,7 @@ describe("Esport - Calculation Actions Component", () => {
         TicketCountComponent,
         ResourceNameByIdPipe,],
     })
-      .overrideModule(BrowserDynamicTestingModule, {
-        set: {
-          entryComponents: [ModalDialogComponent, ModalContentDialogComponent],
-        },
-      })
+      
       .compileComponents()
       .then(() => {
         fixture = TestBed.createComponent(CalculationActionsComponent);

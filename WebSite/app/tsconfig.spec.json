@@ -3,7 +3,7 @@
   "compilerOptions": {
     "outDir": "../dist/spec",
     "module": "commonjs",
-    "target": "ES2015",
+    "target": "ES2022",
     "baseUrl": "./",
     "types": [
       "jest",
@@ -11,8 +11,7 @@
     ]
   },
   "files": [
-    "test.ts",
-    "polyfills.ts"
+    "test.ts"
   ],
   "include": [
     "**/*.spec.ts",

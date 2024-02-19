@@ -1,4 +1,5 @@
-﻿using Fanex.NAP.Client.Helpers.Web;
+﻿
+using Fanex.NAP.Client.Helpers.Web;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Sportsbook.Soccer.Handlers;

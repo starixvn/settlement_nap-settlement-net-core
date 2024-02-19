@@ -145,11 +145,7 @@ describe("Cricket - Early Settlement Component", () => {
         ToastrModule.forRoot()
       ],
     })
-      .overrideModule(BrowserDynamicTestingModule, {
-        set: {
-          entryComponents: [ModalDialogComponent, ModalContentDialogComponent],
-        },
-      })
+      
       .compileComponents()
       .then(() => {
         fixture = TestBed.createComponent(EarlySettlementComponent);

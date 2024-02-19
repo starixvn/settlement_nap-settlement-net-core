@@ -1,2 +1,4 @@
 <filter (searchAction)="search($event)" (disableRefund)="getInfoDisableRefund($event)" (disableRefresh)="getInfoDisableRefresh($event)"></filter>
-<matches *ngIf="calculation" [calculation]="calculation" [filterQuery]="filterQuery" [disableRefund]="disableRefund"  [disableRefresh]="disableRefresh"></matches>
+@if (calculation) {
+  <matches [calculation]="calculation" [filterQuery]="filterQuery" [disableRefund]="disableRefund"  [disableRefresh]="disableRefresh"></matches>
+}

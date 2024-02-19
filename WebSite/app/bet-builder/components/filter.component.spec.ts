@@ -43,13 +43,7 @@ describe('Bet Builder - Filter Component', () => {
                 NgbModule,
                 MaterialModule,
             ],
-        })
-            .overrideModule(BrowserDynamicTestingModule, {
-                set: {
-                    entryComponents: [ModalDialogComponent],
-                },
-            })
-            .compileComponents()
+        }).compileComponents()
             .then(() => {
                 fixture = TestBed.createComponent(FilterComponent);
                 component = fixture.componentInstance;

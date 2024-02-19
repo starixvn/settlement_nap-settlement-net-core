@@ -62,12 +62,7 @@ describe('Tennis', () => {
       imports: [
         NgbModule
       ],
-    })
-      .overrideModule(BrowserDynamicTestingModule, {
-        set: {
-          entryComponents: [ModalDialogComponent, ModalContentDialogComponent],
-        },
-      });
+    });
 
     service = TestBed.inject(VerificationService);
   });

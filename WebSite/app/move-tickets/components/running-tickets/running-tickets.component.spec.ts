@@ -55,11 +55,6 @@ describe('MoveTickets - RunningTicketsComponent', () => {
           MoveTicketsTemplateModule,
       ],
     })
-      .overrideModule(BrowserDynamicTestingModule, {
-        set: {
-          entryComponents: [ModalDialogComponent, ModalContentDialogComponent],
-        },
-      })
       .compileComponents();
   }));
 

@@ -48,10 +48,6 @@ describe("Refund Base Component", () => {
                 ToastNoAnimationModule.forRoot(),
                 ToastContainerModule,
                 ToastrModule.forRoot()],
-        }).overrideModule(BrowserDynamicTestingModule, {
-            set: {
-                entryComponents: [ModalDialogComponent, ModalContentDialogComponent],
-            },
         })
             .compileComponents()
             .then(() => {

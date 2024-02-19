@@ -189,11 +189,6 @@ describe('Component: BetTypesComponent', () => {
                 ToastrModule.forRoot()
             ],
         })
-            .overrideModule(BrowserDynamicTestingModule, {
-                set: {
-                    entryComponents: [ModalDialogComponent, ModalContentDialogComponent],
-                },
-            })
             .compileComponents()
             .then(() => {
                 fixture = TestBed.createComponent(BetTypesComponent);

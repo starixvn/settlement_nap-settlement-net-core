@@ -5,6 +5,7 @@ import { PageComponent } from './calculation';
 import * as _ from 'lodash';
 import { AutoCalculatePageComponent, AutoCalculateService } from './auto-calculation';
 import { PageBaseComponent } from './base-component';
+import { NgIf } from '@angular/common';
 
 @Component({
     selector: 'app-root',
@@ -24,6 +25,8 @@ import { PageBaseComponent } from './base-component';
         AutoCalculateService,
         GenerateFilterService
     ],
+    standalone: true,
+    imports: [NgIf],
 })
 export class AppComponent implements OnInit {
     @ViewChild('container', { read: ViewContainerRef, static: true }) container: ViewContainerRef;

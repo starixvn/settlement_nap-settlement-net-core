@@ -77,7 +77,6 @@ import { ModalDialogComponent } from '../shared/components/modal-dialog/modal-di
         ConfirmScoreComponent,
         MoveBetComponent
     ],
-    entryComponents: [ModalDialogComponent],
     providers: [{ provide: HTTP_INTERCEPTORS, useClass: CustomHttpRequestInterceptor, multi: true }],
     bootstrap: [AppComponent],
 })

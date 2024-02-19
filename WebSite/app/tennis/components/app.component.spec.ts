@@ -54,10 +54,6 @@ describe('AppComponent', () => {
         ToastContainerModule,
         ToastrModule.forRoot()
       ],
-    }).overrideModule(BrowserDynamicTestingModule, {
-      set: {
-        entryComponents: [CalculateActionsComponent, RefundActionsComponent],
-      },
     })
       .compileComponents()
       .then(() => {

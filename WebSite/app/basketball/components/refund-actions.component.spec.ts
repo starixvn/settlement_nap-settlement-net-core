@@ -75,12 +75,7 @@ describe('Component: RefundActionsComponent', () => {
                 ToastrModule.forRoot(),
                 RefundActionsComponent
             ],
-        }).overrideModule(BrowserDynamicTestingModule, {
-            set: {
-                entryComponents: [ModalDialogComponent, ModalContentDialogComponent],
-            },
-        })
-            .compileComponents()
+        }) .compileComponents()
             .then(() => {
                 fixture = TestBed.createComponent(RefundActionsComponent);
                 component = fixture.componentInstance;

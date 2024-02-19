@@ -8,8 +8,9 @@ import * as _ from 'lodash';
 import { LeagueBaseComponent } from '../../../shared/components/sport-listing/league-base.component';
 import { Language } from '../../../shared/language.native';
 @Component({
-  selector: 'matches-base',
-  template: ''
+    selector: 'matches-base',
+    template: '',
+    standalone: true
 })
 export class MatchesBaseComponent extends LeagueBaseComponent implements OnChanges {
   @Input() public calculation: Calculation;

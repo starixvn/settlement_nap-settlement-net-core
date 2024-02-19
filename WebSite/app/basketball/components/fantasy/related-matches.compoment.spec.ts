@@ -19,13 +19,7 @@ describe("RelatedMatchesComponent", () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [CommonModule, ScoreBySettlementPipe],
-    })
-      .overrideModule(BrowserDynamicTestingModule, {
-        set: {
-          entryComponents: [],
-        },
-      })
-      .compileComponents()
+    }).compileComponents()
       .then(() => {
         fixture = TestBed.createComponent(RelatedMatchesComponent);
         component = fixture.componentInstance;

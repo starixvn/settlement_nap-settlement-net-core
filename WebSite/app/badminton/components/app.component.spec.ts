@@ -57,11 +57,7 @@ describe('AppComponent', () => {
         ExcludeTotalPointPipe,
         ResourceHeaderPipe,
       ],
-    }).overrideModule(BrowserDynamicTestingModule, {
-      set: {
-        entryComponents: [EarlySettlementComponent, CalculateActionsComponent, RefundActionsComponent],
-      },
-  })
+    })
     .compileComponents()
     .then(() => {
         fixture = TestBed.createComponent(AppComponent);

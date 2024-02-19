@@ -33,11 +33,7 @@ describe('AppComponent', () => {
         MaterialModule,
         HttpClientModule,
       ]
-      }).overrideModule(BrowserDynamicTestingModule, {
-        set: {
-          entryComponents: [ProviderSourceComponent, OutsideSourceComponent],
-        },
-    })
+      })
       .compileComponents()
       .then(() => {
       fixture = TestBed.createComponent(AppComponent);

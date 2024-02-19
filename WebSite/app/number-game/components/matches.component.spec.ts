@@ -37,11 +37,6 @@ describe('NumberGame - Matches Component', () => {
                 MaterialModule,
             ],
         })
-            .overrideModule(BrowserDynamicTestingModule, {
-                set: {
-                    entryComponents: [ModalDialogComponent, ModalContentDialogComponent],
-                },
-            })
             .compileComponents()
             .then(() => {
                 fixture = TestBed.createComponent(MatchesComponent);

@@ -42,11 +42,6 @@ describe('CalculationComponent', () => {
                 { provide: MessageBoxService, useClass: MessageBoxService },
             ],
         })
-            .overrideModule(BrowserDynamicTestingModule, {
-                set: {
-                    entryComponents: [ModalDialogComponent, ModalContentDialogComponent],
-                },
-            })
             .compileComponents();
     });
 

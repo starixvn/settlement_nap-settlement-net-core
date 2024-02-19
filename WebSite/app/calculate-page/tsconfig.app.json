@@ -3,10 +3,9 @@
     "compilerOptions": {
       "outDir": "../dist",
       "baseUrl": "",
-      "types": []
+      "types": [],
     },
     "files": [
-      "../polyfills.ts",
       "main.ts",
     ],
     "include": [

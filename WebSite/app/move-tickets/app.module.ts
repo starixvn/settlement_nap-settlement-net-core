@@ -55,7 +55,6 @@ import { MultipleSelectComponent } from '../shared/components/multiple-selection
         AppComponent,
         RunningTicketsComponent
     ],
-    entryComponents: [ModalDialogComponent, ModalContentDialogComponent],
     providers: [ { provide: HTTP_INTERCEPTORS, useClass: CustomHttpRequestInterceptor, multi: true }],
     bootstrap: [AppComponent],
 })

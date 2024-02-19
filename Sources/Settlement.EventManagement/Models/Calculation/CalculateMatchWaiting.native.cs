@@ -63,6 +63,9 @@ public class CalculateMatchWaiting
     [Key("autoPayoutStatus")]
     public int AutoPayoutStatus { get; set; }
 
+    [Key("autoInstantStatus")]
+    public int AutoInstantStatus { get; set; }
+
     [Key("eventStatusColor")]
     public string EventStatusColor { get; set; }
 

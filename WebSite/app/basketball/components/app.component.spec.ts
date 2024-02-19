@@ -58,13 +58,7 @@ describe('Component: App', () => {
                 ExternalLinkPipe,
                 NewMultipleSelectComponent,
             ],
-        })
-            .overrideModule(BrowserDynamicTestingModule, {
-                set: {
-                    entryComponents: [EarlySettlementComponent, CalculationActionsComponent, RefundActionsComponent],
-                },
-            })
-            .compileComponents()
+        }).compileComponents()
             .then(() => {
                 fixture = TestBed.createComponent(AppComponent);
                 component = fixture.componentInstance;

@@ -48,11 +48,6 @@ describe('Filter component', () => {
                 DatepickerComponent
             ],
         })
-            .overrideModule(BrowserDynamicTestingModule, {
-                set: {
-                    entryComponents: [ModalDialogComponent],
-                },
-            })
             .compileComponents()
             .then(() => {
                 fixture = TestBed.createComponent(FilterComponent);

@@ -41,12 +41,7 @@ describe('VerificationService', () => {
                 FormsModule,
                 NgbModule,
             ],
-        })
-            .overrideModule(BrowserDynamicTestingModule, {
-                set: {
-                    entryComponents: [ModalDialogComponent, ModalContentDialogComponent],
-                },
-            });
+        });
 
         service = TestBed.inject(VerificationService);
         messageBoxService = TestBed.inject(MessageBoxService);

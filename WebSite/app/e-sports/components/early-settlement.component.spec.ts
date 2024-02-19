@@ -109,11 +109,7 @@ describe("E-sport - Early Settlement Component", () => {
         ResourceNameByIdPipe,
       ]
     })
-      .overrideModule(BrowserDynamicTestingModule, {
-        set: {
-          entryComponents: [ModalDialogComponent, ModalContentDialogComponent],
-        },
-      })
+      
       .compileComponents()
       .then(() => {
         fixture = TestBed.createComponent(EarlySettlementComponent);

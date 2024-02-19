@@ -139,11 +139,6 @@ describe('CalculationComponent', () => {
         { provide: ToastrService, useClass: ToastrService }
       ],
     })
-      .overrideModule(BrowserDynamicTestingModule, {
-        set: {
-          entryComponents: [ModalDialogComponent, ModalContentDialogComponent],
-        },
-      })
       .compileComponents();
   });
 

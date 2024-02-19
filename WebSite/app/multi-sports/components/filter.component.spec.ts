@@ -60,11 +60,6 @@ describe('MultiSport - FilterComponent', () => {
                 NewMultipleSelectComponent,
             ],
         })
-            .overrideModule(BrowserDynamicTestingModule, {
-                set: {
-                    entryComponents: [ModalDialogComponent, ModalContentDialogComponent]
-                },
-            })
             .compileComponents()
             .then(() => {
                 fixture = TestBed.createComponent(FilterComponent);

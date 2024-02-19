@@ -34,7 +34,6 @@ import { LogDetailComponent } from './components/log-detail/log-detail.component
         ResettleLogDetailComponent,
         LogDetailComponent
     ],
-    entryComponents: [ModalDialogComponent, ModalContentDialogComponent],
     providers: [ { provide: HTTP_INTERCEPTORS, useClass: CustomHttpRequestInterceptor, multi: true }],
     bootstrap: [AppComponent],
 })

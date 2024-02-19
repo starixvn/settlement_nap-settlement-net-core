@@ -60,11 +60,11 @@ public class MatchServiceImp : MatchService
         var criteria = mapper.Map<FilterCalculationRequest, GetMatchesCriteria>(request);
         var matches = await GetMatchesAllSites(criteria);
         var listResultDetail = await ResultDetailByMatchIds(matches);
-        var matchesInfoMerged = SetNewMatchInfo(matches, listResultDetail);
+        var matchesInfoMerged = await SetNewMatchInfo(matches, listResultDetail);
         return SortingMatches(matchesInfoMerged, request);
     }
 
-    private List<Match> SetNewMatchInfo(List<Match> matches, List<ResultDetail> listResultDetail)
+    private async Task<List<Match>> SetNewMatchInfo(List<Match> matches, List<ResultDetail> listResultDetail, bool isAutoPage = false)
     {
         foreach (var match in matches)
         {
@@ -84,7 +84,7 @@ public class MatchServiceImp : MatchService
             match.RefDataService = refDataService;
         }
 
-        return matches;
+        return isAutoPage ? matches : await newInfoMatchService.GetAutoSetting(matches);
     }
 
     private async Task<List<Match>> GetMatchesAllSites(MultipleSiteCriteria criteria)
@@ -152,7 +152,7 @@ public class MatchServiceImp : MatchService
         var waitingMatches = await GetMatchesAllSites(criteria);
         var listResultDetail = await ResultDetailByMatchIds(waitingMatches);
 
-        var matches = SetNewMatchInfo(waitingMatches, listResultDetail);
+        var matches = await SetNewMatchInfo(waitingMatches, listResultDetail);
 
         return cachingMatchesService.SetToCache(matches, hashLeagueIds);
     }
@@ -164,7 +164,7 @@ public class MatchServiceImp : MatchService
         var listResultDetail = await ResultDetailByMatchIds(matches);
         await SetReferenceActionsForMatch(matches);
 
-        return SetNewMatchInfo(matches, listResultDetail);
+        return await SetNewMatchInfo(matches, listResultDetail, true);
     }
 
     private static string ConvertKeyToHash(string input)
@@ -187,7 +187,7 @@ public class MatchServiceImp : MatchService
         var listResultDetail = await ResultDetailByMatchIds(waitingMatches);
         await SetReferenceActionsForMatch(waitingMatches);
 
-        var matches = SetNewMatchInfo(waitingMatches, listResultDetail);
+        var matches = await SetNewMatchInfo(waitingMatches, listResultDetail, true);
 
         return cachingMatchesService.SetToCache(matches, hashLeagueIds, true);
     }

@@ -58,11 +58,7 @@ describe('EditSourceDialogComponent', () => {
         NgbModule,
       ]
     })
-    .overrideModule(BrowserDynamicTestingModule, {
-      set: {
-        entryComponents: [ModalDialogComponent, ModalContentDialogComponent],
-      },
-    })
+    
     .compileComponents();
   }));
 

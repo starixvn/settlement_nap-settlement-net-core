@@ -35,12 +35,7 @@ describe('BadmintonService', () => {
         HttpClientModule,
         NgbModule
       ],
-    })
-      .overrideModule(BrowserDynamicTestingModule, {
-        set: {
-          entryComponents: [ModalDialogComponent, ModalContentDialogComponent],
-        },
-      });
+    });
 
     service = TestBed.inject(BadmintonService);
     intervalBackgroundPipe = TestBed.inject(IntervalBackgroundPipe);

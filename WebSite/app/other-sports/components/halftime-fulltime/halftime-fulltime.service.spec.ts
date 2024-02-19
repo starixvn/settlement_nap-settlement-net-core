@@ -47,10 +47,6 @@ describe('HalfTimeFullTimeService', () => {
                 ModalDialogComponent,
                 ModalContentDialogComponent
             ]
-        }).overrideModule(BrowserDynamicTestingModule, {
-            set: {
-                entryComponents: [ModalDialogComponent, ModalContentDialogComponent],
-            },
         });
 
         service = TestBed.inject(HalfTimeFullTimeService);

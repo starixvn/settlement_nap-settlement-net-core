@@ -91,11 +91,6 @@ describe('LeagueComponent', () => {
         MaterialModule,
       ],
     })
-      .overrideModule(BrowserDynamicTestingModule, {
-        set: {
-          entryComponents: [ModalDialogComponent, ModalContentDialogComponent],
-        },
-      })
       .compileComponents();
   }));
 

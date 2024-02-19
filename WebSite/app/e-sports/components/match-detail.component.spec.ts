@@ -47,10 +47,6 @@ describe("E-sport - Refund Match Detail Component", () => {
         MatchDetailComponent,
         ResourceNameByIdPipe,
         ScoreBySettlementPipe,],
-    }).overrideModule(BrowserDynamicTestingModule, {
-      set: {
-        entryComponents: [ModalDialogComponent, ModalContentDialogComponent],
-      },
     })
       .compileComponents()
       .then(() => {

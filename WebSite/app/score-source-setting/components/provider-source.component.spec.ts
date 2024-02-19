@@ -50,11 +50,7 @@ describe('ProviderSourceComponent', () => {
         HttpClientTestingModule,
       ]
     })
-    .overrideModule(BrowserDynamicTestingModule, {
-      set: {
-        entryComponents: [ModalDialogComponent, ModalContentDialogComponent],
-      },
-    })
+    
   }));
 
   beforeEach(() => {

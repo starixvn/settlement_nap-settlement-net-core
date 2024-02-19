@@ -42,10 +42,6 @@ describe('FullTimeVerificationService', () => {
             imports: [
                 HttpClientModule,
             ],
-        }).overrideModule(BrowserDynamicTestingModule, {
-            set: {
-                entryComponents: [ModalDialogComponent, ModalContentDialogComponent],
-            },
         });
 
         service = TestBed.inject(FullTimeVerificationService);

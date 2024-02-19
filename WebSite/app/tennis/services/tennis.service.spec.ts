@@ -32,10 +32,6 @@ describe('TennisService', () => {
       imports: [
         NgbModule
       ],
-    }).overrideModule(BrowserDynamicTestingModule, {
-      set: {
-        entryComponents: [ModalDialogComponent, ModalContentDialogComponent],
-      },
     });
 
     service = TestBed.inject(TennisService);

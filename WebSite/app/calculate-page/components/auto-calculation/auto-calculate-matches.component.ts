@@ -10,10 +10,16 @@ import { AutoSettingLeagueQuery, AutoSettingMatchQuery, ModalDialogMessage, Auto
 import { AutoSettingType, InstantStatus } from '../../constants';
 import { ISubscription } from 'rxjs-compat/Subscription';
 import { interval } from 'rxjs';
+import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { DynamicHeightDirective } from '../../../shared/directives/dynamic-height.directive.native';
+import { CommonModule } from '@angular/common';
 
 @Component({
     selector: 'auto-calculate-matches',
-    templateUrl: './auto-calculate-matches.component.html'
+    templateUrl: './auto-calculate-matches.component.html',
+    standalone: true,
+    imports: [CommonModule, DynamicHeightDirective, MatTooltipModule, NgbTooltip]
 })
 export class AutoCalculateMatchesComponent extends MatchesBaseComponent implements OnChanges, OnInit, OnDestroy {
     @Input() public filterQuery: FilterAutoQuery;

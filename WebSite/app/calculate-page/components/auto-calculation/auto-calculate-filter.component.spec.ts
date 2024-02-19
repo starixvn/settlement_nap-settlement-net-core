@@ -49,10 +49,6 @@ describe('AutoCalculateFilterComponent', () => {
         NgbModule,
         MaterialModule
       ],
-    }).overrideModule(BrowserDynamicTestingModule, {
-      set: {
-        entryComponents: [ModalDialogComponent],
-      },
     })
       .compileComponents();
   });

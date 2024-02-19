@@ -79,10 +79,6 @@ describe('ManageLeagueComponent', () => {
         { provide: MAT_DIALOG_DATA, useValue: data }
       ],
       imports: [FormsModule, HttpClientModule, NgbModule],
-    }).overrideModule(BrowserDynamicTestingModule, {
-      set: {
-        entryComponents: [ModalDialogComponent, ModalContentDialogComponent],
-      },
     })
       .compileComponents()
       .then(() => {

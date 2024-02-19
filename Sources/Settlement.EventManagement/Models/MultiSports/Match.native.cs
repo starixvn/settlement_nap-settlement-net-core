@@ -29,9 +29,6 @@ public class Match : BaseMatch
 
     #endregion Match Status
 
-    [Key("autoPayoutStatus")]
-    public int AutoPayoutStatus { get; set; }
-
     [IgnoreMember]
     public bool IsKeyScore => BetStatus.IsKeyScore(HalfTimeHomeScore, HalfTimeAwayScore, FinalHomeScore, FinalAwayScore);
 

@@ -49,8 +49,7 @@ import { ModalDialogComponent } from '../shared/components/modal-dialog/modal-di
         ResultStatusPipe,
         SelectionPipe,
         TicketStatusPipe,
-    ],
-    entryComponents: [ModalDialogComponent, ModalContentDialogComponent],
+    ]
     providers: [ { provide: HTTP_INTERCEPTORS, useClass: CustomHttpRequestInterceptor, multi: true }],
     bootstrap: [AppComponent],
 })

@@ -49,8 +49,7 @@ import { ToastContainerModule, ToastNoAnimationModule } from 'ngx-toastr';
         ModalDialogComponent,
         ModalContentDialogComponent,
         MaterialDialogComponent,
-    ],
-    entryComponents: [ModalDialogComponent, ModalContentDialogComponent],
+    ]
     providers: [ { provide: HTTP_INTERCEPTORS, useClass: CustomHttpRequestInterceptor, multi: true }],
     bootstrap: [AppComponent],
 })

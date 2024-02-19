@@ -47,11 +47,7 @@ describe('AppComponent', () => {
           NgbModule,
           MaterialModule,
       ],
-      }).overrideModule(BrowserDynamicTestingModule, {
-        set: {
-          entryComponents: [AutoCalculatePageComponent],
-        },
-    })
+      })
       .compileComponents();
   });
 

@@ -122,11 +122,7 @@ describe('CalculationActionsComponent', () => {
         ToastContainerModule,
         ToastrModule.forRoot()],
     })
-      .overrideModule(BrowserDynamicTestingModule, {
-        set: {
-          entryComponents: [ModalDialogComponent, ModalContentDialogComponent, NotReadyMatchComponent],
-        },
-      })
+      
       .compileComponents();
   });
 

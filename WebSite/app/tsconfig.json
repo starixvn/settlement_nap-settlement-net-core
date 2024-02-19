@@ -19,7 +19,8 @@
     "noImplicitAny": false,
     "strictNullChecks": false,
     "module": "esnext",
-    "target": "es2015",
+    "target": "ES2022",
+    "useDefineForClassFields": false,
     "typeRoots": [
       "node_modules/@types"
     ],

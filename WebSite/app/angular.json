@@ -4,19 +4,19 @@
   "newProjectRoot": "projects",
   "projects": {
     "notification": {
-      "root": "app",
+      "root": "",
       "sourceRoot": "notification",
       "projectType": "application",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:browser-esbuild",
           "options": {
             "aot": true,
             "outputPath": "../wwwroot/notification",
-            "index": "notification/index.cshtml",
+            "index": "notification/index.html",
             "main": "notification/main.ts",
             "tsConfig": "notification/tsconfig.app.json",
-            "polyfills": "polyfills.ts",
+            "polyfills": ["zone.js"],
             "styles": [],
             "allowedCommonJsDependencies": ["lodash"]
           },
@@ -41,12 +41,13 @@
                 }
               ],
               "outputHashing": "all",
-              "baseHref": "/notification/"
+              "baseHref": "/notification/",
+              "index": "notification/index.cshtml"
             },
             "development": {
               "buildOptimizer": false,
               "optimization": false,
-              "vendorChunk": true,
+              
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
@@ -56,15 +57,15 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "proxyConfig": "proxy.conf.json",
+            "proxyConfig": "proxy.conf.js",
             "port": 5001
           },
           "configurations": {
             "production": {
-              "browserTarget": "app:build:production"
+              "buildTarget": "notification:build:production"
             },
             "development": {
-              "browserTarget": "app:build:development"
+              "buildTarget": "notification:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -77,14 +78,14 @@
       "projectType": "application",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:browser-esbuild",
           "options": {
             "aot": true,
             "outputPath": "../wwwroot/bet-builder",
-            "index": "bet-builder/index.cshtml",
+            "index": "bet-builder/index.html",
             "main": "bet-builder/main.ts",
             "tsConfig": "bet-builder/tsconfig.app.json",
-            "polyfills": "polyfills.ts",
+            "polyfills": ["zone.js"],
             "styles": [
               "shared/styles/material.style.less",
               "shared/styles/styles.less",
@@ -114,30 +115,33 @@
                 }
               ],
               "outputHashing": "all",
-              "baseHref": "/bet-builder/"
+              "baseHref": "/bet-builder/",
+              "index": "bet-builder/index.cshtml"
             },
             "development": {
               "buildOptimizer": false,
               "optimization": false,
-              "vendorChunk": true,
+              
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
             }
           }
         },
+
+
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "proxyConfig": "proxy.conf.json",
+            "proxyConfig": "proxy.conf.js",
             "port": 5001
           },
           "configurations": {
             "production": {
-              "browserTarget": "app:build:production"
+              "buildTarget": "bet-builder:build:production"
             },
             "development": {
-              "browserTarget": "app:build:development"
+              "buildTarget": "bet-builder:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -145,19 +149,19 @@
       }
     },
     "instant-setting": {
-      "root": "app",
+      "root": "",
       "sourceRoot": "instant-setting",
       "projectType": "application",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:browser-esbuild",
           "options": {
             "aot": true,
             "outputPath": "../wwwroot/instant-setting",
-            "index": "instant-setting/index.cshtml",
+            "index": "instant-setting/index.html",
             "main": "instant-setting/main.ts",
             "tsConfig": "instant-setting/tsconfig.app.json",
-            "polyfills": "polyfills.ts",
+            "polyfills": ["zone.js"],
             "styles": [
               "instant-setting/style.less" ,
               "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
@@ -186,12 +190,13 @@
                 }
               ],
               "outputHashing": "all",
-              "baseHref": "/instant-setting/"
+              "baseHref": "/instant-setting/",
+              "index": "instant-setting/index.cshtml"
             },
             "development": {
               "buildOptimizer": false,
               "optimization": false,
-              "vendorChunk": true,
+              
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
@@ -201,15 +206,15 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "proxyConfig": "proxy.conf.json",
+            "proxyConfig": "proxy.conf.js",
             "port": 5001
           },
           "configurations": {
             "production": {
-              "browserTarget": "app:build:production"
+              "buildTarget": "instant-setting:build:production"
             },
             "development": {
-              "browserTarget": "app:build:development"
+              "buildTarget": "instant-setting:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -217,19 +222,19 @@
       }
     },
     "log": {
-      "root": "app",
+      "root": "",
       "sourceRoot": "log",
       "projectType": "application",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:browser-esbuild",
           "options": {
             "aot": true,
             "outputPath": "../wwwroot/log",
-            "index": "log/index.cshtml",
+            "index": "log/index.html",
             "main": "log/main.ts",
             "tsConfig": "log/tsconfig.app.json",
-            "polyfills": "polyfills.ts",
+            "polyfills": ["zone.js"],
             "styles": ["log/style.less"],
             "allowedCommonJsDependencies": ["lodash"]
           },
@@ -254,12 +259,13 @@
                 }
               ],
               "outputHashing": "all",
-              "baseHref": "/log/"
+              "baseHref": "/log/",
+              "index": "log/index.cshtml"
             },
             "development": {
               "buildOptimizer": false,
               "optimization": false,
-              "vendorChunk": true,
+              
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
@@ -269,15 +275,15 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "proxyConfig": "proxy.conf.json",
+            "proxyConfig": "proxy.conf.js",
             "port": 5001
           },
           "configurations": {
             "production": {
-              "browserTarget": "app:build:production"
+              "buildTarget": "log:build:production"
             },
             "development": {
-              "browserTarget": "app:build:development"
+              "buildTarget": "log:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -285,19 +291,19 @@
       }
     },
     "happy5": {
-      "root": "app",
+      "root": "",
       "sourceRoot": "happy5",
       "projectType": "application",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:browser-esbuild",
           "options": {
             "aot": true,
             "outputPath": "../wwwroot/happy5",
-            "index": "happy5/index.cshtml",
+            "index": "happy5/index.html",
             "main": "happy5/main.ts",
             "tsConfig": "happy5/tsconfig.app.json",
-            "polyfills": "polyfills.ts",
+            "polyfills": ["zone.js"],
             "styles": [
               "node_modules/ngx-toastr/toastr.css",
               "shared/styles/material.style.less",
@@ -328,12 +334,13 @@
                 }
               ],
               "outputHashing": "all",
-              "baseHref": "/happy5/"
+              "baseHref": "/happy5/",
+              "index": "happy5/index.cshtml"
             },
             "development": {
               "buildOptimizer": false,
               "optimization": false,
-              "vendorChunk": true,
+              
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
@@ -343,15 +350,15 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "proxyConfig": "proxy.conf.json",
+            "proxyConfig": "proxy.conf.js",
             "port": 5001
           },
           "configurations": {
             "production": {
-              "browserTarget": "app:build:production"
+              "buildTarget": "happy5:build:production"
             },
             "development": {
-              "browserTarget": "app:build:development"
+              "buildTarget": "happy5:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -359,18 +366,18 @@
       }
     },
     "number-game": {
-      "root": "app",
+      "root": "",
       "sourceRoot": "number-game",
       "projectType": "application",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:browser-esbuild",
           "options": {
             "outputPath": "../wwwroot/number-game",
-            "index": "number-game/index.cshtml",
+            "index": "number-game/index.html",
             "main": "number-game/main.ts",
             "tsConfig": "number-game/tsconfig.app.json",
-            "polyfills": "polyfills.ts",
+            "polyfills": ["zone.js"],
             "styles": [
               "node_modules/ngx-toastr/toastr.css",
               "shared/styles/material.style.less",
@@ -401,12 +408,13 @@
                 }
               ],
               "outputHashing": "all",
-              "baseHref": "/number-game/"
+              "baseHref": "/number-game/",
+              "index": "number-game/index.cshtml"
             },
             "development": {
               "buildOptimizer": false,
               "optimization": false,
-              "vendorChunk": true,
+              
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
@@ -416,15 +424,15 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "proxyConfig": "proxy.conf.json",
+            "proxyConfig": "proxy.conf.js",
             "port": 5001
           },
           "configurations": {
             "production": {
-              "browserTarget": "app:build:production"
+              "buildTarget": "number-game:build:production"
             },
             "development": {
-              "browserTarget": "app:build:development"
+              "buildTarget": "number-game:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -432,19 +440,19 @@
       }
     },
     "move-tickets": {
-      "root": "app",
+      "root": "",
       "sourceRoot": "move-tickets",
       "projectType": "application",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:browser-esbuild",
           "options": {
             "aot": true,
             "outputPath": "../wwwroot/move-tickets",
-            "index": "move-tickets/index.cshtml",
+            "index": "move-tickets/index.html",
             "main": "move-tickets/main.ts",
             "tsConfig": "move-tickets/tsconfig.app.json",
-            "polyfills": "polyfills.ts",
+            "polyfills": ["zone.js"],
             "styles": [
               "move-tickets/style.less",
               "shared/styles/material.style.less",
@@ -473,12 +481,13 @@
                 }
               ],
               "outputHashing": "all",
-              "baseHref": "/move-tickets/"
+              "baseHref": "/move-tickets/",
+              "index": "move-tickets/index.cshtml"
             },
             "development": {
               "buildOptimizer": false,
               "optimization": false,
-              "vendorChunk": true,
+              
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
@@ -488,15 +497,15 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "proxyConfig": "proxy.conf.json",
+            "proxyConfig": "proxy.conf.js",
             "port": 5001
           },
           "configurations": {
             "production": {
-              "browserTarget": "app:build:production"
+              "buildTarget": "move-tickets:build:production"
             },
             "development": {
-              "browserTarget": "app:build:development"
+              "buildTarget": "move-tickets:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -504,19 +513,19 @@
       }
     },
     "score-source-setting": {
-      "root": "app",
+      "root": "",
       "sourceRoot": "score-source-setting",
       "projectType": "application",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:browser-esbuild",
           "options": {
             "aot": true,
             "outputPath": "../wwwroot/score-source-setting",
-            "index": "score-source-setting/index.cshtml",
+            "index": "score-source-setting/index.html",
             "main": "score-source-setting/main.ts",
             "tsConfig": "score-source-setting/tsconfig.app.json",
-            "polyfills": "polyfills.ts",
+            "polyfills": ["zone.js"],
             "styles": [
               "score-source-setting/style.less",
               "shared/styles/material.style.less",
@@ -545,12 +554,13 @@
                 }
               ],
               "outputHashing": "all",
-              "baseHref": "/score-source-setting/"
+              "baseHref": "/score-source-setting/",
+              "index": "score-source-setting/index.cshtml"
             },
             "development": {
               "buildOptimizer": false,
               "optimization": false,
-              "vendorChunk": true,
+              
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
@@ -560,15 +570,15 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "proxyConfig": "proxy.conf.json",
+            "proxyConfig": "proxy.conf.js",
             "port": 5001
           },
           "configurations": {
             "production": {
-              "browserTarget": "app:build:production"
+              "buildTarget": "score-source-setting:build:production"
             },
             "development": {
-              "browserTarget": "app:build:development"
+              "buildTarget": "score-source-setting:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -581,13 +591,13 @@
       "projectType": "application",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:browser-esbuild",
           "options": {
             "outputPath": "../wwwroot/multi-sports",
-            "index": "multi-sports/index.cshtml",
+            "index": "multi-sports/index.html",
             "main": "multi-sports/main.ts",
             "tsConfig": "multi-sports/tsconfig.app.json",
-            "polyfills": "polyfills.ts",
+            "polyfills": ["zone.js"],
             "styles": [
               "multi-sports/style.less",
               "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
@@ -616,12 +626,13 @@
                 }
               ],
               "outputHashing": "all",
-              "baseHref": "/multi-sports/"
+              "baseHref": "/multi-sports/",
+              "index": "multi-sports/index.cshtml"
             },
             "development": {
               "buildOptimizer": false,
               "optimization": false,
-              "vendorChunk": true,
+              
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
@@ -632,15 +643,15 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "proxyConfig": "proxy.conf.json",
+            "proxyConfig": "proxy.conf.js",
             "port": 5001
           },
           "configurations": {
             "production": {
-              "browserTarget": "app:build:production"
+              "buildTarget": "multi-sports:build:production"
             },
             "development": {
-              "browserTarget": "app:build:development"
+              "buildTarget": "multi-sports:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -648,19 +659,19 @@
       }
     },
     "calculate-page": {
-      "root": "app",
+      "root": "",
       "sourceRoot": "calculate-page",
       "projectType": "application",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:browser-esbuild",
           "options": {
             "aot": true,
             "outputPath": "../wwwroot/calculate-page",
             "index": "calculate-page/index.html",
             "main": "calculate-page/main.ts",
             "tsConfig": "calculate-page/tsconfig.app.json",
-            "polyfills": "polyfills.ts",
+            "polyfills": ["zone.js"],
             "styles": [
               "calculate-page/style.less",
               "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
@@ -690,12 +701,12 @@
                 }
               ],
               "outputHashing": "all",
-              "baseHref": "/calculate-page/"
+              "baseHref": "/calculate-page/",
+              "index": "calculate-page/index.cshtml"
             },
             "development": {
               "buildOptimizer": false,
               "optimization": false,
-              "vendorChunk": true,
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
@@ -706,15 +717,15 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "proxyConfig": "proxy.conf.json",
+            "proxyConfig": "proxy.conf.js",
             "port": 5001
           },
           "configurations": {
-            "development": {
-              "browserTarget": "app:build:development"
-            },
             "production": {
-              "browserTarget": "app:build:production"
+              "buildTarget": "calculate-page:build:production"
+            },
+            "development": {
+              "buildTarget": "calculate-page:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -722,19 +733,19 @@
       }
     },
     "fast-market": {
-      "root": "app",
+      "root": "",
       "sourceRoot": "fast-market",
       "projectType": "application",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:browser-esbuild",
           "options": {
             "aot": true,
             "outputPath": "../wwwroot/fast-market",
-            "index": "fast-market/index.cshtml",
+            "index": "fast-market/index.html",
             "main": "fast-market/main.ts",
             "tsConfig": "fast-market/tsconfig.app.json",
-            "polyfills": "polyfills.ts",
+            "polyfills": ["zone.js"],
             "styles": [
               "node_modules/ngx-toastr/toastr.css",
               "shared/styles/material.style.less",
@@ -764,12 +775,12 @@
                 }
               ],
               "outputHashing": "all",
-              "baseHref": "/fast-market/"
+              "baseHref": "/fast-market/",
+              "index": "fast-market/index.cshtml"
             },
             "development": {
               "buildOptimizer": false,
               "optimization": false,
-              "vendorChunk": true,
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
@@ -779,15 +790,15 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "proxyConfig": "proxy.conf.json",
+            "proxyConfig": "proxy.conf.js",
             "port": 5001
           },
           "configurations": {
             "production": {
-              "browserTarget": "app:build:production"
+              "buildTarget": "fast-market:build:production"
             },
             "development": {
-              "browserTarget": "app:build:development"
+              "buildTarget": "fast-market:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -795,19 +806,19 @@
       }
     },
     "soccer": {
-      "root": "app",
+      "root": "",
       "sourceRoot": "soccer",
       "projectType": "application",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:browser-esbuild",
           "options": {
             "aot": true,
             "outputPath": "../wwwroot/soccer",
-            "index": "soccer/index.cshtml",
+            "index": "soccer/index.html",
             "main": "soccer/main.ts",
             "tsConfig": "soccer/tsconfig.app.json",
-            "polyfills": "polyfills.ts",
+            "polyfills": ["zone.js"],
             "styles": [
               "node_modules/ngx-toastr/toastr.css",
               "shared/styles/material.style.less",
@@ -823,7 +834,7 @@
               "sourceMap": true,
               "namedChunks": true,
               "extractLicenses": false,
-              "vendorChunk": true,
+              
               "buildOptimizer": false
             },
             "production": {
@@ -846,22 +857,23 @@
                 }
               ],
               "outputHashing": "all",
-              "baseHref": "/soccer/"
+              "baseHref": "/soccer/",
+              "index": "soccer/index.cshtml"
             }
           }
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "proxyConfig": "proxy.conf.json",
+            "proxyConfig": "proxy.conf.js",
             "port": 5001
           },
           "configurations": {
             "development": {
-              "browserTarget": "app:build:development"
+              "buildTarget": "soccer:build:development"
             },
             "production": {
-              "browserTarget": "app:build:production"
+              "buildTarget": "soccer:build:production"
             }
           },
           "defaultConfiguration": "development"
@@ -869,19 +881,19 @@
       }
     },
     "e-sports": {
-      "root": "app",
+      "root": "",
       "sourceRoot": "e-sports",
       "projectType": "application",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:browser-esbuild",
           "options": {
             "aot": true,
             "outputPath": "../wwwroot/e-sports",
-            "index": "e-sports/index.cshtml",
+            "index": "e-sports/index.html",
             "main": "e-sports/main.ts",
             "tsConfig": "e-sports/tsconfig.app.json",
-            "polyfills": "polyfills.ts",
+            "polyfills": ["zone.js"],
             "styles": [
               "node_modules/ngx-toastr/toastr.css",
               "shared/styles/material.style.less",
@@ -912,12 +924,13 @@
                 }
               ],
               "outputHashing": "all",
-              "baseHref": "/e-sports/"
+              "baseHref": "/e-sports/",
+              "index": "e-sports/index.cshtml"
             },
             "development": {
               "buildOptimizer": false,
               "optimization": false,
-              "vendorChunk": true,
+              
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
@@ -927,15 +940,15 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "proxyConfig": "proxy.conf.json",
+            "proxyConfig": "proxy.conf.js",
             "port": 5001
           },
           "configurations": {
             "development": {
-              "browserTarget": "app:build:development"
+              "buildTarget": "e-sports:build:development"
             },
             "production": {
-              "browserTarget": "app:build:production"
+              "buildTarget": "e-sports:build:production"
             }
           },
           "defaultConfiguration": "development"
@@ -944,19 +957,19 @@
     },
 
     "basketball": {
-      "root": "app",
+      "root": "",
       "sourceRoot": "basketball",
       "projectType": "application",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:browser-esbuild",
           "options": {
             "aot": true,
             "outputPath": "../wwwroot/basketball",
-            "index": "basketball/index.cshtml",
+            "index": "basketball/index.html",
             "main": "basketball/main.ts",
             "tsConfig": "basketball/tsconfig.app.json",
-            "polyfills": "polyfills.ts",
+            "polyfills": ["zone.js"],
             "styles": [
               "node_modules/ngx-toastr/toastr.css",
               "shared/styles/material.style.less",
@@ -987,12 +1000,13 @@
                 }
               ],
               "outputHashing": "all",
-              "baseHref": "/basketball/"
+              "baseHref": "/basketball/",
+              "index": "basketball/index.cshtml"
             },
             "development": {
               "buildOptimizer": false,
               "optimization": false,
-              "vendorChunk": true,
+              
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
@@ -1002,15 +1016,15 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "proxyConfig": "proxy.conf.json",
+            "proxyConfig": "proxy.conf.js",
             "port": 5001
           },
           "configurations": {
             "development": {
-              "browserTarget": "app:build:development"
+              "buildTarget": "basketball:build:development"
             },
             "production": {
-              "browserTarget": "app:build:production"
+              "buildTarget": "basketball:build:production"
             }
           },
           "defaultConfiguration": "development"
@@ -1018,19 +1032,19 @@
       }
     },
     "badminton": {
-      "root": "app",
+      "root": "",
       "sourceRoot": "badminton",
       "projectType": "application",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:browser-esbuild",
           "options": {
             "aot": true,
             "outputPath": "../wwwroot/badminton",
-            "index": "badminton/index.cshtml",
+            "index": "badminton/index.html",
             "main": "badminton/main.ts",
             "tsConfig": "badminton/tsconfig.app.json",
-            "polyfills": "polyfills.ts",
+            "polyfills": ["zone.js"],
             "styles": [
               "node_modules/ngx-toastr/toastr.css",
               "shared/styles/material.style.less",
@@ -1061,12 +1075,13 @@
                 }
               ],
               "outputHashing": "all",
-              "baseHref": "/badminton/"
+              "baseHref": "/badminton/",
+              "index": "badminton/index.cshtml"
             },
             "development": {
               "buildOptimizer": false,
               "optimization": false,
-              "vendorChunk": true,
+              
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
@@ -1076,15 +1091,15 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "proxyConfig": "proxy.conf.json",
+            "proxyConfig": "proxy.conf.js",
             "port": 5001
           },
           "configurations": {
             "production": {
-              "browserTarget": "app:build:production"
+              "buildTarget": "badminton:build:production"
             },
             "development": {
-              "browserTarget": "app:build:development"
+              "buildTarget": "badminton:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -1092,19 +1107,19 @@
       }
     },
     "tennis": {
-      "root": "app",
+      "root": "",
       "sourceRoot": "tennis",
       "projectType": "application",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:browser-esbuild",
           "options": {
             "aot": true,
             "outputPath": "../wwwroot/tennis",
-            "index": "tennis/index.cshtml",
+            "index": "tennis/index.html",
             "main": "tennis/main.ts",
             "tsConfig": "tennis/tsconfig.app.json",
-            "polyfills": "polyfills.ts",
+            "polyfills": ["zone.js"],
             "styles": [
               "node_modules/ngx-toastr/toastr.css",
               "shared/styles/material.style.less",
@@ -1135,12 +1150,13 @@
                 }
               ],
               "outputHashing": "all",
-              "baseHref": "/tennis/"
+              "baseHref": "/tennis/",
+              "index": "tennis/index.cshtml"
             },
             "development": {
               "buildOptimizer": false,
               "optimization": false,
-              "vendorChunk": true,
+              
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
@@ -1150,15 +1166,15 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "proxyConfig": "proxy.conf.json",
+            "proxyConfig": "proxy.conf.js",
             "port": 5001
           },
           "configurations": {
             "production": {
-              "browserTarget": "app:build:production"
+              "buildTarget": "tennis:build:production"
             },
             "development": {
-              "browserTarget": "app:build:development"
+              "buildTarget": "tennis:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -1166,19 +1182,19 @@
       }
     },
     "cricket": {
-      "root": "app",
+      "root": "",
       "sourceRoot": "cricket",
       "projectType": "application",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:browser-esbuild",
           "options": {
             "aot": true,
             "outputPath": "../wwwroot/cricket",
-            "index": "cricket/index.cshtml",
+            "index": "cricket/index.html",
             "main": "cricket/main.ts",
             "tsConfig": "cricket/tsconfig.app.json",
-            "polyfills": "polyfills.ts",
+            "polyfills": ["zone.js"],
             "styles": [
               "node_modules/ngx-toastr/toastr.css",
               "shared/styles/material.style.less",
@@ -1209,12 +1225,13 @@
                 }
               ],
               "outputHashing": "all",
-              "baseHref": "/cricket/"
+              "baseHref": "/cricket/",
+              "index": "cricket/index.cshtml"
             },
             "development": {
               "buildOptimizer": false,
               "optimization": false,
-              "vendorChunk": true,
+              
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
@@ -1225,15 +1242,15 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "proxyConfig": "proxy.conf.json",
+            "proxyConfig": "proxy.conf.js",
             "port": 5001
           },
           "configurations": {
             "production": {
-              "browserTarget": "app:build:production"
+              "buildTarget": "cricket:build:production"
             },
             "development": {
-              "browserTarget": "app:build:development"
+              "buildTarget": "cricket:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -1242,18 +1259,18 @@
     },
 
     "other-sports": {
-      "root": "app",
+      "root": "",
       "sourceRoot": "other-sports",
       "projectType": "application",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:browser-esbuild",
           "options": {
             "outputPath": "../wwwroot/other-sports",
-            "index": "other-sports/index.cshtml",
+            "index": "other-sports/index.html",
             "main": "other-sports/main.ts",
             "tsConfig": "other-sports/tsconfig.app.json",
-            "polyfills": "polyfills.ts",
+            "polyfills": ["zone.js"],
             "styles": [
               "node_modules/ngx-toastr/toastr.css",
               "shared/styles/material.style.less",
@@ -1285,12 +1302,13 @@
                 }
               ],
               "outputHashing": "all",
-              "baseHref": "/other-sports/"
+              "baseHref": "/other-sports/",
+              "index": "other-sports/index.cshtml"
             },
             "development": {
               "buildOptimizer": false,
               "optimization": false,
-              "vendorChunk": true,
+              
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
@@ -1301,15 +1319,15 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "proxyConfig": "proxy.conf.json",
+            "proxyConfig": "proxy.conf.js",
             "port": 5001
           },
           "configurations": {
             "production": {
-              "browserTarget": "app:build:production"
+              "buildTarget": "other-sports:build:production"
             },
             "development": {
-              "browserTarget": "app:build:development"
+              "buildTarget": "other-sports:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -1322,13 +1340,13 @@
       "projectType": "application",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:browser-esbuild",
           "options": {
             "outputPath": "../wwwroot/outright",
-            "index": "outright/index.cshtml",
+            "index": "outright/index.html",
             "main": "outright/main.ts",
             "tsConfig": "outright/tsconfig.app.json",
-            "polyfills": "polyfills.ts",
+            "polyfills": ["zone.js"],
             "styles": [
               "outright/style.less",
               "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
@@ -1359,12 +1377,13 @@
                 }
               ],
               "outputHashing": "all",
-              "baseHref": "/outright/"
+              "baseHref": "/outright/",
+              "index": "outright/index.cshtml"
             },
             "development": {
               "buildOptimizer": false,
               "optimization": false,
-              "vendorChunk": true,
+              
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
@@ -1375,15 +1394,15 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "proxyConfig": "proxy.conf.json",
+            "proxyConfig": "proxy.conf.js",
             "port": 5001
           },
           "configurations": {
             "production": {
-              "browserTarget": "app:build:production"
+              "buildTarget": "outright:build:production"
             },
             "development": {
-              "browserTarget": "app:build:development"
+              "buildTarget": "outright:build:development"
             }
           },
           "defaultConfiguration": "development"

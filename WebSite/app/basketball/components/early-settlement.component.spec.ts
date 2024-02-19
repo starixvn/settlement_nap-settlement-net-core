@@ -91,11 +91,6 @@ describe('Component: EarlySettlementComponent', () => {
                 ResettleCheckerComponent,
             ],
         })
-            .overrideModule(BrowserDynamicTestingModule, {
-                set: {
-                    entryComponents: [ModalDialogComponent, ModalContentDialogComponent],
-                },
-            })
             .compileComponents()
             .then(() => {
                 fixture = TestBed.createComponent(EarlySettlementComponent);

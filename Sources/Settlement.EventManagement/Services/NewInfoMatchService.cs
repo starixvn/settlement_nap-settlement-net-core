@@ -27,7 +27,7 @@ public interface NewInfoMatchService
 
     bool IsExistsConfirmedEarly(MultiSportMatch match);
 
-    Task<List<MultiSportMatch>> GetAutoSetting(List<MultiSportMatch> matches);
+    Task<List<T>> GetAutoSetting<T>(List<T> matches) where T : BaseMatch;
 }
 
 public class NewInfoMatchServiceImp(
@@ -130,23 +130,21 @@ public class NewInfoMatchServiceImp(
         return siteMatchService.IsExistsConfirmedEarly(match);
     }
 
-    public async Task<List<MultiSportMatch>> GetAutoSetting(List<MultiSportMatch> matches)
+    public async Task<List<T>> GetAutoSetting<T>(List<T> matches) where T : BaseMatch
     {
-        var matchStatuses = await getMatchStatus(matches);
-        var dictionary = matches.ToDictionary(m => m.MatchId);
-
-        foreach (var matchStatus in matchStatuses)
+        var matchStatuses = (await GetMatchStatus(matches)).ToList();
+        return matches.Join(matchStatuses, m => m.MatchId, s => s.MatchId, (m, s) =>
         {
-            dictionary[matchStatus.MatchId].AutoPayoutStatus = matchStatus.StatusId;
-        }
-
-        return dictionary.Values.ToList();
+            m.AutoPayoutStatus = s.AutoPayoutStatus;
+            m.AutoInstantStatus = s.InstantStatus;
+            return m;
+        }).ToList();
     }
 
-    private async Task<IEnumerable<MatchStatusModel>> getMatchStatus(List<MultiSportMatch> matches)
+    private async Task<IEnumerable<MatchStatusModel>> GetMatchStatus(IEnumerable<BaseMatch> matches)
     {
         var matchIds = string.Join(',', matches.Select(m => m.MatchId));
-        var criteria = new GetMatchWaitingInfo
+        var criteria = new GetAutoStatusCriteria()
         {
             MatchIds = matchIds
         };

@@ -3,7 +3,7 @@ import { AutoSetting } from "../../shared/models";
 
 export class League {
     public leagueId: number;
-    public leagueName: string;
+    public name: string;
     public directWaitingTime: number;
     public instantWaitingTime: number;
     public autoCalcSetting: AutoSetting;

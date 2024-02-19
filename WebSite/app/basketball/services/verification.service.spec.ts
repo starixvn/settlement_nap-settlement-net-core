@@ -59,10 +59,6 @@ describe('Basketball - Verify Service', () => {
             imports: [
                 NgbModule,
             ]
-        }).overrideModule(BrowserDynamicTestingModule, {
-            set: {
-                entryComponents: [ModalDialogComponent]
-            },
         }).compileComponents();
 
         service = TestBed.inject(VerificationService);

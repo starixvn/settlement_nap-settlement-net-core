@@ -65,11 +65,7 @@ describe('GoalHistoryComponent', () => {
                 VerifyMatchService,
                 VerifyScoreGoalService,
             ]
-        }).overrideModule(BrowserDynamicTestingModule, {
-            set: {
-              entryComponents: [ModalDialogComponent, ModalContentDialogComponent],
-            },
-          }).compileComponents();
+        }).compileComponents();
     });
 
     beforeEach(() => {

@@ -48,10 +48,6 @@ describe('Tennis - Calculation Match Detail Component', () => {
         HttpClientModule,
         MaterialModule
       ],
-    }).overrideModule(BrowserDynamicTestingModule, {
-      set: {
-        entryComponents: [ManageLeagueComponent],
-      },
     })
       .compileComponents()
       .then(() => {

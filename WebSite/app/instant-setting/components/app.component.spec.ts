@@ -29,11 +29,8 @@ describe('AppComponent', () => {
         ToastNoAnimationModule.forRoot(),
         ToastContainerModule,
         ToastrModule.forRoot()
-      ],
-      providers: [
         BlockUIService
       ]
-    })
     .compileComponents()
     .then(() => {
         fixture = TestBed.createComponent(AppComponent);

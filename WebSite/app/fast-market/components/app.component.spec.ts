@@ -60,11 +60,6 @@ describe('Component: AppComponent', () => {
                 ToastNoAnimationModule.forRoot(),
             ],
         })
-            .overrideModule(BrowserDynamicTestingModule, {
-                set: {
-                    entryComponents: [ModalDialogComponent, ModalContentDialogComponent],
-                },
-            })
             .compileComponents()
             .then(() => {
                 fixture = TestBed.createComponent(AppComponent);
