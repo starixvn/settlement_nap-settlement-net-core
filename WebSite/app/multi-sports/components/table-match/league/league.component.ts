@@ -90,7 +90,7 @@ export class LeagueComponent implements OnInit, OnDestroy {
       autoCalcSetting.isInstantForLeague = !autoCalcSetting.isInstantForLeague;
       if (isApplyAll) {
         this.handleActionService.handleAutoInstantForMatch(leagueMatch, autoCalcSetting.isInstantForLeague);
-        this.cd.markForCheck();
+        this.cd.detectChanges();
       }
     } else {
       this.store.dialogMessage.message = result.errMsg;

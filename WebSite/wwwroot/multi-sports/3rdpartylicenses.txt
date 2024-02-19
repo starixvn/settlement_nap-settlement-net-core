@@ -410,6 +410,11 @@ Package: @angular/platform-browser
 License: "MIT"
 
 --------------------------------------------------------------------------------
+Package: @angular/platform-browser
+License: "MIT"
+
+
+--------------------------------------------------------------------------------
 Package: zone.js
 License: "MIT"
 

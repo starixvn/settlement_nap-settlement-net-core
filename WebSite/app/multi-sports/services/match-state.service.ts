@@ -24,7 +24,7 @@ export class MatchStateService {
   }
 
   getBackgroundAutoSetting(match: Match, permission: Permission) {
-    const enableLink = permission.canAutoPayout ? BackgroundColor.codeLink : "";
+    const enableLink = permission.canAutoPayout && isPayout ? BackgroundColor.codeLink : "";
     const colorStatus = _.isEqual(match.autoPayoutStatus, this.autoSettingCompleted) ? 'auto-setting-completed' :
       _.isEqual(match.autoPayoutStatus, this.autoSettingFailed) ? 'auto-setting-failed' : '';
 
@@ -110,10 +110,9 @@ export class MatchStateService {
 
   isHideHtScore(match: Match, permission: Permission) {
     return ResultType.havingHalfTimeConfirmedStatus.includes(match.sportType)
-      && !permission.isLeader // false => true
-      && !match.isHalfTimeCal // flase => true
-      && (!this.isRefundHt(match)
-        && !match.isCalRefund);
+      && !permission.isLeader 
+      && !match.isHalfTimeCal
+      && (!this.isRefundHt(match) && !match.isCalRefund);
   }
 
   private isRefundHt(match: Match) {
@@ -258,6 +257,5 @@ export class MatchStateService {
     }
 
     return "OFF";
-
   }
 }
