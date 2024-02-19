@@ -9,8 +9,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { BrowserModule } from '@angular/platform-browser';
 import {
     AppComponent,
-    FilterComponent,
-    LeagueComponent,
+    FilterComponent
 } from '.';
 import { MultiSportService, RefreshMatchService } from '../services';
 import { GenerateFilterService } from '../../shared/services';
@@ -29,12 +28,6 @@ describe('MultiSport - AppComponent', () => {
 
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
-            declarations: [
-                AppComponent,
-                FilterComponent,
-                LeagueComponent,
-                ModalContentDialogComponent,
-            ],
             imports: [
                 BrowserModule,
                 FormsModule,
@@ -44,7 +37,10 @@ describe('MultiSport - AppComponent', () => {
                 MaterialModule,
                 PipesModule,
                 DatepickerComponent,
-                NewMultipleSelectComponent
+                NewMultipleSelectComponent,
+                AppComponent,
+                FilterComponent,
+                ModalContentDialogComponent,
             ],
             providers: [
                 VerifyDateService,
@@ -81,20 +77,4 @@ describe('MultiSport - AppComponent', () => {
 
         expect(reCheckInService.reCheckin).toHaveBeenCalled();
     }));
-
-    it('search - should set multi sport', () => {
-        const multiSport = new MultiSport();
-
-        component.search(multiSport);
-
-        expect(component.multiSport).toEqual(multiSport);
-    });
-
-    it('getRequest - should set request', () => {
-        const request = new MatchWaitingRequest('', '', '', '', "", "");
-
-        component.getRequest(request);
-
-        expect(component.request).toEqual(request);
-    });
 });

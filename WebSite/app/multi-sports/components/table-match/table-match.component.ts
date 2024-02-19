@@ -45,7 +45,7 @@ export class TableMatchComponent implements OnInit {
     this.refreshMatches();
   }
 
-  public ngOnDestroy() {
+  ngOnDestroy() {
     this.ngUnsubscribe.next(1);
     this.ngUnsubscribe.complete();
     if (this.subscriber) {

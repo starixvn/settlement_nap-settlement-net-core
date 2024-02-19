@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { MatchWaitingRequest, MultiSport } from "../models";
+import { MatchRequest, MultiSport } from "../models";
 import { Observable } from "rxjs/internal/Observable";
 import { BehaviorSubject } from "rxjs/internal/BehaviorSubject";
 import { ModalDialogMessage } from "../../shared/models";
@@ -10,7 +10,7 @@ import { ModalDialogMessage } from "../../shared/models";
 
 export class MultiSportsStore{
   dialogMessage: ModalDialogMessage = new ModalDialogMessage();
-  request: MatchWaitingRequest;
+  request: MatchRequest;
   enableRefresh: boolean = false;
   state$: Observable<MultiSport>;
   private _state$: BehaviorSubject<MultiSport>;

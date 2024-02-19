@@ -9,7 +9,7 @@ import { GenerateFilterService, MessageBoxService, VerifyDateService } from '../
 import {
     FilterRequest,
     LeagueFilterRequest,
-    MatchWaitingRequest,
+    MatchRequest,
     SportFilterRequest,
     SportMatch
 } from '../models';
@@ -69,20 +69,12 @@ export class FilterComponent implements OnInit {
         await this.initialData();
     }
 
-
-    // ChangeDetectionCount = 0
-    // get GetChangeDetectionCount() {
-    //     return this.ChangeDetectionCount++
-    // }
-
     private async initialData() {
         const date = await this.multiSportService.getDate();
         this.fromDate = this.verifyDateService.convertToDateStruct(date.fromDate);
         this.toDate = this.verifyDateService.convertToDateStruct(date.toDate);
         this.initLeague();
         await this.getSport(this.fromDate, this.toDate);
-        // this.matchCode = '79648780';
-        // this.search();
     }
 
     private generateFilter() {
@@ -130,7 +122,7 @@ export class FilterComponent implements OnInit {
         const multiSport = await this.multiSportService.filter(query);
 
         const matchIds = this.getAllMatchId(multiSport.sports);
-        const request = new MatchWaitingRequest(this.leaguesSelected, matchIds, fromDate, toDate, this.overStatusSelected, this.matchCode);
+        const request = new MatchRequest(this.leaguesSelected, matchIds, fromDate, toDate, this.overStatusSelected, this.matchCode);
         this.multiSportsStore.request = { ...request };
         this.multiSportsStore.enableRefresh = multiSport.sports.length > 0;
         this.multiSportsStore.setState(multiSport);

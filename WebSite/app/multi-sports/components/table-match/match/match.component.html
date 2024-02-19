@@ -3,7 +3,7 @@
 		<td class="code">
 			@if (store.state.permission.canViewSettlementLog) {
 			<div>
-				<div class="code-link" (click)="getLog(match.matchId)">
+				<div class="code-link" (click)="getLog()">
 					{{ match.matchCode }}
 				</div>
 			</div>
@@ -97,7 +97,7 @@
 			<div>{{ match.confirmFullTimeScore }}</div>
 			}
 		</td>
-		<td rowspan="2" class="auto-instant">
+		<td rowspan="2" class="auto-instant" [ngClass]="matchState.instantSettingBackgroundColor">
 			@if (sportSupportInstant.includes(match.sportType)) {
 			<div [class]="matchState.instantClass" (click)="store.state.permission.canAutoPayout && updateInstant()">
 			</div>

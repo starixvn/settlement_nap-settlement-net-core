@@ -1,3 +1,4 @@
+import { map } from "lodash";
 import { BackgroundColor } from "../../shared/constants";
 import { MatchStateService } from "../services/match-state.service";
 import { MultiSportsStore } from "../services/multi-sports.store";
@@ -7,6 +8,7 @@ export class MatchState {
   hasValue: boolean;
   undecidedColor: string;
   autoSettingBackgroundColor: string;
+  instantSettingBackgroundColor: string;
   resultHomeConfirmedBackgroundColor: string;
   resultAwayConfirmedBackgroundColor: string;
   totalHomeGames: string;
@@ -36,6 +38,7 @@ export class MatchState {
     this.hasValue = true;
     this.undecidedColor = service.getUndecidedColor(match.remark);
     this.autoSettingBackgroundColor = service.getBackgroundAutoSetting(match, store.state.permission);
+    this.instantSettingBackgroundColor = service.getBackgroundAutoSetting(match, store.state.permission, false);
     this.resultHomeConfirmedBackgroundColor = service.ResultConfirmedBackGround(match, 'home');
     this.resultAwayConfirmedBackgroundColor = service.ResultConfirmedBackGround(match, 'away');
     this.totalHomeGames = service.getTotalHomeGames(match);

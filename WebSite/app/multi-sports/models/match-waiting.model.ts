@@ -24,6 +24,7 @@ export class MatchWaiting {
   public earlySettleStatus: string;
   public betStatus: string;
   public autoPayoutStatus: number;
+  public autoInstantStatus: number
   public isNotConsistentExFtScore: boolean;
   public isNotConsistentExHtScore: boolean;
   public confirmFullTimeScore: string;

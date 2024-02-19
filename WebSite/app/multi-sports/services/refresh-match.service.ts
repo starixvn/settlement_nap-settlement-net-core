@@ -1,7 +1,7 @@
 ﻿import { ChangeDetectorRef, Injectable } from '@angular/core';
 import * as _ from 'lodash';
 import { HttpRequestService } from '../../shared/services';
-import { MatchWaitingRequest, SportMatch, Match } from '../models';
+import { MatchRequest, SportMatch, Match } from '../models';
 import { DetectChangesService } from './detect-changes.service';
 import { Permission } from '../../shared/models/sportsbook-sop/permission.model';
 import { MatchWaiting } from '../models/match-waiting.model';
@@ -18,18 +18,18 @@ export class RefreshMatchService {
     private readonly matchStateService: MatchStateService,
     private readonly store: MultiSportsStore) { }
 
-  refreshMatches(currentSportMatches: SportMatch[], request: MatchWaitingRequest) {
-    this.getMatches(request).subscribe((matchesWaiting: Match[]) => {
+  refreshMatches(currentSportMatches: SportMatch[], request: MatchRequest) {
+    this.getMatches(request).subscribe((matchesWaiting: MatchWaiting[]) => {
       this.changeInfoAfterRefreshMatches(currentSportMatches, matchesWaiting);
     });
   }
 
-  private getMatches(param: MatchWaitingRequest) {
+  private getMatches(param: MatchRequest) {
     const url = `/api/multi-sports/auto-refresh`;
     return this.httpRequestService.postMessagePack(param, url, false);
   }
 
-  private changeInfoAfterRefreshMatches(currentSportMatches: SportMatch[], matches: Match[]) {
+  private changeInfoAfterRefreshMatches(currentSportMatches: SportMatch[], matches: MatchWaiting[]) {
     for (const sport of currentSportMatches) {
       sport.leagues.forEach((league, leagueIndex) => {
         league.matches.forEach((match, matchIndex) => {

@@ -59,8 +59,8 @@ export class MatchComponent implements OnChanges, OnInit {
 
 
   ngOnChanges(changes: SimpleChanges) {
-      this.sportMatchService.getMatchIntervalScore(this.match, this.store.state.permission);
-      this.state$.next(new MatchState(this.matchStateService, this.match, this.store));
+    this.sportMatchService.getMatchIntervalScore(this.match, this.store.state.permission);
+    this.state$.next(new MatchState(this.matchStateService, this.match, this.store));
   }
 
   public changeAutoSetting() {
@@ -69,8 +69,8 @@ export class MatchComponent implements OnChanges, OnInit {
     }
   }
 
-  public getLog(matchId: string) {
-    this.popupService.popupLog(matchId, this.store.request.fromDate, this.store.request.toDate);
+  public getLog() {
+    this.popupService.popupLog(this.match.matchId, this.store.request.fromDate, this.store.request.toDate);
   }
 
   public popupCalc() {
