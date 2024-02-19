@@ -5,6 +5,7 @@ namespace Settlement.EventManagement.Services.MultiSports;
 using Fanex.Settlement.ScaleOut.Services;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
+using Settlement.EventManagement.Constants;
 using Match = Models.MultiSports.Match;
 
 public interface IMatchService
@@ -65,80 +66,14 @@ public class MatchServiceImp(
         };
     }
 
-    private readonly List<int> fullTimeSports =
-    [
-        SportType.IceHockey,
-        SportType.VolleyBall,
-        SportType.TableTennis,
-        SportType.Handball,
-        SportType.Dart,
-        SportType.Swimming,
-        SportType.Politics,
-        SportType.WaterPolo,
-        SportType.Diving,
-        SportType.Boxing,
-        SportType.Archery,
-        SportType.Weightlifting,
-        SportType.Canoeing,
-        SportType.Gymnastics,
-        SportType.Athletics,
-        SportType.Equestrian,
-        SportType.Entertainment,
-        SportType.OtherSports,
-        SportType.Kabaddi,
-        SportType.Futsal,
-        SportType.UpcomingSport56,
-        SportType.Billard,
-        SportType.Golf,
-        SportType.Motorsports,
-        SportType.Winter,
-        SportType.Cycling,
-        SportType.Fencing,
-        SportType.Judo,
-        SportType.ModernPentathlon,
-        SportType.Rowing,
-        SportType.Sailing,
-        SportType.Shooting,
-        SportType.Taekwondo,
-        SportType.Triathlon,
-        SportType.Wrestling,
-        SportType.MuayThai,
-        SportType.BeachSoccer,
-        SportType.Poker,
-        SportType.Chess,
-        SportType.Olympic,
-        SportType.Finance,
-        SportType.FieldHockey,
-        SportType.Squash,
-        SportType.SepakTakraw,
-        SportType.AlpineSkiing,
-        SportType.Biathlon,
-        SportType.Curling,
-        SportType.FigureSkating,
-        SportType.FreestyleSkiing,
-        SportType.Luge,
-        SportType.Skeleton,
-        SportType.SkiJumping,
-        SportType.SpeedSkating
-    ];
-
-    private readonly List<int> halfTimeFullTimeSports =
-    [
-        SportType.Football,
-        SportType.BaseBall,
-        SportType.Rugby,
-        SportType.NetBall,
-        SportType.Bandy
-    ];
-
     private List<Match> LoadExternalResults(List<Match> matches, List<ResultDetail> resultDetails, int sportType)
     {
-        if (fullTimeSports.Contains(sportType))
+        if (Sports.FullTimeSports.Contains(sportType))
         {
             return matchResultDetailService.OtherSportsResultDetail(matches, resultDetails, false);
         }
 
-        if (halfTimeFullTimeSports.Contains(sportType))
+        if (Sports.HalfTimeFullTimeSports.Contains(sportType))
         {
             return matchResultDetailService.OtherSportsResultDetail(matches, resultDetails, true);
         }

@@ -1,4 +1,4 @@
-import { waitForAsync, ComponentFixture, TestBed, tick, fakeAsync, flush } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import {
   MatchComponent,
 } from '../..';
@@ -17,7 +17,7 @@ import { MaterialModule } from '../../../../shared/material-module';
 import { IntervalScorePipe } from '../../../../shared/pipes/interval-score.pipe';
 import {
   Score,
-  AutoSetting
+  AutoSetting,
 } from '../../../../shared/models';
 import { CalculationStatus, SportType } from '../../../../shared/constants';
 import { Permission } from '../../../../shared/models/sportsbook-sop/permission.model';
@@ -287,41 +287,43 @@ describe('matchComponent', () => {
   });
 
   describe('updateInstant', () => {
-    it('should call update instant when match pass validation', fakeAsync(() => {
+    it('should call update instant when match pass validation', async () => {
       store.state.permission.canAutoPayout = true;
       match.isCalculatingSingle = CalculationStatus.success;
       match.autoCalcSetting = new AutoSetting();
       match.autoCalcSetting.isInstantForMatch = false;
-      component.match = match
-      multiSportService.updateSettingMatch = jest.fn().mockReturnValue(Promise.resolve(mockResultSuccess));
+      component.match = match;
+      multiSportService.updateSettingMatch = jest.fn().mockResolvedValue(mockResultSuccess);
       refreshMatchService.refreshMatch = jest.fn();
 
       component.updateInstant();
-      tick();
+
       const buttonYes = document.getElementsByClassName('btn-danger')[0] as HTMLElement;
       buttonYes.click();
-      tick();
+      await new Promise(resolve => setTimeout(resolve, 100));
 
       expect(component.match.autoCalcSetting.isInstantForMatch).toBeTruthy();
       expect(refreshMatchService.refreshMatch).toHaveBeenCalled();
       expect(multiSportService.updateSettingMatch).toHaveBeenCalled();
-    }));
+    });
 
-    it('should alert when update failed', fakeAsync(() => {
+
+    it('should alert when update failed', async () => {
       store.state.permission.canAutoPayout = true;
       match.isCalculatingSingle = CalculationStatus.success;
       match.autoCalcSetting = new AutoSetting();
       match.autoCalcSetting.isInstantForMatch = false;
+      component.match = match;
       jest.spyOn(multiSportService, 'updateSettingMatch').mockReturnValue(Promise.resolve(mockResultFailed));
       jest.spyOn(messageBoxService, 'alert');
 
       component.updateInstant();
       const buttonYes = document.getElementsByClassName('btn-danger')[0] as HTMLElement;
       buttonYes.click();
-      tick();
+      await new Promise(resolve => setTimeout(resolve, 100));
 
       expect(component.match.autoCalcSetting.isInstantForMatch).toBeFalsy();
       expect(messageBoxService.alert).toHaveBeenCalled();
-    }));
+    });
   });
 });

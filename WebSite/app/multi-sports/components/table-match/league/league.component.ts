@@ -1,6 +1,6 @@
 import { MessageBoxService } from './../../../../shared/services/message-box.service.native';
 
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from "@angular/core";
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from "@angular/core";
 import { LeagueMatch } from "../../../models";
 import { CommonModule } from "@angular/common";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -26,10 +26,10 @@ import { MatchComponent } from '../match/match.component';
 
 export class LeagueComponent implements OnInit, OnDestroy {
   @Input() league: LeagueMatch;
-  public readonly sportSupportInstant = SportSupportInstant;
-  public permission: Permission;
-  public readonly sportSupportNewAutoPayout = SportNewAutoPayout;
-  public language = Language;
+  readonly sportSupportInstant = SportSupportInstant;
+  readonly sportSupportNewAutoPayout = SportNewAutoPayout;
+  permission: Permission;
+  language = Language;
   ngUnsubscribe = new Subject();
 
   constructor(
@@ -57,7 +57,8 @@ export class LeagueComponent implements OnInit, OnDestroy {
     this.league.collapse = !this.league.collapse;
   }
 
-  getClassInstant(isInstant: boolean) {
+  getClassInstant() {
+    const isInstant = this.league.autoCalcSetting.isInstantForLeague
     if (this.permission.canAutoPayout) {
       return isInstant ? BackgroundColor.iconOn : BackgroundColor.iconOff;
     } else {
@@ -65,14 +66,14 @@ export class LeagueComponent implements OnInit, OnDestroy {
     }
   }
 
-  updateInstantForLeague(autoCalcSetting: AutoSetting, leagueMatch: LeagueMatch) {
+  updateInstantForLeague() {
     this.store.dialogMessage.title = Language.confirmationBox;
-    this.store.dialogMessage.message = autoCalcSetting.isInstantForLeague ? Language.instants.confirmOffLeague : Language.instants.confirmOnLeague;
+    this.store.dialogMessage.message = this.league.autoCalcSetting.isInstantForLeague ? Language.instants.confirmOffLeague : Language.instants.confirmOnLeague;
     this.store.dialogMessage.hasActionOnNoBtn = true;
     this.messageBoxService.confirm(this.store.dialogMessage, () => {
-      this.doUpdateSettingLeague(autoCalcSetting, leagueMatch, true);
+      this.doUpdateSettingLeague(this.league.autoCalcSetting, this.league, true);
     }, () => {
-      this.doUpdateSettingLeague(autoCalcSetting, leagueMatch, false);
+      this.doUpdateSettingLeague(this.league.autoCalcSetting, this.league, false);
     });
   }
 
@@ -89,7 +90,7 @@ export class LeagueComponent implements OnInit, OnDestroy {
       autoCalcSetting.isInstantForLeague = !autoCalcSetting.isInstantForLeague;
       if (isApplyAll) {
         this.handleActionService.handleAutoInstantForMatch(leagueMatch, autoCalcSetting.isInstantForLeague);
-        this.cd.markForCheck();
+        this.cd.detectChanges();
       }
     } else {
       this.store.dialogMessage.message = result.errMsg;
@@ -97,29 +98,29 @@ export class LeagueComponent implements OnInit, OnDestroy {
     }
   }
 
-  openUpdateTime(league: LeagueMatch) {
+  openUpdateTime() {
     if (this.permission.canAutoPayout) {
-      this.popupService.openUpdateTime(league);
+      this.popupService.openUpdateTime(this.league);
     }
   }
 
-  changeAutoLeague(leagueMatch: LeagueMatch) {
+  changeAutoLeague() {
     if (this.permission.canAutoPayout) {
-      SportNewAutoPayout.includes(leagueMatch.sportType) ? 
-      this.popupService.openUpdateNewPayoutForLeague(leagueMatch, () => { this.cd.markForCheck() }) 
-      : this.popupService.openUpdatePayoutForLeague(leagueMatch, () => { this.cd.markForCheck() });
+      SportNewAutoPayout.includes(this.league.sportType) ?
+        this.popupService.openUpdateNewPayoutForLeague(this.league, () => { this.cd.detectChanges() })
+        : this.popupService.openUpdatePayoutForLeague(this.league, () => { this.cd.detectChanges() });
     }
 
   }
 
-  getAutoSettingLeague(autoSetting: AutoSetting) {
-    if (autoSetting.isAutoPayoutForLeague && autoSetting.isDirectPayoutForLeague) {
+  getAutoSettingLeague() {
+    if (this.league.autoCalcSetting.isAutoPayoutForLeague && this.league.autoCalcSetting.isDirectPayoutForLeague) {
       return "BOTH";
     }
-    if (autoSetting.isAutoPayoutForLeague) {
+    if (this.league.autoCalcSetting.isAutoPayoutForLeague) {
       return "AUTO";
     }
-    if (autoSetting.isDirectPayoutForLeague) {
+    if (this.league.autoCalcSetting.isDirectPayoutForLeague) {
       return "DIRECT";
     }
 

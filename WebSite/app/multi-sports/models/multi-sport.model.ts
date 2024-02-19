@@ -1,5 +1,6 @@
-import { Permission } from "../../shared/models/sportsbook-sop/permission.model";
+
 import { SportMatch } from "./";
+import { Permission } from "./permission.model";
 
 export class MultiSport {
     public permission: Permission;

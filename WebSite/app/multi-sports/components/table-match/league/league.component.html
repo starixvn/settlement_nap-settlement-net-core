@@ -4,17 +4,16 @@
 </td>
 <td class="auto-setting" (click)="!sportSupportInstant.includes(league.sportType) && collapseLeague()">
   @if (sportSupportInstant.includes(league.sportType)) {
-  <span [class]="getClassInstant(league.autoCalcSetting.isInstantForLeague)"
-    (click)="updateInstantForLeague(league.autoCalcSetting, league)"> </span>
+  <span [class]="getClassInstant()" (click)="updateInstantForLeague()"> </span>
   }
 </td>
 <td class="remark-status instant-time">
   <ng-container *ngIf="league.matches[0].applyDirect && !sportSupportNewAutoPayout.includes(league.sportType)">
     <div *ngIf="permission.canAutoPayout" class="act-direct-time" [matTooltip]="language.payout.titleDirectTime"
-      matTooltipPosition="above" (click)="openUpdateTime(league)"></div>
+      matTooltipPosition="above" (click)="openUpdateTime()"></div>
     <div>Waiting time: {{ league.autoWaitingTime }}sec</div>
   </ng-container>
-  <ng-container *ngIf="league.matches[0].applyDirect && sportSupportNewAutoPayout.includes(league.sportType)">
+  <ng-container *ngIf="sportSupportNewAutoPayout.includes(league.sportType)">
     <div class="auto-info">
       <span>Waiting time: {{ league.autoWaitingTime | timeConverter }}</span> <br />
       <span>Retry time: {{ league.autoRetryTime | timeConverter }}</span>
@@ -23,6 +22,5 @@
 </td>
 
 <td [ngClass]="{ 'code-link enable': permission.canAutoPayout, 'auto-setting auto-setting-text': true }">
-  <div class="cursor-pointer" (click)="changeAutoLeague(league)">{{
-    getAutoSettingLeague(league.autoCalcSetting) }}</div>
+  <div class="cursor-pointer" (click)="changeAutoLeague()">{{getAutoSettingLeague() }}</div>
 </td>

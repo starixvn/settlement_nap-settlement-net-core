@@ -14,12 +14,6 @@ public class EmptyKeyException : Exception
     {
     }
 
-    [Obsolete("Obsolete")]
-    protected EmptyKeyException(SerializationInfo info, StreamingContext context)
-        : base(info, context)
-    {
-    }
-
     public string Description
     {
         get;

@@ -14,7 +14,7 @@ public class ResultSettings
         SecondaryProvider = ParseProvider(secondaryProvider, providerInfos);
     }
 
-    [JsonConstructor()]
+    [JsonConstructor]
     public ResultSettings()
     {
     }

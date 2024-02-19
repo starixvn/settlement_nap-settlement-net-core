@@ -29,11 +29,6 @@ export class TableMatchComponent implements OnInit {
     private readonly refreshMatchesService: RefreshMatchService) {
   }
 
-  // public ChangeDetectionCount = 0
-  // public get GetChangeDetectionCount() {
-  //   return this.ChangeDetectionCount++
-  // }
-
   ngOnInit(): void {
     this.store.state$.pipe(
       takeUntil(this.ngUnsubscribe),

@@ -209,7 +209,7 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
       this.toastrService.error(Language.inconsistentValues);
     }  else if (!this.onlySelectedFirstHalf && this.validationService.inValidResult(this.resultDetails)) {
       this.toastrService.error(Language.inconsistentValues);
-    } else if (!this.validationService.allowCalcFinalResult(this.firstHalfResult,this.finalResult)) { // check firstHafl no ticket
+    } else if (!this.validationService.allowCalcFinalResult(this.firstHalfResult,this.finalResult)) {
       this.toastrService.error(Language.IntervalWarning);
     }
     else {

@@ -206,11 +206,12 @@ public class FastMarketServiceImp : IFastMarketService
     private async Task<bool> IsOnAutoSettle(int matchId)
     {
         const int convertToBase = 2;
+        const int autoSettlePosition = 2;
         var criteria = new GetMatchDetailCriteria { MatchId = matchId };
         var matchDetail = await repository.GetAsync<Models.MatchDetail>(criteria);
         var settingMatch = Convert.ToString(matchDetail.AutoSetting, convertToBase).Reverse();
 
-        return !string.IsNullOrWhiteSpace(settingMatch) && settingMatch.Length > 2 && settingMatch[2].Equals('1');
+        return !string.IsNullOrWhiteSpace(settingMatch) && settingMatch.Length > 2 && settingMatch[autoSettlePosition].Equals('1');
     }
 
     public async Task<List<TimeMachineResult>> GetOuTimeMachineResult(GetOuTimeMachineResultRequest request)

@@ -13,8 +13,6 @@ public interface ScoreService
 
 public class ScoreServiceImp(IScoreSetService scoreSetService) : ScoreService
 {
-    private readonly List<int> totalPointSports = [SportType.BeachVolleyball, SportType.Badminton, SportType.VolleyBall];
-
     public bool IsIntervalScore(int sportType, List<ResultDetail> resultDetails)
     {
         return sportType == SportType.BasketBall
@@ -37,6 +35,7 @@ public class ScoreServiceImp(IScoreSetService scoreSetService) : ScoreService
 
     public Score HalftimeScore(int sportType, List<ResultDetail> resultDetails, bool isLeader)
     {
+        List<int> totalPointSports = new() { SportType.BeachVolleyball, SportType.Badminton, SportType.VolleyBall };
         if (SportGroup.SupportSettleDetermine.Contains(sportType))
         {
             ClearScore(sportType, resultDetails, ResourceType.Halftime);

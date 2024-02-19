@@ -34,7 +34,6 @@ public class MultipleServerAioServiceImp(
     IMapper mapper,
     ResultAmendmentService resultAmendmentService) : MultipleServerAioService
 {
-    private readonly AppSettingsKey appSettingsKey = appSettingsKey.Value;
 
     public async Task<(List<Models.ResultDetail>, TicketCounts)> FetchResultDetails(GetResultDetailCriteria criteria, int sportType)
     {
@@ -110,7 +109,7 @@ public class MultipleServerAioServiceImp(
             SportType = getResultDetailCriteria.SportType
         };
 
-        foreach (var server in appSettingsKey.SiteDbServer)
+        foreach (var server in appSettingsKey.Value.SiteDbServer)
         {
             var ticketDetails = await GetTicketDetailsByServer(criteria, server);
             multipleTicketDetails.Add(ticketDetails);
@@ -135,7 +134,7 @@ public class MultipleServerAioServiceImp(
             ResourceIds = GetResourceIds(request.SelectedResources)
         };
 
-        foreach (var server in appSettingsKey.SiteDbServer)
+        foreach (var server in appSettingsKey.Value.SiteDbServer)
         {
             criteria.DbServer = server;
             await repository.ExecuteAsync(criteria);
@@ -223,8 +222,8 @@ public class MultipleServerAioServiceImp(
         await WriteLog(criteria);
 
         var isResultAmendment = await HandleResultAmendment(criteria, selectedResources);
+        foreach (var server in appSettingsKey.Value.SiteDbServer)
 
-        foreach (var server in appSettingsKey.SiteDbServer)
         {
             criteria.DbServer = server;
             await repository.ExecuteAsync(criteria);

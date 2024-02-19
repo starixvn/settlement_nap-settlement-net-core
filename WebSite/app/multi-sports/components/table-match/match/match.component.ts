@@ -51,13 +51,6 @@ export class MatchComponent implements OnChanges, OnInit {
     })
   }
 
-  // public ChangeDetectionCount = 0
-  // public get GetChangeDetectionCount() {
-
-  //   return this.ChangeDetectionCount++
-  // }
-
-
   ngOnChanges(changes: SimpleChanges) {
     this.sportMatchService.getMatchIntervalScore(this.match, this.store.state.permission);
     this.state$.next(new MatchState(this.matchStateService, this.match, this.store));
@@ -106,7 +99,7 @@ export class MatchComponent implements OnChanges, OnInit {
     return this.match.intervalScore;
   }
 
-  public updateInstant() {
+  updateInstant() {
     this.dialogMessage.message = Language.instants.confirm;
     this.dialogMessage.title = Language.confirmationBox;
     this.messageBoxService.confirm(this.dialogMessage, () => {
