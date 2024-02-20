@@ -180,12 +180,12 @@ public class SettingServiceImp : SettingService
 
         if (request.IsApplyChild && !string.IsNullOrEmpty(childMatches))
         {
-            var childMatchIds = childMatches.Split(",").Select(x => x.Trim()).Select(x => int.Parse(x));
+            var childMatch = JsonSerializer.Deserialize<List<ChildMatchRemark>>(childMatches);
             var mtdHoldChanged = remarkChanged.Find(x => x.Contains("Mtd. Hold")) ?? string.Empty;
-            var childRemarkLogs = childMatchIds.Select(x => new RemarkLog
+            var childRemarkLogs = childMatch.Select(x => new RemarkLog
             {
-                MatchId = x,
-                Remark = mtdHoldChanged + " parent({parent})"
+                MatchId = x.MatchId,
+                Remark = mtdHoldChanged + $" parent({x.ParentMatchId})"
             });
 
             remarkLogs.AddRange(childRemarkLogs);
@@ -214,7 +214,14 @@ public class SettingServiceImp : SettingService
             return " child(off)";
         }
 
-        return string.IsNullOrEmpty(childMatches) ? " child(0)" : $" child({childMatches})";
+        if (string.IsNullOrEmpty(childMatches))
+        {
+            return " child(0)";
+        }
+
+        var childMatchIds = JsonSerializer.Deserialize<List<ChildMatchRemark>>(childMatches);
+
+        return $" child({string.Join(",", childMatchIds.Select(x => x.MatchId))})";
     }
 
     private string GetHoldName(int remarkType) => remarkType switch

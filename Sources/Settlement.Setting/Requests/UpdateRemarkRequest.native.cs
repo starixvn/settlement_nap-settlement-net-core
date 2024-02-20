@@ -22,14 +22,3 @@ public class UpdateHoldMatchSettingRequest : IRequest<MatchAndPermission>
     public Remark OrgRemark { get; set; }
     public bool IsApplyChild { get; set; }
 }
-
-public record Remark(bool IsPending, bool IsUndecided, bool IsUnderSettle, bool IsMtdHold, bool IsKeyHold);
-
-public class RemarkLog
-{
-    [JsonPropertyName("m")]
-    public int MatchId { get; set; }
-
-    [JsonPropertyName("rm")]
-    public string Remark { get; set; }
-}
