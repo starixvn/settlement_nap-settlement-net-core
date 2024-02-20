@@ -90,10 +90,10 @@ public class GenerateResultAmendmentServiceImp : GenerateResultAmendmentService
             var inning = resourceId.Substring(1, 1);
             var otherInfo = resourceId[..1] is "A" ? $"{resourceItem.AwayId}" : $"{resourceItem.HomeId}";
 
-            itemChanged.Game = inning;
+            itemChanged.MainGame = inning;
             itemChanged.OtherInfo = otherInfo;
 
-            itemSelected.Game = inning;
+            itemSelected.MainGame = inning;
             itemSelected.OtherInfo = otherInfo;
 
             return (itemChanged, itemSelected);

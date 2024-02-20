@@ -31,6 +31,9 @@ public class CricketResultItem
     [XmlAttribute("G")]
     public string Game { get; set; }
 
+    [XmlAttribute("M")]
+    public string MainGame { get; set; }
+
     [XmlAttribute("X")]
     public string X { get; set; }
 
