@@ -8,13 +8,7 @@ public class GetLogResettleCriteria : CriteriaBase
 
     public int SportType { get; set; }
 
-    public override string GetSettingKey()
-    {
-        return "NAP_SettlementLog_SelReSettle";
-    }
+    public override string GetSettingKey() => "NAP_SettlementLog_SelReSettle";
 
-    public override bool IsValid()
-    {
-        return MatchId > 0;
-    }
+    public override bool IsValid() => MatchId > 0;
 }

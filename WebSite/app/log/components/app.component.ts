@@ -1,78 +1,40 @@
-﻿import { interval } from 'rxjs';
-import { ISubscription } from "rxjs-compat/Subscription";
-import { Component, OnInit, OnDestroy, ElementRef } from '@angular/core';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import {
-    BlockUIService,
-    HttpRequestService,
-    MessageBoxService,
-    VerifyDateService,
-    ReCheckInService,
-} from '../../shared/services';
-import { 
-    SearchService, 
-    ResultSoccerService, 
-    ResultOtherSportService } from '../services';
-import { Match } from '../models';
+import { Component, OnInit, ViewContainerRef, ViewChild, ComponentRef, ElementRef } from '@angular/core';
+import { BlockUIService } from '../../shared/services';
+import { PageType } from '../../shared/constants';
+import { LogComponent } from '../components/log';
+import { ProviderLogComponent } from '../components/provider-log/provider-log.component';
 import * as _ from 'lodash';
-import { ResettleType } from '../constants/log-Type';
 
 @Component({
     selector: 'app-root',
-    templateUrl: './app.component.html',
-    providers: [
-        SearchService,
-        VerifyDateService,
-        MessageBoxService,
-        BlockUIService,
-        HttpRequestService,
-        ReCheckInService,
-        NgbActiveModal,
-        ResultOtherSportService,
-        ResultSoccerService],
+    templateUrl: './app.component.html'
 })
 
-export class AppComponent implements OnInit, OnDestroy {
+export class AppComponent implements OnInit {
+    @ViewChild('container', { read: ViewContainerRef, static: true }) container: ViewContainerRef;
     public blockUI = false;
-    public fromDate: string;
-    public toDate: string;
-    public matchCode: string;
-    public isResettleLog: boolean
-    public matches: Match[];
-    private subscriber: ISubscription;
-    private readonly period = 60000;
-    public intervalTimer = interval(this.period);
+    public component: ComponentRef<OnInit>;
     constructor(
-        private readonly elementRef: ElementRef<HTMLElement>,
         private readonly blockUIService: BlockUIService,
-        private readonly reCheckInService: ReCheckInService) {
+        private readonly elementRef: ElementRef<HTMLElement>,
+        private viewContainerRef: ViewContainerRef) {
     }
 
     public ngOnInit() {
         this.blockUIService.blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
-        this.reCheckIn();
+        this.createTemplateComponent();
     }
 
-    public ngOnDestroy() {
-        if (this.subscriber) {
-            this.subscriber.unsubscribe();
-        }
+    private createTemplateComponent() {
+        this.component = this.getComponentFactory();
+        return this.component;
     }
 
-    public search($event) {
-        this.matchCode = $event.matchCode;
-        this.fromDate = $event.fromDate;
-        this.toDate = $event.toDate;
-        this.isResettleLog = _.isEqual($event.productType, ResettleType);
-    }
-
-    public getMatch($event) {
-        this.matches = $event;
-    }
-
-    private reCheckIn() {
-        this.subscriber = this.intervalTimer.subscribe(() => {
-                this.reCheckInService.reCheckin();
-        });
+    private getComponentFactory()  {
+        const pageType = this.elementRef.nativeElement.getAttribute('page-type');
+       
+        return  _.isEqual(pageType, PageType.ProviderLog)
+            ? this.viewContainerRef.createComponent(ProviderLogComponent)
+            : this.viewContainerRef.createComponent(LogComponent);
     }
 }

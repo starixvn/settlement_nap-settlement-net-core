@@ -2,5 +2,6 @@ export const PageType = {
     ReCalculate: "ReCalculate",
     Refund: "Refund",
     EarlySettlement: "EarlySettlement",
-    OutrightLog: "OutrightLog"
+    OutrightLog: "OutrightLog",
+    ProviderLog: "ProviderLog"
 }

@@ -14,13 +14,7 @@ public class GetLogCriteria : CriteriaBase
 
     public string ProductType { get; set; }
 
-    public override string GetSettingKey()
-    {
-        return "NAP_UserLog_Settle_MatchSelByCode";
-    }
+    public override string GetSettingKey() => "NAP_UserLog_Settle_MatchSelByCode";
 
-    public override bool IsValid()
-    {
-        return MatchCode.Length > 0;
-    }
+    public override bool IsValid() => MatchCode.Length > 0;
 }

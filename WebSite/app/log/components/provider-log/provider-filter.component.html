@@ -1,0 +1,43 @@
+﻿<div class="filter-bar">
+  <div class="line">
+  </div>
+  <div class="filter-bar-inner">
+    <div class="row">
+      <div class="col-md-2">
+        <label class="inner-label">
+          Match ID
+        </label>
+        <input name="matchId" maxlength="50" type="text" myOnlyInteger [(ngModel)]="filter.matchId" class="match-code">
+      </div>
+      <div class="col-md-2">
+        <label class="inner-label">
+          Result ID
+        </label>
+        <input name="sourceIds" maxlength="50" type="text" [(ngModel)]="filter.resourceIds">
+      </div>
+      <div class="col-md-2">
+        <label class="inner-label">
+          Result Name
+        </label>
+        <input name="resultName" type="text" [(ngModel)]="filter.resourceName">
+      </div>
+      <div class="col-md-2">
+        <label class="inner-label">
+          Provider
+        </label>
+        <div>
+          <new-multiple-select (formValue)="onSelectProvider($event)" [multipleSelect]="providerSelect"></new-multiple-select>
+        </div>
+      </div>
+      <div class="col-md-1 field">
+        <input id="latestRecord" name="latestRecord" type="checkbox" value="true" [(ngModel)]="filter.latestRecord">
+        <label for="latestRecord" class="bold">&nbsp;Latest Record Only</label>
+      </div>
+      <div class="col-md-1">
+        <button class="button" (click)="search()">Submit</button>
+      </div>
+    </div>
+  </div>
+  <div class="line">
+  </div>
+</div>

@@ -1,7 +1,6 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-    
     <title>@ViewBag.Title</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/lib/bootstrap/dist/css/bootstrap.min.css" />
@@ -14,9 +13,9 @@
            @await Html.PartialAsync("~/Views/Menu.cshtml")
         </header>
     }
-    <div class="content"><app-root>Loading...</app-root></div>
+    <div class="content"><app-root page-type="@ViewBag.PageType">Loading...</app-root></div>
     <script type="text/javascript">
-        var element = document.getElementById("SettlementLog-menu");
+        var element = document.getElementById("Log-menu");
         if (element !== null) {
             element.className = "active-menu";
         }

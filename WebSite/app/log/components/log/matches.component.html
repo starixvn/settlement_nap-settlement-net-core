@@ -1,0 +1,32 @@
+﻿@if (matches) {
+  <div [ngClass]="scrollName">
+    @for (match of matches; track match) {
+      <div class="clear-both">
+      </div>
+      <div (click)="onCollapsedClick(match)">
+        <div class="league">
+          <div class="btn-left">
+          </div>
+          <div class="btn-middle">
+            <span>{{match.leagueName}}</span>
+          </div>
+          <div [ngClass]="getBackgroundIcon(match.collapsed)">
+          </div>
+        </div>
+      </div>
+      @if (isResettleLog) {
+        <resettle-log-detail [match]="match"></resettle-log-detail>
+      } @else {
+        <log-detail [match]="match"></log-detail>
+      }
+    }
+  </div>
+}
+@if (matches.length == 0) {
+  <div class="no-data">
+    <div class="header">Event From {{fromDate | date : 'mediumDate'}} To {{toDate | date : 'mediumDate'}}</div>
+    <div class="empty-data">
+      There is no information available
+    </div>
+  </div>
+}

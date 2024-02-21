@@ -31,14 +31,8 @@ public class LogModel
             {
                 return $"Number Game No {MatchCode}";
             }
-            else if (SportType == Constants.SportType.Happy5)
-            {
-                return $"No {MatchCode}";
-            }
-            else
-            {
-                return $"{Home} -vs- {Away}";
-            }
+
+            return SportType == Constants.SportType.Happy5 ? $"No {MatchCode}" : $"{Home} -vs- {Away}";
         }
     }
 

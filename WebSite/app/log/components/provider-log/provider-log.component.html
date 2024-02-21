@@ -1,0 +1,10 @@
+﻿<provider-filter (providerLog)="getProviderResult($event)"></provider-filter>
+@if(providerLog) {
+  <provider-result [providerLog]="providerLog"></provider-result>
+}
+@if (blockUI) {
+  <div class="in modal-backdrop">
+    <div class="loading">
+    </div>
+  </div>
+}

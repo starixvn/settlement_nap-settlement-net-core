@@ -497,7 +497,7 @@ thead {
 }
 
 .clear-fix {
-    *zoom: 1;
+    zoom: 1;
 }
 
     .clear-fix:before,
@@ -808,7 +808,7 @@ header,
 #headline,
 #body,
 .filter-bar {
-    *zoom: 1;
+    zoom: 1;
 }
 
     header:before,

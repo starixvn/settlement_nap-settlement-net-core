@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
+import { DatePipe } from "@angular/common";
 import { NgbDateStruct, NgbDateParserFormatter } from "@ng-bootstrap/ng-bootstrap";
 
 @Injectable()
 export class VerifyDateService {
     private readonly ngbDateParserFormatter: NgbDateParserFormatter;
 
-    constructor(ngbDateParserFormatter: NgbDateParserFormatter) {
+    constructor(ngbDateParserFormatter: NgbDateParserFormatter,
+        private datePipe: DatePipe) {
         this.ngbDateParserFormatter = ngbDateParserFormatter;
     }
 
@@ -17,6 +19,11 @@ export class VerifyDateService {
 
     public dateFormat(date: NgbDateStruct) {
         return this.ngbDateParserFormatter.format(date);
+    }
+    
+    public format(date: NgbDateStruct | null): string {
+        const value =  this.ngbDateParserFormatter.format(date);
+        return this.datePipe.transform(value,"yyyy-MM-dd")
     }
 
     public convertToDateStruct(value: string) {

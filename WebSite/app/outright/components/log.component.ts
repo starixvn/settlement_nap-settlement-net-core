@@ -1,5 +1,5 @@
 import { _isNumberValue } from '@angular/cdk/coercion';
-import { CommonModule } from "@angular/common";
+import { CommonModule, DatePipe } from "@angular/common";
 import { Component, Injector, Input } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MatDialogModule } from "@angular/material/dialog";
@@ -7,7 +7,8 @@ import { BlockUIService, HttpRequestService, MessageBoxService, VerifyDateServic
 import { DatepickerComponent } from "../../shared/components/date-picker/date-picker.component";
 import { DynamicHeightDirective } from "../../shared/directives";
 import { OutrightService } from "../services";
-import { NgbDateStruct } from "@ng-bootstrap/ng-bootstrap";
+import { NgbDateStruct, NgbDateParserFormatter } from "@ng-bootstrap/ng-bootstrap";
+import { CustomNgbDateParserFormatter } from '../../shared/components/date-picker/custom-ngb-date-parser-formatter';
 import { OutrightLog } from "../models/outright-log.model";
 import { ModalDialogMessage } from "../../shared/models";
 import { Resources } from "../constants/resources";
@@ -20,7 +21,8 @@ import * as _ from 'lodash';
     templateUrl: './log.component.html',
     standalone: true,
     imports: [CommonModule, FormsModule, DatepickerComponent, MatDialogModule, DynamicHeightDirective],
-    providers: [VerifyDateService, OutrightService, HttpRequestService, MessageBoxService, BlockUIService],
+    providers: [DatePipe, VerifyDateService, OutrightService, HttpRequestService, MessageBoxService, BlockUIService,
+        { provide: NgbDateParserFormatter, useFactory: () => new CustomNgbDateParserFormatter('MMM dd, y') }],
 })
 export default class LogComponent {
     private verifyDateService: VerifyDateService;
@@ -41,9 +43,7 @@ export default class LogComponent {
 
     public warningDialogMessage: ModalDialogMessage = new ModalDialogMessage();
 
-    constructor(
-        protected injector: Injector,
-    ) { }
+    constructor(protected injector: Injector) { }
 
     ngOnInit(): void {
         this.verifyDateService = this.injector.get(VerifyDateService);
@@ -98,10 +98,8 @@ export default class LogComponent {
     }
 
     public search(isSubmit: boolean = false) {
-
-        const fromDate = this.verifyDateService.dateFormat(this.fromDate);
-        const toDate = this.verifyDateService.dateFormat(this.toDate);
-
+        const fromDate = this.verifyDateService.format(this.fromDate);
+        const toDate = this.verifyDateService.format(this.toDate);
         if (!this.matchCode) {
             this.showWarningMessage(Resources.matchCode);
             return;

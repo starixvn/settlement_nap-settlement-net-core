@@ -34,6 +34,7 @@ export class UncalculatePopupComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: { leagueId: number, sportType: number }) {
     this.injector.get(MatDialog).closeAll();
     this.confirmationDialogMessage.title = Language.confirmationBox;
+    this.dialogRef = this.injector.get(MatDialogRef<UncalculatePopupComponent>);
     this.dialogRef.disableClose = true;
   }
 
@@ -41,7 +42,6 @@ export class UncalculatePopupComponent implements OnInit {
     this.injector.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
     this.toastrService = this.injector.get(ToastrService);
     this.outrightService = this.injector.get(OutrightService);
-    this.dialogRef = this.injector.get(MatDialogRef<UncalculatePopupComponent>);
     this.toastrService.overlayContainer = this.toastContainer;
     this.getMatches();
   }

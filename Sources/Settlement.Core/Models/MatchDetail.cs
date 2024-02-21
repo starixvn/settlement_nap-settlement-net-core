@@ -24,6 +24,8 @@ public class MatchDetail
 
     public string KickOffTime { get; set; }
 
+    public DateTime EventDate { get; set; }
+
     public string EventStatus { get; set; }
 
     public int HomeId { get; set; }
