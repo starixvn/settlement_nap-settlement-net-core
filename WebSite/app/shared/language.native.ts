@@ -65,6 +65,9 @@
         Undecided: "Are you sure you want to update UNDECIDED status for this match MATCH_CODE?",
         Pending: "Are you sure you want to update PENDING status for this match MATCH_CODE?",
         UnderSettlement: "Are you sure you want to update UNDER SETTLEMENT status for this match MATCH_CODE?",
+        ParentMatch: "Are you sure you want to apply the current setting to this match?",
+        ChildMatch: "Are you sure you want to apply the current setting to this and related Running matches?"
+
     },
     ConfirmScoreMismatch: "WARNING! Selected scores are inconsistent. Are you sure you want to proceed?",
     Settings: {

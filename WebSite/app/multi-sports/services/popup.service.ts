@@ -117,8 +117,8 @@ export class PopupService {
   public popupChangeRemark(match: Match) {
     this.properties.title = Language.remarkSettingTitle;
     this.properties.src = `/apps/remark-setting?matchId=${match.matchId}&matchCode=${match.matchCode}`;
-    this.properties.width = "500px";
-    this.properties.height = "270px";
+    this.properties.width = "400px";
+    this.properties.height = "250px";
     const frameSrc = encodeURI(this.properties.src);
     const dialogData = new DialogDataIframe(this.properties.title, frameSrc);
     this.dialogBoxService

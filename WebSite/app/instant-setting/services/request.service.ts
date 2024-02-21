@@ -34,6 +34,12 @@ export class RequestService {
         return firstValueFrom(request);
     }
 
+    public changeHoldMatchSetting(param: any): Promise<RemarkAndPermission> {
+       const request = this.httpRequestService.postJson<RemarkAndPermission>(param, `${this.settingApi}/update-holdmatch-setting`);
+
+       return firstValueFrom(request);
+    }
+
     public getLeagueName(leagueId: number) {
         const request = this.httpRequestService.getJson(`${this.settingApi}/get-league-name?leagueId=${leagueId}`);
         return firstValueFrom(request);
