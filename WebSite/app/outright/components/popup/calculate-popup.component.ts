@@ -1,12 +1,13 @@
-import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDateStruct, NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
 import { OutrightService } from './../../services/outright.service';
 import { Component, Inject, OnInit, ViewChild, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { BlockUIService, HttpRequestService, MessageBoxService, VerifyDateService } from '../../../shared/services';
 import { LeagueSettle, Team, TeamSettle } from '../../models';
 import { ToastContainerDirective, ToastContainerModule, ToastrService } from 'ngx-toastr';
 import { FormsModule } from '@angular/forms';
 import { DatepickerComponent } from '../../../shared/components/date-picker/date-picker.component';
+import { CustomNgbDateParserFormatter } from '../../../shared/components/date-picker/custom-ngb-date-parser-formatter';
 import { FilterStatuses, TeamStatuses, StatusId, Status } from '../../constants';
 import * as _ from "lodash";
 import { StatusPipe } from '../../pipes/status-pipe';
@@ -27,7 +28,8 @@ import { TicketStatusFilterPipe } from '../../pipes/ticket-status-filter-pipe';
     templateUrl: './calculate-popup.component.html',
     standalone: true,
     imports: [CommonModule, DynamicHeightDirective, FormsModule, DatepickerComponent, ToastContainerModule, StatusPipe, TicketStatusPipe, TicketStatusFilterPipe, MatDialogModule, DragDropModule, NewMultipleSelectComponent],
-    providers: [OutrightService, HttpRequestService, BlockUIService, MessageBoxService, VerifyDateService, CalculateService, StatusPipe, TicketStatusFilterPipe],
+    providers: [DatePipe, OutrightService, HttpRequestService, BlockUIService, MessageBoxService, VerifyDateService, CalculateService, StatusPipe, TicketStatusFilterPipe,
+        { provide: NgbDateParserFormatter, useFactory: () => new CustomNgbDateParserFormatter('MMM dd, y') }],
 })
 export class CalculatePopupComponent implements OnInit {
     @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;

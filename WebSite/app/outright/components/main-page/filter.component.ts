@@ -3,7 +3,8 @@ import { GenerateFilterService } from './../../../shared/services/generate-filte
 import { NewMultipleSelectComponent } from './../../../shared/components/multiple-select/multiple-select.component';
 import { DatePipe, CommonModule } from '@angular/common';
 import { Component, EventEmitter, Injector, OnInit, Output, ViewChild } from '@angular/core';
-import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDateStruct, NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
+import { CustomNgbDateParserFormatter } from './../../../shared/components/date-picker/custom-ngb-date-parser-formatter';
 import { Statuses } from '../../constants/options';
 import { HttpRequestService, MessageBoxService, VerifyDateService } from '../../../shared/services';
 import { OutrightService } from '../../services/outright.service';
@@ -21,7 +22,8 @@ import { BehaviorSubject } from 'rxjs';
     templateUrl: './filter.component.html',
     standalone: true,
     imports: [CommonModule, FormsModule, DatepickerComponent, MaterialModule, NewMultipleSelectComponent],
-    providers: [DatePipe, VerifyDateService, OutrightService, HttpRequestService, MessageBoxService, GenerateFilterService],
+    providers: [DatePipe, VerifyDateService, OutrightService, HttpRequestService, MessageBoxService, GenerateFilterService,
+        { provide: NgbDateParserFormatter, useFactory: () => new CustomNgbDateParserFormatter('MMM dd, y') }],
 })
 export class FilterComponent implements OnInit {
     @Output() public readonly searchAction = new EventEmitter();
@@ -71,13 +73,17 @@ export class FilterComponent implements OnInit {
     }
 
     onSelectFromDate(value: NgbDateStruct) {
-        this.fromDate = value;
-        this.getSportLeague(this.fromDate, this.toDate);
+        if (value.day !== undefined) {
+            this.fromDate = value;
+            this.getSportLeague(this.fromDate, this.toDate);
+        }
     }
 
     onSelectToDate(value: NgbDateStruct) {
-        this.toDate = value;
-        this.getSportLeague(this.fromDate, this.toDate);
+        if (value.day !== undefined) {
+            this.toDate = value;
+            this.getSportLeague(this.fromDate, this.toDate);
+        }
     }
 
     private async initFilterData() {

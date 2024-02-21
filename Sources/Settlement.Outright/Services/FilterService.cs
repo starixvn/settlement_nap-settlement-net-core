@@ -16,28 +16,16 @@ public interface FilterService
     Task<SportOutright> Filter(FilterRequest request);
 }
 
-public class FilterServiceImp : FilterService
+public class FilterServiceImp(
+    IDynamicRepository repository,
+    IBalanceUpService balanceUpService,
+    IMapper mapper,
+    IRefDataService refDataService,
+    OutrightTicketService outrightTicketService)
+    : FilterService
 {
-    private static readonly List<int> PopularSport = new() { SportType.Soccer, SportType.Badminton, SportType.BasketBall, SportType.ESports, SportType.Tennis };
-    private readonly IDynamicRepository repository;
-    private readonly IBalanceUpService balanceUpService;
-    private readonly IMapper mapper;
-    private readonly IRefDataService refDataService;
-    private readonly OutrightTicketService outrightTicketService;
-
-    public FilterServiceImp(
-        IDynamicRepository repository,
-        IBalanceUpService balanceUpService,
-        IMapper mapper,
-        IRefDataService refDataService,
-        OutrightTicketService outrightTicketService)
-    {
-        this.repository = repository;
-        this.balanceUpService = balanceUpService;
-        this.mapper = mapper;
-        this.refDataService = refDataService;
-        this.outrightTicketService = outrightTicketService;
-    }
+    private static readonly List<int> PopularSport =
+        [SportType.Soccer, SportType.Badminton, SportType.BasketBall, SportType.ESports, SportType.Tennis];
 
     public FilterViewModel GetFilterView()
     {

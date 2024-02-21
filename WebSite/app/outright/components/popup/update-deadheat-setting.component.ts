@@ -32,11 +32,11 @@ export class UpdateDeadheatSettingComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: { deadHeatSetting: number, leagueId: number }) {
     this.injector.get(MatDialog).closeAll();
     this.confirmChange = !_.isNull(this.data.deadHeatSetting);
+    this.dialogRef = this.injector.get(MatDialogRef<UpdateDeadheatSettingComponent>);
     this.dialogRef.disableClose = true;
   }
 
   ngOnInit(): void {
-    this.dialogRef = this.injector.get(MatDialogRef<UpdateDeadheatSettingComponent>);
     if(!_.isNull(this.data.deadHeatSetting)){
       this.currentSetting = this.data.deadHeatSetting == 0
       this.currentStatus = this.currentSetting? this.no : this.yes; 
