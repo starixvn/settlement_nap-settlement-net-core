@@ -49,7 +49,6 @@
 		<Setting Key="NAP_Set_LeagueSel" SpName="NAP_Set_LeagueSel" DbName="DBPRO.bodb02.bodbAdminNet" />
 		<Setting Key="NAP_Set_SettlementStatusUpd" SpName="NAP_Set_SettlementStatusUpd" DbName="DBPRO.bodb02.bodbAdminNet" />
 		<Setting Key="NAP_Set_SettlementHoldMatch" SpName="NAP_Set_SettlementHoldMatch" DbName="DBPRO.bodb02.bodbAdminNet" />
-
 		<Setting Key="NAP_Set_WaitingTimeLeagueUpd" SpName="NAP_Set_WaitingTimeLeagueUpd" DbName="DBPRO.bodb02.bodbAdminNet" />
 		<Setting Key="NAP_Set_AutoSettingSel" SpName="NAP_Set_AutoSettingSel" DbName="DBPRO.bodb02.bodbAdminNet" />
 		<Setting Key="NAP_Set_AutoPayout_LeagueSetting_Sel" SpName="NAP_Set_AutoPayout_LeagueSetting_Sel" DbName="DBPRO.bodb02.bodbAdminNet" />

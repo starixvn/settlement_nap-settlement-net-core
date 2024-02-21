@@ -14,7 +14,7 @@
         </div>
         <div *ngIf="oldMatchDetail" class="hedge-match">
             <input type="checkbox" [(ngModel)]="isRefundOldMatch" id="settleOldMatch" />
-            <label for="settleOldMatch">Aplly for moved match '<strong>{{oldMatchDetail.matchCode}}</strong>'
+            <label for="settleOldMatch">Apply for moved match '<strong>{{oldMatchDetail.matchCode}}</strong>'
                 also.</label>
         </div>
         <div [ngClass]="{'table-score':1, 'table-score-wrapper': resultDetails != null && resultDetails.length > 10}">

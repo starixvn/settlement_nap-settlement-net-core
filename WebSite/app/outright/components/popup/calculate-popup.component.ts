@@ -150,7 +150,7 @@ export class CalculatePopupComponent implements OnInit {
     };
 
     public onSelectDate(value: NgbDateStruct, team: Team) {
-        team.eventDate = this.verifyDateService.dateFormat(value);
+        team.eventDate = this.verifyDateService.format(value);
     }
 
     public onSelectAllTeam(e: any) {
@@ -274,7 +274,6 @@ export class CalculatePopupComponent implements OnInit {
     }
 
     private async checkVoidTicket(teamHide: Team) {
-
         return await this.outrightService.checkVoidTickets(+teamHide.orId)
     }
 }
