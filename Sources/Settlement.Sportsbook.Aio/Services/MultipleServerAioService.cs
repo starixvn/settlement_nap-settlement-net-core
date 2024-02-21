@@ -26,18 +26,16 @@ public interface MultipleServerAioService
 }
 
 public class MultipleServerAioServiceImp(
-    private readonly ResultAmendmentService resultAmendmentService;
     IDynamicRepository repository,
     IOptions<AppSettingsKey> appSettingsKey,
     ScaleOutSettleService scaleOutSettleService,
     ICreateQueryService createQueryService,
     MergeDataService mergeDataService,
     LogService logService,
-        IMapper mapper,
-        ResultAmendmentService resultAmendmentService)
+    IMapper mapper,
+    ResultAmendmentService resultAmendmentService) : MultipleServerAioService
 {
     private readonly AppSettingsKey appSettingsKey = appSettingsKey.Value;
-        this.resultAmendmentService = resultAmendmentService;
 
     public async Task<(List<Models.ResultDetail>, TicketCounts)> FetchResultDetails(GetResultDetailCriteria criteria, int sportType)
     {
