@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
+import { DatePipe } from '@angular/common';
 
 import {
     BlockUIService,
@@ -16,6 +17,7 @@ import {
     ProviderService } from '../services';
 @NgModule({
     providers: [
+        DatePipe,
         VerifyDateService,
         MessageBoxService,
         BlockUIService,
