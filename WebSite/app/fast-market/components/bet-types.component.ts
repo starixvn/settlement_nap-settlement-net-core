@@ -1052,7 +1052,7 @@ export class BetTypesComponent implements OnInit, DoCheck {
     return betTypes;
   }
 
-  public openInputForm() {
+  public openInputForm(betTypeId: number) {
     this.matDialog.closeAll();
     this.matDialog
       .open(InputScoreFormComponent, {
@@ -1060,6 +1060,7 @@ export class BetTypesComponent implements OnInit, DoCheck {
         height: "500px",
         data: {
           matchId: this.matchId,
+          betTypeId
         },
       })
       .afterClosed()
