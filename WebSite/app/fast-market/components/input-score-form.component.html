@@ -18,12 +18,20 @@
                 <ng-container *ngTemplateOutlet="inputForm"></ng-container>
             </div>
         </div>
-        <button class="btn btn-primary action ok-button" (click)="pressOKButton()">OK</button>
-        <button class="btn btn-primary action" (click)="pressCancelButton()">Cancel</button>
+        <div class="action-area">
+            <div class="copy">
+
+                <input type="checkbox" />
+                <label for="displayRefundButton">Show/Hide Refund button</label>
+
+            </div>
+            <div class="action-btn">
+                <button class="btn btn-primary" style="width: 50px;" (click)="pressOKButton()">OK</button>
+                <button class="btn btn-primary" style="width: 50px;" (click)="pressCancelButton()">Cancel</button>
+            </div>
+        </div>
     </div>
 </div>
-
-
 
 
 <ng-template #header>

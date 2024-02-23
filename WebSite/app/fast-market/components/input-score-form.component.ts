@@ -26,7 +26,7 @@ export class InputScoreFormComponent implements OnInit {
   constructor(
     private readonly requestService: RequestService,
     private readonly messageBoxService: MessageBoxService,
-    @Inject(MAT_DIALOG_DATA) public data: {matchId: number},
+    @Inject(MAT_DIALOG_DATA) public data: {matchId: number, betTypeId: number},
     private readonly dialogRef: MatDialogRef<InputScoreFormComponent>,
     private readonly toastrService: ToastrService) { }
 
