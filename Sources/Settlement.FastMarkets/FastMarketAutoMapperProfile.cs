@@ -14,6 +14,7 @@ public class FastMarketAutoMapperProfile : Profile
         CreateMap<UpdateWaterBreakSettingRequest, WriteLogUpdateWaterBreakCriteria>()
             .ForMember(dest => dest.UserId, map => map.MapFrom(src => src.AdminId));
         CreateMap<GetTimeMachineResultRequest, GetTimeMachineResultCriteria>();
+        CreateMap<GetOuTimeMachineResultRequest, GetOuTimeMachineResultCriteria>();
         CreateMap<PushFastMarketResultCriteria, EventTicketFastMarketRequest>();
     }
 }

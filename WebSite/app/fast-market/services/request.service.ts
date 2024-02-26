@@ -80,6 +80,14 @@ export class RequestService {
     return this.httpRequestService.postJson(query, url);
   }
 
+  public getTimeMachineOuResult(
+    matchId: number
+  ): Observable<TimeMachineResult[]> {
+    const url = `${this.fastMarketApi}/get-ou-result`;
+    const query = { matchId };
+    return this.httpRequestService.postJson(query, url);
+  }
+
   public checkingStatus(
     matchId: number,
     actionName: string,

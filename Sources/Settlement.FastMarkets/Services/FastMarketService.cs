@@ -23,6 +23,8 @@ public interface IFastMarketService
     Task<List<TimeMachineResult>> GetTimeMachineResult(GetTimeMachineResultRequest request);
 
     Task InsertMessageToLetstalk(InsertMessageRequest request);
+
+    Task<List<TimeMachineResult>> GetOuTimeMachineResult(GetOuTimeMachineResultRequest request);
 }
 
 public class FastMarketServiceImp : IFastMarketService
@@ -211,5 +213,13 @@ public class FastMarketServiceImp : IFastMarketService
         var settingMatch = Convert.ToString(matchDetail.AutoSetting, convertToBase).Reverse();
 
         return !string.IsNullOrWhiteSpace(settingMatch) && settingMatch.Length > 2 && settingMatch[2].Equals('1');
+    }
+
+    public async Task<List<TimeMachineResult>> GetOuTimeMachineResult(GetOuTimeMachineResultRequest request)
+    {
+        var criteria = mapper.Map<GetOuTimeMachineResultCriteria>(request);
+        var result = await repository.FetchAsync<TimeMachineResult>(criteria);
+
+        return result.ToList();
     }
 }

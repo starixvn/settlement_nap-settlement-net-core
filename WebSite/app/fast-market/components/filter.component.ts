@@ -285,7 +285,6 @@ export class FilterComponent implements OnInit, OnChanges, AfterContentChecked  
 
   public changeResultStatus(value: ItemsSelect[]) {
     const list = value.length > 0 ? value.map((x) => x.value) : [];
-    console.log(list);
     this.resultStatusEvent.emit(list);
   }
 

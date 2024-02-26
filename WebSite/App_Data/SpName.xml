@@ -108,6 +108,7 @@
 		<Setting Key="NAP_Set_MatchSelInfo_Auto_1s" SpName="NAP_Set_MatchSelInfo_Auto_1s" DbName="DBPRO.bodb02.bodbAdminNet" />
 		<Setting Key="NAP_Set_FastMarket_ResultDetailUpd" SpName="NAP_Set_FastMarket_ResultDetailUpd" DbName="DBPRO.bodb02.bodbAdminNet" />
 		<Setting Key="NAP_Set_FastMarket_GoalSequenceSel" SpName="NAP_Set_FastMarket_GoalSequenceSel" DbName="DBPRO.bodb02.bodbAdminNet" />
+		<Setting Key="NAP_Set_FastMarket_TotalGoalSequenceSel" SpName="NAP_Set_FastMarket_TotalGoalSequenceSel" DbName="DBPRO.bodb02.bodbAdminNet" />
 	</Function>
 	<Function Name="Bet Builder">
 		<Setting Key="NAP_Set_SMPSelectionDetailSel" SpName="NAP_Set_SMPSelectionDetailSel" DbName="DBPRO.bodb02.bodbAdminNet" />

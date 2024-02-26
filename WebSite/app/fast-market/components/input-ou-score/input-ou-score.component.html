@@ -1,0 +1,94 @@
+<div cdkDragRootElement=".cdk-overlay-pane" cdkDragBoundary=".cdk-overlay-container" cdkDrag>
+  <div cdkDragHandle>
+    <h1 mat-dialog-title>
+      <label class="title">
+        {{title}}
+      </label>
+      <button type="button" class="close dialog-close" (click)="close()">X</button>
+    </h1>
+  </div>
+  <span toastContainer></span>
+  <div class="input-form">
+    <div class="input-score">
+      <ng-container *ngTemplateOutlet="header"></ng-container>
+      <div class="table-scroll">
+        <ng-container *ngTemplateOutlet="bodyTable"></ng-container>
+      </div>
+      <div class="absolute">
+        <ng-container *ngTemplateOutlet="inputForm"></ng-container>
+      </div>
+    </div>
+    <div class="action-area">
+      <div class="copy">
+      </div>
+      <div class="action-btn">
+        <button class="btn btn-primary" style="width: 50px;" (click)="pressOKButton()">OK</button>
+        <button class="btn btn-primary" style="width: 50px;" (click)="pressCancelButton()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<ng-template #header>
+  <table class="table-input-score">
+    <thead>
+      <tr>
+        <td class="interval" >Interval</td>
+        <td >Total Goal</td>
+        <td class="action-column" ></td>
+      </tr>
+    </thead>
+  </table>
+</ng-template>
+
+<ng-template #bodyTable>
+  <table class="table-input-score">
+    <tbody class="table-scroll">
+      @if (intervals.length > 0) {
+        <div>
+          @for (interval of intervals; track interval; let i = $index) {
+            <tr>
+              <td class="interval" style="width: 190px;">{{interval.positionName}}</td>
+              <td style="width: 127px;">
+                {{interval.totalGoal}}
+              </td>
+              <td class="button-delete" style="width: 132px;">
+                <button type="button" class="btn btn-danger" (click)="delete(interval)">x</button>
+              </td>
+            </tr>
+          }
+        </div>
+      }
+      @if (intervals.length === 0) {
+        <div>
+          <tr>
+            <td class="no-score"><span> No Score.</span></td>
+          </tr>
+        </div>
+      }
+    </tbody>
+  </table>
+</ng-template>
+
+<ng-template #inputForm>
+  <table class="table-input-score">
+    <tbody>
+      <tr>
+        <td class="interval" style="width: 190px;">
+          <select class="select-position" style="width: 170px;" [(ngModel)]="positionSelected">
+            <option value=''></option>
+            @for (option of results; track option) {
+              <option [value]="option.position">{{option.positionName}}
+              </option>
+            }
+          </select>
+        </td>
+        <td style="width: 127px;"><input type="text" maxlength="1" myOnlyInteger [(ngModel)]="newInterval.totalGoal"></td>
+        <td  style="width: 132px;">
+          <button class="btn btn-success " (click)="add()">+</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</ng-template>

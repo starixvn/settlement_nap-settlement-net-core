@@ -30,6 +30,7 @@ import { NewMultipleSelectComponent } from "../shared/components/multiple-select
 
 import { ModalDialogComponent } from "../shared/components/modal-dialog/modal-dialog.component";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { InputOuScoreComponent } from "./components/input-ou-score/input-ou-score.component";
 
 @NgModule({
   imports: [
@@ -66,6 +67,7 @@ import { NoopAnimationsModule } from "@angular/platform-browser/animations";
     SpecialTimePipe,
     SpecialTimeEventCounterPipe,
     InputScoreFormComponent,
+    InputOuScoreComponent
   ],
   providers: [
     {
