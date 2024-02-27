@@ -63,8 +63,7 @@
 											(click)="openUpdateTime(leagueMatch)"></div>
 										<div>Waiting time: {{ leagueMatch.autoWaitingTime }}sec</div>
 									</ng-container>
-									<ng-container
-										*ngIf="leagueMatch.matches[0].applyDirect && sportSupportNewAutoPayout.includes(leagueMatch.sportType)">
+									<ng-container *ngIf="sportSupportNewAutoPayout.includes(leagueMatch.sportType)">
 										<div class="auto-info">
 											<span>Waiting time: {{ leagueMatch.autoWaitingTime | timeConverter }}</span> <br />
 											<span>Retry time: {{ leagueMatch.autoRetryTime | timeConverter }}</span>
