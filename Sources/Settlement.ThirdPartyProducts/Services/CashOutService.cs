@@ -109,7 +109,7 @@ public class VoidBetApiServiceImp : IVoidBetApiService
         }
         catch (Exception exception)
         {
-            await Fanex.Logging.LogService.ErrorAsync("Settlement.WebSites (Call JackTime API): ", exception);
+            await Fanex.Logging.LogService.ErrorAsync($"Settlement.WebSites (Call JackTime API): {apiUri}", exception);
             return new HttpResponseMessage();
         }
     }
