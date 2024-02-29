@@ -3,4 +3,5 @@ export class TimeMachineResult {
     public awayScore: string;
     public position: number;
     public positionName: string;
+    public totalGoal: string;
 }

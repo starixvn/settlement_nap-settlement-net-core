@@ -43,6 +43,9 @@ public class FastMarketsController : ControllerBase
     [Route("get-time-machine-result"), HttpPost]
     public async Task<IActionResult> GetHdpResult(GetTimeMachineResultRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
+    [Route("get-ou-result"), HttpPost]
+    public async Task<IActionResult> GetOuTimeMachineResult(GetOuTimeMachineResultRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+
     [Route("insert-message-letstalk"), HttpPost]
     public async Task<IActionResult> InsertMessageToLetstalk(InsertMessageRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 }

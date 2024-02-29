@@ -12,6 +12,7 @@ public class FastMarketHandler : IRequestHandler<MatchDetailRequest, MatchDetail
     IRequestHandler<BetTypeIntervalRequest, FastMarketModel>,
     IRequestHandler<GetLatestResultRequest, List<FastMarketResult>>,
     IRequestHandler<GetTimeMachineResultRequest, List<TimeMachineResult>>,
+    IRequestHandler<GetOuTimeMachineResultRequest, List<TimeMachineResult>>,
     IRequestHandler<UpdateWaterBreakSettingRequest, Result>,
     IRequestHandler<SettleRequest, Result>,
     IRequestHandler<CheckingMarkedTicketsRequest, MarkedTickets>,
@@ -76,4 +77,7 @@ public class FastMarketHandler : IRequestHandler<MatchDetailRequest, MatchDetail
         await fastMarketService.InsertMessageToLetstalk(request);
         return Unit.Value;
     }
+
+    public async Task<List<TimeMachineResult>> Handle(GetOuTimeMachineResultRequest request, CancellationToken cancellationToken)
+        => await fastMarketService.GetOuTimeMachineResult(request);
 }

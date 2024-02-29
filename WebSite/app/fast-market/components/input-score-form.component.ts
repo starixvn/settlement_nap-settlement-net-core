@@ -2,11 +2,12 @@ import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { TimeMachineResult } from '../models/interval.model';
 import * as _ from 'lodash';
 import { RequestService } from '../services';
-import { ModalDialogMessage } from '../../shared/models';
+import { League, ModalDialogMessage } from '../../shared/models';
 import { BlockUIService, HttpRequestService, MessageBoxService } from '../../shared/services';
 import { Language } from '../../shared/language.native';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
+import { FastMarketBetType } from '../constants';
 
 @Component({
   selector: 'input-score-form',
@@ -22,11 +23,14 @@ export class InputScoreFormComponent implements OnInit {
   public newInterval = new TimeMachineResult();
   public readonly modalDialogMessage = new ModalDialogMessage();
   public readonly modalDialogConfirmMessage = new ModalDialogMessage();
+  public readonly fastMarketBetType = FastMarketBetType;
+  public title = 'Support Input Score - HDP Time Machine';
+  public isCopyToOu = false;
 
   constructor(
     private readonly requestService: RequestService,
     private readonly messageBoxService: MessageBoxService,
-    @Inject(MAT_DIALOG_DATA) public data: {matchId: number},
+    @Inject(MAT_DIALOG_DATA) public data: {matchId: number, betTypeId: number},
     private readonly dialogRef: MatDialogRef<InputScoreFormComponent>,
     private readonly toastrService: ToastrService) { }
 
@@ -92,9 +96,14 @@ export class InputScoreFormComponent implements OnInit {
   }
 
   public pressOKButton() {
-    this.modalDialogConfirmMessage.message = Language.inputForm.confirmScore;
+    this.modalDialogConfirmMessage.message = this.isCopyToOu 
+      ? Language.inputForm.confirmAndCopyScore 
+      : Language.inputForm.confirmScore;
     this.messageBoxService.confirm(this.modalDialogConfirmMessage, () => {
-      this.dialogRef.close(this.intervals);
+      this.dialogRef.close({
+        results: this.intervals,
+        isCopyToOu: this.isCopyToOu
+      });
     });
   }
 

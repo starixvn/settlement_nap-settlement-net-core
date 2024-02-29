@@ -38,6 +38,7 @@ import {
 import { MatDialog } from "@angular/material/dialog";
 import { InputScoreFormComponent } from "./input-score-form.component";
 import { ToastContainerDirective, ToastrService } from "ngx-toastr";
+import { InputOuScoreComponent } from "./input-ou-score/input-ou-score.component";
 
 @Component({
   selector: "bet-types",
@@ -75,7 +76,7 @@ export class BetTypesComponent implements OnInit, DoCheck {
     private readonly verificationService: VerificationService,
     private readonly matDialog: MatDialog,
     private readonly toastrService: ToastrService
-  ) {}
+  ) { }
 
   public ngOnInit() {
     this.selectedTicketStatus = ["2", "3", "5"];
@@ -339,9 +340,10 @@ export class BetTypesComponent implements OnInit, DoCheck {
     const checkedPositions = this.listCheckedPositions(betType);
 
     if (betType.betTypeId === FastMarketBetType.nextOneMinute) {
-      const intervalsByPositionsOfNextOneMinute = betType.fastMarketResults.filter(
-        (item) => checkedPositions.indexOf(item.position) !== -1
-      );
+      const intervalsByPositionsOfNextOneMinute =
+        betType.fastMarketResults.filter(
+          (item) => checkedPositions.indexOf(item.position) !== -1
+        );
 
       intervalsByPositionsOfNextOneMinute.forEach((item) => {
         item.relatedEventCounter = directlyClick;
@@ -407,7 +409,7 @@ export class BetTypesComponent implements OnInit, DoCheck {
           const endPosition = position;
           for (let i = startPosition; i <= endPosition; i++) {
             const resultNext = this.findFastMarketResult(betType, i);
-            if (result) {
+            if (resultNext) {
               items.push(resultNext);
             }
           }
@@ -416,9 +418,9 @@ export class BetTypesComponent implements OnInit, DoCheck {
     }
 
     const checkedItems = items.filter((item) => item.checked);
-    if (checkedItems.length === 0) {
+    if (checkedItems.length === 0 && this.fastMarkets.eventCounters[position]) {
       this.fastMarkets.eventCounters[position].checked = false;
-    } else if (items.length === checkedItems.length) {
+    } else if (items.length === checkedItems.length && this.fastMarkets.eventCounters[position]) {
       this.fastMarkets.eventCounters[position].checked = true;
     }
   }
@@ -812,13 +814,12 @@ export class BetTypesComponent implements OnInit, DoCheck {
       if (propertyName !== "") {
         switch (betType.betTypeId) {
           case FastMarketBetType.nextOneMinute:
-            eventResultItem = this.fastMarkets.eventCounters[item.position]
-              .eventResultItem;
+            eventResultItem =
+              this.fastMarkets.eventCounters[item.position].eventResultItem;
             value = eventResultItem[propertyName];
             checked = item.resultItem[propertyName];
-            validationItem[
-              propertyName
-            ] = this.validNextOneMinuteResultWithEventCounter(value, checked);
+            validationItem[propertyName] =
+              this.validNextOneMinuteResultWithEventCounter(value, checked);
             break;
           case FastMarketBetType.nextFiveMinutes:
             const startPosition = item.position;
@@ -829,8 +830,8 @@ export class BetTypesComponent implements OnInit, DoCheck {
             let total = 0;
             let isValid = true;
             for (let i = startPosition; i <= endPosition; i++) {
-              eventResultItem = this.fastMarkets.eventCounters[i]
-                .eventResultItem;
+              eventResultItem =
+                this.fastMarkets.eventCounters[i].eventResultItem;
               value = eventResultItem[propertyName];
               if (!this.isValidValue(value)) {
                 isValid = false;
@@ -841,14 +842,13 @@ export class BetTypesComponent implements OnInit, DoCheck {
             }
 
             checked = item.resultItem[propertyName];
-            validationItem[
-              propertyName
-            ] = this.validNextFiveMinutesResultWithEventCounter(
-              isValid,
-              betType.resultName[propertyName],
-              total,
-              checked
-            );
+            validationItem[propertyName] =
+              this.validNextFiveMinutesResultWithEventCounter(
+                isValid,
+                betType.resultName[propertyName],
+                total,
+                checked
+              );
             break;
         }
       }
@@ -894,14 +894,14 @@ export class BetTypesComponent implements OnInit, DoCheck {
   }
 
   private getFastMarketResult(matchId: number) {
-    this.requestService.getFastMarketResult(matchId).subscribe(
-      (fastMarkets: FastMarkets) => {
-          this.fastMarkets = fastMarkets;
-          if (!_.isNil(this.fastMarkets)) {
-              this.manipulateResultRadio();
-              this.resetTimeMachineIntervals();
-
-          }
+    this.requestService
+      .getFastMarketResult(matchId)
+      .subscribe((fastMarkets: FastMarkets) => {
+        this.fastMarkets = fastMarkets;
+        if (!_.isNil(this.fastMarkets)) {
+          this.manipulateResultRadio();
+          this.resetTimeMachineIntervals();
+        }
       });
   }
 
@@ -1052,8 +1052,17 @@ export class BetTypesComponent implements OnInit, DoCheck {
     return betTypes;
   }
 
-  public openInputForm() {
+  public openInputForm(betTypeId: number) {
     this.matDialog.closeAll();
+
+    if (betTypeId === FastMarketBetType.timeMachineHDP) {
+      this.openInputHDPScore();
+    } else {
+      this.openInputOUScore();
+    }
+  }
+
+  private openInputHDPScore() {
     this.matDialog
       .open(InputScoreFormComponent, {
         width: "510px",
@@ -1063,28 +1072,96 @@ export class BetTypesComponent implements OnInit, DoCheck {
         },
       })
       .afterClosed()
-      .subscribe((results: TimeMachineResult[]) => {
-        if (results) {
-          const timeMachineHDP = _.find(
-            this.fastMarkets.betTypes,
-            (betType) => betType.betTypeId === FastMarketBetType.timeMachineHDP
-          );
-          _.forEach(timeMachineHDP.fastMarketResults, (interval) => {
-            if (
-              _.some(results, (result) => result.position === interval.position)
-            ) {
-              const filledScore = _.find(
-                results,
-                (result) => result.position === interval.position
-              );
-              interval.homeGoal = filledScore.homeScore;
-              interval.awayGoal = filledScore.awayScore;
-            } else {
-              interval.homeGoal = "0";
-              interval.awayGoal = "0";
-            }
-          });
+      .subscribe(
+        ({
+          results,
+          isCopyToOu,
+        }: {
+          results: TimeMachineResult[];
+          isCopyToOu: boolean;
+        }) => {
+          if (!results) return;
+
+          this.changeHDPScore(results, isCopyToOu);
         }
-      });
+      );
+  }
+
+  private openInputOUScore() {
+    this.matDialog
+      .open(InputOuScoreComponent, {
+        width: "510px",
+        height: "500px",
+        data: {
+          matchId: this.matchId,
+        },
+      })
+      .afterClosed()
+      .subscribe(({ results }: {
+        results: TimeMachineResult[]
+      }) => {
+        if (!results) return;
+        this.changeOUScore(results);
+      }
+      );
+  }
+
+  private changeHDPScore(results: TimeMachineResult[], isCopyToOu: boolean) {
+    const timeMachineHDP = _.find(
+      this.fastMarkets.betTypes,
+      (betType) => betType.betTypeId === FastMarketBetType.timeMachineHDP
+    );
+    _.forEach(timeMachineHDP.fastMarketResults, (interval) => {
+      if (_.some(results, (result) => result.position === interval.position)) {
+        const filledScore = _.find(
+          results,
+          (result) => result.position === interval.position
+        );
+        interval.homeGoal = filledScore.homeScore;
+        interval.awayGoal = filledScore.awayScore;
+      } else {
+        interval.homeGoal = "0";
+        interval.awayGoal = "0";
+      }
+    });
+
+    if (isCopyToOu) this.copyToOuScore(results);
+  }
+
+  private copyToOuScore(results: TimeMachineResult[]) {
+    const timeMachineOu = _.find(
+      this.fastMarkets.betTypes,
+      (betType) => betType.betTypeId === FastMarketBetType.timeMachineOverUnder
+    );
+    _.forEach(timeMachineOu.fastMarketResults, (interval) => {
+      if (_.some(results, (result) => result.position === interval.position)) {
+        const filledScore = _.find(
+          results,
+          (result) => result.position === interval.position
+        );
+        interval.result = Number(filledScore.homeScore) + Number(filledScore.awayScore)
+      } else {
+        interval.result = 0;
+      }
+    });
+  }
+
+
+  private changeOUScore(results: TimeMachineResult[]) {
+    const timeMachineOu = _.find(
+      this.fastMarkets.betTypes,
+      (betType) => betType.betTypeId === FastMarketBetType.timeMachineOverUnder
+    );
+    _.forEach(timeMachineOu.fastMarketResults, (interval) => {
+      if (_.some(results, (result) => result.position === interval.position)) {
+        const filledScore = _.find(
+          results,
+          (result) => result.position === interval.position
+        );
+        interval.result = +filledScore.totalGoal;
+      } else {
+        interval.result = 0;
+      }
+    });
   }
 }

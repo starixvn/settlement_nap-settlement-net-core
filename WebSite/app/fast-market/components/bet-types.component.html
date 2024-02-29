@@ -1,306 +1,302 @@
 ﻿<div (click)="refresh()" class="icon-refresh">
 </div>
 <div class="row">
-    <div class="col-6">
-        <table class="table-ticket">
-            <thead>
-                <tr>
-                    <td></td>
-                    <td>
-                        Running
-                    </td>
-                    <td>
-                        Marked
-                    </td>
+  <div class="col-6">
+    <table class="table-ticket">
+      <thead>
+        <tr>
+          <td></td>
+          <td>
+            Running
+          </td>
+          <td>
+            Marked
+          </td>
 
-                    <td>
-                        Settled
-                    </td>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngIf="fastMarkets">
-                    <td>{{fastMarkets.ticketCount.groupName}}</td>
-                    <td>{{fastMarkets.ticketCount.betRunningCount}}</td>
-                    <td>{{fastMarkets.ticketCount.betMarkedCount}}</td>
-                    <td>{{fastMarkets.ticketCount.betSettledCount}}</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-    <div class="col-6" *ngIf="fastMarkets">
-        <special-session [resultDetail]="fastMarkets.resultDetail" [matchId]="fastMarkets.matchId" [toastContainer]="toastContainer"
-            (waterBreakFilter)="filterAndSelectWaterBreak($event)" (listSpecialSessions)="getExistingSpecialSession($event)"></special-session>
-    </div>
+          <td>
+            Settled
+          </td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngIf="fastMarkets">
+          <td>{{fastMarkets.ticketCount.groupName}}</td>
+          <td>{{fastMarkets.ticketCount.betRunningCount}}</td>
+          <td>{{fastMarkets.ticketCount.betMarkedCount}}</td>
+          <td>{{fastMarkets.ticketCount.betSettledCount}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="col-6" *ngIf="fastMarkets">
+    <special-session [resultDetail]="fastMarkets.resultDetail" [matchId]="fastMarkets.matchId"
+      [toastContainer]="toastContainer" (waterBreakFilter)="filterAndSelectWaterBreak($event)"
+      (listSpecialSessions)="getExistingSpecialSession($event)"></special-session>
+  </div>
 </div>
 <div class="table-wrapper">
-    <filter [checkedProceed]="checkedProceed" (onProceedEvent)="onChangeProceed($event)"
-        (resultStatusEvent)="resultStatusEvent($event)" (ticketStatusEvent)="ticketStatusEvent($event)"
-        (intervalEvent)="intervalEvent($event)" [positions]="selectedPositions"
-        [isApplySpecialSession]="specialTimeFilter.apply" [specialSessionPositions]="specialSessionPositions"
-        [specialSessionType]="specialTimeFilter.resourceId"></filter>
-    <div class="table-scroll">
-        <table class="table-calculation fast-markets" *ngIf="fastMarkets">
-            <colgroup>
-                <col class="time-interval" />
-                <col class="ticket-status" />
-                <col class="choice-result" />
-                <col class="choice-result" />
-                <col class="choice-result" />
-                <col class="choice-result" />
-                <col class="choice-result" />
-                <col class="choice-result" />
-                <col class="choice-result" />
-                <col class="choice-result" />
-                <col class="result-status" />
-                <col class="select-proceed" />
-            </colgroup>
-            <tbody>
-                <tr class="bettype-item" [hidden]="fastMarkets.eventCounters.length<1">
-                    <td colspan="2" class="bettype-title"
-                        (click)="onCollapsedEventCounter(fastMarkets.eventCounterCollapsed)">
-                        <span>{{fastMarkets.eventCounterCollapsed?"+ ":"- "}}</span>
-                        <span>Event Counter <a title="For Next 1 minute and Next 5 minutes only.">(!)</a></span>
-                    </td>
-                    <td></td>
-                    <td></td>
-                    <td colspan="7"></td>
-                    <td class="align-center">
-                        <input type="checkbox" [(ngModel)]="fastMarkets.eventCounterChecked"
-                            (change)="onChangeEventCounter()" [disabled]="fastMarkets.eventCounterCollapsed"
-                            *ngIf="!fastMarkets.eventCounterHided" />
-                    </td>
-                </tr>
-                <tr *ngFor="let event of fastMarkets.eventCounters | intervalFilter:selectedInterval| specialTimeEventCounterFilter:specialTimeFilter"
-                    [hidden]="fastMarkets.eventCounterCollapsed"
-                    [ngClass]="{'bg-auto-settle-running': event.hasBackground}">
-                    <td>{{event.positionName}}</td>
-                    <td></td>
-                    <td></td>
-                    <td>
-                        <input type="text" maxlength="1" myFocus myOnlyInteger [disabled]="!event.checked"
-                            [(ngModel)]="event.eventResultItem.goal"/>
-                    </td>
-                    <td>
-                        <input type="text" maxlength="1" myFocus myOnlyInteger [disabled]="!event.checked"
-                            [(ngModel)]="event.eventResultItem.corner" />
-                    </td>
-                    <td>
-                        <input type="text" maxlength="1" myFocus myOnlyInteger [disabled]="!event.checked"
-                            [(ngModel)]="event.eventResultItem.freeKick" />
-                    </td>
-                    <td>
-                        <input type="text" maxlength="1" myFocus myOnlyInteger [disabled]="!event.checked"
-                            [(ngModel)]="event.eventResultItem.goalKick" />
-                    </td>
-                    <td>
-                        <input type="text" maxlength="1" myFocus myOnlyInteger [disabled]="!event.checked"
-                            [(ngModel)]="event.eventResultItem.throwIn" />
-                    </td>
-                    <td></td>
-                    <td>
-                        <input type="text" maxlength="1" myFocus myOnlyInteger [disabled]="!event.checked"
-                            [(ngModel)]="event.eventResultItem.penalty" />
-                    </td>
-                    <td></td>
-                    <td>
-                        <input type="checkbox" [(ngModel)]="event.checked"
-                            (change)="onEventCounterCheckedChange(event, true)" />
-                    </td>
-                </tr>
-                <ng-template ngFor let-bettype [ngForOf]="fastMarkets.betTypes" let-i="index">
-                    <tr [title]="bettype.resultName.isSetDefaultValue
+  <filter [checkedProceed]="checkedProceed" (onProceedEvent)="onChangeProceed($event)"
+    (resultStatusEvent)="resultStatusEvent($event)" (ticketStatusEvent)="ticketStatusEvent($event)"
+    (intervalEvent)="intervalEvent($event)" [positions]="selectedPositions"
+    [isApplySpecialSession]="specialTimeFilter.apply" [specialSessionPositions]="specialSessionPositions"
+    [specialSessionType]="specialTimeFilter.resourceId"></filter>
+  <div class="table-scroll">
+    <table class="table-calculation fast-markets" *ngIf="fastMarkets">
+      <colgroup>
+        <col class="time-interval" />
+        <col class="ticket-status" />
+        <col class="choice-result" />
+        <col class="choice-result" />
+        <col class="choice-result" />
+        <col class="choice-result" />
+        <col class="choice-result" />
+        <col class="choice-result" />
+        <col class="choice-result" />
+        <col class="choice-result" />
+        <col class="result-status" />
+        <col class="select-proceed" />
+      </colgroup>
+      <tbody>
+        <tr class="bettype-item" [hidden]="fastMarkets.eventCounters.length<1">
+          <td colspan="2" class="bettype-title" (click)="onCollapsedEventCounter(fastMarkets.eventCounterCollapsed)">
+            <span>{{fastMarkets.eventCounterCollapsed?"+ ":"- "}}</span>
+            <span>Event Counter <a title="For Next 1 minute and Next 5 minutes only.">(!)</a></span>
+          </td>
+          <td></td>
+          <td></td>
+          <td colspan="7"></td>
+          <td class="align-center">
+            <input type="checkbox" [(ngModel)]="fastMarkets.eventCounterChecked" (change)="onChangeEventCounter()"
+              [disabled]="fastMarkets.eventCounterCollapsed" *ngIf="!fastMarkets.eventCounterHided" />
+          </td>
+        </tr>
+        <tr
+          *ngFor="let event of fastMarkets.eventCounters | intervalFilter:selectedInterval| specialTimeEventCounterFilter:specialTimeFilter"
+          [hidden]="fastMarkets.eventCounterCollapsed" [ngClass]="{'bg-auto-settle-running': event.hasBackground}">
+          <td>{{event.positionName}}</td>
+          <td></td>
+          <td></td>
+          <td>
+            <input type="text" maxlength="1" myFocus myOnlyInteger [disabled]="!event.checked"
+              [(ngModel)]="event.eventResultItem.goal" />
+          </td>
+          <td>
+            <input type="text" maxlength="1" myFocus myOnlyInteger [disabled]="!event.checked"
+              [(ngModel)]="event.eventResultItem.corner" />
+          </td>
+          <td>
+            <input type="text" maxlength="1" myFocus myOnlyInteger [disabled]="!event.checked"
+              [(ngModel)]="event.eventResultItem.freeKick" />
+          </td>
+          <td>
+            <input type="text" maxlength="1" myFocus myOnlyInteger [disabled]="!event.checked"
+              [(ngModel)]="event.eventResultItem.goalKick" />
+          </td>
+          <td>
+            <input type="text" maxlength="1" myFocus myOnlyInteger [disabled]="!event.checked"
+              [(ngModel)]="event.eventResultItem.throwIn" />
+          </td>
+          <td></td>
+          <td>
+            <input type="text" maxlength="1" myFocus myOnlyInteger [disabled]="!event.checked"
+              [(ngModel)]="event.eventResultItem.penalty" />
+          </td>
+          <td></td>
+          <td>
+            <input type="checkbox" [(ngModel)]="event.checked" (change)="onEventCounterCheckedChange(event, true)" />
+          </td>
+        </tr>
+        <ng-template ngFor let-bettype [ngForOf]="fastMarkets.betTypes" let-i="index">
+          <tr [title]="bettype.resultName.isSetDefaultValue
                         ? tooltipNextFiveMinutes
                         :''" class="bettype-item"
-                        [ngClass]="{'bg-empty-handicap': bettype.resultName.isSetDefaultValue}">
-                        <td colspan="2" class="bettype-title" (click)="onCollapsedClick(bettype)">
-                            <span>{{bettype.collapsed?"+ ":"- "}}</span>
-                            <span>{{bettype.betTypeName}}</span>
-                            <span [ngClass]="{'icon-warning': bettype.resultName.isSetDefaultValue}"></span>
-                        </td>
-                        <td class="align-center">{{bettype.resultName.none}}</td>
-                        <td class="align-center" [innerHTML]="bettype.resultName.goal"></td>
-                        <td class="align-center">{{bettype.resultName.corner}}</td>
-                        <td class="align-center">{{bettype.resultName.freeKick}}</td>
-                        <td class="align-center">{{bettype.resultName.goalKick}}</td>
-                        <td class="align-center">{{bettype.resultName.throwIn}}</td>
-                        <td></td>
-                        <td class="align-center">{{bettype.resultName.penalty}}</td>
-                        <td class="align-center">
-                            <button *ngIf="bettype.betTypeId === fastMarketBetType.timeMachineHDP" class="btn btn-success" (click)="openInputForm()">Support Input Score</button>
-                        </td>
-                        <td class="select-proceed align-center">
-                            <input type="checkbox" [(ngModel)]="bettype.checked" (change)="onChangeBetType(bettype)"
-                                [disabled]="bettype.collapsed" />
-                        </td>
-                    </tr>
-                    <tr *ngFor="let item of bettype.fastMarketResults
+            [ngClass]="{'bg-empty-handicap': bettype.resultName.isSetDefaultValue}">
+            <td colspan="2" class="bettype-title" (click)="onCollapsedClick(bettype)">
+              <span>{{bettype.collapsed?"+ ":"- "}}</span>
+              <span>{{bettype.betTypeName}}</span>
+              <span [ngClass]="{'icon-warning': bettype.resultName.isSetDefaultValue}"></span>
+            </td>
+            <td class="align-center">{{bettype.resultName.none}}</td>
+            <td class="align-center" [innerHTML]="bettype.resultName.goal"></td>
+            <td class="align-center">{{bettype.resultName.corner}}</td>
+            <td class="align-center">{{bettype.resultName.freeKick}}</td>
+            <td class="align-center">{{bettype.resultName.goalKick}}</td>
+            <td class="align-center">{{bettype.resultName.throwIn}}</td>
+            <td></td>
+            <td class="align-center">{{bettype.resultName.penalty}}</td>
+            <td class="align-center">
+              <button
+                *ngIf="bettype.betTypeId === fastMarketBetType.timeMachineHDP || bettype.betTypeId === fastMarketBetType.timeMachineOverUnder"
+                class="btn btn-success" (click)="openInputForm(bettype.betTypeId)">Support Input Score</button>
+            </td>
+            <td class="select-proceed align-center">
+              <input type="checkbox" [(ngModel)]="bettype.checked" (change)="onChangeBetType(bettype)"
+                [disabled]="bettype.collapsed" />
+            </td>
+          </tr>
+          <tr *ngFor="let item of bettype.fastMarketResults
                         | resultStatusFilter:selectedResultStatus | ticketStatusFilter:selectedTicketStatus
-                        | intervalFilter:selectedInterval | specialTimeFilter:specialTimeFilter; let j = index;" [hidden]="bettype.collapsed"
-                        [ngClass]="{'bg-auto-settle-running': item.hasBackground,'result':1}">
-                        <td>{{item.positionName}}</td>
-                        <td [ngClass]="ticketStatusBackground(item.ticketStatusName)">{{item.ticketStatusName}}</td>
-                        <td>
-                            <span *ngIf="item.betType==fastMarketBetType.nextOneMinute
+                        | intervalFilter:selectedInterval | specialTimeFilter:specialTimeFilter; let j = index;"
+            [hidden]="bettype.collapsed" [ngClass]="{'bg-auto-settle-running': item.hasBackground,'result':1}">
+            <td>{{item.positionName}}</td>
+            <td [ngClass]="ticketStatusBackground(item.ticketStatusName)">{{item.ticketStatusName}}</td>
+            <td>
+              <span *ngIf="item.betType==fastMarketBetType.nextOneMinute
                                   || item.betType==fastMarketBetType.nextFiveMinutes">
-                                <input type="checkbox" (change)="choiceNoneResult(item)"
-                                    [(ngModel)]="item.resultItem.none" />
-                            </span>
-                            <span *ngIf="item.betType==fastMarketBetType.firstNextOneMinute
+                <input type="checkbox" (change)="choiceNoneResult(item)" [(ngModel)]="item.resultItem.none" />
+              </span>
+              <span *ngIf="item.betType==fastMarketBetType.firstNextOneMinute
                                   || item.betType==fastMarketBetType.firstNextFiveMinutes
                                   || item.betType==fastMarketBetType.nextOneMinuteSetPiece
                                   || item.betType==fastMarketBetType.combinationNextOneMinute
                                   || item.betType==fastMarketBetType.combinationNextFiveMinutes">
-                                <input type="radio" name="choice-{{i}}-{{j}}" [(ngModel)]="item.radioResult"
-                                    [value]="resultType.none" />
-                            </span>
-                            <span *ngIf="item.betType === fastMarketBetType.timeMachineHDP">
-                                <input type="text" maxlength="1" myFocus myOnlyInteger [disabled]="!item.checked"
-                                    [(ngModel)]="item.homeGoal" (change)="verifyHomeAway(item)" />
-                            </span>
-                        </td>
-                        <td [ngClass]="{'bg-invalid': (item.validationItem && !item.validationItem.goal) || item.isResultMismatch}">
-                            <span *ngIf="item.betType==fastMarketBetType.nextOneMinute
+                <input type="radio" name="choice-{{i}}-{{j}}" [(ngModel)]="item.radioResult"
+                  [value]="resultType.none" />
+              </span>
+              <span *ngIf="item.betType === fastMarketBetType.timeMachineHDP">
+                <input type="text" maxlength="1" myFocus myOnlyInteger [disabled]="!item.checked"
+                  [(ngModel)]="item.homeGoal" (change)="verifyHomeAway(item)" />
+              </span>
+            </td>
+            <td [ngClass]="{'bg-invalid': (item.validationItem && !item.validationItem.goal) || item.isResultMismatch}">
+              <span *ngIf="item.betType==fastMarketBetType.nextOneMinute
                                   || item.betType==fastMarketBetType.nextFiveMinutes">
-                                <input type="checkbox" (change)="choiceOtherResult(item)"
-                                    [(ngModel)]="item.resultItem.goal" />
-                            </span>
-                            <span *ngIf="item.betType==fastMarketBetType.firstNextOneMinute
+                <input type="checkbox" (change)="choiceOtherResult(item)" [(ngModel)]="item.resultItem.goal" />
+              </span>
+              <span *ngIf="item.betType==fastMarketBetType.firstNextOneMinute
                                   || item.betType==fastMarketBetType.firstNextFiveMinutes
                                   || item.betType==fastMarketBetType.nextOneMinuteSetPiece
                                   || item.betType==fastMarketBetType.combinationNextOneMinute
                                   || item.betType==fastMarketBetType.combinationNextFiveMinutes">
-                                <input type="radio" name="choice-{{i}}-{{j}}" [(ngModel)]="item.radioResult"
-                                    [value]="resultType.goals" />
-                            </span>
-                            <span *ngIf="item.betType === fastMarketBetType.timeMachineOverUnder">
-                                <input type="text" maxlength="1" myFocus myOnlyInteger [disabled]="!item.checked"
-                                    [(ngModel)]="item.result" (change)="verifyInterval(item) "/>
-                            </span>
-                            <span *ngIf="item.betType === fastMarketBetType.timeMachineHDP">
-                                <input type="text" maxlength="1" myFocus myOnlyInteger [disabled]="!item.checked"
-                                    [(ngModel)]="item.awayGoal" (change)="verifyHomeAway(item) "/>
-                            </span>
-                        </td>
-                        <td [ngClass]="{'bg-invalid': item.validationItem && !item.validationItem.corner}">
-                            <span *ngIf="item.betType==fastMarketBetType.nextOneMinute
+                <input type="radio" name="choice-{{i}}-{{j}}" [(ngModel)]="item.radioResult"
+                  [value]="resultType.goals" />
+              </span>
+              <span *ngIf="item.betType === fastMarketBetType.timeMachineOverUnder">
+                <input type="text" maxlength="1" myFocus myOnlyInteger [disabled]="!item.checked"
+                  [(ngModel)]="item.result" (change)="verifyInterval(item) " />
+              </span>
+              <span *ngIf="item.betType === fastMarketBetType.timeMachineHDP">
+                <input type="text" maxlength="1" myFocus myOnlyInteger [disabled]="!item.checked"
+                  [(ngModel)]="item.awayGoal" (change)="verifyHomeAway(item) " />
+              </span>
+            </td>
+            <td [ngClass]="{'bg-invalid': item.validationItem && !item.validationItem.corner}">
+              <span *ngIf="item.betType==fastMarketBetType.nextOneMinute
                                   || item.betType==fastMarketBetType.nextFiveMinutes">
-                                <input type="checkbox" (change)="choiceOtherResult(item)"
-                                    [(ngModel)]="item.resultItem.corner" />
-                            </span>
-                            <span *ngIf="item.betType==fastMarketBetType.firstNextOneMinute
+                <input type="checkbox" (change)="choiceOtherResult(item)" [(ngModel)]="item.resultItem.corner" />
+              </span>
+              <span *ngIf="item.betType==fastMarketBetType.firstNextOneMinute
                                   || item.betType==fastMarketBetType.firstNextFiveMinutes
                                   || item.betType==fastMarketBetType.combinationNextOneMinute
                                   || item.betType==fastMarketBetType.combinationNextFiveMinutes">
-                                <input type="radio" name="choice-{{i}}-{{j}}" [(ngModel)]="item.radioResult"
-                                    [value]="resultType.corners" />
-                            </span>
-                        </td>
-                        <td [ngClass]="{'bg-invalid': item.validationItem && !item.validationItem.freeKick}">
-                            <span *ngIf="item.betType==fastMarketBetType.nextOneMinute
+                <input type="radio" name="choice-{{i}}-{{j}}" [(ngModel)]="item.radioResult"
+                  [value]="resultType.corners" />
+              </span>
+            </td>
+            <td [ngClass]="{'bg-invalid': item.validationItem && !item.validationItem.freeKick}">
+              <span *ngIf="item.betType==fastMarketBetType.nextOneMinute
                                   || item.betType==fastMarketBetType.nextFiveMinutes">
-                                <input type="checkbox" (change)="choiceOtherResult(item)"
-                                    [(ngModel)]="item.resultItem.freeKick" />
-                            </span>
-                            <span *ngIf="item.betType==fastMarketBetType.firstNextOneMinute
+                <input type="checkbox" (change)="choiceOtherResult(item)" [(ngModel)]="item.resultItem.freeKick" />
+              </span>
+              <span *ngIf="item.betType==fastMarketBetType.firstNextOneMinute
                                   || item.betType==fastMarketBetType.combinationNextOneMinute">
-                                <input type="radio" name="choice-{{i}}-{{j}}" [(ngModel)]="item.radioResult"
-                                    [value]="resultType.freeKick" />
-                            </span>
-                        </td>
-                        <td [ngClass]="{'bg-invalid': item.validationItem && !item.validationItem.goalKick}">
-                            <span *ngIf="item.betType==fastMarketBetType.nextOneMinute
+                <input type="radio" name="choice-{{i}}-{{j}}" [(ngModel)]="item.radioResult"
+                  [value]="resultType.freeKick" />
+              </span>
+            </td>
+            <td [ngClass]="{'bg-invalid': item.validationItem && !item.validationItem.goalKick}">
+              <span *ngIf="item.betType==fastMarketBetType.nextOneMinute
                                   || item.betType==fastMarketBetType.nextFiveMinutes">
-                                <input type="checkbox" (change)="choiceOtherResult(item)"
-                                    [(ngModel)]="item.resultItem.goalKick" />
-                            </span>
-                            <span *ngIf="item.betType==fastMarketBetType.firstNextOneMinute
+                <input type="checkbox" (change)="choiceOtherResult(item)" [(ngModel)]="item.resultItem.goalKick" />
+              </span>
+              <span *ngIf="item.betType==fastMarketBetType.firstNextOneMinute
                                   || item.betType==fastMarketBetType.combinationNextOneMinute">
-                                <input type="radio" name="choice-{{i}}-{{j}}" [(ngModel)]="item.radioResult"
-                                    [value]="resultType.goalKick" />
-                            </span>
-                        </td>
-                        <td [ngClass]="{'bg-invalid': item.validationItem && !item.validationItem.throwIn}">
-                            <span *ngIf="item.betType==fastMarketBetType.nextOneMinute
+                <input type="radio" name="choice-{{i}}-{{j}}" [(ngModel)]="item.radioResult"
+                  [value]="resultType.goalKick" />
+              </span>
+            </td>
+            <td [ngClass]="{'bg-invalid': item.validationItem && !item.validationItem.throwIn}">
+              <span *ngIf="item.betType==fastMarketBetType.nextOneMinute
                                   || item.betType==fastMarketBetType.nextFiveMinutes">
-                                <input type="checkbox" (change)="choiceOtherResult(item)"
-                                    [(ngModel)]="item.resultItem.throwIn" />
-                            </span>
-                            <span *ngIf="item.betType==fastMarketBetType.firstNextOneMinute
+                <input type="checkbox" (change)="choiceOtherResult(item)" [(ngModel)]="item.resultItem.throwIn" />
+              </span>
+              <span *ngIf="item.betType==fastMarketBetType.firstNextOneMinute
                                   || item.betType==fastMarketBetType.combinationNextOneMinute">
-                                <input type="radio" name="choice-{{i}}-{{j}}" [(ngModel)]="item.radioResult"
-                                    [value]="resultType.throwIn" />
-                            </span>
-                        </td>
-                        <td>
-                            <span *ngIf="item.betType==fastMarketBetType.firstNextFiveMinutes
+                <input type="radio" name="choice-{{i}}-{{j}}" [(ngModel)]="item.radioResult"
+                  [value]="resultType.throwIn" />
+              </span>
+            </td>
+            <td>
+              <span *ngIf="item.betType==fastMarketBetType.firstNextFiveMinutes
                                   || item.betType==fastMarketBetType.combinationNextFiveMinutes">
-                                <input type="radio" name="choice-{{i}}-{{j}}" [(ngModel)]="item.radioResult"
-                                    [value]="resultType.bookings" />
-                            </span>
-                        </td>
-                        <td [ngClass]="{'bg-invalid': item.betType==fastMarketBetType.nextFiveMinutes
+                <input type="radio" name="choice-{{i}}-{{j}}" [(ngModel)]="item.radioResult"
+                  [value]="resultType.bookings" />
+              </span>
+            </td>
+            <td [ngClass]="{'bg-invalid': item.betType==fastMarketBetType.nextFiveMinutes
                             && item.validationItem && !item.validationItem.penalty}">
-                            <span *ngIf="item.betType==fastMarketBetType.nextFiveMinutes">
-                                <input type="checkbox" (change)="choiceOtherResult(item)"
-                                    [(ngModel)]="item.resultItem.penalty" />
-                            </span>
-                            <span *ngIf="item.betType==fastMarketBetType.firstNextFiveMinutes
+              <span *ngIf="item.betType==fastMarketBetType.nextFiveMinutes">
+                <input type="checkbox" (change)="choiceOtherResult(item)" [(ngModel)]="item.resultItem.penalty" />
+              </span>
+              <span *ngIf="item.betType==fastMarketBetType.firstNextFiveMinutes
                                   || item.betType==fastMarketBetType.combinationNextFiveMinutes">
-                                <input type="radio" name="choice-{{i}}-{{j}}" [(ngModel)]="item.radioResult"
-                                    [value]="resultType.penalty" />
-                            </span>
-                        </td>
-                        <td [ngClass]="{'bg-calculated': item.resultStatusName.indexOf('Completed')>-1, 
+                <input type="radio" name="choice-{{i}}-{{j}}" [(ngModel)]="item.radioResult"
+                  [value]="resultType.penalty" />
+              </span>
+            </td>
+            <td [ngClass]="{'bg-calculated': item.resultStatusName.indexOf('Completed')>-1, 
                             'bg-refund': item.resultStatusName.indexOf('Refund')>-1}">
-                            {{item.resultStatusName}}
-                        </td>
-                        <td>
-                            <input type="checkbox" [(ngModel)]="item.checked"
-                                (change)="onBetTypeCheckedChange(item, bettype.fastMarketResults.length)" />
-                        </td>
-                    </tr>
-                </ng-template>
-            </tbody>
-        </table>
+              {{item.resultStatusName}}
+            </td>
+            <td>
+              <input type="checkbox" [(ngModel)]="item.checked"
+                (change)="onBetTypeCheckedChange(item, bettype.fastMarketResults.length)" />
+            </td>
+          </tr>
+        </ng-template>
+      </tbody>
+    </table>
+  </div>
+  <div class="action-button fast-market" *ngIf="fastMarkets">
+    <div>
+      <button class="button" [hidden]="!fastMarkets.permission.canCalculate" [disabled]="disabledCalculate"
+        (click)="calculateAction()">
+        Calculate
+      </button>
+      <button class="button" [hidden]="!fastMarkets.permission.canUncalculate" [disabled]="disabledUnCalculate"
+        (click)="unCalculateAction()">
+        Uncalculate
+      </button>
     </div>
-    <div class="action-button fast-market" *ngIf="fastMarkets">
-        <div>
-            <button class="button" [hidden]="!fastMarkets.permission.canCalculate" [disabled]="disabledCalculate"
-                (click)="calculateAction()">
-                Calculate
-            </button>
-            <button class="button" [hidden]="!fastMarkets.permission.canUncalculate" [disabled]="disabledUnCalculate"
-                (click)="unCalculateAction()">
-                Uncalculate
-            </button>
-        </div>
-    </div>
-    <div class="sub-action-button" *ngIf="fastMarkets && fastMarkets.permission.canRefund">
-        <span>
-            <input type="checkbox" [(ngModel)]="isShowRefundButton" id="displayRefundButton" />&nbsp;<label for="displayRefundButton">Show/Hide Refund button</label>
-        </span>
-        <button *ngIf="isShowRefundButton" [ngClass]="{'button new-refund-button': true, 'button-disabled': disabledCalculate}"
-            (click)="refundAction()" [disabled]="disabledCalculate">
-            Refund
-        </button>
-        &nbsp;
-        <span *ngIf="isShowRefundButton">
-            <label>Refund with Settle Determined Tickets</label>&nbsp;<input type="checkbox" [(ngModel)]="isRefundWithSettleDetermined"/>
-        </span>
-    </div>
+  </div>
+  <div class="sub-action-button" *ngIf="fastMarkets && fastMarkets.permission.canRefund">
+    <span>
+      <input type="checkbox" [(ngModel)]="isShowRefundButton" id="displayRefundButton" />&nbsp;<label
+        for="displayRefundButton">Show/Hide Refund button</label>
+    </span>
+    <button *ngIf="isShowRefundButton"
+      [ngClass]="{'button new-refund-button': true, 'button-disabled': disabledCalculate}" (click)="refundAction()"
+      [disabled]="disabledCalculate">
+      Refund
+    </button>
+    &nbsp;
+    <span *ngIf="isShowRefundButton">
+      <label>Refund with Settle Determined Tickets</label>&nbsp;<input type="checkbox"
+        [(ngModel)]="isRefundWithSettleDetermined" />
+    </span>
+  </div>
 </div>
 <div>
-    - Marked tickets will NOT be calculated.
+  - Marked tickets will NOT be calculated.
 </div>
 <div>
-    - <strong>Settlement options for current match.</strong>
+  - <strong>Settlement options for current match.</strong>
 </div>
 <div class="check-box" style="padding-left:35px;">
-    <input type="checkbox" [(ngModel)]="isReSettledTickets" [checked]="isReSettledTickets" id="isReSettledTickets" />
-    <label for="isReSettledTickets">Recalculate settled tickets.</label>
+  <input type="checkbox" [(ngModel)]="isReSettledTickets" [checked]="isReSettledTickets" id="isReSettledTickets" />
+  <label for="isReSettledTickets">Recalculate settled tickets.</label>
 </div>
 <div class="message-box" *ngIf="errorMessage">
-    <div class="icon error"></div>
-    <div class="message-info error">{{errorMessage}}</div>
+  <div class="icon error"></div>
+  <div class="message-info error">{{errorMessage}}</div>
 </div>

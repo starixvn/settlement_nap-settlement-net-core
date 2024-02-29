@@ -138,7 +138,9 @@
         scoreInvalid: "WARNING! Total inputted score must NOT be '0'. Please check and try again.",
         isExistInterval: "WARNING! Selected interval already exist. Please remove exist interval and try again.",
         cancelMessage: "WARNING! Changes made will not be saved. Are you sure you want to proceed?",
-        confirmScore: `WARNING! Are you sure you want to auto-fill on-screen intervals with inputted values and others with '0' for "SABA HDP Time Machine" intervals?`
+        confirmScore: `WARNING! Are you sure you want to auto-fill on-screen intervals with inputted values and others with '0' for "SABA HDP Time Machine" intervals?`,
+        confirmAndCopyScore:`Are you sure you want to auto-fill on-screen intervals with inputted values and others with '0' for "SABA OU Time Machine" and "SABA HDP Time Machine" intervals?`,
+        confirmOuScore: `Are you sure you want to auto-fill on-screen intervals with inputted values and others with '0' for "SABA OU Time Machine" intervals?`
     },
     moveTickets: {
         confirmMoveTickets: "You choose to move all tickets associate with settled results to corresponding match. Are you sure you want to proceed?",

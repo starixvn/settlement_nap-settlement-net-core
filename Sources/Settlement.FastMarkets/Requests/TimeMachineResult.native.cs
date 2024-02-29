@@ -10,6 +10,8 @@ public class TimeMachineResult
 
     public int Position { get; set; }
 
+    public int TotalGoal { get; set; }
+
     public string PositionName
     {
         get

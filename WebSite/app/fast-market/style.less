@@ -54,10 +54,23 @@ table {
     position: relative;
     margin: 17px;
 
-    .action {
-        position: absolute;
-        right: 0;
+    .action-area {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
         margin-top: 10px;
+        .copy {
+            display: flex;
+            align-items: center;
+            column-gap: 5px;
+            label {
+                margin-top: 5px;
+            }
+        }
+        .action-btn {
+            display: flex;
+            column-gap: 10px;
+        }
     }
 
     .ok-button {
@@ -507,4 +520,20 @@ table {
 
 .modal-backdrop {
     z-index: 1050 !important;
+}
+
+.flex {
+    display: flex;
+}
+
+.items-center {
+    align-items: center;
+}
+
+.justify-between {
+    justify-content: space-between;
+}
+
+.mt-5 {
+    margin-top: 5px;
 }
