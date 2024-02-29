@@ -11,6 +11,7 @@ using Settlement.Sportsbook.Aio.Criteria.Cricket;
 using Settlement.Sportsbook.Aio.Criteria.Tennis;
 using Settlement.Sportsbook.Aio.Requests;
 using Settlement.Sportsbook.Aio.Services.Cricket;
+using LogServiceSentry = Fanex.Logging.LogService;
 
 namespace Settlement.Sportsbook.Aio.Services;
 
@@ -238,10 +239,13 @@ public class MultipleServerAioServiceImp(
 
     private async Task<bool> HandleResultAmendment(SettleCriteria settleCriteria, List<ResourceItem> selectedResources)
     {
+        LogServiceSentry.Error("STart HandleResultAmendment");
         if (settleCriteria.SportType == SportType.Cricket
             && !settleCriteria.IsChildMatch
             && settleCriteria.Action != ActionType.UnCalculate)
         {
+            LogServiceSentry.Error("Starting HandleResultAmendment");
+
             return await resultAmendmentService.HandleResultAmendment(settleCriteria, selectedResources);
         }
 
