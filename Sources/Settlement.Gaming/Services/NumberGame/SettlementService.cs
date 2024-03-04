@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
+using Settlement.Gaming.Constants;
 using Settlement.Gaming.Criteria.NumberGame;
 using Settlement.Gaming.Models;
 using Settlement.Gaming.Models.NumberGame;
@@ -18,43 +19,19 @@ public interface SettlementService
     Task<Result> Settle(NumberGameSettlementRequest request);
 }
 
-public class SettlementServiceImp : SettlementService
+public class SettlementServiceImp(
+    IDynamicRepository repository,
+    XmlConvertService xmlConvertService,
+    IHttpContextAccessor accessor,
+    ScaleOutSettleThirdPartyService scaleOutSettleThirdPartyService,
+    ScaleOutSettleService scaleOutSettleService,
+    IOptions<AppSettingsKey> appSettingsKey,
+    LogService logService)
+    : SettlementService
 {
     private const int NotAuthorized = 1000;
     private const byte SeqTwo = 2;
     private const byte SeqThree = 3;
-
-    private readonly IDynamicRepository repository;
-
-    private readonly XmlConvertService xmlConvertService;
-
-    private readonly IHttpContextAccessor accessor;
-
-    private readonly ScaleOutSettleThirdPartyService scaleOutSettleThirdPartyService;
-
-    private readonly ScaleOutSettleService scaleOutSettleService;
-
-    private readonly AppSettingsKey appSettingsKey;
-
-    private readonly LogService logService;
-
-    public SettlementServiceImp(
-        IDynamicRepository repository,
-        XmlConvertService xmlConvertService,
-        IHttpContextAccessor accessor,
-        ScaleOutSettleThirdPartyService scaleOutSettleThirdPartyService,
-        ScaleOutSettleService scaleOutSettleService,
-        IOptions<AppSettingsKey> options,
-        LogService logService)
-    {
-        this.repository = repository;
-        this.xmlConvertService = xmlConvertService;
-        this.accessor = accessor;
-        this.scaleOutSettleThirdPartyService = scaleOutSettleThirdPartyService;
-        this.scaleOutSettleService = scaleOutSettleService;
-        this.logService = logService;
-        appSettingsKey = options.Value;
-    }
 
     public async Task<Result> Settle(NumberGameSettlementRequest request)
     {
@@ -80,7 +57,11 @@ public class SettlementServiceImp : SettlementService
 
             WriteDirectlyLog(request, criteria);
 
-            return await Execute(criteria);
+            var settledResult = await Execute(criteria);
+
+            WriteSettledLog(request, criteria, settledResult);
+
+            return settledResult;
         }
 
         return new Result
@@ -88,6 +69,23 @@ public class SettlementServiceImp : SettlementService
             ErrCode = validateDeploymentResult.ErrorCode,
             ErrMsg = validateDeploymentResult.ErrorMessage
         };
+    }
+
+    private void WriteSettledLog(NumberGameSettlementRequest request, RecalculateNumberGameCriteria criteria, Result settledResult)
+    {
+        var actionId = request.Action.ToUpperInvariant() switch
+        {
+            ActionType.CalculateAll => ActionId.Cal,
+            ActionType.CalculateHalfTime => ActionId.CalHt,
+            ActionType.RefundAll => ActionId.Refund,
+            ActionType.RefundFullTime => ActionId.RefundFt,
+            _ => 0,
+        };
+
+        var message = $"Match start settle at {settledResult.StartTime} and end at {settledResult.EndTime} with " +
+            $"ball results: {criteria.BallResults} {settledResult.ErrMsg}";
+
+        logService.ActionLog(criteria.MatchId, message, actionId);
     }
 
     private void WriteDirectlyLog(NumberGameSettlementRequest request, RecalculateNumberGameCriteria criteria)
@@ -158,7 +156,8 @@ public class SettlementServiceImp : SettlementService
     private async Task<Result> Execute(RecalculateNumberGameCriteria criteria)
     {
         var results = new List<Result>();
-        foreach (var server in appSettingsKey.SiteDbServer)
+        var startTime = DateTimeOffset.Now.DateTime;
+        foreach (var server in appSettingsKey.Value.SiteDbServer)
         {
             criteria.DbServer = server;
             await repository.ExecuteAsync(criteria);
@@ -168,7 +167,9 @@ public class SettlementServiceImp : SettlementService
         return new Result
         {
             ErrCode = results.Count,
-            ErrMsg = string.Join("<br/>", results.Select(r => r.ErrMsg).ToArray())
+            ErrMsg = string.Join("<br/>", results.Select(r => r.ErrMsg).ToArray()),
+            StartTime = startTime,
+            EndTime = DateTimeOffset.Now.DateTime,
         };
     }
 
