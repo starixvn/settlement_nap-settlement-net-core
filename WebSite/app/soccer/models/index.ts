@@ -1,5 +1,4 @@
 ﻿export * from './goal-icon.model';
-export * from './permission.model';
 export * from './result-detail.model';
 export * from './ticket-count.model';
 export * from './query.model';

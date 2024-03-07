@@ -1,188 +1,220 @@
 
 <span toastContainer></span>
-<div *ngIf="match" class="early-popup">
+@if (match) {
+  <div class="early-popup">
     <match-detail [match]="match"></match-detail>
     <ticket-count [ticketCounts]="match.ticketCounts"></ticket-count>
-    <button class="button set-results" (click)="setAllResults()" *ngIf="isPenaltyShootoutMatch">Set All Results to Refund</button>
+    @if (isPenaltyShootoutMatch) {
+      <button class="button set-results" (click)="setAllResults()">Set All Results to Refund</button>
+    }
     <div class="table-wrapper">
-        <ng-template *ngTemplateOutlet="header"></ng-template>
-        <div class="table-scroll">
-            <table>
-                <colgroup>
-                    <col class="bettype-name" />
-                    <col class="result-status" />
-                    <col class="result-value" />
-                    <col class="result-status" />
-                    <col class="select-proceed" />
-                    <col class="select-proceed" />
-                </colgroup>
-                <tbody>
-                    <ng-template ngFor let-map [ngForOf]="groupMap">
-                        <tr class="group-map">
-                            <td colspan="4" (click)="onCollapsedClick(map)">
-                                <span>{{map.collapsed?"+ ":"- "}}</span>
-                                <span>{{map.id | groupName}}</span>
-                            </td>
-                            <td class="align-center">
-                                <input type="checkbox" [(ngModel)]="map.checked" (ngModelChange)="onChangeGroupMap(map)" [disabled]="map.collapsed || map.isHoldResult" />
-                            </td>
-                            <td><div [ngClass]="getResultSettingIcon(map.isHoldResult)" (click)="changeSettingGroup(map)"></div></td>
-                        </tr>
-                        <ng-template ngFor let-item [ngForOf]="map.resultDetail">
-                            <tr [hidden]="map.collapsed" [ngClass]="{'bg-invalid':item.isInvalidValue, 'bg-not-taken':item.isNotTaken }">
-                                <td class="align-left">{{item.betTypeName}}</td>
-                                <td [ngClass]="{'bold':1, 'calculated': item.ticketStatus == 'Calculated', 'marked':item.ticketStatus == 'Marked' }">
-                                    {{item.ticketStatus}}
-                                </td>
-                                <td>
-                                    <ng-template #dropDownControl>
-                                        <div *ngIf="item.betType == betTypeId.PenaltyWoodwork; else betTypeDropdownControl" class="box-two-control">
-                                            <div>
-                                                <select (change)="woodworkOnChange(item);" [disabled]="!item.checked" [(ngModel)]="item.homeValue"
-                                                    [ngClass]="{'score-odd-even': 1, 'warning':item.isResultWarning}">
-                                                    <option *ngFor="let item of getListResult(item.betType, map.id)" [ngValue]="item.value">{{item.name}}</option>
-                                                </select>
-                                            </div>
-                                            <div class="line"></div>
-                                            <div>
-                                                <select (change)="woodworkOnChange(item);" [disabled]="!item.checked" [(ngModel)]="item.awayValue"
-                                                    [ngClass]="{'score-odd-even': 1, 'warning':item.isResultWarning}">
-                                                    <option *ngFor="let item of getListResult(item.betType, map.id)" [ngValue]="item.value">{{item.name}}</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <ng-template #betTypeDropdownControl>
-                                            <select (change)="resultOnChange(item);" [disabled]="!item.checked" [(ngModel)]="item.homeValue"
-                                                [ngClass]="{'warning':item.isResultWarning}">
-                                                <option *ngFor="let item of getListResult(item.betType, map.id)" [ngValue]="item.value">{{item.name}}
-                                                </option>
-                                            </select>
-                                        </ng-template>
-                                    </ng-template>
-                                    <div *ngIf="isTextBoxControl(item.betType); else dropDownControl">
-                                        <div *ngIf="item.betType == betTypeId.TimeOfFirstCorner || item.betType == betTypeId.TimeOfSecondCorner"
-                                            class="box-two-control">
-                                            <div>
+      <ng-template *ngTemplateOutlet="header"></ng-template>
+      <div class="table-scroll">
+        <table>
+          <colgroup>
+          <col class="bettype-name" />
+          <col class="result-status" />
+          <col class="result-value" />
+          <col class="result-status" />
+          <col class="select-proceed" />
+          <col class="select-proceed" />
+        </colgroup>
+        <tbody>
+          @for (map of groupMap; track map) {
+            <tr class="group-map">
+              <td colspan="4" (click)="onCollapsedClick(map)">
+                <span>{{map.collapsed?"+ ":"- "}}</span>
+                <span>{{map.id | groupName}}</span>
+              </td>
+              <td class="align-center">
+                <input type="checkbox" [(ngModel)]="map.checked" (ngModelChange)="onChangeGroupMap(map)" [disabled]="map.collapsed || map.isHoldResult" />
+              </td>
+              <td><div [ngClass]="getResultSettingIcon(map.isHoldResult)" (click)="changeSettingGroup(map)"></div></td>
+            </tr>
+            @for (item of map.resultDetail; track item) {
+              <tr [hidden]="map.collapsed" [ngClass]="{'bg-invalid':item.isInvalidValue, 'bg-not-taken':item.isNotTaken }">
+                <td class="align-left">{{item.betTypeName}}</td>
+                <td [ngClass]="{'bold':1, 'calculated': item.ticketStatus == 'Calculated', 'marked':item.ticketStatus == 'Marked' }">
+                  {{item.ticketStatus}}
+                </td>
+                <td>
+                  @if (isTextBoxControl(item.betType)) {
+                    <div>
+                      @if (item.betType == betTypeId.TimeOfFirstCorner || item.betType == betTypeId.TimeOfSecondCorner) {
+                        <div
+                          class="box-two-control">
+                          <div>
                                                 <input type="text" maxlength="2" myOnlyInteger [ngClass]="{'score-odd-even':1, 'warning':
                                                     item.isResultWarning || item.isHomeValueWarning}" [disabled]="!item.checked"
-                                                    [(ngModel)]="item.homeValue" />
-                                            </div>
-                                            <div class="line"></div>
-                                            <div>
+                              [(ngModel)]="item.homeValue" />
+                            </div>
+                            <div class="line"></div>
+                            <div>
                                                 <input type="text" maxlength="2" myOnlyInteger [ngClass]="{'score-odd-even':1, 'warning':
                                                     item.isResultWarning || item.isAwayValueWarning}" [disabled]="!item.checked"
-                                                    [(ngModel)]="item.awayValue" />
-                                            </div>
-                                        </div>
-
-                                        <div *ngIf="item.betType == betTypeId.PenaltyShootoutOddEven || item.betType == betTypeId.PenaltyShootoutExactTotalGoals"
-                                            class="box-two-control">
-                                            <div>
-                                                <input type="text" maxlength="1" (change)="resultOnChangeFirstTen(item)"
-                                                    [ngClass]="{'score-odd-even':1, 'warning': item.isResultWarning}" myOnlyInteger
-                                                    [disabled]="!item.checked" [(ngModel)]="item.homeValue" />
-                                            </div>
-                                            <div class="line"></div>
-                                            <div>
-                                                <input type="text" maxlength="1" (change)="resultOnChangeFirstTen(item)"
-                                                    [ngClass]="{'score-odd-even':1, 'warning': item.isResultWarning}" myOnlyInteger
-                                                    [disabled]="!item.checked" [(ngModel)]="item.awayValue" />
-                                            </div>
-                                        </div>
-
-                                        <div *ngIf="item.betType == betTypeId.PenaltyShootoutCombo" class="box-two-control">
-                                            <div>
-                                                <input type="text" maxlength="5" (change)="resultOnChangeFirstTen(item)"
-                                                    [ngClass]="{'score-odd-even':1, 'warning': item.isResultWarning}" myOnlyFirstTenCombo
-                                                    [disabled]="!item.checked" [(ngModel)]="item.homeValue" />
-                                            </div>
-                                            <div class="line"></div>
-                                            <div>
-                                                <input type="text" maxlength="5" (change)="resultOnChangeFirstTen(item)"
-                                                    [ngClass]="{'score-odd-even':1, 'warning': item.isResultWarning}" myOnlyFirstTenCombo
-                                                    [disabled]="!item.checked" [(ngModel)]="item.awayValue" />
-                                            </div>
-                                        </div>
-
-                                        <div
-                                            *ngIf="item.betType == betTypeId.PenaltyShootoutHomeScore || item.betType == betTypeId.PenaltyShootoutAwayScore">
-                                            <input type="text" maxlength="1" (change)="resultOnChangeFirstTen(item)"
-                                                [ngClass]="{'score-penalty':1, 'warning': item.isResultWarning}" myOnlyInteger [disabled]="!item.checked"
-                                                [(ngModel)]="item.homeValue" />
-                                        </div>
+                                [(ngModel)]="item.awayValue" />
+                              </div>
+                            </div>
+                          }
+                          @if (item.betType == betTypeId.PenaltyShootoutOddEven || item.betType == betTypeId.PenaltyShootoutExactTotalGoals) {
+                            <div
+                              class="box-two-control">
+                              <div>
+                                <input type="text" maxlength="1" (change)="resultOnChangeFirstTen(item)"
+                                  [ngClass]="{'score-odd-even':1, 'warning': item.isResultWarning}" myOnlyInteger
+                                  [disabled]="!item.checked" [(ngModel)]="item.homeValue" />
+                                </div>
+                                <div class="line"></div>
+                                <div>
+                                  <input type="text" maxlength="1" (change)="resultOnChangeFirstTen(item)"
+                                    [ngClass]="{'score-odd-even':1, 'warning': item.isResultWarning}" myOnlyInteger
+                                    [disabled]="!item.checked" [(ngModel)]="item.awayValue" />
+                                  </div>
+                                </div>
+                              }
+                              @if (item.betType == betTypeId.PenaltyShootoutCombo) {
+                                <div class="box-two-control">
+                                  <div>
+                                    <input type="text" maxlength="5" (change)="resultOnChangeFirstTen(item)"
+                                      [ngClass]="{'score-odd-even':1, 'warning': item.isResultWarning}" myOnlyFirstTenCombo
+                                      [disabled]="!item.checked" [(ngModel)]="item.homeValue" />
                                     </div>
-                                </td>
+                                    <div class="line"></div>
+                                    <div>
+                                      <input type="text" maxlength="5" (change)="resultOnChangeFirstTen(item)"
+                                        [ngClass]="{'score-odd-even':1, 'warning': item.isResultWarning}" myOnlyFirstTenCombo
+                                        [disabled]="!item.checked" [(ngModel)]="item.awayValue" />
+                                      </div>
+                                    </div>
+                                  }
+                                  @if (item.betType == betTypeId.PenaltyShootoutHomeScore || item.betType == betTypeId.PenaltyShootoutAwayScore) {
+                                    <div
+                                      >
+                                      <input type="text" maxlength="1" (change)="resultOnChangeFirstTen(item)"
+                                        [ngClass]="{'score-penalty':1, 'warning': item.isResultWarning}" myOnlyInteger [disabled]="!item.checked"
+                                        [(ngModel)]="item.homeValue" />
+                                      </div>
+                                    }
+                                  </div>
+                                } @else {
+                                  @if (item.betType == betTypeId.PenaltyWoodwork) {
+                                    <div class="box-two-control">
+                                      <div>
+                                        <select (change)="woodworkOnChange(item);" [disabled]="!item.checked" [(ngModel)]="item.homeValue"
+                                          [ngClass]="{'score-odd-even': 1, 'warning':item.isResultWarning}">
+                                          @for (item of getListResult(item.betType, map.id); track item) {
+                                            <option [ngValue]="item.value">{{item.name}}</option>
+                                          }
+                                        </select>
+                                      </div>
+                                      <div class="line"></div>
+                                      <div>
+                                        <select (change)="woodworkOnChange(item);" [disabled]="!item.checked" [(ngModel)]="item.awayValue"
+                                          [ngClass]="{'score-odd-even': 1, 'warning':item.isResultWarning}">
+                                          @for (item of getListResult(item.betType, map.id); track item) {
+                                            <option [ngValue]="item.value">{{item.name}}</option>
+                                          }
+                                        </select>
+                                      </div>
+                                    </div>
+                                  } @else {
+                                    <select (change)="resultOnChange(item);" [disabled]="!item.checked" [(ngModel)]="item.homeValue"
+                                      [ngClass]="{'warning':item.isResultWarning}">
+                                      @for (item of getListResult(item.betType, map.id); track item) {
+                                        <option [ngValue]="item.value">{{item.name}}
+                                        </option>
+                                      }
+                                    </select>
+                                  }
+                                }
+                              </td>
                                 <td [ngClass]="{'bold':1, 'calculated': isCompleted(item.resultStatusId, item.settlementStatusId),
                                     'refunded': isRefunded(item.resultStatusId, item.settlementStatusId)}"
-                                    [title]="tooltipRefundSettleDetermined(item.settlementStatusId)">
-                                    {{item.resultStatus}}
-                                </td>
-                                <td [ngClass]="{'select-proceed':1, 'bg-invalid': item.isInvalidSelectedProceed}">
-                                    <input type="checkbox" [disabled]="item.resultSettingData.isHoldResult" [(ngModel)]="item.checked" (change)="onChangeBetType(item, map);">
-                                </td>
-                                <td><div [ngClass]="getResultSettingIcon(item.resultSettingData.isHoldResult)" (click)="isChangeSetting(item, map)"></div></td>
+                                [title]="tooltipRefundSettleDetermined(item.settlementStatusId)">
+                                {{item.resultStatus}}
+                              </td>
+                              <td [ngClass]="{'select-proceed':1, 'bg-invalid': item.isInvalidSelectedProceed}">
+                                <input type="checkbox" [disabled]="item.resultSettingData.isHoldResult" [(ngModel)]="item.checked" (change)="onChangeBetType(item, map);">
+                              </td>
+                              <td><div [ngClass]="getResultSettingIcon(item.resultSettingData.isHoldResult)" (click)="isChangeSetting(item, map)"></div></td>
                             </tr>
-                            <tr [hidden]="map.collapsed" *ngIf="isBetTypeSettleDetermined(item.betType)">
+                            @if (isBetTypeSettleDetermined(item.betType)) {
+                              <tr [hidden]="map.collapsed">
                                 <td colspan="6" class="settle-determined align-right">
-                                    <label for="settle-determined-{{item.resourceId}}">Refund with Settle Determined Tickets</label>
-                                    <input id="settle-determined-{{item.resourceId}}" type="checkbox" [(ngModel)]="item.isSettleDetermined" />
+                                  <label for="settle-determined-{{item.resourceId}}">Refund with Settle Determined Tickets</label>
+                                  <input id="settle-determined-{{item.resourceId}}" type="checkbox" [(ngModel)]="item.isSettleDetermined" />
                                 </td>
-                            </tr>
-                        </ng-template>
-                    </ng-template>
-                </tbody>
-            </table>
-        </div>
-
-        <div class="footer">
-            <div>
-                <button [ngClass]="{'button': true, 'button-disabled': isDisabledCalculate}" (click)="calculate()" *ngIf="permission.canCalculate"
-                    [disabled]="isDisabledCalculate">
-                    Calculate
-                </button>
-                <button [ngClass]="{'button': true, 'button-disabled': isDisabledUnCalculate}" (click)="unCalculate()" *ngIf="permission.canUncalculate"
-                    [disabled]="isDisabledUnCalculate">
-                    Uncalculate
-                </button>
-            </div>
-        </div>
-        <div class="footer" *ngIf="permission.canRefund">
-            <div class="sub-footer">
-                <span>
-                    <input type="checkbox" [(ngModel)]="isShowRefundButton" id="displayRefundButton" />&nbsp;<label for="displayRefundButton">Show/Hide Refund button</label>
-                </span>
-                <button *ngIf="isShowRefundButton" [ngClass]="{'button new-refund-button': true, 'button-disabled': isDisabledCalculate}"
-                    (click)="refund()" [disabled]="isDisabledCalculate">
-                    Refund
-                </button>
-            </div>
-        </div>
-        <resettle-checker [checked] = "isReSettledTickets" (proceedEvent)="onResettleCheckboxChange($event)"></resettle-checker>
-    </div>
-</div> 
-<ng-template #header>
-    <table>
-        <thead>
-            <tr>
-                <th class="bettype-name">
-                    Result Type
-                </th>
-                <th class="result-status">
-                    Ticket Status
-                </th>
-                <th class="result-value">
-                    Result Value
-                </th>
-                <th class="result-status">
-                    Result Status
-                </th>
-                <th class="select-proceed height-select">
-                    <div>Select to Proceed</div>
-                </th>
-                <th class="hold-result">
-                    Hold Result
-                </th>
-            </tr>
-        </thead>
-    </table>
-</ng-template>
+                              </tr>
+                            }
+                          }
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+                  <div class="footer">
+                    <div>
+                      @if (permission.canCalculate) {
+                        <button [ngClass]="{'button': true, 'button-disabled': isDisabledCalculate}" (click)="calculate()"
+                          [disabled]="isDisabledCalculate">
+                          Calculate
+                        </button>
+                      }
+                      @if (permission.canUncalculate) {
+                        <button [ngClass]="{'button': true, 'button-disabled': isDisabledUnCalculate}" (click)="unCalculate()"
+                          [disabled]="isDisabledUnCalculate">
+                          Uncalculate
+                        </button>
+                      }
+                    </div>
+                  </div>
+                  @if (permission.canRefund) {
+                    <div class="footer">
+                      <div class="sub-footer">
+                        <span>
+                          <input type="checkbox" [(ngModel)]="isShowRefundButton" id="displayRefundButton" />&nbsp;<label for="displayRefundButton">Show/Hide Refund button</label>
+                        </span>
+                        @if (isShowRefundButton && permission.isLeader){
+                          <button [ngClass]="{'btn btn-outline-primary button-confirmed': true}" [disabled]="isDisabledCalculate"
+                            (click)="confirmRefund()">
+                            Confirm/Undo-confirm Refund
+                        </button>
+                        }
+                        @if (isShowRefundButton) {
+                          <button [ngClass]="{'button new-refund-button': true, 'margin-left-button': permission.isLeader, 'button-disabled': isDisabledCalculate}"
+                            (click)="refund()" [disabled]="isDisabledCalculate">
+                            Refund
+                          </button>
+                        }
+                      </div>
+                    </div>
+                  }
+                  <resettle-checker [checked] = "isReSettledTickets" (proceedEvent)="onResettleCheckboxChange($event)"></resettle-checker>
+                </div>
+              </div>
+            }
+            <ng-template #header>
+              <table>
+                <thead>
+                  <tr>
+                    <th class="bettype-name">
+                      Result Type
+                    </th>
+                    <th class="result-status">
+                      Ticket Status
+                    </th>
+                    <th class="result-value">
+                      Result Value
+                    </th>
+                    <th class="result-status">
+                      Result Status
+                    </th>
+                    <th class="select-proceed height-select">
+                      <div>Select to Proceed</div>
+                    </th>
+                    <th class="hold-result">
+                      Hold Result
+                    </th>
+                  </tr>
+                </thead>
+              </table>
+            </ng-template>

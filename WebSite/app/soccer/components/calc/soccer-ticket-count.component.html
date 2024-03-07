@@ -1,27 +1,29 @@
 <div class="ticket-count">
-    <table class="table-ticket">
-        <thead>
-            <tr>
-                <td></td>
-                <td>
-                    Running
-                </td>
-                <td>
-                    Marked
-                </td>
+  <table class="table-ticket">
+    <thead>
+      <tr>
+        <td></td>
+        <td>
+          Running
+        </td>
+        <td>
+          Marked
+        </td>
 
-                <td>
-                    Settled
-                </td>
-            </tr>
-        </thead>
-        <tbody>
-            <tr *ngFor="let item of ticketCounts">
-                <td>{{item.groupName}}</td>
-                <td>{{item.betRunningCount}}</td>
-                <td>{{item.betMarkedCount}}</td>
-                <td>{{item.betSettledCount}}</td>
-            </tr>
-        </tbody>
-    </table>
+        <td>
+          Settled
+        </td>
+      </tr>
+    </thead>
+    <tbody>
+      @for (item of ticketCounts; track item) {
+        <tr>
+          <td>{{item.groupName}}</td>
+          <td>{{item.betRunningCount}}</td>
+          <td>{{item.betMarkedCount}}</td>
+          <td>{{item.betSettledCount}}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
 </div>

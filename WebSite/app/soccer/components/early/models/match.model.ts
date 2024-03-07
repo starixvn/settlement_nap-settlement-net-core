@@ -1,4 +1,5 @@
-import { Permission, TicketCount, ResultDetail } from '../../../models';
+import { TicketCount, ResultDetail } from '../../../models';
+import { Permission } from '../../../../shared/models/sportsbook-sop';
 import { MatchDetail } from './';
 export class Match {
     public matchDetail: MatchDetail;

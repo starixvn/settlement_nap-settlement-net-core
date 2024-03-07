@@ -9,4 +9,5 @@
     public canAutoPayout: boolean;
     public canMarkPending: boolean;
     public canMarkUnDecided: boolean;
+    public canUncalculateInstant: boolean
 }

@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
+import { firstValueFrom } from 'rxjs';
 import { ResultDetail, SettleQuery } from "../../../models";
 import { ClosePopupService, HttpRequestService } from "../../../../shared/services";
-import { ResultSettingQuery } from "../../../../shared/models";
 import { GroupBetTypeService } from "./group-bettpe.service";
 import { SportType } from '../../../../shared/constants';
 @Injectable()
@@ -19,7 +19,8 @@ export class HelperService {
     }
 
     public getMatch(matchId: number) {
-        return this.httpRequestService.postJson({ matchId  }, `${this.soccerApi}/get-match-early`);
+        const request =  this.httpRequestService.postJson({ matchId  }, `${this.soccerApi}/get-match-early`);
+        return firstValueFrom(request);
     }
 
     public getGroupBetType(resultDetails: ResultDetail[]) {
@@ -37,10 +38,6 @@ export class HelperService {
         };
 
         return this.httpRequestService.postJson(query, `${this.aioApi}/get-recal-result`);
-    }
-
-    public changeResultSetting(query: ResultSettingQuery) {
-        return this.httpRequestService.postJson(query, `${this.aioApi}/result-setting`);
     }
 
     public checkMarkedTickets(matchId: number, selectedResources: ResultDetail[])  {

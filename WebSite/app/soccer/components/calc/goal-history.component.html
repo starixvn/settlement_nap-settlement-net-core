@@ -1,32 +1,40 @@
 <div class="goal-column">
-    <div *ngIf="isExistHalfTimeGoalRecord()" class="ht-goal-record">
-        <div class="header">
-            HT Goal Record
-        </div>
-        <div class="content">
-            <div class="goal-row" *ngFor="let item of halfTimeGoalRecords">
-                <div class="goal-score">
-                    {{item.home}} - {{item.away}}
-                </div>
-                <div>
-                    {{item.team}}
-                </div>
+  @if (isExistHalfTimeGoalRecord()) {
+    <div class="ht-goal-record">
+      <div class="header">
+        HT Goal Record
+      </div>
+      <div class="content">
+        @for (item of halfTimeGoalRecords; track item) {
+          <div class="goal-row">
+            <div class="goal-score">
+              {{item.home}} - {{item.away}}
             </div>
-        </div>
-    </div>
-    <div *ngIf="isExistGoalRecord()" class="goal-record">
-        <div class="header">
-            FT Goal Record
-        </div>
-        <div class="content">
-            <div class="goal-row" *ngFor="let item of fullTimeGoalRecords">
-                <div class="goal-score">
-                    {{item.home}} - {{item.away}}
-                </div>
-                <div>
-                    {{item.team}}
-                </div>
+            <div>
+              {{item.team}}
             </div>
-        </div>
+          </div>
+        }
+      </div>
     </div>
+  }
+  @if (isExistGoalRecord()) {
+    <div class="goal-record">
+      <div class="header">
+        FT Goal Record
+      </div>
+      <div class="content">
+        @for (item of fullTimeGoalRecords; track item) {
+          <div class="goal-row">
+            <div class="goal-score">
+              {{item.home}} - {{item.away}}
+            </div>
+            <div>
+              {{item.team}}
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  }
 </div>
