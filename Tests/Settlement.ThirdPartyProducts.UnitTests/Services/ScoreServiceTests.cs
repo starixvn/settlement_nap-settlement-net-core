@@ -43,7 +43,7 @@ public class ScoreServiceTests
         var scoreSetService = Substitute.For<IScoreSetService>();
         var scoreService = new ScoreServiceImp(scoreSetService);
 
-        scoreSetService.GetScore(Arg.Any<ResultDetail>(), Arg.Any<Permission>()).Returns(fakeQuarterScore);
+        scoreSetService.GetScore(Arg.Any<ResultDetail>(), Arg.Any<bool>()).Returns(fakeQuarterScore);
 
         // Act
         var actualQuarter = scoreService.ScoreOfSets(resultDetail, SportType.BasketBall, true);
@@ -82,7 +82,7 @@ public class ScoreServiceTests
         var scoreSetService = Substitute.For<IScoreSetService>();
         var scoreService = new ScoreServiceImp(scoreSetService);
         const int sportType = SportType.BasketBall;
-        scoreSetService.GetScore(Arg.Any<ResultDetail>(), Arg.Any<Permission>()).Returns(fakeHalftimeScore);
+        scoreSetService.GetScore(Arg.Any<ResultDetail>(), Arg.Any<bool>()).Returns(fakeHalftimeScore);
 
         // Act
         var actualScore = scoreService.HalftimeScore(resultDetail, sportType);
@@ -121,7 +121,7 @@ public class ScoreServiceTests
         var scoreSetService = Substitute.For<IScoreSetService>();
         var scoreService = new ScoreServiceImp(scoreSetService);
         const int sportType = SportType.BasketBall;
-        scoreSetService.GetScore(Arg.Any<ResultDetail>(), Arg.Any<Permission>()).Returns(fakeFinalTimeScore);
+        scoreSetService.GetScore(Arg.Any<ResultDetail>(), Arg.Any<bool>()).Returns(fakeFinalTimeScore);
 
         // Act
         var actualScore = scoreService.FinalScore(resultDetail, sportType);

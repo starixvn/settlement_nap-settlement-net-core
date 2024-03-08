@@ -64,6 +64,6 @@ public class ScoreServiceImp : ScoreService
             resultDetail.SettlementStatusId = SettlementStatus.Running;
         }
 
-        return hasResult ? scoreSetService.GetScore(resultDetail, null) : new Score("-");
+        return hasResult ? scoreSetService.GetScore(resultDetail, false) : new Score("-");
     }
 }

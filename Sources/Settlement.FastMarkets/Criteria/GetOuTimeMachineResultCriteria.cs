@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Settlement.FastMarkets.Criteria;
+﻿namespace Settlement.FastMarkets.Criteria;
 
 public class GetOuTimeMachineResultCriteria : CriteriaBase
 {

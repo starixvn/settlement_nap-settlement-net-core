@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Setting.Models;
@@ -7,7 +8,11 @@ using Settlement.Setting.Services;
 
 namespace Settlement.Setting.Handlers;
 
-public class MatchSettingHandler :
+public class MatchSettingHandler(
+    SettingService settingService,
+    PermissionService permissionService,
+    IRefDataService refDataService)
+    :
         IRequestHandler<SettingMatchRequest, Result>,
         IRequestHandler<SettingLeagueRequest, Result>,
         IRequestHandler<GetRemarkInfoRequest, MatchAndPermission>,
@@ -18,17 +23,6 @@ public class MatchSettingHandler :
         IRequestHandler<UpdateHoldMatchSettingRequest, MatchAndPermission>
 
 {
-    private readonly SettingService settingService;
-    private readonly IRefDataService refDataService;
-    private readonly PermissionService permissionService;
-
-    public MatchSettingHandler(SettingService settingService, PermissionService permissionService, IRefDataService refDataService)
-    {
-        this.settingService = settingService;
-        this.permissionService = permissionService;
-        this.refDataService = refDataService;
-    }
-
     public async Task<Result> Handle(SettingMatchRequest request, CancellationToken cancellationToken) => await settingService.UpdateSettingMatch(request);
 
     public async Task<Result> Handle(SettingLeagueRequest request, CancellationToken cancellationToken) => await settingService.UpdateSettingLeague(request);
@@ -36,9 +30,10 @@ public class MatchSettingHandler :
     public async Task<MatchAndPermission> Handle(GetRemarkInfoRequest request, CancellationToken cancellationToken)
     {
         var match = await settingService.GetRemarkInfo(request.MatchId);
+        var permission = permissionService.GetPermission(CacheSettings.Keys.MemoryCacheManualPermission);
         return new MatchAndPermission
         {
-            Permission = permissionService.Permission,
+            Permission = permission,
             Match = match
         };
     }
@@ -47,9 +42,10 @@ public class MatchSettingHandler :
     {
         await settingService.UpdateRemarkSetting(request);
         var match = await settingService.GetRemarkInfo(request.MatchId);
+        var permission = permissionService.GetPermission(CacheSettings.Keys.MemoryCacheManualPermission);
         return new MatchAndPermission
         {
-            Permission = permissionService.Permission,
+            Permission = permission,
             Match = match
         };
     }
@@ -65,10 +61,11 @@ public class MatchSettingHandler :
         await settingService.ProcessUpdateHoldMatchSetting(request);
 
         var match = await settingService.GetRemarkInfo(request.MatchId);
+        var permission = permissionService.GetPermission(CacheSettings.Keys.MemoryCacheManualPermission);
 
         return new MatchAndPermission
         {
-            Permission = permissionService.Permission,
+            Permission = permission,
             Match = match
         };
     }

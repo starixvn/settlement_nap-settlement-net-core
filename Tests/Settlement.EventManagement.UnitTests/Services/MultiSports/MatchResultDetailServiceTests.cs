@@ -33,13 +33,13 @@ public class MatchResultDetailServiceTests
 
     private static List<ResultDetail> ResultDetail => new();
 
-    private readonly Permission permission = new();
+    private readonly bool isLeader = true;
 
     [Fact]
     public void TennisResultDetail_EmptyMatch_ReturnsEmpty()
     {
         // Act
-        var actual = service.TennisResultDetail(new List<Match>(), ResultDetail, permission);
+        var actual = service.TennisResultDetail(new List<Match>(), ResultDetail, isLeader);
 
         // Assert
         Assert.Empty(actual);
@@ -52,10 +52,10 @@ public class MatchResultDetailServiceTests
         var matches = Matches;
 
         // Act
-        var actualMatches = service.TennisResultDetail(matches, ResultDetail, permission);
+        var actualMatches = service.TennisResultDetail(matches, ResultDetail, isLeader);
 
         // Assert
-        scoreTennisService.Received(1).ScoreLoader(Arg.Any<List<ResultDetail>>(), Arg.Any<Permission>());
+        scoreTennisService.Received(1).ScoreLoader(Arg.Any<List<ResultDetail>>(), Arg.Any<bool>());
         scoreService.Received(1).IsIntervalScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>());
         scoreTennisService.Received(1).GetEventStatus(Arg.Any<List<ResultDetail>>(), Arg.Any<string>());
         Assert.True(actualMatches.Count > 0);
@@ -65,7 +65,7 @@ public class MatchResultDetailServiceTests
     public void BasketballResultDetail_EmptyMatch_ReturnsEmpty()
     {
         // Act
-        var actual = service.BasketballResultDetail(new List<Match>(), ResultDetail, permission);
+        var actual = service.BasketballResultDetail(new List<Match>(), ResultDetail, isLeader);
 
         // Assert
         Assert.Empty(actual);
@@ -78,12 +78,12 @@ public class MatchResultDetailServiceTests
         var matches = Matches;
 
         // Act
-        var actualMatches = service.BasketballResultDetail(matches, ResultDetail, permission);
+        var actualMatches = service.BasketballResultDetail(matches, ResultDetail, isLeader);
 
         // Assert
-        scoreService.Received(1).HalftimeScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>(), Arg.Any<Permission>());
-        scoreService.Received(1).FinalScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>(), Arg.Any<Permission>());
-        scoreService.Received(1).ScoreOfSets(Arg.Any<List<ResultDetail>>(), Arg.Any<List<string>>(), Arg.Any<Permission>());
+        scoreService.Received(1).HalftimeScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>(), Arg.Any<bool>());
+        scoreService.Received(1).FinalScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>(), Arg.Any<bool>());
+        scoreService.Received(1).ScoreOfSets(Arg.Any<List<ResultDetail>>(), Arg.Any<List<string>>(), Arg.Any<bool>());
         scoreService.Received(1).IsIntervalScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>());
         Assert.True(actualMatches.Count > 0);
     }
@@ -92,7 +92,7 @@ public class MatchResultDetailServiceTests
     public void CricketResultDetail_EmptyMatch_ReturnsEmpty()
     {
         // Act
-        var actual = service.CricketResultDetail(new List<Match>(), ResultDetail, permission);
+        var actual = service.CricketResultDetail(new List<Match>(), ResultDetail, isLeader);
 
         // Assert
         Assert.Empty(actual);
@@ -105,12 +105,12 @@ public class MatchResultDetailServiceTests
         var matches = Matches;
 
         // Act
-        var actualMatches = service.CricketResultDetail(matches, ResultDetail, permission);
+        var actualMatches = service.CricketResultDetail(matches, ResultDetail, isLeader);
 
         // Assert
-        scoreService.Received(1).HalftimeScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>(), Arg.Any<Permission>());
-        scoreService.Received(1).FinalScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>(), Arg.Any<Permission>());
-        scoreService.Received(1).ScoreOfSets(Arg.Any<List<ResultDetail>>(), Arg.Any<List<string>>(), Arg.Any<Permission>());
+        scoreService.Received(1).HalftimeScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>(), Arg.Any<bool>());
+        scoreService.Received(1).FinalScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>(), Arg.Any<bool>());
+        scoreService.Received(1).ScoreOfSets(Arg.Any<List<ResultDetail>>(), Arg.Any<List<string>>(), Arg.Any<bool>());
         scoreService.Received(1).IsIntervalScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>());
         Assert.True(actualMatches.Count > 0);
     }
@@ -119,7 +119,7 @@ public class MatchResultDetailServiceTests
     public void BadmintonResultDetail_EmptyMatch_ReturnsEmpty()
     {
         // Act
-        var actual = service.BadmintonResultDetail(new List<Match>(), ResultDetail, permission);
+        var actual = service.BadmintonResultDetail(new List<Match>(), ResultDetail, isLeader);
 
         // Assert
         Assert.Empty(actual);
@@ -132,12 +132,12 @@ public class MatchResultDetailServiceTests
         var matches = Matches;
 
         // Act
-        var actualMatches = service.BadmintonResultDetail(matches, ResultDetail, permission);
+        var actualMatches = service.BadmintonResultDetail(matches, ResultDetail, isLeader);
 
         // Assert
-        scoreService.Received(1).HalftimeScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>(), Arg.Any<Permission>());
-        scoreService.Received(1).FinalScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>(), Arg.Any<Permission>());
-        scoreService.Received(1).ScoreOfSets(Arg.Any<List<ResultDetail>>(), Arg.Any<List<string>>(), Arg.Any<Permission>());
+        scoreService.Received(1).HalftimeScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>(), Arg.Any<bool>());
+        scoreService.Received(1).FinalScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>(), Arg.Any<bool>());
+        scoreService.Received(1).ScoreOfSets(Arg.Any<List<ResultDetail>>(), Arg.Any<List<string>>(), Arg.Any<bool>());
         scoreService.Received(1).IsIntervalScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>());
         Assert.True(actualMatches.Count > 0);
     }
@@ -146,7 +146,7 @@ public class MatchResultDetailServiceTests
     public void ESportsResultDetail_EmptyMatch_ReturnsEmpty()
     {
         // Act
-        var actual = service.ESportsResultDetail(new List<Match>(), ResultDetail, permission);
+        var actual = service.ESportsResultDetail(new List<Match>(), ResultDetail, isLeader);
 
         // Assert
         Assert.Empty(actual);
@@ -162,12 +162,12 @@ public class MatchResultDetailServiceTests
         matches[0].BestOfMap = bestOfMap;
 
         // Act
-        var actualMatches = service.ESportsResultDetail(matches, ResultDetail, permission);
+        var actualMatches = service.ESportsResultDetail(matches, ResultDetail, isLeader);
 
         // Assert
-        scoreService.Received(1).HalftimeScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>(), Arg.Any<Permission>());
-        scoreService.Received(1).FinalScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>(), Arg.Any<Permission>());
-        scoreService.Received(1).ScoreOfSets(Arg.Any<List<ResultDetail>>(), Arg.Any<List<string>>(), Arg.Any<Permission>());
+        scoreService.Received(1).HalftimeScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>(), Arg.Any<bool>());
+        scoreService.Received(1).FinalScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>(), Arg.Any<bool>());
+        scoreService.Received(1).ScoreOfSets(Arg.Any<List<ResultDetail>>(), Arg.Any<List<string>>(), Arg.Any<bool>());
         scoreService.Received(1).IsIntervalScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>());
         Assert.True(actualMatches.Count > 0);
     }
@@ -176,7 +176,7 @@ public class MatchResultDetailServiceTests
     public void BeachVolleyballResultDetail_EmptyMatch_ReturnsEmpty()
     {
         // Act
-        var actual = service.BeachVolleyballResultDetail(new List<Match>(), ResultDetail, permission);
+        var actual = service.BeachVolleyballResultDetail(new List<Match>(), ResultDetail, isLeader);
 
         // Assert
         Assert.Empty(actual);
@@ -189,12 +189,12 @@ public class MatchResultDetailServiceTests
         var matches = Matches;
 
         // Act
-        var actualMatches = service.BeachVolleyballResultDetail(matches, ResultDetail, permission);
+        var actualMatches = service.BeachVolleyballResultDetail(matches, ResultDetail, isLeader);
 
         // Assert
-        scoreService.Received(1).HalftimeScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>(), Arg.Any<Permission>());
-        scoreService.Received(1).FinalScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>(), Arg.Any<Permission>());
-        scoreService.Received(1).ScoreOfSets(Arg.Any<List<ResultDetail>>(), Arg.Any<List<string>>(), Arg.Any<Permission>());
+        scoreService.Received(1).HalftimeScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>(), Arg.Any<bool>());
+        scoreService.Received(1).FinalScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>(), Arg.Any<bool>());
+        scoreService.Received(1).ScoreOfSets(Arg.Any<List<ResultDetail>>(), Arg.Any<List<string>>(), Arg.Any<bool>());
         scoreService.Received(1).IsIntervalScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>());
         externalScoreService.Received(1).IsInconsistentFullTimeScore(Arg.Any<int>(), Arg.Any<string>(), Arg.Any<List<ResultDetail>>());
         Assert.True(actualMatches.Count > 0);
@@ -204,7 +204,7 @@ public class MatchResultDetailServiceTests
     public void VolleyballResultDetail_EmptyMatch_ReturnsEmpty()
     {
         // Act
-        var actual = service.VolleyballResultDetail(new List<Match>(), ResultDetail, permission);
+        var actual = service.VolleyballResultDetail(new List<Match>(), ResultDetail, isLeader);
 
         // Assert
         Assert.Empty(actual);
@@ -217,12 +217,12 @@ public class MatchResultDetailServiceTests
         var matches = Matches;
 
         // Act
-        var actualMatches = service.VolleyballResultDetail(matches, ResultDetail, permission);
+        var actualMatches = service.VolleyballResultDetail(matches, ResultDetail, isLeader);
 
         // Assert
-        scoreService.Received(1).HalftimeScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>(), Arg.Any<Permission>());
-        scoreService.Received(1).FinalScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>(), Arg.Any<Permission>());
-        scoreService.Received(1).ScoreOfSets(Arg.Any<List<ResultDetail>>(), Arg.Any<List<string>>(), Arg.Any<Permission>());
+        scoreService.Received(1).HalftimeScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>(), Arg.Any<bool>());
+        scoreService.Received(1).FinalScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>(), Arg.Any<bool>());
+        scoreService.Received(1).ScoreOfSets(Arg.Any<List<ResultDetail>>(), Arg.Any<List<string>>(), Arg.Any<bool>());
         scoreService.Received(1).IsIntervalScore(Arg.Any<int>(), Arg.Any<List<ResultDetail>>());
         Assert.True(actualMatches.Count > 0);
     }

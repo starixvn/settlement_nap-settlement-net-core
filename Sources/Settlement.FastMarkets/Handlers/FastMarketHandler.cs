@@ -1,4 +1,5 @@
 ﻿using Fanex.NAP.Client.Helpers.Web;
+using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.FastMarkets.Models;
@@ -8,51 +9,35 @@ using MatchDetail = Settlement.FastMarkets.Models.MatchDetail;
 
 namespace Settlement.FastMarkets.Handlers;
 
-public class FastMarketHandler : IRequestHandler<MatchDetailRequest, MatchDetail>,
-    IRequestHandler<BetTypeIntervalRequest, FastMarketModel>,
-    IRequestHandler<GetLatestResultRequest, List<FastMarketResult>>,
-    IRequestHandler<GetTimeMachineResultRequest, List<TimeMachineResult>>,
-    IRequestHandler<GetOuTimeMachineResultRequest, List<TimeMachineResult>>,
-    IRequestHandler<UpdateWaterBreakSettingRequest, Result>,
-    IRequestHandler<SettleRequest, Result>,
-    IRequestHandler<CheckingMarkedTicketsRequest, MarkedTickets>,
-    IRequestHandler<InsertMessageRequest, Unit>
+public class FastMarketHandler(
+    IMatchDetailService matchDetailService,
+    PermissionService permissionService,
+    IFastMarketService fastMarketService,
+    ISettingService settingService,
+    INapSession session)
+    : IRequestHandler<MatchDetailRequest, MatchDetail>,
+        IRequestHandler<BetTypeIntervalRequest, FastMarketModel>,
+        IRequestHandler<GetLatestResultRequest, List<FastMarketResult>>,
+        IRequestHandler<GetTimeMachineResultRequest, List<TimeMachineResult>>,
+        IRequestHandler<GetOuTimeMachineResultRequest, List<TimeMachineResult>>,
+        IRequestHandler<UpdateWaterBreakSettingRequest, Result>,
+        IRequestHandler<SettleRequest, Result>,
+        IRequestHandler<CheckingMarkedTicketsRequest, MarkedTickets>,
+        IRequestHandler<InsertMessageRequest, Unit>
 {
-    private readonly IMatchDetailService matchDetailService;
-
-    private readonly PermissionService permissionService;
-
-    private readonly IFastMarketService fastMarketService;
-
-    private readonly ISettingService settingService;
-
-    private readonly INapSession session;
-
-    public FastMarketHandler(
-        IMatchDetailService matchDetailService,
-        PermissionService permissionService,
-        IFastMarketService fastMarketService,
-        ISettingService settingService,
-        INapSession session)
-    {
-        this.matchDetailService = matchDetailService;
-        this.permissionService = permissionService;
-        this.fastMarketService = fastMarketService;
-        this.settingService = settingService;
-        this.session = session;
-    }
-
     public async Task<MatchDetail> Handle(MatchDetailRequest request, CancellationToken cancellationToken)
     {
+        var permission = permissionService.GetPermission(CacheSettings.Keys.MemoryCacheManualPermission);
         var matchDetail = await matchDetailService.MatchInfo(request.MatchId);
-        matchDetail.AutoSettingIcon.Disabled = !permissionService.Permission.AutoSettlement;
+        matchDetail.AutoSettingIcon.Disabled = !permission.AutoSettlement;
         return matchDetail;
     }
 
     public async Task<FastMarketModel> Handle(BetTypeIntervalRequest request, CancellationToken cancellationToken)
     {
+        var permission = permissionService.GetPermission(CacheSettings.Keys.MemoryCacheManualPermission);
         var fastMarketModel = await fastMarketService.Query(request.MatchId);
-        fastMarketModel.Permission = permissionService.Permission;
+        fastMarketModel.Permission = permission;
         return fastMarketModel;
     }
 

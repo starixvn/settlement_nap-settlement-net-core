@@ -19,41 +19,17 @@ public interface MatchService
     Task<List<CalculateMatchWaiting>> GetWaitingMatches(string leagueIds, bool isAutoPage);
 }
 
-public class MatchServiceImp : MatchService
+public class MatchServiceImp(
+    IDynamicRepository repository,
+    IRefDataService refDataService,
+    CachingMatchesService cachingMatchesService,
+    MergeDataService mergeDataService,
+    NewInfoMatchService newInfoMatchService,
+    IOptions<AppSettingsKey> appSettingsKey,
+    IMapper mapper)
+    : MatchService
 {
     private static int _isProcessing;
-
-    private readonly IDynamicRepository repository;
-
-    private readonly CachingMatchesService cachingMatchesService;
-
-    private readonly IRefDataService refDataService;
-
-    private readonly MergeDataService mergeDataService;
-
-    private readonly NewInfoMatchService newInfoMatchService;
-
-    private readonly AppSettingsKey appSettingsKey;
-
-    private readonly IMapper mapper;
-
-    public MatchServiceImp(
-        IDynamicRepository repository,
-        IRefDataService refDataService,
-        CachingMatchesService cachingMatchesService,
-        MergeDataService mergeDataService,
-        NewInfoMatchService newInfoMatchService,
-        IOptions<AppSettingsKey> appSettingsKey,
-        IMapper mapper)
-    {
-        this.repository = repository;
-        this.refDataService = refDataService;
-        this.cachingMatchesService = cachingMatchesService;
-        this.mergeDataService = mergeDataService;
-        this.newInfoMatchService = newInfoMatchService;
-        this.appSettingsKey = appSettingsKey.Value;
-        this.mapper = mapper;
-    }
 
     public async Task<List<Match>> GetMatches(FilterCalculationRequest request)
     {
@@ -89,17 +65,15 @@ public class MatchServiceImp : MatchService
 
     private async Task<List<Match>> GetMatchesAllSites(MultipleSiteCriteria criteria)
     {
-        var fetchMatchTasks = appSettingsKey
-            .SiteDbServer
-            .Select(s => FetchMatches(s, criteria))
-            .ToList();
+        var siteDbServer = appSettingsKey.Value.SiteDbServer;
+        var fetchMatchTasks = siteDbServer.Select(s => FetchMatches(s, criteria)).ToList();
         var listMatch = await Task.WhenAll(fetchMatchTasks.ToArray());
 
         var matchesInAllServers = listMatch.Select(m => m.ToList()).ToList();
 
         var baseMatches = matchesInAllServers.SelectMany(m => m).Distinct().ToList();
 
-        for (var i = 1; i < appSettingsKey.SiteDbServer.Count; i++)
+        for (var i = 1; i < siteDbServer.Count; i++)
         {
             mergeDataService.AddSiteInfo(baseMatches, matchesInAllServers[i]);
         }

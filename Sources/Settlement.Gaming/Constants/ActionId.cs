@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Settlement.Gaming.Constants;
+﻿namespace Settlement.Gaming.Constants;
 
 public static class ActionId
 {

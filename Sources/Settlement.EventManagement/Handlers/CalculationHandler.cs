@@ -5,36 +5,26 @@ using Settlement.EventManagement.Services.Calculation;
 
 namespace Settlement.EventManagement.Handlers;
 
-public class CalculationHandler :
+public class CalculationHandler(
+    PermissionService permissionService,
+    LeagueService leagueService,
+    MatchService matchService)
+    :
         IRequestHandler<FilterCalculationRequest, CalculationLeagues>,
         IRequestHandler<LeagueCalculationRequest, List<LeagueTypeModel>>,
         IRequestHandler<RefreshCalculationRequest, List<CalculateMatchWaiting>>,
         IRequestHandler<FilterAutoCalculationRequest, CalculationLeagues>,
         IRequestHandler<RefreshAutoCalculationRequest, List<CalculateMatchWaiting>>
 {
-    private readonly LeagueService leagueService;
-
-    private readonly MatchService matchService;
-
-    private readonly PermissionService permissionService;
-
-    public CalculationHandler(PermissionService permissionService,
-        LeagueService leagueService,
-        MatchService matchService)
-    {
-        this.permissionService = permissionService;
-        this.leagueService = leagueService;
-        this.matchService = matchService;
-    }
-
     public async Task<CalculationLeagues> Handle(FilterCalculationRequest request, CancellationToken cancellationToken)
     {
+        var permission = permissionService.GetPermission(CacheSettings.Keys.MemoryCacheManualPermission);
         var matches = await matchService.GetMatches(request);
 
         return new CalculationLeagues
         {
             Leagues = leagueService.Leagues(matches),
-            Permission = permissionService.Permission
+            Permission = permission
         };
     }
 
@@ -47,11 +37,12 @@ public class CalculationHandler :
 
     public async Task<CalculationLeagues> Handle(FilterAutoCalculationRequest request, CancellationToken cancellationToken)
     {
+        var permission = permissionService.GetPermission(CacheSettings.Keys.MemoryCacheManualPermission);
         var matches = await matchService.GetMatchesAutoCalculate(request);
         return new CalculationLeagues
         {
             Leagues = leagueService.Leagues(matches),
-            Permission = permissionService.Permission
+            Permission = permission
         };
     }
 }

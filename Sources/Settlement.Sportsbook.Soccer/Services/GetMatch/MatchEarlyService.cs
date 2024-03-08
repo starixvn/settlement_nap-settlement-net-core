@@ -17,40 +17,16 @@ public interface MatchEarlyService
     Task<MatchEarly> GetMatch(int matchId);
 }
 
-public class MatchEarlyServiceImp : MatchEarlyService
+public class MatchEarlyServiceImp(
+    IDynamicRepository repository,
+    PermissionService permissionService,
+    IMapper mapper,
+    IRefDataService refDataService,
+    GoalIconService goalIconService,
+    EarlyBetTypeNameService earlyBetTypeNameService,
+    IFetchDataService fetchDataService)
+    : MatchEarlyService
 {
-    private readonly IDynamicRepository repository;
-
-    private readonly PermissionService permission;
-
-    private readonly IRefDataService refDataService;
-
-    private readonly GoalIconService goalIconService;
-
-    private readonly EarlyBetTypeNameService earlyBetTypeNameService;
-
-    private readonly IMapper mapper;
-
-    private readonly IFetchDataService fetchDataService;
-
-    public MatchEarlyServiceImp(
-        IDynamicRepository repository,
-        PermissionService permission,
-        IMapper mapper,
-        IRefDataService refDataService,
-        GoalIconService goalIconService,
-        EarlyBetTypeNameService earlyBetTypeNameService,
-        IFetchDataService fetchDataService)
-    {
-        this.repository = repository;
-        this.permission = permission;
-        this.mapper = mapper;
-        this.refDataService = refDataService;
-        this.goalIconService = goalIconService;
-        this.earlyBetTypeNameService = earlyBetTypeNameService;
-        this.fetchDataService = fetchDataService;
-    }
-
     public async Task<MatchEarly> GetMatch(int matchId)
     {
         var criteria = new GetMatchDetailEarlyCriteria { MatchId = matchId };
@@ -75,12 +51,14 @@ public class MatchEarlyServiceImp : MatchEarlyService
 
         resultDetail = resultDetail.OrderBy(result => result.OrdNo).ToList();
 
+        var permission = permissionService.GetPermission(CacheSettings.Keys.MemoryCacheManualPermission);
+
         return new MatchEarly
         {
             MatchDetail = matchDetail,
             ResultDetail = resultDetail,
             TicketCounts = ticketCount,
-            Permission = permission.Permission,
+            Permission = permission,
             HedgeMatchDetail = hedgeMatchDetail
         };
     }

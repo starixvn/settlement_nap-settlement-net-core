@@ -1,4 +1,5 @@
-﻿using Settlement.EventManagement.Models;
+﻿using Settlement.Core.Configurations;
+using Settlement.EventManagement.Models;
 using Settlement.EventManagement.Models.MultiSports;
 using Settlement.EventManagement.Requests;
 using Settlement.EventManagement.Services;
@@ -6,31 +7,22 @@ using Settlement.EventManagement.Services.MultiSports;
 
 namespace Settlement.EventManagement.Handlers;
 
-public class MultiSportHandler : IRequestHandler<FilterMultiSportRequest, MultiSportModel>,
+public class MultiSportHandler(
+    IMultiSportService multiSportService,
+    PermissionService permissionService,
+    GetDataFilterService getDataFilterService)
+    : IRequestHandler<FilterMultiSportRequest, MultiSportModel>,
         IRequestHandler<LeagueRequest, List<LeagueTypeModel>>,
         IRequestHandler<SportRequest, List<Sport>>,
         IRequestHandler<RefreshMultiSportRequest, IList<MultiSportMatchWaiting>>
 {
-    private readonly IMultiSportService multiSportService;
-    private readonly PermissionService permissionService;
-    private readonly GetDataFilterService getDataFilterService;
-
-    public MultiSportHandler(
-        IMultiSportService multiSportService,
-        PermissionService permissionService,
-        GetDataFilterService getDataFilterService)
-    {
-        this.multiSportService = multiSportService;
-        this.permissionService = permissionService;
-        this.getDataFilterService = getDataFilterService;
-    }
-
     public async Task<MultiSportModel> Handle(FilterMultiSportRequest request, CancellationToken cancellationToken)
     {
+        var permission = permissionService.GetPermission(CacheSettings.Keys.MemoryCacheManualPermission);
         return new MultiSportModel
         {
-            Sports = await multiSportService.GetSportBook(request),
-            Permission = permissionService.Permission
+            Sports = await multiSportService.GetSportBook(request, permission.IsLeader),
+            Permission = permission
         };
     }
 
@@ -40,6 +32,7 @@ public class MultiSportHandler : IRequestHandler<FilterMultiSportRequest, MultiS
 
     public async Task<IList<MultiSportMatchWaiting>> Handle(RefreshMultiSportRequest request, CancellationToken cancellationToken)
     {
-        return await multiSportService.GetWaitingMatches(request);
+        var isLeader = permissionService.GetPermissionForLeader($"{CacheSettings.Keys.MemoryCacheManualPermission}-{SettlementFunctionKeys.LeaderCalculate}");
+        return await multiSportService.GetWaitingMatches(request, isLeader);
     }
 }

@@ -23,7 +23,6 @@ public class MultiSportServiceTests
     public MultiSportServiceTests()
     {
         repository = Substitute.For<IDynamicRepository>();
-        var permissionService = Substitute.For<PermissionService>(null, null, null, null);
         matchService = Substitute.For<IMatchService>();
         var cacheService = Substitute.For<IMemoryCache>();
 
@@ -32,10 +31,10 @@ public class MultiSportServiceTests
         var config = new MapperConfiguration(mapperConfig);
         var mapper = new Mapper(config);
 
-        var appSetting = new AppSettingsKey { SiteDbServer = new List<string> { "DB01", "DB02" } };
+        var appSetting = new AppSettingsKey { SiteDbServer = ["DB01", "DB02"] };
         var option = Options.Create(appSetting);
         refDataService = Substitute.For<IRefDataService>();
-        service = new MultiSportServiceImp(repository, matchService, mapper, cacheService, permissionService, option);
+        service = new MultiSportServiceImp(repository, matchService, mapper, cacheService, option);
     }
 
     [Fact]
@@ -62,7 +61,7 @@ public class MultiSportServiceTests
         refDataService.GetLeagueName(Arg.Any<string>()).Returns(string.Empty);
         matchService.GetScoreForMatchBySportType(Arg.Any<List<Match>>(), Arg.Any<List<ResultDetail>>(), Arg.Any<int>()).Returns(new List<Match> { match });
         matchService.SetNewMatchInfo(Arg.Any<List<Match>>(), Arg.Any<List<ResultDetail>>()).Returns(listMatch);
-        var waitingMatches = await service.GetWaitingMatches(request);
+        var waitingMatches = await service.GetWaitingMatches(request, false);
 
         Assert.NotNull(waitingMatches);
     }
@@ -84,7 +83,7 @@ public class MultiSportServiceTests
         matchService.GetScoreForMatchBySportType(Arg.Any<List<Match>>(), Arg.Any<List<ResultDetail>>(), Arg.Any<int>()).Returns(new List<Match> { match });
         matchService.SetNewMatchInfo(Arg.Any<List<Match>>(), Arg.Any<List<ResultDetail>>()).Returns(listMatch);
         matchService.SortingMatches(Arg.Any<List<Match>>()).Returns(new List<Match> { match });
-        var sportBooks = await service.GetSportBook(new FilterMultiSportRequest());
+        var sportBooks = await service.GetSportBook(new FilterMultiSportRequest(), false);
 
         var actualMatches = sportBooks[0].Leagues[0].Matches;
 

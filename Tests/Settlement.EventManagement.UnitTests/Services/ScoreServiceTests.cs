@@ -15,12 +15,13 @@ public class ScoreServiceTests
     public ScoreServiceTests()
     {
         scoreSetService = Substitute.For<IScoreSetService>();
+        isLeader = false;
         service = new ScoreServiceImp(scoreSetService);
     }
 
-    private static List<ResultDetail> EmptyResultDetail => new();
-    private static List<string> Resources => new() { "00", "01" };
-    private readonly Permission permission = new();
+    private static List<ResultDetail> EmptyResultDetail => [];
+    private static List<string> Resources => ["00", "01"];
+    private readonly bool isLeader;
 
     [Fact]
     public void IsIntervalScore_SportIsBasketBallAndResourceIdIsExistedHalftimeFullTime_ReturnFalse()
@@ -79,7 +80,7 @@ public class ScoreServiceTests
         var expectedQuarter = new Score[2].Select(_ => new Score("-")).ToArray();
 
         // Act
-        var actualQuarter = service.ScoreOfSets(EmptyResultDetail, Resources, permission);
+        var actualQuarter = service.ScoreOfSets(EmptyResultDetail, Resources, isLeader);
 
         // Assert
         AssertExtension.AreEqual(expectedQuarter, actualQuarter);
@@ -98,10 +99,10 @@ public class ScoreServiceTests
         var fakeQuarterScore = new Score("1", "2");
         var expectedQuarter = new Score[2].Select(_ => new Score("1", "2")).ToArray();
 
-        scoreSetService.GetScore(Arg.Any<ResultDetail>(), Arg.Any<Permission>()).Returns(fakeQuarterScore);
+        scoreSetService.GetScore(Arg.Any<ResultDetail>(), Arg.Any<bool>()).Returns(fakeQuarterScore);
 
         // Act
-        var actualQuarter = service.ScoreOfSets(resultDetail, Resources, permission);
+        var actualQuarter = service.ScoreOfSets(resultDetail, Resources, isLeader);
 
         // Assert
         AssertExtension.AreEqual(expectedQuarter, actualQuarter);
@@ -117,7 +118,7 @@ public class ScoreServiceTests
         scoreSetService.SumScore(Arg.Any<List<ResultDetail>>()).Returns(new Score("1", "1"));
 
         // Act
-        var actualScore = service.HalftimeScore(SportType.Badminton, resultDetail, permission);
+        var actualScore = service.HalftimeScore(SportType.Badminton, resultDetail, isLeader);
 
         // Assert
         var expectedScore = new Score("1", "1");
@@ -135,10 +136,10 @@ public class ScoreServiceTests
         };
 
         // Act
-        service.HalftimeScore(SportGroup.SupportSettleDetermine[0], resultDetails, permission);
+        service.HalftimeScore(SportGroup.SupportSettleDetermine[0], resultDetails, isLeader);
 
         // Assert
-        scoreSetService.Received().GetScore(Arg.Is<ResultDetail>(r => r.HomeValue == null && r.AwayValue == string.Empty), permission);
+        scoreSetService.Received().GetScore(Arg.Is<ResultDetail>(r => r.HomeValue == null && r.AwayValue == string.Empty), isLeader);
     }
 
     [Fact]
@@ -155,7 +156,7 @@ public class ScoreServiceTests
             }
         };
         // Act
-        var actualScore = service.HalftimeScore(SportType.Badminton, resultDetails, permission);
+        var actualScore = service.HalftimeScore(SportType.Badminton, resultDetails, isLeader);
 
         // Assert
         var expectedScore = new Score("R", "R");
@@ -169,7 +170,7 @@ public class ScoreServiceTests
         var resultDetails = new List<ResultDetail>();
 
         // Act
-        var actualScore = service.HalftimeScore(SportType.OtherSports, resultDetails, permission);
+        var actualScore = service.HalftimeScore(SportType.OtherSports, resultDetails, isLeader);
 
         // Assert
         var expectedScore = new Score("-");
@@ -190,10 +191,10 @@ public class ScoreServiceTests
             }
         };
 
-        scoreSetService.GetScore(Arg.Any<ResultDetail>(), Arg.Any<Permission>()).Returns(new Score("1", "1"));
+        scoreSetService.GetScore(Arg.Any<ResultDetail>(), Arg.Any<bool>()).Returns(new Score("1", "1"));
 
         // Act
-        var actualScore = service.HalftimeScore(SportType.OtherSports, resultDetails, permission);
+        var actualScore = service.HalftimeScore(SportType.OtherSports, resultDetails, isLeader);
 
         // Assert
         var expectedScore = new Score("1", "1");
@@ -207,7 +208,7 @@ public class ScoreServiceTests
         var expectedScore = new Score("-");
 
         // Act
-        var actualScore = service.FinalScore(1, EmptyResultDetail, permission);
+        var actualScore = service.FinalScore(1, EmptyResultDetail, isLeader);
 
         // Assert
         AssertExtension.AreEqual(expectedScore, actualScore);
@@ -224,10 +225,10 @@ public class ScoreServiceTests
         };
 
         // Act
-        service.FinalScore(SportGroup.SupportSettleDetermine[0], resultDetails, permission);
+        service.FinalScore(SportGroup.SupportSettleDetermine[0], resultDetails, isLeader);
 
         // Assert
-        scoreSetService.Received().GetScore(Arg.Is<ResultDetail>(r => r.HomeValue == null && r.AwayValue == string.Empty), permission);
+        scoreSetService.Received().GetScore(Arg.Is<ResultDetail>(r => r.HomeValue == null && r.AwayValue == string.Empty), isLeader);
     }
 
     [Fact]
@@ -242,10 +243,10 @@ public class ScoreServiceTests
             new() { MatchId = 1 , ResourceId = "00" }
         };
 
-        scoreSetService.GetScore(Arg.Any<ResultDetail>(), Arg.Any<Permission>()).Returns(fakeFinalTimeScore);
+        scoreSetService.GetScore(Arg.Any<ResultDetail>(), Arg.Any<bool>()).Returns(fakeFinalTimeScore);
 
         // Act
-        var actualScore = service.FinalScore(1, resultDetail, permission);
+        var actualScore = service.FinalScore(1, resultDetail, isLeader);
 
         // Assert
         AssertExtension.AreEqual(expectedScore, actualScore);
