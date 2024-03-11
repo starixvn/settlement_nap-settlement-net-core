@@ -113,13 +113,13 @@
         </th>
       </tr>
       <tr>
-        <th class="score" *ngIf="hasHalfTime">HT</th>
+        <th class="score" *ngIf="hasHalfTime || matchDetail.sportType === sportType.handball">HT</th>
         <th class="score">{{hasHalfTime ? "FT" : "Final Score"}}</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td class="score" *ngIf="hasHalfTime"> 
+        <td class="score" *ngIf="hasHalfTime || matchDetail.sportType === sportType.handball"> 
           {{matchDetail.exHTHomeScore | score}}
         </td>
         <td class="final-score">
@@ -127,7 +127,7 @@
         </td>
       </tr>
       <tr>
-        <td class="score" *ngIf="hasHalfTime">
+        <td class="score" *ngIf="hasHalfTime || matchDetail.sportType === sportType.handball">
           {{matchDetail.exHTAwayScore | score}}
         </td>
         <td class="final-score">
