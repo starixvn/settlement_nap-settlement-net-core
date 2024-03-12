@@ -11,9 +11,11 @@ export class VerificationService {
     constructor(private readonly requestService: RequestService) {}
 
     public isScoreInconsistent(matchDetail: MatchDetail) {
+        console.log(matchDetail);
         return !this.isScoreEmpty(matchDetail.halfTimeHomeScore, matchDetail.halfTimeAwayScore)
             && !this.isScoreEmpty(matchDetail.finalHomeScore, matchDetail.finalAwayScore)
-            && (matchDetail.halfTimeHomeScore > matchDetail.finalHomeScore || matchDetail.halfTimeAwayScore > matchDetail.finalAwayScore);
+            && (Number(matchDetail.halfTimeHomeScore) > Number(matchDetail.finalHomeScore) 
+                ||Number(matchDetail.halfTimeAwayScore) > Number(matchDetail.finalAwayScore));
     }
 
     public isHaltTimeScoreMismatched(matchDetail: MatchDetail) {

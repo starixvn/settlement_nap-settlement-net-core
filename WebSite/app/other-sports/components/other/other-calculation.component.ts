@@ -3,7 +3,7 @@ import * as _ from "lodash";
 import { ToastContainerDirective, ToastrService } from "ngx-toastr";
 import { Match, MatchDetail, Permission, QueryMatch } from "../../models";
 import { RequestService } from "../../services/request.service";
-import { BackgroundColor, CalculateAction, TicketStatusText } from "../../../shared/constants";
+import { BackgroundColor, CalculateAction, TicketStatusText, SportType } from "../../../shared/constants";
 import { Language } from "../../../shared/language.native";
 import { ModalDialogMessage } from "../../../shared/models";
 import { HedgeMatchDetail, SportTemplate } from "../../../shared/models/sportsbook-sop";
@@ -38,6 +38,7 @@ export class OtherCalculationComponent implements SportTemplate {
   public isHtScoreConfirmed = false;
   public isFinalScoreConfirmed = false;
   public isScoreInconsistent = false;
+  readonly sportType = SportType;
   constructor(private readonly requestService: RequestService,
     private readonly otherService: OtherService,
     private readonly verificationService: VerificationService,

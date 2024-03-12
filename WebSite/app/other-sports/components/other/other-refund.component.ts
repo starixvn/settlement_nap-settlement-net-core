@@ -2,7 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 import * as _ from 'lodash';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 import { ModalDialogMessage } from '../../../shared/models';
-import { CalculateAction } from '../../../shared/constants';
+import { CalculateAction,SportType } from '../../../shared/constants';
 import { HedgeMatchDetail, SportTemplate } from '../../../shared/models/sportsbook-sop';
 import { RequestService } from '../../services/request.service';
 import { MessageBoxService } from '../../../shared/services';
@@ -22,6 +22,8 @@ export class OtherRefundComponent implements SportTemplate {
     public applyHedgeMatch: boolean;
     public confirmDialogMessage: ModalDialogMessage = new ModalDialogMessage();
     public hasRefundFt = false;
+    public sportType = SportType;
+
     constructor(private readonly requestService: RequestService,
         private readonly messageBoxService: MessageBoxService,
         private readonly toastrService: ToastrService,
