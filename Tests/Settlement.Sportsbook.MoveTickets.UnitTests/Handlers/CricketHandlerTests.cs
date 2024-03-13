@@ -33,7 +33,7 @@ public class CricketHandlerTests
         var listSport = new List<SportModel>();
         var permission = new Permission();
         moveTicketService.GetSportBook(Arg.Any<GetMatchRequest>()).Returns(listSport);
-        permissionService.Permission.Returns(permission);
+        permissionService.GetPermission(Arg.Any<string>()).Returns(permission);
 
         var actual = await handler.Handle(new GetMatchRequest(), new CancellationToken());
 

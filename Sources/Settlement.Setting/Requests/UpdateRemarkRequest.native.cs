@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-using MediatR;
-using Settlement.Core.Models;
+﻿using MediatR;
 using Settlement.Setting.Models;
 
 namespace Settlement.Setting.Requests;

@@ -8,27 +8,17 @@ namespace Settlement.Core.Services;
 
 using Configurations;
 
-public abstract class PermissionService
+public abstract class PermissionService(
+    INapSession session,
+    IUserService userService,
+    ICacheService cacheService,
+    INapSettings siteSettings)
 {
-    private readonly INapSession session;
+    protected abstract bool IsLeader { get; }
 
-    private readonly IUserService userService;
+    protected abstract Permission Permission { get; }
 
-    private readonly ICacheService cacheService;
-
-    private readonly INapSettings siteSettings;
-
-    protected PermissionService(INapSession session, IUserService userService, ICacheService cacheService, INapSettings siteSettings)
-    {
-        this.session = session;
-        this.userService = userService;
-        this.cacheService = cacheService;
-        this.siteSettings = siteSettings;
-    }
-
-    public abstract Permission Permission { get; }
-
-    protected virtual bool HasPermission(string functionKey, Constant.Policy policy)
+    protected bool HasPermission(string functionKey, Constant.Policy policy)
     {
         return session.UserId > 0 && userService.IsHavingPermission(
             session.UserId,
@@ -37,7 +27,7 @@ public abstract class PermissionService
             policy);
     }
 
-    public virtual Permission GetPermission(string cacheKey)
+    public Permission GetPermission(string cacheKey)
     {
         var key = $"{cacheKey}-{session.UserId}";
         return cacheService.GetOrSet(
@@ -45,16 +35,25 @@ public abstract class PermissionService
             () => Permission,
             new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(1)));
     }
+
+    public bool GetPermissionForLeader(string cacheKey)
+    {
+        var key = $"{cacheKey}-{session.UserId}";
+        return cacheService.GetOrSet(
+            key,
+            () => IsLeader,
+            new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(1)));
+    }
 }
 
-public class PermissionServiceImp : PermissionService
+public class PermissionServiceImp(
+    INapSession session,
+    IUserService userService,
+    ICacheService cacheService,
+    INapSettings siteSettings)
+    : PermissionService(session, userService, cacheService, siteSettings)
 {
-    public PermissionServiceImp(INapSession session, IUserService userService, ICacheService cacheService, INapSettings siteSettings)
-        : base(session, userService, cacheService, siteSettings)
-    {
-    }
-
-    public override Permission Permission => new()
+    protected override Permission Permission => new()
     {
         CanCalculate = HasPermission(SettlementFunctionKeys.SportsbookCalculate, Constant.Policy.Host),
         CanMarkPending = HasPermission(SettlementFunctionKeys.SportsbookMarkPendingMatch, Constant.Policy.Host),
@@ -70,4 +69,6 @@ public class PermissionServiceImp : PermissionService
         IsTrader = HasPermission(SettlementFunctionKeys.TraderSaveScore, Constant.Policy.Host),
         AutoSettlement = HasPermission(SettlementFunctionKeys.AutoSettlement, Constant.Policy.Host)
     };
+
+    protected override bool IsLeader => HasPermission(SettlementFunctionKeys.LeaderCalculate, Constant.Policy.Host);
 }

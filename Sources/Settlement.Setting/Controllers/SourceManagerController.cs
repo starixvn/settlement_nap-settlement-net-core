@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Settlement.Core.Constants;
 using Settlement.Core.Services;
 using Settlement.Setting.Requests.OutsideSourceManager;
 using Settlement.Setting.Requests.ProviderManager;
@@ -8,23 +9,14 @@ namespace Settlement.Setting.Controllers;
 
 [ApiController]
 [Route("api/setting")]
-public class SourceManagerController : ControllerBase
+public class SourceManagerController(IMediator mediator, PermissionService permissionService) : ControllerBase
 {
-    private readonly IMediator mediator;
-
-    private readonly PermissionService permissionService;
-
-    public SourceManagerController(IMediator mediator, PermissionService permissionService)
-    {
-        this.mediator = mediator;
-        this.permissionService = permissionService;
-    }
-
     [HttpGet]
     [Route("get-score-source-permission")]
     public IActionResult GetPermission()
     {
-        return Ok(permissionService.Permission.CanChangeScoreSource);
+        var permission = permissionService.GetPermission(CacheSettings.Keys.MemoryCacheManualPermission);
+        return Ok(permission.CanChangeScoreSource);
     }
 
     [HttpPost]

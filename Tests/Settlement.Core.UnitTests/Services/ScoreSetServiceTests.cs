@@ -5,16 +5,9 @@ using Xunit;
 
 namespace Settlement.Core.UnitTests.Services;
 
-public class ScoreSetServiceTests
+public class ScoreSetServiceTests(bool isLeader)
 {
-    private readonly IScoreSetService service;
-
-    public ScoreSetServiceTests()
-    {
-        service = new ScoreSetServiceImp();
-    }
-
-    private readonly Permission permission = new();
+    private readonly IScoreSetService service = new ScoreSetServiceImp();
 
     [Fact]
     public void GetScore_HasResultDetailWithSettlementStatusIdIsRefund_ReturnsROnScore()
@@ -24,7 +17,7 @@ public class ScoreSetServiceTests
         var expectedScore = new Score("R", "R");
 
         // Act
-        var actualScore = service.GetScore(resultDetail, permission);
+        var actualScore = service.GetScore(resultDetail, isLeader);
 
         // Assert
         AssertExtension.AreEqual(expectedScore, actualScore);
@@ -38,7 +31,7 @@ public class ScoreSetServiceTests
         var expectedScore = new Score("R.HT", "R.HT");
 
         // Act
-        var actualScore = service.GetScore(resultDetail, permission);
+        var actualScore = service.GetScore(resultDetail, isLeader);
 
         // Assert
         AssertExtension.AreEqual(expectedScore, actualScore);
@@ -52,7 +45,7 @@ public class ScoreSetServiceTests
         var expectedScore = new Score("R.FT", "R.FT");
 
         // Act
-        var actualScore = service.GetScore(resultDetail, permission);
+        var actualScore = service.GetScore(resultDetail, isLeader);
 
         // Assert
         AssertExtension.AreEqual(expectedScore, actualScore);
@@ -66,7 +59,7 @@ public class ScoreSetServiceTests
         var expectedScore = new Score("1", "2", Background.Calculated);
 
         // Act
-        var actualScore = service.GetScore(resultDetail, permission);
+        var actualScore = service.GetScore(resultDetail, isLeader);
 
         // Assert
         AssertExtension.AreEqual(expectedScore, actualScore);
@@ -81,10 +74,9 @@ public class ScoreSetServiceTests
         {
             IsNotSettled = true
         };
-        permission.IsLeader = true;
 
         // Act
-        var actualScore = service.GetScore(resultDetail, permission);
+        var actualScore = service.GetScore(resultDetail, true);
 
         // Assert
         AssertExtension.AreEqual(expectedScore, actualScore);
@@ -99,10 +91,9 @@ public class ScoreSetServiceTests
         {
             IsNotSettled = true
         };
-        permission.IsLeader = true;
 
         // Act
-        var actualScore = service.GetScore(resultDetail, permission);
+        var actualScore = service.GetScore(resultDetail, true);
 
         // Assert
         AssertExtension.AreEqual(expectedScore, actualScore);

@@ -3,6 +3,7 @@ using Fanex.Data.Repository;
 using Fanex.NAP.Client.Helpers.Web;
 using Microsoft.AspNetCore.Http;
 using Settlement.Core.Criteria;
+using Settlement.Core.Services;
 using Settlement.Setting.Criteria;
 using Settlement.Setting.Models;
 using Settlement.Setting.Requests;
@@ -16,6 +17,9 @@ public class SettingServiceTests
 
     public SettingServiceTests()
     {
+        var logService = Substitute.For<LogService>();
+        var xmlConvertService = Substitute.For<XmlConvertService>();
+
         repository = Substitute.For<IDynamicRepository>();
         var currentSession = Substitute.For<INapSession>();
         var mapperConfig = new MapperConfigurationExpression();
@@ -32,7 +36,7 @@ public class SettingServiceTests
         };
         accessor.HttpContext = context;
 
-        service = new SettingServiceImp(repository, currentSession, accessor, mapper);
+        service = new SettingServiceImp(repository, currentSession, accessor, mapper, logService, xmlConvertService);
     }
 
     [Fact]

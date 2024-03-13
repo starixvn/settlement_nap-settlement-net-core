@@ -4,7 +4,7 @@ public interface ScoreTennisService
 {
     string GetEventStatus(IEnumerable<ResultDetail> resultDetails, string currentStatus);
 
-    MoreScores ScoreLoader(List<ResultDetail> resultDetails, Permission permission);
+    MoreScores ScoreLoader(List<ResultDetail> resultDetails, bool isLeader);
 }
 
 public class ScoreTennisServiceImp(IScoreSetService scoreSetService) : ScoreTennisService
@@ -18,7 +18,7 @@ public class ScoreTennisServiceImp(IScoreSetService scoreSetService) : ScoreTenn
         return totalSet != null && IsRefundMatch(totalSet.HomeValue) ? BetStatus.Refund : currentStatus;
     }
 
-    public MoreScores ScoreLoader(List<ResultDetail> resultDetails, Permission permission)
+    public MoreScores ScoreLoader(List<ResultDetail> resultDetails, bool isLeader)
     {
         var moreScore = new MoreScores
         {
@@ -31,14 +31,14 @@ public class ScoreTennisServiceImp(IScoreSetService scoreSetService) : ScoreTenn
 
         foreach (var item in items)
         {
-            var scoreSet = scoreSetService.GetScore(item, permission);
+            var scoreSet = scoreSetService.GetScore(item, isLeader);
             moreScore.Sets[int.Parse(item.ResourceId) - 1] = scoreSet;
         }
 
         var totalSet = resultDetails.Find(n => n.ResourceId == ResourceType.Final);
         if (totalSet is { MatchId: > 0 })
         {
-            moreScore.FinalScore = scoreSetService.GetScore(totalSet, permission);
+            moreScore.FinalScore = scoreSetService.GetScore(totalSet, isLeader);
             moreScore.HalfTimeScore = TotalGame(moreScore.FinalScore.Home, items);
         }
 

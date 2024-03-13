@@ -75,7 +75,7 @@ public class FastMarketHandlerTests
             }
         };
         matchDetailService.MatchInfo(Arg.Any<int>()).Returns(result);
-        permissionService.Permission.Returns(new Permission());
+        permissionService.GetPermission(Arg.Any<string>()).Returns(new Permission());
 
         var actual = await handler.Handle(new MatchDetailRequest(), new CancellationToken());
 
@@ -89,7 +89,6 @@ public class FastMarketHandlerTests
         var permission = new Permission();
         result.Permission = permission;
         fastMarketService.Query(Arg.Any<int>()).Returns(result);
-        permissionService.Permission.Returns(permission);
 
         var actual = await handler.Handle(new BetTypeIntervalRequest(), new CancellationToken());
 
@@ -101,7 +100,6 @@ public class FastMarketHandlerTests
     {
         var result = new List<FastMarketResult>();
         fastMarketService.GetLatestResult(Arg.Any<GetLatestResultRequest>()).Returns(result);
-        permissionService.Permission.Returns(new Permission());
 
         var actual = await handler.Handle(new GetLatestResultRequest(), new CancellationToken());
 
@@ -113,7 +111,6 @@ public class FastMarketHandlerTests
     {
         var result = new List<TimeMachineResult>();
         fastMarketService.GetTimeMachineResult(Arg.Any<GetTimeMachineResultRequest>()).Returns(result);
-        permissionService.Permission.Returns(new Permission());
 
         var actual = await handler.Handle(new GetTimeMachineResultRequest(), new CancellationToken());
 

@@ -4,17 +4,16 @@ public interface ScoreService
 {
     bool IsIntervalScore(int sportType, List<ResultDetail> resultDetails);
 
-    Score[] ScoreOfSets(List<ResultDetail> resultDetails, List<string> resources, Permission permission);
+    Score[] ScoreOfSets(List<ResultDetail> resultDetails, List<string> resources, bool isLeader);
 
-    Score HalftimeScore(int sportType, List<ResultDetail> resultDetails, Permission permission);
+    Score HalftimeScore(int sportType, List<ResultDetail> resultDetails, bool isLeader);
 
-    Score FinalScore(int sportType, List<ResultDetail> resultDetails, Permission permission);
+    Score FinalScore(int sportType, List<ResultDetail> resultDetails, bool isLeader);
 }
 
 public class ScoreServiceImp(IScoreSetService scoreSetService) : ScoreService
 {
-    private readonly List<int> totalPointSports = new()
-        {SportType.BeachVolleyball, SportType.Badminton, SportType.VolleyBall};
+    private readonly List<int> totalPointSports = [SportType.BeachVolleyball, SportType.Badminton, SportType.VolleyBall];
 
     public bool IsIntervalScore(int sportType, List<ResultDetail> resultDetails)
     {
@@ -23,20 +22,20 @@ public class ScoreServiceImp(IScoreSetService scoreSetService) : ScoreService
             : resultDetails.Exists(item => !item.ResourceId.Equals(ResourceType.Final));
     }
 
-    public Score[] ScoreOfSets(List<ResultDetail> resultDetails, List<string> resources, Permission permission)
+    public Score[] ScoreOfSets(List<ResultDetail> resultDetails, List<string> resources, bool isLeader)
     {
         var quarterScore = new Score[resources.Count];
         var index = 0;
         foreach (var resource in resources)
         {
-            quarterScore[index] = ScoreByResource(resultDetails, resource, permission);
+            quarterScore[index] = ScoreByResource(resultDetails, resource, isLeader);
             index++;
         }
 
         return quarterScore;
     }
 
-    public Score HalftimeScore(int sportType, List<ResultDetail> resultDetails, Permission permission)
+    public Score HalftimeScore(int sportType, List<ResultDetail> resultDetails, bool isLeader)
     {
         if (SportGroup.SupportSettleDetermine.Contains(sportType))
         {
@@ -44,16 +43,16 @@ public class ScoreServiceImp(IScoreSetService scoreSetService) : ScoreService
         }
         return totalPointSports.Contains(sportType)
             ? TotalPoints(resultDetails, sportType == SportType.BeachVolleyball)
-            : ScoreByResource(resultDetails, ResourceType.Halftime, permission);
+            : ScoreByResource(resultDetails, ResourceType.Halftime, isLeader);
     }
 
-    public Score FinalScore(int sportType, List<ResultDetail> resultDetails, Permission permission)
+    public Score FinalScore(int sportType, List<ResultDetail> resultDetails, bool isLeader)
     {
         if (SportGroup.SupportSettleDetermine.Contains(sportType))
         {
             ClearScore(sportType, resultDetails, ResourceType.Final);
         }
-        return ScoreByResource(resultDetails, ResourceType.Final, permission);
+        return ScoreByResource(resultDetails, ResourceType.Final, isLeader);
     }
 
     private static void ClearScore(int sportType, List<ResultDetail> resultDetails, string resourceId)
@@ -69,13 +68,13 @@ public class ScoreServiceImp(IScoreSetService scoreSetService) : ScoreService
         }
     }
 
-    private Score ScoreByResource(IEnumerable<ResultDetail> resultDetails, string resource, Permission permission)
+    private Score ScoreByResource(IEnumerable<ResultDetail> resultDetails, string resource, bool isLeader)
     {
         var resultDetail = resultDetails.FirstOrDefault(n => n.ResourceId == resource);
 
         var hasResult = resultDetail is { MatchId: > 0 };
 
-        return hasResult ? scoreSetService.GetScore(resultDetail, permission) : new Score("-");
+        return hasResult ? scoreSetService.GetScore(resultDetail, isLeader) : new Score("-");
     }
 
     private static List<ResultDetail> ResultDetailsFilter(IEnumerable<ResultDetail> resultDetails, bool isBeachVolleyball)

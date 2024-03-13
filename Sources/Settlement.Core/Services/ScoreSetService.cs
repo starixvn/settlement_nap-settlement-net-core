@@ -5,14 +5,14 @@ namespace Settlement.Core.Services;
 
 public interface IScoreSetService
 {
-    Score GetScore(ResultDetail item, Permission permission);
+    Score GetScore(ResultDetail item, bool isLeader);
 
     Score SumScore(IReadOnlyCollection<ResultDetail> resultDetails);
 }
 
 public class ScoreSetServiceImp : IScoreSetService
 {
-    public Score GetScore(ResultDetail item, Permission permission)
+    public Score GetScore(ResultDetail item, bool isLeader)
     {
         if (item.SettlementStatusId == SettlementStatus.Refund)
         {
@@ -47,7 +47,7 @@ public class ScoreSetServiceImp : IScoreSetService
             IsNotSettled = true
         };
 
-        if (permission is not { IsLeader: false })
+        if (isLeader)
         {
             return score;
         }

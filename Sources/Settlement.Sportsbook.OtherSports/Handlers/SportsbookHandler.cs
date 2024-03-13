@@ -9,31 +9,22 @@ using MatchResultDetail = Settlement.Sportsbook.OtherSports.Models.MatchResultDe
 
 namespace Settlement.Sportsbook.OtherSports.Handlers;
 
-public class SportsbookHandler :
-    IRequestHandler<GetMatchRequest, OtherSportsMatchModel>,
-    IRequestHandler<CalculateRequest, Result>,
-    IRequestHandler<CheckingMarkedTicketsRequest, MarkedTickets>,
-    IRequestHandler<GetLatestResultRequest, MatchResultDetail>
+public class SportsbookHandler(
+    SportsbookService sportsbookService,
+    SettlementActionsService settlementActionsService,
+    PermissionService permissionService)
+    :
+        IRequestHandler<GetMatchRequest, OtherSportsMatchModel>,
+        IRequestHandler<CalculateRequest, Result>,
+        IRequestHandler<CheckingMarkedTicketsRequest, MarkedTickets>,
+        IRequestHandler<GetLatestResultRequest, MatchResultDetail>
 {
-    private readonly SportsbookService sportsbookService;
-
-    private readonly SettlementActionsService settlementActionsService;
-
-    private readonly PermissionService permissionService;
-
-    private static readonly List<string> ActionRefund = new() { ActionType.RefundAll, ActionType.RefundHalfTime, ActionType.RefundFullTime };
-
-    public SportsbookHandler(SportsbookService sportsbookService, SettlementActionsService settlementActionsService, PermissionService permissionService)
-    {
-        this.sportsbookService = sportsbookService;
-        this.settlementActionsService = settlementActionsService;
-        this.permissionService = permissionService;
-    }
+    private static readonly List<string> ActionRefund = [ActionType.RefundAll, ActionType.RefundHalfTime, ActionType.RefundFullTime];
 
     public async Task<OtherSportsMatchModel> Handle(GetMatchRequest request, CancellationToken cancellationToken)
     {
         var match = await sportsbookService.GetMatch(request);
-        var permission = permissionService.Permission;
+        var permission = permissionService.GetPermission(CacheSettings.Keys.MemoryCacheManualPermission);
 
         return new OtherSportsMatchModel
         {

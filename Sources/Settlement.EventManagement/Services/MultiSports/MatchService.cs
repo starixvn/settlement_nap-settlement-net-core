@@ -6,7 +6,7 @@ using Match = Models.MultiSports.Match;
 
 public interface IMatchService
 {
-    List<Match> GetScoreForMatchBySportType(List<Match> matches, List<ResultDetail> resultDetails, int sportType, Permission permission = null);
+    List<Match> GetScoreForMatchBySportType(List<Match> matches, List<ResultDetail> resultDetails, int sportType, bool isLeader = false);
 
     void AddSiteInfo(List<Match> baseMatches, List<Match> siteMatches);
 
@@ -45,88 +45,88 @@ public class MatchServiceImp(
         return await newInfoMatchService.GetAutoSetting(matches);
     }
 
-    public List<Match> GetScoreForMatchBySportType(List<Match> matches, List<ResultDetail> resultDetails, int sportType, Permission permission = null)
+    public List<Match> GetScoreForMatchBySportType(List<Match> matches, List<ResultDetail> resultDetails, int sportType, bool isLeader = false)
     {
         return sportType switch
         {
-            SportType.Tennis => matchResultDetailService.TennisResultDetail(matches, resultDetails, permission),
-            SportType.BasketBall => matchResultDetailService.BasketballResultDetail(matches, resultDetails, permission),
-            SportType.ESports => matchResultDetailService.ESportsResultDetail(matches, resultDetails, permission),
-            SportType.Badminton => matchResultDetailService.BadmintonResultDetail(matches, resultDetails, permission),
-            SportType.Cricket => matchResultDetailService.CricketResultDetail(matches, resultDetails, permission),
+            SportType.Tennis => matchResultDetailService.TennisResultDetail(matches, resultDetails, isLeader),
+            SportType.BasketBall => matchResultDetailService.BasketballResultDetail(matches, resultDetails, isLeader),
+            SportType.ESports => matchResultDetailService.ESportsResultDetail(matches, resultDetails, isLeader),
+            SportType.Badminton => matchResultDetailService.BadmintonResultDetail(matches, resultDetails, isLeader),
+            SportType.Cricket => matchResultDetailService.CricketResultDetail(matches, resultDetails, isLeader),
             SportType.BeachVolleyball => matchResultDetailService.BeachVolleyballResultDetail(matches, resultDetails,
-                permission),
-            SportType.VolleyBall => matchResultDetailService.VolleyballResultDetail(matches, resultDetails, permission),
-            SportType.Bandy => matchResultDetailService.BandyResultDetail(matches, resultDetails, permission),
+                isLeader),
+            SportType.VolleyBall => matchResultDetailService.VolleyballResultDetail(matches, resultDetails, isLeader),
+            SportType.Bandy => matchResultDetailService.BandyResultDetail(matches, resultDetails, isLeader),
             _ => LoadExternalResults(matches, resultDetails, sportType)
         };
     }
 
-    private readonly List<int> fullTimeSports = new()
-    {
-            SportType.IceHockey,
-            SportType.VolleyBall,
-            SportType.TableTennis,
-            SportType.Handball,
-            SportType.Dart,
-            SportType.Swimming,
-            SportType.Politics,
-            SportType.WaterPolo,
-            SportType.Diving,
-            SportType.Boxing,
-            SportType.Archery,
-            SportType.Weightlifting,
-            SportType.Canoeing,
-            SportType.Gymnastics,
-            SportType.Athletics,
-            SportType.Equestrian,
-            SportType.Entertainment,
-            SportType.OtherSports,
-            SportType.Kabaddi,
-            SportType.Futsal,
-            SportType.UpcomingSport56,
-            SportType.Billard,
-            SportType.Golf,
-            SportType.Motorsports,
-            SportType.Winter,
-            SportType.Cycling,
-            SportType.Fencing,
-            SportType.Judo,
-            SportType.ModernPentathlon,
-            SportType.Rowing,
-            SportType.Sailing,
-            SportType.Shooting,
-            SportType.Taekwondo,
-            SportType.Triathlon,
-            SportType.Wrestling,
-            SportType.MuayThai,
-            SportType.BeachSoccer,
-            SportType.Poker,
-            SportType.Chess,
-            SportType.Olympic,
-            SportType.Finance,
-            SportType.FieldHockey,
-            SportType.Squash,
-            SportType.SepakTakraw,
-            SportType.AlpineSkiing,
-            SportType.Biathlon,
-            SportType.Curling,
-            SportType.FigureSkating,
-            SportType.FreestyleSkiing,
-            SportType.Luge,
-            SportType.Skeleton,
-            SportType.SkiJumping,
-            SportType.SpeedSkating
-        };
+    private readonly List<int> fullTimeSports =
+    [
+        SportType.IceHockey,
+        SportType.VolleyBall,
+        SportType.TableTennis,
+        SportType.Handball,
+        SportType.Dart,
+        SportType.Swimming,
+        SportType.Politics,
+        SportType.WaterPolo,
+        SportType.Diving,
+        SportType.Boxing,
+        SportType.Archery,
+        SportType.Weightlifting,
+        SportType.Canoeing,
+        SportType.Gymnastics,
+        SportType.Athletics,
+        SportType.Equestrian,
+        SportType.Entertainment,
+        SportType.OtherSports,
+        SportType.Kabaddi,
+        SportType.Futsal,
+        SportType.UpcomingSport56,
+        SportType.Billard,
+        SportType.Golf,
+        SportType.Motorsports,
+        SportType.Winter,
+        SportType.Cycling,
+        SportType.Fencing,
+        SportType.Judo,
+        SportType.ModernPentathlon,
+        SportType.Rowing,
+        SportType.Sailing,
+        SportType.Shooting,
+        SportType.Taekwondo,
+        SportType.Triathlon,
+        SportType.Wrestling,
+        SportType.MuayThai,
+        SportType.BeachSoccer,
+        SportType.Poker,
+        SportType.Chess,
+        SportType.Olympic,
+        SportType.Finance,
+        SportType.FieldHockey,
+        SportType.Squash,
+        SportType.SepakTakraw,
+        SportType.AlpineSkiing,
+        SportType.Biathlon,
+        SportType.Curling,
+        SportType.FigureSkating,
+        SportType.FreestyleSkiing,
+        SportType.Luge,
+        SportType.Skeleton,
+        SportType.SkiJumping,
+        SportType.SpeedSkating
+    ];
 
-    private readonly List<int> halfTimeFullTimeSports = new()
-    {
-            SportType.Football,
-            SportType.BaseBall,
-            SportType.Rugby,
-            SportType.NetBall,
-            SportType.Bandy
-        };
+    private readonly List<int> halfTimeFullTimeSports =
+    [
+        SportType.Football,
+        SportType.BaseBall,
+        SportType.Rugby,
+        SportType.NetBall,
+        SportType.Bandy
+    ];
 
     private List<Match> LoadExternalResults(List<Match> matches, List<ResultDetail> resultDetails, int sportType)
     {

@@ -34,40 +34,40 @@ public class MatchServiceTests
     public void GetScoreForMatchBySportType_IsTennis_InvokeTennisResultDetailMethodOnMatchResultDetailService()
     {
         // Act
-        service.GetScoreForMatchBySportType(new List<Match>(), new List<ResultDetail>(), SportType.Tennis);
+        service.GetScoreForMatchBySportType([], [], SportType.Tennis);
 
         // Assert
-        matchResultDetailService.Received().TennisResultDetail(Arg.Any<List<Match>>(), Arg.Any<List<ResultDetail>>(), Arg.Any<Permission>());
+        matchResultDetailService.Received().TennisResultDetail(Arg.Any<List<Match>>(), Arg.Any<List<ResultDetail>>(), Arg.Any<bool>());
     }
 
     [Fact]
     public void GetScoreForMatchBySportType_IsBasketBall_InvokeBasketballResultDetailMethodOnMatchResultDetailService()
     {
         // Act
-        service.GetScoreForMatchBySportType(new List<Match>(), new List<ResultDetail>(), SportType.BasketBall);
+        service.GetScoreForMatchBySportType([], [], SportType.BasketBall);
 
         // Assert
-        matchResultDetailService.Received().BasketballResultDetail(Arg.Any<List<Match>>(), Arg.Any<List<ResultDetail>>(), Arg.Any<Permission>());
+        matchResultDetailService.Received().BasketballResultDetail(Arg.Any<List<Match>>(), Arg.Any<List<ResultDetail>>(), Arg.Any<bool>());
     }
 
     [Fact]
     public void GetScoreForMatchBySportType_IsESports_InvokeESportsResultDetailMethodOnMatchResultDetailService()
     {
         // Act
-        service.GetScoreForMatchBySportType(new List<Match>(), new List<ResultDetail>(), SportType.ESports);
+        service.GetScoreForMatchBySportType([], [], SportType.ESports);
 
         // Assert
-        matchResultDetailService.Received().ESportsResultDetail(Arg.Any<List<Match>>(), Arg.Any<List<ResultDetail>>(), Arg.Any<Permission>());
+        matchResultDetailService.Received().ESportsResultDetail(Arg.Any<List<Match>>(), Arg.Any<List<ResultDetail>>(), Arg.Any<bool>());
     }
 
     [Fact]
     public void GetScoreForMatchBySportType_IsBadminton_InvokeBadmintonResultDetailMethodOnMatchResultDetailService()
     {
         // Act
-        service.GetScoreForMatchBySportType(new List<Match>(), new List<ResultDetail>(), SportType.Badminton);
+        service.GetScoreForMatchBySportType([], [], SportType.Badminton);
 
         // Assert
-        matchResultDetailService.Received().BadmintonResultDetail(Arg.Any<List<Match>>(), Arg.Any<List<ResultDetail>>(), Arg.Any<Permission>());
+        matchResultDetailService.Received().BadmintonResultDetail(Arg.Any<List<Match>>(), Arg.Any<List<ResultDetail>>(), Arg.Any<bool>());
     }
 
     [Fact]
@@ -99,7 +99,7 @@ public class MatchServiceTests
         matchResultDetailService.OtherSportsResultDetail(Arg.Any<List<Match>>(), Arg.Any<List<ResultDetail>>(), false).Returns(matches);
 
         // Act
-        var newMatches = service.GetScoreForMatchBySportType(matches, new List<ResultDetail>(), 4);
+        var newMatches = service.GetScoreForMatchBySportType(matches, [], 4);
 
         // Assert
         Assert.True(matches.Count == newMatches.Count);
@@ -117,7 +117,7 @@ public class MatchServiceTests
         matchResultDetailService.OtherSportsResultDetail(Arg.Any<List<Match>>(), Arg.Any<List<ResultDetail>>(), true).Returns(matches);
 
         // Act
-        var newMatches = service.GetScoreForMatchBySportType(matches, new List<ResultDetail>(), 3);
+        var newMatches = service.GetScoreForMatchBySportType(matches, [], 3);
 
         // Assert
         Assert.True(matches.Count == newMatches.Count);
@@ -147,7 +147,7 @@ public class MatchServiceTests
         newInfoMatchService.IsExistsConfirmedEarly(Arg.Any<Match>()).Returns(true);
         newInfoMatchService.GetAutoSetting(Arg.Any<List<Match>>()).Returns(x => x[0] as List<Match>);
 
-        var matches = await service.SetNewMatchInfo(new List<Match> { new() }, new List<ResultDetail>());
+        var matches = await service.SetNewMatchInfo([new()], []);
         var match = matches.ToList()[0];
 
         Assert.True(match.IsExistsConfirmedEarly && match.IsExistMarkedTicket && match is { IsExistRunningTicket: true, IsCalculatingSingle: 1 });

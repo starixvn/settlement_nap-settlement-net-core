@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
+using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.Aio.Models;
@@ -7,7 +8,11 @@ using Settlement.Sportsbook.Aio.Services;
 
 namespace Settlement.Sportsbook.Aio.Handlers;
 
-public class AioHandler :
+public class AioHandler(
+    IAioService aioService,
+    PermissionService permissionService,
+    IOptions<AppSettingsKey> appSettingsKey)
+    :
         IRequestHandler<GetMatchRequest, AioMatch>,
         IRequestHandler<SettleRequest, Result>,
         IRequestHandler<GetRecalResultRequest, List<Models.ResultDetail>>,
@@ -18,25 +23,9 @@ public class AioHandler :
         IRequestHandler<ResultSettingRequest, bool>
 
 {
-    private readonly IAioService aioService;
-
-    private readonly PermissionService permissionService;
-
-    private readonly AppSettingsKey appSettingsKey;
-
-    public AioHandler(
-        IAioService aioService,
-        PermissionService permissionService,
-        IOptions<AppSettingsKey> appSettingsKey)
-    {
-        this.aioService = aioService;
-        this.permissionService = permissionService;
-        this.appSettingsKey = appSettingsKey.Value;
-    }
-
     public async Task<AioMatch> Handle(GetMatchRequest request, CancellationToken cancellationToken)
     {
-        request.Permission = permissionService.Permission;
+        request.Permission = permissionService.GetPermission(CacheSettings.Keys.MemoryCacheManualPermission);
         return await aioService.GetMatch(request);
     }
 
@@ -52,7 +41,7 @@ public class AioHandler :
 
     public async Task<Result> Handle(CheckRunningOddsRequest request, CancellationToken cancellationToken)
     {
-        if (appSettingsKey.EnableVerifyingRunningOdds)
+        if (appSettingsKey.Value.EnableVerifyingRunningOdds)
         {
             return await aioService.VerifyNoRunningOdds(request);
         }

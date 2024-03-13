@@ -7,16 +7,15 @@ using Microsoft.Extensions.Caching.Memory;
 using Requests;
 using Settlement.Core.Criteria;
 using Settlement.Core.Models;
-using Settlement.Core.Services;
 using Settlement.EventManagement.Models.MultiSports;
 using System.Text;
 using Match = Models.MultiSports.Match;
 
 public interface IMultiSportService
 {
-    Task<List<SportModel>> GetSportBook(FilterMultiSportRequest request);
+    Task<List<SportModel>> GetSportBook(FilterMultiSportRequest request, bool isLeader);
 
-    Task<List<MultiSportMatchWaiting>> GetWaitingMatches(RefreshMultiSportRequest request);
+    Task<List<MultiSportMatchWaiting>> GetWaitingMatches(RefreshMultiSportRequest request, bool isLeader);
 }
 
 public class MultiSportServiceImp(
@@ -24,17 +23,15 @@ public class MultiSportServiceImp(
     IMatchService matchService,
     IMapper mapper,
     IMemoryCache cacheService,
-    PermissionService permissionService,
     IOptions<AppSettingsKey> appSettingsKey)
     : IMultiSportService
 {
     private static int _isProcessing;
-    private readonly AppSettingsKey appSettingsKey = appSettingsKey.Value;
 
-    public async Task<List<SportModel>> GetSportBook(FilterMultiSportRequest request)
+    public async Task<List<SportModel>> GetSportBook(FilterMultiSportRequest request, bool isLeader)
     {
         var data = await FetchMatchesAndResultDetails(request);
-        var matches = GetMoreScore(data);
+        var matches = GetMoreScore(data, isLeader);
 
         var matchesSorted = matchService.SortingMatches(matches);
 
@@ -42,7 +39,7 @@ public class MultiSportServiceImp(
         return sportBooks;
     }
 
-    public async Task<List<MultiSportMatchWaiting>> GetWaitingMatches(RefreshMultiSportRequest request)
+    public async Task<List<MultiSportMatchWaiting>> GetWaitingMatches(RefreshMultiSportRequest request, bool isLeader)
     {
         var hashLeagueIds = ConvertKeyToHash(request.LeagueIds);
         var matches = MatchesOnShortCaching(hashLeagueIds);
@@ -56,7 +53,7 @@ public class MultiSportServiceImp(
         {
             try
             {
-                return await GetAndCachingMatches(request, hashLeagueIds);
+                return await GetAndCachingMatches(request, hashLeagueIds, isLeader);
             }
             finally
             {
@@ -89,7 +86,7 @@ public class MultiSportServiceImp(
 
     private static string LongCachingKey(string hashLeagueIds) => $"{ShortCachingKey(hashLeagueIds)}-long";
 
-    private async Task<List<MultiSportMatchWaiting>> GetAndCachingMatches(RefreshMultiSportRequest request, string hashLeagueIds)
+    private async Task<List<MultiSportMatchWaiting>> GetAndCachingMatches(RefreshMultiSportRequest request, string hashLeagueIds, bool isLeader)
     {
         var criteria = mapper.Map<RefreshMultiSportRequest, GetWaitingMultiSportCriteria>(request);
         var waitingMatches = await GetMatchesAllSites(criteria);
@@ -97,24 +94,22 @@ public class MultiSportServiceImp(
 
         waitingMatches = await matchService.SetNewMatchInfo(waitingMatches, listResultDetail);
 
-        var matches = GetMoreScore(new MultiSportResult { Matches = waitingMatches, ResultDetails = listResultDetail });
+        var matches = GetMoreScore(new MultiSportResult { Matches = waitingMatches, ResultDetails = listResultDetail }, isLeader);
 
         return SetToCache(hashLeagueIds, matches);
     }
 
     private async Task<List<Match>> GetMatchesAllSites(MultipleSiteCriteria criteria)
     {
-        var fetchMatchTasks = appSettingsKey
-            .SiteDbServer
-            .Select(s => FetchMatches(s, criteria))
-            .ToList();
+        var siteDbServer = appSettingsKey.Value.SiteDbServer;
+        var fetchMatchTasks = siteDbServer.Select(s => FetchMatches(s, criteria)).ToList();
         var listMatch = await Task.WhenAll(fetchMatchTasks.ToArray());
 
         var matchesInAllServers = listMatch.Select(m => m.ToList()).ToList();
 
         var baseMatches = matchesInAllServers.SelectMany(m => m).Distinct().ToList();
 
-        for (var i = 1; i < appSettingsKey.SiteDbServer.Count; i++)
+        for (var i = 1; i < siteDbServer.Count; i++)
         {
             matchService.AddSiteInfo(baseMatches, matchesInAllServers[i]);
         }
@@ -140,16 +135,16 @@ public class MultiSportServiceImp(
         return waitingMatches;
     }
 
-    private List<Match> GetMoreScore(MultiSportResult data)
+    private List<Match> GetMoreScore(MultiSportResult data, bool isLeader)
     {
         var matchesByEachSport = data.Matches.GroupBy(match => match.SportType)
             .Select(sports => new MatchesBySportTypeModel { SportType = sports.Key, Matches = sports.ToList() })
             .ToList();
-        var permission = permissionService.GetPermission(CacheSettings.Keys.MemoryCacheManualPermission);
+
         var listMatch = new List<Match>();
         foreach (var item in matchesByEachSport)
         {
-            item.Matches = matchService.GetScoreForMatchBySportType(item.Matches, data.ResultDetails, item.SportType, permission);
+            item.Matches = matchService.GetScoreForMatchBySportType(item.Matches, data.ResultDetails, item.SportType, isLeader);
             listMatch.AddRange(item.Matches);
         }
 

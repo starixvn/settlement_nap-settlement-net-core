@@ -29,36 +29,15 @@ public interface IMatchService
     Task<List<MatchMoveBetTicket>> GetMatchDetailThirdPartyBetTicket(GetMatchDetailThirdPartyBetTicketsRequest request);
 }
 
-public class MatchServiceImp : IMatchService
+public class MatchServiceImp(
+    IDynamicRepository repository,
+    PermissionService permissionService,
+    IMapper mapper,
+    IRefDataService refDataService,
+    GoalIconService goalIconService,
+    IFetchDataService fetchDataService)
+    : IMatchService
 {
-    private readonly IDynamicRepository repository;
-
-    private readonly PermissionService permission;
-
-    private readonly IMapper mapper;
-
-    private readonly IRefDataService refDataService;
-
-    private readonly GoalIconService goalIconService;
-
-    private readonly IFetchDataService fetchDataService;
-
-    public MatchServiceImp(
-        IDynamicRepository repository,
-        PermissionService permission,
-        IMapper mapper,
-        IRefDataService refDataService,
-        GoalIconService goalIconService,
-        IFetchDataService fetchDataService)
-    {
-        this.repository = repository;
-        this.permission = permission;
-        this.mapper = mapper;
-        this.refDataService = refDataService;
-        this.goalIconService = goalIconService;
-        this.fetchDataService = fetchDataService;
-    }
-
     public string GetBetStatus(int matchId)
     {
         var criteria = new GetMatchInfoCriteria
@@ -85,6 +64,7 @@ public class MatchServiceImp : IMatchService
 
     public async Task<Match> GetMatch(GetMatchRequest request)
     {
+        var permission = permissionService.GetPermission(CacheSettings.Keys.MemoryCacheManualPermission);
         var match = await fetchDataService.GetMatchInfo(request);
         var resultDetails = await GetResultDetail(request.MatchId);
         var matchDetail = match.MatchDetail;
@@ -118,12 +98,13 @@ public class MatchServiceImp : IMatchService
             ChildMatches = childMatches,
             FantasyMatch = fantasyMatch,
             HedgeMatchDetail = hedgeMatchDetail,
-            Permission = permission.Permission
+            Permission = permission
         };
     }
 
     public async Task<Match> GetMatchRefund(GetMatchRequest request)
     {
+        var permission = permissionService.GetPermission(CacheSettings.Keys.MemoryCacheManualPermission);
         var match = await fetchDataService.GetMatchInfo(request);
         var matchDetail = match.MatchDetail;
         var resultDetails = await GetResultDetail(request.MatchId);
@@ -153,7 +134,7 @@ public class MatchServiceImp : IMatchService
             HedgeMatchDetail = hedgeMatchDetail,
             BetDaq = betDaq,
             BetFair = betFair,
-            Permission = permission.Permission
+            Permission = permission
         };
     }
 
