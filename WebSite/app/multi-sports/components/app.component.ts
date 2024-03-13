@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy, Injector } from '@angular/core';
+import { DatePipe } from "@angular/common";
 import { Subscription } from "rxjs";
 import { interval } from 'rxjs';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -18,6 +19,7 @@ import { MultiSport, MatchWaitingRequest } from '../models';
     selector: 'app-root',
     templateUrl: './app.component.html',
     providers: [
+        DatePipe,
         VerifyDateService,
         MessageBoxService,
         MultiSportService,

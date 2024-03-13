@@ -1,7 +1,7 @@
 ﻿import { Injectable } from '@angular/core';
 import * as _ from 'lodash';
 import { HttpRequestService } from '../../shared/services';
-import { MatchWaitingRequest, MultiSport, SportMatch, Match } from '../models';
+import { MatchWaitingRequest, SportMatch, Match } from '../models';
 import { DetectChangesService } from './detect-changes.service';
 import { SportMatchService } from './sport-match.service';
 import { Permission } from '../../shared/models/sportsbook-sop/permission.model';
@@ -14,9 +14,9 @@ export class RefreshMatchService {
     private readonly sportMatchService: SportMatchService
   ) { }
 
-  public refreshMatches(currentSportMatches: SportMatch[], request: MatchWaitingRequest, multiSport: MultiSport) {
+  public refreshMatches(currentSportMatches: SportMatch[], request: MatchWaitingRequest) {
     this.getMatches(request).subscribe((matchesWaiting: Match[]) => {
-      this.changeInfoAfterRefreshMatches(currentSportMatches, matchesWaiting, multiSport);
+      this.changeInfoAfterRefreshMatches(currentSportMatches, matchesWaiting);
     });
   }
 
@@ -25,7 +25,7 @@ export class RefreshMatchService {
     return this.httpRequestService.postMessagePack(param, url, false);
   }
 
-  private changeInfoAfterRefreshMatches(currentSportMatches: SportMatch[], matches: Match[], multiSport: MultiSport) {
+  private changeInfoAfterRefreshMatches(currentSportMatches: SportMatch[], matches: Match[]) {
     currentSportMatches.forEach((sport) =>
       sport.leagues.forEach((league) => {
         league.matches.forEach((match) => {

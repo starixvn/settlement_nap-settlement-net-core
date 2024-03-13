@@ -1,6 +1,6 @@
 import { NgbDateStruct, NgbDateParserFormatter } from "@ng-bootstrap/ng-bootstrap";
 import { DefaultValue, MatchType, Resources } from '../constants';
-import { Component, OnInit, Output, EventEmitter, Injector, inject } from "@angular/core";
+import { Component, OnInit, Output, EventEmitter, inject } from "@angular/core";
 import { DatePipe } from "@angular/common";
 import { CustomNgbDateParserFormatter } from '../../shared/components/date-picker/custom-ngb-date-parser-formatter';
 import { MultiSportService } from '../services';
