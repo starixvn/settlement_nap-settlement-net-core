@@ -33,7 +33,7 @@ public abstract class PermissionService(
         return cacheService.GetOrSet(
             key,
             () => Permission,
-            new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(1)));
+            new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(2)));
     }
 
     public bool GetPermissionForLeader(string cacheKey)
@@ -42,7 +42,7 @@ public abstract class PermissionService(
         return cacheService.GetOrSet(
             key,
             () => IsLeader,
-            new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(1)));
+            new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(2)));
     }
 }
 
