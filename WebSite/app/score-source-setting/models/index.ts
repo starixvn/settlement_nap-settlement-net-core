@@ -6,4 +6,4 @@ export * from './outside-source.model';
 export * from './get-outside-source-query.model';
 export * from './add-source-result.model';
 export * from './update-league-source.model';
-export * from './league-outside-source.model';
+export * from './league-Outside-source.model';
