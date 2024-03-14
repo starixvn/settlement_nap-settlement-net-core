@@ -1,5 +1,4 @@
-﻿using Settlement.Core.Configurations;
-using Settlement.EventManagement.Models;
+﻿using Settlement.EventManagement.Models;
 using Settlement.EventManagement.Models.MultiSports;
 using Settlement.EventManagement.Requests;
 using Settlement.EventManagement.Services;
@@ -32,7 +31,8 @@ public class MultiSportHandler(
 
     public async Task<IList<MultiSportMatchWaiting>> Handle(RefreshMultiSportRequest request, CancellationToken cancellationToken)
     {
-        var isLeader = permissionService.GetPermissionForLeader($"{CacheSettings.Keys.MemoryCacheManualPermission}-{SettlementFunctionKeys.LeaderCalculate}");
+        var permission = permissionService.GetPermission(CacheSettings.Keys.MemoryCacheManualPermission);
+        var isLeader = permission.IsLeader;
         return await multiSportService.GetWaitingMatches(request, isLeader);
     }
 }

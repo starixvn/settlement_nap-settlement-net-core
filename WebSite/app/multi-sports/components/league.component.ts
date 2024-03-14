@@ -83,7 +83,7 @@ export class LeagueComponent implements OnInit, OnChanges, OnDestroy {
   private refreshMatches() {
     this.subscriber = this.intervalTimer.subscribe(() => {
       if (this.enableRefresh && this.isExistedSport) {
-        this.refreshMatchesService.refreshMatches(this.sports, this.request, this.multiSport);
+        this.refreshMatchesService.refreshMatches(this.sports, this.request);
       }
     });
   }

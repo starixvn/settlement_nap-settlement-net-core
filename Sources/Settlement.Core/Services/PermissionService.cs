@@ -14,8 +14,6 @@ public abstract class PermissionService(
     ICacheService cacheService,
     INapSettings siteSettings)
 {
-    protected abstract bool IsLeader { get; }
-
     protected abstract Permission Permission { get; }
 
     protected bool HasPermission(string functionKey, Constant.Policy policy)
@@ -33,15 +31,6 @@ public abstract class PermissionService(
         return cacheService.GetOrSet(
             key,
             () => Permission,
-            new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(2)));
-    }
-
-    public bool GetPermissionForLeader(string cacheKey)
-    {
-        var key = $"{cacheKey}-{session.UserId}";
-        return cacheService.GetOrSet(
-            key,
-            () => IsLeader,
             new CacheItemOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(2)));
     }
 }
@@ -69,6 +58,4 @@ public class PermissionServiceImp(
         IsTrader = HasPermission(SettlementFunctionKeys.TraderSaveScore, Constant.Policy.Host),
         AutoSettlement = HasPermission(SettlementFunctionKeys.AutoSettlement, Constant.Policy.Host)
     };
-
-    protected override bool IsLeader => HasPermission(SettlementFunctionKeys.LeaderCalculate, Constant.Policy.Host);
 }
