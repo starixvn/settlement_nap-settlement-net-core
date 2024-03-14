@@ -21,6 +21,7 @@ import { CustomHttpRequestInterceptor } from '../shared/custom-httprequest-inter
 import { DynamicHeightDirective } from '../shared/directives';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { TimeConverterPipe } from '../shared/pipes/time-converter.pipe';
+import { DatePipe, CommonModule } from '@angular/common';
 
 @NgModule({
     imports: [
@@ -47,7 +48,7 @@ import { TimeConverterPipe } from '../shared/pipes/time-converter.pipe';
         ModalContentDialogComponent,
         LeagueComponent,
     ],
-    providers: [ { provide: HTTP_INTERCEPTORS, useClass: CustomHttpRequestInterceptor, multi: true }],
+    providers: [ { provide: HTTP_INTERCEPTORS, useClass: CustomHttpRequestInterceptor, multi: true }, DatePipe],
     bootstrap: [AppComponent],
 })
 
