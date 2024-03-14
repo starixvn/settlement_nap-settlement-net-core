@@ -14,6 +14,7 @@ namespace Settlement.Sportsbook.Aio.Handlers;
 public class AioHandler(
     IAioService aioService,
     PermissionService permissionService,
+    ResultAmendmentService resultAmendmentService,
     IOptions<AppSettingsKey> appSettingsKey)
     :
         IRequestHandler<GetMatchRequest, AioMatch>,
@@ -27,10 +28,6 @@ public class AioHandler(
         IRequestHandler<UpdateSettlementResultHistoryStatusRequest, bool>
 
 {
-    private readonly ResultAmendmentService resultAmendmentService;
-
-        ResultAmendmentService resultAmendmentService,
-        this.resultAmendmentService = resultAmendmentService;
     public async Task<AioMatch> Handle(GetMatchRequest request, CancellationToken cancellationToken)
     {
         request.Permission = permissionService.GetPermission(CacheSettings.Keys.MemoryCacheManualPermission);

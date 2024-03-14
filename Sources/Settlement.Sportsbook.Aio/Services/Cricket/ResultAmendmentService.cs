@@ -67,7 +67,6 @@ public class ResultAmendmentServiceImp : ResultAmendmentService
         };
 
         var resultsChanged = await CheckReSettleTicket(criteria, settleCriteria.Action);
-        LogService.Error($"CheckReSettleTicket {resultsChanged.Count}");
 
         if (resultsChanged.Count == 0) { return false; }
 
