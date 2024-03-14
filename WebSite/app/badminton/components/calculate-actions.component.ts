@@ -7,7 +7,7 @@ import * as _ from 'lodash';
 import { MessageBoxService, AioService, IntervalCalculationService } from '../../shared/services';
 import { MatchResource, ModalDialogMessage, Result } from '../../shared/models';
 import { Language } from '../../shared/language.native';
-import { SettlementStatusId, CalculateAction, SportType, ResultStatusId } from '../../shared/constants';
+import { SettlementStatusId, CalculateAction, SportType, ResultStatusId, ScoreSourceType } from '../../shared/constants';
 import { Match, HedgeMatchDetail, SettleQuery, ChildMatch, SettleChildMatchQuery } from '../models';
 import { ResourceNameByIdPipe } from '../pipes';
 import { BadmintonService, VerificationService } from '../services';
@@ -117,6 +117,16 @@ export class CalculateActionsComponent implements SportTemplate {
 
   public get totalGames(): ResultDetail {
     return _.find(this.match.resultDetails, (item: ResultDetail) => _.isEqual(item.resourceId, ResourcesIds.totalGames));
+  }
+
+  public get providerCount() {
+    return this.match.resultDetails[0].externalScores.filter(x => 
+      x.sourceId !== ScoreSourceType.trader && x.sourceId < ScoreSourceType.screenshot).length
+  }
+
+  public get outSideCount() {
+    return this.match.resultDetails[0].externalScores.filter(x => 
+      x.sourceId !== ScoreSourceType.trader && x.sourceId >= ScoreSourceType.screenshot).length
   }
 
   private resetHomeAway(resultDetails: ResultDetail[]) {

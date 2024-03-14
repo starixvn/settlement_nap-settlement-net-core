@@ -418,7 +418,7 @@ export class VerificationBaseService {
     }
 
     private providersScore(externalResults: ExternalResult[]) {
-        const maximumProviders = 2;
+        const maximumProviders = 3;
         const listProvidersScore: ExternalResult[] = [];
         const providersScore = _.filter(externalResults, (item: ExternalResult) =>
             item.sourceId !== ScoreSourceType.trader && item.sourceId < ScoreSourceType.screenshot);
