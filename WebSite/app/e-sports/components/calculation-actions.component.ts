@@ -6,12 +6,13 @@ import * as _ from 'lodash';
 import { MessageBoxService, AioService, BlockUIService } from '../../shared/services';
 import { ModalDialogMessage } from '../../shared/models';
 import { Language } from '../../shared/language.native';
-import { CalculateAction, SettlementStatusId, ResultStatusId, SportType } from '../../shared/constants';
+import { CalculateAction, SettlementStatusId, ResultStatusId, SportType, ScoreSourceType } from '../../shared/constants';
 import { ApiKeys, Resources, ResourcesIds, KickOffTime } from '../constants';
 import { Match, SettleQuery } from '../models';
 import { HedgeMatchDetail, ResultDetail, MatchDetail, ExternalResult, SaveScoreQuery, ExternalResultDetail, SportTemplate } from '../../shared/models/sportsbook-sop';
 import { VerificationService, ESportsService } from '../services';
 import { ResourceNameByIdPipe } from '../pipes';
+import { SourceIds } from '../../basketball/constants/source-ids';
 
 @Component({
     selector: 'calculation-actions',
@@ -43,7 +44,8 @@ export class CalculationActionsComponent implements SportTemplate {
     public isSettleOldMatch: boolean;
     public isReadyMatch: boolean;
     public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
-
+    public SOURCE_ID = SourceIds;
+    
     constructor(private injector: Injector) {
         this.confirmationDialogMessage.title = Language.confirmationBox;
     }
@@ -66,7 +68,7 @@ export class CalculationActionsComponent implements SportTemplate {
         this.enableUncalculate = this.verificationService.enableUncalculateButton(this.match.resultDetails);
         this.disableScoreDirect = this.verificationService.hasTicketBetOnMap(this.match.resultDetails);
         this.isLeader = this.match.permission.isLeader;
-        this.verificationService.generateExternalScores(this.match, this.match.resultDetails, SportType.eSports);
+        this.verificationService.generateExternalScores(this.match, this.match.resultDetails, SportType.eSports,this.maxProviderCol);
         this.resetHomeAway(this.match.resultDetails);
         this.match.originalResultDetail = _.cloneDeep(this.match.resultDetails);
         this.autoFillScoreOnLoad(this.match.resultDetails);
@@ -96,6 +98,21 @@ export class CalculationActionsComponent implements SportTemplate {
     public get finalResource(): ResultDetail {
         return _.find(this.match.resultDetails, (item: ResultDetail) => _.isEqual(item.resourceId, ResourcesIds.final));
     }
+
+    public get providerCount() {
+        return this.match.resultDetails[0].externalScores.filter(x => 
+          x.sourceId !== ScoreSourceType.trader && x.sourceId < ScoreSourceType.screenshot).length
+      }
+    
+      public get outSideCount() {
+        return this.match.resultDetails[0].externalScores.filter(x => 
+          x.sourceId !== ScoreSourceType.trader && x.sourceId >= ScoreSourceType.screenshot).length
+      }
+    
+      public get maxProviderCol() {
+        return this.match.externalResults.filter(x => 
+          x.sourceId !== ScoreSourceType.trader && x.sourceId < ScoreSourceType.screenshot).length > 2 ? 3 : 2;
+      }
 
     public calculate() {
         this.toastrService.clear();

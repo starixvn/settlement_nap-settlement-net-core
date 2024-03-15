@@ -7,7 +7,7 @@ import * as _ from 'lodash';
 import { MessageBoxService, AioService, BlockUIService } from '../../shared/services';
 import { ModalDialogMessage } from '../../shared/models';
 import { Language } from '../../shared/language.native';
-import { SettlementStatusId, SportType, CalculateAction, ResultStatusId } from '../../shared/constants';
+import { SettlementStatusId, SportType, CalculateAction, ResultStatusId, ScoreSourceType } from '../../shared/constants';
 import {
     SettleQuery,
     MatchDetail,
@@ -52,7 +52,7 @@ export class CalculationActionsComponent implements SportTemplate {
     public canUncalculate: boolean;
     public isDisabledUnCalculate: boolean;
     public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
-
+    public SOURCE_ID = ScoreSourceType;
     constructor(private injector: Injector) {
         this.confirmationDialogMessage.title = Language.confirmationBox;
     }
@@ -102,7 +102,7 @@ export class CalculationActionsComponent implements SportTemplate {
         this.matchDetail = this.match.matchDetail;
         this.hedgeMatchDetail = this.match.hedgeMatchDetail;
         this.applyHedgeMatch = this.hedgeMatchDetail != null;
-        this.verificationBaseService.generateExternalScores(this.match, this.match.resultDetails, SportType.cricket);
+        this.verificationBaseService.generateExternalScores(this.match, this.match.resultDetails, SportType.cricket,this.maxProviderCol);
         this.match.originalResultDetail = _.cloneDeep(this.match.resultDetails);
         this.resetHomeAway(this.match.resultDetails);
         this.autoFillScoreOnLoad(this.match.resultDetails);
@@ -116,6 +116,21 @@ export class CalculationActionsComponent implements SportTemplate {
     public get matchWinner(): ResultDetail {
         return _.find(this.match.resultDetails, item => _.isEqual(item.resourceId, ResourcesIds.final));
     }
+
+    public get providerCount() {
+        return this.match.resultDetails[0].externalScores.filter(x => 
+          x.sourceId !== ScoreSourceType.trader && x.sourceId < ScoreSourceType.screenshot).length
+      }
+    
+      public get outSideCount() {
+        return this.match.resultDetails[0].externalScores.filter(x => 
+          x.sourceId !== ScoreSourceType.trader && x.sourceId >= ScoreSourceType.screenshot).length
+      }
+    
+      public get maxProviderCol() {
+        return this.match.externalResults.filter(x => 
+          x.sourceId !== ScoreSourceType.trader && x.sourceId < ScoreSourceType.screenshot).length > 2 ? 3 : 2;
+      }
 
     private resetHomeAway(resultDetails: ResultDetail[]) {
         resultDetails.forEach((map) => {

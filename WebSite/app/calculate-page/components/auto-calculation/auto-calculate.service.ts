@@ -5,7 +5,7 @@ import { ItemsSelect } from "../../../shared/models";
 export class AutoCalculateService {
     public createAutoPayoutFilter() {
         const autoPayout = new ItemsSelect(1, '1', 'Auto Payout', true, true, true, []);
-        const direct = new ItemsSelect(2, '16', ' Direct Settlement', true, true, true, []);
+        const direct = new ItemsSelect(2, '16', ' Direct Payout', true, true, true, []);
         const off = new ItemsSelect(3, '0', 'OFF', true, true, true, []);
         return [autoPayout, direct, off];
     }

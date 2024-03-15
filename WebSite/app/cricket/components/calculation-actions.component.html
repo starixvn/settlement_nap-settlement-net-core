@@ -33,8 +33,8 @@
             <th rowspan="2" class="ticket-status">Ticket Status</th>
             <th rowspan="2" colspan="2" class="map" *ngIf="canCalculate || canUncalculate">Final Score</th>
             <th rowspan="2" class="map" [colSpan]="isTrader ? 2 : 1" *ngIf="isLeader || isTrader">Trader Score</th>
-            <th [colSpan]="2" class="map" *ngIf="isLeader && (canCalculate || canUncalculate)">Provider Score</th>
-            <th [colSpan]="(match.resultDetails[0].externalScores.length - 3) * 2"
+            <th [colSpan]="providerCount" class="map" *ngIf="isLeader && (canCalculate || canUncalculate)">Provider Score</th>
+            <th [colSpan]="outSideCount * 2"
                 *ngIf="canCalculate || canUncalculate">Outside Score</th>
             <th rowspan="2" class="status">
                 Select to Proceed
@@ -42,11 +42,11 @@
         </tr>
         <tr>
             <ng-container *ngFor=" let result of match.resultDetails[0].externalScores | slice:1; let i=index">
-                <th class="map" *ngIf="i < 2 && isLeader && (canCalculate || canUncalculate)">
+                <th class="map" *ngIf="i < maxProviderCol && isLeader && (canCalculate || canUncalculate)">
                     {{result.sourceName|externalSourceName}}</th>
-                <th class="map" *ngIf="i === 2 && (canCalculate || canUncalculate)" colspan="2">{{result.sourceName}}
+                <th class="map" *ngIf="i === maxProviderCol && (canCalculate || canUncalculate)" colspan="2">{{result.sourceName}}
                 </th>
-                <th class="map" colspan="2" *ngIf="i > 2 && (canCalculate || canUncalculate)">
+                <th class="map" colspan="2" *ngIf="i > maxProviderCol && (canCalculate || canUncalculate)">
                     <div class="outside-source-text" [matTooltip]="getTextTooltip(result.sourceName, 12)">
                         <a href="{{result.remark|externalLink}}" target="_blank"
                             class="source-link">{{result.sourceName}}</a>
@@ -97,14 +97,14 @@
                     </td>
                 </ng-container>
                 <ng-container *ngIf="canCalculate || canUncalculate">
-                    <td *ngIf="map.resourceId !== '00' && isLeader && ((x < 3 && x > 0) || ( x==0 && !isTrader))">
+                    <td *ngIf="map.resourceId !== '00' && isLeader && ((x < (maxProviderCol +1) && x > 0) || ( x==0 && !isTrader))">
                         {{result.homeValue | resultValuePipe}}
                     </td>
-                    <td *ngIf="map.resourceId === '00' && isLeader && ((x < 3 && x > 0) || ( x==0 && !isTrader))">
+                    <td *ngIf="map.resourceId === '00' && isLeader && ((x < (maxProviderCol +1) && x > 0) || ( x==0 && !isTrader))">
                         {{result.homeValue}}-{{result.awayValue}}
                     </td>
                 </ng-container>
-                <ng-container *ngIf="x >= 3 && (canCalculate || canUncalculate)">
+                <ng-container *ngIf="x >= (maxProviderCol +1) && (canCalculate || canUncalculate)">
                     <td *ngIf="map.resourceId !== '00'" colspan="2" [ngClass]="{'striped': x % 2 === 0}">
                         <input type="text" myOnlyInteger [(ngModel)]="result.homeValue" (change)="verifyAndAutoFillScore(map)"
                             id="outside-{{i+1}}-{{x-2}}-home" />

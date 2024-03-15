@@ -9,6 +9,7 @@ import { ModalDialogMessage } from "../../shared/models";
 import { Language } from "../../shared/language.native";
 import {
   CalculateAction,
+  ScoreSourceType,
   SettingPosition,
   SettlementStatusId,
   SportType,
@@ -91,6 +92,7 @@ export class CalculationActionsComponent implements SportTemplate {
   disableScoreDirect: boolean;
   isReadyMatch: boolean;
   readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
+  public SOURCE_ID = SourceIds;
 
   async getMatch(matchId: number) {
     this.initService();
@@ -133,7 +135,8 @@ export class CalculationActionsComponent implements SportTemplate {
     this.verificationService.generateExternalScores(
       this.match,
       this.resultDetails,
-      SportType.cricket
+      SportType.cricket,
+      this.maxProviderCol
     );
     this.resetHomeAway(this.resultDetails);
     this.matchDetail = this.match.matchDetail;
@@ -208,6 +211,21 @@ export class CalculationActionsComponent implements SportTemplate {
     return _.find(this.resultDetails, (map: ResultDetail) =>
       _.isEqual(map.resourceId, ResourcesIds.ot)
     );
+  }
+
+  public get providerCount() {
+    return this.match.resultDetails[0].externalScores.filter(x => 
+      x.sourceId !== ScoreSourceType.trader && x.sourceId < ScoreSourceType.screenshot).length
+  }
+
+  public get outSideCount() {
+    return this.match.resultDetails[0].externalScores.filter(x => 
+      x.sourceId !== ScoreSourceType.trader && x.sourceId >= ScoreSourceType.screenshot).length
+  }
+
+  public get maxProviderCol() {
+    return this.match.externalResults.filter(x => 
+      x.sourceId !== ScoreSourceType.trader && x.sourceId < ScoreSourceType.screenshot).length > 2 ? 3 : 2;
   }
 
   autoFillScoreOnLoad(resultDetails: ResultDetail[]) {

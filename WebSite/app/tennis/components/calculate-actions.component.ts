@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 import { MessageBoxService, AioService, IntervalCalculationService, BlockUIService } from '../../shared/services';
 import { ModalDialogMessage} from '../../shared/models';
 import { Language } from '../../shared/language.native';
-import { SettlementStatusId, CalculateAction, SportType, ResultStatusId } from '../../shared/constants';
+import { SettlementStatusId, CalculateAction, SportType, ResultStatusId, ScoreSourceType } from '../../shared/constants';
 import { KickOffTime, Resources, ResourcesIds, TennisApiKeys } from '../constants';
 import { Match, SettleQuery } from '../models';
 import { TennisService, VerificationService } from '../services';
@@ -72,7 +72,7 @@ export class CalculateActionsComponent implements SportTemplate {
     this.hedgeMatchDetail = this.match.hedgeMatchDetail;
     this.applyHedgeMatch = this.hedgeMatchDetail != null;
     this.match.resultDetails = this.tennisService.getResultDetail(this.match.resultDetails);
-    this.verificationService.generateExternalScores(this.match, this.match.resultDetails, SportType.tennis);
+    this.verificationService.generateExternalScores(this.match, this.match.resultDetails, SportType.tennis,this.maxProviderCol);
     this.resetHomeAway(this.noTotalGames);
     this.enableUncalculate = this.enableUncalculateButton();
     this.disableScoreDirect = this.verificationService.isTicketOnGame(this.match.resultDetails,
@@ -104,6 +104,21 @@ export class CalculateActionsComponent implements SportTemplate {
 
   public get totalSets(): ResultDetail {
     return _.find(this.match.resultDetails, (item: ResultDetail) => _.isEqual(item.resourceId, ResourcesIds.totalSets));
+  }
+
+  public get providerCount() {
+    return this.match.resultDetails[0].externalScores.filter(x => 
+      x.sourceId !== ScoreSourceType.trader && x.sourceId < ScoreSourceType.screenshot).length
+  }
+
+  public get outSideCount() {
+    return this.match.resultDetails[0].externalScores.filter(x => 
+      x.sourceId !== ScoreSourceType.trader && x.sourceId >= ScoreSourceType.screenshot).length
+  }
+
+  public get maxProviderCol() {
+    return this.match.externalResults.filter(x => 
+      x.sourceId !== ScoreSourceType.trader && x.sourceId < ScoreSourceType.screenshot).length > 2 ? 3 : 2;
   }
 
   public calculate() {

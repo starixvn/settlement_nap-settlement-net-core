@@ -15,6 +15,7 @@ import { BadmintonApiKeys, KickOffTime, ResourcesIds, Resources, VolleyballApiKe
 import { ExternalResultDetail, Permission, ResultDetail, SaveScoreQuery, SportTemplate } from '../../shared/models/sportsbook-sop';
 import { UrlHelper } from '../../helper';
 import { ResultPipe } from '../../shared/pipes/result.pipe';
+import { SourceIds } from '../../basketball/constants/source-ids';
 @Component({
   selector: 'calculation-actions',
   templateUrl: './calculate-actions.component.html',
@@ -43,6 +44,7 @@ export class CalculateActionsComponent implements SportTemplate {
   public apiKeys = null;
   public collapse = false;
   public blockUI = true;
+  public SOURCE_ID = SourceIds;
 
   constructor(private readonly injector: Injector) {
     this.confirmationDialogMessage.title = Language.confirmationBox;
@@ -91,7 +93,7 @@ export class CalculateActionsComponent implements SportTemplate {
     this.applyHedgeMatch = this.hedgeMatchDetail != null;
     this.permission = this.match.permission;
     this.match.resultDetails = this.badmintonService.getResultDetail(this.match.resultDetails);
-    this.verificationService.generateExternalScores(this.match, this.match.resultDetails, this.match.matchDetail.sportType);
+    this.verificationService.generateExternalScores(this.match, this.match.resultDetails, this.match.matchDetail.sportType,this.maxProviderCol);
     this.resetHomeAway(this.noTotalPoints);
     this.enableUncalculate = this.enableUncalculateButton();
     this.disableScoreDirect = this.verificationService.isTicketOnGame(
@@ -127,6 +129,11 @@ export class CalculateActionsComponent implements SportTemplate {
   public get outSideCount() {
     return this.match.resultDetails[0].externalScores.filter(x => 
       x.sourceId !== ScoreSourceType.trader && x.sourceId >= ScoreSourceType.screenshot).length
+  }
+
+  public get maxProviderCol() {
+    return this.match.externalResults.filter(x => 
+      x.sourceId !== ScoreSourceType.trader && x.sourceId < ScoreSourceType.screenshot).length > 2 ? 3 : 2;
   }
 
   private resetHomeAway(resultDetails: ResultDetail[]) {

@@ -366,8 +366,8 @@ export class VerificationBaseService {
         return outsideScores;
     }
 
-    public generateExternalScores(match: GeneralMatch, resultDetails: ResultDetail[], sportType: number) {
-        const listGroupExternalResult = this.groupExternalResult(match.externalResults, sportType);
+    public generateExternalScores(match: GeneralMatch, resultDetails: ResultDetail[], sportType: number,maximumProvider = 2) {
+        const listGroupExternalResult = this.groupExternalResult(match.externalResults, sportType,maximumProvider);
         const newSportsSOP = [SportType.tennis, SportType.cricket, SportType.badminton, SportType.basketBall, SportType.volleyBall, SportType.beachVolleyball, SportType.eSports];
         _.forEach(resultDetails, (map: ResultDetail) => {
             const scores: ExternalResultDetail[] = [];
@@ -401,10 +401,10 @@ export class VerificationBaseService {
         });
     }
 
-    private groupExternalResult(externalResults: ExternalResult[], sportType: number) {
+    private groupExternalResult(externalResults: ExternalResult[], sportType: number,maximumProvider: number) {
         let listProvidersScore: ExternalResult[] = [];
         listProvidersScore.push(this.traderScore(externalResults));
-        listProvidersScore = _.concat(listProvidersScore, this.providersScore(externalResults));
+        listProvidersScore = _.concat(listProvidersScore, this.providersScore(externalResults,maximumProvider));
         return _.concat(listProvidersScore, this.outSidesScore(externalResults));
     }
 
@@ -417,12 +417,12 @@ export class VerificationBaseService {
         }
     }
 
-    private providersScore(externalResults: ExternalResult[]) {
-        const maximumProviders = 3;
+    private providersScore(externalResults: ExternalResult[],maximumProvider: number) {
+        
         const listProvidersScore: ExternalResult[] = [];
         const providersScore = _.filter(externalResults, (item: ExternalResult) =>
             item.sourceId !== ScoreSourceType.trader && item.sourceId < ScoreSourceType.screenshot);
-        for (let i = 0; i < maximumProviders; i++) {
+        for (let i = 0; i < maximumProvider; i++) {
             if (_.isNil(providersScore[i])) {
                 listProvidersScore.push(new ExternalResult(ScoreSourceType.emptySource, []));
             } else {
