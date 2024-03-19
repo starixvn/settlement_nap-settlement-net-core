@@ -18,6 +18,8 @@ export interface ProviderResultLog {
   createDate: string;
   resultValue: string;
   remark: string;
+  action: string;
+  autoPayoutStatus: number
 }
 
 export interface ProviderLog {
