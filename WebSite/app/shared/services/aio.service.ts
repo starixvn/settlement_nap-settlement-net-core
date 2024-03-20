@@ -51,7 +51,7 @@ export class AioService {
     }
 
     public getLastestMatchResult(query: object) {
-        const response = this.httpRequestService.postJson<GeneralResultDetail[]>(query, `${this.aioApi}/get-recal-result`);
+        const response = this.httpRequestService.postJson(query, `${this.aioApi}/get-recal-result`);
         return firstValueFrom(response);
     }
 
@@ -84,7 +84,7 @@ export class AioService {
     }
 
     public async verifyChangedSettledTickets(resultDetails: GeneralResultDetail[], query: object) {
-        const latestResults = await this.getLastestMatchResult(query);
+        const latestResults = await this.getLastestMatchResult(query) as GeneralResultDetail[];
         let needConfirm = false;
         _.forEach(resultDetails, (result) => {
             const correspondingResult = _.find(latestResults, (item) => _.isEqual(item.resourceId, result.resourceId));

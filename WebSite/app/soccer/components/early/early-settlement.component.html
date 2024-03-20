@@ -32,7 +32,7 @@
               <td><div [ngClass]="getResultSettingIcon(map.isHoldResult)" (click)="changeSettingGroup(map)"></div></td>
             </tr>
             @for (item of map.resultDetail; track item) {
-              <tr [hidden]="map.collapsed" [ngClass]="{'bg-invalid':item.isInvalidValue, 'bg-not-taken':item.isNotTaken }">
+              <tr [hidden]="map.collapsed" [ngClass]="{'bg-invalid':item.isInvalidValue, 'bg-not-taken':item.isNotTaken, 'confirmed-refund': permission.isLeader && item.resultSettingData.isConfirmedRefund }">
                 <td class="align-left">{{item.betTypeName}}</td>
                 <td [ngClass]="{'bold':1, 'calculated': item.ticketStatus == 'Calculated', 'marked':item.ticketStatus == 'Marked' }">
                   {{item.ticketStatus}}
