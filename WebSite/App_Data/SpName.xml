@@ -47,7 +47,6 @@
 		<Setting Key="NAP_Set_ProviderExternalResultDetailLatestInfoSel" SpName="NAP_Set_ProviderExternalResultDetailLatestInfoSel" DbName="DBPRO.bodb02.wsv_nap" />
 		<Setting Key="NAP_Set_OutsideSourceByLeagueSel" SpName="NAP_Set_OutsideSourceByLeagueSel" DbName="DBPRO.bodb02.wsv_nap" />
 		<Setting Key="NAP_Set_OutsideSourceByLeagueIns" SpName="NAP_Set_OutsideSourceByLeagueIns" DbName="DBPRO.bodb02.wsv_nap" />
-		<Setting Key="NAP_Set_ResultDetailSettingUpd" SpName="NAP_Set_ResultDetailSettingUpd" DbName="DBPRO.bodb02.wsv_nap" />
 		<Setting Key="NAP_Set_ProviderResultSel" SpName="NAP_Set_ProviderResultSel" DbName="DBPRO.bodb02.wsv_nap" />
 		<Setting Key="NAP_Set_ProviderSel" SpName="NAP_Set_ProviderSel" DbName="DBPRO.bodb02.wsv_nap" />
 	</Function>
