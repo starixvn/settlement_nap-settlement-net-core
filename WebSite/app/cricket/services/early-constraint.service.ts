@@ -123,6 +123,7 @@ export class EarlyConstraintService extends EarlyBaseService {
 
             if (resultDetail.inputType === ResultControlGroup.PlayerSelect) {
                 const isNoneValue = _.isEqual(resultDetail.homeValue, 'N');
+                
                 resultDetail.otherInfo = isNoneValue ? '' : _.find(resultDetail.inputOptions, option =>
                     _.isEqual(resultDetail.homeValue, option.value))?.playerId.toString();
             }
@@ -130,6 +131,7 @@ export class EarlyConstraintService extends EarlyBaseService {
             if (resultDetail.inputType === ResultControlGroup.ScoreWithLabel) {
                 resultDetail.otherInfo = resultDetail.inputOptions[0]?.playerId.toString();
             }
+            
         });
     }
 

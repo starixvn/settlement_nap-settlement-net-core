@@ -42,6 +42,8 @@ export class SettleChildMatchQuery {
     selectedResources: ResultDetail[];
     actionName: string;
     isReSettledTickets: boolean;
+    sportType: number;
+    parentSessionId: string;
 
     constructor(
         childMatchIds: string,
@@ -52,5 +54,18 @@ export class SettleChildMatchQuery {
         this.selectedResources = selectedResources;
         this.actionName = actionName;
         this.isReSettledTickets = isReSettledTickets;
+    }
+}
+
+
+export class UpdateSettlementResultHistoryStatus {
+    matchId: number;
+    sessionIds: string;
+
+    constructor(
+        matchId: number,
+        sessionIds: string) {
+        this.matchId = matchId;
+        this.sessionIds = sessionIds;
     }
 }

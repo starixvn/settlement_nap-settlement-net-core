@@ -4,7 +4,6 @@ namespace Settlement.Sportsbook.Aio.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-
 public class AioController : ControllerBase
 {
     private readonly IMediator mediator;
@@ -45,6 +44,12 @@ public class AioController : ControllerBase
     [HttpPost]
     [LogPushRequest]
     public async Task<IActionResult> SettleChildMatch(SettleChildMatchRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
+
+    [Route("update-settlement-result-history-status")]
+    [HttpPost]
+    [LogPushRequest]
+    public async Task<IActionResult> UpdateSettlementResultHistoryStatus(UpdateSettlementResultHistoryStatusRequest request)
+        => Ok(await mediator.Send(request).ConfigureAwait(false));
 
     [Route("result-setting")]
     [HttpPost]

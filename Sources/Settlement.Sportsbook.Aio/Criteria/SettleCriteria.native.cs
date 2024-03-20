@@ -30,13 +30,16 @@ public class SettleCriteria : NonQueryCommand
 
     public int DeterminedType { get; set; }
 
-    public string BroadcastSessionId { get; } = Guid.NewGuid().ToString();
+    public string BroadcastSessionId { get; set; } = Guid.NewGuid().ToString();
 
     [SpParam(Ignored = true)]
     public int SportType { get; set; }
 
     [SpParam(Ignored = true)]
     public bool IsHedgeMatch { get; set; }
+
+    [SpParam(Ignored = true)]
+    public bool IsChildMatch { get; set; }
 
     [SpParam(Ignored = true)]
     public string DbServer { get; set; }

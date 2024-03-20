@@ -7,8 +7,11 @@ using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.Aio.Constants;
 using Settlement.Sportsbook.Aio.Criteria;
+using Settlement.Sportsbook.Aio.Criteria.Cricket;
 using Settlement.Sportsbook.Aio.Criteria.Tennis;
 using Settlement.Sportsbook.Aio.Requests;
+using Settlement.Sportsbook.Aio.Services.Cricket;
+using LogServiceSentry = Fanex.Logging.LogService;
 
 namespace Settlement.Sportsbook.Aio.Services;
 
@@ -30,8 +33,8 @@ public class MultipleServerAioServiceImp(
     ICreateQueryService createQueryService,
     MergeDataService mergeDataService,
     LogService logService,
-    IMapper mapper)
-    : MultipleServerAioService
+    IMapper mapper,
+    ResultAmendmentService resultAmendmentService) : MultipleServerAioService
 {
     private readonly AppSettingsKey appSettingsKey = appSettingsKey.Value;
 
@@ -166,6 +169,7 @@ public class MultipleServerAioServiceImp(
         {
             var childMatchIds = await GetChildMatchIds(criteria.MatchId, criteria.Action, criteria.SelectedResources);
             result.ChildMatchIds = childMatchIds;
+            result.SettledSessionId = criteria.BroadcastSessionId;
         }
 
         await HandleRefundGameWinner(request, result);
@@ -211,7 +215,7 @@ public class MultipleServerAioServiceImp(
         await logService.WriteLog(criteria.MatchId, messageLog);
     }
 
-    private async Task UpdateInfoAndSettle(SettleCriteria criteria, List<ResourceItem> selectedResources)
+    private async Task<Result> UpdateInfoAndSettle(SettleCriteria criteria, List<ResourceItem> selectedResources)
     {
         await SetUnderSettleFlag(criteria, selectedResources);
 
@@ -219,11 +223,30 @@ public class MultipleServerAioServiceImp(
 
         await WriteLog(criteria);
 
+        var isResultAmendment = await HandleResultAmendment(criteria, selectedResources);
+
         foreach (var server in appSettingsKey.SiteDbServer)
         {
             criteria.DbServer = server;
             await repository.ExecuteAsync(criteria);
         }
+
+        return new Result
+        {
+            HasResultAmendment = isResultAmendment,
+        };
+    }
+
+    private async Task<bool> HandleResultAmendment(SettleCriteria settleCriteria, List<ResourceItem> selectedResources)
+    {
+        if (settleCriteria.SportType == SportType.Cricket
+            && !settleCriteria.IsChildMatch
+            && settleCriteria.Action != ActionType.UnCalculate)
+        {
+            return await resultAmendmentService.HandleResultAmendment(settleCriteria, selectedResources);
+        }
+
+        return false;
     }
 
     private async Task<Result> Execute(SettleCriteria criteria, List<ResourceItem> selectedResources)
@@ -231,7 +254,7 @@ public class MultipleServerAioServiceImp(
         var result = await ValidateBeforeExecute(criteria);
         if (result.IsSuccessful)
         {
-            await UpdateInfoAndSettle(criteria, selectedResources);
+            return await UpdateInfoAndSettle(criteria, selectedResources);
         }
 
         return result;

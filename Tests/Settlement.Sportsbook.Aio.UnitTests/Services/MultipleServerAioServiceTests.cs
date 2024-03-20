@@ -14,6 +14,7 @@ using Settlement.Sportsbook.Aio.Criteria;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Requests;
 using Settlement.Sportsbook.Aio.Services;
+using Settlement.Sportsbook.Aio.Services.Cricket;
 using ResultDetail = Settlement.Sportsbook.Aio.Models.ResultDetail;
 
 namespace Settlement.Sportsbook.Aio.UnitTests.Services;
@@ -31,6 +32,7 @@ public class MultipleServerAioServiceTests
     private readonly LogService logService;
 
     private readonly MultipleServerAioService service;
+    private readonly ResultAmendmentService resultAmendmentService;
 
     public MultipleServerAioServiceTests()
     {
@@ -46,8 +48,9 @@ public class MultipleServerAioServiceTests
         createQueryService = Substitute.For<ICreateQueryService>();
         mergeDataService = Substitute.For<MergeDataService>();
         logService = Substitute.For<LogService>();
+        resultAmendmentService = Substitute.For<ResultAmendmentService>();
 
-        service = new MultipleServerAioServiceImp(repository, option, scaleOutSettleService, createQueryService, mergeDataService, logService, mapper);
+        service = new MultipleServerAioServiceImp(repository, option, scaleOutSettleService, createQueryService, mergeDataService, logService, mapper, resultAmendmentService);
     }
 
     [Theory]

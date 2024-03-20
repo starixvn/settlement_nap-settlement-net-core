@@ -3,4 +3,6 @@
     public errMsg: string;
     public isSuccessful: boolean;
     public childMatchIds: string;
+    public settledSessionId: string;
+    public hasResultAmendment: boolean
 }

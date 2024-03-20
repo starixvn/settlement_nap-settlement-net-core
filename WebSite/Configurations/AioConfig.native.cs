@@ -1,6 +1,7 @@
 ﻿using Settlement.Sportsbook.Aio.Controllers;
 using Settlement.Sportsbook.Aio.MapperFactory;
 using Settlement.Sportsbook.Aio.Services;
+using Settlement.Sportsbook.Aio.Services.Cricket;
 
 namespace Settlement.WebSites.Configurations;
 
@@ -15,6 +16,9 @@ public static class AioConfig
         services.AddTransient<ICriteriaFactory, CriteriaFactoryImp>();
         services.AddTransient<ICreateQueryService, CreateQueryServiceImp>();
         services.AddTransient<MergeDataService, MergeDataServiceImp>();
+        services.AddTransient<GenerateResultAmendmentService, GenerateResultAmendmentServiceImp>();
+        services.AddTransient<ResultAmendmentService, ResultAmendmentServiceImp>();
+
         services.AddTransient<MultipleServerAioService, MultipleServerAioServiceImp>();
     }
 

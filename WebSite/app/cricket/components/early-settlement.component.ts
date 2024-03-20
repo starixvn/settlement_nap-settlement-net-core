@@ -1,7 +1,7 @@
 ﻿import { Injector } from '@angular/core';
 import { Component, ViewChild } from '@angular/core';
 import { ToastContainerDirective } from 'ngx-toastr';
-import { Match, SettleQuery, SettleChildMatchQuery } from '../models';
+import { Match, SettleQuery, SettleChildMatchQuery, UpdateSettlementResultHistoryStatus } from '../models';
 import * as _ from 'lodash';
 import { Language } from '../../shared/language.native';
 import { ItemsSelect } from '../../shared/models';
@@ -185,8 +185,10 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
   private confirmCalculation(resultDetails: ResultDetail[]) {
     this.confirmationDialogMessage.message = this.getConfirmMessage(resultDetails);
     this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
+      const resultSettle = _.cloneDeep(this.selectedResources);
+      this.setTeamResultSettle(resultSettle);
       const query = new SettleQuery(this.match.matchDetail.matchId,
-        this.selectedResources,
+        resultSettle,
         CalculateAction.earlyCalculate,
         this.isReSettledTickets,
         this.permission.isLeader, false);
@@ -197,6 +199,20 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         ApiKeys.NormalMatch, () => {
           this.push(query);
         });
+    });
+  }
+
+  private setTeamResultSettle(resultDetails: ResultDetail[]) {
+    resultDetails.forEach(result => {
+      if(result.inputType === ResultControlGroup.HomeAway) {
+        result.homeId = `${this.matchDetail.homeId}`;
+        result.awayId = `${this.matchDetail.awayId}`;
+      }
+
+      if (result.inputType === ResultControlGroup.PlayerSelect) {
+        const players = result.inputOptions;
+        result.homeId = players.length > 0 ? players.map(x => x.playerId).join(',') : '';
+      }
     });
   }
 
@@ -227,8 +243,11 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
   }
 
   private createQueryRefundAndPush() {
+    const resultSettle = _.cloneDeep(this.selectedResources);
+    this.setTeamResultSettle(resultSettle);
+    this.earlyConstraintService.getOtherInfo(resultSettle);
     const query = new SettleQuery(this.match.matchDetail.matchId,
-      this.selectedResources,
+      resultSettle,
       CalculateAction.earlyRefund,
       this.isReSettledTickets,
       this.permission.isLeader, false);
@@ -238,20 +257,32 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
   private async push(query: SettleQuery) {
     const result = await this.aioService.push(query);
     if (result.isSuccessful) {
-      await this.handleChildMatch(result.childMatchIds, query);
+      await this.handleChildMatch(result.childMatchIds, query,result.settledSessionId);
+     
+      result.hasResultAmendment && await this.handleUpdateSettlementResultHistoryStatus(query,result.settledSessionId);
+     
       this.messageBoxService.closePopup();
     } else {
       this.toastrService.error(result.errMsg);
     }
   }
 
-  private async handleChildMatch(childMatchIds: string, settleQuery: SettleQuery) {
+  private async handleChildMatch(childMatchIds: string, settleQuery: SettleQuery,parentSessionId: string) {
     if (!_.isEmpty(childMatchIds)) {
       const settleChildMatchQuery = new SettleChildMatchQuery(childMatchIds, settleQuery.selectedResources,
         settleQuery.actionName, settleQuery.isReSettledTickets);
+      
+        settleChildMatchQuery.sportType = settleQuery.sportType;
+        settleChildMatchQuery.parentSessionId = parentSessionId;
+
       await this.aioService.pushChildMatch(settleChildMatchQuery);
     }
   }
+
+  private async handleUpdateSettlementResultHistoryStatus(settleQuery: SettleQuery,sessionId: string) {
+      const query = new UpdateSettlementResultHistoryStatus(settleQuery.matchId,sessionId)
+      await this.aioService.updateSettlementResultHistoryStatus(query);
+    }
 
   public saveScore() {
     this.toastrService.clear();

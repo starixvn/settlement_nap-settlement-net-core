@@ -21,6 +21,7 @@ public class CricketResourceNameService : IMapperService
         {
             return (resourceId, GetResourceMain(resourceId));
         }
+
         if (resourceId.Length < InnsBetTypeMinLength)
         {
             var betTypeId = Convert.ToInt32(resourceId);

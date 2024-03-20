@@ -27,4 +27,10 @@ public class ResourceItem : BaseResourceItem
 
     [XmlIgnore]
     public bool IsSettleDetermined { get; set; }
+
+    [XmlIgnore]
+    public string AwayId { get; set; }
+
+    [XmlIgnore]
+    public string HomeId { get; set; }
 }

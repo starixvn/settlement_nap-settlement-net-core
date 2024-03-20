@@ -1,5 +1,6 @@
 ﻿using Fanex.NAP.Client.Helpers.Web;
 using Microsoft.AspNetCore.Http;
+using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.Aio.Criteria;
@@ -69,6 +70,11 @@ public class CreateQueryServiceImp : ICreateQueryService
         criteria.AdminId = currentSession.UserId;
         criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
         criteria.SelectedResources = resourcesResult;
+        criteria.IsChildMatch = true;  //auto set
+        criteria.BroadcastSessionId = request.SportType == SportType.Cricket
+            ? request.ParentSessionId
+            : criteria.BroadcastSessionId;
+
         return criteria;
     }
 

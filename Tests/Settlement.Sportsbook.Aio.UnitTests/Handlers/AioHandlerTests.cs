@@ -5,6 +5,7 @@ using Settlement.Sportsbook.Aio.Handlers;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Requests;
 using Settlement.Sportsbook.Aio.Services;
+using Settlement.Sportsbook.Aio.Services.Cricket;
 
 namespace Settlement.Sportsbook.Aio.UnitTests.Handlers;
 
@@ -15,6 +16,7 @@ public class AioHandlerTests
     private readonly PermissionService permission;
 
     private readonly IAioService service;
+    private readonly ResultAmendmentService resultAmendmentService;
 
     public AioHandlerTests()
     {
@@ -22,7 +24,8 @@ public class AioHandlerTests
         permission = Substitute.For<PermissionService>(null, null, null, null);
         var appSettings = new AppSettingsKey { EnableVerifyingRunningOdds = true };
         var appSettingsOptions = Options.Create(appSettings);
-        handler = new AioHandler(service, permission, appSettingsOptions);
+        resultAmendmentService = Substitute.For<ResultAmendmentService>();
+        handler = new AioHandler(service, permission, resultAmendmentService, appSettingsOptions);
     }
 
     [Fact]
@@ -85,7 +88,7 @@ public class AioHandlerTests
     {
         var appSettings = new AppSettingsKey { EnableVerifyingRunningOdds = false };
         var appSettingsOptions = Options.Create(appSettings);
-        var handlerTemp = new AioHandler(service, permission, appSettingsOptions);
+        var handlerTemp = new AioHandler(service, permission, resultAmendmentService, appSettingsOptions);
         var actual = await handlerTemp.Handle(new CheckRunningOddsRequest(), new CancellationToken());
 
         Assert.True(actual.IsSuccessful);
