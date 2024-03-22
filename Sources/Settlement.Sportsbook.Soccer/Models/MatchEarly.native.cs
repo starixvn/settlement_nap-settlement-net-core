@@ -8,6 +8,8 @@ public class MatchEarly
 
     public List<ResultDetailModel> ResultDetail { get; set; }
 
+    public List<ExternalResultDetailModel> ExternalResults { get; set; }
+
     public TicketCounts TicketCounts { get; set; }
 
     public Permission Permission { get; set; }

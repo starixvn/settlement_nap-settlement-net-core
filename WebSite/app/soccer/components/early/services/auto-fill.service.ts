@@ -1,4 +1,4 @@
-import { BetTypes, ResultValue } from '../../../constants';
+import { BetTypes, ResultValue, BetTypesSettleDetermined } from '../../../constants';
 import { Injectable } from '@angular/core';
 import { ResultDetail, Score } from '../../../models';
 import * as _ from 'lodash';
@@ -124,9 +124,7 @@ export class AutoFillService {
         result.isInvalidValue = this.checkConsistentOnBetTypes(result, score);
 
         const isNotTaken = this.isNotTaken(result, selectedBetType);
-
         result.isNotTaken = isNotTaken;
-        result.isSettleDetermined = !result.isInvalidValue && isNotTaken && !isBothNotTaken;
     }
     private isNotTaken(result: ResultDetail, selectedBetType: string) {
         if (_.isEqual(result.betType, BetTypes.HomePenaltyShootout)) {

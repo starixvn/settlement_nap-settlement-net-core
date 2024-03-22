@@ -53,13 +53,17 @@ public class MatchEarlyServiceImp(
 
         var permission = permissionService.GetPermission(CacheSettings.Keys.MemoryCacheManualPermission);
 
+        var confirmRefundCriteria = new GetResultConfirmRefundCriteria { MatchId = matchId };
+        var externalResults = (await repository.FetchAsync<ExternalResultDetailModel>(confirmRefundCriteria)).ToList();
+
         return new MatchEarly
         {
             MatchDetail = matchDetail,
             ResultDetail = resultDetail,
             TicketCounts = ticketCount,
             Permission = permission,
-            HedgeMatchDetail = hedgeMatchDetail
+            HedgeMatchDetail = hedgeMatchDetail,
+            ExternalResults = externalResults
         };
     }
 

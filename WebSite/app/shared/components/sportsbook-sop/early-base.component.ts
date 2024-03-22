@@ -297,7 +297,7 @@ export class EarlyBaseComponent {
         if (existResultConfirmed) {
             this.undoConfirmedResult(this.selectedResources, this.matchDetail.matchId, resourceIds);
         } else {
-            this.confirmResult(this.selectedResources, this.matchDetail.matchId, resourceIds);
+            this.aioService.changeConfirmResultSetting(Language.confirmRefund.confirmRefund, this.matchDetail.matchId, resourceIds, true, null);
         }
     }
 
@@ -308,16 +308,6 @@ export class EarlyBaseComponent {
         } else {
             this.toastrService.error(Language.confirmRefund.differentStates);
         }
-    }
-
-    public confirmResult(resultDetails: ResultDetail[], matchId: number, resourceIds: string) {
-        // const refundedResultHasNoRunningTicket = _.find(resultDetails, item =>
-        //     item.settlementStatusId === SettlementStatusId.Refund && !_.isEqual(item.ticketStatus, TicketStatusText.running));
-        // if (_.isNil(refundedResultHasNoRunningTicket)) {
-            this.aioService.changeConfirmResultSetting(Language.confirmRefund.confirmRefund, matchId, resourceIds, true, null);
-        // } else {
-        //     this.toastrService.error(Language.confirmRefund.refundedNoRunningTicket);
-        // }
     }
 
     public allResultConfirmed() {

@@ -1,5 +1,5 @@
 import { MessageBoxService } from './../../services/message-box.service.native';
-import { CalculateAction, ResourceIds, ResultStatusId, SettlementStatusId, SportType, TicketStatusText } from "../../constants";
+import { CalculateAction, ResourceIds, SettlementStatusId, SportType } from "../../constants";
 import { Language } from "../../language.native";
 import { AioService, BlockUIService } from "../../services";
 import { ExternalResultDetail, HedgeMatchDetail, MatchDetail, Permission, ResultDetail, SettleQuery } from "../../models/sportsbook-sop";

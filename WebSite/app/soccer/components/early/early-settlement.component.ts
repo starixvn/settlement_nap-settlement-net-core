@@ -12,11 +12,11 @@ import {
     SettlementStatusId,
     CalculateAction,
     ResultSettingType,
-    TicketStatusText,
-    SportType
+    SportType,
+    ScoreSourceType
 } from '../../../shared/constants';
 import { Language } from '../../../shared/language.native';
-import { ModalDialogMessage, Result, ResultSettingQuery } from '../../../shared/models';
+import { ModalDialogMessage, ResourceItem, ResultSettingQuery } from '../../../shared/models';
 import { MessageBoxService, AioService } from '../../../shared/services';
 import { Permission } from '../../../shared/models/sportsbook-sop';
 import {
@@ -101,8 +101,24 @@ export class EarlySettlementComponent implements Soccer {
         this.toastrService.overlayContainer = this.toastContainer;
         this.match = await this.helperService.getMatch(matchId) as Match;
         this.groupMap = this.helperService.getGroupBetType(this.resultDetails);
+        this.generateConfirmRefundSettleDetermined();
     }
 
+    private generateConfirmRefundSettleDetermined()
+    {
+        var listResultDetailSdt = _.filter(this.resultDetails, item => item.resultSettingData.isConfirmedRefundSdt);
+        if(this.permission.isLeader) {
+            listResultDetailSdt.forEach(resultDetail => {
+                const resource = this.match.externalResults.find(item => item.sourceId === ScoreSourceType.confirmRefundSource && item.resourceId === resultDetail.resourceId);
+                if (resource) {
+                    resultDetail.homeValue = resource.homeValue;
+                    resultDetail.awayValue = resource.awayValue;
+                    resultDetail.isSettleDetermined = resultDetail.resultSettingData.isConfirmedRefundSdt;
+                }
+            });
+       }
+       
+    }
     public get resultDetails(): ResultDetail[] {
         return this.match.resultDetail;
     }
@@ -158,7 +174,7 @@ export class EarlySettlementComponent implements Soccer {
 
     public unCalculate() {
         this.clearErrorMessage();
-        const selectedResultDetails = this.resultDetails.filter((item) => item.checked);
+        const selectedResultDetails = this.selectedResources;
         const isRunningResultStatus = _.find(selectedResultDetails, (x: ResultDetail) =>
             x.resultStatusId === ResultStatusId.RunningZero
             || x.resultStatusId === ResultStatusId.RunningOne
@@ -185,36 +201,51 @@ export class EarlySettlementComponent implements Soccer {
     }
     public confirmRefund() {
         this.toastrService.clear();
-        const existResultConfirmed = _.find(this.selectedResources, item => item.resultSettingData.isConfirmedRefund);
+        const resourceIds = _.join(this.selectedResources.map(item => item.resourceId), ',');
+        const existResultConfirmed = _.find(this.selectedResources, item => (item.resultSettingData.isConfirmedRefund || item.resultSettingData.isConfirmedRefundSdt));
         if (existResultConfirmed) {
-            this.undoConfirmedResult(this.selectedResources, this.matchId);
+            this.undoConfirmedResult(this.selectedResources, this.matchId, resourceIds);
         } else {
-            this.confirmResult(this.selectedResources, this.matchId);
+            this.changeConfirmResultSetting(Language.confirmRefund.confirmRefund, this.matchId, true);
         }
     }
 
-    private undoConfirmedResult(resultDetails: ResultDetail[], matchId: number) {
-        const resourceIds = _.join(this.selectedResources.map(item => item.resourceId), ',');
-        const resultNotConfirmed = _.find(resultDetails, item => !item.resultSettingData.isConfirmedRefund);
-        if (_.isNil(resultNotConfirmed)) {
-            this.aioService.changeConfirmResultSetting(Language.confirmRefund.undoConfirm, matchId, resourceIds, false, null);
+    private undoConfirmedResult(resultDetails: ResultDetail[], matchId: number, resourceIds: string) {
+        const resultConfirmed = _.filter(resultDetails, item => (item.resultSettingData.isConfirmedRefund || item.resultSettingData.isConfirmedRefundSdt));
+        if (resultConfirmed.length === resultDetails.length) {
+            this.changeConfirmResultSetting(Language.confirmRefund.undoConfirm, matchId, false);
         } else {
             this.toastrService.error(Language.confirmRefund.differentStates);
         }
     }
-    private confirmResult(resultDetails: ResultDetail[], matchId: number) {
-        const resourceIds = _.join(this.selectedResources.map(item => item.resourceId), ',');
-        const refundedResultHasNoRunningTicket = _.find(resultDetails, item =>
-            item.settlementStatusId === SettlementStatusId.Refund && !_.isEqual(item.ticketStatus, TicketStatusText.running));
-        if (_.isNil(refundedResultHasNoRunningTicket)) {
-            this.aioService.changeConfirmResultSetting(Language.confirmRefund.confirmRefund, matchId, resourceIds, true, null);
-        } else {
-            this.toastrService.error(Language.confirmRefund.refundedNoRunningTicket);
+
+    private changeConfirmResultSetting(message: string, matchId: number, isEnabled: boolean) {
+        this.confirmationDialogMessage.message = message;
+        this.messageBoxService.confirm(this.confirmationDialogMessage, async() => {
+            await this.changeConfirmResultByType(matchId, isEnabled);
+        });
+    }
+
+    private async changeConfirmResultByType(matchId: number, isEnabled: boolean) {
+        const normalResource = _.filter(this.selectedResources, item => !item.isSettleDetermined);
+        const settleDetermineResource = _.filter(this.selectedResources, item => item.isSettleDetermined);
+        
+        if(normalResource.length > 0){
+            const resourceIds = _.join(normalResource.map(item => item.resourceId), ',');
+            const query = new ResultSettingQuery(matchId, ResultSettingType.confirmRefund, isEnabled, resourceIds);
+            await this.aioService.changeResultSetting(query);
+        }
+
+        if(settleDetermineResource.length > 0){
+            const resourceIds = _.join(settleDetermineResource.map(item => item.resourceId), ',');
+            const resourceItems = settleDetermineResource.map(item => new ResourceItem(item.resourceId, item.resourceName, item.homeValue, item.awayValue))
+            const query = new ResultSettingQuery(matchId, ResultSettingType.confirmRefundSDT, isEnabled, resourceIds, resourceItems);
+            await this.aioService.changeResultSetting(query);
         }
     }
 
     private isExistedConfirmRefund() {
-        const existResultNotConfirmed = _.find(this.selectedResources, item => !item.resultSettingData.isConfirmedRefund);
+        const existResultNotConfirmed = _.find(this.selectedResources, item => !item.resultSettingData.isConfirmedRefund && !item.resultSettingData.isConfirmedRefundSdt);
         if (!_.isNil(existResultNotConfirmed)) {
             return false;
         }
@@ -232,7 +263,7 @@ export class EarlySettlementComponent implements Soccer {
     private async doRefund() {
         const resultStatus = await this.helperService.checkingStatus(this.matchId, CalculateAction.refund);
         if(resultStatus.isSuccessful) {
-            const selectedResultDetails = this.resultDetails.filter((map) => map.checked);
+            const selectedResultDetails = this.selectedResources;
             this.correctSettleDeterminedForRefund(selectedResultDetails);
             const errorMessage = await this.verifyBeforeRefund(selectedResultDetails);
             if (_.isEmpty(errorMessage)) {
@@ -259,12 +290,12 @@ export class EarlySettlementComponent implements Soccer {
         const result = await this.aioService.checkMarkedTickets(query);
         return result.isExistMarkedTicket
                 ? Language.MarkedTicket
-                : this.verifyCalculateService.verifyPenaltyBettypeBeforeRefund(selectedResultDetails, this.resultDetails);
+                : this.verifyCalculateService.verifyPenaltyBettypeBeforeRefund(selectedResultDetails,  this.resultDetails, this.match.externalResults);
     }
 
     public async calculate() {
         this.clearErrorMessage();
-        const selectedResultDetails = this.resultDetails.filter((item) => item.checked);
+        const selectedResultDetails = this.selectedResources;
         const resultStatus = await this.helperService.checkingStatus(this.matchId, CalculateAction.calculate);
 
         if(resultStatus.isSuccessful) {

@@ -4,15 +4,8 @@ namespace Settlement.Sportsbook.Aio.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AioController : ControllerBase
+public class AioController(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator mediator;
-
-    public AioController(IMediator mediator)
-    {
-        this.mediator = mediator;
-    }
-
     [Route("get-match")]
     [HttpPost]
     [LogGetRequest]

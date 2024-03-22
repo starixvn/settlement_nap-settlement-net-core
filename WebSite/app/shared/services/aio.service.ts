@@ -189,14 +189,14 @@ export class AioService {
 
     private async confirmHedgeMatch(query: ResultSettingQuery, hedgeMatchDetail: HedgeMatchDetail) {
         if (!_.isNil(hedgeMatchDetail) && hedgeMatchDetail.matchId > 0) {
-            query.matchID = hedgeMatchDetail.matchId;
+            query.matchId = hedgeMatchDetail.matchId;
             await this.changeResultSetting(query);
         }
     }
 
     private async confirmOldMatch(query: ResultSettingQuery, oldMatchDetail: HedgeMatchDetail) {
         if (!_.isNil(oldMatchDetail) && oldMatchDetail.matchId > 0) {
-            query.matchID = oldMatchDetail.matchId;
+            query.matchId = oldMatchDetail.matchId;
             await this.changeResultSetting(query);
         }
     }
