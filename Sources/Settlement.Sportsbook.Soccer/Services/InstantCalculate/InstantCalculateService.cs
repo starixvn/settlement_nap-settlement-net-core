@@ -17,41 +17,20 @@ public interface InstantCalculateService
     Task<Result> UncalPushInstantCalculation(InstantCalculationRequest instantCalculationRequest);
 }
 
-public class InstantCalculateServiceImp : InstantCalculateService
+public class InstantCalculateServiceImp(
+    IDynamicRepository repository,
+    IMapper mapper,
+    InstantResourceService instantResourceService,
+    IOptions<AppSettingsKey> appSettingsKey,
+    ScaleOutSettleService scaleOutSettleService,
+    PushInstantCalculationService pushInstantService)
+    : InstantCalculateService
 {
-    private readonly IDynamicRepository repository;
-
-    private readonly IMapper mapper;
-
-    private readonly InstantResourceService instantResourceService;
-
-    private readonly ScaleOutSettleService scaleOutSettleService;
-
-    private readonly PushInstantCalculationService pushInstantService;
-
-    private readonly AppSettingsKey appSettingsKey;
-
-    public InstantCalculateServiceImp(
-        IDynamicRepository repository,
-        IMapper mapper,
-        InstantResourceService instantResourceService,
-        IOptions<AppSettingsKey> appSettingsKey,
-        ScaleOutSettleService scaleOutSettleService,
-        PushInstantCalculationService pushInstantService)
-    {
-        this.repository = repository;
-        this.mapper = mapper;
-        this.instantResourceService = instantResourceService;
-        this.appSettingsKey = appSettingsKey.Value;
-        this.scaleOutSettleService = scaleOutSettleService;
-        this.pushInstantService = pushInstantService;
-    }
-
     private async Task<Result> CalculateCheckingInfo(MatchCheckingCriteria criteria)
     {
         var matchCheckingResult = new Result();
 
-        foreach (var server in appSettingsKey.SiteDbServer)
+        foreach (var server in appSettingsKey.Value.SiteDbServer)
         {
             criteria.DbServer = server;
             await repository.ExecuteAsync(criteria);
@@ -203,7 +182,7 @@ public class InstantCalculateServiceImp : InstantCalculateService
             MatchId = matchId
         };
 
-        foreach (var server in appSettingsKey.SiteDbServer)
+        foreach (var server in appSettingsKey.Value.SiteDbServer)
         {
             criteria.DbServer = server;
             var item = await repository.GetAsync<MatchTicketInfo>(criteria) ?? new MatchTicketInfo();

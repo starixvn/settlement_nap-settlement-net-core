@@ -31,8 +31,6 @@ public class CalculateServiceImp(
     IMatchService matchService)
     : ICalculateService
 {
-    private readonly AppSettingsKey appSettingsKey = appSettingsKey.Value;
-
     public async Task<Result> Calculate(SettleRequest request)
     {
         var criteria = createCriteriaService.CreateCalculateCriteria(request);
@@ -169,7 +167,7 @@ public class CalculateServiceImp(
     private async Task ExecuteAsync(CalculateCriteria criteria)
     {
         await UpdateMatchInfo(criteria);
-        foreach (var server in appSettingsKey.SiteDbServer)
+        foreach (var server in appSettingsKey.Value.SiteDbServer)
         {
             criteria.DbServer = server;
             await repository.ExecuteAsync(criteria);

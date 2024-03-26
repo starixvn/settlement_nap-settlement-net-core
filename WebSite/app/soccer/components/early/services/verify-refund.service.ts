@@ -71,13 +71,13 @@ export class VerifyRefundService {
     
     public isExistedDifferentValueConfirmed(externalResults: ExternalResultDetail[], list: ResultDetail[]) {
         let flag = false;
-        list = list.filter((item) => item.resultSettingData.isConfirmedRefundSdt);
-        list.forEach((item: ResultDetail) => {
-            const resource = externalResults.find(item => item.sourceId === ScoreSourceType.confirmRefundSource && item.resourceId === item.resourceId);
-            if (!_.isUndefined(resource) && (!_.isEqual(item.homeValue, resource.homeValue) || !_.isEqual(item.awayValue, resource.awayValue))) {
+        list.forEach((resultDetail: ResultDetail) => {
+            const resource = externalResults.find(item => item.sourceId === ScoreSourceType.confirmRefundSource && item.resourceId === resultDetail.resourceId);
+            if (!_.isUndefined(resource) && (!_.isEqual(resultDetail.homeValue, resource.homeValue) || !_.isEqual(resultDetail.awayValue, resource.awayValue))) {
                 flag = true;
             }
         });
+        
         return flag;
     } 
 }

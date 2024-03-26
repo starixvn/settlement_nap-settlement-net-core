@@ -19,39 +19,18 @@ public interface IRefundService
     Task<Result> RefundRunningThirdPartyTickets(RefundRunningThirdPartyTicketRequest request);
 }
 
-public class RefundServiceImp : IRefundService
+public class RefundServiceImp(
+    IDynamicRepository repository,
+    IHttpContextAccessor accessor,
+    IOptions<AppSettingsKey> appSettingsKey,
+    ICreateCriteriaService createCriteriaService,
+    ScaleOutSettleService scaleOutSettleService,
+    LogService logService)
+    : IRefundService
 {
-    private readonly IDynamicRepository repository;
-
-    private readonly IHttpContextAccessor accessor;
-
-    private readonly ICreateCriteriaService createCriteriaService;
-
-    private readonly ScaleOutSettleService scaleOutSettleService;
-
-    private readonly AppSettingsKey appSettingsKey;
-
-    private readonly LogService logService;
-
-    public RefundServiceImp(
-        IDynamicRepository repository,
-        IHttpContextAccessor accessor,
-        IOptions<AppSettingsKey> appSettingsKey,
-        ICreateCriteriaService createCriteriaService,
-        ScaleOutSettleService scaleOutSettleService,
-        LogService logService)
-    {
-        this.repository = repository;
-        this.accessor = accessor;
-        this.appSettingsKey = appSettingsKey.Value;
-        this.createCriteriaService = createCriteriaService;
-        this.scaleOutSettleService = scaleOutSettleService;
-        this.logService = logService;
-    }
-
     public async Task<MarkedTickets> CheckMarkedTickets(CheckingMarkedTicketsCriteria criteria)
     {
-        foreach (var server in appSettingsKey.SiteDbServer)
+        foreach (var server in appSettingsKey.Value.SiteDbServer)
         {
             criteria.DbServer = server;
             await repository.ExecuteAsync(criteria);
@@ -163,7 +142,7 @@ public class RefundServiceImp : IRefundService
     {
         await UpdateMatchInfo(criteria);
 
-        foreach (var server in appSettingsKey.SiteDbServer)
+        foreach (var server in appSettingsKey.Value.SiteDbServer)
         {
             criteria.DbServer = server;
             await repository.ExecuteAsync(criteria);
@@ -202,7 +181,7 @@ public class RefundServiceImp : IRefundService
 
         await WriteLogDirectly(request);
 
-        foreach (var server in appSettingsKey.SiteDbServer)
+        foreach (var server in appSettingsKey.Value.SiteDbServer)
         {
             criteria.DbServer = server;
             await repository.ExecuteAsync(criteria);
@@ -249,7 +228,7 @@ public class RefundServiceImp : IRefundService
     {
         criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
         criteria.SpName = spName;
-        foreach (var server in appSettingsKey.SiteDbServer)
+        foreach (var server in appSettingsKey.Value.SiteDbServer)
         {
             criteria.DbServer = server;
             await repository.ExecuteAsync(criteria);

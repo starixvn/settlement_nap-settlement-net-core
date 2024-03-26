@@ -22,14 +22,12 @@ public interface InstantResourceService
     string GenerateResource(List<XmlResource> resources);
 }
 
-public class InstantResourceServiceImp : InstantResourceService
+public class InstantResourceServiceImp(
+    IInstantGoalCheckingService instantGoalCheckingService,
+    IGoalRecordService goalRecordService,
+    XmlConvertService xmlConvertService)
+    : InstantResourceService
 {
-    private readonly IInstantGoalCheckingService instantGoalCheckingService;
-
-    private readonly IGoalRecordService goalRecordService;
-
-    private readonly XmlConvertService xmlConvertService;
-
     private const char HomeValue = 'H';
 
     private const string FgHomeBetStatus = "FL:1-0;";
@@ -45,16 +43,6 @@ public class InstantResourceServiceImp : InstantResourceService
     private const string HalfTimeFl = "1FL";
 
     private const int Ten = 10;
-
-    public InstantResourceServiceImp(
-        IInstantGoalCheckingService instantGoalCheckingService,
-        IGoalRecordService goalRecordService,
-        XmlConvertService xmlConvertService)
-    {
-        this.instantGoalCheckingService = instantGoalCheckingService;
-        this.goalRecordService = goalRecordService;
-        this.xmlConvertService = xmlConvertService;
-    }
 
     public List<XmlResource> Halftime(InstantGoalCondition goalCondition)
     {

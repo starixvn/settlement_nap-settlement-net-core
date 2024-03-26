@@ -10,19 +10,11 @@ public interface IBetStatusAllService
     string GetBetStatusRefund(RefundRequest request);
 }
 
-public class BetStatusAllServiceImp : IBetStatusAllService
+public class BetStatusAllServiceImp(
+    IValidationService validationService,
+    IGoalRecordService goalRecordService)
+    : IBetStatusAllService
 {
-    private readonly IValidationService validationService;
-    private readonly IGoalRecordService goalRecordService;
-
-    public BetStatusAllServiceImp(
-        IValidationService validationService,
-        IGoalRecordService goalRecordService)
-    {
-        this.validationService = validationService;
-        this.goalRecordService = goalRecordService;
-    }
-
     public string GetBetStatus(SettleRequest singleQuery)
     {
         if (validationService.IsNullScoreAndGoalRecord(singleQuery))

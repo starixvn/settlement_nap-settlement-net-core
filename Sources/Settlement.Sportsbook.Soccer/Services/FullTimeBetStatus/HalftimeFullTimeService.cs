@@ -11,18 +11,9 @@ public interface IHalftimeFullTimeService
     string FullTimeBetStatus(SettleBaseRequest request, string halfTimeBetStatus);
 }
 
-public class HalftimeFullTimeServiceImp : IHalftimeFullTimeService
+public class HalftimeFullTimeServiceImp(IGoalRecordService goalRecordService, IFullTimeService fullTimeService)
+    : IHalftimeFullTimeService
 {
-    private readonly IGoalRecordService goalRecordService;
-
-    private readonly IFullTimeService fullTimeService;
-
-    public HalftimeFullTimeServiceImp(IGoalRecordService goalRecordService, IFullTimeService fullTimeService)
-    {
-        this.goalRecordService = goalRecordService;
-        this.fullTimeService = fullTimeService;
-    }
-
     public string HalfTimeBetStatus(SettleBaseRequest request)
     {
         var isExistRefundHt = request.BetStatus.IgnoreCaseContains(EventStatus.RefundHt);

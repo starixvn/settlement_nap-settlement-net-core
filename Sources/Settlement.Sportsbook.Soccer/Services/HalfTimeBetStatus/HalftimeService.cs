@@ -13,17 +13,11 @@ public interface IHalftimeService
     string AppendFullTimeBetStatus(string betStatus, string fullTimeBetStatus);
 }
 
-public class HalftimeServiceImp : IHalftimeService
+public class HalftimeServiceImp(
+    IValidationService validationService,
+    IHalftimeScoreAndGoalService halftimeScoreAndGoalService)
+    : IHalftimeService
 {
-    private readonly IValidationService validationService;
-    private readonly IHalftimeScoreAndGoalService halftimeScoreAndGoalService;
-
-    public HalftimeServiceImp(IValidationService validationService, IHalftimeScoreAndGoalService halftimeScoreAndGoalService)
-    {
-        this.validationService = validationService;
-        this.halftimeScoreAndGoalService = halftimeScoreAndGoalService;
-    }
-
     public string GetBetStatusForCalculateHalfTime(SettleBaseRequest request)
     {
         if (validationService.IsNullHalftimeScoreAndGoalRecord(request))

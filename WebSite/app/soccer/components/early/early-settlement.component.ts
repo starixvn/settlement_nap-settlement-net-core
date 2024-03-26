@@ -227,21 +227,10 @@ export class EarlySettlementComponent implements Soccer {
     }
 
     private async changeConfirmResultByType(matchId: number, isEnabled: boolean) {
-        const normalResource = _.filter(this.selectedResources, item => !item.isSettleDetermined);
-        const settleDetermineResource = _.filter(this.selectedResources, item => item.isSettleDetermined);
-        
-        if(normalResource.length > 0){
-            const resourceIds = _.join(normalResource.map(item => item.resourceId), ',');
-            const query = new ResultSettingQuery(matchId, ResultSettingType.confirmRefund, isEnabled, resourceIds);
-            await this.aioService.changeResultSetting(query);
-        }
-
-        if(settleDetermineResource.length > 0){
-            const resourceIds = _.join(settleDetermineResource.map(item => item.resourceId), ',');
-            const resourceItems = settleDetermineResource.map(item => new ResourceItem(item.resourceId, item.resourceName, item.homeValue, item.awayValue))
-            const query = new ResultSettingQuery(matchId, ResultSettingType.confirmRefundSDT, isEnabled, resourceIds, resourceItems);
-            await this.aioService.changeResultSetting(query);
-        }
+        const resourceIds = _.join(this.selectedResources.map(item => item.resourceId), ',');
+        const resourceItems = this.selectedResources.map(item => new ResourceItem(item.resourceId, item.resourceName, item.homeValue, item.awayValue))
+        const query = new ResultSettingQuery(matchId, ResultSettingType.confirmRefundSDT, isEnabled, resourceIds, resourceItems);
+        this.aioService.changeResultSetting(query).finally(() => this.messageBoxService.closePopupNotChanged());
     }
 
     private isExistedConfirmRefund() {

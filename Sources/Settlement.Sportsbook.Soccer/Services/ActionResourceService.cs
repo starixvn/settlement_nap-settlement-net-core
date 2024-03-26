@@ -17,23 +17,17 @@ public interface IActionResourceService
     XmlResource HalftimeGoalRecord(string goalRecord, int settlementStatusId);
 }
 
-public class ActionResourceServiceImp : IActionResourceService
+public class ActionResourceServiceImp(IGoalRecordService goalRecordService) : IActionResourceService
 {
-    private readonly IGoalRecordService goalRecordService;
-
-    public ActionResourceServiceImp(IGoalRecordService goalRecordService)
-    {
-        this.goalRecordService = goalRecordService;
-    }
-
     public List<XmlResource> HalftimeResources(GoalAction goalAction)
     {
         var firstGoal = goalRecordService.FirstGoalRecord(goalAction.FirstGoal, goalAction.IsRefund);
         var lastGoal = goalRecordService.LastGoalRecord(goalAction.LastGoal, goalAction.IsRefund);
-        return new List<XmlResource> {
+        return
+        [
             SettleResource(ResourceKey.HalftimeFirstGoal, firstGoal, goalAction.FirstGoalSettlementStatusId),
             SettleResource(ResourceKey.HalftimeLastGoal, lastGoal, goalAction.LastGoalSettlementStatusId)
-        };
+        ];
     }
 
     public XmlResource HalftimeGoalRecord(string goalRecord, int settlementStatusId)
@@ -50,10 +44,11 @@ public class ActionResourceServiceImp : IActionResourceService
     {
         var firstGoal = goalRecordService.FirstGoalRecord(goalAction.FirstGoal, goalAction.IsRefund);
         var lastGoal = goalRecordService.LastGoalRecord(goalAction.LastGoal, goalAction.IsRefund);
-        return new List<XmlResource> {
+        return
+        [
             SettleResource(ResourceKey.FullTimeFirstGoal, firstGoal, goalAction.FirstGoalSettlementStatusId),
             SettleResource(ResourceKey.FullTimeLastGoal, lastGoal, goalAction.LastGoalSettlementStatusId)
-        };
+        ];
     }
 
     public XmlResource FullTimeGoalRecord(string goalRecord, int settlementStatusId)

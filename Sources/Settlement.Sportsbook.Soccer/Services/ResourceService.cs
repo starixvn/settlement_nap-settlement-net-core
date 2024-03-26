@@ -32,18 +32,9 @@ public interface IResourceService
     List<ResourceItem> UnCalculateLogResources();
 }
 
-public class ResourceServiceImp : IResourceService
+public class ResourceServiceImp(IActionResourceService actionResourceService, IGoalRecordService goalRecordService)
+    : IResourceService
 {
-    private readonly IActionResourceService actionResourceService;
-
-    private readonly IGoalRecordService goalRecordService;
-
-    public ResourceServiceImp(IActionResourceService actionResourceService, IGoalRecordService goalRecordService)
-    {
-        this.actionResourceService = actionResourceService;
-        this.goalRecordService = goalRecordService;
-    }
-
     public List<XmlResource> HalftimeResources(GoalCondition goalCondition, int settlementStatusId)
     {
         var halftimeGoal = goalRecordService.HalftimeGoal(goalCondition.GoalRecord);
