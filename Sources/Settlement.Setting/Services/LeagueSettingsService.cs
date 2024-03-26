@@ -36,7 +36,7 @@ public class LeagueSettingsServiceImp
         var leagueSettings = await repository.GetAsync<LeagueSettings>(criteria);
 
         leagueSettings.LeagueName = remotingRef.GetLeagueName(request.LeagueId.ToString(), "EN");
-        leagueSettings.Providers = (await GetProviderInfo(request.SportType)).ToList();
+        leagueSettings.Providers = (await GetProviderInfo(request)).ToList();
 
         return leagueSettings;
     }
@@ -61,11 +61,12 @@ public class LeagueSettingsServiceImp
         return updateASResult.ErrCode + updateWTResult.ErrCode > 0 ? new Result(1, $"{updateWTResult.ErrMsg}<br/>{updateASResult.ErrMsg}") : new Result();
     }
 
-    private async Task<IEnumerable<ProviderInfo>> GetProviderInfo(int sportType)
+    private async Task<IEnumerable<ProviderInfo>> GetProviderInfo(GetLeagueSettingsRequest request)
     {
         var criteria = new GetProviderInfoCriteria
         {
-            SportType = sportType
+            SportType = request.SportType,
+            LeagueId = request.LeagueId
         };
 
         return await repository.FetchAsync<ProviderInfo>(criteria);

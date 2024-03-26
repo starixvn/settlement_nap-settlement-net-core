@@ -15,6 +15,7 @@ import { MatchDetailComponent } from './match-detail.component';
 import { NotReadyMatchComponent } from '../../shared/components/not-ready-match/not-ready-match.component';
 import { VerificationBaseService } from '../../core/services/verification-base.service';
 import { ResourceNameByIdPipe } from '../pipes/resource-name-by-id.pipe';
+import { map } from 'rxjs';
 
 @Component({
     selector: 'early-settlement',
@@ -59,7 +60,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         this.init();
     }
 
-    public initService(){
+    public initService() {
         this.verificationService = this.inject.get(VerificationService);
         this.eSportsService = this.inject.get(ESportsService);
         this.earlyConstraintService = this.inject.get(EarlyConstraintService);
@@ -77,8 +78,9 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         this.isSettleOldMatch = this.oldMatchDetail != null;
         this.match.resultDetails = this.match.resultDetails.filter((map) => map.resourceId.length > maxLength);
         this.resultDetails = this.match.resultDetails;
-        this.resetResult(this.match.resultDetails);
+        this.upperCaseResult();
         this.verificationService.generateExternalScores(this.match, this.match.resultDetails, SportType.eSports);
+        this.resultCooking(this.match.resultDetails);
         this.match.originalResultDetail = _.cloneDeep(this.match.resultDetails);
         this.autoFillResultOnLoad(this.match.resultDetails);
         this.groupMap = this.earlyConstraintService.getGroupMap(this.match.resultDetails);
@@ -93,14 +95,24 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         this.resultStatusSelect.maxWidth = '144px';
     }
 
-    private resetResult(resultDetails: ResultDetail[]) {
+    private resultCooking(resultDetails: ResultDetail[]) {
         resultDetails.forEach((map) => {
             map.groupBetType = this.earlyConstraintService.getBetTypeGroup(map.betType);
-            map.homeValue = map.resultStatusId !== ResultStatusId.ManualCompleted ? "" : map.homeValue;
-            map.awayValue = map.resultStatusId !== ResultStatusId.ManualCompleted ? "" : map.awayValue;
+            map.homeValue = map.resultStatusId !== ResultStatusId.ManualCompleted && map.resultStatusId !== ResultStatusId.AutoCompleted
+                ? "" : map.homeValue?.toUpperCase();
+            map.awayValue = map.resultStatusId !== ResultStatusId.ManualCompleted && map.resultStatusId !== ResultStatusId.AutoCompleted
+                ? "" : map.awayValue?.toUpperCase();
             map.homeName = this.eSportsService.getResultByTeamName(map.homeValue, this.match.matchDetail, map.groupBetType);
             map.awayName = this.eSportsService.getResultByTeamName(map.awayValue, this.match.matchDetail, map.groupBetType);
         });
+    }
+
+    private upperCaseResult() {
+       this.match.externalResults.forEach(e => {
+        e.resultDetails.forEach(result => {
+            result.homeValue = result.homeValue?.toUpperCase();
+        })
+       })
     }
 
     public async calculate() {
@@ -226,7 +238,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
 
     public autoFillResultOnLoad(resultDetails: ResultDetail[]) {
         _.forEach(resultDetails, (resultDetail) => {
-            this.verifyAndAutoFillResult(resultDetail,true);
+            this.verifyAndAutoFillResult(resultDetail, true);
         });
     }
 
@@ -236,10 +248,10 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
             resultDetail.isScoreMismatched = this.verificationService.isMismatchedWarning(resultDetail);
             this.verificationService.autoFillScore(resultDetail);
             resultDetail.isScoreMismatched = this.verificationService.isMismatchedWarning(resultDetail);
-        } else if(resultDetail.groupBetType === ResultControlGroup.Duration) { // TODO
+        } else if (resultDetail.groupBetType === ResultControlGroup.Duration) {
             resultDetail.isScoreMismatched = this.verificationService.isMismatchedDurationWarning(resultDetail);
             this.verificationService.autoFillScreenShotScore(resultDetail);
-            resultDetail.isScoreMismatched = this.verificationService.isMismatchedDurationWarning(resultDetail,true);
+            resultDetail.isScoreMismatched = this.verificationService.isMismatchedDurationWarning(resultDetail, true);
         } else {
             this.verificationService.autoFillEarlyResult(resultDetail);
             resultDetail.isScoreMismatched = this.verificationService.isEarlyMismatchedWarning(resultDetail);
@@ -249,12 +261,12 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     public checkResultIsMatched(resultDetail: ResultDetail) {
         const isExistedCoupleResult = resultDetail.groupBetType === ResultControlGroup.CoupleScores
         const isExistedDurationResult = resultDetail.groupBetType === ResultControlGroup.Duration
-        let isScoreMismatched = false; 
-        
-        if(isExistedCoupleResult) {
+        let isScoreMismatched = false;
+
+        if (isExistedCoupleResult) {
             isScoreMismatched = this.verificationService.isMismatchedWarning(resultDetail)
-        } else if(isExistedDurationResult) {
-            isScoreMismatched = this.verificationService.isMismatchedDurationWarning(resultDetail,true);
+        } else if (isExistedDurationResult) {
+            isScoreMismatched = this.verificationService.isMismatchedDurationWarning(resultDetail, true);
         } else {
             isScoreMismatched = this.verificationService.isEarlyMismatchedWarning(resultDetail)
         }

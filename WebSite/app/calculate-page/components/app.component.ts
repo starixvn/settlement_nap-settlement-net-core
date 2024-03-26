@@ -1,3 +1,4 @@
+
 import { Component, ComponentFactory, ComponentFactoryResolver, ComponentRef, ElementRef, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import { BackGroundService, DetectChangesService, GenerateFilterService, HandleActionsService, PopupService, RequestService } from '../services';
 import { BlockUIService, DialogBoxService, HttpRequestService, MessageBoxService, ReCheckInService, VerifyDateService } from '../../shared/services';
@@ -5,12 +6,13 @@ import { PageComponent } from './calculation';
 import * as _ from 'lodash';
 import { AutoCalculatePageComponent, AutoCalculateService } from './auto-calculation';
 import { PageBaseComponent } from './base-component';
-import { NgIf } from '@angular/common';
+import { NgIf, DatePipe } from '@angular/common';
 
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
     providers: [
+        DatePipe,
         BlockUIService,
         VerifyDateService,
         MessageBoxService,
