@@ -11,6 +11,8 @@ using Settlement.Sportsbook.Aio.MapperFactory;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Requests;
 using ResultDetail = Settlement.Sportsbook.Aio.Models.ResultDetail;
+using ResultTicket = (System.Collections.Generic.List<Settlement.Sportsbook.Aio.Models.ResultDetail> ResultDetails
+    , Settlement.Core.Models.TicketCounts TicketCounts);
 
 namespace Settlement.Sportsbook.Aio.Services;
 
@@ -72,24 +74,16 @@ public class AioServiceImp : IAioService
         var apiKey = validateApiKeyService.GetApiKey(request.ApiKey);
         var matchDetail = await GetMatchDetail(request, apiKey);
 
+        var (resultDetails, ticketCounts) = await GetResultTicket(request, apiKey, matchDetail);
+
         var externalResults = await GetExternalResults(request, apiKey);
-
-        var resultDetailCriteria = (GetResultDetailCriteria)validateApiKeyService.CriteriaName(request, $"{apiKey}-{ApiKeyConstant.ResultDetailKey}");
-        var (resultDetails, ticketCounts) = await multipleServerAioService.FetchResultDetails(resultDetailCriteria, matchDetail.SportType);
-
-        var mapperService = mapperFactory.GetMapperService($"{apiKey}-{ApiKeyConstant.ResultDetailKey}");
-        if (mapperService != null)
-        {
-            resultDetails.ForEach(result => result.MatchId = request.MatchId);
-            mapperService.Decorate(resultDetails);
-        }
 
         var hedgeMatchCriteria = validateApiKeyService.CriteriaName(request, $"{apiKey}-{ApiKeyConstant.HedgeMatchInfoKey}");
         var hedgeMatchDetail = await repository.GetAsync<HedgeMatchDetail>(hedgeMatchCriteria);
+
         var oldMatch = await GetOldMatch(matchDetail, request, apiKey);
 
         var childMatches = await GetChildMatch(resultDetails, request, apiKey);
-        resultDetails = resultDetails.OrderBy(result => result.OrdNo).ToList();
 
         var fantasyMatch = new FantasyMatch();
         if (matchDetail.IsFantasy)
@@ -109,6 +103,24 @@ public class AioServiceImp : IAioService
             ChildMatches = childMatches,
             OldMatchDetail = oldMatch
         };
+    }
+
+    private async Task<ResultTicket> GetResultTicket(GetMatchRequest request, string apiKey, Models.MatchDetail matchDetail)
+    {
+        var resultDetailCriteria = (GetResultDetailCriteria)validateApiKeyService.CriteriaName(request, $"{apiKey}-{ApiKeyConstant.ResultDetailKey}");
+        var (resultDetails, ticketCounts) = await multipleServerAioService.FetchResultDetails(resultDetailCriteria, matchDetail.SportType);
+
+        var mapperService = mapperFactory.GetMapperService($"{apiKey}-{ApiKeyConstant.ResultDetailKey}");
+        if (mapperService != null)
+        {
+            resultDetails.ForEach(result => result.MatchId = request.MatchId);
+            mapperService.Decorate(resultDetails);
+        }
+        resultDetails = resultDetails.OrderBy(result => result.OrdNo).ToList();
+
+        var newResultDetails = await SetInterval(matchDetail, resultDetails);
+
+        return (newResultDetails, ticketCounts);
     }
 
     private async Task<Models.MatchDetail> GetMatchDetail(GetMatchRequest request, string apiKey)
@@ -362,5 +374,36 @@ public class AioServiceImp : IAioService
     public async Task<Result> SettleChildMatch(SettleChildMatchRequest request)
     {
         return await multipleServerAioService.SettleChildMatch(request);
+    }
+
+    public async Task<List<ResultDetail>> SetInterval(Models.MatchDetail matchDetail, List<ResultDetail> resultDetails)
+    {
+        if(matchDetail.SportType != SportType.Tennis) return resultDetails;
+
+        var finalResult = resultDetails.First(r => r.ResourceId == ResourceType.Final);
+        var setResults = resultDetails.Where(x => x.ResourceId != ResourceType.Final).ToList();
+
+        var indexes = (await GetResourceIndex(matchDetail.SportType)).ToList();
+
+        setResults.ForEach(s => s.IntervalNo = indexes.First(i => i.ResourceId == s.ResourceId).IntervalNo);
+
+        var resultOrdered = setResults
+            .Where(r => r.IntervalNo <= matchDetail.GameSession)
+            .OrderBy(s => s.IntervalNo)
+            .ToList();
+
+        resultOrdered.Add(finalResult);
+
+        return resultOrdered.ToList();
+    }
+
+    private async Task<IEnumerable<ResourceIndex>> GetResourceIndex(int sportType)
+    {
+        var criteria = new GetResourceIndexCriteria { SportType = sportType };
+
+        var indexes = await repository.FetchAsync<ResourceIndex>(criteria);
+        return indexes
+            .Where(r => r.ResourceId != ResourceType.Final)
+            .ToList();
     }
 }

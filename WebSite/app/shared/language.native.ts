@@ -306,4 +306,5 @@
     existTeamSettled:
       "Calculate function do not support settled Teams. Please recheck or use Re-Calculate function.",
   },
+  ValueInconsistency:	"Cannot proceed due to inputted value is inconsistent with match type."
 };

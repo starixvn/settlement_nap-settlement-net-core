@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { IntervalCalculationService } from "../../shared/services";
 import { Language } from "../../shared/language.native";
-import { ResultDetail } from "../../shared/models/sportsbook-sop";
+import { MatchDetail, ResultDetail } from "../../shared/models/sportsbook-sop";
 import * as _ from 'lodash';
 import { VerificationBaseService } from "../../core/services/verification-base.service";
 import { ResultByTeamNamePipe } from '../../shared/pipes/result-by-team-name.pipe';
@@ -34,5 +34,18 @@ export class VerificationService extends VerificationBaseService{
         }
 
         return "";
+    }
+
+    public verifySuperTieBreak(matchDetail: MatchDetail, selectedResults: ResultDetail[]) {
+        const validScore = [0,1];
+        const setThree = selectedResults.find(x => x.intervalNo === 3);
+        const isValidScoreSetThree = (+setThree.homeValue)  !== (+setThree.awayValue) 
+            && (validScore.includes(+setThree.homeValue) || validScore.includes(+setThree.awayValue))
+
+        if(setThree && matchDetail.gameSession === 3 && matchDetail.sessionTime === 0) {
+            return !isValidScoreSetThree;
+        }
+
+        return false;
     }
 }

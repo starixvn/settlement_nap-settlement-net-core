@@ -30,6 +30,8 @@ public class MatchDetail
     public int PlayTime { get; set; }
 
     public int BestOfMap { get; set; }
+    public short GameSession { get; set; }
+    public float SessionTime { get; set; }
 
     public int? HalfTimeHomeScore { get; set; }
 

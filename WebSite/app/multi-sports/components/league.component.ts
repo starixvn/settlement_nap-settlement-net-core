@@ -54,10 +54,12 @@ export class LeagueComponent implements OnInit, OnChanges, OnDestroy {
       this.sports = this.sportMatchService.getSportsWithIntervalScore(this.multiSport.sports, this.permission);
     }
     this.cd.detectChanges();
+    console.log(this.multiSport.sports)
   }
 
   ngOnInit() {
     this.permission = this.multiSport.permission;
+  
     
     this.refreshMatches();
   }
