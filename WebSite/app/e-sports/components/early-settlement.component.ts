@@ -77,6 +77,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         this.oldMatchDetail = this.match.oldMatchDetail;
         this.isSettleOldMatch = this.oldMatchDetail != null;
         this.match.resultDetails = this.match.resultDetails.filter((map) => map.resourceId.length > maxLength);
+        this.match.resultDetails.forEach((map) => map.groupBetType = this.earlyConstraintService.getBetTypeGroup(map.betType));
         this.resultDetails = this.match.resultDetails;
         this.upperCaseResult();
         this.verificationService.generateExternalScores(this.match, this.match.resultDetails, SportType.eSports);
@@ -97,7 +98,6 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
 
     private resultCooking(resultDetails: ResultDetail[]) {
         resultDetails.forEach((map) => {
-            map.groupBetType = this.earlyConstraintService.getBetTypeGroup(map.betType);
             map.homeValue = map.resultStatusId !== ResultStatusId.ManualCompleted && map.resultStatusId !== ResultStatusId.AutoCompleted
                 ? "" : map.homeValue?.toUpperCase();
             map.awayValue = map.resultStatusId !== ResultStatusId.ManualCompleted && map.resultStatusId !== ResultStatusId.AutoCompleted
