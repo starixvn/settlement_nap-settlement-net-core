@@ -368,7 +368,7 @@ export class VerificationBaseService {
 
     public generateExternalScores(match: GeneralMatch, resultDetails: ResultDetail[], sportType: number) {
         const listGroupExternalResult = this.groupExternalResult(match.externalResults, sportType);
-        const newSportsSOP = [SportType.tennis, SportType.cricket, SportType.badminton, SportType.basketBall, SportType.volleyBall, SportType.beachVolleyball];
+        const newSportsSOP = [SportType.tennis, SportType.cricket, SportType.badminton, SportType.basketBall, SportType.volleyBall, SportType.beachVolleyball, SportType.eSports];
         _.forEach(resultDetails, (map: ResultDetail) => {
             const scores: ExternalResultDetail[] = [];
             _.forEach(listGroupExternalResult, (result: ExternalResult) => {
@@ -383,8 +383,8 @@ export class VerificationBaseService {
                         const tempScore = new ExternalResultDetail(result.sourceId, map.resourceId, result.sourceName, result.remark);
                         tempScore.homeValue = map.homeValue;
                         tempScore.awayValue = map.awayValue;
-                        tempScore.homeName = this.resultByTeamNamePipe.transform(tempScore.homeValue, match.matchDetail);
-                        tempScore.awayName = this.resultByTeamNamePipe.transform(tempScore.awayValue, match.matchDetail);
+                        tempScore.homeName = this.resultByTeamNamePipe.transform(tempScore.homeValue, match.matchDetail, map.groupBetType);
+                        tempScore.awayName = this.resultByTeamNamePipe.transform(tempScore.awayValue, match.matchDetail, map.groupBetType);
                         tempScore.fromResultDetail = true;
                         scores.push(tempScore);
                     } else {

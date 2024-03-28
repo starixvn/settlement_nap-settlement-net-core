@@ -66,8 +66,8 @@ export class CalculationActionsComponent implements SportTemplate {
         this.enableUncalculate = this.verificationService.enableUncalculateButton(this.match.resultDetails);
         this.disableScoreDirect = this.verificationService.hasTicketBetOnMap(this.match.resultDetails);
         this.isLeader = this.match.permission.isLeader;
-        this.resetHomeAway(this.match.resultDetails);
         this.verificationService.generateExternalScores(this.match, this.match.resultDetails, SportType.eSports);
+        this.resetHomeAway(this.match.resultDetails);
         this.match.originalResultDetail = _.cloneDeep(this.match.resultDetails);
         this.autoFillScoreOnLoad(this.match.resultDetails);
     }
