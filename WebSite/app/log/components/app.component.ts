@@ -36,5 +36,7 @@ export class AppComponent implements OnInit {
         return  _.isEqual(pageType, PageType.ProviderLog)
             ? this.viewContainerRef.createComponent(ProviderLogComponent)
             : this.viewContainerRef.createComponent(LogComponent);
+
+        
     }
 }
