@@ -23,8 +23,14 @@ public class BasketballResourceNameService : IMapperService
         {
             return (resourceId, GetResourceMain(resourceId));
         }
+
+        //if (resourceId.Length >= maxLength + 1)
+        //{
         var betType = resourceId[..(maxLength + 1)];
         return (betType, refDataService.GetBetTypeName(betType, resourceId[(maxLength + 1)..]));
+        //}
+
+        //return (resourceId, resourceId);
     }
 
     private static string GetResourceMain(string resourceId)
