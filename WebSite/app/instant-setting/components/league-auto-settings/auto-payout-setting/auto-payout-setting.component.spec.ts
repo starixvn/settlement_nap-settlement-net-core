@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AutoPayoutSettingComponent } from './auto-payout-setting.component';
 import { LeagueSettingsStore } from '../../../services/league-settings.store';
-import { LeagueSettings } from '../../../models/league-settings.model';
+import { LeagueSettings } from '../../../../shared/models/league-settings.model';
 
 describe('AutoPayoutSettingComponent', () => {
   let component: AutoPayoutSettingComponent;

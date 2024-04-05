@@ -5,7 +5,7 @@ import { Observable, firstValueFrom } from 'rxjs';
 import { TimeSettingQuery, GetRemarkQuery, ChangeSettingQuery, RemarkAndPermission } from '../models';
 import { AutoSettingLeagueQuery, AutoSettingMatchQuery, Result } from '../../shared/models';
 import { SettingType } from '../constants';
-import { LeagueSettings, ProviderSource, ResultSettings } from '../models/league-settings.model';
+import { LeagueSettings, ProviderSource, ResultSettings } from '../../shared/models/league-settings.model';
 
 @Injectable()
 export class RequestService {

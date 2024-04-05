@@ -46,6 +46,7 @@ import { CalculateCommonModule } from "../../shared/modules/calculate-common.mod
 import { RelatedMatchesComponent } from "./fantasy/related-matches.compoment";
 import { FantasyMatch } from "../models/fantasy.model";
 import { SourceIds } from "../constants/source-ids";
+import { ProviderSource } from "../../shared/models/league-settings.model";
 
 @Component({
   selector: "calculation-actions",
@@ -93,6 +94,7 @@ export class CalculationActionsComponent implements SportTemplate {
   isReadyMatch: boolean;
   readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
   public SOURCE_ID = SourceIds;
+  providerSources: ProviderSource[] = [];
 
   async getMatch(matchId: number) {
     this.initService();
@@ -102,10 +104,22 @@ export class CalculationActionsComponent implements SportTemplate {
       sportType: SportType.basketBall,
       settleType: "MNL",
     };
-    this.match = (await this.aioService.getMatch(matchQuery)) as Match;
+    this.match = (await this.aioService.getMatch(matchQuery)) as Match; 
     this.isReadyMatch = this.match.matchDetail.playTime >= KickOffTime.playTime;
+   
+    await this.setProviderSources();  
+
     this.cloneResultDetail();
+
     this.init();
+
+
+  }
+
+  private async setProviderSources() {
+    const {leagueId, sportType} = this.match.matchDetail;
+    const { providers } = await this.aioService.getLeagueSetting(leagueId,sportType);
+    this.providerSources = providers;
   }
 
   initService() {
@@ -224,8 +238,7 @@ export class CalculationActionsComponent implements SportTemplate {
   }
 
   public get maxProviderCol() {
-    return this.match.externalResults.filter(x => 
-      x.sourceId !== ScoreSourceType.trader && x.sourceId < ScoreSourceType.screenshot).length > 2 ? 3 : 2;
+    return this.providerSources.length > 2 ? 3 : 2;
   }
 
   autoFillScoreOnLoad(resultDetails: ResultDetail[]) {

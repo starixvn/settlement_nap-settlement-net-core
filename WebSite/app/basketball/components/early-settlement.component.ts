@@ -1,7 +1,7 @@
 ﻿import { EarlyCommonModule } from './../../shared/modules/early-common.module';
 import { ExternalSourceNamePipe } from './../../shared/pipes/external-source-name.pipe';
 import * as _ from 'lodash';
-import { CalculateAction, ResultStatusId, SportType, TicketStatusText } from '../../shared/constants';
+import { CalculateAction, ResultStatusId, ScoreSourceType, SportType, TicketStatusText } from '../../shared/constants';
 import { Component, Injector, ViewChild } from '@angular/core';
 import { ToastContainerDirective } from 'ngx-toastr';
 import { BasketballApiKeys, EarlyResourcesIds, KickOffTime, ResultStatus } from '../constants';
@@ -14,6 +14,7 @@ import { EarlyBaseComponent } from '../../shared/components/sportsbook-sop/early
 import { MatchDetailComponent } from './match-detail.component';
 import { NewMultipleSelectComponent } from '../../shared/components/multiple-select/multiple-select.component';
 import { ResourceNameByIdPipe } from '../pipes/resource-name-by-id.pipe';
+import { ProviderSource } from '../../shared/models/league-settings.model';
 
 @Component({
     selector: 'early-settlement',
@@ -29,6 +30,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     public match: Match;
     public isShowRefundButton = false;
     public isReadyMatch: boolean;
+    providerSources: ProviderSource[] = [];
 
     constructor(
         protected injector: Injector,
@@ -47,10 +49,26 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
 
         this.match = await this.aioService.getMatch(matchQuery) as Match;
         this.isReadyMatch = this.match.matchDetail.playTime >= KickOffTime.playTime;
+        await this.setProviderSources();  
+
         this.permission = this.match.permission;
         this.init();
     }
 
+    private async setProviderSources() {
+        const {leagueId, sportType} = this.match.matchDetail;
+        const { providers } = await this.aioService.getLeagueSetting(leagueId,sportType);
+        this.providerSources = providers;
+      }
+    
+      public get outSideCount() {
+        return this.match.resultDetails[0].externalScores.filter(x => 
+          x.sourceId !== ScoreSourceType.trader && x.sourceId >= ScoreSourceType.screenshot).length
+      }
+    
+      public get maxProviderCol() {
+        return this.providerSources.length > 2 ? 3 : 2;
+      }
     public initService() {
         this.earlyService = this.injector.get(EarlyService);
         this.verificationService = this.injector.get(VerificationService);

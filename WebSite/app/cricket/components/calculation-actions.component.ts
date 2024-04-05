@@ -23,6 +23,7 @@ import { VerificationBaseService } from '../../core/services/verification-base.s
 import { CalculateCommonModule } from '../../shared/modules/calculate-common.module';
 import { ResultByPlayerNamePipe, ResultNameByIdPipe, ResultValuePipe } from '../pipes';
 import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
+import { ProviderSource } from '../../shared/models/league-settings.model';
 @Component({
     selector: 'calculation-actions',
     templateUrl: 'calculation-actions.component.html',
@@ -53,6 +54,8 @@ export class CalculationActionsComponent implements SportTemplate {
     public isDisabledUnCalculate: boolean;
     public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
     public SOURCE_ID = ScoreSourceType;
+    providerSources: ProviderSource[] = [];
+
     constructor(private injector: Injector) {
         this.confirmationDialogMessage.title = Language.confirmationBox;
     }
@@ -68,11 +71,14 @@ export class CalculationActionsComponent implements SportTemplate {
         this.toastrService.overlayContainer = this.toastContainer;
 
         this.match = await this.aioService.getMatch(matchQuery) as Match;
+        this.isReadyMatch = this.match.matchDetail.playTime >= KickOffTime.playTime;
+
+        await this.setProviderSources();  
+
         this.isLeader = this.match.permission.isLeader;
         this.isTrader = this.match.permission.isTrader;
         this.canCalculate = this.match.permission.canCalculate;
         this.canUncalculate = this.match.permission.canUncalculate;
-        this.isReadyMatch = this.match.matchDetail.playTime >= KickOffTime.playTime;
 
         this.match.resultDetails.forEach((map) => {
             if (map.settlementStatusId === SettlementStatusId.Calculated) {
@@ -86,6 +92,12 @@ export class CalculationActionsComponent implements SportTemplate {
         this.match.resultDetails = _.orderBy(this.match.resultDetails, (map) => map.ordNo);
         this.init();
     }
+
+    private async setProviderSources() {
+        const {leagueId, sportType} = this.match.matchDetail;
+        const { providers } = await this.aioService.getLeagueSetting(leagueId,sportType);
+        this.providerSources = providers;
+      }
 
     private initService() {
         this.messageBoxService = this.injector.get(MessageBoxService);
@@ -116,11 +128,6 @@ export class CalculationActionsComponent implements SportTemplate {
     public get matchWinner(): ResultDetail {
         return _.find(this.match.resultDetails, item => _.isEqual(item.resourceId, ResourcesIds.final));
     }
-
-    public get providerCount() {
-        return this.match.resultDetails[0].externalScores.filter(x => 
-          x.sourceId !== ScoreSourceType.trader && x.sourceId < ScoreSourceType.screenshot).length
-      }
     
       public get outSideCount() {
         return this.match.resultDetails[0].externalScores.filter(x => 
@@ -128,8 +135,7 @@ export class CalculationActionsComponent implements SportTemplate {
       }
     
       public get maxProviderCol() {
-        return this.match.externalResults.filter(x => 
-          x.sourceId !== ScoreSourceType.trader && x.sourceId < ScoreSourceType.screenshot).length > 2 ? 3 : 2;
+        return this.providerSources.length > 2 ? 3 : 2;
       }
 
     private resetHomeAway(resultDetails: ResultDetail[]) {

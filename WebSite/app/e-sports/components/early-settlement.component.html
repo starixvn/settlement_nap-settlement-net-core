@@ -25,10 +25,10 @@
                             <th rowspan="2" class="map" *ngIf="permission.isLeader">
                                 Trader Result
                             </th>
-                            <th colspan="2" *ngIf="permission.isLeader">
+                            <th [colSpan]="maxProviderCol" *ngIf="permission.isLeader">
                                 Provider Result
                             </th>
-                            <th [colSpan]="(match.resultDetails[0].externalScores.length - 3) * 2">
+                            <th [colSpan]="outSideCount * 2">
                                 Outside Result
                             </th>
                             <th rowspan="2" class="result">
@@ -48,18 +48,18 @@
                         <tr>
                             <ng-container
                                 *ngFor=" let result of match.resultDetails[0].externalScores | slice:1; let i=index">
-                                <th class="map" *ngIf="i < 2 && permission.isLeader">
+                                <th class="map" *ngIf="i < maxProviderCol && permission.isLeader">
                                     <div class="outside-source-text"
                                         [matTooltip]="getTextTooltip(result.sourceName, 15)">
                                         {{result.sourceName|externalSourceName}}
                                     </div>
                                 </th>
-                                <th class="map" *ngIf="i === 2">
+                                <th class="map" *ngIf="i === maxProviderCol">
                                     <div class="outside-source-text">
                                         {{result.sourceName}}
                                     </div>
                                 </th>
-                                <th class="map" *ngIf="i > 2">
+                                <th class="map" *ngIf="i > maxProviderCol"  >
                                     <div class="outside-source-text"
                                         [matTooltip]="getTextTooltip(result.sourceName, 15)">
                                         <a href="{{result.remark|externalLink}}" target="_blank"
@@ -81,6 +81,7 @@
                                     (click)="onCollapsedClick(map)">
                                     <span>{{map.collapsed?"+ ":"- "}}</span>
                                     <span>{{map.groupName}}</span>
+                                    <span>{{match.resultDetails[0].externalScores.length}}</span>
                                 </td>
                                 <td class="align-right">
                                     <input type="checkbox" class="select-checkbox" [(ngModel)]="map.checked"
@@ -297,7 +298,7 @@
                                 </td>
 
                                 <ng-container *ngFor="let result of item.externalScores; let x=index">
-                                    <td *ngIf="x < 3 && permission.isLeader" class="map">
+                                    <td *ngIf="x < (maxProviderCol +1) && permission.isLeader" class="map">
                                         <ng-container [ngSwitch]="item.groupBetType">
                                             <ng-container *ngSwitchCase="0">
                                                 <div class="outside-source-text"
@@ -378,7 +379,7 @@
                                             </ng-container>
                                         </ng-container>
                                     </td>
-                                    <ng-container *ngIf="x >= 3">
+                                    <ng-container *ngIf="x >= (maxProviderCol +1)">
                                         <td class="map"
                                             [ngClass]="{'striped': x % 2 === 0, 'can-settle': canSettleResult(item)}">
                                             <ng-container [ngSwitch]="item.groupBetType">

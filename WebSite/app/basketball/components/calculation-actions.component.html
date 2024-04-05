@@ -33,7 +33,7 @@
 			<th scope="col" rowspan="2" class="ticket-status">Ticket Status</th>
 			<th scope="col" rowspan="2" colspan="2" class="map">Final Score</th>
 			<th scope="col" rowspan="2" class="map" *ngIf="isLeader">Trader Score</th>
-			<th scope="col" [colSpan]="providerCount" class="map" *ngIf="isLeader">Provider Score</th>
+			<th scope="col" [colSpan]="maxProviderCol" class="map" *ngIf="isLeader">Provider Score</th>
 			<th scope="col" [colSpan]="outSideCount * 2">Outside Score</th>
 			<th scope="col" rowspan="2" class="status">
 				Select to Proceed

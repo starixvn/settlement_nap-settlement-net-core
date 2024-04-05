@@ -12,6 +12,7 @@ import { TennisService, VerificationService } from '../services';
 import { ExternalResultDetail, HedgeMatchDetail, ResultDetail, SaveScoreQuery, SportTemplate } from '../../shared/models/sportsbook-sop';
 import { ResourceNameByIdPipe } from '../pipes';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
+import { ProviderSource } from '../../shared/models/league-settings.model';
 
 @Component({
   selector: 'calculate-actions',
@@ -33,6 +34,8 @@ export class CalculateActionsComponent implements SportTemplate {
   public isReadyMatch: boolean;
   public readonly totalGamesId = ResourcesIds.totalGames;
   public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
+  providerSources: ProviderSource[] = [];
+
   constructor(
     protected injector: Injector,
     private readonly messageBoxService: MessageBoxService,
@@ -52,8 +55,15 @@ export class CalculateActionsComponent implements SportTemplate {
     this.toastrService.overlayContainer = this.toastContainer;
     this.match = await this.aioService.getMatch(query) as Match;
     this.isReadyMatch = this.match.matchDetail.playTime >= KickOffTime.playTime;
+
+    await this.setProviderSources();  
     this.cloneResultDetail();
     this.init();
+  }
+  private async setProviderSources() {
+    const {leagueId, sportType} = this.match.matchDetail;
+    const { providers } = await this.aioService.getLeagueSetting(leagueId,sportType);
+    this.providerSources = providers;
   }
 
   private cloneResultDetail() {
@@ -106,19 +116,13 @@ export class CalculateActionsComponent implements SportTemplate {
     return _.find(this.match.resultDetails, (item: ResultDetail) => _.isEqual(item.resourceId, ResourcesIds.totalSets));
   }
 
-  public get providerCount() {
-    return this.match.resultDetails[0].externalScores.filter(x => 
-      x.sourceId !== ScoreSourceType.trader && x.sourceId < ScoreSourceType.screenshot).length
-  }
-
   public get outSideCount() {
     return this.match.resultDetails[0].externalScores.filter(x => 
       x.sourceId !== ScoreSourceType.trader && x.sourceId >= ScoreSourceType.screenshot).length
   }
 
   public get maxProviderCol() {
-    return this.match.externalResults.filter(x => 
-      x.sourceId !== ScoreSourceType.trader && x.sourceId < ScoreSourceType.screenshot).length > 2 ? 3 : 2;
+    return this.providerSources.length > 2 ? 3 : 2;
   }
 
   public calculate() {

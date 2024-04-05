@@ -16,6 +16,7 @@ import { ExternalResultDetail, Permission, ResultDetail, SaveScoreQuery, SportTe
 import { UrlHelper } from '../../helper';
 import { ResultPipe } from '../../shared/pipes/result.pipe';
 import { SourceIds } from '../../basketball/constants/source-ids';
+import { ProviderSource } from '../../shared/models/league-settings.model';
 @Component({
   selector: 'calculation-actions',
   templateUrl: './calculate-actions.component.html',
@@ -45,6 +46,7 @@ export class CalculateActionsComponent implements SportTemplate {
   public collapse = false;
   public blockUI = true;
   public SOURCE_ID = SourceIds;
+  providerSources: ProviderSource[] = [];
 
   constructor(private readonly injector: Injector) {
     this.confirmationDialogMessage.title = Language.confirmationBox;
@@ -62,8 +64,17 @@ export class CalculateActionsComponent implements SportTemplate {
     };
     this.match = await this.aioService.getMatch(matchQuery) as Match;
     this.isReadyMatch = this.match.matchDetail.playTime >= KickOffTime.playTime;
+
+    await this.setProviderSources();  
+
     this.cloneResultDetail();
     this.init();
+  }
+
+  private async setProviderSources() {
+    const {leagueId, sportType} = this.match.matchDetail;
+    const { providers } = await this.aioService.getLeagueSetting(leagueId,sportType);
+    this.providerSources = providers;
   }
 
   public initService() {
@@ -121,19 +132,13 @@ export class CalculateActionsComponent implements SportTemplate {
     return _.find(this.match.resultDetails, (item: ResultDetail) => _.isEqual(item.resourceId, ResourcesIds.totalGames));
   }
 
-  public get providerCount() {
-    return this.match.resultDetails[0].externalScores.filter(x => 
-      x.sourceId !== ScoreSourceType.trader && x.sourceId < ScoreSourceType.screenshot).length
-  }
-
   public get outSideCount() {
     return this.match.resultDetails[0].externalScores.filter(x => 
       x.sourceId !== ScoreSourceType.trader && x.sourceId >= ScoreSourceType.screenshot).length
   }
 
   public get maxProviderCol() {
-    return this.match.externalResults.filter(x => 
-      x.sourceId !== ScoreSourceType.trader && x.sourceId < ScoreSourceType.screenshot).length > 2 ? 3 : 2;
+    return this.providerSources.length > 2 ? 3 : 2;
   }
 
   private resetHomeAway(resultDetails: ResultDetail[]) {

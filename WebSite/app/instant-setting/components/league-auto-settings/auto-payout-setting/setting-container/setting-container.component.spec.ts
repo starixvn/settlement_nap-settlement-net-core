@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed, flush } from '@angular/core/testing';
 
 import { SettingContainerComponent } from './setting-container.component';
 import { LeagueSettingsStore } from '../../../../services/league-settings.store';
-import { LeagueSettings, ResultSettings } from '../../../../models/league-settings.model';
+import { LeagueSettings, ResultSettings } from '../../../../../shared/models/league-settings.model';
 import { MatDialog } from '@angular/material/dialog';
 import { ProviderSelectionComponent } from '../provider-selection/provider-selection.component';
 

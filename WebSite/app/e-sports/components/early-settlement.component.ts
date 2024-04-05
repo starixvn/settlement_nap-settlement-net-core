@@ -8,14 +8,14 @@ import * as _ from 'lodash';
 import { Language } from '../../shared/language.native';
 import { ResultControlGroup, Resources, TicketStatus, ApiKeys, ResultStatus, ResultControl, KickOffTime } from '../constants';
 import { BlockUIService } from '../../shared/services';
-import { ResultStatusId, CalculateAction, SportType } from '../../shared/constants';
+import { ResultStatusId, CalculateAction, SportType, ScoreSourceType } from '../../shared/constants';
 import { EarlyConstraintService, VerificationService, ESportsService } from '../services';
 import { EarlyBaseComponent } from '../../shared/components/sportsbook-sop/early-base.component';
 import { MatchDetailComponent } from './match-detail.component';
 import { NotReadyMatchComponent } from '../../shared/components/not-ready-match/not-ready-match.component';
 import { VerificationBaseService } from '../../core/services/verification-base.service';
 import { ResourceNameByIdPipe } from '../pipes/resource-name-by-id.pipe';
-import { map } from 'rxjs';
+import { ProviderSource } from '../../shared/models/league-settings.model';
 
 @Component({
     selector: 'early-settlement',
@@ -41,6 +41,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     public oldMatchDetail: HedgeMatchDetail;
     public isSettleOldMatch: boolean;
     public isReadyMatch: boolean;
+    providerSources: ProviderSource[] = [];
 
     constructor(
         protected verificationService: VerificationService,
@@ -57,7 +58,25 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
             apiKey: ApiKeys.NormalMatch
         };
         this.match = await this.aioService.getMatch(matchQuery) as Match;
+        this.isReadyMatch = this.match.matchDetail.playTime >= KickOffTime.playTime;
+        await this.setProviderSources();
+
         this.init();
+    }
+
+    public get outSideCount() {
+        return this.match.resultDetails[0].externalScores.filter(x =>
+            x.sourceId !== ScoreSourceType.trader && x.sourceId >= ScoreSourceType.screenshot).length
+    }
+
+    public get maxProviderCol() {
+        return this.providerSources.length > 2 ? 3 : 2;
+    }
+
+    private async setProviderSources() {
+        const { leagueId, sportType } = this.match.matchDetail;
+        const { providers } = await this.aioService.getLeagueSetting(leagueId, sportType);
+        this.providerSources = providers;
     }
 
     public initService() {
@@ -72,7 +91,6 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         const maxLength = 2;
         this.matchClone = _.cloneDeep(this.match);
         this.matchDetail = this.match.matchDetail;
-        this.isReadyMatch = this.match.matchDetail.playTime >= KickOffTime.playTime;
         this.matchId = this.match.matchDetail.matchId;
         this.oldMatchDetail = this.match.oldMatchDetail;
         this.isSettleOldMatch = this.oldMatchDetail != null;
@@ -80,13 +98,15 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         this.match.resultDetails.forEach((map) => map.groupBetType = this.earlyConstraintService.getBetTypeGroup(map.betType));
         this.resultDetails = this.match.resultDetails;
         this.upperCaseResult();
-        this.verificationService.generateExternalScores(this.match, this.match.resultDetails, SportType.eSports);
+        this.verificationService.generateExternalScores(this.match, this.match.resultDetails, SportType.eSports,this.maxProviderCol);
         this.resultCooking(this.match.resultDetails);
         this.match.originalResultDetail = _.cloneDeep(this.match.resultDetails);
         this.autoFillResultOnLoad(this.match.resultDetails);
         this.groupMap = this.earlyConstraintService.getGroupMap(this.match.resultDetails);
         this.permission = this.match.permission;
         this.renderFilterSelect();
+
+        console.log(this.match.resultDetails[0].externalScores)
     }
 
     private renderFilterSelect() {

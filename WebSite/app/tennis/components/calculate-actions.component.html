@@ -28,7 +28,7 @@
       <th rowspan="2" class="ticket-status">Ticket Status</th>
       <th rowspan="2" colspan="2" class="map">Final Score</th>
       <th rowspan="2" class="map" *ngIf="isLeader">Trader Score</th>
-      <th [colSpan]="providerCount" class="map" *ngIf="isLeader">Provider Score</th>
+      <th [colSpan]="maxProviderCol" class="map" *ngIf="isLeader">Provider Score</th>
       <th [colSpan]="outSideCount * 2">Outside Score</th>
       <th rowspan="2" class="status">
         Select to Proceed
