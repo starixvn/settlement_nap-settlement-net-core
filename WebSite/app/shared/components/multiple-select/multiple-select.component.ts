@@ -4,22 +4,27 @@ import { FormControl, FormsModule } from '@angular/forms';
 import { MaterialModule } from './../../material-module';
 import {
   Component, Input, ViewChild, ViewChildren, Output, ViewEncapsulation,
-  OnChanges, SimpleChanges, ChangeDetectorRef, QueryList, EventEmitter, ViewContainerRef, AfterViewInit, OnDestroy
+  OnChanges, SimpleChanges, ChangeDetectorRef, QueryList, EventEmitter, ViewContainerRef, AfterViewInit, OnDestroy, ChangeDetectionStrategy
 } from '@angular/core';
 import { ItemsSelect, Group } from './../../models';
 import { MatOption } from '@angular/material/core';
 import { MatExpansionPanel } from '@angular/material/expansion';
 import { MatSelect } from '@angular/material/select';
 import * as _ from 'lodash';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 
 @Component({
   selector: 'new-multiple-select',
   templateUrl: './multiple-select.component.html',
   encapsulation: ViewEncapsulation.None,
   standalone: true,
-  imports: [MaterialModule, FormsModule, CommonModule]
+  imports: [MaterialModule, FormsModule, CommonModule, ScrollingModule],
+  styles: [
+    '.cdk-overlay-backdrop { display: none !important}'
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class NewMultipleSelectComponent implements OnChanges, AfterViewInit {
+export class NewMultipleSelectComponent implements OnChanges {
   @Input() public multipleSelect: MultipleSelect;
   @Input() public disabled: boolean;
   @Output() public readonly formValue = new EventEmitter();
@@ -39,8 +44,7 @@ export class NewMultipleSelectComponent implements OnChanges, AfterViewInit {
   @ViewChild('dropdown') dropdown: MatSelect;
   @ViewChildren('panel') panel: QueryList<MatExpansionPanel>;
 
-  constructor(private readonly cd: ChangeDetectorRef,
-    viewContainerRef: ViewContainerRef) {
+  constructor(viewContainerRef: ViewContainerRef) {
     this.element = viewContainerRef.element.nativeElement;
   }
 
@@ -51,35 +55,11 @@ export class NewMultipleSelectComponent implements OnChanges, AfterViewInit {
       this.itemAfterFilter = _.cloneDeep(this.items);
       this.createGroupType();
       this.initSelected();
-      this.cd.detectChanges();
-
     }
 
     if (changes.disabled) {
       this.dropdown.disabled = changes.disabled.currentValue;
     }
-  }
-
-  ngAfterViewInit() {
-    this.clickOutside();
-  }
-
-  public clickOutside() {
-    document.addEventListener('click', (event) => {
-      const ignoreClickOnMyElement = document.getElementsByClassName("mat-mdc-select-panel")[0];
-      if (!this.isOpened || ignoreClickOnMyElement == null) {
-        return;
-      }
-
-      const isClickOutSideElement = !ignoreClickOnMyElement.contains(event.target as Element)
-        && !this.element.contains(event.target as Element);
-      if (isClickOutSideElement) {
-        this.searchText = "";
-        this.search();
-        this.changeStatus(false);
-        this.dropdown.close();
-      }
-    }, false);
   }
 
   public selectPerOne(item: ItemsSelect) {
@@ -144,7 +124,29 @@ export class NewMultipleSelectComponent implements OnChanges, AfterViewInit {
   public checkOpenState(open: boolean) {
     this.isOpened = open;
     this.checkAllOption();
+    if (this.isOpened) {
+      document.addEventListener("click", this.handleClickOutside, false);
+    } else {
+      document.removeEventListener("click", this.handleClickOutside, false);
+    }
   }
+
+  private handleClickOutside = (event: MouseEvent) => {
+    const ignoreClickOnMyElement = document.body.getElementsByClassName("mat-mdc-select-panel")[0];
+    if (!this.isOpened || ignoreClickOnMyElement == null) {
+      return;
+    }
+
+    const isClickOutSideElement = !ignoreClickOnMyElement.contains(event.target as Element)
+      && !this.element.contains(event.target as Element);
+    if (isClickOutSideElement) {
+      this.searchText = "";
+      this.search();
+      this.changeStatus(false);
+      this.dropdown.close();
+    }
+  }
+
 
   public changeStatus(emitValue = true) {
     this.formControl.setValue(this.valueSelected);
@@ -178,7 +180,6 @@ export class NewMultipleSelectComponent implements OnChanges, AfterViewInit {
   public checkAllOption() {
     if (this.isOpened && this.formControl.value.length === this.items.length && !this.multipleSelect.disableCheckAll) {
       this.allSelected.select();
-      this.cd.detectChanges();
     }
   }
 
