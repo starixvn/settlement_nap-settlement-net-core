@@ -54,9 +54,9 @@ export class CalculateActionsComponent implements SportTemplate {
     };
     this.toastrService.overlayContainer = this.toastContainer;
     this.match = await this.aioService.getMatch(query) as Match;
-    this.isReadyMatch = this.match.matchDetail.playTime >= KickOffTime.playTime;
-
     await this.setProviderSources();  
+    
+    this.isReadyMatch = this.match.matchDetail.playTime >= KickOffTime.playTime;
     this.cloneResultDetail();
     this.init();
   }

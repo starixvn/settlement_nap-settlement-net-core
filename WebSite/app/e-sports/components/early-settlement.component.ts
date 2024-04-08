@@ -1,6 +1,6 @@
 ﻿import { EarlyCommonModule } from './../../shared/modules/early-common.module';
 import { PipesModule } from './../../shared/pipes/pipes.module.native';
-import { Component, Injector, ViewChild } from '@angular/core';
+import { Component, Injector, OnInit, ViewChild } from '@angular/core';
 import { ToastContainerDirective } from 'ngx-toastr';
 import { Match, SettleQuery } from '../models';
 import { ResultDetail, ExternalResultDetail, SportTemplate, HedgeMatchDetail } from '../../shared/models/sportsbook-sop';
@@ -50,6 +50,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         super(inject, verificationService);
     }
 
+
     async getMatch(matchId: number): Promise<void> {
         this.initService();
         const matchQuery = {
@@ -58,9 +59,11 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
             apiKey: ApiKeys.NormalMatch
         };
         this.match = await this.aioService.getMatch(matchQuery) as Match;
-        this.isReadyMatch = this.match.matchDetail.playTime >= KickOffTime.playTime;
+       
         await this.setProviderSources();
 
+        this.isReadyMatch = this.match.matchDetail.playTime >= KickOffTime.playTime;
+ 
         this.init();
     }
 
@@ -77,7 +80,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         const { leagueId, sportType } = this.match.matchDetail;
         const { providers } = await this.aioService.getLeagueSetting(leagueId, sportType);
         this.providerSources = providers;
-    }
+      }
 
     public initService() {
         this.verificationService = this.inject.get(VerificationService);
@@ -86,6 +89,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         this.inject.get(BlockUIService).blockUIEvent.subscribe((event: boolean) => this.blockUI = event);
         this.toastrService.overlayContainer = this.toastContainer;
     }
+
 
     private init() {
         const maxLength = 2;
@@ -105,8 +109,6 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         this.groupMap = this.earlyConstraintService.getGroupMap(this.match.resultDetails);
         this.permission = this.match.permission;
         this.renderFilterSelect();
-
-        console.log(this.match.resultDetails[0].externalScores)
     }
 
     private renderFilterSelect() {

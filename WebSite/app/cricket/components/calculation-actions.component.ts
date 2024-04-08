@@ -71,9 +71,8 @@ export class CalculationActionsComponent implements SportTemplate {
         this.toastrService.overlayContainer = this.toastContainer;
 
         this.match = await this.aioService.getMatch(matchQuery) as Match;
+        await this.setProviderSources();
         this.isReadyMatch = this.match.matchDetail.playTime >= KickOffTime.playTime;
-
-        await this.setProviderSources();  
 
         this.isLeader = this.match.permission.isLeader;
         this.isTrader = this.match.permission.isTrader;
@@ -94,11 +93,11 @@ export class CalculationActionsComponent implements SportTemplate {
     }
 
     private async setProviderSources() {
-        const {leagueId, sportType} = this.match.matchDetail;
-        const { providers } = await this.aioService.getLeagueSetting(leagueId,sportType);
+        const { leagueId, sportType } = this.match.matchDetail;
+        const { providers } = await this.aioService.getLeagueSetting(leagueId, sportType);
         this.providerSources = providers;
       }
-
+    
     private initService() {
         this.messageBoxService = this.injector.get(MessageBoxService);
         this.verificationService = this.injector.get(VerificationService);

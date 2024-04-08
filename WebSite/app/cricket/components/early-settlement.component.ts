@@ -48,19 +48,19 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
       apiKey: ApiKeys.NormalMatch
     };
     this.match = await this.aioService.getMatch(matchQuery) as Match;
+    await this.setProviderSources();
+    this.isReadyMatch = this.match.matchDetail.playTime >= KickOffTime.playTime;
     this.init();
-    
-    await this.setProviderSources();  
   }
 
   private async setProviderSources() {
-    const {leagueId, sportType} = this.match.matchDetail;
-    const { providers } = await this.aioService.getLeagueSetting(leagueId,sportType);
+    const { leagueId, sportType } = this.match.matchDetail;
+    const { providers } = await this.aioService.getLeagueSetting(leagueId, sportType);
     this.providerSources = providers;
   }
 
   public get outSideCount() {
-    return this.match.resultDetails[0].externalScores.filter(x => 
+    return this.match.resultDetails[0].externalScores.filter(x =>
       x.sourceId !== ScoreSourceType.trader && x.sourceId >= ScoreSourceType.screenshot).length
   }
 
@@ -79,17 +79,16 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
   private init() {
     const maxLength = 2;
     this.matchClone = _.cloneDeep(this.match);
-    this.isReadyMatch = this.match.matchDetail.playTime >= KickOffTime.playTime;
     this.permission = this.match.permission;
     this.matchId = this.match.matchDetail.matchId;
     this.matchDetail = this.match.matchDetail;
     this.match.resultDetails = this.match.resultDetails.filter((map) => map.resourceId.length > maxLength);
-    this.verificationBaseService.generateExternalScores(this.match, this.match.resultDetails, SportType.cricket,this.maxProviderCol);
+    this.verificationBaseService.generateExternalScores(this.match, this.match.resultDetails, SportType.cricket, this.maxProviderCol);
     this.resetResult(this.match.resultDetails);
     this.resultDetails = this.match.resultDetails;
     this.earlyConstraintService.generateMultipleResultSelect(this.resultDetails);
     this.groupMap = this.earlyConstraintService.getGroupMap(this.match.resultDetails, this.match.matchDetail);
-    this.autoFillResultOnLoad(this.match.resultDetails);    
+    this.autoFillResultOnLoad(this.match.resultDetails);
     this.match.originalResultDetail = _.cloneDeep(this.match.resultDetails);
     this.hideTicketWaiting(this.groupMap);
     this.renderFilterSelect();
@@ -135,18 +134,18 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
   }
 
   private verifyScoreSources() {
-    if(!this.verificationService.allMapHaveScreenshotSource(this.match.resultDetails)) {
+    if (!this.verificationService.allMapHaveScreenshotSource(this.match.resultDetails)) {
       this.toastrService.error(Language.sop.notScreenshot);
       return;
     }
 
-    if(this.verificationService.isExistMismatchedScoreScreenshot(this.match.resultDetails)) {
+    if (this.verificationService.isExistMismatchedScoreScreenshot(this.match.resultDetails)) {
       this.toastrService.error(Language.sop.mismatchedScreenshot);
       return;
     }
-    
+
     if (this.verificationService.allResultsHaveScoreSources(this.match.resultDetails)) {
-       this.confirmCalculateMismatchScores(() => this.confirmChangedResults());
+      this.confirmCalculateMismatchScores(() => this.confirmChangedResults());
     } else {
       if (!this.permission.isLeader) {
         this.toastrService.error(Language.eSports.nonLeader.insufficientSources);
@@ -158,7 +157,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
       }
     }
   }
-  
+
 
   private getConfirmMessage(resultDetails: ResultDetail[]) {
     let confirmMessage = `${Language.CalculationConfirmMessageEarly}<br/>`;
@@ -225,7 +224,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
 
   private setTeamResultSettle(resultDetails: ResultDetail[]) {
     resultDetails.forEach(result => {
-      if(result.inputType === ResultControlGroup.HomeAway) {
+      if (result.inputType === ResultControlGroup.HomeAway) {
         result.homeId = `${this.matchDetail.homeId}`;
         result.awayId = `${this.matchDetail.awayId}`;
       }
@@ -278,32 +277,32 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
   private async push(query: SettleQuery) {
     const result = await this.aioService.push(query);
     if (result.isSuccessful) {
-      await this.handleChildMatch(result.childMatchIds, query,result.settledSessionId);
-     
-      result.hasResultAmendment && await this.handleUpdateSettlementResultHistoryStatus(query,result.settledSessionId);
-     
+      await this.handleChildMatch(result.childMatchIds, query, result.settledSessionId);
+
+      result.hasResultAmendment && await this.handleUpdateSettlementResultHistoryStatus(query, result.settledSessionId);
+
       this.messageBoxService.closePopup();
     } else {
       this.toastrService.error(result.errMsg);
     }
   }
 
-  private async handleChildMatch(childMatchIds: string, settleQuery: SettleQuery,parentSessionId: string) {
+  private async handleChildMatch(childMatchIds: string, settleQuery: SettleQuery, parentSessionId: string) {
     if (!_.isEmpty(childMatchIds)) {
       const settleChildMatchQuery = new SettleChildMatchQuery(childMatchIds, settleQuery.selectedResources,
         settleQuery.actionName, settleQuery.isReSettledTickets);
-      
-        settleChildMatchQuery.sportType = settleQuery.sportType;
-        settleChildMatchQuery.parentSessionId = parentSessionId;
+
+      settleChildMatchQuery.sportType = settleQuery.sportType;
+      settleChildMatchQuery.parentSessionId = parentSessionId;
 
       await this.aioService.pushChildMatch(settleChildMatchQuery);
     }
   }
 
-  private async handleUpdateSettlementResultHistoryStatus(settleQuery: SettleQuery,sessionId: string) {
-      const query = new UpdateSettlementResultHistoryStatus(settleQuery.matchId,sessionId)
-      await this.aioService.updateSettlementResultHistoryStatus(query);
-    }
+  private async handleUpdateSettlementResultHistoryStatus(settleQuery: SettleQuery, sessionId: string) {
+    const query = new UpdateSettlementResultHistoryStatus(settleQuery.matchId, sessionId)
+    await this.aioService.updateSettlementResultHistoryStatus(query);
+  }
 
   public saveScore() {
     this.toastrService.clear();

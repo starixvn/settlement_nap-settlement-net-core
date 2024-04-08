@@ -61,9 +61,12 @@ export class CalculationActionsComponent implements SportTemplate {
         };
 
         this.match = await this.aioService.getMatch(matchQuery) as Match;
+        
+        await this.setProviderSources();
+
         this.isReadyMatch = this.match.matchDetail.playTime >= KickOffTime.playTime;
 
-        await this.setProviderSources();
+        
         this.hedgeMatchDetail = this.match.hedgeMatchDetail;
         this.oldMatchDetail = this.match.oldMatchDetail;
         this.applyHedgeMatch = this.hedgeMatchDetail != null;
@@ -82,7 +85,7 @@ export class CalculationActionsComponent implements SportTemplate {
         const { leagueId, sportType } = this.match.matchDetail;
         const { providers } = await this.aioService.getLeagueSetting(leagueId, sportType);
         this.providerSources = providers;
-    }
+      }
 
 
     public init() {

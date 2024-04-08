@@ -65,7 +65,7 @@ export class CalculateActionsComponent implements SportTemplate {
     this.match = await this.aioService.getMatch(matchQuery) as Match;
     this.isReadyMatch = this.match.matchDetail.playTime >= KickOffTime.playTime;
 
-    await this.setProviderSources();  
+    await this.setProviderSources();
 
     this.cloneResultDetail();
     this.init();

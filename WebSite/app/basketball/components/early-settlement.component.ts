@@ -58,6 +58,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     private async setProviderSources() {
         const {leagueId, sportType} = this.match.matchDetail;
         const { providers } = await this.aioService.getLeagueSetting(leagueId,sportType);
+    
         this.providerSources = providers;
       }
     
