@@ -62,7 +62,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
       }
     
       public get outSideCount() {
-        return this.match.resultDetails[0].externalScores.filter(x => 
+        return this.resultDetails[0].externalScores.filter(x => 
           x.sourceId !== ScoreSourceType.trader && x.sourceId >= ScoreSourceType.screenshot).length
       }
     
@@ -80,13 +80,14 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         this.matchDetail = this.match.matchDetail;
         this.matchId = this.match.matchDetail.matchId;
         this.resultDetails = _.filter(this.match.resultDetails, item => item.resourceId.length > 2);
-        this.verificationService.generateExternalScores(this.match, this.resultDetails, SportType.basketBall);
+        this.verificationService.generateExternalScores(this.match, this.resultDetails, SportType.basketBall, this.maxProviderCol);
         this.resetResult(this.resultDetails);
         this.autoFillResultOnLoad(this.resultDetails);
         this.groupMap = this.earlyService.getGroupMap(this.resultDetails);
         this.match.originalResultDetail = _.cloneDeep(this.resultDetails);
         this.hideTicketWaiting(this.groupMap);
         this.renderFilterSelect();
+        console.log(this.resultDetails[0].externalScores);
     }
 
     public hasNoneOption(betType: string) {
