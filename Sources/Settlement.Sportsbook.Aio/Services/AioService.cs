@@ -5,6 +5,7 @@ using Settlement.Core.Services;
 using Settlement.Sportsbook.Aio.Constants;
 using Settlement.Sportsbook.Aio.Criteria;
 using Settlement.Sportsbook.Aio.Criteria.Basketball;
+using Settlement.Sportsbook.Aio.Criteria.Cricket;
 using Settlement.Sportsbook.Aio.MapperFactory;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Requests;
@@ -118,7 +119,21 @@ public class AioServiceImp : IAioService
 
         matchDetail.RefDataService = refDataService;
 
+        if (SportGroup.SOP.Contains(matchDetail.SportType))
+        {
+            var providersSetting = await GetProviderInfos(matchDetail.LeagueId, matchDetail.SportType);
+            matchDetail.ProviderCount = providersSetting.Count;
+        }
+
         return matchDetail;
+    }
+
+    private async Task<List<ProviderInfo>> GetProviderInfos(int leagueId, int sportType)
+    {
+        var criteria = new Core.Criteria.GetProviderInfoCriteria { LeagueId = leagueId, SportType = sportType };
+        var providers = await repository.FetchAsync<ProviderInfo>(criteria);
+
+        return providers.ToList();
     }
 
     private async Task<List<ExternalResultModel>> GetExternalResults(GetMatchRequest request, string apiKey)

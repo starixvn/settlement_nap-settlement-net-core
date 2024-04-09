@@ -41,7 +41,6 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     public oldMatchDetail: HedgeMatchDetail;
     public isSettleOldMatch: boolean;
     public isReadyMatch: boolean;
-    providerSources: ProviderSource[] = [];
 
     constructor(
         protected verificationService: VerificationService,
@@ -59,9 +58,6 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
             apiKey: ApiKeys.NormalMatch
         };
         this.match = await this.aioService.getMatch(matchQuery) as Match;
-       
-        await this.setProviderSources();
-
         this.isReadyMatch = this.match.matchDetail.playTime >= KickOffTime.playTime;
  
         this.init();
@@ -73,14 +69,8 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     }
 
     public get maxProviderCol() {
-        return this.providerSources.length > 2 ? 3 : 2;
+        return this.match.matchDetail.providerCount > 2 ? 3 : 2;
     }
-
-    private async setProviderSources() {
-        const { leagueId, sportType } = this.match.matchDetail;
-        const { providers } = await this.aioService.getLeagueSetting(leagueId, sportType);
-        this.providerSources = providers;
-      }
 
     public initService() {
         this.verificationService = this.inject.get(VerificationService);

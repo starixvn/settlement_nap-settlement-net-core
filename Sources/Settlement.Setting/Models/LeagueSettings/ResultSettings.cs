@@ -1,6 +1,8 @@
 ﻿using Newtonsoft.Json;
+using Settlement.Core.Models;
 
 namespace Settlement.Setting.Models.LeagueSettings;
+
 public class ResultSettings
 {
     public ResultSettings(bool hasTrader, int minimumProvider, string primaryProvider, string secondaryProvider,
@@ -15,7 +17,6 @@ public class ResultSettings
     [JsonConstructor()]
     public ResultSettings()
     {
-
     }
 
     public bool HasTrader { get; set; }
@@ -25,7 +26,6 @@ public class ResultSettings
     public string SecondaryProvider { get; set; }
 
     public string PrimaryProvider { get; set; }
-
 
     private static string ParseProvider(string providers, IEnumerable<ProviderInfo> providerInfos)
     {

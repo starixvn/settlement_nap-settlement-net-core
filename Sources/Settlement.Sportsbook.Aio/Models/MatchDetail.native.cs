@@ -23,7 +23,6 @@ public class MatchDetail
 
     public string HomeName => RefDataService.GetTeamName(HomeId);
 
-
     public int AwayId { get; set; }
 
     public string AwayName => RefDataService.GetTeamName(AwayId);
@@ -62,6 +61,8 @@ public class MatchDetail
 
     public int AutoSetting { get; set; }
     public byte LeagueType { get; set; }
+
+    public int ProviderCount { get; set; }
 
     public bool IsFantasy => (LeagueName ?? string.Empty).Contains(LeagueCategory.Fantasy, StringComparison.OrdinalIgnoreCase);
 }

@@ -46,7 +46,6 @@ export class CalculateActionsComponent implements SportTemplate {
   public collapse = false;
   public blockUI = true;
   public SOURCE_ID = SourceIds;
-  providerSources: ProviderSource[] = [];
 
   constructor(private readonly injector: Injector) {
     this.confirmationDialogMessage.title = Language.confirmationBox;
@@ -64,17 +63,8 @@ export class CalculateActionsComponent implements SportTemplate {
     };
     this.match = await this.aioService.getMatch(matchQuery) as Match;
     this.isReadyMatch = this.match.matchDetail.playTime >= KickOffTime.playTime;
-
-    await this.setProviderSources();
-
     this.cloneResultDetail();
     this.init();
-  }
-
-  private async setProviderSources() {
-    const {leagueId, sportType} = this.match.matchDetail;
-    const { providers } = await this.aioService.getLeagueSetting(leagueId,sportType);
-    this.providerSources = providers;
   }
 
   public initService() {
@@ -138,7 +128,7 @@ export class CalculateActionsComponent implements SportTemplate {
   }
 
   public get maxProviderCol() {
-    return this.providerSources.length > 2 ? 3 : 2;
+    return this.match.matchDetail.providerCount > 2 ? 3 : 2;
   }
 
   private resetHomeAway(resultDetails: ResultDetail[]) {

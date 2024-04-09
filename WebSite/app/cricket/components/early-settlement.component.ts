@@ -32,7 +32,6 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
   public matchClone: Match;
   public isShowRefundButton = false;
   public isReadyMatch: boolean;
-  providerSources: ProviderSource[] = [];
 
   constructor(
     protected injector: Injector,
@@ -48,15 +47,8 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
       apiKey: ApiKeys.NormalMatch
     };
     this.match = await this.aioService.getMatch(matchQuery) as Match;
-    await this.setProviderSources();
     this.isReadyMatch = this.match.matchDetail.playTime >= KickOffTime.playTime;
     this.init();
-  }
-
-  private async setProviderSources() {
-    const { leagueId, sportType } = this.match.matchDetail;
-    const { providers } = await this.aioService.getLeagueSetting(leagueId, sportType);
-    this.providerSources = providers;
   }
 
   public get outSideCount() {
@@ -65,7 +57,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
   }
 
   public get maxProviderCol() {
-    return this.providerSources.length > 2 ? 3 : 2;
+    return this.match.matchDetail.providerCount > 2 ? 3 : 2;
   }
 
 

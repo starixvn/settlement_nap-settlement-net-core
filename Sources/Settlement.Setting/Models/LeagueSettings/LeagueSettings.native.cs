@@ -1,6 +1,8 @@
 ﻿using System.Text.Json.Serialization;
+using Settlement.Core.Models;
 
 namespace Settlement.Setting.Models.LeagueSettings;
+
 public class LeagueSettings
 {
     public int LeagueId { get; set; }

@@ -28,4 +28,5 @@
     public isFantasy: boolean;
     public isSupportCopyScore: boolean;
     public leagueType: number;
+    public providerCount: number;
 }

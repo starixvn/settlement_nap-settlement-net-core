@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Fanex.Data.Repository;
 using Fanex.RemotingRef;
+using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Setting.Criteria.LeagueSettings;
@@ -10,6 +11,7 @@ using Settlement.Setting.Requests;
 using Settlement.Setting.Requests.LeagueSettings;
 
 namespace Settlement.Setting.Services;
+
 public interface LeagueSettingsService
 {
     public Task<LeagueSettings> GetLeagueSettings(GetLeagueSettingsRequest request);
@@ -21,10 +23,10 @@ public class LeagueSettingsServiceImp
     (IDynamicRepository repository, IRemotingRefService remotingRef, IMapper mapper, LogService logService, SettingService settingService)
     : LeagueSettingsService
 {
-
     private const int ActionChangeLeagueSettingsId = 81048;
 
     private const int DirectSetting = 5;
+
     public async Task<LeagueSettings> GetLeagueSettings(GetLeagueSettingsRequest request)
     {
         var criteria = new GetLeagueSettings

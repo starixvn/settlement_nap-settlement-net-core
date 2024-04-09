@@ -34,7 +34,6 @@ export class CalculateActionsComponent implements SportTemplate {
   public isReadyMatch: boolean;
   public readonly totalGamesId = ResourcesIds.totalGames;
   public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
-  providerSources: ProviderSource[] = [];
 
   constructor(
     protected injector: Injector,
@@ -53,17 +52,10 @@ export class CalculateActionsComponent implements SportTemplate {
       apikey: TennisApiKeys.NormalMatch,
     };
     this.toastrService.overlayContainer = this.toastContainer;
-    this.match = await this.aioService.getMatch(query) as Match;
-    await this.setProviderSources();  
-    
+    this.match = await this.aioService.getMatch(query) as Match;    
     this.isReadyMatch = this.match.matchDetail.playTime >= KickOffTime.playTime;
     this.cloneResultDetail();
     this.init();
-  }
-  private async setProviderSources() {
-    const {leagueId, sportType} = this.match.matchDetail;
-    const { providers } = await this.aioService.getLeagueSetting(leagueId,sportType);
-    this.providerSources = providers;
   }
 
   private cloneResultDetail() {
@@ -122,7 +114,7 @@ export class CalculateActionsComponent implements SportTemplate {
   }
 
   public get maxProviderCol() {
-    return this.providerSources.length > 2 ? 3 : 2;
+    return this.match.matchDetail.providerCount > 2 ? 3 : 2;
   }
 
   public calculate() {
