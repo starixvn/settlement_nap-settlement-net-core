@@ -106,12 +106,12 @@
         <ng-container *ngFor=" let result of match.resultDetails[0].externalScores | slice:1; let i=index">
           <th class="map" *ngIf="i < maxProviderCol && permission.isLeader">
             <div class="outside-source-text" [matTooltip]="getTextTooltip(result.sourceName, 15)">
-              {{result.sourceName|externalSourceName}} {{i}}
+              {{result.sourceName|externalSourceName}}
             </div>
           </th>
           <th class="result-outside-source" *ngIf="i === maxProviderCol">
             <div class="outside-source-text">
-              {{result.sourceName}} {{i}}
+              {{result.sourceName}}
             </div>
           </th>
           <th class="result-outside-source" *ngIf="i > maxProviderCol">
