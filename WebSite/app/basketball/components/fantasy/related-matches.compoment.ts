@@ -5,15 +5,7 @@ import {
   FantasyRelatedMatch,
   RelatedMatchResult,
 } from "../../models/fantasy.model";
-import {
-  groupBy,
-  mapValues,
-  isEqual,
-  concat,
-  some,
-  isNil,
-  flatMap,
-} from "lodash";
+import * as _ from "lodash";
 import { ResourcesIds } from "../../constants";
 import { ScoreBySettlementPipe } from "../../../shared/pipes/score-by-settlement.pipe";
 import { MessageBoxService } from "../../../shared/services/message-box.service.native";
@@ -27,9 +19,13 @@ import { FantasyScoreService } from "../../services/fantasy-score.service";
   templateUrl: "./related-matches.compoment.html",
   standalone: true,
   imports: [CommonModule, ScoreBySettlementPipe],
-  providers: [VerificationFantasyMatchService,FantasyScoreService,MessageBoxService],
+  providers: [
+    VerificationFantasyMatchService,
+    FantasyScoreService,
+    MessageBoxService,
+  ],
 })
-export class RelatedMatchesComponent{
+export class RelatedMatchesComponent {
   @Input() fantasyMatch: FantasyMatch;
   @Input() isSupportCopyScore = false;
   @Output() public readonly autoFillScore = new EventEmitter<any>();
@@ -39,7 +35,7 @@ export class RelatedMatchesComponent{
   constructor(
     private readonly messageBoxService: MessageBoxService,
     private readonly verificationFantasyMatchService: VerificationFantasyMatchService,
-    private readonly fantasyScoreService :FantasyScoreService
+    private readonly fantasyScoreService: FantasyScoreService
   ) {
     this.dialogMessage.title = Language.confirmationBox;
   }
@@ -60,56 +56,74 @@ export class RelatedMatchesComponent{
       ResourcesIds.quarter4,
       ResourcesIds.ot,
       ResourcesIds.htScore,
-      ResourcesIds.finalScore];
+      ResourcesIds.finalScore,
+    ];
 
-    const matchesView = this.fantasyMatch.relatedMatches.map(match => {
-      return ({
+    const matchesView = this.fantasyMatch.relatedMatches.map((match) => {
+      return {
         ...match,
-        results : resourceIds.map(resourceId => {
+        results: resourceIds.map((resourceId) => {
           const result = match.results
-            .filter(r => r.resourceId)
-            .find(r => r.resourceId === resourceId);
+            .filter((r) => r.resourceId)
+            .find((r) => r.resourceId === resourceId);
 
-          return result ? {...result} : { resourceId};
-        })
-      });
-     })
+          return result ? { ...result } : { resourceId };
+        }),
+      };
+    });
     return matchesView;
   }
 
   getScoreClass(resourceId: string) {
-    if (isEqual(resourceId, ResourcesIds.finalScore)) {
+    if (_.isEqual(resourceId, ResourcesIds.finalScore)) {
       return "color-final-score ";
     }
-    if (isEqual(resourceId, ResourcesIds.htScore)) {
+    if (_.isEqual(resourceId, ResourcesIds.htScore)) {
       return "color-ht-score ";
     }
   }
 
   getEventStatusClass(eventStatus: string) {
-    const isRefund = ['refund','abandon'].some(keyword => eventStatus.toLowerCase().includes(keyword));
-    return isRefund ? 'bg-refund' : ''
+    const isRefund = ["refund", "abandon"].some((keyword) =>
+      eventStatus.toLowerCase().includes(keyword)
+    );
+    return isRefund ? "bg-refund" : "";
   }
 
   public verifyAndFillFantasyMatch() {
-    
     const homeTeams = this.fantasyMatchDetail.fantasyHomeTeam.split(",");
     const awayTeams = this.fantasyMatchDetail.fantasyAwayTeam.split(",");
     const relatedTeams = [...homeTeams, ...awayTeams];
 
     this.errorMsgEmitter.emit("");
-    if (this.verificationFantasyMatchService.isRelatedMatchesInsufficient(relatedTeams, this.relatedMatches)) {
-      this.errorMsgEmitter.emit(Language.fantasyMatch.insufficientRelatedMatches);
+    if (
+      this.verificationFantasyMatchService.isRelatedMatchesInsufficient(
+        relatedTeams,
+        this.relatedMatches
+      )
+    ) {
+      this.errorMsgEmitter.emit(
+        Language.fantasyMatch.insufficientRelatedMatches
+      );
       return;
     }
 
-    if (this.verificationFantasyMatchService.isExistNotCalculatedMatch(this.relatedMatches)) {
-      this.errorMsgEmitter.emit(Language.fantasyMatch.warningMatchNotCalculated);
+    if (
+      this.verificationFantasyMatchService.isExistNotCalculatedMatch(
+        this.relatedMatches
+      )
+    ) {
+      this.errorMsgEmitter.emit(
+        Language.fantasyMatch.warningMatchNotCalculated
+      );
       return;
     }
 
-    if (this.verificationFantasyMatchService.isExistHoldMatch(this.relatedMatches)) {
-      this.dialogMessage.message = Language.fantasyMatch.confirmAutoFillOnHoldMatch;
+    if (
+      this.verificationFantasyMatchService.isExistHoldMatch(this.relatedMatches)
+    ) {
+      this.dialogMessage.message =
+        Language.fantasyMatch.confirmAutoFillOnHoldMatch;
       this.messageBoxService.confirm(this.dialogMessage, () => {
         this.confirmAutoFillScore(homeTeams, awayTeams);
       });
@@ -123,14 +137,18 @@ export class RelatedMatchesComponent{
     this.dialogMessage.message =
       Language.fantasyMatch.confirmAutoFillFantasyMatch;
     this.messageBoxService.confirm(this.dialogMessage, () => {
-      
-      const homes = this.relatedMatches.filter((item) => homeTeams.includes(`${item.homeId}`) || homeTeams.includes(`${item.awayId}`));
-  
-      const aways = this.relatedMatches.filter((item) => awayTeams.includes(`${item.awayId}`) || awayTeams.includes(`${item.homeId}`));
 
-      const resutls = this.fantasyScoreService.sumScore(homeTeams,homes, awayTeams,aways);
+      const homeValueResults = this.fantasyScoreService.sumScore(
+        this.relatedMatches,
+        homeTeams
+      );
+      const awayValueResults = this.fantasyScoreService.sumScore(
+        this.relatedMatches,
+        awayTeams
+      );
 
-      this.autoFillScore.emit(resutls);
+      const results = this.fantasyScoreService.combineResult(homeValueResults,awayValueResults)
+      this.autoFillScore.emit(results);
     });
   }
 }
