@@ -1,4 +1,5 @@
 ﻿export const Language = {
+    information: 'INFORMATION',
     confirmationBox: 'Confirmation box',
     CalculationWarning: 'Calculation warning',
     RefundWarning: 'Refund warning',
@@ -307,4 +308,5 @@
       "Calculate function do not support settled Teams. Please recheck or use Re-Calculate function.",
   },
   TieBreakInconsistency:	"Cannot proceed due to Set 3 score is not consistent with match type (Tie-Break)"
+  childMatchTennisInfo: '- Xth Set Game Winner: refund not played matches.'
 };

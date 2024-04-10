@@ -5,6 +5,7 @@ using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
 using Microsoft.Extensions.Options;
 using Settlement.Core.Constants;
+using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.Soccer.Criteria;
@@ -57,6 +58,7 @@ public class CalculateServiceTests
             Action = ActionType.CalculateAll
         };
         createCriteriaService.CreateCalculateCriteria(Arg.Any<SettleRequest>()).Returns(criteria);
+        createCriteriaService.CreateCalculateLogCriteria(Arg.Any<SettleRequest>()).Returns(new InsertLogCriteria());
         await logService.WriteLog(Arg.Any<int>(), Arg.Any<string>());
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage { ErrorCode = errorCode, ErrorMessage = errorMsg });
 
@@ -78,6 +80,7 @@ public class CalculateServiceTests
             Action = ActionType.CalculateAll
         };
         createCriteriaService.CreateCalculateCriteria(Arg.Any<SettleRequest>()).Returns(criteria);
+        createCriteriaService.CreateCalculateLogCriteria(Arg.Any<SettleRequest>()).Returns(new InsertLogCriteria());
         await logService.WriteLog(Arg.Any<int>(), Arg.Any<string>());
 
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
@@ -105,6 +108,7 @@ public class CalculateServiceTests
             Action = ActionType.CalculateAll
         };
         createCriteriaService.CreateCalculateCriteria(Arg.Any<SettleRequest>()).Returns(criteria);
+        createCriteriaService.CreateCalculateLogCriteria(Arg.Any<SettleRequest>()).Returns(new InsertLogCriteria());
         await logService.WriteLog(Arg.Any<int>(), Arg.Any<string>());
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
         await repository.ExecuteAsync(Arg.Any<CalculateCriteria>());
@@ -145,6 +149,7 @@ public class CalculateServiceTests
             Action = ActionType.UnCalculateFullTime
         };
         createCriteriaService.CreateUnCalculateFtCriteria(Arg.Any<UncalculateFtRequest>()).Returns(criteria);
+        createCriteriaService.CreateUnCalculateFtLogCriteria(Arg.Any<UncalculateFtRequest>()).Returns(new InsertLogCriteria());
         await logService.WriteLog(Arg.Any<int>(), Arg.Any<string>());
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage { ErrorCode = errorCode, ErrorMessage = errorMsg });
 
@@ -163,6 +168,7 @@ public class CalculateServiceTests
             MatchId = 1
         };
         createCriteriaService.CreateUnCalculateFtCriteria(Arg.Any<UncalculateFtRequest>()).Returns(criteria);
+        createCriteriaService.CreateUnCalculateFtLogCriteria(Arg.Any<UncalculateFtRequest>()).Returns(new InsertLogCriteria());
         await logService.WriteLog(Arg.Any<int>(), Arg.Any<string>());
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
 
@@ -186,6 +192,7 @@ public class CalculateServiceTests
             MatchId = 1
         };
         createCriteriaService.CreateUnCalculateFtCriteria(Arg.Any<UncalculateFtRequest>()).Returns(criteria);
+        createCriteriaService.CreateUnCalculateFtLogCriteria(Arg.Any<UncalculateFtRequest>()).Returns(new InsertLogCriteria());
         await logService.WriteLog(Arg.Any<int>(), Arg.Any<string>());
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>()).Returns(new ResultMessage());
 

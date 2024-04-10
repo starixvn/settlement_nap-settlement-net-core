@@ -32,9 +32,10 @@ export class CalculateActionsComponent implements SportTemplate {
   public hedgeMatchDetail: HedgeMatchDetail;
   public applyHedgeMatch: boolean;
   public isReadyMatch: boolean;
+  public isSettleRelated = true;
   public readonly totalGamesId = ResourcesIds.totalGames;
   public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
-
+  private readonly infoDialog: ModalDialogMessage = new ModalDialogMessage();
   constructor(
     protected injector: Injector,
     private readonly messageBoxService: MessageBoxService,
@@ -298,8 +299,9 @@ export class CalculateActionsComponent implements SportTemplate {
     } else {
       resource = _.filter(resource, item => !_.isEqual(item.resourceId, ResourcesIds.totalGames));
       const query = new SettleQuery(this.match.matchDetail.matchId, resource, type, this.isReSettledTickets,
-        betStatus, this.match.matchDetail.sportType,this.match.matchDetail.parentId ,this.match.isScoreDirect);
+        betStatus,this.match.matchDetail.parentId ,this.match.isScoreDirect);
       query.isLeader = this.isLeader;
+      query.isSettleRelated = this.isSettleRelated;
       this.push(query);
     }
   }
@@ -329,7 +331,7 @@ export class CalculateActionsComponent implements SportTemplate {
   private async sendRequest(type: string, resource: ResultDetail[], betStatus: string): Promise<void> {
     resource = _.filter(resource, item => !_.isEqual(item.resourceId, ResourcesIds.totalGames));
     const query = new SettleQuery(this.match.matchDetail.matchId, resource, type, this.isReSettledTickets,
-      betStatus, this.match.matchDetail.sportType,this.match.matchDetail.parentId, this.match.isScoreDirect);
+      betStatus, this.match.matchDetail.parentId, this.match.isScoreDirect);
     query.isLeader = this.isLeader;
     this.push(query);
   }
@@ -536,5 +538,11 @@ export class CalculateActionsComponent implements SportTemplate {
 
   public getTextTooltip(text: string, maxLength: number) {
     return text?.length > maxLength ? text : null;
+  }
+
+  OpenInfo(){
+    this.infoDialog.title = Language.information;
+    this.infoDialog.message = Language.childMatchTennisInfo;
+    this.messageBoxService.alert(this.infoDialog);
   }
 }

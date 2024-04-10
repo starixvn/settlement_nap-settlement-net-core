@@ -31,5 +31,8 @@ public class SettleRequest : IRequest<Result>
     public bool IsHedgeMatch { get; set; }
 
     public int DeterminedType { get; set; }
+    
     public bool IsFantasy { get; set; }
+
+    public bool IsSettleRelated { get; set; }
 }

@@ -101,7 +101,7 @@ public class MultipleServerAioServiceTests
             .Returns((new List<ResultDetail>(), new List<TicketCounts>()));
 
         mergeDataService.MergeTicketDetails(Arg.Any<List<(List<ResultDetail>, TicketCounts)>>())
-            .Returns((new List<ResultDetail>(), new TicketCounts()));
+            .Returns((new List<ResultDetail> { new ResultDetail() { ResourceId = "00" } }, new TicketCounts()));
 
         var (actualResultDetail, _) = await service.FetchResultDetails(new GetResultDetailCriteria(), SportType.ESports);
 
@@ -192,7 +192,8 @@ public class MultipleServerAioServiceTests
         {
             ErrCode = 0,
             ErrMsg = null,
-            ChildMatchIds = "123,456"
+            ChildMatchIds = "123,456",
+            SettledSessionId = actual.SettledSessionId
         };
 
         Assert.Equal(JsonConvert.SerializeObject(expectResult), JsonConvert.SerializeObject(actual));

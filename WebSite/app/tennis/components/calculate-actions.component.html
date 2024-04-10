@@ -97,9 +97,16 @@
     </tr>
     <tr>
       <td colspan="100%" class="input-directly">
-        <input type="checkbox" [(ngModel)]="match.isScoreDirect" (ngModelChange)="changeInputDirectly()"
-          id="isScoreDirect" [disabled]="disableScoreDirect" />
-        <label for="isScoreDirect">Input Match score directly</label>
+        <span>
+          <input type="checkbox" [(ngModel)]="match.isScoreDirect" (ngModelChange)="changeInputDirectly()"
+            id="isScoreDirect" [disabled]="disableScoreDirect" />
+          <label for="isScoreDirect">Input Match score directly</label>
+        </span>
+        <span class="settle-related">
+          <input type="checkbox" [(ngModel)]="isSettleRelated" id="settleRelated" />
+          <label for="settleRelated">Settle related </label> <label class="link"
+            (click)="OpenInfo()">child-match.</label>
+        </span>
       </td>
     </tr>
     <tr>

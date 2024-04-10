@@ -3,6 +3,7 @@ using Fanex.Settlement.ScaleOut.Models;
 using Fanex.Settlement.ScaleOut.Request;
 using Fanex.Settlement.ScaleOut.Services;
 using Microsoft.Extensions.Options;
+using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.Soccer.Criteria;
@@ -45,7 +46,6 @@ public class SettleEarlyServiceTests
             .Returns(new CalculateEarlyCriteria());
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>())
             .Returns(new ResultMessage { ErrorCode = 1, ErrorMessage = "1" });
-
         //act
         var result = await service.CalculateEarly(new SettleEarlyRequest());
 
@@ -63,6 +63,7 @@ public class SettleEarlyServiceTests
         await logService.WriteLog(Arg.Any<int>(), Arg.Any<string>());
         scaleOutSettleService.ValidateEventAndTicket(Arg.Any<EventTicketRequest>())
             .Returns(new ResultMessage());
+        createCriteriaService.CreateCalculateEarlyLogCriteria(Arg.Any<SettleEarlyRequest>()).Returns(new InsertLogCriteria());
 
         //act
         await service.CalculateEarly(new SettleEarlyRequest());

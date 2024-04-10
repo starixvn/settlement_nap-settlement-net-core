@@ -30,6 +30,8 @@ public class SettleCriteria : NonQueryCommand
 
     public int DeterminedType { get; set; }
 
+    public bool IsSettleRelated { get; set; }
+
     public string BroadcastSessionId { get; set; } = Guid.NewGuid().ToString();
 
     [SpParam(Ignored = true)]

@@ -12,6 +12,8 @@ using MatchDetail = Settlement.Sportsbook.Soccer.Models.MatchDetail;
 namespace Settlement.Sportsbook.Soccer.UnitTests.Services.GetMatch;
 
 using Core.Services.SpecificService;
+using Fanex.Caching;
+using Fanex.NAP.Client.Helpers.Web;
 using Soccer.Services.GetMatch;
 
 public class MatchServiceTests
@@ -28,7 +30,11 @@ public class MatchServiceTests
     public MatchServiceTests()
     {
         repository = Substitute.For<IDynamicRepository>();
-        var permission = Substitute.For<PermissionService>(null, null, null, null);
+        var napSession = Substitute.For<INapSession>();
+        var cacheService = Substitute.For<ICacheService>();
+        napSession.UserId = 1;
+        cacheService.GetOrSet(Arg.Any<string>(), Arg.Any<Func<Permission>>(), Arg.Any<CacheItemOptions>()).Returns(new Permission());
+        var permission = Substitute.For<PermissionService>(napSession, null, cacheService, null);
         refDataService = Substitute.For<IRefDataService>();
         goalIconService = Substitute.For<GoalIconService>();
         fetchDataService = Substitute.For<IFetchDataService>();

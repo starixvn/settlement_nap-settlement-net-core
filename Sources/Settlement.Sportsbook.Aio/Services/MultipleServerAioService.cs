@@ -7,11 +7,9 @@ using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.Aio.Constants;
 using Settlement.Sportsbook.Aio.Criteria;
-using Settlement.Sportsbook.Aio.Criteria.Cricket;
 using Settlement.Sportsbook.Aio.Criteria.Tennis;
 using Settlement.Sportsbook.Aio.Requests;
 using Settlement.Sportsbook.Aio.Services.Cricket;
-using LogServiceSentry = Fanex.Logging.LogService;
 
 namespace Settlement.Sportsbook.Aio.Services;
 
@@ -181,17 +179,18 @@ public class MultipleServerAioServiceImp(
     {
         var isMatchGameWinner = request.SportType == SportType.Tennis && request.ParentId == 0 && result.IsSuccessful;
 
-        if (isMatchGameWinner && request.ActionName is ActionType.CalculateAll or ActionType.RefundAll)
+        if (request.IsSettleRelated && isMatchGameWinner && request.ActionName is ActionType.CalculateAll or ActionType.RefundAll)
         {
-            await InsRefundResultOS(request.MatchId);
+            await InsRefundResultOS(request);
         }
     }
 
-    private async Task InsRefundResultOS(int matchId)
+    private async Task InsRefundResultOS(SettleRequest request)
     {
         var criteria = new InsRefundResultOSCriteria
         {
-            MatchId = matchId
+            MatchId = request.MatchId,
+            ResourceIds = string.Join(',', request.SelectedResources.Select(r => r.ResourceId))
         };
 
         await repository.ExecuteAsync(criteria);

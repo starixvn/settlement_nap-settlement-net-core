@@ -15,6 +15,7 @@ export class SettleQuery {
     sportType: number;
     isHedgeMatch: boolean;
     isFantasy:boolean;
+    isSettleRelated = false;
     constructor(
         matchDetail: MatchDetail,
         selectedResources: ResultDetail[],
