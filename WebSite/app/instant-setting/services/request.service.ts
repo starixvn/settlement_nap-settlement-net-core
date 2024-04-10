@@ -23,17 +23,6 @@ export class RequestService {
         return firstValueFrom(request);
     }
 
-    public changeSetting(param: ChangeSettingQuery) {
-        let request;
-        if (_.isEqual(param.type, SettingType.pending)) {
-            request = this.httpRequestService.postJson(param, `${this.settingApi}/mark-pending`);
-        } else {
-            request = this.httpRequestService.postJson(param, `${this.settingApi}/mark-undecided`);
-        }
-
-        return firstValueFrom(request);
-    }
-
     public changeHoldMatchSetting(param: any): Promise<RemarkAndPermission> {
        const request = this.httpRequestService.postJson<RemarkAndPermission>(param, `${this.settingApi}/update-holdmatch-setting`);
 

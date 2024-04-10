@@ -11,6 +11,16 @@ public class RemarkLog
 
     [JsonPropertyName("rm")]
     public string Remark { get; set; }
+
+    public RemarkLog()
+    {
+    }
+
+    public RemarkLog(int matchId, string remark)
+    {
+        MatchId = matchId;
+        Remark = remark;
+    }
 }
 
 public class ChildMatchRemark

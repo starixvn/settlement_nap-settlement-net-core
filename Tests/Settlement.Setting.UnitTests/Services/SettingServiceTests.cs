@@ -94,20 +94,6 @@ public class SettingServiceTests
     }
 
     [Fact]
-    public async Task UpdateRemarkSetting_Always_InvokeExecute()
-    {
-        // Arrange
-        var query = new UpdateRemarkRequest();
-        await repository.ExecuteAsync(Arg.Any<UpdateRemarkCriteria>());
-
-        // Act
-        await service.UpdateRemarkSetting(query);
-
-        // Assert
-        await repository.Received(1).ExecuteAsync(Arg.Any<UpdateRemarkCriteria>());
-    }
-
-    [Fact]
     public async Task UpdateTimeSettingLeague_Always_InvokeExecute()
     {
         // Arrange

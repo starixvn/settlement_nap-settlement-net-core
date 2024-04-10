@@ -25,7 +25,6 @@ public class SettingAutoMapperProfile : Profile
         CreateMap<UpdateOutsideSourceRequest, UpdateOutsideSourceCriteria>().ForMember(dest => dest.IsActive, map => map.MapFrom(src => src.SourceStatus));
         CreateMap<GetLeagueOutsideSourceRequest, GetLeagueOutsideSourceCriteria>();
         CreateMap<UpdateLeagueOutsideSourceRequest, UpdateLeagueOutsideSourceCriteria>();
-        CreateMap<UpdateRemarkRequest, UpdateRemarkCriteria>();
         CreateMap<UpdateLeagueSettingQuery, UpdateLeagueSettingsCriteria>()
             .ForMember(des => des.Main_HasTrader, map => map.MapFrom(src => src.MainResultSettings.HasTrader))
             .ForMember(des => des.Main_NumberProvider,
@@ -41,6 +40,5 @@ public class SettingAutoMapperProfile : Profile
                 map => map.MapFrom(src => src.EarlyResultSettings.PrimaryProvider))
             .ForMember(des => des.EAR_SecondaryProvider,
                 map => map.MapFrom(src => src.EarlyResultSettings.SecondaryProvider));
-
     }
 }

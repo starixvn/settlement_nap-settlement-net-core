@@ -10,21 +10,22 @@
                 </tr>
             <tbody>
                 <tr>
-                    <td>MTD. Hold</td>
-                    <td class="text-center"><input type="radio" [(ngModel)]="remark.isMtdHold" [value]="false" name="isMtdHold"
-                            [disabled]="!permission?.canMarkUnDecided" /></td>
-                    <td class="text-center"><input type="radio" [(ngModel)]="remark.isMtdHold" [value]="true" name="isMtdHold"
-                            [disabled]="!permission?.canMarkUnDecided" /></td>
-                    <td class="text-center"><input type="checkbox" [(ngModel)]="isApplyChild" /></td>
-                </tr>
-                <tr>
                     <td>Undecided</td>
                     <td class="text-center"><input type="radio" [(ngModel)]="remark.isUndecided" [value]="false" name="isUndecided"
                             [disabled]="!permission?.canMarkUnDecided" /></td>
                     <td class="text-center"><input type="radio" [(ngModel)]="remark.isUndecided" [value]="true" name="isUndecided"
                             [disabled]="!permission?.canMarkUnDecided" /></td>
-                    <td class="text-center"></td>
+                            <td class="text-center"><input type="checkbox" [(ngModel)]="isUndecidedApplyChild" /></td>
                 </tr>
+                <tr>
+                    <td>MTD. Hold</td>
+                    <td class="text-center"><input type="radio" [(ngModel)]="remark.isMtdHold" [value]="false" name="isMtdHold"
+                            [disabled]="!permission?.canMarkUnDecided" /></td>
+                    <td class="text-center"><input type="radio" [(ngModel)]="remark.isMtdHold" [value]="true" name="isMtdHold"
+                            [disabled]="!permission?.canMarkUnDecided" /></td>
+                    <td class="text-center"><input type="checkbox" [(ngModel)]="isMtdApplyChild" /></td>
+                </tr>
+
                 <tr>
                     <td>Result Pending</td>
                     <td class="text-center"><input type="radio" [(ngModel)]="remark.isPending" [value]="false" name="isPending"

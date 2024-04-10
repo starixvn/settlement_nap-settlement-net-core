@@ -7,6 +7,7 @@ using Settlement.Core.Models;
 using Settlement.Setting.Constants;
 using Settlement.Setting.Criteria;
 using Settlement.Setting.Models;
+using Settlement.Setting.Models.LeagueSettings;
 using Settlement.Setting.Requests;
 using System.Text.Json;
 using LogService = Settlement.Core.Services.LogService;
@@ -21,15 +22,11 @@ public interface SettingService
 
     Task<RemarkQueryModel> GetRemarkInfo(int matchId);
 
-    Task UpdateRemarkSetting(UpdateRemarkRequest request);
-
     Task<Result> UpdateTimeSettingLeague(TimeSettingRequest request);
 
     Task<string> GetSetting(GetSettingRequest request);
 
-    Task<string> ProcessUpdateHoldMatchSetting(UpdateHoldMatchSettingRequest request);
-
-    Dictionary<string, bool> DetectDiffProperties(Remark remark, Remark otherRemark);
+    Task ProcessUpdateHoldMatchSetting(UpdateHoldMatchSettingRequest request);
 }
 
 public class SettingServiceImp : SettingService
@@ -97,56 +94,22 @@ public class SettingServiceImp : SettingService
         return await repository.GetAsync<RemarkQueryModel>(criteria);
     }
 
-    public async Task UpdateRemarkSetting(UpdateRemarkRequest request)
+    public async Task ProcessUpdateHoldMatchSetting(UpdateHoldMatchSettingRequest request)
     {
-        var criteria = mapper.Map<UpdateRemarkRequest, UpdateRemarkCriteria>(request);
-        criteria.AdminId = currentSession.UserId;
-        await repository.ExecuteAsync(criteria);
-    }
+        var changedSettings = request.HoldSettings.Except(request.OrgHoldSettings).ToList();
 
-    public async Task<string> ProcessUpdateHoldMatchSetting(UpdateHoldMatchSettingRequest request)
-    {
-        var diffRemark = DetectDiffProperties(request.OrgRemark, request.Remark);
+        if (changedSettings.Count == 0) return;
 
-        if (!request.IsApplyChild && diffRemark.Count == 0) return string.Empty;
+        var criteria = CreateUpdateHoldMatchSettingCriteria(request, changedSettings);
 
-        var holdSettingInfo = CreateHoldMatchInfoItems(request, diffRemark);
-
-        var criteria = CreateUpdateHoldMatchSettingCriteria(request, holdSettingInfo);
         var childMatches = await UpdateHoldMatchSetting(criteria);
 
-        WriteLogUpdateHoldSetting(request, holdSettingInfo, childMatches);
-
-        return childMatches;
+        WriteLogUpdateHoldSetting(request, changedSettings, childMatches);
     }
 
-    private List<HoldMatchInfoItem> CreateHoldMatchInfoItems(UpdateHoldMatchSettingRequest request, Dictionary<string, bool> diffRemark)
+    private void WriteLogUpdateHoldSetting(UpdateHoldMatchSettingRequest request, List<HoldSetting> changedSettings, string childMatches)
     {
-        var holdSettingInfo = diffRemark.Select(x => new HoldMatchInfoItem
-        {
-            Type = GetRemarkType(x.Key),
-            Value = x.Value,
-            IsApplyChild = x.Key == nameof(Remark.IsMtdHold) && request.IsApplyChild
-        }).ToList();
-
-        var mtdHold = holdSettingInfo.Find(x => x.Type == RemarkType.IsMtdHold);
-
-        if (mtdHold is null && request.IsApplyChild)
-        {
-            holdSettingInfo.Add(new HoldMatchInfoItem
-            {
-                Type = RemarkType.IsMtdHold,
-                Value = request.Remark.IsMtdHold,
-                IsApplyChild = request.IsApplyChild
-            });
-        }
-
-        return holdSettingInfo;
-    }
-
-    private void WriteLogUpdateHoldSetting(UpdateHoldMatchSettingRequest request, List<HoldMatchInfoItem> holdMatchInfo, string childMatches)
-    {
-        var remarkLogs = CreateRemarkLogs(request, holdMatchInfo, childMatches);
+        var remarkLogs = CreateRemarkLogs(request.MatchId, changedSettings, childMatches);
 
         var logCriteria = new LogCriteria
         {
@@ -158,36 +121,42 @@ public class SettingServiceImp : SettingService
         logService.WriteLog(logCriteria);
     }
 
-    private List<RemarkLog> CreateRemarkLogs(UpdateHoldMatchSettingRequest request, List<HoldMatchInfoItem> holdMatchInfo, string childMatches)
+    private List<RemarkLog> CreateRemarkLogs(int matchId, List<HoldSetting> changedSettings, string childMatches)
     {
-        var remarkChanged = holdMatchInfo.Select(x => $"{GetHoldName(x.Type)}({(x.Value ? "yes" : "no")})").ToList();
-
-        var childInfo = CreateChildInfo(request, holdMatchInfo, childMatches);
-
-        var parentRemark = remarkChanged.Count > 0 ? string.Join(", ", remarkChanged) : string.Empty;
+        var childMatchRemark = GenerateChildMatchRemark(changedSettings, childMatches);
+        var parentMatchRemark = string.Join(", ", changedSettings.Select(x => $"{x.Description}({(x.Value ? "yes" : "no")})"));
         var remarkLogs = new List<RemarkLog>
         {
-            new ()
-            {
-                MatchId = request.MatchId,
-                Remark = $"{parentRemark}{childInfo}"
-            }
+            new (matchId,$"{parentMatchRemark}{childMatchRemark}")
         };
 
-        if (request.IsApplyChild && !string.IsNullOrEmpty(childMatches))
-        {
-            var childMatch = JsonSerializer.Deserialize<List<ChildMatchRemark>>(childMatches);
-            var mtdHoldChanged = remarkChanged.Find(x => x.Contains("Mtd. Hold")) ?? string.Empty;
-            var childRemarkLogs = childMatch.Select(x => new RemarkLog
-            {
-                MatchId = x.MatchId,
-                Remark = mtdHoldChanged + $" parent({x.ParentMatchId})"
-            });
-
-            remarkLogs.AddRange(childRemarkLogs);
-        }
+        var childMatchRemarkLogs = CreateChildMatchRemarkLogs(changedSettings, childMatches);
+        remarkLogs.AddRange(childMatchRemarkLogs);
 
         return remarkLogs;
+    }
+
+    private List<RemarkLog> CreateChildMatchRemarkLogs(List<HoldSetting> changedSettings, string childMatches)
+    {
+        var changedChildMatchSettings = changedSettings.Where(x => x.IsApplyChild);
+        if (changedChildMatchSettings.Any() && !string.IsNullOrEmpty(childMatches))
+        {
+            var childMatch = JsonSerializer.Deserialize<List<ChildMatchRemark>>(childMatches);
+
+            return childMatch.Select(x =>
+            {
+                var changedNames = string.Join(",", changedChildMatchSettings.Select(setting => setting.Name));
+                var parentMatchRemark = $"parent({x.ParentMatchId})";
+
+                return new RemarkLog
+                {
+                    MatchId = x.MatchId,
+                    Remark = $"{changedNames} {parentMatchRemark}"
+                };
+            }).ToList();
+        }
+
+        return new List<RemarkLog>();
     }
 
     private async Task<string> UpdateHoldMatchSetting(UpdateHoldMatchSettingCriteria criteria)
@@ -197,15 +166,15 @@ public class SettingServiceImp : SettingService
         return criteria.ChildMatchList;
     }
 
-    private string CreateChildInfo(UpdateHoldMatchSettingRequest request, List<HoldMatchInfoItem> holdSettingInfo, string childMatches)
+    private string GenerateChildMatchRemark(List<HoldSetting> changedSettings, string childMatches)
     {
-        var mtdHold = holdSettingInfo.Find(x => x.Type == RemarkType.IsMtdHold);
-        if (mtdHold is null)
+        if (!changedSettings.Any(x => x.Type == HoldPosition.IsUndecided
+            || x.Type == HoldPosition.IsMtdHold))
         {
             return string.Empty;
         }
 
-        if (!request.IsApplyChild)
+        if (changedSettings.All(x => !x.IsApplyChild))
         {
             return " child(off)";
         }
@@ -220,58 +189,25 @@ public class SettingServiceImp : SettingService
         return $" child({string.Join(",", childMatchIds.Select(x => x.MatchId))})";
     }
 
-    private string GetHoldName(int remarkType) => remarkType switch
+    private UpdateHoldMatchSettingCriteria CreateUpdateHoldMatchSettingCriteria(UpdateHoldMatchSettingRequest request, List<HoldSetting> holdSettings)
     {
-        RemarkType.IsMtdHold => "Mtd. Hold",
-        RemarkType.IsUndecided => "Undecided",
-        RemarkType.IsPending => "Result Pending",
-        RemarkType.IsUnderSettle => "Under Settlement",
-        RemarkType.IsKeyHold => "Hold Key",
-        _ => string.Empty,
-    };
-
-    private short GetRemarkType(string key) => key switch
-    {
-        nameof(Remark.IsMtdHold) => 16,
-        nameof(Remark.IsUndecided) => 2,
-        nameof(Remark.IsPending) => 1,
-        nameof(Remark.IsUnderSettle) => 4,
-        nameof(Remark.IsKeyHold) => 64,
-        _ => -1
-    };
-
-    public Dictionary<string, bool> DetectDiffProperties(Remark remark, Remark otherRemark)
-    {
-        var differentProperties = new Dictionary<string, bool>();
-        var properties = typeof(Remark).GetProperties();
-        foreach (var property in properties)
-        {
-            var valueOne = (bool)property.GetValue(remark);
-            var valueTwo = (bool)property.GetValue(otherRemark);
-
-            var fieldName = property.Name;
-
-            if (valueOne != valueTwo)
-            {
-                differentProperties.Add(fieldName, valueTwo);
-            }
-        }
-
-        return differentProperties;
-    }
-
-    private UpdateHoldMatchSettingCriteria CreateUpdateHoldMatchSettingCriteria(UpdateHoldMatchSettingRequest request, List<HoldMatchInfoItem> holdInfos)
-    {
-        var criteria = new UpdateHoldMatchSettingCriteria { MatchId = request.MatchId };
-        criteria.AdminId = currentSession.UserId;
-        criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
-
         var holdInfoRoot = new HoldMatchInfoRoot
         {
-            HoldMatchInfoItems = holdInfos,
+            HoldMatchInfoItems = holdSettings.Select(x => new HoldSettingInfo
+            {
+                Type = x.Type,
+                IsApplyChild = x.IsApplyChild,
+                Value = x.Value,
+            }).ToList(),
         };
 
-        criteria.HoldInfo = xmlConvertService.Serialize(holdInfoRoot);
+        var criteria = new UpdateHoldMatchSettingCriteria
+        {
+            MatchId = request.MatchId,
+            AdminId = currentSession.UserId,
+            Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString(),
+            HoldInfo = xmlConvertService.Serialize(holdInfoRoot)
+        };
 
         return criteria;
     }
