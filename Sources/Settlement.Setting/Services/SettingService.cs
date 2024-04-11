@@ -145,7 +145,7 @@ public class SettingServiceImp : SettingService
 
             return childMatch.Select(x =>
             {
-                var changedNames = string.Join(",", changedChildMatchSettings.Select(setting => setting.Name));
+                var changedNames = string.Join(",", changedChildMatchSettings.Select(setting => setting.Description));
                 var parentMatchRemark = $"parent({x.ParentMatchId})";
 
                 return new RemarkLog
