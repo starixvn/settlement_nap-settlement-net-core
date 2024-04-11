@@ -93,7 +93,7 @@ export class PopupService {
       match.sportType === SportType.cricket
         ? "1400px"
         : this.isPopupEarlySOP(match.sportType)
-        ? "1480px"
+        ? "1570px"
         : "845px";
     this.properties.height = this.isPopupEarlySOP(match.sportType)
       ? "958px"
@@ -156,7 +156,7 @@ export class PopupService {
     const groupOne = [SportType.badminton, SportType.eSports];
     const groupTwo = [SportType.beachVolleyball, SportType.volleyBall];
     if (_.includes(groupOne, sportType)) {
-      this.properties.width = "1005px";
+      this.properties.width = "1091px";
       this.properties.height = "760px";
     } else if (_.includes(groupTwo, sportType)) {
       this.properties.width = "900px";
