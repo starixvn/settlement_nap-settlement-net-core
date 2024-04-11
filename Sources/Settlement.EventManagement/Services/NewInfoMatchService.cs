@@ -144,7 +144,7 @@ public class NewInfoMatchServiceImp(
     private async Task<IEnumerable<MatchStatusModel>> GetMatchStatus(IEnumerable<BaseMatch> matches)
     {
         var matchIds = string.Join(',', matches.Select(m => m.MatchId));
-        var criteria = new GetAutoStatusCriteria()
+        var criteria = new GetAutoStatusCriteria
         {
             MatchIds = matchIds
         };

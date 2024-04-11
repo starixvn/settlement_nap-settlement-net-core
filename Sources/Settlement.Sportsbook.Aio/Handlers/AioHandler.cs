@@ -1,5 +1,4 @@
-﻿using Fanex.Settlement.ScaleOut.Criteria.Update;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
