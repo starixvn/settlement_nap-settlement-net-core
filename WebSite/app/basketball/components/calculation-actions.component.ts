@@ -9,6 +9,7 @@ import { ModalDialogMessage } from "../../shared/models";
 import { Language } from "../../shared/language.native";
 import {
   CalculateAction,
+  ScoreSourceType,
   SettingPosition,
   SettlementStatusId,
   SportType,
@@ -45,6 +46,7 @@ import { CalculateCommonModule } from "../../shared/modules/calculate-common.mod
 import { RelatedMatchesComponent } from "./fantasy/related-matches.compoment";
 import { FantasyMatch } from "../models/fantasy.model";
 import { SourceIds } from "../constants/source-ids";
+import { ProviderSource } from "../../shared/models/league-settings.model";
 
 @Component({
   selector: "calculation-actions",
@@ -91,6 +93,7 @@ export class CalculationActionsComponent implements SportTemplate {
   disableScoreDirect: boolean;
   isReadyMatch: boolean;
   readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
+  public SOURCE_ID = SourceIds;
 
   async getMatch(matchId: number) {
     this.initService();
@@ -100,9 +103,11 @@ export class CalculationActionsComponent implements SportTemplate {
       sportType: SportType.basketBall,
       settleType: "MNL",
     };
-    this.match = (await this.aioService.getMatch(matchQuery)) as Match;
+    this.match = (await this.aioService.getMatch(matchQuery)) as Match; 
     this.isReadyMatch = this.match.matchDetail.playTime >= KickOffTime.playTime;
+  
     this.cloneResultDetail();
+
     this.init();
   }
 
@@ -133,7 +138,8 @@ export class CalculationActionsComponent implements SportTemplate {
     this.verificationService.generateExternalScores(
       this.match,
       this.resultDetails,
-      SportType.cricket
+      SportType.cricket,
+      this.maxProviderCol
     );
     this.resetHomeAway(this.resultDetails);
     this.matchDetail = this.match.matchDetail;
@@ -208,6 +214,20 @@ export class CalculationActionsComponent implements SportTemplate {
     return _.find(this.resultDetails, (map: ResultDetail) =>
       _.isEqual(map.resourceId, ResourcesIds.ot)
     );
+  }
+
+  public get providerCount() {
+    return this.match.resultDetails[0].externalScores.filter(x => 
+      x.sourceId !== ScoreSourceType.trader && x.sourceId < ScoreSourceType.screenshot).length
+  }
+
+  public get outSideCount() {
+    return this.match.resultDetails[0].externalScores.filter(x => 
+      x.sourceId !== ScoreSourceType.trader && x.sourceId >= ScoreSourceType.screenshot).length
+  }
+
+  public get maxProviderCol() {
+    return this.match.matchDetail.providerCount > 2 ? 3 : 2;
   }
 
   autoFillScoreOnLoad(resultDetails: ResultDetail[]) {

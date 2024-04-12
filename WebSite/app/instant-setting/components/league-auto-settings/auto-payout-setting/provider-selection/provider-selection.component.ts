@@ -2,7 +2,7 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { LeagueSettingsStore } from '../../../../services/league-settings.store';
-import { ProviderSource, ResultSettings } from '../../../../models/league-settings.model';
+import { ProviderSource, ResultSettings } from '../../../../../shared/models/league-settings.model';
 import * as _ from 'lodash';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';

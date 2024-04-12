@@ -1,7 +1,7 @@
 ﻿import { EarlyCommonModule } from './../../shared/modules/early-common.module';
 import { ExternalSourceNamePipe } from './../../shared/pipes/external-source-name.pipe';
 import * as _ from 'lodash';
-import { CalculateAction, ResultStatusId, SportType, TicketStatusText } from '../../shared/constants';
+import { CalculateAction, ResultStatusId, ScoreSourceType, SportType, TicketStatusText } from '../../shared/constants';
 import { Component, Injector, ViewChild } from '@angular/core';
 import { ToastContainerDirective } from 'ngx-toastr';
 import { BasketballApiKeys, EarlyResourcesIds, KickOffTime, ResultStatus } from '../constants';
@@ -14,6 +14,7 @@ import { EarlyBaseComponent } from '../../shared/components/sportsbook-sop/early
 import { MatchDetailComponent } from './match-detail.component';
 import { NewMultipleSelectComponent } from '../../shared/components/multiple-select/multiple-select.component';
 import { ResourceNameByIdPipe } from '../pipes/resource-name-by-id.pipe';
+import { ProviderSource } from '../../shared/models/league-settings.model';
 
 @Component({
     selector: 'early-settlement',
@@ -29,7 +30,6 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
     public match: Match;
     public isShowRefundButton = false;
     public isReadyMatch: boolean;
-
     constructor(
         protected injector: Injector,
         protected verificationService: VerificationService) {
@@ -50,7 +50,15 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         this.permission = this.match.permission;
         this.init();
     }
-
+    
+      public get outSideCount() {
+        return this.resultDetails[0].externalScores.filter(x => 
+          x.sourceId !== ScoreSourceType.trader && x.sourceId >= ScoreSourceType.screenshot).length
+      }
+    
+      public get maxProviderCol() {
+        return this.match.matchDetail.providerCount > 2 ? 3 : 2;
+      }
     public initService() {
         this.earlyService = this.injector.get(EarlyService);
         this.verificationService = this.injector.get(VerificationService);
@@ -62,13 +70,14 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
         this.matchDetail = this.match.matchDetail;
         this.matchId = this.match.matchDetail.matchId;
         this.resultDetails = _.filter(this.match.resultDetails, item => item.resourceId.length > 2);
-        this.verificationService.generateExternalScores(this.match, this.resultDetails, SportType.basketBall);
+        this.verificationService.generateExternalScores(this.match, this.resultDetails, SportType.basketBall, this.maxProviderCol);
         this.resetResult(this.resultDetails);
         this.autoFillResultOnLoad(this.resultDetails);
         this.groupMap = this.earlyService.getGroupMap(this.resultDetails);
         this.match.originalResultDetail = _.cloneDeep(this.resultDetails);
         this.hideTicketWaiting(this.groupMap);
         this.renderFilterSelect();
+        console.log(this.resultDetails[0].externalScores);
     }
 
     public hasNoneOption(betType: string) {

@@ -95,8 +95,7 @@ describe('MultipleSelectComponent', () => {
     });
   });
 
-  describe('clickOutside.', () => {
-
+  describe('checkOpenState.', () => {
     beforeEach(() => {
       component.dropdown = TestBed.createComponent(MatSelect).componentInstance;
     });
@@ -105,8 +104,7 @@ describe('MultipleSelectComponent', () => {
       const div = document.createElement("div");
       document.body.appendChild(div);
       spyOn(component.dropdown, "close");
-      component.clickOutside();
-      component.dropdown.open();
+      component.checkOpenState(true);
       div.click();
 
       expect(component.dropdown.panelOpen).toBe(false);

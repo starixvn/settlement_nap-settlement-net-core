@@ -1,6 +1,6 @@
 import { LeagueSettingsStore } from '../../services/league-settings.store';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { LeagueSettings, ResultSettings } from '../../models/league-settings.model';
+import { LeagueSettings, ResultSettings } from '../../../shared/models/league-settings.model';
 import { UrlHelper } from '../../../helper';
 import { AutoTypeComponent } from './auto-setting/auto-setting.component';
 import { CommonModule } from '@angular/common';

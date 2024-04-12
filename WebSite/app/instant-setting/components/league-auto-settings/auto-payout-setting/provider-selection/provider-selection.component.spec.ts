@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ProviderSelectionComponent } from './provider-selection.component';
 import { LeagueSettingsStore } from '../../../../services/league-settings.store';
-import { LeagueSettings, ProviderSource } from '../../../../models/league-settings.model';
+import { LeagueSettings, ProviderSource } from '../../../../../shared/models/league-settings.model';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { Language } from '../../../../../shared/language.native';
 

@@ -7,16 +7,27 @@ import { MessageBoxService } from './message-box.service.native';
 import { Language } from '../language.native';
 import { GeneralMatch, HedgeMatchDetail, ResultDetail, SaveScoreQuery } from '../models/sportsbook-sop';
 import { ResultSettingType, ResultStatus, ResourceIds } from '../../shared/constants';
+import { LeagueSettings } from '../models/league-settings.model';
 
 @Injectable()
 export class AioService {
     private aioApi = `/api/aio`;
+    private leagueSettingApi = '/api/league-settings'
 
     private readonly httpRequestService: HttpRequestService;
     public readonly warningDialogMessage: ModalDialogMessage = new ModalDialogMessage();
     constructor(httpRequestService: HttpRequestService,
         private readonly messageBoxService: MessageBoxService) {
         this.httpRequestService = httpRequestService;
+    }
+
+    public getLeagueSetting(leagueId: number, sportType: number) {
+        const query = {
+            leagueId,
+            sportType
+        }
+        const request = this.httpRequestService.postJson<LeagueSettings>(query, `${this.leagueSettingApi}/get-settings`);
+        return firstValueFrom(request);
     }
 
     public getMatch(query: object) {

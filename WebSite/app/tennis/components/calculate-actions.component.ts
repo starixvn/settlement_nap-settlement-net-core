@@ -5,13 +5,14 @@ import * as _ from 'lodash';
 import { MessageBoxService, AioService, IntervalCalculationService, BlockUIService } from '../../shared/services';
 import { ModalDialogMessage} from '../../shared/models';
 import { Language } from '../../shared/language.native';
-import { SettlementStatusId, CalculateAction, SportType, ResultStatusId } from '../../shared/constants';
+import { SettlementStatusId, CalculateAction, SportType, ResultStatusId, ScoreSourceType } from '../../shared/constants';
 import { KickOffTime, Resources, ResourcesIds, TennisApiKeys } from '../constants';
 import { Match, SettleQuery } from '../models';
 import { TennisService, VerificationService } from '../services';
 import { ExternalResultDetail, HedgeMatchDetail, ResultDetail, SaveScoreQuery, SportTemplate } from '../../shared/models/sportsbook-sop';
 import { ResourceNameByIdPipe } from '../pipes';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
+import { ProviderSource } from '../../shared/models/league-settings.model';
 
 @Component({
   selector: 'calculate-actions',
@@ -33,6 +34,7 @@ export class CalculateActionsComponent implements SportTemplate {
   public isReadyMatch: boolean;
   public readonly totalGamesId = ResourcesIds.totalGames;
   public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
+
   constructor(
     protected injector: Injector,
     private readonly messageBoxService: MessageBoxService,
@@ -50,7 +52,7 @@ export class CalculateActionsComponent implements SportTemplate {
       apikey: TennisApiKeys.NormalMatch,
     };
     this.toastrService.overlayContainer = this.toastContainer;
-    this.match = await this.aioService.getMatch(query) as Match;
+    this.match = await this.aioService.getMatch(query) as Match;    
     this.isReadyMatch = this.match.matchDetail.playTime >= KickOffTime.playTime;
     this.cloneResultDetail();
     this.init();
@@ -72,7 +74,7 @@ export class CalculateActionsComponent implements SportTemplate {
     this.hedgeMatchDetail = this.match.hedgeMatchDetail;
     this.applyHedgeMatch = this.hedgeMatchDetail != null;
     this.match.resultDetails = this.tennisService.getResultDetail(this.match.resultDetails);
-    this.verificationService.generateExternalScores(this.match, this.match.resultDetails, SportType.tennis);
+    this.verificationService.generateExternalScores(this.match, this.match.resultDetails, SportType.tennis,this.maxProviderCol);
     this.resetHomeAway(this.noTotalGames);
     this.enableUncalculate = this.enableUncalculateButton();
     this.disableScoreDirect = this.verificationService.isTicketOnGame(this.match.resultDetails,
@@ -104,6 +106,15 @@ export class CalculateActionsComponent implements SportTemplate {
 
   public get totalSets(): ResultDetail {
     return _.find(this.match.resultDetails, (item: ResultDetail) => _.isEqual(item.resourceId, ResourcesIds.totalSets));
+  }
+
+  public get outSideCount() {
+    return this.match.resultDetails[0].externalScores.filter(x => 
+      x.sourceId !== ScoreSourceType.trader && x.sourceId >= ScoreSourceType.screenshot).length
+  }
+
+  public get maxProviderCol() {
+    return this.match.matchDetail.providerCount > 2 ? 3 : 2;
   }
 
   public calculate() {

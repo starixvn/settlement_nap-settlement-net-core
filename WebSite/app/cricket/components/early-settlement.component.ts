@@ -5,7 +5,7 @@ import { Match, SettleQuery, SettleChildMatchQuery, UpdateSettlementResultHistor
 import * as _ from 'lodash';
 import { Language } from '../../shared/language.native';
 import { ItemsSelect } from '../../shared/models';
-import { ResultStatusId, CalculateAction, SportType } from '../../shared/constants';
+import { ResultStatusId, CalculateAction, SportType, ScoreSourceType } from '../../shared/constants';
 import { EarlyConstraintService, VerificationService } from '../services';
 import { ApiKeys, KickOffTime, ResourcesIds, ResultControlGroup, ResultStatus, TicketStatus } from '../constants';
 import { ExternalResultDetail, ResultDetail, SportTemplate } from '../../shared/models/sportsbook-sop';
@@ -15,6 +15,7 @@ import { EarlyCommonModule } from '../../shared/modules/early-common.module';
 import { MatchDetailComponent } from './match-detail.component';
 import { ResultValuePipe, ResultByPlayerNamePipe } from '../pipes';
 import { BlockUIService } from '../../shared/services/block-ui.service';
+import { ProviderSource } from '../../shared/models/league-settings.model';
 
 @Component({
   selector: 'early-settlement',
@@ -31,6 +32,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
   public matchClone: Match;
   public isShowRefundButton = false;
   public isReadyMatch: boolean;
+
   constructor(
     protected injector: Injector,
     protected verificationBaseService: VerificationBaseService) {
@@ -45,8 +47,19 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
       apiKey: ApiKeys.NormalMatch
     };
     this.match = await this.aioService.getMatch(matchQuery) as Match;
+    this.isReadyMatch = this.match.matchDetail.playTime >= KickOffTime.playTime;
     this.init();
   }
+
+  public get outSideCount() {
+    return this.match.resultDetails[0].externalScores.filter(x =>
+      x.sourceId !== ScoreSourceType.trader && x.sourceId >= ScoreSourceType.screenshot).length
+  }
+
+  public get maxProviderCol() {
+    return this.match.matchDetail.providerCount > 2 ? 3 : 2;
+  }
+
 
   private initService() {
     this.earlyConstraintService = this.injector.get(EarlyConstraintService);
@@ -58,17 +71,16 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
   private init() {
     const maxLength = 2;
     this.matchClone = _.cloneDeep(this.match);
-    this.isReadyMatch = this.match.matchDetail.playTime >= KickOffTime.playTime;
     this.permission = this.match.permission;
     this.matchId = this.match.matchDetail.matchId;
     this.matchDetail = this.match.matchDetail;
     this.match.resultDetails = this.match.resultDetails.filter((map) => map.resourceId.length > maxLength);
-    this.verificationBaseService.generateExternalScores(this.match, this.match.resultDetails, SportType.cricket);
+    this.verificationBaseService.generateExternalScores(this.match, this.match.resultDetails, SportType.cricket, this.maxProviderCol);
     this.resetResult(this.match.resultDetails);
     this.resultDetails = this.match.resultDetails;
     this.earlyConstraintService.generateMultipleResultSelect(this.resultDetails);
     this.groupMap = this.earlyConstraintService.getGroupMap(this.match.resultDetails, this.match.matchDetail);
-    this.autoFillResultOnLoad(this.match.resultDetails);    
+    this.autoFillResultOnLoad(this.match.resultDetails);
     this.match.originalResultDetail = _.cloneDeep(this.match.resultDetails);
     this.hideTicketWaiting(this.groupMap);
     this.renderFilterSelect();
@@ -114,18 +126,18 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
   }
 
   private verifyScoreSources() {
-    if(!this.verificationService.allMapHaveScreenshotSource(this.match.resultDetails)) {
+    if (!this.verificationService.allMapHaveScreenshotSource(this.match.resultDetails)) {
       this.toastrService.error(Language.sop.notScreenshot);
       return;
     }
 
-    if(this.verificationService.isExistMismatchedScoreScreenshot(this.match.resultDetails)) {
+    if (this.verificationService.isExistMismatchedScoreScreenshot(this.match.resultDetails)) {
       this.toastrService.error(Language.sop.mismatchedScreenshot);
       return;
     }
-    
+
     if (this.verificationService.allResultsHaveScoreSources(this.match.resultDetails)) {
-       this.confirmCalculateMismatchScores(() => this.confirmChangedResults());
+      this.confirmCalculateMismatchScores(() => this.confirmChangedResults());
     } else {
       if (!this.permission.isLeader) {
         this.toastrService.error(Language.eSports.nonLeader.insufficientSources);
@@ -137,7 +149,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
       }
     }
   }
-  
+
 
   private getConfirmMessage(resultDetails: ResultDetail[]) {
     let confirmMessage = `${Language.CalculationConfirmMessageEarly}<br/>`;
@@ -204,7 +216,7 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
 
   private setTeamResultSettle(resultDetails: ResultDetail[]) {
     resultDetails.forEach(result => {
-      if(result.inputType === ResultControlGroup.HomeAway) {
+      if (result.inputType === ResultControlGroup.HomeAway) {
         result.homeId = `${this.matchDetail.homeId}`;
         result.awayId = `${this.matchDetail.awayId}`;
       }
@@ -257,32 +269,32 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
   private async push(query: SettleQuery) {
     const result = await this.aioService.push(query);
     if (result.isSuccessful) {
-      await this.handleChildMatch(result.childMatchIds, query,result.settledSessionId);
-     
-      result.hasResultAmendment && await this.handleUpdateSettlementResultHistoryStatus(query,result.settledSessionId);
-     
+      await this.handleChildMatch(result.childMatchIds, query, result.settledSessionId);
+
+      result.hasResultAmendment && await this.handleUpdateSettlementResultHistoryStatus(query, result.settledSessionId);
+
       this.messageBoxService.closePopup();
     } else {
       this.toastrService.error(result.errMsg);
     }
   }
 
-  private async handleChildMatch(childMatchIds: string, settleQuery: SettleQuery,parentSessionId: string) {
+  private async handleChildMatch(childMatchIds: string, settleQuery: SettleQuery, parentSessionId: string) {
     if (!_.isEmpty(childMatchIds)) {
       const settleChildMatchQuery = new SettleChildMatchQuery(childMatchIds, settleQuery.selectedResources,
         settleQuery.actionName, settleQuery.isReSettledTickets);
-      
-        settleChildMatchQuery.sportType = settleQuery.sportType;
-        settleChildMatchQuery.parentSessionId = parentSessionId;
+
+      settleChildMatchQuery.sportType = settleQuery.sportType;
+      settleChildMatchQuery.parentSessionId = parentSessionId;
 
       await this.aioService.pushChildMatch(settleChildMatchQuery);
     }
   }
 
-  private async handleUpdateSettlementResultHistoryStatus(settleQuery: SettleQuery,sessionId: string) {
-      const query = new UpdateSettlementResultHistoryStatus(settleQuery.matchId,sessionId)
-      await this.aioService.updateSettlementResultHistoryStatus(query);
-    }
+  private async handleUpdateSettlementResultHistoryStatus(settleQuery: SettleQuery, sessionId: string) {
+    const query = new UpdateSettlementResultHistoryStatus(settleQuery.matchId, sessionId)
+    await this.aioService.updateSettlementResultHistoryStatus(query);
+  }
 
   public saveScore() {
     this.toastrService.clear();

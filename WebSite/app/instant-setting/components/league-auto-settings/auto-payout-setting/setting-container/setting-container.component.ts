@@ -6,7 +6,7 @@ import { OnlyIntegerDirective } from '../../../../../shared/directives';
 import { LeagueSettingsStore } from '../../../../services/league-settings.store';
 import { distinctUntilChanged, map } from 'rxjs';
 import * as _ from 'lodash';
-import { ResultSettings } from '../../../../models/league-settings.model';
+import { ResultSettings } from '../../../../../shared/models/league-settings.model';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ProviderSelectionComponent } from '../provider-selection/provider-selection.component';
 

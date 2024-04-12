@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, Observable } from "rxjs";
-import { LeagueSettings } from "../models/league-settings.model";
+import { LeagueSettings } from "../../shared/models/league-settings.model";
 
 @Injectable({
   providedIn: 'root'
