@@ -1,4 +1,5 @@
 ﻿using Fanex.NAP.Client.Helpers.Common;
+using Fanex.Settlement.ScaleOut.Constants;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
@@ -266,7 +267,36 @@ public class AioServiceImp : IAioService
 
     public async Task<Result> Settle(SettleRequest request)
     {
+        var validateFantasyMatchResult = await ValidateFantasyMatch(request);
+
+        if (!validateFantasyMatchResult.IsSuccessful)
+        {
+            return validateFantasyMatchResult;
+        }
+
         return await multipleServerAioService.Settle(request);
+    }
+
+    private async Task<Result> ValidateFantasyMatch(SettleRequest request)
+    {
+        if (!request.IsFantasy || !request.ActionName.Equals(ActionName.CalculateAll, StringComparison.Ordinal))
+        {
+            return new Result();
+        }
+
+        var fantasyMatch = await GetRelatedMatches(request.MatchId);
+        var relatedMatches = fantasyMatch?.RelatedMatches ?? new List<RelatedMatch>();
+        var settlingResourceIds = request.SelectedResources.Select(x => x.ResourceId).ToList();
+
+        var isNotCalc = relatedMatches.Any(x => x.Results.Any(r => settlingResourceIds.Contains(r.ResourceId)
+            && r.SettlementStatusId != SettlementStatus.Completed));
+
+        if (isNotCalc)
+        {
+            return new Result(ErrorCode.ParentFantasyNotCalc, ErrorMessage.ParentFantasyNotCalc);
+        }
+
+        return new Result();
     }
 
     public async Task<Result> VerifyNoRunningOdds(CheckRunningOddsRequest request)

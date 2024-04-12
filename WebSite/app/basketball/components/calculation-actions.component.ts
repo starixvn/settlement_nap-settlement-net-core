@@ -543,7 +543,6 @@ export class CalculationActionsComponent implements SportTemplate {
     ) {
       this.toastrService.error(Language.IntervalWarning);
     } else if(this.matchDetail.isFantasy && this.verificationFantasyMatchService.isResultRelatedMatchesNotCalc(this.selectedResources,this.fantasyMatch.relatedMatches)) {
-      // TODO
       this.toastrService.error(Language.fantasyMatch.relatedMatchesNotCalc);
     } else {
       this.verifyRunningOdds();
