@@ -27,6 +27,8 @@ public interface IMatchService
     Task<List<string>> GetSpecificBetTypes(GetSpecificBetTypeRequest request);
 
     Task<List<MatchMoveBetTicket>> GetMatchDetailThirdPartyBetTicket(GetMatchDetailThirdPartyBetTicketsRequest request);
+
+    Task<FantasyMatch> GetRelatedMatches(int matchId);
 }
 
 public class MatchServiceImp(
@@ -163,7 +165,7 @@ public class MatchServiceImp(
         return await repository.GetAsync<HedgeMatchDetail>(hedgeMatchCriteria);
     }
 
-    private async Task<FantasyMatch> GetRelatedMatches(int matchId)
+    public async Task<FantasyMatch> GetRelatedMatches(int matchId)
     {
         var criteria = new GetFantasyMatchCriteria
         {

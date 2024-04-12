@@ -59,7 +59,9 @@ export class CalculationComponent implements Soccer {
         this.hedgeMatchDetail = this.match.hedgeMatchDetail;
         this.applyHedgeMatch = this.hedgeMatchDetail != null && !this.hedgeMatchDetail.isUndecided;
         this.matchDetail.originalGoalRecord = this.matchDetail.goalRecord;
-        this.relatedMatches =  this.match.fantasyMatch.relatedMatches.filter((match) => !match.isDeleted);
+        this.relatedMatches =  this.matchDetail.isFantasyMatch 
+            ? this.match.fantasyMatch.relatedMatches.filter((match) => !match.isDeleted)
+            : []
     }
 
     public getErrorMsg(value: string) {
@@ -162,8 +164,6 @@ export class CalculationComponent implements Soccer {
 
     public async calculateFullTime() {
         this.resetAllWarning();
-        console.log(this.matchDetail);
-        console.log(this.relatedMatches);
         const errorMessage = await this.verifyActionService.verifyFullTime(this.matchDetail, this.selectedChildMatches, this.relatedMatches);
         if (_.isEmpty(errorMessage)) {
             this.confirmFullTime();

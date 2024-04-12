@@ -24,9 +24,8 @@ export class VerifyActionService {
     } else if (matchDetail.isScoreInconsistent) {
       return Language.soccer.confirmWithInconsistentScore;
     } else if(matchDetail.isFantasyMatch && this.isFirstHalfRelatedMatchesNotCalc(relatedMatches)) {
-      //TODO
       return Language.fantasyMatch.relatedMatchesNotCalc;
-    } else {
+    }  else {
       return this.checkNewStatus(matchDetail, CalculateAction.calculateHalfTime);
     }
   }
@@ -61,10 +60,9 @@ export class VerifyActionService {
       return Language.soccer.goalRecordNotConsistent;
     } else if (matchDetail.isScoreInconsistent) {
       return Language.soccer.incorrectHalftimeAndFullTimeScore;
-    } else if(matchDetail.isFantasyMatch && this.isFullTimeRelatedMatchesNotCalc(relatedMatches)) {
-      //TODO
+    } 
+    else if(matchDetail.isFantasyMatch && this.isFullTimeRelatedMatchesNotCalc(relatedMatches)) {
       return Language.fantasyMatch.relatedMatchesNotCalc;
-
     } else {
       return this.checkNewStatus(matchDetail, CalculateAction.calculateFullTime);
     }
@@ -90,11 +88,12 @@ export class VerifyActionService {
       return Language.soccer.goalRecordNotConsistent;
     } else if (matchDetail.isScoreInconsistent) {
       return Language.soccer.incorrectHalftimeAndFullTimeScore;
-    } else if(matchDetail.isFantasyMatch && this.isAllResultRelatedMatchesNotCalc(relatedMatches)) {
-      //TODO
+    } 
+    else if(matchDetail.isFantasyMatch && this.isAllResultRelatedMatchesNotCalc(relatedMatches)) {
       return Language.fantasyMatch.relatedMatchesNotCalc;
 
-    }  else {
+    }  
+    else {
       return this.checkNewStatus(matchDetail, CalculateAction.calculate);
     }
   }

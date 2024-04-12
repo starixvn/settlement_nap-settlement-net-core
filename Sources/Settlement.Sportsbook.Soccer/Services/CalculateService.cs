@@ -5,6 +5,8 @@ using Settlement.Core.Services;
 using Settlement.Sportsbook.Soccer.Constants;
 using Settlement.Sportsbook.Soccer.Criteria;
 using Settlement.Sportsbook.Soccer.Requests;
+using Settlement.Sportsbook.Soccer.Services.GetMatch;
+using FantasyRelatedMatch = Settlement.Sportsbook.Soccer.Models.FantasyRelatedMatch;
 
 namespace Settlement.Sportsbook.Soccer.Services;
 
@@ -33,13 +35,16 @@ public class CalculateServiceImp : ICalculateService
 
     private readonly LogService logService;
 
+    private readonly IMatchService matchService;
+
     public CalculateServiceImp(
         IMapper mapper,
         IDynamicRepository repository,
         IOptions<AppSettingsKey> appSettingsKey,
         ICreateCriteriaService createCriteriaService,
         ScaleOutSettleService scaleOutSettleService,
-        LogService logService)
+        LogService logService,
+        IMatchService matchService)
     {
         this.repository = repository;
         this.appSettingsKey = appSettingsKey.Value;
@@ -47,15 +52,23 @@ public class CalculateServiceImp : ICalculateService
         this.createCriteriaService = createCriteriaService;
         this.scaleOutSettleService = scaleOutSettleService;
         this.logService = logService;
+        this.matchService = matchService;
     }
 
     public async Task<Result> Calculate(SettleRequest request)
     {
         var criteria = createCriteriaService.CreateCalculateCriteria(request);
         var matchChecking = await ValidateBeforeExecute(criteria);
+
         if (matchChecking.ErrCode > 0)
         {
             return matchChecking;
+        }
+
+        var validateFantasyMatchResult = await ValidateFantasyMatch(request);
+        if (validateFantasyMatchResult.ErrCode > 0)
+        {
+            return validateFantasyMatchResult;
         }
 
         var match = CreatedMatch(criteria);
@@ -137,6 +150,40 @@ public class CalculateServiceImp : ICalculateService
             ErrMsg = criteria.ErrMsg
         };
     }
+
+    private async Task<Result> ValidateFantasyMatch(SettleRequest request)
+    {
+        if (!request.isFantasyMatch) return new Result();
+
+        var fantasyMatch = await matchService.GetRelatedMatches(request.MatchId);
+        var relatedMatches = fantasyMatch.RelatedMatches;
+
+        if (IsFirstHalfRelatedMatchesNotCalc(request.ActionName, relatedMatches)
+            || IsFulltimeRelatedMatchesNotCalc(request.ActionName, relatedMatches)
+            || IsAllRelatedMatchesNotCalc(request.ActionName, relatedMatches))
+        {
+            return new Result
+            {
+                ErrCode = ErrorCode.ParentFantasyNotCalc,
+                ErrMsg = ErrorMessage.ParentFantasyNotCalc
+            };
+        }
+
+        return new Result();
+    }
+
+    private bool IsFirstHalfRelatedMatchesNotCalc(string action, List<FantasyRelatedMatch> relatedMatches)
+        => action.Equals(ActionName.CalculateHalfTime, StringComparison.Ordinal)
+            && relatedMatches.Any(x => x.HtSettlementStatusId != SettlementStatus.Completed);
+
+    private bool IsFulltimeRelatedMatchesNotCalc(string action, List<FantasyRelatedMatch> relatedMatches)
+        => action.Equals(ActionName.CalculateFullTime, StringComparison.Ordinal)
+            && relatedMatches.Any(x => x.FtSettlementStatusId != SettlementStatus.Completed);
+
+    private bool IsAllRelatedMatchesNotCalc(string action, List<FantasyRelatedMatch> relatedMatches)
+        => action.Equals(ActionName.CalculateAll, StringComparison.Ordinal)
+            && (IsFirstHalfRelatedMatchesNotCalc(ActionName.CalculateHalfTime, relatedMatches)
+                || IsFulltimeRelatedMatchesNotCalc(ActionName.CalculateFullTime, relatedMatches));
 
     private async Task ExecuteAsync(CalculateCriteria criteria)
     {
