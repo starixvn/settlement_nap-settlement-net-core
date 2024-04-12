@@ -1,8 +1,8 @@
 import { Injectable } from "@angular/core";
 import * as _ from "lodash";
-import { TicketStatusText, CalculateAction } from "../../../../shared/constants";
+import { TicketStatusText, CalculateAction, SettlementStatusId } from "../../../../shared/constants";
 import { Language } from '../../../../shared/language.native';
-import { ChildMatch, MatchDetail } from '../models/match.model';
+import { ChildMatch, FantasyRelatedMatch, MatchDetail } from '../models/match.model';
 import { VerifyScoreGoalService } from "./verify-score-goal.service";
 import { RequestService } from './request.service';
 
@@ -12,7 +12,7 @@ export class VerifyActionService {
     private readonly verifyScoreGoalService: VerifyScoreGoalService,
     private readonly requestService: RequestService) { }
 
-  public async verifyFirstHalf(matchDetail: MatchDetail) {
+  public async verifyFirstHalf(matchDetail: MatchDetail, relatedMatches: FantasyRelatedMatch[]) {
     if (this.verifyScoreGoalService.verifyScoreHalfTime(matchDetail)) {
       return Language.warningInputScore;
     } else if (this.verifyScoreGoalService.goalRecordNotExistSemicolon(matchDetail)) {
@@ -23,9 +23,16 @@ export class VerifyActionService {
       return Language.soccer.halfTimeGoalRecordNotConsistent;
     } else if (matchDetail.isScoreInconsistent) {
       return Language.soccer.confirmWithInconsistentScore;
+    } else if(matchDetail.isFantasyMatch && this.isFirstHalfRelatedMatchesNotCalc(relatedMatches)) {
+      //TODO
+      return Language.fantasyMatch.relatedMatchesNotCalc;
     } else {
       return this.checkNewStatus(matchDetail, CalculateAction.calculateHalfTime);
     }
+  }
+
+  private isFirstHalfRelatedMatchesNotCalc(relatedMatches: FantasyRelatedMatch[] = [])  {
+    return relatedMatches.some(x => x.htSettlementStatusId !== SettlementStatusId.Calculated)
   }
 
   private async checkNewStatus(matchDetail: MatchDetail, actionName: string) {
@@ -33,7 +40,7 @@ export class VerifyActionService {
     return result.isSuccessful ? "" : result.errMsg;
   }
 
-  public async verifyFullTime(matchDetail: MatchDetail, selectedChildMatches: ChildMatch[]) {
+  public async verifyFullTime(matchDetail: MatchDetail, selectedChildMatches: ChildMatch[],relatedMatches: FantasyRelatedMatch[]) {
     if (this.verifyScoreGoalService.verifyScoreFullTime(matchDetail)) {
       return Language.warningInputScore;
     } else if (this.verifyScoreGoalService.verifyScoreForChildMatch(matchDetail, selectedChildMatches)) {
@@ -54,12 +61,20 @@ export class VerifyActionService {
       return Language.soccer.goalRecordNotConsistent;
     } else if (matchDetail.isScoreInconsistent) {
       return Language.soccer.incorrectHalftimeAndFullTimeScore;
+    } else if(matchDetail.isFantasyMatch && this.isFullTimeRelatedMatchesNotCalc(relatedMatches)) {
+      //TODO
+      return Language.fantasyMatch.relatedMatchesNotCalc;
+
     } else {
       return this.checkNewStatus(matchDetail, CalculateAction.calculateFullTime);
     }
   }
 
-  public async verifyAll(matchDetail: MatchDetail, selectedChildMatches: ChildMatch[]) {
+  private isFullTimeRelatedMatchesNotCalc(relatedMatches: FantasyRelatedMatch[] = [])  {
+    return relatedMatches.some(x => x.ftSettlementStatusId !== SettlementStatusId.Calculated)
+  }
+
+  public async verifyAll(matchDetail: MatchDetail, selectedChildMatches: ChildMatch[],relatedMatches: FantasyRelatedMatch[]) {
     if (this.verifyScoreGoalService.verifyScoreAll(matchDetail)) {
       return Language.warningInputScore;
     } else if (this.verifyScoreGoalService.verifyScoreForChildMatch(matchDetail, selectedChildMatches)) {
@@ -75,9 +90,17 @@ export class VerifyActionService {
       return Language.soccer.goalRecordNotConsistent;
     } else if (matchDetail.isScoreInconsistent) {
       return Language.soccer.incorrectHalftimeAndFullTimeScore;
-    } else {
+    } else if(matchDetail.isFantasyMatch && this.isAllResultRelatedMatchesNotCalc(relatedMatches)) {
+      //TODO
+      return Language.fantasyMatch.relatedMatchesNotCalc;
+
+    }  else {
       return this.checkNewStatus(matchDetail, CalculateAction.calculate);
     }
+  }
+
+  private isAllResultRelatedMatchesNotCalc(relatedMatches: FantasyRelatedMatch[] = [])  {
+    return this.isFirstHalfRelatedMatchesNotCalc(relatedMatches) || this.isFullTimeRelatedMatchesNotCalc(relatedMatches);
   }
 
   public async isScoreChangedFirstHalf(matchDetail: MatchDetail, isReSettledTickets: boolean) {

@@ -75,6 +75,8 @@ export interface FantasyRelatedMatch {
     eventStatus: string;
     betStatus: string;
     isDeleted: boolean;
+    ftSettlementStatusId: number;
+    htSettlementStatusId: number
 }
 
 export interface UndoChecking {

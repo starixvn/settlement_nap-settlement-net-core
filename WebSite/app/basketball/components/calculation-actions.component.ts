@@ -5,7 +5,7 @@ import {
   AioService,
   BlockUIService,
 } from "../../shared/services";
-import { ModalDialogMessage } from "../../shared/models";
+import { League, ModalDialogMessage } from "../../shared/models";
 import { Language } from "../../shared/language.native";
 import {
   CalculateAction,
@@ -46,7 +46,7 @@ import { CalculateCommonModule } from "../../shared/modules/calculate-common.mod
 import { RelatedMatchesComponent } from "./fantasy/related-matches.compoment";
 import { FantasyMatch } from "../models/fantasy.model";
 import { SourceIds } from "../constants/source-ids";
-import { ProviderSource } from "../../shared/models/league-settings.model";
+import { VerificationFantasyMatchService } from "../services/verification-fantasy-match.service";
 
 @Component({
   selector: "calculation-actions",
@@ -66,6 +66,7 @@ import { ProviderSource } from "../../shared/models/league-settings.model";
     VerificationService,
     CashOutService,
     GenerateCashOutService,
+    VerificationFantasyMatchService,
   ],
 })
 export class CalculationActionsComponent implements SportTemplate {
@@ -77,6 +78,7 @@ export class CalculationActionsComponent implements SportTemplate {
   private aioService = inject(AioService);
   private cashOutService = inject(CashOutService);
   private verificationService = inject(VerificationService);
+  private  verificationFantasyMatchService = inject(VerificationFantasyMatchService);
   private toastrService = inject(ToastrService);
   private blockUiService = inject(BlockUIService);
   readonly overTimeId = ResourcesIds.ot;
@@ -377,7 +379,7 @@ export class CalculationActionsComponent implements SportTemplate {
       this.firstHalf.settlementStatusId === SettlementStatusId.Calculated ||
       this.firstHalf.settlementStatusId === SettlementStatusId.Refund ||
       this.firstHalf.settlementStatusId ===
-        SettlementStatusId.RefundSettleDetermined
+      SettlementStatusId.RefundSettleDetermined
     ) {
       this.firstHalf.isScoreMismatched = this.verificationService.isMismatchedWarning(
         this.firstHalf
@@ -390,7 +392,7 @@ export class CalculationActionsComponent implements SportTemplate {
       this.fullTime.settlementStatusId === SettlementStatusId.Calculated ||
       this.fullTime.settlementStatusId === SettlementStatusId.Refund ||
       this.fullTime.settlementStatusId ===
-        SettlementStatusId.RefundSettleDetermined
+      SettlementStatusId.RefundSettleDetermined
     ) {
       this.fullTime.isScoreMismatched = this.verificationService.isMismatchedWarning(
         this.fullTime
@@ -540,6 +542,9 @@ export class CalculationActionsComponent implements SportTemplate {
       )
     ) {
       this.toastrService.error(Language.IntervalWarning);
+    } else if(this.matchDetail.isFantasy && this.verificationFantasyMatchService.isResultRelatedMatchesNotCalc(this.selectedResources,this.fantasyMatch.relatedMatches)) {
+      // TODO
+      this.toastrService.error(Language.fantasyMatch.relatedMatchesNotCalc);
     } else {
       this.verifyRunningOdds();
     }
@@ -566,16 +571,16 @@ export class CalculationActionsComponent implements SportTemplate {
   }
 
   private verifyScoreSourcesAndCalculate() {
-    if(!this.verificationService.allMapHaveScreenshotSource(this.resultDetails)) {
+    if (!this.verificationService.allMapHaveScreenshotSource(this.resultDetails)) {
       this.toastrService.error(Language.sop.notScreenshot);
       return;
     }
-    
-    if(this.verificationService.isExistMismatchedScoreScreenshot(this.resultDetails)) {
+
+    if (this.verificationService.isExistMismatchedScoreScreenshot(this.resultDetails)) {
       this.toastrService.error(Language.sop.mismatchedScreenshot);
       return;
     }
-    
+
     if (this.verificationService.allMapHaveScoreSources(this.resultDetails)) {
       this.confirmCalculateMismatchScores();
     } else {
@@ -606,7 +611,7 @@ export class CalculationActionsComponent implements SportTemplate {
 
   private async confirmChangedResults() {
     if (this.isReSettledTickets) {
-            this.confirmCalculation();
+      this.confirmCalculation();
     } else {
       const getBasketballResultQuery = {
         matchId: this.matchDetail.matchId,
@@ -627,13 +632,13 @@ export class CalculationActionsComponent implements SportTemplate {
           this.isReSettledTickets = true;
         });
       } else {
-                this.confirmCalculation();
+        this.confirmCalculation();
       }
     }
   }
 
-    private confirmCalculation() {
-      this.confirmationDialogMessage.message = this.basketballService.confirmationMessage(this.selectedResources);
+  private confirmCalculation() {
+    this.confirmationDialogMessage.message = this.basketballService.confirmationMessage(this.selectedResources);
     this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
       this.doCalculation(this.selectedResources);
     });
@@ -720,8 +725,8 @@ export class CalculationActionsComponent implements SportTemplate {
     const isInstant =
       this.matchDetail.autoSetting > 1
         ? this.matchDetail.autoSetting.toString(2).split("").reverse()[
-            SettingPosition.instant
-          ] === "1"
+        SettingPosition.instant
+        ] === "1"
         : false;
     return _.isEqual(actionName, CalculateAction.calculate) && isInstant
       ? this.aioService.generateDeterminedType(this.resultDetails)
@@ -788,7 +793,7 @@ export class CalculationActionsComponent implements SportTemplate {
   }
 
   private async cashOutResultUpdate(betStatus: string) {
-    const isVirtualMatch =  this.verificationService.isPinGoalMatch(this.matchDetail.leagueGroupId) ||
+    const isVirtualMatch = this.verificationService.isPinGoalMatch(this.matchDetail.leagueGroupId) ||
       this.verificationService.isSabaMatch(this.matchDetail.leagueGroupId);
     if (!isVirtualMatch && this.matchDetail.parentId === 0) {
       if (this.match.isScoreDirect) {

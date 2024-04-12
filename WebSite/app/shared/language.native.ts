@@ -215,6 +215,7 @@
         confirmAutoFillOnHoldMatch: 'WARNING! You attempt to auto-fill results from related matches that are ON-HOLD. Are you sure you want to proceed?',
         warningMatchNotCalculated: 'WARNING! Cannot continue due to related matches are not calculated.',
         confirmAutoFillFantasyMatch: "WARNING! This will overwrite ALL current scores with related matches's scores. Are you sure you want to proceed?",
+        relatedMatchesNotCalc: "Cannot continue due to some Parent-match scores have not been calculated."
     },
     soccer: {
         noNeedSemicolonOnGoalRecord: "Goal Record must not contain \";\" character, please correct Goal Record and then try again.",

@@ -31,8 +31,7 @@ export class FantasyScoreService {
 
     const resultsOfAway = _.chain(relatedMatches)
       .filter(x => teamIds.includes(x.awayId.toString()))
-      .map(x => x.results)
-      .flatten()
+      .flatMap(x => x.results)
       .groupBy(x => x.resourceId)
       .map((group, key) => ({
         resourceId: key,
