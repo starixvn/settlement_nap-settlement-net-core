@@ -15,7 +15,6 @@ import {
     ResultSoccerService, 
     ResultOtherSportService,
     ProviderService } from '../services';
-import { DatePipe } from '@angular/common';
 @NgModule({
     providers: [
         DatePipe,
