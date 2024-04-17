@@ -1,10 +1,9 @@
 import { Injectable } from "@angular/core";
-import {
-  FantasyRelatedMatch,
-  RelatedMatchResult,
-} from "../models/fantasy.model";
-import { flatMap, isEmpty, sum } from "lodash";
+import { FantasyRelatedMatch } from "../models/fantasy.model";
+import * as _ from "lodash";
 import { ResourcesIds } from "../constants/resource-ids.native";
+
+type ResultTemp = {resourceId: string, value: number}
 
 @Injectable()
 export class FantasyScoreService {
@@ -18,130 +17,52 @@ export class FantasyScoreService {
     ResourcesIds.finalScore,
   ];
 
-  public sumScore(
-    homeTeams: string[],
-    homes: FantasyRelatedMatch[],
-    awayTeams: string[],
-    aways: FantasyRelatedMatch[]
-  ) {
-    const resutls = this.combineResults(
-      this.getResultsHome(homeTeams, homes),
-      this.getResultsAway(awayTeams, aways)
-    );
-    return resutls;
-  }
 
-  private combineResults(
-    homesResults: { resourceId: string; homeValue: number }[],
-    awayResults: { resourceId: string; awayValue: number }[]
-  ) {
-    const results = [];
+  public sumScore(relatedMatches: FantasyRelatedMatch[], teamIds: string[]) {
+    const resultsOfHome = _.chain(relatedMatches)
+      .filter(x => teamIds.includes(x.homeId.toString()))
+      .flatMap(x => x.results)
+      .groupBy(x => x.resourceId)
+      .map((group, key) => ({
+        resourceId: key,
+        value: _.sumBy(group, result => parseInt(result.homeValue) || 0)
+      }))
+      .value();
 
-    this.resourcesIds.forEach((resourceId) => {
-      const resultHomeItem = homesResults.find(
-        (homeResult) => homeResult.resourceId === resourceId
-      );
-      const resultAwayItem = awayResults.find(
-        (awayResult) => awayResult.resourceId === resourceId
-      );
+    const resultsOfAway = _.chain(relatedMatches)
+      .filter(x => teamIds.includes(x.awayId.toString()))
+      .flatMap(x => x.results)
+      .groupBy(x => x.resourceId)
+      .map((group, key) => ({
+        resourceId: key,
+        value: _.sumBy(group, result => parseInt(result.awayValue) || 0)
+      }))
+      .value();
 
-      if(resultAwayItem && resultHomeItem) {
-        results.push({
-          resourceId,
-          homeValue: resultHomeItem?.homeValue,
-          awayValue:resultAwayItem?.awayValue
-        })
-      }
-
-      if(resourceId == ResourcesIds.ot && (resultHomeItem || resultAwayItem)) {
-        results.push({
-          resourceId,
-          homeValue: resultHomeItem?.homeValue,
-          awayValue:resultAwayItem?.awayValue
-        })
-      }
-    })
+      const results = _.chain(resultsOfHome)
+        .concat(resultsOfAway)
+        .groupBy(x => x.resourceId)
+        .map((group, key) => ({
+            resourceId: key,
+            value: _.sumBy(group, x => x.value)
+        }))
+        .value();
 
     return results;
   }
 
-  private getResultsAway(awayTeams: string[], aways: FantasyRelatedMatch[]) {
-    const newAways = this.changeMatchesByFantasyTeam(awayTeams, aways);
-    const results = this.sumResultsScore(
-      flatMap(newAways, (x) => x.results),
-      false
-    );
+  public combineResult(homeValueResults: ResultTemp[], awayValueResults: ResultTemp[]) {
+    const commonResourceIds = _.intersectionBy(homeValueResults, awayValueResults, x => x.resourceId);
 
-    return results;
-  }
+    return _.map(commonResourceIds, commonResult => {
+        const homeResult = homeValueResults.find(x => x.resourceId === commonResult.resourceId);
+        const awayResult = awayValueResults.find(x => x.resourceId === commonResult.resourceId);
 
-  private getResultsHome(homeTeams: string[], homes: FantasyRelatedMatch[]) {
-    const newHomes = this.changeMatchesByFantasyTeam(homeTeams, homes);
-    const results = this.sumResultsScore(flatMap(newHomes, (x) => x.results));
-
-    return results;
-  }
-
-  private changeMatchesByFantasyTeam(
-    teams: string[],
-    matches: FantasyRelatedMatch[]
-  ) {
-    const newHomes = matches.map((home) => {
-      const isHome = teams.includes(`${home.homeId}`);
-
-      const updatedResults = home.results.map((result) => ({
-        ...result,
-        isHome: isHome,
-      }));
-
-      return {
-        ...home,
-        results: updatedResults,
-      };
+        return {
+            resourceId: commonResult.resourceId,
+            homeValue: `${homeResult?.value || 0}`,
+            awayValue: `${awayResult?.value || 0}`
+        };
     });
-
-    return newHomes;
-  }
-
-  private getCorrectResults(results: RelatedMatchResult[], resourceId: string) {
-    const resourceResults = results.filter((x) => x.resourceId === resourceId);
-
-    if (resourceId === ResourcesIds.ot) {
-      return resourceResults;
-    }
-
-    const existsNullScore = resourceResults.some(
-      (x) => isEmpty(x.homeValue) || isEmpty(x.awayValue)
-    );
-    if (existsNullScore) {
-      return [];
-    }
-
-    return resourceResults;
-  }
-
-  private sumResultsScore(results: RelatedMatchResult[], home: boolean = true) {
-    const result = [];
-
-    this.resourcesIds.forEach((resourceId) => {
-      const resourceResults = this.getCorrectResults(results, resourceId);
-
-      if (resourceResults && resourceResults.length) {
-        const score = sum(
-          resourceResults.map((x) => (x.isHome ? +x.homeValue : +x.awayValue))
-        );
-        const item = home
-          ? {
-              resourceId,
-              homeValue: score,
-            }
-          : {
-              resourceId,
-              awayValue: score,
-            };
-        result.push(item);
-      }
-    });
-    return result;
-  }
+}
 }

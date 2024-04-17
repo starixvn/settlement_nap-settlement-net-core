@@ -14,6 +14,7 @@ export class SettleQuery {
     determinedType : number;
     sportType: number;
     isHedgeMatch: boolean;
+    isFantasy:boolean;
     constructor(
         matchDetail: MatchDetail,
         selectedResources: ResultDetail[],
@@ -30,5 +31,6 @@ export class SettleQuery {
         this.isReSettledTickets = isReSettledTickets;
         this.betStatus = betStatus;
         this.isLeader = isLeader;
+        this.isFantasy = matchDetail.isFantasy;
     }
 }

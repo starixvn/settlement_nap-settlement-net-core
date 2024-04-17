@@ -59,6 +59,9 @@ export class CalculationComponent implements Soccer {
         this.hedgeMatchDetail = this.match.hedgeMatchDetail;
         this.applyHedgeMatch = this.hedgeMatchDetail != null && !this.hedgeMatchDetail.isUndecided;
         this.matchDetail.originalGoalRecord = this.matchDetail.goalRecord;
+        this.relatedMatches =  this.matchDetail.isFantasyMatch 
+            ? this.match.fantasyMatch.relatedMatches.filter((match) => !match.isDeleted)
+            : []
     }
 
     public getErrorMsg(value: string) {
@@ -135,7 +138,7 @@ export class CalculationComponent implements Soccer {
 
     public async calculateHalfTime() {
         this.resetAllWarning();
-        const errorMessage = await this.verifyActionService.verifyFirstHalf(this.matchDetail);
+        const errorMessage = await this.verifyActionService.verifyFirstHalf(this.matchDetail,this.relatedMatches);
 
         if (_.isEmpty(errorMessage)) {
             this.confirmHalftime();
@@ -161,7 +164,7 @@ export class CalculationComponent implements Soccer {
 
     public async calculateFullTime() {
         this.resetAllWarning();
-        const errorMessage = await this.verifyActionService.verifyFullTime(this.matchDetail, this.selectedChildMatches);
+        const errorMessage = await this.verifyActionService.verifyFullTime(this.matchDetail, this.selectedChildMatches, this.relatedMatches);
         if (_.isEmpty(errorMessage)) {
             this.confirmFullTime();
         } else {
@@ -189,7 +192,7 @@ export class CalculationComponent implements Soccer {
 
     public async calculateAll() {
         this.resetAllWarning();
-        const errorMessage = await this.verifyActionService.verifyAll(this.matchDetail, this.selectedChildMatches);
+        const errorMessage = await this.verifyActionService.verifyAll(this.matchDetail, this.selectedChildMatches, this.relatedMatches);
         if (_.isEmpty(errorMessage)) {
             this.confirmAll();
         } else {

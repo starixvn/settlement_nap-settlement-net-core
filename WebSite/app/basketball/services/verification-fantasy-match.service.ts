@@ -1,10 +1,11 @@
 import { Injectable } from "@angular/core";
 import { FantasyRelatedMatch } from "../models/fantasy.model";
-import {  isEqual, isNil } from "lodash";
+import {  chain, isEqual, isNil } from "lodash";
 import { EventStatus } from "../../shared/constants/event-status.native";
 import { ResourceIds } from "../../shared/constants/resource-id.native";
 import { ResultStatusId } from "../../shared/constants/result-status-id.native";
-
+import { ExternalResultDetail, ResultDetail } from '../../shared/models/sportsbook-sop';
+import { SettlementStatusId } from "../../shared/constants";
 @Injectable()
 export class VerificationFantasyMatchService {
   public isExistHoldMatch(relatedMatches: FantasyRelatedMatch[]) {
@@ -45,6 +46,13 @@ export class VerificationFantasyMatchService {
     );
 
     return isExistNotCalculatedMatch;
+  }
+  public isResultRelatedMatchesNotCalc(selectedResult: ResultDetail[], relatedMatches: FantasyRelatedMatch[]) {
+    const selectedResourceIds = selectedResult.map(x => x.resourceId);
+    const results = chain(relatedMatches).flatMap(x => x.results).value();
+    const checkingResults = results.filter(x => selectedResourceIds.includes(x.resourceId));
+    
+    return checkingResults.some(x => x.settlementStatusId !== SettlementStatusId.Calculated);
   }
 
   private isMatchRefunded(match: FantasyRelatedMatch) {

@@ -47,4 +47,8 @@ public class FantasyRelatedMatch
     public RemarkSettingModel Remark => new(SettlementStatus);
 
     public bool IsDeleted { get; set; }
+
+    public short FtSettlementStatusId { get; set; }
+
+    public short HtSettlementStatusId { get; set; }
 }
