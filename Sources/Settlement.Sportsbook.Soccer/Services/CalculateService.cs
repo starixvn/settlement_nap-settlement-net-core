@@ -133,19 +133,19 @@ public class CalculateServiceImp(
         {
             return new Result();
         }
+            var fantasyMatch = await matchService.GetRelatedMatches(request.MatchId);
+            var relatedMatches = fantasyMatch.RelatedMatches;
 
-        var fantasyMatch = await matchService.GetRelatedMatches(request.MatchId);
-        var relatedMatches = fantasyMatch.RelatedMatches;
-
-        if (IsFirstHalfRelatedMatchesNotCalc(request.ActionName, relatedMatches)
-            || IsFulltimeRelatedMatchesNotCalc(request.ActionName, relatedMatches)
-            || IsAllRelatedMatchesNotCalc(request.ActionName, relatedMatches))
-        {
-            return new Result
+            if (IsFirstHalfRelatedMatchesNotCalc(request.ActionName, relatedMatches)
+                || IsFulltimeRelatedMatchesNotCalc(request.ActionName, relatedMatches)
+                || IsAllRelatedMatchesNotCalc(request.ActionName, relatedMatches))
             {
-                ErrCode = ErrorCode.ParentFantasyNotCalc,
-                ErrMsg = ErrorMessage.ParentFantasyNotCalc
-            };
+                return new Result
+                {
+                    ErrCode = ErrorCode.ParentFantasyNotCalc,
+                    ErrMsg = ErrorMessage.ParentFantasyNotCalc
+                };
+            }
         }
 
         return new Result();
