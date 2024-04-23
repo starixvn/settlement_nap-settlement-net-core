@@ -67,10 +67,7 @@ public class ProviderLogServiceImp : ProviderLogService
     public async Task<IEnumerable<ResultLog>> GetProviderLog(ProviderLogRequest request, int sportType)
     {
         var resultLogs = await GetProviderLogs(request);
-        if (!resultLogs.Any())
-        {
-            return new List<ResultLog>();
-        }
+
         var traderLogs = await GetTraderConfirmLog(request.MatchId, resultLogs);
 
         var logs = resultLogs.Concat(traderLogs).ToList();
