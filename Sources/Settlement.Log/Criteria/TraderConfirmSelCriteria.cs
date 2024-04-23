@@ -13,6 +13,8 @@ public class TraderConfirmSelCriteria : CriteriaBase
 
     public string ResourceIDs { get; set; }
 
+    public bool LatestRecord { get; set; }
+
     public override string GetSettingKey() => "NAP_Set_SettlementResultDetailHistory_TraderConfirmSel";
 
     public override bool IsValid() => MatchId > 0;

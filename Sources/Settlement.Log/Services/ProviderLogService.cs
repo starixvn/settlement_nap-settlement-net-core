@@ -68,7 +68,7 @@ public class ProviderLogServiceImp : ProviderLogService
     {
         var resultLogs = await GetProviderLogs(request);
 
-        var traderLogs = await GetTraderConfirmLog(request.MatchId, request.ResourceIds);
+        var traderLogs = await GetTraderConfirmLog(request);
 
         var logs = resultLogs.Concat(traderLogs).ToList();
         var listResultLogs = GenerateResourceName(logs, sportType);
@@ -101,9 +101,14 @@ public class ProviderLogServiceImp : ProviderLogService
         return resultLogs;
     }
 
-    private async Task<List<ResultLog>> GetTraderConfirmLog(int matchId, string resourceIds)
+    private async Task<List<ResultLog>> GetTraderConfirmLog(ProviderLogRequest request)
     {
-        var criteria = new TraderConfirmSelCriteria { MatchId = matchId, ResourceIDs = resourceIds };
+        var criteria = new TraderConfirmSelCriteria
+        {
+            MatchId = request.MatchId,
+            ResourceIDs = request.ResourceIds,
+            LatestRecord = request.LatestRecord
+        };
 
         var result = await repository.FetchAsync<ResultLog>(criteria);
 
