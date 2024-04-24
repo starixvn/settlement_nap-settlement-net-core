@@ -378,7 +378,9 @@ public class AioServiceImp : IAioService
 
     public async Task<List<ResultDetail>> SetInterval(Models.MatchDetail matchDetail, List<ResultDetail> resultDetails)
     {
-        if(matchDetail.SportType != SportType.Tennis) return resultDetails;
+        var setViewed = matchDetail.GameSession == GamePlay.Three ? GamePlay.Three : GamePlay.Five;
+
+        if (matchDetail.SportType != SportType.Tennis) return resultDetails;
 
         var finalResult = resultDetails.First(r => r.ResourceId == ResourceType.Final);
         var setResults = resultDetails.Where(x => x.ResourceId != ResourceType.Final).ToList();
@@ -388,7 +390,7 @@ public class AioServiceImp : IAioService
         setResults.ForEach(s => s.IntervalNo = indexes.First(i => i.ResourceId == s.ResourceId).IntervalNo);
 
         var resultOrdered = setResults
-            .Where(r => r.IntervalNo <= matchDetail.GameSession)
+            .Where(r => r.IntervalNo <= setViewed)
             .OrderBy(s => s.IntervalNo)
             .ToList();
 
