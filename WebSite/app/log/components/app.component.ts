@@ -37,6 +37,7 @@ export class AppComponent implements OnInit {
             ? this.viewContainerRef.createComponent(ProviderLogComponent)
             : this.viewContainerRef.createComponent(LogComponent);
 
-        
+            
+         
     }
 }

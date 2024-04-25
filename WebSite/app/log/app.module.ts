@@ -20,7 +20,7 @@ import { DatepickerComponent } from '../shared/components/date-picker/date-picke
 import { ResettleLogDetailComponent } from './components/log/resettle-log-detail.component';
 import { LogDetailComponent } from './components/log/log-detail.component';
 import { NewMultipleSelectComponent } from "../shared/components/multiple-select/multiple-select.component";
-import { OnlyIntegerDirective } from '../shared/directives';
+import { DynamicHeightDirective, OnlyIntegerDirective } from '../shared/directives';
 @NgModule({
     declarations: [
         AppComponent,
@@ -49,6 +49,7 @@ import { OnlyIntegerDirective } from '../shared/directives';
         NewMultipleSelectComponent,
         NoopAnimationsModule,
         OnlyIntegerDirective,
+        DynamicHeightDirective
     ]
 })
 export class AppModule {
