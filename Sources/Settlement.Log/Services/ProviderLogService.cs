@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.ComponentModel;
+using AutoMapper;
 using Fanex.Data.Repository;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
@@ -65,10 +66,16 @@ public class ProviderLogServiceImp : ProviderLogService
 
     public async Task<IEnumerable<ResultLog>> GetProviderLog(ProviderLogRequest request, int sportType)
     {
-        var criteria = mapper.Map<ProviderLogRequest, GetProviderLogCriteria>(request);
-        var resultLogs = (await repository.FetchAsync<ResultLog>(criteria)).ToList();
-        var listResultLogs = GenerateResourceName(resultLogs, sportType);
-        return listResultLogs.Where(item => item.ResourceName.Contains(request.ResourceName.Trim(), StringComparison.InvariantCultureIgnoreCase));
+        var resultLogs = await GetProviderLogs(request);
+
+        var traderLogs = await GetTraderConfirmLog(request);
+
+        var logs = resultLogs.Concat(traderLogs).ToList();
+        var listResultLogs = GenerateResourceName(logs, sportType);
+
+        return listResultLogs
+            .Where(item =>
+                (item.ResourceName ?? string.Empty).Contains(request.ResourceName.Trim(), StringComparison.InvariantCultureIgnoreCase));
     }
 
     private IEnumerable<ResultLog> GenerateResourceName(List<ResultLog> resultLogs, int sportType)
@@ -83,5 +90,30 @@ public class ProviderLogServiceImp : ProviderLogService
         });
 
         return resultLogs;
+    }
+
+    private async Task<List<ResultLog>> GetProviderLogs(ProviderLogRequest request)
+    {
+        var criteria = mapper.Map<ProviderLogRequest, GetProviderLogCriteria>(request);
+        var resultLogs = (await repository.FetchAsync<ResultLog>(criteria)).ToList();
+        resultLogs.ForEach(x => { x.Action = x.SourceName.Equals("-") ? "Auto Payout" : "received"; });
+
+        return resultLogs;
+    }
+
+    private async Task<List<ResultLog>> GetTraderConfirmLog(ProviderLogRequest request)
+    {
+        var criteria = new TraderConfirmSelCriteria
+        {
+            MatchId = request.MatchId,
+            ResourceIDs = request.ResourceIds,
+            LatestRecord = request.LatestRecord
+        };
+
+        var result = await repository.FetchAsync<ResultLog>(criteria);
+
+        result.ToList().ForEach(log => { log.Action = "confirmed"; });
+
+        return result.ToList();
     }
 }

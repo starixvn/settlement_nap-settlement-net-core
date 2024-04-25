@@ -39,7 +39,7 @@
         </tr>
       </thead>
     </table>
-    <div class="hide-menu">
+    <div dynamicHeight style="overflow-y: scroll;">
       <table class="table-calculation">
         <colgroup>
           <col class="index"/>
@@ -52,7 +52,7 @@
         </colgroup>
         <tbody>
           @for (log of providerLog.providerResultLog; track log; let i = $index) {
-            <tr [ngClass]="{'bold': log.sourceName === '-'}">
+            <tr [ngClass]="{'bold': log.autoPayoutStatus !== 0}">
               <td>
                 {{i+1}}
               </td>
@@ -63,11 +63,7 @@
                 {{log.resourceName}}
               </td>
               <td>
-                @if(log.sourceName === '-') {
-                  Auto Payout
-                } @else {
-                  received
-                }
+                {{log.action}}
               </td>
               <td>
                 {{log.createDate | date : 'mediumDate' }} {{log.createDate | date : 'hh:mm:ss a' }}

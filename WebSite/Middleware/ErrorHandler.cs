@@ -1,4 +1,6 @@
-﻿using Fanex.Logging.Extensions;
+﻿using System.Text;
+using Azure.Core;
+using Fanex.Logging.Extensions;
 using Fanex.Logging.Extensions.Database;
 using Microsoft.AspNetCore.Http.Extensions;
 using ONEbook.UM.Services;
@@ -23,32 +25,38 @@ public class ErrorHandler
 
     public async Task InvokeAsync(HttpContext context)
     {
+        string body = string.Empty;
         try
         {
+            context.Request.EnableBuffering();
+            body = await new StreamReader(context.Request.Body).ReadToEndAsync();
+            context.Request.Body.Position = 0;
+
             await next(context);
         }
         catch (Exception exception)
         {
-            await HandleException(context, exception);
+            await HandleException(context, exception, body);
         }
     }
 
-    private static Dictionary<string, object> GetRequestInfo(HttpContext context)
+    private Dictionary<string, object> GetRequestInfo(HttpContext context, string body)
     {
         return new Dictionary<string, object>
         {
             { "Url", context.Request.GetDisplayUrl() },
             { "Username", context.User.Identity?.Name },
-            { "User IP", context.Request.Headers["X-Forwarded-For"] }
+            { "User IP", context.Request.Headers["X-Forwarded-For"] },
+            { "Request Body", body }
         };
     }
 
-    private async Task HandleException(HttpContext context, Exception exception)
+    private async Task HandleException(HttpContext context, Exception exception, string body)
     {
         maintenanceService.RemoveUnderMaintenanceTimeCache();
 
         var logMessage = new LogMessage(exception.Message)
-                    .AddSection("Request Info", GetRequestInfo(context))
+                    .AddSection("Request Info", GetRequestInfo(context, body))
                     .AddSection("Database Info", DatabaseInfoGetters.GetDbExceptionInfo(exception))
                     .AddSection("Server Info", CommonInfoGetters.GetServerInfo())
                     .AddSection("Exception Info", CommonInfoGetters.GetExceptionInfo(exception))

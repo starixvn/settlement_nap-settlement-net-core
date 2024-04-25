@@ -43,7 +43,8 @@ export class ProviderFilterComponent implements OnInit {
         if (this.isValidInput()) {
             this.filter.sourceIds = this.providerSelected;
             this.providerService.search(this.filter).subscribe((providerLog: ProviderLog) => {
-                this.providerLog.emit(providerLog);
+                const sortedLogs = _.sortBy(providerLog.providerResultLog, x => x.createDate)
+                this.providerLog.emit({...providerLog, providerResultLog: sortedLogs});
             });
         } else {
             this.showWarningMessage();

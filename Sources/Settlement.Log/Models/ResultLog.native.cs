@@ -7,10 +7,11 @@ public class ResultLog
     private string sourceName;
 
     private const string Dash = "-";
+    private string remark;
 
     public string ResourceId { get; set; }
 
-    public string ResourceName { get; set; }
+    public string ResourceName { get; set; } = string.Empty;
 
     public string SourceName
     {
@@ -42,18 +43,22 @@ public class ResultLog
         }
     }
 
-    private int AutoPayoutStatus { get; set; }
+    public int AutoPayoutStatus { get; set; }
 
     public string Remark
     {
         get
         {
-            if (AutoPayoutStatus == CalculateStatus.IsSuccess)
+            return AutoPayoutStatus switch
             {
-                return "Success";
-            }
-
-            return AutoPayoutStatus == CalculateStatus.IsFailed ? "Failed" : Dash;
+                CalculateStatus.IsFailed => remark,
+                CalculateStatus.IsSuccess => "success",
+                _ => Dash,
+            };
         }
+
+        set => remark = value;
     }
+
+    public string Action { get; set; }
 }

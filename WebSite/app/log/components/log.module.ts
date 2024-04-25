@@ -10,11 +10,14 @@ import {
     ReCheckInService,
     VerifyDateService
 } from "../../shared/services";
-import { 
-    SearchService, 
-    ResultSoccerService, 
+import {
+    SearchService,
+    ResultSoccerService,
     ResultOtherSportService,
-    ProviderService } from '../services';
+    ProviderService
+} from '../services';
+
+
 @NgModule({
     providers: [
         DatePipe,
@@ -28,8 +31,10 @@ import {
         ProviderService,
         SearchService,
         ResultOtherSportService,
-        ResultSoccerService
-    ]
+        ResultSoccerService,
+        DatePipe,
+
+    ],
 })
 
 export class LogModule { }
