@@ -246,12 +246,23 @@ export class CalculateActionsComponent implements SportTemplate {
   }
 
   private confirmCalculation(resultDetails: ResultDetail[]) {
+    if(this.isSettleRelated) {
+      this.confirmationDialogMessage.message = Language.confirmRelatedChildMatch;
+      this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
+        this.confirmCalculationSecond(resultDetails);
+      });
+    } else {
+      this.confirmCalculationSecond(resultDetails);
+    }
+  }
+
+  private confirmCalculationSecond(resultDetails: ResultDetail[]){
     const excludeTotalGame = resultDetails.filter((item) => !_.isEqual(item.resourceId, ResourcesIds.totalGames));
     const confirmMessage = this.verificationService.getCalculationConfirmMessage(excludeTotalGame, new ResourceNameByIdPipe());
     this.confirmationDialogMessage.message = confirmMessage;
-    this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
-      this.doCalculation(this.selectedResources);
-    });
+      this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
+        this.doCalculation(this.selectedResources);
+      });
   }
 
   private confirmUncalculation() {

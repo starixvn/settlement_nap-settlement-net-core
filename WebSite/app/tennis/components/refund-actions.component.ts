@@ -68,11 +68,25 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
       this.toastrService.error(Language.MarkedTicket);
     } else {
       if (this.verifySelectedOnMap()) {
+       this.confirmBeforeRefund();
+      }
+    }
+  }
+
+  private confirmBeforeRefund() {
+    if(this.isSettleRelated) {
+      this.confirmationDialogMessage.message = Language.confirmRelatedChildMatch;
+      this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
         this.confirmationDialogMessage.message = Language.RefundConfirmMessage;
         this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
           this.doRefund();
         });
-      }
+      });
+    } else {
+      this.confirmationDialogMessage.message = Language.RefundConfirmMessage;
+      this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
+        this.doRefund();
+      });
     }
   }
 
