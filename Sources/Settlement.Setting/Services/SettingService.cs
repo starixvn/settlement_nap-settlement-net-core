@@ -98,7 +98,10 @@ public class SettingServiceImp : SettingService
     {
         var changedSettings = request.HoldSettings.Except(request.OrgHoldSettings).ToList();
 
-        if (changedSettings.Count == 0) return;
+        if (changedSettings.Count == 0)
+        {
+            return;
+        }
 
         var criteria = CreateUpdateHoldMatchSettingCriteria(request, changedSettings);
 
@@ -145,7 +148,7 @@ public class SettingServiceImp : SettingService
 
             return childMatch.Select(x =>
             {
-                var changedNames = string.Join(",", changedChildMatchSettings.Select(setting => setting.Description));
+                var changedNames = string.Join(",", changedChildMatchSettings.Select(x => $"{x.Description}({(x.Value ? "yes" : "no")})"));
                 var parentMatchRemark = $"parent({x.ParentMatchId})";
 
                 return new RemarkLog
