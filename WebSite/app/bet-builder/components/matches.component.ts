@@ -3,16 +3,43 @@ import { interval } from 'rxjs';
 import { Component, OnInit, OnDestroy} from "@angular/core";
 import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { MultiSports, MatchDetail, SportLeagues, LeagueMatches } from '../models';
-import { LeagueSettingService, MatchSettingService, RefreshMatchService, PopupService } from '../services';
+import { 
+    LeagueSettingService, 
+    MatchSettingService, 
+    RefreshMatchService, 
+    GenerateListService,
+    PopupService,
+    RequestService } from '../services';
 import { Resources, BackgroundColor, EventStatus } from '../constants';
 import { MatchStatus } from '../../shared/constants';
 import { ModalDialogMessage } from '../../shared/models';
-import { MessageBoxService } from '../../shared/services';
+import { 
+    MessageBoxService, 
+    HttpRequestService, 
+    BlockUIService,
+    DialogBoxService,
+    VerifyDateService,
+ } from '../../shared/services';
+ import { DatePipe } from '@angular/common';
 import { ISubscription } from 'rxjs-compat/Subscription';
 
 @Component({
     selector: 'matches',
-    templateUrl: './matches.component.html'
+    templateUrl: './matches.component.html',
+    providers:[
+        GenerateListService,
+        DatePipe,
+        VerifyDateService,
+        RequestService,
+        HttpRequestService,
+        MessageBoxService,
+        LeagueSettingService,
+        MatchSettingService,
+        RefreshMatchService,
+        PopupService,
+        BlockUIService,
+        DialogBoxService
+    ]
 })
 
 export class MatchesComponent implements OnInit, OnDestroy {

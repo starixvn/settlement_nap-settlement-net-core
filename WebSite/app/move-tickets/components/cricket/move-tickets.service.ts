@@ -36,7 +36,7 @@ export class MoveTicketsService {
     return this.httpRequestService.postJson(request, `/api/moveticket/move-ticket`);
   }
 
-  public popupLog(matchId: number, fromDate: string, toData: string ) {
+  public popupLog(matchId: string, fromDate: string, toData: string ) {
     const src = `/home/log?matchCode=${matchId}&fromDate=${fromDate}&toDate=${toData}&isShowMenu=false&productType=ALL`;
     const frameSrc = encodeURI(src);
     const dialogData = new DialogDataIframe(Language.SettlementLog, frameSrc);

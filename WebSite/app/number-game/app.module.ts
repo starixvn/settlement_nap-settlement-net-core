@@ -38,6 +38,7 @@ import { ToastContainerModule, ToastNoAnimationModule } from 'ngx-toastr';
         ToastContainerModule,
         OnlyIntegerDirective,
         DatepickerComponent,
+        MaterialDialogComponent,
     ],
     declarations: [
         AppComponent,
@@ -47,8 +48,6 @@ import { ToastContainerModule, ToastNoAnimationModule } from 'ngx-toastr';
         ReCalculationComponent,
         ModalDialogComponent,
         ModalContentDialogComponent,
-        MaterialDialogComponent,
-        
     ],
     providers: [ { provide: HTTP_INTERCEPTORS, useClass: CustomHttpRequestInterceptor, multi: true }],
     bootstrap: [AppComponent],

@@ -21,7 +21,7 @@ import { CustomHttpRequestInterceptor } from '../shared/custom-httprequest-inter
 import { DynamicHeightDirective } from '../shared/directives';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { TimeConverterPipe } from '../shared/pipes/time-converter.pipe';
-import { DatePipe, CommonModule } from '@angular/common';
+import { DatePipe } from '@angular/common';
 
 @NgModule({
     imports: [

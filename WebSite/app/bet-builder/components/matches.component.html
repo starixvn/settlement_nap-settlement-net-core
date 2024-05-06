@@ -1,151 +1,173 @@
 ﻿<filter (searchAction)="search($event)"></filter>
-<div *ngIf="multiSports && multiSports.sportLeagues" >
+@if (multiSports && multiSports.sportLeagues) {
+  <div >
     <ng-template *ngTemplateOutlet="header"></ng-template>
     <ng-template *ngTemplateOutlet="body"></ng-template>
-</div>
+  </div>
+}
 <ng-template #header>
-    <div class="head-table">
-        <table class="table-calculation">
-            <thead>
-                <tr>
-                    <th rowspan="2" class="code">
-                        Match Code
-                    </th>
-                    <th rowspan="2" class="kick-off-time">
-                        Kick-off Time
-                    </th>
-                    <th rowspan="2" class="event">
-                        Event
-                    </th>
-                    <th rowspan="2" class="interval-score">
-                        Interval Score
-                    </th>
-                    <th rowspan="2" class="score">
-                        HT Score
-                    </th>
-                    <th rowspan="2" class="score">
-                        Final Score
-                    </th>
-                    <th rowspan="2" class="event-status">
-                        Event Status
-                    </th>
-                    <th colspan="2" class="bet-builder">Bet Builder</th>
-                    <th rowspan="2" class="header-action">
-                        Action
-                    </th>
-                </tr>
-                <tr>
-                    <th class="auto-setting">Auto Setting</th>
-                    <th class="auto-setting">Status</th>
-                </tr>
-            </thead>
-        </table>
-    </div>
+  <div class="head-table">
+    <table class="table-calculation">
+      <thead>
+        <tr>
+          <th rowspan="2" class="code">
+            Match Code
+          </th>
+          <th rowspan="2" class="kick-off-time">
+            Kick-off Time
+          </th>
+          <th rowspan="2" class="event">
+            Event
+          </th>
+          <th rowspan="2" class="interval-score">
+            Interval Score
+          </th>
+          <th rowspan="2" class="score">
+            HT Score
+          </th>
+          <th rowspan="2" class="score">
+            Final Score
+          </th>
+          <th rowspan="2" class="event-status">
+            Event Status
+          </th>
+          <th colspan="2" class="bet-builder">Bet Builder</th>
+          <th rowspan="2" class="header-action">
+            Action
+          </th>
+        </tr>
+        <tr>
+          <th class="auto-setting">Auto Setting</th>
+          <th class="auto-setting">Status</th>
+        </tr>
+      </thead>
+    </table>
+  </div>
 </ng-template>
 <ng-template #body>
-    <div class="content-scroll" *ngIf="isExistedSport; else empty">
-        <div *ngFor="let sport of multiSports.sportLeagues">
-            <div (click)="collapseSport(sport)" class="sport-name">
-                <span class="collapse-icon" [ngClass]="sport.collapse ? 'collapsed' : ''"></span>
-                &nbsp;{{sport.name}}
-            </div>
-            <ng-template [ngIf]="!sport.collapse">
-                <ng-template ngFor let-league [ngForOf]="sport.leagues">
-                    <table class="table-calculation">
-                        <colgroup>
-                            <col class="code" />
-                            <col class="kick-off-time" />
-                            <col class="event" />
-                            <col class="interval-score" />
-                            <col class="score" />
-                            <col class="score" />
-                            <col class="event-status" />
-                            <col class="auto-setting" />
-                            <col class="auto-setting" />
-                            <col class="header-action" />
-                        </colgroup>
-                        <tbody>
-                            <tr class="league-name">
-                                <td colspan="7" class="name" (click)="collapseLeague(league)">
-                                    <span class="collapse-icon" [ngClass]="league.collapse ? 'collapsed' : ''"></span>
-                                    &nbsp;{{league.leagueName}}</td>
-                                <td class="league-setting">
-                                    <span [title]="getAutoSettingTooltip(league.isAutoSettingForLeague)"
+  @if (isExistedSport) {
+    <div class="content-scroll">
+      @for (sport of multiSports.sportLeagues; track sport) {
+        <div>
+          <div (click)="collapseSport(sport)" class="sport-name">
+            <span class="collapse-icon" [ngClass]="sport.collapse ? 'collapsed' : ''"></span>
+            &nbsp;{{sport.name}}
+          </div>
+          @if (!sport.collapse) {
+            @for (league of sport.leagues; track league) {
+              <table class="table-calculation">
+                <colgroup>
+                <col class="code" />
+                <col class="kick-off-time" />
+                <col class="event" />
+                <col class="interval-score" />
+                <col class="score" />
+                <col class="score" />
+                <col class="event-status" />
+                <col class="auto-setting" />
+                <col class="auto-setting" />
+                <col class="header-action" />
+              </colgroup>
+              <tbody>
+                <tr class="league-name">
+                  <td colspan="7" class="name" (click)="collapseLeague(league)">
+                    <span class="collapse-icon" [ngClass]="league.collapse ? 'collapsed' : ''"></span>
+                  &nbsp;{{league.leagueName}}</td>
+                  <td class="league-setting">
+                    <span [title]="getAutoSettingTooltip(league.isAutoSettingForLeague)"
                                         (click)="updateLeagueSetting(league)" [ngClass]="{'btn':1, 'icon-yes': league.isAutoSettingForLeague,
                                 'icon-no': !league.isAutoSettingForLeague}"></span>
-                                </td>
-                                <td colspan="2"></td>
-                            </tr>
-                            <ng-template [ngIf]="!league.collapse">
-                                <ng-template ngFor let-match [ngForOf]="league.matches">
-                                    <tr>
-                                        <td>
-                                            <div [ngClass]="getClassNameViewLog()"
-                                                (click)="multiSports.permission.canViewSettlementLog ? openPopupLog(match): null">
-                                                {{match.matchCode}}
-                                            </div>
-                                        </td>
-                                        <td rowspan="2">
-                                            {{match.kickOffTime | date : 'mediumDate'  }}
-                                            <br />
-                                            {{match.kickOffTime | date : 'hh:mm:ss a' }}
-                                        </td>
-                                        <td class="home-team-name">
-                                            {{match.homeName}}
-                                        </td>
-                                        <td class="interval-score">
-                                            <span
-                                                *ngFor="let score of match.moreScores.sets; let i = index; let last = last;"
-                                                [ngClass]="score.background">
-                                                {{score.home}}<span *ngIf="!last">; </span>
-                                            </span>
-                                        </td>
-                                        <td>{{match.moreScores.halfTimeScore.home}}</td>
-                                        <td class="final-score">{{match.moreScores.finalScore.home}}</td>
-                                        <td rowspan="2" class="event-status" [ngClass]="getEventStatusColor(match)">
-                                            {{match.eventStatus}}
-                                        </td>
-                                        <td rowspan="2">
-                                            <span
-                                                [title]="getAutoSettingTooltip(match.autoCalcSetting.isAutoSettingForMatch)"
-                                                (click)="updateMatchSetting(match)"
-                                                [ngClass]="isShowAutoSettingLeague(match)"></span>
-                                        </td>
-                                        <td rowspan="2" [ngClass]="getColorParlayStatus(match.parlayStatus)">
-                                            {{match.parlayStatus}}
-                                        </td>
-                                        <td rowspan="2" [ngClass]="getBackground(match.parlayStatus, match.eventStatus)">
+                  </td>
+                  <td colspan="2"></td>
+                </tr>
+                @if (!league.collapse) {
+                  @for (match of league.matches; track match) {
+                    <tr>
+                      <td>
+                        <div [ngClass]="getClassNameViewLog()"
+                          (click)="multiSports.permission.canViewSettlementLog ? openPopupLog(match): null">
+                          {{match.matchCode}}
+                        </div>
+                      </td>
+                      <td rowspan="2">
+                        {{match.kickOffTime | date : 'mediumDate'  }}
+                        <br />
+                        {{match.kickOffTime | date : 'hh:mm:ss a' }}
+                      </td>
+                      <td class="home-team-name">
+                        {{match.homeName}}
+                      </td>
+                      <td class="interval-score">
+                        @for (score of match.moreScores.sets; track score; let i = $index; let last = $last) {
+                          <span
+                            [ngClass]="score.background">
+                            {{score.home}}@if (!last) {
+                            <span>; </span>
+                          }
+                        </span>
+                      }
+                    </td>
+                    <td>{{match.moreScores.halfTimeScore.home}}</td>
+                    <td class="final-score">{{match.moreScores.finalScore.home}}</td>
+                    <td rowspan="2" class="event-status" [ngClass]="getEventStatusColor(match)">
+                      {{match.eventStatus}}
+                    </td>
+                    <td rowspan="2">
+                      <span
+                        [title]="getAutoSettingTooltip(match.autoCalcSetting.isAutoSettingForMatch)"
+                        (click)="updateMatchSetting(match)"
+                      [ngClass]="isShowAutoSettingLeague(match)"></span>
+                    </td>
+                    <td rowspan="2" [ngClass]="getColorParlayStatus(match.parlayStatus)">
+                      {{match.parlayStatus}}
+                    </td>
+                    <td rowspan="2" [ngClass]="getBackground(match.parlayStatus, match.eventStatus)">
                                             <div (click)="isProcessingMatch(match.parlayStatus)
                                     ? null : openPopupCalc(match)" [ngClass]="isShowLinkCalculation(match)">Calc
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>{{match.matchId}}</td>
-                                        <td class="away-team-name">{{match.awayName}}</td>
-                                        <td class="interval-score">
-                                            <span
-                                                *ngFor="let score of match.moreScores.sets; let i = index; let last = last;"
-                                                [ngClass]="score.background">
-                                                {{score.away}}<span *ngIf="!last">; </span>
-                                            </span>
-                                        </td>
-                                        <td>{{match.moreScores.halfTimeScore.away}}</td>
-                                        <td class="final-score">{{match.moreScores.finalScore.away}}</td>
-                                    </tr>
-                                </ng-template>
-                            </ng-template>
-                        </tbody>
-                    </table>
-                </ng-template>
-            </ng-template>
-        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>{{match.matchId}}</td>
+                    <td class="away-team-name">{{match.awayName}}</td>
+                    <td class="interval-score">
+                      @for (score of match.moreScores.sets; track score; let i = $index; let last = $last) {
+                        <span
+                          [ngClass]="score.background">
+                          {{score.away}}@if (!last) {
+                          <span>; </span>
+                        }
+                      </span>
+                    }
+                  </td>
+                  <td>{{match.moreScores.halfTimeScore.away}}</td>
+                  <td class="final-score">{{match.moreScores.finalScore.away}}</td>
+                </tr>
+              }
+            }
+          </tbody>
+        </table>
+      }
+    }
+  </div>
+}
+</div>
+} @else {
+  @if (multiSports.sportLeagues) {
+    <div class="no-data">
+      <div class="empty-data">
+        There is no information available
+      </div>
     </div>
-    <ng-template #empty>
-        <div class="no-data" *ngIf="multiSports.sportLeagues">
-            <div class="empty-data">
-                There is no information available
-            </div>
-        </div>
-    </ng-template>
+  }
+}
+<ng-template #empty>
+  @if (multiSports.sportLeagues) {
+    <div class="no-data">
+      <div class="empty-data">
+        There is no information available
+      </div>
+    </div>
+  }
+</ng-template>
 </ng-template>

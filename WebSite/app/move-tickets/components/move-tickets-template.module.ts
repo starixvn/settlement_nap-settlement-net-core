@@ -11,7 +11,7 @@ import {
     SportMatchService,
     VerifyDateService
 } from "../../shared/services";
-import { MoveRunningTicketsService } from "./running-tickets/move-running-tickets.service";
+import { DatePipe } from '@angular/common';
 
 @NgModule({
     imports: [
@@ -19,6 +19,7 @@ import { MoveRunningTicketsService } from "./running-tickets/move-running-ticket
     declarations: [
     ],
     providers: [
+        DatePipe,
         VerifyDateService,
         MessageBoxService,
         MoveTicketsService,
@@ -28,8 +29,7 @@ import { MoveRunningTicketsService } from "./running-tickets/move-running-ticket
         NgbActiveModal,
         ReCheckInService,
         DialogBoxService,
-        SportMatchService,
-        MoveRunningTicketsService,
+        SportMatchService
     ]
 })
 

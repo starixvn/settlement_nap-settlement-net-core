@@ -1,39 +1,41 @@
 ﻿<div class="filter-bar">
-    <div class="line">
+  <div class="line">
+  </div>
+  <div class="filter-bar-inner">
+    <div class="row">
+      <div class="col-md-2">
+        <label for="FromDate" class="inner-label">
+          From
+        </label>
+        <ngbd-date-picker [date]="fromDate" (change)="onSelectFromDate($event)"></ngbd-date-picker>
+      </div>
+      <div class="col-md-2">
+        <label for="ToDate" class="inner-label">
+          To
+        </label>
+        <ngbd-date-picker [date]="toDate" (change)="onSelectToDate($event)"></ngbd-date-picker>
+      </div>
+      <div class="col-md-2">
+        <label for="matchCode" class="inner-label">
+          Match Code/ID
+        </label>
+        <input name="matchCode" maxlength="50" type="text" [(ngModel)]="matchCode">
+      </div>
+      <div class="col-md-2">
+        <label for="StatusId" class="inner-label">
+          Status
+        </label>
+        <select [(ngModel)]="status">
+          @for (item of statuses; track item) {
+            <option [value]="item">{{item}}</option>
+          }
+        </select>
+      </div>
+      <div class="col-sm-1">
+        <button class="button" (click)="search()" [disabled]="isDisabled">Submit</button>
+      </div>
     </div>
-    <div class="filter-bar-inner">
-        <div class="row">
-            <div class="col-md-2">
-                <label for="FromDate" class="inner-label">
-                    From
-                </label>
-                <ngbd-date-picker [date]="fromDate" (change)="onSelectFromDate($event)"></ngbd-date-picker>
-            </div>
-            <div class="col-md-2">
-                <label for="ToDate" class="inner-label">
-                    To
-                </label>
-                <ngbd-date-picker [date]="toDate" (change)="onSelectToDate($event)"></ngbd-date-picker>
-            </div>
-            <div class="col-md-2">
-                <label for="matchCode" class="inner-label">
-                    Match Code/ID
-                </label>
-                <input name="matchCode" maxlength="50" type="text" [(ngModel)]="matchCode">
-            </div>
-            <div class="col-md-2">
-                <label for="StatusId" class="inner-label">
-                    Status
-                </label>
-                <select [(ngModel)]="status">
-                    <option *ngFor="let item of statuses" [value]="item">{{item}}</option>
-                </select>
-            </div>
-            <div class="col-sm-1">
-                <button class="button" (click)="search()" [disabled]="isDisabled">Submit</button>
-            </div>
-        </div>
-    </div>
-    <div class="line">
-    </div>
+  </div>
+  <div class="line">
+  </div>
 </div>

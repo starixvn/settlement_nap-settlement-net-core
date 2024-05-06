@@ -31,9 +31,7 @@ import {
         ProviderService,
         SearchService,
         ResultOtherSportService,
-        ResultSoccerService,
-        DatePipe,
-
+        ResultSoccerService
     ],
 })
 

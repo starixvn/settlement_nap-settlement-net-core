@@ -1,4 +1,4 @@
 export class KickOut {
-    public OnUserId: number;
-    public IsKickedOut: number;
+    public onUserId: number;
+    public isKickedOut: number;
 }

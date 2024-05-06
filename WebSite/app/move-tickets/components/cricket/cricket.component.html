@@ -1,3 +1,5 @@
 <filter #filter (searchAction)="search($event)" (requestEmitter)="getRequest($event)"></filter>
 <league [multiSport]="multiSport" [request]="request" (refreshAction)="filter.search()"></league>
-<div *ngIf="blockUI" class="loading"></div>
+@if (blockUI) {
+  <div class="loading"></div>
+}

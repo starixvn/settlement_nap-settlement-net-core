@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { KickOut } from '../models';
+import { catchError } from 'rxjs/operators';
+import { of } from 'rxjs';
+
 
 @Injectable()
 export class ReCheckInService {
@@ -8,6 +11,7 @@ export class ReCheckInService {
     constructor(httpClient: HttpClient) {
         this.httpClient = httpClient;
     }
+    
     public reCheckin() {
         const urlRecheckIn = "/Auth/ReCheckIn";
         const urlLogout =  "/Auth/LogOut";
@@ -18,19 +22,18 @@ export class ReCheckInService {
                 'X-Requested-With': 'XMLHttpRequest',
             });
         const options = { headers };
-        this.httpClient.post(urlRecheckIn, null, options)
-        .subscribe(
-            (response: KickOut) => {
-                if (response.IsKickedOut === 1) {
-                    alert('You have logged in from another session or your login session has expired!');
-                    window.location.href = urlLogout;
-                }
-
-            },
-            (error) => {
-                if (error.error.code === 999999) {
-                    window.location.href = urlOffline;
-                }
-            });
+        this.httpClient.post<KickOut>(urlRecheckIn, null, options)
+        .pipe(catchError((error) => {
+            if (error.code === 999999) {
+                window.location.href = urlOffline;
+            }
+            return of();
+        }))
+        .subscribe(response => {
+            if (response.isKickedOut === 1) {
+                alert('You have logged in from another session or your login session has expired!');
+                window.location.href = urlLogout;
+            }
+        });
     }
 }

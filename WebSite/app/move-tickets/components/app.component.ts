@@ -1,9 +1,6 @@
-import { Component, OnInit, ViewContainerRef, ViewChild, ComponentFactoryResolver, ComponentFactory, ComponentRef, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewContainerRef, ViewChild, ComponentRef } from '@angular/core';
 import { BlockUIService } from '../../shared/services';
-import { PageType } from '../constants';
 import { CricketComponent } from '../components/cricket';
-import { RunningTicketsComponent } from '../components/running-tickets/running-tickets.component';
-import * as _ from 'lodash';
 
 @Component({
     selector: 'app-root',
@@ -16,8 +13,7 @@ export class AppComponent implements OnInit {
     public component: ComponentRef<OnInit>;
     constructor(
         private readonly blockUIService: BlockUIService,
-        private readonly elementRef: ElementRef<HTMLElement>,
-        private readonly componentFactoryResolver: ComponentFactoryResolver) {
+        private viewContainerRef: ViewContainerRef) {
     }
 
     public ngOnInit() {
@@ -26,16 +22,7 @@ export class AppComponent implements OnInit {
     }
 
     private createTemplateComponent() {
-        const factory = this.getComponentFactory();
-        this.component = this.container.createComponent(factory);
+        this.component = this.viewContainerRef.createComponent(CricketComponent);
         return this.component;
-    }
-
-
-    private getComponentFactory() : ComponentFactory<OnInit> {
-        const pageType = this.elementRef.nativeElement.getAttribute('page-type');
-        return _.isEqual(pageType, PageType.cricket)
-            ? this.componentFactoryResolver.resolveComponentFactory(CricketComponent)
-            : this.componentFactoryResolver.resolveComponentFactory(RunningTicketsComponent);
     }
 }

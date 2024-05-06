@@ -1,54 +1,60 @@
-﻿<div *ngIf="matchDetail">
+﻿@if (matchDetail) {
+  <div>
     <div class="league">
-        <div class="icon">
-        </div>
-        {{matchDetail.sportName | uppercase}} - {{matchDetail.leagueName}}
+      <div class="icon">
+      </div>
+      {{matchDetail.sportName | uppercase}} - {{matchDetail.leagueName}}
     </div>
     <table class="table-calculation match-detail">
-        <thead>
-            <tr>
-                <th class="code">Match Code/ID</th>
-                <th class="kick-off-time">Kick-off Time</th>
-                <th class="team">Team</th>
-                <ng-container *ngIf="matchDetail.sportType === 2">
-                    <th class="quarter-score">1Q</th>
-                    <th class="quarter-score">2Q</th>
-                    <th class="quarter-score">3Q</th>
-                    <th class="quarter-score">4Q</th>
-                    <th class="quarter-score">OT</th>
-                </ng-container>
-                <th class="score">HT Score</th>
-                <th class="score">FT Score</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>{{matchDetail.matchCode}}</td>
-                <td rowspan="2">
-                    {{matchDetail.kickOffTime | date : 'mediumDate'  }}
-                    <br />
-                    {{matchDetail.kickOffTime | date : 'hh:mm:ss a' }}
-                </td>
-                <td class="home-team-name">{{matchDetail.homeName}}</td>
-                <ng-container *ngIf="matchDetail.sportType === 2">
-                    <td *ngFor="let score of matchDetail.moreScores.sets;  let last=last;" [ngClass]="score.background">
-                        {{score.home}}
-                    </td>
-                </ng-container>
-                <td>{{matchDetail.moreScores.halfTimeScore.home}}</td>
-                <td class="final-score">{{matchDetail.moreScores.finalScore.home}}</td>
-            </tr>
-            <tr>
-                <td>{{matchDetail.matchId}}</td>
-                <td class="away-team-name">{{matchDetail.awayName}}</td>
-                <ng-container *ngIf="matchDetail.sportType === 2">
-                    <td *ngFor="let score of matchDetail.moreScores.sets;  let last=last;" [ngClass]="score.background">
-                        {{score.away}}
-                    </td>
-                </ng-container>
-                <td>{{matchDetail.moreScores.halfTimeScore.away}}</td>
-                <td class="final-score">{{matchDetail.moreScores.finalScore.away}}</td>
-            </tr>
-        </tbody>
+      <thead>
+        <tr>
+          <th class="code">Match Code/ID</th>
+          <th class="kick-off-time">Kick-off Time</th>
+          <th class="team">Team</th>
+          @if (matchDetail.sportType === 2) {
+            <th class="quarter-score">1Q</th>
+            <th class="quarter-score">2Q</th>
+            <th class="quarter-score">3Q</th>
+            <th class="quarter-score">4Q</th>
+            <th class="quarter-score">OT</th>
+          }
+          <th class="score">HT Score</th>
+          <th class="score">FT Score</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>{{matchDetail.matchCode}}</td>
+          <td rowspan="2">
+            {{matchDetail.kickOffTime | date : 'mediumDate'  }}
+            <br />
+            {{matchDetail.kickOffTime | date : 'hh:mm:ss a' }}
+          </td>
+          <td class="home-team-name">{{matchDetail.homeName}}</td>
+          @if (matchDetail.sportType === 2) {
+            @for (score of matchDetail.moreScores.sets; track score; let last = $last) {
+              <td [ngClass]="score.background">
+                {{score.home}}
+              </td>
+            }
+          }
+          <td>{{matchDetail.moreScores.halfTimeScore.home}}</td>
+          <td class="final-score">{{matchDetail.moreScores.finalScore.home}}</td>
+        </tr>
+        <tr>
+          <td>{{matchDetail.matchId}}</td>
+          <td class="away-team-name">{{matchDetail.awayName}}</td>
+          @if (matchDetail.sportType === 2) {
+            @for (score of matchDetail.moreScores.sets; track score; let last = $last) {
+              <td [ngClass]="score.background">
+                {{score.away}}
+              </td>
+            }
+          }
+          <td>{{matchDetail.moreScores.halfTimeScore.away}}</td>
+          <td class="final-score">{{matchDetail.moreScores.finalScore.away}}</td>
+        </tr>
+      </tbody>
     </table>
-</div>
+  </div>
+}

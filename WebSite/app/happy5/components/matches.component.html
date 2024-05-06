@@ -1,153 +1,169 @@
 ﻿<div class="head-table">
-    <table class="table-calculation">
-        <colgroup class="happy5">
-            <col class="code" />
-            <col class="kick-off-time" />
-            <col class="event" />
-            <col />
-            <col class="total" />
-            <col class="total" />
-            <col class="total" />
-            <col class="total" />
-            <col class="total" />
-            <col class="total" />
-            <col class="event-status" />
-            <col class="action" />
-        </colgroup>
-        <thead>
-            <tr>
-                <td>
-                    Match Code
-                </td>
-                <td>
-                    Kick-off Time
-                </td>
-                <td>
-                    Event
-                </td>
-                <td>
-                    Result
-                </td>
-                <td>
-                    Total
-                </td>
-                <td>
-                    B/S
-                </td>
-                <td>
-                    O/E
-                </td>
-                <td>
-                    4S
-                </td>
-                <td>
-                    MO/ME
-                </td>
-                <td>
-                    CB
-                </td>
-                <td>
-                    Status
-                </td>
-                <td>
-                    Action
-                </td>
-            </tr>
-        </thead>
-    </table>
+  <table class="table-calculation">
+    <colgroup class="happy5">
+    <col class="code" />
+    <col class="kick-off-time" />
+    <col class="event" />
+    <col />
+    <col class="total" />
+    <col class="total" />
+    <col class="total" />
+    <col class="total" />
+    <col class="total" />
+    <col class="total" />
+    <col class="event-status" />
+    <col class="action" />
+  </colgroup>
+  <thead>
+    <tr>
+      <td>
+        Match Code
+      </td>
+      <td>
+        Kick-off Time
+      </td>
+      <td>
+        Event
+      </td>
+      <td>
+        Result
+      </td>
+      <td>
+        Total
+      </td>
+      <td>
+        B/S
+      </td>
+      <td>
+        O/E
+      </td>
+      <td>
+        4S
+      </td>
+      <td>
+        MO/ME
+      </td>
+      <td>
+        CB
+      </td>
+      <td>
+        Status
+      </td>
+      <td>
+        Action
+      </td>
+    </tr>
+  </thead>
+</table>
 </div>
-<div class="content-scroll" *ngIf="leagues">
+@if (leagues) {
+  <div class="content-scroll">
     <table class="table-calculation">
-        <colgroup class="happy5">
-            <col class="code" />
-            <col class="kick-off-time" />
-            <col class="event" />
-            <col />
-            <col class="total" />
-            <col class="total" />
-            <col class="total" />
-            <col class="total" />
-            <col class="total" />
-            <col class="total" />
-            <col class="event-status" />
-            <col class="action-link" />
-            <col class="action-link" />
-        </colgroup>
-        <tbody>
-            <ng-template ngFor let-league [ngForOf]="leagues">
-                <tr>
-                    <td colspan="13" class="league-name">{{league.leagueName}}</td>
-                </tr>
-                <tr *ngFor="let match of league.matches; let index=index;let isEven=even "
-                    [ngClass]="{'even': !isEven}">
-                    <td>
-                        <div>
-                            <div *ngIf="permission.canViewSettlementLog; else notViewLog">
-                                <div class="code-link" (click)="openLog(match.matchId)">
-                                    {{match.matchCode}}
-                                </div>
-                            </div>
-                            <ng-template #notViewLog>
-                                <div class="no-link"> {{match.matchCode}}</div>
-                            </ng-template>
+      <colgroup class="happy5">
+      <col class="code" />
+      <col class="kick-off-time" />
+      <col class="event" />
+      <col />
+      <col class="total" />
+      <col class="total" />
+      <col class="total" />
+      <col class="total" />
+      <col class="total" />
+      <col class="total" />
+      <col class="event-status" />
+      <col class="action-link" />
+      <col class="action-link" />
+    </colgroup>
+    <tbody>
+      @for (league of leagues; track league) {
+        <tr>
+          <td colspan="13" class="league-name">{{league.leagueName}}</td>
+        </tr>
+        @for (match of league.matches; track match; let index = $index; let isEven = $even) {
+          <tr
+            [ngClass]="{'even': !isEven}">
+            <td>
+              <div>
+                @if (permission.canViewSettlementLog) {
+                  <div>
+                    <div class="code-link" (click)="openLog(match.matchId)">
+                      {{match.matchCode}}
+                    </div>
+                  </div>
+                } @else {
+                  <div class="no-link"> {{match.matchCode}}</div>
+                }
+              </div>
+              <div class="match-id">{{match.matchId}}</div>
+            </td>
+            <td>
+              {{match.kickOffTime | date : 'mediumDate' }}
+              <br /> {{match.kickOffTime | date : 'hh:mm:ss a' }}
+            </td>
+            <td>
+              {{match.eventName}}
+            </td>
+            <td>
+              @if (isCompletedMatch(match.eventStatus)) {
+                <ul>
+                  @for (ball of match.balls; track ball) {
+                    <li>
+                      @if (ball.numberBall>0) {
+                        <div
+                          [ngClass]="['lotto-ball', getColorBall(ball)]">
+                          {{ball.numberBall}}
                         </div>
-                        <div class="match-id">{{match.matchId}}</div>
-                    </td>
-                    <td>
-                        {{match.kickOffTime | date : 'mediumDate' }}
-                        <br /> {{match.kickOffTime | date : 'hh:mm:ss a' }}
-                    </td>
-                    <td>
-                        {{match.eventName}}
-                    </td>
-                    <td>
-                        <ul *ngIf="isCompletedMatch(match.eventStatus); else normal">
-                            <li *ngFor="let ball of match.balls">
-                                <div *ngIf="ball.numberBall>0; else normalBall"
-                                     [ngClass]="['lotto-ball', getColorBall(ball)]">
-                                    {{ball.numberBall}}
-                                </div>
-                                <ng-template #normalBall>
-                                    <div class="normal-ball">N/A</div>
-                                </ng-template>
-                            </li>
-                        </ul>
-                        <ng-template #normal>
-                            N/A
-                        </ng-template>
-                    </td>
-                    <td>{{match.totalBall}}</td>
-                    <td>{{match.bigSmall}}</td>
-                    <td>{{match.oddEven}}</td>
-                    <td>{{match.seasons}}</td>
-                    <td>{{match.moreOddEven}}</td>
-                    <td>{{match.combo}}</td>
-                    <td class="event-status">
-                        {{match.eventStatus}}
-                    </td>
-                    <td [ngClass]="[getBackground(match.eventStatus)]">
-                        <div *ngIf="isRecalculate(match.isYesterdayMatch); else notReCalculate">
-                            <div class="code-link re-cal" (click)="openReCalc(match)">ReCalc</div>
-                        </div>
-                        <ng-template #notReCalculate>
-                            ReCalc
-                        </ng-template>
-                    </td>
-                    <td>
-                        <div *ngIf="isRefund(match.isYesterdayMatch); else notRefund">
-                            <div class="code-link" (click)="openRefund(match)">
-                                Refund
-                            </div>
-                        </div>
-                        <ng-template #notRefund>
-                            Refund
-                        </ng-template>
-                    </td>
-                </tr>
-            </ng-template>
-        </tbody>
-    </table>
+                      } @else {
+                        <div class="normal-ball">N/A</div>
+                      }
+                    </li>
+                  }
+                </ul>
+              } @else {
+                N/A
+              }
+              <ng-template #normal>
+                N/A
+              </ng-template>
+            </td>
+            <td>{{match.totalBall}}</td>
+            <td>{{match.bigSmall}}</td>
+            <td>{{match.oddEven}}</td>
+            <td>{{match.seasons}}</td>
+            <td>{{match.moreOddEven}}</td>
+            <td>{{match.combo}}</td>
+            <td class="event-status">
+              {{match.eventStatus}}
+            </td>
+            <td [ngClass]="[getBackground(match.eventStatus)]">
+              @if (isRecalculate(match.isYesterdayMatch)) {
+                <div>
+                  <div class="code-link re-cal" (click)="openReCalc(match)">ReCalc</div>
+                </div>
+              } @else {
+                ReCalc
+              }
+            </td>
+            <td>
+              @if (isRefund(match.isYesterdayMatch)) {
+                <div>
+                  <div class="code-link" (click)="openRefund(match)">
+                    Refund
+                  </div>
+                </div>
+              } @else {
+                Refund
+              }
+            </td>
+          </tr>
+        }
+      }
+    </tbody>
+  </table>
 </div>
-<div class="empty-data" *ngIf="leagues.length == 0">
+}
+@if (leagues.length == 0) {
+  <div class="empty-data">
     There is no information available
-</div>
+  </div>
+}

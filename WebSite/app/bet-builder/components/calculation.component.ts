@@ -13,7 +13,7 @@ import {
   MultipleSelect,
   ItemsSelect,
 } from "../../shared/models";
-import { MessageBoxService } from "../../shared/services";
+import { MessageBoxService, HttpRequestService, BlockUIService } from "../../shared/services";
 import {
   RequestService,
   CalculationFilterService,
@@ -25,6 +25,14 @@ import { UrlHelper } from "../../helper";
 @Component({
   selector: "calculation",
   templateUrl: "./calculation.component.html",
+  providers:[
+    RequestService,
+    HttpRequestService,
+    CalculationFilterService,
+    CalculationConstraintService,
+    MessageBoxService,
+    BlockUIService
+  ]
 })
 export class CalculationComponent implements OnInit {
   private matchId: number;

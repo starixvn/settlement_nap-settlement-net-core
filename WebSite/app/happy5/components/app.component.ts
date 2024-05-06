@@ -10,12 +10,14 @@ import {
     GenerateFilterService,
     VerifyDateService
 } from '../../shared/services';
+import { DatePipe } from '@angular/common';
 import { HappyFive } from '../models';
 import { QueryService, VerifyBallService, PopupService, BallService } from '../services';
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
     providers: [
+        DatePipe,
         BlockUIService,
         HttpRequestService,
         MessageBoxService,
