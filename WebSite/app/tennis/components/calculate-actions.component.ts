@@ -127,8 +127,6 @@ export class CalculateActionsComponent implements SportTemplate {
       this.toastrService.error(Resources.UnSelectedMapForCalculation);
     } else if (this.verificationService.invalidInputScore(this.selectedResources, this.match.isScoreDirect, ResourcesIds.totalSets)) {
       this.toastrService.error(this.isLeader ? Language.sop.leader.blankScore : Language.sop.nonLeader.blankScore);
-    } else if(this.verificationService.verifySuperTieBreak(this.match.matchDetail, this.selectedResources)) {
-      this.toastrService.error(Language.TieBreakInconsistency)
     } else {
       this.verifyRunningOdds();
     }
