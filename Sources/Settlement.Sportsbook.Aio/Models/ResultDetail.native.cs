@@ -35,6 +35,8 @@ public class ResultDetail
 
     public int OrdNo { get; set; }
 
+    public int IntervalNo { get; set; }
+
     public virtual string ResultStatus => ResultStatusId.ResultName(SettlementStatusId);
 
     public virtual bool IsNotExistedValue => SettlementStatusId == SettlementStatus.Running && string.IsNullOrWhiteSpace(HomeValue) && string.IsNullOrWhiteSpace(AwayValue);

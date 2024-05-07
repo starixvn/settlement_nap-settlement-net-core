@@ -35,4 +35,6 @@ export class ResultDetail extends GeneralResultDetail {
     otherInfo: string;
     isResultWarningByBetType: boolean;
     ordNo: number;
+    intervalNo: number;
+
 }

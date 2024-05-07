@@ -18,6 +18,7 @@ public static class AioConfig
         services.AddTransient<MergeDataService, MergeDataServiceImp>();
         services.AddTransient<GenerateResultAmendmentService, GenerateResultAmendmentServiceImp>();
         services.AddTransient<ResultAmendmentService, ResultAmendmentServiceImp>();
+        services.AddTransient<ResultDetailService, ResultDetailServiceImp>();
 
         services.AddTransient<MultipleServerAioService, MultipleServerAioServiceImp>();
     }

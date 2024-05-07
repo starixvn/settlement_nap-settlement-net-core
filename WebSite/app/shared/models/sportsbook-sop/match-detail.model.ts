@@ -10,6 +10,8 @@
     public awayId: number;
     public playTime: number;
     public bestOfMap: number;
+    public gameSession: number;
+    public sessionTime: number;
     public map: MatchDetail;
     public isSavedScore: boolean;
     public betStatus: string;
