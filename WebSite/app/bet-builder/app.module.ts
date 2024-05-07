@@ -35,6 +35,7 @@ import { ModalDialogComponent } from '../shared/components/modal-dialog/modal-di
         OnlyIntegerDirective,
         NewMultipleSelectComponent,
         DatepickerComponent,
+        MaterialDialogComponent,
         NoopAnimationsModule
     ],
     declarations: [
@@ -45,11 +46,10 @@ import { ModalDialogComponent } from '../shared/components/modal-dialog/modal-di
         CalculationComponent,
         ModalDialogComponent,
         ModalContentDialogComponent,
-        MaterialDialogComponent,
         ResultStatusPipe,
         SelectionPipe,
         TicketStatusPipe,
-    ]
+    ],
     providers: [ { provide: HTTP_INTERCEPTORS, useClass: CustomHttpRequestInterceptor, multi: true }],
     bootstrap: [AppComponent],
 })

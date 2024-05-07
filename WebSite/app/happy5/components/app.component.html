@@ -1,4 +1,8 @@
 ﻿<filter (searchAction)="search($event)" [change]="change"></filter>
-<matches *ngIf="happyFive" [happyFive]="happyFive" [fromDate]="fromDate"
-         [toDate]="toDate" (reloadMainPage)="reloadAction()"></matches>
-<div *ngIf="blockUI" class="loading"></div>
+@if (happyFive) {
+  <matches [happyFive]="happyFive" [fromDate]="fromDate"
+  [toDate]="toDate" (reloadMainPage)="reloadAction()"></matches>
+}
+@if (blockUI) {
+  <div class="loading"></div>
+}

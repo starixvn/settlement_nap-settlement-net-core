@@ -2,7 +2,7 @@ import { Component, Input, OnChanges, OnDestroy, OnInit } from '@angular/core';
 import { BackGroundService, RequestService, PopupService, HandleActionsService } from '../../services';
 import * as _ from 'lodash';
 import { MatchesBaseComponent } from '../base-component';
-import { CalculationMatch, FilterAutoQuery, League, MatchCheckingResult, UpdateInstantQuery } from '../../models';
+import { CalculationMatch, FilterAutoQuery, League, UpdateInstantQuery } from '../../models';
 import { BackgroundColor, CalculationStatus } from '../../../shared/constants';
 import { Language } from '../../../shared/language.native';
 import { MessageBoxService } from '../../../shared/services';

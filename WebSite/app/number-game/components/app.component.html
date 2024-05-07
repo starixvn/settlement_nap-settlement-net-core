@@ -1,3 +1,7 @@
 ﻿<filter (searchAction)="search($event)"></filter>
-<matches *ngIf="numberGame" [numberGame]="numberGame" [fromDate]="fromDate" [toDate]="toDate"></matches>
-<div *ngIf="blockUI" class="loading"></div>
+@if (numberGame) {
+  <matches [numberGame]="numberGame" [fromDate]="fromDate" [toDate]="toDate"></matches>
+}
+@if (blockUI) {
+  <div class="loading"></div>
+}

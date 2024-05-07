@@ -1,116 +1,123 @@
 ﻿<div class="bet-builder-app">
-    <match-detail></match-detail>
-    <div (click)="refresh()" class="icon-refresh">
-    </div>
-    <div class="filter-selection">
-        <table class="table-calculation">
-            <thead>
-                <tr>
-                    <th class="selection-name">
-                        <div>Selection</div>
-                        <div>
-                            <new-multiple-select [multipleSelect]="selectionSelect"
-                                            (formValue)="changeSelection($event)"></new-multiple-select>
-                        </div>
-                    </th>
-                    <th class="result">
-                        Ticket Status
-                        <div>
-                            <new-multiple-select [multipleSelect]="ticketStatusSelect"
-                                            (formValue)="changeTicketStatus($event)"></new-multiple-select>
-                        </div>
-                    </th>
-                    <th class="result">
-                        Result
-                    </th>
-                    <th class="result-status">
-                        Result Status
-                        <div>
-                            <new-multiple-select [multipleSelect]="resultStatusSelect"
-                                            (formValue)="changeResultStatus($event)"></new-multiple-select>
-                        </div>
-                    </th>
-                    <th class="select-proceed">
-                        <label>
-                            Select to Proceed
-                            <input type="checkbox" [checked]="selectedAll" [(ngModel)]="selectedAll"
-                                (change)="selectAll($event.target.checked);" />
-                        </label>
-                    </th>
-                </tr>
-            </thead>
-        </table>
+  <match-detail></match-detail>
+  <div (click)="refresh()" class="icon-refresh">
+  </div>
+  <div class="filter-selection">
+    <table class="table-calculation">
+      <thead>
+        <tr>
+          <th class="selection-name">
+            <div>Selection</div>
+            <div>
+              <new-multiple-select [multipleSelect]="selectionSelect"
+              (formValue)="changeSelection($event)"></new-multiple-select>
+            </div>
+          </th>
+          <th class="result">
+            Ticket Status
+            <div>
+              <new-multiple-select [multipleSelect]="ticketStatusSelect"
+              (formValue)="changeTicketStatus($event)"></new-multiple-select>
+            </div>
+          </th>
+          <th class="result">
+            Result
+          </th>
+          <th class="result-status">
+            Result Status
+            <div>
+              <new-multiple-select [multipleSelect]="resultStatusSelect"
+              (formValue)="changeResultStatus($event)"></new-multiple-select>
+            </div>
+          </th>
+          <th class="select-proceed">
+            <label>
+              Select to Proceed
+              <input type="checkbox" [checked]="selectedAll" [(ngModel)]="selectedAll"
+                (change)="selectAll($event.target.checked);" />
+              </label>
+            </th>
+          </tr>
+        </thead>
+      </table>
 
-        <div class="table-scroll">
-            <table>
-                <colgroup>
-                    <col />
-                    <col class="result" />
-                    <col class="result" />
-                    <col class="result-status" />
-                    <col class="selected" />
-                </colgroup>
-                <tbody>
-                    <ng-template ngFor let-group [ngForOf]="groupSelections | selectionFilter:selectedSelection">
-                        <tr class="group-selecion">
-                            <td colspan="4" (click)="onCollapsedClick(group)">
-                                <span>{{group.collapsed?"+ ":"- "}}</span>
-                                <span>{{correctGroupSelectionName(group.name)}}</span>
-                            </td>
-                            <td class="group-check-box">
-                                <input type="checkbox" [(ngModel)]="group.checked" (change)="onChangeGroup(group)"
-                                    [disabled]="group.collapsed" />
-                            </td>
-                        </tr>
-
-                        <tr *ngFor="let item of group.selections
-                            | resultStatusFilter:selectedResultStatus
-                            | ticketStatusFilter:selectedTicketStatus"
-                            [hidden]="group.collapsed"
-                            [ngClass]="{'different-result': item.isDifferentResult}">
-                            <td class="align-left">{{correctSelectionName(item.selectionName)}}</td>
-                            <td [ngClass]="{ 'calculated': item.ticketStatus == 'Calculated', 'align-center': 1 }">
-                                {{item.ticketStatus}}
-                            </td>
-                            <td class="align-center">
-                                <select [(ngModel)]="item.result" [ngClass]="{'warning':item.isResultWarning }"
-                                        [disabled]="!item.checked">
-                                    <option></option>
-                                    <option value="Lose">Lose</option>
-                                    <option value="Won">Won</option>
-                                    <option value="Refund">Refund</option>
-                                </select>
-                            </td>
-                            <td [ngClass]="{'calculated': isCompleted(item.resultStatusId), 'align-center':1}">
-                                {{getResultStatus(item.resultStatusId)}}
-                            </td>
-                            <td>
-                                <input type="checkbox" [(ngModel)]="item.checked"
-                                    (change)="onChangeSelection(item, group);" />
-                            </td>
-                        </tr>
-                    </ng-template>
-                </tbody>
-            </table>
+      <div class="table-scroll">
+        <table>
+          <colgroup>
+          <col />
+          <col class="result" />
+          <col class="result" />
+          <col class="result-status" />
+          <col class="selected" />
+        </colgroup>
+        <tbody>
+          @for (group of groupSelections | selectionFilter:selectedSelection; track group) {
+            <tr class="group-selecion">
+              <td colspan="4" (click)="onCollapsedClick(group)">
+                <span>{{group.collapsed?"+ ":"- "}}</span>
+                <span>{{correctGroupSelectionName(group.name)}}</span>
+              </td>
+              <td class="group-check-box">
+                <input type="checkbox" [(ngModel)]="group.checked" (change)="onChangeGroup(group)"
+                  [disabled]="group.collapsed" />
+                </td>
+              </tr>
+              @for (item of group.selections
+                | resultStatusFilter:selectedResultStatus
+                | ticketStatusFilter:selectedTicketStatus; track item) {
+                <tr
+                  [hidden]="group.collapsed"
+                  [ngClass]="{'different-result': item.isDifferentResult}">
+                  <td class="align-left">{{correctSelectionName(item.selectionName)}}</td>
+                  <td [ngClass]="{ 'calculated': item.ticketStatus == 'Calculated', 'align-center': 1 }">
+                    {{item.ticketStatus}}
+                  </td>
+                  <td class="align-center">
+                    <select [(ngModel)]="item.result" [ngClass]="{'warning':item.isResultWarning }"
+                      [disabled]="!item.checked">
+                      <option></option>
+                      <option value="Lose">Lose</option>
+                      <option value="Won">Won</option>
+                      <option value="Refund">Refund</option>
+                    </select>
+                  </td>
+                  <td [ngClass]="{'calculated': isCompleted(item.resultStatusId), 'align-center':1}">
+                    {{getResultStatus(item.resultStatusId)}}
+                  </td>
+                  <td>
+                    <input type="checkbox" [(ngModel)]="item.checked"
+                      (change)="onChangeSelection(item, group);" />
+                    </td>
+                  </tr>
+                }
+              }
+            </tbody>
+          </table>
         </div>
 
-        <div class="empty-data" *ngIf="groupSelections.length === 0">
+        @if (groupSelections.length === 0) {
+          <div class="empty-data">
             There is no information available
-        </div>
+          </div>
+        }
 
-        <div class="footer" *ngIf="groupSelections.length !== 0 && canCalculate">
+        @if (groupSelections.length !== 0 && canCalculate) {
+          <div class="footer">
             <button [ngClass]="{'button': true, 'button-disabled': isDisabledCalculate}" (click)="calculate()"
-                    [disabled]="isDisabledCalculate">
-                Calculate
+              [disabled]="isDisabledCalculate">
+              Calculate
             </button>
             <button [ngClass]="{'button': true, 'button-disabled': isDisabledUnCalculate}" (click)="unCalculate()"
-                    [disabled]="isDisabledUnCalculate">
-                Uncalculate
+              [disabled]="isDisabledUnCalculate">
+              Uncalculate
             </button>
+          </div>
+        }
+      </div>
+      @if (errorMessage) {
+        <div class="message-box">
+          <div class="icon error"></div>
+          <div class="message-info error">{{errorMessage}}</div>
         </div>
+      }
     </div>
-    <div class="message-box" *ngIf="errorMessage">
-        <div class="icon error"></div>
-        <div class="message-info error">{{errorMessage}}</div>
-    </div>
-</div>

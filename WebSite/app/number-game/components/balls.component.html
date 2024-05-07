@@ -1,5 +1,7 @@
 <ul>
-    <li *ngFor="let ball of balls">
-        <div [ngClass]="['lotto-ball', getColorBall(ball)]">{{ball}}</div>
+  @for (ball of balls; track ball) {
+    <li>
+      <div [ngClass]="['lotto-ball', getColorBall(ball)]">{{ball}}</div>
     </li>
+  }
 </ul>

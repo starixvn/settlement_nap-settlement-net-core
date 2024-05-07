@@ -9,12 +9,14 @@ import {
     ReCheckInService,
     DialogBoxService
 } from '../../shared/services';
+import { DatePipe } from '@angular/common';
 import { QueryService, PopupService } from '../services';
 import { ISubscription } from 'rxjs-compat/Subscription';
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
     providers: [
+        DatePipe,
         BlockUIService,
         HttpRequestService,
         MessageBoxService,

@@ -1,42 +1,46 @@
 ﻿<div cdkDrag cdkDragRootElement=".cdk-overlay-pane" >
-    <h1 mat-dialog-title  cdkDragHandle>Recalculate Happy 5
-        <button type="button" class="close" (click)="closePopup()">X</button>
-    </h1>
+  <h1 mat-dialog-title  cdkDragHandle>Recalculate Happy 5
+    <button type="button" class="close" (click)="closePopup()">X</button>
+  </h1>
 </div>
 <span toastContainer></span>
-<div *ngIf="match">
+@if (match) {
+  <div>
     <div class="calculate-league">
-        <div class="icon">
-        </div>
-        {{match.eventName}} - {{match.kickOffTime | date : 'mediumDate' }}
+      <div class="icon">
+      </div>
+      {{match.eventName}} - {{match.kickOffTime | date : 'mediumDate' }}
     </div>
     <div class="recal">
-        <table>
-            <thead>
-                <tr>
-                    <td>
-                        Sequence
-                    </td>
-                    <td>
-                        Result
-                    </td>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let ball of balls">
-                    <td>{{ball.seq}}</td>
-                    <td>
-                        <input maxlength="2" myOnlyInteger type="text"
-                               [(ngModel)]="ball.numberBall" [ngClass]="{'error':isWarningOnBall(ball.numberBall)}">
-                    </td>
-                </tr>
-                <tr>
-                    <td> </td>
-                    <td>
-                        <button class="button" (click)="reCalculate()">Re-Calculate</button>
-                    </td>
-                </tr>
-            </tbody>
+      <table>
+        <thead>
+          <tr>
+            <td>
+              Sequence
+            </td>
+            <td>
+              Result
+            </td>
+          </tr>
+        </thead>
+        <tbody>
+          @for (ball of balls; track ball) {
+            <tr>
+              <td>{{ball.seq}}</td>
+              <td>
+                <input maxlength="2" myOnlyInteger type="text"
+                  [(ngModel)]="ball.numberBall" [ngClass]="{'error':isWarningOnBall(ball.numberBall)}">
+                </td>
+              </tr>
+            }
+            <tr>
+              <td> </td>
+              <td>
+                <button class="button" (click)="reCalculate()">Re-Calculate</button>
+              </td>
+            </tr>
+          </tbody>
         </table>
+      </div>
     </div>
-</div>
+  }

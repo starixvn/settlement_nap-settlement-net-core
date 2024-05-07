@@ -67,7 +67,7 @@ export class LeagueComponent extends LeagueBaseComponent implements OnInit, OnCh
     return _.includes(ResultType.autoSettleSupported, sportType);
   }
 
-  public getLog(matchId: number) {
+  public getLog(matchId: string) {
     this.moveTicketsService.popupLog(matchId, this.request.fromDate, this.request.toDate);
   }
 

@@ -1,6 +1,6 @@
 import { Match } from './../../../tennis/models/match.model';
 import { FilterAutoQuery } from './../../models/filter-auto-query.model';
-import { Statuses } from './../../Constants/status.native';
+import { Statuses } from '../../constants/status.native';
 import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 
 import { AutoCalculateFilterComponent } from './auto-calculate-filter.component';
