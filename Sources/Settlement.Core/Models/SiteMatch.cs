@@ -41,4 +41,8 @@ public class SiteMatch
     public List<ChildMatchTicketInfos> SiteChildMatches { get; set; }
 
     public List<TicketCounts> TicketCounts { get; set; }
+
+    public string SuspenderHalftime { get; set; }
+    public string SuspenderFulltime { get; set; }
+    public int MatchId { get; set; }
 }

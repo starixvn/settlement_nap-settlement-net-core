@@ -119,6 +119,18 @@ public class MultiSportServiceImp(
         return baseMatches;
     }
 
+    private async Task GetOSTicketInfo() 
+    { 
+        
+    }
+
+    private async Task<List<Match>> GetMatches(MultipleSiteCriteria criteria)
+    {
+        var matches = await repository.FetchAsync<Match>(criteria);
+
+        return matches.ToList();
+    }
+
     private async Task<IEnumerable<Match>> FetchMatches(string server, MultipleSiteCriteria criteria)
     {
         criteria.DbServer = server;
@@ -212,8 +224,13 @@ public class MultiSportServiceImp(
     private async Task<MultiSportResult> FetchMatchesAndResultDetails(FilterMultiSportRequest request)
     {
         var criteria = mapper.Map<FilterMultiSportRequest, SportsbookCriteria>(request);
+
         var matches = await GetMatchesAllSites(criteria);
+
+        var matcheXXs = await GetMatches(criteria);
+
         var resultDetails = await ResultDetailByMatchIds(matches);
+
         matches = await matchService.SetNewMatchInfo(matches, resultDetails);
 
         return new MultiSportResult
