@@ -9,15 +9,15 @@ public interface EventStatusService
 
 public class EventStatusServiceImp : EventStatusService
 {
-    private readonly List<string> eventStatusReasonTitles = new()
-    {
+    private readonly List<string> eventStatusReasonTitles =
+    [
         EventStatus.IrregularTime1H,
         EventStatus.IrregularTime,
         EventStatus.WrongTeamName,
         EventStatus.Suspended
-    };
+    ];
 
-    private readonly List<int> eventStatusReasons = new() { 1, 2, 3, 4 };
+    private readonly List<int> eventStatusReasons = [1, 2, 3, 4];
 
     public string CheckProcessingStatus(string eventStatus, BaseMatch match)
     {

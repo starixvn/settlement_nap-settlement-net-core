@@ -13,20 +13,11 @@ public interface SendMailService
     void SendMail(NotificationModel item);
 }
 
-public class SendMailServiceImp : SendMailService
+public class SendMailServiceImp(
+    IConfiguration configuration,
+    IWebHostEnvironment environment)
+    : SendMailService
 {
-    private readonly IWebHostEnvironment environment;
-
-    private readonly IConfiguration configuration;
-
-    public SendMailServiceImp(
-        IConfiguration configuration,
-        IWebHostEnvironment environment)
-    {
-        this.configuration = configuration;
-        this.environment = environment;
-    }
-
     public void SendMail(NotificationModel item)
     {
         var mailRecord = new MailRecord

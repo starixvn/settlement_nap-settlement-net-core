@@ -21,28 +21,13 @@ public interface OutsideSourceSettingService
     Task<Result> UpdateLeagueOutsideSource(UpdateLeagueOutsideSourceRequest query);
 }
 
-public class OutsideSourceSettingServiceImp : OutsideSourceSettingService
+public class OutsideSourceSettingServiceImp(
+    IDynamicRepository repository,
+    XmlConvertService xmlConvertService,
+    IRefDataService refDataService,
+    IMapper mapper)
+    : OutsideSourceSettingService
 {
-    private readonly IDynamicRepository repository;
-
-    private readonly XmlConvertService xmlConvertService;
-
-    private readonly IRefDataService refDataService;
-
-    private readonly IMapper mapper;
-
-    public OutsideSourceSettingServiceImp(
-        IDynamicRepository repository,
-        XmlConvertService xmlConvertService,
-        IRefDataService refDataService,
-        IMapper mapper)
-    {
-        this.repository = repository;
-        this.xmlConvertService = xmlConvertService;
-        this.refDataService = refDataService;
-        this.mapper = mapper;
-    }
-
     public async Task<List<OutsideSourceModel>> GetOutsideSource(GetOutsideSourceRequest query)
     {
         var criteria = mapper.Map<GetOutsideSourceRequest, GetOutsideSourceCriteria>(query);
@@ -62,26 +47,20 @@ public class OutsideSourceSettingServiceImp : OutsideSourceSettingService
                       }).ToList();
     }
 
-    private List<GameModel> GroupGames(IEnumerable<QueryResultModel> games)
+    private static List<GameModel> GroupGames(IEnumerable<QueryResultModel> games)
     {
-        var result = new List<GameModel>();
-        foreach (var game in games)
-        {
-            result.Add(new GameModel { GameType = game.GameType, IsActive = game.IsActive });
-        }
-
-        return result;
+        return games.Select(game => new GameModel { GameType = game.GameType, IsActive = game.IsActive }).ToList();
     }
 
     public async Task<LeagueOutsideSourceModel> GetLeagueOutsideSource(GetLeagueOutsideSourceRequest query)
     {
         var criteria = mapper.Map<GetLeagueOutsideSourceRequest, GetLeagueOutsideSourceCriteria>(query);
-        var data = await repository.FetchMultipleAsync<LeagueOutSideSourceResourceItem, LeagueOutSideSourceResourceItem>(criteria);
+        var (FirstResultSet, SecondResultSet) = await repository.FetchMultipleAsync<LeagueOutSideSourceResourceItem, LeagueOutSideSourceResourceItem>(criteria);
 
         return new LeagueOutsideSourceModel
         {
-            OutsideSourceList = data.Item1.OrderBy(item => item.PGid).ToList(),
-            OutsideSourceSort = data.Item2.ToList()
+            OutsideSourceList = FirstResultSet.OrderBy(item => item.PGid).ToList(),
+            OutsideSourceSort = SecondResultSet.ToList()
         };
     }
 

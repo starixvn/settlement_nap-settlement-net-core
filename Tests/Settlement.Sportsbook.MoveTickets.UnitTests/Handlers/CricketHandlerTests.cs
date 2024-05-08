@@ -15,8 +15,6 @@ public class CricketHandlerTests
 
     private readonly MoveTicketService moveTicketService;
 
-    private readonly PermissionService permissionService;
-
     private readonly CricketHandler handler;
 
     public CricketHandlerTests()
@@ -29,7 +27,7 @@ public class CricketHandlerTests
         var cacheService = Substitute.For<ICacheService>();
         napSession.UserId = 1;
         cacheService.GetOrSet(Arg.Any<string>(), Arg.Any<Func<Permission>>(), Arg.Any<CacheItemOptions>()).Returns(new Permission());
-        permissionService = Substitute.For<PermissionService>(napSession, null, cacheService, null);
+        var permissionService = Substitute.For<PermissionService>(napSession, null, cacheService, null);
         handler = new CricketHandler(moveTicketService, permissionService, moveActionService);
     }
 
@@ -37,7 +35,6 @@ public class CricketHandlerTests
     public async Task HandleGetMatchRequest_Always_ReturnCorrectResult()
     {
         var listSport = new List<SportModel>();
-        var permission = new Permission();
         moveTicketService.GetSportBook(Arg.Any<GetMatchRequest>()).Returns(listSport);
 
         var actual = await handler.Handle(new GetMatchRequest(), new CancellationToken());

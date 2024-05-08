@@ -5,7 +5,7 @@ using Xunit;
 
 namespace Settlement.Core.UnitTests.Services;
 
-public class ScoreSetServiceTests()
+public class ScoreSetServiceTests
 {
     private readonly IScoreSetService service = new ScoreSetServiceImp();
 

@@ -17,32 +17,14 @@ public interface NotificationService
     Task<ShowNotificationModel> ShowTopNotifications(int top);
 }
 
-public class NotificationServiceImp : NotificationService
+public class NotificationServiceImp(
+    IDynamicRepository repository,
+    IOptions<AppSettingsKey> appSettingsKey,
+    IRefDataService refDataService,
+    INapSession currentSession,
+    SendMailService sendMailService)
+    : NotificationService
 {
-    private readonly IDynamicRepository repository;
-
-    private readonly IRefDataService refDataService;
-
-    private readonly INapSession currentSession;
-
-    private readonly SendMailService sendMailService;
-
-    private readonly AppSettingsKey appSettingsKey;
-
-    public NotificationServiceImp(
-        IDynamicRepository repository,
-        IOptions<AppSettingsKey> appSettingsKey,
-        IRefDataService refDataService,
-        INapSession currentSession,
-        SendMailService sendMailService)
-    {
-        this.repository = repository;
-        this.appSettingsKey = appSettingsKey.Value;
-        this.refDataService = refDataService;
-        this.currentSession = currentSession;
-        this.sendMailService = sendMailService;
-    }
-
     public async Task<bool> IsNotificationsBetBuilder()
     {
         return await repository.GetAsync<bool>(new NotificationBetBuilderCriteria());
@@ -57,7 +39,7 @@ public class NotificationServiceImp : NotificationService
             AdminId = currentSession.UserId
         };
 
-        foreach (var server in appSettingsKey.SiteDbServer)
+        foreach (var server in appSettingsKey.Value.SiteDbServer)
         {
             criteria.DbServer = server;
             var list = (await repository.FetchAsync<NotificationModel>(criteria)).ToList();
@@ -92,7 +74,7 @@ public class NotificationServiceImp : NotificationService
             AdminId = currentSession.UserId
         };
 
-        foreach (var server in appSettingsKey.SiteDbServer)
+        foreach (var server in appSettingsKey.Value.SiteDbServer)
         {
             criteria.DbServer = server;
             var result = await repository.FetchMultipleAsync<int, NotificationModel>(criteria);

@@ -14,21 +14,12 @@ public interface ProviderSettingService
     Task<Result> UpdateProvider(UpdateProviderRequest query);
 }
 
-public class ProviderSettingServiceImp : ProviderSettingService
+public class ProviderSettingServiceImp(
+    IDynamicRepository repository,
+    XmlConvertService xmlConvertService,
+    IMapper mapper)
+    : ProviderSettingService
 {
-    private readonly IDynamicRepository repository;
-
-    private readonly XmlConvertService xmlConvertService;
-
-    private readonly IMapper mapper;
-
-    public ProviderSettingServiceImp(IDynamicRepository repository, XmlConvertService xmlConvertService, IMapper mapper)
-    {
-        this.repository = repository;
-        this.xmlConvertService = xmlConvertService;
-        this.mapper = mapper;
-    }
-
     public async Task<List<ProviderModel>> GetProvider(GetProviderRequest query)
     {
         var criteria = mapper.Map<GetProviderRequest, GetProviderCriteria>(query);

@@ -6,7 +6,6 @@ using Settlement.Core.Services;
 using Settlement.Sportsbook.Aio.Constants;
 using Settlement.Sportsbook.Aio.Criteria;
 using Settlement.Sportsbook.Aio.Criteria.Basketball;
-using Settlement.Sportsbook.Aio.Criteria.Cricket;
 using Settlement.Sportsbook.Aio.MapperFactory;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Requests;
@@ -35,40 +34,16 @@ public interface IAioService
     Task<bool> ResultSetting(ResultSettingRequest request);
 }
 
-public class AioServiceImp : IAioService
+public class AioServiceImp(
+    IDynamicRepository repository,
+    IRefDataService refDataService,
+    IMapperFactory mapperFactory,
+    IValidateApiKeyService validateApiKeyService,
+    ICreateQueryService createQueryService,
+    MultipleServerAioService multipleServerAioService,
+    BasketballEventStatusService basketballEventStatusService)
+    : IAioService
 {
-    private readonly IDynamicRepository repository;
-
-    private readonly IRefDataService refDataService;
-
-    private readonly ICreateQueryService createQueryService;
-
-    private readonly IMapperFactory mapperFactory;
-
-    private readonly IValidateApiKeyService validateApiKeyService;
-
-    private readonly MultipleServerAioService multipleServerAioService;
-
-    private readonly BasketballEventStatusService basketballEventStatusService;
-
-    public AioServiceImp(
-        IDynamicRepository repository,
-        IRefDataService refDataService,
-        IMapperFactory mapperFactory,
-        IValidateApiKeyService validateApiKeyService,
-        ICreateQueryService createQueryService,
-        MultipleServerAioService multipleServerAioService,
-        BasketballEventStatusService basketballEventStatusService)
-    {
-        this.repository = repository;
-        this.refDataService = refDataService;
-        this.mapperFactory = mapperFactory;
-        this.validateApiKeyService = validateApiKeyService;
-        this.createQueryService = createQueryService;
-        this.multipleServerAioService = multipleServerAioService;
-        this.basketballEventStatusService = basketballEventStatusService;
-    }
-
     public async Task<AioMatch> GetMatch(GetMatchRequest request)
     {
         var apiKey = validateApiKeyService.GetApiKey(request.ApiKey);
@@ -376,11 +351,14 @@ public class AioServiceImp : IAioService
         return await multipleServerAioService.SettleChildMatch(request);
     }
 
-    public async Task<List<ResultDetail>> SetInterval(Models.MatchDetail matchDetail, List<ResultDetail> resultDetails)
+    private async Task<List<ResultDetail>> SetInterval(Models.MatchDetail matchDetail, List<ResultDetail> resultDetails)
     {
         var setViewed = matchDetail.GameSession == GamePlay.Three ? GamePlay.Three : GamePlay.Five;
 
-        if (matchDetail.SportType != SportType.Tennis) return resultDetails;
+        if (matchDetail.SportType != SportType.Tennis)
+        {
+            return resultDetails;
+        }
 
         var finalResult = resultDetails.First(r => r.ResourceId == ResourceType.Final);
         var setResults = resultDetails.Where(x => x.ResourceId != ResourceType.Final).ToList();

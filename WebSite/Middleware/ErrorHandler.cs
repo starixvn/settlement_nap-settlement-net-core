@@ -1,6 +1,4 @@
-﻿using System.Text;
-using Azure.Core;
-using Fanex.Logging.Extensions;
+﻿using Fanex.Logging.Extensions;
 using Fanex.Logging.Extensions.Database;
 using Microsoft.AspNetCore.Http.Extensions;
 using ONEbook.UM.Services;

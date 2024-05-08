@@ -14,8 +14,6 @@ public class FastMarketHandlerTests
 {
     private readonly IMatchDetailService matchDetailService;
 
-    private readonly PermissionService permissionService;
-
     private readonly IFastMarketService fastMarketService;
 
     private readonly FastMarketHandler handler;
@@ -28,7 +26,7 @@ public class FastMarketHandlerTests
         var cacheService = Substitute.For<ICacheService>();
         napSession.UserId = 1;
         cacheService.GetOrSet(Arg.Any<string>(), Arg.Any<Func<Permission>>(), Arg.Any<CacheItemOptions>()).Returns(new Permission());
-        permissionService = Substitute.For<PermissionService>(napSession, null, cacheService, null);
+        var permissionService = Substitute.For<PermissionService>(napSession, null, cacheService, null);
         matchDetailService = Substitute.For<IMatchDetailService>();
         fastMarketService = Substitute.For<IFastMarketService>();
         settingService = Substitute.For<ISettingService>();

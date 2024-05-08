@@ -32,7 +32,6 @@ public class MultipleServerAioServiceTests
     private readonly LogService logService;
 
     private readonly MultipleServerAioService service;
-    private readonly ResultAmendmentService resultAmendmentService;
 
     public MultipleServerAioServiceTests()
     {
@@ -48,7 +47,7 @@ public class MultipleServerAioServiceTests
         createQueryService = Substitute.For<ICreateQueryService>();
         mergeDataService = Substitute.For<MergeDataService>();
         logService = Substitute.For<LogService>();
-        resultAmendmentService = Substitute.For<ResultAmendmentService>();
+        var resultAmendmentService = Substitute.For<ResultAmendmentService>();
 
         service = new MultipleServerAioServiceImp(repository, option, scaleOutSettleService, createQueryService, mergeDataService, logService, mapper, resultAmendmentService);
     }
