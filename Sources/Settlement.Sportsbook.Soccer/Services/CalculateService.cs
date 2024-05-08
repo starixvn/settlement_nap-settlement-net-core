@@ -21,39 +21,17 @@ public interface ICalculateService
     Task<Result> CheckStatus(CheckStatusRequest request);
 }
 
-public class CalculateServiceImp : ICalculateService
+public class CalculateServiceImp(
+    IMapper mapper,
+    IDynamicRepository repository,
+    IOptions<AppSettingsKey> appSettingsKey,
+    ICreateCriteriaService createCriteriaService,
+    ScaleOutSettleService scaleOutSettleService,
+    LogService logService,
+    IMatchService matchService)
+    : ICalculateService
 {
-    private readonly IDynamicRepository repository;
-
-    private readonly IMapper mapper;
-
-    private readonly AppSettingsKey appSettingsKey;
-
-    private readonly ICreateCriteriaService createCriteriaService;
-
-    private readonly ScaleOutSettleService scaleOutSettleService;
-
-    private readonly LogService logService;
-
-    private readonly IMatchService matchService;
-
-    public CalculateServiceImp(
-        IMapper mapper,
-        IDynamicRepository repository,
-        IOptions<AppSettingsKey> appSettingsKey,
-        ICreateCriteriaService createCriteriaService,
-        ScaleOutSettleService scaleOutSettleService,
-        LogService logService,
-        IMatchService matchService)
-    {
-        this.repository = repository;
-        this.appSettingsKey = appSettingsKey.Value;
-        this.mapper = mapper;
-        this.createCriteriaService = createCriteriaService;
-        this.scaleOutSettleService = scaleOutSettleService;
-        this.logService = logService;
-        this.matchService = matchService;
-    }
+    private readonly AppSettingsKey appSettingsKey = appSettingsKey.Value;
 
     public async Task<Result> Calculate(SettleRequest request)
     {
@@ -153,7 +131,10 @@ public class CalculateServiceImp : ICalculateService
 
     private async Task<Result> ValidateFantasyMatch(SettleRequest request)
     {
-        if (!request.isFantasyMatch) return new Result();
+        if (!request.isFantasyMatch)
+        {
+            return new Result();
+        }
 
         var fantasyMatch = await matchService.GetRelatedMatches(request.MatchId);
         var relatedMatches = fantasyMatch.RelatedMatches;
@@ -172,15 +153,15 @@ public class CalculateServiceImp : ICalculateService
         return new Result();
     }
 
-    private bool IsFirstHalfRelatedMatchesNotCalc(string action, List<FantasyRelatedMatch> relatedMatches)
+    private static bool IsFirstHalfRelatedMatchesNotCalc(string action, List<FantasyRelatedMatch> relatedMatches)
         => action.Equals(ActionName.CalculateHalfTime, StringComparison.Ordinal)
             && relatedMatches.Any(x => x.HtSettlementStatusId != SettlementStatus.Completed);
 
-    private bool IsFulltimeRelatedMatchesNotCalc(string action, List<FantasyRelatedMatch> relatedMatches)
+    private static bool IsFulltimeRelatedMatchesNotCalc(string action, List<FantasyRelatedMatch> relatedMatches)
         => action.Equals(ActionName.CalculateFullTime, StringComparison.Ordinal)
             && relatedMatches.Any(x => x.FtSettlementStatusId != SettlementStatus.Completed);
 
-    private bool IsAllRelatedMatchesNotCalc(string action, List<FantasyRelatedMatch> relatedMatches)
+    private static bool IsAllRelatedMatchesNotCalc(string action, List<FantasyRelatedMatch> relatedMatches)
         => action.Equals(ActionName.CalculateAll, StringComparison.Ordinal)
             && (IsFirstHalfRelatedMatchesNotCalc(ActionName.CalculateHalfTime, relatedMatches)
                 || IsFulltimeRelatedMatchesNotCalc(ActionName.CalculateFullTime, relatedMatches));
@@ -205,7 +186,7 @@ public class CalculateServiceImp : ICalculateService
         await logService.WriteLog(match.MatchId, messageLog);
     }
 
-    private Match CreatedMatch(CalculateCriteria criteria)
+    private static Match CreatedMatch(CalculateCriteria criteria)
     {
         return new Match
         {
@@ -219,7 +200,7 @@ public class CalculateServiceImp : ICalculateService
         };
     }
 
-    private Match CreatedMatch(CalculateCriteria criteria, IEnumerable<ResultDetail> resultDetails)
+    private static Match CreatedMatch(CalculateCriteria criteria, IEnumerable<ResultDetail> resultDetails)
     {
         var resultHalfTime = resultDetails?.FirstOrDefault(result => result.ResourceId == ResourceType.Halftime) ?? new ResultDetail();
         return new Match

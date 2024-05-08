@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using AutoMapper;
+﻿using AutoMapper;
 using Fanex.Data.Repository;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
@@ -21,26 +20,13 @@ public interface ProviderLogService
     Task<MatchDetail> GetMatchDetail(int matchId);
 }
 
-public class ProviderLogServiceImp : ProviderLogService
+public class ProviderLogServiceImp(
+    IDynamicRepository repository,
+    IMapper mapper,
+    IRefDataService refDataService)
+    : ProviderLogService
 {
-    private readonly IMapper mapper;
-
-    private readonly IRefDataService refDataService;
-
-    private readonly IDynamicRepository repository;
-
-    private readonly IResourceNameService resourceNameService;
-
-    public ProviderLogServiceImp(
-        IDynamicRepository repository,
-        IMapper mapper,
-        IRefDataService refDataService)
-    {
-        this.repository = repository;
-        this.mapper = mapper;
-        this.refDataService = refDataService;
-        resourceNameService = new ResourceNameService(new MapperFactoryBase());
-    }
+    private readonly IResourceNameService resourceNameService = new ResourceNameService(new MapperFactoryBase());
 
     public async Task<MatchDetail> GetMatchDetail(int matchId)
     {
@@ -112,8 +98,9 @@ public class ProviderLogServiceImp : ProviderLogService
 
         var result = await repository.FetchAsync<ResultLog>(criteria);
 
-        result.ToList().ForEach(log => { log.Action = "confirmed"; });
+        var resultLogs = result.ToList();
+        resultLogs.ForEach(log => { log.Action = "confirmed"; });
 
-        return result.ToList();
+        return resultLogs;
     }
 }
