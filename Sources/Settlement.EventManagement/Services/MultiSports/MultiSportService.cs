@@ -3,6 +3,7 @@
 namespace Settlement.EventManagement.Services.MultiSports;
 
 using Criteria;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.Caching.Memory;
 using Requests;
 using Settlement.Core.Criteria;
@@ -119,16 +120,24 @@ public class MultiSportServiceImp(
         return baseMatches;
     }
 
-    private async Task GetOSTicketInfo() 
-    { 
-        
+    private async Task GetOSTicketInfo(List<Match> matches)
+    {
+        var matchInfo = matches.Select(x => new MatchRequest
+        {
+            MatchId = x.MatchId,
+            ChildMatchType = x.ChildMatchType,
+            EventStatus = x.EventStatus,
+            SportType = x.SportType,
+            ConfirmFT = x.ConfirmFT,
+            ConfirmHT = x.ConfirmHT,
+        });
     }
 
-    private async Task<List<Match>> GetMatches(MultipleSiteCriteria criteria)
+    private async Task<IEnumerable<Match>, IEnumerable<MatchOverStatus>> GetMatches(MultipleSiteCriteria criteria)
     {
-        var matches = await repository.FetchAsync<Match>(criteria);
+        var result = await repository.FetchMultipleAsync<Match, MatchOverStatus>(criteria);
 
-        return matches.ToList();
+        return (result.FirstResultSet, result.SecondResultSet);
     }
 
     private async Task<IEnumerable<Match>> FetchMatches(string server, MultipleSiteCriteria criteria)
