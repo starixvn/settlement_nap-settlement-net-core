@@ -133,29 +133,34 @@ public class CalculateServiceImp(
         {
             return new Result();
         }
-            var fantasyMatch = await matchService.GetRelatedMatches(request.MatchId);
-            var relatedMatches = fantasyMatch.RelatedMatches;
 
-            if (IsFirstHalfRelatedMatchesNotCalc(request.ActionName, relatedMatches)
-                || IsFulltimeRelatedMatchesNotCalc(request.ActionName, relatedMatches)
-                || IsAllRelatedMatchesNotCalc(request.ActionName, relatedMatches))
+        var fantasyMatch = await matchService.GetRelatedMatches(request.MatchId);
+        var relatedMatches = fantasyMatch.RelatedMatches;
+
+        if (IsRelatedMatches(request.ActionName, relatedMatches))
+        {
+            return new Result
             {
-                return new Result
-                {
-                    ErrCode = ErrorCode.ParentFantasyNotCalc,
-                    ErrMsg = ErrorMessage.ParentFantasyNotCalc
-                };
-            }
+                ErrCode = ErrorCode.ParentFantasyNotCalc,
+                ErrMsg = ErrorMessage.ParentFantasyNotCalc
+            };
         }
 
         return new Result();
     }
 
-    private static bool IsFirstHalfRelatedMatchesNotCalc(string action, List<FantasyRelatedMatch> relatedMatches)
+    private static bool IsRelatedMatches(string actionName, List<FantasyRelatedMatch> relatedMatches)
+    {
+        return IsFirstHalfRelatedMatchesNotCalc(actionName, relatedMatches)
+               || IsFulltimeRelatedMatchesNotCalc(actionName, relatedMatches)
+               || IsAllRelatedMatchesNotCalc(actionName, relatedMatches);
+    }
+
+    private static bool IsFirstHalfRelatedMatchesNotCalc(string action, IEnumerable<FantasyRelatedMatch> relatedMatches)
         => action.Equals(ActionName.CalculateHalfTime, StringComparison.Ordinal)
             && relatedMatches.Any(x => x.HtSettlementStatusId != SettlementStatus.Completed);
 
-    private static bool IsFulltimeRelatedMatchesNotCalc(string action, List<FantasyRelatedMatch> relatedMatches)
+    private static bool IsFulltimeRelatedMatchesNotCalc(string action, IEnumerable<FantasyRelatedMatch> relatedMatches)
         => action.Equals(ActionName.CalculateFullTime, StringComparison.Ordinal)
             && relatedMatches.Any(x => x.FtSettlementStatusId != SettlementStatus.Completed);
 

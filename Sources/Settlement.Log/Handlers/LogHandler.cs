@@ -5,19 +5,11 @@ using Settlement.Log.Services;
 
 namespace Settlement.Log.Handlers;
 
-public class LogHandler : IRequestHandler<LogRequest, List<LogModel>>
+public class LogHandler(
+    LogService logService,
+    Core.Services.IBalanceUpService balanceUpService)
+    : IRequestHandler<LogRequest, List<LogModel>>
 {
-    private readonly Core.Services.IBalanceUpService balanceUpService;
-    private readonly LogService logService;
-
-    public LogHandler(
-        LogService logService,
-        Core.Services.IBalanceUpService balanceUpService)
-    {
-        this.logService = logService;
-        this.balanceUpService = balanceUpService;
-    }
-
     public async Task<List<LogModel>> Handle(LogRequest request, CancellationToken cancellationToken)
     {
         var balanceUpDay = balanceUpService.GetBalanceUpDay().BalanceUpDay;

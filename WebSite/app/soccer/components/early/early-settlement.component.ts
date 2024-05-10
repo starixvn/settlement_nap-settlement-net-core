@@ -199,18 +199,22 @@ export class EarlySettlementComponent implements Soccer {
             this.push(query);
         });
     }
-    public confirmRefund() {
+    public async confirmRefund() {
         this.toastrService.clear();
-        const resourceIds = _.join(this.selectedResources.map(item => item.resourceId), ',');
         const existResultConfirmed = _.find(this.selectedResources, item => (item.resultSettingData.isConfirmedRefund || item.resultSettingData.isConfirmedRefundSdt));
         if (existResultConfirmed) {
-            this.undoConfirmedResult(this.selectedResources, this.matchId, resourceIds);
+            this.undoConfirmedResult(this.selectedResources, this.matchId);
         } else {
-            this.changeConfirmResultSetting(Language.confirmRefund.confirmRefund, this.matchId, true);
+            const errorMessage = await this.verifyBeforeRefund(this.selectedResources);
+            if (_.isEmpty(errorMessage)) {
+                this.changeConfirmResultSetting(Language.confirmRefund.confirmRefund, this.matchId, true);
+            } else {
+                this.toastrService.error(errorMessage);
+            }
         }
     }
 
-    private undoConfirmedResult(resultDetails: ResultDetail[], matchId: number, resourceIds: string) {
+    private undoConfirmedResult(resultDetails: ResultDetail[], matchId: number) {
         const resultConfirmed = _.filter(resultDetails, item => (item.resultSettingData.isConfirmedRefund || item.resultSettingData.isConfirmedRefundSdt));
         if (resultConfirmed.length === resultDetails.length) {
             this.changeConfirmResultSetting(Language.confirmRefund.undoConfirm, matchId, false);
