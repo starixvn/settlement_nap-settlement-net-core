@@ -23,6 +23,8 @@ public interface SiteMatchService
     bool IsExistsConfirmedEarly(MultiSportMatch match);
 
     int? IsCalculating(int? baseValue, List<int?> siteValues);
+
+    int? IsCalculating(List<int?> siteValues);
 }
 
 public class SiteMatchServiceImp : SiteMatchService
@@ -65,6 +67,31 @@ public class SiteMatchServiceImp : SiteMatchService
         }
 
         if (baseValue == CalculateStatus.IsSuccess && siteValues.TrueForAll(m => m == CalculateStatus.IsSuccess))
+        {
+            return CalculateStatus.IsSuccess;
+        }
+
+        return null;
+    }
+
+    public int? IsCalculating(List<int?> siteValues)
+    {
+        if (siteValues.Exists(m => m == CalculateStatus.IsWaiting))
+        {
+            return CalculateStatus.IsWaiting;
+        }
+
+        if (siteValues.Exists(m => m == CalculateStatus.IsCalculating))
+        {
+            return CalculateStatus.IsCalculating;
+        }
+
+        if (siteValues.Exists(m => m == CalculateStatus.IsFailed))
+        {
+            return CalculateStatus.IsFailed;
+        }
+
+        if (siteValues.TrueForAll(m => m == CalculateStatus.IsSuccess))
         {
             return CalculateStatus.IsSuccess;
         }

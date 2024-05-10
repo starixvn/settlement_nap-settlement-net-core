@@ -56,8 +56,11 @@ public class Match : BaseMatch
     [Key("autoCalcSetting")]
     public AutoCalculationSetting AutoCalcSetting => new(AutoSetting, AutoSettingForLeague, true);
 
-    public bool ConfirmHT { get; set; }
-    public bool ConfirmFT { get; set; }
+    [IgnoreMember]
+    public int ConfirmHT { get; set; }
+
+    [IgnoreMember]
+    public int ConfirmFT { get; set; }
 
     public override bool Equals(object obj)
     {

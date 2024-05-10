@@ -42,7 +42,25 @@ public class SiteMatch
 
     public List<TicketCounts> TicketCounts { get; set; }
 
-    public string SuspenderHalftime { get; set; }
-    public string SuspenderFulltime { get; set; }
+    private const string Dash = "-";
+
+    private string suspenderHalfTime = string.Empty;
+
+    private string suspenderFullTime = string.Empty;
+
+    public string SuspenderHalfTime
+    {
+        get => string.IsNullOrEmpty(suspenderHalfTime) ? Dash : suspenderHalfTime;
+
+        set => suspenderHalfTime = value;
+    }
+
+    public string SuspenderFullTime
+    {
+        get => string.IsNullOrEmpty(suspenderFullTime) ? Dash : suspenderFullTime;
+
+        set => suspenderFullTime = value;
+    }
+
     public int MatchId { get; set; }
 }

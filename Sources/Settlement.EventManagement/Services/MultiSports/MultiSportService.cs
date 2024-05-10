@@ -3,14 +3,18 @@
 namespace Settlement.EventManagement.Services.MultiSports;
 
 using Criteria;
-using Microsoft.AspNetCore.Identity.UI.Services;
+using Fanex.Data.Repository;
 using Microsoft.Extensions.Caching.Memory;
 using Requests;
 using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.EventManagement.Models.MultiSports;
+using System.IO.Pipes;
 using System.Text;
+using System.Text.Json;
 using Match = Models.MultiSports.Match;
+
+using MatchTuple = (List<Models.MultiSports.Match> Matches, List<Models.MultiSports.MatchOverStatus> MatchOverStatuses);
 
 public interface IMultiSportService
 {
@@ -24,6 +28,7 @@ public class MultiSportServiceImp(
     IMatchService matchService,
     IMapper mapper,
     IMemoryCache cacheService,
+    SiteMatchService siteMatchService,
     IOptions<AppSettingsKey> appSettingsKey)
     : IMultiSportService
 {
@@ -120,9 +125,9 @@ public class MultiSportServiceImp(
         return baseMatches;
     }
 
-    private async Task GetOSTicketInfo(List<Match> matches)
+    private async Task<IEnumerable<SiteMatch>> GetOSTicketInfo(MatchTuple matchTuple)
     {
-        var matchInfo = matches.Select(x => new MatchRequest
+        var matchesInfo = matchTuple.Matches.Select(x => new MatchRequest
         {
             MatchId = x.MatchId,
             ChildMatchType = x.ChildMatchType,
@@ -131,13 +136,79 @@ public class MultiSportServiceImp(
             ConfirmFT = x.ConfirmFT,
             ConfirmHT = x.ConfirmHT,
         });
+
+        var matchesOverStatus = matchTuple.MatchOverStatuses;
+
+        var criteria = new OSTicketInfoSelCriteria
+        {
+            MatchInfo = JsonSerializer.Serialize(matchesInfo),
+            MatchOverStatus = JsonSerializer.Serialize(matchesOverStatus)
+        };
+
+        var result = await GetTicketInfoAllDbSites(criteria);
+
+        var list = result.ToList();
+
+        return result;
     }
 
-    private async Task<IEnumerable<Match>, IEnumerable<MatchOverStatus>> GetMatches(MultipleSiteCriteria criteria)
+    private void SetMatchTicketInfo(List<Match> matches, List<SiteMatch> siteMatches)
+    {
+        foreach (var item in matches)
+        {
+            var ticketInfo = siteMatches.Where(x => x.MatchId == item.MatchId).ToList();
+
+            item.SuspenderFullTime = ticketInfo.FirstOrDefault(x => string.IsNullOrEmpty(x.SuspenderFullTime))?.SuspenderFullTime;
+            item.SuspenderHalfTime = ticketInfo.FirstOrDefault(x => string.IsNullOrEmpty(x.SuspenderHalfTime))?.SuspenderHalfTime;
+
+            item.IsExistEarlyBetTypes = ticketInfo.Exists(x => x.IsExistEarlyBetTypes);
+            item.IsRunningEarlyBetTypes = ticketInfo.Exists(x => x.IsRunningEarlyBetTypes);
+            item.IsWaitingEarlyBetTypes = ticketInfo.Exists(x => x.IsWaitingEarlyBetTypes);
+            item.IsExistRunningTicket = ticketInfo.Exists(x => x.IsExistRunningTicket);
+            item.IsExistMarkedTicket = ticketInfo.Exists(x => x.IsExistFastMarket);
+            item.IsExistsConfirmedEarly = ticketInfo.Exists(x => x.IsExistsConfirmedEarly);
+
+            item.IsCalculatingSingle = siteMatchService.IsCalculating(ticketInfo.Select(x => x.IsCalculatingSingle).ToList());
+            item.IsCalculatingMP = siteMatchService.IsCalculating(ticketInfo.Select(x => x.IsCalculatingMP).ToList());
+        }
+    }
+
+    private async Task<IEnumerable<SiteMatch>> GetTicketInfoAllDbSites(OSTicketInfoSelCriteria criteria)
+    {
+        var siteDbServer = appSettingsKey.Value.SiteDbServer;
+        var getTicketInfoTasks = siteDbServer.Select(s => GetTicketInfo(s, criteria));
+
+        var result = await Task.WhenAll(getTicketInfoTasks.ToArray());
+
+        var newResult = result.SelectMany(x => x);
+
+        return newResult;
+    }
+
+    private async Task<IEnumerable<SiteMatch>> GetTicketInfo(string server, OSTicketInfoSelCriteria criteria)
+    {
+        criteria.DbServer = server;
+
+        return await repository.FetchAsync<SiteMatch>(criteria);
+    }
+
+    private async Task<MatchTuple> GetMatches(MultipleSiteCriteria criteria)
     {
         var result = await repository.FetchMultipleAsync<Match, MatchOverStatus>(criteria);
 
-        return (result.FirstResultSet, result.SecondResultSet);
+        return (result.FirstResultSet.ToList(), result.SecondResultSet.ToList());
+    }
+
+    private async Task<List<Match>> GetMatchesAllInfo(SportsbookCriteria criteria)
+    {
+        var matchTuple = await GetMatches(criteria);
+        var siteMatches = (await GetOSTicketInfo(matchTuple)).ToList();
+
+        var matches = matchTuple.Matches.ToList();
+
+        SetMatchTicketInfo(matches, siteMatches);
+
+        return matches;
     }
 
     private async Task<IEnumerable<Match>> FetchMatches(string server, MultipleSiteCriteria criteria)
@@ -234,9 +305,9 @@ public class MultiSportServiceImp(
     {
         var criteria = mapper.Map<FilterMultiSportRequest, SportsbookCriteria>(request);
 
-        var matches = await GetMatchesAllSites(criteria);
+        //var matches = await GetMatchesAllSites(criteria);
 
-        var matcheXXs = await GetMatches(criteria);
+        var matches = await GetMatchesAllInfo(criteria);
 
         var resultDetails = await ResultDetailByMatchIds(matches);
 

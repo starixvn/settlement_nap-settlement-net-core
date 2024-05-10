@@ -36,7 +36,6 @@ public class MatchServiceImp(
             var listSourceByMatchId = listResultDetail.Where(m => m.MatchId == match.MatchId && m.SourceId != SourceType.Normal).ToList();
             var currentResultDetail = listResultDetail.Where(m => m.MatchId == match.MatchId && m.SourceId == SourceType.Normal).ToList();
 
-            newInfoMatchService.TicketInfo(match);
             match.NewEventStatus = newInfoMatchService.NewEventStatus(match, currentResultDetail);
             match.EventStatusColor = newInfoMatchService.EventStatusColor(match);
             match.EarlySettleStatus = newInfoMatchService.EarlySettlementStatus(match);

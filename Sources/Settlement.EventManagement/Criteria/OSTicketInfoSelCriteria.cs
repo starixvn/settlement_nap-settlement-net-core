@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using Fanex.Data;
 
 namespace Settlement.EventManagement.Criteria;
 
@@ -22,10 +23,10 @@ public class MatchRequest
     public string EventStatus { get; set; }
 
     [JsonPropertyName("cfht")]
-    public bool ConfirmHT { get; set; }
+    public int ConfirmHT { get; set; }
 
     [JsonPropertyName("cfft")]
-    public bool ConfirmFT { get; set; }
+    public int ConfirmFT { get; set; }
 }
 
 public class OSTicketInfoSelCriteria : CriteriaBase
@@ -33,7 +34,10 @@ public class OSTicketInfoSelCriteria : CriteriaBase
     public string MatchInfo { get; set; }
     public string MatchOverStatus { get; set; }
 
-    public override string GetSettingKey() => "";
+    [SpParam(Ignored = true)]
+    public string DbServer { get; set; }
+
+    public override string GetSettingKey() => $"NAP_Set_MatchOtherSports_TicketInfoSel_{DbServer}";
 
     public override bool IsValid() => true;
 }
