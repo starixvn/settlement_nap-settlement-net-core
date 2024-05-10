@@ -32,7 +32,7 @@ export class CalculateActionsComponent implements SportTemplate {
   public hedgeMatchDetail: HedgeMatchDetail;
   public applyHedgeMatch: boolean;
   public isReadyMatch: boolean;
-  public isSettleRelated = true;
+  public isSettleRelated = false;
   public readonly totalGamesId = ResourcesIds.totalGames;
   public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage();
   private readonly infoDialog: ModalDialogMessage = new ModalDialogMessage();

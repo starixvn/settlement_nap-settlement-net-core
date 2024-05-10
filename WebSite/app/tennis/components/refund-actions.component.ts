@@ -25,7 +25,7 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
   @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
   @Input() public match: Match;
   public blockUI = true;
-  public isSettleRelated = true;
+  public isSettleRelated = false;
   private readonly infoDialog: ModalDialogMessage = new ModalDialogMessage();
   public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage(Language.confirmationBox);
 
