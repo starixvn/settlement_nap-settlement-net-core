@@ -9,6 +9,7 @@ using Requests;
 using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.EventManagement.Models.MultiSports;
+using System.IO.Pipes;
 using System.Text;
 using System.Text.Json;
 using Match = Models.MultiSports.Match;
@@ -156,6 +157,46 @@ public class MultiSportServiceImp(
     }
 
     private void SetMatchTicketInfo(List<Match> matches, List<SiteMatch> siteMatches)
+    {
+        foreach (var item in matches)
+        {
+            var ticketInfo = siteMatches.Where(x => x.MatchId == item.MatchId).ToList();
+
+            item.SuspenderFullTime = ticketInfo.FirstOrDefault(x => string.IsNullOrEmpty(x.SuspenderFullTime))?.SuspenderFullTime;
+            item.SuspenderHalfTime = ticketInfo.FirstOrDefault(x => string.IsNullOrEmpty(x.SuspenderHalfTime))?.SuspenderHalfTime;
+
+            item.IsExistEarlyBetTypes = ticketInfo.Exists(x => x.IsExistEarlyBetTypes);
+            item.IsRunningEarlyBetTypes = ticketInfo.Exists(x => x.IsRunningEarlyBetTypes);
+            item.IsWaitingEarlyBetTypes = ticketInfo.Exists(x => x.IsWaitingEarlyBetTypes);
+            item.IsExistRunningTicket = ticketInfo.Exists(x => x.IsExistRunningTicket);
+            item.IsExistMarkedTicket = ticketInfo.Exists(x => x.IsExistFastMarket);
+            item.IsExistsConfirmedEarly = ticketInfo.Exists(x => x.IsExistsConfirmedEarly);
+
+            item.IsCalculatingSingle = siteMatchService.IsCalculating(ticketInfo.Select(x => x.IsCalculatingSingle).ToList());
+            item.IsCalculatingMP = siteMatchService.IsCalculating(ticketInfo.Select(x => x.IsCalculatingMP).ToList());
+        }
+    }
+
+    private async Task<IEnumerable<SiteMatch>> GetTicketInfoAllDbSites(OSTicketInfoSelCriteria criteria)
+    {
+        var siteDbServer = appSettingsKey.Value.SiteDbServer;
+        var getTicketInfoTasks = siteDbServer.Select(s => GetTicketInfo(s, criteria));
+
+        var result = await Task.WhenAll(getTicketInfoTasks.ToArray());
+
+        var newResult = result.SelectMany(x => x);
+
+        return newResult;
+    }
+
+    private async Task<IEnumerable<SiteMatch>> GetTicketInfo(string server, OSTicketInfoSelCriteria criteria)
+    {
+        criteria.DbServer = server;
+
+        return await repository.FetchAsync<SiteMatch>(criteria);
+    }
+
+    private async Task<MatchTuple> GetMatches(MultipleSiteCriteria criteria)
     {
         foreach (var item in matches)
         {

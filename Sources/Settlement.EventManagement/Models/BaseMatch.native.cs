@@ -7,11 +7,11 @@ public class BaseMatch
 {
     private string eventStatus = string.Empty;
 
-    private const string Dash = "-";
+    //private const string Dash = "-";
 
-    private string suspenderHalfTime = string.Empty;
+    //private string suspenderHalfTime = string.Empty;
 
-    private string suspenderFullTime = string.Empty;
+    //private string suspenderFullTime = string.Empty;
 
     [IgnoreMember]
     public IRefDataService RefDataService { get; set; }
@@ -155,21 +155,23 @@ public class BaseMatch
     public bool IsNotConsistentExFtScore { get; set; }
 
     [Key("suspenderHalfTime")]
-    public string SuspenderHalfTime
+    public string SuspenderHalfTime { get; set; }
 
-    {
-        get => string.IsNullOrEmpty(suspenderHalfTime) ? Dash : suspenderHalfTime;
 
-        set => suspenderHalfTime = value;
-    }
+    //{
+    //    get => string.IsNullOrEmpty(suspenderHalfTime) ? Dash : suspenderHalfTime;
+
+    //    set => suspenderHalfTime = value;
+    //}
 
     [Key("suspenderFullTime")]
-    public string SuspenderFullTime
-    {
-        get => string.IsNullOrEmpty(suspenderFullTime) ? Dash : suspenderFullTime;
+    public string SuspenderFullTime { get; set; }
 
-        set => suspenderFullTime = value;
-    }
+    //{
+    //    get => string.IsNullOrEmpty(suspenderFullTime) ? Dash : suspenderFullTime;
+
+    //    set => suspenderFullTime = value;
+    //}
 
     [Key("confirmHalfTimeScore")]
     public string ConfirmHalfTimeScore { get; set; }
