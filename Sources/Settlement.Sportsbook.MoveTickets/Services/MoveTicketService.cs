@@ -1,7 +1,10 @@
-﻿using AutoMapper;
+﻿using System.IO;
+using System.Text.Json;
+using AutoMapper;
 using Fanex.Data.Repository;
 using Microsoft.Extensions.Options;
 using Settlement.Core.Constants;
+using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.MoveTickets.Criteria;
@@ -150,7 +153,7 @@ public class MoveTicketServiceImp : MoveTicketService
 
     private async Task<MultiSportResult> FetchMatchesAndResultDetails(SportsbookCriteria criteria)
     {
-        var matches = await MatchesAllSites(criteria);
+        var matches = await GetMatchesAllInfo(criteria);
         var resultDetails = await ResultDetailByMatchIds(matches);
         matchService.SetNewMatchInfo(matches);
         return new MultiSportResult
@@ -160,25 +163,106 @@ public class MoveTicketServiceImp : MoveTicketService
         };
     }
 
-    private async Task<List<Match>> MatchesAllSites(SportsbookCriteria criteria)
-    {
-        var matches = new List<Match>();
-        var isCentralDataBase = true;
-        foreach (var server in appSettingsKey.SiteDbServer)
-        {
-            criteria.DbServer = server;
-            var data = (await repository.FetchAsync<Match>(criteria)).ToList();
+    //private async Task<List<Match>> MatchesAllSites(SportsbookCriteria criteria)
+    //{
+    //    var matches = new List<Match>();
+    //    var isCentralDataBase = true;
+    //    foreach (var server in appSettingsKey.SiteDbServer)
+    //    {
+    //        criteria.DbServer = server;
+    //        var data = (await repository.FetchAsync<Match>(criteria)).ToList();
 
-            if (isCentralDataBase)
-            {
-                matches = data;
-                isCentralDataBase = false;
-            }
-            else
-            {
-                matchService.MergeMatches(matches, data);
-            }
+    //        if (isCentralDataBase)
+    //        {
+    //            matches = data;
+    //            isCentralDataBase = false;
+    //        }
+    //        else
+    //        {
+    //            matchService.MergeMatches(matches, data);
+    //        }
+    //    }
+
+    //    return matches;
+    //}
+
+    private async Task<List<Match>> GetMatches(SportsbookCriteria criteria)
+    {
+        var (matches, _) = await repository.FetchMultipleAsync<Match, object>(criteria);
+
+        return matches.ToList();
+    }
+
+    private async Task<IEnumerable<SiteMatch>> GetTicketInfoAllDbSites(OSTicketInfoSelCriteria criteria)
+    {
+        var siteDbServer = appSettingsKey.SiteDbServer;
+        var getTicketInfoTasks = siteDbServer.Select(s => GetTicketInfo(s, criteria));
+
+        var result = await Task.WhenAll(getTicketInfoTasks.ToArray());
+
+        var newResult = result.SelectMany(x => x);
+
+        return newResult;
+    }
+
+    private async Task<IEnumerable<SiteMatch>> GetTicketInfo(string server, OSTicketInfoSelCriteria criteria)
+    {
+        criteria.DbServer = server;
+
+        return await repository.FetchAsync<SiteMatch>(criteria);
+    }
+
+    private async Task<IEnumerable<SiteMatch>> GetOSTicketInfo(List<Match> matches)
+    {
+        var matchesInfo = matches.Select(x => new MatchRequest
+        {
+            MatchId = x.MatchId,
+            ChildMatchType = x.ChildMatchType,
+            EventStatus = x.EventStatus,
+            SportType = x.SportType,
+            //ConfirmFT = x.ConfirmFT,
+            //ConfirmHT = x.ConfirmHT,
+        });
+
+        var criteria = new OSTicketInfoSelCriteria
+        {
+            MatchInfo = JsonSerializer.Serialize(matchesInfo),
+        };
+
+        var result = await GetTicketInfoAllDbSites(criteria);
+
+        var list = result.ToList();
+
+        return result;
+    }
+
+    private void SetMatchTicketInfo(List<Match> matches, List<SiteMatch> siteMatches)
+    {
+        foreach (var item in matches)
+        {
+            var ticketInfo = siteMatches.Where(x => x.MatchId == item.MatchId).ToList();
+
+            item.SuspenderFullTime = ticketInfo.FirstOrDefault(x => string.IsNullOrEmpty(x.SuspenderFullTime))?.SuspenderFullTime;
+            item.SuspenderHalfTime = ticketInfo.FirstOrDefault(x => string.IsNullOrEmpty(x.SuspenderHalfTime))?.SuspenderHalfTime;
+
+            item.IsExistEarlyBetTypes = ticketInfo.Exists(x => x.IsExistEarlyBetTypes);
+            item.IsRunningEarlyBetTypes = ticketInfo.Exists(x => x.IsRunningEarlyBetTypes);
+            item.IsWaitingEarlyBetTypes = ticketInfo.Exists(x => x.IsWaitingEarlyBetTypes);
+            item.IsExistRunningTicket = ticketInfo.Exists(x => x.IsExistRunningTicket);
+            item.IsExistMarkedTicket = ticketInfo.Exists(x => x.IsExistFastMarket);
+            //item.IsExistsConfirmedEarly = ticketInfo.Exists(x => x.IsExistsConfirmedEarly);
+
+            //item.IsCalculatingSingle = siteMatchService.IsCalculating(ticketInfo.Select(x => x.IsCalculatingSingle).ToList());
+            //item.IsCalculatingMP = siteMatchService.IsCalculating(ticketInfo.Select(x => x.IsCalculatingMP).ToList());
         }
+    }
+
+    private async Task<List<Match>> GetMatchesAllInfo(SportsbookCriteria criteria)
+    {
+        var matches = await GetMatches(criteria);
+        var siteMatches = (await GetOSTicketInfo(matches)).ToList();
+
+        SetMatchTicketInfo(matches, siteMatches);
 
         return matches;
     }

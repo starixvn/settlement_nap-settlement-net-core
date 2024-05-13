@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using Fanex.Data.Repository;
 using Fanex.Data;
 
-namespace Settlement.EventManagement.Criteria;
+namespace Settlement.Core.Criteria;
 
 public class MatchRequest
 {

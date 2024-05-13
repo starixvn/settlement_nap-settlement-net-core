@@ -12,15 +12,21 @@ public interface SiteMatchService
 
     string GetBackgroundCompletedStatus(BaseMatch match);
 
+    string GetOSBackgroundCompletedStatus(BaseMatch match);
+
     string FastMarketStatus(Match match);
 
     string EarlySettlementStatus(BaseMatch match);
+
+    string EarlyOSSettlementStatus(BaseMatch match);
 
     bool IsExistFgLg(Match match);
 
     bool IsExistHtFgLg(Match match);
 
     bool IsExistsConfirmedEarly(MultiSportMatch match);
+
+    bool IsExistsConfirmedOSEarly(MultiSportMatch match);
 
     int? IsCalculating(int? baseValue, List<int?> siteValues);
 
@@ -47,6 +53,11 @@ public class SiteMatchServiceImp : SiteMatchService
     {
         var isExistsConfirmedEarly = match.SiteMatch.Exists(m => m.IsExistsConfirmedEarly);
         return match.IsExistsConfirmedEarly || isExistsConfirmedEarly;
+    }
+
+    public bool IsExistsConfirmedOSEarly(MultiSportMatch match)
+    {
+        return match.IsExistsConfirmedEarly;
     }
 
     public int? IsCalculating(int? baseValue, List<int?> siteValues)
@@ -106,6 +117,13 @@ public class SiteMatchServiceImp : SiteMatchService
             : GetBackgroundRunningTicket(match);
     }
 
+    public string GetOSBackgroundCompletedStatus(BaseMatch match)
+    {
+        return match.IsExistMarkedTicket && !match.IsExistRunningTicket
+            ? Background.WhiteBlinking
+            : GetOSBackgroundRunningTicket(match);
+    }
+
     public string EarlySettlementStatus(BaseMatch match)
     {
         if (IsNotExistedEarlyBetTypes(match))
@@ -119,6 +137,26 @@ public class SiteMatchServiceImp : SiteMatchService
         }
 
         if (IsExistedWaitingEarlyBetTypes(match))
+        {
+            return TicketStatus.Waiting;
+        }
+
+        return TicketStatus.Completed;
+    }
+
+    public string EarlyOSSettlementStatus(BaseMatch match)
+    {
+        if (!match.IsExistEarlyBetTypes)
+        {
+            return match.ChildMatchType == MatchPen || match.IsOpenOdds ? TicketStatus.NoTicket : TicketStatus.Normal;
+        }
+
+        if (match.IsRunningEarlyBetTypes)
+        {
+            return TicketStatus.Running;
+        }
+
+        if (match.IsWaitingEarlyBetTypes)
         {
             return TicketStatus.Waiting;
         }
@@ -166,6 +204,16 @@ public class SiteMatchServiceImp : SiteMatchService
         }
 
         return IsExistRunningTickets(match) ? Background.Pink : string.Empty;
+    }
+
+    private string GetOSBackgroundRunningTicket(BaseMatch match)
+    {
+        if (match.IsExistMarkedTicket)
+        {
+            return Background.PinkBlinking;
+        }
+
+        return match.IsExistRunningTicket ? Background.Pink : string.Empty;
     }
 
     private bool IsOnlyMarkedTicket(BaseMatch match)

@@ -37,11 +37,11 @@ public class MatchServiceImp(
             var currentResultDetail = listResultDetail.Where(m => m.MatchId == match.MatchId && m.SourceId == SourceType.Normal).ToList();
 
             match.NewEventStatus = newInfoMatchService.NewEventStatus(match, currentResultDetail);
-            match.EventStatusColor = newInfoMatchService.EventStatusColor(match);
-            match.EarlySettleStatus = newInfoMatchService.EarlySettlementStatus(match);
+            match.EventStatusColor = newInfoMatchService.OSEventStatusColor(match);
+            match.EarlySettleStatus = newInfoMatchService.EarlyOSSettlementStatus(match);
             match.ConfirmHalfTimeScore = newInfoMatchService.ConfirmScore(listSourceByMatchId, ResourceType.Halftime);
             match.ConfirmFullTimeScore = newInfoMatchService.ConfirmScore(listSourceByMatchId, ResourceType.Final);
-            match.IsExistsConfirmedEarly = newInfoMatchService.IsExistsConfirmedEarly(match);
+            match.IsExistsConfirmedEarly = newInfoMatchService.IsExistsConfirmedOSEarly(match);
             match.RefDataService = refDataService;
         }
 

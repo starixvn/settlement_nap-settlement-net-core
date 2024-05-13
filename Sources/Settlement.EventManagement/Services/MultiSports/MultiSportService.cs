@@ -95,7 +95,7 @@ public class MultiSportServiceImp(
     private async Task<List<MultiSportMatchWaiting>> GetAndCachingMatches(RefreshMultiSportRequest request, string hashLeagueIds, bool isLeader)
     {
         var criteria = mapper.Map<RefreshMultiSportRequest, GetWaitingMultiSportCriteria>(request);
-        var waitingMatches = await GetMatchesAllSites(criteria);
+        var waitingMatches = await GetMatchesAllInfo(criteria);
         var listResultDetail = await ResultDetailByMatchIds(waitingMatches);
 
         waitingMatches = await matchService.SetNewMatchInfo(waitingMatches, listResultDetail);
@@ -111,7 +111,6 @@ public class MultiSportServiceImp(
             .SiteDbServer
             .Select(s => FetchMatches(s, criteria))
             .ToList();
-        var listMatch = await Task.WhenAll(fetchMatchTasks.ToArray());
 
         var matchesInAllServers = listMatch.Select(m => m.ToList()).ToList();
 
@@ -199,7 +198,7 @@ public class MultiSportServiceImp(
         return (result.FirstResultSet.ToList(), result.SecondResultSet.ToList());
     }
 
-    private async Task<List<Match>> GetMatchesAllInfo(SportsbookCriteria criteria)
+    private async Task<List<Match>> GetMatchesAllInfo(MultipleSiteCriteria criteria)
     {
         var matchTuple = await GetMatches(criteria);
         var siteMatches = (await GetOSTicketInfo(matchTuple)).ToList();
@@ -211,11 +210,11 @@ public class MultiSportServiceImp(
         return matches;
     }
 
-    private async Task<IEnumerable<Match>> FetchMatches(string server, MultipleSiteCriteria criteria)
-    {
-        criteria.DbServer = server;
-        return await repository.FetchAsync<Match>(criteria);
-    }
+    //private async Task<IEnumerable<Match>> FetchMatches(string server, MultipleSiteCriteria criteria)
+    //{
+    //    criteria.DbServer = server;
+    //    return await repository.FetchAsync<Match>(criteria);
+    //}
 
     private List<MultiSportMatchWaiting> SetToCache(string hashLeagueIds, List<Match> matches)
     {
@@ -304,8 +303,6 @@ public class MultiSportServiceImp(
     private async Task<MultiSportResult> FetchMatchesAndResultDetails(FilterMultiSportRequest request)
     {
         var criteria = mapper.Map<FilterMultiSportRequest, SportsbookCriteria>(request);
-
-        //var matches = await GetMatchesAllSites(criteria);
 
         var matches = await GetMatchesAllInfo(criteria);
 

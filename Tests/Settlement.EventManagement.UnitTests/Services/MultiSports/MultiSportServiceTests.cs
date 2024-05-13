@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.EventManagement.Requests;
+using Settlement.EventManagement.Services;
 using Settlement.EventManagement.Services.MultiSports;
 using Match = Settlement.EventManagement.Models.MultiSports.Match;
 
@@ -20,10 +21,14 @@ public class MultiSportServiceTests
 
     private readonly IRefDataService refDataService;
 
+    private readonly SiteMatchService siteMatchService;
+
     public MultiSportServiceTests()
     {
         repository = Substitute.For<IDynamicRepository>();
         matchService = Substitute.For<IMatchService>();
+
+        siteMatchService = Substitute.For<SiteMatchService>();
         var cacheService = Substitute.For<IMemoryCache>();
 
         var mapperConfig = new MapperConfigurationExpression();
@@ -34,7 +39,7 @@ public class MultiSportServiceTests
         var appSetting = new AppSettingsKey { SiteDbServer = ["DB01", "DB02"] };
         var option = Options.Create(appSetting);
         refDataService = Substitute.For<IRefDataService>();
-        service = new MultiSportServiceImp(repository, matchService, mapper, cacheService, option);
+        service = new MultiSportServiceImp(repository, matchService, mapper, cacheService, siteMatchService, option);
     }
 
     [Fact]
