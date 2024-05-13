@@ -6,7 +6,7 @@ import * as _ from 'lodash';
 import { MessageBoxService, AioService, BlockUIService } from '../../shared/services';
 import { ModalDialogMessage } from '../../shared/models';
 import { Language } from '../../shared/language.native';
-import { CalculateAction, SettlementStatusId, ResultStatusId, SportType, ScoreSourceType } from '../../shared/constants';
+import { CalculateAction, SettlementStatusId, ResultStatusId, SportType, ScoreSourceType, ResultStatus, TicketStatusText } from '../../shared/constants';
 import { ApiKeys, Resources, ResourcesIds, KickOffTime } from '../constants';
 import { Match, SettleQuery } from '../models';
 import { HedgeMatchDetail, ResultDetail, MatchDetail, ExternalResult, SaveScoreQuery, ExternalResultDetail, SportTemplate } from '../../shared/models/sportsbook-sop';
@@ -124,6 +124,16 @@ export class CalculationActionsComponent implements SportTemplate {
             this.verifyRunningOdds();
         }
     }
+
+    public canSettleResult(result: ResultDetail) {
+        const isRunning = _.isEqual(result.ticketStatus, TicketStatusText.running)
+          || _.isEqual(result.resultStatus, ResultStatus.noResult) 
+          || _.isEqual(result.resultStatus, ResultStatus.running);
+
+        return isRunning 
+            && !result.isScoreMismatched 
+            && !_.isNil(this.verificationService.isExistInhouseResult(result));
+      }
 
     private async verifyRunningOdds() {
         const selectedResourceIds = this.selectedResources.map(item => item.resourceId);

@@ -14,22 +14,17 @@ public interface SiteMatchService
     string EarlySettlementStatus(Match match);
 
     int? IsCalculatingSingle(Match match);
+
+    int? IsCalculatingSingle(List<SiteMatch> siteMatches);
 }
 
 public class SiteMatchServiceImp : SiteMatchService
 {
     private const int MatchPen = 202;
-    public bool IsExistMarkedTickets(Match match)
-    {
-        var isExistMarkedTicketOnSite = match.SiteMatch.Exists(m => m.IsExistMarkedTicket);
-        return match.IsExistMarkedTicket || isExistMarkedTicketOnSite;
-    }
 
-    public bool IsExistRunningTickets(Match match)
-    {
-        var isExistRunningTicketOnSite = match.SiteMatch.Exists(m => m.IsExistRunningTicket);
-        return match.IsExistRunningTicket || isExistRunningTicketOnSite;
-    }
+    public bool IsExistMarkedTickets(Match match) => match.IsExistMarkedTicket;
+
+    public bool IsExistRunningTickets(Match match) => !match.IsExistRunningTicket;
 
     public int? IsCalculatingSingle(Match match)
     {
@@ -49,6 +44,31 @@ public class SiteMatchServiceImp : SiteMatchService
         }
 
         if (match.IsCalculatingSingle == CalculateStatus.IsSuccess && match.SiteMatch.TrueForAll(m => m.IsCalculatingSingle == CalculateStatus.IsSuccess))
+        {
+            return CalculateStatus.IsSuccess;
+        }
+
+        return null;
+    }
+
+    public int? IsCalculatingSingle(List<SiteMatch> siteMatches)
+    {
+        if (siteMatches.Exists(m => m.IsCalculatingSingle == CalculateStatus.IsWaiting))
+        {
+            return CalculateStatus.IsWaiting;
+        }
+
+        if (siteMatches.Exists(m => m.IsCalculatingSingle == CalculateStatus.IsCalculating))
+        {
+            return CalculateStatus.IsCalculating;
+        }
+
+        if (siteMatches.Exists(m => m.IsCalculatingSingle == CalculateStatus.IsFailed))
+        {
+            return CalculateStatus.IsFailed;
+        }
+
+        if (siteMatches.TrueForAll(m => m.IsCalculatingSingle == CalculateStatus.IsSuccess))
         {
             return CalculateStatus.IsSuccess;
         }
@@ -83,23 +103,11 @@ public class SiteMatchServiceImp : SiteMatchService
         return TicketStatus.Completed;
     }
 
-    private static bool IsExistedWaitingEarlyBetTypes(Match match)
-    {
-        return match.IsWaitingEarlyBetTypes || match.SiteMatch.Exists(m => m.IsWaitingEarlyBetTypes);
-    }
+    private static bool IsExistedWaitingEarlyBetTypes(Match match) => match.IsWaitingEarlyBetTypes;
 
-    private static bool IsExistedRunningEarlyBetTypes(Match match)
-    {
-        return match.IsRunningEarlyBetTypes || match.SiteMatch.Exists(m => m.IsRunningEarlyBetTypes);
-    }
+    private static bool IsExistedRunningEarlyBetTypes(Match match) => match.IsRunningEarlyBetTypes;
 
-    private static bool IsNotExistedEarlyBetTypes(Match match)
-    {
-        var matchSite = match.SiteMatch;
-        var isExistEarlyBetTypes = match.IsExistEarlyBetTypes || matchSite.Exists(m => m.IsExistEarlyBetTypes);
-
-        return !isExistEarlyBetTypes;
-    }
+    private static bool IsNotExistedEarlyBetTypes(Match match) => !match.IsExistEarlyBetTypes;
 
     private string GetBackgroundRunningTicket(Match match)
     {

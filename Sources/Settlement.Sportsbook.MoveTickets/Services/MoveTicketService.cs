@@ -10,6 +10,7 @@ using Settlement.Core.Services;
 using Settlement.Sportsbook.MoveTickets.Criteria;
 using Settlement.Sportsbook.MoveTickets.Models;
 using Settlement.Sportsbook.MoveTickets.Requests;
+using Settlement.Sportsbook.MoveTickets.Services.MultipleServer;
 
 namespace Settlement.Sportsbook.MoveTickets.Services;
 
@@ -26,6 +27,7 @@ public class MoveTicketServiceImp : MoveTicketService
     private readonly IRefDataService refDataService;
     private readonly IMapper mapper;
     private readonly IMatchService matchService;
+    private readonly SiteMatchService siteMatchService;
     private readonly AppSettingsKey appSettingsKey;
 
     public MoveTicketServiceImp(
@@ -33,13 +35,15 @@ public class MoveTicketServiceImp : MoveTicketService
         IRefDataService refDataService,
         IMapper mapper,
         IMatchService matchService,
-        IOptions<AppSettingsKey> appSettingsKey)
+        IOptions<AppSettingsKey> appSettingsKey,
+        SiteMatchService siteMatchService)
     {
         this.repository = repository;
         this.refDataService = refDataService;
         this.mapper = mapper;
         this.matchService = matchService;
         this.appSettingsKey = appSettingsKey.Value;
+        this.siteMatchService = siteMatchService;
     }
 
     public async Task<List<SportModel>> GetSportBook(GetMatchRequest request)
@@ -146,7 +150,8 @@ public class MoveTicketServiceImp : MoveTicketService
 
     private static bool IsSettleAndHasRunningTicket(Match match)
     {
-        var isCalc = match.NewEventStatus.Equals(EventStatus.Refund, StringComparison.OrdinalIgnoreCase) || match.NewEventStatus.Equals(EventStatus.Completed, StringComparison.OrdinalIgnoreCase);
+        var isCalc = match.NewEventStatus.Equals(EventStatus.Refund, StringComparison.OrdinalIgnoreCase)
+            || match.NewEventStatus.Equals(EventStatus.Completed, StringComparison.OrdinalIgnoreCase);
 
         return isCalc && (match.IsExistMarkedTicket || match.IsExistRunningTicket);
     }
@@ -154,37 +159,17 @@ public class MoveTicketServiceImp : MoveTicketService
     private async Task<MultiSportResult> FetchMatchesAndResultDetails(SportsbookCriteria criteria)
     {
         var matches = await GetMatchesAllInfo(criteria);
+
         var resultDetails = await ResultDetailByMatchIds(matches);
+
         matchService.SetNewMatchInfo(matches);
+
         return new MultiSportResult
         {
             Matches = matches,
             ResultDetails = resultDetails
         };
     }
-
-    //private async Task<List<Match>> MatchesAllSites(SportsbookCriteria criteria)
-    //{
-    //    var matches = new List<Match>();
-    //    var isCentralDataBase = true;
-    //    foreach (var server in appSettingsKey.SiteDbServer)
-    //    {
-    //        criteria.DbServer = server;
-    //        var data = (await repository.FetchAsync<Match>(criteria)).ToList();
-
-    //        if (isCentralDataBase)
-    //        {
-    //            matches = data;
-    //            isCentralDataBase = false;
-    //        }
-    //        else
-    //        {
-    //            matchService.MergeMatches(matches, data);
-    //        }
-    //    }
-
-    //    return matches;
-    //}
 
     private async Task<List<Match>> GetMatches(SportsbookCriteria criteria)
     {
@@ -220,8 +205,6 @@ public class MoveTicketServiceImp : MoveTicketService
             ChildMatchType = x.ChildMatchType,
             EventStatus = x.EventStatus,
             SportType = x.SportType,
-            //ConfirmFT = x.ConfirmFT,
-            //ConfirmHT = x.ConfirmHT,
         });
 
         var criteria = new OSTicketInfoSelCriteria
@@ -250,10 +233,7 @@ public class MoveTicketServiceImp : MoveTicketService
             item.IsWaitingEarlyBetTypes = ticketInfo.Exists(x => x.IsWaitingEarlyBetTypes);
             item.IsExistRunningTicket = ticketInfo.Exists(x => x.IsExistRunningTicket);
             item.IsExistMarkedTicket = ticketInfo.Exists(x => x.IsExistFastMarket);
-            //item.IsExistsConfirmedEarly = ticketInfo.Exists(x => x.IsExistsConfirmedEarly);
-
-            //item.IsCalculatingSingle = siteMatchService.IsCalculating(ticketInfo.Select(x => x.IsCalculatingSingle).ToList());
-            //item.IsCalculatingMP = siteMatchService.IsCalculating(ticketInfo.Select(x => x.IsCalculatingMP).ToList());
+            item.IsCalculatingSingle = siteMatchService.IsCalculatingSingle(ticketInfo);
         }
     }
 
