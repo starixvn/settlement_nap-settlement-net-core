@@ -80,34 +80,4 @@ describe('Auto Setting Service', () => {
 
     expect(httpRequestService.postJson).toHaveBeenCalledWith(param, url);
   });
-
-  describe('changeSetting', () => {
-    it('should call exact param and url when setting type is pending', () => {
-      const param: ChangeSettingQuery = {
-        matchId: '12345',
-        type: 1,
-        isEnabled: true
-      };
-      const url = '/api/setting/mark-pending';
-      spyOn(httpRequestService, 'postJson');
-
-      service.changeSetting(param);
-
-      expect(httpRequestService.postJson).toHaveBeenCalledWith(param, url);
-    });
-
-    it('should call exact param and url when setting type is not pending', () => {
-      const param: ChangeSettingQuery = {
-        matchId: '12345',
-        type: 2,
-        isEnabled: true
-      };
-      const url = '/api/setting/mark-undecided';
-      spyOn(httpRequestService, 'postJson');
-
-      service.changeSetting(param);
-
-      expect(httpRequestService.postJson).toHaveBeenCalledWith(param, url);
-    });
-  });
 });

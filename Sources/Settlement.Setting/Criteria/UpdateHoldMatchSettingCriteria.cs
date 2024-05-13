@@ -19,7 +19,7 @@ public class UpdateHoldMatchSettingCriteria : NonQueryCommand
 
     public override string GetSettingKey()
     {
-        return "NAP_Set_SettlementHoldMatch";
+        return "NAP_Set_SettlementStatusUpd";
     }
 
     public override bool IsValid()

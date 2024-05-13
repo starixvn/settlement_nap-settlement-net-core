@@ -16,7 +16,6 @@ public class MatchSettingHandler(
         IRequestHandler<SettingMatchRequest, Result>,
         IRequestHandler<SettingLeagueRequest, Result>,
         IRequestHandler<GetRemarkInfoRequest, MatchAndPermission>,
-        IRequestHandler<UpdateRemarkRequest, MatchAndPermission>,
         IRequestHandler<TimeSettingRequest, Result>,
         IRequestHandler<LeagueRequest, string>,
         IRequestHandler<GetSettingRequest, string>,
@@ -29,18 +28,6 @@ public class MatchSettingHandler(
 
     public async Task<MatchAndPermission> Handle(GetRemarkInfoRequest request, CancellationToken cancellationToken)
     {
-        var match = await settingService.GetRemarkInfo(request.MatchId);
-        var permission = permissionService.GetPermission(CacheSettings.Keys.MemoryCacheManualPermission);
-        return new MatchAndPermission
-        {
-            Permission = permission,
-            Match = match
-        };
-    }
-
-    public async Task<MatchAndPermission> Handle(UpdateRemarkRequest request, CancellationToken cancellationToken)
-    {
-        await settingService.UpdateRemarkSetting(request);
         var match = await settingService.GetRemarkInfo(request.MatchId);
         var permission = permissionService.GetPermission(CacheSettings.Keys.MemoryCacheManualPermission);
         return new MatchAndPermission

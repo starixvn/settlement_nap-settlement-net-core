@@ -1,6 +1,6 @@
 ﻿namespace Settlement.Setting.Constants;
 
-public static class RemarkType
+public static class HoldPosition
 {
     public const short IsMtdHold = 16;
     public const short IsUndecided = 2;

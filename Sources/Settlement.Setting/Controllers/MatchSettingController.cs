@@ -47,14 +47,6 @@ public class MatchSettingController : ControllerBase
     public async Task<IActionResult> GetRemarkInfo(GetRemarkInfoRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
     [HttpPost]
-    [Route("mark-pending")]
-    public async Task<IActionResult> MarkPending(UpdateRemarkRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
-
-    [HttpPost]
-    [Route("mark-undecided")]
-    public async Task<IActionResult> MarkUndecided(UpdateRemarkRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
-
-    [HttpPost]
     [Route("update-holdmatch-setting")]
     public async Task<IActionResult> UpdateHoldMatchSetting(UpdateHoldMatchSettingRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));
 
