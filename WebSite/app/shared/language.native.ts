@@ -1,4 +1,5 @@
 ﻿export const Language = {
+    information: 'INFORMATION',
     confirmationBox: 'Confirmation box',
     CalculationWarning: 'Calculation warning',
     RefundWarning: 'Refund warning',
@@ -205,6 +206,7 @@
     },
     consistentRelatedMatch: 'WARNING! Cannot continue due main match and related matches have inconsistent results.',
     confirmChildMatch: 'WARNING! You select to calculate FT for selected related match. Are you sure you want to proceed?',
+    confirmRelatedChildMatch: 'Are you sure you want to process all related child-matches?',
     directlyWithChildMAtch: 'WARNING! Cannot proceed due to "input result directly" is selected along side child-matches! Please check and try again.',
     otherSports: {
         confirmCalculateInconsistent: "WARNING! Insufficient or inconsistent score sources! Are you sure you want to proceed?",
@@ -306,5 +308,6 @@
     existTeamSettled:
       "Calculate function do not support settled Teams. Please recheck or use Re-Calculate function.",
   },
-  TieBreakInconsistency:	"Cannot proceed due to Set 3 score is not consistent with match type (Tie-Break)"
+  TieBreakInconsistency:	"Cannot proceed due to Set 3 score is not consistent with match type (Tie-Break)",
+  childMatchTennisInfo: '- Xth Set Game Winner: refund not played matches.'
 };

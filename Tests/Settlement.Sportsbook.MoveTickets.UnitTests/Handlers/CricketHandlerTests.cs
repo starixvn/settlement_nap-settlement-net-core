@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Fanex.Caching;
+using Fanex.NAP.Client.Helpers.Web;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.MoveTickets.Handlers;
@@ -13,8 +15,6 @@ public class CricketHandlerTests
 
     private readonly MoveTicketService moveTicketService;
 
-    private readonly PermissionService permissionService;
-
     private readonly CricketHandler handler;
 
     public CricketHandlerTests()
@@ -23,7 +23,11 @@ public class CricketHandlerTests
         mapperConfig.AddProfile<SportsbookMoveTicketAutoMapperProfile>();
         moveTicketService = Substitute.For<MoveTicketService>();
         moveActionService = Substitute.For<MoveActionService>();
-        permissionService = Substitute.For<PermissionService>(null, null, null, null);
+        var napSession = Substitute.For<INapSession>();
+        var cacheService = Substitute.For<ICacheService>();
+        napSession.UserId = 1;
+        cacheService.GetOrSet(Arg.Any<string>(), Arg.Any<Func<Permission>>(), Arg.Any<CacheItemOptions>()).Returns(new Permission());
+        var permissionService = Substitute.For<PermissionService>(napSession, null, cacheService, null);
         handler = new CricketHandler(moveTicketService, permissionService, moveActionService);
     }
 
@@ -31,13 +35,10 @@ public class CricketHandlerTests
     public async Task HandleGetMatchRequest_Always_ReturnCorrectResult()
     {
         var listSport = new List<SportModel>();
-        var permission = new Permission();
         moveTicketService.GetSportBook(Arg.Any<GetMatchRequest>()).Returns(listSport);
-        permissionService.GetPermission(Arg.Any<string>()).Returns(permission);
 
         var actual = await handler.Handle(new GetMatchRequest(), new CancellationToken());
 
-        Assert.Equal(permission, actual.Permission);
         Assert.Equal(listSport, actual.Sports);
     }
 
@@ -58,7 +59,8 @@ public class CricketHandlerTests
         var actual = await handler.Handle(new GetMatchRequest(), new CancellationToken());
         var expected = new MultiSportModel
         {
-            Sports = result
+            Sports = result,
+            Permission = new Permission()
         };
 
         AssertExtension.AreEqual(expected, actual);

@@ -25,6 +25,8 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
   @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
   @Input() public match: Match;
   public blockUI = true;
+  public isSettleRelated = false;
+  private readonly infoDialog: ModalDialogMessage = new ModalDialogMessage();
   public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage(Language.confirmationBox);
 
   async getMatch(matchId: number): Promise<void> {
@@ -66,11 +68,25 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
       this.toastrService.error(Language.MarkedTicket);
     } else {
       if (this.verifySelectedOnMap()) {
+       this.confirmBeforeRefund();
+      }
+    }
+  }
+
+  private confirmBeforeRefund() {
+    if(this.isSettleRelated) {
+      this.confirmationDialogMessage.message = Language.confirmRelatedChildMatch;
+      this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
         this.confirmationDialogMessage.message = Language.RefundConfirmMessage;
         this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
           this.doRefund();
         });
-      }
+      });
+    } else {
+      this.confirmationDialogMessage.message = Language.RefundConfirmMessage;
+      this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
+        this.doRefund();
+      });
     }
   }
 
@@ -86,6 +102,7 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
 
   public async doRefund() {
     const query = this.generateRefundQuery(TennisApiKeys.Settle);
+    query.isSettleRelated = this.isSettleRelated;
     const result = await this.aioService.push(query);
     if (result.errCode === 0) {
       this.refundHedgeMatch(query);
@@ -124,5 +141,11 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
     });
 
     return refund + betStatus.join(',');
+  }
+
+  OpenInfo(){
+    this.infoDialog.title = Language.information;
+    this.infoDialog.message = Language.childMatchTennisInfo;
+    this.messageBoxService.alert(this.infoDialog);
   }
 }

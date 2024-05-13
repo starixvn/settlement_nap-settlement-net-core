@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
-using Fanex.Settlement.Converter.Services;
-using Settlement.Core.Constants;
+﻿using Settlement.Core.Constants;
 using Settlement.Core.Models;
 using Settlement.ResourceInfos.Constants;
 using Settlement.Sportsbook.Aio.Constants.Cricket;
@@ -38,7 +31,10 @@ public class GenerateResultAmendmentServiceImp : GenerateResultAmendmentService
         {
             var resourceItem = selectedResources.Find(x => x.ResourceId == resultChanged.ResourceId);
 
-            if (resourceItem is null) return (null, null);
+            if (resourceItem is null)
+            {
+                return (null, null);
+            }
 
             var resourceId = resourceItem.ResourceId;
 

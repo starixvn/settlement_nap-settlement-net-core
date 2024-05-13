@@ -1,7 +1,4 @@
-﻿using System.Security.Cryptography;
-using System.Text.Json;
-using Fanex.Data.Repository;
-using Fanex.Logging;
+﻿using Fanex.Logging;
 using Microsoft.Extensions.Options;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
@@ -9,6 +6,7 @@ using Settlement.Sportsbook.Aio.Constants.Cricket;
 using Settlement.Sportsbook.Aio.Criteria;
 using Settlement.Sportsbook.Aio.Criteria.Cricket;
 using Settlement.Sportsbook.Aio.Models;
+using System.Text.Json;
 
 namespace Settlement.Sportsbook.Aio.Services.Cricket;
 
@@ -19,22 +17,12 @@ public interface ResultAmendmentService
     Task UpdateResultHistory(ResultHistoryUpdateCriteria criteria);
 }
 
-public class ResultAmendmentServiceImp : ResultAmendmentService
+public class ResultAmendmentServiceImp(
+    IDynamicRepository repository,
+    IOptions<AppSettingsKey> appSettingsKey,
+    GenerateResultAmendmentService generateResultAmendmentService)
+    : ResultAmendmentService
 {
-    private readonly IDynamicRepository repository;
-    private readonly AppSettingsKey appSettingsKey;
-    private readonly GenerateResultAmendmentService generateResultAmendmentService;
-
-    public ResultAmendmentServiceImp(
-        IDynamicRepository repository,
-        IOptions<AppSettingsKey> appSettingsKey,
-        GenerateResultAmendmentService generateResultAmendmentService)
-    {
-        this.repository = repository;
-        this.appSettingsKey = appSettingsKey.Value;
-        this.generateResultAmendmentService = generateResultAmendmentService;
-    }
-
     public async Task<bool> HandleResultAmendment(SettleCriteria settleCriteria, List<ResourceItem> selectedResources)
     {
         try
@@ -43,14 +31,14 @@ public class ResultAmendmentServiceImp : ResultAmendmentService
         }
         catch (Exception ex)
         {
-            LogService.Error("ResultAmendmentService", ex);
+            await LogService.ErrorAsync("ResultAmendmentService", ex);
             return false;
         }
     }
 
     public async Task UpdateResultHistory(ResultHistoryUpdateCriteria criteria)
     {
-        foreach (var server in appSettingsKey.SiteDbServer.Where(x => x != "DBTXN"))
+        foreach (var server in appSettingsKey.Value.SiteDbServer.Where(x => x != "DBTXN"))
         {
             criteria.DbServer = server;
             await repository.ExecuteAsync(criteria);
@@ -68,7 +56,10 @@ public class ResultAmendmentServiceImp : ResultAmendmentService
 
         var resultsChanged = await CheckReSettleTicket(criteria, settleCriteria.Action);
 
-        if (resultsChanged.Count == 0) { return false; }
+        if (resultsChanged.Count == 0)
+        {
+            return false;
+        }
 
         var resultHistoryItems = resultsChanged.Select((item, index)
             => CreateResultHistoryItem(item.ToList(), selectedResources, item.Key, index + 1));
@@ -91,7 +82,7 @@ public class ResultAmendmentServiceImp : ResultAmendmentService
         });
 
         var resultsChangedGroupBy = resultsSetActionType
-            .Where(x => x.ReSettleType != ReSettleType.Unknow)
+            .Where(x => x.ReSettleType != ReSettleType.UnKnow)
             .GroupBy(x => x.ReSettleType).ToList();
 
         return resultsChangedGroupBy;
@@ -99,21 +90,22 @@ public class ResultAmendmentServiceImp : ResultAmendmentService
 
     private void InsResultHistory(ResultHistoryInsCriteria resultHistoryInsCriteria)
     {
-        foreach (var server in appSettingsKey.SiteDbServer.Where(x => x != "DBTXN"))
+        foreach (var server in appSettingsKey.Value.SiteDbServer.Where(x => x != "DBTXN"))
         {
             resultHistoryInsCriteria.DbServer = server;
             repository.Execute(resultHistoryInsCriteria);
         }
     }
 
-    private ResultHistoryInsCriteria CreateResultHistoryInsCriteria(SettleCriteria settleCriteria, List<ResultHistoryItem> resultHistoryItems)
+    private static ResultHistoryInsCriteria CreateResultHistoryInsCriteria(SettleCriteria settleCriteria, List<ResultHistoryItem> resultHistoryItems)
     {
-        var criteria = new ResultHistoryInsCriteria();
-        criteria.MatchId = settleCriteria.MatchId;
-        criteria.SessionID = settleCriteria.BroadcastSessionId;
-        criteria.SportType = settleCriteria.SportType;
-
-        criteria.ResourceInfo = CreateResourceInfo(resultHistoryItems);
+        var criteria = new ResultHistoryInsCriteria
+        {
+            MatchId = settleCriteria.MatchId,
+            SessionID = settleCriteria.BroadcastSessionId,
+            SportType = settleCriteria.SportType,
+            ResourceInfo = CreateResourceInfo(resultHistoryItems)
+        };
 
         return criteria;
     }
@@ -136,7 +128,7 @@ public class ResultAmendmentServiceImp : ResultAmendmentService
         return resultHistoryItem;
     }
 
-    private short GetReSettleActionType(string beforeAction, string currentAction)
+    private static short GetReSettleActionType(string beforeAction, string currentAction)
         => (beforeAction.ToUpperInvariant(), currentAction.ToUpperInvariant()) switch
         {
             (var a, string c) when a.Contains(ActionType.RefundAll) && c.Contains(ActionType.CalculateAll) =>
@@ -148,8 +140,8 @@ public class ResultAmendmentServiceImp : ResultAmendmentService
             (string a, string c) when a.Contains(ActionType.CalculateAll) && c.Contains(ActionType.CalculateAll) =>
                 ReSettleType.ReCalc,
 
-            _ => ReSettleType.Unknow,
+            _ => ReSettleType.UnKnow,
         };
 
-    private string CreateResourceInfo(List<ResultHistoryItem> resultHistoryItems) => JsonSerializer.Serialize(resultHistoryItems);
+    private static string CreateResourceInfo(List<ResultHistoryItem> resultHistoryItems) => JsonSerializer.Serialize(resultHistoryItems);
 }

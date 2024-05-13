@@ -1,4 +1,4 @@
-.calc-popup{
+.calc-popup {
     width: 100%;
 }
 
@@ -34,4 +34,25 @@
 
 tr.mismatched td:not(:first-child):not(.set-status):not(.match-status):not(.calculated):not(.refunded) {
     background: #f00;
+}
+
+.settle-related {
+    float: right;
+    padding-right: 5px;
+
+    .link {
+        cursor: pointer;
+        color: blue;
+        text-decoration: underline;
+    }
+
+    input {
+        margin: inherit;
+        vertical-align: middle;
+    }
+
+    label {
+        vertical-align: middle;
+        padding-left: 3px;
+    }
 }

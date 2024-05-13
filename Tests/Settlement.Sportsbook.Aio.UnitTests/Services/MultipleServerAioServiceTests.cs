@@ -32,7 +32,6 @@ public class MultipleServerAioServiceTests
     private readonly LogService logService;
 
     private readonly MultipleServerAioService service;
-    private readonly ResultAmendmentService resultAmendmentService;
 
     public MultipleServerAioServiceTests()
     {
@@ -48,7 +47,7 @@ public class MultipleServerAioServiceTests
         createQueryService = Substitute.For<ICreateQueryService>();
         mergeDataService = Substitute.For<MergeDataService>();
         logService = Substitute.For<LogService>();
-        resultAmendmentService = Substitute.For<ResultAmendmentService>();
+        var resultAmendmentService = Substitute.For<ResultAmendmentService>();
 
         service = new MultipleServerAioServiceImp(repository, option, scaleOutSettleService, createQueryService, mergeDataService, logService, mapper, resultAmendmentService);
     }
@@ -101,7 +100,7 @@ public class MultipleServerAioServiceTests
             .Returns((new List<ResultDetail>(), new List<TicketCounts>()));
 
         mergeDataService.MergeTicketDetails(Arg.Any<List<(List<ResultDetail>, TicketCounts)>>())
-            .Returns((new List<ResultDetail>(), new TicketCounts()));
+            .Returns((new List<ResultDetail> { new ResultDetail() { ResourceId = "00" } }, new TicketCounts()));
 
         var (actualResultDetail, _) = await service.FetchResultDetails(new GetResultDetailCriteria(), SportType.ESports);
 
@@ -192,7 +191,8 @@ public class MultipleServerAioServiceTests
         {
             ErrCode = 0,
             ErrMsg = null,
-            ChildMatchIds = "123,456"
+            ChildMatchIds = "123,456",
+            SettledSessionId = actual.SettledSessionId
         };
 
         Assert.Equal(JsonConvert.SerializeObject(expectResult), JsonConvert.SerializeObject(actual));

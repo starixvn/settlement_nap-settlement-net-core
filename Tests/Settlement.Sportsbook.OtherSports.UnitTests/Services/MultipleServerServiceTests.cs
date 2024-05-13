@@ -24,12 +24,14 @@ public class MultipleServerServiceTests
 
     private readonly MultipleServerService service;
 
+    private readonly LogService logService;
+
     public MultipleServerServiceTests()
     {
         repository = Substitute.For<IDynamicRepository>();
         mergeDataService = Substitute.For<MergeDataService>();
         scaleOutSettleService = Substitute.For<ScaleOutSettleService>();
-        var logService = Substitute.For<LogService>();
+        logService = Substitute.For<LogService>();
         var appSettingsKey = new AppSettingsKey { SiteDbServer = new List<string> { "01", "02" } };
         var options = Options.Create(appSettingsKey);
         var mapperConfig = new MapperConfigurationExpression();
@@ -114,6 +116,6 @@ public class MultipleServerServiceTests
 
         await service.Calculate(new CalculateCriteria { IsReSettledTickets = true, Action = "CAL" }, new ScoreSetModel());
 
-        await repository.Received().ExecuteAsync(Arg.Any<InsertLogCriteria>());
+        await logService.Received().WriteLog(Arg.Any<InsertLogCriteria>());
     }
 }

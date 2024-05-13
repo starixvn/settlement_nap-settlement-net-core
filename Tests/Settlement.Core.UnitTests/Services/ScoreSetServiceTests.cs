@@ -5,9 +5,11 @@ using Xunit;
 
 namespace Settlement.Core.UnitTests.Services;
 
-public class ScoreSetServiceTests(bool isLeader)
+public class ScoreSetServiceTests
 {
     private readonly IScoreSetService service = new ScoreSetServiceImp();
+
+    private readonly bool isLeader = true;
 
     [Fact]
     public void GetScore_HasResultDetailWithSettlementStatusIdIsRefund_ReturnsROnScore()

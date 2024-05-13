@@ -4,6 +4,7 @@ import { ResultDetail } from '../../shared/models/sportsbook-sop';
 import { ResourcesIds } from '../constants';
 import { ResultStatusId, SettlementStatusId } from '../../shared/constants';
 import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
+import { ModalContentDialogComponent } from '../../shared/components/modal-dialog/modal-content-dialog.component';
 
 @Injectable(
 )

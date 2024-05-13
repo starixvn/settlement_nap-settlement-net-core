@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using Fanex.Caching;
 using Fanex.Data.Repository;
+using Fanex.NAP.Client.Helpers.Web;
 using NSubstitute.ReturnsExtensions;
 using Settlement.Core.Constants;
 using Settlement.Core.Models;
@@ -26,7 +28,12 @@ public class MatchEarlyServiceTests
     public MatchEarlyServiceTests()
     {
         repository = Substitute.For<IDynamicRepository>();
-        var permission = Substitute.For<PermissionService>(null, null, null, null);
+
+        var napSession = Substitute.For<INapSession>();
+        var cacheService = Substitute.For<ICacheService>();
+        napSession.UserId = 1;
+        cacheService.GetOrSet(Arg.Any<string>(), Arg.Any<Func<Permission>>(), Arg.Any<CacheItemOptions>()).Returns(new Permission());
+        var permission = Substitute.For<PermissionService>(napSession, null, cacheService, null);
         var refDataService = Substitute.For<IRefDataService>();
         var goalIconService = Substitute.For<GoalIconService>();
         earlyBetTypeNameService = Substitute.For<EarlyBetTypeNameService>();

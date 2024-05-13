@@ -1,4 +1,5 @@
-﻿using Fanex.NAP.Client.Helpers.Web;
+﻿using Fanex.Caching;
+using Fanex.NAP.Client.Helpers.Web;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.FastMarkets.Handlers;
@@ -13,8 +14,6 @@ public class FastMarketHandlerTests
 {
     private readonly IMatchDetailService matchDetailService;
 
-    private readonly PermissionService permissionService;
-
     private readonly IFastMarketService fastMarketService;
 
     private readonly FastMarketHandler handler;
@@ -23,12 +22,15 @@ public class FastMarketHandlerTests
 
     public FastMarketHandlerTests()
     {
+        var napSession = Substitute.For<INapSession>();
+        var cacheService = Substitute.For<ICacheService>();
+        napSession.UserId = 1;
+        cacheService.GetOrSet(Arg.Any<string>(), Arg.Any<Func<Permission>>(), Arg.Any<CacheItemOptions>()).Returns(new Permission());
+        var permissionService = Substitute.For<PermissionService>(napSession, null, cacheService, null);
         matchDetailService = Substitute.For<IMatchDetailService>();
-        permissionService = Substitute.For<PermissionService>(null, null, null, null);
         fastMarketService = Substitute.For<IFastMarketService>();
         settingService = Substitute.For<ISettingService>();
-        var session = Substitute.For<INapSession>();
-        handler = new FastMarketHandler(matchDetailService, permissionService, fastMarketService, settingService, session);
+        handler = new FastMarketHandler(matchDetailService, permissionService, fastMarketService, settingService, napSession);
     }
 
     [Fact]
@@ -75,7 +77,6 @@ public class FastMarketHandlerTests
             }
         };
         matchDetailService.MatchInfo(Arg.Any<int>()).Returns(result);
-        permissionService.GetPermission(Arg.Any<string>()).Returns(new Permission());
 
         var actual = await handler.Handle(new MatchDetailRequest(), new CancellationToken());
 

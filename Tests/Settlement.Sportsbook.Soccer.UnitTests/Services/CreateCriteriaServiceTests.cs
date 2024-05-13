@@ -136,9 +136,9 @@ public class CreateCriteriaServiceTests
         // Assert
         Received.InOrder(() =>
         {
-            betStatusAllService.GetBetStatusRefund(Arg.Any<RefundRequest>());
             resourceService.FullTimeResourcesSettleDetermined(Arg.Any<GoalCondition>());
             xmlConvertService.Serialize(Arg.Any<XmlResults>());
+            betStatusAllService.GetBetStatusRefund(Arg.Any<RefundRequest>());
         });
     }
 
@@ -181,9 +181,9 @@ public class CreateCriteriaServiceTests
         // Assert
         Received.InOrder(() =>
         {
-            betStatusAllService.GetBetStatusRefund(Arg.Any<RefundRequest>());
             resourceService.AllResourcesSettleDetermined(Arg.Any<GoalCondition>());
             xmlConvertService.Serialize(Arg.Any<XmlResults>());
+            betStatusAllService.GetBetStatusRefund(Arg.Any<RefundRequest>());
         });
         Assert.Equal(1, criteria.FullTimeAway);
         Assert.Equal(2, criteria.FullTimeHome);

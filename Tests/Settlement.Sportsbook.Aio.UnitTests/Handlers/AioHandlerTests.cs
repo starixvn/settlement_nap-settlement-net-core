@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Fanex.Caching;
+using Fanex.NAP.Client.Helpers.Web;
+using Microsoft.Extensions.Options;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Settlement.Sportsbook.Aio.Handlers;
@@ -21,7 +23,11 @@ public class AioHandlerTests
     public AioHandlerTests()
     {
         service = Substitute.For<IAioService>();
-        permission = Substitute.For<PermissionService>(null, null, null, null);
+        var napSession = Substitute.For<INapSession>();
+        var cacheService = Substitute.For<ICacheService>();
+        napSession.UserId = 1;
+        cacheService.GetOrSet(Arg.Any<string>(), Arg.Any<Func<Permission>>(), Arg.Any<CacheItemOptions>()).Returns(new Permission());
+        permission = Substitute.For<PermissionService>(napSession, null, cacheService, null);
         var appSettings = new AppSettingsKey { EnableVerifyingRunningOdds = true };
         var appSettingsOptions = Options.Create(appSettings);
         resultAmendmentService = Substitute.For<ResultAmendmentService>();
