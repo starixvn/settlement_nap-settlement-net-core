@@ -133,7 +133,7 @@ export class CalculationActionsComponent implements SportTemplate {
         return isRunning 
             && !result.isScoreMismatched 
             && !_.isNil(this.verificationService.isExistInhouseResult(result));
-      }
+    }
 
     private async verifyRunningOdds() {
         const selectedResourceIds = this.selectedResources.map(item => item.resourceId);
