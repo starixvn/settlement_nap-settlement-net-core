@@ -29,16 +29,35 @@ public interface SettingService
     Task ProcessUpdateHoldMatchSetting(UpdateHoldMatchSettingRequest request);
 }
 
-public class SettingServiceImp(
-    IDynamicRepository repository,
-    INapSession currentSession,
-    IHttpContextAccessor accessor,
-    IMapper mapper,
-    LogService logService,
-    XmlConvertService xmlConvertService)
-    : SettingService
+public class SettingServiceImp : SettingService
 {
+    private readonly IDynamicRepository repository;
+
+    private readonly INapSession currentSession;
+
+    private readonly IHttpContextAccessor accessor;
+
+    private readonly IMapper mapper;
+    private readonly LogService logService;
+    private readonly XmlConvertService xmlConvertService;
+
     private const int holdMatchActionId = 81049;
+
+    public SettingServiceImp(
+        IDynamicRepository repository,
+        INapSession currentSession,
+        IHttpContextAccessor accessor,
+        IMapper mapper,
+        LogService logService,
+        XmlConvertService xmlConvertService)
+    {
+        this.repository = repository;
+        this.currentSession = currentSession;
+        this.accessor = accessor;
+        this.mapper = mapper;
+        this.logService = logService;
+        this.xmlConvertService = xmlConvertService;
+    }
 
     public async Task<Result> UpdateSettingLeague(SettingLeagueRequest query)
     {
@@ -82,9 +101,6 @@ public class SettingServiceImp(
         if (changedSettings.Count == 0)
         {
             return;
-        {
-            return string.Empty;
-        }
         }
 
         var criteria = CreateUpdateHoldMatchSettingCriteria(request, changedSettings);
@@ -176,19 +192,16 @@ public class SettingServiceImp(
         return $" child({string.Join(",", childMatchIds.Select(x => x.MatchId))})";
     }
 
-    private static string GetHoldName(int remarkType) => remarkType switch
+    private UpdateHoldMatchSettingCriteria CreateUpdateHoldMatchSettingCriteria(UpdateHoldMatchSettingRequest request, List<HoldSetting> holdSettings)
     {
         var holdInfoRoot = new HoldMatchInfoRoot
-    private static short GetRemarkType(string key) => key switch
-    private static Dictionary<string, bool> DetectDiffProperties(Remark remark, Remark otherRemark)
         {
             HoldMatchInfoItems = holdSettings.Select(x => new HoldSettingInfo
             {
-        var criteria = new UpdateHoldMatchSettingCriteria
-        {
-            MatchId = request.MatchId,
-            AdminId = currentSession.UserId,
-            Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString()
+                Type = x.Type,
+                IsApplyChild = x.IsApplyChild,
+                Value = x.Value,
+            }).ToList(),
         };
 
         var criteria = new UpdateHoldMatchSettingCriteria
