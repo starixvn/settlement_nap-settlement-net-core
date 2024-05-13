@@ -84,6 +84,7 @@ export class EarlySettlementComponent implements Soccer {
     public matchId = Number(UrlHelper.getUrlParameter('matchId'));
     public groupMap: GroupMap[];
     public isShowRefundButton = false;
+    private originalResultDetail: ResultDetail[];
     constructor(protected injector: Injector)
     {
         this.confirmationDialogMessage.title = Language.confirmationBox;
@@ -106,7 +107,7 @@ export class EarlySettlementComponent implements Soccer {
 
     private generateConfirmRefundSettleDetermined()
     {
-        var listResultDetailSdt = _.filter(this.resultDetails, item => item.resultSettingData.isConfirmedRefundSdt);
+        var listResultDetailSdt = _.filter(this.resultDetails, item => item.resultSettingData.isConfirmedRefundSdt || item.resultSettingData.isConfirmedRefund);
         if(this.permission.isLeader) {
             listResultDetailSdt.forEach(resultDetail => {
                 const resource = this.match.externalResults.find(item => item.sourceId === ScoreSourceType.confirmRefundSource && item.resourceId === resultDetail.resourceId);
@@ -114,6 +115,7 @@ export class EarlySettlementComponent implements Soccer {
                     resultDetail.homeValue = resource.homeValue;
                     resultDetail.awayValue = resource.awayValue;
                     resultDetail.isSettleDetermined = resultDetail.resultSettingData.isConfirmedRefundSdt;
+                    resultDetail.isSettleDeterminedOriginal = _.clone(resultDetail.isSettleDetermined);
                 }
             });
        }
@@ -217,6 +219,10 @@ export class EarlySettlementComponent implements Soccer {
     private undoConfirmedResult(resultDetails: ResultDetail[], matchId: number) {
         const resultConfirmed = _.filter(resultDetails, item => (item.resultSettingData.isConfirmedRefund || item.resultSettingData.isConfirmedRefundSdt));
         if (resultConfirmed.length === resultDetails.length) {
+            this.selectedResources.forEach(resultDetail => {
+                resultDetail.isSettleDetermined =  resultDetail.isSettleDeterminedOriginal;
+            });
+
             this.changeConfirmResultSetting(Language.confirmRefund.undoConfirm, matchId, false);
         } else {
             this.toastrService.error(Language.confirmRefund.differentStates);
@@ -226,15 +232,30 @@ export class EarlySettlementComponent implements Soccer {
     private changeConfirmResultSetting(message: string, matchId: number, isEnabled: boolean) {
         this.confirmationDialogMessage.message = message;
         this.messageBoxService.confirm(this.confirmationDialogMessage, async() => {
-            await this.changeConfirmResultByType(matchId, isEnabled);
+            await this.changeConfirmRefundSettleDetermined(matchId, isEnabled);
+            await this.changeConfirmRefundNormal(matchId, isEnabled);
+            this.messageBoxService.closePopupNotChanged();
         });
     }
 
-    private async changeConfirmResultByType(matchId: number, isEnabled: boolean) {
-        const resourceIds = _.join(this.selectedResources.map(item => item.resourceId), ',');
-        const resourceItems = this.selectedResources.map(item => new ResourceItem(item.resourceId, item.resourceName, item.homeValue, item.awayValue))
-        const query = new ResultSettingQuery(matchId, ResultSettingType.confirmRefundSDT, isEnabled, resourceIds, resourceItems);
-        this.aioService.changeResultSetting(query).finally(() => this.messageBoxService.closePopupNotChanged());
+    private async changeConfirmResult(selectedResources: ResultDetail[], settingType: number, matchId: number, isEnabled: boolean) {
+        if (selectedResources.length > 0) {
+            const resourceIds = _.join(selectedResources.map(item => item.resourceId), ',');
+            const resourceItems = selectedResources.map(item => new ResourceItem(item.resourceId, item.resourceName, item.homeValue, item.awayValue))
+       
+            const query = new ResultSettingQuery(matchId, settingType, isEnabled, resourceIds, resourceItems);
+            return await this.aioService.changeResultSetting(query);
+        }
+    }
+
+    private async changeConfirmRefundSettleDetermined(matchId: number, isEnabled: boolean) {
+        const selectedResourcesSdt = _.filter(this.selectedResources, item => item.isSettleDetermined);
+        return await this.changeConfirmResult(selectedResourcesSdt, ResultSettingType.confirmRefundSDT, matchId, isEnabled);
+    }
+
+    private async changeConfirmRefundNormal(matchId: number, isEnabled: boolean) {
+        const selectedResourcesNormal = _.filter(this.selectedResources, item => !item.isSettleDetermined);
+        return await this.changeConfirmResult(selectedResourcesNormal, ResultSettingType.confirmRefund, matchId, isEnabled);
     }
 
     private isExistedConfirmRefund() {

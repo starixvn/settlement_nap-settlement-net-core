@@ -73,7 +73,8 @@ export class VerifyRefundService {
         let flag = false;
         list.forEach((resultDetail: ResultDetail) => {
             const resource = externalResults.find(item => item.sourceId === ScoreSourceType.confirmRefundSource && item.resourceId === resultDetail.resourceId);
-            if (!_.isUndefined(resource) && (!_.isEqual(resultDetail.homeValue, resource.homeValue) || !_.isEqual(resultDetail.awayValue, resource.awayValue))) {
+            if (!_.isUndefined(resource) && (!_.isEqual(resultDetail.homeValue ?? "", resource.homeValue) || !_.isEqual(resultDetail.awayValue?? "", resource.awayValue)
+            || resultDetail.isSettleDetermined!==resultDetail.resultSettingData.isConfirmedRefundSdt)) {
                 flag = true;
             }
         });
