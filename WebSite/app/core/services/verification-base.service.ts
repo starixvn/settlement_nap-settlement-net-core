@@ -536,5 +536,12 @@ export class VerificationBaseService {
        return (result.awayValue === "0" && result.homeValue === "0" && _.isEmpty(orinalResult.homeValue) && _.isEmpty(orinalResult.awayValue));
     }
 
+    public isValidTraderConfirmScore(result: ResultDetail) {
+        const traderScore = result.externalScores.find((source) => source.sourceId === ScoreSourceType.trader);
+
+        return traderScore 
+            && !_.isEmpty(result.homeValue) 
+            && !_.isEmpty(result.awayValue);
+    }
 
 }

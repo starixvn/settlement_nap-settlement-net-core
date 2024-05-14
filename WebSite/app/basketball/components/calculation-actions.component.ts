@@ -9,10 +9,12 @@ import { League, ModalDialogMessage } from "../../shared/models";
 import { Language } from "../../shared/language.native";
 import {
   CalculateAction,
+  ResultStatus,
   ScoreSourceType,
   SettingPosition,
   SettlementStatusId,
   SportType,
+  TicketStatusText,
 } from "../../shared/constants";
 import {
   BasketballService,
@@ -1047,5 +1049,15 @@ export class CalculationActionsComponent implements SportTemplate {
         }
       })
     })
+  }
+
+  public canSettleResult(result: ResultDetail) {
+    const isRunning = _.isEqual(result.ticketStatus, TicketStatusText.running)
+      || _.isEqual(result.resultStatus, ResultStatus.noResult) 
+      || _.isEqual(result.resultStatus, ResultStatus.running);
+
+    return isRunning 
+        && !result.isScoreMismatched 
+        && this.verificationService.isValidTraderConfirmScore(result);
   }
 }

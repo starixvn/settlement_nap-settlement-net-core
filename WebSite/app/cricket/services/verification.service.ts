@@ -172,4 +172,12 @@ export class VerificationService  {
         
         return false;
     }
+
+    public isValidTraderConfirmScore(result: ResultDetail) {
+        const traderScore = result.externalScores.find((source) => source.sourceId === ScoreSourceType.trader);
+
+        return traderScore 
+            && !_.isEmpty(result.homeValue) 
+            && !_.isEmpty(result.awayValue);
+    }
 }

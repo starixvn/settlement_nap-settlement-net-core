@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 import { MessageBoxService, AioService, IntervalCalculationService, BlockUIService } from '../../shared/services';
 import { ModalDialogMessage} from '../../shared/models';
 import { Language } from '../../shared/language.native';
-import { SettlementStatusId, CalculateAction, SportType, ResultStatusId, ScoreSourceType } from '../../shared/constants';
+import { SettlementStatusId, CalculateAction, SportType, ResultStatusId, ScoreSourceType, TicketStatusText, ResultStatus } from '../../shared/constants';
 import { KickOffTime, Resources, ResourcesIds, TennisApiKeys } from '../constants';
 import { Match, SettleQuery } from '../models';
 import { TennisService, VerificationService } from '../services';
@@ -563,10 +563,20 @@ export class CalculateActionsComponent implements SportTemplate {
   public getTextTooltip(text: string, maxLength: number) {
     return text?.length > maxLength ? text : null;
   }
-
-  OpenInfo(){
+  
+    OpenInfo(){
     this.infoDialog.title = Language.information;
     this.infoDialog.message = Language.childMatchTennisInfo;
     this.messageBoxService.alert(this.infoDialog);
+    }
+
+  public canSettleResult(result: ResultDetail) {
+    const isRunning = _.isEqual(result.ticketStatus, TicketStatusText.running)
+      || _.isEqual(result.resultStatus, ResultStatus.noResult) 
+      || _.isEqual(result.resultStatus, ResultStatus.running);
+
+    return isRunning 
+        && !result.isScoreMismatched 
+        && this.verificationService.isValidTraderConfirmScore(result);
   }
 }

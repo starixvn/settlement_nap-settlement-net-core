@@ -655,6 +655,6 @@ export class CalculateActionsComponent implements SportTemplate {
 
     return isRunning 
         && !result.isScoreMismatched 
-        && !_.isNil(this.verificationService.isExistInhouseResult(result));
-}
+        && this.verificationService.isValidTraderConfirmScore(result);
+  }
 }

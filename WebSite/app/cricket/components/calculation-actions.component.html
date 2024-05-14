@@ -105,15 +105,15 @@
                     </td>
                 </ng-container>
                 <ng-container *ngIf="x >= (maxProviderCol +1) && (canCalculate || canUncalculate)">
-                    <td *ngIf="map.resourceId !== '00'" colspan="2" [ngClass]="{'striped': x % 2 === 0}">
+                    <td *ngIf="map.resourceId !== '00'" colspan="2" [ngClass]="{'striped': x % 2 === 0, 'can-settle': canSettleResult(map)}">
                         <input type="text" myOnlyInteger [(ngModel)]="result.homeValue" (change)="verifyAndAutoFillScore(map)"
                             id="outside-{{i+1}}-{{x-2}}-home" />
                     </td>
-                    <td *ngIf="map.resourceId === '00'" colspan="1" [ngClass]="{'striped': x % 2 === 0}">
+                    <td *ngIf="map.resourceId === '00'" colspan="1" [ngClass]="{'striped': x % 2 === 0, 'can-settle': canSettleResult(map)}">
                         <input type="text" myOnlyInteger class="match-score-left final-score" [(ngModel)]="result.homeValue"
                             (change)="verifyAndAutoFillScore(map)" id="outside-{{i+1}}-{{x-2}}-home" />
                     </td>
-                    <td *ngIf="map.resourceId === '00'" colspan="1" [ngClass]="{'striped': x % 2 === 0}">
+                    <td *ngIf="map.resourceId === '00'" colspan="1" [ngClass]="{'striped': x % 2 === 0, 'can-settle': canSettleResult(map)}">
                         <input type="text" myOnlyInteger class="match-score-right final-score" [(ngModel)]="result.awayValue"
                             (change)="verifyAndAutoFillScore(map)" id="outside-{{i+1}}-{{x-2}}-away" />
                     </td>
