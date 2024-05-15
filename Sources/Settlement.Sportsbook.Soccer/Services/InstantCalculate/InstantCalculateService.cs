@@ -104,12 +104,6 @@ public class InstantCalculateServiceImp : InstantCalculateService
         var resources = GetResourcesInstantCalculate(request);
         var resourceResult = instantResourceService.GenerateResource(resources);
 
-        var resultMatchChecking = await CheckCalculationMatch(request, resourceResult);
-        if (resultMatchChecking.ErrCode > 0)
-        {
-            return resultMatchChecking;
-        }
-
         var result = await ProcessPushInstantCalculation(request, resourceResult);
 
         return result;
@@ -137,14 +131,25 @@ public class InstantCalculateServiceImp : InstantCalculateService
 
         var result = await ValidateBeforeExecute(request);
 
-        if (result.IsSuccessful)
+        if (!result.IsSuccessful)
         {
-            await UpdateResult(request);
-            await UpdateMatchInfo(request, request.IsHalfTime, criteria.ResourceResult);
-            await pushInstantService.Execute(criteria);
+            return result;
         }
 
-        return result;
+        if (!request.Action.Equals(ActionType.UnCalculate))
+        {
+            var resultMatchChecking = await CheckCalculationMatch(request, resourceResult);
+            if (resultMatchChecking.ErrCode > 0)
+            {
+                return resultMatchChecking;
+            }
+        }
+
+        await UpdateResult(request);
+        await UpdateMatchInfo(request, request.IsHalfTime, criteria.ResourceResult);
+        await pushInstantService.Execute(criteria);
+
+        return new Result();
     }
 
     private async Task<Result> CheckCalculationMatch(InstantCalculationRequest request, string resourceResult)
