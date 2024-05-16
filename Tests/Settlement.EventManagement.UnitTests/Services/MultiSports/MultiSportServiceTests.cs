@@ -65,7 +65,7 @@ public class MultiSportServiceTests
         repository.FetchAsync<ResultDetail>(Arg.Any<ICriteria>()).Returns(new List<ResultDetail> { resultDetail });
         refDataService.GetLeagueName(Arg.Any<string>()).Returns(string.Empty);
         matchService.GetScoreForMatchBySportType(Arg.Any<List<Match>>(), Arg.Any<List<ResultDetail>>(), Arg.Any<int>()).Returns(new List<Match> { match });
-        matchService.SetNewMatchInfo(Arg.Any<List<Match>>(), Arg.Any<List<ResultDetail>>()).Returns(listMatch);
+        matchService.SetNewOsMatchInfo(Arg.Any<List<Match>>(), Arg.Any<List<ResultDetail>>()).Returns(listMatch);
         var waitingMatches = await service.GetWaitingMatches(request, false);
 
         Assert.NotNull(waitingMatches);
@@ -86,7 +86,7 @@ public class MultiSportServiceTests
         repository.FetchAsync<ResultDetail>(Arg.Any<ICriteria>()).Returns(new List<ResultDetail>());
         refDataService.GetLeagueName(Arg.Any<string>()).Returns(string.Empty);
         matchService.GetScoreForMatchBySportType(Arg.Any<List<Match>>(), Arg.Any<List<ResultDetail>>(), Arg.Any<int>()).Returns(new List<Match> { match });
-        matchService.SetNewMatchInfo(Arg.Any<List<Match>>(), Arg.Any<List<ResultDetail>>()).Returns(listMatch);
+        matchService.SetNewOsMatchInfo(Arg.Any<List<Match>>(), Arg.Any<List<ResultDetail>>()).Returns(listMatch);
         matchService.SortingMatches(Arg.Any<List<Match>>()).Returns(new List<Match> { match });
         var sportBooks = await service.GetSportBook(new FilterMultiSportRequest(), false);
 

@@ -14,6 +14,8 @@ public interface IMatchService
 
     void AddSiteInfo(List<Match> baseMatches, List<Match> siteMatches);
 
+    Task<List<Match>> SetNewOsMatchInfo(List<Match> matches, List<ResultDetail> listResultDetail);
+
     Task<List<Match>> SetNewMatchInfo(List<Match> matches, List<ResultDetail> listResultDetail);
 
     Task UpdateMatchInfo(UpdateMatchInfoRequest request);
@@ -29,7 +31,7 @@ public class MatchServiceImp(
     ScaleOutSettleService scaleOutSettleService)
     : IMatchService
 {
-    public async Task<List<Match>> SetNewMatchInfo(List<Match> matches, List<ResultDetail> listResultDetail)
+    public async Task<List<Match>> SetNewOsMatchInfo(List<Match> matches, List<ResultDetail> listResultDetail)
     {
         foreach (var match in matches)
         {
@@ -42,6 +44,25 @@ public class MatchServiceImp(
             match.ConfirmHalfTimeScore = newInfoMatchService.ConfirmScore(listSourceByMatchId, ResourceType.Halftime);
             match.ConfirmFullTimeScore = newInfoMatchService.ConfirmScore(listSourceByMatchId, ResourceType.Final);
             match.IsExistsConfirmedEarly = newInfoMatchService.IsExistsConfirmedOSEarly(match);
+            match.RefDataService = refDataService;
+        }
+
+        return await newInfoMatchService.GetAutoSetting(matches);
+    }
+
+    public async Task<List<Match>> SetNewMatchInfo(List<Match> matches, List<ResultDetail> listResultDetail)
+    {
+        foreach (var match in matches)
+        {
+            var listSourceByMatchId = listResultDetail.Where(m => m.MatchId == match.MatchId && m.SourceId != SourceType.Normal).ToList();
+            var currentResultDetail = listResultDetail.Where(m => m.MatchId == match.MatchId && m.SourceId == SourceType.Normal).ToList();
+
+            match.NewEventStatus = newInfoMatchService.NewEventStatus(match, currentResultDetail);
+            match.EventStatusColor = newInfoMatchService.EventStatusColor(match);
+            match.EarlySettleStatus = newInfoMatchService.EarlySettlementStatus(match);
+            match.ConfirmHalfTimeScore = newInfoMatchService.ConfirmScore(listSourceByMatchId, ResourceType.Halftime);
+            match.ConfirmFullTimeScore = newInfoMatchService.ConfirmScore(listSourceByMatchId, ResourceType.Final);
+            match.IsExistsConfirmedEarly = newInfoMatchService.IsExistsConfirmedEarly(match);
             match.RefDataService = refDataService;
         }
 

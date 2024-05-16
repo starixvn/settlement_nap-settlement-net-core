@@ -147,7 +147,7 @@ public class MatchServiceTests
         newInfoMatchService.IsExistsConfirmedEarly(Arg.Any<Match>()).Returns(true);
         newInfoMatchService.GetAutoSetting(Arg.Any<List<Match>>()).Returns(x => x[0] as List<Match>);
 
-        var matches = await service.SetNewMatchInfo([new()], []);
+        var matches = await service.SetNewOsMatchInfo([new()], []);
         var match = matches.ToList()[0];
 
         Assert.True(match.IsExistsConfirmedEarly && match.IsExistMarkedTicket && match is { IsExistRunningTicket: true, IsCalculatingSingle: 1 });

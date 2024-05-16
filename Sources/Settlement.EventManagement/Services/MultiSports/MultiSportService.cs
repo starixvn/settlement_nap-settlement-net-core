@@ -95,7 +95,7 @@ public class MultiSportServiceImp(
     private async Task<List<MultiSportMatchWaiting>> GetAndCachingMatches(RefreshMultiSportRequest request, string hashLeagueIds, bool isLeader)
     {
         var criteria = mapper.Map<RefreshMultiSportRequest, GetWaitingMultiSportCriteria>(request);
-        var waitingMatches = await GetMatchesAllInfo(criteria);
+        var waitingMatches = await GetMatchesAllSites(criteria);
         var listResultDetail = await ResultDetailByMatchIds(waitingMatches);
 
         waitingMatches = await matchService.SetNewMatchInfo(waitingMatches, listResultDetail);
@@ -194,6 +194,8 @@ public class MultiSportServiceImp(
     private async Task<MatchTuple> GetMatches(MultipleSiteCriteria criteria)
     {
         var result = await repository.FetchMultipleAsync<Match, MatchOverStatus>(criteria);
+        var item1 = result.FirstResultSet.ToList();
+        var item2 = result.SecondResultSet.ToList();
 
         return (result.FirstResultSet.ToList(), result.SecondResultSet.ToList());
     }
@@ -210,11 +212,11 @@ public class MultiSportServiceImp(
         return matches;
     }
 
-    //private async Task<IEnumerable<Match>> FetchMatches(string server, MultipleSiteCriteria criteria)
-    //{
-    //    criteria.DbServer = server;
-    //    return await repository.FetchAsync<Match>(criteria);
-    //}
+    private async Task<IEnumerable<Match>> FetchMatches(string server, MultipleSiteCriteria criteria)
+    {
+        criteria.DbServer = server;
+        return await repository.FetchAsync<Match>(criteria);
+    }
 
     private List<MultiSportMatchWaiting> SetToCache(string hashLeagueIds, List<Match> matches)
     {
@@ -308,7 +310,7 @@ public class MultiSportServiceImp(
 
         var resultDetails = await ResultDetailByMatchIds(matches);
 
-        matches = await matchService.SetNewMatchInfo(matches, resultDetails);
+        matches = await matchService.SetNewOsMatchInfo(matches, resultDetails);
 
         return new MultiSportResult
         {

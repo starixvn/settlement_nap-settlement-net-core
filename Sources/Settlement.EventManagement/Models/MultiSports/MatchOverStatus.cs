@@ -15,7 +15,7 @@ public class MatchOverStatus
     [JsonPropertyName("b")]
     public int BetType { get; set; }
 
-    [JsonPropertyName("bi")]
+    [JsonPropertyName("bid")]
     public int BetId { get; set; }
 
     [JsonPropertyName("o")]
