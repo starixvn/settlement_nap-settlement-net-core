@@ -13,6 +13,7 @@ import { CalculateAction } from '../../../shared/constants';
 import { ModalDialogMessage, Result } from '../../../shared/models';
 import { ToastContainerDirective, ToastrService } from 'ngx-toastr';
 import { Language } from '../../../shared/language.native';
+import { Permission } from '../../../shared/models/sportsbook-sop/permission.model';
 
 @Component({
   selector: 'confirm-refund',
@@ -27,12 +28,13 @@ import { Language } from '../../../shared/language.native';
 })
 export class ConfirmRefundComponent implements OnInit {
   @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
-  public matchDetail: MatchDetail;
-  public isRefundAll: boolean;
-  public subButtonRefundAll: SubRefundAllButtonStatus;
-  public subButtonRefundFT: SubRefundFTButtonStatus;
-  public refundAction = CalculateAction;
-  public dialogMessage = new ModalDialogMessage();
+  matchDetail: MatchDetail;
+  permission: Permission
+  isRefundAll: boolean;
+  subButtonRefundAll: SubRefundAllButtonStatus;
+  subButtonRefundFT: SubRefundFTButtonStatus;
+  refundAction = CalculateAction;
+  dialogMessage = new ModalDialogMessage();
   constructor(
     private readonly verifyMatchService: VerifyMatchService,
     private readonly requestService: RequestService,
@@ -46,6 +48,7 @@ export class ConfirmRefundComponent implements OnInit {
   ngOnInit(): void {
     this.toastrService.overlayContainer = this.toastContainer;
     this.matchDetail = this.data.match.matchDetail;
+    this.permission = this.data.match.permission;
     this.isRefundAll = _.isEqual(this.data.refundType, RefundType.refundAll);
     const halfTimeStatusId = (_.find(this.data.match.resultDetails, item => _.isEqual(item.resourceId, ResourceIds.halfTime)) ??
       new ResultDetail()).settlementStatusId;
@@ -59,11 +62,11 @@ export class ConfirmRefundComponent implements OnInit {
     }
   }
 
-  public close() {
+  close() {
     this.dialogRef.close();
   }
 
-  public async refundSus(actionName: string) {
+  async refundSus(actionName: string) {
     this.toastrService.clear();
     this.matchDetail.isSettleAbandonedMatchIBC = true;
     const checkingStatus = await this.requestService.checkNewStatus(this.matchDetail.matchId, actionName, true);
@@ -74,7 +77,7 @@ export class ConfirmRefundComponent implements OnInit {
     }
   }
 
-  public async refundNotSdtAndPos(actionName: string) {
+  async refundNotSdtAndPos(actionName: string) {
     this.toastrService.clear();
     this.matchDetail.isSettleAbandonedMatchIBC = false;
     const checkingStatus = await this.requestService.checkNewStatus(this.matchDetail.matchId, actionName, false);
