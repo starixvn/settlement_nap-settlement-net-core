@@ -1,46 +1,43 @@
-<h1 mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragBoundary=".cdk-overlay-container"
-    cdkDragHandle>
-    <label class="title">
-        {{data.refundType.toUpperCase()}} Confirmation
-    </label>
-    <button type="button" class="close dialog-close" (click)="close()">X</button>
+<h1 mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragBoundary=".cdk-overlay-container" cdkDragHandle>
+  <label class="title">
+    {{data.refundType.toUpperCase()}} Confirmation
+  </label>
+  <button type="button" class="close dialog-close" (click)="close()">X</button>
 </h1>
 <span toastContainer></span>
 <div class="confirm-refund">
-    <div class="content">
-        Please double check and confirm which kind of {{data.refundType.toUpperCase()}} that you need to execute on
-        this
-        match!
-    </div>
+  <div class="content">
+    Please double check and confirm which kind of {{data.refundType.toUpperCase()}} that you need to execute on
+    this
+    match!
+  </div>
 
-    <div class="action-button">
+  <div class="action-button">
     @if (!isRefundAll) {
       <div>
         <button class="button refund-button" [disabled]="subButtonRefundFT.isDisableRefundFTSus"
           (click)="refundSus(refundAction.refundFullTime)">
           Refund FT (Sus)
         </button>
-            <button class="button refund-button" [disabled]="subButtonRefundFT.isDisableRefundFTNotSDT"
-                (click)="refundNotSdtAndPos(refundAction.refundFullTime)">
-                Refund FT (Not SDT)
-            </button>
-        </div>
+        <button class="button refund-button" [disabled]="subButtonRefundFT.isDisableRefundFTNotSDT" (click)="refundNotSdtAndPos(refundAction.refundFullTime)">
+          Refund FT (Not SDT)
+        </button>
+      </div>
     }
     @if (isRefundAll) {
       <div>
         <button type="checkbox" class="button refund-button" [disabled]="subButtonRefundAll.isDisableRefundAllSus" (click)="refundNotSdtAndPos(refundAction.refund)">
           Refund All (Pos)
         </button>
-            <button class="button refund-button"
-                [disabled]="subButtonRefundAll.isDisableRefundAllPos || !permission.isLeader"
-                (click)="refundSus(refundAction.refund)">
-                Refund All (Sus)
-            </button>
-        </div>
+        <button class="button refund-button" [disabled]="subButtonRefundAll.isDisableRefundAllPos || !permission.isLeader"
+          (click)="refundSus(refundAction.refund)">
+          Refund All (Sus)
+        </button>
+      </div>
     }
-    </div>
-    <div class="clear-both">
-    </div>
+  </div>
+  <div class="clear-both">
+  </div>
   @if (!isRefundAll) {
     <div class="mark-message">
       <div><b>- Refund FT (Sus)</b> Refund FT tickets together with settle determined tickets (used for suspende in
