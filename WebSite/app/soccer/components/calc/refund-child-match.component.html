@@ -1,69 +1,69 @@
 <hr class="thick-line" />
 <div class="act-select-childMatch">
-    - <b>Settlement options for related match</b>
+  - <b>Settlement options for related match</b>
 </div>
 <div class="check-box">
-    <span class="collapse-icon" [ngClass]="collapsed ? 'collapsed': ''" (click)="collapse()"></span>
-    &nbsp;Refund related Extra Time & Penalty Shootout matches.
+  <span class="collapse-icon" [ngClass]="collapsed ? 'collapsed': ''" (click)="collapse()"></span>
+  &nbsp;Refund related Extra Time & Penalty Shootout matches.
 </div>
 <div class="table-child" [hidden]="collapsed">
-    <table class="table-calculation">
-        <thead>
-            <tr>
-                <th rowspan="2" class="code">
-                    Match Code/ID
-                </th>
-                <th rowspan="2" class="event-refund">
-                    Team
-                </th>
-                <th rowspan="2" class="event-status">
-                    Event Status
-                </th>
-                <th rowspan="2" class="marked-refund">
-                    Marked to Refund All
-                </th>
-                <th rowspan="2" class="marked-refund">
-                    Select to Refund
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            <ng-container *ngFor="let item of childMatches; let i = index">
-                <tr>
-                    <td class="code" rowspan="2">
-                        <div>{{item.matchCode}}</div>
-                        <div>{{item.matchId}}</div>
-                    </td>
-                    <td>
-                        <div class="match-home">
-                            {{item.homeName}}
-                        </div>
-                    </td>
-                    <td rowspan="2" class="{{item.eventStatusColor}}">
-                        <div class="event-status">
-                            {{item.eventStatus}}
-                        </div>
-                    </td>
-                    <td rowspan="2">
-                        <div class="marked-refund">
-                            {{item.isRefund}}
-                        </div>
-                    </td>
-                    <td rowspan="2">
-                        <div class="marked-refund">
-                            <input type="checkbox" [(ngModel)]="item.checked" (ngModelChange)="childMatchesChecked.emit(childMatches)" class="selectProceed">
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div class="match-away">
-                            {{item.awayName}}
-                        </div>
-                    </td>
-                </tr>
-            </ng-container>
-        </tbody>
-    </table>
-    - Matches with Marked tickets, settled tickets, or are on-hold will not be refunded along side main match calculation. Please proceed with refund manually.
+  <table class="table-calculation">
+    <thead>
+      <tr>
+        <th rowspan="2" class="code">
+          Match Code/ID
+        </th>
+        <th rowspan="2" class="event-refund">
+          Team
+        </th>
+        <th rowspan="2" class="event-status">
+          Event Status
+        </th>
+        <th rowspan="2" class="marked-refund">
+          Marked to Refund All
+        </th>
+        <th rowspan="2" class="marked-refund">
+          Select to Refund
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (item of childMatches; track item; let i = $index) {
+        <tr>
+          <td class="code" rowspan="2">
+            <div>{{item.matchCode}}</div>
+            <div>{{item.matchId}}</div>
+          </td>
+          <td>
+            <div class="match-home">
+              {{item.homeName}}
+            </div>
+          </td>
+          <td rowspan="2" class="{{item.eventStatusColor}}">
+            <div class="event-status">
+              {{item.eventStatus}}
+            </div>
+          </td>
+          <td rowspan="2">
+            <div class="marked-refund">
+              {{item.isRefund}}
+            </div>
+          </td>
+          <td rowspan="2">
+            <div class="marked-refund">
+              <input type="checkbox" [(ngModel)]="item.checked" (ngModelChange)="childMatchesChecked.emit(childMatches)" class="selectProceed">
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <div class="match-away">
+              {{item.awayName}}
+            </div>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+  - Matches with Marked tickets, settled tickets, or are on-hold will not be refunded along side main match calculation. Please proceed with refund manually.
 </div>

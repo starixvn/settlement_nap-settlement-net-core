@@ -9,32 +9,20 @@ public interface PushInstantCalculationService
     Task Execute(PushInstantCalculationCriteria criteria);
 }
 
-public class PushInstantCalculationServiceImp : PushInstantCalculationService
+public class PushInstantCalculationServiceImp(
+    IDynamicRepository repository,
+    IHttpContextAccessor accessor,
+    LogService logService,
+    IOptions<AppSettingsKey> appSettingsKey)
+    : PushInstantCalculationService
 {
-    private readonly IDynamicRepository repository;
-    private readonly IHttpContextAccessor accessor;
-    private readonly LogService logService;
-    private readonly AppSettingsKey appSettingsKey;
-
-    public PushInstantCalculationServiceImp(
-        IDynamicRepository repository,
-        IHttpContextAccessor accessor,
-        LogService logService,
-        IOptions<AppSettingsKey> appSettingsKey)
-    {
-        this.repository = repository;
-        this.accessor = accessor;
-        this.logService = logService;
-        this.appSettingsKey = appSettingsKey.Value;
-    }
-
     public async Task Execute(PushInstantCalculationCriteria criteria)
     {
         criteria.Ip = accessor.HttpContext.Connection.RemoteIpAddress.ToString();
 
         WriteLogDirectly(criteria);
 
-        foreach (var server in appSettingsKey.SiteDbServer)
+        foreach (var server in appSettingsKey.Value.SiteDbServer)
         {
             criteria.DbServer = server;
             await repository.ExecuteAsync(criteria);

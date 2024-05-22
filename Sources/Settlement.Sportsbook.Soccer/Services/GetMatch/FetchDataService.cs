@@ -25,26 +25,14 @@ public interface IFetchDataService
     public Task<bool> IsDeterminedHedgeMatch(int matchId);
 }
 
-public class FetchDateServiceImp : IFetchDataService
+public class FetchDateServiceImp(
+    IDynamicRepository repository,
+    IMapper mapper,
+    IOptions<AppSettingsKey> appSettingsKey,
+    IMergeDataService mergeDataService)
+    : IFetchDataService
 {
-    private readonly IDynamicRepository repository;
-
-    private readonly IMapper mapper;
-
-    private readonly AppSettingsKey appSettingsKey;
-
-    private readonly IMergeDataService mergeDataService;
-
-    public FetchDateServiceImp(IDynamicRepository repository,
-        IMapper mapper,
-        IOptions<AppSettingsKey> appSettingsKey,
-        IMergeDataService mergeDataService)
-    {
-        this.repository = repository;
-        this.mapper = mapper;
-        this.appSettingsKey = appSettingsKey.Value;
-        this.mergeDataService = mergeDataService;
-    }
+    private readonly AppSettingsKey appSettingsKey = appSettingsKey.Value;
 
     public async Task<Match> GetMatchInfo(GetMatchRequest request)
     {

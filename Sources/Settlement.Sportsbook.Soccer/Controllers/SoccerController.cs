@@ -6,15 +6,8 @@ namespace Settlement.Sportsbook.Soccer.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class SoccerController : ControllerBase
+public class SoccerController(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator mediator;
-
-    public SoccerController(IMediator mediator)
-    {
-        this.mediator = mediator;
-    }
-
     [Route("get-match-early"), HttpPost]
     [LogGetRequest]
     public async Task<IActionResult> GetMatchEarly(GetMatchEarlyRequest request) => Ok(await mediator.Send(request).ConfigureAwait(false));

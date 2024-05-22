@@ -1,13 +1,12 @@
 import { Injectable } from "@angular/core";
+import { firstValueFrom } from 'rxjs';
 import { ResultDetail, SettleQuery } from "../../../models";
 import { ClosePopupService, HttpRequestService } from "../../../../shared/services";
-import { ResultSettingQuery } from "../../../../shared/models";
+import { Result } from '../../../../shared/models';
 import { GroupBetTypeService } from "./group-bettpe.service";
-import { SportType } from '../../../../shared/constants';
 @Injectable()
 export class HelperService {
     private soccerApi = '/api/soccer';
-    private aioApi = '/api/aio';
     constructor(
         private readonly httpRequestService: HttpRequestService,
         private readonly closePopupService: ClosePopupService,
@@ -15,11 +14,13 @@ export class HelperService {
     ) { }
 
     public settle(query: SettleQuery) {
-        return this.httpRequestService.postJson(query, `${this.soccerApi}/settle-early`);
+        const request = this.httpRequestService.postJson<Result>(query, `${this.soccerApi}/settle-early`);
+        return firstValueFrom(request);
     }
 
     public getMatch(matchId: number) {
-        return this.httpRequestService.postJson({ matchId  }, `${this.soccerApi}/get-match-early`);
+        const request =  this.httpRequestService.postJson({ matchId  }, `${this.soccerApi}/get-match-early`);
+        return firstValueFrom(request);
     }
 
     public getGroupBetType(resultDetails: ResultDetail[]) {
@@ -30,27 +31,6 @@ export class HelperService {
         return this.closePopupService.closePopup();
     }
 
-    public getLastestMatchResult(matchId: number) {
-        const query = {
-            matchId,
-            sportType: SportType.soccer,
-        };
-
-        return this.httpRequestService.postJson(query, `${this.aioApi}/get-recal-result`);
-    }
-
-    public changeResultSetting(query: ResultSettingQuery) {
-        return this.httpRequestService.postJson(query, `${this.aioApi}/result-setting`);
-    }
-
-    public checkMarkedTickets(matchId: number, selectedResources: ResultDetail[])  {
-        const query = {
-            matchId,
-            selectedResources
-        };
-        return this.httpRequestService.postJson(query, `${this.aioApi}/check-marked-tickets`, false);
-    }
-
     public checkingStatus(matchId: number, actionName: string) {
         const query = {
             matchId,
@@ -58,6 +38,7 @@ export class HelperService {
             isSettleDetermined: false,
             isEarly: true
         };
-        return this.httpRequestService.postJson(query, `${this.soccerApi}/check-status`, false);
+        const request = this.httpRequestService.postJson<Result>(query, `${this.soccerApi}/check-status`, false);
+        return firstValueFrom(request);
     }
 }

@@ -13,32 +13,16 @@ public interface ISoccerBetStatusService
     string CreateBetStatusAfterUncalculateFt(UncalculateFtRequest request, string betStatus, string goalRecord);
 }
 
-public class SoccerBetStatusServiceImp : ISoccerBetStatusService
+public class SoccerBetStatusServiceImp(
+    IMatchService matchService,
+    IValidationService validationService,
+    HalfTimeBetStatus.IBetStatusService halfTimeBetStatusService,
+    FullTimeBetStatus.IBetStatusService fullTimeBetStatusService,
+    IBetStatusAllService betStatusAllService,
+    IMapper mapper)
+    : ISoccerBetStatusService
 {
-    private readonly IMatchService matchService;
-    private readonly IValidationService validationService;
-    private readonly IBetStatusAllService betStatusAllService;
-    private readonly FullTimeBetStatus.IBetStatusService fullTimeBetStatusService;
-    private readonly HalfTimeBetStatus.IBetStatusService halfTimeBetStatusService;
-    private readonly IMapper mapper;
-
     private const string RefundHalfTime = "Refund HT;";
-
-    public SoccerBetStatusServiceImp(
-        IMatchService matchService,
-        IValidationService validationService,
-        HalfTimeBetStatus.IBetStatusService halfTimeBetStatusService,
-        FullTimeBetStatus.IBetStatusService fullTimeBetStatusService,
-        IBetStatusAllService betStatusAllService,
-        IMapper mapper)
-    {
-        this.matchService = matchService;
-        this.validationService = validationService;
-        this.halfTimeBetStatusService = halfTimeBetStatusService;
-        this.fullTimeBetStatusService = fullTimeBetStatusService;
-        this.betStatusAllService = betStatusAllService;
-        this.mapper = mapper;
-    }
 
     public string CreateBetStatus(SettleRequest request)
     {

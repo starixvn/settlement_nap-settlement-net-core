@@ -9,17 +9,11 @@ public interface IScoreAndGoalService
     string BetStatusHasFinalScoreAndGoalRecord(SettleRequest request);
 }
 
-public class ScoreAndGoalServiceImp : IScoreAndGoalService
+public class ScoreAndGoalServiceImp(
+    IHalftimeFullTimeService halftimeFullTimeService,
+    FirstLastGoalService firstLastGoalService)
+    : IScoreAndGoalService
 {
-    private readonly IHalftimeFullTimeService halftimeFullTimeService;
-    private readonly FirstLastGoalService firstLastGoalService;
-
-    public ScoreAndGoalServiceImp(IHalftimeFullTimeService halftimeFullTimeService, FirstLastGoalService firstLastGoalService)
-    {
-        this.halftimeFullTimeService = halftimeFullTimeService;
-        this.firstLastGoalService = firstLastGoalService;
-    }
-
     public string ReplaceBetStatusWhenScoreAndGoalRecordIsNull(string betStatus)
     {
         var isExistHalfTimeFirstGoalLastGoal = betStatus.IgnoreCaseContains("1FL");

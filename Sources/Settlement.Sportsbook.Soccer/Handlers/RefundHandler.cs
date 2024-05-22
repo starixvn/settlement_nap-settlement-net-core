@@ -10,35 +10,20 @@ using AutoMapper;
 using Fanex.NAP.Client.Helpers.Web;
 using Services.GetMatch;
 
-public class RefundHandler :
-    IRequestHandler<GetSpecificBetTypeRequest, List<string>>,
-    IRequestHandler<CheckingMarkedTicketsRequest, MarkedTickets>,
-    IRequestHandler<RefundRequest, Result>,
-    IRequestHandler<RefundRunningThirdPartyTicketRequest, Result>,
-    IRequestHandler<MoveBetRequest, Result>,
-    IRequestHandler<GetMatchDetailThirdPartyBetTicketsRequest, List<MatchMoveBetTicket>>
+public class RefundHandler(
+    INapSession currentSession,
+    IMatchService matchService,
+    IRefundService refundService,
+    IMapper mapper)
+    :
+        IRequestHandler<GetSpecificBetTypeRequest, List<string>>,
+        IRequestHandler<CheckingMarkedTicketsRequest, MarkedTickets>,
+        IRequestHandler<RefundRequest, Result>,
+        IRequestHandler<RefundRunningThirdPartyTicketRequest, Result>,
+        IRequestHandler<MoveBetRequest, Result>,
+        IRequestHandler<GetMatchDetailThirdPartyBetTicketsRequest, List<MatchMoveBetTicket>>
 
 {
-    private readonly INapSession currentSession;
-
-    private readonly IMapper mapper;
-
-    private readonly IMatchService matchService;
-
-    private readonly IRefundService refundService;
-
-    public RefundHandler(
-        INapSession currentSession,
-        IMatchService matchService,
-        IRefundService refundService,
-        IMapper mapper)
-    {
-        this.currentSession = currentSession;
-        this.matchService = matchService;
-        this.refundService = refundService;
-        this.mapper = mapper;
-    }
-
     public async Task<List<string>> Handle(GetSpecificBetTypeRequest request, CancellationToken cancellationToken) =>
         await matchService.GetSpecificBetTypes(request);
 

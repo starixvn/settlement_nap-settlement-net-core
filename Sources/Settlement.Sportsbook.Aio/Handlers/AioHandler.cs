@@ -68,7 +68,7 @@ public class AioHandler(
         {
             MatchId = request.MatchId,
             SessionIds = request.SessionIds,
-            StatusId = -1 // initial
+            StatusId = -1
         };
         await resultAmendmentService.UpdateResultHistory(criteria);
 

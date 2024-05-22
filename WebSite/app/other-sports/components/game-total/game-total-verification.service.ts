@@ -158,22 +158,6 @@ export class GameTotalVerificationService {
         return matchDetail.confirmFT > 0 && !this.isEmptyHomeOrAwayValue(resultDetail);
     }
 
-    private compareInputScoreWithExternalScore(isExistTraderScore: boolean, isExistProviderScore: boolean, matchDetail: MatchDetail,
-        originalResultDetail: ResultDetail, resultDetail: ResultDetail, externalResult: ExternalResultDetail) {
-        let isMismatched = false;
-        if (isExistTraderScore) {
-            isMismatched = !_.isEqual(resultDetail.homeValue, originalResultDetail.homeValue)
-                || !_.isEqual(resultDetail.awayValue, originalResultDetail.awayValue);
-        }
-
-        if (!isMismatched && isExistProviderScore) {
-            isMismatched = !_.isEqual(resultDetail.homeValue, externalResult.homeValue.toString())
-                || !_.isEqual(resultDetail.awayValue, externalResult.awayValue.toString());
-        }
-
-        return isMismatched;
-    }
-
     public isInsufficient(matchDetail: MatchDetail,originalResultDetails: ResultDetail[],externalResults: ExternalResultDetail[]) {
         const originalTotalSetResultDetail = originalResultDetails.find(r => r.resourceId === ResourcesIds.totalSets);
         return  (matchDetail.confirmFT < 1 || this.isEmptyHomeOrAwayValue(originalTotalSetResultDetail)) && !externalResults?.length;
@@ -188,7 +172,6 @@ export class GameTotalVerificationService {
         return externalResults?.length;
     }
 
-
     public isConsistentScore(originalResultDetails: ResultDetail[],externalResults: ExternalResultDetail[],resultDetails: ResultDetail[],matchDetail: MatchDetail) {
         const hasProvider = this.hasProvider(externalResults);
         const hasTraderConfirmed = this.hasTraderConfirmed(matchDetail,originalResultDetails);
@@ -200,7 +183,6 @@ export class GameTotalVerificationService {
         if(!isConsistent && hasProvider) {
             isConsistent = this.isConsistentScoreProvider(resultDetails,externalResults);
         }
-        
         
         if(!isConsistent && hasTraderConfirmed) {
             isConsistent = this.isConsistentScoreTraderConfirm(originalResultDetails,resultDetails);

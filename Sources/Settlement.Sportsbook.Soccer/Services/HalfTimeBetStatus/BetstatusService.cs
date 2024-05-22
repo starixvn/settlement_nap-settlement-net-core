@@ -7,15 +7,8 @@ public interface IBetStatusService
     string GetBetStatus(SettleBaseRequest request);
 }
 
-public class BetStatusServiceImp : IBetStatusService
+public class BetStatusServiceImp(IHalftimeService halftimeService) : IBetStatusService
 {
-    private readonly IHalftimeService halftimeService;
-
-    public BetStatusServiceImp(IHalftimeService halftimeService)
-    {
-        this.halftimeService = halftimeService;
-    }
-
     public string GetBetStatus(SettleBaseRequest request)
     {
         var halfTimeBetStatus = string.Empty;

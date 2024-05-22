@@ -31,8 +31,6 @@ public class CalculateServiceImp(
     IMatchService matchService)
     : ICalculateService
 {
-    private readonly AppSettingsKey appSettingsKey = appSettingsKey.Value;
-
     public async Task<Result> Calculate(SettleRequest request)
     {
         var criteria = createCriteriaService.CreateCalculateCriteria(request);
@@ -139,9 +137,7 @@ public class CalculateServiceImp(
         var fantasyMatch = await matchService.GetRelatedMatches(request.MatchId);
         var relatedMatches = fantasyMatch.RelatedMatches;
 
-        if (IsFirstHalfRelatedMatchesNotCalc(request.ActionName, relatedMatches)
-            || IsFulltimeRelatedMatchesNotCalc(request.ActionName, relatedMatches)
-            || IsAllRelatedMatchesNotCalc(request.ActionName, relatedMatches))
+        if (IsRelatedMatches(request.ActionName, relatedMatches))
         {
             return new Result
             {
@@ -153,11 +149,18 @@ public class CalculateServiceImp(
         return new Result();
     }
 
-    private static bool IsFirstHalfRelatedMatchesNotCalc(string action, List<FantasyRelatedMatch> relatedMatches)
+    private static bool IsRelatedMatches(string actionName, List<FantasyRelatedMatch> relatedMatches)
+    {
+        return IsFirstHalfRelatedMatchesNotCalc(actionName, relatedMatches)
+               || IsFulltimeRelatedMatchesNotCalc(actionName, relatedMatches)
+               || IsAllRelatedMatchesNotCalc(actionName, relatedMatches);
+    }
+
+    private static bool IsFirstHalfRelatedMatchesNotCalc(string action, IEnumerable<FantasyRelatedMatch> relatedMatches)
         => action.Equals(ActionName.CalculateHalfTime, StringComparison.Ordinal)
             && relatedMatches.Any(x => x.HtSettlementStatusId != SettlementStatus.Completed);
 
-    private static bool IsFulltimeRelatedMatchesNotCalc(string action, List<FantasyRelatedMatch> relatedMatches)
+    private static bool IsFulltimeRelatedMatchesNotCalc(string action, IEnumerable<FantasyRelatedMatch> relatedMatches)
         => action.Equals(ActionName.CalculateFullTime, StringComparison.Ordinal)
             && relatedMatches.Any(x => x.FtSettlementStatusId != SettlementStatus.Completed);
 
@@ -169,7 +172,7 @@ public class CalculateServiceImp(
     private async Task ExecuteAsync(CalculateCriteria criteria)
     {
         await UpdateMatchInfo(criteria);
-        foreach (var server in appSettingsKey.SiteDbServer)
+        foreach (var server in appSettingsKey.Value.SiteDbServer)
         {
             criteria.DbServer = server;
             await repository.ExecuteAsync(criteria);

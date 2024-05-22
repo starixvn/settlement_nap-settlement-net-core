@@ -16,13 +16,7 @@ public class ResultSettingCriteria : NonQueryCommand
 
     public bool Is3x3 { get; set; }
 
-    public override string GetSettingKey()
-    {
-        return "NAP_Set_ResultDetailSettingUpd";
-    }
+    public override string GetSettingKey() => "NAP_Set_ResultDetailSettingUpd";
 
-    public override bool IsValid()
-    {
-        return MatchId > 0;
-    }
+    public override bool IsValid() => MatchId > 0;
 }

@@ -48,6 +48,7 @@ export class InputScoreFormComponent implements OnInit {
   public delete(interval: TimeMachineResult) {
     this.intervals = _.filter(this.intervals, item => interval.position !== item.position);
   }
+  
   public add() {
     this.toastrService.clear();
     this.newInterval.position = Number(this.positionSelected);

@@ -6,6 +6,8 @@ import { VerifyRefundService } from './verify-refund.service';
 import { VerifyService } from './verify.service';
 import * as _ from 'lodash';
 import { Language } from '../../../../shared/language.native';
+import { ExternalResultDetail } from '../../../../shared/models/sportsbook-sop';
+
 @Injectable()
 export class VerifyCalculateService {
     constructor(
@@ -54,10 +56,16 @@ export class VerifyCalculateService {
         return isOverTime ? Language.NotSpecifyValidResults : "";
     }
 
-    public verifyPenaltyBettypeBeforeRefund(selectedResultDetails: ResultDetail[], resultDetails: ResultDetail[]) {
+    public verifyPenaltyBettypeBeforeRefund(selectedResultDetails: ResultDetail[], resultDetails: ResultDetail[], externalResults: ExternalResultDetail[]) {
         const isEmpty = this.verifyRefundService.isEmptyResultValue(selectedResultDetails);
         if (isEmpty) {
             return Language.NotSpecifyValidResults;
+        }
+
+        const isExistedDifferentValue = this.verifyRefundService.isExistedDifferentValueConfirmed(externalResults, selectedResultDetails);
+        
+        if(isExistedDifferentValue) {
+            return Language.confirmRefund.sdtErrorMessage;
         }
 
         const isNotExisted = this.verifyRefundService.isExistedNotTaken(selectedResultDetails);

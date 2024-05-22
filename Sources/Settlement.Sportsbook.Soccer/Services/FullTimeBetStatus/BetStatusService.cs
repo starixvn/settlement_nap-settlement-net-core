@@ -7,17 +7,9 @@ public interface IBetStatusService
     string GetBetStatus(SettleRequest request);
 }
 
-public class BetStatusServiceImp : IBetStatusService
+public class BetStatusServiceImp(IValidationService validationService, IScoreAndGoalService scoreAndGoalService)
+    : IBetStatusService
 {
-    private readonly IValidationService validationService;
-    private readonly IScoreAndGoalService scoreAndGoalService;
-
-    public BetStatusServiceImp(IValidationService validationService, IScoreAndGoalService scoreAndGoalService)
-    {
-        this.validationService = validationService;
-        this.scoreAndGoalService = scoreAndGoalService;
-    }
-
     public string GetBetStatus(SettleRequest request)
     {
         if (validationService.IsNullScoreAndGoalRecord(request))

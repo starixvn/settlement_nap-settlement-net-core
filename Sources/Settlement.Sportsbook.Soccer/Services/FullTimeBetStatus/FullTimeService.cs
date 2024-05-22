@@ -13,15 +13,8 @@ public interface IFullTimeService
     string RefundHtOnBetStatus(string fullTimeBetStatus);
 }
 
-public class FullTimeServiceImp : IFullTimeService
+public class FullTimeServiceImp(IGoalRecordService goalRecordService) : IFullTimeService
 {
-    private readonly IGoalRecordService goalRecordService;
-
-    public FullTimeServiceImp(IGoalRecordService goalRecordService)
-    {
-        this.goalRecordService = goalRecordService;
-    }
-
     public string BetStatusFullTimeWithSemicolon(SettleBaseRequest request)
     {
         var goalRecord = new GoalRecordModel { IsExistFgLg = request.IsExistFgLg };

@@ -10,32 +10,14 @@ public interface SettleEarlyService
     public Task<Result> CalculateEarly(SettleEarlyRequest request);
 }
 
-public class SettleEarlyServiceImp : SettleEarlyService
+public class SettleEarlyServiceImp(
+    ICreateCriteriaService createCriteriaService,
+    IOptions<AppSettingsKey> appSettingsKey,
+    IDynamicRepository repository,
+    ScaleOutSettleService scaleOutSettleService,
+    LogService logService)
+    : SettleEarlyService
 {
-    private readonly ICreateCriteriaService createCriteriaService;
-
-    private readonly AppSettingsKey appSettingsKey;
-
-    private readonly IDynamicRepository repository;
-
-    private readonly ScaleOutSettleService scaleOutSettleService;
-
-    private readonly LogService logService;
-
-    public SettleEarlyServiceImp(
-        ICreateCriteriaService createCriteriaService,
-        IOptions<AppSettingsKey> appSettingsKey,
-        IDynamicRepository repository,
-        ScaleOutSettleService scaleOutSettleService,
-        LogService logService)
-    {
-        this.createCriteriaService = createCriteriaService;
-        this.appSettingsKey = appSettingsKey.Value;
-        this.repository = repository;
-        this.scaleOutSettleService = scaleOutSettleService;
-        this.logService = logService;
-    }
-
     public async Task<Result> CalculateEarly(SettleEarlyRequest request)
     {
         var criteria = createCriteriaService.CreateCalculateEarlyCriteria(request);
@@ -65,7 +47,7 @@ public class SettleEarlyServiceImp : SettleEarlyService
 
     private async Task<Result> Execute(CalculateEarlyCriteria criteria)
     {
-        foreach (var server in appSettingsKey.SiteDbServer)
+        foreach (var server in appSettingsKey.Value.SiteDbServer)
         {
             criteria.DbServer = server;
             await repository.ExecuteAsync(criteria);

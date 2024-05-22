@@ -1,5 +1,6 @@
 import { Remark } from "../../../../shared/models";
-import { Permission, TicketCount, ResultDetail, MatchDetailBase } from '../../../models';
+import { Permission } from "../../../../shared/models/sportsbook-sop";
+import { TicketCount, ResultDetail, MatchDetailBase } from '../../../models';
 import { Resource } from "./resouce.model";
 
 export interface Match {
@@ -67,10 +68,10 @@ export interface FantasyRelatedMatch {
     awayId: number;
     homeName: string;
     awayName: string;
-    htHomeScore: string;
-    htAwayScore: string;
-    finalHomeScore: string;
-    finalAwayScore: string;
+    htHomeScore: number;
+    htAwayScore: number;
+    finalHomeScore: number;
+    finalAwayScore: number;
     remark: Remark;
     eventStatus: string;
     betStatus: string;

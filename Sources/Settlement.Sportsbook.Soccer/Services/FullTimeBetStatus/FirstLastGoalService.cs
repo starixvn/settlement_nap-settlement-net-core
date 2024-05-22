@@ -7,15 +7,8 @@ public interface FirstLastGoalService
     string LastGoalOnBetStatus(string betStatus);
 }
 
-public class FirstLastGoalServiceImp : FirstLastGoalService
+public class FirstLastGoalServiceImp(IGoalRecordService goalRecordService) : FirstLastGoalService
 {
-    private readonly IGoalRecordService goalRecordService;
-
-    public FirstLastGoalServiceImp(IGoalRecordService goalRecordService)
-    {
-        this.goalRecordService = goalRecordService;
-    }
-
     public string FirstGoalOnBetStatus(string betStatus)
     {
         var indexFullTime = betStatus.IgnoreCaseIndexOf(";FL");

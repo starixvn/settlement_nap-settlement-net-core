@@ -11,6 +11,7 @@ export class ResultDetail extends GeneralResultDetail{
     public isInvalidValue: boolean;
     public isNotTaken: boolean;
     public isSettleDetermined: boolean;
+    public isSettleDeterminedOriginal: boolean;
     public isInvalidSelectedProceed: boolean;
     public isNotExistedValue: boolean;
     public resultSettingData: ResultSettingModel;

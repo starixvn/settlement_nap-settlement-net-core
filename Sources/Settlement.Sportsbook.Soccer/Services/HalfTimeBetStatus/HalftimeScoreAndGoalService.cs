@@ -15,15 +15,8 @@ public interface IHalftimeScoreAndGoalService
     string FullTimeBetStatus(string goalRecordValue);
 }
 
-public class HalftimeScoreAndGoalServiceImp : IHalftimeScoreAndGoalService
+public class HalftimeScoreAndGoalServiceImp(IGoalRecordService goalRecordService) : IHalftimeScoreAndGoalService
 {
-    private readonly IGoalRecordService goalRecordService;
-
-    public HalftimeScoreAndGoalServiceImp(IGoalRecordService goalRecordService)
-    {
-        this.goalRecordService = goalRecordService;
-    }
-
     public string NoGoalHalftime
     {
         get

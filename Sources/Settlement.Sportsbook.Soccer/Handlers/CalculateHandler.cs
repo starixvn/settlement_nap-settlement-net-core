@@ -10,35 +10,20 @@ using MatchDetail = Settlement.Sportsbook.Soccer.Models.MatchDetail;
 
 namespace Settlement.Sportsbook.Soccer.Handlers;
 
-public class CalculateHandler : IRequestHandler<GetMatchRequest, Match>,
-    IRequestHandler<GetLatestMatchDetailRequest, MatchDetail>,
-    IRequestHandler<SettleRequest, Result>,
-    IRequestHandler<CheckStatusRequest, Result>,
-    IRequestHandler<UndoCheckingRequest, UndoCheckingModel>,
-    IRequestHandler<InstantCalculationRequest, Result>,
-    IRequestHandler<UncalculateFtRequest, Result>
+public class CalculateHandler(
+    INapSession currentSession,
+    IMatchService matchService,
+    ICalculateService calculateService,
+    InstantCalculateService instantCalculateService)
+    : IRequestHandler<GetMatchRequest, Match>,
+        IRequestHandler<GetLatestMatchDetailRequest, MatchDetail>,
+        IRequestHandler<SettleRequest, Result>,
+        IRequestHandler<CheckStatusRequest, Result>,
+        IRequestHandler<UndoCheckingRequest, UndoCheckingModel>,
+        IRequestHandler<InstantCalculationRequest, Result>,
+        IRequestHandler<UncalculateFtRequest, Result>
 
 {
-    private readonly INapSession currentSession;
-
-    private readonly IMatchService matchService;
-
-    private readonly ICalculateService calculateService;
-
-    private readonly InstantCalculateService instantCalculateService;
-
-    public CalculateHandler(
-        INapSession currentSession,
-        IMatchService matchService,
-        ICalculateService calculateService,
-        InstantCalculateService instantCalculateService)
-    {
-        this.currentSession = currentSession;
-        this.matchService = matchService;
-        this.calculateService = calculateService;
-        this.instantCalculateService = instantCalculateService;
-    }
-
     public async Task<Match> Handle(GetMatchRequest request, CancellationToken cancellationToken)
     {
         return request.IsRefundPage ? await matchService.GetMatchRefund(request) : await matchService.GetMatch(request);

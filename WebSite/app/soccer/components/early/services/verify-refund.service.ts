@@ -1,6 +1,8 @@
 import { BetTypes, ResultValue } from '../../../constants';
 import { Injectable } from '@angular/core';
 import { ResultDetail } from '../../../models';
+import { ExternalResultDetail } from '../../../../shared/models/sportsbook-sop';
+import { ScoreSourceType } from '../../../../shared/constants';
 import { PenaltyShootoutService } from './penalty-shootout.service';
 import * as _ from 'lodash';
 
@@ -65,4 +67,18 @@ export class VerifyRefundService {
         const result = _.find(list, (item: ResultDetail) => item.isInvalidValue && item.isSettleDetermined);
         return !_.isEmpty(result);
     }
+
+    
+    public isExistedDifferentValueConfirmed(externalResults: ExternalResultDetail[], list: ResultDetail[]) {
+        let flag = false;
+        list.forEach((resultDetail: ResultDetail) => {
+            const resource = externalResults.find(item => item.sourceId === ScoreSourceType.confirmRefundSource && item.resourceId === resultDetail.resourceId);
+            if (!_.isUndefined(resource) && (!_.isEqual(resultDetail.homeValue ?? "", resource.homeValue) || !_.isEqual(resultDetail.awayValue?? "", resource.awayValue)
+            || resultDetail.isSettleDetermined!==resultDetail.resultSettingData.isConfirmedRefundSdt)) {
+                flag = true;
+            }
+        });
+        
+        return flag;
+    } 
 }

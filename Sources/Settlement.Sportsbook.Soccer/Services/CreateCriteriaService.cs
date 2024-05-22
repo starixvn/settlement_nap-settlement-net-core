@@ -31,40 +31,16 @@ public interface ICreateCriteriaService
     public InsertLogCriteria CreateRefundLogCriteria(RefundRequest request);
 }
 
-public class CreateCriteriaServiceImp : ICreateCriteriaService
+public class CreateCriteriaServiceImp(
+    IResourceService resourceService,
+    IHttpContextAccessor accessor,
+    ISoccerBetStatusService soccerBetStatusService,
+    XmlConvertService xmlConvertService,
+    IMapper mapper,
+    IBetStatusAllService betStatusAllService,
+    IMatchService matchService)
+    : ICreateCriteriaService
 {
-    private readonly IMapper mapper;
-
-    private readonly IHttpContextAccessor accessor;
-
-    private readonly IResourceService resourceService;
-
-    private readonly ISoccerBetStatusService soccerBetStatusService;
-
-    private readonly XmlConvertService xmlConvertService;
-
-    private readonly IBetStatusAllService betStatusAllService;
-
-    private readonly IMatchService matchService;
-
-    public CreateCriteriaServiceImp(
-        IResourceService resourceService,
-        IHttpContextAccessor accessor,
-        ISoccerBetStatusService soccerBetStatusService,
-        XmlConvertService xmlConvertService,
-        IMapper mapper,
-        IBetStatusAllService betStatusAllService,
-        IMatchService matchService)
-    {
-        this.resourceService = resourceService;
-        this.accessor = accessor;
-        this.soccerBetStatusService = soccerBetStatusService;
-        this.xmlConvertService = xmlConvertService;
-        this.mapper = mapper;
-        this.betStatusAllService = betStatusAllService;
-        this.matchService = matchService;
-    }
-
     public CalculateCriteria CreateCalculateCriteria(SettleRequest request)
     {
         var resources = GetResourcesCalculate(request);
