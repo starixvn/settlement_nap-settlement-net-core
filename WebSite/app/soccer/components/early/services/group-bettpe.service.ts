@@ -6,7 +6,7 @@ import { PenaltyShootoutService } from './penalty-shootout.service';
 import { PenaltyShootout1x2Service } from './penalty-shootout1x2.service';
 import { PenaltyShootoutBothOneNeitherService } from './penalty-shootout-both-one-neither.service';
 import { PenaltyWoodWorkService } from './penalty-wood-work.service';
-import { BetTypes } from '../../../constants';
+import { BetTypes, CheckedSettleDetermined } from '../../../constants';
 import { SettlementStatusId } from '../../../../shared/constants';
 
 @Injectable()
@@ -88,7 +88,7 @@ export class GroupBetTypeService {
       }
 
       result.isNotTaken = isNotTaken;
-      result.isSettleDetermined = isNotTaken && !isBothNotTaken;
+      result.isSettleDetermined = isNotTaken && !isBothNotTaken && _.includes(CheckedSettleDetermined, result.betType);
     } else {
       result.isSettleDetermined = result.settlementStatusId === SettlementStatusId.RefundSettleDetermined;
     }
