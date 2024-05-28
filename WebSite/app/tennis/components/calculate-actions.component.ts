@@ -564,7 +564,7 @@ export class CalculateActionsComponent implements SportTemplate {
     return text?.length > maxLength ? text : null;
   }
   
-    OpenInfo(){
+  OpenInfo(){
     this.infoDialog.title = Language.information;
     this.infoDialog.message = Language.childMatchTennisInfo;
     this.messageBoxService.alert(this.infoDialog);
