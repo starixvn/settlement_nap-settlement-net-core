@@ -8,7 +8,9 @@ public static class PatternResultType
 
     public static List<int> EarlyTypeThree => [9401, 9400];
 
-    public static List<int> EarlyTypeFour => [9708, 9709, 9615, 9451, 9454, 9455, 9460, 9461];
+    public static List<int> EarlyTypeFour => [9708, 9709, 9615, 9451];
+
+    public static List<int> EarlyTypeFourTwo => [9454, 9455, 9460, 9461];
 
     public static List<int> EarlyTypeFive => [9668, 9650, 9672, 9656, 9671, 9651, 9675, 9657];
 
