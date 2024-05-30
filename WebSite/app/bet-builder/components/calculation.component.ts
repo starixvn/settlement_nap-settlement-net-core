@@ -89,10 +89,6 @@ export class CalculationComponent implements OnInit {
     this.selectionSelect = {...this.selectionSelect, items};
   }
 
-  public correctGroupSelectionName(name: string) {
-    return name.slice(0, -1);
-  }
-
   public correctSelectionName(name: string) {
     return _.isEqual(name.slice(0, 1), "-")
       ? name.substring(1, name.length).trim()
