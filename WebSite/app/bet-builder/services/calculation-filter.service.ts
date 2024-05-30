@@ -1,4 +1,5 @@
-﻿import * as _ from 'lodash';
+﻿import { isEqual } from 'lodash';
+import * as _ from 'lodash';
 import { Injectable } from '@angular/core';
 import { Selection, GroupSelection } from '../models';
 import { ItemsSelect, MultipleSelect } from '../../shared/models';
@@ -64,15 +65,15 @@ export class CalculationFilterService {
         const name = selectionName.split('-');
         if (this.hasDashCharacter(selectionName)) {
             return _.isEmpty(name[0])
-                ? name[1].includes(groupName.replace("-", ""))
-                : selectionName.includes(groupName);
+                ? name[1].toLowerCase() === groupName.replace("-", "").toLowerCase()
+                : name[0].toLowerCase() === groupName.toLowerCase();
         }
 
         return false;
     }
 
     private hasNotDashOnSelectionName(groupName: string, selectionName: string) {
-        return !this.hasDashCharacter(selectionName) && selectionName.includes(groupName.replace("-", ""));
+        return !this.hasDashCharacter(selectionName) && selectionName.toLowerCase() === groupName.replace("-", "").toLowerCase();
     }
 
     private listSelectionGroupByName(listSelection: Selection[]) {
@@ -80,7 +81,7 @@ export class CalculationFilterService {
 
         _.forEach(listSelection, (item) => {
             const selectionName = this.getSelectionName(item.selectionName);
-            selections.push(new Selection(`${selectionName}-`));
+            selections.push(new Selection(selectionName));
         });
 
         return _.uniqBy(selections, (selection: Selection) => selection.selectionName);
