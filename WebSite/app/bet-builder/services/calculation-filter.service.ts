@@ -84,7 +84,7 @@ export class CalculationFilterService {
             selections.push(new Selection(selectionName));
         });
 
-        return _.uniqBy(selections, (selection: Selection) => selection.selectionName);
+        return _.uniqBy(selections, (selection: Selection) => selection.selectionName.toLowerCase());
     }
 
     private hasDashCharacter(name: string) {
