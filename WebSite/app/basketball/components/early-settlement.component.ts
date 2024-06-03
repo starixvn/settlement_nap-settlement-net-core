@@ -1,7 +1,7 @@
 ﻿import { EarlyCommonModule } from './../../shared/modules/early-common.module';
 import { ExternalSourceNamePipe } from './../../shared/pipes/external-source-name.pipe';
 import * as _ from 'lodash';
-import { CalculateAction, ResultStatusId, ScoreSourceType, SportType, TicketStatusText } from '../../shared/constants';
+import { CalculateAction, ScoreSourceType, SettlementStatusId, SportType, TicketStatusText } from '../../shared/constants';
 import { Component, Injector, ViewChild } from '@angular/core';
 import { ToastContainerDirective } from 'ngx-toastr';
 import { BasketballApiKeys, EarlyResourcesIds, KickOffTime, ResultStatus } from '../constants';
@@ -94,8 +94,8 @@ export class EarlySettlementComponent extends EarlyBaseComponent implements Spor
 
     private resetResult(resultDetails: ResultDetail[]) {
         resultDetails.forEach((map) => {
-            map.homeValue = map.resultStatusId !== ResultStatusId.ManualCompleted ? "" : map.homeValue;
-            map.awayValue = map.resultStatusId !== ResultStatusId.ManualCompleted ? "" : map.awayValue;
+            map.homeValue = map.settlementStatusId !== SettlementStatusId.Calculated ? "" : map.homeValue;
+            map.awayValue = map.settlementStatusId !== SettlementStatusId.Calculated ? "" : map.awayValue;
         });
     }
 
