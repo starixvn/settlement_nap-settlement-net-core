@@ -96,7 +96,6 @@ export class BandyCalculationComponent implements SportTemplate, OnInit {
 
     this.isReadyMatch = this.isCompletedOrConfirmScore(this.matchDetail) || this.matchDetail.playTime >= KickOffTime.playTime;
 
-    console.log(this.isReadyMatch);
     this.createProviderResource();
   }
 
