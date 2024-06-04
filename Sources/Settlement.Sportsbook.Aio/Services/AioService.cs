@@ -9,6 +9,7 @@ using Settlement.Sportsbook.Aio.Criteria.Basketball;
 using Settlement.Sportsbook.Aio.MapperFactory;
 using Settlement.Sportsbook.Aio.Models;
 using Settlement.Sportsbook.Aio.Requests;
+using StackExchange.Redis;
 using ResultDetail = Settlement.Sportsbook.Aio.Models.ResultDetail;
 using ResultTicket = (System.Collections.Generic.List<Settlement.Sportsbook.Aio.Models.ResultDetail> ResultDetails
     , Settlement.Core.Models.TicketCounts TicketCounts);
@@ -41,9 +42,11 @@ public class AioServiceImp(
     IValidateApiKeyService validateApiKeyService,
     ICreateQueryService createQueryService,
     MultipleServerAioService multipleServerAioService,
-    BasketballEventStatusService basketballEventStatusService)
+    BasketballEventStatusService basketballEventStatusService,
+    IConnectionMultiplexer connectionMultiplexer)
     : IAioService
 {
+    private const string KeyConfirmRefund = "SettlementConfirmRefund";
     public async Task<AioMatch> GetMatch(GetMatchRequest request)
     {
         var apiKey = validateApiKeyService.GetApiKey(request.ApiKey);
@@ -337,9 +340,34 @@ public class AioServiceImp(
     public async Task<bool> ResultSetting(ResultSettingRequest request)
     {
         var criteria = createQueryService.QueryChangeSetting(request);
-
         await repository.ExecuteAsync(criteria);
+
+        // TODO
+        int[] confirmRefund = [ResultSettingType.ConfirmRefund, ResultSettingType.ConfirmRefundSDT];
+        if (confirmRefund.Contains(request.Type))
+        {
+            SetConfirmRefundKeyCache(request);
+        }
+
         return criteria.IsEnabled;
+    }
+
+    private void SetConfirmRefundKeyCache(ResultSettingRequest request)
+    {
+        var keys = request.ResourceIds.Split(",").Select(x => $"{KeyConfirmRefund}:3:{request.MatchId}:{x}").ToList();
+        var db = connectionMultiplexer.GetDatabase();
+        foreach (var key in keys)
+        {
+            if (request.IsEnabled)
+            {
+                db.StringSet(key, request.IsEnabled, TimeSpan.FromSeconds(5));
+            }
+            else
+            {
+                var undoKey = db.StringGetDelete(key);
+                Console.WriteLine(undoKey);
+            }
+        }
     }
 
     public async Task<Result> SettleChildMatch(SettleChildMatchRequest request)
