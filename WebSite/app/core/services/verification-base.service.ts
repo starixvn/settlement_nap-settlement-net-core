@@ -540,8 +540,8 @@ export class VerificationBaseService {
         const traderScore = result.externalScores.find((source) => source.sourceId === ScoreSourceType.trader);
 
         return traderScore 
-            && !_.isEmpty(result.homeValue) 
-            && !_.isEmpty(result.awayValue);
+            && !_.isEmpty(traderScore.homeValue) 
+            && !_.isEmpty(traderScore.awayValue);
     }
 
 }

@@ -132,7 +132,7 @@ export class CalculationActionsComponent implements SportTemplate {
 
         return isRunning 
             && !result.isScoreMismatched 
-            && !_.isNil(this.verificationService.isValidTraderConfirmScore(result));
+            && this.verificationService.isValidTraderConfirmScore(result);
     }
 
     private async verifyRunningOdds() {
