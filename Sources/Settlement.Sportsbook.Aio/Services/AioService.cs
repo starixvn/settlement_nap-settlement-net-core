@@ -354,18 +354,23 @@ public class AioServiceImp(
 
     private void SetConfirmRefundKeyCache(ResultSettingRequest request)
     {
-        var keys = request.ResourceIds.Split(",").Select(x => $"{KeyConfirmRefund}:3:{request.MatchId}:{x}").ToList();
-        var db = connectionMultiplexer.GetDatabase();
+        var keys = request.ResourceIds.Split(",").Select(x => $"{KeyConfirmRefund}:{request.MatchId}:{x}").ToList();
+        var db = connectionMultiplexer.GetDatabase(13);
         foreach (var key in keys)
         {
+            var result1 = db.KeyExists(key);
             if (request.IsEnabled)
             {
-                db.StringSet(key, request.IsEnabled, TimeSpan.FromSeconds(5));
+                var result = db.StringSet(key, request.IsEnabled, TimeSpan.FromSeconds(5));
+                Console.WriteLine(result);
             }
             else
             {
-                var undoKey = db.StringGetDelete(key);
-                Console.WriteLine(undoKey);
+                if (db.KeyExists(key))
+                {
+                    var isDeleted = db.KeyDelete(key);
+                    Console.WriteLine(isDeleted);
+                }
             }
         }
     }

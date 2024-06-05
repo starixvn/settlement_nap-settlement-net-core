@@ -83,7 +83,8 @@ public static class WebSites
     public static void AddRedis(this IServiceCollection services, IConfiguration configuration)
     {
         var redisConfig = configuration.GetSection("AuthSettings:RedisConfig").Value;
-        //var applicationName = configuration.GetSection("AuthSettings:ChannelPrefix").Value;
+        var applicationName = configuration.GetSection("AuthSettings:ChannelPrefix").Value;
+        //services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect($"{redisConfig},ChannelPrefix={applicationName}"));
         services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect($"{redisConfig}"));
 
         services.AddStackExchangeRedisCache(options =>
