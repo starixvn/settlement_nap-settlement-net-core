@@ -120,10 +120,9 @@ public class MultiSportServiceImp(
         }
 
         return baseMatches;
-
     }
 
-    private async Task<IEnumerable<SiteMatch>> GetOSTicketInfo(MatchTuple matchTuple)
+    private async Task<IEnumerable<SiteMatch>> GetOSTicketInfo(MatchTuple matchTuple, SportsbookCriteria filterCriteria)
     {
         var matchesInfo = matchTuple.Matches.Select(x => new MatchRequest
         {
@@ -140,7 +139,8 @@ public class MultiSportServiceImp(
         var criteria = new OSTicketInfoSelCriteria
         {
             MatchInfo = JsonSerializer.Serialize(matchesInfo),
-            MatchOverStatus = JsonSerializer.Serialize(matchesOverStatus)
+            MatchOverStatus = JsonSerializer.Serialize(matchesOverStatus),
+            OverStatus = filterCriteria.OverStatus
         };
 
         var result = await GetTicketInfoAllDbSites(criteria);
@@ -190,7 +190,7 @@ public class MultiSportServiceImp(
         return await repository.FetchAsync<SiteMatch>(criteria);
     }
 
-    private async Task<MatchTuple> GetMatches(MultipleSiteCriteria criteria)
+    private async Task<MatchTuple> GetMatches(SportsbookCriteria criteria)
     {
         var result = await repository.FetchMultipleAsync<Match, MatchOverStatus>(criteria);
         var item1 = result.FirstResultSet.ToList();
@@ -199,10 +199,10 @@ public class MultiSportServiceImp(
         return (result.FirstResultSet.ToList(), result.SecondResultSet.ToList());
     }
 
-    private async Task<List<Match>> GetMatchesAllInfo(MultipleSiteCriteria criteria)
+    private async Task<List<Match>> GetMatchesAllInfo(SportsbookCriteria criteria)
     {
         var matchTuple = await GetMatches(criteria);
-        var siteMatches = (await GetOSTicketInfo(matchTuple)).ToList();
+        var siteMatches = (await GetOSTicketInfo(matchTuple, criteria)).ToList();
 
         var matches = matchTuple.Matches.ToList();
 
