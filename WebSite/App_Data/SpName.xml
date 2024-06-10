@@ -429,7 +429,7 @@
 			<Setting Key="NAP_Admin_Settlement_CheckingMoveBetDay_DBSID02" SpName="NAP_Admin_Settlement_CheckingMoveBetDay" DbName="DBSID02.bodb02.wsv_nap" />
 			<Setting Key="NAP_Admin_Settlement_CheckingMoveBetDay_DBSID03" SpName="NAP_Admin_Settlement_CheckingMoveBetDay" DbName="DBSID03.bodb02.wsv_nap" />
 		</Function>
-		<Function Name="NAP_Set_MatchOtherSports_TicketInfoSel_xpre">
+		<Function Name="NAP_Set_MatchOtherSports_TicketInfoSel">
 			<Setting Key="NAP_Set_MatchOtherSports_TicketInfoSel_DBTXN" SpName="NAP_Set_MatchOtherSports_TicketInfoSel" DbName="DBTXN.bodb02.wsv_nap" />
 			<Setting Key="NAP_Set_MatchOtherSports_TicketInfoSel_DBSID01" SpName="NAP_Set_MatchOtherSports_TicketInfoSel" DbName="DBSID01.bodb02.wsv_nap" />
 			<Setting Key="NAP_Set_MatchOtherSports_TicketInfoSel_DBSID02" SpName="NAP_Set_MatchOtherSports_TicketInfoSel" DbName="DBSID02.bodb02.wsv_nap" />

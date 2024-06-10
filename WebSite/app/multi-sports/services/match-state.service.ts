@@ -165,7 +165,8 @@ export class MatchStateService {
       && _.isEqual(match.eventStatus.toLowerCase(), BackgroundColor.completed);
     const isCompleted = !_.isNull(match.earlySettleStatus) && _.isEqual(match.earlySettleStatus.toLowerCase(), BackgroundColor.completed);
     const backgroundColor = isRunning ? BackgroundColor.autoSettleRunning : isCompleted ? BackgroundColor.calculated : '';
-    return backgroundColorBlinking + ' ' + backgroundColor;
+    const bgEarlyConfirm = match.isExistsConfirmedEarly && match.sportType === SportType.eSports  ? BackgroundColor.earlyConfirm : ''
+    return bgEarlyConfirm + ' ' + backgroundColorBlinking + ' ' + backgroundColor;
   }
 
   private isEarlyOverAndOtherStatus(overStatus: string) {
