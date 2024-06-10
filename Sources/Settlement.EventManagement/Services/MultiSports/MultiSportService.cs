@@ -9,7 +9,6 @@ using Requests;
 using Settlement.Core.Criteria;
 using Settlement.Core.Models;
 using Settlement.EventManagement.Models.MultiSports;
-using System.IO.Pipes;
 using System.Text;
 using System.Text.Json;
 using Match = Models.MultiSports.Match;
@@ -107,21 +106,21 @@ public class MultiSportServiceImp(
 
     private async Task<List<Match>> GetMatchesAllSites(MultipleSiteCriteria criteria)
     {
-        var fetchMatchTasks = appSettingsKey.Value
-            .SiteDbServer
-            .Select(s => FetchMatches(s, criteria))
-            .ToList();
+        var siteDbServer = appSettingsKey.Value.SiteDbServer;
+        var fetchMatchTasks = siteDbServer.Select(s => FetchMatches(s, criteria)).ToList();
+        var listMatch = await Task.WhenAll(fetchMatchTasks.ToArray());
 
         var matchesInAllServers = listMatch.Select(m => m.ToList()).ToList();
 
         var baseMatches = matchesInAllServers.SelectMany(m => m).Distinct().ToList();
 
-        for (var i = 1; i < appSettingsKey.Value.SiteDbServer.Count; i++)
+        for (var i = 1; i < siteDbServer.Count; i++)
         {
             matchService.AddSiteInfo(baseMatches, matchesInAllServers[i]);
         }
 
         return baseMatches;
+
     }
 
     private async Task<IEnumerable<SiteMatch>> GetOSTicketInfo(MatchTuple matchTuple)
