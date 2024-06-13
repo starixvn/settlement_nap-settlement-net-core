@@ -163,7 +163,7 @@ public class MultiSportServiceImp(
             item.IsRunningEarlyBetTypes = ticketInfo.Exists(x => x.IsRunningEarlyBetTypes);
             item.IsWaitingEarlyBetTypes = ticketInfo.Exists(x => x.IsWaitingEarlyBetTypes);
             item.IsExistRunningTicket = ticketInfo.Exists(x => x.IsExistRunningTicket);
-            item.IsExistMarkedTicket = ticketInfo.Exists(x => x.IsExistFastMarket);
+            item.IsExistMarkedTicket = ticketInfo.Exists(x => x.IsExistMarkedTicket);
             item.IsExistsConfirmedEarly = ticketInfo.Exists(x => x.IsExistsConfirmedEarly);
 
             item.IsCalculatingSingle = siteMatchService.IsCalculating(ticketInfo.Select(x => x.IsCalculatingSingle).ToList());
