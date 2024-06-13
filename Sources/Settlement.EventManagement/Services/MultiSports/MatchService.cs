@@ -1,5 +1,8 @@
-﻿namespace Settlement.EventManagement.Services.MultiSports;
+﻿using Fanex.Settlement.ScaleOut.Request;
 
+namespace Settlement.EventManagement.Services.MultiSports;
+
+using Fanex.Settlement.ScaleOut.Services;
 using Settlement.Core.Models;
 using Settlement.Core.Services;
 using Match = Models.MultiSports.Match;

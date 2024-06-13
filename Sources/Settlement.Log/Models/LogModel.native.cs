@@ -1,5 +1,5 @@
 ﻿using Settlement.Core.Services;
-using Constants = Settlement.Core.Constants;
+using CoreConstants = Settlement.Core.Constants;
 
 namespace Settlement.Log.Models;
 
@@ -27,12 +27,12 @@ public class LogModel
     {
         get
         {
-            if (SportType == Constants.SportType.NumberGame)
+            if (SportType == CoreConstants.SportType.NumberGame)
             {
                 return $"Number Game No {MatchCode}";
             }
 
-            return SportType == Constants.SportType.Happy5 ? $"No {MatchCode}" : $"{Home} -vs- {Away}";
+            return SportType == CoreConstants.SportType.Happy5 ? $"No {MatchCode}" : $"{Home} -vs- {Away}";
         }
     }
 

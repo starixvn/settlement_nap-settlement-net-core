@@ -173,8 +173,8 @@ public class MatchServiceImp(
         };
 
         var result = await repository.FetchMultipleAsync<FantasyMatchDetail, FantasyRelatedMatch>(criteria);
-        var matchDetail = result.FirstResultSet.FirstOrDefault();
-        var relatedMatches = result.SecondResultSet.OrderBy(match => match.MatchCode).ToList();
+        var matchDetail = result.Item1.FirstOrDefault();
+        var relatedMatches = result.Item2.OrderBy(match => match.MatchCode).ToList();
         foreach (var match in relatedMatches)
         {
             match.RefDataService = refDataService;

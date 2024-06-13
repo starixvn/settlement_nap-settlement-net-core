@@ -1,4 +1,4 @@
-using Fanex.Data.SqlServer;
+using Fanex.Data;
 using Fanex.NAP.Client;
 using Fanex.NAP.Client.Configuration;
 using Fanex.NAP.Client.Helpers.Web;
@@ -15,7 +15,7 @@ using Settlement.WebSites.Middleware;
 var builder = WebApplication.CreateBuilder(args);
 
 var services = builder.Services;
-var configuration=builder.Configuration;
+var configuration = builder.Configuration;
 
 services.AddAuthorizationPolicy();
 
@@ -29,7 +29,7 @@ services.AddOnebookUM(configuration);
 
 services.AddNapServices(configuration);
 
-services.AddFanexSql(configuration);
+services.AddFanexData(configuration);
 
 services.AddFanex(configuration);
 

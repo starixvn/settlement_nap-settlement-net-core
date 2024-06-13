@@ -1,8 +1,6 @@
 ﻿global using AutoMapper;
 global using Fanex.Data.Repository;
 global using Fanex.Settlement.Converter.Helpers;
-global using Fanex.Settlement.ScaleOut.Request;
-global using Fanex.Settlement.ScaleOut.Services;
 global using MediatR;
 global using MessagePack;
 global using Microsoft.AspNetCore.Mvc;

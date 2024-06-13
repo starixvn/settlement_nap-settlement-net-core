@@ -25,8 +25,7 @@ public interface IFetchDataService
     public Task<bool> IsDeterminedHedgeMatch(int matchId);
 }
 
-public class FetchDateServiceImp(
-    IDynamicRepository repository,
+public class FetchDateServiceImp(IDynamicRepository repository,
     IMapper mapper,
     IOptions<AppSettingsKey> appSettingsKey,
     IMergeDataService mergeDataService)
@@ -37,10 +36,9 @@ public class FetchDateServiceImp(
     public async Task<Match> GetMatchInfo(GetMatchRequest request)
     {
         var criteria = mapper.Map<GetMatchRequest, GetMatchDetailCriteria>(request);
-        var mappingTypes = new[] { typeof(MatchDetail), typeof(ChildMatchModel) };
 
-        var result = await repository.FetchMultipleAsync(criteria, mappingTypes);
-        var baseMatchDetail = result[0].Cast<MatchDetail>().FirstOrDefault();
+        var result = await repository.FetchMultipleAsync<MatchDetail, ChildMatchModel>(criteria);
+        var baseMatchDetail = result.Item1.FirstOrDefault();
         Check.Argument.IsNotNull(baseMatchDetail, $"Match ${criteria.MatchId} does not exist");
 
         var siteMatch = GetSiteMatchInfo(criteria.MatchId);
@@ -50,7 +48,7 @@ public class FetchDateServiceImp(
         var ticketCounts = mergeDataService.MergeTicketCounts(siteMatch);
         var matchDetail = mergeDataService.MergeSiteMatch(baseMatchDetail, ticketCounts);
         var childMatches =
-            mergeDataService.MergeDataChildMatches(result[1].Cast<ChildMatchModel>().ToList(), siteMatch);
+            mergeDataService.MergeDataChildMatches(result.Item2.ToList(), siteMatch);
 
         return new Match
         {
@@ -62,20 +60,17 @@ public class FetchDateServiceImp(
 
     private List<SiteMatch> GetSiteMatchInfo(int matchId)
     {
-        var mappingTypes = new[] { typeof(SiteMatch), typeof(TicketCounts), typeof(ChildMatchTicketInfos) };
-
-        return appSettingsKey.SiteDbServer.Select(server => GetSiteMatchByServer(matchId, mappingTypes, server)).ToList();
+        return appSettingsKey.SiteDbServer.Select(server => GetSiteMatchByServer(matchId, server)).ToList();
     }
 
-    private SiteMatch GetSiteMatchByServer(int matchId, Type[] mappingTypes, string server)
+    private SiteMatch GetSiteMatchByServer(int matchId, string server)
     {
-        const int childMatchResultPosition = 2;
         var criteria = new GetTicketInfoCriteria { MatchId = matchId, DbServer = server };
-        var result = repository.FetchMultiple(criteria, mappingTypes);
+        var result = repository.FetchMultiple<SiteMatch, TicketCounts, ChildMatchTicketInfos>(criteria);
 
-        var siteMatch = result[0].Cast<SiteMatch>().First();
-        siteMatch.TicketCounts = result[1].Cast<TicketCounts>().ToList();
-        siteMatch.SiteChildMatches = result[childMatchResultPosition].Cast<ChildMatchTicketInfos>().ToList();
+        var siteMatch = result.Item1.First();
+        siteMatch.TicketCounts = result.Item2.ToList();
+        siteMatch.SiteChildMatches = result.Item3.ToList();
 
         return siteMatch;
     }

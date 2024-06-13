@@ -65,7 +65,7 @@ public class ErrorHandler
         var method = context.Request.Method.ToLowerInvariant();
         var requestedWith = context.Request.Headers["X-Requested-With"];
 
-        if (method is "post" or "put" or "delete" && requestedWith == "XMLHttpRequest")
+        if (method is "post" or "put" or "delete" && requestedWith == "XMLHttpRequest" && !context.Response.HasStarted)
         {
             context.Response.StatusCode = StatusCodes.Status500InternalServerError;
         }
