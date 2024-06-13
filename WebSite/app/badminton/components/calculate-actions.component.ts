@@ -16,12 +16,13 @@ import { ExternalResultDetail, Permission, ResultDetail, SaveScoreQuery, SportTe
 import { UrlHelper } from '../../helper';
 import { ResultPipe } from '../../shared/pipes/result.pipe';
 import { SourceIds } from '../../basketball/constants/source-ids';
-import { ProviderSource } from '../../shared/models/league-settings.model';
+import { ChildMatchComponent } from './child-match/child-match.component';
+
 @Component({
   selector: 'calculation-actions',
   templateUrl: './calculate-actions.component.html',
   standalone: true,
-  imports: [CalculateCommonModule, ResultPipe, ResourceNameByIdPipe, CalculateMatchDetailComponent],
+  imports: [CalculateCommonModule, ResultPipe, ResourceNameByIdPipe, CalculateMatchDetailComponent, ChildMatchComponent],
   providers: [BadmintonService, VerificationService, IntervalCalculationService]
 })
 export class CalculateActionsComponent implements SportTemplate {
@@ -46,6 +47,7 @@ export class CalculateActionsComponent implements SportTemplate {
   collapse = false;
   blockUI = true;
   SOURCE_ID = SourceIds;
+  public isSettleRelated = false;
 
   constructor(private readonly injector: Injector) {
     this.confirmationDialogMessage.title = Language.confirmationBox;
@@ -54,7 +56,7 @@ export class CalculateActionsComponent implements SportTemplate {
   async getMatch(matchId: number) {
     this.initService();
     const sportType = Number(UrlHelper.getUrlParameter('sportType'));
-    this.apiKeys = sportType === SportType.volleyBall ? VolleyballApiKeys : BadmintonApiKeys;
+    this.apiKeys = sportType === SportType.tableTennis || sportType === SportType.volleyBall ? VolleyballApiKeys : BadmintonApiKeys;
     const matchQuery = {
       matchId,
       apikey: this.apiKeys.NormalMatch,

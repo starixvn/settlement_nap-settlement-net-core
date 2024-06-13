@@ -36,6 +36,7 @@ export class PopupService {
     SportType.basketBall,
     SportType.cricket,
     SportType.volleyBall,
+    SportType.tableTennis
   ];
   public properties = new PopupProperties();
   constructor(
@@ -58,11 +59,11 @@ export class PopupService {
 
     if (this.listNewSport.includes(match.sportType)) {
       let sportName = PopularSports.get(match.sportType);
+      sportName = _.isEqual(sportName, "table tennis") || _.isEqual(sportName, "volleyball") ? "badminton" : sportName;
       this.properties.src = `/apps/${sportName}-recalculate?matchId=${match.matchId}&sportType=${match.sportType}`;
     } else {
       this.properties.src = `/apps/other-sports-recalculate?matchId=${match.matchId}&sportType=${match.sportType}`;
     }
-
     this.openAndHandlePopup(this.properties, match, state$);
   }
 
@@ -72,7 +73,8 @@ export class PopupService {
 
     if (_.includes(this.listNewSport, match.sportType)) {
       let sportName = PopularSports.get(match.sportType);
-      this.properties.src = `/apps/${sportName}-refund?matchId=${match.matchId}&sportType=${match.sportType}`;
+        sportName = _.isEqual(sportName, "table tennis") || _.isEqual(sportName, "volleyball") ? "badminton" : sportName;
+        this.properties.src = `/apps/${sportName}-refund?matchId=${match.matchId}&sportType=${match.sportType}`;
     } else {
       this.properties.src = `/apps/other-sports-refund?matchId=${match.matchId}&sportType=${match.sportType}`;
     }

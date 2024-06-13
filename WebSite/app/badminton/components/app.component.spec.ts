@@ -10,7 +10,6 @@ import {
 } from '../pipes';
 import { MaterialModule } from '../../shared/material-module';
 import { ExternalLinkPipe } from '../../score-source-setting/pipes';
-import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { PipesModule } from '../../shared/pipes/pipes.module.native';
 import { ToastContainerModule, ToastNoAnimationModule, ToastrModule } from 'ngx-toastr';
 import { PageType } from '../../shared/constants';

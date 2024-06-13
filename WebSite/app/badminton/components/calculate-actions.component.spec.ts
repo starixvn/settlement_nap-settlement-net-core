@@ -1,5 +1,4 @@
 import { TestBed, ComponentFixture, fakeAsync, tick, flush } from '@angular/core/testing';
-import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { HttpClientModule } from '@angular/common/http';
 import { ResourceNameByIdPipe } from '../pipes';
 import {

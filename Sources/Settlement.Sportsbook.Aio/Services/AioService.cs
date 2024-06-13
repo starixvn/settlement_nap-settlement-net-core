@@ -89,7 +89,7 @@ public class AioServiceImp(
         if (mapperService != null)
         {
             resultDetails.ForEach(result => result.MatchId = request.MatchId);
-            mapperService.Decorate(resultDetails);
+            //mapperService.Decorate(resultDetails);
         }
         resultDetails = resultDetails.OrderBy(result => result.OrdNo).ToList();
 
@@ -353,9 +353,10 @@ public class AioServiceImp(
 
     private async Task<List<ResultDetail>> SetInterval(Models.MatchDetail matchDetail, List<ResultDetail> resultDetails)
     {
-        var setViewed = matchDetail.GameSession == GamePlay.Three ? GamePlay.Three : GamePlay.Five;
+        var setViewed = GetViewedSet(matchDetail);
 
-        if (matchDetail.SportType != SportType.Tennis)
+        int[] sports = [SportType.Tennis, SportType.TableTennis];
+        if (!sports.Contains(matchDetail.SportType))
         {
             return resultDetails;
         }
@@ -375,6 +376,20 @@ public class AioServiceImp(
         resultOrdered.Add(finalResult);
 
         return resultOrdered.ToList();
+    }
+
+    private int GetViewedSet(Models.MatchDetail matchDetail)
+    {
+        var setViewed = (matchDetail.GameSession, matchDetail.SportType) switch
+        {
+            (3, SportType.Tennis) => GamePlay.Three,
+            (_, SportType.Tennis) => GamePlay.Five,
+            (0, SportType.TableTennis) => GamePlay.Seven,
+            (_, SportType.TableTennis) => matchDetail.GameSession,
+            (_, _) => matchDetail.GameSession
+        };
+
+        return setViewed;
     }
 
     private async Task<IEnumerable<ResourceIndex>> GetResourceIndex(int sportType)
