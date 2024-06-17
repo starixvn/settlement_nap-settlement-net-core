@@ -50,6 +50,7 @@ export class AioService {
     }
 
     public changeResultSetting(query: object) {
+        console.log(query);
         const request = this.httpRequestService.postJson<boolean>(query, `${this.aioApi}/result-setting`);
         return firstValueFrom(request);
     }
@@ -152,12 +153,14 @@ export class AioService {
     }
 
     public changeConfirmResultSetting(message: string, matchId: number, resourceIds: string,
-        isEnabled: boolean, hedgeMatchDetail: HedgeMatchDetail, oldMatchDetail: HedgeMatchDetail = null) {
+        isEnabled: boolean, hedgeMatchDetail: HedgeMatchDetail, oldMatchDetail: HedgeMatchDetail = null, confirmRefundResources: ResourceItem[] = []) {
+
         this.warningDialogMessage.title = Language.confirmationBox;
         this.warningDialogMessage.message = message;
         this.messageBoxService.confirm(this.warningDialogMessage, () => {
-            const query = new ResultSettingQuery(matchId, ResultSettingType.confirmRefund,
-                isEnabled, resourceIds);
+            const query = new ResultSettingQuery(matchId, ResultSettingType.confirmRefund,isEnabled, resourceIds);
+            query.confirmRefundResources = confirmRefundResources;
+         
             this.changeResultSetting(query).then(async () => {
                 await this.confirmHedgeMatch(query, hedgeMatchDetail);
                 await this.confirmOldMatch(query, oldMatchDetail);

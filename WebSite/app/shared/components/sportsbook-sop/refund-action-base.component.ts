@@ -8,6 +8,16 @@ import { Component, inject } from "@angular/core";
 import { ToastrService } from "ngx-toastr";
 import { ResourceItem } from '../../models';
 
+
+type UndoConfirm = {
+    resultDetails: ResultDetail[], 
+    matchId: number, 
+    resourceIds: string,
+    hedgeMatchDetail: HedgeMatchDetail, 
+    oldMatchDetail?: HedgeMatchDetail | null,
+    confirmRefundResources?: ResourceItem[]
+}
+
 @Component({
     template: '',
 })
@@ -81,16 +91,28 @@ export class RefundActionBaseComponent {
             this.aioService.changeConfirmResultSetting(Language.confirmRefund.confirmRefund, this.matchDetail.matchId, resourceIds, true,
                 hedgeMatchDetail);
         } else {
-            this.undoConfirmedResult(this.selectedResources, this.matchDetail.matchId, resourceIds, hedgeMatchDetail);
+            this.undoConfirmedResult({
+                resultDetails: this.selectedResources,matchId: 
+                this.matchDetail.matchId, 
+                resourceIds, 
+                hedgeMatchDetail,
+                oldMatchDetail: null,
+            });
         }
     }
 
-    undoConfirmedResult(resultDetails: ResultDetail[], matchId: number, resourceIds: string,
-        hedgeMatchDetail: HedgeMatchDetail, oldMatchDetail: HedgeMatchDetail = null) {
-        const resultNotConfirmed = _.find(resultDetails, item => !item.resultSettingData.isConfirmedRefund);
+    undoConfirmedResult(undoConfirm: UndoConfirm) {
+        const resultNotConfirmed = _.find(undoConfirm.resultDetails, item => !item.resultSettingData.isConfirmedRefund);
+        
         if (_.isNil(resultNotConfirmed)) {
-            this.aioService.changeConfirmResultSetting(Language.confirmRefund.undoConfirm, matchId, resourceIds, false,
-                hedgeMatchDetail, oldMatchDetail);
+            this.aioService.changeConfirmResultSetting(
+                Language.confirmRefund.undoConfirm, 
+                undoConfirm.matchId, 
+                undoConfirm.resourceIds, 
+                false,
+                undoConfirm.hedgeMatchDetail, 
+                undoConfirm.oldMatchDetail,
+                undoConfirm.confirmRefundResources);
         } else {
             this.toastrService.error(Language.confirmRefund.differentStates);
         }

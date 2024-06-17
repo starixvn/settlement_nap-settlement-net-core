@@ -47,6 +47,8 @@ public class AioServiceImp(
     : IAioService
 {
     private const string KeyConfirmRefund = "SettlementConfirmRefund";
+    private const string ValueConfirmResult = "SettlementConfirmRefundValue";
+
     public async Task<AioMatch> GetMatch(GetMatchRequest request)
     {
         var apiKey = validateApiKeyService.GetApiKey(request.ApiKey);
@@ -354,23 +356,28 @@ public class AioServiceImp(
 
     private void SetConfirmRefundKeyCache(ResultSettingRequest request)
     {
-        var keys = request.ResourceIds.Split(",").Select(x => $"{KeyConfirmRefund}:{request.MatchId}:{x}").ToList();
+        var keys = request.ResourceIds.Split(",").Select(x =>
+        {
+            var resource = request.ConfirmRefundResources.FirstOrDefault(z => z.ResourceId == x);
+            var resourceName = resource != null ? resource.ResourceName : string.Empty;
+
+            return $"{KeyConfirmRefund}:{request.MatchId}:{x}:{resourceName}";
+        }).ToList();
+
         var db = connectionMultiplexer.GetDatabase(13);
+
         foreach (var key in keys)
         {
             var result1 = db.KeyExists(key);
             if (request.IsEnabled)
             {
                 var result = db.StringSet(key, request.IsEnabled, TimeSpan.FromSeconds(5));
-                Console.WriteLine(result);
+                continue;
             }
-            else
+
+            if (db.KeyExists(key))
             {
-                if (db.KeyExists(key))
-                {
-                    var isDeleted = db.KeyDelete(key);
-                    Console.WriteLine(isDeleted);
-                }
+                var isDeleted = db.KeyDelete(key);
             }
         }
     }

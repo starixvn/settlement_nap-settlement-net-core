@@ -33,4 +33,7 @@ public class ResourceItem : BaseResourceItem
 
     [XmlIgnore]
     public string HomeId { get; set; }
+
+    [XmlIgnore]
+    public string ResourceName { get; set; }
 }

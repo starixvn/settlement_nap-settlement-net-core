@@ -1,5 +1,5 @@
 ﻿import { RefundCommonModule } from './../../shared/modules/refund-common.module';
-import { Component, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild,inject } from '@angular/core';
 import { ToastContainerDirective } from 'ngx-toastr';
 import * as _ from 'lodash';
 import { ModalDialogMessage } from '../../shared/models';
@@ -12,13 +12,12 @@ import { MatchDetailComponent } from './match-detail.component';
 import { ResourceNameByIdPipe } from '../pipes/resource-name-by-id.pipe';
 import { VerificationBaseService } from '../../core/services/verification-base.service';
 import { LeagueGroupId } from '../../shared/constants/league-group-id.native';
-
 @Component({
     selector: 'refund-actions',
     templateUrl: 'refund-actions.component.html',
     standalone: true,
     imports: [RefundCommonModule, MatchDetailComponent, ResourceNameByIdPipe],
-    providers: [VerificationBaseService]
+    providers: [VerificationBaseService,ResourceNameByIdPipe]
 })
 export class RefundActionsComponent extends RefundActionBaseComponent implements SportTemplate {
     @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
@@ -27,6 +26,11 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
     public isRefundOldMatch: boolean;
     public oldMatchDetail: HedgeMatchDetail;
     public readonly confirmationDialogMessage: ModalDialogMessage = new ModalDialogMessage(Language.confirmationBox);
+    private resourceNameByIdPipe = inject(ResourceNameByIdPipe);
+
+    // constructor(private injector: Injector) { super();
+    //     this.resourceNameByIdPipe = this.injector.get(ResourceNameByIdPipe);
+    // }
 
     async getMatch(matchId: number): Promise<void> {
         this.initService();
@@ -109,12 +113,20 @@ export class RefundActionsComponent extends RefundActionBaseComponent implements
         }
         const resourceIds = _.join(this.selectedResources.map(item => item.resourceId), ',');
         const resultConfirmed = _.find(this.selectedResources, item => item.resultSettingData.isConfirmedRefund);
+        const confirmRefundResources = this.selectedResources.map(x => ({...x,resourceName: this.resourceNameByIdPipe.transform(x.resourceId)}));
+
         if (_.isNil(resultConfirmed)) {
             this.aioService.changeConfirmResultSetting(Language.confirmRefund.confirmRefund, this.matchDetail.matchId, resourceIds, true,
-                hedgeMatchDetail, oldMatchDetail);
+                hedgeMatchDetail, oldMatchDetail,confirmRefundResources);
         } else {
-            this.undoConfirmedResult(this.selectedResources, this.matchDetail.matchId, resourceIds,
-                hedgeMatchDetail, oldMatchDetail);
+            this.undoConfirmedResult({
+                resultDetails: this.selectedResources, 
+                matchId: this.matchDetail.matchId, 
+                resourceIds,
+                hedgeMatchDetail, 
+                oldMatchDetail,
+                confirmRefundResources
+            });
         }
     }
 }
