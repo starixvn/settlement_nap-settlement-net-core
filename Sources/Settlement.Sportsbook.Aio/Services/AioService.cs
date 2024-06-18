@@ -358,10 +358,15 @@ public class AioServiceImp(
     {
         var keys = request.ResourceIds.Split(",").Select(x =>
         {
-            var resource = request.ConfirmRefundResources.FirstOrDefault(z => z.ResourceId == x);
-            var resourceName = resource != null ? resource.ResourceName : string.Empty;
+            string GetResourceName(IEnumerable<ResourceItem> resources, string resourceId) => 
+                resources?.FirstOrDefault(z => z.ResourceId == resourceId)?.ResourceName;
+
+            var resourceName = GetResourceName(request.ConfirmRefundResources, x) ??
+                   GetResourceName(request.SelectedResources, x) ??
+                   string.Empty;
 
             return $"{KeyConfirmRefund}:{request.MatchId}:{x}:{resourceName}";
+
         }).ToList();
 
         var db = connectionMultiplexer.GetDatabase(13);

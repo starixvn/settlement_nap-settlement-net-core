@@ -78,7 +78,8 @@ export class RefundActionBaseComponent {
         return this.permission.isLeader && resultDetail.resultSettingData.isConfirmedRefund;
     }
 
-    confirmRefund() {
+    confirmRefund(confirmRefundResources?: ResourceItem[]) {
+        console.log(confirmRefundResources)
         this.toastrService.clear();
         const hedgeMatchDetail = this.applyHedgeMatch ? this.hedgeMatchDetail : new HedgeMatchDetail();
         if (this.isSDTSettle) {
@@ -88,8 +89,14 @@ export class RefundActionBaseComponent {
         const resourceIds = _.join(this.selectedResources.map(item => item.resourceId), ',');
         const resultConfirmed = _.find(this.selectedResources, item => item.resultSettingData.isConfirmedRefund);
         if (_.isNil(resultConfirmed)) {
-            this.aioService.changeConfirmResultSetting(Language.confirmRefund.confirmRefund, this.matchDetail.matchId, resourceIds, true,
-                hedgeMatchDetail);
+            this.aioService.changeConfirmResultSetting(
+                Language.confirmRefund.confirmRefund,
+                this.matchDetail.matchId, 
+                resourceIds, 
+                true,
+                hedgeMatchDetail,
+                null,
+                confirmRefundResources);
         } else {
             this.undoConfirmedResult({
                 resultDetails: this.selectedResources,matchId: 
@@ -97,6 +104,7 @@ export class RefundActionBaseComponent {
                 resourceIds, 
                 hedgeMatchDetail,
                 oldMatchDetail: null,
+                confirmRefundResources
             });
         }
     }
@@ -118,14 +126,14 @@ export class RefundActionBaseComponent {
         }
     }
 
-    undoConfirmedAllResult() {
+    undoConfirmedAllResult(confirmRefundResources?: ResourceItem[]) {
         this.toastrService.clear();
         const hedgeMatch = this.applyHedgeMatch ? this.hedgeMatchDetail : null;
         const refundNormal = this.resultDetails.filter(item => item.resultSettingData.isConfirmedRefund);
         if (refundNormal.length > 0) {
             const resourceIds = refundNormal.map(resource => resource.resourceId).join(',');
             this.aioService.changeConfirmResultSetting(Language.confirmRefund.undoConfirmAll, this.matchDetail.matchId, resourceIds, false,
-                hedgeMatch);
+                hedgeMatch,null,confirmRefundResources);
         } else {
             const resultConfirmed = this.resultDetails.filter(item => item.resultSettingData.isConfirmedRefundSdt)
             const resourceItems = resultConfirmed.map(item => new ResourceItem(item.resourceId, item.resourceName, item.homeValue, item.awayValue))

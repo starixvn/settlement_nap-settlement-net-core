@@ -8,7 +8,6 @@ import { ModalContentDialogComponent } from "../modal-dialog/modal-content-dialo
 import { NgbModal, NgbModule } from "@ng-bootstrap/ng-bootstrap";
 import { VerificationBaseService } from "../../../core/services/verification-base.service";
 import { HttpClientModule } from "@angular/common/http";
-import { BrowserDynamicTestingModule } from "@angular/platform-browser-dynamic/testing";
 import { ResultByTeamNamePipe } from "../../pipes/result-by-team-name.pipe";
 import { CalculateAction, ResultSettingType, ResultStatusId, SettlementStatusId, TicketStatusText } from "../../constants";
 import { of } from "rxjs";

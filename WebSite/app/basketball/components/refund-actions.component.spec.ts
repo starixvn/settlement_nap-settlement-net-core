@@ -1,7 +1,6 @@
 import { ResultSettingModel } from './../../shared/models/result-setting.model';
 import { CashOutService } from './../services/cash-out.service';
 import { TestBed, waitForAsync, ComponentFixture, fakeAsync, tick } from '@angular/core/testing';
-import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { HttpClientModule } from '@angular/common/http';
 import { RefundActionsComponent } from './refund-actions.component';
 import { BasketballService, VerificationService } from '../services';

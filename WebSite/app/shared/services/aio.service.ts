@@ -152,8 +152,14 @@ export class AioService {
         });
     }
 
-    public changeConfirmResultSetting(message: string, matchId: number, resourceIds: string,
-        isEnabled: boolean, hedgeMatchDetail: HedgeMatchDetail, oldMatchDetail: HedgeMatchDetail = null, confirmRefundResources: ResourceItem[] = []) {
+    public changeConfirmResultSetting(
+        message: string, 
+        matchId: number, 
+        resourceIds: string,
+        isEnabled: boolean, 
+        hedgeMatchDetail: HedgeMatchDetail, 
+        oldMatchDetail: HedgeMatchDetail = null, 
+        confirmRefundResources: ResourceItem[] = []) {
 
         this.warningDialogMessage.title = Language.confirmationBox;
         this.warningDialogMessage.message = message;

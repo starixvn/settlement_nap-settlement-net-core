@@ -293,18 +293,33 @@ export class EarlyBaseComponent {
     public confirmRefund() {
         this.toastrService.clear();
         const resourceIds = _.join(this.selectedResources.map(item => item.resourceId), ',');
+    
+        const confirmRefundResources = this.selectedResources.map(x => ({...x,resourceName: x.betTypeName}));
+
         const existResultConfirmed = _.find(this.selectedResources, item => item.resultSettingData.isConfirmedRefund);
         if (existResultConfirmed) {
-            this.undoConfirmedResult(this.selectedResources, this.matchDetail.matchId, resourceIds);
+            this.undoConfirmedResult(this.selectedResources, this.matchDetail.matchId, resourceIds,confirmRefundResources);
         } else {
-            this.aioService.changeConfirmResultSetting(Language.confirmRefund.confirmRefund, this.matchDetail.matchId, resourceIds, true, null);
+            this.aioService.changeConfirmResultSetting(
+                Language.confirmRefund.confirmRefund, 
+                this.matchDetail.matchId, 
+                resourceIds, 
+                true, 
+                null,
+                null,
+                confirmRefundResources
+            );
         }
     }
 
-    public undoConfirmedResult(resultDetails: ResultDetail[], matchId: number, resourceIds: string) {
+    public undoConfirmedResult(
+        resultDetails: ResultDetail[], 
+        matchId: number, 
+        resourceIds: string,
+        confirmRefundResources: any[]) {
         const resultNotConfirmed = _.find(resultDetails, item => !item.resultSettingData.isConfirmedRefund);
         if (_.isNil(resultNotConfirmed)) {
-            this.aioService.changeConfirmResultSetting(Language.confirmRefund.undoConfirm, matchId, resourceIds, false, null);
+            this.aioService.changeConfirmResultSetting(Language.confirmRefund.undoConfirm, matchId, resourceIds, false, null,null,confirmRefundResources);
         } else {
             this.toastrService.error(Language.confirmRefund.differentStates);
         }

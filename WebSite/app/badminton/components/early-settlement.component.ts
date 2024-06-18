@@ -16,7 +16,6 @@ import { EarlyBaseService } from '../../core/services/early-base.service';
 import { UrlHelper } from '../../helper';
 import { MatchDetailComponent } from './match-detail.component';
 import { EarlyCommonModule } from '../../shared/modules/early-common.module';
-import { ProviderSource } from '../../shared/models/league-settings.model';
 
 @Component({
   selector: 'early-settlement',
