@@ -29,9 +29,16 @@ public class SoccerResourceNameService : IMapperService
         }
 
         var betType = resourceId[..MaxLengthResourceId];
-        var betTypeId = Convert.ToInt32(betType);
-        var resourceName = GetResourceEarly(betTypeId, resourceId);
-        return (betType, resourceName);
+
+        var isNumber = int.TryParse(betType, out _);
+        if (isNumber)
+        {
+            var betTypeId = Convert.ToInt32(betType);
+            var resourceName = GetResourceEarly(betTypeId, resourceId);
+            return (betType, resourceName);
+        }
+
+        return (resourceId, resourceId);
     }
 
     private static string GetResourceMain(string resourceId)
