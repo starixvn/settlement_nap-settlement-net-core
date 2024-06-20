@@ -108,11 +108,11 @@
 			</ng-container>
 			<td *ngIf="map.resourceId === totalPointsId" rowspan="2">
 				<input id="final-checkbox" type="checkbox" [(ngModel)]="match.resultDetails[i + 1].checked"
-					(ngModelChange)="selectedOnLastMap()" />
+					(ngModelChange)="selectedOnLastMap(map)" />
 			</td>
 			<td *ngIf="map.resourceId !== totalPointsId && !last">
 				<input id="checkbox-map-{{ i + 1 }}" type="checkbox" [(ngModel)]="map.checked" [disabled]="match.isScoreDirect"
-					(ngModelChange)="selectedOnMap()" />
+					(ngModelChange)="selectedOnMap(map)" />
 			</td>
 		</tr>
 

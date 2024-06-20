@@ -19,6 +19,7 @@ public class ChildMatchModel
     public string MatchCode { get; set; }
 
     public int MatchId { get; set; }
+    public short SportType { get; set; }
 
     public string ResourceId { get; set; }
 
@@ -46,7 +47,7 @@ public class ChildMatchModel
 
     public string LeagueName => ChildMatchConstant.LeagueName.TryGetValue(ChildMatchType, out leagueName) ? leagueName : DefaultValue;
 
-    public string RelatedResourceId => ChildMatchConstant.ResourceRelated.TryGetValue(ChildMatchType, out relatedResourceId) ? relatedResourceId : DefaultValue;
+    public string RelatedResourceId => ChildMatchConstant.ResourceRelated.TryGetValue((SportType, ChildMatchType), out relatedResourceId) ? relatedResourceId : DefaultValue;
 
     public ResultDetailSetting ResultSettingData => new()
     {

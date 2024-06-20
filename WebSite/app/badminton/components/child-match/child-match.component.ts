@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnInit, Output } from "@angular/core";
 import { ChildMatch } from "../../models/child-match.model";
 import { MatchDetail } from "../../models";
 import { ResultStatusId } from "../../../shared/constants";
@@ -14,12 +14,10 @@ import { FormsModule } from "@angular/forms";
   imports: [NgClass,ResultPipe,FormsModule]
 })
 export class ChildMatchComponent implements OnInit {
-  ngOnInit(): void {
-   console.log(this.matches)
-  }
   @Input() matches: ChildMatch[]  = [];
   @Input() matchDetail: MatchDetail;
   @Input() showAction = false;
+  // @Output() selectMatchEvent = new EventEmitter<number[]>();
 
   public collapse = false;
 
@@ -33,5 +31,9 @@ export class ChildMatchComponent implements OnInit {
   }
   public collapseChildMatch() {
     this.collapse = !this.collapse;
+  }
+
+  ngOnInit(): void {
+    // throw new Error("Method not implemented.");
   }
 }

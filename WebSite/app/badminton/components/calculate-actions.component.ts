@@ -17,6 +17,7 @@ import { UrlHelper } from '../../helper';
 import { ResultPipe } from '../../shared/pipes/result.pipe';
 import { SourceIds } from '../../basketball/constants/source-ids';
 import { ChildMatchComponent } from './child-match/child-match.component';
+import { map } from 'rxjs';
 
 @Component({
   selector: 'calculation-actions',
@@ -47,7 +48,7 @@ export class CalculateActionsComponent implements SportTemplate {
   collapse = false;
   blockUI = true;
   SOURCE_ID = SourceIds;
-  public isSettleRelated = false;
+  public isSettleRelated = true;
 
   constructor(private readonly injector: Injector) {
     this.confirmationDialogMessage.title = Language.confirmationBox;
@@ -142,18 +143,19 @@ export class CalculateActionsComponent implements SportTemplate {
     });
   }
 
-  selectedOnLastMap() {
+  public selectedOnLastMap(map: ResultDetail) {
     this.totalPoints.checked = this.totalGames.checked;
     const newFullTimeScore = this.verificationService.getNewFinalResource(this.noTotalPoints, ResourcesIds.totalGames, false);
     const confirmMessage = this.verificationService.verifyFinalResource(this.noTotalPoints,
       ResourcesIds.totalGames, newFullTimeScore, "Total Game");
+
     if (!_.isEmpty(confirmMessage) && !this.match.isScoreDirect) {
       this.confirmationDialogMessage.message = confirmMessage;
       this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
         this.verificationService.changeToNewFinalResource(this.totalGames, newFullTimeScore);
       });
     }
-    this.selectedOnMap();
+    this.selectedOnMap(map);
   }
 
   async calculate() {
@@ -251,15 +253,13 @@ export class CalculateActionsComponent implements SportTemplate {
 
     if (this.verificationService.allMapHaveScoreSources(this.selectedResources)) {
       this.confirmCalculateMismatchScores();
+    } else if (this.isLeader) {
+      this.confirmationDialogMessage.message = Language.eSports.leader.insufficientSources;
+      this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
+        this.confirmCalculateMismatchScores();
+      });
     } else {
-      if (this.isLeader) {
-        this.confirmationDialogMessage.message = Language.eSports.leader.insufficientSources;
-        this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
-          this.confirmCalculateMismatchScores();
-        });
-      } else {
-        this.toastrService.error(Language.eSports.nonLeader.insufficientSources);
-      }
+      this.toastrService.error(Language.eSports.nonLeader.insufficientSources);
     }
   }
 
@@ -303,31 +303,49 @@ export class CalculateActionsComponent implements SportTemplate {
     }
   }
 
-  selectedOnMap() {
+  public selectedOnMap(map: ResultDetail) {
     this.enableUncalculate = this.enableUncalculateButton();
     this.match.isClickOnCalculate = false;
+    this.autoSelectChildMatch(map);
   }
 
   private async confirmChangedResults() {
     const badmintonResultDetails = _.filter(this.match.resultDetails, { checked: true });
     if (this.isReSettledTickets) {
       this.confirmCalculation(badmintonResultDetails);
-    } else {
-      const getBadmintonResultQuery = {
-        matchId: this.match.matchDetail.matchId,
-        apikey: this.apiKeys.NormalMatch,
-        sportType: this.match.matchDetail.sportType,
-      };
-      const needConfirm = await this.aioService.verifyChangedSettledTickets(badmintonResultDetails, getBadmintonResultQuery);
-      if (needConfirm) {
-        this.confirmationDialogMessage.message = Language.recalculateNotification;
-        this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
-          this.isReSettledTickets = true;
-        });
-      } else {
-        this.confirmCalculation(badmintonResultDetails);
-      }
+      return;
     }
+
+    const getBadmintonResultQuery = {
+      matchId: this.match.matchDetail.matchId,
+      apikey: this.apiKeys.NormalMatch,
+      sportType: this.match.matchDetail.sportType,
+    };
+    const needConfirm = await this.aioService.verifyChangedSettledTickets(badmintonResultDetails, getBadmintonResultQuery);
+
+    if (needConfirm) {
+      this.confirmationDialogMessage.message = Language.recalculateNotification;
+      this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
+        this.isReSettledTickets = true;
+      });
+      return;
+    }
+    
+    this.confirmChildMatchCalculation(badmintonResultDetails);
+  }
+
+  private confirmChildMatchCalculation(resultDetails: ResultDetail[]) {
+    const { sportType } = this.match.matchDetail;
+
+    if (sportType === SportType.tableTennis && this.isSettleRelated) {
+      this.confirmationDialogMessage.message = Language.confirmRelatedChildMatch;
+      this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
+        this.confirmCalculation(resultDetails);
+      });
+      return;
+    }
+
+    this.confirmCalculation(resultDetails);
   }
 
   private confirmCalculation(resultDetails: ResultDetail[]) {
@@ -608,7 +626,8 @@ export class CalculateActionsComponent implements SportTemplate {
 
   private checkConsistent() {
     this.match.childMatches.forEach(item =>
-      item.isNotConsistent = this.verificationService.isChildMatchNotConsistent(this.match.resultDetails, item));
+      item.isNotConsistent = this.verificationService.isChildMatchNotConsistent(this.match.resultDetails, item)
+    );
   }
 
   private get childMatchSelected(): ChildMatch[] {
@@ -658,5 +677,23 @@ export class CalculateActionsComponent implements SportTemplate {
     return isRunning 
         && !result.isScoreMismatched 
         && this.verificationService.isValidTraderConfirmScore(result);
+  }
+  private autoSelectChildMatch(result: ResultDetail) {
+    const { sportType } = this.match.matchDetail;
+    if (sportType !== SportType.tableTennis || !this.isSettleRelated) return;
+
+    const childMatch = this.match.childMatches.find(x => x.relatedResourceId === result.resourceId);
+    if (childMatch) {
+      childMatch.checked = result.checked;
+    }
+  }
+
+
+
+
+  public openInfo() {
+    this.confirmationDialogMessage.title = Language.information;
+    this.confirmationDialogMessage.message = Language.childMatchTabbleTennisInfo;
+    this.messageBoxService.alert(this.confirmationDialogMessage);
   }
 }

@@ -2,9 +2,9 @@
   <span class="collapse-icon" role="button" [ngClass]="collapse ? 'collapsed' : ''" (click)="collapseChildMatch()"></span>
   <span style="margin-left: 5px;">Related Matches</span>
 </div>
-
 @if(!collapse) {
-  <table class="table-child-match">
+<div class="table-child-match">
+  <table >
     <thead>
       <tr>
         <th class="code">Match Code/ID</th>
@@ -28,7 +28,7 @@
           <td rowspan="2">{{ childMatch.isHold ? "YES" : "NO" }}</td>
          @if(showAction) {
           <td rowspan="2">
-            <input type="checkbox" [(ngModel)]="childMatch.checked" [disabled]="childMatch.isHold" />
+            <input type="checkbox" [(ngModel)]="childMatch.checked"  [disabled]="childMatch.isHold" />
           </td>
          }
         </tr>
@@ -39,7 +39,9 @@
           <td [ngClass]="getChildMatchesClass(childMatch)">{{ childMatch.awayValue | result }}</td>
         </tr>
       }
-
     </tbody>
   </table>
+  <span>- Marked tickets will not be settled.</span><br />
+  <span>- Matches that are on-hold will not be settled along side main match.</span>
+</div>
 }
