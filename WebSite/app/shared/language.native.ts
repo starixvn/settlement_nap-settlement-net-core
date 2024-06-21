@@ -312,5 +312,7 @@
     confirmDeadHeatSetting: "Are you sure you want to change Dead Heat Setting from @CURRENT to @EXPECTED?"
   },
   TieBreakInconsistency:	"Cannot proceed due to Set 3 score is not consistent with match type (Tie-Break)",
-  childMatchTennisInfo: '- Xth Set Game Winner: refund not played matches.'
+  childMatchTennisInfo: '- Xth Set Game Winner: refund not played matches.',
+  childMatchTabbleTennisInfo: 'Matches List (Xth Set Winner, Points Handicap). Actions on corresponding matches Calculate played matches.',
+  chidMatchRefundTabbleTennisInfo: 'Refund related child-match: Xth Set Winner, Points Handicap.'
 };

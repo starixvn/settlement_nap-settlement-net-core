@@ -31,6 +31,20 @@
 
         <tr>
           <td colspan="2">
+            <div style="display: flex;
+              justify-content: flex-end;
+              padding-right: 10px;">
+              <span class="settle-related">
+                <input type="checkbox"  id="settleRelated" />
+                <label for="settleRelated">Also refund <span class="link" (click)="openInfo()">
+                    child-match.</span></label>
+              </span>
+            </div>
+          </td>
+        </tr>
+
+        <tr>
+          <td colspan="2">
             <button *ngIf="permission.isLeader" [ngClass]="{'btn btn-outline-primary button-confirmed': true}"
               [disabled]="selectedResources.length === 0" (click)="confirmRefund()">
               Confirm/Undo-confirm Refund

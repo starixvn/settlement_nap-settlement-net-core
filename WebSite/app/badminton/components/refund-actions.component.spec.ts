@@ -40,13 +40,17 @@ describe('Badminton - Refund actions component', () => {
     errCode: 0,
     errMsg: "",
     isSuccessful: true,
-    childMatchIds: ''
+    childMatchIds: '',
+    settledSessionId: '',
+    hasResultAmendment: false
   };
   const unSuccessfulResult: Result = {
     errCode: 1,
     errMsg: errorMessage,
     isSuccessful: false,
-    childMatchIds: ''
+    childMatchIds: '',
+    settledSessionId: '',
+    hasResultAmendment: false
   };
   const existMarkedTicket = {
     isExistMarkedTicket: true,

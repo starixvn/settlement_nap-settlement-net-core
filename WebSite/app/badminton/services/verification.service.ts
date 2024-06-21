@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { InputType, ResourcesIds } from "../constants";
+import { InputType, ResourcesIds, VolleyballBetTypes } from "../constants";
 import * as _ from 'lodash';
 import { ResultDetail } from "../../shared/models/sportsbook-sop";
 import { ScoreSourceType, TicketStatusText } from "../../shared/constants";
@@ -49,12 +49,13 @@ export class VerificationService extends VerificationBaseService  {
 
      isChildMatchNotConsistent(resultDetails: ResultDetail[], childMatch: ChildMatch) {
         const resultRelated = _.find(resultDetails, item => item.resourceId === childMatch.relatedResourceId);
-        const homeValue = _.isEmpty(resultRelated.homeValue) ? null : resultRelated.homeValue;
-        const awayValue = _.isEmpty(resultRelated.awayValue) ? null : resultRelated.awayValue;
+        const homeValue = _.isEmpty(resultRelated?.homeValue) ? null : resultRelated.homeValue;
+        const awayValue = _.isEmpty(resultRelated?.awayValue) ? null : resultRelated.awayValue;
         return !resultRelated || !_.isEqual(homeValue, childMatch.homeValue) || !_.isEqual(awayValue, childMatch.awayValue);
     }
 
      verifyConsistentChildMatch(resultDetails: ResultDetail[], childMatch: ChildMatch[]) {
+       
         if (childMatch.length > 0) {
             const notConsistent = _.find(childMatch, item => this.isChildMatchNotConsistent(resultDetails, item));
             return !_.isNil(notConsistent);
