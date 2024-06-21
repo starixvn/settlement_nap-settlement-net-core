@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { InputType, ResourcesIds, VolleyballBetTypes } from "../constants";
+import { InputType, ResourcesIds } from "../constants";
 import * as _ from 'lodash';
 import { ResultDetail } from "../../shared/models/sportsbook-sop";
 import { ScoreSourceType, TicketStatusText } from "../../shared/constants";
@@ -16,24 +16,24 @@ export class VerificationService extends VerificationBaseService  {
             super(resultByTeamNamePipe);
     }
 
-    public hasTicketBetOnMap(resultDetails: ResultDetail[]) {
+     hasTicketBetOnMap(resultDetails: ResultDetail[]) {
         return _.filter(resultDetails, (item) => !_.isEqual(item.resourceId, ResourcesIds.totalGames)
             && item.ticketStatus !== TicketStatusText.noTicket).length > 0;
     }
 
-    public isExistInhouseResult(result: ResultDetail) {
+     isExistInhouseResult(result: ResultDetail) {
         return result.inputType === InputType.coupleScore
             ? _.find(result.externalScores, (source) => source.sourceId < ScoreSourceType.screenshot
                 && this.isExistedHomeAwayScore(source.homeValue, source.awayValue))
             : _.find(result.externalScores, (source) => source.sourceId < ScoreSourceType.screenshot && !_.isEmpty(source.homeValue));
     }
 
-    public verifyMatchScoreOnCalculation(resultDetails: ResultDetail[]) {
+     verifyMatchScoreOnCalculation(resultDetails: ResultDetail[]) {
         return this.intervalCalculationService.isMatchNotCheckedWhenChangingIntervals(resultDetails,
             ResourcesIds.totalGames, ResourcesIds.totalPoints);
     }
 
-    public verifyIntervalsOnCalculation(resultDetails: ResultDetail[], isScoreDirect: boolean) {
+     verifyIntervalsOnCalculation(resultDetails: ResultDetail[], isScoreDirect: boolean) {
         if (this.intervalCalculationService.isIntervalNotCheckedWhenCalculateMatch(resultDetails,
             isScoreDirect, ResourcesIds.totalGames, ResourcesIds.totalPoints)) {
             return Language.intervalsAndMatch.intervalNotSelected;
@@ -47,18 +47,22 @@ export class VerificationService extends VerificationBaseService  {
         return "";
     }
 
-    public isChildMatchNotConsistent(resultDetails: ResultDetail[], childMatch: ChildMatch) {
+     isChildMatchNotConsistent(resultDetails: ResultDetail[], childMatch: ChildMatch) {
         const resultRelated = _.find(resultDetails, item => item.resourceId === childMatch.relatedResourceId);
         const homeValue = _.isEmpty(resultRelated.homeValue) ? null : resultRelated.homeValue;
         const awayValue = _.isEmpty(resultRelated.awayValue) ? null : resultRelated.awayValue;
         return !resultRelated || !_.isEqual(homeValue, childMatch.homeValue) || !_.isEqual(awayValue, childMatch.awayValue);
     }
 
-    public verifyConsistentChildMatch(resultDetails: ResultDetail[], childMatch: ChildMatch[]) {
+     verifyConsistentChildMatch(resultDetails: ResultDetail[], childMatch: ChildMatch[]) {
         if (childMatch.length > 0) {
             const notConsistent = _.find(childMatch, item => this.isChildMatchNotConsistent(resultDetails, item));
             return !_.isNil(notConsistent);
         }
         return false;
+    }
+
+    isFTDrawWithInputNormal(totalGames: ResultDetail, inputDirectly: boolean) {
+        return totalGames.checked && !inputDirectly && totalGames.homeValue.trim() === totalGames.awayValue.trim();
     }
 }
