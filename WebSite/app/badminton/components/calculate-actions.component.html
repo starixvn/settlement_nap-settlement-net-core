@@ -124,11 +124,15 @@
 							id="isScoreDirect" [disabled]="disableScoreDirect" />
 						<label for="isScoreDirect">Input Match score directly</label>
 					</span>
-					<span class="settle-related">
-						<input type="checkbox" [(ngModel)]="isSettleRelated" id="settleRelated" />
-						<label for="settleRelated">Also calculated <span class="link" (click)="openInfo()">
-								child-match.</span></label>
-					</span>
+					
+					@if(isSupportSettleRelated) {
+						<span class="settle-related">
+							<input type="checkbox" [(ngModel)]="isSettleRelated" id="settleRelated" />
+							<label for="settleRelated">Also calculated <span class="link" (click)="openInfo()">
+									child-match.</span></label>
+						</span>
+					}
+					
 				</div>
 			</td>
 		</tr>

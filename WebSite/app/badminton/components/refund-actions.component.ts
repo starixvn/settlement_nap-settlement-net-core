@@ -36,8 +36,7 @@ import { BadmintonService } from "../services";
 })
 export class RefundActionsComponent
   extends RefundActionBaseComponent
-  implements SportTemplate
-{
+  implements SportTemplate {
   @ViewChild(ToastContainerDirective, { static: true })
   toastContainer: ToastContainerDirective;
   public match: Match;
@@ -46,13 +45,20 @@ export class RefundActionsComponent
     new ModalDialogMessage(Language.confirmationBox);
   public apiKeys = null;
   public blockUI = true;
-  public isSettleRelated = true;
+  public isSettleRelated = false;
+
+
+  public get isSupportSettleRelated() {
+    return [SportType.tableTennis].includes(this.matchDetail.sportType)
+  }
 
   async getMatch(matchId: number): Promise<void> {
     this.initService();
     const sportType = Number(UrlHelper.getUrlParameter("sportType"));
-    this.apiKeys =
-      sportType === SportType.volleyBall ? VolleyballApiKeys : BadmintonApiKeys;
+    this.apiKeys = sportType === SportType.tableTennis || sportType === SportType.volleyBall
+      ? VolleyballApiKeys
+      : BadmintonApiKeys;
+
     const matchQuery = {
       matchId,
       sportType,
@@ -77,10 +83,12 @@ export class RefundActionsComponent
     this.resultDetails = this.match.resultDetails;
     this.matchDetail = this.match.matchDetail;
     this.permission = this.match.permission;
+    this.isSettleRelated = this.isSupportSettleRelated;
     this.cloneResultDetail();
   }
 
   public async refund() {
+    console.log(this.getChildrenMatch())
     const paramsCheckingMarkedTickets = this.generateCheckMarkedTicketsQuery();
     const res = await this.aioService.checkMarkedTickets(
       paramsCheckingMarkedTickets
@@ -103,9 +111,7 @@ export class RefundActionsComponent
   }
 
   private confirmChildMatchRefund() {
-    const { sportType } = this.match.matchDetail;
-
-    if (sportType === SportType.tableTennis && this.isSettleRelated) {
+    if (this.isSupportSettleRelated && this.isSettleRelated) {
       this.confirmationDialogMessage.message =
         Language.confirmRelatedChildMatch;
       this.messageBoxService.confirm(this.confirmationDialogMessage, () => {
@@ -119,8 +125,9 @@ export class RefundActionsComponent
 
   public async doRefund() {
     const query = this.generateRefundQuery(this.apiKeys.Settle);
+    query.childMatchIds = this.getChildrenMatch();
     const result = await this.aioService.push(query);
-    
+
     if (result.errCode > 0) {
       this.toastrService.error(result.errMsg);
       return;
@@ -156,8 +163,8 @@ export class RefundActionsComponent
       this.match.resultDetails.find(
         (map) => map.resourceId === ResourcesIds.totalGames
       ).checked ||
-      (this.match.matchDetail.betStatus &&
-        _.includes(this.match.matchDetail.betStatus, EventStatus.refund))
+        (this.match.matchDetail.betStatus &&
+          _.includes(this.match.matchDetail.betStatus, EventStatus.refund))
         ? `${EventStatus.refund};`
         : "";
     const submitedSets = this.match.resultDetails.filter(
@@ -182,4 +189,24 @@ export class RefundActionsComponent
       Language.chidMatchRefundTabbleTennisInfo;
     this.messageBoxService.alert(this.confirmationDialogMessage);
   }
+ 
+  getChildrenMatch() {
+    
+    if (!this.isSettleRelated || !this.isSupportSettleRelated) {
+      return null;
+    }
+
+    const { childMatches } = this.match;
+    const selectedResourceIds = this.selectedResources.map(x => x.resourceId);
+    const newSelectedRourceIds = selectedResourceIds.includes(ResourcesIds.totalGames) 
+      ? [...selectedResourceIds,ResourcesIds.totalPoints] 
+      : selectedResourceIds;
+   
+    const childrenMatchRefund = childMatches.filter(x => newSelectedRourceIds.includes(x.relatedResourceId));
+    
+    const childrendMatchId = childrenMatchRefund.length ? childrenMatchRefund.map(x => x.matchId).join(',') : null;
+
+    return childrendMatchId;
+  }
+  
 }

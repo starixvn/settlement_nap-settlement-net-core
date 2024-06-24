@@ -634,7 +634,10 @@ export class CalculateActionsComponent implements SportTemplate {
     return _.filter(this.match.childMatches, item => item.checked);
   }
 
-  getChildMatchesClass(child: ChildMatch) {
+  public get isSupportSettleRelated() {
+    return [SportType.tableTennis].includes(this.match.matchDetail.sportType)
+  }
+
     if (child.isNotConsistent) {
       return "not-consistent";
     } else {

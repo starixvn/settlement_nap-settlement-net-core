@@ -170,6 +170,7 @@ public class MultipleServerAioServiceImp(
         }
 
         await HandleRefundGameWinner(request, result);
+        await InsIAutoRefundOSChildrenMatch(request);
 
         return result;
     }
@@ -184,11 +185,25 @@ public class MultipleServerAioServiceImp(
         }
     }
 
-    private async Task HandleInsRefundResultOS(SettleRequest request)
+    private async Task InsIAutoRefundOSChildrenMatch(SettleRequest request)
     {
         var isHasRefundChildMatch = request.SportType == SportType.TableTennis
             && request.ParentId == 0
             && request.ActionName is ActionType.RefundAll;
+
+        if (!isHasRefundChildMatch) return;
+
+        var criteria = request.ChildMatchIds.Split(",")
+            .Select(x => Convert.ToInt32(x))
+            .Select(x => new AutoRefundOSResultInsCriteria
+            {
+                MatchId = x,
+                TypeId = 1, // Refund Single
+                ResourceIds = "00"
+            }).ToList();
+
+        var tasks = criteria.Select(x => repository.ExecuteAsync(x));
+        await Task.WhenAll(tasks);
     }
 
     private async Task InsRefundResultOS(SettleRequest request)

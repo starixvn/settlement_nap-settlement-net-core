@@ -7,7 +7,7 @@ public class AutoRefundOSResultInsCriteria : NonQueryCommand
     public string ResourceIds { get; set; }
     public int RowCount { get; set; }
 
-    public override string GetSettingKey() => "NAP_AutoRefundOSResultInsCriteria";
+    public override string GetSettingKey() => "NAP_Set_AutoRefundOS_ResultIns";
 
     public override bool IsValid() => MatchId > 0;
 }

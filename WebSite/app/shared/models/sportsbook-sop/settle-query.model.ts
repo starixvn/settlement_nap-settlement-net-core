@@ -16,6 +16,8 @@ export class SettleQuery {
     isHedgeMatch: boolean;
     isFantasy:boolean;
     isSettleRelated = false;
+    childMatchIds: string | null = null;
+    
     constructor(
         matchDetail: MatchDetail,
         selectedResources: ResultDetail[],
