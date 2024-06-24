@@ -19,6 +19,7 @@
 		<Setting Key="NAP_Set_FantasyMatchOSSel" SpName="NAP_Set_FantasyMatchOSSel" DbName="DBPRO.bodb02.wsv_nap" />
 		<Setting Key="NAP_Admin_MajorRound_Sel" SpName="NAP_Admin_MajorRound_Sel_xtest" DbName="DBPRO.bodb02.wsv_nap" />
 		<Setting Key="NAP_Set_MatchOtherSportsSel" SpName="NAP_Set_MatchOtherSportsSel" DbName="DBPRO.bodb02.wsv_nap" />
+		<Setting Key="NAP_Set_AutoRefundOS_ResultIns" SpName="NAP_Set_AutoRefundOS_ResultIns" DbName="DBPRO.bodb02.wsv_nap" />
 	</Function>
 	<Function Name="MoveTickets">
 		<Setting Key="NAP_Set_AutoPayout_ReferenceActionByMatchSel" SpName="NAP_Set_AutoPayout_ReferenceActionByMatchSel" DbName="DBLOG.bodb_CustomerLog.wsv_nap" />

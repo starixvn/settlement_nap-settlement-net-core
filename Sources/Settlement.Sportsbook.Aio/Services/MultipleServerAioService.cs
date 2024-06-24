@@ -184,6 +184,13 @@ public class MultipleServerAioServiceImp(
         }
     }
 
+    private async Task HandleInsRefundResultOS(SettleRequest request)
+    {
+        var isHasRefundChildMatch = request.SportType == SportType.TableTennis
+            && request.ParentId == 0
+            && request.ActionName is ActionType.RefundAll;
+    }
+
     private async Task InsRefundResultOS(SettleRequest request)
     {
         var criteria = new InsRefundResultOSCriteria
