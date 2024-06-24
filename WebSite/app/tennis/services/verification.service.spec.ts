@@ -3,7 +3,6 @@ import { IntervalCalculationService } from '../../shared/services';
 import { ResultDetail } from '../../shared/models/sportsbook-sop';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ModalContentDialogComponent, ModalDialogComponent } from '../../shared/components';
-import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { VerificationService } from './verification.service';
 import { IntervalBackgroundPipe } from '../../shared/pipes/interval-background.pipe';
 import { ResultByTeamNamePipe } from '../../shared/pipes/result-by-team-name.pipe';

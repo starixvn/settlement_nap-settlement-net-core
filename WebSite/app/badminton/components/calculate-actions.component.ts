@@ -173,14 +173,14 @@ export class CalculateActionsComponent implements SportTemplate {
     }
 
     if(this.verificationService.isFTDrawWithInputNormal(this.totalGames, this.match.isScoreDirect)) {
-      this.verifySituationWhenFTDraw();
+      this.verifyScenarioWhenFTDraw();
       return;
     }
 
     await this.ProcessBasedOnChildMatchSelected();
   }
 
-  private verifySituationWhenFTDraw() {
+  private verifyScenarioWhenFTDraw() {
     if (this.permission.isLeader) {
       this.confirmationDialogMessage.message = Language.sop.leader.finalIsDraw;
       this.messageBoxService.confirm(this.confirmationDialogMessage, async () => {

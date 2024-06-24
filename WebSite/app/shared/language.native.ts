@@ -171,7 +171,7 @@
             insufficientSources: "WARNING! There are insufficient Source Scores! Please check Score Sources or contact leaders.",
             mismatchedScore: 'WARNING! There are inconsistent scores! Please check inputted values.',
             mismatchedResult: 'WARNING! There are inconsistent results! Please check inputted values.',
-            finalIsDraw: 'Cannot calculate FT = DRAW. Please check then try again.',
+            finalIsDraw: 'Please contact Leader to Calculate FT = Draw.',
         },
         saveScore: 'Are you sure you want to save changes made to selected Outside Scores?',
         invalidResultByBetType: 'WARNING! Cannot continue due to invalid value inputted. Please check and try again.',

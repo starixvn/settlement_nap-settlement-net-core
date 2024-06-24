@@ -15,11 +15,11 @@ export class VerificationService extends VerificationBaseService {
     super(resultByTeamNamePipe);
   }
 
-  public isExistedHomeAwayScore(homeValue: string, awayValue: string) {
+   isExistedHomeAwayScore(homeValue: string, awayValue: string) {
     return !_.isEmpty(homeValue) && !_.isEmpty(awayValue);
   }
 
-  public verifyMatchScoreOnCalculation(resultDetails: ResultDetail[]) {
+   verifyMatchScoreOnCalculation(resultDetails: ResultDetail[]) {
     return this.intervalCalculationService.isMatchNotCheckedWhenChangingIntervals(
       resultDetails,
       ResourcesIds.totalSets,
@@ -27,7 +27,7 @@ export class VerificationService extends VerificationBaseService {
     );
   }
 
-  public verifyIntervalsOnCalculation(
+   verifyIntervalsOnCalculation(
     resultDetails: ResultDetail[],
     isScoreDirect: boolean
   ) {
@@ -56,7 +56,7 @@ export class VerificationService extends VerificationBaseService {
     return "";
   }
 
-  public verifySuperTieBreak(matchDetail: MatchDetail,selectedResults: ResultDetail[]) {
+   verifySuperTieBreak(matchDetail: MatchDetail, selectedResults: ResultDetail[]) {
     const setThree = selectedResults.find((x) => x.intervalNo === 3);
     const isSuperTieBreak =
       matchDetail.gameSession === 3 && matchDetail.sessionTime === 0;
@@ -67,7 +67,7 @@ export class VerificationService extends VerificationBaseService {
 
     const { homeValue, awayValue } = setThree;
 
-    const isValidScoreSetThree =  +homeValue === 0 && +awayValue === 1 || +homeValue === 1 && +awayValue === 0;
+    const isValidScoreSetThree = +homeValue === 0 && +awayValue === 1 || +homeValue === 1 && +awayValue === 0;
     //+homeValue !== +awayValue && (validScore.includes(+homeValue) && validScore.includes(+awayValue));
 
     if (isSuperTieBreak) {
@@ -75,5 +75,9 @@ export class VerificationService extends VerificationBaseService {
     } else {
       return isValidScoreSetThree;
     }
+  }
+
+  isFTDrawWithInputNormal(totalPoint: ResultDetail, inputDirectly: boolean) {
+    return totalPoint.checked && !inputDirectly && totalPoint.homeValue.trim() === totalPoint.awayValue.trim();
   }
 }
