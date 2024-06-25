@@ -25,9 +25,9 @@ export class AppComponent extends AppBaseComponent implements OnInit {
     // const pageType = this.elementRef.nativeElement.getAttribute('page-type');
     // switch (pageType) {
     //   case PageType.ReCalculate:
-    //     return CalculateActionsComponent;
+        return CalculateActionsComponent;
     //   case PageType.Refund:
-        return RefundActionsComponent;
+        // return RefundActionsComponent;
     //   case PageType.EarlySettlement:
     //     return EarlySettlementComponent;
     //   default:

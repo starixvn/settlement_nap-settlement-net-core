@@ -17,7 +17,6 @@ import { UrlHelper } from '../../helper';
 import { ResultPipe } from '../../shared/pipes/result.pipe';
 import { SourceIds } from '../../basketball/constants/source-ids';
 import { ChildMatchComponent } from './child-match/child-match.component';
-import { map } from 'rxjs';
 
 @Component({
   selector: 'calculation-actions',
@@ -57,7 +56,8 @@ export class CalculateActionsComponent implements SportTemplate {
   async getMatch(matchId: number) {
     this.initService();
     const sportType = Number(UrlHelper.getUrlParameter('sportType'));
-    this.apiKeys = sportType === SportType.tableTennis || sportType === SportType.volleyBall ? VolleyballApiKeys : BadmintonApiKeys;
+    // this.apiKeys = sportType === SportType.tableTennis || sportType === SportType.volleyBall ? VolleyballApiKeys : BadmintonApiKeys;
+    this.apiKeys = VolleyballApiKeys;
     const matchQuery = {
       matchId,
       apikey: this.apiKeys.NormalMatch,

@@ -13,11 +13,10 @@ import { FormsModule } from "@angular/forms";
   standalone: true,
   imports: [NgClass,ResultPipe,FormsModule]
 })
-export class ChildMatchComponent implements OnInit {
+export class ChildMatchComponent {
   @Input() matches: ChildMatch[]  = [];
   @Input() matchDetail: MatchDetail;
   @Input() showAction = false;
-  // @Output() selectMatchEvent = new EventEmitter<number[]>();
 
   public collapse = false;
 
@@ -31,9 +30,5 @@ export class ChildMatchComponent implements OnInit {
   }
   public collapseChildMatch() {
     this.collapse = !this.collapse;
-  }
-
-  ngOnInit(): void {
-    // throw new Error("Method not implemented.");
   }
 }

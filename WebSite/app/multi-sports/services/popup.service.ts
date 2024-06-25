@@ -151,7 +151,7 @@ export class PopupService {
 
   private setPopupSize(sportType: number) {
     const groupOne = [SportType.badminton, SportType.eSports];
-    const groupTwo = [SportType.beachVolleyball, SportType.volleyBall];
+    const groupTwo = [SportType.beachVolleyball, SportType.volleyBall,SportType.tableTennis];
     if (_.includes(groupOne, sportType)) {
       this.properties.width = "1091px";
       this.properties.height = "760px";
