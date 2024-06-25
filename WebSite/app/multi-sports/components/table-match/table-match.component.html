@@ -44,13 +44,13 @@
         &nbsp;{{ sport.name }}
       </div>
 
-      <div class="league" [style]="{'display': !sport.collapse ?  'contents' : 'none'}">
+      <div class="league" *ngIf="!sport.collapse">
         <table class="table-calculation">
           <tbody>
             @for (league of sport.leagues; track league.leagueId) {
             <tr league-row [league]="league" class="league-name"> </tr>
             @for (match of league.matches; track match.matchId) {
-            <match [style]="{'display': !league.collapse ?  'contents' : 'none'}" [match]="match"> </match>
+            <match [isShow]="!league.collapse" [match]="match"> </match>
             }
             }
           </tbody>

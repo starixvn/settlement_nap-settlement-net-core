@@ -17,37 +17,40 @@ import { SportSupportInstant } from '../../../constants/sport-instant';
 import { MatchState } from '../../../models/match-state.model';
 import { IntervalScorePipe } from '../../../../shared/pipes/interval-score.pipe';
 import { MatchStateService } from '../../../services/match-state.service';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 
+
+// add style display : contents
 @Component({
   selector: 'match',
   templateUrl: './match.component.html',
   standalone: true,
   imports: [CommonModule, FormsModule, MatTooltipModule, PipesModule, NgbTooltip],
   providers: [IntervalScorePipe],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  styles: [' :host { display: contents; } ']
 })
 export class MatchComponent implements OnChanges, OnInit {
   @Input() match: Match;
+  @Input() isShow: boolean;
   private sportMatchService = inject(SportMatchService);
   private popupService = inject(PopupService);
   private messageBoxService = inject(MessageBoxService);
   private multiSportService = inject(MultiSportService);
   private refreshMatchService = inject(RefreshMatchService);
   private matchStateService = inject(MatchStateService);
-  public store = inject(MultiSportsStore);
-  public language = Language;
-  public readonly sportTypeCricket = SportType.cricket;
-  public readonly sportSupportInstant = SportSupportInstant;
-  public readonly dialogMessage: ModalDialogMessage = new ModalDialogMessage();
-  public matchState: MatchState;
-  public state$ = new BehaviorSubject<MatchState>(null)
+  store = inject(MultiSportsStore);
+  language = Language;
+  readonly sportTypeCricket = SportType.cricket;
+  readonly sportSupportInstant = SportSupportInstant;
+  readonly dialogMessage: ModalDialogMessage = new ModalDialogMessage();
+  matchState: MatchState;
+  state$ = new BehaviorSubject<MatchState>(null)
 
   constructor(readonly cd: ChangeDetectorRef) { }
   ngOnInit(): void {
     this.state$.subscribe(state => {
       this.matchState = state;
-      this.cd.detectChanges();
     })
   }
 
@@ -56,40 +59,40 @@ export class MatchComponent implements OnChanges, OnInit {
     this.state$.next(new MatchState(this.matchStateService, this.match, this.store));
   }
 
-  public changeAutoSetting() {
+  changeAutoSetting() {
     if (this.store.state.permission.canAutoPayout) {
       this.popupService.openUpdatePayoutForMatch(this.match, this.state$);
     }
   }
 
-  public getLog() {
+  getLog() {
     this.popupService.popupLog(this.match.matchId, this.store.request.fromDate, this.store.request.toDate);
   }
 
-  public popupCalc() {
+  popupCalc() {
     this.popupService.popupCalc(this.match, this.state$);
   }
 
-  public popupRefund() {
+  popupRefund() {
     this.popupService.popupRefund(this.match, this.state$);
   }
 
-  public popupEarly() {
+  popupEarly() {
     this.popupService.popupEarly(this.match, this.state$);
   }
 
-  public popupChangeRemarkSetting() {
+  popupChangeRemarkSetting() {
     if (this.isChangeSetting()) {
       this.popupService.popupChangeRemark(this.match, this.state$);
     }
   }
 
-  public isChangeSetting() {
+  isChangeSetting() {
     return this.match.isCalculatingSingle !== CalculationStatus.waiting && this.match.isCalculatingSingle !== CalculationStatus.calculating
       && this.match.isCalculatingMP !== CalculationStatus.waiting && this.match.isCalculatingMP !== CalculationStatus.calculating;
   }
 
-  public getInterval() {
+  getInterval() {
     const eSportNormalMaxMap = 9;
     if (_.isEqual(this.match.sportType, SportType.eSports) && this.match.bestOfMap > eSportNormalMaxMap) {
       this.match.isMatchBOMThirty = true;

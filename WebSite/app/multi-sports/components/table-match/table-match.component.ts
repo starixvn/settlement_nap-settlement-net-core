@@ -35,7 +35,7 @@ export class TableMatchComponent implements OnInit {
       map(state => state.sports),
     ).subscribe(data => {
       this.sports = data;
-      this.cd.detectChanges();
+      this.cd.markForCheck();
     });
     this.refreshMatches();
   }
@@ -50,14 +50,13 @@ export class TableMatchComponent implements OnInit {
 
   collapseSport(sport: SportMatch) {
     sport.collapse = !sport.collapse;
-    this.cd.detectChanges();
   }
 
   private refreshMatches() {
     this.subscriber = this.intervalTimer.subscribe(() => {
       if (this.store.enableRefresh) {
         this.refreshMatchesService.refreshMatches(this.sports, this.store.request);
-        this.cd.detectChanges();
+        this.cd.markForCheck();
       }
     });
   }

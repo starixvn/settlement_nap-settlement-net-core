@@ -1,4 +1,4 @@
-<ng-container *ngIf="matchState">
+<ng-container *ngIf="isShow && matchState">
 	<tr class="row-3" [ngClass]="matchState.undecidedColor">
 		<td class="code">
 			@if (store.state.permission.canViewSettlementLog) {
