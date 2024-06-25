@@ -9,6 +9,7 @@ import { Permission } from "../models/permission.model";
 @Injectable()
 export class SportMatchService {
     public getSportsWithIntervalScore(sports: SportMatch[], permission: Permission = null) {
+      console.log(sports)
         sports.forEach((sport) => {
           if (_.includes(ResultType.havingIntervalScore, sport.id)) {
             sport.leagues.forEach((league) => league.matches.forEach((match) => this.getMatchIntervalScore(match, permission)));

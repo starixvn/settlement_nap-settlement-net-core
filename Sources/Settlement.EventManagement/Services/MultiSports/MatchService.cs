@@ -81,6 +81,7 @@ public class MatchServiceImp(
                 isLeader),
             SportType.VolleyBall => matchResultDetailService.VolleyballResultDetail(matches, resultDetails, isLeader),
             SportType.Bandy => matchResultDetailService.BandyResultDetail(matches, resultDetails, isLeader),
+            SportType.TableTennis => matchResultDetailService.TableTennisResultDetail(matches, resultDetails, isLeader),
             _ => LoadExternalResults(matches, resultDetails, sportType)
         };
     }

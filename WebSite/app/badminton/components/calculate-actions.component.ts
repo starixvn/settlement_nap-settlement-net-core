@@ -26,6 +26,7 @@ import { ChildMatchComponent } from './child-match/child-match.component';
   providers: [BadmintonService, VerificationService, IntervalCalculationService]
 })
 export class CalculateActionsComponent implements SportTemplate {
+
   @ViewChild(ToastContainerDirective, { static: true }) toastContainer: ToastContainerDirective;
   private aioService: AioService;
   private messageBoxService: MessageBoxService;
@@ -682,8 +683,7 @@ export class CalculateActionsComponent implements SportTemplate {
         && this.verificationService.isValidTraderConfirmScore(result);
   }
   private autoSelectChildMatch(result: ResultDetail) {
-    const { sportType } = this.match.matchDetail;
-    if (sportType !== SportType.tableTennis || !this.isSettleRelated) return;
+    if (!this.isSupportSettleRelated || !this.isSettleRelated) return;
 
     const childMatch = this.match.childMatches.find(x => x.relatedResourceId === result.resourceId);
     if (childMatch) {
@@ -698,5 +698,18 @@ export class CalculateActionsComponent implements SportTemplate {
     this.confirmationDialogMessage.title = Language.information;
     this.confirmationDialogMessage.message = Language.childMatchTabbleTennisInfo;
     this.messageBoxService.alert(this.confirmationDialogMessage);
+  }
+
+  changeIsSettleRelated($event: any) {
+    if($event) {
+      this.selectedResources.forEach(item => { 
+        this.autoSelectChildMatch(item);
+      })
+      return;
+    } 
+    
+    this.match.childMatches.forEach(item => {
+      item.checked = false;
+    })
   }
 }

@@ -127,7 +127,7 @@
 					
 					@if(isSupportSettleRelated) {
 						<span class="settle-related">
-							<input type="checkbox" [(ngModel)]="isSettleRelated" id="settleRelated" />
+							<input type="checkbox" [(ngModel)]="isSettleRelated" id="settleRelated" (ngModelChange)="changeIsSettleRelated($event)"/>
 							<label for="settleRelated">Also calculated <span class="link" (click)="openInfo()">
 									child-match.</span></label>
 						</span>

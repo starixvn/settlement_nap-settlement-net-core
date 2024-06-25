@@ -22,6 +22,8 @@ public interface IMatchResultDetailService
     List<Match> OtherSportsResultDetail(List<Match> matches, List<ResultDetail> resultDetails, bool includeHalfTime);
 
     List<Match> BandyResultDetail(List<Match> matches, List<ResultDetail> resultDetails, bool isLeader);
+
+    List<Match> TableTennisResultDetail(List<Match> matches, List<ResultDetail> resultDetails, bool isLeader);
 }
 
 public class MatchResultDetailServiceImp(
@@ -105,6 +107,20 @@ public class MatchResultDetailServiceImp(
     public List<Match> VolleyballResultDetail(List<Match> matches, List<ResultDetail> resultDetails, bool isLeader)
     {
         var resources = new List<string> { "0101", "0102", "0103", "0104", "0105" };
+        foreach (var match in matches)
+        {
+            match.RefDataService = refDataService;
+            var resultDetailByMatchId = resultDetails.Where(m => m.MatchId == match.MatchId && m.SourceId == SourceType.Normal).ToList();
+            match.MoreScores = ScoreLoader(match.SportType, resultDetailByMatchId, resources, isLeader);
+            match.IsHavingIntervalScore = scoreService.IsIntervalScore(match.SportType, resultDetailByMatchId);
+        }
+
+        return matches;
+    }
+
+    public List<Match> TableTennisResultDetail(List<Match> matches, List<ResultDetail> resultDetails, bool isLeader)
+    {
+        var resources = new List<string> { "0101", "0102", "0103", "0104", "0105", "0106", "0107" };
         foreach (var match in matches)
         {
             match.RefDataService = refDataService;
