@@ -89,7 +89,7 @@ public class AioServiceImp(
         if (mapperService != null)
         {
             resultDetails.ForEach(result => result.MatchId = request.MatchId);
-            //mapperService.Decorate(resultDetails);
+            mapperService.Decorate(resultDetails);
         }
         resultDetails = resultDetails.OrderBy(result => result.OrdNo).ToList();
 

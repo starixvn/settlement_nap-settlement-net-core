@@ -5,7 +5,7 @@ using Settlement.Sportsbook.Aio.Models;
 
 namespace Settlement.Sportsbook.Aio.Services.TableTennis;
 
-public class ValidateChildMatchService : IMapperService
+public class ChildMatchService : IMapperService
 {
     private const int Confirmed = 3;
 

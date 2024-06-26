@@ -56,9 +56,10 @@ export class CalculateActionsComponent implements SportTemplate {
 
   async getMatch(matchId: number) {
     this.initService();
+   
     const sportType = Number(UrlHelper.getUrlParameter('sportType'));
-    // this.apiKeys = sportType === SportType.tableTennis || sportType === SportType.volleyBall ? VolleyballApiKeys : BadmintonApiKeys;
-    this.apiKeys = VolleyballApiKeys;
+    this.getApiKeys(sportType);
+    
     const matchQuery = {
       matchId,
       apikey: this.apiKeys.NormalMatch,
@@ -69,6 +70,10 @@ export class CalculateActionsComponent implements SportTemplate {
     this.isReadyMatch = this.match.matchDetail.playTime >= KickOffTime.playTime;
     this.cloneResultDetail();
     this.init();
+  }
+
+  private getApiKeys(sportType) {
+    this.apiKeys = sportType === SportType.tableTennis || sportType === SportType.volleyBall ? VolleyballApiKeys : BadmintonApiKeys;
   }
 
   initService() {
