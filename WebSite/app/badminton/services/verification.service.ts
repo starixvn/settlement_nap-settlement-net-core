@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { InputType, ResourcesIds, VolleyballBetTypes } from "../constants";
 import * as _ from 'lodash';
 import { ResultDetail } from "../../shared/models/sportsbook-sop";
-import { ScoreSourceType, TicketStatusText } from "../../shared/constants";
+import { EventStatus, ScoreSourceType, TicketStatusText } from "../../shared/constants";
 import { VerificationBaseService } from '../../core/services/verification-base.service';
 import { IntervalCalculationService } from "../../shared/services";
 import { ResultByTeamNamePipe } from '../../shared/pipes/result-by-team-name.pipe';
@@ -61,9 +61,16 @@ export class VerificationService extends VerificationBaseService  {
             return !_.isNil(notConsistent);
         }
         return false;
-    }
+    }    
 
+    public verifyCannotSettleChildMatch(childMatch: ChildMatch[]) {
+        const isExistsSettled = childMatch.some(item => item.eventStatus.toLowerCase() === EventStatus.completed.toLowerCase());
+        const isExistsHold = childMatch.some(item => item.isHold);
+        const isExistsConfirmRefund = childMatch.some(item => item.resultSettingData.isConfirmedRefund);
+        
+        return isExistsSettled || isExistsHold || isExistsConfirmRefund;
+    }
+    
     isFTDrawWithInputNormal(totalGames: ResultDetail, inputDirectly: boolean) {
         return totalGames.checked && !inputDirectly && totalGames.homeValue.trim() === totalGames.awayValue.trim();
-    }
 }

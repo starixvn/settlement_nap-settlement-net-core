@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, Output } from "@angular/core";
+import { Component, Input,  } from "@angular/core";
 import { ChildMatch } from "../../models/child-match.model";
 import { MatchDetail } from "../../models";
 import { ResultStatusId } from "../../../shared/constants";
@@ -17,6 +17,7 @@ export class ChildMatchComponent {
   @Input() matches: ChildMatch[]  = [];
   @Input() matchDetail: MatchDetail;
   @Input() showAction = false;
+  @Input() isLeader = true;
 
   public collapse = false;
 

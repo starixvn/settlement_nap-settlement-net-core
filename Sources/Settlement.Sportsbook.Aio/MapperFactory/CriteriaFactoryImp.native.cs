@@ -13,6 +13,7 @@ public class CriteriaFactoryImp : CriteriaFactoryBase
         GameTotal();
         Basketball();
         Bandy();
+        TableTennis();
     }
 
     private static void Tennis()
@@ -100,5 +101,18 @@ public class CriteriaFactoryImp : CriteriaFactoryBase
         CriteriaTypes.Add($"bandy-{ApiKeyConstant.ChildMatchKey}", typeof(Criteria.Volleyball.GetChildMatchCriteria));
         CriteriaTypes.Add($"bandy-{ApiKeyConstant.SaveScore}", typeof(Criteria.SaveScoreCriteria));
         CriteriaTypes.Add("bandy-settle", typeof(Criteria.SettleCriteria));
+    }
+
+    private static void TableTennis()
+    {
+        CriteriaTypes.Add($"tableTennis-{ApiKeyConstant.MatchInfoKey}", typeof(Criteria.GetMatchDetailCriteria));
+        CriteriaTypes.Add($"tableTennis-{ApiKeyConstant.HedgeMatchInfoKey}", typeof(Criteria.GetHedgeMatchCriteria));
+        CriteriaTypes.Add($"tableTennis-{ApiKeyConstant.ResultDetailKey}", typeof(Criteria.GetResultDetailCriteria));
+        CriteriaTypes.Add($"tableTennis-{ApiKeyConstant.LatestResultKey}", typeof(Criteria.GetRecalResultCriteria));
+        CriteriaTypes.Add($"tableTennis-{ApiKeyConstant.ProviderKey}", typeof(Criteria.GetProviderCriteria));
+        CriteriaTypes.Add($"tableTennis-{ApiKeyConstant.ChildMatchKey}", typeof(Criteria.Volleyball.GetChildMatchCriteria));
+        CriteriaTypes.Add($"tableTennis-{ApiKeyConstant.SaveScore}", typeof(Criteria.SaveScoreCriteria));
+
+        CriteriaTypes.Add("tableTennis-settle", typeof(Criteria.SettleCriteria));
     }
 }

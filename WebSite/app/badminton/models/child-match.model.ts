@@ -1,3 +1,5 @@
+import { ResultSettingModel } from "../../shared/models";
+
 export class ChildMatch {
     public matchCode: string;
 
@@ -28,4 +30,6 @@ export class ChildMatch {
     public leagueName: string;
 
     public isNotConsistent: boolean;
+
+    resultSettingData: ResultSettingModel;
 }

@@ -246,10 +246,13 @@ public class MultipleServerAioServiceImp(
         var isResultAmendment = await HandleResultAmendment(criteria, selectedResources);
         foreach (var server in appSettingsKey.Value.SiteDbServer)
 
+        var tasks = appSettingsKey.SiteDbServer.Select(server =>
         {
             criteria.DbServer = server;
-            await repository.ExecuteAsync(criteria);
-        }
+            return repository.ExecuteAsync(criteria);
+        });
+
+        await Task.WhenAll(tasks);
 
         return new Result
         {

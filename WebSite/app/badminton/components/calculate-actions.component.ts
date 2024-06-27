@@ -11,7 +11,7 @@ import { SettlementStatusId, CalculateAction, SportType, ResultStatusId, ScoreSo
 import { Match, HedgeMatchDetail, SettleQuery, ChildMatch, SettleChildMatchQuery } from '../models';
 import { ResourceNameByIdPipe } from '../pipes';
 import { BadmintonService, VerificationService } from '../services';
-import { BadmintonApiKeys, KickOffTime, ResourcesIds, Resources, VolleyballApiKeys } from '../constants';
+import { BadmintonApiKeys, KickOffTime, ResourcesIds, Resources, VolleyballApiKeys, TableTennisApiKeys } from '../constants';
 import { ExternalResultDetail, Permission, ResultDetail, SaveScoreQuery, SportTemplate } from '../../shared/models/sportsbook-sop';
 import { UrlHelper } from '../../helper';
 import { ResultPipe } from '../../shared/pipes/result.pipe';
@@ -49,6 +49,7 @@ export class CalculateActionsComponent implements SportTemplate {
   blockUI = true;
   SOURCE_ID = SourceIds;
   public isSettleRelated = true;
+  public sportTypes = SportType;
 
   constructor(private readonly injector: Injector) {
     this.confirmationDialogMessage.title = Language.confirmationBox;
@@ -73,7 +74,14 @@ export class CalculateActionsComponent implements SportTemplate {
   }
 
   private getApiKeys(sportType) {
-    this.apiKeys = sportType === SportType.tableTennis || sportType === SportType.volleyBall ? VolleyballApiKeys : BadmintonApiKeys;
+    
+    const sportTypeToApiKeys = {
+      [SportType.tableTennis]: TableTennisApiKeys,
+      [SportType.volleyBall]: VolleyballApiKeys,
+      [sportType.badminton] : BadmintonApiKeys
+    };
+    
+    this.apiKeys = sportTypeToApiKeys[sportType];
   }
 
   initService() {
@@ -216,6 +224,8 @@ export class CalculateActionsComponent implements SportTemplate {
       this.toastrService.error(Language.directlyWithChildMAtch);
     } else if (this.verificationService.verifyConsistentChildMatch(this.match.resultDetails, this.childMatchSelected)) {
       this.toastrService.error(Language.consistentRelatedMatch);
+    } else if(this.verificationService.verifyCannotSettleChildMatch(this.childMatchSelected)) {
+      this.toastrService.error(Language.cannotSettleChildMatch);
     } else {
       this.confirmationDialogMessage.message = Language.confirmChildMatch;
       this.messageBoxService.confirm(this.confirmationDialogMessage, () => {

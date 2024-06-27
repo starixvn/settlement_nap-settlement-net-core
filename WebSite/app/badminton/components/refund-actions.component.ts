@@ -88,7 +88,6 @@ export class RefundActionsComponent
   }
 
   public async refund() {
-    console.log(this.getChildrenMatch())
     const paramsCheckingMarkedTickets = this.generateCheckMarkedTicketsQuery();
     const res = await this.aioService.checkMarkedTickets(
       paramsCheckingMarkedTickets
