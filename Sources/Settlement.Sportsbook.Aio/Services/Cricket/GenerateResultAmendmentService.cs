@@ -58,12 +58,7 @@ public class GenerateResultAmendmentServiceImp(XmlConvertService xmlConvertServi
 
     private (CricketResultItem, CricketResultItem) CreateMainResultItem(ResultChanged resultChanged, ResourceItem resourceItem)
     {
-        if (resultChanged.ResourceId == ResourceType.Final)
-        {
-            return CreateResultItemBase(resultChanged, resourceItem);
-        }
-
-        return CreateMainInningResultItem(resultChanged, resourceItem);
+        return resultChanged.ResourceId == ResourceType.Final ? CreateResultItemBase(resultChanged, resourceItem) : CreateMainInningResultItem(resultChanged, resourceItem);
     }
 
     private (CricketResultItem, CricketResultItem) CreateMainInningResultItem(ResultChanged resultChanged, ResourceItem resourceItem)
@@ -96,10 +91,10 @@ public class GenerateResultAmendmentServiceImp(XmlConvertService xmlConvertServi
         if (PatternResultType.EarlyTypeOne.Contains(betTypeId))
         {
             itemChanged.Home = itemChanged.Home == "N" ? "None" : itemChanged.Home;
-            itemChanged.TeamIds = resultChanged.HomeValue == "H" ? $"{resourceItem.HomeId}" : (resultChanged.HomeValue == "A" ? $"{resourceItem.AwayId}" : "");
+            itemChanged.TeamIds = resultChanged.HomeValue == "H" ? $"{resourceItem.HomeId}" : resultChanged.HomeValue == "A" ? $"{resourceItem.AwayId}" : "";
 
             itemSelected.Home = itemSelected.Home == "N" ? "None" : itemSelected.Home;
-            itemSelected.TeamIds = resourceItem.HomeValue == "H" ? $"{resourceItem.HomeId}" : (resourceItem.HomeValue == "A" ? $"{resourceItem.AwayId}" : "");
+            itemSelected.TeamIds = resourceItem.HomeValue == "H" ? $"{resourceItem.HomeId}" : resourceItem.HomeValue == "A" ? $"{resourceItem.AwayId}" : "";
 
             return (itemChanged, itemSelected);
         }
@@ -111,8 +106,8 @@ public class GenerateResultAmendmentServiceImp(XmlConvertService xmlConvertServi
 
         if (PatternResultType.EarlyTypeThree.Contains(betTypeId))
         {
-            itemChanged.TeamIds = resultChanged.HomeValue == "H" ? $"{resourceItem.HomeId}" : (resultChanged.HomeValue == "A" ? $"{resourceItem.AwayId}" : "");
-            itemSelected.TeamIds = resourceItem.HomeValue == "H" ? $"{resourceItem.HomeId}" : (resourceItem.HomeValue == "A" ? $"{resourceItem.AwayId}" : "");
+            itemChanged.TeamIds = resultChanged.HomeValue == "H" ? $"{resourceItem.HomeId}" : resultChanged.HomeValue == "A" ? $"{resourceItem.AwayId}" : "";
+            itemSelected.TeamIds = resourceItem.HomeValue == "H" ? $"{resourceItem.HomeId}" : resourceItem.HomeValue == "A" ? $"{resourceItem.AwayId}" : "";
 
             return (itemChanged, itemSelected);
         }
@@ -219,12 +214,7 @@ public class GenerateResultAmendmentServiceImp(XmlConvertService xmlConvertServi
 
     private int GetBetType(string resourceId)
     {
-        if (resourceId.Length < 5)
-        {
-            return Convert.ToInt32(resourceId);
-        }
-
-        return Convert.ToInt32(resourceId.Substring(0, 4));
+        return Convert.ToInt32(resourceId.Length < 5 ? resourceId : resourceId[..4]);
     }
 
     private (CricketResultItem, CricketResultItem) CreateResultItemBase(ResultChanged resultChanged, ResourceItem resourceItem)

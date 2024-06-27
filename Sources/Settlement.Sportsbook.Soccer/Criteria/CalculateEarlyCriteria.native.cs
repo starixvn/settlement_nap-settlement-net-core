@@ -27,7 +27,7 @@ public class CalculateEarlyCriteria : NonQueryCommand
     public string SpName => "NAP_Admin_Settlement_Auto_1s_Push";
 
     [SpParam(Ignored = true)]
-    public int SportType { get; } = Core.Constants.SportType.Soccer;
+    public int SportType => Core.Constants.SportType.Soccer;
 
     public override string GetSettingKey() => $"NAP_Admin_Settlement_Auto_1s_Push_{DbServer}";
 

@@ -88,14 +88,20 @@ public class MatchDetail
 
     public int AutoSettingForLeague { get; set; }
 
-    public AutoSettingIcon AutoSettingIcon => autoSettingIcon ?? (autoSettingIcon = new AutoSettingIcon
-    {
-        MatchSetting = Convert.ToString(AutoSetting, ConvertToBase).Reverse(),
-        LeagueSetting = Convert.ToString(AutoSettingForLeague, ConvertToBase).Reverse()
-    });
+    public AutoSettingIcon AutoSettingIcon => autoSettingIcon ?? GetDefaultAutoSettingIcon();
 
     private static string EmptyScore(string score)
     {
         return string.IsNullOrEmpty(score) ? "-" : score;
+    }
+
+    private AutoSettingIcon GetDefaultAutoSettingIcon()
+    {
+        autoSettingIcon = new AutoSettingIcon
+        {
+            MatchSetting = Convert.ToString(AutoSetting, ConvertToBase).Reverse(),
+            LeagueSetting = Convert.ToString(AutoSettingForLeague, ConvertToBase).Reverse()
+        };
+        return autoSettingIcon;
     }
 }

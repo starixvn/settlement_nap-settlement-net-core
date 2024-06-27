@@ -6,12 +6,7 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services.TableTennis;
 
 public class ChildMatchServiceTests
 {
-    private readonly ChildMatchService service;
-
-    public ChildMatchServiceTests()
-    {
-        service = new ChildMatchService();
-    }
+    private readonly ChildMatchService service = new();
 
     [Fact]
     public void Decorate_ShouldOrderChildMatchModelsByChildMatchType()
@@ -19,15 +14,15 @@ public class ChildMatchServiceTests
         // Arrange
         var childMatches = new List<ChildMatchModel>
             {
-                new ChildMatchModel { ChildMatchType = 2 },
-                new ChildMatchModel { ChildMatchType = 1 },
-                new ChildMatchModel { ChildMatchType = 3 }
+                new() { ChildMatchType = 2 },
+                new() { ChildMatchType = 1 },
+                new() { ChildMatchType = 3 }
             };
 
         var resultDetails = new List<ResultDetail>
             {
-                new ResultDetail { ResourceId = "01"},
-                new ResultDetail { ResourceId = ResourceType.Final }
+                new() { ResourceId = "01"},
+                new() { ResourceId = ResourceType.Final }
             };
 
         var tuple = new Tuple<List<ChildMatchModel>, List<ResultDetail>>(childMatches, resultDetails);

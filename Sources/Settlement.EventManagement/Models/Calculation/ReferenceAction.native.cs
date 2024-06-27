@@ -50,12 +50,11 @@ public class ReferenceAction
     {
         get
         {
-            if (!actionNames.ContainsKey(ActionId))
+            if (!actionNames.TryGetValue(ActionId, out var actionName))
             {
                 return string.Empty;
             }
 
-            var actionName = actionNames[ActionId];
             if (IsShowScore)
             {
                 actionName = $"{HomeScore}-{AwayScore} {actionName}";

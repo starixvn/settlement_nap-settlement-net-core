@@ -279,12 +279,7 @@ public class AioServiceImp(
         var isNotCalc = relatedMatches.Exists(x => x.Results.Exists(r => settlingResourceIds.Contains(r.ResourceId)
             && r.SettlementStatusId != SettlementStatus.Completed));
 
-        if (isNotCalc)
-        {
-            return new Result(ErrorCode.ParentFantasyNotCalc, ErrorMessage.ParentFantasyNotCalc);
-        }
-
-        return new Result();
+        return isNotCalc ? new Result(ErrorCode.ParentFantasyNotCalc, ErrorMessage.ParentFantasyNotCalc) : new Result();
     }
 
     public async Task<Result> VerifyNoRunningOdds(CheckRunningOddsRequest request)

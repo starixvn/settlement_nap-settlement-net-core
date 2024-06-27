@@ -35,11 +35,6 @@ public class TimeMachineResult
             return $"0{position}:01-0{position + 1}:00";
         }
 
-        if (position == nineMinute)
-        {
-            return $"0{position}:01-{position + 1}:00";
-        }
-
-        return $"{position}:01-{position + 1}:00";
+        return position == nineMinute ? $"0{position}:01-{position + 1}:00" : $"{position}:01-{position + 1}:00";
     }
 }

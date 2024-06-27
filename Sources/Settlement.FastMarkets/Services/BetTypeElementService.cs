@@ -37,14 +37,8 @@ public class BetTypeElementServiceImp : IBetTypeElementService
         {
             return fastMarket.Result.ToString();
         }
-        else if (fastMarket.BetType == FastMarketBetType.NextOneMinuteSetPiece)
-        {
-            return NextOneMinuteSetPiece(fastMarket.ResultItem).ToString();
-        }
-        else
-        {
-            return fastMarket.ResultItem.Value.ToString();
-        }
+
+        return fastMarket.BetType == FastMarketBetType.NextOneMinuteSetPiece ? NextOneMinuteSetPiece(fastMarket.ResultItem).ToString() : fastMarket.ResultItem.Value.ToString();
     }
 
     private static int NextOneMinuteSetPiece(ResultItem item)

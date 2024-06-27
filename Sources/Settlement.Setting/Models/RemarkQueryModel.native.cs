@@ -51,8 +51,15 @@ public class RemarkQueryModel
 
     public int AutoSetting { get; set; }
 
-    public AutoCalculationSetting AutoCalcSetting => autoCalcSetting ?? (autoCalcSetting = new AutoCalculationSetting
+    public AutoCalculationSetting AutoCalcSetting => autoCalcSetting ?? getDefaultAutoCalculationSetting();
+
+    private AutoCalculationSetting getDefaultAutoCalculationSetting()
     {
-        MatchSetting = Convert.ToString(AutoSetting, ConvertToBase).Reverse()
-    });
+        autoCalcSetting = new AutoCalculationSetting
+        {
+            MatchSetting = Convert.ToString(AutoSetting, ConvertToBase).Reverse()
+        };
+
+        return autoCalcSetting;
+    }
 }

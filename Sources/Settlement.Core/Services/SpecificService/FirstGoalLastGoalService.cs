@@ -79,10 +79,8 @@ public class FirstGoalLastGoalServiceImp : FirstGoalLastGoalService
                 ? new GoalModel { Home = FirstLastGoal }
                 : new GoalModel { Away = LastGoal, Home = FirstGoal };
         }
-        else
-        {
-            return new GoalModel();
-        }
+
+        return new GoalModel();
     }
 
     private static GoalModel HomeTeamLastGoal(string[] goalValue, GoalModel goalIcon)
@@ -98,10 +96,8 @@ public class FirstGoalLastGoalServiceImp : FirstGoalLastGoalService
                 ? new GoalModel { Away = FirstGoal, Home = LastGoal }
                 : new GoalModel { Away = FirstLastGoal };
         }
-        else
-        {
-            return goalIcon;
-        }
+
+        return goalIcon;
     }
 
     public virtual GoalModel CreateGoalIconModelOnBetStatus(string betStatus)
@@ -129,27 +125,25 @@ public class FirstGoalLastGoalServiceImp : FirstGoalLastGoalService
             goal.Away = HtFirstLastGoal;
             return goal;
         }
-        else if (halfTimeGoalRecord.StartsWith("h", comparisonType) && halfTimeGoalRecord.EndsWith("h", comparisonType))
+
+        if (halfTimeGoalRecord.StartsWith("h", comparisonType) && halfTimeGoalRecord.EndsWith("h", comparisonType))
         {
             goal.Home = HtFirstLastGoal;
             return goal;
         }
-        else if (halfTimeGoalRecord.StartsWith("a", comparisonType) && halfTimeGoalRecord.EndsWith("h", comparisonType))
+        if (halfTimeGoalRecord.StartsWith("a", comparisonType) && halfTimeGoalRecord.EndsWith("h", comparisonType))
         {
             goal.Away = HtFirstGoal;
             goal.Home = HtLastGoal;
             return goal;
         }
-        else if (halfTimeGoalRecord.StartsWith("h", comparisonType) && halfTimeGoalRecord.EndsWith("a", comparisonType))
+        if (halfTimeGoalRecord.StartsWith("h", comparisonType) && halfTimeGoalRecord.EndsWith("a", comparisonType))
         {
             goal.Home = HtFirstGoal;
             goal.Away = HtLastGoal;
             return goal;
         }
-        else
-        {
-            return goal;
-        }
+        return goal;
     }
 
     public GoalModel GetFullTimeGoalByGoalRecord(string goalRecord, bool isFinalScore)

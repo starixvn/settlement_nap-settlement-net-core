@@ -2,9 +2,9 @@
 
 public class AddNotificationCriteria : NonQueryCommand
 {
-    public int MessageGroupId { get; } = 2;
+    public int MessageGroupId => 2;
 
-    public string MessageType { get; } = "Reminder";
+    public string MessageType => "Reminder";
 
     public int MatchId { get; set; }
 

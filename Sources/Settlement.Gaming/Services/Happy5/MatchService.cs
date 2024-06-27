@@ -40,9 +40,7 @@ public class MatchServiceImp(
             return balls.GroupBy(b => b.MatchId)
                 .ToDictionary(m => m.Key, m => m.ToList());
         }
-        else
-        {
-            return new Dictionary<int, List<BallModel>>();
-        }
+
+        return new Dictionary<int, List<BallModel>>();
     }
 }

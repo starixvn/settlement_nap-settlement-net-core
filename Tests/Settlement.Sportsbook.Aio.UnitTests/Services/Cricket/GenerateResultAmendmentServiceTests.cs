@@ -7,12 +7,11 @@ namespace Settlement.Sportsbook.Aio.UnitTests.Services.Cricket;
 
 public class GenerateResultAmendmentServiceTests
 {
-    private readonly XmlConvertService xmlConvertService;
     private readonly GenerateResultAmendmentService generateResultAmendmentService;
 
     public GenerateResultAmendmentServiceTests()
     {
-        xmlConvertService = Substitute.For<XmlConvertService>();
+        var xmlConvertService = Substitute.For<XmlConvertService>();
         generateResultAmendmentService = new GenerateResultAmendmentServiceImp(xmlConvertService);
     }
 
@@ -22,8 +21,8 @@ public class GenerateResultAmendmentServiceTests
         // Arrange
         var resultsChanged = new List<ResultChanged>
         {
-            new ResultChanged { ResourceId = "1" },
-            new ResultChanged { ResourceId = "2" }
+            new() { ResourceId = "1" },
+            new() { ResourceId = "2" }
         };
         var selectedResources = new List<ResourceItem>();
 

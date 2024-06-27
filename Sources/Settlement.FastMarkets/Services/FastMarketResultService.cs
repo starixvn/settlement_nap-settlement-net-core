@@ -58,12 +58,7 @@ public class FastMarketResultServiceImp(
             oldResults = [];
         }
 
-        if (oldResults.Any())
-        {
-            return GenerateOldResultsResource(oldResults);
-        }
-
-        return string.Empty;
+        return oldResults.Any() ? GenerateOldResultsResource(oldResults) : string.Empty;
     }
 
     private string GenerateOldResultsResource(List<OldResult> oldResults)

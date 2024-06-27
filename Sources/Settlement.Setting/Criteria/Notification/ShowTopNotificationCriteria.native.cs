@@ -9,15 +9,7 @@ public class ShowTopNotificationCriteria : CriteriaBase
 
     public int? Top
     {
-        get
-        {
-            if (!top.HasValue || top.Value <= 0)
-            {
-                return int.MaxValue;
-            }
-
-            return top.Value;
-        }
+        get => top is not > 0 ? int.MaxValue : top.Value;
 
         set => top = value;
     }

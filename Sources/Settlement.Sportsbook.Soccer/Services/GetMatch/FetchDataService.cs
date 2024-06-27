@@ -95,12 +95,7 @@ public class FetchDateServiceImp(IDynamicRepository repository,
                                                        betDaq.IsRefundRunningBetDaq
                                                        || baseData.IsSettleAbandonedMatchBetDaq !=
                                                        betDaq.IsSettleAbandonedMatchBetDaq);
-        if (existConflictData)
-        {
-            return mergeDataService.MergeBetDaq(baseData, nodeData);
-        }
-
-        return baseData;
+        return existConflictData ? mergeDataService.MergeBetDaq(baseData, nodeData) : baseData;
     }
 
     public async Task<BetFair> GetMultiServersBetFair(BetFairCheckingCriteria criteria)
