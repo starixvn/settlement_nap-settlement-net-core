@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System.Globalization;
+﻿using System.Globalization;
 
 namespace Settlement.EventManagement.Models;
 
@@ -14,7 +13,7 @@ public class BaseMatch
 
     private string suspenderFullTime = string.Empty;
 
-    [JsonIgnore, IgnoreMember]
+    [IgnoreMember]
     public IRefDataService RefDataService { get; set; }
 
     [Key("matchId")]
@@ -26,7 +25,7 @@ public class BaseMatch
     [Key("leagueName")]
     public string LeagueName => RefDataService == null ? string.Empty : RefDataService.GetLeagueName(LeagueId);
 
-    [JsonIgnore, IgnoreMember]
+    [IgnoreMember]
     public int HomeId { get; set; }
 
     [Key("homeName")]
@@ -41,7 +40,7 @@ public class BaseMatch
         }
     }
 
-    [JsonIgnore, IgnoreMember]
+    [IgnoreMember]
     public int AwayId { get; set; }
 
     [Key("awayName")]
@@ -56,10 +55,10 @@ public class BaseMatch
     [Key("kickOffTime")]
     public string KickOff => KickOffTime.ToString(CultureInfo.InvariantCulture);
 
-    [JsonIgnore, IgnoreMember]
+    [IgnoreMember]
     public DateTime EventDate { get; set; }
 
-    [JsonIgnore, IgnoreMember]
+    [IgnoreMember]
     public bool IsNeutral { get; set; }
 
     [Key("halfTimeHomeScore")]

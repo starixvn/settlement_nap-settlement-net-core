@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-
-namespace Settlement.Core.Models;
+﻿namespace Settlement.Core.Models;
 
 public class VoidBetInfo
 {
@@ -8,6 +6,5 @@ public class VoidBetInfo
 
     public string CustId { get; set; }
 
-    [JsonIgnore]
     public string Action { get; set; }
 }
