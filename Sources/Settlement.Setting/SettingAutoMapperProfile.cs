@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Settlement.Core.Criteria;
 using Settlement.Setting.Criteria;
 using Settlement.Setting.Criteria.LeagueSettings;
 using Settlement.Setting.Criteria.OutsideSourceManager;

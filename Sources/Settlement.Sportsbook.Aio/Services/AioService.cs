@@ -275,7 +275,7 @@ public class AioServiceImp(
         var relatedMatches = fantasyMatch?.RelatedMatches ?? new List<RelatedMatch>();
         var settlingResourceIds = request.SelectedResources.Select(x => x.ResourceId).ToList();
 
-        var isNotCalc = relatedMatches.Any(x => x.Results.Any(r => settlingResourceIds.Contains(r.ResourceId)
+        var isNotCalc = relatedMatches.Exists(x => x.Results.Exists(r => settlingResourceIds.Contains(r.ResourceId)
             && r.SettlementStatusId != SettlementStatus.Completed));
 
         if (isNotCalc)

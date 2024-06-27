@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Settlement.Setting.Constants;
 
 namespace Settlement.Setting.Models;
 
@@ -10,11 +6,11 @@ public class HoldSetting
 {
     private Dictionary<string, short> holdBitPosition => new Dictionary<string, short>
     {
-        {"isMtdHold", 16},
-        {"isUndecided", 2},
-        {"isPending", 1},
-        {"isUnderSettle", 4},
-        {"isKeyHold", 64},
+        {"isMtdHold", HoldBitPosition.MtdHold},
+        {"isUndecided", HoldBitPosition.Undecided},
+        {"isPending", HoldBitPosition.Pending},
+        {"isUnderSettle", HoldBitPosition.UnderSettle},
+        {"isKeyHold", HoldBitPosition.KeyHold},
     };
 
     private Dictionary<string, string> holdDescription => new Dictionary<string, string>
