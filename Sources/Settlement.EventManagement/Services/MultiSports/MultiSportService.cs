@@ -140,7 +140,8 @@ public class MultiSportServiceImp(
         {
             MatchInfo = JsonSerializer.Serialize(matchesInfo),
             MatchOverStatus = matchesOverStatus.Any() ? JsonSerializer.Serialize(matchesOverStatus) : string.Empty,
-            OverStatus = filterCriteria.OverStatus
+            OverStatus = filterCriteria.OverStatus,
+            MatchCode = filterCriteria.MatchCode
         };
 
         var result = await GetTicketInfoAllDbSites(criteria);
@@ -205,10 +206,11 @@ public class MultiSportServiceImp(
         var siteMatches = (await GetOSTicketInfo(matchTuple, criteria)).ToList();
 
         var matches = matchTuple.Matches.ToList();
+        var filteredMatches = matches.Where(x => siteMatches.Any(z => x.MatchId == z.MatchId)).ToList();
 
-        SetMatchTicketInfo(matches, siteMatches);
+        SetMatchTicketInfo(filteredMatches, siteMatches);
 
-        return matches;
+        return filteredMatches;
     }
 
     private async Task<IEnumerable<Match>> FetchMatches(string server, MultipleSiteCriteria criteria)
